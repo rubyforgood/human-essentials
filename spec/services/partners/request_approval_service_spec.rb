@@ -23,7 +23,7 @@ describe Partners::RequestApprovalService do
       let(:fake_mailer) { double('fake_mailer', deliver_later: -> {}) }
       before do
         allow(OrganizationMailer).to receive(:partner_approval_request).with(partner: partner, organization: partner.organization).and_return(fake_mailer)
-        expect(partner.status).not_to eq(:awaiting_approval)
+        expect(partner.status).not_to eq(:awaiting_review)
       end
 
       it 'should set the status on the partner record to awaiting_review' do

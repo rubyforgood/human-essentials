@@ -54,7 +54,7 @@
               <%= link_to '', class: 'btn btn-info disabled' do %>
                 <i class="fa fa-check"></i> Approved
               <% end %>
-            <% elsif current_partner.status == :awaiting_approval %>
+            <% elsif current_partner.awaiting_review? %>
               <%= link_to '', class: "btn btn-warning disabled" do %>
                 <i class="fa fa-clock"></i> Pending Approval
               <% end %>

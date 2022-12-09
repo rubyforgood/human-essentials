@@ -18,7 +18,6 @@ class MoveItemRequestIndex < ActiveRecord::Migration[7.0]
     SQL
     rows = ApplicationRecord.connection.select_all(sql)
     rows.each do |request|
-      puts request['id']
       from = request['created_at'] - 10.seconds
       to = request['created_at'] + 10.seconds
       new_partner = Partners::Profile.find_by_id(request['partner_id'])&.partner_id
