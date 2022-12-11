@@ -31,7 +31,7 @@ RSpec.describe "/partners/profiles", type: :request do
       expect(partner.reload.name).to eq("Partnerdude")
       expect(partner.profile.reload.address1).to eq("456 Main St.")
       expect(partner.profile.address2).to eq("Washington, DC")
-      expect(response).to redirect_to(partners_profile_path(partner))
+      expect(response).to redirect_to(partners_profile_path)
     end
   end
 end
