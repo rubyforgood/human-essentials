@@ -25,7 +25,8 @@
               <tbody>
                 <%= render partial: "/users/organization_user", 
                            collection: @organization.users.with_discarded.alphabetized,
-                           as: :user %>
+                           as: :user,
+                           locals: { current_organization: current_organization || @organization } %>
               </tbody>
             </table>
           </div>
