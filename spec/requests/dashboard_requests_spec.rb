@@ -19,7 +19,7 @@ RSpec.describe "Dashboard", type: :request do
 
       context 'with both roles' do
         it 'should include the switch link' do
-          partner = FactoryBot.create(:partners_partner)
+          partner = FactoryBot.create(:partner)
           @user.add_role(Role::PARTNER, partner)
           get dashboard_path(default_params)
           expect(response.body).to include('switch_to_role')

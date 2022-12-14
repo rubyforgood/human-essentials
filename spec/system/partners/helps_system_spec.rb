@@ -1,9 +1,9 @@
 RSpec.describe "Help", type: :system do
   let(:partner) { FactoryBot.create(:partner) }
-  let(:partner_user) { partner.primary_partner_user }
+  let(:partner_user) { partner.primary_user }
 
   before do
-    partner.profile.update(partner_status: :verified)
+    partner.update(status: :approved)
     login_as(partner_user)
   end
 

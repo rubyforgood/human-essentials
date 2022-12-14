@@ -3,51 +3,51 @@
   <div class="card-body">
     <dl>
       <dt>Year Founded</dt>
-      <dd><%= partner.founded %></dd>
+      <dd><%= profile.founded %></dd>
 
       <dt>Form 990 Filed</dt>
-      <dd><%= humanize_boolean(partner.form_990) %></dd>
+      <dd><%= humanize_boolean(profile.form_990) %></dd>
 
       <dt>Form 990</dt>
-      <% if partner.proof_of_form_990.attached? %>
+      <% if profile.proof_of_form_990.attached? %>
         <dd>Attached
-          file: <%= link_to partner.proof_of_form_990.blob['filename'], rails_blob_path(partner.proof_of_form_990), class: "font-weight-bold" %></dd>
+          file: <%= link_to profile.proof_of_form_990.blob['filename'], rails_blob_path(profile.proof_of_form_990), class: "font-weight-bold" %></dd>
       <% else %>
         <dd>Form 990 not on file</dd>
       <% end %>
 
       <dt>Program Name(s)</dt>
-      <dd><%= partner.program_name %></dd>
+      <dd><%= profile.program_name %></dd>
 
       <dt>Program Description(s)</dt>
-      <dd><%= partner.program_description %></dd>
+      <dd><%= profile.program_description %></dd>
 
       <dt>Agency Age</dt>
-      <dd><%= partner.program_age %></dd>
+      <dd><%= profile.program_age %></dd>
 
       <dt>Case Management</dt>
-      <dd><%= humanize_boolean(partner.case_management) %></dd>
+      <dd><%= humanize_boolean(profile.case_management) %></dd>
 
       <dt>Evidence Based</dt>
-      <dd><%= humanize_boolean(partner.evidence_based) %></dd>
+      <dd><%= humanize_boolean(profile.evidence_based) %></dd>
 
       <dt>How Are Essentials (e.g. diapers, period supplies) Used In Your Program?</dt>
-      <dd><%= partner.essentials_use %></dd>
+      <dd><%= profile.essentials_use %></dd>
 
       <dt>Do You Receive Essentials From Other Sources?</dt>
-      <dd><%= partner.receives_essentials_from_other %></dd>
+      <dd><%= profile.receives_essentials_from_other %></dd>
 
       <dt>Current Providing Diapers</dt>
-      <dd><%= humanize_boolean(partner.currently_provide_diapers) %></dd>
+      <dd><%= humanize_boolean(profile.currently_provide_diapers) %></dd>
 
       <address>
         <strong>Program Address (if different)</strong> <br>
-        <%= partner.program_address1 %> <br>
-        <% unless partner.program_address2.blank? %>
-          <%= partner.program_address2 %> <br>
+        <%= profile.program_address1 %> <br>
+        <% unless profile.program_address2.blank? %>
+          <%= profile.program_address2 %> <br>
         <% end %>
-        <%= partner.program_city %> <%= partner.program_state %> <br>
-        <%= partner.program_zip_code %>
+        <%= profile.program_city %> <%= profile.program_state %> <br>
+        <%= profile.program_zip_code %>
       </address>
     </dl>
   </div>

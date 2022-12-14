@@ -3,7 +3,7 @@ module Partners
     def new
       @request = FamilyRequest.new({}, initial_items: 1)
 
-      requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.partner.id).call
+      requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
       @formatted_requestable_items = requestable_items.map do |rt|
         [rt.name, rt.id]
       end.sort
@@ -24,7 +24,7 @@ module Partners
       else
         @request = FamilyRequest.new({}, initial_items: 1)
         @errors = create_service.errors
-        @requestable_items = Organization.find(current_partner.essentials_bank_id).valid_items.map do |item|
+        @requestable_items = Organization.find(current_partner.organization_id).valid_items.map do |item|
           [item[:name], item[:id]]
         end.sort
 

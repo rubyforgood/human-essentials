@@ -10,10 +10,10 @@
             <%= form.input :founded, label: "Year Founded", class: "form-control", wrapper: :input_group %>
             <%= form.input :form_990, label: "Form 990 Filed", as: :boolean, class: "form-control", wrapper: :input_group %>
             <label class="control-label col-md-3">Form 990</label>
-            <% if partner.proof_of_form_990.attached? %>
+            <% if profile.proof_of_form_990.attached? %>
               <div class="col-md-8">
                 Attached
-                file: <%= link_to partner.proof_of_form_990.blob['filename'], rails_blob_path(partner.proof_of_form_990), class: "font-weight-bold" %>
+                file: <%= link_to profile.proof_of_form_990.blob['filename'], rails_blob_path(profile.proof_of_form_990), class: "font-weight-bold" %>
                 <%= form.file_field :proof_of_form_990, class: "form-control-file form-control" %>
               </div>
             <% else %>
