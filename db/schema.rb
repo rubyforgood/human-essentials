@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_10_23_013754) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_04_191611) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -265,6 +265,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_23_013754) do
     t.datetime "updated_at", precision: nil, null: false
     t.bigint "partner_id"
     t.boolean "military", default: false
+    t.bigint "old_partner_id"
     t.index ["partner_id"], name: "index_families_on_partner_id"
   end
 
@@ -318,6 +319,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_23_013754) do
     t.datetime "updated_at", precision: nil, null: false
     t.string "partner_key"
     t.integer "item_id"
+    t.integer "old_partner_request_id"
     t.index ["item_id"], name: "index_item_requests_on_item_id"
     t.index ["partner_request_id"], name: "index_item_requests_on_partner_request_id"
   end
@@ -661,6 +663,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_23_013754) do
     t.bigint "resource_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "old_resource_id"
     t.index ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id"
     t.index ["resource_type", "resource_id"], name: "index_roles_on_resource"
   end
@@ -781,11 +784,10 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_23_013754) do
   add_foreign_key "donations", "manufacturers"
   add_foreign_key "donations", "product_drives"
   add_foreign_key "donations", "storage_locations"
-  add_foreign_key "families", "partner_profiles", column: "partner_id"
+  add_foreign_key "families", "partners"
   add_foreign_key "item_categories", "organizations"
   add_foreign_key "item_categories_partner_groups", "item_categories"
   add_foreign_key "item_categories_partner_groups", "partner_groups"
-  add_foreign_key "item_requests", "partner_requests"
   add_foreign_key "items", "item_categories"
   add_foreign_key "items", "kits"
   add_foreign_key "kits", "organizations"
@@ -794,11 +796,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_23_013754) do
   add_foreign_key "organizations", "ndbn_members", primary_key: "ndbn_member_id"
   add_foreign_key "partner_groups", "organizations"
   add_foreign_key "partner_requests", "users", column: "partner_user_id"
-  add_foreign_key "partner_users", "partner_profiles", column: "partner_id"
   add_foreign_key "partners", "storage_locations", column: "default_storage_location_id"
   add_foreign_key "product_drives", "organizations"
   add_foreign_key "requests", "distributions"
   add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"
-  add_foreign_key "users", "partner_profiles", column: "partner_id"
 end

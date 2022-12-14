@@ -13,7 +13,10 @@ module Partners
     end
 
     def call
-      @partner_request = Partners::Request.new(partner_id: partner.id, organization_id: organization_id, comments: comments, for_families: @for_families, sent: true, partner_user_id: partner_user_id)
+      @partner_request = ::Request.new(partner_id: partner.id,
+        organization_id: organization_id,
+        comments: comments,
+        partner_user_id: partner_user_id)
       @partner_request = populate_item_request(@partner_request)
       @partner_request.assign_attributes(additional_attrs)
 
@@ -29,13 +32,10 @@ module Partners
 
       return self if errors.present?
 
-      Partners::Base.transaction do
+      Request.transaction do
         @partner_request.save!
 
-        @organization_request = build_organization_request(@partner_request)
-        @organization_request.save!
-
-        NotifyPartnerJob.perform_now(@organization_request.id)
+        NotifyPartnerJob.perform_now(@partner_request.id)
       rescue StandardError => e
         errors.add(:base, e.message)
         raise ActiveRecord::Rollback
@@ -66,6 +66,12 @@ module Partners
 
       partner_request.item_requests << item_requests
 
+      partner_request.request_items = partner_request.item_requests.map do |ir|
+        {
+          item_id: ir.item_id,
+          quantity: ir.quantity
+        }
+      end
       partner_request
     end
 
@@ -88,26 +94,11 @@ module Partners
     end
 
     def organization_id
-      @organization_id ||= partner.essentials_bank_id
+      @organization_id ||= partner.organization_id
     end
 
     def partner
       @partner ||= ::User.find(partner_user_id).partner
-    end
-
-    def build_organization_request(partner_request)
-      ::Request.new(
-        organization_id: partner_request.organization_id,
-        partner_id: partner_request.partner.partner_id,
-        partner_user_id: partner_user_id,
-        comments: partner_request.comments,
-        request_items: partner_request.item_requests.map do |ir|
-          {
-            item_id: ir.item_id,
-            quantity: ir.quantity
-          }
-        end
-      )
     end
   end
 end

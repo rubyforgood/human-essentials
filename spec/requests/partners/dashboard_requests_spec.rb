@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "/partners/dashboard", type: :request do
   let(:partner) { create(:partner) }
-  let(:partner_user) { Partners::Partner.find_by(partner_id: partner.id).primary_user }
+  let(:partner_user) { partner.primary_user }
   let(:date) { 1.week.from_now }
   let(:past_date) { 1.week.ago }
   let(:item1) { create(:item, name: "Good item") }

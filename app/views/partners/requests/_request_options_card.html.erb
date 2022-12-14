@@ -3,7 +3,7 @@
 
   <div class="d-flex">
 
-    <% if current_partner.enable_quantity_based_requests? %>
+    <% if current_partner.profile.enable_quantity_based_requests? %>
       <article class="col d-flex flex-column justify-content-between p-4 mr-4 border border-primary rounded shadow">
         <div>
           <h3 class='mb-0'>Quantity</h3>
@@ -17,7 +17,7 @@
       </article>
     <% end %>
 
-    <% if current_partner.enable_child_based_requests? %>
+    <% if current_partner.profile.enable_child_based_requests? %>
       <article class="col d-flex flex-column justify-content-between p-4 mr-4 border border-primary rounded shadow">
         <div>
           <h3 class='mb-0'>Child</h3>
@@ -31,7 +31,7 @@
       </article>
     <% end %>
 
-    <% if current_partner.enable_individual_requests? %>
+    <% if current_partner.profile.enable_individual_requests? %>
       <article class="col d-flex flex-column justify-content-between p-4 border border-primary rounded shadow">
         <div>
           <h3 class='mb-0'># of Individuals</h3>

@@ -6,7 +6,7 @@ class MigrateRoles < ActiveRecord::Migration[7.0]
         user.add_role(:org_user, org) if org
       end
       if user.partner_id.present?
-        partner = Partners::Partner.find_by_id(user.partner_id)
+        partner = Partner.find_by_id(user.partner_id)
         user.add_role(:partner, partner)
       end
       if user.read_attribute(:super_admin)

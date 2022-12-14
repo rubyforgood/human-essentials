@@ -22,7 +22,7 @@ module Reports
       @report = { name: 'Partner Agencies and Service Area', entries: entries }
     end
 
-    # @return [Array<Partners::Partner>]
+    # @return [Array<Partner>]
     def partner_agency_profiles
       @partner_agency_profiles ||= organization.partners.map(&:profile).compact
     end

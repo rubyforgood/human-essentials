@@ -1,6 +1,6 @@
 RSpec.describe "Coworking invitations", type: :system, js: true do
   describe 'inviting a new user as a partner user' do
-    let(:partner_user) { partner.primary_partner_user }
+    let(:partner_user) { partner.primary_user }
     let!(:partner) { FactoryBot.create(:partner) }
 
     context 'GIVEN a partner user complete the process to invite a coworker' do

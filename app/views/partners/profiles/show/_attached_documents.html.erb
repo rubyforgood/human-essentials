@@ -1,9 +1,9 @@
 <div class="card mb-4">
   <h5 class="card-header bg-primary text-white">Attached Documents</h5>
   <div class="card-body">
-    <% if partner.documents.attached? %>
+    <% if profile.documents.attached? %>
       <dt>Attached files:</dt>
-      <% partner.documents.each do |doc| %>
+      <% profile.documents.each do |doc| %>
         <dd><%= link_to doc.blob['filename'], rails_blob_path(doc), class: "font-weight-bold" %></dd>
       <% end %>
     <% else %>

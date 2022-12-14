@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "/partners/distributions", type: :request do
   let(:partner) { create(:partner) }
-  let(:partner_user) { Partners::Partner.find_by(partner_id: partner.id).primary_user }
+  let(:partner_user) { partner.primary_user }
 
   describe "GET #index" do
     subject { -> { get partners_distributions_path } }

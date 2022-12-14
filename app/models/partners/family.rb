@@ -21,11 +21,12 @@
 #  sources_of_income         :jsonb
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
+#  old_partner_id            :bigint
 #  partner_id                :bigint
 #
 module Partners
   class Family < Base
-    belongs_to :partner, class_name: "Partners::Partner"
+    belongs_to :partner, class_name: '::Partner'
     has_many :children, dependent: :destroy
     has_many :authorized_family_members, dependent: :destroy
     serialize :sources_of_income, Array
