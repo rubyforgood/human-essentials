@@ -30,6 +30,7 @@ class Partner < ApplicationRecord
 
   belongs_to :organization
   belongs_to :partner_group, optional: true
+
   has_many :item_categories, through: :partner_group
   has_many :requestable_items, through: :item_categories, source: :items
   has_one :profile, class_name: 'Partners::Profile', dependent: :destroy
@@ -101,6 +102,7 @@ class Partner < ApplicationRecord
     agency_stability
     organizational_capacity
     sources_of_funding
+    area_served
     population_served
     executive_director
     diaper_pick_up_person
