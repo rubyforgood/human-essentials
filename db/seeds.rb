@@ -209,6 +209,7 @@ note = [
   end
 
   profile = Partners::Profile.create!({
+                                        partner_id: p.id,
                                         address1: Faker::Address.street_address,
                                         address2: "",
                                         city: Faker::Address.city,
@@ -329,7 +330,8 @@ note = [
     pr = Request.new(
       comments: Faker::Lorem.paragraph,
       partner: p,
-      partner_user: p.primary_user
+      partner_user: p.primary_user,
+      organization_id: p.organization_id
     )
 
     # Ensure that the item requests are valid with
