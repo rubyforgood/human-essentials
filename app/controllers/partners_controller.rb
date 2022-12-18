@@ -50,9 +50,10 @@ class PartnersController < ApplicationController
 
   def show
     @partner = current_organization.partners.find(params[:id])
-    @impact_metrics = @partner.profile.impact_metrics unless @partner.uninvited?
+    @impact_metrics = @partner.impact_metrics unless @partner.uninvited?
     @partner_distributions = @partner.distributions.includes(:partner, :storage_location, line_items: [:item]).order("issued_at DESC")
     @partner_profile_fields = current_organization.partner_form_fields
+    @partner_users = @partner.users.order(name: :asc)
 
     respond_to do |format|
       format.html

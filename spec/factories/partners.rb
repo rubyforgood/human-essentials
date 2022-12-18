@@ -42,9 +42,9 @@ FactoryBot.define do
     after(:create) do |partner, evaluator|
       next if evaluator.try(:without_profile)
 
-      # Create associated records on partnerbase DB
-      partners_partner = create(:partners_partner, essentials_bank_id: partner.organization_id, partner_id: partner.id, name: partner.name)
-      create(:partners_user, email: partner.email, name: partner.name, partner: partners_partner)
+      # Create associated records
+      create(:partner_profile, partner_id: partner.id)
+      create(:partners_user, email: partner.email, name: partner.name, partner: partner)
     end
   end
 end

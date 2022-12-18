@@ -2,20 +2,21 @@
 #
 # Table name: item_requests
 #
-#  id                 :bigint           not null, primary key
-#  name               :string
-#  partner_key        :string
-#  quantity           :string
-#  created_at         :datetime         not null
-#  updated_at         :datetime         not null
-#  item_id            :integer
-#  partner_request_id :bigint
+#  id                     :bigint           not null, primary key
+#  name                   :string
+#  partner_key            :string
+#  quantity               :string
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  item_id                :integer
+#  old_partner_request_id :integer
+#  partner_request_id     :bigint
 #
 require "rails_helper"
 
 RSpec.describe Partners::ItemRequest, type: :model do
   describe 'associations' do
-    it { should belong_to(:request).class_name('Partners::Request').with_foreign_key(:partner_request_id) }
+    it { should belong_to(:request).class_name('::Request').with_foreign_key(:partner_request_id) }
     it { should have_many(:child_item_requests).dependent(:destroy) }
     it { should have_many(:children).through(:child_item_requests) }
   end

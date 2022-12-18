@@ -6,17 +6,8 @@ class OrganizationUpdateService
     result = organization.update(params)
     return false unless result
 
-    sync_visible_partner_form_sections(organization)
     update_partner_flags(organization)
     true
-  end
-
-  # @param organization [Organization]
-  def self.sync_visible_partner_form_sections(organization)
-    return unless organization.saved_change_to_attribute?(:partner_form_fields)
-
-    partner_form = Partners::PartnerForm.where(essentials_bank_id: organization.id).first_or_create
-    partner_form.update!(sections: organization.partner_form_fields)
   end
 
   # @param organization [Organization]

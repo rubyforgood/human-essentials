@@ -1,6 +1,6 @@
 RSpec.describe "Approval process for partners", type: :system, js: true do
   describe 'filling in organization details and requesting for approval' do
-    let(:partner_user) { partner.primary_partner_user }
+    let(:partner_user) { partner.primary_user }
     let!(:partner) { FactoryBot.create(:partner) }
 
     context 'GIVEN a partner user is new and wants to request approval' do
@@ -27,7 +27,7 @@ RSpec.describe "Approval process for partners", type: :system, js: true do
       context 'AND they fill out the form and submit it' do
         before do
           click_on 'My Organization'
-          assert page.has_content? 'pending'
+          assert page.has_content? 'Uninvited'
           click_on 'Update Information'
 
           fill_in 'Other Agency Type', with: 'Lorem'
@@ -43,7 +43,7 @@ RSpec.describe "Approval process for partners", type: :system, js: true do
 
           find_link(text: 'Submit for Approval').click
           assert page.has_content? 'You have submitted your details for approval.'
-          assert page.has_content? 'submitted'
+          assert page.has_content? 'Awaiting Review'
         end
 
         context 'THEN the organization approves them' do
@@ -55,7 +55,7 @@ RSpec.describe "Approval process for partners", type: :system, js: true do
           end
 
           it 'should show that they have been approved and able to make requests', :aggregate_failures do
-            assert page.has_content? 'verified'
+            assert page.has_content? 'Approved'
 
             visit partners_requests_path
             assert page.has_content? 'Make a request'

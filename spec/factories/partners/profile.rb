@@ -1,5 +1,6 @@
 FactoryBot.define do
-  factory :partners_partner, class: Partners::Partner do
+  factory :partner_profile, class: Partners::Profile do
+    partner { Partner.first || create(:partner) }
     essentials_bank_id { Organization.try(:first).id || create(:organization).id }
   end
 end
