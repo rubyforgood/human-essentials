@@ -37,7 +37,7 @@
 
 
 
-  <% if current_partner.enable_child_based_requests? %>
+  <% if current_partner.profile.enable_child_based_requests? %>
     <li class="nav-item">
       <%= link_to(partners_families_path, class: "nav-link") do %>
         <i class="nav-icon fa fa-users"></i>

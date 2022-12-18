@@ -16,22 +16,26 @@
       <div class="col-md-12">
         <div class="card-transparent">
           <%= simple_form_for @partner, url: profile_path, html: {role: 'form', class: 'form-horizontal'} do |form| %>
-            <div class="row">
-              <div class="col-6">
-                <%= render partial: "partners/profiles/edit/agency_information", locals: {form: form, partner: @partner} %>
-              </div>
-              <% @partner.partials_to_show.each do |partial| %>
+            <%= simple_fields_for :profile, @partner.profile do |profile_form| %>
+              <div class="row">
                 <div class="col-6">
-                  <%= render partial: "partners/profiles/edit/#{partial}", locals: {form: form, partner: @partner} %>
+                  <%= render partial: "partners/profiles/edit/agency_information",
+                             locals: {form: form, partner: @partner, profile: @partner.profile, profile_form: profile_form} %>
+                </div>
+                <% @partner.partials_to_show.each do |partial| %>
+                  <div class="col-6">
+                    <%= render partial: "partners/profiles/edit/#{partial}",
+                               locals: {form: profile_form, partner: @partner, profile: @partner.profile} %>
+                  </div>
+                <% end %>
+                <div class="col-6">
+                  <%= render partial: "partners/profiles/edit/partner_settings", locals: {form: profile_form } %>
                 </div>
               <% end %>
-              <div class="col-6">
-                <%= render partial: "partners/profiles/edit/partner_settings", locals: {form: form, partner: @partner} %>
-              </div>
             </div>
             <div class="card-footer">
               <%= form.submit("Update Information", class: "btn btn-primary") %>
-              <%= link_to "Cancel Update", partner_path(@partner.partner), class: "btn btn-danger float-right" %>
+              <%= link_to "Cancel Update", partner_path(@partner), class: "btn btn-danger float-right" %>
             </div>
           <% end %>
         </div>

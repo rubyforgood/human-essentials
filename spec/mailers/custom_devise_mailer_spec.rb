@@ -6,13 +6,13 @@ RSpec.describe CustomDeviseMailer, type: :mailer do
     context "when partner is invited" do
       let(:partner) do
         partner = create(:partner, :uninvited)
-        partner.profile.primary_user.delete
-        partner.profile.reload
+        partner.primary_user.delete
+        partner.reload
         partner
       end
 
       let(:user) do
-        create(:partner_user, partner: partner.profile)
+        create(:partner_user, partner: partner)
       end
 
       it "invites to primary user" do
@@ -23,7 +23,7 @@ RSpec.describe CustomDeviseMailer, type: :mailer do
 
     context "when other partner users invited" do
       let(:partner) { create(:partner) }
-      let(:user) { create(:partner_user, partner: partner.profile) }
+      let(:user) { create(:partner_user, partner: partner) }
 
       it "invites to partner user" do
         expect(mail.subject).to eq("You've been invited to #{user.partner.name}'s partnerbase account")

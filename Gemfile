@@ -12,7 +12,7 @@ ruby "3.1.2"
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.4.4"
+gem "pg", "~> 1.4.5"
 # Web server.
 gem "puma"
 # Rails web framework.
@@ -46,8 +46,6 @@ gem "jquery-rails"
 gem "jquery-ui-rails"
 # SASS CSS framework (nested selectors, variables, etc.)
 gem "sass-rails"
-# JavaScript minified, used in asset compilation.
-gem "uglifier", ">= 1.3.0"
 # Used to verify that the user is a human.
 gem "recaptcha"
 # Hotwire for SPA like without much JS
@@ -119,6 +117,11 @@ group :production do
   gem "skylight"
   # Tool to detect unused code through knowing which methods are used in which files.
   gem 'coverband'
+end
+
+group :production, :staging do
+  # JS compression for deployed environments.
+  gem 'terser'
 end
 
 group :development, :test, :staging do

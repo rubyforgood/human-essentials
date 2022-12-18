@@ -169,4 +169,63 @@ RSpec.describe "Organizations", type: :request do
       end
     end
   end
+
+  context 'When signed in as a super admin' do
+    before do
+      sign_in(@super_admin)
+    end
+
+    describe "POST #promote_to_org_admin" do
+      subject { post promote_to_org_admin_organization_path(default_params.merge(user_id: @user.id)) }
+
+      it "redirect after update" do
+        subject
+        expect(response).to redirect_to(admin_organization_path(@organization.id, default_params))
+      end
+      it "change user" do
+        expect { subject }.to change { @user.reload.kind }.to "admin"
+      end
+    end
+
+    describe "POST #demote_to_user" do
+      let(:admin_user) do
+        create(:user, organization: @organization, name: "ADMIN USER")
+      end
+      subject { post demote_to_user_organization_path(default_params.merge(user_id: admin_user.id)) }
+
+      it "redirect after update" do
+        subject
+        expect(response).to redirect_to(admin_organization_path(@organization.id, default_params))
+      end
+      it "demotes the user to user" do
+        subject
+        expect(admin_user.reload.has_role?(Role::ORG_ADMIN, admin_user.organization)).to be_falsey
+      end
+    end
+
+    describe "PUT #deactivate_user" do
+      subject { put deactivate_user_organization_path(default_params.merge(user_id: @user.id)) }
+
+      it "redirect after update" do
+        subject
+        expect(response).to redirect_to(admin_organization_path(@organization.id, default_params))
+      end
+      it "deactivates the user" do
+        expect { subject }.to change { @user.reload.discarded_at }.to be_present
+      end
+    end
+
+    describe "PUT #reactivate_user" do
+      subject { put reactivate_user_organization_path(default_params.merge(user_id: @user.id)) }
+      before { @user.discard! }
+
+      it "redirect after update" do
+        subject
+        expect(response).to redirect_to(admin_organization_path(@organization.id, default_params))
+      end
+      it "reactivates the user" do
+        expect { subject }.to change { @user.reload.discarded_at }.to be_nil
+      end
+    end
+  end
 end

@@ -7,7 +7,7 @@ RSpec.describe UserInviteService, type: :service, skip_seed: true do
     end
     it "should invite the existing user" do
       allow(User).to receive(:invite!).and_call_original
-      result = described_class.invite(email: "email@email.com")
+      result = described_class.invite(email: "email@email.com", resource: @organization)
       expect(result.id).to eq(user.id)
       expect(User).to have_received(:invite!)
     end

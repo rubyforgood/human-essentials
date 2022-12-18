@@ -3,7 +3,7 @@
     <div class="row mb-2">
       <div class="col-sm-6">
         <% content_for :title, "My Organization - #{current_partner.name}" %>
-        <% if current_partner.partner_status == "recertification_required" %>
+        <% if current_partner.status == "recertification_required" %>
           <div class="alert alert-danger"><i class="fa fa-warning"></i>&nbsp;
             Please review your application details and submit for approval.</div>
         <% end %>
@@ -27,15 +27,15 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-6">
-            <%= render partial: "partners/profiles/show/agency_information", locals: { partner: current_partner } %>
+            <%= render partial: "partners/profiles/show/agency_information", locals: { profile: current_partner.profile } %>
           </div>
           <% current_partner.partials_to_show.each do |partial| %>
             <div class="col-6">
-              <%= render partial: "partners/profiles/show/#{partial}", locals: { partner: current_partner }%>
+              <%= render partial: "partners/profiles/show/#{partial}", locals: { profile: current_partner.profile }%>
             </div>
           <% end %>
           <div class="col-6">
-            <%= render partial: "partners/profiles/show/partner_settings", locals: { partner: current_partner }%>
+            <%= render partial: "partners/profiles/show/partner_settings", locals: { profile: current_partner.profile }%>
           </div>
         </div>
       </div>
@@ -50,11 +50,11 @@
         <!-- jquery validation -->
         <div class="card card-primary">
           <div class="card-footer">
-            <% if current_partner.verified? %>
+            <% if current_partner.approved? %>
               <%= link_to '', class: 'btn btn-info disabled' do %>
                 <i class="fa fa-check"></i> Approved
               <% end %>
-            <% elsif current_partner.partner_status == 'submitted' %>
+            <% elsif current_partner.awaiting_review? %>
               <%= link_to '', class: "btn btn-warning disabled" do %>
                 <i class="fa fa-clock"></i> Pending Approval
               <% end %>
