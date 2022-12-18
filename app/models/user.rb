@@ -45,8 +45,8 @@ class User < ApplicationRecord
 
   has_one :partner_role_join, class_name: "UsersRole", dependent: :destroy
   has_one :partner_role, through: :partner_role_join, class_name: "Role", source: :role
-  has_one :partner, through: :partner_role, source: :resource, source_type: "Partners::Partner"
-  has_many :partners, through: :roles, source: :resource, source_type: "Partners::Partner"
+  has_one :partner, through: :partner_role, source: :resource, source_type: "Partner"
+  has_many :partners, through: :roles, source: :resource, source_type: "Partner"
 
   attr_accessor :organization_admin # for creation / update time
 
@@ -65,8 +65,7 @@ class User < ApplicationRecord
   scope :partner_users, -> { with_role(Role::PARTNER, :any) }
   scope :org_users, -> { with_role(Role::ORG_USER, :any) }
 
-  has_many :requests, class_name: "Partners::Request", foreign_key: :partner_id, dependent: :destroy, inverse_of: :partner_user
-  has_many :submitted_partner_requests, class_name: "Partners::Request", foreign_key: :partner_user_id, dependent: :destroy, inverse_of: :partner_user
+  has_many :requests, class_name: "::Request", foreign_key: :partner_id, dependent: :destroy, inverse_of: :partner_user
   has_many :submitted_requests, class_name: "Request", foreign_key: :partner_user_id, dependent: :destroy, inverse_of: :partner_user
 
   def password_complexity

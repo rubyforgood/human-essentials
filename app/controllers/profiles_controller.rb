@@ -1,12 +1,12 @@
 class ProfilesController < ApplicationController
   def edit
-    @partner = current_organization.partners.find(params[:id]).profile
+    @partner = current_organization.partners.find(params[:id])
   end
 
   def update
-    @partner = current_organization.partners.find(params[:id]).profile
-    if @partner.update(edit_profile_params)
-      redirect_to partner_path(@partner.partner) + "#partner-information", notice: "#{@partner.name} updated!"
+    @partner = current_organization.partners.find(params[:id])
+    if @partner.update(edit_partner_params) && @partner.profile.update(edit_profile_params)
+      redirect_to partner_path(@partner) + "#partner-information", notice: "#{@partner.name} updated!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
@@ -15,12 +15,14 @@ class ProfilesController < ApplicationController
 
   private
 
+  def edit_partner_params
+    params.require(:partner).permit(:name)
+  end
+
   def edit_profile_params
-    params.require(:partners_partner).permit(
-      :name,
+    params.require(:profile).permit(
       :agency_type,
       :other_agency_type,
-      :partner_status,
       :proof_of_partner_status,
       :agency_mission,
       :address1,
@@ -99,6 +101,6 @@ class ProfilesController < ApplicationController
       :enable_individual_requests,
       :enable_quantity_based_requests,
       documents: []
-    )
+    ).select { |_, v| v.present? }
   end
 end

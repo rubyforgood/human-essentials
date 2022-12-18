@@ -7,7 +7,7 @@ FactoryBot.define do
     invitation_sent_at { Time.current - 1.day }
     last_sign_in_at { Time.current }
     transient do
-      partner { Partners::Partner.first || create(:partners_partner) }
+      partner { Partner.first || create(:partner) }
     end
     after(:create) do |user, evaluator|
       user.add_role(Role::PARTNER, evaluator.partner)

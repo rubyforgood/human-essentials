@@ -23,7 +23,7 @@ module Partners
     end
 
     def authorize_verified_partners
-      return if current_partner.verified?
+      return if current_partner.approved?
 
       redirect_to partners_requests_path, notice: "Please review your application details and submit for approval in order to make a new request."
     end

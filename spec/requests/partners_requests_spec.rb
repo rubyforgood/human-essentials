@@ -48,8 +48,8 @@ RSpec.describe "Partners", type: :request do
         expect { subject.call }.to change { Partner.all.count }.by(1)
       end
 
-      it 'should create a new Partners::Partner record' do
-        expect { subject.call }.to change { Partners::Partner.all.count }.by(1)
+      it 'should create a new Partners::Profile record' do
+        expect { subject.call }.to change { Partners::Profile.all.count }.by(1)
       end
 
       it 'redirect to the partners index page' do
@@ -71,8 +71,8 @@ RSpec.describe "Partners", type: :request do
         expect { subject.call }.not_to change { Partner.all.count }
       end
 
-      it 'should not create a new Partners::Partner record' do
-        expect { subject.call }.not_to change { Partners::Partner.all.count }
+      it 'should not create a new Partners::Profile record' do
+        expect { subject.call }.not_to change { Partners::Profile.all.count }
       end
 
       it 'should display the error message' do
@@ -89,9 +89,9 @@ RSpec.describe "Partners", type: :request do
     end
 
     let(:partner) { create(:partner, organization: @organization, status: :approved) }
-    let!(:family1) { FactoryBot.create(:partners_family, guardian_zip_code: '45612-123', partner: partner.profile) }
-    let!(:family2) { FactoryBot.create(:partners_family, guardian_zip_code: '45612-126', partner: partner.profile) }
-    let!(:family3) { FactoryBot.create(:partners_family, guardian_zip_code: '45612-123', partner: partner.profile) }
+    let!(:family1) { FactoryBot.create(:partners_family, guardian_zip_code: '45612-123', partner: partner) }
+    let!(:family2) { FactoryBot.create(:partners_family, guardian_zip_code: '45612-126', partner: partner) }
+    let!(:family3) { FactoryBot.create(:partners_family, guardian_zip_code: '45612-123', partner: partner) }
 
     let!(:child1) { FactoryBot.create_list(:partners_child, 2, family: family1) }
     let!(:child2) { FactoryBot.create_list(:partners_child, 2, family: family3) }
@@ -132,7 +132,7 @@ RSpec.describe "Partners", type: :request do
         context 'when the partner has no users' do
           # see the deletable? method which is tested separately in the partner model spec
           it 'shows the delete button' do
-            partner.profile.users.each(&:destroy)
+            partner.users.each(&:destroy)
             expect(subject.body).to include('Delete')
           end
         end
@@ -288,7 +288,11 @@ RSpec.describe "Partners", type: :request do
       end
       it "send the invite" do
         subject.call
-        expect(UserInviteService).to have_received(:invite)
+        expect(UserInviteService).to have_received(:invite).with(
+          email: email,
+          roles: [Role::PARTNER],
+          resource: partner.profile
+        )
         expect(response).to redirect_to(partner_path(partner))
         expect(flash[:notice]).to eq("We have invited #{email} to #{partner.name}!")
       end
@@ -362,10 +366,10 @@ RSpec.describe "Partners", type: :request do
     context "when the partner successfully reactivates" do
       let(:partner) { create(:partner, organization: @organization, status: "deactivated") }
 
-      it "changes the partner status to approved, partner status on partner app to verified, and redirects with flash" do
+      it "changes the partner status to approved and redirects with flash" do
         put reactivate_partner_path(default_params.merge(id: partner.id))
 
-        expect(partner.reload.status).to eq("approved")
+        expect(partner.reload.status).to eq('approved')
         expect(response).to redirect_to(partners_path)
         expect(flash[:notice]).to eq("#{partner.name} successfully reactivated!")
       end

@@ -37,7 +37,7 @@ RSpec.describe AccountRequestMailer, type: :mailer do
       end
 
       it 'should include the instruction video link' do
-        expect(html_body(mail)).to include('https://www.youtube.com/watch?v=fwo3WKMGM_4&feature=youtu.be')
+        expect(html_body(mail)).to include('https://youtu.be/w53iaJtlQUo')
       end
 
       it 'should include the button to confirm the request' do
@@ -60,7 +60,7 @@ RSpec.describe AccountRequestMailer, type: :mailer do
       end
 
       it 'should include the instruction video link' do
-        expect(text_body(mail)).to include('https://www.youtube.com/watch?v=fwo3WKMGM_4&feature=youtu.be')
+        expect(text_body(mail)).to include('https://youtu.be/w53iaJtlQUo')
       end
 
       it 'should include the button to confirm the request' do

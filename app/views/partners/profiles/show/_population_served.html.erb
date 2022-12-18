@@ -3,51 +3,51 @@
   <div class="card-body">
     <dl>
       <dt>Clients Have An Income Requirement to Work With You</dt>
-      <dd><%= humanize_boolean(partner.income_requirement_desc) %></dd>
+      <dd><%= humanize_boolean(profile.income_requirement_desc) %></dd>
 
       <dt>Do You Verify The Income Of Your Clients</dt>
-      <dd><%= humanize_boolean(partner.income_verification) %></dd>
+      <dd><%= humanize_boolean(profile.income_verification) %></dd>
 
       <h6>Race/Ethnicity of Client Base</h6>
       <dt>African American</dt>
-      <dd><%= partner.population_black || t(:not_provided) %></dd>
+      <dd><%= profile.population_black || t(:not_provided) %></dd>
 
       <dt>Caucasian</dt>
-      <dd><%= partner.population_white || t(:not_provided) %></dd>
+      <dd><%= profile.population_white || t(:not_provided) %></dd>
 
       <dt>Hispanic</dt>
-      <dd><%= partner.population_hispanic || t(:not_provided) %></dd>
+      <dd><%= profile.population_hispanic || t(:not_provided) %></dd>
 
       <dt>Asian</dt>
-      <dd><%= partner.population_asian || t(:not_provided) %></dd>
+      <dd><%= profile.population_asian || t(:not_provided) %></dd>
 
       <dt>American Indian</dt>
-      <dd><%= partner.population_american_indian || t(:not_provided) %></dd>
+      <dd><%= profile.population_american_indian || t(:not_provided) %></dd>
 
       <dt>Pacific Islander</dt>
-      <dd><%= partner.population_island || t(:not_provided) %></dd>
+      <dd><%= profile.population_island || t(:not_provided) %></dd>
 
       <dt>Multi-racial</dt>
-      <dd><%= partner.population_multi_racial || t(:not_provided) %></dd>
+      <dd><%= profile.population_multi_racial || t(:not_provided) %></dd>
 
       <dt>Other</dt>
-      <dd><%= partner.population_other || t(:not_provided) %></dd>
+      <dd><%= profile.population_other || t(:not_provided) %></dd>
 
       <dt>Zip Codes Served</dt>
-      <dd><%= partner.zips_served %></dd>
+      <dd><%= profile.zips_served %></dd>
 
       <h6>Poverty Information of Those Served</h6>
       <dt>At FPL or below</dt>
-      <dd><%= partner.at_fpl_or_below || t(:not_provided) %></dd>
+      <dd><%= profile.at_fpl_or_below || t(:not_provided) %></dd>
 
       <dt>Above 1-2 times FPL</dt>
-      <dd><%= partner.above_1_2_times_fpl || t(:not_provided) %></dd>
+      <dd><%= profile.above_1_2_times_fpl || t(:not_provided) %></dd>
 
       <dt>Greater than 2 times FPL</dt>
-      <dd><%= partner.greater_2_times_fpl || t(:not_provided) %></dd>
+      <dd><%= profile.greater_2_times_fpl || t(:not_provided) %></dd>
 
       <dt>Poverty Unknown</dt>
-      <dd><%= partner.poverty_unknown || t(:not_provided) %></dd>
+      <dd><%= profile.poverty_unknown || t(:not_provided) %></dd>
     </dl>
   </div>
 </div>

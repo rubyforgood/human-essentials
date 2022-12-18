@@ -7,10 +7,9 @@ RSpec.describe Partners::FamilyRequestsController, type: :request do
       hash["child-#{child.id}"] = true
     end
   end
-  let(:partners_partner) { Partners::Partner.find_by(partner_id: partner.id) }
-  let(:family) { create(:partners_family, partner_id: partners_partner.id) }
+  let(:family) { create(:partners_family, partner_id: partner.id) }
   let!(:children) { FactoryBot.create_list(:partners_child, 3, family: family) }
-  let(:partner_user) { partners_partner.primary_user }
+  let(:partner_user) { partner.primary_user }
 
   before { sign_in(partner_user) }
 
@@ -18,13 +17,13 @@ RSpec.describe Partners::FamilyRequestsController, type: :request do
     subject { get new_partners_family_request_path }
 
     it "does not allow deactivated partners" do
-      partners_partner.update!(status_in_diaper_base: :deactivated)
+      partner.update!(status: :deactivated)
 
       expect(subject).to redirect_to(partners_requests_path)
     end
 
     it "does not allow partners not verified" do
-      partners_partner.update!(partner_status: :pending)
+      partner.update!(status: :uninvited)
 
       expect(subject).to redirect_to(partners_requests_path)
     end
@@ -40,19 +39,19 @@ RSpec.describe Partners::FamilyRequestsController, type: :request do
     subject { post partners_family_requests_path, params: params }
 
     it "does not allow deactivated partners" do
-      partners_partner.update!(status_in_diaper_base: :deactivated)
+      partner.update!(status: :deactivated)
 
       expect(subject).to redirect_to(partners_requests_path)
     end
 
     it "does not allow partners not verified" do
-      partners_partner.update!(partner_status: :pending)
+      partner.update!(status: :uninvited)
 
       expect(subject).to redirect_to(partners_requests_path)
     end
 
     it "submits the request" do
-      partners_partner.update!(partner_status: :verified)
+      partner.update!(status: :approved)
 
       subject
 
