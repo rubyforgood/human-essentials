@@ -6,7 +6,8 @@ describe PartnerCreateService do
     let(:organization) {
       create(:organization,
         enable_individual_requests: false,
-        enable_child_based_requests: false)
+        enable_child_based_requests: false,
+        enable_quantity_based_requests: true)
     }
     let(:partner_attrs) { FactoryBot.attributes_for(:partner).except(:organization_id) }
 
@@ -37,18 +38,19 @@ describe PartnerCreateService do
       end
 
       it 'should create the associated partner profile data' do
-        query = Partners::Partner.where(name: partner_attrs[:name])
+        query = Partners::Profile.joins(:partner).where(partners: {name: partner_attrs[:name]})
         expect { subject }.to change { query.count }.from(0).to(1)
         expect(query.first.enable_child_based_requests).to eq(false)
         expect(query.first.enable_individual_requests).to eq(false)
+        expect(query.first.enable_quantity_based_requests).to eq(true)
       end
 
       context 'but there was an unexpected issue with saving the' do
         let(:error_message) { Faker::Games::ElderScrolls.dragon }
 
-        context 'Partners::Partner record' do
+        context 'Partners::Profile record' do
           before do
-            allow(Partners::Partner).to receive(:create!).and_raise(error_message)
+            allow(Partners::Profile).to receive(:create!).and_raise(error_message)
           end
 
           it 'should not create the partner record for the organization' do

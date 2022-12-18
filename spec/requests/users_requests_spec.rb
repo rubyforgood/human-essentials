@@ -31,7 +31,7 @@ RSpec.describe "Users", type: :request do
     end
     context "with a partner role" do
       it "should redirect to the partner path" do
-        @user.add_role(Role::PARTNER, Partners::Partner.find_by(partner_id: partner.id))
+        @user.add_role(Role::PARTNER, partner)
         get switch_to_role_users_path(@organization,
           role_id: @user.roles.find { |r| r.name == Role::PARTNER.to_s })
         # all bank controllers add organization_id to all routes - there's no way to

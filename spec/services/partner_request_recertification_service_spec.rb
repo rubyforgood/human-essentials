@@ -39,10 +39,6 @@ describe PartnerRequestRecertificationService do
         expect { subject }.to change { partner.reload.recertification_required? }.from(false).to(true)
       end
 
-      it 'should change the partner profile partner_status' do
-        expect { subject }.to change { partner_profile.reload.partner_status }.to(Partners::Partner::RECERTIFICATION_REQUESTED_STATUS)
-      end
-
       it 'should queue sending the notice to the partner' do
         subject
         expect(fake_recertification_request).to have_received(:deliver_later)
@@ -62,10 +58,6 @@ describe PartnerRequestRecertificationService do
 
           it 'should not change the partner status to recertification_required' do
             expect { subject }.not_to change { partner.reload.approved? }
-          end
-
-          it 'should not change the partner_profile partner_status' do
-            expect { subject }.not_to change { partner_profile.reload.partner_status }
           end
 
           it 'should NOT queue sending the notice to the partner' do

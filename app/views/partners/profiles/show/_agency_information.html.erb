@@ -3,38 +3,38 @@
   <div class="card-body">
     <dl>
       <dt>Name</dt>
-      <dd><%= partner.name %></dd>
+      <dd><%= profile.partner.name %></dd>
 
       <dt>Agency Type</dt>
-      <dd><%= partner.agency_type %></dd>
+      <dd><%= profile.agency_type %></dd>
 
-      <% if partner.agency_type == "Other" %>
+      <% if profile.agency_type == "Other" %>
         <dt>Other Agency Type</dt>
-        <dd><%= partner.other_agency_type %></dd>
+        <dd><%= profile.other_agency_type %></dd>
       <% end %>
 
       <dt>Status</dt>
-      <dd><%= partner.partner_status.humanize %></dd>
+      <dd><%= profile.partner.display_status %></dd>
 
       <dt>501(c)(3) IRS Determination Letter</dt>
-      <% if partner.proof_of_partner_status.attached? %>
+      <% if profile.proof_of_partner_status.attached? %>
         <dd>Attached
-          file: <%= link_to partner.proof_of_partner_status.blob['filename'], rails_blob_path(partner.proof_of_partner_status), class: "font-weight-bold" %></dd>
+          file: <%= link_to profile.proof_of_partner_status.blob['filename'], rails_blob_path(profile.proof_of_partner_status), class: "font-weight-bold" %></dd>
       <% else %>
         <dd>Documentation not on file</dd>
       <% end %>
 
       <dt>Agency Mission</dt>
-      <dd><%= partner.agency_mission %></dd>
+      <dd><%= profile.agency_mission %></dd>
 
       <address>
         <strong>Address</strong> <br>
-        <%= partner.address1 %> <br>
-        <% unless partner.address2.blank? %> <br>
-          <%= partner.address2 %> <br>
+        <%= profile.address1 %> <br>
+        <% unless profile.address2.blank? %> <br>
+          <%= profile.address2 %> <br>
         <% end %>
-        <%= partner.city %> <%= partner.state %> <br>
-        <%= partner.zip_code %>
+        <%= profile.city %> <%= profile.state %> <br>
+        <%= profile.zip_code %>
       </address>
     </dl>
   </div>

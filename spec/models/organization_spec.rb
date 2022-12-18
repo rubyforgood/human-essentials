@@ -2,31 +2,32 @@
 #
 # Table name: organizations
 #
-#  id                          :integer          not null, primary key
-#  city                        :string
-#  deadline_day                :integer
-#  default_storage_location    :integer
-#  distribute_monthly          :boolean          default(FALSE), not null
-#  email                       :string
-#  enable_child_based_requests :boolean          default(TRUE), not null
-#  enable_individual_requests  :boolean          default(TRUE), not null
-#  intake_location             :integer
-#  invitation_text             :text
-#  latitude                    :float
-#  longitude                   :float
-#  name                        :string
-#  partner_form_fields         :text             default([]), is an Array
-#  reminder_day                :integer
-#  repackage_essentials        :boolean          default(FALSE), not null
-#  short_name                  :string
-#  state                       :string
-#  street                      :string
-#  url                         :string
-#  zipcode                     :string
-#  created_at                  :datetime         not null
-#  updated_at                  :datetime         not null
-#  account_request_id          :integer
-#  ndbn_member_id              :bigint
+#  id                             :integer          not null, primary key
+#  city                           :string
+#  deadline_day                   :integer
+#  default_storage_location       :integer
+#  distribute_monthly             :boolean          default(FALSE), not null
+#  email                          :string
+#  enable_child_based_requests    :boolean          default(TRUE), not null
+#  enable_individual_requests     :boolean          default(TRUE), not null
+#  enable_quantity_based_requests :boolean          default(TRUE), not null
+#  intake_location                :integer
+#  invitation_text                :text
+#  latitude                       :float
+#  longitude                      :float
+#  name                           :string
+#  partner_form_fields            :text             default([]), is an Array
+#  reminder_day                   :integer
+#  repackage_essentials           :boolean          default(FALSE), not null
+#  short_name                     :string
+#  state                          :string
+#  street                         :string
+#  url                            :string
+#  zipcode                        :string
+#  created_at                     :datetime         not null
+#  updated_at                     :datetime         not null
+#  account_request_id             :integer
+#  ndbn_member_id                 :bigint
 #
 
 RSpec.describe Organization, type: :model do
@@ -42,6 +43,18 @@ RSpec.describe Organization, type: :model do
                    logo: Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/logo.gif"),
                                                       "image/gif")))
         .to_not be_valid
+    end
+
+    it "validates that at least one distribution type is enabled" do
+      expect(build(:organization, enable_child_based_requests: true)).to be_valid
+      expect(build(:organization, enable_individual_requests: true)).to be_valid
+      expect(build(:organization, enable_quantity_based_requests: true)).to be_valid
+      expect(build(
+        :organization,
+        enable_child_based_requests: false,
+        enable_individual_requests: false,
+        enable_quantity_based_requests: false
+      )).to_not be_valid
     end
   end
 
