@@ -18,6 +18,12 @@
                              as: :boolean,
                              class: "form-control", wrapper: :input_group %>
             <% end %>
+
+            <% if form.object.organization.enable_quantity_based_requests? %>
+              <%= form.input :enable_quantity_based_requests, label: "Enable Quantity-based Requests",
+                             as: :boolean,
+                             class: "form-control", wrapper: :input_group %>
+            <% end %>
           </div>
         </div>
       </div>

@@ -23,6 +23,8 @@
       <p>Website: <%= partner_profile.website %></p>
       <p>Facebook: <%= partner_profile.facebook %></p>
       <p>Twitter: <%= partner_profile.twitter %></p>
+      <p>Instagram: <%= partner_profile.instagram %></p>
+      <p>No Social Media Presence: <%= humanize_boolean(partner_profile.no_social_media_presence) %></p>
       <br>
     <% end %>
     <% if partner_profile_fields.include?('agency_stability') || partner_profile_fields.empty? %>
@@ -48,6 +50,9 @@
       <% end %>
       <% if partner_profile.organization.enable_individual_requests? %>
         <p>Enable Requests for Individuals: <%= partner_profile.enable_individual_requests? %></p>
+      <% end %>
+      <% if partner_profile.organization.enable_quantity_based_requests? %>
+        <p>Enable Quantity-based Requests: <%= partner_profile.enable_quantity_based_requests? %></p>
       <% end %>
       <br>
       <h3>Program Address (if different)</h3>
@@ -140,13 +145,15 @@
       </ul>
     <h2 class='text-2xl underline'>Settings</h2>
       <ul>
-      <% if partner_profile.organization.enable_child_based_requests? %>
-        <li>Uses Child Based Requests: <%= humanize_boolean(partner_profile.enable_child_based_requests) %></li>
-      <% end %>
-      <% if partner_profile.organization.enable_individual_requests? %>
-        <li>Uses Individual Requests: <%= humanize_boolean(partner_profile.enable_individual_requests) %></li>
-      <% end %>
-
+        <% if partner_profile.organization.enable_child_based_requests? %>
+          <li>Uses Child Based Requests: <%= humanize_boolean(partner_profile.enable_child_based_requests) %></li>
+        <% end %>
+        <% if partner_profile.organization.enable_individual_requests? %>
+          <li>Uses Individual Requests: <%= humanize_boolean(partner_profile.enable_individual_requests) %></li>
+        <% end %>
+        <% if partner_profile.organization.enable_quantity_based_requests? %>
+          <li>Uses Quantity Based Requests: <%= humanize_boolean(partner_profile.enable_quantity_based_requests) %></li>
+        <% end %>
       </ul>
   </div>
 <% end %>

@@ -31,6 +31,8 @@ module Partners
         :website,
         :facebook,
         :twitter,
+        :instagram,
+        :no_social_media_presence,
         :founded,
         :form_990,
         :proof_of_form_990,
@@ -84,6 +86,7 @@ module Partners
         :essentials_funding_source,
         :enable_child_based_requests,
         :enable_individual_requests,
+        :enable_quantity_based_requests,
         documents: []
       )
     end

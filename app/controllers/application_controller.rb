@@ -90,6 +90,10 @@ class ApplicationController < ActionController::Base
     current_user.last_request_at.utc < 10.minutes.ago.utc
   end
 
+  def enable_turbo!
+    @turbo = true
+  end
+
   def not_found!
     respond_to do |format|
       format.html { render template: "errors/404", layout: "layouts/application", status: :not_found }

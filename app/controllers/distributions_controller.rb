@@ -7,6 +7,7 @@ class DistributionsController < ApplicationController
   include DateRangeHelper
   include DistributionHelper
 
+  before_action :enable_turbo!, only: %i[new show]
   skip_before_action :authenticate_user!, only: %i(calendar)
   skip_before_action :authorize_user, only: %i(calendar)
 
@@ -15,7 +16,7 @@ class DistributionsController < ApplicationController
     respond_to do |format|
       format.any do
         pdf = DistributionPdf.new(current_organization, @distribution)
-        send_data pdf.render,
+        send_data pdf.compute_and_render,
                   filename: format("%s %s.pdf", @distribution.partner.name, sortable_date(@distribution.created_at)),
                   type: "application/pdf",
                   disposition: "inline"
@@ -42,6 +43,8 @@ class DistributionsController < ApplicationController
 
     @distributions = current_organization
                      .distributions
+                     .includes(:partner, :storage_location, line_items: [:item])
+                     .order('issued_at DESC')
                      .apply_filters(filter_params, helpers.selected_range)
     @paginated_distributions = @distributions.page(params[:page])
     @total_value_all_distributions = total_value(@distributions)
@@ -49,9 +52,11 @@ class DistributionsController < ApplicationController
     @total_items_all_distributions = total_items(@distributions)
     @total_items_paginated_distributions = total_items(@paginated_distributions)
     @items = current_organization.items.alphabetized
+    @item_categories = current_organization.item_categories
     @storage_locations = current_organization.storage_locations.alphabetized
     @partners = @distributions.collect(&:partner).uniq.sort_by(&:name)
     @selected_item = filter_params[:by_item_id]
+    @selected_item_category = filter_params[:by_item_category_id]
     @selected_partner = filter_params[:by_partner]
     @selected_status = filter_params[:by_state]
     @selected_location = filter_params[:by_location]
@@ -61,7 +66,7 @@ class DistributionsController < ApplicationController
     respond_to do |format|
       format.html
       format.csv do
-        send_data Exports::ExportDistributionsCSVService.new(distribution_ids: @distributions.map(&:id)).generate_csv, filename: "Distributions-#{Time.zone.today}.csv"
+        send_data Exports::ExportDistributionsCSVService.new(distributions: @distributions, filters: filter_params).generate_csv, filename: "Distributions-#{Time.zone.today}.csv"
       end
     end
   end
@@ -72,10 +77,14 @@ class DistributionsController < ApplicationController
     if result.success?
       session[:created_distribution_id] = result.distribution.id
       @distribution = result.distribution
-      flash[:notice] = "Distribution created!"
 
       perform_inventory_check
-      redirect_to(distribution_path(result.distribution)) && return
+
+      respond_to do |format|
+        format.turbo_stream do
+          redirect_to distribution_path(result.distribution), notice: "Distribution created!"
+        end
+      end
     else
       @distribution = result.distribution
       if params[:request_id].present?
@@ -83,11 +92,21 @@ class DistributionsController < ApplicationController
         # does not match any known Request
         @distribution.request = Request.find(params[:request_id])
       end
-      flash[:error] = insufficient_error_message(result.error.message)
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
       @storage_locations = current_organization.storage_locations.alphabetized
-      render :new
+
+      flash_error = insufficient_error_message(result.error.message)
+
+      respond_to do |format|
+        format.turbo_stream do
+          flash.now[:error] = flash_error
+          render turbo_stream: [
+            turbo_stream.replace(@distribution, partial: "form", locals: {distribution: @distribution}),
+            turbo_stream.replace("flash", partial: "shared/flash")
+          ], status: :bad_request
+        end
+      end
     end
   end
 
@@ -242,7 +261,7 @@ class DistributionsController < ApplicationController
     def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).permit(:by_item_id, :by_partner, :by_state, :by_location)
+    params.require(:filters).permit(:by_item_id, :by_item_category_id, :by_partner, :by_state, :by_location)
   end
 
   def perform_inventory_check

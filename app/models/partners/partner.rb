@@ -19,6 +19,7 @@
 #  distributor_type               :string
 #  enable_child_based_requests    :boolean          default(TRUE), not null
 #  enable_individual_requests     :boolean          default(TRUE), not null
+#  enable_quantity_based_requests :boolean          default(TRUE), not null
 #  essentials_budget              :string
 #  essentials_funding_source      :string
 #  essentials_use                 :string
@@ -32,9 +33,11 @@
 #  greater_2_times_fpl            :integer
 #  income_requirement_desc        :boolean
 #  income_verification            :boolean
+#  instagram                      :string
 #  more_docs_required             :string
 #  name                           :string
 #  new_client_times               :string
+#  no_social_media_presence       :boolean
 #  other_agency_type              :string
 #  partner_status                 :string           default("pending")
 #  pick_up_email                  :string
@@ -91,6 +94,8 @@ module Partners
     has_one_attached :proof_of_partner_status
     has_one_attached :proof_of_form_990
     has_many_attached :documents
+
+    validates :no_social_media_presence, acceptance: {message: "must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram."}, if: :has_no_social_media?
 
     self.ignored_columns = %w[
       evidence_based_description
@@ -182,6 +187,10 @@ module Partners
     end
 
     private
+
+    def has_no_social_media?
+      website.blank? && twitter.blank? && facebook.blank? && instagram.blank?
+    end
 
     def families_served_count
       families.count

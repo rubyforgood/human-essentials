@@ -106,26 +106,3 @@ $(document).ready(function () {
     window.location.hash = e.target.hash;
   })
 })
-
-/**
- * Handles toggling the visiblity of reminder options depending on
- * if reminders are even enabled.
- */
-$(document).ready(function() {
-  $('[data-partner-reminder-form]').each(function(idx, formEle) {
-    let nestedForm = $(formEle).find('[data-partner-reminder-form-nested-form]');
-    let checkBox = $(formEle).find('[data-partner-reminder-form-checkbox]');
-
-    function toggleNestedFormVisibility(nestedForm, checkBox) {
-      let shouldBeVisible = !checkBox.get(0).checked;
-      nestedForm.toggleClass('hidden', shouldBeVisible);
-    }
-
-    $(checkBox).change(function(ele) {
-      toggleNestedFormVisibility(nestedForm, checkBox);
-    })
-
-    toggleNestedFormVisibility(nestedForm, checkBox);
-  })
-})
-

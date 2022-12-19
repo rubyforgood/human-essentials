@@ -12,7 +12,7 @@ ruby "3.1.2"
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.4.4"
+gem "pg", "~> 1.4.5"
 # Web server.
 gem "puma"
 # Rails web framework.
@@ -34,7 +34,7 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.3.2"
+gem "strong_migrations", "1.4.0"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
@@ -46,12 +46,14 @@ gem "jquery-rails"
 gem "jquery-ui-rails"
 # SASS CSS framework (nested selectors, variables, etc.)
 gem "sass-rails"
-# JavaScript minified, used in asset compilation.
-gem "uglifier", ">= 1.3.0"
 # JavaScript bundler.
 gem 'webpacker', '~> 5.0'
 # Used to verify that the user is a human.
 gem "recaptcha"
+# Hotwire for SPA like without much JS
+gem "turbo-rails"
+# Sprinkle a little JS to add interactivity
+gem "stimulus-rails"
 
 ##### VIEWS/CONTROLLERS #####
 
@@ -121,6 +123,11 @@ group :production do
   gem 'coverband'
 end
 
+group :production, :staging do
+  # JS compression for deployed environments.
+  gem 'terser'
+end
+
 group :development, :test, :staging do
   # Generate models based on factory definitions.
   gem 'factory_bot_rails'
@@ -148,7 +155,7 @@ group :development, :test do
   # Add-on for command line to create a simple debugger.
   gem "pry-nav"
   # RSpec behavioral testing framework for Rails.
-  gem "rspec-rails", "~> 6.0.0"
+  gem "rspec-rails", "~> 6.0.1"
   # Allow retrying flaky RSpec tests.
   gem "rspec-retry"
   # Static analysis / linter.
@@ -182,7 +189,7 @@ end
 
 group :test do
   # Test using browsers.
-  gem "capybara", "~> 3.37"
+  gem "capybara", "~> 3.38"
   # Create screenshots when doing browser tests.
   gem "capybara-screenshot"
   # Generate Capybara tests in the browser and debug them.
@@ -208,3 +215,6 @@ end
 if %w(mingw mswin x64_mingw jruby).include?(RUBY_PLATFORM)
   gem "tzinfo-data", "~> 1.2", platforms: %i(mingw mswin x64_mingw jruby)
 end
+
+# Use Redis for Action Cable
+gem "redis", "~> 5.0"
