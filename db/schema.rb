@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_12_17_172535) do
+ActiveRecord::Schema[7.0].define(version: 2022_12_24_131834) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -420,6 +420,16 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_17_172535) do
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
 
+  create_table "partner_counties", force: :cascade do |t|
+    t.bigint "partner_id", null: false
+    t.bigint "county_id", null: false
+    t.integer "client_share"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["county_id"], name: "index_partner_counties_on_county_id"
+    t.index ["partner_id"], name: "index_partner_counties_on_partner_id"
+  end
+
   create_table "partner_forms", force: :cascade do |t|
     t.integer "essentials_bank_id"
     t.text "sections", default: [], array: true
@@ -801,6 +811,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_17_172535) do
   add_foreign_key "manufacturers", "organizations"
   add_foreign_key "organizations", "account_requests"
   add_foreign_key "organizations", "ndbn_members", primary_key: "ndbn_member_id"
+  add_foreign_key "partner_counties", "counties"
+  add_foreign_key "partner_counties", "partners"
   add_foreign_key "partner_groups", "organizations"
   add_foreign_key "partner_requests", "users", column: "partner_user_id"
   add_foreign_key "partners", "storage_locations", column: "default_storage_location_id"
