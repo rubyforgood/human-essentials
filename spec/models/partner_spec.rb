@@ -29,6 +29,8 @@ RSpec.describe Partner, type: :model do
     it { should have_many(:families).dependent(:destroy) }
     it { should have_many(:children).through(:families) }
 
+    it { should have_many(:partner_counties) }
+
     describe 'primary_user' do
       subject { partner.primary_user }
       let(:partner) { create(:partner) }

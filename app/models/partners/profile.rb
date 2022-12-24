@@ -87,6 +87,9 @@ module Partners
 
     has_one_attached :proof_of_partner_status
     has_one_attached :proof_of_form_990
+
+    has_many :partner_counties, through: :partner
+
     has_many_attached :documents
 
     validates :no_social_media_presence, acceptance: {message: "must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram."}, if: :has_no_social_media?

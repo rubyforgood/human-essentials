@@ -30,6 +30,7 @@ class Partner < ApplicationRecord
 
   belongs_to :organization
   belongs_to :partner_group, optional: true
+
   has_many :item_categories, through: :partner_group
   has_many :requestable_items, through: :item_categories, source: :items
   has_one :profile, class_name: 'Partners::Profile', dependent: :destroy
@@ -40,6 +41,7 @@ class Partner < ApplicationRecord
   has_many :families, dependent: :destroy, class_name: 'Partners::Family'
   has_many :children, through: :families, class_name: 'Partners::Child'
   has_many :authorized_family_members, through: :families, class_name: 'Partners::AuthorizedFamilyMember'
+  has_many :partner_counties, dependent: :destroy
 
   has_many_attached :documents
 

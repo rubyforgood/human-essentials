@@ -9,13 +9,11 @@
 #  county_id    :bigint           not null
 #  partner_id   :bigint           not null
 #
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe PartnerCounty, type: :model do
-
   it { should belong_to(:partner) }
   it { should belong_to(:county) }
-
 
   it "must only allow integer client shares" do
     expect(build(:partner_county, partner: create(:partner), county: create(:county), client_share: 50)).to be_valid
@@ -27,6 +25,4 @@ RSpec.describe PartnerCounty, type: :model do
     expect(build(:partner_county, partner: create(:partner), county: create(:county), client_share: 1)).to be_valid
     expect(build(:partner_county, partner: create(:partner), county: create(:county), client_share: 100)).to be_valid
   end
-
-
 end

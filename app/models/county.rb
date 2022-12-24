@@ -9,4 +9,5 @@
 #  updated_at :datetime         not null
 #
 class County < ApplicationRecord
+  has_many :partner_counties, dependent: :destroy
 end
