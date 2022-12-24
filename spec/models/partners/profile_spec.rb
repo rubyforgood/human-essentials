@@ -86,8 +86,11 @@ RSpec.describe Partners::Profile, type: :model do
     it { should have_one_attached(:proof_of_partner_status) }
     it { should have_one_attached(:proof_of_form_990) }
     it { should have_many_attached(:documents) }
-
     it { should have_many(:partner_counties).through(:partner) }
+  end
+
+  it "must allow deleting partner_counties through profile" do
+    should accept_nested_attributes_for(:partner_counties).allow_destroy(true)
   end
 
   describe "social media info validation for partners" do
