@@ -35,7 +35,7 @@
                 </div>
                 <% current_partner.partials_to_show.each do |partial| %>
                   <div class="col-6">
-                    <%= render partial: "partners/profiles/edit/#{partial}", locals: {form: profile_form, profile: current_partner.profile} %>
+                    <%= render partial: "partners/profiles/edit/#{partial}", locals: {form: profile_form, f: profile_form, profile: current_partner.profile} %>
                   </div>
                 <% end %>
                 <div class="col-6">

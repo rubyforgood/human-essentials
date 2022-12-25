@@ -710,4 +710,41 @@ end
 # ----------------------------------------------------------------------------
 Rake::Task['db:load_us_counties'].invoke
 
+# ----------------------------------------------------------------------------
+# Partner Counties
+# ----------------------------------------------------------------------------
+
+# aim -- every partner except one will have some non-zero number of counties,  and the first one 'verified' will have counties, for convenience sake
+# Noted -- The first pass of this is kludgey as all get out.  I'm *sure* there is a better way
+partner_ids = Partner.pluck(:id)
+partner_ids.pop(1)
+county_ids = County.pluck(:id)
+
+partner_ids.each do |partner_id|
+  partner = Partner.find(partner_id)
+  num_counties_for_partner = Faker::Number.within(range: 1..10)
+  remaining_percentage = 100
+  share_ceiling = 100/num_counties_for_partner  #arbitrary,  so I can do the math easily
+  county_index = 0
+
+  county_ids_for_this_partner = county_ids.sample(num_counties_for_partner)
+  county_ids_for_this_partner.each do |county_id|
+    client_share = 0
+    if county_index ==  num_counties_for_partner - 1
+      client_share = remaining_percentage
+    else
+      client_share = Faker::Number.within(range:1..share_ceiling)
+    end
+
+    PartnerCounty.create(
+      partner: partner,
+      county: County.find(county_id),
+      client_share: client_share
+    )
+    county_index += 1
+    remaining_percentage = remaining_percentage - client_share
+  end
+end
+
+
 

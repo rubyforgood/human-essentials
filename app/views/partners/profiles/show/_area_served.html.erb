@@ -1,0 +1,16 @@
+<div class="card mb-4">
+  <h5 class="card-header bg-primary text-white">Area Served</h5>
+
+  <div class="card-body">
+    <table>
+      <th class="county-heading">County</th><th class="county-heading">% of Clients in county</th>
+
+      <% partner_county_col = PartnerCounty.where(partner: profile.partner) %>
+      <% if partner_county_col.any? %>
+        <%= render partial: "partners/profiles/show/partner_county_row", collection: partner_county_col %>
+      <% else %>
+        <tr ><td class="county-name"><%= "No County Specified" %></td><td class="client-share percent">100%</td></tr>
+      <%end %>
+    </table>
+  </div>
+</div>
