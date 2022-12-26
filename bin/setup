@@ -40,10 +40,20 @@ FileUtils.chdir APP_ROOT do
   #
   # Validate that the ruby version requirement is met.
   #
-  expected_version = `cat .ruby-version`.chomp
-  current_version = `ruby -v`.chomp
-  unless current_version.include?(expected_version)
-    log "Ruby version must be #{expected_version}. You are on #{current_version}"
+  expected_ruby_version = `cat .ruby-version`.chomp
+  current_ruby_version = `ruby -v`.chomp
+  unless current_ruby_version.include?(expected_ruby_version)
+    log "Ruby version must be #{expected_ruby_version}. You are on #{current_ruby_version}"
+    exit
+  end
+
+  #
+  # Validate that the node version requirement is met.
+  #
+  expected_node_version = `cat .nvmrc`.chomp
+  current_node_version = `node -v`.chomp
+  unless current_node_version.include?(expected_node_version)
+    log "Node version must be #{expected_node_version}. You are on #{current_node_version}"
     exit
   end
 
