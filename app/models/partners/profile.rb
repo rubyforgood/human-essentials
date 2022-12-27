@@ -112,5 +112,14 @@ module Partners
     def has_no_social_media?
       website.blank? && twitter.blank? && facebook.blank? && instagram.blank?
     end
+
+
+   def client_share_total
+     tot = 0
+     partner_counties.each do |pc|
+       tot += pc.client_share
+     end
+     tot
+   end
   end
 end

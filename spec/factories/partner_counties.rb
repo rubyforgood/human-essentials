@@ -11,8 +11,9 @@
 #
 FactoryBot.define do
   factory :partner_county do
-    partner { Partner.first || create(:partner) }
-    county { County.first || create(:county) }
+    association :partner
+    association :county
     client_share { 1 }
+
   end
 end

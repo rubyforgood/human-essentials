@@ -116,12 +116,16 @@ RSpec.describe "/partners/profiles", type: :request do
         let(:county_2) {create(:county, name: "Second County")}
         let!(:pc_1) {create(:partner_county, partner: partner, county: county_1, client_share: 70)}
         let!(:pc_2) {create(:partner_county, partner: partner, county: county_2, client_share: 30)}
-        it "displays the counties" do
+        before do
           get edit_partners_profile_path(partner)
+        end
+        it "displays the counties" do
           expect(response.body).to include(pc_1.county.name)
           expect(response.body).to include(pc_2.county.name)
           expect(response.body).not_to include ("No County Specified")
-
+        end
+        it "has the right total" do
+          expect(response.body).to include "Total is: 100 %"
         end
       end
     end

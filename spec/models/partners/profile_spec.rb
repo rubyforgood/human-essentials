@@ -140,6 +140,24 @@ RSpec.describe Partners::Profile, type: :model do
     end
   end
 
+  describe "client share behaviour" do
+    context "no partner counties" do
+      let(:profile) { FactoryBot.build(:partner_profile) }
+      it "has 0 client share" do
+        expect(profile.client_share_total).to eq(0)
+      end
+    end
 
+    context "multiple" do
+     it "sums the client shares " do
+        profile = create(:partner_profile)
+        county1 = create(:county, name: "county1", region: "region1")
+        county2 = create(:county, name: "county2", region: "region2")
+        pc1 = create(:partner_county, partner_id: profile.partner_id, county: county1,  client_share: 50)
+        pc2 = create(:partner_county, partner_id: profile.partner_id, county: county2, client_share: 25)
+        expect(profile.client_share_total).to eq(75)
+      end
+    end
+  end
 
 end

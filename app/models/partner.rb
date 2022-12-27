@@ -99,11 +99,11 @@ class Partner < ApplicationRecord
   }.freeze
 
   ALL_PARTIALS = %w[
+    area_served
     media_information
     agency_stability
     organizational_capacity
     sources_of_funding
-    area_served
     population_served
     executive_director
     diaper_pick_up_person

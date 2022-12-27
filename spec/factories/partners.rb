@@ -39,6 +39,15 @@ FactoryBot.define do
       status { :awaiting_review }
     end
 
+    trait :with_4_counties do
+      after(:build) do |partner|
+        partner.partner_counties = build_list(:partner_county, 4, client_share: 25)
+      end
+    end
+
+
+
+
     after(:create) do |partner, evaluator|
       next if evaluator.try(:without_profile)
 
