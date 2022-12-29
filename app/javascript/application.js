@@ -1,13 +1,5 @@
 // Configure your import map in config/importmap.rb. Read more: https://github.com/rails/importmap-rails
 
-/**
- * Load all javascript needed to run the AdminLTE theme and
- * all the interactions.
- */
-import jQuery from 'jquery'
-window.jQuery = jQuery
-window.$ = jQuery
-
 import 'admin-lte'
 import "@oddcamp/cocoon-vanilla-js";
 import { Turbo } from "@hotwired/turbo-rails"
@@ -26,9 +18,19 @@ import 'litepicker/ranges';
 import 'bootstrap'
 import 'controllers'
 
+import 'adjustments'
+import 'barcode_items'
+import 'barcode_scan'
+import 'deadline_day_pickers'
+import 'distributions_and_transfers'
+import 'donations'
+import 'purchases'
+
+import Rails from "@rails/ujs"
+Rails.start()
+
 // Disable turbo by default to avoid issues with turbolinks
 Turbo.session.drive = false
-
 
 // Global toastr options
 window.toastr = toastr;
