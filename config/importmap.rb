@@ -6,6 +6,7 @@ pin "@hotwired/turbo-rails", to: "turbo.min.js", preload: true
 pin "@hotwired/stimulus", to: "https://ga.jspm.io/npm:@hotwired/stimulus@3.1.0/dist/stimulus.js"
 pin "@hotwired/stimulus-loading", to: "stimulus-loading", preload: true
 pin_all_from "app/javascript/controllers", under: "controllers"
+pin_all_from "app/javascript"
 pin "admin-lte", to: "https://ga.jspm.io/npm:admin-lte@3.2.0/dist/js/adminlte.min.js"
 pin "@oddcamp/cocoon-vanilla-js", to: "https://ga.jspm.io/npm:@oddcamp/cocoon-vanilla-js@1.1.3/index.js"
 pin "bootstrap", to: "https://ga.jspm.io/npm:bootstrap@4.6.2/dist/js/bootstrap.js"
@@ -26,3 +27,5 @@ pin "@fullcalendar/luxon", to: "https://ga.jspm.io/npm:@fullcalendar/luxon@6.0.1
 pin "@fullcalendar/core/", to: "https://ga.jspm.io/npm:@fullcalendar/core@6.0.1/"
 pin "@fullcalendar/daygrid", to: "https://ga.jspm.io/npm:@fullcalendar/daygrid@6.0.1/index.js"
 pin "@fullcalendar/list", to: "https://ga.jspm.io/npm:@fullcalendar/list@6.0.1/index.js"
+pin "quagga", to: "https://ga.jspm.io/npm:quagga@0.12.1/dist/quagga.min.js"
+pin "@rails/ujs", to: "https://ga.jspm.io/npm:@rails/ujs@7.0.4/lib/assets/compiled/rails-ujs.js", preload: true

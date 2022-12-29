@@ -1,6 +1,4 @@
-// Place all the behaviors and hooks related to the matching controller here.
-// All this logic will automatically be available in application.js.
-
+import $ from 'jquery';
 $(function() {
   const control_id = "#donation_source";
 
@@ -13,11 +11,9 @@ $(function() {
   const product_drive_participant_container_id = "div.donation_product_drive_participant";
   const manufacturer_container_id = "div.donation_manufacturer";
 
-  const product_drive_text = "<%= Donation::SOURCES[:product_drive] %>";
-  const product_drive_participant_text = "<%= Donation::SOURCES[:product_drive_participant] %>";
-  const manufacturer_text = "<%= Donation::SOURCES[:manufacturer] %>";
-  const donation_site_text = "<%= Donation::SOURCES[:donation_site] %>";
-
+  const product_drive_text = "Product Drive";
+  const manufacturer_text = "Manufacturer";
+  const donation_site_text = "Donation Site";
 
   const create_new_product_drive_text = "---Create new Product Drive---";
   const create_new_product_drive_participant_text = "---Create new Participant---";

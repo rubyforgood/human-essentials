@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 /**
  * Likely we can remove this since distribution_and_transfers.js seen to cover this use
  */
