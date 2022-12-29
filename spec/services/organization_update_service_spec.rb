@@ -20,6 +20,53 @@ describe OrganizationUpdateService, skip_seed: true do
         expect(organization.reload.name).not_to eq("A brand NEW NEW name")
       end
     end
+
+    context 'when an organization has a partner' do
+      let(:organization) { create(:organization, enable_individual_requests: true, enable_child_based_requests: true, enable_quantity_based_requests: true) }
+      let(:partners) { create_list(:partner, 2, organization: organization) }
+
+      context "when all of a partners' request types will be disabled" do
+        before do
+          partners.first.profile.update!(
+              enable_individual_requests: true,
+              enable_child_based_requests: true,
+              enable_quantity_based_requests: false
+          )
+          partners.last.profile.update!(
+              enable_individual_requests: true,
+              enable_child_based_requests: true,
+              enable_quantity_based_requests: true
+          )
+        end
+
+        context "when all of a single partner's request types will be disabled" do
+          before { described_class.update(organization, { enable_individual_requests: false, enable_child_based_requests: false }) }
+
+          it 'should NOT allow the enabled request type to be disabled in organization or its partners' do
+            aggregate_failures 'request type in organization and partners' do
+              expect(organization.reload.enable_individual_requests).to eq(true)
+              expect(partners.first.profile.reload.enable_individual_requests).to eq(true)
+              expect(partners.last.profile.reload.enable_individual_requests).to eq(true)
+              expect(organization.reload.enable_child_based_requests).to eq(true)
+              expect(partners.first.profile.reload.enable_child_based_requests).to eq(true)
+              expect(partners.last.profile.reload.enable_child_based_requests).to eq(true)
+            end
+          end
+        end
+
+        context "when all of a single partner's request types WILL NOT be disabled" do
+          before { described_class.update(organization, enable_individual_requests: false ) }
+
+          it 'should allow the enabled request type to be disabled in organization and its partners' do
+            aggregate_failures 'request type in organization and partners' do
+              expect(organization.reload.enable_individual_requests).to eq(false)
+              expect(partners.first.profile.reload.enable_individual_requests).to eq(false)
+              expect(partners.last.profile.reload.enable_individual_requests).to eq(false)
+            end
+          end
+        end
+      end
+    end
   end
 
   describe "#update_partner_flags" do
