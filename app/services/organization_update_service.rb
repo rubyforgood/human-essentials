@@ -18,7 +18,7 @@ class OrganizationUpdateService
       enable_quantity_based_requests
     ]
     fields.each do |field|
-      next unless organization.saved_change_to_attribute?(field)
+      next if organization.send(field) 
       organization.partners.map(&:profile).each do |profile|
         profile.update!(field => organization.send(field))
       end

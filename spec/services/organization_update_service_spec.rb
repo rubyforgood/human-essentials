@@ -68,6 +68,28 @@ describe OrganizationUpdateService, skip_seed: true do
         expect(organization.partners.map { |p| p.profile.enable_quantity_based_requests })
           .to eq([false, false])
       end
+
+      it "should not update partners' request types when enabling request types on the organization" do
+        organization.update!(enable_quantity_based_requests: false)
+        organization.update!(enable_quantity_based_requests: true)
+
+        organization.partners.each { |p|
+          p.profile.update!(
+            enable_individual_requests: false,
+            enable_child_based_requests: false,
+            enable_quantity_based_requests: false
+          )
+        }
+
+        described_class.update_partner_flags(organization)
+
+        expect(organization.partners.map { |p| p.profile.enable_child_based_requests })
+          .to eq([false, false])
+        expect(organization.partners.map { |p| p.profile.enable_individual_requests })
+          .to eq([false, false])
+        expect(organization.partners.map { |p| p.profile.enable_quantity_based_requests })
+          .to eq([false, false])
+      end
     end
   end
 end
