@@ -6,9 +6,21 @@
   <title>PartnerBase</title>
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <%= csrf_meta_tags %>
-  <%= javascript_include_tag 'application' %>
-  <%= stylesheet_pack_tag 'application' %>
-  <%= javascript_pack_tag 'application' %>
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/v4-shims.css" rel="stylesheet" />
+
+  <%= stylesheet_link_tag 'application', media: 'all' %>
+  <%= raw fullstory_script(current_user: current_user) if Rails.env.production? %>
+  <%= javascript_importmap_tags %>
+
+  <%# Allow jQuery to be used from <script> tags within pages %>
+  <script type="module" async="false">
+    import jQuery from 'jquery'
+    window.jQuery = jQuery
+    window.$ = jQuery
+  </script>
   <%= raw fullstory_script(current_user: current_user) if Rails.env.production? %>
   <%= stylesheet_link_tag 'application', media: 'all' %>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
