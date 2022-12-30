@@ -83,7 +83,7 @@ RSpec.describe "Organizations", type: :request do
 
         it "redirects to #edit with an error message" do
           subject
-          
+
           expect(subject).to render_template("edit")
           expect(flash[:error]).to be_present
         end
