@@ -77,6 +77,17 @@ RSpec.describe "Organizations", type: :request do
       it "can update name" do
         expect { subject }.to change { @organization.reload.name }.to "Thunder Pants"
       end
+
+      context "when organization can not be updated" do
+        before { allow(OrganizationUpdateService).to receive(:update).and_return(false) }
+
+        it "redirects to #edit with an error message" do
+          subject
+          
+          expect(subject).to render_template("edit")
+          expect(flash[:error]).to be_present
+        end
+      end
     end
 
     describe "POST #promote_to_org_admin" do

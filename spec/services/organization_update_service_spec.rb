@@ -116,7 +116,7 @@ describe OrganizationUpdateService, skip_seed: true do
           .to eq([false, false])
       end
 
-      it "should not update partners' request types when enabling request types on the organization" do
+      it "should NOT update partners' request types when enabling request types on the organization" do
         organization.update!(enable_quantity_based_requests: false)
         organization.update!(enable_quantity_based_requests: true)
 
