@@ -29,3 +29,5 @@ pin "@fullcalendar/list", to: "https://ga.jspm.io/npm:@fullcalendar/list@6.0.1/i
 pin "quagga", to: "https://ga.jspm.io/npm:quagga@0.12.1/dist/quagga.min.js"
 pin "@rails/ujs", to: "https://ga.jspm.io/npm:@rails/ujs@7.0.4/lib/assets/compiled/rails-ujs.js", preload: true
 pin "cocoon-js-vanilla", to: "https://ga.jspm.io/npm:cocoon-js-vanilla@1.3.0/index.js"
+# NOTE: This has been vendored into vendor/javascript because there isn't a JS module exported by this package
+pin "filterrific", to: "filterrific.js"
