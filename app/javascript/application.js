@@ -1,5 +1,9 @@
 // Configure your import map in config/importmap.rb. Read more: https://github.com/rails/importmap-rails
 
+import jQuery from 'jquery'
+window.jQuery = jQuery
+window.$ = jQuery
+
 import 'admin-lte'
 import "@oddcamp/cocoon-vanilla-js";
 import { Turbo } from "@hotwired/turbo-rails"
@@ -18,13 +22,13 @@ import 'litepicker/ranges';
 import 'bootstrap'
 import 'controllers'
 
-import 'adjustments'
-import 'barcode_items'
-import 'barcode_scan'
-import 'deadline_day_pickers'
-import 'distributions_and_transfers'
-import 'donations'
-import 'purchases'
+import 'utils/adjustments'
+import 'utils/barcode_items'
+import 'utils/barcode_scan'
+import 'utils/deadline_day_pickers'
+import 'utils/distributions_and_transfers'
+import 'utils/donations'
+import 'utils/purchases'
 
 import Rails from "@rails/ujs"
 Rails.start()

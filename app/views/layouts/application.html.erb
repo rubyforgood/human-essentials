@@ -15,13 +15,6 @@
   <%= raw fullstory_script(current_user: current_user) if Rails.env.production? %>
   <%= javascript_importmap_tags %>
 
-  <%# Allow jQuery to be used from <script> tags within pages %>
-  <script type="module" async="false">
-    import jQuery from 'jquery'
-    window.jQuery = jQuery
-    window.$ = jQuery
-  </script>
-
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
