@@ -6,6 +6,7 @@ window.$ = jQuery
 
 import 'admin-lte'
 import "cocoon-js-vanilla";
+import 'filterrific'
 import { Turbo } from "@hotwired/turbo-rails"
 import "trix"
 import "@rails/actiontext"
