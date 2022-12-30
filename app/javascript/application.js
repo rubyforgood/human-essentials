@@ -51,8 +51,13 @@ function isShortHeightScreen() {
   return $(window).height() < 768 && !isMobileResolution();
 }
 
+
 // es-module-shims calls DOMContentLoaded twice for some reason
 document.addEventListener("DOMContentLoaded", function() {
+  const hash = window.location.hash;
+  if (hash) {
+    $('ul.nav a[href="' + hash + '"]').tab('show');
+  }
   const isMobile = isMobileResolution();
   const isShortHeight = isShortHeightScreen();
 
