@@ -104,11 +104,13 @@ $(document).on("change", product_drive_id, function(evt) {
   $(document).on(
     "cocoon:after-insert",
     "form#new_donation",
-    (e, insertedItem) =>
+    (e) => {
+      const insertedItem = $(e.detail[2]);
       insertedItem
         .find("#_barcode-lookup-new_line_items")
-        .attr("id", `_barcode-lookup-${$(".nested-fields").size() - 1}`)
-  );
+        .attr("id", `_barcode-lookup-${$(".nested-fields").length - 1}`)
+    }
+  )
 
   const large_donation_boundary = 100000;
   $(document).on("submit", "form#new_donation", (e, _) =>

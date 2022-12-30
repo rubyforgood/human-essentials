@@ -5,7 +5,7 @@ window.jQuery = jQuery
 window.$ = jQuery
 
 import 'admin-lte'
-import "@oddcamp/cocoon-vanilla-js";
+import "cocoon-js-vanilla";
 import { Turbo } from "@hotwired/turbo-rails"
 import "trix"
 import "@rails/actiontext"
@@ -50,14 +50,8 @@ function isShortHeightScreen() {
   return $(window).height() < 768 && !isMobileResolution();
 }
 
-window.contentLoaded = false;
-
 // es-module-shims calls DOMContentLoaded twice for some reason
 document.addEventListener("DOMContentLoaded", function() {
-  if (window.contentLoaded) {
-    return;
-  }
-  window.contentLoaded = true;
   const isMobile = isMobileResolution();
   const isShortHeight = isShortHeightScreen();
 
