@@ -92,6 +92,7 @@ module Partners
         :enable_child_based_requests,
         :enable_individual_requests,
         :enable_quantity_based_requests,
+        partner_counties_attributes: %i[county_id client_share _destroy],
         documents: []
       ).select { |_, v| v.present? }
     end
