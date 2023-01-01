@@ -89,6 +89,7 @@ module Partners
     has_one_attached :proof_of_form_990
 
     has_many :partner_counties, through: :partner
+    accepts_nested_attributes_for :partner
     accepts_nested_attributes_for :partner_counties, allow_destroy: true
 
     has_many_attached :documents
