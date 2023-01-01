@@ -45,9 +45,6 @@ FactoryBot.define do
       end
     end
 
-
-
-
     after(:create) do |partner, evaluator|
       next if evaluator.try(:without_profile)
 

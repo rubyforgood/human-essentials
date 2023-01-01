@@ -2,14 +2,12 @@ class DistributionsByCountyController < ApplicationController
   include DateRangeHelper
   include DistributionHelper
 
-
-
   def show
     setup_date_range_picker
     distributions = current_organization.distributions.includes(:partner).during(helpers.selected_range)
     breakdown_hash = {}
     breakdown_hash["Unspecified"] = {}
-    breakdown_hash["Unspecified"][:region] = "ZZZ" #after all natural region names
+    breakdown_hash["Unspecified"][:region] = "ZZZ" # after all natural region names
     breakdown_hash["Unspecified"][:num_items] = 0
     breakdown_hash["Unspecified"][:amount] = 0.00
     distributions.each do |distribution|
@@ -36,7 +34,6 @@ class DistributionsByCountyController < ApplicationController
       end
     end
 
-    @breakdown = breakdown_hash.sort_by{|k,v| [v[:region],k]}
-
+    @breakdown = breakdown_hash.sort_by { |k, v| [v[:region], k] }
   end
 end

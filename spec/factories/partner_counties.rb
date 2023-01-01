@@ -14,6 +14,5 @@ FactoryBot.define do
     association :partner
     association :county
     client_share { 1 }
-
   end
 end
