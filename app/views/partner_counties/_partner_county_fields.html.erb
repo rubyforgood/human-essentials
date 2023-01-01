@@ -4,7 +4,7 @@
       <div class='d-flex flex-row'>
         <span class="pc-name">
             <%= f.input :county_id, collection: @counties, prompt: "County or equivalent", include_blank: "",
-                        label: false,     input_html: { class: "my-0 pc-county-select" } %>
+                        label: false,    input_html: { class: "my-0 pc-county-select", "data-controller": "select2" } %>
           </span>
         <div class="mx-2">
           <%= f.input :client_share, placeholder: "Client Share", label: false, input_html: { class: "pc-client-share", onchange: 'calculate_client_share_total()',
