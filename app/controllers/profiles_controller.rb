@@ -1,6 +1,9 @@
 class ProfilesController < ApplicationController
   def edit
     @partner = current_organization.partners.find(params[:id])
+
+    @counties = County.all
+    @client_share_total = @partner.profile.client_share_total
   end
 
   def update
