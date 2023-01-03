@@ -117,9 +117,6 @@ describe OrganizationUpdateService, skip_seed: true do
       end
 
       it "should NOT update partners' request flags when enabling request flags on the organization" do
-        organization.update!(enable_quantity_based_requests: false)
-        organization.update!(enable_quantity_based_requests: true)
-
         organization.partners.each { |p|
           p.profile.update!(
             enable_individual_requests: false,

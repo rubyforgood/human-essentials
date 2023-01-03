@@ -23,8 +23,8 @@ class OrganizationUpdateService
     def update_partner_flags(organization)
       FIELDS.each do |field|
         # We don't want to automatically enable request types
-        # on a partner. This should be left up to 
-        # individual partners to decide themselves
+        # on a partner. This should be left up to
+        # individual partners to decide themselves as per
         # github.com/rubyforgood/human-essentials/issues/3264
         next if organization.send(field)
         organization.partners.map(&:profile).each do |profile|
