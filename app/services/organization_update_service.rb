@@ -36,21 +36,19 @@ class OrganizationUpdateService
     private
 
     def valid?(organization, params)
-      return true unless organization.partners.any?
+      return true if organization.partners.none?
 
-      disable_fields = FIELDS.select { |field| params[field] == false }
+      fields_marked_for_disabling = FIELDS.select { |field| params[field] == false }
 
-      organization.partners.each do |partner|
-        return false if disables_all_partner_fields?(partner, disable_fields)
+      organization.partners.none? do |partner|
+        all_fields_will_be_disabled?(partner, fields_marked_for_disabling)
       end
-
-      true
     end
 
-    def disables_all_partner_fields?(partner, disable_fields)
+    def all_fields_will_be_disabled?(partner, fields_marked_for_disabling)
       enabled_fields = FIELDS.select { |field| partner.profile.send(field) == true }
 
-      enabled_fields.all? { |field| disable_fields.include?(field) }
+      (enabled_fields - fields_marked_for_disabling).empty?
     end
   end
 end
