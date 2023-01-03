@@ -22,6 +22,10 @@ class OrganizationUpdateService
     # @param organization [Organization]
     def update_partner_flags(organization)
       FIELDS.each do |field|
+        # We don't want to automatically enable request types
+        # on a partner. This should be left up to 
+        # individual partners to decide themselves
+        # github.com/rubyforgood/human-essentials/issues/3264
         next if organization.send(field)
         organization.partners.map(&:profile).each do |profile|
           profile.update!(field => organization.send(field))
@@ -34,19 +38,19 @@ class OrganizationUpdateService
     def valid?(organization, params)
       return true unless organization.partners.any?
 
-      disable_params = FIELDS.select { |field| params[field] == false }
+      disable_fields = FIELDS.select { |field| params[field] == false }
 
       organization.partners.each do |partner|
-        return false if disables_all_partner_fields?(partner, disable_params)
+        return false if disables_all_partner_fields?(partner, disable_fields)
       end
 
       true
     end
 
-    def disables_all_partner_fields?(partner, disable_params)
+    def disables_all_partner_fields?(partner, disable_fields)
       enabled_fields = FIELDS.select { |field| partner.profile.send(field) == true }
 
-      enabled_fields.all? { |field| disable_params.include?(field) }
+      enabled_fields.all? { |field| disable_fields.include?(field) }
     end
   end
 end
