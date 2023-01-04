@@ -22,9 +22,11 @@ class OrganizationUpdateService
     # @param organization [Organization]
     def update_partner_flags(organization)
       FIELDS.each do |field|
-        # We don't want to automatically enable request types
+        # If organization.send(field) is true then that means a
+        # request type on the organization has been enabled. 
+        # We don't want to automatically enable the request type
         # on a partner. This should be left up to
-        # individual partners to decide themselves as per
+        # individual partners to decide themselves as per:
         # github.com/rubyforgood/human-essentials/issues/3264
         next if organization.send(field)
         organization.partners.map(&:profile).each do |profile|
@@ -40,6 +42,10 @@ class OrganizationUpdateService
 
       fields_marked_for_disabling = FIELDS.select { |field| params[field] == false }
 
+      # Here we do a check: if applying the params for disabling request types to all 
+      # partners would mean any one partner would have all its request types disabled, 
+      # then we should not apply the params. As per:
+      # github.com/rubyforgood/human-essentials/issues/3264
       organization.partners.none? do |partner|
         all_fields_will_be_disabled?(partner, fields_marked_for_disabling)
       end
