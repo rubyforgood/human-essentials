@@ -53,7 +53,7 @@ FileUtils.chdir APP_ROOT do
   expected_node_version = `cat .nvmrc`.chomp
   current_node_version = `node -v`.chomp
   unless current_node_version.include?(expected_node_version)
-    log "Node version must be #{expected_node_version}. You are on #{current_node_version}"
+    log "Node version must be #{expected_node_version}. You are on #{current_node_version}", color: :red
     exit
   end
 
