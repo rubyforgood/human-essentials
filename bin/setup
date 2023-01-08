@@ -43,7 +43,7 @@ FileUtils.chdir APP_ROOT do
   expected_ruby_version = `cat .ruby-version`.chomp
   current_ruby_version = `ruby -v`.chomp
   unless current_ruby_version.include?(expected_ruby_version)
-    log "Ruby version must be #{expected_ruby_version}. You are on #{current_ruby_version}"
+    log "Ruby version must be #{expected_ruby_version}. You are on #{current_ruby_version}", color: :red
     exit
   end
 
