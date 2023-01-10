@@ -102,6 +102,8 @@ gem 'httparty'
 gem 'icalendar', require: false
 # JSON Web Token encoding / decoding (e.g. for links in e-mails)
 gem "jwt"
+# Used to manage periodic cron-like jobs
+gem "clockwork"
 
 ##### DEPENDENCY PINS ######
 # These are gems that aren't used directly, only as dependencies for other gems.
@@ -110,7 +112,7 @@ gem "jwt"
 gem "mini_racer", "~> 0.6.3"
 gem "nokogiri", ">= 1.10.4"
 gem "image_processing"
-gem "sprockets", "~> 4.1.1"
+gem "sprockets", "~> 4.2.0"
 
 group :production do
   # Reduce the noise of logs and include custom fields to it for easier access
@@ -199,7 +201,7 @@ group :test do
   # Show code coverage.
   gem 'simplecov'
   # More concise test ("should") matchers
-  gem 'shoulda-matchers', '~> 5.2'
+  gem 'shoulda-matchers', '~> 5.3'
   # Selenium webdriver automatic installation and update.
   gem 'webdrivers', '~> 5.2'
   # Mock HTTP requests and ensure they are not called during tests.
