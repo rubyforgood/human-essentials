@@ -8,8 +8,7 @@
       <table class="table table-hover text-nowrap">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Email</th>
+            <th>Name & Email</th>
             <th>Last Login</th>
             <th>Invitation Status</th>
             <th>Action</th>
@@ -18,14 +17,20 @@
         <tbody>
           <% users.order(name: :asc).each do |user| %>
             <tr>
-              <td><%= user.name %></td>
-              <td><%= user.email %></td>
               <td>
-                <% if user.last_sign_in_at.present? %>
-                  <%= time_ago_in_words(user.last_sign_in_at) %> ago <small>(<%= user.invitation_sent_at.strftime('%b %d %Y') %>)<small>
-                <% else %>
-                  <span class="badge bg-danger">Never</span>
-                <% end %>
+                <div class='d-flex flex-column'>
+                  <span><%= user.name %></span>
+                  <small><%= user.email %></small>
+                </div>
+              </td>
+              <td>
+                <small>
+                  <% if user.last_sign_in_at.present? %>
+                    <%= time_ago_in_words(user.last_sign_in_at) %> ago <small>(<%= user.invitation_sent_at.strftime('%b %d %Y') %>)
+                  <% else %>
+                    <span class="badge bg-danger">Never</span>
+                  <% end %>
+                </small>
               </td>
               <td>
                 <% if user.invitation_accepted_at %>

@@ -4,7 +4,7 @@ class PartnerUsersController < ApplicationController
   before_action :set_partner, only: %i[index create destroy resend_invitation]
 
   def index
-    @users = @partner.profile.users
+    @users = @partner.users
     @user = User.new(name: "")
   end
 
