@@ -95,6 +95,6 @@ class ProductDrivesController < ApplicationController
     def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(:by_name)
+    params.require(:filters).permit(:by_name)
   end
 end
