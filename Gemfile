@@ -201,7 +201,7 @@ group :test do
   # Show code coverage.
   gem 'simplecov'
   # More concise test ("should") matchers
-  gem 'shoulda-matchers', '~> 5.2'
+  gem 'shoulda-matchers', '~> 5.3'
   # Selenium webdriver automatic installation and update.
   gem 'webdrivers', '~> 5.2'
   # Mock HTTP requests and ensure they are not called during tests.
