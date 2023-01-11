@@ -564,7 +564,7 @@ GEM
       rubocop-performance (= 1.12.0)
     stimulus-rails (1.2.1)
       railties (>= 6.0.0)
-    strong_migrations (1.4.0)
+    strong_migrations (1.4.1)
       activerecord (>= 5.2)
     terser (1.1.13)
       execjs (>= 0.3.0, < 3)
@@ -698,7 +698,7 @@ DEPENDENCIES
   sprockets (~> 4.2.0)
   standard (~> 1.0)
   stimulus-rails
-  strong_migrations (= 1.4.0)
+  strong_migrations (= 1.4.1)
   terser
   turbo-rails
   web-console
