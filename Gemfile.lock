@@ -83,7 +83,7 @@ GEM
       faraday_middleware (~> 1.0, >= 1.0.0.rc1)
       net-http-persistent (~> 4.0)
       nokogiri (~> 1, >= 1.10.8)
-    bcrypt (3.1.16)
+    bcrypt (3.1.18)
     better_errors (2.9.1)
       coderay (>= 1.0.0)
       erubi (>= 1.0.0)
@@ -130,6 +130,7 @@ GEM
       rexml
     crass (1.0.6)
     database_cleaner (1.8.5)
+    date (3.3.3)
     debug_inspector (1.1.0)
     delayed_job (4.1.10)
       activesupport (>= 3.0, < 8.0)
@@ -147,11 +148,10 @@ GEM
       railties (>= 4.1.0)
       responders
       warden (~> 1.2.3)
-    devise_invitable (2.0.6)
+    devise_invitable (2.0.7)
       actionmailer (>= 5.0)
       devise (>= 4.6)
     diff-lcs (1.5.0)
-    digest (3.1.0)
     discard (1.2.1)
       activerecord (>= 4.2, < 8)
     docile (1.4.0)
@@ -159,7 +159,7 @@ GEM
     dotenv-rails (2.8.1)
       dotenv (= 2.8.1)
       railties (>= 3.2)
-    erubi (1.11.0)
+    erubi (1.12.0)
     execjs (2.8.1)
     factory_bot (6.2.0)
       activesupport (>= 5.0.0)
@@ -280,7 +280,7 @@ GEM
       activesupport (>= 4)
       railties (>= 4)
       request_store (~> 1.0)
-    loofah (2.19.0)
+    loofah (2.19.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     lumberjack (1.2.8)
@@ -289,8 +289,11 @@ GEM
       pry
       pry-stack_explorer
       rails (>= 6.0)
-    mail (2.7.1)
+    mail (2.8.0)
       mini_mime (>= 0.1.1)
+      net-imap
+      net-pop
+      net-smtp
     marcel (1.0.2)
     matrix (0.4.2)
     method_source (1.0.0)
@@ -298,7 +301,7 @@ GEM
     mini_mime (1.1.2)
     mini_racer (0.6.3)
       libv8-node (~> 16.10.0.0)
-    minitest (5.16.3)
+    minitest (5.17.0)
     monetize (1.11.0)
       money (~> 6.12)
     money (6.16.0)
@@ -315,20 +318,15 @@ GEM
     nenv (0.3.0)
     net-http-persistent (4.0.1)
       connection_pool (~> 2.2)
-    net-imap (0.2.3)
-      digest
+    net-imap (0.3.4)
+      date
       net-protocol
-      strscan
-    net-pop (0.1.1)
-      digest
+    net-pop (0.1.2)
       net-protocol
+    net-protocol (0.2.1)
       timeout
-    net-protocol (0.1.3)
-      timeout
-    net-smtp (0.3.1)
-      digest
+    net-smtp (0.3.3)
       net-protocol
-      timeout
     nio4r (2.5.8)
     nokogiri (1.13.10-arm64-darwin)
       racc (~> 1.4)
@@ -402,8 +400,8 @@ GEM
     public_suffix (5.0.0)
     puma (5.6.5)
       nio4r (~> 2.0)
-    racc (1.6.1)
-    rack (2.2.4)
+    racc (1.6.2)
+    rack (2.2.5)
     rack-protection (2.1.0)
       rack
     rack-proxy (0.7.0)
@@ -436,8 +434,8 @@ GEM
       activesupport (>= 4.2)
       choice (~> 0.2.0)
       ruby-graphviz (~> 1.2)
-    rails-html-sanitizer (1.4.3)
-      loofah (~> 2.3)
+    rails-html-sanitizer (1.4.4)
+      loofah (~> 2.19, >= 2.19.1)
     railties (7.0.4)
       actionpack (= 7.0.4)
       activesupport (= 7.0.4)
@@ -568,12 +566,11 @@ GEM
       railties (>= 6.0.0)
     strong_migrations (1.4.0)
       activerecord (>= 5.2)
-    strscan (3.0.4)
     terser (1.1.13)
       execjs (>= 0.3.0, < 3)
     thor (1.2.1)
     tilt (2.0.10)
-    timeout (0.3.0)
+    timeout (0.3.1)
     ttfunk (1.7.0)
     turbo-rails (1.3.2)
       actionpack (>= 6.0.0)
