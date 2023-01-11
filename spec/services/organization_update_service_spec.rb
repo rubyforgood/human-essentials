@@ -26,14 +26,16 @@ describe OrganizationUpdateService, skip_seed: true do
         create(:organization, enable_individual_requests: true, enable_child_based_requests: true, enable_quantity_based_requests: true)
       end
       let(:partners) { create_list(:partner, 2, organization: organization) }
+      let(:partner_one) { partners.first }
+      let(:partner_two) { partners.last }
 
       before do
-        partners.first.profile.update!(
+        partner_one.profile.update!(
           enable_individual_requests: true,
           enable_child_based_requests: true,
           enable_quantity_based_requests: false
         )
-        partners.last.profile.update!(
+        partner_two.profile.update!(
           enable_individual_requests: true,
           enable_child_based_requests: true,
           enable_quantity_based_requests: true
@@ -44,13 +46,17 @@ describe OrganizationUpdateService, skip_seed: true do
         before { described_class.update(organization, {enable_individual_requests: false, enable_child_based_requests: false}) }
 
         it "should NOT change request flags in organization or its partners" do
+          organization.reload
+          partner_one.profile.reload
+          partner_two.profile.reload
+
           aggregate_failures "request type in organization and partners" do
-            expect(organization.reload.enable_individual_requests).to eq(true)
-            expect(partners.first.profile.reload.enable_individual_requests).to eq(true)
-            expect(partners.last.profile.reload.enable_individual_requests).to eq(true)
-            expect(organization.reload.enable_child_based_requests).to eq(true)
-            expect(partners.first.profile.reload.enable_child_based_requests).to eq(true)
-            expect(partners.last.profile.reload.enable_child_based_requests).to eq(true)
+            expect(organization.enable_individual_requests).to eq(true)
+            expect(partner_one.profile.enable_individual_requests).to eq(true)
+            expect(partner_two.profile.enable_individual_requests).to eq(true)
+            expect(organization.enable_child_based_requests).to eq(true)
+            expect(partner_one.profile.enable_child_based_requests).to eq(true)
+            expect(partner_two.profile.enable_child_based_requests).to eq(true)
           end
         end
       end
@@ -59,10 +65,14 @@ describe OrganizationUpdateService, skip_seed: true do
         before { described_class.update(organization, enable_individual_requests: false) }
 
         it "should allow the disabling of request flags in organization and its partners" do
+          organization.reload
+          partner_one.profile.reload
+          partner_two.profile.reload
+
           aggregate_failures "request type in organization and partners" do
-            expect(organization.reload.enable_individual_requests).to eq(false)
-            expect(partners.first.profile.reload.enable_individual_requests).to eq(false)
-            expect(partners.last.profile.reload.enable_individual_requests).to eq(false)
+            expect(organization.enable_individual_requests).to eq(false)
+            expect(partner_one.profile.enable_individual_requests).to eq(false)
+            expect(partner_two.profile.enable_individual_requests).to eq(false)
           end
         end
       end
