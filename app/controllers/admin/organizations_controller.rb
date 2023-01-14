@@ -6,10 +6,11 @@ class Admin::OrganizationsController < AdminController
 
   def update
     @organization = Organization.find(params[:id])
+    binding.pry
     if OrganizationUpdateService.update(@organization, organization_params)
       redirect_to admin_organizations_path, notice: "Updated organization!"
     else
-      flash[:error] = "Failed to update this organization."
+      flash[:error] = @organization.errors.collect { |error| "#{error.attribute}: " + error.message }.join("<br />".html_safe)
       render :edit
     end
   end

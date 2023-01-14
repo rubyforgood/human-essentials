@@ -14,10 +14,11 @@ class OrganizationsController < ApplicationController
 
   def update
     @organization = current_organization
+    binding.pry
     if OrganizationUpdateService.update(@organization, organization_params)
       redirect_to organization_path(@organization), notice: "Updated your organization!"
     else
-      flash[:error] = "Failed to update your organization."
+      flash[:error] = @organization.errors.collect { |error| "#{error.attribute}: " + error.message }.join("<br />".html_safe)
       render :edit
     end
   end
