@@ -14,7 +14,6 @@ class OrganizationsController < ApplicationController
 
   def update
     @organization = current_organization
-    binding.pry
     if OrganizationUpdateService.update(@organization, organization_params)
       redirect_to organization_path(@organization), notice: "Updated your organization!"
     else
