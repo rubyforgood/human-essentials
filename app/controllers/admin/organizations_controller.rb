@@ -6,7 +6,6 @@ class Admin::OrganizationsController < AdminController
 
   def update
     @organization = Organization.find(params[:id])
-    binding.pry
     if OrganizationUpdateService.update(@organization, organization_params)
       redirect_to admin_organizations_path, notice: "Updated organization!"
     else
