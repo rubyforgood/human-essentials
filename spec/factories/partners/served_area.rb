@@ -11,7 +11,7 @@
 #
 FactoryBot.define do
   factory :partners_served_area, class: "Partners::ServedArea" do
-    association :partner_profile, class: Partners::Profile
+    association :partner_profile
     association :county
     client_share { 1 }
   end
