@@ -450,9 +450,9 @@ GEM
       ffi (~> 1.0)
     recaptcha (5.12.3)
       json
-    redis (5.0.5)
+    redis (5.0.6)
       redis-client (>= 0.9.0)
-    redis-client (0.11.2)
+    redis-client (0.12.1)
       connection_pool
     regexp_parser (2.6.0)
     request_store (1.5.1)
