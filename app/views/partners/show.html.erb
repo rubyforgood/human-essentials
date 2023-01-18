@@ -330,11 +330,11 @@
               Note: If the email entered for the partner does not match a user on the partner an email will be sent inviting that person to be a user of the partner agency.
             </p>
             <br/>
-            <%= form_tag invite_partner_user_partner_path do %>
+            <%= form_tag partner_user_reset_password_users_path do %>
               <div class="input-group">
                 <span class="input-group-text" id="spn_env_fa_icon"><%= fa_icon "envelope" %></span>
                 <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon">
-                <%= hidden_field_tag :partner, @partner.id %><br>
+                <%= hidden_field_tag :partner_id, @partner.id %><br>
               </div>
               <br>
               <%= submit_button({ text: "Reset Password", icon: "envelope" }) %>
