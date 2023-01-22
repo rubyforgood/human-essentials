@@ -124,7 +124,6 @@ RSpec.describe DistributionsController, type: :controller do
         end
         subject { post :create, params: params.merge(format: :turbo_stream) }
 
-
         it "flashes an error" do
           expect(subject).to have_http_status(:bad_request)
           expect(flash[:error]).to include("Sorry, we weren't able to save the distribution. \n Validation failed: Inventory Item 1's quantity needs to be positive")
