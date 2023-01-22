@@ -122,8 +122,7 @@ module Itemizable
 
     line_items.each do |line_item|
       next unless line_item.item
-
-      next unless line_item.quantity <= 0
+      next unless line_item.quantity != nil && line_item.quantity <= 0
 
       errors.add(:inventory,
                  "#{line_item.item.name}'s quantity " \
