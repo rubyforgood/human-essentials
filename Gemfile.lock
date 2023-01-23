@@ -344,7 +344,7 @@ GEM
       rack (>= 1.2, < 3)
       snaky_hash (~> 2.0)
       version_gem (~> 1.1)
-    omniauth (2.1.0)
+    omniauth (2.1.1)
       hashie (>= 3.4.6)
       rack (>= 2.2.3)
       rack-protection
@@ -401,7 +401,7 @@ GEM
     puma (5.6.5)
       nio4r (~> 2.0)
     racc (1.6.2)
-    rack (2.2.5)
+    rack (2.2.6.2)
     rack-protection (2.1.0)
       rack
     rack-proxy (0.7.0)
