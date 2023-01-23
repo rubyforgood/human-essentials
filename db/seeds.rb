@@ -209,6 +209,7 @@ note = [
   end
 
   profile = Partners::Profile.create!({
+                                        essentials_bank_id: p.organization_id,
                                         partner_id: p.id,
                                         address1: Faker::Address.street_address,
                                         address2: "",

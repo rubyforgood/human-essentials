@@ -69,6 +69,16 @@ RSpec.describe 'Account request flow', type: :system, js: true do
       # Ensure the AccountRequest is not considered processed
       expect(created_account_request.reload.processed?).to eq(true)
     end
+
+    context 'with a partner agency' do
+      it 'reveals text that directs current partner to human essentials sign in page' do
+        visit('/account_requests/new')
+
+        choose(option: 'partner')
+
+        expect(page).to have_link('here', href: 'https://humanessentials.app/users/sign_in')
+      end
+    end
   end
 end
 

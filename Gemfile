@@ -34,7 +34,7 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.4.0"
+gem "strong_migrations", "1.4.1"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
@@ -100,6 +100,8 @@ gem 'httparty'
 gem 'icalendar', require: false
 # JSON Web Token encoding / decoding (e.g. for links in e-mails)
 gem "jwt"
+# Used to manage periodic cron-like jobs
+gem "clockwork"
 
 ##### DEPENDENCY PINS ######
 # These are gems that aren't used directly, only as dependencies for other gems.
@@ -176,7 +178,7 @@ group :development do
   # Open sent e-mails in the browser instead of trying to send to a real mail server.
   gem "letter_opener"
   # Used as a dependency for Guard.
-  gem "listen", "~> 3.7.0"
+  gem "listen", "~> 3.8.0"
   # Generate a diagram based on Rails models.
   gem "rails-erd"
   # Allows to create a console in the browser.
@@ -197,7 +199,7 @@ group :test do
   # Show code coverage.
   gem 'simplecov'
   # More concise test ("should") matchers
-  gem 'shoulda-matchers', '~> 5.2'
+  gem 'shoulda-matchers', '~> 5.3'
   # Selenium webdriver automatic installation and update.
   gem 'webdrivers', '~> 5.2'
   # Mock HTTP requests and ensure they are not called during tests.
