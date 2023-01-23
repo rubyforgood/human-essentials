@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe "ProductDrives", type: :request, skip_seed: true do
-  let(:organization) { FactoryBot.create(:organization) }
-  let(:user) { FactoryBot.create(:user, organization: organization) }
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
   let(:default_params) { { organization_id: organization.to_param } }
 
   context "while not signed in" do
@@ -27,6 +27,32 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
         expect(response).to be_successful
       end
 
+      it 'displays only product drives that belong to organization and that match drive name and date range' do
+        filter_params = {
+          date_range: date_range_picker_params(Date.parse('20/01/2000'), Date.parse('22/01/2000')),
+          by_name: "AAAA"
+        }
+        default_params[:filters] = filter_params
+
+        product_drive = create(:product_drive, organization: organization, name: "AAAA", start_date: '20/01/2000', end_date: '22/01/2000')
+
+        product_drive_two = create(:product_drive, organization: organization, name: "BBBB", start_date: '20/01/2000', end_date: '22/01/2000')
+        product_drive_three = create(:product_drive, organization: create(:organization), name: "AAAA", start_date: '20/01/2000', end_date: '22/01/2000')
+        product_drive_four = create(:product_drive, organization: organization, name: "AAAA", start_date: '20/01/1990', end_date: '22/01/1990')
+        product_drive_five = create(:product_drive, organization: organization, name: "AAAA", start_date: '20/01/2022', end_date: '22/01/2022')
+
+        subject
+
+        expect(response).to be_successful
+
+        expect(response.body).to include(product_drive_path(product_drive.id))
+
+        expect(response.body).not_to include(product_drive_path(product_drive_two.id))
+        expect(response.body).not_to include(product_drive_path(product_drive_three.id))
+        expect(response.body).not_to include(product_drive_path(product_drive_four.id))
+        expect(response.body).not_to include(product_drive_path(product_drive_five.id))
+      end
+
       context "csv" do
         before { default_params.merge!(format: :csv) }
 
@@ -41,8 +67,8 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
         end
 
         it 'returns ONLY the associated product drives' do
-          FactoryBot.create(:product_drive, name: 'product_drive', organization: organization)
-          FactoryBot.create(:product_drive, name: 'unassociated_product_drive', organization: FactoryBot.create(:organization))
+          create(:product_drive, name: 'product_drive', organization: organization)
+          create(:product_drive, name: 'unassociated_product_drive', organization: create(:organization))
 
           subject
 
@@ -53,21 +79,21 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
         it 'returns ONLY the product drives within a selected date range (inclusive)' do
           default_params[:filters] = { date_range: date_range_picker_params(Date.parse('30/01/1979'), Date.parse('30/01/1982')) }
 
-          FactoryBot.create(
+          create(
             :product_drive,
             name: 'early_product_drive',
             start_date: '30/01/1970',
             end_date: '30/01/1971',
             organization: organization
           )
-          FactoryBot.create(
+          create(
             :product_drive,
             name: 'product_drive_within_date_range',
             start_date: '30/01/1980',
             end_date: '30/01/1981',
             organization: organization
           )
-          FactoryBot.create(
+          create(
             :product_drive,
             name: 'product_drive_on_date_range',
             start_date: '30/01/1979',
@@ -75,7 +101,7 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
             organization: organization
           )
 
-          FactoryBot.create(
+          create(
             :product_drive,
             name: 'late_product_drive',
             start_date: '30/01/1990',

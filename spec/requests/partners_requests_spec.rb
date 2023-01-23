@@ -291,7 +291,7 @@ RSpec.describe "Partners", type: :request do
         expect(UserInviteService).to have_received(:invite).with(
           email: email,
           roles: [Role::PARTNER],
-          resource: partner.profile
+          resource: partner
         )
         expect(response).to redirect_to(partner_path(partner))
         expect(flash[:notice]).to eq("We have invited #{email} to #{partner.name}!")
