@@ -7,7 +7,7 @@ class FixDiscardedUsers < ActiveRecord::Migration[7.0]
       end
       if user.partner_id.present?
         partner = Partner.find_by_id(user.partner_id)
-        user.add_role(:partner, partner)
+        user.add_role(:partner, partner) if partner
       end
       if user.read_attribute(:super_admin)
         user.add_role(:super_admin)
