@@ -26,6 +26,12 @@
                 </p>
               </div>
               <div class="mb-4">
+                <h3 class='font-bold'>Short Name</h3>
+                <p>
+                  <%= @organization.short_name || "Not Provided"%>
+                </p>
+              </div>
+              <div class="mb-4">
                 <h3 class='font-bold'>Repackage Essentials?</h3>
                 <p>
                   <%= fa_icon "inbox" %>
