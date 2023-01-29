@@ -32,6 +32,12 @@
                 </p>
               </div>
               <div class="mb-4">
+                <h3 class='font-bold'>URL</h3>
+                <p>
+                  <%= @organization.url.blank? ? "Not Provided" : @organization.url %>
+                </p>
+              </div>
+              <div class="mb-4">
                 <h3 class='font-bold'>Repackage Essentials?</h3>
                 <p>
                   <%= fa_icon "inbox" %>
