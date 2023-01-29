@@ -34,7 +34,11 @@
               <div class="mb-4">
                 <h3 class='font-bold'>URL</h3>
                 <p>
-                  <%= @organization.url.blank? ? "Not Provided" : @organization.url %>
+                <% if @organization.url.blank? %>
+                  "Not Provided"
+                <% else %>
+                  <a href=<%= @organization.url %>><%= @organization.url %></a>
+                <% end %>
                 </p>
               </div>
               <div class="mb-4">
