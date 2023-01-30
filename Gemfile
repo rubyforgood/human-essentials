@@ -26,7 +26,7 @@ gem 'azure-storage-blob'
 # Adds soft delete functionality for models.
 gem 'discard', '~> 1.0'
 # Adds grouping by date/month/etc to queries.
-gem "groupdate", "~> 6.1"
+gem "groupdate", "~> 6.2"
 # Treats attributes like money, which knows about dollars and cents.
 gem "money-rails"
 # Tracks history / audits models.
