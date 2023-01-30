@@ -36,6 +36,7 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page).to have_content("Users")
         expect(page).to have_content("Short Name")
         expect(page).to have_content("URL")
+        expect(page).to have_content("Required Partner Fields")
       end
     end
 

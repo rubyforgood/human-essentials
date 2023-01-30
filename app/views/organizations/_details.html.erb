@@ -42,6 +42,21 @@
                 </p>
               </div>
               <div class="mb-4">
+                <h3 class='font-bold'>Required Partner Fields</h3>
+                  <% if @organization.partner_form_fields.blank? %>
+                    <p>Not Provided</p>
+                  <% else %>
+                    <ul>
+                      <% for partner_form_field in @organization.partner_form_fields %>
+                        <li>
+                          <%= display_partner_fields_value(partner_form_field) %>
+                        </li>
+                      <% end %>
+                    </ul>
+                  <% end %>
+                </p>
+              </div>
+              <div class="mb-4">
                 <h3 class='font-bold'>Repackage Essentials?</h3>
                 <p>
                   <%= fa_icon "inbox" %>
