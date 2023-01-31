@@ -37,6 +37,7 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page).to have_content("Short Name")
         expect(page).to have_content("URL")
         expect(page).to have_content("Required Partner Fields")
+        expect(page).to have_content("Custom Partner Invitation Message")
       end
     end
 
