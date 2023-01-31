@@ -73,6 +73,27 @@
                 </p>
               </div>
               <div class="mb-4">
+                <h3 class='font-bold'>Child Based Requests?</h3>
+                <p>
+                  <%= fa_icon "child" %>
+                  <%= humanize_boolean(@organization.enable_child_based_requests) %>
+                </p>
+              </div>
+              <div class="mb-4">
+                <h3 class='font-bold'>Individual Requests?</h3>
+                <p>
+                  <%= fa_icon "female" %>
+                  <%= humanize_boolean(@organization.enable_individual_requests) %>
+                </p>
+              </div>
+              <div class="mb-4">
+                <h3 class='font-bold'>Quantity Based Requests?</h3>
+                <p>
+                  <%= fa_icon "group" %>
+                  <%= humanize_boolean(@organization.enable_quantity_based_requests) %>
+                </p>
+              </div>
+              <div class="mb-4">
                 <h3 class='font-bold'>Reminder day</h3>
                 <p>
                   <%= fa_icon "calendar" %>
