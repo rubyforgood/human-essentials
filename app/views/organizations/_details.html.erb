@@ -99,10 +99,11 @@
                 </p>
               </div>
             </div>
-
             <div class="col-lg-8">
               <h3 class='font-bold'>Default email text:</h3>
-              <%= @organization.default_email_text %>
+              <p>
+                <%= @organization.default_email_text.blank? ? 'Not defined' : @organization.default_email_text %>
+              </p>
             </div>
           </div>
 
