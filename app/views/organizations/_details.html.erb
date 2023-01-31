@@ -127,6 +127,25 @@
                     <%= @organization.invitation_text.blank? ? "Not defined" : @organization.invitation_text %>
                 </p>
               </div>
+              <% if @organization.logo.attached? %>
+                    <div class="mb-4">
+                    <h3 class='font-bold'>Logo</h3>
+                      <p>
+                        <%= image_tag current_organization.logo, class: "main_logo" %>
+                      </p>
+                      <p>
+                        <a href="#showTheLogo" class="btn btn-xs btn-info" data-toggle="modal">
+                          View Original
+                        </a>
+                      </p>
+                      <div id="showTheLogo" class="modal fade">
+                        <div class="modal-dialog">
+                          <%= image_tag @organization.logo, class: "thumbnail" %>
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  <% end %>
             </div>
             <div class="col-lg-8">
               <h3 class='font-bold'>Default email text:</h3>
