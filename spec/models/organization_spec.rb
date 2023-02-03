@@ -58,8 +58,8 @@ RSpec.describe Organization, type: :model do
     end
 
     it "validates that short names are unique" do
-      expect(create(:organization, short_name: "foo_bar")).to be_valid 
-      expect(build(:organization, short_name: "foo_bar")).to_not be_valid 
+      expect(create(:organization, short_name: "foo_bar")).to be_valid
+      expect(build(:organization, short_name: "foo_bar")).to_not be_valid
     end
   end
 
