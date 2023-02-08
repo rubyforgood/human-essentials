@@ -10,52 +10,27 @@ class PartnerUsersController < ApplicationController
 
   def create
     user = UserInviteService.invite(
-      email: user_params[:email], 
-      name: user_params[:name], 
-      roles: [Role::PARTNER], 
+      email: user_params[:email],
+      name: user_params[:name],
+      roles: [Role::PARTNER],
       resource: @partner
     )
-    user.valid?
-
-    respond_to do |format|
-      format.turbo_stream do
-        if user.errors.none?
-          flash.now[:notice] = "#{user.name} has been invited. Invitation email sent to #{user.email}"
-
-          render turbo_stream: [
-            turbo_stream.replace("partners/#{@partner.id}/form", partial: "partner_users/form", locals: {partner: @partner, user: User.new(name: "")}),
-            turbo_stream.replace("flash", partial: "shared/flash"),
-            turbo_stream.replace("partners/#{@partner.id}/users", partial: "partner_users/users", locals: {users: @partner.reload.users, partner: @partner})
-          ]
-        else
-          flash.now[:error] = "Invitation failed. Check the form for errors."
-          render turbo_stream: [
-            turbo_stream.replace("partners/#{@partner.id}/form", partial: "partner_users/form", locals: {partner: @partner, user: user}),
-            turbo_stream.replace("flash", partial: "shared/flash")
-          ], status: :bad_request
-        end
-      end
+    if user.valid?
+      redirect_back(fallback_location: '/',
+                    notice: "#{user.name} has been invited. Invitation email sent to #{user.email}")
+    else
+      redirect_back(fallback_location: '/',
+                    alert: "Invitation failed. Check the form for errors.")
     end
   end
 
   def destroy
     user = User.find(params[:id])
 
-    respond_to do |format|
-      format.turbo_stream do
-        if user.remove_role(Role::PARTNER, @partner.profile)
-          flash.now[:notice] = "Access to #{user.name} has been revoked."
-          render turbo_stream: [
-            turbo_stream.replace("flash", partial: "shared/flash"),
-            turbo_stream.replace("partners/#{@partner.id}/users", partial: "partner_users/users", locals: {users: @partner.reload.users, partner: @partner})
-          ]
-        else
-          flash.now[:error] = "Invitation failed. Check the form for errors."
-          render turbo_stream: [
-            turbo_stream.replace("flash", partial: "shared/flash")
-          ], status: :bad_request
-        end
-      end
+    if user.remove_role(Role::PARTNER, @partner.profile)
+      redirect_back(fallback_location: '/', notice: "Access to #{user.name} has been revoked.")
+    else
+      redirect_back(fallback_location: '/', alert: "Invitation failed. Check the form for errors.")
     end
   end
 
@@ -68,21 +43,10 @@ class PartnerUsersController < ApplicationController
       user.errors.add(:base, "User has already accepted invitation.")
     end
 
-    respond_to do |format|
-      format.turbo_stream do
-        if user.errors.none?
-          flash.now[:notice] = "Invitation email sent to #{user.email}"
-          render turbo_stream: [
-            turbo_stream.replace("flash", partial: "shared/flash"),
-            turbo_stream.replace("partners/#{@partner.id}/users", partial: "partner_users/users", locals: {users: @partner.reload.users, partner: @partner})
-          ]
-        else
-          flash.now[:error] = user.errors.full_messages.to_sentence
-          render turbo_stream: [
-            turbo_stream.replace("flash", partial: "shared/flash")
-          ], status: :bad_request
-        end
-      end
+    if user.errors.none?
+      redirect_back(fallback_location: '/', notice: "Invitation email sent to #{user.email}")
+    else
+      redirect_back(fallback_location: '/', alert: user.errors.full_messages.to_sentence)
     end
   end
 
