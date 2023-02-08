@@ -9,18 +9,19 @@ class PartnerUsersController < ApplicationController
   end
 
   def create
-    user = UserInviteService.invite(
+    @user = UserInviteService.invite(
       email: user_params[:email],
       name: user_params[:name],
       roles: [Role::PARTNER],
       resource: @partner
     )
-    if user.valid?
+    if @user.valid?
       redirect_back(fallback_location: '/',
                     notice: "#{user.name} has been invited. Invitation email sent to #{user.email}")
     else
-      redirect_back(fallback_location: '/',
-                    alert: "Invitation failed. Check the form for errors.")
+      flash[:alert] = "Invitation failed. Check the form for errors."
+      @users = @partner.users
+      render :index
     end
   end
 
