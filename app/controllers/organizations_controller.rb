@@ -17,7 +17,7 @@ class OrganizationsController < ApplicationController
     if OrganizationUpdateService.update(@organization, organization_params)
       redirect_to organization_path(@organization), notice: "Updated your organization!"
     else
-      flash[:error] = @organization.errors.collect { |error| "#{error.attribute}: " + error.message }.join("<br />".html_safe)
+      flash[:error] = "Failed to update your organization."
       render :edit
     end
   end
