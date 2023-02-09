@@ -58,9 +58,11 @@ RSpec.describe "/partners/profiles", type: :request do
     let(:organization) { create(:organization, name: "3rd National Bank of Favour", partner_form_fields: ["area_served"]) }
     let!(:partner) { create(:partner, name: "Partnerlicious", organization: organization) }
     let(:partner_user) { partner.primary_user }
+
     before do
       sign_in(partner_user)
     end
+
     describe "on show" do
       it "displays the area served if specified" do
         partner.organization = organization
@@ -71,6 +73,7 @@ RSpec.describe "/partners/profiles", type: :request do
         get partners_profile_path(partner)
         expect(response.body).to include("No County Specified")
       end
+
       describe "full_county_list" do
         let(:county_1) { create(:county, name: "First County") }
         let(:county_2) { create(:county, name: "Second County") }
@@ -84,12 +87,14 @@ RSpec.describe "/partners/profiles", type: :request do
         end
       end
     end
+
     describe "on edit" do
       it "displays the area served if specified" do
         partner.organization = organization
         get edit_partners_profile_path(partner)
         expect(response.body).to include("Area Served")
       end
+
       describe "full_county_list" do
         let(:county_1) { create(:county, name: "First County") }
         let(:county_2) { create(:county, name: "Second County") }
