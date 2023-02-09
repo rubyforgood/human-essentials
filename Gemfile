@@ -35,8 +35,6 @@ gem "paper_trail"
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
 gem "strong_migrations", "1.4.1"
-# imports (used to set up counties)
-gem "activerecord-import"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
