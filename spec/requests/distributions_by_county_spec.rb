@@ -7,7 +7,7 @@ RSpec.describe "DistributionsByCounties", type: :request do
 
   context "While not signed in" do
     it "redirects for authentication" do
-      get distributions_by_county_show_path(default_params)
+      get distributions_by_county_report_path(default_params)
       expect(response).to be_redirect
     end
 
@@ -18,7 +18,7 @@ RSpec.describe "DistributionsByCounties", type: :request do
 
       describe "show" do
         it "returns http success" do
-          get distributions_by_county_show_path(default_params)
+          get distributions_by_county_report_path(default_params)
           expect(response).to have_http_status(:success)
         end
       end

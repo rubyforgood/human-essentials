@@ -106,7 +106,7 @@
             <div class="position-relative mb-4">
               <div class="box-body text-center float-center">
                 <%= new_button_to new_distribution_path, {text: "New Distribution"} %>
-                <%= medium_print_button_to distributions_by_county_show_path(filters: { date_range: date_range_params }), {text: "Distributions by County"} %>
+                <%= print_button_to distributions_by_county_report_path(filters: { date_range: date_range_params }), {text: "Distributions by County", size: "md"} %>
 
                 <h3 class="text-center">
                   <span class="total_distributed">

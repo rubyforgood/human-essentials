@@ -17,7 +17,7 @@ RSpec.feature "Distributions by County", type: :system do
 
   it "shows 'Unspecified 100%' if no served_areas" do
     @distribution = create(:distribution, :with_items, item: item_1, organization: @user.organization)
-    visit distributions_by_county_show_path
+    visit distributions_by_county_report_path
     expect(page).to have_text("Unspecified")
     expect(page).to have_text("100")
     expect(page).to have_text("$1,050.00")
@@ -26,7 +26,7 @@ RSpec.feature "Distributions by County", type: :system do
   context "basic behaviour with served areas" do
     it "shows the county names and percentages if there are served_areas" do
       @distribution = create(:distribution, :with_items, item: item_1, organization: @user.organization, partner: @partner_1)
-      visit distributions_by_county_show_path
+      visit distributions_by_county_report_path
       @partner_1.profile.served_areas.each do |served_area|
         expect(page).to have_text(served_area.county.name)
       end
@@ -35,7 +35,7 @@ RSpec.feature "Distributions by County", type: :system do
     end
   end
 
-  context "handles time ranges properly (not fully written yet)" do
+  context "handles time ranges properly" do
     it("works for all time") do
       @distribution_last_year = create(:distribution, :with_items, item: item_1, organization: @user.organization, partner: @partner_1, issued_at: issued_at_last_year)
       @distribution_current = create(:distribution, :with_items, item: item_1, organization: @user.organization, partner: @partner_1, issued_at: issued_at_present)
@@ -65,7 +65,7 @@ RSpec.feature "Distributions by County", type: :system do
     @distribution_p1 = create(:distribution, :with_items, item: item_1, organization: @user.organization, partner: @partner_1, issued_at: issued_at_present)
     @distribution_p2 = create(:distribution, :with_items, item: item_1, organization: @user.organization, partner: @partner_2, issued_at: issued_at_present)
 
-    visit distributions_by_county_show_path
+    visit distributions_by_county_report_path
 
     expect(page).to have_text("45") # First ones are definitely combined
     expect(page).to have_text("$472.50")

@@ -109,10 +109,6 @@ module UiHelper
     _link_to link, { icon: "print", type: "outline-dark", text: "Print", size: "xs" }.merge(options)
   end
 
-  def medium_print_button_to(link, options = {})
-    _link_to link, { icon: "print", type: "outline-dark", text: "Print", size: "md" }.merge(options)
-  end
-
   # Generic Submit button for a form
   def submit_button(options = {}, data = {})
     disable_text = options[:disable_text] || "Saving"

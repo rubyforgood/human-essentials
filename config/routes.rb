@@ -8,7 +8,7 @@ def set_up_flipper
 end
 
 Rails.application.routes.draw do
-  get 'distributions_by_county/show'
+  get 'distributions_by_county/report'
   devise_for :users, controllers: {
     sessions: "users/sessions",
     omniauth_callbacks: 'users/omniauth_callbacks'
