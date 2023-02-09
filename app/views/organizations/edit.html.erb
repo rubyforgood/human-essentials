@@ -72,7 +72,7 @@
 
                 <%= f.select(:partner_form_fields, Organization::ALL_PARTIALS, {include_hidden: false}, { multiple: true, class: 'form-control selectpicker input_group' }) %>
                 <br>
-                <%= f.input :default_storage_location, :collection => current_organization.storage_locations.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Storage Location", :include_blank => true, wrapper: :input_group %>
+                <%= f.input :default_storage_location, :collection => current_organization.storage_locations.alphabetized.select{|storage_location| !storage_location.discarded_at}, :label_method => :name, :value_method => :id, :label => "Default Storage Location", :include_blank => true, wrapper: :input_group %>
 
                 <%= f.input :invitation_text, label: "Custom Partner Invitation Message", wrapper: :input_group do %>
                   <%= f.text_area :invitation_text, class: "form-control" %>
