@@ -3,10 +3,8 @@ class PartnerProfileUpdateService
   attr_reader :error
   def initialize(old_partner, new_partner_params, new_profile_params)
     @partner = old_partner
-    @old_profile = old_partner.profile
     @profile = @partner.profile
     @partner_params = new_partner_params
-    @old_served_areas = old_partner.profile.served_areas
     @profile_params = new_profile_params
   end
 
