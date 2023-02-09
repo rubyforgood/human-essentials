@@ -4,4 +4,9 @@ module OrganizationHelper
     organization ||= current_organization
     organization.logo.attached? ? image_tag(organization.logo, alt: "#{organization.name} logo", class: "organization-logo", style: "max-height:188px") : organization.name
   end
+
+  def get_active_storage_locations(organization = nil)
+    organization ||= current_organization
+    organization.storage_locations.alphabetized.select{|storage_location| !storage_location.discarded_at}
+  end
 end

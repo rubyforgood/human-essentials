@@ -17,12 +17,16 @@
                 <span class="input-group-text"><i class="fa fa-envelope"></i></span>
                 <%= f.input_field :email, class: "form-control"%>
               <% end %>
-              <%= f.input :default_storage_location_id, :collection => current_organization.storage_locations.alphabetized.select{|storage_location| !storage_location.discarded_at},
+
+
+              <%= f.input :default_storage_location_id, :collection => get_active_storage_locations,
                           :label_method => :name,
                           :value_method => :id,
                           :label => "Default Storage Location",
                           :include_blank => true,
                           wrapper: :input_group %>
+
+
               <div class='w-50'>
                 <%= f.input :partner_group_id, label: "Group", wrapper: :input_group do %>
                   <%= f.input_field :partner_group_id, collection: @partner_groups, class: "form-control", include_blank: "None" %>
