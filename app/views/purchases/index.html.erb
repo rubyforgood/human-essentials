@@ -38,7 +38,7 @@
               <div class="row">
                 <% if @storage_locations.present? %>
                   <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                    <%= filter_select(label: "Filter by storage location", scope: :at_storage_location, collection: @storage_locations, selected: @selected_storage_location) %>
+                    <%= filter_select(label: "Filter by storage location", scope: :at_storage_location, collection: get_active_locations, selected: @selected_storage_location) %>
                   </div>
                 <% end %>
                 <% if @vendors.present? %>

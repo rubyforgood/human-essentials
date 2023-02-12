@@ -1,5 +1,4 @@
 <%
-  storage_locations ||= @storage_locations
   label ||= "From storage location"
   error ||= "Which location are you moving inventory from?"
   association_field ||= :storage_location
@@ -7,7 +6,7 @@
   include_omitted_items ||= false
 %>
 <%= source.association association_field,
-  collection: storage_locations,
+  collection: get_active_locations,
   label: label,
   error: error,
   selected: storage_location_for_source(source.object),

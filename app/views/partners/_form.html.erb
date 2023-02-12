@@ -19,7 +19,7 @@
               <% end %>
 
 
-              <%= f.input :default_storage_location_id, :collection => get_active_storage_locations,
+              <%= f.input :default_storage_location_id, :collection => get_active_locations,
                           :label_method => :name,
                           :value_method => :id,
                           :label => "Default Storage Location",
