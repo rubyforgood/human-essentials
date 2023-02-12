@@ -273,12 +273,12 @@ RSpec.describe Partner, type: :model do
       create(:distribution, :with_items, partner: partner)
     end
 
-    it "includes all item quantities for the given year" do
+    it "includes all item quantities from distributions issued during the current year" do
       expect(partner.quantity_year_to_date).to eq(300)
     end
 
-    it "does not include quantities from last year" do
-      LineItem.last.update(created_at: Time.zone.today.beginning_of_year - 20)
+    it "does not include quantities from distributions issued during the previous year" do
+      partner.distributions.last.update(issued_at: Time.zone.today.beginning_of_year - 20)
       expect(partner.quantity_year_to_date).to eq(200)
     end
   end
