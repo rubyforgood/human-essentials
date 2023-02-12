@@ -204,7 +204,7 @@ class Partner < ApplicationRecord
   def quantity_year_to_date
     distributions
       .includes(:line_items)
-      .where("line_items.created_at > ?", Time.zone.today.beginning_of_year)
+      .where('distributions.issued_at >= ?', Time.zone.today.beginning_of_year)
       .references(:line_items).map(&:line_items).flatten.sum(&:quantity)
   end
 
