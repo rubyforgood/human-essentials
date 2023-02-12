@@ -44,7 +44,7 @@ class TransfersController < ApplicationController
   def new
     @transfer = current_organization.transfers.new
     @transfer.line_items.build
-    @storage_locations = current_organization.storage_locations.alphabetized
+    @storage_locations = current_organization.storage_locations.alphabetized.select{|storage_location| !storage_location.discarded_at}
     @items = current_organization.items.active.alphabetized
   end
 
