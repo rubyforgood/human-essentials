@@ -135,4 +135,9 @@ module ApplicationHelper
     end
     current_organization.default_storage_location
   end
+
+  def get_active_locations(organization = nil)
+    organization ||= current_organization
+    organization.storage_locations.select{|storage_location| !storage_location.discarded_at}
+  end
 end
