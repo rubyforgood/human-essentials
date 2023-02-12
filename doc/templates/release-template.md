@@ -1,6 +1,3 @@
-## ✍️ Description
-
-[Insert a high level overview of what is new in the release. Less is more!]
 
 ## ✨ What's New?
 
