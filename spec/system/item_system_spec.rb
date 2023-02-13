@@ -166,8 +166,6 @@ RSpec.describe "Item management", type: :system do
     let(:num_tampons_second_donation) { 17 }
     let!(:donation_tampons) { create(:donation, :with_items, storage_location: storage, item_quantity: num_tampons_in_donation, item: item_tampons) }
     let!(:donation_aux_tampons) { create(:donation, :with_items, storage_location: aux_storage, item_quantity: num_tampons_second_donation, item: item_tampons) }
-    let(:inactive_storage_name) { "Inactive R Us" }
-    let(:inactive_storage) { create(:storage_location, name: storage_name, discarded_at: Time.current) }
     before do
       visit url_prefix + "/items"
     end
