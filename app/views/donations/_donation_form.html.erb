@@ -54,7 +54,7 @@
     <div class="row">
       <div class="col-xs-8 col-md-6 col-lg-3">
         <%= f.association :storage_location,
-                          collection: get_active_locations,
+                          collection: filter_inactive_locations(@storage_locations),
                           label: "Storage Location",
                           error: "Where is it being stored?",
                           selected: f.object.storage_location&.id || current_organization.intake_location,
