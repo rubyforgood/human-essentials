@@ -217,7 +217,7 @@ class DistributionsController < ApplicationController
   private
 
   def insufficient_error_message(details)
-    "Sorry, we weren't able to save the distribution. \n #{@distribution.errors.full_messages.join(', ')} #{details}"
+    "Sorry, we weren't able to save the distribution. \n #{details}"
   end
 
   def send_notification(org, dist, subject: 'Your Distribution', distribution_changes: {})

@@ -176,7 +176,7 @@ class StorageLocation < ApplicationRecord
       # Raise this custom error with information about each of the items that showed insufficient
       # This bails out of the method!
       raise Errors::InsufficientAllotment.new(
-        "Requested items exceed the available inventory",
+        "Requested items exceed the available inventory.",
         insufficient_items
       )
     end
