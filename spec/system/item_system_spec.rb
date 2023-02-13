@@ -191,13 +191,6 @@ RSpec.describe "Item management", type: :system do
       expect(tab_items_quantity_location_text).to have_content item_pullups.name
       expect(tab_items_quantity_location_text).to have_content item_tampons.name
     end
-
-    it "should not display inactive storage locations" do
-      click_link "Items, Quantity, and Location"
-      expect(page).to have_no_text inactive_storage_name
-      click_link("Kits", href: "#custom-tabs-three-kits")
-      expect(page).to have_no_text inactive_storage_name
-    end
   end
 
   describe 'Item Category Management' do

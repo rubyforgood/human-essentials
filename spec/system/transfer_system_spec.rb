@@ -97,10 +97,6 @@ RSpec.describe "Transfer management", type: :system do
     expect(to_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(transfer_amount)
   end
 
-  # it 'should not include inactive storage locations' do
-
-  # end
-
   context "when there's insufficient inventory at the origin to cover the move" do
     let!(:from_storage_location) { create(:storage_location, :with_items, item: item, item_quantity: 10, name: "From me", organization: @organization) }
     let!(:to_storage_location) { create(:storage_location, :with_items, name: "To me", organization: @organization) }
