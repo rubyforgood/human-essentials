@@ -137,6 +137,6 @@ module ApplicationHelper
   end
 
   def filter_inactive_locations(storage_locations)
-    storage_locations.select{|storage_location| !storage_location.discarded_at}
+    storage_locations.select { |storage_location| !storage_location.discarded_at }
   end
 end

@@ -149,10 +149,12 @@ RSpec.describe ApplicationHelper, type: :helper do
   end
 
   describe "filter_inactive_locations" do
-    let(:storage_locations) { [
+    let(:storage_locations) {
+      [
         create(:storage_location, name: "Active Location"),
-        create(:storage_location, name: "Inactive Location", discarded_at: Time.now),
-    ]}
+        create(:storage_location, name: "Inactive Location", discarded_at: Time.zone.now)
+      ]
+    }
     it "returns an array of active storage locations" do
       expect(helper.filter_inactive_locations(storage_locations).length).to eq(1)
     end
