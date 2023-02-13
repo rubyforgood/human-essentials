@@ -166,6 +166,8 @@ RSpec.describe "Item management", type: :system do
     let(:num_tampons_second_donation) { 17 }
     let!(:donation_tampons) { create(:donation, :with_items, storage_location: storage, item_quantity: num_tampons_in_donation, item: item_tampons) }
     let!(:donation_aux_tampons) { create(:donation, :with_items, storage_location: aux_storage, item_quantity: num_tampons_second_donation, item: item_tampons) }
+    let(:inactive_storage_name) { "Inactive R Us" }
+    let(:inactive_storage) { create(:storage_location, name: storage_name, discarded_at: Time.current) }
     before do
       visit url_prefix + "/items"
     end
@@ -188,6 +190,13 @@ RSpec.describe "Item management", type: :system do
       expect(tab_items_quantity_location_text).to have_content num_tampons_in_donation + num_tampons_second_donation
       expect(tab_items_quantity_location_text).to have_content item_pullups.name
       expect(tab_items_quantity_location_text).to have_content item_tampons.name
+    end
+
+    it "should not display inactive storage locations" do
+      click_link "Items, Quantity, and Location"
+      expect(page).to have_no_text inactive_storage_name
+      click_link("Kits", href: "#custom-tabs-three-kits")
+      expect(page).to have_no_text inactive_storage_name
     end
   end
 
