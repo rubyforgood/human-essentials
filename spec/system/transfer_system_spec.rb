@@ -98,7 +98,7 @@ RSpec.describe "Transfer management", type: :system do
   end
 
   it 'should not include inactive storage locations in dropdowns when creating a new transfer' do
-    create(:storage_location, name: "Inactive R Us", discarded_at: Time.now)
+    create(:storage_location, name: "Inactive R Us", discarded_at: Time.zone.now)
     visit url_prefix + "/transfers/new"
     expect(page).to have_no_text 'Inactive R Us'
   end
