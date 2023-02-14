@@ -82,8 +82,13 @@ RSpec.describe "Kit management", type: :system do
   end
 
   it 'should not display inactive storage locations under allocations' do
-    create(:storage_location, name: "Inactive R Us", discarded_at: Time.zone.now)
-    create(:kit, organization_id: @organization.id, name: Faker::Appliance.equipment)
+    inactive_location = create(:storage_location, organization_id: @organization.id, name: "Inactive R Us", discarded_at: Time.now)
+    setup_storage_location(inactive_location)
+    kit_params = {
+      organization_id: @organization.id,
+      name: "Fake Kit",
+    }
+    KitCreateService.new(organization_id: @organization.id, kit_params: kit_params).tap(&:call).kit
     visit url_prefix + "/kits/"
     expect(page).to have_no_text("Inactive R Us")
   end
