@@ -65,7 +65,7 @@
 
                 <%= render 'shared/deadline_day_fields', f: f %>
 
-                <%= f.input :intake_location, :collection => filter_inactive_locations(@organization.sotrage_locations.alphabetized), :label_method => :name, :value_method => :id, :label => "Default Intake Location", :include_blank => true, wrapper: :input_group %>
+                <%= f.input :intake_location, :collection => filter_inactive_locations(@organization.storage_locations.alphabetized), :label_method => :name, :value_method => :id, :label => "Default Intake Location", :include_blank => true, wrapper: :input_group %>
 
                 <%= f.input :invitation_text, label: "Custom Partner Invitation Message", wrapper: :input_group do %>
                   <%= f.text_area :invitation_text, class: "form-control" %>
