@@ -26,7 +26,7 @@ RSpec.describe CustomDeviseMailer, type: :mailer do
       let(:user) { create(:partner_user, partner: partner) }
 
       it "invites to partner user" do
-        expect(mail.subject).to eq("You've been invited to #{user.partner.name}'s partnerbase account")
+        expect(mail.subject).to eq("You've been invited to #{user.partner.name}'s Human Essentials account")
         expect(mail.html_part.body).to include("You've been invited to <strong>#{user.partner.name}'s</strong> account for requesting items from <strong>#{user.partner.organization.name}!")
       end
     end
