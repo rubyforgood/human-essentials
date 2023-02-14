@@ -44,8 +44,12 @@
                 <% end %>
                 <%= f.input :short_name, required: true, autofocus: true, wrapper: :input_group do %>
                   <span class="input-group-text"><i class="fa fa-desktop"></i></span>
-                  <%= f.input_field :short_name, disabled: true, class: "form-control" %>
+                  <%= f.input_field :short_name, class: "form-control" %>
                 <% end %>
+                <div>
+                  APPROACH with EXTREME CAUTION! Editing the short name will break bookmarked links and calendar notices! If a
+                  bank has asked you to do this, explain this to them first.
+                </div>
                 <%= f.input :url, as: :url, placeholder: "http://www.example.com", wrapper: :input_group do %>
                   <span class="input-group-text"><i class="fa fa-link"></i></span>
                   <%= f.input_field :url, class: "form-control" %>
