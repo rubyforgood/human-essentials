@@ -15,7 +15,6 @@
 #  updated_at      :datetime         not null
 #  organization_id :integer
 #
-
 class StorageLocation < ApplicationRecord
   require "csv"
 
