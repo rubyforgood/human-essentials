@@ -86,7 +86,7 @@ class StorageLocation < ApplicationRecord
       value_in_cents = inventory_item.item.try(:value_in_cents)
       value_in_cents * inventory_item.quantity
     end.reduce(:+)
-    inventory_total_value.present? ? (inventory_total_value / 100) : 0
+    inventory_total_value.present? ? (inventory_total_value.to_f / 100) : 0
   end
 
   def to_csv
