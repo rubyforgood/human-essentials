@@ -7,7 +7,7 @@
   include_omitted_items ||= false
 %>
 <%= source.association association_field,
-  collection: filter_inactive_locations(storage_locations),
+  collection: storage_locations,
   label: label,
   error: error,
   selected: storage_location_for_source(source.object),

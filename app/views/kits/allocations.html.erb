@@ -67,7 +67,7 @@
                     <div class='col-md-4'>
                       <div class="form-group">
                         <%= label_tag "Storage Location" %>
-                        <%= f.collection_select :storage_location_id, filter_inactive_locations(@storage_locations), :id, :name, { include_blank: true }, class: "form-control"%>
+                        <%= f.collection_select :storage_location_id, @storage_locations, :id, :name, { include_blank: true }, class: "form-control"%>
                       </div>
 
                       <div class="form-group">
