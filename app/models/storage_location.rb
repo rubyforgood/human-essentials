@@ -15,7 +15,6 @@
 #  updated_at      :datetime         not null
 #  organization_id :integer
 #
-
 class StorageLocation < ApplicationRecord
   require "csv"
 
@@ -60,6 +59,7 @@ class StorageLocation < ApplicationRecord
   }
   scope :alphabetized, -> { order(:name) }
   scope :for_csv_export, ->(organization, *) { where(organization: organization) }
+  scope :active_locations, -> { where(discarded_at: nil) }
 
   def self.item_total(item_id)
     StorageLocation.select("quantity")
