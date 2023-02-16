@@ -15,7 +15,6 @@
 #  updated_at      :datetime         not null
 #  organization_id :integer
 #
-
 RSpec.describe StorageLocation, type: :model do
   context "Validations >" do
     it { is_expected.to validate_presence_of(:name) }
