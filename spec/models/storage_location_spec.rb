@@ -53,6 +53,14 @@ RSpec.describe StorageLocation, type: :model do
       expect(results.length).to eq(1)
       expect(results.first).to eq(storage_location)
     end
+
+    it "->active_locations yields only storage locations that haven't been discarded" do
+      create(:storage_location, name: "Active Location")
+      create(:storage_location, name: "Inactive Location", discarded_at: Time.zone.now)
+      results = StorageLocation.active_locations
+      expect(results.length).to eq(1)
+      expect(results.first.discarded_at).to be_nil
+    end
   end
 
   context "Methods >" do

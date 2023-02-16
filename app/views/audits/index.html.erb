@@ -38,7 +38,7 @@
             <%= form_tag(audits_path, method: :get) do |f| %>
               <div class="row">
                 <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                  <%= filter_select(label: "Filter by Storage Location", scope: :at_location, collection: filter_inactive_locations(@storage_locations), key: :id, value: :name, selected: @selected_location) %>
+                  <%= filter_select(label: "Filter by Storage Location", scope: :at_location, collection: @storage_locations, key: :id, value: :name, selected: @selected_location) %>
                 </div>
               </div>
               </div>

@@ -135,8 +135,4 @@ module ApplicationHelper
     end
     current_organization.default_storage_location
   end
-
-  def filter_inactive_locations(storage_locations)
-    storage_locations.select { |storage_location| !storage_location.discarded_at }
-  end
 end
