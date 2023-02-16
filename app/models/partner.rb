@@ -166,24 +166,6 @@ class Partner < ApplicationRecord
     ]
   end
 
-  def meow
-    partners = Partner.where.not(status: 'deactivated')
-    users = partners.map(&:profile).map(&:users).flatten
-    emails = users.map(&:email)
-    partner_emails = emails.flatten
-
-    user_emails = User.where(discarded_at: nil).pluck(:email)
-
-    emails = [partner_emails + user_emails].flatten
-
-    CSV.open("contact_emails.csv", "wb") do |csv|
-      csv << ["Email Address"]
-      emails.each do |email|
-        csv << [email]
-      end
-    end
-  end
-
   def contact_person
     return @contact_person if @contact_person
 
