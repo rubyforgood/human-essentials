@@ -9,7 +9,6 @@ module UserInviteService
 
     user = User.find_by(email: email)
     if user
-      user.invite!
       add_roles(user, resource: resource, roles: roles)
       return user
     end
