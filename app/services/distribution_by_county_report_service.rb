@@ -2,36 +2,32 @@
 
 class DistributionByCountyReportService
   def get_breakdown(distributions)
-    breakdown_hash = {}
-    breakdown_hash["Unspecified"] = {}
-    breakdown_hash["Unspecified"][:region] = "ZZZ" # after all natural region names
-    breakdown_hash["Unspecified"][:num_items] = 0
-    breakdown_hash["Unspecified"][:amount] = 0.00
+    breakdown_struct = Struct.new(:name, :region, :num_items, :amount)
+    breakdowns = {}
+    breakdowns["Unspecified"] = breakdown_struct.new("Unspecified", "ZZZ", 0, 0.00)
     distributions.each do |distribution|
       served_areas = distribution.partner.profile.served_areas
       num_items_for_distribution = distribution.line_items.total
       value_of_distribution = distribution.line_items.total_value
       if served_areas.size == 0
-        breakdown_hash["Unspecified"][:num_items] += num_items_for_distribution
-        breakdown_hash["Unspecified"][:amount] += value_of_distribution
+        breakdowns["Unspecified"].num_items += num_items_for_distribution
+        breakdowns["Unspecified"].amount += value_of_distribution
       else
         served_areas.each do |served_area|
           name = served_area.county.name
           percentage = served_area.client_share / 100.0
-          if !breakdown_hash[name]
-            breakdown_hash[name] = {}
-            breakdown_hash[name][:name] = name
-            breakdown_hash[name][:region] = served_area.county.region
-            breakdown_hash[name][:num_items] = (num_items_for_distribution * percentage).round(0)
-            breakdown_hash[name][:amount] = value_of_distribution * percentage
+          if !breakdowns[name]
+            breakdowns[name] = breakdown_struct.new(name, served_area.county.region,
+              (num_items_for_distribution * percentage).round(0), value_of_distribution * percentage)
           else
-            breakdown_hash[name][:num_items] = breakdown_hash[name][:num_items] + (num_items_for_distribution * percentage).round(0)
-            breakdown_hash[name][:amount] = breakdown_hash[name][:amount] + value_of_distribution * percentage
+            breakdowns[name].num_items = breakdowns[name].num_items + (num_items_for_distribution * percentage).round(0)
+            breakdowns[name].amount = breakdowns[name].amount + value_of_distribution * percentage
           end
         end
       end
     end
 
-    @breakdown = breakdown_hash.sort_by { |k, v| [v[:region], k] }
+    breakdown_array = breakdowns.sort_by { |k, v| [v[:region], k] }
+    @breakdown = breakdown_array.map { |a| a[1] }
   end
 end

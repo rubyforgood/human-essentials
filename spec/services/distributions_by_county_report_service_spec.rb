@@ -16,19 +16,19 @@ RSpec.describe DistributionByCountyReportService, type: :service do
       distribution_1 = create(:distribution, :with_items, item: item_1, organization: @user.organization)
       breakdown = DistributionByCountyReportService.new.get_breakdown([distribution_1])
       expect(breakdown.size).to eq(1)
-      expect(breakdown[0][1][:num_items]).to eq(100)
-      expect(breakdown[0][1][:amount]).to be_within(0.01).of(105000.0)
+      expect(breakdown[0].num_items).to eq(100)
+      expect(breakdown[0].amount).to be_within(0.01).of(105000.0)
     end
 
     it "divides the item numbers and values according to the partner profile" do
       distribution_1 = create(:distribution, :with_items, item: item_1, organization: @user.organization, partner: @partner_1)
       breakdown = DistributionByCountyReportService.new.get_breakdown([distribution_1])
       expect(breakdown.size).to eq(5)
-      expect(breakdown[4][1][:num_items]).to eq(0)
-      expect(breakdown[4][1][:amount]).to be_within(0.01).of(0)
+      expect(breakdown[4].num_items).to eq(0)
+      expect(breakdown[4].amount).to be_within(0.01).of(0)
       (0..3).each do |i|
-        expect(breakdown[i][1][:num_items]).to eq(25)
-        expect(breakdown[i][1][:amount]).to be_within(0.01).of(26250.0)
+        expect(breakdown[i].num_items).to eq(25)
+        expect(breakdown[i].amount).to be_within(0.01).of(26250.0)
       end
     end
 
@@ -41,20 +41,20 @@ RSpec.describe DistributionByCountyReportService, type: :service do
       num_with_0 = 0
       # The result will have at least 1 45 and at least 1 20, and 1 0.  Anything else will be either 45 or 25 or 20
       breakdown.each do |sa|
-        if sa[1][:num_items] == 45
-          expect(sa[1][:amount]).to be_within(0.01).of(47250.0)
+        if sa.num_items == 45
+          expect(sa.amount).to be_within(0.01).of(47250.0)
           num_with_45 += 1
         end
 
-        if sa[1][:num_items] == 25
-          expect(sa[1][:amount]).to be_within(0.01).of(26250.0)
+        if sa.num_items == 25
+          expect(sa.amount).to be_within(0.01).of(26250.0)
         end
-        if sa[1][:num_items] == 20
-          expect(sa[1][:amount]).to be_within(0.01).of(21000.0)
+        if sa.num_items == 20
+          expect(sa.amount).to be_within(0.01).of(21000.0)
           num_with_20 += 1
         end
-        if sa[1][:num_items] == 0
-          expect(sa[1][:amount]).to be_within(0.01).of(0)
+        if sa.num_items == 0
+          expect(sa.amount).to be_within(0.01).of(0)
         end
       end
       expect(num_with_45).to be > 0
