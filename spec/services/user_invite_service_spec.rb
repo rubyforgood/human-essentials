@@ -5,8 +5,8 @@ RSpec.describe UserInviteService, type: :service, skip_seed: true do
     let!(:user) do
       User.create!(name: "Some Name", email: "email@email.com", password: "blahblah!")
     end
-    it "should invite the existing user" do
-      expect { described_class.invite(email: "email@email.com", resource: @organization) }.to change { ActionMailer::Base.deliveries.count }.by(1)
+    it "should not reinvite the existing user" do
+      expect { described_class.invite(email: "email@email.com", resource: @organization) }.not_to change { ActionMailer::Base.deliveries.count }
     end
 
     it "should add roles to existing user" do
@@ -21,10 +21,13 @@ RSpec.describe UserInviteService, type: :service, skip_seed: true do
 
   context "with a new user" do
     it "should create the user with roles" do
-      result = described_class.invite(name: "Another Name",
-        email: "email2@email.com",
-        roles: [Role::ORG_USER, Role::ORG_ADMIN],
-        resource: organization)
+      result = nil
+      expect {
+        result = described_class.invite(name: "Another Name",
+          email: "email2@email.com",
+          roles: [Role::ORG_USER, Role::ORG_ADMIN],
+          resource: organization)
+      }.to change { ActionMailer::Base.deliveries.count }.by(1)
       expect(result.name).to eq("Another Name")
       expect(result.email).to eq("email2@email.com")
       expect(result).to have_role(Role::ORG_USER, organization)

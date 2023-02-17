@@ -2,17 +2,10 @@ module Partners
   class BaseController < ApplicationController
     layout 'partners/application'
 
-    skip_before_action :authorize_user
-
     private
 
     def redirect_to_root
       redirect_to root_path
-    end
-
-    helper_method :current_partner
-    def current_partner
-      current_user.partner
     end
 
     def verify_partner_is_active
