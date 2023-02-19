@@ -37,5 +37,11 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
 
       expect(page.find(".alert")).to have_content "Deleted that user"
     end
+
+    it "filters users by name" do
+      visit admin_users_path
+      fill_in "filterrific_search_name", with: "ba"
+      expect(page).not_to have_content(@organization_admin.name)
+    end
   end
 end
