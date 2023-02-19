@@ -17,7 +17,7 @@
                 <span class="input-group-text"><i class="fa fa-envelope"></i></span>
                 <%= f.input_field :email, class: "form-control"%>
               <% end %>
-              <%= f.input :default_storage_location_id, :collection => current_organization.storage_locations.alphabetized,
+              <%= f.input :default_storage_location_id, :collection => current_organization.storage_locations.active_locations.alphabetized,
                           :label_method => :name,
                           :value_method => :id,
                           :label => "Default Storage Location",
