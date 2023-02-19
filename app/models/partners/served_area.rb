@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: served_areas
+# Table name: partner_served_areas
 #
 #  id                 :bigint           not null, primary key
 #  client_share       :integer
@@ -11,6 +11,7 @@
 #
 module Partners
   class ServedArea < ApplicationRecord
+    self.table_name = "partner_served_areas"
     belongs_to :partner_profile, class_name: "Partners::Profile"
     belongs_to :county
     validates :client_share, numericality: {only_integer: true}
