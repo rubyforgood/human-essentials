@@ -16,7 +16,7 @@ gem "pg", "~> 1.4.5"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "7.0.4"
+gem "rails", "7.0.4.2"
 
 ###### MODELS / DATABASE #######
 
@@ -26,7 +26,7 @@ gem 'azure-storage-blob'
 # Adds soft delete functionality for models.
 gem 'discard', '~> 1.0'
 # Adds grouping by date/month/etc to queries.
-gem "groupdate", "~> 6.1"
+gem "groupdate", "~> 6.2"
 # Treats attributes like money, which knows about dollars and cents.
 gem "money-rails"
 # Tracks history / audits models.
@@ -34,7 +34,7 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.4.1"
+gem "strong_migrations", "1.4.2"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 

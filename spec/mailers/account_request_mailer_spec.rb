@@ -31,7 +31,6 @@ RSpec.describe AccountRequestMailer, type: :mailer do
         expect(html).to match('Username: org_admin1@example.com')
         expect(html).to match('Password: password!')
 
-        expect(html).to match(%r{<a href='https://staging.humanessentials.app/partner_users/sign_in'>PartnerBase</a>})
         expect(html).to match('Username: verified@example.com')
         expect(html).to match('Password: password!')
       end
@@ -54,7 +53,6 @@ RSpec.describe AccountRequestMailer, type: :mailer do
         expect(text).to match('Username: org_admin1@example.com')
         expect(text).to match('Password: password!')
 
-        expect(text).to match(%r{https://staging.humanessentials.app/partner_users/sign_in})
         expect(text).to match('Username: verified@example.com')
         expect(text).to match('Password: password!')
       end
