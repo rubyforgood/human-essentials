@@ -27,36 +27,29 @@
         <!-- Default box -->
         <div class="card">
           <div class="card-header">
-            <div class="float-right">
-              <h2 class="card-title">
-                <%= new_button_to new_admin_user_path, {text: "Invite a new user"} %>
-              </h2>
-            </div>
+            <%= form_for_filterrific @filterrific, remote: true do |f| %>
+              <div class="row flex-row justify-content-between align-items-center">
+                <div class='col-3'>
+                  <%= f.label :search_name, "Search By User Name" %>
+                  <%= f.text_field(:search_name, class: 'filterrific-periodically-observed form-control') %>
+                </div>
+                <div class="col-3">
+                  <%= render_filterrific_spinner %>
+                </div>
+                <div clas="col-9">
+                  <div class="float-right">
+                    <h2 class="card-title">
+                      <%= new_button_to new_admin_user_path, {text: "Invite a new user"} %>
+                    </h2>
+                  </div>
+                </div>
+              </div>
+            <% end %>
           </div>
           <div class="card-body p-0">
-            <table class="table">
-              <thead>
-              <tr>
-                <th>Organization</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th class="text-right">Actions</th>
-              </tr>
-              </thead>
-              <tbody>
-              <% @users.each do |user| %>
-                <tr>
-                  <td><%= user.organization&.name %></td>
-                  <td><%= user.name %></td>
-                  <td><%= user.email %></td>
-                  <td class="text-right">
-                    <%= edit_button_to edit_admin_user_path(user) %>
-                    <%= delete_button_to(admin_user_path(user), {confirm: "Are you sure you want to permanently remove this user?"}) unless user == current_user %>
-                  </td>
-              <% end %>
-              </tr>
-              </tbody>
-            </table>
+            <div id="filterrific_results">
+              <%= render( partial: 'list', locals: { users: @users }) %>
+            </div>
           </div>
           <div class="card-footer clearfix">
             <%= paginate @users %>
