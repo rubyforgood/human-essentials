@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: served_areas
+# Table name: partner_served_areas
 #
 #  id                 :bigint           not null, primary key
 #  client_share       :integer
