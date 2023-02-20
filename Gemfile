@@ -47,7 +47,7 @@ gem "jquery-ui-rails"
 # SASS CSS framework (nested selectors, variables, etc.)
 gem "sass-rails"
 # JavaScript bundler.
-gem 'webpacker', '~> 5.0'
+gem 'webpacker', '~> 5.4'
 # Used to verify that the user is a human.
 gem "recaptcha"
 # Hotwire for SPA like without much JS
