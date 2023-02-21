@@ -19,7 +19,7 @@ class DistributionPdf
                    Organization::DIAPER_APP_LOGO
                  end
 
-    image logo_image, fit: [325, 110]
+    image logo_image, fit: [250, 85]
 
     bounding_box [bounds.right - 225, bounds.top], width: 225, height: 50 do
       text @organization.name, align: :right
@@ -27,23 +27,32 @@ class DistributionPdf
       text @organization.email, align: :right
     end
 
-    text "Issued to:", style: :bold, align: :right
+    text "Issued to:", style: :bold
     font_size 12
-    text @distribution.partner.name, align: :right
+    text @distribution.partner.name
     font_size 10
+    text @distribution.partner.organization.address
+    move_up 34
+
+    text "Primary Contact:", style: :bold, align: :right
+    font_size 12
+    text @distribution.partner.profile.primary_contact_name, align: :right
+    font_size 10
+    text @distribution.partner.profile.primary_contact_email, align: :right
+    text @distribution.partner.profile.primary_contact_phone, align: :right
     move_down 10
 
-    text "Issued on:", style: :bold, align: :right
+    text "Issued on:", style: :bold
     font_size 12
-    text @distribution.distributed_at, align: :right
+    text @distribution.distributed_at
     font_size 10
-    move_down 10
+    move_up 22
 
     text "Items Received Year-to-Date:", style: :bold, align: :right
     font_size 12
     text @distribution.partner.quantity_year_to_date.to_s, align: :right
     font_size 10
-    move_up 10
+    move_down 10
 
     text "Comments:", style: :bold
     font_size 12
