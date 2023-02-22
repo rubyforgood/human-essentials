@@ -1,3 +1,4 @@
+import $ from 'jquery';
 $(document).ready(function() {
   /* Barcode readers will often "helpfully" send a CRLF at the end of the
      scanned string. We're going to capture this and use it to invoke the
@@ -25,7 +26,7 @@ $(document).ready(function() {
    */
   function barcode_item_lookup(value, organization_id,src) {
     // Hardcoding magic URLs isn't ideal but it works for now
-    $.getJSON("/" + organization_id + "/barcode_items/find.json?barcode_item[value]=" + value, function(data) {
+    $.getJSON("/" + organization_id + "/barcode_items/find.json?barcode_item[value]=" + value, {}, function(data) {
          // Preserve this for reference of where we came from.
          data['src'] = src;
          data['value'] = value;
@@ -50,15 +51,15 @@ $(document).ready(function() {
     @param data : JSON object result from the above method. Expecting a JSON-serialized BarcodeItem
   */
   function fill_fields_with_barcode_results(data) {
-    line_item = $(data['src']).closest('.nested-fields');
-      line_item_quantity = data['quantity'];
+    let line_item = $(data['src']).closest('.nested-fields');
+      let line_item_quantity = data['quantity'];
       $('.__barcode_item_lookup').each(function () {
           if (data['src'] != this && data['value'] == this.value) {
               line_item = this.closest('.nested-fields');
               if ($(line_item).attr('scanned_more_than_two_times') != undefined) {
-                  current_total = parseInt($(line_item).find('input[type=number]').val());
-                  current_boops = (current_total / line_item_quantity) + 1;
-                  total_boops = prompt('Enter total number of packages for this item', current_boops);
+                  let current_total = parseInt($(line_item).find('input[type=number]').val());
+                  let current_boops = (current_total / line_item_quantity) + 1;
+                  let total_boops = prompt('Enter total number of packages for this item', current_boops);
                   if (total_boops != null) {
                       total_boops = parseInt(total_boops);
                       line_item_quantity = total_boops * line_item_quantity;
@@ -74,15 +75,16 @@ $(document).ready(function() {
           }
       })
       $(line_item).find('input[type=number]').val(line_item_quantity);
-      $(line_item).find('[value="' + data['item_id'] + '"]').attr("selected", true);
+      $(line_item).find('select').val(data['item_id']);
+      $(line_item).find('select').trigger('change');
 
-      if (data['src'] != $(line_item).closest('.__barcode_item_lookup').context) {
+      if ($(data['src']).closest('.nested-fields')[0] != $(line_item).closest('section')[0]) {
           $(data['src']).closest('.nested-fields').remove();
           $('.line-item-separator:last').remove();
       }
     // This will facilitate serial barcode inputs.
     // First trigger the "add new line item"
-    $('#__add_line_item').trigger('click');
+    document.getElementById('__add_line_item').click();
     // Now focus on the barcode field
     $("input.__barcode_item_lookup").last().focus();
   }
