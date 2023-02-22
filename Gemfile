@@ -46,8 +46,6 @@ gem "jquery-rails"
 gem "jquery-ui-rails"
 # SASS CSS framework (nested selectors, variables, etc.)
 gem "sass-rails"
-# JavaScript bundler.
-gem 'webpacker', '~> 5.0'
 # Used to verify that the user is a human.
 gem "recaptcha"
 # Hotwire for SPA like without much JS
@@ -112,7 +110,7 @@ gem "clockwork"
 gem "mini_racer", "~> 0.6.3"
 gem "nokogiri", ">= 1.10.4"
 gem "image_processing"
-gem "sprockets", "~> 4.2.0"
+gem "sprockets", "~> 4.0.0"
 
 group :production do
   # Reduce the noise of logs and include custom fields to it for easier access
@@ -218,3 +216,5 @@ end
 
 # Use Redis for Action Cable
 gem "redis", "~> 5.0"
+
+gem "importmap-rails", "~> 1.1"
