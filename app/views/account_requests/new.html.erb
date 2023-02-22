@@ -14,7 +14,7 @@
         <%= label_tag(:account, "I am a Partner Agency to an Essentials Bank. I distribute the diapers/period supplies that I receive from essentials banks directly to the public.", class: 'form-check-label') %>
       </div>
 
-      <script>
+      <script type="module">
           $('.account_type').change(function() {
               if (this.value === 'bank') {
                   $('#create_bank').show()

@@ -1,6 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
-import Select2 from "select2"
 import $ from 'jquery';
+import "select2"
 
 export default class extends Controller {
   static values = {
