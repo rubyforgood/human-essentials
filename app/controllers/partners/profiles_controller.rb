@@ -5,7 +5,7 @@ module Partners
     def edit; end
 
     def update
-      if current_partner.update(partner_params)
+      if current_partner.update(partner_params) && current_partner.profile.update(profile_params)
         flash[:success] = "Details were successfully updated."
         redirect_to partners_profile_path
       else
@@ -16,11 +16,13 @@ module Partners
     private
 
     def partner_params
-      params.require(:partners_partner).permit(
-        :name,
+      params.require(:partner).permit(:name)
+    end
+
+    def profile_params
+      params.require(:profile).permit(
         :agency_type,
         :other_agency_type,
-        :partner_status,
         :proof_of_partner_status,
         :agency_mission,
         :address1,
@@ -86,8 +88,9 @@ module Partners
         :essentials_funding_source,
         :enable_child_based_requests,
         :enable_individual_requests,
+        :enable_quantity_based_requests,
         documents: []
-      )
+      ).select { |_, v| v.present? }
     end
   end
 end

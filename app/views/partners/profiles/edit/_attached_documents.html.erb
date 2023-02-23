@@ -7,12 +7,12 @@
             <h3 class="card-title"><strong>Additional Documents</strong></h3>
           </div>
           <div class="card-body">
-            <% if partner.documents.attached? %>
+            <% if profile.documents.attached? %>
               <div class="row">
                 <div class="col-6">
                   Attached files:
                   <ul>
-                    <% partner.documents.each do |doc| %>
+                    <% profile.documents.each do |doc| %>
                       <li><%= link_to doc.blob['filename'], rails_blob_path(doc), class: "font-weight-bold" %></li>
                     <% end %>
                   </ul>

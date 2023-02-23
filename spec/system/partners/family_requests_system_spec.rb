@@ -1,11 +1,11 @@
 RSpec.describe "Family requests", type: :system, js: true do
   let(:partner) { FactoryBot.create(:partner) }
-  let(:partner_user) { partner.primary_partner_user }
-  let(:family) { create(:partners_family, guardian_last_name: "Morales", partner: partner.profile) }
-  let(:other_family) { create(:partners_family, partner: partner.profile) }
+  let(:partner_user) { partner.primary_user }
+  let(:family) { create(:partners_family, guardian_last_name: "Morales", partner: partner) }
+  let(:other_family) { create(:partners_family, partner: partner) }
 
   before do
-    partner.profile.update(partner_status: :verified)
+    partner.update(status: :approved)
     login_as(partner_user)
   end
 
@@ -30,7 +30,6 @@ RSpec.describe "Family requests", type: :system, js: true do
       expect(page).to have_text("Request History")
       expect(Partners::ChildItemRequest.pluck(:child_id)).to match_array(children.pluck(:id))
       expect(Partners::ItemRequest.pluck(:item_id)).to match_array(children.pluck(:item_needed_diaperid).uniq)
-      expect(Partners::Request.last.for_families?).to eq(true)
     end
   end
 

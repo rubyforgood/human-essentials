@@ -1044,7 +1044,25 @@
       "contributions": [
         "code"
       ]
-    }
+    },
+    {
+      "login": "confused-cabbage",
+      "name": "Robert Greene",
+      "avatar_url": "https://avatars.githubusercontent.com/u/65237366?v=4",
+      "profile": "http://robgreene.dev",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "kev-kev",
+      "name": "Kevin Clark",
+      "avatar_url": "https://avatars.githubusercontent.com/u/32309015?v=4",
+      "profile": "https://kev-kev.github.io/portfolio",
+      "contributions": [
+        "code"
+      ]
+    },
   ],
   "contributorsPerLine": 7,
   "projectName": "human-essentials",

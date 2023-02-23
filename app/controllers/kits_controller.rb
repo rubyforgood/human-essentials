@@ -50,7 +50,7 @@ class KitsController < ApplicationController
 
   def allocations
     @kit = Kit.find(params[:id])
-    @storage_locations = current_organization.storage_locations
+    @storage_locations = current_organization.storage_locations.active_locations
     @item_inventories = @kit.item.inventory_items
 
     load_form_collections
@@ -58,7 +58,7 @@ class KitsController < ApplicationController
 
   def allocate
     @kit = Kit.find(params[:id])
-    @storage_location = current_organization.storage_locations.find(kit_adjustment_params[:storage_location_id])
+    @storage_location = current_organization.storage_locations.active_locations.find(kit_adjustment_params[:storage_location_id])
     @change_by = kit_adjustment_params[:change_by].to_i
 
     if @change_by.positive?

@@ -21,6 +21,7 @@
 #  sources_of_income         :jsonb
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
+#  old_partner_id            :bigint
 #  partner_id                :bigint
 #
 
