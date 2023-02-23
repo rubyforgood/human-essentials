@@ -117,5 +117,23 @@ RSpec.describe DistributionCreateService, type: :service do
         expect(result).not_to be_success
       end
     end
+
+    context "when the line item quantity is not positive" do
+      let(:params) {
+        {
+          organization_id: @organization.id,
+          partner_id: @partner.id,
+          storage_location_id: storage_location.id,
+          delivery_method: :delivery,
+          line_items_attributes: { "0": { item_id: storage_location.items.first.id, quantity: 0 } }
+        }
+      }
+
+      it "preserves the RecordInvalid error and is unsuccessful" do
+        result = subject.new(params).call
+        expect(result.error).to be_instance_of(ActiveRecord::RecordInvalid)
+        expect(result).not_to be_success
+      end
+    end
   end
 end

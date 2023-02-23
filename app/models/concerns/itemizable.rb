@@ -47,7 +47,17 @@ module Itemizable
       end
 
       def quantities_by_category
-        includes(:item).group("items.category").sum(:quantity)
+        results = {}
+
+        # Gather the quantities first
+        each do |li|
+          next if li.quantity.zero?
+
+          results[li.item.item_category_id] ||= 0
+          results[li.item.item_category_id] += li.quantity
+        end
+
+        results
       end
 
       def quantities_by_name
@@ -72,10 +82,13 @@ module Itemizable
         sum(&:value_per_line_item)
       end
     end
+
     has_many :items, through: :line_items
     accepts_nested_attributes_for :line_items,
                                   allow_destroy: true,
                                   reject_if: proc { |l| l[:item_id].blank? || l[:quantity].blank? }
+
+    has_many :item_categories, through: :items
 
     # Anything using line_items should not be OK with an invalid line_item
     validates_associated :line_items
@@ -109,8 +122,7 @@ module Itemizable
 
     line_items.each do |line_item|
       next unless line_item.item
-
-      next unless line_item.quantity <= 0
+      next unless !line_item.quantity.nil? && line_item.quantity <= 0
 
       errors.add(:inventory,
                  "#{line_item.item.name}'s quantity " \

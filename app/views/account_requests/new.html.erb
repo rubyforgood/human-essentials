@@ -14,7 +14,7 @@
         <%= label_tag(:account, "I am a Partner Agency to an Essentials Bank. I distribute the diapers/period supplies that I receive from essentials banks directly to the public.", class: 'form-check-label') %>
       </div>
 
-      <script>
+      <script type="module">
           $('.account_type').change(function() {
               if (this.value === 'bank') {
                   $('#create_bank').show()
@@ -32,7 +32,7 @@
       </script>
 
       <div class='card-text' id='partner_info'>
-        <p class='p-2'>Are you a current partner to a diaper and/or period supply banks? If so please go to the <a href='https://www.humanessentials.app/partner_users/sign_in'>partner app</a> to login.</p>
+        <p class='p-2'>Are you a current partner to diaper and/or period supply banks? If so please go <a href='https://humanessentials.app/users/sign_in'>here</a> to login.</p>
         <p class='p-2'>If you are wishing to receive diapers/period supplies and partner to a local diaper/period supply bank please contact your local bank. They are the only ones able create your account.</p>
       </div>
 

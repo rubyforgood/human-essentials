@@ -30,7 +30,8 @@
               <%= render partial: 'partners/requests/error' %>
             <% end %>
 
-            <%= simple_form_for @partner_request, html: {role: 'form', class: 'form-horizontal'} do |form| %>
+            <%= simple_form_for @partner_request, url: partners_requests_path(@partner_request, :organization_id => current_partner.organization.id),
+                                html: {role: 'form', class: 'form-horizontal'}, method: :post do |form| %>
               <%= form.input :comments, label: "Comments:", as: :text, class: "form-control", wrapper: :input_group %>
 
               <table class='table'>
@@ -65,7 +66,7 @@
   </div>
 </section>
 
-<script type="text/javascript">
+<script type="module">
   $(document).ready(function() {
     $(document).on('click', '[data-add-target][data-add-template]', (event) => {
       var button = $(event.target)

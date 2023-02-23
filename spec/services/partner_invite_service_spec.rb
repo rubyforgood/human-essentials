@@ -6,7 +6,7 @@ describe PartnerInviteService do
 
   context 'when the user has already been invited' do
     before do
-      expect(partner.profile.primary_user).not_to eq(nil)
+      expect(partner.primary_user).not_to eq(nil)
     end
 
     it 'should return an error saying they are invited already' do
@@ -17,8 +17,8 @@ describe PartnerInviteService do
   context 'when the user has not been invited yet' do
     let(:partner) do
       partner = create(:partner, :uninvited)
-      partner.profile.primary_user.delete
-      partner.profile.reload
+      partner.primary_user.delete
+      partner.reload
       partner
     end
 
@@ -37,7 +37,7 @@ describe PartnerInviteService do
       expect(UserInviteService).to have_received(:invite).with(
         email: partner.email,
         roles: [Role::PARTNER],
-        resource: partner.profile
+        resource: partner
       )
     end
   end

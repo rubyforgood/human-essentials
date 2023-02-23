@@ -30,7 +30,7 @@ RSpec.describe "User sign-in handling", type: :system, js: true do
   context 'when a partner user logs in' do
     it 'redirects to the partner page' do
       partner = create(:partner)
-      partner_user = create(:partners_user, partner: partner.profile)
+      partner_user = create(:partners_user, partner: partner)
       fill_in "Email", with: partner_user.email
       fill_in "user_password", with: partner_user.password
       click_button "Log in"

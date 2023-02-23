@@ -34,16 +34,11 @@
           <div class="card-body">
             <!-- Default box -->
             <div class="box">
-            <%= simple_form_for @distribution, method: :post, url: distributions_path(organization: @organization, request_id: params[:request_id]),
-                                   html: {class: "storage-location-required"},
-                                   wrapper_mappings: {
-                                   datetime: :custom_multi_select } do |f| %>
-              <%= render 'form', distribution: @distribution, f: f %>
-            <% end %>
-          </div><!-- /.box -->
+              <%= render 'form', distribution: @distribution %>
+            </div><!-- /.box -->
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <%= render partial: "barcode_items/barcode_modal" %>
+    <%= render partial: "barcode_items/barcode_modal" %>
 </section>

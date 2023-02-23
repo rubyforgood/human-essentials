@@ -10,7 +10,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
       let!(:partner_awaiting_approval) { create(:partner, :awaiting_review) }
 
       before do
-        expect(partner_awaiting_approval.profile.partner_status).not_to eq('approval')
+        expect(partner_awaiting_approval.status).not_to eq(:approved)
       end
 
       context 'when the approval succeeds' do
@@ -25,7 +25,6 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           assert page.has_content? 'Partner approved!'
 
           expect(partner_awaiting_approval.reload.approved?).to eq(true)
-          expect(partner_awaiting_approval.profile.reload.partner_status).to eq(Partners::Partner::VERIFIED_STATUS)
         end
       end
 
@@ -47,7 +46,6 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           assert page.has_content? "Failed to approve partner because: #{fake_error_msg}"
 
           expect(partner_awaiting_approval.reload.approved?).to eq(false)
-          expect(partner_awaiting_approval.profile.reload.partner_status).not_to eq(Partners::Partner::VERIFIED_STATUS)
         end
       end
     end
@@ -153,7 +151,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
       it "allows a user to invite a partner", js: true do
         partner = create(:partner, name: 'Charities')
-        partner.profile.primary_user.delete
+        partner.primary_user.delete
 
         visit url_prefix + "/partners"
 
@@ -294,6 +292,12 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
         expect(page.find(".alert")).to have_content "Failed to add partner due to:"
       end
+
+      it "should not display inactive storage locations in dropdown" do
+        create(:storage_location, name: "Inactive R Us", discarded_at: Time.zone.now)
+        visit subject
+        expect(page).to have_no_content "Inactive R Us"
+      end
     end
 
     describe "#edit" do
@@ -352,7 +356,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
       context "when viewing a partner's users" do
         subject { url_prefix + "/partners/#{partner.id}" }
         let(:partner) { create(:partner, name: "Partner") }
-        let(:partner_user) { partner.profile.users.first }
+        let(:partner_user) { partner.users.first }
         let(:invitation_sent_at) { partner_user.invitation_sent_at.to_formatted_s(:date_picker) }
         let(:last_sign_in_at) { partner_user.last_sign_in_at.to_formatted_s(:date_picker) }
 

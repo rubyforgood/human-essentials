@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe "/partners/requests", type: :request do
   describe "GET #index" do
     subject { -> { get partners_requests_path } }
-    let(:partner_user) { Partners::Partner.find_by(partner_id: partner.id).primary_user }
+    let(:partner_user) { partner.primary_user }
     let(:partner) { create(:partner) }
 
     before do
@@ -18,7 +18,7 @@ RSpec.describe "/partners/requests", type: :request do
 
   describe "GET #new" do
     subject { -> { get new_partners_request_path } }
-    let(:partner_user) { Partners::Partner.find_by(partner_id: partner.id).primary_user }
+    let(:partner_user) { partner.primary_user }
     let(:partner) { create(:partner) }
 
     before do
@@ -39,8 +39,8 @@ RSpec.describe "/partners/requests", type: :request do
   end
 
   describe "POST #create" do
-    subject { -> { post partners_requests_path, params: { partners_request: partners_request_attributes } } }
-    let(:partners_request_attributes) do
+    subject { -> { post partners_requests_path, params: { request: request_attributes } } }
+    let(:request_attributes) do
       {
         comments: Faker::Lorem.paragraph,
         item_requests_attributes: {
@@ -51,7 +51,7 @@ RSpec.describe "/partners/requests", type: :request do
         }
       }
     end
-    let(:partner_user) { Partners::Partner.find_by(partner_id: partner.id).primary_user }
+    let(:partner_user) { partner.primary_user }
     let(:partner) { create(:partner) }
 
     before do
@@ -59,7 +59,7 @@ RSpec.describe "/partners/requests", type: :request do
     end
 
     context 'when given valid parameters' do
-      let(:partners_request_attributes) do
+      let(:request_attributes) do
         {
           comments: Faker::Lorem.paragraph,
           item_requests_attributes: {
@@ -73,12 +73,12 @@ RSpec.describe "/partners/requests", type: :request do
 
       it 'should redirect to the show page' do
         subject.call
-        expect(response).to redirect_to(partners_request_path(Partners::Request.last.id))
+        expect(response).to redirect_to(partners_request_path(Request.last.id))
       end
     end
 
     context 'when given invalid parameters' do
-      let(:partners_request_attributes) do
+      let(:request_attributes) do
         {
           comments: ""
         }
