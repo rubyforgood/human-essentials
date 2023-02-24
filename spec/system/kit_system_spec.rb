@@ -81,6 +81,18 @@ RSpec.describe "Kit management", type: :system do
     expect(storage_location.inventory_items.find_by(item_id: existing_kit_item_2.id).quantity).to eq(original_item_2_count)
   end
 
+  it 'should not display inactive storage locations under allocations' do
+    inactive_location = create(:storage_location, organization_id: @organization.id, name: "Inactive R Us", discarded_at: Time.zone.now)
+    setup_storage_location(inactive_location)
+    kit_params = {
+      organization_id: @organization.id,
+      name: "Fake Kit"
+    }
+    KitCreateService.new(organization_id: @organization.id, kit_params: kit_params).tap(&:call).kit
+    visit url_prefix + "/kits/"
+    expect(page).to have_no_text("Inactive R Us")
+  end
+
   context 'when there is not enough quantity of the items contained in the kit on-hand' do
     before do
       # Force there to be no loose items available

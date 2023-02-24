@@ -1,3 +1,2 @@
 web: bundle exec rails s -p 3000
 worker: bundle exec rails jobs:work
-webpack: bin/webpack-dev-server

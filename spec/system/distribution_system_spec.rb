@@ -127,6 +127,12 @@ RSpec.feature "Distributions", type: :system do
         expect(find("#distribution_storage_location_id").text).to eq(@storage_location.name)
       end
     end
+    it "should not display inactive storage locations in dropdown" do
+      inactive_location = create(:storage_location, name: "Inactive R Us", discarded_at: Time.zone.now)
+      setup_storage_location(inactive_location)
+      visit @url_prefix + "/distributions/new"
+      expect(page).to have_no_content "Inactive R Us"
+    end
   end
 
   it "errors if user does not fill storage_location" do
@@ -500,5 +506,11 @@ RSpec.feature "Distributions", type: :system do
     end
 
     it_behaves_like "Date Range Picker", Distribution, :issued_at
+
+    it "should not display inactive storage locations in dropdown" do
+      create(:storage_location, name: "Inactive R Us", discarded_at: Time.zone.now)
+      visit subject
+      expect(page).to have_no_content "Inactive R Us"
+    end
   end
 end
