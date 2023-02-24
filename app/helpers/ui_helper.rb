@@ -198,7 +198,8 @@ module UiHelper
     size = options[:text] || "sm"
     type = options[:type] || "danger"
 
-    link_to_remove_association form, class: "btn btn-#{size} btn-#{type} remove_served_area", style: "width: 100px;" do
+    link_to_remove_association form, class: "btn btn-#{size} btn-#{type} remove_served_area", style: "width: 100px;",
+                               "data-action": "click->served-area#zeroShareValue click->area-served#calculateClientShareTotal" do
       fa_icon "trash", text: text
     end
   end

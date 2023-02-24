@@ -5,15 +5,12 @@ export default class extends Controller {
         this.calculateClientShareTotal()
     }
     calculateClientShareTotal(){
-        console.log("mark a")
         let total = 0;
         let share_targets = this.shareTargets
         share_targets.forEach( share_target =>{
-            if(share_target.value){
-                total += parseInt(share_target.value);
-                console.log("total becomes", total)
-            }
-
+                if(share_target.value){
+                    total += parseInt(share_target.value);
+                }
         }
         )
 
