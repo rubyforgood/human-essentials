@@ -252,7 +252,7 @@ GEM
       thor (>= 0.14, < 2.0)
     jquery-ui-rails (6.0.1)
       railties (>= 3.2.16)
-    json (2.6.2)
+    json (2.6.3)
     jwt (2.6.0)
     kaminari (1.2.2)
       activesupport (>= 4.1.0)
@@ -502,10 +502,10 @@ GEM
     rubocop-performance (1.15.2)
       rubocop (>= 1.7.0, < 2.0)
       rubocop-ast (>= 0.4.0)
-    rubocop-rails (2.9.1)
+    rubocop-rails (2.17.4)
       activesupport (>= 4.2.0)
       rack (>= 1.1)
-      rubocop (>= 0.90.0, < 2.0)
+      rubocop (>= 1.33.0, < 2.0)
     ruby-graphviz (1.2.5)
       rexml
     ruby-progressbar (1.11.0)
@@ -688,7 +688,7 @@ DEPENDENCIES
   rspec-rails (~> 6.0.1)
   rspec-retry
   rubocop
-  rubocop-rails (~> 2.9.0)
+  rubocop-rails (~> 2.17.4)
   sass-rails
   shoulda-matchers (~> 5.3)
   simple_form
