@@ -38,6 +38,7 @@ class Distribution < ApplicationRecord
 
   validates :storage_location, :partner, :organization, :delivery_method, presence: true
   validate :line_item_items_exist_in_inventory
+  validate :line_item_items_quantity_is_positive
 
   before_save :combine_distribution
 

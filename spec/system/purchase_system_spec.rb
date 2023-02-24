@@ -254,6 +254,11 @@ RSpec.describe "Purchases", type: :system, js: true do
           raise
         end
       end
+      it "should not display inactive storage locations in dropdown" do
+        create(:storage_location, name: "Inactive R Us", discarded_at: Time.zone.now)
+        visit subject
+        expect(page).to have_no_content "Inactive R Us"
+      end
     end
 
     context "When visiting an existing purchase" do

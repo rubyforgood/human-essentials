@@ -73,6 +73,7 @@ Rails.application.routes.draw do
   scope path: ":organization_id" do
     resources :users do
       get :switch_to_role, on: :collection
+      post :partner_user_reset_password, on: :collection
     end
 
     # Users that are organization admins can manage the organization itself

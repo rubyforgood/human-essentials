@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 // Place all the behaviors and hooks related to the matching controller here.
 // All this logic will automatically be available in application.js.
 
@@ -77,7 +79,8 @@ $(function() {
   $(document).on(
     "cocoon:after-insert",
     "form.storage-location-required",
-    function(e, insertedItem) {
+    function(e) {
+      const insertedItem = $(e.detail[2]);
       request_storage_location_and_populate_item($("select", insertedItem));
       insertedItem
         .find("#_barcode-lookup-new_line_items")
