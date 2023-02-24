@@ -142,7 +142,7 @@ GEM
       delayed_job (> 2.0.3)
       rack-protection (>= 1.5.5)
       sinatra (>= 1.4.4)
-    devise (4.8.1)
+    devise (4.9.0)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
       railties (>= 4.1.0)
@@ -458,9 +458,9 @@ GEM
     regexp_parser (2.6.0)
     request_store (1.5.1)
       rack (>= 1.4)
-    responders (3.0.1)
-      actionpack (>= 5.0)
-      railties (>= 5.0)
+    responders (3.1.0)
+      actionpack (>= 5.2)
+      railties (>= 5.2)
     rexml (3.2.5)
     rolify (6.0.1)
     rspec (3.11.0)
@@ -605,7 +605,7 @@ GEM
       nokogiri (~> 1.8)
     yard (0.9.28)
       webrick (~> 1.7.0)
-    zeitwerk (2.6.6)
+    zeitwerk (2.6.7)
 
 PLATFORMS
   arm64-darwin-21
