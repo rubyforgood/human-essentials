@@ -26,7 +26,7 @@ RSpec.describe DistributionByCountyReportService, type: :service do
       expect(breakdown.size).to eq(5)
       expect(breakdown[4].num_items).to eq(0)
       expect(breakdown[4].amount).to be_within(0.01).of(0)
-      (0..3).each do |i|
+      3.times do |i|
         expect(breakdown[i].num_items).to eq(25)
         expect(breakdown[i].amount).to be_within(0.01).of(26250.0)
       end
