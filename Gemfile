@@ -34,7 +34,7 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.4.2"
+gem "strong_migrations", "1.4.3"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
@@ -161,7 +161,7 @@ group :development, :test do
   # Rails add-on for static analysis.
   gem "rubocop-rails", "~> 2.9.0"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.0"
+  gem "standard", "~> 1.24"
 end
 
 group :development do
