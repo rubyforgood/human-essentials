@@ -9,8 +9,8 @@ describe DistributionPdf do
     FactoryBot.create(:line_item, itemizable: distribution, item: item1, quantity: 50)
     FactoryBot.create(:line_item, itemizable: distribution, item: item2, quantity: 100)
     FactoryBot.create(:request, distribution: distribution,
-                      request_items: [{"item_id" => item2.id, "quantity" => 30},
-                        {"item_id" => item3.id, "quantity" => 50}])
+      request_items: [{"item_id" => item2.id, "quantity" => 30},
+        {"item_id" => item3.id, "quantity" => 50}])
   end
 
   specify "#request_data" do
