@@ -15,6 +15,6 @@ class ItemCategory < ApplicationRecord
   validates :description, length: { maximum: 250 }
 
   belongs_to :organization
-  has_many :items, -> { order(name: :asc) }, inverse_of: :item_category
+  has_many :items, -> { order(name: :asc) }, inverse_of: :item_category, dependent: :restrict_with_exception
   has_many :partner_groups, dependent: :nullify
 end
