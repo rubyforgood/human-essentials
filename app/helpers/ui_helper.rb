@@ -148,7 +148,7 @@ module UiHelper
     # user sparingly.
     center = options[:center].present? ? "center-block" : ""
 
-    disabled = options[:enabled] || options[:enabled].nil? ? "" : "disabled"
+    disabled = (options[:enabled] || options[:enabled].nil?) ? "" : "disabled"
 
     klass = "#{options[:class] || ""} btn btn-#{type} btn-#{size} #{center} #{disabled}"
 
