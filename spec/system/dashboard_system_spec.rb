@@ -172,7 +172,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
         before_filtered_date_range = start_date.yesterday.to_date
         after_filtered_date_range = end_date.tomorrow.to_date
 
-        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.to_formatted_s(:date_picker)}
+        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.to_formatted_s(:date_picker) }
 
         # Ideally different date ranges get different counts (incl. 0!) to test the various combinations
         # w/out making a fixed pattern
@@ -289,7 +289,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
         before_filtered_date_range = start_date.yesterday.to_date
         after_filtered_date_range = end_date.tomorrow.to_date
 
-        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.to_formatted_s(:date_picker)}
+        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.to_formatted_s(:date_picker) }
 
         # Ideally different date ranges get different counts (incl. 0!) to test the various combinations
         # w/out making a fixed pattern
@@ -404,7 +404,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
         before_filtered_date_range = start_date.yesterday.to_date
         after_filtered_date_range = end_date.tomorrow.to_date
 
-        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.to_formatted_s(:date_picker)}
+        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.to_formatted_s(:date_picker) }
 
         # Ideally different date ranges get different counts (incl. 0!) to test the various combinations
         # w/out making a fixed pattern
@@ -576,7 +576,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
         before_filtered_date_range = start_date.yesterday.to_date
         after_filtered_date_range = end_date.tomorrow.to_date
 
-        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.to_formatted_s(:date_picker)}
+        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.to_formatted_s(:date_picker) }
 
         # Ideally different date ranges get different counts (incl. 0!) to test the various combinations
         # w/out making a fixed pattern
@@ -719,7 +719,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
         before_filtered_date_range = start_date.yesterday.to_date
         after_filtered_date_range = end_date.tomorrow.to_date
 
-        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.to_formatted_s(:date_picker)}
+        start_date_formatted, end_date_formatted = [start_date, end_date].map { _1.to_formatted_s(:date_picker) }
 
         # Ideally different date ranges get different counts (incl. 0!) to test the various combinations
         # w/out making a fixed pattern
