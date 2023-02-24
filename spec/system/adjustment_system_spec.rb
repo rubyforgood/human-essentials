@@ -92,6 +92,12 @@ RSpec.describe "Adjustment management", type: :system, js: true do
         expect(page).to have_content("items exceed the available inventory")
       end
     end
+
+    it "should not display inactive storage locations in dropdown" do
+      create(:storage_location, name: "Inactive R Us", discarded_at: Time.zone.now)
+      visit url_prefix + "/adjustments/new"
+      expect(page).to have_no_content "Inactive R Us"
+    end
   end
 
   it "can filter the #index by storage location" do
@@ -116,6 +122,12 @@ RSpec.describe "Adjustment management", type: :system, js: true do
     click_on "Filter"
 
     expect(page).to have_css("table tr", count: 2)
+  end
+
+  it "should not display inactive storage locations in dropdown" do
+    create(:storage_location, name: "Inactive R Us", discarded_at: Time.zone.now)
+    visit subject
+    expect(page).to have_no_content "Inactive R Us"
   end
 
   it_behaves_like "Date Range Picker", Adjustment

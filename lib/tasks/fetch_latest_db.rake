@@ -15,7 +15,10 @@ task :fetch_latest_db => :environment do
 
   puts "Restoring the database with #{backup.name}"
   backup_filepath = fetch_file_path(backup)
-  system("pg_restore --clean --no-acl --no-owner -h localhost -d diaper_dev #{backup_filepath}")
+  db_username = ENV.fetch("PG_USERNAME", 'postgres')
+  db_host = ENV.fetch("PG_HOST", 'localhost')
+  system("pg_restore --clean --no-acl --no-owner -h #{db_host} -d diaper_dev -U #{db_username} #{backup_filepath}")
+
   puts "Done!"
 
   # Update the ar_internal_metadata table to have the correct environment
