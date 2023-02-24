@@ -1,0 +1,31 @@
+import { Controller } from "@hotwired/stimulus"
+export default class extends Controller {
+    static targets= ["share", "total", "warning"]
+    connect () {
+        this.calculateClientShareTotal()
+    }
+    calculateClientShareTotal(){
+        console.log("mark a")
+        let total = 0;
+        let share_targets = this.shareTargets
+        share_targets.forEach( share_target =>{
+            if(share_target.value){
+                total += parseInt(share_target.value);
+                console.log("total becomes", total)
+            }
+
+        }
+        )
+
+        this.totalTarget.innerHTML = total + " %"
+
+        if(total == 0 || total == 100){
+            this.warningTarget.style.visibility= 'hidden';
+        }else {
+            this.warningTarget.style.visibility= 'visible';
+            this.warningTarget.style.color= 'red';
+        }
+        return total;
+    }
+
+}
