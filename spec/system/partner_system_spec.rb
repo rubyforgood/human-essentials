@@ -292,6 +292,12 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
         expect(page.find(".alert")).to have_content "Failed to add partner due to:"
       end
+
+      it "should not display inactive storage locations in dropdown" do
+        create(:storage_location, name: "Inactive R Us", discarded_at: Time.zone.now)
+        visit subject
+        expect(page).to have_no_content "Inactive R Us"
+      end
     end
 
     describe "#edit" do

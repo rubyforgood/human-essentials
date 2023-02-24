@@ -35,6 +35,12 @@ RSpec.describe "Donations", type: :system, js: true do
         item.reload
         expect { visit(@url_prefix + "/donations") }.to_not raise_error
       end
+
+      it "should not display inactive storage locations in dropdown" do
+        create(:storage_location, name: "Inactive R Us", discarded_at: Time.zone.now)
+        visit subject
+        expect(page).to have_no_content "Inactive R Us"
+      end
     end
 
     context "When filtering on the index page" do
@@ -496,6 +502,12 @@ RSpec.describe "Donations", type: :system, js: true do
             expect(qty).to eq(@global_barcode.quantity.to_s)
           end
         end
+      end
+
+      it "should not display inactive storage locations in dropdown" do
+        create(:storage_location, name: "Inactive R Us", discarded_at: Time.zone.now)
+        visit @url_prefix + "/donations/new"
+        expect(page).to have_no_content "Inactive R Us"
       end
     end
 

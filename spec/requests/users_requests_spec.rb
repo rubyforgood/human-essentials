@@ -24,6 +24,31 @@ RSpec.describe "Users", type: :request do
     end
   end
 
+  describe "POST #send_partner_user_reset_password" do
+    let(:partner) { create(:partner) }
+    let!(:user) { create(:partner_user, partner: partner, email: "me@partner.com") }
+    let(:params) { default_params.merge(partner_id: partner.id, email: "me@partner.com") }
+
+    it "should send a password" do
+      post partner_user_reset_password_users_path(params)
+      expect(response).to redirect_to(root_path(organization_id: @organization.to_param))
+      expect(ActionMailer::Base.deliveries.size).to eq(1)
+    end
+
+    it "should return an error if organization does not own the partner" do
+      org2 = create(:organization)
+      partner.update!(organization_id: org2.id)
+      post partner_user_reset_password_users_path(params)
+      expect(ActionMailer::Base.deliveries.size).to eq(0)
+    end
+
+    it "should return an error if it cannot find the user" do
+      user.update!(email: "some-other-email@mail.com")
+      post partner_user_reset_password_users_path(params)
+      expect(ActionMailer::Base.deliveries.size).to eq(0)
+    end
+  end
+
   describe "GET #switch_to_partner_role" do
     let(:admin_user) do
       org = create(:organization)

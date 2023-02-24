@@ -29,6 +29,7 @@ dump.rdb
 /log/*.log
 /tmp
 .env
+.env.production
 .byebug_history
 
 # Ignore locally installed bundled gems
@@ -53,6 +54,8 @@ dump.rdb
 # Ignore Docker stuff (see issues #503, #603)
 Dockerfile
 docker-compose.yml
+.dockerignore
+
 /public/packs
 /public/packs-test
 /node_modules
