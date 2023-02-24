@@ -13,7 +13,6 @@ class TransfersController < ApplicationController
     @selected_to = filter_params[:to_location]
     @from_storage_locations = Transfer.storage_locations_transferred_from_in(current_organization)
     @to_storage_locations = Transfer.storage_locations_transferred_to_in(current_organization)
-
     respond_to do |format|
       format.html
       format.csv { send_data Transfer.generate_csv(@transfers), filename: "Transfers-#{Time.zone.today}.csv" }
@@ -44,7 +43,7 @@ class TransfersController < ApplicationController
   def new
     @transfer = current_organization.transfers.new
     @transfer.line_items.build
-    @storage_locations = current_organization.storage_locations.alphabetized
+    @storage_locations = current_organization.storage_locations.active_locations.alphabetized
     @items = current_organization.items.active.alphabetized
   end
 
@@ -70,7 +69,7 @@ class TransfersController < ApplicationController
   private
 
   def load_form_collections
-    @storage_locations = current_organization.storage_locations.alphabetized
+    @storage_locations = current_organization.storage_locations.active_locations.alphabetized
     @items = current_organization.items.alphabetized
   end
 

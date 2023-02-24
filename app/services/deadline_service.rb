@@ -19,7 +19,7 @@ class DeadlineService
 
   # Returns the first non-nil value for method receivers
   def next_date(day)
-    date = (@today.day >= day ? @today.next_month : @today)
+    date = ((@today.day >= day) ? @today.next_month : @today)
     date.change(day: day)
   end
 end

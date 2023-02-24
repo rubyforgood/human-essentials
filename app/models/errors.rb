@@ -36,10 +36,10 @@ module Errors
     #   that are insufficient.
     ###
     def message
-      super.to_s + ("<ul><li>" + insufficient_items.map do |i|
+      super.to_s + (" " + insufficient_items.map do |i|
         "#{i[:quantity_requested]} #{i[:item_name]} requested, only #{i[:quantity_on_hand]} available." \
         "(Reduce by #{i[:quantity_requested].to_i - i[:quantity_on_hand].to_i})"
-      end.join("</li><li>") + "</li></ul>")
+      end.join(""))
     end
   end
 

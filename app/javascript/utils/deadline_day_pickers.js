@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 $(document).ready(function () {
   const container_selector = '.deadline-day-pickers';
   const reminder_selector = '.deadline-day-pickers__reminder-day';

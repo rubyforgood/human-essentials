@@ -1,19 +1,14 @@
 # Encapsulates methods that need some business logic
 module ItemsHelper
+  include MoneyRails::ActionViewExtension
+
   def dollar_presentation(value)
     dollars = cents_to_dollar(value)
-    rounds_to_self = dollars.round == value
-    precision = rounds_to_self ? 0 : 2
-
-    ActionController::Base.helpers.number_to_currency(dollars, precision: precision)
+    humanized_money_with_symbol(dollars)
   end
 
   def dollar_value(value)
-    if value.zero?
-      ''
-    else
-      dollar_presentation(value)
-    end
+    value.zero? ? '' : dollar_presentation(value)
   end
 
   def cents_to_dollar(value_in_cents)
