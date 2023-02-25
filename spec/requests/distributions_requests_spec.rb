@@ -143,7 +143,7 @@ RSpec.describe "Distributions", type: :request do
       end
 
       it "sums distribution totals accurately" do
-        distribution = create(:distribution, :with_items, item_quantity: 0)
+        distribution = create(:distribution, :with_items, item_quantity: 1)
 
         item_quantity = 6
         package_size = 2
@@ -158,7 +158,7 @@ RSpec.describe "Distributions", type: :request do
         )
         get distribution_path(default_params.merge(id: distribution.id))
 
-        expect(assigns(:total_quantity)).to eq(item_quantity)
+        expect(assigns(:total_quantity)).to eq(item_quantity + 1)
         expect(assigns(:total_package_count)).to eq(item_quantity / package_size)
       end
     end

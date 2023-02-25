@@ -32,7 +32,7 @@ class Audit < ApplicationRecord
   validate :user_is_organization_admin_of_the_organization
 
   def self.storage_locations_audited_for(organization)
-    includes(:storage_location).where(organization_id: organization.id).collect(&:storage_location).sort
+    includes(:storage_location).joins(:storage_location).where(organization_id: organization.id, storage_location: {discarded_at: nil}).collect(&:storage_location).sort
   end
 
   def user_is_organization_admin_of_the_organization
