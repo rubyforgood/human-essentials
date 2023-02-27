@@ -29,7 +29,7 @@
           <div class="card-header">
             <%= form_for_filterrific @filterrific, remote: true do |f| %>
               <div class="row flex-row justify-content-between align-items-center">
-                <div class='col-3'>
+                <div class="col-3">
                   <%= f.label :search_name, "Search By User Name" %>
                   <%= f.text_field(:search_name, class: 'filterrific-periodically-observed form-control') %>
                 </div>
@@ -60,4 +60,3 @@
     </div>
   </div>
 </section>
-
