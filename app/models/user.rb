@@ -64,7 +64,7 @@ class User < ApplicationRecord
   scope :alphabetized, -> { order(discarded_at: :desc, name: :asc) }
   scope :partner_users, -> { with_role(Role::PARTNER, :any) }
   scope :org_users, -> { with_role(Role::ORG_USER, :any) }
-  scope :search_name, ->(query) { where('name ilike ?', "%#{query}%") }
+  scope :search_name, ->(query) { where("name ilike ?", "%#{query}%") }
 
   filterrific(
     available_filters: [
