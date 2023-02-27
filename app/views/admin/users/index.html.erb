@@ -27,11 +27,6 @@
         <!-- Default box -->
         <div class="card">
           <div class="card-header">
-            <div class="float-right">
-              <h2 class="card-title">
-                <%= new_button_to new_admin_user_path, {text: "Invite a new user"} %>
-              </h2>
-            </div>
             <%= form_for_filterrific @filterrific, remote: true do |f| %>
               <div class="row flex-row justify-content-between align-items-center">
                 <div class="col-3">
