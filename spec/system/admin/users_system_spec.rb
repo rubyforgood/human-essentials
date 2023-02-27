@@ -39,9 +39,21 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
     end
 
     it "filters users by name" do
+      new_user = User.create!(name: "Willow", email: "email@email.com", password: "blahblah!")
+      user_names = User.all.pluck(:name)
+
       visit admin_users_path
-      fill_in "filterrific_search_name", with: "ba"
-      expect(page).not_to have_content(@organization_admin.name)
+      user_names.each do |name|
+        expect(page).to have_content(name)
+      end
+
+      user_names.delete("Willow")
+
+      fill_in "filterrific_search_name", with: new_user.name
+      user_names.each do |name|
+        expect(page).not_to have_content(name)
+      end
+      expect(page).to have_content(new_user.name)
     end
   end
 end
