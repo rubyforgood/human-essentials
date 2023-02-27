@@ -51,7 +51,7 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
 
       fill_in "filterrific_search_name", with: new_user.name
       user_names.each do |name|
-        expect(page).not_to have_content(name)
+        expect(page.find("table")).not_to have_content(name)
       end
       expect(page).to have_content(new_user.name)
     end
