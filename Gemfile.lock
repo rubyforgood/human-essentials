@@ -569,7 +569,7 @@ GEM
       railties (>= 6.0.0)
     strong_migrations (1.4.3)
       activerecord (>= 5.2)
-    terser (1.1.13)
+    terser (1.1.14)
       execjs (>= 0.3.0, < 3)
     thor (1.2.1)
     tilt (2.0.10)
