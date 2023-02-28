@@ -107,24 +107,6 @@ Once you've successfully installed ruby. You may proceed to the next section!
 **My RBENV installation did not work**
 The rbenv repository provides a [rbenv-doctor script](https://github.com/rbenv/rbenv-installer#rbenv-doctor) to verify the state of the rbenv installation and if a ruby version is installed
 
-### Install Node
-You must install the version of node specified in [`.nvmrc`](.nvmrc). You can follow the guide [here](https://heynode.com/tutorial/install-nodejs-locally-nvm/) for setting up node.
-
-You can verify that your node installation was successful and matches the version in [`.nvmrc`](.nvmrc) by running in the project directory:
-```
-node -v
-```
-
-*NOTE: It's possible that Node version 12 may cause you problems, see issue #751. Node 10 or 11 seem to be fine.*
-
-### Install Yarn
-You can install yarn by following the instructions [here](https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable)
-
-You can verify that yarn was installed correctly by running this and seeing a version get returned in the project directory:
-```
-yarn -v
-```
-
 ### Install Postgres
 You must install postgres and run the database locally. Instructions differ depending on the operating system.
 
@@ -136,7 +118,7 @@ Create a `database.yml` file on `config/` directory with your database configura
 - Ubuntu - TODO
 - Windows - Do you develop on windows? We'd love to hear (and for you to submit a PR explaining) how you do it. 🙏🏻
 
-After completing this step, you should have both ruby, node, and postgres installed. Now you can proceed to the next step which is to setup the application.
+After completing this step, you should have both ruby and postgres installed. Now you can proceed to the next step which is to setup the application.
 
 ### Run Setup
 Run the following command should run all the neccessary steps to get up and running.
