@@ -374,7 +374,7 @@ GEM
     parser (3.2.1.0)
       ast (~> 2.4.1)
     pdf-core (0.9.0)
-    pg (1.4.5)
+    pg (1.4.6)
     popper_js (1.16.0)
     prawn (2.4.0)
       pdf-core (~> 0.9.0)
@@ -569,7 +569,7 @@ GEM
       railties (>= 6.0.0)
     strong_migrations (1.4.3)
       activerecord (>= 5.2)
-    terser (1.1.13)
+    terser (1.1.14)
       execjs (>= 0.3.0, < 3)
     thor (1.2.1)
     tilt (2.0.10)
@@ -672,7 +672,7 @@ DEPENDENCIES
   omniauth-rails_csrf_protection
   orderly (~> 0.1)
   paper_trail
-  pg (~> 1.4.5)
+  pg (~> 1.4.6)
   prawn-rails
   pry-doc
   pry-nav
