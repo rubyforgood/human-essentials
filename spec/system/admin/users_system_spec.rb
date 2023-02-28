@@ -39,21 +39,21 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
     end
 
     it "filters users by name" do
-      new_user = User.create!(name: "Willow", email: "email@email.com", password: "blahblah!")
-      user_names = User.all.pluck(:name)
+      User.delete_all
+      user_a = create(:user, name: "Alex")
+      user_b = create(:user, name: "Bob")
+      user_c = create(:user, name: "Crystal")
 
       visit admin_users_path
-      user_names.each do |name|
-        expect(page).to have_content(name)
+      [user_a, user_b, user_c].each do |user|
+        expect(page.find("table")).to have_content(user.name)
       end
 
-      user_names.delete("Willow")
-
-      fill_in "filterrific_search_name", with: new_user.name
-      user_names.each do |name|
-        expect(page.find("table")).not_to have_content(name)
+      fill_in "filterrific_search_name", with: user_a.name
+      [user_b, user_c].each do |user|
+        expect(page.find("table")).not_to have_content(user.name)
       end
-      expect(page).to have_content(new_user.name)
+      expect(page.find("table")).to have_content(user_a.name)
     end
   end
 end
