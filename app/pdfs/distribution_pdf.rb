@@ -34,7 +34,7 @@ class DistributionPdf
     text @distribution.partner.organization.address
     move_up 34
 
-    text "Primary Contact:", style: :bold, align: :right
+    text "Partner Primary Contact:", style: :bold, align: :right
     font_size 12
     text @distribution.partner.profile.primary_contact_name, align: :right
     font_size 10
