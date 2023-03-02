@@ -12,7 +12,7 @@ ruby "3.1.2"
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.4.5"
+gem "pg", "~> 1.4.6"
 # Web server.
 gem "puma"
 # Rails web framework.
@@ -34,7 +34,7 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.4.2"
+gem "strong_migrations", "1.4.3"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
@@ -161,7 +161,7 @@ group :development, :test do
   # Rails add-on for static analysis.
   gem "rubocop-rails", "~> 2.9.0"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.0"
+  gem "standard", "~> 1.24"
 end
 
 group :development do
