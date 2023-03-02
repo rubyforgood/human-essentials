@@ -18,9 +18,6 @@ chdir APP_ROOT do
   system! 'gem install bundler --conservative'
   system('bundle check') || system!('bundle install')
  
-  puts 'Updating yarn'
-  system('yarn install') || abort("install yarn and try again")
-  
   puts "\n== Updating database =="
   system! 'bin/rails db:migrate'
 
