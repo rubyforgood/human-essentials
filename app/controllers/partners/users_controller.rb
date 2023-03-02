@@ -24,13 +24,18 @@ module Partners
     end
 
     def create
-      user = UserInviteService.invite(name: user_params[:name],
+      @user = UserInviteService.invite(name: user_params[:name],
         email: user_params[:email],
         roles: [Role::PARTNER],
         resource: current_partner)
 
-      flash[:success] = "You have invited #{user.name} to join your organization!"
-      redirect_to partners_users_path
+      if !@user.id.nil?
+        flash[:success] = "You have invited #{@user.name} to join your organization!"
+        redirect_to partners_users_path
+      else
+        flash[:error] = "Failed to create user."
+        render :new
+      end
     end
 
     private
