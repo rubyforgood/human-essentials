@@ -1,0 +1,14 @@
+<tr id="<%= dom_id broadcast_announcement %>">
+  <td><%= broadcast_announcement.message %></td>
+  <td><%= link_to  broadcast_announcement.link, broadcast_announcement.link %></td>
+  <td><%= User.find(broadcast_announcement.user_id).name %></td>
+  <td><%= broadcast_announcement.expiry %>
+    <% unless broadcast_announcement.expiry.nil? || broadcast_announcement.expiry.strftime('%y %m %d') >= DateTime.now.strftime('%y %m %d') %>
+      <span class="badge badge-danger">Expired</span>
+    <% end %>
+  </td>
+  <td class="text-right">
+    <%= edit_button_to edit_broadcast_announcement_path(broadcast_announcement) %>
+    <%= delete_button_to broadcast_announcement, method: :delete %>
+  </td>
+</tr>
