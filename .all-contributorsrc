@@ -1063,6 +1063,15 @@
         "code"
       ]
     },
+    {
+      "login": "jdepumpo",
+      "name": "Joe DePumpo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/24465877?v=4",
+      "profile": "https://joe.depumpo.com/",
+      "contributions": [
+        "code"
+      ]
+    }
   ],
   "contributorsPerLine": 7,
   "projectName": "human-essentials",
