@@ -1,4 +1,5 @@
 <header class="container mx-auto mb-5">
+  <%= render 'broadcast_announcement' unless @broadcast_announcements.empty? %>
   <h1 class="d-block font-weight-bold mb-1">Dashboard - <%= @partner.name %></h1>
   <h3><button class="btn btn-warning mx-auto p-2 font-weight-bold round">
   <%= @partner.display_status %> Partner</button></h3>

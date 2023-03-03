@@ -1,0 +1,16 @@
+<br />
+<div class="card"> 
+  <h5 class="card-header bg-primary text-white">Announcements</h5>
+  <ul class="list-group list-group-flush">
+    <% @broadcast_announcements.each do |announcement| %>
+      <li class="list-group-item"><strong><%= announcement.created_at.strftime("%B %d") %></strong>
+        <i>From <%= Organization.find(announcement.organization_id).name %></i>
+      <br />
+      <%= announcement.message %>
+      <% unless announcement.link == '' %>
+        <br />
+        <a href="<%= announcement.link %>" class="btn btn-primary">more info</a>
+      <% end %>
+    <% end %>
+  </ul>
+</div>
