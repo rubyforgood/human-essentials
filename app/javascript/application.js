@@ -10,6 +10,7 @@ import 'filterrific'
 import { Turbo } from "@hotwired/turbo-rails"
 import "trix"
 import "@rails/actiontext"
+import "bootstrap-select"
 
 import {DateTime} from "luxon";
 import 'litepicker';
