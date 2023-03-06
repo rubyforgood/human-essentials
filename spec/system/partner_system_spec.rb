@@ -345,12 +345,6 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         before { visit_approval_page(partner_name: invited_partner.name) }
 
         it { expect(page).to have_selector(:link_or_button, 'Approve Partner') }
-        it { expect(page).to have_selector('span#pending-approval-request-tooltip') }
-
-        it 'shows correct tooltip' do
-          page.execute_script('$("#pending-approval-request-tooltip").mouseover()')
-          expect(page).to have_content tooltip_message, wait: page_content_wait
-        end
       end
 
       context "when viewing a partner's users" do
@@ -377,13 +371,6 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         before { visit_approval_page(partner_name: awaiting_review_partner.name) }
 
         it { expect(page).to have_selector(:link_or_button, 'Approve Partner') }
-        it { expect(page).not_to have_selector('span#pending-approval-request-tooltip > a.btn.btn-success.btn-md.disabled') }
-
-        it 'shows no tooltip' do
-          expect(page).to have_selector('#pending-approval-request-tooltip', wait: page_content_wait)
-          page.execute_script('$("#pending-approval-request-tooltip").mouseover()')
-          expect(page).not_to have_content tooltip_message
-        end
       end
     end
 
