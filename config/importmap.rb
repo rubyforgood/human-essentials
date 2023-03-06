@@ -31,3 +31,4 @@ pin "@rails/ujs", to: "https://ga.jspm.io/npm:@rails/ujs@7.0.4/lib/assets/compil
 pin "cocoon-js-vanilla", to: "https://ga.jspm.io/npm:cocoon-js-vanilla@1.3.0/index.js"
 # NOTE: This has been vendored into vendor/javascript because there isn't a JS module exported by this package
 pin "filterrific", to: "filterrific.js"
+pin "bootstrap-select", to: "https://ga.jspm.io/npm:bootstrap-select@1.13.18/dist/js/bootstrap-select.js"
