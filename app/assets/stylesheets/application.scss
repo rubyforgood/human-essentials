@@ -160,3 +160,6 @@ body:not(.sidebar-mini-md) .content-wrapper, body:not(.sidebar-mini-md) .main-fo
   margin-left: 280px;
 }
 
+select.selectpicker + .dropdown-toggle::after {
+  display: none;
+}
