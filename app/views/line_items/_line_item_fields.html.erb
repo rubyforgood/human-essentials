@@ -11,7 +11,7 @@
           <%= f.input :item_id, collection: @items, prompt: "Choose an item", include_blank: "", label: false, input_html: { class: "my-0", "data-controller": "select2" } %>
         </span>
         <div class="li-quantity mx-2">
-          <%= f.input :quantity, placeholder: "Quantity", label: false, input_html: { class: "quantity my-0"} %>
+          <%= f.input :quantity, as: :string, placeholder: "Quantity", label: false, input_html: { class: "quantity my-0"} %>
         </div>
       </div>
     </div>

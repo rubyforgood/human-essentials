@@ -332,7 +332,7 @@ RSpec.feature "Distributions", type: :system do
 
       it "User creates a distribution from a donation then edits it" do
         within ".distribution_line_items_quantity" do
-          first(".numeric").set 13
+          first(".string").set 13
         end
         click_on "Save"
         expect(page).to have_content "Distribution updated!"
@@ -341,7 +341,7 @@ RSpec.feature "Distributions", type: :system do
 
       it "User creates a distribution from a donation then tries to make the quantity too big", js: true do
         within ".distribution_line_items_quantity" do
-          first(".numeric").set 999_999
+          first(".string").set 999_999
         end
         click_on "Save"
         expect(page).to have_no_content "Distribution updated!"
@@ -357,10 +357,11 @@ RSpec.feature "Distributions", type: :system do
         item_type = @distribution.line_items.first.item.name
         first_item_name_field = 'distribution_line_items_attributes_0_item_id'
         select(item_type, from: first_item_name_field)
-        find_all(".numeric")[0].set 1
+        fill_in "distribution_line_items_attributes_0_quantity", with: 1
 
         click_on "Add another item"
-        find_all(".numeric")[1].set 3
+        text_id = page.find_all('.distribution_line_items_quantity > input').last[:id]
+        fill_in text_id, with: 3
 
         first("button", text: "Save").click
 

@@ -210,6 +210,16 @@ RSpec.describe "Donations", type: :system, js: true do
           expect(Donation.last.line_items.first.quantity).to eq(15)
         end
 
+        it "Does not allow commas in the line item quantity field" do
+          select Donation::SOURCES[:misc], from: "donation_source"
+          select StorageLocation.first.name, from: "donation_storage_location_id"
+          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+          fill_in "donation_line_items_attributes_0_quantity", with: "5,0"
+          click_button "Save"
+          expect(page).to have_content("error")
+          expect(page).to have_content("Quantity is not a number")
+        end
+
         it "Does not include inactive items in the line item fields" do
           item = Item.alphabetized.first
 
@@ -386,10 +396,7 @@ RSpec.describe "Donations", type: :system, js: true do
           fill_in "donation_line_items_attributes_0_quantity", with: "1000000"
 
           expect do
-            accept_confirm do
-              click_button "Save"
-            end
-            # wait for the next page to load
+            click_button "Save"
             expect(page).not_to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']")
           end.to change { Donation.count }.by(1)
         end
@@ -401,9 +408,7 @@ RSpec.describe "Donations", type: :system, js: true do
           fill_in "donation_line_items_attributes_0_quantity", with: "10000000000000000000000"
 
           expect do
-            accept_confirm do
-              click_button "Save"
-            end
+            click_button "Save"
             expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']")
           end.not_to change { Donation.count }
           expect(page).to have_content("Start a new donation")
