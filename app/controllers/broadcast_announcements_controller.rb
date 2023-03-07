@@ -1,5 +1,5 @@
 class BroadcastAnnouncementsController < ApplicationController
-  before_action :set_broadcast_announcement, only: %i[ edit update destroy ]
+  before_action :set_broadcast_announcement, only: %i[edit update destroy]
 
   def index
     @broadcast_announcements = BroadcastAnnouncement.all.select { |announcement| announcement.organization_id == current_organization.id }
@@ -43,11 +43,12 @@ class BroadcastAnnouncementsController < ApplicationController
   end
 
   private
-    def set_broadcast_announcement
-      @broadcast_announcement = BroadcastAnnouncement.find(params[:id])
-    end
 
-    def broadcast_announcement_params
-      params.require(:broadcast_announcement).permit(:user_id, :organization_id, :message, :link, :expiry)
-    end
+  def set_broadcast_announcement
+    @broadcast_announcement = BroadcastAnnouncement.find(params[:id])
+  end
+
+  def broadcast_announcement_params
+    params.require(:broadcast_announcement).permit(:user_id, :organization_id, :message, :link, :expiry)
+  end
 end

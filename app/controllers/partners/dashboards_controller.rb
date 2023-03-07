@@ -25,10 +25,10 @@ module Partners
       @families = @partner.families
       @children = @partner.children
 
-      @broadcast_announcements = BroadcastAnnouncement.all.select{ |announcement| 
-                                  Role.find(announcement.user_id).name == 'org_user' && 
-                                  (announcement.expiry.nil? || announcement.expiry.strftime('%y %m %d') >= DateTime.now.strftime('%y %m %d')) 
-                                  }
+      @broadcast_announcements = BroadcastAnnouncement.all.select { |announcement|
+        Role.find(announcement.user_id).name == 'org_user' &&
+          (announcement.expiry.nil? || announcement.expiry.strftime('%y %m %d') >= DateTime.now.strftime('%y %m %d'))
+      }
     end
   end
 end

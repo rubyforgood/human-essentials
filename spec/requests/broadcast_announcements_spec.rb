@@ -1,7 +1,7 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe "BroadcastAnnouncements", type: :request do
-  before(:all) do 
+  before(:all) do
     @test_a = create(:broadcast_announcement, link: "http://google.com")
   end
 
