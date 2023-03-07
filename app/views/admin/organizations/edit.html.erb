@@ -44,8 +44,12 @@
                 <% end %>
                 <%= f.input :short_name, required: true, autofocus: true, wrapper: :input_group do %>
                   <span class="input-group-text"><i class="fa fa-desktop"></i></span>
-                  <%= f.input_field :short_name, disabled: true, class: "form-control" %>
+                  <%= f.input_field :short_name, class: "form-control" %>
                 <% end %>
+                <div>
+                  APPROACH with EXTREME CAUTION! Editing the short name will break bookmarked links and calendar notices! If a
+                  bank has asked you to do this, explain this to them first.
+                </div>
                 <%= f.input :url, as: :url, placeholder: "http://www.example.com", wrapper: :input_group do %>
                   <span class="input-group-text"><i class="fa fa-link"></i></span>
                   <%= f.input_field :url, class: "form-control" %>
@@ -65,7 +69,7 @@
 
                 <%= render 'shared/deadline_day_fields', f: f %>
 
-                <%= f.input :intake_location, :collection => @organization.storage_locations.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Intake Location", :include_blank => true, wrapper: :input_group %>
+                <%= f.input :intake_location, :collection => @organization.storage_locations.active_locations.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Intake Location", :include_blank => true, wrapper: :input_group %>
 
                 <%= f.input :invitation_text, label: "Custom Partner Invitation Message", wrapper: :input_group do %>
                   <%= f.text_area :invitation_text, class: "form-control" %>

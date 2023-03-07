@@ -53,7 +53,7 @@ class DistributionsController < ApplicationController
     @total_items_paginated_distributions = total_items(@paginated_distributions)
     @items = current_organization.items.alphabetized
     @item_categories = current_organization.item_categories
-    @storage_locations = current_organization.storage_locations.alphabetized
+    @storage_locations = current_organization.storage_locations.active_locations.alphabetized
     @partners = @distributions.collect(&:partner).uniq.sort_by(&:name)
     @selected_item = filter_params[:by_item_id]
     @selected_item_category = filter_params[:by_item_category_id]
@@ -94,7 +94,7 @@ class DistributionsController < ApplicationController
       end
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
-      @storage_locations = current_organization.storage_locations.alphabetized
+      @storage_locations = current_organization.storage_locations.active_locations.alphabetized
 
       flash_error = insufficient_error_message(result.error.message)
 
@@ -119,7 +119,7 @@ class DistributionsController < ApplicationController
       @distribution.copy_from_donation(params[:donation_id], params[:storage_location_id])
     end
     @items = current_organization.items.alphabetized
-    @storage_locations = current_organization.storage_locations.has_inventory_items.alphabetized
+    @storage_locations = current_organization.storage_locations.active_locations.has_inventory_items.alphabetized
   end
 
   def show
@@ -139,7 +139,7 @@ class DistributionsController < ApplicationController
         current_user.has_role?(Role::ORG_ADMIN, current_organization)
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
-      @storage_locations = current_organization.storage_locations.has_inventory_items.alphabetized
+      @storage_locations = current_organization.storage_locations.active_locations.has_inventory_items.alphabetized
     else
       redirect_to distributions_path, error: 'To edit a distribution,
       you must be an organization admin or the current date must be later than today.'
@@ -162,7 +162,7 @@ class DistributionsController < ApplicationController
       flash[:error] = insufficient_error_message(result.error.message)
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
-      @storage_locations = current_organization.storage_locations.alphabetized
+      @storage_locations = current_organization.storage_locations.active_locations.alphabetized
       render :edit
     end
   end
@@ -217,7 +217,7 @@ class DistributionsController < ApplicationController
   private
 
   def insufficient_error_message(details)
-    "Sorry, we weren't able to save the distribution. \n #{@distribution.errors.full_messages.join(', ')} #{details}"
+    "Sorry, we weren't able to save the distribution. \n #{details}"
   end
 
   def send_notification(org, dist, subject: 'Your Distribution', distribution_changes: {})

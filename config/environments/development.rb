@@ -8,8 +8,6 @@ Rails.application.configure do
     Bullet.add_footer    = true
   end
 
-  # Verifies that versions and hashed value of the package contents in the project's package.json
-  config.webpacker.check_yarn_integrity = true
   # Settings specified here will take precedence over those in config/application.rb.
 
   # In the development environment your application's code is reloaded on

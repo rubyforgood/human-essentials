@@ -27,6 +27,7 @@
             </tr>
           </thead>
           <% kit.inventory_items.map do |inventory_item| %>
+            <% next if inventory_item.storage_location.discarded_at %>
             <tr>
               <td><%= inventory_item.storage_location.name %></td>
               <td><%= inventory_item.quantity %></td>
@@ -51,6 +52,6 @@
   <% end %>
 </tbody>
 </table>
-<script>
+<script type="module">
   $('.tooltip-target').tooltip();
 </script>

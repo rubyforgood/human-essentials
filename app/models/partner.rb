@@ -134,6 +134,10 @@ class Partner < ApplicationRecord
       users&.none?
   end
 
+  def approvable?
+    invited? || awaiting_review?
+  end
+
   # better to extract this outside of the model
   def self.import_csv(csv, organization_id)
     organization = Organization.find(organization_id)
@@ -166,24 +170,6 @@ class Partner < ApplicationRecord
     ]
   end
 
-  def meow
-    partners = Partner.where.not(status: 'deactivated')
-    users = partners.map(&:profile).map(&:users).flatten
-    emails = users.map(&:email)
-    partner_emails = emails.flatten
-
-    user_emails = User.where(discarded_at: nil).pluck(:email)
-
-    emails = [partner_emails + user_emails].flatten
-
-    CSV.open("contact_emails.csv", "wb") do |csv|
-      csv << ["Email Address"]
-      emails.each do |email|
-        csv << [email]
-      end
-    end
-  end
-
   def contact_person
     return @contact_person if @contact_person
 
@@ -204,7 +190,7 @@ class Partner < ApplicationRecord
   def quantity_year_to_date
     distributions
       .includes(:line_items)
-      .where("line_items.created_at > ?", Time.zone.today.beginning_of_year)
+      .where('distributions.issued_at >= ?', Time.zone.today.beginning_of_year)
       .references(:line_items).map(&:line_items).flatten.sum(&:quantity)
   end
 

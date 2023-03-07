@@ -1,37 +1,42 @@
-/* eslint no-console:0 */
-// This file is automatically compiled by Webpack, along with any other files
-// present in this directory. You're encouraged to place your actual application logic in
-// a relevant structure within app/javascript and only use these pack files to reference
-// that code so it'll be compiled.
-//
-// To reference this file, add <%= javascript_pack_tag 'application' %> to the appropriate
-// layout file, like app/views/layouts/application.html.erb
+// Configure your import map in config/importmap.rb. Read more: https://github.com/rails/importmap-rails
 
+import jQuery from 'jquery'
+window.jQuery = jQuery
+window.$ = jQuery
+
+import 'admin-lte'
+import "cocoon-js-vanilla";
+import 'filterrific'
 import { Turbo } from "@hotwired/turbo-rails"
-
-// Disable turbo by default to avoid issues with turbolinks
-Turbo.session.drive = false
-
-import "../controllers/index"
 import "trix"
 import "@rails/actiontext"
-import "stylesheets/application.scss"
-import $ from 'jquery';
+import "bootstrap-select"
 
 import {DateTime} from "luxon";
-import Litepicker from 'litepicker';
+import 'litepicker';
 import { Calendar } from '@fullcalendar/core';
 import luxonPlugin from '@fullcalendar/luxon'
 import dayGridPlugin from '@fullcalendar/daygrid';
 import listPlugin from '@fullcalendar/list';
 import toastr from 'toastr';
-import 'litepicker/dist/plugins/ranges';
-import "@fortawesome/fontawesome-free/css/fontawesome.css";
-import "@fortawesome/fontawesome-free/css/solid.css";
-import "@fortawesome/fontawesome-free/css/regular.css";
-import "@fortawesome/fontawesome-free/css/brands.css";
-import "@fortawesome/fontawesome-free/css/v4-shims.css";
-import "toastr/build/toastr.css"
+import 'litepicker/ranges';
+
+import 'bootstrap'
+import 'controllers'
+
+import 'utils/adjustments'
+import 'utils/barcode_items'
+import 'utils/barcode_scan'
+import 'utils/deadline_day_pickers'
+import 'utils/distributions_and_transfers'
+import 'utils/donations'
+import 'utils/purchases'
+
+import Rails from "@rails/ujs"
+Rails.start()
+
+// Disable turbo by default to avoid issues with turbolinks
+Turbo.session.drive = false
 
 // Global toastr options
 window.toastr = toastr;
@@ -47,7 +52,13 @@ function isShortHeightScreen() {
   return $(window).height() < 768 && !isMobileResolution();
 }
 
+
+// es-module-shims calls DOMContentLoaded twice for some reason
 document.addEventListener("DOMContentLoaded", function() {
+  const hash = window.location.hash;
+  if (hash) {
+    $('ul.nav a[href="' + hash + '"]').tab('show');
+  }
   const isMobile = isMobileResolution();
   const isShortHeight = isShortHeightScreen();
 
@@ -96,3 +107,5 @@ document.addEventListener("DOMContentLoaded", function() {
   });
   picker.setDateRange(startDate, endDate);
 }, false);
+
+
