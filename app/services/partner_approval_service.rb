@@ -25,7 +25,7 @@ class PartnerApprovalService
   attr_reader :partner
 
   def valid?
-    unless partner.awaiting_review?
+    unless partner.approvable?
       errors.add(:partner, 'is not waiting for approval')
     end
 

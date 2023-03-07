@@ -23,7 +23,7 @@ class TextInterpolatorService
       else
         key = ($1 || $2 || match.tr("%{}", "")).to_sym
         value = values[key] if values.key?(key)
-        $3 ? format("%#{$3}", value) : value
+        ($3) ? format("%#{$3}", value) : value
       end
     end
   end
