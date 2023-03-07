@@ -21,6 +21,12 @@ def random_request_items
   keys.map { |k| { "item_id" => k, "quantity" => rand(3..10) } }
 end
 
+def request_items_w_duplicates
+  keys = Item.active.pluck(:id).sample(3)
+  keys.push(keys[0])
+  keys.map { |k| { "item_id" => k, "quantity" => 50 } }
+end
+
 FactoryBot.define do
   factory :request do
     partner { Partner.try(:first) || create(:partner) }
@@ -40,5 +46,9 @@ FactoryBot.define do
 
   trait :pending do
     status { 'pending' }
+  end
+
+  trait :with_duplicates do
+    request_items { request_items_w_duplicates }
   end
 end
