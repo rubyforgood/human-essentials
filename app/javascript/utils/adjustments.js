@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 /**
  * Likely we can remove this since distribution_and_transfers.js seen to cover this use
  */
@@ -25,13 +27,12 @@ $(function() {
   });
 
   $(document).on("cocoon:after-insert", "form#new_adjustment", function(
-    e,
-    insertedItem
-  ) {
+    e) {
     const control = $(control_id);
+    const insertedItem = $(e.detail[2]);
     insertedItem
       .find("#_barcode-lookup-new_line_items")
-      .attr("id", `_barcode-lookup-${$(".nested-fields").size() - 1}`);
+      .attr("id", `_barcode-lookup-${$(".nested-fields").length - 1}`);
     $.ajax({
       url: control
         .data("storage-location-inventory-path")

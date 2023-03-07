@@ -156,3 +156,7 @@ body a {
 .main-sidebar {
   width: auto;
 }
+
+select.selectpicker + .dropdown-toggle::after {
+  display: none;
+}

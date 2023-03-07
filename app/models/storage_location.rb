@@ -15,7 +15,6 @@
 #  updated_at      :datetime         not null
 #  organization_id :integer
 #
-
 class StorageLocation < ApplicationRecord
   require "csv"
 
@@ -60,6 +59,7 @@ class StorageLocation < ApplicationRecord
   }
   scope :alphabetized, -> { order(:name) }
   scope :for_csv_export, ->(organization, *) { where(organization: organization) }
+  scope :active_locations, -> { where(discarded_at: nil) }
 
   def self.item_total(item_id)
     StorageLocation.select("quantity")
@@ -86,7 +86,7 @@ class StorageLocation < ApplicationRecord
       value_in_cents = inventory_item.item.try(:value_in_cents)
       value_in_cents * inventory_item.quantity
     end.reduce(:+)
-    inventory_total_value.present? ? (inventory_total_value / 100) : 0
+    inventory_total_value.present? ? (inventory_total_value.to_f / 100) : 0
   end
 
   def to_csv
@@ -176,7 +176,7 @@ class StorageLocation < ApplicationRecord
       # Raise this custom error with information about each of the items that showed insufficient
       # This bails out of the method!
       raise Errors::InsufficientAllotment.new(
-        "Requested items exceed the available inventory",
+        "Requested items exceed the available inventory.",
         insufficient_items
       )
     end

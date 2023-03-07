@@ -105,6 +105,30 @@ RSpec.describe DistributionsController, type: :controller do
           expect(flash[:alert]).to eq("The following items have fallen below the recommended on hand quantity: Item 1, Item 2")
         end
       end
+
+      context "when line item quantity is not positive" do
+        let(:item) { create(:item, name: "Item 1", organization: @organization, on_hand_minimum_quantity: 5) }
+        let(:storage_location) { create(:storage_location, :with_items, item: item, item_quantity: 2) }
+        let(:params) do
+          {
+            organization_id: @organization.id,
+            distribution: {
+              partner_id: @partner.id,
+              storage_location_id: storage_location.id,
+              line_items_attributes:
+                {
+                  "0": { item_id: storage_location.items.first.id, quantity: 0 }
+                }
+            }
+          }
+        end
+        subject { post :create, params: params.merge(format: :turbo_stream) }
+
+        it "flashes an error" do
+          expect(subject).to have_http_status(:bad_request)
+          expect(flash[:error]).to include("Sorry, we weren't able to save the distribution. \n Validation failed: Inventory Item 1's quantity needs to be positive")
+        end
+      end
     end
 
     describe "PUT #update" do

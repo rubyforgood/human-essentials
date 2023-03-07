@@ -1,0 +1,23 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th>Organization</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th class="text-right">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @users.each do |user| %>
+      <tr>
+        <td><%= user.organization&.name %></td>
+        <td><%= user.name %></td>
+        <td><%= user.email %></td>
+        <td class="text-right">
+          <%= edit_button_to edit_admin_user_path(user) %>
+          <%= delete_button_to(admin_user_path(user), {confirm: "Are you sure you want to permanently remove this user?"}) unless user == current_user %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

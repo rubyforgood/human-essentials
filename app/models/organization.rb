@@ -257,7 +257,9 @@ class Organization < ApplicationRecord
 
   def some_request_type_enabled
     unless enable_child_based_requests? || enable_individual_requests || enable_quantity_based_requests
-      errors.add(:enable_requests, "You must allow at least one request type (child-based, individual, or quantity-based)")
+      errors.add(:enable_child_based_requests, "You must allow at least one request type (child-based, individual, or quantity-based)")
+      errors.add(:enable_individual_requests, "You must allow at least one request type (child-based, individual, or quantity-based)")
+      errors.add(:enable_quantity_based_requests, "You must allow at least one request type (child-based, individual, or quantity-based)")
     end
   end
 
