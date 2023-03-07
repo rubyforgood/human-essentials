@@ -15,8 +15,8 @@ task :fetch_latest_db => :environment do
 
   puts "Restoring the database with #{backup.name}"
   backup_filepath = fetch_file_path(backup)
-  db_username = ENV.fetch("PG_USERNAME", 'postgres')
-  db_host = ENV.fetch("PG_HOST", 'localhost')
+  db_username = ENV["PG_USERNAME"].presence || ENV["USER"].presence || "postgres"
+  db_host = ENV["PG_HOST"].presence || "localhost"
   system("pg_restore --clean --no-acl --no-owner -h #{db_host} -d diaper_dev -U #{db_username} #{backup_filepath}")
 
   puts "Done!"
