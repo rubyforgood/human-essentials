@@ -163,7 +163,7 @@ class DistributionPdf
 
     data + [["", "", "", "", ""],
       ["Total Items Received",
-        @distribution.line_items.total + requested_not_received.map(&:quantity).sum,
+        request_items.map(&:quantity).sum,
         @distribution.line_items.total,
         "",
         dollar_value(@distribution.value_per_itemizable),
