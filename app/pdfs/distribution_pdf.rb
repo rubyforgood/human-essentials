@@ -158,7 +158,7 @@ class DistributionPdf
         "",
         dollar_value(c.item.value_in_cents),
         dollar_value(c.value_per_line_item),
-        c.package_count]
+        nil]
     end
 
     data + [["", "", "", "", ""],
