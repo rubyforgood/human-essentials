@@ -305,7 +305,7 @@ GEM
     mini_mime (1.1.2)
     mini_racer (0.6.3)
       libv8-node (~> 16.10.0.0)
-    minitest (5.17.0)
+    minitest (5.18.0)
     monetize (1.11.0)
       money (~> 6.12)
     money (6.16.0)
@@ -567,7 +567,7 @@ GEM
       rubocop-performance (= 1.15.2)
     stimulus-rails (1.2.1)
       railties (>= 6.0.0)
-    strong_migrations (1.4.3)
+    strong_migrations (1.4.4)
       activerecord (>= 5.2)
     terser (1.1.14)
       execjs (>= 0.3.0, < 3)
@@ -697,7 +697,7 @@ DEPENDENCIES
   sprockets (~> 4.0.0)
   standard (~> 1.24)
   stimulus-rails
-  strong_migrations (= 1.4.3)
+  strong_migrations (= 1.4.4)
   terser
   turbo-rails
   web-console
