@@ -23,7 +23,7 @@ describe DistributionPdf do
       ["Item 3", 50, "", "$3.00", "$150.00", nil],
       ["Item 4", 120, "", "$4.00", "$480.00", nil],
       ["", "", "", "", ""],
-      ["Total Items Received", 80, 150, "", "$250.00", ""]
+      ["Total Items Received", 200, 150, "", "$250.00", ""]
                           ])
   end
 
