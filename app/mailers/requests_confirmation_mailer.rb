@@ -21,8 +21,7 @@ class RequestsConfirmationMailer < ApplicationMailer
     return [] if request.request_items.size == 0
     sorted = request.request_items.sort_by { |k| k['item_id'] }
     combined = [sorted[0]]
-    (1..sorted.size - 1).each do |i|
-      request_item = sorted[i]
+    sorted[1..].each do |request_item|
       if request_item["item_id"] == combined.last["item_id"]
         combined.last["quantity"] = combined.last["quantity"] + request_item["quantity"]
       else
