@@ -1,4 +1,5 @@
 import $ from 'jquery';
+
 $(document).ready(function() {
   /* Barcode readers will often "helpfully" send a CRLF at the end of the
      scanned string. We're going to capture this and use it to invoke the

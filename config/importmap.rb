@@ -1,13 +1,15 @@
 # Pin npm packages by running ./bin/importmap
 
-pin "jquery", to: "https://ga.jspm.io/npm:jquery@3.6.1/dist/jquery.js", preload: true
+pin "jquery", to: "jquery.js", preload: true
+pin "jquery-ui", to: "jquery-ui.js", preload: true
+pin "admin-lte", to: "adminlte.js", preload: true
 pin "application", preload: true
+pin "startup", to: "startup.js", preload: true
 pin "@hotwired/turbo-rails", to: "turbo.min.js", preload: true
 pin "@hotwired/stimulus", to: "stimulus.min.js", preload: true
 pin "@hotwired/stimulus-loading", to: "stimulus-loading.js", preload: true
 pin_all_from "app/javascript/controllers", under: "controllers"
 pin_all_from "app/javascript/utils", under: "utils"
-pin "admin-lte", to: "https://ga.jspm.io/npm:admin-lte@3.2.0/dist/js/adminlte.min.js"
 pin "bootstrap", to: "https://ga.jspm.io/npm:bootstrap@4.6.2/dist/js/bootstrap.js"
 pin "popper.js", to: "https://ga.jspm.io/npm:popper.js@1.16.1/dist/umd/popper.js"
 pin "highcharts", to: "https://ga.jspm.io/npm:highcharts@10.3.2/highcharts.js"
@@ -31,4 +33,3 @@ pin "@rails/ujs", to: "https://ga.jspm.io/npm:@rails/ujs@7.0.4/lib/assets/compil
 pin "cocoon-js-vanilla", to: "https://ga.jspm.io/npm:cocoon-js-vanilla@1.3.0/index.js"
 # NOTE: This has been vendored into vendor/javascript because there isn't a JS module exported by this package
 pin "filterrific", to: "filterrific.js"
-pin "bootstrap-select", to: "https://ga.jspm.io/npm:bootstrap-select@1.13.18/dist/js/bootstrap-select.js"
