@@ -8,7 +8,7 @@
 #  message         :text
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
-#  organization_id :bigint           not null
+#  organization_id :bigint
 #  user_id         :bigint           not null
 #
 class BroadcastAnnouncement < ApplicationRecord
@@ -16,4 +16,9 @@ class BroadcastAnnouncement < ApplicationRecord
   belongs_to :organization
   validates :link, format: URI::DEFAULT_PARSER.make_regexp(%w[http https]), allow_blank: true
   validates :message, presence: true
+
+  def expired?
+    return false if expiry.nil?
+    expiry < Time.zone.yesterday
+  end
 end
