@@ -1,20 +1,124 @@
 require "rails_helper"
 
 RSpec.describe "BroadcastAnnouncements", type: :request do
-  before(:all) do
-    @test_a = create(:broadcast_announcement, link: "http://google.com")
+  before do
+    sign_in(@user)
+  end
+  let(:valid_attributes) {
+    {
+      expiry: Time.zone.today,
+      link: "http://google.com",
+      message: "test",
+      user_id: 1,
+      organization_id: 1
+    }
+  }
+
+  let(:invalid_attributes) {
+    {
+      link: "badlink.com"
+    }
+  }
+
+  describe "GET /index" do
+    it "renders a successful response" do
+      BroadcastAnnouncement.create! valid_attributes
+      get broadcast_announcements_url
+      expect(response).to be_successful
+    end
   end
 
-  it "creates an announcement" do
-    expect(@test_a).to be_valid
+  describe "GET /new" do
+    it "renders a successful response" do
+      get new_broadcast_announcement_url
+      expect(response).to be_successful
+    end
   end
 
-  it "can find an announcement" do
-    expect(BroadcastAnnouncement.find_by(message: "test")).to eq(@test_a)
+  describe "GET /edit" do
+    it "render a successful response" do
+      announcement = BroadcastAnnouncement.create! valid_attributes
+      get edit_broadcast_announcement_url(announcement)
+      expect(response).to be_successful
+    end
   end
 
-  it "deletes an announcement" do
-    @test_a.destroy
-    expect(BroadcastAnnouncement.count).to eq(0)
+  describe "POST /create" do
+    context "with valid parameters" do
+      it "creates a new BroadcastAnnouncement" do
+        expect {
+          post broadcast_announcements_url, params: {broadcast_announcement: valid_attributes}
+        }.to change(BroadcastAnnouncement, :count).by(1)
+      end
+
+      it "redirects after create" do
+        post broadcast_announcements_url, params: {broadcast_announcement: valid_attributes}
+        expect(response).to have_http_status(:redirect)
+      end
+    end
+
+    context "with invalid parameters" do
+      it "does not create a new BroadcastAnnouncement" do
+        expect {
+          post broadcast_announcements_url, params: {broadcast_announcement: invalid_attributes}
+        }.to change(BroadcastAnnouncement, :count).by(0)
+      end
+
+      it "does not render a successful response" do
+        post broadcast_announcements_url, params: {broadcast_announcement: invalid_attributes}
+        expect(response).not_to be_successful
+      end
+    end
+  end
+
+  describe "PATCH /update" do
+    context "with valid parameters" do
+      let(:new_attributes) {
+        {
+          expiry: Time.zone.yesterday,
+          link: "http://google.com",
+          message: "new_test",
+          user_id: 1,
+          organization_id: 1
+        }
+      }
+
+      it "updates the requested announcement" do
+        announcement = BroadcastAnnouncement.create! valid_attributes
+        patch broadcast_announcement_url(announcement), params: {broadcast_announcement: new_attributes}
+        announcement.reload
+        expect(announcement.message).to eq("new_test")
+      end
+
+      it "redirects after update" do
+        announcement = BroadcastAnnouncement.create! valid_attributes
+        patch broadcast_announcement_url(announcement), params: {broadcast_announcement: new_attributes}
+        announcement.reload
+        expect(response).to have_http_status(:redirect)
+      end
+    end
+
+    context "with invalid parameters" do
+      it "does not render a successful response" do
+        announcement = BroadcastAnnouncement.create! valid_attributes
+        patch broadcast_announcement_url(announcement), params: {broadcast_announcement: invalid_attributes}
+        expect(response).not_to be_successful
+      end
+    end
+  end
+
+  describe "DELETE /destroy" do
+    it "destroys the requested announcement" do
+      announcement = BroadcastAnnouncement.create! valid_attributes
+      expect {
+        delete broadcast_announcement_url(announcement)
+      }.to change(BroadcastAnnouncement, :count).by(-1)
+    end
+
+    it "redirects after delete" do
+      announcement = BroadcastAnnouncement.create! valid_attributes
+      delete broadcast_announcement_url(announcement)
+      expect(response).to have_http_status(:redirect)
+    end
   end
 end
