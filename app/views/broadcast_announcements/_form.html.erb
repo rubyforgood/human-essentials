@@ -12,20 +12,14 @@
               <div class="card-body w-50">
                 <%= f.hidden_field :user_id, value: current_user.id %>
                 <%= f.hidden_field :organization_id, value: current_organization.id %>
-                <%= f.label :message, "Announcement " %><i>(500 character max)</i>
+                <%= f.label :message, "Announcement " %> <i>(500 character max)</i>
                 <%= f.input :message, label: false, maxlength: 500, autofocus: true %>
                 <%= f.label :link, "URL for more information" %>
-                <%= f.text_field :link, label: false, class: "form-control" %>
-                <br /><br />
-                <input id="expiry_check" name="expiry_check" type="checkbox" 
-                      onclick="var select_input = Array.from(document.getElementsByTagName('select'));
-                        if(this.checked) {
-                        select_input.forEach((input) => {input.disabled = false});
-                        } else {
-                        select_input.forEach((input) => {input.disabled=true});
-                        }" >
-                <label for="expiry_check">Expiration date</label>
-                <%= f.input :expiry, label: false, disabled: true, class: "form-control" %>
+                <%= f.input :link, label: false %>
+                <%= f.input :expiry,
+                  label: "Expiration date",
+                  as: :date,
+                  html5: true %>
                 <!-- /.card-body -->
                 <div class="card-footer">
                   <%= submit_button({ text: "Broadcast Announcement", icon: "envelope" }) %>
