@@ -19,6 +19,6 @@ class BroadcastAnnouncement < ApplicationRecord
 
   def expired?
     return false if expiry.nil?
-    expiry < Time.zone.yesterday
+    expiry < Time.zone.today
   end
 end
