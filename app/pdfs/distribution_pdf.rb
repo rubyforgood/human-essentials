@@ -158,12 +158,12 @@ class DistributionPdf
         "",
         dollar_value(c.item.value_in_cents),
         dollar_value(c.value_per_line_item),
-        c.package_count]
+        nil]
     end
 
     data + [["", "", "", "", ""],
       ["Total Items Received",
-        @distribution.line_items.total + requested_not_received.map(&:quantity).sum,
+        request_items.map(&:quantity).sum,
         @distribution.line_items.total,
         "",
         dollar_value(@distribution.value_per_itemizable),
