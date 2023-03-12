@@ -162,8 +162,9 @@ RSpec.describe "Dashboard", type: :system, js: true do
         ["Last 30 Days", test_time - 29.days,                     test_time],
         ["This Month",   test_time.beginning_of_month,            test_time.end_of_month],
         ["Last Month",   test_time.last_month.beginning_of_month, test_time.last_month.end_of_month],
-        ["This Year",    test_time.beginning_of_year,             test_time.end_of_year],
-        ["All Time",     test_time - 100.years,                   test_time]
+        ["This Year",    test_time.beginning_of_year,             test_time.end_of_year]
+      #  We now can't test the lower limit of All Time, because the earliest possible date is 2000-01-01
+      #  ["All Time",     test_time - 100.years,                   test_time]
         # rubocop:enable Layout/ExtraSpacing, Layout/SpaceAroundOperators
       ].each do |date_range_info|
         filtered_date_range_label, start_date, end_date, set_custom_dates = date_range_info
@@ -279,7 +280,9 @@ RSpec.describe "Dashboard", type: :system, js: true do
         ["This Month",   test_time.beginning_of_month,            test_time.end_of_month],
         ["Last Month",   test_time.last_month.beginning_of_month, test_time.last_month.end_of_month],
         ["This Year",    test_time.beginning_of_year,             test_time.end_of_year],
-        ["All Time",     test_time - 100.years,                   test_time],
+
+        #  We now can't test the lower limit of All Time, because the earliest possible date is 2000-01-01
+        # ["All Time",     test_time - 100.years,                   test_time],
         [nil, test_time -   2.years,                   test_time - rand(180).days, :set_custom_dates] # arbitrary values
         # rubocop:enable Layout/ExtraSpacing, Layout/SpaceAroundOperators
       ].each do |date_range_info|
@@ -394,7 +397,9 @@ RSpec.describe "Dashboard", type: :system, js: true do
         ["This Month",   test_time.beginning_of_month,            test_time.end_of_month],
         ["Last Month",   test_time.last_month.beginning_of_month, test_time.last_month.end_of_month],
         ["This Year",    test_time.beginning_of_year,             test_time.end_of_year],
-        ["All Time",     test_time - 100.years,                   test_time],
+
+        #  We now can't test the lower limit of All Time, because the earliest possible date is 2000-01-01
+        # ["All Time",     test_time - 100.years,                   test_time],
         [nil, test_time - 2.years,                     test_time - rand(180).days, :set_custom_dates] # arbitrary values
         # rubocop:enable Layout/ExtraSpacing, Layout/SpaceAroundOperators
       ].each do |date_range_info|
@@ -566,7 +571,9 @@ RSpec.describe "Dashboard", type: :system, js: true do
         ["This Month",   test_time.beginning_of_month,            test_time.end_of_month],
         ["Last Month",   test_time.last_month.beginning_of_month, test_time.last_month.end_of_month],
         ["This Year",    test_time.beginning_of_year,             test_time.end_of_year],
-        ["All Time",     test_time - 100.years,                   test_time],
+
+        #  We now can't test the lower limit of All Time, because the earliest possible date is 2000-01-01
+        #  ["All Time",     test_time - 100.years,                   test_time],
         [nil, test_time -   2.years,                   test_time - rand(180).days, :set_custom_dates] # arbitrary values
         # rubocop:enable Layout/ExtraSpacing, Layout/SpaceAroundOperators
       ].each do |date_range_info|
@@ -709,7 +716,9 @@ RSpec.describe "Dashboard", type: :system, js: true do
         ["This Month",   test_time.beginning_of_month,            test_time.end_of_month],
         ["Last Month",   test_time.last_month.beginning_of_month, test_time.last_month.end_of_month],
         ["This Year",    test_time.beginning_of_year,             test_time.end_of_year],
-        ["All Time",     test_time - 100.years,                   test_time],
+
+        #  We now can't test the lower limit of All Time, because the earliest possible date is 2000-01-01
+        #  ["All Time",     test_time - 100.years,                   test_time],
         [nil, test_time -   2.years,                   test_time - rand(180).days, :set_custom_dates] # arbitrary values
         # rubocop:enable Layout/ExtraSpacing, Layout/SpaceAroundOperators
       ].each do |date_range_info|

@@ -43,6 +43,13 @@ RSpec.describe Distribution, type: :model do
       d.line_items << build(:line_item, item: item_missing)
       expect(d).not_to be_valid
     end
+
+    it "ensures that the issued at is no earlier than 2000" do
+      d = build(:distribution, issued_at: '1999-12-31')
+      expect(d).not_to be_valid
+    end
+
+
   end
 
   context "Scopes >" do
