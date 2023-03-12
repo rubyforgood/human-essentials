@@ -66,7 +66,8 @@ class Donation < ApplicationRecord
     { message: "must be specified since you chose '#{SOURCES[:manufacturer]}'" }, if: :from_manufacturer?
   validates :source, presence: true, inclusion: { in: SOURCES.values, message: "Must be a valid source." }
 
-  include IssuedAt
+  validate :issued_at_cannot_be_before_2000
+
 
   # TODO: move this to Organization.donations as an extension
   scope :during, ->(range) { where(donations: { issued_at: range }) }

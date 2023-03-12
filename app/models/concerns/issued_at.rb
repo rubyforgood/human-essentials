@@ -16,4 +16,10 @@ module IssuedAt
   def initialize_issued_at
     self.issued_at ||= created_at
   end
+
+  def issued_at_cannot_be_before_2000
+    if issued_at.present? && issued_at < Date.new(2000,1,1)
+      errors.add(:issued_at, "Cannot be before 2000")
+    end
+  end
 end
