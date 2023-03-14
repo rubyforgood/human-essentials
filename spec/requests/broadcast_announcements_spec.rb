@@ -45,14 +45,10 @@ RSpec.describe "BroadcastAnnouncements", type: :request do
 
   describe "POST /create" do
     context "with valid parameters" do
-      it "creates a new BroadcastAnnouncement" do
+      it "creates a new BroadcastAnnouncement then redirects" do
         expect {
           post broadcast_announcements_url, params: {broadcast_announcement: valid_attributes}
         }.to change(BroadcastAnnouncement, :count).by(1)
-      end
-
-      it "redirects after create" do
-        post broadcast_announcements_url, params: {broadcast_announcement: valid_attributes}
         expect(response).to have_http_status(:redirect)
       end
     end
@@ -83,17 +79,11 @@ RSpec.describe "BroadcastAnnouncements", type: :request do
         }
       }
 
-      it "updates the requested announcement" do
+      it "updates the requested announcement and redirects" do
         announcement = BroadcastAnnouncement.create! valid_attributes
         patch broadcast_announcement_url(announcement), params: {broadcast_announcement: new_attributes}
         announcement.reload
         expect(announcement.message).to eq("new_test")
-      end
-
-      it "redirects after update" do
-        announcement = BroadcastAnnouncement.create! valid_attributes
-        patch broadcast_announcement_url(announcement), params: {broadcast_announcement: new_attributes}
-        announcement.reload
         expect(response).to have_http_status(:redirect)
       end
     end
@@ -108,16 +98,11 @@ RSpec.describe "BroadcastAnnouncements", type: :request do
   end
 
   describe "DELETE /destroy" do
-    it "destroys the requested announcement" do
+    it "destroys the requested announcement then redirects" do
       announcement = BroadcastAnnouncement.create! valid_attributes
       expect {
         delete broadcast_announcement_url(announcement)
       }.to change(BroadcastAnnouncement, :count).by(-1)
-    end
-
-    it "redirects after delete" do
-      announcement = BroadcastAnnouncement.create! valid_attributes
-      delete broadcast_announcement_url(announcement)
       expect(response).to have_http_status(:redirect)
     end
   end

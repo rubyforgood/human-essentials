@@ -37,4 +37,9 @@ RSpec.describe BroadcastAnnouncement, type: :model do
     test_a = build(:broadcast_announcement, expiry: 2.days.ago)
     expect(test_a.expired?).to eq(true)
   end
+
+  it "expired? should be false if the announcement has not expired" do
+    test_a = build(:broadcast_announcement, expiry: Time.zone.today)
+    expect(test_a.expired?).to eq(false)
+  end
 end
