@@ -13,7 +13,7 @@
 #
 class BroadcastAnnouncement < ApplicationRecord
   belongs_to :user
-  belongs_to :organization
+  belongs_to :organization, optional: true
   validates :link, format: URI::DEFAULT_PARSER.make_regexp(%w[http https]), allow_blank: true
   validates :message, presence: true
 
