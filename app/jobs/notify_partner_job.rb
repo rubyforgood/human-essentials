@@ -1,11 +1,6 @@
 class NotifyPartnerJob < ApplicationJob
   def perform(request_id, current_user_email)
     request = Request.find_by(id: request_id)
-<<<<<<< HEAD
-
-=======
-    
->>>>>>> 86d2d45f (distribution email working correctly)
     RequestsConfirmationMailer.confirmation_email(request, current_user_email).deliver_later if valid?(request)
   end
 
