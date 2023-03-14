@@ -43,6 +43,7 @@ class Organization < ApplicationRecord
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
   validate :correct_logo_mime_type
   validate :some_request_type_enabled
+  validate :logo_size_check, if: proc { |org| org.logo.attached? }
 
   belongs_to :account_request, optional: true
   belongs_to :ndbn_member, class_name: 'NDBNMember', optional: true
@@ -265,5 +266,9 @@ class Organization < ApplicationRecord
 
   def get_admin_email
     User.with_role(Role::ORG_ADMIN, self).sample.email
+  end
+
+  def logo_size_check
+    errors.add(:logo, 'File size is greater than 1 MB') if logo.byte_size > 1.megabytes
   end
 end
