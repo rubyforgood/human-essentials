@@ -28,7 +28,7 @@ module Partners
         item_requests_attributes: partner_request_params[:item_requests_attributes]&.values || []
       )
 
-      create_service.call
+      create_service.call(current_user.email)
       if create_service.errors.none?
         flash[:success] = 'Request was successfully created.'
         redirect_to partners_request_path(create_service.partner_request.id)

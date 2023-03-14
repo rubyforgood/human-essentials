@@ -2,7 +2,7 @@ class NotifyPartnerJob < ApplicationJob
   def perform(request_id)
     request = Request.find_by(id: request_id)
 
-    RequestsConfirmationMailer.confirmation_email(request).deliver_later if valid?(request)
+    RequestsConfirmationMailer.confirmation_email(request, current_user_email).deliver_later if valid?(request)
   end
 
   private

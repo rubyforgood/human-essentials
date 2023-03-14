@@ -12,7 +12,7 @@ module Partners
       @additional_attrs = additional_attrs
     end
 
-    def call
+    def call(current_user_email)
       @partner_request = ::Request.new(partner_id: partner.id,
         organization_id: organization_id,
         comments: comments,
@@ -35,7 +35,7 @@ module Partners
       Request.transaction do
         @partner_request.save!
 
-        NotifyPartnerJob.perform_now(@partner_request.id)
+        NotifyPartnerJob.perform_now(@partner_request.id, current_user_email)
       rescue StandardError => e
         errors.add(:base, e.message)
         raise ActiveRecord::Rollback
