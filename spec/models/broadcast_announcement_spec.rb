@@ -14,7 +14,7 @@
 require "rails_helper"
 
 RSpec.describe BroadcastAnnouncement, type: :model do
-  it { should belong_to(:organization) }
+  it { should belong_to(:organization).optional }
   it { should belong_to(:user) }
   it { should validate_presence_of(:message) }
 
@@ -33,13 +33,33 @@ RSpec.describe BroadcastAnnouncement, type: :model do
     expect(test_a).to be_valid
   end
 
-  it "expired? should be true if the announcement is expired" do
-    test_a = build(:broadcast_announcement, expiry: 2.days.ago)
-    expect(test_a.expired?).to eq(true)
+  context "expired?" do
+    it "should be true if the announcement is expired" do
+      test_a = build(:broadcast_announcement, expiry: 2.days.ago)
+      expect(test_a.expired?).to eq(true)
+    end
+
+    it "should be false if the announcement has not expired" do
+      test_a = build(:broadcast_announcement, expiry: Time.zone.today)
+      expect(test_a.expired?).to eq(false)
+    end
   end
 
-  it "expired? should be false if the announcement has not expired" do
-    test_a = build(:broadcast_announcement, expiry: Time.zone.today)
-    expect(test_a.expired?).to eq(false)
+  context "filter_announcements" do
+    it "should include only announcements from the passed organization" do
+      BroadcastAnnouncement.create!(message: "test", user_id: 1, organization_id: 1)
+      BroadcastAnnouncement.create!(message: "test", user_id: 1, organization_id: 1)
+      BroadcastAnnouncement.create!(message: "test", user_id: 1)
+      BroadcastAnnouncement.create!(message: "test", user_id: 1, organization_id: 2)
+      expect(BroadcastAnnouncement.filter_announcements(1).count).to eq(2)
+    end
+
+    it "shouldn't include expired announcements" do
+      BroadcastAnnouncement.create!(message: "test", user_id: 1, organization_id: 1)
+      BroadcastAnnouncement.create!(message: "test", user_id: 1, expiry: 2.days.ago, organization_id: 1)
+      BroadcastAnnouncement.create!(message: "test", user_id: 1, expiry: 5.days.ago, organization_id: 1)
+      BroadcastAnnouncement.create!(message: "test", user_id: 1, expiry: Time.zone.today, organization_id: 1)
+      expect(BroadcastAnnouncement.filter_announcements(1).count).to eq(2)
+    end
   end
 end
