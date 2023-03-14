@@ -25,8 +25,7 @@ module Partners
       @families = @partner.families
       @children = @partner.children
 
-      @broadcast_announcements = BroadcastAnnouncement.where(organization_id: @parent_org)
-                                                      .where('expiry IS ? or expiry >= ?', nil, Time.zone.today)
+      @broadcast_announcements = BroadcastAnnouncement.filter_announcements(@parent_org)
     end
   end
 end

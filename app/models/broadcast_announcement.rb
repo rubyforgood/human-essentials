@@ -21,4 +21,10 @@ class BroadcastAnnouncement < ApplicationRecord
     return false if expiry.nil?
     expiry < Time.zone.today
   end
+
+  def self.filter_announcements(parent_org)
+    BroadcastAnnouncement.where(organization_id: parent_org)
+      .where("expiry IS ? or expiry >= ?", nil, Time.zone.today)
+      .reverse
+  end
 end

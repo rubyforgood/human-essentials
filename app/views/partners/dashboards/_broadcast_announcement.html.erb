@@ -2,7 +2,7 @@
 <div class="card"> 
   <h5 class="card-header bg-primary text-white">Announcements from <%= @parent_org.name %></h5>
   <ul class="list-group list-group-flush">
-    <% @broadcast_announcements.reverse.each do |announcement| %>
+    <% @broadcast_announcements.each do |announcement| %>
       <li class="list-group-item">
         <strong><%= if announcement.created_at.strftime("%Y") == DateTime.now.strftime("%Y")
                       announcement.created_at.strftime("%B %d")
