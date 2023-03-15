@@ -11,7 +11,7 @@ class DistributionMailer < ApplicationMailer
     @partner = distribution.partner
     @distribution = distribution
     @comment = distribution.comment
-    requestee_email = User.find_by(id: distribution.request.partner_user_id).email
+    requestee_email = distribution.request ? distribution.request.user_email : @partner.email
 
     delivery_method = @distribution.delivery? ? 'delivered' : 'picked up'
     @default_email_text = current_organization.default_email_text
@@ -33,7 +33,7 @@ class DistributionMailer < ApplicationMailer
     distribution = Distribution.find(distribution_id)
     @partner = distribution.partner
     @distribution = distribution
-    requestee_email = User.find_by(id: distribution.request.partner_user_id).email
+    requestee_email = distribution.request ? distribution.request.user_email : @partner.email
 
     return if @distribution.past? || !@partner.send_reminders || @partner.deactivated?
 
