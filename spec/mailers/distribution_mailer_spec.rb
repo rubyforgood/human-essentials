@@ -103,7 +103,7 @@ RSpec.describe DistributionMailer, type: :mailer do
       end
     end
   end
-  describe "#requestee_email" do
+  describe "requestee_email assignment" do
     let(:requestee_email) { "requestee@example.com" }
     let(:partner) { create(:partner) }
     let(:organization) { create(:organization) }
@@ -111,9 +111,19 @@ RSpec.describe DistributionMailer, type: :mailer do
     let!(:request) { create(:request, partner: partner, organization: organization, partner_user_id: requestee_user.id) }
     let!(:distribution) { create(:distribution, partner: partner, organization: organization, request: request) }
   
-    it "retrieves the correct email for the requestee" do
-      requestee_email_result = User.find_by(id: distribution.request.partner_user_id).email
-      expect(requestee_email_result).to eq(requestee_email)
+    context "when distribution has a request" do
+      it "assigns the requestee's email from the request's user_email" do
+        requestee_email_result = distribution.request ? distribution.request.user_email : partner.email
+        expect(requestee_email_result).to eq(requestee_email)
+      end
+    end
+  
+    context "when distribution doesn't have a request" do
+      let!(:distribution_without_request) { create(:distribution, partner: partner, organization: organization, request: nil) }
+      it "assigns the requestee's email from the partner's email" do
+        requestee_email_result = distribution_without_request.request ? distribution_without_request.request.user_email : partner.email
+        expect(requestee_email_result).to eq(partner.email)
+      end
     end
   end
 end
