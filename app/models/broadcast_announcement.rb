@@ -23,7 +23,7 @@ class BroadcastAnnouncement < ApplicationRecord
   end
 
   def self.filter_announcements(parent_org)
-    BroadcastAnnouncement.where(organization_id: parent_org)
+    BroadcastAnnouncement.where(organization_id: [parent_org, nil].uniq)
       .where("expiry IS ? or expiry >= ?", nil, Time.zone.today)
       .reverse
   end

@@ -46,12 +46,12 @@ RSpec.describe BroadcastAnnouncement, type: :model do
   end
 
   context "filter_announcements" do
-    it "should include only announcements from the passed organization" do
+    it "should include only announcements from the passed organization and from admins" do
       BroadcastAnnouncement.create!(message: "test", user_id: 1, organization_id: 1)
       BroadcastAnnouncement.create!(message: "test", user_id: 1, organization_id: 1)
       BroadcastAnnouncement.create!(message: "test", user_id: 1)
       BroadcastAnnouncement.create!(message: "test", user_id: 1, organization_id: 2)
-      expect(BroadcastAnnouncement.filter_announcements(1).count).to eq(2)
+      expect(BroadcastAnnouncement.filter_announcements(1).count).to eq(3)
     end
 
     it "shouldn't include expired announcements" do
