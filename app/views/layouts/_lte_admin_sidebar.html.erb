@@ -64,6 +64,11 @@
           <i class="nav-icon fa fa-plus-circle"></i> New Organization
         <% end %>
       </li>
+      <li class="nav-item <%= 'active' if current_page?(admin_broadcast_announcements_path) %>">
+        <%= link_to(admin_broadcast_announcements_path, class: "nav-link #{"active" if current_page?(admin_broadcast_announcements_path)}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Bank Announcement
+        <% end %>
+      </li>
     </ul>
   </li>
 
