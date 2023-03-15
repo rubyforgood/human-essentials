@@ -107,8 +107,8 @@ RSpec.describe DistributionMailer, type: :mailer do
     let(:requestee_email) { "requestee@example.com" }
     let(:partner) { create(:partner) }
     let(:organization) { create(:organization) }
-    let!(:requestee_user) { create(:partner_user, email: requestee_email, partner: partner) }
-    let!(:request) { create(:request, partner: partner, organization: organization, partner_user_id: requestee_user.id) }
+    let!(:user) { create(:partner_user, email: requestee_email, partner: partner) }
+    let!(:request) { create(:request, partner: partner, organization: organization, partner_user_id: user.id) }
   
     context "when distribution has a request with a associated user" do
       let!(:distribution) { create(:distribution, partner: partner, organization: organization, request: request) }
