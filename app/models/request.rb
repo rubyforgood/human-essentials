@@ -53,7 +53,7 @@ class Request < ApplicationRecord
   end
 
   def user_email 
-    User.find_by(id: self.partner_user_id).email
+    self.partner_user_id ? User.find_by(id: self.partner_user_id).email : Partner.find_by(id: self.partner_id).email 
   end 
 
   private
