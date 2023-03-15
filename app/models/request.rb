@@ -52,6 +52,10 @@ class Request < ApplicationRecord
     request_items.sum { |item| item["quantity"] }
   end
 
+  def user_email 
+    User.find_by(id: self.partner_user_id).email
+  end 
+
   private
 
   def sanitize_items_data

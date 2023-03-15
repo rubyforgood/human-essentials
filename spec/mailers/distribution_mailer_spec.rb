@@ -6,7 +6,7 @@ RSpec.describe DistributionMailer, type: :mailer do
     @organization.update!(email: "me@org.com")
     allow(DistributionPdf).to receive(:new).and_return(double('DistributionPdf', compute_and_render: ''))
   end
-
+  
   describe "#partner_mailer" do
     let(:distribution_changes) { {} }
     let(:mail) { DistributionMailer.partner_mailer(@organization, @distribution, 'test subject', distribution_changes) }
@@ -101,6 +101,19 @@ RSpec.describe DistributionMailer, type: :mailer do
         mail = DistributionMailer.reminder_email(distribution.id)
         expect(mail.body.encoded).to match("delivery")
       end
+    end
+  end
+  describe "#requestee_email" do
+    let(:requestee_email) { "requestee@example.com" }
+    let(:partner) { create(:partner) }
+    let(:organization) { create(:organization) }
+    let!(:requestee_user) { create(:partner_user, email: requestee_email, partner: partner) }
+    let!(:request) { create(:request, partner: partner, organization: organization, partner_user_id: requestee_user.id) }
+    let!(:distribution) { create(:distribution, partner: partner, organization: organization, request: request) }
+  
+    it "retrieves the correct email for the requestee" do
+      requestee_email_result = User.find_by(id: distribution.request.partner_user_id).email
+      expect(requestee_email_result).to eq(requestee_email)
     end
   end
 end
