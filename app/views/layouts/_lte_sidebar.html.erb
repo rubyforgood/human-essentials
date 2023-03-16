@@ -82,11 +82,24 @@
       <p>Pick Ups & Deliveries</p>
     <% end %>
   </li>
-  <li class="nav-item <%= 'active' if current_page?(partners_path) %>">
-    <%= link_to(partners_path, class: "nav-link #{"active" if current_page?(partners_path)}") do %>
+  <li class="nav-item has-treeview <%= menu_open?(['partners']) %> <%= menu_open?(['broadcast_announcements']) %>">
+    <a href="#" class="nav-link <%= active_class(['partners']) %> <%= active_class(['broadcast_announcements']) %>">
       <i class="nav-icon fas fa-user-friends"></i>
-      <p>Partner Agencies</p>
-    <% end %>
+      <p>Partner Agencies
+        <i class="fas fa-angle-left right"></i></p>
+    </a>
+    <ul class="nav nav-treeview">
+      <li class="nav-item <%= 'active' if current_page?(partners_path) %>">
+        <%= link_to(partners_path, class: "nav-link #{"active" if current_page?(partners_path)}") do %>
+          <i class="nav-icon fa fa-circle-o"></i>All Partners
+        <% end %>
+      </li>
+      <li class="nav-item <%= 'active' if current_page?(broadcast_announcements_path) %>">
+        <%= link_to(broadcast_announcements_path, class: "nav-link #{active_class(['broadcast_announcements'])}") do %>
+          <i class="nav-icon fa fa-circle-o"></i>Partner Annoucement 
+        <% end %>
+      </li>
+    </ul>
   </li>
   <li class="nav-item has-treeview <%= menu_open?(['items', 'kits', 'barcode_items', 'storage_locations', 'adjustments', 'transfers']) %>">
     <a href="#" class="nav-link <%= active_class(['items', 'kits', 'barcode_items', 'storage_locations', 'adjustments', 'transfers']) %>">
