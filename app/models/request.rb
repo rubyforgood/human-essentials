@@ -52,9 +52,9 @@ class Request < ApplicationRecord
     request_items.sum { |item| item["quantity"] }
   end
 
-  def user_email 
-    self.partner_user_id ? User.find_by(id: self.partner_user_id).email : Partner.find_by(id: self.partner_id).email 
-  end 
+  def user_email
+    partner_user_id ? User.find_by(id: partner_user_id).email : Partner.find_by(id: partner_id).email
+  end
 
   private
 

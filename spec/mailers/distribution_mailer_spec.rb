@@ -7,7 +7,7 @@ RSpec.describe DistributionMailer, type: :mailer do
     @request = create(:request, distribution: @distribution)
     allow(DistributionPdf).to receive(:new).and_return(double('DistributionPdf', compute_and_render: ''))
   end
-  
+
   describe "#partner_mailer" do
     let(:distribution_changes) { {} }
     let(:mail) { DistributionMailer.partner_mailer(@organization, @distribution, 'test subject', distribution_changes) }
@@ -79,9 +79,8 @@ RSpec.describe DistributionMailer, type: :mailer do
         expect(mail.cc).to eq([@distribution.partner.email])
         expect(mail.from).to eq(["no-reply@humanessentials.app"])
         expect(mail.subject).to eq("PARTNER Distribution Reminder")
-        end 
       end
-
+    end
 
     context 'Text format' do
       it "renders the body with organization's email text" do
@@ -115,7 +114,7 @@ RSpec.describe DistributionMailer, type: :mailer do
     let(:organization) { create(:organization) }
     let!(:user) { create(:partner_user, email: requestee_email, partner: partner) }
     let!(:request) { create(:request, partner: partner, organization: organization, partner_user_id: user.id) }
-  
+
     context "when distribution has a request with a associated user" do
       let!(:distribution) { create(:distribution, partner: partner, organization: organization, request: request) }
       it "assigns the requestee's email from the request's user_email" do
@@ -132,7 +131,7 @@ RSpec.describe DistributionMailer, type: :mailer do
         expect(requestee_email_result).to eq(partner.email)
       end
     end
-  
+
     context "when distribution doesn't have a request" do
       let!(:distribution_without_request) { create(:distribution, partner: partner, organization: organization, request: nil) }
       it "assigns the requestee's email from the partner's email" do
