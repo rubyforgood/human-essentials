@@ -3,7 +3,7 @@ class RequestsConfirmationMailer < ApplicationMailer
     @organization = request.organization
     @partner = request.partner
     @request_items = fetch_items(request)
-    requestee_email = request.user_email 
+    requestee_email = request.user_email
 
     mail(to: requestee_email, cc: @partner.email, subject: "#{@organization.name} - Requests Confirmation")
   end
