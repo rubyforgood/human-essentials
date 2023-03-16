@@ -9,6 +9,7 @@ RSpec.describe RequestsConfirmationMailer, type: :mailer do
     it 'renders the headers' do
       expect(mail.subject).to eq("#{request.organization.name} - Requests Confirmation")
       expect(mail.to).to eq([request.user_email])
+      expect(mail.cc).to eq([request.partner.email])
       expect(mail.from).to include("no-reply@humanessentials.app")
     end
 
