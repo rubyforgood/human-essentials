@@ -7,10 +7,7 @@ module UserInviteService
   def self.invite(email:, resource:, name: nil, roles: [])
     raise "Resource not found!" if resource.nil?
 
-    if !valid_email_format?(email)
-      user = {email: email, name: name, errors: "is not a valid email format"}
-      return user
-    end
+    return nil if !valid_email_format?(email)
 
     user = User.find_by(email: email)
     if user
