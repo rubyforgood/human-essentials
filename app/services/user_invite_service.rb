@@ -8,9 +8,9 @@ module UserInviteService
     raise "Resource not found!" if resource.nil?
 
     if !valid_email_format?(email)
-      user = { email: email, name: name, errors: "is not a valid email format"}
+      user = {email: email, name: name, errors: "is not a valid email format"}
       return user
-    end 
+    end
 
     user = User.find_by(email: email)
     if user
