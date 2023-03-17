@@ -29,13 +29,13 @@ module Partners
         roles: [Role::PARTNER],
         resource: current_partner)
 
-      if user[:errors]
-        flash[:error] = user[:errors]
-        redirect_to new_partners_user_path
-      else
+      if user
         flash[:success] = "You have invited #{user.name} to join your organization!"
         redirect_to partners_users_path
-      end
+      else
+        flash[:error] = "invalid email"
+        redirect_to new_partners_user_path
+      end 
     end
 
     private
@@ -43,5 +43,5 @@ module Partners
     def user_params
       params.require(:user).permit(:name, :email)
     end
-  end
+  end 
 end
