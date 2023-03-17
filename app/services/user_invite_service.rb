@@ -7,6 +7,11 @@ module UserInviteService
   def self.invite(email:, resource:, name: nil, roles: [])
     raise "Resource not found!" if resource.nil?
 
+    if !valid_email_format?(email)
+      user = { email: email, name: name, errors: "is not a valid email format"}
+      return user
+    end 
+
     user = User.find_by(email: email)
     if user
       user.invite!
@@ -24,5 +29,10 @@ module UserInviteService
     roles.each do |role|
       user.add_role(role, resource)
     end
+  end
+
+  def self.valid_email_format?(email)
+    email_regex_pattern = /\A\w{2,}@[a-z]+(\.[a-z]{2,})+\z/i
+    email.match(email_regex_pattern)
   end
 end
