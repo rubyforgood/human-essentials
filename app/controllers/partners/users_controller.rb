@@ -24,13 +24,21 @@ module Partners
     end
 
     def create
-      user = UserInviteService.invite(name: user_params[:name],
-        email: user_params[:email],
-        roles: [Role::PARTNER],
-        resource: current_partner)
+      email_regex_pattern = /\A\w{2,}@[a-z]+(\.[a-z]{2,})+\z/i
+      user_email = user_params[:email]
 
-      flash[:success] = "You have invited #{user.name} to join your organization!"
-      redirect_to partners_users_path
+      if !user_email.match(email_regex_pattern)
+        flash[:error] = "Invalid email format. Please enter a valid email address."
+        redirect_to new_partners_user_path
+      else 
+        user = UserInviteService.invite(name: user_params[:name],
+          email: user_email,
+          roles: [Role::PARTNER],
+          resource: current_partner)
+
+        flash[:success] = "You have invited #{user.name} to join your organization!"
+        redirect_to partners_users_path
+      end 
     end
 
     private
