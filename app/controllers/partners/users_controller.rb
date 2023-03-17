@@ -30,7 +30,7 @@ module Partners
       if !user_email.match(email_regex_pattern)
         flash[:error] = "Invalid email format. Please enter a valid email address."
         redirect_to new_partners_user_path
-      else 
+      else
         user = UserInviteService.invite(name: user_params[:name],
           email: user_email,
           roles: [Role::PARTNER],
@@ -38,7 +38,7 @@ module Partners
 
         flash[:success] = "You have invited #{user.name} to join your organization!"
         redirect_to partners_users_path
-      end 
+      end
     end
 
     private
