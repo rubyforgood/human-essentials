@@ -1080,6 +1080,18 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "cielf",
+      "name": "CL Fisher",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10157589?v=4",
+      "profile": "https://github.com/cielf",
+      "contributions": [
+        "code",
+        "projectManagement",
+        "ideas",
+        "questions"
+      ]
     }
   ],
   "contributorsPerLine": 7,
