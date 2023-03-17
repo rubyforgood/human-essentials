@@ -29,14 +29,14 @@ module Partners
         roles: [Role::PARTNER],
         resource: current_partner)
 
-        unless user[:errors]
-          flash[:success] = "You have invited #{user.name} to join your organization!"
-          redirect_to partners_users_path
-        else
-          flash[:error] = user[:errors]
-          redirect_to new_partners_user_path
-        end
+      if user[:errors]
+        flash[:error] = user[:errors]
+        redirect_to new_partners_user_path
+      else
+        flash[:success] = "You have invited #{user.name} to join your organization!"
+        redirect_to partners_users_path
       end
+    end
 
     private
 
