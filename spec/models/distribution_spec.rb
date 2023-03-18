@@ -45,11 +45,9 @@ RSpec.describe Distribution, type: :model do
     end
 
     it "ensures that the issued at is no earlier than 2000" do
-      d = build(:distribution, issued_at: '1999-12-31')
+      d = build(:distribution, issued_at: "1999-12-31")
       expect(d).not_to be_valid
     end
-
-
   end
 
   context "Scopes >" do

@@ -84,10 +84,9 @@ RSpec.describe Purchase, type: :model do
     end
 
     it "ensures that the issued at is no earlier than 2000" do
-      p = build(:purchase, issued_at: '1999-12-31')
+      p = build(:purchase, issued_at: "1999-12-31")
       expect(p).not_to be_valid
     end
-
   end
 
   context "Callbacks >" do

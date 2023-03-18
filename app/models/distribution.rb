@@ -17,7 +17,6 @@ require 'time_util'
 #  storage_location_id    :integer
 #
 
-
 class Distribution < ApplicationRecord
   # Distributions are issued from a single storage location, so we associate
   # them so that on-hand amounts can be verified
@@ -36,8 +35,6 @@ class Distribution < ApplicationRecord
 
   has_one :request, dependent: :nullify
   accepts_nested_attributes_for :request
-
-  validate :issued_at_cannot_be_before_2000
 
   validates :storage_location, :partner, :organization, :delivery_method, presence: true
   validate :line_item_items_exist_in_inventory
@@ -144,7 +141,4 @@ class Distribution < ApplicationRecord
   def past?
     issued_at < Time.zone.today
   end
-
-
-
 end
