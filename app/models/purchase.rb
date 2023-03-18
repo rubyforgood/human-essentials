@@ -60,9 +60,6 @@ class Purchase < ApplicationRecord
   validates :amount_spent_in_cents, numericality: { greater_than: 0 }
   validate :total_equal_to_all_categories
 
-  validate :issued_at_cannot_be_before_2000
-
-
   def storage_view
     storage_location.nil? ? "N/A" : storage_location.name
   end

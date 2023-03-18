@@ -57,7 +57,6 @@ RSpec.describe Donation, type: :model do
       d = build(:donation, issued_at: '1999-12-31')
       expect(d).not_to be_valid
     end
-
   end
 
   context "Callbacks >" do
