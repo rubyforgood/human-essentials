@@ -1,15 +1,18 @@
 // Configure your import map in config/importmap.rb. Read more: https://github.com/rails/importmap-rails
 
-import jQuery from 'jquery'
+import jQuery from "jquery";
 window.jQuery = jQuery
 window.$ = jQuery
 
+import "startup"
+import "jquery-ui"
 import 'admin-lte'
 import "cocoon-js-vanilla";
 import 'filterrific'
 import { Turbo } from "@hotwired/turbo-rails"
 import "trix"
 import "@rails/actiontext"
+import "bootstrap-select"
 
 import {DateTime} from "luxon";
 import 'litepicker';
