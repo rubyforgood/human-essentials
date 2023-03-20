@@ -19,7 +19,6 @@ module UserInviteService
       add_roles(user1, resource: resource, roles: roles)
       if !valid_email_format?(email)
         user1.skip_invitation = !valid_email_format?(email)
-        user1.errors.add("invalid_email")
       end
     end
   end
