@@ -33,7 +33,7 @@ module Partners
         flash[:success] = "You have invited #{user.name} to join your organization!"
         redirect_to partners_users_path
       else
-        flash[:error] = "#{user.errors.full_messages.join("")}"
+        flash[:error] = user.errors.full_messages.join("").to_s
         redirect_to new_partners_user_path
       end
     end
