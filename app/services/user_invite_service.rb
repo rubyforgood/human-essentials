@@ -26,9 +26,4 @@ module UserInviteService
       user.add_role(role, resource)
     end
   end
-
-  def self.valid_email_format?(email)
-    email_regex_pattern = /\A\w{2,}@[a-z]+(\.[a-z]{2,})+\z/i
-    email.match(email_regex_pattern)
-  end
 end
