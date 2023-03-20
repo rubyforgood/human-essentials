@@ -62,4 +62,14 @@ class ProductDrive < ApplicationRecord
     dates = dates.split(" - ")
     @search_date_range = { start_date: dates[0], end_date: dates[1] }
   end
+
+  def items_quantity_by_name
+    quantities = donations.joins(:line_items)
+      .group('line_items.item_id')
+      .sum('line_items.quantity')
+
+    organization.items.order(:name).map do |item|
+      quantities[item.id] || 0
+    end
+  end
 end

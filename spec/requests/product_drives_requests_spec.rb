@@ -55,6 +55,7 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
 
       context "csv" do
         before { default_params.merge!(format: :csv) }
+        let(:headers) { Exports::ExportProductDrivesCSVService::HEADERS + organization.items.order(:name).pluck(:name) }
 
         it 'is successful' do
           subject
@@ -62,8 +63,8 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
           expect(response).to be_successful
           expect(response.header['Content-Type']).to include 'text/csv'
 
-          expected_headers = "Product Drive Name,Start Date,End Date,Held Virtually?,Quantity of Items,Variety of Items,In Kind Value\n"
-          expect(response.body).to eq(expected_headers)
+          expected_headers = headers
+          expect(response.body.chomp.split(",")).to eq(expected_headers)
         end
 
         it 'returns ONLY the associated product drives' do
@@ -115,6 +116,23 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
           expect(response.body).to include('product_drive_on_date_range')
           expect(response.body).not_to include('early_product_drive')
           expect(response.body).not_to include('late_product_drive')
+        end
+
+        it "returns the quantity of all organization's items" do
+          product_drive = create(:product_drive, name: 'product_drive', organization: organization)
+
+          items = organization.items
+
+          donation = create(:product_drive_donation, product_drive: product_drive)
+          create(:line_item, :donation, itemizable_id: donation.id, item_id: items.first.id, quantity: 4)
+
+          subject
+
+          row = response.body.split("\n")[1]
+          expect(response.body).to include(items.first.name)
+          expect(response.body).to include(items.second.name)
+          expect(row.split(',')[7]).to eq('4')
+          expect(row.split(',')[8]).to eq('0')
         end
       end
     end
