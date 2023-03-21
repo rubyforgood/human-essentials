@@ -200,7 +200,7 @@ GEM
       faraday (~> 1.0)
     ffi (1.15.5)
     filterrific (5.2.5)
-    flipper (0.27.0)
+    flipper (0.27.1)
       concurrent-ruby (< 2)
     flipper-active_record (0.27.0)
       activerecord (>= 4.2, < 8)
