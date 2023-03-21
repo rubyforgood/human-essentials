@@ -17,7 +17,7 @@ module UserInviteService
     User.invite!(email: email) do |user1|
       user1.name = name if name # Does this get persisted somewhere up the line? - CLF 20230203
       add_roles(user1, resource: resource, roles: roles)
-      user1.skip_invitation = true if user1.errors
+      user1.skip_invitation = user1.errors.any?
     end
   end
 
