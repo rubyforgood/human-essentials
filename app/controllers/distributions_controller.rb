@@ -87,10 +87,10 @@ class DistributionsController < ApplicationController
       end
     else
       @distribution = result.distribution
-      if params[:request_id].present?
+      if request_id
         # Using .find here instead of .find_by so we can raise a error if request_id
         # does not match any known Request
-        @distribution.request = Request.find(params[:request_id])
+        @distribution.request = Request.find(request_id)
       end
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
