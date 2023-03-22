@@ -53,7 +53,7 @@ function isShortHeightScreen() {
   return $(window).height() < 768 && !isMobileResolution();
 }
 
-function runOnStart(){
+$(document).ready(function(){
     const hash = window.location.hash;
     if (hash) {
       $('ul.nav a[href="' + hash + '"]').tab('show');
@@ -104,18 +104,5 @@ function runOnStart(){
       }
     });
     picker.setDateRange(startDate, endDate);
-}
-
-
-// This logic is a workaround for a problem with the date range picker in Safari
-// See https://developer.apple.com/forums/thread/651215
-
-if(document.readyState != 'loading'){
-  runOnStart();
-} else{
-// es-module-shims calls DOMContentLoaded twice for some reason
-  document.addEventListener("DOMContentLoaded", function() {
-    runOnStart();
-  }, false);
-}
+});
 
