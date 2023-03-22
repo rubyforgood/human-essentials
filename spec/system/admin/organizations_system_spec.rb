@@ -8,6 +8,18 @@ RSpec.describe "Admin Organization Management", type: :system, js: true do
       sign_in(@super_admin)
     end
 
+    it "breaks into two pages when a threshold of 2 organizations per page is reached", :aggregate_failures do
+      visit admin_organizations_path
+
+      expect(page).to have_content("Next ›")
+      expect(page).to have_content("Last »")
+
+      click_on "Next ›"
+
+      expect(page).to have_content("‹ Prev")
+      expect(page).to have_content("« First")
+    end
+
     it "filters by organizations by name in organizations index page" do
       visit admin_organizations_path
 
