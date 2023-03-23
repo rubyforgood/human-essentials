@@ -57,7 +57,10 @@ class User < ApplicationRecord
          :timeoutable
   devise :omniauthable, omniauth_providers: [:google_oauth2]
 
-  validates :name, :email, presence: true
+  validates :name, presence: true
+  validates :email, presence: true, uniqueness: {case_sensitive: false},
+  format: {with: URI::MailTo::EMAIL_REGEXP, on: :create}
+
   validate :password_complexity
 
   default_scope -> { kept }
