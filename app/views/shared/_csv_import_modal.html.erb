@@ -25,7 +25,7 @@
                 <li>
                   <%= f.file_field :file, accept: 'text/csv', class: 'form-control-file', style: "margin: auto;"  %>
                 </li>
-                <li style="margin-bottom: 27px;">Then click the "Import CSV" button <br>to import your storage locations.</li>
+                <li style="margin-bottom: 27px;"><%= import_csv_custom_text(csv_template_url, csv_import_url) %></li>
                 <li>
                   <%= button_tag :class => "btn btn-md btn-info" do %>
                     <i class="fa fa-upload"></i> Import CSV
