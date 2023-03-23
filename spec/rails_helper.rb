@@ -221,7 +221,7 @@ RSpec.configure do |config|
 end
 
 Kaminari.configure do |config|
-  config.default_per_page = 2
+  config.default_per_page = 3
 end
 
 Shoulda::Matchers.configure do |config|
