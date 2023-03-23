@@ -3,12 +3,14 @@ RSpec.describe "Admin Organization Management", type: :system, js: true do
   let!(:bar_org) { create(:organization, name: 'bar') }
   let!(:baz_org) { create(:organization, name: 'baz') }
 
-  context "While signed in as an Administrative User (super admin)" do
-    before :each do
+  context "while logged in as a super admin and there are enough organizations to trigger pagination" do
+    let!(:fourth_org) { create(:organization, name: 'fourth_org') }
+
+    before do
       sign_in(@super_admin)
     end
 
-    it "breaks into two pages when a threshold of 2 organizations per page is reached", :aggregate_failures do
+    it "it works on the organizations index page" do
       visit admin_organizations_path
 
       expect(page).to have_content("Next ›")
@@ -18,6 +20,12 @@ RSpec.describe "Admin Organization Management", type: :system, js: true do
 
       expect(page).to have_content("‹ Prev")
       expect(page).to have_content("« First")
+    end
+  end
+
+  context "While signed in as an Administrative User (super admin)" do
+    before :each do
+      sign_in(@super_admin)
     end
 
     it "filters by organizations by name in organizations index page" do
