@@ -11,7 +11,11 @@ module UserInviteService
     user = User.find_by(email: email)
     if user
       add_roles(user, resource: resource, roles: roles)
-      user.invite! if force
+      if force
+        user.invite!
+      else
+        UserMailer.role_added(user, resource, roles).deliver_later
+      end
       return user
     end
 
