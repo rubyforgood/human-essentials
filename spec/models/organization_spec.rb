@@ -56,6 +56,22 @@ RSpec.describe Organization, type: :model do
         enable_quantity_based_requests: false
       )).to_not be_valid
     end
+
+    it "validates that attachment file size is not higher than 1 MB" do
+      fixture_path = File.join(Rails.root, 'spec', 'fixtures', 'files', 'logo.jpg')
+      fixture_file = File.open(fixture_path)
+      organization = build(:organization)
+
+      allow(fixture_file).to receive(:size) { 2.megabytes }
+      organization.logo.attach(io: fixture_file, filename: 'logo.jpg')
+
+      expect(organization).to_not be_valid
+
+      allow(fixture_file).to receive(:size) { 10.kilobytes }
+      organization.logo.attach(io: fixture_file, filename: 'logo.jpg')
+
+      expect(organization).to be_valid
+    end
   end
 
   context "Associations >" do
