@@ -337,7 +337,7 @@ note = [
 
     item_requests = [] 
     Array.new(Faker::Number.within(range: 5..15)) do
-      item = Item.all.sample
+      item = p.organization.items.sample
       new_item_request = Partners::ItemRequest.new(
         item_id: item.id,
         quantity: Faker::Number.within(range: 10..30),
