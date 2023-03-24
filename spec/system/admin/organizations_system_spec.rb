@@ -1,16 +1,46 @@
 RSpec.describe "Admin Organization Management", type: :system, js: true do
-  let!(:foo_org) { create(:organization, name: 'foo') }
-  let!(:bar_org) { create(:organization, name: 'bar') }
-  let!(:baz_org) { create(:organization, name: 'baz') }
+  context "while logged in as a super admin and there are no organizations" do
+    before do
+      sign_in(@super_admin)
+    end
+
+    it "pagination does not appear" do
+      visit admin_organizations_path
+
+      expect(page).not_to have_content("Next ›")
+      expect(page).not_to have_content("Last »")
+    end
+  end
+
+  context "while logged in as a super admin and the per page limit is reached but not passed" do
+    let!(:first_org) { create(:organization, name: 'first_org') }
+    let!(:second_org) { create(:organization, name: 'second_org') }
+    let!(:third_org) { create(:organization, name: 'third_org') }
+
+    before do
+      sign_in(@super_admin)
+    end
+
+    # The per page limit is set to 3 for the tests
+    it "pagination does not appear" do
+      visit admin_organizations_path
+
+      expect(page).not_to have_content("Next ›")
+      expect(page).not_to have_content("Last »")
+    end
+  end
 
   context "while logged in as a super admin and there are enough organizations to trigger pagination" do
+    let!(:first_org) { create(:organization, name: 'first_org') }
+    let!(:second_org) { create(:organization, name: 'second_org') }
+    let!(:third_org) { create(:organization, name: 'third_org') }
     let!(:fourth_org) { create(:organization, name: 'fourth_org') }
 
     before do
       sign_in(@super_admin)
     end
 
-    it "it works on the organizations index page" do
+    it "pagination does appear" do
       visit admin_organizations_path
 
       expect(page).to have_content("Next ›")
@@ -24,6 +54,9 @@ RSpec.describe "Admin Organization Management", type: :system, js: true do
   end
 
   context "While signed in as an Administrative User (super admin)" do
+    let!(:foo_org) { create(:organization, name: 'foo') }
+    let!(:bar_org) { create(:organization, name: 'bar') }
+    let!(:baz_org) { create(:organization, name: 'baz') }
     before :each do
       sign_in(@super_admin)
     end
