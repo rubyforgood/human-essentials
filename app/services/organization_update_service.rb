@@ -12,12 +12,10 @@ class OrganizationUpdateService
     def update(organization, params)
       if organization.update(params)
         update_partner_flags(organization)
-        organization
-      else
-        organization
       end
+      organization
     end
-    
+
     # @param organization [Organization]
     def update_partner_flags(organization)
       FIELDS.each do |field|

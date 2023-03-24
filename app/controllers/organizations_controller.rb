@@ -15,8 +15,8 @@ class OrganizationsController < ApplicationController
   def update
     @organization = current_organization
     update = OrganizationUpdateService.update(@organization, organization_params)
-  
-    if update.errors.none? 
+
+    if update.errors.none?
       redirect_to organization_path(@organization), notice: "Updated your organization!"
     else
       flash[:error] = update.errors.full_messages.join("")
