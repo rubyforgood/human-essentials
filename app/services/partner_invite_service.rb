@@ -1,8 +1,9 @@
 class PartnerInviteService
   include ServiceObjectErrorsMixin
 
-  def initialize(partner:)
+  def initialize(partner:, force: false)
     @partner = partner
+    @force = force
   end
 
   def call
@@ -13,8 +14,10 @@ class PartnerInviteService
 
     partner.update!(status: 'invited')
     UserInviteService.invite(email: partner.email,
-      roles: [Role::PARTNER],
-      resource: partner)
+                             roles: [Role::PARTNER],
+                             resource: partner,
+                             force: @force
+    )
   end
 
   attr_reader :partner

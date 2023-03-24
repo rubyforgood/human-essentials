@@ -3,13 +3,15 @@ module UserInviteService
   # @param email [String]
   # @param roles [Array<Symbol>]
   # @param resource [ApplicationRecord]
+  # @param force [Boolean]
   # @return [User]
-  def self.invite(email:, resource:, name: nil, roles: [])
+  def self.invite(email:, resource:, name: nil, roles: [], force: false)
     raise "Resource not found!" if resource.nil?
 
     user = User.find_by(email: email)
     if user
       add_roles(user, resource: resource, roles: roles)
+      user.invite! if force
       return user
     end
 

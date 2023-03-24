@@ -9,6 +9,13 @@ RSpec.describe UserInviteService, type: :service, skip_seed: true do
       expect { described_class.invite(email: "email@email.com", resource: @organization) }.not_to change { ActionMailer::Base.deliveries.count }
     end
 
+    context 'with force: true' do
+      it 'should reinvite the user' do
+      expect { described_class.invite(email: "email@email.com", resource: @organization, force: true) }.
+        to change { ActionMailer::Base.deliveries.count }
+      end
+    end
+
     it "should add roles to existing user" do
       described_class.invite(email: "email@email.com",
         roles: [Role::ORG_USER, Role::ORG_ADMIN],
