@@ -14,10 +14,9 @@ class PartnerInviteService
 
     partner.update!(status: 'invited')
     UserInviteService.invite(email: partner.email,
-                             roles: [Role::PARTNER],
-                             resource: partner,
-                             force: @force
-    )
+      roles: [Role::PARTNER],
+      resource: partner,
+      force: @force)
   end
 
   attr_reader :partner
