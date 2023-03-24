@@ -1,4 +1,5 @@
-document.addEventListener('DOMContentLoaded', function () {
+import $ from 'jquery';
+$(document).ready(function () {
   var cocoonElementCounter = 0;
 
   var createNewID = function () {
