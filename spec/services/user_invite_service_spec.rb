@@ -1,5 +1,8 @@
 RSpec.describe UserInviteService, type: :service, skip_seed: true do
   let(:organization) { FactoryBot.create(:organization) }
+  before(:each) do
+    allow(UserMailer).to receive(:role_added).and_return(double(:mail, deliver_later: nil))
+  end
 
   context "with existing user" do
     let!(:user) do
@@ -7,12 +10,14 @@ RSpec.describe UserInviteService, type: :service, skip_seed: true do
     end
     it "should not reinvite the existing user" do
       expect { described_class.invite(email: "email@email.com", resource: @organization) }.not_to change { ActionMailer::Base.deliveries.count }
+      expect(UserMailer).to have_received(:role_added).with(user, [])
     end
 
     context 'with force: true' do
       it 'should reinvite the user' do
-      expect { described_class.invite(email: "email@email.com", resource: @organization, force: true) }.
-        to change { ActionMailer::Base.deliveries.count }
+        expect { described_class.invite(email: "email@email.com", resource: @organization, force: true) }.
+          to change { ActionMailer::Base.deliveries.count }
+        expect(UserMailer).not_to have_received(:role_added)
       end
     end
 

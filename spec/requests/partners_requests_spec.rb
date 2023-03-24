@@ -276,7 +276,7 @@ RSpec.describe "Partners", type: :request do
       service = instance_double(PartnerInviteService, call: nil, errors: [])
       allow(PartnerInviteService).to receive(:new).and_return(service)
     end
-    
+
     it "sends the invite" do
       post invite_partner_path(default_params.merge(id: partner.id))
       expect(PartnerInviteService).to have_received(:new).with(partner: partner, force: true)
