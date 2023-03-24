@@ -10,15 +10,14 @@ class OrganizationUpdateService
     # @param params [ActionDispatch::Http::Parameters]
     # @return [Boolean]
     def update(organization, params)
-      return false unless valid?(organization, params)
-
-      result = organization.update(params)
-      return false unless result
-
-      update_partner_flags(organization)
-      true
+      if organization.update(params)
+        update_partner_flags(organization)
+        organization
+      else
+        organization
+      end
     end
-
+    
     # @param organization [Organization]
     def update_partner_flags(organization)
       FIELDS.each do |field|
