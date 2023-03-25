@@ -715,20 +715,12 @@ end
 # ----------------------------------------------------------------------------
 # Transfers
 # ----------------------------------------------------------------------------
-storage_location = random_record_for_org(pdx_org, StorageLocation)
-stored_inventory_items_sample = storage_location.inventory_items.sample(20)
-distribution = Distribution.create!(storage_location: storage_location,
-                                    partner: random_record_for_org(pdx_org, Partner),
-                                    organization: pdx_org,
-                                    issued_at: Faker::Date.between(from: 4.days.ago, to: Time.zone.today),
-                                    delivery_method: Distribution.delivery_methods.keys.sample,
-                                    comment: 'Urgent')
 Transfer.create!(
   comment: Faker::Lorem.sentence,
   organization_id: pdx_org.id,
   from_id: pdx_org.id,
   to_id: sf_org.id,
   line_items: [
-    LineItem.create!(quantity: 5, item: pdx_org.items.first, itemizable: distribution)
+    LineItem.create!(quantity: 5, item: pdx_org.items.first, itemizable: Distribution.first)
   ]
 )
