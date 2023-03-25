@@ -31,27 +31,5 @@ class OrganizationUpdateService
         end
       end
     end
-
-    private
-
-    def valid?(organization, params)
-      return true if organization.partners.none?
-
-      fields_marked_for_disabling = FIELDS.select { |field| params[field] == false }
-
-      # Here we do a check: if applying the params for disabling request types to all
-      # partners would mean any one partner would have all its request types disabled,
-      # then we should not apply the params. As per:
-      # github.com/rubyforgood/human-essentials/issues/3264
-      organization.partners.none? do |partner|
-        all_fields_will_be_disabled?(partner, fields_marked_for_disabling)
-      end
-    end
-
-    def all_fields_will_be_disabled?(partner, fields_marked_for_disabling)
-      enabled_fields = FIELDS.select { |field| partner.profile.send(field) == true }
-
-      (enabled_fields - fields_marked_for_disabling).empty?
-    end
   end
 end
