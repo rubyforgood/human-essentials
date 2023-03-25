@@ -55,7 +55,6 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
 
       context "csv" do
         before { default_params.merge!(format: :csv) }
-        let(:headers) { Exports::ExportProductDrivesCSVService::HEADERS + organization.items.order(:name).pluck(:name) }
 
         it 'is successful' do
           subject
@@ -63,7 +62,7 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
           expect(response).to be_successful
           expect(response.header['Content-Type']).to include 'text/csv'
 
-          expected_headers = headers
+          expected_headers = Exports::ExportProductDrivesCSVService::HEADERS + organization.items.order(:name).pluck(:name)
           expect(response.body.chomp.split(",")).to eq(expected_headers)
         end
 
@@ -121,18 +120,22 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
         it "returns the quantity of all organization's items" do
           product_drive = create(:product_drive, name: 'product_drive', organization: organization)
 
-          items = organization.items
+          active_item, inactive_item = organization.items.first(2)
+          inactive_item.update!(active: false)
 
           donation = create(:product_drive_donation, product_drive: product_drive)
-          create(:line_item, :donation, itemizable_id: donation.id, item_id: items.first.id, quantity: 4)
+          create(:line_item, :donation, itemizable_id: donation.id, item_id: active_item.id, quantity: 4)
+          create(:line_item, :donation, itemizable_id: donation.id, item_id: inactive_item.id, quantity: 5)
 
           subject
 
           row = response.body.split("\n")[1]
-          expect(response.body).to include(items.first.name)
-          expect(response.body).to include(items.second.name)
-          expect(row.split(',')[7]).to eq('4')
-          expect(row.split(',')[8]).to eq('0')
+          cells = row.split(',')
+          expect(response.body).to include(active_item.name)
+          expect(response.body).to include(inactive_item.name)
+          expect(cells.count('4')).to eq(1)
+          expect(cells.count('5')).to eq(1)
+          expect(cells.count('0')).to eq(organization.items.count - 2)
         end
       end
     end
