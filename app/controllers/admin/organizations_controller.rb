@@ -8,6 +8,8 @@ class Admin::OrganizationsController < AdminController
     @organization = Organization.find(params[:id])
     update = OrganizationUpdateService.update(@organization, organization_params)
 
+    return false unless update 
+
     if update.errors.none?
       redirect_to admin_organizations_path, notice: "Updated organization!"
     else
