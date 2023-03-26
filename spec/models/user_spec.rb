@@ -44,9 +44,12 @@ RSpec.describe User, type: :model do
       expect(build(:user, name: nil)).not_to be_valid
       expect(build(:user, name: "foo")).to be_valid
     end
-    it "requires an email" do
-      expect(build(:user, email: nil)).not_to be_valid
-      expect(build(:user, email: "foo@bar.com")).to be_valid
+    it "requires an email that is formatted correctly" do
+      expect(build(:partner, email: nil)).not_to be_valid
+      expect(build(:partner, email: "foo@bar.com")).to be_valid
+      expect(build(:partner, email: "boooooooooo")).not_to be_valid
+      expect(build(:partner, email: "@boooooooooo")).not_to be_valid
+      expect(build(:partner, email: "boooooooooo@")).not_to be_valid
     end
   end
 

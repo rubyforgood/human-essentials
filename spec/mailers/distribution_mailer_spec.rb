@@ -4,6 +4,7 @@ RSpec.describe DistributionMailer, type: :mailer do
     @partner = create(:partner, name: 'PARTNER')
     @distribution = create(:distribution, organization: @user.organization, comment: "Distribution comment", partner: @partner)
     @organization.update!(email: "me@org.com")
+    @request = create(:request, distribution: @distribution)
     allow(DistributionPdf).to receive(:new).and_return(double('DistributionPdf', compute_and_render: ''))
   end
 
@@ -14,6 +15,8 @@ RSpec.describe DistributionMailer, type: :mailer do
     it "renders the body with organization's email text" do
       expect(mail.body.encoded).to match("Default email text example")
       expect(mail.html_part.body).to match(%(From: <a href="mailto:me@org.com">me@org.com</a>))
+      expect(mail.to).to eq([@distribution.request.user_email])
+      expect(mail.cc).to eq([@distribution.partner.email])
       expect(mail.from).to eq(["no-reply@humanessentials.app"])
       expect(mail.subject).to eq("test subject from DEFAULT")
     end
@@ -72,6 +75,8 @@ RSpec.describe DistributionMailer, type: :mailer do
         html = html_body(mail)
         expect(html).to match("This is a friendly reminder")
         expect(html).to match(%(For more information: <a href="mailto:me@org.com">me@org.com</a>))
+        expect(mail.to).to eq([@distribution.request.user_email])
+        expect(mail.cc).to eq([@distribution.partner.email])
         expect(mail.from).to eq(["no-reply@humanessentials.app"])
         expect(mail.subject).to eq("PARTNER Distribution Reminder")
       end

@@ -1,11 +1,2 @@
 $("#modal_new").html("<%= j (render "vendors/new_modal") %>");
 $("#modal_new").modal("show");
-
-// There seems to be an odd bug where *only on this page* the close button for the modal
-// doesn't work if the "fade" class is added to the modal.
-// To keep the fade functionality, we remove it once the modal is shown so the close button
-// works, then re-add it in case the modal has to be popped up again.
-$("#modal_new").on('hidden.bs.modal', function(e) {
-  $("#modal_new").addClass("fade");
-})
-$("#modal_new").removeClass("fade");
