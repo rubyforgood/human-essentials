@@ -22,7 +22,7 @@ class OrganizationsController < ApplicationController
       redirect_to organization_path(@organization), notice: "Updated your organization!"
     else
       flash[:error] = update.errors.full_messages.first
-      render :edit
+      redirect_to edit_organization_path(@organization)
     end
   end
 
