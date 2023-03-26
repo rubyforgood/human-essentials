@@ -19,7 +19,7 @@ class OrganizationsController < ApplicationController
     if update.errors.none?
       redirect_to organization_path(@organization), notice: "Updated your organization!"
     else
-      flash[:error] = update.errors.full_messages.join("")
+      flash[:error] = update.errors.full_messages.first
       render :edit
     end
   end
