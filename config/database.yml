@@ -25,4 +25,11 @@ test:
   timeout: 5000
 
 production:
-  <<: *development
+  adapter: postgresql
+  encoding: unicode
+  host: <%= ENV["DIAPER_DB_HOST"] %>
+  pool: 5
+  username: <%= ENV["DIAPER_DB_USERNAME"] %>
+  password: <%= ENV["DIAPER_DB_PASSWORD"] %>
+  database: <%= ENV["DIAPER_DB_DATABASE"] %>
+  timeout: 5000

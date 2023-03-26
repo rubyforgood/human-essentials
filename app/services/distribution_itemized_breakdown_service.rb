@@ -35,7 +35,7 @@ class DistributionItemizedBreakdownService
       })
     end
 
-    items_distributed.sort_by { |item| -item[:distributed] }
+    items_distributed.sort_by { |item| item[:name] }
   end
 
   #

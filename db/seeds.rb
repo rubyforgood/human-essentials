@@ -337,7 +337,7 @@ note = [
 
     item_requests = [] 
     Array.new(Faker::Number.within(range: 5..15)) do
-      item = Item.all.sample
+      item = p.organization.items.sample
       new_item_request = Partners::ItemRequest.new(
         item_id: item.id,
         quantity: Faker::Number.within(range: 10..30),
@@ -754,5 +754,15 @@ partner_ids.each do |partner_id|
   end
 end
 
-
-
+# ----------------------------------------------------------------------------
+# Transfers
+# ----------------------------------------------------------------------------
+Transfer.create!(
+  comment: Faker::Lorem.sentence,
+  organization_id: pdx_org.id,
+  from_id: pdx_org.id,
+  to_id: sf_org.id,
+  line_items: [
+    LineItem.create!(quantity: 5, item: pdx_org.items.first, itemizable: Distribution.first)
+  ]
+)

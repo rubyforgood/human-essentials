@@ -9,7 +9,7 @@ class Admin::OrganizationsController < AdminController
     if OrganizationUpdateService.update(@organization, organization_params)
       redirect_to admin_organizations_path, notice: "Updated organization!"
     else
-      flash[:error] = "Failed to update this organization."
+      flash[:error] = "Failed to update your organization."
       render :edit
     end
   end
