@@ -118,7 +118,7 @@ RSpec.describe "Admin::Organizations", type: :request do
         end
 
         it "returns http success" do
-          expect(subject).to satisfy { |response| response.status == 200 || response.status == 302 }
+          expect(subject).to be(successful)
         end
 
         it "redirects to #edit with an error message" do
