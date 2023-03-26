@@ -79,12 +79,17 @@ RSpec.describe "Organizations", type: :request do
       end
 
       context "when organization can not be updated" do
-        before { allow(OrganizationUpdateService).to receive(:update).and_return(false) }
+        let(:invalid_organization) { create(:organization, name: "Original Name") }
+        let(:invalid_params) { { organization: { name: nil } } }
+
+        before do
+          patch "/#{default_params[:organization_id]}/manage",
+                params: default_params.merge(invalid_params)
+        end
 
         it "redirects to #edit with an error message" do
-          subject
-
-          expect(subject).to render_template("edit")
+          expect(response).to redirect_to(edit_organization_path(assigns(:organization)))
+          follow_redirect!
           expect(flash[:error]).to be_present
         end
       end
