@@ -16,6 +16,8 @@ class OrganizationsController < ApplicationController
     @organization = current_organization
     update = OrganizationUpdateService.update(@organization, organization_params)
 
+    return false unless update 
+    
     if update.errors.none?
       redirect_to organization_path(@organization), notice: "Updated your organization!"
     else
