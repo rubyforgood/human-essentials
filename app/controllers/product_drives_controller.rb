@@ -14,7 +14,7 @@ class ProductDrivesController < ApplicationController
     respond_to do |format|
       format.html
       format.csv do
-        send_data Exports::ExportProductDrivesCSVService.generate_csv(@product_drives, current_organization), filename: "Product-Drives-#{Time.zone.today}.csv"
+        send_data Exports::ExportProductDrivesCSVService.new(@product_drives, current_organization).generate_csv, filename: "Product-Drives-#{Time.zone.today}.csv"
       end
     end
   end
