@@ -1,10 +1,11 @@
 # Overview
 
+> :warning: **WORK IN PROGRESS**: This document is currently (March 2023) under review, but committed to exercise the diagram generation code.
+
 ## The Physical Flow of Inventory
 
 ![Physical Flow](./physical-flow.svg)
-<details>
-<summary>(Diagram Code - Physical Flow)</summary>
+<details><summary>(Diagram Code - Physical Flow)</summary>
 
 ```plantuml:physical-flow
 skinparam componentStyle rectangle
@@ -28,7 +29,24 @@ rectangle "Partner" {
 ```
 </details>
 
+![Timeline](./timeline-flow.svg)
+<details><summary>(Diagram Code - Timeline)</summary>
+
+```plantuml:timeline-flow
+participant Donor
+participant Supplier
+Donor -> Bank: Donation
+Supplier -> Bank: Purchase
+Bank -> Bank: Inventory Management
+Partner --> Bank: Request (Optional)
+Bank -> Partner: Distribution
+Partner -> "Client/Family": Dispense
+```
+</details>
+
+
 ### Intake
+
 A Diaperbank will acquire inventory primarily through one of two methods: a **Donation** or a **Purchase**. Purchases are straightforward; the Diaperbank spends its own money to purchase inventory. Donations can be received through a few different means.
 
 **Diaperdrives** are like food drives -- a campaign, typically with advertisement to the community, for the general public to provide needed items to the diaperbank. Sometimes people will also donate inventory at a local **Donation Site**, outside of a Diaperdrive. Other than those two primary methods, there is a miscellaneous classification for diapers that are received (but not purchased) through other means.
@@ -40,13 +58,15 @@ Donations that don't fit into either of those types are classified as "Miscellan
 Both Donation Sites and Diaper Drives have to be created in the application beforehand, but can be used repeatedly after that.
 
 ### Inventory Management
+
 All inventory is physically stored at **Storage Locations**. This is one area where the application is particularly useful, as some storage locations accrue large quantities of inventory over time. Each storage location can contain any number of **Items** or types of items, and if a diaper bank has multiple storage locations, it is possible for the same item type to exist at multiple locations.
 
 Sometimes, the diaper banks will need to make a correction, this application calls them **Adjustment**s.
 
 When a diaper bank wants to move inventory from one storage location to another, they do so with a **Transfer**.
 
-### Distribution
+### Partner Distribution
+
 When inventory leaves a diaper bank, it does so via a **Distribution**. These are either created implicitly from inbound Partner **Requests**, or created explicitly via the menu interface. When they are created explicitly, they pull from a single designated Storage Location, and are built in a similar fashion to Donations, Adjustments, Transfers, etc -- items are added and quantities are specified.
 
 Distributions can be exported as PDFs, which Banks can use as printable manifests for the packages sent to the Community Partner.
@@ -54,6 +74,7 @@ Distributions can be exported as PDFs, which Banks can use as printable manifest
 Community Partners then dispense the items they receive to the clients / families.
 
 # Application Architecture
+
 This section is a more detailed, and more technical, explanation of how the application works, internally.
 
 ## Multi-Tenancy
@@ -96,7 +117,7 @@ This application is multi-tenant -- that is, each Diaper Bank (used interchangea
 
 When a user is signed-in, they are automatically "isolated" to their organizational space, as indicated by the URL (which features a short-code of their organization in it).
 
-### Users
+## Users
 Every organization has a user who is the "organization admin", typically the first user to sign up for that organization. This user can perform administrative privileges on the organization, such as changing the descriptive details, inviting other users, etc. Additional users are able to use most of the functions of their organizational space.
 
 ## Items
@@ -122,10 +143,12 @@ The behaviors of Line Items are consistent enough that the logic has been captur
 #### Inventory Items
 Inventory Items are similar to Line Items in their function, except it might be better to abstractly think of them as "Shelves" -- they are only found in Storage Locations, and are the resting place for inventory while it's retained by the Organization. Like Line Items, each Inventory Item can only track a single item type, but instead of associating with a polymorphic type, they only associate with Storage Locations (which hold physical inventory). They also differ in that they cannot be negative (you can't have -5 Baby Wipes, right?)
 
-## Barcoding
+### Barcoding
 One of the reasons that DiaperBase was built was specifically to offer the ability to expedite inventory tracking with Barcodes. If you aren't familiar with the physical concept of how Barcodes function, read up on [Code 39](https://en.wikipedia.org/wiki/Code_39) specifically - this allows us to encode letters and/or numbers into machine readable barcodes.
 
-### Organization Barcodes
+One or more **BARCODE**s are used to look up an **ITEM**.
+
+#### Organization Barcodes
 Organizations are encouraged to create their own Barcodes. So long as the barcode value has not already been used by that organization, they are free to use whatever Code39 barcode value they like.
 
 Suggested uses include:
@@ -136,10 +159,10 @@ Suggested uses include:
 
 Organization barcodes always take precedence when they do a lookup.
 
-### Global Barcodes
+#### Global Barcodes
 These are barcodes that act as "fall-throughs" and will generally be used to track product UPCs and map them to the appropriate Base Item type. (For example: pointing the UPC for 40 Huggies 3T, 48 Pampers 3T, and 24 Luvs 3T diaper packs all to the "3T Diapers" Base Item type). These are only entered by Site Administrators, and must always point to a Base Item type.
 
-### Barcode Retrieval
+#### Barcode Retrieval
 
 ![Barcode Retrieval](./barcode-retrieval.svg)
 <details>
@@ -167,8 +190,7 @@ For the second item, after the `BaseItem` is retrieved, it consults back to the 
 ## Partner Requests
 
 ![Partner Request](./partner-request.svg)
-<details>
-<summary>(Diagram Code)</summary>
+<details><summary>(Diagram Code)</summary>
 
 ```plantuml:partner-request
 participant Partner as partner
