@@ -111,7 +111,7 @@ RSpec.describe "Admin::Organizations", type: :request do
 
       context "with an invalid update" do
         let(:updated_name) { nil }
-        let(:successful) { 200 }
+        let(:successful) { 302 }
 
         subject do
           patch admin_organization_path(default_params.merge(id: organization.id, organization: { name: updated_name }))
