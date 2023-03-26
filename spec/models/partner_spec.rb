@@ -175,6 +175,30 @@ RSpec.describe Partner, type: :model do
     end
   end
 
+  describe '#approvable?' do
+    context 'when status is invited' do
+      it 'should return true' do
+        expect(build(:partner, status: :invited)).to be_approvable
+      end
+    end
+
+    context 'when status is awaiting_review' do
+      it 'should return true' do
+        expect(build(:partner, status: :awaiting_review)).to be_approvable
+      end
+    end
+
+    context 'when status is not invited or awaiting_review' do
+      it 'should return false', :aggregate_failures do
+        expect(build(:partner, status: :uninvited)).not_to be_approvable
+        expect(build(:partner, status: :approved)).not_to be_approvable
+        expect(build(:partner, status: :error)).not_to be_approvable
+        expect(build(:partner, status: :recertification_required)).not_to be_approvable
+        expect(build(:partner, status: :deactivated)).not_to be_approvable
+      end
+    end
+  end
+
   describe 'changing emails' do
     let(:partner) { create(:partner, status: :invited) }
     before do
