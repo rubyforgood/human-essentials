@@ -712,3 +712,15 @@ answers = [
   )
 end
 
+# ----------------------------------------------------------------------------
+# Transfers
+# ----------------------------------------------------------------------------
+Transfer.create!(
+  comment: Faker::Lorem.sentence,
+  organization_id: pdx_org.id,
+  from_id: pdx_org.id,
+  to_id: sf_org.id,
+  line_items: [
+    LineItem.create!(quantity: 5, item: pdx_org.items.first, itemizable: Distribution.first)
+  ]
+)
