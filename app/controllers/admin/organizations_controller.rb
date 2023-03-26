@@ -12,7 +12,7 @@ class Admin::OrganizationsController < AdminController
       redirect_to admin_organizations_path, notice: "Updated organization!"
     else
       flash[:error] = update.errors.full_messages.first
-      redirect_to edit_admin_organization_path(current_organization)
+      render :edit
     end
   end
 
