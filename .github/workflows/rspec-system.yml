@@ -60,10 +60,8 @@ jobs:
           POSTGRES_HOST_AUTH_METHOD: trust
           POSTGRES_PORT: 5432
           RAILS_ENV: test
-          NODE_ENV: test
         run: |
           bundle exec skylight disable_dev_warning
-          yarn
           bundle exec rake db:create
           bundle exec rake db:schema:load
           bundle exec rails assets:precompile
@@ -78,7 +76,6 @@ jobs:
           PGHOST: localhost
           PGUSER: postgres
           RAILS_ENV: test
-          NODE_ENV: test
           KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: ${{ secrets.KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC }}
           KNAPSACK_PRO_CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
           KNAPSACK_PRO_CI_NODE_INDEX: ${{ matrix.ci_node_index }}
