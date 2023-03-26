@@ -12,11 +12,11 @@ ruby "3.1.2"
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.4.5"
+gem "pg", "~> 1.4.6"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "7.0.4.2"
+gem "rails", "7.0.4.3"
 
 ###### MODELS / DATABASE #######
 
@@ -34,16 +34,13 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.4.2"
+gem "strong_migrations", "1.4.4"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
 gem 'bootstrap-select-rails'
 # Bootstrap is a library for HTML, CSS and JS.
 gem 'bootstrap', '~> 4.6.0'
-# jQuery framework (DOM methods, Ajax, chaining, etc.)
-gem "jquery-rails"
-gem "jquery-ui-rails"
 # SASS CSS framework (nested selectors, variables, etc.)
 gem "sass-rails"
 # Used to verify that the user is a human.
@@ -130,7 +127,7 @@ group :development, :test, :staging do
   # Generate models based on factory definitions.
   gem 'factory_bot_rails'
   # Ensure the database is in a clean state on every test.
-  gem "database_cleaner", '1.8.5'
+  gem "database_cleaner-active_record", '~> 2.1'
   # Generate fake data for use in tests.
   gem 'faker'
 end
@@ -161,7 +158,7 @@ group :development, :test do
   # Rails add-on for static analysis.
   gem "rubocop-rails", "~> 2.17.4"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.24"
+  gem "standard", "~> 1.25"
 end
 
 group :development do

@@ -41,4 +41,15 @@ FactoryBot.define do
   trait :pending do
     status { 'pending' }
   end
+
+  trait :with_duplicates do
+    request_items {
+      # get 3 unique item ids
+      keys = Item.active.pluck(:id).sample(3)
+      # add an extra of the first key, so we have one duplicated item
+      keys.push(keys[0])
+      # give each item a quantity of 50
+      keys.map { |k| { "item_id" => k, "quantity" => 50 } }
+    }
+  end
 end
