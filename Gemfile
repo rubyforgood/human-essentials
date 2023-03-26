@@ -127,7 +127,7 @@ group :development, :test, :staging do
   # Generate models based on factory definitions.
   gem 'factory_bot_rails'
   # Ensure the database is in a clean state on every test.
-  gem "database_cleaner", '2.0.2'
+  gem "database_cleaner-active_record", '~> 2.1'
   # Generate fake data for use in tests.
   gem 'faker'
 end

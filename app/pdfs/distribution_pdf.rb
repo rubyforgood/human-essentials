@@ -157,7 +157,7 @@ class DistributionPdf
         c.quantity,
         "",
         dollar_value(c.item.value_in_cents),
-        dollar_value(c.value_per_line_item),
+        nil,
         nil]
     end
 
