@@ -79,13 +79,15 @@ RSpec.describe "Organizations", type: :request do
       end
 
       context "when organization can not be updated" do
-        before { allow(OrganizationUpdateService).to receive(:update).and_return(false) }
+        # before { allow(OrganizationUpdateService).to receive(:update).and_return(false) }
+        let(:update_param) { { organization: { url: "Thunder Pants" } } }
+
 
         it "redirects to #edit with an error message" do
           subject
 
           expect(subject).to render_template("edit")
-          expect(flash[:error]).to be_present
+          expect(flash[:error]).to eq("Url it should look like 'http://www.example.com'")
         end
       end
     end
