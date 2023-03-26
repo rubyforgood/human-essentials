@@ -24,17 +24,23 @@ module Partners
     end
 
     def create
-      user = UserInviteService.invite(name: user_params[:name],
-        email: user_params[:email],
-        roles: [Role::PARTNER],
-        resource: current_partner)
-
-      if user.errors.none?
-        flash[:success] = "You have invited #{user.name} to join your organization!"
+      # this pre-creation work is to determine whether the user has accepted the invitation or not - if they have, then a new email is not sent
+      @user = User.find_by(email: user_params[:email])
+      if @user && (@user.last_sign_in_at? || user.invitation_accepted_at?)
+        flash[:error] = "#{@user.name} has already joined the organization"
         redirect_to partners_users_path
       else
-        flash[:error] = user.errors.full_messages.join("")
-        redirect_to new_partners_user_path
+        user = UserInviteService.invite(name: user_params[:name],
+          email: user_params[:email],
+          roles: [Role::PARTNER],
+          resource: current_partner)
+        if user.errors.none?
+          flash[:success] = "You have invited #{user.name} to join your organization!"
+          redirect_to partners_users_path
+        else
+          flash[:error] = user.errors.full_messages.join("")
+          redirect_to new_partners_user_path
+        end
       end
     end
 
