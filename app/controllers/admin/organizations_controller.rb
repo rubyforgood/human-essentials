@@ -6,14 +6,11 @@ class Admin::OrganizationsController < AdminController
 
   def update
     @organization = Organization.find(params[:id])
-    update = OrganizationUpdateService.update(@organization, organization_params)
 
-    return false unless update
-
-    if update.errors.none?
+    if OrganizationUpdateService.update(@organization, organization_params)
       redirect_to admin_organizations_path, notice: "Updated organization!"
     else
-      flash[:error] = update.errors.full_messages.first
+      flash[:error] = @organization.errors.full_messages.first
       render :edit
     end
   end

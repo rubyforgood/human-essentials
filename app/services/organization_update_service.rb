@@ -10,11 +10,12 @@ class OrganizationUpdateService
     # @param params [ActionDispatch::Http::Parameters]
     # @return [Boolean]
     def update(organization, params)
-      if valid?(organization, params)
-        organization.update(params)
-        update_partner_flags(organization)
-      end
-      organization
+      return false unless valid?(organization, params)
+
+      return false unless organization.update(params)
+
+      update_partner_flags(organization)
+      true
     end
 
     # @param organization [Organization]

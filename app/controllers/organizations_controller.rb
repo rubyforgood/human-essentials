@@ -14,15 +14,12 @@ class OrganizationsController < ApplicationController
 
   def update
     @organization = current_organization
-    update = OrganizationUpdateService.update(@organization, organization_params)
 
-    return false unless update
-
-    if update.errors.none?
+    if OrganizationUpdateService.update(@organization, organization_params)
       redirect_to organization_path(@organization), notice: "Updated your organization!"
     else
-      flash[:error] = update.errors.full_messages.first
-      redirect_to edit_organization_path(current_organization)
+      flash[:error] = @organization.errors.full_messages.first
+      redirect_to edit_organization_path(@organization)
     end
   end
 
