@@ -81,7 +81,7 @@ If you're new here, here are some things you should know:
 
 #### 💬 Join us on slack
 Please feel free to join us on Slack!
-You can sign up at https://rubyforgood.herokuapp.com and find us in #human-essentials.
+You can sign up at https://rubyforgood.org and find us in #human-essentials.
 
 There are numerous other folks that can chime in and answer questions -- please ask and someone will probably be there to help!
 
