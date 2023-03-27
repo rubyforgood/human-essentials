@@ -4,7 +4,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h2 class="modal-title">Import <%= title %></h2>
+        <h2 class="modal-title">Import <%= import_type %></h2>
       </div><!-- /.modal-header -->
       <div class="modal-body">
         <div class="row">
@@ -25,7 +25,7 @@
                 <li>
                   <%= f.file_field :file, accept: 'text/csv', class: 'form-control-file', style: "margin: auto;"  %>
                 </li>
-                <li style="margin-bottom: 27px;">Then click the "Import CSV" button to import your <%= title.downcase %>.</li>
+                <li style="margin-bottom: 27px;">Then click the "Import CSV" button to import your <%= import_type.downcase %>.</li>
                 <li>
                   <%= button_tag :class => "btn btn-md btn-info" do %>
                     <i class="fa fa-upload"></i> Import CSV

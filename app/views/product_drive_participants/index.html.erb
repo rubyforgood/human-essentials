@@ -76,9 +76,9 @@
   <%= render(
           layout: "shared/csv_import_modal",
           locals: {
-              title: "Product Drive Participants",
-              csv_template_url: "/product_drive_participants.csv",
-              csv_import_url: import_csv_product_drive_participants_path
+            import_type: "Product Drive Participants",
+            csv_template_url: "/product_drive_participants.csv",
+            csv_import_url: import_csv_product_drive_participants_path
           }
       ) do %>
     <li>Open the csv file with excel or your favourite spreadsheet program.</li>
