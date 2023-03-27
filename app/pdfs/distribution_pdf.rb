@@ -21,7 +21,7 @@ class DistributionPdf
 
     image logo_image, fit: [250, 85]
 
-    bounding_box [bounds.right - 225, bounds.top], width: 225, height: 50 do
+    bounding_box [bounds.right - 225, bounds.top], width: 225, height: 85 do
       text @organization.name, align: :right
       text @organization.address, align: :right
       text @organization.email, align: :right
