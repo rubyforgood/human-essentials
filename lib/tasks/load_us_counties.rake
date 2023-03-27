@@ -8,7 +8,7 @@ namespace :db do
       CSV.foreach("lib//assets//us_county_list.csv") do |row|
         counties<< {name: row[0], region: row[1]}
       end
-      County.insert_all( counties)
+      County.upsert_all( counties)
     end
   end
 end
