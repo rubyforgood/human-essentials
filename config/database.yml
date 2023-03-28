@@ -24,5 +24,15 @@ test:
   database: diaper_test
   timeout: 5000
 
+# These env vars live in Cloud66 application settings. Don't change
+# the names of the vars we're looking for without ensuring you've
+# updated/duplicated the vars there!
 production:
-  <<: *development
+  adapter: postgresql
+  encoding: unicode
+  host: <%= ENV["DIAPER_DB_HOST"] %>
+  pool: 5
+  username: <%= ENV["DIAPER_DB_USERNAME"] %>
+  password: <%= ENV["DIAPER_DB_PASSWORD"] %>
+  database: <%= ENV["DIAPER_DB_DATABASE"] %>
+  timeout: 5000

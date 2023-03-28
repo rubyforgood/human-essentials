@@ -494,15 +494,15 @@ GEM
       rubocop-ast (>= 1.26.0, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 2.4.0, < 3.0)
-    rubocop-ast (1.27.0)
+    rubocop-ast (1.28.0)
       parser (>= 3.2.1.0)
     rubocop-performance (1.16.0)
       rubocop (>= 1.7.0, < 2.0)
       rubocop-ast (>= 0.4.0)
-    rubocop-rails (2.9.1)
+    rubocop-rails (2.18.0)
       activesupport (>= 4.2.0)
       rack (>= 1.1)
-      rubocop (>= 0.90.0, < 2.0)
+      rubocop (>= 1.33.0, < 2.0)
     ruby-graphviz (1.2.5)
       rexml
     ruby-progressbar (1.13.0)
@@ -683,7 +683,7 @@ DEPENDENCIES
   rspec-rails (~> 6.0.1)
   rspec-retry
   rubocop
-  rubocop-rails (~> 2.9.0)
+  rubocop-rails (~> 2.18.0)
   sass-rails
   shoulda-matchers (~> 5.3)
   simple_form
