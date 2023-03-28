@@ -11,7 +11,7 @@ module Exports
 
     def generate_csv
       CSV.generate do |csv|
-        csv << generate_headers(organization)
+        csv << generate_headers
 
         product_drives.each do |drive|
           csv << generate_row(drive)
@@ -32,11 +32,11 @@ module Exports
         drive.donation_quantity.to_s,
         drive.distinct_items_count.to_s,
         dollar_value(drive.in_kind_value).to_s,
-        *drive.items_quantity_by_name
+        *drive.item_quantities_by_name
       ]
     end
 
-    def generate_headers(organization)
+    def generate_headers
       HEADERS + item_headers
     end
 
