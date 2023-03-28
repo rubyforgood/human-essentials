@@ -28,7 +28,11 @@ RSpec.describe "Coworking invitations", type: :system, js: true do
         user = ::User.find_by(email: new_user_email)
         expect(user.has_role?(Role::PARTNER, partner_user.partner)).to be_truthy
       end
+
+      it "should not send an invitation to already accepted accounts" do
+        @user = create(:user, name: "accepted_user", email: "q@example.com", invitation_accepted_at: Time.zone.parse("2018-10-11 00:00:00"))
+        expect page.has_content? "accepted_user has already joined the organization"
+      end
     end
   end
 end
-
