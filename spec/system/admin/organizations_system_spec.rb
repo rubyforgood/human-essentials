@@ -13,7 +13,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true do
   end
 
   context "while logged in as a super admin and the per page limit is reached but not passed" do
-    let!(:first_org) { create(:organization, name: 'first_org') }
+    # The first org being the default org that gets made during test setup.
     let!(:second_org) { create(:organization, name: 'second_org') }
     let!(:third_org) { create(:organization, name: 'third_org') }
 
@@ -129,11 +129,11 @@ RSpec.describe "Admin Organization Management", type: :system, js: true do
     it "can view organization details", :aggregate_failures do
       visit admin_organizations_path
 
-      within("tr.#{foo_org.short_name}") do
+      within("tr.#{bar_org.short_name}") do
         first(:link, "View").click
       end
 
-      expect(page.find("h1")).to have_text(foo_org.name)
+      expect(page.find("h1")).to have_text(bar_org.name)
       expect(page).to have_link("Home", href: "#{admin_dashboard_path}?organization_id=#{@organization.short_name}")
 
       expect(page).to have_content("Organization Info")
