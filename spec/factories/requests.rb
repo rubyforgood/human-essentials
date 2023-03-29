@@ -64,9 +64,4 @@ FactoryBot.define do
       keys.map.with_index { |k, i| { "item_id" => k, "quantity" => item_quantities[i]} }
     }
   end
-
-
-
-
-
 end
