@@ -140,6 +140,14 @@ RSpec.describe "Vendors", type: :request do
       let(:object) { create(:vendor, organization: create(:organization)) }
       include_examples "requiring authorization"
     end
+
+    describe "when on vendors index page" do
+      it "has the correct import type" do
+        get vendors_path(default_params.merge(format: 'html'))
+
+        expect(response.body).to include('Import Vendors')
+      end
+    end
   end
 
   context "While not signed in" do
