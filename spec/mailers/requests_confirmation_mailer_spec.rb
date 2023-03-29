@@ -3,7 +3,9 @@ RSpec.describe RequestsConfirmationMailer, type: :mailer do
   let(:mail) { RequestsConfirmationMailer.confirmation_email(request) }
 
   let(:request_w_duplicates) { create(:request, :with_duplicates) }
+  let(:request_w_varied_quantities) { create(:request, :with_varied_quantities)}
   let(:mail_w_duplicates) { RequestsConfirmationMailer.confirmation_email(request_w_duplicates) }
+  let(:mail_w_varied_quantities) { RequestsConfirmationMailer.confirmation_email(request_w_varied_quantities) }
 
   describe "#confirmation_email" do
     it 'renders the headers' do
@@ -25,4 +27,16 @@ RSpec.describe RequestsConfirmationMailer, type: :mailer do
     expect(mail_w_duplicates.body.encoded).to match('This is an email confirmation')
     expect(mail_w_duplicates.body.encoded).to match(' - 100')
   end
+
+  it 'pairs the right quantities with the right item names' do
+    @organization.update!(email: "me@org.com")
+    expect(mail_w_varied_quantities.body.encoded).to match('This is an email confirmation')
+    request_w_varied_quantities.request_items.each { |ri|
+      item = Item.find(ri["item_id"])
+      puts "item name is: #{item.name}"
+      expected_string = "#{item.name} - #{ri['quantity']}"
+      expect(mail_w_varied_quantities.body.encoded).to include(expected_string)
+    }
+  end
+
 end
