@@ -18,9 +18,15 @@ class StorageLocationsController < ApplicationController
       @storage_locations = @storage_locations.kept
     end
 
+    storage_location_inventory_item_names = []
+    @storage_locations.first.inventory_items.sort.each{ |item|
+      next unless Item.find(item.item_id).active
+      storage_location_inventory_item_names << Item.find(item.item_id).name 
+    }
+
     respond_to do |format|
       format.html
-      format.csv { send_data StorageLocation.generate_csv(@storage_locations), filename: "StorageLocations-#{Time.zone.today}.csv" }
+      format.csv { send_data StorageLocation.generate_csv(@storage_locations, storage_location_inventory_item_names), filename: "StorageLocations-#{Time.zone.today}.csv" }
     end
   end
 

@@ -70,7 +70,7 @@ class StorageLocation < ApplicationRecord
   end
 
   def self.items_inventoried
-    Item.joins(:storage_locations).select(:id, :name).group(:id, :name).order(name: :asc)
+    Item.joins(:storage_locations).select(:id, :name, :active).group(:id, :name).order(name: :asc)
   end
 
   def item_total(item_id)
@@ -211,7 +211,12 @@ class StorageLocation < ApplicationRecord
   end
 
   def csv_export_attributes
-    [name, address, square_footage, warehouse_type, size]
+    attributes = [name, address, square_footage, warehouse_type, size]
+    inventory_items.sort.each { |item| 
+      next unless Item.find(item.item_id).active
+      attributes << item.quantity 
+    }
+    attributes
   end
 
   def empty_inventory_items?
