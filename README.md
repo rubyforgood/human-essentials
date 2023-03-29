@@ -115,7 +115,7 @@ This app uses PostgreSQL for all environments. You'll also need to create the `d
 Create a `database.yml` file on `config/` directory with your database configurations. You can also copy the existing files called [`database.yml.example`](config/database.yml.example) and [`.env.example`](.env.example) as an example and just change the credentials.
 
 - MacOSX - https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-macos
-- Ubuntu - TODO
+- Ubuntu - https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-ubuntu-18-04
 - Windows - Do you develop on windows? We'd love to hear (and for you to submit a PR explaining) how you do it. 🙏🏻
 
 After completing this step, you should have both ruby and postgres installed. Now you can proceed to the next step which is to setup the application.

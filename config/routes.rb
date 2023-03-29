@@ -228,6 +228,7 @@ Rails.application.routes.draw do
       get 'invalid_token'
     end
   end
+  resources :broadcast_announcements
 
   root "static#index"
 end

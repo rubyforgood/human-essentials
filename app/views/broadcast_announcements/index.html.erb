@@ -1,0 +1,60 @@
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Send broadcast announcement" %>
+        <h1>
+          Broadcast Announcement to Partners
+          <small>for <%= current_organization.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><%= link_to "All Partners", (partners_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Broadcast Announcements", broadcast_announcements_path %></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary">
+          <!-- /.card-header -->
+          <div class="card-body">
+            <div class='flex justify-end mb-4'>
+              <%= new_button_to new_broadcast_announcement_path(organization_id: current_organization), {text: "New Announcement"} %>
+            </div>
+            <table class="table table-responsive-md">
+              <thead>
+                <tr>
+                  <th class="w-50">Announcement</th>
+                  <th>More info</th>
+                  <th>Sent by</th>
+                  <th>Expiration</th>
+                  <th class="text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @broadcast_announcements.reverse.each do |broadcast_announcement| %>
+                  <%= render broadcast_announcement %>
+                <% end %>
+              </tbody>
+            </table>
+            <!-- /.card-body -->
+          </div>
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
+</section>

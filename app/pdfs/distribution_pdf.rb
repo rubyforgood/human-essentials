@@ -21,7 +21,7 @@ class DistributionPdf
 
     image logo_image, fit: [250, 85]
 
-    bounding_box [bounds.right - 225, bounds.top], width: 225, height: 50 do
+    bounding_box [bounds.right - 225, bounds.top], width: 225, height: 85 do
       text @organization.name, align: :right
       text @organization.address, align: :right
       text @organization.email, align: :right
@@ -157,13 +157,13 @@ class DistributionPdf
         c.quantity,
         "",
         dollar_value(c.item.value_in_cents),
-        dollar_value(c.value_per_line_item),
-        c.package_count]
+        nil,
+        nil]
     end
 
     data + [["", "", "", "", ""],
       ["Total Items Received",
-        @distribution.line_items.total + requested_not_received.map(&:quantity).sum,
+        request_items.map(&:quantity).sum,
         @distribution.line_items.total,
         "",
         dollar_value(@distribution.value_per_itemizable),
