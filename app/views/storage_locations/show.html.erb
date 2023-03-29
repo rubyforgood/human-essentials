@@ -159,7 +159,7 @@
 <%= render(
   layout: "shared/csv_import_modal",
   locals: {
-    title: 'Import Storage Locations Instructions:',
+    import_type: 'Storage Locations Instructions',
     csv_template_url: storage_location_path(@storage_location, format: :csv),
     csv_import_url: import_inventory_storage_locations_path(storage_location: @storage_location.id)
   }
