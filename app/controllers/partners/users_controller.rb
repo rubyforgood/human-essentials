@@ -30,6 +30,7 @@ module Partners
         flash[:error] = "#{@user.name} has already joined the organization"
         redirect_to partners_users_path
       else
+        #everything from here on runs only if the revious condition is met
         user = UserInviteService.invite(name: user_params[:name],
           email: user_params[:email],
           roles: [Role::PARTNER],
