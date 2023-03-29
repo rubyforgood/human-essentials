@@ -26,7 +26,7 @@ module Partners
     def create
       # this pre-creation work is to determine whether the user has accepted the invitation or not - if they have, then a new email is not sent
       @user = User.find_by(email: user_params[:email])
-      if @user && (@user.last_sign_in_at? || user.invitation_accepted_at?)
+      if @user && (@user.last_sign_in_at? || @user.invitation_accepted_at?)
         flash[:error] = "#{@user.name} has already joined the organization"
         redirect_to partners_users_path
       else

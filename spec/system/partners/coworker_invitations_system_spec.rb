@@ -36,3 +36,4 @@ RSpec.describe "Coworking invitations", type: :system, js: true do
     end
   end
 end
+
