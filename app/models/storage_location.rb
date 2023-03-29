@@ -212,7 +212,9 @@ class StorageLocation < ApplicationRecord
 
   def csv_export_attributes
     attributes = [name, address, square_footage, warehouse_type, size]
-    inventory_items.sort.each { |item| 
+    inventory_items.sort{|a, b| 
+      Item.find(a.item_id).name <=> Item.find(b.item_id).name
+    }.each { |item| 
       next unless Item.find(item.item_id).active
       attributes << item.quantity 
     }

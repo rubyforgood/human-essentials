@@ -19,7 +19,9 @@ class StorageLocationsController < ApplicationController
     end
 
     storage_location_inventory_item_names = []
-    @storage_locations.first.inventory_items.sort.each{ |item|
+    @storage_locations.first.inventory_items.sort{|a, b| 
+      Item.find(a.item_id).name <=> Item.find(b.item_id).name
+    }.each{ |item|
       next unless Item.find(item.item_id).active
       storage_location_inventory_item_names << Item.find(item.item_id).name 
     }
