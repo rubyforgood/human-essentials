@@ -228,5 +228,27 @@ RSpec.describe StorageLocation, type: :model do
         expect(storage_location.longitude).not_to eq(nil)
       end
     end
+
+    describe "csv_export_attributes" do
+      it "returns an array of storage location attributes, followed by inventory item quantities that are sorted by alphabetized item names" do
+        item1 = create(:item, name: 'C')
+        item2 = create(:item, name: 'B')
+        item3 = create(:item, name: 'A')
+        name = Faker::Company.name
+        address = "1500 Remount Road, Front Royal, VA 22630"
+        warehouse_type = "Warehouse with loading bay"
+        square_footage = rand(1000..10000)
+        storage_location = create(:storage_location, name: name, address: address, square_footage: square_footage)
+
+        quantity1 = rand(100..1000)
+        quantity2 = rand(100..1000)
+        quantity3 = rand(100..1000)
+        create(:inventory_item, storage_location_id: storage_location.id, item_id: item1.id, quantity: quantity1)
+        create(:inventory_item, storage_location_id: storage_location.id, item_id: item2.id, quantity: quantity2)
+        create(:inventory_item, storage_location_id: storage_location.id, item_id: item3.id, quantity: quantity3)
+        sum = quantity1 + quantity2 + quantity3
+        expect(storage_location.csv_export_attributes).to eq([name, address, square_footage, warehouse_type, sum, quantity3, quantity2, quantity1])
+      end
+    end
   end
 end
