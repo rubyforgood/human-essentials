@@ -54,7 +54,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true do
   end
 
   context "While signed in as an Administrative User (super admin)" do
-    let!(:foo_org) { create(:organization, name: 'foo') }
+    let!(:foo_org) { Organization.first }
     let!(:bar_org) { create(:organization, name: 'bar') }
     let!(:baz_org) { create(:organization, name: 'baz') }
     before :each do
