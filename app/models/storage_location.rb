@@ -81,6 +81,12 @@ class StorageLocation < ApplicationRecord
     inventory_items.sum(:quantity)
   end
 
+  def total_active_inventory_count
+    inventory_items.select{ |item| 
+      Item.find(item.item_id).active 
+    }.sum(&:quantity)
+  end
+
   def inventory_total_value_in_dollars
     inventory_total_value = inventory_items.joins(:item).map do |inventory_item|
       value_in_cents = inventory_item.item.try(:value_in_cents)
@@ -211,7 +217,7 @@ class StorageLocation < ApplicationRecord
   end
 
   def csv_export_attributes
-    attributes = [name, address, square_footage, warehouse_type, size]
+    attributes = [name, address, square_footage, warehouse_type, total_active_inventory_count]
     inventory_items.sort{|a, b| 
       Item.find(a.item_id).name <=> Item.find(b.item_id).name
     }.each { |item| 

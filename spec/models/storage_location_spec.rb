@@ -234,11 +234,12 @@ RSpec.describe StorageLocation, type: :model do
         item1 = create(:item, name: 'C')
         item2 = create(:item, name: 'B')
         item3 = create(:item, name: 'A')
+        inactive_item = create(:item, name: 'inactive item', active: false)
         name = Faker::Company.name
         address = "1500 Remount Road, Front Royal, VA 22630"
         warehouse_type = "Warehouse with loading bay"
         square_footage = rand(1000..10000)
-        storage_location = create(:storage_location, name: name, address: address, square_footage: square_footage)
+        storage_location = create(:storage_location, name: name, address: address,  warehouse_type: warehouse_type, square_footage: square_footage,)
 
         quantity1 = rand(100..1000)
         quantity2 = rand(100..1000)
@@ -246,6 +247,7 @@ RSpec.describe StorageLocation, type: :model do
         create(:inventory_item, storage_location_id: storage_location.id, item_id: item1.id, quantity: quantity1)
         create(:inventory_item, storage_location_id: storage_location.id, item_id: item2.id, quantity: quantity2)
         create(:inventory_item, storage_location_id: storage_location.id, item_id: item3.id, quantity: quantity3)
+        create(:inventory_item, storage_location_id: storage_location.id, item_id: inactive_item.id, quantity: 1)
         sum = quantity1 + quantity2 + quantity3
         expect(storage_location.csv_export_attributes).to eq([name, address, square_footage, warehouse_type, sum, quantity3, quantity2, quantity1])
       end
