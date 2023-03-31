@@ -26,8 +26,7 @@ RSpec.describe "/partners/profiles", type: :request do
     it "updates the partner and profile" do
       partner.profile.update!(address1: "123 Main St.", address2: "New York, New York")
       put partners_profile_path(partner,
-        partner: {name: "Partnerdude"},
-        profile: {address1: "456 Main St.", address2: "Washington, DC"})
+        partner: {name: "Partnerdude", profile: {address1: "456 Main St.", address2: "Washington, DC"}})
       expect(partner.reload.name).to eq("Partnerdude")
       expect(partner.profile.reload.address1).to eq("456 Main St.")
       expect(partner.profile.address2).to eq("Washington, DC")
