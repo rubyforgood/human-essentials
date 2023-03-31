@@ -225,6 +225,10 @@ Run all the tests with:
 
   `bundle exec rspec`
 
+Run a single test with:
+
+  `bundle exec rspec {path_to_test_name}_spec.rb`
+
 This app uses RSpec, Capybara, and FactoryBot for testing. Make sure the tests run clean & green before submitting a Pull Request. If you are inexperienced in writing tests or get stuck on one, please reach out so one of us can help you. :)
 
 The one situation where you probably don't need to write new tests is when simple re-stylings are done (ie. the page may look slightly different but the Test suite is unaffected by those changes).
