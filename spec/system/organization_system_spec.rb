@@ -42,7 +42,6 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page).to have_content("Individual Requests?")
         expect(page).to have_content("Quantity Based Requests?")
         expect(page).to have_content("Logo")
-
       end
     end
 
