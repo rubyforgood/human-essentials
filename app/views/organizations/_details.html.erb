@@ -150,7 +150,7 @@
             <div class="col-lg-8">
               <h3 class='font-bold'>Default email text:</h3>
               <p>
-                <%= @organization.default_email_text.blank? ? 'Not defined' : @organization.default_email_text %>
+                <%= @organization.default_email_text.presence || 'Not defined' %>
               </p>
             </div>
           </div>

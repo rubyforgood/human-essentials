@@ -6,7 +6,6 @@ module OrganizationHelper
   end
 
   def display_partner_fields_value(stored_value)
-    display_value, _ = Organization::ALL_PARTIALS.detect { |arr| arr[1] == stored_value }
-    display_value
+    Organization::ALL_PARTIALS.to_h.key(stored_value)
   end
 end
