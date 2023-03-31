@@ -12,11 +12,11 @@ ruby "3.1.2"
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.4.5"
+gem "pg", "~> 1.4.6"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "7.0.4"
+gem "rails", "7.0.4.3"
 
 ###### MODELS / DATABASE #######
 
@@ -26,7 +26,7 @@ gem 'azure-storage-blob'
 # Adds soft delete functionality for models.
 gem 'discard', '~> 1.0'
 # Adds grouping by date/month/etc to queries.
-gem "groupdate", "~> 6.1"
+gem "groupdate", "~> 6.2"
 # Treats attributes like money, which knows about dollars and cents.
 gem "money-rails"
 # Tracks history / audits models.
@@ -34,20 +34,15 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.4.1"
+gem "strong_migrations", "1.4.4"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
 gem 'bootstrap-select-rails'
 # Bootstrap is a library for HTML, CSS and JS.
 gem 'bootstrap', '~> 4.6.0'
-# jQuery framework (DOM methods, Ajax, chaining, etc.)
-gem "jquery-rails"
-gem "jquery-ui-rails"
 # SASS CSS framework (nested selectors, variables, etc.)
 gem "sass-rails"
-# JavaScript bundler.
-gem 'webpacker', '~> 5.0'
 # Used to verify that the user is a human.
 gem "recaptcha"
 # Hotwire for SPA like without much JS
@@ -112,7 +107,7 @@ gem "clockwork"
 gem "mini_racer", "~> 0.6.3"
 gem "nokogiri", ">= 1.10.4"
 gem "image_processing"
-gem "sprockets", "~> 4.2.0"
+gem "sprockets", "~> 4.0.0"
 
 group :production do
   # Reduce the noise of logs and include custom fields to it for easier access
@@ -132,7 +127,7 @@ group :development, :test, :staging do
   # Generate models based on factory definitions.
   gem 'factory_bot_rails'
   # Ensure the database is in a clean state on every test.
-  gem "database_cleaner", '1.8.5'
+  gem "database_cleaner-active_record", '~> 2.1'
   # Generate fake data for use in tests.
   gem 'faker'
 end
@@ -161,9 +156,9 @@ group :development, :test do
   # Static analysis / linter.
   gem "rubocop"
   # Rails add-on for static analysis.
-  gem "rubocop-rails", "~> 2.9.0"
+  gem "rubocop-rails", "~> 2.18.0"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.0"
+  gem "standard", "~> 1.25"
 end
 
 group :development do
@@ -218,3 +213,5 @@ end
 
 # Use Redis for Action Cable
 gem "redis", "~> 5.0"
+
+gem "importmap-rails", "~> 1.1"

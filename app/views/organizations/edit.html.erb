@@ -66,13 +66,13 @@
 
                 <%= render 'shared/deadline_day_fields', f: f %>
 
-                <%= f.input :intake_location, :collection => current_organization.storage_locations.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Intake Location", :include_blank => true, wrapper: :input_group %>
+                <%= f.input :intake_location, :collection => current_organization.storage_locations.active_locations.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Intake Location", :include_blank => true, wrapper: :input_group %>
 
                 <%= f.label :partner_form_fields, "Required Partner Fields" %>
 
                 <%= f.select(:partner_form_fields, Organization::ALL_PARTIALS, {include_hidden: false}, { multiple: true, class: 'form-control selectpicker input_group' }) %>
                 <br>
-                <%= f.input :default_storage_location, :collection => current_organization.storage_locations.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Storage Location", :include_blank => true, wrapper: :input_group %>
+                <%= f.input :default_storage_location, :collection => current_organization.storage_locations.active_locations.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Storage Location", :include_blank => true, wrapper: :input_group %>
 
                 <%= f.input :invitation_text, label: "Custom Partner Invitation Message", wrapper: :input_group do %>
                   <%= f.text_area :invitation_text, class: "form-control" %>
@@ -116,7 +116,7 @@
                   <%= f.input_field :logo, as: :file %>
                   <p class="help-block">
                     Logo should be a 4:1 ratio of width / height (default image is 763 x 188 pixels).
-                    Only jpeg/png format is supported.
+                    Only jpeg/png format is supported. Images should be under 1 MB in size.
                   </p>
 
                 <% end %>

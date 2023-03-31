@@ -1,14 +1,14 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  host: localhost
+  host: <%= ENV.fetch("PG_HOST", 'localhost') %>
   database: diaper_dev
   username: <%= ENV.fetch("PG_USERNAME", 'postgres') %>
   password: <%= ENV.fetch("PG_PASSWORD", nil) %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: 5000
 
-development:
+development: &development
   <<: *default
   timeout: 5000
 
@@ -24,6 +24,9 @@ test:
   database: diaper_test
   timeout: 5000
 
+# These env vars live in Cloud66 application settings. Don't change
+# the names of the vars we're looking for without ensuring you've
+# updated/duplicated the vars there!
 production:
   adapter: postgresql
   encoding: unicode

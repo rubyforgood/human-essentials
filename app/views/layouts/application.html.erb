@@ -6,14 +6,20 @@
   <title><%= content_for?(:title) ? yield(:title) : default_title_content %></title>
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <%= csrf_meta_tags %>
-  <% # It is important to load the styling before AdminLTE via stylesheet_link_tag 'application' %>
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/v4-shims.css" rel="stylesheet" />
 
-  <%= javascript_include_tag 'application' %>
   <%= stylesheet_link_tag 'application', media: 'all' %>
   <%= raw fullstory_script(current_user: current_user) if Rails.env.production? %>
-  <%= javascript_pack_tag 'application' %>
-  <%= stylesheet_pack_tag 'application' %>
+  <%= javascript_importmap_tags %>
+  <script type="esms-options">
+  {
+    "noLoadEventRetriggers": true
+  }
+  </script>
+
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -66,15 +72,13 @@
     <!-- Sidebar -->
     <div class="sidebar">
       <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <% if user_signed_in? %>
-            <% if admin_namespace? %>
-              <%= render partial: "layouts/lte_admin_sidebar" %>
-            <% else %>
-              <%= render partial: "layouts/lte_sidebar" %>
-            <% end %>
+        <% if user_signed_in? %>
+          <% if admin_namespace? %>
+            <%= render partial: "layouts/lte_admin_sidebar" %>
+          <% else %>
+            <%= render partial: "layouts/lte_sidebar" %>
           <% end %>
-        </ul>
+        <% end %>
       </nav>
     </div>
   </aside>

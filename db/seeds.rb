@@ -328,28 +328,34 @@ note = [
   end
 
   Faker::Number.within(range: 32..56).times do
-    pr = Request.new(
+    partner_request = ::Request.new(
+      partner_id: p.id,
+      organization_id: p.organization_id,
       comments: Faker::Lorem.paragraph,
-      partner: p,
-      partner_user: p.primary_user,
-      organization_id: p.organization_id
+      partner_user_id: p.primary_user.id
     )
 
-    # Ensure that the item requests are valid with
-    # the valid `item_id
-    item_requests = Array.new(Faker::Number.within(range: 5..15)) do
-      item = Item.all.sample
-
-      Partners::ItemRequest.new(
-        name: Partners::Child::CHILD_ITEMS.sample,
+    item_requests = [] 
+    Array.new(Faker::Number.within(range: 5..15)) do
+      item = p.organization.items.sample
+      new_item_request = Partners::ItemRequest.new(
+        item_id: item.id,
         quantity: Faker::Number.within(range: 10..30),
-        partner_key: item.partner_key,
-        item_id: item.id
+        children: [],
+        name: item.name,
+        partner_key: item.partner_key
       )
+      partner_request.item_requests << new_item_request
     end
 
-    pr.item_requests = item_requests
-    pr.save!
+    partner_request.request_items = partner_request.item_requests.map do |ir|
+      {
+        item_id: ir.item_id,
+        quantity: ir.quantity
+      }
+    end
+
+    partner_request.save!
   end
 end
 
@@ -706,3 +712,15 @@ answers = [
   )
 end
 
+# ----------------------------------------------------------------------------
+# Transfers
+# ----------------------------------------------------------------------------
+Transfer.create!(
+  comment: Faker::Lorem.sentence,
+  organization_id: pdx_org.id,
+  from_id: pdx_org.id,
+  to_id: sf_org.id,
+  line_items: [
+    LineItem.create!(quantity: 5, item: pdx_org.items.first, itemizable: Distribution.first)
+  ]
+)
