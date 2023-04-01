@@ -179,11 +179,11 @@ RSpec.feature "Distributions", type: :system do
     it "allows the user can change the issued_at date" do
       click_on "Edit", match: :first
       expect do
-        fill_in "Distribution date", with: Time.zone.parse("2001-10-01")
+        fill_in "Distribution date", with: Time.zone.parse("2001-10-01 10:00")
 
         click_on "Save", match: :first
         distribution.reload
-      end.to change { distribution.issued_at }.to(Time.zone.parse("2001-10-01"))
+      end.to change { distribution.issued_at }.to(Time.zone.parse("2001-10-01 10:00"))
     end
 
     it "disallows the user from changing the quantity above the inventory quantity" do

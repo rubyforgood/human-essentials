@@ -36,7 +36,7 @@ class Distribution < ApplicationRecord
   has_one :request, dependent: :nullify
   accepts_nested_attributes_for :request
 
-  validates :storage_location, :partner, :organization, :delivery_method, presence: true
+  validates :storage_location, :partner, :organization, :delivery_method, :issued_at, presence: true
   validate :line_item_items_exist_in_inventory
   validate :line_item_items_quantity_is_positive
 
