@@ -11,14 +11,21 @@ class RequestsConfirmationMailer < ApplicationMailer
   private
 
   def fetch_items(request)
-    return [] if request.request_items.size == 0
-    # convert items into a hash of (id => list of items with that ID
+    combined = combined_items(request)
+    item_ids = combined&.map { |item| item['item_id'] }
+    db_items = Item.where(id: item_ids).select(:id, :name)
+    combined.each { |i| i['name'] = db_items.find { |db_item| i["item_id"] == db_item.id}.name }
+    combined.sort_by{|i| i['name']}
+  end
 
+  def combined_items(request)
+    return [] if request.request_items.size == 0
+    # convert items into a hash of (id => list of items with that ID)
     grouped = request.request_items.group_by { |i| i['item_id'] }
     # convert hash into an array of items with combined quantities
-    compacted = grouped.map do |id, items|
-      { 'item_id' => id, 'quantity' => items.map { |i| i['quantity'] }.sum, 'name' => Item.find(id).name }
+    grouped.map do |id, items|
+      { 'item_id' => id, 'quantity' => items.map { |i| i['quantity'] }.sum }
+      { 'item_id' => id, 'quantity' => items.map { |i| i['quantity'] }.sum, 'name'=> Item.find(id).name }
     end
-    compacted.sort_by{|i| i['name']}
   end
 end
