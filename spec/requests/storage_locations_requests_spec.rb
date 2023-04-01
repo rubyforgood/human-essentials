@@ -35,13 +35,25 @@ RSpec.describe "StorageLocations", type: :request do
           end
         end
       end
-
+    
       context "csv" do
         let(:response_format) { 'csv' }
-
         it "succeeds" do
           get storage_locations_path(default_params.merge(format: response_format))
           expect(response).to be_successful
+        end
+
+        it "includes headers followed by alphabetized item names" do
+          storage_location_with_items = create(:storage_location)
+          item1 = create(:item, name: 'C')
+          item2 = create(:item, name: 'B')
+          item3 = create(:item, name: 'A')
+          inactive_item = create(:item, name: 'inactive item', active: false)
+          Item.last(4).each { |item| create(:inventory_item, storage_location_id: storage_location_with_items.id, item_id: item.id, quantity: 1) }
+
+          get storage_locations_path(default_params.merge(format: response_format))
+
+          expect(response.body.split("\n")[0]).to eq([StorageLocation.csv_export_headers, item3.name, item2.name, item1.name].join(','))
         end
       end
     end
