@@ -7,11 +7,12 @@ export default class extends Controller {
     calculateClientShareTotal(){
         let total = 0;
         let share_targets = this.shareTargets
-        share_targets.forEach( share_target =>{
+        share_targets.forEach(
+            share_target =>{
                 if(share_target.value){
                     total += parseInt(share_target.value);
                 }
-        }
+            }
         )
 
         this.totalTarget.innerHTML = total + " %"

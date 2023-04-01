@@ -164,3 +164,7 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
 select.selectpicker + .dropdown-toggle::after {
   display: none;
 }
+
+.percentage-selector {
+  width: 110px;
+}
