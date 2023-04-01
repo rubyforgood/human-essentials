@@ -70,7 +70,7 @@ class StorageLocation < ApplicationRecord
   end
 
   def self.items_inventoried
-    Item.joins(:storage_locations).select(:id, :name, :active).group(:id, :name).order(name: :asc)
+    Item.joins(:storage_locations).select(:id, :name).group(:id, :name).order(name: :asc)
   end
 
   def item_total(item_id)
