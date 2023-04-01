@@ -146,6 +146,7 @@ RSpec.describe Partners::Profile, type: :model do
       let(:profile) { FactoryBot.build(:partner_profile) }
       it "has 0 client share" do
         expect(profile.client_share_total).to eq(0)
+        expect(profile.valid?).to eq(true)
       end
     end
 

@@ -18,7 +18,7 @@ RSpec.describe "Partners profile served area behaviour when accessed as bank", t
 
     it "handles an invalid total client share properly" do
       county_1_text = find_field("profile_served_areas_attributes_0_county_id").find("option[selected]").text
-      fill_in "profile_served_areas_attributes_0_client_share", with: "26"
+      select "26", from: "profile_served_areas_attributes_0_client_share"
       expect(page).to have_content("101 %")
       expect(page).to have_content("The total client share must be either 0 or 100 %")
       click_on "Update Information"
@@ -30,8 +30,8 @@ RSpec.describe "Partners profile served area behaviour when accessed as bank", t
 
     it "handles a changed but correct total client share properly" do
       check "profile_no_social_media_presence"
-      fill_in "profile_served_areas_attributes_0_client_share", with: "26"
-      fill_in "profile_served_areas_attributes_1_client_share", with: "24"
+      select "26", from: "profile_served_areas_attributes_0_client_share"
+      select "24", from: "profile_served_areas_attributes_1_client_share"
       expect(page).to have_content("100 %")
       expect(page).not_to have_content("The total client share must be either 0 or 100 %")
       click_on "Update Information"
