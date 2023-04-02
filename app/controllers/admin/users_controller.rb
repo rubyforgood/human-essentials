@@ -3,7 +3,16 @@ class Admin::UsersController < AdminController
   before_action :load_organizations, only: %i[new create edit update]
 
   def index
-    @users = User.includes(:organization).alphabetized.page(params[:page])
+    @filterrific = initialize_filterrific(
+      User.includes(:organization).alphabetized,
+      params[:filterrific]
+    ) || return
+    @users = @filterrific.find.page(params[:page])
+
+    respond_to do |format|
+      format.html
+      format.js
+    end
   end
 
   def update

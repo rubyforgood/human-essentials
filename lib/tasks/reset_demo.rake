@@ -3,8 +3,7 @@ task :reset_demo => :environment do
   raise "Cannot run this in production" if Rails.env.production?
 
   puts "Cleaning up the database..."
-  DatabaseCleaner[:active_record, { model: ApplicationRecord }]
-  DatabaseCleaner.strategy = :truncation
+  DatabaseCleaner[:active_record].strategy = :truncation
   DatabaseCleaner.clean
 
   puts "Seeding the databases again..."
