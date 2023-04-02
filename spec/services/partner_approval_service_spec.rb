@@ -11,9 +11,9 @@ describe PartnerApprovalService do
     end
 
     context 'when the arguments are incorrect' do
-      context 'because the partner is not awaiting_review' do
+      context 'because the partner is not approvable' do
         before do
-          partner.invited!
+          allow(partner).to receive(:approvable?).and_return(false)
         end
 
         it 'should return the PartnerApprovalService object with an error' do

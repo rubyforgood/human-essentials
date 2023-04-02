@@ -72,15 +72,13 @@
     <!-- Sidebar -->
     <div class="sidebar">
       <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <% if user_signed_in? %>
-            <% if admin_namespace? %>
-              <%= render partial: "layouts/lte_admin_sidebar" %>
-            <% else %>
-              <%= render partial: "layouts/lte_sidebar" %>
-            <% end %>
+        <% if user_signed_in? %>
+          <% if admin_namespace? %>
+            <%= render partial: "layouts/lte_admin_sidebar" %>
+          <% else %>
+            <%= render partial: "layouts/lte_sidebar" %>
           <% end %>
-        </ul>
+        <% end %>
       </nav>
     </div>
   </aside>

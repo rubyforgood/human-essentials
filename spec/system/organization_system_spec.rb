@@ -34,6 +34,14 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page).to have_content("Contact Info")
         expect(page).to have_content("Default email text")
         expect(page).to have_content("Users")
+        expect(page).to have_content("Short Name")
+        expect(page).to have_content("URL")
+        expect(page).to have_content("Required Partner Fields")
+        expect(page).to have_content("Custom Partner Invitation Message")
+        expect(page).to have_content("Child Based Requests?")
+        expect(page).to have_content("Individual Requests?")
+        expect(page).to have_content("Quantity Based Requests?")
+        expect(page).to have_content("Logo")
       end
     end
 

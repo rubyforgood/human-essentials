@@ -24,6 +24,8 @@ module Partners
 
       @families = @partner.families
       @children = @partner.children
+
+      @broadcast_announcements = BroadcastAnnouncement.filter_announcements(@parent_org)
     end
   end
 end
