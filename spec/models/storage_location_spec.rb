@@ -240,7 +240,6 @@ RSpec.describe StorageLocation, type: :model do
         warehouse_type = "Warehouse with loading bay"
         square_footage = rand(1000..10000)
         storage_location = create(:storage_location, name: name, address: address,  warehouse_type: warehouse_type, square_footage: square_footage,)
-
         quantity1 = rand(100..1000)
         quantity2 = rand(100..1000)
         quantity3 = rand(100..1000)

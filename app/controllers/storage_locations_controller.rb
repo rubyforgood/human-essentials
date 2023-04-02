@@ -18,17 +18,16 @@ class StorageLocationsController < ApplicationController
       @storage_locations = @storage_locations.kept
     end
 
-    storage_location_inventory_item_names = []
-    InventoryItem.all.sort{|a, b| 
-      Item.find(a.item_id).name <=> Item.find(b.item_id).name
-    }.each{ |item|
-      next unless Item.find(item.item_id).active
-      storage_location_inventory_item_names << Item.find(item.item_id).name 
+    inventory_item_names = []
+    InventoryItem.all.each{ |inv_item|
+      cur_item = Item.find(inv_item.item_id)
+      inventory_item_names << cur_item.name if cur_item.active && !inventory_item_names.include?(cur_item.name)
     }
+    inventory_item_names.sort!{ |a, b| a <=> b }
 
     respond_to do |format|
       format.html
-      format.csv { send_data StorageLocation.generate_csv(@storage_locations, storage_location_inventory_item_names), filename: "StorageLocations-#{Time.zone.today}.csv" }
+      format.csv { send_data StorageLocation.generate_csv(@storage_locations, inventory_item_names), filename: "StorageLocations-#{Time.zone.today}.csv" }
     end
   end
 
