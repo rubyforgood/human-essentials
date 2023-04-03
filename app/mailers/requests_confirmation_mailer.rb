@@ -24,7 +24,8 @@ class RequestsConfirmationMailer < ApplicationMailer
     grouped = request.request_items.group_by { |i| i['item_id'] }
     # convert hash into an array of items with combined quantities
     grouped.map do |id, items|
-      { 'item_id' => id, 'quantity' => items.map { |i| i['quantity'] }.sum, name: Item.find(id).name }
+      { 'item_id' => id, 'quantity' => items.map { |i| i['quantity'] }.sum }
+      { 'item_id' => id, 'quantity' => items.map { |i| i['quantity'] }.sum, 'name'=> Item.find(id).name }
     end
   end
 end
