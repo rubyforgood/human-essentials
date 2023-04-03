@@ -106,7 +106,7 @@ module Partners
     ]
 
     def has_no_social_media?
-      website.blank? && twitter.blank? && facebook.blank? && instagram.blank?
+      (website.blank? || website == "N/A") && (twitter.blank? || twitter == "N/A") && (facebook.blank? || facebook == "N/A") && (instagram.blank? || instagram == "N/A")
     end
   end
 end
