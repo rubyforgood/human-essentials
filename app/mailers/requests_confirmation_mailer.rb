@@ -14,8 +14,8 @@ class RequestsConfirmationMailer < ApplicationMailer
     combined = combined_items(request)
     item_ids = combined&.map { |item| item['item_id'] }
     db_items = Item.where(id: item_ids).select(:id, :name)
-    combined.each { |i| i['name'] = db_items.find { |db_item| i["item_id"] == db_item.id}.name }
-    combined.sort_by{|i| i['name']}
+    combined.each { |i| i['name'] = db_items.find { |db_item| i["item_id"] == db_item.id }.name }
+    combined.sort_by { |i| i['name'] }
   end
 
   def combined_items(request)
@@ -25,7 +25,6 @@ class RequestsConfirmationMailer < ApplicationMailer
     # convert hash into an array of items with combined quantities
     grouped.map do |id, items|
       { 'item_id' => id, 'quantity' => items.map { |i| i['quantity'] }.sum }
-      { 'item_id' => id, 'quantity' => items.map { |i| i['quantity'] }.sum, 'name'=> Item.find(id).name }
     end
   end
 end
