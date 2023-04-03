@@ -2,12 +2,11 @@
   <div class="col-md-6">
     <!-- /.box-header -->
     <h2 class='text-2xl underline'>Agency Information</h2>
-    <! -- The field for inputting the name registers it as partner.name, 
-    not partner_profile.name, so this pulls from partner.name -->
+    <! -- #The field for inputting the name registers it as partner.name, 
+    #not partner_profile.name, so this pulls from partner.name -->
     <p>Name: <%= @partner.name %></p>
-    <p>Distributor Type: <%= partner_profile.distributor_type %></p>
     <p>Agency Type: <%= partner_profile.agency_type %>
-    <% if partner_profile.agency_type == "Other" %>
+    <% if partner_profile.agency_type == "Other" && partner_profile.other_agency_type %>
       (<%=partner_profile.other_agency_type%>)
     <% end %>
     </p>
