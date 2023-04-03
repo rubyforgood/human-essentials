@@ -25,7 +25,7 @@ class ProfilesController < ApplicationController
   end
 
   def edit_profile_params
-    params.require(:profile).permit(
+    params.require(:partner).require(:profile).permit(
       :agency_type,
       :other_agency_type,
       :proof_of_partner_status,

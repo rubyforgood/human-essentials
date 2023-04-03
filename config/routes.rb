@@ -66,6 +66,7 @@ Rails.application.routes.draw do
       get :for_rejection, on: :collection
     end
     resources :questions
+    resources :broadcast_announcements
   end
 
   match "/404", to: "errors#not_found", via: :all
