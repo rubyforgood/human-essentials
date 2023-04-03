@@ -137,8 +137,8 @@
       <h2 class='text-2xl underline'>Other Documents</h2>
         <% partner_profile.documents.each do |document| %>
           <p><%= link_to document.filename, rails_blob_path(document, disposition: 'inline') %></p>
-        <br/>
         <% end %>
+        <br/>
     <h2 class='text-2xl underline'>Settings</h2>
         <% if partner_profile.organization.enable_child_based_requests? %>
           <p>Uses Child Based Requests: <%= humanize_boolean(partner_profile.enable_child_based_requests) %></p>
