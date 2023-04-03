@@ -53,12 +53,12 @@ describe OrganizationUpdateService, skip_seed: true do
           partner_two.profile.reload
 
           aggregate_failures "request type in organization and partners" do
-            expect(organization.enable_individual_requests).to eq(organization.errors.none?)
-            expect(partner_one.profile.enable_individual_requests).to eq(organization.errors.none?)
-            expect(partner_two.profile.enable_individual_requests).to eq(organization.errors.none?)
-            expect(organization.enable_child_based_requests).to eq(organization.errors.none?)
-            expect(partner_one.profile.enable_child_based_requests).to eq(organization.errors.none?)
-            expect(partner_two.profile.enable_child_based_requests).to eq(organization.errors.none?)
+            expect(organization.enable_individual_requests).to eq(true)
+            expect(partner_one.profile.enable_individual_requests).to eq(true)
+            expect(partner_two.profile.enable_individual_requests).to eq(true)
+            expect(organization.enable_child_based_requests).to eq(true)
+            expect(partner_one.profile.enable_child_based_requests).to eq(true)
+            expect(partner_two.profile.enable_child_based_requests).to eq(true)
           end
         end
       end
@@ -72,9 +72,9 @@ describe OrganizationUpdateService, skip_seed: true do
           partner_two.profile.reload
 
           aggregate_failures "request type in organization and partners" do
-            expect(organization.enable_individual_requests).to eq(organization.errors.any?)
-            expect(partner_one.profile.enable_individual_requests).to eq(organization.errors.any?)
-            expect(partner_two.profile.enable_individual_requests).to eq(organization.errors.any?)
+            expect(organization.enable_individual_requests).to eq(false)
+            expect(partner_one.profile.enable_individual_requests).to eq(false)
+            expect(partner_two.profile.enable_individual_requests).to eq(false)
           end
         end
       end
@@ -97,11 +97,11 @@ describe OrganizationUpdateService, skip_seed: true do
       it "should not update partners" do
         described_class.update_partner_flags(organization)
         expect(organization.partners.map { |p| p.profile.enable_child_based_requests })
-          .to eq([organization.errors.none?, organization.errors.none?])
+          .to eq([true, true])
         expect(organization.partners.map { |p| p.profile.enable_individual_requests })
-          .to eq([organization.errors.none?, organization.errors.none?])
+          .to eq([true, true])
         expect(organization.partners.map { |p| p.profile.enable_quantity_based_requests })
-          .to eq([organization.errors.none?, organization.errors.none?])
+          .to eq([true, true])
       end
     end
 
@@ -110,22 +110,22 @@ describe OrganizationUpdateService, skip_seed: true do
         organization.update!(enable_child_based_requests: false, enable_individual_requests: false, enable_quantity_based_requests: true)
         described_class.update_partner_flags(organization)
         expect(organization.partners.map { |p| p.profile.enable_child_based_requests })
-          .to eq([organization.errors.any?, organization.errors.any?])
+          .to eq([false, false])
         expect(organization.partners.map { |p| p.profile.enable_individual_requests })
-          .to eq([organization.errors.any?, organization.errors.any?])
+          .to eq([false, false])
         expect(organization.partners.map { |p| p.profile.enable_quantity_based_requests })
-          .to eq([organization.errors.none?, organization.errors.none?])
+          .to eq([true, true])
       end
 
       it "should update partners when disabling quantity-based request flags" do
         organization.update!(enable_quantity_based_requests: false)
         described_class.update_partner_flags(organization)
         expect(organization.partners.map { |p| p.profile.enable_child_based_requests })
-          .to eq([organization.errors.none?, organization.errors.none?])
+          .to eq([true, true])
         expect(organization.partners.map { |p| p.profile.enable_individual_requests })
-          .to eq([organization.errors.none?, organization.errors.none?])
+          .to eq([true, true])
         expect(organization.partners.map { |p| p.profile.enable_quantity_based_requests })
-          .to eq([organization.errors.any?, organization.errors.any?])
+          .to eq([false, false])
       end
 
       it "should NOT update partners' request flags when enabling request flags on the organization" do
@@ -140,11 +140,11 @@ describe OrganizationUpdateService, skip_seed: true do
         described_class.update_partner_flags(organization)
 
         expect(organization.partners.map { |p| p.profile.enable_child_based_requests })
-          .to eq([organization.errors.any?, organization.errors.any?])
+          .to eq([false, false])
         expect(organization.partners.map { |p| p.profile.enable_individual_requests })
-          .to eq([organization.errors.any?, organization.errors.any?])
+          .to eq([false, false])
         expect(organization.partners.map { |p| p.profile.enable_quantity_based_requests })
-          .to eq([organization.errors.any?, organization.errors.any?])
+          .to eq([false, false])
       end
     end
   end

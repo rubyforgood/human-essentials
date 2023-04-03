@@ -10,7 +10,7 @@ class Admin::OrganizationsController < AdminController
     if OrganizationUpdateService.update(@organization, organization_params)
       redirect_to admin_organizations_path, notice: "Updated organization!"
     else
-      flash[:error] = @organization.errors.full_messages.first
+      flash[:error] = @organization.errors.full_messages.join("\n")
       render :edit
     end
   end
