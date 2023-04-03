@@ -139,6 +139,18 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_14_202847) do
     t.string "partner_key"
   end
 
+  create_table "broadcast_announcements", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.text "message"
+    t.text "link"
+    t.date "expiry"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "organization_id"
+    t.index ["organization_id"], name: "index_broadcast_announcements_on_organization_id"
+    t.index ["user_id"], name: "index_broadcast_announcements_on_user_id"
+  end
+
   create_table "child_item_requests", force: :cascade do |t|
     t.bigint "child_id"
     t.bigint "item_request_id"
@@ -776,6 +788,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_14_202847) do
   add_foreign_key "adjustments", "users"
   add_foreign_key "annual_reports", "organizations"
   add_foreign_key "authorized_family_members", "families"
+  add_foreign_key "broadcast_announcements", "users"
   add_foreign_key "child_item_requests", "children"
   add_foreign_key "child_item_requests", "item_requests"
   add_foreign_key "children", "families"
