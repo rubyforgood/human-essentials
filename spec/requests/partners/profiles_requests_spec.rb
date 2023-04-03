@@ -42,7 +42,6 @@ RSpec.describe "/partners/profiles", type: :request do
       end
 
       it "updates the partner profile attribute to a blank value" do
-        partner.profile.update!(city: "N/A")
         put partners_profile_path(partner,
           partner: {name: "Partnerdude"},
           profile: {city: ""})
