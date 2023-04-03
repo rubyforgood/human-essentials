@@ -26,5 +26,8 @@ class DashboardController < ApplicationController
     @top_manufacturers = current_organization.manufacturers.by_donation_count
 
     @distribution_data = helpers.received_distributed_data(helpers.selected_range)
+
+    # passing nil here filters the announcements that didn't come from an organization
+    @broadcast_announcements = BroadcastAnnouncement.filter_announcements(nil)
   end
 end
