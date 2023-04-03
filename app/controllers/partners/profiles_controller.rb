@@ -26,7 +26,7 @@ module Partners
     end
 
     def profile_params
-      params.require(:profile).permit(
+      params.require(:partner).require(:profile).permit(
         :agency_type,
         :other_agency_type,
         :proof_of_partner_status,

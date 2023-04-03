@@ -57,6 +57,11 @@ RSpec.describe Organization, type: :model do
       )).to_not be_valid
     end
 
+    it "validates that short names are unique" do
+      expect(create(:organization, short_name: "foo_bar")).to be_valid
+      expect(build(:organization, short_name: "foo_bar")).to_not be_valid
+    end
+
     it "validates that attachment file size is not higher than 1 MB" do
       fixture_path = File.join(Rails.root, 'spec', 'fixtures', 'files', 'logo.jpg')
       fixture_file = File.open(fixture_path)
