@@ -137,6 +137,30 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
           expect(cells.count('5')).to eq(1)
           expect(cells.count('0')).to eq(organization.items.count - 2)
         end
+
+        it "only counts items within the selected date range" do
+          default_params[:filters] = { date_range: date_range_picker_params(Date.parse('20/01/2023'), Date.parse('25/01/2023')) }
+          item = organization.items.first
+          product_drive = create(
+            :product_drive,
+            name: 'product_drive_within_date_range',
+            start_date: '20/01/2023',
+            end_date: '30/01/2023',
+            organization: organization
+          )
+
+          donation = create(:product_drive_donation, product_drive: product_drive, issued_at: '21/01/2023')
+          create(:line_item, :donation, itemizable_id: donation.id, item_id: item.id, quantity: 4)
+          donation = create(:product_drive_donation, product_drive: product_drive, issued_at: '26/01/2023')
+          create(:line_item, :donation, itemizable_id: donation.id, item_id: item.id, quantity: 10)
+
+          subject
+
+          row = response.body.split("\n")[1]
+          cells = row.split(',')
+          expect(cells.count('4')).to eq(2)
+          expect(cells.count('0')).to eq(organization.items.count - 1)
+        end
       end
     end
 

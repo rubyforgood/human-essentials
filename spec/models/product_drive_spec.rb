@@ -28,6 +28,20 @@ RSpec.describe ProductDrive, type: :model do
     expect(product_drive.in_kind_value).to be_a Integer
   end
 
+  it "calculates donation quantity by date" do
+    create(:donation, :with_items, item_quantity: 2, product_drive: product_drive, issued_at: '26-01-2023')
+    expect(product_drive.donation_quantity_by_date(Time.zone.parse('23/01/2023')..Time.zone.parse('26/01/2023')))
+      .to eq 2
+  end
+
+  it "calculates and returns all donated organization item quantities by name and date" do
+    create(:donation, :with_items, item_quantity: 2, product_drive: product_drive, issued_at: '26-01-2023')
+    result = product_drive.item_quantities_by_name_and_date(Time.zone.parse('23/01/2023')..Time.zone.parse('26/01/2023'))
+    expect(result.length).to eq product_drive.organization.items.count
+    expect(result.count(2)).to eq(1)
+    expect(result.count(0)).to eq(product_drive.organization.items.count - 1)
+  end
+
   describe "validations" do
     it { expect(build(:product_drive, name: nil)).not_to be_valid }
     it { expect(build(:product_drive, start_date: nil)).not_to be_valid }
@@ -97,6 +111,20 @@ RSpec.describe ProductDrive, type: :model do
       donation_2.line_items << line_item_2_4
 
       expect(product_drive.distinct_items_count).to eq 3
+    end
+
+    it("counts the distince items correctly by given date") do
+      product_drive = create(:product_drive)
+      donation_within_date = create(:donation, product_drive: product_drive, issued_at: '26-01-2023')
+      donation_out_of_date = create(:donation, product_drive: product_drive, issued_at: '20-01-2023')
+      line_item_1 = create(:line_item, itemizable: donation_within_date, item: item_1, quantity: 4)
+      line_item_2 = create(:line_item, itemizable: donation_out_of_date, item: item_2, quantity: 5)
+
+      donation_within_date.line_items << line_item_1
+      donation_out_of_date.line_items << line_item_2
+
+      expect(product_drive.distinct_items_count_by_date(Time.zone.parse('23/01/2023')..Time.zone.parse('26/01/2023')))
+        .to eq(1)
     end
   end
 
