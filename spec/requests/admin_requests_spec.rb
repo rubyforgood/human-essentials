@@ -11,26 +11,19 @@ RSpec.describe "Admin", type: :request do
 
     context "with rendered views" do
       let!(:users_list) { create_list(:user, 25) }
-      let!(:user) { create(:user) }
+      let!(:user) { create(:user, name: "Name Not Provided") }
+      edit_user_path_regex = Regexp.new('admin/users/[0-9]+/edit\\?organization_id=admin')
 
       it "shows a logout button" do
         get admin_dashboard_path
         expect(response.body).to match(/log out/im)
       end
 
-      it "shows recently added users email" do
+      it "shows the recently added users email " do
         get admin_dashboard_path
-        expect(response.body).to match(/#{user.email}/im)
-      end
 
-      it "shows only 20 users within recently added users ssection" do
-        get admin_dashboard_path
         expect(response.body).to match(/20 New users/im)
-      end
-
-      it "displays edit users path on recently added users ssection" do
-        get admin_dashboard_path
-        edit_user_path_regex = Regexp.new('admin/users/[0-9]+/edit\\?organization_id=admin')
+        expect(response.body).to match(/#{user.email}/im)
         expect(response.body).to match(edit_user_path_regex)
       end
     end
