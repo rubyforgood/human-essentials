@@ -12,21 +12,21 @@ RSpec.describe "Partners profile served area behaviour", type: :system, js: true
     end
 
     it "handles an invalid total client share properly" do
-      county_1_text = find_field("profile_served_areas_attributes_0_county_id").find("option[selected]").text
-      select "26", from: "profile_served_areas_attributes_0_client_share"
+      county_1_text = find_field("partner_profile_served_areas_attributes_0_county_id").find("option[selected]").text
+      select "26", from: "partner_profile_served_areas_attributes_0_client_share"
       expect(page).to have_content("101 %")
       expect(page).to have_content("The total client share must be either 0 or 100 %")
       click_on "Update Information"
-      text_2 = find_field("profile_served_areas_attributes_0_county_id").find("option[selected]").text
+      text_2 = find_field("partner_profile_served_areas_attributes_0_county_id").find("option[selected]").text
       expect(text_2).to eq(county_1_text)
-      expect(page).to have_field("profile_served_areas_attributes_0_client_share", with: "26")
+      expect(page).to have_field("partner_profile_served_areas_attributes_0_client_share", with: "26")
       expect(page).to have_content("The total client share must be either 0 or 100 %")
     end
 
     it "handles a changed but correct total client share properly" do
-      check "profile_no_social_media_presence"
-      select "26", from: "profile_served_areas_attributes_0_client_share"
-      select "24", from: "profile_served_areas_attributes_1_client_share"
+      check "partner_profile_no_social_media_presence"
+      select "26", from: "partner_profile_served_areas_attributes_0_client_share"
+      select "24", from: "partner_profile_served_areas_attributes_1_client_share"
       expect(page).to have_content("100 %")
       expect(page).not_to have_content("The total client share must be either 0 or 100 %")
       click_on "Update Information"
