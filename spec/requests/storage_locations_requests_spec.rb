@@ -51,6 +51,9 @@ RSpec.describe "StorageLocations", type: :request do
           inactive_item = create(:item, name: 'inactive item', active: false)
           Item.last(4).each { |item| create(:inventory_item, storage_location_id: storage_location_with_items.id, item_id: item.id, quantity: 1) }
 
+          storage_location_with_duplicate_item = create(:storage_location)
+          create(:inventory_item, storage_location_id: storage_location_with_duplicate_item.id, item_id: item3.id, quantity: 1)
+
           get storage_locations_path(default_params.merge(format: response_format))
 
           expect(response.body.split("\n")[0]).to eq([StorageLocation.csv_export_headers, item3.name, item2.name, item1.name].join(','))

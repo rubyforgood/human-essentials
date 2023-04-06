@@ -19,11 +19,17 @@ class StorageLocationsController < ApplicationController
     end
 
     inventory_item_names = []
-    InventoryItem.all.each{ |inv_item|
-      cur_item = Item.find(inv_item.item_id)
-      inventory_item_names << cur_item.name if cur_item.active && !inventory_item_names.include?(cur_item.name)
-    }
-    inventory_item_names.sort!{ |a, b| a <=> b }
+    @storage_locations.each do |storage_location| 
+      inventory_item_names << 
+        storage_location.
+        inventory_items.
+        includes(:item).
+        joins(:item).
+        select('distinct items.name').
+        where(items: { active: true }).
+        pluck(:name)
+    end
+    inventory_item_names.flatten!.uniq!.sort!
 
     respond_to do |format|
       format.html
