@@ -35,7 +35,7 @@ RSpec.describe "StorageLocations", type: :request do
           end
         end
       end
-    
+
       context "csv" do
         let(:response_format) { 'csv' }
         it "succeeds" do
@@ -48,7 +48,7 @@ RSpec.describe "StorageLocations", type: :request do
           item1 = create(:item, name: 'C')
           item2 = create(:item, name: 'B')
           item3 = create(:item, name: 'A')
-          inactive_item = create(:item, name: 'inactive item', active: false)
+          create(:item, name: 'inactive item', active: false)
           Item.last(4).each { |item| create(:inventory_item, storage_location_id: storage_location_with_items.id, item_id: item.id, quantity: 1) }
 
           storage_location_with_duplicate_item = create(:storage_location)

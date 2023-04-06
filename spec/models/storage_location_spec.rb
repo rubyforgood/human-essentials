@@ -231,15 +231,15 @@ RSpec.describe StorageLocation, type: :model do
 
     describe "csv_export_attributes" do
       it "returns an array of storage location attributes, followed by inventory item quantities that are sorted by alphabetized item names" do
-        item1 = create(:item, name: 'C')
-        item2 = create(:item, name: 'B')
-        item3 = create(:item, name: 'A')
-        inactive_item = create(:item, name: 'inactive item', active: false)
+        item1 = create(:item, name: "C")
+        item2 = create(:item, name: "B")
+        item3 = create(:item, name: "A")
+        inactive_item = create(:item, name: "inactive item", active: false)
         name = "New Storage Location"
         address = "1500 Remount Road, Front Royal, VA 22630"
         warehouse_type = "Warehouse with loading bay"
         square_footage = rand(1000..10000)
-        storage_location = create(:storage_location, name: name, address: address,  warehouse_type: warehouse_type, square_footage: square_footage,)
+        storage_location = create(:storage_location, name: name, address: address, warehouse_type: warehouse_type, square_footage: square_footage)
         quantity1 = rand(100..1000)
         quantity2 = rand(100..1000)
         quantity3 = rand(100..1000)

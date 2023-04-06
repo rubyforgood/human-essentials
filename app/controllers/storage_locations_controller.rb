@@ -19,13 +19,13 @@ class StorageLocationsController < ApplicationController
     end
 
     inventory_item_names = []
-    @storage_locations.each do |storage_location| 
-      inventory_item_names << 
-        storage_location.
-        get_active_items.
-        joins(:item).
-        select('distinct items.name').
-        pluck(:name)
+    @storage_locations.each do |storage_location|
+      inventory_item_names <<
+        storage_location
+        .get_active_items
+        .joins(:item)
+        .select('distinct items.name')
+        .pluck(:name)
     end
     inventory_item_names.flatten!.uniq!.sort!
 
