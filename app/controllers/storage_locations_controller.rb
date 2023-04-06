@@ -27,7 +27,7 @@ class StorageLocationsController < ApplicationController
         .select('distinct items.name')
         .pluck(:name)
     end
-    inventory_item_names.flatten!.uniq!.sort!
+    inventory_item_names.flatten!.uniq!&.sort!
 
     respond_to do |format|
       format.html
