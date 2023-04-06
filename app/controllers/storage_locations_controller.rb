@@ -22,11 +22,9 @@ class StorageLocationsController < ApplicationController
     @storage_locations.each do |storage_location| 
       inventory_item_names << 
         storage_location.
-        inventory_items.
-        includes(:item).
+        get_active_items.
         joins(:item).
         select('distinct items.name').
-        where(items: { active: true }).
         pluck(:name)
     end
     inventory_item_names.flatten!.uniq!.sort!

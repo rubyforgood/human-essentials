@@ -235,7 +235,7 @@ RSpec.describe StorageLocation, type: :model do
         item2 = create(:item, name: 'B')
         item3 = create(:item, name: 'A')
         inactive_item = create(:item, name: 'inactive item', active: false)
-        name = Faker::Company.name
+        name = "New Storage Location"
         address = "1500 Remount Road, Front Royal, VA 22630"
         warehouse_type = "Warehouse with loading bay"
         square_footage = rand(1000..10000)
