@@ -18,20 +18,19 @@ class StorageLocationsController < ApplicationController
       @storage_locations = @storage_locations.kept
     end
 
-    inventory_item_names = []
+    active_inventory_item_names = []
     @storage_locations.each do |storage_location|
-      inventory_item_names <<
+      active_inventory_item_names <<
         storage_location
         .get_active_items
         .joins(:item)
         .select('distinct items.name')
         .pluck(:name)
     end
-    inventory_item_names.flatten!.uniq!&.sort!
-
+    active_inventory_item_names = active_inventory_item_names.flatten.uniq.sort
     respond_to do |format|
       format.html
-      format.csv { send_data StorageLocation.generate_csv(@storage_locations, inventory_item_names), filename: "StorageLocations-#{Time.zone.today}.csv" }
+      format.csv { send_data StorageLocation.generate_csv(@storage_locations, active_inventory_item_names), filename: "StorageLocations-#{Time.zone.today}.csv" }
     end
   end
 
