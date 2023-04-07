@@ -90,7 +90,7 @@ module Partners
         :enable_individual_requests,
         :enable_quantity_based_requests,
         documents: []
-      )
+      ).select{ |k, v| k.present?}
     end
   end
 end

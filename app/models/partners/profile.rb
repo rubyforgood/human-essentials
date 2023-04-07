@@ -105,8 +105,18 @@ module Partners
       ages_served
     ]
 
+    EMPTY_STRING = "N/A".freeze
+
     def has_no_social_media?
-      (website.blank? || website == "N/A") && (twitter.blank? || twitter == "N/A") && (facebook.blank? || facebook == "N/A") && (instagram.blank? || instagram == "N/A")
+      website.blank? && twitter.blank? && facebook.blank? && instagram.blank?
     end
+
+    attribute_names.each do |attr|
+      define_method(attr) do
+        (!self[attr].nil? && self[attr].blank? ) ? EMPTY_STRING : self[attr]
+      end
+    end
+
+
   end
 end
