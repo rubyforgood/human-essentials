@@ -5,7 +5,7 @@ class ProfilesController < ApplicationController
 
   def update
     @partner = current_organization.partners.find(params[:id])
-    if @partner.update(edit_partner_params) && ProfileUpdateService.update(@partner.profile, edit_profile_params)
+    if @partner.update(edit_partner_params) && @partner.profile.update(edit_profile_params)
       redirect_to partner_path(@partner) + "#partner-information", notice: "#{@partner.name} updated!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"
@@ -101,6 +101,6 @@ class ProfilesController < ApplicationController
       :enable_individual_requests,
       :enable_quantity_based_requests,
       documents: []
-    ).select{|k,v| k.present?}
+    ).select { |k, v| k.present? }
   end
 end

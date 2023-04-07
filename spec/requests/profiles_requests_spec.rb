@@ -48,7 +48,7 @@ RSpec.describe "Profiles", type: :request do
         expect(response).to have_http_status(:redirect)
         expect(partner.reload.name).to eq("Awesome Partner")
         expect(partner.profile.reload.executive_director_email).to eq("awesomepartner@example.com")
-        expect(partner.profile.facebook).to eq("N/A")
+        expect(partner.profile.facebook).to eq("")
       end
     end
   end
