@@ -38,7 +38,7 @@ RSpec.describe "/partners/profiles", type: :request do
         partner.profile.update!(address1: "")
         put partners_profile_path(partner,
           partner: {name: "Partnerdude", profile: {address1: "N/A"}})
-          partner.profile.reload
+        partner.profile.reload
       end
 
       it "updates the partner profile attribute to a blank value" do

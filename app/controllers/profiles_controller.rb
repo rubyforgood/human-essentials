@@ -101,6 +101,6 @@ class ProfilesController < ApplicationController
       :enable_individual_requests,
       :enable_quantity_based_requests,
       documents: []
-    ).select{|k,v| k.present?}
+    ).select { |k, v| k.present? }
   end
 end

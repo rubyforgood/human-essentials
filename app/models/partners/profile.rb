@@ -114,7 +114,7 @@ module Partners
 
     attribute_names.each do |attr|
       define_method(attr) do
-        (!self[attr].nil? && self[attr].blank? ) ? EMPTY_STRING : self[attr]
+        (!self[attr].nil? && self[attr].blank?) ? EMPTY_STRING : self[attr]
       end
     end
 
