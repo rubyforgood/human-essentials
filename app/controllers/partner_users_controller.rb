@@ -16,8 +16,8 @@ class PartnerUsersController < ApplicationController
       resource: @partner
     )
     if @user.valid?
-      redirect_back(fallback_location: "/",
-        notice: "#{user.name} has been invited. Invitation email sent to #{user.email}")
+      redirect_back(fallback_location: "/", 
+                    notice: "#{@user.name} has been invited. Invitation email sent to #{@user.email}")
     else
       flash[:alert] = "Invitation failed. Check the form for errors."
       @users = @partner.users
@@ -28,7 +28,7 @@ class PartnerUsersController < ApplicationController
   def destroy
     user = User.find(params[:id])
 
-    if user.remove_role(Role::PARTNER, @partner.profile)
+    if user.remove_role(Role::PARTNER, @partner)
       redirect_back(fallback_location: "/", notice: "Access to #{user.name} has been revoked.")
     else
       redirect_back(fallback_location: "/", alert: "Invitation failed. Check the form for errors.")
