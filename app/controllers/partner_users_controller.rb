@@ -16,8 +16,8 @@ class PartnerUsersController < ApplicationController
       resource: @partner
     )
     if @user.valid?
-      redirect_back(fallback_location: "/", 
-                    notice: "#{@user.name} has been invited. Invitation email sent to #{@user.email}")
+      redirect_back(fallback_location: "/",
+        notice: "#{@user.name} has been invited. Invitation email sent to #{@user.email}")
     else
       flash[:alert] = "Invitation failed. Check the form for errors."
       @users = @partner.users
