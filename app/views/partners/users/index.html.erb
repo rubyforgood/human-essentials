@@ -2,10 +2,10 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <% content_for :title, "Users - #{@partner.name}" %>
+        <% content_for :title, "Users - #{current_partner.name}" %>
         <h1><i class="fa fa-users"></i>&nbsp;&nbsp;
           Users
-          <small>for <%= @partner.name %></small>
+          <small>for <%= current_partner.name %></small>
         </h1>
       </div>
       <div class="col-sm-6">
@@ -27,7 +27,7 @@
       <div class="col-md-12">
         <div class="card">
           <div class="card-header bg-white">
-            <h3 class="card-title"><%= @partner.name %>
+            <h3 class="card-title"><%= current_partner.name %>
               Users </h3><%= link_to "Invite new user", new_partners_user_path, class: "btn btn-outline-info pull-right" %>
           </div>
           <div class="card-body">
