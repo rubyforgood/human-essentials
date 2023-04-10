@@ -68,7 +68,7 @@
 
                 <%= f.input :intake_location, :collection => current_organization.storage_locations.active_locations.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Intake Location", :include_blank => true, wrapper: :input_group %>
 
-                <%= f.label :partner_form_fields, "Required Partner Fields" %>
+                <%= f.label :partner_form_fields, "Partner Profile Sections" %>
 
                 <%= f.select(:partner_form_fields, Organization::ALL_PARTIALS, {include_hidden: false}, { multiple: true, class: 'form-control selectpicker input_group' }) %>
                 <br>
