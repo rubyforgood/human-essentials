@@ -12,6 +12,10 @@ class OrganizationUpdateService
     def update(organization, params)
       return false unless valid?(organization, params)
 
+      if params["partner_form_fields"] == [""]
+        params["partner_form_fields"] = []
+      end
+
       result = organization.update(params)
       return false unless result
 
