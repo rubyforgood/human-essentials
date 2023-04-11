@@ -37,5 +37,20 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
 
       expect(page.find(".alert")).to have_content "Deleted that user"
     end
+
+    it "filters users by name" do
+      user_names = User.all.pluck(:name)
+
+      visit admin_users_path
+      user_names.each do |name|
+        expect(page.find("table")).to have_content(name)
+      end
+
+      fill_in "filterrific_search_name", with: user_names.first
+      user_names[1..].each do |name|
+        expect(page.find("table")).not_to have_content(name)
+      end
+      expect(page.find("table")).to have_content(user_names.first)
+    end
   end
 end

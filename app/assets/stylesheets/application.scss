@@ -153,10 +153,6 @@ body a {
   margin-left: 10px;
 }
 
-.main-sidebar, .main-sidebar::before {
-  width: 280px;
+select.selectpicker + .dropdown-toggle::after {
+  display: none;
 }
-body:not(.sidebar-mini-md) .content-wrapper, body:not(.sidebar-mini-md) .main-footer, body:not(.sidebar-mini-md) .main-header {
-  margin-left: 280px;
-}
-

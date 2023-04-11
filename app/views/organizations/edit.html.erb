@@ -68,7 +68,7 @@
 
                 <%= f.input :intake_location, :collection => current_organization.storage_locations.active_locations.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Intake Location", :include_blank => true, wrapper: :input_group %>
 
-                <%= f.label :partner_form_fields, "Required Partner Fields" %>
+                <%= f.label :partner_form_fields, "Partner Profile Sections" %>
 
                 <%= f.select(:partner_form_fields, Organization::ALL_PARTIALS, {include_hidden: true}, { multiple: true, class: 'form-control selectpicker input_group partner_fields_dropdown' }) %>
                 <br>
@@ -116,7 +116,7 @@
                   <%= f.input_field :logo, as: :file %>
                   <p class="help-block">
                     Logo should be a 4:1 ratio of width / height (default image is 763 x 188 pixels).
-                    Only jpeg/png format is supported.
+                    Only jpeg/png format is supported. Images should be under 1 MB in size.
                   </p>
 
                 <% end %>
