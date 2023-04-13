@@ -70,17 +70,23 @@ class PurchasesController < ApplicationController
       load_form_collections
       render "edit"
     end
+    rescue Errors::InsufficientAllotment
+    flash[:error] =  "Sorry, we weren't able to save the purchase because that would reduce available inventory below zero."
+    render "edit"
   end
 
   def destroy
     ActiveRecord::Base.transaction do
-      purchase = current_organization.purchases.find(params[:id])
-      purchase.storage_location.decrease_inventory(purchase)
-      purchase.destroy!
+      @purchase = current_organization.purchases.find(params[:id])
+      @purchase.storage_location.decrease_inventory(@purchase)
+      @purchase.destroy!
     end
-
     flash[:notice] = "Purchase #{params[:id]} has been removed!"
     redirect_to purchases_path
+    rescue Errors::InsufficientAllotment
+    @line_items = @purchase.line_items
+    flash[:error] = "Sorry, we weren't able to delete the purchase because that would reduce available inventory below zero."
+    render "show" 
   end
 
   private
