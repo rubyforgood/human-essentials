@@ -51,7 +51,7 @@ RSpec.describe "/partners/dashboard", type: :request do
   context "with both roles" do
     it "should include the switch link" do
       partner_user.add_role(Role::ORG_USER, @organization)
-      allow(UsersRole).to receive(:current_role_for).and_return(partner_user.roles.find_by(name: 'partner'))
+      allow(UsersRole).to receive(:current_role_for).and_return(partner_user.roles.find_by(name: "partner"))
       get partners_dashboard_path
       expect(response.body).to include("switch_to_role")
     end
