@@ -152,16 +152,16 @@ RSpec.describe "Organizations", type: :request do
       describe "GET #show" do
         before { get organization_path(other_organization_params) }
 
-        it "redirects to dashboard" do
-          expect(response).to redirect_to(dashboard_path)
+        it "shows your own anyway" do
+          expect(response.body).to include(@organization.name)
         end
       end
 
       describe "GET #edit" do
         before { get edit_organization_path(other_organization_params) }
 
-        it "redirects to dashboard" do
-          expect(response).to redirect_to(dashboard_path)
+        it "shows your own anyway" do
+          expect(response.body).to include(@organization.name)
         end
       end
 
