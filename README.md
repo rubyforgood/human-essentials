@@ -37,6 +37,11 @@ Human Essentials has over 200 registered banks across the United States at **no 
 * [SDG 3](https://sdgs.un.org/goals/goal3) - Ensure healthy lives and promote well-being for all at all ages
 * [SDG 10](https://sdgs.un.org/goals/goal10) - Reduce inequality within and among countries
 
+
+## Ruby for Good
+
+Human Essentials is one of many projects initiated and run by Ruby for Good. You can find out more about Ruby for Good at https://rubyforgood.org
+
 ---
 
 
@@ -54,9 +59,9 @@ Human Essentials has over 200 registered banks across the United States at **no 
 <a href="https://github.com/rubyforgood/human-essentials/commits/main" alt="Total Commits"><img src="https://badgen.net/github/commits/rubyforgood/human-essentials/main?icon=github&color=green" /></a>
 </p>
 <p align="center">
-<a href="https://github.com/rubyforgood/human-essentials/ alt="Stars"><img src="https://img.shields.io/github/stars/rubyforgood/human-essentials?style=social" /></a>
-<a href="https://github.com/rubyforgood/human-essentials/ alt="Forks"><img src="https://img.shields.io/github/forks/rubyforgood/human-essentials?style=social" /></a>
-<a href="https://github.com/rubyforgood/human-essentials/ alt="Watchers"><img src="https://img.shields.io/github/watchers/rubyforgood/human-essentials?style=social" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/" alt="Stars"><img src="https://img.shields.io/github/stars/rubyforgood/human-essentials?style=social" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/" alt="Forks"><img src="https://img.shields.io/github/forks/rubyforgood/human-essentials?style=social" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/" alt="Watchers"><img src="https://img.shields.io/github/watchers/rubyforgood/human-essentials?style=social" /></a>
 </p>
 
 ---
@@ -81,7 +86,7 @@ If you're new here, here are some things you should know:
 
 #### 💬 Join us on slack
 Please feel free to join us on Slack!
-You can sign up at https://rubyforgood.org and find us in #human-essentials.
+You can sign up [here](https://rubyforgood.slack.com/join/shared_invite/zt-1kfeimohe-KL~~~6Lkof7G94_7Ojd_Hw#/shared-invite/email) and find us in #human-essentials.
 
 There are numerous other folks that can chime in and answer questions -- please ask and someone will probably be there to help!
 
