@@ -70,9 +70,9 @@
   <%= render(
           layout: "shared/csv_import_modal",
           locals: {
-              title: "Import Manufacturers",
-              csv_template_url: "/manufacturers.csv",
-              csv_import_url: import_csv_manufacturers_path
+            import_type: "Import Manufacturers",
+            csv_template_url: "/manufacturers.csv",
+            csv_import_url: import_csv_manufacturers_path
           }
       ) do %>
     <li>Open the csv file with excel or your favourite spreadsheet program.</li>
