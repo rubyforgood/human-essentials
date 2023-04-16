@@ -20,6 +20,7 @@
 #  reminder_day                   :integer
 #  repackage_essentials           :boolean          default(FALSE), not null
 #  short_name                     :string
+#  single_step_invite_and_approve :boolean          default(FALSE), not null
 #  state                          :string
 #  street                         :string
 #  url                            :string
