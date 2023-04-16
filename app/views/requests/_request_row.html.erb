@@ -3,7 +3,7 @@
   <td><%= request_row.partner.name %> </td>
   <td>
     <% partner_user = @partner_users.find { |pu| pu.id == request_row.partner_user_id } %>
-    <%= partner_user && "#{partner_user.name} <#{partner_user.email}>" %>
+    <%= "#{partner_user&.formatted_email}" %>
   </td>
   <td class="<%= quota_column_class(request_row.total_items, request_row.partner) %>">
     <%= request_row.total_items %>
