@@ -101,8 +101,8 @@
                   <td><%= product_drive.start_date.strftime("%m-%d-%Y") %></td>
                   <td><%= product_drive.end_date&.strftime("%m-%d-%Y") %></td>
                   <td><%= is_virtual(product_drive: product_drive) %></td>
-                  <td class="text-right"><%= product_drive.donation_quantity %></td>
-                  <td class="text-right"><%= product_drive.distinct_items_count %></td>
+                  <td class="text-right"><%= product_drive.donation_quantity_by_date(selected_range) %></td>
+                  <td class="text-right"><%= product_drive.distinct_items_count_by_date(selected_range) %></td>
                   <td class="text-right"><strong><%= dollar_value(product_drive.in_kind_value) %></strong></td>
                   <td class="text-right"><%= view_button_to product_drive_path(product_drive.id) %></td>
                 </tr>

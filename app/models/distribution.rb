@@ -105,6 +105,7 @@ class Distribution < ApplicationRecord
     self.request = request
     self.organization_id = request.organization_id
     self.partner_id = request.partner_id
+    self.agency_rep = request.partner_user&.formatted_email
     self.comment = request.comments
     self.issued_at = Time.zone.today + 1.day
     request.request_items.each do |item|
