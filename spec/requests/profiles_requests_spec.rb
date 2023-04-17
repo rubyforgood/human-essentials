@@ -18,11 +18,13 @@ RSpec.describe "Profiles", type: :request do
 
   describe "POST #update" do
     context "successful save" do
-      partner_params = { name: "Awesome Partner" }
-      profiles_params = { executive_director_email: "awesomepartner@example.com", facebook: "facebooksucks" }
+      let(:partner_params) do
+        { name: "Awesome Partner", profile:
+                               { executive_director_email: "awesomepartner@example.com", facebook: "facebooksucks" } }
+      end
 
       it "update partner" do
-        put profile_path(default_params.merge(id: partner, partner: partner_params, profile: profiles_params))
+        put profile_path(default_params.merge(id: partner, partner: partner_params))
         expect(response).to have_http_status(:redirect)
         expect(partner.reload.name).to eq("Awesome Partner")
         expect(partner.profile.reload.executive_director_email).to eq("awesomepartner@example.com")
@@ -30,7 +32,7 @@ RSpec.describe "Profiles", type: :request do
       end
 
       it "redirects to #show" do
-        put profile_path(default_params.merge(id: partner, partner: partner_params, profile: profiles_params))
+        put profile_path(default_params.merge(id: partner, partner: partner_params))
         expect(response).to redirect_to(partner_path(partner) + "#partner-information")
       end
     end
