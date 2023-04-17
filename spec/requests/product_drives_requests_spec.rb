@@ -62,8 +62,8 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
           expect(response).to be_successful
           expect(response.header['Content-Type']).to include 'text/csv'
 
-          expected_headers = "Product Drive Name,Start Date,End Date,Held Virtually?,Quantity of Items,Variety of Items,In Kind Value\n"
-          expect(response.body).to eq(expected_headers)
+          expected_headers = Exports::ExportProductDrivesCSVService::HEADERS + organization.items.order(:name).pluck(:name)
+          expect(response.body.chomp.split(",")).to eq(expected_headers)
         end
 
         it 'returns ONLY the associated product drives' do
@@ -115,6 +115,51 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
           expect(response.body).to include('product_drive_on_date_range')
           expect(response.body).not_to include('early_product_drive')
           expect(response.body).not_to include('late_product_drive')
+        end
+
+        it "returns the quantity of all organization's items" do
+          product_drive = create(:product_drive, name: 'product_drive', organization: organization)
+
+          active_item, inactive_item = organization.items.first(2)
+          inactive_item.update!(active: false)
+
+          donation = create(:product_drive_donation, product_drive: product_drive)
+          create(:line_item, :donation, itemizable_id: donation.id, item_id: active_item.id, quantity: 4)
+          create(:line_item, :donation, itemizable_id: donation.id, item_id: inactive_item.id, quantity: 5)
+
+          subject
+
+          row = response.body.split("\n")[1]
+          cells = row.split(',')
+          expect(response.body).to include(active_item.name)
+          expect(response.body).to include(inactive_item.name)
+          expect(cells.count('4')).to eq(1)
+          expect(cells.count('5')).to eq(1)
+          expect(cells.count('0')).to eq(organization.items.count - 2)
+        end
+
+        it "only counts items within the selected date range" do
+          default_params[:filters] = { date_range: date_range_picker_params(Date.parse('20/01/2023'), Date.parse('25/01/2023')) }
+          item = organization.items.first
+          product_drive = create(
+            :product_drive,
+            name: 'product_drive_within_date_range',
+            start_date: '20/01/2023',
+            end_date: '30/01/2023',
+            organization: organization
+          )
+
+          donation = create(:product_drive_donation, product_drive: product_drive, issued_at: '21/01/2023')
+          create(:line_item, :donation, itemizable_id: donation.id, item_id: item.id, quantity: 4)
+          donation = create(:product_drive_donation, product_drive: product_drive, issued_at: '26/01/2023')
+          create(:line_item, :donation, itemizable_id: donation.id, item_id: item.id, quantity: 10)
+
+          subject
+
+          row = response.body.split("\n")[1]
+          cells = row.split(',')
+          expect(cells.count('4')).to eq(2)
+          expect(cells.count('0')).to eq(organization.items.count - 1)
         end
       end
     end

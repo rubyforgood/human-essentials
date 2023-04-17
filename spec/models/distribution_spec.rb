@@ -192,6 +192,30 @@ RSpec.describe Distribution, type: :model do
       end
     end
 
+    describe "#copy_from_request" do
+      it "copy over relevant request information into the distrubution" do
+        item1 = create(:item, name: "Item1")
+        item2 = create(:item, name: "Item2")
+        request = create(:request,
+          organization: @organization,
+          partner_user: ::User.partner_users.first,
+          request_items: [
+            { item_id: item1.id, quantity: 15 },
+            { item_id: item2.id, quantity: 18 }
+          ])
+        distribution = Distribution.new
+        distribution.copy_from_request(request.id)
+        expect(distribution.line_items.size).to eq 2
+        expect(distribution.line_items.first.quantity).to eq 15
+        expect(distribution.line_items.second.quantity).to eq 18
+        expect(distribution.organization_id).to eq @organization.id
+        expect(distribution.partner_id).to eq request.partner_id
+        expect(distribution.agency_rep).to eq "#{request.partner_user.name} <#{request.partner_user.email}>"
+        expect(distribution.comment).to eq request.comments
+        expect(distribution.issued_at.to_date).to eq(Time.zone.today + 1.day)
+      end
+    end
+
     describe "#future?" do
       let(:dist1)    { create(:distribution, issued_at: Time.zone.tomorrow) }
       let(:dist2)    { create(:distribution, issued_at: Time.zone.yesterday) }

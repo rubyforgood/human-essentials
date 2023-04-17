@@ -57,7 +57,10 @@ class User < ApplicationRecord
          :timeoutable
   devise :omniauthable, omniauth_providers: [:google_oauth2]
 
-  validates :name, :email, presence: true
+  validates :name, presence: true
+  validates :email, presence: true, uniqueness: {case_sensitive: false},
+  format: {with: URI::MailTo::EMAIL_REGEXP, on: :create}
+
   validate :password_complexity
 
   default_scope -> { kept }
@@ -74,6 +77,10 @@ class User < ApplicationRecord
 
   has_many :requests, class_name: "::Request", foreign_key: :partner_id, dependent: :destroy, inverse_of: :partner_user
   has_many :submitted_requests, class_name: "Request", foreign_key: :partner_user_id, dependent: :destroy, inverse_of: :partner_user
+
+  def formatted_email
+    email.present? ? "#{name} <#{email}>" : ""
+  end
 
   def password_complexity
     return if password.blank? || password =~ /(?=.*?[#?!@$%^&*-])/

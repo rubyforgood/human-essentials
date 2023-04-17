@@ -37,6 +37,11 @@ Human Essentials has over 200 registered banks across the United States at **no 
 * [SDG 3](https://sdgs.un.org/goals/goal3) - Ensure healthy lives and promote well-being for all at all ages
 * [SDG 10](https://sdgs.un.org/goals/goal10) - Reduce inequality within and among countries
 
+
+## Ruby for Good
+
+Human Essentials is one of many projects initiated and run by Ruby for Good. You can find out more about Ruby for Good at https://rubyforgood.org
+
 ---
 
 
@@ -54,9 +59,9 @@ Human Essentials has over 200 registered banks across the United States at **no 
 <a href="https://github.com/rubyforgood/human-essentials/commits/main" alt="Total Commits"><img src="https://badgen.net/github/commits/rubyforgood/human-essentials/main?icon=github&color=green" /></a>
 </p>
 <p align="center">
-<a href="https://github.com/rubyforgood/human-essentials/ alt="Stars"><img src="https://img.shields.io/github/stars/rubyforgood/human-essentials?style=social" /></a>
-<a href="https://github.com/rubyforgood/human-essentials/ alt="Forks"><img src="https://img.shields.io/github/forks/rubyforgood/human-essentials?style=social" /></a>
-<a href="https://github.com/rubyforgood/human-essentials/ alt="Watchers"><img src="https://img.shields.io/github/watchers/rubyforgood/human-essentials?style=social" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/" alt="Stars"><img src="https://img.shields.io/github/stars/rubyforgood/human-essentials?style=social" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/" alt="Forks"><img src="https://img.shields.io/github/forks/rubyforgood/human-essentials?style=social" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/" alt="Watchers"><img src="https://img.shields.io/github/watchers/rubyforgood/human-essentials?style=social" /></a>
 </p>
 
 ---
@@ -81,7 +86,7 @@ If you're new here, here are some things you should know:
 
 #### 💬 Join us on slack
 Please feel free to join us on Slack!
-You can sign up at https://rubyforgood.herokuapp.com and find us in #human-essentials.
+You can sign up [here](https://rubyforgood.slack.com/join/shared_invite/zt-1kfeimohe-KL~~~6Lkof7G94_7Ojd_Hw#/shared-invite/email) and find us in #human-essentials.
 
 There are numerous other folks that can chime in and answer questions -- please ask and someone will probably be there to help!
 
@@ -115,7 +120,7 @@ This app uses PostgreSQL for all environments. You'll also need to create the `d
 Create a `database.yml` file on `config/` directory with your database configurations. You can also copy the existing files called [`database.yml.example`](config/database.yml.example) and [`.env.example`](.env.example) as an example and just change the credentials.
 
 - MacOSX - https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-macos
-- Ubuntu - TODO
+- Ubuntu - https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-ubuntu-18-04
 - Windows - Do you develop on windows? We'd love to hear (and for you to submit a PR explaining) how you do it. 🙏🏻
 
 After completing this step, you should have both ruby and postgres installed. Now you can proceed to the next step which is to setup the application.
@@ -224,6 +229,10 @@ Try to keep your PRs limited to one particular issue and don't make changes that
 Run all the tests with:
 
   `bundle exec rspec`
+
+Run a single test with:
+
+  `bundle exec rspec {path_to_test_name}_spec.rb`
 
 This app uses RSpec, Capybara, and FactoryBot for testing. Make sure the tests run clean & green before submitting a Pull Request. If you are inexperienced in writing tests or get stuck on one, please reach out so one of us can help you. :)
 
