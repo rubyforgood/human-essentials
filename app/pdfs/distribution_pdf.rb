@@ -21,7 +21,7 @@ class DistributionPdf
 
     image logo_image, fit: [250, 85]
 
-    bounding_box [bounds.right - 225, bounds.top], width: 225, height: 50 do
+    bounding_box [bounds.right - 225, bounds.top], width: 225, height: 85 do
       text @organization.name, align: :right
       text @organization.address, align: :right
       text @organization.email, align: :right
@@ -30,9 +30,7 @@ class DistributionPdf
     text "Issued to:", style: :bold
     font_size 12
     text @distribution.partner.name
-    font_size 10
-    text @distribution.partner.organization.address
-    move_up 34
+    move_up 24
 
     text "Partner Primary Contact:", style: :bold, align: :right
     font_size 12
@@ -157,7 +155,7 @@ class DistributionPdf
         c.quantity,
         "",
         dollar_value(c.item.value_in_cents),
-        dollar_value(c.value_per_line_item),
+        nil,
         nil]
     end
 
