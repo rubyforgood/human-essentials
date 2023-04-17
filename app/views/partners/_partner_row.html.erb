@@ -25,7 +25,11 @@
   <td>
     <% case status %>
     <% when "uninvited" %>
-      <%= invite_button_to(invite_partner_path(partner_row), confirm: "Send an invitation to #{partner_row.name} to begin using the partner application?") %>
+      <% if current_organization.single_step_invite_and_approve == false %>
+        <%= invite_button_to(invite_partner_path(partner_row), confirm: "Send an invitation to #{partner_row.name} to begin using the partner application?") %>
+      <% else %>
+        <%= invite_button_to(invite_and_approve_partner_path(partner_row), confirm: "Send an invitation #{partner_row.name} and approve?", text: 'Invite and Approve') %>
+      <% end %>
     <% when "invited" %>
       <%= view_button_to partner_path(partner_row) + "#partner-information", { text: "Review Application", icon: "check", type: "warning" } %>
       <%= invite_button_to(invite_partner_path(partner_row), confirm: "Re-send an invitation to #{partner_row.name}?", text: 'Re-send Invite') %>
