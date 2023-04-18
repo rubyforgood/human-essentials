@@ -88,7 +88,7 @@ RSpec.describe "Organization management", type: :system, js: true do
       end
 
       it 'can set single step invite and approve on the organization' do
-        select('organization[single_step_invite_and_approve]', option: true)
+        choose('organization[single_step_invite_and_approve]', option: true)
 
         click_on "Save"
         expect(page).to have_content("Yes")
