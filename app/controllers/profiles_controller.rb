@@ -1,6 +1,8 @@
 class ProfilesController < ApplicationController
   def edit
+
     @partner = current_organization.partners.find(params[:id])
+    abort @partner.profile.inspect
   end
 
   def update

@@ -43,6 +43,15 @@ RSpec.describe "/partners/profiles", type: :request do
       it "updates the partner profile attribute to a blank value" do
         expect(partner.profile.city).to eq ""
       end
+
+      it "does not update other partner profile attributes to blank" do
+        expect(partner.profile.address2).to be_nil
+      end
+
+      it "does not store N/A in the database" do
+        profile = Partners::Profile.find(partner.profile.id)
+        expect(profile[:address1]).to eq ""
+      end
     end
   end
 end

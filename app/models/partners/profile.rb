@@ -91,6 +91,7 @@ module Partners
 
     validates :no_social_media_presence, acceptance: {message: "must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram."}, if: :has_no_social_media?
 
+    before_update :change_to_blank_value
     self.ignored_columns = %w[
       evidence_based_description
       program_client_improvement
