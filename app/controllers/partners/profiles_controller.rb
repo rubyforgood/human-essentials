@@ -5,7 +5,7 @@ module Partners
     def edit
       current_partner.profile.attributes.each do |attr_name, attr_value|
         if attr_value.blank? && !attr_value.nil?
-          current_partner.profile[attr_name] = Profile::NA_STRING
+          current_partner.profile[attr_name] = Partners::Profile::NA_STRING
         end
       end
     end
