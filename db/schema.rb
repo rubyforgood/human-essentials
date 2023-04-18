@@ -421,6 +421,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_16_135543) do
     t.boolean "enable_child_based_requests", default: true, null: false
     t.boolean "enable_individual_requests", default: true, null: false
     t.boolean "enable_quantity_based_requests", default: true, null: false
+    t.boolean "single_step_invite_and_approve", default: false, null: false
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end

@@ -43,7 +43,7 @@
 
           <div class="card-body">
             <div class="tab-content">
-              <%= render partial: 'partners_table', locals: { partners: @partners } %>
+              <%= render partial: 'partners_table', locals: { partners: @partners, organization: @organization } %>
               <%= render partial: 'partner_groups_table' %>
             </div>
           </div>

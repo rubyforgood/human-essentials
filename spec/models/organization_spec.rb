@@ -20,6 +20,7 @@
 #  reminder_day                   :integer
 #  repackage_essentials           :boolean          default(FALSE), not null
 #  short_name                     :string
+#  single_step_invite_and_approve :boolean          default(FALSE), not null
 #  state                          :string
 #  street                         :string
 #  url                            :string
@@ -349,6 +350,18 @@ RSpec.describe Organization, type: :model do
                              state: 'KS',
                              zipcode: '12345')
       expect(org.default_storage_location).to eq(storage_location.id)
+    end
+  end
+
+  describe 'default invite and approve value' do
+    it 'returns false when not set' do
+      expect(build(:organization)).to_not be_single_step_invite_and_approve
+    end
+
+    it 'updates to true' do
+      org = create(:organization)
+      org.update(single_step_invite_and_approve: true)
+      expect(org.single_step_invite_and_approve).to eq(true)
     end
   end
 
