@@ -117,7 +117,7 @@ class PartnersController < ApplicationController
       svc.call
 
       if svc.errors.none?
-        redirect_to partners_path, notice: "Partner invited and approved!"
+        redirect_to partners_path, notice: "Partner #{partner.name} invited and approved!"
       else
         redirect_to partners_path, error: "Failed to approve partner because: #{svc.errors.full_messages}"
       end

@@ -353,6 +353,18 @@ RSpec.describe Organization, type: :model do
     end
   end
 
+  describe 'default invite and approve value' do
+    it 'returns false when not set' do
+      expect(build(:organization)).to_not be_single_step_invite_and_approve
+    end
+
+    it 'updates to true' do
+      org = create(:organization)
+      org.update(single_step_invite_and_approve: true)
+      expect(org.single_step_invite_and_approve).to eq(true)
+    end
+  end
+
   describe 'address' do
     it 'returns an empty string when the org has no address components' do
       expect(Organization.new.address).to be_blank
