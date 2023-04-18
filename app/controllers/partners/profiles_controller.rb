@@ -2,10 +2,16 @@ module Partners
   class ProfilesController < BaseController
     def show; end
 
-    def edit; end
+    def edit
+      current_partner.profile.attributes.each do |attr_name, attr_value|
+        if attr_value.blank? && !attr_value.nil?
+          current_partner.profile[attr_name] = Profile::NA_STRING
+        end
+      end
+    end
 
     def update
-      if current_partner.update(partner_params) && current_partner.profile.update(profile_params)
+      if current_partner.update(partner_params) && ProfileUpdateService.update(current_partner.profile, profile_params)
         flash[:success] = "Details were successfully updated."
         redirect_to partners_profile_path
       else

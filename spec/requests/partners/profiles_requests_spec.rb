@@ -37,7 +37,7 @@ RSpec.describe "/partners/profiles", type: :request do
       before do
         partner.profile.update!(city: "")
         put partners_profile_path(partner,
-          partner: {name: "Partnerdude", profile: {city: ""}})
+          partner: {name: "Partnerdude", profile: {city: "", website: "N/A"}})
       end
 
       it "updates the partner profile attribute to a blank value" do
@@ -49,8 +49,7 @@ RSpec.describe "/partners/profiles", type: :request do
       end
 
       it "does not store N/A in the database" do
-        profile = Partners::Profile.find(partner.profile.id)
-        expect(profile[:address1]).to eq ""
+        expect(partner.profile.website).to be_nil
       end
     end
   end

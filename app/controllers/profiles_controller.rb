@@ -2,12 +2,16 @@ class ProfilesController < ApplicationController
   def edit
 
     @partner = current_organization.partners.find(params[:id])
-    abort @partner.profile.inspect
+    @partner.profile.attributes.each do |attr_name, attr_value|
+      if attr_value.blank? && !attr_value.nil?
+        @partner.profile[attr_name] = Profile::NA_STRING
+      end
+    end
   end
 
   def update
     @partner = current_organization.partners.find(params[:id])
-    if @partner.update(edit_partner_params) && @partner.profile.update(edit_profile_params)
+    if @partner.update(edit_partner_params) && ProfileUpdateService.update(@partner.profile, edit_profile_params)
       redirect_to partner_path(@partner) + "#partner-information", notice: "#{@partner.name} updated!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"
