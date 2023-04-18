@@ -82,7 +82,7 @@ class StorageLocation < ApplicationRecord
   end
 
   def total_active_inventory_count
-    get_active_items
+    active_inventory_items
     .select('items.quantity')
     .sum(:quantity)
   end
@@ -218,7 +218,7 @@ class StorageLocation < ApplicationRecord
 
   def csv_export_attributes
     attributes = [name, address, square_footage, warehouse_type, total_active_inventory_count]
-    get_active_items.sort { |a, b| a.item.name <=> b.item.name }.each { |item| attributes << item.quantity }
+    active_inventory_items.sort_by{ |inv_item| inv_item.item.name }.each { |item| attributes << item.quantity }
     attributes
   end
 
@@ -226,7 +226,7 @@ class StorageLocation < ApplicationRecord
     inventory_items.map(&:quantity).uniq.reject(&:zero?).empty?
   end
 
-  def get_active_items
+  def active_inventory_items
     inventory_items
     .includes(:item)
     .where(items: { active: true })
