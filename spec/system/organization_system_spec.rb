@@ -41,6 +41,7 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page).to have_content("Child Based Requests?")
         expect(page).to have_content("Individual Requests?")
         expect(page).to have_content("Quantity Based Requests?")
+        expect(page).to have_content("Skip Partner Approval Process?")
         expect(page).to have_content("Logo")
       end
     end
@@ -84,6 +85,13 @@ RSpec.describe "Organization management", type: :system, js: true do
 
         click_on "Save"
         expect(page).to have_content(store.name)
+      end
+
+      it 'can set single step invite and approve on the organization' do
+        choose('organization[single_step_invite_and_approve]', option: true)
+
+        click_on "Save"
+        expect(page).to have_content("Yes")
       end
 
       it 'can set the NDBN Member ID' do

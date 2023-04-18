@@ -127,6 +127,12 @@
                     <%= @organization.invitation_text.blank? ? "Not defined" : @organization.invitation_text %>
                 </p>
               </div>
+              <div class="mb-4">
+                <h3 class='font-bold'>Skip Partner Approval Process?</h3>
+                  <p>
+                    <%= humanize_boolean(@organization.single_step_invite_and_approve) %>
+                  </p>
+              </div>
               <% if @organization.logo.attached? %>
                     <div class="mb-4">
                     <h3 class='font-bold'>Logo</h3>
