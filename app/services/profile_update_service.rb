@@ -1,6 +1,5 @@
 class ProfileUpdateService
   class << self
-
     # we shouldn't load the entire profile file here, so we'll just define the constant here
     EMPTY_STRING = "N/A"
 
@@ -18,7 +17,7 @@ class ProfileUpdateService
     # @return params [ActionDispatch::Http::Parameters]
     def filter_params(params, profile)
       # should update the present params and the params that are already present in the profile
-      params.select { |k, v| (v.present? || profile.send(k).present?) && v != EMPTY_STRING}
+      params.select { |k, v| (v.present? || profile.send(k).present?) && v != EMPTY_STRING }
     end
   end
 end

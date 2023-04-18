@@ -57,6 +57,5 @@ RSpec.describe "Profiles", type: :request do
         expect(partner.profile.website).to be_nil
       end
     end
-
   end
 end
