@@ -117,11 +117,7 @@ module Partners
     end
 
     def client_share_total
-      tot = 0
-      served_areas.each do |served_area|
-        tot += served_area.client_share
-      end
-      tot
+served_areas.sum(&:client_share)
     end
 
     def client_share_is_0_or_100
