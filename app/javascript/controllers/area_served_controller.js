@@ -4,12 +4,11 @@ export default class extends Controller {
     connect () {
         this.calculateClientShareTotal()
     }
-    calculateClientShareTotal(){
+    calculateClientShareTotal ( ){
         let total = 0;
-        let share_targets = this.shareTargets
-        share_targets.forEach(
-            share_target =>{
-                if(share_target.value){
+        this.share_targets.forEach(
+            share_target => {
+                if ( share_target.value ) {
                     total += parseInt(share_target.value);
                 }
             }
@@ -17,13 +16,12 @@ export default class extends Controller {
 
         this.totalTarget.innerHTML = total + " %"
 
-        if(total == 0 || total == 100){
+        if ( total == 0 || total == 100 ) {
             this.warningTarget.style.visibility= 'hidden';
-        }else {
+        } else {
             this.warningTarget.style.visibility= 'visible';
             this.warningTarget.style.color= 'red';
         }
         return total;
     }
-
 }

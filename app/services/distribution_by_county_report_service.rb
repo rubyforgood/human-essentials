@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class DistributionByCountyReportService
+  Breakdown = Struct.new(:name, :region, :num_items, :amount)
   def get_breakdown(distributions)
-    breakdown_struct = Struct.new(:name, :region, :num_items, :amount)
     breakdowns = {}
-    breakdowns["Unspecified"] = breakdown_struct.new("Unspecified", "ZZZ", 0, 0.00)
+    breakdowns["Unspecified"] = Breakdown.new("Unspecified", "ZZZ", 0, 0.00)
     distributions.each do |distribution|
       served_areas = distribution.partner.profile.served_areas
       num_items_for_distribution = distribution.line_items.total
@@ -17,7 +17,7 @@ class DistributionByCountyReportService
           name = served_area.county.name
           percentage = served_area.client_share / 100.0
           if !breakdowns[name]
-            breakdowns[name] = breakdown_struct.new(name, served_area.county.region,
+            breakdowns[name] = Breakdown.new(name, served_area.county.region,
               (num_items_for_distribution * percentage).round(0), value_of_distribution * percentage)
           else
             breakdowns[name].num_items = breakdowns[name].num_items + (num_items_for_distribution * percentage).round(0)
@@ -27,7 +27,7 @@ class DistributionByCountyReportService
       end
     end
 
-    breakdown_array = breakdowns.sort_by { |k, v| [v[:region], k] }
+    breakdown_array = breakdowns.sort_by { |k, v| [v.region, k] }
     @breakdown = breakdown_array.map { |a| a[1] }
   end
 end

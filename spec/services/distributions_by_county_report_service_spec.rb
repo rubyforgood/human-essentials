@@ -2,12 +2,11 @@ RSpec.describe DistributionByCountyReportService, type: :service do
   let(:organization) { create(:organization) }
   let(:year) { Time.current.year }
   let(:issued_at_last_year) { Time.current.utc.change(year: year - 1).to_datetime }
-  let(:issued_at_present) { Time.current.utc.to_datetime }
-  let(:item_1) { create(:item, value_in_cents: 1050) }
   let(:distributions) { [] }
 
+  include_examples "distribution_by_county"
+
   before do
-    setup_overlapping_partners
     @storage_location = create(:storage_location, organization: @organization)
   end
 
@@ -21,7 +20,7 @@ RSpec.describe DistributionByCountyReportService, type: :service do
     end
 
     it "divides the item numbers and values according to the partner profile" do
-      distribution_1 = create(:distribution, :with_items, item: item_1, organization: @user.organization, partner: @partner_1)
+      distribution_1 = create(:distribution, :with_items, item: item_1, organization: @user.organization, partner: partner_1)
       breakdown = DistributionByCountyReportService.new.get_breakdown([distribution_1])
       expect(breakdown.size).to eq(5)
       expect(breakdown[4].num_items).to eq(0)
@@ -33,8 +32,8 @@ RSpec.describe DistributionByCountyReportService, type: :service do
     end
 
     it "handles multiple partners with overlapping service areas properly" do
-      distribution_p1 = create(:distribution, :with_items, item: item_1, organization: @user.organization, partner: @partner_1, issued_at: issued_at_present)
-      distribution_p2 = create(:distribution, :with_items, item: item_1, organization: @user.organization, partner: @partner_2, issued_at: issued_at_present)
+      distribution_p1 = create(:distribution, :with_items, item: item_1, organization: @user.organization, partner: partner_1, issued_at: issued_at_present)
+      distribution_p2 = create(:distribution, :with_items, item: item_1, organization: @user.organization, partner: partner_2, issued_at: issued_at_present)
       breakdown = DistributionByCountyReportService.new.get_breakdown([distribution_p1, distribution_p2])
       num_with_45 = 0
       num_with_20 = 0
@@ -61,17 +60,5 @@ RSpec.describe DistributionByCountyReportService, type: :service do
       expect(num_with_20).to be > 0
       expect(num_with_0).to eq 0
     end
-  end
-
-  def setup_overlapping_partners
-    @partner_1 = create(:partner, organization: @organization)
-    @partner_1.profile.served_areas << create_list(:partners_served_area, 4,
-      partner_profile: @partner_1.profile, client_share: 25)
-    @partner_2 = create(:partner, organization: @organization)
-    @partner_2.profile.served_areas << create_list(:partners_served_area, 5,
-      partner_profile: @partner_1.profile, client_share: 20)
-    @partner_2.profile.served_areas[0].county = @partner_1.profile.served_areas[0].county
-    @partner_2.profile.served_areas[0].save
-    @partner_2.reload
   end
 end
