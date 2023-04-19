@@ -117,20 +117,16 @@ module Partners
     end
 
     def client_share_total
-served_areas.sum(&:client_share)
+      served_areas.sum(&:client_share)
     end
 
     def client_share_is_0_or_100
       # business logic:  the client share has to be 0 or 100 -- although it is an estimate only,  making it 0 (not
       # specified at all) or 100 means we won't have people overallocating (> 100) and that they think about what
       # their allocation actually is
-      value = client_share_total
-      check = (value == 0 || value == 100)
-      if !check
-
+      if client_share_total != 0 && client_share_total != 100
         errors.add(:base, "Total client share must be 0 or 100")
       end
-      check
     end
   end
 end

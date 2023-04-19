@@ -15,7 +15,7 @@ class PartnerProfileUpdateService
       @return_value = @partner.valid?
 
       if @return_value
-        @profile.served_areas.each(&:destroy!)
+        @profile.served_areas.destroy_all
         @profile.reload
         @profile.update!(@profile_params)
         @profile.reload
