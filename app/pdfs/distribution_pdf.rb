@@ -30,9 +30,7 @@ class DistributionPdf
     text "Issued to:", style: :bold
     font_size 12
     text @distribution.partner.name
-    font_size 10
-    text @distribution.partner.organization.address
-    move_up 34
+    move_up 24
 
     text "Partner Primary Contact:", style: :bold, align: :right
     font_size 12

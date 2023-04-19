@@ -20,6 +20,7 @@
 #  reminder_day                   :integer
 #  repackage_essentials           :boolean          default(FALSE), not null
 #  short_name                     :string
+#  single_step_invite_and_approve :boolean          default(FALSE), not null
 #  state                          :string
 #  street                         :string
 #  url                            :string
@@ -55,6 +56,11 @@ RSpec.describe Organization, type: :model do
         enable_individual_requests: false,
         enable_quantity_based_requests: false
       )).to_not be_valid
+    end
+
+    it "validates that short names are unique" do
+      expect(create(:organization, short_name: "foo_bar")).to be_valid
+      expect(build(:organization, short_name: "foo_bar")).to_not be_valid
     end
 
     it "validates that attachment file size is not higher than 1 MB" do
@@ -344,6 +350,18 @@ RSpec.describe Organization, type: :model do
                              state: 'KS',
                              zipcode: '12345')
       expect(org.default_storage_location).to eq(storage_location.id)
+    end
+  end
+
+  describe 'default invite and approve value' do
+    it 'returns false when not set' do
+      expect(build(:organization)).to_not be_single_step_invite_and_approve
+    end
+
+    it 'updates to true' do
+      org = create(:organization)
+      org.update(single_step_invite_and_approve: true)
+      expect(org.single_step_invite_and_approve).to eq(true)
     end
   end
 

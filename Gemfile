@@ -156,9 +156,9 @@ group :development, :test do
   # Static analysis / linter.
   gem "rubocop"
   # Rails add-on for static analysis.
-  gem "rubocop-rails", "~> 2.18.0"
+  gem "rubocop-rails", "~> 2.19.0"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.25"
+  gem "standard", "~> 1.26"
 end
 
 group :development do
@@ -184,7 +184,7 @@ end
 
 group :test do
   # Test using browsers.
-  gem "capybara", "~> 3.38"
+  gem "capybara", "~> 3.39"
   # Create screenshots when doing browser tests.
   gem "capybara-screenshot"
   # Generate Capybara tests in the browser and debug them.
