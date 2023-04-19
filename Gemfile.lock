@@ -214,7 +214,7 @@ GEM
     geocoder (1.8.1)
     globalid (1.1.0)
       activesupport (>= 5.0)
-    groupdate (6.2.0)
+    groupdate (6.2.1)
       activesupport (>= 5.2)
     guard (2.18.0)
       formatador (>= 0.2.4)
