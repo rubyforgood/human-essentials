@@ -158,7 +158,7 @@ group :development, :test do
   # Rails add-on for static analysis.
   gem "rubocop-rails", "~> 2.19.1"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.26"
+  gem "standard", "~> 1.27"
 end
 
 group :development do
