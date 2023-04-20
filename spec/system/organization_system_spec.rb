@@ -36,7 +36,7 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page).to have_content("Users")
         expect(page).to have_content("Short Name")
         expect(page).to have_content("URL")
-        expect(page).to have_content("Required Partner Fields")
+        expect(page).to have_content("Partner Profile Sections")
         expect(page).to have_content("Custom Partner Invitation Message")
         expect(page).to have_content("Child Based Requests?")
         expect(page).to have_content("Individual Requests?")
@@ -91,6 +91,22 @@ RSpec.describe "Organization management", type: :system, js: true do
 
         click_on "Save"
         expect(page).to have_content(ndbn_member.full_name)
+      end
+
+      it 'can select and deselect Required Partner Fields' do
+        # select first option in from Required Partner Fields
+        find('.partner_fields_dropdown').click.find(:xpath, '//*[@id="organization_partner_form_fields"]/option[1]').click
+        click_on "Save"
+        expect(page).to have_content('Media Information')
+        expect(@organization.reload.partner_form_fields).to eq(['media_information'])
+
+        # deselect previously choosen Required Partner Field
+        click_on "Edit"
+        find('.partner_fields_dropdown').click.find(:xpath, '//*[@id="organization_partner_form_fields"]/option[1]').click
+        click_on "Save"
+
+        expect(page).to_not have_content('Media Information')
+        expect(@organization.reload.partner_form_fields).to eq([])
       end
     end
 
