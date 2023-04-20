@@ -218,7 +218,7 @@ class StorageLocation < ApplicationRecord
 
   def csv_export_attributes
     attributes = [name, address, square_footage, warehouse_type, total_active_inventory_count]
-    active_inventory_items.sort_by{ |inv_item| inv_item.item.name }.each { |item| attributes << item.quantity }
+    active_inventory_items.sort_by { |inv_item| inv_item.item.name }.each { |item| attributes << item.quantity }
     attributes
   end
 
