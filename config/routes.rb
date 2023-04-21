@@ -173,6 +173,8 @@ Rails.application.routes.draw do
         get :approve_application
         post :invite
         post :invite_partner_user
+        post :invite_and_approve
+        get :invite_and_approve
         post :recertify_partner
         put :deactivate
         put :reactivate

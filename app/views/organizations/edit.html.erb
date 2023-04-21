@@ -77,7 +77,9 @@
                 <%= f.input :invitation_text, label: "Custom Partner Invitation Message", wrapper: :input_group do %>
                   <%= f.text_area :invitation_text, class: "form-control" %>
                 <% end %>
-
+                <!-- <%= f.check_box :enable_one_step_invite, label: 'Use single-step invite-and-approve partner process', label_method: :second, value_method: :first %> -->
+                <%= f.label 'Use single-step invite-and-approve partner process?' %> <br />
+                <%= f.check_box :enable_one_step_invite%>
 
                 <%= f.input :repackage_essentials, label: 'Does your bank repackage essentials?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
                 <%= f.input :distribute_monthly, label: 'Does your bank distribute monthly?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
