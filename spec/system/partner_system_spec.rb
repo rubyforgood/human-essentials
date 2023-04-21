@@ -5,7 +5,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
     end
     let!(:url_prefix) { "/#{@organization.to_param}" }
     let!(:page_content_wait) { 10 } # allow up to 10 seconds for content to load in the test
-    
+
     describe 'approving a partner that is awaiting approval' do
       let!(:partner_awaiting_approval) { create(:partner, :awaiting_review) }
 
@@ -114,7 +114,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
     describe 'invite and approve partner if organization opts in single step invite and approve' do
       let!(:partner_uninvited) { create(:partner, status: 'uninvited', name: Faker::Name.name, email: Faker::Internet.email) }
-      
+
       context 'when single-step inviting and approving a partner successfully' do
         before do
           @organization.single_step_invite_and_approve = true
@@ -126,7 +126,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           expect(@organization.single_step_invite_and_approve).to eq(true)
 
           visit url_prefix + "/partners"
-            
+
           assert page.has_content? partner_uninvited.name
           accept_confirm do
             find('tr', text: partner_uninvited[:name]).find_link('Invite and Approve').click
