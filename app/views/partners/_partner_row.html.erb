@@ -1,4 +1,5 @@
 <% status = partner_row.status%>
+<% onestep = :enable_one_step_invite%>
 <tr>
   <td class='text-blue-500'><%= link_to partner_row.name, partner_path(partner_row) %></td>
   <td><%= link_to partner_row.email, "mailto:#{partner_row.email}" %></td>
@@ -24,8 +25,13 @@
   </td>
   <td>
     <% case status %>
-    <% when "uninvited" %>
-      <%= invite_button_to(invite_partner_path(partner_row), confirm: "Send an invitation to #{partner_row.name} to begin using the partner application?") %>
+      <% when "uninvited" %>
+        <% case onestep%>
+          <% when true%>
+            <%= invite_approve_button_to(invite_and_approve_partner_path(partner_row), confirm: "Send an invitation to #{partner_row.name} and approve their partner application?") %>
+          <% else %>
+            <%= invite_button_to(invite_partner_path(partner_row), confirm: "Send an invitation to #{partner_row.name} to begin using the partner application?") %>
+        <% end %>
     <% when "invited" %>
       <%= view_button_to partner_path(partner_row) + "#partner-information", { text: "Review Application", icon: "check", type: "warning" } %>
       <%= invite_button_to(invite_partner_path(partner_row), confirm: "Re-send an invitation to #{partner_row.name}?", text: 'Re-send Invite') %>
