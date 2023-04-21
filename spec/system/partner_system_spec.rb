@@ -112,6 +112,56 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
       end
     end
 
+    describe 'adding a new partner and inviting them with single step enabled' do
+      context 'when adding & inviting/approving a partner successfully' do
+        let(:partner_attributes) do
+          {
+            name: Faker::Name.name,
+            email: Faker::Internet.email,
+            quota: Faker::Number.within(range: 5..100),
+            notes: Faker::Lorem.paragraph
+          }
+        end
+        
+        before do
+          sign_in(@organization_admin)
+          visit url_prefix + "/manage/edit"
+          assert page.has_content? "Use single-step invite-and-approve partner process?"
+
+          check 'organization[enable_one_step_invite]'
+          click_on 'Save'
+
+          visit url_prefix + "/partners"
+          assert page.has_content? "Partner Agencies for #{@organization.name}"
+
+          click_on 'New Partner Agency'
+
+          fill_in 'Name *', with: partner_attributes[:name]
+          fill_in 'E-mail *', with: partner_attributes[:email]
+          fill_in 'Quota', with: partner_attributes[:quota]
+          fill_in 'Notes', with: partner_attributes[:notes]
+          find('button', text: 'Add Partner Agency').click
+
+          assert page.has_content? "Partner #{partner_attributes[:name]} added!"
+
+          accept_confirm do
+            find('tr', text: partner_attributes[:name]).find_link('Invite & Approve').click
+          end
+
+          assert page.has_content? "Partner #{partner_attributes[:name]} invited and approved!"
+        end
+
+        it 'should have added the partner and approved them' do
+          expect(Partner.find_by(email: partner_attributes[:email]).status).to eq('approved')
+          visit url_prefix + "/manage/edit"
+          assert page.has_content? "Use single-step invite-and-approve partner process?"
+
+          check 'organization[enable_one_step_invite]'
+          click_on 'Save'
+        end
+      end
+    end
+
     describe 'requesting recertification of a partner' do
       context 'GIVEN a user goes through the process of requesting recertification of partner' do
         let!(:partner_to_request_recertification) { create(:partner, status: 'approved') }
