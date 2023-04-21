@@ -6,7 +6,7 @@ export default class extends Controller {
     }
     calculateClientShareTotal ( ){
         let total = 0;
-        this.share_targets.forEach(
+        this.shareTargets.forEach(
             share_target => {
                 if ( share_target.value ) {
                     total += parseInt(share_target.value);
@@ -17,10 +17,10 @@ export default class extends Controller {
         this.totalTarget.innerHTML = total + " %"
 
         if ( total == 0 || total == 100 ) {
-            this.warningTarget.style.visibility= 'hidden';
+            this.warningTarget.style.visibility = 'hidden';
         } else {
-            this.warningTarget.style.visibility= 'visible';
-            this.warningTarget.style.color= 'red';
+            this.warningTarget.style.visibility = 'visible';
+            this.warningTarget.style.color = 'red';
         }
         return total;
     }

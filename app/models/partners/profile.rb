@@ -124,7 +124,8 @@ module Partners
       # business logic:  the client share has to be 0 or 100 -- although it is an estimate only,  making it 0 (not
       # specified at all) or 100 means we won't have people overallocating (> 100) and that they think about what
       # their allocation actually is
-      if client_share_total != 0 && client_share_total != 100
+      total = client_share_total
+      if total != 0 && total != 100
         errors.add(:base, "Total client share must be 0 or 100")
       end
     end
