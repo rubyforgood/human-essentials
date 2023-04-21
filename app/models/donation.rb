@@ -122,7 +122,7 @@ class Donation < ApplicationRecord
       original_storage_location.decrease_inventory(old_data)
     end
   rescue ActiveRecord::RecordInvalid
-    false
+    return false
   end
 
   def remove(item)

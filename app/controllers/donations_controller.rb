@@ -75,12 +75,15 @@ class DonationsController < ApplicationController
 
   def update
     @donation = Donation.find(params[:id])
-    @donation.replace_increase!(donation_params)
-    redirect_to donations_path
-    rescue Errors::InsufficientAllotment
-    flash[:error] =  "Sorry, we weren't able to save the donation because that would reduce available inventory below zero."
-    render "edit"
+    if @donation.replace_increase!(donation_params)
+      redirect_to donations_path
+    else
+      render "edit"
     end
+    # rescue Errors::InsufficientAllotment
+    #   flash[:error] = "Sorry, we weren't able to save the donation because that would reduce available inventory below zero."
+    #   render "edit"
+    # end
   end
 
   def destroy
@@ -90,7 +93,7 @@ class DonationsController < ApplicationController
     if service.success?
       flash[:notice] = "Donation #{params[:id]} has been removed!"
     else
-      flash[:error] = "Sorry, we weren't able to delete the donation because that would reduce available inventory below zero."
+      flash[:error] = "Donation #{params[:id]} failed to be removed because #{service.error}"
     end
 
     redirect_to donations_path

@@ -30,7 +30,7 @@ class DistributionsController < ApplicationController
     if result.success?
       flash[:notice] = "Distribution #{params[:id]} has been reclaimed!"
     else
-      flash[:error] = "Could not destroy distribution #{params[:id]}. Please contact technical support."
+      flash[:error] = "Sorry, we weren't able to delete the distribution because that would reduce available inventory below zero."
     end
 
     redirect_to distributions_path

@@ -70,9 +70,9 @@ class PurchasesController < ApplicationController
       load_form_collections
       render "edit"
     end
-    rescue Errors::InsufficientAllotment
-    flash[:error] =  "Sorry, we weren't able to save the purchase because that would reduce available inventory below zero."
-    render "edit"
+    # rescue Errors::InsufficientAllotment
+    # flash[:error] =  "Sorry, we weren't able to save the purchase because that would reduce available inventory below zero."
+    # render "edit"
   end
 
   def destroy
