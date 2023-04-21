@@ -40,6 +40,10 @@ module DashboardHelper
     number_with_delimiter future_distributed_unformatted
   end
 
+  def recently_added_user_display_text(user)
+    (user.name == "Name Not Provided") ? user.email : user.name
+  end
+
   private
 
   def total_received_donations_unformatted(range = selected_range)
