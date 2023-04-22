@@ -14,6 +14,37 @@ RSpec.describe 'Account request flow', type: :system, js: true do
     before do
       allow(Rails.env).to receive(:staging?).and_return(false)
     end
+
+    it 'should display the acount request form with error validation messages' do
+      ndbn_member = FactoryBot.create(:ndbn_member)
+      visit root_path
+
+      click_button('Request A Demo', match: :first)
+      choose('account_bank')
+
+      account_request_attrs = FactoryBot.attributes_for(:account_request)
+
+      fill_in 'Name', with: account_request_attrs[:name]
+      fill_in 'Email', with: account_request_attrs[:email]
+      fill_in 'Organization name', with: account_request_attrs[:organization_name]
+      fill_in 'Organization website', with: account_request_attrs[:organization_website]
+      fill_in 'Request Details (min 50 characters)', with: nil
+      select "#{ndbn_member.ndbn_member_id} - #{ndbn_member.account_name}", from: 'account_request[ndbn_member_id]'
+
+      expect(AccountRequest.count).to eq(0)
+
+      expect { click_button 'Submit' }.to change(AccountRequest, :count).by(0)
+
+      expect(page).to have_current_path("/account_requests")
+
+
+    end
+  end
+
+  context 'when not in staging' do
+    before do
+      allow(Rails.env).to receive(:staging?).and_return(false)
+    end
     it 'should allow prospective users to request an account via a form. And that request form data gets used to create an organization' do
       ndbn_member = FactoryBot.create(:ndbn_member)
       visit root_path

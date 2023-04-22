@@ -26,7 +26,13 @@
           })
 
           $(document).ready(function() {
+            if(new_account_request.childNodes[2].className == "alert alert-danger") {
+              $('#create_bank').show()
+              account_bank.checked = true
+            }
+            else{
               $('#create_bank').hide()
+            }
               $('#partner_info').hide()
           })
       </script>
@@ -44,6 +50,7 @@
         </p>
 
         <%= simple_form_for(@account_request) do |f| %>
+
           <%= f.error_notification %>
           <%= render partial: "shared/flash" %>
 
