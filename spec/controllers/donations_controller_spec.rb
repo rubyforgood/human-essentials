@@ -112,10 +112,11 @@ RSpec.describe DonationsController, type: :controller do
           donation_params = { source: donation.source, storage_location: new_storage_location, line_items_attributes: line_item_params }
           expect do
             put :update, params: default_params.merge(id: donation.id, donation: donation_params)
-          end.to raise_error(Errors::InsufficientAllotment)
+          end
           expect(original_storage_location.size).to eq 5
           expect(new_storage_location.size).to eq 0
           expect(donation.reload.line_items.first.quantity).to eq 10
+          expect(flash[:error]).to be_present
         end
       end
 
