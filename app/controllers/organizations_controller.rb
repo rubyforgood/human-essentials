@@ -28,6 +28,8 @@ class OrganizationsController < ApplicationController
       roles: [Role::ORG_USER],
       resource: Organization.find(params[:org]))
     redirect_to organization_path, notice: "User invited to organization!"
+  rescue => e
+    redirect_to organization_path, alert: e.message
   end
 
   def resend_user_invitation

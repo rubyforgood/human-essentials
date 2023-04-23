@@ -17,6 +17,8 @@ class PartnerInviteService
       roles: [Role::PARTNER],
       resource: partner,
       force: @force)
+  rescue => e
+    errors.add(:base, e.message)
   end
 
   attr_reader :partner
