@@ -78,7 +78,6 @@ class DonationsController < ApplicationController
     if @donation.replace_increase!(donation_params)
       redirect_to donations_path
     else
-      # flash[:error] = "Sorry, we weren't able to save the donation because that would reduce available inventory below zero."
       render "edit"
     end
     rescue Errors::InsufficientAllotment
@@ -93,7 +92,7 @@ class DonationsController < ApplicationController
     if service.success?
       flash[:notice] = "Donation #{params[:id]} has been removed!"
     else
-      flash[:error] = "Sorry, we weren't able to save the donation because that would reduce available inventory below zero."
+      flash[:error] = "Sorry, we weren't able to delete the donation because that would reduce available inventory below zero."
     end
 
     redirect_to donations_path
