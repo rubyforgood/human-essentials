@@ -9,9 +9,11 @@ RSpec.describe UserInviteService, type: :service, skip_seed: true do
       User.create!(name: "Some Name", email: "email@email.com", password: "blahblah!")
     end
 
-    it "should not reinvite the existing user" do
-      expect { described_class.invite(email: "email@email.com", resource: @organization) }
-        .not_to change { ActionMailer::Base.deliveries.count }
+    it "should raise an error when reinviting an existing user with the same role" do
+      expect {
+        expect { described_class.invite(email: "email@email.com", resource: @organization) }
+          .to raise_error("User already has the requested role!")
+      }.not_to change { ActionMailer::Base.deliveries.count }
       expect(UserMailer).not_to have_received(:role_added)
     end
 
