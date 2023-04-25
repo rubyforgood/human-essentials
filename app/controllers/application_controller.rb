@@ -3,6 +3,9 @@ class ApplicationController < ActionController::Base
   add_flash_types :error
   include DateHelper
 
+  include CurrentRole
+  helper_method :current_role
+
   protect_from_forgery with: :exception
   before_action :authenticate_user!
   before_action :authorize_user
@@ -10,7 +13,6 @@ class ApplicationController < ActionController::Base
   before_action :swaddled
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_paper_trail_whodunnit
-  helper_method :current_role
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found!
 
@@ -18,13 +20,6 @@ class ApplicationController < ActionController::Base
     @current_organization ||= Organization.find_by(short_name: params[:organization_id]) || current_user&.organization
   end
   helper_method :current_organization
-
-  def current_role
-    role = Role.find_by(id: session[:current_role]) || UsersRole.current_role_for(current_user)
-    session[:current_role] = role&.id
-
-    role
-  end
 
   def organization_url_options(options = {})
     options.merge(organization_id: current_organization.to_param)

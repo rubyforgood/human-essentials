@@ -12,7 +12,7 @@
 FactoryBot.define do
   factory :item_category do
     association :organization
-    name { Faker::Appliance.unique.brand }
+    sequence(:name) { |n| "#{Faker::Appliance.brand} #{n}" }
     description { Faker::Lorem.paragraph_by_chars(number: 250) }
   end
 end

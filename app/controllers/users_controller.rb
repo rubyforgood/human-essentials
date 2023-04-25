@@ -9,14 +9,14 @@ class UsersController < ApplicationController
   end
 
   def switch_to_role
-    role = Role.find(params[:role_id])
-    unless current_user.roles.include?(role)
+    role = current_user.roles.find_by id: params[:role_id]
+    if role.blank?
       error_message = "Attempted to switch to a role that doesn't belong to you!"
       redirect_back(fallback_location: root_path, alert: error_message)
       return
     end
 
-    session[:current_role] = params[:role_id]
+    set_current_role role
     redirect_to dashboard_path_from_current_role
   end
 

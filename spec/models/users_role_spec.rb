@@ -2,12 +2,13 @@
 #
 # Table name: users_roles
 #
-#  id      :bigint           not null, primary key
-#  role_id :bigint
-#  user_id :bigint
+#  id             :bigint           not null, primary key
+#  last_active_at :datetime
+#  role_id        :bigint
+#  user_id        :bigint
 #
 RSpec.describe UsersRole, type: :model do
-  describe "#current_role_for" do
+  describe ".current_role_for" do
     context "for org user" do
       it "should return org user" do
         user = FactoryBot.create(:user)
@@ -33,6 +34,29 @@ RSpec.describe UsersRole, type: :model do
       it "should return partner user" do
         user = FactoryBot.create(:partner_user)
         expect(described_class.current_role_for(user).name).to eq("partner")
+      end
+    end
+  end
+
+  describe ".activate!" do
+    subject(:activate!) { described_class.activate! role:, user: }
+
+    let(:user) { create :user }
+    let(:role) { create :role }
+
+    context "when user has role" do
+      let(:user_role) { described_class.find_by! role: role, user: user }
+
+      before { user.roles << role }
+
+      it "updates last_active_at" do
+        expect { activate! }.to change { user_role.reload.last_active_at }
+      end
+    end
+
+    context "when user does not have role" do
+      it "does not raise" do
+        expect { activate! }.not_to raise_error
       end
     end
   end

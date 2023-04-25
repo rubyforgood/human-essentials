@@ -48,6 +48,9 @@ class User < ApplicationRecord
   has_one :partner, through: :partner_role, source: :resource, source_type: "Partner"
   has_many :partners, through: :roles, source: :resource, source_type: "Partner"
 
+  has_one :current_role, -> { merge(UsersRole.by_last_active) },
+          class_name: "Role", through: :partner_role_join, source: :role
+
   attr_accessor :organization_admin # for creation / update time
 
   # :invitable is from the devise_invitable gem

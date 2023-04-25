@@ -29,4 +29,11 @@ class Role < ApplicationRecord
   ORG_ADMIN = :org_admin
   SUPER_ADMIN = :super_admin
   PARTNER = :partner
+
+  HIERARCHY = [
+    SUPER_ADMIN,
+    ORG_ADMIN,
+    ORG_USER,
+    PARTNER
+  ].freeze
 end
