@@ -2,13 +2,7 @@ module Partners
   class ProfilesController < BaseController
     def show; end
 
-    def edit
-      current_partner.profile.attributes.each do |attr_name, attr_value|
-        if attr_value.blank? && !attr_value.nil?
-          current_partner.profile[attr_name] = Partners::Profile::NA_STRING
-        end
-      end
-    end
+    def edit; end
 
     def update
       if current_partner.update(partner_params) && ProfileUpdateService.update(current_partner.profile, profile_params)

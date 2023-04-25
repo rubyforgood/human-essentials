@@ -108,7 +108,5 @@ module Partners
     def has_no_social_media?
       website.blank? && twitter.blank? && facebook.blank? && instagram.blank?
     end
-
-    NA_STRING = "N/A".freeze
   end
 end

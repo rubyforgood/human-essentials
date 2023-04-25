@@ -1,11 +1,6 @@
 class ProfilesController < ApplicationController
   def edit
     @partner = current_organization.partners.find(params[:id])
-    @partner.profile.attributes.each do |attr_name, attr_value|
-      if attr_value.blank? && !attr_value.nil?
-        @partner.profile[attr_name] = Partners::Profile::NA_STRING
-      end
-    end
   end
 
   def update

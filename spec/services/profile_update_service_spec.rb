@@ -10,7 +10,7 @@ RSpec.describe ProfileUpdateService do
       expect(partner.profile.address1).to be_nil
 
       result = described_class.update(partner.profile, params)
-      expect(result).to eq("true")
+      expect(result).to eq(true)
       expect(partner.profile.address2).to eq("Washington, DC")
     end
   end
