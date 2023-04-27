@@ -771,8 +771,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_16_135543) do
   end
 
   create_table "versions", force: :cascade do |t|
-    t.string "item_type"
-    t.string "{:null=>false}"
+    t.string "item_type", null: false
     t.bigint "item_id", null: false
     t.string "event", null: false
     t.string "whodunnit"
