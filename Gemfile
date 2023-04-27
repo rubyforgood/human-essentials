@@ -12,7 +12,7 @@ ruby "3.1.2"
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.4.6"
+gem "pg", "~> 1.5.1"
 # Web server.
 gem "puma"
 # Rails web framework.
@@ -156,7 +156,7 @@ group :development, :test do
   # Static analysis / linter.
   gem "rubocop"
   # Rails add-on for static analysis.
-  gem "rubocop-rails", "~> 2.18.0"
+  gem "rubocop-rails", "~> 2.19.1"
   # Default rules for Rubocop.
   gem "standard", "~> 1.26"
 end

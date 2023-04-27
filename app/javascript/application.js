@@ -26,7 +26,6 @@ import 'litepicker/ranges';
 import 'bootstrap'
 import 'controllers'
 
-import 'utils/adjustments'
 import 'utils/barcode_items'
 import 'utils/barcode_scan'
 import 'utils/deadline_day_pickers'
