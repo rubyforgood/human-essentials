@@ -1,9 +1,62 @@
 RSpec.describe "Admin Organization Management", type: :system, js: true do
-  let!(:foo_org) { create(:organization, name: 'foo') }
-  let!(:bar_org) { create(:organization, name: 'bar') }
-  let!(:baz_org) { create(:organization, name: 'baz') }
+  context "while logged in as a super admin and there are no organizations" do
+    before do
+      sign_in(@super_admin)
+    end
+
+    it "pagination does not appear" do
+      visit admin_organizations_path
+
+      expect(page).not_to have_content("Next ›")
+      expect(page).not_to have_content("Last »")
+    end
+  end
+
+  context "while logged in as a super admin and the per page limit is reached but not passed" do
+    # The first org being the default org that gets made during test setup.
+    let!(:second_org) { create(:organization, name: 'second_org') }
+    let!(:third_org) { create(:organization, name: 'third_org') }
+
+    before do
+      sign_in(@super_admin)
+    end
+
+    # The per page limit is set to 3 for the tests
+    it "pagination does not appear" do
+      visit admin_organizations_path
+
+      expect(page).not_to have_content("Next ›")
+      expect(page).not_to have_content("Last »")
+    end
+  end
+
+  context "while logged in as a super admin and there are enough organizations to trigger pagination" do
+    let!(:first_org) { create(:organization, name: 'first_org') }
+    let!(:second_org) { create(:organization, name: 'second_org') }
+    let!(:third_org) { create(:organization, name: 'third_org') }
+    let!(:fourth_org) { create(:organization, name: 'fourth_org') }
+
+    before do
+      sign_in(@super_admin)
+    end
+
+    it "pagination does appear" do
+      visit admin_organizations_path
+
+      expect(page).to have_content("Next ›")
+      expect(page).to have_content("Last »")
+
+      click_on "Next ›"
+
+      expect(page).to have_content("‹ Prev")
+      expect(page).to have_content("« First")
+    end
+  end
 
   context "While signed in as an Administrative User (super admin)" do
+    let!(:foo_org) { Organization.first }
+    let!(:bar_org) { create(:organization, name: 'bar') }
+    let!(:baz_org) { create(:organization, name: 'baz') }
     before :each do
       sign_in(@super_admin)
     end
@@ -76,11 +129,11 @@ RSpec.describe "Admin Organization Management", type: :system, js: true do
     it "can view organization details", :aggregate_failures do
       visit admin_organizations_path
 
-      within("tr.#{foo_org.short_name}") do
+      within("tr.#{bar_org.short_name}") do
         first(:link, "View").click
       end
 
-      expect(page.find("h1")).to have_text(foo_org.name)
+      expect(page.find("h1")).to have_text(bar_org.name)
       expect(page).to have_link("Home", href: "#{admin_dashboard_path}?organization_id=#{@organization.short_name}")
 
       expect(page).to have_content("Organization Info")

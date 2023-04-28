@@ -49,6 +49,9 @@
               <%= render( partial: 'list', locals: { organizations: @organizations }) %>
             </div>
           </div>
+          <div class="card-footer clearfix">
+            <%= paginate @organizations %>
+          </div>
         </div>
         <!-- /.card -->
       </div>

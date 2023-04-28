@@ -42,9 +42,15 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       user_names = User.all.pluck(:name)
 
       visit admin_users_path
-      user_names.each do |name|
-        expect(page.find("table")).to have_content(name)
-      end
+
+      expect(page.find("table")).to have_content("DEFAULT ORG ADMIN")
+      expect(page.find("table")).to have_content("DEFAULT PARTNER")
+      expect(page.find("table")).to have_content("DEFAULT SUPERADMIN")
+
+      click_on "Next"
+
+      expect(page.find("table")).to have_content("DEFAULT SUPERADMIN NO ORG")
+      expect(page.find("table")).to have_content("DEFAULT USER")
 
       fill_in "filterrific_search_name", with: user_names.first
       user_names[1..].each do |name|
