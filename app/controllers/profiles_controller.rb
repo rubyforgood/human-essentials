@@ -107,6 +107,6 @@ class ProfilesController < ApplicationController
       :enable_quantity_based_requests,
       served_areas_attributes: %i[county_id client_share _destroy],
       documents: []
-    ).select { |_, v| v.present? }
+    ).select { |k, v| k.present? }
   end
 end

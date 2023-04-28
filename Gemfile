@@ -12,7 +12,7 @@ ruby "3.1.2"
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.4.6"
+gem "pg", "~> 1.5.2"
 # Web server.
 gem "puma"
 # Rails web framework.
@@ -156,9 +156,9 @@ group :development, :test do
   # Static analysis / linter.
   gem "rubocop"
   # Rails add-on for static analysis.
-  gem "rubocop-rails", "~> 2.18.0"
+  gem "rubocop-rails", "~> 2.19.1"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.25"
+  gem "standard", "~> 1.26"
 end
 
 group :development do
@@ -184,7 +184,7 @@ end
 
 group :test do
   # Test using browsers.
-  gem "capybara", "~> 3.38"
+  gem "capybara", "~> 3.39"
   # Create screenshots when doing browser tests.
   gem "capybara-screenshot"
   # Generate Capybara tests in the browser and debug them.
