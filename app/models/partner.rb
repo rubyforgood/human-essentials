@@ -156,7 +156,13 @@ class Partner < ApplicationRecord
       "Agency Email",
       "Contact Name",
       "Contact Phone",
-      "Contact Email"
+      "Contact Email",
+      "Address",
+      "City",
+      "State",
+      "Zip Code",
+      "Website",
+      "Agency Type"
     ]
   end
 
@@ -166,7 +172,13 @@ class Partner < ApplicationRecord
       email,
       contact_person[:name],
       contact_person[:phone],
-      contact_person[:email]
+      contact_person[:email],
+      agency_info[:address],
+      agency_info[:city],
+      agency_info[:state],
+      agency_info[:zip_code],
+      agency_info[:website],
+      agency_info[:agency_type]
     ]
   end
 
@@ -180,6 +192,17 @@ class Partner < ApplicationRecord
       email: profile.primary_contact_email,
       phone: profile.primary_contact_phone ||
              profile.primary_contact_mobile
+    }
+  end
+
+  def agency_info
+    @agency_info = {
+      address: "#{profile.address1} #{profile.address2}",
+      city: profile.city,
+      state: profile.state,
+      zip_code: profile.zip_code,
+      website: profile.website,
+      agency_type: profile.agency_type
     }
   end
 

@@ -14,7 +14,6 @@ class PartnersController < ApplicationController
     end
     @partners = @partners.alphabetized
     @partner_groups = PartnerGroup.includes(:partners, :item_categories).where(organization: current_organization)
-
     respond_to do |format|
       format.html
       format.csv { send_data Partner.generate_csv(@partners), filename: "Partners-#{Time.zone.today}.csv" }
