@@ -30,6 +30,7 @@ RSpec.describe "Users", type: :request do
     let(:params) { default_params.merge(partner_id: partner.id, email: "me@partner.com") }
 
     it "should send a password" do
+			allow(IpInfoService).to receive(:get_timezone).and_return("America/New_York")
       post partner_user_reset_password_users_path(params)
       expect(response).to redirect_to(root_path(organization_id: @organization.to_param))
       expect(ActionMailer::Base.deliveries.size).to eq(1)
