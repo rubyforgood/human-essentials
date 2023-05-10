@@ -12,8 +12,8 @@ module UsersHelper
     end
   end
 
-	def get_time_at_timezone
-		timezone = IpInfoService.get_timezone
-		Time.now.in_time_zone(timezone)
-	end
+  def get_time_at_timezone
+    timezone = IpInfoService.get_timezone
+    Time.now.in_time_zone(timezone)
+  end
 end

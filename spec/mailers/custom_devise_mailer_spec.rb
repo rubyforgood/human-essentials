@@ -1,9 +1,8 @@
 RSpec.describe CustomDeviseMailer, type: :mailer do
   describe "#invitation_instructions" do
-		before(:each) do
-			# allow(IpInfoService).to receive(:get_timezone).and_return("America/New_York")
-			@time = Time.now.in_time_zone("America/New_York")
-		end
+    before(:each) do
+      @time = Time.now.in_time_zone("America/New_York")
+    end
 
     let(:user) { create(:partner_user) }
     let(:mail) { described_class.invitation_instructions(user, SecureRandom.uuid) }
@@ -44,11 +43,11 @@ RSpec.describe CustomDeviseMailer, type: :mailer do
         expect(mail.html_part.body).to include("Your request has been approved and you're invited to become an user of the Human Essentials inventory management system!")
       end
 
-			it "has invite expiration message" do
-        expiration_time = (@time + 6.hour).strftime("%I:%M %p on %m/%d/%Y %Z")
+      it "has invite expiration message" do
+        expiration_time = (@time + 6.hours).strftime("%I:%M %p on %m/%d/%Y %Z")
 
-				expect(mail.html_part.body).to include("For security reasons these invites expire. This invite will expire at #{expiration_time} or if a new password reset is triggered.")
-			end
+        expect(mail.html_part.body).to include("For security reasons these invites expire. This invite will expire at #{expiration_time} or if a new password reset is triggered.")
+      end
     end
   end
 end

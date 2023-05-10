@@ -207,7 +207,7 @@ RSpec.configure do |config|
   config.before(:each) do
     # Defined shared @ global variables used throughout the test suite.
     define_global_variables
-		allow(IpInfoService).to receive(:get_timezone).and_return("America/New_York")
+    allow(IpInfoService).to receive(:get_timezone).and_return("America/New_York")
   end
 
   # RSpec Rails can automatically mix in different behaviours to your tests

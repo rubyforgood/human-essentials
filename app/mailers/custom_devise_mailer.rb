@@ -1,6 +1,7 @@
 class CustomDeviseMailer < Devise::Mailer
   protected
-	helper :Users
+
+  helper :Users
 
   def subject_for(key)
     return super unless key.to_s == 'invitation_instructions'
