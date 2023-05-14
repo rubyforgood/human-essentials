@@ -69,7 +69,6 @@ RSpec.describe "Audits", type: :request do
       context "with valid params" do
         it "creates a new Audit" do
           expect do
-            require 'pry'; binding.pry
             post audits_path(default_params.merge(audit: valid_attributes))
           end.to change(Audit, :count).by(1)
         end
