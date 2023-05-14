@@ -2,7 +2,7 @@ class BroadcastAnnouncementsController < ApplicationController
   before_action :set_broadcast_announcement, only: %i[edit update destroy]
 
   def index
-    @broadcast_announcements = BroadcastAnnouncement.where(organization_id: current_organization.id)
+    @broadcast_announcements = BroadcastAnnouncement.where(organization_id: current_organization.id).order(:created_at)
   end
 
   def new
