@@ -40,7 +40,7 @@ RSpec.describe Audit, type: :model do
       expect(audit.save).to be_falsey
     end
 
-    it "can not have line items that has quantity as zero" do
+    it "can have line items that has quantity as zero" do
       item = create(:item)
       storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
       audit = build(:audit,
@@ -49,7 +49,7 @@ RSpec.describe Audit, type: :model do
                       { item_id: storage_location.items.first.id, quantity: 0 }
                     ])
 
-      expect(audit.save).to be_falsey
+      expect(audit.save).to be_truthy
     end
 
     it "can not have line items that has quantity as a string that cannot be reduced to an integer" do
