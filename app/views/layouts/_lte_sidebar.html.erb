@@ -96,7 +96,7 @@
       </li>
       <li class="nav-item <%= 'active' if current_page?(broadcast_announcements_path) %>">
         <%= link_to(broadcast_announcements_path, class: "nav-link #{active_class(['broadcast_announcements'])}") do %>
-          <i class="nav-icon fa fa-circle-o"></i>Partner Annoucement 
+          <i class="nav-icon fa fa-circle-o"></i>Partner Annoucement
         <% end %>
       </li>
     </ul>
@@ -192,25 +192,25 @@
       </ul>
     </li>
   <% end %>
-    <li class="nav-item has-treeview <%= menu_open?(['forecasting/distributions', 'forecasting/donations', 'forecasting/purchases']) %>">
-      <a href="#" class="nav-link <%= active_class(['forecasting/distributions', 'forecasting/donations', 'forecasting/purchases']) %>">
+    <li class="nav-item has-treeview <%= menu_open?(['historical_trends/distributions', 'historical_trends/donations', 'historical_trends/purchases']) %>">
+      <a href="#" class="nav-link <%= active_class(['historical_trends/distributions', 'historical_trends/donations', 'historical_trends/purchases']) %>">
         <i class="nav-icon fa fa-bar-chart"></i>
-        <p>Forecasting
+        <p>Historical Trends
           <i class="fas fa-angle-left right"></i></p>
       </a>
       <ul class="nav nav-treeview">
-        <li class="nav-item <%= 'active' if current_page?(forecasting_donations_path) %>">
-          <%= link_to(forecasting_donations_path, class: "nav-link #{"active" if current_page?(forecasting_donations_path)}") do %>
+        <li class="nav-item <%= 'active' if current_page?(historical_trends_donations_path) %>">
+          <%= link_to(historical_trends_donations_path, class: "nav-link #{"active" if current_page?(historical_trends_donations_path)}") do %>
             <i class="nav-icon fa fa-circle-o"></i> Donations
           <% end %>
         </li>
-        <li class="nav-item <%= 'active' if current_page?(forecasting_purchases_path) %>">
-          <%= link_to(forecasting_purchases_path, class: "nav-link #{"active" if current_page?(forecasting_purchases_path)}") do %>
+        <li class="nav-item <%= 'active' if current_page?(historical_trends_purchases_path) %>">
+          <%= link_to(historical_trends_purchases_path, class: "nav-link #{"active" if current_page?(historical_trends_purchases_path)}") do %>
             <i class="nav-icon fa fa-circle-o"></i> Purchases
           <% end %>
         </li>
-        <li class="nav-item <%= 'active' if current_page?(forecasting_distributions_path) %>">
-          <%= link_to(forecasting_distributions_path, class: "nav-link #{"active" if current_page?(forecasting_distributions_path)}") do %>
+        <li class="nav-item <%= 'active' if current_page?(historical_trends_distributions_path) %>">
+          <%= link_to(historical_trends_distributions_path, class: "nav-link #{"active" if current_page?(historical_trends_distributions_path)}") do %>
             <i class="nav-icon fa fa-circle-o"></i> Distributions
           <% end %>
         </li>
