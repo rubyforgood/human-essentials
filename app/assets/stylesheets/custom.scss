@@ -19,6 +19,21 @@
     width: 100%
 }
 
+#csvImportModal .modal-header {
+  flex-direction: row;
+  justify-content: center;
+  
+  h2 {
+    text-align: center;
+  }
+  .close {
+    position: absolute;
+    margin: 0 !important;
+    top: -0.25rem;
+    left: 0.5rem;
+  }
+}
+
 #pick-ups-header {
     height: 'auto';
     @include for-desktop {
