@@ -1,14 +1,19 @@
 class ProfilesController < ApplicationController
   def edit
     @partner = current_organization.partners.find(params[:id])
+
+    @counties = County.all
+    @client_share_total = @partner.profile.client_share_total
   end
 
   def update
+    @counties = County.all
     @partner = current_organization.partners.find(params[:id])
-    if @partner.update(edit_partner_params) && @partner.profile.update(edit_profile_params)
+    result = PartnerProfileUpdateService.new(@partner, edit_partner_params, edit_profile_params).call
+    if result.success?
       redirect_to partner_path(@partner) + "#partner-information", notice: "#{@partner.name} updated!"
     else
-      flash[:error] = "Something didn't work quite right -- try again?"
+      flash[:error] = "Something didn't work quite right -- try again?   %s " % result.error
       render action: :edit
     end
   end
@@ -20,7 +25,7 @@ class ProfilesController < ApplicationController
   end
 
   def edit_profile_params
-    params.require(:profile).permit(
+    params.require(:partner).require(:profile).permit(
       :agency_type,
       :other_agency_type,
       :proof_of_partner_status,
@@ -100,7 +105,8 @@ class ProfilesController < ApplicationController
       :enable_child_based_requests,
       :enable_individual_requests,
       :enable_quantity_based_requests,
+      served_areas_attributes: %i[county_id client_share _destroy],
       documents: []
-    ).select { |_, v| v.present? }
+    ).select { |k, v| k.present? }
   end
 end

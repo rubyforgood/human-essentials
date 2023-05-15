@@ -12,7 +12,7 @@ ruby "3.1.2"
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.4.6"
+gem "pg", "~> 1.5.3"
 # Web server.
 gem "puma"
 # Rails web framework.
@@ -127,7 +127,7 @@ group :development, :test, :staging do
   # Generate models based on factory definitions.
   gem 'factory_bot_rails'
   # Ensure the database is in a clean state on every test.
-  gem "database_cleaner", '2.0.2'
+  gem "database_cleaner-active_record", '~> 2.1'
   # Generate fake data for use in tests.
   gem 'faker'
 end
@@ -150,15 +150,15 @@ group :development, :test do
   # Add-on for command line to create a simple debugger.
   gem "pry-nav"
   # RSpec behavioral testing framework for Rails.
-  gem "rspec-rails", "~> 6.0.1"
+  gem "rspec-rails", "~> 6.0.2"
   # Allow retrying flaky RSpec tests.
   gem "rspec-retry"
   # Static analysis / linter.
   gem "rubocop"
   # Rails add-on for static analysis.
-  gem "rubocop-rails", "~> 2.9.0"
+  gem "rubocop-rails", "~> 2.19.1"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.25"
+  gem "standard", "~> 1.26"
 end
 
 group :development do
@@ -184,7 +184,7 @@ end
 
 group :test do
   # Test using browsers.
-  gem "capybara", "~> 3.38"
+  gem "capybara", "~> 3.39"
   # Create screenshots when doing browser tests.
   gem "capybara-screenshot"
   # Generate Capybara tests in the browser and debug them.

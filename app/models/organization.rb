@@ -38,7 +38,7 @@ class Organization < ApplicationRecord
   include Deadlinable
 
   validates :name, presence: true
-  validates :short_name, presence: true, format: /\A[a-z0-9_]+\z/i
+  validates :short_name, presence: true, format: /\A[a-z0-9_]+\z/i, uniqueness: true
   validates :url, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "it should look like 'http://www.example.com'" }, allow_blank: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
   validate :correct_logo_mime_type
@@ -112,6 +112,7 @@ class Organization < ApplicationRecord
     ['Agency Stability', 'agency_stability'],
     ['Organizational Capacity', 'organizational_capacity'],
     ['Sources of Funding', 'sources_of_funding'],
+    ['Area Served', 'area_served'],
     ['Population Served', 'population_served'],
     ['Executive Director', 'executive_director'],
     ['Pickup Person', 'diaper_pick_up_person'],
