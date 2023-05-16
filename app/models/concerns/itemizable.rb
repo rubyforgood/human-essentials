@@ -135,7 +135,7 @@ module Itemizable
 
     line_items.each do |line_item|
       next unless line_item.item
-      next unless !line_item.quantity.nil? && line_item.quantity < threshold
+      next if line_item.quantity && lint_item.quantity < threshold
 
       errors.add(:inventory,
                  "#{line_item.item.name}'s quantity " \
