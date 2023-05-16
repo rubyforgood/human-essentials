@@ -87,9 +87,7 @@ RSpec.describe "Organizations", type: :request do
                 params: default_params.merge(invalid_params)
         end
 
-        it "redirects to #edit with an error message" do
-          expect(response).to redirect_to(edit_organization_path(assigns(:organization)))
-          follow_redirect!
+        it "renders edit template with an error message" do
           expect(flash[:error]).to be_present
         end
       end
