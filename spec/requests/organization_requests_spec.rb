@@ -82,12 +82,13 @@ RSpec.describe "Organizations", type: :request do
         let(:invalid_organization) { create(:organization, name: "Original Name") }
         let(:invalid_params) { { organization: { name: nil } } }
 
-        before do
+        subject do
           patch "/#{default_params[:organization_id]}/manage",
                 params: default_params.merge(invalid_params)
         end
 
         it "renders edit template with an error message" do
+          expect(subject).to render_template("edit")
           expect(flash[:error]).to be_present
         end
       end
