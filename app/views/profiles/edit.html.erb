@@ -25,7 +25,7 @@
                 <% @partner.partials_to_show.each do |partial| %>
                   <div class="col-6">
                     <%= render partial: "partners/profiles/edit/#{partial}",
-                               locals: {form: profile_form, partner: @partner, profile: @partner.profile} %>
+                               locals: {form: profile_form, f: profile_form, partner: @partner, profile: @partner.profile} %>
                   </div>
                 <% end %>
                 <div class="col-6">

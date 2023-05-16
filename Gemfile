@@ -12,7 +12,7 @@ ruby "3.1.2"
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.4.6"
+gem "pg", "~> 1.5.3"
 # Web server.
 gem "puma"
 # Rails web framework.
@@ -150,13 +150,13 @@ group :development, :test do
   # Add-on for command line to create a simple debugger.
   gem "pry-nav"
   # RSpec behavioral testing framework for Rails.
-  gem "rspec-rails", "~> 6.0.1"
+  gem "rspec-rails", "~> 6.0.2"
   # Allow retrying flaky RSpec tests.
   gem "rspec-retry"
   # Static analysis / linter.
   gem "rubocop"
   # Rails add-on for static analysis.
-  gem "rubocop-rails", "~> 2.18.0"
+  gem "rubocop-rails", "~> 2.19.1"
   # Default rules for Rubocop.
   gem "standard", "~> 1.26"
 end

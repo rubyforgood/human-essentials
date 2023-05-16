@@ -70,7 +70,7 @@
 
                 <%= f.label :partner_form_fields, "Partner Profile Sections" %>
 
-                <%= f.select(:partner_form_fields, Organization::ALL_PARTIALS, {include_hidden: false}, { multiple: true, class: 'form-control selectpicker input_group' }) %>
+                <%= f.select(:partner_form_fields, Organization::ALL_PARTIALS, {include_hidden: true}, { multiple: true, class: 'form-control selectpicker input_group partner_fields_dropdown' }) %>
                 <br>
                 <%= f.input :default_storage_location, :collection => current_organization.storage_locations.active_locations.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Storage Location", :include_blank => true, wrapper: :input_group %>
 

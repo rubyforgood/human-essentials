@@ -12,7 +12,12 @@ class OrganizationUpdateService
     def update(organization, params)
       return false unless valid?(organization, params)
 
-      return false unless organization.update(params)
+      if params.has_key?("partner_form_fields")
+        params["partner_form_fields"].delete_if { |field| field == "" }
+      end
+
+      result = organization.update(params)
+      return false unless result
 
       update_partner_flags(organization)
       true

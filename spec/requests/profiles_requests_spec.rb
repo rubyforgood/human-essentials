@@ -36,5 +36,26 @@ RSpec.describe "Profiles", type: :request do
         expect(response).to redirect_to(partner_path(partner) + "#partner-information")
       end
     end
+
+    context "when updating an existing value to a blank value" do
+      let(:partner_params) do
+        { name: "Awesome Partner", profile:
+                               { executive_director_email: "awesomepartner@example.com", facebook: "", website: "" } }
+      end
+
+      it "update partner" do
+        put profile_path(default_params.merge(id: partner, partner: partner_params))
+        expect(response).to have_http_status(:redirect)
+        expect(partner.reload.name).to eq("Awesome Partner")
+        expect(partner.profile.reload.executive_director_email).to eq("awesomepartner@example.com")
+        expect(partner.profile.facebook).to be_blank
+      end
+
+      it "should have blank values" do
+        put profile_path(default_params.merge(id: partner, partner: partner_params))
+        expect(response).to have_http_status(:redirect)
+        expect(partner.profile.website).to be_blank
+      end
+    end
   end
 end

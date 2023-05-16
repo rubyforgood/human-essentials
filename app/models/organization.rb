@@ -112,6 +112,7 @@ class Organization < ApplicationRecord
     ['Agency Stability', 'agency_stability'],
     ['Organizational Capacity', 'organizational_capacity'],
     ['Sources of Funding', 'sources_of_funding'],
+    ['Area Served', 'area_served'],
     ['Population Served', 'population_served'],
     ['Executive Director', 'executive_director'],
     ['Pickup Person', 'diaper_pick_up_person'],
