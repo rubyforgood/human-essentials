@@ -5,7 +5,6 @@ describe PartnerApprovalService do
     subject { described_class.new(partner: partner).call }
     let(:partner) { create(:partner) }
     let(:partner_profile) { partner.profile }
-
     before do
       partner.awaiting_review!
     end

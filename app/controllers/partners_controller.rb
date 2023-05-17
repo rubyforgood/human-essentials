@@ -109,20 +109,13 @@ class PartnersController < ApplicationController
   def invite_and_approve
     partner = current_organization.partners.find(params[:id])
 
-    svc = PartnerInviteService.new(partner: partner)
+    svc = PartnerInviteAndApprovalService.new(partner: partner)
     svc.call
 
     if svc.errors.none?
-      svc = PartnerApprovalService.new(partner: partner)
-      svc.call
-
-      if svc.errors.none?
-        redirect_to partners_path, notice: "Partner #{partner.name} invited and approved!"
-      else
-        redirect_to partners_path, error: "Failed to approve partner because: #{svc.errors.full_messages}"
-      end
+      redirect_to partners_path, notice: "Partner #{partner.name} invited and approved!"
     else
-      redirect_to partners_path, notice: "Failed to invite #{partner.name}! #{svc.errors.full_messages}"
+      redirect_to partners_path, notice: "Failed to invite and approve #{partner.name}! #{svc.errors.full_messages}"
     end
   end
 

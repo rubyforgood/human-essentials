@@ -25,7 +25,7 @@
   <td>
     <% case status %>
     <% when "uninvited" %>
-      <% if current_organization.single_step_invite_and_approve == true %>
+      <% if current_organization.single_step_invite_and_approve? %>
         <%= invite_button_to(invite_and_approve_partner_path(partner_row), confirm: "Send an invitation #{partner_row.name} and approve?", text: 'Invite and Approve') %>
       <% else %>
         <%= invite_button_to(invite_partner_path(partner_row), confirm: "Send an invitation to #{partner_row.name} to begin using the partner application?") %>
