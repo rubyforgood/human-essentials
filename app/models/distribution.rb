@@ -38,7 +38,7 @@ class Distribution < ApplicationRecord
 
   validates :storage_location, :partner, :organization, :delivery_method, presence: true
   validate :line_item_items_exist_in_inventory
-  validate :line_item_items_quantity_is_not_negative
+  validate :line_item_items_quantity_is_positive
 
   before_save :combine_distribution
 
@@ -144,7 +144,7 @@ class Distribution < ApplicationRecord
 
   private
 
-  def line_item_items_quantity_is_not_negative
+  def line_item_items_quantity_is_positive
     line_item_items_quantity_is_above_threshold(1)
   end
 end
