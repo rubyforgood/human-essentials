@@ -28,7 +28,7 @@ class Audit < ApplicationRecord
 
   validates :storage_location, :organization, presence: true
   validate :line_item_items_exist_in_inventory
-  validate :line_item_items_quantity_is_not_negative
+  validate :line_item_items_quantity_is_positive
   validate :user_is_organization_admin_of_the_organization
 
   def self.storage_locations_audited_for(organization)
@@ -45,7 +45,7 @@ class Audit < ApplicationRecord
 
   private
 
-  def line_item_items_quantity_is_not_negative
+  def line_item_items_quantity_is_positive
     line_item_items_quantity_is_above_threshold(0)
   end
 end
