@@ -6,7 +6,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
     let!(:url_prefix) { "/#{@organization.to_param}" }
     let!(:page_content_wait) { 10 } # allow up to 10 seconds for content to load in the test
-    
+
     describe 'approving a partner that is awaiting approval' do
       let!(:partner_awaiting_approval) { create(:partner, :awaiting_review) }
 
