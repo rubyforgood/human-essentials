@@ -6,17 +6,19 @@ describe OrganizationUpdateService, skip_seed: true do
   describe "#update" do
     context "when object is valid" do
       it "should update and return true" do
-        result = described_class.update(organization, {name: "A brand NEW NEW name"})
-        expect(result).to eq(true)
+        params = {name: "A brand NEW NEW name"}
+        described_class.update(organization, params)
+        expect(organization.errors.none?).to eq(true)
         expect(organization.reload.name).to eq("A brand NEW NEW name")
       end
     end
 
     context "when object is invalid" do
       it "should not update and return false" do
-        result = described_class.update(organization, {name: "A brand NEW NEW name",
-                                                        url: "something that IS NOT A URL"})
-        expect(result).to eq(false)
+        params = {name: "A brand NEW NEW name",
+                  url: "something that IS NOT A URL"}
+        described_class.update(organization, params)
+        expect(organization.errors.any?).to eq(true)
         expect(organization.reload.name).not_to eq("A brand NEW NEW name")
       end
     end
