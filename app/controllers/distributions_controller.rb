@@ -238,14 +238,6 @@ class DistributionsController < ApplicationController
     params.dig(:distribution, :request_attributes, :id)
   end
 
-  def total_items(distributions)
-    LineItem.where(itemizable_type: "Distribution", itemizable_id: distributions.pluck(:id)).sum('quantity')
-  end
-
-  def total_value(distributions)
-    distributions.sum(&:value_per_itemizable)
-  end
-
   def daily_items(pick_ups)
     item_groups = LineItem.where(itemizable_type: "Distribution", itemizable_id: pick_ups.pluck(:id)).group_by(&:item_id)
     item_groups.map do |_id, items|
