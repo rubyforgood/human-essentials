@@ -2,12 +2,12 @@ class ProfilesController < ApplicationController
   def edit
     @partner = current_organization.partners.find(params[:id])
 
-    @counties = County.all
+    @counties = County.all.order(:name)
     @client_share_total = @partner.profile.client_share_total
   end
 
   def update
-    @counties = County.all
+    @counties = County.all.order(:name)
     @partner = current_organization.partners.find(params[:id])
     result = PartnerProfileUpdateService.new(@partner, edit_partner_params, edit_profile_params).call
     if result.success?
