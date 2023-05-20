@@ -214,18 +214,18 @@ class DistributionsController < ApplicationController
     @selected_date = pickup_day_params[:during]&.to_date || Time.zone.now.to_date
   end
 
+  private
+
+  def insufficient_error_message(details)
+    "Sorry, we weren't able to save the distribution. \n #{details}"
+  end
+
   def total_items(distributions)
     LineItem.where(itemizable_type: "Distribution", itemizable_id: distributions.pluck(:id)).sum('quantity')
   end
 
   def total_value(distributions)
     distributions.sum(&:value_per_itemizable)
-  end
-
-  private
-
-  def insufficient_error_message(details)
-    "Sorry, we weren't able to save the distribution. \n #{details}"
   end
 
   def send_notification(org, dist, subject: 'Your Distribution', distribution_changes: {})
