@@ -271,23 +271,44 @@ RSpec.feature "Distributions", type: :system do
       visit @url_prefix + "/distributions"
     end
 
-    it 'the user sees value in row on index page' do
-      # row: 100 items * 1$
-      expect(page).to have_content "$100"
+    let(:expected_headers) do
+      [
+        "ID",
+        "Partner",
+        "Initial Allocation",
+        "Distribution Scheduled for",
+        "Source Inventory",
+        "Total items",
+        "Total value",
+        "Delivery method",
+        "Comments",
+        "State"
+      ]
+
+      it "the user sees value in row on index page" do
+        # row: 100 items * 1$
+        expect(page).to have_content "$100"
+      end
+
+      it "the user sees expected column headers" do
+        within "table" do
+          expected_headers.each { |header| expect(page).to_have_content header }
+        end
+      end
     end
 
-    it 'the user sees total value on index page' do
+    it "the user sees total value on index page" do
       # 100 items * 10.5 + 100 items * 1
       expect(page).to have_content "$1,150"
     end
 
-    it 'the user sees value per item on show page' do
+    it "the user sees value per item on show page" do
       # item value 10.50
       visit @url_prefix + "/distributions/#{@distribution1.id}"
       expect(page).to have_content "$10.50"
     end
 
-    it 'the user sees total value on show page' do
+    it "the user sees total value on show page" do
       # 100 items * 10.5
       visit @url_prefix + "/distributions/#{@distribution1.id}"
       expect(page).to have_content "$1,050"
@@ -377,11 +398,19 @@ RSpec.feature "Distributions", type: :system do
   context "When creating a distribution from a request" do
     it "sets the distribution id and fulfilled status on the request" do
       items = @storage_location.items.pluck(:id).sample(2)
-      request_items = [{ "item_id" => items[0], "quantity" => 10 }, { "item_id" => items[1], "quantity" => 10 }]
+      request_items = [{"item_id" => items[0], "quantity" => 10}, {"item_id" => items[1], "quantity" => 10}]
       @request = create :request, organization: @organization, request_items: request_items
 
       visit @url_prefix + "/requests/#{@request.id}"
+
+      # there should be no change in distribution when Fullfill request is clicked
+      initial_count = Distribution.count
+      difference = 0
+
       click_on "Fulfill request"
+      final_count = Distribution.count
+      expect(final_count - initial_count).to eq(difference)
+
       within "#new_distribution" do
         select @storage_location.name, from: "From storage location"
         choose "Delivery"
@@ -389,6 +418,10 @@ RSpec.feature "Distributions", type: :system do
       end
 
       expect(page).to have_content("Distribution Complete")
+
+      final_count = Distribution.count
+      difference = 1
+      expect(final_count - initial_count).to eq(difference)
 
       @distribution = Distribution.last
       expect(@request.reload.distribution_id).to eq @distribution.id

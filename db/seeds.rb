@@ -555,6 +555,7 @@ end
                                       organization: pdx_org,
                                       issued_at: Faker::Date.between(from: 4.days.ago, to: Time.zone.today),
                                       delivery_method: Distribution.delivery_methods.keys.sample,
+                                      created_at: Faker::Date.between(from: 10.days.ago)
                                       comment: 'Urgent')
 
   stored_inventory_items_sample.each do |stored_inventory_item|

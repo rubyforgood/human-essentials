@@ -67,7 +67,8 @@ describe Exports::ExportDistributionsCSVService do
     let(:expected_headers) do
       [
         "Partner",
-        "Date of Distribution",
+        "Initial Allocation",
+        "Distribution Scheduled for",
         "Source Inventory",
         "Total Number of #{item_name}",
         "Total Value",
@@ -84,12 +85,13 @@ describe Exports::ExportDistributionsCSVService do
       item_names
     end
 
-    it 'should match the expected content for the csv' do
+    it "should match the expected content for the csv" do
       expect(subject[0]).to eq(expected_headers)
 
       distributions.zip(total_item_quantities).each_with_index do |(distribution, total_item_quantity), idx|
         row = [
           distribution.partner.name,
+          distribution.created_at.strftime("%m/%d/%Y"),
           distribution.issued_at.strftime("%m/%d/%Y"),
           distribution.storage_location.name,
           distribution.line_items.where(item_id: item_id).total,
