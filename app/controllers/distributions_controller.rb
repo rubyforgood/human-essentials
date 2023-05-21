@@ -224,6 +224,12 @@ class DistributionsController < ApplicationController
     PartnerMailerJob.perform_now(org, dist, subject, distribution_changes)
   end
 
+  def schedule_reminder_email(distribution)
+    return if distribution.past? || !distribution.partner.send_reminders
+
+    DistributionMailer.reminder_email(distribution.id).deliver_later(wait_until: distribution.issued_at - 1.day)
+  end
+
   def total_items(distributions, item)
     if item
       LineItem.where(itemizable_type: "Distribution", item_id: item.to_i, itemizable_id: distributions.pluck(:id)).sum('quantity')
@@ -234,12 +240,6 @@ class DistributionsController < ApplicationController
 
   def total_value(distributions)
     distributions.sum(&:value_per_itemizable)
-  end
-
-  def schedule_reminder_email(distribution)
-    return if distribution.past? || !distribution.partner.send_reminders
-
-    DistributionMailer.reminder_email(distribution.id).deliver_later(wait_until: distribution.issued_at - 1.day)
   end
 
   def distribution_params
