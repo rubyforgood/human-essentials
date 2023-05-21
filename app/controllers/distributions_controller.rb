@@ -47,13 +47,13 @@ class DistributionsController < ApplicationController
                      .order('issued_at DESC')
                      .apply_filters(filter_params, helpers.selected_range)
     @paginated_distributions = @distributions.page(params[:page])
-    @total_value_all_distributions = total_value(@distributions)
-    @total_items_all_distributions = total_items(@distributions, @selected_item)
     @items = current_organization.items.alphabetized
     @item_categories = current_organization.item_categories
     @storage_locations = current_organization.storage_locations.active_locations.alphabetized
     @partners = @distributions.collect(&:partner).uniq.sort_by(&:name)
     @selected_item = filter_params[:by_item_id]
+    @total_value_all_distributions = total_value(@distributions)
+    @total_items_all_distributions = total_items(@distributions, @selected_item)
     @total_value_paginated_distributions = total_value(@paginated_distributions)
     @total_items_paginated_distributions = total_items(@paginated_distributions, @selected_item)
     @selected_item_category = filter_params[:by_item_category_id]
