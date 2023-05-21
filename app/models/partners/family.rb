@@ -3,6 +3,7 @@
 # Table name: families
 #
 #  id                        :bigint           not null, primary key
+#  archived                  :boolean          default(FALSE)
 #  case_manager              :string
 #  comments                  :text
 #  guardian_county           :string
@@ -29,6 +30,7 @@ module Partners
     has_paper_trail
     belongs_to :partner, class_name: '::Partner'
     has_many :children, dependent: :destroy
+    before_save :archive_children, if: :archived?
     has_many :authorized_family_members, dependent: :destroy
     serialize :sources_of_income, Array
     validates :guardian_first_name, :guardian_last_name, :guardian_zip_code, presence: true
@@ -39,12 +41,15 @@ module Partners
     filterrific(
       available_filters: [
         :search_guardian_names,
-        :search_agency_guardians
+        :search_agency_guardians,
+        :include_archived
       ],
     )
 
     scope :search_guardian_names, ->(query) { where('guardian_first_name ilike ? OR guardian_last_name ilike ?', "%#{query}%", "%#{query}%") }
     scope :search_agency_guardians, ->(query) { where('case_manager ilike ?', "%#{query}%") }
+    scope :include_archived, ->(bool) { bool == 1 ? all : where(archived: false) }
+
 
     INCOME_TYPES = ['SSI', 'SNAP/FOOD Stamps', 'TANF', 'WIC', 'Housing/subsidized', 'Housing/unsubsidized', 'N/A'].freeze
     INSURANCE_TYPES = ['Private insurance', 'Medicaid', 'Uninsured'].freeze
@@ -57,6 +62,10 @@ module Partners
         first_name: guardian_first_name,
         last_name: guardian_last_name
       )
+    end
+
+    def archive_children
+      children.update_all(archived: true)
     end
 
     def guardian_display_name
@@ -79,6 +88,7 @@ module Partners
     def csv_export_attributes
       [
         id,
+        archived,
         guardian_first_name,
         guardian_last_name,
         guardian_zip_code,

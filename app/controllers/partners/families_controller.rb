@@ -70,6 +70,7 @@ module Partners
       params.require(:partners_family).permit(
         :case_manager,
         :comments,
+        :archived,
         :guardian_county,
         :guardian_employed,
         :guardian_employment_type,
