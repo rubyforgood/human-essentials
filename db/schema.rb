@@ -1,3 +1,4 @@
+
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -10,8 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_21_202218) do
-
+ActiveRecord::Schema[7.0].define(version: 2023_04_30_025441) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -289,6 +289,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_21_202218) do
     t.bigint "partner_id"
     t.boolean "military", default: false
     t.bigint "old_partner_id"
+    t.boolean "archived", default: false
     t.index ["partner_id"], name: "index_families_on_partner_id"
   end
 

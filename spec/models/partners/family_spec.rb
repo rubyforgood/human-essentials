@@ -3,6 +3,7 @@
 # Table name: families
 #
 #  id                        :bigint           not null, primary key
+#  archived                  :boolean          default(FALSE)
 #  case_manager              :string
 #  comments                  :text
 #  guardian_county           :string
@@ -68,6 +69,21 @@ RSpec.describe Partners::Family, type: :model do
 
     it "should return the family's total children count" do
       expect(subject.total_children_count).to eq(subject.home_child_count + subject.home_young_child_count)
+    end
+  end
+
+  describe "#archived_children" do
+    subject do 
+      partners_family = FactoryBot.build(:partners_family)
+      child1 = FactoryBot.create(:partners_child, family: partners_family)
+      child2 = FactoryBot.create(:partners_child, family: partners_family)
+      partners_family
+    end 
+    it "should archive children when family is archived" do
+      expect(subject.children.pluck(:archived).any?).to be false
+      subject.update(archived: true)
+      expect(subject.archived).to be true
+      expect(subject.children.pluck(:archived).all?).to be true 
     end
   end
 end
