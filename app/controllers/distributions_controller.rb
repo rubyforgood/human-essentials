@@ -220,6 +220,10 @@ class DistributionsController < ApplicationController
     "Sorry, we weren't able to save the distribution. \n #{details}"
   end
 
+  def send_notification(org, dist, subject: 'Your Distribution', distribution_changes: {})
+    PartnerMailerJob.perform_now(org, dist, subject, distribution_changes)
+  end
+
   def total_items(distributions, item)
     if item
       LineItem.where(itemizable_type: "Distribution", item_id: item.to_i, itemizable_id: distributions.pluck(:id)).sum('quantity')
@@ -230,10 +234,6 @@ class DistributionsController < ApplicationController
 
   def total_value(distributions)
     distributions.sum(&:value_per_itemizable)
-  end
-
-  def send_notification(org, dist, subject: 'Your Distribution', distribution_changes: {})
-    PartnerMailerJob.perform_now(org, dist, subject, distribution_changes)
   end
 
   def schedule_reminder_email(distribution)
