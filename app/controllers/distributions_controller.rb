@@ -230,6 +230,14 @@ class DistributionsController < ApplicationController
     DistributionMailer.reminder_email(distribution.id).deliver_later(wait_until: distribution.issued_at - 1.day)
   end
 
+  def distribution_params
+    params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, :reminder_email_enabled, :delivery_method, line_items_attributes: %i(item_id quantity _destroy))
+  end
+
+  def request_id
+    params.dig(:distribution, :request_attributes, :id)
+  end
+
   def total_items(distributions, item)
     if item
       LineItem.where(itemizable_type: "Distribution", item_id: item.to_i, itemizable_id: distributions.pluck(:id)).sum('quantity')
@@ -240,14 +248,6 @@ class DistributionsController < ApplicationController
 
   def total_value(distributions)
     distributions.sum(&:value_per_itemizable)
-  end
-
-  def distribution_params
-    params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, :reminder_email_enabled, :delivery_method, line_items_attributes: %i(item_id quantity _destroy))
-  end
-
-  def request_id
-    params.dig(:distribution, :request_attributes, :id)
   end
 
   def daily_items(pick_ups)
