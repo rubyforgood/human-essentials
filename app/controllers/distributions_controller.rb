@@ -239,11 +239,9 @@ class DistributionsController < ApplicationController
   end
 
   def total_items(distributions, item)
-    if item
-      LineItem.where(itemizable_type: "Distribution", item_id: item.to_i, itemizable_id: distributions.pluck(:id)).sum('quantity')
-    else
-      LineItem.where(itemizable_type: "Distribution", itemizable_id: distributions.pluck(:id)).sum('quantity')
-    end
+    query = LineItem.where(itemizable_type: "Distribution", itemizable_id: distributions.pluck(:id))
+    query = query.where(item_id: item.to_i) if item
+    query.sum('quantity')
   end
 
   def total_value(distributions)
