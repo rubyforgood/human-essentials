@@ -12,7 +12,7 @@ class DistributionUpdateService < DistributionService
       @old_delivery_method = distribution.delivery_method
       distribution.storage_location.increase_inventory(distribution.to_a)
       # Delete the line items -- they'll be replaced later
-      distribution.line_items.each(&:destroy!)
+      distribution.line_items.delete_all
       distribution.reload
       # Replace the current distribution with the new parameters
       distribution.update! @params
