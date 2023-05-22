@@ -129,6 +129,10 @@ class StorageLocation < ApplicationRecord
     adjustment.storage_location.increase_inventory(adjustment)
   end
 
+  def remove_empty_items
+    inventory_items.where(quantity: 0).delete_all
+  end
+
   # FIXME: After this is stable, revisit how we do logging
   def increase_inventory(itemizable_array)
     itemizable_array = itemizable_array.to_a

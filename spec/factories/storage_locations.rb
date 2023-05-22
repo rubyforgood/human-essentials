@@ -23,22 +23,24 @@ FactoryBot.define do
     organization { Organization.try(:first) || create(:organization) }
     square_footage { 100 }
     warehouse_type { StorageLocation::WAREHOUSE_TYPES.sample }
+    transient do
+      item_count { 1 }
+    end
 
     trait :with_items do
       transient do
-        item_count { 1 }
         item_quantity { 100 }
         item { nil }
       end
 
       after(:create) do |storage_location, evaluator|
-        if evaluator.item.nil?
+        if evaluator.item.nil? && evaluator.item_count != 0
           item_count = evaluator.item_count
 
           create_list(:inventory_item, item_count,
                       storage_location: storage_location,
                       quantity: evaluator.item_quantity)
-        else
+        elsif evaluator.item
           item = evaluator.item
           item.save if item.new_record?
           create_list(:inventory_item, 1,
