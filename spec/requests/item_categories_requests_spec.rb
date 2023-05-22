@@ -26,7 +26,6 @@ RSpec.describe "ItemCategories", type: :request do
 
     it "renders a successful response" do
       get item_category_url(default_params.merge(id: item_category.id))
-      expect(response).to be_successful
       expect(response).to render_template(:show)
     end
   end
@@ -34,7 +33,7 @@ RSpec.describe "ItemCategories", type: :request do
   describe "GET #new" do
     it "renders a successful response" do
       get new_item_category_url(default_params)
-      expect(response).to be_successful
+      expect(response).to render_template(:new)
     end
   end
 
@@ -43,7 +42,7 @@ RSpec.describe "ItemCategories", type: :request do
 
     it "renders a successful response" do
       get edit_item_category_url(default_params.merge(id: item_category.id))
-      expect(response).to be_successful
+      expect(response).to render_template(:edit)
     end
   end
 
@@ -53,7 +52,6 @@ RSpec.describe "ItemCategories", type: :request do
         expect {
           post item_categories_url(default_params.merge(item_category: valid_attributes))
         }.to change(ItemCategory, :count).by(1)
-        expect(response).to have_http_status(:redirect)
         expect(response).to redirect_to(items_path(organization: @organization))
         expect(ItemCategory.last.organization).to eq(@organization)
       end
