@@ -447,8 +447,8 @@ RSpec.feature "Distributions", type: :system do
       visit @url_prefix + "/distributions/new"
       page.fill_in "_barcode-lookup-0", with: "123123123321\n"
 
-      expect(page).to have_text('Adult Briefs (Large/X-Large)')
-      expect(page).to have_field('Quantity', with: '50')
+      expect(page).to have_text("Adult Briefs (Large/X-Large)")
+      expect(page).to have_field("Quantity", with: "50")
     end
   end
 

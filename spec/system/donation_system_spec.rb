@@ -583,7 +583,6 @@ RSpec.describe "Donations", type: :system, js: true do
         click_on "View"
         expect(page).to have_content "Rare Candy"
 
-
         click_on "Make a correction"
 
         item_select = "#donation_line_items_attributes_0_item_id"
