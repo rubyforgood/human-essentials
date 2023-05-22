@@ -16,6 +16,13 @@ class LineItem < ApplicationRecord
   MAX_INT = 2**31
   MIN_INT = -2**31
 
+  # To any future developers:
+  # WARNING, WARNING!!!
+  # The code that handles Distribution updates (and, soon, the code that handles Purchase and Donation updates)
+  # is dependent on the lack of callbacks on LineItem.   Do not add any without thoroughly understanding the
+  # implications on the behaviour around all Itemizables.
+  # Thanks,  past CL Fisher (2023/05/22)
+
   belongs_to :itemizable, polymorphic: true, inverse_of: :line_items, optional: false
   belongs_to :item
 
