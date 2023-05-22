@@ -117,20 +117,35 @@ module Itemizable
     Array.wrap(params[:line_items_attributes]&.values)
   end
 
-  def line_item_items_quantity_is_positive
-    return if storage_location.nil?
+  # def line_item_items_quantity_is_positive
+  #   return if storage_location.nil?
 
-    line_items.each do |line_item|
-      next unless line_item.item
-      next unless !line_item.quantity.nil? && line_item.quantity <= 0
+  #   line_items.each do |line_item|
+  #     next unless line_item.item
+  #     next unless !line_item.quantity.nil? && line_item.quantity <= 0
 
-      errors.add(:inventory,
-                 "#{line_item.item.name}'s quantity " \
-                 "needs to be positive")
-    end
+  #     errors.add(:inventory,
+  #                "#{line_item.item.name}'s quantity " \
+  #                "needs to be positive")
+  #   end
+  # end
+
+  def line_items_quantity_is_at_least(threshold)
+   return if storage_location.nil?
+
+
+   line_items.each do |line_item|
+     next unless line_item.item
+     next if line_item.quantity.nil? || line_item.quantity >= threshold
+
+
+     errors.add(:inventory,
+               "#{line_item.item.name}'s quantity " \
+               "needs to be at least #{threshold}")
+   end
   end
 
-  def line_item_items_exist_in_inventory
+  def line_items_exist_in_inventory
     return if storage_location.nil?
 
     line_items.each do |line_item|
