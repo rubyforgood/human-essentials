@@ -435,20 +435,20 @@ RSpec.feature "Distributions", type: :system do
     end
 
     it "a user can add items that do not yet have a barcode" do
-      page.fill_in "_barcode-lookup-0", with: "123123123321\n"
-      find('#_barcode-lookup-0').set("123123123321\n")
+      barcode_value = "123123123321\n"
+      page.fill_in "_barcode-lookup-0", with: barcode_value
 
-      page.fill_in "Quantity", with: "50"
-      select "Adult Briefs (Large/X-Large)", from: "Item"
-      page.fill_in "Barcode", with: "123123123321"
-
-      click_on "Save"
+      within ".modal-content" do
+        page.fill_in "Quantity", with: "51"
+        select "Adult Briefs (Large/X-Large)", from: "Item"
+        click_on "Save"
+      end
 
       visit @url_prefix + "/distributions/new"
-      page.fill_in "_barcode-lookup-0", with: "123123123321\n"
+      page.fill_in "_barcode-lookup-0", with: barcode_value
 
       expect(page).to have_text("Adult Briefs (Large/X-Large)")
-      expect(page).to have_field("Quantity", with: "50")
+      expect(page).to have_field("Quantity", with: "51")
     end
   end
 
