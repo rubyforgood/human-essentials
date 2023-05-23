@@ -32,8 +32,23 @@ RSpec.describe Distribution, type: :model do
     end
 
     it "ensures the associated line_items are valid" do
+      storage_location = create(:storage_location)
+      d = build(:distribution, storage_location: storage_location)
+      line_item = build(:line_item, quantity: 1)
+      create(:inventory_item, storage_location: d.storage_location, item: line_item.item)
+      d.line_items << line_item
+      expect(d).to be_valid
+    end
+
+    it "ensures the associated line_items are invalid with a nil quantity" do
       d = build(:distribution)
       d.line_items << build(:line_item, quantity: nil)
+      expect(d).not_to be_valid
+    end
+
+    it "ensures the associated line_items are invalid with a zero quantity" do
+      d = build(:distribution)
+      d.line_items << build(:line_item, quantity: 0)
       expect(d).not_to be_valid
     end
 
