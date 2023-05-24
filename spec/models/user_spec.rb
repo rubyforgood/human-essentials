@@ -39,6 +39,17 @@ RSpec.describe User, type: :model do
     expect(build(:user)).to be_valid
   end
 
+  context "discarded user from organization should be able to create a partner profile" do
+    let(:discarded_at) { Time.zone.now }
+    let(:email) { "larry-june@gmail.com" }
+    let!(:discarded_user) { create(:user, name: "Larry", email: email, discarded_at: discarded_at) }
+    let!(:partner) { create(:partner, email: email) }
+
+    it "allows a previously discarded user to create a partner account" do
+      expect(partner).not_to be_valid
+    end
+  end
+
   context "Validations >" do
     it "requires a name" do
       expect(build(:user, name: nil)).not_to be_valid
@@ -55,8 +66,8 @@ RSpec.describe User, type: :model do
 
   describe "Scopes >" do
     describe "->alphabetized" do
-      let!(:z_name_user) { create(:user, name: 'Zachary') }
-      let!(:a_name_user) { create(:user, name: 'Amanda') }
+      let!(:z_name_user) { create(:user, name: "Zachary") }
+      let!(:a_name_user) { create(:user, name: "Amanda") }
 
       it "retrieves users in the correct order" do
         alphabetized_list = described_class.alphabetized
@@ -71,10 +82,10 @@ RSpec.describe User, type: :model do
     describe "->alphabetized" do
       let(:discarded_at) { Time.zone.now }
 
-      let!(:z_name_user) { create(:user, name: 'Zachary') }
-      let!(:a_name_user) { create(:user, name: 'Amanda') }
-      let!(:deactivated_a_name_user) { create(:user, name: 'Alice', discarded_at: discarded_at) }
-      let!(:deactivated_z_name_user) { create(:user, name: 'Zeke', discarded_at: discarded_at) }
+      let!(:z_name_user) { create(:user, name: "Zachary") }
+      let!(:a_name_user) { create(:user, name: "Amanda") }
+      let!(:deactivated_a_name_user) { create(:user, name: "Alice", discarded_at: discarded_at) }
+      let!(:deactivated_z_name_user) { create(:user, name: "Zeke", discarded_at: discarded_at) }
 
       it "retrieves users in the correct order" do
         alphabetized_list = described_class.org_users.with_discarded.alphabetized
@@ -118,12 +129,12 @@ RSpec.describe User, type: :model do
     end
   end
 
-  describe 'omniauth' do
-    it 'retrieves the user from an omniauth context' do
+  describe "omniauth" do
+    it "retrieves the user from an omniauth context" do
       # can't use instance_double since AuthHash uses Hashie for dynamically created methods
-      token = double(OmniAuth::AuthHash, info: {'email' => 'me@me.com'})
+      token = double(OmniAuth::AuthHash, info: {"email" => "me@me.com"})
       expect(described_class.from_omniauth(token)).to eq(nil)
-      user = FactoryBot.create(:user, email: 'me@me.com')
+      user = FactoryBot.create(:user, email: "me@me.com")
       expect(described_class.from_omniauth(token)).to eq(user)
     end
   end
