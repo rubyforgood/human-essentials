@@ -68,7 +68,7 @@ describe Exports::ExportDistributionsCSVService do
       [
         "Partner",
         "Initial Allocation",
-        "Distribution Scheduled for",
+        "Scheduled for",
         "Source Inventory",
         "Total Number of #{item_name}",
         "Total Value",

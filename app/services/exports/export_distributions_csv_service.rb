@@ -64,7 +64,7 @@ module Exports
         "Initial Allocation" => ->(distribution) {
           distribution.created_at.strftime("%m/%d/%Y")
         },
-        "Distribution Scheduled for" => ->(distribution) {
+        "Scheduled for" => ->(distribution) {
           distribution.issued_at.strftime("%m/%d/%Y")
         },
         "Source Inventory" => ->(distribution) {
