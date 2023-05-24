@@ -1,4 +1,4 @@
-class Forecasting::BaseController < ApplicationController
+class HistoricalTrends::BaseController < ApplicationController
   def series(type)
     items = []
 

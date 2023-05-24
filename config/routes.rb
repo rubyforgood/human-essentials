@@ -209,9 +209,9 @@ Rails.application.routes.draw do
     end
 
     get "dashboard", to: "dashboard#index"
-    get "forecasting/distributions", to: "forecasting/distributions#index"
-    get "forecasting/purchases", to: "forecasting/purchases#index"
-    get "forecasting/donations", to: "forecasting/donations#index"
+    get "historical_trends/distributions", to: "historical_trends/distributions#index"
+    get "historical_trends/purchases", to: "historical_trends/purchases#index"
+    get "historical_trends/donations", to: "historical_trends/donations#index"
   end
 
   resources :attachments, only: %i(destroy)
