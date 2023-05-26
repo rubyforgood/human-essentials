@@ -246,13 +246,28 @@ RSpec.describe "Purchases", type: :system, js: true do
         end
 
         it "a user can add items that do not yet have a barcode" do
-          # enter a new barcode
-          # form finds no barcode and responds by prompting user to choose an item and quantity
-          # fill that in
-          # saves new barcode
-          # form updates
-          pending "TODO: adding items with a new barcode"
-          raise
+          new_barcode_value = "8594159081517"
+          within "#purchase_line_items" do
+            expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
+            Barcode.boop(new_barcode_value)
+          end
+
+          expect(page.find(".modal-title").text).to eq("Add New Barcode")
+
+          within ".modal-content" do
+            fill_in "barcode_item_quantity", with: 3
+            select Item.alphabetized.first.name, from: "barcode_item_barcodeable_id"
+            click_button "Save"
+          end
+
+          expect(page).to have_field "purchase_line_items_attributes_0_quantity", with: 3
+          expect(page).to have_field "_barcode-lookup-0", with: new_barcode_value
+
+          new_barcode_item = BarcodeItem.last
+          expect(new_barcode_item.value).to eq(new_barcode_value)
+          expect(new_barcode_item.quantity).to eq(3)
+          expect(new_barcode_item.barcodeable_type).to eq("Item")
+          expect(new_barcode_item.barcodeable_id).to eq(Item.alphabetized.first.id)
         end
       end
       it "should not display inactive storage locations in dropdown" do

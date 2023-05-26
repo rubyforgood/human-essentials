@@ -43,17 +43,6 @@ module ApplicationHelper
 
   ## Devise overrides
 
-  def after_sign_in_path_for(resource)
-    # default to the stored location
-    if resource.is_a?(User) && resource.organization.present?
-      # go to user's dashboard
-      dashboard_path(organization_id: resource.organization.id)
-    else
-      stored_location_for(resource) || new_organization_path
-      # send new users to organization creation page
-    end
-  end
-
   def confirm_delete_msg(resource)
     "Are you sure you want to delete #{resource}?"
   end
