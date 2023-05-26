@@ -9,7 +9,8 @@ module Partners
       @filterrific = initialize_filterrific(
         current_partner.families
                        .order(sort_order),
-        params[:filterrific]
+        params[:filterrific],
+        default_filter_params: {"include_archived"=>0},
       ) || return
 
       @families = @filterrific.find

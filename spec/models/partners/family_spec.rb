@@ -73,17 +73,32 @@ RSpec.describe Partners::Family, type: :model do
   end
 
   describe "#archived_children" do
-    subject do 
+    subject do
       partners_family = FactoryBot.build(:partners_family)
-      child1 = FactoryBot.create(:partners_child, family: partners_family)
-      child2 = FactoryBot.create(:partners_child, family: partners_family)
+      FactoryBot.create(:partners_child, family: partners_family)
+      FactoryBot.create(:partners_child, family: partners_family)
       partners_family
-    end 
+    end
     it "should archive children when family is archived" do
       expect(subject.children.pluck(:archived).any?).to be false
       subject.update(archived: true)
       expect(subject.archived).to be true
-      expect(subject.children.pluck(:archived).all?).to be true 
+      expect(subject.children.pluck(:archived).all?).to be true
+    end
+  end
+
+  describe "#search_non_archived" do
+    let!(:partners_family_1) { FactoryBot.create(:partners_family) }
+    let!(:partners_family_2) { FactoryBot.create(:partners_family) }
+    let!(:partners_family_3) { FactoryBot.create(:partners_family, archived: true) }
+    let!(:partners_family_4) { FactoryBot.create(:partners_family, archived: true) }
+
+    it "should return all families if one is passed in" do
+      expect(Partners::Family.include_archived(1)).to contain_exactly(partners_family_1, partners_family_2, partners_family_3, partners_family_4)
+    end
+
+    it "should return non-archived families if zero is passed in" do
+      expect(Partners::Family.include_archived(0)).to contain_exactly(partners_family_1, partners_family_2)
     end
   end
 end
