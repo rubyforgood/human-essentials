@@ -60,8 +60,8 @@ RSpec.describe "Admin::Organizations", type: :request do
       end
     end
 
-    xdescribe "POST #create" do
-      let(:valid_organization_params) { attributes_for(:organization, users_attributes: [attributes_for(:organization_admin)]).except(:logo) }
+    describe "POST #create" do
+      let(:valid_organization_params) { attributes_for(:organization, user: { name: 'admin', email: 'admin@example.com'}).except(:logo) }
 
       context "with valid params" do
         it "creates an organization and redirects to #index" do

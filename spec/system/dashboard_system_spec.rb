@@ -162,8 +162,9 @@ RSpec.describe "Dashboard", type: :system, js: true do
         ["Last 30 Days", test_time - 29.days,                     test_time],
         ["This Month",   test_time.beginning_of_month,            test_time.end_of_month],
         ["Last Month",   test_time.last_month.beginning_of_month, test_time.last_month.end_of_month],
-        ["This Year",    test_time.beginning_of_year,             test_time.end_of_year],
-        ["All Time",     test_time - 100.years,                   test_time]
+        ["This Year",    test_time.beginning_of_year,             test_time.end_of_year]
+        #  We now can't test the lower limit of All Time, because the earliest possible date is 2000-01-01
+        #  ["All Time",     test_time - 100.years,                   test_time]
         # rubocop:enable Layout/ExtraSpacing, Layout/SpaceAroundOperators
       ].each do |date_range_info|
         filtered_date_range_label, start_date, end_date, set_custom_dates = date_range_info
@@ -178,7 +179,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
         # w/out making a fixed pattern
         num_donations_in_filtered_period = rand(0..max_donations_in_filtered_period)
 
-        context "given 1 Donation on #{before_filtered_date_range}, " \
+        context "given 1 Donation on #{before_filtered_date_range} (only if a valid date), " \
                 "#{num_donations_in_filtered_period} during #{filtered_date_range}, and " \
                 "1 on #{after_filtered_date_range}" do
           custom_dates = if set_custom_dates
@@ -206,8 +207,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
               @quantities_donated_in_filtered_date_range << create_next_donation(donation_date: filtered_dates.sample)
             end
 
-            # create Donations before & after the filtered date range
-            [before_filtered_date_range, after_filtered_date_range].each { create_next_donation donation_date: _1 }
+            # create Donations before (if valid) & after the filtered date range
+            valid_bracketing_dates(date_range_info).each { create_next_donation donation_date: _1 }
           end
 
           describe("filtering to '#{filtered_date_range_label}'" + (set_custom_dates ? " (#{custom_dates})" : "")) do
@@ -279,7 +280,9 @@ RSpec.describe "Dashboard", type: :system, js: true do
         ["This Month",   test_time.beginning_of_month,            test_time.end_of_month],
         ["Last Month",   test_time.last_month.beginning_of_month, test_time.last_month.end_of_month],
         ["This Year",    test_time.beginning_of_year,             test_time.end_of_year],
-        ["All Time",     test_time - 100.years,                   test_time],
+
+        #  We now can't test the lower limit of All Time, because the earliest possible date is 2000-01-01
+        # ["All Time",     test_time - 100.years,                   test_time],
         [nil, test_time -   2.years,                   test_time - rand(180).days, :set_custom_dates] # arbitrary values
         # rubocop:enable Layout/ExtraSpacing, Layout/SpaceAroundOperators
       ].each do |date_range_info|
@@ -295,7 +298,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
         # w/out making a fixed pattern
         num_purchases_in_filtered_period = rand(0..max_purchases_in_filtered_period)
 
-        context "given 1 Purchase on #{before_filtered_date_range}, " \
+        context "given 1 Purchase on #{before_filtered_date_range}  (unless 'All Time'), " \
                 "#{num_purchases_in_filtered_period} during #{filtered_date_range}, and " \
                 "1 on #{after_filtered_date_range}" do
           custom_dates = if set_custom_dates
@@ -324,7 +327,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
             end
 
             # create Purchases before & after the filtered date range
-            [before_filtered_date_range, after_filtered_date_range].each { create_next_purchase purchase_date: _1 }
+            valid_bracketing_dates(date_range_info).each { create_next_purchase purchase_date: _1 }
           end
 
           describe("filtering to '#{filtered_date_range_label}'" + (set_custom_dates ? " (#{custom_dates})" : "")) do
@@ -394,7 +397,9 @@ RSpec.describe "Dashboard", type: :system, js: true do
         ["This Month",   test_time.beginning_of_month,            test_time.end_of_month],
         ["Last Month",   test_time.last_month.beginning_of_month, test_time.last_month.end_of_month],
         ["This Year",    test_time.beginning_of_year,             test_time.end_of_year],
-        ["All Time",     test_time - 100.years,                   test_time],
+
+        #  We now can't test the lower limit of All Time, because the earliest possible date is 2000-01-01
+        # ["All Time",     test_time - 100.years,                   test_time],
         [nil, test_time - 2.years,                     test_time - rand(180).days, :set_custom_dates] # arbitrary values
         # rubocop:enable Layout/ExtraSpacing, Layout/SpaceAroundOperators
       ].each do |date_range_info|
@@ -410,7 +415,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
         # w/out making a fixed pattern
         num_donations_in_filtered_period = rand(0..max_donations_in_filtered_period)
 
-        context "given 1 Donation on #{before_filtered_date_range}, " \
+        context "given 1 Product Drive Donation on #{before_filtered_date_range} (unless 'All Time'), " \
                 "#{num_donations_in_filtered_period} during #{filtered_date_range}, and " \
                 "1 on #{after_filtered_date_range}" do
           custom_dates = if set_custom_dates
@@ -440,7 +445,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
             end
 
             # create Donations before & after the filtered date range
-            [before_filtered_date_range, after_filtered_date_range].each { create_next_product_drive_donation donation_date: _1 }
+            valid_bracketing_dates(date_range_info).each { create_next_product_drive_donation donation_date: _1 }
           end
 
           describe("filtering to '#{filtered_date_range_label}'" + (set_custom_dates ? " (#{custom_dates})" : "")) do
@@ -566,7 +571,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
         ["This Month",   test_time.beginning_of_month,            test_time.end_of_month],
         ["Last Month",   test_time.last_month.beginning_of_month, test_time.last_month.end_of_month],
         ["This Year",    test_time.beginning_of_year,             test_time.end_of_year],
-        ["All Time",     test_time - 100.years,                   test_time],
+        ["All Time",     Time.zone.parse("2000-01-01"),                   test_time],
         [nil, test_time -   2.years,                   test_time - rand(180).days, :set_custom_dates] # arbitrary values
         # rubocop:enable Layout/ExtraSpacing, Layout/SpaceAroundOperators
       ].each do |date_range_info|
@@ -582,7 +587,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
         # w/out making a fixed pattern
         num_manufacturers_donated_in_filtered_period = rand(0..max_manufacturers_donated_in_filtered_period)
 
-        context "given 1 Manufacturer donating on #{before_filtered_date_range}, " \
+        context "given 1 Manufacturer donating on #{before_filtered_date_range}  (unless 'All Time'), " \
                 "#{num_manufacturers_donated_in_filtered_period} during #{filtered_date_range}, and " \
                 "1 on #{after_filtered_date_range}" do
           custom_dates = if set_custom_dates
@@ -619,12 +624,13 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
             # create Donations before & after the filtered date range
             @item_quantity.rewind
-            @manufacturer_donations_outside_filtered_date_range = [
-              # rubocop:disable Layout/ExtraSpacing
-              ["Before", before_filtered_date_range],
-              ["After",   after_filtered_date_range]
-              # rubocop:enable Layout/ExtraSpacing
-            ].map do
+            manufacturer_name_structs = if filtered_date_range_label == "All Time"
+              [["After", after_filtered_date_range]]
+            else
+              [["Before", before_filtered_date_range], ["After", after_filtered_date_range]]
+            end
+
+            @manufacturer_donations_outside_filtered_date_range = manufacturer_name_structs.map do
               prefix, date = _1
 
               manufacturer_name = "#{prefix}-date-range Manufacturer"
@@ -642,8 +648,15 @@ RSpec.describe "Dashboard", type: :system, js: true do
                 .filter_to_date_range(filtered_date_range_label, custom_dates)
             end
 
-            # max_manufacturers_donated_in_filtered_period + 2 because the list includes the before- & after-date-range donations, too
-            expected_top_manufacturer_donation_links_count = [max_top_manufacturer_donations_links_count, num_manufacturers_donated_in_filtered_period + 2].min
+            # max_manufacturers_donated_in_filtered_period + 2 because the list includes the before- & after-date-range donations, too.  But for all time it will only include after.
+
+            expected_top_manufacturer_donation_links_count = if filtered_date_range_label == "All Time"
+              [max_top_manufacturer_donations_links_count, num_manufacturers_donated_in_filtered_period +
+                1].min
+            else
+              [max_top_manufacturer_donations_links_count, num_manufacturers_donated_in_filtered_period +
+                2].min
+            end
 
             it "shows the correct total and #{expected_top_manufacturer_donation_links_count} Top Manufacturer Donation link(s)" do
               # "Total" is filtered by the time period
@@ -709,7 +722,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
         ["This Month",   test_time.beginning_of_month,            test_time.end_of_month],
         ["Last Month",   test_time.last_month.beginning_of_month, test_time.last_month.end_of_month],
         ["This Year",    test_time.beginning_of_year,             test_time.end_of_year],
-        ["All Time",     test_time - 100.years,                   test_time],
+        ["All Time",     Time.zone.parse("2000-01-01"),                   test_time],
         [nil, test_time -   2.years,                   test_time - rand(180).days, :set_custom_dates] # arbitrary values
         # rubocop:enable Layout/ExtraSpacing, Layout/SpaceAroundOperators
       ].each do |date_range_info|
@@ -725,7 +738,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
         # w/out making a fixed pattern
         num_distributions_in_filtered_period = rand(0..max_distributions_in_filtered_period)
 
-        context "given 1 Distribution on #{before_filtered_date_range}, " \
+        context "given 1 Distribution on #{before_filtered_date_range}  (unless 'All Time'), " \
                 "#{num_distributions_in_filtered_period} during #{filtered_date_range}, and " \
                 "1 on #{after_filtered_date_range}" do
           custom_dates = if set_custom_dates
@@ -763,7 +776,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
             end
 
             # create Distributions before & after the filtered date range
-            [before_filtered_date_range, after_filtered_date_range].each { create_next_product_drive_distribution date_picker: _1 }
+            valid_bracketing_dates(date_range_info).each { create_next_product_drive_distribution date_picker: _1 }
           end
 
           describe("filtering to '#{filtered_date_range_label}'" + (set_custom_dates ? " (#{custom_dates})" : "")) do
@@ -798,6 +811,18 @@ RSpec.describe "Dashboard", type: :system, js: true do
           end
         end
       end
+    end
+  end
+
+  def valid_bracketing_dates(date_range_info)
+    filtered_date_range_label, start_date, end_date, _set_custom_dates = date_range_info
+    before_filtered_date_range = start_date.yesterday.to_date
+    after_filtered_date_range = end_date.tomorrow.to_date
+
+    if filtered_date_range_label == "All Time"
+      [after_filtered_date_range]
+    else
+      [before_filtered_date_range, after_filtered_date_range]
     end
   end
 end

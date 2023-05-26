@@ -8,7 +8,7 @@ class AdminController < ApplicationController
 
   def dashboard
     @recent_organizations = Organization.where('created_at > ?', 1.week.ago)
-    @recent_users = User.where('created_at > ?', 1.week.ago)
+    @recent_users = User.where('created_at > ?', 1.week.ago).order(created_at: :desc).limit(20)
     @active_users = User.where('last_request_at > ?', 1.week.ago.utc).includes(:organization).order('organizations.name')
     @top_10_other = Item.by_partner_key('other').where.not(name: "Other").group(:name).limit(10).order('count_name DESC').count(:name)
     @donation_count = Donation.where('created_at > ?', 1.week.ago).count
