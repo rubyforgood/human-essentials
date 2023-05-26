@@ -48,7 +48,7 @@ module Partners
 
     scope :search_guardian_names, ->(query) { where('guardian_first_name ilike ? OR guardian_last_name ilike ?', "%#{query}%", "%#{query}%") }
     scope :search_agency_guardians, ->(query) { where('case_manager ilike ?', "%#{query}%") }
-    scope :include_archived, ->(bool) { bool == 1 ? all : where(archived: false) }
+    scope :include_archived, ->(query) { query.zero? ? where(archived: false) : all }
 
 
     INCOME_TYPES = ['SSI', 'SNAP/FOOD Stamps', 'TANF', 'WIC', 'Housing/subsidized', 'Housing/unsubsidized', 'N/A'].freeze
@@ -81,14 +81,13 @@ module Partners
         id guardian_first_name guardian_last_name guardian_zip_code guardian_county
         guardian_phone case_manager home_adult_count home_child_count home_young_child_count
         sources_of_income guardian_employed guardian_employment_type guardian_monthly_pay
-        guardian_health_insurance comments created_at updated_at partner_id military
+        guardian_health_insurance comments created_at updated_at partner_id military archived
       ].freeze
     end
 
     def csv_export_attributes
       [
         id,
-        archived,
         guardian_first_name,
         guardian_last_name,
         guardian_zip_code,
@@ -107,7 +106,8 @@ module Partners
         created_at,
         updated_at,
         partner_id,
-        military
+        military,
+        archived,
       ]
     end
   end
