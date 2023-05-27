@@ -43,7 +43,7 @@ RSpec.describe "/partners/family", type: :request do
       comments: "Some comment 2",
       military: true,
       partner: partner,
-      archived: true,)
+      archived: true)
   end
 
   describe "GET #index" do
@@ -59,14 +59,14 @@ RSpec.describe "/partners/family", type: :request do
     end
 
     it "should render without any issues and present all families" do
-      get partners_families_path, params: {"filterrific"=>{"include_archived"=>"1"}}
+      get partners_families_path, params: {"filterrific" => {"include_archived" => "1"}}
       expect(response).to render_template(:index)
       expect(assigns[:families].count).to eq(2)
     end
 
     it "should export CSV" do
       headers = {"Accept" => "text/csv", "Content-Type" => "text/csv"}
-      params = {"filterrific"=>{"search_guardian_names"=>"", "search_agency_guardians"=>"", "include_archived"=>"1"}}
+      params = {"filterrific" => {"search_guardian_names" => "", "search_agency_guardians" => "", "include_archived" => "1"}}
       get partners_families_path, headers: headers, params: params
       csv = <<~CSV
         id,guardian_first_name,guardian_last_name,guardian_zip_code,guardian_county,guardian_phone,case_manager,home_adult_count,home_child_count,home_young_child_count,sources_of_income,guardian_employed,guardian_employment_type,guardian_monthly_pay,guardian_health_insurance,comments,created_at,updated_at,partner_id,military,archived
