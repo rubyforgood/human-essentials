@@ -50,7 +50,6 @@ module Partners
     scope :search_agency_guardians, ->(query) { where('case_manager ilike ?', "%#{query}%") }
     scope :include_archived, ->(query) { query.zero? ? where(archived: false) : all }
 
-
     INCOME_TYPES = ['SSI', 'SNAP/FOOD Stamps', 'TANF', 'WIC', 'Housing/subsidized', 'Housing/unsubsidized', 'N/A'].freeze
     INSURANCE_TYPES = ['Private insurance', 'Medicaid', 'Uninsured'].freeze
     EMPLOYMENT_TYPES = %w[Full-time Part-time N/A].freeze
@@ -65,7 +64,7 @@ module Partners
     end
 
     def archive_children
-      children.update_all(archived: true)
+      children.each { |c| c.update(archived: true) }
     end
 
     def guardian_display_name
@@ -107,7 +106,7 @@ module Partners
         updated_at,
         partner_id,
         military,
-        archived,
+        archived
       ]
     end
   end
