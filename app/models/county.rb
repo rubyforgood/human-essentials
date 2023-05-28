@@ -3,7 +3,7 @@
 # Table name: counties
 #
 #  id         :bigint           not null, primary key
-#  category   :string
+#  category   :enum             default("US_County"), not null
 #  name       :string
 #  region     :string
 #  created_at :datetime         not null

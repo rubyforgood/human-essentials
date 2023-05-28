@@ -14,6 +14,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_23_192243) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  # Custom types defined in this database.
+  # Note that some types may not work with other database engines. Be careful if changing database.
+  create_enum "category", ["US_County", "Other"]
+
   create_table "account_requests", force: :cascade do |t|
     t.string "name", null: false
     t.string "email", null: false
@@ -188,7 +192,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_23_192243) do
     t.string "region"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "category"
+    t.enum "category", default: "US_County", null: false, enum_type: "category"
     t.index ["name", "region"], name: "index_counties_on_name_and_region", unique: true
     t.index ["name"], name: "index_counties_on_name"
     t.index ["region"], name: "index_counties_on_region"
