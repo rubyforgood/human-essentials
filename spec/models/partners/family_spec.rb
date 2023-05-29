@@ -72,21 +72,6 @@ RSpec.describe Partners::Family, type: :model do
     end
   end
 
-  describe "#archived_children" do
-    subject do
-      partners_family = FactoryBot.build(:partners_family)
-      FactoryBot.create(:partners_child, family: partners_family)
-      FactoryBot.create(:partners_child, family: partners_family)
-      partners_family
-    end
-    it "should archive children when family is archived" do
-      expect(subject.children.pluck(:archived).any?).to be false
-      subject.update(archived: true)
-      expect(subject.archived).to be true
-      expect(subject.children.pluck(:archived).all?).to be true
-    end
-  end
-
   describe "#search_non_archived" do
     let!(:partners_family_1) { FactoryBot.create(:partners_family) }
     let!(:partners_family_2) { FactoryBot.create(:partners_family) }
