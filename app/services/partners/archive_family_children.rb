@@ -1,4 +1,4 @@
-# This service object is meant to archive a family and all of 
+# This service object is meant to archive a family and all of
 # its children
 module Partners
   class ArchiveFamilyChildren
@@ -7,7 +7,7 @@ module Partners
     attr_reader :family
 
     def initialize(family:)
-      @family = family 
+      @family = family
     end
 
     def call
@@ -15,7 +15,7 @@ module Partners
         ActiveRecord::Base.transaction do
           family.update(archived: true, updated_at: Time.zone.now)
           family.children.update_all(archived: true, updated_at: Time.zone.now)
-        rescue StandardError => e
+        rescue => e
           errors.add(:base, e.message)
           raise ActiveRecord::Rollback
         end
