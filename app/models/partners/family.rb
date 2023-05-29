@@ -30,7 +30,6 @@ module Partners
     has_paper_trail
     belongs_to :partner, class_name: '::Partner'
     has_many :children, dependent: :destroy
-    before_save :archive_children, if: :archived?
     has_many :authorized_family_members, dependent: :destroy
     serialize :sources_of_income, Array
     validates :guardian_first_name, :guardian_last_name, :guardian_zip_code, presence: true
@@ -61,10 +60,6 @@ module Partners
         first_name: guardian_first_name,
         last_name: guardian_last_name
       )
-    end
-
-    def archive_children
-      children.each { |c| c.update(archived: true) }
     end
 
     def guardian_display_name
