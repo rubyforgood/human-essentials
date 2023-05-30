@@ -163,7 +163,7 @@ Rails.application.routes.draw do
       patch :restore, on: :member
       patch :remove_category, on: :member
     end
-    resources :item_categories
+    resources :item_categories, except: [:index]
     resources :partners do
       collection do
         post :import_csv
