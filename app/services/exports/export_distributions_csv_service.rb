@@ -108,13 +108,14 @@ module Exports
     end
 
     def item_headers
+      return @item_headers if @item_headers
       # Define the item_headers by taking each item name
       # and sort them alphabetically
       item_names = distributions.map do |distribution|
         distribution.line_items.map(&:item).map(&:name)
       end.flatten
 
-      item_names.sort.uniq
+      @item_headers = item_names.sort.uniq
     end
 
     def build_row_data(distribution)
