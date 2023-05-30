@@ -68,5 +68,11 @@ RSpec.describe "/partners/dashboard", type: :request do
       get partners_dashboard_path
       expect(response.body).not_to include("test announcement")
     end
+
+    it "doesn't display announcements from super admins" do
+      BroadcastAnnouncement.create(message: "test announcement", user_id: 1, organization_id: nil)
+      get partners_dashboard_path
+      expect(response.body).not_to include("test announcement")
+    end
   end
 end

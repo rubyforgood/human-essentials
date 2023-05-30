@@ -24,6 +24,9 @@ test:
   database: diaper_test
   timeout: 5000
 
+# These env vars live in Cloud66 application settings. Don't change
+# the names of the vars we're looking for without ensuring you've
+# updated/duplicated the vars there!
 production:
   adapter: postgresql
   encoding: unicode

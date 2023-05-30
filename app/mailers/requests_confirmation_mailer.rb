@@ -13,9 +13,9 @@ class RequestsConfirmationMailer < ApplicationMailer
   def fetch_items(request)
     combined = combined_items(request)
     item_ids = combined&.map { |item| item['item_id'] }
-    items_names = Item.where(id: item_ids).order(:id).pluck(:name)
-    names_hash = items_names.map { |name| { 'name' => name } }
-    combined.zip(names_hash).map { |items, names| items.merge(names) }
+    db_items = Item.where(id: item_ids).select(:id, :name)
+    combined.each { |i| i['name'] = db_items.find { |db_item| i["item_id"] == db_item.id }.name }
+    combined.sort_by { |i| i['name'] }
   end
 
   def combined_items(request)

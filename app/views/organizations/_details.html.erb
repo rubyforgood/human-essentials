@@ -11,12 +11,13 @@
           <div class="card-body md:flex sm:block">
             <div class="col-lg-4">
               <div class="mb-4">
-                <h3 class='font-bold'>Contact Info</h3>
+                <h3 class="font-bold">Name</h3>
+                <p><%= current_organization&.name %></p>
+              </div>
+              <div class="mb-4">
+                <h3 class='font-bold'>Short Name</h3>
                 <p>
-                  <%= fa_icon "envelope" %>
-                  <%= link_to @organization.email, "mailto:#{@organization.email}", aria: { label: "Email organization - opens in new tab" } %>
-                  <br />
-                  <address class="mb-0"><%= fa_icon "map-marker" %> <%= @organization.address %></address>
+                  <%= @organization.short_name || "Not Provided"%>
                 </p>
               </div>
               <div class="mb-4">
@@ -26,17 +27,39 @@
                 </p>
               </div>
               <div class="mb-4">
-                <h3 class='font-bold'>Repackage Essentials?</h3>
+                <h3 class='font-bold'>URL</h3>
                 <p>
-                  <%= fa_icon "inbox" %>
-                  <%= humanize_boolean(@organization.repackage_essentials) %>
+                  <% if @organization.url.blank? %>
+                    Not Provided
+                  <% else %>
+                    <a href=<%= @organization.url %>>
+                      <%= fa_icon "external-link" %>
+                      <%= @organization.url %></a>
+                  <% end %>
                 </p>
               </div>
               <div class="mb-4">
-                <h3 class='font-bold'>Distribute Monthly?</h3>
+                <h3 class='font-bold'>Email</h3>
                 <p>
-                  <%= fa_icon "paper-plane" %>
-                  <%= humanize_boolean(@organization.distribute_monthly) %>
+                  <%= fa_icon "envelope" %>
+                  <% if @organization.email.blank? %>
+                    Not Provided
+                  <% else %>
+                    <%= link_to @organization.email, "mailto:#{@organization.email}",
+                                aria: { label: "Email organization - opens in new tab" } %>
+                  <% end %>
+                </p>
+              </div>
+              <div class="mb-4">
+                <p>
+                <h3 class='font-bold'>Contact Info</h3>
+                <address class="mb-0"><%= fa_icon "map-marker" %>
+                <% if @organization.address.blank? %>
+                    Not provided
+                <% else %>
+                    <%= @organization.address %>
+                  </address>
+                <% end %>
                 </p>
               </div>
               <div class="mb-4">
@@ -57,21 +80,97 @@
                 <h3 class='font-bold'>Default Intake Location</h3>
                 <p>
                   <%= fa_icon "building" %>
-                  <%= StorageLocation.find_by(id: @organization.intake_location)&.name || "Not Defined" %>
+                  <%= StorageLocation.find_by(id: @organization.intake_location)&.name || "Not defined" %>
+                </p>
+              </div>
+              <div class="mb-4">
+                <h3 class='font-bold'>Partner Profile Sections</h3>
+                  <% if @organization.partner_form_fields.blank? %>
+                    <p>Not Provided</p>
+                  <% else %>
+                    <ul>
+                      <% for partner_form_field in @organization.partner_form_fields %>
+                        <li>
+                          <%= display_partner_fields_value(partner_form_field) %>
+                        </li>
+                      <% end %>
+                    </ul>
+                  <% end %>
                 </p>
               </div>
               <div class="mb-4">
                 <h3 class='font-bold'>Default Storage Location</h3>
                 <p>
                   <%= fa_icon "building-o" %>
-                  <%= StorageLocation.find_by(id: @organization.default_storage_location)&.name || "Not Defined" %>
+                  <%= StorageLocation.find_by(id: @organization.default_storage_location)&.name || "Not defined" %>
                 </p>
               </div>
+              <div class="mb-4">
+                <h3 class='font-bold'>Custom Partner Invitation Message</h3>
+                <p>
+                  <%= @organization.invitation_text.blank? ? "Not defined" : @organization.invitation_text %>
+                </p>
+              </div>
+              <div class="mb-4">
+                <h3 class='font-bold'>Repackage Essentials?</h3>
+                <p>
+                  <%= fa_icon "inbox" %>
+                  <%= humanize_boolean(@organization.repackage_essentials) %>
+                </p>
+              </div>
+              <div class="mb-4">
+                <h3 class='font-bold'>Distribute Monthly?</h3>
+                <p>
+                  <%= fa_icon "paper-plane" %>
+                  <%= humanize_boolean(@organization.distribute_monthly) %>
+                </p>
+              </div>
+              <div class="mb-4">
+                <h3 class='font-bold'>Child Based Requests?</h3>
+                <p>
+                  <%= fa_icon "child" %>
+                  <%= humanize_boolean(@organization.enable_child_based_requests) %>
+                </p>
+              </div>
+              <div class="mb-4">
+                <h3 class='font-bold'>Individual Requests?</h3>
+                <p>
+                  <%= fa_icon "female" %>
+                  <%= humanize_boolean(@organization.enable_individual_requests) %>
+                </p>
+              </div>
+              <div class="mb-4">
+                <h3 class='font-bold'>Quantity Based Requests?</h3>
+                <p>
+                  <%= fa_icon "group" %>
+                  <%= humanize_boolean(@organization.enable_quantity_based_requests) %>
+                </p>
+              </div>
+              <% if @organization.logo.attached? %>
+                    <div class="mb-4">
+                    <h3 class='font-bold'>Logo</h3>
+                      <p>
+                        <%= image_tag current_organization.logo, class: "main_logo" %>
+                      </p>
+                      <p>
+                        <a href="#showTheLogo" class="btn btn-xs btn-info" data-toggle="modal">
+                          View Original
+                        </a>
+                      </p>
+                      <div id="showTheLogo" class="modal fade">
+                        <div class="modal-dialog">
+                          <%= image_tag @organization.logo, class: "thumbnail" %>
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  <% end %>
             </div>
-
             <div class="col-lg-8">
               <h3 class='font-bold'>Default email text:</h3>
-              <%= @organization.default_email_text %>
+              <p>
+                <%= @organization.default_email_text.presence || 'Not defined' %>
+              </p>
             </div>
           </div>
 
