@@ -53,7 +53,7 @@ class DistributionsController < ApplicationController
     @partners = @distributions.collect(&:partner).uniq.sort_by(&:name)
     @selected_item = filter_params[:by_item_id]
     @total_value_all_distributions = total_value(@distributions)
-    @total_items_all_distributions = total_items(@distributions, nil)
+    @total_items_all_distributions = total_items(@distributions, @selected_item)
     @total_value_paginated_distributions = total_value(@paginated_distributions)
     @total_items_paginated_distributions = total_items(@paginated_distributions, @selected_item)
     @selected_item_category = filter_params[:by_item_category_id]
