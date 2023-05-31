@@ -3,12 +3,12 @@ module Partners
     def show; end
 
     def edit
-      @counties = County.all
+      @counties = County.in_category_name_order
       @client_share_total = current_partner.profile.client_share_total
     end
 
     def update
-      @counties = County.all
+      @counties = County.in_category_name_order
       result = PartnerProfileUpdateService.new(current_partner, partner_params, profile_params).call
       if result.success?
         flash[:success] = "Details were successfully updated."
