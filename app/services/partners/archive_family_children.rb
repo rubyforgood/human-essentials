@@ -4,8 +4,7 @@ module Partners
   class ArchiveFamilyChildren
     include ServiceObjectErrorsMixin
 
-    attr_reader :family
-
+    # rubocop:disable Rails::SkipsModelValidations
     def initialize(family:)
       @family = family
     end
@@ -14,9 +13,7 @@ module Partners
       if family.children.exists?
         ActiveRecord::Base.transaction do
           family.update(archived: true, updated_at: Time.zone.now)
-          # rubocop:disable Rails::SkipsModelValidations
           family.children.update_all(archived: true, updated_at: Time.zone.now)
-          # rubocop:enable Rails::SkipsModelValidations
         rescue => e
           errors.add(:base, e.message)
           raise ActiveRecord::Rollback
@@ -24,5 +21,10 @@ module Partners
       end
       self
     end
+    # rubocop:enable Rails::SkipsModelValidations
+
+    private
+
+    attr_reader :family
   end
 end
