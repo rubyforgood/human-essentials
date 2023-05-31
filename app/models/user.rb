@@ -83,10 +83,6 @@ class User < ApplicationRecord
     email.present? ? "#{name} <#{email}>" : ""
   end
 
-  def check_if_user_discarded
-    user = User.find_by(email: name)
-  end
-
   def password_complexity
     return if password.blank? || password =~ /(?=.*?[#?!@$%^&*-])/
 
