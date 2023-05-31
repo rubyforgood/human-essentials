@@ -53,13 +53,14 @@ class User < ApplicationRecord
   # :invitable is from the devise_invitable gem
   # If you change any of these options, adjust ConsolidatedLoginsController::DeviseMappingShunt accordingly
   devise :invitable, :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable,
-         :timeoutable
+    :recoverable, :rememberable, :trackable, :validatable,
+    :timeoutable
   devise :omniauthable, omniauth_providers: [:google_oauth2]
 
   validates :name, presence: true
+  before_validation
   validates :email, presence: true, uniqueness: {case_sensitive: false},
-  format: {with: URI::MailTo::EMAIL_REGEXP, on: :create}
+    format: {with: URI::MailTo::EMAIL_REGEXP, on: :create}
 
   validate :password_complexity
 
@@ -82,6 +83,10 @@ class User < ApplicationRecord
     email.present? ? "#{name} <#{email}>" : ""
   end
 
+  def check_if_user_discarded
+    user = User.find_by(email: name)
+  end
+
   def password_complexity
     return if password.blank? || password =~ /(?=.*?[#?!@$%^&*-])/
 
@@ -99,6 +104,7 @@ class User < ApplicationRecord
     return "admin" if has_role?(Role::ORG_ADMIN, organization)
     return "normal" if has_role?(Role::ORG_USER, organization)
     return "partner" if has_role?(Role::PARTNER, partner)
+    return "deactived" if has_role?(Role::DEACTIVATED)
 
     "normal"
   end

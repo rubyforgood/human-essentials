@@ -42,7 +42,7 @@ RSpec.describe User, type: :model do
   context "discarded user from organization should be able to create a partner profile" do
     let(:discarded_at) { Time.zone.now }
     let(:email) { "larry-june@gmail.com" }
-    let!(:discarded_user) { create(:user, name: "Larry", email: email, discarded_at: discarded_at) }
+    let!(:discarded_user) { build(:user, name: "Larry", email: email, discarded_at: discarded_at) }
     let!(:partner) { create(:partner, email: email) }
 
     it "allows a previously discarded user to create a partner account" do

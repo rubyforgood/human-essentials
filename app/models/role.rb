@@ -29,4 +29,5 @@ class Role < ApplicationRecord
   ORG_ADMIN = :org_admin
   SUPER_ADMIN = :super_admin
   PARTNER = :partner
+  DEACTIVATED = :deactivated
 end

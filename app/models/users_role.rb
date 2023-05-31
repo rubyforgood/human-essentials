@@ -15,7 +15,7 @@ class UsersRole < ApplicationRecord
   # @param user [User]
   # @return [Role,nil]
   def self.current_role_for(user)
-    role_order = [Role::SUPER_ADMIN, Role::ORG_ADMIN, Role::ORG_USER, Role::PARTNER]
+    role_order = [Role::SUPER_ADMIN, Role::ORG_ADMIN, Role::ORG_USER, Role::PARTNER, Role::DEACTIVATED]
     role_order.each do |role|
       found_role = user&.roles&.find { |r| r.name.to_sym == role }
       return found_role if found_role
