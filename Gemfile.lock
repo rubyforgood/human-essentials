@@ -399,7 +399,7 @@ GEM
       binding_of_caller (~> 1.0)
       pry (~> 0.13)
     public_suffix (5.0.1)
-    puma (6.2.2)
+    puma (6.3.0)
       nio4r (~> 2.0)
     racc (1.6.2)
     rack (2.2.7)
@@ -433,8 +433,9 @@ GEM
       activesupport (>= 4.2)
       choice (~> 0.2.0)
       ruby-graphviz (~> 1.2)
-    rails-html-sanitizer (1.5.0)
-      loofah (~> 2.19, >= 2.19.1)
+    rails-html-sanitizer (1.6.0)
+      loofah (~> 2.21)
+      nokogiri (~> 1.14)
     railties (7.0.5)
       actionpack (= 7.0.5)
       activesupport (= 7.0.5)
@@ -473,7 +474,7 @@ GEM
     rspec-mocks (3.12.5)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.12.0)
-    rspec-rails (6.0.2)
+    rspec-rails (6.0.3)
       actionpack (>= 6.1)
       activesupport (>= 6.1)
       railties (>= 6.1)
@@ -566,7 +567,7 @@ GEM
       railties (>= 6.0.0)
     strong_migrations (1.4.4)
       activerecord (>= 5.2)
-    terser (1.1.15)
+    terser (1.1.16)
       execjs (>= 0.3.0, < 3)
     thor (1.2.2)
     tilt (2.0.10)
@@ -681,7 +682,7 @@ DEPENDENCIES
   recaptcha
   redis (~> 5.0)
   rolify (~> 6.0)
-  rspec-rails (~> 6.0.2)
+  rspec-rails (~> 6.0.3)
   rspec-retry
   rubocop
   rubocop-rails (~> 2.19.1)
@@ -704,4 +705,4 @@ RUBY VERSION
    ruby 3.1.2p20
 
 BUNDLED WITH
-   2.4.12
+   2.4.13
