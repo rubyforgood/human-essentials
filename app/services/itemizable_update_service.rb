@@ -11,37 +11,37 @@ module ItemizableUpdateService
       from_location = to_location = itemizable.storage_location
       to_location = StorageLocation.find(params[:storage_location_id]) if params[:storage_location_id]
 
-      increase_method = (type == :increase) ? :increase_inventory : :decrease_inventory
-      decrease_method = (type == :increase) ? :decrease_inventory : :increase_inventory
+      apply_change_method = (type == :increase) ? :increase_inventory : :decrease_inventory
+      undo_change_method = (type == :increase) ? :decrease_inventory : :increase_inventory
 
       line_item_attrs = Array.wrap(params[:line_items_attributes]&.values)
       line_item_attrs.each { |attr| attr.delete(:id) }
 
-      update_storage_location(itemizable: itemizable,
-        increase_method: increase_method,
-        decrease_method: decrease_method,
-        params: params,
-        from_location: from_location,
-        to_location: to_location)
+      update_storage_location(itemizable:          itemizable,
+                              apply_change_method: apply_change_method,
+                              undo_change_method:  undo_change_method,
+                              params:              params,
+                              from_location:       from_location,
+                              to_location:         to_location)
     end
   end
 
   # @param itemizable [Itemizable]
-  # @param increase_method [Symbol]
-  # @param decrease_method [Symbol]
+  # @param apply_change_method [Symbol]
+  # @param undo_change_method [Symbol]
   # @param params [Hash] Parameters passed from the controller. Should include `line_item_attributes`.
   # @param from_location [StorageLocation]
   # @param to_location [StorageLocation]
-  def self.update_storage_location(itemizable:, increase_method:, decrease_method:,
-    params:, from_location:, to_location:)
-    from_location.public_send(decrease_method, itemizable.to_a)
+  def self.update_storage_location(itemizable:, apply_change_method:, undo_change_method:,
+                                   params:, from_location:, to_location:)
+    from_location.public_send(undo_change_method, itemizable.to_a)
     # Delete the line items -- they'll be replaced later
     itemizable.line_items.delete_all
     # Update the current model with the new parameters
     itemizable.update!(params)
     itemizable.reload
     # Apply the new changes to the storage location inventory
-    to_location.public_send(increase_method, itemizable.to_a)
+    to_location.public_send(apply_change_method, itemizable.to_a)
 
     from_location.remove_empty_items
     to_location.remove_empty_items

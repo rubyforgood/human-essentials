@@ -34,7 +34,7 @@ FactoryBot.define do
       end
 
       after(:create) do |storage_location, evaluator|
-        if evaluator.item.nil? && evaluator.item_count != 0
+        if evaluator.item.nil? && !evaluator.item_count.zero?
           item_count = evaluator.item_count
 
           create_list(:inventory_item, item_count,
