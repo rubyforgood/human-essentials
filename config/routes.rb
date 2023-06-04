@@ -35,7 +35,11 @@ Rails.application.routes.draw do
   namespace :partners do
     resource :dashboard, only: [:show]
     resource :help, only: [:show]
-    resources :requests, only: [:show, :new, :index, :create]
+    resources :requests, only: [:show, :new, :index, :create] do
+      collection do
+        post :confirmation
+      end
+    end
     resources :individuals_requests, only: [:new, :create]
     resources :family_requests, only: [:new, :create]
     resources :users, only: [:index, :new, :create, :edit, :update]

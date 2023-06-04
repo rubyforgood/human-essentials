@@ -17,6 +17,11 @@ module Partners
       end.sort
     end
 
+    def confirmation
+      @params = partner_request_params
+      render :confirmation
+    end
+
     def show
       @partner_request = current_partner.requests.find(params[:id])
     end
