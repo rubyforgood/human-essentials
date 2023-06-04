@@ -1,4 +1,4 @@
-<section style="width: 100%;height: 100%;display:flex;flex-direction:column;align-items:center;padding-top:75px;padding-bottom:25px;">
+<section style="display:flex;flex-direction:column;align-items:center;padding-top:25px;padding-bottom:25px;">
   <div style="width:700px;display:flex:flex-direction:row;align-items:center;justify-content:center;padding:10px;background-color:#fff;border: 1px solid rgb(213, 213, 213);box-shadow: 0 0.5px 3px 1px rgb(228, 228, 228);border-radius:10px">
     <h3 style="font-size:2.5rem">Request Summary</h3>
     <div style="display:flex;min-height:50px">
@@ -15,8 +15,8 @@
     <div>
 
   <div style="display:flex;justify-content:space-between;align-items:center">
-    <%= link_to 'Go back to edit', 'javascript:history.back()', rel: 'nofollow', style: "font-size: 2rem;" %>
-    <%= link_to 'Submit Request', partners_requests_path(request: @partner_request, organization_id: current_partner.organization.id), method: :post, rel: 'nofollow', style: "font-size: 2rem;" %>
+    <%= link_to 'Go back', 'javascript:history.back()', rel: 'nofollow', style: "font-size: 2rem;" %>
+    <%= link_to 'Submit Essentials Request', partners_requests_path(request: @partner_request, organization_id: current_partner.organization.id), method: :post, rel: 'nofollow', id: 'confirm-partner-request', style: "font-size: 2rem;" %>
   </div>
 </section>
 

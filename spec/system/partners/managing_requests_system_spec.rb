@@ -96,10 +96,11 @@ RSpec.describe "Managing requests", type: :system, js: true do
       context 'WHEN they create a request with only a comment' do
         before do
           fill_in 'Comments', with: Faker::Lorem.paragraph
+          click_button 'Submit Essentials Request'
         end
 
         it 'should be created without any issue' do
-          expect { click_button 'Submit Essentials Request' }.to change { Request.count }.by(1)
+          expect { click_link 'Submit Essentials Request' }.to change { Request.count }.by(1)
 
           expect(current_path).to eq(partners_request_path(Request.last.id))
           expect(page).to have_content('Request has been successfully created!')
