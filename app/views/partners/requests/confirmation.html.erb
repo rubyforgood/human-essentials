@@ -1,5 +1,4 @@
-<section style="width: 100%;height: 100%;display:flex;flex-direction:column;align-items:center">
-  <h1 style="font-size:4rem;color: rgb(255, 71, 71)">Please Confirm Your Request</h1>
+<section style="width: 100%;height: 100%;display:flex;flex-direction:column;align-items:center;padding-top:75px;padding-bottom:25px;">
   <div style="width:700px;display:flex:flex-direction:row;align-items:center;justify-content:center;padding:10px;background-color:#fff;border: 1px solid rgb(213, 213, 213);box-shadow: 0 0.5px 3px 1px rgb(228, 228, 228);border-radius:10px">
     <h3 style="font-size:2.5rem">Request Summary</h3>
     <div style="display:flex;min-height:50px">
@@ -15,31 +14,11 @@
         <% end %>
     <div>
 
-  <div style="display:flex;flex-direction:column;justify-content:flex-start">
-    <div style="width:400px;height:100px;display:flex;justify-content:space-evenly;align-items:center;">
-        <p style="padding:0;margin:0;font-size:1.2rem">I confirm all the details are correct</p>
-        <input style="height:25px;width:25px" type="checkbox" id="confirmation-for-partner-request-input">
-    </div>
-    <%= link_to 'Back', 'javascript:history.back()', id: "styled-link-button", rel: 'nofollow' %>
-    <%= link_to 'Submit', partners_requests_path(request: @partner_request, organization_id: current_partner.organization.id), method: :post, rel: 'nofollow', id: "submit-partner-request-button", style: "display: none;" %> 
-    <button id="dummy-submit-partner-request-button" disabled style="background-color: grey;">Submit</button>
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <%= link_to 'Go back to edit', 'javascript:history.back()', rel: 'nofollow', style: "font-size: 2rem;" %>
+    <%= link_to 'Submit Request', partners_requests_path(request: @partner_request, organization_id: current_partner.organization.id), method: :post, rel: 'nofollow', style: "font-size: 2rem;" %>
   </div>
 </section>
-
-
-<script type="module">
-    document.getElementById("confirmation-for-partner-request-input").addEventListener('change', function() {
-        const submitButton = document.getElementById("submit-partner-request-button");
-        const dummyButton = document.getElementById("dummy-submit-partner-request-button");
-        if (this.checked) {
-            submitButton.style.display = "inline-block";
-            dummyButton.style.display = "none";
-        } else {
-            submitButton.style.display = "none";
-            dummyButton.style.display = "inline-block";
-        }
-    });
-</script>
 
 
 
