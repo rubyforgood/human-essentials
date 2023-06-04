@@ -3,5 +3,6 @@
     <p><%= @params['comments'] %></p>
     <h2>Quantity:</h2>
     <p><%= @params["item_requests_attributes"]["0"]["quantity"] %></p>
+     <%= link_to 'Back', 'javascript:history.back()' %>
     <%= link_to 'Submit', partners_requests_path(request: @params, organization_id: current_partner.organization.id), method: :post, rel: 'nofollow' %>
 </section>
