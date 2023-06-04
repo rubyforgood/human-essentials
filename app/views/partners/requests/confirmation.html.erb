@@ -1,28 +1,29 @@
 <section style="width: 100%;height: 100%;display:flex;flex-direction:column;align-items:center">
-  <h1 style="font-size:5rem">Please Confirm Your Request</h1>
-  <div style="width:500px;display:flex:flex-direction:column">
-    <div>
-      <h2>Comments added:</h2>
-      <p><%= @partner_request['comments'] %></p>
+  <h1 style="font-size:4rem;color: rgb(255, 71, 71)">Please Confirm Your Request</h1>
+  <div style="width:700px;display:flex:flex-direction:row;align-items:center;justify-content:center;padding:10px;background-color:#fff;border: 1px solid rgb(213, 213, 213);box-shadow: 0 0.5px 3px 1px rgb(228, 228, 228);border-radius:10px">
+    <h3 style="font-size:2.5rem">Request Summary</h3>
+    <div style="display:flex;min-height:50px">
+      <p style="padding:0;padding-right:10px;margin:0;font-size:1.2rem">Your comments:</p>
+      <p style="padding:0;margin:0;font-size:1.2rem"><%= @partner_request['comments'] %></p>
     </div>
 
-    <% @items.each do |item, quantity| %>
-      <div>
-        <h2>Item selected:</h2>
-        <p><%= item %></p>
-      </div>
-      <div>
-        <h2>Requested Quantity:</h2>
-        <p><%= quantity %></p>
-      </div>
-    <% end %>
-  </div>
+    <div style="display:flex;flex-direction:column; justify-content:space-evenly">
+        <% @items.each do |item_name, quantity| %>
+            <p style="padding:0;margin:0;font-size:1.2rem"><%= item_name %></p>
+            <p style="padding:0;margin:0;font-size:1.2rem">Quantity: <%= quantity %></p>
+            <hr>
+        <% end %>
+    <div>
 
-  <input type="checkbox" id="confirmation-for-partner-request-input">
-  <label for="confirmation-for-partner-request-input">I confirm all the details are correct</label>
-  <%= link_to 'Back', 'javascript:history.back()' %>
-  <%= link_to 'Submit', partners_requests_path(request: @partner_request, organization_id: current_partner.organization.id), method: :post, rel: 'nofollow', id: "submit-partner-request-button", style: "display: none;" %>
-  <button id="dummy-submit-partner-request-button" disabled style="background-color: grey;">Submit</button>
+  <div style="display:flex;flex-direction:column;justify-content:flex-start">
+    <div style="width:400px;height:100px;display:flex;justify-content:space-evenly;align-items:center;">
+        <p style="padding:0;margin:0;font-size:1.2rem">I confirm all the details are correct</p>
+        <input style="height:25px;width:25px" type="checkbox" id="confirmation-for-partner-request-input">
+    </div>
+    <%= link_to 'Back', 'javascript:history.back()', id: "styled-link-button", rel: 'nofollow' %>
+    <%= link_to 'Submit', partners_requests_path(request: @partner_request, organization_id: current_partner.organization.id), method: :post, rel: 'nofollow', id: "submit-partner-request-button", style: "display: none;" %> 
+    <button id="dummy-submit-partner-request-button" disabled style="background-color: grey;">Submit</button>
+  </div>
 </section>
 
 
