@@ -18,7 +18,7 @@ module Partners
     end
 
     def confirmation
-      @params = partner_request_params
+      @partner_request = partner_request_params
       render :confirmation
     end
 
