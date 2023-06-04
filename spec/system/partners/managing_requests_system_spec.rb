@@ -135,11 +135,13 @@ RSpec.describe "Managing requests", type: :system, js: true do
 
           # Trigger another row but keep it empty. It should still be valid!
           click_link 'Add Another Item'
+
+          click_button 'Submit Essentials Request'
         end
 
         context 'THEN a request records will be created and the partner will be notified via flash message on the dashboard' do
           before do
-            expect { click_button 'Submit Essentials Request' }.to change { Request.count }.by(1)
+            expect { click_link 'Submit Essentials Request' }.to change { Request.count }.by(1)
 
             expect(current_path).to eq(partners_request_path(Request.last.id))
             expect(page).to have_content('Request has been successfully created!')
