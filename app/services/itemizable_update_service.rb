@@ -18,11 +18,11 @@ module ItemizableUpdateService
       line_item_attrs.each { |attr| attr.delete(:id) }
 
       update_storage_location(itemizable:          itemizable,
-                              apply_change_method: apply_change_method,
-                              undo_change_method:  undo_change_method,
-                              params:              params,
-                              from_location:       from_location,
-                              to_location:         to_location)
+        apply_change_method: apply_change_method,
+        undo_change_method:  undo_change_method,
+        params:              params,
+        from_location:       from_location,
+        to_location:         to_location)
     end
   end
 
@@ -33,7 +33,7 @@ module ItemizableUpdateService
   # @param from_location [StorageLocation]
   # @param to_location [StorageLocation]
   def self.update_storage_location(itemizable:, apply_change_method:, undo_change_method:,
-                                   params:, from_location:, to_location:)
+    params:, from_location:, to_location:)
     from_location.public_send(undo_change_method, itemizable.to_a)
     # Delete the line items -- they'll be replaced later
     itemizable.line_items.delete_all
