@@ -1,8 +1,44 @@
-<section>
-    <h2>Comments:</h2>
-    <p><%= @params['comments'] %></p>
-    <h2>Quantity:</h2>
-    <p><%= @params["item_requests_attributes"]["0"]["quantity"] %></p>
-     <%= link_to 'Back', 'javascript:history.back()' %>
-    <%= link_to 'Submit', partners_requests_path(request: @partner_request, organization_id: current_partner.organization.id), method: :post, rel: 'nofollow' %>
+<section style="width: 100%;height: 100%;display:flex;flex-direction:column;align-items:center">
+  <h1 style="font-size:5rem">Please Confirm Your Request</h1>
+  <div style="width:500px;display:flex:flex-direction:column">
+    <div>
+      <h2>Comments added:</h2>
+      <p><%= @partner_request['comments'] %></p>
+    </div>
+
+    <% @items.each do |item, quantity| %>
+      <div>
+        <h2>Item selected:</h2>
+        <p><%= item %></p>
+      </div>
+      <div>
+        <h2>Requested Quantity:</h2>
+        <p><%= quantity %></p>
+      </div>
+    <% end %>
+  </div>
+
+  <input type="checkbox" id="confirmation-for-partner-request-input">
+  <label for="confirmation-for-partner-request-input">I confirm all the details are correct</label>
+  <%= link_to 'Back', 'javascript:history.back()' %>
+  <%= link_to 'Submit', partners_requests_path(request: @partner_request, organization_id: current_partner.organization.id), method: :post, rel: 'nofollow', id: "submit-partner-request-button", style: "display: none;" %>
+  <button id="dummy-submit-partner-request-button" disabled style="background-color: grey;">Submit</button>
 </section>
+
+
+<script type="module">
+    document.getElementById("confirmation-for-partner-request-input").addEventListener('change', function() {
+        const submitButton = document.getElementById("submit-partner-request-button");
+        const dummyButton = document.getElementById("dummy-submit-partner-request-button");
+        if (this.checked) {
+            submitButton.style.display = "inline-block";
+            dummyButton.style.display = "none";
+        } else {
+            submitButton.style.display = "none";
+            dummyButton.style.display = "inline-block";
+        }
+    });
+</script>
+
+
+

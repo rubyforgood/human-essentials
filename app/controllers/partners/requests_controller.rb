@@ -19,6 +19,13 @@ module Partners
 
     def confirmation
       @partner_request = partner_request_params
+      @items = {}
+
+      params.dig("request", "item_requests_attributes").each do |index, request_params|
+        item = Item.find_by(id: request_params["item_id"])
+        @items[item.name] = request_params["quantity"] unless item.nil?
+      end
+
       render :confirmation
     end
 
