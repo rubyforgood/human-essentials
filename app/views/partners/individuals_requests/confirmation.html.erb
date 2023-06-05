@@ -2,24 +2,23 @@
   <div style="width:700px;display:flex:flex-direction:row;align-items:center;justify-content:center;padding:10px;background-color:#fff;border: 1px solid rgb(213, 213, 213);box-shadow: 0 0.5px 3px 1px rgb(228, 228, 228);border-radius:10px">
     <h3 style="font-size:2.5rem">Request Summary</h3>
     <div style="display:flex;flex-direction:column; justify-content:space-evenly">
-        <% @items.each do |item_name, quantity| %>
+        <% @items.each do |item_name, person_count| %>
             <p style="padding:0;margin:0;font-size:1.2rem"><%= item_name %></p>
-            <p style="padding:0;margin:0;font-size:1.2rem">Quantity: <%= quantity %></p>
+            <p style="padding:0;margin:0;font-size:1.2rem">Number of individuals: <%= person_count %></p>
             <hr>
         <% end %>
     <div>
 
     <div style="display:flex;min-height:50px">
       <p style="padding:0;padding-right:10px;margin:0;font-size:1.2rem">Your comments:</p>
-      <p style="padding:0;margin:0;font-size:1.2rem"><%= @partner_request['comments'] %></p>
+      <p style="padding:0;margin:0;font-size:1.2rem"><%= @request['comments'] %></p>
     </div>
 
     <div style="display:flex;justify-content:space-between;align-items:center">
       <%= link_to 'Go back', 'javascript:history.back()', rel: 'nofollow', style: "font-size: 2rem;" %>
-      <%= link_to 'Submit Essentials Request', partners_requests_path(request: @partner_request, organization_id: current_partner.organization.id), method: :post, rel: 'nofollow', style: "font-size: 2rem;" %>
+      <%= link_to 'Submit Essentials Request', partners_individuals_requests_path(partners_family_request: @request, organization_id: current_partner.organization.id), method: :post, rel: 'nofollow', style: "font-size: 2rem;" %>
     </div>
   </div>
 </section>
-
 
 

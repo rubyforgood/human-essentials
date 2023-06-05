@@ -9,6 +9,18 @@ module Partners
       end.sort
     end
 
+    def confirmation
+      @request = individuals_request_params
+      @items = {}
+
+      @request["items_attributes"].values.each do |individual_item_request|
+        item = Item.find_by(id: individual_item_request["item_id"])
+        @items[item.name] = individual_item_request["person_count"] unless item.nil?
+      end
+
+      render :confirmation
+    end
+
     def create
       create_service = Partners::FamilyRequestCreateService.new(
         partner_user_id: current_user.id,

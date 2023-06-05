@@ -40,7 +40,11 @@ Rails.application.routes.draw do
         post :confirmation
       end
     end
-    resources :individuals_requests, only: [:new, :create]
+    resources :individuals_requests, only: [:new, :create] do
+      collection do
+        post :confirmation
+      end
+    end
     resources :family_requests, only: [:new, :create]
     resources :users, only: [:index, :new, :create, :edit, :update]
     resource :profile, only: [:show, :edit, :update]
