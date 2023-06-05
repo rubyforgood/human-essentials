@@ -13,10 +13,10 @@
       <p style="padding:0;padding-right:10px;margin:0;font-size:1.2rem">Your comments:</p>
       <p style="padding:0;margin:0;font-size:1.2rem"><%= @partner_request['comments'] %></p>
     </div>
-
+     <h3 style="font-size:1.6rem">Please confirm that the above list is what you meant to request</h3>
     <div style="display:flex;justify-content:space-between;align-items:center">
-      <%= link_to 'No, I need to change something.', 'javascript:history.back()', rel: 'nofollow', style: "font-size: 2rem;" %>
-      <%= link_to "Yes, it's right", partners_requests_path(request: @partner_request, organization_id: current_partner.organization.id), method: :post, rel: 'nofollow', style: "font-size: 2rem;" %>
+      <%= link_to 'No, I need to change something.', 'javascript:history.back()', rel: 'nofollow', style: "font-size: 1.6rem;" %>
+      <%= link_to "Yes, it's right", partners_requests_path(request: @partner_request, organization_id: current_partner.organization.id), method: :post, rel: 'nofollow', style: "font-size: 1.6rem;" %>
     </div>
   </div>
 </section>

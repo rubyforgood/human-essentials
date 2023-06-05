@@ -9,13 +9,14 @@
       <% end %>
     <div>
 
+     <h3 style="font-size:1.6rem">Please confirm that the above list is what you meant to request</h3>
     <%= form_with(url: partners_family_requests_path, method: :post) do %>
       <% @children_ids.each do |child_id| %>
         <%= hidden_field_tag "child-#{child_id}", 'true' %>
       <% end %>
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <%= link_to 'No, I need to change something.', 'javascript:history.back()', rel: 'nofollow', style: "font-size: 2rem;" %>
-      <%= button_tag(type: 'submit', class: 'btn btn-primary', style: "font-size: 2rem;") do %>
+        <%= link_to 'No, I need to change something.', 'javascript:history.back()', rel: 'nofollow', style: "font-size: 1.6rem;" %>
+      <%= button_tag(type: 'submit', class: 'btn btn-primary', style: "font-size: 1.6rem;") do %>
         Yes, it's right
         <% end %>
       </div>
