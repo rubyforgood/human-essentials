@@ -12,6 +12,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
       context 'WHEN they create a request inproperly' do
         before do
           click_button 'Submit Essentials Request'
+          click_link 'Submit Essentials Request'
         end
 
         it 'should show an error message with the instructions ' do
@@ -48,11 +49,13 @@ RSpec.describe "Managing requests", type: :system, js: true do
             last_row.find('option', text: item[:name], exact_text: true).select_option
             last_row.find_all('.form-control').last.fill_in(with: item[:person_count])
           end
+
+          click_button 'Submit Essentials Request'
         end
 
         context 'THEN a request records will be created and the partner will be notified via flash message on the dashboard' do
           before do
-            expect { click_button 'Submit Essentials Request' }.to change { Request.count }.by(1)
+            expect { click_link 'Submit Essentials Request' }.to change { Request.count }.by(1)
 
             expect(current_path).to eq(partners_request_path(Request.last.id))
             expect(page).to have_content('Request has been successfully created!')
