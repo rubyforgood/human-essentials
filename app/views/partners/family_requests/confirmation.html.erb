@@ -2,26 +2,18 @@
   <div style="width:700px;display:flex:flex-direction:row;align-items:center;justify-content:center;padding:10px;background-color:#fff;border: 1px solid rgb(213, 213, 213);box-shadow: 0 0.5px 3px 1px rgb(228, 228, 228);border-radius:10px">
     <h3 style="font-size:2.5rem">Request Summary</h3>
     <div style="display:flex;flex-direction:column; justify-content:space-evenly">
-         <% @items.each do |item_name, item_info| %>
-            <p style="padding:0;margin:0;font-size:1.2rem"><%= item_name %> requested for:</p>
-            <% item_info[:children].each do |child| %>
-              <p style="padding:0;margin:0;font-size:1.2rem"><%= child[:first_name] %> <%= child[:last_name] %></p>
-            <% end %>
-            <hr>
-        <% end %>
-    <div>
-
-    <%= form_with(url: partners_family_requests_path, method: :post) do %>
-      <% @children_ids.each do |child_id| %>
-        <%= hidden_field_tag "child-#{child_id}", 'true' %>
+      <% @items.each do |item| %>
+        <p style="padding:0;margin:0;font-size:1.2rem">Item Needed: <%= item[:item_name] %> for</p>
+        <p style="padding:0;margin:0;font-size:1.2rem"><%= item[:child][:first_name] %> <%= item[:child][:last_name] %></p>
+        <hr>
       <% end %>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <%= link_to 'Go back', 'javascript:history.back()', rel: 'nofollow', style: "font-size: 2rem;" %>
-      <%= button_tag(type: 'submit', class: 'btn btn-primary', style: "font-size: 2rem;") do %>
-        Submit Essentials Request
-        <% end %>
-      </div>
-    <% end %>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <%= link_to 'Go back', 'javascript:history.back()', rel: 'nofollow', style: "font-size: 2rem;" %>
+      <%= link_to 'Submit Essentials Request', partners_family_requests_path(child_params: @items, organization_id: current_partner.organization.id), method: :post, rel: 'nofollow', style: "font-size: 2rem;" %>
+    </div>
   </div>
 </section>
+
 
