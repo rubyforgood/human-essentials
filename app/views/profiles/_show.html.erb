@@ -126,7 +126,7 @@
       <p>Primary Contact Email: <%= partner_profile.primary_contact_email %> </p>
       <br>
     <% end %>
-    <% if partner_profile_fields.include?('diaper_pick_up_person') || partner_profile_fields.empty? %>
+    <% if partner_profile_fields.include?('pick_up_person') || partner_profile_fields.empty? %>
       <h2 class='text-2xl underline'>Pick Up Person</h2>
       <p>Pick Up Name: <%= partner_profile.pick_up_name %></p>
       <p>Pick Up Phone: <%= partner_profile.pick_up_phone %></p>
