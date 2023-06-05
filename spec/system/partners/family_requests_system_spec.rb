@@ -25,7 +25,7 @@ RSpec.describe "Family requests", type: :system, js: true do
       visit partners_requests_path
       find('a[aria-label="Create a request for a child or family"]').click
       find('input[type="submit"]').click
-      click_button "Submit Essentials Request"
+      click_button "Yes, it's right"
       expect(page).to have_text("Request Details")
       click_link "Your Previous Requests"
       expect(page).to have_text("Request History")
