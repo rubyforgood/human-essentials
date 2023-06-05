@@ -14,9 +14,9 @@
         <%= hidden_field_tag "child-#{child_id}", 'true' %>
       <% end %>
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <%= link_to 'Go back', 'javascript:history.back()', rel: 'nofollow', style: "font-size: 2rem;" %>
+        <%= link_to 'No, I need to change something.', 'javascript:history.back()', rel: 'nofollow', style: "font-size: 2rem;" %>
       <%= button_tag(type: 'submit', class: 'btn btn-primary', style: "font-size: 2rem;") do %>
-        Submit Essentials Request
+        Yes, it's right
         <% end %>
       </div>
     <% end %>

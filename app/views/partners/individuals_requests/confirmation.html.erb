@@ -15,8 +15,8 @@
     </div>
 
     <div style="display:flex;justify-content:space-between;align-items:center">
-      <%= link_to 'Go back', 'javascript:history.back()', rel: 'nofollow', style: "font-size: 2rem;" %>
-      <%= link_to 'Submit Essentials Request', partners_individuals_requests_path(partners_family_request: @request, organization_id: current_partner.organization.id), method: :post, rel: 'nofollow', style: "font-size: 2rem;" %>
+      <%= link_to 'No, I need to change something.', 'javascript:history.back()', rel: 'nofollow', style: "font-size: 2rem;" %>
+      <%= link_to "Yes, it's right", partners_individuals_requests_path(partners_family_request: @request, organization_id: current_partner.organization.id), method: :post, rel: 'nofollow', style: "font-size: 2rem;" %>
     </div>
   </div>
 </section>
