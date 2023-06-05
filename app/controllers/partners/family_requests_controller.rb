@@ -13,6 +13,24 @@ module Partners
       @children = @filterrific.find
     end
 
+    def confirmation
+      @children_ids = params.keys.select { |key| key.start_with?('child') && params[key] == "true" }.map { |key| key.split('-').last }
+      children = current_partner.children.active.where(id: @children_ids).where.not(item_needed_diaperid: [nil, 0])
+      children_grouped_by_item_id = children.group_by(&:item_needed_diaperid)
+
+      @items = {}
+      children_grouped_by_item_id.each do |item_id, item_requested_children|
+        item = Item.find(item_id)
+        unless item.nil?
+          @items[item.name] = {
+            count: item_requested_children.size,
+            children: item_requested_children.map { |child| {first_name: child.first_name, last_name: child.last_name} }
+          }
+        end
+      end
+      render :confirmation
+    end
+
     def create
       children_ids = []
 
