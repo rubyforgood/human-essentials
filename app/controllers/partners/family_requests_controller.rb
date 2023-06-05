@@ -14,17 +14,14 @@ module Partners
     end
 
     def confirmation
-      children_ids = params.keys.select { |key| key.start_with?('child') && params[key] == "true" }.map { |key| key.split('-').last }
-      children = current_partner.children.active.where(id: children_ids).where.not(item_needed_diaperid: [nil, 0])
+      @children_ids = params.keys.select { |key| key.start_with?('child-') && params[key] == 'true' }.map { |key| key.split('-').last.to_i }
+      children = current_partner.children.active.where(id: @children_ids).where.not(item_needed_diaperid: [nil, 0])
 
-      @items = []
+      @items = {}
       children.each do |child|
         item = Item.find(child.item_needed_diaperid)
         unless item.nil?
-          @items << {
-            item_name: item.name,
-            child: {first_name: child.first_name, last_name: child.last_name}
-          }
+          @items[item.name] = {first_name: child.first_name, last_name: child.last_name}
         end
       end
 
