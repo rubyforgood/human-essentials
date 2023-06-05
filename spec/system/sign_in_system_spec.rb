@@ -40,13 +40,13 @@ RSpec.describe "User sign-in handling", type: :system, js: true do
   end
 
   context "when users are valid and don't belong to an organization" do
-    it "redirects to home " do
+    it "redirects to 404" do
       user_no_org = create(:user, organization: nil)
       fill_in "Email", with: user_no_org.email
       fill_in "Password", with: user_no_org.password
       click_button "Log in"
 
-      expect(page).to have_current_path(root_path)
+      expect(page).to have_current_path("/404")
     end
   end
 end
