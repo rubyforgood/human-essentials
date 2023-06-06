@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_05_140424) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_06_061826) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -372,6 +372,18 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_05_140424) do
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"
     t.check_constraint "distribution_quantity >= 0", name: "distribution_quantity_nonnegative"
+  end
+
+  create_table "kit_allocations", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "storage_location_id", null: false
+    t.bigint "kit_id", null: false
+    t.integer "kit_allocation_type", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["kit_id"], name: "index_kit_allocations_on_kit_id"
+    t.index ["organization_id"], name: "index_kit_allocations_on_organization_id"
+    t.index ["storage_location_id"], name: "index_kit_allocations_on_storage_location_id"
   end
 
   create_table "kits", force: :cascade do |t|
@@ -828,6 +840,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_05_140424) do
   add_foreign_key "item_categories_partner_groups", "partner_groups"
   add_foreign_key "items", "item_categories"
   add_foreign_key "items", "kits"
+  add_foreign_key "kit_allocations", "kits"
+  add_foreign_key "kit_allocations", "organizations"
+  add_foreign_key "kit_allocations", "storage_locations"
   add_foreign_key "kits", "organizations"
   add_foreign_key "manufacturers", "organizations"
   add_foreign_key "organizations", "account_requests"
