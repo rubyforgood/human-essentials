@@ -92,7 +92,7 @@ RSpec.describe AllocateKitInventoryService, type: :service do
           # Check inventory out decreases both time with the increase_by value
           expect(inventory_out.line_items.first.quantity).to eq(kit.line_items.first.quantity * (increase_by+second_increase_by)*(-1))
 
-          # Check inventory increase both time with increase_by value
+          # Check inventory in increase both time with increase_by value
           expect(inventory_in.line_items.first.quantity).to eq(increase_by+second_increase_by)
         end
       end
