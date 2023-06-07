@@ -94,6 +94,27 @@ RSpec.describe Partners::Profile, type: :model do
     should accept_nested_attributes_for(:served_areas).allow_destroy(true)
   end
 
+  describe "request settings validation for profile" do
+    subject { FactoryBot.build(:partner_profile, enable_child_based_requests: false, enable_individual_requests: false, enable_quantity_based_requests: false) }
+
+    context "no settings are set to true" do
+      it "should not be valid" do
+        expect(subject).to_not be_valid
+        expect(subject.errors[:base]).to include("At least one request type must be set")
+      end
+    end
+
+    context "at least one request type is set to true" do
+      request_type_attributes = [:enable_child_based_requests, :enable_individual_requests, :enable_quantity_based_requests]
+      request_type_attributes.each do |request_type|
+        it "should be valid when #{request_type} is true" do
+          subject.update("#{request_type}": true)
+          expect(subject.valid?).to eq(true)
+        end
+      end
+    end
+  end
+
   describe "social media info validation for profile" do
     context "no social media presence and the checkbox isn't checked" do
       let(:profile) { FactoryBot.build(:partner_profile, website: "", twitter: "", facebook: "", instagram: "", no_social_media_presence: false) }
