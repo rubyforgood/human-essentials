@@ -19,8 +19,8 @@ RSpec.describe "/partners/requests", type: :request do
 
     it 'should display total count of items in partner request' do
       create(
-        :request, 
-        partner_id: partner.id, 
+        :request,
+        partner_id: partner.id,
         partner_user_id: partner_user.id,
         request_items: [
           {item_id: item1.id, quantity: '125'},
