@@ -14,7 +14,7 @@ require:
   - standard
 
 AllCops:
-  TargetRubyVersion: 3.1.2
+  TargetRubyVersion: 3.2.2
   Exclude:
     - "vendor/**/*"
     - "db/schema.rb"

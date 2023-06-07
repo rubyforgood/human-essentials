@@ -131,7 +131,7 @@ describe OrganizationUpdateService, skip_seed: true do
       it "should NOT update partners' request flags when enabling request flags on the organization" do
         organization.partners.each { |p|
           p.profile.update!(
-            enable_individual_requests: false,
+            enable_individual_requests: true,
             enable_child_based_requests: false,
             enable_quantity_based_requests: false
           )
@@ -142,7 +142,7 @@ describe OrganizationUpdateService, skip_seed: true do
         expect(organization.partners.map { |p| p.profile.enable_child_based_requests })
           .to eq([false, false])
         expect(organization.partners.map { |p| p.profile.enable_individual_requests })
-          .to eq([false, false])
+          .to eq([true, true])
         expect(organization.partners.map { |p| p.profile.enable_quantity_based_requests })
           .to eq([false, false])
       end
