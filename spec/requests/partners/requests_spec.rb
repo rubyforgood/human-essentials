@@ -5,6 +5,8 @@ RSpec.describe "/partners/requests", type: :request do
     subject { -> { get partners_requests_path } }
     let(:partner_user) { partner.primary_user }
     let(:partner) { create(:partner) }
+    let(:item1) { create(:item, name: "First item") }
+    let(:item2) { create(:item, name: "Second item") }
 
     before do
       sign_in(partner_user)
@@ -13,6 +15,20 @@ RSpec.describe "/partners/requests", type: :request do
     it 'should render without any issues' do
       subject.call
       expect(response).to render_template(:index)
+    end
+
+    it 'should display total count of items in partner request' do
+      create(
+        :request, 
+        partner_id: partner.id, 
+        partner_user_id: partner_user.id,
+        request_items: [
+          {item_id: item1.id, quantity: '125'},
+          {item_id: item2.id, quantity: '559'}
+        ]
+      )
+      subject.call
+      expect(response.body).to include("684")
     end
   end
 
