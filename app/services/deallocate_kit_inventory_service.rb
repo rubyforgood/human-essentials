@@ -50,7 +50,7 @@ class DeallocateKitInventoryService
           kit_allocation.destroy!
           break
         elsif new_quantity.to_i > 0
-          raise StandardError.new('Inconsistant inventory out')
+          raise StandardError.new('Inconsistent inventory out')
         else
           line_item_record.update!(quantity: new_quantity)
         end
@@ -69,7 +69,7 @@ class DeallocateKitInventoryService
       if new_quantity.to_i == 0
         kit_allocation.destroy!
       elsif new_quantity.to_i < 0
-        raise StandardError.new('Inconsistant inventory in')
+        raise StandardError.new('Inconsistent inventory in')
       else
         kit_item.update!(quantity: new_quantity)
       end
