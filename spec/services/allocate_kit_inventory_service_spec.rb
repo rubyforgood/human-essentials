@@ -1,6 +1,6 @@
 RSpec.describe AllocateKitInventoryService, type: :service do
   let(:organization) { create :organization }
-  let(:item) { create(:item, name: "Item", organization: organization, on_hand_minimum_quantity: 5) }
+  let(:item) { create(:item, name: "Item", organization: organization, on_hand_minimum_quantity: 15) }
   let(:item_out_of_stock) { create(:item, name: "Item out of stock", organization: organization, on_hand_minimum_quantity: 0) }
 
   let(:storage_location) { create(:storage_location, organization: organization) }
@@ -90,10 +90,53 @@ RSpec.describe AllocateKitInventoryService, type: :service do
           expect(@second_call.error).to be_nil
 
           # Check inventory out decreases both time with the increase_by value
-          expect(inventory_out.line_items.first.quantity).to eq(kit.line_items.first.quantity * (increase_by+second_increase_by)*(-1))
+          expect(inventory_out.line_items.first.quantity).to eq(kit.line_items.first.quantity * -(increase_by+second_increase_by))
 
           # Check inventory in increase both time with increase_by value
           expect(inventory_in.line_items.first.quantity).to eq(increase_by+second_increase_by)
+        end
+      end
+
+      context "when there are more then one line items" do
+        let(:params) do
+          {
+            organization_id: organization.id,
+            name: Faker::Appliance.equipment,
+            line_items_attributes: {
+              "0": { item_id: item.id, quantity: quantity_of_items },
+              "1": { item_id: item.id, quantity: 2 }
+            }
+          }
+        end
+
+        context "when there kit is allocated once" do
+          before do
+            item_inventory
+            @first_call = AllocateKitInventoryService.new(kit: kit, storage_location: storage_location, increase_by: increase_by).allocate
+          end
+
+          it "inventory out for that kit contains both line_items with their respective quantity" do
+            expect(inventory_out.line_items[0].quantity).to eq(kit.line_items[0].quantity * -increase_by)
+            expect(inventory_out.line_items[1].quantity).to eq(kit.line_items[1].quantity * -increase_by)
+          end
+        end
+
+        context "when same kit is allocated multiple times" do
+          let(:second_increase_by) { 3 }
+          before do
+            item_inventory
+            @first_call = AllocateKitInventoryService.new(kit: kit, storage_location: storage_location, increase_by: increase_by).allocate
+            @second_call = AllocateKitInventoryService.new(kit: kit, storage_location: storage_location, increase_by: second_increase_by).allocate
+          end
+
+          it "inventory out for that kit contains both line_items with their respective quantity" do
+            expect(@first_call.error).to be_nil
+            expect(@second_call.error).to be_nil
+
+            expect(inventory_in.line_items.first.quantity).to eq(increase_by+second_increase_by)
+            expect(inventory_out.line_items[0].quantity).to eq(kit.line_items[0].quantity * -(increase_by+second_increase_by))
+            expect(inventory_out.line_items[1].quantity).to eq(kit.line_items[1].quantity * -(increase_by+second_increase_by))
+          end
         end
       end
     end
