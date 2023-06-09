@@ -239,11 +239,11 @@ RSpec.describe Item, type: :model do
     context "when item does not have kit" do
       let(:kit) { nil }
 
-      it "does not raise NoMethodError" do
+      it "does not raise any errors" do
         allow_any_instance_of(Kit).to receive(:update).and_return(true)
         expect {
           item.update(name: "my new name")
-        }.not_to raise_error(NoMethodError)
+        }.not_to raise_error
       end
     end
   end

@@ -2,31 +2,32 @@
 #
 # Table name: organizations
 #
-#  id                          :integer          not null, primary key
-#  city                        :string
-#  deadline_day                :integer
-#  default_storage_location    :integer
-#  distribute_monthly          :boolean          default(FALSE), not null
-#  email                       :string
-#  enable_child_based_requests :boolean          default(TRUE), not null
-#  enable_individual_requests  :boolean          default(TRUE), not null
-#  intake_location             :integer
-#  invitation_text             :text
-#  latitude                    :float
-#  longitude                   :float
-#  name                        :string
-#  partner_form_fields         :text             default([]), is an Array
-#  reminder_day                :integer
-#  repackage_essentials        :boolean          default(FALSE), not null
-#  short_name                  :string
-#  state                       :string
-#  street                      :string
-#  url                         :string
-#  zipcode                     :string
-#  created_at                  :datetime         not null
-#  updated_at                  :datetime         not null
-#  account_request_id          :integer
-#  ndbn_member_id              :bigint
+#  id                             :integer          not null, primary key
+#  city                           :string
+#  deadline_day                   :integer
+#  default_storage_location       :integer
+#  distribute_monthly             :boolean          default(FALSE), not null
+#  email                          :string
+#  enable_child_based_requests    :boolean          default(TRUE), not null
+#  enable_individual_requests     :boolean          default(TRUE), not null
+#  enable_quantity_based_requests :boolean          default(TRUE), not null
+#  intake_location                :integer
+#  invitation_text                :text
+#  latitude                       :float
+#  longitude                      :float
+#  name                           :string
+#  partner_form_fields            :text             default([]), is an Array
+#  reminder_day                   :integer
+#  repackage_essentials           :boolean          default(FALSE), not null
+#  short_name                     :string
+#  state                          :string
+#  street                         :string
+#  url                            :string
+#  zipcode                        :string
+#  created_at                     :datetime         not null
+#  updated_at                     :datetime         not null
+#  account_request_id             :integer
+#  ndbn_member_id                 :bigint
 #
 
 class Organization < ApplicationRecord
@@ -37,10 +38,12 @@ class Organization < ApplicationRecord
   include Deadlinable
 
   validates :name, presence: true
-  validates :short_name, presence: true, format: /\A[a-z0-9_]+\z/i
+  validates :short_name, presence: true, format: /\A[a-z0-9_]+\z/i, uniqueness: true
   validates :url, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "it should look like 'http://www.example.com'" }, allow_blank: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
   validate :correct_logo_mime_type
+  validate :some_request_type_enabled
+  validate :logo_size_check, if: proc { |org| org.logo.attached? }
 
   belongs_to :account_request, optional: true
   belongs_to :ndbn_member, class_name: 'NDBNMember', optional: true
@@ -109,9 +112,10 @@ class Organization < ApplicationRecord
     ['Agency Stability', 'agency_stability'],
     ['Organizational Capacity', 'organizational_capacity'],
     ['Sources of Funding', 'sources_of_funding'],
+    ['Area Served', 'area_served'],
     ['Population Served', 'population_served'],
     ['Executive Director', 'executive_director'],
-    ['Pickup Person', 'diaper_pick_up_person'],
+    ['Pickup Person', 'pick_up_person'],
     ['Agency Distribution Information', 'agency_distribution_information'],
     ['Attached Documents', 'attached_documents']
   ].freeze
@@ -253,7 +257,19 @@ class Organization < ApplicationRecord
     end
   end
 
+  def some_request_type_enabled
+    unless enable_child_based_requests? || enable_individual_requests || enable_quantity_based_requests
+      errors.add(:enable_child_based_requests, "You must allow at least one request type (child-based, individual, or quantity-based)")
+      errors.add(:enable_individual_requests, "You must allow at least one request type (child-based, individual, or quantity-based)")
+      errors.add(:enable_quantity_based_requests, "You must allow at least one request type (child-based, individual, or quantity-based)")
+    end
+  end
+
   def get_admin_email
     User.with_role(Role::ORG_ADMIN, self).sample.email
+  end
+
+  def logo_size_check
+    errors.add(:logo, 'File size is greater than 1 MB') if logo.byte_size > 1.megabytes
   end
 end

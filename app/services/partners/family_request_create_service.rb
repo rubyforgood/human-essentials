@@ -1,7 +1,6 @@
 # This service object is meant to transform a family request
 # into the correct parameters that would be expected a regular
-# Partners::ItemRequest. It will create the relevant
-# organization request (i.e. ::Request), the Partners::Request,
+# Partners::ItemRequest. It will create the relevant Request,
 # the Partners::ItemRequest(s), and Partners::ChildItemRequest(s)
 module Partners
   class FamilyRequestCreateService

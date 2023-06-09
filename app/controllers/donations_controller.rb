@@ -21,7 +21,7 @@ class DonationsController < ApplicationController
     @paginated_donations_quantity = @paginated_donations.collect(&:total_quantity).sum
     @total_value_all_donations = total_value(@donations)
     @total_money_raised = total_money_raised(@donations)
-    @storage_locations = @donations.collect(&:storage_location).compact.uniq.sort
+    @storage_locations = @donations.filter_map { |donation| donation.storage_location if !donation.storage_location.discarded_at }.compact.uniq.sort
     @selected_storage_location = filter_params[:at_storage_location]
     @sources = @donations.collect(&:source).uniq.sort
     @selected_source = filter_params[:by_source]
@@ -75,11 +75,11 @@ class DonationsController < ApplicationController
 
   def update
     @donation = Donation.find(params[:id])
-    if @donation.replace_increase!(donation_params)
-      redirect_to donations_path
-    else
-      render "edit"
-    end
+    ItemizableUpdateService.call(itemizable: @donation, params: donation_params, type: :increase)
+    redirect_to donations_path
+  rescue => e
+    flash[:alert] = "Error updating donation: #{e.message}"
+    render "edit"
   end
 
   def destroy
@@ -98,7 +98,7 @@ class DonationsController < ApplicationController
   private
 
   def load_form_collections
-    @storage_locations = current_organization.storage_locations.alphabetized
+    @storage_locations = current_organization.storage_locations.active_locations.alphabetized
     @donation_sites = current_organization.donation_sites.alphabetized
     @product_drives = current_organization.product_drives.alphabetized
     @product_drive_participants = current_organization.product_drive_participants.alphabetized

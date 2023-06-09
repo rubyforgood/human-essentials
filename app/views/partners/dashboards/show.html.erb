@@ -1,11 +1,12 @@
 <header class="container mx-auto mb-5">
+  <%= render 'broadcast_announcement' if @broadcast_announcements.any? %>
   <h1 class="d-block font-weight-bold mb-1">Dashboard - <%= @partner.name %></h1>
   <h3><button class="btn btn-warning mx-auto p-2 font-weight-bold round">
-  <%= @partner.partner_status.titleize %> Partner</button></h3>
+  <%= @partner.display_status %> Partner</button></h3>
 </header>
 
 <main>
-  <%= render partial: '/partners/requests/request_options_card' if @partner.verified? %>
+  <%= render partial: '/partners/requests/request_options_card' if @partner.approved? %>
 
   <section class="container mx-auto my-5">
     <%= render partial: "requests_in_progress" %>

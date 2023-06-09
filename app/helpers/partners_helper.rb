@@ -13,12 +13,12 @@ module PartnersHelper
   end
 
   def partner_status_badge(partner)
-    if partner.partner_status == "verified"
-      tag.span partner.partner_status, class: %w(badge badge-pill badge-primary float-right)
-    elsif partner.partner_status == "recertification_required"
-      tag.span partner.partner_status, class: %w(badge badge-pill badge-danger float-right)
+    if partner.status == "approved"
+      tag.span partner.display_status, class: %w(badge badge-pill badge-primary float-right)
+    elsif partner.status == "recertification_required"
+      tag.span partner.display_status, class: %w(badge badge-pill badge-danger float-right)
     else
-      tag.span partner.partner_status, class: %w(badge badge-pill badge-info float-right)
+      tag.span partner.display_status, class: %w(badge badge-pill badge-info float-right)
     end
   end
 end

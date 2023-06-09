@@ -31,13 +31,12 @@ RSpec.describe AccountRequestMailer, type: :mailer do
         expect(html).to match('Username: org_admin1@example.com')
         expect(html).to match('Password: password!')
 
-        expect(html).to match(%r{<a href='https://staging.humanessentials.app/partner_users/sign_in'>PartnerBase</a>})
         expect(html).to match('Username: verified@example.com')
         expect(html).to match('Password: password!')
       end
 
       it 'should include the instruction video link' do
-        expect(html_body(mail)).to include('https://www.youtube.com/watch?v=fwo3WKMGM_4&feature=youtu.be')
+        expect(html_body(mail)).to include('https://youtu.be/w53iaJtlQUo')
       end
 
       it 'should include the button to confirm the request' do
@@ -54,13 +53,12 @@ RSpec.describe AccountRequestMailer, type: :mailer do
         expect(text).to match('Username: org_admin1@example.com')
         expect(text).to match('Password: password!')
 
-        expect(text).to match(%r{https://staging.humanessentials.app/partner_users/sign_in})
         expect(text).to match('Username: verified@example.com')
         expect(text).to match('Password: password!')
       end
 
       it 'should include the instruction video link' do
-        expect(text_body(mail)).to include('https://www.youtube.com/watch?v=fwo3WKMGM_4&feature=youtu.be')
+        expect(text_body(mail)).to include('https://youtu.be/w53iaJtlQUo')
       end
 
       it 'should include the button to confirm the request' do

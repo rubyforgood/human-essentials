@@ -14,7 +14,6 @@ class PartnerRequestRecertificationService
     return self unless valid?
 
     Partners::Base.transaction do
-      partner.profile.update!(partner_status: Partners::Partner::RECERTIFICATION_REQUESTED_STATUS)
       partner.recertification_required!
       PartnerMailer.recertification_request(partner: partner).deliver_later
     rescue StandardError => e

@@ -6,10 +6,7 @@ RSpec.describe UserInviteService, type: :service, skip_seed: true do
       User.create!(name: "Some Name", email: "email@email.com", password: "blahblah!")
     end
     it "should invite the existing user" do
-      allow(User).to receive(:invite!).and_call_original
-      result = described_class.invite(email: "email@email.com")
-      expect(result.id).to eq(user.id)
-      expect(User).to have_received(:invite!)
+      expect { described_class.invite(email: "email@email.com", resource: @organization) }.to change { ActionMailer::Base.deliveries.count }.by(1)
     end
 
     it "should add roles to existing user" do

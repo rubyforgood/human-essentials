@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :partners_family, class: Partners::Family do
-    association :partner, factory: :partners_partner
+    association :partner
 
     comments                  { Faker::Lorem.paragraph }
     # Faker doesn't have county, community is same flavour, we don't use it, and it is not country.

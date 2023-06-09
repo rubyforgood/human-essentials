@@ -40,10 +40,10 @@ FileUtils.chdir APP_ROOT do
   #
   # Validate that the ruby version requirement is met.
   #
-  expected_version = `cat .ruby-version`.chomp
-  current_version = `ruby -v`.chomp
-  unless current_version.include?(expected_version)
-    log "Ruby version must be #{expected_version}. You are on #{current_version}"
+  expected_ruby_version = `cat .ruby-version`.chomp
+  current_ruby_version = `ruby -v`.chomp
+  unless current_ruby_version.include?(expected_ruby_version)
+    log "Ruby version must be #{expected_ruby_version}. You are on #{current_ruby_version}", color: :red
     exit
   end
 
@@ -53,10 +53,6 @@ FileUtils.chdir APP_ROOT do
   system!("bundle update --bundler --verbose")
   system!("bundle check") || system!("bundle install")
 
-  # Install JavaScript dependencies if using Yarn
-  log '== Installing javascript dependencies via yarn == '
-  system('bin/yarn')
-
   unless File.exist?('.env')
     log "== Setup .env file from .env.example =="
     system!('cp .env.example .env')
@@ -64,7 +60,7 @@ FileUtils.chdir APP_ROOT do
 
   log "== Preparing database =="
   log "⚠️  If you use docker to run postgres, make sure your database is running ⚠️"
-  system! 'bin/rails db:setup'
+  system! 'bin/rails db:reset'
   system! 'bin/rails db:test:prepare'
 
   log "== Removing old logs, tempfiles, and jobs =="

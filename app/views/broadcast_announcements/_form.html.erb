@@ -1,0 +1,35 @@
+  <%= simple_form_for @broadcast_announcement, html: { class: 'form-horizontal' } do |f| %>
+    <%= f.error_notification %>
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <!-- left column -->
+          <div class="col-md-12">
+            <!-- jquery validation -->
+            <div class="card card-primary">
+              <!-- /.card-header -->
+              <!-- form start -->
+              <div class="card-body w-50">
+                <%= f.hidden_field :user_id, value: current_user.id %>
+                <%= f.hidden_field :organization_id, value: current_organization.id %>
+                <%= f.label :message, "Announcement " %> <i>(500 character max)</i>
+                <%= f.input :message, label: false, maxlength: 500, autofocus: true %>
+                <%= f.label :link, "URL for more information" %>
+                <%= f.input :link, label: false %>
+                <%= f.input :expiry,
+                  label: "Expiration date",
+                  as: :date,
+                  html5: true %>
+                <!-- /.card-body -->
+                <div class="card-footer">
+                  <%= submit_button({ text: "Broadcast Announcement", icon: "envelope" }) %>
+                </div>
+              </div>
+            </div>
+            <!-- /.card -->
+          </div>
+        </div>
+        <!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </section>
+  <% end %>

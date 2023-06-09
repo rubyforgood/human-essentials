@@ -15,7 +15,6 @@
 #  updated_at      :datetime         not null
 #  organization_id :integer
 #
-
 RSpec.describe StorageLocation, type: :model do
   context "Validations >" do
     it { is_expected.to validate_presence_of(:name) }
@@ -52,6 +51,14 @@ RSpec.describe StorageLocation, type: :model do
       results = StorageLocation.containing(item.id)
       expect(results.length).to eq(1)
       expect(results.first).to eq(storage_location)
+    end
+
+    it "->active_locations yields only storage locations that haven't been discarded" do
+      create(:storage_location, name: "Active Location")
+      create(:storage_location, name: "Inactive Location", discarded_at: Time.zone.now)
+      results = StorageLocation.active_locations
+      expect(results.length).to eq(1)
+      expect(results.first.discarded_at).to be_nil
     end
   end
 
@@ -176,6 +183,13 @@ RSpec.describe StorageLocation, type: :model do
         expect(storage_location.inventory_total_value_in_dollars).to eq(30)
       end
 
+      it "returns a value including cents if the total isn't an even dollar amount" do
+        storage_location = create(:storage_location)
+        item1 = create(:item, value_in_cents: 1_15)
+        create(:inventory_item, storage_location_id: storage_location.id, item_id: item1.id, quantity: 5)
+        expect(storage_location.inventory_total_value_in_dollars).to eq(5.75)
+      end
+
       it "returns 0 when there are no items in this storage location" do
         storage_location = create(:storage_location)
         expect(storage_location.inventory_total_value_in_dollars).to eq(0)
@@ -212,6 +226,29 @@ RSpec.describe StorageLocation, type: :model do
         storage_location.save
         expect(storage_location.latitude).not_to eq(nil)
         expect(storage_location.longitude).not_to eq(nil)
+      end
+    end
+
+    describe "csv_export_attributes" do
+      it "returns an array of storage location attributes, followed by inventory item quantities that are sorted by alphabetized item names" do
+        item1 = create(:item, name: "C")
+        item2 = create(:item, name: "B")
+        item3 = create(:item, name: "A")
+        inactive_item = create(:item, name: "inactive item", active: false)
+        name = "New Storage Location"
+        address = "1500 Remount Road, Front Royal, VA 22630"
+        warehouse_type = "Warehouse with loading bay"
+        square_footage = rand(1000..10000)
+        storage_location = create(:storage_location, name: name, address: address, warehouse_type: warehouse_type, square_footage: square_footage)
+        quantity1 = rand(100..1000)
+        quantity2 = rand(100..1000)
+        quantity3 = rand(100..1000)
+        create(:inventory_item, storage_location_id: storage_location.id, item_id: item1.id, quantity: quantity1)
+        create(:inventory_item, storage_location_id: storage_location.id, item_id: item2.id, quantity: quantity2)
+        create(:inventory_item, storage_location_id: storage_location.id, item_id: item3.id, quantity: quantity3)
+        create(:inventory_item, storage_location_id: storage_location.id, item_id: inactive_item.id, quantity: 1)
+        sum = quantity1 + quantity2 + quantity3
+        expect(storage_location.csv_export_attributes).to eq([name, address, square_footage, warehouse_type, sum, quantity3, quantity2, quantity1])
       end
     end
   end

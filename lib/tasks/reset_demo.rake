@@ -1,13 +1,9 @@
-desc "This task is called by the Heroku scheduler add-on to reset the demo periodically at everyday"
+desc "Resets the database to default demo data"
 task :reset_demo => :environment do
-  puts "Cleaning up the partner database..."
-  DatabaseCleaner[:active_record, { model: Partners::Base }]
-  DatabaseCleaner.strategy = :truncation
-  DatabaseCleaner.clean
+  raise "Cannot run this in production" if Rails.env.production?
 
-  puts "Cleaning up the diaper database..."
-  DatabaseCleaner[:active_record, { model: ApplicationRecord }]
-  DatabaseCleaner.strategy = :truncation
+  puts "Cleaning up the database..."
+  DatabaseCleaner[:active_record].strategy = :truncation
   DatabaseCleaner.clean
 
   puts "Seeding the databases again..."

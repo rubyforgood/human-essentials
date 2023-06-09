@@ -17,6 +17,7 @@
 #
 
 class Partner < ApplicationRecord
+  resourcify
   require "csv"
 
   ALLOWED_MIME_TYPES = [
@@ -29,11 +30,17 @@ class Partner < ApplicationRecord
 
   belongs_to :organization
   belongs_to :partner_group, optional: true
+
   has_many :item_categories, through: :partner_group
   has_many :requestable_items, through: :item_categories, source: :items
+  has_one :profile, class_name: 'Partners::Profile', dependent: :destroy
 
   has_many :distributions, dependent: :destroy
-  has_many :requests, dependent: :destroy
+  has_many :requests, dependent: :destroy, class_name: '::Request'
+  has_many :users, through: :roles, class_name: '::User', dependent: :destroy
+  has_many :families, dependent: :destroy, class_name: 'Partners::Family'
+  has_many :children, through: :families, class_name: 'Partners::Child'
+  has_many :authorized_family_members, through: :families, class_name: 'Partners::AuthorizedFamilyMember'
 
   has_many_attached :documents
 
@@ -64,8 +71,61 @@ class Partner < ApplicationRecord
     where(status: status.to_sym)
   }
 
-  def deactivated?
-    status == 'deactivated'
+  AGENCY_TYPES = {
+    "CAREER" => "Career technical training",
+    "ABUSE" => "Child abuse resource center",
+    "CHURCH" => "Church outreach ministry",
+    "CDC" => "Community development corporation",
+    "HEALTH" => "Community health program",
+    "OUTREACH" => "Community outreach services",
+    "CRISIS" => "Crisis/Disaster services",
+    "DISAB" => "Developmental disabilities program",
+    "DOMV" => "Domestic violence shelter",
+    "CHILD" => "Early childhood services",
+    "EDU" => "Education program",
+    "FAMILY" => "Family resource center",
+    "FOOD" => "Food bank/pantry",
+    "GOVT" => "Government Agency/Affiliate",
+    "HEADSTART" => "Head Start/Early Head Start",
+    "HOMEVISIT" => "Home visits",
+    "HOMELESS" => "Homeless resource center",
+    "INFPAN" => "Infant/Child Pantry/Closet",
+    "PREG" => "Pregnancy resource center",
+    "REF" => "Refugee resource center",
+    "TREAT" => "Treatment clinic",
+    "WIC" => "Women, Infants and Children",
+    "OTHER" => "Other"
+  }.freeze
+
+  ALL_PARTIALS = %w[
+    media_information
+    agency_stability
+    organizational_capacity
+    sources_of_funding
+    area_served
+    population_served
+    executive_director
+    pick_up_person
+    agency_distribution_information
+    attached_documents
+  ].freeze
+
+  # @return [String]
+  def display_status
+    case status
+    when :awaiting_review
+      'Submitted'
+    when :uninvited
+      'Pending'
+    when :approved
+      'Verified'
+    else
+      status.titleize
+    end
+  end
+
+  def primary_user
+    users.order('created_at ASC').first
   end
 
   # @return [Boolean]
@@ -73,22 +133,11 @@ class Partner < ApplicationRecord
     uninvited? &&
       distributions.none? &&
       requests.none? &&
-      (profile.nil? || profile&.users&.none?)
+      users&.none?
   end
 
-  #
-  # Returns the Partners::Partner record which is stored in
-  # the partnerbase DB and contains mostly profile data of
-  # the partner user.
-  def profile
-    @profile ||= ::Partners::Partner.find_by(partner_id: id)
-  end
-
-  #
-  # Returns the primary User record which is the
-  # first & main user associated to a partner agency.
-  def primary_partner_user
-    profile&.primary_user
+  def approvable?
+    invited? || awaiting_review?
   end
 
   # better to extract this outside of the model
@@ -123,24 +172,6 @@ class Partner < ApplicationRecord
     ]
   end
 
-  def meow
-    partners = Partner.where.not(status: 'deactivated')
-    users = partners.map(&:profile).map(&:users).flatten
-    emails = users.map(&:email)
-    partner_emails = emails.flatten
-
-    user_emails = User.where(discarded_at: nil).pluck(:email)
-
-    emails = [partner_emails + user_emails].flatten
-
-    CSV.open("contact_emails.csv", "wb") do |csv|
-      csv << ["Email Address"]
-      emails.each do |email|
-        csv << [email]
-      end
-    end
-  end
-
   def contact_person
     return @contact_person if @contact_person
 
@@ -154,14 +185,43 @@ class Partner < ApplicationRecord
     }
   end
 
+  def partials_to_show
+    organization.partner_form_fields.presence || ALL_PARTIALS
+  end
+
   def quantity_year_to_date
     distributions
       .includes(:line_items)
-      .where("line_items.created_at > ?", Time.zone.today.beginning_of_year)
+      .where('distributions.issued_at >= ?', Time.zone.today.beginning_of_year)
       .references(:line_items).map(&:line_items).flatten.sum(&:quantity)
   end
 
+  def impact_metrics
+    {
+      families_served: families_served_count,
+      children_served: children_served_count,
+      family_zipcodes: family_zipcodes_count,
+      family_zipcodes_list: family_zipcodes_list
+    }
+  end
+
   private
+
+  def families_served_count
+    families.count
+  end
+
+  def children_served_count
+    children.count
+  end
+
+  def family_zipcodes_count
+    families.pluck(:guardian_zip_code).uniq.count
+  end
+
+  def family_zipcodes_list
+    families.pluck(:guardian_zip_code).uniq
+  end
 
   def correct_document_mime_type
     if documents.attached? && documents.any? { |doc| !doc.content_type.in?(ALLOWED_MIME_TYPES) }
@@ -170,7 +230,7 @@ class Partner < ApplicationRecord
   end
 
   def invite_new_partner
-    UserInviteService.invite(email: email, roles: [Role::PARTNER], resource: profile)
+    UserInviteService.invite(email: email, roles: [Role::PARTNER], resource: self)
   end
 
   def should_invite_because_email_changed?

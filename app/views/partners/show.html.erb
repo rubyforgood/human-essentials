@@ -64,7 +64,9 @@
                 <% end %>
                 <br>
                 <br>
-                <%= print_button_to approve_application_partner_path(@partner), { text: "Activate Partner Now", icon: "thumbs-o-up", type: "success", size: "m" } if can_administrate? %>
+                <% unless @partner.approved? %>
+                  <%= print_button_to approve_application_partner_path(@partner), { text: "Activate Partner Now", icon: "thumbs-o-up", type: "success", size: "m" } if can_administrate? %>
+                <% end %>
               </div>
             </div>
           </div>
@@ -218,14 +220,13 @@
 
         <section class="card card-info card-outline" id='partner-information'>
           <div class="card-header">
-            <div>
+            <div class="clearfix">
               <h2 class="card-title">Application & Information</h2>
             </div>
             <div class='pull-right'>
-              <% tooltip_message = "Partner has not requested approval yet. Partners are able to request approval by going into 'My Organization' and clicking 'Request Approval' button." %>
-              <span id="pending-approval-request-tooltip" title="<%= tooltip_message unless @partner.awaiting_review? %>">
-                <%= print_button_to approve_application_partner_path(@partner), { text: "Approve Partner", icon: "thumbs-o-up", type: "success", size: "md", enabled: @partner.awaiting_review? } %>
-              </span>
+              <% unless @partner.approved? %>
+                <%= print_button_to approve_application_partner_path(@partner), { text: "Approve Partner", icon: "thumbs-o-up", type: "success", size: "md", enabled: @partner.approvable? } %>
+              <% end %>
               <%= edit_button_to edit_profile_path(@partner), { text: "Edit Information", size: "md" } %>
             </div>
           </div>
@@ -326,15 +327,12 @@
             <p>
               If your partner is unable to log in because they have forgotten their password, this will send your partner an email to reset their password so are able to can log in again. The person receiving this email should exist in the list of users who can access this partner. That list is available on the current page <a href="#partner-users">here.</a>
             </p>
-            <p>
-              Note: If the email entered for the partner does not match a user on the partner an email will be sent inviting that person to be a user of the partner agency.
-            </p>
             <br/>
-            <%= form_tag invite_partner_user_partner_path do %>
+            <%= form_tag partner_user_reset_password_users_path do %>
               <div class="input-group">
                 <span class="input-group-text" id="spn_env_fa_icon"><%= fa_icon "envelope" %></span>
                 <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon">
-                <%= hidden_field_tag :partner, @partner.id %><br>
+                <%= hidden_field_tag :partner_id, @partner.id %><br>
               </div>
               <br>
               <%= submit_button({ text: "Reset Password", icon: "envelope" }) %>
@@ -345,9 +343,3 @@
     </div><!-- modal-dialog -->
   </div><!-- addUserModal -->
 </section>
-
-<script>
-  $(function () {
-    $('#pending-approval-request-tooltip').tooltip()
-  })
-</script>

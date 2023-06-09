@@ -3,8 +3,10 @@ require 'rails_helper'
 RSpec.describe "/partners/requests", type: :request do
   describe "GET #index" do
     subject { -> { get partners_requests_path } }
-    let(:partner_user) { Partners::Partner.find_by(partner_id: partner.id).primary_user }
+    let(:partner_user) { partner.primary_user }
     let(:partner) { create(:partner) }
+    let(:item1) { create(:item, name: "First item") }
+    let(:item2) { create(:item, name: "Second item") }
 
     before do
       sign_in(partner_user)
@@ -14,11 +16,25 @@ RSpec.describe "/partners/requests", type: :request do
       subject.call
       expect(response).to render_template(:index)
     end
+
+    it 'should display total count of items in partner request' do
+      create(
+        :request,
+        partner_id: partner.id,
+        partner_user_id: partner_user.id,
+        request_items: [
+          {item_id: item1.id, quantity: '125'},
+          {item_id: item2.id, quantity: '559'}
+        ]
+      )
+      subject.call
+      expect(response.body).to include("684")
+    end
   end
 
   describe "GET #new" do
     subject { -> { get new_partners_request_path } }
-    let(:partner_user) { Partners::Partner.find_by(partner_id: partner.id).primary_user }
+    let(:partner_user) { partner.primary_user }
     let(:partner) { create(:partner) }
 
     before do
@@ -39,8 +55,8 @@ RSpec.describe "/partners/requests", type: :request do
   end
 
   describe "POST #create" do
-    subject { -> { post partners_requests_path, params: { partners_request: partners_request_attributes } } }
-    let(:partners_request_attributes) do
+    subject { -> { post partners_requests_path, params: { request: request_attributes } } }
+    let(:request_attributes) do
       {
         comments: Faker::Lorem.paragraph,
         item_requests_attributes: {
@@ -51,7 +67,7 @@ RSpec.describe "/partners/requests", type: :request do
         }
       }
     end
-    let(:partner_user) { Partners::Partner.find_by(partner_id: partner.id).primary_user }
+    let(:partner_user) { partner.primary_user }
     let(:partner) { create(:partner) }
 
     before do
@@ -59,7 +75,7 @@ RSpec.describe "/partners/requests", type: :request do
     end
 
     context 'when given valid parameters' do
-      let(:partners_request_attributes) do
+      let(:request_attributes) do
         {
           comments: Faker::Lorem.paragraph,
           item_requests_attributes: {
@@ -73,12 +89,12 @@ RSpec.describe "/partners/requests", type: :request do
 
       it 'should redirect to the show page' do
         subject.call
-        expect(response).to redirect_to(partners_request_path(Partners::Request.last.id))
+        expect(response).to redirect_to(partners_request_path(Request.last.id))
       end
     end
 
     context 'when given invalid parameters' do
-      let(:partners_request_attributes) do
+      let(:request_attributes) do
         {
           comments: ""
         }
