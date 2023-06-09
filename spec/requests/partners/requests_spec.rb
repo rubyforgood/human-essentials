@@ -73,7 +73,6 @@ RSpec.describe "/partners/requests", type: :request do
       get partners_request_path(other_request)
       expect(response.code).to eq("404")
     end
-
   end
 
   describe "POST #create" do
