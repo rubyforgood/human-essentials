@@ -14,10 +14,11 @@ class OrganizationsController < ApplicationController
 
   def update
     @organization = current_organization
+
     if OrganizationUpdateService.update(@organization, organization_params)
       redirect_to organization_path(@organization), notice: "Updated your organization!"
     else
-      flash[:error] = "Failed to update your organization."
+      flash[:error] = @organization.errors.full_messages.join("\n")
       render :edit
     end
   end
@@ -40,7 +41,7 @@ class OrganizationsController < ApplicationController
     user = User.find(params[:user_id])
     raise ActiveRecord::RecordNotFound unless user.has_role?(Role::ORG_USER, current_organization)
     user.add_role(Role::ORG_ADMIN, current_organization)
-    redirect_to organization_path, notice: "User has been promoted!"
+    redirect_to user_update_redirect_path, notice: "User has been promoted!"
   end
 
   def demote_to_user
@@ -53,21 +54,21 @@ class OrganizationsController < ApplicationController
       notice = "Admin has been changed to User!"
     end
 
-    redirect_to organization_path, notice: notice
+    redirect_to user_update_redirect_path, notice: notice
   end
 
   def deactivate_user
     user = User.with_discarded.find_by!(id: params[:user_id])
     raise ActiveRecord::RecordNotFound unless user.has_role?(Role::ORG_USER, current_organization)
     user.discard!
-    redirect_to organization_path, notice: "User has been deactivated."
+    redirect_to user_update_redirect_path, notice: "User has been deactivated."
   end
 
   def reactivate_user
     user = User.with_discarded.find_by!(id: params[:user_id])
     raise ActiveRecord::RecordNotFound unless user.has_role?(Role::ORG_USER, current_organization)
     user.undiscard!
-    redirect_to organization_path, notice: "User has been reactivated."
+    redirect_to user_update_redirect_path, notice: "User has been reactivated."
   end
 
   private
@@ -85,8 +86,16 @@ class OrganizationsController < ApplicationController
       :invitation_text, :reminder_day, :deadline_day,
       :repackage_essentials, :distribute_monthly,
       :ndbn_member_id, :enable_child_based_requests,
-      :enable_individual_requests,
+      :enable_individual_requests, :enable_quantity_based_requests,
       partner_form_fields: []
     )
+  end
+
+  def user_update_redirect_path
+    if current_user.has_role?(Role::SUPER_ADMIN)
+      admin_organization_path(current_organization.id)
+    else
+      organization_path
+    end
   end
 end

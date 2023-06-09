@@ -35,6 +35,12 @@ RSpec.describe "Donations", type: :system, js: true do
         item.reload
         expect { visit(@url_prefix + "/donations") }.to_not raise_error
       end
+
+      it "should not display inactive storage locations in dropdown" do
+        create(:storage_location, name: "Inactive R Us", discarded_at: Time.zone.now)
+        visit subject
+        expect(page).to have_no_content "Inactive R Us"
+      end
     end
 
     context "When filtering on the index page" do
@@ -497,6 +503,12 @@ RSpec.describe "Donations", type: :system, js: true do
           end
         end
       end
+
+      it "should not display inactive storage locations in dropdown" do
+        create(:storage_location, name: "Inactive R Us", discarded_at: Time.zone.now)
+        visit @url_prefix + "/donations/new"
+        expect(page).to have_no_content "Inactive R Us"
+      end
     end
 
     context "When donation items have value" do
@@ -538,8 +550,31 @@ RSpec.describe "Donations", type: :system, js: true do
         visit @url_prefix + "/donations/"
       end
 
-      xit "Allows the user to edit a donation" do
-        pending("TODO - write this!")
+      it "Allows the user to edit a donation" do
+        total_quantity = find("#donation_quantity").text
+        expect(total_quantity).to eq "100 (Total)"
+        click_on "View"
+        expect(page).to have_content "Rare Candy"
+
+        click_on "Make a correction"
+
+        select Donation::SOURCES[:manufacturer], from: "donation_source"
+        select Manufacturer.first.name, from: "donation_manufacturer_id"
+        fill_in "donation_line_items_attributes_0_quantity", with: "200"
+        fill_in "donation_money_raised_in_dollars", with: "100.02"
+        fill_in "donation_comment", with: "edited"
+
+        click_on "Save"
+
+        total_quantity = find("#donation_quantity").text
+        expect(total_quantity).to eq "200 (Total)"
+
+        expect(Donation.count).to eq(1)
+        donation = Donation.last
+        expect(donation.comment).to eq "edited"
+        expect(donation.manufacturer).to eq Manufacturer.first
+        expect(donation.source).to eq Donation::SOURCES[:manufacturer]
+        expect(donation.money_raised).to eq(10002)
       end
 
       it "Does not default a selection if item lookup fails" do

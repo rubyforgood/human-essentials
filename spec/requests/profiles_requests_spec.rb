@@ -18,20 +18,43 @@ RSpec.describe "Profiles", type: :request do
 
   describe "POST #update" do
     context "successful save" do
-      profiles_params = { name: "Awesome Partner", executive_director_email: "awesomepartner@example.com", facebook: "facebooksucks" }
+      let(:partner_params) do
+        { name: "Awesome Partner", profile:
+                               { executive_director_email: "awesomepartner@example.com", facebook: "facebooksucks" } }
+      end
 
       it "update partner" do
-        put profile_path(default_params.merge(id: partner, partners_partner: profiles_params))
+        put profile_path(default_params.merge(id: partner, partner: partner_params))
         expect(response).to have_http_status(:redirect)
-        partnerbase = partner.profile
-        expect(partnerbase.name).to eq("Awesome Partner")
-        expect(partnerbase.executive_director_email).to eq("awesomepartner@example.com")
-        expect(partnerbase.facebook).to eq("facebooksucks")
+        expect(partner.reload.name).to eq("Awesome Partner")
+        expect(partner.profile.reload.executive_director_email).to eq("awesomepartner@example.com")
+        expect(partner.profile.facebook).to eq("facebooksucks")
       end
 
       it "redirects to #show" do
-        put profile_path(default_params.merge(id: partner, partners_partner: profiles_params))
+        put profile_path(default_params.merge(id: partner, partner: partner_params))
         expect(response).to redirect_to(partner_path(partner) + "#partner-information")
+      end
+    end
+
+    context "when updating an existing value to a blank value" do
+      let(:partner_params) do
+        { name: "Awesome Partner", profile:
+                               { executive_director_email: "awesomepartner@example.com", facebook: "", website: "" } }
+      end
+
+      it "update partner" do
+        put profile_path(default_params.merge(id: partner, partner: partner_params))
+        expect(response).to have_http_status(:redirect)
+        expect(partner.reload.name).to eq("Awesome Partner")
+        expect(partner.profile.reload.executive_director_email).to eq("awesomepartner@example.com")
+        expect(partner.profile.facebook).to be_blank
+      end
+
+      it "should have blank values" do
+        put profile_path(default_params.merge(id: partner, partner: partner_params))
+        expect(response).to have_http_status(:redirect)
+        expect(partner.profile.website).to be_blank
       end
     end
   end

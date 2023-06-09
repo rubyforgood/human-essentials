@@ -2,15 +2,25 @@
 #
 # Table name: roles
 #
-#  id            :bigint           not null, primary key
-#  name          :string
-#  resource_type :string
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  resource_id   :bigint
+#  id              :bigint           not null, primary key
+#  name            :string
+#  resource_type   :string
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  old_resource_id :bigint
+#  resource_id     :bigint
 #
 require "rails_helper"
 
 RSpec.describe Role, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  describe "Validations" do
+    it { should validate_inclusion_of(:resource_type).in_array(Rolify.resource_types) }
+  end
+
+  describe "Associations" do
+    it { should have_and_belong_to_many(:users) }
+    it { should belong_to(:resource).optional }
+  end
+
+  it { should accept_nested_attributes_for :users }
 end

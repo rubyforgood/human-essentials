@@ -14,7 +14,11 @@ class ProductDrivesController < ApplicationController
     respond_to do |format|
       format.html
       format.csv do
-        send_data Exports::ExportProductDrivesCSVService.generate_csv(@product_drives), filename: "Product-Drives-#{Time.zone.today}.csv"
+        send_data Exports::ExportProductDrivesCSVService.new(
+          @product_drives,
+          current_organization,
+          helpers.selected_range
+        ).generate_csv, filename: "Product-Drives-#{Time.zone.today}.csv"
       end
     end
   end
@@ -95,6 +99,6 @@ class ProductDrivesController < ApplicationController
     def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).slice(:by_name)
+    params.require(:filters).permit(:by_name)
   end
 end

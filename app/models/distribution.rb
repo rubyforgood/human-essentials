@@ -37,7 +37,8 @@ class Distribution < ApplicationRecord
   accepts_nested_attributes_for :request
 
   validates :storage_location, :partner, :organization, :delivery_method, presence: true
-  validate :line_item_items_exist_in_inventory
+  validate :line_items_exist_in_inventory
+  validate :line_items_quantity_is_positive
 
   before_save :combine_distribution
 
@@ -48,6 +49,7 @@ class Distribution < ApplicationRecord
   # add item_id scope to allow filtering distributions by item
   scope :by_item_id, ->(item_id) { joins(:items).where(items: { id: item_id }) }
   # partner scope to allow filtering by partner
+  scope :by_item_category_id, ->(item_category_id) { joins(:items).where(items: { item_category_id: item_category_id }) }
   scope :by_partner, ->(partner_id) { where(partner_id: partner_id) }
   # location scope to allow filtering distributions by location
   scope :by_location, ->(storage_location_id) { where(storage_location_id: storage_location_id) }
@@ -103,6 +105,7 @@ class Distribution < ApplicationRecord
     self.request = request
     self.organization_id = request.organization_id
     self.partner_id = request.partner_id
+    self.agency_rep = request.partner_user&.formatted_email
     self.comment = request.comments
     self.issued_at = Time.zone.today + 1.day
     request.request_items.each do |item|
@@ -138,5 +141,11 @@ class Distribution < ApplicationRecord
 
   def past?
     issued_at < Time.zone.today
+  end
+
+  private
+
+  def line_items_quantity_is_positive
+    line_items_quantity_is_at_least(1)
   end
 end

@@ -16,7 +16,7 @@ class PurchasesController < ApplicationController
     @purchases_quantity = @purchases.collect(&:total_quantity).sum
     @paginated_purchases_quantity = @paginated_purchases.collect(&:total_quantity).sum
     @total_value_all_purchases = @purchases.sum(&:amount_spent_in_cents)
-    @storage_locations = current_organization.storage_locations
+    @storage_locations = current_organization.storage_locations.active_locations
     @selected_storage_location = filter_params[:at_storage_location]
     @vendors = current_organization.vendors.sort_by { |vendor| vendor.business_name.downcase }
     @selected_vendor = filter_params[:from_vendor]
@@ -64,12 +64,12 @@ class PurchasesController < ApplicationController
 
   def update
     @purchase = current_organization.purchases.find(params[:id])
-    if @purchase.replace_increase!(purchase_params)
-      redirect_to purchases_path
-    else
-      load_form_collections
-      render "edit"
-    end
+    ItemizableUpdateService.call(itemizable: @purchase, params: purchase_params, type: :increase)
+    redirect_to purchases_path
+  rescue => e
+    load_form_collections
+    flash[:alert] = "Error updating purchase: #{e.message}"
+    render "edit"
   end
 
   def destroy
@@ -86,7 +86,7 @@ class PurchasesController < ApplicationController
   private
 
   def load_form_collections
-    @storage_locations = current_organization.storage_locations.alphabetized
+    @storage_locations = current_organization.storage_locations.active_locations.alphabetized
     @items = current_organization.items.active.alphabetized
     @vendors = current_organization.vendors.alphabetized
   end

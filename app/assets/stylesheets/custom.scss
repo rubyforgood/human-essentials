@@ -2,14 +2,14 @@
 @import 'AdminLTE';
 
 @mixin for-desktop {
-    @media (min-width: 992px) and (min-height: 769px) { 
+    @media (min-width: 992px) and (min-height: 769px) {
         @content;
     }
 }
 
 .full-height {
     height: 'auto';
-    @include for-desktop { 
+    @include for-desktop {
         height: calc(100vh - #{$diaper-navbar-height}px - #{$diaper-footer-height}px);
     }
 }
@@ -19,17 +19,36 @@
     width: 100%
 }
 
+#csvImportModal .modal-dialog.onboarding_steps .modal-body li {
+  text-align: left !important;
+}
+#csvImportModal .modal-header {
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  h2 {
+    text-align: center;
+  }
+  .close {
+    position: absolute;
+    margin: 0 !important;
+    top: -0.25rem;
+    left: 0.5rem;
+  }
+}
+
 #pick-ups-header {
     height: 'auto';
-    @include for-desktop { 
-        height: 10%;        
+    @include for-desktop {
+        height: 10%;
     }
 }
 
 #pick-ups-calendar {
     height: 'auto';
-    @include for-desktop { 
-        height: 90%;        
+    @include for-desktop {
+        height: 90%;
     }
 }
 
@@ -43,7 +62,9 @@
 }
 
 .login-page--user {
-  background: linear-gradient(135deg, #3023AE, #C86DD7)
+  background: linear-gradient(135deg, #3023AE, #C86DD7);
+  background-attachment: fixed;
+  flex-flow: wrap;
 }
 
 .login-page--consolidated {
@@ -60,4 +81,12 @@
 
 .modal-body-warning-text {
   color: #ee5034
+}
+
+.numeric {
+  text-align: right;
+}
+
+.percent {
+  text-align: right;
 }

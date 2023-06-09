@@ -2,12 +2,13 @@
 #
 # Table name: roles
 #
-#  id            :bigint           not null, primary key
-#  name          :string
-#  resource_type :string
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  resource_id   :bigint
+#  id              :bigint           not null, primary key
+#  name            :string
+#  resource_type   :string
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  old_resource_id :bigint
+#  resource_id     :bigint
 #
 class Role < ApplicationRecord
   has_and_belongs_to_many :users, join_table: :users_roles

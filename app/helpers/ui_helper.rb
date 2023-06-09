@@ -112,7 +112,7 @@ module UiHelper
   # Generic Submit button for a form
   def submit_button(options = {}, data = {})
     disable_text = options[:disable_text] || "Saving"
-    _button_to({ text: "Save", icon: "floppy-o", type: "success", align: "pull-right" }.merge(options), data: { disable_text: disable_text }.merge(data), name: options[:name] || 'button')
+    _button_to({ text: "Save", icon: "floppy-o", type: "success", align: "pull-right" }.merge(options), data: { disable_with: disable_text }.merge(data), name: options[:name] || 'button')
   end
 
   # Like above, but POSTs to a URL instead of to a form
@@ -148,7 +148,7 @@ module UiHelper
     # user sparingly.
     center = options[:center].present? ? "center-block" : ""
 
-    disabled = options[:enabled] || options[:enabled].nil? ? "" : "disabled"
+    disabled = (options[:enabled] || options[:enabled].nil?) ? "" : "disabled"
 
     klass = "#{options[:class] || ""} btn btn-#{type} btn-#{size} #{center} #{disabled}"
 
@@ -176,6 +176,31 @@ module UiHelper
       tag.span(field)
     else
       tag.span("Not-Provided", class: "text-muted font-weight-light")
+    end
+  end
+
+  def add_served_area_button(form, node, options = {})
+    text = options[:text] || "Add another county"
+    size = options[:size] || "md"
+    type = options[:type] || "primary"
+    partial = options[:partial] || "served_areas/served_area_fields"
+    link_to_add_association form, :served_areas,
+                           data: {
+                             association_insertion_node: node,
+                             association_insertion_method: "append"
+                           }, id: "__add_partner_served_area", class: "btn btn-#{size} btn-#{type} add-partner-served_area", partial: partial do
+      fa_icon "plus", text: text
+    end
+  end
+
+  def delete_served_area_button(form, options = {})
+    text = options[:text] || "Remove"
+    size = options[:text] || "sm"
+    type = options[:type] || "danger"
+
+    link_to_remove_association form, class: "btn btn-#{size} btn-#{type} remove_served_area", style: "width: 100px;",
+                               "data-action": "click->served-area#zeroShareValue click->area-served#calculateClientShareTotal" do
+      fa_icon "trash", text: text
     end
   end
 end

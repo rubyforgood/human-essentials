@@ -10,9 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_09_30_091557) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_05_140424) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  # Custom types defined in this database.
+  # Note that some types may not work with other database engines. Be careful if changing database.
+  create_enum "category", ["US_County", "Other"]
 
   create_table "account_requests", force: :cascade do |t|
     t.string "name", null: false
@@ -139,6 +143,18 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_30_091557) do
     t.string "partner_key"
   end
 
+  create_table "broadcast_announcements", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.text "message"
+    t.text "link"
+    t.date "expiry"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "organization_id"
+    t.index ["organization_id"], name: "index_broadcast_announcements_on_organization_id"
+    t.index ["user_id"], name: "index_broadcast_announcements_on_user_id"
+  end
+
   create_table "child_item_requests", force: :cascade do |t|
     t.bigint "child_id"
     t.bigint "item_request_id"
@@ -169,6 +185,17 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_30_091557) do
     t.boolean "active", default: true
     t.boolean "archived"
     t.index ["family_id"], name: "index_children_on_family_id"
+  end
+
+  create_table "counties", force: :cascade do |t|
+    t.string "name"
+    t.string "region"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.enum "category", default: "US_County", null: false, enum_type: "category"
+    t.index ["name", "region"], name: "index_counties_on_name_and_region", unique: true
+    t.index ["name"], name: "index_counties_on_name"
+    t.index ["region"], name: "index_counties_on_region"
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
@@ -265,6 +292,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_30_091557) do
     t.datetime "updated_at", precision: nil, null: false
     t.bigint "partner_id"
     t.boolean "military", default: false
+    t.bigint "old_partner_id"
     t.index ["partner_id"], name: "index_families_on_partner_id"
   end
 
@@ -318,6 +346,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_30_091557) do
     t.datetime "updated_at", precision: nil, null: false
     t.string "partner_key"
     t.integer "item_id"
+    t.integer "old_partner_request_id"
     t.index ["item_id"], name: "index_item_requests_on_item_id"
     t.index ["partner_request_id"], name: "index_item_requests_on_partner_request_id"
   end
@@ -406,6 +435,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_30_091557) do
     t.bigint "ndbn_member_id"
     t.boolean "enable_child_based_requests", default: true, null: false
     t.boolean "enable_individual_requests", default: true, null: false
+    t.boolean "enable_quantity_based_requests", default: true, null: false
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
@@ -517,6 +547,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_30_091557) do
     t.boolean "enable_individual_requests", default: true, null: false
     t.string "instagram"
     t.boolean "no_social_media_presence"
+    t.boolean "enable_quantity_based_requests", default: true, null: false
     t.index ["essentials_bank_id"], name: "index_partners_on_essentials_bank_id"
   end
 
@@ -531,6 +562,16 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_30_091557) do
     t.integer "partner_user_id"
     t.index ["organization_id"], name: "index_partner_requests_on_organization_id"
     t.index ["partner_id"], name: "index_partner_requests_on_partner_id"
+  end
+
+  create_table "partner_served_areas", force: :cascade do |t|
+    t.bigint "partner_profile_id", null: false
+    t.bigint "county_id", null: false
+    t.integer "client_share"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["county_id"], name: "index_partner_served_areas_on_county_id"
+    t.index ["partner_profile_id"], name: "index_partner_served_areas_on_partner_profile_id"
   end
 
   create_table "partner_users", force: :cascade do |t|
@@ -659,6 +700,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_30_091557) do
     t.bigint "resource_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "old_resource_id"
     t.index ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id"
     t.index ["resource_type", "resource_id"], name: "index_roles_on_resource"
   end
@@ -771,6 +813,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_30_091557) do
   add_foreign_key "adjustments", "users"
   add_foreign_key "annual_reports", "organizations"
   add_foreign_key "authorized_family_members", "families"
+  add_foreign_key "broadcast_announcements", "users"
   add_foreign_key "child_item_requests", "children"
   add_foreign_key "child_item_requests", "item_requests"
   add_foreign_key "children", "families"
@@ -779,11 +822,10 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_30_091557) do
   add_foreign_key "donations", "manufacturers"
   add_foreign_key "donations", "product_drives"
   add_foreign_key "donations", "storage_locations"
-  add_foreign_key "families", "partner_profiles", column: "partner_id"
+  add_foreign_key "families", "partners"
   add_foreign_key "item_categories", "organizations"
   add_foreign_key "item_categories_partner_groups", "item_categories"
   add_foreign_key "item_categories_partner_groups", "partner_groups"
-  add_foreign_key "item_requests", "partner_requests"
   add_foreign_key "items", "item_categories"
   add_foreign_key "items", "kits"
   add_foreign_key "kits", "organizations"
@@ -792,11 +834,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_30_091557) do
   add_foreign_key "organizations", "ndbn_members", primary_key: "ndbn_member_id"
   add_foreign_key "partner_groups", "organizations"
   add_foreign_key "partner_requests", "users", column: "partner_user_id"
-  add_foreign_key "partner_users", "partner_profiles", column: "partner_id"
+  add_foreign_key "partner_served_areas", "counties"
+  add_foreign_key "partner_served_areas", "partner_profiles"
   add_foreign_key "partners", "storage_locations", column: "default_storage_location_id"
   add_foreign_key "product_drives", "organizations"
   add_foreign_key "requests", "distributions"
   add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"
-  add_foreign_key "users", "partner_profiles", column: "partner_id"
 end

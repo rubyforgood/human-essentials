@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "/partners/dashboard", type: :request do
   let(:partner) { create(:partner) }
-  let(:partner_user) { Partners::Partner.find_by(partner_id: partner.id).primary_user }
+  let(:partner_user) { partner.primary_user }
   let(:date) { 1.week.from_now }
   let(:past_date) { 1.week.ago }
   let(:item1) { create(:item, name: "Good item") }
@@ -53,6 +53,26 @@ RSpec.describe "/partners/dashboard", type: :request do
       partner_user.add_role(Role::ORG_USER, @organization)
       get partners_dashboard_path
       expect(response.body).to include("switch_to_role")
+    end
+  end
+
+  context "BroadcastAnnouncement card" do
+    it "displays announcements if there are valid ones" do
+      BroadcastAnnouncement.create(message: "test announcement", user_id: 1, organization_id: 1)
+      get partners_dashboard_path
+      expect(response.body).to include("test announcement")
+    end
+
+    it "doesn't display announcements if there are not valid ones" do
+      BroadcastAnnouncement.create(expiry: 5.days.ago, message: "test announcement", user_id: 1, organization_id: 1)
+      get partners_dashboard_path
+      expect(response.body).not_to include("test announcement")
+    end
+
+    it "doesn't display announcements from super admins" do
+      BroadcastAnnouncement.create(message: "test announcement", user_id: 1, organization_id: nil)
+      get partners_dashboard_path
+      expect(response.body).not_to include("test announcement")
     end
   end
 end

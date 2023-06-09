@@ -12,11 +12,11 @@ ruby "3.1.2"
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.4.4"
+gem "pg", "~> 1.5.3"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "7.0.4"
+gem "rails", "7.0.5"
 
 ###### MODELS / DATABASE #######
 
@@ -26,7 +26,7 @@ gem 'azure-storage-blob'
 # Adds soft delete functionality for models.
 gem 'discard', '~> 1.0'
 # Adds grouping by date/month/etc to queries.
-gem "groupdate", "~> 6.1"
+gem "groupdate", "~> 6.2"
 # Treats attributes like money, which knows about dollars and cents.
 gem "money-rails"
 # Tracks history / audits models.
@@ -34,22 +34,15 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.3.2"
+gem "strong_migrations", "1.4.4"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
 gem 'bootstrap-select-rails'
 # Bootstrap is a library for HTML, CSS and JS.
 gem 'bootstrap', '~> 4.6.0'
-# jQuery framework (DOM methods, Ajax, chaining, etc.)
-gem "jquery-rails"
-gem "jquery-ui-rails"
 # SASS CSS framework (nested selectors, variables, etc.)
 gem "sass-rails"
-# JavaScript minified, used in asset compilation.
-gem "uglifier", ">= 1.3.0"
-# JavaScript bundler.
-gem 'webpacker', '~> 5.0'
 # Used to verify that the user is a human.
 gem "recaptcha"
 # Hotwire for SPA like without much JS
@@ -104,15 +97,17 @@ gem 'httparty'
 gem 'icalendar', require: false
 # JSON Web Token encoding / decoding (e.g. for links in e-mails)
 gem "jwt"
+# Used to manage periodic cron-like jobs
+gem "clockwork"
 
 ##### DEPENDENCY PINS ######
 # These are gems that aren't used directly, only as dependencies for other gems.
 # Technically they don't need to be in this Gemfile at all, but we are pinning them to
 # specific versions for compatibility reasons.
-gem "mini_racer", "~> 0.6.3"
+gem "mini_racer", "~> 0.8.0"
 gem "nokogiri", ">= 1.10.4"
 gem "image_processing"
-gem "sprockets", "~> 4.1.1"
+gem "sprockets", "~> 4.0.0"
 
 group :production do
   # Reduce the noise of logs and include custom fields to it for easier access
@@ -123,11 +118,16 @@ group :production do
   gem 'coverband'
 end
 
+group :production, :staging do
+  # JS compression for deployed environments.
+  gem 'terser'
+end
+
 group :development, :test, :staging do
   # Generate models based on factory definitions.
   gem 'factory_bot_rails'
   # Ensure the database is in a clean state on every test.
-  gem "database_cleaner", '1.8.5'
+  gem "database_cleaner-active_record", '~> 2.1'
   # Generate fake data for use in tests.
   gem 'faker'
 end
@@ -150,15 +150,16 @@ group :development, :test do
   # Add-on for command line to create a simple debugger.
   gem "pry-nav"
   # RSpec behavioral testing framework for Rails.
-  gem "rspec-rails", "~> 6.0.1"
+  gem "rspec-rails", "~> 6.0.3"
   # Allow retrying flaky RSpec tests.
   gem "rspec-retry"
   # Static analysis / linter.
   gem "rubocop"
   # Rails add-on for static analysis.
-  gem "rubocop-rails", "~> 2.9.0"
+  gem 'rubocop-performance'
+  gem "rubocop-rails", "~> 2.19.1"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.0"
+  gem "standard", "~> 1.28"
 end
 
 group :development do
@@ -175,7 +176,7 @@ group :development do
   # Open sent e-mails in the browser instead of trying to send to a real mail server.
   gem "letter_opener"
   # Used as a dependency for Guard.
-  gem "listen", "~> 3.7.0"
+  gem "listen", "~> 3.8.0"
   # Generate a diagram based on Rails models.
   gem "rails-erd"
   # Allows to create a console in the browser.
@@ -184,7 +185,7 @@ end
 
 group :test do
   # Test using browsers.
-  gem "capybara", "~> 3.37"
+  gem "capybara", "~> 3.39"
   # Create screenshots when doing browser tests.
   gem "capybara-screenshot"
   # Generate Capybara tests in the browser and debug them.
@@ -196,7 +197,7 @@ group :test do
   # Show code coverage.
   gem 'simplecov'
   # More concise test ("should") matchers
-  gem 'shoulda-matchers', '~> 5.2'
+  gem 'shoulda-matchers', '~> 5.3'
   # Selenium webdriver automatic installation and update.
   gem 'webdrivers', '~> 5.2'
   # Mock HTTP requests and ensure they are not called during tests.
@@ -213,3 +214,5 @@ end
 
 # Use Redis for Action Cable
 gem "redis", "~> 5.0"
+
+gem "importmap-rails", "~> 1.1"

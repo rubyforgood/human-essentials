@@ -25,16 +25,11 @@ RSpec.feature "Distributions", type: :system do
 
   context "When creating a new distribution manually" do
     it "Allows a distribution to be created" do
-      # update items to check for inactive ones
-      @storage_location.items.first.update!(name: 'Inactive Item', active: false)
-
       visit @url_prefix + "/distributions/new"
 
       select @partner.name, from: "Partner"
       select @storage_location.name, from: "From storage location"
       choose "Pick up"
-
-      expect(page).not_to have_content('Inactive')
 
       fill_in "Comment", with: "Take my wipes... please"
       fill_in "Distribution date", with: '01/01/2001 10:15:00 AM'
@@ -131,6 +126,12 @@ RSpec.feature "Distributions", type: :system do
         visit @url_prefix + "/distributions/new"
         expect(find("#distribution_storage_location_id").text).to eq(@storage_location.name)
       end
+    end
+    it "should not display inactive storage locations in dropdown" do
+      inactive_location = create(:storage_location, name: "Inactive R Us", discarded_at: Time.zone.now)
+      setup_storage_location(inactive_location)
+      visit @url_prefix + "/distributions/new"
+      expect(page).to have_no_content "Inactive R Us"
     end
   end
 
@@ -393,6 +394,30 @@ RSpec.feature "Distributions", type: :system do
       expect(@request.reload.distribution_id).to eq @distribution.id
       expect(@request.reload).to be_status_fulfilled
     end
+
+    it "maintains the connection with the request even when there are initial errors" do
+      items = @storage_location.items.pluck(:id).sample(2)
+      request_items = [{ "item_id" => items[0], "quantity" => 1000000 }, { "item_id" => items[1], "quantity" => 10 }]
+      @request = create :request, organization: @organization, request_items: request_items
+
+      visit @url_prefix + "/requests/#{@request.id}"
+      click_on "Fulfill request"
+      within "#new_distribution" do
+        select @storage_location.name, from: "From storage location"
+        choose "Delivery"
+        click_on "Save"
+      end
+
+      expect(page).to have_content("Sorry, we weren't able to save")
+      find_all(".numeric")[0].set 1
+      click_on "Save"
+
+      expect(page).to have_content("Distribution Complete")
+
+      @distribution = Distribution.last
+      expect(@request.reload.distribution_id).to eq @distribution.id
+      expect(@request.reload).to be_status_fulfilled
+    end
   end
 
   context "via barcode entry" do
@@ -409,27 +434,28 @@ RSpec.feature "Distributions", type: :system do
       expect(qty).to eq(@existing_barcode.quantity.to_s)
     end
 
-    xit "a user can add items that do not yet have a barcode" do
-      pending("fix this test")
-      page.fill_in "_barcode-lookup-0", with: "123123123321\n"
-      find('#_barcode-lookup-0').set("123123123321\n")
+    it "a user can add items that do not yet have a barcode" do
+      barcode_value = "123123123321\n"
+      page.fill_in "_barcode-lookup-0", with: barcode_value
 
-      page.fill_in "Quantity", with: "50"
-      select "Adult Briefs (Large/X-Large)", from: "Item"
-      page.fill_in "Barcode", with: "123123123321"
-
-      click_on "Submit"
+      within ".modal-content" do
+        page.fill_in "Quantity", with: "51"
+        select "Adult Briefs (Large/X-Large)", from: "Item"
+        click_on "Save"
+      end
 
       visit @url_prefix + "/distributions/new"
-      page.fill_in "_barcode-lookup-0", with: "123123123321\n"
+      page.fill_in "_barcode-lookup-0", with: barcode_value
 
-      expect(page).to have_text("50")
+      expect(page).to have_text("Adult Briefs (Large/X-Large)")
+      expect(page).to have_field("Quantity", with: "51")
     end
   end
 
   context "when filtering on the index page" do
     subject { @url_prefix + "/distributions" }
-    let(:item1) { create(:item, name: "Good item") }
+    let(:item_category) { create(:item_category) }
+    let(:item1) { create(:item, name: "Good item", item_category: item_category) }
     let(:item2) { create(:item, name: "Crap item") }
     let(:partner1) { create(:partner, name: "This Guy", email: "thisguy@example.com") }
     let(:partner2) { create(:partner, name: "Not This Guy", email: "ntg@example.com") }
@@ -446,6 +472,33 @@ RSpec.feature "Distributions", type: :system do
       click_button("Filter")
       # check for filtered distributions
       expect(page).to have_css("table tbody tr", count: 1)
+
+      # check for heading text
+      expect(page).to have_css("table thead tr th", text: "Total #{item1.name}")
+      # check for count update
+      stored_item1_total = @storage_location.item_total(item1.id)
+      expect(page).to have_css("table tbody tr td", text: stored_item1_total)
+    end
+
+    it "filters by item category id" do
+      @organization.item_categories << item_category
+      create(:distribution, :with_items, item: item1)
+      create(:distribution, :with_items, item: item2)
+
+      visit subject
+      # check for all distributions
+      expect(page).to have_css("table tbody tr", count: 2)
+      # filter
+      select(item_category.name, from: "filters_by_item_category_id")
+      click_button("Filter")
+      # check for filtered distributions
+      expect(page).to have_css("table tbody tr", count: 1)
+
+      # check for heading text
+      expect(page).to have_css("table thead tr th", text: "Total in #{item_category.name}")
+      # check for count update
+      stored_item1_total = @storage_location.item_total(item1.id)
+      expect(page).to have_css("table tbody tr td", text: stored_item1_total)
     end
 
     it "filters by partner" do
@@ -477,5 +530,11 @@ RSpec.feature "Distributions", type: :system do
     end
 
     it_behaves_like "Date Range Picker", Distribution, :issued_at
+
+    it "should not display inactive storage locations in dropdown" do
+      create(:storage_location, name: "Inactive R Us", discarded_at: Time.zone.now)
+      visit subject
+      expect(page).to have_no_content "Inactive R Us"
+    end
   end
 end

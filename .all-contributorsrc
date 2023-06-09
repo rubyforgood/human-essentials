@@ -1044,6 +1044,54 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "confused-cabbage",
+      "name": "Robert Greene",
+      "avatar_url": "https://avatars.githubusercontent.com/u/65237366?v=4",
+      "profile": "http://robgreene.dev",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "kev-kev",
+      "name": "Kevin Clark",
+      "avatar_url": "https://avatars.githubusercontent.com/u/32309015?v=4",
+      "profile": "https://kev-kev.github.io/portfolio",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "jdepumpo",
+      "name": "Joe DePumpo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/24465877?v=4",
+      "profile": "https://joe.depumpo.com/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "KaylaGallatin",
+      "name": "Kayla McEowen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7715500?v=4",
+      "profile": "https://github.com/KaylaGallatin",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "cielf",
+      "name": "CL Fisher",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10157589?v=4",
+      "profile": "https://github.com/cielf",
+      "contributions": [
+        "code",
+        "projectManagement",
+        "ideas",
+        "questions"
+      ]
     }
   ],
   "contributorsPerLine": 7,

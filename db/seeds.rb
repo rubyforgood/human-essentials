@@ -173,13 +173,6 @@ end
 # Partners & Associated Data
 # ----------------------------------------------------------------------------
 
-partner_status_map = {
-  pending: "pending",
-  recertification_required: "recertification_required",
-  approved: "verified",
-  verified: "verified"
-}
-
 note = [
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ac enim orci. Donec id consequat est. Vivamus luctus vel erat quis tincidunt. Nunc quis varius justo. Integer quam augue, dictum vitae bibendum in, fermentum quis felis. Nam euismod ultrices velit a tristique. Vestibulum sed tincidunt erat. Vestibulum et ullamcorper sem. Sed ante leo, molestie vitae augue ac, aliquam ultrices enim."
 ]
@@ -215,16 +208,9 @@ note = [
     partner.partner_group = pdx_org.partner_groups.first
   end
 
-
-
-  # ----------------------------------------------------------------------------
-  # Creating associated records within the Partnerbase database
-  #
-  # **We have two separate database. One for diaperbase and the other for partnerbase**
-  # ----------------------------------------------------------------------------
-
-  partner = Partners::Partner.create!({
-                                        name: p.name,
+  profile = Partners::Profile.create!({
+                                        essentials_bank_id: p.organization_id,
+                                        partner_id: p.id,
                                         address1: Faker::Address.street_address,
                                         address2: "",
                                         city: Faker::Address.city,
@@ -232,8 +218,6 @@ note = [
                                         zip_code: Faker::Address.zip,
                                         website: Faker::Internet.domain_name,
                                         zips_served: Faker::Address.zip,
-                                        essentials_bank_id: pdx_org.id,
-                                        partner_id: p.id,
                                         executive_director_name: Faker::Name.name,
                                         executive_director_email: p.email,
                                         executive_director_phone: Faker::PhoneNumber.phone_number,
@@ -243,9 +227,7 @@ note = [
                                         primary_contact_mobile: Faker::PhoneNumber.phone_number,
                                         pick_up_name: Faker::Name.name,
                                         pick_up_email: Faker::Internet.email,
-                                        pick_up_phone: Faker::PhoneNumber.phone_number,
-                                        partner_status: partner_status_map[partner_option[:status]] || "pending",
-                                        status_in_diaper_base: partner_option[:status]
+                                        pick_up_phone: Faker::PhoneNumber.phone_number
                                       })
 
   user = ::User.create!(
@@ -257,7 +239,7 @@ note = [
     last_sign_in_at: Time.utc(2021, 9, 9, 11, 34, 4)
   )
 
-  user.add_role(:partner, partner)
+  user.add_role(:partner, p)
 
   user_2 = ::User.create!(
     name: Faker::Name.name,
@@ -268,13 +250,13 @@ note = [
     last_sign_in_at: Time.utc(2021, 9, 17, 11, 34, 4)
   )
 
-  user_2.add_role(:partner, partner)
+  user_2.add_role(:partner, p)
 
   #
   # Skip creating records that they would have created after
   # they've accepted the invitation
   #
-  next if partner.partner_status == 'pending'
+  next if p.status == 'uninvited'
 
   families = (1..Faker::Number.within(range: 4..13)).to_a.map do
     Partners::Family.create!(
@@ -294,7 +276,7 @@ note = [
       guardian_health_insurance: Partners::Family::INSURANCE_TYPES.sample,
       comments: Faker::Lorem.paragraph,
       military: false,
-      partner: partner
+      partner: p
     )
   end
 
@@ -322,7 +304,7 @@ note = [
         comments: Faker::Lorem.paragraph,
         active: Faker::Boolean.boolean,
         archived: false,
-        item_needed_diaperid: partner.organization.item_id_to_display_string_map.key(Partners::Child::CHILD_ITEMS.sample)
+        item_needed_diaperid: p.organization.item_id_to_display_string_map.key(Partners::Child::CHILD_ITEMS.sample)
       )
     end
 
@@ -340,34 +322,40 @@ note = [
         comments: Faker::Lorem.paragraph,
         active: Faker::Boolean.boolean,
         archived: false,
-        item_needed_diaperid: partner.organization.item_id_to_display_string_map.key(Partners::Child::CHILD_ITEMS.sample)
+        item_needed_diaperid: p.organization.item_id_to_display_string_map.key(Partners::Child::CHILD_ITEMS.sample)
       )
     end
   end
 
   Faker::Number.within(range: 32..56).times do
-    pr = Partners::Request.new(
+    partner_request = ::Request.new(
+      partner_id: p.id,
+      organization_id: p.organization_id,
       comments: Faker::Lorem.paragraph,
-      partner: partner,
-      for_families: Faker::Boolean.boolean,
-      partner_user: partner.primary_user
+      partner_user_id: p.primary_user.id
     )
 
-    # Ensure that the item requests are valid with
-    # the valid `item_id
-    item_requests = Array.new(Faker::Number.within(range: 5..15)) do
-      item = Item.all.sample
-
-      Partners::ItemRequest.new(
-        name: Partners::Child::CHILD_ITEMS.sample,
+    item_requests = [] 
+    Array.new(Faker::Number.within(range: 5..15)) do
+      item = p.organization.items.sample
+      new_item_request = Partners::ItemRequest.new(
+        item_id: item.id,
         quantity: Faker::Number.within(range: 10..30),
-        partner_key: item.partner_key,
-        item_id: item.id
+        children: [],
+        name: item.name,
+        partner_key: item.partner_key
       )
+      partner_request.item_requests << new_item_request
     end
 
-    pr.item_requests = item_requests
-    pr.save!
+    partner_request.request_items = partner_request.item_requests.map do |ir|
+      {
+        item_id: ir.item_id,
+        quantity: ir.quantity
+      }
+    end
+
+    partner_request.save!
   end
 end
 
@@ -578,30 +566,6 @@ end
 end
 
 # ----------------------------------------------------------------------------
-# Requests
-# ----------------------------------------------------------------------------
-
-20.times.each do |count|
-  status = count > 15 ? 'fulfilled' : 'pending'
-
-  org_items = pdx_org.items.pluck(:id)
-  request_items = Array.new(Faker::Number.within(range: 3..8)).map do |_item|
-    {
-      "item_id" => org_items.sample,
-      "quantity" => Faker::Number.within(range: 5..10)
-    }
-  end
-
-  Request.create(
-    partner: random_record_for_org(pdx_org, Partner),
-    organization: pdx_org,
-    request_items: request_items,
-    comments: "Urgent",
-    status: status
-  )
-end
-
-# ----------------------------------------------------------------------------
 # Vendors
 # ----------------------------------------------------------------------------
 
@@ -748,3 +712,57 @@ answers = [
   )
 end
 
+# ----------------------------------------------------------------------------
+# Counties
+# ----------------------------------------------------------------------------
+Rake::Task['db:load_us_counties'].invoke
+
+# ----------------------------------------------------------------------------
+# Partner Counties
+# ----------------------------------------------------------------------------
+
+# aim -- every partner except one will have some non-zero number of counties,  and the first one 'verified' will have counties, for convenience sake
+# Noted -- The first pass of this is kludgey as all get out.  I'm *sure* there is a better way
+partner_ids = Partner.pluck(:id)
+partner_ids.pop(1)
+county_ids = County.pluck(:id)
+
+partner_ids.each do |partner_id|
+  partner = Partner.find(partner_id)
+  profile = partner.profile
+  num_counties_for_partner = Faker::Number.within(range: 1..10)
+  remaining_percentage = 100
+  share_ceiling = 100/num_counties_for_partner  #arbitrary,  so I can do the math easily
+  county_index = 0
+
+  county_ids_for_this_partner = county_ids.sample(num_counties_for_partner)
+  county_ids_for_this_partner.each do |county_id|
+    client_share = 0
+    if county_index ==  num_counties_for_partner - 1
+      client_share = remaining_percentage
+    else
+      client_share = Faker::Number.within(range:1..share_ceiling)
+    end
+
+    Partners::ServedArea.create(
+      partner_profile: profile,
+      county: County.find(county_id),
+      client_share: client_share
+    )
+    county_index += 1
+    remaining_percentage = remaining_percentage - client_share
+  end
+end
+
+# ----------------------------------------------------------------------------
+# Transfers
+# ----------------------------------------------------------------------------
+Transfer.create!(
+  comment: Faker::Lorem.sentence,
+  organization_id: pdx_org.id,
+  from_id: pdx_org.id,
+  to_id: sf_org.id,
+  line_items: [
+    LineItem.create!(quantity: 5, item: pdx_org.items.first, itemizable: Distribution.first)
+  ]
+)

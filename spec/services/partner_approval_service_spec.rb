@@ -11,9 +11,9 @@ describe PartnerApprovalService do
     end
 
     context 'when the arguments are incorrect' do
-      context 'because the partner is not awaiting_review' do
+      context 'because the partner is not approvable' do
         before do
-          partner.invited!
+          allow(partner).to receive(:approvable?).and_return(false)
         end
 
         it 'should return the PartnerApprovalService object with an error' do
@@ -39,10 +39,6 @@ describe PartnerApprovalService do
         expect { subject }.to change { partner.reload.approved? }.from(false).to(true)
       end
 
-      it 'should change the partner profile partner_status' do
-        expect { subject }.to change { partner_profile.reload.partner_status }.to(Partners::Partner::VERIFIED_STATUS)
-      end
-
       it 'should send an email notification to the partner' do
         subject
         expect(fake_mailer).to have_received(:deliver_later)
@@ -62,10 +58,6 @@ describe PartnerApprovalService do
 
           it 'should not change the partner status to approved' do
             expect { subject }.not_to change { partner.reload.approved? }
-          end
-
-          it 'should not change the partner_profile partner_status' do
-            expect { subject }.not_to change { partner_profile.reload.partner_status }
           end
 
           it 'should not send an email notification to the partner' do
