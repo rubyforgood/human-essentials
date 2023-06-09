@@ -12,5 +12,13 @@
 #
 FactoryBot.define do
   factory :kit_allocation do
+    storage_location { StorageLocation.try(:first) || create(:storage_location) }
+    kit_id { Kit.try(:first)&.id || create(:kit).id }
+    organization_id { storage_location.organization_id }
+
+    after(:build) do |instance|
+      kit = Kit.find(instance.kit_id)
+      kit.update(organization_id: instance.organization_id)
+    end
   end
 end
