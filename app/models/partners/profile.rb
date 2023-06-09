@@ -116,11 +116,11 @@ module Partners
       website.blank? && twitter.blank? && facebook.blank? && instagram.blank?
     end
 
-    private
-
     def client_share_total
       served_areas.sum(&:client_share)
     end
+
+    private
 
     def client_share_is_0_or_100
       # business logic:  the client share has to be 0 or 100 -- although it is an estimate only,  making it 0 (not
