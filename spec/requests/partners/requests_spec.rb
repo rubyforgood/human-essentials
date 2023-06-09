@@ -47,11 +47,32 @@ RSpec.describe "/partners/requests", type: :request do
     end
   end
 
-  describe "GET #shows" do
-    # TODO: write this spec
-    # Ensure to cover that:
-    # - Authorization, other partners should not be able to see this
-    # - Ensure it shows 404 if the partner request id doesn't exist
+  describe "GET #show" do
+    let(:partner_user) { partner.primary_user }
+    let(:partner) { create(:partner) }
+    let!(:request) { create(:request, partner: partner) }
+
+    before do
+      sign_in(partner_user)
+    end
+
+    it 'should render without any issues' do
+      get partners_request_path(request)
+      expect(response.body).to include(request.id.to_s)
+    end
+
+    it 'should give a 404 error if not found' do
+      id = Request.last.id + 1
+      get partners_request_path(id)
+      expect(response.code).to eq("404")
+    end
+
+    it 'should give a 404 error if forbidden' do
+      other_partner = FactoryBot.create(:partner)
+      other_request = FactoryBot.create(:request, partner: other_partner)
+      get partners_request_path(other_request)
+      expect(response.code).to eq("404")
+    end
   end
 
   describe "POST #create" do
