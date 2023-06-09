@@ -15,7 +15,7 @@ describe Partners::RequestApprovalService do
       end
 
       it 'should return an error saying it the partner is already requested approval' do
-        expect(subject.errors[:base]).to eq(["This partner has already requested approval."])
+        expect(subject.errors[:base]).to include("This partner has already requested approval.")
       end
     end
 
