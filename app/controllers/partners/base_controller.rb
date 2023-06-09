@@ -27,5 +27,12 @@ module Partners
 
       redirect_to partners_requests_path, notice: "Please review your application details and submit for approval in order to make a new request."
     end
+
+    def not_found!
+      respond_to do |format|
+        format.html { render template: "errors/404", layout: "layouts/partners/application", status: :not_found }
+        format.json { render body: nil, status: :not_found }
+      end
+    end
   end
 end
