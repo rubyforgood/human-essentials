@@ -42,24 +42,24 @@ class AllocateKitInventoryService
 
   def allocate_inventory_out
     kit_allocation = KitAllocation.find_or_create_by!(storage_location_id: storage_location.id, kit_id: kit.id,
-                                                      organization_id: kit.organization.id, kit_allocation_type: "inventory_out")
+      organization_id: kit.organization.id, kit_allocation_type: "inventory_out")
     line_items = kit_allocation.line_items
     if line_items.present?
       kit_content.each_with_index do |line_item, index|
         line_item_record = line_items[index]
-        new_quantity =  line_item_record[:quantity] + line_item[:quantity].to_i * (-1)
+        new_quantity = line_item_record[:quantity] + line_item[:quantity].to_i * -1
         line_item_record.update!(quantity: new_quantity)
       end
     else
       kit_content.each do |line_item|
-        kit_allocation.line_items.create!(item_id: line_item[:item_id], quantity: line_item[:quantity].to_i * (-1))
+        kit_allocation.line_items.create!(item_id: line_item[:item_id], quantity: line_item[:quantity].to_i * -1)
       end
     end
   end
 
   def allocate_inventory_in
     kit_allocation = KitAllocation.find_or_create_by!(storage_location_id: storage_location.id, kit_id: kit.id,
-                                                organization_id: kit.organization.id, kit_allocation_type: "inventory_in")
+      organization_id: kit.organization.id, kit_allocation_type: "inventory_in")
     line_items = kit_allocation.line_items
     if line_items.present?
       kit_item = line_items.first

@@ -13,5 +13,5 @@
 class KitAllocation < ApplicationRecord
   include Itemizable
   belongs_to :storage_location
-  enum kit_allocation_type: [ :inventory_in, :inventory_out ]
+  enum kit_allocation_type: {inventory_in: 0, inventory_out: 1}
 end

@@ -74,8 +74,6 @@ RSpec.describe DeallocateKitInventoryService, type: :service do
           before_deallocate1 = item_inventory1.quantity
           before_deallocate2 = item_inventory2.quantity
           kit_item_inventory_quantity = kit_item_inventory.quantity
-
-          #binding.pry
           service = DeallocateKitInventoryService.new(kit: kit, storage_location: storage_location, decrease_by: decrease_by).deallocate
 
           expect(service.error).to be_nil
@@ -84,14 +82,14 @@ RSpec.describe DeallocateKitInventoryService, type: :service do
           expect(item_inventory2.reload.quantity).to eq(before_deallocate2 + (quantity_of_items2 * decrease_by))
           expect(kit_item_inventory.reload.quantity).to eq(kit_item_inventory_quantity - decrease_by)
 
-          # Invetory our and inventory in should be deleted on de-allocation
+          # Invetory out and inventory in should be deleted on de-allocation
           expect(KitAllocation.find_by(id: inventory_in.id).present?).to be_falsey
           expect(KitAllocation.find_by(id: inventory_out.id).present?).to be_falsey
         end
       end
 
       context "when decrease_by is less then kit's quantity in inventory_in" do
-        let(:inventory_quantity) {3}
+        let(:inventory_quantity) { 3 }
         before do
           inventory_out.line_items.create!(item_id: item1.id, quantity: -1 * (quantity_of_items1 * inventory_quantity))
           inventory_out.line_items.create!(item_id: item2.id, quantity: -1 * (quantity_of_items2 * inventory_quantity))
@@ -102,24 +100,23 @@ RSpec.describe DeallocateKitInventoryService, type: :service do
           first_line_item_quantity_before = inventory_out.reload.line_items[0].quantity
           second_line_item_quantity_before = inventory_out.reload.line_items[1].quantity
           kit_quantity = inventory_in.reload.line_items.first.quantity
-          #binding.pry
           service = DeallocateKitInventoryService.new(kit: kit, storage_location: storage_location, decrease_by: decrease_by).deallocate
 
           expect(service.error).to be_nil
 
-          #inventoy out increased with decrese_by
-          expect(inventory_out.reload.line_items[0].quantity).to eq(first_line_item_quantity_before+ (quantity_of_items1 * decrease_by))
-          expect(inventory_out.reload.line_items[1].quantity).to eq(second_line_item_quantity_before+ (quantity_of_items2 * decrease_by))
+          # inventoy out increased with decrease_by
+          expect(inventory_out.reload.line_items[0].quantity).to eq(first_line_item_quantity_before + (quantity_of_items1 * decrease_by))
+          expect(inventory_out.reload.line_items[1].quantity).to eq(second_line_item_quantity_before + (quantity_of_items2 * decrease_by))
 
-          #invetory in decreased with decrease_by
-          expect(inventory_in.reload.line_items.first.quantity).to eq(kit_quantity-decrease_by)
+          # invetory in decreased with decrease_by
+          expect(inventory_in.reload.line_items.first.quantity).to eq(kit_quantity - decrease_by)
         end
       end
 
       context "when decrease_by is greater then kit's quantity in inventory_in" do
         before do
-          inventory_out.line_items.create!(item_id: item1.id, quantity: -1 * (quantity_of_items1))
-          inventory_out.line_items.create!(item_id: item2.id, quantity: -1 * (quantity_of_items2))
+          inventory_out.line_items.create!(item_id: item1.id, quantity: -1 * quantity_of_items1)
+          inventory_out.line_items.create!(item_id: item2.id, quantity: -1 * quantity_of_items2)
           inventory_in.line_items.create!(item_id: kit.item.id, quantity: 1)
         end
 

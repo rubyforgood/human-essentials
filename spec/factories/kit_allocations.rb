@@ -12,6 +12,5 @@
 #
 FactoryBot.define do
   factory :kit_allocation do
-    
   end
 end
