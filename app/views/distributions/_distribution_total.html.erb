@@ -1,15 +1,9 @@
 <tr>
-  <td style="min-width: 150px;"><strong>Filtered totals:</strong></td>
+  <td style="min-width: 150px;"><strong>Page totals:</strong></td>
   <td style="width: 375px; display: flex; flex-direction: row; justify-content: space-between">
     <p><%= number_with_delimiter(@total_items_paginated_distributions, :delimiter => ',') %> (Quantity)</p>
     <p><%= dollar_value(@total_value_paginated_distributions) %>(Dollar Value)</p>
   </td>
 </tr>
-<tr>
-  <td style="min-width: 150px;"><strong>Grand totals:</strong></td>
-  <td style="width: 375px; display: flex; flex-direction: row; justify-content: space-between">
-    <p><%= number_with_delimiter(@total_items_all_distributions, :delimiter => ',') %> (Quantity)</p>
-    <p><%= dollar_value(@total_value_all_distributions) %>(Dollar Value)</p>
-  </td>
-</tr>
+
 
