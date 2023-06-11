@@ -16,15 +16,15 @@ module Partners
 
     def confirmation
       @children = current_partner.children.active.where(id: session[:children_ids]).where.not(item_needed_diaperid: [nil, 0])
-    
+
       @items = @children.each_with_object({}) do |child, items|
         item = Item.find(child.item_needed_diaperid)
         items[item.name] = {first_name: child.first_name, last_name: child.last_name} unless item.nil?
       end
-    
+
       render :confirmation
     end
-    
+
     def create
       children = current_partner.children.active.where(id: session[:children_ids]).where.not(item_needed_diaperid: [nil, 0])
 
