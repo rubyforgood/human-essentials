@@ -12,6 +12,10 @@ class OrganizationUpdateService
     def update(organization, params)
       return false unless valid?(organization, params)
 
+      if params.has_key?("partner_form_fields")
+        params["partner_form_fields"].delete_if { |field| field == "" }
+      end
+
       result = organization.update(params)
       return false unless result
 
@@ -39,9 +43,7 @@ class OrganizationUpdateService
 
     def valid?(organization, params)
       return true if organization.partners.none?
-
       fields_marked_for_disabling = FIELDS.select { |field| params[field] == false }
-
       # Here we do a check: if applying the params for disabling request types to all
       # partners would mean any one partner would have all its request types disabled,
       # then we should not apply the params. As per:

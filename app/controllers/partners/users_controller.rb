@@ -43,6 +43,9 @@ module Partners
           redirect_to new_partners_user_path
         end
       end
+    rescue => e
+      flash[:error] = e.message
+      redirect_to new_partners_user_path
     end
 
     private

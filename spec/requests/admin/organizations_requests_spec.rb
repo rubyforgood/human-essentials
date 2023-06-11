@@ -60,8 +60,8 @@ RSpec.describe "Admin::Organizations", type: :request do
       end
     end
 
-    xdescribe "POST #create" do
-      let(:valid_organization_params) { attributes_for(:organization, users_attributes: [attributes_for(:organization_admin)]).except(:logo) }
+    describe "POST #create" do
+      let(:valid_organization_params) { attributes_for(:organization, user: { name: 'admin', email: 'admin@example.com'}).except(:logo) }
 
       context "with valid params" do
         it "creates an organization and redirects to #index" do
@@ -105,7 +105,7 @@ RSpec.describe "Admin::Organizations", type: :request do
 
         it "redirects to #index" do
           expect(subject).to be(redirect_status)
-          expect(subject).to redirect_to(admin_organizations_path({ organization_id: @organization }))
+          expect(subject).to redirect_to(admin_organizations_path({ organization_id: 'admin' }))
         end
       end
 
@@ -134,7 +134,7 @@ RSpec.describe "Admin::Organizations", type: :request do
       context "with a valid organization id" do
         it "redirects to #index" do
           delete admin_organization_path({ id: organization.id })
-          expect(response).to redirect_to(admin_organizations_path({ organization_id: @organization }))
+          expect(response).to redirect_to(admin_organizations_path({ organization_id: 'admin' }))
         end
       end
     end

@@ -2,17 +2,10 @@ module Partners
   class BaseController < ApplicationController
     layout 'partners/application'
 
-    skip_before_action :authorize_user
-
     private
 
     def redirect_to_root
       redirect_to root_path
-    end
-
-    helper_method :current_partner
-    def current_partner
-      current_user.partner
     end
 
     def verify_partner_is_active
@@ -26,6 +19,13 @@ module Partners
       return if current_partner.approved?
 
       redirect_to partners_requests_path, notice: "Please review your application details and submit for approval in order to make a new request."
+    end
+
+    def not_found!
+      respond_to do |format|
+        format.html { render template: "errors/404", layout: "layouts/partners/application", status: :not_found }
+        format.json { render body: nil, status: :not_found }
+      end
     end
   end
 end

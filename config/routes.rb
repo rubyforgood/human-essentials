@@ -8,6 +8,7 @@ def set_up_flipper
 end
 
 Rails.application.routes.draw do
+  get 'distributions_by_county/report'
   devise_for :users, controllers: {
     sessions: "users/sessions",
     omniauth_callbacks: 'users/omniauth_callbacks'
@@ -65,6 +66,7 @@ Rails.application.routes.draw do
       get :for_rejection, on: :collection
     end
     resources :questions
+    resources :broadcast_announcements
   end
 
   match "/404", to: "errors#not_found", via: :all
@@ -161,7 +163,7 @@ Rails.application.routes.draw do
       patch :restore, on: :member
       patch :remove_category, on: :member
     end
-    resources :item_categories
+    resources :item_categories, except: [:index]
     resources :partners do
       collection do
         post :import_csv
@@ -207,9 +209,9 @@ Rails.application.routes.draw do
     end
 
     get "dashboard", to: "dashboard#index"
-    get "forecasting/distributions", to: "forecasting/distributions#index"
-    get "forecasting/purchases", to: "forecasting/purchases#index"
-    get "forecasting/donations", to: "forecasting/donations#index"
+    get "historical_trends/distributions", to: "historical_trends/distributions#index"
+    get "historical_trends/purchases", to: "historical_trends/purchases#index"
+    get "historical_trends/donations", to: "historical_trends/donations#index"
   end
 
   resources :attachments, only: %i(destroy)
