@@ -11,14 +11,14 @@ module Partners
         params[:filterrific]
       ) || return
       @children = @filterrific.find
+      session[:children_ids] = @children.map(&:id)
     end
 
     def confirmation
-      @children_ids = params.keys.select { |key| key.start_with?('child-') && params[key] == 'true' }.map { |key| key.split('-').last.to_i }
-      children = current_partner.children.active.where(id: @children_ids).where.not(item_needed_diaperid: [nil, 0])
+      @children = current_partner.children.active.where(id: session[:children_ids]).where.not(item_needed_diaperid: [nil, 0])
 
       @items = {}
-      children.each do |child|
+      @children.each do |child|
         item = Item.find(child.item_needed_diaperid)
         unless item.nil?
           @items[item.name] = {first_name: child.first_name, last_name: child.last_name}
@@ -29,16 +29,7 @@ module Partners
     end
 
     def create
-      children_ids = []
-
-      params.each do |key, _|
-        is_child, id = key.split('-')
-        if is_child == 'child'
-          children_ids << id
-        end
-      end
-
-      children = current_partner.children.active.where(id: children_ids).where.not(item_needed_diaperid: [nil, 0])
+      children = current_partner.children.active.where(id: session[:children_ids]).where.not(item_needed_diaperid: [nil, 0])
 
       children_grouped_by_item_id = children.group_by(&:item_needed_diaperid)
       family_requests_attributes = children_grouped_by_item_id.map do |item_id, item_requested_children|
