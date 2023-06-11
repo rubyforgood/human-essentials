@@ -41,8 +41,8 @@ class Admin::UsersController < AdminController
       resource: Organization.find(user_params[:organization_id]))
     flash[:notice] = "Created a new user!"
     redirect_to admin_users_path
-  rescue
-    flash[:error] = "Failed to create user"
+  rescue => e
+    flash[:error] = "Failed to create user: #{e}"
     render "admin/users/new"
   end
 
