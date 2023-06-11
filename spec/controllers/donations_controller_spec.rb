@@ -90,7 +90,7 @@ RSpec.describe DonationsController, type: :controller do
           expect(new_storage_location.size).to eq 8
         end
 
-        it "rollsback updates if quantity would go below 0" do
+        it "rolls back updates if quantity would go below 0" do
           donation = create(:donation, :with_items, item_quantity: 10)
           original_storage_location = donation.storage_location
 
@@ -110,9 +110,8 @@ RSpec.describe DonationsController, type: :controller do
             }
           }
           donation_params = { source: donation.source, storage_location: new_storage_location, line_items_attributes: line_item_params }
-          expect do
-            put :update, params: default_params.merge(id: donation.id, donation: donation_params)
-          end.to raise_error(Errors::InsufficientAllotment)
+          put :update, params: default_params.merge(id: donation.id, donation: donation_params)
+          expect(response).not_to redirect_to(anything)
           expect(original_storage_location.size).to eq 5
           expect(new_storage_location.size).to eq 0
           expect(donation.reload.line_items.first.quantity).to eq 10
