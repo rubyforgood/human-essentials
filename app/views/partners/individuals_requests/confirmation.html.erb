@@ -1,25 +1,23 @@
-<section style="display:flex;flex-direction:column;align-items:center;padding-top:25px;padding-bottom:25px;">
-  <div style="width:700px;display:flex:flex-direction:row;align-items:center;justify-content:center;padding:10px;background-color:#fff;border: 1px solid rgb(213, 213, 213);box-shadow: 0 0.5px 3px 1px rgb(228, 228, 228);border-radius:10px">
-    <h3 style="font-size:2.5rem">Request Summary</h3>
-    <div style="display:flex;flex-direction:column; justify-content:space-evenly">
-        <% @items.each do |item_name, person_count| %>
-            <p style="padding:0;margin:0;font-size:1.2rem"><%= item_name %></p>
-            <p style="padding:0;margin:0;font-size:1.2rem">Number of individuals: <%= person_count %></p>
-            <hr>
-        <% end %>
-    <div>
-
-    <div style="display:flex;min-height:50px">
-      <p style="padding:0;padding-right:10px;margin:0;font-size:1.2rem">Your comments:</p>
-      <p style="padding:0;margin:0;font-size:1.2rem"><%= @request['comments'] %></p>
-    </div>
-
-    <h3 style="font-size:1.6rem">Please confirm that the above list is what you meant to request</h3>
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <%= link_to 'No, I need to change something.', 'javascript:history.back()', rel: 'nofollow', style: "font-size: 1.6rem;" %>
-      <%= link_to "Yes, it's right", partners_individuals_requests_path(partners_family_request: @request, organization_id: current_partner.organization.id), method: :post, rel: 'nofollow', class: 'btn btn-primary', style: "font-size: 1.6rem;" %>
+<section class="d-flex flex-column align-items-center py-4">
+  <div class="card shadow mx-auto" style="width: 40rem;">
+    <div class="card-body">
+      <h1 class="text-center">Request Summary</h1>
+      <hr>
+      <% @items.each do |item_name, person_count| %>
+        <p class="card-text">
+          <strong><%= item_name %></strong><br>
+          Number of individuals: <%= person_count %>
+        </p>
+        <hr>
+      <% end %>
+      <div class="my-3">
+        <p class="card-text"><strong>Your comments:</strong> <%= @request['comments'] %></p>
+      </div>
+      <h3>Please confirm that the above list is what you meant to request</h3>
+      <div class="d-flex justify-content-between align-items-center mt-4">
+        <%= link_to 'No, I need to change something.', 'javascript:history.back()', rel: 'nofollow', class: "btn btn-danger" %>
+        <%= link_to "Yes, it's right", partners_individuals_requests_path(partners_family_request: @request, organization_id: current_partner.organization.id), method: :post, rel: 'nofollow', class: 'btn btn-primary' %>
+      </div>
     </div>
   </div>
 </section>
-
-
