@@ -55,15 +55,14 @@
   <%= render(
           layout: "shared/csv_import_modal",
           locals: {
-            import_type: "Partners Instructions",
+            import_type: "Partners",
             csv_template_url: "/partners.csv",
             csv_import_url: import_csv_partners_path
           }
       ) do %>
-    <li>Open the csv file with excel <br>or your favourite spreadsheet program.</li>
-    <li>Delete the sample data and <br>enter your partner agency names and <br>addresses in the appropriate columns.
-    </li>
-    <li>Save the file as a csv file.</li>
+    <li>Open the CSV file with Excel or your favourite spreadsheet program.</li>
+    <li>Delete the sample data and enter your partner agency names and addresses in the appropriate columns.</li>
+    <li>Save the file as a CSV file.</li>
   <% end %>
 
 </section>
