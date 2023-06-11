@@ -176,9 +176,8 @@ RSpec.describe "Purchases", type: :request do
             }
           }
           purchase_params = { storage_location: new_storage_location, line_items_attributes: line_item_params }
-          expect do
-            put purchase_path(default_params.merge(id: purchase.id, purchase: purchase_params))
-          end.to raise_error(Errors::InsufficientAllotment)
+          put purchase_path(default_params.merge(id: purchase.id, purchase: purchase_params))
+          expect(response).not_to redirect_to(anything)
           expect(original_storage_location.size).to eq 5
           expect(new_storage_location.size).to eq 0
           expect(purchase.reload.line_items.first.quantity).to eq 10

@@ -10,6 +10,7 @@ inherit_from:
 
 require:
   - rubocop-rails
+  - rubocop-performance
   - standard
 
 AllCops:
