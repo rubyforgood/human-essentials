@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_06_061826) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_12_073836) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -378,7 +378,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_06_061826) do
     t.bigint "organization_id", null: false
     t.bigint "storage_location_id", null: false
     t.bigint "kit_id", null: false
-    t.integer "kit_allocation_type", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["kit_id"], name: "index_kit_allocations_on_kit_id"
