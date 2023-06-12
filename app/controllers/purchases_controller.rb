@@ -64,12 +64,12 @@ class PurchasesController < ApplicationController
 
   def update
     @purchase = current_organization.purchases.find(params[:id])
-    if @purchase.replace_increase!(purchase_params)
-      redirect_to purchases_path
-    else
-      load_form_collections
-      render "edit"
-    end
+    ItemizableUpdateService.call(itemizable: @purchase, params: purchase_params, type: :increase)
+    redirect_to purchases_path
+  rescue => e
+    load_form_collections
+    flash[:alert] = "Error updating purchase: #{e.message}"
+    render "edit"
   end
 
   def destroy

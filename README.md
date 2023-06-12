@@ -8,10 +8,6 @@
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper?ref=badge_shield)
 [![Knapsack Pro Parallel CI builds for RSpec tests](https://img.shields.io/badge/Knapsack%20Pro-Parallel%20%2F%20Rspec%20tests-%230074ff)](https://knapsackpro.com/dashboard/organizations/1858/projects/1295/test_suites/1835/builds?utm_campaign=organization-id-1858&amp;utm_content=test-suite-id-1835&amp;utm_medium=readme&amp;utm_source=knapsack-pro-badge&amp;utm_term=project-id-1295)
 
-## 🎃 Hacktoberfest
-
-We absolutely love [Hacktoberfest](https://hacktoberfest.com/) and love how it exposes our amazing project to so many new contributors but with so many new people helping out in a condensed time period it can get a little hectic for the core team to keep up. We are going to do our best to respond to comments, issues, and pull requests within a couple days but given the busy nature of the month please wait at least a week before reaching out. You are welcome to drop in to the team office hours which are every Sunday at 10:00AM ET. The office zoom room for the office hours will be posted in the #human-essentials channel in the Ruby for Good slack.
-
 ## 💖 Mission
 
 Human Essentials is an inventory management system that was built to address the needs of [Diaper Banks](https://nationaldiaperbanknetwork.org/diaper-need/) as directly and explicitly as possible and later adapted to meet the need of other Essentials Banks. Essentials Banks maintain inventory, receive donations and other means of intaking human essentials supplies (e.g. diapers, period supplies), and issue distributions to community partner organizations. Like any non-profit, they also need to perform reports on this data and have day-to-day operational information they need as well. This application aims to serve all those needs, as well as facilitate, wherever possible the general operations of the Diaper Bank themselves (eg. through using barcode readers, scale weighing, inventory audits).

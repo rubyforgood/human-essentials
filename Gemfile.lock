@@ -263,7 +263,7 @@ GEM
       activerecord
       kaminari-core (= 1.2.2)
     kaminari-core (1.2.2)
-    knapsack_pro (4.1.0)
+    knapsack_pro (5.1.0)
       rake
     language_server-protocol (3.17.0.3)
     launchy (2.5.0)
@@ -711,7 +711,7 @@ DEPENDENCIES
   webmock (~> 3.18)
 
 RUBY VERSION
-   ruby 3.1.2p20
+   ruby 3.2.2p53
 
 BUNDLED WITH
    2.4.13
