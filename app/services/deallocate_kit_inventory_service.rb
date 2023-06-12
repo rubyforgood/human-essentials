@@ -40,7 +40,7 @@ class DeallocateKitInventoryService
 
   def deallocate_inventory_out
     kit_allocation = KitAllocation.find_by(storage_location_id: storage_location.id, kit_id: kit.id,
-      organization_id: kit.organization.id, kit_allocation_type: "inventory_out")
+      organization_id: kit.organization.id, inventory: "inventory_out")
     if kit_allocation.present?
       line_items = kit_allocation.line_items
       kit_content.each_with_index do |line_item, index|
@@ -62,7 +62,7 @@ class DeallocateKitInventoryService
 
   def deallocate_inventory_in
     kit_allocation = KitAllocation.find_by(storage_location_id: storage_location.id, kit_id: kit.id,
-      organization_id: kit.organization.id, kit_allocation_type: "inventory_in")
+      organization_id: kit.organization.id, inventory: "inventory_in")
     if kit_allocation.present?
       kit_item = kit_allocation.line_items.first
       new_quantity = kit_item[:quantity].to_i - decrease_by

@@ -36,11 +36,11 @@ RSpec.describe AllocateKitInventoryService, type: :service do
     let(:kit_item_inventory) { InventoryItem.find_by(storage_location_id: storage_location.id, item_id: kit.item.id) }
     let(:inventory_out) {
       KitAllocation.find_by(storage_location_id: storage_location.id, kit_id: kit.id,
-        organization_id: kit.organization.id, kit_allocation_type: "inventory_out")
+        organization_id: kit.organization.id, inventory: "inventory_out")
     }
     let(:inventory_in) {
       KitAllocation.find_by(storage_location_id: storage_location.id, kit_id: kit.id,
-        organization_id: kit.organization.id, kit_allocation_type: "inventory_in")
+        organization_id: kit.organization.id, inventory: "inventory_in")
     }
 
     context "when inventory items are available" do
