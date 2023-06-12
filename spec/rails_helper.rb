@@ -108,7 +108,7 @@ RSpec.configure do |config|
   # Disable this rubocop rule here so we are permitted to set constants within
   # the RSpec.configure block.
   # rubocop:disable Lint/ConstantDefinitionInBlock
-  DEFAULT_TEST_ORGANIZATION_NAME = "DEFAULT"
+  DEFAULT_TEST_ORGANIZATION_NAME = "STARTER"
   DEFAULT_TEST_USER_NAME = "DEFAULT USER"
   DEFAULT_TEST_ORG_ADMIN_USER_NAME = "DEFAULT ORG ADMIN"
   DEFAULT_TEST_SUPER_ADMIN_USER_NAME = "DEFAULT SUPERADMIN"
