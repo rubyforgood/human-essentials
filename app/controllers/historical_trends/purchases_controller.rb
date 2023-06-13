@@ -1,6 +1,6 @@
 class HistoricalTrends::PurchasesController < HistoricalTrends::BaseController
   def index
-    @series = series('Purchase')
+    @series = cached_series('Purchase')
     @title = "Monthly Purchases"
   end
 end
