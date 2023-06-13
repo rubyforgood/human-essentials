@@ -35,7 +35,10 @@ RSpec.describe Partners::FamilyRequestsController, type: :request do
       # without a item_needed_diaperid
       children[0].update(active: false)
       children[1].update(item_needed_diaperid: nil)
+
+      allow_any_instance_of(Partners::FamilyRequestsController).to receive(:session).and_return({children_ids: children.map(&:id)})
     end
+
     subject { post partners_family_requests_path, params: params }
 
     it "does not allow deactivated partners" do
@@ -54,7 +57,7 @@ RSpec.describe Partners::FamilyRequestsController, type: :request do
       partner.update!(status: :approved)
 
       subject
-
+      p response.request.flash
       expect(response.request.flash[:notice]).to eql "Requested items successfully!"
     end
   end
