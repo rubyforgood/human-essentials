@@ -12,20 +12,17 @@ class BringInventoryInAndOutToInvetoryLevel < ActiveRecord::Migration[7.0]
 
     def allocate
       ActiveRecord::Base.transaction do
-        begin
-          allocate_inventory_in
-          allocate_inventory_out
-        rescue Exception => e
-          puts "==================================>>Error:"
-          puts e
-          raise ActiveRecord::Rollback
-        end
+        allocate_inventory_in
+        allocate_inventory_out
+      rescue => e
+        Rails.logger.debug "Error: #{e}"
+        raise ActiveRecord::Rollback
       end
     end
 
     def allocate_inventory_out
       kit_allocation = KitAllocation.find_or_create_by!(storage_location_id: storage_location.id, kit_id: kit.id,
-                                                        organization_id: kit.organization.id, inventory: "inventory_out")
+        organization_id: kit.organization.id, inventory: "inventory_out")
       line_items = kit_allocation.line_items
       if line_items.present?
         kit_content.each_with_index do |line_item, index|
@@ -42,7 +39,7 @@ class BringInventoryInAndOutToInvetoryLevel < ActiveRecord::Migration[7.0]
 
     def allocate_inventory_in
       kit_allocation = KitAllocation.find_or_create_by!(storage_location_id: storage_location.id, kit_id: kit.id,
-                                                        organization_id: kit.organization.id, inventory: "inventory_in")
+        organization_id: kit.organization.id, inventory: "inventory_in")
       line_items = kit_allocation.line_items
       if line_items.present?
         kit_item = line_items.first
@@ -56,8 +53,8 @@ class BringInventoryInAndOutToInvetoryLevel < ActiveRecord::Migration[7.0]
     def kit_content
       kit.to_a.map do |item|
         item.merge({
-                     quantity: item[:quantity] * increase_by
-                   })
+          quantity: item[:quantity] * increase_by
+        })
       end
     end
 
@@ -73,24 +70,23 @@ class BringInventoryInAndOutToInvetoryLevel < ActiveRecord::Migration[7.0]
 
   def up
     StorageLocation.all.each do |location|
-      location.inventory_items.select{ |inventory_item| inventory_item.item.partner_key == "kit" }.each do |inventory_item|
+      location.inventory_items.select { |inventory_item| inventory_item.item.partner_key == "kit" }.each do |inventory_item|
         kit_quantity = inventory_item.quantity
         kit_item = inventory_item.item
         kit = kit_item.kit
         if kit.present?
           service = AllocationService.new(storage_location: location, kit: kit, increase_by: kit_quantity)
-          puts "=====================================================>>> "
-          puts "allocating kit_id: #{kit.id} kit_name: #{kit.name} kit_quantity: #{kit_quantity}"
+          Rails.logger.debug "=====================================================>>>"
+          Rails.logger.debug "allocating kit_id: #{kit.id} kit_name: #{kit.name} kit_quantity: #{kit_quantity}"
           service.allocate
         else
-          puts "=============================================>>>>"
-          puts "kit not exist"
+          Rails.logger.debug "=====================================================>>>"
+          Rails.logger.debug "kit not exist"
         end
       end
     end
   end
 
   def down
-
   end
 end
