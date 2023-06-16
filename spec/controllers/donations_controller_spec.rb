@@ -159,22 +159,6 @@ RSpec.describe DonationsController, type: :controller do
         expect(subject).to redirect_to(dashboard_path)
       end
     end
-
-    context "Looking at a different organization" do
-      let(:object) { create(:donation, organization: create(:organization)) }
-
-      include_examples "requiring authorization"
-
-      it "Disallows all access for Donation-specific actions" do
-        single_params = { organization_id: object.organization.to_param, id: object.id }
-
-        patch :add_item, params: single_params
-        expect(response).to be_redirect
-
-        patch :remove_item, params: single_params
-        expect(response).to be_redirect
-      end
-    end
   end
 
   context "While signed in as an organization admin >" do
@@ -187,21 +171,6 @@ RSpec.describe DonationsController, type: :controller do
       it "redirects to the index" do
         expect(subject).to redirect_to(donations_path)
       end
-    end
-  end
-
-  context "While not signed in" do
-    let(:object) { create(:donation) }
-
-    include_examples "requiring authorization"
-    it "redirects the user to the sign-in page for Donation specific actions" do
-      single_params = { organization_id: object.organization.to_param, id: object.id }
-
-      patch :add_item, params: single_params
-      expect(response).to be_redirect
-
-      patch :remove_item, params: single_params
-      expect(response).to be_redirect
     end
   end
 

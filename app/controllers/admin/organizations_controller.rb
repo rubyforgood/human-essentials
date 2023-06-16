@@ -58,6 +58,9 @@ class Admin::OrganizationsController < AdminController
       flash[:error] = "Failed to create Organization."
       render :new
     end
+  rescue => e
+    flash[:error] = e
+    render :new
   end
 
   def show
