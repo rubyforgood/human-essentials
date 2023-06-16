@@ -122,6 +122,12 @@ RSpec.describe Partners::Profile, type: :model do
       it "should not be valid" do
         expect(profile.valid?).to eq(false)
       end
+
+      it "should be valid if media_information is not needed" do
+        org = profile.partner.organization
+        org.update!(partner_form_fields: %w[agency_stability])
+        expect(profile).to be_valid
+      end
     end
 
     context "no social media presence and the checkbox is checked" do
