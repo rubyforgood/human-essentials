@@ -5,10 +5,6 @@ describe Partners::RequestApprovalService do
     subject { described_class.new(partner: partner).call }
     let(:partner) { create(:partner) }
 
-    it 'should return an instance of itself' do
-      expect(subject).to be_a_kind_of(Partners::RequestApprovalService)
-    end
-
     context 'when the partner is already awaiting approval' do
       before do
         partner.update!(status: 'awaiting_review')
@@ -19,42 +15,18 @@ describe Partners::RequestApprovalService do
       end
     end
 
-    context 'when the partner is not yet waiting for approval and the media information is blank' do
+    context 'when the partner is not yet waiting for approval and there is a profile error' do
       it 'should return an error' do
         partner.profile.update(website: '', facebook: '', twitter: '', instagram: '', no_social_media_presence: false)
-        expect(subject.errors[:base]).to eq(['You must either provide a social media site or indicate that you have no social media presence before submitting for approval.'])
+        expect(subject.errors.full_messages)
+          .to eq(['no_social_media_presence must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.'])
       end
     end
 
-    context 'when the partner is not yet waiting for approval and the media information is not blank it should not throw an error' do
-      it 'with a website' do
+    context 'when the partner is not yet waiting for approval and there is no profile error' do
+      it 'does not have an error' do
         partner.profile.update(website: 'website URL', facebook: '', twitter: '', instagram: '', no_social_media_presence: false)
-        expect(subject.errors[:base]).to eq([])
-      end
-
-      it 'with facebook' do
-        partner.profile.update(website: '', facebook: 'facebook URL', twitter: '', instagram: '', no_social_media_presence: false)
-        expect(subject.errors[:base]).to eq([])
-      end
-
-      it 'with twitter' do
-        partner.profile.update(website: '', facebook: '', twitter: 'twitter URL', instagram: '', no_social_media_presence: false)
-        expect(subject.errors[:base]).to eq([])
-      end
-
-      it 'with instagram' do
-        partner.profile.update(website: '', facebook: '', twitter: '', instagram: 'instagram URL', no_social_media_presence: false)
-        expect(subject.errors[:base]).to eq([])
-      end
-
-      it 'with all social media options' do
-        partner.profile.update(website: 'website URL', facebook: 'facebook URL', twitter: 'twitter URL', instagram: 'instagram URL', no_social_media_presence: false)
-        expect(subject.errors[:base]).to eq([])
-      end
-
-      it 'with no social media but the checkbox is checked' do
-        partner.profile.update(website: '', facebook: '', twitter: '', instagram: '', no_social_media_presence: true)
-        expect(subject.errors[:base]).to eq([])
+        expect(subject.errors.full_messages).to be_empty
       end
     end
 
