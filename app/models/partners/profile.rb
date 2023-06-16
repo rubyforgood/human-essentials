@@ -97,6 +97,7 @@ module Partners
     validates :no_social_media_presence, acceptance: {message: "must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram."}, if: :has_no_social_media?
 
     validate :client_share_is_0_or_100
+    validate :has_at_least_one_request_setting
 
     self.ignored_columns = %w[
       evidence_based_description
@@ -129,6 +130,12 @@ module Partners
       total = client_share_total
       if total != 0 && total != 100
         errors.add(:base, "Total client share must be 0 or 100")
+      end
+    end
+
+    def has_at_least_one_request_setting
+      if !(enable_child_based_requests || enable_individual_requests || enable_quantity_based_requests)
+        errors.add(:base, "At least one request type must be set")
       end
     end
   end
