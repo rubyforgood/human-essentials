@@ -99,7 +99,7 @@ class StorageLocation < ApplicationRecord
     org = organization
 
     CSV.generate(headers: true) do |csv|
-      csv << ["Quantity", "DO NOT CHANGE ANYTHING IN THIS ROW"]
+      csv << ["Quantity", "DO NOT CHANGE ANYTHING IN THIS COLUMN"]
       org.items.each do |item|
         csv << ["", item.name]
       end
