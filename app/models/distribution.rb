@@ -41,10 +41,10 @@ class Distribution < ApplicationRecord
   validate :line_items_exist_in_inventory
   validate :line_items_quantity_is_positive
 
-  before_save :combine_distribution
+  before_save :combine_distribution, :reset_shipping_cost
 
   enum state: { scheduled: 5, complete: 10 }
-  enum delivery_method: { pick_up: 0, delivery: 1, shipped: 0 }
+  enum delivery_method: { pick_up: 0, delivery: 1, shipped: 3 }
 
   scope :active, -> { joins(:line_items).joins(:items).where(items: { active: true }) }
   # add item_id scope to allow filtering distributions by item
@@ -148,5 +148,9 @@ class Distribution < ApplicationRecord
 
   def line_items_quantity_is_positive
     line_items_quantity_is_at_least(1)
+  end
+
+  def reset_shipping_cost
+    self.shipping_cost = 0 unless delivery_method == "shipped"
   end
 end

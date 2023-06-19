@@ -18,10 +18,10 @@
 
     <div class='d-flex flex-row'>
       <span class="w-25">
-         <%= f.input :delivery_method, as: :radio_buttons, :input_html => { id: "dist_delivery_method" }, collection: Distribution.delivery_methods.keys, label_method: :humanize, label: "Delivery method" %>
+         <%= f.input :delivery_method, as: :radio_buttons, :input_html => { class: "dist_delivery_method" }, collection: Distribution.delivery_methods.keys, label_method: :humanize, label: "Delivery method" %>
       </span>
       <span class="mx-2 mt-5">
-        <%= f.input :shipping_cost, as: :numeric, label: false, placeholder: "Shipping Cost", value: number_to_currency(f.object.shipping_cost.to_f, delimiter: '', unit: ''), input_html: { min: 0, step: 0.01, :class => "d-none", id: "dist_shipping_cost" } %>
+        <%= f.input :shipping_cost, as: :numeric, label: "Shipping Cost", placeholder: "Shipping Cost", value: number_to_currency(f.object.shipping_cost.to_f, delimiter: '', unit: ''), input_html: { min: 0, step: 0.01, :class => "d-none", id: "dist_shipping_cost" } %>
       </span>
     </div>
 
