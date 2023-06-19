@@ -146,6 +146,13 @@
                   <%= humanize_boolean(@organization.enable_quantity_based_requests) %>
                 </p>
               </div>
+              <div class="mb-4">
+                <h3 class='font-bold'>Show Year-to-date values on distribution printout?</h3>
+                <p>
+                  <%= fa_icon "calendar" %>
+                  <%= humanize_boolean(@organization.show_ytd_values_on_distribution_printout) %>
+                </p>
+              </div>
               <% if @organization.logo.attached? %>
                     <div class="mb-4">
                     <h3 class='font-bold'>Logo</h3>
