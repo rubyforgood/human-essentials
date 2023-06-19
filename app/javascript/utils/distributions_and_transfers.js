@@ -106,3 +106,39 @@ $(function() {
     request_storage_location_and_populate_item(default_item);
   });
 });
+
+$(document).ready(function (e) {
+  $(document).on('change', '#dist_delivery_method', hide_show_shipping_cost);
+  show_shipping_cost();
+});
+
+function show_shipping_cost()
+{
+  var delivery_method = $("#dist_delivery_method")[0].value;
+  const shipping_cost_input = $("#dist_shipping_cost");
+
+  if (delivery_method == "shipped")
+  {
+    shipping_cost_input.removeClass("d-none");
+    shipping_cost_input.addClass("d-block");
+  }
+}
+
+function hide_show_shipping_cost(e)
+{
+  var delivery_method = e.currentTarget.value;
+  const shipping_cost_input = $("#dist_shipping_cost");
+
+  if (delivery_method == "shipped")
+  {
+    shipping_cost_input.removeClass("d-none");
+    shipping_cost_input.addClass("d-block");
+  }
+  else
+  {
+    shipping_cost_input.value = '0.00';
+    shipping_cost_input.removeClass("d-block");
+    shipping_cost_input.addClass("d-none");
+  }
+}
+
