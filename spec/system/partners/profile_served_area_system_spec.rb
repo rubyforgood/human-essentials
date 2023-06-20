@@ -46,7 +46,7 @@ RSpec.describe "Partners profile served area behaviour", type: :system, js: true
       assert page.has_content? "The total client share must be either 0 or 100 %."
       first(".remove_served_area").click
       assert page.has_content? "50 %"
-      click_on "Update Information"
+      click_button "Update Information"
       assert page.has_content? "50 %"
     end
   end
