@@ -1,5 +1,6 @@
 # Encapsulates methods that need some business logic
 module DistributionHelper
+  include ActionView::Helpers::NumberHelper
   def pickup_day_params
     return {} unless params.key?(:filters)
 
@@ -31,5 +32,9 @@ module DistributionHelper
     quantities = distribution.line_items.quantities_by_category
 
     quantities[item_category_id]
+  end
+
+  def distribution_shipping_cost(shipping_cost)
+    shipping_cost.present? ? number_to_currency(shipping_cost) : "0.00"
   end
 end
