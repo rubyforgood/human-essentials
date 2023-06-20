@@ -115,9 +115,10 @@ $(document).ready(function (e) {
 function show_shipping_cost()
 {
   var delivery_method_radio = $(".dist_delivery_method");
+  var shipping_cost_div = $(".distribution_shipping_cost");
   var shipped = false;
 
-  if (delivery_method_radio.length>0) {
+  if ( delivery_method_radio.length>0 && shipping_cost_div.length>0 ) {
     $.each(delivery_method_radio, function(index, delivery_method) {
        if(delivery_method.checked == true && delivery_method.value == "shipped")
        {
@@ -130,6 +131,10 @@ function show_shipping_cost()
       shipping_cost_input.removeClass("d-none");
       shipping_cost_input.addClass("d-block");
     }
+    else
+    {
+      shipping_cost_div.find("label").addClass("d-none")
+    }
   }
 }
 
@@ -137,17 +142,22 @@ function hide_show_shipping_cost(e)
 {
   var delivery_method = e.currentTarget.value;
   const shipping_cost_input = $("#dist_shipping_cost");
+  const shipping_cost_label = $(".distribution_shipping_cost").find("label");
 
   if (delivery_method == "shipped")
   {
     shipping_cost_input.removeClass("d-none");
     shipping_cost_input.addClass("d-block");
+    shipping_cost_label.removeClass("d-none");
+    shipping_cost_label.addClass("d-block");
   }
   else
   {
     shipping_cost_input.value = '0.00';
     shipping_cost_input.removeClass("d-block");
     shipping_cost_input.addClass("d-none");
+    shipping_cost_label.removeClass("d-block");
+    shipping_cost_label.addClass("d-none");
   }
 }
 
