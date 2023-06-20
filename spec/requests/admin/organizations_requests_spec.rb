@@ -68,7 +68,7 @@ RSpec.describe "Admin::Organizations", type: :request do
           expect {
             post admin_organizations_path({ organization: valid_organization_params })
           }.to change(Organization, :count).by(1)
-          expect(response).to redirect_to(admin_organizations_path(organization_id: Organization.first.short_name))
+          expect(response).to redirect_to(admin_organizations_path(organization_id: 'admin'))
         end
       end
 

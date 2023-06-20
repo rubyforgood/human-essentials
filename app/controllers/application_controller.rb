@@ -31,10 +31,12 @@ class ApplicationController < ActionController::Base
   helper_method :current_partner
 
   def current_role
-    role = Role.find_by(id: session[:current_role]) || UsersRole.current_role_for(current_user)
-    session[:current_role] = role&.id
+    return @role if @role
 
-    role
+    @role = Role.find_by(id: session[:current_role]) || UsersRole.current_role_for(current_user)
+    session[:current_role] = @role&.id
+
+    @role
   end
 
   def organization_url_options(options = {})
