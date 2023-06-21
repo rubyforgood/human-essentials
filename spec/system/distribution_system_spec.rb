@@ -295,7 +295,7 @@ RSpec.feature "Distributions", type: :system do
   end
 
   context "When showing a individual distribution" do
-    let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: @user.organization, issued_at: Time.zone.today, state: :complete) }
+    let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: @user.organization, issued_at: Time.zone.today, state: :complete, delivery_method: "pick_up") }
 
     before { visit @url_prefix + "/distributions/#{distribution.id}" }
 
@@ -357,11 +357,11 @@ RSpec.feature "Distributions", type: :system do
         item_type = @distribution.line_items.first.item.name
         first_item_name_field = 'distribution_line_items_attributes_0_item_id'
         select(item_type, from: first_item_name_field)
-        find_all(".numeric")[2].set 1
+        find_all(".numeric")[1].set 1
 
         click_on "Add another item"
 
-        find_all(".numeric")[3].set 3
+        find_all(".numeric")[2].set 3
 
         first("button", text: "Save").click
 
