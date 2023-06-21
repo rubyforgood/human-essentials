@@ -34,7 +34,7 @@
           <div class="card-body">
             <!-- Default box -->
             <div class="box">
-              <%= render 'form', distribution: @distribution %>
+          <%= render 'form', distribution: @distribution, date_place_holder: Time.now.beginning_of_day %>
             </div><!-- /.box -->
           </div>
         </div>
