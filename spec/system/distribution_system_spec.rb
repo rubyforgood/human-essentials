@@ -360,6 +360,7 @@ RSpec.feature "Distributions", type: :system do
         find_all(".numeric")[2].set 1
 
         click_on "Add another item"
+
         find_all(".numeric")[3].set 3
 
         first("button", text: "Save").click
