@@ -72,6 +72,7 @@ describe Exports::ExportDistributionsCSVService do
         "Total Number of #{item_name}",
         "Total Value",
         "Delivery Method",
+        "Shipping Cost",
         "State",
         "Agency Representative",
         "Comments"
@@ -95,6 +96,7 @@ describe Exports::ExportDistributionsCSVService do
           distribution.line_items.where(item_id: item_id).total,
           distribution.cents_to_dollar(distribution.line_items.total_value),
           distribution.delivery_method,
+          "$0.00",
           distribution.state,
           distribution.agency_rep,
           distribution.comment

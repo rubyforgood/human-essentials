@@ -357,10 +357,10 @@ RSpec.feature "Distributions", type: :system do
         item_type = @distribution.line_items.first.item.name
         first_item_name_field = 'distribution_line_items_attributes_0_item_id'
         select(item_type, from: first_item_name_field)
-        find_all(".numeric")[0].set 1
+        find_all(".numeric")[2].set 1
 
         click_on "Add another item"
-        find_all(".numeric")[1].set 3
+        find_all(".numeric")[3].set 3
 
         first("button", text: "Save").click
 
@@ -409,7 +409,7 @@ RSpec.feature "Distributions", type: :system do
       end
 
       expect(page).to have_content("Sorry, we weren't able to save")
-      find_all(".numeric")[0].set 1
+      find_all(".numeric")[2].set 1
       click_on "Save"
 
       expect(page).to have_content("Distribution Complete")
