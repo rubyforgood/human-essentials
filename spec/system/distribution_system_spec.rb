@@ -24,21 +24,27 @@ RSpec.feature "Distributions", type: :system do
   end
 
   context "When creating a new distribution manually" do
-    it "Allows a distribution to be created" do
-      visit @url_prefix + "/distributions/new"
+    context "when the delivery_method is not shipped" do
+      it "Allows a distribution to be created and shipping cost field not visible" do
+        visit @url_prefix + "/distributions/new"
 
-      select @partner.name, from: "Partner"
-      select @storage_location.name, from: "From storage location"
-      choose "Pick up"
+        select @partner.name, from: "Partner"
+        select @storage_location.name, from: "From storage location"
+        choose "Pick up"
 
-      fill_in "Comment", with: "Take my wipes... please"
-      fill_in "Distribution date", with: '01/01/2001 10:15:00 AM'
+        fill_in "Comment", with: "Take my wipes... please"
+        fill_in "Distribution date", with: '01/01/2001 10:15:00 AM'
 
-      expect(PartnerMailerJob).to receive(:perform_later).once
-      click_button "Save", match: :first
+        #shipping cost field should not be visible
+        shipping_cost_field = page.find("#dist_shipping_cost") rescue nil
+        expect(shipping_cost_field).to be_nil
 
-      expect(page).to have_content "Distributions"
-      expect(page.find(".alert-info")).to have_content "reated"
+        expect(PartnerMailerJob).to receive(:perform_later).once
+        click_button "Save", match: :first
+
+        expect(page).to have_content "Distributions"
+        expect(page.find(".alert-info")).to have_content "created"
+      end
     end
 
     it "Displays a complete form after validation errors" do
@@ -55,6 +61,53 @@ RSpec.feature "Distributions", type: :system do
       # verify line items appear on reload
       expect(page).to have_content "New Distribution"
       expect(page).to have_selector "#distribution_line_items"
+    end
+
+    context "when the delivery_method is shipped" do
+      context "when the shipping cost is negative" do
+        it "should not create distribution and show error message" do
+          visit @url_prefix + "/distributions/new"
+
+          select @partner.name, from: "Partner"
+          select @storage_location.name, from: "From storage location"
+          choose "Shipped"
+
+          # if element not found it will throw exception
+          shipping_cost_field = page.find("#dist_shipping_cost") rescue nil
+          expect(shipping_cost_field).not_to be_nil
+
+          fill_in "Shipping cost", with: '-12.05'
+          fill_in "Comment", with: "Take my wipes... please"
+          fill_in "Distribution date", with: '01/01/2001 10:15:00 AM'
+
+          click_button "Save", match: :first
+
+          expect(page.find(".alert-danger")).to have_content "Sorry, we weren't able to save the distribution. Shipping cost cannot be negative!"
+        end
+      end
+
+      context "when the shipping cost is positive" do
+        it "Allows a distribution to be created" do
+          visit @url_prefix + "/distributions/new"
+
+          select @partner.name, from: "Partner"
+          select @storage_location.name, from: "From storage location"
+          choose "Shipped"
+
+          # if element not found it will throw exception
+          shipping_cost_field = page.find("#dist_shipping_cost") rescue nil
+          expect(shipping_cost_field).not_to be_nil
+
+          fill_in "Shipping cost", with: '12.05'
+          fill_in "Comment", with: "Take my wipes... please"
+          fill_in "Distribution date", with: '01/01/2001 10:15:00 AM'
+
+          click_button "Save", match: :first
+
+          expect(page).to have_content "Distributions"
+          expect(page.find(".alert-info")).to have_content "created"
+        end
+      end
     end
 
     context "when the quantity is lower than the on hand minimum quantity" do
@@ -147,7 +200,8 @@ RSpec.feature "Distributions", type: :system do
   end
 
   context "With an existing distribution" do
-    let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: @user.organization) }
+    let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", delivery_method: delivery_method, organization: @user.organization) }
+    let(:delivery_method) { "pick_up" }
 
     before do
       sign_in(@organization_admin)
@@ -204,6 +258,49 @@ RSpec.feature "Distributions", type: :system do
         end
         expect(page).to have_content "reclaimed"
       end.to change { Distribution.count }.by(-1)
+    end
+
+    context "when delivery method is not shipped" do
+      it "should not display shipping_cost field" do
+        click_on "Edit", match: :first
+
+        # if element not found it will throw exception
+        shipping_cost_field = page.find("#dist_shipping_cost") rescue nil
+        expect(shipping_cost_field).to be_nil
+      end
+    end
+
+    context "when delivery method is shipped" do
+      let(:delivery_method) {"shipped"}
+
+      context "when shipping cost is negative" do
+        it "should not update distribution, display shipping_cost field and show error message" do
+          click_on "Edit", match: :first
+
+          # if element not found it will throw exception
+          shipping_cost_field = page.find("#dist_shipping_cost") rescue nil
+          expect(shipping_cost_field).not_to be_nil
+
+          fill_in "Shipping cost", with: -12.05
+          click_on "Save", match: :first
+          expect(page.find(".alert-danger")).to have_content "Sorry, we weren't able to save the distribution. Shipping cost cannot be negative!"
+        end
+      end
+
+      context "when shipping cost is positive" do
+        it "should update distribution and display shipping_cost field" do
+          click_on "Edit", match: :first
+
+          # if element not found it will throw exception
+          shipping_cost_field = page.find("#dist_shipping_cost") rescue nil
+          expect(shipping_cost_field).not_to be_nil
+
+          fill_in "Shipping cost", with: 12.05
+          click_on "Save", match: :first
+          expect(page).to have_content "Distributions"
+          expect(page.find(".alert-info")).to have_content "Distribution updated!"
+        end
+      end
     end
 
     context "when one of the items has been 'deleted'" do
