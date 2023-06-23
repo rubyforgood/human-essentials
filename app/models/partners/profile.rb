@@ -93,7 +93,7 @@ module Partners
     accepts_nested_attributes_for :served_areas, allow_destroy: true
 
     has_many_attached :documents
-    validate :check_social_media
+    validate :check_social_media, on: :edit
 
     validate :client_share_is_0_or_100
     validate :has_at_least_one_request_setting
