@@ -29,7 +29,7 @@ module Partners
         errors.add(:base, 'This partner has already requested approval.')
       end
 
-      unless partner.profile.valid?
+      unless partner.profile.valid?(:edit)
         errors.copy!(partner.profile)
       end
 
