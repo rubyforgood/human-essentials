@@ -174,20 +174,20 @@ RSpec.describe Distribution, type: :model do
     context "#before_save" do
       context "when creating distribution" do
         context "when delivery_method is shipped and shipping cost is negative" do
-        let(:distribution) { create(:distribution, delivery_method: "shipped", shipping_cost: -12.05) }
+          let(:distribution) { create(:distribution, delivery_method: "shipped", shipping_cost: -12.05) }
 
-        it "raises error" do
-          expect{ distribution }.to raise_error(StandardError, "Shipping cost cannot be negative!")
-        end
+          it "raises error" do
+            expect { distribution }.to raise_error(StandardError, "Shipping cost cannot be negative!")
+          end
         end
 
         context "when delivery_method is other then shipped" do
-        let(:distribution) { create(:distribution, delivery_method: "delivery", shipping_cost: 12.05) }
+          let(:distribution) { create(:distribution, delivery_method: "delivery", shipping_cost: 12.05) }
 
-        it "distribution will be created successfully and the shipping_cost will be zero" do
-          expect(distribution.errors).to be_empty
-          expect(distribution.shipping_cost).to eq(0)
-        end
+          it "distribution will be created successfully and the shipping_cost will be zero" do
+            expect(distribution.errors).to be_empty
+            expect(distribution.shipping_cost).to eq(0)
+          end
         end
       end
 
@@ -198,7 +198,7 @@ RSpec.describe Distribution, type: :model do
           let(:distribution_params) { {delivery_method: "shipped", shipping_cost: -7.12 } }
 
           it "raises error on save if shipping_cost is negative" do
-            expect{ distribution.update(distribution_params) }.to raise_error(StandardError, "Shipping cost cannot be negative!")
+            expect { distribution.update(distribution_params) }.to raise_error(StandardError, "Shipping cost cannot be negative!")
           end
         end
 

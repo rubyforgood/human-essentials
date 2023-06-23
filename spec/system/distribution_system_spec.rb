@@ -35,9 +35,8 @@ RSpec.feature "Distributions", type: :system do
         fill_in "Comment", with: "Take my wipes... please"
         fill_in "Distribution date", with: '01/01/2001 10:15:00 AM'
 
-        #shipping cost field should not be visible
-        shipping_cost_field = page.find("#dist_shipping_cost") rescue nil
-        expect(shipping_cost_field).to be_nil
+        # shipping cost field should not be visible
+        expect { page.find("#dist_shipping_cost") }.to raise_error(Capybara::ElementNotFound)
 
         expect(PartnerMailerJob).to receive(:perform_later).once
         click_button "Save", match: :first
@@ -72,9 +71,8 @@ RSpec.feature "Distributions", type: :system do
           select @storage_location.name, from: "From storage location"
           choose "Shipped"
 
-          # if element not found it will throw exception
-          shipping_cost_field = page.find("#dist_shipping_cost") rescue nil
-          expect(shipping_cost_field).not_to be_nil
+          # to check if shipping_cost field exist
+          expect(page.find("#dist_shipping_cost").present?).to be_truthy
 
           fill_in "Shipping cost", with: '-12.05'
           fill_in "Comment", with: "Take my wipes... please"
@@ -94,9 +92,8 @@ RSpec.feature "Distributions", type: :system do
           select @storage_location.name, from: "From storage location"
           choose "Shipped"
 
-          # if element not found it will throw exception
-          shipping_cost_field = page.find("#dist_shipping_cost") rescue nil
-          expect(shipping_cost_field).not_to be_nil
+          # to check if shipping_cost field exist
+          expect(page.find("#dist_shipping_cost").present?).to be_truthy
 
           fill_in "Shipping cost", with: '12.05'
           fill_in "Comment", with: "Take my wipes... please"
@@ -265,21 +262,19 @@ RSpec.feature "Distributions", type: :system do
         click_on "Edit", match: :first
 
         # if element not found it will throw exception
-        shipping_cost_field = page.find("#dist_shipping_cost") rescue nil
-        expect(shipping_cost_field).to be_nil
+        expect { page.find("#dist_shipping_cost") }.to raise_error(Capybara::ElementNotFound)
       end
     end
 
     context "when delivery method is shipped" do
-      let(:delivery_method) {"shipped"}
+      let(:delivery_method) { "shipped" }
 
       context "when shipping cost is negative" do
         it "should not update distribution, display shipping_cost field and show error message" do
           click_on "Edit", match: :first
 
-          # if element not found it will throw exception
-          shipping_cost_field = page.find("#dist_shipping_cost") rescue nil
-          expect(shipping_cost_field).not_to be_nil
+          # to check if shipping_cost field exist
+          expect(page.find("#dist_shipping_cost").present?).to be_truthy
 
           fill_in "Shipping cost", with: -12.05
           click_on "Save", match: :first
@@ -291,9 +286,8 @@ RSpec.feature "Distributions", type: :system do
         it "should update distribution and display shipping_cost field" do
           click_on "Edit", match: :first
 
-          # if element not found it will throw exception
-          shipping_cost_field = page.find("#dist_shipping_cost") rescue nil
-          expect(shipping_cost_field).not_to be_nil
+          # to check if shipping_cost field exist
+          expect(page.find("#dist_shipping_cost").present?).to be_truthy
 
           fill_in "Shipping cost", with: 12.05
           click_on "Save", match: :first

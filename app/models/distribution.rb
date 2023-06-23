@@ -155,7 +155,7 @@ class Distribution < ApplicationRecord
   end
 
   def validate_shipping_cost
-    if self.shipping_cost < 0
+    if shipping_cost < 0
       raise StandardError.new("Shipping cost cannot be negative!")
     end
   end
