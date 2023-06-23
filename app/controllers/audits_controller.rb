@@ -25,11 +25,13 @@ class AuditsController < ApplicationController
     @audit.save
 
     inventory_items = @audit.storage_location.inventory_items
+
     inventory_items.each do |inventory_item|
       line_item = @audit.line_items.find_by(item: inventory_item.item)
-      if line_item.nil?
-        @audit.adjustment.line_items.create(item_id: inventory_item.item.id, quantity: -inventory_item.quantity)
-      elsif line_item.quantity != inventory_item.quantity
+
+      next if line_item.nil?
+
+      if line_item.quantity != inventory_item.quantity
         @audit.adjustment.line_items.create(item_id: inventory_item.item.id, quantity: line_item.quantity - inventory_item.quantity)
       end
     end
