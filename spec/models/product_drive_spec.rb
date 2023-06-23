@@ -57,6 +57,8 @@ RSpec.describe ProductDrive, type: :model do
 
       expect(subject.donations).to include(donation)
     end
+
+    it { is_expected.to have_many(:product_drive_participants).through(:donations) }
   end
 
   describe "distinct_items" do
