@@ -1,9 +1,9 @@
 desc "This task is run by a scheduling tool nightly to cache the processor intensive queries"
 task :cache_historical_data => :environment do
-  puts "Caching historical data"
+  Rails.logger.info("Caching historical data")
   DATA_TYPES = ['Distribution', 'Purchase', 'Donation']
 
-  orgs = Organization.all
+  orgs = Organization.is_active
 
   orgs.each do |org|
     DATA_TYPES.each do |type|
@@ -12,5 +12,5 @@ task :cache_historical_data => :environment do
     end
   end
   
-  puts "Done!"
+  Rails.logger.info("Done!")
 end

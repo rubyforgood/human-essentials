@@ -14,7 +14,12 @@ RSpec.describe HistoricalDataCacheJob, type: :job do
   end
 
   it "caches the historical data" do
-    expect(Rails.cache).to receive(:write).with("#{organization.short_name}-historical-#{type}-data", anything)
+    expected_data = {name: "Item 2", data: [0, 0, 0, 0, 0, 60, 0, 0, 30, 0, 0, 0], visible: false}
+    allow_any_instance_of(HistoricalTrendService).to receive(:series).and_return(expected_data)
+
     perform_enqueued_jobs { job }
+
+    cached_data = Rails.cache.read("#{organization.short_name}-historical-#{type}-data")
+    expect(cached_data).to eq(expected_data)
   end
 end
