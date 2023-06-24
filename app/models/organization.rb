@@ -137,6 +137,12 @@ class Organization < ApplicationRecord
   scope :alphabetized, -> { order(:name) }
   scope :search_name, ->(query) { where('name ilike ?', "%#{query}%") }
 
+  scope :is_active, -> {
+    joins(:users)
+      .where('users.last_sign_in_at > ?', 4.months.ago)
+      .distinct
+  }
+
   def assign_attributes_from_account_request(account_request)
     assign_attributes(
       name: account_request.organization_name,
