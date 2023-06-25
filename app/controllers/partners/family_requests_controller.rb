@@ -16,11 +16,14 @@ module Partners
 
     def confirmation
       @children = current_partner.children.active.where(id: session[:children_ids]).where.not(item_needed_diaperid: [nil, 0])
+      @partners_quota = current_partner.quota
 
-      @items = @children.each_with_object({}) do |child, items|
+      @items = @children.each_with_object({}).with_index do |(child, items), index|
         item = Item.find(child.item_needed_diaperid)
-        items[item.name] = {first_name: child.first_name, last_name: child.last_name} unless item.nil?
+        items[index] = { item_name: item.name, child_name: "#{child.first_name} #{child.last_name}" } unless item.nil?
       end
+
+      @total_items_requested = @items.keys.length
 
       render :confirmation
     end

@@ -1,14 +1,16 @@
 <section class="d-flex flex-column align-items-center py-4">
-  <div class="card shadow mx-auto" style="width: 40rem;">
+  <div class="card shadow-sm mx-auto" style="width: 40rem;">
     <div class="card-body">
       <h1 class="text-center">Request Summary</h1>
       <hr>
-      <% @items.each do |item_name, child_info| %>
+      <% @items.each do |hash_index, item_info| %>
         <p class="card-text">
-          <strong><%= item_name %></strong> for <%= child_info[:first_name] %> <%= child_info[:last_name] %>
+          <strong><%= item_info[:item_name] %></strong> for <%= item_info[:child_name] %>
         </p>
         <hr>
       <% end %>
+      <h2 class="text-center"><strong><%= @total_items_requested %> total items are being requested<strong></h2>
+      <hr>
       <h3 class="card-subtitle mb-4 text-center">Please confirm that the above list is what you meant to request</h3>
       <div class="d-flex justify-content-between align-items-center">
         <%= link_to 'Go back', 'javascript:history.back()', rel: 'nofollow', class: "btn btn-danger" %>
