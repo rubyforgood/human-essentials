@@ -23,6 +23,13 @@ class PartnerCreateService
       Partners::Profile.create!({
                                   partner_id: @partner.id,
                                   name: @partner.name,
+                                  agency_type: "tbd",
+                                  city: "tbd",
+                                  state: "tbd",
+                                  zip_code: "tbd",
+                                  address1: "tbd",
+                                  program_name: "tbd",
+                                  program_description: "tbd",
                                   enable_child_based_requests: organization.enable_child_based_requests,
                                   enable_individual_requests: organization.enable_individual_requests,
                                   enable_quantity_based_requests: organization.enable_quantity_based_requests
