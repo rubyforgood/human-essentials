@@ -15,8 +15,8 @@
       </div>
       <h3>Please confirm that the above list is what you meant to request</h3>
       <div class="d-flex justify-content-between align-items-center mt-4">
-        <%= link_to 'No, I need to change something.', 'javascript:history.back()', rel: 'nofollow', class: "btn btn-danger" %>
-        <%= link_to "Yes, it's right", partners_individuals_requests_path(partners_family_request: @request, organization_id: current_partner.organization.id), method: :post, rel: 'nofollow', class: 'btn btn-primary' %>
+        <%= link_to 'Go back', 'javascript:history.back()', rel: 'nofollow', class: "btn btn-danger" %>
+        <%= link_to "Submit", partners_individuals_requests_path(partners_family_request: @request, organization_id: current_partner.organization.id), method: :post, rel: 'nofollow', class: 'btn btn-primary' %>
       </div>
     </div>
   </div>
