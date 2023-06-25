@@ -32,5 +32,25 @@ RSpec.describe "/partners/profiles", type: :request do
       expect(partner.profile.address2).to eq("Washington, DC")
       expect(response).to redirect_to(partners_profile_path)
     end
+
+    context "when updating an existing value to a blank value" do
+      before do
+        partner.profile.update!(city: "")
+        put partners_profile_path(partner,
+          partner: {name: "Partnerdude", profile: {city: "", website: "N/A"}})
+      end
+
+      it "updates the partner profile attribute to a blank value" do
+        expect(partner.profile.reload.city).to eq ""
+      end
+
+      it "does not update other partner profile attributes to blank" do
+        expect(partner.profile.reload.address2).to be_nil
+      end
+
+      it "does store N/A in the database" do
+        expect(partner.profile.reload.website).to eq "N/A"
+      end
+    end
   end
 end

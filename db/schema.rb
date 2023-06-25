@@ -10,9 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_16_135543) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_05_140424) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  # Custom types defined in this database.
+  # Note that some types may not work with other database engines. Be careful if changing database.
+  create_enum "category", ["US_County", "Other"]
 
   create_table "account_requests", force: :cascade do |t|
     t.string "name", null: false
@@ -181,6 +185,17 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_16_135543) do
     t.boolean "active", default: true
     t.boolean "archived"
     t.index ["family_id"], name: "index_children_on_family_id"
+  end
+
+  create_table "counties", force: :cascade do |t|
+    t.string "name"
+    t.string "region"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.enum "category", default: "US_County", null: false, enum_type: "category"
+    t.index ["name", "region"], name: "index_counties_on_name_and_region", unique: true
+    t.index ["name"], name: "index_counties_on_name"
+    t.index ["region"], name: "index_counties_on_region"
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
@@ -549,6 +564,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_16_135543) do
     t.index ["partner_id"], name: "index_partner_requests_on_partner_id"
   end
 
+  create_table "partner_served_areas", force: :cascade do |t|
+    t.bigint "partner_profile_id", null: false
+    t.bigint "county_id", null: false
+    t.integer "client_share"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["county_id"], name: "index_partner_served_areas_on_county_id"
+    t.index ["partner_profile_id"], name: "index_partner_served_areas_on_partner_profile_id"
+  end
+
   create_table "partner_users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -809,6 +834,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_16_135543) do
   add_foreign_key "organizations", "ndbn_members", primary_key: "ndbn_member_id"
   add_foreign_key "partner_groups", "organizations"
   add_foreign_key "partner_requests", "users", column: "partner_user_id"
+  add_foreign_key "partner_served_areas", "counties"
+  add_foreign_key "partner_served_areas", "partner_profiles"
   add_foreign_key "partners", "storage_locations", column: "default_storage_location_id"
   add_foreign_key "product_drives", "organizations"
   add_foreign_key "requests", "distributions"
