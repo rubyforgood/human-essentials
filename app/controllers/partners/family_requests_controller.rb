@@ -47,5 +47,7 @@ module Partners
         redirect_to new_partners_family_request_path, error: "Request failed! #{create_service.errors.map { |error| error.message.to_s }}}"
       end
     end
+
+    session.delete(:children_ids)
   end
 end
