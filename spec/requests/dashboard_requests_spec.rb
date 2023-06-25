@@ -27,10 +27,10 @@ RSpec.describe "Dashboard", type: :request do
       end
 
       context "for another org" do
-        it "requires authorization" do
+        it "still displays the user's org" do
           # nother org
           get dashboard_path(organization_id: create(:organization).to_param)
-          expect(response).to be_redirect
+          expect(response.body).to include(@organization.name)
         end
       end
     end

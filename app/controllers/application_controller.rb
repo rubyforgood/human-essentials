@@ -15,15 +15,28 @@ class ApplicationController < ActionController::Base
   rescue_from ActiveRecord::RecordNotFound, with: :not_found!
 
   def current_organization
-    @current_organization ||= Organization.find_by(short_name: params[:organization_id]) || current_user&.organization
+    return @current_organization if @current_organization
+
+    return current_role.resource if current_role.resource.is_a?(Organization)
+
+    Organization.find_by(short_name: params[:organization_id])
   end
   helper_method :current_organization
 
-  def current_role
-    role = Role.find_by(id: session[:current_role]) || UsersRole.current_role_for(current_user)
-    session[:current_role] = role&.id
+  def current_partner
+    return nil if current_role.name.to_sym != Role::PARTNER
 
-    role
+    current_role.resource
+  end
+  helper_method :current_partner
+
+  def current_role
+    return @role if @role
+
+    @role = Role.find_by(id: session[:current_role]) || UsersRole.current_role_for(current_user)
+    session[:current_role] = @role&.id
+
+    @role
   end
 
   def organization_url_options(options = {})
@@ -66,7 +79,8 @@ class ApplicationController < ActionController::Base
     verboten! unless params[:controller].include?("devise") ||
       current_user.has_role?(Role::SUPER_ADMIN) ||
       current_user.has_role?(Role::ORG_USER, current_organization) ||
-      current_user.has_role?(Role::ORG_ADMIN, current_organization)
+      current_user.has_role?(Role::ORG_ADMIN, current_organization) ||
+      current_user.has_role?(Role::PARTNER, current_partner)
   end
 
   def authorize_admin

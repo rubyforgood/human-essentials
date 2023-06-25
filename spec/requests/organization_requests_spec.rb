@@ -79,11 +79,15 @@ RSpec.describe "Organizations", type: :request do
       end
 
       context "when organization can not be updated" do
-        before { allow(OrganizationUpdateService).to receive(:update).and_return(false) }
+        let(:invalid_organization) { create(:organization, name: "Original Name") }
+        let(:invalid_params) { { organization: { name: nil } } }
 
-        it "redirects to #edit with an error message" do
-          subject
+        subject do
+          patch "/#{default_params[:organization_id]}/manage",
+                params: default_params.merge(invalid_params)
+        end
 
+        it "renders edit template with an error message" do
           expect(subject).to render_template("edit")
           expect(flash[:error]).to be_present
         end
@@ -152,16 +156,16 @@ RSpec.describe "Organizations", type: :request do
       describe "GET #show" do
         before { get organization_path(other_organization_params) }
 
-        it "redirects to dashboard" do
-          expect(response).to redirect_to(dashboard_path)
+        it "shows your own anyway" do
+          expect(response.body).to include(@organization.name)
         end
       end
 
       describe "GET #edit" do
         before { get edit_organization_path(other_organization_params) }
 
-        it "redirects to dashboard" do
-          expect(response).to redirect_to(dashboard_path)
+        it "shows your own anyway" do
+          expect(response.body).to include(@organization.name)
         end
       end
 

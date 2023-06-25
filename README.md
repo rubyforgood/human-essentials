@@ -8,10 +8,6 @@
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper?ref=badge_shield)
 [![Knapsack Pro Parallel CI builds for RSpec tests](https://img.shields.io/badge/Knapsack%20Pro-Parallel%20%2F%20Rspec%20tests-%230074ff)](https://knapsackpro.com/dashboard/organizations/1858/projects/1295/test_suites/1835/builds?utm_campaign=organization-id-1858&amp;utm_content=test-suite-id-1835&amp;utm_medium=readme&amp;utm_source=knapsack-pro-badge&amp;utm_term=project-id-1295)
 
-## 🎃 Hacktoberfest
-
-We absolutely love [Hacktoberfest](https://hacktoberfest.com/) and love how it exposes our amazing project to so many new contributors but with so many new people helping out in a condensed time period it can get a little hectic for the core team to keep up. We are going to do our best to respond to comments, issues, and pull requests within a couple days but given the busy nature of the month please wait at least a week before reaching out. You are welcome to drop in to the team office hours which are every Sunday at 10:00AM ET. The office zoom room for the office hours will be posted in the #human-essentials channel in the Ruby for Good slack.
-
 ## 💖 Mission
 
 Human Essentials is an inventory management system that was built to address the needs of [Diaper Banks](https://nationaldiaperbanknetwork.org/diaper-need/) as directly and explicitly as possible and later adapted to meet the need of other Essentials Banks. Essentials Banks maintain inventory, receive donations and other means of intaking human essentials supplies (e.g. diapers, period supplies), and issue distributions to community partner organizations. Like any non-profit, they also need to perform reports on this data and have day-to-day operational information they need as well. This application aims to serve all those needs, as well as facilitate, wherever possible the general operations of the Diaper Bank themselves (eg. through using barcode readers, scale weighing, inventory audits).
@@ -37,6 +33,11 @@ Human Essentials has over 200 registered banks across the United States at **no 
 * [SDG 3](https://sdgs.un.org/goals/goal3) - Ensure healthy lives and promote well-being for all at all ages
 * [SDG 10](https://sdgs.un.org/goals/goal10) - Reduce inequality within and among countries
 
+
+## Ruby for Good
+
+Human Essentials is one of many projects initiated and run by Ruby for Good. You can find out more about Ruby for Good at https://rubyforgood.org
+
 ---
 
 
@@ -54,9 +55,9 @@ Human Essentials has over 200 registered banks across the United States at **no 
 <a href="https://github.com/rubyforgood/human-essentials/commits/main" alt="Total Commits"><img src="https://badgen.net/github/commits/rubyforgood/human-essentials/main?icon=github&color=green" /></a>
 </p>
 <p align="center">
-<a href="https://github.com/rubyforgood/human-essentials/ alt="Stars"><img src="https://img.shields.io/github/stars/rubyforgood/human-essentials?style=social" /></a>
-<a href="https://github.com/rubyforgood/human-essentials/ alt="Forks"><img src="https://img.shields.io/github/forks/rubyforgood/human-essentials?style=social" /></a>
-<a href="https://github.com/rubyforgood/human-essentials/ alt="Watchers"><img src="https://img.shields.io/github/watchers/rubyforgood/human-essentials?style=social" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/" alt="Stars"><img src="https://img.shields.io/github/stars/rubyforgood/human-essentials?style=social" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/" alt="Forks"><img src="https://img.shields.io/github/forks/rubyforgood/human-essentials?style=social" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/" alt="Watchers"><img src="https://img.shields.io/github/watchers/rubyforgood/human-essentials?style=social" /></a>
 </p>
 
 ---
@@ -81,7 +82,7 @@ If you're new here, here are some things you should know:
 
 #### 💬 Join us on slack
 Please feel free to join us on Slack!
-You can sign up at https://rubyforgood.herokuapp.com and find us in #human-essentials.
+You can sign up [here](https://rubyforgood.slack.com/join/shared_invite/zt-1kfeimohe-KL~~~6Lkof7G94_7Ojd_Hw#/shared-invite/email) and find us in #human-essentials.
 
 There are numerous other folks that can chime in and answer questions -- please ask and someone will probably be there to help!
 

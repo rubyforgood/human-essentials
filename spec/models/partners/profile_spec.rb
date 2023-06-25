@@ -86,51 +86,112 @@ RSpec.describe Partners::Profile, type: :model do
     it { should have_one_attached(:proof_of_partner_status) }
     it { should have_one_attached(:proof_of_form_990) }
     it { should have_many_attached(:documents) }
+
+    it { should have_many(:served_areas) }
   end
 
-  describe "social media info validation for partners" do
+  it "must allow deleting served_areas" do
+    should accept_nested_attributes_for(:served_areas).allow_destroy(true)
+  end
+
+  describe "request settings validation for profile" do
+    subject { FactoryBot.build(:partner_profile, enable_child_based_requests: false, enable_individual_requests: false, enable_quantity_based_requests: false) }
+
+    context "no settings are set to true" do
+      it "should not be valid" do
+        expect(subject).to_not be_valid
+        expect(subject.errors[:base]).to include("At least one request type must be set")
+      end
+    end
+
+    context "at least one request type is set to true" do
+      request_type_attributes = [:enable_child_based_requests, :enable_individual_requests, :enable_quantity_based_requests]
+      request_type_attributes.each do |request_type|
+        it "should be valid when #{request_type} is true" do
+          subject.update("#{request_type}": true)
+          expect(subject.valid?).to eq(true)
+        end
+      end
+    end
+  end
+
+  describe "social media info validation for profile" do
     context "no social media presence and the checkbox isn't checked" do
-      let(:partner) { FactoryBot.build(:partner_profile, website: "", twitter: "", facebook: "", instagram: "", no_social_media_presence: false) }
+      let(:profile) { FactoryBot.build(:partner_profile, website: "", twitter: "", facebook: "", instagram: "", no_social_media_presence: false) }
 
       it "should not be valid" do
-        expect(partner.valid?).to eq(false)
+        expect(profile.valid?).to eq(false)
       end
     end
 
     context "no social media presence and the checkbox is checked" do
-      let(:partner) { FactoryBot.build(:partner_profile, website: "", twitter: "", facebook: "", instagram: "", no_social_media_presence: true) }
+      let(:profile) { FactoryBot.build(:partner_profile, website: "", twitter: "", facebook: "", instagram: "", no_social_media_presence: true) }
 
       it "should be valid" do
-        expect(partner.valid?).to eq(true)
+        expect(profile.valid?).to eq(true)
       end
     end
 
     context "has social media presence and the checkbox is unchecked" do
-      let(:partner) { FactoryBot.build(:partner_profile, no_social_media_presence: false) }
+      let(:profile) { FactoryBot.build(:partner_profile, no_social_media_presence: false) }
 
       it "with just a website it should be valid" do
-        partner.update(website: "some website URL", twitter: "", facebook: "", instagram: "")
-        expect(partner.valid?).to eq(true)
+        profile.update(website: "some website URL", twitter: "", facebook: "", instagram: "")
+        expect(profile.valid?).to eq(true)
       end
 
       it "with just twitter it should be valid" do
-        partner.update(website: "", twitter: "some twitter URL", facebook: "", instagram: "")
-        expect(partner.valid?).to eq(true)
+        profile.update(website: "", twitter: "some twitter URL", facebook: "", instagram: "")
+        expect(profile.valid?).to eq(true)
       end
 
       it "with just facebook it should be valid" do
-        partner.update(website: "", twitter: "", facebook: "some facebook URL", instagram: "")
-        expect(partner.valid?).to eq(true)
+        profile.update(website: "", twitter: "", facebook: "some facebook URL", instagram: "")
+        expect(profile.valid?).to eq(true)
       end
 
       it "with just instagram it should be valid" do
-        partner.update(website: "", twitter: "", facebook: "", instagram: "some instagram URL")
-        expect(partner.valid?).to eq(true)
+        profile.update(website: "", twitter: "", facebook: "", instagram: "some instagram URL")
+        expect(profile.valid?).to eq(true)
       end
 
       it "with every social media option it should be valid" do
-        partner.update(website: "some website URL", twitter: "some twitter URL", facebook: "some facebook URL", instagram: "some instagram URL")
-        expect(partner.valid?).to eq(true)
+        profile.update(website: "some website URL", twitter: "some twitter URL", facebook: "some facebook URL", instagram: "some instagram URL")
+        expect(profile.valid?).to eq(true)
+      end
+    end
+  end
+
+  describe "client share behaviour" do
+    context "no served areas" do
+      let(:profile) { FactoryBot.build(:partner_profile) }
+      it "has 0 client share" do
+        expect(profile.client_share_total).to eq(0)
+        expect(profile.valid?).to eq(true)
+      end
+    end
+
+    context "multiple" do
+      it "sums the client shares " do
+        profile = create(:partner_profile)
+        county1 = create(:county, name: "county1", region: "region1")
+        county2 = create(:county, name: "county2", region: "region2")
+        create(:partners_served_area, partner_profile: profile, county: county1, client_share: 50)
+        create(:partners_served_area, partner_profile: profile, county: county2, client_share: 49)
+        profile.reload
+        expect(profile.client_share_total).to eq(99)
+        expect(profile.valid?).to eq(false)
+      end
+
+      it "is valid if client share sum is 100" do
+        profile = create(:partner_profile)
+        county1 = create(:county, name: "county1", region: "region1")
+        county2 = create(:county, name: "county2", region: "region2")
+        create(:partners_served_area, partner_profile: profile, county: county1, client_share: 75)
+        create(:partners_served_area, partner_profile: profile, county: county2, client_share: 25)
+        profile.reload
+        expect(profile.client_share_total).to eq(100)
+        expect(profile.valid?).to eq(true)
       end
     end
   end
