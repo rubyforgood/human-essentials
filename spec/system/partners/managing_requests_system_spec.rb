@@ -12,7 +12,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
       context 'WHEN they create a request inproperly' do
         before do
           click_button 'Submit Essentials Request'
-          click_link "Yes, it's right"
+          click_link "Submit"
         end
 
         it 'should show an error message with the instructions ' do
@@ -87,7 +87,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
       context 'WHEN they create a request inproperly by not inputting anything' do
         before do
           click_button 'Submit Essentials Request'
-          click_link "Yes, it's right"
+          click_link "Submit"
         end
 
         it 'should show an error message with the instructions ' do
