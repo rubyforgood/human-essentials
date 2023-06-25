@@ -41,13 +41,13 @@ module Partners
 
       create_service.call
 
+      session.delete(:children_ids)
+
       if create_service.errors.none?
         redirect_to partners_request_path(create_service.partner_request), notice: "Requested items successfully!"
       else
         redirect_to new_partners_family_request_path, error: "Request failed! #{create_service.errors.map { |error| error.message.to_s }}}"
       end
     end
-
-    session.delete(:children_ids)
   end
 end
