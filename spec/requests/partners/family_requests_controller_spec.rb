@@ -57,7 +57,6 @@ RSpec.describe Partners::FamilyRequestsController, type: :request do
       partner.update!(status: :approved)
 
       subject
-      p response.request.flash
       expect(response.request.flash[:notice]).to eql "Requested items successfully!"
     end
   end
