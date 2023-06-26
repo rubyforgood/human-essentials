@@ -91,14 +91,14 @@ RSpec.describe Partners::Profile, type: :model do
   end
 
   describe "validations" do
-    it { should validate_presence_of(:name) }
-    it { should validate_presence_of(:agency_type) }
-    it { should validate_presence_of(:city) }
-    it { should validate_presence_of(:state) }
-    it { should validate_presence_of(:zip_code) }
-    it { should validate_presence_of(:address1) }
-    it { should validate_presence_of(:program_name) }
-    it { should validate_presence_of(:program_description) }
+    it { should validate_presence_of(:name).on(:edit) }
+    it { should validate_presence_of(:agency_type).on(:edit) }
+    it { should validate_presence_of(:city).on(:edit) }
+    it { should validate_presence_of(:state).on(:edit) }
+    it { should validate_presence_of(:zip_code).on(:edit) }
+    it { should validate_presence_of(:address1).on(:edit) }
+    it { should validate_presence_of(:program_name).on(:edit) }
+    it { should validate_presence_of(:program_description).on(:edit) }
   end
 
   it "must allow deleting served_areas" do
