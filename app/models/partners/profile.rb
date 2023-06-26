@@ -95,7 +95,7 @@ module Partners
     has_many_attached :documents
 
     validate :check_social_media, on: :edit
-    validates :name, :agency_type, :city, :state, :zip_code, :address1, :program_name, :program_description, presence: true, on: :edit
+    validates :agency_type, :city, :state, :zip_code, :address1, :program_name, :program_description, presence: true, on: :edit
 
     validate :client_share_is_0_or_100
     validate :has_at_least_one_request_setting
