@@ -8,7 +8,7 @@
 #  delivery_method        :integer          default("pick_up"), not null
 #  issued_at              :datetime
 #  reminder_email_enabled :boolean          default(FALSE), not null
-#  shipping_cost          :decimal(8, 2)    default(0.0)
+#  shipping_cost          :decimal(8, 2)
 #  state                  :integer          default("scheduled"), not null
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
@@ -188,7 +188,7 @@ RSpec.describe Distribution, type: :model do
 
           it "distribution will be created successfully and the shipping_cost will be zero" do
             expect(distribution.errors).to be_empty
-            expect(distribution.shipping_cost).to eq(0)
+            expect(distribution.shipping_cost).to be_nil
           end
         end
       end

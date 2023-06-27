@@ -9,7 +9,7 @@ require 'time_util'
 #  delivery_method        :integer          default("pick_up"), not null
 #  issued_at              :datetime
 #  reminder_email_enabled :boolean          default(FALSE), not null
-#  shipping_cost          :decimal(8, 2)    default(0.0)
+#  shipping_cost          :decimal(8, 2)
 #  state                  :integer          default("scheduled"), not null
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
@@ -44,7 +44,7 @@ class Distribution < ApplicationRecord
   before_save :combine_distribution, :reset_shipping_cost, :validate_shipping_cost
 
   enum state: { scheduled: 5, complete: 10 }
-  enum delivery_method: { pick_up: 0, delivery: 1, shipped: 3 }
+  enum delivery_method: { pick_up: 0, delivery: 1, shipped: 2 }
 
   scope :active, -> { joins(:line_items).joins(:items).where(items: { active: true }) }
   # add item_id scope to allow filtering distributions by item
@@ -151,11 +151,11 @@ class Distribution < ApplicationRecord
   end
 
   def reset_shipping_cost
-    self.shipping_cost = 0 unless delivery_method == "shipped"
+    self.shipping_cost = nil unless delivery_method == "shipped"
   end
 
   def validate_shipping_cost
-    if shipping_cost < 0
+    if shipping_cost&.negative?
       raise StandardError.new("Shipping cost cannot be negative!")
     end
   end
