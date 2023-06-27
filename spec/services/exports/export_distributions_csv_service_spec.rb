@@ -35,7 +35,7 @@ describe Exports::ExportDistributionsCSVService do
       items_lists.each_with_index.map do |items, i|
         distribution = create(
           :distribution,
-          issued_at: start_time - i.days
+          issued_at: start_time - i.days, delivery_method: "shipped", shipping_cost: "12.09"
         )
 
         items.each do |(item, quantity)|
@@ -96,7 +96,7 @@ describe Exports::ExportDistributionsCSVService do
           distribution.line_items.where(item_id: item_id).total,
           distribution.cents_to_dollar(distribution.line_items.total_value),
           distribution.delivery_method,
-          "$0.00",
+          "$#{distribution.shipping_cost.to_f}",
           distribution.state,
           distribution.agency_rep,
           distribution.comment

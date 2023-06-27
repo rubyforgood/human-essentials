@@ -262,7 +262,7 @@ RSpec.feature "Distributions", type: :system do
         click_on "Edit", match: :first
 
         # if element not found it will throw exception
-        expect { page.find("#dist_shipping_cost") }.to raise_error(Capybara::ElementNotFound)
+        expect { page.find_by_id("dist_shipping_cost", wait: 2) }.to raise_error(Capybara::ElementNotFound)
       end
     end
 
@@ -274,7 +274,7 @@ RSpec.feature "Distributions", type: :system do
           click_on "Edit", match: :first
 
           # to check if shipping_cost field exist
-          expect(page.find("#dist_shipping_cost").present?).to be_truthy
+          expect(page.find_by_id("dist_shipping_cost")).not_to be_nil
 
           fill_in "Shipping cost", with: -12.05
           click_on "Save", match: :first
@@ -287,7 +287,7 @@ RSpec.feature "Distributions", type: :system do
           click_on "Edit", match: :first
 
           # to check if shipping_cost field exist
-          expect(page.find("#dist_shipping_cost").present?).to be_truthy
+          expect(page.find_by_id("dist_shipping_cost")).not_to be_nil
 
           fill_in "Shipping cost", with: 12.05
           click_on "Save", match: :first
@@ -501,7 +501,7 @@ RSpec.feature "Distributions", type: :system do
       end
 
       expect(page).to have_content("Sorry, we weren't able to save")
-      find_all(".numeric")[2].set 1
+      find_all(".numeric")[1].set 1
       click_on "Save"
 
       expect(page).to have_content("Distribution Complete")
