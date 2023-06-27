@@ -183,7 +183,7 @@ RSpec.describe Distribution, type: :model do
       end
 
       context "#reset_shipping_cost" do
-        context "#when delivery_method is other then shipped" do
+        context "when delivery_method is other then shipped" do
           let(:distribution) { create(:distribution, delivery_method: "delivery", shipping_cost: 12.05) }
 
           it "distribution will be created successfully and the shipping_cost will be zero" do
