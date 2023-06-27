@@ -72,7 +72,7 @@ RSpec.feature "Distributions", type: :system do
           choose "Shipped"
 
           # to check if shipping_cost field exist
-          expect(page.find("#dist_shipping_cost").present?).to be_truthy
+          expect(page.find_by_id("dist_shipping_cost")).not_to be_nil
 
           fill_in "Shipping cost", with: '-12.05'
           fill_in "Comment", with: "Take my wipes... please"
@@ -93,7 +93,7 @@ RSpec.feature "Distributions", type: :system do
           choose "Shipped"
 
           # to check if shipping_cost field exist
-          expect(page.find("#dist_shipping_cost").present?).to be_truthy
+          expect(page.find_by_id("dist_shipping_cost")).not_to be_nil
 
           fill_in "Shipping cost", with: '12.05'
           fill_in "Comment", with: "Take my wipes... please"
