@@ -1,8 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 
-let delivery_method, shipping_field, shipping_label="";
+let delivery_method, shipping_cost_div="";
 export default class extends Controller {
-    static targets = ["shippingCostField", "shippingCostLabel"]
+    static targets = ["shippingCost"]
 
     connect() {
         delivery_method= $('input[name="distribution[delivery_method]"]:checked')[0].value;
@@ -15,18 +15,15 @@ export default class extends Controller {
     }
 
     toggle(selected_delivery_method) {
-        shipping_field = this.shippingCostFieldTarget;
-        shipping_label = this.shippingCostLabelTarget;
+        shipping_cost_div = this.shippingCostTarget;
 
         if (selected_delivery_method == "shipped")
         {
-            shipping_field.classList.remove("d-none");
-            shipping_label.classList.remove("d-none");
+            shipping_cost_div.classList.remove("d-none");
         }
         else
         {
-            shipping_field.classList.add("d-none");
-            shipping_label.classList.add("d-none");
+            shipping_cost_div.classList.add("d-none");
         }
     }
 }
