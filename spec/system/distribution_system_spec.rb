@@ -36,7 +36,7 @@ RSpec.feature "Distributions", type: :system do
         fill_in "Distribution date", with: '01/01/2001 10:15:00 AM'
 
         # shipping cost field should not be visible
-        expect { page.find("#dist_shipping_cost") }.to raise_error(Capybara::ElementNotFound)
+        expect { page.find_by_id("dist_shipping_cost", wait: 2) }.to raise_error(Capybara::ElementNotFound)
 
         expect(PartnerMailerJob).to receive(:perform_later).once
         click_button "Save", match: :first
