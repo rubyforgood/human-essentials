@@ -1,5 +1,5 @@
 <section class="d-flex flex-column align-items-center py-4">
-  <div class="card shadow-sm mx-auto" style="width: 40rem;">
+  <div class="card shadow-sm mx-auto" style="width: 50rem;">
     <div class="card-body">
       <h1 class="text-center">Request Summary</h1>
       <hr>
@@ -9,15 +9,14 @@
         </p>
         <hr>
       <% end %>
-      <h2 class="text-center"><strong><%= @total_items_requested %> total items are being requested<strong></h2>
+      <h3 class="text-start"><strong> You are ordering for a total of <%= @total_items_requested %> children. Are you sure?</strong></h3>
       <hr>
-      <h3 class="card-subtitle mb-4 text-center">Please confirm that the above list is what you meant to request</h3>
+      <h3 class="card-subtitle mb-4 text-start">Please confirm that the above list is what you meant to request</h3>
       <div class="d-flex justify-content-between align-items-center">
-        <%= link_to 'Go back', 'javascript:history.back()', rel: 'nofollow', class: "btn btn-danger" %>
-        <%= button_to 'Submit', partners_family_requests_path, method: :post, class: 'btn btn-primary' %>
+        <%= link_to 'Go back', 'javascript:history.back()', rel: 'nofollow', class: "btn btn-danger btn-lg" %>
+        <%= button_to 'Submit', partners_family_requests_path, method: :post, class: 'btn btn-primary btn-lg' %>
       </div>
     </div>
   </div>
 </section>
-
 
