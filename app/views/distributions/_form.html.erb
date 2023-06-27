@@ -16,12 +16,12 @@
     <%= f.input :reminder_email_enabled, as: :boolean, checked_value: true, unchecked_value: false, label: "Send email reminder the day before?" %>
     <%= f.input :agency_rep, label: "Agency representative" %>
 
-    <div class='d-flex flex-row' data-controller="distribution">
+    <div class='d-flex flex-row' data-controller="distribution-delivery">
       <span class="w-25">
-         <%= f.input :delivery_method, as: :radio_buttons, :input_html => { data: { action: "distribution#toggleShippingCost" } }, collection: Distribution.delivery_methods.keys, label_method: :humanize, label: "Delivery method" %>
+         <%= f.input :delivery_method, as: :radio_buttons, :input_html => { data: { action: "distribution-delivery#toggleShippingCost" } }, collection: Distribution.delivery_methods.keys, label_method: :humanize, label: "Delivery method" %>
       </span>
       <span class="mx-2 mt-5">
-        <%= f.input :shipping_cost, as: :numeric, label: "Shipping cost", placeholder: "Shipping Cost", value: number_to_currency(f.object.shipping_cost.to_f, delimiter: '', unit: ''), input_html: { min: 0, step: 0.01, :class => "d-none", id: "dist_shipping_cost", data: { distribution_target: "shippingCostField" } }, label_html: { data: { distribution_target: "shippingCostLabel"}, class: "d-none" } %>
+        <%= f.input :shipping_cost, as: :numeric, label: "Shipping cost", placeholder: "Shipping Cost", value: number_to_currency(f.object.shipping_cost.to_f, delimiter: '', unit: ''), input_html: { min: 0, step: 0.01, :class => "d-none", id: "dist_shipping_cost", data: { distribution_delivery_target: "shippingCostField" } }, label_html: { data: { distribution_delivery_target: "shippingCostLabel"}, class: "d-none" } %>
       </span>
     </div>
 
