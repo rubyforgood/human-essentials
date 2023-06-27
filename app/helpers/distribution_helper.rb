@@ -35,6 +35,6 @@ module DistributionHelper
   end
 
   def distribution_shipping_cost(shipping_cost)
-    shipping_cost.present? ? number_to_currency(shipping_cost) : "0.00"
+    (shipping_cost && shipping_cost != 0) ? number_to_currency(shipping_cost) : ""
   end
 end
