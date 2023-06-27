@@ -106,4 +106,3 @@ $(function() {
     request_storage_location_and_populate_item(default_item);
   });
 });
-
