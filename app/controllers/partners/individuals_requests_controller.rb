@@ -12,10 +12,14 @@ module Partners
     def confirmation
       @request = individuals_request_params
       @items = {}
+      @individuals_recieving_items = 0
 
-      @request["items_attributes"].values.each do |individual_item_request|
+      @request["items_attributes"].values.each_with_index do |individual_item_request, index|
         item = Item.find_by(id: individual_item_request["item_id"])
-        @items[item.name] = individual_item_request["person_count"] unless item.nil?
+        unless item.nil?
+          @items[item.name] = individual_item_request["person_count"]
+          @individuals_recieving_items += individual_item_request["person_count"].to_i
+        end
       end
 
       render :confirmation
