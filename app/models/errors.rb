@@ -48,4 +48,10 @@ module Errors
       "Storage location kit doesn't match"
     end
   end
+
+  class InventoryAlreadyHasItems < StandardError
+    def message
+      "Could not complete action: inventory already has items stored"
+    end
+  end
 end

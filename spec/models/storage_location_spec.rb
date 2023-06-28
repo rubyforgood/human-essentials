@@ -208,14 +208,25 @@ RSpec.describe StorageLocation, type: :model do
     end
 
     describe "import_inventory" do
+      let(:storage_location) { create(:storage_location, organization_id: @organization.id) }
+      let(:import_file_path) { Rails.root.join("spec", "fixtures", "files", "inventory.csv").read }
+
       it "imports storage locations from a csv file" do
         donations_count = Donation.count
-        storage_location = create(:storage_location, organization_id: @organization.id)
-        import_file_path = Rails.root.join("spec", "fixtures", "files", "inventory.csv").read
         StorageLocation.import_inventory(import_file_path, @organization.id, storage_location.id)
         expect(storage_location.size).to eq 14_842
         expect(donations_count).to eq Donation.count
         expect(@organization.adjustments.last.user_id).to eq(@organization.users.with_role(Role::ORG_ADMIN, @organization).first.id)
+      end
+
+      context "if the inventory already has items" do
+        let(:storage_location_with_items) { create(:storage_location, :with_items, item_quantity: 10, organization_id: @organization.id) }
+
+        it "raises the inventory already has items error" do
+          expect {
+            StorageLocation.import_inventory(import_file_path, @organization.id, storage_location_with_items.id)
+          }.to raise_error Errors::InventoryAlreadyHasItems
+        end
       end
     end
 

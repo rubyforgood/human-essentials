@@ -117,7 +117,10 @@ class StorageLocation < ApplicationRecord
 
   # NOTE: We should generalize this elsewhere -- Importable concern?
   def self.import_inventory(filename, org, loc)
+    raise Errors::InventoryAlreadyHasItems if StorageLocation.find(loc.to_i).size > 0
+
     current_org = Organization.find(org)
+
     adjustment = current_org.adjustments.create!(storage_location_id: loc.to_i,
                                                  user_id: User.with_role(Role::ORG_ADMIN, current_org).first&.id,
                                                  comment: "Starting Inventory")
