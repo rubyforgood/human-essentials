@@ -13,6 +13,14 @@ RSpec.describe "Audits", type: :request do
     }
   end
 
+  let(:invalid_storage_location_attributes) do
+    {
+      organization_id: @organization.id,
+      storage_location_id: nil,
+      user_id: create(:organization_admin, organization: @organization).id
+    }
+  end
+
   let(:invalid_attributes) do
     { organization_id: nil }
   end
@@ -107,6 +115,11 @@ RSpec.describe "Audits", type: :request do
 
         it "re-renders the 'new' template" do
           post audits_path(default_params.merge(audit: invalid_attributes))
+          expect(response).to render_template(:new)
+        end
+
+        it "re-renders the 'new' template when an invalid storage location is given" do
+          post audits_path(default_params.merge(audit: invalid_storage_location_attributes))
           expect(response).to render_template(:new)
         end
       end
