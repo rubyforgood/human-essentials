@@ -71,7 +71,7 @@ class AuditsController < ApplicationController
     if @audit.save
       save_audit_status_and_redirect(params)
     else
-      flash[:error] = "<ul><li>" + @audit.errors.collect { |error| "#{error.attribute}: " + error.message }.join("</li><li>") + "</li></ul>"
+      flash[:error] = @audit.errors.collect { |error| "#{error.attribute}: " + error.message }.join("</li><li>") + "</li></ul>"
       set_storage_locations
       set_items
       @audit.line_items.build if @audit.line_items.empty?
