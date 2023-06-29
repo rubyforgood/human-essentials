@@ -3,7 +3,7 @@ class Users::SessionsController < Devise::SessionsController
   # before_action :configure_sign_in_params, only: [:create]
   layout "devise"
   before_action :check_failed_login
-  before_action :sign_out_if_signed_in, only: [:create] 
+  before_action :sign_out_if_signed_in, only: [:create]
   skip_before_action :authorize_user
   skip_before_action :authenticate_user!
   # This one causes a redirect require_no_authentication
