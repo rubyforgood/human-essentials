@@ -121,6 +121,7 @@ Rails.application.routes.draw do
         get :schedule
         get :pickup_day
         get :itemized_breakdown
+        post :confirmation
       end
       patch :picked_up, on: :member
     end

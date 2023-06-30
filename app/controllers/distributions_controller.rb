@@ -110,6 +110,11 @@ class DistributionsController < ApplicationController
     end
   end
 
+  def confirmation
+    binding.pry
+    render :confirmation
+  end
+
   def new
     @distribution = Distribution.new
     if params[:request_id]
