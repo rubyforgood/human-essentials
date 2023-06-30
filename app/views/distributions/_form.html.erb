@@ -21,7 +21,7 @@
         <%= f.input :delivery_method, as: :radio_buttons, :input_html => { data: { action: "distribution-delivery#toggleShippingCost" } }, collection: Distribution.delivery_methods.keys, label_method: :humanize, label: "Delivery method" %>
       </span>
       <div class="mx-2 mt-5" id="shipping_cost_div" data-distribution-delivery-target="shippingCost">
-        <%= f.input :shipping_cost, as: :numeric, label: "Shipping cost", placeholder: "Shipping Cost", value: number_to_currency(f.object.shipping_cost.to_f, delimiter: '', unit: ''), input_html: { min: 0, step: 0.01} %>
+        <%= f.input :shipping_cost, label: "Shipping cost", placeholder: "Shipping Cost", value: number_to_currency(f.object.shipping_cost.to_f, delimiter: '', unit: '') %>
       </div>
     </div>
 

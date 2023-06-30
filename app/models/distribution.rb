@@ -40,12 +40,12 @@ class Distribution < ApplicationRecord
   validates :storage_location, :partner, :organization, :delivery_method, presence: true
   validate :line_items_exist_in_inventory
   validate :line_items_quantity_is_positive
+  validates :shipping_cost, :numericality => { :greater_than_or_equal_to => 0 }, allow_blank: true, if: :shipped?
 
-  before_save :combine_distribution, :reset_shipping_cost, :validate_shipping_cost
+  before_save :combine_distribution, :reset_shipping_cost
 
   enum state: { scheduled: 5, complete: 10 }
   enum delivery_method: { pick_up: 0, delivery: 1, shipped: 2 }
-
   scope :active, -> { joins(:line_items).joins(:items).where(items: { active: true }) }
   # add item_id scope to allow filtering distributions by item
   scope :by_item_id, ->(item_id) { joins(:items).where(items: { id: item_id }) }
@@ -154,9 +154,7 @@ class Distribution < ApplicationRecord
     self.shipping_cost = nil unless delivery_method == "shipped"
   end
 
-  def validate_shipping_cost
-    if shipping_cost&.negative?
-      raise StandardError.new("Shipping cost cannot be negative!")
-    end
+  def shipped?
+    delivery_method == "shipped"
   end
 end

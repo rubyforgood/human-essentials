@@ -64,6 +64,29 @@ RSpec.describe Distribution, type: :model do
       d = build(:distribution, issued_at: "1999-12-31")
       expect(d).not_to be_valid
     end
+
+    context "when delivery method is shipped" do
+      context "shipping cost is negative" do
+        let(:distribution) { build(:distribution, delivery_method: "shipped", shipping_cost: -13)}
+        it "will not allow to save distribution" do
+          expect(distribution).not_to be_valid
+        end
+      end
+
+      context "shipping cost is none negative" do
+        let(:distribution) { create(:distribution, delivery_method: "shipped", shipping_cost: 13.09)}
+        it "allows to save distribution" do
+          expect(distribution).to be_valid
+        end
+      end
+    end
+
+    context "when delivery method is other then shipped" do
+      let(:distribution) { create(:distribution, delivery_method: "delivery", shipping_cost: -13)}
+      it "allows to save distribution" do
+        expect(distribution).to be_valid
+      end
+    end
   end
 
   context "Scopes >" do
@@ -172,16 +195,6 @@ RSpec.describe Distribution, type: :model do
     end
 
     context "#before_save" do
-      context "#validate_shipping_cost" do
-        context "when delivery_method is shipped and shipping cost is negative" do
-          let(:distribution) { create(:distribution, delivery_method: "shipped", shipping_cost: -12.05) }
-
-          it "raises error" do
-            expect { distribution }.to raise_error(StandardError, "Shipping cost cannot be negative!")
-          end
-        end
-      end
-
       context "#reset_shipping_cost" do
         context "when delivery_method is other then shipped" do
           let(:distribution) { create(:distribution, delivery_method: "delivery", shipping_cost: 12.05) }

@@ -15,15 +15,6 @@ export default class extends Controller {
     }
 
     toggle(selected_delivery_method) {
-        shipping_cost_div = this.shippingCostTarget;
-
-        if (selected_delivery_method == "shipped")
-        {
-            shipping_cost_div.classList.remove("d-none");
-        }
-        else
-        {
-            shipping_cost_div.classList.add("d-none");
-        }
+        $(this.shippingCostTarget).toggleClass("d-none", selected_delivery_method != "shipped");
     }
 }

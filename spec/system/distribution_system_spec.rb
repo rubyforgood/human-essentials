@@ -62,48 +62,25 @@ RSpec.feature "Distributions", type: :system do
       expect(page).to have_selector "#distribution_line_items"
     end
 
-    context "when the delivery_method is shipped" do
-      context "when the shipping cost is negative" do
-        it "should not create distribution and show error message" do
-          visit @url_prefix + "/distributions/new"
+    context "when the delivery_method is shipped and shipping cost is none-negative" do
+      it "Allows a distribution to be created" do
+        visit @url_prefix + "/distributions/new"
 
-          select @partner.name, from: "Partner"
-          select @storage_location.name, from: "From storage location"
-          choose "Shipped"
+        select @partner.name, from: "Partner"
+        select @storage_location.name, from: "From storage location"
+        choose "Shipped"
 
-          # to check if shipping_cost field exist
-          expect(page.find_by_id("shipping_cost_div")).not_to be_nil
+        # to check if shipping_cost field exist
+        expect(page.find_by_id("shipping_cost_div")).not_to be_nil
 
-          fill_in "Shipping cost", with: '-12.05'
-          fill_in "Comment", with: "Take my wipes... please"
-          fill_in "Distribution date", with: '01/01/2001 10:15:00 AM'
+        fill_in "Shipping cost", with: '12.05'
+        fill_in "Comment", with: "Take my wipes... please"
+        fill_in "Distribution date", with: '01/01/2001 10:15:00 AM'
 
-          click_button "Save", match: :first
+        click_button "Save", match: :first
 
-          expect(page.find(".alert-danger")).to have_content "Sorry, we weren't able to save the distribution. Shipping cost cannot be negative!"
-        end
-      end
-
-      context "when the shipping cost is positive" do
-        it "Allows a distribution to be created" do
-          visit @url_prefix + "/distributions/new"
-
-          select @partner.name, from: "Partner"
-          select @storage_location.name, from: "From storage location"
-          choose "Shipped"
-
-          # to check if shipping_cost field exist
-          expect(page.find_by_id("shipping_cost_div")).not_to be_nil
-
-          fill_in "Shipping cost", with: '12.05'
-          fill_in "Comment", with: "Take my wipes... please"
-          fill_in "Distribution date", with: '01/01/2001 10:15:00 AM'
-
-          click_button "Save", match: :first
-
-          expect(page).to have_content "Distributions"
-          expect(page.find(".alert-info")).to have_content "created"
-        end
+        expect(page).to have_content "Distributions"
+        expect(page.find(".alert-info")).to have_content "created"
       end
     end
 
@@ -266,34 +243,19 @@ RSpec.feature "Distributions", type: :system do
       end
     end
 
-    context "when delivery method is shipped" do
+    context "when delivery method is shipped and shipping cost is none negative" do
       let(:delivery_method) { "shipped" }
 
-      context "when shipping cost is negative" do
-        it "should not update distribution, display shipping_cost field and show error message" do
-          click_on "Edit", match: :first
+      it "should update distribution and display shipping_cost field" do
+        click_on "Edit", match: :first
 
-          # to check if shipping_cost field exist
-          expect(page.find_by_id("shipping_cost_div")).not_to be_nil
+        # to check if shipping_cost field exist
+        expect(page.find_by_id("shipping_cost_div")).not_to be_nil
 
-          fill_in "Shipping cost", with: -12.05
-          click_on "Save", match: :first
-          expect(page.find(".alert-danger")).to have_content "Sorry, we weren't able to save the distribution. Shipping cost cannot be negative!"
-        end
-      end
-
-      context "when shipping cost is positive" do
-        it "should update distribution and display shipping_cost field" do
-          click_on "Edit", match: :first
-
-          # to check if shipping_cost field exist
-          expect(page.find_by_id("shipping_cost_div")).not_to be_nil
-
-          fill_in "Shipping cost", with: 12.05
-          click_on "Save", match: :first
-          expect(page).to have_content "Distributions"
-          expect(page.find(".alert-info")).to have_content "Distribution updated!"
-        end
+        fill_in "Shipping cost", with: 12.05
+        click_on "Save", match: :first
+        expect(page).to have_content "Distributions"
+        expect(page.find(".alert-info")).to have_content "Distribution updated!"
       end
     end
 
