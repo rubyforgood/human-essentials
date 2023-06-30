@@ -71,7 +71,7 @@ class AuditsController < ApplicationController
     if @audit.save
       save_audit_status_and_redirect(params)
     else
-      flash[:error] = @audit.errors.collect { |error| "#{error.attribute} ".gsub("_", " ") + error.message }.join(" ")
+      handle_storage_location_error
       set_storage_locations
       set_items
       @audit.line_items.build if @audit.line_items.empty?
@@ -89,6 +89,12 @@ class AuditsController < ApplicationController
   end
 
   private
+
+  def handle_storage_location_error
+    if @audit.errors.present?
+      flash[:error] = "Storage location must be selected."
+    end
+  end
 
   def set_audit
     @audit = current_organization.audits.find(params[:id] || params[:audit_id])
