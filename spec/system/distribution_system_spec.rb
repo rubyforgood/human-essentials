@@ -28,7 +28,7 @@ RSpec.feature "Distributions", type: :system do
       visit @url_prefix + "/distributions/new"
 
       select @partner.name, from: "Partner"
-      select @storage_location.name, from: "From storage location"
+      select @storage_location.name, from: "Storage location"
       choose "Pick up"
 
       fill_in "Comment", with: "Take my wipes... please"
@@ -65,7 +65,7 @@ RSpec.feature "Distributions", type: :system do
         @storage_location.inventory_items.first.update!(quantity: 20)
 
         select @partner.name, from: "Partner"
-        select @storage_location.name, from: "From storage location"
+        select @storage_location.name, from: "Storage location"
         select item.name, from: "distribution_line_items_attributes_0_item_id"
         select @storage_location.name, from: "distribution_storage_location_id"
         fill_in "distribution_line_items_attributes_0_quantity", with: 18
@@ -85,7 +85,7 @@ RSpec.feature "Distributions", type: :system do
         @storage_location.inventory_items.first.update!(quantity: 20)
 
         select @partner.name, from: "Partner"
-        select @storage_location.name, from: "From storage location"
+        select @storage_location.name, from: "Storage location"
         select item.name, from: "distribution_line_items_attributes_0_item_id"
         select @storage_location.name, from: "distribution_storage_location_id"
         fill_in "distribution_line_items_attributes_0_quantity", with: 18
@@ -101,7 +101,7 @@ RSpec.feature "Distributions", type: :system do
         visit @url_prefix + "/distributions/new"
 
         select @partner.name, from: "Partner"
-        select @storage_location.name, from: "From storage location"
+        select @storage_location.name, from: "Storage location"
         choose "Delivery"
 
         fill_in "Comment", with: "Take my wipes... please"
@@ -139,7 +139,7 @@ RSpec.feature "Distributions", type: :system do
     visit @url_prefix + "/distributions/new"
 
     select @partner.name, from: "Partner"
-    select "", from: "From storage location"
+    select "", from: "Storage location"
 
     click_button "Save", match: :first
     page.find('.alert')
@@ -383,7 +383,7 @@ RSpec.feature "Distributions", type: :system do
       visit @url_prefix + "/requests/#{@request.id}"
       click_on "Fulfill request"
       within "#new_distribution" do
-        select @storage_location.name, from: "From storage location"
+        select @storage_location.name, from: "Storage location"
         choose "Delivery"
         click_on "Save"
       end
@@ -403,7 +403,7 @@ RSpec.feature "Distributions", type: :system do
       visit @url_prefix + "/requests/#{@request.id}"
       click_on "Fulfill request"
       within "#new_distribution" do
-        select @storage_location.name, from: "From storage location"
+        select @storage_location.name, from: "Storage location"
         choose "Delivery"
         click_on "Save"
       end
