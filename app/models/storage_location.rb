@@ -129,7 +129,7 @@ class StorageLocation < ApplicationRecord
       adjustment.line_items
                 .create(quantity: row[0].to_i, item_id: current_org.items.find_by(name: row[1]))
     end
-    adjustment.storage_location.increase_inventory(adjustment)
+    adjustment.storage_location.increase_inventory(adjustment, replace_inventory: true)
   end
 
   def remove_empty_items
@@ -137,7 +137,7 @@ class StorageLocation < ApplicationRecord
   end
 
   # FIXME: After this is stable, revisit how we do logging
-  def increase_inventory(itemizable_array)
+  def increase_inventory(itemizable_array, replace_inventory: false)
     itemizable_array = itemizable_array.to_a
 
     # This is, at least for now, how we log changes to the inventory made in this call
@@ -148,7 +148,8 @@ class StorageLocation < ApplicationRecord
       # Locate the storage box for the item, or create a new storage box for it
       inventory_item = inventory_items.find_or_create_by!(item_id: item_hash[:item_id])
       # Increase the quantity-on-record for that item
-      new_quantity = inventory_item.quantity + item_hash[:quantity].to_i
+      new_quantity = item_hash[:quantity].to_i
+      new_quantity += inventory_item.quantity unless replace_inventory
       inventory_item.update!(quantity: new_quantity)
       # Record in the log that this has occurred
       log[item_hash[:item_id]] = "+#{item_hash[:quantity]}"
