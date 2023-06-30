@@ -42,14 +42,14 @@ RSpec.describe "Audit management", type: :system, js: true do
       it "*Does* include inactive items in the line item fields" do
         visit subject
 
-        select storage_location.name, from: "From storage location"
+        select storage_location.name, from: "Storage location"
         expect(page).to have_content(item.name)
         select item.name, from: "audit_line_items_attributes_0_item_id"
 
         item.update(active: false)
 
         page.refresh
-        select storage_location.name, from: "From storage location"
+        select storage_location.name, from: "Storage location"
         expect(page).to have_content(item.name)
       end
 
@@ -80,7 +80,7 @@ RSpec.describe "Audit management", type: :system, js: true do
       it "should be able to save progress of an audit" do
         visit subject
         click_link "New Audit"
-        select storage_location.name, from: "From storage location"
+        select storage_location.name, from: "Storage location"
         select Item.last.name, from: "audit_line_items_attributes_0_item_id"
         fill_in "audit_line_items_attributes_0_quantity", with: quantity.to_s
 
@@ -102,7 +102,7 @@ RSpec.describe "Audit management", type: :system, js: true do
       it "should be able to confirm the audit from the #new page", js: true do
         visit subject
         click_link "New Audit"
-        select storage_location.name, from: "From storage location"
+        select storage_location.name, from: "Storage location"
         select Item.last.name, from: "audit_line_items_attributes_0_item_id"
         fill_in "audit_line_items_attributes_0_quantity", with: quantity.to_s
 
