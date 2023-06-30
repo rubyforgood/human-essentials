@@ -166,7 +166,7 @@ RSpec.describe "Requests", type: :system, js: true do
         it "should change request to fulfilled", js: true do
           expect(page).to have_content "started"
           choose "Delivery"
-          select @storage_location.name, from: "From storage location"
+          select @storage_location.name, from: "Storage location"
           fill_in "Comment", with: "Take my wipes... please"
           click_on "Save"
 
