@@ -67,14 +67,14 @@ RSpec.describe Distribution, type: :model do
 
     context "when delivery method is shipped" do
       context "shipping cost is negative" do
-        let(:distribution) { build(:distribution, delivery_method: "shipped", shipping_cost: -13)}
+        let(:distribution) { build(:distribution, delivery_method: "shipped", shipping_cost: -13) }
         it "will not allow to save distribution" do
           expect(distribution).not_to be_valid
         end
       end
 
       context "shipping cost is none negative" do
-        let(:distribution) { create(:distribution, delivery_method: "shipped", shipping_cost: 13.09)}
+        let(:distribution) { create(:distribution, delivery_method: "shipped", shipping_cost: 13.09) }
         it "allows to save distribution" do
           expect(distribution).to be_valid
         end
@@ -82,7 +82,7 @@ RSpec.describe Distribution, type: :model do
     end
 
     context "when delivery method is other then shipped" do
-      let(:distribution) { create(:distribution, delivery_method: "delivery", shipping_cost: -13)}
+      let(:distribution) { create(:distribution, delivery_method: "delivery", shipping_cost: -13) }
       it "allows to save distribution" do
         expect(distribution).to be_valid
       end
