@@ -153,8 +153,4 @@ class Distribution < ApplicationRecord
   def reset_shipping_cost
     self.shipping_cost = nil unless delivery_method == "shipped"
   end
-
-  def shipped?
-    delivery_method == "shipped"
-  end
 end
