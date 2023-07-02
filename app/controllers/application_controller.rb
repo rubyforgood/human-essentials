@@ -135,9 +135,9 @@ class ApplicationController < ActionController::Base
 
   def append_info_to_payload(payload)
     super
-    payload[:uid] = current_user&.id
-    payload[:org_id] = current_organization&.id
-    payload[:partner_id] = current_partner&.id
+    payload[:uid]        = current_user.id if current_user
+    payload[:org_id]     = current_organization.id if current_organization
+    payload[:partner_id] = current_partner.id if current_partner
   end
 
   protected
