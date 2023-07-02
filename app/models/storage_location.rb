@@ -117,9 +117,10 @@ class StorageLocation < ApplicationRecord
 
   # NOTE: We should generalize this elsewhere -- Importable concern?
   def self.import_inventory(filename, org, loc)
-    raise Errors::InventoryAlreadyHasItems if StorageLocation.find(loc.to_i).size > 0
-
     current_org = Organization.find(org)
+    storage_location = StorageLocation.find(loc.to_i)
+
+    raise Errors::InventoryAlreadyHasItems if storage_location.size > 0
 
     adjustment = current_org.adjustments.create!(storage_location_id: loc.to_i,
                                                  user_id: User.with_role(Role::ORG_ADMIN, current_org).first&.id,
@@ -129,7 +130,10 @@ class StorageLocation < ApplicationRecord
       adjustment.line_items
                 .create(quantity: row[0].to_i, item_id: current_org.items.find_by(name: row[1]))
     end
-    adjustment.storage_location.increase_inventory(adjustment, replace_inventory: true)
+
+    increasing_adjustment, _decreasing_adjustment = adjustment.split_difference
+
+    storage_location.increase_inventory increasing_adjustment
   end
 
   def remove_empty_items
@@ -137,7 +141,7 @@ class StorageLocation < ApplicationRecord
   end
 
   # FIXME: After this is stable, revisit how we do logging
-  def increase_inventory(itemizable_array, replace_inventory: false)
+  def increase_inventory(itemizable_array)
     itemizable_array = itemizable_array.to_a
 
     # This is, at least for now, how we log changes to the inventory made in this call
@@ -148,8 +152,7 @@ class StorageLocation < ApplicationRecord
       # Locate the storage box for the item, or create a new storage box for it
       inventory_item = inventory_items.find_or_create_by!(item_id: item_hash[:item_id])
       # Increase the quantity-on-record for that item
-      new_quantity = item_hash[:quantity].to_i
-      new_quantity += inventory_item.quantity unless replace_inventory
+      new_quantity = inventory_item.quantity + item_hash[:quantity].to_i
       inventory_item.update!(quantity: new_quantity)
       # Record in the log that this has occurred
       log[item_hash[:item_id]] = "+#{item_hash[:quantity]}"

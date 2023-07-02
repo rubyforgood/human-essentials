@@ -36,7 +36,7 @@ class Adjustment < ApplicationRecord
   end
 
   def split_difference
-    pre_adjustment = line_items.partition { |line_item| line_item.quantity.positive? }
+    pre_adjustment = line_items.reject { |line_item| line_item.quantity == 0 }.partition { |line_item| line_item.quantity.positive? }
     increasing_adjustment, decreasing_adjustment = pre_adjustment.map { |adjustment| Adjustment.new(line_items: adjustment) }
 
     decreasing_adjustment.line_items.each { |line_item| line_item.quantity *= -1 }

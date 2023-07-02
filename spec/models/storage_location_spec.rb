@@ -70,19 +70,12 @@ RSpec.describe StorageLocation, type: :model do
       context "With existing inventory" do
         let(:donation) { create(:donation, :with_items, item: item, item_quantity: 66, organization: @organization) }
 
-        it "increases inventory quantities" do
+        it "increases inventory quantities from an itemizable object" do
           expect do
             subject.increase_inventory(donation.to_a)
           end.to change { subject.size }.by(66)
 
           expect(subject.item_total(item.id)).to eq 76
-        end
-
-        it "replaces inventory quantities if the replace inventory option is used" do
-          expect do
-            subject.increase_inventory(donation, replace_inventory: true)
-          end.to change { subject.size }.by(56)
-          expect(subject.item_total(item.id)).to eq 66
         end
       end
 
