@@ -59,7 +59,7 @@ Both Donation Sites and Product Drives have to be created in the application bef
 
 ### Inventory Management
 
-All inventory is physically stored at **Storage Locations**. This is one area where the application is particularly useful, as some storage locations accrue large quantities of inventory over time. Each storage location can contain any number of **Items** or types of items, and if a Essentials Bank has multiple storage locations, it is possible for the same item type to exist at multiple locations.
+All inventory is physically stored at **Storage Locations**. This is one area where the application is particularly useful, as some storage locations accrue large quantities of inventory over time. Each storage location can contain any number of **Items** or types of items, and if a Essentials Bank has multiple storage locations, it is possible for the same item type to exist at multiple locations. Generally a Storage Location corresponds to one general physical area, like an entire room or building.
 
 Sometimes, the Essentials Banks will need to make a correction, this application calls them **Adjustment**s.
 
@@ -67,7 +67,7 @@ When an Essentials Bank wants to move inventory from one storage location to ano
 
 ### Partner Distribution
 
-When inventory leaves an Essentials Bank, it does so via a **Distribution**. These are either created implicitly from inbound Partner **Requests**, or created explicitly via the menu interface. When they are created explicitly, they pull from a single designated Storage Location, and are built in a similar fashion to Donations, Adjustments, Transfers, etc -- items are added and quantities are specified.
+When inventory leaves an Essentials Bank, it does so via a **Distribution**. These are either created implicitly from inbound Partner **Requests**, or created explicitly via the menu interface. The inventory is pulled from a single designated Storage Location, and the distribution is built in a similar fashion to Donations, Adjustments, Transfers, etc -- items are selected and quantities are specified.
 
 Distributions can be exported as PDFs, which Banks can use as printable manifests for the packages sent to the Community Partner.
 
@@ -136,7 +136,7 @@ Because Items are only defining *types* of physical inventory, we need a vehicle
 #### Line Items
 These are the most common, and are used polymorphically for numerous models. The name "line item" was chosen because a "line item" is a single line on a list of items, perhaps found on a manifest or roster. In this application, line items are like a plain box, labeled with an item type, that some number of items are put into. That labeled box can only hold that kind of item, it can also hold negative quantities of that item.
 
-Line Items are used in Donations, Distributions, Adjustments, Transfers, Purchases, and generally any place where inventory is being moved somehow.
+Line Items are used in Donations, Distributions, Adjustments, Transfers, Purchases, and generally any place where inventory is being listed somehow.
 
 The behaviors of Line Items are consistent enough that the logic has been captured largely in the [Itemizable](/rubyforgood/human-essentials/blob/master/app/models/concerns/itemizable.rb) model concern.
 
@@ -157,7 +157,7 @@ Suggested uses include:
 
 Organization barcodes always take precedence when they do a lookup.
 
-#### Global Barcodes
+#### Global (Shared) Barcodes
 These are barcodes that act as "fall-throughs" and will generally be used to track product UPCs and map them to the appropriate Base Item type. (For example: pointing the UPC for 40 Huggies 3T, 48 Pampers 3T, and 24 Luvs 3T diaper packs all to the "3T Diapers" Base Item type). These are only entered by Site Administrators, and must always point to a Base Item type.
 
 #### Barcode Retrieval
@@ -200,7 +200,7 @@ bank -> partner: Fulfill distribution
 ```
 </details>
 
-Partners may submit requests to a Bank.
+Partners may submit requests to an Essentials Bank. These list the items and quantities of each item being requested. The Essentials Bank can use this request as the starting point for a Distribution, but often makes changes to the actual Distribution to more accurately capture which actual items and quantities are being distributed.
 
 # Future Documentation
 
