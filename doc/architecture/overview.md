@@ -201,3 +201,9 @@ bank -> partner: Fulfill distribution
 </details>
 
 Partners may submit requests to a Bank.
+
+# Future Documentation
+
+* Counties reporting
+* Announcements
+* New Kits architecture once it is merged
