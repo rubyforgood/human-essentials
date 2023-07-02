@@ -78,8 +78,13 @@ Rails.application.configure do
   # Send deprecation notices to registered listeners.
   config.active_support.deprecation = :notify
 
-  # Use default logging formatter so that PID and timestamp are not suppressed.
-  config.log_formatter = ::Logger::Formatter.new
+  config.lograge.enabled = true
+  config.lograge.custom_options = lambda do |event|
+    exceptions = %w(controller action format id)
+    {
+      params: event.payload[:params].except(*exceptions)
+    }
+  end
 
   # Store files locally.
   config.active_storage.service = :azure

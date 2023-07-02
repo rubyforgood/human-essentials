@@ -60,6 +60,7 @@ Rails.application.configure do
 
   # Prepend all log lines with the following tags.
   config.log_tags = [:request_id]
+  config.lograge.enabled = true
 
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store
@@ -79,9 +80,6 @@ Rails.application.configure do
 
   # Send deprecation notices to registered listeners.
   config.active_support.deprecation = :notify
-
-  # Use default logging formatter so that PID and timestamp are not suppressed.
-  config.log_formatter = ::Logger::Formatter.new
 
   # Store files locally.
   config.active_storage.service = :azure
@@ -103,12 +101,6 @@ Rails.application.configure do
   # help with debugging
   #
   config.lograge.enabled = true
-  config.lograge.custom_payload do |controller|
-    {
-      host: controller.request.host,
-      user_id: controller.current_user.try(:id)
-    }
-  end
   config.lograge.custom_options = lambda do |event|
     exceptions = %w(controller action format id)
     {
