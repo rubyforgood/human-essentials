@@ -68,7 +68,7 @@ RSpec.describe "Admin::Organizations", type: :request do
           expect {
             post admin_organizations_path({ organization: valid_organization_params })
           }.to change(Organization, :count).by(1)
-          expect(response).to redirect_to(admin_organizations_path(organization_id: Organization.first.short_name))
+          expect(response).to redirect_to(admin_organizations_path(organization_id: 'admin'))
         end
       end
 
@@ -105,7 +105,7 @@ RSpec.describe "Admin::Organizations", type: :request do
 
         it "redirects to #index" do
           expect(subject).to be(redirect_status)
-          expect(subject).to redirect_to(admin_organizations_path({ organization_id: @organization }))
+          expect(subject).to redirect_to(admin_organizations_path({ organization_id: 'admin' }))
         end
       end
 
@@ -134,7 +134,7 @@ RSpec.describe "Admin::Organizations", type: :request do
       context "with a valid organization id" do
         it "redirects to #index" do
           delete admin_organization_path({ id: organization.id })
-          expect(response).to redirect_to(admin_organizations_path({ organization_id: @organization }))
+          expect(response).to redirect_to(admin_organizations_path({ organization_id: 'admin' }))
         end
       end
     end

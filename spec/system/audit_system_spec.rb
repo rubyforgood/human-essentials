@@ -236,6 +236,26 @@ RSpec.describe "Audit management", type: :system, js: true do
           expect(page).not_to have_content("Delete Audit")
           # Actual Deletion(`delete :destroy`) Check is done in audits_controller_spec
         end
+
+        context "with a storage location containing multiple items" do
+          let(:item2) { create(:item) }
+
+          before do
+            create(:inventory_item, storage_location_id: storage_location.id, item_id: item2.id, quantity: 50)
+          end
+
+          it "creates an adjustment with the differential of only the audited item" do
+            item_quantity = 10
+
+            visit subject
+            expect do
+              accept_confirm do
+                click_link "Finalize Audit"
+              end
+              expect(page).to have_content("Audit is Finalized.")
+            end.to change { storage_location.size }.by(quantity - item_quantity)
+          end
+        end
       end
     end
   end
