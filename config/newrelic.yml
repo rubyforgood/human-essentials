@@ -738,7 +738,7 @@ common: &default_settings
 # If your application has other named environments, configure them here.
 development:
   <<: *default_settings
-  app_name: <%= app_name %> (Development)
+  app_name: human-essentials (Development)
 
 test:
   <<: *default_settings
@@ -747,7 +747,7 @@ test:
 
 staging:
   <<: *default_settings
-  app_name: <%= app_name %> (Staging)
+  app_name: human-essentials (Staging)
 
 production:
   <<: *default_settings
