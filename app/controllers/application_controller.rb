@@ -133,6 +133,15 @@ class ApplicationController < ActionController::Base
     response.headers["swaddled-by"] = "rubyforgood"
   end
 
+  def append_info_to_payload(payload)
+    super
+    if logged_in?
+      payload[:uid] = current_user.id if logged_in?
+      payload[:org_id] = current_organization&.id
+      payload[:partner_id] = current_partner&.id
+    end
+  end
+
   protected
 
   def setup_date_range_picker
