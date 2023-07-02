@@ -67,11 +67,13 @@ When an Essentials Bank wants to move inventory from one storage location to ano
 
 ### Partner Distribution
 
+A Partner is another organization that receives items from an Essentials Bank and then provides them to their local community. An Essentials Bank might serve an overall region, and a Partner might be more localized to a neighborhood. Local community centers, churches, and similar organizations get supplies from the Essentials Bank to then share with the individuals and families that they serve.
+
 When inventory leaves an Essentials Bank, it does so via a **Distribution**. These are either created implicitly from inbound Partner **Requests**, or created explicitly via the menu interface. The inventory is pulled from a single designated Storage Location, and the distribution is built in a similar fashion to Donations, Adjustments, Transfers, etc -- items are selected and quantities are specified.
 
-Distributions can be exported as PDFs, which Banks can use as printable manifests for the packages sent to the Community Partner.
+Distributions can be exported as PDFs, which Banks can use as printable manifests for the packages sent to the Partner.
 
-Community Partners then dispense the items they receive to the clients / families.
+Partners then dispense the items they receive to the clients / families.
 
 # Application Architecture
 
