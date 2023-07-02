@@ -137,7 +137,14 @@ RSpec.describe "Purchases", type: :system, js: true do
             click_button "Save"
           end.to change { Purchase.count }.by(1)
 
-          expect(Purchase.last.issued_at).to eq(Time.zone.parse("2001-01-01"))
+          visit url_prefix + "/purchases/#{Purchase.last.id}"
+
+          expected_date = "January 1 2001 (entered: #{Purchase.last.created_at.to_fs(:distribution_date)})"
+          expected_breadcrumb_date = "#{Vendor.first.business_name} on January 1 2001"
+          aggregate_failures do
+            expect(page).to have_text(expected_date)
+            expect(page).to have_text(expected_breadcrumb_date)
+          end
         end
 
         it "Does not include inactive items in the line item fields" do

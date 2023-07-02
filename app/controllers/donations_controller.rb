@@ -75,11 +75,11 @@ class DonationsController < ApplicationController
 
   def update
     @donation = Donation.find(params[:id])
-    if @donation.replace_increase!(donation_params)
-      redirect_to donations_path
-    else
-      render "edit"
-    end
+    ItemizableUpdateService.call(itemizable: @donation, params: donation_params, type: :increase)
+    redirect_to donations_path
+  rescue => e
+    flash[:alert] = "Error updating donation: #{e.message}"
+    render "edit"
   end
 
   def destroy

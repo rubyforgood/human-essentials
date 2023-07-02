@@ -16,7 +16,7 @@ gem "pg", "~> 1.5.3"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "7.0.5"
+gem "rails", "7.0.6"
 
 ###### MODELS / DATABASE #######
 
@@ -156,9 +156,10 @@ group :development, :test do
   # Static analysis / linter.
   gem "rubocop"
   # Rails add-on for static analysis.
+  gem 'rubocop-performance'
   gem "rubocop-rails", "~> 2.19.1"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.26"
+  gem "standard", "~> 1.28"
 end
 
 group :development do
@@ -214,4 +215,4 @@ end
 # Use Redis for Action Cable
 gem "redis", "~> 5.0"
 
-gem "importmap-rails", "~> 1.1"
+gem "importmap-rails", "~> 1.2"
