@@ -1,5 +1,6 @@
 module Exports
   class ExportDistributionsCSVService
+    include DistributionHelper
     def initialize(distributions:, filters: [])
       # Currently, the @distributions are already loaded by the controllers that are delegating exporting
       # to this service object; this is happening within the same request/response cycle, so it's already
@@ -81,6 +82,9 @@ module Exports
         },
         "Delivery Method" => ->(distribution) {
           distribution.delivery_method
+        },
+        "Shipping Cost" => ->(distribution) {
+          distribution_shipping_cost(distribution.shipping_cost)
         },
         "State" => ->(distribution) {
           distribution.state
