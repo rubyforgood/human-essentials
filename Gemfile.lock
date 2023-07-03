@@ -214,8 +214,8 @@ GEM
     geocoder (1.8.1)
     globalid (1.1.0)
       activesupport (>= 5.0)
-    groupdate (6.2.1)
-      activesupport (>= 5.2)
+    groupdate (6.3.0)
+      activesupport (>= 6.1)
     guard (2.18.0)
       formatador (>= 0.2.4)
       listen (>= 2.7, < 4.0)
@@ -654,7 +654,7 @@ DEPENDENCIES
   flipper-ui
   foreman
   geocoder
-  groupdate (~> 6.2)
+  groupdate (~> 6.3)
   guard-rspec
   httparty
   icalendar
