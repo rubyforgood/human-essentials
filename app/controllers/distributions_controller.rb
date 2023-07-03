@@ -125,7 +125,6 @@ class DistributionsController < ApplicationController
     end
     @items = current_organization.items.alphabetized
     @storage_locations = current_organization.storage_locations.active_locations.has_inventory_items.alphabetized
-    session[:distribution_id] = @distribution.id
   end
 
   def show
