@@ -43,7 +43,7 @@
     </fieldset>
   </div>
   <div class="card-footer">
-    <%= submit_button_to confirmation_distributions_path(organization_id: current_organization.id) %>
+    <%= link_to "Confirmation", confirmation_distributions_path(organization_id: current_organization.id) %>
   </div>
   </div>
 <% end %>
