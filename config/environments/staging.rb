@@ -79,6 +79,14 @@ Rails.application.configure do
   config.active_support.deprecation = :notify
 
   config.lograge.enabled = true
+  config.lograge.custom_payload do |controller|
+    {
+      host: controller.request.host,
+      user_id: controller.current_user.try(:id),
+      org_id: controller.current_organization.try(:id),
+      partner_id: controller.current_partner.try(:id)
+    }
+  end
   config.lograge.custom_options = lambda do |event|
     exceptions = %w(controller action format id)
     {

@@ -97,6 +97,7 @@ gem 'httparty'
 gem 'icalendar', require: false
 # JSON Web Token encoding / decoding (e.g. for links in e-mails)
 gem "jwt"
+# Use Newrelic for logs and APM
 gem "newrelic_rpm"
 # Used to manage periodic cron-like jobs
 gem "clockwork"
