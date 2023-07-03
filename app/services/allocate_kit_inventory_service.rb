@@ -42,7 +42,7 @@ class AllocateKitInventoryService
 
   def allocate_inventory_out
     kit_allocation = KitAllocation.find_or_create_by!(storage_location_id: storage_location.id, kit_id: kit.id,
-      organization_id: kit.organization.id, inventory: "inventory_out")
+      organization_id: kit.organization.id, kit_allocation_type: "inventory_out")
     line_items = kit_allocation.line_items
     if line_items.present?
       kit_content.each_with_index do |line_item, index|
@@ -59,7 +59,7 @@ class AllocateKitInventoryService
 
   def allocate_inventory_in
     kit_allocation = KitAllocation.find_or_create_by!(storage_location_id: storage_location.id, kit_id: kit.id,
-      organization_id: kit.organization.id, inventory: "inventory_in")
+      organization_id: kit.organization.id, kit_allocation_type: "inventory_in")
     line_items = kit_allocation.line_items
     if line_items.present?
       kit_item = line_items.first

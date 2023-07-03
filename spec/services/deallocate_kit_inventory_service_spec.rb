@@ -7,8 +7,8 @@ RSpec.describe DeallocateKitInventoryService, type: :service do
   let(:item_inventory1) { create(:inventory_item, storage_location: storage_location, quantity: item1.on_hand_minimum_quantity, item: item1) }
   let(:item_inventory2) { create(:inventory_item, storage_location: storage_location, quantity: item2.on_hand_minimum_quantity, item: item2) }
 
-  let(:inventory_in) { create(:kit_allocation, storage_location: storage_location, organization_id: organization.id, kit_id: kit.id, inventory: "inventory_in") }
-  let(:inventory_out) { create(:kit_allocation, storage_location: storage_location, organization_id: organization.id, kit_id: kit.id, inventory: "inventory_out") }
+  let(:inventory_in) { create(:kit_allocation, storage_location: storage_location, organization_id: organization.id, kit_id: kit.id, kit_allocation_type: "inventory_in") }
+  let(:inventory_out) { create(:kit_allocation, storage_location: storage_location, organization_id: organization.id, kit_id: kit.id, kit_allocation_type: "inventory_out") }
 
   describe "#error" do
     let(:kit) do
