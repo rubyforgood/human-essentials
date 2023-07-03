@@ -34,13 +34,6 @@ module Diaper
     # sidekiq worker that is only taking work from the `default`
     # queue.
     config.action_mailer.deliver_later_queue_name = 'default'
-
-    config.lograge.custom_options = lambda do |event|
-      {
-        :uid => event.payload[:uid],
-        :org_id => event.payload[:org_id],
-        :partner_id => event.payload[:partner_id]
-      }
-    end
+    config.lograge.formatter = Lograge::Formatters::Json.new
   end
 end
