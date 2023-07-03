@@ -1,5 +1,4 @@
-<%= simple_form_for distribution, html: {class: "storage-location-required"}, wrapper_mappings: { datetime: :custom_multi_select } do |f| %>
-
+<%= simple_form_for distribution, url: confirmation_distributions_path(organization_id: current_organization.id), method: :get, html: {class: "storage-location-required"}, wrapper_mappings: { datetime: :custom_multi_select } do |f| %>
   <div class="box-body">
     <%= f.simple_fields_for :request do |r| %>
       <%= r.input :id, as: :hidden %>
@@ -43,7 +42,7 @@
     </fieldset>
   </div>
   <div class="card-footer">
-    <%= link_to "Confirmation", confirmation_distributions_path(organization_id: current_organization.id) %>
+   <%= f.submit 'Submit request', class: 'btn btn-primary' %>
   </div>
   </div>
 <% end %>
