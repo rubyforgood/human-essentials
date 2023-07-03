@@ -118,6 +118,10 @@ class StorageLocation < ApplicationRecord
   # NOTE: We should generalize this elsewhere -- Importable concern?
   def self.import_inventory(filename, org, loc)
     current_org = Organization.find(org)
+    storage_location = StorageLocation.find(loc.to_i)
+
+    raise Errors::InventoryAlreadyHasItems if storage_location.size > 0
+
     adjustment = current_org.adjustments.create!(storage_location_id: loc.to_i,
                                                  user_id: User.with_role(Role::ORG_ADMIN, current_org).first&.id,
                                                  comment: "Starting Inventory")
@@ -126,7 +130,10 @@ class StorageLocation < ApplicationRecord
       adjustment.line_items
                 .create(quantity: row[0].to_i, item_id: current_org.items.find_by(name: row[1]))
     end
-    adjustment.storage_location.increase_inventory(adjustment)
+
+    increasing_adjustment, _decreasing_adjustment = adjustment.split_difference
+
+    storage_location.increase_inventory increasing_adjustment
   end
 
   def remove_empty_items
