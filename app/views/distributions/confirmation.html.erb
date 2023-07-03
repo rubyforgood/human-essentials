@@ -1,3 +1,20 @@
-<section style="height:100vh;width:100vw;backgroundColor:red;z-index:50">
-    YOOOOOO
+<section class="d-flex flex-column align-items-center py-4">
+  <div class="card shadow-sm mx-auto" style="width: 50rem;">
+    <div class="card-body">
+      <h1 class="text-center">Request Summary</h1>
+      <hr>
+      <% @items.each do |index, item_info| %>
+        <p class="card-text">
+          <strong><%= item_info[:name] %></strong> for <%= item_info[:quantity] %>
+        </p>
+        <hr>
+      <% end %>
+      <h3 class="text-start"><strong> You are ordering a total of <%= @total_items_requested %> items. Are you sure?</strong></h3>
+      <hr>
+      <h3 class="card-subtitle mb-4 text-start">Please confirm that the above list is what you meant to request</h3>
+      <div class="d-flex justify-content-between align-items-center">
+        <%= link_to 'Go back', 'javascript:history.back()', rel: 'nofollow', class: "btn btn-danger btn-lg" %>
+      </div>
+    </div>
+  </div>
 </section>

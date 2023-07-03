@@ -111,7 +111,15 @@ class DistributionsController < ApplicationController
   end
 
   def confirmation
-    binding.pry
+    @storage_location_name = StorageLocation.find(params[:distribution][:storage_location_id]).name
+    @total_items_requested = 0
+    @items = {}
+    params[:distribution][:line_items_attributes].values.each_with_index do |line_item, index|
+      item = Item.find(line_item["item_id"])
+      @total_items_requested += line_item["quantity"].to_i
+      @items[index] = {name: item.name, quantity: line_item["quantity"]}
+    end
+
     render :confirmation
   end
 
