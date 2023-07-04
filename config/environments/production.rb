@@ -1,3 +1,5 @@
+require_relative '../log_formatter'
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -96,6 +98,7 @@ Rails.application.configure do
   # contains parameters (excluding password) that can
   # help with debugging
   #
+  config.lograge.formatter = LogFormatter.new
   config.lograge.enabled = true
   config.lograge.custom_payload do |controller|
     {
