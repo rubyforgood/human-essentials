@@ -6,14 +6,6 @@ require 'rails/all'
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-require 'json'
-class LogFormatter
-  def call(data)
-    ::JSON.dump({message: data})
-  end
-end
-
-
 module Diaper
   # Bootstraps the application
   class Application < Rails::Application
@@ -42,6 +34,5 @@ module Diaper
     # sidekiq worker that is only taking work from the `default`
     # queue.
     config.action_mailer.deliver_later_queue_name = 'default'
-    config.lograge.formatter = LogFormatter.new
   end
 end

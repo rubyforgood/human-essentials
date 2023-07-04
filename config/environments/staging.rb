@@ -1,3 +1,5 @@
+require_relative '../log_formatter'
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -76,6 +78,7 @@ Rails.application.configure do
   config.active_support.deprecation = :notify
 
   config.lograge.enabled = true
+  config.lograge.formatter = LogFormatter.new
   config.lograge.custom_payload do |controller|
     {
       host: controller.request.host,
@@ -85,7 +88,7 @@ Rails.application.configure do
     }
   end
   config.lograge.custom_options = lambda do |event|
-    exceptions = %w(controller action format id)
+    exceptions = %w[controller action format id]
     {
       params: event.payload[:params].except(*exceptions)
     }
