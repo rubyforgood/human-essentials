@@ -14,7 +14,7 @@ RSpec.describe "Sessions", type: :request, order: :defined do
       )
       user.add_role(:partner, create(:organization))
       post "/users/sign_in/",
-        params: {user: {email: "partner123@example.com", password: "password!" }}
+        params: {user: {email: "partner123@example.com", password: "password!"}}
     end
 
     it "successfully reach the partners dashboard" do
