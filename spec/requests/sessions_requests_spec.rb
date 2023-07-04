@@ -18,8 +18,8 @@ RSpec.describe "Sessions", type: :request, order: :defined do
     end
 
     it "successfully reach the partners dashboard" do
-      # the "?organization_id=db_2" becomes "/partners/dashbaord/" in the browser
-      expect(response).to redirect_to("http://www.example.com/?organization_id=db_2")
+      get dashboard_path
+      expect(response).to be_successful
     end
 
     it "cannot access the admin dashboard" do
