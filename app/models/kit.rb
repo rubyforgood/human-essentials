@@ -13,7 +13,6 @@
 #
 class Kit < ApplicationRecord
   has_paper_trail
-  include Itemizable
   include Filterable
   include Valuable
 
