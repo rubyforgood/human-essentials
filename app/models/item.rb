@@ -25,6 +25,7 @@ class Item < ApplicationRecord
   include Filterable
   include Exportable
   include Valuable
+  include Itemizable
 
   after_update :update_associated_kit_name, if: -> { kit.present? }
 
