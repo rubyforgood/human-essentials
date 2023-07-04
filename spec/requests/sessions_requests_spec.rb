@@ -8,20 +8,20 @@ RSpec.describe "Sessions", type: :request, order: :defined do
 
       # sign in as a partner
       user = User.create!(
-        email: 'partner123@example.com',
-        name: 'Test Partner',
-        password: "password!",
+        email: "partner123@example.com",
+        name: "Test Partner",
+        password: "password!"
       )
       user.add_role(:partner, create(:organization))
       post "/users/sign_in/",
-        params: { user: { email: 'partner123@example.com', password: 'password!' } }
+        params: {user: {email: "partner123@example.com", password: "password!" }}
     end
 
     it "successfully reach the partners dashboard" do
       # the "?organization_id=db_2" becomes "/partners/dashbaord/" in the browser
       expect(response).to redirect_to("http://www.example.com/?organization_id=db_2")
     end
-    
+
     it "cannot access the admin dashboard" do
       get admin_dashboard_path
       expect(response).not_to be_successful
