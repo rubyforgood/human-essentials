@@ -118,12 +118,6 @@ RSpec.describe "Adjustment management", type: :system, js: true do
       end
     end
 
-
-
-
-
-
-
     it "should not display inactive storage locations in dropdown" do
       create(:storage_location, name: "Inactive R Us", discarded_at: Time.zone.now)
       visit url_prefix + "/adjustments/new"
