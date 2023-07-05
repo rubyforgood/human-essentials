@@ -31,6 +31,12 @@ class Adjustment < ApplicationRecord
   validate :negative_line_items_exist_in_inventory
   validate :storage_locations_belong_to_organization
 
+  before_save :combine_adjustment
+
+  def combine_adjustment
+    line_items.combine!
+  end
+
   def self.storage_locations_adjusted_for(organization)
     includes(:storage_location).joins(:storage_location).where(organization_id: organization.id, storage_location: {discarded_at: nil}).collect(&:storage_location).sort
   end
