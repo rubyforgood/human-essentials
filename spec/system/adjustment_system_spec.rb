@@ -17,7 +17,7 @@ RSpec.describe "Adjustment management", type: :system, js: true do
       before do
         visit subject
         click_on "New Adjustment"
-        select bare_storage_location.name, from: "Storage location"
+        select bare_storage_location.name, from: "From storage location"
       end
 
       it "allows you to choose items that do not yet exist" do
@@ -35,7 +35,7 @@ RSpec.describe "Adjustment management", type: :system, js: true do
       before do
         visit subject
         click_on "New Adjustment"
-        select storage_location.name, from: "Storage location"
+        select storage_location.name, from: "From storage location"
         fill_in "Comment", with: "something"
         select Item.last.name, from: "adjustment_line_items_attributes_0_item_id"
       end
@@ -63,7 +63,7 @@ RSpec.describe "Adjustment management", type: :system, js: true do
 
         item = Item.alphabetized.first
 
-        select storage_location.name, from: "Storage location"
+        select storage_location.name, from: "From storage location"
         expect(page).to have_content(item.name)
         select item.name, from: "adjustment_line_items_attributes_0_item_id"
 
@@ -71,7 +71,7 @@ RSpec.describe "Adjustment management", type: :system, js: true do
 
         page.refresh
         within "#new_adjustment" do
-          select storage_location.name, from: "Storage location"
+          select storage_location.name, from: "From storage location"
           expect(page).to have_no_content(item.name)
         end
       end
@@ -81,7 +81,7 @@ RSpec.describe "Adjustment management", type: :system, js: true do
         storage_location = create(:storage_location, :with_items, name: "PICK THIS ONE", item_quantity: 10, organization: @organization)
         visit url_prefix + "/adjustments"
         click_on "New Adjustment"
-        select storage_location.name, from: "Storage location"
+        select storage_location.name, from: "From storage location"
         fill_in "Comment", with: "something"
         select Item.last.name, from: "adjustment_line_items_attributes_0_item_id"
         fill_in "adjustment_line_items_attributes_0_quantity", with: sub_quantity.to_s
