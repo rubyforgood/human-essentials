@@ -122,6 +122,7 @@ RSpec.describe "Audits", type: :request do
           post audits_path(default_params.merge(audit: invalid_storage_location_attributes))
           expect(response).to render_template(:new)
           expect(flash[:error]).to eq("Storage location can't be blank")
+          expect(flash[:error]).to_not eq("Storage location must exist")
         end
       end
     end
