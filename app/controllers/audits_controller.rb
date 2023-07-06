@@ -90,13 +90,12 @@ class AuditsController < ApplicationController
 
   private
 
-def handle_audit_errors
-  error_message = @audit.errors.collect { |error| "#{error.attribute.capitalize} ".tr("_", " ") + error.message }
-                             .find { |error| error.include?("blank") }
+  def handle_audit_errors
+    error_message = @audit.errors.collect { |error| "#{error.attribute.capitalize} ".tr("_", " ") + error.message }
+      .find { |error| error.include?("blank") }
 
-  flash[:error] = error_message if error_message.present?
-end
-
+    flash[:error] = error_message if error_message.present?
+  end
 
   def set_audit
     @audit = current_organization.audits.find(params[:id] || params[:audit_id])
