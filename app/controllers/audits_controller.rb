@@ -93,7 +93,10 @@ class AuditsController < ApplicationController
   def handle_audit_errors
     if @audit.errors.present?
       errors = @audit.errors.collect { |error| "#{error.attribute.capitalize} ".tr("_", " ") + error.message }
-      flash[:error] = errors[1]
+
+      error_message = errors.find { |error| error.include?("blank") }
+
+      flash[:error] = error_message unless error_message.nil?
     end
   end
 
