@@ -55,7 +55,7 @@ class AdjustmentsController < ApplicationController
       load_form_collections
       render :new
     end
-  rescue Errors::InsufficientAllotment => e
+  rescue Errors::InsufficientAllotment => e   # TODO:  Can we get rid of this, if we are checking for sufficient allotment in the adjustment validation?
     flash[:error] = e.message
     load_form_collections
     render :new
