@@ -115,6 +115,7 @@ RSpec.describe "Adjustment management", type: :system, js: true do
           click_button "Save"
         end.not_to change { storage_location.size }
         expect(page).to have_content("items exceed the available inventory")
+        expect(page).to have_field("adjustment_line_items_attributes_0_quantity", with: "-18")
       end
     end
 
