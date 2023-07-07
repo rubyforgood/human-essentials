@@ -56,6 +56,20 @@ class Admin::UsersController < AdminController
     end
   end
 
+  def remove_role
+    user_role = UsersRole.find_by(user_id: params[:user_id], role_id: params[:role_id])
+    if user_role
+      user_role.destroy
+      if user_role.role.name.to_sym == :org_user # they can't be an admin if they're not a user
+        admin_role = Role.find_by(resource_id: user_role.role.resource_id, name: :org_admin)
+        UsersRole.find_by(user_id: params[:user_id], role_id: admin_role.id)&.destroy
+      end
+      redirect_back(fallback_location: admin_users_path, notice: 'Role removed!')
+    else
+      redirect_back(fallback_location: admin_users_path, alert: 'Could not find role!')
+    end
+  end
+
   private
 
   def user_params
