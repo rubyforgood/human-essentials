@@ -32,6 +32,7 @@ class Admin::UsersController < AdminController
 
   def edit
     @user = User.find_by(id: params[:id])
+    @resources = Role.resources_for_select
   end
 
   def create
@@ -54,6 +55,39 @@ class Admin::UsersController < AdminController
     else
       redirect_to admin_users_path, flash: { error: "Couldn't find that user, sorry" }
     end
+  end
+
+  def resource_ids
+    klass = case params[:resource_type]
+            when 'org_admin', 'org_user'
+              Organization
+            when 'partner'
+              Partner
+            else
+              raise "Unknown resource type #{params[:resource_type]}"
+            end
+
+    objects = klass.where("name LIKE ?", "%#{params[:q]}%").select(:id, :name)
+    object_json = objects.map do |obj|
+      {
+        id: obj.id,
+        text: obj.name
+      }
+    end
+    render json: { results: object_json }
+  end
+
+  def add_role
+    resource_id = params[:resource_id]
+    type = params[:resource_type]
+    klass = Role::TITLE_TO_RESOURCE[type.to_sym]
+    resource = klass.find(resource_id)
+    user = User.find(params[:user_id])
+    user.add_role(type, resource)
+    if type == 'org_admin'
+      user.add_role(:org_user, resource)
+    end
+    redirect_back(fallback_location: admin_users_path, notice: 'Role added!')
   end
 
   def remove_role
