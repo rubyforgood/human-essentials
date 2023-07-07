@@ -6,7 +6,11 @@ task change_itemizable_id: :environment do
   line_items.each do |line_item|
     puts "Processing line_item with id: #{line_item.id}"
     item = line_item.itemizable.item
+
+    item_id = line_item.item_id
     line_item.itemizable = item
+    line_item.item_id = item_id
+
     line_item.save!
   end
 
