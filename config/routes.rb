@@ -59,7 +59,10 @@ Rails.application.routes.draw do
     resources :base_items
     resources :organizations
     resources :partners, except: %i[new create]
-    resources :users
+    resources :users do
+      delete :remove_role
+      post :add_role
+    end
     resources :barcode_items
     resources :account_requests, only: [:index] do
       post :reject, on: :collection

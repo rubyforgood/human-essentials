@@ -1,0 +1,41 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary card-outline">
+          <div class="card-header">
+            <h5 class="card-title"><%= user.name %> - Roles
+            </h5>
+          </div>
+          <!-- /.card-header -->
+          <!-- form start -->
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Role Type</th>
+                  <th>Resource</th>
+                  <th class="text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% user.roles.each do |role| %>
+                  <tr>
+                    <td><%= role.title %></td>
+                    <td><%= link_to role.resource.name, role.resource %></td>
+                    <td class="text-right">
+                      <%= delete_button_to admin_user_remove_role_path(user, role_id: role.id),
+                                           confirm: "Are you sure you want to remove this role?" %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
