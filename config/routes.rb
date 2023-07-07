@@ -62,6 +62,7 @@ Rails.application.routes.draw do
     resources :users do
       delete :remove_role
       post :add_role
+      get :resource_ids, on: :collection
     end
     resources :barcode_items
     resources :account_requests, only: [:index] do
