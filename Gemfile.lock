@@ -211,11 +211,11 @@ GEM
       sanitize (< 7)
     foreman (0.87.2)
     formatador (0.3.0)
-    geocoder (1.8.1)
+    geocoder (1.8.2)
     globalid (1.1.0)
       activesupport (>= 5.0)
-    groupdate (6.2.1)
-      activesupport (>= 5.2)
+    groupdate (6.3.0)
+      activesupport (>= 6.1)
     guard (2.18.0)
       formatador (>= 0.2.4)
       listen (>= 2.7, < 4.0)
@@ -330,11 +330,11 @@ GEM
     net-smtp (0.3.3)
       net-protocol
     nio4r (2.5.9)
-    nokogiri (1.15.2-arm64-darwin)
+    nokogiri (1.15.3-arm64-darwin)
       racc (~> 1.4)
-    nokogiri (1.15.2-x86_64-darwin)
+    nokogiri (1.15.3-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.15.2-x86_64-linux)
+    nokogiri (1.15.3-x86_64-linux)
       racc (~> 1.4)
     notiffany (0.1.3)
       nenv (~> 0.1)
@@ -573,7 +573,7 @@ GEM
       rubocop-performance (~> 1.18.0)
     stimulus-rails (1.2.1)
       railties (>= 6.0.0)
-    strong_migrations (1.4.4)
+    strong_migrations (1.5.0)
       activerecord (>= 5.2)
     terser (1.1.16)
       execjs (>= 0.3.0, < 3)
@@ -654,7 +654,7 @@ DEPENDENCIES
   flipper-ui
   foreman
   geocoder
-  groupdate (~> 6.2)
+  groupdate (~> 6.3)
   guard-rspec
   httparty
   icalendar
@@ -703,7 +703,7 @@ DEPENDENCIES
   sprockets (~> 4.0.0)
   standard (~> 1.28)
   stimulus-rails
-  strong_migrations (= 1.4.4)
+  strong_migrations (= 1.5.0)
   terser
   turbo-rails
   web-console
