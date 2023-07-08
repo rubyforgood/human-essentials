@@ -19,14 +19,14 @@ module Partners
 
     def confirmation
       @partner_request = partner_request_params
-      @total_quanity_requested = 0
+      @total_quantity_requested = 0
       @items = {}
 
       params.dig("request", "item_requests_attributes").each do |index, request_params|
         item = Item.find_by(id: request_params["item_id"])
         unless item.nil?
           @items[item.name] = request_params["quantity"]
-          @total_quanity_requested += request_params["quantity"].to_i
+          @total_quantity_requested += request_params["quantity"].to_i
         end
       end
 

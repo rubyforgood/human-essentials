@@ -3,6 +3,9 @@
     <div class="card-body">
       <h1 class="text-center">Request Summary</h1>
       <hr>
+      <div class="my-3">
+        <p class="card-text"><strong>Your comments:</strong> <%= @request['comments'] %></p>
+      </div>
       <% @items.each do |item_name, person_count| %>
         <p class="card-text">
           <strong><%= item_name %></strong><br>
@@ -10,14 +13,10 @@
         </p>
         <hr>
       <% end %>
-      <div class="my-3">
-        <p class="card-text"><strong>Your comments:</strong> <%= @request['comments'] %></p>
-      </div>
-
-      <h2 class="text-start"><strong>You are ordering for the total of <%= @individuals_recieving_items %> individuals. Are you sure? </strong></h2>
-      <hr>
-      <h3>Please confirm that the above list is what you meant to request</h3>
-      <div class="d-flex justify-content-between align-items-start mt-4">
+      <h3 class="card-subtitle mb-4 text-start">Please confirm that the above list is what you meant to request</h3>
+      <h1 class="text-center"><strong>You are ordering for a total of <%= @individuals_recieving_items %> individuals.</strong></h1>
+      <h1 class="text-center"><strong>Are you sure?</strong></h1>
+      <div class="d-flex justify-content-around align-items-center">
         <%= link_to 'Go back', 'javascript:history.back()', rel: 'nofollow', class: "btn btn-danger" %>
         <%= button_to "Submit", partners_individuals_requests_path(partners_family_request: @request, organization_id: current_partner.organization.id), method: :post, rel: 'nofollow', class: 'btn btn-primary' %>
       </div>
