@@ -119,7 +119,6 @@ class DistributionsController < ApplicationController
       @total_items_requested += line_item["quantity"].to_i
       @items[index] = {name: item.name, quantity: line_item["quantity"]}
     end
-
     render :confirmation
   end
 

@@ -14,6 +14,7 @@
       <h3 class="card-subtitle mb-4 text-start">Please confirm that the above list is what you meant to request</h3>
       <div class="d-flex justify-content-between align-items-center">
         <%= link_to 'Go back', 'javascript:history.back()', rel: 'nofollow', class: "btn btn-danger btn-lg" %>
+        <%= button_to 'Submit', { controller: "distributions", action: "create", organization_id: current_organization.id}, method: :post, class: "btn btn-success btn-lg" %>
       </div>
     </div>
   </div>
