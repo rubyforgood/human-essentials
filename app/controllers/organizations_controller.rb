@@ -41,17 +41,28 @@ class OrganizationsController < ApplicationController
 
   def promote_to_org_admin
     user = User.find(params[:user_id])
-    AddRoleService.call(user_id: user.id,
-      resource_type: :org_admin,
-      resource_id: current_organization.id)
-    redirect_to user_update_redirect_path, notice: "User has been promoted!"
+    raise ActiveRecord::RecordNotFound unless user.has_role?(Role::ORG_USER, current_organization)
+    begin
+      AddRoleService.call(user_id: user.id,
+        resource_type: Role::ORG_ADMIN,
+        resource_id: current_organization.id)
+      redirect_to user_update_redirect_path, notice: "User has been promoted!"
+    rescue => e
+      redirect_back(fallback_location: organization_path(current_organization), alert: e.message)
+    end
   end
 
   def demote_to_user
-    RemoveRoleService.call(user_id: params[:user_id],
-      resource_type: Role::ORG_ADMIN,
-      resource_id: current_organization.id)
-    redirect_to user_update_redirect_path, notice: notice
+    user = User.find(params[:user_id])
+    raise ActiveRecord::RecordNotFound unless user.has_role?(Role::ORG_ADMIN, current_organization)
+    begin
+      RemoveRoleService.call(user_id: params[:user_id],
+        resource_type: Role::ORG_ADMIN,
+        resource_id: current_organization.id)
+      redirect_to user_update_redirect_path, notice: notice
+    rescue => e
+      redirect_back(fallback_location: organization_path(current_organization), alert: e.message)
+    end
   end
 
   def deactivate_user
