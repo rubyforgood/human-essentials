@@ -41,21 +41,16 @@ class OrganizationsController < ApplicationController
 
   def promote_to_org_admin
     user = User.find(params[:user_id])
-    raise ActiveRecord::RecordNotFound unless user.has_role?(Role::ORG_USER, current_organization)
-    user.add_role(Role::ORG_ADMIN, current_organization)
+    AddRoleService.call(user_id: user.id,
+                        resource_type: :org_admin,
+                        resource_id: current_organization.id)
     redirect_to user_update_redirect_path, notice: "User has been promoted!"
   end
 
   def demote_to_user
-    user = User.find(params[:user_id])
-    raise ActiveRecord::RecordNotFound unless user.has_role?(Role::ORG_USER, current_organization)
-    if user.has_role?(Role::SUPER_ADMIN)
-      notice = "Unable to convert super to user."
-    else
-      user.remove_role(Role::ORG_ADMIN, current_organization)
-      notice = "Admin has been changed to User!"
-    end
-
+    RemoveRoleService.call(user_id: params[:user_id],
+                           resource_type: Role::ORG_ADMIN,
+                           resource_id: current_organization.id)
     redirect_to user_update_redirect_path, notice: notice
   end
 
