@@ -78,29 +78,24 @@ class Admin::UsersController < AdminController
   end
 
   def add_role
-    resource_id = params[:resource_id]
-    type = params[:resource_type]
-    klass = Role::TITLE_TO_RESOURCE[type.to_sym]
-    resource = klass.find(resource_id)
-    user = User.find(params[:user_id])
-    user.add_role(type, resource)
-    if type == 'org_admin'
-      user.add_role(:org_user, resource)
+    begin
+      AddRoleService.call(user_id: params[:user_id],
+                          resource_type: params[:resource_type],
+                          resource_id: params[:resource_id]
+      )
+    rescue => e
+      redirect_back(fallback_location: admin_users_path, alert: e.message)
+      return
     end
     redirect_back(fallback_location: admin_users_path, notice: 'Role added!')
   end
 
   def remove_role
-    user_role = UsersRole.find_by(user_id: params[:user_id], role_id: params[:role_id])
-    if user_role
-      user_role.destroy
-      if user_role.role.name.to_sym == :org_user # they can't be an admin if they're not a user
-        admin_role = Role.find_by(resource_id: user_role.role.resource_id, name: :org_admin)
-        UsersRole.find_by(user_id: params[:user_id], role_id: admin_role.id)&.destroy
-      end
+    begin
+      RemoveRoleService.call(user_id: params[:user_id], role_id: params[:role_id])
       redirect_back(fallback_location: admin_users_path, notice: 'Role removed!')
-    else
-      redirect_back(fallback_location: admin_users_path, alert: 'Could not find role!')
+    rescue => e
+      redirect_back(fallback_location: admin_users_path, alert: e.message)
     end
   end
 
