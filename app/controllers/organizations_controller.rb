@@ -42,15 +42,15 @@ class OrganizationsController < ApplicationController
   def promote_to_org_admin
     user = User.find(params[:user_id])
     AddRoleService.call(user_id: user.id,
-                        resource_type: :org_admin,
-                        resource_id: current_organization.id)
+      resource_type: :org_admin,
+      resource_id: current_organization.id)
     redirect_to user_update_redirect_path, notice: "User has been promoted!"
   end
 
   def demote_to_user
     RemoveRoleService.call(user_id: params[:user_id],
-                           resource_type: Role::ORG_ADMIN,
-                           resource_id: current_organization.id)
+      resource_type: Role::ORG_ADMIN,
+      resource_id: current_organization.id)
     redirect_to user_update_redirect_path, notice: notice
   end
 

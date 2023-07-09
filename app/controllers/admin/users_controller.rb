@@ -59,13 +59,13 @@ class Admin::UsersController < AdminController
 
   def resource_ids
     klass = case params[:resource_type]
-            when 'org_admin', 'org_user'
-              Organization
-            when 'partner'
-              Partner
-            else
-              raise "Unknown resource type #{params[:resource_type]}"
-            end
+    when "org_admin", "org_user"
+      Organization
+    when "partner"
+      Partner
+    else
+      raise "Unknown resource type #{params[:resource_type]}"
+    end
 
     objects = klass.where("name LIKE ?", "%#{params[:q]}%").select(:id, :name)
     object_json = objects.map do |obj|
@@ -80,23 +80,20 @@ class Admin::UsersController < AdminController
   def add_role
     begin
       AddRoleService.call(user_id: params[:user_id],
-                          resource_type: params[:resource_type],
-                          resource_id: params[:resource_id]
-      )
+        resource_type: params[:resource_type],
+        resource_id: params[:resource_id])
     rescue => e
       redirect_back(fallback_location: admin_users_path, alert: e.message)
       return
     end
-    redirect_back(fallback_location: admin_users_path, notice: 'Role added!')
+    redirect_back(fallback_location: admin_users_path, notice: "Role added!")
   end
 
   def remove_role
-    begin
-      RemoveRoleService.call(user_id: params[:user_id], role_id: params[:role_id])
-      redirect_back(fallback_location: admin_users_path, notice: 'Role removed!')
-    rescue => e
-      redirect_back(fallback_location: admin_users_path, alert: e.message)
-    end
+    RemoveRoleService.call(user_id: params[:user_id], role_id: params[:role_id])
+    redirect_back(fallback_location: admin_users_path, notice: "Role removed!")
+  rescue => e
+    redirect_back(fallback_location: admin_users_path, alert: e.message)
   end
 
   private

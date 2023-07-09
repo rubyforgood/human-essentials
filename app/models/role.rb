@@ -31,26 +31,25 @@ class Role < ApplicationRecord
   PARTNER = :partner
 
   TITLES = {
-      :org_user => 'Organization',
-      :org_admin => 'Organization Admin',
-      :partner => 'Partner',
-      :super_admin => 'Super admin'
-    }.freeze
+    org_user: "Organization",
+    org_admin: "Organization Admin",
+    partner: "Partner",
+    super_admin: "Super admin"
+  }.freeze
 
   TITLE_TO_RESOURCE = {
-    :org_user => ::Organization,
-    :org_admin => ::Organization,
-    :partner => ::Partner,
+    org_user: ::Organization,
+    org_admin: ::Organization,
+    partner: ::Partner
   }.freeze
 
   # @return [String]
   def title
-    TITLES[self.name.to_sym]
+    TITLES[name.to_sym]
   end
 
   # @return [Hash<Symbol, String>]
   def self.resources_for_select
     TITLES.without(:super_admin).invert
   end
-
 end

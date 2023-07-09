@@ -38,8 +38,8 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       find("div.input-group:has(.select2-container)").click
       find('.select2-search__field', wait: 5).set("Partner ABC")
       find(:xpath,
-           "//li[contains(@class, 'select2-results__option') and contains(., 'Partner ABC')]",
-           wait: 5).click
+        "//li[contains(@class, 'select2-results__option') and contains(., 'Partner ABC')]",
+        wait: 5).click
       click_on 'Add Role'
 
       expect(page.find('.alert')).to have_content('Role added')
