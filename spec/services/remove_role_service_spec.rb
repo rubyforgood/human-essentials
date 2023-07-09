@@ -37,7 +37,7 @@ RSpec.describe RemoveRoleService, type: :service do
       it "should raise an error" do
         expect {
           described_class.call(user_id: user.id, role_id: role.id)
-        }.to raise_error("User ID #{user.id} does not have role #{role.id}!")
+        }.to raise_error("User User XYZ does not have role for Org ABC!")
         expect(user.reload.has_role?(:org_user, org)).to eq(false)
       end
     end

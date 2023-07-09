@@ -12,7 +12,9 @@ class RemoveRoleService
     end
     user_role = UsersRole.find_by(user_id: user_id, role_id: role_id)
     unless user_role
-      raise "User ID #{user_id} does not have role #{role_id}!"
+      user = User.find(user_id)
+      role = Role.find(role_id)
+      raise "User #{user.name} does not have role for #{role.resource.name}!"
     end
 
     user_role.destroy
