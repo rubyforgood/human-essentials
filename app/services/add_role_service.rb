@@ -26,5 +26,4 @@ class AddRoleService
     end
     user.add_role(Role::SUPER_ADMIN)
   end
-
 end

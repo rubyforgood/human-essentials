@@ -5,7 +5,7 @@ class RemoveRoleService
   # @param resource_id [Integer]
   def self.call(user_id:, role_id: nil, resource_type: nil, resource_id: nil)
     if role_id.nil? && resource_id.nil?
-      raise 'Must provide either a role ID or resource ID!'
+      raise "Must provide either a role ID or resource ID!"
     end
     if role_id.nil?
       role_id = Role.find_by(name: resource_type, resource_id: resource_id).id

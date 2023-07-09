@@ -30,12 +30,12 @@ RSpec.describe "Admin::UsersController", type: :request do
         it 'should call the service and redirect back' do
           allow(AddRoleService).to receive(:call)
           post admin_user_add_role_path(user_id: user.id,
-                                        resource_type: Role::ORG_ADMIN,
-                                        resource_id: org.id),
-               headers: { 'HTTP_REFERER' => '/back/url'}
+            resource_type: Role::ORG_ADMIN,
+            resource_id: org.id),
+            headers: { 'HTTP_REFERER' => '/back/url'}
           expect(AddRoleService).to have_received(:call).with(user_id: user.id.to_s,
-                                        resource_type: Role::ORG_ADMIN.to_s,
-                                        resource_id: org.id.to_s)
+            resource_type: Role::ORG_ADMIN.to_s,
+            resource_id: org.id.to_s)
           expect(flash[:notice]).to eq('Role added!')
           expect(response).to redirect_to('/back/url')
         end
@@ -45,12 +45,12 @@ RSpec.describe "Admin::UsersController", type: :request do
         it 'should redirect back with error' do
           allow(AddRoleService).to receive(:call).and_raise('OH NOES')
           post admin_user_add_role_path(user_id: user.id,
-                                        resource_type: Role::ORG_ADMIN,
-                                        resource_id: org.id),
-               headers: { 'HTTP_REFERER' => '/back/url'}
+            resource_type: Role::ORG_ADMIN,
+            resource_id: org.id),
+            headers: { 'HTTP_REFERER' => '/back/url'}
           expect(AddRoleService).to have_received(:call).with(user_id: user.id.to_s,
-                                        resource_type: Role::ORG_ADMIN.to_s,
-                                        resource_id: org.id.to_s)
+            resource_type: Role::ORG_ADMIN.to_s,
+            resource_id: org.id.to_s)
           expect(flash[:alert]).to eq('OH NOES')
           expect(response).to redirect_to('/back/url')
         end
@@ -62,10 +62,10 @@ RSpec.describe "Admin::UsersController", type: :request do
         it 'should call the service and redirect back' do
           allow(RemoveRoleService).to receive(:call)
           delete admin_user_remove_role_path(user_id: user.id,
-                                           role_id: 123),
-               headers: { 'HTTP_REFERER' => '/back/url'}
+            role_id: 123),
+            headers: { 'HTTP_REFERER' => '/back/url'}
           expect(RemoveRoleService).to have_received(:call).with(user_id: user.id.to_s,
-                                                              role_id: '123')
+            role_id: '123')
           expect(flash[:notice]).to eq('Role removed!')
           expect(response).to redirect_to('/back/url')
         end
@@ -75,10 +75,10 @@ RSpec.describe "Admin::UsersController", type: :request do
         it 'should redirect back with error' do
           allow(RemoveRoleService).to receive(:call).and_raise('OH NOES')
           delete admin_user_remove_role_path(user_id: user.id,
-                                        role_id: 123),
-               headers: { 'HTTP_REFERER' => '/back/url'}
+            role_id: 123),
+            headers: { 'HTTP_REFERER' => '/back/url'}
           expect(RemoveRoleService).to have_received(:call).with(user_id: user.id.to_s,
-                                                              role_id: '123')
+            role_id: '123')
           expect(flash[:alert]).to eq('OH NOES')
           expect(response).to redirect_to('/back/url')
         end
