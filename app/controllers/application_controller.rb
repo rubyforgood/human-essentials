@@ -64,7 +64,7 @@ class ApplicationController < ActionController::Base
 
   def dashboard_path_from_current_role
     return root_path if current_role.blank?
-    
+
     if current_role.name == Role::SUPER_ADMIN.to_s
       admin_dashboard_path
     elsif current_role.name == Role::PARTNER.to_s
