@@ -97,6 +97,8 @@ gem 'httparty'
 gem 'icalendar', require: false
 # JSON Web Token encoding / decoding (e.g. for links in e-mails)
 gem "jwt"
+# Use Newrelic for logs and APM
+gem "newrelic_rpm"
 # Used to manage periodic cron-like jobs
 gem "clockwork"
 
@@ -110,15 +112,13 @@ gem "image_processing"
 gem "sprockets", "~> 4.2.0"
 
 group :production do
-  # Reduce the noise of logs and include custom fields to it for easier access
-  gem 'lograge'
-  # Profiler (third party app) showing performance and metrics.
-  gem "skylight"
   # Tool to detect unused code through knowing which methods are used in which files.
   gem 'coverband'
 end
 
 group :production, :staging do
+  # Reduce the noise of logs and include custom fields to it for easier access
+  gem 'lograge'
   # JS compression for deployed environments.
   gem 'terser'
 end

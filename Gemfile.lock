@@ -329,6 +329,7 @@ GEM
       timeout
     net-smtp (0.3.3)
       net-protocol
+    newrelic_rpm (9.3.0)
     nio4r (2.5.9)
     nokogiri (1.15.3-arm64-darwin)
       racc (~> 1.4)
@@ -548,8 +549,6 @@ GEM
       rack (~> 2.2)
       rack-protection (= 2.1.0)
       tilt (~> 2.0)
-    skylight (5.3.4)
-      activesupport (>= 5.2.0)
     slop (3.6.0)
     snaky_hash (2.0.0)
       hashie
@@ -672,6 +671,7 @@ DEPENDENCIES
   matrix
   mini_racer (~> 0.8.0)
   money-rails
+  newrelic_rpm
   nokogiri (>= 1.10.4)
   omniauth
   omniauth-google-oauth2
@@ -700,7 +700,6 @@ DEPENDENCIES
   shoulda-matchers (~> 5.3)
   simple_form
   simplecov
-  skylight
   sprockets (~> 4.2.0)
   standard (~> 1.28)
   stimulus-rails
