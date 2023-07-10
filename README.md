@@ -22,7 +22,7 @@ Human Essentials has over 200 registered banks across the United States at **no 
  ## 🎉 The [Digital Public Goods Alliance](https://digitalpublicgoods.net/registry/) recognizes Human Essentials as a digital public good (DPG)
 
 <p align="center">
-<a href="https://digitalpublicgoods.net">
+<a href="https://app.digitalpublicgoods.net/a/10622">
 <img src="https://user-images.githubusercontent.com/667909/181150972-e59a77ab-b657-4893-aef9-d3df1384a506.png" alt="DPG Approved" height="40">
 </a>
 </p>

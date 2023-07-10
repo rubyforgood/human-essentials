@@ -26,7 +26,7 @@ gem 'azure-storage-blob'
 # Adds soft delete functionality for models.
 gem 'discard', '~> 1.0'
 # Adds grouping by date/month/etc to queries.
-gem "groupdate", "~> 6.2"
+gem "groupdate", "~> 6.3"
 # Treats attributes like money, which knows about dollars and cents.
 gem "money-rails"
 # Tracks history / audits models.
@@ -34,7 +34,7 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.4.4"
+gem "strong_migrations", "1.5.0"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
@@ -109,7 +109,7 @@ gem "clockwork"
 gem "mini_racer", "~> 0.8.0"
 gem "nokogiri", ">= 1.10.4"
 gem "image_processing"
-gem "sprockets", "~> 4.0.0"
+gem "sprockets", "~> 4.2.0"
 
 group :production do
   # Tool to detect unused code through knowing which methods are used in which files.
@@ -157,7 +157,7 @@ group :development, :test do
   gem "rubocop"
   # Rails add-on for static analysis.
   gem 'rubocop-performance'
-  gem "rubocop-rails", "~> 2.19.1"
+  gem "rubocop-rails", "~> 2.20.1"
   # Default rules for Rubocop.
   gem "standard", "~> 1.28"
 end
