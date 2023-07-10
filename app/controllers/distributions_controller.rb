@@ -72,7 +72,8 @@ class DistributionsController < ApplicationController
   end
 
   def create
-    result = DistributionCreateService.new(distribution_params.merge(organization: current_organization), request_id).call
+    result = DistributionCreateService.new(session[:distribution_params].merge(organization: current_organization), request_id).call
+    session.delete(:distribution_params)
 
     if result.success?
       session[:created_distribution_id] = result.distribution.id
@@ -111,6 +112,7 @@ class DistributionsController < ApplicationController
   end
 
   def confirmation
+    session[:distribution_params] = distribution_params.to_h
     @storage_location_name = StorageLocation.find(params[:distribution][:storage_location_id]).name
     @total_items_requested = 0
     @items = {}
