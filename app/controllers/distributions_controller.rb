@@ -82,7 +82,7 @@ class DistributionsController < ApplicationController
       perform_inventory_check
 
       respond_to do |format|
-        format.turbo_stream do
+        format.html do
           redirect_to distribution_path(result.distribution), notice: "Distribution created!"
         end
       end
