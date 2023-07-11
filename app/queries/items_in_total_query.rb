@@ -22,6 +22,7 @@ LEFT OUTER JOIN adjustments ON adjustments.id = line_items.itemizable_id AND lin
 LEFT OUTER JOIN transfers ON transfers.id = line_items.itemizable_id AND line_items.itemizable_type = 'Transfer'")
                         .where("(donations.storage_location_id = :id or purchases.storage_location_id = :id or (adjustments.storage_location_id = :id and line_items.quantity > 0) or transfers.to_id = :id)  and items.organization_id = :organization_id", id: @storage_location.id, organization_id: @organization.id)
                         .sum("line_items.quantity")
+    #"test"
   end
   # rubocop:enable Naming/MemoizedInstanceVariableName
 end
