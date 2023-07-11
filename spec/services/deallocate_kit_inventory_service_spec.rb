@@ -67,7 +67,9 @@ RSpec.describe DeallocateKitInventoryService, type: :service do
         before do
           inventory_out.line_items.create!(item_id: item1.id, quantity: -1 * (quantity_of_items1 * decrease_by))
           inventory_out.line_items.create!(item_id: item2.id, quantity: -1 * (quantity_of_items2 * decrease_by))
-          inventory_in.line_items.create!(item_id: kit.item.id, quantity: decrease_by)
+
+          inventory_in.line_items.create!(item_id: item1.id, quantity:  (quantity_of_items1 * decrease_by))
+          inventory_in.line_items.create!(item_id: item2.id, quantity:  (quantity_of_items2 * decrease_by))
         end
 
         it "increases the quantity of the loose items contained in the kit and decrease kit quantity, and delete inventory_in and inventory_out" do
@@ -93,23 +95,29 @@ RSpec.describe DeallocateKitInventoryService, type: :service do
         before do
           inventory_out.line_items.create!(item_id: item1.id, quantity: -1 * (quantity_of_items1 * inventory_quantity))
           inventory_out.line_items.create!(item_id: item2.id, quantity: -1 * (quantity_of_items2 * inventory_quantity))
-          inventory_in.line_items.create!(item_id: kit.item.id, quantity: inventory_quantity)
+
+          inventory_in.line_items.create!(item_id: item1.id, quantity: (quantity_of_items1 * inventory_quantity))
+          inventory_in.line_items.create!(item_id: item2.id, quantity: (quantity_of_items2 * inventory_quantity))
         end
 
         it "will add items in inventory_out and remove kits for decrease_by from inventory_in" do
-          first_line_item_quantity_before = inventory_out.reload.line_items[0].quantity
-          second_line_item_quantity_before = inventory_out.reload.line_items[1].quantity
-          kit_quantity = inventory_in.reload.line_items.first.quantity
+          out_first_line_item_quantity_before = inventory_out.reload.line_items[0].quantity
+          out_second_line_item_quantity_before = inventory_out.reload.line_items[1].quantity
+
+          in_first_line_item_quantity_before = inventory_in.reload.line_items[0].quantity
+          in_second_line_item_quantity_before = inventory_in.reload.line_items[1].quantity
+
           service = DeallocateKitInventoryService.new(kit: kit, storage_location: storage_location, decrease_by: decrease_by).deallocate
 
           expect(service.error).to be_nil
 
           # inventoy out increased with decrease_by
-          expect(inventory_out.reload.line_items[0].quantity).to eq(first_line_item_quantity_before + (quantity_of_items1 * decrease_by))
-          expect(inventory_out.reload.line_items[1].quantity).to eq(second_line_item_quantity_before + (quantity_of_items2 * decrease_by))
+          expect(inventory_out.reload.line_items[0].quantity).to eq(out_first_line_item_quantity_before + (quantity_of_items1 * decrease_by))
+          expect(inventory_out.reload.line_items[1].quantity).to eq(out_second_line_item_quantity_before + (quantity_of_items2 * decrease_by))
 
           # invetory in decreased with decrease_by
-          expect(inventory_in.reload.line_items.first.quantity).to eq(kit_quantity - decrease_by)
+          expect(inventory_in.reload.line_items[0].quantity).to eq(in_first_line_item_quantity_before - (quantity_of_items1 * decrease_by))
+          expect(inventory_in.reload.line_items[1].quantity).to eq(in_second_line_item_quantity_before - (quantity_of_items2 * decrease_by))
         end
       end
 
@@ -117,7 +125,9 @@ RSpec.describe DeallocateKitInventoryService, type: :service do
         before do
           inventory_out.line_items.create!(item_id: item1.id, quantity: -1 * quantity_of_items1)
           inventory_out.line_items.create!(item_id: item2.id, quantity: -1 * quantity_of_items2)
-          inventory_in.line_items.create!(item_id: kit.item.id, quantity: 1)
+
+          inventory_in.line_items.create!(item_id: item1.id, quantity: quantity_of_items1)
+          inventory_in.line_items.create!(item_id: item2.id, quantity: quantity_of_items2)
         end
 
         it "raises error about inconsistent inventory in or out" do

@@ -74,8 +74,10 @@ RSpec.describe AllocateKitInventoryService, type: :service do
         expect(inventory_out.line_items.first.item_id).to eq(kit.line_items.first.item_id)
         expect(inventory_out.line_items.first.quantity).to eq(kit.line_items.first.quantity * -increase_by)
 
-        # Check inventory in increased by number of kits allocated
-        expect(inventory_in.line_items.first.quantity).to eq(increase_by)
+        # Check that Inventory in increased by allocated kit's line_items and their respective quantities
+        expect(inventory_in.line_items.count).to eq(kit.line_items.count)
+        expect(inventory_in.line_items.first.item_id).to eq(kit.line_items.first.item_id)
+        expect(inventory_in.line_items.first.quantity).to eq(kit.line_items.first.quantity * increase_by)
 
         expect(service.error).to be_nil
       end
@@ -97,7 +99,7 @@ RSpec.describe AllocateKitInventoryService, type: :service do
           expect(inventory_out.line_items.first.quantity).to eq(kit.line_items.first.quantity * -(increase_by + second_increase_by))
 
           # Check inventory in increase both time with increase_by value
-          expect(inventory_in.line_items.first.quantity).to eq(increase_by + second_increase_by)
+          expect(inventory_in.line_items.first.quantity).to eq(kit.line_items.first.quantity * (increase_by + second_increase_by))
         end
       end
 
@@ -133,13 +135,15 @@ RSpec.describe AllocateKitInventoryService, type: :service do
             @second_call = AllocateKitInventoryService.new(kit: kit, storage_location: storage_location, increase_by: second_increase_by).allocate
           end
 
-          it "inventory out for that kit contains both line_items with their respective quantity" do
+          it "inventory in and out for that kit contains both line_items with their respective quantity" do
             expect(@first_call.error).to be_nil
             expect(@second_call.error).to be_nil
 
-            expect(inventory_in.line_items.first.quantity).to eq(increase_by + second_increase_by)
             expect(inventory_out.line_items[0].quantity).to eq(kit.line_items[0].quantity * -(increase_by + second_increase_by))
             expect(inventory_out.line_items[1].quantity).to eq(kit.line_items[1].quantity * -(increase_by + second_increase_by))
+
+            expect(inventory_in.line_items[0].quantity).to eq(kit.line_items[0].quantity * (increase_by + second_increase_by))
+            expect(inventory_in.line_items[1].quantity).to eq(kit.line_items[1].quantity * (increase_by + second_increase_by))
           end
         end
       end

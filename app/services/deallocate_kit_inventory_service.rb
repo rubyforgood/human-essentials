@@ -34,47 +34,30 @@ class DeallocateKitInventoryService
   end
 
   def deallocate_inventory_in_and_inventory_out
-    deallocate_inventory_in
-    deallocate_inventory_out
-  end
-
-  def deallocate_inventory_out
-    kit_allocation = KitAllocation.find_by(storage_location_id: storage_location.id, kit_id: kit.id,
-      organization_id: kit.organization.id, kit_allocation_type: "inventory_out")
-    if kit_allocation.present?
-      line_items = kit_allocation.line_items
-      kit_content.each_with_index do |line_item, index|
-        line_item_record = line_items[index]
-        new_quantity = line_item_record[:quantity] + line_item[:quantity].to_i
-        if new_quantity.to_i == 0
-          kit_allocation.destroy!
-          break
-        elsif new_quantity.to_i > 0
-          raise StandardError.new("Inconsistent inventory out")
-        else
-          line_item_record.update!(quantity: new_quantity)
+    kit_allocation_types = ["inventory_in", "inventory_out"]
+    kit_allocation_types.each do |kit_allocation_type|
+      kit_allocation = KitAllocation.find_by(storage_location_id: storage_location.id, kit_id: kit.id,
+        organization_id: kit.organization.id, kit_allocation_type: kit_allocation_type)
+      if kit_allocation.present?
+        multiply_by = kit_allocation_type == "inventory_out" ? 1 : -1
+        line_items = kit_allocation.line_items
+        kit_content.each_with_index do |line_item, index|
+          line_item_record = line_items[index]
+          new_quantity = line_item_record[:quantity] + line_item[:quantity].to_i * multiply_by
+          if new_quantity.to_i == 0
+            kit_allocation.destroy!
+            break
+          elsif kit_allocation_type == "inventory_out" && new_quantity.to_i > 0
+            raise StandardError.new("Inconsistent inventory out")
+          elsif kit_allocation_type == "inventory_in" && new_quantity.to_i < 0
+            raise StandardError.new("Inconsistent inventory in")
+          else
+            line_item_record.update!(quantity: new_quantity)
+          end
         end
-      end
-    else
-      raise Errors::KitAllocationNotExists
-    end
-  end
-
-  def deallocate_inventory_in
-    kit_allocation = KitAllocation.find_by(storage_location_id: storage_location.id, kit_id: kit.id,
-      organization_id: kit.organization.id, kit_allocation_type: "inventory_in")
-    if kit_allocation.present?
-      kit_item = kit_allocation.line_items.first
-      new_quantity = kit_item[:quantity].to_i - decrease_by
-      if new_quantity.to_i == 0
-        kit_allocation.destroy!
-      elsif new_quantity.to_i < 0
-        raise StandardError.new("Inconsistent inventory in")
       else
-        kit_item.update!(quantity: new_quantity)
+        raise Errors::KitAllocationNotExists
       end
-    else
-      raise Errors::KitAllocationNotExists
     end
   end
 
