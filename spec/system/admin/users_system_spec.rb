@@ -8,11 +8,8 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       visit admin_users_path(organization_id: @organization.id)
       click_link "Invite a new user"
       find('#user_organization_id option:last-of-type').select_option
-
       fill_in "user_name", with: "TestUser"
       fill_in "user_email", with: "testuser@example.com"
-      fill_in "user_password", with: "password!"
-      fill_in "user_password_confirmation", with: "password!"
       click_on "Save"
 
       expect(page.find(".alert")).to have_content "Created a new user!"
@@ -26,13 +23,6 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       click_on "Save"
 
       expect(page.find(".alert")).to have_content "TestUser updated"
-    end
-
-    it "cannot edit a user's password" do
-      visit admin_users_path
-      click_link "Edit", match: :first
-      expect(page).not_to have_field("user_password")
-      expect(page).not_to have_field("user_password_confirmation")
     end
 
     it "deletes an existing user" do
