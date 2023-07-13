@@ -115,7 +115,7 @@ class Organization < ApplicationRecord
     ['Area Served', 'area_served'],
     ['Population Served', 'population_served'],
     ['Executive Director', 'executive_director'],
-    ['Pickup Person', 'diaper_pick_up_person'],
+    ['Pickup Person', 'pick_up_person'],
     ['Agency Distribution Information', 'agency_distribution_information'],
     ['Attached Documents', 'attached_documents']
   ].freeze

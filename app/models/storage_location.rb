@@ -40,6 +40,7 @@ class StorageLocation < ApplicationRecord
                           inverse_of: :to,
                           foreign_key: :id,
                           dependent: :destroy
+  has_many :kit_allocations, dependent: :destroy
 
   validates :name, :address, :organization, presence: true
   validates :warehouse_type, inclusion: { in: WAREHOUSE_TYPES },
@@ -99,7 +100,7 @@ class StorageLocation < ApplicationRecord
     org = organization
 
     CSV.generate(headers: true) do |csv|
-      csv << ["Quantity", "DO NOT CHANGE ANYTHING IN THIS ROW"]
+      csv << ['Quantity', 'DO NOT CHANGE ANYTHING IN THIS COLUMN']
       org.items.each do |item|
         csv << ["", item.name]
       end
@@ -127,6 +128,10 @@ class StorageLocation < ApplicationRecord
                 .create(quantity: row[0].to_i, item_id: current_org.items.find_by(name: row[1]))
     end
     adjustment.storage_location.increase_inventory(adjustment)
+  end
+
+  def remove_empty_items
+    inventory_items.where(quantity: 0).delete_all
   end
 
   # FIXME: After this is stable, revisit how we do logging

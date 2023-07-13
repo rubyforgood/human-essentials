@@ -4,13 +4,8 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-115-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-[![View performance data on Skylight](https://badges.skylight.io/status/LrXHcxDK7Be9.svg)](https://oss.skylight.io/app/applications/LrXHcxDK7Be9)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper?ref=badge_shield)
 [![Knapsack Pro Parallel CI builds for RSpec tests](https://img.shields.io/badge/Knapsack%20Pro-Parallel%20%2F%20Rspec%20tests-%230074ff)](https://knapsackpro.com/dashboard/organizations/1858/projects/1295/test_suites/1835/builds?utm_campaign=organization-id-1858&amp;utm_content=test-suite-id-1835&amp;utm_medium=readme&amp;utm_source=knapsack-pro-badge&amp;utm_term=project-id-1295)
-
-## 🎃 Hacktoberfest
-
-We absolutely love [Hacktoberfest](https://hacktoberfest.com/) and love how it exposes our amazing project to so many new contributors but with so many new people helping out in a condensed time period it can get a little hectic for the core team to keep up. We are going to do our best to respond to comments, issues, and pull requests within a couple days but given the busy nature of the month please wait at least a week before reaching out. You are welcome to drop in to the team office hours which are every Sunday at 10:00AM ET. The office zoom room for the office hours will be posted in the #human-essentials channel in the Ruby for Good slack.
 
 ## 💖 Mission
 
@@ -27,7 +22,7 @@ Human Essentials has over 200 registered banks across the United States at **no 
  ## 🎉 The [Digital Public Goods Alliance](https://digitalpublicgoods.net/registry/) recognizes Human Essentials as a digital public good (DPG)
 
 <p align="center">
-<a href="https://digitalpublicgoods.net">
+<a href="https://app.digitalpublicgoods.net/a/10622">
 <img src="https://user-images.githubusercontent.com/667909/181150972-e59a77ab-b657-4893-aef9-d3df1384a506.png" alt="DPG Approved" height="40">
 </a>
 </p>

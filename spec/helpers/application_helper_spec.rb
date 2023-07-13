@@ -92,25 +92,6 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
-  describe "after_sign_in_path_for" do
-    context "User is member of organization" do
-      let(:user) { create :user }
-
-      it "redirects to a user's dashboard" do
-        expect(helper.after_sign_in_path_for(user)).to eq dashboard_path(user.organization.id)
-      end
-    end
-
-    context "User is not member of organization" do
-      let(:user) { create :user, organization_id: nil }
-
-      it "redirects to a user's dashboard" do
-        pending("TODO - figure out why stored_location_for is failing")
-        expect(helper.after_sign_in_path_for(user)).to eq new_organization_path
-      end
-    end
-  end
-
   describe "confirm_delete_msg" do
     let(:item) { "Adult Briefs (Medium/Large)" }
 

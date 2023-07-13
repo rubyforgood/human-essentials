@@ -48,4 +48,10 @@ module Errors
       "Storage location kit doesn't match"
     end
   end
+
+  class KitAllocationNotExists < StandardError
+    def message
+      "KitAllocation not found for given kit"
+    end
+  end
 end

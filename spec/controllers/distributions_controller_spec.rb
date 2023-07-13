@@ -126,7 +126,7 @@ RSpec.describe DistributionsController, type: :controller do
 
         it "flashes an error" do
           expect(subject).to have_http_status(:bad_request)
-          expect(flash[:error]).to include("Sorry, we weren't able to save the distribution. \n Validation failed: Inventory Item 1's quantity needs to be positive")
+          expect(flash[:error]).to include("Sorry, we weren't able to save the distribution. \n Validation failed: Inventory Item 1's quantity needs to be at least 1")
         end
       end
     end
