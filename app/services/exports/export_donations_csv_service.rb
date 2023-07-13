@@ -94,7 +94,7 @@ module Exports
       return @item_headers if @item_headers
 
       item_names = Set.new
-      
+
       donations.each do |donation|
         donation.line_items.each do |line_item|
           item_names.add(line_item.item.name)

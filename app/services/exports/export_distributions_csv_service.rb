@@ -125,7 +125,6 @@ module Exports
       @item_headers = item_names.sort
     end
 
-
     def build_row_data(distribution)
       row = base_table.values.map { |closure| closure.call(distribution) }
 

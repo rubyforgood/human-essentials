@@ -43,7 +43,7 @@ module Exports
 
     def item_headers
       return @item_headers if @item_headers
-      
+
       @item_headers = organization.items.order(:name).pluck(:name)
     end
   end
