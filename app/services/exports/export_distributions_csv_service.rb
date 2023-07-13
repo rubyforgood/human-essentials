@@ -113,14 +113,18 @@ module Exports
 
     def item_headers
       return @item_headers if @item_headers
-      # Define the item_headers by taking each item name
-      # and sort them alphabetically
-      item_names = distributions.map do |distribution|
-        distribution.line_items.map(&:item).map(&:name)
-      end.flatten
 
-      @item_headers = item_names.sort.uniq
+      item_names = Set.new
+
+      distributions.each do |distribution|
+        distribution.line_items.each do |line_item|
+          item_names.add(line_item.item.name)
+        end
+      end
+
+      @item_headers = item_names.sort
     end
+
 
     def build_row_data(distribution)
       row = base_table.values.map { |closure| closure.call(distribution) }
