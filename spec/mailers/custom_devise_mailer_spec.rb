@@ -44,9 +44,7 @@ RSpec.describe CustomDeviseMailer, type: :mailer do
       end
 
       it "has invite expiration message" do
-        expiration_time = (@time + 6.hours).strftime("%I:%M %p on %m/%d/%Y %Z")
-
-        expect(mail.html_part.body).to include("For security reasons these invites expire. This invite will expire at #{expiration_time} or if a new password reset is triggered.")
+        expect(mail.html_part.body).to include("For security reasons these invites expire. This invite will expire in 8 hours or if a new password reset is triggered.")
       end
     end
   end

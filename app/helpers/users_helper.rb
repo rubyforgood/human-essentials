@@ -11,9 +11,4 @@ module UsersHelper
       link_to tag.i("", class: 'fa fa-envelope', alt: "Re-send invitation", title: "Re-send invitation"), resend_user_invitation_organization_path(user_id: user.id), method: :post
     end
   end
-
-  def get_time_at_timezone
-    timezone = IpInfoService.get_timezone
-    Time.now.in_time_zone(timezone)
-  end
 end
