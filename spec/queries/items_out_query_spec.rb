@@ -11,6 +11,8 @@ RSpec.describe ItemsOutQuery do
       create(:transfer, :with_items, item_quantity: 8, item: items[0], to: other_storage_location, from: storage_location)
       create(:distribution, :with_items, item: items[1], item_quantity: 9, storage_location: storage_location)
       create(:adjustment, :with_items, item: items[2], item_quantity: -10, storage_location: storage_location)
+      kit = create(:kit, :with_item, organization: @organization)
+      create(:kit_allocation, :with_items, kit_allocation_type: "inventory_out", kit_id: kit.id, storage_location: storage_location, organization_id: @organization.id)
     end
 
     it "returns a collection with the fields name, item_id, quantity" do
@@ -19,8 +21,8 @@ RSpec.describe ItemsOutQuery do
       expect(subject.first).to be_respond_to(:item_id)
     end
 
-    it "includes distributions, adjustments, transfers among sources" do
-      expect(subject.to_a.size).to eq(3)
+    it "includes distributions, adjustments, transfers and kit_allocations among sources" do
+      expect(subject.to_a.size).to eq(4)
     end
   end
 end
