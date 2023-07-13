@@ -14,7 +14,7 @@ class ItemsOutQuery
 
   # rubocop:disable Naming/MemoizedInstanceVariableName
   def call
-    @items = LineItem.joins("
+    @items ||= LineItem.joins("
 LEFT OUTER JOIN distributions ON distributions.id = line_items.itemizable_id AND line_items.itemizable_type = 'Distribution'
 LEFT OUTER JOIN items ON items.id = line_items.item_id
 LEFT OUTER JOIN adjustments ON adjustments.id = line_items.itemizable_id AND line_items.itemizable_type = 'Adjustment'
