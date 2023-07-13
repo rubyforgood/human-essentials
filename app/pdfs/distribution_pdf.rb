@@ -45,7 +45,7 @@ class DistributionPdf
     text @distribution.distributed_at
     font_size 10
 
-    if @organization.show_ytd_values_on_distribution_printout
+    if @organization.use_fiscal_year
       move_up 22
       text "Items Received Year-to-Date:", style: :bold, align: :right
       font_size 12

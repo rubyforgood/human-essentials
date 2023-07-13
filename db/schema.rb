@@ -436,7 +436,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_19_140313) do
     t.boolean "enable_child_based_requests", default: true, null: false
     t.boolean "enable_individual_requests", default: true, null: false
     t.boolean "enable_quantity_based_requests", default: true, null: false
-    t.boolean "show_ytd_values_on_distribution_printout", default: true, null: false
+    t.boolean "use_fiscal_year", default: true, null: false
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end

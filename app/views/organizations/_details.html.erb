@@ -149,7 +149,7 @@
               <div class="mb-4">
                 <h3 class='font-bold'>Show Year-to-date values on distribution printout?</h3>
                 <p>
-                  <%= humanize_boolean(@organization.show_ytd_values_on_distribution_printout) %>
+                  <%= humanize_boolean(@organization.use_fiscal_year) %>
                 </p>
               </div>
               <% if @organization.logo.attached? %>

@@ -89,7 +89,7 @@ class OrganizationsController < ApplicationController
       :repackage_essentials, :distribute_monthly,
       :ndbn_member_id, :enable_child_based_requests,
       :enable_individual_requests, :enable_quantity_based_requests,
-      :show_ytd_values_on_distribution_printout, partner_form_fields: []
+      :use_fiscal_year, partner_form_fields: []
     )
   end
 
