@@ -16,6 +16,7 @@ class ApplicationController < ActionController::Base
 
   def current_organization
     return @current_organization if @current_organization
+    return nil unless current_role
 
     return current_role.resource if current_role.resource.is_a?(Organization)
 
@@ -24,6 +25,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_organization
 
   def current_partner
+    return nil unless current_role
     return nil if current_role.name.to_sym != Role::PARTNER
 
     current_role.resource
@@ -31,10 +33,13 @@ class ApplicationController < ActionController::Base
   helper_method :current_partner
 
   def current_role
-    role = Role.find_by(id: session[:current_role]) || UsersRole.current_role_for(current_user)
-    session[:current_role] = role&.id
+    return @role if @role
+    return nil unless current_user
 
-    role
+    @role = Role.find_by(id: session[:current_role]) || UsersRole.current_role_for(current_user)
+    session[:current_role] = @role&.id
+
+    @role
   end
 
   def organization_url_options(options = {})
