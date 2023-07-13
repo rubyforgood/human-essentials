@@ -593,8 +593,6 @@ RSpec.feature "Distributions", type: :system do
     end
   end
 
-
-
   it "allows completion of corrected distribution with depleted inventory item" do
     visit @url_prefix + "/distributions/new"
     item = @storage_location.inventory_items.first.item
@@ -623,5 +621,4 @@ RSpec.feature "Distributions", type: :system do
 
     expect(page).to have_content("This distribution has been marked as being completed!")
   end
-
 end
