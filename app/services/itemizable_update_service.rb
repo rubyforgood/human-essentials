@@ -42,8 +42,5 @@ module ItemizableUpdateService
     itemizable.reload
     # Apply the new changes to the storage location inventory
     to_location.public_send(apply_change_method, itemizable.to_a)
-
-    #    from_location.remove_empty_items
-    #   to_location.remove_empty_items
   end
 end
