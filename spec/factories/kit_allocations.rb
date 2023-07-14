@@ -23,10 +23,10 @@ FactoryBot.define do
 
     trait :with_items do
       after(:build) do |kit_allocation, evaluator|
-          kit = Kit.find(kit_allocation.kit_id)
-          multiply_by = kit_allocation.kit_allocation_type == "inventory_in" ? 1 : -1
-          kit.line_items.each do |line_item|
-            kit_allocation.line_items << build(:line_item, quantity: line_item.quantity * multiply_by, item_id: line_item.item_id, itemizable: kit_allocation)
+        kit = Kit.find(kit_allocation.kit_id)
+        multiply_by = (kit_allocation.kit_allocation_type == "inventory_in") ? 1 : -1
+        kit.line_items.each do |line_item|
+          kit_allocation.line_items << build(:line_item, quantity: line_item.quantity * multiply_by, item_id: line_item.item_id, itemizable: kit_allocation)
         end
       end
     end
