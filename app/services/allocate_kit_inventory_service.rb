@@ -37,11 +37,11 @@ class AllocateKitInventoryService
 
   def allocate_inventory_in_and_inventory_out
     kit_allocation_types = ["inventory_in", "inventory_out"]
-    kit_allocation_types.each do |kit_allocation_type |
+    kit_allocation_types.each do |kit_allocation_type|
       kit_allocation = KitAllocation.find_or_create_by!(storage_location_id: storage_location.id, kit_id: kit.id,
         organization_id: kit.organization.id, kit_allocation_type: kit_allocation_type)
       line_items = kit_allocation.line_items
-      multiply_by = kit_allocation_type == "inventory_out" ? -1 : 1
+      multiply_by = (kit_allocation_type == "inventory_out") ? -1 : 1
       if line_items.present?
         kit_content.each_with_index do |line_item, index|
           line_item_record = line_items[index]

@@ -68,8 +68,8 @@ RSpec.describe DeallocateKitInventoryService, type: :service do
           inventory_out.line_items.create!(item_id: item1.id, quantity: -1 * (quantity_of_items1 * decrease_by))
           inventory_out.line_items.create!(item_id: item2.id, quantity: -1 * (quantity_of_items2 * decrease_by))
 
-          inventory_in.line_items.create!(item_id: item1.id, quantity:  (quantity_of_items1 * decrease_by))
-          inventory_in.line_items.create!(item_id: item2.id, quantity:  (quantity_of_items2 * decrease_by))
+          inventory_in.line_items.create!(item_id: item1.id, quantity: (quantity_of_items1 * decrease_by))
+          inventory_in.line_items.create!(item_id: item2.id, quantity: (quantity_of_items2 * decrease_by))
         end
 
         it "increases the quantity of the loose items contained in the kit and decrease kit quantity, and delete inventory_in and inventory_out" do

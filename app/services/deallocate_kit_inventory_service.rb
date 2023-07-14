@@ -39,7 +39,7 @@ class DeallocateKitInventoryService
       kit_allocation = KitAllocation.find_by(storage_location_id: storage_location.id, kit_id: kit.id,
         organization_id: kit.organization.id, kit_allocation_type: kit_allocation_type)
       if kit_allocation.present?
-        multiply_by = kit_allocation_type == "inventory_out" ? 1 : -1
+        multiply_by = (kit_allocation_type == "inventory_out") ? 1 : -1
         line_items = kit_allocation.line_items
         kit_content.each_with_index do |line_item, index|
           line_item_record = line_items[index]
