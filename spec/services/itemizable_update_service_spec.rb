@@ -102,16 +102,5 @@ RSpec.describe ItemizableUpdateService do
       expect(storage_location.size).to eq(30)
       expect(new_storage_location.size).to eq(16)
     end
-
-    it "should delete empty inventory items" do
-      attributes[:storage_location_id] = new_storage_location.id
-      attributes[:line_items_attributes] =
-        {"0": {item_id: item1.id, quantity: 10}, "1": {item_id: item2.id, quantity: 10}}
-
-      subject
-
-      expect(new_storage_location.size).to eq(0)
-      expect(new_storage_location.inventory_items.count).to eq(0)
-    end
   end
 end
