@@ -1,15 +1,10 @@
 # This service object is meant to archive a family and all of
 # its children
 module Partners
-  class ArchiveFamilyChildren
-    include ServiceObjectErrorsMixin
-
+  module UpdateFamily 
+    extend ServiceObjectErrorsMixin
     # rubocop:disable Rails::SkipsModelValidations
-    def initialize(family:)
-      @family = family
-    end
-
-    def call
+    def self.archive(family)
       if family.children.exists?
         ActiveRecord::Base.transaction do
           family.update(archived: true, updated_at: Time.zone.now)
@@ -22,9 +17,5 @@ module Partners
       self
     end
     # rubocop:enable Rails::SkipsModelValidations
-
-    private
-
-    attr_reader :family
   end
 end

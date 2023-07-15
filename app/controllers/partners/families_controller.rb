@@ -104,8 +104,7 @@ module Partners
     end
 
     def archive_children
-      service = ArchiveFamilyChildren.new(family: @family)
-      if service.call
+      if UpdateFamily.archive(@family)
         flash.now[:notice] = 'Family and children archived successfully.'
       else
         flash.now[:alert] = service.errors.full_messages.join(', ')

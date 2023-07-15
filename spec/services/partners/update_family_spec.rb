@@ -1,8 +1,8 @@
 require "rails_helper"
 
-RSpec.describe Partners::ArchiveFamilyChildren do
+RSpec.describe Partners::UpdateFamily do
   describe "#call" do
-    subject { described_class.new(family: family).call }
+    subject { described_class.archive(family) }
     let(:family) { FactoryBot.create(:partners_family) }
     let!(:child1) { FactoryBot.create(:partners_child, family: family) }
     let!(:child2) { FactoryBot.create(:partners_child, family: family) }
