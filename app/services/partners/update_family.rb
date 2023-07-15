@@ -1,7 +1,7 @@
 # This service object is meant to archive a family and all of
 # its children
 module Partners
-  module UpdateFamily 
+  module UpdateFamily
     extend ServiceObjectErrorsMixin
     # rubocop:disable Rails::SkipsModelValidations
     def self.archive(family)
