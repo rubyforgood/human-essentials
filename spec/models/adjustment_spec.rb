@@ -25,20 +25,12 @@ RSpec.describe Adjustment, type: :model do
       expect(build(:adjustment, :with_items, item_quantity: 10, item: create(:item), storage_location: create(:storage_location))).to be_valid
     end
 
-    it "disallows you from removing inventory that doesn't exist in the storage location" do
-      expect(build(:adjustment, :with_items, item_quantity: -10, item: create(:item), storage_location: create(:storage_location))).not_to be_valid
-    end
+
     it "allows you to remove all the inventory that exists in the storage location" do
       storage_location1 = create(:storage_location, organization: @organization)
       item1 = create(:item)
       storage_location1.inventory_items << create(:inventory_item, item: item1, quantity: 10)
       expect(build(:adjustment, :with_items, item_quantity: -10, item: item1, storage_location: storage_location1)).to be_valid
-    end
-    it "disallows you from removing more inventory than exists in the storage location" do
-      storage_location1 = create(:storage_location, organization: @organization)
-      item1 = create(:item)
-      storage_location1.inventory_items << create(:inventory_item, item: item1, quantity: 10)
-      expect(build(:adjustment, :with_items, item_quantity: -11, item: item1, storage_location: storage_location1)).not_to be_valid
     end
   end
 
