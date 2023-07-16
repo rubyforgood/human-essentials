@@ -71,7 +71,7 @@ class AuditsController < ApplicationController
     if @audit.save
       save_audit_status_and_redirect(params)
     else
-      flash[:error] = "<ul><li>" + @audit.errors.collect { |error| "#{error.attribute}: " + error.message }.join("</li><li>") + "</li></ul>"
+      handle_audit_errors
       set_storage_locations
       set_items
       @audit.line_items.build if @audit.line_items.empty?
@@ -89,6 +89,13 @@ class AuditsController < ApplicationController
   end
 
   private
+
+  def handle_audit_errors
+    error_message = @audit.errors.uniq(&:attribute).map do |error|
+      "#{error.attribute.capitalize} ".tr("_", " ") + error.message
+    end
+    flash[:error] = error_message.join(", ")
+  end
 
   def set_audit
     @audit = current_organization.audits.find(params[:id] || params[:audit_id])

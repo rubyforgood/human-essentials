@@ -14,7 +14,7 @@
               </div>
               <div class="box-body">
                 <%= simple_form_for @audit, html: {class: "storage-location-required"} do |f| %>
-                  <%= render partial: "storage_locations/source", object: f, locals: {include_inactive_items: true} %>
+                  <%= render partial: "storage_locations/source", object: f, locals: { label: "Storage location", error: "What storage location are you auditing?", include_inactive_items: true} %>
                   <fieldset style="margin-bottom: 2rem;">
                     <legend>Items in this audit</legend>
                     <div id="audit_line_items" class="line-item-fields" data-capture-barcode="true">

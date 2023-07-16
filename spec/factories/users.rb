@@ -45,13 +45,19 @@ FactoryBot.define do
     end
 
     after(:create) do |user, evaluator|
-      user.add_role(Role::ORG_USER, evaluator.organization)
+      if evaluator.organization
+        user.add_role(Role::ORG_USER, evaluator.organization)
+      end
     end
 
     factory :organization_admin do
       name { "Very Organized Admin" }
       after(:create) do |user, evaluator|
-        user.add_role(Role::ORG_ADMIN, evaluator.organization)
+        if evaluator.organization
+          AddRoleService.call(user_id: user.id,
+            resource_id: evaluator.organization.id,
+            resource_type: Role::ORG_ADMIN)
+        end
       end
     end
 
