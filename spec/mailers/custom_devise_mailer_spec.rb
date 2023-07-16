@@ -1,9 +1,5 @@
 RSpec.describe CustomDeviseMailer, type: :mailer do
   describe "#invitation_instructions" do
-    before(:each) do
-      @time = Time.now.in_time_zone("America/New_York")
-    end
-
     let(:user) { create(:partner_user) }
     let(:mail) { described_class.invitation_instructions(user, SecureRandom.uuid) }
 

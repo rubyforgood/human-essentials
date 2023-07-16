@@ -4,7 +4,6 @@ RSpec.describe "User Reset Password Instructions", type: :mailer do
       let(:user) { create(:user) }
 
       before(:each) do
-        @time = Time.now.in_time_zone("America/New_York")
         user.send_reset_password_instructions
       end
 
