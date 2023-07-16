@@ -28,14 +28,7 @@ class Adjustment < ApplicationRecord
   scope :during, ->(range) { where(adjustments: { created_at: range }) }
 
   validates :storage_location, :organization, presence: true
-  validate :enough_inventory_for_decreases
   validate :storage_locations_belong_to_organization
-
-  before_validation :combine_adjustment
-
-  def combine_adjustment
-    line_items.combine!
-  end
 
   def self.storage_locations_adjusted_for(organization)
     includes(:storage_location).joins(:storage_location).where(organization_id: organization.id, storage_location: {discarded_at: nil}).collect(&:storage_location).sort
@@ -70,37 +63,6 @@ class Adjustment < ApplicationRecord
 
     unless organization.storage_locations.include?(storage_location)
       errors.add :storage_location, "storage location must belong to organization"
-    end
-  end
-
-  # def negative_line_items_exist_in_inventory
-  #  return if storage_location.nil?
-
-  # line_items.each do |line_item|
-  #   next unless line_item.quantity.negative?
-
-  #   inventory_item = storage_location.inventory_items.find_by(item: line_item.item)
-  #   next unless inventory_item.nil?
-
-  #   errors.add(:inventory,
-  #              "#{line_item.item.name} is not available to be removed from this storage location")
-  #  end
-  # end
-
-  def enough_inventory_for_decreases
-    return if storage_location.nil?
-
-    line_items.each do |line_item|
-      next unless line_item.quantity.negative?
-
-      inventory_item = storage_location.inventory_items.find_by(item: line_item.item)
-      if inventory_item.nil?
-        errors.add(:inventory,
-                   "#{line_item.item.name} is not available to be removed from this storage location")
-      elsif inventory_item.quantity < line_item.quantity * -1
-        errors.add(:inventory,
-                   "The requested reduction of  #{line_item.quantity * -1} #{line_item.item.name}  items exceed the available inventory")
-      end
     end
   end
 end
