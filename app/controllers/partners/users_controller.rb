@@ -36,6 +36,9 @@ module Partners
         flash[:error] = user.errors.full_messages.join("")
         redirect_to new_partners_user_path
       end
+    rescue => e
+      flash[:error] = e.message
+      redirect_to new_partners_user_path
     end
 
     private

@@ -15,7 +15,7 @@
             <i class="text-primary far fa-file-alt mr-1"></i>
             <%= partner_request.created_at.strftime("%b %-d %Y") %>
           </td>
-          <td class="p-4"><%= partner_request.id %></td>
+          <td class="p-4"><%= partner_request.total_items %></td>
           <td class="p-4 d-flex flex-wrap">
             <% partner_request.item_requests.map do |item| %>
               <span class="p-1 mr-1 mb-2 lg:mb-0 border border-dark rounded-sm">

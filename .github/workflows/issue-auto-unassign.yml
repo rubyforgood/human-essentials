@@ -13,8 +13,8 @@ jobs:
         id: unassign_issues
         with:
           token: ${{secrets.GITHUB_TOKEN}}
-          unassign_inactive_in_hours: 360 # 15 days
-          warning_inactive_in_hours: 240 # 10 days
+          unassign_inactive_in_hours: 720 # 30 days
+          warning_inactive_in_hours: 480 # 20 days
       - name: Print the unassigned issues
         run: echo "Unassigned issues = ${{steps.unassign_issues.outputs.unassigned_issues}}"
       - name: Print the warned issues

@@ -440,7 +440,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
             # rather than
             # days_this_year.sample(num_donations_in_filtered_period).each
             # because Array#sample(n) on an Array with m<n elements returns only m elements
-            @donations_in_filtered_date_range = num_donations_in_filtered_period.times.map do
+            @donations_in_filtered_date_range = Array.new(num_donations_in_filtered_period) do
               create_next_product_drive_donation donation_date: filtered_dates.sample
             end
 
@@ -501,7 +501,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
             OpenStruct.new name: name, drive: create(:product_drive, name: name)
           end
 
-          @product_drive_donations = 2.times.map do
+          @product_drive_donations = Array.new(2) do
             create_next_product_drive_donation donation_date: test_time
           end
 
@@ -608,14 +608,14 @@ RSpec.describe "Dashboard", type: :system, js: true do
             end
 
             # Generate new Manufacturers and their in-filtered-date-range donations
-            @manufacturer_donations_in_filtered_date_range = num_manufacturers_donated_in_filtered_period.times.map do |index|
+            @manufacturer_donations_in_filtered_date_range = Array.new(num_manufacturers_donated_in_filtered_period) do |index|
               @item_quantity.rewind
               manufacturer_name = "In-date-range Manufacturer #{index}"
 
               manufacturer = create :manufacturer, name: manufacturer_name, organization: @organization
 
               # Ensure at least 1 donation in the filtered period
-              donation_quantities = rand(1..3).times.map do
+              donation_quantities = Array.new(rand(1..3)) do
                 create_next_manufacturer_donation manufacturer: manufacturer, donation_date: filtered_dates.sample
               end
 
@@ -771,7 +771,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
             # rather than
             # days_this_year.sample(num_distributions_in_filtered_period).each
             # because Array#sample(n) on an Array with m<n elements returns only m elements
-            @distributions_in_filtered_date_range = num_distributions_in_filtered_period.times.map do
+            @distributions_in_filtered_date_range = Array.new(num_distributions_in_filtered_period) do
               create_next_product_drive_distribution date_picker: filtered_dates.sample
             end
 

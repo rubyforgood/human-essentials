@@ -96,7 +96,7 @@ class PartnersController < ApplicationController
   def invite
     partner = current_organization.partners.find(params[:id])
 
-    svc = PartnerInviteService.new(partner: partner)
+    svc = PartnerInviteService.new(partner: partner, force: true)
     svc.call
 
     if svc.errors.none?

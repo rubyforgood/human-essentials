@@ -1,4 +1,4 @@
-class Forecasting::DonationsController < Forecasting::BaseController
+class HistoricalTrends::DonationsController < HistoricalTrends::BaseController
   def index
     @series = series('Donation')
     @title = 'Monthly Donations'

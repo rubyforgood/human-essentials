@@ -10,6 +10,7 @@ inherit_from:
 
 require:
   - rubocop-rails
+  - rubocop-performance
   - standard
 
 AllCops:
@@ -88,3 +89,10 @@ Rails/WhereNot:
 Rails/HasAndBelongsToMany:
   Enabled: false
 
+Rails/BulkChangeTable:
+  Exclude:
+    - db/partners_migrate/20180811225530_add_devise_to_partners.rb
+    - db/partners_migrate/20180811230421_devise_invitable_add_to_partners.rb
+    - db/partners_migrate/20190331165342_rename_item_to_item_request.rb
+    - db/partners_migrate/20190527220231_change_item_needed_column_to_integer_type.rb
+    - db/partners_migrate/20190726131533_devise_invitable_add_to_users_for_partnerbase.rb
