@@ -224,7 +224,8 @@ and run the spec using this command: `MAGIC_TEST=1 NOT_HEADLESS=true bundle exec
 The human-essentials & partner application should be deployed ideally on a weekly or bi-weekly schedule. However, this depends on the amount of updates that we have merged into main. Assuming there is updates that we want to ship into deploy, this is the process we take to getting updates from our `main` branch deployed to our servers.
 
 ### Requirements
-- You will need SSH access to our servers. Access is usually only given to core maintainers of the human-essentials & partner projects.
+- SSH access to our servers. Access is usually only given to core maintainers of the human-essentials & partner projects.
+- Login credentials to our [Mailchimp](https://mailchimp.com/) account
 
 ### Running delayed jobs
 
@@ -245,13 +246,6 @@ You can replace the `last` query with any other query (e.g. `Delayed::Job.find(1
 ```bash
 rvm install 2.6.4 --with-openssl-dir='brew --prefix openssl'
 ```
-
-### Requirements
-
-- You will need SSH access to our servers
-  - Access is usually only given to core maintainers of the human-essentials project
-
-- Login credentials to our [Mailchimp](https://mailchimp.com/) account
 
 ### Tag & Release
 1. You'll need to push up a tag with the proper semantic versioning. Check out the [releases](https://github.com/rubyforgood/human-essentials/releases) to get the correct semantic versioning tag to use. For example, if the last release was `2.1.0` and the update is a hotfix then the next one should be `2.1.1`
