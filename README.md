@@ -254,9 +254,6 @@ rvm install 2.6.4 --with-openssl-dir='brew --prefix openssl'
 
 Users that are frequent contributors and are involved in discussion (join the slack channel! :)) may be given direct Contributor access to the Repo so they can submit Pull Requests directly, instead of Forking first.
 
-### Deployment Process
-The human-essentials application should be deployed ideally on a weekly or bi-weekly schedule. However, this depends on the amount of updates that we have merged into main. Assuming there is updates that we want to ship into deploy, this is the process we take to getting updates from our `main` branch deployed to our servers.
-
 ### Requirements
 
 - You will need SSH access to our servers
