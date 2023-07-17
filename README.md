@@ -88,21 +88,11 @@ You can sign up [here](https://rubyforgood.slack.com/join/shared_invite/zt-1kfei
      - Do you develop on Windows? We'd love to hear (and for you to submit a PR explaining) how you do it. 🙏🏻 
    - Create a `database.yml` file on `config/` directory with your database configurations. You can also copy the existing files called [`database.yml.example`](config/database.yml.example) and [`.env.example`](.env.example) and change the credentials.
 
-### 3. Run Setup
-Run the following command should run all the neccessary steps to get up and running.
-```
-bin/setup
-```
+   </br>
 
-### 4.  Run the application
-Run the following command to start the server locally.
-```
-bin/start
-```
-
-You should be able to open up a browser and goto http://localhost:3000/ and see the human essentials page.
-
-### 5. Login as a sample user
+3. Run `bin/setup`
+4. Run `bin/start` and visit http://localhost:3000/ to see the human essentials page.
+5. Login as a sample user
 To login to the web application, use these default credentials:
 
 **Super Users**
