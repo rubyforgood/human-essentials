@@ -62,13 +62,12 @@ Use as an Organization or Contribute as an Individual/Team to this Project:
 
 # Welcome Contributors! 👋
 
-Thanks for checking us out!
-
-If you're new here, here are some things you should know:
- - We actively curate issues and try to make them as self-contained as possible for people new to the application; those ones are tagged "Help Wanted"
- - We're actively watching for Pull Requests and you shouldn't have to wait very long for a review. Try to make sure your build passes (`rubocop -a` is a frequent need) and that you've addressed the requirements in the issue
- - Check the [Contributing Guidelines](#-contributing-guidelines) section for a guide on how to get started
- - This is a 100% volunteer-supported project, please be patient with your correspondence. We do handle issues and PRs with more fervor during Hacktoberfest & Conferences, but most (all?) of us have day jobs and so responses to questions / pending PRs may not be immediate. Please be patient, we'll get to you! :)
+Thanks for checking us out! If you're new here, here are some things you should know: 
+ - Issues tagged "Help Wanted" are self-contained and great for new contributors
+ - Pull Requests are promptly reviewed
+ - Ensure your build passes (`rubocop -a` is often necessary) and addresses the issue requirements
+ - Check the [Contributing Guidelines](#-contributing-guidelines) for getting started
+ - This project relies entirely on volunteers, so please be patient with communication
 
 ### Join us on slack 💬
 Please feel free to join us on Slack!
