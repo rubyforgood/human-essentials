@@ -77,9 +77,9 @@ You can sign up [here](https://rubyforgood.slack.com/join/shared_invite/zt-1kfei
 
 
 1. Install Ruby 
-   - Install the version specified in [`.ruby-version`](.ruby-version) file. 
+   - Install the version specified in [`.ruby-version`](.ruby-version). 
    - Visit the [Install Ruby on Rails](https://gorails.com/setup/osx/12-monterey) guide by GoRails for Ubuntu, Windows, and macOSX setup. ⚠️ Follow only the Installing Ruby step, as our project setup differs ⚠️ It is highly recommended you use a ruby version manager such as [rbenv](https://github.com/rbenv/rbenv), [asdf](https://asdf-vm.com/), or [rvm](https://rvm.io/). 
-   - Verify that your Ruby installation by running `ruby -v`.
+   - Verify that your Ruby installation works by running `ruby -v`.
 
 </br>
 
