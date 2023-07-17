@@ -71,10 +71,7 @@ Thanks for checking us out! If you're new here, here are some things you should 
   - Visit the [wiki](https://github.com/rubyforgood/human-essentials/wiki) for more information
 
 ### Join us on slack 💬
-Please feel free to join us on Slack!
-You can sign up [here](https://rubyforgood.slack.com/join/shared_invite/zt-1kfeimohe-KL~~~6Lkof7G94_7Ojd_Hw#/shared-invite/email) and find us in #human-essentials.
-
-There are numerous other folks that can chime in and answer questions -- please ask and someone will probably be there to help!
+You can sign up [here](https://rubyforgood.slack.com/join/shared_invite/zt-1kfeimohe-KL~~~6Lkof7G94_7Ojd_Hw#/shared-invite/email) and find us in #human-essentials. Many helpful members are available to answer your questions. Just ask, and someone will be there to help you!
 
 ##  Getting Started 🛠️
 
