@@ -6,15 +6,3 @@
   <span class="input-group-text"><%= fa_icon "envelope" %></span>
   <%= f.input_field :email, class: "form-control" %>
 <% end %>
-<!-- Only display password fields when not nested within organization form -->
-<% if @organization.nil? %>
-  <%= f.input :password, label: "Password", wrapper: :input_group, required: true, hint: ("#{@minimum_password_length} characters minimum" if @minimum_password_length) do %>
-    <span class="input-group-text"><%= fa_icon "lock" %></span>
-    <%= f.input_field :password, class: "form-control" %>
-  <% end %>
-  <%= f.input :password_confirmation, label: "Confirm Password", wrapper: :input_group, required: true do %>
-    <span class="input-group-text"><%= fa_icon "check" %></span>
-    <%= f.input_field :password_confirmation, class: "form-control" %>
-  <% end %>
-<% end %>
-
