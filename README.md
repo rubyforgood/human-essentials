@@ -237,10 +237,6 @@ Delayed::Job.last.invoke_job
 
 You can replace the `last` query with any other query (e.g. `Delayed::Job.find(123)`).
 
-### In-flight Pull Requests
-
-Sometimes we want to get a PR up there and going so that other people can review it or provide feedback, but maybe it's incomplete. This is OK, but if you do it, please tag your PR with `in-progress` label so that we know not to review / merge it.
-
 ### Additional Notes
 
 - The generated `schema.rb` file may include or omit `id: :serial` for `create table`, and `null: false` for `t.datetime`. According to Aaron, this can safely be ignored, and it is probably best to commit the schema.rb only if you have committed anything that would change the DB schema (i.e. a migration).
