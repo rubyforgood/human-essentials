@@ -255,18 +255,19 @@ git push --tags
 ```
 2. Publish a release associated to that tag pushed up in the previous step. You can do that [here](https://github.com/rubyforgood/human-essentials/releases/new). Make sure to include details on what the release's updates achieves (we use this to notify our stakeholders on updates via email).
 
-#### Send Update Email To Human Essential Users
-We will now want to inform the stakeholders that we've recently made a deployment and include details on what was updated. This is achieved by accessing all the user records and sending out a email via our Mailchimp account.
+### Send Update Email To Human Essential Users
+To notify stakeholders about the deployment and updates via email, follow these steps:
 
-1. Fetch all the emails of our users by accessing our human essentials production database
+1. Fetch all the users' emails from our human essentials production database
 ```ruby
 cap production rails:console
 emails = User.all.pluck(:email) 
 puts "Email Address\n" + emails.join("\n") # Copy this output
 ```
-2. Use the list of the emails copied from the output from the previous step to send a update audience via [Mailchimp](https://mailchimp.com/). Go to Audience > Manage Audience > Import Contacts and select "Copy and paste" option. Then paste the output of step 1. Complete the subsequent steps.
+2. Use the copied list of emails to send an update audience via [Mailchimp](https://mailchimp.com/). Go to Audience > Manage Audience > Import Contacts and select "Copy and paste" option. Then paste the email list from the previous step.
 
-3. Draft the email and send it with updates.
+3. Draft and send the email with updates.
+
 
 # Acknowledgements
 Thanks to Rachel (from PDX Diaperbank) for all of her insight, support, and assistance with this application, and Sarah ( http://www.sarahkasiske.com/ ) for her wonderful design and CSS work at Ruby For Good '17!
