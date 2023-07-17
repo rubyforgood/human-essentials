@@ -75,21 +75,18 @@ You can sign up [here](https://rubyforgood.slack.com/join/shared_invite/zt-1kfei
 
 ##  Getting Started 🛠️
 
-### 1. Install Ruby
-Install the required ruby version specified in the [`.ruby-version`](.ruby-version) file. Visit the [Install Ruby on Rails](https://gorails.com/setup/osx/12-monterey) guide by GoRails for Ubuntu, Windows, and macOSX setup. ⚠️ Follow only the Installing Ruby step, as our project setup differs ⚠️ It is highly recommended you use a ruby version manager such as [rbenv](https://github.com/rbenv/rbenv), [asdf](https://asdf-vm.com/), or [rvm](https://rvm.io/). Verify that your Ruby installation by running `ruby -v`.
 
-### 2. Install Postgres
-You must install postgres and run the database locally. Instructions differ depending on the operating system.
+1. Install Ruby 
+   - Install the version specified in [`.ruby-version`](.ruby-version) file. 
+   - Visit the [Install Ruby on Rails](https://gorails.com/setup/osx/12-monterey) guide by GoRails for Ubuntu, Windows, and macOSX setup. ⚠️ Follow only the Installing Ruby step, as our project setup differs ⚠️ It is highly recommended you use a ruby version manager such as [rbenv](https://github.com/rbenv/rbenv), [asdf](https://asdf-vm.com/), or [rvm](https://rvm.io/). 
+   - Verify that your Ruby installation by running `ruby -v`.
 
-Follow one of these guides to install postgres:
-This app uses PostgreSQL for all environments. You'll also need to create the `dev` and `test` databases, the app is expecting them to be named `diaper_dev` and `diaper_test` respectively. This should all be handled with `rails db:setup`.
-Create a `database.yml` file on `config/` directory with your database configurations. You can also copy the existing files called [`database.yml.example`](config/database.yml.example) and [`.env.example`](.env.example) as an example and just change the credentials.
+</br>
 
-- MacOSX - https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-macos
-- Ubuntu - https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-ubuntu-18-04
-- Windows - Do you develop on windows? We'd love to hear (and for you to submit a PR explaining) how you do it. 🙏🏻
-
-After completing this step, you should have both ruby and postgres installed. Now you can proceed to the next step which is to setup the application.
+2. Install Postgres
+   - Follow one of these guides: [MacOSX](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-macos), [Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-ubuntu-18-04). 
+     - Do you develop on Windows? We'd love to hear (and for you to submit a PR explaining) how you do it. 🙏🏻 
+   - Create a `database.yml` file on `config/` directory with your database configurations. You can also copy the existing files called [`database.yml.example`](config/database.yml.example) and [`.env.example`](.env.example) and change the credentials.
 
 ### 3. Run Setup
 Run the following command should run all the neccessary steps to get up and running.
