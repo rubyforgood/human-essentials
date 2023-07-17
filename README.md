@@ -68,6 +68,7 @@ Thanks for checking us out! If you're new here, here are some things you should 
  - Ensure your build passes (`rubocop -a` is often necessary) and addresses the issue requirements
  - Check the [Contributing Guidelines](#-contributing-guidelines) for getting started
  - This project relies entirely on volunteers, so please be patient with communication
+  - Visit the [wiki](https://github.com/rubyforgood/human-essentials/wiki) for more information
 
 ### Join us on slack 💬
 Please feel free to join us on Slack!
