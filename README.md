@@ -32,21 +32,13 @@
 
 ## Mission 💖
 
-Human Essentials is an inventory management system that was built to address the needs of [Diaper Banks](https://nationaldiaperbanknetwork.org/diaper-need/) as directly and explicitly as possible and later adapted to meet the need of other Essentials Banks. Essentials Banks maintain inventory, receive donations and other means of intaking human essentials supplies (e.g. diapers, period supplies), and issue distributions to community partner organizations. Like any non-profit, they also need to perform reports on this data and have day-to-day operational information they need as well. This application aims to serve all those needs, as well as facilitate, wherever possible the general operations of the Diaper Bank themselves (eg. through using barcode readers, scale weighing, inventory audits).
+Human Essentials is an inventory management system built to address the needs of [Diaper Banks](https://nationaldiaperbanknetwork.org/diaper-need/) as directly and explicitly as possible and adapted to meet the needs of other Essentials Banks. Essentials Banks maintain inventory, receive donations and other human essentials supplies (e.g. diapers, period supplies), and issue distributions to community partner organizations. Like any non-profit, they also need to perform reports on this data and have day-to-day operational information they need. This application aims to serve those needs and facilitate the general operations of the Diaper Banks (e.g., using barcode readers, scale weighing, inventory audits).
 
 ## Impact 🌟
 
-Human Essentials has over 200 registered banks across the United States at **no cost to them**. It is currently helping over **3 million children** receive diapers and over **400k period supply recipients** receive period supplies. Our team is in partnership with the [National Diaper Bank Network (NDBN)](https://nationaldiaperbanknetwork.org/) and can be found in their annual conference that brings numerous of non-profit organizations that distribute essential products to people.
+Human Essentials has over 200 registered banks across the United States at **no cost** to them. It is currently helping over **3 million** children receive diapers and over **400k** period supply recipients receive period supplies. Our team is in partnership with the [National Diaper Bank Network (NDBN)](https://nationaldiaperbanknetwork.org/) and can be found in their annual conference that brings numerous of non-profit organizations that distribute essential products to people.
 
-**We are proud of our achievements up to date but there is much more to do! This is where you come in...**
-
-
-
-#### This project supports the following Sustainable Development Goals:
-* [SDG 1](https://sdgs.un.org/goals/goal1) - End poverty in all its forms everywhere
-* [SDG 3](https://sdgs.un.org/goals/goal3) - Ensure healthy lives and promote well-being for all at all ages
-* [SDG 10](https://sdgs.un.org/goals/goal10) - Reduce inequality within and among countries
-
+We are proud of our achievements up to date but there is much more to do! This is where you come in...
 
 ## Ruby for Good
 
