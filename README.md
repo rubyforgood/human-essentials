@@ -250,10 +250,6 @@ Sometimes we want to get a PR up there and going so that other people can review
 rvm install 2.6.4 --with-openssl-dir='brew --prefix openssl'
 ```
 
-### Becoming a Repo Contributor
-
-Users that are frequent contributors and are involved in discussion (join the slack channel! :)) may be given direct Contributor access to the Repo so they can submit Pull Requests directly, instead of Forking first.
-
 ### Requirements
 
 - You will need SSH access to our servers
