@@ -30,11 +30,11 @@
 </p>
 
 
-## 💖 Mission
+## Mission 💖
 
 Human Essentials is an inventory management system that was built to address the needs of [Diaper Banks](https://nationaldiaperbanknetwork.org/diaper-need/) as directly and explicitly as possible and later adapted to meet the need of other Essentials Banks. Essentials Banks maintain inventory, receive donations and other means of intaking human essentials supplies (e.g. diapers, period supplies), and issue distributions to community partner organizations. Like any non-profit, they also need to perform reports on this data and have day-to-day operational information they need as well. This application aims to serve all those needs, as well as facilitate, wherever possible the general operations of the Diaper Bank themselves (eg. through using barcode readers, scale weighing, inventory audits).
 
-## 🌟 Impact
+## Impact 🌟
 
 Human Essentials has over 200 registered banks across the United States at **no cost to them**. It is currently helping over **3 million children** receive diapers and over **400k period supply recipients** receive period supplies. Our team is in partnership with the [National Diaper Bank Network (NDBN)](https://nationaldiaperbanknetwork.org/) and can be found in their annual conference that brings numerous of non-profit organizations that distribute essential products to people.
 
@@ -54,15 +54,14 @@ Human Essentials is one of many projects initiated and run by Ruby for Good. You
 
 
 
-## Use as an Organization or Contribute as an Individual/Team to this Project
+## Digital Public Good 🎉
+ Use as an Organization or Contribute as an Individual/Team to this Project
 
 ### [NGO Adoption Info](ngo.md) - information about how to use this DPG
 ### [Skills Based Volunteering Info](sbv.md) - information about how to volunteer
 
----
 
-
-## 👋 Welcome Contributors!
+# Welcome Contributors! 👋
 
 Thanks for checking us out!
 
@@ -72,13 +71,13 @@ If you're new here, here are some things you should know:
  - Check the [Contributing Guidelines](#-contributing-guidelines) section for a guide on how to get started
  - This is a 100% volunteer-supported project, please be patient with your correspondence. We do handle issues and PRs with more fervor during Hacktoberfest & Conferences, but most (all?) of us have day jobs and so responses to questions / pending PRs may not be immediate. Please be patient, we'll get to you! :)
 
-#### 💬 Join us on slack
+### Join us on slack 💬
 Please feel free to join us on Slack!
 You can sign up [here](https://rubyforgood.slack.com/join/shared_invite/zt-1kfeimohe-KL~~~6Lkof7G94_7Ojd_Hw#/shared-invite/email) and find us in #human-essentials.
 
 There are numerous other folks that can chime in and answer questions -- please ask and someone will probably be there to help!
 
-## 🛠️ Getting Started
+##  Getting Started 🛠️
 
 ### Install Ruby
 You will need to first install the required ruby version specified in the [`.ruby-version`](.ruby-version) file. GoRails has a very detail oriented guide for installing ruby on Ubuntu, Windows, and macOSX. You can check out that guide [here](https://gorails.com/setup/osx/12-monterey). **Follow only the Installing Ruby step, as our project setup differs**
@@ -96,7 +95,7 @@ ruby -v
 
 Once you've successfully installed ruby. You may proceed to the next section!
 
-#### Troubleshooting
+### Troubleshooting
 **My RBENV installation did not work**
 The rbenv repository provides a [rbenv-doctor script](https://github.com/rbenv/rbenv-installer#rbenv-doctor) to verify the state of the rbenv installation and if a ruby version is installed
 
@@ -168,10 +167,10 @@ Recertification Required Partner
 
 Let's recap! You should now be able to run `bin/start` and login as one of the sample users to see their dashboard. If you've gotten to that point, you are ready to start contributing!
 
-### 🤭 Something went wrong in the setup process?
+### Something went wrong in the setup process? 🤭
 Please let us know by opening up an issue! We have many new contributors come through and it is likely what you experienced will happen to them as well. *Documentation often goes out of date... documentations... ama'right?*
 
-## 🤝 Contributing Guidelines
+## Contributing Guidelines 🤝
 
 Please feel free to contribute! While we welcome all contributions to this app, pull-requests that address outstanding Issues *and* have appropriate test coverage for them will be strongly prioritized. In particular, addressing issues that are tagged with the next milestone should be prioritized higher.
 
@@ -211,7 +210,7 @@ Users that are frequent contributors and are involved in discussion (join the sl
 
 Try to keep your PRs limited to one particular issue and don't make changes that are out of scope for that issue. If you notice something that needs attention but is out-of-scope, [please create a new issue.](https://github.com/rubyforgood/human-essentials/issues/new)
 
-## 🧪 Testing
+## Testing 🧪
 ### Writing Tests/Specs
 
 Run all the tests with:
@@ -236,7 +235,7 @@ example:
   end
 ```
 
-### On Writing Browser/System/Feature Specs
+### Writing Browser/System/Feature Specs
 
 If you need to see a browser/system spec run in the browser, you can use the following env variable:
 
@@ -244,7 +243,7 @@ If you need to see a browser/system spec run in the browser, you can use the fol
 NOT_HEADLESS=true bundle exec rspec
 ```
 
-##### Use magic_test to simplify browser/system/feature spec writing
+### Use magic_test to simplify browser/system/feature spec writing
 We've added [magic_test](https://github.com/bullet-train-co/magic_test) which makes creating browser specs much easier. It does this by giving you the ability to record actions on the browser running the specs and easily paste them into the spec.
 
 For example you can do this by adding `magic_test` within your system spec:
@@ -260,13 +259,13 @@ MAGIC_TEST=1 NOT_HEADLESS=true bundle exec rspec <path_to_spec>
 
 **See videos of it in action [here](https://twitter.com/andrewculver/status/1366062684802846721)**
 
-# 🚀 Deployment Process
+# Deployment Process 🚀
 The human-essentials & partner application should be deployed ideally on a weekly or bi-weekly schedule. However, this depends on the amount of updates that we have merged into main. Assuming there is updates that we want to ship into deploy, this is the process we take to getting updates from our `main` branch deployed to our servers.
 
-#### Requirements
+### Requirements
 - You will need SSH access to our servers. Access is usually only given to core maintainers of the human-essentials & partner projects.
 
-#### Running delayed jobs
+### Running delayed jobs
 
 You can run delayed jobs locally by running the `rake jobs:work` command. You'll need to do this to see any e-mails (they should
 pop up in your browser). Alternatively, you can run a specific delayed job by opening a Rails console and doing something like:
@@ -277,11 +276,11 @@ Delayed::Job.last.invoke_job
 
 You can replace the `last` query with any other query (e.g. `Delayed::Job.find(123)`).
 
-#### In-flight Pull Requests
+### In-flight Pull Requests
 
 Sometimes we want to get a PR up there and going so that other people can review it or provide feedback, but maybe it's incomplete. This is OK, but if you do it, please tag your PR with `in-progress` label so that we know not to review / merge it.
 
-#### Additional Notes
+### Additional Notes
 
 - The generated `schema.rb` file may include or omit `id: :serial` for `create table`, and `null: false` for `t.datetime`. According to Aaron, this can safely be ignored, and it is probably best to commit the schema.rb only if you have committed anything that would change the DB schema (i.e. a migration).
 - If you have trouble relating to SSL libraries installing Ruby using `rvm` or `rbenv` on a Mac, you may need to add a command line option to specify the location of the SSL libraries. Assuming you are using `brew`, this will probably result in a command looking something like:
@@ -290,21 +289,21 @@ Sometimes we want to get a PR up there and going so that other people can review
 rvm install 2.6.4 --with-openssl-dir='brew --prefix openssl'
 ```
 
-#### Becoming a Repo Contributor
+### Becoming a Repo Contributor
 
 Users that are frequent contributors and are involved in discussion (join the slack channel! :)) may be given direct Contributor access to the Repo so they can submit Pull Requests directly, instead of Forking first.
 
 ### Deployment Process
 The human-essentials application should be deployed ideally on a weekly or bi-weekly schedule. However, this depends on the amount of updates that we have merged into main. Assuming there is updates that we want to ship into deploy, this is the process we take to getting updates from our `main` branch deployed to our servers.
 
-#### Requirements
+### Requirements
 
 - You will need SSH access to our servers
   - Access is usually only given to core maintainers of the human-essentials project
 
 - Login credentials to our [Mailchimp](https://mailchimp.com/) account
 
-#### Tag & Release
+### Tag & Release
 1. You'll need to push up a tag with the proper semantic versioning. Check out the [releases](https://github.com/rubyforgood/human-essentials/releases) to get the correct semantic versioning tag to use. For example, if the last release was `2.1.0` and the update is a hotfix then the next one should be `2.1.1`
 ```sh
 git tag x.y.z
