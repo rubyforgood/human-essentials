@@ -10,8 +10,6 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       find('#user_organization_id option:last-of-type').select_option
       fill_in "user_name", with: "TestUser"
       fill_in "user_email", with: "testuser@example.com"
-      fill_in "user_password", with: "password!"
-      fill_in "user_password_confirmation", with: "password!"
       click_on "Save"
 
       expect(page.find(".alert")).to have_content "Created a new user!"
@@ -22,8 +20,6 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       click_link "Edit", match: :first
       expect(page).to have_content("Update #{@organization_admin.name}")
       fill_in "user_name", with: "TestUser"
-      fill_in "user_password", with: "123password!"
-      fill_in "user_password_confirmation", with: "123password!"
       click_on "Save"
 
       expect(page.find(".alert")).to have_content "TestUser updated"
