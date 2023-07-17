@@ -1,11 +1,34 @@
 # Human Essentials 
+<p align="center">
+<a href="https://app.digitalpublicgoods.net/a/10622">
+<img src="https://user-images.githubusercontent.com/667909/181150972-e59a77ab-b657-4893-aef9-d3df1384a506.png" alt="DPG Approved" height="40">
+</a>
+</p>
 
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-115-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
+<!-- ALL-CONTRIBUTORS-BADGE - Do not remove or modify -->
 
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper?ref=badge_shield)
-[![Knapsack Pro Parallel CI builds for RSpec tests](https://img.shields.io/badge/Knapsack%20Pro-Parallel%20%2F%20Rspec%20tests-%230074ff)](https://knapsackpro.com/dashboard/organizations/1858/projects/1295/test_suites/1835/builds?utm_campaign=organization-id-1858&amp;utm_content=test-suite-id-1835&amp;utm_medium=readme&amp;utm_source=knapsack-pro-badge&amp;utm_term=project-id-1295)
+<p>
+<a href="https://img.shields.io/badge/all_contributors-115-orange.svg?logo=github" alt="All contributors"><img src="https://img.shields.io/badge/all_contributors-115-orange.svg?logo=github" /></a>
+<a href="https://app.fossa.com/api/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper.svg?type=shield" alt="license scan"><img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper.svg?type=shield" /></a>
+<a href="https://img.shields.io/badge/Knapsack%20Pro-Parallel%20%2F%20Rspec%20tests-%230074ff" alt="Knapsack Pro Parallel CI builds for RSpec tests"><img src="https://img.shields.io/badge/Knapsack%20Pro-Parallel%20%2F%20Rspec%20tests-%230074ff" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/graphs/contributors" alt="Contributors"> <img src="https://img.shields.io/github/contributors/rubyforgood/human-essentials?logo=github" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/issues" alt="Contributors"> <img src="https://img.shields.io/github/issues-closed/rubyforgood/human-essentials?logo=github" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/search" alt="Languages"><img src="https://img.shields.io/github/languages/count/rubyforgood/human-essentials?logo=github" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/search" alt="Languages"><img src="https://img.shields.io/github/languages/top/rubyforgood/human-essentials?logo=github" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/ alt="Size"><img src="https://img.shields.io/github/repo-size/rubyforgood/human-essentials?logo=github" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/pulls" alt="Pull Requests"><img src="https://img.shields.io/github/issues-pr-closed-raw/rubyforgood/human-essentials?logo=github" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/ alt="LICENSE"><img src="https://badgen.net/github/license/rubyforgood/human-essentials?icon=github&color=green" /></a>
+<a href="https://github.com/badges/shields/pulse" alt="Activity"><img src="https://img.shields.io/github/commit-activity/m/rubyforgood/human-essentials?logo=github" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/commits/main" alt="Last Commit"><img src="https://img.shields.io/github/last-commit/rubyforgood/human-essentials?logo=github" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/commits/main" alt="Total Commits"><img src="https://badgen.net/github/commits/rubyforgood/human-essentials/main?icon=github&color=green" /></a>
+</p>
+
+<p align="center">
+<a href="https://github.com/rubyforgood/human-essentials/" alt="Stars"><img src="https://img.shields.io/github/stars/rubyforgood/human-essentials?style=social" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/" alt="Forks"><img src="https://img.shields.io/github/forks/rubyforgood/human-essentials?style=social" /></a>
+<a href="https://github.com/rubyforgood/human-essentials/" alt="Watchers"><img src="https://img.shields.io/github/watchers/rubyforgood/human-essentials?style=social" /></a>
+</p>
+
 
 ## 💖 Mission
 
@@ -19,14 +42,6 @@ Human Essentials has over 200 registered banks across the United States at **no 
 
 
 
- ## 🎉 The [Digital Public Goods Alliance](https://digitalpublicgoods.net/registry/) recognizes Human Essentials as a digital public good (DPG)
-
-<p align="center">
-<a href="https://app.digitalpublicgoods.net/a/10622">
-<img src="https://user-images.githubusercontent.com/667909/181150972-e59a77ab-b657-4893-aef9-d3df1384a506.png" alt="DPG Approved" height="40">
-</a>
-</p>
-
 #### This project supports the following Sustainable Development Goals:
 * [SDG 1](https://sdgs.un.org/goals/goal1) - End poverty in all its forms everywhere
 * [SDG 3](https://sdgs.un.org/goals/goal3) - Ensure healthy lives and promote well-being for all at all ages
@@ -37,29 +52,7 @@ Human Essentials has over 200 registered banks across the United States at **no 
 
 Human Essentials is one of many projects initiated and run by Ruby for Good. You can find out more about Ruby for Good at https://rubyforgood.org
 
----
 
-
-<p align="center">
-<h2 align="center">GitHub Stats at a Glance</h2>
-<a href="https://github.com/rubyforgood/human-essentials/graphs/contributors" alt="Contributors"> <img src="https://img.shields.io/github/contributors/rubyforgood/human-essentials?logo=github" /></a>
-<a href="https://github.com/rubyforgood/human-essentials/issues" alt="Contributors"> <img src="https://img.shields.io/github/issues-closed/rubyforgood/human-essentials?logo=github" /></a>
-<a href="https://github.com/rubyforgood/human-essentials/search" alt="Languages"><img src="https://img.shields.io/github/languages/count/rubyforgood/human-essentials?logo=github" /></a>
-<a href="https://github.com/rubyforgood/human-essentials/search" alt="Languages"><img src="https://img.shields.io/github/languages/top/rubyforgood/human-essentials?logo=github" /></a>
-<a href="https://github.com/rubyforgood/human-essentials/ alt="Size"><img src="https://img.shields.io/github/repo-size/rubyforgood/human-essentials?logo=github" /></a>
-<a href="https://github.com/rubyforgood/human-essentials/pulls" alt="Pull Requests"><img src="https://img.shields.io/github/issues-pr-closed-raw/rubyforgood/human-essentials?logo=github" /></a>
-<a href="https://github.com/rubyforgood/human-essentials/ alt="LICENSE"><img src="https://badgen.net/github/license/rubyforgood/human-essentials?icon=github&color=green" /></a>
-<a href="https://github.com/badges/shields/pulse" alt="Activity"><img src="https://img.shields.io/github/commit-activity/m/rubyforgood/human-essentials?logo=github" /></a>
-<a href="https://github.com/rubyforgood/human-essentials/commits/main" alt="Last Commit"><img src="https://img.shields.io/github/last-commit/rubyforgood/human-essentials?logo=github" /></a>
-<a href="https://github.com/rubyforgood/human-essentials/commits/main" alt="Total Commits"><img src="https://badgen.net/github/commits/rubyforgood/human-essentials/main?icon=github&color=green" /></a>
-</p>
-<p align="center">
-<a href="https://github.com/rubyforgood/human-essentials/" alt="Stars"><img src="https://img.shields.io/github/stars/rubyforgood/human-essentials?style=social" /></a>
-<a href="https://github.com/rubyforgood/human-essentials/" alt="Forks"><img src="https://img.shields.io/github/forks/rubyforgood/human-essentials?style=social" /></a>
-<a href="https://github.com/rubyforgood/human-essentials/" alt="Watchers"><img src="https://img.shields.io/github/watchers/rubyforgood/human-essentials?style=social" /></a>
-</p>
-
----
 
 ## Use as an Organization or Contribute as an Individual/Team to this Project
 
