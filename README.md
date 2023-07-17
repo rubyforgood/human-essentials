@@ -76,20 +76,7 @@ You can sign up [here](https://rubyforgood.slack.com/join/shared_invite/zt-1kfei
 ##  Getting Started 🛠️
 
 ### 1. Install Ruby
-You will need to first install the required ruby version specified in the [`.ruby-version`](.ruby-version) file. GoRails has a very detail oriented guide for installing ruby on Ubuntu, Windows, and macOSX. You can check out that guide [here](https://gorails.com/setup/osx/12-monterey). **Follow only the Installing Ruby step, as our project setup differs**
-
-
-It is highly recommended you use a ruby version manager such as:
-- [rbenv](https://github.com/rbenv/rbenv) 
-- [asdf](https://asdf-vm.com/)
-- [rvm](https://rvm.io/)
-
-You can verify that your ruby installation was successful and matches the version in [`.ruby-version`](.ruby-version) in the project directory:
-```
-ruby -v
-```
-
-Once you've successfully installed ruby. You may proceed to the next section!
+Install the required ruby version specified in the [`.ruby-version`](.ruby-version) file. Visit the [Install Ruby on Rails](https://gorails.com/setup/osx/12-monterey) guide by GoRails for Ubuntu, Windows, and macOSX setup. ⚠️ Follow only the Installing Ruby step, as our project setup differs ⚠️ It is highly recommended you use a ruby version manager such as [rbenv](https://github.com/rbenv/rbenv), [asdf](https://asdf-vm.com/), or [rvm](https://rvm.io/). Verify that your Ruby installation by running `ruby -v`.
 
 ### Troubleshooting
 **My RBENV installation did not work**
@@ -163,8 +150,13 @@ Recertification Required Partner
 
 Let's recap! You should now be able to run `bin/start` and login as one of the sample users to see their dashboard. If you've gotten to that point, you are ready to start contributing!
 
-### Something went wrong in the setup process? 🤭
-Please let us know by opening up an issue! We have many new contributors come through and it is likely what you experienced will happen to them as well. *Documentation often goes out of date... documentations... ama'right?*
+## Troubleshooting 👷🏼‍♀️
+Please let us know by opening up an issue! We have many new contributors come through and it is likely what you experienced will happen to them as well.
+
+
+- *"My RBENV installation didn't work!"* - The rbenv repository provides a [rbenv-doctor script](https://github.com/rbenv/rbenv-installer#rbenv-doctor) to verify the installation and check if a ruby version is installed
+
+
 
 ## Contributing Guidelines 🤝
 
