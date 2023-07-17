@@ -84,54 +84,66 @@ You can sign up [here](https://rubyforgood.slack.com/join/shared_invite/zt-1kfei
 </br>
 
 2. Install Postgres
-   - Follow one of these guides: [MacOSX](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-macos), [Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-ubuntu-18-04). 
+   - Install Postgres- Follow one of these guides: [MacOSX](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-macos), [Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-ubuntu-18-04).
      - Do you develop on Windows? We'd love to hear (and for you to submit a PR explaining) how you do it. 🙏🏻 
    - Create a `database.yml` file on `config/` directory with your database configurations. You can also copy the existing files called [`database.yml.example`](config/database.yml.example) and [`.env.example`](.env.example) and change the credentials.
 
-   </br>
+</br>
 
 3. Run `bin/setup`
 4. Run `bin/start` and visit http://localhost:3000/ to see the human essentials page.
-5. Login as a sample user
-To login to the web application, use these default credentials:
+5. Login as a sample user with these default credentials:
 
-**Super Users**
-```
-username: superadmin@example.com
-password: password!
-```
+    <details>
+    <summary> Super Users 🦸🏽‍♀️ </summary>
+    <br>
+    
+    ```
+    username: superadmin@example.com
+    password: password!
+    ```
 
-**Bank users**
-```bash
-Organization Admin
-  Email: org_admin1@example.com
-  Password: password!
+    </details>
+    </br>
+    <details>
+    <summary> Bank Users 🏦 </summary>
+    <br>
+    
+    ```bash
+    Organization Admin
+      Email: org_admin1@example.com
+      Password: password!
 
-User
-  Email: user_1@example.com
-  Password: password!
-```
+    User
+      Email: user_1@example.com
+      Password: password!
+    ```
+      </details>
+    </br>
 
-**Partner Users**
-```bash
-Verified Partner
-  Email: verified@example.com
-  Password: password!
+    <details>
+    <summary> Partner Users 👥 </summary>
+    <br>
+    
+    ```bash
+    Verified Partner
+      Email: verified@example.com
+      Password: password!
 
-Invited Partner
-  Email: invited@pawneehomeless.com
-  Password: password!
-  
-Unverified Partner
-  Email: unverified@pawneepregnancy.com
-  Password: password!
-  
-Recertification Required Partner
-  Email: recertification_required@example.com
-  Password: password!
-```
+    Invited Partner
+      Email: invited@pawneehomeless.com
+      Password: password!
+      
+    Unverified Partner
+      Email: unverified@pawneepregnancy.com
+      Password: password!
+      
+    Recertification Required Partner
+      Email: recertification_required@example.com
+      Password: password!
+    ```
 
-Let's recap! You should now be able to run `bin/start` and login as one of the sample users to see their dashboard. If you've gotten to that point, you are ready to start contributing!
+    </details>
 
 ## Troubleshooting 👷🏼‍♀️
 Please let us know by opening up an issue! We have many new contributors come through and it is likely what you experienced will happen to them as well.
