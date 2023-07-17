@@ -191,22 +191,10 @@ Try to keep your PRs limited to one particular issue, and don't make changes tha
 
 ## Testing 🧪
 ### Writing Tests/Specs
-
-Run all the tests with:
-
-  `bundle exec rspec`
-
-Run a single test with:
-
-  `bundle exec rspec {path_to_test_name}_spec.rb`
-
-This app uses RSpec, Capybara, and FactoryBot for testing. Make sure the tests run clean & green before submitting a Pull Request. If you are inexperienced in writing tests or get stuck on one, please reach out so one of us can help you. :)
-
-The one situation where you probably don't need to write new tests is when simple re-stylings are done (ie. the page may look slightly different but the Test suite is unaffected by those changes).
+Run all the tests with `bundle exec rspec`; run a single test with `bundle exec rspec {path_to_test_name}_spec.rb`. This app uses RSpec, Capybara, and FactoryBot for testing. Make sure the tests run clean & green before submitting a Pull Request. If you are inexperienced in writing tests or get stuck on one, please reach out for help :). You probably don't need to write new tests when simple re-stylings are done (ie. the page may look slightly different but the Test suite is unaffected by those changes).
 
 Tip: If you need to skip a failing test, place `pending("Reason you are skipping the test")` into the `it` block rather than skipping with `xit`. This will allow rspec to deliver the error message without causing the test suite to fail.
 
-example:
 ```ruby
   it "works!" do
     pending("Need to implement this")
@@ -222,19 +210,13 @@ If you need to see a browser/system spec run in the browser, you can use the fol
 NOT_HEADLESS=true bundle exec rspec
 ```
 
-### Use magic_test to simplify browser/system/feature spec writing
-We've added [magic_test](https://github.com/bullet-train-co/magic_test) which makes creating browser specs much easier. It does this by giving you the ability to record actions on the browser running the specs and easily paste them into the spec.
-
-For example you can do this by adding `magic_test` within your system spec:
+We've added [magic_test](https://github.com/bullet-train-co/magic_test) which makes creating browser specs much easier. It allows you to record actions on the browser running the specs and easily paste them into the spec. You can do this by adding `magic_test` within your system spec:
 ```rb
  it "does some browser stuff" do
    magic_test
  end
 ```
-and run the spec using this command:
-```
-MAGIC_TEST=1 NOT_HEADLESS=true bundle exec rspec <path_to_spec>
-```
+and run the spec using this command: `MAGIC_TEST=1 NOT_HEADLESS=true bundle exec rspec <path_to_spec>`
 
 **See videos of it in action [here](https://twitter.com/andrewculver/status/1366062684802846721)**
 
