@@ -47,11 +47,18 @@ Human Essentials is one of many projects initiated and run by Ruby for Good. You
 
 
 ## Digital Public Good 🎉
- Use as an Organization or Contribute as an Individual/Team to this Project
+ 
+The [Digital Public Goods Alliance](https://digitalpublicgoods.net/registry/) recognizes Human Essentials as a digital public good (DPG). This project supports the following Sustainable Development Goals:
+* [SDG 1](https://sdgs.un.org/goals/goal1) - End poverty in all its forms everywhere
+* [SDG 3](https://sdgs.un.org/goals/goal3) - Ensure healthy lives and promote well-being for all at all ages
+* [SDG 10](https://sdgs.un.org/goals/goal10) - Reduce inequality within and among countries
 
-### [NGO Adoption Info](ngo.md) - information about how to use this DPG
-### [Skills Based Volunteering Info](sbv.md) - information about how to volunteer
+## Uses
+Use as an Organization or Contribute as an Individual/Team to this Project:
+- [NGO Adoption Info](ngo.md) - information about how to use this DPG
+- [Skills Based Volunteering Info](sbv.md) - information about how to volunteer
 
+</br>
 
 # Welcome Contributors! 👋
 
