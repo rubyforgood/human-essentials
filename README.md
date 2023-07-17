@@ -172,13 +172,10 @@ To contribute:
  * Create a pull request and indicate the addressed issue in the title
 
 ### Squashing Commits
-Squashing your own commits before pushing is totally fine. Please don't squash other people's commits. (Everyone who contributes here deserves credit for their work! :) ). Also, consider the balance of "polluting the git log with commit messages" vs. "providing useful detail about the history of changes in the git log". If you have several (or many) smaller commits that all serve one purpose, and these can be squashed into a single commit whose message describes the thing, you're encouraged to squash.
-
-There's no hard and fast rule here about this (for now), just use your best judgement.
+Consider the balance of "polluting the git log with commit messages" vs. "providing useful detail about the history of changes in the git log". If you have several smaller commits that serve one purpose, you are encouraged to squash them into a single commit. There's no hard and fast rule about this, just use your best judgement. Please don't squash other people's commits. Everyone who contributes here deserves credit for their work! :)
 
 ### Pull Request Merging
-
-At that point, someone will work with you on doing a code review (typically pretty minor unless it's a very significant PR). If TravisCI gives :+1: to the PR merging, we can then merge your code in; if your feature branch was in this main repository, the branch will be deleted after the PR is merged.
+Someone will work with you on doing a code review. If TravisCI gives :+1: to the PR merging, we can then merge your code in; if your feature branch was in this main repository, the branch will be deleted after the PR is merged.
 
 ### In-flight Pull Requests
 
@@ -186,11 +183,11 @@ Sometimes we want to get a PR up there and going so that other people can review
 
 ### Becoming a Repo Contributor
 
-Users that are frequent contributors and are involved in discussion (join the slack channel! :)) may be given direct Contributor access to the Repo so they can submit Pull Requests directly, instead of Forking first.
+Users that are frequent contributors and are involved in discussion (join the slack channel! :)) may be given direct Contributor access to the Repo so they can submit Pull Requests directly instead of Forking first.
 
 ### Stay Scoped
 
-Try to keep your PRs limited to one particular issue and don't make changes that are out of scope for that issue. If you notice something that needs attention but is out-of-scope, [please create a new issue.](https://github.com/rubyforgood/human-essentials/issues/new)
+Try to keep your PRs limited to one particular issue, and don't make changes that are out of scope for that issue. If you notice something that needs attention but is out of scope, please [create a new issue](https://github.com/rubyforgood/human-essentials/issues/new).
 
 ## Testing 🧪
 ### Writing Tests/Specs
