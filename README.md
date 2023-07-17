@@ -191,9 +191,12 @@ Try to keep your PRs limited to one particular issue, and don't make changes tha
 
 ## Testing 🧪
 ### Writing Tests/Specs
-Run all the tests with `bundle exec rspec`; run a single test with `bundle exec rspec {path_to_test_name}_spec.rb`. This app uses RSpec, Capybara, and FactoryBot for testing. Make sure the tests run clean & green before submitting a Pull Request. If you are inexperienced in writing tests or get stuck on one, please reach out for help :). You probably don't need to write new tests when simple re-stylings are done (ie. the page may look slightly different but the Test suite is unaffected by those changes).
+- Run all the tests with `bundle exec rspec`
+- Run a single test with `bundle exec rspec {path_to_test_name}_spec.rb`
 
-Tip: If you need to skip a failing test, place `pending("Reason you are skipping the test")` into the `it` block rather than skipping with `xit`. This will allow rspec to deliver the error message without causing the test suite to fail.
+Make sure all tests run clean & green before submitting a Pull Request. If you are inexperienced in writing tests or get stuck on one, please reach out for help :). You probably don't need to write new tests when simple re-stylings are done (ie. the page may look slightly different but the Test suite is unaffected by those changes).
+
+*Tip: If you need to skip a failing test, place `pending("Reason you are skipping the test")` into the `it` block rather than skipping with `xit`. This will allow rspec to deliver the error message without causing the test suite to fail.*
 
 ```ruby
   it "works!" do
@@ -221,39 +224,31 @@ and run the spec using this command: `MAGIC_TEST=1 NOT_HEADLESS=true bundle exec
 **See videos of it in action [here](https://twitter.com/andrewculver/status/1366062684802846721)**
 
 # Deployment Process 🚀
-The human-essentials & partner application should be deployed ideally on a weekly or bi-weekly schedule. However, this depends on the amount of updates that we have merged into main. Assuming there is updates that we want to ship into deploy, this is the process we take to getting updates from our `main` branch deployed to our servers.
+The human-essentials & partner application should ideally be deployed on a weekly or bi-weekly schedule depending on the merged updates in the main branch. This is the process we take to deploy updates from our main branch to our servers.
 
 ### Requirements
-- SSH access to our servers. Access is usually only given to core maintainers of the human-essentials & partner projects.
+- SSH access to our servers (usually granted to core maintainers)
 - Login credentials to our [Mailchimp](https://mailchimp.com/) account
+
+
+### Tag & Release
+1. Push a tag with the appropriate semantic versioning. Refer to the [releases](https://github.com/rubyforgood/human-essentials/releases) for the correct versioning. For example, if the last release was `2.1.0` and you're making a hotfix, use `2.1.1`
+
+    ```sh
+    git tag x.y.z
+    git push --tags
+    ```
+2. Publish a release associated to that tag pushed up in the previous step [here](https://github.com/rubyforgood/human-essentials/releases/new). Include details about the release's updates (we use this to notify our stakeholders on updates via email).
 
 ### Running delayed jobs
 
-You can run delayed jobs locally by running the `rake jobs:work` command. You'll need to do this to see any e-mails (they should
-pop up in your browser). Alternatively, you can run a specific delayed job by opening a Rails console and doing something like:
+Run delayed jobs locally with the `rake jobs:work` command. This is necessary to view any emails in your browser. Alternatively, you can run a specific delayed job by opening a Rails console and doing something like:
 
 ```ruby
 Delayed::Job.last.invoke_job
 ```
 
 You can replace the `last` query with any other query (e.g. `Delayed::Job.find(123)`).
-
-### Additional Notes
-
-- The generated `schema.rb` file may include or omit `id: :serial` for `create table`, and `null: false` for `t.datetime`. According to Aaron, this can safely be ignored, and it is probably best to commit the schema.rb only if you have committed anything that would change the DB schema (i.e. a migration).
-- If you have trouble relating to SSL libraries installing Ruby using `rvm` or `rbenv` on a Mac, you may need to add a command line option to specify the location of the SSL libraries. Assuming you are using `brew`, this will probably result in a command looking something like:
-
-```bash
-rvm install 2.6.4 --with-openssl-dir='brew --prefix openssl'
-```
-
-### Tag & Release
-1. You'll need to push up a tag with the proper semantic versioning. Check out the [releases](https://github.com/rubyforgood/human-essentials/releases) to get the correct semantic versioning tag to use. For example, if the last release was `2.1.0` and the update is a hotfix then the next one should be `2.1.1`
-```sh
-git tag x.y.z
-git push --tags
-```
-2. Publish a release associated to that tag pushed up in the previous step. You can do that [here](https://github.com/rubyforgood/human-essentials/releases/new). Make sure to include details on what the release's updates achieves (we use this to notify our stakeholders on updates via email).
 
 ### Send Update Email To Human Essential Users
 To notify stakeholders about the deployment and updates via email, follow these steps:
@@ -267,6 +262,16 @@ puts "Email Address\n" + emails.join("\n") # Copy this output
 2. Use the copied list of emails to send an update audience via [Mailchimp](https://mailchimp.com/). Go to Audience > Manage Audience > Import Contacts and select "Copy and paste" option. Then paste the email list from the previous step.
 
 3. Draft and send the email with updates.
+
+### Additional Notes
+
+- The generated `schema.rb` file may include or omit `id: :serial` for `create table`, and `null: false` for `t.datetime`. According to Aaron, this can safely be ignored, and it is probably best to commit the schema.rb only if you have committed anything that would change the DB schema (i.e. a migration).
+- If you have trouble relating to SSL libraries installing Ruby using `rvm` or `rbenv` on a Mac, you may need to add a command line option to specify the location of the SSL libraries. Assuming you are using `brew`, this will probably result in a command looking something like:
+
+```bash
+rvm install 2.6.4 --with-openssl-dir='brew --prefix openssl'
+```
+
 
 
 # Acknowledgements
