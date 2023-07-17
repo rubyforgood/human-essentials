@@ -75,7 +75,7 @@ You can sign up [here](https://rubyforgood.slack.com/join/shared_invite/zt-1kfei
 
 ##  Getting Started 🛠️
 
-### Install Ruby
+### 1. Install Ruby
 You will need to first install the required ruby version specified in the [`.ruby-version`](.ruby-version) file. GoRails has a very detail oriented guide for installing ruby on Ubuntu, Windows, and macOSX. You can check out that guide [here](https://gorails.com/setup/osx/12-monterey). **Follow only the Installing Ruby step, as our project setup differs**
 
 
@@ -95,7 +95,7 @@ Once you've successfully installed ruby. You may proceed to the next section!
 **My RBENV installation did not work**
 The rbenv repository provides a [rbenv-doctor script](https://github.com/rbenv/rbenv-installer#rbenv-doctor) to verify the state of the rbenv installation and if a ruby version is installed
 
-### Install Postgres
+### 2. Install Postgres
 You must install postgres and run the database locally. Instructions differ depending on the operating system.
 
 Follow one of these guides to install postgres:
@@ -108,13 +108,13 @@ Create a `database.yml` file on `config/` directory with your database configura
 
 After completing this step, you should have both ruby and postgres installed. Now you can proceed to the next step which is to setup the application.
 
-### Run Setup
+### 3. Run Setup
 Run the following command should run all the neccessary steps to get up and running.
 ```
 bin/setup
 ```
 
-### Run the application
+### 4.  Run the application
 Run the following command to start the server locally.
 ```
 bin/start
@@ -122,7 +122,7 @@ bin/start
 
 You should be able to open up a browser and goto http://localhost:3000/ and see the human essentials page.
 
-### Login as a sample user
+### 5. Login as a sample user
 To login to the web application, use these default credentials:
 
 **Super Users**
