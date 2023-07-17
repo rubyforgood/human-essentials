@@ -78,10 +78,6 @@ You can sign up [here](https://rubyforgood.slack.com/join/shared_invite/zt-1kfei
 ### 1. Install Ruby
 Install the required ruby version specified in the [`.ruby-version`](.ruby-version) file. Visit the [Install Ruby on Rails](https://gorails.com/setup/osx/12-monterey) guide by GoRails for Ubuntu, Windows, and macOSX setup. ⚠️ Follow only the Installing Ruby step, as our project setup differs ⚠️ It is highly recommended you use a ruby version manager such as [rbenv](https://github.com/rbenv/rbenv), [asdf](https://asdf-vm.com/), or [rvm](https://rvm.io/). Verify that your Ruby installation by running `ruby -v`.
 
-### Troubleshooting
-**My RBENV installation did not work**
-The rbenv repository provides a [rbenv-doctor script](https://github.com/rbenv/rbenv-installer#rbenv-doctor) to verify the state of the rbenv installation and if a ruby version is installed
-
 ### 2. Install Postgres
 You must install postgres and run the database locally. Instructions differ depending on the operating system.
 
