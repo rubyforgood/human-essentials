@@ -1,8 +1,8 @@
 class KitsController < ApplicationController
   def index
-    @kits = current_organization.kits.includes(line_items: :item, inventory_items: :storage_location).class_filter(filter_params)
+    @items = Item.where(partner_key: "kit").includes(line_items: :item, inventory_items: :storage_location).class_filter(filter_params)
     unless params[:include_inactive_items]
-      @kits = @kits.active
+      @items = @items.active
     end
     @selected_filter_name = filter_params[:by_name]
   end

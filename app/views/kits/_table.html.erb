@@ -8,12 +8,12 @@
 </tr>
 </thead>
 <tbody>
-  <% @kits.each do |kit| %>
+  <% @items.each do |item| %>
     <tr>
-      <td><%= kit.name %></td>
+      <td><%= item.name %></td>
       <td>
         <ul>
-          <% kit.line_items.quantities_by_name.map do |id, item_hash| %>
+          <% item.line_items_quantities_by_name.map do |id, item_hash| %>
             <li><%= "#{item_hash[:quantity]} #{item_hash[:name]}" %></li>
           <% end %>
         </ul>
@@ -26,7 +26,7 @@
               <td> Quantity </td>
             </tr>
           </thead>
-          <% kit.inventory_items.map do |inventory_item| %>
+          <% item.inventory_items.map do |inventory_item| %>
             <% next if inventory_item.storage_location.discarded_at %>
             <tr>
               <td><%= inventory_item.storage_location.name %></td>
