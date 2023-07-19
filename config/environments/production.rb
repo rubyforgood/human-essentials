@@ -100,6 +100,7 @@ Rails.application.configure do
   #
   config.lograge.formatter = LogFormatter.new
   config.lograge.enabled = true
+  config.lograge.base_controller_class = 'ApplicationController'
   config.lograge.custom_payload do |controller|
     {
       host: controller.request.host,
