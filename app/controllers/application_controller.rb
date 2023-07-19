@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
     return @current_organization if @current_organization
     return nil unless current_role
 
-    return current_role.resource if current_role.resource.is_a?(Organization)
+    return current_role.resource if current_role&.resource&.is_a?(Organization)
 
     Organization.find_by(short_name: params[:organization_id])
   end
@@ -52,7 +52,7 @@ class ApplicationController < ActionController::Base
   def default_url_options(options = {})
     # Early return if the request is not authenticated and no
     # current_user is defined
-    return options if current_user.blank?
+    return options if current_user.blank? || current_role.blank?
 
     if current_organization.present? && !options.key?(:organization_id)
       options[:organization_id] = current_organization.to_param
@@ -66,6 +66,8 @@ class ApplicationController < ActionController::Base
   end
 
   def dashboard_path_from_current_role
+    return root_path if current_role.blank?
+
     if current_role.name == Role::SUPER_ADMIN.to_s
       admin_dashboard_path
     elsif current_role.name == Role::PARTNER.to_s
