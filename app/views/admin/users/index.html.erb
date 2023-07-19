@@ -34,6 +34,11 @@
                   <%= f.text_field(:search_name, class: 'filterrific-periodically-observed form-control') %>
                 </div>
                 <div class="col-3">
+                  <%= f.label :search_email, "Search By Email" %>
+                  <%= f.text_field(:search_email, class: 'filterrific-periodically-observed form-control') %>
+                </div>
+                
+                <div class="col-3">
                   <%= render_filterrific_spinner %>
                 </div>
                 <div clas="col-9">

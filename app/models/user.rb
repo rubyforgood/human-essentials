@@ -71,7 +71,8 @@ class User < ApplicationRecord
 
   filterrific(
     available_filters: [
-      :search_name
+      :search_name,
+      :search_email
     ]
   )
 
