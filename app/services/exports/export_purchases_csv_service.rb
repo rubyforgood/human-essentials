@@ -102,13 +102,17 @@ module Exports
     end
 
     def item_headers
-      # Define the item_headers by taking each item name
-      # and sort them alphabetically
-      item_names = purchases.map do |purchase|
-        purchase.line_items.map(&:item).map(&:name)
-      end.flatten
+      return @item_headers if @item_headers
 
-      item_names.sort.uniq
+      item_names = Set.new
+
+      purchases.each do |purchase|
+        purchase.line_items.each do |line_item|
+          item_names.add(line_item.item.name)
+        end
+      end
+
+      @item_headers = item_names.sort
     end
 
     def build_row_data(purchase)
