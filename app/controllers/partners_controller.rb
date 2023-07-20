@@ -3,7 +3,7 @@
 # of which Partners are associated with which Diaperbanks.
 class PartnersController < ApplicationController
   include Importable
-  before_action :authorize_user, only: :show
+  before_action :validate_user, only: :show
 
   def index
     @unfiltered_partners_for_statuses = Partner.where(organization: current_organization)
@@ -165,8 +165,8 @@ class PartnersController < ApplicationController
 
   private
 
-  def authorize_user
-    return if current_user.has_role?(Role::ORG_ADMIN, current_organization)
+  def validate_user
+    return if current_user.has_role?(Role::ORG_ADMIN, current_organization) || current_user.has_role?(Role::ORG_USER, current_organization)
 
     redirect_to partner_user_root_path, error: "You must be logged in as the essentials bank's organization administrator to approve partner applications!"
   end
