@@ -26,6 +26,7 @@ class ProductDrive < ApplicationRecord
   }
 
   has_many :donations, dependent: :nullify
+  has_many :product_drive_participants, -> { distinct }, through: :donations
   validates :name, presence:
     { message: "A name must be chosen." }
   validates :start_date, presence:

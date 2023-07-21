@@ -35,11 +35,24 @@ RSpec.describe ProductDriveParticipant, type: :model do
 
   context "Methods" do
     describe "volume" do
-      it "retrieves the amount of product that has been donated through this product drive" do
+      it "retrieves the amount of product that has been donated by participant" do
         dd = create(:product_drive)
         ddp = create(:product_drive_participant)
         create(:donation, :with_items, item_quantity: 10, source: Donation::SOURCES[:product_drive], product_drive: dd, product_drive_participant: ddp)
         expect(ddp.volume).to eq(10)
+      end
+    end
+
+    describe "volume_by_product_drive" do
+      it "retrieves the amount of product that has been donated through specific product drive" do
+        dd1 = create(:product_drive)
+        dd2 = create(:product_drive)
+        ddp = create(:product_drive_participant)
+        create(:donation, :with_items, item_quantity: 10, source: Donation::SOURCES[:product_drive], product_drive: dd1, product_drive_participant: ddp)
+        create(:donation, :with_items, item_quantity: 9, source: Donation::SOURCES[:product_drive], product_drive: dd2, product_drive_participant: ddp)
+        expect(ddp.volume).to eq(19)
+        expect(ddp.volume_by_product_drive(dd1.id)).to eq(10)
+        expect(ddp.volume_by_product_drive(dd2.id)).to eq(9)
       end
     end
 
