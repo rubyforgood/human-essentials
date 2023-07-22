@@ -33,6 +33,15 @@ RSpec.describe "/partners/profiles", type: :request do
       expect(response).to redirect_to(partners_profile_path)
     end
 
+    context "with no social media" do
+      it "shows an error" do
+        put partners_profile_path(partner,
+          partner: {name: "Partnerdude", profile: {website: "", no_social_media: false}})
+        expect(response).not_to redirect_to(anything)
+        expect(response.body).to include("No social media presence must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.")
+      end
+    end
+
     context "when updating an existing value to a blank value" do
       before do
         partner.profile.update!(city: "")
