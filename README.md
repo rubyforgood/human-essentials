@@ -1,4 +1,4 @@
-# Human Essentials 
+# Human Essentials
 <p align="center">
 <a href="https://app.digitalpublicgoods.net/a/10622">
 <img src="https://user-images.githubusercontent.com/667909/181150972-e59a77ab-b657-4893-aef9-d3df1384a506.png" alt="DPG Approved" height="40">
@@ -29,7 +29,6 @@
 <a href="https://github.com/rubyforgood/human-essentials/" alt="Watchers"><img src="https://img.shields.io/github/watchers/rubyforgood/human-essentials?style=social" /></a>
 </p>
 
-
 ## Mission 💖
 
 Human Essentials is an inventory management system built to address the needs of [Diaper Banks](https://nationaldiaperbanknetwork.org/diaper-need/) as directly and explicitly as possible and adapted to meet the needs of other Essentials Banks. Essentials Banks maintain inventory, receive donations and other human essentials supplies (e.g. diapers, period supplies), and issue distributions to community partner organizations. Like any non-profit, they also need to perform reports on this data and have day-to-day operational information they need. This application aims to serve those needs and facilitate the general operations of the Diaper Banks (e.g., using barcode readers, scale weighing, inventory audits).
@@ -44,100 +43,89 @@ We are proud of our achievements up to date but there is much more to do! This i
 
 Human Essentials is one of many projects initiated and run by Ruby for Good. You can find out more about Ruby for Good at https://rubyforgood.org
 
-
-
 ## Digital Public Good 🎉
- 
+
 The [Digital Public Goods Alliance](https://digitalpublicgoods.net/registry/) recognizes Human Essentials as a digital public good (DPG). This project supports the following Sustainable Development Goals:
 * [SDG 1](https://sdgs.un.org/goals/goal1) - End poverty in all its forms everywhere
 * [SDG 3](https://sdgs.un.org/goals/goal3) - Ensure healthy lives and promote well-being for all at all ages
 * [SDG 10](https://sdgs.un.org/goals/goal10) - Reduce inequality within and among countries
 
-## Uses
 Use as an Organization or Contribute as an Individual/Team to this Project:
 - [NGO Adoption Info](ngo.md) - information about how to use this DPG
 - [Skills Based Volunteering Info](sbv.md) - information about how to volunteer
 
-</br>
-
 # Welcome Contributors! 👋
 
-Thanks for checking us out! If you're new here, here are some things you should know: 
- - Issues tagged "Help Wanted" are self-contained and great for new contributors
- - Pull Requests are reviewed within a week
- - Ensure your build passes (`rubocop -a` is often necessary) and addresses the issue requirements
- - This project relies entirely on volunteers, so please be patient with communication
+Thanks for checking us out! If you're new here, here are some things you should know:
+- Issues tagged "Help Wanted" are self-contained and great for new contributors
+- Pull Requests are reviewed within a week or so
+- Ensure your build passes (`rubocop -a` is often necessary) and addresses the issue requirements
+- This project relies entirely on volunteers, so please be patient with communication
 
 ### Join us on slack 💬
 You can sign up [here](https://rubyforgood.slack.com/join/shared_invite/zt-1kfeimohe-KL~~~6Lkof7G94_7Ojd_Hw#/shared-invite/email) and find us in #human-essentials. Many helpful members are available to answer your questions. Just ask, and someone will be there to help you!
 
 ##  Getting Started 🛠️
 
-
-1. Install Ruby 
-   - Install the version specified in [`.ruby-version`](.ruby-version). 
-   - Visit the [Install Ruby on Rails](https://gorails.com/setup/osx/12-monterey) guide by GoRails for Ubuntu, Windows, and macOSX setup. ⚠️ Follow only the Installing Ruby step, as our project setup differs ⚠️ It is highly recommended you use a ruby version manager such as [rbenv](https://github.com/rbenv/rbenv), [asdf](https://asdf-vm.com/), or [rvm](https://rvm.io/). 
+1. Install Ruby
+   - Install the version specified in [`.ruby-version`](.ruby-version).
+   - Visit the [Install Ruby on Rails](https://gorails.com/setup/osx/12-monterey) guide by GoRails for Ubuntu, Windows, and macOSX setup. ⚠️ Follow only the Installing Ruby step, as our project setup differs ⚠️ It is highly recommended you use a ruby version manager such as [rbenv](https://github.com/rbenv/rbenv), [asdf](https://asdf-vm.com/), or [rvm](https://rvm.io/).
    - Verify that your Ruby installation works by running `ruby -v`.
 2. Install Postgres
    - Follow one of these guides: [MacOSX](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-macos), [Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-ubuntu-18-04).
-     - Do you develop on Windows? We'd love to hear (and for you to submit a PR explaining) how you do it. 🙏🏻 
+     - Do you develop on Windows? We'd love to hear (and for you to submit a PR explaining) how you do it. 🙏🏻
    - Create a `database.yml` file on `config/` directory with your database configurations. You can also copy the existing files called [`database.yml.example`](config/database.yml.example) and [`.env.example`](.env.example) and change the credentials.
 3. Run `bin/setup`
 4. Run `bin/start` and visit http://localhost:3000/ to see the human essentials page.
-5. Login as a sample user with these default credentials:
+5. Login as a sample user with these default credentials (which also work for [staging](https://staging.humanessentials.app/)):
 
-    <details>
-    <summary> Super Users 🦸🏽‍♀️ </summary>
-    <br>
-    
-    ```
+<details>
+  <summary> Super Users 🦸🏽‍♀️ </summary>
+
+  ```
     username: superadmin@example.com
     password: password!
-    ```
+  ```
+</details>
 
-    </details>
-    </br>
-    <details>
-    <summary> Bank Users 🏦 </summary>
-    <br>
-    
-    ```bash
+<details>
+  <summary> Bank Users 🏦 </summary>
+
+  ```
     Organization Admin
-      Email: org_admin1@example.com
-      Password: password!
+    Email: org_admin1@example.com
+    Password: password!
 
     User
-      Email: user_1@example.com
-      Password: password!
-    ```
-      </details>
-    </br>
+    Email: user_1@example.com
+    Password: password!
+  ```
+</details>
 
-    <details>
-    <summary> Partner Users 👥 </summary>
-    <br>
-    
-    ```bash
+<details>
+  <summary> Partner Users 👥 </summary>
+
+  ```
     Verified Partner
-      Email: verified@example.com
-      Password: password!
+    Email: verified@example.com
+    Password: password!
 
     Invited Partner
-      Email: invited@pawneehomeless.com
-      Password: password!
-      
-    Unverified Partner
-      Email: unverified@pawneepregnancy.com
-      Password: password!
-      
-    Recertification Required Partner
-      Email: recertification_required@example.com
-      Password: password!
-    ```
+    Email: invited@pawneehomeless.com
+    Password: password!
 
-    </details>
+    Unverified Partner
+    Email: unverified@pawneepregnancy.com
+    Password: password!
+
+    Recertification Required Partner
+    Email: recertification_required@example.com
+    Password: password!
+  ```
+</details>
 
 ## Troubleshooting 👷🏼‍♀️
+
 Please let us know by opening up an issue! We have many new contributors come through and it is likely what you experienced will happen to them as well.
 
 - *"My RBENV installation didn't work!"* - The rbenv repository provides a [rbenv-doctor script](https://github.com/rbenv/rbenv-installer#rbenv-doctor) to verify the installation and check if a ruby version is installed
@@ -147,12 +135,12 @@ Please let us know by opening up an issue! We have many new contributors come th
 Please feel free to contribute! Priority will be given to pull requests that address outstanding issues and have appropriate test coverage. Focus on issues tagged with the next milestone for higher priority.
 
 To contribute:
-*  Identify an unassigned issue
-*  Assign the issue to yourself to avoid duplicated efforts
-*  Fork the repo if you're not a contributor yet
-*  Create a new branch for the issue using the format `XXX-brief-description-of-feature`, where `XXX` is the issue number
+* Identify an unassigned issue
+* Assign the issue to yourself to avoid duplicated efforts (or request assignment by adding a comment)
+* Fork the repo if you're not a contributor yet
+* Create a new branch for the issue using the format `XXX-brief-description-of-feature`, where `XXX` is the issue number
 * If you create a new model run `bundle exec annotate` from the root of the app
-* Create tests to provide proof that your work fixes the Issue (if you need help with this, please reach out!)
+* Create tests to validate that your work fixes the Issue (if you need help with this, please reach out!)
 * Commit locally using descriptive messages that indicate the affected parts of the app
 * Ensure all tests pass successfully; if any fail, fix the issues causing the failures
 * Make a final commit if tests needed fixing
@@ -160,10 +148,12 @@ To contribute:
 * Create a pull request and indicate the addressed issue in the title
 
 ### Squashing Commits
+
 Consider the balance of "polluting the git log with commit messages" vs. "providing useful detail about the history of changes in the git log". If you have several smaller commits that serve a one purpose, you are encouraged to squash them into a single commit. There's no hard and fast rule here about this (for now), just use your best judgement. Please don't squash other people's commits. Everyone who contributes here deserves credit for their work! :)
 
 ### Pull Request Merging
-At that point, someone will work with you on doing a code review. If TravisCI gives :+1: to the PR merging, we can then merge your code in; if your feature branch was in this main repository, the branch will be deleted after the PR is merged.
+
+At this point, someone will work with you on doing a code review. If the automated tests gives :+1: to the PR merging, we can then do any additional (staging) testing as needed. Finally if all looks good the core team will merge your code in; if your feature branch was in this main repository, the branch will be deleted after the PR is merged. Deploys are currently done about once a week!
 
 ### In-flight Pull Requests
 
@@ -267,7 +257,6 @@ Thanks to Rachel (from PDX Diaperbank) for all of her insight, support, and assi
 
 # License
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Frubyforgood%2Fdiaper?ref=badge_large)
-
 
 # ✨ Contributors ✨
 
@@ -436,5 +425,4 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
-
 
