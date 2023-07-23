@@ -68,9 +68,10 @@
 
                 <%= f.input :intake_location, :collection => current_organization.storage_locations.active_locations.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Intake Location", :include_blank => true, wrapper: :input_group %>
 
-                <%= f.label :partner_form_fields, "Partner Profile Sections" %>
+                <%= f.label :partner_form_fields, 'Partner Profile Sections' %>
+                
+                <%= f.select(:partner_form_fields, Organization::ALL_PARTIALS, { include_hidden: true }, { multiple: true, class: 'form-control custom-select', 'data-controller': 'select2', 'data-select2-config-value': '{}'}) %>
 
-                <%= f.select(:partner_form_fields, Organization::ALL_PARTIALS, {include_hidden: true}, { multiple: true, class: 'form-control select2 input_group partner_fields_dropdown' }) %>
                 <br>
                 <%= f.input :default_storage_location, :collection => current_organization.storage_locations.active_locations.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Storage Location", :include_blank => true, wrapper: :input_group %>
 
