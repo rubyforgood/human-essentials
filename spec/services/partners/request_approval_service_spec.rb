@@ -5,17 +5,28 @@ describe Partners::RequestApprovalService do
     subject { described_class.new(partner: partner).call }
     let(:partner) { create(:partner) }
 
-    it 'should return an instance of itself' do
-      expect(subject).to be_a_kind_of(Partners::RequestApprovalService)
-    end
-
     context 'when the partner is already awaiting approval' do
       before do
         partner.update!(status: 'awaiting_review')
       end
 
       it 'should return an error saying it the partner is already requested approval' do
-        expect(subject.errors[:base]).to eq(["partner has already requested approval"])
+        expect(subject.errors[:base]).to include("This partner has already requested approval.")
+      end
+    end
+
+    context 'when the partner is not yet waiting for approval and there is a profile error' do
+      it 'should return an error' do
+        partner.profile.update(website: '', facebook: '', twitter: '', instagram: '', no_social_media_presence: false)
+        expect(subject.errors.full_messages)
+          .to eq(['no_social_media_presence must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.'])
+      end
+    end
+
+    context 'when the partner is not yet waiting for approval and there is no profile error' do
+      it 'does not have an error' do
+        partner.profile.update(website: 'website URL', facebook: '', twitter: '', instagram: '', no_social_media_presence: false)
+        expect(subject.errors.full_messages).to be_empty
       end
     end
 
@@ -24,6 +35,7 @@ describe Partners::RequestApprovalService do
       before do
         allow(OrganizationMailer).to receive(:partner_approval_request).with(partner: partner, organization: partner.organization).and_return(fake_mailer)
         expect(partner.status).not_to eq(:awaiting_review)
+        partner.profile.update(website: 'website URL')
       end
 
       it 'should set the status on the partner record to awaiting_review' do
