@@ -228,29 +228,9 @@ Delayed::Job.last.invoke_job
 
 You can replace the `last` query with any other query (e.g. `Delayed::Job.find(123)`).
 
-### Send Update Email To Human Essential Users
-To notify stakeholders about the deployment and updates via email, follow these steps:
-
-1. Fetch all the users' emails from our human essentials production database
-```ruby
-cap production rails:console
-emails = User.all.pluck(:email) 
-puts "Email Address\n" + emails.join("\n") # Copy this output
-```
-2. Use the copied list of emails to send an update audience via [Mailchimp](https://mailchimp.com/). Go to Audience > Manage Audience > Import Contacts and select "Copy and paste" option. Then paste the email list from the previous step.
-
-3. Draft and send the email with updates.
-
 ### Additional Notes
 
-- The generated `schema.rb` file may include or omit `id: :serial` for `create table`, and `null: false` for `t.datetime`. According to Aaron, this can safely be ignored, and it is probably best to commit the schema.rb only if you have committed anything that would change the DB schema (i.e. a migration).
-- If you have trouble relating to SSL libraries installing Ruby using `rvm` or `rbenv` on a Mac, you may need to add a command line option to specify the location of the SSL libraries. Assuming you are using `brew`, this will probably result in a command looking something like:
-
-```bash
-rvm install 2.6.4 --with-openssl-dir='brew --prefix openssl'
-```
-
-
+- Only commit the schema.rb only if you have committed anything that would change the DB schema (i.e. a migration).
 
 # Acknowledgements
 Thanks to Rachel (from PDX Diaperbank) for all of her insight, support, and assistance with this application, and Sarah ( http://www.sarahkasiske.com/ ) for her wonderful design and CSS work at Ruby For Good '17!
