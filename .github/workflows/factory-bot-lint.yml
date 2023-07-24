@@ -49,7 +49,6 @@ jobs:
           POSTGRES_HOST_AUTH_METHOD: trust
           POSTGRES_PORT: 5432
         run: |
-          bundle exec skylight disable_dev_warning
           bundle exec rake db:create
           bundle exec rake db:schema:load
       - name: Run factory_bot:lint

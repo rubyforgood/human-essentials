@@ -18,12 +18,12 @@ RSpec.describe DistributionMailer, type: :mailer do
       expect(mail.to).to eq([@distribution.request.user_email])
       expect(mail.cc).to eq([@distribution.partner.email])
       expect(mail.from).to eq(["no-reply@humanessentials.app"])
-      expect(mail.subject).to eq("test subject from DEFAULT")
+      expect(mail.subject).to eq("test subject from STARTER")
     end
 
     it "renders the body with distributions text" do
       expect(mail.body.encoded).to match("Distribution comment")
-      expect(mail.subject).to eq("test subject from DEFAULT")
+      expect(mail.subject).to eq("test subject from STARTER")
     end
 
     context "with deliver_method: :pick_up" do

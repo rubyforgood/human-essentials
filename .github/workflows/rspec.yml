@@ -61,7 +61,6 @@ jobs:
           POSTGRES_PORT: 5432
           RAILS_ENV: test
         run: |
-          bundle exec skylight disable_dev_warning
           bundle exec rake db:create
           bundle exec rake db:schema:load
       - name: Run rspec

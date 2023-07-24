@@ -120,7 +120,13 @@ RSpec.describe Partners::Profile, type: :model do
       let(:profile) { FactoryBot.build(:partner_profile, website: "", twitter: "", facebook: "", instagram: "", no_social_media_presence: false) }
 
       it "should not be valid" do
-        expect(profile.valid?).to eq(false)
+        expect(profile.valid?(:edit)).to eq(false)
+      end
+
+      it "should be valid if media_information is not needed" do
+        org = profile.partner.organization
+        org.update!(partner_form_fields: %w[agency_stability])
+        expect(profile.valid?(:edit)).to eq(true)
       end
     end
 
@@ -128,7 +134,7 @@ RSpec.describe Partners::Profile, type: :model do
       let(:profile) { FactoryBot.build(:partner_profile, website: "", twitter: "", facebook: "", instagram: "", no_social_media_presence: true) }
 
       it "should be valid" do
-        expect(profile.valid?).to eq(true)
+        expect(profile.valid?(:edit)).to eq(true)
       end
     end
 
@@ -137,27 +143,27 @@ RSpec.describe Partners::Profile, type: :model do
 
       it "with just a website it should be valid" do
         profile.update(website: "some website URL", twitter: "", facebook: "", instagram: "")
-        expect(profile.valid?).to eq(true)
+        expect(profile.valid?(:edit)).to eq(true)
       end
 
       it "with just twitter it should be valid" do
         profile.update(website: "", twitter: "some twitter URL", facebook: "", instagram: "")
-        expect(profile.valid?).to eq(true)
+        expect(profile.valid?(:edit)).to eq(true)
       end
 
       it "with just facebook it should be valid" do
         profile.update(website: "", twitter: "", facebook: "some facebook URL", instagram: "")
-        expect(profile.valid?).to eq(true)
+        expect(profile.valid?(:edit)).to eq(true)
       end
 
       it "with just instagram it should be valid" do
         profile.update(website: "", twitter: "", facebook: "", instagram: "some instagram URL")
-        expect(profile.valid?).to eq(true)
+        expect(profile.valid?(:edit)).to eq(true)
       end
 
       it "with every social media option it should be valid" do
         profile.update(website: "some website URL", twitter: "some twitter URL", facebook: "some facebook URL", instagram: "some instagram URL")
-        expect(profile.valid?).to eq(true)
+        expect(profile.valid?(:edit)).to eq(true)
       end
     end
   end
