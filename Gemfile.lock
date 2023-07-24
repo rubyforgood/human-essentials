@@ -163,6 +163,8 @@ GEM
       dotenv (= 2.8.1)
       railties (>= 3.2)
     erubi (1.12.0)
+    et-orbi (1.2.7)
+      tzinfo
     execjs (2.8.1)
     factory_bot (6.2.0)
       activesupport (>= 5.0.0)
@@ -211,6 +213,9 @@ GEM
       sanitize (< 7)
     foreman (0.87.2)
     formatador (0.3.0)
+    fugit (1.8.1)
+      et-orbi (~> 1, >= 1.2.7)
+      raabro (~> 1.4)
     geocoder (1.8.1)
     globalid (1.1.0)
       activesupport (>= 5.0)
@@ -402,6 +407,7 @@ GEM
     public_suffix (5.0.1)
     puma (6.3.0)
       nio4r (~> 2.0)
+    raabro (1.4.0)
     racc (1.6.2)
     rack (2.2.7)
     rack-protection (2.1.0)
@@ -512,6 +518,8 @@ GEM
       ffi (~> 1.12)
     ruby2_keywords (0.0.5)
     rubyzip (2.3.2)
+    rufus-scheduler (3.9.1)
+      fugit (~> 1.1, >= 1.1.6)
     sanitize (6.0.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -695,6 +703,7 @@ DEPENDENCIES
   rubocop
   rubocop-performance
   rubocop-rails (~> 2.19.1)
+  rufus-scheduler
   sass-rails
   shoulda-matchers (~> 5.3)
   simple_form
