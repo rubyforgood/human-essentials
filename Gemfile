@@ -97,6 +97,8 @@ gem 'httparty'
 gem 'icalendar', require: false
 # JSON Web Token encoding / decoding (e.g. for links in e-mails)
 gem "jwt"
+# Scheduling
+gem 'rufus-scheduler'
 # Used to manage periodic cron-like jobs
 gem "clockwork"
 
