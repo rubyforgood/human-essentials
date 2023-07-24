@@ -57,6 +57,10 @@ module Exports
     end
 
     def item_headers
+      @item_headers ||= compute_item_headers
+    end
+
+    def compute_item_headers
       item_names = items.pluck(:name)
 
       # Adding this to handle cases in which a requested item
