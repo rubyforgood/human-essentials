@@ -170,6 +170,16 @@ class Item < ApplicationRecord
     inventory_items.find_by(storage_location_id: storage_location_id)
   end
 
+  def line_items_quantities_by_name
+    results = {}
+    self.line_items.each do |li|
+      next if li.quantity.zero?
+
+      results[li.id] = { item_id: li.item.id, name: li.item.name, quantity: li.quantity }
+    end
+    results
+  end
+
   private
 
   def update_associated_kit_name
