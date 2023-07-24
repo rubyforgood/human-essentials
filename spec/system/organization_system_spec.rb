@@ -97,15 +97,12 @@ RSpec.describe "Organization management", type: :system, js: true do
         # select first option from Required Partner Fields
         select('Media Information', from: 'organization_partner_form_fields', visible: false)
         click_on "Save"
-      
         expect(page).to have_content('Media Information')
         expect(@organization.reload.partner_form_fields).to eq(['media_information'])
-      
         # deselect previously chosen Required Partner Field
         click_on "Edit"
         unselect('Media Information', from: 'organization_partner_form_fields', visible: false)
         click_on "Save"
-      
         expect(page).to_not have_content('Media Information')
         expect(@organization.reload.partner_form_fields).to eq([])
       end
