@@ -42,14 +42,14 @@ RSpec.describe "Audit management", type: :system, js: true do
       it "*Does* include inactive items in the line item fields" do
         visit subject
 
-        select storage_location.name, from: "From storage location"
+        select storage_location.name, from: "Storage location"
         expect(page).to have_content(item.name)
         select item.name, from: "audit_line_items_attributes_0_item_id"
 
         item.update(active: false)
 
         page.refresh
-        select storage_location.name, from: "From storage location"
+        select storage_location.name, from: "Storage location"
         expect(page).to have_content(item.name)
       end
 
@@ -80,7 +80,7 @@ RSpec.describe "Audit management", type: :system, js: true do
       it "should be able to save progress of an audit" do
         visit subject
         click_link "New Audit"
-        select storage_location.name, from: "From storage location"
+        select storage_location.name, from: "Storage location"
         select Item.last.name, from: "audit_line_items_attributes_0_item_id"
         fill_in "audit_line_items_attributes_0_quantity", with: quantity.to_s
 
@@ -102,7 +102,7 @@ RSpec.describe "Audit management", type: :system, js: true do
       it "should be able to confirm the audit from the #new page", js: true do
         visit subject
         click_link "New Audit"
-        select storage_location.name, from: "From storage location"
+        select storage_location.name, from: "Storage location"
         select Item.last.name, from: "audit_line_items_attributes_0_item_id"
         fill_in "audit_line_items_attributes_0_quantity", with: quantity.to_s
 
@@ -235,6 +235,26 @@ RSpec.describe "Audit management", type: :system, js: true do
           end
           expect(page).not_to have_content("Delete Audit")
           # Actual Deletion(`delete :destroy`) Check is done in audits_controller_spec
+        end
+
+        context "with a storage location containing multiple items" do
+          let(:item2) { create(:item) }
+
+          before do
+            create(:inventory_item, storage_location_id: storage_location.id, item_id: item2.id, quantity: 50)
+          end
+
+          it "creates an adjustment with the differential of only the audited item" do
+            item_quantity = 10
+
+            visit subject
+            expect do
+              accept_confirm do
+                click_link "Finalize Audit"
+              end
+              expect(page).to have_content("Audit is Finalized.")
+            end.to change { storage_location.size }.by(quantity - item_quantity)
+          end
         end
       end
     end
