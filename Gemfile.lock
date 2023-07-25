@@ -198,14 +198,14 @@ GEM
       faraday (~> 1.0)
     ffi (1.15.5)
     filterrific (5.2.5)
-    flipper (0.28.2)
+    flipper (0.28.3)
       concurrent-ruby (< 2)
     flipper-active_record (0.28.2)
       activerecord (>= 4.2, < 8)
       flipper (~> 0.28.2)
-    flipper-ui (0.28.2)
+    flipper-ui (0.28.3)
       erubi (>= 1.0.0, < 2.0.0)
-      flipper (~> 0.28.2)
+      flipper (~> 0.28.3)
       rack (>= 1.4, < 3)
       rack-protection (>= 1.5.3, <= 4.0.0)
       sanitize (< 7)
@@ -263,7 +263,7 @@ GEM
       activerecord
       kaminari-core (= 1.2.2)
     kaminari-core (1.2.2)
-    knapsack_pro (5.3.2)
+    knapsack_pro (5.3.3)
       rake
     language_server-protocol (3.17.0.3)
     launchy (2.5.0)
@@ -573,7 +573,7 @@ GEM
       rubocop-performance (~> 1.18.0)
     stimulus-rails (1.2.1)
       railties (>= 6.0.0)
-    strong_migrations (1.5.0)
+    strong_migrations (1.6.0)
       activerecord (>= 5.2)
     terser (1.1.17)
       execjs (>= 0.3.0, < 3)
@@ -703,7 +703,7 @@ DEPENDENCIES
   sprockets (~> 4.2.0)
   standard (~> 1.30)
   stimulus-rails
-  strong_migrations (= 1.5.0)
+  strong_migrations (= 1.6.0)
   terser
   turbo-rails
   web-console
