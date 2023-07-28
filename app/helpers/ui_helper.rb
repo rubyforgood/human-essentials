@@ -62,7 +62,7 @@ module UiHelper
     options[:id] = id
     additional_properties = {
       data: {
-        toggle: "dropdown"
+        'bs-toggle': "dropdown"
       },
       "aria-haspopup": true,
       "aria-expanded": true
@@ -97,7 +97,7 @@ module UiHelper
   end
 
   def modal_button_to(target_id, options = {})
-    properties = { data: { toggle: "modal" } }
+    properties = { data: { 'bs-toggle': "modal" } }
     _link_to target_id, { icon: "dot-circle-o", type: "outline-primary", text: "Set 'text' option", size: "md" }.merge(options), properties
   end
 

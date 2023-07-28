@@ -1,6 +1,6 @@
 <% if current_user.has_role?(Role::SUPER_ADMIN) %>
 <li class="nav-item dropdown">
-  <a class="nav-link" data-toggle="dropdown" href="#">
+  <a class="nav-link" data-bs-toggle="dropdown" href="#">
     <i class="fa fa-lock"></i> Administration
   </a>
   <ul class="dropdown-menu">
@@ -25,7 +25,7 @@
 </li>
 
 <li class="nav-item dropdown">
-  <a class="nav-link" data-toggle="dropdown" href="#">
+  <a class="nav-link" data-bs-toggle="dropdown" href="#">
     <i class="fa fa-calendar"></i>
     <span class="badge badge-danger navbar-badge" style="background-color: #007bff"><%= current_organization.distributions.upcoming.count.to_s.gsub(/^0$/, '') %></span>
   </a>
@@ -40,7 +40,7 @@
 </li>
 
 <li class="nav-item dropdown">
-  <a class="nav-link" data-toggle="dropdown" href="#">
+  <a class="nav-link" data-bs-toggle="dropdown" href="#">
     <i class="fa fa-bell-o"></i>
     <% if current_organization && (current_organization.requests.status_pending.size > 0 || current_organization.partners.awaiting_review.size > 0) %>
     <span class="badge badge-warning navbar-badge" style="background-color: #ffc107"><%= (current_organization.requests.status_pending.size + current_organization.partners.awaiting_review.size) %></span>
@@ -59,7 +59,7 @@
   </div>
 </li>
 <li class="nav-item dropdown">
-  <a class="nav-link" data-toggle="dropdown" href="#">
+  <a class="nav-link" data-bs-toggle="dropdown" href="#">
     <%= current_user.name %>
   </a>
   <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
