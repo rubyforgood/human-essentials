@@ -123,4 +123,8 @@ RSpec.describe Adjustment, type: :model do
       expect(new_adjustment.save).to be_truthy
     end
   end
+
+  describe 'versioning' do
+    it { is_expected.to be_versioned }
+  end
 end

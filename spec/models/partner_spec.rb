@@ -338,4 +338,8 @@ RSpec.describe Partner, type: :model do
       it { is_expected.to eq({families_served: 0, children_served: 0, family_zipcodes: 0, family_zipcodes_list: []}) }
     end
   end
+
+  describe 'versioning' do
+    it { is_expected.to be_versioned }
+  end
 end

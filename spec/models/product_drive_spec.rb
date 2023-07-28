@@ -173,4 +173,8 @@ RSpec.describe ProductDrive, type: :model do
       expect(product_drive.donation_source_view).to eq("Test Drive (product drive)")
     end
   end
+
+  describe 'versioning' do
+    it { is_expected.to be_versioned }
+  end
 end
