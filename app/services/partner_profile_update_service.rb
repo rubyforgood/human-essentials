@@ -16,7 +16,6 @@ class PartnerProfileUpdateService
 
       if @return_value
         @profile.served_areas.destroy_all
-        @profile.reload
         @profile.attributes = @profile_params
         @profile.save!(context: :edit)
         @profile.reload
