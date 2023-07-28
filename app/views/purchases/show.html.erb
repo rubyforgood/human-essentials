@@ -15,7 +15,7 @@
             <% end %>
           </li>
           <li class="breadcrumb-item"><%= link_to "Purchases", (purchases_path) %></li>
-          <li class="breadcrumb-item"><a href="#"><%= @purchase.purchased_from_view %> on <%= @purchase.created_at.to_fs(:distribution_date) %></a></li>
+          <li class="breadcrumb-item"><a href="#"><%= @purchase.purchased_from_view %> on <%= @purchase.issued_at.to_fs(:distribution_date) %></a></li>
         </ol>
       </div>
     </div>
@@ -39,7 +39,7 @@
               </thead>
               <tbody>
               <tr>
-              <td><%= @purchase.created_at.to_fs(:distribution_date) %></td>
+              <td><%= @purchase.issued_at.to_fs(:distribution_date) %> (entered: <%= @purchase.created_at.to_fs(:distribution_date) %>)</td>
               <td><%= @purchase.purchased_from_view %></td>
               <td><%= @purchase.storage_view %></td>
               </tr>

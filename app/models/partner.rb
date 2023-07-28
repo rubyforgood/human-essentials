@@ -17,6 +17,7 @@
 #
 
 class Partner < ApplicationRecord
+  has_paper_trail
   resourcify
   require "csv"
 

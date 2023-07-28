@@ -16,6 +16,7 @@
 #  ndbn_member_id       :bigint
 #
 class AccountRequest < ApplicationRecord
+  has_paper_trail
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true
   validates :request_details, presence: true, length: { minimum: 50 }

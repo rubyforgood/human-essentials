@@ -81,6 +81,7 @@
 #
 module Partners
   class Profile < Base
+    has_paper_trail
     self.table_name = "partner_profiles"
     belongs_to :partner
     has_one :organization, through: :partner, class_name: "::Organization"
