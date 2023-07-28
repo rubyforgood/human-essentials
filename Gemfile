@@ -198,8 +198,8 @@ group :test do
   gem 'simplecov'
   # More concise test ("should") matchers
   gem 'shoulda-matchers', '~> 5.3'
-  # Selenium webdriver automatic installation and update.
-  gem 'webdrivers', '~> 5.2'
+  # Nice interface to Chrome, handles updates itself now
+  gem 'selenium-webdriver'
   # Mock HTTP requests and ensure they are not called during tests.
   gem "webmock", "~> 3.18"
 end
