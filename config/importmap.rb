@@ -10,7 +10,7 @@ pin "@hotwired/stimulus", to: "stimulus.min.js", preload: true
 pin "@hotwired/stimulus-loading", to: "stimulusloading.js", preload: true
 pin_all_from "app/javascript/controllers", under: "controllers"
 pin_all_from "app/javascript/utils", under: "utils"
-pin "bootstrap", to: "https://ga.jspm.io/npm:bootstrap@4.6.2/dist/js/bootstrap.js"
+pin "bootstrap", to: "bootstrap.min.js", preload: true
 pin "popper.js", to: "https://ga.jspm.io/npm:popper.js@1.16.1/dist/umd/popper.js"
 pin "highcharts", to: "https://ga.jspm.io/npm:highcharts@10.3.2/highcharts.js"
 pin "select2", to: "https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"
