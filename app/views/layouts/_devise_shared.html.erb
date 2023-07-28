@@ -32,10 +32,10 @@
     $(document).ready(function() {
       <% if Rails.env.staging? %>
         // Prevents users from closing the modal by clicking outside of it or pressing the esc key
-        $('#warningModal').modal({
+        new bootstrap.Modal('#warningModal', {
           backdrop: 'static',
           keyboard: false
-        });
+        }).show();
         // Adds click event handler on the checkbox
         $('#defaultCheck1').click(function(){
           // If the checkbox is checked, enable the continue button
