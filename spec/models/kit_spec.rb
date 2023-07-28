@@ -130,7 +130,7 @@ RSpec.describe Kit, type: :model do
     expect(kit.item.active).to eq(true)
   end
 
-  describe 'versioning' do
+  describe "versioning" do
     it { is_expected.to be_versioned }
   end
 end

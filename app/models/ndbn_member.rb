@@ -7,7 +7,7 @@
 #  updated_at     :datetime         not null
 #  ndbn_member_id :bigint           not null, primary key
 #
-class NDBNMember < ApplicationRecord 
+class NDBNMember < ApplicationRecord
   has_paper_trail
   self.primary_key = "ndbn_member_id"
 

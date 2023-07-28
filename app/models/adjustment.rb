@@ -11,7 +11,7 @@
 #  user_id             :bigint
 #
 
-class Adjustment < ApplicationRecord 
+class Adjustment < ApplicationRecord
   has_paper_trail
   belongs_to :organization
   belongs_to :storage_location

@@ -21,7 +21,7 @@
 #  organization_id              :integer
 #
 
-class Item < ApplicationRecord 
+class Item < ApplicationRecord
   has_paper_trail
   include Filterable
   include Exportable

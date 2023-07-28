@@ -16,7 +16,7 @@
 #  organization_id :integer
 #
 
-class Vendor < ApplicationRecord 
+class Vendor < ApplicationRecord
   has_paper_trail
   include Provideable
   include Geocodable

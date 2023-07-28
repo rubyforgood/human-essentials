@@ -28,7 +28,7 @@ RSpec.describe Partners::ItemRequest, type: :model do
     it { should validate_presence_of(:partner_key) }
   end
 
-  describe 'versioning' do
+  describe "versioning" do
     it { is_expected.to be_versioned }
   end
 end

@@ -9,7 +9,7 @@
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #
-class Question < ApplicationRecord 
+class Question < ApplicationRecord
   has_paper_trail
   has_rich_text :answer
   validates :answer, presence: true
