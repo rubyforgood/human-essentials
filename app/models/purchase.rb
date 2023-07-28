@@ -18,7 +18,7 @@
 #  vendor_id                                :integer
 #
 
-class Purchase < ApplicationRecord 
+class Purchase < ApplicationRecord
   has_paper_trail
   include MoneyRails::ActionViewExtension
 

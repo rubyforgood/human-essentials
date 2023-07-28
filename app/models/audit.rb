@@ -12,7 +12,7 @@
 #  user_id             :bigint
 #
 
-class Audit < ApplicationRecord 
+class Audit < ApplicationRecord
   has_paper_trail
   belongs_to :user
   belongs_to :organization

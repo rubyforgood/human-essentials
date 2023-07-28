@@ -27,7 +27,7 @@ RSpec.describe ItemCategory, type: :model do
     it { should have_and_belong_to_many(:partner_groups) }
   end
 
-  describe 'versioning' do
+  describe "versioning" do
     it { is_expected.to be_versioned }
   end
 end

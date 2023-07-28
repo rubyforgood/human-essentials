@@ -30,7 +30,7 @@
 #  ndbn_member_id                 :bigint
 #
 
-class Organization < ApplicationRecord 
+class Organization < ApplicationRecord
   has_paper_trail
   resourcify
 

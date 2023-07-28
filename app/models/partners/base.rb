@@ -1,5 +1,5 @@
 module Partners
-  class Base < ApplicationRecord 
+  class Base < ApplicationRecord
     self.abstract_class = true
   end
 end

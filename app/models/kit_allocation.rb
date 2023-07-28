@@ -10,7 +10,7 @@
 #  organization_id     :bigint           not null
 #  storage_location_id :bigint           not null
 #
-class KitAllocation < ApplicationRecord 
+class KitAllocation < ApplicationRecord
   has_paper_trail
   include Itemizable
   belongs_to :storage_location

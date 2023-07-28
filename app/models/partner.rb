@@ -16,7 +16,7 @@
 #  partner_group_id            :bigint
 #
 
-class Partner < ApplicationRecord 
+class Partner < ApplicationRecord
   has_paper_trail
   resourcify
   require "csv"

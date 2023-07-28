@@ -9,7 +9,7 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
-class County < ApplicationRecord 
+class County < ApplicationRecord
   has_paper_trail
   has_many :served_areas, class_name: "Partners::ServedArea", dependent: :destroy
 

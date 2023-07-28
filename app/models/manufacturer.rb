@@ -9,7 +9,7 @@
 #  organization_id :bigint
 #
 
-class Manufacturer < ApplicationRecord 
+class Manufacturer < ApplicationRecord
   has_paper_trail
   belongs_to :organization
 

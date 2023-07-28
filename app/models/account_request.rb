@@ -15,7 +15,7 @@
 #  updated_at           :datetime         not null
 #  ndbn_member_id       :bigint
 #
-class AccountRequest < ApplicationRecord 
+class AccountRequest < ApplicationRecord
   has_paper_trail
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true

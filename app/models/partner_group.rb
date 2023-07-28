@@ -11,7 +11,7 @@
 #  updated_at      :datetime         not null
 #  organization_id :bigint
 #
-class PartnerGroup < ApplicationRecord 
+class PartnerGroup < ApplicationRecord
   has_paper_trail
   include Deadlinable
 

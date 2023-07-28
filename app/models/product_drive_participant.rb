@@ -16,7 +16,7 @@
 #  organization_id :integer
 #
 
-class ProductDriveParticipant < ApplicationRecord 
+class ProductDriveParticipant < ApplicationRecord
   has_paper_trail
   include Provideable
   include Geocodable

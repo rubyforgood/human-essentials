@@ -91,7 +91,7 @@ RSpec.describe Question, type: :model do
     end
   end
 
-  describe 'versioning' do
+  describe "versioning" do
     it { is_expected.to be_versioned }
   end
 end
