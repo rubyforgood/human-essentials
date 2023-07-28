@@ -48,4 +48,8 @@ RSpec.describe Partners::ChildItemRequest, type: :model do
       expect(subject).to eq(item_id)
     end
   end
+
+  describe 'versioning' do
+    it { is_expected.to be_versioned }
+  end
 end
