@@ -19,35 +19,11 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-md-12">
-        <div class="card" id="summary">
-          <div class="card-header">
-            <h5 class="card-title"><%= current_organization.name %></h5>
-            <div class="card-tools">
-              <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                <i class="fas fa-minus"></i>
-              </button>
-              <button type="button" class="btn btn-tool" data-card-widget="remove">
-                <i class="fas fa-times"></i>
-              </button>
-            </div>
-          </div>
-          <!-- /.card-header -->
-          <div class="card-body">
-            <div class="row">
-              <%= render partial: "getting_started_prompt", locals: {org_stats: @org_stats} %>
-
-              <div class="col-md-8">
-                <%== display_logo_or_name %>
-              </div>
-              <!-- /.col -->
-              <div class="col-md-4">
-
-              </div>
-              <!-- /.col -->
-            </div>
-            <!-- /.row -->
-          </div>
-          <div class="card-footer">
+        <%= render(
+          "card",
+          id: "summary",
+          header: content_tag(:h5, current_organization.name, class: "card-title"),
+          footer: capture { %>
             <div class="row">
               <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
@@ -81,8 +57,23 @@
                 </div>
               </div>
             </div>
+          <% },
+          type: :plain,
+        ) do %>
+          <div class="row">
+            <%= render partial: "getting_started_prompt", locals: {org_stats: @org_stats} %>
+
+            <div class="col-md-8">
+              <%== display_logo_or_name %>
+            </div>
+            <!-- /.col -->
+            <div class="col-md-4">
+
+            </div>
+            <!-- /.col -->
           </div>
-        </div>
+          <!-- /.row -->
+        <% end %>
       </div>
     </div>
   </div>
@@ -154,7 +145,7 @@
           gradient: "success",
           title: "Itemized Distributions",
           subtitle: @selected_date_range,
-          table: true,
+          type: :table,
         ) do %>
           <div class='p-2 pull-right'>
             <%= download_button_to(itemized_breakdown_distributions_path(format: :csv, filters: { date_range: date_range_params }), {text: "Export To CSV"}) %>
@@ -320,7 +311,7 @@
           gradient: "warning",
           title: "Itemized Donations",
           subtitle: @selected_date_range,
-          table: true,
+          type: :table,
         ) do %>
           <%= render partial: "itemized_donations_partial", locals: { itemized_breakdown: @itemized_donation_data } %>
         <% end %>

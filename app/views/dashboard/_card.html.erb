@@ -5,8 +5,8 @@
   header_div ||= nil
   id ||= nil
   subtitle ||= nil
-  table ||= false
   title ||= nil
+  type ||= :box # or :table or :plain
 
   options ||= {}
   options.symbolize_keys!
@@ -42,19 +42,27 @@
         <% end
       end
   %>
-  <% if table %>
-    <div class="box-body table-responsive no-padding">
-      <%= yield %>
-    </div>
-  <% else %>
-    <div class="card-body">
-      <div class="position-relative mb-4">
-        <div class="box-body text-center float-center">
-          <%= yield %>
+  <% case type.to_sym
+    when :box %>
+      <div class="card-body">
+        <div class="position-relative mb-4">
+          <div class="box-body text-center float-center">
+            <%= yield %>
+          </div>
         </div>
       </div>
-    </div>
-  <% end %>
+    <% when :plain %>
+      <div class="card-body">
+        <%= yield %>
+      </div>
+    <% when :table %>
+      <div class="box-body table-responsive no-padding">
+        <%= yield %>
+      </div>
+  <% else
+    raise "Unknown card type: #{type}"
+  end %>
+
   <%=
     footer_div ||
       if footer
