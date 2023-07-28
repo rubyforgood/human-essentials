@@ -11,7 +11,7 @@
     <div class="modal-body">
       <% flash.each do |key, value| %>
         <div class="<%= flash_class(key) %> .alert-dismissible">
-          <a href="#" class="close" data-dismiss="alert" aria-label="Close" style="text-decoration: none;"><%= fa_icon('times') %></a>
+          <a href="#" class="close btn-close" data-dismiss="alert" aria-label="Close" style="text-decoration: none;"><%= fa_icon('times') %></a>
           <%= value %>
         </div>
       <% end %>
