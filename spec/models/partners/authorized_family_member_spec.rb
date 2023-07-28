@@ -28,6 +28,10 @@ RSpec.describe Partners::AuthorizedFamilyMember, type: :model do
       expect(authorized_family_member.display_name).to eq("#{authorized_family_member.first_name} #{authorized_family_member.last_name}")
     end
   end
+
+  describe 'versioning' do
+    it { is_expected.to be_versioned }
+  end
 end
 
 

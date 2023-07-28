@@ -14,6 +14,7 @@
 #
 module Partners
   class AuthorizedFamilyMember < Base
+    has_paper_trail
     belongs_to :family
     has_many :child_item_requests, dependent: :nullify
 

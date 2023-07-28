@@ -1,6 +1,7 @@
 module Partners
   class FamilyRequest
     include ActiveModel::Model
+    has_paper_trail
 
     attr_accessor :comments, :partner
     attr_reader :items
