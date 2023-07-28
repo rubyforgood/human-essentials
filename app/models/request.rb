@@ -16,7 +16,8 @@
 #  partner_user_id :integer
 #
 
-class Request < ApplicationRecord
+class Request < ApplicationRecord 
+  has_paper_trail
   include Discard::Model
   include Exportable
 

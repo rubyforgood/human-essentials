@@ -10,10 +10,11 @@
 #  storage_location_id :integer
 #
 
-class InventoryItem < ApplicationRecord
+class InventoryItem < ApplicationRecord 
+  has_paper_trail
   MAX_INT = 2**31
 
-  has_paper_trail
+    has_paper_trail
 
   EARLIEST_VERSION = "2021-08-02"
 

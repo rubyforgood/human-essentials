@@ -9,7 +9,8 @@
 #  updated_at      :datetime         not null
 #  organization_id :integer          not null
 #
-class ItemCategory < ApplicationRecord
+class ItemCategory < ApplicationRecord 
+  has_paper_trail
   validates :name, presence: true, uniqueness: { scope: :organization_id }
   validates :organization, presence: true
   validates :description, length: { maximum: 250 }

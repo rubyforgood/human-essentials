@@ -15,7 +15,8 @@
 #  updated_at      :datetime         not null
 #  organization_id :integer
 #
-class StorageLocation < ApplicationRecord
+class StorageLocation < ApplicationRecord 
+  has_paper_trail
   require "csv"
 
   WAREHOUSE_TYPES = [

@@ -6,7 +6,8 @@
 #  role_id :bigint
 #  user_id :bigint
 #
-class UsersRole < ApplicationRecord
+class UsersRole < ApplicationRecord 
+  has_paper_trail
   belongs_to :user
   belongs_to :role
 

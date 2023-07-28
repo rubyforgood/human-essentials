@@ -11,7 +11,8 @@
 #  to_id           :integer
 #
 
-class Transfer < ApplicationRecord
+class Transfer < ApplicationRecord 
+  has_paper_trail
   belongs_to :organization, inverse_of: :transfers
   belongs_to :from, class_name: "StorageLocation", inverse_of: :transfers_from
   belongs_to :to, class_name: "StorageLocation", inverse_of: :transfers_to

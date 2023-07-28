@@ -9,7 +9,8 @@
 #  updated_at      :datetime         not null
 #  organization_id :bigint
 #
-class AnnualReport < ApplicationRecord
+class AnnualReport < ApplicationRecord 
+  has_paper_trail
   belongs_to :organization, inverse_of: :annual_reports
   validates :year, numericality: { greater_than: 1900, less_than: 10_000 }
 
