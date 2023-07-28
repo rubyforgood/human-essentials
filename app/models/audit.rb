@@ -13,6 +13,7 @@
 #
 
 class Audit < ApplicationRecord
+  has_paper_trail
   belongs_to :user
   belongs_to :organization
   belongs_to :storage_location

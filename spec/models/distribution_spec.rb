@@ -8,6 +8,7 @@
 #  delivery_method        :integer          default("pick_up"), not null
 #  issued_at              :datetime
 #  reminder_email_enabled :boolean          default(FALSE), not null
+#  shipping_cost          :decimal(8, 2)
 #  state                  :integer          default("scheduled"), not null
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
@@ -62,6 +63,29 @@ RSpec.describe Distribution, type: :model do
     it "ensures that the issued at is no earlier than 2000" do
       d = build(:distribution, issued_at: "1999-12-31")
       expect(d).not_to be_valid
+    end
+
+    context "when delivery method is shipped" do
+      context "shipping cost is negative" do
+        let(:distribution) { build(:distribution, delivery_method: "shipped", shipping_cost: -13) }
+        it "will not allow to save distribution" do
+          expect(distribution).not_to be_valid
+        end
+      end
+
+      context "shipping cost is none negative" do
+        let(:distribution) { create(:distribution, delivery_method: "shipped", shipping_cost: 13.09) }
+        it "allows to save distribution" do
+          expect(distribution).to be_valid
+        end
+      end
+    end
+
+    context "when delivery method is other then shipped" do
+      let(:distribution) { create(:distribution, delivery_method: "delivery", shipping_cost: -13) }
+      it "allows to save distribution" do
+        expect(distribution).to be_valid
+      end
     end
   end
 
@@ -168,6 +192,19 @@ RSpec.describe Distribution, type: :model do
 
       distribution = create(:distribution, created_at: yesterday)
       expect(distribution.issued_at).to eq(distribution.created_at)
+    end
+
+    context "#before_save" do
+      context "#reset_shipping_cost" do
+        context "when delivery_method is other then shipped" do
+          let(:distribution) { create(:distribution, delivery_method: "delivery", shipping_cost: 12.05) }
+
+          it "distribution will be created successfully and the shipping_cost will be zero" do
+            expect(distribution.errors).to be_empty
+            expect(distribution.shipping_cost).to be_nil
+          end
+        end
+      end
     end
   end
 
@@ -286,5 +323,9 @@ RSpec.describe Distribution, type: :model do
         expect(distribution_details[7]).to eq distribution.agency_rep
       end
     end
+  end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
   end
 end

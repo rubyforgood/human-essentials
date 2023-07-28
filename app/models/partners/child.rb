@@ -21,6 +21,7 @@
 #
 module Partners
   class Child < Base
+    has_paper_trail
     serialize :child_lives_with, Array
     belongs_to :family
     has_many :child_item_requests, dependent: :destroy

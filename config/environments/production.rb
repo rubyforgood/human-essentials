@@ -1,3 +1,5 @@
+require_relative '../log_formatter'
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -58,11 +60,8 @@ Rails.application.configure do
 
   config.log_level = :info
 
-  # Prepend all log lines with the following tags.
-  config.log_tags = [:request_id]
-
   # Use a different cache store in production.
-  # config.cache_store = :mem_cache_store
+  config.cache_store = :redis_cache_store, { url: ENV['REDIS_URL'] }
 
   # Use a real queuing backend for Active Job (and separate queues per environment)
   # config.active_job.queue_adapter     = :resque
@@ -79,9 +78,6 @@ Rails.application.configure do
 
   # Send deprecation notices to registered listeners.
   config.active_support.deprecation = :notify
-
-  # Use default logging formatter so that PID and timestamp are not suppressed.
-  config.log_formatter = ::Logger::Formatter.new
 
   # Store files locally.
   config.active_storage.service = :azure
@@ -102,11 +98,14 @@ Rails.application.configure do
   # contains parameters (excluding password) that can
   # help with debugging
   #
+  config.lograge.formatter = LogFormatter.new
   config.lograge.enabled = true
   config.lograge.custom_payload do |controller|
     {
       host: controller.request.host,
-      user_id: controller.current_user.try(:id)
+      user_id: controller.current_user.try(:id),
+      org_id: controller.try(:current_organization).try(:id),
+      partner_id: controller.try(:current_partner).try(:id)
     }
   end
   config.lograge.custom_options = lambda do |event|
