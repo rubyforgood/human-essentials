@@ -34,7 +34,8 @@
 #  partner_id             :bigint
 #
 
-class User < ApplicationRecord
+class User < ApplicationRecord 
+  has_paper_trail
   rolify
   include Discard::Model
 

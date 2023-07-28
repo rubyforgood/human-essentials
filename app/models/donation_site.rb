@@ -12,7 +12,8 @@
 #  organization_id :integer
 #
 
-class DonationSite < ApplicationRecord
+class DonationSite < ApplicationRecord 
+  has_paper_trail
   require "csv"
 
   belongs_to :organization

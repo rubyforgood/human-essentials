@@ -11,7 +11,8 @@
 #  organization_id :bigint
 #  user_id         :bigint           not null
 #
-class BroadcastAnnouncement < ApplicationRecord
+class BroadcastAnnouncement < ApplicationRecord 
+  has_paper_trail
   belongs_to :user
   belongs_to :organization, optional: true
   validates :link, format: URI::DEFAULT_PARSER.make_regexp(%w[http https]), allow_blank: true

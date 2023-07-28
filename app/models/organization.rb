@@ -30,7 +30,8 @@
 #  ndbn_member_id                 :bigint
 #
 
-class Organization < ApplicationRecord
+class Organization < ApplicationRecord 
+  has_paper_trail
   resourcify
 
   DIAPER_APP_LOGO = Rails.root.join("public", "img", "humanessentials_logo.png")

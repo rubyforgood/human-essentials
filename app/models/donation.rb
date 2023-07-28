@@ -17,7 +17,8 @@
 #  storage_location_id          :integer
 #
 
-class Donation < ApplicationRecord
+class Donation < ApplicationRecord 
+  has_paper_trail
   SOURCES = { product_drive: "Product Drive",
               manufacturer: "Manufacturer",
               donation_site: "Donation Site",
