@@ -90,4 +90,8 @@ RSpec.describe Question, type: :model do
       expect(question.punctuate(sentences)).to eq "This is a sentence. This is another sentence. This is a third sentence. "
     end
   end
+
+  describe 'versioning' do
+    it { is_expected.to be_versioned }
+  end
 end

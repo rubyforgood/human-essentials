@@ -478,4 +478,8 @@ RSpec.describe Organization, type: :model do
       expect(org.earliest_reporting_year).to eq(7.years.ago.year)
     end
   end
+
+  describe 'versioning' do
+    it { is_expected.to be_versioned }
+  end
 end

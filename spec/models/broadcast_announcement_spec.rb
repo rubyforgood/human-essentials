@@ -72,4 +72,8 @@ RSpec.describe BroadcastAnnouncement, type: :model do
       expect(BroadcastAnnouncement.filter_announcements(1).include?(announcement_3)).to be(false)
     end
   end
+
+  describe 'versioning' do
+    it { is_expected.to be_versioned }
+  end
 end

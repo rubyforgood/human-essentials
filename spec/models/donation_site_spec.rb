@@ -45,4 +45,8 @@ RSpec.describe DonationSite, type: :model do
       expect(donation_site.longitude).not_to eq(nil)
     end
   end
+
+  describe 'versioning' do
+    it { is_expected.to be_versioned }
+  end
 end

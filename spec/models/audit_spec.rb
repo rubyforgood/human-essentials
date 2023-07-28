@@ -97,4 +97,8 @@ RSpec.describe Audit, type: :model do
       expect(Audit.storage_locations_audited_for(@organization).to_a).to match_array([storage_location1, storage_location2])
     end
   end
+
+  describe 'versioning' do
+    it { is_expected.to be_versioned }
+  end
 end
