@@ -47,8 +47,6 @@ FactoryBot.define do
     reminder_day { 10 }
     deadline_day { 20 }
 
-    logo { Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/logo.jpg"), "image/jpeg") }
-
     trait :without_deadlines do
       reminder_day { nil }
       deadline_day { nil }
@@ -56,6 +54,11 @@ FactoryBot.define do
 
     after(:create) do |instance, evaluator|
       Organization.seed_items(instance) unless evaluator.skip_items
+    end
+
+    after(:build) do |instance|
+      file = Rails.root.join("spec/fixtures/files/logo.jpg")
+      instance.logo.attach(io: File.open(file), filename: File.basename(file))
     end
   end
 end
