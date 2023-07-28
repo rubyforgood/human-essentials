@@ -151,4 +151,8 @@ RSpec.describe AccountRequest, type: :model do
       .with(account_request_id: account_request.id)
     expect(mail_double).to have_received(:deliver_later)
   end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
+  end
 end
