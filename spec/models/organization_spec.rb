@@ -317,6 +317,17 @@ RSpec.describe Organization, type: :model do
     end
   end
 
+  describe 'is_active' do
+    let!(:active_organization) { create(:organization) }
+    let!(:inactive_organization) { create(:organization) }
+    let!(:active_user) { create(:user, organization: active_organization, last_sign_in_at: 1.month.ago) }
+    let!(:inactive_user) { create(:user, organization: inactive_organization, last_sign_in_at: 6.months.ago) }
+
+    it 'returns active organizations' do
+      expect(Organization.is_active).to contain_exactly(active_organization)
+    end
+  end
+
   describe "total_inventory" do
     it "returns a sum total of all inventory at all storage locations" do
       item = create(:item)
