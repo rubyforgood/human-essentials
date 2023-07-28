@@ -10,7 +10,7 @@ class HistoricalTrendService
     @organization.items.active.sort.each do |item|
       next if item.line_items.where(itemizable_type: @type, item: item).blank?
 
-      month_offset = [*1..12].rotate(12 - Time.zone.today.month)
+      month_offset = [*1..12].rotate(Time.zone.today.month)
 
       dates = (1..12).index_with { |i| 0 }
 
