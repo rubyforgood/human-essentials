@@ -49,6 +49,7 @@ RSpec.feature "Distributions by County", type: :system do
     end
 
     click_on "Filter"
+    click_on "Reporting & Auditing"
     click_on "Distributions by County"
   end
 end
