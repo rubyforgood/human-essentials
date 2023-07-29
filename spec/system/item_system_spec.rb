@@ -161,7 +161,7 @@ RSpec.describe "Item management", type: :system do
     let(:storage) { create(:storage_location, :with_items, item: item_pullups, item_quantity: num_pullups_in_donation, name: storage_name) }
     let!(:aux_storage) { create(:storage_location, :with_items, item: item_pullups, item_quantity: num_pullups_second_donation, name: "a secret secondary location") }
     let(:num_pullups_in_donation) { 666 }
-    let(:num_pullups_second_donation) { 1 }
+    let(:num_pullups_second_donation) { 15 }
     let(:num_tampons_in_donation) { 42 }
     let(:num_tampons_second_donation) { 17 }
     let!(:donation_tampons) { create(:donation, :with_items, storage_location: storage, item_quantity: num_tampons_in_donation, item: item_tampons) }
@@ -188,6 +188,27 @@ RSpec.describe "Item management", type: :system do
       expect(tab_items_quantity_location_text).to have_content num_tampons_in_donation + num_tampons_second_donation
       expect(tab_items_quantity_location_text).to have_content item_pullups.name
       expect(tab_items_quantity_location_text).to have_content item_tampons.name
+    end
+
+    it "should display an Item Inventory table", js: true do
+      click_link "Item Inventory" # href="#sectionD"
+      tab_items_quantity_location_text = page.find(".table-items-location", visible: true).text
+      expect(tab_items_quantity_location_text).to have_content "Quantity"
+      expect(tab_items_quantity_location_text).to have_content item_pullups.name
+      expect(tab_items_quantity_location_text).to have_content item_tampons.name
+      expect(tab_items_quantity_location_text).to have_content num_pullups_in_donation + num_pullups_second_donation
+      expect(tab_items_quantity_location_text).to have_content num_tampons_in_donation + num_tampons_second_donation
+      expect(tab_items_quantity_location_text).not_to have_content storage_name
+      expect(tab_items_quantity_location_text).not_to have_content num_pullups_in_donation
+      expect(tab_items_quantity_location_text).not_to have_content num_pullups_second_donation
+      expect(tab_items_quantity_location_text).not_to have_content num_tampons_in_donation
+      expect(tab_items_quantity_location_text).not_to have_content num_tampons_second_donation
+      expandable_row = find("td", text: item_tampons.name).find(:xpath, "..")
+      expandable_row.click
+      expanded_row = find(".expandable-body", visible: true).text
+      expect(expanded_row).to have_content storage_name
+      expect(expanded_row).to have_content num_tampons_in_donation
+      expect(expanded_row).to have_content num_tampons_second_donation
     end
   end
 

@@ -1,0 +1,14 @@
+<% row_item = row.last %>
+<tr data-widget="expandable-table" aria-expanded="false">
+  <td><%= link_to(row_item[:item_name], item_url(row_item[:item_id])) %></td>
+  <td class="numeric"><%= row_item[:quantity] %></td>
+  <td class="numeric"><%= row_item[:item_on_hand_minimum_quantity] %></td>
+  <td class="numeric"><%= row_item[:item_on_hand_recommended_quantity] %></td>
+</tr>
+<tr class="expandable-body">
+  <td colspan="4">
+    <% row_item[:locations].each do |location_name, quantity| %>
+      <p><%= "#{location_name} - #{quantity} units" %></p>
+    <% end %>
+  </td>
+</tr>
