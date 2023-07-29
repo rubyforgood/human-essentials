@@ -20,7 +20,7 @@
     <div class="row">
       <div class="col-md-12">
         <%= render(
-          "card",
+          "shared/card",
           id: "summary",
           header: content_tag(:h5, current_organization.name, class: "card-title"),
           footer: capture { %>
@@ -83,7 +83,7 @@
     <div class="row">
       <div class="col-lg-6">
         <% if @broadcast_announcements.any? %>
-          <div class="card" id="distributions">
+          <div class="shared/card" id="distributions">
             <div class="card-header border-0 bg-gradient-warning">
               <h3 class="card-title">Announcements
                 <small>from Human Essentials</small></h3>
@@ -124,7 +124,7 @@
               "See more..."
             end
           render(
-            "card",
+            "shared/card",
             id: "outstanding",
             gradient: "warning",
             title: "Outstanding Requests",
@@ -142,7 +142,7 @@
         %>
 
         <%= render(
-          "card",
+          "shared/card",
           id: "distributions",
           gradient: "info",
           title: "Distributions",
@@ -167,7 +167,7 @@
         <% end %>
 
         <%= render(
-          "card",
+          "shared/card",
           gradient: "success",
           title: "Itemized Distributions",
           subtitle: @selected_date_range,
@@ -181,7 +181,7 @@
         <% end %>
 
         <%= render(
-          "card",
+          "shared/card",
           gradient: "warning",
           title: "Activity",
           subtitle: @selected_date_range,
@@ -228,7 +228,7 @@
       <div class="col-lg-6">
 
         <%= render(
-          "card",
+          "shared/card",
           id: "donations",
           title: "Donations (All Sources)",
           subtitle: @selected_date_range,
@@ -254,7 +254,7 @@
         <% end %>
 
         <%= render(
-          "card",
+          "shared/card",
           id: "product_drives",
           gradient: "info",
           title: "Product Drives",
@@ -284,7 +284,7 @@
         <% end %>
 
         <%= render(
-          "card",
+          "shared/card",
           id: "manufacturers",
           gradient: "success",
           title: "Manufacturer Donations",
@@ -313,7 +313,7 @@
         <% end %>
 
         <%= render(
-          "card",
+          "shared/card",
           id: "purchases",
           gradient: "secondary",
           title: "Purchases",
@@ -331,17 +331,6 @@
             <%= render partial: "purchase", collection: @recent_purchases, as: :purchase %>
           </div>
         <% end %>
-
-        <%= render(
-          "card",
-          gradient: "warning",
-          title: "Itemized Donations",
-          subtitle: @selected_date_range,
-          type: :table,
-        ) do %>
-          <%= render partial: "itemized_donations_partial", locals: { itemized_breakdown: @itemized_donation_data } %>
-        <% end %>
-
       </div>
     </div>
   </div>
