@@ -18,12 +18,6 @@ class OrganizationDashboardPage < OrganizationPage
     end
   end
 
-  def create_new_purchase
-    within purchases_section do
-      click_link "New Purchase"
-    end
-  end
-
   def product_drive_total_donations
     within product_drives_section do
       parse_formatted_integer find(".total_received_donations").text
@@ -130,12 +124,6 @@ class OrganizationDashboardPage < OrganizationPage
     end
   end
 
-  def recent_purchase_links
-    within purchases_section do
-      all(".purchase a").map(&:text)
-    end
-  end
-
   def select_date_filter_range(range_name)
     find("#filters_date_range").click
 
@@ -216,10 +204,6 @@ class OrganizationDashboardPage < OrganizationPage
 
   def org_logo_selector
     ".organization-logo"
-  end
-
-  def purchases_section
-    find "#purchases"
   end
 
   def outstanding_selector
