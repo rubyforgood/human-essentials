@@ -1,55 +1,48 @@
 version: "3"
-# One time, run
-# docker-compose up -d db
-# docker-compose run --rm app bin/setup
-#
-# Periodically, run
-# docker-compose build app
-# docker-compose run --rm app bin/update
-#
-# To run specs
-# docker-compose run --rm app bundle exec rspec
-#
-# To develop, run
-# docker-compose up
-#
-# To run a shell
-# docker-compose run --rm app bin/rails c
+
+x-common-vars: &common-vars
+  PG_USERNAME: postgres
+  PG_PASSWORD: postgres
+  PG_HOST: db
 x-base-app-settings: &base-app-settings
-  image: human-essentials
-  volumes:
-    - .:/app
-  extra_hosts: # This lets us use host.docker.internal on osx/linux
-    host.docker.internal: host-gateway
-  environment:
-    - PG_USERNAME=postgres
-    - PG_PASSWORD=postgres
-    - PG_HOST=host.docker.internal
-    - RAILS_DEVELOPMENT_HOSTS=host.docker.internal
   depends_on:
     - db
+  image: human-essentials
+  environment:
+    <<: *common-vars
+  networks:
+    - human-essentials
+  volumes:
+    - .:/app
+
 services:
   app:
+    profiles:
+      - build
     <<: *base-app-settings
     build: .
     command: echo Base image only for building
-    profiles:
-      - build
   web:
     <<: *base-app-settings
     ports:
-      - "3000:3000" # main web interface
-    command: bundle exec rails s -p 3000 -b 0.0.0.0
+      - "3000:3000"
+    command: bash -c "bundle install && bundle exec rails s -p 3000 -b 0.0.0.0"
   worker:
     <<: *base-app-settings
     command: bundle exec rails jobs:work
   db:
-    image: postgres:latest
-    volumes:
-      - dev-db-volume:/var/lib/postgresql/data
-    ports:
-      - "5432:5432" # local psql cli
+    image: "postgres:${POSTGRES_VERSION:-latest}"
     environment:
       - POSTGRES_PASSWORD=postgres
+    networks:
+      - human-essentials
+    ports:
+      - "5432:5432" # local psql cli
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
 volumes:
-  dev-db-volume: # Creates a named persistent volume (yes, with no value set)
+  postgres:
+
+networks:
+  human-essentials:
