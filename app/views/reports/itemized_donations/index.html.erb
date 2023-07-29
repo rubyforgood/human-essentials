@@ -1,29 +1,31 @@
 <%= render(
-  "shared/card",
-  gradient: "warning",
+  "shared/filtered_card",
+  id: "purchases",
+  gradient: "secondary",
   title: "Itemized Donations",
   subtitle: @selected_date_range,
   type: :table,
+  filter_url: reports_itemized_donations_path
 ) do %>
 
-  <table class="table table-hover striped">
-    <thead>
+<table class="table table-hover striped">
+  <thead>
     <tr>
       <th>&nbsp;&nbsp;&nbsp;Item</th>
       <th>Total Donated</th>
       <th>Total On Hand</th>
     </tr>
-    </thead>
-    <% # Ordering from highest distributed to lowest %>
-    <% @itemized_donation_data.each do |item| %>
-      <tbody>
-        <tr>
-          <td>&nbsp;&nbsp;&nbsp;<%= item[:name] %></td>
-          <td><%= item[:donated] %></td>
-          <td><%= item[:current_onhand] || "Unknown" %></td>
-        </tr>
-      <% end %>
+  </thead>
+  <% # Ordering from highest distributed to lowest %>
+  <% @itemized_donation_data.each do |item| %>
+    <tbody>
+      <tr>
+        <td>&nbsp;&nbsp;&nbsp;<%= item[:name] %></td>
+        <td><%= item[:donated] %></td>
+        <td><%= item[:current_onhand] || "Unknown" %></td>
+      </tr>
+    <% end %>
     </tbody>
-  </table>
+</table>
 
 <% end %>
