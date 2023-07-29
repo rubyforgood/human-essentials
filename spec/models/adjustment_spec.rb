@@ -25,7 +25,6 @@ RSpec.describe Adjustment, type: :model do
       expect(build(:adjustment, :with_items, item_quantity: 10, item: create(:item), storage_location: create(:storage_location))).to be_valid
     end
 
-
     it "allows you to remove all the inventory that exists in the storage location" do
       storage_location1 = create(:storage_location, organization: @organization)
       item1 = create(:item)

@@ -21,7 +21,7 @@ class AdjustmentCreateService
         @adjustment.save
         @adjustment.storage_location.increase_inventory increasing_adjustment
         @adjustment.storage_location.decrease_inventory decreasing_adjustment
-      rescue InsufficientAllotment => e
+      rescue InsufficientAllotment
         raise InsufficientAllotment
       end
     end
