@@ -62,6 +62,11 @@
           <i class="nav-icon fa fa-circle-o"></i> New Purchase
         <% end %>
       </li>
+      <li class="nav-item <%= 'active' if current_page?(purchases_summary_path(organization_id: current_user.organization)) %>">
+        <%= link_to(purchases_summary_path(organization_id: current_user.organization), class: "nav-link #{"active" if current_page?(purchases_summary_path)}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Purchases Summary
+        <% end %>
+      </li>
     </ul>
   </li>
   <li class="nav-item <%= 'active' if current_page?(requests_path) %>">

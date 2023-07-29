@@ -7,8 +7,6 @@ class DashboardController < ApplicationController
 
     @donations = current_organization.donations.during(helpers.selected_range)
     @recent_donations = @donations.recent
-    @purchases = current_organization.purchases.during(helpers.selected_range)
-    @recent_purchases = @purchases.recent.includes(:vendor)
 
     distributions = current_organization.distributions.includes(:partner).during(helpers.selected_range)
     @recent_distributions = distributions.recent
