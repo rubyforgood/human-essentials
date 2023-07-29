@@ -250,7 +250,7 @@ SimpleForm.setup do |config|
     b.optional :pattern
     b.optional :min_max
     b.optional :readonly
-    b.use :label, class: 'sr-only'
+    b.use :label, class: 'sr-only visually-hidden'
 
     b.use :input, class: 'form-control', error_class: 'is-invalid', valid_class: 'is-valid'
     b.use :error, wrap_with: { tag: 'div', class: 'invalid-feedback' }
