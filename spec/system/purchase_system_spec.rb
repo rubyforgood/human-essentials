@@ -130,7 +130,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           select Item.alphabetized.first.name, from: "purchase_line_items_attributes_0_item_id"
           select Vendor.first.business_name, from: "purchase_vendor_id"
           fill_in "purchase_line_items_attributes_0_quantity", with: "5"
-          fill_in "purchase_issued_at", with: "01/01/2001"
+          fill_in "purchase_issued_at", with: "2001-01-01"
           fill_in "purchase_amount_spent", with: "10"
 
           expect do
