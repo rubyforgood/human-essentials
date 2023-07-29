@@ -12,11 +12,11 @@
   <thead>
     <tr>
       <th>&nbsp;&nbsp;&nbsp;Item</th>
-      <th>Total Donated</th>
-      <th>Total On Hand</th>
+      <th class="text-right">Total Donated</th>
+      <th class="text-right">Total On Hand</th>
     </tr>
   </thead>
-  <% # Ordering from highest distributed to lowest %>
+
   <% @itemized_donation_data.each do |item| %>
     <tbody>
       <tr>
