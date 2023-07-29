@@ -885,6 +885,23 @@ RSpec.describe "Dashboard", type: :system, js: true do
         org_dashboard_page.visit
         expect(org_dashboard_page.outstanding_requests).to be_empty
       end
+
+      context "with many pending requests" do
+        let(:num_requests) { 50 }
+        let(:limit) { 25 }
+        before do
+          create_list :request, num_requests, :pending
+          org_dashboard_page.visit
+        end
+
+        it "displays a limited number of requests" do
+          expect(org_dashboard_page.outstanding_requests.length).to eq limit
+        end
+
+        it "has a link with the number of other requests" do
+          expect(org_dashboard_page.outstanding_requests_link).to have_content num_requests - limit
+        end
+      end
     end
   end
 
