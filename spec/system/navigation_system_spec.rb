@@ -17,6 +17,18 @@ RSpec.describe "Navigation", type: :system, js: true do
         end
       end
 
+      describe "Reporting & Auditing submenu", focus: true do
+        let(:reports) { ["Inventory Audit", "Annual Survey", "Distributions by County"] }
+        before { click_link("Reporting & Auditing") }
+
+        it "shows submenu navigation options" do
+          sidebar = page.find(".sidebar")
+          reports.each do |report_name|
+            expect(sidebar).to have_link(report_name)
+          end
+        end
+      end
+
       context "with collapsed sidebar" do
         before { click_link("collapse") }
 

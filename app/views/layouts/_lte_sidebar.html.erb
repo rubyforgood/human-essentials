@@ -189,6 +189,11 @@
             <i class="nav-icon fa fa-circle-o"></i> Annual Survey
           <% end %>
         </li>
+        <li class="nav-item <%= active_class(['reports']) %>">
+          <%= link_to(distributions_by_county_report_path(filters: { date_range: date_range_params }), class: "nav-link #{active_class(['reports'])}") do %>
+            <i class="nav-icon fa fa-circle-o"></i> Distributions by County
+          <% end %>
+        </li>
       </ul>
     </li>
   <% end %>
