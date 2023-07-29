@@ -115,6 +115,32 @@
           </div>
         <% end %>
 
+        <%=
+          outstanding_type = @outstanding_requests.empty? ? :box : :table
+          outstanding_footer =
+            if @outstanding_requests.count > 25
+              "And #{@outstanding_requests.count - 25} more..."
+            else
+              "See more..."
+            end
+          render(
+            "card",
+            id: "outstanding",
+            gradient: "warning",
+            title: "Outstanding Requests",
+            type: outstanding_type,
+            footer: link_to(outstanding_footer, requests_path),
+            footer_options: { class: "text-center" },
+          ) do
+            if @outstanding_requests.empty?
+              "No outstanding requests!"
+            else
+              render "outstanding_requests",
+                outstanding_requests: @outstanding_requests.take(25)
+            end
+          end
+        %>
+
         <%= render(
           "card",
           id: "distributions",
