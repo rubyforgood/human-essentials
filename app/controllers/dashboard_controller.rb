@@ -29,5 +29,7 @@ class DashboardController < ApplicationController
 
     # passing nil here filters the announcements that didn't come from an organization
     @broadcast_announcements = BroadcastAnnouncement.filter_announcements(nil)
+
+    @outstanding_requests = Request.where(status: %i[pending started]).order(:created_at)
   end
 end

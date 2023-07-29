@@ -812,6 +812,80 @@ RSpec.describe "Dashboard", type: :system, js: true do
         end
       end
     end
+
+    describe "Outstanding Requests" do
+      it "has a card" do
+        org_dashboard_page.visit
+        expect(org_dashboard_page).to have_outstanding_section
+      end
+
+      context "when empty" do
+        before { org_dashboard_page.visit }
+
+        it "displays a message" do
+          expect(org_dashboard_page.outstanding_section).to have_content "No outstanding requests!"
+        end
+
+        it "has a See More link" do
+          expect(org_dashboard_page.outstanding_requests_link).to have_content "See more"
+        end
+      end
+
+      context "with a pending request" do
+        let!(:request) { create :request, :pending }
+        let!(:outstanding_request) do
+          org_dashboard_page.visit
+          requests = org_dashboard_page.outstanding_requests
+          expect(requests.length).to eq 1
+          requests.first
+        end
+
+        it "displays the date" do
+          date = outstanding_request.find "td.date"
+          expect(date.text).to eq request.created_at.strftime("%m/%d/%Y")
+        end
+
+        it "displays the partner" do
+          expect(outstanding_request).to have_content request.partner.name
+        end
+
+        it "displays the requestor" do
+          expect(outstanding_request).to have_content request.partner_user.name
+        end
+
+        it "displays the comment" do
+          expect(outstanding_request).to have_content request.comments
+        end
+
+        it "links to the request" do
+          expect { outstanding_request.find('a').click }
+            .to change { page.current_path }
+            .to "/#{org_short_name}/requests/#{request.id}"
+        end
+
+        it "has a See More link" do
+          expect(org_dashboard_page.outstanding_requests_link).to have_content "See more"
+        end
+      end
+
+      it "does display a started request" do
+        create :request, :started
+        org_dashboard_page.visit
+        expect(org_dashboard_page.outstanding_requests.length).to eq 1
+      end
+
+      it "does not display a fulfilled request" do
+        create :request, :fulfilled
+        org_dashboard_page.visit
+        expect(org_dashboard_page.outstanding_requests).to be_empty
+      end
+
+      it "does not display a discarded request" do
+        create :request, :discarded
+        org_dashboard_page.visit
+        expect(org_dashboard_page.outstanding_requests).to be_empty
+      end
+    end
   end
 
   def valid_bracketing_dates(date_range_info)
