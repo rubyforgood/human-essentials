@@ -95,14 +95,16 @@ RSpec.describe "Organization management", type: :system, js: true do
 
       it 'can select and deselect Required Partner Fields' do
         # select first option in from Required Partner Fields
-        find('.partner_fields_dropdown').click.find(:xpath, '//*[@id="organization_partner_form_fields"]/option[1]').click
+        find('.partner_fields_dropdown').click
+        first('.partner_fields_dropdown li').click
         click_on "Save"
         expect(page).to have_content('Media Information')
         expect(@organization.reload.partner_form_fields).to eq(['media_information'])
 
         # deselect previously choosen Required Partner Field
         click_on "Edit"
-        find('.partner_fields_dropdown').click.find(:xpath, '//*[@id="organization_partner_form_fields"]/option[1]').click
+        find('.partner_fields_dropdown').click
+        first('.partner_fields_dropdown li').click
         click_on "Save"
 
         expect(page).to_not have_content('Media Information')
