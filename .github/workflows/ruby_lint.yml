@@ -9,8 +9,6 @@ on:
       - '*.md'
       - 'bin/*'
   pull_request:
-    branches:
-      - main
     paths-ignore:
       - 'doc/**'
       - '*.md'
