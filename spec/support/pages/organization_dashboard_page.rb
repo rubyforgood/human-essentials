@@ -84,6 +84,10 @@ class OrganizationDashboardPage < OrganizationPage
     has_selector? org_logo_selector
   end
 
+  def has_outstanding_section?
+    has_selector? outstanding_selector
+  end
+
   def manufacturers_total_donations
     within manufacturers_section do
       parse_formatted_integer find(".total_received_donations").text
@@ -164,6 +168,22 @@ class OrganizationDashboardPage < OrganizationPage
     end
   end
 
+  def outstanding_section
+    find outstanding_selector
+  end
+
+  def outstanding_requests
+    within outstanding_section do
+      all('tbody > tr')
+    end
+  end
+
+  def outstanding_requests_link
+    within outstanding_section do
+      find('.card-footer a')
+    end
+  end
+
   private
 
   def product_drives_section
@@ -200,5 +220,9 @@ class OrganizationDashboardPage < OrganizationPage
 
   def purchases_section
     find "#purchases"
+  end
+
+  def outstanding_selector
+    "#outstanding"
   end
 end
