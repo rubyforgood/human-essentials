@@ -12,6 +12,7 @@
 #  organization_id :bigint
 #
 class PartnerGroup < ApplicationRecord
+  has_paper_trail
   include Deadlinable
 
   belongs_to :organization
