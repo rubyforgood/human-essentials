@@ -1,0 +1,57 @@
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0 text-dark"><%= current_organization.name %> - Dashboard</h1>
+      </div><!-- /.col -->
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
+          <li class="breadcrumb-item active">Dashboard</li>
+          <li class="breadcrumb-item active"><%= current_organization.name %></li>
+        </ol>
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+
+<div class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-12">
+
+        <%= render(
+          "card",
+          id: "distributions",
+          gradient: "info",
+          title: "Distributions",
+          subtitle: @selected_date_range,
+          footer: link_to("See more...", distributions_path),
+          footer_options: { class: "text-center" },
+        ) do %>
+          <%= new_button_to new_distribution_path, {text: "New Distribution"} %>
+          <%= print_button_to distributions_by_county_report_path(filters: { date_range: date_range_params }), {text: "Distributions by County", size: "md"} %>
+
+          <h3 class="text-center">
+            <span class="total_distributed">
+              <%= total_distributed %>
+            </span>
+            items distributed <%= @selected_date_range_label %>
+          </h3>
+          <h4 class="text-center">(<%= future_distributed %> items scheduled for future distribution)</h4>
+          <div class="box-body">
+            <h4>Recent distributions</h4>
+            <%= render partial: "distribution", collection: @recent_distributions, as: :distribution %>
+          </div>
+        <% end %>
+
+      </div>
+      <div class="col-lg-6">
+
+
+
+
+      </div>
+    </div>
+  </div>
+</div>
