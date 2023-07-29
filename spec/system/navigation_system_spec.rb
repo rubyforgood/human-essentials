@@ -5,7 +5,7 @@ RSpec.describe "Navigation", type: :system, js: true do
       visit "/"
     end
 
-    context "with organization user" do
+    context "with organization admin" do
       let(:user) { create(:organization_admin) }
       # 2389 Links was missing Forecasting, which is available to an organization admin
       let(:links) { ["Dashboard", "Donations", "Purchases", "Requests", "Product Drives", "Distributions", "Pick Ups & Deliveries", "Partner Agencies", "Inventory", "Community", "Reporting & Auditing", "Historical Trends", "My Organization"] }
@@ -17,18 +17,6 @@ RSpec.describe "Navigation", type: :system, js: true do
         end
       end
 
-      describe "Reporting & Auditing submenu", focus: true do
-        let(:reports) { ["Inventory Audit", "Annual Survey", "Distributions by County"] }
-        before { click_link("Reporting & Auditing") }
-
-        it "shows submenu navigation options" do
-          sidebar = page.find(".sidebar")
-          reports.each do |report_name|
-            expect(sidebar).to have_link(report_name)
-          end
-        end
-      end
-
       context "with collapsed sidebar" do
         before { click_link("collapse") }
 
@@ -37,6 +25,18 @@ RSpec.describe "Navigation", type: :system, js: true do
             label = link.find("p", visible: :all)
             expect(label).to match_style(width: "0px")
             expect(links).to include(label.text(:all))
+          end
+        end
+      end
+
+      describe "Reporting & Auditing submenu"do
+        let(:reports) { ["Inventory Audit", "Annual Survey", "Distributions by County"] }
+        before { click_link("Reporting & Auditing") }
+
+        it "shows submenu navigation options" do
+          sidebar = page.find(".sidebar")
+          reports.each do |report_name|
+            expect(sidebar).to have_link(report_name)
           end
         end
       end
