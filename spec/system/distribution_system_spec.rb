@@ -106,11 +106,11 @@ RSpec.feature "Distributions", type: :system do
 
     context "when the quantity is lower than the on hand recommended quantity" do
       it "should display an alert" do
-        visit @url_prefix + "/distributions/new"
         item = @storage_location.inventory_items.first.item
         item.update!(on_hand_minimum_quantity: 1, on_hand_recommended_quantity: 5)
         @storage_location.inventory_items.first.update!(quantity: 20)
 
+        visit @url_prefix + "/distributions/new"
         select @partner.name, from: "Partner"
         select @storage_location.name, from: "From storage location"
         select item.name, from: "distribution_line_items_attributes_0_item_id"
