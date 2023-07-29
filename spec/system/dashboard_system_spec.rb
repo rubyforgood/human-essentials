@@ -695,6 +695,11 @@ RSpec.describe "Dashboard", type: :system, js: true do
         travel_back
       end
 
+      it "does not have a link to the distributions by county report", focus: true do
+        expect(org_dashboard_page.visit).to have_distributions_section
+        expect(org_dashboard_page).not_to have_link "Distributions by County"
+      end
+
       it "has a link to create a new distribution" do
         org_new_distribution_page = OrganizationNewDistributionPage.new org_short_name: org_short_name
 
