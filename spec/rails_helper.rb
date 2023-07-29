@@ -10,7 +10,6 @@ require "capybara/rails"
 require "capybara/rspec"
 require "capybara-screenshot/rspec"
 require "pry"
-require 'webdrivers'
 require 'knapsack_pro'
 
 KnapsackPro::Adapters::RSpecAdapter.bind
@@ -45,24 +44,30 @@ Dir[Rails.root.join("spec/controllers/shared_examples/*.rb")].sort.each { |f| re
 # If an element is hidden, Capybara should ignore it
 Capybara.ignore_hidden_elements = true
 
-# https://docs.travis-ci.com/user/chrome
-Capybara.register_driver :chrome do |app|
-  args = %w[no-sandbox disable-gpu disable-site-isolation-trials window-size=1680,1050]
-  args << "headless" unless ENV["NOT_HEADLESS"] == "true"
-  capabilities = Selenium::WebDriver::Chrome::Options.new(args: args)
-  capabilities.add_preference(:download, prompt_for_download: false, default_directory: DownloadHelper::PATH.to_s)
-  capabilities.add_preference(:browser, set_download_behavior: { behavior: 'allow' })
-
-  Capybara::Selenium::Driver.new(app, browser: :chrome, capabilities: capabilities)
+require "capybara/cuprite"
+Capybara.register_driver(:local_cuprite) do |app|
+  Capybara::Cuprite::Driver.new(
+    app,
+    window_size: [1200, 800],
+    js_errors: true,
+    headless: ENV["NOT_HEADLESS"] != "true",
+    slowmo: ENV["SLOWMO"]&.to_f,
+    process_timeout: 15,
+    timeout: 10,
+    browser_options: ENV["DOCKER"] ? { "no-sandbox" => nil } : {}
+  )
 end
 
 # Enable JS for Capybara tests
-Capybara.javascript_driver = :chrome
+Capybara.javascript_driver = :local_cuprite
+
+# disable CSS transitions and js animations
+Capybara.disable_animation = true
 
 Capybara::Screenshot.autosave_on_failure = true
 # The driver name should match the Capybara driver config name.
-Capybara::Screenshot.register_driver(:chrome) do |driver, path|
-  driver.browser.save_screenshot(path)
+Capybara::Screenshot.register_driver(:local_cuprite) do |driver, path|
+  driver.save_screenshot(path)
 end
 
 # Set the asset host so that the screenshots look nice
@@ -200,7 +205,7 @@ RSpec.configure do |config|
 
   config.before(:each, type: :system) do
     clear_downloads
-    driven_by :chrome
+    driven_by :local_cuprite
     Capybara.server = :puma, { Silent: true }
   end
 
