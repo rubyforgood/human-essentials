@@ -99,6 +99,8 @@ gem 'icalendar', require: false
 gem "jwt"
 # Use Newrelic for logs and APM
 gem "newrelic_rpm"
+# Scheduling
+gem 'rufus-scheduler'
 # Used to manage periodic cron-like jobs
 gem "clockwork"
 
