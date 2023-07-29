@@ -2,11 +2,7 @@ name: brakeman
 
 on:
   push:
-    branches:
-      - main
   pull_request:
-    branches:
-      - main
     paths-ignore:
       - 'doc/**'
       - '*.md'
