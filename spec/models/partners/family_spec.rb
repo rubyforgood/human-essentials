@@ -70,4 +70,8 @@ RSpec.describe Partners::Family, type: :model do
       expect(subject.total_children_count).to eq(subject.home_child_count + subject.home_young_child_count)
     end
   end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
+  end
 end
