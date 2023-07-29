@@ -22,7 +22,6 @@ class AdjustmentCreateService
         @adjustment.storage_location.increase_inventory increasing_adjustment
         @adjustment.storage_location.decrease_inventory decreasing_adjustment
       rescue InsufficientAllotment => e
-        @adjustment.errors.add(:base, e.message)
         raise InsufficientAllotment
       end
     end
