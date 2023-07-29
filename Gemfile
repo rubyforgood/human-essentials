@@ -198,10 +198,10 @@ group :test do
   gem 'simplecov'
   # More concise test ("should") matchers
   gem 'shoulda-matchers', '~> 5.3'
-  # Selenium webdriver automatic installation and update.
-  gem 'webdrivers', '~> 5.2'
   # Mock HTTP requests and ensure they are not called during tests.
   gem "webmock", "~> 3.18"
+  # Interface capybara to chrome headless
+  gem "cuprite"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
