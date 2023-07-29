@@ -128,6 +128,9 @@ GEM
     crack (0.4.5)
       rexml
     crass (1.0.6)
+    cuprite (0.14.3)
+      capybara (~> 3.0)
+      ferrum (~> 0.13.0)
     database_cleaner-active_record (2.1.0)
       activerecord (>= 5.a)
       database_cleaner-core (~> 2.0.0)
@@ -197,6 +200,11 @@ GEM
     faraday-retry (1.0.3)
     faraday_middleware (1.2.0)
       faraday (~> 1.0)
+    ferrum (0.13)
+      addressable (~> 2.5)
+      concurrent-ruby (~> 1.1)
+      webrick (~> 1.7)
+      websocket-driver (>= 0.6, < 0.8)
     ffi (1.15.5)
     filterrific (5.2.5)
     flipper (0.28.3)
@@ -491,8 +499,6 @@ GEM
       rspec-expectations (~> 3.12)
       rspec-mocks (~> 3.12)
       rspec-support (~> 3.12)
-    rspec-retry (0.6.2)
-      rspec-core (> 3.3)
     rspec-support (3.12.0)
     rubocop (1.52.1)
       json (~> 2.3)
@@ -519,7 +525,6 @@ GEM
     ruby-vips (2.1.4)
       ffi (~> 1.12)
     ruby2_keywords (0.0.5)
-    rubyzip (2.3.2)
     rufus-scheduler (3.9.1)
       fugit (~> 1.1, >= 1.1.6)
     sanitize (6.0.2)
@@ -535,10 +540,6 @@ GEM
       sprockets (> 3.0)
       sprockets-rails
       tilt
-    selenium-webdriver (4.10.0)
-      rexml (~> 3.2, >= 3.2.5)
-      rubyzip (>= 1.2.2, < 3.0)
-      websocket (~> 1.0)
     shellany (0.0.1)
     shoulda-matchers (5.3.0)
       activesupport (>= 5.2.0)
@@ -609,7 +610,6 @@ GEM
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
     webrick (1.7.0)
-    websocket (1.2.9)
     websocket-driver (0.7.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
@@ -644,6 +644,7 @@ DEPENDENCIES
   clockwork
   cocoon
   coverband
+  cuprite
   database_cleaner-active_record (~> 2.1)
   delayed_job_active_record
   delayed_job_web
@@ -697,13 +698,11 @@ DEPENDENCIES
   redis (~> 5.0)
   rolify (~> 6.0)
   rspec-rails (~> 6.0.3)
-  rspec-retry
   rubocop
   rubocop-performance
   rubocop-rails (~> 2.20.1)
   rufus-scheduler
   sass-rails
-  selenium-webdriver
   shoulda-matchers (~> 5.3)
   simple_form
   simplecov
