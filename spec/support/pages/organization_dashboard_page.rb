@@ -162,13 +162,13 @@ class OrganizationDashboardPage < OrganizationPage
 
   def outstanding_requests
     within outstanding_section do
-      all('tbody > tr')
+      all("tbody > tr")
     end
   end
 
   def outstanding_requests_link
     within outstanding_section do
-      find('.card-footer a')
+      find(".card-footer a")
     end
   end
 

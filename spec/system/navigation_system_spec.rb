@@ -29,7 +29,7 @@ RSpec.describe "Navigation", type: :system, js: true do
         end
       end
 
-      describe "Reporting & Auditing submenu"do
+      describe "Reporting & Auditing submenu" do
         let(:reports) { ["Inventory Audit", "Annual Survey", "Distributions by County"] }
         before { click_link("Reporting & Auditing") }
 

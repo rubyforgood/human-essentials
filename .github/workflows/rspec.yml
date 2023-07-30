@@ -2,9 +2,6 @@ name: rspec
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
     paths-ignore:
       - 'doc/**'
       - '*.md'

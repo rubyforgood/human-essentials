@@ -35,9 +35,15 @@
         content_tag(:div, **header_options) do %>
           <%= header %>
           <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-              <i class="fas fa-minus"></i>
-            </button>
+            <% if type == :table %>
+              <button type="button" class="btn btn-tool" data-card-widget="remove">
+                <i class="fas fa-times"></i>
+              </button>
+            <% else %>
+              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+              </button>
+            <% end %>
           </div>
         <% end
       end
