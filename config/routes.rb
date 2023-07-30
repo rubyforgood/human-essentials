@@ -219,6 +219,7 @@ Rails.application.routes.draw do
     get "historical_trends/purchases", to: "historical_trends/purchases#index"
     get "historical_trends/donations", to: "historical_trends/donations#index"
     get "purchases_summary", to: "purchases_summary#index"
+    get "distributions_summary", to: "distributions_summary#index"
   end
 
   resources :attachments, only: %i(destroy)
