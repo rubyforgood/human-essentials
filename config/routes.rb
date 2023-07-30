@@ -105,6 +105,7 @@ Rails.application.routes.draw do
         post :recalculate, on: :member
       end
       resources :itemized_donations, only: [:index]
+      resources :itemized_distributions, only: [:index]
     end
 
     resources :transfers, only: %i(index create new show destroy)
