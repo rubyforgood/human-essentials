@@ -206,7 +206,7 @@ RSpec.describe "Item management", type: :system do
       expandable_row = find("td", text: item_tampons.name).find(:xpath, "..")
       expandable_row.click
       expanded_row = find(".expandable-body", visible: true).text
-      expect(expanded_row).to have_content storage_name
+      expect(find(".expandable-body", visible: true)).to have_link storage_name
       expect(expanded_row).to have_content num_tampons_in_donation
       expect(expanded_row).to have_content num_tampons_second_donation
     end

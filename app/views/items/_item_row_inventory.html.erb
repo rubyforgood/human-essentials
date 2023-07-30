@@ -9,8 +9,9 @@
 <tr class="expandable-body">
   <td colspan="5">
     <p>
-    <% row_item[:locations].each do |location_name, quantity| %>
-      <%= "#{location_name} - #{quantity} units" %><br>
+    <% row_item[:locations].each do |location| %>
+      <%= link_to(location[:name], storage_location_url(location[:id])) %>
+      <%= " - #{location[:quantity]} units" %><br>
     <% end %>
     </p>
   </td>
