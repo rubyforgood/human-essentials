@@ -1,7 +1,6 @@
 require "rails_helper"
 
 RSpec.describe "Distributions Summary", type: :system, js: true do
-
   test_time = Time.zone.now
 
   before do
