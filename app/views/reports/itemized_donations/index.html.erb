@@ -22,15 +22,15 @@
       </tr>
     </thead>
 
-    <% @itemized_donation_data.each do |item| %>
-      <tbody>
+    <tbody>
+      <% @itemized_donation_data.each do |item| %>
         <tr>
           <td>&nbsp;&nbsp;&nbsp;<%= item[:name] %></td>
           <td class="text-right"><%= item[:donated] %></td>
           <td class="text-right"><%= item[:current_onhand] || "Unknown" %></td>
         </tr>
       <% end %>
-      </tbody>
+    </tbody>
   </table>
 <% end %>
 
