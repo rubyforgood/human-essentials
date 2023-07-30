@@ -205,6 +205,11 @@
           <i class="nav-icon fa fa-circle-o"></i> Itemized Distributions
         <% end %>
       </li>
+      <li class="nav-item <%= active_class(['reports']) %>">
+        <%= link_to(donations_path(organization_id: current_user.organization, action: "summary"), class: "nav-link #{active_class(['reports'])}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Donations Summary
+        <% end %>
+      </li>
       <li class="nav-item <%= active_class(['purchases_summary']) %>">
         <%= link_to(purchases_summary_path(organization_id: current_user.organization), class: "nav-link #{"active" if current_page?(purchases_summary_path)}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Purchases Summary
