@@ -169,41 +169,33 @@ class StorageLocation < ApplicationRecord
     insufficient_items = []
     # Iterate through each of the line-items in the moving box
     itemizable_array.each do |item_hash|
+      adjusted_quantity = item_hash[:quantity] * -1
       # Locate the storage box for the item, or create an empty storage box
       inventory_item = inventory_items.find_by(item_id: item_hash[:item_id]) || inventory_items.build
       # If we've got sufficient inventory in the storage box to fill the moving box, then continue
-      next unless inventory_item.quantity < item_hash[:quantity]
+      next unless inventory_item.quantity < adjusted_quantity
 
       # Otherwise, we need to record that there was insufficient inventory on-hand
       insufficient_items << {
         item_id: item_hash[:item_id],
         item_name: item_hash[:name],
         quantity_on_hand: inventory_item.quantity,
-        quantity_requested: item_hash[:quantity]
+        quantity_requested: adjusted_quantity
       }
-    end
-    # NOTE: Could this be handled by a validation instead?
-    # If we found any insufficiencies
-    unless insufficient_items.empty?
-      # Raise this custom error with information about each of the items that showed insufficient
-      # This bails out of the method!
-      raise Errors::InsufficientAllotment.new(
-        "Requested items exceed the available inventory.",
-        insufficient_items
-      )
     end
 
     # Re-run through the items in the moving box again
     itemizable_array.each do |item_hash|
+      adjusted_quantity = item_hash[:quantity] * -1
       # Look for the moving box for this item -- we know there is sufficient quantity this time
       # Raise AR:RNF if it fails to find it -- though that seems moot since it would have been
       # captured by the previous block.
       inventory_item = inventory_items.find_by(item_id: item_hash[:item_id])
       # Reduce the inventory box quantity
-      new_quantity = inventory_item.quantity - item_hash[:quantity]
+      new_quantity = inventory_item.quantity - adjusted_quantity
       inventory_item.update(quantity: new_quantity)
       # Record in the log that this has occurred
-      log[item_hash[:item_id]] = "-#{item_hash[:quantity]}"
+      log[item_hash[:item_id]] = "-#{adjusted_quantity}"
     end
     # log could be pulled from dirty AR stuff
     save!

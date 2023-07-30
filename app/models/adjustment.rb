@@ -39,8 +39,6 @@ class Adjustment < ApplicationRecord
   def split_difference
     pre_adjustment = line_items.partition { |line_item| line_item.quantity.positive? }
     increasing_adjustment, decreasing_adjustment = pre_adjustment.map { |adjustment| Adjustment.new(line_items: adjustment) }
-
-    decreasing_adjustment.line_items.each { |line_item| line_item.quantity *= -1 }
     [increasing_adjustment, decreasing_adjustment]
   end
 
@@ -75,10 +73,18 @@ class Adjustment < ApplicationRecord
       next unless line_item.quantity.negative?
 
       inventory_item = storage_location.inventory_items.find_by(item: line_item.item)
-      next unless inventory_item.nil?
+      next unless inventory_item.nil? || inventory_item.quantity + line_item.quantity < 0
 
-      errors.add(:inventory,
-                 "#{line_item.item.name} is not available to be removed from this storage location")
+      if inventory_item.nil?
+        errors.add(:inventory,
+                   "#{line_item.item.name} is not available to be removed from this storage location")
+      end
+
+      if inventory_item.quantity + line_item.quantity < 0
+        insufficient_message = "#{(line_item.quantity * -1).to_s} #{line_item.name} requested, only #{inventory_item.quantity.to_s} available." \
+        "(Reduce by #{((inventory_item.quantity + line_item.quantity) * -1).to_s})"
+        errors.add(:inventory, insufficient_message)
+      end
     end
   end
 end

@@ -41,7 +41,6 @@ class AdjustmentsController < ApplicationController
   def create
     @adjustment = current_organization.adjustments.new(adjustment_params)
     @adjustment.user_id = current_user.id
-
     if @adjustment.valid? && @adjustment.save
       increasing_adjustment, decreasing_adjustment = @adjustment.split_difference
       ActiveRecord::Base.transaction do
@@ -53,12 +52,12 @@ class AdjustmentsController < ApplicationController
     else
       flash[:error] = @adjustment.errors.collect { |error| "#{error.attribute}: " + error.message }.join("<br />".html_safe)
       load_form_collections
-      render :new
+      redirect_to new_adjustment_path
     end
   rescue Errors::InsufficientAllotment => e
     flash[:error] = e.message
     load_form_collections
-    render :new
+    redirect_to new_adjustment_path
   end
 
   private
