@@ -51,11 +51,9 @@
     <!-- Sidebar -->
     <div class="sidebar">
       <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <% if user_signed_in? %>
-            <%= render partial: "layouts/partners/navigation/sidebar" %>
-          <% end %>
-        </ul>
+        <% if user_signed_in? %>
+          <%= render partial: "layouts/partners/navigation/sidebar" %>
+        <% end %>
       </nav>
     </div>
   </aside>
@@ -83,5 +81,3 @@
 </body>
 <div class="modal fade" id="modal_new" role="dialog"></div>
 </html>
-
-
