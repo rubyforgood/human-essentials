@@ -25,6 +25,7 @@ class DashboardController < ApplicationController
 
     @distribution_data = helpers.received_distributed_data(helpers.selected_range)
 
+    @partners_awaiting_review = current_organization.partners.awaiting_review
     # passing nil here filters the announcements that didn't come from an organization
     @broadcast_announcements = BroadcastAnnouncement.filter_announcements(nil)
 

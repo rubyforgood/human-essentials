@@ -786,6 +786,57 @@ RSpec.describe "Dashboard", type: :system, js: true do
         end
       end
     end
+
+    describe "Partner Approvals" do
+      it "has a card" do
+        org_dashboard_page.visit
+        expect(org_dashboard_page).to have_partner_approvals_section
+      end
+
+      context "when empty" do
+        it "displays a message" do
+          org_dashboard_page.visit
+          expect(org_dashboard_page.partner_approvals_section).to have_content "No partners waiting for approval"
+        end
+      end
+
+      context "with no awaiting partners" do
+        let!(:partner) { create :partner, :approved }
+
+        it "still displays the simple message" do
+          org_dashboard_page.visit
+          expect(org_dashboard_page.partner_approvals_section).to have_content "No partners waiting for approval"
+        end
+      end
+
+      context "with awaiting partners" do
+        let!(:org) { create :organization }
+        let!(:user) { create :user, organization: org }
+        let!(:partner_to_see1) { create :partner, status: :awaiting_review, organization: org }
+        let!(:partner_to_see2) { create :partner, status: :awaiting_review, organization: org }
+        let!(:partner_hidden1) { create :partner, status: :approved, organization: org }
+        let!(:partner_hidden2) { create :partner, status: :invited, organization: org }
+
+        it "only displays awaiting partners" do
+          sign_in user
+          org_dashboard_page.visit
+          within(org_dashboard_page.partner_approvals_section) do
+            [partner_to_see1, partner_to_see2].each do |partner|
+              expect(page).to have_content partner.name
+              expect(page).to have_content partner.profile.primary_contact_email
+              expect(page).to have_content partner.profile.primary_contact_name
+              expect(page).to have_link "Review Application", href: partner_path(organization_id: org, id: partner) + "#partner-information"
+            end
+            [partner_hidden1, partner_hidden2].each do |hidden_partner|
+              expect(page).to_not have_content hidden_partner.name
+              expect(page).to_not have_content hidden_partner.profile.primary_contact_email
+              expect(page).to_not have_content hidden_partner.profile.primary_contact_name
+              expect(page).to_not have_link "Review Application", href: partner_path(organization_id: org, id: hidden_partner) + "#partner-information"
+            end
+          end
+        end
+      end
+    end
   end
 
   def valid_bracketing_dates(date_range_info)
