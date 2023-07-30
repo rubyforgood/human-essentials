@@ -124,4 +124,84 @@ module ApplicationHelper
     end
     current_organization.default_storage_location
   end
+
+  # Helper to create the wrapper for the sidebar_* helpers.
+  #
+  # Call with a block that contains calls to sidebar_item and sidebar_group
+  def sidebar(**options, &block)
+    options = {
+      class: "nav nav-pills nav-sidebar flex-column",
+      data: {
+        widget: "treeview",
+        accordion: "false"
+      }.merge(options[:data] || {}),
+      role: "menu"
+    }.merge options
+    content_tag :ul, **options, &block
+  end
+
+  # Create an item in the sidebar.
+  #
+  # Name is displayed to the user
+  #
+  # Path is the destination of the link.
+  #
+  # Icon is a Font Awesome icon name, with the leading fa- removed.  Can append
+  # " fas" to the icon name to get solid varieties.
+  #
+  # If controller is the name of a controller, this item will be open if that
+  # controller is.  If controller is true, it will parse path to determine the
+  # controller name.
+  def sidebar_item(name, path, icon: 'circle-o', controller: false, **)
+    active = sidebar_item_active path: path, controller: controller
+    content_tag(:li, class: 'nav-item') do
+      link_to(path, class: "nav-link #{'active' if active}") do
+        content_tag(:i, '', class: "nav-icon fa fa-#{icon}") +
+          content_tag(:p, name)
+      end
+    end
+  end
+
+  # Returns true if the sidebar item described by path and controller is active.
+  # See `sidebar_item` for descriptions of those arguments.
+  def sidebar_item_active(path:, controller: false, **)
+    return current_page?(path) unless controller
+    if controller == true
+      controller = Rails.application.routes.recognize_path(path)[:controller]
+    end
+    controller_path == controller
+  end
+
+  # Create a collapsible group for the sidebar.  The group will be open and
+  # active if any of its children are active (see sidebar_item_active above).
+  #
+  # Name is displayed on the page.
+  #
+  # Children is an array of hashes.  The hash is passed to sidebar_item with
+  # :name and :path keys extracted for the positional arguments.
+  #
+  # Icon is a Font Awesome icon name, with the leading fa- removed.  Can append
+  # " fas" to the icon name to get solid varieties.
+  #
+  # If controller is the name of a controller or an array of them, this group
+  # will be open if those controllers are.  Note that this is in addition to
+  # being open if the children are active.
+  def sidebar_group(name, children, icon: 'folder', controller: false)
+    open = children.any? { |child| sidebar_item_active(**child) }
+    open ||= Array.wrap(controller).include? controller_path if controller
+
+    content_tag(:li, class: "nav-item has-treeview #{'menu-open' if open}") do
+      content_tag(:a, href: '#', class: "nav-link #{'active' if open}") do
+        content_tag(:i, '', class: "nav-icon fa fa-#{icon}") +
+          content_tag(:p) do
+            html_escape(name) + content_tag(:i, '', class: "fas fa-angle-left right")
+          end
+      end +
+        content_tag(:ul, class: "nav nav-treeview") do
+          safe_join(children.map do |child|
+            sidebar_item child[:name], child[:path], **child
+          end)
+        end
+    end
+  end
 end

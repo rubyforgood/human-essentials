@@ -1,55 +1,12 @@
-<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-
-  <li class="nav-item">
-    <%= link_to(partner_user_root_path, class: "nav-link") do %>
-      <i class="nav-icon fa fa-dashboard"></i>
-      <p>Dashboard</p>
-    <% end %>
-  </li>
-
-  <li class="nav-item">
-    <%= link_to(partners_profile_path, class: "nav-link") do %>
-      <i class="nav-icon fa fa-building"></i>
-      <p>My Organization</p>
-    <% end %>
-  </li>
-
-  <li class="nav-item">
-    <%= link_to(edit_partners_profile_path, class: "nav-link") do %>
-      <i class="nav-icon fa fa-cog"></i>
-      <p>Edit My Organization</p>
-    <% end %>
-  </li>
-
-  <li class="nav-item">
-    <%= link_to(partners_requests_path, class: "nav-link") do %>
-      <i class="nav-icon fa fa-edit"></i>
-      <p>Essentials Requests</p>
-    <% end %>
-  </li>
-
-  <li class="nav-item">
-    <%= link_to(partners_distributions_path, class: "nav-link") do %>
-      <i class="nav-icon fa fa-shopping-cart"></i>
-      <p>Distributions</p>
-    <% end %>
-  </li>
-
-
+<%= sidebar do %>
+  <%= sidebar_item 'Dashboard', partner_user_root_path, icon: 'dashboard' %>
+  <%= sidebar_item 'My Organization', partners_profile_path, icon: 'building' %>
+  <%= sidebar_item 'Edit My Organization', edit_partners_profile_path, icon: 'cog' %>
+  <%= sidebar_item 'Essentials Requests', partners_requests_path, icon: 'edit' %>
+  <%= sidebar_item 'Distributions', partners_distributions_path, icon: 'shopping-cart' %>
 
   <% if current_partner.profile.enable_child_based_requests? %>
-    <li class="nav-item">
-      <%= link_to(partners_families_path, class: "nav-link") do %>
-        <i class="nav-icon fa fa-users"></i>
-        <p>Families</p>
-      <% end %>
-    </li>
-
-    <li class="nav-item">
-      <%= link_to(partners_children_path, class: "nav-link") do %>
-        <i class="nav-icon fa fa-child"></i>
-        <p>Children</p>
-      <% end %>
-    </li>
+    <%= sidebar_item 'Families', partners_families_path, icon: 'users', controller: true %>
+    <%= sidebar_item 'Children', partners_children_path, icon: 'child', controller: true %>
   <% end %>
-</ul>
+<% end %>
