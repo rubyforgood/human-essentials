@@ -172,6 +172,14 @@ class OrganizationDashboardPage < OrganizationPage
     end
   end
 
+  def has_partner_approvals_section?
+    has_selector? "#partner_approvals.card"
+  end
+
+  def partner_approvals_section
+    find "#partner_approvals.card"
+  end
+
   private
 
   def product_drives_section
