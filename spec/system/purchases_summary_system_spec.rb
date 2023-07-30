@@ -1,5 +1,4 @@
 RSpec.describe "Purchases Summary", type: :system, js: true do
-
   attr_reader :new_organization, :org_short_name, :user
 
   before do

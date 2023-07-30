@@ -23,7 +23,7 @@ class OrganizationPurchasesSummaryPage < OrganizationPage
     if custom_dates.present?
       fill_in :filters_date_range, with: ""
       fill_in :filters_date_range, with: custom_dates
-      #clicking on page to ensure date picker closes
+      # clicking on page to ensure date picker closes
       page.find(:xpath, "//*[contains(text(),'Recent purchases')]").click
     end
 
