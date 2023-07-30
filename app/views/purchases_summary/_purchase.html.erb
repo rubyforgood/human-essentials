@@ -1,4 +1,4 @@
-<br>
+
 <div class="pull-left purchase">
   <%= link_to purchase do %>
     <%= number_with_delimiter purchase.line_items.total %> items from <%= purchase.purchased_from_view %>
@@ -7,3 +7,4 @@
 <div class="pull-right">
   <%= distance_of_time_in_words_to_now purchase.created_at %> ago
 </div>
+
