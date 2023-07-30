@@ -28,6 +28,21 @@ RSpec.describe Adjustment, type: :model do
     it "disallows you from removing inventory that doesn't exist in the storage location" do
       expect(build(:adjustment, :with_items, item_quantity: -10, item: create(:item), storage_location: create(:storage_location))).not_to be_valid
     end
+
+    it "disallows removing a greater quantity of an item than available quantity" do
+      item = create(:item)
+      storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
+      storage_location.inventory_items << create(:inventory_item, item: create(:item), quantity: 10)
+      expect do
+
+        adjustment = create(:adjustment,
+                            storage_location: storage_location,
+                            line_items_attributes: [
+                              { item_id: storage_location.items.first.id, quantity: -15 },
+                              { item_id: storage_location.items.last.id, quantity: -5 }
+                            ])
+      end.to raise_error(ActiveRecord::RecordInvalid)
+    end
   end
 
   context "Scopes >" do
@@ -102,10 +117,11 @@ RSpec.describe Adjustment, type: :model do
                             ])
         pos, neg = adjustment.split_difference
         expect(neg.line_items.size).to eq(2)
-        expect(neg.line_items.first.quantity).to eq(10)
-        expect(neg.line_items.last.quantity).to eq(5)
+        expect(neg.line_items.first.quantity).to eq(-10)
+        expect(neg.line_items.last.quantity).to eq(-5)
         expect(pos.line_items).to be_empty
       end
+
     end
   end
 
