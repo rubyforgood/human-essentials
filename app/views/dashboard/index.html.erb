@@ -167,20 +167,6 @@
 
         <%= render(
           "shared/card",
-          gradient: "success",
-          title: "Itemized Distributions",
-          subtitle: @selected_date_range,
-          type: :table,
-        ) do %>
-          <div class='p-2 pull-right'>
-            <%= download_button_to(itemized_breakdown_distributions_path(format: :csv, filters: { date_range: date_range_params }), {text: "Export To CSV"}) %>
-          </div>
-
-          <%= render partial: "itemized_distributions_partial", locals: { itemized_breakdown: @itemized_distribution_data } %>
-        <% end %>
-
-        <%= render(
-          "shared/card",
           gradient: "warning",
           title: "Activity",
           subtitle: @selected_date_range,
