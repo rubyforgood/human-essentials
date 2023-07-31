@@ -49,4 +49,6 @@ RSpec.describe "User sign-in handling", type: :system, js: true do
       expect(page).to have_current_path("/403")
     end
   end
+
+  p "yooo"
 end
