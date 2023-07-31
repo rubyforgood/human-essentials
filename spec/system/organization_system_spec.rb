@@ -16,6 +16,7 @@ RSpec.describe "Organization management", type: :system, js: true do
       expect(page.find(".table.border")).to have_no_content "Make User"
     end
   end
+
   context "while signed in as an organization admin" do
     let!(:store) { create(:storage_location) }
     let!(:ndbn_member) { create(:ndbn_member, ndbn_member_id: "50000", account_name: "Best Place") }
@@ -49,6 +50,7 @@ RSpec.describe "Organization management", type: :system, js: true do
       before do
         visit url_prefix + "/manage/edit"
       end
+
       it "is prompted with placeholder text and a more helpful error message to ensure correct URL format as a user" do
         fill_in "Url", with: "www.diaperbase.com"
         click_on "Save"
@@ -107,6 +109,10 @@ RSpec.describe "Organization management", type: :system, js: true do
 
         expect(page).to_not have_content('Media Information')
         expect(@organization.reload.partner_form_fields).to eq([])
+      end
+
+      it 'can change the allowed request types and send an error if it results in a partner not having request capability' do
+        save_and_open_page
       end
     end
 
