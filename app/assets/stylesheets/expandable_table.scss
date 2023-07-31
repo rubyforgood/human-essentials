@@ -1,0 +1,22 @@
+/*
+ * Customized Styling for Exandable Tables - provided by AdminLTE
+ * ExpandableTable - https://adminlte.io/docs/3.1/javascript/expandable-tables.html
+ */
+
+/*
+ * Default Expanded table has no indicator that the row is clickable. This styles an expand/collapse icon.
+ * Expanded=true is minus, Expanded=false is plus
+ */
+[data-widget="expandable-table"] {
+  &[aria-expanded="true"] {
+    td > .fa::before{
+      content: "\f068";
+    }
+  }
+
+  &[aria-expanded="false"] {
+    td > .fa::before{
+      content: "\f067";
+    }
+  }
+}

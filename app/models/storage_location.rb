@@ -16,6 +16,7 @@
 #  organization_id :integer
 #
 class StorageLocation < ApplicationRecord
+  has_paper_trail
   require "csv"
 
   WAREHOUSE_TYPES = [

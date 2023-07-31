@@ -25,4 +25,8 @@ RSpec.describe NDBNMember, type: :model do
       expect(subject).to eq("#{ndbn_member.ndbn_member_id} - #{ndbn_member.account_name}")
     end
   end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
+  end
 end

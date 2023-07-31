@@ -86,4 +86,8 @@ RSpec.describe Transfer, type: :model do
       expect(Transfer.storage_locations_transferred_from_in(@organization).to_a).to match_array([storage_location3])
     end
   end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
+  end
 end

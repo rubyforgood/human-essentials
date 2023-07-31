@@ -14,6 +14,7 @@
 #
 module Partners
   class ChildItemRequest < Base
+    has_paper_trail
     belongs_to :item_request
     belongs_to :child
     belongs_to :authorized_family_member, optional: true

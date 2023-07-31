@@ -17,6 +17,7 @@
 #
 
 class ProductDriveParticipant < ApplicationRecord
+  has_paper_trail
   include Provideable
   include Geocodable
 
