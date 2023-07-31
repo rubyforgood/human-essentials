@@ -34,6 +34,20 @@ RSpec.describe "Static", type: :request do
     end
   end
 
+  describe "Non super user without org signed in" do
+    before do
+      user = create(:user, organization: nil)
+      sign_in(user)
+    end
+
+    describe "GET #index" do
+      it "redirects to a public/403.html page" do
+        get root_path
+        expect(response).to redirect_to("/403")
+      end
+    end
+  end
+
   describe "Super user without org signed in" do
     before do
       sign_in(@super_admin_no_org)
