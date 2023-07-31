@@ -26,4 +26,8 @@ RSpec.describe Partners::ServedArea, type: :model do
     expect(build(:partners_served_area, partner_profile: create(:partner_profile), county: create(:county), client_share: 1)).to be_valid
     expect(build(:partners_served_area, partner_profile: create(:partner_profile), county: create(:county), client_share: 100)).to be_valid
   end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
+  end
 end

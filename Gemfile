@@ -34,7 +34,7 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.5.0"
+gem "strong_migrations", "1.6.0"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
@@ -97,6 +97,10 @@ gem 'httparty'
 gem 'icalendar', require: false
 # JSON Web Token encoding / decoding (e.g. for links in e-mails)
 gem "jwt"
+# Use Newrelic for logs and APM
+gem "newrelic_rpm"
+# Scheduling
+gem 'rufus-scheduler'
 # Used to manage periodic cron-like jobs
 gem "clockwork"
 
@@ -107,18 +111,16 @@ gem "clockwork"
 gem "mini_racer", "~> 0.8.0"
 gem "nokogiri", ">= 1.10.4"
 gem "image_processing"
-gem "sprockets", "~> 4.0.0"
+gem "sprockets", "~> 4.2.0"
 
 group :production do
-  # Reduce the noise of logs and include custom fields to it for easier access
-  gem 'lograge'
-  # Profiler (third party app) showing performance and metrics.
-  gem "skylight"
   # Tool to detect unused code through knowing which methods are used in which files.
   gem 'coverband'
 end
 
 group :production, :staging do
+  # Reduce the noise of logs and include custom fields to it for easier access
+  gem 'lograge'
   # JS compression for deployed environments.
   gem 'terser'
 end
@@ -157,9 +159,9 @@ group :development, :test do
   gem "rubocop"
   # Rails add-on for static analysis.
   gem 'rubocop-performance'
-  gem "rubocop-rails", "~> 2.19.1"
+  gem "rubocop-rails", "~> 2.20.1"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.28"
+  gem "standard", "~> 1.30"
 end
 
 group :development do
@@ -198,8 +200,8 @@ group :test do
   gem 'simplecov'
   # More concise test ("should") matchers
   gem 'shoulda-matchers', '~> 5.3'
-  # Selenium webdriver automatic installation and update.
-  gem 'webdrivers', '~> 5.2'
+  # Nice interface to Chrome, handles updates itself now
+  gem 'selenium-webdriver'
   # Mock HTTP requests and ensure they are not called during tests.
   gem "webmock", "~> 3.18"
 end
