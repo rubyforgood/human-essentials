@@ -41,21 +41,19 @@ RSpec.describe "User sign-in handling", type: :system, js: true do
 
   context "when users are valid and don't belong to an organization" do
     let(:user_no_org) { User.create(email: 'no-org-user@example.org2', password: 'password!') }
-  
+
     before do
       user_no_org.add_role(:org_user)
     end
-  
+
     it "redirects to 403" do
       visit new_user_session_path
-  
+
       fill_in "Email", with: user_no_org.email
-      fill_in "Password", with: 'password!'
+      fill_in "Password", with: user_no_org.password
       click_button "Log in"
-  
+
       expect(page).to have_current_path("/403")
     end
   end
-  
-  
 end
