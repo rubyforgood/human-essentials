@@ -34,7 +34,7 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.5.0"
+gem "strong_migrations", "1.6.0"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
@@ -99,6 +99,8 @@ gem 'icalendar', require: false
 gem "jwt"
 # Use Newrelic for logs and APM
 gem "newrelic_rpm"
+# Scheduling
+gem 'rufus-scheduler'
 # Used to manage periodic cron-like jobs
 gem "clockwork"
 
@@ -198,8 +200,8 @@ group :test do
   gem 'simplecov'
   # More concise test ("should") matchers
   gem 'shoulda-matchers', '~> 5.3'
-  # Selenium webdriver automatic installation and update.
-  gem 'webdrivers', '~> 5.2'
+  # Nice interface to Chrome, handles updates itself now
+  gem 'selenium-webdriver'
   # Mock HTTP requests and ensure they are not called during tests.
   gem "webmock", "~> 3.18"
 end

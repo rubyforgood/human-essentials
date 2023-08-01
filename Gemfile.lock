@@ -96,8 +96,8 @@ GEM
       popper_js (>= 1.14.3, < 2)
       sassc-rails (>= 2.0.0)
     bootstrap-select-rails (1.13.8)
-    brakeman (6.0.0)
-    bugsnag (6.25.2)
+    brakeman (6.0.1)
+    bugsnag (6.26.0)
       concurrent-ruby (~> 1.0)
     builder (3.2.4)
     bullet (7.0.7)
@@ -115,7 +115,6 @@ GEM
     capybara-screenshot (1.0.26)
       capybara (>= 1.0, < 4)
       launchy
-    childprocess (4.1.0)
     choice (0.2.0)
     clockwork (3.0.2)
       activesupport
@@ -163,6 +162,8 @@ GEM
       dotenv (= 2.8.1)
       railties (>= 3.2)
     erubi (1.12.0)
+    et-orbi (1.2.7)
+      tzinfo
     execjs (2.8.1)
     factory_bot (6.2.0)
       activesupport (>= 5.0.0)
@@ -198,19 +199,22 @@ GEM
       faraday (~> 1.0)
     ffi (1.15.5)
     filterrific (5.2.5)
-    flipper (0.28.2)
+    flipper (0.28.3)
       concurrent-ruby (< 2)
-    flipper-active_record (0.28.2)
+    flipper-active_record (0.28.3)
       activerecord (>= 4.2, < 8)
-      flipper (~> 0.28.2)
-    flipper-ui (0.28.2)
+      flipper (~> 0.28.3)
+    flipper-ui (0.28.3)
       erubi (>= 1.0.0, < 2.0.0)
-      flipper (~> 0.28.2)
+      flipper (~> 0.28.3)
       rack (>= 1.4, < 3)
       rack-protection (>= 1.5.3, <= 4.0.0)
       sanitize (< 7)
     foreman (0.87.2)
     formatador (0.3.0)
+    fugit (1.8.1)
+      et-orbi (~> 1, >= 1.2.7)
+      raabro (~> 1.4)
     geocoder (1.8.2)
     globalid (1.1.0)
       activesupport (>= 5.0)
@@ -263,7 +267,7 @@ GEM
       activerecord
       kaminari-core (= 1.2.2)
     kaminari-core (1.2.2)
-    knapsack_pro (5.3.0)
+    knapsack_pro (5.3.4)
       rake
     language_server-protocol (3.17.0.3)
     launchy (2.5.0)
@@ -277,7 +281,7 @@ GEM
     listen (3.8.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
-    lograge (0.12.0)
+    lograge (0.13.0)
       actionpack (>= 4)
       activesupport (>= 4)
       railties (>= 4)
@@ -303,7 +307,7 @@ GEM
     mini_mime (1.1.2)
     mini_racer (0.8.0)
       libv8-node (~> 18.16.0.0)
-    minitest (5.18.1)
+    minitest (5.19.0)
     monetize (1.11.0)
       money (~> 6.12)
     money (6.16.0)
@@ -404,6 +408,7 @@ GEM
     public_suffix (5.0.1)
     puma (6.3.0)
       nio4r (~> 2.0)
+    raabro (1.4.0)
     racc (1.7.1)
     rack (2.2.7)
     rack-protection (2.1.0)
@@ -428,8 +433,9 @@ GEM
       actionpack (>= 5.0.1.rc1)
       actionview (>= 5.0.1.rc1)
       activesupport (>= 5.0.1.rc1)
-    rails-dom-testing (2.0.3)
-      activesupport (>= 4.2.0)
+    rails-dom-testing (2.1.1)
+      activesupport (>= 5.0.0)
+      minitest
       nokogiri (>= 1.6)
     rails-erd (1.7.2)
       activerecord (>= 4.2)
@@ -462,7 +468,7 @@ GEM
     responders (3.1.0)
       actionpack (>= 5.2)
       railties (>= 5.2)
-    rexml (3.2.5)
+    rexml (3.2.6)
     rolify (6.0.1)
     rouge (4.1.2)
     rspec (3.12.0)
@@ -514,6 +520,8 @@ GEM
       ffi (~> 1.12)
     ruby2_keywords (0.0.5)
     rubyzip (2.3.2)
+    rufus-scheduler (3.9.1)
+      fugit (~> 1.1, >= 1.1.6)
     sanitize (6.0.2)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -527,8 +535,7 @@ GEM
       sprockets (> 3.0)
       sprockets-rails
       tilt
-    selenium-webdriver (4.5.0)
-      childprocess (>= 0.5, < 5.0)
+    selenium-webdriver (4.10.0)
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
@@ -573,7 +580,7 @@ GEM
       rubocop-performance (~> 1.18.0)
     stimulus-rails (1.2.1)
       railties (>= 6.0.0)
-    strong_migrations (1.5.0)
+    strong_migrations (1.6.0)
       activerecord (>= 5.2)
     terser (1.1.17)
       execjs (>= 0.3.0, < 3)
@@ -597,10 +604,6 @@ GEM
       activemodel (>= 6.0.0)
       bindex (>= 0.4.0)
       railties (>= 6.0.0)
-    webdrivers (5.2.0)
-      nokogiri (~> 1.6)
-      rubyzip (>= 1.3.0)
-      selenium-webdriver (~> 4.0)
     webmock (3.18.1)
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
@@ -614,13 +617,15 @@ GEM
       nokogiri (~> 1.8)
     yard (0.9.28)
       webrick (~> 1.7.0)
-    zeitwerk (2.6.8)
+    zeitwerk (2.6.9)
 
 PLATFORMS
+  arm64-darwin-20
   arm64-darwin-21
   arm64-darwin-22
   x86_64-darwin-20
   x86_64-darwin-21
+  x86_64-darwin-22
   x86_64-linux
 
 DEPENDENCIES
@@ -696,22 +701,23 @@ DEPENDENCIES
   rubocop
   rubocop-performance
   rubocop-rails (~> 2.20.1)
+  rufus-scheduler
   sass-rails
+  selenium-webdriver
   shoulda-matchers (~> 5.3)
   simple_form
   simplecov
   sprockets (~> 4.2.0)
   standard (~> 1.30)
   stimulus-rails
-  strong_migrations (= 1.5.0)
+  strong_migrations (= 1.6.0)
   terser
   turbo-rails
   web-console
-  webdrivers (~> 5.2)
   webmock (~> 3.18)
 
 RUBY VERSION
    ruby 3.1.2p20
 
 BUNDLED WITH
-   2.4.16
+   2.4.17
