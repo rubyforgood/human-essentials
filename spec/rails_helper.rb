@@ -55,9 +55,28 @@ Capybara.register_driver(:local_cuprite) do |app|
     slowmo: ENV["SLOWMO"]&.to_f,
     process_timeout: 15,
     timeout: 10,
-    browser_options: ENV["DOCKER"] ? { "no-sandbox" => nil } : {}
+    # browser_options: ENV["DOCKER"] ? { "no-sandbox" => nil, 'disable-dev-shm-usage' => true } : { 'disable-dev-shm-usage' => true},
+    browser_options: {
+      "no-sandbox" => nil,
+      "disable-dev-shm-usage" => nil,
+      "headless" => nil,
+      "disable-gpu" => nil,
+      "disable-setuid-sandbox" => nil,
+      "remote-debugging-port" => 9222,
+    },
+    # url: "http://#{ENV.fetch("SELENIUM_HOST", "localhost")}:#{ENV.fetch("SELENIUM_PORT", 4444)}",
+    url: "http://#{ENV.fetch("SELENIUM_HOST", "localhost")}:#{ENV.fetch("SELENIUM_PORT", 4444)}/wd/hub/",
+    host: ENV.fetch("SELENIUM_HOST", "localhost"),
+    port: ENV.fetch("SELENIUM_PORT", 4444),
+    xvfb: false,
+    # url: "http://#{ENV.fetch("SELENIUM_HOST", "localhost")}:4444",
   )
+
+
+  # pp("http://#{ENV.fetch("SELENIUM_HOST", "localhost")}:#{ENV.fetch("SELENIUM_PORT", 4444)}/")
+  # exit
 end
+Capybara.run_server = false
 
 # Enable JS for Capybara tests
 Capybara.javascript_driver = :local_cuprite

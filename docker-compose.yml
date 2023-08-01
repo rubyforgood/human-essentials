@@ -40,9 +40,53 @@ services:
       - "5432:5432" # local psql cli
     volumes:
       - postgres:/var/lib/postgresql/data
+  selenium:
+    profiles:
+      - tests
+    networks:
+      - human-essentials
+    # This version should match that of the selenium-webdriver gem (see Gemfile)
+    image: selenium/standalone-chrome:latest
+    privileged: true
+    shm_size: 2g
+    environment:
+      SE_OPTS: '--enable-managed-downloads true --log-level FINEST'
+      SE_NODE_PORT: 5555
+      SE_START_XVFB: false
+      SE_ENABLE_TRACING: true
+    #     SE_JAVA_OPTS: -Dwebdriver.chrome.whitelistedIps=
+    #     CHROMEDRIVER_WHITELISTED_IPS: ""
+    ports:
+      - "4444:4444"
+      - "9222:9222"
+      - "7900:7900"
+#    volumes:
+#      - /dev/shm:/dev/shm
+  tests:
+      profiles:
+        - tests
+      depends_on:
+        - db
+        - selenium
+      <<: *base-app-settings
+      networks:
+        - human-essentials
+      environment:
+        <<: *common-vars
+        SELENIUM_HOST: selenium
+        RAILS_ENV: test
+#        APP_HOST: tests
+#      ports:
+#        - "3000:3000"
+      command: |
+        bundle exec rails db:prepare assets:precompile spec:system
+      volumes:
+        - .:/app
 
 volumes:
   postgres:
 
 networks:
   human-essentials:
+#    external: true
+    driver: bridge
