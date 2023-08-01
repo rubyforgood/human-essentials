@@ -14,6 +14,6 @@ module IssuedAt
   private
 
   def initialize_issued_at
-    self.issued_at ||= created_at&.tomorrow&.beginning_of_day
+    self.issued_at ||= created_at&.end_of_day
   end
 end
