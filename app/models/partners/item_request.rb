@@ -14,6 +14,7 @@
 #
 module Partners
   class ItemRequest < Base
+    has_paper_trail
     belongs_to :request, class_name: '::Request', foreign_key: :partner_request_id, inverse_of: :item_requests
     has_many :child_item_requests, dependent: :destroy
     has_many :children, through: :child_item_requests

@@ -10,8 +10,8 @@ require "capybara/rails"
 require "capybara/rspec"
 require "capybara-screenshot/rspec"
 require "pry"
-require 'webdrivers'
 require 'knapsack_pro'
+require 'paper_trail/frameworks/rspec'
 
 KnapsackPro::Adapters::RSpecAdapter.bind
 
@@ -108,7 +108,7 @@ RSpec.configure do |config|
   # Disable this rubocop rule here so we are permitted to set constants within
   # the RSpec.configure block.
   # rubocop:disable Lint/ConstantDefinitionInBlock
-  DEFAULT_TEST_ORGANIZATION_NAME = "DEFAULT"
+  DEFAULT_TEST_ORGANIZATION_NAME = "STARTER"
   DEFAULT_TEST_USER_NAME = "DEFAULT USER"
   DEFAULT_TEST_ORG_ADMIN_USER_NAME = "DEFAULT ORG ADMIN"
   DEFAULT_TEST_SUPER_ADMIN_USER_NAME = "DEFAULT SUPERADMIN"
@@ -207,6 +207,10 @@ RSpec.configure do |config|
   config.before(:each) do
     # Defined shared @ global variables used throughout the test suite.
     define_global_variables
+  end
+
+  config.before do
+    Faker::UniqueGenerator.clear # Clears used values to avoid retry limit exceeded error
   end
 
   # RSpec Rails can automatically mix in different behaviours to your tests

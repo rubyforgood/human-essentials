@@ -54,9 +54,8 @@ RSpec.describe BarcodeItem, type: :model do
     # These are scopes that are expressly to integrate with Filterable
     context "filters >" do
       it "->barcodeable_id shows only barcodes for a specific barcodeable_id" do
-        skip "TODO: this test can be intermittent see https://travis-ci.org/rubyforgood/diaper/builds/624661379?"
-        global_barcode_item          # initial creation
-        create(:global_barcode_item) # create a null case
+        global_barcode_item
+        create(:global_barcode_item, base_item: create(:base_item))
         results = BarcodeItem.barcodeable_id(base_item.id)
 
         expect(results.length).to eq(1)
@@ -206,5 +205,9 @@ RSpec.describe BarcodeItem, type: :model do
         expect(barcode_item.to_h).to eq(barcodeable_id: barcode_item.barcodeable_id, barcodeable_type: barcode_item.barcodeable_type, quantity: barcode_item.quantity)
       end
     end
+  end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
   end
 end

@@ -10,9 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_16_135543) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_16_055847) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  # Custom types defined in this database.
+  # Note that some types may not work with other database engines. Be careful if changing database.
+  create_enum "category", ["US_County", "Other"]
+  create_enum "kit_allocation_type", ["inventory_in", "inventory_out"]
 
   create_table "account_requests", force: :cascade do |t|
     t.string "name", null: false
@@ -183,6 +188,17 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_16_135543) do
     t.index ["family_id"], name: "index_children_on_family_id"
   end
 
+  create_table "counties", force: :cascade do |t|
+    t.string "name"
+    t.string "region"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.enum "category", default: "US_County", null: false, enum_type: "category"
+    t.index ["name", "region"], name: "index_counties_on_name_and_region", unique: true
+    t.index ["name"], name: "index_counties_on_name"
+    t.index ["region"], name: "index_counties_on_region"
+  end
+
   create_table "delayed_jobs", force: :cascade do |t|
     t.integer "priority", default: 0, null: false
     t.integer "attempts", default: 0, null: false
@@ -220,6 +236,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_16_135543) do
     t.integer "state", default: 5, null: false
     t.boolean "reminder_email_enabled", default: false, null: false
     t.integer "delivery_method", default: 0, null: false
+    t.decimal "shipping_cost", precision: 8, scale: 2
     t.index ["organization_id"], name: "index_distributions_on_organization_id"
     t.index ["partner_id"], name: "index_distributions_on_partner_id"
     t.index ["storage_location_id"], name: "index_distributions_on_storage_location_id"
@@ -357,6 +374,18 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_16_135543) do
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"
     t.check_constraint "distribution_quantity >= 0", name: "distribution_quantity_nonnegative"
+  end
+
+  create_table "kit_allocations", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "storage_location_id", null: false
+    t.bigint "kit_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.enum "kit_allocation_type", default: "inventory_in", null: false, enum_type: "kit_allocation_type"
+    t.index ["kit_id"], name: "index_kit_allocations_on_kit_id"
+    t.index ["organization_id"], name: "index_kit_allocations_on_organization_id"
+    t.index ["storage_location_id"], name: "index_kit_allocations_on_storage_location_id"
   end
 
   create_table "kits", force: :cascade do |t|
@@ -547,6 +576,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_16_135543) do
     t.integer "partner_user_id"
     t.index ["organization_id"], name: "index_partner_requests_on_organization_id"
     t.index ["partner_id"], name: "index_partner_requests_on_partner_id"
+  end
+
+  create_table "partner_served_areas", force: :cascade do |t|
+    t.bigint "partner_profile_id", null: false
+    t.bigint "county_id", null: false
+    t.integer "client_share"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["county_id"], name: "index_partner_served_areas_on_county_id"
+    t.index ["partner_profile_id"], name: "index_partner_served_areas_on_partner_profile_id"
   end
 
   create_table "partner_users", force: :cascade do |t|
@@ -803,12 +842,17 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_16_135543) do
   add_foreign_key "item_categories_partner_groups", "partner_groups"
   add_foreign_key "items", "item_categories"
   add_foreign_key "items", "kits"
+  add_foreign_key "kit_allocations", "kits"
+  add_foreign_key "kit_allocations", "organizations"
+  add_foreign_key "kit_allocations", "storage_locations"
   add_foreign_key "kits", "organizations"
   add_foreign_key "manufacturers", "organizations"
   add_foreign_key "organizations", "account_requests"
   add_foreign_key "organizations", "ndbn_members", primary_key: "ndbn_member_id"
   add_foreign_key "partner_groups", "organizations"
   add_foreign_key "partner_requests", "users", column: "partner_user_id"
+  add_foreign_key "partner_served_areas", "counties"
+  add_foreign_key "partner_served_areas", "partner_profiles"
   add_foreign_key "partners", "storage_locations", column: "default_storage_location_id"
   add_foreign_key "product_drives", "organizations"
   add_foreign_key "requests", "distributions"

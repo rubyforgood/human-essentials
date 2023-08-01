@@ -1,5 +1,6 @@
 module Exports
   class ExportDistributionsCSVService
+    include DistributionHelper
     def initialize(distributions:, filters: [])
       # Currently, the @distributions are already loaded by the controllers that are delegating exporting
       # to this service object; this is happening within the same request/response cycle, so it's already
@@ -82,6 +83,9 @@ module Exports
         "Delivery Method" => ->(distribution) {
           distribution.delivery_method
         },
+        "Shipping Cost" => ->(distribution) {
+          distribution_shipping_cost(distribution.shipping_cost)
+        },
         "State" => ->(distribution) {
           distribution.state
         },
@@ -108,13 +112,17 @@ module Exports
     end
 
     def item_headers
-      # Define the item_headers by taking each item name
-      # and sort them alphabetically
-      item_names = distributions.map do |distribution|
-        distribution.line_items.map(&:item).map(&:name)
-      end.flatten
+      return @item_headers if @item_headers
 
-      item_names.sort.uniq
+      item_names = Set.new
+
+      distributions.each do |distribution|
+        distribution.line_items.each do |line_item|
+          item_names.add(line_item.item.name)
+        end
+      end
+
+      @item_headers = item_names.sort
     end
 
     def build_row_data(distribution)

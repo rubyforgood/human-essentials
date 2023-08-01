@@ -16,6 +16,7 @@
 #  organization_id :integer
 #
 class StorageLocation < ApplicationRecord
+  has_paper_trail
   require "csv"
 
   WAREHOUSE_TYPES = [
@@ -40,6 +41,7 @@ class StorageLocation < ApplicationRecord
                           inverse_of: :to,
                           foreign_key: :id,
                           dependent: :destroy
+  has_many :kit_allocations, dependent: :destroy
 
   validates :name, :address, :organization, presence: true
   validates :warehouse_type, inclusion: { in: WAREHOUSE_TYPES },
@@ -81,6 +83,12 @@ class StorageLocation < ApplicationRecord
     inventory_items.sum(:quantity)
   end
 
+  def total_active_inventory_count
+    active_inventory_items
+    .select('items.quantity')
+    .sum(:quantity)
+  end
+
   def inventory_total_value_in_dollars
     inventory_total_value = inventory_items.joins(:item).map do |inventory_item|
       value_in_cents = inventory_item.item.try(:value_in_cents)
@@ -93,7 +101,7 @@ class StorageLocation < ApplicationRecord
     org = organization
 
     CSV.generate(headers: true) do |csv|
-      csv << ["Quantity", "DO NOT CHANGE ANYTHING IN THIS ROW"]
+      csv << ['Quantity', 'DO NOT CHANGE ANYTHING IN THIS COLUMN']
       org.items.each do |item|
         csv << ["", item.name]
       end
@@ -121,6 +129,10 @@ class StorageLocation < ApplicationRecord
                 .create(quantity: row[0].to_i, item_id: current_org.items.find_by(name: row[1]))
     end
     adjustment.storage_location.increase_inventory(adjustment)
+  end
+
+  def remove_empty_items
+    inventory_items.where(quantity: 0).delete_all
   end
 
   # FIXME: After this is stable, revisit how we do logging
@@ -211,10 +223,18 @@ class StorageLocation < ApplicationRecord
   end
 
   def csv_export_attributes
-    [name, address, square_footage, warehouse_type, size]
+    attributes = [name, address, square_footage, warehouse_type, total_active_inventory_count]
+    active_inventory_items.sort_by { |inv_item| inv_item.item.name }.each { |item| attributes << item.quantity }
+    attributes
   end
 
   def empty_inventory_items?
     inventory_items.map(&:quantity).uniq.reject(&:zero?).empty?
+  end
+
+  def active_inventory_items
+    inventory_items
+    .includes(:item)
+    .where(items: { active: true })
   end
 end

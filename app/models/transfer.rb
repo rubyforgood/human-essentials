@@ -12,6 +12,7 @@
 #
 
 class Transfer < ApplicationRecord
+  has_paper_trail
   belongs_to :organization, inverse_of: :transfers
   belongs_to :from, class_name: "StorageLocation", inverse_of: :transfers_from
   belongs_to :to, class_name: "StorageLocation", inverse_of: :transfers_to
@@ -37,7 +38,7 @@ class Transfer < ApplicationRecord
   end
 
   validates :from, :to, :organization, presence: true
-  validate :line_item_items_exist_in_inventory
+  validate :line_items_exist_in_inventory
   validate :storage_locations_belong_to_organization
   validate :storage_locations_must_be_different
   validate :from_storage_quantities

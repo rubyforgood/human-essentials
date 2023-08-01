@@ -12,11 +12,11 @@ ruby "3.1.2"
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.4.6"
+gem "pg", "~> 1.5.3"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "7.0.4.3"
+gem "rails", "7.0.6"
 
 ###### MODELS / DATABASE #######
 
@@ -26,7 +26,7 @@ gem 'azure-storage-blob'
 # Adds soft delete functionality for models.
 gem 'discard', '~> 1.0'
 # Adds grouping by date/month/etc to queries.
-gem "groupdate", "~> 6.2"
+gem "groupdate", "~> 6.3"
 # Treats attributes like money, which knows about dollars and cents.
 gem "money-rails"
 # Tracks history / audits models.
@@ -34,7 +34,7 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.4.4"
+gem "strong_migrations", "1.6.0"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
@@ -97,6 +97,10 @@ gem 'httparty'
 gem 'icalendar', require: false
 # JSON Web Token encoding / decoding (e.g. for links in e-mails)
 gem "jwt"
+# Use Newrelic for logs and APM
+gem "newrelic_rpm"
+# Scheduling
+gem 'rufus-scheduler'
 # Used to manage periodic cron-like jobs
 gem "clockwork"
 
@@ -104,21 +108,19 @@ gem "clockwork"
 # These are gems that aren't used directly, only as dependencies for other gems.
 # Technically they don't need to be in this Gemfile at all, but we are pinning them to
 # specific versions for compatibility reasons.
-gem "mini_racer", "~> 0.6.3"
+gem "mini_racer", "~> 0.8.0"
 gem "nokogiri", ">= 1.10.4"
 gem "image_processing"
-gem "sprockets", "~> 4.0.0"
+gem "sprockets", "~> 4.2.0"
 
 group :production do
-  # Reduce the noise of logs and include custom fields to it for easier access
-  gem 'lograge'
-  # Profiler (third party app) showing performance and metrics.
-  gem "skylight"
   # Tool to detect unused code through knowing which methods are used in which files.
   gem 'coverband'
 end
 
 group :production, :staging do
+  # Reduce the noise of logs and include custom fields to it for easier access
+  gem 'lograge'
   # JS compression for deployed environments.
   gem 'terser'
 end
@@ -150,15 +152,16 @@ group :development, :test do
   # Add-on for command line to create a simple debugger.
   gem "pry-nav"
   # RSpec behavioral testing framework for Rails.
-  gem "rspec-rails", "~> 6.0.1"
+  gem "rspec-rails", "~> 6.0.3"
   # Allow retrying flaky RSpec tests.
   gem "rspec-retry"
   # Static analysis / linter.
   gem "rubocop"
   # Rails add-on for static analysis.
-  gem "rubocop-rails", "~> 2.18.0"
+  gem 'rubocop-performance'
+  gem "rubocop-rails", "~> 2.20.1"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.25"
+  gem "standard", "~> 1.30"
 end
 
 group :development do
@@ -184,7 +187,7 @@ end
 
 group :test do
   # Test using browsers.
-  gem "capybara", "~> 3.38"
+  gem "capybara", "~> 3.39"
   # Create screenshots when doing browser tests.
   gem "capybara-screenshot"
   # Generate Capybara tests in the browser and debug them.
@@ -197,8 +200,8 @@ group :test do
   gem 'simplecov'
   # More concise test ("should") matchers
   gem 'shoulda-matchers', '~> 5.3'
-  # Selenium webdriver automatic installation and update.
-  gem 'webdrivers', '~> 5.2'
+  # Nice interface to Chrome, handles updates itself now
+  gem 'selenium-webdriver'
   # Mock HTTP requests and ensure they are not called during tests.
   gem "webmock", "~> 3.18"
 end
@@ -214,4 +217,4 @@ end
 # Use Redis for Action Cable
 gem "redis", "~> 5.0"
 
-gem "importmap-rails", "~> 1.1"
+gem "importmap-rails", "~> 1.2"

@@ -28,14 +28,14 @@
         <!-- jquery validation -->
         <div class="card-transparent">
           <%= simple_form_for current_partner, url: partners_profile_path, html: {role: 'form', class: 'form-horizontal'} do |form| %>
-            <%= simple_fields_for :profile, current_partner.profile do |profile_form| %>
+            <%= form.simple_fields_for :profile, current_partner.profile do |profile_form| %>
               <div class="row">
                 <div class="col-6">
                   <%= render partial: "partners/profiles/edit/agency_information", locals: {form: form, profile: current_partner.profile, profile_form: profile_form} %>
                 </div>
                 <% current_partner.partials_to_show.each do |partial| %>
                   <div class="col-6">
-                    <%= render partial: "partners/profiles/edit/#{partial}", locals: {form: profile_form, profile: current_partner.profile} %>
+                    <%= render partial: "partners/profiles/edit/#{partial}", locals: {form: profile_form, f: profile_form, profile: current_partner.profile} %>
                   </div>
                 <% end %>
                 <div class="col-6">

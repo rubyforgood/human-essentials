@@ -9,6 +9,7 @@ require 'time_util'
 #  delivery_method        :integer          default("pick_up"), not null
 #  issued_at              :datetime
 #  reminder_email_enabled :boolean          default(FALSE), not null
+#  shipping_cost          :decimal(8, 2)
 #  state                  :integer          default("scheduled"), not null
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
@@ -18,6 +19,7 @@ require 'time_util'
 #
 
 class Distribution < ApplicationRecord
+  has_paper_trail
   # Distributions are issued from a single storage location, so we associate
   # them so that on-hand amounts can be verified
   belongs_to :storage_location
@@ -37,14 +39,14 @@ class Distribution < ApplicationRecord
   accepts_nested_attributes_for :request
 
   validates :storage_location, :partner, :organization, :delivery_method, presence: true
-  validate :line_item_items_exist_in_inventory
-  validate :line_item_items_quantity_is_positive
+  validate :line_items_exist_in_inventory
+  validate :line_items_quantity_is_positive
+  validates :shipping_cost, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true, if: :shipped?
 
-  before_save :combine_distribution
+  before_save :combine_distribution, :reset_shipping_cost
 
   enum state: { scheduled: 5, complete: 10 }
-  enum delivery_method: { pick_up: 0, delivery: 1 }
-
+  enum delivery_method: { pick_up: 0, delivery: 1, shipped: 2 }
   scope :active, -> { joins(:line_items).joins(:items).where(items: { active: true }) }
   # add item_id scope to allow filtering distributions by item
   scope :by_item_id, ->(item_id) { joins(:items).where(items: { id: item_id }) }
@@ -105,6 +107,7 @@ class Distribution < ApplicationRecord
     self.request = request
     self.organization_id = request.organization_id
     self.partner_id = request.partner_id
+    self.agency_rep = request.partner_user&.formatted_email
     self.comment = request.comments
     self.issued_at = Time.zone.today + 1.day
     request.request_items.each do |item|
@@ -140,5 +143,15 @@ class Distribution < ApplicationRecord
 
   def past?
     issued_at < Time.zone.today
+  end
+
+  private
+
+  def line_items_quantity_is_positive
+    line_items_quantity_is_at_least(1)
+  end
+
+  def reset_shipping_cost
+    self.shipping_cost = nil unless delivery_method == "shipped"
   end
 end

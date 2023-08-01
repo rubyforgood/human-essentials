@@ -17,7 +17,7 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
     described_class.destroy_all
   end
 
-  let!(:very_old) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(1919, 7, 31)) }
+  let!(:very_old) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(2000, 7, 31)) }
   let!(:recent) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(2019, 7, 24)) }
   let!(:today) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(2019, 7, 31)) }
 

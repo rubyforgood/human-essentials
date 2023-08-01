@@ -3,10 +3,6 @@ class ItemCategoriesController < ApplicationController
     @item_category = ItemCategory.new
   end
 
-  def index
-    @item_categories = current_organization.item_categories.includes(:items).order('name ASC')
-  end
-
   def create
     @item_category = ItemCategory.new(organization: current_organization)
     @item_category.assign_attributes(item_category_params)

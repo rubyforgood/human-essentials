@@ -27,6 +27,7 @@
 @import 'progress_stepper';
 @import 'audits';
 @import 'modal-dialog';
+@import 'expandable_table';
 @import 'custom';
 
 .modal-dialog {
@@ -155,4 +156,8 @@ body a {
 
 select.selectpicker + .dropdown-toggle::after {
   display: none;
+}
+
+.percentage-selector {
+  width: 110px;
 }
