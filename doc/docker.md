@@ -38,14 +38,55 @@ docker compose run --rm app bin/rails console
 
 ## Tests
 
-You can run individual tests within the container by running the following:
+System tests require a browser, which is not available in the app image. You
+can start the included chrome container by running the following:
 
 ```bash
-docker compose run --rm app bundle exec rspec <test filepath>
+docker compose --profile chrome up -d
 ```
 
-_Note: Not all tests will run inside of docker. System tests in particular
-should not be expected to run properly._
+With the container running you can now run all tests:
+
+```bash
+docker compose run --rm app bin/rails spec
+```
+
+You can also run a subset of tests or a single test:
+
+```bash
+docker compose run --rm app bin/rails spec:<test type>
+docker compose run --rm app bin/rspec <test filepath>
+```
+
+To stop (or terminate) the chrome container after running the tests, use:
+
+```bash
+docker compose --profile chrome [stop|down] chrome
+```
+
+_Note: The chrome container is only required for running system tests._
+
+### Using the chrome container for local system tests
+
+Additionally, you can run system tests locally against the chrome container.
+To do so, you will need to set the following environment variables (also found
+in [`.env.example`][.env]):
+
+```dotenv
+APP_HOST=host.docker.internal
+SELENIUM_HOST=localhost
+SELENIUM_PORT=4444
+SELENIUM_REMOTE=1
+```
+
+With the variables set, execute the following to launch a container and run the
+tests:
+
+```bash
+docker compose --profile chrome up
+bundle exec rails spec:system
+docker compose --profile chrome down chrome
+```
 
 ## Updates
 
@@ -55,6 +96,7 @@ Run the following to update application dependencies:
 docker compose run --rm app bin/update
 ```
 
+[.env]: ../.env.example
 [compose]: ../docker-compose.yml
 [decision]: architecture/decisions/0010-docker.md
 [dockerfile]: ../Dockerfile

@@ -17,6 +17,13 @@ Rails.application.configure do
   # running a single test file at the time of this comment was around 2-3 seconds slower with
   # eager loading enabled. For a single test within a file it lost even more time.
   config.eager_load = ENV["CI"] == "true"
+  config.hosts << "127.0.0.1"
+  config.hosts << "localhost"
+  config.hosts << "host.docker.internal"
+  config.hosts << ENV["APP_HOST"] if ENV["APP_HOST"]
+  config.hosts << `hostname`.strip if ENV["DOCKER"]
+
+  config.log_level = ENV.fetch("RAILS_LOG_LEVEL", :info)
 
   config.action_mailer.default_url_options = { host: "localhost" }
 

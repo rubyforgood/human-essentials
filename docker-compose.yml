@@ -4,6 +4,10 @@ x-common-vars: &common-vars
   PG_USERNAME: postgres
   PG_PASSWORD: postgres
   PG_HOST: db
+  SELENIUM_HOST: chrome
+  SELENIUM_PORT: 4444
+  SELENIUM_REMOTE: 1
+  DOCKER: 1
 x-base-app-settings: &base-app-settings
   depends_on:
     - db
@@ -37,9 +41,23 @@ services:
     networks:
       - human-essentials
     ports:
-      - "5432:5432" # local psql cli
+      - "5432:5432"
     volumes:
       - postgres:/var/lib/postgresql/data
+  chrome:
+    profiles:
+      - chrome
+    networks:
+      - human-essentials
+    # This version should match that of the selenium-webdriver gem (see Gemfile)
+    image: selenium/standalone-chrome:4.11.0
+    shm_size: 2g
+    environment:
+      JAVA_OPTS: -Dwebdriver.chrome.whitelistedIps=
+    ports:
+      - "4444:4444"
+    volumes:
+      - /dev/shm:/dev/shm
 
 volumes:
   postgres:

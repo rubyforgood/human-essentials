@@ -47,14 +47,26 @@ Capybara.ignore_hidden_elements = true
 
 # https://docs.travis-ci.com/user/chrome
 Capybara.register_driver :chrome do |app|
-  args = %w[no-sandbox disable-gpu disable-site-isolation-trials window-size=1680,1050]
+  args = %w[no-sandbox disable-gpu disable-site-isolation-trials disable-dev-shm-usage window-size=1680,1050]
   args << "headless" unless ENV["NOT_HEADLESS"] == "true"
-  capabilities = Selenium::WebDriver::Chrome::Options.new(args: args)
-  capabilities.add_preference(:download, prompt_for_download: false, default_directory: DownloadHelper::PATH.to_s)
-  capabilities.add_preference(:browser, set_download_behavior: { behavior: 'allow' })
+  options = Selenium::WebDriver::Chrome::Options.new(args: args)
+  options.add_preference(:download, prompt_for_download: false, default_directory: DownloadHelper::PATH.to_s)
+  options.add_preference(:browser, set_download_behavior: { behavior: 'allow' })
 
-  Capybara::Selenium::Driver.new(app, browser: :chrome, capabilities: capabilities)
+  Capybara::Selenium::Driver.new(
+    app,
+    browser: ENV["SELENIUM_REMOTE"] ? :remote : :chrome,
+    options: options,
+    url: ENV["SELENIUM_REMOTE"] ?
+      "http://#{ENV.fetch("SELENIUM_HOST", "localhost")}:#{ENV.fetch("SELENIUM_PORT", 4444)}" :
+      nil
+  )
 end
+
+hostname = ENV["DOCKER"] ? `hostname`.strip : "localhost"
+Capybara.server_host = ENV.fetch("APP_HOST", hostname)
+Capybara.server_port = ENV.fetch("APP_PORT", Capybara::Server.new(Rails.application).send(:find_available_port, "localhost"))
+Capybara.app_host = "http://#{ENV.fetch("APP_HOST", hostname)}:#{Capybara.server_port}"
 
 # Enable JS for Capybara tests
 Capybara.javascript_driver = :chrome
