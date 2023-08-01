@@ -81,15 +81,23 @@
 #
 module Partners
   class Profile < Base
+    has_paper_trail
     self.table_name = "partner_profiles"
     belongs_to :partner
     has_one :organization, through: :partner, class_name: "::Organization"
 
     has_one_attached :proof_of_partner_status
     has_one_attached :proof_of_form_990
-    has_many_attached :documents
 
-    validates :no_social_media_presence, acceptance: {message: "must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram."}, if: :has_no_social_media?
+    has_many :served_areas, foreign_key: "partner_profile_id", class_name: "Partners::ServedArea", dependent: :destroy, inverse_of: :partner_profile
+
+    accepts_nested_attributes_for :served_areas, allow_destroy: true
+
+    has_many_attached :documents
+    validate :check_social_media, on: :edit
+
+    validate :client_share_is_0_or_100
+    validate :has_at_least_one_request_setting
 
     self.ignored_columns = %w[
       evidence_based_description
@@ -105,8 +113,35 @@ module Partners
       ages_served
     ]
 
-    def has_no_social_media?
-      website.blank? && twitter.blank? && facebook.blank? && instagram.blank?
+    def client_share_total
+      served_areas.sum(&:client_share)
+    end
+
+    private
+
+    def check_social_media
+      return if website.present? || twitter.present? || facebook.present? || instagram.present?
+      return if partner.partials_to_show.exclude?("media_information")
+
+      unless no_social_media_presence
+        errors.add(:no_social_media_presence, "must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.")
+      end
+    end
+
+    def client_share_is_0_or_100
+      # business logic:  the client share has to be 0 or 100 -- although it is an estimate only,  making it 0 (not
+      # specified at all) or 100 means we won't have people overallocating (> 100) and that they think about what
+      # their allocation actually is
+      total = client_share_total
+      if total != 0 && total != 100
+        errors.add(:base, "Total client share must be 0 or 100")
+      end
+    end
+
+    def has_at_least_one_request_setting
+      if !(enable_child_based_requests || enable_individual_requests || enable_quantity_based_requests)
+        errors.add(:base, "At least one request type must be set")
+      end
     end
   end
 end

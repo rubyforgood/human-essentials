@@ -79,11 +79,15 @@ RSpec.describe "Organizations", type: :request do
       end
 
       context "when organization can not be updated" do
-        before { allow(OrganizationUpdateService).to receive(:update).and_return(false) }
+        let(:invalid_organization) { create(:organization, name: "Original Name") }
+        let(:invalid_params) { { organization: { name: nil } } }
 
-        it "redirects to #edit with an error message" do
-          subject
+        subject do
+          patch "/#{default_params[:organization_id]}/manage",
+                params: default_params.merge(invalid_params)
+        end
 
+        it "renders edit template with an error message" do
           expect(subject).to render_template("edit")
           expect(flash[:error]).to be_present
         end
@@ -93,28 +97,23 @@ RSpec.describe "Organizations", type: :request do
     describe "POST #promote_to_org_admin" do
       subject { post promote_to_org_admin_organization_path(default_params.merge(user_id: @user.id)) }
 
-      it "promotes the user to organization admin" do
+      it "runs successfully" do
         subject
+        expect(@user.has_role?(Role::ORG_ADMIN, @organization)).to eq(true)
         expect(response).to redirect_to(organization_path)
-      end
-      it "change user" do
-        expect { subject }.to change { @user.reload.kind }.to "admin"
       end
     end
 
     describe "POST #demote_to_user" do
       let(:admin_user) do
-        create(:user, organization: @organization, name: "ADMIN USER")
+        create(:organization_admin, organization: @organization, name: "ADMIN USER")
       end
       subject { post demote_to_user_organization_path(default_params.merge(user_id: admin_user.id)) }
 
-      it "redirect after update" do
-        subject
-        expect(response).to redirect_to(organization_path)
-      end
-      it "demotes the user to user" do
+      it "runs correctly" do
         subject
         expect(admin_user.reload.has_role?(Role::ORG_ADMIN, admin_user.organization)).to be_falsey
+        expect(response).to redirect_to(organization_path)
       end
     end
 
@@ -152,30 +151,29 @@ RSpec.describe "Organizations", type: :request do
       describe "GET #show" do
         before { get organization_path(other_organization_params) }
 
-        it "redirects to dashboard" do
-          expect(response).to redirect_to(dashboard_path)
+        it "shows your own anyway" do
+          expect(response.body).to include(@organization.name)
         end
       end
 
       describe "GET #edit" do
         before { get edit_organization_path(other_organization_params) }
 
-        it "redirects to dashboard" do
-          expect(response).to redirect_to(dashboard_path)
+        it "shows your own anyway" do
+          expect(response.body).to include(@organization.name)
         end
       end
 
       describe "POST #promote_to_org_admin" do
-        let(:other_user) { create(:user, organization: other_organization) }
+        let(:other_user) { create(:user, organization: other_organization, name: "Wrong User") }
 
         subject { post promote_to_org_admin_organization_path(default_params.merge(user_id: other_user.id)) }
 
-        it "redirect after update" do
+        it "redirects after update" do
           subject
           expect(response).to have_http_status(:not_found)
-        end
-        it "does not promote user" do
-          expect { subject }.not_to change { other_user.reload.organization_admin }
+          expect(other_user.reload.has_role?(Role::ORG_ADMIN, @organization)).to eq(false)
+          expect(other_user.reload.has_role?(Role::ORG_ADMIN, other_organization)).to eq(false)
         end
       end
     end
@@ -189,27 +187,22 @@ RSpec.describe "Organizations", type: :request do
     describe "POST #promote_to_org_admin" do
       subject { post promote_to_org_admin_organization_path(default_params.merge(user_id: @user.id)) }
 
-      it "redirect after update" do
+      it "runs successfully" do
         subject
+        expect(@user.has_role?(:org_admin, @organization)).to eq(true)
         expect(response).to redirect_to(admin_organization_path(@organization.id, default_params))
-      end
-      it "change user" do
-        expect { subject }.to change { @user.reload.kind }.to "admin"
       end
     end
 
     describe "POST #demote_to_user" do
       let(:admin_user) do
-        create(:user, organization: @organization, name: "ADMIN USER")
+        create(:organization_admin, organization: @organization, name: "ADMIN USER")
       end
       subject { post demote_to_user_organization_path(default_params.merge(user_id: admin_user.id)) }
 
-      it "redirect after update" do
+      it "runs successfully" do
         subject
         expect(response).to redirect_to(admin_organization_path(@organization.id, default_params))
-      end
-      it "demotes the user to user" do
-        subject
         expect(admin_user.reload.has_role?(Role::ORG_ADMIN, admin_user.organization)).to be_falsey
       end
     end

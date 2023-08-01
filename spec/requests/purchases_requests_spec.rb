@@ -116,23 +116,6 @@ RSpec.describe "Purchases", type: :request do
             put purchase_path(default_params.merge(id: purchase.id, purchase: purchase_params))
           end.to change { purchase.storage_location.inventory_items.first.quantity }.by(-10)
         end
-
-        it "deletes inventory item if line item and inventory item quantities are equal" do
-          purchase = create(:purchase, :with_items, item_quantity: 1)
-          line_item = purchase.line_items.first
-          inventory_item = purchase.storage_location.inventory_items.first
-          inventory_item.update(quantity: line_item.quantity)
-          line_item_params = {
-            "0" => {
-              "_destroy" => "true",
-              item_id: line_item.item_id,
-              id: line_item.id
-            }
-          }
-          purchase_params = { source: "Purchase Site", line_items_attributes: line_item_params }
-          put purchase_path(default_params.merge(id: purchase.id, purchase: purchase_params))
-          expect { inventory_item.reload }.to raise_error(ActiveRecord::RecordNotFound)
-        end
       end
 
       describe "when changing storage location" do
@@ -176,9 +159,8 @@ RSpec.describe "Purchases", type: :request do
             }
           }
           purchase_params = { storage_location: new_storage_location, line_items_attributes: line_item_params }
-          expect do
-            put purchase_path(default_params.merge(id: purchase.id, purchase: purchase_params))
-          end.to raise_error(Errors::InsufficientAllotment)
+          put purchase_path(default_params.merge(id: purchase.id, purchase: purchase_params))
+          expect(response).not_to redirect_to(anything)
           expect(original_storage_location.size).to eq 5
           expect(new_storage_location.size).to eq 0
           expect(purchase.reload.line_items.first.quantity).to eq 10

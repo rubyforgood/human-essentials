@@ -12,6 +12,7 @@
 #
 
 class Adjustment < ApplicationRecord
+  has_paper_trail
   belongs_to :organization
   belongs_to :storage_location
   belongs_to :user
@@ -28,7 +29,7 @@ class Adjustment < ApplicationRecord
   scope :during, ->(range) { where(adjustments: { created_at: range }) }
 
   validates :storage_location, :organization, presence: true
-  validate :negative_line_item_items_exist_in_inventory
+  validate :negative_line_items_exist_in_inventory
   validate :storage_locations_belong_to_organization
 
   def self.storage_locations_adjusted_for(organization)
@@ -67,7 +68,7 @@ class Adjustment < ApplicationRecord
     end
   end
 
-  def negative_line_item_items_exist_in_inventory
+  def negative_line_items_exist_in_inventory
     return if storage_location.nil?
 
     line_items.each do |line_item|

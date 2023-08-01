@@ -44,7 +44,7 @@
               <tbody>
               <tr>
                 <td><%= @request.partner.name %></td>
-                <td><%= @request.partner_user.present? ? "#{@request.partner_user.name} <#{@request.partner_user.email}>" : "" %></td>
+                <td><%= @request.partner_user&.formatted_email %></td>
                 <td><%= render partial: "status", locals: {status: @request.status} %></td>
                 <td><%= @request.comments || 'None' %></td>
               </tr>

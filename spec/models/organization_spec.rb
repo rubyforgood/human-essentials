@@ -57,6 +57,11 @@ RSpec.describe Organization, type: :model do
       )).to_not be_valid
     end
 
+    it "validates that short names are unique" do
+      expect(create(:organization, short_name: "foo_bar")).to be_valid
+      expect(build(:organization, short_name: "foo_bar")).to_not be_valid
+    end
+
     it "validates that attachment file size is not higher than 1 MB" do
       fixture_path = File.join(Rails.root, 'spec', 'fixtures', 'files', 'logo.jpg')
       fixture_file = File.open(fixture_path)
@@ -312,6 +317,17 @@ RSpec.describe Organization, type: :model do
     end
   end
 
+  describe 'is_active' do
+    let!(:active_organization) { create(:organization) }
+    let!(:inactive_organization) { create(:organization) }
+    let!(:active_user) { create(:user, organization: active_organization, last_sign_in_at: 1.month.ago) }
+    let!(:inactive_user) { create(:user, organization: inactive_organization, last_sign_in_at: 6.months.ago) }
+
+    it 'returns active organizations' do
+      expect(Organization.is_active).to contain_exactly(active_organization)
+    end
+  end
+
   describe "total_inventory" do
     it "returns a sum total of all inventory at all storage locations" do
       item = create(:item)
@@ -461,5 +477,9 @@ RSpec.describe Organization, type: :model do
       create(:purchase, organization: org, issued_at: 7.years.ago)
       expect(org.earliest_reporting_year).to eq(7.years.ago.year)
     end
+  end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
   end
 end

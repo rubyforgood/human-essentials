@@ -14,7 +14,15 @@
     </div>
     <%= f.input :reminder_email_enabled, as: :boolean, checked_value: true, unchecked_value: false, label: "Send email reminder the day before?" %>
     <%= f.input :agency_rep, label: "Agency representative" %>
-    <%= f.input :delivery_method, as: :radio_buttons, collection: Distribution.delivery_methods.keys, label_method: :humanize, label: "Delivery method" %>
+
+    <div class='d-flex flex-row' data-controller="distribution-delivery">
+      <span class="w-25">
+        <%= f.input :delivery_method, as: :radio_buttons, :input_html => { data: { action: "distribution-delivery#toggleShippingCost" } }, collection: Distribution.delivery_methods.keys, label_method: :humanize, label: "Delivery method" %>
+      </span>
+      <div class="mx-2 mt-5" id="shipping_cost_div" data-distribution-delivery-target="shippingCost">
+        <%= f.input :shipping_cost, label: "Shipping cost", placeholder: "Shipping Cost", value: number_to_currency(f.object.shipping_cost.to_f, delimiter: '', unit: '') %>
+      </div>
+    </div>
 
     <%= render partial: "storage_locations/source", object: f, locals: { include_inactive_items: false, include_omitted_items: true }  %>
 

@@ -13,6 +13,7 @@
 #
 
 class Audit < ApplicationRecord
+  has_paper_trail
   belongs_to :user
   belongs_to :organization
   belongs_to :storage_location
@@ -27,8 +28,8 @@ class Audit < ApplicationRecord
   enum status: { in_progress: 0, confirmed: 1, finalized: 2 }
 
   validates :storage_location, :organization, presence: true
-  validate :line_item_items_exist_in_inventory
-  validate :line_item_items_quantity_is_positive
+  validate :line_items_exist_in_inventory
+  validate :line_items_quantity_is_not_negative
   validate :user_is_organization_admin_of_the_organization
 
   def self.storage_locations_audited_for(organization)
@@ -41,5 +42,11 @@ class Audit < ApplicationRecord
     unless user.has_role?(Role::ORG_ADMIN, organization)
       errors.add :user, "user must be an organization admin of the organization"
     end
+  end
+
+  private
+
+  def line_items_quantity_is_not_negative
+    line_items_quantity_is_at_least(0)
   end
 end

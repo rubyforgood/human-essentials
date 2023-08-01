@@ -1,7 +1,7 @@
 <div data-controller="highchart" data-highchart-config-value="<%= config %>">
   <div data-highchart-target="chart"></div>
-  <div class='flex flex-row justify-center w-full space-x-2 py-3'>
-    <button type="button" class="inline-flex items-center rounded border border-transparent bg-indigo-600 px-2.5 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-action="click->highchart#selectAll">Select All</button>
-    <button type="button" class="inline-flex items-center rounded border border-transparent bg-gray-600 px-2.5 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-action="click->highchart#deselectAll">Deselect All</button>
+  <div>
+    <button type="button" class="btn btn-sm btn-secondary" data-action="click->highchart#selectAll">Select All</button>
+    <button type="button" class="btn btn-sm btn-info" data-action="click->highchart#deselectAll">Deselect All</button>
   </div>
 </div>

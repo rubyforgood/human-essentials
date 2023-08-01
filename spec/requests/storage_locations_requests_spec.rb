@@ -38,10 +38,25 @@ RSpec.describe "StorageLocations", type: :request do
 
       context "csv" do
         let(:response_format) { 'csv' }
-
         it "succeeds" do
           get storage_locations_path(default_params.merge(format: response_format))
           expect(response).to be_successful
+        end
+
+        it "includes headers followed by alphabetized item names" do
+          storage_location_with_items = create(:storage_location)
+          item1 = create(:item, name: 'C')
+          item2 = create(:item, name: 'B')
+          item3 = create(:item, name: 'A')
+          create(:item, name: 'inactive item', active: false)
+          Item.last(4).each { |item| create(:inventory_item, storage_location_id: storage_location_with_items.id, item_id: item.id, quantity: 1) }
+
+          storage_location_with_duplicate_item = create(:storage_location)
+          create(:inventory_item, storage_location_id: storage_location_with_duplicate_item.id, item_id: item3.id, quantity: 1)
+
+          get storage_locations_path(default_params.merge(format: response_format))
+
+          expect(response.body.split("\n")[0]).to eq([StorageLocation.csv_export_headers, item3.name, item2.name, item1.name].join(','))
         end
       end
     end
@@ -128,7 +143,7 @@ RSpec.describe "StorageLocations", type: :request do
           expect(response.body).to include("200")
         end
 
-        context "with version date set" do
+        context "with version date set", versioning: true do
           context "with a version found" do
             it "should show the version specified" do
               travel 1.day do

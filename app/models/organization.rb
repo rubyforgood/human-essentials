@@ -31,6 +31,7 @@
 #
 
 class Organization < ApplicationRecord
+  has_paper_trail
   resourcify
 
   DIAPER_APP_LOGO = Rails.root.join("public", "img", "humanessentials_logo.png")
@@ -38,7 +39,7 @@ class Organization < ApplicationRecord
   include Deadlinable
 
   validates :name, presence: true
-  validates :short_name, presence: true, format: /\A[a-z0-9_]+\z/i
+  validates :short_name, presence: true, format: /\A[a-z0-9_]+\z/i, uniqueness: true
   validates :url, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "it should look like 'http://www.example.com'" }, allow_blank: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
   validate :correct_logo_mime_type
@@ -112,9 +113,10 @@ class Organization < ApplicationRecord
     ['Agency Stability', 'agency_stability'],
     ['Organizational Capacity', 'organizational_capacity'],
     ['Sources of Funding', 'sources_of_funding'],
+    ['Area Served', 'area_served'],
     ['Population Served', 'population_served'],
     ['Executive Director', 'executive_director'],
-    ['Pickup Person', 'diaper_pick_up_person'],
+    ['Pickup Person', 'pick_up_person'],
     ['Agency Distribution Information', 'agency_distribution_information'],
     ['Attached Documents', 'attached_documents']
   ].freeze
@@ -135,6 +137,12 @@ class Organization < ApplicationRecord
 
   scope :alphabetized, -> { order(:name) }
   scope :search_name, ->(query) { where('name ilike ?', "%#{query}%") }
+
+  scope :is_active, -> {
+    joins(:users)
+      .where('users.last_sign_in_at > ?', 4.months.ago)
+      .distinct
+  }
 
   def assign_attributes_from_account_request(account_request)
     assign_attributes(
