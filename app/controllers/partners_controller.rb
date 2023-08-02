@@ -166,9 +166,9 @@ class PartnersController < ApplicationController
   private
 
   def validate_user
-    return unless current_user.has_role?(Role::PARTNER, current_partner)
+    return if current_user.has_role?(Role::ORG_ADMIN, current_organization) || current_user.has_role?(Role::ORG_USER, current_organization)
 
-    redirect_to partner_user_root_path, error: "You must be logged in as the essentials bank's organization administrator to approve partner applications!"
+    redirect_to root_path, error: "You must be logged in as the essentials bank to review this partner!"
   end
 
   def partner_params
