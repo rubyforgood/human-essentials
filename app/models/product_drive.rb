@@ -13,6 +13,7 @@
 #
 
 class ProductDrive < ApplicationRecord
+  has_paper_trail
   belongs_to :organization, optional: true
   include Filterable
 

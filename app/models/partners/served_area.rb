@@ -11,6 +11,7 @@
 #
 module Partners
   class ServedArea < ApplicationRecord
+    has_paper_trail
     self.table_name = "partner_served_areas"
     belongs_to :partner_profile, class_name: "Partners::Profile"
     belongs_to :county

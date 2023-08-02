@@ -127,4 +127,8 @@ RSpec.describe User, type: :model do
       expect(described_class.from_omniauth(token)).to eq(user)
     end
   end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
+  end
 end

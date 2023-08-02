@@ -22,6 +22,7 @@
 #
 
 class Item < ApplicationRecord
+  has_paper_trail
   include Filterable
   include Exportable
   include Valuable
