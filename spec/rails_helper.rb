@@ -10,8 +10,8 @@ require "capybara/rails"
 require "capybara/rspec"
 require "capybara-screenshot/rspec"
 require "pry"
-require 'webdrivers'
 require 'knapsack_pro'
+require 'paper_trail/frameworks/rspec'
 
 KnapsackPro::Adapters::RSpecAdapter.bind
 

@@ -35,6 +35,7 @@
 #
 
 class User < ApplicationRecord
+  has_paper_trail
   rolify
   include Discard::Model
 

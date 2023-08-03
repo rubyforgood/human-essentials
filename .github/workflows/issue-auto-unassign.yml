@@ -7,25 +7,22 @@ jobs:
   unassign_issues:
     runs-on: ubuntu-latest
     name: Unassign issues
+    permissions:
+      issues: write
+      pull-requests: write
     steps:
-      - name: Unassign issues
-        uses: rubyforgood/unassign-issues@v1
-        id: unassign_issues
+      - name: Mark issues as stale
+        uses: actions/stale@v8
         with:
-          token: ${{secrets.GITHUB_TOKEN}}
-          unassign_inactive_in_hours: 360 # 15 days
-          warning_inactive_in_hours: 240 # 10 days
-      - name: Print the unassigned issues
-        run: echo "Unassigned issues = ${{steps.unassign_issues.outputs.unassigned_issues}}"
-      - name: Print the warned issues
-        run: echo "Warned issues = ${{steps.unassign_issues.outputs.warned_issues}}"
-      - name: Move unassigned issues from In Progress to To Do
-        uses: bjthompson805/move-issues@v1
-        id: move_issues
+          include-only-assigned: true
+          stale-issue-message: 'This issue is marked as stale due to no activity within 30 days. If no further activity is detected within 7 days, it will be unassigned.'
+          days-before-stale: 30
+          days-before-close: -1
+          days-before-pr-close: -1
+      - name: Unassign stale issues
+        uses: boundfoxstudios/action-unassign-contributor-after-days-of-inactivity@main
         with:
-          token: ${{secrets.GITHUB_TOKEN}}
-          issues: ${{steps.unassign_issues.outputs.unassigned_issues}}
-          from_column: '16446973'
-          to_column: '16446972'
-      - name: Print moved issues
-        run: echo "Moved issues = ${{steps.move_issues.outputs.moved_issues}}"
+          last-activity: 7
+          labels: 'Stale'
+          labels-to-remove: 'Stale'
+          message: 'Automatically unassigned after 7 days of inactivity.'
