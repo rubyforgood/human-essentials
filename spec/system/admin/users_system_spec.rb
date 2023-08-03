@@ -1,4 +1,5 @@
 RSpec.describe "Admin Users Management", type: :system, js: true do
+
   context "While signed in as an Administrative User (super admin)" do
     before do
       sign_in(@super_admin)
@@ -51,6 +52,25 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
         expect(page.find("table")).not_to have_content(name)
       end
       expect(page.find("table")).to have_content(user_names.first)
+    end
+
+    it "filters users by email" do
+      user_email = "person100@example.com"
+    
+      visit admin_users_path
+      fill_in "filterrific_search_email", with: user_email
+      expect(page.find("table")).to have_content(user_email)
+    end
+    
+    it "clears search filters" do
+      visit admin_users_path
+    
+      fill_in "filterrific_search_name", with: "some name"
+      fill_in "filterrific_search_email", with: "some email"
+      click_button "Clear"
+    
+      expect(find_field("filterrific_search_name").value).to eq ""
+      expect(find_field("filterrific_search_email").value).to eq ""
     end
   end
 end
