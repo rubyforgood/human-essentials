@@ -68,8 +68,7 @@ class User < ApplicationRecord
   scope :partner_users, -> { with_role(Role::PARTNER, :any) }
   scope :org_users, -> { with_role(Role::ORG_USER, :any) }
   scope :search_name, ->(query) { where("name ilike ?", "%#{query}%") }
-  scope :search_email, ->(query) { where('email LIKE ?', "%#{query}%") }
-
+  scope :search_email, ->(query) { where("email LIKE ?", "%#{query}%") }
 
   filterrific(
     available_filters: [

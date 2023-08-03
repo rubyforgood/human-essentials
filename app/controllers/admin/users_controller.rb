@@ -9,7 +9,7 @@ class Admin::UsersController < AdminController
       available_filters: [:search_query, :search_name, :search_email]
     ) || return
     @users = @filterrific.find.page(params[:page])
-  
+
     respond_to do |format|
       format.html
       format.js
