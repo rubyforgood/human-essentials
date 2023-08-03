@@ -112,7 +112,14 @@ RSpec.describe "Organization management", type: :system, js: true do
       end
 
       it 'can change the allowed request types and send an error if it results in a partner not having request capability' do
-        
+        #adjust organiation partner to only allow one request type
+        partner = @organization.partners.first.profile
+        partner.update(enable_child_based_requests: false, enable_individual_requests: false)
+
+        choose('organization[enable_quantity_based_requests]', option: false)
+        click_on "Save"
+
+        expect(page).to have_content("Please update DEFAULT PARTNER so that they could make requests if you completed this change, then try again. Thank you.")
       end
     end
 
