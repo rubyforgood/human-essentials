@@ -18,15 +18,24 @@ class ItemsByStorageCollectionAndQuantityQuery
     @items_by_storage_collection.each do |row|
       unless @items_by_storage_collection_and_quantity.key?(row.id)
         @items_by_storage_collection_and_quantity[row.id] = {
+          item_id: row.id,
           item_name: row.name,
           item_on_hand_minimum_quantity: row.on_hand_minimum_quantity,
           item_on_hand_recommended_quantity: row.on_hand_recommended_quantity,
           item_value: row.value_in_cents,
-          item_barcode_count: row.barcode_count
+          item_barcode_count: row.barcode_count,
+          locations: [],
+          quantity: 0
         }
       end
-      @items_by_storage_collection_and_quantity[row.id][row.storage_id] = row.quantity
-      @items_by_storage_collection_and_quantity[row.id][:quantity] ||= 0
+
+      if row.storage_id
+        @items_by_storage_collection_and_quantity[row.id][:locations] << {
+          id: row.storage_id,
+          name: row.storage_name,
+          quantity: row.quantity
+        }
+      end
       @items_by_storage_collection_and_quantity[row.id][:quantity] += row.quantity || 0
     end
 

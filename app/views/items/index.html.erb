@@ -76,11 +76,15 @@
               </li>
               </li>
               <li class="nav-item">
-                <a class="nav-link" id="custom-tabs-three-profile-tab" data-bs-toggle="pill" href="#custom-tabs-three-categories" role="tab" aria-controls="custom-tabs-three-categories" aria-selected="false">Item Categories</a>
+                <a class="nav-link" id="custom-tabs-three-categories-tab" data-bs-toggle="pill" href="#custom-tabs-three-categories" role="tab" aria-controls="custom-tabs-three-categories" aria-selected="false">Item Categories</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" id="custom-tabs-three-profile-tab" data-bs-toggle="pill" href="#custom-tabs-three-profile" role="tab" aria-controls="custom-tabs-three-profile" aria-selected="false">Items,
                   Quantity, and Location</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="custom-tabs-three-inventory-tab" data-bs-toggle="pill" href="#custom-tabs-three-inventory" role="tab" aria-controls="custom-tabs-three-inventory" aria-selected="false">
+                  Item Inventory</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" id="custom-tabs-three-kits-tab" data-bs-toggle="pill" href="#custom-tabs-three-kits" role="tab" aria-controls="custom-tabs-three-kits" aria-selected="false">Kits</a>
@@ -92,6 +96,7 @@
               <%= render partial: 'item_list', locals: { items: @items } %>
               <%= render partial: 'item_categories', locals: { item_categories: @item_categories } %>
               <%= render partial: 'items_quantity_and_location' %>
+              <%= render partial: 'items_inventory' %>
               <%= render partial: 'kits' %>
             </div>
           </div>
