@@ -56,7 +56,7 @@ module Partners
 
       create_service.call
 
-      session.delete(:children_ids)
+      session.delete(:children_and_item_ids)
 
       if create_service.errors.none?
         redirect_to partners_request_path(create_service.partner_request), notice: "Requested items successfully!"
