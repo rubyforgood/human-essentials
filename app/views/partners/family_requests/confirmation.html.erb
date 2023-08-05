@@ -1,5 +1,5 @@
 <section class="d-flex flex-column align-items-center py-4">
-  <div class="card shadow-sm mx-auto" style="width: 55rem;">
+  <div class="card shadow-sm mx-auto" style="width: 60rem;">
     <div class="card-body">
       <h1 class="text-center">Request Summary</h1>
       <hr>
@@ -10,7 +10,7 @@
         <hr>
       <% end %>
 
-      <h1 class="text-center"><strong> You are ordering for a total of <%= @total_items_requested %> children.</strong></h1>
+      <h1 class="text-center"><strong> You are ordering for a total of <%= @total_items_requested %> items for <%= @total_children %>  children.</strong></h1>
       <h1 class="text-center"><strong>Are you sure?</strong></h1>
 
       <div class="d-flex justify-content-around align-items-center">

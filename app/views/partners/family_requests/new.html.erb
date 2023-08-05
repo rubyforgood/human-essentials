@@ -73,14 +73,14 @@
             <div id="filterrific_results">
               <%= render(
                 partial: 'partners/family_requests/list',
-                locals: {children: @children}
+                locals: {children: @children.select { |child| child.active }}
               ) %>
             </div>
 
             <hr>
 
             <div class="card-footer">
-              <%= submit_tag("Submit Essentials Request", class: "btn btn-primary") %>
+              <%= submit_tag("Submit Essentials Request", class: "btn btn-primary", id: "updateActiveChildren") %>
               <%= link_to "Cancel Request", partners_requests_path, class: "btn btn-danger" %>
             </div>
           <% end %>
@@ -89,3 +89,4 @@
     </div>
   </div>
 </section>
+

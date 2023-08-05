@@ -8,33 +8,36 @@
   </tr>
   </thead>
   <tbody class='fields'>
-  <% @children.each_with_index do |child, index| %>
-    <tr>
-      <td>
-        <%= child.family.guardian_first_name %>
-        <%= child.family.guardian_last_name %>
-      </td>
-      <td>
-        <%= child.first_name %> <%= child.last_name %>
-      </td>
-      <td>
+<% @children.each_with_index do |child, index| %>
+  <tr>
+    <td>
+      <%= child.family.guardian_first_name %>
+      <%= child.family.guardian_last_name %>
+    </td>
+    <td>
+      <%= child.first_name %> <%= child.last_name %>
+    </td>
+    <td>
+      <% if child.item_needed_diaperid %>
+        <%= current_partner.organization.item_id_to_display_string_map[child.item_needed_diaperid] %>
+      <% else %>
+        <%= "N/A" %>
+      <% end %>
+    </td>
+    <td>
+      <div class="custom-control custom-switch">
         <% if child.item_needed_diaperid %>
-          <%= current_partner.organization.item_id_to_display_string_map[child.item_needed_diaperid] %>
-        <% else %>
-          <%= "N/A" %>
+          <%= check_box_tag "children[#{child.id}][active]", 'true', child.active,
+                            class: "custom-control-input",
+                            id: "child-#{child.id}" %>
+          <%= hidden_field_tag "children[#{child.id}][child_id]", child.id %>
+          <%= hidden_field_tag "children[#{child.id}][item_id]", child.item_needed_diaperid %>
+          <label class="custom-control-label" for="child-<%= child.id %>"></label>
         <% end %>
-      </td>
-      <td>
-        <div class="custom-control custom-switch">
-          <% if child.item_needed_diaperid %>
-            <%= check_box_tag "child-#{child.id}", child.active, child.active,
-                              class: "custom-control-input",
-                              id: "child-#{child.id}" %>
-            <label class="custom-control-label" for="child-<%= child.id %>"></label>
-          <% end %>
-        </div>
-      </td>
-    </tr>
-  <% end %>
-  </tbody>
+      </div>
+    </td>
+  </tr>
+<% end %>
+</tbody>
 </table>
+
