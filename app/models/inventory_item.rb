@@ -11,9 +11,8 @@
 #
 
 class InventoryItem < ApplicationRecord
-  MAX_INT = 2**31
-
   has_paper_trail
+  MAX_INT = 2**31
 
   EARLIEST_VERSION = "2021-08-02"
 

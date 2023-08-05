@@ -592,4 +592,33 @@ RSpec.feature "Distributions", type: :system do
       expect(page).to have_no_content "Inactive R Us"
     end
   end
+
+  it "allows completion of corrected distribution with depleted inventory item" do
+    visit @url_prefix + "/distributions/new"
+    item = @storage_location.inventory_items.first.item
+    @storage_location.inventory_items.first.update!(quantity: 20)
+
+    select @partner.name, from: "Partner"
+    select @storage_location.name, from: "From storage location"
+    choose "Delivery"
+    select item.name, from: "distribution_line_items_attributes_0_item_id"
+    fill_in "distribution_line_items_attributes_0_quantity", with: 15
+
+    click_button "Save"
+
+    click_link "Make a Correction"
+
+    fill_in "distribution_line_items_attributes_0_quantity", with: 20
+
+    click_button "Save"
+
+    expect(page).to have_content("Distribution Complete")
+    expect(page).to have_link("Distribution Complete")
+
+    expect(@storage_location.inventory_items.first.quantity).to eq(0)
+
+    click_link "Distribution Complete"
+
+    expect(page).to have_content("This distribution has been marked as being completed!")
+  end
 end

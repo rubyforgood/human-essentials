@@ -164,4 +164,8 @@ RSpec.describe Purchase, type: :model do
       end
     end
   end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
+  end
 end

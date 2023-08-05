@@ -61,7 +61,7 @@ Rails.application.configure do
   config.log_level = :info
 
   # Use a different cache store in production.
-  # config.cache_store = :mem_cache_store
+  config.cache_store = :redis_cache_store, { url: ENV['REDIS_URL'] }
 
   # Use a real queuing backend for Active Job (and separate queues per environment)
   # config.active_job.queue_adapter     = :resque
@@ -104,8 +104,8 @@ Rails.application.configure do
     {
       host: controller.request.host,
       user_id: controller.current_user.try(:id),
-      org_id: controller.current_organization.try(:id),
-      partner_id: controller.current_partner.try(:id)
+      org_id: controller.try(:current_organization).try(:id),
+      partner_id: controller.try(:current_partner).try(:id)
     }
   end
   config.lograge.custom_options = lambda do |event|
