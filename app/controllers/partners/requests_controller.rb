@@ -29,7 +29,6 @@ module Partners
           @total_quantity_requested += request_params["quantity"].to_i
         end
       end
-
       render :confirmation
     end
 
