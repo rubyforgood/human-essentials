@@ -170,8 +170,8 @@
       </li>
     </ul>
   </li>
-  <li class="nav-item has-treeview <%= menu_open?(['audits', 'reports/annual_reports', "distributions_by_county", 'reports/itemized_donations', 'reports/itemized_distributions', "purchases_summary", "distributions_summary"]) %>">
-    <a href="#" class="nav-link <%= active_class(['audits', 'reports/annual_reports', "distributions_by_county", 'reports/itemized_donations', 'reports/itemized_distributions', "purchases_summary", "distributions_summary"]) %>">
+  <li class="nav-item has-treeview <%= menu_open?(['audits', 'reports', "distributions_by_county", "purchases_summary", "distributions_summary"]) %>">
+    <a href="#" class="nav-link <%= active_class(['audits', 'reports', "distributions_by_county", "purchases_summary", "distributions_summary"]) %>">
       <i class="nav-icon fa fa-tasks"></i>
       <p>Reporting & Auditing
         <i class="fas fa-angle-left right"></i>
@@ -203,6 +203,11 @@
       <li class="nav-item <%= active_class(['reports/itemized_distributions']) %>">
         <%= link_to(reports_itemized_distributions_path(organization_id: current_user.organization), class: "nav-link #{active_class(['reports/itemized_distributions'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Itemized Distributions
+        <% end %>
+      </li>
+      <li class="nav-item <%= active_class(['reports']) %>">
+        <%= link_to(reports_donations_summary_index_path(organization_id: current_user.organization), class: "nav-link #{active_class(['reports/donations_summary'])}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Donations Summary
         <% end %>
       </li>
       <li class="nav-item <%= active_class(['purchases_summary']) %>">

@@ -104,6 +104,7 @@ Rails.application.routes.draw do
       resources :annual_reports, only: [:index, :show], param: :year do
         post :recalculate, on: :member
       end
+      resources :donations_summary, only: [:index]
       resources :itemized_donations, only: [:index]
       resources :itemized_distributions, only: [:index]
     end
