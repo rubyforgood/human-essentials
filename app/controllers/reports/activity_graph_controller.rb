@@ -25,5 +25,4 @@ class Reports::ActivityGraphController < ApplicationController
       "Distributed" => total_distributed_unformatted(range)
     }
   end
-
 end
