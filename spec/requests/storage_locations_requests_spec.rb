@@ -143,7 +143,7 @@ RSpec.describe "StorageLocations", type: :request do
           expect(response.body).to include("200")
         end
 
-        context "with version date set" do
+        context "with version date set", versioning: true do
           context "with a version found" do
             it "should show the version specified" do
               travel 1.day do

@@ -267,7 +267,7 @@ GEM
       activerecord
       kaminari-core (= 1.2.2)
     kaminari-core (1.2.2)
-    knapsack_pro (5.3.4)
+    knapsack_pro (5.3.5)
       rake
     language_server-protocol (3.17.0.3)
     launchy (2.5.2)
@@ -535,7 +535,7 @@ GEM
       sprockets (> 3.0)
       sprockets-rails
       tilt
-    selenium-webdriver (4.10.0)
+    selenium-webdriver (4.11.0)
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
@@ -619,6 +619,7 @@ GEM
     zeitwerk (2.6.9)
 
 PLATFORMS
+  arm64-darwin-20
   arm64-darwin-21
   arm64-darwin-22
   x86_64-darwin-20

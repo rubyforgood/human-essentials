@@ -11,6 +11,7 @@
 #  resource_id     :bigint
 #
 class Role < ApplicationRecord
+  has_paper_trail
   has_and_belongs_to_many :users, join_table: :users_roles
   accepts_nested_attributes_for :users
 

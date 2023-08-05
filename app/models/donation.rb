@@ -18,6 +18,7 @@
 #
 
 class Donation < ApplicationRecord
+  has_paper_trail
   SOURCES = { product_drive: "Product Drive",
               manufacturer: "Manufacturer",
               donation_site: "Donation Site",
