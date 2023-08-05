@@ -15,11 +15,11 @@ module ApplicationHelper
   end
 
   def active_class(name)
-    (name.any? { |path_name| controller_path.include? path_name }) ? "active" : controller_path
+    name.include?(controller_path) ? "active" : controller_path
   end
 
   def menu_open?(name)
-    (name.any? { |path_name| controller_path.include? path_name }) ? 'menu-open' : ''
+    name.include?(controller_path) ? 'menu-open' : ''
   end
 
   def can_administrate?
