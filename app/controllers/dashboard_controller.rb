@@ -20,8 +20,6 @@ class DashboardController < ApplicationController
     @recent_donations_from_manufacturers = current_organization.donations.during(helpers.selected_range).by_source(:manufacturer)
     @top_manufacturers = current_organization.manufacturers.by_donation_count
 
-    @distribution_data = helpers.received_distributed_data(helpers.selected_range)
-
     @partners_awaiting_review = current_organization.partners.awaiting_review
     # passing nil here filters the announcements that didn't come from an organization
     @broadcast_announcements = BroadcastAnnouncement.filter_announcements(nil)
