@@ -45,14 +45,14 @@ RSpec.describe ProductDriveParticipant, type: :model do
 
     describe "volume_by_product_drive" do
       it "retrieves the amount of product that has been donated through specific product drive" do
-        dd1 = create(:product_drive)
-        dd2 = create(:product_drive)
-        ddp = create(:product_drive_participant)
-        create(:donation, :with_items, item_quantity: 10, source: Donation::SOURCES[:product_drive], product_drive: dd1, product_drive_participant: ddp)
-        create(:donation, :with_items, item_quantity: 9, source: Donation::SOURCES[:product_drive], product_drive: dd2, product_drive_participant: ddp)
-        expect(ddp.volume).to eq(19)
-        expect(ddp.volume_by_product_drive(dd1.id)).to eq(10)
-        expect(ddp.volume_by_product_drive(dd2.id)).to eq(9)
+        drive1 = create(:product_drive)
+        drive2 = create(:product_drive)
+        participant = create(:product_drive_participant)
+        create(:donation, :with_items, item_quantity: 10, source: Donation::SOURCES[:product_drive], product_drive: drive1, product_drive_participant: participant)
+        create(:donation, :with_items, item_quantity: 9, source: Donation::SOURCES[:product_drive], product_drive: drive2, product_drive_participant: participant)
+        expect(participant.volume).to eq(19)
+        expect(participant.volume_by_product_drive(drive1.id)).to eq(10)
+        expect(participant.volume_by_product_drive(drive2.id)).to eq(9)
       end
     end
 
