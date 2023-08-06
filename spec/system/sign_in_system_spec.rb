@@ -44,16 +44,14 @@ RSpec.describe "User sign-in handling", type: :system, js: true do
 
     before do
       user_no_org.add_role(:org_user)
-    end
-
-    it "redirects to 403" do
       visit new_user_session_path
 
       fill_in "Email", with: user_no_org.email
       fill_in "Password", with: user_no_org.password
       click_button "Log in"
+    end
 
-      sleep(10)
+    it "redirects to 403" do
       expect(page).to have_content("The page you were looking for is forbidden.")
       expect(page).to have_current_path("/403")
     end
