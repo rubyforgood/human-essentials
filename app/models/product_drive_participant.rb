@@ -32,7 +32,7 @@ class ProductDriveParticipant < ApplicationRecord
   end
 
   def volume_by_product_drive(product_drive_id)
-    donations.by_product_drive(product_drive_id).map { |d| d.line_items.total }.reduce(:+)
+    donations.by_product_drive(product_drive_id).map { |d| d.line_items.total }.sum
   end
 
   def donation_source_view
