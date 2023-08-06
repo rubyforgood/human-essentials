@@ -53,7 +53,7 @@ RSpec.describe "User sign-in handling", type: :system, js: true do
       fill_in "Password", with: user_no_org.password
       click_button "Log in"
 
-      find('body')
+      sleep(10) 
       expect(page).to have_content("The page you were looking for is forbidden.")
       expect(page).to have_current_path("/403")
     end
