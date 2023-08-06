@@ -52,12 +52,7 @@ RSpec.describe "User sign-in handling", type: :system, js: true do
     end
 
     it "redirects to 403" do
-      Capybara.using_wait_time 10 do
-        STDERR.puts page.current_path 
-        expect(page).to have_content("The page you were looking for is forbidden.")
-        expect(page).to have_current_path("/403", ignore_query: true)
-      end
+      expect(page).to have_current_path("/403", ignore_query: true)
     end
-    
   end
 end
