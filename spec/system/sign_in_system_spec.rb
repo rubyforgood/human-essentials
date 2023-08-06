@@ -52,7 +52,7 @@ RSpec.describe "User sign-in handling", type: :system, js: true do
     end
 
     it "redirects to 403" do
-      expect(page).to have_current_path("/403", ignore_query: true)
+      expect(page).to have_current_path("/403", url: true)
     end
   end
 end
