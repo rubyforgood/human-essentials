@@ -35,9 +35,10 @@ RSpec.describe "Static", type: :request do
   end
 
   describe "Non super user without org signed in" do
+    let(:user_no_org) { User.create(email: 'no-org-user@example.org2', password: 'password!') }
     before do
-      user = create(:user, organization: nil)
-      sign_in(user)
+      user_no_org.add_role(:org_user)
+      sign_in(user_no_org)
     end
 
     describe "GET #index" do
