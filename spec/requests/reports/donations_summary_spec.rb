@@ -1,8 +1,8 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe "Reports::DonationsSummary", type: :request do
   let(:default_params) do
-    { organization_id: @organization.to_param }
+    {organization_id: @organization.to_param}
   end
 
   describe "while signed in" do
@@ -15,7 +15,7 @@ RSpec.describe "Reports::DonationsSummary", type: :request do
         get reports_donations_summary_index_path(default_params.merge(format: response_format))
         response
       end
-      let(:response_format) { 'html' }
+      let(:response_format) { "html" }
 
       it { is_expected.to have_http_status(:success) }
     end
