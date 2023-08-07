@@ -14,7 +14,7 @@ describe OrganizationUpdateService, skip_seed: true do
     end
 
     context "when object is invalid" do
-      it "should not update and return false" do
+      it "should not update, return false" do
         params = {name: "A brand NEW NEW name",
                   url: "something that IS NOT A URL"}
         described_class.update(organization, params)
@@ -45,7 +45,7 @@ describe OrganizationUpdateService, skip_seed: true do
       end
 
       context "when all of a single partner's request flags will be disabled" do
-        before { described_class.update(organization, {enable_individual_requests: false, enable_child_based_requests: false}) }
+        before { described_class.update(organization, {enable_individual_requests: "false", enable_child_based_requests: "false"}) }
 
         it "should NOT change request flags in organization or its partners" do
           organization.reload
@@ -61,10 +61,14 @@ describe OrganizationUpdateService, skip_seed: true do
             expect(partner_two.profile.enable_child_based_requests).to eq(true)
           end
         end
+
+        it "should add an error message to the organization" do
+          expect(organization.errors.full_messages).to eq(["Please update #{partner_one.name}, so that they could make requests if you completed this change, then try again. Thank you."])
+        end
       end
 
       context "when all of a single partner's request flags WILL NOT be disabled" do
-        before { described_class.update(organization, enable_individual_requests: false) }
+        before { described_class.update(organization, enable_individual_requests: "false") }
 
         it "should allow the disabling of request flags in organization and its partners" do
           organization.reload
