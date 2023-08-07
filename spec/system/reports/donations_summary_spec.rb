@@ -20,7 +20,7 @@ RSpec.describe "DonationsSummary", type: :system, js: true do
 
     context "when visiting the summary page" do
       it "has a link to create a new donation" do
-        visit @url_prefix + "/reports/donations_summary" 
+        visit @url_prefix + "/reports/donations_summary"
         expect(page).to have_link "New Donation", href: "#{@url_prefix}/donations/new"
       end
 
@@ -103,7 +103,7 @@ RSpec.describe "DonationsSummary", type: :system, js: true do
 
           describe("filtering to '#{filtered_date_range_label}'" + (set_custom_dates ? " (#{custom_dates})" : "")) do
             before do
-              visit @url_prefix + "/reports/donations_summary" 
+              visit @url_prefix + "/reports/donations_summary"
               filter_to_date_range(filtered_date_range_label, custom_dates)
             end
 
