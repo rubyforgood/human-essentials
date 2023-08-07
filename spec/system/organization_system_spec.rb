@@ -119,7 +119,7 @@ RSpec.describe "Organization management", type: :system, js: true do
         choose('organization[enable_quantity_based_requests]', option: false)
         click_on "Save"
 
-        expect(page).to have_content("Please update DEFAULT PARTNER so that they could make requests if you completed this change, then try again. Thank you.")
+        expect(page).to have_content("Please update DEFAULT PARTNER, so that they could make requests if you completed this change, then try again. Thank you.")
       end
     end
 
