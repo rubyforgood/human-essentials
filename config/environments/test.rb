@@ -19,6 +19,7 @@ Rails.application.configure do
   config.eager_load = ENV["CI"] == "true"
   config.hosts << "127.0.0.1"
   config.hosts << "localhost"
+  config.hosts << ".example.com"
   config.hosts << "host.docker.internal"
   config.hosts << ENV["APP_HOST"] if ENV["APP_HOST"]
   config.hosts << `hostname`.strip if ENV["DOCKER"]
