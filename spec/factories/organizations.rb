@@ -34,6 +34,7 @@ FactoryBot.define do
   factory :organization do
     transient do
       skip_items { false }
+      logo_filename { "spec/fixtures/files/logo.jpg" }
     end
 
     sequence(:name) { |n| "Essentials Bank #{n}" } # 037000863427
@@ -56,8 +57,8 @@ FactoryBot.define do
       Organization.seed_items(instance) unless evaluator.skip_items
     end
 
-    after(:build) do |instance|
-      file = Rails.root.join("spec/fixtures/files/logo.jpg")
+    after(:build) do |instance, evaluator|
+      file = Rails.root.join(evaluator.logo_filename)
       instance.logo.attach(io: File.open(file), filename: File.basename(file))
     end
   end

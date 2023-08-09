@@ -18,6 +18,10 @@
 
 FactoryBot.define do
   factory :partner do
+    transient do
+      attached_documents { [] }
+    end
+
     sequence(:name) { |n| "Leslie Sue, the #{n}" }
     sequence(:email) { |n| "leslie#{n}@gmail.com" }
     send_reminders { true }
@@ -45,6 +49,13 @@ FactoryBot.define do
       # Create associated records
       create(:partner_profile, partner_id: partner.id)
       create(:partners_user, email: partner.email, name: partner.name, partner: partner)
+    end
+
+    after(:build) do |instance, evaluator|
+      evaluator.attached_documents.each do |document_name|
+        file = Rails.root.join(document_name)
+        instance.documents.attach(io: File.open(file), filename: File.basename(file))
+      end
     end
   end
 end

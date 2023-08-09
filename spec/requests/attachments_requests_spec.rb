@@ -4,7 +4,7 @@ RSpec.describe "Attachments", type: :request do
   end
 
   describe "DELETE #destroy" do
-    let(:partner) { create(:partner, documents: [Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/dbase.pdf"), "application/pdf")]) }
+    let(:partner) { create(:partner, attached_documents: %w[spec/fixtures/files/dbase.pdf]) }
 
     it "redirects to referrer" do
       delete attachment_path(partner.documents.first)
