@@ -370,8 +370,8 @@ GEM
       capybara (>= 1.1)
       rspec (>= 2.14)
     orm_adapter (0.5.0)
-    paper_trail (14.0.0)
-      activerecord (>= 6.0)
+    paper_trail (15.0.0)
+      activerecord (>= 6.1)
       request_store (~> 1.4)
     parallel (1.23.0)
     parser (3.2.2.3)
@@ -410,7 +410,7 @@ GEM
       nio4r (~> 2.0)
     raabro (1.4.0)
     racc (1.7.1)
-    rack (2.2.7)
+    rack (2.2.8)
     rack-protection (2.1.0)
       rack
     rack-test (2.1.0)
@@ -433,7 +433,7 @@ GEM
       actionpack (>= 5.0.1.rc1)
       actionview (>= 5.0.1.rc1)
       activesupport (>= 5.0.1.rc1)
-    rails-dom-testing (2.1.1)
+    rails-dom-testing (2.2.0)
       activesupport (>= 5.0.0)
       minitest
       nokogiri (>= 1.6)
@@ -578,7 +578,7 @@ GEM
     standard-performance (1.1.1)
       lint_roller (~> 1.1)
       rubocop-performance (~> 1.18.0)
-    stimulus-rails (1.2.1)
+    stimulus-rails (1.2.2)
       railties (>= 6.0.0)
     strong_migrations (1.6.0)
       activerecord (>= 5.2)
@@ -617,7 +617,7 @@ GEM
       nokogiri (~> 1.8)
     yard (0.9.28)
       webrick (~> 1.7.0)
-    zeitwerk (2.6.9)
+    zeitwerk (2.6.11)
 
 PLATFORMS
   arm64-darwin-20
