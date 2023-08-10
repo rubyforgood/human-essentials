@@ -94,7 +94,9 @@ module Partners
     accepts_nested_attributes_for :served_areas, allow_destroy: true
 
     has_many_attached :documents
+
     validate :check_social_media, on: :edit
+    validates :agency_type, :city, :state, :zip_code, :address1, :program_name, :program_description, presence: true, on: :edit
 
     validate :client_share_is_0_or_100
     validate :has_at_least_one_request_setting
@@ -121,7 +123,7 @@ module Partners
 
     def check_social_media
       return if website.present? || twitter.present? || facebook.present? || instagram.present?
-      return if partner.partials_to_show.exclude?("media_information")
+      return if partner&.partials_to_show&.exclude?("media_information")
 
       unless no_social_media_presence
         errors.add(:no_social_media_presence, "must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.")
