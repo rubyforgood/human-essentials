@@ -21,8 +21,8 @@
                 <%= form.file_field :proof_of_form_990, class: "form-control-file" %>
               </div>
             <% end %>
-            <%= form.input :program_name, label: "Program Name(s)", class: "form-control", wrapper: :input_group %>
-            <%= form.input :program_description, label: "Program Description(s)", class: "form-control", wrapper: :input_group %>
+            <%= form.input :program_name, label: "Program Name(s)", required: true, class: "form-control", wrapper: :input_group %>
+            <%= form.input :program_description, label: "Program Description(s)", required: true, class: "form-control", wrapper: :input_group %>
             <%= form.input :program_age, label: "Agency Age", class: "form-control", wrapper: :input_group %>
             <%= form.input :evidence_based, label: "Evidence Based?", as: :boolean,
                            class: "form-control", wrapper: :input_group %>
