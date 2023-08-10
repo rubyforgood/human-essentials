@@ -6,7 +6,7 @@ class Admin::UsersController < AdminController
     @filterrific = initialize_filterrific(
       User.includes(:organization).alphabetized,
       params[:filterrific],
-      available_filters: [:search_query, :search_name, :search_email]
+      available_filters: [:search_name, :search_email]
     ) || return
     @users = @filterrific.find.page(params[:page])
 
