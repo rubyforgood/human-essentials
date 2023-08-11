@@ -16,8 +16,7 @@ class CleanUpOldFields < ActiveRecord::Migration[7.0]
                    :partner_status,
                    :status_in_diaper_base,
                    :application_data,
-                   :distributor_type,
-                   :incorporate_plan
+                   :distributor_type
 
   end
 end
