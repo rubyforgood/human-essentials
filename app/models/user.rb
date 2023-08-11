@@ -79,6 +79,8 @@ class User < ApplicationRecord
   has_many :requests, class_name: "::Request", foreign_key: :partner_id, dependent: :destroy, inverse_of: :partner_user
   has_many :submitted_requests, class_name: "Request", foreign_key: :partner_user_id, dependent: :destroy, inverse_of: :partner_user
 
+  self.ignored_columns = %w[organization_id partner_id super_admin organization_admin]
+
   def formatted_email
     email.present? ? "#{name} <#{email}>" : ""
   end

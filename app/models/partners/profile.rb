@@ -101,20 +101,6 @@ module Partners
     validate :client_share_is_0_or_100
     validate :has_at_least_one_request_setting
 
-    self.ignored_columns = %w[
-      evidence_based_description
-      program_client_improvement
-      incorporate_plan
-      turn_away_child_care
-      responsible_staff_position
-      trusted_pickup
-      serve_income_circumstances
-      internal_db
-      maac
-      pick_up_method
-      ages_served
-    ]
-
     def client_share_total
       served_areas.sum(&:client_share)
     end
