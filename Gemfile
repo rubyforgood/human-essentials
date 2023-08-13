@@ -16,7 +16,7 @@ gem "pg", "~> 1.5.3"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "7.0.6"
+gem "rails", "7.0.7"
 
 ###### MODELS / DATABASE #######
 
@@ -34,7 +34,7 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.6.0"
+gem "strong_migrations", "1.6.1"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
