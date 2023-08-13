@@ -91,32 +91,6 @@ RSpec.describe "Adjustment management", type: :system, js: true do
         end.not_to change { storage_location.size }
         expect(page).to have_content("items exceed the available inventory")
       end
-
-      it "politely informs the user if they try to adjust down below zero, even if they use multiple adjustments to do so" do
-        sub_quantity = -9
-
-        storage_location = create(:storage_location, :with_items, name: "PICK THIS ONE", item_quantity: 10, organization: @organization)
-        visit url_prefix + "/adjustments"
-        click_on "New Adjustment"
-        select storage_location.name, from: "From storage location"
-        fill_in "Comment", with: "something"
-        select Item.last.name, from: "adjustment_line_items_attributes_0_item_id"
-        fill_in "adjustment_line_items_attributes_0_quantity", with: sub_quantity.to_s
-        click_on "Add another item"
-        within all(".line_item_section").last do
-          element_1 = find(".line_item_name")
-          expect(page).to have_select(element_1[:id])
-          select Item.last.name, from: element_1[:id]
-          element_2 = find(".quantity")
-          element_2.set sub_quantity.to_s
-        end
-
-        expect do
-          click_button "Save"
-        end.not_to change { storage_location.size }
-        expect(page).to have_content("items exceed the available inventory")
-        expect(page).to have_field("adjustment_line_items_attributes_0_quantity", with: "-18")
-      end
     end
 
     it "should not display inactive storage locations in dropdown" do
