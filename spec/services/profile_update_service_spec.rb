@@ -7,7 +7,7 @@ RSpec.describe ProfileUpdateService do
     let(:params) { {address2: "Washington, DC"} }
 
     it "updates the profile with the filtered and prepared params" do
-      expect(partner.profile.address1).to be_nil
+      expect(partner.profile.instagram).to be_nil
 
       result = described_class.update(partner.profile, params)
       expect(result).to eq(true)
