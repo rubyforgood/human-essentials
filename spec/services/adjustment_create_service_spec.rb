@@ -16,11 +16,32 @@ RSpec.describe AdjustmentCreateService, type: :service do
       end.to change { inventory_item_1.reload.quantity }.by(5)
     end
 
+    it "saves a new adjustment with line items relating to the current (simple case) positive adjustment" do
+      expect do
+        adjustment_params = {user_id: @user.id, organization_id: @organization.id, storage_location_id: storage_location.id, line_items_attributes: {"0": {item_id: storage_location.items.first.id, quantity: 5}}}
+        subject.new(adjustment_params).call
+      end.to change { Adjustment.count }.by(1)
+      adjustment = Adjustment.last
+      expect(adjustment.line_items.count).to eq(1)
+      expect(adjustment.line_items[0].quantity).to eq(5)
+    end
+
     it "decreases stored inventory on a negative adjustment" do
       expect do
         adjustment_params = {user_id: @user.id, organization_id: @organization.id, storage_location_id: storage_location.id, line_items_attributes: {"0": {item_id: storage_location.items.first.id, quantity: -5}}}
         subject.new(adjustment_params).call
       end.to change { inventory_item_1.reload.quantity }.by(-5)
+    end
+
+    it "saves a new adjustment with line items relating to the current (simple case) negative adjustment" do
+      expect do
+        adjustment_params = {user_id: @user.id, organization_id: @organization.id, storage_location_id: storage_location.id, line_items_attributes: {"0": {item_id: storage_location.items.first.id, quantity: -5}}}
+        subject.new(adjustment_params).call
+      end.to change { Adjustment.count }.by(1)
+
+      adjustment = Adjustment.last
+      expect(adjustment.line_items.count).to eq(1)
+      expect(adjustment.line_items[0].quantity).to eq(-5)
     end
 
     it "increases handles mixed adjustments to same item appropriately (total is positive version)" do
@@ -35,6 +56,9 @@ RSpec.describe AdjustmentCreateService, type: :service do
                              }}
         subject.new(adjustment_params).call
       end.to change { inventory_item_1.reload.quantity }.by(1)
+      adjustment = Adjustment.last
+      expect(adjustment.line_items.count).to eq(1)
+      expect(adjustment.line_items[0].quantity).to eq(1)
     end
 
     it "increases handles mixed adjustments to same appropriately (total is negative version)" do
@@ -49,7 +73,11 @@ RSpec.describe AdjustmentCreateService, type: :service do
                              }}
         subject.new(adjustment_params).call
       end.to change { inventory_item_1.reload.quantity }.by(-7)
+      adjustment = Adjustment.last
+      expect(adjustment.line_items.count).to eq(1)
+      expect(adjustment.line_items[0].quantity).to eq(-7)
     end
+
     it "does not allow inventory to be adjusted below 0" do
       quantity = -1 * (inventory_item_1.quantity + 1)
       expect do
@@ -72,12 +100,18 @@ RSpec.describe AdjustmentCreateService, type: :service do
                            storage_location_id: storage_location.id,
                            line_items_attributes: {
                              "0": {item_id: item_1.id, quantity: 5},
-                             "1": {item_id: item_2.id, quantity: 3},
-                             "2": {item_id: item_1.id, quantity: 2}
+                             "1": {item_id: item_2.id, quantity: 2},
+                             "2": {item_id: item_1.id, quantity: -2}
                            }}
       subject.new(adjustment_params).call
-      expect(inventory_item_1.reload.quantity).to eq(quantity_1 + 7)
-      expect(inventory_item_2.reload.quantity).to eq(quantity_2 + 3)
+      expect(inventory_item_1.reload.quantity).to eq(quantity_1 + 3)
+      expect(inventory_item_2.reload.quantity).to eq(quantity_2 + 2)
+      adjustment = Adjustment.last
+      expect(adjustment.line_items.count).to eq(2)
+      line_item_1 = adjustment.line_items.where(item_id: item_1.id).first
+      expect(line_item_1.quantity).to eq(3)
+      line_item_2 = adjustment.line_items.where(item_id: item_2.id).first
+      expect(line_item_2.quantity).to eq(2)
     end
   end
 end

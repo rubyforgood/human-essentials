@@ -13,12 +13,12 @@ class AdjustmentCreateService
     combine_adjustment
     # Check for validity, and save the actual adjustment
 
-    if @adjustment.valid? && enough_inventory_for_decreases? && @adjustment.save
-      # Split into positive and negative portions
-      increasing_adjustment, decreasing_adjustment = @adjustment.split_difference
+    if @adjustment.valid? && enough_inventory_for_decreases?
       ActiveRecord::Base.transaction do
         # Make the necessary changes in the db
         @adjustment.save
+        # Split into positive and negative portions.  NOTE -- THIS CHANGES THE ORIGINAL LINE ITEMS DO **NOT** RESAVE
+        increasing_adjustment, decreasing_adjustment = @adjustment.split_difference
         @adjustment.storage_location.increase_inventory increasing_adjustment
         @adjustment.storage_location.decrease_inventory decreasing_adjustment
       rescue InsufficientAllotment => e
