@@ -44,7 +44,7 @@ RSpec.describe AdjustmentCreateService, type: :service do
       expect(adjustment.line_items[0].quantity).to eq(-5)
     end
 
-    it "increases handles mixed adjustments to same item appropriately (total is positive version)" do
+    it "handles mixed adjustments to same item appropriately (total is positive version)" do
       expect do
         adjustment_params = {user_id: @user.id,
                              organization_id: @organization.id,
@@ -89,6 +89,19 @@ RSpec.describe AdjustmentCreateService, type: :service do
                              }}
         subject.new(adjustment_params).call
       end.to change { inventory_item_1.reload.quantity }.by(0)
+    end
+
+    it "gives an error if we attempt to adjust inventory below 0" do
+      quantity = -1 * (inventory_item_1.quantity + 1)
+      adjustment_params = {user_id: @user.id,
+                           organization_id: @organization.id,
+                           storage_location_id: storage_location.id,
+                           line_items_attributes: {
+                             "0": {item_id: item_1.id, quantity: quantity}
+                           }}
+      result = subject.new(adjustment_params).call
+      expect(result.adjustment.errors.size).to be > 0
+      expect(result.adjustment.errors[:inventory][0]).to include("items exceed the available inventory")
     end
 
     it "handles adjustments to multiple items" do
