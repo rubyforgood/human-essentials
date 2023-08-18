@@ -14,13 +14,14 @@ class ItemsOutTotalQuery
 
   # rubocop:disable Naming/MemoizedInstanceVariableName
   def call
-    @items ||=  LineItem.joins("
+    @items ||= LineItem.joins("
 LEFT OUTER JOIN distributions ON distributions.id = line_items.itemizable_id AND line_items.itemizable_type = 'Distribution'
 LEFT OUTER JOIN items ON items.id = line_items.item_id
 LEFT OUTER JOIN adjustments ON adjustments.id = line_items.itemizable_id AND line_items.itemizable_type = 'Adjustment'
-LEFT OUTER JOIN transfers ON transfers.id = line_items.itemizable_id AND line_items.itemizable_type = 'Transfer'")
-                        .where("(distributions.storage_location_id = :id or (adjustments.storage_location_id= :id and line_items.quantity < 0) or transfers.from_id = :id) and items.organization_id= :organization_id", id: @storage_location.id, organization_id: @organization.id)
-                        .sum("case when line_items.quantity < 0 then -1*line_items.quantity else line_items.quantity END")
+LEFT OUTER JOIN transfers ON transfers.id = line_items.itemizable_id AND line_items.itemizable_type = 'Transfer'
+LEFT OUTER JOIN kit_allocations ON kit_allocations.id = line_items.itemizable_id AND line_items.itemizable_type = 'KitAllocation' AND kit_allocations.kit_allocation_type = 'inventory_out'")
+                    .out_items(@storage_location.id, @organization.id)
+                    .sum("case when line_items.quantity < 0 then -1*line_items.quantity else line_items.quantity END")
   end
   # rubocop:enable Naming/MemoizedInstanceVariableName
 end
