@@ -11,6 +11,10 @@ class DistributionCreateService < DistributionService
       validate_request_not_yet_processed! if @request.present?
 
       distribution.save!
+
+      Rails.configuration.event_store.publish(DistributionCreated.from_distribution(distribution),
+                                              stream_name: "Org-#{distribution.organization_id}")
+
       distribution.storage_location.decrease_inventory distribution
       distribution.reload
       @request&.update!(distribution_id: distribution.id, status: 'fulfilled')

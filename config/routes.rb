@@ -8,6 +8,7 @@ def set_up_flipper
 end
 
 Rails.application.routes.draw do
+  mount RailsEventStore::Browser => '/res' if Rails.env.development?
   get 'distributions_by_county/report'
   devise_for :users, controllers: {
     sessions: "users/sessions",
