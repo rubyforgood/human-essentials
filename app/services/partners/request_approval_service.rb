@@ -30,7 +30,7 @@ module Partners
       end
 
       unless partner.profile.valid?(:edit)
-        errors.copy!(partner.profile)
+        errors.add(:base, 'There is missing information in your profile.  Please update it before submitting for approval')
       end
 
       errors.none?
