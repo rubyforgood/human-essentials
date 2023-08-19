@@ -16,10 +16,18 @@ describe Partners::RequestApprovalService do
     end
 
     context 'when the partner is not yet waiting for approval and there is a profile error' do
-      it 'should return an error' do
+      it 'should return an error re social media' do
         partner.profile.update(website: '', facebook: '', twitter: '', instagram: '', no_social_media_presence: false)
-        expect(subject.errors.full_messages)
-          .to eq(['no_social_media_presence must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.'])
+
+        expect(subject.partner.profile.errors.full_messages)
+          .to include("No social media presence must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.")
+      end
+
+      it 'should return an error re agency_type' do
+        partner.profile.update(agency_type: "")
+
+        expect(subject.partner.profile.errors.full_messages)
+          .to include("Agency type can't be blank")
       end
     end
 

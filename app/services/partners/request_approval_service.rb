@@ -20,9 +20,9 @@ module Partners
       self
     end
 
-    private
-
     attr_reader :partner
+
+    private
 
     def valid?
       if partner.status == 'awaiting_review'
@@ -30,7 +30,7 @@ module Partners
       end
 
       unless partner.profile.valid?(:edit)
-        errors.add(:base, 'There is missing information in your profile.  Please update it before submitting for approval')
+        errors.copy!(partner.profile)
       end
 
       errors.none?
