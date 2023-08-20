@@ -45,7 +45,7 @@ describe CalendarService do
           LOCATION:1500 Remount Road\\, Front Royal\\, VA 22630
           SUMMARY:Pickup from Partner 1
           URL;VALUE=URI:https://humanessentials.app/diaper_bank/distributions/schedul
-          #{"\x20"}e
+           e
           END:VEVENT
           BEGIN:VEVENT
           DTSTART;TZID=America/New_York:20220217T060000
@@ -53,7 +53,7 @@ describe CalendarService do
           LOCATION:1500 Remount Road\\, Front Royal\\, VA 22630
           SUMMARY:Pickup from Partner 1
           URL;VALUE=URI:https://humanessentials.app/diaper_bank/distributions/schedul
-          #{"\x20"}e
+           e
           END:VEVENT
           BEGIN:VEVENT
           DTSTART;TZID=America/New_York:20230316T210000
@@ -61,7 +61,7 @@ describe CalendarService do
           LOCATION:1500 Remount Road\\, Front Royal\\, VA 22630
           SUMMARY:Pickup from Partner 2
           URL;VALUE=URI:https://humanessentials.app/diaper_bank/distributions/schedul
-          #{"\x20"}e
+           e
           END:VEVENT
           END:VCALENDAR
         ICAL
