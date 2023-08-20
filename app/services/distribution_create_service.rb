@@ -12,8 +12,7 @@ class DistributionCreateService < DistributionService
 
       distribution.save!
 
-      Rails.configuration.event_store.publish(DistributionCreated.from_distribution(distribution),
-                                              stream_name: "Org-#{distribution.organization_id}")
+      DistributionCreated.publish(distribution)
 
       distribution.storage_location.decrease_inventory distribution
       distribution.reload
