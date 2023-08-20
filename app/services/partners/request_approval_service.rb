@@ -20,9 +20,9 @@ module Partners
       self
     end
 
-    attr_reader :partner
-
     private
+
+    attr_reader :partner
 
     def valid?
       if partner.status == 'awaiting_review'
@@ -30,7 +30,7 @@ module Partners
       end
 
       unless partner.profile.valid?(:edit)
-        errors.copy!(partner.profile)
+        errors.add :base, partner.profile.errors.full_messages.join('. ')
       end
 
       errors.none?
