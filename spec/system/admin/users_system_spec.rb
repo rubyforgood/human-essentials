@@ -64,5 +64,13 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       end
       expect(page.find("table")).to have_content(user_names.first)
     end
+
+    it "filters users by email" do
+      user_email = "person100@example.com"
+
+      visit admin_users_path
+      fill_in "filterrific_search_email", with: user_email
+      expect(page.find("table")).to have_content(user_email)
+    end
   end
 end
