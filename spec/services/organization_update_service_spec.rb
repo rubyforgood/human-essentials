@@ -14,7 +14,7 @@ describe OrganizationUpdateService, skip_seed: true do
     end
 
     context "when object is invalid" do
-      it "should not update, return false" do
+      it "should not update and return false" do
         params = {name: "A brand NEW NEW name",
                   url: "something that IS NOT A URL"}
         described_class.update(organization, params)
@@ -63,7 +63,7 @@ describe OrganizationUpdateService, skip_seed: true do
         end
 
         it "should add an error message to the organization" do
-          expect(organization.errors.full_messages).to eq(["Please update #{partner_one.name}, so that they could make requests if you completed this change, then try again. Thank you."])
+          expect(organization.errors.full_messages).to eq(["The following partners would be unable to make requests with this update: #{partner_one.name}"])
         end
       end
 
