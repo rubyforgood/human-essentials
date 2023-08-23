@@ -1,0 +1,30 @@
+
+<%= render(
+  "shared/card",
+  id: "low_inventory",
+  gradient: "info",
+  title: "Bank-wide Low inventory"
+) do %>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Storage Location</th>
+      <th>Item Name</th>
+      <th>Quantity</th>
+      <th>Minimum Quantity</th>
+      <th>Recommended Quantity</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @low_inventory_report.each do |inventory_item| %>
+      <tr>
+        <td><%= inventory_item.storage_location.name %></td>
+        <td><%= inventory_item.item.name %></td>
+        <td><%= inventory_item.quantity %></td>
+        <td><%= inventory_item.item.on_hand_minimum_quantity %></td>
+        <td><%= inventory_item.item.on_hand_recommended_quantity %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<% end %>
