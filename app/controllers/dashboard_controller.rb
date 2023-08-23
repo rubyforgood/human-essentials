@@ -27,5 +27,7 @@ class DashboardController < ApplicationController
     @broadcast_announcements = BroadcastAnnouncement.filter_announcements(nil)
 
     @outstanding_requests = Request.where(status: %i[pending started]).order(:created_at)
+
+    @low_inventory_report = LowInventoryQuery.new(organization: current_organization).call
   end
 end
