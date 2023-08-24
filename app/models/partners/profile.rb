@@ -81,6 +81,7 @@
 #
 module Partners
   class Profile < Base
+    has_paper_trail
     self.table_name = "partner_profiles"
     belongs_to :partner
     has_one :organization, through: :partner, class_name: "::Organization"
@@ -94,7 +95,8 @@ module Partners
 
     has_many_attached :documents
 
-    validates :no_social_media_presence, acceptance: {message: "must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram."}, if: :has_no_social_media?
+    validate :check_social_media, on: :edit
+    validates :agency_type, :city, :state, :zip_code, :address1, :program_name, :program_description, presence: true, on: :edit
 
     validate :client_share_is_0_or_100
     validate :has_at_least_one_request_setting
@@ -113,12 +115,19 @@ module Partners
       ages_served
     ]
 
-    def has_no_social_media?
-      website.blank? && twitter.blank? && facebook.blank? && instagram.blank?
-    end
-
     def client_share_total
       served_areas.sum(&:client_share)
+    end
+
+    private
+
+    def check_social_media
+      return if website.present? || twitter.present? || facebook.present? || instagram.present?
+      return if partner&.partials_to_show&.exclude?("media_information")
+
+      unless no_social_media_presence
+        errors.add(:no_social_media_presence, "must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.")
+      end
     end
 
     def client_share_is_0_or_100

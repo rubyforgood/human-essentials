@@ -16,7 +16,7 @@ gem "pg", "~> 1.5.3"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "7.0.6"
+gem "rails", "7.0.7"
 
 ###### MODELS / DATABASE #######
 
@@ -24,7 +24,7 @@ gem "rails", "7.0.6"
 # gem 'azure-storage', '~> 0.15.0.preview', require: false
 gem 'azure-storage-blob'
 # Adds soft delete functionality for models.
-gem 'discard', '~> 1.0'
+gem 'discard', '~> 1.3'
 # Adds grouping by date/month/etc to queries.
 gem "groupdate", "~> 6.3"
 # Treats attributes like money, which knows about dollars and cents.
@@ -34,7 +34,7 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.5.0"
+gem "strong_migrations", "1.6.1"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
@@ -98,6 +98,8 @@ gem 'icalendar', require: false
 gem "jwt"
 # Use Newrelic for logs and APM
 gem "newrelic_rpm"
+# Scheduling
+gem 'rufus-scheduler'
 # Used to manage periodic cron-like jobs
 gem "clockwork"
 
@@ -197,8 +199,8 @@ group :test do
   gem 'simplecov'
   # More concise test ("should") matchers
   gem 'shoulda-matchers', '~> 5.3'
-  # Selenium webdriver automatic installation and update.
-  gem 'webdrivers', '~> 5.2'
+  # Nice interface to Chrome, handles updates itself now
+  gem 'selenium-webdriver'
   # Mock HTTP requests and ensure they are not called during tests.
   gem "webmock", "~> 3.18"
 end

@@ -8,9 +8,11 @@
           </div>
           <div class="card-body">
             <%= form.input :income_requirement_desc, label: "Clients Have An Income Requirement to Work With You?",
-                           as: :boolean, class: "form-control", wrapper: :input_group %>
-            <%= form.input :income_verification,label: "Do You Verify The Income Of Your Clients?",
-                           as: :boolean, class: "form-control", wrapper: :input_group %>
+                           as: :radio_buttons, class: "form-control", wrapper: :input_group,
+                           wrapper_html: {class: "form-yesno"}, input_html: {class: "radio-yesno"} %>
+            <%= form.input :income_verification, label: "Do You Verify The Income Of Your Clients?",
+                           as: :radio_buttons, class: "form-control", wrapper: :input_group,
+                           wrapper_html: {class: "form-yesno"}, input_html: {class: "radio-yesno"} %>
           </div>
         </div>
       </div>

@@ -8,7 +8,7 @@
             }) do %>
   <div class="deadline-day-pickers__reminder-container">
     <%= f.input :reminder_day, wrapper: :input_group, wrapper_html: { class: 'mb-0' },
-                label: 'Reminder day (Day an e-mail reminder is sent to partners to submit requests)' do %>
+                label: 'Reminder day (Day of month an e-mail reminder is sent to partners to submit requests)' do %>
       <span class="input-group-text"><i class="fa fa-calendar"></i></span>
       <%= f.number_field :reminder_day,
                          class: "deadline-day-pickers__reminder-day form-control",
@@ -19,7 +19,7 @@
 
   <div class="deadline-day-pickers__deadline-container">
     <%= f.input :deadline_day, wrapper: :input_group, wrapper_html: { class: 'mb-0' },
-                label: 'Deadline day (Final day to submit requests)' do %>
+                label: 'Deadline day (Final day of month to submit requests)' do %>
       <span class="input-group-text"><i class="fa fa-calendar"></i></span>
       <%= f.number_field :deadline_day,
                          class: "deadline-day-pickers__deadline-day form-control",

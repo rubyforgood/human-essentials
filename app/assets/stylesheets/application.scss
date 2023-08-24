@@ -26,6 +26,7 @@
 @import 'progress_stepper';
 @import 'audits';
 @import 'modal-dialog';
+@import 'expandable_table';
 @import 'custom';
 
 .modal-dialog {
@@ -158,4 +159,16 @@ select.selectpicker + .dropdown-toggle::after {
 
 .percentage-selector {
   width: 110px;
+}
+
+.form-yesno {
+  .radio-yesno {
+    width: 3rem;
+  }
+  .input-group {
+    text-align: center;
+  }
+  .collection_radio_buttons {
+    font-weight: normal !important;
+  }
 }

@@ -90,6 +90,16 @@ RSpec.describe Partners::Profile, type: :model do
     it { should have_many(:served_areas) }
   end
 
+  describe "validations" do
+    it { should validate_presence_of(:agency_type).on(:edit) }
+    it { should validate_presence_of(:city).on(:edit) }
+    it { should validate_presence_of(:state).on(:edit) }
+    it { should validate_presence_of(:zip_code).on(:edit) }
+    it { should validate_presence_of(:address1).on(:edit) }
+    it { should validate_presence_of(:program_name).on(:edit) }
+    it { should validate_presence_of(:program_description).on(:edit) }
+  end
+
   it "must allow deleting served_areas" do
     should accept_nested_attributes_for(:served_areas).allow_destroy(true)
   end
@@ -120,7 +130,13 @@ RSpec.describe Partners::Profile, type: :model do
       let(:profile) { FactoryBot.build(:partner_profile, website: "", twitter: "", facebook: "", instagram: "", no_social_media_presence: false) }
 
       it "should not be valid" do
-        expect(profile.valid?).to eq(false)
+        expect(profile.valid?(:edit)).to eq(false)
+      end
+
+      it "should be valid if media_information is not needed" do
+        org = profile.partner.organization
+        org.update!(partner_form_fields: %w[agency_stability])
+        expect(profile.valid?(:edit)).to eq(true)
       end
     end
 
@@ -128,7 +144,7 @@ RSpec.describe Partners::Profile, type: :model do
       let(:profile) { FactoryBot.build(:partner_profile, website: "", twitter: "", facebook: "", instagram: "", no_social_media_presence: true) }
 
       it "should be valid" do
-        expect(profile.valid?).to eq(true)
+        expect(profile.valid?(:edit)).to eq(true)
       end
     end
 
@@ -137,27 +153,27 @@ RSpec.describe Partners::Profile, type: :model do
 
       it "with just a website it should be valid" do
         profile.update(website: "some website URL", twitter: "", facebook: "", instagram: "")
-        expect(profile.valid?).to eq(true)
+        expect(profile.valid?(:edit)).to eq(true)
       end
 
       it "with just twitter it should be valid" do
         profile.update(website: "", twitter: "some twitter URL", facebook: "", instagram: "")
-        expect(profile.valid?).to eq(true)
+        expect(profile.valid?(:edit)).to eq(true)
       end
 
       it "with just facebook it should be valid" do
         profile.update(website: "", twitter: "", facebook: "some facebook URL", instagram: "")
-        expect(profile.valid?).to eq(true)
+        expect(profile.valid?(:edit)).to eq(true)
       end
 
       it "with just instagram it should be valid" do
         profile.update(website: "", twitter: "", facebook: "", instagram: "some instagram URL")
-        expect(profile.valid?).to eq(true)
+        expect(profile.valid?(:edit)).to eq(true)
       end
 
       it "with every social media option it should be valid" do
         profile.update(website: "some website URL", twitter: "some twitter URL", facebook: "some facebook URL", instagram: "some instagram URL")
-        expect(profile.valid?).to eq(true)
+        expect(profile.valid?(:edit)).to eq(true)
       end
     end
   end
@@ -194,5 +210,9 @@ RSpec.describe Partners::Profile, type: :model do
         expect(profile.valid?).to eq(true)
       end
     end
+  end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
   end
 end
