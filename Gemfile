@@ -220,4 +220,3 @@ end
 gem "redis", "~> 5.0"
 
 gem "importmap-rails", "~> 1.2"
-gem "rails_event_store", "~> 2.11.0"

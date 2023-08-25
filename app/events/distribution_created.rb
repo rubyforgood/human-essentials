@@ -1,12 +1,14 @@
-class DistributionCreated < ApplicationEvent
+class DistributionCreated < Event
 
   # @param distribution [Distribution]
   def self.publish(distribution)
-    event = self.from_payload(EventTypes::InventoryPayload.new(
+    self.create!(
       organization_id: distribution.organization_id,
-      partner_id: distribution.partner_id,
-      items: EventTypes::EventLineItem.from_line_items(distribution.line_items, to: distribution.storage_location_id)
-    ))
-    Rails.configuration.event_store.publish(event, stream_name: "org-#{distribution.organization_id}")
+      event_time: Time.zone.now,
+      data: EventTypes::InventoryPayload.new(
+        partner_id: distribution.partner_id,
+        items: EventTypes::EventLineItem.from_line_items(distribution.line_items, to: distribution.storage_location_id)
+      ).as_json
+    )
   end
 end
