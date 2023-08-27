@@ -16,7 +16,7 @@ gem "pg", "~> 1.5.3"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "7.0.7"
+gem "rails", "7.0.7.2"
 
 ###### MODELS / DATABASE #######
 
@@ -24,7 +24,7 @@ gem "rails", "7.0.7"
 # gem 'azure-storage', '~> 0.15.0.preview', require: false
 gem 'azure-storage-blob'
 # Adds soft delete functionality for models.
-gem 'discard', '~> 1.0'
+gem 'discard', '~> 1.3'
 # Adds grouping by date/month/etc to queries.
 gem "groupdate", "~> 6.3"
 # Treats attributes like money, which knows about dollars and cents.

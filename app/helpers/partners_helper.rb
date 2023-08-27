@@ -12,6 +12,14 @@ module PartnersHelper
     boolean ? 'Yes' : 'No'
   end
 
+  def humanize_boolean_3state(boolean)
+    if boolean.nil?
+      "Unspecified"
+    else
+      boolean ? 'Yes' : 'No'
+    end
+  end
+
   def partner_status_badge(partner)
     if partner.status == "approved"
       tag.span partner.display_status, class: %w(badge badge-pill badge-primary bg-primary float-right)
