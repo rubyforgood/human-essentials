@@ -13,12 +13,41 @@ RSpec.describe "/partners/profiles", type: :request do
       get partners_profile_path(partner)
       expect(response.body).to include("Partnerrific")
     end
+
+    it "shows correct values for yes/no buttons" do
+      partner.profile.update!(currently_provide_diapers: nil, form_990: false, income_verification: true)
+      get partners_profile_path(partner)
+      expect(response.body).to include("<dt>Current Providing Diapers</dt>\n      <dd>Unspecified</dd>")
+      expect(response.body).to include("<dt>Form 990 Filed</dt>\n      <dd>No</dd>")
+      expect(response.body).to include("<dt>Do You Verify The Income Of Your Clients</dt>\n      <dd>Yes</dd>")
+    end
   end
 
   describe "GET #edit" do
     it "displays the partner" do
       get edit_partners_profile_path(partner)
       expect(response.body).to include("Partnerrific")
+    end
+
+    it "does not have default radio button value when value is nil" do
+      partner.profile.update!(storage_space: nil)
+      get edit_partners_profile_path(partner)
+      expect(response.body).not_to include("type=\"radio\" value=\"true\" checked=\"checked\" name=\"partner[profile][storage_space]\" id=\"partner_profile_storage_space_true\" />")
+      expect(response.body).not_to include("type=\"radio\" value=\"false\" checked=\"checked\" name=\"partner[profile][storage_space]\" id=\"partner_profile_storage_space_false\"")
+    end
+
+    it "has \"Yes\" radio button value when value is true" do
+      partner.profile.update!(storage_space: true)
+      get edit_partners_profile_path(partner)
+      expect(response.body).to include("type=\"radio\" value=\"true\" checked=\"checked\" name=\"partner[profile][storage_space]\" id=\"partner_profile_storage_space_true\" />")
+      expect(response.body).not_to include("type=\"radio\" value=\"false\" checked=\"checked\" name=\"partner[profile][storage_space]\" id=\"partner_profile_storage_space_false\"")
+    end
+
+    it "has \"No\" radio button value when value is false" do
+      partner.profile.update!(storage_space: false)
+      get edit_partners_profile_path(partner)
+      expect(response.body).not_to include("type=\"radio\" value=\"true\" checked=\"checked\" name=\"partner[profile][storage_space]\" id=\"partner_profile_storage_space_true\" />")
+      expect(response.body).to include("type=\"radio\" value=\"false\" checked=\"checked\" name=\"partner[profile][storage_space]\" id=\"partner_profile_storage_space_false\"")
     end
   end
 
