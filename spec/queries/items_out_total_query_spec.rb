@@ -11,12 +11,10 @@ RSpec.describe ItemsOutTotalQuery do
       create(:transfer, :with_items, item_quantity: 10, item: items[0], to: other_storage_location, from: storage_location)
       create(:distribution, :with_items, item: items[1], item_quantity: 10, storage_location: storage_location)
       create(:adjustment, :with_items, item: items[2], item_quantity: -10, storage_location: storage_location)
-      kit = create(:kit, :with_item, organization: @organization)
-      create(:kit_allocation, :with_items, kit_allocation_type: "inventory_out", kit_id: kit.id, storage_location: storage_location, organization_id: @organization.id)
     end
 
     it "returns a sum total of all out-flows" do
-      expect(subject).to eq(31)
+      expect(subject).to eq(30)
     end
   end
 end
