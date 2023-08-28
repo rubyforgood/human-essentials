@@ -203,7 +203,7 @@ group :test do
   # Nice interface to Chrome, handles updates itself now
   gem 'selenium-webdriver'
   # Mock HTTP requests and ensure they are not called during tests.
-  gem "webmock", "~> 3.18"
+  gem "webmock", "~> 3.19"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
