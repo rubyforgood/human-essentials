@@ -66,7 +66,7 @@ GEM
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
-    addressable (2.8.4)
+    addressable (2.8.5)
       public_suffix (>= 2.0.2, < 6.0)
     annotate (3.2.0)
       activerecord (>= 3.2, < 8.0)
@@ -407,7 +407,7 @@ GEM
     pry-stack_explorer (0.6.1)
       binding_of_caller (~> 1.0)
       pry (~> 0.13)
-    public_suffix (5.0.1)
+    public_suffix (5.0.3)
     puma (6.3.1)
       nio4r (~> 2.0)
     raabro (1.4.0)
@@ -606,7 +606,7 @@ GEM
       activemodel (>= 6.0.0)
       bindex (>= 0.4.0)
       railties (>= 6.0.0)
-    webmock (3.18.1)
+    webmock (3.19.0)
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
@@ -716,7 +716,7 @@ DEPENDENCIES
   terser
   turbo-rails
   web-console
-  webmock (~> 3.18)
+  webmock (~> 3.19)
 
 RUBY VERSION
    ruby 3.1.2p20
