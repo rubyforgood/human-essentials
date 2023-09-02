@@ -172,3 +172,17 @@ select.selectpicker + .dropdown-toggle::after {
     font-weight: normal !important;
   }
 }
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+  padding-left: 28px;
+  background-color: #575b61;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+  margin-left: 0;
+  width: 20px;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+  background-color: #8282df
+}
