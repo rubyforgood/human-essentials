@@ -641,7 +641,6 @@ DEPENDENCIES
   better_errors
   binding_of_caller
   bootstrap (~> 4.6.0)
-  bootstrap-select-rails
   brakeman
   bugsnag
   bullet
