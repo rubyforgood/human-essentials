@@ -4,6 +4,7 @@ end
 
 module EventTypes
   class EventLineItem < Dry::Struct
+    transform_keys(&:to_sym)
     attribute :quantity, Types::Integer # can be positive or negative
     attribute :item_id, Types::Integer
     attribute :item_value_in_cents, Types::Integer
