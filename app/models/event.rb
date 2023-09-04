@@ -11,5 +11,5 @@
 #  organization_id :bigint
 #
 class Event < ApplicationRecord
-
+  scope :for_organization, ->(organization_id) { where(organization_id: organization_id).order(:event_time) }
 end
