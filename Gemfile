@@ -38,7 +38,6 @@ gem "strong_migrations", "1.6.1"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
-gem 'bootstrap-select-rails'
 # Bootstrap is a library for HTML, CSS and JS.
 gem 'bootstrap', '~> 4.6.0'
 # SASS CSS framework (nested selectors, variables, etc.)
