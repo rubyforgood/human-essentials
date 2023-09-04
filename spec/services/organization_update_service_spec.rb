@@ -45,7 +45,7 @@ describe OrganizationUpdateService, skip_seed: true do
       end
 
       context "when all of a single partner's request flags will be disabled" do
-        before { described_class.update(organization, {enable_individual_requests: "false", enable_child_based_requests: "false"}) }
+        before { described_class.update(organization, {enable_individual_requests: false, enable_child_based_requests: false}) }
 
         it "should NOT change request flags in organization or its partners" do
           organization.reload

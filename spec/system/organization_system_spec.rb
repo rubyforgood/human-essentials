@@ -109,7 +109,7 @@ RSpec.describe "Organization management", type: :system, js: true do
 
         expect(page).to_not have_content('Media Information')
         expect(@organization.reload.partner_form_fields).to eq([])
-      end
+      end 
     end
 
     it "can add a new user to an organization" do

@@ -43,7 +43,7 @@ class OrganizationUpdateService
     private
 
     def valid?(organization, params)
-      fields_marked_for_disabling = FIELDS.select { |field| params[field] == "false" }
+      fields_marked_for_disabling = FIELDS.select { |field| params[field] == false }
       # Here we do a check: if applying the params for disabling request types to all
       # partners would mean any one partner would have all its request types disabled,
       # then we should not apply the params and return an error message. As per:
