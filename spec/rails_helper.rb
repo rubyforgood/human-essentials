@@ -53,7 +53,7 @@ Capybara.register_driver :chrome do |app|
   capabilities.add_preference(:download, prompt_for_download: false, default_directory: DownloadHelper::PATH.to_s)
   capabilities.add_preference(:browser, set_download_behavior: { behavior: 'allow' })
 
-  Capybara::Selenium::Driver.new(app, browser: :chrome, capabilities: capabilities)
+  Capybara::Selenium::Driver.new(app, browser: :chrome, options: capabilities)
 end
 
 # Enable JS for Capybara tests
