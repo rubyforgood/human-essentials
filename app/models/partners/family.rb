@@ -47,7 +47,10 @@ module Partners
 
     scope :search_guardian_names, ->(query) { where('guardian_first_name ilike ? OR guardian_last_name ilike ?', "%#{query}%", "%#{query}%") }
     scope :search_agency_guardians, ->(query) { where('case_manager ilike ?', "%#{query}%") }
-    scope :include_archived, ->(query) { query.zero? ? where(archived: false) : all }
+    scope :include_archived, ->(archived) { 
+      return where(archived: false) if archived == 0 
+      all 
+    }
 
     INCOME_TYPES = ['SSI', 'SNAP/FOOD Stamps', 'TANF', 'WIC', 'Housing/subsidized', 'Housing/unsubsidized', 'N/A'].freeze
     INSURANCE_TYPES = ['Private insurance', 'Medicaid', 'Uninsured'].freeze
