@@ -381,7 +381,7 @@ GEM
       ast (~> 2.4.1)
       racc
     pdf-core (0.9.0)
-    pg (1.5.3)
+    pg (1.5.4)
     popper_js (1.16.0)
     prawn (2.4.0)
       pdf-core (~> 0.9.0)
@@ -641,7 +641,6 @@ DEPENDENCIES
   better_errors
   binding_of_caller
   bootstrap (~> 4.6.0)
-  bootstrap-select-rails
   brakeman
   bugsnag
   bullet
@@ -689,7 +688,7 @@ DEPENDENCIES
   omniauth-rails_csrf_protection
   orderly (~> 0.1)
   paper_trail
-  pg (~> 1.5.3)
+  pg (~> 1.5.4)
   prawn-rails
   pry-doc
   pry-nav
