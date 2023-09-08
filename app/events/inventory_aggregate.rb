@@ -31,12 +31,20 @@ module InventoryAggregate
     # @param validate [Boolean]
     def handle_inventory_event(payload, inventory, validate: true)
       payload.items.each do |line_item|
-        inventory.move_item(item_id: line_item.item_id,
-                            quantity: line_item.quantity,
-                            from_location: line_item.from_storage_location,
-                            to_location: line_item.to_storage_location,
-                            validate: validate
-                            )
+        if payload.replace
+          inventory.replace_item(
+            item_id: line_item.item_id,
+            quantity: line_item.quantity,
+            location: line_item.to_storage_location
+          )
+        else
+          inventory.move_item(item_id: line_item.item_id,
+                              quantity: line_item.quantity,
+                              from_location: line_item.from_storage_location,
+                              to_location: line_item.to_storage_location,
+                              validate: validate
+                              )
+        end
       end
 
     end
