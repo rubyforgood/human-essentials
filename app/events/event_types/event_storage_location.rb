@@ -17,6 +17,12 @@ module EventTypes
 
     # @param item_id [Integer]
     # @param quantity [Integer]
+    def set_inventory(item_id, quantity)
+      self.items[item_id] = EventTypes::EventItem.new(item_id: item_id, quantity: quantity)
+    end
+
+    # @param item_id [Integer]
+    # @param quantity [Integer]
     # @param validate [Boolean]
     def reduce_inventory(item_id, quantity, validate: true)
       if validate
