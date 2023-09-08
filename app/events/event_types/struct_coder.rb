@@ -13,7 +13,7 @@ module EventTypes
 
     def load(h)
       return if h.nil?
-      struct.new(struct.load_json(h.with_indifferent_access))
+      struct.new(h.with_indifferent_access)
     end
   end
 end

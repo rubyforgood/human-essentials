@@ -278,6 +278,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_18_155934) do
     t.string "type", null: false
     t.datetime "event_time", null: false
     t.jsonb "data"
+    t.bigint "eventable_id"
+    t.string "eventable_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "organization_id"
