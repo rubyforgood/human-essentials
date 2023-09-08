@@ -9,6 +9,8 @@ class CreateEvents < ActiveRecord::Migration[7.0]
       t.string :type, null: false
       t.datetime :event_time, null: false, precision: 6
       t.jsonb :data
+      t.bigint :eventable_id
+      t.string :eventable_type
 
       t.timestamps
     end

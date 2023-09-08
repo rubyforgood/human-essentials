@@ -9,23 +9,27 @@ RSpec.describe InventoryAggregate do
     donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
     donation.line_items << build(:line_item, quantity: 50, item: item1)
     donation.line_items << build(:line_item, quantity: 30, item: item2)
-    DonationCreated.publish(donation)
+    DonationEvent.publish(donation)
 
     donation2 = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
     donation2.line_items << build(:line_item, quantity: 30, item: item1)
-    DonationCreated.publish(donation2)
+    DonationEvent.publish(donation2)
 
     donation3 = FactoryBot.create(:donation, organization: organization, storage_location: storage_location2)
-    donation3.line_items << build(:line_item, quantity: 40, item: item2)
-    DonationCreated.publish(donation3)
+    donation3.line_items << build(:line_item, quantity: 50, item: item2)
+    DonationEvent.publish(donation3)
+
+    # correction event
+    donation3.line_items = [build(:line_item, quantity: 40, item: item2)]
+    DonationEvent.publish(donation3)
 
     dist = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location1)
     dist.line_items << build(:line_item, quantity: 10, item: item1)
-    DistributionCreated.publish(dist)
+    DistributionEvent.publish(dist)
 
     dist2 = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location2)
     dist2.line_items << build(:line_item, quantity: 15, item: item2)
-    DistributionCreated.publish(dist2)
+    DistributionEvent.publish(dist2)
 
     inventory = described_class.inventory_for(organization.id)
     expect(inventory).to eq(EventTypes::Inventory.new(

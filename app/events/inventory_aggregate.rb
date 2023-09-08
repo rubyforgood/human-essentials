@@ -13,8 +13,9 @@ module InventoryAggregate
     def inventory_for(organization_id)
       events = Event.for_organization(organization_id)
       inventory = EventTypes::Inventory.from(organization_id)
-      events.find_each do |event|
-        handle(event, inventory)
+      events.group_by { |e| [e.eventable_type, e.eventable_id] }.each do |_, event_batch|
+        last_event = event_batch.max_by(&:event_time)
+        handle(last_event, inventory)
       end
       inventory
     end
@@ -42,11 +43,11 @@ module InventoryAggregate
 
   end
 
-  on DonationCreated do |event, inventory|
+  on DonationEvent do |event, inventory|
     handle_inventory_event(event.data, inventory, validate: false)
   end
 
-  on DistributionCreated do |event, inventory|
+  on DistributionEvent do |event, inventory|
     handle_inventory_event(event.data, inventory, validate: false)
   end
 

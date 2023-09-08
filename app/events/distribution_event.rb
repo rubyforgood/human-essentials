@@ -1,10 +1,9 @@
-class DistributionCreated < Event
-
-  serialize :data, EventTypes::StructCoder.new(EventTypes::InventoryPayload)
+class DistributionEvent < Event
 
   # @param distribution [Distribution]
   def self.publish(distribution)
     self.create!(
+      eventable: distribution,
       organization_id: distribution.organization_id,
       event_time: Time.zone.now,
       data: EventTypes::InventoryPayload.new(
