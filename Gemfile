@@ -110,7 +110,7 @@ gem "clockwork"
 gem "mini_racer", "~> 0.8.0"
 gem "nokogiri", ">= 1.10.4"
 gem "image_processing"
-gem "sprockets", "~> 4.2.0"
+gem "sprockets", "~> 4.2.1"
 
 group :production do
   # Tool to detect unused code through knowing which methods are used in which files.

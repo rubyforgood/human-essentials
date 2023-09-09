@@ -96,7 +96,6 @@ GEM
       autoprefixer-rails (>= 9.1.0)
       popper_js (>= 1.14.3, < 2)
       sassc-rails (>= 2.0.0)
-    bootstrap-select-rails (1.13.8)
     brakeman (6.0.1)
     brow (0.4.1)
     bugsnag (6.26.0)
@@ -565,7 +564,7 @@ GEM
     snaky_hash (2.0.0)
       hashie
       version_gem (~> 1.1)
-    sprockets (4.2.0)
+    sprockets (4.2.1)
       concurrent-ruby (~> 1.0)
       rack (>= 2.2.4, < 4)
     sprockets-rails (3.4.2)
@@ -588,7 +587,7 @@ GEM
       railties (>= 6.0.0)
     strong_migrations (1.6.1)
       activerecord (>= 5.2)
-    terser (1.1.17)
+    terser (1.1.18)
       execjs (>= 0.3.0, < 3)
     thor (1.2.2)
     tilt (2.0.10)
@@ -605,7 +604,7 @@ GEM
     version_gem (1.1.0)
     warden (1.2.9)
       rack (>= 2.0.9)
-    web-console (4.2.0)
+    web-console (4.2.1)
       actionview (>= 6.0.0)
       activemodel (>= 6.0.0)
       bindex (>= 0.4.0)
@@ -712,7 +711,7 @@ DEPENDENCIES
   shoulda-matchers (~> 5.3)
   simple_form
   simplecov
-  sprockets (~> 4.2.0)
+  sprockets (~> 4.2.1)
   standard (~> 1.30)
   stimulus-rails
   strong_migrations (= 1.6.1)
