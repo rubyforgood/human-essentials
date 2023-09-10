@@ -73,13 +73,13 @@ RSpec.describe "/partners/profiles", type: :request do
 
     context "when updating an existing value to a blank value" do
       before do
-        partner.profile.update!(instagram: "")
+        partner.profile.update!(city: "")
         put partners_profile_path(partner,
-          partner: {name: "Partnerdude", profile: {instagram: "", website: "N/A"}})
+          partner: {name: "Partnerdude", profile: {city: "", website: "N/A"}})
       end
 
       it "updates the partner profile attribute to a blank value" do
-        expect(partner.profile.reload.instagram).to eq ""
+        expect(partner.profile.reload.city).to eq ""
       end
 
       it "does not update other partner profile attributes to blank" do
