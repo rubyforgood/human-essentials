@@ -759,7 +759,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_18_185722) do
     t.inet "last_sign_in_ip"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
-    t.integer "organizationre_id"
+    t.integer "organization_id"
     t.string "invitation_token"
     t.datetime "invitation_created_at", precision: nil
     t.datetime "invitation_sent_at", precision: nil

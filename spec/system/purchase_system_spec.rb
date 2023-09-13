@@ -106,6 +106,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           fill_in "vendor_contact_name", with: "test"
           fill_in "vendor_email", with: "123@mail.ru"
           click_on "vendor-submit"
+          save_and_open_page
           select "businesstest", from: "purchase_vendor_id"
           expect(page).to have_no_content("New Vendor")
         end
