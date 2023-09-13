@@ -2,10 +2,12 @@ module InventoryAggregate
 
   class << self
 
-    # @param event_type [Class<Event>]
-    def on(event_type, &block)
+    # @param event_types [Array<Class<Event>>]
+    def on(*event_types, &block)
       @handlers ||= {}
-      @handlers[event_type] = block
+      event_types.each do |event_type|
+        @handlers[event_type] = block
+      end
     end
 
     # @param organization_id
@@ -31,31 +33,18 @@ module InventoryAggregate
     # @param validate [Boolean]
     def handle_inventory_event(payload, inventory, validate: true)
       payload.items.each do |line_item|
-        if payload.replace
-          inventory.replace_item(
-            item_id: line_item.item_id,
-            quantity: line_item.quantity,
-            location: line_item.to_storage_location
-          )
-        else
-          inventory.move_item(item_id: line_item.item_id,
-                              quantity: line_item.quantity,
-                              from_location: line_item.from_storage_location,
-                              to_location: line_item.to_storage_location,
-                              validate: validate
-                              )
-        end
+        inventory.reset! if payload.replace
+        inventory.move_item(item_id: line_item.item_id,
+                            quantity: line_item.quantity,
+                            from_location: line_item.from_storage_location,
+                            to_location: line_item.to_storage_location,
+                            validate: validate
+                            )
       end
-
     end
-
   end
 
-  on DonationEvent do |event, inventory|
-    handle_inventory_event(event.data, inventory, validate: false)
-  end
-
-  on DistributionEvent do |event, inventory|
+  on DonationEvent, DistributionEvent, AdjustmentEvent, AuditEvent, PurchaseEvent, TransferEvent do |event, inventory|
     handle_inventory_event(event.data, inventory, validate: false)
   end
 
