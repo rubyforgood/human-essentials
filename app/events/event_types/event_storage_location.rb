@@ -15,6 +15,10 @@ module EventTypes
       self.new(id: storage_location.id, items: {})
     end
 
+    def reset!
+      self.items = {}
+    end
+
     # @param item_id [Integer]
     # @param quantity [Integer]
     def set_inventory(item_id, quantity)
