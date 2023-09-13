@@ -1,0 +1,23 @@
+<section class="d-flex flex-column align-items-center py-4">
+  <div class="card shadow-sm mx-auto" style="width: 60rem;">
+    <div class="card-body">
+      <h1 class="text-center">Request Summary</h1>
+      <hr>
+      <% @items.each do |hash_index, item_info| %>
+        <p class="card-text">
+          <strong><%= item_info[:item_name] %></strong> for <%= item_info[:child_name] %>
+        </p>
+        <hr>
+      <% end %>
+
+      <h1 class="text-center"><strong> You are ordering for a total of <%= @total_items_requested %> items for <%= @total_children %>  children.</strong></h1>
+      <h1 class="text-center"><strong>Are you sure?</strong></h1>
+
+      <div class="d-flex justify-content-around align-items-center">
+        <%= link_to 'Go back', 'javascript:history.back()', rel: 'nofollow', class: "btn btn-danger btn-lg" %>
+        <%= button_to 'Submit', partners_family_requests_path, method: :post, class: 'btn btn-primary btn-lg' %>
+      </div>
+    </div>
+  </div>
+</section>
+

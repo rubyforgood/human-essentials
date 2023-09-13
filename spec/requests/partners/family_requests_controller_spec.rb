@@ -32,10 +32,16 @@ RSpec.describe Partners::FamilyRequestsController, type: :request do
   describe 'POST #create' do
     before do
       # Set one child as deactivated and the other as active but
-      # without a item_needed_diaperid
-      children[0].update(active: false)
-      children[1].update(item_needed_diaperid: nil)
+      children_and_items = children.map do |child|
+        {
+          "child_id" => child.id,
+          "item_id" => child.item_needed_diaperid
+        }
+      end
+
+      allow_any_instance_of(Partners::FamilyRequestsController).to receive(:session).and_return({children_and_item_ids: children_and_items})
     end
+
     subject { post partners_family_requests_path, params: params }
 
     it "does not allow deactivated partners" do
@@ -54,7 +60,6 @@ RSpec.describe Partners::FamilyRequestsController, type: :request do
       partner.update!(status: :approved)
 
       subject
-
       expect(response.request.flash[:notice]).to eql "Requested items successfully!"
     end
   end

@@ -1,0 +1,25 @@
+<section class="d-flex flex-column align-items-center py-4">
+  <div class="card shadow-sm mx-auto" style="width: 55rem;">
+    <div class="card-body">
+      <h1 class="text-center">Request Summary</h1>
+      <hr>
+      <div class="my-3">
+        <p class="card-text"><strong>Your comments:</strong> <%= @request['comments'] %></p>
+      </div>
+      <% @items.each do |item_name, person_count| %>
+        <p class="card-text">
+          <strong><%= item_name %></strong><br>
+          Number of individuals: <%= person_count %>
+        </p>
+        <hr>
+      <% end %>
+
+      <h1 class="text-center"><strong>You are ordering for a total of <%= @individuals_recieving_items %> individuals.</strong></h1>
+      <h1 class="text-center"><strong>Are you sure?</strong></h1>
+      <div class="d-flex justify-content-around align-items-center">
+        <%= link_to 'Go back', 'javascript:history.back()', rel: 'nofollow', class: "btn btn-danger" %>
+        <%= button_to "Submit", partners_individuals_requests_path(partners_family_request: @request, organization_id: current_partner.organization.id), method: :post, rel: 'nofollow', class: 'btn btn-primary' %>
+      </div>
+    </div>
+  </div>
+</section>

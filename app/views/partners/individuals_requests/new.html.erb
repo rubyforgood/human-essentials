@@ -30,7 +30,7 @@
               <%= render partial: 'partners/requests/error' %>
             <% end %>
 
-            <%= simple_form_for @request, url: partners_individuals_requests_path, html: {role: 'form', class: 'form-horizontal'} do |form| %>
+            <%= simple_form_for @request, url: confirmation_partners_individuals_requests_path, html: {role: 'form', class: 'form-horizontal'} do |form| %>
 
               <%= form.input :comments, label: "Comments:", as: :text, class: "form-control", wrapper: :input_group %>
 

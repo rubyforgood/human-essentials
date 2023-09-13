@@ -30,8 +30,8 @@
               <%= render partial: 'partners/requests/error' %>
             <% end %>
 
-            <%= simple_form_for @partner_request, url: partners_requests_path(@partner_request, :organization_id => current_partner.organization.id),
-                                html: {role: 'form', class: 'form-horizontal'}, method: :post do |form| %>
+            <%= simple_form_for @partner_request, :url => {:action => "confirmation"},
+                                html: {role: 'form', class: 'form-horizontal'} do |form| %>
               <%= form.input :comments, label: "Comments:", as: :text, class: "form-control", wrapper: :input_group %>
 
               <table class='table'>

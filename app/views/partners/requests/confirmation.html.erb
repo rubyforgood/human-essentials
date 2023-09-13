@@ -1,0 +1,27 @@
+<section class="d-flex flex-column align-items-center py-4">
+  <div class="card shadow-sm mx-auto" style="width: 55rem;">
+    <div class="card-body">
+      <h1 class="text-center">Request Summary</h1>
+      <hr>
+      <div class="my-3">
+        <p class="card-text"><strong>Your comments: <%= @partner_request['comments'] %></strong></p>
+      </div>
+      <% @items.each do |item_name, quantity| %>
+        <p class="card-text">
+          <strong><%= item_name %></strong><br>
+          Quantity: <%= quantity %>
+        </p>
+        <hr>
+      <% end %>
+
+      <h1 class="text-center"><strong>You are ordering a total of <%= @total_quantity_requested %> items.</strong></h1>
+      <h1 class="text-center"><strong>Are you sure?</strong></h1>
+      <div class="d-flex justify-content-around align-items-center">
+        <%= link_to 'Go back', 'javascript:history.back()', rel: 'nofollow', class: "btn btn-danger btn-lg" %>
+        <%= button_to "Submit", partners_requests_path(request: @partner_request, organization_id: current_partner.organization.id), method: :post, rel: 'nofollow', class: 'btn btn-primary btn-lg' %>
+      </div>
+    </div>
+  </div>
+</section>
+
+
