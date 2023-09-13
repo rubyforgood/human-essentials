@@ -12,7 +12,7 @@ ruby "3.1.2"
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.5.3"
+gem "pg", "~> 1.5.4"
 # Web server.
 gem "puma"
 # Rails web framework.
@@ -38,7 +38,6 @@ gem "strong_migrations", "1.6.1"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
-gem 'bootstrap-select-rails'
 # Bootstrap is a library for HTML, CSS and JS.
 gem 'bootstrap', '~> 4.6.0'
 # SASS CSS framework (nested selectors, variables, etc.)
@@ -111,7 +110,7 @@ gem "clockwork"
 gem "mini_racer", "~> 0.8.0"
 gem "nokogiri", ">= 1.10.4"
 gem "image_processing"
-gem "sprockets", "~> 4.2.0"
+gem "sprockets", "~> 4.2.1"
 
 group :production do
   # Tool to detect unused code through knowing which methods are used in which files.

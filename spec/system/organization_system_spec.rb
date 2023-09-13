@@ -95,18 +95,16 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page).to have_content(ndbn_member.full_name)
       end
 
-      it 'can select and deselect Required Partner Fields' do
-        # select first option in from Required Partner Fields
-        find('.partner_fields_dropdown').click.find(:xpath, '//*[@id="organization_partner_form_fields"]/option[1]').click
+      it 'can select and deselect Required Partner Fields', js: true do
+        # select first option from Required Partner Fields
+        select('Media Information', from: 'organization_partner_form_fields', visible: false)
         click_on "Save"
         expect(page).to have_content('Media Information')
         expect(@organization.reload.partner_form_fields).to eq(['media_information'])
-
-        # deselect previously choosen Required Partner Field
+        # deselect previously chosen Required Partner Field
         click_on "Edit"
-        find('.partner_fields_dropdown').click.find(:xpath, '//*[@id="organization_partner_form_fields"]/option[1]').click
+        unselect('Media Information', from: 'organization_partner_form_fields', visible: false)
         click_on "Save"
-
         expect(page).to_not have_content('Media Information')
         expect(@organization.reload.partner_form_fields).to eq([])
       end 
