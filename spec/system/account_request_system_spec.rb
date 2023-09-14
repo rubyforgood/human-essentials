@@ -79,6 +79,23 @@ RSpec.describe 'Account request flow', type: :system, js: true do
         expect(page).to have_link('here', href: 'https://humanessentials.app/users/sign_in')
       end
     end
+
+    context 'renders the #new template with the form and errors visible' do
+      it 'shows create bank form info and errors when required fields are missing' do
+        visit('/account_requests/new')
+        choose('account_bank')
+
+        fill_in 'Name', with: "Barbara Smith"
+        click_button 'Submit'
+
+        expect(find_field('account_bank')).to be_checked
+        expect(find_field('account_partner')).to_not be_checked
+        expect(page).to have_css('#create_bank', visible: true)
+        expect(page).to have_css('#partner_info', visible: :hidden)
+        expect(page).to have_content('Please review the problems below')
+        expect(page).to have_content('Name, email, and request details required')
+      end
+    end
   end
 end
 

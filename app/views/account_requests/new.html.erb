@@ -6,13 +6,29 @@
       </div>
 
       <div class="form-check">
-        <%= radio_button_tag(:account, :bank, false, class: 'form-check-input account_type') %>
+        <%= radio_button_tag(:account, :bank, flash.present?, class: 'form-check-input account_type') %>
         <%= label_tag(:account, "I am an Essentials Bank. I do NOT distribute diapers/period supplies directly to the public, I distribute them to partner agencies who distribute them to the public.", class: 'form-check-label') %>
       </div>
       <div class="form-check">
         <%= radio_button_tag(:account, :partner, false, class: 'form-check-input account_type') %>
         <%= label_tag(:account, "I am a Partner Agency to an Essentials Bank. I distribute the diapers/period supplies that I receive from essentials banks directly to the public.", class: 'form-check-label') %>
       </div>
+
+      <% if flash.present? %>
+        <script type="module">
+            $(document).ready(function() {
+                $('#create_bank').show()
+                $('#partner_info').hide()
+            })
+        </script>
+      <% else %>
+        <script type="module">
+            $(document).ready(function() {
+                $('#create_bank').hide()
+                $('#partner_info').hide()
+            })
+        </script>
+      <% end %>
 
       <script type="module">
           $('.account_type').change(function() {
@@ -23,11 +39,6 @@
                   $('#create_bank').hide()
                   $('#partner_info').show()
               }
-          })
-
-          $(document).ready(function() {
-              $('#create_bank').hide()
-              $('#partner_info').hide()
           })
       </script>
 
