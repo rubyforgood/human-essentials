@@ -1,7 +1,7 @@
 class PurchaseEvent < Event
   # @param purchase [Purchase]
   def self.publish(purchase)
-    self.create!(
+    self.create(
       eventable: purchase,
       organization_id: purchase.organization_id,
       event_time: Time.zone.now,

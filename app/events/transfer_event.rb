@@ -1,7 +1,7 @@
 class TransferEvent < Event
   # @param transfer [Transfer]
   def self.publish(transfer)
-    self.create!(
+    self.create(
       eventable: transfer,
       organization_id: transfer.organization_id,
       event_time: Time.zone.now,

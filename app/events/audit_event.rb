@@ -3,7 +3,7 @@ class AuditEvent < Event
 
   # @param audit [Audit]
   def self.publish(audit)
-    self.create!(
+    self.create(
       eventable: audit,
       organization_id: audit.organization_id,
       event_time: Time.zone.now,
