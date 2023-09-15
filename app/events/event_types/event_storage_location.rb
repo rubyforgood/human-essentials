@@ -16,7 +16,7 @@ module EventTypes
     end
 
     def reset!
-      self.items = {}
+      self.items.clear
     end
 
     # @param item_id [Integer]
