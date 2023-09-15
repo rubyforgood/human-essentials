@@ -2,7 +2,7 @@ class DonationEvent < Event
 
   # @param donation [Donation]
   def self.publish(donation)
-    self.create!(
+    self.create(
       eventable: donation,
       organization_id: donation.organization_id,
       event_time: Time.zone.now,

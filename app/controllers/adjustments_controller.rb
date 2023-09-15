@@ -42,7 +42,7 @@ class AdjustmentsController < ApplicationController
     @adjustment = current_organization.adjustments.new(adjustment_params)
     @adjustment.user_id = current_user.id
 
-    if @adjustment.valid? && @adjustment.save
+    if @adjustment.valid? && AdjustmentCreateService.call(@adjustment)
       increasing_adjustment, decreasing_adjustment = @adjustment.split_difference
       ActiveRecord::Base.transaction do
         @adjustment.storage_location.increase_inventory increasing_adjustment
