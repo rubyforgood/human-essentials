@@ -15,15 +15,6 @@ module EventTypes
                storage_locations: org.storage_locations.map { |s| [s.id, EventTypes::EventStorageLocation.from(s)] }.to_h)
     end
 
-    def reset!
-      self.storage_locations.each(&:reset!)
-    end
-
-    def replace_item(item_id:, quantity:, location:)
-      self.storage_locations[location] ||= EventTypes::EventStorageLocation.new(id: location, items: {})
-      self.storage_locations[location].set_inventory(item_id, quantity)
-    end
-
     def move_item(item_id:, quantity:, from_location: nil, to_location: nil, validate: true)
       if from_location
         if self.storage_locations[from_location].nil? && validate

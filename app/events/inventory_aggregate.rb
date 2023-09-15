@@ -33,7 +33,6 @@ module InventoryAggregate
     # @param validate [Boolean]
     def handle_inventory_event(payload, inventory, validate: true)
       payload.items.each do |line_item|
-        inventory.reset! if payload.replace
         inventory.move_item(item_id: line_item.item_id,
                             quantity: line_item.quantity,
                             from_location: line_item.from_storage_location,
@@ -44,7 +43,12 @@ module InventoryAggregate
     end
   end
 
-  on DonationEvent, DistributionEvent, AdjustmentEvent, AuditEvent, PurchaseEvent, TransferEvent do |event, inventory|
+  on DonationEvent, DistributionEvent, AdjustmentEvent, PurchaseEvent, TransferEvent do |event, inventory|
+    handle_inventory_event(event.data, inventory, validate: false)
+  end
+
+  on AuditEvent do |event, inventory|
+    inventory.storage_locations[event.data.storage_location_id].reset!
     handle_inventory_event(event.data, inventory, validate: false)
   end
 
