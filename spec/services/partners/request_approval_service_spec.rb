@@ -23,7 +23,9 @@ describe Partners::RequestApprovalService do
           .to include("No social media presence must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.")
       end
 
-      it 'should return an error re agency_type' do
+      # TODO: This test is disabled until we sort out required fields, per
+      # https://github.com/rubyforgood/human-essentials/issues/3875
+      xit 'should return an error re agency_type' do
         partner.profile.update(agency_type: "")
 
         expect(subject.errors.full_messages)

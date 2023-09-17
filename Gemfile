@@ -12,11 +12,11 @@ ruby "3.1.2"
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.5.3"
+gem "pg", "~> 1.5.4"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "7.0.7.2"
+gem "rails", "7.0.8"
 
 ###### MODELS / DATABASE #######
 
@@ -26,7 +26,7 @@ gem 'azure-storage-blob'
 # Adds soft delete functionality for models.
 gem 'discard', '~> 1.3'
 # Adds grouping by date/month/etc to queries.
-gem "groupdate", "~> 6.3"
+gem "groupdate", "~> 6.4"
 # Treats attributes like money, which knows about dollars and cents.
 gem "money-rails"
 # Tracks history / audits models.
@@ -34,11 +34,10 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.6.1"
+gem "strong_migrations", "1.6.2"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
-gem 'bootstrap-select-rails'
 # Bootstrap is a library for HTML, CSS and JS.
 gem 'bootstrap', '~> 5.2'
 # SASS CSS framework (nested selectors, variables, etc.)
@@ -111,7 +110,7 @@ gem "clockwork"
 gem "mini_racer", "~> 0.8.0"
 gem "nokogiri", ">= 1.10.4"
 gem "image_processing"
-gem "sprockets", "~> 4.2.0"
+gem "sprockets", "~> 4.2.1"
 
 group :production do
   # Tool to detect unused code through knowing which methods are used in which files.
@@ -161,7 +160,7 @@ group :development, :test do
   gem 'rubocop-performance'
   gem "rubocop-rails", "~> 2.20.1"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.30"
+  gem "standard", "~> 1.31"
 end
 
 group :development do
@@ -203,7 +202,7 @@ group :test do
   # Selenium webdriver automatic installation and update.
   gem 'selenium-webdriver', '~> 4.10'
   # Mock HTTP requests and ensure they are not called during tests.
-  gem "webmock", "~> 3.18"
+  gem "webmock", "~> 3.19"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
