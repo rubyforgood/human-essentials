@@ -11,7 +11,7 @@ module UserInviteService
     user = User.find_by(email: email)
 
     # return if user already has all the roles we're trying to add
-    if !force && user && roles.all? { |role| user.has_role?(role, resource) }
+    if !force && user && roles.all? { |role| user.has_role?(role, resource) && resource.email != user.email }
       raise "User already has the requested role!"
     end
 
