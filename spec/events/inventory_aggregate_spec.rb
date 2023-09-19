@@ -137,6 +137,34 @@ RSpec.describe InventoryAggregate do
 
     end
 
+    it 'should process a distribution destroyed event' do
+      dist = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location1)
+      dist.line_items << build(:line_item, quantity: 50, item: item1)
+      dist.line_items << build(:line_item, quantity: 30, item: item2)
+      DistributionDestroyEvent.publish(dist)
+
+      # 30 + 50 = 80, 10 + 30 = 40
+      InventoryAggregate.handle(DistributionDestroyEvent.last, inventory)
+      expect(inventory).to eq(EventTypes::Inventory.new(
+        organization_id: organization.id,
+        storage_locations: {
+          storage_location1.id => EventTypes::EventStorageLocation.new(
+            id: storage_location1.id,
+            items: {
+              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 80),
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 40),
+              item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40)
+            }),
+          storage_location2.id => EventTypes::EventStorageLocation.new(
+            id: storage_location2.id,
+            items: {
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10),
+              item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 50)
+            })
+        }))
+
+    end
+
     it 'should process a transfer event' do
       transfer = FactoryBot.create(:transfer, organization: organization, from: storage_location1, to: storage_location2)
       transfer.line_items << build(:line_item, quantity: 20, item: item1)

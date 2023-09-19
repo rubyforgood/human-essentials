@@ -12,7 +12,7 @@ class DistributionCreateService < DistributionService
 
       distribution.save!
 
-      DistributionCreated.publish(distribution)
+      DistributionEvent.publish(distribution)
 
       distribution.storage_location.decrease_inventory distribution
       distribution.reload
