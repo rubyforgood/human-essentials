@@ -1,3 +1,4 @@
+
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -295,6 +296,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_18_185722) do
     t.bigint "partner_id"
     t.boolean "military", default: false
     t.bigint "old_partner_id"
+    t.boolean "archived", default: false
     t.index ["partner_id"], name: "index_families_on_partner_id"
   end
 
