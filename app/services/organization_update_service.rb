@@ -12,14 +12,11 @@ class OrganizationUpdateService
     def update(organization, params)
       return false unless valid?(organization, params)
 
-      
       if params.has_key?("partner_form_fields")
         params["partner_form_fields"].delete_if { |field| field == "" }
       end
-      
       result = organization.update(params)
       return false unless result
-      
       update_partner_flags(organization)
       true
     end
@@ -49,17 +46,16 @@ class OrganizationUpdateService
       # then we should not apply the params and return an error message. As per:
       # github.com/rubyforgood/human-essentials/issues/3264
       invalid_partner_names = find_invalid_partners(organization, fields_marked_for_disabling).map(&:name)
-      
       if invalid_partner_names.empty?
-        return true
+        true
       else
         organization.errors.add(:base, "The following partners would be unable to make requests with this update: #{invalid_partner_names.join(", ")}")
-        return false
+        false
       end
     end
 
     def find_invalid_partners(organization, fields_marked_for_disabling)
-      #finds any partners who's request types will all be disabled
+      # finds any partners who's request types will all be disabled
       organization.partners.select do |partner|
         all_fields_will_be_disabled?(partner, fields_marked_for_disabling)
       end
