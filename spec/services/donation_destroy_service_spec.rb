@@ -117,11 +117,13 @@ describe DonationDestroyService do
           .and_return(fake_donation)
         allow(fake_storage_location).to receive(:decrease_inventory).with(fake_donation)
         allow(fake_donation).to receive(:destroy!)
+        allow(fake_donation).to receieve(:line_items).and_return([])
       end
 
       it 'to be a success' do
         result = subject.call
         expect(result).to be_success
+        expect(DonationDestroyEvent.count).to eq(1)
       end
     end
   end

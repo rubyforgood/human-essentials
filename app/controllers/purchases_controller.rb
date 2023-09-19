@@ -64,7 +64,10 @@ class PurchasesController < ApplicationController
 
   def update
     @purchase = current_organization.purchases.find(params[:id])
-    ItemizableUpdateService.call(itemizable: @purchase, params: purchase_params, type: :increase)
+    ItemizableUpdateService.call(itemizable: @purchase,
+                                 params: purchase_params,
+                                 type: :increase,
+                                 event_class: PurchaseEvent)
     redirect_to purchases_path
   rescue => e
     load_form_collections
