@@ -15,6 +15,7 @@ class DistributionUpdateService < DistributionService
         params: @params,
         type: :decrease
       )
+      DistributionEvent.publish(distribution)
 
       @new_issued_at = distribution.issued_at
       @new_delivery_method = distribution.delivery_method

@@ -25,7 +25,12 @@ module InventoryAggregate
     # @param event [Event]
     # @param inventory [Inventory]
     def handle(event, inventory)
-      @handlers[event.class].call(event, inventory)
+      handler = @handlers[event.class]
+      if handler.nil?
+        Rails.logger.warn("No handler found for #{event.class}, skipping")
+        return
+      end
+      handler.call(event, inventory)
     end
 
     # @param payload [EventTypes::InventoryPayload]
@@ -43,7 +48,8 @@ module InventoryAggregate
     end
   end
 
-  on DonationEvent, DistributionEvent, AdjustmentEvent, PurchaseEvent, TransferEvent do |event, inventory|
+  on DonationEvent, DistributionEvent, AdjustmentEvent, PurchaseEvent,
+     TransferEvent, DistributionDestroyEvent do |event, inventory|
     handle_inventory_event(event.data, inventory, validate: false)
   end
 
