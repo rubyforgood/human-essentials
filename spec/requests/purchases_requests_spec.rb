@@ -55,7 +55,9 @@ RSpec.describe "Purchases", type: :request do
         end
 
         it "redirects to GET#edit" do
-          post purchases_path(default_params.merge(purchase: purchase))
+          expect { post purchases_path(default_params.merge(purchase: purchase)) }.
+            to change { Purchase.count }.by(1).
+              and change { PurchaseEvent.count }.by(1)
           expect(response).to redirect_to(purchases_path)
         end
 
