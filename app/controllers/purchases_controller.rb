@@ -32,8 +32,7 @@ class PurchasesController < ApplicationController
 
   def create
     @purchase = current_organization.purchases.new(purchase_params)
-    if @purchase.save
-      @purchase.storage_location.increase_inventory @purchase
+    if PurchaseCreateService.call(@purchase)
       flash[:notice] = "New Purchase logged!"
       redirect_to purchases_path
     else
@@ -76,11 +75,8 @@ class PurchasesController < ApplicationController
   end
 
   def destroy
-    ActiveRecord::Base.transaction do
-      purchase = current_organization.purchases.find(params[:id])
-      purchase.storage_location.decrease_inventory(purchase)
-      purchase.destroy!
-    end
+    purchase = current_organization.purchases.find(params[:id])
+    PurchaseDestroyService.call(purchase)
 
     flash[:notice] = "Purchase #{params[:id]} has been removed!"
     redirect_to purchases_path

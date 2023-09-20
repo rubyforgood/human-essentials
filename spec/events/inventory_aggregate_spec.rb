@@ -108,6 +108,33 @@ RSpec.describe InventoryAggregate do
         }))
     end
 
+    it 'should process a purchase destroyed event' do
+      purchase = FactoryBot.create(:purchase, organization: organization, storage_location: storage_location1)
+      purchase.line_items << build(:line_item, quantity: 20, item: item1)
+      purchase.line_items << build(:line_item, quantity: 5, item: item2)
+      PurchaseDestroyEvent.publish(purchase)
+
+      # 30 - 20 = 10, 10 - 5 = 5
+      InventoryAggregate.handle(PurchaseDestroyEvent.last, inventory)
+      expect(inventory).to eq(EventTypes::Inventory.new(
+        organization_id: organization.id,
+        storage_locations: {
+          storage_location1.id => EventTypes::EventStorageLocation.new(
+            id: storage_location1.id,
+            items: {
+              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 10),
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 5),
+              item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40)
+            }),
+          storage_location2.id => EventTypes::EventStorageLocation.new(
+            id: storage_location2.id,
+            items: {
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10),
+              item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 50)
+            })
+        }))
+    end
+
     it 'should process an adjustment event' do
       adjustment = FactoryBot.create(:adjustment, organization: organization, storage_location: storage_location1)
       adjustment.line_items << build(:line_item, quantity: 20, item: item1)
@@ -201,6 +228,36 @@ RSpec.describe InventoryAggregate do
       # 30 - 20 = 10, 10 - 5 = 5
       # 0 + 20 = 20, 10 + 5 = 15
       InventoryAggregate.handle(TransferEvent.last, inventory)
+      expect(inventory).to eq(EventTypes::Inventory.new(
+        organization_id: organization.id,
+        storage_locations: {
+          storage_location1.id => EventTypes::EventStorageLocation.new(
+            id: storage_location1.id,
+            items: {
+              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 10),
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 5),
+              item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40)
+            }),
+          storage_location2.id => EventTypes::EventStorageLocation.new(
+            id: storage_location2.id,
+            items: {
+              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 20),
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 15),
+              item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 50)
+            })
+        }))
+
+    end
+
+    it 'should process a transfer destroy event' do
+      transfer = FactoryBot.create(:transfer, organization: organization, from: storage_location2, to: storage_location1)
+      transfer.line_items << build(:line_item, quantity: 20, item: item1)
+      transfer.line_items << build(:line_item, quantity: 5, item: item2)
+      TransferDestroyEvent.publish(transfer)
+
+      # 30 - 20 = 10, 10 - 5 = 5
+      # 0 + 20 = 20, 10 + 5 = 15
+      InventoryAggregate.handle(TransferDestroyEvent.last, inventory)
       expect(inventory).to eq(EventTypes::Inventory.new(
         organization_id: organization.id,
         storage_locations: {

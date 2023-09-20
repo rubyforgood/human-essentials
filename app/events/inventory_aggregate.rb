@@ -49,7 +49,8 @@ module InventoryAggregate
   end
 
   on DonationEvent, DistributionEvent, AdjustmentEvent, PurchaseEvent,
-     TransferEvent, DistributionDestroyEvent, DonationDestroyEvent do |event, inventory|
+     TransferEvent, DistributionDestroyEvent, DonationDestroyEvent,
+     PurchaseDestroyEvent, TransferDestroyEvent do |event, inventory|
     handle_inventory_event(event.data, inventory, validate: false)
   end
 
