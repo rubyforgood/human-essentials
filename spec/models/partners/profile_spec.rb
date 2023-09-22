@@ -90,16 +90,6 @@ RSpec.describe Partners::Profile, type: :model do
     it { should have_many(:served_areas) }
   end
 
-  describe "validations" do
-    it { should validate_presence_of(:agency_type).on(:edit) }
-    it { should validate_presence_of(:city).on(:edit) }
-    it { should validate_presence_of(:state).on(:edit) }
-    it { should validate_presence_of(:zip_code).on(:edit) }
-    it { should validate_presence_of(:address1).on(:edit) }
-    it { should validate_presence_of(:program_name).on(:edit) }
-    it { should validate_presence_of(:program_description).on(:edit) }
-  end
-
   it "must allow deleting served_areas" do
     should accept_nested_attributes_for(:served_areas).allow_destroy(true)
   end

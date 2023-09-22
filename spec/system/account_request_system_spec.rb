@@ -18,7 +18,7 @@ RSpec.describe 'Account request flow', type: :system, js: true do
       ndbn_member = FactoryBot.create(:ndbn_member)
       visit root_path
 
-      click_button('Request A Demo', match: :first)
+      click_button('Request An Account', match: :first)
       choose('account_bank')
 
       account_request_attrs = FactoryBot.attributes_for(:account_request)
@@ -81,4 +81,3 @@ RSpec.describe 'Account request flow', type: :system, js: true do
     end
   end
 end
-
