@@ -4,8 +4,9 @@ end
 
 module EventTypes
   class Inventory < Dry::Struct
+    transform_keys(&:to_sym)
     attribute :organization_id, Types::Integer
-    attribute :storage_locations, Types::Hash.map(Types::Integer, EventTypes::EventStorageLocation)
+    attribute :storage_locations, Types::Hash.map(Types::Coercible::Integer, EventTypes::EventStorageLocation)
 
     # @param organization_id [Integer]
     # @return [EventTypes::Inventory]
