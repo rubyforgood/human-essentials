@@ -50,7 +50,8 @@ module InventoryAggregate
 
   on DonationEvent, DistributionEvent, AdjustmentEvent, PurchaseEvent,
      TransferEvent, DistributionDestroyEvent, DonationDestroyEvent,
-     PurchaseDestroyEvent, TransferDestroyEvent do |event, inventory|
+     PurchaseDestroyEvent, TransferDestroyEvent,
+     KitAllocateEvent, KitDeallocateEvent do |event, inventory|
     handle_inventory_event(event.data, inventory, validate: false)
   end
 

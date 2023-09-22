@@ -34,7 +34,7 @@ RSpec.describe InventoryAggregate do
       DonationEvent.publish(donation)
 
       # 30 + 50 = 80, 10 + 30 = 40
-      InventoryAggregate.handle(DonationEvent.last, inventory)
+      described_class.handle(DonationEvent.last, inventory)
       expect(inventory).to eq(EventTypes::Inventory.new(
         organization_id: organization.id,
         storage_locations: {
@@ -61,7 +61,7 @@ RSpec.describe InventoryAggregate do
       DistributionEvent.publish(dist)
 
       # 30 - 20 = 10, 10 - 5 = 5
-      InventoryAggregate.handle(DistributionEvent.last, inventory)
+      described_class.handle(DistributionEvent.last, inventory)
       expect(inventory).to eq(EventTypes::Inventory.new(
         organization_id: organization.id,
         storage_locations: {
@@ -88,7 +88,7 @@ RSpec.describe InventoryAggregate do
       DonationDestroyEvent.publish(donation)
 
       # 30 - 20 = 10, 10 - 5 = 5
-      InventoryAggregate.handle(DonationDestroyEvent.last, inventory)
+      described_class.handle(DonationDestroyEvent.last, inventory)
       expect(inventory).to eq(EventTypes::Inventory.new(
         organization_id: organization.id,
         storage_locations: {
@@ -115,7 +115,7 @@ RSpec.describe InventoryAggregate do
       PurchaseDestroyEvent.publish(purchase)
 
       # 30 - 20 = 10, 10 - 5 = 5
-      InventoryAggregate.handle(PurchaseDestroyEvent.last, inventory)
+      described_class.handle(PurchaseDestroyEvent.last, inventory)
       expect(inventory).to eq(EventTypes::Inventory.new(
         organization_id: organization.id,
         storage_locations: {
@@ -142,7 +142,7 @@ RSpec.describe InventoryAggregate do
       AdjustmentEvent.publish(adjustment)
 
       # 30 + 20 = 50, 10 - 5 = 5
-      InventoryAggregate.handle(AdjustmentEvent.last, inventory)
+      described_class.handle(AdjustmentEvent.last, inventory)
       expect(inventory).to eq(EventTypes::Inventory.new(
         organization_id: organization.id,
         storage_locations: {
@@ -170,7 +170,7 @@ RSpec.describe InventoryAggregate do
       PurchaseEvent.publish(purchase)
 
       # 30 + 50 = 80, 10 + 30 = 40
-      InventoryAggregate.handle(PurchaseEvent.last, inventory)
+      described_class.handle(PurchaseEvent.last, inventory)
       expect(inventory).to eq(EventTypes::Inventory.new(
         organization_id: organization.id,
         storage_locations: {
@@ -198,7 +198,7 @@ RSpec.describe InventoryAggregate do
       DistributionDestroyEvent.publish(dist)
 
       # 30 + 50 = 80, 10 + 30 = 40
-      InventoryAggregate.handle(DistributionDestroyEvent.last, inventory)
+      described_class.handle(DistributionDestroyEvent.last, inventory)
       expect(inventory).to eq(EventTypes::Inventory.new(
         organization_id: organization.id,
         storage_locations: {
@@ -227,7 +227,7 @@ RSpec.describe InventoryAggregate do
 
       # 30 - 20 = 10, 10 - 5 = 5
       # 0 + 20 = 20, 10 + 5 = 15
-      InventoryAggregate.handle(TransferEvent.last, inventory)
+      described_class.handle(TransferEvent.last, inventory)
       expect(inventory).to eq(EventTypes::Inventory.new(
         organization_id: organization.id,
         storage_locations: {
@@ -257,7 +257,7 @@ RSpec.describe InventoryAggregate do
 
       # 30 - 20 = 10, 10 - 5 = 5
       # 0 + 20 = 20, 10 + 5 = 15
-      InventoryAggregate.handle(TransferDestroyEvent.last, inventory)
+      described_class.handle(TransferDestroyEvent.last, inventory)
       expect(inventory).to eq(EventTypes::Inventory.new(
         organization_id: organization.id,
         storage_locations: {
@@ -285,7 +285,7 @@ RSpec.describe InventoryAggregate do
       audit.line_items << build(:line_item, quantity: 10, item: item3)
       AuditEvent.publish(audit)
 
-      InventoryAggregate.handle(AuditEvent.last, inventory)
+      described_class.handle(AuditEvent.last, inventory)
       expect(inventory).to eq(EventTypes::Inventory.new(
         organization_id: organization.id,
         storage_locations: {
@@ -304,6 +304,67 @@ RSpec.describe InventoryAggregate do
         }))
     end
 
+    it 'should process a kit allocation event' do
+      kit = FactoryBot.create(:kit, :with_item, organization: organization)
+      kit.line_items << build(:line_item, quantity: 20, item: item1)
+      kit.line_items << build(:line_item, quantity: 5, item: item2)
+      KitAllocateEvent.publish(kit, storage_location1.id, 5)
+
+      # 30 - 20 = 10, 10 - 5 = 5
+      # 0 + 20 = 20, 10 + 5 = 15
+      described_class.handle(KitAllocateEvent.last, inventory)
+      expect(inventory).to eq(EventTypes::Inventory.new(
+        organization_id: organization.id,
+        storage_locations: {
+          storage_location1.id => EventTypes::EventStorageLocation.new(
+            id: storage_location1.id,
+            items: {
+              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 10),
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 5),
+              item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40),
+              kit.item.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 5)
+            }),
+          storage_location2.id => EventTypes::EventStorageLocation.new(
+            id: storage_location2.id,
+            items: {
+              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 20),
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 15),
+              item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 50)
+            })
+        }))
+
+    end
+
+    it 'should process a kit deallocation event' do
+      kit = FactoryBot.create(:kit, organization: organization)
+      kit.line_items << build(:line_item, quantity: 20, item: item1)
+      kit.line_items << build(:line_item, quantity: 5, item: item2)
+      KitDeAllocateEvent.publish(kit, :with_item, storage_location1, 2)
+      inventory.move_item(item_id: kit.item.id, quantity: 3, to_storage_location: storage_location1)
+
+      # 30 + (20*2) = 70, 10 + (5*2) = 20
+      described_class.handle(KitDeAllocateEvent.last, inventory)
+      expect(inventory).to eq(EventTypes::Inventory.new(
+        organization_id: organization.id,
+        storage_locations: {
+          storage_location1.id => EventTypes::EventStorageLocation.new(
+            id: storage_location1.id,
+            items: {
+              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 70),
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 20),
+              item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40),
+              kit.item.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 1)
+            }),
+          storage_location2.id => EventTypes::EventStorageLocation.new(
+            id: storage_location2.id,
+            items: {
+              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 20),
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 15),
+              item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 50)
+            })
+        }))
+
+    end
   end
 
   it 'should process multiple events' do
