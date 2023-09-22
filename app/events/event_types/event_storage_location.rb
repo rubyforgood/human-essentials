@@ -7,7 +7,7 @@ module EventTypes
     transform_keys(&:to_sym)
 
     attribute :id, Types::Integer
-    attribute :items, Types::Hash.map(Types::Integer, EventTypes::EventItem)
+    attribute :items, Types::Hash.map(Types::Coercible::Integer, EventTypes::EventItem)
 
     # @param storage_location [StorageLocation]
     # @return [EventTypes::EventStorageLocation]

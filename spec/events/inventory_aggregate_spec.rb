@@ -306,11 +306,12 @@ RSpec.describe InventoryAggregate do
 
     it 'should process a kit allocation event' do
       kit = FactoryBot.create(:kit, :with_item, organization: organization)
-      kit.line_items << build(:line_item, quantity: 20, item: item1)
-      kit.line_items << build(:line_item, quantity: 5, item: item2)
-      KitAllocateEvent.publish(kit, storage_location1.id, 5)
+      kit.line_items = []
+      kit.line_items << build(:line_item, quantity: 10, item: item1)
+      kit.line_items << build(:line_item, quantity: 3, item: item2)
+      KitAllocateEvent.publish(kit, storage_location1.id, 2)
 
-      # 30 - 20 = 10, 10 - 5 = 5
+      # 30 - (10*2) = 10, 10 - (3*2) = 4
       # 0 + 20 = 20, 10 + 5 = 15
       described_class.handle(KitAllocateEvent.last, inventory)
       expect(inventory).to eq(EventTypes::Inventory.new(
@@ -320,15 +321,14 @@ RSpec.describe InventoryAggregate do
             id: storage_location1.id,
             items: {
               item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 10),
-              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 5),
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 4),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40),
-              kit.item.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 5)
+              kit.item.id => EventTypes::EventItem.new(item_id: kit.item.id, quantity: 2)
             }),
           storage_location2.id => EventTypes::EventStorageLocation.new(
             id: storage_location2.id,
             items: {
-              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 20),
-              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 15),
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 50)
             })
         }))
@@ -336,14 +336,15 @@ RSpec.describe InventoryAggregate do
     end
 
     it 'should process a kit deallocation event' do
-      kit = FactoryBot.create(:kit, organization: organization)
+      kit = FactoryBot.create(:kit, :with_item, organization: organization)
+      kit.line_items = []
       kit.line_items << build(:line_item, quantity: 20, item: item1)
       kit.line_items << build(:line_item, quantity: 5, item: item2)
-      KitDeAllocateEvent.publish(kit, :with_item, storage_location1, 2)
-      inventory.move_item(item_id: kit.item.id, quantity: 3, to_storage_location: storage_location1)
+      inventory.move_item(item_id: kit.item.id, quantity: 3, to_location: storage_location1.id)
+      KitDeallocateEvent.publish(kit, storage_location1, 2)
 
       # 30 + (20*2) = 70, 10 + (5*2) = 20
-      described_class.handle(KitDeAllocateEvent.last, inventory)
+      described_class.handle(KitDeallocateEvent.last, inventory)
       expect(inventory).to eq(EventTypes::Inventory.new(
         organization_id: organization.id,
         storage_locations: {
@@ -353,18 +354,44 @@ RSpec.describe InventoryAggregate do
               item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 70),
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 20),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40),
-              kit.item.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 1)
+              kit.item.id => EventTypes::EventItem.new(item_id: kit.item.id, quantity: 1)
             }),
           storage_location2.id => EventTypes::EventStorageLocation.new(
             id: storage_location2.id,
             items: {
-              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 20),
-              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 15),
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 50)
             })
         }))
 
     end
+
+    it 'should process a snapshot event' do
+      storage_location1.inventory_items.create!(quantity: 5, item_id: item1.id)
+      storage_location1.inventory_items.create!(quantity: 10, item_id: item2.id)
+      storage_location2.inventory_items.create!(quantity: 15, item_id: item2.id)
+      storage_location2.inventory_items.create!(quantity: 20, item_id: item3.id)
+      SnapshotEvent.publish(organization)
+
+      described_class.handle(SnapshotEvent.last, inventory)
+      expect(inventory).to eq(EventTypes::Inventory.new(
+        organization_id: organization.id,
+        storage_locations: {
+          storage_location1.id => EventTypes::EventStorageLocation.new(
+            id: storage_location1.id,
+            items: {
+              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 5),
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10)
+            }),
+          storage_location2.id => EventTypes::EventStorageLocation.new(
+            id: storage_location2.id,
+            items: {
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 15),
+              item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 20)
+            })
+        }))
+    end
+
   end
 
   it 'should process multiple events' do

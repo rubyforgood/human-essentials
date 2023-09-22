@@ -60,4 +60,9 @@ module InventoryAggregate
     handle_inventory_event(event.data, inventory, validate: false)
   end
 
+  on SnapshotEvent do |event, inventory|
+    inventory.storage_locations.clear
+    inventory.storage_locations.merge!(event.data.storage_locations)
+  end
+
 end

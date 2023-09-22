@@ -4,7 +4,7 @@ class KitAllocateEvent < Event
     items = kit.line_items.map do |item|
       EventTypes::EventLineItem.new(
         quantity: item.quantity * quantity,
-        item_id: item.id,
+        item_id: item.item_id,
         item_value_in_cents: item.item.value_in_cents,
         from_storage_location: storage_location,
         to_storage_location: nil
