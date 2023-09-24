@@ -1,7 +1,5 @@
 module InventoryAggregate
-
   class << self
-
     # @param event_types [Array<Class<Event>>]
     def on(*event_types, &block)
       @handlers ||= {}
@@ -39,19 +37,18 @@ module InventoryAggregate
     def handle_inventory_event(payload, inventory, validate: true)
       payload.items.each do |line_item|
         inventory.move_item(item_id: line_item.item_id,
-                            quantity: line_item.quantity,
-                            from_location: line_item.from_storage_location,
-                            to_location: line_item.to_storage_location,
-                            validate: validate
-                            )
+          quantity: line_item.quantity,
+          from_location: line_item.from_storage_location,
+          to_location: line_item.to_storage_location,
+          validate: validate)
       end
     end
   end
 
   on DonationEvent, DistributionEvent, AdjustmentEvent, PurchaseEvent,
-     TransferEvent, DistributionDestroyEvent, DonationDestroyEvent,
-     PurchaseDestroyEvent, TransferDestroyEvent,
-     KitAllocateEvent, KitDeallocateEvent do |event, inventory|
+    TransferEvent, DistributionDestroyEvent, DonationDestroyEvent,
+    PurchaseDestroyEvent, TransferDestroyEvent,
+    KitAllocateEvent, KitDeallocateEvent do |event, inventory|
     handle_inventory_event(event.data, inventory, validate: false)
   end
 
@@ -64,5 +61,4 @@ module InventoryAggregate
     inventory.storage_locations.clear
     inventory.storage_locations.merge!(event.data.storage_locations)
   end
-
 end

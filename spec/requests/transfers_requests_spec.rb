@@ -63,9 +63,9 @@ RSpec.describe "Transfers", type: :request do
           from_id: create(:storage_location, organization: @organization).id
         )
 
-        expect { post transfers_path(valid_params.merge(transfer: attributes)) }.
-          to change { Transfer.count }.by(1).
-            and change { TransferEvent.count }.by(1)
+        expect { post transfers_path(valid_params.merge(transfer: attributes)) }
+          .to change { Transfer.count }.by(1)
+          .and change { TransferEvent.count }.by(1)
         expect(response).to redirect_to(transfers_path)
       end
 

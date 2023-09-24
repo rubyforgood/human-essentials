@@ -37,8 +37,8 @@ describe DistributionDestroyService do
         end
 
         it 'should destroy the Distribution' do
-          expect { subject }.to change { Distribution.count }.by(-1).
-            and change { DistributionDestroyEvent.count }.by(1)
+          expect { subject }.to change { Distribution.count }.by(-1)
+            .and change { DistributionDestroyEvent.count }.by(1)
         end
 
         it 'should be successful' do

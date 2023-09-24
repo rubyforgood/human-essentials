@@ -16,7 +16,7 @@ module EventTypes
     # @param to [Integer]
     # @return [EventLineItem]
     def self.from_line_item(line_item, from: nil, to: nil)
-      self.new(
+      new(
         quantity: line_item.quantity,
         item_id: line_item.item_id,
         item_value_in_cents: line_item.item.value_in_cents,
@@ -30,8 +30,7 @@ module EventTypes
     # @param to [Integer]
     # @return [Array<EventLineItem>]
     def self.from_line_items(line_items, from: nil, to: nil)
-      line_items.map { |i| self.from_line_item(i, from: from, to: to)}
+      line_items.map { |i| from_line_item(i, from: from, to: to) }
     end
-
   end
 end

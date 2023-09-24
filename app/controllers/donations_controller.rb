@@ -75,9 +75,9 @@ class DonationsController < ApplicationController
   def update
     @donation = Donation.find(params[:id])
     ItemizableUpdateService.call(itemizable: @donation,
-                                 params: donation_params,
-                                 type: :increase,
-                                 event_class: DonationEvent)
+      params: donation_params,
+      type: :increase,
+      event_class: DonationEvent)
     redirect_to donations_path
   rescue => e
     flash[:alert] = "Error updating donation: #{e.message}"

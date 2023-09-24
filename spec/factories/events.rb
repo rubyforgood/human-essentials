@@ -23,4 +23,3 @@ FactoryBot.define do
     event_time { Time.zone.now }
   end
 end
-

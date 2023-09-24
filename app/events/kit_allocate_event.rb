@@ -1,5 +1,4 @@
 class KitAllocateEvent < Event
-
   def self.event_line_items(kit, storage_location, quantity)
     items = kit.line_items.map do |item|
       EventTypes::EventLineItem.new(
@@ -21,12 +20,12 @@ class KitAllocateEvent < Event
   end
 
   def self.publish(kit, storage_location, quantity)
-    self.create(
+    create(
       eventable: kit,
       organization_id: kit.organization_id,
       event_time: Time.zone.now,
       data: EventTypes::InventoryPayload.new(
-        items: self.event_line_items(kit, storage_location, quantity)
+        items: event_line_items(kit, storage_location, quantity)
       ).as_json
     )
   end
