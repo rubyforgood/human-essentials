@@ -93,7 +93,7 @@ You can sign up [here](https://rubyforgood.slack.com/join/shared_invite/zt-1kfei
 
   ```
     Organization Admin
-    Email: org_admin1@example.com
+       Email: org_admin1@example.com
     Password: password!
 
     User
