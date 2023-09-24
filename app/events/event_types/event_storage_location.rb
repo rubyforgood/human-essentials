@@ -12,17 +12,17 @@ module EventTypes
     # @param storage_location [StorageLocation]
     # @return [EventTypes::EventStorageLocation]
     def self.from(storage_location)
-      self.new(id: storage_location.id, items: {})
+      new(id: storage_location.id, items: {})
     end
 
     def reset!
-      self.items.clear
+      items.clear
     end
 
     # @param item_id [Integer]
     # @param quantity [Integer]
     def set_inventory(item_id, quantity)
-      self.items[item_id] = EventTypes::EventItem.new(item_id: item_id, quantity: quantity)
+      items[item_id] = EventTypes::EventItem.new(item_id: item_id, quantity: quantity)
     end
 
     # @param item_id [Integer]
@@ -30,24 +30,22 @@ module EventTypes
     # @param validate [Boolean]
     def reduce_inventory(item_id, quantity, validate: true)
       if validate
-        if self.items[item_id].nil?
-          raise "Item #{item_id} not found in storage location #{self.id}"
+        if items[item_id].nil?
+          raise "Item #{item_id} not found in storage location #{id}"
         end
-        if self.items[item_id].quantity < quantity
-          raise "Could not reduce quantity by #{quantity} for item #{item_id} in storage location #{self.id} - current quantity is #{self.items[item_id].quantity}"
+        if items[item_id].quantity < quantity
+          raise "Could not reduce quantity by #{quantity} for item #{item_id} in storage location #{id} - current quantity is #{items[item_id].quantity}"
         end
       end
-      current_quantity = self.items[item_id]&.quantity || 0
-      self.items[item_id] = EventTypes::EventItem.new(item_id: item_id, quantity: current_quantity - quantity)
+      current_quantity = items[item_id]&.quantity || 0
+      items[item_id] = EventTypes::EventItem.new(item_id: item_id, quantity: current_quantity - quantity)
     end
 
     # @param item_id [Integer]
     # @param quantity [Integer]
     def add_inventory(item_id, quantity)
-      current_quantity = self.items[item_id]&.quantity || 0
-      self.items[item_id] = EventTypes::EventItem.new(item_id: item_id, quantity: current_quantity + quantity)
+      current_quantity = items[item_id]&.quantity || 0
+      items[item_id] = EventTypes::EventItem.new(item_id: item_id, quantity: current_quantity + quantity)
     end
-
   end
-
 end

@@ -1,12 +1,12 @@
 RSpec.describe InventoryAggregate do
   let(:organization) { FactoryBot.create(:organization) }
-  let(:storage_location1) { FactoryBot.create(:storage_location, organization: organization)}
-  let(:storage_location2) { FactoryBot.create(:storage_location, organization: organization)}
-  let(:item1) { FactoryBot.create(:item, organization: organization)}
-  let(:item2) { FactoryBot.create(:item, organization: organization)}
-  let(:item3) { FactoryBot.create(:item, organization: organization)}
+  let(:storage_location1) { FactoryBot.create(:storage_location, organization: organization) }
+  let(:storage_location2) { FactoryBot.create(:storage_location, organization: organization) }
+  let(:item1) { FactoryBot.create(:item, organization: organization) }
+  let(:item2) { FactoryBot.create(:item, organization: organization) }
+  let(:item3) { FactoryBot.create(:item, organization: organization) }
 
-  describe 'individual events' do
+  describe "individual events" do
     let(:inventory) do
       EventTypes::Inventory.new(
         organization_id: organization.id,
@@ -17,17 +17,20 @@ RSpec.describe InventoryAggregate do
               item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 30),
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40)
-            }),
+            }
+          ),
           storage_location2.id => EventTypes::EventStorageLocation.new(
             id: storage_location2.id,
             items: {
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 50)
-            })
-        })
+            }
+          )
+        }
+      )
     end
 
-    it 'should process a donation event' do
+    it "should process a donation event" do
       donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
       donation.line_items << build(:line_item, quantity: 50, item: item1)
       donation.line_items << build(:line_item, quantity: 30, item: item2)
@@ -44,17 +47,20 @@ RSpec.describe InventoryAggregate do
               item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 80),
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 40),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40)
-            }),
+            }
+          ),
           storage_location2.id => EventTypes::EventStorageLocation.new(
             id: storage_location2.id,
             items: {
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 50)
-            })
-        }))
+            }
+          )
+        }
+      ))
     end
 
-    it 'should process a distribution event' do
+    it "should process a distribution event" do
       dist = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location1)
       dist.line_items << build(:line_item, quantity: 20, item: item1)
       dist.line_items << build(:line_item, quantity: 5, item: item2)
@@ -71,17 +77,20 @@ RSpec.describe InventoryAggregate do
               item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 10),
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 5),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40)
-            }),
+            }
+          ),
           storage_location2.id => EventTypes::EventStorageLocation.new(
             id: storage_location2.id,
             items: {
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 50)
-            })
-        }))
+            }
+          )
+        }
+      ))
     end
 
-    it 'should process a donation destroyed event' do
+    it "should process a donation destroyed event" do
       donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
       donation.line_items << build(:line_item, quantity: 20, item: item1)
       donation.line_items << build(:line_item, quantity: 5, item: item2)
@@ -98,17 +107,20 @@ RSpec.describe InventoryAggregate do
               item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 10),
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 5),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40)
-            }),
+            }
+          ),
           storage_location2.id => EventTypes::EventStorageLocation.new(
             id: storage_location2.id,
             items: {
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 50)
-            })
-        }))
+            }
+          )
+        }
+      ))
     end
 
-    it 'should process a purchase destroyed event' do
+    it "should process a purchase destroyed event" do
       purchase = FactoryBot.create(:purchase, organization: organization, storage_location: storage_location1)
       purchase.line_items << build(:line_item, quantity: 20, item: item1)
       purchase.line_items << build(:line_item, quantity: 5, item: item2)
@@ -125,17 +137,20 @@ RSpec.describe InventoryAggregate do
               item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 10),
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 5),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40)
-            }),
+            }
+          ),
           storage_location2.id => EventTypes::EventStorageLocation.new(
             id: storage_location2.id,
             items: {
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 50)
-            })
-        }))
+            }
+          )
+        }
+      ))
     end
 
-    it 'should process an adjustment event' do
+    it "should process an adjustment event" do
       adjustment = FactoryBot.create(:adjustment, organization: organization, storage_location: storage_location1)
       adjustment.line_items << build(:line_item, quantity: 20, item: item1)
       adjustment.line_items << build(:line_item, quantity: -5, item: item2)
@@ -152,18 +167,20 @@ RSpec.describe InventoryAggregate do
               item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 50),
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 5),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40)
-            }),
+            }
+          ),
           storage_location2.id => EventTypes::EventStorageLocation.new(
             id: storage_location2.id,
             items: {
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 50)
-            })
-        }))
-
+            }
+          )
+        }
+      ))
     end
 
-    it 'should process a purchase event' do
+    it "should process a purchase event" do
       purchase = FactoryBot.create(:purchase, organization: organization, storage_location: storage_location1)
       purchase.line_items << build(:line_item, quantity: 50, item: item1)
       purchase.line_items << build(:line_item, quantity: 30, item: item2)
@@ -180,18 +197,20 @@ RSpec.describe InventoryAggregate do
               item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 80),
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 40),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40)
-            }),
+            }
+          ),
           storage_location2.id => EventTypes::EventStorageLocation.new(
             id: storage_location2.id,
             items: {
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 50)
-            })
-        }))
-
+            }
+          )
+        }
+      ))
     end
 
-    it 'should process a distribution destroyed event' do
+    it "should process a distribution destroyed event" do
       dist = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location1)
       dist.line_items << build(:line_item, quantity: 50, item: item1)
       dist.line_items << build(:line_item, quantity: 30, item: item2)
@@ -208,18 +227,20 @@ RSpec.describe InventoryAggregate do
               item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 80),
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 40),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40)
-            }),
+            }
+          ),
           storage_location2.id => EventTypes::EventStorageLocation.new(
             id: storage_location2.id,
             items: {
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 50)
-            })
-        }))
-
+            }
+          )
+        }
+      ))
     end
 
-    it 'should process a transfer event' do
+    it "should process a transfer event" do
       transfer = FactoryBot.create(:transfer, organization: organization, from: storage_location1, to: storage_location2)
       transfer.line_items << build(:line_item, quantity: 20, item: item1)
       transfer.line_items << build(:line_item, quantity: 5, item: item2)
@@ -237,19 +258,21 @@ RSpec.describe InventoryAggregate do
               item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 10),
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 5),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40)
-            }),
+            }
+          ),
           storage_location2.id => EventTypes::EventStorageLocation.new(
             id: storage_location2.id,
             items: {
               item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 20),
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 15),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 50)
-            })
-        }))
-
+            }
+          )
+        }
+      ))
     end
 
-    it 'should process a transfer destroy event' do
+    it "should process a transfer destroy event" do
       transfer = FactoryBot.create(:transfer, organization: organization, from: storage_location2, to: storage_location1)
       transfer.line_items << build(:line_item, quantity: 20, item: item1)
       transfer.line_items << build(:line_item, quantity: 5, item: item2)
@@ -267,19 +290,21 @@ RSpec.describe InventoryAggregate do
               item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 10),
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 5),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40)
-            }),
+            }
+          ),
           storage_location2.id => EventTypes::EventStorageLocation.new(
             id: storage_location2.id,
             items: {
               item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 20),
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 15),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 50)
-            })
-        }))
-
+            }
+          )
+        }
+      ))
     end
 
-    it 'should process an audit event' do
+    it "should process an audit event" do
       audit = FactoryBot.create(:audit, organization: organization, storage_location: storage_location1)
       audit.line_items << build(:line_item, quantity: 20, item: item1)
       audit.line_items << build(:line_item, quantity: 10, item: item3)
@@ -294,17 +319,20 @@ RSpec.describe InventoryAggregate do
             items: {
               item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 20),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 10)
-            }),
+            }
+          ),
           storage_location2.id => EventTypes::EventStorageLocation.new(
             id: storage_location2.id,
             items: {
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 50)
-            })
-        }))
+            }
+          )
+        }
+      ))
     end
 
-    it 'should process a kit allocation event' do
+    it "should process a kit allocation event" do
       kit = FactoryBot.create(:kit, :with_item, organization: organization)
       kit.line_items = []
       kit.line_items << build(:line_item, quantity: 10, item: item1)
@@ -324,18 +352,20 @@ RSpec.describe InventoryAggregate do
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 4),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40),
               kit.item.id => EventTypes::EventItem.new(item_id: kit.item.id, quantity: 2)
-            }),
+            }
+          ),
           storage_location2.id => EventTypes::EventStorageLocation.new(
             id: storage_location2.id,
             items: {
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 50)
-            })
-        }))
-
+            }
+          )
+        }
+      ))
     end
 
-    it 'should process a kit deallocation event' do
+    it "should process a kit deallocation event" do
       kit = FactoryBot.create(:kit, :with_item, organization: organization)
       kit.line_items = []
       kit.line_items << build(:line_item, quantity: 20, item: item1)
@@ -355,18 +385,20 @@ RSpec.describe InventoryAggregate do
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 20),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40),
               kit.item.id => EventTypes::EventItem.new(item_id: kit.item.id, quantity: 1)
-            }),
+            }
+          ),
           storage_location2.id => EventTypes::EventStorageLocation.new(
             id: storage_location2.id,
             items: {
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 50)
-            })
-        }))
-
+            }
+          )
+        }
+      ))
     end
 
-    it 'should process a snapshot event' do
+    it "should process a snapshot event" do
       storage_location1.inventory_items.create!(quantity: 5, item_id: item1.id)
       storage_location1.inventory_items.create!(quantity: 10, item_id: item2.id)
       storage_location2.inventory_items.create!(quantity: 15, item_id: item2.id)
@@ -382,19 +414,21 @@ RSpec.describe InventoryAggregate do
             items: {
               item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 5),
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10)
-            }),
+            }
+          ),
           storage_location2.id => EventTypes::EventStorageLocation.new(
             id: storage_location2.id,
             items: {
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 15),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 20)
-            })
-        }))
+            }
+          )
+        }
+      ))
     end
-
   end
 
-  it 'should process multiple events' do
+  it "should process multiple events" do
     donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
     donation.line_items << build(:line_item, quantity: 50, item: item1)
     donation.line_items << build(:line_item, quantity: 30, item: item2)
@@ -429,7 +463,8 @@ RSpec.describe InventoryAggregate do
           items: {
             item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 70),
             item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 30)
-          }),
+          }
+        ),
         storage_location2.id => EventTypes::EventStorageLocation.new(
           id: storage_location2.id,
           items: {
@@ -438,6 +473,5 @@ RSpec.describe InventoryAggregate do
         )
       }
     ))
-
   end
 end

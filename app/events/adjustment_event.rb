@@ -1,7 +1,7 @@
 class AdjustmentEvent < Event
   # @param adjustment [Adjustment]
   def self.publish(adjustment)
-    self.create(
+    create(
       eventable: adjustment,
       organization_id: adjustment.organization_id,
       event_time: Time.zone.now,
@@ -10,5 +10,4 @@ class AdjustmentEvent < Event
       ).as_json
     )
   end
-
 end

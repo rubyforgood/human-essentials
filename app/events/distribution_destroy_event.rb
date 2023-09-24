@@ -1,7 +1,7 @@
 class DistributionDestroyEvent < Event
   # @param distribution [Distribution]
   def self.publish(distribution)
-    self.create(
+    create(
       eventable: distribution,
       organization_id: distribution.organization_id,
       event_time: Time.zone.now,
@@ -10,5 +10,4 @@ class DistributionDestroyEvent < Event
       ).as_json
     )
   end
-
 end

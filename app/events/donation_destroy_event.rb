@@ -1,8 +1,7 @@
 class DonationDestroyEvent < Event
-
   # @param donation [Donation]
   def self.publish(donation)
-    self.create(
+    create(
       eventable: donation,
       organization_id: donation.organization_id,
       event_time: Time.zone.now,
@@ -11,5 +10,4 @@ class DonationDestroyEvent < Event
       )
     )
   end
-
 end

@@ -6,7 +6,6 @@ class PurchaseDestroyService
         PurchaseDestroyEvent.publish(purchase)
         purchase.destroy!
       end
-
     end
   end
 end

@@ -36,9 +36,9 @@ RSpec.describe ItemizableUpdateService do
 
     subject do
       described_class.call(itemizable: itemizable,
-                           params: attributes,
-                           type: :increase,
-                           event_class: DonationEvent)
+        params: attributes,
+        type: :increase,
+        event_class: DonationEvent)
     end
 
     it "should update quantity in same storage location" do
