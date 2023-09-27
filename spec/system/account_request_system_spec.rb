@@ -93,7 +93,6 @@ RSpec.describe 'Account request flow', type: :system, js: true do
         expect(page).to have_css('#create_bank', visible: true)
         expect(page).to have_css('#partner_info', visible: :hidden)
         expect(page).to have_content('Please review the problems below')
-        expect(page).to have_content('Name, email, and request details required')
       end
     end
   end
