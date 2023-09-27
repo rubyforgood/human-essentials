@@ -264,6 +264,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           within ".modal-content" do
             fill_in "barcode_item_quantity", with: 3
             select Item.alphabetized.first.name, from: "barcode_item_barcodeable_id"
+            sleep(0.1)
             click_button "Save"
           end
 
