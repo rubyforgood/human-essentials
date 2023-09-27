@@ -105,6 +105,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           fill_in "vendor_business_name", with: "businesstest"
           fill_in "vendor_contact_name", with: "test"
           fill_in "vendor_email", with: "123@mail.ru"
+          sleep(0.3)
           click_on "vendor-submit"
           select "businesstest", from: "purchase_vendor_id"
           expect(page).to have_no_content("New Vendor")
@@ -264,7 +265,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           within ".modal-content" do
             fill_in "barcode_item_quantity", with: 3
             select Item.alphabetized.first.name, from: "barcode_item_barcodeable_id"
-            sleep(0.1)
+            sleep(0.3)
             click_button "Save"
           end
 
