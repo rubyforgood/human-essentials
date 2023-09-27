@@ -32,7 +32,6 @@ class AccountRequestsController < ApplicationController
       redirect_to received_account_requests_path(token: @account_request.identity_token),
                   notice: 'Account request was successfully created.'
     else
-      flash[:alert] = "Name, email, and request details required"
       render :new
     end
   end
