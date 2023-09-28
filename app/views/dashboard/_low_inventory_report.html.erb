@@ -23,7 +23,13 @@
           <tr>
             <td><%= inventory_item.storage_location.name %></td>
             <td><%= inventory_item.item.name %></td>
-            <td><%= inventory_item.quantity %></td>
+            <td>
+              <% if inventory_item.quantity < inventory_item.item.on_hand_minimum_quantity %>
+                <strong class="text-red"><%= inventory_item.quantity %></strong>
+              <% else %>
+                <%= inventory_item.quantity %>
+              <% end %>
+            </td>
             <td><%= inventory_item.item.on_hand_minimum_quantity %></td>
             <td><%= inventory_item.item.on_hand_recommended_quantity %></td>
           </tr>
