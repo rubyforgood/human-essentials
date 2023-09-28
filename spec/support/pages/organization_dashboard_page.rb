@@ -60,6 +60,10 @@ class OrganizationDashboardPage < OrganizationPage
     has_selector? "#getting-started-guide"
   end
 
+  def has_low_inventory_section?
+    has_selector? low_inventory_selector
+  end
+
   def has_manufacturers_section?
     has_selector? manufacturers_section_selector
   end
@@ -134,6 +138,16 @@ class OrganizationDashboardPage < OrganizationPage
     end
   end
 
+  def low_inventory_section
+    find low_inventory_selector
+  end
+
+  def low_inventories
+    within low_inventory_section do
+      all("tbody > tr").map(&:text)
+    end
+  end
+
   def outstanding_section
     find outstanding_selector
   end
@@ -159,6 +173,10 @@ class OrganizationDashboardPage < OrganizationPage
   end
 
   private
+
+  def low_inventory_selector
+    "#low_inventory"
+  end
 
   def product_drives_section
     find product_drives_selector
