@@ -45,6 +45,9 @@ Dir[Rails.root.join("spec/controllers/shared_examples/*.rb")].sort.each { |f| re
 # If an element is hidden, Capybara should ignore it
 Capybara.ignore_hidden_elements = true
 
+# disable CSS transitions and jQuery animations
+Capybara.disable_animation = true
+
 # https://docs.travis-ci.com/user/chrome
 Capybara.register_driver :chrome do |app|
   args = %w[no-sandbox disable-gpu disable-site-isolation-trials window-size=1680,1050]
