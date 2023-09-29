@@ -82,7 +82,11 @@ describe DonationDestroyService do
     context 'when the donation destroy fails' do
       let(:fake_organization) { instance_double(Organization, short_name: 'org_name', donations: fake_organization_donations) }
       let(:fake_organization_donations) { instance_double('donations') }
-      let(:fake_donation) { instance_double(Donation, storage_location: fake_storage_location) }
+      let(:fake_donation) { instance_double(Donation,
+                                            storage_location: fake_storage_location,
+                                            storage_location_id: 12,
+                                            line_items: [],
+                                            organization_id: organization_id) }
       let(:fake_storage_location) { instance_double(StorageLocation) }
 
       before do
@@ -103,22 +107,9 @@ describe DonationDestroyService do
     end
 
     context 'when the donation succesfully gets destroyed' do
-      let(:fake_organization) { instance_double(Organization, short_name: 'org_name', donations: fake_organization_donations) }
-      let(:fake_organization_donations) { instance_double('donations') }
-      let(:fake_donation) { instance_double(Donation, storage_location: fake_storage_location) }
-      let(:fake_storage_location) { instance_double(StorageLocation) }
-
-      before do
-        allow(Organization).to receive(:find)
-          .with(organization_id)
-          .and_return(fake_organization)
-        allow(fake_organization_donations).to receive(:find)
-          .with(donation_id)
-          .and_return(fake_donation)
-        allow(fake_storage_location).to receive(:decrease_inventory).with(fake_donation)
-        allow(fake_donation).to receive(:destroy!)
-        allow(fake_donation).to receieve(:line_items).and_return([])
-      end
+      let(:donation) { FactoryBot.create(:donation) }
+      subject { described_class.new(organization_id: donation.organization_id,
+                                    donation_id: donation.id) }
 
       it 'to be a success' do
         result = subject.call

@@ -4,8 +4,8 @@ class TransferCreateService
       if transfer.valid?
         ActiveRecord::Base.transaction do
           transfer.save
-          transfer.from.decrease_inventory @transfer
-          transfer.to.increase_inventory @transfer
+          transfer.from.decrease_inventory transfer
+          transfer.to.increase_inventory transfer
           TransferEvent.publish(transfer)
         end
       else
