@@ -11,7 +11,7 @@ class AllocateKitInventoryService
     validate_storage_location
     if error.nil?
       allocate_inventory_items_and_increase_kit_quantity
-      KitAllocateEvent.publish(@kit, @storage_location, @increase_by)
+      KitAllocateEvent.publish(@kit, @storage_location.id, @increase_by)
     end
   rescue Errors::InsufficientAllotment => e
     kit.line_items.assign_insufficiency_errors(e.insufficient_items)

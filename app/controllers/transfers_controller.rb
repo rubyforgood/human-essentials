@@ -23,6 +23,7 @@ class TransfersController < ApplicationController
     @transfer = current_organization.transfers.new(transfer_params)
 
     TransferCreateService.call(@transfer)
+    redirect_to transfers_path, notice: "#{@transfer.line_items.total} items have been transferred from #{@transfer.from.name} to #{@transfer.to.name}!"
   rescue StandardError => e
     flash[:error] = e.message
     load_form_collections
