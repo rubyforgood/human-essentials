@@ -61,10 +61,14 @@ describe OrganizationUpdateService, skip_seed: true do
             expect(partner_two.profile.enable_child_based_requests).to eq(true)
           end
         end
+
+        it "should add an error message to the organization" do
+          expect(organization.errors.full_messages).to eq(["The following partners would be unable to make requests with this update: #{partner_one.name}"])
+        end
       end
 
       context "when all of a single partner's request flags WILL NOT be disabled" do
-        before { described_class.update(organization, enable_individual_requests: false) }
+        before { described_class.update(organization, enable_individual_requests: "false") }
 
         it "should allow the disabling of request flags in organization and its partners" do
           organization.reload
