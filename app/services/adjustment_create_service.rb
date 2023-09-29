@@ -5,10 +5,10 @@ class AdjustmentCreateService
   attr_reader :adjustment
 
   def initialize(adjustment_or_params)
-    if adjustment_or_params.is_a?(Adjustment)
-      @adjustment = adjustment_or_params
+    @adjustment = if adjustment_or_params.is_a?(Adjustment)
+      adjustment_or_params
     else
-      @adjustment = Adjustment.new(adjustment_params)
+      Adjustment.new(adjustment_params)
     end
   end
 
