@@ -4,8 +4,12 @@ class AdjustmentCreateService
   include ServiceObjectErrorsMixin
   attr_reader :adjustment
 
-  def initialize(adjustment_params)
-    @adjustment = Adjustment.new(adjustment_params)
+  def initialize(adjustment_or_params)
+    if adjustment_or_params.is_a?(Adjustment)
+      @adjustment = adjustment_or_params
+    else
+      @adjustment = Adjustment.new(adjustment_params)
+    end
   end
 
   def call
