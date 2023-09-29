@@ -8,7 +8,7 @@ class AdjustmentCreateService
     @adjustment = if adjustment_or_params.is_a?(Adjustment)
       adjustment_or_params
     else
-      Adjustment.new(adjustment_params)
+      Adjustment.new(adjustment_or_params)
     end
   end
 
