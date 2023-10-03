@@ -30,7 +30,7 @@ class SnapshotEvent < Event
       data: EventTypes::Inventory.new(
         organization_id: organization.id,
         storage_locations: storage_locations(organization)
-      ).as_json
+      )
     )
   end
 end

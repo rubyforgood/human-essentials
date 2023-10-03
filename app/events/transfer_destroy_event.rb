@@ -9,7 +9,7 @@ class TransferDestroyEvent < Event
         items: EventTypes::EventLineItem.from_line_items(transfer.line_items,
           from: transfer.to.id,
           to: transfer.from.id)
-      ).as_json
+      )
     )
   end
 end

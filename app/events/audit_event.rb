@@ -10,7 +10,7 @@ class AuditEvent < Event
       data: EventTypes::AuditPayload.new(
         storage_location_id: audit.storage_location_id,
         items: EventTypes::EventLineItem.from_line_items(audit.line_items, to: audit.storage_location_id)
-      ).as_json
+      )
     )
   end
 end
