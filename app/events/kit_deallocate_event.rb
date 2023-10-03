@@ -26,7 +26,7 @@ class KitDeallocateEvent < Event
       event_time: Time.zone.now,
       data: EventTypes::InventoryPayload.new(
         items: event_line_items(kit, storage_location, quantity)
-      ).as_json
+      )
     )
   end
 end
