@@ -25,7 +25,7 @@
             <td><%= inventory_item.item.name %></td>
             <td>
               <% if inventory_item.quantity < inventory_item.item.on_hand_minimum_quantity %>
-                <strong class="text-red"><%= inventory_item.quantity %></strong>
+                <strong class="text-red" title="Below minimum quantity"><%= inventory_item.quantity %></strong>
               <% else %>
                 <%= inventory_item.quantity %>
               <% end %>
