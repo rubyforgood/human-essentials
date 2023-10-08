@@ -28,6 +28,6 @@ class DashboardController < ApplicationController
 
     @outstanding_requests = Request.where(status: %i[pending started]).order(:created_at)
 
-    @low_inventory_report = LowInventoryQuery.new(organization: current_organization).call
+    @low_inventory_report = LowInventoryQuery.call(current_organization)
   end
 end
