@@ -569,6 +569,44 @@ end
 end
 
 # ----------------------------------------------------------------------------
+# Broadcast Announcements
+# ----------------------------------------------------------------------------
+
+user_3 = ::User.create!(
+    name: Faker::Name.name,
+    password: "password!",
+    password_confirmation: "password!",
+    email: Faker::Internet.email
+)
+
+user_3.add_role(:super_admin)
+
+BroadcastAnnouncement.create(
+  user: user_3,
+  message: "This is the staging /demo server. There may be new features here! Stay tuned!",
+  link: "https://example.com",
+  expiry: Date.today + 7.days,
+  organization: nil
+)
+
+user_4 = ::User.create!(
+    name: Faker::Name.name,
+    password: "password!",
+    password_confirmation: "password!",
+    email: Faker::Internet.email
+)
+
+user_4.add_role(:org_user)
+
+BroadcastAnnouncement.create(
+  user: user_4,
+  message: "This is the staging /demo server. There may be new features here! Stay tuned!",
+  link: "https://example.com",
+  expiry: Date.today + 10.days,
+  organization: pdx_org
+)
+
+# ----------------------------------------------------------------------------
 # Vendors
 # ----------------------------------------------------------------------------
 
