@@ -1,11 +1,5 @@
 class LowInventoryQuery
-  attr_reader :organization
-
-  def initialize(organization:)
-    @organization = organization
-  end
-
-  def call
+  def self.call(organization)
     scope = organization.inventory_items
     scope.where("inventory_items.quantity < items.on_hand_minimum_quantity")
       .or(scope.where("inventory_items.quantity < items.on_hand_recommended_quantity"))

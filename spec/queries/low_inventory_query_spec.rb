@@ -1,5 +1,5 @@
 RSpec.describe LowInventoryQuery do
-  subject { LowInventoryQuery.new(organization: organization).call }
+  subject { LowInventoryQuery.call(organization) }
 
   let(:organization) { create :organization }
 
