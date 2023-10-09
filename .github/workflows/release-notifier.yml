@@ -11,10 +11,11 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+      issues: write
     steps:
-      - uses: apexskier/github-release-commenter@v1
+      - uses: chriskarlin/github-release-commenter@v1.3.2
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           comment-template: |
-            {author}: Your PR is part of today's Human Essentials production release: {release_link}. 
+            @{author}: Your PR/Issue `{title}` is part of today's Human Essentials production release: {release_link}. 
             Thank you very much for your contribution!
