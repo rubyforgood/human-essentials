@@ -200,7 +200,7 @@ group :test do
   # More concise test ("should") matchers
   gem 'shoulda-matchers', '~> 5.3'
   # Selenium webdriver automatic installation and update.
-  gem 'selenium-webdriver', '~> 4.10'
+  gem 'selenium-webdriver', '~> 4.14'
   # Mock HTTP requests and ensure they are not called during tests.
   gem "webmock", "~> 3.19"
 end
