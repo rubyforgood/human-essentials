@@ -569,6 +569,26 @@ end
 end
 
 # ----------------------------------------------------------------------------
+# Broadcast Announcements
+# ----------------------------------------------------------------------------
+
+BroadcastAnnouncement.create(
+  user: User.find_by(email: 'superadmin@example.com'),
+  message: "This is the staging /demo server. There may be new features here! Stay tuned!",
+  link: "https://example.com",
+  expiry: Date.today + 7.days,
+  organization: nil
+)
+
+BroadcastAnnouncement.create(
+  user: User.find_by(email: 'org_admin1@example.com'),
+  message: "This is the staging /demo server. There may be new features here! Stay tuned!",
+  link: "https://example.com",
+  expiry: Date.today + 10.days,
+  organization: pdx_org
+)
+
+# ----------------------------------------------------------------------------
 # Vendors
 # ----------------------------------------------------------------------------
 
