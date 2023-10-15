@@ -35,6 +35,8 @@ gem "paper_trail"
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
 gem "strong_migrations", "1.6.3"
+# used in events
+gem 'dry-struct'
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 

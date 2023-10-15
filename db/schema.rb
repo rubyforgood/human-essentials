@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_18_185722) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_22_203313) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -273,6 +273,19 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_18_185722) do
     t.index ["organization_id"], name: "index_donations_on_organization_id"
     t.index ["product_drive_id"], name: "index_donations_on_product_drive_id"
     t.index ["storage_location_id"], name: "index_donations_on_storage_location_id"
+  end
+
+  create_table "events", force: :cascade do |t|
+    t.string "type", null: false
+    t.datetime "event_time", null: false
+    t.jsonb "data"
+    t.bigint "eventable_id"
+    t.string "eventable_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "organization_id"
+    t.index ["organization_id", "event_time"], name: "index_events_on_organization_id_and_event_time"
+    t.index ["organization_id"], name: "index_events_on_organization_id"
   end
 
   create_table "families", force: :cascade do |t|
