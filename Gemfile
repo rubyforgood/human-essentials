@@ -41,7 +41,7 @@ gem 'dry-struct'
 ##### JAVSCRIPT/CSS/ASSETS #######
 
 # Bootstrap is a library for HTML, CSS and JS.
-gem 'bootstrap', '~> 4.6.0'
+gem 'bootstrap', '~> 5.2'
 # SASS CSS framework (nested selectors, variables, etc.)
 gem "sass-rails"
 # Used to verify that the user is a human.
@@ -201,8 +201,8 @@ group :test do
   gem 'simplecov'
   # More concise test ("should") matchers
   gem 'shoulda-matchers', '~> 5.3'
-  # Nice interface to Chrome, handles updates itself now
-  gem 'selenium-webdriver'
+  # Selenium webdriver automatic installation and update.
+  gem 'selenium-webdriver', '~> 4.10'
   # Mock HTTP requests and ensure they are not called during tests.
   gem "webmock", "~> 3.19"
 end
