@@ -13,15 +13,36 @@
         <%= radio_button_tag(:account, :partner, false, class: 'form-check-input account_type') %>
         <%= label_tag(:account, "I am a Partner Agency to an Essentials Bank. I distribute the diapers/period supplies that I receive from essentials banks directly to the public.", class: 'form-check-label') %>
       </div>
+      
+      <% if @bank_selected %>
+        <script type="module">
+            $(document).ready(function() {
+                const bankRadioButtons = $('.account_type[value="bank"]:not(:checked)');
+
+                if (bankRadioButtons.length > 0) {
+                    bankRadioButtons.eq(0).click();
+                }
+            });
+        </script>
+      <% else %>
+        <script type="module">
+            $(document).ready(function() {
+                $('#create_bank').hide()
+                $('#partner_info').hide()
+            });
+        </script>
+      <% end %>
 
       <script type="module">
           $('.account_type').change(function() {
               if (this.value === 'bank') {
                   $('#create_bank').show()
                   $('#partner_info').hide()
+                  $('#bank-selected').val(true);
               } else {
                   $('#create_bank').hide()
                   $('#partner_info').show()
+                  $('#bank-selected').val(false);
               }
           })
       </script>
@@ -39,28 +60,11 @@
         </p>
 
       <%= simple_form_for(@account_request) do |f| %>
-        <% if f.error_notification.present? %>
-          <script type="module">
-              $(document).ready(function() {
-                  const bankRadioButtons = $('.account_type[value="bank"]:not(:checked)');
-
-                  if (bankRadioButtons.length > 0) {
-                      bankRadioButtons.eq(0).click();
-                  }
-              });
-          </script>
-        <% else %>
-          <script type="module">
-              $(document).ready(function() {
-                    $('#create_bank').hide()
-                    $('#partner_info').hide()
-              })
-          </script>
-        <% end %>
-
         <%= f.error_notification %>
         <%= render partial: "shared/flash" %>
 
+        <%= f.hidden_field :bank_selected, value: false , id: 'bank-selected' %>
+        
         <div class="form-inputs">
           <div class="form-inputs">
             <%= f.input :name, autofocus: true %>
