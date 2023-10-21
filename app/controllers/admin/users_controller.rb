@@ -100,7 +100,16 @@ class Admin::UsersController < AdminController
   private
 
   def user_params
-    params.require(:user).permit(:name, :organization_id, :email, :password, :password_confirmation)
+    user_params = params.require(:user).permit(:name, :organization_id, :email, :password, :password_confirmation)
+    role_id = updated_role_id
+
+    user_params[:organization_role_join_attributes] = { role_id: role_id } if role_id
+
+    user_params
+  end
+
+  def updated_role_id
+    Role.find_by(resource_type: Role::TITLES[Role::ORG_USER], resource_id: params[:user][:organization_id], name: Role::ORG_USER)&.id
   end
 
   def load_organizations
