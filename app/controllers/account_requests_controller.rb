@@ -18,12 +18,11 @@ class AccountRequestsController < ApplicationController
 
   def new
     @account_request = AccountRequest.new
-    @bank_selected
   end
 
   def create
     @account_request = AccountRequest.new(account_request_params)
-    bank_selected if params[:account_request][:bank_selected] == "true"
+    @bank_selected = true
 
     if !verify_recaptcha(model: @account_request)
       flash[:alert] = "Invalid captcha submission"
@@ -51,11 +50,6 @@ class AccountRequestsController < ApplicationController
     end
 
     @account_request
-  end
-
-  # Pass parameter through to 'render :new' action to expand account_request form upon form or captcha error reload
-  def bank_selected
-    @bank_selected = true 
   end
 
   # Only allow a list of trusted parameters through.

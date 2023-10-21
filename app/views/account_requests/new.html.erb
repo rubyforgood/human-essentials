@@ -38,11 +38,9 @@
               if (this.value === 'bank') {
                   $('#create_bank').show()
                   $('#partner_info').hide()
-                  $('#bank-selected').val(true);
               } else {
                   $('#create_bank').hide()
                   $('#partner_info').show()
-                  $('#bank-selected').val(false);
               }
           })
       </script>
@@ -62,8 +60,6 @@
       <%= simple_form_for(@account_request) do |f| %>
         <%= f.error_notification %>
         <%= render partial: "shared/flash" %>
-
-        <%= f.hidden_field :bank_selected, value: false , id: 'bank-selected' %>
         
         <div class="form-inputs">
           <div class="form-inputs">
