@@ -1,4 +1,3 @@
-
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -11,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_22_203313) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_22_140444) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -284,8 +283,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_22_203313) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "organization_id"
+    t.bigint "user_id"
     t.index ["organization_id", "event_time"], name: "index_events_on_organization_id_and_event_time"
     t.index ["organization_id"], name: "index_events_on_organization_id"
+    t.index ["user_id"], name: "index_events_on_user_id"
   end
 
   create_table "families", force: :cascade do |t|
@@ -327,6 +328,17 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_22_203313) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.index ["feature_key", "key", "value"], name: "index_flipper_gates_on_feature_key_and_key_and_value", unique: true
+  end
+
+  create_table "inventory_discrepancies", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "event_id", null: false
+    t.json "diff"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_inventory_discrepancies_on_event_id"
+    t.index ["organization_id", "created_at"], name: "index_inventory_discrepancies_on_organization_id_and_created_at"
+    t.index ["organization_id"], name: "index_inventory_discrepancies_on_organization_id"
   end
 
   create_table "inventory_items", id: :serial, force: :cascade do |t|
@@ -852,6 +864,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_22_203313) do
   add_foreign_key "donations", "product_drives"
   add_foreign_key "donations", "storage_locations"
   add_foreign_key "families", "partners"
+  add_foreign_key "inventory_discrepancies", "events"
+  add_foreign_key "inventory_discrepancies", "organizations"
   add_foreign_key "item_categories", "organizations"
   add_foreign_key "item_categories_partner_groups", "item_categories"
   add_foreign_key "item_categories_partner_groups", "partner_groups"
