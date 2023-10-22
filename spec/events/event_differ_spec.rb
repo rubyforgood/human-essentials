@@ -13,12 +13,12 @@ RSpec.describe EventDiffer do
     create(:inventory_item, item: item1, storage_location: storage_location2, quantity: 50)
   end
 
-  it 'should return a full diff' do
+  it "should return a full diff" do
     aggregate = EventTypes::Inventory.new(
-      organization_id:   organization.id,
+      organization_id: organization.id,
       storage_locations: {
         storage_location1.id => EventTypes::EventStorageLocation.new(
-          id:    storage_location1.id,
+          id: storage_location1.id,
           items: {
             item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 50), # no diff
             # missing item2
@@ -26,7 +26,7 @@ RSpec.describe EventDiffer do
           }
         ),
         storage_location2.id => EventTypes::EventStorageLocation.new(
-          id:    storage_location2.id,
+          id: storage_location2.id,
           items: {
             item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 60), # diff in quantity
             item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 40) # added item2
@@ -35,42 +35,41 @@ RSpec.describe EventDiffer do
         # missing storage_location3
         # added storage location that doesn't exist
         StorageLocation.count + 1 => EventTypes::EventStorageLocation.new(
-          id:    StorageLocation.count + 1,
+          id: StorageLocation.count + 1,
           items: {}
         )
       }
     )
-    results   = EventDiffer.check_difference(aggregate)
+    results = EventDiffer.check_difference(aggregate)
     expect(results.as_json).to contain_exactly(
-                                 { "aggregate"           => false,
-                                   "database"            => true,
-                                   "storage_location_id" => storage_location3.id,
-                                   :type                 => "location" },
-                                 { "aggregate"           => true,
-                                    "database"            => false,
-                                    "storage_location_id" => StorageLocation.count + 1,
-                                    :type                 => "location" },
-                                 { "aggregate"           => 0,
-                                    "database"            => 50,
-                                    "item_id"             => item2.id,
-                                    "storage_location_id" => storage_location1.id,
-                                    :type                 => "item" },
-                                 { "aggregate"           => 70,
-                                    "database"            => 0,
-                                    "item_id"             => item3.id,
-                                    "storage_location_id" => storage_location1.id,
-                                    :type                 => "item" },
-                                 { "aggregate"           => 40,
-                                    "database"            => 0,
-                                    "item_id"             => item2.id,
-                                    "storage_location_id" => storage_location2.id,
-                                    :type                 => "item" },
-                                 { "aggregate"           => 60,
-                                    "database"            => 50,
-                                    "item_id"             => item1.id,
-                                    "storage_location_id" => storage_location2.id,
-                                    :type                 => "item" }
-                               )
+      {"aggregate" => false,
+       "database" => true,
+       "storage_location_id" => storage_location3.id,
+       :type => "location"},
+      {"aggregate" => true,
+       "database" => false,
+       "storage_location_id" => StorageLocation.count + 1,
+       :type => "location"},
+      {"aggregate" => 0,
+       "database" => 50,
+       "item_id" => item2.id,
+       "storage_location_id" => storage_location1.id,
+       :type => "item"},
+      {"aggregate" => 70,
+       "database" => 0,
+       "item_id" => item3.id,
+       "storage_location_id" => storage_location1.id,
+       :type => "item"},
+      {"aggregate" => 40,
+       "database" => 0,
+       "item_id" => item2.id,
+       "storage_location_id" => storage_location2.id,
+       :type => "item"},
+      {"aggregate" => 60,
+       "database" => 50,
+       "item_id" => item1.id,
+       "storage_location_id" => storage_location2.id,
+       :type => "item"}
+    )
   end
-
 end
