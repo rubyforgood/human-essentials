@@ -106,6 +106,7 @@ RSpec.configure do |config|
     config.use_transactional_fixtures = true
 
     DatabaseCleaner.clean_with(:truncation)
+    seed_base_data_for_tests
   end
 
   #

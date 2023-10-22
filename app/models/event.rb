@@ -26,15 +26,14 @@ class Event < ApplicationRecord
   end
 
   after_create_commit do
-    inventory = InventoryAggregate.inventory_for(self.organization_id)
+    inventory = InventoryAggregate.inventory_for(organization_id)
     diffs = EventDiffer.check_difference(inventory)
     if diffs.any?
       InventoryDiscrepancy.create!(
-        event_id: self.id,
-        organization_id: self.organization_id,
+        event_id: id,
+        organization_id: organization_id,
         diff: diffs
       )
     end
   end
-
 end

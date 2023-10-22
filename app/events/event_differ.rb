@@ -3,7 +3,6 @@ module Types
 end
 
 module EventDiffer
-
   # Used to indicate that a storage location exists in one source but not the other.
   class LocationDiff < Dry::Struct
     attribute :storage_location_id, Types::Integer
@@ -12,7 +11,7 @@ module EventDiffer
 
     # @param options [Object]
     # @return [Hash]
-    def as_json(options=nil)
+    def as_json(options = nil)
       super.merge(type: "location")
     end
   end
@@ -26,13 +25,12 @@ module EventDiffer
 
     # @param options [Object]
     # @return [Hash]
-    def as_json(options=nil)
+    def as_json(options = nil)
       super.merge(type: "item")
     end
   end
 
   class << self
-
     # @param locations [Array<StorageLocation>]
     # @param inventory [EventTypes::Inventory]
     # @return [Array<LocationDiff>]
@@ -61,9 +59,9 @@ module EventDiffer
 
         if inventory_item.quantity != db_item.quantity
           diffs.push(ItemDiff.new(item_id: db_item.item_id,
-                                  storage_location_id: db_loc.id,
-                                  database: db_item.quantity,
-                                  aggregate: inventory_item.quantity))
+            storage_location_id: db_loc.id,
+            database: db_item.quantity,
+            aggregate: inventory_item.quantity))
         end
       end
       diffs
