@@ -100,6 +100,13 @@ RSpec.configure do |config|
 
   # Make FactoryBot easier.
   config.include FactoryBot::Syntax::Methods
+  config.around(:each, skip_transaction: true) do |example|
+    config.use_transactional_fixtures = false
+    example.run
+    config.use_transactional_fixtures = true
+
+    DatabaseCleaner.clean_with(:truncation)
+  end
 
   #
   # --------------------
