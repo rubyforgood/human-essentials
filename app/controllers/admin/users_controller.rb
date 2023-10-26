@@ -1,6 +1,7 @@
 # [Super Admin] This is for administrating users at a global level. We can create, view, modify, etc.
 class Admin::UsersController < AdminController
   before_action :load_organizations, only: %i[new create edit update]
+  before_action :user_params, only: %i[create update]
 
   def index
     @filterrific = initialize_filterrific(
@@ -103,13 +104,22 @@ class Admin::UsersController < AdminController
     user_params = params.require(:user).permit(:name, :organization_id, :email, :password, :password_confirmation)
     role_id = updated_role_id
 
-    user_params[:organization_role_join_attributes] = { role_id: role_id } if role_id
+    if role_id
+      user_params[:organization_role_join_attributes] = { role_id: role_id }
+    else
+      redirect_back(fallback_location: edit_admin_user_path, error: "Please select an organization")
+    end
 
     user_params
   end
 
   def updated_role_id
-    Role.find_by(resource_type: Role::TITLES[Role::ORG_USER], resource_id: params[:user][:organization_id], name: Role::ORG_USER)&.id
+    user_role_title = Role::TITLES[Role::ORG_USER]
+    organization_id = params[:user][:organization_id]
+    user_role_type = Role::ORG_USER
+
+    role = Role.find_by(resource_type: user_role_title, resource_id: organization_id, name: user_role_type)
+    role&.id
   end
 
   def load_organizations
