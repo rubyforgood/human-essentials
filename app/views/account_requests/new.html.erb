@@ -57,46 +57,47 @@
           <span class='text-bold'>Do you <span class='text-italic'>partner</span> with diaper and/or period supply banks? If so please go to the <%= link_to 'partner app', new_user_session_path %> to login.</span>
         </p>
 
-      <%= simple_form_for(@account_request) do |f| %>
-        <%= f.error_notification %>
-        <%= render partial: "shared/flash" %>
+        <%= simple_form_for(@account_request) do |f| %>
+          <%= f.error_notification %>
+          <%= render partial: "shared/flash" %>
         
-        <div class="form-inputs">
           <div class="form-inputs">
-            <%= f.input :name, autofocus: true %>
+            <div class="form-inputs">
+              <%= f.input :name, autofocus: true %>
+            </div>
+
+            <div class="form-inputs">
+              <%= f.input :email %>
+            </div>
+
+            <div class="form-inputs">
+              <%= f.input :organization_name %>
+            </div>
+
+            <div class="form-inputs">
+              <%= f.input :organization_website %>
+            </div>
+
+            <div class="form-inputs">
+              <%= f.input :ndbn_member, label: 'NDBN Membership', wrapper: :input_group do %>
+                <%= f.association :ndbn_member, label_method: :full_name, value_method: :id, label: false %>
+              <% end %>
+            </div>
+
+            <div class="form-inputs">
+              <%= f.input :request_details, placeholder: 'Tell us more about your organization and how you would use Human Essentials', label: "Request Details (min 50 characters)" %>
+            </div>
           </div>
 
-          <div class="form-inputs">
-            <%= f.input :email %>
+          <div class="my-2">
+            <%= recaptcha_tags %>
           </div>
 
-          <div class="form-inputs">
-            <%= f.input :organization_name %>
+          <div class="card-footer">
+            <%= submit_button({text: 'Submit', icon: nil}) %>
           </div>
-
-          <div class="form-inputs">
-            <%= f.input :organization_website %>
-          </div>
-
-          <div class="form-inputs">
-            <%= f.input :ndbn_member, label: 'NDBN Membership', wrapper: :input_group do %>
-              <%= f.association :ndbn_member, label_method: :full_name, value_method: :id, label: false %>
-            <% end %>
-          </div>
-
-          <div class="form-inputs">
-            <%= f.input :request_details, placeholder: 'Tell us more about your organization and how you would use Human Essentials', label: "Request Details (min 50 characters)" %>
-          </div>
-        </div>
-
-        <div class="my-2">
-          <%= recaptcha_tags %>
-        </div>
-
-        <div class="card-footer">
-          <%= submit_button({text: 'Submit', icon: nil}) %>
-        </div>
-      <% end %>
+        <% end %>
+      </div>
     </div>
   </div>
 <% else %>
