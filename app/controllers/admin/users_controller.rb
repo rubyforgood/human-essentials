@@ -101,25 +101,29 @@ class Admin::UsersController < AdminController
   private
 
   def user_params
-    user_params = params.require(:user).permit(:name, :organization_id, :email, :password, :password_confirmation)
-    role_id = updated_role_id
+    organization_id = params[:user][:organization_id]
 
-    if role_id
-      user_params[:organization_role_join_attributes] = { role_id: role_id }
-    else
-      redirect_back(fallback_location: edit_admin_user_path, error: "Please select an organization")
-    end
+    raise "Please select an organization for the user." if organization_id.blank?
+
+    user_params = params.require(:user).permit(:name, :organization_id, :email, :password, :password_confirmation)
+    user_params[:organization_role_join_attributes] = { role_id: updated_role_id(organization_id) }
 
     user_params
+  rescue => e
+    redirect_back(fallback_location: edit_admin_user_path, error: e)
   end
 
-  def updated_role_id
+  def updated_role_id(organization_id)
     user_role_title = Role::TITLES[Role::ORG_USER]
-    organization_id = params[:user][:organization_id]
     user_role_type = Role::ORG_USER
 
     role = Role.find_by(resource_type: user_role_title, resource_id: organization_id, name: user_role_type)
-    role&.id
+
+    if role
+      role.id
+    else
+      raise "Error finding a role within the provided organization"
+    end
   end
 
   def load_organizations
