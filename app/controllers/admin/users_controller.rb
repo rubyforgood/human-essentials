@@ -24,7 +24,7 @@ class Admin::UsersController < AdminController
       redirect_to admin_users_path
     else
       flash[:error] = "Something didn't work quite right -- try again?"
-      render action: :edit
+      redirect_back(fallback_location: edit_admin_user_path)
     end
   end
 
@@ -110,7 +110,7 @@ class Admin::UsersController < AdminController
 
     user_params
   rescue => e
-    redirect_back(fallback_location: edit_admin_user_path, error: e)
+    redirect_back(fallback_location: edit_admin_user_path, error: e.message)
   end
 
   def updated_role_id(organization_id)
@@ -119,11 +119,7 @@ class Admin::UsersController < AdminController
 
     role = Role.find_by(resource_type: user_role_title, resource_id: organization_id, name: user_role_type)
 
-    if role
-      role.id
-    else
-      raise "Error finding a role within the provided organization"
-    end
+    role&.id || raise("Error finding a role within the provided organization")
   end
 
   def load_organizations
