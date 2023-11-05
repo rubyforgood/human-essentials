@@ -11,6 +11,7 @@ class DonationDestroyService
       organization = Organization.find(organization_id)
       donation = organization.donations.find(donation_id)
       donation.storage_location.decrease_inventory(donation)
+      DonationDestroyEvent.publish(donation)
       donation.destroy!
     end
   rescue ActiveRecord::RecordNotFound => e

@@ -20,9 +20,15 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       click_link "Edit", match: :first
       expect(page).to have_content("Update #{@organization_admin.name}")
       fill_in "user_name", with: "TestUser"
+      select(@organization.name, from: 'user_organization_id')
       click_on "Save"
 
       expect(page.find(".alert")).to have_content "TestUser updated"
+
+      # Check if the organization role has been updated
+      tbody = find('#filterrific_results table tbody')
+      first_row = tbody.find('tr', text: 'TestUser')
+      expect(first_row).to have_text(@organization.name)
     end
 
     it 'adds a role' do

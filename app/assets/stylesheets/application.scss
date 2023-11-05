@@ -23,7 +23,6 @@
 @import 'AdminLTE';
 @import 'bootstrap';
 @import 'simple_form-bootstrap/simple_form-bootstrap';
-@import 'bootstrap-select';
 @import 'progress_stepper';
 @import 'audits';
 @import 'modal-dialog';
@@ -172,4 +171,18 @@ select.selectpicker + .dropdown-toggle::after {
   .collection_radio_buttons {
     font-weight: normal !important;
   }
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+  padding-left: 28px;
+  background-color: #575b61;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+  margin-left: 0;
+  width: 20px;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+  background-color: #8282df
 }

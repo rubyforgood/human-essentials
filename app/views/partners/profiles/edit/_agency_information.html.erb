@@ -8,7 +8,7 @@
           </div>
           <div class="card-body">
             <%= form.input :name, label: "Agency Name", class: "form-control", wrapper: :input_group %>
-            <%= profile_form.input :agency_type, required: true, collection: Partner::AGENCY_TYPES.values, label: "Agency Type", class: "form-control", wrapper: :input_group %>
+            <%= profile_form.input :agency_type, collection: Partner::AGENCY_TYPES.values, label: "Agency Type", class: "form-control", wrapper: :input_group %>
             <%= profile_form.input :other_agency_type, label: "Other Agency Type", class: "form-control", wrapper: :input_group %>
             <div class="form-group row">
               <label class="control-label col-md-3">501(c)(3) IRS Determination Letter</label>
@@ -25,11 +25,11 @@
               <% end %>
             </div>
             <%= profile_form.input :agency_mission, label: "Agency Mission", class: "form-control", wrapper: :input_group %>
-            <%= profile_form.input :address1, label: "Address (line 1)", required: true, class: "form-control", wrapper: :input_group %>
+            <%= profile_form.input :address1, label: "Address (line 1)", class: "form-control", wrapper: :input_group %>
             <%= profile_form.input :address2, label: "Address (line 2)", class: "form-control", wrapper: :input_group %>
-            <%= profile_form.input :city, label: "City", required: true, class: "form-control", wrapper: :input_group %>
-            <%= profile_form.input :state, label: "State", required: true, class: "form-control", wrapper: :input_group %>
-            <%= profile_form.input :zip_code, label: "Zip Code", required: true, class: "form-control", wrapper: :input_group %>
+            <%= profile_form.input :city, label: "City", class: "form-control", wrapper: :input_group %>
+            <%= profile_form.input :state, label: "State", class: "form-control", wrapper: :input_group %>
+            <%= profile_form.input :zip_code, label: "Zip Code", class: "form-control", wrapper: :input_group %>
           </div>
         </div>
       </div>
