@@ -18,5 +18,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           skip-linked: true
           comment-template: |
-            @{author}: Your PR/Issue `{title}` is part of today's Human Essentials production release: {release_link}. 
+            @{author}: Your PR `{title}` is part of today's Human Essentials production release: {release_link}. 
             Thank you very much for your contribution!
