@@ -4,8 +4,12 @@ class AdjustmentCreateService
   include ServiceObjectErrorsMixin
   attr_reader :adjustment
 
-  def initialize(adjustment_params)
-    @adjustment = Adjustment.new(adjustment_params)
+  def initialize(adjustment_or_params)
+    @adjustment = if adjustment_or_params.is_a?(Adjustment)
+      adjustment_or_params
+    else
+      Adjustment.new(adjustment_or_params)
+    end
   end
 
   def call
@@ -22,6 +26,7 @@ class AdjustmentCreateService
         increasing_adjustment, decreasing_adjustment = @adjustment.split_difference
         @adjustment.storage_location.increase_inventory increasing_adjustment
         @adjustment.storage_location.decrease_inventory decreasing_adjustment
+        AdjustmentEvent.publish(adjustment)
       rescue InsufficientAllotment => e
         @adjustment.errors.add(:base, e.message)
         raise e

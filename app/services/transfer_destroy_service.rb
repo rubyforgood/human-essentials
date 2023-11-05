@@ -6,6 +6,7 @@ class TransferDestroyService
   def call
     transfer.transaction do
       revert_inventory_transfer!
+      TransferDestroyEvent.publish(transfer)
       transfer.destroy!
     end
 

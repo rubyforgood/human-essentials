@@ -22,11 +22,11 @@ module PartnersHelper
 
   def partner_status_badge(partner)
     if partner.status == "approved"
-      tag.span partner.display_status, class: %w(badge badge-pill badge-primary float-right)
+      tag.span partner.display_status, class: %w(badge badge-pill badge-primary bg-primary float-right)
     elsif partner.status == "recertification_required"
-      tag.span partner.display_status, class: %w(badge badge-pill badge-danger float-right)
+      tag.span partner.display_status, class: %w(badge badge-pill badge-danger bg-danger float-right)
     else
-      tag.span partner.display_status, class: %w(badge badge-pill badge-info float-right)
+      tag.span partner.display_status, class: %w(badge badge-pill badge-info bg-info float-right)
     end
   end
 end
