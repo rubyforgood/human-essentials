@@ -29,7 +29,7 @@ describe DistributionDestroyService do
           .and_return(distribution)
       end
 
-      context 'and the operations suceed' do
+      context 'and the operations succeed' do
         let(:fake_storage_location) { instance_double(StorageLocation) }
         before do
           allow(distribution).to receive(:storage_location).and_return(fake_storage_location)
@@ -38,6 +38,7 @@ describe DistributionDestroyService do
 
         it 'should destroy the Distribution' do
           expect { subject }.to change { Distribution.count }.by(-1)
+            .and change { DistributionDestroyEvent.count }.by(1)
         end
 
         it 'should be successful' do

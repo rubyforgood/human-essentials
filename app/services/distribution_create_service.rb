@@ -11,6 +11,9 @@ class DistributionCreateService < DistributionService
       validate_request_not_yet_processed! if @request.present?
 
       distribution.save!
+
+      DistributionEvent.publish(distribution)
+
       distribution.storage_location.decrease_inventory distribution
       distribution.reload
       @request&.update!(distribution_id: distribution.id, status: 'fulfilled')

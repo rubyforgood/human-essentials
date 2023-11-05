@@ -13,9 +13,10 @@ jobs:
       pull-requests: write
       issues: write
     steps:
-      - uses: chriskarlin/github-release-commenter@v1.3.2
+      - uses: chriskarlin/github-release-commenter@v1.3.3
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          skip-linked: true
           comment-template: |
             @{author}: Your PR/Issue `{title}` is part of today's Human Essentials production release: {release_link}. 
             Thank you very much for your contribution!
