@@ -10,6 +10,7 @@ RSpec.describe DistributionCreateService, type: :service do
       expect do
         subject.new(distribution_params).call
       end.to change { storage_location.reload.size }.by(-5)
+        .and change { DistributionEvent.count }.by(1)
     end
 
     it "returns a successful object with Scheduled distribution" do
