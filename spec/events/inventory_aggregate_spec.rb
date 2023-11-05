@@ -6,6 +6,24 @@ RSpec.describe InventoryAggregate do
   let(:item2) { FactoryBot.create(:item, organization: organization) }
   let(:item3) { FactoryBot.create(:item, organization: organization) }
 
+  describe "discrepancy", skip_transaction: true do
+    let(:donation) { create(:donation, organization: organization) }
+
+    before(:each) do
+      allow(InventoryAggregate).to receive(:inventory_for).and_return([])
+      allow(EventDiffer).to receive(:check_difference).and_return([{foo: "bar"}, {baz: "spam"}])
+    end
+
+    it "should save a discrepancy" do
+      DonationEvent.publish(donation)
+      expect(InventoryDiscrepancy.count).to eq(1)
+      disc = InventoryDiscrepancy.last
+      expect(disc.event).to eq(DonationEvent.last)
+      expect(disc.diff).to eq([{"foo" => "bar"}, {"baz" => "spam"}])
+      expect(disc.organization).to eq(organization)
+    end
+  end
+
   describe "individual events" do
     let(:inventory) do
       EventTypes::Inventory.new(
