@@ -21,7 +21,7 @@ RSpec.describe "Navigation", type: :system, js: true do
         before { click_link("collapse") }
 
         it "hides text" do
-          page.all(".nav-sidebar > .nav-item > .nav-link").each do |link|
+          page.all(".nav-sidebar > .nav-item > .nav-link").each do |link| # rubocop:disable Rails/FindEach
             label = link.find("p", visible: :all)
             expect(label).to match_style(width: "0px")
             expect(links).to include(label.text(:all))
@@ -52,7 +52,7 @@ RSpec.describe "Navigation", type: :system, js: true do
         before { click_link("collapse") }
 
         it "hides text" do
-          page.all(".nav-sidebar > .nav-item > .nav-link").each do |link|
+          page.all(".nav-sidebar > .nav-item > .nav-link").each do |link| # rubocop:disable Rails/FindEach
             label = link.find("p", visible: :all)
             expect(label).to match_style(width: "0px")
             expect(links).to include(label.text(:all))
