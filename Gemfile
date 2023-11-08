@@ -162,7 +162,7 @@ group :development, :test do
   gem 'rubocop-performance'
   gem "rubocop-rails", "~> 2.21.2"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.31"
+  gem "standard", "~> 1.32"
 end
 
 group :development do
