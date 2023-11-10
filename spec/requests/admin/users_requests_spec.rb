@@ -25,6 +25,30 @@ RSpec.describe "Admin::UsersController", type: :request do
       end
     end
 
+    describe "PATCH #update" do
+      context 'with no errors' do
+        it "renders index template with a successful update flash message" do
+          patch admin_user_path(user), params: { user: default_params.merge(name: 'New User 123', email: 'random@gmail.com') }
+          expect(response).to redirect_to admin_users_path(organization_id: 'admin')
+          expect(flash[:notice]).to eq("New User 123 updated!")
+        end
+      end
+
+      context 'with errors' do
+        it "redirects back with no organization_id flash message" do
+          patch admin_user_path(user), params: { user: { name: 'New User 123' } }
+          expect(response).to redirect_to(edit_admin_user_path)
+          expect(flash[:error]).to eq('Please select an organization for the user.')
+        end
+
+        it "redirects back with no role found flash message" do
+          patch admin_user_path(user), params: { user: { name: 'New User 123', organization_id: -1 } }
+          expect(response).to redirect_to(edit_admin_user_path)
+          expect(flash[:error]).to eq('Error finding a role within the provided organization')
+        end
+      end
+    end
+
     describe '#add_role' do
       context 'with no errors' do
         it 'should call the service and redirect back' do

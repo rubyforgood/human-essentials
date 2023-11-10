@@ -44,21 +44,24 @@ describe CalendarService do
           DTEND;TZID=America/New_York:20220317T071500
           LOCATION:1500 Remount Road\\, Front Royal\\, VA 22630
           SUMMARY:Pickup from Partner 1
-          URL:https://humanessentials.app/diaper_bank/distributions/schedule
+          URL;VALUE=URI:https://humanessentials.app/diaper_bank/distributions/schedul
+           e
           END:VEVENT
           BEGIN:VEVENT
           DTSTART;TZID=America/New_York:20220217T060000
           DTEND;TZID=America/New_York:20220217T061500
           LOCATION:1500 Remount Road\\, Front Royal\\, VA 22630
           SUMMARY:Pickup from Partner 1
-          URL:https://humanessentials.app/diaper_bank/distributions/schedule
+          URL;VALUE=URI:https://humanessentials.app/diaper_bank/distributions/schedul
+           e
           END:VEVENT
           BEGIN:VEVENT
           DTSTART;TZID=America/New_York:20230316T210000
           DTEND;TZID=America/New_York:20230316T211500
           LOCATION:1500 Remount Road\\, Front Royal\\, VA 22630
           SUMMARY:Pickup from Partner 2
-          URL:https://humanessentials.app/diaper_bank/distributions/schedule
+          URL;VALUE=URI:https://humanessentials.app/diaper_bank/distributions/schedul
+           e
           END:VEVENT
           END:VCALENDAR
         ICAL

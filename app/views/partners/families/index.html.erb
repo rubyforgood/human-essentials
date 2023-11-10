@@ -49,6 +49,13 @@
                           class: 'filterrific-periodically-observed form-control'
                       ) %>
                 </div>
+                <div class="col-2" align="center">
+                  <%= f.label :include_archived, "Include Archived?" %>
+                  <%= f.check_box(
+                          :include_archived,
+                          class: 'filterrific-periodically-observed form-control',
+                      ) %>
+                </div>
                 <div class="col-3">
                   <%= render_filterrific_spinner %>
                 </div>
