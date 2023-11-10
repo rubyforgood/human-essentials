@@ -6,6 +6,8 @@ updates:
     interval: daily
   open-pull-requests-limit: 10
   ignore:
+  - dependency-name: bootstrap
+    update-types: ["version-update:semver-major", "version-update:semver-minor"]
   - dependency-name: rubocop
     versions:
     - 1.10.0

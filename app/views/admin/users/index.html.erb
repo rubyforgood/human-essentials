@@ -27,16 +27,17 @@
         <!-- Default box -->
         <div class="card">
           <div class="card-header">
-            <%= form_for_filterrific @filterrific, remote: true do |f| %>
+            <%= form_for_filterrific @filterrific, remote: true, html: { id: 'filterrific-form' } do |f| %>
               <div class="row flex-row justify-content-between align-items-center">
                 <div class="col-3">
                   <%= f.label :search_name, "Search By User Name" %>
                   <%= f.text_field(:search_name, class: 'filterrific-periodically-observed form-control') %>
                 </div>
                 <div class="col-3">
-                  <%= render_filterrific_spinner %>
+                  <%= f.label :search_email, "Search By Email" %>
+                  <%= f.text_field(:search_email, class: 'filterrific-periodically-observed form-control') %>
                 </div>
-                <div clas="col-9">
+                <div class="col-5">
                   <div class="float-right">
                     <h2 class="card-title">
                       <%= new_button_to new_admin_user_path, {text: "Invite a new user"} %>

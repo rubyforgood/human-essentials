@@ -4,7 +4,7 @@
   <td><%= broadcast_announcement.user&.name || "N/A" %></td>
   <td><%= broadcast_announcement.expiry %>
     <% if broadcast_announcement.expired? %> 
-      <span class="badge badge-danger">Expired</span>
+      <span class="badge badge-danger bg-danger">Expired</span>
     <% end %>
   </td>
   <td class="text-right">

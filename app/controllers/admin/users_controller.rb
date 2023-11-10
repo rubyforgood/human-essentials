@@ -1,11 +1,13 @@
 # [Super Admin] This is for administrating users at a global level. We can create, view, modify, etc.
 class Admin::UsersController < AdminController
   before_action :load_organizations, only: %i[new create edit update]
+  before_action :user_params, only: %i[create update]
 
   def index
     @filterrific = initialize_filterrific(
       User.includes(:organization).alphabetized,
-      params[:filterrific]
+      params[:filterrific],
+      available_filters: [:search_name, :search_email]
     ) || return
     @users = @filterrific.find.page(params[:page])
 
@@ -22,7 +24,7 @@ class Admin::UsersController < AdminController
       redirect_to admin_users_path
     else
       flash[:error] = "Something didn't work quite right -- try again?"
-      render action: :edit
+      redirect_back(fallback_location: edit_admin_user_path)
     end
   end
 
@@ -99,7 +101,25 @@ class Admin::UsersController < AdminController
   private
 
   def user_params
-    params.require(:user).permit(:name, :organization_id, :email, :password, :password_confirmation)
+    organization_id = params[:user][:organization_id]
+
+    raise "Please select an organization for the user." if organization_id.blank?
+
+    user_params = params.require(:user).permit(:name, :organization_id, :email, :password, :password_confirmation)
+    user_params[:organization_role_join_attributes] = { role_id: updated_role_id(organization_id) }
+
+    user_params
+  rescue => e
+    redirect_back(fallback_location: edit_admin_user_path, error: e.message)
+  end
+
+  def updated_role_id(organization_id)
+    user_role_title = Role::TITLES[Role::ORG_USER]
+    user_role_type = Role::ORG_USER
+
+    role = Role.find_by(resource_type: user_role_title, resource_id: organization_id, name: user_role_type)
+
+    role&.id || raise("Error finding a role within the provided organization")
   end
 
   def load_organizations
