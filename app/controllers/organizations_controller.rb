@@ -87,6 +87,8 @@ class OrganizationsController < ApplicationController
   end
 
   def organization_params
+    request_type_formatter(params)
+
     params.require(:organization).permit(
       :name, :short_name, :street, :city, :state,
       :zipcode, :email, :url, :logo, :intake_location,
@@ -97,6 +99,22 @@ class OrganizationsController < ApplicationController
       :enable_individual_requests, :enable_quantity_based_requests,
       partner_form_fields: []
     )
+  end
+
+  def request_type_formatter(params)
+    if params[:organization][:enable_individual_requests] == "false"
+      params[:organization][:enable_child_based_requests] = false
+    end
+
+    if params[:organization][:enable_child_based_requests] == "false"
+      params[:organization][:enable_individual_requests] = false
+    end
+
+    if params[:organization][:enable_quantity_based_requests] == "false"
+      params[:organization][:enable_quantity_based_requests] = false
+    end
+
+    params
   end
 
   def user_update_redirect_path

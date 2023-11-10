@@ -23,6 +23,7 @@ import listPlugin from '@fullcalendar/list';
 import toastr from 'toastr';
 import 'litepicker/ranges';
 
+import 'popper'
 import 'bootstrap'
 import 'controllers'
 

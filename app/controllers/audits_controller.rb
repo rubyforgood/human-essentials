@@ -40,6 +40,7 @@ class AuditsController < ApplicationController
     ActiveRecord::Base.transaction do
       @audit.storage_location.increase_inventory increasing_adjustment
       @audit.storage_location.decrease_inventory decreasing_adjustment
+      AuditEvent.publish(@audit)
     end
     @audit.finalized!
     redirect_to audit_path(@audit), notice: "Audit is Finalized."
