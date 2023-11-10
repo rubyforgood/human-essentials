@@ -164,7 +164,8 @@ RSpec.describe "Donations", type: :system, js: true do
           visit @url_prefix + "/donations/new"
         end
 
-        it "Allows donations to be created IN THE PAST" do
+        # using this to also test user ID for events - it needs to be an actual controller action
+        it "Allows donations to be created IN THE PAST", versioning: true do
           select Donation::SOURCES[:misc], from: "donation_source"
           select StorageLocation.first.name, from: "donation_storage_location_id"
           select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
@@ -175,6 +176,7 @@ RSpec.describe "Donations", type: :system, js: true do
             click_button "Save"
           end.to change { Donation.count }.by(1)
 
+          expect(DonationEvent.last.user).to eq(@user)
           expect(Donation.last.issued_at).to eq(Time.zone.parse("2001-01-01"))
         end
 

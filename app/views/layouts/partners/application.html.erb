@@ -13,15 +13,17 @@
   <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/v4-shims.css" rel="stylesheet" />
 
   <%= stylesheet_link_tag 'application', media: 'all' %>
-  <%= raw fullstory_script(current_user: current_user) if Rails.env.production? %>
-  <%= javascript_importmap_tags %>
+  <%=
+    # DO NOT LOAD ANY JAVASCRIPT BEFORE THIS!!!
+    javascript_importmap_tags
+  %>
+  <%= raw fullstory_script(current_user: current_user) if Rails.env.production?  %>
   <script type="esms-options">
   {
     "noLoadEventRetriggers": true
   }
   </script>
 
-  <%= raw fullstory_script(current_user: current_user) if Rails.env.production? %>
   <%= stylesheet_link_tag 'application', media: 'all' %>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
   <%= render 'magic_test/support' if Rails.env.test? %>
@@ -63,7 +65,7 @@
   <div class="content-wrapper">
     <% flash.each do |key, value| %>
       <div class="<%= flash_class(key) %> alert-dismissible fade show" role="alert">
-        <a href="#" class="close" data-dismiss="alert" aria-label="Close" style="text-decoration: none;"><%= fa_icon('times') %></a>
+        <a href="#" class="close btn-close" data-bs-dismiss="alert" aria-label="Close" style="text-decoration: none;"><%= fa_icon('times') %></a>
         <%= sanitize(value, tags: %w(ul li)) %>
       </div>
     <% end %>
@@ -83,5 +85,3 @@
 </body>
 <div class="modal fade" id="modal_new" role="dialog"></div>
 </html>
-
-

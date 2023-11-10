@@ -1,0 +1,22 @@
+name: Release Contribution Notifier
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release:
+    name: Release Commenter
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    steps:
+      - uses: chriskarlin/github-release-commenter@v1.3.3
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          skip-linked: true
+          comment-template: |
+            @{author}: Your PR `{title}` is part of today's Human Essentials production release: {release_link}. 
+            Thank you very much for your contribution!

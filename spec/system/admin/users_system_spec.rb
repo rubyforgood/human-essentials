@@ -20,9 +20,15 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       click_link "Edit", match: :first
       expect(page).to have_content("Update #{@organization_admin.name}")
       fill_in "user_name", with: "TestUser"
+      select(@organization.name, from: 'user_organization_id')
       click_on "Save"
 
       expect(page.find(".alert")).to have_content "TestUser updated"
+
+      # Check if the organization role has been updated
+      tbody = find('#filterrific_results table tbody')
+      first_row = tbody.find('tr', text: 'TestUser')
+      expect(first_row).to have_text(@organization.name)
     end
 
     it 'adds a role' do
@@ -63,6 +69,14 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
         expect(page.find("table")).not_to have_content(name)
       end
       expect(page.find("table")).to have_content(user_names.first)
+    end
+
+    it "filters users by email" do
+      user_email = "person100@example.com"
+
+      visit admin_users_path
+      fill_in "filterrific_search_email", with: user_email
+      expect(page.find("table")).to have_content(user_email)
     end
   end
 end
