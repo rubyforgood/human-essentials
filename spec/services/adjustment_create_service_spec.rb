@@ -18,16 +18,15 @@ RSpec.describe AdjustmentCreateService, type: :service do
       event = AdjustmentEvent.last
       expect(event.data).to eq(EventTypes::InventoryPayload.new(
         items: [
-                 EventTypes::EventLineItem.new(
-                   quantity: 5,
-                   item_id: item_1.id,
-                   from_storage_location: nil,
-                   to_storage_location: storage_location.id,
-                   item_value_in_cents: 0
-                 )
-               ]
-      )
-    )
+          EventTypes::EventLineItem.new(
+            quantity: 5,
+            item_id: item_1.id,
+            from_storage_location: nil,
+            to_storage_location: storage_location.id,
+            item_value_in_cents: 0
+          )
+        ]
+      ))
     end
 
     it "saves a new adjustment with line items relating to the current (simple case) positive adjustment" do
@@ -49,16 +48,15 @@ RSpec.describe AdjustmentCreateService, type: :service do
       event = AdjustmentEvent.last
       expect(event.data).to eq(EventTypes::InventoryPayload.new(
         items: [
-                 EventTypes::EventLineItem.new(
-                   quantity: -5,
-                   item_id: item_1.id,
-                   from_storage_location: nil,
-                   to_storage_location: storage_location.id,
-                   item_value_in_cents: 0
-                 )
-               ]
-      )
-    )
+          EventTypes::EventLineItem.new(
+            quantity: -5,
+            item_id: item_1.id,
+            from_storage_location: nil,
+            to_storage_location: storage_location.id,
+            item_value_in_cents: 0
+          )
+        ]
+      ))
     end
 
     it "saves a new adjustment with line items relating to the current (simple case) negative adjustment" do
