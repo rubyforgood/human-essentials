@@ -11,6 +11,7 @@ require "capybara/rspec"
 require "capybara-screenshot/rspec"
 require "pry"
 require 'knapsack_pro'
+require 'paper_trail/frameworks/rspec'
 
 KnapsackPro::Adapters::RSpecAdapter.bind
 
@@ -43,6 +44,9 @@ Dir[Rails.root.join("spec/controllers/shared_examples/*.rb")].sort.each { |f| re
 
 # If an element is hidden, Capybara should ignore it
 Capybara.ignore_hidden_elements = true
+
+# disable CSS transitions and jQuery animations
+Capybara.disable_animation = true
 
 # https://docs.travis-ci.com/user/chrome
 Capybara.register_driver :chrome do |app|
@@ -96,6 +100,14 @@ RSpec.configure do |config|
 
   # Make FactoryBot easier.
   config.include FactoryBot::Syntax::Methods
+  config.around(:each, skip_transaction: true) do |example|
+    config.use_transactional_fixtures = false
+    example.run
+    config.use_transactional_fixtures = true
+
+    DatabaseCleaner.clean_with(:truncation)
+    seed_base_data_for_tests
+  end
 
   #
   # --------------------

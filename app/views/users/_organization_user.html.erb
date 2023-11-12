@@ -2,7 +2,7 @@
   <td>
     <%= user.name %>
     <% if user.discarded? %>
-      <span class="badge badge-danger">Deactivated</span>
+      <span class="badge badge-danger bg-danger">Deactivated</span>
     <% end %>
   </td>
   <td><%= user.email %></td>
@@ -13,7 +13,7 @@
   <td>
       <% unless user.has_role?(Role::SUPER_ADMIN) || user.has_role?(Role::ORG_ADMIN, current_organization) %>
         <div class="dropdown">
-          <button class="btn btn-default dropdown-toggle" type="button" id=<%= dom_id(user, "dropdownMenu") %> data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+          <button class="btn btn-default dropdown-toggle" type="button" id=<%= dom_id(user, "dropdownMenu") %> data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
             Actions
             <span class="caret"></span>
           </button>

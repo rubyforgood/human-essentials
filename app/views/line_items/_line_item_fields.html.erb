@@ -1,4 +1,4 @@
-<section class="nested-fields">
+<section class="nested-fields line_item_section">
   <div class="row mt-2 d-flex flex-row align-items-center justify-content-between">
     <div class='d-flex flex-column justify-content-center'>
       <div class='d-flex flex-row align-items-center'>
@@ -8,7 +8,7 @@
       <label class='my-1 mx-auto font-weight-normal'>OR</label>
       <div class='d-flex flex-row'>
         <span class="li-name w-100">
-          <%= f.input :item_id, collection: @items, prompt: "Choose an item", include_blank: "", label: false, input_html: { class: "my-0", "data-controller": "select2" } %>
+          <%= f.input :item_id, collection: @items, prompt: "Choose an item", include_blank: "", label: false, input_html: { class: "my-0 line_item_name", "data-controller": "select2" } %>
         </span>
         <div class="li-quantity mx-2">
           <%= f.input :quantity, placeholder: "Quantity", label: false, input_html: { class: "quantity my-0"} %>
