@@ -14,8 +14,11 @@
   <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/v4-shims.css" rel="stylesheet" />
 
-  <%= raw fullstory_script(current_user: current_user) if Rails.env.production? %>
-  <%= javascript_importmap_tags %>
+  <%=
+    # DO NOT LOAD ANY JAVASCRIPT BEFORE THIS!!!
+    javascript_importmap_tags
+  %>
+  <%= raw fullstory_script(current_user: current_user) if Rails.env.production?  %>
   <script type="esms-options">
   {
     "noLoadEventRetriggers": true
@@ -32,10 +35,10 @@
     $(document).ready(function() {
       <% if Rails.env.staging? %>
         // Prevents users from closing the modal by clicking outside of it or pressing the esc key
-        $('#warningModal').modal({
+        new bootstrap.Modal('#warningModal', {
           backdrop: 'static',
           keyboard: false
-        });
+        }).show();
         // Adds click event handler on the checkbox
         $('#defaultCheck1').click(function(){
           // If the checkbox is checked, enable the continue button
@@ -90,7 +93,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-warning continue-btn" data-dismiss="modal" disabled>Continue To The Test Site</button>
+          <button type="button" class="btn btn-warning continue-btn" data-bs-dismiss="modal" disabled>Continue To The Test Site</button>
         </div>
       </div>
     </div>
