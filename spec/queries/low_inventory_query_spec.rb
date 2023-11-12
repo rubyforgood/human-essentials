@@ -14,9 +14,9 @@ RSpec.describe LowInventoryQuery do
 
     let(:item) do
       create :item,
-             organization: organization,
-             on_hand_minimum_quantity: minimum_quantity,
-             on_hand_recommended_quantity: recommended_quantity
+        organization: organization,
+        on_hand_minimum_quantity: minimum_quantity,
+        on_hand_recommended_quantity: recommended_quantity
     end
 
     it { is_expected.to eq [] }
