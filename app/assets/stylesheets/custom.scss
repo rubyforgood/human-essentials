@@ -19,6 +19,25 @@
     width: 100%
 }
 
+#csvImportModal .modal-dialog.onboarding_steps .modal-body li {
+  text-align: left !important;
+}
+#csvImportModal .modal-header {
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  h2 {
+    text-align: center;
+  }
+  .close {
+    position: absolute;
+    margin: 0 !important;
+    top: -0.25rem;
+    left: 0.5rem;
+  }
+}
+
 #pick-ups-header {
     height: 'auto';
     @include for-desktop {
@@ -62,4 +81,12 @@
 
 .modal-body-warning-text {
   color: #ee5034
+}
+
+.numeric {
+  text-align: right;
+}
+
+.percent {
+  text-align: right;
 }

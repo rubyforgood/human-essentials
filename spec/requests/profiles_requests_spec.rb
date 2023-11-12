@@ -40,7 +40,10 @@ RSpec.describe "Profiles", type: :request do
     context "when updating an existing value to a blank value" do
       let(:partner_params) do
         { name: "Awesome Partner", profile:
-                               { executive_director_email: "awesomepartner@example.com", facebook: "", website: "" } }
+                               { executive_director_email: "awesomepartner@example.com",
+                                 no_social_media_presence: true,
+                                 facebook: "",
+                                 website: "" } }
       end
 
       it "update partner" do
@@ -48,7 +51,7 @@ RSpec.describe "Profiles", type: :request do
         expect(response).to have_http_status(:redirect)
         expect(partner.reload.name).to eq("Awesome Partner")
         expect(partner.profile.reload.executive_director_email).to eq("awesomepartner@example.com")
-        expect(partner.profile.facebook).to be_nil
+        expect(partner.profile.facebook).to be_blank
       end
 
       it "should have blank values" do

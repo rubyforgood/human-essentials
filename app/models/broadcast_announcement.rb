@@ -12,6 +12,7 @@
 #  user_id         :bigint           not null
 #
 class BroadcastAnnouncement < ApplicationRecord
+  has_paper_trail
   belongs_to :user
   belongs_to :organization, optional: true
   validates :link, format: URI::DEFAULT_PARSER.make_regexp(%w[http https]), allow_blank: true
@@ -25,6 +26,6 @@ class BroadcastAnnouncement < ApplicationRecord
   def self.filter_announcements(parent_org)
     BroadcastAnnouncement.where(organization_id: parent_org)
       .where("expiry IS ? or expiry >= ?", nil, Time.zone.today)
-      .reverse
+      .order(created_at: :desc)
   end
 end

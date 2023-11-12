@@ -32,8 +32,7 @@ class PurchasesController < ApplicationController
 
   def create
     @purchase = current_organization.purchases.new(purchase_params)
-    if @purchase.save
-      @purchase.storage_location.increase_inventory @purchase
+    if PurchaseCreateService.call(@purchase)
       flash[:notice] = "New Purchase logged!"
       redirect_to purchases_path
     else
@@ -64,20 +63,20 @@ class PurchasesController < ApplicationController
 
   def update
     @purchase = current_organization.purchases.find(params[:id])
-    if @purchase.replace_increase!(purchase_params)
-      redirect_to purchases_path
-    else
-      load_form_collections
-      render "edit"
-    end
+    ItemizableUpdateService.call(itemizable: @purchase,
+      params: purchase_params,
+      type: :increase,
+      event_class: PurchaseEvent)
+    redirect_to purchases_path
+  rescue => e
+    load_form_collections
+    flash[:alert] = "Error updating purchase: #{e.message}"
+    render "edit"
   end
 
   def destroy
-    ActiveRecord::Base.transaction do
-      purchase = current_organization.purchases.find(params[:id])
-      purchase.storage_location.decrease_inventory(purchase)
-      purchase.destroy!
-    end
+    purchase = current_organization.purchases.find(params[:id])
+    PurchaseDestroyService.call(purchase)
 
     flash[:notice] = "Purchase #{params[:id]} has been removed!"
     redirect_to purchases_path

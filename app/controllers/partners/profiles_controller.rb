@@ -2,13 +2,19 @@ module Partners
   class ProfilesController < BaseController
     def show; end
 
-    def edit; end
+    def edit
+      @counties = County.in_category_name_order
+      @client_share_total = current_partner.profile.client_share_total
+    end
 
     def update
-      if current_partner.update(partner_params) && ProfileUpdateService.update(current_partner.profile, profile_params)
+      @counties = County.in_category_name_order
+      result = PartnerProfileUpdateService.new(current_partner, partner_params, profile_params).call
+      if result.success?
         flash[:success] = "Details were successfully updated."
         redirect_to partners_profile_path
       else
+        flash[:error] = "There is a problem. Try again:  %s" % result.error
         render :edit
       end
     end
@@ -89,6 +95,7 @@ module Partners
         :enable_child_based_requests,
         :enable_individual_requests,
         :enable_quantity_based_requests,
+        served_areas_attributes: %i[county_id client_share _destroy],
         documents: []
       ).select { |k, v| k.present? }
     end

@@ -31,6 +31,7 @@
 #
 
 class Organization < ApplicationRecord
+  has_paper_trail
   resourcify
 
   DIAPER_APP_LOGO = Rails.root.join("public", "img", "humanessentials_logo.png")
@@ -112,9 +113,10 @@ class Organization < ApplicationRecord
     ['Agency Stability', 'agency_stability'],
     ['Organizational Capacity', 'organizational_capacity'],
     ['Sources of Funding', 'sources_of_funding'],
+    ['Area Served', 'area_served'],
     ['Population Served', 'population_served'],
     ['Executive Director', 'executive_director'],
-    ['Pickup Person', 'diaper_pick_up_person'],
+    ['Pickup Person', 'pick_up_person'],
     ['Agency Distribution Information', 'agency_distribution_information'],
     ['Attached Documents', 'attached_documents']
   ].freeze
@@ -135,6 +137,12 @@ class Organization < ApplicationRecord
 
   scope :alphabetized, -> { order(:name) }
   scope :search_name, ->(query) { where('name ilike ?', "%#{query}%") }
+
+  scope :is_active, -> {
+    joins(:users)
+      .where('users.last_sign_in_at > ?', 4.months.ago)
+      .distinct
+  }
 
   def assign_attributes_from_account_request(account_request)
     assign_attributes(

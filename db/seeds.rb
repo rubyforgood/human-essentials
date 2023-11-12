@@ -550,11 +550,14 @@ end
 20.times.each do
   storage_location = random_record_for_org(pdx_org, StorageLocation)
   stored_inventory_items_sample = storage_location.inventory_items.sample(20)
+  delivery_method = Distribution.delivery_methods.keys.sample
+  shipping_cost = delivery_method == "shipped" ? (rand(20.0..100.0)).round(2).to_s : nil
   distribution = Distribution.create!(storage_location: storage_location,
                                       partner: random_record_for_org(pdx_org, Partner),
                                       organization: pdx_org,
                                       issued_at: Faker::Date.between(from: 4.days.ago, to: Time.zone.today),
-                                      delivery_method: Distribution.delivery_methods.keys.sample,
+                                      delivery_method: delivery_method,
+                                      shipping_cost: shipping_cost,
                                       comment: 'Urgent')
 
   stored_inventory_items_sample.each do |stored_inventory_item|
@@ -564,6 +567,26 @@ end
   distribution.reload
   distribution.storage_location.decrease_inventory(distribution)
 end
+
+# ----------------------------------------------------------------------------
+# Broadcast Announcements
+# ----------------------------------------------------------------------------
+
+BroadcastAnnouncement.create(
+  user: User.find_by(email: 'superadmin@example.com'),
+  message: "This is the staging /demo server. There may be new features here! Stay tuned!",
+  link: "https://example.com",
+  expiry: Date.today + 7.days,
+  organization: nil
+)
+
+BroadcastAnnouncement.create(
+  user: User.find_by(email: 'org_admin1@example.com'),
+  message: "This is the staging /demo server. There may be new features here! Stay tuned!",
+  link: "https://example.com",
+  expiry: Date.today + 10.days,
+  organization: pdx_org
+)
 
 # ----------------------------------------------------------------------------
 # Vendors
@@ -710,6 +733,48 @@ answers = [
     for_partners: true,
     answer: "Answer for partners. #{answers.sample}"
   )
+end
+
+# ----------------------------------------------------------------------------
+# Counties
+# ----------------------------------------------------------------------------
+Rake::Task['db:load_us_counties'].invoke
+
+# ----------------------------------------------------------------------------
+# Partner Counties
+# ----------------------------------------------------------------------------
+
+# aim -- every partner except one will have some non-zero number of counties,  and the first one 'verified' will have counties, for convenience sake
+# Noted -- The first pass of this is kludgey as all get out.  I'm *sure* there is a better way
+partner_ids = Partner.pluck(:id)
+partner_ids.pop(1)
+county_ids = County.pluck(:id)
+
+partner_ids.each do |partner_id|
+  partner = Partner.find(partner_id)
+  profile = partner.profile
+  num_counties_for_partner = Faker::Number.within(range: 1..10)
+  remaining_percentage = 100
+  share_ceiling = 100/num_counties_for_partner  #arbitrary,  so I can do the math easily
+  county_index = 0
+
+  county_ids_for_this_partner = county_ids.sample(num_counties_for_partner)
+  county_ids_for_this_partner.each do |county_id|
+    client_share = 0
+    if county_index ==  num_counties_for_partner - 1
+      client_share = remaining_percentage
+    else
+      client_share = Faker::Number.within(range:1..share_ceiling)
+    end
+
+    Partners::ServedArea.create(
+      partner_profile: profile,
+      county: County.find(county_id),
+      client_share: client_share
+    )
+    county_index += 1
+    remaining_percentage = remaining_percentage - client_share
+  end
 end
 
 # ----------------------------------------------------------------------------

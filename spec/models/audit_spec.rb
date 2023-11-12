@@ -28,19 +28,19 @@ RSpec.describe Audit, type: :model do
       expect(build(:audit, storage_location: create(:storage_location, organization: @organization), user: @organization_admin,  organization: @organization)).to be_valid
     end
 
-    it "can not have line items that has quantity as a negative integer" do
+    it "can not have line items that has quantity as negative integer" do
       item = create(:item)
       storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
       audit = build(:audit,
                     storage_location: storage_location,
                     line_items_attributes: [
-                      { item_id: storage_location.items.first.id, quantity: -10 }
+                      { item_id: storage_location.items.first.id, quantity: -1 }
                     ])
 
       expect(audit.save).to be_falsey
     end
 
-    it "can not have line items that has quantity as zero" do
+    it "can have line items that has quantity as zero" do
       item = create(:item)
       storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
       audit = build(:audit,
@@ -49,7 +49,7 @@ RSpec.describe Audit, type: :model do
                       { item_id: storage_location.items.first.id, quantity: 0 }
                     ])
 
-      expect(audit.save).to be_falsey
+      expect(audit.save).to be_truthy
     end
 
     it "can not have line items that has quantity as a string that cannot be reduced to an integer" do
@@ -96,5 +96,9 @@ RSpec.describe Audit, type: :model do
       create(:audit, storage_location: storage_location4, organization: storage_location4.organization)
       expect(Audit.storage_locations_audited_for(@organization).to_a).to match_array([storage_location1, storage_location2])
     end
+  end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
   end
 end

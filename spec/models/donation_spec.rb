@@ -60,7 +60,7 @@ RSpec.describe Donation, type: :model do
   end
 
   context "Callbacks >" do
-    it "inititalizes the issued_at field to default to created_at if it wasn't explicitly set" do
+    it "inititalizes the issued_at field to default to midnight if it wasn't explicitly set" do
       yesterday = 1.day.ago
       today = Time.zone.today
 
@@ -68,7 +68,7 @@ RSpec.describe Donation, type: :model do
       expect(donation.issued_at.to_date).to eq(today)
 
       donation = create(:donation, created_at: yesterday)
-      expect(donation.issued_at).to eq(donation.created_at)
+      expect(donation.issued_at).to eq(donation.created_at.end_of_day)
     end
 
     it "automatically combines duplicate line_item records when they're created" do
@@ -92,7 +92,7 @@ RSpec.describe Donation, type: :model do
         create(:donation, issued_at: Date.yesterday)
         # and one outside the range
         create(:donation, issued_at: 1.year.ago)
-        expect(Donation.during(1.month.ago..Date.tomorrow).size).to eq(2)
+        expect(Donation.during(1.month.ago..Time.zone.now + 2.days).size).to eq(2)
       end
     end
 
@@ -181,37 +181,6 @@ RSpec.describe Donation, type: :model do
       end
     end
 
-    describe "replace_increase!" do
-      let!(:storage_location) { create(:storage_location, organization: @organization) }
-      subject { create(:donation, :with_items, organization: @organization, item_quantity: 5, storage_location: storage_location) }
-
-      context "changing the donation" do
-        let(:attributes) { { line_items_attributes: { "0": { item_id: subject.line_items.first.item_id, quantity: 2 } } } }
-
-        it "updates the quantity of items" do
-          subject
-          expect do
-            subject.replace_increase!(attributes)
-            storage_location.reload
-          end.to change { storage_location.size }.by(-3)
-        end
-      end
-
-      context "when adding an item that has been previously deleted" do
-        let!(:inactive_item) { create(:item, active: false) }
-        let(:attributes) { { line_items_attributes: { "0": { item_id: inactive_item.to_param, quantity: 10 } } } }
-
-        it "re-creates the item" do
-          subject
-          expect do
-            subject.replace_increase!(attributes)
-            storage_location.reload
-          end.to change { storage_location.size }.by(5) # We had 5 items of a different kind before, now we have 10
-                                                 .and change { Item.active.count }.by(1)
-        end
-      end
-    end
-
     describe "source_view" do
       context "from a drive" do
         let!(:donation) { create(:product_drive_donation, product_drive_participant: product_drive_participant, product_drive: product_drive) }
@@ -273,5 +242,9 @@ RSpec.describe Donation, type: :model do
         expect { frozen_string << 'bar' }.to raise_error(FrozenError)
       end
     end
+  end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
   end
 end

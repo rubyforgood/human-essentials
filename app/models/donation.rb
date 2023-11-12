@@ -18,6 +18,7 @@
 #
 
 class Donation < ApplicationRecord
+  has_paper_trail
   SOURCES = { product_drive: "Product Drive",
               manufacturer: "Manufacturer",
               donation_site: "Donation Site",
@@ -101,26 +102,6 @@ class Donation < ApplicationRecord
                       .group(:source)
                       .group_by_day("donations.created_at")
                       .sum("line_items.quantity")
-  end
-
-  def replace_increase!(new_donation_params)
-    old_data = to_a
-    item_ids = line_items_attributes(new_donation_params).map { |i| i[:item_id].to_i }
-    original_storage_location = storage_location
-
-    ActiveRecord::Base.transaction do
-      line_items.map(&:destroy!)
-      reload
-      Item.reactivate(item_ids)
-      line_items_attributes(new_donation_params).map { |i| i.delete(:id) }
-      update! new_donation_params
-      # Roll back distribution output by increasing storage location
-      storage_location.increase_inventory(to_a)
-      # Apply the new changes to the storage location inventory
-      original_storage_location.decrease_inventory(old_data)
-    end
-  rescue ActiveRecord::RecordInvalid
-    false
   end
 
   def remove(item)

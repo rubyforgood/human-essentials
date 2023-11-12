@@ -164,7 +164,8 @@ RSpec.describe "Donations", type: :system, js: true do
           visit @url_prefix + "/donations/new"
         end
 
-        it "Allows donations to be created IN THE PAST" do
+        # using this to also test user ID for events - it needs to be an actual controller action
+        it "Allows donations to be created IN THE PAST", versioning: true do
           select Donation::SOURCES[:misc], from: "donation_source"
           select StorageLocation.first.name, from: "donation_storage_location_id"
           select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
@@ -175,6 +176,7 @@ RSpec.describe "Donations", type: :system, js: true do
             click_button "Save"
           end.to change { Donation.count }.by(1)
 
+          expect(DonationEvent.last.user).to eq(@user)
           expect(Donation.last.issued_at).to eq(Time.zone.parse("2001-01-01"))
         end
 
@@ -550,8 +552,31 @@ RSpec.describe "Donations", type: :system, js: true do
         visit @url_prefix + "/donations/"
       end
 
-      xit "Allows the user to edit a donation" do
-        pending("TODO - write this!")
+      it "Allows the user to edit a donation" do
+        total_quantity = find("#donation_quantity").text
+        expect(total_quantity).to eq "100 (Total)"
+        click_on "View"
+        expect(page).to have_content "Rare Candy"
+
+        click_on "Make a correction"
+
+        select Donation::SOURCES[:manufacturer], from: "donation_source"
+        select Manufacturer.first.name, from: "donation_manufacturer_id"
+        fill_in "donation_line_items_attributes_0_quantity", with: "200"
+        fill_in "donation_money_raised_in_dollars", with: "100.02"
+        fill_in "donation_comment", with: "edited"
+
+        click_on "Save"
+
+        total_quantity = find("#donation_quantity").text
+        expect(total_quantity).to eq "200 (Total)"
+
+        expect(Donation.count).to eq(1)
+        donation = Donation.last
+        expect(donation.comment).to eq "edited"
+        expect(donation.manufacturer).to eq Manufacturer.first
+        expect(donation.source).to eq Donation::SOURCES[:manufacturer]
+        expect(donation.money_raised).to eq(10002)
       end
 
       it "Does not default a selection if item lookup fails" do

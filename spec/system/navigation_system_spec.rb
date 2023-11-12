@@ -8,7 +8,7 @@ RSpec.describe "Navigation", type: :system, js: true do
     context "with organization user" do
       let(:user) { create(:organization_admin) }
       # 2389 Links was missing Forecasting, which is available to an organization admin
-      let(:links) { ["Dashboard", "Donations", "Purchases", "Requests", "Product Drives", "Distributions", "Pick Ups & Deliveries", "Partner Agencies", "Inventory", "Community", "Reporting & Auditing", "Forecasting", "My Organization"] }
+      let(:links) { ["Dashboard", "Donations", "Purchases", "Requests", "Product Drives", "Distributions", "Pick Ups & Deliveries", "Partner Agencies", "Inventory", "Community", "Reporting & Auditing", "Historical Trends", "My Organization"] }
 
       it "shows navigation options" do
         sidebar = page.find(".sidebar")
@@ -21,7 +21,7 @@ RSpec.describe "Navigation", type: :system, js: true do
         before { click_link("collapse") }
 
         it "hides text" do
-          page.all(".nav-sidebar > .nav-item > .nav-link").each do |link|
+          page.all(".nav-sidebar > .nav-item > .nav-link").each do |link| # rubocop:disable Rails/FindEach
             label = link.find("p", visible: :all)
             expect(label).to match_style(width: "0px")
             expect(links).to include(label.text(:all))
@@ -52,7 +52,7 @@ RSpec.describe "Navigation", type: :system, js: true do
         before { click_link("collapse") }
 
         it "hides text" do
-          page.all(".nav-sidebar > .nav-item > .nav-link").each do |link|
+          page.all(".nav-sidebar > .nav-item > .nav-link").each do |link| # rubocop:disable Rails/FindEach
             label = link.find("p", visible: :all)
             expect(label).to match_style(width: "0px")
             expect(links).to include(label.text(:all))

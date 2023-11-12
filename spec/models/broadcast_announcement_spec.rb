@@ -61,5 +61,19 @@ RSpec.describe BroadcastAnnouncement, type: :model do
       BroadcastAnnouncement.create!(message: "test", user_id: 1, expiry: Time.zone.today, organization_id: 1)
       expect(BroadcastAnnouncement.filter_announcements(1).count).to eq(2)
     end
+
+    it "sorts announcements from most recently created to last" do
+      announcement_1 = BroadcastAnnouncement.create!(message: "test", user_id: 1, organization_id: 1, created_at: Time.zone.today)
+      announcement_2 = BroadcastAnnouncement.create!(message: "test", user_id: 1, organization_id: 1, created_at: 2.days.ago)
+      announcement_3 = BroadcastAnnouncement.create!(message: "test", user_id: 1, organization_id: 1, expiry: 1.day.ago, created_at: 3.days.ago)
+      announcement_4 = BroadcastAnnouncement.create!(message: "test", user_id: 1, organization_id: 1, created_at: 4.days.ago)
+
+      expect(BroadcastAnnouncement.filter_announcements(1)).to eq([announcement_1, announcement_2, announcement_4])
+      expect(BroadcastAnnouncement.filter_announcements(1).include?(announcement_3)).to be(false)
+    end
+  end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
   end
 end
