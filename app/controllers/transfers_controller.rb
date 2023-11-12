@@ -22,17 +22,8 @@ class TransfersController < ApplicationController
   def create
     @transfer = current_organization.transfers.new(transfer_params)
 
-    if @transfer.valid?
-      ActiveRecord::Base.transaction do
-        @transfer.save
-        @transfer.from.decrease_inventory @transfer
-        @transfer.to.increase_inventory @transfer
-      end
-
-      redirect_to transfers_path, notice: "#{@transfer.line_items.total} items have been transferred from #{@transfer.from.name} to #{@transfer.to.name}!"
-    else
-      raise StandardError.new(@transfer.errors.full_messages.join("</br>"))
-    end
+    TransferCreateService.call(@transfer)
+    redirect_to transfers_path, notice: "#{@transfer.line_items.total} items have been transferred from #{@transfer.from.name} to #{@transfer.to.name}!"
   rescue StandardError => e
     flash[:error] = e.message
     load_form_collections

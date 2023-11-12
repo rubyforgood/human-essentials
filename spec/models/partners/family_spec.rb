@@ -3,6 +3,7 @@
 # Table name: families
 #
 #  id                        :bigint           not null, primary key
+#  archived                  :boolean          default(FALSE)
 #  case_manager              :string
 #  comments                  :text
 #  guardian_county           :string
@@ -68,6 +69,25 @@ RSpec.describe Partners::Family, type: :model do
 
     it "should return the family's total children count" do
       expect(subject.total_children_count).to eq(subject.home_child_count + subject.home_young_child_count)
+    end
+  end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
+  end
+
+  describe "#search_non_archived" do
+    let!(:partners_family_1) { FactoryBot.create(:partners_family) }
+    let!(:partners_family_2) { FactoryBot.create(:partners_family) }
+    let!(:partners_family_3) { FactoryBot.create(:partners_family, archived: true) }
+    let!(:partners_family_4) { FactoryBot.create(:partners_family, archived: true) }
+
+    it "should return all families if one is passed in" do
+      expect(Partners::Family.include_archived(1)).to contain_exactly(partners_family_1, partners_family_2, partners_family_3, partners_family_4)
+    end
+
+    it "should return non-archived families if zero is passed in" do
+      expect(Partners::Family.include_archived(0)).to contain_exactly(partners_family_1, partners_family_2)
     end
   end
 end

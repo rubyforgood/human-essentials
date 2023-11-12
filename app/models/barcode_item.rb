@@ -13,6 +13,7 @@
 #
 
 class BarcodeItem < ApplicationRecord
+  has_paper_trail
   belongs_to :organization, optional: true
   belongs_to :barcodeable, polymorphic: true, dependent: :destroy, counter_cache: :barcode_count
 

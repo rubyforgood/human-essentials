@@ -94,7 +94,7 @@ $(document).ready(function() {
     $("#barcode_item_value").val(value);
     // Saving this to the modal so the modal knows which field to trigger when it's done.
     $("#trigger-field-id").val($(src).attr('id'));
-    $("#newBarcode").modal();
+    new bootstrap.Modal('#newBarcode').show()
     $("#barcode_item_quantity").focus();
   }
 });
