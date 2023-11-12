@@ -115,6 +115,8 @@
           </div>
         <% end %>
 
+        <%= render partial: "low_inventory_report" %>
+
         <%=
           outstanding_type = @outstanding_requests.empty? ? :box : :table
           outstanding_footer =
