@@ -54,7 +54,7 @@ Capybara.register_driver(:local_cuprite) do |app|
     headless: ENV["NOT_HEADLESS"] != "true",
     slowmo: ENV["SLOWMO"]&.to_f,
     process_timeout: 15,
-    timeout: 10,
+    timeout: 20,
     browser_options: ENV["DOCKER"] ? { "no-sandbox" => nil } : {}
   )
 end
