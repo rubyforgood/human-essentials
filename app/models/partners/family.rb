@@ -3,6 +3,7 @@
 # Table name: families
 #
 #  id                        :bigint           not null, primary key
+#  archived                  :boolean          default(FALSE)
 #  case_manager              :string
 #  comments                  :text
 #  guardian_county           :string
@@ -26,6 +27,7 @@
 #
 module Partners
   class Family < Base
+    has_paper_trail
     belongs_to :partner, class_name: '::Partner'
     has_many :children, dependent: :destroy
     has_many :authorized_family_members, dependent: :destroy
@@ -38,12 +40,17 @@ module Partners
     filterrific(
       available_filters: [
         :search_guardian_names,
-        :search_agency_guardians
+        :search_agency_guardians,
+        :include_archived
       ],
     )
 
     scope :search_guardian_names, ->(query) { where('guardian_first_name ilike ? OR guardian_last_name ilike ?', "%#{query}%", "%#{query}%") }
     scope :search_agency_guardians, ->(query) { where('case_manager ilike ?', "%#{query}%") }
+    scope :include_archived, ->(archived) {
+      return where(archived: false) if archived == 0
+      all
+    }
 
     INCOME_TYPES = ['SSI', 'SNAP/FOOD Stamps', 'TANF', 'WIC', 'Housing/subsidized', 'Housing/unsubsidized', 'N/A'].freeze
     INSURANCE_TYPES = ['Private insurance', 'Medicaid', 'Uninsured'].freeze
@@ -71,7 +78,7 @@ module Partners
         id guardian_first_name guardian_last_name guardian_zip_code guardian_county
         guardian_phone case_manager home_adult_count home_child_count home_young_child_count
         sources_of_income guardian_employed guardian_employment_type guardian_monthly_pay
-        guardian_health_insurance comments created_at updated_at partner_id military
+        guardian_health_insurance comments created_at updated_at partner_id military archived
       ].freeze
     end
 
@@ -96,7 +103,8 @@ module Partners
         created_at,
         updated_at,
         partner_id,
-        military
+        military,
+        archived
       ]
     end
   end

@@ -102,6 +102,7 @@ RSpec.describe "Adjustments", type: :request do
           expect do
             post adjustments_path(default_params.merge(adjustment: valid_attributes))
           end.to change(Adjustment, :count).by(1)
+            .and change(AdjustmentEvent, :count).by(1)
         end
 
         it "assigns a newly created adjustment as @adjustment" do

@@ -22,6 +22,7 @@ class AccountRequestsController < ApplicationController
 
   def create
     @account_request = AccountRequest.new(account_request_params)
+    @bank_selected = true
 
     if !verify_recaptcha(model: @account_request)
       flash[:alert] = "Invalid captcha submission"

@@ -49,13 +49,22 @@ RSpec.describe ProductDrive, type: :model do
   end
 
   describe "associations" do
-    let!(:donation) { create(:donation) }
+    let!(:product_drive_participant) { create(:product_drive_participant) }
+    let!(:donation) { create(:product_drive_donation, product_drive_participant: product_drive_participant) }
+    let!(:product_drive2) { create(:product_drive) }
+    let!(:donation2) { create(:donation, :with_items, item_quantity: 7, product_drive: product_drive2, product_drive_participant: product_drive_participant) }
+
     subject { create(:product_drive) }
 
     it "has_many donations" do
       subject.donations << donation
 
       expect(subject.donations).to include(donation)
+    end
+    it "has_many product_drive_participants through donations" do
+      subject.donations << donation
+      is_expected.to have_many(:product_drive_participants).through(:donations)
+      expect(subject.product_drive_participants).to include(donation.product_drive_participant)
     end
   end
 
@@ -172,5 +181,9 @@ RSpec.describe ProductDrive, type: :model do
     it "returns formatted text" do
       expect(product_drive.donation_source_view).to eq("Test Drive (product drive)")
     end
+  end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
   end
 end

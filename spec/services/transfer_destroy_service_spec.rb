@@ -7,8 +7,8 @@ RSpec.describe TransferDestroyService, type: :service do
     # Create a double StorageLocation that behaves like how we want to use
     # it within the service object. The benefit is that we aren't testing
     # ActiveRecord and the database.
-    let(:fake_from) { instance_double(StorageLocation, increase_inventory: -> {}) }
-    let(:fake_to) { instance_double(StorageLocation, decrease_inventory: -> {}) }
+    let(:fake_from) { instance_double(StorageLocation, increase_inventory: -> {}, id: 1) }
+    let(:fake_to) { instance_double(StorageLocation, decrease_inventory: -> {}, id: 1) }
 
     before do
       # Stub the outputs of these method calls to avoid testing
@@ -28,7 +28,8 @@ RSpec.describe TransferDestroyService, type: :service do
     end
 
     context 'when there are no issues' do
-      it 'should return an OpenStruct with succes? set to true' do
+      it 'should return an OpenStruct with success? set to true' do
+        expect { subject }.to change { TransferDestroyEvent.count }.by(1)
         expect(subject).to be_a_kind_of(OpenStruct)
         expect(subject.success?).to eq(true)
       end

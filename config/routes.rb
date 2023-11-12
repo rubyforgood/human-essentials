@@ -105,6 +105,7 @@ Rails.application.routes.draw do
         post :recalculate, on: :member
       end
       resources :donations_summary, only: [:index]
+      resources :manufacturer_donations_summary, only: [:index]
       resources :itemized_donations, only: [:index]
       resources :itemized_distributions, only: [:index]
       resources :activity_graph, only: [:index]
