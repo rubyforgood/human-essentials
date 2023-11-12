@@ -108,6 +108,7 @@ Rails.application.routes.draw do
       resources :manufacturer_donations_summary, only: [:index]
       resources :itemized_donations, only: [:index]
       resources :itemized_distributions, only: [:index]
+      resources :activity_graph, only: [:index]
     end
 
     resources :transfers, only: %i(index create new show destroy)
