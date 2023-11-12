@@ -15,10 +15,8 @@ class OrganizationUpdateService
       if params.has_key?("partner_form_fields")
         params["partner_form_fields"].delete_if { |field| field == "" }
       end
-
       result = organization.update(params)
       return false unless result
-
       update_partner_flags(organization)
       true
     end
@@ -42,13 +40,23 @@ class OrganizationUpdateService
     private
 
     def valid?(organization, params)
-      return true if organization.partners.none?
       fields_marked_for_disabling = FIELDS.select { |field| params[field] == false }
       # Here we do a check: if applying the params for disabling request types to all
       # partners would mean any one partner would have all its request types disabled,
-      # then we should not apply the params. As per:
+      # then we should not apply the params and return an error message. As per:
       # github.com/rubyforgood/human-essentials/issues/3264
-      organization.partners.none? do |partner|
+      invalid_partner_names = find_invalid_partners(organization, fields_marked_for_disabling).map(&:name)
+      if invalid_partner_names.empty?
+        true
+      else
+        organization.errors.add(:base, "The following partners would be unable to make requests with this update: #{invalid_partner_names.join(", ")}")
+        false
+      end
+    end
+
+    def find_invalid_partners(organization, fields_marked_for_disabling)
+      # finds any partners who's request types will all be disabled
+      organization.partners.select do |partner|
         all_fields_will_be_disabled?(partner, fields_marked_for_disabling)
       end
     end

@@ -53,4 +53,8 @@ RSpec.describe Request, type: :model do
       expect(request.total_items).to eq(33)
     end
   end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
+  end
 end

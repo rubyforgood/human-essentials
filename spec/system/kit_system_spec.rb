@@ -96,7 +96,7 @@ RSpec.describe "Kit management", type: :system do
   context 'when there is not enough quantity of the items contained in the kit on-hand' do
     before do
       # Force there to be no loose items available
-      InventoryItem.all.each { |ii| ii.update(quantity: 0) }
+      InventoryItem.all.find_each { |ii| ii.update(quantity: 0) }
     end
 
     it 'will not change quantity amounts when allocating' do

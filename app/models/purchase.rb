@@ -19,6 +19,7 @@
 #
 
 class Purchase < ApplicationRecord
+  has_paper_trail
   include MoneyRails::ActionViewExtension
 
   belongs_to :organization
