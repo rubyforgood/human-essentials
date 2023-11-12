@@ -79,7 +79,7 @@
         <div class="card-header border-transparent">
           <h3 class="card-title"><strong>Recently Added Users</strong></h3>
           <div class="card-tools">
-            <span class="badge badge-danger"><%= pluralize(@recent_users.count, "New User") %></span>
+            <span class="badge badge-danger bg-danger"><%= pluralize(@recent_users.count, "New User") %></span>
             <button type="button" class="btn btn-tool" data-card-widget="collapse">
               <i class="fas fa-minus"></i>
             </button>
@@ -118,7 +118,7 @@
         <div class="card-header border-transparent">
           <h3 class="card-title"><strong>Recently Added Organizations</strong></h3>
           <div class="card-tools">
-            <span class="badge badge-danger"><%= pluralize(@recent_organizations.count, "New Organization") %></span>
+            <span class="badge badge-danger bg-danger"><%= pluralize(@recent_organizations.count, "New Organization") %></span>
             <button type="button" class="btn btn-tool" data-card-widget="collapse">
               <i class="fas fa-minus"></i>
             </button>

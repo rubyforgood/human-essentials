@@ -14,6 +14,7 @@ jobs:
       - name: Mark issues as stale
         uses: actions/stale@v8
         with:
+          include-only-assigned: true
           stale-issue-message: 'This issue is marked as stale due to no activity within 30 days. If no further activity is detected within 7 days, it will be unassigned.'
           days-before-stale: 30
           days-before-close: -1
