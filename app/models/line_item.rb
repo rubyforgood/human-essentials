@@ -12,6 +12,7 @@
 #
 
 class LineItem < ApplicationRecord
+  has_paper_trail
   include ItemQuantity
   MAX_INT = 2**31
   MIN_INT = -2**31

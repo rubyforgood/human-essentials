@@ -99,7 +99,7 @@ RSpec.describe Distribution, type: :model do
         create(:distribution, issued_at: Date.yesterday)
         # and one outside the range
         create(:distribution, issued_at: 1.year.ago)
-        expect(Distribution.during(Time.zone.now - 1.week..Time.zone.now).size).to eq(2)
+        expect(Distribution.during(Time.zone.now - 1.week..Time.zone.now + 2.days).size).to eq(2)
       end
     end
 
@@ -183,7 +183,7 @@ RSpec.describe Distribution, type: :model do
   end
 
   context "Callbacks >" do
-    it "initializes the issued_at field to default to created_at if it wasn't explicitly set" do
+    it "initializes the issued_at field to default to midnight if it wasn't explicitly set" do
       yesterday = 1.day.ago
       today = Time.zone.today
 
@@ -191,7 +191,7 @@ RSpec.describe Distribution, type: :model do
       expect(distribution.issued_at.to_date).to eq(today)
 
       distribution = create(:distribution, created_at: yesterday)
-      expect(distribution.issued_at).to eq(distribution.created_at)
+      expect(distribution.issued_at).to eq(distribution.created_at.end_of_day)
     end
 
     context "#before_save" do
@@ -323,5 +323,9 @@ RSpec.describe Distribution, type: :model do
         expect(distribution_details[7]).to eq distribution.agency_rep
       end
     end
+  end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
   end
 end

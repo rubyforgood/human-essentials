@@ -202,7 +202,6 @@ RSpec.describe "Distributions", type: :request do
         second_item = create(:item)
         first_distribution = create(:distribution)
         second_distribution = create(:distribution)
-
         create(:line_item, :distribution, item_id: first_item.id, itemizable_id: first_distribution.id, quantity: 7)
         create(:line_item, :distribution, item_id: first_item.id, itemizable_id: second_distribution.id, quantity: 4)
         create(:line_item, :distribution, item_id: second_item.id, itemizable_id: second_distribution.id, quantity: 5)

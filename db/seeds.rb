@@ -550,11 +550,14 @@ end
 20.times.each do
   storage_location = random_record_for_org(pdx_org, StorageLocation)
   stored_inventory_items_sample = storage_location.inventory_items.sample(20)
+  delivery_method = Distribution.delivery_methods.keys.sample
+  shipping_cost = delivery_method == "shipped" ? (rand(20.0..100.0)).round(2).to_s : nil
   distribution = Distribution.create!(storage_location: storage_location,
                                       partner: random_record_for_org(pdx_org, Partner),
                                       organization: pdx_org,
                                       issued_at: Faker::Date.between(from: 4.days.ago, to: Time.zone.today),
-                                      delivery_method: Distribution.delivery_methods.keys.sample,
+                                      delivery_method: delivery_method,
+                                      shipping_cost: shipping_cost,
                                       comment: 'Urgent')
 
   stored_inventory_items_sample.each do |stored_inventory_item|
@@ -564,6 +567,26 @@ end
   distribution.reload
   distribution.storage_location.decrease_inventory(distribution)
 end
+
+# ----------------------------------------------------------------------------
+# Broadcast Announcements
+# ----------------------------------------------------------------------------
+
+BroadcastAnnouncement.create(
+  user: User.find_by(email: 'superadmin@example.com'),
+  message: "This is the staging /demo server. There may be new features here! Stay tuned!",
+  link: "https://example.com",
+  expiry: Date.today + 7.days,
+  organization: nil
+)
+
+BroadcastAnnouncement.create(
+  user: User.find_by(email: 'org_admin1@example.com'),
+  message: "This is the staging /demo server. There may be new features here! Stay tuned!",
+  link: "https://example.com",
+  expiry: Date.today + 10.days,
+  organization: pdx_org
+)
 
 # ----------------------------------------------------------------------------
 # Vendors

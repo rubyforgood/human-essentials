@@ -203,6 +203,16 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
         get product_drive_path(default_params.merge(id: product_drive.id))
         expect(response).to be_successful
       end
+
+      it "shows appropriate number on the UI" do
+        product_drive = create(:product_drive, organization: organization)
+        participant = create(:product_drive_participant)
+        create(:donation, :with_items, item_quantity: 4862167, source: Donation::SOURCES[:product_drive], product_drive: product_drive, product_drive_participant: participant)
+
+        get product_drive_path(default_params.merge(id: product_drive.id))
+
+        expect(response.body).to include("4862167")
+      end
     end
 
     describe "DELETE #destroy" do

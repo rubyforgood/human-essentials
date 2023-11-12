@@ -8,6 +8,7 @@
 #  ndbn_member_id :bigint           not null, primary key
 #
 class NDBNMember < ApplicationRecord
+  has_paper_trail
   self.primary_key = "ndbn_member_id"
 
   validates :ndbn_member_id, presence: true

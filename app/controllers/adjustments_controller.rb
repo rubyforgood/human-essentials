@@ -39,15 +39,9 @@ class AdjustmentsController < ApplicationController
 
   # POST /adjustments
   def create
-    @adjustment = current_organization.adjustments.new(adjustment_params)
-    @adjustment.user_id = current_user.id
-
-    if @adjustment.valid? && @adjustment.save
-      increasing_adjustment, decreasing_adjustment = @adjustment.split_difference
-      ActiveRecord::Base.transaction do
-        @adjustment.storage_location.increase_inventory increasing_adjustment
-        @adjustment.storage_location.decrease_inventory decreasing_adjustment
-      end
+    result = AdjustmentCreateService.new(adjustment_params.merge(organization: current_organization, user: current_user)).call
+    @adjustment = result.adjustment
+    if @adjustment.errors.none?
       flash[:notice] = "Adjustment was successful."
       redirect_to adjustment_path(@adjustment)
     else
@@ -55,10 +49,6 @@ class AdjustmentsController < ApplicationController
       load_form_collections
       render :new
     end
-  rescue Errors::InsufficientAllotment => e
-    flash[:error] = e.message
-    load_form_collections
-    render :new
   end
 
   private

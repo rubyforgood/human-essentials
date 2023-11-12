@@ -17,6 +17,7 @@
 #
 
 class ProductDriveParticipant < ApplicationRecord
+  has_paper_trail
   include Provideable
   include Geocodable
 
@@ -29,6 +30,10 @@ class ProductDriveParticipant < ApplicationRecord
 
   def volume
     donations.map { |d| d.line_items.total }.reduce(:+)
+  end
+
+  def volume_by_product_drive(product_drive_id)
+    donations.by_product_drive(product_drive_id).map { |d| d.line_items.total }.sum
   end
 
   def donation_source_view
