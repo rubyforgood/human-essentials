@@ -27,7 +27,7 @@ class PartnerProfileUpdateService
       @profile.transaction do
         yield block
       end
-    @profile.reload
+      @profile.reload
     rescue ActiveRecord::RecordNotFound => e
       Rails.logger.error "[!] #{self.class.name} failed to update profile #{@profile.id} because it does not exist"
       set_error(e)
