@@ -33,6 +33,15 @@ RSpec.describe UserInviteService, type: :service, skip_seed: true do
       expect(user).to have_role(Role::ORG_ADMIN, organization)
       expect(user).not_to have_role(Role::PARTNER, :any)
     end
+
+    context "with an old email address" do
+      it "should not raise an error when reinviting an existing user with the same role and an old email address" do
+        expect {
+          expect { described_class.invite(email: "email@email.com", roles: [Role::PARTNER], resource: @organization) }
+            .to_not raise_error
+        }.to_not change { ActionMailer::Base.deliveries.count }
+      end
+    end
   end
 
   context "with a new user" do
