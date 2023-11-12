@@ -81,7 +81,7 @@ RSpec.describe "Approval process for partners", type: :system, js: true do
     end
 
     it "should render an error message", :aggregate_failures do
-      assert page.has_content? 'no_social_media_presence must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.'
+      assert page.has_content? 'No social media presence must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.'
     end
   end
 end

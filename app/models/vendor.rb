@@ -17,6 +17,7 @@
 #
 
 class Vendor < ApplicationRecord
+  has_paper_trail
   include Provideable
   include Geocodable
 

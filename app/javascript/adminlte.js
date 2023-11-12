@@ -822,7 +822,7 @@ import $ from 'jquery';
   var SELECTOR_NAVBAR = '.navbar';
   var SELECTOR_DROPDOWN_MENU = '.dropdown-menu';
   var SELECTOR_DROPDOWN_MENU_ACTIVE = '.dropdown-menu.show';
-  var SELECTOR_DROPDOWN_TOGGLE = '[data-toggle="dropdown"]';
+  var SELECTOR_DROPDOWN_TOGGLE = '[data-bs-toggle="dropdown"]';
   var CLASS_NAME_DROPDOWN_RIGHT = 'dropdown-menu-right';
   var CLASS_NAME_DROPDOWN_SUBMENU = 'dropdown-submenu'; // TODO: this is unused; should be removed along with the extend?
 
@@ -1282,7 +1282,7 @@ import $ from 'jquery';
         navId += "-" + Math.floor(Math.random() * 1000);
       }
 
-      var newNavItem = "<li class=\"nav-item\" role=\"presentation\"><a href=\"#\" class=\"btn-iframe-close\" data-widget=\"iframe-close\" data-type=\"only-this\"><i class=\"fas fa-times\"></i></a><a class=\"nav-link\" data-toggle=\"row\" id=\"" + navId + "\" href=\"#" + tabId + "\" role=\"tab\" aria-controls=\"" + tabId + "\" aria-selected=\"false\">" + title + "</a></li>";
+      var newNavItem = "<li class=\"nav-item\" role=\"presentation\"><a href=\"#\" class=\"btn-iframe-close\" data-widget=\"iframe-close\" data-type=\"only-this\"><i class=\"fas fa-times\"></i></a><a class=\"nav-link\" data-bs-toggle=\"row\" id=\"" + navId + "\" href=\"#" + tabId + "\" role=\"tab\" aria-controls=\"" + tabId + "\" aria-selected=\"false\">" + title + "</a></li>";
       $__default["default"](SELECTOR_TAB_NAVBAR_NAV).append(unescape(escape(newNavItem)));
       var newTabItem = "<div class=\"tab-pane fade\" id=\"" + tabId + "\" role=\"tabpanel\" aria-labelledby=\"" + navId + "\"><iframe src=\"" + link + "\"></iframe></div>";
       $__default["default"](SELECTOR_TAB_CONTENT).append(unescape(escape(newTabItem)));
@@ -2664,7 +2664,7 @@ import $ from 'jquery';
       }
 
       if (this._config.close == true) {
-        var toastClose = $__default["default"]('<button data-dismiss="toast" />').attr('type', 'button').addClass('ml-2 mb-1 close').attr('aria-label', 'Close').append('<span aria-hidden="true">&times;</span>');
+        var toastClose = $__default["default"]('<button data-bs-dismiss="toast" />').attr('type', 'button').addClass('ml-2 mb-1 close').attr('aria-label', 'Close').append('<span aria-hidden="true">&times;</span>');
 
         if (this._config.title == null) {
           toastClose.toggleClass('ml-2 ml-auto');
