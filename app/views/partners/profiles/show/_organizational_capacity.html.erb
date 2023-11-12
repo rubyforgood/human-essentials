@@ -6,7 +6,7 @@
       <dd><%= profile.client_capacity %></dd>
 
       <dt>Storage Space</dt>
-      <dd><%= humanize_boolean(profile.storage_space) %></dd>
+      <dd><%= humanize_boolean_3state(profile.storage_space) %></dd>
 
       <dt>Storage Space Description</dt>
       <dd><%= profile.describe_storage_space %></dd>
