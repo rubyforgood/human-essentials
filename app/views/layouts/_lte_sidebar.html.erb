@@ -170,8 +170,8 @@
       </li>
     </ul>
   </li>
-  <li class='nav-item has-treeview <%= menu_open?(['audits', 'reports/annual_reports', 'distributions_by_county', 'reports/itemized_donations', 'reports/itemized_distributions', 'reports/donations_summary', 'reports/activity_graph', 'purchases_summary', 'distributions_summary']) %>'>
-    <a href='#' class='nav-link <%= active_class(['audits', 'reports/annual_reports', 'distributions_by_county', 'reports/itemized_donations', 'reports/itemized_ditributions', 'reports/donations_summary', 'reports/activity_graph', 'purchases_summary', 'distributions_summary']) %>'>
+  <li class='nav-item has-treeview <%= menu_open?(['audits', 'reports/annual_reports', 'distributions_by_county', 'reports/itemized_donations', 'reports/itemized_distributions', 'reports/donations_summary', 'reports/activity_graph', 'reports/manufacturer_donations_summary', 'purchases_summary', 'distributions_summary']) %>'>
+    <a href='#' class='nav-link <%= active_class(['audits', 'reports/annual_reports', 'distributions_by_county', 'reports/itemized_donations', 'reports/itemized_distributions', 'reports/donations_summary', 'reports/activity_graph', 'reports/manufacturer_donations_summary', 'purchases_summary', 'distributions_summary']) %>'>
       <i class="nav-icon fa fa-tasks"></i>
       <p>Reporting & Auditing
         <i class="fas fa-angle-left right"></i>
@@ -215,18 +215,18 @@
           <i class="nav-icon fa fa-circle-o"></i> Activity Graph
         <% end %>
       </li>
-       <li class="nav-item <%= active_class(['reports']) %>">
-        <%= link_to(reports_manufacturer_donations_summary_index_path(organization_id: current_user.organization), class: "nav-link #{active_class(['reports/donations_summary'])}") do %>
+       <li class="nav-item <%= active_class(['reports/manufacturer_donations_summary']) %>">
+        <%= link_to(reports_manufacturer_donations_summary_index_path(organization_id: current_user.organization), class: "nav-link #{active_class(['reports/manufacturer_donations_summary'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Manufacturer Donations
         <% end %>
       </li>
       <li class="nav-item <%= active_class(['purchases_summary']) %>">
-        <%= link_to(purchases_summary_path(organization_id: current_user.organization), class: "nav-link #{"active" if current_page?(purchases_summary_path)}") do %>
+        <%= link_to(purchases_summary_path(organization_id: current_user.organization), class: "nav-link #{active_class(['purchases_summary'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Purchases Summary
         <% end %>
       </li>
       <li class="nav-item <%= active_class(['distributions_summary']) %>">
-        <%= link_to(distributions_summary_path(organization_id: current_user.organization), class: "nav-link #{"active" if current_page?(distributions_summary_path)}") do %>
+        <%= link_to(distributions_summary_path(organization_id: current_user.organization), class: "nav-link #{active_class(['distributions_summary'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Distributions Summary
         <% end %>
       </li>
