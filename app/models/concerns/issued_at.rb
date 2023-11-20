@@ -15,7 +15,7 @@ module IssuedAt
   private
 
   def initialize_issued_at
-    self.issued_at ||= created_at
+    self.issued_at ||= created_at&.end_of_day
   end
 
   def issued_at_cannot_be_before_2000

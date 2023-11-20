@@ -16,15 +16,15 @@
               <%= f.input :guardian_zip_code, label: "Guardian Zip Code", class: "form-control", wrapper: :input_group %>
 
               <%= f.label :guardian_county, "Guardian County" %>
-              <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
+              <%# <i class="fa fa-question-circle" style="color:blue" data-bs-toggle="tooltip" title="Hooray!"></i> %>
               <%= f.text_field :guardian_county, class: "form-control" %>
 
               <%= f.label :guardian_phone, "Guardian Phone" %>
-              <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
+              <%# <i class="fa fa-question-circle" style="color:blue" data-bs-toggle="tooltip" title="Hooray!"></i> %>
               <%= f.text_field :guardian_phone, class: "form-control" %>
 
               <%= f.label :case_manager, "Case Manager" %>
-              <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Person at the agency who is assigned to this family."></i>
+              <i class="fa fa-question-circle" style="color:blue" data-bs-toggle="tooltip" title="Person at the agency who is assigned to this family."></i>
               <%= f.text_field :case_manager, class: "form-control" %>
 
               <%= f.label :home_adult_count, "Number of Adults Living In The Home" %>
@@ -63,7 +63,7 @@
               <br>
 
               <%= f.label :guardian_monthly_pay, "Guardian's Monthly Income" %>
-              <%# <i class="fa fa-question-circle" style="color:blue" data-toggle="tooltip" title="Hooray!"></i> %>
+              <%# <i class="fa fa-question-circle" style="color:blue" data-bs-toggle="tooltip" title="Hooray!"></i> %>
               <%= f.text_field :guardian_monthly_pay, class: "form-control" %>
 
               <%= f.label :guardian_health_insurance, "Guardian's Health Insurance Status" %>
@@ -83,6 +83,8 @@
               <br>
               <%= f.label :comments %>
               <%= f.text_area :comments, class: "form-control" %>
+              <%= f.label :archived %>
+              <%= f.check_box :archived %>
               </div>
               <!-- /.card-body -->
               <div class="card-footer">

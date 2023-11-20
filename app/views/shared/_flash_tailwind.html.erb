@@ -3,14 +3,14 @@
 
     <% flash.each do |msg_type, msg| %>
 
-      <div x-data="{flashVisible: false, flashType: '<%= msg_type %>'}" x-show='flashVisible' x-init="() => {flashVisible=true; setTimeout(() => {flashVisible=false}, 5000)}" class="max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto"
+      <div x-data="{flashVisible: false, flashType: '<%= msg_type %>'}" x-show='flashVisible' x-init="() => {flashVisible=true; setTimeout(() => {flashVisible=false}, 5000)}" class="max-w-sm w-full bg-white shadow-lg rounded-3 pointer-events-auto"
            x-transition:enter="transition ease-out duration-300"
            x-transition:enter-start="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
            x-transition:enter-end="translate-y-0 opacity-100 sm:translate-x-0"
            x-transition:leave="transition ease-out duration-100"
            x-transition:leave-start="transform opacity-100"
            x-transition:leave-end="transform opacity-0">
-        <div class="rounded-lg shadow-xs overflow-hidden">
+        <div class="rounded-3 shadow-xs overflow-hidden">
           <div class="p-4">
             <div class="flex items-start">
               <div class="flex-shrink-0">

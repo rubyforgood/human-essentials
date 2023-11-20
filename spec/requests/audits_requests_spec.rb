@@ -126,6 +126,16 @@ RSpec.describe "Audits", type: :request do
       end
     end
 
+    describe 'POST #finalize' do
+      it 'sets the finalize status and saves an event' do
+        audit = create(:audit, organization: @organization)
+        expect(AuditEvent.count).to eq(0)
+        post audit_finalize_path(default_params.merge(audit_id: audit.to_param))
+        expect(audit.reload).to be_finalized
+        expect(AuditEvent.count).to eq(1)
+      end
+    end
+
     describe "DELETE #destroy" do
       context "with valid params" do
         it "destroys the audit if the audit's status is `in_progress`" do
