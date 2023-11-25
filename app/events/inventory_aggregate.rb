@@ -43,6 +43,17 @@ module InventoryAggregate
           validate: validate)
       end
     end
+
+    # @param payload [EventTypes::InventoryPayload]
+    # @param inventory [EventTypes::Inventory]
+    # @param validate [Boolean]
+    def handle_audit_event(payload, inventory)
+      payload.items.each do |line_item|
+        inventory.set_item_quantity(item_id: line_item.item_id,
+          quantity: line_item.quantity,
+          location: line_item.to_storage_location)
+      end
+    end
   end
 
   on DonationEvent, DistributionEvent, AdjustmentEvent, PurchaseEvent,
@@ -53,8 +64,7 @@ module InventoryAggregate
   end
 
   on AuditEvent do |event, inventory|
-    inventory.storage_locations[event.data.storage_location_id].reset!
-    handle_inventory_event(event.data, inventory, validate: false)
+    handle_audit_event(event.data, inventory)
   end
 
   on SnapshotEvent do |event, inventory|
