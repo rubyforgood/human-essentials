@@ -336,6 +336,7 @@ RSpec.describe InventoryAggregate do
             id: storage_location1.id,
             items: {
               item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 20),
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 10)
             }
           ),
