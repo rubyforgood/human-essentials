@@ -15,10 +15,10 @@ module InventoryAggregate
     def inventory_for(organization_id, first_event: nil, last_event: nil)
       events = Event.for_organization(organization_id)
       if first_event
-        events = events.where('id >= ?', first_event)
+        events = events.where("id >= ?", first_event)
       end
       if last_event
-        events = events.where('id <= ?', last_event)
+        events = events.where("id <= ?", last_event)
       end
       inventory = EventTypes::Inventory.from(organization_id)
       events.group_by { |e| [e.eventable_type, e.eventable_id] }.each do |_, event_batch|
