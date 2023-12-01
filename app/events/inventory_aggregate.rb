@@ -8,14 +8,22 @@ module InventoryAggregate
       end
     end
 
-    # @param organization_id
+    # @param organization_id [Integer]
+    # @param first_event [Integer]
+    # @param last_event [Integer]
     # @return [EventTypes::Inventory]
-    def inventory_for(organization_id)
+    def inventory_for(organization_id, first_event: nil, last_event: nil)
       events = Event.for_organization(organization_id)
+      if first_event
+        events = events.where('id >= ?', first_event)
+      end
+      if last_event
+        events = events.where('id <= ?', last_event)
+      end
       inventory = EventTypes::Inventory.from(organization_id)
       events.group_by { |e| [e.eventable_type, e.eventable_id] }.each do |_, event_batch|
-        last_event = event_batch.max_by(&:event_time)
-        handle(last_event, inventory)
+        last_grouped_event = event_batch.max_by(&:updated_at)
+        handle(last_grouped_event, inventory)
       end
       inventory
     end
