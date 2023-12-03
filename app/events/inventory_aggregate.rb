@@ -8,27 +8,37 @@ module InventoryAggregate
       end
     end
 
-    # @param organization_id
+    # @param organization_id [Integer]
+    # @param first_event [Integer]
+    # @param last_event [Integer]
+    # @param validate [Boolean]
     # @return [EventTypes::Inventory]
-    def inventory_for(organization_id)
+    def inventory_for(organization_id, first_event: nil, last_event: nil, validate: false)
       events = Event.for_organization(organization_id)
+      if first_event
+        events = events.where("id >= ?", first_event)
+      end
+      if last_event
+        events = events.where("id <= ?", last_event)
+      end
       inventory = EventTypes::Inventory.from(organization_id)
       events.group_by { |e| [e.eventable_type, e.eventable_id] }.each do |_, event_batch|
-        last_event = event_batch.max_by(&:event_time)
-        handle(last_event, inventory)
+        last_grouped_event = event_batch.max_by(&:updated_at)
+        handle(last_grouped_event, inventory, validate: validate)
       end
       inventory
     end
 
     # @param event [Event]
     # @param inventory [Inventory]
-    def handle(event, inventory)
+    # @param validate [Boolean]
+    def handle(event, inventory, validate: false)
       handler = @handlers[event.class]
       if handler.nil?
         Rails.logger.warn("No handler found for #{event.class}, skipping")
         return
       end
-      handler.call(event, inventory)
+      handler.call(event, inventory, validate: validate)
     end
 
     # @param payload [EventTypes::InventoryPayload]
@@ -43,21 +53,30 @@ module InventoryAggregate
           validate: validate)
       end
     end
+
+    # @param payload [EventTypes::InventoryPayload]
+    # @param inventory [EventTypes::Inventory]
+    def handle_audit_event(payload, inventory)
+      payload.items.each do |line_item|
+        inventory.set_item_quantity(item_id: line_item.item_id,
+          quantity: line_item.quantity,
+          location: line_item.to_storage_location)
+      end
+    end
   end
 
   on DonationEvent, DistributionEvent, AdjustmentEvent, PurchaseEvent,
     TransferEvent, DistributionDestroyEvent, DonationDestroyEvent,
     PurchaseDestroyEvent, TransferDestroyEvent,
-    KitAllocateEvent, KitDeallocateEvent do |event, inventory|
-    handle_inventory_event(event.data, inventory, validate: false)
+    KitAllocateEvent, KitDeallocateEvent do |event, inventory, validate: false|
+    handle_inventory_event(event.data, inventory, validate: validate)
   end
 
-  on AuditEvent do |event, inventory|
-    inventory.storage_locations[event.data.storage_location_id].reset!
-    handle_inventory_event(event.data, inventory, validate: false)
+  on AuditEvent do |event, inventory, validate: false|
+    handle_audit_event(event.data, inventory)
   end
 
-  on SnapshotEvent do |event, inventory|
+  on SnapshotEvent do |event, inventory, validate: false|
     inventory.storage_locations.clear
     inventory.storage_locations.merge!(event.data.storage_locations)
   end
