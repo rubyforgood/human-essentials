@@ -76,6 +76,7 @@ Capybara.asset_host = "http://localhost:3000"
 
 # Only keep the most recent run
 Capybara::Screenshot.prune_strategy = :keep_last_run
+Capybara.save_path = Rails.root.join("tmp", "screenshots")
 
 RSpec.configure do |config|
   config.include Devise::Test::ControllerHelpers, type: :controller
