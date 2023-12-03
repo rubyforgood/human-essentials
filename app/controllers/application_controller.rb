@@ -75,7 +75,7 @@ class ApplicationController < ActionController::Base
     elsif current_user.organization
       dashboard_path(current_user.organization)
     else
-      root_path
+      "/403"
     end
   end
 
