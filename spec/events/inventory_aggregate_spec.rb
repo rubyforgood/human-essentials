@@ -521,7 +521,7 @@ RSpec.describe InventoryAggregate do
       donation.line_items[0].quantity = 20
       DonationEvent.publish(donation)
 
-      inventory = described_class.inventory_for(organization.id)
+      inventory = described_class.inventory_for(organization.id, validate: true)
       expect(inventory).to eq(EventTypes::Inventory.new(
         organization_id: organization.id,
         storage_locations: {
