@@ -561,7 +561,7 @@ GEM
       sprockets (> 3.0)
       sprockets-rails
       tilt
-    selenium-webdriver (4.15.0)
+    selenium-webdriver (4.16.0)
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
@@ -728,7 +728,7 @@ DEPENDENCIES
   rubocop-rails (~> 2.22.2)
   rufus-scheduler
   sass-rails
-  selenium-webdriver (~> 4.10)
+  selenium-webdriver (~> 4.16)
   shoulda-matchers (~> 5.3)
   simple_form
   simplecov
