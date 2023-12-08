@@ -42,6 +42,13 @@ class ApplicationController < ActionController::Base
     @role
   end
 
+  # gets organization associated with user either directly or through partner association. fixes issue in shared sidebar menu view
+  def get_users_organization
+    org = current_user.organization.present? ? current_user.organization : current_user.partner.organization
+    return org
+  end
+  helper_method :get_users_organization
+
   def organization_url_options(options = {})
     options.merge(organization_id: current_organization.to_param)
   end

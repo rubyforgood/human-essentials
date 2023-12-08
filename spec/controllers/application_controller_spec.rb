@@ -93,5 +93,33 @@ describe ApplicationController do
         expect(controller.dashboard_path_from_current_role).to eq "/#{org_name}/dashboard"
       end
     end
+
+    describe "get_users_organization" do
+      before(:each) do
+        allow(controller).to receive(:current_user).and_return(user)
+        allow(controller).to receive(:current_role).and_return(user.roles.first)
+      end
+      context 'gets organization from user with org role' do
+        let(:org) { create(:organization) }
+        let(:user) { create(:user, organization: org) }
+        before(:each) do
+          user.add_role(Role::ORG_USER, org)
+        end
+        it "should return an organization for a user with an org role" do
+          expect(controller.get_users_organization).to eq(org)
+        end
+      end
+      context 'gets organization from user with only partner role' do
+        let(:partner) { create(:partner) }
+        let(:user) { create(:partners_user, partner: partner) }
+        before(:each) do
+          user.add_role(Role::PARTNER, partner)
+        end
+        it "should return an organization from a user with a partner role" do
+          org = user.partner.organization
+          expect(controller.get_users_organization).to eq(org)
+        end
+      end
+    end
   end
 end
