@@ -6,7 +6,7 @@ class AuditEvent < Event
     create(
       eventable: audit,
       organization_id: audit.organization_id,
-      event_time: Time.zone.now,
+      event_time: audit.updated_at,
       data: EventTypes::AuditPayload.new(
         storage_location_id: audit.storage_location_id,
         items: EventTypes::EventLineItem.from_line_items(audit.line_items, to: audit.storage_location_id)
