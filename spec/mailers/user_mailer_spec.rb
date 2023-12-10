@@ -24,7 +24,6 @@ RSpec.describe User, type: :mailer do
       it "sends an email with instructions" do
         expect(mail.body.encoded).to include("For security reasons these invitations expire. This invitation will expire in 8 hours or if a new password reset is triggered.")
       end
-
     end
-  end  
+  end
 end
