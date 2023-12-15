@@ -63,7 +63,7 @@ Thanks for checking us out! If you're new here, here are some things you should 
 - This project relies entirely on volunteers, so please be patient with communication
 
 ### Join us on slack 💬
-You can sign up [here](https://rubyforgood.slack.com/join/shared_invite/zt-1kfeimohe-KL~~~6Lkof7G94_7Ojd_Hw#/shared-invite/email) and find us in #human-essentials. Many helpful members are available to answer your questions. Just ask, and someone will be there to help you!
+You can sign up [here](https://join.slack.com/t/rubyforgood/shared_invite/zt-21pyz2ab8-H6JgQfGGI0Ab6MfNOZRIQA) and find us in #human-essentials. Many helpful members are available to answer your questions. Just ask, and someone will be there to help you!
 
 ##  Getting Started 🛠️
 
