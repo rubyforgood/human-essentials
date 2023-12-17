@@ -9,17 +9,13 @@ module InventoryAggregate
     end
 
     # @param organization_id [Integer]
-    # @param first_event [Integer]
-    # @param last_event [Integer]
+    # @param event_time [DateTime]
     # @param validate [Boolean]
     # @return [EventTypes::Inventory]
-    def inventory_for(organization_id, first_event: nil, last_event: nil, validate: false)
+    def inventory_for(organization_id, event_time: nil, validate: false)
       events = Event.for_organization(organization_id)
-      if first_event
-        events = events.where("id >= ?", first_event)
-      end
-      if last_event
-        events = events.where("id <= ?", last_event)
+      if event_time
+        events = events.where("event_time <= ?", event_time)
       end
       inventory = EventTypes::Inventory.from(organization_id)
       events.group_by { |e| [e.eventable_type, e.eventable_id] }.each do |_, event_batch|
