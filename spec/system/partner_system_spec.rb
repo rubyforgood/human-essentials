@@ -231,7 +231,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           sign_in(partner.users.first)
         end
         it "redirects user to partners page root page (dashboard) with error message" do
-          visit url_prefix+"/partners/#{partner.id}"
+          visit url_prefix + "/partners/#{partner.id}"
           expect(page).to have_content("Dashboard - #{partner.name}")
           expect(page.find(".alert-danger")).to have_content("You must be logged in as the essentials bank's organization administrator to approve partner applications.")
         end

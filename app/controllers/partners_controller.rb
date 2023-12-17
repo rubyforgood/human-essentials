@@ -166,7 +166,7 @@ class PartnersController < ApplicationController
   private
 
   def validate_user_role
-    if current_user.kind == 'partner'
+    if current_role.name == "partner"
       redirect_to partner_user_root_path,
         error: "You must be logged in as the essentials bank's organization administrator to approve partner applications."
     end
