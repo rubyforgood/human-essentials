@@ -49,10 +49,10 @@ RSpec.describe AdjustmentCreateService, type: :service do
       expect(event.data).to eq(EventTypes::InventoryPayload.new(
         items: [
           EventTypes::EventLineItem.new(
-            quantity: -5,
+            quantity: 5,
             item_id: item_1.id,
-            from_storage_location: nil,
-            to_storage_location: storage_location.id,
+            from_storage_location: storage_location.id,
+            to_storage_location: nil,
             item_value_in_cents: 0
           )
         ]

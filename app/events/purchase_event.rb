@@ -4,7 +4,7 @@ class PurchaseEvent < Event
     create(
       eventable: purchase,
       organization_id: purchase.organization_id,
-      event_time: Time.zone.now,
+      event_time: purchase.created_at,
       data: EventTypes::InventoryPayload.new(
         items: EventTypes::EventLineItem.from_line_items(purchase.line_items, to: purchase.storage_location_id)
       )

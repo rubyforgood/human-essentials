@@ -16,13 +16,23 @@ module EventTypes
     # @param to [Integer]
     # @return [EventLineItem]
     def self.from_line_item(line_item, from: nil, to: nil)
-      new(
-        quantity: line_item.quantity,
-        item_id: line_item.item_id,
-        item_value_in_cents: line_item.item.value_in_cents,
-        from_storage_location: from,
-        to_storage_location: to
-      )
+      if line_item.quantity.negative?
+        new(
+          quantity: -line_item.quantity,
+          item_id: line_item.item_id,
+          item_value_in_cents: line_item.item.value_in_cents,
+          from_storage_location: to,
+          to_storage_location: from
+        )
+      else
+        new(
+          quantity: line_item.quantity,
+          item_id: line_item.item_id,
+          item_value_in_cents: line_item.item.value_in_cents,
+          from_storage_location: from,
+          to_storage_location: to
+        )
+      end
     end
 
     # @param line_item [Array<LineItem>]
