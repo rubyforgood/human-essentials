@@ -108,6 +108,44 @@ RSpec.describe InventoryAggregate do
       ))
     end
 
+    it "should process a donation event after a new storage location is created" do
+      new_loc = FactoryBot.create(:storage_location, organization: organization)
+      donation = FactoryBot.create(:donation, organization: organization, storage_location: new_loc)
+      donation.line_items << build(:line_item, quantity: 20, item: item1)
+      donation.line_items << build(:line_item, quantity: 5, item: item2)
+      DonationEvent.publish(donation)
+
+      # 30 - 20 = 10, 10 - 5 = 5
+      described_class.handle(DonationEvent.last, inventory)
+      expect(inventory).to eq(EventTypes::Inventory.new(
+        organization_id: organization.id,
+        storage_locations: {
+          storage_location1.id => EventTypes::EventStorageLocation.new(
+            id: storage_location1.id,
+            items: {
+              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 30),
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10),
+              item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40)
+            }
+          ),
+          storage_location2.id => EventTypes::EventStorageLocation.new(
+            id: storage_location2.id,
+            items: {
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10),
+              item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 50)
+            }
+          ),
+          new_loc.id => EventTypes::EventStorageLocation.new(
+            id: new_loc.id,
+            items: {
+              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 20),
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 5)
+            }
+          )
+        }
+      ))
+    end
+
     it "should process a donation destroyed event" do
       donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
       donation.line_items << build(:line_item, quantity: 20, item: item1)
