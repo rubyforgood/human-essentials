@@ -38,6 +38,7 @@ module EventTypes
         storage_locations[from_location].reduce_inventory(item_id, quantity, validate: validate)
       end
       if to_location
+        storage_locations[to_location] ||= EventTypes::EventStorageLocation.new(id: to_location, items: {})
         storage_locations[to_location].add_inventory(item_id, quantity)
       end
     end
