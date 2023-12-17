@@ -10,4 +10,20 @@ RSpec.describe User, type: :mailer do
       expect(mail.subject).to eq("Role Added")
     end
   end
+
+  describe "#send_reset_password_instructions" do
+    context "user gets an email with instructions" do
+      let(:user) { create(:user) }
+
+      before(:each) do
+        user.send_reset_password_instructions
+      end
+
+      let(:mail) { ActionMailer::Base.deliveries.last }
+
+      it "sends an email with instructions" do
+        expect(mail.body.encoded).to include("For security reasons these invitations expire. This invitation will expire in 8 hours or if a new password reset is triggered.")
+      end
+    end
+  end
 end
