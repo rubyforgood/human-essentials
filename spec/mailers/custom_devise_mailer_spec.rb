@@ -38,6 +38,10 @@ RSpec.describe CustomDeviseMailer, type: :mailer do
         expect(mail.subject).to eq("Your Human Essentials App Account Approval")
         expect(mail.html_part.body).to include("Your request has been approved and you're invited to become an user of the Human Essentials inventory management system!")
       end
+
+      it "has invite expiration message" do
+        expect(mail.html_part.body).to include("For security reasons these invitations expire. This invitation will expire in 8 hours or if a new password reset is triggered.")
+      end
     end
   end
 end

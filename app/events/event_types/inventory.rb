@@ -16,6 +16,19 @@ module EventTypes
         storage_locations: org.storage_locations.map { |s| [s.id, EventTypes::EventStorageLocation.from(s)] }.to_h)
     end
 
+    # @param item_id [Integer]
+    # @param quantity [Integer]
+    # @param location [Integer]
+    def set_item_quantity(item_id:, quantity:, location:)
+      storage_locations[location] ||= EventTypes::EventStorageLocation.new(id: location, items: {})
+      storage_locations[location].set_inventory(item_id, quantity)
+    end
+
+    # @param item_id [Integer]
+    # @param quantity [Integer]
+    # @param from_location [Integer]
+    # @param to_location [Integer]
+    # @param validate [Boolean]
     def move_item(item_id:, quantity:, from_location: nil, to_location: nil, validate: true)
       if from_location
         if storage_locations[from_location].nil? && validate
@@ -25,6 +38,7 @@ module EventTypes
         storage_locations[from_location].reduce_inventory(item_id, quantity, validate: validate)
       end
       if to_location
+        storage_locations[to_location] ||= EventTypes::EventStorageLocation.new(id: to_location, items: {})
         storage_locations[to_location].add_inventory(item_id, quantity)
       end
     end

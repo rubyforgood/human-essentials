@@ -24,6 +24,7 @@
     { "key": "pullup_23t", "name": "Kids Pull-Ups (2T-3T)", "qty": { "arbor": 0, "pdxdb": 1532 } },
     { "key": "pullup_34t", "name": "Kids Pull-Ups (3T-4T)", "qty": { "arbor": 0, "pdxdb": 787 } },
     { "key": "pullup_45t", "name": "Kids Pull-Ups (4T-5T)", "qty": { "arbor": 0, "pdxdb": 124 } },
+    { "key": "pullup_56t", "name": "Kids Pull-Ups (5T-6T)", "qty": { "arbor": 0, "pdxdb": 258 } },
     { "key": "k_sm", "name": "Kids S/M (38-65 lbs)", "qty": { "arbor": 0, "pdxdb": 264 } },
     { "key": "swimmers", "name": "Swimmers", "qty": { "arbor": 0, "pdxdb": 459 } }
   ],

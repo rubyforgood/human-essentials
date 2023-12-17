@@ -108,6 +108,44 @@ RSpec.describe InventoryAggregate do
       ))
     end
 
+    it "should process a donation event after a new storage location is created" do
+      new_loc = FactoryBot.create(:storage_location, organization: organization)
+      donation = FactoryBot.create(:donation, organization: organization, storage_location: new_loc)
+      donation.line_items << build(:line_item, quantity: 20, item: item1)
+      donation.line_items << build(:line_item, quantity: 5, item: item2)
+      DonationEvent.publish(donation)
+
+      # 30 - 20 = 10, 10 - 5 = 5
+      described_class.handle(DonationEvent.last, inventory)
+      expect(inventory).to eq(EventTypes::Inventory.new(
+        organization_id: organization.id,
+        storage_locations: {
+          storage_location1.id => EventTypes::EventStorageLocation.new(
+            id: storage_location1.id,
+            items: {
+              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 30),
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10),
+              item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40)
+            }
+          ),
+          storage_location2.id => EventTypes::EventStorageLocation.new(
+            id: storage_location2.id,
+            items: {
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10),
+              item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 50)
+            }
+          ),
+          new_loc.id => EventTypes::EventStorageLocation.new(
+            id: new_loc.id,
+            items: {
+              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 20),
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 5)
+            }
+          )
+        }
+      ))
+    end
+
     it "should process a donation destroyed event" do
       donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
       donation.line_items << build(:line_item, quantity: 20, item: item1)
@@ -336,6 +374,7 @@ RSpec.describe InventoryAggregate do
             id: storage_location1.id,
             items: {
               item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 20),
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 10)
             }
           ),
@@ -446,50 +485,92 @@ RSpec.describe InventoryAggregate do
     end
   end
 
-  it "should process multiple events" do
-    donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
-    donation.line_items << build(:line_item, quantity: 50, item: item1)
-    donation.line_items << build(:line_item, quantity: 30, item: item2)
-    DonationEvent.publish(donation)
+  describe "multiple events" do
+    it "should process multiple events" do
+      donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
+      donation.line_items << build(:line_item, quantity: 50, item: item1)
+      donation.line_items << build(:line_item, quantity: 30, item: item2)
+      DonationEvent.publish(donation)
 
-    donation2 = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
-    donation2.line_items << build(:line_item, quantity: 30, item: item1)
-    DonationEvent.publish(donation2)
+      donation2 = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
+      donation2.line_items << build(:line_item, quantity: 30, item: item1)
+      DonationEvent.publish(donation2)
 
-    donation3 = FactoryBot.create(:donation, organization: organization, storage_location: storage_location2)
-    donation3.line_items << build(:line_item, quantity: 50, item: item2)
-    DonationEvent.publish(donation3)
+      donation3 = FactoryBot.create(:donation, organization: organization, storage_location: storage_location2)
+      donation3.line_items << build(:line_item, quantity: 50, item: item2)
+      DonationEvent.publish(donation3)
 
-    # correction event
-    donation3.line_items = [build(:line_item, quantity: 40, item: item2)]
-    DonationEvent.publish(donation3)
+      # correction event
+      donation3.line_items = [build(:line_item, quantity: 40, item: item2)]
+      DonationEvent.publish(donation3)
 
-    dist = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location1)
-    dist.line_items << build(:line_item, quantity: 10, item: item1)
-    DistributionEvent.publish(dist)
+      dist = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location1)
+      dist.line_items << build(:line_item, quantity: 10, item: item1)
+      DistributionEvent.publish(dist)
 
-    dist2 = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location2)
-    dist2.line_items << build(:line_item, quantity: 15, item: item2)
-    DistributionEvent.publish(dist2)
+      dist2 = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location2)
+      dist2.line_items << build(:line_item, quantity: 15, item: item2)
+      DistributionEvent.publish(dist2)
 
-    inventory = described_class.inventory_for(organization.id)
-    expect(inventory).to eq(EventTypes::Inventory.new(
-      organization_id: organization.id,
-      storage_locations: {
-        storage_location1.id => EventTypes::EventStorageLocation.new(
-          id: storage_location1.id,
-          items: {
-            item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 70),
-            item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 30)
-          }
-        ),
-        storage_location2.id => EventTypes::EventStorageLocation.new(
-          id: storage_location2.id,
-          items: {
-            item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 25)
-          }
-        )
-      }
-    ))
+      inventory = described_class.inventory_for(organization.id)
+      expect(inventory).to eq(EventTypes::Inventory.new(
+        organization_id: organization.id,
+        storage_locations: {
+          storage_location1.id => EventTypes::EventStorageLocation.new(
+            id: storage_location1.id,
+            items: {
+              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 70),
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 30)
+            }
+          ),
+          storage_location2.id => EventTypes::EventStorageLocation.new(
+            id: storage_location2.id,
+            items: {
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 25)
+            }
+          )
+        }
+      ))
+    end
+
+    it "should validate incorrect events" do
+      donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
+      donation.line_items << build(:line_item, quantity: 10, item: item1)
+      DonationEvent.publish(donation)
+
+      dist = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location1)
+      dist.line_items << build(:line_item, quantity: 20, item: item1)
+      DistributionEvent.publish(dist)
+
+      expect { described_class.inventory_for(organization.id, validate: true) }
+        .to raise_error("Could not reduce quantity by 20 for item #{item1.id} in storage location #{storage_location1.id} - current quantity is 10")
+    end
+
+    it "should handle timing correctly" do
+      donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
+      donation.line_items << build(:line_item, quantity: 30, item: item1)
+      DonationEvent.publish(donation)
+
+      dist = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location1)
+      dist.line_items << build(:line_item, quantity: 10, item: item1)
+      DistributionEvent.publish(dist)
+
+      # correction event
+      donation.line_items[0].quantity = 20
+      DonationEvent.publish(donation)
+
+      inventory = described_class.inventory_for(organization.id, validate: true)
+      expect(inventory).to eq(EventTypes::Inventory.new(
+        organization_id: organization.id,
+        storage_locations: {
+          storage_location1.id => EventTypes::EventStorageLocation.new(
+            id: storage_location1.id,
+            items: {
+              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 10)
+            }
+          )
+        }
+      ))
+    end
   end
 end
