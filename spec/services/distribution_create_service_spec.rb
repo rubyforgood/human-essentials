@@ -4,12 +4,15 @@ RSpec.describe DistributionCreateService, type: :service do
   subject { DistributionCreateService }
   describe "call" do
     let!(:storage_location) { create(:storage_location, :with_items, item_count: 2) }
-    let!(:distribution) { Distribution.new(organization_id: @organization.id,
-                                           partner_id: @partner.id,
-                                           storage_location_id: storage_location.id,
-                                           delivery_method: :delivery,
-                                           line_items_attributes: {
-                                             "0": { item_id: storage_location.items.first.id, quantity: 5 } }) }
+    let!(:distribution) {
+      Distribution.new(organization_id: @organization.id,
+        partner_id: @partner.id,
+        storage_location_id: storage_location.id,
+        delivery_method: :delivery,
+        line_items_attributes: {
+          "0": { item_id: storage_location.items.first.id, quantity: 5 }
+        })
+    }
 
     it "replaces a big distribution with a smaller one, resulting in increased stored quantities" do
       expect do
@@ -83,12 +86,15 @@ RSpec.describe DistributionCreateService, type: :service do
     end
 
     context "when there's not sufficient inventory" do
-      let(:too_much_dist) { Distribution.new(
-        organization_id: @organization.id,
-        partner_id: @partner.id,
-        storage_location_id: storage_location.id,
-        delivery_method: :delivery,
-        line_items_attributes: { "0": { item_id: storage_location.items.first.id, quantity: 500 } }) }
+      let(:too_much_dist) {
+        Distribution.new(
+          organization_id: @organization.id,
+          partner_id: @partner.id,
+          storage_location_id: storage_location.id,
+          delivery_method: :delivery,
+          line_items_attributes: { "0": { item_id: storage_location.items.first.id, quantity: 500 } }
+        )
+      }
 
       it "preserves the Insufficiency error and is unsuccessful" do
         result = subject.new(too_much_dist).call
@@ -120,10 +126,13 @@ RSpec.describe DistributionCreateService, type: :service do
     end
 
     context "when it fails to save" do
-      let(:bad_dist) { Distribution.new(organization_id: @organization.id,
-                                        storage_location_id: storage_location.id,
-                                        line_items_attributes: {
-                                          "0": { item_id: storage_location.items.first.id, quantity: 500 } }) }
+      let(:bad_dist) {
+        Distribution.new(organization_id: @organization.id,
+          storage_location_id: storage_location.id,
+          line_items_attributes: {
+            "0": { item_id: storage_location.items.first.id, quantity: 500 }
+          })
+      }
 
       it "preserves the error and is unsuccessful" do
         result = subject.new(bad_dist).call
