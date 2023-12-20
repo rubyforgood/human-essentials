@@ -5,7 +5,7 @@ class ChangeFlipperGatesValueToText < ActiveRecord::Migration[7.0]
   def up
     # Ensure this incremental update migration is idempotent
     return unless connection.column_exists? :flipper_gates, :value, :string
-    if index_exists? :flipper_gates, [:feature_key, :key, :value]
+      if index_exists? :flipper_gates, [:feature_key, :key, :value]
     end
     change_column :flipper_gates, :value, :text
   end
