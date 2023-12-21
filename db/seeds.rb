@@ -388,6 +388,7 @@ StorageLocation.all.each do |sl|
     )
   end
 end
+Organization.all.each { |org| SnapshotEvent.publish(org) }
 
 # ----------------------------------------------------------------------------
 # Product Drives
@@ -526,10 +527,11 @@ end
 # Distributions
 # ----------------------------------------------------------------------------
 
+inventory = InventoryAggregate.inventory_for(pdx_org.id)
 # Make some distributions, but don't use up all the inventory
 20.times.each do
   storage_location = random_record_for_org(pdx_org, StorageLocation)
-  stored_inventory_items_sample = storage_location.inventory_items.sample(20)
+  stored_inventory_items_sample = inventory.storage_locations[storage_location.id].items.values.sample(20)
   delivery_method = Distribution.delivery_methods.keys.sample
   shipping_cost = delivery_method == "shipped" ? (rand(20.0..100.0)).round(2).to_s : nil
   distribution = Distribution.new(
@@ -546,7 +548,7 @@ end
     distribution_qty = rand(stored_inventory_item.quantity / 2)
     if distribution_qty >= 1
       distribution.line_items.push(LineItem.new(quantity: distribution_qty,
-                                                item: stored_inventory_item.item))
+                                                item_id: stored_inventory_item.item_id))
     end
   end
   DistributionCreateService.new(distribution).call
