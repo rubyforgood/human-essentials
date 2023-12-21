@@ -573,7 +573,7 @@ RSpec.describe InventoryAggregate do
       ))
     end
 
-    it 'should ignore unusable snapshots' do
+    it "should ignore unusable snapshots" do
       freeze_time do
         donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
         donation.line_items << build(:line_item, quantity: 50, item: item1)
@@ -592,7 +592,7 @@ RSpec.describe InventoryAggregate do
               id: storage_location1.id,
               items: {
                 item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 50),
-                item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 30),
+                item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 30)
               }
             )
           }
@@ -617,6 +617,5 @@ RSpec.describe InventoryAggregate do
         }
       ))
     end
-
   end
 end
