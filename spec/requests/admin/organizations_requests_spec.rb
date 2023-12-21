@@ -67,7 +67,8 @@ RSpec.describe "Admin::Organizations", type: :request do
         it "creates an organization and redirects to #index" do
           expect {
             post admin_organizations_path({ organization: valid_organization_params })
-          }.to change(Organization, :count).by(1)
+          }.to change(Organization, :count).by(1).
+            and change(SnapshotEvent, :count).by(1)
           expect(response).to redirect_to(admin_organizations_path(organization_id: 'admin'))
         end
       end

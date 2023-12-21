@@ -572,5 +572,51 @@ RSpec.describe InventoryAggregate do
         }
       ))
     end
+
+    it 'should ignore unusable snapshots' do
+      freeze_time do
+        donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
+        donation.line_items << build(:line_item, quantity: 50, item: item1)
+        donation.line_items << build(:line_item, quantity: 30, item: item2)
+        DonationEvent.publish(donation)
+
+        travel 1.minute
+        SnapshotEvent.publish_from_events(organization)
+
+        # check inventory at this point
+        inventory = described_class.inventory_for(organization.id)
+        expect(inventory).to eq(EventTypes::Inventory.new(
+          organization_id: organization.id,
+          storage_locations: {
+            storage_location1.id => EventTypes::EventStorageLocation.new(
+              id: storage_location1.id,
+              items: {
+                item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 50),
+                item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 30),
+              }
+            )
+          }
+        ))
+
+        travel 1.minute
+        # correction event - should ruin the snapshot since it's updating a previous event
+        donation.line_items = [build(:line_item, quantity: 40, item: item1)]
+        DonationEvent.publish(donation)
+      end
+
+      inventory = described_class.inventory_for(organization.id)
+      expect(inventory).to eq(EventTypes::Inventory.new(
+        organization_id: organization.id,
+        storage_locations: {
+          storage_location1.id => EventTypes::EventStorageLocation.new(
+            id: storage_location1.id,
+            items: {
+              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 40)
+            }
+          )
+        }
+      ))
+    end
+
   end
 end
