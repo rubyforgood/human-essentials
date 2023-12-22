@@ -11,9 +11,6 @@ class ItemsByStorageCollectionAndQuantityQuery
 
   def call
     @items_by_storage_collection ||= ItemsByStorageCollectionQuery.new(organization: organization, filter_params: filter_params).call
-    unless @filter_params[:include_inactive_items]
-      @items_by_storage_collection = @items_by_storage_collection.active
-    end
     @items_by_storage_collection_and_quantity ||= Hash.new
     @items_by_storage_collection.each do |row|
       unless @items_by_storage_collection_and_quantity.key?(row.id)
