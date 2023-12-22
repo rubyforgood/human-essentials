@@ -116,7 +116,7 @@ RSpec.describe Item, type: :model do
         cloth_1 = create(:item, :active, name: "Cloth Diaper", partner_key: cloth_base.partner_key)
 
         disposables = Item.disposable
-        
+
         expect(disposables.count).to eq(2)
         expect(disposables).to include(disposable_1, disposable_2)
         expect(disposables).to_not include(cloth_1)

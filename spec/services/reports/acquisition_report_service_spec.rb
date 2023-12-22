@@ -128,29 +128,28 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
     end
 
     it 'should return the proper results on #report' do
-    # require 'pry'; binding.pry
-    expect(subject.report).to eq({
-      entries: { "Disposable diapers distributed" => "200",
-                 "Cloth diapers distributed" => "300",
-                 "Average monthly disposable diapers distributed" => "17",
-                 "Average monthly cloth diapers distributed" => "25",
-                 "Total product drives" => 2,
-                 "Disposable diapers collected from drives" => "600",
-                 "Cloth diapers collected from drives" => "900",
-                 "Money raised from product drives" => "$60.00",
-                 "Total product drives (virtual)" => 2,
-                 "Money raised from product drives (virtual)" => "$20.00",
-                 "Disposable diapers collected from drives (virtual)" => "120",
-                 "Cloth diapers collected from drives (virtual)" => "60",
-                 "% diapers donated" => "84%",
-                 "% diapers purchased" => "16%",
-                 "% disposable diapers purchased" => "11%",
-                 "% cloth diapers purchased" => "5%",
-                 "Money spent purchasing diapers" => "$60.00",
-                 "Purchased from" => "Google, Walmart",
-                 "Vendors diapers purchased through" => "Vendor 1, Vendor 2"},
-      name: "Diaper Acquisition"
-    })
+      expect(subject.report).to eq({
+        entries: { "Disposable diapers distributed" => "200",
+                   "Cloth diapers distributed" => "300",
+                   "Average monthly disposable diapers distributed" => "17",
+                   "Average monthly cloth diapers distributed" => "25",
+                   "Total product drives" => 2,
+                   "Disposable diapers collected from drives" => "600",
+                   "Cloth diapers collected from drives" => "900",
+                   "Money raised from product drives" => "$60.00",
+                   "Total product drives (virtual)" => 2,
+                   "Money raised from product drives (virtual)" => "$20.00",
+                   "Disposable diapers collected from drives (virtual)" => "120",
+                   "Cloth diapers collected from drives (virtual)" => "60",
+                   "% diapers donated" => "84%",
+                   "% diapers purchased" => "16%",
+                   "% disposable diapers purchased" => "11%",
+                   "% cloth diapers purchased" => "5%",
+                   "Money spent purchasing diapers" => "$60.00",
+                   "Purchased from" => "Google, Walmart",
+                   "Vendors diapers purchased through" => "Vendor 1, Vendor 2"},
+        name: "Diaper Acquisition"
+      })
     end
   end
 end
