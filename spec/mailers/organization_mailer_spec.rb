@@ -7,11 +7,11 @@ RSpec.describe OrganizationMailer, type: :mailer do
     it "renders the body with correct text with partner information" do
       html = html_body(subject)
       expect(html).to include("<h1> You've received a request to approve the account for #{partner.name}. </h1>")
-      expect(html).to include("Review This Organization")
-      expect(html).to include("#{organization.short_name}/partners/#{partner.id}#partner-information\">Review This Organization</a>")
+      expect(html).to include("Review This Partner")
+      expect(html).to include("#{organization.short_name}/partners/#{partner.id}#partner-information\">Review This Partner</a>")
       text = text_body(subject)
       expect(text).to include("You've received a request to approve the account for #{partner.name}.")
-      expect(text).to include("Review This Organization")
+      expect(text).to include("Review This Partner")
       expect(text).to include("#{organization.short_name}/partners/#{partner.id}#partner-information")
     end
 
