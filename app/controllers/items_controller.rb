@@ -3,6 +3,8 @@
 class ItemsController < ApplicationController
   def index
     @items = current_organization.items.includes(:base_item, :kit).alphabetized.class_filter(filter_params)
+    @items = @items.active unless params[:include_inactive_items]
+
     @item_categories = current_organization.item_categories.includes(:items).order('name ASC')
     @kits = current_organization.kits.includes(line_items: :item, inventory_items: :storage_location)
     @storages = current_organization.storage_locations.active_locations.order(id: :asc)
@@ -12,10 +14,6 @@ class ItemsController < ApplicationController
     @items_with_counts = ItemsByStorageCollectionQuery.new(organization: current_organization, filter_params: filter_params).call
 
     @items_by_storage_collection_and_quantity = ItemsByStorageCollectionAndQuantityQuery.new(organization: current_organization, filter_params: filter_params).call
-    unless params[:include_inactive_items]
-      @items = @items.active
-      @items_with_counts = @items_with_counts.active
-    end
 
     @paginated_items = @items.page(params[:page])
 
@@ -63,7 +61,17 @@ class ItemsController < ApplicationController
 
   def update
     @item = current_organization.items.find(params[:id])
-    if @item.update(item_params)
+    @item.attributes = item_params
+
+    deactivated = @item.active_changed? && !@item.active
+    if deactivated && !@item.can_deactivate?
+      @base_items = BaseItem.without_kit.alphabetized
+      flash[:error] = "Can't deactivate this item - it is currently assigned to either an active kit or a storage location!"
+      render action: :edit
+      return
+    end
+
+    if @item.save
       redirect_to items_path, notice: "#{@item.name} updated!"
     else
       @base_items = BaseItem.without_kit.alphabetized
