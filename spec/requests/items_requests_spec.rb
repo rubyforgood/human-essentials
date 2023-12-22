@@ -35,7 +35,7 @@ RSpec.describe "Items", type: :request do
 
     describe 'PUT #update' do
       let(:item) { create(:item, organization: @organization, active: true) }
-      let(:storage_location) { create(:storage_location, organization: @organization)}
+      let(:storage_location) { create(:storage_location, organization: @organization) }
       let(:kit) { create(:kit, organization: @organization) }
       let(:inactive_params) { default_params.merge({id: item.id, item: { active: false } }) }
 

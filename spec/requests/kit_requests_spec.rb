@@ -67,7 +67,7 @@ RSpec.describe "/kits", type: :request do
     end
 
     describe "PUT #reactivate" do
-      it 'cannot reactivate if it has an inactive item' do
+      it "cannot reactivate if it has an inactive item" do
         kit.deactivate
         expect(kit).not_to be_active
         kit.line_items.first.item.update!(active: false)
@@ -78,7 +78,7 @@ RSpec.describe "/kits", type: :request do
         expect(flash[:alert]).to eq("Cannot reactivate kit - it has inactive item! Please reactivate the items first.")
       end
 
-      it 'should successfully reactivate' do
+      it "should successfully reactivate" do
         kit.deactivate
         expect(kit).not_to be_active
         put reactivate_kit_url(kit, default_params)
