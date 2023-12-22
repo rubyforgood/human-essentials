@@ -127,11 +127,15 @@ module Reports
 
     # @return [Float]
     def percent_cloth_diapers_purchased
+      return 0.0 if purchased_cloth_diapers.zero?
+
       (purchased_cloth_diapers / total_diapers.to_f) * 100
     end
 
     # @return [Float]
     def percent_disposable_diapers_purchased
+      return 0.0 if purchased_disposable_diapers.zero?
+
       (purchased_disposable_diapers / total_diapers.to_f) * 100
     end
 
