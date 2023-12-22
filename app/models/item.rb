@@ -110,13 +110,13 @@ class Item < ApplicationRecord
   def can_deactivate?
     # Cannot deactivate if it's currently in inventory in a storage location. It doesn't make sense
     # to have physical inventory of something we're now saying isn't valid.
-    self.inventory_items.where('quantity > 0').none? &&
+    inventory_items.where("quantity > 0").none? &&
       # If an active kit includes this item, then changing kit allocations would change inventory
       # for an inactive item - which we said above we don't want to allow.
-      self.organization.kits.
-        active.
-        joins(:line_items).
-        where(line_items: { item_id: self.id}).none?
+      organization.kits
+        .active
+        .joins(:line_items)
+        .where(line_items: { item_id: id}).none?
   end
 
   def deactivate
