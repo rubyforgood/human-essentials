@@ -12,18 +12,6 @@ class OrganizationDashboardPage < OrganizationPage
     end
   end
 
-  def product_drive_total_donations
-    within product_drives_section do
-      parse_formatted_integer find(".total_received_donations").text
-    end
-  end
-
-  def product_drive_total_money_raised
-    within product_drives_section do
-      parse_formatted_currency find(".total_money_raised").text
-    end
-  end
-
   def filter_to_date_range(range_name, custom_dates = nil)
     select_date_filter_range range_name
 
@@ -50,10 +38,6 @@ class OrganizationDashboardPage < OrganizationPage
 
   def has_add_storage_location_call_to_action?
     has_selector? "#org-stats-call-to-action-storage-locations"
-  end
-
-  def has_product_drives_section?
-    has_selector? product_drives_selector
   end
 
   def has_getting_started_guide?
@@ -92,12 +76,6 @@ class OrganizationDashboardPage < OrganizationPage
 
   def organization_logo_filepath
     find(org_logo_selector).native[:src]
-  end
-
-  def recent_product_drive_donation_links
-    within product_drives_section do
-      all(".donation a").map(&:text)
-    end
   end
 
   def recent_donation_links
@@ -176,14 +154,6 @@ class OrganizationDashboardPage < OrganizationPage
 
   def low_inventory_selector
     "#low_inventory"
-  end
-
-  def product_drives_section
-    find product_drives_selector
-  end
-
-  def product_drives_selector
-    "#product_drives"
   end
 
   def donations_section
