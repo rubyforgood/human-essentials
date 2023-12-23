@@ -170,8 +170,8 @@
       </li>
     </ul>
   </li>
-  <li class='nav-item has-treeview <%= menu_open?(['audits', 'reports/annual_reports', 'distributions_by_county', 'reports/itemized_donations', 'reports/itemized_distributions', 'reports/donations_summary', 'reports/activity_graph', 'reports/manufacturer_donations_summary', 'purchases_summary', 'distributions_summary']) %>'>
-    <a href='#' class='nav-link <%= active_class(['audits', 'reports/annual_reports', 'distributions_by_county', 'reports/itemized_donations', 'reports/itemized_distributions', 'reports/donations_summary', 'reports/activity_graph', 'reports/manufacturer_donations_summary', 'purchases_summary', 'distributions_summary']) %>'>
+  <li class='nav-item has-treeview <%= menu_open?(['audits', 'reports/annual_reports', 'distributions_by_county', 'reports/itemized_donations', 'reports/itemized_distributions', 'reports/donations_summary', 'reports/activity_graph', 'reports/manufacturer_donations_summary', 'reports/product_drives', 'purchases_summary', 'distributions_summary']) %>'>
+    <a href='#' class='nav-link <%= active_class(['audits', 'reports/annual_reports', 'distributions_by_county', 'reports/itemized_donations', 'reports/itemized_distributions', 'reports/donations_summary', 'reports/activity_graph', 'reports/manufacturer_donations_summary', 'reports/product_drives', 'purchases_summary', 'distributions_summary']) %>'>
       <i class="nav-icon fa fa-tasks"></i>
       <p>Reporting & Auditing
         <i class="fas fa-angle-left right"></i>
@@ -203,6 +203,11 @@
        <li class="nav-item <%= active_class(['reports/manufacturer_donations_summary']) %>">
         <%= link_to(reports_manufacturer_donations_summary_index_path(organization_id: current_user.organization), class: "nav-link #{active_class(['reports/manufacturer_donations_summary'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Manufacturer Donations
+        <% end %>
+      </li>
+      <li class="nav-item <%= active_class(['reports/product_drives']) %>">
+        <%= link_to(reports_product_drives_path(organization_id: current_user.organization), class: "nav-link #{active_class(['reports/product_drives'])}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Product Drives
         <% end %>
       </li>
       <li class="nav-item <%= active_class(['reports/itemized_donations']) %>">
