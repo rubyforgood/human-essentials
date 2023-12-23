@@ -28,9 +28,9 @@ RSpec.describe "ProductDrives Report", type: :system, js: true do
       end
 
       it "has a widget for product drive summary data" do
-        product_drives_report_page.visit
+        org_reports_product_drives_page.visit
 
-        expect(product_drives_report_page).to have_product_drives_section
+        expect(org_reports_product_drives_page).to have_product_drives_section
       end
 
       # as of 28 Jan 2022, the "Recent Donations" list shows up to this many items matching the date filter
@@ -113,7 +113,7 @@ RSpec.describe "ProductDrives Report", type: :system, js: true do
 
           describe("filtering to '#{filtered_date_range_label}'" + (set_custom_dates ? " (#{custom_dates})" : "")) do
             before do
-              product_drives_report_page
+              org_reports_product_drives_page
                 .visit
                 .filter_to_date_range(filtered_date_range_label, custom_dates)
             end
@@ -121,15 +121,15 @@ RSpec.describe "ProductDrives Report", type: :system, js: true do
             expected_recent_donation_links_count = [max_recent_donation_links_count, num_donations_in_filtered_period].min
 
             it "shows the correct total donations" do
-              expect(product_drives_report_page.product_drive_total_donations).to eq @donations_in_filtered_date_range.map(&:quantity).sum
+              expect(org_reports_product_drives_page.product_drive_total_donations).to eq @donations_in_filtered_date_range.map(&:quantity).sum
             end
 
             it "shows the correct total money raised" do
-              expect(product_drives_report_page.product_drive_total_money_raised).to eq @donations_in_filtered_date_range.map(&:money_raised).sum
+              expect(org_reports_product_drives_page.product_drive_total_money_raised).to eq @donations_in_filtered_date_range.map(&:money_raised).sum
             end
 
             it "shows #{expected_recent_donation_links_count} Recent Donation link(s)" do
-              recent_donation_links = product_drives_report_page.recent_product_drive_donation_links
+              recent_donation_links = org_reports_product_drives_page.recent_product_drive_donation_links
 
               expect(recent_donation_links.count).to eq expected_recent_donation_links_count
 
@@ -173,19 +173,19 @@ RSpec.describe "ProductDrives Report", type: :system, js: true do
           manufacturer = create :manufacturer, name: "Manufacturer for product drive test", organization: @organization
           create :manufacturer_donation, :with_items, manufacturer: manufacturer, issued_at: test_time, item_quantity: quantity_in_donation, storage_location: storage_location, organization: @organization, money_raised: @money_raised_on_each_manufacturer_donation
 
-          product_drives_report_page.visit
+          org_reports_product_drives_page.visit
         end
 
         it "only counts product drive donations for product drive" do
-          expect(product_drives_report_page.product_drive_total_donations).to eq @product_drive_donations.map(&:quantity).sum
+          expect(org_reports_product_drives_page.product_drive_total_donations).to eq @product_drive_donations.map(&:quantity).sum
         end
 
         it "only counts product drive money raised" do
-          expect(product_drives_report_page.product_drive_total_money_raised).to eq @product_drive_donations.map(&:money_raised).sum
+          expect(org_reports_product_drives_page.product_drive_total_money_raised).to eq @product_drive_donations.map(&:money_raised).sum
         end
 
         it "only shows product drive donations as product drive donations" do
-          recent_donation_links = product_drives_report_page.recent_product_drive_donation_links
+          recent_donation_links = org_reports_product_drives_page.recent_product_drive_donation_links
 
           expect(recent_donation_links.count).to eq @product_drive_donations.count
 
