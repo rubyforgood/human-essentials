@@ -283,16 +283,4 @@ RSpec.describe "Dashboard", type: :system, js: true do
       end
     end
   end
-
-  def valid_bracketing_dates(date_range_info)
-    filtered_date_range_label, start_date, end_date, _set_custom_dates = date_range_info
-    before_filtered_date_range = start_date.yesterday.to_date
-    after_filtered_date_range = end_date.tomorrow.to_date
-
-    if filtered_date_range_label == "All Time"
-      [after_filtered_date_range]
-    else
-      [before_filtered_date_range, after_filtered_date_range]
-    end
-  end
 end
