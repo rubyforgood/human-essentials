@@ -35,6 +35,16 @@ class OrganizationReportsProductDrivesPage < OrganizationPage
     "#product_drives"
   end
 
+  def select_date_filter_range(range_name)
+    find("#filters_date_range").click
+
+    if range_name
+      within ".container__predefined-ranges" do
+        find("button", text: range_name).click
+      end
+    end
+  end
+
   def filter_to_date_range(range_name, custom_dates = nil)
     select_date_filter_range range_name
 
