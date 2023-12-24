@@ -34,4 +34,16 @@ class OrganizationReportsProductDrivesPage < OrganizationPage
   def product_drives_selector
     "#product_drives"
   end
+
+  def filter_to_date_range(range_name, custom_dates = nil)
+    select_date_filter_range range_name
+
+    if custom_dates.present?
+      fill_in :filters_date_range, with: ""
+      fill_in :filters_date_range, with: custom_dates
+      page.find(:xpath, "//*[contains(text(),'- Dashboard')]").click
+    end
+
+    click_on "Filter"
+  end
 end
