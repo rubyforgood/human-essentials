@@ -564,7 +564,7 @@ GEM
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
     shellany (0.0.1)
-    shoulda-matchers (5.3.0)
+    shoulda-matchers (6.0.0)
       activesupport (>= 5.2.0)
     simple_form (5.3.0)
       actionpack (>= 5.2)
@@ -728,7 +728,7 @@ DEPENDENCIES
   rufus-scheduler
   sass-rails
   selenium-webdriver (~> 4.16)
-  shoulda-matchers (~> 5.3)
+  shoulda-matchers (~> 6.0)
   simple_form
   simplecov
   sprockets (~> 4.2.1)
