@@ -270,9 +270,11 @@ RSpec.describe InventoryAggregate do
       dist = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location1)
       dist.line_items << build(:line_item, quantity: 50, item: item1)
       dist.line_items << build(:line_item, quantity: 30, item: item2)
+      DistributionEvent.publish(dist)
       DistributionDestroyEvent.publish(dist)
 
-      # 30 + 50 = 80, 10 + 30 = 40
+      # should be unchanged
+      described_class.handle(DistributionEvent.last, inventory)
       described_class.handle(DistributionDestroyEvent.last, inventory)
       expect(inventory).to eq(EventTypes::Inventory.new(
         organization_id: organization.id,
@@ -280,8 +282,8 @@ RSpec.describe InventoryAggregate do
           storage_location1.id => EventTypes::EventStorageLocation.new(
             id: storage_location1.id,
             items: {
-              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 80),
-              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 40),
+              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 30),
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40)
             }
           ),
@@ -332,10 +334,11 @@ RSpec.describe InventoryAggregate do
       transfer = FactoryBot.create(:transfer, organization: organization, from: storage_location2, to: storage_location1)
       transfer.line_items << build(:line_item, quantity: 20, item: item1)
       transfer.line_items << build(:line_item, quantity: 5, item: item2)
+      TransferEvent.publish(transfer)
       TransferDestroyEvent.publish(transfer)
 
-      # 30 - 20 = 10, 10 - 5 = 5
-      # 0 + 20 = 20, 10 + 5 = 15
+      # should be unchanged
+      described_class.handle(TransferEvent.last, inventory)
       described_class.handle(TransferDestroyEvent.last, inventory)
       expect(inventory).to eq(EventTypes::Inventory.new(
         organization_id: organization.id,
@@ -343,16 +346,16 @@ RSpec.describe InventoryAggregate do
           storage_location1.id => EventTypes::EventStorageLocation.new(
             id: storage_location1.id,
             items: {
-              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 10),
-              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 5),
+              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 30),
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40)
             }
           ),
           storage_location2.id => EventTypes::EventStorageLocation.new(
             id: storage_location2.id,
             items: {
-              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 20),
-              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 15),
+              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 0),
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 50)
             }
           )
