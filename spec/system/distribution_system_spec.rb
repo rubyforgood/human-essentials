@@ -160,6 +160,15 @@ RSpec.feature "Distributions", type: :system do
       visit @url_prefix + "/distributions/new"
       expect(page).to have_no_content "Inactive R Us"
     end
+
+    it 'should not display inactive items in dropdown' do
+      create(:item, :inactive, name: "Inactive Item", organization: @organization)
+
+      visit @url_prefix + "/distributions/new"
+      select @storage_location.name, from: "From storage location"
+
+      expect(page).to have_no_content "Inactive Item"
+    end
   end
 
   it "errors if user does not fill storage_location" do
