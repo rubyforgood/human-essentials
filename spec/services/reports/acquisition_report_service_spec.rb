@@ -128,7 +128,6 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
     end
 
     it 'should return the proper results on #report' do
-    # require 'pry'; binding.pry
       expect(subject.report).to eq({
         entries: { "Disposable diapers distributed" => "200",
                    "Cloth diapers distributed" => "300",
