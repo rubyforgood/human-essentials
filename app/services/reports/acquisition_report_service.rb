@@ -17,7 +17,6 @@ module Reports
                       'Disposable diapers distributed' => number_with_delimiter(distributed_disposable_diapers),
                       'Cloth diapers distributed' => number_with_delimiter(distributed_cloth_diapers),
                       'Average monthly disposable diapers distributed' => number_with_delimiter(monthly_disposable_diapers),
-                      'Average monthly cloth diapers distributed' => number_with_delimiter(monthly_cloth_diapers),
                       'Total product drives' => annual_drives.count,
                       'Disposable diapers collected from drives' => number_with_delimiter(disposable_diapers_from_drives),
                       'Cloth diapers collected from drives' => number_with_delimiter(cloth_diapers_from_drives),
@@ -26,8 +25,7 @@ module Reports
                       'Money raised from product drives (virtual)' => number_to_currency(money_from_virtual_drives),
                       'Disposable diapers collected from drives (virtual)' => number_with_delimiter(disposable_diapers_from_virtual_drives),
                       'Cloth diapers collected from drives (virtual)' => number_with_delimiter(cloth_diapers_from_virtual_drives),
-                      '% diapers donated' => "#{percent_donated.round}%",
-                      '% diapers purchased' => "#{percent_purchased.round}%",
+                      '% disposable diapers donated' => "#{percent_disposable_donated.round}%",
                       '% disposable diapers purchased' => "#{percent_disposable_diapers_purchased.round}%",
                       '% cloth diapers purchased' => "#{percent_cloth_diapers_purchased.round}%",
                       'Money spent purchasing diapers' => number_to_currency(money_spent_on_diapers),
@@ -58,10 +56,6 @@ module Reports
     # @return [Integer]
     def monthly_disposable_diapers
       (distributed_disposable_diapers / 12.0).round
-    end
-
-    def monthly_cloth_diapers
-      (distributed_cloth_diapers / 12.0).round
     end
 
     # @return [ActiveRecord::Relation]
@@ -112,31 +106,24 @@ module Reports
     end
 
     # @return [Float]
-    def percent_donated
-      return 0.0 if total_diapers.zero?
+    def percent_disposable_donated
+      return 0.0 if total_disposable_diapers.zero?
 
-      ((donated_disposable_diapers + donated_cloth_diapers) / total_diapers.to_f) * 100
-    end
-
-    # @return [Float]
-    def percent_purchased
-      return 0.0 if total_diapers.zero?
-
-      ((purchased_cloth_diapers + purchased_disposable_diapers) / total_diapers.to_f) * 100
+      (donated_disposable_diapers / total_disposable_diapers.to_f) * 100
     end
 
     # @return [Float]
     def percent_cloth_diapers_purchased
       return 0.0 if purchased_cloth_diapers.zero?
 
-      (purchased_cloth_diapers / total_diapers.to_f) * 100
+      (purchased_cloth_diapers / total_cloth_diapers.to_f) * 100
     end
 
     # @return [Float]
     def percent_disposable_diapers_purchased
       return 0.0 if purchased_disposable_diapers.zero?
 
-      (purchased_disposable_diapers / total_diapers.to_f) * 100
+      (purchased_disposable_diapers / total_disposable_diapers.to_f) * 100
     end
 
     # @return [Float]
@@ -189,17 +176,12 @@ module Reports
 
     # @return [Integer]
     def total_disposable_diapers
-      @total_disposable_diapers ||= purchased_dispsable_diapers + donated_disposable_diapers
+      @total_disposable_diapers ||= purchased_disposable_diapers + donated_disposable_diapers
     end
 
     # @return [Integer]
     def total_cloth_diapers
       @total_cloth_diapers ||= purchased_cloth_diapers + donated_cloth_diapers
-    end
-
-    # @return [Integer]
-    def total_diapers
-      @total_diapers ||= (purchased_cloth_diapers + donated_cloth_diapers) + (purchased_disposable_diapers + donated_disposable_diapers)
     end
 
     # @return [Integer]
