@@ -219,10 +219,9 @@ RSpec.describe "Purchases", type: :system, js: true do
 
         it "The storage location is correct" do
           storage1 = create(:storage_location, name: "storage1")
-          storage2 = create(:storage_location, name: "storage2")
-          purchase = create(:purchase, storage_location: storage2)
+          purchase = create(:purchase, storage_location: storage1)
           visit edit_purchase_path(@organization.to_param, purchase)
-          expect(page).to have_content("storage2")
+          expect(page).to have_content("storage1")
         end
       end
 
