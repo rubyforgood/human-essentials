@@ -128,11 +128,11 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
     end
 
     it 'should return the proper results on #report' do
+    # require 'pry'; binding.pry
       expect(subject.report).to eq({
         entries: { "Disposable diapers distributed" => "200",
                    "Cloth diapers distributed" => "300",
                    "Average monthly disposable diapers distributed" => "17",
-                   "Average monthly cloth diapers distributed" => "25",
                    "Total product drives" => 2,
                    "Disposable diapers collected from drives" => "600",
                    "Cloth diapers collected from drives" => "900",
@@ -141,10 +141,9 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
                    "Money raised from product drives (virtual)" => "$20.00",
                    "Disposable diapers collected from drives (virtual)" => "120",
                    "Cloth diapers collected from drives (virtual)" => "60",
-                   "% diapers donated" => "84%",
-                   "% diapers purchased" => "16%",
-                   "% disposable diapers purchased" => "11%",
-                   "% cloth diapers purchased" => "5%",
+                   "% disposable diapers donated" => "78%",
+                   "% disposable diapers purchased" => "22%",
+                   "% cloth diapers purchased" => "11%",
                    "Money spent purchasing diapers" => "$60.00",
                    "Purchased from" => "Google, Walmart",
                    "Vendors diapers purchased through" => "Vendor 1, Vendor 2"},
