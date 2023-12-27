@@ -141,6 +141,7 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
                    "Disposable diapers collected from drives (virtual)" => "120",
                    "Cloth diapers collected from drives (virtual)" => "60",
                    "% disposable diapers donated" => "78%",
+                   "% cloth diapers donated" => "89%",
                    "% disposable diapers purchased" => "22%",
                    "% cloth diapers purchased" => "11%",
                    "Money spent purchasing diapers" => "$60.00",
