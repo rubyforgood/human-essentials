@@ -26,6 +26,7 @@ module Reports
                       'Disposable diapers collected from drives (virtual)' => number_with_delimiter(disposable_diapers_from_virtual_drives),
                       'Cloth diapers collected from drives (virtual)' => number_with_delimiter(cloth_diapers_from_virtual_drives),
                       '% disposable diapers donated' => "#{percent_disposable_donated.round}%",
+                      '% cloth diapers donated' => "#{percent_cloth_diapers_donated.round}%",
                       '% disposable diapers purchased' => "#{percent_disposable_diapers_purchased.round}%",
                       '% cloth diapers purchased' => "#{percent_cloth_diapers_purchased.round}%",
                       'Money spent purchasing diapers' => number_to_currency(money_spent_on_diapers),
@@ -110,6 +111,13 @@ module Reports
       return 0.0 if total_disposable_diapers.zero?
 
       (donated_disposable_diapers / total_disposable_diapers.to_f) * 100
+    end
+
+    # @return [Float]
+    def percent_cloth_diapers_donated
+      return 0.0 if total_cloth_diapers.zero?
+
+      (donated_cloth_diapers / total_cloth_diapers.to_f) * 100
     end
 
     # @return [Float]
