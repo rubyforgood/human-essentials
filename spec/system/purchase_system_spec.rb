@@ -221,7 +221,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           storage1 = create(:storage_location, name: "storage1")
           purchase = create(:purchase, storage_location: storage1)
           visit edit_purchase_path(@organization.to_param, purchase)
-          expect(page).to have_content("storage1")
+          assert page.has_select? "Storage Location", selected: "storage1"
         end
       end
 
