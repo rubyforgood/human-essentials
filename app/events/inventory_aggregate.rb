@@ -29,7 +29,7 @@ module InventoryAggregate
       events.unshift(last_snapshot) if last_snapshot
 
       inventory = EventTypes::Inventory.from(organization_id)
-      events.group_by { |e| [e.type, e.eventable_type, e.eventable_id] }.each do |_, event_batch|
+      events.group_by(&:group_id).each do |_, event_batch|
         last_grouped_event = event_batch.max_by(&:updated_at)
         handle(last_grouped_event, inventory, validate: validate)
       end

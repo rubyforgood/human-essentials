@@ -10,6 +10,7 @@
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  eventable_id    :bigint
+#  group_id        :string
 #  organization_id :bigint
 #  user_id         :bigint
 #
