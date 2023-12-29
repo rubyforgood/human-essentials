@@ -75,7 +75,7 @@ RSpec.describe "/kits", type: :request do
         put reactivate_kit_url(kit, default_params)
         expect(kit.reload).not_to be_active
         expect(response).to redirect_to(dashboard_path)
-        expect(flash[:alert]).to eq("Cannot reactivate kit - it has inactive item! Please reactivate the items first.")
+        expect(flash[:alert]).to eq("Cannot reactivate kit - it has inactive items! Please reactivate the items first.")
       end
 
       it "should successfully reactivate" do
