@@ -71,6 +71,11 @@ class Item < ApplicationRecord
       .where.not("lower(base_items.category) LIKE '%cloth%' OR lower(base_items.name) LIKE '%cloth%'")
   }
 
+  scope :cloth_diapers, -> {
+    joins(:base_item)
+      .where("lower(base_items.category) LIKE '%cloth%' OR lower(base_items.name) LIKE '%cloth%'")
+  }
+
   scope :adult_incontinence, -> {
     joins(:base_item)
       .where(items: { partner_key: %w(adult_incontinence underpads liners) })
