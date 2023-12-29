@@ -48,7 +48,7 @@ class KitsController < ApplicationController
       @kit.reactivate
       redirect_back(fallback_location: dashboard_path, notice: "Kit has been reactivated!")
     else
-      redirect_back(fallback_location: dashboard_path, alert: "Cannot reactivate kit - it has inactive item! Please reactivate the items first.")
+      redirect_back(fallback_location: dashboard_path, alert: "Cannot reactivate kit - it has inactive items! Please reactivate the items first.")
     end
   end
 
