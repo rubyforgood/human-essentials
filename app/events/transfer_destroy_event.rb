@@ -3,6 +3,7 @@ class TransferDestroyEvent < Event
   def self.publish(transfer)
     create(
       eventable: transfer,
+      group_id: "transfer-destroy-#{transfer.id}",
       organization_id: transfer.organization_id,
       event_time: transfer.created_at,
       data: EventTypes::InventoryPayload.new(

@@ -3,6 +3,7 @@ class DonationEvent < Event
   def self.publish(donation)
     create(
       eventable: donation,
+      group_id: "donation-#{donation.id}",
       organization_id: donation.organization_id,
       event_time: donation.created_at,
       data: EventTypes::InventoryPayload.new(

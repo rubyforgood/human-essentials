@@ -3,6 +3,7 @@ class DistributionEvent < Event
   def self.publish(distribution)
     create(
       eventable: distribution,
+      group_id: "dist-#{distribution.id}",
       organization_id: distribution.organization_id,
       event_time: distribution.created_at,
       data: EventTypes::InventoryPayload.new(

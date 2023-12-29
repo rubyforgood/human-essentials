@@ -36,6 +36,7 @@ class SnapshotEvent < Event
   def self.publish(organization)
     create(
       eventable: organization,
+      group_id: "snapshot-#{SecureRandom.hex}",
       organization_id: organization.id,
       event_time: Time.zone.now,
       data: EventTypes::Inventory.new(
