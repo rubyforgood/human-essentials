@@ -22,6 +22,17 @@ class SnapshotEvent < Event
   end
 
   # @param organization [Organization]
+  def self.publish_from_events(organization)
+    inventory = InventoryAggregate.inventory_for(organization.id)
+    create(
+      eventable: organization,
+      organization_id: organization.id,
+      event_time: Time.zone.now,
+      data: inventory
+    )
+  end
+
+  # @param organization [Organization]
   def self.publish(organization)
     create(
       eventable: organization,
