@@ -108,6 +108,10 @@ class Organization < ApplicationRecord
     account_request&.update!(status: "admin_approved")
   end
 
+  def flipper_id
+    "Org:#{id}"
+  end
+
   ALL_PARTIALS = [
     ['Media Information', 'media_information'],
     ['Agency Stability', 'agency_stability'],

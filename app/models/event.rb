@@ -54,6 +54,10 @@ class Event < ApplicationRecord
     SnapshotEvent.find_by_sql(query, [organization_id]).first
   end
 
+  def self.read_events?(organization)
+    Flipper.enabled?(:read_events, organization)
+  end
+
   after_create_commit do
     inventory = InventoryAggregate.inventory_for(organization_id)
     diffs = EventDiffer.check_difference(inventory)
