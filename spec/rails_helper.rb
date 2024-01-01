@@ -12,6 +12,7 @@ require "capybara-screenshot/rspec"
 require "pry"
 require 'knapsack_pro'
 require 'paper_trail/frameworks/rspec'
+require_relative 'inventory'
 
 KnapsackPro::Adapters::RSpecAdapter.bind
 
