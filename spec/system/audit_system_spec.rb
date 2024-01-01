@@ -241,7 +241,11 @@ RSpec.describe "Audit management", type: :system, js: true do
           let(:item2) { create(:item) }
 
           before do
-            create(:inventory_item, storage_location_id: storage_location.id, item_id: item2.id, quantity: 50)
+            TestInventory.create_inventory(storage_location.organization, {
+              storage_location.id => {
+                item2.id => 50
+              }
+            })
           end
 
           it "creates an adjustment with the differential of only the audited item" do
