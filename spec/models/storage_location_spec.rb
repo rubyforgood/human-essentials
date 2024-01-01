@@ -34,7 +34,7 @@ RSpec.describe StorageLocation, type: :model do
       end
 
       it "deletes storage locations with no inventory items on it" do
-        subject.inventory_items.destroy_all
+        TestInventory.clear_inventory(subject)
         subject.destroy
 
         expect(StorageLocation.count).to eq(0)
@@ -135,24 +135,12 @@ RSpec.describe StorageLocation, type: :model do
       end
     end
 
-    describe "StorageLocation.item_total" do
-      it "gathers the final total of a single item across all inventories" do
-        item = create(:item)
-        storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item)
-        create(:storage_location, :with_items, item_quantity: 10, item: item)
-        # This inventory_item will not be included, because it will be for a different item
-        create(:inventory_item, storage_location_id: storage_location.id, quantity: 10)
-
-        expect(StorageLocation.item_total(item.id)).to eq(20)
-      end
-    end
-
     describe "StorageLocation.items_inventoried" do
       it "returns a collection of items that are stored within inventories" do
         create_list(:item, 3)
         create(:storage_location, :with_items, item: Item.first, item_quantity: 5)
         create(:storage_location, :with_items, item: Item.last, item_quantity: 5)
-        expect(StorageLocation.items_inventoried.length).to eq(2)
+        expect(StorageLocation.items_inventoried(@organization).length).to eq(2)
       end
     end
 
@@ -167,8 +155,12 @@ RSpec.describe StorageLocation, type: :model do
     describe "size" do
       it "returns total quantity of all items in this storage location" do
         storage_location = create(:storage_location)
-        create(:inventory_item, storage_location_id: storage_location.id, quantity: 10)
-        create(:inventory_item, storage_location_id: storage_location.id, quantity: 10)
+        TestInventory.create_inventory(storage_location.organization, {
+          storage_location.id => {
+            create(:item).id => 10,
+            create(:item).id => 10
+          }
+        })
         expect(storage_location.size).to eq(20)
       end
     end
@@ -178,15 +170,23 @@ RSpec.describe StorageLocation, type: :model do
         storage_location = create(:storage_location)
         item1 = create(:item, value_in_cents: 1_00)
         item2 = create(:item, value_in_cents: 2_00)
-        create(:inventory_item, storage_location_id: storage_location.id, item_id: item1.id, quantity: 10)
-        create(:inventory_item, storage_location_id: storage_location.id, item_id: item2.id, quantity: 10)
+        TestInventory.create_inventory(storage_location.organization, {
+          storage_location.id => {
+            item1.id => 10,
+            item2.id => 10
+          }
+        })
         expect(storage_location.inventory_total_value_in_dollars).to eq(30)
       end
 
       it "returns a value including cents if the total isn't an even dollar amount" do
         storage_location = create(:storage_location)
         item1 = create(:item, value_in_cents: 1_15)
-        create(:inventory_item, storage_location_id: storage_location.id, item_id: item1.id, quantity: 5)
+        TestInventory.create_inventory(storage_location.organization, {
+          storage_location.id => {
+            item1.id => 5
+          }
+        })
         expect(storage_location.inventory_total_value_in_dollars).to eq(5.75)
       end
 
@@ -243,10 +243,14 @@ RSpec.describe StorageLocation, type: :model do
         quantity1 = rand(100..1000)
         quantity2 = rand(100..1000)
         quantity3 = rand(100..1000)
-        create(:inventory_item, storage_location_id: storage_location.id, item_id: item1.id, quantity: quantity1)
-        create(:inventory_item, storage_location_id: storage_location.id, item_id: item2.id, quantity: quantity2)
-        create(:inventory_item, storage_location_id: storage_location.id, item_id: item3.id, quantity: quantity3)
-        create(:inventory_item, storage_location_id: storage_location.id, item_id: inactive_item.id, quantity: 1)
+        TestInventory.create_inventory(storage_location.organization, {
+          storage_location.id => {
+            item1.id => quantity1,
+            item2.id => quantity2,
+            item3.id => quantity3,
+            inactive_item.id => 1
+          }
+        })
         sum = quantity1 + quantity2 + quantity3
         expect(storage_location.csv_export_attributes).to eq([name, address, square_footage, warehouse_type, sum, quantity3, quantity2, quantity1])
       end

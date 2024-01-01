@@ -63,16 +63,18 @@ class StorageLocation < ApplicationRecord
   scope :for_csv_export, ->(organization, *) { where(organization: organization) }
   scope :active_locations, -> { where(discarded_at: nil) }
 
-  def self.item_total(item_id)
-    StorageLocation.select("quantity")
-                   .joins(:inventory_items)
-                   .where("inventory_items.item_id = ?", item_id)
-                   .collect(&:quantity)
-                   .reduce(:+)
-  end
-
-  def self.items_inventoried
-    Item.joins(:storage_locations).select(:id, :name).group(:id, :name).order(name: :asc)
+  # @param organization [Organization]
+  # @param inventory [View::Inventory]
+  def self.items_inventoried(organization, inventory = nil)
+    if inventory
+      inventory
+        .all_items
+        .uniq(&:item_id)
+        .sort_by(&:name)
+        .map { |i| OpenStruct.new(name: i.name, id: i.item_id) }
+    else
+      organization.items.joins(:storage_locations).select(:id, :name).group(:id, :name).order(name: :asc)
+    end
   end
 
   def item_total(item_id)
@@ -89,12 +91,16 @@ class StorageLocation < ApplicationRecord
     .sum(:quantity)
   end
 
-  def inventory_total_value_in_dollars
-    inventory_total_value = inventory_items.joins(:item).map do |inventory_item|
-      value_in_cents = inventory_item.item.try(:value_in_cents)
-      value_in_cents * inventory_item.quantity
-    end.reduce(:+)
-    inventory_total_value.present? ? (inventory_total_value.to_f / 100) : 0
+  def inventory_total_value_in_dollars(inventory = nil)
+    if inventory
+      inventory.total_value_in_dollars(storage_location: id)
+    else
+      inventory_total_value = inventory_items.joins(:item).map do |inventory_item|
+        value_in_cents = inventory_item.item.try(:value_in_cents)
+        value_in_cents * inventory_item.quantity
+      end.reduce(:+)
+      inventory_total_value.present? ? (inventory_total_value.to_f / 100) : 0
+    end
   end
 
   def to_csv
@@ -129,10 +135,6 @@ class StorageLocation < ApplicationRecord
                 .build(quantity: row[0].to_i, item_id: current_org.items.find_by(name: row[1]))
     end
     AdjustmentCreateService.new(adjustment).call
-  end
-
-  def remove_empty_items
-    inventory_items.where(quantity: 0).delete_all
   end
 
   # FIXME: After this is stable, revisit how we do logging
@@ -222,14 +224,39 @@ class StorageLocation < ApplicationRecord
     ["Name", "Address", "Square Footage", "Warehouse Type", "Total Inventory"]
   end
 
+  # TODO remove this method once read_events? is true everywhere
   def csv_export_attributes
     attributes = [name, address, square_footage, warehouse_type, total_active_inventory_count]
     active_inventory_items.sort_by { |inv_item| inv_item.item.name }.each { |item| attributes << item.quantity }
     attributes
   end
 
+  # @param storage_locations [Array<StorageLocation>]
+  # @param inventory [View::Inventory]
+  # @return [String]
+  def self.generate_csv_from_inventory(storage_locations, inventory)
+    all_items = inventory.all_items.uniq(&:item_id).sort_by(&:name)
+    additional_headers = all_items.map(&:name).uniq
+    CSV.generate(headers: true) do |csv|
+      csv_data = storage_locations.map do |sl|
+        total_quantity = inventory.quantity_for(storage_location: sl.id)
+        attributes = [sl.name, sl.address, sl.square_footage, sl.warehouse_type, total_quantity] +
+          all_items.map { |i| inventory.quantity_for(storage_location: sl.id, item_id: i.item_id) }
+        attributes.map { |attr| normalize_csv_attribute(attr) }
+      end
+      ([csv_export_headers + additional_headers] + csv_data).each do |row|
+        csv << row
+      end
+    end
+  end
+
   def empty_inventory_items?
-    inventory_items.map(&:quantity).uniq.reject(&:zero?).empty?
+    if Event.read_events?(organization)
+      inventory = View::Inventory.new(organization_id)
+      inventory.quantity_for(storage_location: id).zero?
+    else
+      inventory_items.map(&:quantity).uniq.reject(&:zero?).empty?
+    end
   end
 
   def active_inventory_items
