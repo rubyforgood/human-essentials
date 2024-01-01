@@ -218,6 +218,11 @@ RSpec.configure do |config|
   config.before(:each) do
     # Defined shared @ global variables used throughout the test suite.
     define_global_variables
+
+    if ENV['EVENTS_READ'] == 'true'
+      puts "Running in read_events=true mode"
+      allow(Event).to receive(:read_events?).and_return(true)
+    end
   end
 
   config.before do
