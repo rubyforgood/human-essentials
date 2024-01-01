@@ -278,7 +278,10 @@ RSpec.describe "Distributions", type: :request do
           expect(new_storage_location.size).to eq 25
         end
 
+        # TODO this test is invalid in event-world since it's handled by the aggregate
         it "rollsback updates if quantity would go below 0" do
+          next if Event.read_events?(@organization)
+
           distribution = create(:distribution, :with_items, item_quantity: 10)
           original_storage_location = distribution.storage_location
 
