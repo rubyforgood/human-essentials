@@ -84,10 +84,10 @@ module View
         if item_id
           @inventory.storage_locations[storage_location.to_i].items[item_id.to_i]&.quantity || 0
         else
-          @inventory.storage_locations[storage_location.to_i].items.values.map(&:quantity).sum
+          @inventory.storage_locations[storage_location.to_i]&.items&.values&.map(&:quantity)&.sum || 0
         end
       elsif item_id
-        @inventory.storage_locations.values.map { |loc| loc.items[item_id.to_i]&.quantity }.compact.sum
+        @inventory.storage_locations.values.map { |loc| loc&.items&.[](item_id.to_i)&.quantity }.compact.sum
       end
     end
 

@@ -10,8 +10,10 @@ class DeallocateKitInventoryService
   def deallocate
     validate_storage_location
     if error.nil?
-      deallocate_inventory_items
-      KitDeallocateEvent.publish(@kit, @storage_location, @decrease_by)
+      ApplicationRecord.transaction do
+        deallocate_inventory_items
+        KitDeallocateEvent.publish(@kit, @storage_location, @decrease_by)
+      end
     end
   rescue StandardError => e
     Rails.logger.error "[!] #{self.class.name} failed to allocate items for a kit #{kit.name}: #{storage_location.errors.full_messages} [#{e.inspect}]"

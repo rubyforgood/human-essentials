@@ -13,7 +13,7 @@ on:
       - 'bin/*'
 
 jobs:
-  rspec-system:
+  rspec-system-events:
 
     runs-on: ubuntu-latest
 
@@ -64,7 +64,7 @@ jobs:
           bundle exec rake db:create
           bundle exec rake db:schema:load
           bundle exec rails assets:precompile
-      - name: Run rspec
+      - name: Run rspec with events
         env:
           POSTGRES_HOST: localhost
           DATABASE_HOST: localhost

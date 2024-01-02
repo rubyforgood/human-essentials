@@ -186,7 +186,7 @@ class StorageLocation < ApplicationRecord
     end
     # NOTE: Could this be handled by a validation instead?
     # If we found any insufficiencies
-    unless insufficient_items.empty?
+    if insufficient_items.any? && !Event.read_events?(organization)
       # Raise this custom error with information about each of the items that showed insufficient
       # This bails out of the method!
       raise Errors::InsufficientAllotment.new(

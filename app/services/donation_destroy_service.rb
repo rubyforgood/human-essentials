@@ -17,7 +17,7 @@ class DonationDestroyService
   rescue ActiveRecord::RecordNotFound => e
     Rails.logger.error "[!] #{self.class.name} failed to destroy donation #{donation_id} because organization or donation does does not exist"
     set_error(e)
-  rescue Errors::InsufficientAllotment => e
+  rescue Errors::InsufficientAllotment, InventoryError => e
     Rails.logger.error "[!] #{self.class.name} failed because of Insufficient Allotment"
     set_error(e)
   rescue StandardError => e

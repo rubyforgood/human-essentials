@@ -221,13 +221,16 @@ RSpec.configure do |config|
     define_global_variables
 
     if ENV['EVENTS_READ'] == 'true'
-      puts "Running in read_events=true mode"
       allow(Event).to receive(:read_events?).and_return(true)
     end
   end
 
   config.before do
     Faker::UniqueGenerator.clear # Clears used values to avoid retry limit exceeded error
+  end
+
+  config.after(:each) do
+    travel_back
   end
 
   # RSpec Rails can automatically mix in different behaviours to your tests
