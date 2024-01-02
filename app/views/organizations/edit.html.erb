@@ -68,9 +68,10 @@
 
                 <%= f.input :intake_location, :collection => current_organization.storage_locations.active_locations.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Intake Location", :include_blank => true, wrapper: :input_group %>
 
-                <%= f.label :partner_form_fields, "Partner Profile Sections" %>
+                <%= f.label :partner_form_fields, 'Partner Profile Sections' %>
+                
+                <%= f.select(:partner_form_fields, Organization::ALL_PARTIALS, { include_hidden: true }, { multiple: true, class: 'form-control custom-select', 'data-controller': 'select2', 'data-select2-config-value': '{}'}) %>
 
-                <%= f.select(:partner_form_fields, Organization::ALL_PARTIALS, {include_hidden: true}, { multiple: true, class: 'form-control selectpicker input_group partner_fields_dropdown' }) %>
                 <br>
                 <%= f.input :default_storage_location, :collection => current_organization.storage_locations.active_locations.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Storage Location", :include_blank => true, wrapper: :input_group %>
 
@@ -100,14 +101,14 @@
                         <%= image_tag current_organization.logo, class: "main_logo" %>
                       </p>
                       <p>
-                        <a href="#showTheLogo" class="btn btn-xs btn-info" data-toggle="modal">
+                        <a href="#showTheLogo" class="btn btn-xs btn-info" data-bs-toggle="modal">
                           View Original
                         </a>
                       </p>
                       <div id="showTheLogo" class="modal fade">
                         <div class="modal-dialog">
                           <%= image_tag current_organization.logo, class: "thumbnail" %>
-                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         </div>
                       </div>
                     </div>

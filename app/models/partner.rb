@@ -17,6 +17,7 @@
 #
 
 class Partner < ApplicationRecord
+  has_paper_trail
   resourcify
   require "csv"
 
@@ -234,6 +235,17 @@ class Partner < ApplicationRecord
   end
 
   def should_invite_because_email_changed?
-    email_changed? and (invited? or awaiting_review? or recertification_required? or approved?)
+    email_changed? &&
+      (
+        invited? ||
+        awaiting_review? ||
+        recertification_required? ||
+        approved?
+      ) &&
+      !partner_user_with_same_email_exist?
+  end
+
+  def partner_user_with_same_email_exist?
+    User.exists?(email: email) && User.find_by(email: email).has_role?(Role::PARTNER, self)
   end
 end

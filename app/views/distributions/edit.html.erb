@@ -46,7 +46,7 @@
             <!-- Default box -->
             <div class="box">
               <div class="box-body">
-                <%= render 'form', distribution: @distribution %>
+                <%= render 'form', distribution: @distribution, date_place_holder: @distribution.issued_at %>
               </div>
           </div><!-- /.box -->
         </div>

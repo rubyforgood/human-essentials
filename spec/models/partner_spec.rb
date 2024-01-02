@@ -218,6 +218,24 @@ RSpec.describe Partner, type: :model do
       end
     end
 
+    it "should not call the UserInviteService.invite when the partner is changing email to previously used email" do
+      previous_email = partner.email
+      partner.email = "randomtest@email.com"
+      partner.save!
+      partner.email = previous_email
+      partner.save!
+      expect(UserInviteService).not_to have_received(:invite).with(
+        email: previous_email,
+        roles: [Role::PARTNER],
+        resource: partner
+      )
+      expect(UserInviteService).to have_received(:invite).with(
+        email: "randomtest@email.com",
+        roles: [Role::PARTNER],
+        resource: partner
+      )
+    end
+
     [:uninvited, :deactivated].each do |test_status|
       it "should not call the UserInviteService.invite when the partner has status #{test_status} and the email is changed" do
         partner.status = test_status
@@ -337,5 +355,9 @@ RSpec.describe Partner, type: :model do
     context "when partner don't have any related information" do
       it { is_expected.to eq({families_served: 0, children_served: 0, family_zipcodes: 0, family_zipcodes_list: []}) }
     end
+  end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
   end
 end

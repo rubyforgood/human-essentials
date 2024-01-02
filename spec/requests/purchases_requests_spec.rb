@@ -55,7 +55,9 @@ RSpec.describe "Purchases", type: :request do
         end
 
         it "redirects to GET#edit" do
-          post purchases_path(default_params.merge(purchase: purchase))
+          expect { post purchases_path(default_params.merge(purchase: purchase)) }
+            .to change { Purchase.count }.by(1)
+            .and change { PurchaseEvent.count }.by(1)
           expect(response).to redirect_to(purchases_path)
         end
 
@@ -115,23 +117,6 @@ RSpec.describe "Purchases", type: :request do
           expect do
             put purchase_path(default_params.merge(id: purchase.id, purchase: purchase_params))
           end.to change { purchase.storage_location.inventory_items.first.quantity }.by(-10)
-        end
-
-        it "deletes inventory item if line item and inventory item quantities are equal" do
-          purchase = create(:purchase, :with_items, item_quantity: 1)
-          line_item = purchase.line_items.first
-          inventory_item = purchase.storage_location.inventory_items.first
-          inventory_item.update(quantity: line_item.quantity)
-          line_item_params = {
-            "0" => {
-              "_destroy" => "true",
-              item_id: line_item.item_id,
-              id: line_item.id
-            }
-          }
-          purchase_params = { source: "Purchase Site", line_items_attributes: line_item_params }
-          put purchase_path(default_params.merge(id: purchase.id, purchase: purchase_params))
-          expect { inventory_item.reload }.to raise_error(ActiveRecord::RecordNotFound)
         end
       end
 

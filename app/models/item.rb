@@ -22,6 +22,7 @@
 #
 
 class Item < ApplicationRecord
+  has_paper_trail
   include Filterable
   include Exportable
   include Valuable
@@ -68,6 +69,11 @@ class Item < ApplicationRecord
     joins(:base_item)
       .where("lower(base_items.category) LIKE '%diaper%'")
       .where.not("lower(base_items.category) LIKE '%cloth%' OR lower(base_items.name) LIKE '%cloth%'")
+  }
+
+  scope :cloth_diapers, -> {
+    joins(:base_item)
+      .where("lower(base_items.category) LIKE '%cloth%' OR lower(base_items.name) LIKE '%cloth%'")
   }
 
   scope :adult_incontinence, -> {

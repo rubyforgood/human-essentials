@@ -47,15 +47,15 @@ class DistributionsController < ApplicationController
                      .order('issued_at DESC')
                      .apply_filters(filter_params, helpers.selected_range)
     @paginated_distributions = @distributions.page(params[:page])
-    @total_value_all_distributions = total_value(@distributions)
-    @total_value_paginated_distributions = total_value(@paginated_distributions)
-    @total_items_all_distributions = total_items(@distributions)
-    @total_items_paginated_distributions = total_items(@paginated_distributions)
     @items = current_organization.items.alphabetized
     @item_categories = current_organization.item_categories
     @storage_locations = current_organization.storage_locations.active_locations.alphabetized
     @partners = @distributions.collect(&:partner).uniq.sort_by(&:name)
-    @selected_item = filter_params[:by_item_id]
+    @selected_item = filter_params[:by_item_id].presence
+    @total_value_all_distributions = total_value(@distributions)
+    @total_items_all_distributions = total_items(@distributions, @selected_item)
+    @total_value_paginated_distributions = total_value(@paginated_distributions)
+    @total_items_paginated_distributions = total_items(@paginated_distributions, @selected_item)
     @selected_item_category = filter_params[:by_item_category_id]
     @selected_partner = filter_params[:by_partner]
     @selected_status = filter_params[:by_state]
@@ -72,7 +72,8 @@ class DistributionsController < ApplicationController
   end
 
   def create
-    result = DistributionCreateService.new(distribution_params.merge(organization: current_organization), request_id).call
+    dist = Distribution.new(distribution_params.merge(organization: current_organization))
+    result = DistributionCreateService.new(dist, request_id).call
 
     if result.success?
       session[:created_distribution_id] = result.distribution.id
@@ -102,7 +103,7 @@ class DistributionsController < ApplicationController
         format.turbo_stream do
           flash.now[:error] = flash_error
           render turbo_stream: [
-            turbo_stream.replace(@distribution, partial: "form", locals: {distribution: @distribution}),
+            turbo_stream.replace(@distribution, partial: "form", locals: {distribution: @distribution, date_place_holder: @distribution.issued_at}),
             turbo_stream.replace("flash", partial: "shared/flash")
           ], status: :bad_request
         end
@@ -238,8 +239,10 @@ class DistributionsController < ApplicationController
     params.dig(:distribution, :request_attributes, :id)
   end
 
-  def total_items(distributions)
-    LineItem.where(itemizable_type: "Distribution", itemizable_id: distributions.pluck(:id)).sum('quantity')
+  def total_items(distributions, item)
+    query = LineItem.where(itemizable_type: "Distribution", itemizable_id: distributions.pluck(:id))
+    query = query.where(item_id: item.to_i) if item
+    query.sum('quantity')
   end
 
   def total_value(distributions)

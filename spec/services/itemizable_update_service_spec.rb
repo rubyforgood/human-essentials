@@ -35,7 +35,10 @@ RSpec.describe ItemizableUpdateService do
     end
 
     subject do
-      described_class.call(itemizable: itemizable, params: attributes, type: :increase)
+      described_class.call(itemizable: itemizable,
+        params: attributes,
+        type: :increase,
+        event_class: DonationEvent)
     end
 
     it "should update quantity in same storage location" do
@@ -47,6 +50,7 @@ RSpec.describe ItemizableUpdateService do
       expect(storage_location.size).to eq(14)
       expect(new_storage_location.size).to eq(20)
       expect(itemizable.issued_at).to eq(2.days.ago)
+      expect(DonationEvent.count).to eq(1)
     end
 
     it "should update quantity in different locations" do
@@ -101,17 +105,6 @@ RSpec.describe ItemizableUpdateService do
       expect(itemizable.line_items.sum(&:quantity)).to eq(4)
       expect(storage_location.size).to eq(30)
       expect(new_storage_location.size).to eq(16)
-    end
-
-    it "should delete empty inventory items" do
-      attributes[:storage_location_id] = new_storage_location.id
-      attributes[:line_items_attributes] =
-        {"0": {item_id: item1.id, quantity: 10}, "1": {item_id: item2.id, quantity: 10}}
-
-      subject
-
-      expect(new_storage_location.size).to eq(0)
-      expect(new_storage_location.inventory_items.count).to eq(0)
     end
   end
 end

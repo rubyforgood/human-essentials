@@ -19,6 +19,7 @@ require 'time_util'
 #
 
 class Distribution < ApplicationRecord
+  has_paper_trail
   # Distributions are issued from a single storage location, so we associate
   # them so that on-hand amounts can be verified
   belongs_to :storage_location

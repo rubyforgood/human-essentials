@@ -26,7 +26,11 @@ module Partners
 
     def valid?
       if partner.status == 'awaiting_review'
-        errors.add(:base, 'partner has already requested approval')
+        errors.add(:base, 'This partner has already requested approval.')
+      end
+
+      unless partner.profile.valid?(:edit)
+        errors.add :base, partner.profile.errors.full_messages.join('. ')
       end
 
       errors.none?

@@ -16,6 +16,7 @@ RSpec.describe "Organization management", type: :system, js: true do
       expect(page.find(".table.border")).to have_no_content "Make User"
     end
   end
+
   context "while signed in as an organization admin" do
     let!(:store) { create(:storage_location) }
     let!(:ndbn_member) { create(:ndbn_member, ndbn_member_id: "50000", account_name: "Best Place") }
@@ -50,6 +51,7 @@ RSpec.describe "Organization management", type: :system, js: true do
       before do
         visit url_prefix + "/manage/edit"
       end
+
       it "is prompted with placeholder text and a more helpful error message to ensure correct URL format as a user" do
         fill_in "Url", with: "www.diaperbase.com"
         click_on "Save"
@@ -101,18 +103,16 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page).to have_content(ndbn_member.full_name)
       end
 
-      it 'can select and deselect Required Partner Fields' do
-        # select first option in from Required Partner Fields
-        find('.partner_fields_dropdown').click.find(:xpath, '//*[@id="organization_partner_form_fields"]/option[1]').click
+      it 'can select and deselect Required Partner Fields', js: true do
+        # select first option from Required Partner Fields
+        select('Media Information', from: 'organization_partner_form_fields', visible: false)
         click_on "Save"
         expect(page).to have_content('Media Information')
         expect(@organization.reload.partner_form_fields).to eq(['media_information'])
-
-        # deselect previously choosen Required Partner Field
+        # deselect previously chosen Required Partner Field
         click_on "Edit"
-        find('.partner_fields_dropdown').click.find(:xpath, '//*[@id="organization_partner_form_fields"]/option[1]').click
+        unselect('Media Information', from: 'organization_partner_form_fields', visible: false)
         click_on "Save"
-
         expect(page).to_not have_content('Media Information')
         expect(@organization.reload.partner_form_fields).to eq([])
       end
