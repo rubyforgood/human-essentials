@@ -77,6 +77,9 @@ module InventoryAggregate
     PurchaseDestroyEvent, TransferDestroyEvent,
     KitAllocateEvent, KitDeallocateEvent do |event, inventory, validate: false|
     handle_inventory_event(event.data, inventory, validate: validate)
+  rescue InventoryError => e
+    e.event = event
+    raise e
   end
 
   on AuditEvent do |event, inventory, validate: false|

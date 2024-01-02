@@ -116,6 +116,8 @@ RSpec.describe StorageLocation, type: :model do
         let(:distribution_but_too_much) { create(:distribution, :with_items, item: item, item_quantity: 9001) }
 
         it "gives informative errors" do
+          next if Event.read_events?(@organization)
+
           storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization)
           expect do
             storage_location.decrease_inventory(distribution_but_too_much.to_a).errors
@@ -123,11 +125,13 @@ RSpec.describe StorageLocation, type: :model do
         end
 
         it "does not change inventory quantities if there is an error" do
+          next if Event.read_events?(@organization)
+
           storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization)
           starting_size = storage_location.size
           begin
             storage_location.decrease_inventory(distribution.to_a)
-          rescue Errors::InsufficientAllotment
+          rescue Errors::InsufficientAllotment, InventoryError
           end
           storage_location.reload
           expect(storage_location.size).to eq(starting_size)

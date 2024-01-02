@@ -150,7 +150,8 @@ RSpec.feature "Distributions", type: :system do
         end.not_to change { Distribution.count }
 
         expect(page).to have_content("New Distribution")
-        expect(page.find(".alert")).to have_content "exceed"
+        message = Event.read_events?(@organization) ? 'Could not reduce quantity' : 'items exceed the available inventory'
+        expect(page.find(".alert")).to have_content message
       end
     end
     context "when there is a default storage location" do
@@ -227,7 +228,8 @@ RSpec.feature "Distributions", type: :system do
         click_on "Save", match: :first
       end.not_to change { distribution.line_items.first.quantity }
       within ".alert" do
-        expect(page).to have_content "items exceed the available inventory"
+        message = Event.read_events?(@organization) ? 'Could not reduce quantity' : 'items exceed the available inventory'
+        expect(page).to have_content message
       end
     end
 
@@ -408,7 +410,8 @@ RSpec.feature "Distributions", type: :system do
         end
         click_on "Save"
         expect(page).to have_no_content "Distribution updated!"
-        expect(page).to have_content(/items exceed the available inventory/i)
+        message = Event.read_events?(@organization) ? 'Could not reduce quantity' : 'items exceed the available inventory'
+        expect(page).to have_content(/#{message}/i)
         expect(page).to have_content 999_999, count: 1
         within ".alert" do
           expect(page).to have_content 999_999

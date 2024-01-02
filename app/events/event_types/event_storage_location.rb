@@ -30,11 +30,11 @@ module EventTypes
     # @param validate [Boolean]
     def reduce_inventory(item_id, quantity, validate: true)
       if validate
-        if items[item_id].nil?
-          raise "Item #{item_id} not found in storage location #{id}"
-        end
-        if items[item_id].quantity < quantity
-          raise "Could not reduce quantity by #{quantity} for item #{item_id} in storage location #{id} - current quantity is #{items[item_id].quantity}"
+        current_quantity = items[item_id]&.quantity || 0
+        if current_quantity < quantity
+          raise InventoryError.new("Could not reduce quantity by #{quantity} - current quantity is #{current_quantity}",
+            item_id,
+            id)
         end
       end
       current_quantity = items[item_id]&.quantity || 0
