@@ -83,7 +83,7 @@ RSpec.describe "Organization management", type: :system, js: true do
       end
 
       it 'can select if the org shows year-to-date values on the distribution printout' do
-        choose('organization[use_fiscal_year]', option: false)
+        choose('organization[ytd_on_distribution_printout]', option: false)
 
         click_on "Save"
         expect(page).to have_content("No")

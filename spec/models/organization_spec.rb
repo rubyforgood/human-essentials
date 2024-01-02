@@ -23,7 +23,7 @@
 #  state                          :string
 #  street                         :string
 #  url                            :string
-#  use_fiscal_year                :boolean          default(TRUE), not null
+#  ytd_on_distribution_printout   :boolean          default(TRUE), not null
 #  zipcode                        :string
 #  created_at                     :datetime         not null
 #  updated_at                     :datetime         not null
