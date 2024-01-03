@@ -357,7 +357,7 @@ GEM
       net-protocol
     newrelic_rpm (9.6.0)
       base64
-    nio4r (2.5.9)
+    nio4r (2.7.0)
     nokogiri (1.16.0-arm64-darwin)
       racc (~> 1.4)
     nokogiri (1.16.0-x86_64-darwin)
@@ -429,7 +429,7 @@ GEM
       binding_of_caller (~> 1.0)
       pry (~> 0.13)
     public_suffix (5.0.3)
-    puma (6.4.0)
+    puma (6.4.1)
       nio4r (~> 2.0)
     raabro (1.4.0)
     racc (1.7.3)
