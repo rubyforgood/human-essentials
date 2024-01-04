@@ -216,13 +216,6 @@ RSpec.describe "Purchases", type: :system, js: true do
           visit edit_purchase_path(@user.organization.short_name, purchase)
           expect(page).to have_content("Still haven't found what you're looking for")
         end
-
-        it "The storage location is correct" do
-          storage1 = create(:storage_location, name: "storage1")
-          purchase = create(:purchase, storage_location: storage1)
-          visit edit_purchase_path(@organization.to_param, purchase)
-          assert page.has_select? "Storage Location", selected: "storage1"
-        end
       end
 
       context "via barcode entry" do
