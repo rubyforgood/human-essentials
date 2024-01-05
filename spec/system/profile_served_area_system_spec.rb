@@ -8,7 +8,7 @@ RSpec.describe "Partners profile served area behaviour when accessed as bank", t
       partner_profile: partner1.profile, client_share: 25)
   }
   let!(:default_params) do
-    {organization_id: @organization.to_param, id: partner1.id, partner_id: partner1.id}
+    {organization_name: @organization.to_param, id: partner1.id, partner_id: partner1.id}
   end
 
   context "changing the client share" do

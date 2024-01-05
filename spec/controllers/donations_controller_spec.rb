@@ -1,6 +1,6 @@
 RSpec.describe DonationsController, type: :controller do
   let(:default_params) do
-    { organization_id: @organization.to_param }
+    { organization_name: @organization.to_param }
   end
   let(:donation) { create(:donation, organization: @organization) }
 

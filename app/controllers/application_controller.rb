@@ -20,7 +20,7 @@ class ApplicationController < ActionController::Base
 
     return current_role.resource if current_role&.resource&.is_a?(Organization)
 
-    Organization.find_by(short_name: params[:organization_id])
+    Organization.find_by(short_name: params[:organization_name])
   end
   helper_method :current_organization
 
@@ -43,7 +43,7 @@ class ApplicationController < ActionController::Base
   end
 
   def organization_url_options(options = {})
-    options.merge(organization_id: current_organization.to_param)
+    options.merge(organization_name: current_organization.to_param)
   end
   helper_method :organization_url_options
 
@@ -54,13 +54,10 @@ class ApplicationController < ActionController::Base
     # current_user is defined
     return options if current_user.blank? || current_role.blank?
 
-    if current_organization.present? && !options.key?(:organization_id)
-      options[:organization_id] = current_organization.to_param
+    if current_organization.present? && !options.key?(:organization_name)
+      options[:organization_name] = current_organization.to_param
     elsif current_role.name == Role::ORG_ADMIN.to_s
-      options[:organization_id] = current_user.organization.to_param
-    elsif current_role.name == Role::SUPER_ADMIN.to_s
-      # FIXME: This *might* not be the best way to approach this...
-      options[:organization_id] = "admin"
+      options[:organization_name] = current_user.organization.to_param
     end
     options
   end
