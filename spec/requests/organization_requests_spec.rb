@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Organizations", type: :request do
   let(:default_params) do
-    { organization_id: @organization.to_param }
+    { organization_name: @organization.to_param }
   end
 
   context "While signed in as a normal user" do
@@ -145,7 +145,7 @@ RSpec.describe "Organizations", type: :request do
     context "when attempting to access a different organization" do
       let(:other_organization) { create(:organization) }
       let(:other_organization_params) do
-        { organization_id: other_organization.to_param }
+        { organization_name: other_organization.to_param }
       end
 
       describe "GET #show" do

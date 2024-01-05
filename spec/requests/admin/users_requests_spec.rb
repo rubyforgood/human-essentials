@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Admin::UsersController", type: :request do
   let(:default_params) do
-    { organization_id: @organization.id }
+    { organization_name: @organization.id }
   end
   let(:org) { FactoryBot.create(:organization, name: 'Org ABC') }
   let(:partner) { FactoryBot.create(:partner, name: 'Partner XYZ') }
@@ -29,7 +29,7 @@ RSpec.describe "Admin::UsersController", type: :request do
       context 'with no errors' do
         it "renders index template with a successful update flash message" do
           patch admin_user_path(user), params: { user: default_params.merge(name: 'New User 123', email: 'random@gmail.com') }
-          expect(response).to redirect_to admin_users_path(organization_id: 'admin')
+          expect(response).to redirect_to admin_users_path
           expect(flash[:notice]).to eq("New User 123 updated!")
         end
       end
@@ -124,7 +124,7 @@ RSpec.describe "Admin::UsersController", type: :request do
     describe "POST #create" do
       it "returns http success" do
         post admin_users_path, params: { user: { email: 'email@email.com', organization_id: 1 } }
-        expect(response).to redirect_to(admin_users_path(organization_id: 'admin'))
+        expect(response).to redirect_to(admin_users_path)
       end
 
       it "preloads organizations" do
