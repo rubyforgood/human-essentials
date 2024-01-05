@@ -75,6 +75,7 @@ class ApplicationController < ActionController::Base
       "/403"
     end
   end
+  helper_method :dashboard_path_from_current_role
 
   def authorize_user
     return unless params[:controller] # part of omniauth controller flow
