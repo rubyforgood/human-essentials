@@ -119,7 +119,7 @@ class ApplicationController < ActionController::Base
 
   def verboten!
     respond_to do |format|
-      format.html { redirect_to dashboard_path, flash: { error: "Access Denied." } }
+      format.html { redirect_to dashboard_path_from_current_role, flash: { error: "Access Denied." } }
       format.json { render body: nil, status: :forbidden }
     end
   end
