@@ -189,7 +189,7 @@ RSpec.describe "Purchases", type: :request do
         purchase2 = create(:purchase, storage_location: storage2)
         get edit_purchase_path(@organization.to_param, purchase2)
         expect(response.body).to match(/(<option selected=\"selected\" value=\")[0-9]*(\">storage2<\/option>)/)
-        end
+      end
     end
 
     describe "GET #show" do
