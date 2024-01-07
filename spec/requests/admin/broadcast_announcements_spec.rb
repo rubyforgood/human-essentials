@@ -115,14 +115,14 @@ RSpec.describe "BroadcastAnnouncements", type: :request do
     describe "GET /new" do
       it "redirects" do
         get new_admin_broadcast_announcement_url
-        expect(response).to redirect_to(admin_dashboard_path)
+        expect(response).to redirect_to(dashboard_path(organization_name: @organization_admin.organization))
       end
     end
 
     describe "POST /create" do
       it "redirects" do
         post admin_broadcast_announcements_url, params: {user: 1, message: "test"}
-        expect(response).to redirect_to(admin_dashboard_path)
+        expect(response).to redirect_to(dashboard_path(organization_name: @organization_admin.organization))
       end
     end
   end
