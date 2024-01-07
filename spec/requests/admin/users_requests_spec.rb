@@ -143,14 +143,14 @@ RSpec.describe "Admin::UsersController", type: :request do
     describe "GET #new" do
       it "redirects" do
         get new_admin_user_path
-        expect(response).to redirect_to(dashboard_path)
+        expect(response).to redirect_to(admin_dashboard_path)
       end
     end
 
     describe "POST #create" do
       it "redirects" do
         post admin_users_path, params: { user: { organization_id: 1 } }
-        expect(response).to redirect_to(dashboard_path)
+        expect(response).to redirect_to(admin_dashboard_path)
       end
     end
   end
@@ -164,14 +164,14 @@ RSpec.describe "Admin::UsersController", type: :request do
     describe "GET #new" do
       it "redirects" do
         get new_admin_user_path
-        expect(response).to redirect_to(dashboard_path)
+        expect(response).to redirect_to(admin_dashboard_path)
       end
     end
 
     describe "POST #create" do
       it "redirects" do
         post admin_users_path, params: { user: { organization_id: 1 } }
-        expect(response).to redirect_to(dashboard_path)
+        expect(response).to redirect_to(admin_dashboard_path)
       end
     end
   end
