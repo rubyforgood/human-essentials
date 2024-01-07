@@ -33,8 +33,8 @@ RSpec.describe "Admin", type: :request do
     it "disallows dashboard access, redirecting to the normal dashboard" do
       [@organization_admin, @user].each do |u|
         sign_in(u)
-        get admin_dashboard_path
-        expect(response).to redirect_to(dashboard_path)
+        get dashboard_path
+        expect(response).to redirect_to(admin_dashboard_path)
         expect(response).to have_error
       end
     end
