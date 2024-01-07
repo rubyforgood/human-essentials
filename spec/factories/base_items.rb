@@ -14,7 +14,6 @@
 FactoryBot.define do
   factory :base_item do
     sequence(:name) { |size| "#{size}T Diapers" }
-    size { nil }
     sequence(:partner_key) { |n| "#{n}t_diapers" }
   end
 end
