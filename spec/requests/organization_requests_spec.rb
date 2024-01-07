@@ -34,7 +34,7 @@ RSpec.describe "Organizations", type: :request do
     describe "PATCH #update" do
       let(:update_param) { { organization: { name: "Thunder Pants" } } }
       before do
-        patch "/#{default_params[:organization_id]}/manage",
+        patch "/#{default_params[:organization_name]}/manage",
               params: default_params.merge(update_param)
       end
 
@@ -66,7 +66,7 @@ RSpec.describe "Organizations", type: :request do
     describe "PATCH #update" do
       let(:update_param) { { organization: { name: "Thunder Pants" } } }
       subject do
-        patch "/#{default_params[:organization_id]}/manage",
+        patch "/#{default_params[:organization_name]}/manage",
               params: default_params.merge(update_param)
       end
 
@@ -83,7 +83,7 @@ RSpec.describe "Organizations", type: :request do
         let(:invalid_params) { { organization: { name: nil } } }
 
         subject do
-          patch "/#{default_params[:organization_id]}/manage",
+          patch "/#{default_params[:organization_name]}/manage",
                 params: default_params.merge(invalid_params)
         end
 
