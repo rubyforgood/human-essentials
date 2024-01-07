@@ -12,7 +12,7 @@ RSpec.describe "Admin", type: :request do
     context "with rendered views" do
       let!(:users_list) { create_list(:user, 25) }
       let!(:user) { create(:user, name: "Name Not Provided") }
-      edit_user_path_regex = Regexp.new('admin/users/[0-9]+/edit')
+      edit_user_path_regex = Regexp.new("admin/users/[0-9]+/edit")
 
       it "shows a logout button" do
         get admin_dashboard_path
