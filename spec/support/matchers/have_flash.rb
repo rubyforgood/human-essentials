@@ -16,7 +16,7 @@ RSpec::Matchers.define :have_flash do |expected = {}|
 end
 
 [:error, :notice, :alert, :success].each do |type|
-  type_symbol = "have_#{type}".to_sym
+  type_symbol = :"have_#{type}"
 
   # Default case checks the presence of any message of the given type,
   # but if no message exists, flash[type] is `nil`, which causes
