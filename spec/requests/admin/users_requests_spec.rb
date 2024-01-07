@@ -29,7 +29,7 @@ RSpec.describe "Admin::UsersController", type: :request do
       context 'with no errors' do
         it "renders index template with a successful update flash message" do
           patch admin_user_path(user), params: { user: default_params.merge(organization_id: user.organization.id,
-                                                                            name: 'New User 123', email: 'random@gmail.com') }
+            name: 'New User 123', email: 'random@gmail.com') }
           expect(response).to redirect_to admin_users_path
           expect(flash[:notice]).to eq("New User 123 updated!")
         end
