@@ -14,7 +14,7 @@ module Reports
     def report
       @report ||= { name: 'Diaper Acquisition',
                     entries: {
-                      'Disposable diapers distributed' => number_with_delimiter(distributed_diapers),
+                      'Disposable diapers distributed' => number_with_delimiter(total_diapers_distributed),
                       'Average monthly disposable diapers distributed' => number_with_delimiter(monthly_disposable_diapers),
                       'Total product drives' => annual_drives.count,
                       'Disposable diapers collected from drives' => number_with_delimiter(disposable_diapers_from_drives),
@@ -40,12 +40,16 @@ module Reports
                                .sum('line_items.quantity')
     end
 
-    def disposable_diapers_from_kits
-      @disposable_diapers_from_kits ||= organization
+    def distributed_diapers_from_kits
+      @distributed_diapers_from_kits ||= organization
                                         .kits
                                         .joins(inventory_items: :item)
                                         .merge(Item.disposable)
                                         .sum('inventory_items.quantity')
+    end
+
+    def total_diapers_distributed
+      distributed_diapers + distributed_diapers_from_kits
     end
 
     # @return [Integer]
