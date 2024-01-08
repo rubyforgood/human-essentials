@@ -14,6 +14,14 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
       # We will create data both within and outside our date range, and both disposable and non disposable.
       # Spec will ensure that only the required data is included.
 
+      #Create kits with disposable items
+      kits = create_list(:kit, 2, organization: organization)
+      kits.each do |kit|
+        disposable_kit_item = create(:item, name: "Disposables #{kit.id}", organization: organization, kit: kit)
+        storage_location = create(:storage_location, organization: organization)
+        create(:inventory_item, quantity: 10, item: disposable_kit_item, storage_location: storage_location)
+      end
+      
       # Distributions
       distributions = create_list(:distribution, 2, issued_at: within_time, organization: organization)
       outside_distributions = create_list(:distribution, 2, issued_at: outside_time, organization: organization)
@@ -125,6 +133,10 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
           create_list(:line_item, 3, :purchase, quantity: 10, item: non_disposable_item, itemizable: purchase)
         end
       end
+    end
+
+    it "returns the correct quantity of disposable diapers from kits" do
+      expect(subject.send(:disposable_diapers_from_kits)).to eq(20)
     end
 
     it 'should return the proper results on #report' do
