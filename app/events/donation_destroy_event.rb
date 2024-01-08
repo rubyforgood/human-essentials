@@ -3,7 +3,7 @@ class DonationDestroyEvent < Event
   def self.publish(donation)
     create(
       eventable: donation,
-      group_id: "donation-destroy-#{donation.id}",
+      group_id: "donation-destroy-#{donation.id}-#{SecureRandom.hex}",
       organization_id: donation.organization_id,
       event_time: Time.zone.now,
       data: EventTypes::InventoryPayload.new(

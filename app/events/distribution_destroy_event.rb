@@ -3,7 +3,7 @@ class DistributionDestroyEvent < Event
   def self.publish(distribution)
     create(
       eventable: distribution,
-      group_id: "dist-destroy-#{distribution.id}",
+      group_id: "dist-destroy-#{distribution.id}-#{SecureRandom.hex}",
       organization_id: distribution.organization_id,
       event_time: Time.zone.now,
       data: EventTypes::InventoryPayload.new(
