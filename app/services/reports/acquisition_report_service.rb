@@ -40,6 +40,14 @@ module Reports
                                .sum('line_items.quantity')
     end
 
+    def disposable_diapers_from_kits
+      @disposable_diapers_from_kits ||= organization
+                                        .kits
+                                        .joins(inventory_items: :item)
+                                        .merge(Item.disposable)
+                                        .sum('inventory_items.quantity')
+    end
+
     # @return [Integer]
     def monthly_disposable_diapers
       (distributed_diapers / 12.0).round
