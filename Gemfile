@@ -32,7 +32,7 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.6.4"
+gem "strong_migrations", "1.7.0"
 # used in events
 gem 'dry-struct'
 
