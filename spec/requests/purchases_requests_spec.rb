@@ -71,7 +71,7 @@ RSpec.describe "Purchases", type: :request do
         it "storage location defaults to organizations storage location" do
           purchase = create(:purchase)
           get edit_purchase_path(@organization.to_param, purchase)
-          expect(response.body).to match(/(<option selected=\"selected\" value=\")[0-9]*(\">Smithsonian Conservation Center<\/option>)/)
+          expect(response.body).to match(/(<option selected="selected" value=")[0-9]*(">Smithsonian Conservation Center<\/option>)/)
         end
       end
 
