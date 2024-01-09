@@ -160,7 +160,7 @@ group :development, :test do
   gem 'rubocop-performance'
   gem "rubocop-rails", "~> 2.23.1"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.32"
+  gem "standard", "~> 1.33"
 end
 
 group :development do
@@ -216,4 +216,4 @@ end
 # Use Redis for Action Cable
 gem "redis", "~> 5.0"
 
-gem "importmap-rails", "~> 1.2"
+gem "importmap-rails", "~> 2.0"
