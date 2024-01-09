@@ -44,14 +44,16 @@ class DistributionPdf
     font_size 12
     text @distribution.distributed_at
     font_size 10
-    move_up 22
 
-    text "Items Received Year-to-Date:", style: :bold, align: :right
-    font_size 12
-    text @distribution.partner.quantity_year_to_date.to_s, align: :right
-    font_size 10
+    if @organization.ytd_on_distribution_printout
+      move_up 22
+      text "Items Received Year-to-Date:", style: :bold, align: :right
+      font_size 12
+      text @distribution.partner.quantity_year_to_date.to_s, align: :right
+      font_size 10
+    end
+
     move_down 10
-
     text "Comments:", style: :bold
     font_size 12
     text @distribution.comment
