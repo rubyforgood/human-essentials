@@ -698,7 +698,7 @@ RSpec.describe InventoryAggregate do
         expect { DistributionEvent.publish(distribution) }.to raise_error do |e|
           expect(e).to be_a(InventoryError)
           expect(e.event).to be_a(DistributionEvent)
-          expect(e.message).to eq("Error occurred when re-running events: DistributionEvent on 2023-05-05: Could not reduce quantity by 30 - current quantity is 20 for #{item1.name} in #{storage_location1.name}")
+          expect(e.message).to eq("Could not reduce quantity by 30 - current quantity is 20 for #{item1.name} in #{storage_location1.name}")
         end
       end
     end
