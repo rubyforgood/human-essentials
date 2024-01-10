@@ -39,12 +39,20 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
         create_list(:line_item, 5, :distribution, quantity: 300, item: non_disposable_item, itemizable: dist)
       end
 
+      # Kits
+      kits = create_list(:kit, 2, organization: organization)
+      kits.each do |kit|
+        disposable_kit_item = create(:item, name: "Disposables #{kit.id}", organization: organization, kit: kit)
+        storage_location = create(:storage_location, organization: organization)
+        create(:inventory_item, quantity: 10, item: disposable_kit_item, storage_location: storage_location)
+      end
+
       expect(report.report).to eq({
                                     name: 'Children Served',
                                     entries: {
-                                      'Average children served monthly' => "8",
-                                      'Total children served' => "100",
-                                      'Diapers per child monthly' => "20",
+                                      'Average children served monthly' => "9",
+                                      'Total children served' => "102",
+                                      'Diapers per child monthly' => "15",
                                       'Repackages diapers?' => 'Y',
                                       'Monthly diaper distributions?' => 'Y'
                                     }
@@ -69,12 +77,20 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
         create_list(:line_item, 5, :distribution, quantity: 300, item: non_disposable_item, itemizable: dist)
       end
 
+      # Kits
+      kits = create_list(:kit, 2, organization: organization)
+      kits.each do |kit|
+        disposable_kit_item = create(:item, name: "Disposables #{kit.id}", organization: organization, kit: kit)
+        storage_location = create(:storage_location, organization: organization)
+        create(:inventory_item, quantity: 10, item: disposable_kit_item, storage_location: storage_location)
+      end
+
       expect(report.report).to eq({
                                     name: 'Children Served',
                                     entries: {
-                                      'Average children served monthly' => "3",
-                                      'Total children served' => "40",
-                                      'Diapers per child monthly' => "50",
+                                      'Average children served monthly' => "4",
+                                      'Total children served' => "42",
+                                      'Diapers per child monthly' => "30",
                                       'Repackages diapers?' => 'Y',
                                       'Monthly diaper distributions?' => 'Y'
                                     }
