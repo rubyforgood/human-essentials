@@ -52,8 +52,6 @@ module Reports
         .sum('inventory_items.quantity')
     end
 
-
-
     def total_diapers_distributed
       distributed_diapers + distributed_diapers_from_kits
     end
