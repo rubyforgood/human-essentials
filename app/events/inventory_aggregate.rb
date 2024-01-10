@@ -13,10 +13,21 @@ module InventoryAggregate
     # @param validate [Boolean]
     # @return [EventTypes::Inventory]
     def inventory_for(organization_id, event_time: nil, validate: false)
-      events = Event.for_organization(organization_id)
-      if event_time
+      last_snapshot = Event.most_recent_snapshot(organization_id)
+
+      # ignore all other snapshots as they are considered "unusable" - see most_recent_snapshot method
+      events = Event.for_organization(organization_id).without_snapshots
+      if last_snapshot # all previous events can be ignored
+        events = events.where("event_time > ?", last_snapshot.event_time)
+      end
+
+      if event_time && event_time > last_snapshot.event_time
         events = events.where("event_time <= ?", event_time)
       end
+
+      events = events.to_a
+      events.unshift(last_snapshot) if last_snapshot
+
       inventory = EventTypes::Inventory.from(organization_id)
       events.group_by { |e| [e.eventable_type, e.eventable_id] }.each do |_, event_batch|
         last_grouped_event = event_batch.max_by(&:updated_at)
