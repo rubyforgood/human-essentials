@@ -14,8 +14,9 @@ module EventTypes
     # @param line_item [LineItem]
     # @param from [Integer]
     # @param to [Integer]
+    # @param quantity [Integer]
     # @return [EventLineItem]
-    def self.from_line_item(line_item, from: nil, to: nil)
+    def self.from_line_item(line_item, from: nil, to: nil, quantity: nil)
       if line_item.quantity.negative?
         new(
           quantity: -line_item.quantity,
@@ -26,7 +27,7 @@ module EventTypes
         )
       else
         new(
-          quantity: line_item.quantity,
+          quantity: quantity || line_item.quantity,
           item_id: line_item.item_id,
           item_value_in_cents: line_item.item.value_in_cents,
           from_storage_location: from,
@@ -35,7 +36,15 @@ module EventTypes
       end
     end
 
-    # @param line_item [Array<LineItem>]
+    # @param line_items [Array<LineItem>]
+    # @param from [Integer]
+    # @param to [Integer]
+    # @return [Array<EventLineItem>]
+    def self.zeroed_line_items(line_items, from: nil, to: nil)
+      line_items.map { |i| from_line_item(i, from: from, to: to, quantity: 0) }
+    end
+
+    # @param line_items [Array<LineItem>]
     # @param from [Integer]
     # @param to [Integer]
     # @return [Array<EventLineItem>]

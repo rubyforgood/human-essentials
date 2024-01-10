@@ -410,11 +410,16 @@ RSpec.feature "Distributions", type: :system do
         end
         click_on "Save"
         expect(page).to have_no_content "Distribution updated!"
-        message = Event.read_events?(@organization) ? 'Could not reduce quantity' : 'items exceed the available inventory'
+        message = 'items exceed the available inventory'
+        number = 999_999
+        if Event.read_events?(@organization)
+          message = 'Could not reduce quantity'
+          number = 999_899
+        end
         expect(page).to have_content(/#{message}/i)
-        expect(page).to have_content 999_999, count: 1
+        expect(page).to have_content number, count: 1
         within ".alert" do
-          expect(page).to have_content 999_999
+          expect(page).to have_content number
         end
         expect(Distribution.first.line_items.count).to eq 1
       end

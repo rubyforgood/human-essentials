@@ -7,9 +7,9 @@ class TransferDestroyEvent < Event
       organization_id: transfer.organization_id,
       event_time: Time.zone.now,
       data: EventTypes::InventoryPayload.new(
-        items: EventTypes::EventLineItem.from_line_items(transfer.line_items,
-          from: transfer.to.id,
-          to: transfer.from.id)
+        items: EventTypes::EventLineItem.zeroed_line_items(transfer.line_items,
+          to: transfer.to.id,
+          from: transfer.from.id)
       )
     )
   end
