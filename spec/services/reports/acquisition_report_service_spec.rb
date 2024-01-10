@@ -141,13 +141,11 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
 
     it 'should return the proper results on #report' do
       expect(subject.report).to eq({
-        entries: { "Disposable diapers distributed" => "200",
+        entries: { "Disposable diapers distributed" => "220",
                    "Cloth diapers distributed" => "300",
                    "Average monthly disposable diapers distributed" => "17",
                    "Total product drives" => 2,
                    "Disposable diapers collected from drives" => "600",
-                   "Disposable diapers collected from drives (virtual)" => "120",
-                   "Disposable diapers distributed" => "220",
                    "Cloth diapers collected from drives" => "900",
                    "Money raised from product drives" => "$60.00",
                    "Total product drives (virtual)" => 2,
