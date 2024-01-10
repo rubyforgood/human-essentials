@@ -58,16 +58,7 @@ module Reports
     end
 
     def total_diapers_distributed
-      distributed_diapers + distributed_diapers_from_kits
-    end
-    
-    def distributed_cloth_diapers
-      @distributed_cloth_diapers ||= organization
-                               .distributions
-                               .for_year(year)
-                               .joins(line_items: :item)
-                               .merge(Item.cloth_diapers)
-                               .sum('line_items.quantity')
+      distributed_disposable_diapers + distributed_diapers_from_kits
     end
 
     def distributed_cloth_diapers
