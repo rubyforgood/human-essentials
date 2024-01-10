@@ -141,19 +141,26 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
 
     it 'should return the proper results on #report' do
       expect(subject.report).to eq({
-        entries: { "% diapers bought" => "22%",
-                   "% diapers donated" => "78%",
+        entries: { "Disposable diapers distributed" => "200",
+                   "Cloth diapers distributed" => "300",
                    "Average monthly disposable diapers distributed" => "17",
+                   "Total product drives" => 2,
                    "Disposable diapers collected from drives" => "600",
                    "Disposable diapers collected from drives (virtual)" => "120",
                    "Disposable diapers distributed" => "220",
+                   "Cloth diapers collected from drives" => "900",
                    "Money raised from product drives" => "$60.00",
+                   "Total product drives (virtual)" => 2,
                    "Money raised from product drives (virtual)" => "$20.00",
+                   "Disposable diapers collected from drives (virtual)" => "120",
+                   "Cloth diapers collected from drives (virtual)" => "60",
+                   "% disposable diapers donated" => "78%",
+                   "% cloth diapers donated" => "89%",
+                   "% disposable diapers purchased" => "22%",
+                   "% cloth diapers purchased" => "11%",
                    "Money spent purchasing diapers" => "$60.00",
                    "Purchased from" => "Google, Walmart",
-                   "Total product drives" => 2,
-                   "Total product drives (virtual)" => 2,
-                   "Vendors diapers purchased through" => "Vendor 1, Vendor 2" },
+                   "Vendors diapers purchased through" => "Vendor 1, Vendor 2"},
         name: "Diaper Acquisition"
       })
     end
