@@ -42,11 +42,17 @@ module Reports
 
     def distributed_diapers_from_kits
       @distributed_diapers_from_kits ||= organization
-                                        .kits
-                                        .joins(inventory_items: :item)
-                                        .merge(Item.disposable)
-                                        .sum('inventory_items.quantity')
+        .kits
+        .joins(inventory_items: :item)
+        .merge(Item.disposable)
+        .where("kits.id IN (SELECT DISTINCT kits.id FROM line_items
+                         JOIN distributions ON distributions.id = line_items.itemizable_id
+                         WHERE line_items.itemizable_type = 'Distribution'
+                           AND EXTRACT(YEAR FROM distributions.issued_at) = ?)", year)
+        .sum('inventory_items.quantity')
     end
+
+
 
     def total_diapers_distributed
       distributed_diapers + distributed_diapers_from_kits
