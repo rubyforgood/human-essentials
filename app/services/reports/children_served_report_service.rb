@@ -25,11 +25,14 @@ module Reports
     # @return [Integer]
     def total_children_served
       @total_children_served ||= organization
-                                 .distributions
-                                 .for_year(year)
-                                 .joins(line_items: :item)
-                                 .merge(Item.disposable)
-                                 .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50)') || 0
+                             .distributions
+                             .for_year(year)
+                             .joins(line_items: :item)
+                             .merge(Item.disposable)
+                             .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50)') +
+        organization
+        .kits
+        .count || 0
     end
 
     # @return [Float]
@@ -39,12 +42,35 @@ module Reports
 
     # @return [Float]
     def per_child_monthly
+      total_distributions = organization.distributions.for_year(year).count
+      total_kits = organization.kits.count
+
+      total_avg = if total_distributions.zero? && total_kits.zero?
+        0.0
+      else
+        (distribution_average * total_distributions + kit_average * total_kits) / (total_distributions + total_kits)
+      end
+
+      total_avg.nan? ? 0.0 : total_avg
+    end
+
+    private
+
+    def distribution_average
       organization
-        .distributions
-        .for_year(year)
-        .joins(line_items: :item)
-        .merge(Item.disposable)
-        .average('COALESCE(items.distribution_quantity, 50)') || 0.0
+      .distributions
+      .for_year(year)
+      .joins(line_items: :item)
+      .merge(Item.disposable)
+      .average('COALESCE(items.distribution_quantity, 50)') || 0.0
+    end
+
+    def kit_average
+      organization
+      .kits
+      .joins(inventory_items: :item)
+      .merge(Item.disposable)
+      .average('COALESCE(inventory_items.quantity, 0)') || 0.0
     end
   end
 end
