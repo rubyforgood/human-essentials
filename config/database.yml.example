@@ -4,7 +4,7 @@ default: &default
   host: localhost
   database: diaper_dev
   username: postgres
-  password: password
+  password: root
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 development:
