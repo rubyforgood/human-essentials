@@ -415,7 +415,7 @@ GEM
     pry (0.14.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
-    pry-doc (1.4.0)
+    pry-doc (1.5.0)
       pry (~> 0.11)
       yard (~> 0.9.11)
     pry-nav (1.0.0)
