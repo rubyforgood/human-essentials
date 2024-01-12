@@ -20,4 +20,8 @@ class Bank < ApplicationRecord
   validates :phone, presence: true
   validates :address, presence: true
   validates :opt_in_email_notification, inclusion: { in: [true, false] }
+
+  def contact_email
+    email
+  end
 end
