@@ -1,0 +1,2 @@
+class BankMailer < ApplicationMailer
+end
