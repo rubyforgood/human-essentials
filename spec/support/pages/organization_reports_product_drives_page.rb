@@ -51,7 +51,8 @@ class OrganizationReportsProductDrivesPage < OrganizationPage
     if custom_dates.present?
       fill_in :filters_date_range, with: ""
       fill_in :filters_date_range, with: custom_dates
-      page.find(:xpath, "//*[contains(text(),'- Dashboard')]").click
+      # clicking on page to ensure date picker closes
+      page.find(:xpath, "//*[contains(text(),'Product Drives')]").click
     end
 
     click_on "Filter"
