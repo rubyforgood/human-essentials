@@ -53,6 +53,7 @@ class Admin::OrganizationsController < AdminController
                                        email: user_params[:email],
                                        roles: [Role::ORG_USER, Role::ORG_ADMIN],
                                        resource: @organization)
+      SnapshotEvent.publish(@organization) # need one to start with
       redirect_to admin_organizations_path, notice: "Organization added!"
     else
       flash[:error] = "Failed to create Organization."
