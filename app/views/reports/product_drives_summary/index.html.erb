@@ -5,13 +5,9 @@
   title: "Product Drives",
   subtitle: @selected_date_range,
   type: :table,
-  filter_url: reports_product_drives_path,
+  filter_url: reports_product_drives_summary_index_path,
   footer_options: { class: "text-center" },
-  footer: link_to("See more...", donations_path(
-      filters: {
-        by_source: "Product Drive"
-      }
-    )),
+  footer: link_to("See more...", product_drives_path),
 ) do %>
 
   <h3 class="text-center">

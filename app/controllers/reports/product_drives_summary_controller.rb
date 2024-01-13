@@ -1,4 +1,4 @@
-class Reports::ProductDrivesController < ApplicationController
+class Reports::ProductDrivesSummaryController < ApplicationController
   def index
     setup_date_range_picker
     @donations = current_organization.donations.during(helpers.selected_range)
