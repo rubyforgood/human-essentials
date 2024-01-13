@@ -1,8 +1,8 @@
 require_relative "organization_page"
 
-class OrganizationReportsProductDrivesPage < OrganizationPage
+class OrganizationReportsProductDrivesSummaryPage < OrganizationPage
   def org_page_path
-    "reports/product_drives"
+    "reports/product_drives_summary"
   end
 
   def product_drive_total_donations
