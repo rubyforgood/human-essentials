@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Reports::ProductDrives", type: :request do
+RSpec.describe "Reports::ProductDrivesSummary", type: :request do
   let(:default_params) do
     {organization_id: @organization.to_param}
   end
@@ -12,7 +12,7 @@ RSpec.describe "Reports::ProductDrives", type: :request do
 
     describe "GET #index" do
       subject do
-        get reports_product_drives_path(default_params.merge(format: response_format))
+        get reports_product_drives_summary_index_path(default_params.merge(format: response_format))
         response
       end
       let(:response_format) { "html" }
@@ -24,12 +24,12 @@ RSpec.describe "Reports::ProductDrives", type: :request do
   describe "while not signed in" do
     describe "GET /index" do
       subject do
-        get reports_product_drives_path(default_params)
+        get reports_product_drives_summary_index_path(default_params)
         response
       end
 
       it "redirect to login" do
-        is_expected.to redirect_to(new_user_session_path)
+        is_expected.to redirect_to(new_user_session_summary_index_path)
       end
     end
   end
