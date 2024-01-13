@@ -1,7 +1,7 @@
-RSpec.describe "ProductDrives Report", type: :system, js: true do
+RSpec.describe "Product Drives Summary Report", type: :system, js: true do
   let!(:storage_location) { create(:storage_location, :with_items, item_quantity: 0, organization: @organization) }
   let(:org_short_name) { @organization.short_name }
-  let(:org_reports_product_drives_page) { OrganizationReportsProductDrivesPage.new org_short_name: org_short_name }
+  let(:org_reports_product_drives_page) { OrganizationReportsProductDrivesSummaryPage.new org_short_name: org_short_name }
 
   before do
     @url_prefix = "/#{@organization.short_name}"
