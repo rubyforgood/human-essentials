@@ -29,7 +29,7 @@ RSpec.describe "Reports::ProductDrivesSummary", type: :request do
       end
 
       it "redirect to login" do
-        is_expected.to redirect_to(new_user_session_summary_index_path)
+        is_expected.to redirect_to(new_user_session_path)
       end
     end
   end
