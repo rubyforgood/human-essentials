@@ -72,7 +72,8 @@ class DistributionsController < ApplicationController
   end
 
   def create
-    result = DistributionCreateService.new(distribution_params.merge(organization: current_organization), request_id).call
+    dist = Distribution.new(distribution_params.merge(organization: current_organization))
+    result = DistributionCreateService.new(dist, request_id).call
 
     if result.success?
       session[:created_distribution_id] = result.distribution.id
