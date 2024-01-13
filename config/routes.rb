@@ -106,6 +106,7 @@ Rails.application.routes.draw do
       end
       resources :donations_summary, only: [:index]
       resources :manufacturer_donations_summary, only: [:index]
+      resources :product_drives_summary, only: [:index]
       resources :itemized_donations, only: [:index]
       resources :itemized_distributions, only: [:index]
       resources :activity_graph, only: [:index]
