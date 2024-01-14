@@ -51,7 +51,7 @@ class AuditsController < ApplicationController
     if @audit.update(audit_params)
       save_audit_status_and_redirect(params)
     else
-      flash[:error] = "Something didn't work quite right -- try again?"
+      flash[:error] = @audit.errors.full_messages.join("\n")
       @storage_locations = [@audit.storage_location]
       set_items
       @audit.line_items.build if @audit.line_items.empty?
