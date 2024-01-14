@@ -76,7 +76,16 @@ Capybara.asset_host = "http://localhost:3000"
 
 # Only keep the most recent run
 Capybara::Screenshot.prune_strategy = :keep_last_run
-Capybara.save_path = Rails.root.join("tmp", "screenshots")
+
+# Set the directory Capybara should save screenshots to
+# This monkeypatch is needed to separate screenshots from downloads
+module Capybara
+  module Screenshot
+    def self.capybara_tmp_path
+      Rails.root.join("tmp", "screenshots")
+    end
+  end
+end
 
 RSpec.configure do |config|
   config.include Devise::Test::ControllerHelpers, type: :controller
