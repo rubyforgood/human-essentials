@@ -427,7 +427,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
           it 'should properly indicate the requestable items and adjust the partners requestable items' do
             assert page.has_content? item_category.name
-            expect(PartnerFetchRequestableItemsService.new(partner_id: @partner.id).call).to eq(items_in_category)
+            expect(PartnerFetchRequestableItemsService.new(partner_id: @partner.id).call.sort).to eq(items_in_category.sort)
           end
         end
 
