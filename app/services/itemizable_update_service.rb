@@ -36,13 +36,13 @@ module ItemizableUpdateService
   # @param to_location [StorageLocation]
   def self.update_storage_location(itemizable:, apply_change_method:, undo_change_method:,
     params:, from_location:, to_location:)
-    from_location.public_send(undo_change_method, itemizable.to_a)
+    from_location.public_send(undo_change_method, itemizable.line_item_hashes)
     # Delete the line items -- they'll be replaced later
     itemizable.line_items.delete_all
     # Update the current model with the new parameters
     itemizable.update!(params)
     itemizable.reload
     # Apply the new changes to the storage location inventory
-    to_location.public_send(apply_change_method, itemizable.to_a)
+    to_location.public_send(apply_change_method, itemizable.line_item_hashes)
   end
 end

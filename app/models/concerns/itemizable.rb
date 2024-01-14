@@ -102,12 +102,19 @@ module Itemizable
     line_items.total
   end
 
-  def to_a
+  def line_item_hashes
     line_items.map do |l|
       # When the item isn't found, it's probably just inactive. This ensures it's available.
       item = Item.find(l.item_id)
       { item_id: item.id, name: item.name, quantity: l.quantity, active: item.active }.with_indifferent_access
     end
+  end
+
+  # TODO: I'm not sure if this should just be removed or leave as a warning for now?
+  def to_a
+    Rails.logger.error("Calling Itemizable#to_a is deprecated. Use Itemizable#line_item_hashes instead.")
+    Rails.logger.error("Called on #{inspect} by #{caller}")
+    line_item_hashes
   end
 
   private
