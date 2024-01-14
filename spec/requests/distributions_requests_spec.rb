@@ -332,6 +332,33 @@ RSpec.describe "Distributions", type: :request do
         end
       end
     end
+
+    describe "GET #edit" do
+      let(:location) { create(:storage_location) }
+      let(:partner) { create(:partner) }
+
+      let(:distribution) { create(:distribution, partner: partner) }
+
+      it "should show the distribution" do
+        get edit_distribution_path(default_params.merge(id: distribution.id))
+        expect(response).to be_successful
+        expect(response.body).not_to include("You’ve had an audit since this distribution was started.")
+      end
+
+      it "should show a warning if there is an inteverning audit" do
+        distribution.update!(created_at: 1.week.ago)
+        create(:audit, storage_location: distribution.storage_location)
+        get edit_distribution_path(default_params.merge(id: distribution.id))
+        expect(response.body).to include("You’ve had an audit since this distribution was started.")
+      end
+
+      it "should not show a warning if the audit is for another location" do
+        distribution.update!(created_at: 1.week.ago)
+        create(:audit, storage_location: create(:storage_location))
+        get edit_distribution_path(default_params.merge(id: distribution.id))
+        expect(response.body).not_to include("You’ve had an audit since this distribution was started.")
+      end
+    end
   end
 
   context "While not signed in" do
