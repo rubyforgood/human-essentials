@@ -347,9 +347,16 @@ RSpec.describe "Distributions", type: :request do
 
       it "should show a warning if there is an inteverning audit" do
         distribution.update!(created_at: 1.week.ago)
-        create(:audit)
+        create(:audit, storage_location: distribution.storage_location)
         get edit_distribution_path(default_params.merge(id: distribution.id))
         expect(response.body).to include("You’ve had an audit since this distribution was started.")
+      end
+
+      it "should not show a warning if the audit is for another location" do
+        distribution.update!(created_at: 1.week.ago)
+        create(:audit, storage_location: create(:storage_location))
+        get edit_distribution_path(default_params.merge(id: distribution.id))
+        expect(response.body).not_to include("You’ve had an audit since this distribution was started.")
       end
     end
   end
