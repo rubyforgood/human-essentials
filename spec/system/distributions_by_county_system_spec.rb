@@ -42,6 +42,10 @@ RSpec.feature "Distributions by County", type: :system do
 
   def visit_distribution_by_county_with_specified_date_range(date_range_string)
     visit dashboard_path(default_params)
+
+    click_on "Reporting & Auditing"
+    click_on "Distributions by County"
+
     find("#filters_date_range").click
 
     within ".container__predefined-ranges" do
@@ -49,7 +53,5 @@ RSpec.feature "Distributions by County", type: :system do
     end
 
     click_on "Filter"
-    click_on "Reporting & Auditing"
-    click_on "Distributions by County"
   end
 end
