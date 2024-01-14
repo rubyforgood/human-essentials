@@ -137,8 +137,6 @@ class StorageLocation < ApplicationRecord
 
   # FIXME: After this is stable, revisit how we do logging
   def increase_inventory(itemizable_array)
-    itemizable_array = itemizable_array.to_a
-
     # This is, at least for now, how we log changes to the inventory made in this call
     log = {}
     # Iterate through each of the line-items in the moving box
@@ -161,8 +159,6 @@ class StorageLocation < ApplicationRecord
 
   # TODO: re-evaluate this for optimization
   def decrease_inventory(itemizable_array)
-    itemizable_array = itemizable_array.to_a
-
     # This is, at least for now, how we log changes to the inventory made in this call
     log = {}
     # This tracks items that have insufficient inventory counts to be reduced as much
