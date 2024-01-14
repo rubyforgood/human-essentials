@@ -28,8 +28,8 @@ FactoryBot.define do
 
     after(:build) do |instance, evaluator|
       instance.barcodeable = evaluator.barcodeable || create(:item,
-                                                             organization: (instance.organization || Organization.try(:first)),
-                                                             base_item: (BaseItem.try(:first) || create(:base_item)))
+                                                             organization: instance.organization || Organization.try(:first),
+                                                             base_item: BaseItem.try(:first) || create(:base_item))
     end
   end
 end
