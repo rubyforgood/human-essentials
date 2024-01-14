@@ -103,14 +103,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
         it "displays the on-hand totals" do
           expect(org_dashboard_page.summary_section.text).to include "on-hand"
         end
-
-        context "when constrained to date range" do
-          it "does not change" do
-            expect { org_dashboard_page.select_date_filter_range "Last Month" }
-              .not_to change { org_dashboard_page.total_inventory }
-              .from 333
-          end
-        end
       end
     end
 

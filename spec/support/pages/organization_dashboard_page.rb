@@ -12,18 +12,6 @@ class OrganizationDashboardPage < OrganizationPage
     end
   end
 
-  def filter_to_date_range(range_name, custom_dates = nil)
-    select_date_filter_range range_name
-
-    if custom_dates.present?
-      fill_in :filters_date_range, with: ""
-      fill_in :filters_date_range, with: custom_dates
-      page.find(:xpath, "//*[contains(text(),'- Dashboard')]").click
-    end
-
-    click_on "Filter"
-  end
-
   def has_add_donation_site_call_to_action?
     has_selector? "#org-stats-call-to-action-donation-sites"
   end
@@ -87,16 +75,6 @@ class OrganizationDashboardPage < OrganizationPage
   def top_manufacturer_donation_links
     within manufacturers_section do
       all(".manufacturer a").map(&:text)
-    end
-  end
-
-  def select_date_filter_range(range_name)
-    find("#filters_date_range").click
-
-    if range_name
-      within ".container__predefined-ranges" do
-        find("button", text: range_name).click
-      end
     end
   end
 
