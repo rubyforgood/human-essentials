@@ -14,7 +14,7 @@ module Reports
     def report
       @report ||= { name: 'Diaper Acquisition',
                     entries: {
-                      'Disposable diapers distributed' => number_with_delimiter(total_diapers_distributed),
+                      'Disposable diapers distributed' => number_with_delimiter(total_disposable_diapers_distributed),
                       'Cloth diapers distributed' => number_with_delimiter(distributed_cloth_diapers),
                       'Average monthly disposable diapers distributed' => number_with_delimiter(monthly_disposable_diapers),
                       'Total product drives' => annual_drives.count,
@@ -36,7 +36,7 @@ module Reports
     end
 
     # @return [Integer]
-    def distributed_disposable_diapers
+    def distributed_disposable_diapers_not_from_kits
       @distributed_disposable_diapers ||= organization
                                .distributions
                                .for_year(year)
@@ -45,7 +45,7 @@ module Reports
                                .sum('line_items.quantity')
     end
 
-    def distributed_diapers_from_kits
+    def distributed_disposable_diapers_from_kits
       @distributed_diapers_from_kits ||= organization
         .kits
         .joins(inventory_items: :item)
@@ -57,8 +57,8 @@ module Reports
         .sum('inventory_items.quantity')
     end
 
-    def total_diapers_distributed
-      distributed_disposable_diapers + distributed_diapers_from_kits
+    def total_disposable_diapers_distributed
+      distributed_disposable_diapers_not_from_kits + distributed_disposable_diapers_from_kits
     end
 
     def distributed_cloth_diapers
@@ -72,7 +72,7 @@ module Reports
 
     # @return [Integer]
     def monthly_disposable_diapers
-      (distributed_disposable_diapers / 12.0).round
+      (distributed_disposable_diapers_not_from_kits / 12.0).round
     end
 
     # @return [ActiveRecord::Relation]
