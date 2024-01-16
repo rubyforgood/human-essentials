@@ -67,8 +67,9 @@ RSpec.describe "Donations", type: :request do
 
           it "should display Misc Donation and a truncated comment" do
             donation
+            short_comment = donation.comment.truncate(25, separator: /\s/)
             expect(subject.body).to include("<td>#{donation.source}</td>")
-            expect(subject.body).to include("<td>#{donation.comment[..25]}</td>")
+            expect(subject.body).to include("<td>#{short_comment}</td>")
           end
         end
       end
