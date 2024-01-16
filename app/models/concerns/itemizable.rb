@@ -104,7 +104,6 @@ module Itemizable
 
   def line_item_hashes
     line_items.map do |l|
-      # When the item isn't found, it's probably just inactive. This ensures it's available.
       item = Item.find(l.item_id)
       { item_id: item.id, name: item.name, quantity: l.quantity, active: item.active }.with_indifferent_access
     end
