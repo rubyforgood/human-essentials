@@ -48,7 +48,7 @@ module Reports
       total_avg = if total_distributions.zero? && total_kits.zero?
         0.0
       else
-        (distribution_average * total_distributions + kit_average * total_kits) / (total_distributions + total_kits)
+        (disposable_distribution_average * total_distributions + kit_average * total_kits) / (total_distributions + total_kits)
       end
 
       total_avg.nan? ? 0.0 : total_avg
@@ -56,7 +56,7 @@ module Reports
 
     private
 
-    def distribution_average
+    def disposable_distribution_average
       organization
       .distributions
       .for_year(year)
