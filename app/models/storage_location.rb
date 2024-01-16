@@ -46,7 +46,7 @@ class StorageLocation < ApplicationRecord
   validates :name, :address, :organization, presence: true
   validates :warehouse_type, inclusion: { in: WAREHOUSE_TYPES },
                              allow_blank: true
-  before_destroy :verify_inventory_items, prepend: true
+  before_destroy :validate_empty_inventory, prepend: true
 
   include Discard::Model
   include Geocodable
@@ -173,8 +173,8 @@ class StorageLocation < ApplicationRecord
     change_log
   end
 
-  def verify_inventory_items
-    unless empty_inventory_items?
+  def validate_empty_inventory
+    unless empty_inventory?
       errors.add(:base, "Cannot delete storage location containing inventory items with non-zero quantities")
       throw(:abort)
     end
@@ -190,8 +190,8 @@ class StorageLocation < ApplicationRecord
     attributes
   end
 
-  def empty_inventory_items?
-    inventory_items.map(&:quantity).uniq.reject(&:zero?).empty?
+  def empty_inventory?
+    inventory_items.map(&:quantity).all?(&:zero?)
   end
 
   def active_inventory_items
