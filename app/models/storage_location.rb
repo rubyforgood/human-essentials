@@ -136,48 +136,25 @@ class StorageLocation < ApplicationRecord
   end
 
   # FIXME: After this is stable, revisit how we do logging
-  def increase_inventory(itemizable_array)
-    # This is, at least for now, how we log changes to the inventory made in this call
-    log = {}
-    # Iterate through each of the line-items in the moving box
-    Item.reactivate(itemizable_array.map { |item_hash| item_hash[:item_id] })
-    itemizable_array.each do |item_hash|
-      # Locate the storage box for the item, or create a new storage box for it
-      inventory_item = inventory_items.find_or_create_by!(item_id: item_hash[:item_id])
-      # Increase the quantity-on-record for that item
-      new_quantity = inventory_item.quantity + item_hash[:quantity].to_i
-      inventory_item.update!(quantity: new_quantity)
-      # Record in the log that this has occurred
-      log[item_hash[:item_id]] = "+#{item_hash[:quantity]}"
-    end
+  def increase_inventory(item_hash_array)
+    change_log = {}
+
+    Item.reactivate(item_hash_array.map { |item| item[:item_id] })
+
+    item_hash_array.each { |item| update_item_quantity(change_log, item, increase: true) }
     # log could be pulled from dirty AR stuff?
     # Save the final changes -- does this need to occur here?
     save
-    # return log
-    log
+
+    change_log
   end
 
   # TODO: re-evaluate this for optimization
-  def decrease_inventory(itemizable_array)
-    # This is, at least for now, how we log changes to the inventory made in this call
-    log = {}
-    # This tracks items that have insufficient inventory counts to be reduced as much
-    insufficient_items = []
-    # Iterate through each of the line-items in the moving box
-    itemizable_array.each do |item_hash|
-      # Locate the storage box for the item, or create an empty storage box
-      inventory_item = inventory_items.find_by(item_id: item_hash[:item_id]) || inventory_items.build
-      # If we've got sufficient inventory in the storage box to fill the moving box, then continue
-      next unless inventory_item.quantity < item_hash[:quantity]
+  def decrease_inventory(item_hash_array)
+    change_log = {}
 
-      # Otherwise, we need to record that there was insufficient inventory on-hand
-      insufficient_items << {
-        item_id: item_hash[:item_id],
-        item_name: item_hash[:name],
-        quantity_on_hand: inventory_item.quantity,
-        quantity_requested: item_hash[:quantity]
-      }
-    end
+    # This tracks items that have insufficient inventory counts to be reduced as much
+    insufficient_items = item_hash_array.filter_map { |item| amount_insufficient(item) }
     # NOTE: Could this be handled by a validation instead?
     # If we found any insufficiencies
     unless insufficient_items.empty?
@@ -189,22 +166,11 @@ class StorageLocation < ApplicationRecord
       )
     end
 
-    # Re-run through the items in the moving box again
-    itemizable_array.each do |item_hash|
-      # Look for the moving box for this item -- we know there is sufficient quantity this time
-      # Raise AR:RNF if it fails to find it -- though that seems moot since it would have been
-      # captured by the previous block.
-      inventory_item = inventory_items.find_by(item_id: item_hash[:item_id])
-      # Reduce the inventory box quantity
-      new_quantity = inventory_item.quantity - item_hash[:quantity]
-      inventory_item.update(quantity: new_quantity)
-      # Record in the log that this has occurred
-      log[item_hash[:item_id]] = "-#{item_hash[:quantity]}"
-    end
-    # log could be pulled from dirty AR stuff
+    # Iterate through each of the line-items in the moving box
+    item_hash_array.each { |item_hash| update_item_quantity(change_log, item_hash, increase: false) }
     save!
-    # return log
-    log
+
+    change_log
   end
 
   def verify_inventory_items
@@ -232,5 +198,38 @@ class StorageLocation < ApplicationRecord
     inventory_items
     .includes(:item)
     .where(items: { active: true })
+  end
+
+  private
+
+  # checks if there is enough inventory to remove the requested amount
+  # returns nil if there is enough inventory
+  # returns a hash if there is enough inventory
+  def amount_insufficient(item_hash)
+    inventory_item = inventory_items.find_by(item_id: item_hash[:item_id])
+
+    # If item exists and has sufficient inventory, then continue
+    return if inventory_item && inventory_item.quantity >= item_hash[:quantity]
+
+    # Return hash of insufficiency information
+    {
+      item_id: item_hash[:item_id],
+      item_name: item_hash[:name],
+      quantity_on_hand: inventory_item&.quantity || 0,
+      quantity_requested: item_hash[:quantity]
+    }
+  end
+
+  # takes a log, and item hash and boolean: increase: true/false
+  # updates the log with the new inventory count
+  def update_item_quantity(change_log, item, increase:)
+    inventory_item = inventory_items.find_or_create_by!(item_id: item[:item_id])
+
+    change_amount = increase ? item[:quantity] : item[:quantity] * -1
+    new_quantity = inventory_item.quantity + change_amount
+    inventory_item.update(quantity: new_quantity)
+
+    # Record in the log that this has occurred
+    change_log[item[:item_id]] = new_quantity.to_s
   end
 end
