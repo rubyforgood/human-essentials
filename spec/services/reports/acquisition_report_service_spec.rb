@@ -136,7 +136,7 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
     end
 
     it "returns the correct quantity of disposable diapers from kits" do
-      expect(subject.send(:distributed_diapers_from_kits)).to eq(20)
+      expect(subject.send(:distributed_disposable_diapers_from_kits)).to eq(20)
     end
 
     it 'should return the proper results on #report' do
