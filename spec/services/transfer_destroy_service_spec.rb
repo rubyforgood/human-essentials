@@ -29,7 +29,7 @@ RSpec.describe TransferDestroyService, type: :service do
       allow(transfer).to receive(:from).and_return(fake_from)
       allow(transfer).to receive(:to).and_return(fake_to)
       allow(transfer).to receive(:destroy!)
-      allow(transfer).to receive(:line_item_hashes).and_return(fake_items)
+      allow(transfer).to receive(:line_item_values).and_return(fake_items)
 
       # Now that that the `transfer.from` and `transfer.to` is stubbed
       # to return the doubles of StorageLocation, we must program them
@@ -73,7 +73,7 @@ RSpec.describe TransferDestroyService, type: :service do
         let(:fake_error) { Errors::InsufficientAllotment.new('msg') }
 
         before do
-          allow(transfer).to receive(:line_item_hashes).and_return(fake_items)
+          allow(transfer).to receive(:line_item_values).and_return(fake_items)
           allow(fake_from).to receive(:increase_inventory).with(fake_items).and_raise(fake_error)
         end
 
@@ -87,8 +87,8 @@ RSpec.describe TransferDestroyService, type: :service do
       context 'because undoing the transfer inventory changes by decreasing the inventory of `to` failed' do
         let(:fake_error) { Errors::InsufficientAllotment.new('random-error') }
         before do
-          allow(transfer).to receive(:line_item_hashes).and_return(fake_items)
-          allow(fake_to).to receive(:decrease_inventory).with(transfer.line_item_hashes).and_raise(fake_error)
+          allow(transfer).to receive(:line_item_values).and_return(fake_items)
+          allow(fake_to).to receive(:decrease_inventory).with(transfer.line_item_values).and_raise(fake_error)
         end
 
         it 'should return a OpenStruct with the raised error' do

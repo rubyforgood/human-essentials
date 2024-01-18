@@ -67,7 +67,7 @@ describe DonationDestroyService do
         allow(fake_organization_donations).to receive(:find)
           .with(donation_id)
           .and_return(fake_donation)
-        allow(fake_donation).to receive(:line_item_hashes).and_return(fake_insufficient_items)
+        allow(fake_donation).to receive(:line_item_values).and_return(fake_insufficient_items)
         allow(fake_storage_location).to receive(:decrease_inventory)
           .with(fake_insufficient_items)
           .and_raise(fake_insufficient_allotment_error)
@@ -109,7 +109,7 @@ describe DonationDestroyService do
         allow(fake_organization_donations).to receive(:find)
           .with(donation_id)
           .and_return(fake_donation)
-        allow(fake_donation).to receive(:line_item_hashes).and_return(fake_insufficient_items)
+        allow(fake_donation).to receive(:line_item_values).and_return(fake_insufficient_items)
         allow(fake_storage_location).to receive(:decrease_inventory).with(fake_insufficient_items)
         allow(fake_donation).to receive(:destroy!).and_raise('boom')
       end

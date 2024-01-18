@@ -72,7 +72,7 @@ RSpec.describe StorageLocation, type: :model do
 
         it "increases inventory quantities from an itemizable object" do
           expect do
-            subject.increase_inventory(donation.line_item_hashes)
+            subject.increase_inventory(donation.line_item_values)
           end.to change { subject.size }.by(66)
         end
       end
@@ -83,7 +83,7 @@ RSpec.describe StorageLocation, type: :model do
 
         it "creates those new inventory items in the storage location" do
           expect do
-            subject.increase_inventory(donation_with_new_items.line_item_hashes)
+            subject.increase_inventory(donation_with_new_items.line_item_values)
           end.to change { subject.inventory_items.count }.by(1)
         end
       end
@@ -94,7 +94,7 @@ RSpec.describe StorageLocation, type: :model do
 
         it "re-activates the item as part of the creation process" do
           expect do
-            subject.increase_inventory(donation_with_inactive_item.line_item_hashes)
+            subject.increase_inventory(donation_with_inactive_item.line_item_values)
           end.to change { subject.inventory_items.count }.by(1)
                                                          .and change { Item.count }.by(1)
         end
@@ -108,7 +108,7 @@ RSpec.describe StorageLocation, type: :model do
       it "decreases inventory quantities from an itemizable object" do
         storage_location = create(:storage_location, :with_items, item_quantity: 100, item: item, organization: @organization)
         expect do
-          storage_location.decrease_inventory(distribution.line_item_hashes)
+          storage_location.decrease_inventory(distribution.line_item_values)
         end.to change { storage_location.size }.by(-66)
       end
 
@@ -118,7 +118,7 @@ RSpec.describe StorageLocation, type: :model do
         it "gives informative errors" do
           storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization)
           expect do
-            storage_location.decrease_inventory(distribution_but_too_much.line_item_hashes).errors
+            storage_location.decrease_inventory(distribution_but_too_much.line_item_values).errors
           end.to raise_error(Errors::InsufficientAllotment)
         end
 
@@ -126,7 +126,7 @@ RSpec.describe StorageLocation, type: :model do
           storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization)
           starting_size = storage_location.size
           begin
-            storage_location.decrease_inventory(distribution.line_item_hashes)
+            storage_location.decrease_inventory(distribution.line_item_values)
           rescue Errors::InsufficientAllotment
           end
           storage_location.reload

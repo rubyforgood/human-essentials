@@ -102,7 +102,7 @@ module Itemizable
     line_items.total
   end
 
-  def line_item_hashes
+  def line_item_values
     line_items.map do |l|
       item = Item.find(l.item_id)
       { item_id: item.id, name: item.name, quantity: l.quantity, active: item.active }.with_indifferent_access
@@ -111,9 +111,11 @@ module Itemizable
 
   # TODO: I'm not sure if this should just be removed or leave as a warning for now?
   def to_a
-    Rails.logger.error("Calling Itemizable#to_a is deprecated. Use Itemizable#line_item_hashes instead.")
-    Rails.logger.error("Called on #{inspect} by #{caller}")
-    line_item_hashes
+    line_item_values unless Flipper.enabled?(:deprecate_to_a)
+
+    Rails.logger.warn "Called #to_a on an Itemizable #{inspect}."
+    Rails.logger.warn caller.join("\n")
+    raise StandardError, "Calling to_a on an Itemizable is deprecated. Use #line_item_values instead."
   end
 
   private

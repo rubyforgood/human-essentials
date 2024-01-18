@@ -38,8 +38,8 @@ class AuditsController < ApplicationController
 
     increasing_adjustment, decreasing_adjustment = @audit.adjustment.split_difference
     ActiveRecord::Base.transaction do
-      @audit.storage_location.increase_inventory(increasing_adjustment.line_item_hashes)
-      @audit.storage_location.decrease_inventory(decreasing_adjustment.line_item_hashes)
+      @audit.storage_location.increase_inventory(increasing_adjustment.line_item_values)
+      @audit.storage_location.decrease_inventory(decreasing_adjustment.line_item_values)
       AuditEvent.publish(@audit)
     end
     @audit.finalized!
