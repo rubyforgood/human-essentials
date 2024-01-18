@@ -1,0 +1,66 @@
+<div class="card card-success">
+  <div class="card-header">
+    <h3 class="card-title">Users</h3>
+  </div>
+
+  <div class="card-body table-responsive p-0">
+    <table class="table table-hover text-nowrap">
+      <thead>
+        <tr>
+          <th>Name & Email</th>
+          <th>Last Login</th>
+          <th>Invitation Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% users.order(name: :asc).each do |user| %>
+          <tr>
+            <td>
+              <div class='d-flex flex-column'>
+                <span><%= user.name %></span>
+                <small><%= user.email %></small>
+              </div>
+            </td>
+            <td>
+              <small>
+                <% if user.last_sign_in_at.present? %>
+                  <%= time_ago_in_words(user.last_sign_in_at) %> ago <small>(<%= user.invitation_sent_at.strftime('%b %d %Y') %>)</small>
+                <% else %>
+                  <span class="badge bg-danger">Never</span>
+                <% end %>
+              </small>
+            </td>
+            <td>
+              <% if user.invitation_accepted_at %>
+                <span class="badge bg-success">
+                  <i class="fas fa-check"></i> Accepted
+                </span>
+              <% else %>
+                <div class='d-flex flex-column justify-content-center align-items-start'>
+                  <span class="badge bg-warning">
+                    <div>Waiting Acceptance</div>
+                  </span>
+                  <small style='font-size:10px'>
+                    Last invite sent <strong><%= time_ago_in_words(user.invitation_sent_at) %> ago on <%= user.invitation_sent_at.strftime('%b %d %Y') %></strong>
+                  </small>
+                </div>
+              <% end %>
+            </td>
+            <td class='d-flex flex-column'>
+              <% unless user.invitation_accepted_at %>
+                <%= button_to resend_invitation_partner_user_path(partner, user), method: :post, class: "btn btn-warning btn-xs mb-2" do %>
+                  <i class="fa fa-envelope"></i> Resend Invitation
+                <% end %>
+              <% end %>
+              <%= button_to partner_user_path(partner, user), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-xs" do %>
+                  <i class="fa fa-ban"></i> Remove Access
+              <% end %>
+
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
