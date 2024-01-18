@@ -93,7 +93,7 @@ class AuditsController < ApplicationController
 
   def handle_audit_errors
     error_message = @audit.errors.uniq(&:attribute).map do |error|
-      attr = error.attribute.to_s == 'base' ? '' : error.attribute.capitalize
+      attr = (error.attribute.to_s == 'base') ? '' : error.attribute.capitalize
       "#{attr} ".tr("_", " ") + error.message
     end
     flash[:error] = error_message.join(", ")
