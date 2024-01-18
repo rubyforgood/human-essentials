@@ -43,7 +43,7 @@ describe DistributionDestroyService do
         end
         before do
           allow(distribution).to receive(:storage_location).and_return(fake_storage_location)
-          allow(distribution).to receive(:line_item_hashes).and_return(fake_items)
+          allow(distribution).to receive(:line_item_values).and_return(fake_items)
           allow(fake_storage_location).to receive(:increase_inventory)
         end
 
@@ -106,7 +106,7 @@ describe DistributionDestroyService do
 
         before do
           allow(distribution).to receive(:storage_location).and_return(fake_storage_location)
-          allow(distribution).to receive(:line_item_hashes).and_return(fake_insufficient_items)
+          allow(distribution).to receive(:line_item_values).and_return(fake_insufficient_items)
           allow(fake_storage_location).to receive(:increase_inventory)
             .with(fake_insufficient_items)
             .and_raise(fake_insufficient_allotment_error)

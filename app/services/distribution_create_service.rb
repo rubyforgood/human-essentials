@@ -14,7 +14,7 @@ class DistributionCreateService < DistributionService
 
       DistributionEvent.publish(distribution)
 
-      distribution.storage_location.decrease_inventory(distribution.line_item_hashes)
+      distribution.storage_location.decrease_inventory(distribution.line_item_values)
       distribution.reload
       @request&.update!(distribution_id: distribution.id, status: 'fulfilled')
       send_notification if distribution.partner&.send_reminders
