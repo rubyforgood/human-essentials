@@ -64,6 +64,20 @@ RSpec.describe Audit, type: :model do
       expect(audit.save).to be_falsey
     end
 
+    it 'cannot have duplicate line items' do
+      item = create(:item, name: "Dupe Item")
+      storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
+      audit = build(:audit,
+                    storage_location: storage_location,
+                    line_items_attributes: [
+                      { item_id: item.id, quantity: 3 },
+                      { item_id: item.id, quantity: 5 }
+                    ])
+
+      expect(audit.save).to be_falsey
+      expect(audit.errors.full_messages).to eq(["You have entered at least one duplicate item: Dupe Item"])
+    end
+
     it "can have line items that has quantity as a positive integer" do
       item = create(:item)
       storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
