@@ -497,6 +497,7 @@ RSpec.describe InventoryAggregate do
 
   describe "multiple events" do
     it "should process multiple events" do
+      item4 = FactoryBot.create(:item, organization: organization)
       donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
       donation.line_items << build(:line_item, quantity: 50, item: item1)
       donation.line_items << build(:line_item, quantity: 30, item: item2)
@@ -512,6 +513,7 @@ RSpec.describe InventoryAggregate do
 
       # correction event
       donation3.line_items = [build(:line_item, quantity: 40, item: item2)]
+      donation3.line_items << build(:line_item, quantity: 50, item: item4)
       DonationEvent.publish(donation3)
 
       dist = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location1)
@@ -536,7 +538,8 @@ RSpec.describe InventoryAggregate do
           storage_location2.id => EventTypes::EventStorageLocation.new(
             id: storage_location2.id,
             items: {
-              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 25, storage_location_id: storage_location2.id)
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 25, storage_location_id: storage_location2.id),
+              item4.id => EventTypes::EventItem.new(item_id: item4.id, quantity: 50, storage_location_id: storage_location2.id)
             }
           )
         }

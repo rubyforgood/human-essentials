@@ -61,11 +61,7 @@ module InventoryAggregate
         quantity = line_item.quantity
         if previous_event
           previous_item = previous_event.data.items.find { |i| i.item_id == line_item.item_id }
-          if previous_item
-            quantity -= previous_item.quantity
-          else
-            quantity = 0 # don't change it
-          end
+          quantity -= previous_item.quantity if previous_item
         end
         inventory.move_item(item_id: line_item.item_id,
           quantity: quantity,
