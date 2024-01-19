@@ -154,6 +154,9 @@ class DistributionsController < ApplicationController
         current_user.has_role?(Role::ORG_ADMIN, current_organization)
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
+      @audit_warning = current_organization.audits
+        .where(storage_location_id: @distribution.storage_location_id)
+        .where("updated_at > ?", @distribution.created_at).any?
       if Event.read_events?(current_organization)
         inventory = View::Inventory.new(@distribution.organization_id)
         @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
