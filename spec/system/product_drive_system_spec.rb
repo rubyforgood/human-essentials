@@ -42,6 +42,10 @@ RSpec.describe "Product Drives", type: :system, js: true do
     it 'shows only one non-virtual product drive' do
       expect(page).to have_text(/No/, maximum: 1)
     end
+
+    it 'shows in descending order of start date' do
+      expect("Test name 2").to appear_before("Test name 1")
+    end
   end
 
   context 'when creating a normal product drive' do
