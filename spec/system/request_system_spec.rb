@@ -118,12 +118,12 @@ RSpec.describe "Requests", type: :system, js: true do
     let!(:item) { create(:item, name: "Item Count Test") }
     let!(:request) {
       create(:request,
-             organization: @organization,
-             request_items: [
-               { "item_id": item1.id, "quantity": '12' },
-               { "item_id": item2.id, "quantity": '17' },
-               { "item_id": item.id,  "quantity": '23' },
-             ])
+        organization: @organization,
+        request_items: [
+          { "item_id": item1.id, "quantity": '12' },
+          { "item_id": item2.id, "quantity": '17' },
+          { "item_id": item.id, "quantity": '23' }
+        ])
     }
 
     it "should show the request with a request sender if a partner user is set" do
