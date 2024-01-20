@@ -173,7 +173,7 @@ class PartnersController < ApplicationController
   end
 
   def partner_params
-    params.require(:partner).permit(:name, :email, :send_reminders, :quota,
+    params.require(:partner).permit(:name, :email, :primary_contact_name, :send_reminders, :quota,
       :notes, :partner_group_id, :default_storage_location_id, documents: [])
   end
 

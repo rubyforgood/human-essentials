@@ -21,6 +21,8 @@ class Partner < ApplicationRecord
   resourcify
   require "csv"
 
+  attr_accessor :primary_contact_name
+
   ALLOWED_MIME_TYPES = [
     "application/pdf",
     "application/msword",
