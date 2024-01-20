@@ -66,7 +66,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
           click_on 'New Partner Agency'
 
-          fill_in 'Name *', with: partner_attributes[:name]
+          fill_in 'Partner Name *', with: partner_attributes[:name]
           fill_in 'E-mail *', with: partner_attributes[:email]
           fill_in 'Quota', with: partner_attributes[:quota]
           fill_in 'Notes', with: partner_attributes[:notes]
@@ -97,7 +97,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           assert page.has_content? "Partner Agencies for #{@organization.name}"
           click_on 'New Partner Agency'
 
-          fill_in 'Name *', with: partner_attributes[:name]
+          fill_in 'Partner Name *', with: partner_attributes[:name]
 
           find('button', text: 'Add Partner Agency').click
         end
@@ -291,7 +291,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
       it "User can add a new partner" do
         visit subject
-        fill_in "Name", with: "Frank"
+        fill_in "Partner Name", with: "Frank"
         fill_in "E-mail", with: "frank@frank.com"
         check 'send_reminders'
         click_button "Add Partner Agency"
@@ -320,7 +320,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
       it "User can update a partner" do
         visit subject
         name = Faker::Name.first_name
-        fill_in "Name", with: name
+        fill_in "Partner Name", with: name
         click_button "Update Partner"
 
         expect(page).to have_current_path(url_prefix + "/partners/#{partner.id}")
@@ -330,7 +330,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
       it "prevents a user from updating a partner with empty name" do
         visit subject
-        fill_in "Name", with: ""
+        fill_in "Partner Name", with: ""
         click_button "Update Partner"
 
         expect(page.find(".alert")).to have_content "Something didn't work quite right -- try again?"
