@@ -3,6 +3,7 @@
 # Table name: partners
 #
 #  id                          :integer          not null, primary key
+#  contact_name_at_creation    :string
 #  email                       :string
 #  name                        :string
 #  notes                       :text

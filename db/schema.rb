@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_12_29_200106) do
+ActiveRecord::Schema[7.0].define(version: 2024_01_20_221350) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -660,6 +660,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_29_200106) do
     t.integer "quota"
     t.bigint "partner_group_id"
     t.bigint "default_storage_location_id"
+    t.string "contact_name_at_creation"
     t.index ["default_storage_location_id"], name: "index_partners_on_default_storage_location_id"
     t.index ["organization_id"], name: "index_partners_on_organization_id"
     t.index ["partner_group_id"], name: "index_partners_on_partner_group_id"

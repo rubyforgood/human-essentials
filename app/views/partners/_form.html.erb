@@ -18,9 +18,9 @@
                 <%= f.input_field :email, class: "form-control"%>
               <% end %>
               <% if @partner.new_record? %>
-                <%= f.input :primary_contact_name, label: "Primary Contact Name", wrapper: :input_group do %>
+                <%= f.input :contact_name_at_creation, label: "Primary Contact Name", wrapper: :input_group do %>
                   <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                  <%= f.input_field :primary_contact_name, class: "form-control"%>
+                  <%= f.input_field :contact_name_at_creation, class: "form-control", value: 'Name Not Provided' %>
                 <% end %>
               <% end %>
               <%= f.input :default_storage_location_id, :collection => current_organization.storage_locations.active_locations.alphabetized,
