@@ -5,11 +5,12 @@ class PartnerCreateService
 
   def initialize(organization:, partner_attrs:)
     @organization = organization
-    @partner_attrs = partner_attrs
+    @primary_contact_name = partner_attrs[:primary_contact_name]
+    @partner_attrs = partner_attrs.except(:primary_contact_name)
   end
 
   def call
-    @partner = organization.partners.build(partner_attrs)
+    @partner = organization.partners.build(@partner_attrs)
 
     unless @partner.valid?
       @partner.errors.each do |error|
@@ -25,7 +26,8 @@ class PartnerCreateService
                                   name: @partner.name,
                                   enable_child_based_requests: organization.enable_child_based_requests,
                                   enable_individual_requests: organization.enable_individual_requests,
-                                  enable_quantity_based_requests: organization.enable_quantity_based_requests
+                                  enable_quantity_based_requests: organization.enable_quantity_based_requests,
+                                  primary_contact_name: @primary_contact_name
                                 })
     rescue StandardError => e
       errors.add(:base, e.message)
