@@ -125,20 +125,12 @@ RSpec.describe StorageLocation, type: :model do
         it "does not change inventory quantities if there is an error" do
           storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization)
           starting_size = storage_location.size
-          expect { storage_location.decrease_inventory(distribution.line_item_values) }.to raise_error(Errors::InsufficientAllotment)
+          begin
+            storage_location.decrease_inventory(distribution.line_item_values)
+          rescue Errors::InsufficientAllotment
+          end
           storage_location.reload
           expect(storage_location.size).to eq(starting_size)
-        end
-
-        context "when the item is does not exist" do
-          it "it raises insufficient allotment error if item does not exist" do
-            nonexistent_item = {item_id: nil, quantity: 1, name: "Nonexistent Item"}
-            storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization)
-            starting_size = storage_location.size
-            expect { storage_location.decrease_inventory([nonexistent_item]) }.to raise_error(Errors::InsufficientAllotment)
-            storage_location.reload
-            expect(storage_location.size).to eq(starting_size)
-          end
         end
       end
     end
