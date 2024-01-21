@@ -103,8 +103,8 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page).to have_content(ndbn_member.full_name)
       end
 
-      it 'can select and deselect Required Partner Fields', js: true do
-        # select first option from Required Partner Fields
+      it 'can select and deselect Required Partner Fields' do
+        # select first option in from Required Partner Fields
         select('Media Information', from: 'organization_partner_form_fields', visible: false)
         click_on "Save"
         expect(page).to have_content('Media Information')
