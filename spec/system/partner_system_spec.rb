@@ -56,6 +56,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           {
             name: Faker::Name.name,
             email: Faker::Internet.email,
+            contact_name_at_creation: Faker::Name.name,
             quota: Faker::Number.within(range: 5..100),
             notes: Faker::Lorem.paragraph
           }
@@ -68,6 +69,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
           fill_in 'Partner Name *', with: partner_attributes[:name]
           fill_in 'E-mail *', with: partner_attributes[:email]
+          fill_in 'Primary Contact Name *', with: partner_attributes[:contact_name_at_creation]
           fill_in 'Quota', with: partner_attributes[:quota]
           fill_in 'Notes', with: partner_attributes[:notes]
           find('button', text: 'Add Partner Agency').click
@@ -83,6 +85,12 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
         it 'should have added the partner and invited them' do
           expect(Partner.find_by(email: partner_attributes[:email]).status).to eq('invited')
+        end
+
+        it "creates a user for the partner with a name other than 'Name Not Provided'" do
+          partner = Partner.find_by(email: partner_attributes[:email])
+          user = partner.users.first
+          expect(user.name).to eq(partner_attributes[:contact_name_at_creation])
         end
       end
 
@@ -311,6 +319,11 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         visit subject
         expect(page).to have_no_content "Inactive R Us"
       end
+
+      it "displays the Primary Contact Name field with a default value" do
+        visit subject
+        expect(page).to have_field('Primary Contact Name *', with: 'Name Not Provided')
+      end
     end
 
     describe "#edit" do
@@ -344,6 +357,11 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         expect(page.find(".alert")).to have_content "updated"
         partner.reload
         expect(partner.send_reminders).to be false
+      end
+
+      it "does not display the Primary Contact Name field" do
+        visit subject
+        expect(page).to_not have_field('Primary Contact Name *')
       end
     end
 

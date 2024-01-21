@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe PartnerInviteService do
   subject { described_class.new(partner: partner).call }
-  let(:partner) { create(:partner) }
+  let(:partner) { create(:partner, contact_name_at_creation: Faker::Name) }
   let(:user) { instance_double(User, reload: -> {}, deliver_invitation: -> {}) }
 
   before do
