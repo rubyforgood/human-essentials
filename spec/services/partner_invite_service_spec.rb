@@ -24,6 +24,7 @@ describe PartnerInviteService do
     subject
     expect(UserInviteService).to have_received(:invite).with(
       email: partner.email,
+      name: partner.contact_name_at_creation,
       roles: [Role::PARTNER],
       resource: partner,
       force: false
@@ -37,6 +38,7 @@ describe PartnerInviteService do
       subject
       expect(UserInviteService).to have_received(:invite).with(
         email: partner.email,
+        name: partner.contact_name_at_creation,
         roles: [Role::PARTNER],
         resource: partner,
         force: true

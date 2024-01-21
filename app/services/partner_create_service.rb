@@ -6,10 +6,11 @@ class PartnerCreateService
   def initialize(organization:, partner_attrs:)
     @organization = organization
     @partner_attrs = partner_attrs
+    @partner_attrs[:contact_name_at_creation] ||= "Name Not Provided"
   end
 
   def call
-    @partner = organization.partners.build(partner_attrs)
+    @partner = organization.partners.build(@partner_attrs)
 
     unless @partner.valid?
       @partner.errors.each do |error|
