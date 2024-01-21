@@ -5,7 +5,7 @@ describe Exports::ExportDistributionsCSVService do
 
     let(:duplicate_item) do
       FactoryBot.create(
-        :item, name: Faker::Appliance.equipment
+        :item, name: Faker::Appliance.equipment + SecureRandom.hex(4)
       )
     end
 
@@ -14,14 +14,14 @@ describe Exports::ExportDistributionsCSVService do
         [
           [duplicate_item, 5],
           [
-            FactoryBot.create(:item, name: Faker::Appliance.equipment),
+            FactoryBot.create(:item, name: Faker::Appliance.equipment + SecureRandom.hex(4)),
             7
           ],
           [duplicate_item, 3]
         ],
         *(Array.new(3) do |i|
           [[FactoryBot.create(
-            :item, name: Faker::Appliance.equipment
+            :item, name: Faker::Appliance.equipment + SecureRandom.hex(4)
           ), i + 1]]
         end)
       ]
