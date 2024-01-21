@@ -141,6 +141,9 @@ class DistributionsController < ApplicationController
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
       @storage_locations = current_organization.storage_locations.active_locations.has_inventory_items.alphabetized
+      @audit_warning = current_organization.audits
+        .where(storage_location_id: @distribution.storage_location_id)
+        .where("updated_at > ?", @distribution.created_at).any?
     else
       redirect_to distributions_path, error: 'To edit a distribution,
       you must be an organization admin or the current date must be later than today.'
