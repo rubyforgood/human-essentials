@@ -86,7 +86,6 @@ RSpec.feature "Distributions", type: :system do
 
     context "when the quantity is lower than the on hand minimum quantity" do
       it "should display an error" do
-        visit @url_prefix + "/distributions/new"
         item = View::Inventory.new(@organization.id).items_for_location(@storage_location.id).first.db_item
         item.update!(on_hand_minimum_quantity: 5)
         TestInventory.create_inventory(@organization,
@@ -94,6 +93,7 @@ RSpec.feature "Distributions", type: :system do
             @storage_location.id => { item.id => 20 }
           })
 
+        visit @url_prefix + "/distributions/new"
         select @partner.name, from: "Partner"
         select @storage_location.name, from: "From storage location"
         select item.name, from: "distribution_line_items_attributes_0_item_id"
@@ -109,7 +109,6 @@ RSpec.feature "Distributions", type: :system do
 
     context "when the quantity is lower than the on hand recommended quantity" do
       it "should display an alert" do
-        visit @url_prefix + "/distributions/new"
         item = View::Inventory.new(@organization.id).items_for_location(@storage_location.id).first.db_item
         item.update!(on_hand_minimum_quantity: 1, on_hand_recommended_quantity: 5)
         TestInventory.create_inventory(@organization,
@@ -117,6 +116,7 @@ RSpec.feature "Distributions", type: :system do
             @storage_location.id => { item.id => 20 }
           })
 
+        visit @url_prefix + "/distributions/new"
         select @partner.name, from: "Partner"
         select @storage_location.name, from: "From storage location"
         select item.name, from: "distribution_line_items_attributes_0_item_id"
@@ -442,7 +442,7 @@ RSpec.feature "Distributions", type: :system do
         item_row = find("td", text: item.name).find(:xpath, '..')
 
         # TODO: Find out how to test for item type and 4 without the dollar amounts.
-        expect(item_row).to have_content("#{item.name} $1.00 $4.00 4")
+        expect(item_row).to have_content("#{item.name}\t$1.00\t$4.00\t4")
       end
     end
   end
@@ -504,14 +504,14 @@ RSpec.feature "Distributions", type: :system do
     it "allows users to add items via scanning them in by barcode", js: true do
       Barcode.boop(@existing_barcode.value)
       # the form should update
+      page.find_field(id: "distribution_line_items_attributes_0_quantity", with: "50")
       qty = page.find(:xpath, '//input[@id="distribution_line_items_attributes_0_quantity"]').value
-
       expect(qty).to eq(@existing_barcode.quantity.to_s)
     end
 
     it "a user can add items that do not yet have a barcode" do
-      barcode_value = "123123123321\n"
-      page.fill_in "_barcode-lookup-0", with: barcode_value
+      barcode_value = "123123123321"
+      Barcode.boop(barcode_value)
 
       within ".modal-content" do
         page.fill_in "Quantity", with: "51"
@@ -520,7 +520,7 @@ RSpec.feature "Distributions", type: :system do
       end
 
       visit @url_prefix + "/distributions/new"
-      page.fill_in "_barcode-lookup-0", with: barcode_value
+      Barcode.boop(barcode_value)
 
       expect(page).to have_text("Adult Briefs (Large/X-Large)")
       expect(page).to have_field("Quantity", with: "51")

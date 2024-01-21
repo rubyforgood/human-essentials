@@ -55,7 +55,7 @@ class AuditsController < ApplicationController
     if @audit.update(audit_params)
       save_audit_status_and_redirect(params)
     else
-      flash[:error] = "Something didn't work quite right -- try again?"
+      flash[:error] = @audit.errors.full_messages.join("\n")
       @storage_locations = [@audit.storage_location]
       set_items
       @audit.line_items.build if @audit.line_items.empty?
@@ -97,7 +97,8 @@ class AuditsController < ApplicationController
 
   def handle_audit_errors
     error_message = @audit.errors.uniq(&:attribute).map do |error|
-      "#{error.attribute.capitalize} ".tr("_", " ") + error.message
+      attr = (error.attribute.to_s == 'base') ? '' : error.attribute.capitalize
+      "#{attr} ".tr("_", " ") + error.message
     end
     flash[:error] = error_message.join(", ")
   end

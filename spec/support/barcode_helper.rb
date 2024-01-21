@@ -1,7 +1,8 @@
 module Barcode
   def self.boop(value, barcode_field = nil)
     barcode_field ||= get_last_empty_barcode_field
-    Capybara.fill_in "_barcode-lookup-" + barcode_field.to_s, with: value + 10.chr
+    Capybara.find(id: "_barcode-lookup-" + barcode_field.to_s).click
+    Capybara.page.driver.browser.keyboard.type(value + "\n")
   end
 
   def self.get_last_empty_barcode_field
