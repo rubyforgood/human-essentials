@@ -546,6 +546,40 @@ RSpec.describe InventoryAggregate do
       ))
     end
 
+    it 'should handle changing storage location' do
+      donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
+      donation.line_items << build(:line_item, quantity: 50, item: item2)
+      DonationEvent.publish(donation)
+
+      donation2 = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
+      donation2.line_items << build(:line_item, quantity: 50, item: item1)
+      DonationEvent.publish(donation2)
+
+      donation2.update!(storage_location_id: storage_location2.id)
+      donation2.line_items = [build(:line_item, quantity: 30, item: item1)]
+      DonationEvent.publish(donation2)
+
+      result = InventoryAggregate.inventory_for(organization.id)
+      expect(result).to eq(EventTypes::Inventory.new(
+        organization_id: organization.id,
+        storage_locations: {
+          storage_location1.id => EventTypes::EventStorageLocation.new(
+            id: storage_location1.id,
+            items: {
+              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 0, storage_location_id: storage_location1.id),
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 50, storage_location_id: storage_location1.id)
+            }
+          ),
+          storage_location2.id => EventTypes::EventStorageLocation.new(
+            id: storage_location2.id,
+            items: {
+              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 30, storage_location_id: storage_location2.id)
+            }
+          )
+        }
+      ))
+    end
+
     it "should handle intervening audits" do
       donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
       donation.line_items << build(:line_item, quantity: 30, item: item1)

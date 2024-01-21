@@ -11,6 +11,14 @@ module EventTypes
     attribute :from_storage_location, Types::Integer.optional
     attribute :to_storage_location, Types::Integer.optional
 
+    # @param line_item [Types::EventLineItem]
+    # @return [Boolean]
+    def same_item?(line_item)
+      %i(from_storage_location to_storage_location item_id).all? do |field|
+        self.send(field) == line_item.send(field)
+      end
+    end
+
     # @param line_item [LineItem]
     # @param from [Integer]
     # @param to [Integer]
