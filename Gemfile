@@ -196,7 +196,7 @@ group :test do
   # Show code coverage.
   gem 'simplecov'
   # More concise test ("should") matchers
-  gem 'shoulda-matchers', '~> 6.0'
+  gem 'shoulda-matchers', '~> 6.1'
   # Mock HTTP requests and ensure they are not called during tests.
   gem "webmock", "~> 3.19"
   # Interface capybara to chrome headless
