@@ -32,7 +32,7 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.6.4"
+gem "strong_migrations", "1.7.0"
 # used in events
 gem 'dry-struct'
 
@@ -152,15 +152,13 @@ group :development, :test do
   gem "pry-nav"
   # RSpec behavioral testing framework for Rails.
   gem "rspec-rails", "~> 6.1.0"
-  # Allow retrying flaky RSpec tests.
-  gem "rspec-retry"
   # Static analysis / linter.
   gem "rubocop"
   # Rails add-on for static analysis.
   gem 'rubocop-performance'
-  gem "rubocop-rails", "~> 2.23.0"
+  gem "rubocop-rails", "~> 2.23.1"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.32"
+  gem "standard", "~> 1.33"
 end
 
 group :development do
@@ -198,11 +196,11 @@ group :test do
   # Show code coverage.
   gem 'simplecov'
   # More concise test ("should") matchers
-  gem 'shoulda-matchers', '~> 5.3'
-  # Selenium webdriver automatic installation and update.
-  gem 'selenium-webdriver', '~> 4.16'
+  gem 'shoulda-matchers', '~> 6.0'
   # Mock HTTP requests and ensure they are not called during tests.
   gem "webmock", "~> 3.19"
+  # Interface capybara to chrome headless
+  gem "cuprite"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
@@ -216,4 +214,4 @@ end
 # Use Redis for Action Cable
 gem "redis", "~> 5.0"
 
-gem "importmap-rails", "~> 1.2"
+gem "importmap-rails", "~> 2.0"

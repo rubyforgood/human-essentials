@@ -8,7 +8,7 @@ module Partners
     def initialize(params, partner: nil, initial_items: nil)
       @items = [Item.new] * initial_items if initial_items
       @partner = partner
-      super params
+      super(params)
     end
 
     def items_attributes=(attributes)

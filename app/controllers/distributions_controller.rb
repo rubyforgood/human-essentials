@@ -72,7 +72,8 @@ class DistributionsController < ApplicationController
   end
 
   def create
-    result = DistributionCreateService.new(distribution_params.merge(organization: current_organization), request_id).call
+    dist = Distribution.new(distribution_params.merge(organization: current_organization))
+    result = DistributionCreateService.new(dist, request_id).call
 
     if result.success?
       session[:created_distribution_id] = result.distribution.id
@@ -140,6 +141,9 @@ class DistributionsController < ApplicationController
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
       @storage_locations = current_organization.storage_locations.active_locations.has_inventory_items.alphabetized
+      @audit_warning = current_organization.audits
+        .where(storage_location_id: @distribution.storage_location_id)
+        .where("updated_at > ?", @distribution.created_at).any?
     else
       redirect_to distributions_path, error: 'To edit a distribution,
       you must be an organization admin or the current date must be later than today.'
