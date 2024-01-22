@@ -546,7 +546,7 @@ RSpec.describe InventoryAggregate do
       ))
     end
 
-    it 'should handle changing storage location' do
+    it "should handle changing storage location" do
       donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
       donation.line_items << build(:line_item, quantity: 50, item: item2)
       DonationEvent.publish(donation)
