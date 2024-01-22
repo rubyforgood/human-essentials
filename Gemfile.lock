@@ -226,7 +226,7 @@ GEM
       websocket-driver (>= 0.6, < 0.8)
     ffi (1.15.5)
     filterrific (5.2.5)
-    flipper (1.2.1)
+    flipper (1.2.2)
       concurrent-ruby (< 2)
     flipper-active_record (1.2.1)
       activerecord (>= 4.2, < 8)
