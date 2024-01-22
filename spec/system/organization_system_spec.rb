@@ -42,6 +42,7 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page).to have_content("Child Based Requests?")
         expect(page).to have_content("Individual Requests?")
         expect(page).to have_content("Quantity Based Requests?")
+        expect(page).to have_content("Show Year-to-date values on distribution printout?")
         expect(page).to have_content("Logo")
       end
     end
@@ -81,6 +82,13 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page).to have_content("Yes")
       end
 
+      it 'can select if the org shows year-to-date values on the distribution printout' do
+        choose('organization[ytd_on_distribution_printout]', option: false)
+
+        click_on "Save"
+        expect(page).to have_content("No")
+      end
+
       it 'can set a default storage location on the organization' do
         select(store.name, from: 'Default Storage Location')
 
@@ -95,8 +103,8 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page).to have_content(ndbn_member.full_name)
       end
 
-      it 'can select and deselect Required Partner Fields', js: true do
-        # select first option from Required Partner Fields
+      it 'can select and deselect Required Partner Fields' do
+        # select first option in from Required Partner Fields
         select('Media Information', from: 'organization_partner_form_fields', visible: false)
         click_on "Save"
         expect(page).to have_content('Media Information')

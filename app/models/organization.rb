@@ -23,6 +23,7 @@
 #  state                          :string
 #  street                         :string
 #  url                            :string
+#  ytd_on_distribution_printout   :boolean          default(TRUE), not null
 #  zipcode                        :string
 #  created_at                     :datetime         not null
 #  updated_at                     :datetime         not null

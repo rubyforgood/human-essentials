@@ -155,12 +155,11 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
         visit url_prefix + "/partners"
 
-        ele = find('tr', text: partner.name)
-        within(ele) { click_on "Invite" }
-        invite_alert = page.driver.browser.switch_to.alert
-        expect(invite_alert.text).to eq("Send an invitation to #{partner.name} to begin using the partner application?")
+        accept_alert("Send an invitation to #{partner.name} to begin using the partner application?") do
+          ele = find('tr', text: partner.name)
+          within(ele) { click_on "Invite" }
+        end
 
-        invite_alert.accept
         # assert page.has_content? "Partner #{partner.name} invited!", wait: page_content_wait
         # expect(page.find(".alert")).to have_content "invited!", wait: page_content_wait
       end
@@ -428,7 +427,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
           it 'should properly indicate the requestable items and adjust the partners requestable items' do
             assert page.has_content? item_category.name
-            expect(PartnerFetchRequestableItemsService.new(partner_id: @partner.id).call).to eq(items_in_category)
+            expect(PartnerFetchRequestableItemsService.new(partner_id: @partner.id).call.sort).to eq(items_in_category.sort)
           end
         end
 
