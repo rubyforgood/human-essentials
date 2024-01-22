@@ -14,8 +14,8 @@ module EventTypes
     # @param line_item [Types::EventLineItem]
     # @return [Boolean]
     def same_item?(line_item)
-      %i(from_storage_location to_storage_location item_id).all? do |field|
-        self.send(field) == line_item.send(field)
+      %i[from_storage_location to_storage_location item_id].all? do |field|
+        send(field) == line_item.send(field)
       end
     end
 
