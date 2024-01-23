@@ -32,7 +32,13 @@ module Reports
                              .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50)') +
         organization
         .kits
-        .count || 0
+        .joins(inventory_items: :item)
+        .merge(Item.disposable)
+        .where("kits.id IN (SELECT DISTINCT kits.id FROM line_items
+                         JOIN distributions ON distributions.id = line_items.itemizable_id
+                         WHERE line_items.itemizable_type = 'Distribution'
+                           AND EXTRACT(YEAR FROM distributions.issued_at) = ?)", year)
+        .sum('inventory_items.quantity') || 0
     end
 
     # @return [Float]
