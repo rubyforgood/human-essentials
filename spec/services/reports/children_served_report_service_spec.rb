@@ -40,7 +40,7 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       end
 
       # Kits
-      disposable_kits = create_list(:kit, 2, organization: organization)
+      create_list(:kit, 2, organization: organization)
 
       expect(report.report).to eq({
                                     name: 'Children Served',
@@ -72,8 +72,8 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
         create_list(:line_item, 5, :distribution, quantity: 300, item: non_disposable_item, itemizable: dist)
       end
 
-     # Kits
-      disposable_kits = create_list(:kit, 2, organization: organization)
+      # Kits
+      create_list(:kit, 2, organization: organization)
 
       expect(report.report).to eq({
                                     name: 'Children Served',
