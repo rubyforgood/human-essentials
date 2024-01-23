@@ -5,7 +5,9 @@
   <td><%= transfer_row.comment || "none" %></td>
   <td><%= transfer_row.line_items.total %></td>
   <td>
-    <%= delete_button_to transfer_path(transfer_row.id), { confirm: "Are you sure you want to permanently remove this transfer?" } %>
+    <% if transfer_row.deletable? %>
+      <%= delete_button_to transfer_path(transfer_row.id), { confirm: "Are you sure you want to permanently remove this transfer?" } %>
+    <% end %>
     <%= view_button_to transfer_row %>
   </td>
 </tr>
