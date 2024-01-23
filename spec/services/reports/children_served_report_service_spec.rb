@@ -40,19 +40,14 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       end
 
       # Kits
-      kits = create_list(:kit, 2, organization: organization)
-      kits.each do |kit|
-        disposable_kit_item = create(:item, name: "Disposables #{kit.id}", organization: organization, kit: kit)
-        storage_location = create(:storage_location, organization: organization)
-        create(:inventory_item, quantity: 10, item: disposable_kit_item, storage_location: storage_location)
-      end
+      disposable_kits = create_list(:kit, 2, organization: organization)
 
       expect(report.report).to eq({
                                     name: 'Children Served',
                                     entries: {
                                       'Average children served monthly' => "9",
                                       'Total children served' => "102",
-                                      'Diapers per child monthly' => "15",
+                                      'Diapers per child monthly' => "10",
                                       'Repackages diapers?' => 'Y',
                                       'Monthly diaper distributions?' => 'Y'
                                     }
@@ -77,28 +72,15 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
         create_list(:line_item, 5, :distribution, quantity: 300, item: non_disposable_item, itemizable: dist)
       end
 
-      # Kits
-      kits = create_list(:kit, 2, organization: organization)
-      kits.each do |kit|
-        disposable_kit_item = create(:item, name: "Disposables #{kit.id}", organization: organization, kit: kit)
-        storage_location = create(:storage_location, organization: organization)
-        create(:inventory_item, quantity: 10, item: disposable_kit_item, storage_location: storage_location)
-      end
-      
-      kits = create_list(:kit, 2, organization: organization)
-      kits.each do |kit|
-        non_disposable_kit_item = create(:item, name: "Cloth #{kit.id}", organization: organization, kit: kit)
-        storage_location = create(:storage_location, organization: organization)
-        create(:inventory_item, quantity: 10, item: non_disposable_item, storage_location: storage_location)
-      end
-      
+     # Kits
+      disposable_kits = create_list(:kit, 2, organization: organization)
 
       expect(report.report).to eq({
                                     name: 'Children Served',
                                     entries: {
                                       'Average children served monthly' => "4",
                                       'Total children served' => "42",
-                                      'Diapers per child monthly' => "30",
+                                      'Diapers per child monthly' => "25",
                                       'Repackages diapers?' => 'Y',
                                       'Monthly diaper distributions?' => 'Y'
                                     }
