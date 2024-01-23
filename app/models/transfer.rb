@@ -56,6 +56,11 @@ class Transfer < ApplicationRecord
     ]
   end
 
+  def deletable?
+    item_ids = line_items.pluck(:item_id)
+    Audit.where(storage_location_id: [to_id, from_id]).where(created_at: created_at..).joins(:line_items).where(line_items: {item_id: item_ids}).empty?
+  end
+
   private
 
   def storage_locations_belong_to_organization
