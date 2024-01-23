@@ -24,21 +24,7 @@ module Reports
 
     # @return [Integer]
     def total_children_served
-      @total_children_served ||= organization
-                             .distributions
-                             .for_year(year)
-                             .joins(line_items: :item)
-                             .merge(Item.disposable)
-                             .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50)') +
-        organization
-        .kits
-        .joins(inventory_items: :item)
-        .merge(Item.disposable)
-        .where("kits.id IN (SELECT DISTINCT kits.id FROM line_items
-                         JOIN distributions ON distributions.id = line_items.itemizable_id
-                         WHERE line_items.itemizable_type = 'Distribution'
-                           AND EXTRACT(YEAR FROM distributions.issued_at) = ?)", year)
-        .sum('inventory_items.quantity') || 0
+      @total_children_served ||= distributed_disposable_items + distributed_kits_with_disposable_items
     end
 
     # @return [Float]
@@ -77,6 +63,24 @@ module Reports
       .joins(inventory_items: :item)
       .merge(Item.disposable)
       .average('COALESCE(inventory_items.quantity, 0)') || 0.0
+    end
+
+    def distributed_disposable_items
+      organization
+      .distributions
+      .for_year(year)
+      .joins(line_items: :item)
+      .merge(Item.disposable)
+      .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50)')
+    end
+
+    def distributed_kits_with_disposable_items
+      organization
+      .kits
+      .joins(line_items: :item)
+      .merge(Item.disposable)
+      .distinct
+      .count("kits.id")
     end
   end
 end
