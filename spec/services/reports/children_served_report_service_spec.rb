@@ -87,7 +87,7 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       
       kits = create_list(:kit, 2, organization: organization)
       kits.each do |kit|
-        disposable_kit_item = create(:item, name: "Cloth #{kit.id}", organization: organization, kit: kit)
+        non_disposable_kit_item = create(:item, name: "Cloth #{kit.id}", organization: organization, kit: kit)
         storage_location = create(:storage_location, organization: organization)
         create(:inventory_item, quantity: 10, item: non_disposable_item, storage_location: storage_location)
       end
