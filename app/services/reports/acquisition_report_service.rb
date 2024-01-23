@@ -72,7 +72,7 @@ module Reports
 
     # @return [Integer]
     def monthly_disposable_diapers
-      (distributed_disposable_diapers_not_from_kits / 12.0).round
+      ((distributed_disposable_diapers_not_from_kits + distributed_disposable_diapers_from_kits) / 12.0).round
     end
 
     # @return [ActiveRecord::Relation]
