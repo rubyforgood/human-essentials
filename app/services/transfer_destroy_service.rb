@@ -4,6 +4,8 @@ class TransferDestroyService
   end
 
   def call
+    raise StandardError.new "Transfer cannot be deleted" unless transfer.deletable?
+
     transfer.transaction do
       revert_inventory_transfer!
       TransferDestroyEvent.publish(transfer)
