@@ -5,7 +5,7 @@ shared_examples_for "itemizable" do
   context ".items" do
   end
 
-  context ".to_a" do
+  describe ".to_a" do
     let(:storage_location) { create(:storage_location, :with_items, item: item, organization: @organization) }
     let(:obj) { build(model_f, storage_location: storage_location, organization: @organization) }
     context "with Flipper flag :deprecate_to_a disabled" do
