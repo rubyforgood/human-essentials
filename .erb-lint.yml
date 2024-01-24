@@ -1,0 +1,12 @@
+---
+EnableDefaultLinters: true
+linters:
+  AllowedScriptType:
+    enabled: true
+    allowed_types:
+      - "application/json"
+      - "text/javascript"
+      - "text/html"
+      - "module"
+      - "esms-options"
+    disallow_inline_scripts: false
