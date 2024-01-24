@@ -170,7 +170,7 @@ RSpec.describe "Donations", type: :system, js: true do
           select StorageLocation.first.name, from: "donation_storage_location_id"
           select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
           fill_in "donation_line_items_attributes_0_quantity", with: "5"
-          fill_in "donation_issued_at", with: "01/01/2001"
+          fill_in "donation_issued_at", with: "2001-01-01"
 
           expect do
             click_button "Save"
@@ -250,7 +250,7 @@ RSpec.describe "Donations", type: :system, js: true do
           expect(page).to have_content("New Product Drive")
 
           fill_in "product_drive_name", with: "drivenametest"
-          fill_in "product_drive_start_date", with: Time.current
+          fill_in "product_drive_start_date", with: Time.current.to_date.to_s
           click_on "product_drive_submit"
           select "drivenametest", from: "donation_product_drive_id"
         end
@@ -663,7 +663,7 @@ RSpec.describe "Donations", type: :system, js: true do
 
         expect(page).to have_content "Donation #{@donation.id} has been removed!"
         # deleted the only donation, ensure total now reads 0
-        expect(page).to have_content "Total 0"
+        expect(page).to have_content "0 (Total)"
       end
     end
   end
