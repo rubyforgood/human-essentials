@@ -1,14 +1,13 @@
-<!-- Modal HTML -->
 <div id="csvImportModal" class="modal fade">
   <div class="modal-dialog onboarding_steps">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
         <h2 class="modal-title">Import <%= import_type %> Instructions</h2>
-      </div><!-- /.modal-header -->
+      </div>
       <div class="modal-body">
         <div class="row">
-          <div class="col-md-6 col-sm-12" style="padding: 30px 16px 0 16px;"">
+          <div class="col-md-6 col-sm-12" style="padding: 30px 16px 0 16px">
             <i class="fa fa-download fa-4x" aria-hidden="true"></i>
             <h3 class="text-info">1. Download an example CSV file</h3>
             <ul>
@@ -23,20 +22,19 @@
               <ul>
                 <li>Click the choose file button and <br>navigate to the saved file and select it.</li>
                 <li>
-                  <%= f.file_field :file, accept: 'text/csv', class: 'form-control-file', style: "margin: auto;"  %>
+                  <%= f.file_field :file, accept: 'text/csv', class: 'form-control-file', style: "margin: auto;" %>
                 </li>
-                <li style="margin-bottom: 27px;">Then click the "Import CSV" button to import your <%= import_type.downcase %>.</li>
-                  <%= button_tag class: "btn btn-md btn-info" do %>
+                <li style="margin-bottom: 27px;">Then click the "Import CSV" button to import your <%= import_type.downcase %>.</li>                  <%= button_tag class: "btn btn-md btn-info" do %>
                     <i class="fa fa-upload"></i> Import CSV
                   <% end %>
               </ul>
             <% end #form %>
           </div>
-        </div><!-- / row -->
-      </div><!-- /.modal-body -->
+        </div>
+      </div>
       <div class="modal-footer">
         <small>Note: You're only able to run the import one time to prevent accidental imports or writing over existing <%= import_type.downcase %>!</small>
       </div><!-- /.modal-footer -->
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /#csvImportModal -->
+    </div>
+  </div>
+</div>

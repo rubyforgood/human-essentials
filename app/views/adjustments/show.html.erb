@@ -41,7 +41,7 @@
               </tr>
               </thead>
               <tbody>
-              <% @adjustment.line_items.each do |line_item|  %>
+              <% @adjustment.line_items.each do |line_item| %>
                 <tr class="<%= line_item.quantity > 0 ? "positive" : "negative" %>">
                   <td><%= (line_item.quantity > 0) ? "Added " : "Removed " %></td>
                   <td><%= line_item.item.name %></td>

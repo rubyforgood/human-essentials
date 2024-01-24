@@ -51,7 +51,7 @@
                     </thead>
                     <tbody>
                       <% @item_inventories.order('id ASC').each do |ii| %>
-                        <tr id="storage_location_<%=ii.storage_location.id %>">
+                        <tr id="storage_location_<%= ii.storage_location.id %>">
                           <td> <%= ii.storage_location.name %> </td>
                           <td>
                             <strong><%= ii.quantity %></strong>
@@ -67,7 +67,7 @@
                     <div class='col-md-4'>
                       <div class="form-group">
                         <%= label_tag "Storage Location" %>
-                        <%= f.collection_select :storage_location_id, @storage_locations, :id, :name, { include_blank: true }, class: "form-control"%>
+                        <%= f.collection_select :storage_location_id, @storage_locations, :id, :name, { include_blank: true }, class: "form-control" %>
                       </div>
 
                       <div class="form-group">

@@ -17,13 +17,13 @@
               <div class="mb-4">
                 <h3 class='font-bold'>Short Name</h3>
                 <p>
-                  <%= @organization.short_name || "Not Provided"%>
+                  <%= @organization.short_name || "Not Provided" %>
                 </p>
               </div>
               <div class="mb-4">
                 <h3 class='font-bold'>NDBN Membership ID</h3>
                 <p>
-                  <%= @organization.ndbn_member&.full_name || "Not Provided"%>
+                  <%= @organization.ndbn_member&.full_name || "Not Provided" %>
                 </p>
               </div>
               <div class="mb-4">
@@ -32,7 +32,7 @@
                   <% if @organization.url.blank? %>
                     Not Provided
                   <% else %>
-                    <a href=<%= @organization.url %>>
+                    <a href="<%= @organization.url %>">
                       <%= fa_icon "external-link" %>
                       <%= @organization.url %></a>
                   <% end %>
