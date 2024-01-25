@@ -4,7 +4,7 @@ class TransferDestroyService
   end
 
   def call
-    raise StandardError.new "Transfer cannot be deleted" unless transfer.deletable?
+    raise "Transfer cannot be deleted because an audit was performed after it" unless transfer.deletable?
 
     transfer.transaction do
       revert_inventory_transfer!
