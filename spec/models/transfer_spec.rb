@@ -87,25 +87,14 @@ RSpec.describe Transfer, type: :model do
     end
 
     it "`deletable?` returns true only if there are no audits containing items transferred since transfer" do
-      storage_location1 = create(:storage_location, :with_items, item_quantity: 10, organization: @organization)
-      storage_location2 = create(:storage_location, :with_items, item_quantity: 10, organization: @organization)
-      storage_location3 = create(:storage_location, :with_items, item_quantity: 10, organization: @organization)
-      other_item = create(:item)
-      create_list(:inventory_item, 1, storage_location: storage_location2, quantity: 10, item: other_item)
+      xfer1 = create(:transfer)
+      xfer2 = create(:transfer)
 
-      create(:audit, storage_location: storage_location2, line_items_attributes: [{item_id: storage_location2.items.first.id, quantity: 10}])
+      allow(Audit).to receive(:since?).with(xfer1, xfer1.to_id, xfer1.from_id).and_return(true)
+      allow(Audit).to receive(:since?).with(xfer2, xfer2.to_id, xfer2.from_id).and_return(false)
 
-      nondeletable_xfer1 = create(:transfer, :with_items, item_quantity: 5, item: storage_location1.items.first, from: storage_location1, to: storage_location2, organization: @organization)
-      nondeletable_xfer2 = create(:transfer, :with_items, item_quantity: 5, item: storage_location1.items.first, from: storage_location1, to: storage_location3, organization: @organization)
-      deletable_xfer = create(:transfer, :with_items, item_quantity: 10, item: storage_location2.items.first, from: storage_location2, to: storage_location3, organization: @organization)
-
-      create(:audit, storage_location: storage_location1, line_items_attributes: [{item_id: storage_location1.items.first.id, quantity: 5}])
-      create(:audit, storage_location: storage_location2, line_items_attributes: [{item_id: storage_location2.items.last.id, quantity: 10}])
-      create(:audit, storage_location: storage_location3, line_items_attributes: [{item_id: storage_location3.items.first.id, quantity: 10}])
-
-      expect(nondeletable_xfer1.deletable?).to be false
-      expect(nondeletable_xfer2.deletable?).to be false
-      expect(deletable_xfer.deletable?).to be true
+      expect(xfer1.deletable?).to be false
+      expect(xfer2.deletable?).to be true
     end
   end
 

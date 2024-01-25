@@ -45,6 +45,22 @@ RSpec.describe "Transfers", type: :request do
             end
           end
         end
+
+        it "only displays delete button for deletable transfers" do
+          xfer1 = create(:transfer, organization: @organization)
+          xfer2 = create(:transfer, organization: @organization)
+
+          allow(Audit).to receive(:since?).with(xfer1, xfer1.to_id, xfer1.from_id).and_return(true)
+          allow(Audit).to receive(:since?).with(xfer2, xfer2.to_id, xfer2.from_id).and_return(false)
+
+          get transfers_path(valid_params)
+
+          xfer1_markup = "data-method=\"delete\" href=\"/#{@organization.short_name}/transfers/#{xfer1.id}\""
+          xfer2_markup = "data-method=\"delete\" href=\"/#{@organization.short_name}/transfers/#{xfer2.id}\""
+
+          expect(response.body).not_to include(xfer1_markup)
+          expect(response.body).to include(xfer2_markup)
+        end
       end
 
       context "csv" do

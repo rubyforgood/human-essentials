@@ -135,21 +135,5 @@ RSpec.describe "Transfer management", type: :system do
     end
 
     it_behaves_like "Date Range Picker", Transfer
-
-    it "only displays delete button for deletable transfers" do
-      storage_location1 = create(:storage_location, :with_items, item_quantity: 10, organization: @organization)
-      storage_location2 = create(:storage_location, :with_items, item_quantity: 10, organization: @organization)
-      storage_location3 = create(:storage_location, organization: @organization)
-      xfer1 = create(:transfer, :with_items, item_quantity: 10, item: storage_location1.items.first, from: storage_location1, to: storage_location2, organization: @organization)
-      xfer2 = create(:transfer, :with_items, item_quantity: 10, item: storage_location2.items.first, from: storage_location2, to: storage_location3, organization: @organization)
-      create(:audit, storage_location: storage_location1, line_items_attributes: [{item_id: storage_location1.items.first.id, quantity: 10}])
-
-      visit subject
-
-      xfer1_path = "'#{url_prefix}/transfers/#{xfer1.id}'"
-      xfer2_path = "'#{url_prefix}/transfers/#{xfer2.id}'"
-      expect(page).not_to have_selector("a[href=#{xfer1_path}][data-method='delete']")
-      expect(page).to have_selector("a[href=#{xfer2_path}][data-method='delete']")
-    end
   end
 end
