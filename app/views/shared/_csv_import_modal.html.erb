@@ -1,10 +1,11 @@
+<!-- Modal HTML -->
 <div id="csvImportModal" class="modal fade">
   <div class="modal-dialog onboarding_steps">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
         <h2 class="modal-title">Import <%= import_type %> Instructions</h2>
-      </div>
+      </div><!-- /.modal-header -->
       <div class="modal-body">
         <div class="row">
           <div class="col-md-6 col-sm-12" style="padding: 30px 16px 0 16px">
@@ -30,11 +31,11 @@
               </ul>
             <% end #form %>
           </div>
-        </div>
-      </div>
+        </div><!-- / row -->
+      </div><!-- /.modal-body -->
       <div class="modal-footer">
         <small>Note: You're only able to run the import one time to prevent accidental imports or writing over existing <%= import_type.downcase %>!</small>
       </div><!-- /.modal-footer -->
-    </div>
-  </div>
-</div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /#csvImportModal -->
