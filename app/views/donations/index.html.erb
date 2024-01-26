@@ -43,10 +43,11 @@
                 <% end %>
                 <% if @sources.present? %>
                   <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                    <%= label_tag :filters_by_source, "Filter by Source" %>
+                    <% id = "filter_#{SecureRandom.uuid}" %>
+                    <%= label_tag id, "Filter by Source" %>
                     <%= select_tag "filters[by_source]",
                     options_for_select(@sources, @selected_source),
-                    { include_blank: true, class: "form-control" } %>
+                    { include_blank: true, class: "form-control", id: id } %>
                   </div>
                 <% end %>
                 <% if @product_drives.present? %>
