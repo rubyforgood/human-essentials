@@ -192,7 +192,7 @@ GEM
     factory_bot_rails (6.4.3)
       factory_bot (~> 6.4)
       railties (>= 5.0.0)
-    faker (3.2.2)
+    faker (3.2.3)
       i18n (>= 1.8.11, < 2)
     faraday (1.10.3)
       faraday-em_http (~> 1.0)
@@ -362,7 +362,7 @@ GEM
       timeout
     net-smtp (0.4.0)
       net-protocol
-    newrelic_rpm (9.7.0)
+    newrelic_rpm (9.7.1)
     nio4r (2.7.0)
     nokogiri (1.16.0-arm64-darwin)
       racc (~> 1.4)
@@ -512,7 +512,7 @@ GEM
     rspec-mocks (3.12.6)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.12.0)
-    rspec-rails (6.1.0)
+    rspec-rails (6.1.1)
       actionpack (>= 6.1)
       activesupport (>= 6.1)
       railties (>= 6.1)
@@ -721,7 +721,7 @@ DEPENDENCIES
   recaptcha
   redis (~> 5.0)
   rolify (~> 6.0)
-  rspec-rails (~> 6.1.0)
+  rspec-rails (~> 6.1.1)
   rubocop
   rubocop-performance
   rubocop-rails (~> 2.23.1)
