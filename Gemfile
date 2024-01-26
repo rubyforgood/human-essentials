@@ -151,7 +151,7 @@ group :development, :test do
   # Add-on for command line to create a simple debugger.
   gem "pry-nav"
   # RSpec behavioral testing framework for Rails.
-  gem "rspec-rails", "~> 6.1.0"
+  gem "rspec-rails", "~> 6.1.1"
   # Static analysis / linter.
   gem "rubocop"
   # Rails add-on for static analysis.
