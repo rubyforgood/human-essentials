@@ -512,7 +512,7 @@ GEM
     rspec-mocks (3.12.6)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.12.0)
-    rspec-rails (6.1.0)
+    rspec-rails (6.1.1)
       actionpack (>= 6.1)
       activesupport (>= 6.1)
       railties (>= 6.1)
@@ -721,7 +721,7 @@ DEPENDENCIES
   recaptcha
   redis (~> 5.0)
   rolify (~> 6.0)
-  rspec-rails (~> 6.1.0)
+  rspec-rails (~> 6.1.1)
   rubocop
   rubocop-performance
   rubocop-rails (~> 2.23.1)
