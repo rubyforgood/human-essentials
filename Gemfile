@@ -151,7 +151,7 @@ group :development, :test do
   # Add-on for command line to create a simple debugger.
   gem "pry-nav"
   # RSpec behavioral testing framework for Rails.
-  gem "rspec-rails", "~> 6.1.0"
+  gem "rspec-rails", "~> 6.1.1"
   # Static analysis / linter.
   gem "rubocop"
   # Rails add-on for static analysis.
@@ -196,7 +196,7 @@ group :test do
   # Show code coverage.
   gem 'simplecov'
   # More concise test ("should") matchers
-  gem 'shoulda-matchers', '~> 6.0'
+  gem 'shoulda-matchers', '~> 6.1'
   # Mock HTTP requests and ensure they are not called during tests.
   gem "webmock", "~> 3.19"
   # Interface capybara to chrome headless
