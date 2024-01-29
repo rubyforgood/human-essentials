@@ -122,13 +122,13 @@ RSpec.describe "Transfer management", type: :system do
       create(:transfer, organization: @organization, from: to_storage_location, to: from_storage_location)
 
       visit subject
-      select to_storage_location.name, from: "filters_to_location"
+      select to_storage_location.name, from: "filters[to_location]"
       click_button "Filter"
 
       expect(page).to have_css("table tr", count: 2)
 
       visit subject
-      select from_storage_location.name, from: "filters_from_location"
+      select from_storage_location.name, from: "filters[from_location]"
       click_button "Filter"
 
       expect(page).to have_css("table tr", count: 2)
