@@ -47,6 +47,12 @@ RSpec.describe "Users", type: :request do
       post partner_user_reset_password_users_path(params)
       expect(ActionMailer::Base.deliveries.size).to eq(0)
     end
+
+    it "should return send a password even if case-insensitive spelling of email" do
+      user.update!(email: "Me@partner.com")
+      post partner_user_reset_password_users_path(params)
+      expect(ActionMailer::Base.deliveries.size).to eq(1)
+    end
   end
 
   describe "GET #switch_to_partner_role" do
