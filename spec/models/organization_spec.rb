@@ -2,33 +2,34 @@
 #
 # Table name: organizations
 #
-#  id                             :integer          not null, primary key
-#  city                           :string
-#  deadline_day                   :integer
-#  default_storage_location       :integer
-#  distribute_monthly             :boolean          default(FALSE), not null
-#  email                          :string
-#  enable_child_based_requests    :boolean          default(TRUE), not null
-#  enable_individual_requests     :boolean          default(TRUE), not null
-#  enable_quantity_based_requests :boolean          default(TRUE), not null
-#  intake_location                :integer
-#  invitation_text                :text
-#  latitude                       :float
-#  longitude                      :float
-#  name                           :string
-#  partner_form_fields            :text             default([]), is an Array
-#  reminder_day                   :integer
-#  repackage_essentials           :boolean          default(FALSE), not null
-#  short_name                     :string
-#  state                          :string
-#  street                         :string
-#  url                            :string
-#  ytd_on_distribution_printout   :boolean          default(TRUE), not null
-#  zipcode                        :string
-#  created_at                     :datetime         not null
-#  updated_at                     :datetime         not null
-#  account_request_id             :integer
-#  ndbn_member_id                 :bigint
+#  id                                                 :integer          not null, primary key
+#  city                                               :string
+#  deadline_day                                       :integer
+#  default_storage_location                           :integer
+#  distribute_monthly                                 :boolean          default(FALSE), not null
+#  email                                              :string
+#  enable_child_based_requests                        :boolean          default(TRUE), not null
+#  enable_individual_requests                         :boolean          default(TRUE), not null
+#  enable_quantity_based_requests                     :boolean          default(TRUE), not null
+#  intake_location                                    :integer
+#  invitation_text                                    :text
+#  latitude                                           :float
+#  longitude                                          :float
+#  name                                               :string
+#  partner_form_fields                                :text             default([]), is an Array
+#  reminder_day                                       :integer
+#  repackage_essentials                               :boolean          default(FALSE), not null
+#  short_name                                         :string
+#  state                                              :string
+#  street                                             :string
+#  url                                                :string
+#  use_single_step_invite_and_approve_partner_process :boolean          default(FALSE)
+#  ytd_on_distribution_printout                       :boolean          default(TRUE), not null
+#  zipcode                                            :string
+#  created_at                                         :datetime         not null
+#  updated_at                                         :datetime         not null
+#  account_request_id                                 :integer
+#  ndbn_member_id                                     :bigint
 #
 
 RSpec.describe Organization, type: :model do
