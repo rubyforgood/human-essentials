@@ -141,7 +141,6 @@ RSpec.describe "Partners", type: :request do
 
     context "csv" do
       let(:response_format) { 'csv' }
-      before { create(:distribution, partner: partner) }
 
       it { is_expected.to be_successful }
     end

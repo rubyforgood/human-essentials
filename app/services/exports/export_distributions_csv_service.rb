@@ -10,10 +10,14 @@ module Exports
       # service object.
       @distributions = distributions
       @filters = filters
-      @organization = @distributions.first.organization
+      @organization = @distributions&.first&.organization
     end
 
     def generate_csv
+      # TODO: we may want some error handling here in case there are none, but I'm not sure what the process is;
+      # should we do a flash[:error]?
+      return if distributions.blank?
+
       csv_data = generate_csv_data
 
       CSV.generate(headers: true) do |csv|
@@ -115,7 +119,7 @@ module Exports
     def item_headers
       return @item_headers if @item_headers
 
-      @item_headers = @organization.items.uniq.sort_by(&:created_at).pluck(:name)
+      @item_headers = @organization.items.order(:created_at).distinct.select([:created_at, :name]).map(&:name)
     end
 
     def build_row_data(distribution)
