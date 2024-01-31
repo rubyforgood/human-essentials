@@ -56,7 +56,6 @@ describe Exports::ExportDistributionsCSVService do
     let(:all_org_items) { Item.where(organization:).uniq.sort_by(&:created_at) }
 
     let(:total_item_quantities) do
-      # binding.pry
       template = all_org_items.pluck(:name).index_with(0)
 
       items_lists.map do |items_list|
