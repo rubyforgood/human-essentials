@@ -10,6 +10,7 @@ module Exports
       # service object.
       @distributions = distributions
       @filters = filters
+      @organization = @distributions.first.organization
     end
 
     def generate_csv
@@ -114,15 +115,7 @@ module Exports
     def item_headers
       return @item_headers if @item_headers
 
-      item_names = Set.new
-
-      distributions.each do |distribution|
-        distribution.line_items.each do |line_item|
-          item_names.add(line_item.item.name)
-        end
-      end
-
-      @item_headers = item_names.sort
+      @item_headers = @organization.items.uniq.sort_by(&:created_at).pluck(:name)
     end
 
     def build_row_data(distribution)
@@ -133,6 +126,8 @@ module Exports
       distribution.line_items.each do |line_item|
         item_name = line_item.item.name
         item_column_idx = headers_with_indexes[item_name]
+        next unless item_column_idx
+
         row[item_column_idx] += line_item.quantity
       end
 
