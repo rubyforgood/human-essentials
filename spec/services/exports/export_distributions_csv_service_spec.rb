@@ -51,9 +51,13 @@ describe Exports::ExportDistributionsCSVService do
     let(:item_id) { distributions.flatten.first.line_items.first.item_id }
     let(:filters) { {by_item_id: item_id} }
     let(:item_name) { Item.find(item_id).name }
+    let(:organization) { distributions.first.organization }
+
+    let(:all_org_items) { Item.where(organization:).uniq.sort_by(&:created_at) }
 
     let(:total_item_quantities) do
-      template = item_names.index_with(0)
+      # binding.pry
+      template = all_org_items.pluck(:name).index_with(0)
 
       items_lists.map do |items_list|
         row = template.dup
@@ -64,7 +68,7 @@ describe Exports::ExportDistributionsCSVService do
       end
     end
 
-    let(:expected_headers) do
+    let(:non_item_headers) do
       [
         "Partner",
         "Date of Distribution",
@@ -76,14 +80,10 @@ describe Exports::ExportDistributionsCSVService do
         "State",
         "Agency Representative",
         "Comments"
-      ] + expected_item_headers
+      ]
     end
 
-    let(:expected_item_headers) do
-      expect(item_names).not_to be_empty
-
-      item_names
-    end
+    let(:expected_headers) { non_item_headers + all_org_items.pluck(:name) }
 
     it 'should match the expected content for the csv' do
       expect(subject[0]).to eq(expected_headers)
@@ -105,6 +105,43 @@ describe Exports::ExportDistributionsCSVService do
         row += total_item_quantity
 
         expect(subject[idx + 1]).to eq(row)
+      end
+    end
+
+    context 'when a new item is added' do
+      let!(:original_columns_count) { organization.items.size + non_item_headers.size }
+      let(:new_item_name) { "new item" }
+      before do
+        create(:item, name: new_item_name, organization:)
+      end
+
+      it 'should add it to the end of the row' do
+        expect(subject[0].uniq).to eq(expected_headers)
+          .and end_with(new_item_name)
+          .and have_attributes(size: original_columns_count + 1)
+      end
+
+      it 'should show up with a 0 quantity if there are no distributions' do
+        distributions.zip(total_item_quantities).each_with_index do |(distribution, total_item_quantity), idx|
+          row = [
+            distribution.partner.name,
+            distribution.issued_at.strftime("%m/%d/%Y"),
+            distribution.storage_location.name,
+            distribution.line_items.where(item_id: item_id).total,
+            distribution.cents_to_dollar(distribution.line_items.total_value),
+            distribution.delivery_method,
+            "$#{distribution.shipping_cost.to_f}",
+            distribution.state,
+            distribution.agency_rep,
+            distribution.comment
+          ]
+
+          row += total_item_quantity
+
+          expect(subject[idx + 1]).to eq(row)
+            .and end_with(0)
+            .and have_attributes(size: original_columns_count + 1)
+        end
       end
     end
   end
