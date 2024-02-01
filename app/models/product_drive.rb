@@ -18,6 +18,7 @@ class ProductDrive < ApplicationRecord
   include Filterable
 
   scope :by_name, ->(name_filter) { where(name: name_filter) }
+  scope :by_item_category_id, ->(item_category_id) { joins(donations: [line_items: [:item]]).where(item: { item_category_id: item_category_id }) }
 
   scope :within_date_range, ->(search_range) {
     search_dates = search_date_range(search_range)
@@ -72,6 +73,17 @@ class ProductDrive < ApplicationRecord
       .sum('line_items.quantity')
 
     organization.items.order(:name).map do |item|
+      quantities[item.id] || 0
+    end
+  end
+
+  def item_quantities_by_category_and_date(date_range)
+    quantities = donations.joins(:line_items)
+      .during(date_range)
+      .group('line_items.item_id')
+      .sum('line_items.quantity')
+
+    organization.items.order(:item_category_id).map do |item|
       quantities[item.id] || 0
     end
   end
