@@ -24,7 +24,7 @@ module Reports
 
     # @return [Integer]
     def total_children_served
-      @total_children_served ||= distributed_disposable_items + distributed_kits_with_disposable_items
+      @total_children_served ||= distributed_loose_disposable_items + distributed_kits_with_disposable_items
     end
 
     # @return [Float]
@@ -40,7 +40,7 @@ module Reports
       total_avg = if total_distributions.zero? && total_kits.zero?
         0.0
       else
-        (disposable_distribution_average * total_distributions + kit_average * total_kits) / (total_distributions + total_kits)
+        (loose_disposable_distribution_average * total_distributions + kit_average * total_kits) / (total_distributions + total_kits)
       end
 
       total_avg.nan? ? 0.0 : total_avg
@@ -48,7 +48,7 @@ module Reports
 
     private
 
-    def disposable_distribution_average
+    def loose_disposable_distribution_average
       organization
       .distributions
       .for_year(year)
@@ -65,7 +65,7 @@ module Reports
       .average('COALESCE(inventory_items.quantity, 0)') || 0.0
     end
 
-    def distributed_disposable_items
+    def distributed_loose_disposable_items
       organization
       .distributions
       .for_year(year)
