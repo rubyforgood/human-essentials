@@ -152,6 +152,12 @@
                   <%= humanize_boolean(@organization.ytd_on_distribution_printout) %>
                 </p>
               </div>
+              <div class="mb-4">
+                <h3 class='font-bold'>Use Single-step Invite and Approve Partner Process?</h3>
+                <p>
+                  <%= humanize_boolean(@organization.use_single_step_invite_and_approve_partner_process) %>
+                </p>
+              </div>
               <% if @organization.logo.attached? %>
                     <div class="mb-4">
                     <h3 class='font-bold'>Logo</h3>
