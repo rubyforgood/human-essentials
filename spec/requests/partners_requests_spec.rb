@@ -423,4 +423,65 @@ RSpec.describe "Partners", type: :request do
       end
     end
   end
+
+  describe "POST #single_step_invite_and_approve" do
+    let(:partner) { create(:partner, organization: @organization) }
+
+    context "when invitation succeeded and approval succeed" do
+      before do
+        fake_partner_invite_service = instance_double(PartnerInviteService, call: nil, errors: [])
+        allow(PartnerInviteService).to receive(:new).and_return(fake_partner_invite_service)
+
+        fake_partner_approval_service = instance_double(PartnerApprovalService, call: nil, errors: [])
+        allow(PartnerApprovalService).to receive(:new).with(partner: partner).and_return(fake_partner_approval_service)
+      end
+
+      it "sends invitation email and approve partner in single step" do
+        post single_step_invite_and_approve_partner_path(default_params.merge(id: partner.id))
+
+        expect(PartnerInviteService).to have_received(:new).with(partner: partner, force: true)
+        expect(response).to have_http_status(:found)
+
+        expect(PartnerApprovalService).to have_received(:new).with(partner: partner)
+        expect(response).to redirect_to(partners_path(organization_id: @organization.to_param))
+        expect(flash[:notice]).to eq("Partner invited and approved!")
+      end
+    end
+
+    context "when invitation failed" do
+      let(:fake_error_msg) { Faker::Games::ElderScrolls.dragon }
+
+      before do
+        fake_partner_invite_service = instance_double(PartnerInviteService, call: nil)
+        allow(PartnerInviteService).to receive(:new).with(partner: partner, force: true).and_return(fake_partner_invite_service)
+        allow(fake_partner_invite_service).to receive_message_chain(:errors, :none?).and_return(false)
+        allow(fake_partner_invite_service).to receive_message_chain(:errors, :full_messages).and_return(fake_error_msg)
+      end
+
+      it "should redirect to the partners index page with a notice flash message" do
+        post single_step_invite_and_approve_partner_path(default_params.merge(id: partner.id))
+
+        expect(response).to redirect_to(partners_path(organization_id: @organization.to_param))
+        expect(flash[:notice]).to eq("Failed to invite #{partner.name}! #{fake_error_msg}")
+      end
+    end
+
+    context "when approval fails" do
+      let(:fake_error_msg) { Faker::Games::ElderScrolls.dragon }
+
+      before do
+        fake_partner_approval_service = instance_double(PartnerApprovalService, call: nil)
+        allow(PartnerApprovalService).to receive(:new).with(partner: partner).and_return(fake_partner_approval_service)
+        allow(fake_partner_approval_service).to receive_message_chain(:errors, :none?).and_return(false)
+        allow(fake_partner_approval_service).to receive_message_chain(:errors, :full_messages).and_return(fake_error_msg)
+      end
+
+      it "should redirect to the partners index page with a notice flash message" do
+        post single_step_invite_and_approve_partner_path(default_params.merge(id: partner.id))
+
+        expect(response).to redirect_to(partners_path(organization_id: @organization.to_param))
+        expect(flash[:error]).to eq("Failed to approve partner because: #{fake_error_msg}")
+      end
+    end
+  end
 end

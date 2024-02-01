@@ -49,6 +49,27 @@ class PartnersController < ApplicationController
     end
   end
 
+  def single_step_invite_and_approve
+    # Invite the partner
+    partner = current_organization.partners.find(params[:id])
+
+    partner_invite_service = PartnerInviteService.new(partner: partner, force: true)
+    partner_invite_service.call
+
+    # If no errors inviting, then approve the partner
+    if partner_invite_service.errors.none?
+      partner_approval_service = PartnerApprovalService.new(partner: partner)
+      partner_approval_service.call
+
+      if partner_approval_service.errors.none?
+        redirect_to partners_path, notice: "Partner invited and approved!"
+      else
+        redirect_to partners_path, error: "Failed to approve partner because: #{partner_approval_service.errors.full_messages}"
+      end
+    else
+      redirect_to partners_path, notice: "Failed to invite #{partner.name}! #{partner_invite_service.errors.full_messages}"
+    end
+  end
   def show
     @partner = current_organization.partners.find(params[:id])
     @impact_metrics = @partner.impact_metrics unless @partner.uninvited?

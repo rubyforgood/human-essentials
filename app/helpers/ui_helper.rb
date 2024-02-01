@@ -130,6 +130,11 @@ module UiHelper
     _link_to link, { icon: "envelope", type: "warning", text: "Invite", size: "xs" }.merge(options), properties
   end
 
+  def invite_and_approve_button_to(link, options = {}, properties = {})
+    properties = { method: options[:method]&.to_sym || :post, rel: "nofollow", data: { confirm: options[:confirm] || "Are you sure?" } }.merge(properties)
+    _link_to link, { icon: "envelope", type: "info", text: "Invite and Approve", size: "xs" }.merge(options), properties
+  end
+
   def refresh_button_to(link, options = {}, properties = {})
     _link_to link, { icon: "sync", type: "info", text: "Refresh", size: "md" }.merge(options), properties
   end

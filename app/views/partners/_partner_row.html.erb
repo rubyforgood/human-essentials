@@ -1,4 +1,5 @@
 <% status = partner_row.status%>
+<% can_single_step_invite_and_approve = partner_row.organization.use_single_step_invite_and_approve_partner_process %>
 <tr>
   <td class='text-blue-500'><%= link_to partner_row.name, partner_path(partner_row) %></td>
   <td><%= link_to partner_row.email, "mailto:#{partner_row.email}" %></td>
@@ -25,7 +26,11 @@
   <td>
     <% case status %>
     <% when "uninvited" %>
-      <%= invite_button_to(invite_partner_path(partner_row), confirm: "Send an invitation to #{partner_row.name} to begin using the partner application?") %>
+      <% if can_single_step_invite_and_approve %>
+        <%= invite_and_approve_button_to(single_step_invite_and_approve_partner_path(partner_row), confirm: "Single step invite and approve #{partner_row.name} to begin using the partner application?") %>
+      <% else %>
+        <%= invite_button_to(invite_partner_path(partner_row), confirm: "Send an invitation to #{partner_row.name} to begin using the partner application?") %>
+      <% end %>
     <% when "invited" %>
       <%= view_button_to partner_path(partner_row) + "#partner-information", { text: "Review Application", icon: "check", type: "warning" } %>
       <%= invite_button_to(invite_partner_path(partner_row), confirm: "Re-send an invitation to #{partner_row.name}?", text: 'Re-send Invite') %>
