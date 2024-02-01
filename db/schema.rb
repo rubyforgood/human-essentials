@@ -478,7 +478,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_31_202431) do
     t.boolean "enable_individual_requests", default: true, null: false
     t.boolean "enable_quantity_based_requests", default: true, null: false
     t.boolean "ytd_on_distribution_printout", default: true, null: false
-    t.boolean "use_single_step_invite_and_approve_partner_process", default: false
+    t.boolean "use_single_step_invite_and_approve_partner_process", default: false, null: false
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
@@ -839,7 +839,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_31_202431) do
   end
 
   create_table "versions", force: :cascade do |t|
-    t.string "item_type", null: false
+    t.string "item_type"
+    t.string "{:null=>false}"
     t.bigint "item_id", null: false
     t.string "event", null: false
     t.string "whodunnit"
