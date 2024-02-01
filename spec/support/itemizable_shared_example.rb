@@ -5,6 +5,26 @@ shared_examples_for "itemizable" do
   context ".items" do
   end
 
+  describe ".to_a" do
+    let(:storage_location) { create(:storage_location, :with_items, item: item, organization: @organization) }
+    let(:obj) { build(model_f, storage_location: storage_location, organization: @organization) }
+    context "with Flipper flag :deprecate_to_a disabled" do
+      it "calls line_item_values" do
+        allow(Flipper).to receive(:enabled?).with(:deprecate_to_a).and_return(false)
+
+        expect(obj).to receive(:line_item_values)
+        obj.to_a
+      end
+    end
+
+    context "with Flipper flag :deprecate_to_a enabled" do
+      it "raises an error" do
+        allow(Flipper).to receive(:enabled?).with(:deprecate_to_a).and_return(true)
+        expect { obj.to_a }.to raise_error(StandardError, "Calling to_a on an Itemizable is deprecated. Use #line_item_values instead.")
+      end
+    end
+  end
+
   context ".line_items" do
     describe "combine!" do
       it "combines multiple line_items with the same item_id into a single record" do
