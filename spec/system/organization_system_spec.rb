@@ -44,6 +44,7 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page).to have_content("Quantity Based Requests?")
         expect(page).to have_content("Show Year-to-date values on distribution printout?")
         expect(page).to have_content("Logo")
+        expect(page).to have_content("Use Single-step Invite and Approve Partner Process?")
       end
     end
 
@@ -115,6 +116,20 @@ RSpec.describe "Organization management", type: :system, js: true do
         click_on "Save"
         expect(page).to_not have_content('Media Information')
         expect(@organization.reload.partner_form_fields).to eq([])
+      end
+
+      it "can disable if the org does NOT use single step invite and approve partner process" do
+        choose("organization[use_single_step_invite_and_approve_partner_process]", option: false)
+
+        click_on "Save"
+        expect(page).to have_content("No")
+      end
+
+      it "can enable if the org uses single step invite and approve partner process" do
+        choose("organization[use_single_step_invite_and_approve_partner_process]", option: true)
+
+        click_on "Save"
+        expect(page).to have_content("Yes")
       end
     end
 
