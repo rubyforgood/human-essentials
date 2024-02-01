@@ -36,7 +36,7 @@ module Reports
     end
 
     # @return [Integer]
-    def distributed_disposable_diapers_not_from_kits
+    def distributed_loose_disposable_diapers
       @distributed_disposable_diapers ||= organization
                                .distributions
                                .for_year(year)
@@ -58,7 +58,7 @@ module Reports
     end
 
     def total_disposable_diapers_distributed
-      distributed_disposable_diapers_not_from_kits + distributed_disposable_diapers_from_kits
+      distributed_loose_disposable_diapers + distributed_disposable_diapers_from_kits
     end
 
     def distributed_cloth_diapers
@@ -72,7 +72,7 @@ module Reports
 
     # @return [Integer]
     def monthly_disposable_diapers
-      ((distributed_disposable_diapers_not_from_kits + distributed_disposable_diapers_from_kits) / 12.0).round
+      ((distributed_loose_disposable_diapers + distributed_disposable_diapers_from_kits) / 12.0).round
     end
 
     # @return [ActiveRecord::Relation]
@@ -145,9 +145,9 @@ module Reports
 
     # @return [Float]
     def percent_disposable_diapers_purchased
-      return 0.0 if purchased_disposable_diapers.zero?
+      return 0.0 if purchased_loose_disposable_diapers.zero?
 
-      (purchased_disposable_diapers / total_disposable_diapers.to_f) * 100
+      (purchased_loose_disposable_diapers / total_disposable_diapers.to_f) * 100
     end
 
     # @return [Float]
@@ -183,7 +183,7 @@ module Reports
     ###### HELPER METHODS ######
 
     # @return [Integer]
-    def purchased_disposable_diapers
+    def purchased_loose_disposable_diapers
       @purchased_diapers ||= LineItem.joins(:item)
                                      .merge(Item.disposable)
                                      .where(itemizable: organization.purchases.for_year(year))
@@ -200,7 +200,7 @@ module Reports
 
     # @return [Integer]
     def total_disposable_diapers
-      @total_disposable_diapers ||= purchased_disposable_diapers + donated_disposable_diapers
+      @total_disposable_diapers ||= purchased_loose_disposable_diapers + donated_disposable_diapers
     end
 
     # @return [Integer]
