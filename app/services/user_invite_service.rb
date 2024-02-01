@@ -5,7 +5,7 @@ module UserInviteService
   # @param resource [ApplicationRecord]
   # @param force [Boolean]
   # @return [User]
-  def self.invite(email:, resource:, name:, roles: [], force: false)
+  def self.invite(email:, resource:, name: nil, roles: [], force: false)
     raise "Resource not found!" if resource.nil?
 
     user = User.find_by(email: email)
@@ -26,7 +26,7 @@ module UserInviteService
     end
 
     User.invite!(email: email) do |user1|
-      user1.name = name # Does this get persisted somewhere up the line? - CLF 20230203
+      user1.name = name if name # Does this get persisted somewhere up the line? - CLF 20230203
       user1.save!
       add_roles(user1, resource: resource, roles: roles)
       user1.skip_invitation = user1.errors[:email].any?
