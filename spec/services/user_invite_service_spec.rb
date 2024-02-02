@@ -63,7 +63,7 @@ RSpec.describe UserInviteService, type: :service, skip_seed: true do
       expect(result.email).to eq("email2@email.com")
       expect(result).to have_role(Role::ORG_USER, organization)
       expect(result).to have_role(Role::ORG_ADMIN, organization)
-      # expect(result).to have_role(Role::PARTNER, :any)
+      expect(result).not_to have_role(Role::PARTNER, :any)
     end
   end
 end
@@ -103,7 +103,7 @@ RSpec.describe UserInviteService, type: :service do
       }.to change(User, :count).by(1)
 
       new_user = User.find_by(email: "email2@example.com")
-      expect(new_user.name).to eq("") # GB 02022024 - "Name Not Provided" should pass this test, but doesnt.
+      expect(new_user.name).to eq("")
       expect(new_user.has_role?(:org_user, organization)).to be true
     end
   end
