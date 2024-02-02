@@ -9,9 +9,8 @@ module Clockwork
     puts "Running #{job}"
   end
 
+  DATA_TYPES = %w[Distribution Purchase Donation]
   every(1.day, "Cache historical data", at: "03:00") do
-    DATA_TYPES = %w[Distribution Purchase Donation]
-
     Organization.is_active.each do |org|
       DATA_TYPES.each do |type|
         Rails.logger.info("Queuing up #{type} cache data for #{org.name}")
