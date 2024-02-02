@@ -115,12 +115,12 @@ describe Exports::ExportDistributionsCSVService do
       end
 
       it 'should add it to the end of the row' do
-        expect(subject[0].uniq).to eq(expected_headers)
+        expect(subject[0]).to eq(expected_headers)
           .and end_with(new_item_name)
           .and have_attributes(size: original_columns_count + 1)
       end
 
-      it 'should show up with a 0 quantity if there are no distributions' do
+      it 'should show up with a 0 quantity if there are none of this item in any distribution' do
         distributions.zip(total_item_quantities).each_with_index do |(distribution, total_item_quantity), idx|
           row = [
             distribution.partner.name,
@@ -141,6 +141,16 @@ describe Exports::ExportDistributionsCSVService do
             .and end_with(0)
             .and have_attributes(size: original_columns_count + 1)
         end
+      end
+    end
+
+    context 'when there are no distributions but the report is requested' do
+      subject { described_class.new(distributions: [], organization: Organization.first, filters: filters).generate_csv_data }
+      it 'returns a csv with only headers and no rows' do
+        header_row = subject[0]
+        expect(header_row).to eq(expected_headers)
+        expect(header_row.last).to eq(all_org_items.last.name)
+        expect(subject.size).to eq(1)
       end
     end
   end
