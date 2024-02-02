@@ -9,6 +9,19 @@ module Clockwork
     puts "Running #{job}"
   end
 
+  every(1.day, "Cache historical data", at: "03:00") do
+    DATA_TYPES = %w[Distribution Purchase Donation]
+
+    Organization.is_active.each do |org|
+      DATA_TYPES.each do |type|
+        Rails.logger.info("Queuing up #{type} cache data for #{org.name}")
+        HistoricalDataCacheJob.perform_later(org_id: org.id, type: type)
+      end
+    end
+
+    Rails.logger.info("Done!")
+  end
+
   every(1.day, "Periodically reset seed data in staging", at: "00:00") do
     if ENV["RAILS_ENV"] == "staging"
       rake = Rake.application
