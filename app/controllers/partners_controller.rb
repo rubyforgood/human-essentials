@@ -70,6 +70,7 @@ class PartnersController < ApplicationController
       redirect_to partners_path, notice: "Failed to invite #{partner.name}! #{partner_invite_service.errors.full_messages}"
     end
   end
+
   def show
     @partner = current_organization.partners.find(params[:id])
     @impact_metrics = @partner.impact_metrics unless @partner.uninvited?
