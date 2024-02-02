@@ -1,7 +1,7 @@
 module Exports
   class ExportDistributionsCSVService
     include DistributionHelper
-    def initialize(distributions:, filters: [])
+    def initialize(distributions:, organization:, filters: [])
       # Currently, the @distributions are already loaded by the controllers that are delegating exporting
       # to this service object; this is happening within the same request/response cycle, so it's already
       # in memory, so we can pass that collection in directly. Should this be moved to a background / async
@@ -10,14 +10,10 @@ module Exports
       # service object.
       @distributions = distributions
       @filters = filters
-      @organization = @distributions&.first&.organization
+      @organization = organization
     end
 
     def generate_csv
-      # TODO: we may want some error handling here in case there are none, but I'm not sure what the process is;
-      # should we do a flash[:error]?
-      return if distributions.blank?
-
       csv_data = generate_csv_data
 
       CSV.generate(headers: true) do |csv|
