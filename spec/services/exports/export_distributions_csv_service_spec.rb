@@ -1,6 +1,6 @@
 describe Exports::ExportDistributionsCSVService do
   describe '#generate_csv_data' do
-    subject { described_class.new(distributions: distributions, filters: filters).generate_csv_data }
+    subject { described_class.new(distributions: distributions, organization: Organization.first, filters: filters).generate_csv_data }
     let(:distributions) { distributions }
 
     let(:duplicate_item) do

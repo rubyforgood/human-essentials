@@ -66,7 +66,7 @@ class DistributionsController < ApplicationController
     respond_to do |format|
       format.html
       format.csv do
-        send_data Exports::ExportDistributionsCSVService.new(distributions: @distributions, filters: filter_params).generate_csv, filename: "Distributions-#{Time.zone.today}.csv"
+        send_data Exports::ExportDistributionsCSVService.new(distributions: @distributions, organization: current_organization, filters: filter_params).generate_csv, filename: "Distributions-#{Time.zone.today}.csv"
       end
     end
   end
