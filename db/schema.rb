@@ -478,7 +478,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_31_202431) do
     t.boolean "enable_individual_requests", default: true, null: false
     t.boolean "enable_quantity_based_requests", default: true, null: false
     t.boolean "ytd_on_distribution_printout", default: true, null: false
-    t.boolean "use_single_step_invite_and_approve_partner_process", default: false, null: false
+    t.boolean "one_step_partner_invite", default: false, null: false
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end

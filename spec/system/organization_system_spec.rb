@@ -119,14 +119,14 @@ RSpec.describe "Organization management", type: :system, js: true do
       end
 
       it "can disable if the org does NOT use single step invite and approve partner process" do
-        choose("organization[use_single_step_invite_and_approve_partner_process]", option: false)
+        choose("organization[one_step_partner_invite]", option: false)
 
         click_on "Save"
         expect(page).to have_content("No")
       end
 
       it "can enable if the org uses single step invite and approve partner process" do
-        choose("organization[use_single_step_invite_and_approve_partner_process]", option: true)
+        choose("organization[one_step_partner_invite]", option: true)
 
         click_on "Save"
         expect(page).to have_content("Yes")

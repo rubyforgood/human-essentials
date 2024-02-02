@@ -23,7 +23,7 @@
 #  state                                              :string
 #  street                                             :string
 #  url                                                :string
-#  use_single_step_invite_and_approve_partner_process :boolean          default(FALSE), not null
+#  one_step_partner_invite                            :boolean          default(FALSE), not null
 #  ytd_on_distribution_printout                       :boolean          default(TRUE), not null
 #  zipcode                                            :string
 #  created_at                                         :datetime         not null

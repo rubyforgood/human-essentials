@@ -97,7 +97,7 @@ class OrganizationsController < ApplicationController
       :repackage_essentials, :distribute_monthly,
       :ndbn_member_id, :enable_child_based_requests,
       :enable_individual_requests, :enable_quantity_based_requests,
-      :ytd_on_distribution_printout,:use_single_step_invite_and_approve_partner_process ,
+      :ytd_on_distribution_printout,:one_step_partner_invite,
       partner_form_fields: []
     )
   end
