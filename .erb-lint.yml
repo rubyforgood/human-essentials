@@ -1,4 +1,8 @@
 ---
+glob: "**/*.{html,text,js}{+*,}.erb"
+exclude:
+  - "**/vendor/**/*"
+  - "**/node_modules/**/*"
 EnableDefaultLinters: true
 linters:
   AllowedScriptType:
