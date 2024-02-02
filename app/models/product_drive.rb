@@ -77,26 +77,29 @@ class ProductDrive < ApplicationRecord
     end
   end
 
-  def item_quantities_by_category_and_date(date_range)
-    quantities = donations.joins(:line_items)
-      .during(date_range)
-      .group('line_items.item_id')
-      .sum('line_items.quantity')
-
-    organization.items.order(:item_category_id).map do |item|
-      quantities[item.id] || 0
+  def donation_quantity_by_date(date_range, item_category_id)
+    if item_category_id != (nil || '')
+      donations.joins(line_items: [:item])
+        .where(item: {item_category_id: item_category_id} )
+        .during(date_range)
+        .sum('line_items.quantity')
+    else
+      donations.joins(:line_items)
+        .during(date_range)
+        .sum('line_items.quantity')
     end
   end
 
-  def donation_quantity_by_date(date_range)
-    donations.joins(:line_items)
-      .during(date_range)
-      .sum('line_items.quantity')
-  end
-
-  def distinct_items_count_by_date(date_range)
-    donations.joins(:line_items)
-      .during(date_range)
-      .select('line_items.item_id').distinct.count
+  def distinct_items_count_by_date(date_range, item_category_id)
+    if item_category_id != (nil || '')
+      donations.joins(line_items: [:item])
+        .where(item: {item_category_id: item_category_id} )
+        .during(date_range)
+        .select('line_items.item_id').distinct.count
+    else
+      donations.joins(:line_items)
+        .during(date_range)
+        .select('line_items.item_id').distinct.count
+    end
   end
 end
