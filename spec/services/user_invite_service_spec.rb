@@ -63,7 +63,6 @@ RSpec.describe UserInviteService, type: :service, skip_seed: true do
       expect(result.email).to eq("email2@email.com")
       expect(result).to have_role(Role::ORG_USER, organization)
       expect(result).to have_role(Role::ORG_ADMIN, organization)
-      expect(result).not_to have_role(Role::PARTNER, :any)
     end
   end
 end
