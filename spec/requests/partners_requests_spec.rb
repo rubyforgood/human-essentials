@@ -424,7 +424,7 @@ RSpec.describe "Partners", type: :request do
     end
   end
 
-  describe "POST #single_step_invite_and_approve" do
+  describe "POST #invite_and_approve" do
     let(:partner) { create(:partner, organization: @organization) }
 
     context "when invitation succeeded and approval succeed" do

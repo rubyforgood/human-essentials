@@ -49,7 +49,7 @@ class PartnersController < ApplicationController
     end
   end
 
-  def single_step_invite_and_approve
+  def invite_and_approve
     # Invite the partner
     partner = current_organization.partners.find(params[:id])
 
