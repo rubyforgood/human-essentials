@@ -27,7 +27,7 @@
     <% case status %>
     <% when "uninvited" %>
       <% if can_one_step_invite_and_approve %>
-        <% button_options = { icon: "envelope", type: "info", text: "Invite and Approve", size: "xs", confirm: "One step invite and approve #{partner_row.name} to begin using the partner application?" } %>
+        <% button_options = { icon: "envelope", type: "warning", text: "Invite and Approve", size: "xs", confirm: "One step invite and approve #{partner_row.name} to begin using the partner application?" } %>
         <%= invite_button_to(invite_and_approve_partner_path(partner_row), button_options) %>
       <% else %>
         <%= invite_button_to(invite_partner_path(partner_row), confirm: "Send an invitation to #{partner_row.name} to begin using the partner application?") %>
