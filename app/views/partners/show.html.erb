@@ -304,9 +304,9 @@
             <%= form_tag invite_partner_user_partner_path do %>
               <div class="input-group">
                 <span class="input-group-text" id="spn_env_fa_icon"><%= fa_icon "envelope" %></span>
-                <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon">
+                <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon" required>
               </div>
-              <div class="input-group">
+              <div class="input-group mt-3">
                 <span class="input-group-text" id="spn_env_fa_icon"><%= fa_icon "user" %></span>
                 <input type="text" name="name" class="form-control" placeholder="Name" aria-describedby="name_icon">
                 <%= hidden_field_tag :partner, @partner.id %><br>
