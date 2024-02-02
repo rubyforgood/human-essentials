@@ -44,7 +44,7 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page).to have_content("Quantity Based Requests?")
         expect(page).to have_content("Show Year-to-date values on distribution printout?")
         expect(page).to have_content("Logo")
-        expect(page).to have_content("Use Single-step Invite and Approve Partner Process?")
+        expect(page).to have_content("Use One Step Invite and Approve partner process?")
       end
     end
 
