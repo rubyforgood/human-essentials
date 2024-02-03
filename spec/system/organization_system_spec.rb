@@ -26,6 +26,8 @@ RSpec.describe "Organization management", type: :system, js: true do
 
     describe "Viewing the organization" do
       it "can view organization details", :aggregate_failures do
+        @organization.update!(one_step_partner_invite: true)
+
         visit organization_path(@organization)
 
         expect(page.find("h1")).to have_text(@organization.name)
@@ -44,7 +46,7 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page).to have_content("Quantity Based Requests?")
         expect(page).to have_content("Show Year-to-date values on distribution printout?")
         expect(page).to have_content("Logo")
-        expect(page).to have_content("Use One Step Invite and Approve partner process?")
+        expect(page).to have_content("Use One step Partner invite and approve process?")
       end
     end
 
