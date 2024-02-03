@@ -132,7 +132,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
       end
 
       context "when one step partner invite setting is off" do
-        it "only shows invite button" do
+        it "does not show invite and approve button" do
           @organization.update!(one_step_partner_invite: false)
 
           visit url_prefix + "/partners"
