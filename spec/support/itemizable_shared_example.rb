@@ -11,6 +11,7 @@ shared_examples_for "itemizable" do
     context "with Flipper flag :deprecate_to_a disabled" do
       it "calls line_item_values" do
         allow(Flipper).to receive(:enabled?).with(:deprecate_to_a).and_return(false)
+        allow(Flipper).to receive(:enabled?) # for other flags
 
         expect(obj).to receive(:line_item_values)
         obj.to_a
@@ -19,6 +20,7 @@ shared_examples_for "itemizable" do
 
     context "with Flipper flag :deprecate_to_a enabled" do
       it "raises an error" do
+        allow(Flipper).to receive(:enabled?) # for other flags
         allow(Flipper).to receive(:enabled?).with(:deprecate_to_a).and_return(true)
         expect { obj.to_a }.to raise_error(StandardError, "Calling to_a on an Itemizable is deprecated. Use #line_item_values instead.")
       end
