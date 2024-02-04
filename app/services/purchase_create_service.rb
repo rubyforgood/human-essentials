@@ -3,7 +3,7 @@ class PurchaseCreateService
     def call(purchase)
       Purchase.transaction do
         if purchase.save
-          purchase.storage_location.increase_inventory(purchase)
+          purchase.storage_location.increase_inventory(purchase.line_item_values)
           PurchaseEvent.publish(purchase)
         end
       end

@@ -70,7 +70,7 @@ RSpec.describe "Item management", type: :system do
     create(:item, base_item: BaseItem.first)
     create(:item, base_item: BaseItem.last)
     visit url_prefix + "/items"
-    select BaseItem.first.name, from: "filters_by_base_item"
+    select BaseItem.first.name, from: "filters[by_base_item]"
     click_button "Filter"
     within "#items-table" do
       expect(page).to have_css("tbody tr", count: 1)

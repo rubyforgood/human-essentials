@@ -543,7 +543,7 @@ RSpec.feature "Distributions", type: :system do
       # check for all distributions
       expect(page).to have_css("table tbody tr", count: 2)
       # filter
-      select(item1.name, from: "filters_by_item_id")
+      select(item1.name, from: "filters[by_item_id]")
       click_button("Filter")
       # check for filtered distributions
       expect(page).to have_css("table tbody tr", count: 1)
@@ -564,7 +564,7 @@ RSpec.feature "Distributions", type: :system do
       # check for all distributions
       expect(page).to have_css("table tbody tr", count: 2)
       # filter
-      select(item_category.name, from: "filters_by_item_category_id")
+      select(item_category.name, from: "filters[by_item_category_id]")
       click_button("Filter")
       # check for filtered distributions
       expect(page).to have_css("table tbody tr", count: 1)
@@ -584,7 +584,7 @@ RSpec.feature "Distributions", type: :system do
       # check for all distributions
       expect(page).to have_css("table tbody tr", count: 2)
       # filter
-      select(partner1.name, from: "filters_by_partner")
+      select(partner1.name, from: "filters[by_partner]")
       click_button("Filter")
       # check for filtered distributions
       expect(page).to have_css("table tbody tr", count: 1)
@@ -598,7 +598,7 @@ RSpec.feature "Distributions", type: :system do
       # check for all distributions
       expect(page).to have_css("table tbody tr", count: 2)
       # filter
-      select(distribution1.state.humanize, from: "filters_by_state")
+      select(distribution1.state.humanize, from: "filters[by_state]")
       click_button("Filter")
       # check for filtered distributions
       expect(page).to have_css("table tbody tr", count: 1)

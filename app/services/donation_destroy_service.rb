@@ -10,7 +10,7 @@ class DonationDestroyService
     ActiveRecord::Base.transaction do
       organization = Organization.find(organization_id)
       donation = organization.donations.find(donation_id)
-      donation.storage_location.decrease_inventory(donation)
+      donation.storage_location.decrease_inventory(donation.line_item_values)
       DonationDestroyEvent.publish(donation)
       donation.destroy!
     end

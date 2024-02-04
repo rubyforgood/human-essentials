@@ -71,7 +71,7 @@ RSpec.describe "Audit management", type: :system, js: true do
         create(:audit, organization: @organization, storage_location: storage_location2)
 
         visit subject
-        select storage_location.name, from: "filters_at_location"
+        select storage_location.name, from: "filters[at_location]"
         click_button "Filter"
 
         expect(page).to have_css("table tr", count: 2)
