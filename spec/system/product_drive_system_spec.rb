@@ -24,7 +24,7 @@ RSpec.describe "Product Drives", type: :system, js: true do
     end
 
     it "Shows the expected filters with the expected values" do
-      expect(page.has_select?('filters_by_name', with_options: @product_drives.map(&:name))).to be true
+      expect(page.has_select?('filters[by_name]', with_options: @product_drives.map(&:name))).to be true
       expect(page.has_field?('filters_date_range', with: this_year))
     end
 
