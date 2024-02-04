@@ -67,8 +67,9 @@ describe DonationDestroyService do
         allow(fake_organization_donations).to receive(:find)
           .with(donation_id)
           .and_return(fake_donation)
+        allow(fake_donation).to receive(:line_item_values).and_return(fake_insufficient_items)
         allow(fake_storage_location).to receive(:decrease_inventory)
-          .with(fake_donation)
+          .with(fake_insufficient_items)
           .and_raise(fake_insufficient_allotment_error)
       end
 
@@ -91,6 +92,16 @@ describe DonationDestroyService do
           organization_id: organization_id)
       }
       let(:fake_storage_location) { instance_double(StorageLocation) }
+      let(:fake_insufficient_items) do
+        [
+          {
+            item_id: Faker::Number.number,
+            item: Faker::Lorem.word,
+            quantity_on_hand: Faker::Number.number,
+            quantity_requested: Faker::Number.number
+          }
+        ]
+      end
 
       before do
         allow(Organization).to receive(:find)
@@ -99,7 +110,8 @@ describe DonationDestroyService do
         allow(fake_organization_donations).to receive(:find)
           .with(donation_id)
           .and_return(fake_donation)
-        allow(fake_storage_location).to receive(:decrease_inventory).with(fake_donation)
+        allow(fake_donation).to receive(:line_item_values).and_return(fake_insufficient_items)
+        allow(fake_storage_location).to receive(:decrease_inventory).with(fake_insufficient_items)
         allow(fake_donation).to receive(:destroy!).and_raise('boom')
       end
 
