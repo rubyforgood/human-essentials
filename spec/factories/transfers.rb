@@ -43,7 +43,7 @@ FactoryBot.define do
       end
 
       after(:create) do |instance, evaluator|
-        evaluator.from.increase_inventory(instance)
+        evaluator.from.increase_inventory(instance.line_item_values)
       end
     end
   end

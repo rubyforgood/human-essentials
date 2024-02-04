@@ -46,7 +46,7 @@ class StorageLocation < ApplicationRecord
   validates :name, :address, :organization, presence: true
   validates :warehouse_type, inclusion: { in: WAREHOUSE_TYPES },
                              allow_blank: true
-  before_destroy :verify_inventory_items, prepend: true
+  before_destroy :validate_empty_inventory, prepend: true
 
   include Discard::Model
   include Geocodable
@@ -139,8 +139,6 @@ class StorageLocation < ApplicationRecord
 
   # FIXME: After this is stable, revisit how we do logging
   def increase_inventory(itemizable_array)
-    itemizable_array = itemizable_array.to_a
-
     # This is, at least for now, how we log changes to the inventory made in this call
     log = {}
     # Iterate through each of the line-items in the moving box
@@ -163,8 +161,6 @@ class StorageLocation < ApplicationRecord
 
   # TODO: re-evaluate this for optimization
   def decrease_inventory(itemizable_array)
-    itemizable_array = itemizable_array.to_a
-
     # This is, at least for now, how we log changes to the inventory made in this call
     log = {}
     # This tracks items that have insufficient inventory counts to be reduced as much
@@ -213,8 +209,8 @@ class StorageLocation < ApplicationRecord
     log
   end
 
-  def verify_inventory_items
-    unless empty_inventory_items?
+  def validate_empty_inventory
+    unless empty_inventory?
       errors.add(:base, "Cannot delete storage location containing inventory items with non-zero quantities")
       throw(:abort)
     end
@@ -255,7 +251,7 @@ class StorageLocation < ApplicationRecord
       inventory = View::Inventory.new(organization_id)
       inventory.quantity_for(storage_location: id).zero?
     else
-      inventory_items.map(&:quantity).uniq.reject(&:zero?).empty?
+      inventory_items.map(&:quantity).all?(&:zero?)
     end
   end
 

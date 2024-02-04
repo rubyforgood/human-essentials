@@ -98,8 +98,6 @@ gem 'icalendar', require: false
 gem "jwt"
 # Use Newrelic for logs and APM
 gem "newrelic_rpm"
-# Scheduling
-gem 'rufus-scheduler'
 # Used to manage periodic cron-like jobs
 gem "clockwork"
 
@@ -184,7 +182,7 @@ end
 
 group :test do
   # Test using browsers.
-  gem "capybara", "~> 3.39"
+  gem "capybara", "~> 3.40"
   # Create screenshots when doing browser tests.
   gem "capybara-screenshot"
   # Generate Capybara tests in the browser and debug them.

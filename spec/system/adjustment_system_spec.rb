@@ -132,7 +132,7 @@ RSpec.describe "Adjustment management", type: :system, js: true do
     create(:adjustment, organization: @organization, storage_location: storage_location2)
 
     visit subject
-    select storage_location.name, from: "filters_at_location"
+    select storage_location.name, from: "filters[at_location]"
     click_on "Filter"
 
     expect(page).to have_css("table tr", count: 2)
@@ -144,7 +144,7 @@ RSpec.describe "Adjustment management", type: :system, js: true do
     create(:adjustment, organization: @organization, storage_location: storage_location2, user_id: @organization_admin.id)
 
     visit subject
-    select @user.name, from: "filters_by_user"
+    select @user.name, from: "filters[by_user]"
     click_on "Filter"
 
     expect(page).to have_css("table tr", count: 2)
