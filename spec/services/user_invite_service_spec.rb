@@ -94,7 +94,7 @@ RSpec.describe UserInviteService, type: :service do
     it "should create the user without a name with default role" do
       expect {
         described_class.invite(
-          name: "",
+          name: nil,
           email: "email2@example.com",
           roles: [Role::ORG_USER],
           resource: organization
