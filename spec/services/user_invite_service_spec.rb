@@ -1,5 +1,7 @@
 RSpec.describe UserInviteService, type: :service, skip_seed: true do
   let(:organization) { FactoryBot.create(:organization) }
+  let(:partner) { FactoryBot.create(:partner, organization: organization) }
+
   before(:each) do
     allow(UserMailer).to receive(:role_added).and_return(double(:mail, deliver_later: nil))
   end
@@ -65,45 +67,36 @@ RSpec.describe UserInviteService, type: :service, skip_seed: true do
       expect(result).to have_role(Role::ORG_ADMIN, organization)
     end
   end
-end
 
-RSpec.describe UserInviteService, type: :service do
-  let!(:organization) { FactoryBot.create(:organization) }
-  let!(:partner) { FactoryBot.create(:partner, organization: organization) }
+  it "should invite a user with the partner role" do
+    result = nil
+    expect {
+      result = described_class.invite(
+        name: "Partner User",
+        email: "partner@example.com",
+        roles: [Role::PARTNER],
+        resource: partner
+      )
+    }.to change(ActionMailer::Base.deliveries, :count).by(1)
 
-  before do
-    allow(UserMailer).to receive(:role_added).and_return(double(:mail, deliver_later: nil))
+    expect(result.name).to eq("Partner User")
+    expect(result).not_to be_nil
+    expect(result.has_role?(:partner, partner)).to be true
   end
 
-  context "with a new user" do
-    it "should invite a user with the partner role" do
-      expect {
-        described_class.invite(
-          name: "Partner User",
-          email: "partner@example.com",
-          roles: [Role::PARTNER],
-          resource: partner
-        )
-      }.to change(User, :count).by(1).and change(ActionMailer::Base.deliveries, :count).by(1)
+  it "should create the user without a name with default role" do
+    result = nil
+    expect {
+      result = described_class.invite(
+        name: nil,
+        email: "email2@example.com",
+        roles: [Role::ORG_USER],
+        resource: organization
+      )
+    }.to change(ActionMailer::Base.deliveries, :count).by(1)
 
-      new_user = User.find_by(email: "partner@example.com")
-      expect(new_user).not_to be_nil
-      expect(new_user.has_role?(:partner, partner)).to be true
-    end
-
-    it "should create the user without a name with default role" do
-      expect {
-        described_class.invite(
-          name: nil,
-          email: "email2@example.com",
-          roles: [Role::ORG_USER],
-          resource: organization
-        )
-      }.to change(User, :count).by(1)
-
-      new_user = User.find_by(email: "email2@example.com")
-      expect(new_user.name).to eq("Name Not Provided")
-      expect(new_user.has_role?(:org_user, organization)).to be true
-    end
+    expect(result.name).to eq("Name Not Provided")
+    expect(result.email).to eq("email2@example.com")
+    expect(result.has_role?(:org_user, organization)).to be true
   end
 end

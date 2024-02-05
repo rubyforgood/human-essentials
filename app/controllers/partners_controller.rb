@@ -114,7 +114,8 @@ class PartnersController < ApplicationController
       name: params[:name].presence || "Name Not Provided",
       email: params[:email],
       roles: [Role::PARTNER],
-      resource: partner)
+      resource: partner
+    )
 
     redirect_to partner_path(partner), notice: "We have invited #{params[:email]} to #{partner.name}!"
   rescue StandardError => e
