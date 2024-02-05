@@ -52,7 +52,7 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:donation_site_donation)
         visit subject
         expect(page).to have_css("table tbody tr", count: 2)
-        select Donation::SOURCES[:misc], from: "filters_by_source"
+        select Donation::SOURCES[:misc], from: "filters[by_source]"
         click_button "Filter"
         expect(page).to have_css("table tbody tr", count: 1)
       end
@@ -65,7 +65,7 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:product_drive_donation, product_drive: b, product_drive_participant: x)
         visit subject
         expect(page).to have_css("table tbody tr", count: 2)
-        select a.name, from: "filters_by_product_drive"
+        select a.name, from: "filters[by_product_drive]"
         click_button "Filter"
         expect(page).to have_css("table tbody tr", count: 1)
       end
@@ -78,7 +78,7 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:product_drive_donation, product_drive: x, product_drive_participant: b)
         visit subject
         expect(page).to have_css("table tbody tr", count: 2)
-        select a.business_name, from: "filters_by_product_drive_participant"
+        select a.business_name, from: "filters[by_product_drive_participant]"
         click_button "Filter"
         expect(page).to have_css("table tbody tr", count: 1)
       end
@@ -91,9 +91,9 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:product_drive_donation, product_drive: x, product_drive_participant: b)
         visit subject
         expect(page).to have_css("table tbody tr", count: 2)
-        select a.business_name, from: "filters_by_product_drive_participant"
+        select a.business_name, from: "filters[by_product_drive_participant]"
         click_button "Filter"
-        expect(page).to have_select("filters_by_product_drive_participant", selected: a.business_name)
+        expect(page).to have_select("filters[by_product_drive_participant]", selected: a.business_name)
       end
 
       it "Filters by manufacturer" do
@@ -103,7 +103,7 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:manufacturer_donation, manufacturer: b)
         visit subject
         expect(page).to have_css("table tbody tr", count: 2)
-        select a.name, from: "filters_from_manufacturer"
+        select a.name, from: "filters[from_manufacturer]"
         click_button "Filter"
         expect(page).to have_css("table tbody tr", count: 1)
       end
@@ -113,7 +113,7 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:donation, donation_site: location1)
         create(:donation, donation_site: location2)
         visit subject
-        select location1.name, from: "filters_from_donation_site"
+        select location1.name, from: "filters[from_donation_site]"
         click_button "Filter"
         expect(page).to have_css("table tbody tr", count: 1)
       end
@@ -124,7 +124,7 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:donation, storage_location: storage2)
         visit subject
         expect(page).to have_css("table tbody tr", count: 2)
-        select storage1.name, from: "filters_at_storage_location"
+        select storage1.name, from: "filters[at_storage_location]"
         click_button "Filter"
         expect(page).to have_css("table tbody tr", count: 1)
       end
@@ -139,10 +139,10 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:donation_site_donation, storage_location: storage1)
         visit subject
         expect(page).to have_css("table tbody tr", count: 3)
-        select Donation::SOURCES[:misc], from: "filters_by_source"
+        select Donation::SOURCES[:misc], from: "filters[by_source]"
         click_button "Filter"
         expect(page).to have_css("table tbody tr", count: 2)
-        select storage1.name, from: "filters_at_storage_location"
+        select storage1.name, from: "filters[at_storage_location]"
         click_button "Filter"
         expect(page).to have_css("table tbody tr", count: 1)
       end

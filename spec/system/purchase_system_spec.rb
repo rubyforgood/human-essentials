@@ -61,7 +61,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           create(:purchase, storage_location: storage2)
           visit subject
           expect(page).to have_css("table tbody tr", count: 2)
-          select storage1.name, from: "filters_at_storage_location"
+          select storage1.name, from: "filters[at_storage_location]"
           click_button "Filter"
           expect(page).to have_css("table tbody tr", count: 1)
         end
@@ -73,7 +73,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           create(:purchase, vendor: vendor2)
           visit subject
           expect(page).to have_css("table tbody tr", count: 2)
-          select vendor1.business_name, from: "filters_from_vendor"
+          select vendor1.business_name, from: "filters[from_vendor]"
           click_button "Filter"
           expect(page).to have_css("table tbody tr", count: 1)
         end

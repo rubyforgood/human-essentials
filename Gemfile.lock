@@ -103,11 +103,11 @@ GEM
     bullet (7.1.6)
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.11)
-    capybara (3.39.2)
+    capybara (3.40.0)
       addressable
       matrix
       mini_mime (>= 0.1.3)
-      nokogiri (~> 1.8)
+      nokogiri (~> 1.11)
       rack (>= 1.6.0)
       rack-test (>= 0.6.3)
       regexp_parser (>= 1.5, < 3.0)
@@ -184,15 +184,13 @@ GEM
       dry-logic (~> 1.4)
       zeitwerk (~> 2.6)
     erubi (1.12.0)
-    et-orbi (1.2.7)
-      tzinfo
     execjs (2.9.1)
     factory_bot (6.4.5)
       activesupport (>= 5.0.0)
     factory_bot_rails (6.4.3)
       factory_bot (~> 6.4)
       railties (>= 5.0.0)
-    faker (3.2.2)
+    faker (3.2.3)
       i18n (>= 1.8.11, < 2)
     faraday (1.10.3)
       faraday-em_http (~> 1.0)
@@ -239,9 +237,6 @@ GEM
       sanitize (< 7)
     foreman (0.87.2)
     formatador (1.1.0)
-    fugit (1.8.1)
-      et-orbi (~> 1, >= 1.2.7)
-      raabro (~> 1.4)
     geocoder (1.8.2)
     globalid (1.2.1)
       activesupport (>= 6.1)
@@ -362,7 +357,7 @@ GEM
       timeout
     net-smtp (0.4.0)
       net-protocol
-    newrelic_rpm (9.7.0)
+    newrelic_rpm (9.7.1)
     nio4r (2.7.0)
     nokogiri (1.16.0-arm64-darwin)
       racc (~> 1.4)
@@ -437,7 +432,6 @@ GEM
     public_suffix (5.0.4)
     puma (6.4.2)
       nio4r (~> 2.0)
-    raabro (1.4.0)
     racc (1.7.3)
     rack (2.2.8)
     rack-protection (3.1.0)
@@ -512,7 +506,7 @@ GEM
     rspec-mocks (3.12.6)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.12.0)
-    rspec-rails (6.1.0)
+    rspec-rails (6.1.1)
       actionpack (>= 6.1)
       activesupport (>= 6.1)
       railties (>= 6.1)
@@ -548,8 +542,6 @@ GEM
     ruby-vips (2.1.4)
       ffi (~> 1.12)
     ruby2_keywords (0.0.5)
-    rufus-scheduler (3.9.1)
-      fugit (~> 1.1, >= 1.1.6)
     sanitize (6.1.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -662,7 +654,7 @@ DEPENDENCIES
   brakeman
   bugsnag
   bullet
-  capybara (~> 3.39)
+  capybara (~> 3.40)
   capybara-screenshot
   clockwork
   cocoon
@@ -721,11 +713,10 @@ DEPENDENCIES
   recaptcha
   redis (~> 5.0)
   rolify (~> 6.0)
-  rspec-rails (~> 6.1.0)
+  rspec-rails (~> 6.1.1)
   rubocop
   rubocop-performance
   rubocop-rails (~> 2.23.1)
-  rufus-scheduler
   sass-rails
   shoulda-matchers (~> 6.1)
   simple_form
