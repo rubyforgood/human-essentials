@@ -166,7 +166,34 @@ Users that are frequent contributors and are involved in discussion (join the sl
 ### Stay Scoped
 
 Try to keep your PRs limited to one particular issue, and don't make changes that are out of scope for that issue. If you notice something that needs attention but is out of scope, please [create a new issue](https://github.com/rubyforgood/human-essentials/issues/new).
+## Debugging
+To debug, drop a ``binding.remote_pry`` into the line where you want execution to pause at. Then run ``pry-remote`` in the terminal to connect to it.
+https://github.com/Mon-Ouie/pry-remote
+```
+class Foo
 
+def initialize(x, y)
+  binding.remote_pry
+  end
+end
+
+Foo.new 10, 20
+```
+
+```
+$ pry-remote
+From: example.rb @ line 7 in Foo#initialize:
+     2:
+     3: require 'pry-remote'
+     4:
+     5: class Foo
+     6:   def initialize(x, y)
+ =>  7:     binding.remote_pry
+     8:   end
+     9: end
+    10:
+    11: Foo.new 10, 20
+```
 ## Testing 🧪
 ### Writing Tests/Specs
 - Run all the tests with `bundle exec rspec`
