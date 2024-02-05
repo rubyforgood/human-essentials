@@ -102,7 +102,7 @@ RSpec.describe UserInviteService, type: :service do
       }.to change(User, :count).by(1)
 
       new_user = User.find_by(email: "email2@example.com")
-      expect(new_user.name).to eq("")
+      expect(new_user.name).to eq("Name Not Provided")
       expect(new_user.has_role?(:org_user, organization)).to be true
     end
   end
