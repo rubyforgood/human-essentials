@@ -110,9 +110,9 @@ class PartnersController < ApplicationController
   def invite_partner_user
     partner = current_organization.partners.find(params[:partner])
 
-    name = params[:name].presence || "Name Not Provided"
-
-    UserInviteService.invite(name: name, email: params[:email],
+    UserInviteService.invite(
+      name: params[:name].presence || "Name Not Provided",
+      email: params[:email],
       roles: [Role::PARTNER],
       resource: partner)
 
