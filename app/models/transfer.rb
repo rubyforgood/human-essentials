@@ -56,10 +56,6 @@ class Transfer < ApplicationRecord
     ]
   end
 
-  def deletable?
-    !Audit.since?(self, to_id, from_id)
-  end
-
   private
 
   def storage_locations_belong_to_organization

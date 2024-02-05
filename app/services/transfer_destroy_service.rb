@@ -4,7 +4,9 @@ class TransferDestroyService
   end
 
   def call
-    raise "Transfer cannot be deleted because an audit was performed after it" unless transfer.deletable?
+    if Audit.since?(transfer, transfer.to_id, transfer.from_id)
+      raise "We can't delete this transfer because its items were audited since you made the transfer."
+    end
 
     transfer.transaction do
       revert_inventory_transfer!

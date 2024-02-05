@@ -101,7 +101,7 @@ RSpec.describe TransferDestroyService, type: :service do
 
     context 'because transfer should not be deleted' do
       before do
-        allow(transfer).to receive(:deletable?).and_return(false)
+        allow(Audit).to receive(:since?).and_return(true)
       end
 
       it 'should return an OpenStruct with the raised error' do

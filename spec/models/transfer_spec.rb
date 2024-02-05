@@ -85,17 +85,6 @@ RSpec.describe Transfer, type: :model do
       expect(Transfer.storage_locations_transferred_to_in(@organization).to_a).to match_array([storage_location1, storage_location2])
       expect(Transfer.storage_locations_transferred_from_in(@organization).to_a).to match_array([storage_location3])
     end
-
-    it "`deletable?` returns true only if there are no audits containing items transferred since transfer" do
-      xfer1 = create(:transfer)
-      xfer2 = create(:transfer)
-
-      allow(Audit).to receive(:since?).with(xfer1, xfer1.to_id, xfer1.from_id).and_return(true)
-      allow(Audit).to receive(:since?).with(xfer2, xfer2.to_id, xfer2.from_id).and_return(false)
-
-      expect(xfer1.deletable?).to be false
-      expect(xfer2.deletable?).to be true
-    end
   end
 
   describe "versioning" do
