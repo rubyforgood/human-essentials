@@ -1,7 +1,7 @@
 # h/t to https://dev.to/coorasse/test-downloaded-files-with-rspec-and-system-tests-55mn
 module DownloadHelper
   TIMEOUT = 10
-  PATH = Rails.root.join('tmp/downloads')
+  PATH = Rails.root.join('tmp/capybara')
 
   def downloads
     Dir[PATH.join('*')]

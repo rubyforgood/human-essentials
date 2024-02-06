@@ -59,7 +59,7 @@ RSpec.describe "Requests", type: :system, js: true do
         it "constrains the list" do
           visit subject
           expect(page).to have_css("table tbody tr", count: 5)
-          select(item2.name, from: "filters_by_request_item_id")
+          select(item2.name, from: "filters[by_request_item_id]")
           click_on "Filter"
           expect(page).to have_css("table tbody tr", count: 1)
         end
@@ -69,7 +69,7 @@ RSpec.describe "Requests", type: :system, js: true do
         it "constrains the list" do
           visit subject
           expect(page).to have_css("table tbody tr", count: 5)
-          select(partner2.name, from: "filters_by_partner")
+          select(partner2.name, from: "filters[by_partner]")
           click_on 'Filter'
           expect(page).to have_css("table tbody tr", count: 1)
         end
@@ -81,7 +81,7 @@ RSpec.describe "Requests", type: :system, js: true do
           # check for all requests
           expect(page).to have_css("table tbody tr", count: 5)
           # filter
-          select('Fulfilled', from: "filters_by_status")
+          select('Fulfilled', from: "filters[by_status]")
           click_on 'Filter'
           # check for filtered requests
           expect(page).to have_css("table tbody tr", count: 1)
@@ -92,7 +92,7 @@ RSpec.describe "Requests", type: :system, js: true do
         it "respects the applied filters" do
           visit subject
           expect(page).to have_css("table tbody tr", count: 5)
-          select(item2.name, from: "filters_by_request_item_id")
+          select(item2.name, from: "filters[by_request_item_id]")
           click_on 'Filter'
           expect(page).to have_css("table tbody tr", count: 1)
           click_on 'Export Requests'
@@ -115,7 +115,16 @@ RSpec.describe "Requests", type: :system, js: true do
   context "#show" do
     subject { url_prefix + "/requests/#{request.id}" }
 
-    let!(:request) { create(:request, organization: @organization) }
+    let!(:item) { create(:item, name: "Item Count Test") }
+    let!(:request) {
+      create(:request,
+        organization: @organization,
+        request_items: [
+          { "item_id": item1.id, "quantity": '12' },
+          { "item_id": item2.id, "quantity": '17' },
+          { "item_id": item.id, "quantity": '23' }
+        ])
+    }
 
     it "should show the request with a request sender if a partner user is set" do
       visit subject
@@ -143,7 +152,6 @@ RSpec.describe "Requests", type: :system, js: true do
       # Add inventory items to both storage locations
       ####
       second_storage_location = create(:storage_location, organization: @organization)
-      item = Item.find(request.request_items.first["item_id"])
       @storage_location.inventory_items.create!(quantity: 234, item: item)
       second_storage_location.inventory_items.create!(quantity: 100, item: item)
       visit subject
