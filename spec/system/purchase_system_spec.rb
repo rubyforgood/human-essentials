@@ -295,6 +295,42 @@ RSpec.describe "Purchases", type: :system, js: true do
         expect(page).to_not have_link("Delete")
       end
     end
+
+    context "when editing an existing purchase" do
+      subject { url_prefix + "/purchases" }
+
+      let(:quantity) { 7 }
+      let(:item) { create(:item) }
+      let!(:storage_location) { create(:storage_location, :with_items, item: item, item_quantity: 10, organization: @organization) }
+
+      context "when an audit has been performed on the purchased items" do
+        let!(:audit) { create(:audit, :with_items, storage_location: storage_location, item: item, item_quantity: quantity) }
+
+        it "shows a warning" do
+          purchase = create(:purchase, :with_items, item: item)
+          visit "#{subject}/#{purchase.id}/edit"
+
+          warning_message = "You’ve had an audit since this (purchase/donation) was started. In the case that you are correcting a typo, " +
+          "rather than recording that the physical amounts being (purchased/donated) have changed, " +
+          "you’ll need to make an adjustment to the inventory as well."
+
+          expect(page).to have_content(warning_message)
+        end
+      end
+
+      context "when no audit hasn't been performed" do
+        it "doesn't show a warning" do
+          purchase = create(:purchase, :with_items, item: item)
+          visit "#{subject}/#{purchase.id}/edit"
+
+          warning_message = "You’ve had an audit since this (purchase/donation) was started. In the case that you are correcting a typo, " +
+          "rather than recording that the physical amounts being (purchased/donated) have changed, " +
+          "you’ll need to make an adjustment to the inventory as well."
+
+          expect(page).to_not have_content(warning_message)
+        end
+      end
+    end
   end
 
   context "while signed in as an organization admin" do
