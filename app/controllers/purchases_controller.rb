@@ -47,7 +47,6 @@ class PurchasesController < ApplicationController
   def new
     @purchase = current_organization.purchases.new(issued_at: Time.zone.today)
     @purchase.line_items.build
-
     load_form_collections
   end
 
