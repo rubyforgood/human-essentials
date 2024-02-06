@@ -607,6 +607,39 @@ RSpec.describe "Donations", type: :system, js: true do
         total_quantity = find("#donation_quantity").text
         expect(total_quantity).to eq "0 (Total)"
       end
+
+      context "when an audit has been performed on the purchased items" do
+        let!(:item) { create(:item, organization: @organization, name: "Brightbloom Seed") }
+        let!(:donation) { create(:donation, :with_items, item: item, organization: @organization) }
+        let!(:storage_location) { create(:storage_location, :with_items, item: item, organization: @organization) }
+        let!(:audit) { create(:audit, :with_items, storage_location: storage_location, item: item, item_quantity: 2) }
+
+        it "shows a warning" do
+          visit "#{@url_prefix}/donations/#{donation.id}/edit"
+
+          warning_message = "You’ve had an audit since this (purchase/donation) was started. In the case that you are correcting a typo, " +
+            "rather than recording that the physical amounts being (purchased/donated) have changed, " +
+            "you’ll need to make an adjustment to the inventory as well."
+
+          expect(page).to have_content(warning_message)
+        end
+      end
+
+      context "when no audit hasn't been performed" do
+        let!(:item) { create(:item, organization: @organization, name: "Brightbloom Seed") }
+        let!(:donation) { create(:donation, :with_items, item: item, organization: @organization) }
+        let!(:storage_location) { create(:storage_location, :with_items, item: item, organization: @organization) }
+
+        it "doesn't show a warning" do
+          visit "#{@url_prefix}/donations/#{donation.id}/edit"
+
+          warning_message = "You’ve had an audit since this donation was started. In the case that you are correcting a typo, " +
+            "rather than recording that the physical amounts being (purchased/donated) have changed, " +
+            "you’ll need to make an adjustment to the inventory as well."
+
+          expect(page).to_not have_content(warning_message)
+        end
+      end
     end
 
     context "When viewing an existing donation" do
