@@ -4,6 +4,10 @@ class TransferDestroyService
   end
 
   def call
+    if Audit.since?(transfer, transfer.to_id, transfer.from_id)
+      raise "We can't delete this transfer because its items were audited since you made the transfer."
+    end
+
     transfer.transaction do
       revert_inventory_transfer!
       TransferDestroyEvent.publish(transfer)
