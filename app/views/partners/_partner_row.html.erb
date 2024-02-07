@@ -1,5 +1,6 @@
-<% status = partner_row.status%>
+<% status = partner_row.status %>
 <% can_one_step_invite_and_approve = partner_row.organization.one_step_partner_invite %>
+
 <tr>
   <td class='text-blue-500'><%= link_to partner_row.name, partner_path(partner_row) %></td>
   <td><%= link_to partner_row.email, "mailto:#{partner_row.email}" %></td>

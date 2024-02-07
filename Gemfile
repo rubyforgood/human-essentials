@@ -157,6 +157,8 @@ group :development, :test do
   gem "rubocop-rails", "~> 2.23.1"
   # Default rules for Rubocop.
   gem "standard", "~> 1.33"
+  # Erb linter.
+  gem "erb_lint"
 end
 
 group :development do
@@ -196,7 +198,7 @@ group :test do
   # More concise test ("should") matchers
   gem 'shoulda-matchers', '~> 6.1'
   # Mock HTTP requests and ensure they are not called during tests.
-  gem "webmock", "~> 3.19"
+  gem "webmock", "~> 3.20"
   # Interface capybara to chrome headless
   gem "cuprite"
 end

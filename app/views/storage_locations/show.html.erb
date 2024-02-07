@@ -82,11 +82,11 @@
 
               <div class="tab-pane fade show active" id="custom-tabs-inventory" role="tabpanel" aria-labelledby="custom-tabs-one-home-tab">
                 <%= form_for @storage_location, method: :get do %>
-                  Show Inventory at Date: <%= date_field_tag 'version_date', params[:version_date], min: InventoryItem::EARLIEST_VERSION %>
+                  Show Inventory at Date: <%= date_field_tag 'version_date', params[:version_date], min: InventoryItem::EARLIEST_VERSION, autocomplete: "on" %>
                   <%= filter_button(text: 'View') %>
-                  <br/><small>(historical data collected since <%= Date.parse(InventoryItem::EARLIEST_VERSION).strftime("%b %-d, %Y") %>)</small>
+                  <br><small>(historical data collected since <%= Date.parse(InventoryItem::EARLIEST_VERSION).strftime("%b %-d, %Y") %>)</small>
                 <% end %>
-                <br/><br/>
+                <br><br>
                 <table class="table">
                   <thead>
                   <tr>
@@ -97,7 +97,7 @@
                   <tbody>
                   <%= render partial: "inventory_item_row",
                              collection: @storage_location.inventory_items,
-                             locals: { version_date: params[:version_date] }%>
+                             locals: { version_date: params[:version_date] } %>
                   </tbody>
                   <tfoot>
                   <tr>
@@ -107,7 +107,6 @@
                   </tfoot>
                 </table>
               </div><!-- /.box-body.table-responsive -->
-
 
               <div class="tab-pane fade show" id="custom-tabs-inventory-in" role="tabpanel" aria-labelledby="custom-two-home-tab">
                 <table class="table">
