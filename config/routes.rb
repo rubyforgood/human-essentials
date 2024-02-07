@@ -177,7 +177,6 @@ Rails.application.routes.draw do
         patch :profile
         get :approve_application
         post :invite
-        post :invite_and_approve
         post :invite_partner_user
         post :recertify_partner
         put :deactivate
