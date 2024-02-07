@@ -77,7 +77,7 @@ class ProductDrive < ApplicationRecord
     end
   end
 
-  def donation_quantity_by_date(date_range, item_category_id)
+  def donation_quantity_by_date(date_range, item_category_id=nil)
     if (item_category_id == nil || item_category_id == '')
       donations.joins(:line_items)
         .during(date_range)
@@ -90,7 +90,7 @@ class ProductDrive < ApplicationRecord
     end
   end
 
-  def distinct_items_count_by_date(date_range, item_category_id)
+  def distinct_items_count_by_date(date_range, item_category_id=nil)
     if (item_category_id == nil || item_category_id == '')
       donations.joins(:line_items)
         .during(date_range)
