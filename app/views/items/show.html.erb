@@ -76,7 +76,7 @@
                 </thead>
                 <tbody>
                 <% total = 0; @storage_locations_containing.each do |storage|
-                  total += storage.item_total(@item)   %>
+                  total += storage.item_total(@item) %>
                   <tr>
                     <td><%= link_to storage.name, storage_location_path(storage) %></td>
                     <td class="text-left"><%= storage.item_total(@item) %></td>
