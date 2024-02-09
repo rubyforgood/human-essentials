@@ -46,9 +46,6 @@
               <div class="card-footer">
                 <%= filter_button %>
                 <%= clear_filter_button %>
-                <span class="float-right">
-                  <%= download_button_to(events_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Events", size: "md"}) if @events.any? %>
-                </span>
               </div>
             <% end # form %>
             </div>
