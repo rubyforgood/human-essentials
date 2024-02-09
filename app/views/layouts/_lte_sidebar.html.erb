@@ -189,6 +189,11 @@
             <i class="nav-icon fa fa-circle-o"></i> Annual Survey
           <% end %>
         </li>
+        <li class="nav-item <%= active_class(['events']) %>">
+          <%= link_to(events_path(organization_id: current_user.organization), class: "nav-link #{active_class(['events'])}") do %>
+            <i class="nav-icon fa fa-circle-o"></i> Events
+          <% end %>
+        </li>
       </ul>
     </li>
   <% end %>
