@@ -3,13 +3,12 @@ name: rubocop lint
 on:
   push:
     paths-ignore:
-      - 'doc/**'
-      - '*.md'
-      - 'bin/*'
+      - "doc/**"
+      - "*.md"
+      - "bin/*"
 
 jobs:
   ruby_lint:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -22,3 +21,5 @@ jobs:
 
       - name: lint
         run: bundle exec rubocop
+      - name: lint erb files
+        run: bundle exec erblint --lint-all
