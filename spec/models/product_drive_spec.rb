@@ -30,7 +30,7 @@ RSpec.describe ProductDrive, type: :model do
 
   it "calculates donation quantity by date" do
     create(:donation, :with_items, item_quantity: 2, product_drive: product_drive, issued_at: '26-01-2023')
-    expect(product_drive.donation_quantity_by_date(Time.zone.parse('23/01/2023')..Time.zone.parse('26/01/2023'), nil))
+    expect(product_drive.donation_quantity_by_date(Time.zone.parse('23/01/2023')..Time.zone.parse('26/01/2023')))
       .to eq 2
   end
 
