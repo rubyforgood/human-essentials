@@ -266,8 +266,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
           org_dashboard_page.visit
           expect(org_dashboard_page).to have_low_inventory_section
           inventories = org_dashboard_page.low_inventories
-          minimum_item = "#{storage_location.name} #{below_minimum_item.name} 100 150 200"
-          recommended_item = "#{storage_location.name} #{below_recommended_item.name} 100 0 200"
+          minimum_item = "#{storage_location.name}\t#{below_minimum_item.name}\t100\t150\t200"
+          recommended_item = "#{storage_location.name}\t#{below_recommended_item.name}\t100\t0\t200"
           expect(inventories.count).to eq 2
           expect(inventories).to include minimum_item
           expect(inventories).to include recommended_item
