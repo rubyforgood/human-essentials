@@ -32,7 +32,8 @@
             content_tag :h3, title, class: "card-title"
           end
 
-        content_tag(:div, **header_options) do %>
+        content_tag(:div, **header_options) do
+  %>
           <%= header %>
           <div class="card-tools">
             <% if type == :table %>
@@ -46,8 +47,7 @@
             <% end %>
           </div>
         <% end
-      end
-  %>
+      end %>
   <% case type.to_sym
     when :box %>
       <div class="card-body">
