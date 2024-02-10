@@ -92,10 +92,10 @@
                                 else
                                   announcement.created_at.strftime("%B %d %Y")
                                 end %></strong>
-                    <br />
+                    <br>
                     <%= announcement.message %>
                     <% unless announcement.link == '' %>
-                      <br />
+                      <br>
                       <a href="<%= announcement.link %>" class="btn btn-primary">more info</a>
                     <% end %>
                   </li>
