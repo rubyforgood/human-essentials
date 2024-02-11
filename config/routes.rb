@@ -106,8 +106,8 @@ Rails.application.routes.draw do
       end
       get :donations_summary
       get :manufacturer_donations_summary
-      get :product_drives_summary, only: [:index]
-      resources :itemized_donations, only: [:index]
+      get :product_drives_summary
+      get :itemized_donations
       resources :itemized_distributions, only: [:index]
       resources :activity_graph, only: [:index]
     end

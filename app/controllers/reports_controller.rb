@@ -20,4 +20,10 @@ class ReportsController < ApplicationController
     @donations = current_organization.donations.during(helpers.selected_range)
     @recent_donations = @donations.recent
   end
+
+  def itemized_donations
+    setup_date_range_picker
+    @donations = current_organization.donations.during(helpers.selected_range)
+    @itemized_donation_data = DonationItemizedBreakdownService.new(organization: current_organization, donation_ids: @donations.pluck(:id)).fetch
+  end
 end
