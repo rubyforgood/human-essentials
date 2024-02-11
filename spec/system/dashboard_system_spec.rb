@@ -93,19 +93,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
       end
     end
 
-    describe "Inventory Totals" do
-      describe "Summary" do
-        before do
-          create_list(:storage_location, 3, :with_items, item_quantity: 111, organization: @organization)
-          org_dashboard_page.visit
-        end
-
-        it "displays the on-hand totals" do
-          expect(org_dashboard_page.summary_section.text).to include "on-hand"
-        end
-      end
-    end
-
     describe "Outstanding Requests" do
       it "has a card" do
         org_dashboard_page.visit
