@@ -12,7 +12,7 @@
     <td>
       <% loc.items.values.each do |entry| %>
         <%= link_to items.find { |i| i.id == entry.item_id}.name, item_path(entry.item_id) %>:
-        <%= entry.quantity %><br/>
+        <%= entry.quantity %><br>
       <% end %>
     </td>
   </tr>
