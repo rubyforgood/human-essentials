@@ -77,27 +77,27 @@ class ProductDrive < ApplicationRecord
     end
   end
 
-  def donation_quantity_by_date(date_range, item_category_id=nil)
-    if (item_category_id == nil || item_category_id == '')
+  def donation_quantity_by_date(date_range, item_category_id = nil)
+    if [nil, ''].include? item_category_id
       donations.joins(:line_items)
         .during(date_range)
         .sum('line_items.quantity')
     else
       donations.joins(line_items: [:item])
-      .where(item: {item_category_id: item_category_id} )
+        .where(item: {item_category_id: item_category_id})
         .during(date_range)
         .sum('line_items.quantity')
     end
   end
 
-  def distinct_items_count_by_date(date_range, item_category_id=nil)
-    if (item_category_id == nil || item_category_id == '')
+  def distinct_items_count_by_date(date_range, item_category_id = nil)
+    if [nil, ''].include? item_category_id
       donations.joins(:line_items)
         .during(date_range)
         .select('line_items.item_id').distinct.count
     else
       donations.joins(line_items: [:item])
-      .where(item: {item_category_id: item_category_id} )
+        .where(item: {item_category_id: item_category_id})
         .during(date_range)
         .select('line_items.item_id').distinct.count
     end
