@@ -150,7 +150,7 @@ RSpec.describe ProductDrive, type: :model do
       line_item_1 = create(:line_item, itemizable: donation_within_date, item: item_1, quantity: 4)
       line_item_2 = create(:line_item, itemizable: donation_within_date, item: item_2, quantity: 5)
       line_item_3 = create(:line_item, itemizable: donation_within_date, item: item_3, quantity: 6)
-      line_item_1 = create(:line_item, itemizable: donation_out_of_date, item: item_1, quantity: 7)
+      line_item_4 = create(:line_item, itemizable: donation_out_of_date, item: item_1, quantity: 7)
 
       donation_within_date.line_items << line_item_1
       donation_within_date.line_items << line_item_2
