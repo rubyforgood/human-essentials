@@ -15,7 +15,7 @@
 #  user_id         :bigint
 #
 class Event < ApplicationRecord
-  scope :for_organization, ->(organization_id) { where(organization_id: organization_id).order(:event_time) }
+  scope :for_organization, ->(organization_id) { where(organization_id: organization_id).order(:event_time, :updated_at) }
   scope :without_snapshots, -> { where("type != 'SnapshotEvent'") }
 
   serialize :data, EventTypes::StructCoder.new(EventTypes::InventoryPayload)
