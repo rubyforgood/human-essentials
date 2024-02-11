@@ -9,15 +9,15 @@
           <div class="card-body" data-controller="area-served">
             <fieldset style="margin-bottom: 2rem">
               <legend></legend>
-              <div id="served_areas"  class="partner-served-area-fields partner-served-areas">
+              <div id="served_areas" class="partner-served-area-fields partner-served-areas">
                 <%= f.simple_fields_for :served_areas do |served_area| %>
                   <%= render 'served_areas/served_area_fields', f: served_area %>
                 <% end %>
               </div>
               <div class="partner-served_areas-total-row row">
-                <div class = "partners-served-areas-total-prompt col-w">Total is:</div>
+                <div class="partners-served-areas-total-prompt col-w">Total is:</div>
                 <span id="partners-served-areas-client-share-total" class="partners-served-areas-total-value col-2 numeric" data-area-served-target="total">
-                  <%= @client_share_total  %> %</span>
+                  <%= @client_share_total %> %</span>
                 <div id="partners-served-areas-client-share-total-warning" class="partners-served-areas-total-warning col-8" data-area-served-target="warning">
                   The total client share must be either 0 or 100 %.
                 </div>

@@ -111,5 +111,17 @@ RSpec.describe TransferDestroyService, type: :service do
         end
       end
     end
+
+    context 'because transfer should not be deleted' do
+      before do
+        allow(Audit).to receive(:since?).and_return(true)
+      end
+
+      it 'should return an OpenStruct with the raised error' do
+        expect(subject).to be_a_kind_of(OpenStruct)
+        expect(subject.success?).to eq(false)
+        expect(subject.error).to be_a_kind_of(StandardError)
+      end
+    end
   end
 end

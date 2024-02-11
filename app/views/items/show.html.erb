@@ -81,8 +81,7 @@
                   else
                     storage.item_total(@item)
                   end
-                  total += location_quantity
-                %>
+                  total += location_quantity %>
                   <tr>
                     <td><%= link_to storage.name, storage_location_path(storage) %></td>
                     <td class="text-left"><%= location_quantity %></td>
