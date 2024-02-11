@@ -155,7 +155,7 @@ RSpec.describe ProductDrive, type: :model do
       donation_within_date.line_items << line_item_1
       donation_within_date.line_items << line_item_2
       donation_within_date.line_items << line_item_3
-      donation_out_of_date.line_items << line_item_1
+      donation_out_of_date.line_items << line_item_4
 
       expect(product_drive.distinct_items_count_by_date(Time.zone.parse('23/01/2023')..Time.zone.parse('26/01/2023'), 1))
         .to eq(2)
