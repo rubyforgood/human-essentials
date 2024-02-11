@@ -1,23 +1,28 @@
-<% from_loc = event_row.data.items.first&.from_storage_location %>
-<% to_loc = event_row.data.items.first&.to_storage_location %>
-<tr>
-  <td><%= event_row.id %></td>
-  <td><%= event_row.type.sub(/Event/, '') %></td>
-  <td><%= link_to event_row.eventable_id, event_row.eventable %></td>
-  <td>
-    <% if from_loc %>
-      <%= link_to storage_locs.find { |i| i.id == from_loc}.name, storage_location_path(from_loc) %>
-    <% end %>
-  </td>
-  <td>
-    <% if to_loc %>
-      <%= link_to storage_locs.find { |i| i.id == to_loc}.name, storage_location_path(to_loc) %>
-    <% end %>
-  </td>
-  <td>
-    <% event_row.data.items.each do |entry| %>
-      <%= link_to items.find { |i| i.id == entry.item_id}.name, item_path(entry.item_id) %>:
-      <%= entry.from_storage_location == from_loc ? entry.quantity : -entry.quantity %><br/>
-    <% end %>
-  </td>
-</tr>
+<% if event.is_a?(SnapshotEvent) %>
+  <%= render partial: "snapshot_event_row", object: event, as: :event, locals: { items: items, storage_locs: storage_locs } %>
+<% else %>
+  <% from_loc = event.data.items.first&.from_storage_location %>
+  <% to_loc = event.data.items.first&.to_storage_location %>
+  <tr>
+    <td><%= event.id %></td>
+    <td><%= event.type.sub(/Event/, '') %></td>
+    <td><%= link_to event.eventable_id, event.eventable %></td>
+    <td><%= event.event_time.to_s %></td>
+    <td>
+      <% if from_loc %>
+        <%= link_to storage_locs.find { |i| i.id == from_loc}.name, storage_location_path(from_loc) %>
+      <% end %>
+    </td>
+    <td>
+      <% if to_loc %>
+        <%= link_to storage_locs.find { |i| i.id == to_loc}.name, storage_location_path(to_loc) %>
+      <% end %>
+    </td>
+    <td>
+      <% event.data.items.each do |entry| %>
+        <%= link_to items.find { |i| i.id == entry.item_id}.name, item_path(entry.item_id) %>:
+        <%= entry.from_storage_location == from_loc ? entry.quantity : -entry.quantity %><br/>
+      <% end %>
+    </td>
+  </tr>
+<% end %>
