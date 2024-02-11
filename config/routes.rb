@@ -105,7 +105,7 @@ Rails.application.routes.draw do
         post :recalculate, on: :member
       end
       get :donations_summary
-      resources :manufacturer_donations_summary, only: [:index]
+      get :manufacturer_donations_summary
       resources :product_drives_summary, only: [:index]
       resources :itemized_donations, only: [:index]
       resources :itemized_distributions, only: [:index]
