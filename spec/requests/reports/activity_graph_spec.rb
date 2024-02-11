@@ -12,7 +12,7 @@ RSpec.describe "Reports::ActivityGraph", type: :request do
 
     describe "GET #index" do
       subject do
-        get reports_activity_graph_index_path(default_params.merge(format: response_format))
+        get reports_activity_graph_path(default_params.merge(format: response_format))
         response
       end
       let(:response_format) { "html" }
@@ -24,7 +24,7 @@ RSpec.describe "Reports::ActivityGraph", type: :request do
   describe "while not signed in" do
     describe "GET /index" do
       subject do
-        get reports_activity_graph_index_path(default_params)
+        get reports_activity_graph_path(default_params)
         response
       end
 

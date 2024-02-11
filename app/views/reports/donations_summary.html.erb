@@ -5,7 +5,7 @@
   subtitle: @selected_date_range,
   footer_options: { class: "text-center" },
   footer: link_to("See more...", donations_path),
-  filter_url: reports_donations_summary_index_path
+  filter_url: reports_donations_summary_path
 ) do %>
   <%= new_button_to new_donation_path, {text: "New Donation"} %>
   <h3 class="text-center">
@@ -21,7 +21,7 @@
   </h4>
   <div class="box-body">
     <h4>Recent Donations</h4>
-    <%= render partial: "reports/donations_summary/donation", collection: @recent_donations, as: :donation %>
+    <%= render partial: "donation", collection: @recent_donations, as: :donation %>
   </div>
 <% end %>
 </section>
