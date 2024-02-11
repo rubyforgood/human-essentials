@@ -51,7 +51,7 @@
               </thead>
               <tbody>
               <% if @items %>
-                <% @items.each do |inventory_item|  %>
+                <% @items.each do |inventory_item| %>
                   <% line_item = @audit.line_items.find { |i| i.item_id == inventory_item.item_id } %>
                   <tr class="<%= line_item.nil? ? "negative" : (line_item.quantity.equal?(inventory_item.quantity) ? "positive" : "highlight") %>">
                     <td><%= inventory_item.name %></td>
@@ -60,7 +60,7 @@
                   </tr>
                 <% end %>
               <% else %>
-                <% @inventory_items.each do |inventory_item|  %>
+                <% @inventory_items.each do |inventory_item| %>
                   <% line_item = @audit.line_items.find_by(item: inventory_item.item) %>
                   <tr class="<%= line_item.nil? ? "negative" : (line_item.quantity.equal?(inventory_item.quantity) ? "positive" : "highlight") %>">
                     <td><%= inventory_item.item.name %></td>
