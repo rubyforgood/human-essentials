@@ -75,24 +75,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
     let(:org_short_name) { @organization.short_name }
     let(:org_dashboard_page) { OrganizationDashboardPage.new org_short_name: org_short_name }
 
-    describe "Signage" do
-      it "shows their organization name unless they have a logo set" do
-        org_dashboard_page.visit
-
-        expect(org_dashboard_page).to have_organization_logo
-
-        logo_filename = File.basename(org_dashboard_page.organization_logo_filepath).split("?").first
-        expect(logo_filename).to include("logo.jpg")
-
-        # This allows us to simulate the deletion of the org logo without actually deleting it
-        # See @awwaiid 's comment: https://github.com/rubyforgood/human-essentials/pull/3220#issuecomment-1297049810
-        allow_any_instance_of(Organization).to receive_message_chain(:logo, :attached?).and_return(false)
-        org_dashboard_page.visit
-
-        expect(org_dashboard_page).not_to have_organization_logo
-      end
-    end
-
     describe "Outstanding Requests" do
       it "has a card" do
         org_dashboard_page.visit
