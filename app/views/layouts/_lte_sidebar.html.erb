@@ -178,11 +178,6 @@
       </p>
     </a>
     <ul class="nav nav-treeview">
-      <li class="nav-item <%= active_class(['reports/activity_graph']) %>">
-        <%= link_to(reports_activity_graph_path(organization_id: current_user.organization), class: "nav-link #{active_class(['reports/activity_graph'])}") do %>
-          <i class="nav-icon fa fa-circle-o"></i> Activity Graph
-        <% end %>
-      </li>
       <% if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
         <li class="nav-item <%= active_class(['audits']) %>">
           <%= link_to(audits_path(organization_id: current_user.organization), class: "nav-link #{active_class(['audits'])}") do %>
@@ -190,49 +185,54 @@
           <% end %>
         </li>
       <% end %>
+      <li class="nav-item <%= active_class(['reports/activity_graph']) %>">
+        <%= link_to(reports_activity_graph_path(organization_id: current_user.organization), class: "nav-link #{active_class(['reports/activity_graph'])}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Activity Graph
+        <% end %>
+      </li>
       <li class="nav-item <%= active_class(['reports/annual_reports']) %>">
         <%= link_to(reports_annual_reports_path(organization_id: current_user.organization), class: "nav-link #{active_class(['reports/annual_reports'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Annual Survey
         <% end %>
       </li>
-      <li class="nav-item <%= active_class(['reports/donations_summary']) %>">
-        <%= link_to(reports_donations_summary_path(organization_id: current_user.organization), class: "nav-link #{active_class(['reports/donations_summary'])}") do %>
-          <i class="nav-icon fa fa-circle-o"></i> Donations Summary
-        <% end %>
-      </li>
-       <li class="nav-item <%= active_class(['reports/manufacturer_donations_summary']) %>">
-        <%= link_to(reports_manufacturer_donations_summary_path(organization_id: current_user.organization), class: "nav-link #{active_class(['reports/manufacturer_donations_summary'])}") do %>
-          <i class="nav-icon fa fa-circle-o"></i> Manufacturer Donations
-        <% end %>
-      </li>
-      <li class="nav-item <%= active_class(['reports/product_drives_summary']) %>">
-        <%= link_to(reports_product_drives_summary_path(organization_id: current_user.organization), class: "nav-link #{active_class(['reports/product_drives_summary'])}") do %>
-          <i class="nav-icon fa fa-circle-o"></i> Product Drives Summary
-        <% end %>
-      </li>
-      <li class="nav-item <%= active_class(['reports/itemized_donations']) %>">
-        <%= link_to(reports_itemized_donations_path(organization_id: current_user.organization), class: "nav-link #{active_class(['reports/itemized_donations'])}") do %>
-          <i class="nav-icon fa fa-circle-o"></i> Itemized Donations
-        <% end %>
-      </li>
-      <li class="nav-item <%= active_class(['purchases_summary']) %>">
-        <%= link_to(purchases_summary_path(organization_id: current_user.organization), class: "nav-link #{active_class(['purchases_summary'])}") do %>
-          <i class="nav-icon fa fa-circle-o"></i> Purchases Summary
-        <% end %>
-      </li>
       <li class="nav-item <%= active_class(['distributions_summary']) %>">
         <%= link_to(distributions_summary_path(organization_id: current_user.organization), class: "nav-link #{active_class(['distributions_summary'])}") do %>
-          <i class="nav-icon fa fa-circle-o"></i> Distributions Summary
+          <i class="nav-icon fa fa-circle-o"></i> Distributions - Summary
         <% end %>
       </li>
       <li class="nav-item <%= active_class(['reports/itemized_distributions']) %>">
         <%= link_to(reports_itemized_distributions_path(organization_id: current_user.organization), class: "nav-link #{active_class(['reports/itemized_distributions'])}") do %>
-          <i class="nav-icon fa fa-circle-o"></i> Itemized Distributions
+          <i class="nav-icon fa fa-circle-o"></i> Distributions - Itemized
         <% end %>
       </li>
       <li class="nav-item <%= active_class(['distributions_by_county']) %>">
         <%= link_to(distributions_by_county_report_path(filters: { date_range: date_range_params }), class: "nav-link #{active_class(['distributions_by_county'])}") do %>
-          <i class="nav-icon fa fa-circle-o"></i> Distributions by County
+          <i class="nav-icon fa fa-circle-o"></i> Distributions - By County
+        <% end %>
+      </li>
+      <li class="nav-item <%= active_class(['reports/donations_summary']) %>">
+        <%= link_to(reports_donations_summary_path(organization_id: current_user.organization), class: "nav-link #{active_class(['reports/donations_summary'])}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Donations - Summary
+        <% end %>
+      </li>
+      <li class="nav-item <%= active_class(['reports/itemized_donations']) %>">
+        <%= link_to(reports_itemized_donations_path(organization_id: current_user.organization), class: "nav-link #{active_class(['reports/itemized_donations'])}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Donations - Itemized
+        <% end %>
+      </li>
+       <li class="nav-item <%= active_class(['reports/manufacturer_donations_summary']) %>">
+        <%= link_to(reports_manufacturer_donations_summary_path(organization_id: current_user.organization), class: "nav-link #{active_class(['reports/manufacturer_donations_summary'])}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Donations - Manufacturer
+        <% end %>
+      </li>
+      <li class="nav-item <%= active_class(['reports/product_drives_summary']) %>">
+        <%= link_to(reports_product_drives_summary_path(organization_id: current_user.organization), class: "nav-link #{active_class(['reports/product_drives_summary'])}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Product Drives - Summary
+        <% end %>
+      </li>
+      <li class="nav-item <%= active_class(['purchases_summary']) %>">
+        <%= link_to(purchases_summary_path(organization_id: current_user.organization), class: "nav-link #{active_class(['purchases_summary'])}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Purchases - Summary
         <% end %>
       </li>
     </ul>
