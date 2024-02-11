@@ -104,12 +104,12 @@ Rails.application.routes.draw do
       resources :annual_reports, only: [:index, :show], param: :year do
         post :recalculate, on: :member
       end
-      resources :donations_summary, only: [:index]
-      resources :manufacturer_donations_summary, only: [:index]
-      resources :product_drives_summary, only: [:index]
-      resources :itemized_donations, only: [:index]
-      resources :itemized_distributions, only: [:index]
-      resources :activity_graph, only: [:index]
+      get :donations_summary
+      get :manufacturer_donations_summary
+      get :product_drives_summary
+      get :itemized_donations
+      get :itemized_distributions
+      get :activity_graph
     end
 
     resources :transfers, only: %i(index create new show destroy)
