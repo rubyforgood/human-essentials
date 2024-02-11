@@ -19,55 +19,12 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-md-12">
-        <%= render(
-          "shared/card",
-          id: "summary",
-          header: content_tag(:h5, current_organization.name, class: "card-title"),
-          footer: capture { %>
-            <div class="row">
-              <div class="col-sm-3 col-6">
-                <div class="description-block border-right">
-                  <h3>Items on-hand:</h3>
-                  <h5 style="color:purple" class="total_inventory"><%= total_on_hand(@total_inventory) %> </h5>
-                </div>
-                <!-- /.description-block -->
-              </div>
-              <!-- /.col -->
-              <div class="col-sm-3 col-6">
-                <div class="description-block border-right">
-                  <%= new_button_to new_transfer_path, {text: "Make a transfer", size: "md"} %>
-                </div>
-                <!-- /.description-block -->
-              </div>
-              <!-- /.col -->
-              <div class="col-sm-3 col-6">
-                <div class="description-block">
-                  <%= new_button_to new_adjustment_path, {text: "Make an adjustment", size: "md"} %>
-
-                </div>
-              </div>
-            </div>
-          <% },
-          type: :plain,
-        ) do %>
-          <div class="row">
-            <%= render partial: "getting_started_prompt", locals: {org_stats: @org_stats} %>
-
-            <div class="col-md-8">
-              <%== display_logo_or_name %>
-            </div>
-            <!-- /.col -->
-            <div class="col-md-4">
-
-            </div>
-            <!-- /.col -->
-          </div>
-          <!-- /.row -->
-        <% end %>
+        <%= render partial: "getting_started_prompt", locals: {org_stats: @org_stats} %>
       </div>
     </div>
   </div>
 </div>
+
 <div class="content">
   <div class="container-fluid">
     <div class="row">
