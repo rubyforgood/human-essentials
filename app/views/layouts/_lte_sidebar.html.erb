@@ -206,7 +206,7 @@
         <% end %>
       </li>
       <li class="nav-item <%= active_class(['reports/product_drives_summary']) %>">
-        <%= link_to(reports_product_drives_summary_index_path(organization_id: current_user.organization), class: "nav-link #{active_class(['reports/product_drives_summary'])}") do %>
+        <%= link_to(reports_product_drives_summary_path(organization_id: current_user.organization), class: "nav-link #{active_class(['reports/product_drives_summary'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Product Drives Summary
         <% end %>
       </li>
