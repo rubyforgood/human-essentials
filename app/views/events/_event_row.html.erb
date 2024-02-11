@@ -21,7 +21,7 @@
     <td>
       <% event.data.items.each do |entry| %>
         <%= link_to items.find { |i| i.id == entry.item_id}.name, item_path(entry.item_id) %>:
-        <%= entry.from_storage_location == from_loc ? entry.quantity : -entry.quantity %><br/>
+        <%= entry.from_storage_location == from_loc ? entry.quantity : -entry.quantity %><br>
       <% end %>
     </td>
   </tr>
