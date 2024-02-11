@@ -3,9 +3,9 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <% content_for :title, "Events - #{current_organization.name}" %>
+        <% content_for :title, "History - #{current_organization.name}" %>
         <h1>
-          Events
+          History
           <small>for <%= current_organization.name %></small>
         </h1>
       </div>
@@ -15,7 +15,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><a href="#">Events</a></li>
+          <li class="breadcrumb-item"><a href="#">History</a></li>
         </ol>
       </div>
     </div>
@@ -30,7 +30,7 @@
         <!-- jquery validation -->
         <div class="card card-primary">
           <div class="card-header">
-            <h3 class="card-title">Event Filter</h3>
+            <h3 class="card-title">History Filter</h3>
           </div>
           <!-- /.card-header -->
           <!-- form start -->
@@ -70,16 +70,17 @@
             <table class="table">
               <thead>
               <tr>
-                <th>Event ID</th>
+                <th>Internal ID</th>
                 <th>Type</th>
-                <th>Resource</th>
+                <th>Refers To</th>
+                <th>Date/Time</th>
                 <th>From Location</th>
                 <th>To Location</th>
                 <th>Items</th>
               </tr>
               </thead>
               <tbody>
-                <%= render partial: "event_row", collection: @events, locals: { items: @items, storage_locs: @locations} %>
+                <%= render partial: "event_row", collection: @events, as: :event, locals: { items: @items, storage_locs: @locations} %>
               </tbody>
             </table>
           </div>
