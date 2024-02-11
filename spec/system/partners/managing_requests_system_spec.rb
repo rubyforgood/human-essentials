@@ -1,9 +1,32 @@
 RSpec.describe "Managing requests", type: :system, js: true do
-  describe 'creating a individuals/family request' do
+  describe 'creating a # individuals request' do
     let(:partner_user) { partner.primary_user }
     let!(:partner) { FactoryBot.create(:partner) }
 
     context 'GIVEN a partner user is permitted to make a request' do
+      describe 'Select Input Tests' do
+        let(:requestable_items) { build_stubbed_list(:item, 3) }
+        context 'WHEN they reach the page' do
+          before do
+            allow_any_instance_of(PartnerFetchRequestableItemsService).to receive(:call).and_return(requestable_items)
+            login_as(partner_user)
+            visit new_partners_individuals_request_path
+          end
+          it 'should show the proper items in the select box' do
+            expected_items = requestable_items.map(&:name).unshift('Select an item')
+            expect(page.all('select[name="partners_family_request[items_attributes][0][item_id]"] option').map(&:text)).to eq(expected_items)
+          end
+
+          context 'WHEN they create a request inproperly' do
+            before { click_button 'Submit Essentials Request' }
+            it 'should show the proper items in the select box' do
+              expected_items = requestable_items.map(&:name).unshift('Select an item')
+              expect(page.all('select[name="partners_family_request[items_attributes][0][item_id]"] option').map(&:text)).to eq(expected_items)
+            end
+          end
+        end
+      end
+
       before do
         login_as(partner_user)
         visit new_partners_individuals_request_path
@@ -71,11 +94,36 @@ RSpec.describe "Managing requests", type: :system, js: true do
     end
   end
 
-  describe 'creating a request' do
+  describe 'creating a new quantity request' do
     let(:partner_user) { partner.primary_user }
     let!(:partner) { FactoryBot.create(:partner) }
 
     context 'GIVEN a partner user is permitted to make a request' do
+      describe 'Select Input Tests' do
+        let(:requestable_items) { build_stubbed_list(:item, 3) }
+        context 'WHEN they reach the page' do
+          before do
+            allow_any_instance_of(PartnerFetchRequestableItemsService).to receive(:call).and_return(requestable_items)
+            login_as(partner_user)
+            visit new_partners_request_path
+          end
+
+          it 'should show the proper items in the select box' do
+            expected_items = requestable_items.map(&:name).unshift('Select an item')
+            expect(page.all('select[name="request[item_requests_attributes][0][item_id]"] option').map(&:text)).to eq(expected_items)
+          end
+
+          context 'WHEN they create a request inproperly' do
+            before { click_button 'Submit Essentials Request' }
+
+            it 'should show the proper items in the select box' do
+              expected_items = requestable_items.map(&:name).unshift('Select an item')
+              expect(page.all('select[name="request[item_requests_attributes][0][item_id]"] option').map(&:text)).to eq(expected_items)
+            end
+          end
+        end
+      end
+
       before do
         login_as(partner_user)
         visit new_partners_request_path
