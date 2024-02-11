@@ -11,10 +11,7 @@ module Partners
       @partner_request = ::Request.new
       @partner_request.item_requests.build
 
-      requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
-      @formatted_requestable_items = requestable_items.map do |rt|
-        [rt.name, rt.id]
-      end.sort
+      set_formated_requestable_items
     end
 
     def show
@@ -36,9 +33,8 @@ module Partners
 
         @partner_request = create_service.partner_request
         @errors = create_service.errors
-        @formatted_requestable_items = Organization.find(current_partner.organization_id).valid_items.map do |item|
-          [item[:name], item[:id]]
-        end.sort
+
+        set_formated_requestable_items
 
         Rails.logger.info("[Request Creation Failure] partner_user_id=#{current_user.id} reason=#{@errors.full_messages}")
 
@@ -47,6 +43,13 @@ module Partners
     end
 
     private
+
+    def set_formated_requestable_items
+      requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
+      @formatted_requestable_items = requestable_items.map do |rt|
+        [rt.name, rt.id]
+      end.sort
+    end
 
     def partner_request_params
       params.require(:request).permit(:comments, item_requests_attributes: [
