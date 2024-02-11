@@ -179,7 +179,7 @@
     </a>
     <ul class="nav nav-treeview">
       <li class="nav-item <%= active_class(['reports/activity_graph']) %>">
-        <%= link_to(reports_activity_graph_index_path(organization_id: current_user.organization), class: "nav-link #{active_class(['reports/activity_graph'])}") do %>
+        <%= link_to(reports_activity_graph_path(organization_id: current_user.organization), class: "nav-link #{active_class(['reports/activity_graph'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Activity Graph
         <% end %>
       </li>

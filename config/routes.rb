@@ -109,7 +109,7 @@ Rails.application.routes.draw do
       get :product_drives_summary
       get :itemized_donations
       get :itemized_distributions
-      resources :activity_graph, only: [:index]
+      get :activity_graph
     end
 
     resources :transfers, only: %i(index create new show destroy)
