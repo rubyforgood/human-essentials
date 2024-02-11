@@ -88,6 +88,14 @@ GEM
       erubi (>= 1.0.0)
       rack (>= 0.9.0)
       rouge (>= 1.0.0)
+    better_html (2.0.2)
+      actionview (>= 6.0)
+      activesupport (>= 6.0)
+      ast (~> 2.0)
+      erubi (~> 1.4)
+      parser (>= 2.4)
+      smart_properties
+    bigdecimal (3.1.6)
     bindex (0.8.1)
     binding_of_caller (1.0.0)
       debug_inspector (>= 0.0.1)
@@ -95,7 +103,7 @@ GEM
       autoprefixer-rails (>= 9.1.0)
       popper_js (>= 2.11.6, < 3)
       sassc-rails (>= 2.0.0)
-    brakeman (6.1.1)
+    brakeman (6.1.2)
       racc
     bugsnag (6.26.3)
       concurrent-ruby (~> 1.0)
@@ -125,7 +133,8 @@ GEM
     connection_pool (2.4.1)
     coverband (6.0.1)
       redis (>= 3.0)
-    crack (0.4.5)
+    crack (0.4.6)
+      bigdecimal
       rexml
     crass (1.0.6)
     cuprite (0.15)
@@ -183,9 +192,14 @@ GEM
       dry-inflector (~> 1.0)
       dry-logic (~> 1.4)
       zeitwerk (~> 2.6)
+    erb_lint (0.5.0)
+      activesupport
+      better_html (>= 2.0.1)
+      parser (>= 2.7.1.4)
+      rainbow
+      rubocop
+      smart_properties
     erubi (1.12.0)
-    et-orbi (1.2.7)
-      tzinfo
     execjs (2.9.1)
     factory_bot (6.4.5)
       activesupport (>= 5.0.0)
@@ -239,9 +253,6 @@ GEM
       sanitize (< 7)
     foreman (0.87.2)
     formatador (1.1.0)
-    fugit (1.8.1)
-      et-orbi (~> 1, >= 1.2.7)
-      raabro (~> 1.4)
     geocoder (1.8.2)
     globalid (1.2.1)
       activesupport (>= 6.1)
@@ -261,7 +272,7 @@ GEM
       guard (~> 2.1)
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
-    hashdiff (1.0.1)
+    hashdiff (1.1.0)
     hashie (5.0.0)
     httparty (0.21.0)
       mini_mime (>= 1.0.0)
@@ -364,11 +375,11 @@ GEM
       net-protocol
     newrelic_rpm (9.7.1)
     nio4r (2.7.0)
-    nokogiri (1.16.0-arm64-darwin)
+    nokogiri (1.16.2-arm64-darwin)
       racc (~> 1.4)
-    nokogiri (1.16.0-x86_64-darwin)
+    nokogiri (1.16.2-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.16.0-x86_64-linux)
+    nokogiri (1.16.2-x86_64-linux)
       racc (~> 1.4)
     notiffany (0.1.3)
       nenv (~> 0.1)
@@ -403,7 +414,7 @@ GEM
       activerecord (>= 6.1)
       request_store (~> 1.4)
     parallel (1.24.0)
-    parser (3.3.0.2)
+    parser (3.3.0.5)
       ast (~> 2.4.1)
       racc
     pdf-core (0.9.0)
@@ -437,7 +448,6 @@ GEM
     public_suffix (5.0.4)
     puma (6.4.2)
       nio4r (~> 2.0)
-    raabro (1.4.0)
     racc (1.7.3)
     rack (2.2.8)
     rack-protection (3.1.0)
@@ -548,8 +558,6 @@ GEM
     ruby-vips (2.1.4)
       ffi (~> 1.12)
     ruby2_keywords (0.0.5)
-    rufus-scheduler (3.9.1)
-      fugit (~> 1.1, >= 1.1.6)
     sanitize (6.1.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -581,6 +589,7 @@ GEM
       rack-protection (= 3.1.0)
       tilt (~> 2.0)
     slop (3.6.0)
+    smart_properties (1.17.0)
     snaky_hash (2.0.1)
       hashie
       version_gem (~> 1.1, >= 1.1.1)
@@ -629,7 +638,7 @@ GEM
       activemodel (>= 6.0.0)
       bindex (>= 0.4.0)
       railties (>= 6.0.0)
-    webmock (3.19.1)
+    webmock (3.20.0)
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
@@ -676,6 +685,7 @@ DEPENDENCIES
   discard (~> 1.3)
   dotenv-rails
   dry-struct
+  erb_lint
   factory_bot_rails
   faker
   filterrific
@@ -725,7 +735,6 @@ DEPENDENCIES
   rubocop
   rubocop-performance
   rubocop-rails (~> 2.23.1)
-  rufus-scheduler
   sass-rails
   shoulda-matchers (~> 6.1)
   simple_form
@@ -737,7 +746,7 @@ DEPENDENCIES
   terser
   turbo-rails
   web-console
-  webmock (~> 3.19)
+  webmock (~> 3.20)
 
 BUNDLED WITH
    2.5.4
