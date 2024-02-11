@@ -42,7 +42,10 @@ RSpec.describe "Events", type: :request do
   end
 
   context "When not signed" do
-    let(:object) { create(:event) }
+    let(:object) do
+      donation = create(:donation)
+      DonationEvent.publish(donation)
+    end
 
     include_examples "requiring authorization"
   end
