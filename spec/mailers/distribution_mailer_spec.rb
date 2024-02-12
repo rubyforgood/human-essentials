@@ -52,7 +52,7 @@ RSpec.describe DistributionMailer, type: :mailer do
         context 'when pickup person happens to be the same as the primary contact' do
           let(:pick_up_email) { @partner.email }
 
-          it 'dones not send email twice' do
+          it 'does not send email twice' do
             expect(mail.cc.count).to eq(1)
             expect(mail.cc.first).to match(@partner.email)
           end
