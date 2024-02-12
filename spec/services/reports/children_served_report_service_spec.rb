@@ -73,7 +73,13 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       end
 
       # Kits
-      create_list(:kit, 2, organization: organization)
+      # disposable_kit = Kit.create!(name: "Test Disposable Kit 1", organization: organization)
+      # non_disposable_kit = Kit.create!(name: "Test Cloth Kit 2", organization: organization)
+
+      # disposable_item.kit_id = disposable_kit.id
+      # non_disposable_item.kit_id = non_disposable_kit.id
+      # require 'pry'; binding.pry
+      # organization.reload!
 
       expect(report.report).to eq({
                                     name: 'Children Served',
