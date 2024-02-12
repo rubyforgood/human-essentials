@@ -26,7 +26,13 @@ class DistributionMailer < ApplicationMailer
     @distribution_changes = distribution_changes
     pdf = DistributionPdf.new(current_organization, @distribution).compute_and_render
     attachments[format("%s %s.pdf", @partner.name, @distribution.created_at.strftime("%Y-%m-%d"))] = pdf
-    mail(to: requestee_email, cc: @partner.email, subject: "#{subject} from #{current_organization.name}")
+    cc = [@partner.email]
+    if distribution.pick_up?
+      pickup_person_email = @partner.profile&.pick_up_email
+      cc.push(pickup_person_email) if pickup_person_email.present? && pickup_person_email != @partner.email
+    end
+
+    mail(to: requestee_email, cc: cc, subject: "#{subject} from #{current_organization.name}")
   end
 
   def reminder_email(distribution_id)

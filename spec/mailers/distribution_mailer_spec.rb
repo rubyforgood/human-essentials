@@ -27,10 +27,36 @@ RSpec.describe DistributionMailer, type: :mailer do
     end
 
     context "with deliver_method: :pick_up" do
-      it "renders the body with 'picked up' specified" do
+      let(:mail) do
         distribution = create(:distribution, organization: @user.organization, comment: "Distribution comment", partner: @partner, delivery_method: :pick_up)
-        mail = DistributionMailer.partner_mailer(@organization, distribution, 'test subject', distribution_changes)
+        DistributionMailer.partner_mailer(@organization, distribution, 'test subject', distribution_changes)
+      end
+
+      it "renders the body with 'picked up' specified" do
         expect(mail.body.encoded).to match("picked up")
+        expect(mail.cc.first).to match(@partner.email)
+      end
+
+      context 'when parners profile pick_up_email is present' do
+        let(:pick_up_email) { 'pick_up@org.com' }
+        
+        before do
+          allow(@partner.profile).to receive(:pick_up_email).and_return(pick_up_email)
+        end
+
+        it 'sends email to the primary contact and partner`s pickup person' do
+          expect(mail.cc.first).to match(@partner.email)
+          expect(mail.cc.second).to match(pick_up_email)
+        end
+
+        context 'when pickup person happens to be the same as the primary contact' do
+          let(:pick_up_email) { @partner.email }
+
+          it 'dones not send email twice' do
+            expect(mail.cc.count).to eq(1)
+            expect(mail.cc.first).to match(@partner.email)
+          end
+        end
       end
     end
 
