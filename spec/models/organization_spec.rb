@@ -135,7 +135,6 @@ RSpec.describe Organization, type: :model do
           create(:distribution, organization: @organization, state: :complete, issued_at: Time.zone.local(2019, 7, 3))
           sunday_distribution = create(:distribution, organization: @organization, state: :scheduled, issued_at: Time.zone.local(2019, 7, 7))
           upcoming_distributions = @organization.distributions.upcoming
-          require 'pry'; binding.pry
           expect(upcoming_distributions).to match_array([wednesday_distribution_scheduled, sunday_distribution])
         end
       end
