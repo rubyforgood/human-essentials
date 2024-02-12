@@ -3,10 +3,18 @@ RSpec.describe ItemizableUpdateService do
   let(:new_storage_location) { create(:storage_location, organization: @organization, item_count: 0) }
   let(:item1) { create(:item, organization: @organization) }
   let(:item2) { create(:item, organization: @organization) }
-  let!(:ii1) { create(:inventory_item, storage_location: storage_location, item: item1, quantity: 10) }
-  let!(:ii2) { create(:inventory_item, storage_location: new_storage_location, item: item2, quantity: 10) }
-  let!(:ii3) { create(:inventory_item, storage_location: storage_location, item: item2, quantity: 10) }
-  let!(:ii4) { create(:inventory_item, storage_location: new_storage_location, item: item1, quantity: 10) }
+  before(:each) do
+    TestInventory.create_inventory(storage_location.organization, {
+      storage_location.id => {
+        item1.id => 10,
+        item2.id => 10
+      },
+      new_storage_location.id => {
+        item1.id => 10,
+        item2.id => 10
+      }
+    })
+  end
 
   around(:each) do |ex|
     freeze_time do

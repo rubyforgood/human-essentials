@@ -22,6 +22,7 @@ class KitAllocateEvent < Event
   def self.publish(kit, storage_location, quantity)
     create(
       eventable: kit,
+      group_id: "kit-allocate-#{kit.id}-#{SecureRandom.hex}",
       organization_id: kit.organization_id,
       event_time: Time.zone.now,
       data: EventTypes::InventoryPayload.new(

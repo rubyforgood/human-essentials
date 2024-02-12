@@ -284,6 +284,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_07_202431) do
     t.datetime "updated_at", null: false
     t.bigint "organization_id"
     t.bigint "user_id"
+    t.string "group_id"
     t.index ["organization_id", "event_time"], name: "index_events_on_organization_id_and_event_time"
     t.index ["organization_id"], name: "index_events_on_organization_id"
     t.index ["user_id"], name: "index_events_on_user_id"
