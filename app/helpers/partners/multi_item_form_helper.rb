@@ -5,11 +5,20 @@ module Partners
     end
 
     def add_item_button(label, container: ".fields", &block)
-      link_to(
-        label, "javascript:void(0)",
-        class: "btn btn-outline-primary",
-        data: { add_target: container, add_template: capture(&block) }
-      )
+      content_tag :div do
+        concat(link_to(
+          label,
+          "javascript:void(0)",
+          class: "btn btn-outline-primary",
+          data: {
+            request_item_target: 'addButton', action: "click->request-item#addItem:prevent",
+            add_target: container
+          }
+        ))
+        concat(
+          content_tag(:template, capture(&block), data: { request_item_target: 'addTemplate' })
+        )
+      end
     end
   end
 end

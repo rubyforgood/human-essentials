@@ -30,7 +30,8 @@
               <%= render partial: 'partners/requests/error' %>
             <% end %>
 
-            <%= simple_form_for @request, url: partners_individuals_requests_path, html: {role: 'form', class: 'form-horizontal'} do |form| %>
+            <%= simple_form_for @request, url: partners_individuals_requests_path, html: {role: 'form', class: 'form-horizontal'},
+              data: {controller: 'request-item'} do |form| %>
 
               <%= form.input :comments, label: "Comments:", as: :text, class: "form-control", wrapper: :input_group %>
 
@@ -43,7 +44,7 @@
                   </tr>
                 </thead>
 
-                <tbody class='fields'>
+                <tbody class='fields' data-request-item-target="addDest">
                   <%= render 'partners/individuals_requests/item_request', form: form %>
                 </tbody>
               </table>
@@ -67,31 +68,3 @@
     </div>
   </div>
 </section>
-
-<script type="module">
-  $(document).ready(function() {
-    $(document).on('click', '[data-add-target][data-add-template]', (event) => {
-      var button = $(event.target)
-      var target = button.data('add-target');
-      var template = button.data("add-template");
-      var templateId = new Date().getTime();
-      var rendered = template.replace(/([\[_])([0-9]+)([\]_])/g, "$1" + templateId + '$3');
-
-      $(target).append(rendered);
-
-      event.preventDefault();
-    });
-
-    $(document).on('click', '[data-remove-item]', (event) => {
-      var button = $(event.target)
-      var wrapper = button.closest('tr')
-      if (button.data("remove-item") === "soft") {
-        wrapper.hide();
-        button.prev('input[type=hidden]').val('1');
-      } else {
-        wrapper.remove()
-      }
-      event.preventDefault();
-    });
-  })
-</script>
