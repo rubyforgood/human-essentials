@@ -14,21 +14,6 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
       # We will create data both within and outside our date range, and both disposable and non disposable.
       # Spec will ensure that only the required data is included.
 
-      # Create kits with disposable items
-    #  disposable_kits = create_list(:kit, 2, organization: organization)
-    #   disposable_kits.each do |kit|
-    #     disposable_kit_item = create(:item, name: "Disposables #{kit.id}", organization: organization, kit: kit)
-    #     storage_location = create(:storage_location, organization: organization)
-    #     create(:inventory_item, quantity: 10, item: disposable_kit_item, storage_location: storage_location)
-    #   end
-      # Create kits with non disposable items
-    #  non_disposable_kits = create_list(:kit, 2, organization: organization)
-    #   non_disposable_kits.each do |kit|
-    #     non_disposable_kit_item = create(:item, name: "Disposables #{kit.id}", organization: organization, kit: kit)
-    #     storage_location = create(:storage_location, organization: organization)
-    #     create(:inventory_item, quantity: 10, item: disposable_kit_item, storage_location: storage_location)
-    #   end
-
       # Distributions
       distributions = create_list(:distribution, 2, issued_at: within_time, organization: organization)
       outside_distributions = create_list(:distribution, 2, issued_at: outside_time, organization: organization)
