@@ -35,12 +35,12 @@ module Reports
     # @return [Float]
     def per_child_monthly
       total_distributions = organization.distributions.for_year(year).count
-      total_kits = organization.kits.count
+      total_distributed_kits = distributed_kits_with_disposable_items
 
       total_avg = if total_distributions.zero? && total_kits.zero?
         0.0
       else
-        (loose_disposable_distribution_average * total_distributions + kit_average * total_kits) / (total_distributions + total_kits)
+        (loose_disposable_distribution_average * total_distributions + kit_average * total_distributed_kits) / (total_distributions + total_distributed_kits)
       end
 
       total_avg.nan? ? 0.0 : total_avg
@@ -80,9 +80,9 @@ module Reports
       .for_year(year)
       .joins(line_items: :item)
       .merge(Item.disposable)
-      .where.not(kit_id: nil)
+      .where.not(items: {kit_id: nil})
       .distinct
-      .count("kit_id")
+      .count("items.kit_id")
     end
   end
 end
