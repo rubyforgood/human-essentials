@@ -33,7 +33,6 @@
 
 RSpec.describe Organization, type: :model do
   let(:organization) { create(:organization) }
-
   describe "validations" do
     it "validates that attachments are png or jpgs" do
       expect(build(:organization,
@@ -109,9 +108,11 @@ RSpec.describe Organization, type: :model do
         create(:barcode_item, organization: organization)
         create(:global_barcode_item) # global
       end
+
       it "returns only this organization's barcodes, no globals" do
         expect(organization.barcode_items.count).to eq(1)
       end
+
       describe ".all" do
         it "includes global barcode items also" do
           expect(organization.barcode_items.all.count).to eq(2)
@@ -134,6 +135,7 @@ RSpec.describe Organization, type: :model do
           create(:distribution, organization: @organization, state: :complete, issued_at: Time.zone.local(2019, 7, 3))
           sunday_distribution = create(:distribution, organization: @organization, state: :scheduled, issued_at: Time.zone.local(2019, 7, 7))
           upcoming_distributions = @organization.distributions.upcoming
+          require 'pry'; binding.pry
           expect(upcoming_distributions).to match_array([wednesday_distribution_scheduled, sunday_distribution])
         end
       end
