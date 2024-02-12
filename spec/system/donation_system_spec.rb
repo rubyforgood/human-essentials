@@ -617,8 +617,8 @@ RSpec.describe "Donations", type: :system, js: true do
 
           visit "#{@url_prefix}/donations/#{donation.id}/edit"
 
-          warning_message = "You’ve had an audit since this donation was started. In the case that you are correcting a typo, " +
-            "rather than recording that the physical amounts being donated have changed, " +
+          warning_message = "You’ve had an audit since this donation was started. In the case that you are correcting a typo, " \
+            "rather than recording that the physical amounts being donated have changed, " \
             "you’ll need to make an adjustment to the inventory as well."
 
           expect(page).to have_content(warning_message)
@@ -635,8 +635,8 @@ RSpec.describe "Donations", type: :system, js: true do
 
           visit "#{@url_prefix}/donations/#{donation.id}/edit"
 
-          warning_message = "You’ve had an audit since this donation was started. In the case that you are correcting a typo, " +
-            "rather than recording that the physical amounts being donated have changed, " +
+          warning_message = "You’ve had an audit since this donation was started. In the case that you are correcting a typo, " \
+            "rather than recording that the physical amounts being donated have changed, " \
             "you’ll need to make an adjustment to the inventory as well."
 
           expect(page).to_not have_content(warning_message)
@@ -651,8 +651,8 @@ RSpec.describe "Donations", type: :system, js: true do
 
           visit "#{@url_prefix}/donations/#{donation.id}/edit"
 
-          warning_message = "You’ve had an audit since this donation was started. In the case that you are correcting a typo, " +
-            "rather than recording that the physical amounts being donated have changed, " +
+          warning_message = "You’ve had an audit since this donation was started. In the case that you are correcting a typo, " \
+            "rather than recording that the physical amounts being donated have changed, " \
             "you’ll need to make an adjustment to the inventory as well."
 
           expect(page).to_not have_content(warning_message)

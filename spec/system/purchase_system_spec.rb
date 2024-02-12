@@ -309,8 +309,8 @@ RSpec.describe "Purchases", type: :system, js: true do
 
           visit "#{subject}/#{purchase.id}/edit"
 
-          warning_message = "You’ve had an audit since this purchase was started. In the case that you are correcting a typo, " +
-          "rather than recording that the physical amounts being purchased have changed, " +
+          warning_message = "You’ve had an audit since this purchase was started. In the case that you are correcting a typo, " \
+          "rather than recording that the physical amounts being purchased have changed, " \
           "you’ll need to make an adjustment to the inventory as well."
 
           expect(page).to have_content(warning_message)
@@ -326,8 +326,8 @@ RSpec.describe "Purchases", type: :system, js: true do
 
           visit "#{subject}/#{purchase.id}/edit"
 
-          warning_message = "You’ve had an audit since this purchase was started. In the case that you are correcting a typo, " +
-            "rather than recording that the physical amounts being purchased have changed, " +
+          warning_message = "You’ve had an audit since this purchase was started. In the case that you are correcting a typo, " \
+            "rather than recording that the physical amounts being purchased have changed, " \
             "you’ll need to make an adjustment to the inventory as well."
 
           expect(page).to_not have_content(warning_message)
@@ -342,8 +342,8 @@ RSpec.describe "Purchases", type: :system, js: true do
 
           visit "#{subject}/#{purchase.id}/edit"
 
-          warning_message = "You’ve had an audit since this purchase was started. In the case that you are correcting a typo, " +
-          "rather than recording that the physical amounts being purchased have changed, " +
+          warning_message = "You’ve had an audit since this purchase was started. In the case that you are correcting a typo, " \
+          "rather than recording that the physical amounts being purchased have changed, " \
           "you’ll need to make an adjustment to the inventory as well."
 
           expect(page).to_not have_content(warning_message)
