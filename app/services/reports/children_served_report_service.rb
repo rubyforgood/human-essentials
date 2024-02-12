@@ -24,7 +24,7 @@ module Reports
 
     # @return [Integer]
     def total_children_served
-      @total_children_served ||= distributed_loose_disposable_items + distributed_kits_with_disposable_items
+      @total_children_served ||= total_children_served_with_loose_disposable + distributed_kits_with_disposable_items
     end
 
     # @return [Float]
@@ -65,7 +65,7 @@ module Reports
       .average('COALESCE(inventory_items.quantity, 0)') || 0.0
     end
 
-    def distributed_loose_disposable_items
+    def total_children_served_with_loose_disposable
       organization
       .distributions
       .for_year(year)
@@ -76,11 +76,13 @@ module Reports
 
     def distributed_kits_with_disposable_items
       organization
-      .kits
+      .distributions
+      .for_year(year)
       .joins(line_items: :item)
       .merge(Item.disposable)
+      .where.not(kit_id: nil)
       .distinct
-      .count("kits.id")
+      .count("kit_id")
     end
   end
 end
