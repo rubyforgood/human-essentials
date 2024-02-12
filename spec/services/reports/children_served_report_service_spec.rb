@@ -31,6 +31,9 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       disposable_item.update!(distribution_quantity: 20)
       non_disposable_item = organization.items.where.not(id: organization.items.disposable).first
 
+      #Kits
+      create(:kit, item: disposable_item)
+      create(:kit, item: non_disposable_item)
       # Distributions
       distributions = create_list(:distribution, 2, issued_at: within_time, organization: organization)
       outside_distributions = create_list(:distribution, 2, issued_at: outside_time, organization: organization)
@@ -39,15 +42,12 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
         create_list(:line_item, 5, :distribution, quantity: 300, item: non_disposable_item, itemizable: dist)
       end
 
-      # Kits
-      create_list(:kit, 2, organization: organization)
-
       expect(report.report).to eq({
                                     name: 'Children Served',
                                     entries: {
-                                      'Average children served monthly' => "9",
-                                      'Total children served' => "102",
-                                      'Diapers per child monthly' => "10",
+                                      'Average children served monthly' => "8",
+                                      'Total children served' => "101",
+                                      'Diapers per child monthly' => "13",
                                       'Repackages diapers?' => 'Y',
                                       'Monthly diaper distributions?' => 'Y'
                                     }
@@ -63,7 +63,8 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
 
       disposable_item = organization.items.disposable.first
       non_disposable_item = organization.items.where.not(id: organization.items.disposable).first
-
+      create(:kit, item: disposable_item)
+      create(:kit, item: non_disposable_item)
       # Distributions
       distributions = create_list(:distribution, 2, issued_at: within_time, organization: organization)
       outside_distributions = create_list(:distribution, 2, issued_at: outside_time, organization: organization)
@@ -72,21 +73,12 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
         create_list(:line_item, 5, :distribution, quantity: 300, item: non_disposable_item, itemizable: dist)
       end
 
-      # Kits
-      # disposable_kit = Kit.create!(name: "Test Disposable Kit 1", organization: organization)
-      # non_disposable_kit = Kit.create!(name: "Test Cloth Kit 2", organization: organization)
-
-      # disposable_item.kit_id = disposable_kit.id
-      # non_disposable_item.kit_id = non_disposable_kit.id
-      # require 'pry'; binding.pry
-      # organization.reload!
-
       expect(report.report).to eq({
                                     name: 'Children Served',
                                     entries: {
-                                      'Average children served monthly' => "4",
-                                      'Total children served' => "42",
-                                      'Diapers per child monthly' => "25",
+                                      'Average children served monthly' => "3",
+                                      'Total children served' => "41",
+                                      'Diapers per child monthly' => "33",
                                       'Repackages diapers?' => 'Y',
                                       'Monthly diaper distributions?' => 'Y'
                                     }
