@@ -1,0 +1,4 @@
+#!/bin/bash
+
+bundle exec rubocop -A
+bundle exec erblint --lint-all -a
