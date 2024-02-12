@@ -9,8 +9,7 @@
       <%= field.number_field :quantity, label: false, step: 1, min: 1, class: 'form-control' %>
     </td>
     <td>
-      <%= field.hidden_field :_destroy, as: :hidden %>
-      <%= remove_item_button "Remove", soft: true %>
+      <%= remove_item_button "Remove" %>
     </td>
   </tr>
 <% end %>
