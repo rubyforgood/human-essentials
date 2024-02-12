@@ -76,10 +76,15 @@
                 </thead>
                 <tbody>
                 <% total = 0; @storage_locations_containing.each do |storage|
-                  total += storage.item_total(@item) %>
+                  location_quantity = if @inventory
+                    @inventory.quantity_for(item_id: @item.id)
+                  else
+                    storage.item_total(@item)
+                  end
+                  total += location_quantity %>
                   <tr>
                     <td><%= link_to storage.name, storage_location_path(storage) %></td>
-                    <td class="text-left"><%= storage.item_total(@item) %></td>
+                    <td class="text-left"><%= location_quantity %></td>
                   </tr>
                 <% end %>
                 <tr>

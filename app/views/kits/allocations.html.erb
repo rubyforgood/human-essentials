@@ -50,6 +50,16 @@
                       <td> On Hand Quantity </td>
                     </thead>
                     <tbody>
+                    <% if @inventory %>
+                      <% @inventory.all_items.select { |i| i.item_id == @kit.item.id }.each do |ii| %>
+                        <tr id="storage_location_<%= ii.storage_location_id %>">
+                          <td> <%= @inventory.storage_location_name(ii.storage_location_id) %> </td>
+                          <td>
+                            <strong><%= ii.quantity %></strong>
+                          </td>
+                        </tr>
+                      <% end %>
+                    <% else %>
                       <% @item_inventories.order('id ASC').each do |ii| %>
                         <tr id="storage_location_<%= ii.storage_location.id %>">
                           <td> <%= ii.storage_location.name %> </td>
@@ -58,6 +68,7 @@
                           </td>
                         </tr>
                       <% end %>
+                    <% end %>
                     <tbody>
                   </table>
                 </div>
