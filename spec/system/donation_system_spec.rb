@@ -608,13 +608,13 @@ RSpec.describe "Donations", type: :system, js: true do
         expect(total_quantity).to eq "0 (Total)"
       end
 
-      context "when an audit has been performed on the purchased items" do
-        let!(:item) { create(:item, organization: @organization, name: "Brightbloom Seed") }
-        let!(:donation) { create(:donation, :with_items, item: item, organization: @organization) }
-        let!(:storage_location) { create(:storage_location, :with_items, item: item, organization: @organization) }
-        let!(:audit) { create(:audit, :with_items, storage_location: storage_location, item: item, item_quantity: 2) }
-
+      context "when an audit has been performed on the donated items" do
         it "shows a warning" do
+          item = create(:item, organization: @organization, name: "Brightbloom Seed")
+          storage_location = create(:storage_location, :with_items, item: item, organization: @organization)
+          donation = create(:donation, :with_items, item: item, organization: @organization, storage_location: storage_location)
+          create(:audit, :with_items, item: item, storage_location: storage_location)
+
           visit "#{@url_prefix}/donations/#{donation.id}/edit"
 
           warning_message = "You’ve had an audit since this donation was started. In the case that you are correcting a typo, " +
@@ -626,11 +626,11 @@ RSpec.describe "Donations", type: :system, js: true do
       end
 
       context "when no audit hasn't been performed" do
-        let!(:item) { create(:item, organization: @organization, name: "Brightbloom Seed") }
-        let!(:donation) { create(:donation, :with_items, item: item, organization: @organization) }
-        let!(:storage_location) { create(:storage_location, :with_items, item: item, organization: @organization) }
-
         it "doesn't show a warning" do
+          item = create(:item, organization: @organization, name: "Brightbloom Seed")
+          storage_location = create(:storage_location, :with_items, item: item, organization: @organization)
+          donation = create(:donation, :with_items, item: item, organization: @organization, storage_location: storage_location)
+
           visit "#{@url_prefix}/donations/#{donation.id}/edit"
 
           warning_message = "You’ve had an audit since this donation was started. In the case that you are correcting a typo, " +

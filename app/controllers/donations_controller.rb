@@ -64,10 +64,7 @@ class DonationsController < ApplicationController
   def edit
     @donation = Donation.find(params[:id])
     @donation.line_items.build
-
-    audited_items_ids = Audit.all.collect { |i| i.items.pluck(:id) }.flatten
-    items_donated_ids = @donation.line_items.pluck(:item_id)
-    @audit_performed_on_donated_items = audited_items_ids.any? { |i| items_donated_ids.include?(i) }
+    @audit_performed_on_donated_items = Audit.since?(@donation, @donation.storage_location_id)
 
     load_form_collections
   end
