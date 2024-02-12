@@ -30,6 +30,7 @@ class Audit < ApplicationRecord
   validates :storage_location, :organization, presence: true
   validate :line_items_exist_in_inventory
   validate :line_items_quantity_is_not_negative
+  validate :line_items_unique_by_item_id
   validate :user_is_organization_admin_of_the_organization
 
   def self.storage_locations_audited_for(organization)
@@ -45,6 +46,16 @@ class Audit < ApplicationRecord
   end
 
   private
+
+  def line_items_unique_by_item_id
+    item_ids = line_items.map(&:item_id)
+    duplicate_ids = item_ids.select { |i| item_ids.count(i) > 1 }
+    if duplicate_ids.any?
+      item_names = Item.where(id: duplicate_ids).map(&:name)
+      errors.add(:base,
+        "You have entered at least one duplicate item: #{item_names.join(", ")}")
+    end
+  end
 
   def line_items_quantity_is_not_negative
     line_items_quantity_is_at_least(0)

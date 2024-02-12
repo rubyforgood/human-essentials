@@ -67,6 +67,12 @@ RSpec.describe "Purchases", type: :request do
 
           expect(Purchase.last.amount_spent_in_cents).to eq 100_054
         end
+
+        it "storage location defaults to organizations storage location" do
+          purchase = create(:purchase)
+          get edit_purchase_path(@organization.to_param, purchase)
+          expect(response.body).to match(/(<option selected="selected" value=")[0-9]*(">Smithsonian Conservation Center<\/option>)/)
+        end
       end
 
       context "on failure" do
@@ -171,9 +177,18 @@ RSpec.describe "Purchases", type: :request do
     end
 
     describe "GET #edit" do
+      let(:storage_location) { create(:storage_location, organization: @organization) }
+
       it "returns http success" do
         get edit_purchase_path(default_params.merge(id: create(:purchase, organization: @organization)))
         expect(response).to be_successful
+      end
+
+      it "storage location is correct" do
+        storage2 = create(:storage_location, name: "storage2")
+        purchase2 = create(:purchase, storage_location: storage2)
+        get edit_purchase_path(@organization.to_param, purchase2)
+        expect(response.body).to match(/(<option selected="selected" value=")[0-9]*(">storage2<\/option>)/)
       end
     end
 
