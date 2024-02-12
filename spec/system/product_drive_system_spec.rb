@@ -24,7 +24,7 @@ RSpec.describe "Product Drives", type: :system, js: true do
     end
 
     it "Shows the expected filters with the expected values" do
-      expect(page.has_select?('filters_by_name', with_options: @product_drives.map(&:name))).to be true
+      expect(page.has_select?('filters[by_name]', with_options: @product_drives.map(&:name))).to be true
       expect(page.has_field?('filters_date_range', with: this_year))
     end
 
@@ -41,6 +41,10 @@ RSpec.describe "Product Drives", type: :system, js: true do
 
     it 'shows only one non-virtual product drive' do
       expect(page).to have_text(/No/, maximum: 1)
+    end
+
+    it 'shows in descending order of start date' do
+      expect("Test name 2").to appear_before("Test name 1")
     end
   end
 

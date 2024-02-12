@@ -8,7 +8,7 @@ class ProductDrivesController < ApplicationController
                      .product_drives
                      .class_filter(filter_params)
                      .within_date_range(@selected_date_range)
-                     .order(created_at: :desc)
+                     .order(start_date: :desc)
     @selected_name_filter = filter_params[:by_name]
 
     respond_to do |format|
