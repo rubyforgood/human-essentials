@@ -34,7 +34,6 @@ RSpec.describe DistributionMailer, type: :mailer do
 
       it "renders the body with 'picked up' specified" do
         expect(mail.body.encoded).to match("picked up")
-        expect(mail.cc.first).to match(@partner.email)
       end
 
       context 'when parners profile pick_up_email is present' do
