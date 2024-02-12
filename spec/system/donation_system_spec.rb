@@ -625,7 +625,6 @@ RSpec.describe "Donations", type: :system, js: true do
         end
       end
 
-
       context "when an non-finalized audit has been performed on the donated items" do
         it "does not shows a warning" do
           item = create(:item, organization: @organization, name: "Brightbloom Seed")

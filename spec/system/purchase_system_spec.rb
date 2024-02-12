@@ -300,7 +300,6 @@ RSpec.describe "Purchases", type: :system, js: true do
       subject { url_prefix + "/purchases" }
 
       context "when an finalized audit has been performed on the purchased items" do
-
         it "shows a warning" do
           item = create(:item, organization: @organization, name: "Brightbloom Seed")
           storage_location = create(:storage_location, :with_items, item: item, organization: @organization)
