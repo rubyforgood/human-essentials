@@ -608,12 +608,12 @@ RSpec.describe "Donations", type: :system, js: true do
         expect(total_quantity).to eq "0 (Total)"
       end
 
-      context "when an audit has been performed on the donated items" do
+      context "when an finalized audit has been performed on the donated items" do
         it "shows a warning" do
           item = create(:item, organization: @organization, name: "Brightbloom Seed")
           storage_location = create(:storage_location, :with_items, item: item, organization: @organization)
           donation = create(:donation, :with_items, item: item, organization: @organization, storage_location: storage_location)
-          create(:audit, :with_items, item: item, storage_location: storage_location)
+          create(:audit, :with_items, item: item, storage_location: storage_location, status: "finalized")
 
           visit "#{@url_prefix}/donations/#{donation.id}/edit"
 
@@ -622,6 +622,24 @@ RSpec.describe "Donations", type: :system, js: true do
             "you’ll need to make an adjustment to the inventory as well."
 
           expect(page).to have_content(warning_message)
+        end
+      end
+
+
+      context "when an non-finalized audit has been performed on the donated items" do
+        it "does not shows a warning" do
+          item = create(:item, organization: @organization, name: "Brightbloom Seed")
+          storage_location = create(:storage_location, :with_items, item: item, organization: @organization)
+          donation = create(:donation, :with_items, item: item, organization: @organization, storage_location: storage_location)
+          create(:audit, :with_items, item: item, storage_location: storage_location, status: "confirmed")
+
+          visit "#{@url_prefix}/donations/#{donation.id}/edit"
+
+          warning_message = "You’ve had an audit since this donation was started. In the case that you are correcting a typo, " +
+            "rather than recording that the physical amounts being donated have changed, " +
+            "you’ll need to make an adjustment to the inventory as well."
+
+          expect(page).to_not have_content(warning_message)
         end
       end
 

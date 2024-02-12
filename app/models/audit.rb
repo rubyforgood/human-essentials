@@ -46,6 +46,16 @@ class Audit < ApplicationRecord
       .exists?
   end
 
+  def self.finalized_since?(itemizable, *location_ids)
+    item_ids = itemizable.line_items.pluck(:item_id)
+    where(status: "finalized")
+      .where(storage_location_id: location_ids)
+      .where(created_at: itemizable.created_at..)
+      .joins(:line_items)
+      .where(line_items: {item_id: item_ids})
+      .exists?
+  end
+
   def user_is_organization_admin_of_the_organization
     return if organization.nil?
 

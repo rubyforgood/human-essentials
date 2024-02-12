@@ -299,13 +299,13 @@ RSpec.describe "Purchases", type: :system, js: true do
     context "when editing an existing purchase" do
       subject { url_prefix + "/purchases" }
 
-      context "when an audit has been performed on the purchased items" do
+      context "when an finalized audit has been performed on the purchased items" do
 
         it "shows a warning" do
           item = create(:item, organization: @organization, name: "Brightbloom Seed")
           storage_location = create(:storage_location, :with_items, item: item, organization: @organization)
           purchase = create(:purchase, :with_items, item: item, storage_location: storage_location)
-          create(:audit, :with_items, item: item, storage_location: storage_location)
+          create(:audit, :with_items, item: item, storage_location: storage_location, status: "finalized")
 
           visit "#{subject}/#{purchase.id}/edit"
 
@@ -314,6 +314,23 @@ RSpec.describe "Purchases", type: :system, js: true do
           "you’ll need to make an adjustment to the inventory as well."
 
           expect(page).to have_content(warning_message)
+        end
+      end
+
+      context "when non-finalized audit has been performed on the purchased items" do
+        it "does not show a warning" do
+          item = create(:item, organization: @organization, name: "Brightbloom Seed")
+          storage_location = create(:storage_location, :with_items, item: item, organization: @organization)
+          purchase = create(:purchase, :with_items, item: item, storage_location: storage_location)
+          create(:audit, :with_items, item: item, storage_location: storage_location, status: "confirmed")
+
+          visit "#{subject}/#{purchase.id}/edit"
+
+          warning_message = "You’ve had an audit since this purchase was started. In the case that you are correcting a typo, " +
+            "rather than recording that the physical amounts being purchased have changed, " +
+            "you’ll need to make an adjustment to the inventory as well."
+
+          expect(page).to_not have_content(warning_message)
         end
       end
 
