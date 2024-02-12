@@ -299,15 +299,14 @@ RSpec.describe "Purchases", type: :system, js: true do
     context "when editing an existing purchase" do
       subject { url_prefix + "/purchases" }
 
-      let(:quantity) { 7 }
-      let(:item) { create(:item) }
-      let!(:storage_location) { create(:storage_location, :with_items, item: item, item_quantity: 10, organization: @organization) }
-
       context "when an audit has been performed on the purchased items" do
-        let!(:audit) { create(:audit, :with_items, storage_location: storage_location, item: item, item_quantity: quantity) }
 
         it "shows a warning" do
-          purchase = create(:purchase, :with_items, item: item)
+          item = create(:item, organization: @organization, name: "Brightbloom Seed")
+          storage_location = create(:storage_location, :with_items, item: item, organization: @organization)
+          purchase = create(:purchase, :with_items, item: item, storage_location: storage_location)
+          create(:audit, :with_items, item: item, storage_location: storage_location)
+
           visit "#{subject}/#{purchase.id}/edit"
 
           warning_message = "You’ve had an audit since this purchase was started. In the case that you are correcting a typo, " +
@@ -320,7 +319,10 @@ RSpec.describe "Purchases", type: :system, js: true do
 
       context "when no audit hasn't been performed" do
         it "doesn't show a warning" do
-          purchase = create(:purchase, :with_items, item: item)
+          item = create(:item, organization: @organization, name: "Brightbloom Seed")
+          storage_location = create(:storage_location, :with_items, item: item, organization: @organization)
+          purchase = create(:purchase, :with_items, item: item, storage_location: storage_location)
+
           visit "#{subject}/#{purchase.id}/edit"
 
           warning_message = "You’ve had an audit since this purchase was started. In the case that you are correcting a typo, " +

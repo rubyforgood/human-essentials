@@ -53,10 +53,7 @@ class PurchasesController < ApplicationController
   def edit
     @purchase = current_organization.purchases.find(params[:id])
     @purchase.line_items.build
-
-    audited_items_ids = Audit.all.collect { |i| i.items.pluck(:id) }.flatten
-    items_purchased_ids = @purchase.line_items.pluck(:item_id)
-    @audit_performed_on_purchased_items = audited_items_ids.any? { |i| items_purchased_ids.include?(i) }
+    @audit_performed_on_purchased_items = Audit.since?(@purchase, @purchase.storage_location_id)
 
     load_form_collections
   end
