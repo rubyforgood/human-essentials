@@ -184,7 +184,7 @@ module Reports
 
     # @return [Integer]
     def purchased_loose_disposable_diapers
-      @purchased_diapers ||= LineItem.joins(:item)
+      @purchased_disposable_diapers ||= LineItem.joins(:item)
                                      .merge(Item.disposable)
                                      .where(itemizable: organization.purchases.for_year(year))
                                      .sum(:quantity)
