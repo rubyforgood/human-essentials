@@ -31,11 +31,11 @@
           </div>
           <% current_partner.partials_to_show.each do |partial| %>
             <div class="col-6">
-              <%= render partial: "partners/profiles/show/#{partial}", locals: { profile: current_partner.profile }%>
+              <%= render partial: "partners/profiles/show/#{partial}", locals: { profile: current_partner.profile } %>
             </div>
           <% end %>
           <div class="col-6">
-            <%= render partial: "partners/profiles/show/partner_settings", locals: { profile: current_partner.profile }%>
+            <%= render partial: "partners/profiles/show/partner_settings", locals: { profile: current_partner.profile } %>
           </div>
         </div>
       </div>

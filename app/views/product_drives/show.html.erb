@@ -21,7 +21,6 @@
   </div><!-- /.container-fluid -->
 </section>
 
-
 <section class="content">
   <div class="container-fluid">
     <div class="row">
@@ -81,7 +80,7 @@
                   <td><%= donation.line_items.count(&:quantity) %></td>
                   <td><strong><%= dollar_value(donation.value_per_itemizable) %></strong></td>
                 </tr>
-              <% end%>
+              <% end %>
               </tbody>
             </table>
           </div>
@@ -133,7 +132,7 @@
                   <td><%= participant.volume %></td>
                   <td><%= participant.comment %></td>
                 </tr>
-              <% end%>
+              <% end %>
               </tbody>
             </table>
           </div>

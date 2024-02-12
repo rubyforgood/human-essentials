@@ -21,7 +21,6 @@
   </div><!-- /.container-fluid -->
 </section>
 
-
 <section class="content">
   <div class="container-fluid">
     <div class="row">
@@ -36,7 +35,7 @@
           <!-- form start -->
           <div class="card-body">
             <%= form_tag(storage_locations_path, method: :get) do |f| %>
-              <div class="row"> 
+              <div class="row">
                 <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
                   <%= filter_select(label: "Filter by Item", scope: :containing, collection: @items, selected: @selected_item_category) %>
                 </div>

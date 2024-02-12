@@ -80,11 +80,11 @@
                 <tr>
                   <td>
                     <%= account_request.organization_name %>
-                    <br/><%= account_request.organization_website %>
+                    <br><%= account_request.organization_website %>
                   </td>
                   <td><%= account_request.request_details %></td>
                   <td><%= account_request.name %>
-                    <br/><%= account_request.email %>
+                    <br><%= account_request.email %>
                   </td>
                   <td><%= account_request.status.titleize %></td>
                   <td><%= account_request.confirmed_at&.strftime("%m/%d/%Y") || "N/A" %></td>

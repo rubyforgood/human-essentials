@@ -1,3 +1,18 @@
+# == Schema Information
+#
+# Table name: events
+#
+#  id              :bigint           not null, primary key
+#  data            :jsonb
+#  event_time      :datetime         not null
+#  eventable_type  :string
+#  type            :string           not null
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  eventable_id    :bigint
+#  organization_id :bigint
+#  user_id         :bigint
+#
 RSpec.describe Event, type: :model do
   let(:organization) { FactoryBot.create(:organization) }
   describe "#most_recent_snapshot" do

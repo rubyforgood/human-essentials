@@ -22,7 +22,7 @@ RSpec.describe "Barcode management", type: :system, js: true do
       b = create(:barcode_item, organization: @organization)
       create(:barcode_item, organization: @organization)
       visit subject
-      fill_in "filters_by_value", with: b.value
+      fill_in "filters[by_value]", with: b.value
       click_button "Filter"
 
       expect(page).to have_css("table tbody tr", count: 1)
@@ -39,15 +39,15 @@ RSpec.describe "Barcode management", type: :system, js: true do
       create(:barcode_item, barcodeable: item1)
       visit subject
 
-      expect(page.all("select#filters_barcodeable_id option").map(&:text)).to eq(expected_order)
-      expect(page.all("select#filters_barcodeable_id option").map(&:text)).not_to eq(expected_order.reverse)
+      expect(page.all('select[name="filters[barcodeable_id]"] option').map(&:text)).to eq(expected_order)
+      expect(page.all('select[name="filters[barcodeable_id]"] option').map(&:text)).not_to eq(expected_order.reverse)
     end
 
     it "can have a user filter the #index by item type" do
       b = create(:barcode_item, organization: @organization)
       create(:barcode_item, organization: @organization)
       visit subject
-      select b.item.name, from: "filters_barcodeable_id"
+      select b.item.name, from: "filters[barcodeable_id]"
       click_button "Filter"
 
       expect(page).to have_css("table tbody tr", count: 1)
@@ -59,7 +59,7 @@ RSpec.describe "Barcode management", type: :system, js: true do
       create(:barcode_item, organization: @organization, barcodeable: item)
       create(:barcode_item, organization: @organization, barcodeable: item2)
       visit subject
-      select BaseItem.first.name, from: "filters_by_item_partner_key"
+      select BaseItem.first.name, from: "filters[by_item_partner_key]"
       click_button "Filter"
 
       expect(page).to have_css("table tbody tr", count: 2)
