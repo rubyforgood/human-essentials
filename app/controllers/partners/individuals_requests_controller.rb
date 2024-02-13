@@ -2,7 +2,7 @@ module Partners
   class IndividualsRequestsController < BaseController
     def new
       @request = FamilyRequest.new({}, initial_items: 1)
-      set_formated_requestable_items
+      @requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
     end
 
     def create
@@ -21,7 +21,7 @@ module Partners
         @request = FamilyRequest.new({}, initial_items: 1)
         @errors = create_service.errors
 
-        set_formated_requestable_items
+        @requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
 
         Rails.logger.info("[Request Creation Failure] partner_user_id=#{current_user.id} reason=#{@errors.full_messages}")
 
@@ -34,13 +34,6 @@ module Partners
     def individuals_request_params
       params.require(:partners_family_request)
             .permit(:comments, items_attributes: %i[item_id person_count])
-    end
-
-    def set_formated_requestable_items
-      requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
-      @formatted_requestable_items = requestable_items.map do |rt|
-        [rt.name, rt.id]
-      end.sort
     end
   end
 end

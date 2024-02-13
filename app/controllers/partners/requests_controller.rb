@@ -11,7 +11,7 @@ module Partners
       @partner_request = ::Request.new
       @partner_request.item_requests.build
 
-      set_formated_requestable_items
+      @requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
     end
 
     def show
@@ -34,7 +34,7 @@ module Partners
         @partner_request = create_service.partner_request
         @errors = create_service.errors
 
-        set_formated_requestable_items
+        @requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
 
         Rails.logger.info("[Request Creation Failure] partner_user_id=#{current_user.id} reason=#{@errors.full_messages}")
 
@@ -43,13 +43,6 @@ module Partners
     end
 
     private
-
-    def set_formated_requestable_items
-      requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
-      @formatted_requestable_items = requestable_items.map do |rt|
-        [rt.name, rt.id]
-      end.sort
-    end
 
     def partner_request_params
       params.require(:request).permit(:comments, item_requests_attributes: [:item_id, :quantity])
