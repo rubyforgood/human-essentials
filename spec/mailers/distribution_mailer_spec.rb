@@ -1,4 +1,6 @@
 RSpec.describe DistributionMailer, type: :mailer do
+  let(:pick_up_email) { 'pick_up@org.com' }
+
   before do
     @organization.default_email_text = "Default email text example\n\n%{delivery_method} %{distribution_date}\n\n%{partner_name}\n\n%{comment}"
     @partner = create(:partner, name: 'PARTNER')
@@ -6,6 +8,7 @@ RSpec.describe DistributionMailer, type: :mailer do
     @organization.update!(email: "me@org.com")
     @request = create(:request, distribution: @distribution)
     allow(DistributionPdf).to receive(:new).and_return(double('DistributionPdf', compute_and_render: ''))
+    allow(@partner.profile).to receive(:pick_up_email).and_return(pick_up_email)
   end
 
   describe "#partner_mailer" do
@@ -16,7 +19,7 @@ RSpec.describe DistributionMailer, type: :mailer do
       expect(mail.body.encoded).to match("Default email text example")
       expect(mail.html_part.body).to match(%(From: <a href="mailto:me@org.com">me@org.com</a>))
       expect(mail.to).to eq([@distribution.request.user_email])
-      expect(mail.cc).to eq([@distribution.partner.email])
+      expect(mail.cc).to eq([@distribution.partner.email, pick_up_email])
       expect(mail.from).to eq(["no-reply@humanessentials.app"])
       expect(mail.subject).to eq("test subject from STARTER")
     end
@@ -37,12 +40,6 @@ RSpec.describe DistributionMailer, type: :mailer do
       end
 
       context 'when parners profile pick_up_email is present' do
-        let(:pick_up_email) { 'pick_up@org.com' }
-        
-        before do
-          allow(@partner.profile).to receive(:pick_up_email).and_return(pick_up_email)
-        end
-
         it 'sends email to the primary contact and partner`s pickup person' do
           expect(mail.cc.first).to match(@partner.email)
           expect(mail.cc.second).to match(pick_up_email)
@@ -60,10 +57,17 @@ RSpec.describe DistributionMailer, type: :mailer do
     end
 
     context "with deliver_method: :delivery" do
-      it "renders the body with 'delivered' specified" do
+      let(:mail) {
         distribution = create(:distribution, organization: @user.organization, comment: "Distribution comment", partner: @partner, delivery_method: :delivery)
-        mail = DistributionMailer.partner_mailer(@organization, distribution, 'test subject', distribution_changes)
+        DistributionMailer.partner_mailer(@organization, distribution, 'test subject', distribution_changes)
+      }
+      
+      it "renders the body with 'delivered' specified" do
         expect(mail.body.encoded).to match("delivered")
+      end
+
+      it 'sends copy of email only to the partner' do
+        expect(mail.cc).to match([@partner.email])
       end
     end
 
