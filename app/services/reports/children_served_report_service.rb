@@ -37,7 +37,7 @@ module Reports
       total_distributions = organization.distributions.for_year(year).count
       total_distributed_kits = distributed_kits_with_disposable_items
 
-      total_avg = if total_distributions.zero? && total_kits.zero?
+      total_avg = if total_distributions.zero? && total_distributed_kits.zero?
         0.0
       else
         (loose_disposable_distribution_average * total_distributions + kit_average * total_distributed_kits) / (total_distributions + total_distributed_kits)
