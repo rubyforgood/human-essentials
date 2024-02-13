@@ -642,7 +642,7 @@ RSpec.describe "Donations", type: :system, js: true do
         end
       end
 
-      context "when no audit hasn't been performed" do
+      context "when no audit has been performed" do
         it "doesn't show a warning" do
           item = create(:item, organization: @organization, name: "Brightbloom Seed")
           storage_location = create(:storage_location, :with_items, item: item, organization: @organization)
