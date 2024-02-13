@@ -497,9 +497,9 @@ GEM
     rb-inotify (0.10.1)
       ffi (~> 1.0)
     recaptcha (5.16.0)
-    redis (5.0.8)
+    redis (5.1.0)
       redis-client (>= 0.17.0)
-    redis-client (0.18.0)
+    redis-client (0.19.1)
       connection_pool
     regexp_parser (2.9.0)
     request_store (1.5.1)
@@ -729,7 +729,7 @@ DEPENDENCIES
   rails-controller-testing
   rails-erd
   recaptcha
-  redis (~> 5.0)
+  redis (~> 5.1)
   rolify (~> 6.0)
   rspec-rails (~> 6.1.1)
   rubocop
