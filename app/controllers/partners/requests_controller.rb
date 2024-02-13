@@ -49,11 +49,7 @@ module Partners
     private
 
     def partner_request_params
-      params.require(:request).permit(:comments, item_requests_attributes: [
-                                        :item_id,
-                                                 :quantity,
-                                                 :_destroy
-                                      ])
+      params.require(:request).permit(:comments, item_requests_attributes: [:item_id, :quantity])
     end
   end
 end
