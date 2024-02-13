@@ -21,7 +21,8 @@ describe PartnerFetchRequestableItemsService do
       end
 
       it 'should return all active and visible items' do
-        expect(subject).to eq(organization.items.active.visible)
+        expected_items = organization.items.active.visible.map { |item| [item.name, item.id] }.sort
+        expect(subject).to eq(expected_items)
       end
     end
 
@@ -33,7 +34,8 @@ describe PartnerFetchRequestableItemsService do
       end
 
       it 'should return all active and visible items specified by the item associated with' do
-        expect(subject).to eq(partner.requestable_items.active.visible)
+        expected_items = partner.requestable_items.active.visible.map { |item| [item.name, item.id] }.sort
+        expect(subject).to eq(expected_items)
       end
     end
   end
