@@ -14,7 +14,7 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
       # We will create data both within and outside our date range, and both disposable and non disposable.
       # Spec will ensure that only the required data is included.
 
-      #Kits
+      # Kits
       kit = create(:kit, :with_item, organization: organization)
 
       create(:base_item, name: "Adult Disposable Diaper", partner_key: "adult diapers", category: "disposable diaper")
