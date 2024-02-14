@@ -32,8 +32,14 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       non_disposable_item = organization.items.where.not(id: organization.items.disposable).first
 
       #Kits
-      create(:kit, item: disposable_item)
-      create(:kit, item: non_disposable_item)
+      kit = create(:kit, :with_item, organization: organization)
+
+      create(:base_item, name: "Toddler Disposable Diaper", partner_key: "toddler diapers", category: "disposable diaper")
+      create(:base_item, name: "Infant Disposable Diaper", partner_key: "infant diapers", category: "infant disposable diaper")
+
+      toddler_disposable_kit_item = create(:item, name: "Toddler Disposable Diapers", partner_key: "toddler diapers", kit: kit)
+      infant_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", partner_key: "infant diapers", kit: kit)
+
       # Distributions
       distributions = create_list(:distribution, 2, issued_at: within_time, organization: organization)
       outside_distributions = create_list(:distribution, 2, issued_at: outside_time, organization: organization)
@@ -42,12 +48,18 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
         create_list(:line_item, 5, :distribution, quantity: 300, item: non_disposable_item, itemizable: dist)
       end
 
+      infant_distribution = create(:distribution, organization: organization, issued_at: within_time)
+      toddler_distribution = create(:distribution, organization: organization, issued_at: within_time)
+
+      create(:line_item, :distribution, quantity: 10, item: toddler_disposable_kit_item, itemizable: infant_distribution)
+      create(:line_item, :distribution, quantity: 10, item: infant_disposable_kit_item, itemizable: toddler_distribution)
+
       expect(report.report).to eq({
                                     name: 'Children Served',
                                     entries: {
                                       'Average children served monthly' => "8",
                                       'Total children served' => "101",
-                                      'Diapers per child monthly' => "13",
+                                      'Diapers per child monthly' => "25",
                                       'Repackages diapers?' => 'Y',
                                       'Monthly diaper distributions?' => 'Y'
                                     }
@@ -63,8 +75,15 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
 
       disposable_item = organization.items.disposable.first
       non_disposable_item = organization.items.where.not(id: organization.items.disposable).first
-      create(:kit, item: disposable_item)
-      create(:kit, item: non_disposable_item)
+      #Kits
+      kit = create(:kit, :with_item, organization: organization)
+
+      create(:base_item, name: "Toddler Disposable Diaper", partner_key: "toddler diapers", category: "disposable diaper")
+      create(:base_item, name: "Infant Disposable Diaper", partner_key: "infant diapers", category: "infant disposable diaper")
+
+      toddler_disposable_kit_item = create(:item, name: "Toddler Disposable Diapers", partner_key: "toddler diapers", kit: kit)
+      infant_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", partner_key: "infant diapers", kit: kit)
+
       # Distributions
       distributions = create_list(:distribution, 2, issued_at: within_time, organization: organization)
       outside_distributions = create_list(:distribution, 2, issued_at: outside_time, organization: organization)
@@ -73,12 +92,18 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
         create_list(:line_item, 5, :distribution, quantity: 300, item: non_disposable_item, itemizable: dist)
       end
 
+      infant_distribution = create(:distribution, organization: organization, issued_at: within_time)
+      toddler_distribution = create(:distribution, organization: organization, issued_at: within_time)
+
+      create(:line_item, :distribution, quantity: 10, item: toddler_disposable_kit_item, itemizable: infant_distribution)
+      create(:line_item, :distribution, quantity: 10, item: infant_disposable_kit_item, itemizable: toddler_distribution)
+
       expect(report.report).to eq({
                                     name: 'Children Served',
                                     entries: {
                                       'Average children served monthly' => "3",
                                       'Total children served' => "41",
-                                      'Diapers per child monthly' => "33",
+                                      'Diapers per child monthly' => "50",
                                       'Repackages diapers?' => 'Y',
                                       'Monthly diaper distributions?' => 'Y'
                                     }
