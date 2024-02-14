@@ -12,6 +12,7 @@ require "capybara-screenshot/rspec"
 require "pry"
 require 'knapsack_pro'
 require 'paper_trail/frameworks/rspec'
+require_relative 'inventory'
 
 KnapsackPro::Adapters::RSpecAdapter.bind
 
@@ -231,10 +232,18 @@ RSpec.configure do |config|
   config.before(:each) do
     # Defined shared @ global variables used throughout the test suite.
     define_global_variables
+
+    if ENV['EVENTS_READ'] == 'true'
+      allow(Event).to receive(:read_events?).and_return(true)
+    end
   end
 
   config.before do
     Faker::UniqueGenerator.clear # Clears used values to avoid retry limit exceeded error
+  end
+
+  config.after(:each) do
+    travel_back
   end
 
   # RSpec Rails can automatically mix in different behaviours to your tests

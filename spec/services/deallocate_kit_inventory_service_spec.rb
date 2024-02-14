@@ -4,11 +4,20 @@ RSpec.describe DeallocateKitInventoryService, type: :service do
   let(:item2) { create(:item, name: "Item 2", organization: organization, on_hand_minimum_quantity: 1) }
 
   let(:storage_location) { create(:storage_location, organization: organization) }
-  let(:item_inventory1) { create(:inventory_item, storage_location: storage_location, quantity: item1.on_hand_minimum_quantity, item: item1) }
-  let(:item_inventory2) { create(:inventory_item, storage_location: storage_location, quantity: item2.on_hand_minimum_quantity, item: item2) }
+  let(:item_inventory1) { storage_location.inventory_items.find_by(item_id: item1.id) }
+  let(:item_inventory2) { storage_location.inventory_items.find_by(item_id: item2.id) }
 
   let(:inventory_in) { create(:kit_allocation, storage_location: storage_location, organization_id: organization.id, kit_id: kit.id, kit_allocation_type: "inventory_in") }
   let(:inventory_out) { create(:kit_allocation, storage_location: storage_location, organization_id: organization.id, kit_id: kit.id, kit_allocation_type: "inventory_out") }
+
+  before(:each) do
+    TestInventory.create_inventory(organization, {
+      storage_location.id => {
+        item1.id => 5,
+        item2.id => 1
+      }
+    })
+  end
 
   describe "#error" do
     let(:kit) do
@@ -44,8 +53,12 @@ RSpec.describe DeallocateKitInventoryService, type: :service do
     let(:kit_item_inventory) { InventoryItem.find_by(storage_location_id: storage_location.id, item_id: kit.item.id) }
 
     before do
-      # Force there to be kit quantity
-      kit_item_inventory.update(quantity: 100)
+      TestInventory.create_inventory(organization,
+        {
+          storage_location.id => {
+            kit.item.id => 100
+          }
+        })
     end
 
     context "when inventory items are available" do
@@ -81,6 +94,13 @@ RSpec.describe DeallocateKitInventoryService, type: :service do
           expect(item_inventory1.reload.quantity).to eq(before_deallocate1 + (quantity_of_items1 * decrease_by))
           expect(item_inventory2.reload.quantity).to eq(before_deallocate2 + (quantity_of_items2 * decrease_by))
           expect(kit_item_inventory.reload.quantity).to eq(kit_item_inventory_quantity - decrease_by)
+          inventory = View::Inventory.new(organization.id)
+          expect(inventory.quantity_for(storage_location: storage_location.id, item_id: item1.id))
+            .to eq(before_deallocate1 + (quantity_of_items1 * decrease_by))
+          expect(inventory.quantity_for(storage_location: storage_location.id, item_id: item2.id))
+            .to eq(before_deallocate2 + (quantity_of_items2 * decrease_by))
+          expect(inventory.quantity_for(storage_location: storage_location.id, item_id: kit.item.id))
+            .to eq(kit_item_inventory_quantity - decrease_by)
 
           # Invetory out and inventory in should be deleted on de-allocation
           expect(KitAllocation.find_by(id: inventory_in.id).present?).to be_falsey
