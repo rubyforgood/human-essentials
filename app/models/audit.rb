@@ -39,15 +39,6 @@ class Audit < ApplicationRecord
 
   def self.since?(itemizable, *location_ids)
     item_ids = itemizable.line_items.pluck(:item_id)
-    where(storage_location_id: location_ids)
-      .where(created_at: itemizable.created_at..)
-      .joins(:line_items)
-      .where(line_items: {item_id: item_ids})
-      .exists?
-  end
-
-  def self.finalized_since?(itemizable, *location_ids)
-    item_ids = itemizable.line_items.pluck(:item_id)
     where(status: "finalized")
       .where(storage_location_id: location_ids)
       .where(created_at: itemizable.created_at..)
