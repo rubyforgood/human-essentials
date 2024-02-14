@@ -64,7 +64,7 @@ class DonationsController < ApplicationController
   def edit
     @donation = Donation.find(params[:id])
     @donation.line_items.build
-    @audit_performed_on_donated_items = Audit.finalized_since?(@donation, @donation.storage_location_id)
+    @audit_performed_and_finalized = Audit.finalized_since?(@donation, @donation.storage_location_id)
 
     load_form_collections
   end
