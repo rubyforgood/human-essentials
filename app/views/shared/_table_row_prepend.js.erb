@@ -15,7 +15,6 @@ $('#flash-message-container').html('')
     $(".index tbody").prepend(
       `<%= j render(partial: "#{table_row_prepend.class.to_s.underscore}_row",
                     object: table_row_prepend,
-                    locals: {class: 'info'})
-        %>`
+                    locals: {class: 'info'}) %>`
     )
 <% end %>

@@ -36,7 +36,9 @@ RSpec.describe Distribution, type: :model do
       storage_location = create(:storage_location)
       d = build(:distribution, storage_location: storage_location)
       line_item = build(:line_item, quantity: 1)
-      create(:inventory_item, storage_location: d.storage_location, item: line_item.item)
+      TestInventory.create_inventory(@organization, {
+        storage_location.id => { line_item.item_id => 10 }
+      })
       d.line_items << line_item
       expect(d).to be_valid
     end
@@ -54,10 +56,12 @@ RSpec.describe Distribution, type: :model do
     end
 
     it "ensures that any included items are found in the associated storage location" do
-      d = build(:distribution)
-      item_missing = create(:item, name: "missing")
-      d.line_items << build(:line_item, item: item_missing)
-      expect(d).not_to be_valid
+      unless Event.read_events?(@organization) # not relevant in event world
+        d = build(:distribution)
+        item_missing = create(:item, name: "missing")
+        d.line_items << build(:line_item, item: item_missing)
+        expect(d).not_to be_valid
+      end
     end
 
     it "ensures that the issued at is no earlier than 2000" do
