@@ -52,7 +52,7 @@ module Reports
       .joins(line_items: { item: :kit })
       .merge(Item.disposable)
       .where.not(kits: { id: nil })
-      .count
+      .sum("line_items.quantity")
     end
 
     def total_disposable_diapers_distributed

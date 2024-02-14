@@ -142,14 +142,14 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
     end
 
     it "returns the correct quantity of disposable diapers from kits" do
-      expect(subject.send(:distributed_disposable_diapers_from_kits)).to eq(2)
+      expect(subject.send(:distributed_disposable_diapers_from_kits)).to eq(20)
     end
 
     it 'should return the proper results on #report' do
       expect(subject.report).to eq({
-        entries: { "Disposable diapers distributed" => "222",
+        entries: { "Disposable diapers distributed" => "240",
                    "Cloth diapers distributed" => "300",
-                   "Average monthly disposable diapers distributed" => "19",
+                   "Average monthly disposable diapers distributed" => "20",
                    "Total product drives" => 2,
                    "Disposable diapers collected from drives" => "600",
                    "Cloth diapers collected from drives" => "900",
