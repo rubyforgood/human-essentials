@@ -24,7 +24,7 @@ module Reports
 
     # @return [Integer]
     def total_children_served
-      @total_children_served ||= total_children_served_with_loose_disposable + distributed_kits_with_disposable_items
+      @total_children_served ||= total_children_served_with_loose_disposables + children_served_with_kits_containing_disposables
     end
 
     # @return [Float]
@@ -34,21 +34,6 @@ module Reports
 
     # @return [Float]
     def per_child_monthly
-      total_distributions = organization.distributions.for_year(year).count
-      total_distributed_kits = distributed_kits_with_disposable_items
-
-      total_avg = if total_distributions.zero? && total_distributed_kits.zero?
-        0.0
-      else
-        (loose_disposable_distribution_average * total_distributions + kit_average * total_distributed_kits) / (total_distributions + total_distributed_kits)
-      end
-
-      total_avg.nan? ? 0.0 : total_avg
-    end
-
-    private
-
-    def loose_disposable_distribution_average
       organization
       .distributions
       .for_year(year)
@@ -57,15 +42,32 @@ module Reports
       .average('COALESCE(items.distribution_quantity, 50)') || 0.0
     end
 
-    def kit_average
-      organization
-      .kits
-      .joins(inventory_items: :item)
-      .merge(Item.disposable)
-      .average('COALESCE(inventory_items.quantity, 0)') || 0.0
+    private
+
+    def total_disposable_diapers_distributed
+      loose_disposable_distribution_total + disposable_diapers_from_kits_total
     end
 
-    def total_children_served_with_loose_disposable
+    def loose_disposable_distribution_total
+      organization
+      .distributions
+      .for_year(year)
+      .joins(line_items: :item)
+      .merge(Item.disposable)
+      .sum("line_items.quantity")
+    end
+
+    def disposable_diapers_from_kits_total
+      organization
+      .distributions
+      .for_year(year)
+      .joins(line_items: {item: :kit})
+      .merge(Item.disposable)
+      .where.not(items: {kit_id: nil})
+      .sum("line_items.quantity")
+    end
+
+    def total_children_served_with_loose_disposables
       organization
       .distributions
       .for_year(year)
@@ -74,15 +76,15 @@ module Reports
       .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50)')
     end
 
-    def distributed_kits_with_disposable_items
+    def children_served_with_kits_containing_disposables
       organization
       .distributions
       .for_year(year)
-      .joins(line_items: :item)
+      .joins(line_items: {item: :kit})
       .merge(Item.disposable)
       .where.not(items: {kit_id: nil})
       .distinct
-      .count("items.kit_id")
+      .count("kits.id")
     end
   end
 end
