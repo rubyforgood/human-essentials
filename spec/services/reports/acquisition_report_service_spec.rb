@@ -14,6 +14,20 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
       # We will create data both within and outside our date range, and both disposable and non disposable.
       # Spec will ensure that only the required data is included.
 
+      #Kits
+      kit = create(:kit, :with_item, organization: organization)
+
+      create(:base_item, name: "Adult Disposable Diaper", partner_key: "adult diapers", category: "disposable diaper")
+      create(:base_item, name: "Infant Disposable Diaper", partner_key: "infant diapers", category: "disposable diaper")
+
+      disposable_kit_item = create(:item, name: "Adult Disposable Diapers", partner_key: "adult diapers", kit: kit)
+      another_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", partner_key: "infant diapers", kit: kit)
+
+      distribution = create(:distribution, organization: organization, issued_at: within_time)
+
+      create(:line_item, :distribution, quantity: 10, item: disposable_kit_item, itemizable: distribution)
+      create(:line_item, :distribution, quantity: 10, item: another_disposable_kit_item, itemizable: distribution)
+
       # Distributions
       distributions = create_list(:distribution, 2, issued_at: within_time, organization: organization)
       outside_distributions = create_list(:distribution, 2, issued_at: outside_time, organization: organization)
@@ -128,14 +142,14 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
     end
 
     it "returns the correct quantity of disposable diapers from kits" do
-      expect(subject.send(:distributed_disposable_diapers_from_kits)).to eq(20)
+      expect(subject.send(:distributed_disposable_diapers_from_kits)).to eq(2)
     end
 
     it 'should return the proper results on #report' do
       expect(subject.report).to eq({
-        entries: { "Disposable diapers distributed" => "220",
+        entries: { "Disposable diapers distributed" => "222",
                    "Cloth diapers distributed" => "300",
-                   "Average monthly disposable diapers distributed" => "18",
+                   "Average monthly disposable diapers distributed" => "19",
                    "Total product drives" => 2,
                    "Disposable diapers collected from drives" => "600",
                    "Cloth diapers collected from drives" => "900",
