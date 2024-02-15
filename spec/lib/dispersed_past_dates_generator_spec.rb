@@ -13,8 +13,8 @@ RSpec.describe DispersedPastDatesGenerator do
 
     it "returns equally dispersed dates between all time ranges" do
       expect(dates_generator.next).to be_between(Time.zone.today - 6.days, Time.zone.today)
-      expect(dates_generator.next).to be_between(Time.zone.today - 31.days, Time.zone.today - 7.days)
-      expect(dates_generator.next).to be_between(Time.zone.today - 300.days, Time.zone.today - 32.days)
+      expect(dates_generator.next).to be_between(Time.zone.today - 30.days, Time.zone.today - 7.days)
+      expect(dates_generator.next).to be_between(Time.zone.today - 300.days, Time.zone.today - 31.days)
       expect(dates_generator.next).to be_between(Time.zone.today - 700.days, Time.zone.today - 350.days)
     end
 
@@ -24,10 +24,10 @@ RSpec.describe DispersedPastDatesGenerator do
       it "fits few dates in one time period" do
         expect(dates_generator.next).to be_between(Time.zone.today - 6.days, Time.zone.today)
         expect(dates_generator.next).to be_between(Time.zone.today - 6.days, Time.zone.today)
-        expect(dates_generator.next).to be_between(Time.zone.today - 31.days, Time.zone.today - 7.days)
-        expect(dates_generator.next).to be_between(Time.zone.today - 31.days, Time.zone.today - 7.days)
-        expect(dates_generator.next).to be_between(Time.zone.today - 300.days, Time.zone.today - 32.days)
-        expect(dates_generator.next).to be_between(Time.zone.today - 300.days, Time.zone.today - 32.days)
+        expect(dates_generator.next).to be_between(Time.zone.today - 30.days, Time.zone.today - 7.days)
+        expect(dates_generator.next).to be_between(Time.zone.today - 30.days, Time.zone.today - 7.days)
+        expect(dates_generator.next).to be_between(Time.zone.today - 300.days, Time.zone.today - 31.days)
+        expect(dates_generator.next).to be_between(Time.zone.today - 300.days, Time.zone.today - 31.days)
         expect(dates_generator.next).to be_between(Time.zone.today - 700.days, Time.zone.today - 350.days)
         expect(dates_generator.next).to be_between(Time.zone.today - 700.days, Time.zone.today - 350.days)
       end
@@ -36,8 +36,8 @@ RSpec.describe DispersedPastDatesGenerator do
     context "when #next is called more times than declared number of dates" do
       it "starts cycle from beginning" do
         expect(dates_generator.next).to be_between(Time.zone.today - 6.days, Time.zone.today)
-        expect(dates_generator.next).to be_between(Time.zone.today - 31.days, Time.zone.today - 7.days)
-        expect(dates_generator.next).to be_between(Time.zone.today - 300.days, Time.zone.today - 32.days)
+        expect(dates_generator.next).to be_between(Time.zone.today - 30.days, Time.zone.today - 7.days)
+        expect(dates_generator.next).to be_between(Time.zone.today - 300.days, Time.zone.today - 31.days)
         expect(dates_generator.next).to be_between(Time.zone.today - 700.days, Time.zone.today - 350.days)
         expect(dates_generator.next).to be_between(Time.zone.today - 6.days, Time.zone.today)
       end
