@@ -177,30 +177,36 @@ note = [
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ac enim orci. Donec id consequat est. Vivamus luctus vel erat quis tincidunt. Nunc quis varius justo. Integer quam augue, dictum vitae bibendum in, fermentum quis felis. Nam euismod ultrices velit a tristique. Vestibulum sed tincidunt erat. Vestibulum et ullamcorper sem. Sed ante leo, molestie vitae augue ac, aliquam ultrices enim."
 ]
 
+contact_name_at_creation = 'Name Not Provided'
+
 [
   {
     name: "Pawnee Parent Service",
     email: "verified@example.com",
     status: :approved,
-    notes: note.sample
+    notes: note.sample,
+    contact_name_at_creation:
   },
   {
     name: "Pawnee Homeless Shelter",
     email: "invited@pawneehomeless.com",
     status: :invited,
-    notes: note.sample
+    notes: note.sample,
+    contact_name_at_creation:
   },
   {
     name: "Pawnee Pregnancy Center",
     email: "unverified@pawneepregnancy.com",
     status: :invited,
-    notes: note.sample
+    notes: note.sample,
+    contact_name_at_creation:
   },
   {
     name: "Pawnee Senior Citizens Center",
     email: "recertification_required@example.com",
     status: :recertification_required,
-    notes: note.sample
+    notes: note.sample,
+    contact_name_at_creation:
   }
 ].each do |partner_option|
   p = Partner.find_or_create_by!(partner_option) do |partner|
