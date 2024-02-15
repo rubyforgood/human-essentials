@@ -27,7 +27,11 @@ FactoryBot.define do
       end
 
       after(:build) do |adjustment, evaluator|
-        item = evaluator.item || adjustment.storage_location.inventory_items.first.item
+        event_item = View::Inventory.new(adjustment.organization_id)
+          .items_for_location(adjustment.storage_location_id)
+          .first
+          &.db_item
+        item = evaluator.item || event_item || create(:item)
         adjustment.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item, itemizable: adjustment)
       end
     end

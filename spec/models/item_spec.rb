@@ -174,7 +174,12 @@ RSpec.describe Item, type: :model do
       it "identifies items that have been used previously" do
         no_history_item = create(:item)
         item_in_line_item = create(:line_item, :purchase).item
-        item_in_inventory_item = create(:inventory_item).item
+        item_in_inventory_item = create(:item)
+        TestInventory.create_inventory(@organization, {
+          @organization.storage_locations.first.id => {
+            item_in_inventory_item.id => 10
+          }
+        })
         item_in_barcodes = create(:barcode_item).barcodeable
 
         expect(no_history_item).not_to have_history

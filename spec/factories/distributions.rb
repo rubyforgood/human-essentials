@@ -35,11 +35,11 @@ FactoryBot.define do
       storage_location { create :storage_location, :with_items, item: item, organization: organization }
 
       after(:build) do |instance, evaluator|
-        item = if evaluator.item.nil?
-                 instance.storage_location.inventory_items.first.item
-               else
-                 evaluator.item
-               end
+        event_item = View::Inventory.new(instance.organization_id)
+          .items_for_location(instance.storage_location_id)
+          .first
+          &.db_item
+        item = evaluator.item || event_item
         instance.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item)
       end
     end
