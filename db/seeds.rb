@@ -12,6 +12,7 @@ Flipper.enable(:onebase)
 # ----------------------------------------------------------------------------
 # Random Record Generators
 # ----------------------------------------------------------------------------
+load "lib/dispersed_past_dates_generator.rb"
 
 def random_record(klass)
   klass.limit(1).order(Arel.sql('random()')).first
@@ -500,13 +501,15 @@ end
 # Donations
 # ----------------------------------------------------------------------------
 
+dates_generator = DispersedPastDatesGenerator.new(20)
 # Make some donations of all sorts
 20.times.each do
   source = Donation::SOURCES.values.sample
   # Depending on which source it uses, additional data may need to be provided.
   donation = Donation.new(source: source,
                           storage_location: random_record_for_org(pdx_org, StorageLocation),
-                          organization: pdx_org, issued_at: Time.zone.now)
+                          organization: pdx_org, 
+                          issued_at: dates_generator.next)
   case source
   when Donation::SOURCES[:product_drive]
     donation.product_drive = ProductDrive.first
@@ -526,6 +529,7 @@ end
 # ----------------------------------------------------------------------------
 # Distributions
 # ----------------------------------------------------------------------------
+dates_generator = DispersedPastDatesGenerator.new(20)
 
 inventory = InventoryAggregate.inventory_for(pdx_org.id)
 # Make some distributions, but don't use up all the inventory
@@ -538,7 +542,7 @@ inventory = InventoryAggregate.inventory_for(pdx_org.id)
     storage_location: storage_location,
     partner: random_record_for_org(pdx_org, Partner),
     organization: pdx_org,
-    issued_at: Faker::Date.between(from: 4.days.ago, to: Time.zone.today),
+    issued_at: dates_generator.next,
     delivery_method: delivery_method,
     shipping_cost: shipping_cost,
     comment: 'Urgent'
@@ -619,7 +623,10 @@ comments = [
   "Nullam dictum ac lectus at scelerisque. Phasellus volutpat, sem at eleifend tristique, massa mi cursus dui, eget pharetra ligula arcu sit amet nunc."
 ]
 
-20.times do
+dates_generator = DispersedPastDatesGenerator.new(25)
+
+25.times do
+  purchase_date = dates_generator.next
   storage_location = random_record_for_org(pdx_org, StorageLocation)
   vendor = random_record_for_org(pdx_org, Vendor)
   purchase = Purchase.new(
@@ -628,32 +635,13 @@ comments = [
     organization_id: pdx_org.id,
     storage_location_id: storage_location.id,
     amount_spent_in_cents: rand(200..10_000),
-    issued_at: (Time.zone.today - rand(15).days),
-    created_at: (Time.zone.today - rand(15).days),
-    updated_at: (Time.zone.today - rand(15).days),
+    issued_at: purchase_date,
+    created_at: purchase_date,
+    updated_at: purchase_date,
     vendor_id: vendor.id
   )
   PurchaseCreateService.call(purchase)
 end
-
-#re 2813_update_annual_report add some data for last year (enables system testing of reports)
-5.times do
-  storage_location = random_record_for_org(pdx_org, StorageLocation)
-  vendor = random_record_for_org(pdx_org, Vendor)
-  purchase = Purchase.new(
-    purchased_from: suppliers.sample,
-    comment: comments.sample,
-    organization_id: pdx_org.id,
-    storage_location_id: storage_location.id,
-    amount_spent_in_cents: rand(200..10_000),
-    issued_at: (Time.zone.today - 1.year),
-    created_at: (Time.zone.today - 1.year),
-    updated_at: (Time.zone.today - 1.year),
-    vendor_id: vendor.id
-  )
-  PurchaseCreateService.call(purchase)
-end
-
 
 # ----------------------------------------------------------------------------
 # Flipper
@@ -666,12 +654,14 @@ Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "new_logo")
 # ----------------------------------------------------------------------------
 # Add some Account Requests to fill up the account requests admin page
 
+dates_generator = DispersedPastDatesGenerator.new(3)
+
 [{ organization_name: "Telluride Diaper Bank",    website: "TDB.com", confirmed_at: nil },
  { organization_name: "Ouray Diaper Bank",        website: "ODB.com",   confirmed_at: nil },
  { organization_name: "Canon City Diaper Bank",   website: "CCDB.com",  confirmed_at: nil },
- { organization_name: "Golden Diaper Bank",       website: "GDB.com",   confirmed_at: (Time.zone.today - rand(15).days) },
- { organization_name: "Westminster Diaper Bank",  website: "WDB.com",   confirmed_at: (Time.zone.today - rand(15).days) },
- { organization_name: "Lakewood Diaper Bank",     website: "LDB.com",   confirmed_at: (Time.zone.today - rand(15).days) }].each do |account_request|
+ { organization_name: "Golden Diaper Bank",       website: "GDB.com",   confirmed_at: dates_generator.next },
+ { organization_name: "Westminster Diaper Bank",  website: "WDB.com",   confirmed_at: dates_generator.next },
+ { organization_name: "Lakewood Diaper Bank",     website: "LDB.com",   confirmed_at: dates_generator.next }].each do |account_request|
   AccountRequest.create(
     name: Faker::Name.unique.name,
     email: Faker::Internet.unique.email,
