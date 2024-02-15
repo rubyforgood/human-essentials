@@ -60,7 +60,7 @@ class DonationSitesController < ApplicationController
   private
 
   def donation_site_params
-    params.require(:donation_site).permit(:name, :address, :contact_name, :email, :phone)
+    params.require(:donation_site).permit(:name, :address)
   end
 
   helper_method \
