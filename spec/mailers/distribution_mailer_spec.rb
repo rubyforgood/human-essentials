@@ -61,7 +61,7 @@ RSpec.describe DistributionMailer, type: :mailer do
         distribution = create(:distribution, organization: @user.organization, comment: "Distribution comment", partner: @partner, delivery_method: :delivery)
         DistributionMailer.partner_mailer(@organization, distribution, 'test subject', distribution_changes)
       }
-      
+
       it "renders the body with 'delivered' specified" do
         expect(mail.body.encoded).to match("delivered")
       end
