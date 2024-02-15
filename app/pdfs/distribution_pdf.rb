@@ -133,8 +133,12 @@ class DistributionPdf
       "In-Kind Value Received",
       "Packages"]]
 
+    inventory = nil
+    if Event.read_events?(@distribution.organization)
+      inventory = View::Inventory.new(@distribution.organization_id)
+    end
     request_items = @distribution.request.request_items.map do |request_item|
-      RequestItem.from_json(request_item, @distribution.request)
+      RequestItem.from_json(request_item, @distribution.request, inventory)
     end
     line_items = @distribution.line_items.sorted
 

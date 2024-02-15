@@ -88,6 +88,14 @@ GEM
       erubi (>= 1.0.0)
       rack (>= 0.9.0)
       rouge (>= 1.0.0)
+    better_html (2.0.2)
+      actionview (>= 6.0)
+      activesupport (>= 6.0)
+      ast (~> 2.0)
+      erubi (~> 1.4)
+      parser (>= 2.4)
+      smart_properties
+    bigdecimal (3.1.6)
     bindex (0.8.1)
     binding_of_caller (1.0.0)
       debug_inspector (>= 0.0.1)
@@ -95,7 +103,7 @@ GEM
       autoprefixer-rails (>= 9.1.0)
       popper_js (>= 2.11.6, < 3)
       sassc-rails (>= 2.0.0)
-    brakeman (6.1.1)
+    brakeman (6.1.2)
       racc
     bugsnag (6.26.3)
       concurrent-ruby (~> 1.0)
@@ -125,7 +133,8 @@ GEM
     connection_pool (2.4.1)
     coverband (6.0.1)
       redis (>= 3.0)
-    crack (0.4.5)
+    crack (0.4.6)
+      bigdecimal
       rexml
     crass (1.0.6)
     cuprite (0.15)
@@ -160,10 +169,10 @@ GEM
     discard (1.3.0)
       activerecord (>= 4.2, < 8)
     docile (1.4.0)
-    dotenv (2.8.1)
-    dotenv-rails (2.8.1)
-      dotenv (= 2.8.1)
-      railties (>= 3.2)
+    dotenv (3.0.0)
+    dotenv-rails (3.0.0)
+      dotenv (= 3.0.0)
+      railties (>= 6.1)
     dry-core (1.0.1)
       concurrent-ruby (~> 1.0)
       zeitwerk (~> 2.6)
@@ -183,6 +192,13 @@ GEM
       dry-inflector (~> 1.0)
       dry-logic (~> 1.4)
       zeitwerk (~> 2.6)
+    erb_lint (0.5.0)
+      activesupport
+      better_html (>= 2.0.1)
+      parser (>= 2.7.1.4)
+      rainbow
+      rubocop
+      smart_properties
     erubi (1.12.0)
     execjs (2.9.1)
     factory_bot (6.4.5)
@@ -256,7 +272,7 @@ GEM
       guard (~> 2.1)
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
-    hashdiff (1.0.1)
+    hashdiff (1.1.0)
     hashie (5.0.0)
     httparty (0.21.0)
       mini_mime (>= 1.0.0)
@@ -296,7 +312,7 @@ GEM
     language_server-protocol (3.17.0.3)
     launchy (2.5.2)
       addressable (~> 2.8)
-    letter_opener (1.8.1)
+    letter_opener (1.9.0)
       launchy (>= 2.2, < 3)
     libv8-node (18.16.0.0-arm64-darwin)
     libv8-node (18.16.0.0-x86_64-darwin)
@@ -331,7 +347,7 @@ GEM
     mini_mime (1.1.5)
     mini_racer (0.8.0)
       libv8-node (~> 18.16.0.0)
-    minitest (5.21.2)
+    minitest (5.22.2)
     monetize (1.12.0)
       money (~> 6.12)
     money (6.16.0)
@@ -359,11 +375,11 @@ GEM
       net-protocol
     newrelic_rpm (9.7.1)
     nio4r (2.7.0)
-    nokogiri (1.16.0-arm64-darwin)
+    nokogiri (1.16.2-arm64-darwin)
       racc (~> 1.4)
-    nokogiri (1.16.0-x86_64-darwin)
+    nokogiri (1.16.2-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.16.0-x86_64-linux)
+    nokogiri (1.16.2-x86_64-linux)
       racc (~> 1.4)
     notiffany (0.1.3)
       nenv (~> 0.1)
@@ -398,7 +414,7 @@ GEM
       activerecord (>= 6.1)
       request_store (~> 1.4)
     parallel (1.24.0)
-    parser (3.3.0.2)
+    parser (3.3.0.5)
       ast (~> 2.4.1)
       racc
     pdf-core (0.9.0)
@@ -481,9 +497,9 @@ GEM
     rb-inotify (0.10.1)
       ffi (~> 1.0)
     recaptcha (5.16.0)
-    redis (5.0.8)
+    redis (5.1.0)
       redis-client (>= 0.17.0)
-    redis-client (0.18.0)
+    redis-client (0.19.1)
       connection_pool
     regexp_parser (2.9.0)
     request_store (1.5.1)
@@ -573,6 +589,7 @@ GEM
       rack-protection (= 3.1.0)
       tilt (~> 2.0)
     slop (3.6.0)
+    smart_properties (1.17.0)
     snaky_hash (2.0.1)
       hashie
       version_gem (~> 1.1, >= 1.1.1)
@@ -621,7 +638,7 @@ GEM
       activemodel (>= 6.0.0)
       bindex (>= 0.4.0)
       railties (>= 6.0.0)
-    webmock (3.19.1)
+    webmock (3.20.0)
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
@@ -632,7 +649,7 @@ GEM
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yard (0.9.34)
-    zeitwerk (2.6.12)
+    zeitwerk (2.6.13)
 
 PLATFORMS
   arm64-darwin-20
@@ -668,6 +685,7 @@ DEPENDENCIES
   discard (~> 1.3)
   dotenv-rails
   dry-struct
+  erb_lint
   factory_bot_rails
   faker
   filterrific
@@ -711,7 +729,7 @@ DEPENDENCIES
   rails-controller-testing
   rails-erd
   recaptcha
-  redis (~> 5.0)
+  redis (~> 5.1)
   rolify (~> 6.0)
   rspec-rails (~> 6.1.1)
   rubocop
@@ -728,7 +746,7 @@ DEPENDENCIES
   terser
   turbo-rails
   web-console
-  webmock (~> 3.19)
+  webmock (~> 3.20)
 
 BUNDLED WITH
    2.5.4

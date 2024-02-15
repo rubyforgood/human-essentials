@@ -110,6 +110,28 @@ RSpec.describe Audit, type: :model do
       create(:audit, storage_location: storage_location4, organization: storage_location4.organization)
       expect(Audit.storage_locations_audited_for(@organization).to_a).to match_array([storage_location1, storage_location2])
     end
+
+    it "`self.since?` returns true iff some audit occurred after itemizable created_at that shares item for location(s)" do
+      storage_location1 = create(:storage_location, :with_items, item_quantity: 10, organization: @organization)
+      storage_location2 = create(:storage_location, :with_items, item_quantity: 10, organization: @organization)
+      storage_location3 = create(:storage_location, :with_items, item_quantity: 10, organization: @organization)
+      storage_location4 = create(:storage_location, organization: @organization)
+
+      create(:audit, storage_location: storage_location2, line_items_attributes: [{item_id: storage_location2.items.first.id, quantity: 10}])
+
+      xfer1 = create(:transfer, :with_items, item_quantity: 5, item: storage_location1.items.first, from: storage_location1, to: storage_location2, organization: @organization)
+      xfer2 = create(:transfer, :with_items, item_quantity: 5, item: storage_location1.items.first, from: storage_location1, to: storage_location3, organization: @organization)
+      xfer3 = create(:transfer, :with_items, item_quantity: 10, item: storage_location2.items.first, from: storage_location2, to: storage_location3, organization: @organization)
+
+      create(:audit, storage_location: storage_location1, line_items_attributes: [{item_id: storage_location1.items.first.id, quantity: 5}])
+      create(:audit, storage_location: storage_location3, line_items_attributes: [{item_id: storage_location3.items.first.id, quantity: 10}])
+
+      expect(Audit.since?(xfer1, storage_location1.id)).to be true # match items and location and occurs after
+      expect(Audit.since?(xfer1, storage_location1.id, storage_location2.id)).to be true # handles multiple locations
+      expect(Audit.since?(xfer3, storage_location2)).to be false # match items and location but occurs before
+      expect(Audit.since?(xfer2, storage_location3.id)).to be false # match location and occurs after but different items
+      expect(Audit.since?(xfer3, storage_location4)).to be false # no audits at location
+    end
   end
 
   describe "versioning" do
