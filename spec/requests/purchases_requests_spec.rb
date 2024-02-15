@@ -106,6 +106,10 @@ RSpec.describe "Purchases", type: :request do
         expect do
           put purchase_path(default_params.merge(id: purchase.id, purchase: purchase_params))
         end.to change { purchase.storage_location.inventory_items.first.quantity }.by(5)
+          .and change {
+            View::Inventory.new(@organization.id)
+              .quantity_for(storage_location: purchase.storage_location_id, item_id: line_item.item_id)
+          }.by(5)
       end
 
       describe "when removing a line item" do
@@ -123,6 +127,10 @@ RSpec.describe "Purchases", type: :request do
           expect do
             put purchase_path(default_params.merge(id: purchase.id, purchase: purchase_params))
           end.to change { purchase.storage_location.inventory_items.first.quantity }.by(-10)
+            .and change {
+                   View::Inventory.new(@organization.id)
+                     .quantity_for(storage_location: purchase.storage_location_id, item_id: line_item.item_id)
+                 }.by(-10)
         end
       end
 
@@ -147,7 +155,10 @@ RSpec.describe "Purchases", type: :request do
           expect(new_storage_location.size).to eq 8
         end
 
+        # TODO this test is invalid in event-world since it's handled by the aggregate
         it "rollsback updates if quantity would go below 0" do
+          next if Event.read_events?(@organization)
+
           purchase = create(:purchase, :with_items, item_quantity: 10)
           original_storage_location = purchase.storage_location
 

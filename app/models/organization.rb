@@ -110,6 +110,10 @@ class Organization < ApplicationRecord
     account_request&.update!(status: "admin_approved")
   end
 
+  def flipper_id
+    "Org:#{id}"
+  end
+
   ALL_PARTIALS = [
     ['Media Information', 'media_information'],
     ['Agency Stability', 'agency_stability'],
@@ -185,7 +189,11 @@ class Organization < ApplicationRecord
   end
 
   def total_inventory
-    inventory_items.sum(:quantity) || 0
+    if Event.read_events?(self)
+      View::Inventory.total_inventory(id)
+    else
+      inventory_items.sum(:quantity) || 0
+    end
   end
 
   def self.seed_items(organization = Organization.all)

@@ -4,8 +4,17 @@ RSpec.describe AllocateKitInventoryService, type: :service do
   let(:item_out_of_stock) { create(:item, name: "Item out of stock", organization: organization, on_hand_minimum_quantity: 0) }
 
   let(:storage_location) { create(:storage_location, organization: organization) }
-  let(:item_inventory) { create(:inventory_item, storage_location: storage_location, quantity: item.on_hand_minimum_quantity, item: item) }
-  let(:item_out_of_stock_inventory) { create(:inventory_item, storage_location: storage_location, quantity: item_out_of_stock.on_hand_minimum_quantity, item: item_out_of_stock) }
+  let(:item_inventory) { storage_location.inventory_items.where(item_id: item.id).first }
+  let(:item_out_of_stock_inventory) { storage_location.inventory_items.where(item_id: item_out_of_stock.id)&.first }
+
+  before(:each) do
+    TestInventory.create_inventory(organization, {
+      storage_location.id => {
+        item.id => 15,
+        item_out_of_stock.id => 0
+      }
+    })
+  end
 
   describe "#error" do
     let(:kit) { Kit.create(params) }
@@ -68,6 +77,9 @@ RSpec.describe AllocateKitInventoryService, type: :service do
 
         # Check that the kit's item quantity was increased by the correct amount
         expect(kit_item_inventory.reload.quantity).to eq(kit_quantity_before_allocate + increase_by)
+        inventory = View::Inventory.new(organization.id)
+        expect(inventory.quantity_for(storage_location: storage_location.id, item_id: item.id)).to eq(13)
+        expect(inventory.quantity_for(storage_location: storage_location.id, item_id: kit.item.id)).to eq(2)
 
         # Check that Inventory out decreased by allocated kit's line_items and their respective quantities
         expect(inventory_out.line_items.count).to eq(kit.line_items.count)
@@ -165,10 +177,14 @@ RSpec.describe AllocateKitInventoryService, type: :service do
 
           service = AllocateKitInventoryService.new(kit: kit, storage_location: storage_location, increase_by: quantity_of_kits).allocate
 
-          expect(service.error).to include("Requested items exceed the available inventory")
+          message = Event.read_events?(@organization) ? "Could not reduce quantity" : "items exceed the available inventory"
+          expect(service.error).to include(message)
 
           expect(item_inventory.reload.quantity).to eq(quantity_of_items)
           expect(kit_item_inventory.reload.quantity).to eq(kit_quantity_before_allocate)
+          inventory = View::Inventory.new(organization.id)
+          expect(inventory.quantity_for(storage_location: storage_location.id, item_id: item.id)).to eq(quantity_of_items)
+          expect(inventory.quantity_for(storage_location: storage_location.id, item_id: kit.item.id)).to eq(kit_quantity_before_allocate)
         end
       end
     end
