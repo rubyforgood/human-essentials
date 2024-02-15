@@ -152,8 +152,6 @@ group :development, :test do
   gem "pry-nav"
   # RSpec behavioral testing framework for Rails.
   gem "rspec-rails", "~> 6.1.0"
-  # Allow retrying flaky RSpec tests.
-  gem "rspec-retry"
   # Static analysis / linter.
   gem "rubocop"
   # Rails add-on for static analysis.
@@ -198,11 +196,11 @@ group :test do
   # Show code coverage.
   gem 'simplecov'
   # More concise test ("should") matchers
-  gem 'shoulda-matchers', '~> 6.0'
-  # Selenium webdriver automatic installation and update.
-  gem 'selenium-webdriver', '~> 4.16'
+  gem 'shoulda-matchers', '~> 6.1'
   # Mock HTTP requests and ensure they are not called during tests.
   gem "webmock", "~> 3.19"
+  # Interface capybara to chrome headless
+  gem "cuprite"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
