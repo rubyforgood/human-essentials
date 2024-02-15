@@ -37,7 +37,7 @@ module Reports
 
     # @return [Integer]
     def distributed_loose_disposable_diapers
-      @distributed_disposable_diapers ||= organization
+      @distributed_loose_disposable_diapers ||= organization
                                .distributions
                                .for_year(year)
                                .joins(line_items: :item)
@@ -122,30 +122,30 @@ module Reports
 
     # @return [Float]
     def percent_disposable_donated
-      return 0.0 if total_disposable_diapers.zero?
+      return 0.0 if total_disposable_diapers_acquired.zero?
 
-      (donated_disposable_diapers / total_disposable_diapers.to_f) * 100
+      (donated_disposable_diapers / total_disposable_diapers_acquired.to_f) * 100
     end
 
     # @return [Float]
     def percent_cloth_diapers_donated
-      return 0.0 if total_cloth_diapers.zero?
+      return 0.0 if total_cloth_diapers_acquired.zero?
 
-      (donated_cloth_diapers / total_cloth_diapers.to_f) * 100
+      (donated_cloth_diapers / total_cloth_diapers_acquired.to_f) * 100
     end
 
     # @return [Float]
     def percent_cloth_diapers_purchased
       return 0.0 if purchased_cloth_diapers.zero?
 
-      (purchased_cloth_diapers / total_cloth_diapers.to_f) * 100
+      (purchased_cloth_diapers / total_cloth_diapers_acquired.to_f) * 100
     end
 
     # @return [Float]
     def percent_disposable_diapers_purchased
       return 0.0 if purchased_loose_disposable_diapers.zero?
 
-      (purchased_loose_disposable_diapers / total_disposable_diapers.to_f) * 100
+      (purchased_loose_disposable_diapers / total_disposable_diapers_acquired.to_f) * 100
     end
 
     # @return [Float]
@@ -197,13 +197,13 @@ module Reports
     end
 
     # @return [Integer]
-    def total_disposable_diapers
-      @total_disposable_diapers ||= purchased_loose_disposable_diapers + donated_disposable_diapers
+    def total_disposable_diapers_acquired
+      @total_disposable_diapers_acquired ||= purchased_loose_disposable_diapers + donated_disposable_diapers
     end
 
     # @return [Integer]
-    def total_cloth_diapers
-      @total_cloth_diapers ||= purchased_cloth_diapers + donated_cloth_diapers
+    def total_cloth_diapers_acquired
+      @total_cloth_diapers_acquired ||= purchased_cloth_diapers + donated_cloth_diapers
     end
 
     # @return [Integer]
