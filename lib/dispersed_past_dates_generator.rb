@@ -1,10 +1,10 @@
 class DispersedPastDatesGenerator
-  RANGES = [0..6, 7..31, 32..300, 350..700].freeze
+  DAYS_RANGES = [0..6, 7..30, 31..300, 350..700].freeze
 
   def initialize(dates_quantity)
     @dates_quantity = dates_quantity
     @current_iteration = 0.0
-    @dates_per_range = (dates_quantity.to_f / RANGES.size).ceil
+    @dates_per_range = (dates_quantity.to_f / DAYS_RANGES.size).ceil
   end
 
   def next
@@ -16,7 +16,7 @@ class DispersedPastDatesGenerator
       0.0
     end
 
-    Time.zone.today - rand(RANGES[range_index]).days
+    Time.zone.today - rand(DAYS_RANGES[range_index]).days
   end
 
   private
