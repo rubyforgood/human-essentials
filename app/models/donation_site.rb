@@ -4,12 +4,9 @@
 #
 #  id              :integer          not null, primary key
 #  address         :string
-#  contact_name    :string
-#  email           :string
 #  latitude        :float
 #  longitude       :float
 #  name            :string
-#  phone           :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :integer
@@ -22,8 +19,6 @@ class DonationSite < ApplicationRecord
   belongs_to :organization
 
   validates :name, :address, :organization, presence: true
-  validates :phone, presence: {message: "Must provide a phone or an email"}, if: proc { |ds| ds.email.blank? }
-  validates :email, presence: {message: "Must provide a phone or an email"}, if: proc { |ds| ds.phone.blank? }
 
   has_many :donations, dependent: :destroy
 

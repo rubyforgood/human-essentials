@@ -4,12 +4,9 @@
 #
 #  id              :integer          not null, primary key
 #  address         :string
-#  contact_name    :string
-#  email           :string
 #  latitude        :float
 #  longitude       :float
 #  name            :string
-#  phone           :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :integer
