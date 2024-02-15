@@ -2,7 +2,9 @@ load "lib/dispersed_past_dates_generator.rb"
 
 RSpec.describe DispersedPastDatesGenerator do
   describe "constants" do
-    it { expect(described_class::RANGES).to eq([0..6, 7..31, 32..300, 350..700]) }
+    it "has 4 day ranges for generation of past dates" do
+      expect(described_class::DAYS_RANGES).to eq([0..6, 7..30, 31..300, 350..700])
+    end
   end
 
   describe "#next" do
