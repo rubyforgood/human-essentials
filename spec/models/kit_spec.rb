@@ -105,15 +105,19 @@ RSpec.describe Kit, type: :model do
     context 'with inventory items' do
       it 'should return false' do
         kit = create(:kit, :with_item)
-        create(:inventory_item, item: kit.item)
-        expect(kit.reload.can_deactivate?).to eq(false)
+        TestInventory.create_inventory(@organization, {
+          @organization.storage_locations.first.id => {
+            kit.item.id => 10
+          }
+        })
+        expect(kit.reload.can_deactivate?(nil)).to eq(false)
       end
     end
 
     context 'without inventory items' do
       it 'should return true' do
         kit = create(:kit, :with_item)
-        expect(kit.reload.can_deactivate?).to eq(true)
+        expect(kit.reload.can_deactivate?(nil)).to eq(true)
       end
     end
   end

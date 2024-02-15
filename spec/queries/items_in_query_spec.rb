@@ -2,7 +2,8 @@
 
 RSpec.describe ItemsInQuery do
   let!(:storage_location) { create(:storage_location, organization: @organization) }
-  let!(:other_storage_location) { create(:storage_location, :with_items, item: create(:item), item_quantity: 10, organization: @organization) }
+  let(:other_item) { create(:item) }
+  let!(:other_storage_location) { create(:storage_location, :with_items, item: other_item, item_quantity: 10, organization: @organization) }
   subject { ItemsInQuery.new(storage_location: storage_location, organization: @organization).call }
 
   describe "items_in" do
@@ -10,7 +11,7 @@ RSpec.describe ItemsInQuery do
       create_list(:donation, 2, :with_items, item: create(:item), item_quantity: 5, storage_location: storage_location)
       create_list(:purchase, 2, :with_items, item: create(:item), item_quantity: 5, storage_location: storage_location)
       create_list(:adjustment, 2, :with_items, item: create(:item), item_quantity: 5, storage_location: storage_location)
-      create_list(:transfer, 2, :with_items, item_quantity: 5, item: other_storage_location.inventory_items.first.item, from: other_storage_location, to: storage_location)
+      create_list(:transfer, 2, :with_items, item_quantity: 5, item: other_item, from: other_storage_location, to: storage_location)
     end
 
     it "returns a collection with the fields name, item_id, quantity" do

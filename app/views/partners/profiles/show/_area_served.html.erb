@@ -9,8 +9,8 @@
       <% if served_area_col.any? %>
         <%= render partial: "partners/profiles/show/served_area_row", collection: served_area_col %>
       <% else %>
-        <tr ><td class="county-name"><%= "No County Specified" %></td><td class="client-share percent">100 %</td></tr>
-      <%end %>
+        <tr><td class="county-name"><%= "No County Specified" %></td><td class="client-share percent">100 %</td></tr>
+      <% end %>
     </table>
   </div>
 </div>

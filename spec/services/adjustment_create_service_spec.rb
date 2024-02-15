@@ -3,17 +3,28 @@ RSpec.describe AdjustmentCreateService, type: :service do
 
   subject { AdjustmentCreateService }
   describe "call" do
-    let!(:storage_location) { create(:storage_location, :with_items, item_count: 2) }
+    let!(:storage_location) { create(:storage_location, :with_items, item_count: 2, item_quantity: 100) }
     let!(:item_1) { storage_location.items.first }
     let!(:item_2) { storage_location.items.second }
     let!(:inventory_item_1) { InventoryItem.where(storage_location_id: storage_location.id, item_id: storage_location.items.first.id).first }
     let!(:inventory_item_2) { InventoryItem.where(storage_location_id: storage_location.id, item_id: storage_location.items.second.id).first }
 
+    # These can't be `let` variables because they need to be recalculated each time.
+    def item1_inventory_quantity
+      View::Inventory.new(storage_location.organization_id)
+        .quantity_for(item_id: item_1.id, storage_location: storage_location.id)
+    end
+
+    def item2_inventory_quantity
+      View::Inventory.new(storage_location.organization_id)
+        .quantity_for(item_id: item_2.id, storage_location: storage_location.id)
+    end
+
     it "increases stored inventory on a positive adjustment" do
       expect do
         adjustment_params = {user_id: @user.id, organization_id: @organization.id, storage_location_id: storage_location.id, line_items_attributes: {"0": {item_id: storage_location.items.first.id, quantity: 5}}}
         subject.new(adjustment_params).call
-      end.to change { inventory_item_1.reload.quantity }.by(5)
+      end.to change { inventory_item_1.reload.quantity }.by(5).and change { item1_inventory_quantity }.by(5)
       expect(AdjustmentEvent.count).to eq(1)
       event = AdjustmentEvent.last
       expect(event.data).to eq(EventTypes::InventoryPayload.new(
@@ -43,7 +54,7 @@ RSpec.describe AdjustmentCreateService, type: :service do
       expect do
         adjustment_params = {user_id: @user.id, organization_id: @organization.id, storage_location_id: storage_location.id, line_items_attributes: {"0": {item_id: storage_location.items.first.id, quantity: -5}}}
         subject.new(adjustment_params).call
-      end.to change { inventory_item_1.reload.quantity }.by(-5)
+      end.to change { inventory_item_1.reload.quantity }.by(-5).and change { item1_inventory_quantity }.by(-5)
       expect(AdjustmentEvent.count).to eq(1)
       event = AdjustmentEvent.last
       expect(event.data).to eq(EventTypes::InventoryPayload.new(
@@ -81,7 +92,7 @@ RSpec.describe AdjustmentCreateService, type: :service do
                                "2": {item_id: storage_location.items.first.id, quantity: 2}
                              }}
         subject.new(adjustment_params).call
-      end.to change { inventory_item_1.reload.quantity }.by(1)
+      end.to change { inventory_item_1.reload.quantity }.by(1).and change { item1_inventory_quantity }.by(1)
       adjustment = Adjustment.last
       expect(adjustment.line_items.count).to eq(1)
       expect(adjustment.line_items[0].quantity).to eq(1)
@@ -98,14 +109,14 @@ RSpec.describe AdjustmentCreateService, type: :service do
                                "2": {item_id: item_1.id, quantity: 2}
                              }}
         subject.new(adjustment_params).call
-      end.to change { inventory_item_1.reload.quantity }.by(-7)
+      end.to change { inventory_item_1.reload.quantity }.by(-7).and change { item1_inventory_quantity }.by(-7)
       adjustment = Adjustment.last
       expect(adjustment.line_items.count).to eq(1)
       expect(adjustment.line_items[0].quantity).to eq(-7)
     end
 
     it "does not allow inventory to be adjusted below 0" do
-      quantity = -1 * (inventory_item_1.quantity + 1)
+      quantity = -101
       expect do
         adjustment_params = {user_id: @user.id,
                              organization_id: @organization.id,
@@ -114,11 +125,11 @@ RSpec.describe AdjustmentCreateService, type: :service do
                                "0": {item_id: item_1.id, quantity: quantity}
                              }}
         subject.new(adjustment_params).call
-      end.to change { inventory_item_1.reload.quantity }.by(0)
+      end.to change { inventory_item_1.reload.quantity }.by(0).and change { item1_inventory_quantity }.by(0)
     end
 
     it "gives an error if we attempt to adjust inventory below 0" do
-      quantity = -1 * (inventory_item_1.quantity + 1)
+      quantity = -101
       adjustment_params = {user_id: @user.id,
                            organization_id: @organization.id,
                            storage_location_id: storage_location.id,
@@ -131,9 +142,6 @@ RSpec.describe AdjustmentCreateService, type: :service do
     end
 
     it "handles adjustments to multiple items" do
-      quantity_1 = inventory_item_1.quantity
-      quantity_2 = inventory_item_2.quantity
-
       adjustment_params = {user_id: @user.id,
                            organization_id: @organization.id,
                            storage_location_id: storage_location.id,
@@ -143,8 +151,8 @@ RSpec.describe AdjustmentCreateService, type: :service do
                              "2": {item_id: item_1.id, quantity: -2}
                            }}
       subject.new(adjustment_params).call
-      expect(inventory_item_1.reload.quantity).to eq(quantity_1 + 3)
-      expect(inventory_item_2.reload.quantity).to eq(quantity_2 + 2)
+      expect(inventory_item_1.reload.quantity).to eq(103)
+      expect(inventory_item_2.reload.quantity).to eq(102)
       adjustment = Adjustment.last
       expect(adjustment.line_items.count).to eq(2)
       line_item_1 = adjustment.line_items.where(item_id: item_1.id).first

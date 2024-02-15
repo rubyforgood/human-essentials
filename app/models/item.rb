@@ -134,7 +134,14 @@ class Item < ApplicationRecord
   end
 
   def has_history?
-    !(line_items.empty? && inventory_items.empty? && barcode_items.empty?)
+    return true if line_items.any? || barcode_items.any?
+
+    if Event.read_events?(organization)
+      inventory = View::Inventory.new(organization_id)
+      inventory.quantity_for(item_id: id).positive?
+    else
+      inventory_items.any?
+    end
   end
 
   def self.gather_items(current_organization, global = false)
@@ -159,6 +166,7 @@ class Item < ApplicationRecord
     ["Name", "Barcodes", "Base Item", "Quantity"]
   end
 
+  # TODO remove this method once read_events? is true everywhere
   def csv_export_attributes
     [
       name,
@@ -166,6 +174,20 @@ class Item < ApplicationRecord
       base_item.name,
       inventory_items.sum(&:quantity)
     ]
+  end
+
+  # @param items [Array<Item>]
+  # @param inventory [View::Inventory]
+  # @return [String]
+  def self.generate_csv_from_inventory(items, inventory)
+    item_quantities = items.to_h { |i| [i.id, inventory.quantity_for(item_id: i.id)] }
+    CSV.generate(headers: true) do |csv|
+      csv_data = items.map do |item|
+        attributes = [item.name, item.barcode_count, item.base_item.name, item_quantities[item.id]]
+        attributes.map { |attr| normalize_csv_attribute(attr) }
+      end
+      ([csv_export_headers] + csv_data).each { |row| csv << row }
+    end
   end
 
   def default_quantity

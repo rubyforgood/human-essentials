@@ -48,6 +48,17 @@ RSpec.describe "Managing requests", type: :system, js: true do
             last_row.find('option', text: item[:name], exact_text: true).select_option
             last_row.find_all('.form-control').last.fill_in(with: item[:person_count])
           end
+
+          # delete an item
+          find_all('td').last.click
+
+          # BUG: Consider how to make this work. Currently
+          # partners/family_request_create_service validates that no blank values
+          # got passed in. This results in an error. partners/request_create_service filters
+          # all blank items passed in. What is correct behavior?
+          #
+          # Trigger another row but keep it empty. It should still be valid!
+          # click_link 'Add Another Item'
         end
 
         context 'THEN a request records will be created and the partner will be notified via flash message on the dashboard' do
@@ -62,9 +73,13 @@ RSpec.describe "Managing requests", type: :system, js: true do
             visit partners_request_path(id: Request.last.id)
 
             # Should have the proper quantity per each item.
+            deleted_item = item_details.pop
             item_details.each do |item|
               expect(page).to have_content("#{item[:quantity].to_i * item[:quantity_per_person]} of #{item[:name]}")
             end
+
+            # Should not have the last item: it was deleted.
+            expect(page).to_not have_content("#{deleted_item[:quantity].to_i * deleted_item[:quantity_per_person]} of #{deleted_item[:name]}")
           end
         end
       end
@@ -132,6 +147,9 @@ RSpec.describe "Managing requests", type: :system, js: true do
             last_row.find_all('.form-control').last.fill_in(with: item[:quantity])
           end
 
+          # delete an item
+          find_all('td').last.click
+
           # Trigger another row but keep it empty. It should still be valid!
           click_link 'Add Another Item'
         end
@@ -148,9 +166,13 @@ RSpec.describe "Managing requests", type: :system, js: true do
           it 'AND the partner_user can view the details of the created request in a seperate page' do
             visit partners_request_path(id: Request.last.id)
 
+            deleted_item = item_details.pop
             item_details.each do |item|
               expect(page).to have_content("#{item[:quantity]} of #{item[:name]}")
             end
+
+            # Should not have the last item: it was deleted.
+            expect(page).not_to have_content("#{deleted_item[:quantity]} of #{deleted_item[:name]}")
           end
         end
       end
