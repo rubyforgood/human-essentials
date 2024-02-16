@@ -501,7 +501,7 @@ end
 # Donations
 # ----------------------------------------------------------------------------
 
-dates_generator = DispersedPastDatesGenerator.new(20)
+dates_generator = DispersedPastDatesGenerator.new
 # Make some donations of all sorts
 20.times.each do
   source = Donation::SOURCES.values.sample
@@ -529,7 +529,7 @@ end
 # ----------------------------------------------------------------------------
 # Distributions
 # ----------------------------------------------------------------------------
-dates_generator = DispersedPastDatesGenerator.new(20)
+dates_generator = DispersedPastDatesGenerator.new
 
 inventory = InventoryAggregate.inventory_for(pdx_org.id)
 # Make some distributions, but don't use up all the inventory
@@ -623,7 +623,7 @@ comments = [
   "Nullam dictum ac lectus at scelerisque. Phasellus volutpat, sem at eleifend tristique, massa mi cursus dui, eget pharetra ligula arcu sit amet nunc."
 ]
 
-dates_generator = DispersedPastDatesGenerator.new(25)
+dates_generator = DispersedPastDatesGenerator.new
 
 25.times do
   purchase_date = dates_generator.next
@@ -654,7 +654,7 @@ Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "new_logo")
 # ----------------------------------------------------------------------------
 # Add some Account Requests to fill up the account requests admin page
 
-dates_generator = DispersedPastDatesGenerator.new(3)
+dates_generator = DispersedPastDatesGenerator.new
 
 [{ organization_name: "Telluride Diaper Bank",    website: "TDB.com", confirmed_at: nil },
  { organization_name: "Ouray Diaper Bank",        website: "ODB.com",   confirmed_at: nil },
