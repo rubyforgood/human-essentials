@@ -13,7 +13,6 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
                                     entries: {
                                       'Average children served monthly' => "0",
                                       'Total children served' => "0",
-                                      'Diapers per child monthly' => "0",
                                       'Repackages diapers?' => 'N',
                                       'Monthly diaper distributions?' => 'N'
                                     }
@@ -59,7 +58,6 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
                                     entries: {
                                       'Average children served monthly' => "8",
                                       'Total children served' => "101",
-                                      'Diapers per child monthly' => "25",
                                       'Repackages diapers?' => 'Y',
                                       'Monthly diaper distributions?' => 'Y'
                                     }
@@ -103,7 +101,6 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
                                     entries: {
                                       'Average children served monthly' => "3",
                                       'Total children served' => "41",
-                                      'Diapers per child monthly' => "50",
                                       'Repackages diapers?' => 'Y',
                                       'Monthly diaper distributions?' => 'Y'
                                     }
