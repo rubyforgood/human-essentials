@@ -15,9 +15,15 @@
 #  user_id         :bigint
 #
 class Event < ApplicationRecord
+  include Filterable
   scope :for_organization, ->(organization_id) { where(organization_id: organization_id).order(:event_time, :updated_at) }
   scope :without_snapshots, -> { where("type != 'SnapshotEvent'") }
   scope :during, ->(range) { where(events: {created_at: range}) }
+  scope :by_type, ->(type) { where(type: type) }
+  scope :by_storage_location, -> (loc_id) {
+    joins("left join lateral jsonb_array_elements(data->'items') AS item ON true").
+    where("type = 'SnapshotEvent' OR (item->>'from_storage_location')=? OR (item->>'to_storage_location')=?", loc_id, loc_id)
+  }
 
   serialize :data, EventTypes::StructCoder.new(EventTypes::InventoryPayload)
 
@@ -29,6 +35,13 @@ class Event < ApplicationRecord
     self.user_id = PaperTrail.request&.whodunnit
   end
   after_create :validate_inventory
+
+  # @return [Array<OpenStruct>]
+  def self.types_for_select
+    self.descendants.map { |klass|
+      OpenStruct.new(name: klass.name.sub(/Event/, '').titleize, value: klass.name)
+    }.sort_by(&:name)
+  end
 
   # Returns the most recent "usable" snapshot. A snapshot is unusable if there is another event
   # that was originally made before the snapshot, but was later updated/edited after the snapshot

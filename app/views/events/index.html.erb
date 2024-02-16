@@ -41,12 +41,20 @@
                   <%= label_tag "Date Range" %>
                   <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %>
                 </div>
+                <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                  <%= filter_select(scope: :by_type, collection: Event.types_for_select, key: :value, value: :name,
+                                    selected: params.dig(:filters, :by_type)) %>
+                </div>
+                <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                  <%= filter_select(scope: :by_storage_location, collection: current_organization.storage_locations,
+                                    selected:params.dig(:filters, :by_storage_location)) %>
+                </div>
               </div>
-              </div>
-              <div class="card-footer">
-                <%= filter_button %>
-                <%= clear_filter_button %>
-              </div>
+            </div>
+            <div class="card-footer">
+              <%= filter_button %>
+              <%= clear_filter_button %>
+            </div>
             <% end # form %>
             </div>
         <!-- /.card -->
