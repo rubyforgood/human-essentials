@@ -7,10 +7,10 @@ class DispersedPastDatesGenerator
 
   def next
     day = Time.zone.today - rand(DAYS_RANGES[@current_index]).days
-    if DAYS_RANGES.size - 1 > @current_index
-      @current_index = @current_index.next
+    @current_index = if DAYS_RANGES.size - 1 > @current_index
+      @current_index.next
     else
-      @current_index = 0
+      0
     end
 
     day
