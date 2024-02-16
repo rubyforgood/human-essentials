@@ -16,7 +16,6 @@ module Reports
                     entries: {
                       'Average children served monthly' => number_with_delimiter(average_children_monthly.round),
                       'Total children served' => number_with_delimiter(total_children_served),
-                      'Diapers per child monthly' => number_with_delimiter(per_child_monthly.round),
                       'Repackages diapers?' => organization.repackage_essentials? ? 'Y' : 'N',
                       'Monthly diaper distributions?' => organization.distribute_monthly? ? 'Y' : 'N'
                     } }
@@ -30,16 +29,6 @@ module Reports
     # @return [Float]
     def average_children_monthly
       total_children_served / 12.0
-    end
-
-    # @return [Float]
-    def per_child_monthly
-      organization
-      .distributions
-      .for_year(year)
-      .joins(line_items: :item)
-      .merge(Item.disposable)
-      .average('COALESCE(items.distribution_quantity, 50)') || 0.0
     end
 
     private
