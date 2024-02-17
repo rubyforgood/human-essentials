@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_07_202431) do
+ActiveRecord::Schema[7.0].define(version: 2024_02_16_163610) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -250,7 +250,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_07_202431) do
     t.integer "organization_id"
     t.float "latitude"
     t.float "longitude"
-    t.index ["latitude", "longitude"], name: "index_donation_sites_on_latitude_and_longitude"
+        t.index ["latitude", "longitude"], name: "index_donation_sites_on_latitude_and_longitude"
     t.index ["organization_id"], name: "index_donation_sites_on_organization_id"
   end
 
@@ -799,7 +799,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_07_202431) do
     t.integer "invited_by_id"
     t.integer "invitations_count", default: 0
     t.boolean "organization_admin"
-    t.string "name", default: "Name Not Provided", null: false
+    t.string "name"
     t.boolean "super_admin", default: false
     t.datetime "last_request_at", precision: nil
     t.datetime "discarded_at", precision: nil

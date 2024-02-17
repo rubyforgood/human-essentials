@@ -154,7 +154,7 @@
                 <tbody>
                 <% @partner_users.each do |user| %>
                   <tr>
-                    <td><%= user.name %></td>
+                    <td><%= user.display_name %></td>
                     <td><%= user.email %></td>
                     <td><%= user.invitation_sent_at && user.invitation_sent_at.strftime('%B %-d, %Y') %></td>
                     <td><%= user.last_sign_in_at && user.last_sign_in_at.strftime('%B %-d, %Y') %></td>

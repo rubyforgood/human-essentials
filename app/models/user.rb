@@ -18,7 +18,7 @@
 #  last_request_at        :datetime
 #  last_sign_in_at        :datetime
 #  last_sign_in_ip        :inet
-#  name                   :string           default("Name Not Provided"), not null
+#  name                   :string
 #  organization_admin     :boolean
 #  provider               :string
 #  remember_created_at    :datetime
@@ -59,7 +59,8 @@ class User < ApplicationRecord
          :timeoutable
   devise :omniauthable, omniauth_providers: [:google_oauth2]
 
-  validates :name, presence: true
+  validates :name, presence: false
+
   validates :email, presence: true, uniqueness: {case_sensitive: false},
   format: {with: URI::MailTo::EMAIL_REGEXP, on: :create}
 
@@ -81,6 +82,10 @@ class User < ApplicationRecord
 
   has_many :requests, class_name: "::Request", foreign_key: :partner_id, dependent: :destroy, inverse_of: :partner_user
   has_many :submitted_requests, class_name: "Request", foreign_key: :partner_user_id, dependent: :destroy, inverse_of: :partner_user
+
+  def display_name
+    name.presence || "Name Not Provided"
+  end
 
   def formatted_email
     email.present? ? "#{name} <#{email}>" : ""
