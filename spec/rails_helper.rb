@@ -117,6 +117,7 @@ RSpec.configure do |config|
   config.around(:each, skip_transaction: true) do |example|
     config.use_transactional_fixtures = false
     example.run
+  ensure
     config.use_transactional_fixtures = true
 
     DatabaseCleaner.clean_with(:truncation)
