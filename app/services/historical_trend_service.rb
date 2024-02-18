@@ -26,7 +26,7 @@ class HistoricalTrendService
       .items
       .active
       .joins(:line_items)
-      .where(line_items: {itemizable_type: @type, created_at: 1.year.ago.beginning_of_month..Time.current}) # shouldnt be `..Date.today.at_beginning_of_month`?
+      .where(line_items: {itemizable_type: @type, created_at: 1.year.ago.beginning_of_month..Time.current}) # shouldnt it be `..Date.today.at_beginning_of_month`?
       .select(:id, :name, "DATE_TRUNC('month', line_items.created_at)::timestamptz as month_trunk", "SUM(quantity) as total")
       .group(:id, :name, :month_trunk)
       .order(:name)
