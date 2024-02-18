@@ -6,7 +6,15 @@
   <tr>
     <td><%= event.id %></td>
     <td><%= event.type.sub(/Event/, '') %></td>
-    <td><%= link_to event.eventable_id, event.eventable %></td>
+    <td>
+      <%= link_to event.eventable_id, event.eventable %>
+      <%= link_to(
+          events_path(current_organization, eventable_type: event.eventable_type, eventable_id: event.eventable_id),
+          class: 'btn btn-md') do
+      %>
+        <i class="fa fa-filter"></i>
+      <% end %>
+    </td>
     <td><%= event.event_time.strftime("%Y/%m/%d %H:%M:%S %Z") %></td>
     <td>
       <% if from_loc %>
