@@ -10,7 +10,7 @@ end
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.5.4"
+gem "pg", "~> 1.5.5"
 # Web server.
 gem "puma"
 # Rails web framework.
@@ -212,6 +212,6 @@ if %w(mingw mswin x64_mingw jruby).include?(RUBY_PLATFORM)
 end
 
 # Use Redis for Action Cable
-gem "redis", "~> 5.0"
+gem "redis", "~> 5.1"
 
 gem "importmap-rails", "~> 2.0"
