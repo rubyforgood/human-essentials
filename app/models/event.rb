@@ -20,9 +20,13 @@ class Event < ApplicationRecord
   scope :without_snapshots, -> { where("type != 'SnapshotEvent'") }
   scope :during, ->(range) { where(events: {created_at: range}) }
   scope :by_type, ->(type) { where(type: type) }
-  scope :by_storage_location, -> (loc_id) {
-    joins("left join lateral jsonb_array_elements(data->'items') AS item ON true").
-    where("type = 'SnapshotEvent' OR (item->>'from_storage_location')=? OR (item->>'to_storage_location')=?", loc_id, loc_id)
+  scope :by_item, ->(item_id) {
+    joins("left join lateral jsonb_array_elements(data->'items') AS item ON true")
+      .where("type = 'SnapshotEvent' OR (item->>'item_id')=? ", item_id)
+  }
+  scope :by_storage_location, ->(loc_id) {
+    joins("left join lateral jsonb_array_elements(data->'items') AS item ON true")
+      .where("type = 'SnapshotEvent' OR (item->>'from_storage_location')=? OR (item->>'to_storage_location')=?", loc_id, loc_id)
   }
 
   serialize :data, EventTypes::StructCoder.new(EventTypes::InventoryPayload)
@@ -38,8 +42,8 @@ class Event < ApplicationRecord
 
   # @return [Array<OpenStruct>]
   def self.types_for_select
-    self.descendants.map { |klass|
-      OpenStruct.new(name: klass.name.sub(/Event/, '').titleize, value: klass.name)
+    descendants.map { |klass|
+      OpenStruct.new(name: klass.name.sub("Event", "").titleize, value: klass.name)
     }.sort_by(&:name)
   end
 
