@@ -24,10 +24,10 @@ module Partners
       end
 
       children = current_partner.children.active
-                                .where(id: children_ids)
-                                .joins(:needed_items)
-                                .select('children.*', :item_id)
-      
+        .where(id: children_ids)
+        .joins(:needed_items)
+        .select('children.*', :item_id)
+
       children_grouped_by_item_id = children.group_by { |child| child.item_id }
       family_requests_attributes = children_grouped_by_item_id.map do |item_id, item_requested_children|
         { item_id: item_id, person_count: item_requested_children.size, children: item_requested_children }
