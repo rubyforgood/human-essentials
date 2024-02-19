@@ -59,7 +59,12 @@
                     <dd><%= @child.health_insurance %></dd>
 
                     <dt>Item needed:</dt>
-                    <dd><%= current_partner.organization.item_id_to_display_string_map[@child.item_needed_diaperid] %></dd>
+                    <dd>
+                      <% @child.needed_item_ids.each do |item_id| %>
+                        <%= current_partner.organization.item_id_to_display_string_map[item_id] %>
+                        </br>
+                      <% end %>
+                    </dd>
 
                     <dt>Comments:</dt>
                     <dd><%= @child.comments %></dd>
