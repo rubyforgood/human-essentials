@@ -15,7 +15,7 @@ RSpec.describe "/partners/children", type: :request do
       agency_child_id: "Agency McAgence",
       health_insurance: "Private insurance",
       comments: "Some comment",
-      item_needed_diaperid: nil,
+      needed_item_ids: nil,
       active: true,
       archived: false,
       family: family)
@@ -31,7 +31,7 @@ RSpec.describe "/partners/children", type: :request do
       agency_child_id: "Agency McAgence",
       health_insurance: "Private insurance",
       comments: "Some comment",
-      item_needed_diaperid: nil,
+      needed_item_ids: nil,
       active: true,
       archived: false,
       family: family)
@@ -51,7 +51,7 @@ RSpec.describe "/partners/children", type: :request do
       headers = {"Accept" => "text/csv", "Content-Type" => "text/csv"}
       get partners_children_path, headers: headers
       csv = <<~CSV
-        id,first_name,last_name,date_of_birth,gender,child_lives_with,race,agency_child_id,health_insurance,comments,created_at,updated_at,family_id,item_needed_diaperid,active,archived
+        id,first_name,last_name,date_of_birth,gender,child_lives_with,race,agency_child_id,health_insurance,comments,created_at,updated_at,family_id,needed_item_ids,active,archived
         #{child1.id},John,Smith,2019-01-01,Male,"mother,grandfather",Other,Agency McAgence,Private insurance,Some comment,#{child1.created_at},#{child1.updated_at},#{family.id},"",true,false
         #{child2.id},Jane,Smith,2018-01-01,Female,father,Hispanic,Agency McAgence,Private insurance,Some comment,#{child2.created_at},#{child2.updated_at},#{family.id},"",true,false
       CSV

@@ -14,9 +14,9 @@ RSpec.describe "Family requests", type: :system, js: true do
     let!(:children) do
       [
         create(:partners_child, family: family),
-        create(:partners_child, family: family, item_needed_diaperid: item_id),
-        create(:partners_child, family: family, item_needed_diaperid: item_id),
-        create(:partners_child, family: other_family, item_needed_diaperid: item_id),
+        create(:partners_child, family: family, needed_item_ids: item_id),
+        create(:partners_child, family: family, needed_item_ids: item_id),
+        create(:partners_child, family: other_family, needed_item_ids: item_id),
         create(:partners_child, family: other_family)
       ]
     end
@@ -29,7 +29,7 @@ RSpec.describe "Family requests", type: :system, js: true do
       click_link "Your Previous Requests"
       expect(page).to have_text("Request History")
       expect(Partners::ChildItemRequest.pluck(:child_id)).to match_array(children.pluck(:id))
-      expect(Partners::ItemRequest.pluck(:item_id)).to match_array(children.pluck(:item_needed_diaperid).uniq)
+      expect(Partners::ItemRequest.pluck(:item_id)).to match_array(children.map(&:needed_item_ids).flatten.uniq)
     end
   end
 

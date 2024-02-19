@@ -32,9 +32,9 @@ RSpec.describe Partners::FamilyRequestsController, type: :request do
   describe 'POST #create' do
     before do
       # Set one child as deactivated and the other as active but
-      # without a item_needed_diaperid
+      # without a needed items
       children[0].update(active: false)
-      children[1].update(item_needed_diaperid: nil)
+      children[1].needed_item_ids = []
     end
     subject { post partners_family_requests_path, params: params }
 
