@@ -3,15 +3,15 @@ require 'rails_helper'
 describe PartnerFetchRequestableItemsService do
   describe '#call' do
     subject { described_class.new(partner_id: partner.id).call }
-    let(:partner) { create(:partner, organization: organization) }
     let!(:organization) { create(:organization, skip_items: true, items: org_items) }
+    let(:partner) { create(:partner, organization: organization) }
     let(:org_items) { [] }
     let(:items_list) {
       [
-        build(:item, active: true, visible_to_partners: true),
-        build(:item, active: false, visible_to_partners: true),
-        build(:item, active: true, visible_to_partners: false),
-        build(:item, active: false, visible_to_partners: false)
+        build(:item, active: true, visible_to_partners: true, name: 'Item 1'),
+        build(:item, active: false, visible_to_partners: true, name: 'Item 2'),
+        build(:item, active: true, visible_to_partners: false, name: 'Item 3'),
+        build(:item, active: false, visible_to_partners: false, name: 'Item 4')
       ]
     }
 
@@ -39,8 +39,8 @@ describe PartnerFetchRequestableItemsService do
         it { expect(organization.items).to eq(items_list) }
 
         it 'should return only active and visible items' do
-          expected_items = [[items_list[0].name, items_list[0].id]]
-          expect(subject).to eq(expected_items)
+          got_items = subject.map { |i| i[0] }
+          expect(got_items).to eq(["Item 1"])
         end
       end
     end
@@ -58,8 +58,8 @@ describe PartnerFetchRequestableItemsService do
         end
 
         it 'should return only active and visible items from partner' do
-          expected_items = [[items_list[0].name, items_list[0].id]]
-          expect(subject).to eq(expected_items)
+          got_items = subject.map { |i| i[0] }
+          expect(got_items).to eq(["Item 1"])
         end
       end
 
