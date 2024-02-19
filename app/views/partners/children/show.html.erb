@@ -60,10 +60,9 @@
 
                     <dt>Item needed:</dt>
                     <dd>
-                      <% @child.needed_item_ids.each do |item_id| %>
-                        <%= current_partner.organization.item_id_to_display_string_map[item_id] %>
-                        </br>
-                      <% end %>
+                      <%= @child.needed_item_ids.map do |item_id|
+                        current_partner.organization.item_id_to_display_string_map[item_id]
+                      end.join(', ') %>
                     </dd>
 
                     <dt>Comments:</dt>
