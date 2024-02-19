@@ -117,3 +117,4 @@ module Partners
   end
 end
 
+# TODO: drop items_needed_ids after issue #3797 released to prod
