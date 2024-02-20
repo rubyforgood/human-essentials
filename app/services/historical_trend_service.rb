@@ -5,32 +5,26 @@ class HistoricalTrendService
   end
 
   def series
-    items = []
+    # Preload line_items with a single query to avoid N+1 queries.
+    items_with_line_items = @organization.items.active
+                                         .includes(:line_items)
+                                         .where(line_items: {itemizable_type: @type, created_at: 1.year.ago.beginning_of_month..Time.current})
+                                         .order(:name)
 
-    @organization.items.active.sort.each do |item|
-      next if item.line_items.where(itemizable_type: @type, item: item).blank?
+    month_offset = [*1..12].rotate(Time.zone.today.month)
+    default_dates = (1..12).index_with { |i| 0 }
 
-      month_offset = [*1..12].rotate(Time.zone.today.month)
+    items = items_with_line_items.each_with_object([]) do |item, array_of_items|
+      dates = default_dates.deep_dup
 
-      dates = (1..12).index_with { |i| 0 }
-
-      total_items(item.line_items, @type).each do |line_item|
-        month = line_item.dig(0).to_date.month
-        dates[(month_offset.index(month) + 1)] = line_item.dig(1)
+      item.line_items.each do |line_item|
+        month = line_item.created_at.month
+        index = month_offset.index(month) + 1
+        dates[index] = dates[index] + line_item.quantity
       end
 
-      items << {name: item.name, data: dates.values, visible: false}
+      array_of_items << { name: item.name, data: dates.values, visible: false } unless dates.values.sum.zero?
     end
-
-    items.sort_by { |hsh| hsh[:name] }
-  end
-
-  private
-
-  def total_items(line_items, type)
-    line_items.where(created_at: 1.year.ago.beginning_of_month..Time.current)
-      .where(itemizable_type: type)
-      .group_by_month(:created_at)
-      .sum(:quantity)
+    items
   end
 end
