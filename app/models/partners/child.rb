@@ -12,7 +12,6 @@
 #  gender               :string
 #  health_insurance     :jsonb
 #  item_needed_diaperid :integer          # DEPRECATED
-#  items_needed_ids     :string
 #  last_name            :string
 #  race                 :jsonb
 #  created_at           :datetime         not null
@@ -117,4 +116,4 @@ module Partners
   end
 end
 
-# TODO: drop items_needed_ids after issue #3797 released to prod
+# TODO: drop item_needed_diaperid after issue #3797 released to prod
