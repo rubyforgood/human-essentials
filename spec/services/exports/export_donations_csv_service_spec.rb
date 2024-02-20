@@ -2,21 +2,12 @@ describe Exports::ExportDonationsCSVService do
   describe '#generate_csv_data' do
     subject { described_class.new(donation_ids: donation_ids).generate_csv_data }
     let(:donation_ids) { donations.map(&:id) }
-    let(:duplicate_item) do
-      FactoryBot.create(
-        :item, name: Faker::Appliance.equipment
-      )
-    end
+    let(:duplicate_item) { FactoryBot.create(:item) }
     let(:items_lists) do
       [
         [
           [duplicate_item, 5],
-          [
-            FactoryBot.create(
-              :item, name: Faker::Appliance.equipment
-            ),
-            7
-          ],
+          [FactoryBot.create(:item), 7],
           [duplicate_item, 3]
         ],
         *(Array.new(3) do |i|
