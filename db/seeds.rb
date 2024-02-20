@@ -328,12 +328,18 @@ note = [
     end
   end
 
+  dates_generator = DispersedPastDatesGenerator.new
+
   Faker::Number.within(range: 32..56).times do
+    date = dates_generator.next
+
     partner_request = ::Request.new(
       partner_id: p.id,
       organization_id: p.organization_id,
       comments: Faker::Lorem.paragraph,
-      partner_user_id: p.primary_user.id
+      partner_user_id: p.primary_user.id,
+      created_at: date,
+      updated_at: date
     )
 
     item_requests = []
@@ -344,7 +350,9 @@ note = [
         quantity: Faker::Number.within(range: 10..30),
         children: [],
         name: item.name,
-        partner_key: item.partner_key
+        partner_key: item.partner_key,
+        created_at: date,
+        updated_at: date
       )
       partner_request.item_requests << new_item_request
     end
@@ -654,14 +662,12 @@ Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "new_logo")
 # ----------------------------------------------------------------------------
 # Add some Account Requests to fill up the account requests admin page
 
-dates_generator = DispersedPastDatesGenerator.new
-
 [{ organization_name: "Telluride Diaper Bank",    website: "TDB.com", confirmed_at: nil },
  { organization_name: "Ouray Diaper Bank",        website: "ODB.com",   confirmed_at: nil },
  { organization_name: "Canon City Diaper Bank",   website: "CCDB.com",  confirmed_at: nil },
- { organization_name: "Golden Diaper Bank",       website: "GDB.com",   confirmed_at: dates_generator.next },
- { organization_name: "Westminster Diaper Bank",  website: "WDB.com",   confirmed_at: dates_generator.next },
- { organization_name: "Lakewood Diaper Bank",     website: "LDB.com",   confirmed_at: dates_generator.next }].each do |account_request|
+ { organization_name: "Golden Diaper Bank",       website: "GDB.com",   confirmed_at: (Time.zone.today - rand(15).days) },
+ { organization_name: "Westminster Diaper Bank",  website: "WDB.com",   confirmed_at: (Time.zone.today - rand(15).days) },
+ { organization_name: "Lakewood Diaper Bank",     website: "LDB.com",   confirmed_at: (Time.zone.today - rand(15).days) }].each do |account_request|
   AccountRequest.create(
     name: Faker::Name.unique.name,
     email: Faker::Internet.unique.email,
