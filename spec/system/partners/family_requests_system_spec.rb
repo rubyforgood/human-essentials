@@ -13,11 +13,11 @@ RSpec.describe "Family requests", type: :system, js: true do
     let(:item_ids) { Item.pluck(:id).sample(2) }
     let!(:children) do
       [
-        FactoryBot.create(:partners_child, family: family),
-        FactoryBot.create(:partners_child, family: family, needed_item_ids: item_ids),
-        FactoryBot.create(:partners_child, family: family, needed_item_ids: item_ids),
-        FactoryBot.create(:partners_child, family: other_family, needed_item_ids: item_ids),
-        FactoryBot.create(:partners_child, family: other_family)
+        create(:partners_child, family: family),
+        create(:partners_child, family: family, needed_item_ids: item_ids),
+        create(:partners_child, family: family, needed_item_ids: item_ids),
+        create(:partners_child, family: other_family, needed_item_ids: item_ids),
+        create(:partners_child, family: other_family)
       ]
     end
 
