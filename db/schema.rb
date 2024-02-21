@@ -243,8 +243,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_21_072118) do
     t.integer "organization_id"
     t.datetime "issued_at", precision: nil
     t.string "agency_rep"
-    t.boolean "reminder_email_enabled", default: false, null: false
     t.integer "state", default: 5, null: false
+    t.boolean "reminder_email_enabled", default: false, null: false
     t.integer "delivery_method", default: 0, null: false
     t.decimal "shipping_cost", precision: 8, scale: 2
     t.index ["organization_id"], name: "index_distributions_on_organization_id"
@@ -850,8 +850,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_21_072118) do
   end
 
   create_table "versions", force: :cascade do |t|
-    t.string "item_type"
-    t.string "{:null=>false}"
+    t.string "item_type", null: false
     t.bigint "item_id", null: false
     t.string "event", null: false
     t.string "whodunnit"
