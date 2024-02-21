@@ -29,7 +29,6 @@ RSpec.describe "Family requests", type: :system, js: true do
       click_link "Your Previous Requests"
       expect(page).to have_text("Request History")
 
-      Partners::ChildItemRequest.all
       expect(children[0].child_item_requests.size).to eq(1)
       expect(children[1].child_item_requests.size).to eq(2)
       expect(children[2].child_item_requests.size).to eq(2)
