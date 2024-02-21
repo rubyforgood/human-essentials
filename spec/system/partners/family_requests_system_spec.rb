@@ -13,11 +13,11 @@ RSpec.describe "Family requests", type: :system, js: true do
     let(:item_ids) { Item.pluck(:id).sample(2) }
     let!(:children) do
       [
-        create(:partners_child, family: family),
-        create(:partners_child, family: family, needed_item_ids: item_ids),
-        create(:partners_child, family: family, needed_item_ids: item_ids),
-        create(:partners_child, family: other_family, needed_item_ids: item_ids),
-        create(:partners_child, family: other_family)
+        FactoryBot.create(:partners_child, family: family),
+        FactoryBot.create(:partners_child, family: family, needed_item_ids: item_ids),
+        FactoryBot.create(:partners_child, family: family, needed_item_ids: item_ids),
+        FactoryBot.create(:partners_child, family: other_family, needed_item_ids: item_ids),
+        FactoryBot.create(:partners_child, family: other_family)
       ]
     end
 
@@ -30,14 +30,11 @@ RSpec.describe "Family requests", type: :system, js: true do
       expect(page).to have_text("Request History")
 
       requests = Partners::ChildItemRequest.all
-      expect(requests[0].child).to eq(children[0])
-      expect(requests[1].child).to eq(children[1])
-      expect(requests[2].child).to eq(children[2])
-      expect(requests[3].child).to eq(children[3])
-      expect(requests[4].child).to eq(children[1])
-      expect(requests[5].child).to eq(children[2])
-      expect(requests[6].child).to eq(children[3])
-      expect(requests[7].child).to eq(children[4])
+      expect(children[0].child_item_requests.size).to eq(1)
+      expect(children[1].child_item_requests.size).to eq(2)
+      expect(children[2].child_item_requests.size).to eq(2)
+      expect(children[3].child_item_requests.size).to eq(2)
+      expect(children[4].child_item_requests.size).to eq(1)
       expect(Partners::ItemRequest.pluck(:item_id)).to match_array(children.map(&:needed_item_ids).flatten.uniq)
     end
   end
