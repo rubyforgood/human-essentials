@@ -25,7 +25,7 @@ RSpec.describe Partners::Child, type: :model do
   describe 'associations' do
     it { should belong_to(:family) }
     it { should have_many(:child_item_requests).dependent(:destroy) }
-    it { should have_and_belong_to_many(:needed_items).class_name('Item').join_table(:needed_items) }
+    it { should have_and_belong_to_many(:needed_items).class_name('Item') }
   end
 
   describe "#display_name" do
