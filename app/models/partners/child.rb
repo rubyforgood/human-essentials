@@ -25,7 +25,7 @@ module Partners
     serialize :child_lives_with, Array
     belongs_to :family
     has_many :child_item_requests, dependent: :destroy
-    has_and_belongs_to_many :needed_items, class_name: 'Item', join_table: :needed_items
+    has_and_belongs_to_many :needed_items, class_name: 'Item'
 
     include Filterable
     include Exportable

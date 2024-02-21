@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_19_122800) do
+ActiveRecord::Schema[7.0].define(version: 2024_02_21_072115) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -167,6 +167,16 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_19_122800) do
     t.integer "authorized_family_member_id"
     t.index ["child_id"], name: "index_child_item_requests_on_child_id"
     t.index ["item_request_id"], name: "index_child_item_requests_on_item_request_id"
+  end
+
+  create_table "child_items", force: :cascade do |t|
+    t.bigint "child_id", null: false
+    t.bigint "item_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["child_id", "item_id"], name: "index_child_items_on_child_id_and_item_id", unique: true
+    t.index ["child_id"], name: "index_child_items_on_child_id"
+    t.index ["item_id"], name: "index_child_items_on_item_id"
   end
 
   create_table "children", force: :cascade do |t|
@@ -450,15 +460,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_19_122800) do
     t.string "account_name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "needed_items", force: :cascade do |t|
-    t.integer "child_id", null: false
-    t.integer "item_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["child_id"], name: "index_needed_items_on_child_id"
-    t.index ["item_id"], name: "index_needed_items_on_item_id"
   end
 
   create_table "organizations", id: :serial, force: :cascade do |t|
@@ -869,6 +870,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_19_122800) do
   add_foreign_key "broadcast_announcements", "users"
   add_foreign_key "child_item_requests", "children"
   add_foreign_key "child_item_requests", "item_requests"
+  add_foreign_key "child_items", "children"
+  add_foreign_key "child_items", "items"
   add_foreign_key "children", "families"
   add_foreign_key "distributions", "partners"
   add_foreign_key "distributions", "storage_locations"
