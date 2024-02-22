@@ -7,14 +7,14 @@ class HistoricalTrendService
   def series
     # Preload line_items with a single query to avoid N+1 queries.
     items_with_line_items = @organization.items.active
-                                         .includes(:line_items)
-                                         .where(line_items: {itemizable_type: @type, created_at: 1.year.ago.beginning_of_month..Time.current})
-                                         .order(:name)
+      .includes(:line_items)
+      .where(line_items: {itemizable_type: @type, created_at: 1.year.ago.beginning_of_month..Time.current})
+      .order(:name)
 
     month_offset = [*1..12].rotate(Time.zone.today.month)
     default_dates = (1..12).index_with { |i| 0 }
 
-    items = items_with_line_items.each_with_object([]) do |item, array_of_items|
+    items_with_line_items.each_with_object([]) do |item, array_of_items|
       dates = default_dates.deep_dup
 
       item.line_items.each do |line_item|
@@ -23,8 +23,7 @@ class HistoricalTrendService
         dates[index] = dates[index] + line_item.quantity
       end
 
-      array_of_items << { name: item.name, data: dates.values, visible: false } unless dates.values.sum.zero?
+      array_of_items << {name: item.name, data: dates.values, visible: false} unless dates.values.sum.zero?
     end
-    items
   end
 end
