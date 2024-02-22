@@ -1,6 +1,6 @@
 <% num_locations = event.data.storage_locations.length %>
 <% event.data.storage_locations.values.each_with_index do |loc, loc_index| %>
-  <tr>
+  <tr style="background-color: #e9e4f3;">
     <% if loc_index == 0 %>
       <td rowspan="<%= num_locations %>"><%= event.id %></td>
       <td rowspan="<%= num_locations %>">Snapshot</td>
