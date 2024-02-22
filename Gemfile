@@ -10,7 +10,7 @@ end
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.5.4"
+gem "pg", "~> 1.5.5"
 # Web server.
 gem "puma"
 # Rails web framework.
@@ -198,7 +198,7 @@ group :test do
   # More concise test ("should") matchers
   gem 'shoulda-matchers', '~> 6.1'
   # Mock HTTP requests and ensure they are not called during tests.
-  gem "webmock", "~> 3.20"
+  gem "webmock", "~> 3.22"
   # Interface capybara to chrome headless
   gem "cuprite"
 end
