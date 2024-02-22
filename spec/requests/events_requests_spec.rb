@@ -43,8 +43,8 @@ RSpec.describe "Events", type: :request do
 
       it "should be successful" do
         subject
-        expect(response.body).to include("Item1")
-        expect(response.body).to include("Item2")
+        expect(response.body).to include("Item1</a>")
+        expect(response.body).to include("Item2</a>")
         expect(response.body).to include("55<br>")
         expect(response.body).to include("66<br>")
         expect(response.body).to include("77<br>")
@@ -59,8 +59,8 @@ RSpec.describe "Events", type: :request do
 
         it "should not include the adjustment" do
           subject
-          expect(response.body).to include("Item1")
-          expect(response.body).to include("Item2")
+          expect(response.body).to include("Item1</a>")
+          expect(response.body).to include("Item2</a>")
           expect(response.body).to include("55<br>")
           expect(response.body).to include("66<br>")
           expect(response.body).to include("77<br>")
@@ -76,8 +76,8 @@ RSpec.describe "Events", type: :request do
 
         it "should not include the other item" do
           subject
-          expect(response.body).to include("Item1")
-          expect(response.body).not_to include("Item2")
+          expect(response.body).to include("Item1</a>")
+          expect(response.body).not_to include("Item2</a>")
           expect(response.body).not_to include("55<br>")
           expect(response.body).to include("66<br>")
           expect(response.body).to include("77<br>")
@@ -93,8 +93,8 @@ RSpec.describe "Events", type: :request do
 
         it "should not include the other storage location" do
           subject
-          expect(response.body).to include("Item1")
-          expect(response.body).to include("Item2")
+          expect(response.body).to include("Item1</a>")
+          expect(response.body).to include("Item2</a>")
           expect(response.body).to include("55<br>")
           expect(response.body).to include("66<br>")
           expect(response.body).not_to include("77<br>")
@@ -113,8 +113,8 @@ RSpec.describe "Events", type: :request do
 
         it "should not include the old donation" do
           subject
-          expect(response.body).to include("Item1")
-          expect(response.body).to include("Item2")
+          expect(response.body).to include("Item1</a>")
+          expect(response.body).to include("Item2</a>")
           expect(response.body).to include("55<br>")
           expect(response.body).to include("66<br>")
           expect(response.body).to include("77<br>")
@@ -138,10 +138,10 @@ RSpec.describe "Events", type: :request do
 
         it "should only show events from that eventable" do
           subject
-          expect(response.body).to include("Item1")
+          expect(response.body).to include("Item1</a>")
           expect(response.body).to include("44<br>")
           expect(response.body).to include("33<br>")
-          expect(response.body).not_to include("Item2")
+          expect(response.body).not_to include("Item2</a>")
           expect(response.body).not_to include("55<br>")
           expect(response.body).not_to include("66<br>")
           expect(response.body).not_to include("77<br>")
