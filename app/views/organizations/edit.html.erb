@@ -69,7 +69,7 @@
                 <%= f.input :intake_location, :collection => current_organization.storage_locations.active_locations.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Intake Location", :include_blank => true, wrapper: :input_group %>
 
                 <%= f.label :partner_form_fields, 'Partner Profile Sections' %>
-                
+
                 <%= f.select(:partner_form_fields, Organization::ALL_PARTIALS, { include_hidden: true }, { multiple: true, class: 'form-control custom-select', 'data-controller': 'select2', 'data-select2-config-value': '{}'}) %>
 
                 <br>
@@ -79,19 +79,18 @@
                   <%= f.text_area :invitation_text, class: "form-control" %>
                 <% end %>
 
-
                 <%= f.input :repackage_essentials, label: 'Does your bank repackage essentials?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
                 <%= f.input :distribute_monthly, label: 'Does your bank distribute monthly?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
                 <%= f.input :enable_child_based_requests, label: 'Enable partners to make child-based requests?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
                 <%= f.input :enable_individual_requests, label: 'Enable partners to make requests for individuals?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
                 <%= f.input :enable_quantity_based_requests, label: 'Enable partners to make quantity-based requests?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
                 <%= f.input :ytd_on_distribution_printout, label: 'Show Year-to-date values on distribution printout?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
+                <%= f.input :one_step_partner_invite, label: 'Use One Step Invite and Approve partner process?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
 
                 <% default_email_text_hint = "You can use the variables <code>%{partner_name}</code>, <code>%{delivery_method}</code>, <code>%{distribution_date}</code>, and <code>%{comment}</code> to include the partner's name, delivery method, distribution date, and comments sent in the request." %>
                 <%= f.input :default_email_text, label: "Distribution Email Content", hint: default_email_text_hint.html_safe do %>
                   <%= f.rich_text_area :default_email_text %>
                 <% end %>
-
 
                 <%= f.input :logo, wrapper: :input_group do %>
 
