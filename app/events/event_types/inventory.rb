@@ -32,10 +32,10 @@ module EventTypes
     def move_item(item_id:, quantity:, from_location: nil, to_location: nil, validate: true)
       if quantity.negative?
         move_item(item_id: item_id,
-                  quantity: -quantity,
-                  from_location: to_location,
-                  to_location: from_location,
-                  validate: validate)
+          quantity: -quantity,
+          from_location: to_location,
+          to_location: from_location,
+          validate: validate)
         return
       end
       if from_location
