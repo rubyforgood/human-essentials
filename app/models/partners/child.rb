@@ -11,7 +11,7 @@
 #  first_name           :string
 #  gender               :string
 #  health_insurance     :jsonb
-#  item_needed_diaperid :integer          # DEPRECATED
+#  item_needed_diaperid :integer
 #  last_name            :string
 #  race                 :jsonb
 #  created_at           :datetime         not null
