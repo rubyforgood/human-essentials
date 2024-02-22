@@ -709,7 +709,6 @@ RSpec.describe InventoryAggregate do
     end
 
     context "subsequent event is incorrect" do
-
       it "should handle negative quantities" do
         next unless Event.read_events?(organization) # only relevant if flag is on
 
