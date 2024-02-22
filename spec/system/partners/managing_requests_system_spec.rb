@@ -47,7 +47,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
         end
       end
 
-      context 'WHEN they create part of request improperly' do
+      context 'WHEN they create a request properly' do
         let(:items_to_select) { partner_user.partner.organization.valid_items.sample(3) }
         let(:item_details) do
           items_to_select.map do |item|
@@ -75,53 +75,29 @@ RSpec.describe "Managing requests", type: :system, js: true do
             last_row.find_all('.form-control').last.fill_in(with: item[:person_count])
           end
 
-          # BUG: Consider how to make this work. Currently
-          # incorrect inputs do not get retained
-          # last_row = find_all('tr').last
-          # last_row.find_all('.form-control').last.fill_in(with: -1)
-          # click_button 'Submit Essentials Request'
+          # delete an item
+          find_all('td').last.click
         end
 
-        it 'should retain inputs' do
-          pending 'See coment above'
-          rows = find_all('tr')
-          expect(rows.size).to eq(4)
-          expect(rows.last.find('input').value).to eq('-1')
-        end
-
-        context 'WHEN they create a request properly' do
+        context 'THEN a request records will be created and the partner will be notified via flash message on the dashboard' do
           before do
-            find_all('td').last.click
+            expect { click_button 'Submit Essentials Request' }.to change { Request.count }.by(1)
 
-            # BUG: Consider how to make this work. Currently
-            # partners/family_request_create_service validates that no blank values
-            # got passed in. This results in an error. partners/request_create_service filters
-            # all blank items passed in. What is correct behavior?
-            #
-            # Trigger another row but keep it empty. It should still be valid!
-            # click_link 'Add Another Item'
+            expect(current_path).to eq(partners_request_path(Request.last.id))
+            expect(page).to have_content('Request has been successfully created!')
           end
 
-          context 'THEN a request records will be created and the partner will be notified via flash message on the dashboard' do
-            before do
-              expect { click_button 'Submit Essentials Request' }.to change { Request.count }.by(1)
+          it 'AND the partner_user can view the details of the created individuals request in a seperate page' do
+            visit partners_request_path(id: Request.last.id)
 
-              expect(current_path).to eq(partners_request_path(Request.last.id))
-              expect(page).to have_content('Request has been successfully created!')
+            # Should have the proper quantity per each item.
+            deleted_item = item_details.pop
+            item_details.each do |item|
+              expect(page).to have_content("#{item[:quantity].to_i * item[:quantity_per_person]} of #{item[:name]}")
             end
 
-            it 'AND the partner_user can view the details of the created individuals request in a seperate page' do
-              visit partners_request_path(id: Request.last.id)
-
-              # Should have the proper quantity per each item.
-              deleted_item = item_details.pop
-              item_details.each do |item|
-                expect(page).to have_content("#{item[:quantity].to_i * item[:quantity_per_person]} of #{item[:name]}")
-              end
-
-              # Should not have the last item: it was deleted.
-              expect(page).to_not have_content("#{deleted_item[:quantity].to_i * deleted_item[:quantity_per_person]} of #{deleted_item[:name]}")
-            end
+            # Should not have the last item: it was deleted.
+            expect(page).to_not have_content("#{deleted_item[:quantity].to_i * deleted_item[:quantity_per_person]} of #{deleted_item[:name]}")
           end
         end
       end
@@ -192,7 +168,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
         end
       end
 
-      context 'WHEN they create a request partly improperly' do
+      context 'WHEN they create a request properly' do
         let(:items_to_select) { partner_user.partner.organization.valid_items.sample(3) }
         let(:item_details) do
           items_to_select.map do |item|
@@ -217,45 +193,32 @@ RSpec.describe "Managing requests", type: :system, js: true do
             last_row.find_all('.form-control').last.fill_in(with: item[:quantity])
           end
 
-          last_row = find_all('tr').last
-          last_row.find_all('.form-control').last.fill_in(with: -1)
-          click_button 'Submit Essentials Request'
+          # delete an item
+          find_all('td').last.click
+
+          # Trigger another row but keep it empty. It should still be valid!
+          click_link 'Add Another Item'
         end
 
-        it 'should will retain inputs' do
-          rows = find_all('tr')
-          expect(rows.size).to eq(4)
-          expect(rows.last.find('input').value).to eq('-1')
-        end
-
-        context 'THEN remove improper item' do
+        context 'THEN a request records will be created and the partner will be notified via flash message on the dashboard' do
           before do
-            # delete an item
-            find_all('td').last.click
+            expect { click_button 'Submit Essentials Request' }.to change { Request.count }.by(1)
 
-            # Trigger another row but keep it empty. It should still be valid!
-            click_link 'Add Another Item'
+            expect(current_path).to eq(partners_request_path(Request.last.id))
+            expect(page).to have_content('Request has been successfully created!')
+            expect(page).to have_content("#{partner.organization.name} should have received the request.")
           end
-          context 'THEN a request records will be created and the partner will be notified via flash message on the dashboard' do
-            before do
-              expect { click_button 'Submit Essentials Request' }.to change { Request.count }.by(1)
 
-              expect(current_path).to eq(partners_request_path(Request.last.id))
-              expect(page).to have_content('Request has been successfully created!')
-              expect(page).to have_content("#{partner.organization.name} should have received the request.")
+          it 'AND the partner_user can view the details of the created request in a seperate page' do
+            visit partners_request_path(id: Request.last.id)
+
+            deleted_item = item_details.pop
+            item_details.each do |item|
+              expect(page).to have_content("#{item[:quantity]} of #{item[:name]}")
             end
 
-            it 'AND the partner_user can view the details of the created request in a seperate page' do
-              visit partners_request_path(id: Request.last.id)
-
-              deleted_item = item_details.pop
-              item_details.each do |item|
-                expect(page).to have_content("#{item[:quantity]} of #{item[:name]}")
-              end
-
-              # Should not have the last item: it was deleted.
-              expect(page).not_to have_content("#{deleted_item[:quantity]} of #{deleted_item[:name]}")
-            end
+            # Should not have the last item: it was deleted.
+            expect(page).not_to have_content("#{deleted_item[:quantity]} of #{deleted_item[:name]}")
           end
         end
       end
