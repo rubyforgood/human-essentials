@@ -25,6 +25,12 @@
 
 <section class="content">
   <div class="container-fluid">
+    <% if @audit_performed_and_finalized %>
+      <div class="card-header border-0 bg-gradient-warning">
+        You’ve had an audit since this purchase was started. In the case that you are correcting a typo, rather than recording that the physical amounts being purchased have changed,
+        you’ll need to make an adjustment to the inventory as well.
+      </div>
+    <% end %>
     <div class="row">
       <!-- left column -->
       <div class="col-md-12">

@@ -53,6 +53,8 @@ class PurchasesController < ApplicationController
   def edit
     @purchase = current_organization.purchases.find(params[:id])
     @purchase.line_items.build
+    @audit_performed_and_finalized = Audit.finalized_since?(@purchase, @purchase.storage_location_id)
+
     load_form_collections
   end
 

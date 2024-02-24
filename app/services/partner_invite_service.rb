@@ -14,6 +14,7 @@ class PartnerInviteService
 
     partner.update!(status: 'invited')
     UserInviteService.invite(email: partner.email,
+      name: partner.name,
       roles: [Role::PARTNER],
       resource: partner,
       force: @force)
