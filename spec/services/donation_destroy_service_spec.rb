@@ -87,6 +87,7 @@ describe DonationDestroyService do
         instance_double(Donation,
           storage_location: fake_storage_location,
           storage_location_id: 12,
+          id: 5,
           line_items: [],
           organization_id: organization_id)
       }

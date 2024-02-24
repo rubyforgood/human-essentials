@@ -21,7 +21,7 @@
 
           <td class="p-4"><%= request.total_items %></td>
           <td class="p-4 d-flex flex-wrap">
-            <% request_item = request.request_items.map { |json| RequestItem.from_json(json, request) } %>
+            <% request_item = request.request_items.map { |json| RequestItem.from_json(json, request, @inventory) } %>
 
             <% request_item.map do |item| %>
               <span class="p-1 mr-1 mb-2 lg:mb-0 border border-dark rounded-1">
