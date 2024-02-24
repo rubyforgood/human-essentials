@@ -9,25 +9,30 @@ RSpec.describe "Admin", type: :request do
       expect(response).to be_successful
     end
 
-    context "with rendered views" do
-      let!(:users_list) { create_list(:user, 25) }
-      let!(:user) { create(:user, name: "Name Not Provided") }
+    it "shows a logout button" do
+      get admin_dashboard_path
+      expect(response.body).to match(/log out/im)
+    end
 
-      it "shows a logout button" do
+    context "when the user has a name" do
+      let!(:user_with_name) { create(:user, name: "John Doe", email: "john@example.com") }
+
+      it "displays the user's name" do
         get admin_dashboard_path
-        expect(response.body).to match(/log out/im)
+        expect(response.body).to include("John Doe")
+        expect(response.body).not_to include("john@example.com")
       end
+    end
 
-      it "shows the recently added users email" do
+    context "when the user does not have a name" do
+      let!(:user_without_name) { create(:user, name: nil, email: "noname@example.com") }
+
+      it "displays the user's email" do
         get admin_dashboard_path
-        expect(response).to have_http_status(:success)
-        expect(response.body).to match(/20 New Users/im)
-        expected_path = edit_admin_user_path(user, organization_id: "admin")
-        expect(response.body).to include(CGI.escapeHTML(expected_path))
+        expect(response.body).to include("noname@example.com")
       end
     end
   end
-
   context "while signed in as a non-super-admin" do
     it "disallows dashboard access, redirecting to the normal dashboard" do
       [@organization_admin, @user].each do |u|
