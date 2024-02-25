@@ -6,7 +6,7 @@ class ProductDrivesController < ApplicationController
     setup_date_range_picker
     @product_drives = current_organization
                      .product_drives
-                     .includes(donations: [line_items: [:item]])
+                     .includes(donations: {line_items: :item})
                      .class_filter(filter_params)
                      .within_date_range(@selected_date_range)
                      .order(start_date: :desc)

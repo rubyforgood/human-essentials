@@ -18,7 +18,10 @@ class ProductDrive < ApplicationRecord
   include Filterable
 
   scope :by_name, ->(name_filter) { where(name: name_filter) }
-  scope :by_item_category_id, ->(item_category_id) { joins(donations: [line_items: [:item]]).where(item: { item_category_id: item_category_id }) }
+  scope :by_item_category_id, ->(item_category_id) { 
+    joins(donations: {line_items: :item})
+    .where(item: { item_category_id: item_category_id }) 
+  }
 
   scope :within_date_range, ->(search_range) {
     search_dates = search_date_range(search_range)
@@ -78,26 +81,23 @@ class ProductDrive < ApplicationRecord
   end
 
   def donation_quantity_by_date(date_range, item_category_id = nil)
-    if [nil, ''].include? item_category_id
-      donations.joins(:line_items)
-        .during(date_range)
-        .sum('line_items.quantity')
+    query = donations.during(date_range)
+    if item_category_id.present?
+      query = query.joins(line_items: :item).where(item: {item_category_id: item_category_id})
     else
-      donations.joins(line_items: [:item])
-        .where(item: {item_category_id: item_category_id})
-        .during(date_range)
-        .sum('line_items.quantity')
+      query = query.joins(:line_items)
     end
+    query.sum('line_items.quantity')
   end
 
   def distinct_items_count_by_date(date_range, item_category_id = nil)
-    if [nil, ''].include? item_category_id
-      donations.joins(:line_items)
+    if item_category_id.present?
+      donations.joins(line_items: :item)
+        .where(item: {item_category_id: item_category_id})
         .during(date_range)
         .select('line_items.item_id').distinct.count
     else
-      donations.joins(line_items: [:item])
-        .where(item: {item_category_id: item_category_id})
+      donations.joins(:line_items)
         .during(date_range)
         .select('line_items.item_id').distinct.count
     end

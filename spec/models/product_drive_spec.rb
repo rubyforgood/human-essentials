@@ -43,9 +43,19 @@ RSpec.describe ProductDrive, type: :model do
   end
 
   it "calculates and returns all donated organization item quantities by category and date" do
-    create(:donation, :with_items, item_quantity: 2, product_drive: product_drive, issued_at: '26-01-2023')
+    item_category_1 = create(:item_category, id: 1)
+    item_category_2 = create(:item_category, id: 2)
+    item_1 = create(:item, name: "item_1", item_category_id: 1)
+    item_2 = create(:item, name: "item_2", item_category_id: 2)
+    donation = create(:donation, product_drive: product_drive, issued_at: '26-01-2023')
+    line_item_1 = create(:line_item, itemizable: donation, item: item_1, quantity: 4)
+    line_item_2 = create(:line_item, itemizable: donation, item: item_2, quantity: 5)
+
+    donation.line_items << line_item_1
+    donation.line_items << line_item_2
+    
     result = product_drive.donation_quantity_by_date(Time.zone.parse('23/01/2023')..Time.zone.parse('26/01/2023'), 1)
-    expect(result).to eq product_drive.organization.items.where(item_category_id: 1).count
+    expect(result).to eq(4)
   end
 
   describe "validations" do
@@ -88,10 +98,6 @@ RSpec.describe ProductDrive, type: :model do
       line_item_1_1 = create(:line_item, itemizable: donation_1, item: item_1, quantity: 4)
       line_item_1_2 = create(:line_item, itemizable: donation_1, item: item_2, quantity: 5)
       line_item_1_3 = create(:line_item, itemizable: donation_1, item: item_3, quantity: 6)
-
-      print line_item_1_1.item_id
-      print line_item_1_2.item_id
-      print line_item_1_3.item_id
 
       donation_1.line_items << line_item_1_1
       donation_1.line_items << line_item_1_2
