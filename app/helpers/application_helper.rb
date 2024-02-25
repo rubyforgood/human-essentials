@@ -15,7 +15,7 @@ module ApplicationHelper
   end
 
   def active_class(name)
-    if name.include?(controller_path) || name.find{|n| request.path.ends_with?(n)}
+    if name.include?(controller_path) || name.find { |n| request.path.ends_with?(n) }
       "active"
     else
       controller_path
