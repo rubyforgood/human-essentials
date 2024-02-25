@@ -2,7 +2,7 @@ require_relative "organization_page"
 
 class OrganizationDistributionsSummaryPage < OrganizationPage
   def org_page_path
-    "distributions_summary"
+    "reports/distributions_summary"
   end
 
   def total_distributed
