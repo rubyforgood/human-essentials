@@ -33,6 +33,12 @@ class ReportsController < ApplicationController
     @itemized_distribution_data = DistributionItemizedBreakdownService.new(organization: current_organization, distribution_ids: distributions.pluck(:id)).fetch
   end
 
+  def distributions_summary
+    setup_date_range_picker
+    distributions = current_organization.distributions.includes(:partner).during(helpers.selected_range)
+    @recent_distributions = distributions.recent
+  end
+
   def activity_graph
     setup_date_range_picker
     @distribution_data = received_distributed_data(helpers.selected_range)
