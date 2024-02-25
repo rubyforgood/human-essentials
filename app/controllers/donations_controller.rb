@@ -45,8 +45,8 @@ class DonationsController < ApplicationController
 
     begin
       DonationCreateService.call(@donation)
-        flash[:notice] = "Donation created and logged!"
-        redirect_to donations_path
+      flash[:notice] = "Donation created and logged!"
+      redirect_to donations_path
     rescue => e
       load_form_collections
       @donation.line_items.build if @donation.line_items.count.zero?
