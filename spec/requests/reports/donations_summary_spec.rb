@@ -30,7 +30,6 @@ RSpec.describe "Reports::DonationsSummary", type: :request do
         expect(response.body).to include("#{@url_prefix}/donations/new")
       end
     end
-
   end
 
   describe "while not signed in" do
