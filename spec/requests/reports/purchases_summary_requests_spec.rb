@@ -1,15 +1,15 @@
 require "rails_helper"
 
-RSpec.describe "Distributions", type: :request do
+RSpec.describe "Purchases", type: :request do
   context "while signed in" do
     before do
       sign_in(@user)
     end
 
     describe "GET #index" do
-      it "shows a list of recent distributions" do
-        get distributions_summary_path(@user.organization)
-        expect(response.body).to include("Recent distributions")
+      it "shows a list of recent purchases" do
+        get reports_purchases_summary_path(@user.organization)
+        expect(response.body).to include("Recent purchases")
       end
     end
   end
@@ -17,7 +17,7 @@ RSpec.describe "Distributions", type: :request do
   context "while not signed in" do
     describe "GET #index" do
       it "redirects user to sign in page" do
-        get distributions_summary_path(@user.organization)
+        get reports_purchases_summary_path(@user.organization)
         expect(response).to redirect_to(new_user_session_path)
       end
     end
