@@ -170,7 +170,7 @@
       </li>
     </ul>
   </li>
-  <li class='nav-item has-treeview <%= menu_open?(['audits', 'reports', 'reports/annual_reports']) %>'>
+  <li class='nav-item has-treeview <%= menu_open?(['audits', 'distributions_by_county', 'reports', 'reports/annual_reports']) %>'>
     <a href='#' class='nav-link <%= active_class(['audits', 'reports/annual_reports', 'distributions_by_county', 'reports/itemized_donations', 'reports/itemized_distributions', 'reports/donations_summary', 'reports/activity_graph', 'reports/manufacturer_donations_summary', 'reports/product_drives_summary', 'purchases_summary', 'reports/distributions_summary']) %>'>
       <i class="nav-icon fa fa-tasks"></i>
       <p>Reporting & Auditing
@@ -262,8 +262,8 @@
     </ul>
   </li>
   <% if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
-    <li class="nav-item">
-      <%= link_to(organization_path, class: "nav-link") do %>
+    <li class="nav-item <%= 'active' if current_page?(organization_path) %>">
+      <%= link_to(organization_path, class: "nav-link #{'active' if current_page?(organization_path)}") do %>
         <i class="nav-icon fas fa-home"></i>
         <p>My Organization</p>
       <% end %>
