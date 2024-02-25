@@ -2,7 +2,7 @@ require_relative "organization_page"
 
 class OrganizationPurchasesSummaryPage < OrganizationPage
   def org_page_path
-    "purchases_summary"
+    "reports/purchases_summary"
   end
 
   def create_new_purchase

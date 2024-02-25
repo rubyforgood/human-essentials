@@ -230,8 +230,8 @@
           <i class="nav-icon fa fa-circle-o"></i> Product Drives - Summary
         <% end %>
       </li>
-      <li class="nav-item <%= active_class(['purchases_summary']) %>">
-        <%= link_to(purchases_summary_path(organization_id: current_user.organization), class: "nav-link #{active_class(['purchases_summary'])}") do %>
+      <li class="nav-item <%= active_class(['reports/purchases_summary']) %>">
+        <%= link_to(reports_purchases_summary_path(organization_id: current_user.organization), class: "nav-link #{active_class(['reports/purchases_summary'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Purchases - Summary
         <% end %>
       </li>

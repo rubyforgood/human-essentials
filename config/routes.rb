@@ -107,6 +107,7 @@ Rails.application.routes.draw do
       get :donations_summary
       get :manufacturer_donations_summary
       get :product_drives_summary
+      get :purchases_summary
       get :itemized_donations
       get :itemized_distributions
       get :distributions_summary
@@ -224,7 +225,6 @@ Rails.application.routes.draw do
     get "historical_trends/distributions", to: "historical_trends/distributions#index"
     get "historical_trends/purchases", to: "historical_trends/purchases#index"
     get "historical_trends/donations", to: "historical_trends/donations#index"
-    get "purchases_summary", to: "purchases_summary#index"
   end
 
   resources :attachments, only: %i(destroy)
