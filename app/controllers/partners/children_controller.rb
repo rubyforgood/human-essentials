@@ -88,11 +88,11 @@ module Partners
         :first_name,
         :gender,
         :health_insurance,
-        :item_needed_diaperid,
         :last_name,
         :race,
         :archived,
-        child_lives_with: []
+        child_lives_with: [],
+        needed_item_ids: []
       )
     end
 

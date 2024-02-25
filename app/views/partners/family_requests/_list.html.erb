@@ -18,15 +18,17 @@
         <%= child.first_name %> <%= child.last_name %>
       </td>
       <td>
-        <% if child.item_needed_diaperid %>
-          <%= current_partner.organization.item_id_to_display_string_map[child.item_needed_diaperid] %>
+        <% if child.needed_item_ids.present? %>
+          <%= child.needed_item_ids.map{|item_id|
+            current_partner.organization.item_id_to_display_string_map[item_id]
+          }.join(', ') %>
         <% else %>
           <%= "N/A" %>
         <% end %>
       </td>
       <td>
         <div class="custom-control custom-switch form-switch">
-          <% if child.item_needed_diaperid %>
+          <% if child.needed_item_ids.present? %>
             <%= check_box_tag "child-#{child.id}", child.active, child.active,
                               class: "custom-control-input",
                               id: "child-#{child.id}" %>

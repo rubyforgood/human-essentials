@@ -10,13 +10,13 @@ RSpec.describe "Family requests", type: :system, js: true do
   end
 
   describe "for children with different items, from different families" do
-    let(:item_id) { Item.all.sample.id }
+    let(:item_ids) { Item.pluck(:id).sample(2).sort }
     let!(:children) do
       [
         create(:partners_child, family: family),
-        create(:partners_child, family: family, item_needed_diaperid: item_id),
-        create(:partners_child, family: family, item_needed_diaperid: item_id),
-        create(:partners_child, family: other_family, item_needed_diaperid: item_id),
+        create(:partners_child, family: family, needed_item_ids: item_ids),
+        create(:partners_child, family: family, needed_item_ids: item_ids),
+        create(:partners_child, family: other_family, needed_item_ids: item_ids),
         create(:partners_child, family: other_family)
       ]
     end
@@ -28,8 +28,16 @@ RSpec.describe "Family requests", type: :system, js: true do
       expect(page).to have_text("Request Details")
       click_link "Your Previous Requests"
       expect(page).to have_text("Request History")
-      expect(Partners::ChildItemRequest.pluck(:child_id)).to match_array(children.pluck(:id))
-      expect(Partners::ItemRequest.pluck(:item_id)).to match_array(children.pluck(:item_needed_diaperid).uniq)
+
+      expect(children[0].child_item_requests.size).to eq(1)
+      expect(children[1].child_item_requests.size).to eq(2)
+      expect(children[2].child_item_requests.size).to eq(2)
+      expect(children[3].child_item_requests.size).to eq(2)
+      expect(children[4].child_item_requests.size).to eq(1)
+      expect(children[1].child_item_requests.map(&:item_request).map(&:item_id).sort).to eq(item_ids)
+      expect(children[2].child_item_requests.map(&:item_request).map(&:item_id).sort).to eq(item_ids)
+      expect(children[3].child_item_requests.map(&:item_request).map(&:item_id).sort).to eq(item_ids)
+      expect(Partners::ItemRequest.pluck(:item_id)).to match_array(children.map(&:needed_item_ids).flatten.uniq)
     end
   end
 

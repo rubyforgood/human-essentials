@@ -9,6 +9,6 @@ FactoryBot.define do
     first_name           { Faker::Name.first_name }
     last_name            { Faker::Name.last_name }
     gender               { Faker::Gender.binary_type }
-    item_needed_diaperid { Item.all.sample.id }
+    needed_item_ids      { [Item.all.sample.id] }
   end
 end

@@ -17,10 +17,10 @@
               <%= form.text_field :last_name, class: "form-control" %>
 
               <%= form.label :item_needed, "Diaper/Item Used" %>
-              <%= form.select :item_needed_diaperid, @formatted_requestable_items,
-                              {include_blank: 'Select an item'},
-                              {class: 'form-control'} %>
-              <br>
+              <span>(select multiple by holding `ctrl`)</span>
+              <%= form.select :needed_item_ids, @formatted_requestable_items,
+                              {include_blank: false, include_hidden: false, selected: child.needed_item_ids},
+                              {class: 'form-control', multiple: true} %>
 
               <%= form.input :date_of_birth, as: :date, start_year: 20.years.ago.year, end_year: Time.current.year, label: "Date of Birth" %>
               <%= form.input :gender, collection: ["Male", "Female"], class: "form-control" %>
