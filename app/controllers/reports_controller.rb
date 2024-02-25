@@ -15,6 +15,12 @@ class ReportsController < ApplicationController
     @recent_donations = @donations.recent
   end
 
+  def purchases_summary
+    setup_date_range_picker
+    @purchases = current_organization.purchases.during(helpers.selected_range)
+    @recent_purchases = @purchases.recent.includes(:vendor)
+  end
+
   def product_drives_summary
     setup_date_range_picker
     @donations = current_organization.donations.during(helpers.selected_range)

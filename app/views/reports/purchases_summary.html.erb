@@ -6,7 +6,7 @@
   subtitle: @selected_date_range,
   footer_options: { class: "text-center" },
   footer: link_to("See more...", purchases_path),
-  filter_url: purchases_summary_path
+  filter_url: reports_purchases_summary_path
 ) do %>
   <%= new_button_to new_purchase_path, {text: "New Purchase"} %>
   <h3 class="text-center"><%= dollar_presentation(@purchases.sum(&:amount_spent_in_cents)) %>
