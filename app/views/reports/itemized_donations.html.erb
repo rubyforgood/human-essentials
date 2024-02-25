@@ -16,7 +16,7 @@
   <table class="table table-hover striped text-left">
     <thead>
       <tr>
-        <th>&nbsp;&nbsp;&nbsp;Item</th>
+        <th>Item</th>
         <th class="text-right">Total Donated</th>
         <th class="text-right">Total On Hand</th>
       </tr>
@@ -25,7 +25,7 @@
     <tbody>
       <% @itemized_donation_data.each do |item| %>
         <tr>
-          <td>&nbsp;&nbsp;&nbsp;<%= item[:name] %></td>
+          <td><%= item[:name] %></td>
           <td class="text-right"><%= item[:donated] %></td>
           <td class="text-right"><%= item[:current_onhand] || "Unknown" %></td>
         </tr>
