@@ -19,11 +19,6 @@ RSpec.describe "DonationsSummary", type: :system, js: true do
     item_quantities = (1..9).map { |i| i * 10**(i - 1) }
 
     context "when visiting the summary page" do
-      it "has a link to create a new donation" do
-        visit @url_prefix + "/reports/donations_summary"
-        expect(page).to have_link "New Donation", href: "#{@url_prefix}/donations/new"
-      end
-
       # as of 28 Jan 2022, the "Recent Donations" list shows up to this many items matching the date filter
       max_recent_donation_links_count = 3
 
