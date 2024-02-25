@@ -45,15 +45,15 @@ RSpec.describe ProductDrive, type: :model do
   it "calculates and returns all donated organization item quantities by category and date" do
     item_category_1 = create(:item_category, id: 1)
     item_category_2 = create(:item_category, id: 2)
-    item_1 = create(:item, name: "item_1", item_category_id: 1)
-    item_2 = create(:item, name: "item_2", item_category_id: 2)
+    item_1 = create(:item, name: "item_1", item_category_id: item_category_1.id)
+    item_2 = create(:item, name: "item_2", item_category_id: item_category_2.id)
     donation = create(:donation, product_drive: product_drive, issued_at: '26-01-2023')
     line_item_1 = create(:line_item, itemizable: donation, item: item_1, quantity: 4)
     line_item_2 = create(:line_item, itemizable: donation, item: item_2, quantity: 5)
 
     donation.line_items << line_item_1
     donation.line_items << line_item_2
-    
+
     result = product_drive.donation_quantity_by_date(Time.zone.parse('23/01/2023')..Time.zone.parse('26/01/2023'), 1)
     expect(result).to eq(4)
   end

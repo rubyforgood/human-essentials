@@ -18,9 +18,9 @@ class ProductDrive < ApplicationRecord
   include Filterable
 
   scope :by_name, ->(name_filter) { where(name: name_filter) }
-  scope :by_item_category_id, ->(item_category_id) { 
+  scope :by_item_category_id, ->(item_category_id) {
     joins(donations: {line_items: :item})
-    .where(item: { item_category_id: item_category_id }) 
+      .where(item: { item_category_id: item_category_id })
   }
 
   scope :within_date_range, ->(search_range) {
@@ -82,10 +82,10 @@ class ProductDrive < ApplicationRecord
 
   def donation_quantity_by_date(date_range, item_category_id = nil)
     query = donations.during(date_range)
-    if item_category_id.present?
-      query = query.joins(line_items: :item).where(item: {item_category_id: item_category_id})
+    query = if item_category_id.present?
+      query.joins(line_items: :item).where(item: {item_category_id: item_category_id})
     else
-      query = query.joins(:line_items)
+      query.joins(:line_items)
     end
     query.sum('line_items.quantity')
   end
