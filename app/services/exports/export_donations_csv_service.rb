@@ -63,13 +63,13 @@ module Exports
     def base_table
       {
         "Source" => ->(donation) {
-          donation.source_view
+          donation.source
         },
         "Date" => ->(donation) {
           donation.issued_at.strftime("%F")
         },
-        "Donation Site" => ->(donation) {
-          donation.donation_site.try(:name)
+        "Details" => ->(donation) {
+          donation.details
         },
         "Storage Location" => ->(donation) {
           donation.storage_view
