@@ -19,6 +19,18 @@ RSpec.describe "Reports::DonationsSummary", type: :request do
 
       it { is_expected.to have_http_status(:success) }
     end
+
+    context "when visiting the summary page" do
+      before do
+        get reports_donations_summary_path(default_params)
+      end
+
+      it "has a link to create a new donation" do
+        expect(response.body).to include("New Donation")
+        expect(response.body).to include("#{@url_prefix}/donations/new")
+      end
+    end
+
   end
 
   describe "while not signed in" do
