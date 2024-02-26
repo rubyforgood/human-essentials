@@ -309,7 +309,7 @@ GEM
       activerecord
       kaminari-core (= 1.2.2)
     kaminari-core (1.2.2)
-    knapsack_pro (6.0.4)
+    knapsack_pro (7.0.0)
       rake
     language_server-protocol (3.17.0.3)
     launchy (2.5.2)
