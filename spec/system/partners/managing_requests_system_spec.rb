@@ -37,6 +37,18 @@ RSpec.describe "Managing requests", type: :system, js: true do
 
       context 'WHEN they create a request inproperly' do
         before do
+          fill_in 'Comments', with: Faker::Lorem.paragraph
+
+          # Select items
+          3.times do |idx|
+            if idx != 0
+              click_link 'Add Another Item'
+            end
+
+            last_row = find_all('tr').last
+            last_row.find_all('.form-control').last.fill_in(with: 1)
+          end
+
           click_button 'Submit Essentials Request'
         end
 
@@ -44,6 +56,14 @@ RSpec.describe "Managing requests", type: :system, js: true do
           expect(page).to have_content('Oops! Something went wrong with your Request')
           expect(page).to have_content('Ensure each line item has a item selected AND a quantity greater than 0.')
           expect(page).to have_content('Still need help? Submit a support ticket here and we will do our best to follow up with you via email.')
+        end
+
+        it "should show invalid values in the form" do
+          expected_items = page.all('select').map(&:value)
+          expected_quantities = page.all('input[type="number"]').map(&:value)
+
+          expect(expected_items).to eq(["", "", ""])
+          expect(expected_quantities).to eq(["1", "1", "1"])
         end
       end
 
@@ -165,6 +185,38 @@ RSpec.describe "Managing requests", type: :system, js: true do
           expect(current_path).to eq(partners_request_path(Request.last.id))
           expect(page).to have_content('Request has been successfully created!')
           expect(page).to have_content("#{partner.organization.name} should have received the request.")
+        end
+      end
+
+      context 'WHEN a request has invalid values' do
+        before do
+          fill_in 'Comments', with: Faker::Lorem.paragraph
+
+          # Select items
+          3.times do |idx|
+            if idx != 0
+              click_link 'Add Another Item'
+            end
+
+            last_row = find_all('tr').last
+            last_row.find_all('.form-control').last.fill_in(with: 1)
+          end
+
+          click_button 'Submit Essentials Request'
+        end
+
+        it 'should show an error message with the instructions ' do
+          expect(page).to have_content('Oops! Something went wrong with your Request')
+          expect(page).to have_content('Ensure each line item has a item selected AND a quantity greater than 0.')
+          expect(page).to have_content('Still need help? Submit a support ticket here and we will do our best to follow up with you via email.')
+        end
+
+        it "should show invalid values in the form" do
+          expected_items = page.all('select').map(&:value)
+          expected_quantities = page.all('input[type="number"]').map(&:value)
+
+          expect(expected_items).to eq(["", "", ""])
+          expect(expected_quantities).to eq(["1", "1", "1"])
         end
       end
 
