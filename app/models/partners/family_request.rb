@@ -17,6 +17,13 @@ module Partners
       end
     end
 
+    def self.new_with_attrs(request_attrs)
+      items_attributes = request_attrs.map.with_index { |x, i| [i, x] }.to_h
+      request = new({}, initial_items: 1)
+      request.items_attributes = items_attributes
+      request
+    end
+
     class Item
       include ActiveModel::Model
 
