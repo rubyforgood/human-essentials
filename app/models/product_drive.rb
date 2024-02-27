@@ -91,15 +91,12 @@ class ProductDrive < ApplicationRecord
   end
 
   def distinct_items_count_by_date(date_range, item_category_id = nil)
-    if item_category_id.present?
-      donations.joins(line_items: :item)
-        .where(item: {item_category_id: item_category_id})
-        .during(date_range)
-        .select('line_items.item_id').distinct.count
+    query = donations.during(date_range)
+    query = if item_category_id.present?
+      query.joins(line_items: :item).where(item: {item_category_id: item_category_id})
     else
-      donations.joins(:line_items)
-        .during(date_range)
-        .select('line_items.item_id').distinct.count
+      query.joins(:line_items)
     end
+    query.select('line_items.item_id').distinct.count
   end
 end
