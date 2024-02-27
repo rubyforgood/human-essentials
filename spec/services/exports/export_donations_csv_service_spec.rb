@@ -47,7 +47,7 @@ describe Exports::ExportDonationsCSVService do
       [
         "Source",
         "Date",
-        "Donation Site",
+        "Details",
         "Storage Location",
         "Quantity of Items",
         "Variety of Items",
@@ -78,9 +78,9 @@ describe Exports::ExportDonationsCSVService do
 
       donations.zip(total_item_quantities).each_with_index do |(donation, total_item_quantity), idx|
         row = [
-          donation.source_view,
+          donation.source,
           donation.issued_at.strftime("%F"),
-          donation.donation_site.try(:name),
+          donation.details,
           donation.storage_view,
           donation.line_items.total,
           total_item_quantity.count(&:positive?),

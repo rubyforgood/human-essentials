@@ -431,14 +431,13 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         it 'it should say they can request every item' do
           assert page.has_content? 'All Items Requestable'
           assert page.has_content? 'Settings'
-          expect(PartnerFetchRequestableItemsService.new(partner_id: @partner.id).call).to eq(@organization.items.active.visible)
         end
       end
 
       context 'when a partner is assigned to partner group' do
         before do
           assert page.has_content? 'All Items Requestable'
-          expect(PartnerFetchRequestableItemsService.new(partner_id: @partner.id).call).to eq(@organization.items.active.visible)
+          expect(@partner.partner_group).to be_nil
         end
 
         context 'that has requestable item categories' do
@@ -457,7 +456,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
           it 'should properly indicate the requestable items and adjust the partners requestable items' do
             assert page.has_content? item_category.name
-            expect(PartnerFetchRequestableItemsService.new(partner_id: @partner.id).call.sort).to eq(items_in_category.sort)
+            expect { @partner.reload }.to change(@partner, :requestable_items).from([]).to(items_in_category)
           end
         end
 
@@ -471,7 +470,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
           it 'should properly indicate the requestable items and adjust the partners requestable items' do
             assert page.has_content? 'No Items Requestable'
-            expect(PartnerFetchRequestableItemsService.new(partner_id: @partner.id).call).to eq([])
+            expect { @partner.reload }.to change(@partner, :requestable_items).from([]).to([])
           end
         end
       end

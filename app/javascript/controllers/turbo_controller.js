@@ -7,16 +7,14 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
 
   connect() {
-    
+
     /**
-     * Scrolls to the top after turbo:submit-end event if the 
+     * Scrolls to the top after turbo:submit-end event if the
      * request was unsuccessful with status code of 4xx or 5xx.
      */
     document.addEventListener("turbo:submit-end", (event) => {
-      let status = event.detail.fetchResponse.response.status
-
-      if (status >= 400) {
-        scrollTo(0, 0)
+      if (!event.detail.success) {
+        scrollTo(0, 0);
       }
     })
   }
