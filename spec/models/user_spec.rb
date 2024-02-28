@@ -47,7 +47,7 @@ RSpec.describe User, type: :model do
     it "without a name results in display_name 'Name Not Provided'" do
       user = build(:user, name: nil)
       expect(user).to be_valid
-      expect(user.name).to eq(nil)
+      expect(user.name).to be_nil
       expect(user.display_name).to eq("Name Not Provided")
     end
 
