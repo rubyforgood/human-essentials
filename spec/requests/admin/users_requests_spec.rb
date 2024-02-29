@@ -128,7 +128,7 @@ RSpec.describe "Admin::UsersController", type: :request do
       end
 
       it "preloads organizations" do
-        post admin_users_path, params: { user: { organization_id: 1, email: 'hello@gm.com' }}
+        post admin_users_path, params: { user: { organization_id: 1 }}
         expect(assigns(:organizations)).to eq(Organization.all.alphabetized)
       end
     end
