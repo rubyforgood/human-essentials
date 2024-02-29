@@ -1,6 +1,5 @@
 RSpec.describe UserInviteService, type: :service, skip_seed: true do
   let(:organization) { FactoryBot.create(:organization) }
-
   before(:each) do
     allow(UserMailer).to receive(:role_added).and_return(double(:mail, deliver_later: nil))
   end
