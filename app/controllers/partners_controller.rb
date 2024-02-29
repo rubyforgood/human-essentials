@@ -131,7 +131,6 @@ class PartnersController < ApplicationController
 
   def invite_partner_user
     partner = current_organization.partners.find(params[:partner])
-
     UserInviteService.invite(email: params[:email],
       roles: [Role::PARTNER],
       resource: partner)
