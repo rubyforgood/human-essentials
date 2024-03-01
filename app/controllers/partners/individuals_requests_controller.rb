@@ -2,11 +2,7 @@ module Partners
   class IndividualsRequestsController < BaseController
     def new
       @request = FamilyRequest.new({}, initial_items: 1)
-
-      requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
-      @formatted_requestable_items = requestable_items.map do |rt|
-        [rt.name, rt.id]
-      end.sort
+      @requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
     end
 
     def create
@@ -24,9 +20,8 @@ module Partners
       else
         @request = FamilyRequest.new({}, initial_items: 1)
         @errors = create_service.errors
-        @requestable_items = Organization.find(current_partner.organization_id).valid_items.map do |item|
-          [item[:name], item[:id]]
-        end.sort
+
+        @requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
 
         Rails.logger.info("[Request Creation Failure] partner_user_id=#{current_user.id} reason=#{@errors.full_messages}")
 
