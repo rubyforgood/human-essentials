@@ -1,9 +1,35 @@
 RSpec.describe "Managing requests", type: :system, js: true do
-  describe 'creating a individuals/family request' do
+  describe 'creating a # individuals request' do
     let(:partner_user) { partner.primary_user }
     let!(:partner) { FactoryBot.create(:partner) }
 
     context 'GIVEN a partner user is permitted to make a request' do
+      describe 'Select Input Tests' do
+        let(:requestable_items) { [["Item 1", 1], ["Item 2", 2], ["Item 3", 3]] }
+        context 'WHEN they reach the page' do
+          before do
+            allow_any_instance_of(PartnerFetchRequestableItemsService).to receive(:call).and_return(requestable_items)
+            login_as(partner_user)
+            visit new_partners_individuals_request_path
+          end
+          it 'should show the proper items in the select box' do
+            expected_items = requestable_items.map(&:first).unshift('Select an item')
+            expect(page.all('select[name="partners_family_request[items_attributes][0][item_id]"] option').map(&:text)).to eq(expected_items)
+          end
+
+          context 'WHEN they create a request inproperly' do
+            before {
+              click_button 'Submit Essentials Request'
+              click_link 'Add Another Item'
+            }
+            it 'should show the proper items in the select box' do
+              expected_items = requestable_items.map(&:first).unshift('Select an item')
+              expect(page.all('select[name="partners_family_request[items_attributes][0][item_id]"] option').map(&:text)).to eq(expected_items)
+            end
+          end
+        end
+      end
+
       before do
         login_as(partner_user)
         visit new_partners_individuals_request_path
@@ -51,14 +77,6 @@ RSpec.describe "Managing requests", type: :system, js: true do
 
           # delete an item
           find_all('td').last.click
-
-          # BUG: Consider how to make this work. Currently
-          # partners/family_request_create_service validates that no blank values
-          # got passed in. This results in an error. partners/request_create_service filters
-          # all blank items passed in. What is correct behavior?
-          #
-          # Trigger another row but keep it empty. It should still be valid!
-          # click_link 'Add Another Item'
         end
 
         context 'THEN a request records will be created and the partner will be notified via flash message on the dashboard' do
@@ -86,11 +104,39 @@ RSpec.describe "Managing requests", type: :system, js: true do
     end
   end
 
-  describe 'creating a request' do
+  describe 'creating a new quantity request' do
     let(:partner_user) { partner.primary_user }
     let!(:partner) { FactoryBot.create(:partner) }
 
     context 'GIVEN a partner user is permitted to make a request' do
+      describe 'Select Input Tests' do
+        let(:requestable_items) { [["Item 1", 1], ["Item 2", 2], ["Item 3", 3]] }
+        context 'WHEN they reach the page' do
+          before do
+            allow_any_instance_of(PartnerFetchRequestableItemsService).to receive(:call).and_return(requestable_items)
+            login_as(partner_user)
+            visit new_partners_request_path
+          end
+
+          it 'should show the proper items in the select box' do
+            expected_items = requestable_items.map(&:first).unshift('Select an item')
+            expect(page.all('select[name="request[item_requests_attributes][0][item_id]"] option').map(&:text)).to eq(expected_items)
+          end
+
+          context 'WHEN they create a request inproperly' do
+            before {
+              click_button 'Submit Essentials Request'
+              click_link 'Add Another Item'
+            }
+
+            it 'should show the proper items in the select box' do
+              expected_items = requestable_items.map(&:first).unshift('Select an item')
+              expect(page.all('select option').map(&:text)).to eq(expected_items)
+            end
+          end
+        end
+      end
+
       before do
         login_as(partner_user)
         visit new_partners_request_path
