@@ -9,7 +9,7 @@ module ItemizableUpdateService
       item_ids = params[:line_items_attributes]&.values&.map { |i| i[:item_id].to_i } || []
       inactive_item_names = Item.where(id: item_ids, active: false).pluck(:name)
       if inactive_item_names.any?
-        raise "Update failed: The following items are currently inactive: #{inactive_item_names.join(', ')}. Please reactivate them before continuing."
+        raise "Update failed: The following items are currently inactive: #{inactive_item_names.join(", ")}. Please reactivate them before continuing."
       end
 
       from_location = to_location = itemizable.storage_location
