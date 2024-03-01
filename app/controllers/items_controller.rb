@@ -11,15 +11,23 @@ class ItemsController < ApplicationController
 
     @include_inactive_items = params[:include_inactive_items]
     @selected_base_item = filter_params[:by_base_item]
-    @items_with_counts = ItemsByStorageCollectionQuery.new(organization: current_organization, filter_params: filter_params).call
-
-    @items_by_storage_collection_and_quantity = ItemsByStorageCollectionAndQuantityQuery.new(organization: current_organization, filter_params: filter_params).call
 
     @paginated_items = @items.page(params[:page])
 
+    if Event.read_events?(current_organization)
+      @inventory = View::Inventory.new(current_organization.id)
+    end
+    @items_by_storage_collection_and_quantity = ItemsByStorageCollectionAndQuantityQuery.call(organization: current_organization,
+      inventory: @inventory,
+      filter_params: filter_params)
+
     respond_to do |format|
       format.html
-      format.csv { send_data Item.generate_csv(@items), filename: "Items-#{Time.zone.today}.csv" }
+      if Event.read_events?(current_organization)
+        format.csv { send_data Item.generate_csv_from_inventory(@items, @inventory), filename: "Items-#{Time.zone.today}.csv" }
+      else
+        format.csv { send_data Item.generate_csv(@items), filename: "Items-#{Time.zone.today}.csv" }
+      end
     end
   end
 
@@ -55,7 +63,13 @@ class ItemsController < ApplicationController
 
   def show
     @item = current_organization.items.find(params[:id])
-    @storage_locations_containing = current_organization.items.storage_locations_containing(@item)
+    if Event.read_events?(current_organization)
+      inventory = View::Inventory.new(current_organization.id)
+      storage_location_ids = inventory.storage_locations_for_item(@item.id)
+      @storage_locations_containing = StorageLocation.find(storage_location_ids)
+    else
+      @storage_locations_containing = current_organization.items.storage_locations_containing(@item)
+    end
     @barcodes_for = current_organization.items.barcodes_for(@item)
   end
 

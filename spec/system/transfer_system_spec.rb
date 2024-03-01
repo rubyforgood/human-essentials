@@ -48,15 +48,22 @@ RSpec.describe "Transfer management", type: :system do
     from_storage_location = create(:storage_location, :with_items, item: item, name: "From me", organization: @organization)
     to_storage_location = create(:storage_location, :with_items, name: "To me", organization: @organization)
 
-    original_from_storage_item_count = from_storage_location.inventory_items.find_by(item_id: item.id).quantity
+    inventory = View::Inventory.new(@organization.id)
+    original_from_storage_item_count = inventory.quantity_for(storage_location: from_storage_location.id, item_id: item.id)
+    original_from_ii_storage_item_count = from_storage_location.inventory_items.find_by(item_id: item.id).quantity
+    expect(original_from_storage_item_count).to eq(original_from_ii_storage_item_count)
     original_to_storage_item_count = 0
     transfer_amount = 10
 
     create_transfer(transfer_amount.to_s, from_storage_location.name, to_storage_location.name)
 
+    inventory.reload
+
     # Ensure the that the transfer has changed the inventory quantities
     expect(from_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).not_to eq(original_from_storage_item_count)
     expect(to_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(transfer_amount)
+    expect(inventory.quantity_for(storage_location: from_storage_location.id, item_id: item.id)).not_to eq(original_from_storage_item_count)
+    expect(inventory.quantity_for(storage_location: to_storage_location.id, item_id: item.id)).to eq(transfer_amount)
 
     accept_confirm do
       click_link 'Delete'
@@ -64,22 +71,32 @@ RSpec.describe "Transfer management", type: :system do
 
     expect(page).to have_content(/Succesfully deleted Transfer/)
 
+    inventory.reload
+
     # Assert that the original inventory counts have been restored.
     expect(from_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(original_from_storage_item_count)
     expect(to_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(original_to_storage_item_count)
+    expect(inventory.quantity_for(storage_location: from_storage_location.id, item_id: item.id)).to eq(original_from_storage_item_count)
+    expect(inventory.quantity_for(storage_location: to_storage_location.id, item_id: item.id)).to eq(original_to_storage_item_count)
   end
 
   it 'shows a error when deleting a transfer that causes an insufficient inventory counts' do
     from_storage_location = create(:storage_location, :with_items, item: item, name: "From me", organization: @organization)
     to_storage_location = create(:storage_location, :with_items, name: "To me", organization: @organization)
 
-    original_from_storage_item_count = from_storage_location.inventory_items.find_by(item_id: item.id).quantity
+    inventory = View::Inventory.new(@organization.id)
+    original_from_storage_item_count = inventory.quantity_for(storage_location: from_storage_location.id, item_id: item.id)
+    original_from_ii_storage_item_count = from_storage_location.inventory_items.find_by(item_id: item.id).quantity
+    expect(original_from_storage_item_count).to eq(original_from_ii_storage_item_count)
     transfer_amount = 10
 
     create_transfer(transfer_amount.to_s, from_storage_location.name, to_storage_location.name)
+    inventory.reload
 
     expect(from_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(original_from_storage_item_count - transfer_amount)
     expect(to_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(transfer_amount)
+    expect(inventory.quantity_for(storage_location: from_storage_location.id, item_id: item.id)).to eq(original_from_storage_item_count - transfer_amount)
+    expect(inventory.quantity_for(storage_location: to_storage_location.id, item_id: item.id)).to eq(transfer_amount)
 
     allow_any_instance_of(StorageLocation).to receive(:decrease_inventory).and_raise(
       Errors::InsufficientAllotment.new('error-msg', [])
@@ -90,11 +107,14 @@ RSpec.describe "Transfer management", type: :system do
     end
 
     expect(page).to have_content(/error-msg/)
+    inventory.reload
 
     # Assert that the inventory did not change in response
     # to the raised error.
     expect(from_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(original_from_storage_item_count - transfer_amount)
     expect(to_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(transfer_amount)
+    expect(inventory.quantity_for(storage_location: from_storage_location.id, item_id: item.id)).to eq(original_from_storage_item_count - transfer_amount)
+    expect(inventory.quantity_for(storage_location: to_storage_location.id, item_id: item.id)).to eq(transfer_amount)
   end
 
   it 'should not include inactive storage locations in dropdowns when creating a new transfer' do
@@ -122,13 +142,13 @@ RSpec.describe "Transfer management", type: :system do
       create(:transfer, organization: @organization, from: to_storage_location, to: from_storage_location)
 
       visit subject
-      select to_storage_location.name, from: "filters_to_location"
+      select to_storage_location.name, from: "filters[to_location]"
       click_button "Filter"
 
       expect(page).to have_css("table tr", count: 2)
 
       visit subject
-      select from_storage_location.name, from: "filters_from_location"
+      select from_storage_location.name, from: "filters[from_location]"
       click_button "Filter"
 
       expect(page).to have_css("table tr", count: 2)

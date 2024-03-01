@@ -113,7 +113,7 @@ class Distribution < ApplicationRecord
     request.request_items.each do |item|
       line_items.new(
         quantity: item["quantity"],
-        item: Item.joins(:inventory_items).eager_load(:base_item).find_by(organization: request.organization, id: item["item_id"]),
+        item: Item.eager_load(:base_item).find_by(organization: request.organization, id: item["item_id"]),
         itemizable_id: request.id,
         itemizable_type: "Distribution"
       )

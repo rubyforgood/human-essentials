@@ -29,7 +29,12 @@ RSpec.describe "/kits", type: :request do
 
       context "when it cannot be deactivated" do
         it "should disable the button" do
-          create(:inventory_item, item: kit.item)
+          storage_location = create(:storage_location)
+          TestInventory.create_inventory(kit.organization, {
+            storage_location.id => {
+              kit.item.id => 10
+            }
+          })
           get kits_url(default_params)
           expect(response).to be_successful
           page = Nokogiri::HTML(response.body)

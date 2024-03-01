@@ -10,7 +10,7 @@ end
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.5.4"
+gem "pg", "~> 1.5.5"
 # Web server.
 gem "puma"
 # Rails web framework.
@@ -98,8 +98,6 @@ gem 'icalendar', require: false
 gem "jwt"
 # Use Newrelic for logs and APM
 gem "newrelic_rpm"
-# Scheduling
-gem 'rufus-scheduler'
 # Used to manage periodic cron-like jobs
 gem "clockwork"
 
@@ -151,7 +149,7 @@ group :development, :test do
   # Add-on for command line to create a simple debugger.
   gem "pry-nav"
   # RSpec behavioral testing framework for Rails.
-  gem "rspec-rails", "~> 6.1.0"
+  gem "rspec-rails", "~> 6.1.1"
   # Static analysis / linter.
   gem "rubocop"
   # Rails add-on for static analysis.
@@ -159,6 +157,8 @@ group :development, :test do
   gem "rubocop-rails", "~> 2.23.1"
   # Default rules for Rubocop.
   gem "standard", "~> 1.33"
+  # Erb linter.
+  gem "erb_lint"
 end
 
 group :development do
@@ -175,7 +175,7 @@ group :development do
   # Open sent e-mails in the browser instead of trying to send to a real mail server.
   gem "letter_opener"
   # Used as a dependency for Guard.
-  gem "listen", "~> 3.8.0"
+  gem "listen", "~> 3.9.0"
   # Generate a diagram based on Rails models.
   gem "rails-erd"
   # Allows to create a console in the browser.
@@ -184,7 +184,7 @@ end
 
 group :test do
   # Test using browsers.
-  gem "capybara", "~> 3.39"
+  gem "capybara", "~> 3.40"
   # Create screenshots when doing browser tests.
   gem "capybara-screenshot"
   # Generate Capybara tests in the browser and debug them.
@@ -196,9 +196,9 @@ group :test do
   # Show code coverage.
   gem 'simplecov'
   # More concise test ("should") matchers
-  gem 'shoulda-matchers', '~> 6.0'
+  gem 'shoulda-matchers', '~> 6.1'
   # Mock HTTP requests and ensure they are not called during tests.
-  gem "webmock", "~> 3.19"
+  gem "webmock", "~> 3.23"
   # Interface capybara to chrome headless
   gem "cuprite"
 end
@@ -212,6 +212,6 @@ if %w(mingw mswin x64_mingw jruby).include?(RUBY_PLATFORM)
 end
 
 # Use Redis for Action Cable
-gem "redis", "~> 5.0"
+gem "redis", "~> 5.1"
 
 gem "importmap-rails", "~> 2.0"

@@ -1,17 +1,23 @@
 RSpec.describe "Requests", type: :system, js: true do
-  before do
-    sign_in(@user)
-    @storage_location = create(:storage_location, :with_items, organization: @organization)
-  end
-
   let!(:url_prefix) { "/#{@organization.to_param}" }
 
   let(:item1) { create(:item, name: "Good item") }
   let(:item2) { create(:item, name: "Crap item") }
   let(:partner1) { create(:partner, name: "This Guy", email: "thisguy@example.com") }
   let(:partner2) { create(:partner, name: "That Guy", email: "ntg@example.com") }
+  let!(:storage_location) { create(:storage_location, organization: @organization) }
 
-  before { travel_to Time.zone.local(2020, 1, 1) }
+  before do
+    sign_in(@user)
+    travel_to Time.zone.local(2020, 1, 1)
+    TestInventory.create_inventory(@organization, {
+      storage_location.id => {
+        item1.id => 500,
+        item2.id => 500
+      }
+    })
+  end
+
   after { travel_back }
 
   context "#index" do
@@ -59,7 +65,7 @@ RSpec.describe "Requests", type: :system, js: true do
         it "constrains the list" do
           visit subject
           expect(page).to have_css("table tbody tr", count: 5)
-          select(item2.name, from: "filters_by_request_item_id")
+          select(item2.name, from: "filters[by_request_item_id]")
           click_on "Filter"
           expect(page).to have_css("table tbody tr", count: 1)
         end
@@ -69,7 +75,7 @@ RSpec.describe "Requests", type: :system, js: true do
         it "constrains the list" do
           visit subject
           expect(page).to have_css("table tbody tr", count: 5)
-          select(partner2.name, from: "filters_by_partner")
+          select(partner2.name, from: "filters[by_partner]")
           click_on 'Filter'
           expect(page).to have_css("table tbody tr", count: 1)
         end
@@ -81,7 +87,7 @@ RSpec.describe "Requests", type: :system, js: true do
           # check for all requests
           expect(page).to have_css("table tbody tr", count: 5)
           # filter
-          select('Fulfilled', from: "filters_by_status")
+          select('Fulfilled', from: "filters[by_status]")
           click_on 'Filter'
           # check for filtered requests
           expect(page).to have_css("table tbody tr", count: 1)
@@ -92,7 +98,7 @@ RSpec.describe "Requests", type: :system, js: true do
         it "respects the applied filters" do
           visit subject
           expect(page).to have_css("table tbody tr", count: 5)
-          select(item2.name, from: "filters_by_request_item_id")
+          select(item2.name, from: "filters[by_request_item_id]")
           click_on 'Filter'
           expect(page).to have_css("table tbody tr", count: 1)
           click_on 'Export Requests'
@@ -115,16 +121,13 @@ RSpec.describe "Requests", type: :system, js: true do
   context "#show" do
     subject { url_prefix + "/requests/#{request.id}" }
 
-    let!(:item) { create(:item, name: "Item Count Test") }
-    let!(:request) {
-      create(:request,
-        organization: @organization,
-        request_items: [
-          { "item_id": item1.id, "quantity": '12' },
-          { "item_id": item2.id, "quantity": '17' },
-          { "item_id": item.id, "quantity": '23' }
-        ])
+    let(:request_items) {
+      [
+        { item_id: item1.id, quantity: 50},
+        { item_id: item2.id, quantity: 100}
+      ]
     }
+    let!(:request) { create(:request, request_items: request_items, organization: @organization) }
 
     it "should show the request with a request sender if a partner user is set" do
       visit subject
@@ -152,8 +155,19 @@ RSpec.describe "Requests", type: :system, js: true do
       # Add inventory items to both storage locations
       ####
       second_storage_location = create(:storage_location, organization: @organization)
-      @storage_location.inventory_items.create!(quantity: 234, item: item)
-      second_storage_location.inventory_items.create!(quantity: 100, item: item)
+      TestInventory.clear_inventory(storage_location)
+      travel 1.second
+      TestInventory.create_inventory(@organization,
+        {
+          storage_location.id => {
+            item1.id => 234,
+            item2.id => 500
+          },
+          second_storage_location.id => {
+            item1.id => 100
+          }
+        })
+      travel 1.second
       visit subject
       expect(page).to have_content("334")
     end
@@ -174,7 +188,7 @@ RSpec.describe "Requests", type: :system, js: true do
         it "should change request to fulfilled", js: true do
           expect(page).to have_content "started"
           choose "Delivery"
-          select @storage_location.name, from: "From storage location"
+          select storage_location.name, from: "From storage location"
           fill_in "Comment", with: "Take my wipes... please"
           click_on "Save"
 

@@ -10,7 +10,11 @@ class AuditsController < ApplicationController
   end
 
   def show
-    @inventory_items = @audit.storage_location.inventory_items
+    if Event.read_events?(@audit.organization)
+      @items = View::Inventory.items_for_location(@audit.storage_location)
+    else
+      @inventory_items = @audit.storage_location.inventory_items
+    end
   end
 
   def edit
@@ -38,8 +42,8 @@ class AuditsController < ApplicationController
 
     increasing_adjustment, decreasing_adjustment = @audit.adjustment.split_difference
     ActiveRecord::Base.transaction do
-      @audit.storage_location.increase_inventory increasing_adjustment
-      @audit.storage_location.decrease_inventory decreasing_adjustment
+      @audit.storage_location.increase_inventory(increasing_adjustment.line_item_values)
+      @audit.storage_location.decrease_inventory(decreasing_adjustment.line_item_values)
       AuditEvent.publish(@audit)
     end
     @audit.finalized!
@@ -78,7 +82,7 @@ class AuditsController < ApplicationController
       @audit.line_items.build if @audit.line_items.empty?
       render :new
     end
-  rescue Errors::InsufficientAllotment => e
+  rescue Errors::InsufficientAllotment, InventoryError => e
     flash[:error] = e.message
     render :new
   end
