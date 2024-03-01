@@ -14,7 +14,6 @@ export default class extends Controller {
   }
 
   removeItem(event) {
-    console.log(event.target);
     const wrapper = event.target.closest("tr");
     const removeSoft = event.target.dataset.removeSoft === "false";
 

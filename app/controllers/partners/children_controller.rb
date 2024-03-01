@@ -36,10 +36,7 @@ module Partners
       family = current_partner.families.find_by!(id: params[:family_id])
       @child = family.children.new
 
-      requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
-      @formatted_requestable_items = requestable_items.map do |rt|
-        [rt.name, rt.id]
-      end
+      @requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
     end
 
     def active
@@ -50,10 +47,7 @@ module Partners
 
     def edit
       @child = current_partner.children.find_by(id: params[:id])
-      requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
-      @formatted_requestable_items = requestable_items.map do |rt|
-        [rt.name, rt.id]
-      end
+      @requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
     end
 
     def create
