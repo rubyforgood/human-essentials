@@ -2,7 +2,7 @@
   <tr>
     <td>
       <%= field.label :item_id, "Item Requested", {class: 'sr-only'} %>
-      <%= field.select :item_id, @formatted_requestable_items, {include_blank: 'Select an item'}, {class: 'form-control'} %>
+      <%= field.select :item_id, @requestable_items, {include_blank: 'Select an item'}, {class: 'form-control'} %>
     </td>
     <td>
       <%= field.label :quantity, "Quantity", {class: 'sr-only'} %>

@@ -37,9 +37,10 @@ class Audit < ApplicationRecord
     includes(:storage_location).joins(:storage_location).where(organization_id: organization.id, storage_location: {discarded_at: nil}).collect(&:storage_location).sort
   end
 
-  def self.since?(itemizable, *location_ids)
+  def self.finalized_since?(itemizable, *location_ids)
     item_ids = itemizable.line_items.pluck(:item_id)
-    where(storage_location_id: location_ids)
+    where(status: "finalized")
+      .where(storage_location_id: location_ids)
       .where(created_at: itemizable.created_at..)
       .joins(:line_items)
       .where(line_items: {item_id: item_ids})

@@ -275,3 +275,11 @@ end
 def text_body(mail)
   mail.body.parts.find { |p| p.content_type =~ /text/ }.body.encoded
 end
+
+def select2(node, select_name, value, position: nil)
+  position_str = position ? "[#{position}]" : ""
+  xpath = %((//div[contains(@class, "#{select_name}")]//span[contains(@class, "select2-container")])#{position_str})
+  container = node.find(:xpath, xpath)
+  container.click
+  container.find(:xpath, '//li[contains(@class, "select2-results__option")][@role="option"]', text: value).click
+end
