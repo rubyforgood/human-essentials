@@ -7,7 +7,7 @@ class DistributionDestroyService < DistributionService
     perform_distribution_service do
       DistributionDestroyEvent.publish(distribution)
       distribution.destroy!
-      distribution.storage_location.increase_inventory(distribution)
+      distribution.storage_location.increase_inventory(distribution.line_item_values)
     end
   end
 end

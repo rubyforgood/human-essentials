@@ -12,6 +12,7 @@ require "capybara-screenshot/rspec"
 require "pry"
 require 'knapsack_pro'
 require 'paper_trail/frameworks/rspec'
+require_relative 'inventory'
 
 KnapsackPro::Adapters::RSpecAdapter.bind
 
@@ -231,10 +232,18 @@ RSpec.configure do |config|
   config.before(:each) do
     # Defined shared @ global variables used throughout the test suite.
     define_global_variables
+
+    if ENV['EVENTS_READ'] == 'true'
+      allow(Event).to receive(:read_events?).and_return(true)
+    end
   end
 
   config.before do
     Faker::UniqueGenerator.clear # Clears used values to avoid retry limit exceeded error
+  end
+
+  config.after(:each) do
+    travel_back
   end
 
   # RSpec Rails can automatically mix in different behaviours to your tests
@@ -265,4 +274,12 @@ end
 
 def text_body(mail)
   mail.body.parts.find { |p| p.content_type =~ /text/ }.body.encoded
+end
+
+def select2(node, select_name, value, position: nil)
+  position_str = position ? "[#{position}]" : ""
+  xpath = %((//div[contains(@class, "#{select_name}")]//span[contains(@class, "select2-container")])#{position_str})
+  container = node.find(:xpath, xpath)
+  container.click
+  container.find(:xpath, '//li[contains(@class, "select2-results__option")][@role="option"]', text: value).click
 end
