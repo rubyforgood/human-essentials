@@ -4,9 +4,13 @@ class PartnerFetchRequestableItemsService
   end
 
   def call
-    return organization.items.active.visible.sort if partner.partner_group.blank?
+    requestable_items = if partner.partner_group.blank?
+      organization.items.active.visible
+    else
+      partner.requestable_items.active.visible
+    end
 
-    partner.requestable_items.active.visible
+    requestable_items.map { |item| [item.name, item.id] }.sort
   end
 
   private

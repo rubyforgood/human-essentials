@@ -2,10 +2,10 @@ RSpec.describe DistributionItemizedBreakdownService, type: :service do
   let(:organization) { create(:organization) }
   let(:distribution_ids) { [distribution_1, distribution_2, distribution_3].map(&:id) }
   let(:item_a) do
-    create(:item, organization: organization, on_hand_minimum_quantity: 9999, name: "Item 1")
+    create(:item, organization: organization, on_hand_minimum_quantity: 9999, name: "A Diapers")
   end
   let(:item_b) do
-    create(:item, organization: organization, on_hand_minimum_quantity: 5, name: "Item 2")
+    create(:item, organization: organization, on_hand_minimum_quantity: 5, name: "B Diapers")
   end
   let(:distribution_1) { create(:distribution, :with_items, item: item_a, item_quantity: 500, organization: organization) }
   let(:distribution_2) { create(:distribution, :with_items, item: item_b, item_quantity: 100, organization: organization) }
