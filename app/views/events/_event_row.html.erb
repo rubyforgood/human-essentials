@@ -4,8 +4,10 @@
   <% from_loc = event.data.items.first&.from_storage_location %>
   <% to_loc = event.data.items.first&.to_storage_location %>
   <tr>
-    <td><%= event.id %></td>
-    <td><%= event.type.sub(/Event/, '') %></td>
+    <td>
+      <%= event.user.name %>
+    </td>
+    <td title="Internal Event ID: <%= event.id %>"><%= event.type.sub(/Event/, '') %></td>
     <td>
       <%= link_to event.eventable_id, event.eventable %>
       <%= link_to(
