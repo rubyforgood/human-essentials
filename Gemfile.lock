@@ -170,9 +170,9 @@ GEM
     discard (1.3.0)
       activerecord (>= 4.2, < 8)
     docile (1.4.0)
-    dotenv (3.0.2)
-    dotenv-rails (3.0.2)
-      dotenv (= 3.0.2)
+    dotenv (3.1.0)
+    dotenv-rails (3.1.0)
+      dotenv (= 3.1.0)
       railties (>= 6.1)
     dry-core (1.0.1)
       concurrent-ruby (~> 1.0)
@@ -239,7 +239,7 @@ GEM
       concurrent-ruby (~> 1.1)
       webrick (~> 1.7)
       websocket-driver (>= 0.6, < 0.8)
-    ffi (1.15.5)
+    ffi (1.16.3)
     filterrific (5.2.5)
     flipper (1.2.2)
       concurrent-ruby (< 2)
@@ -309,7 +309,7 @@ GEM
       activerecord
       kaminari-core (= 1.2.2)
     kaminari-core (1.2.2)
-    knapsack_pro (6.0.4)
+    knapsack_pro (7.0.0)
       rake
     language_server-protocol (3.17.0.3)
     launchy (2.5.2)
@@ -320,7 +320,7 @@ GEM
     libv8-node (18.16.0.0-x86_64-darwin)
     libv8-node (18.16.0.0-x86_64-linux)
     lint_roller (1.1.0)
-    listen (3.8.0)
+    listen (3.9.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
     lograge (0.14.0)
@@ -451,7 +451,7 @@ GEM
     puma (6.4.2)
       nio4r (~> 2.0)
     racc (1.7.3)
-    rack (2.2.8)
+    rack (2.2.8.1)
     rack-protection (3.1.0)
       rack (~> 2.2, >= 2.2.4)
     rack-test (2.1.0)
@@ -620,7 +620,7 @@ GEM
       activerecord (>= 5.2)
     terser (1.2.0)
       execjs (>= 0.3.0, < 3)
-    thor (1.3.0)
+    thor (1.3.1)
     tilt (2.2.0)
     timeout (0.4.0)
     ttfunk (1.7.0)
@@ -640,7 +640,7 @@ GEM
       activemodel (>= 6.0.0)
       bindex (>= 0.4.0)
       railties (>= 6.0.0)
-    webmock (3.21.2)
+    webmock (3.23.0)
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
@@ -707,7 +707,7 @@ DEPENDENCIES
   kaminari
   knapsack_pro
   letter_opener
-  listen (~> 3.8.0)
+  listen (~> 3.9.0)
   lograge
   magic_test
   matrix
@@ -748,7 +748,7 @@ DEPENDENCIES
   terser
   turbo-rails
   web-console
-  webmock (~> 3.21)
+  webmock (~> 3.23)
 
 BUNDLED WITH
    2.5.4
