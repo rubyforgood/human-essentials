@@ -4,7 +4,7 @@ class EventsController < ApplicationController
 
     @events = Event.for_organization(current_organization)
       .during(helpers.selected_range)
-      .includes(:eventable)
+      .includes(:eventable, :user)
     @events = if params[:eventable_id]
       @events.where(eventable_id: params[:eventable_id],
         eventable_type: params[:eventable_type])
