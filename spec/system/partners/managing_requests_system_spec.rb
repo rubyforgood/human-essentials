@@ -17,7 +17,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
             expect(page.all('select[name="partners_family_request[items_attributes][0][item_id]"] option').map(&:text)).to eq(expected_items)
           end
 
-          context 'WHEN they create a request inproperly' do
+          context 'WHEN they create a request improperly' do
             before {
               click_button 'Submit Essentials Request'
               click_link 'Add Another Item'
@@ -35,7 +35,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
         visit new_partners_individuals_request_path
       end
 
-      context 'WHEN they create a request inproperly by not inputting anything' do
+      context 'WHEN they create a request improperly by not inputting anything' do
         before do
           click_button 'Submit Essentials Request'
         end
@@ -173,7 +173,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
             expect(page.all('select[name="request[item_requests_attributes][0][item_id]"] option').map(&:text)).to eq(expected_items)
           end
 
-          context 'WHEN they create a request inproperly' do
+          context 'WHEN they create a request improperly' do
             before {
               click_button 'Submit Essentials Request'
               click_link 'Add Another Item'
