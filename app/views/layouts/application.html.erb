@@ -6,17 +6,17 @@
   <title><%= content_for?(:title) ? yield(:title) : default_title_content %></title>
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <%= csrf_meta_tags %>
-  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/v4-shims.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/v4-shims.css" rel="stylesheet">
 
   <%= stylesheet_link_tag 'application', media: 'all' %>
   <%=
     # DO NOT LOAD ANY JAVASCRIPT BEFORE THIS!!!
     javascript_importmap_tags
   %>
-  <%= raw fullstory_script(current_user: current_user) if Rails.env.production?  %>
+  <%= raw fullstory_script(current_user: current_user) if Rails.env.production? %>
   <script type="esms-options">
   {
     "noLoadEventRetriggers": true
@@ -31,8 +31,8 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
   <%= render 'magic_test/support' if Rails.env.test? %>
   <% unless @turbo %>
-    <meta name="turbo-visit-control" content="reload" />
-    <meta name="turbo-cache-control" content="no-cache" />
+    <meta name="turbo-visit-control" content="reload">
+    <meta name="turbo-cache-control" content="no-cache">
   <% end %>
 </head>
 <body data-turbo="<%= @turbo %>" data-controller='turbo'

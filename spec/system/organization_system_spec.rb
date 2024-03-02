@@ -26,6 +26,8 @@ RSpec.describe "Organization management", type: :system, js: true do
 
     describe "Viewing the organization" do
       it "can view organization details", :aggregate_failures do
+        @organization.update!(one_step_partner_invite: true)
+
         visit organization_path(@organization)
 
         expect(page.find("h1")).to have_text(@organization.name)
@@ -44,6 +46,7 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page).to have_content("Quantity Based Requests?")
         expect(page).to have_content("Show Year-to-date values on distribution printout?")
         expect(page).to have_content("Logo")
+        expect(page).to have_content("Use One step Partner invite and approve process?")
       end
     end
 
@@ -115,6 +118,20 @@ RSpec.describe "Organization management", type: :system, js: true do
         click_on "Save"
         expect(page).to_not have_content('Media Information')
         expect(@organization.reload.partner_form_fields).to eq([])
+      end
+
+      it "can disable if the org does NOT use single step invite and approve partner process" do
+        choose("organization[one_step_partner_invite]", option: false)
+
+        click_on "Save"
+        expect(page).to have_content("No")
+      end
+
+      it "can enable if the org uses single step invite and approve partner process" do
+        choose("organization[one_step_partner_invite]", option: true)
+
+        click_on "Save"
+        expect(page).to have_content("Yes")
       end
     end
 
