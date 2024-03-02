@@ -35,8 +35,8 @@ RSpec.describe DistributionItemizedBreakdownService, type: :service do
     it "should output the expected output but in CSV format" do
       expected_output_csv = <<~CSV
         Item,Total Distribution,Total On Hand
-        Item 1,500,100
-        Item 2,200,200
+        A Diapers,500,100
+        B Diapers,200,200
       CSV
 
       expect(subject).to eq(expected_output_csv)
