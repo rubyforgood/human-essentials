@@ -4,8 +4,12 @@ class AdjustmentCreateService
   include ServiceObjectErrorsMixin
   attr_reader :adjustment
 
-  def initialize(adjustment_params)
-    @adjustment = Adjustment.new(adjustment_params)
+  def initialize(adjustment_or_params)
+    @adjustment = if adjustment_or_params.is_a?(Adjustment)
+      adjustment_or_params
+    else
+      Adjustment.new(adjustment_or_params)
+    end
   end
 
   def call
@@ -13,15 +17,17 @@ class AdjustmentCreateService
     combine_adjustment
     # Check for validity, and save the actual adjustment
 
-    if @adjustment.valid? && enough_inventory_for_decreases? && @adjustment.save
-      # Split into positive and negative portions
-      increasing_adjustment, decreasing_adjustment = @adjustment.split_difference
+    if @adjustment.valid? && enough_inventory_for_decreases?
       ActiveRecord::Base.transaction do
         # Make the necessary changes in the db
         @adjustment.save
-        @adjustment.storage_location.increase_inventory increasing_adjustment
-        @adjustment.storage_location.decrease_inventory decreasing_adjustment
-      rescue InsufficientAllotment => e
+        AdjustmentEvent.publish(adjustment)
+        # Split into positive and negative portions.
+        # N.B. -- THIS CHANGES THE ORIGINAL LINE ITEMS ON @adjustment DO **NOT** RESAVE AS THAT WILL CHANGE ANY NEGATIVE LINE ITEMS ON THE ADJUSTMENT TO POSITIVES
+        increasing_adjustment, decreasing_adjustment = @adjustment.split_difference
+        @adjustment.storage_location.increase_inventory(increasing_adjustment.line_item_values)
+        @adjustment.storage_location.decrease_inventory(decreasing_adjustment.line_item_values)
+      rescue InsufficientAllotment, InventoryError => e
         @adjustment.errors.add(:base, e.message)
         raise e
       end
@@ -46,6 +52,5 @@ def enough_inventory_for_decreases?
       @adjustment.errors.add(:inventory, "The requested reduction of  #{line_item.quantity * -1} #{line_item.item.name}  items exceed the available inventory")
     end
   end
-  return true if @adjustment.errors.none?
-  false
+  @adjustment.errors.none?
 end

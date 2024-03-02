@@ -32,8 +32,7 @@ class PurchasesController < ApplicationController
 
   def create
     @purchase = current_organization.purchases.new(purchase_params)
-    if @purchase.save
-      @purchase.storage_location.increase_inventory @purchase
+    if PurchaseCreateService.call(@purchase)
       flash[:notice] = "New Purchase logged!"
       redirect_to purchases_path
     else
@@ -54,6 +53,8 @@ class PurchasesController < ApplicationController
   def edit
     @purchase = current_organization.purchases.find(params[:id])
     @purchase.line_items.build
+    @audit_performed_and_finalized = Audit.finalized_since?(@purchase, @purchase.storage_location_id)
+
     load_form_collections
   end
 
@@ -64,7 +65,10 @@ class PurchasesController < ApplicationController
 
   def update
     @purchase = current_organization.purchases.find(params[:id])
-    ItemizableUpdateService.call(itemizable: @purchase, params: purchase_params, type: :increase)
+    ItemizableUpdateService.call(itemizable: @purchase,
+      params: purchase_params,
+      type: :increase,
+      event_class: PurchaseEvent)
     redirect_to purchases_path
   rescue => e
     load_form_collections
@@ -73,11 +77,8 @@ class PurchasesController < ApplicationController
   end
 
   def destroy
-    ActiveRecord::Base.transaction do
-      purchase = current_organization.purchases.find(params[:id])
-      purchase.storage_location.decrease_inventory(purchase)
-      purchase.destroy!
-    end
+    purchase = current_organization.purchases.find(params[:id])
+    PurchaseDestroyService.call(purchase)
 
     flash[:notice] = "Purchase #{params[:id]} has been removed!"
     redirect_to purchases_path

@@ -44,14 +44,16 @@ class DistributionPdf
     font_size 12
     text @distribution.distributed_at
     font_size 10
-    move_up 22
 
-    text "Items Received Year-to-Date:", style: :bold, align: :right
-    font_size 12
-    text @distribution.partner.quantity_year_to_date.to_s, align: :right
-    font_size 10
+    if @organization.ytd_on_distribution_printout
+      move_up 22
+      text "Items Received Year-to-Date:", style: :bold, align: :right
+      font_size 12
+      text @distribution.partner.quantity_year_to_date.to_s, align: :right
+      font_size 10
+    end
+
     move_down 10
-
     text "Comments:", style: :bold
     font_size 12
     text @distribution.comment
@@ -131,8 +133,12 @@ class DistributionPdf
       "In-Kind Value Received",
       "Packages"]]
 
+    inventory = nil
+    if Event.read_events?(@distribution.organization)
+      inventory = View::Inventory.new(@distribution.organization_id)
+    end
     request_items = @distribution.request.request_items.map do |request_item|
-      RequestItem.from_json(request_item, @distribution.request)
+      RequestItem.from_json(request_item, @distribution.request, inventory)
     end
     line_items = @distribution.line_items.sorted
 

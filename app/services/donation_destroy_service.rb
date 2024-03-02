@@ -10,13 +10,14 @@ class DonationDestroyService
     ActiveRecord::Base.transaction do
       organization = Organization.find(organization_id)
       donation = organization.donations.find(donation_id)
-      donation.storage_location.decrease_inventory(donation)
+      donation.storage_location.decrease_inventory(donation.line_item_values)
+      DonationDestroyEvent.publish(donation)
       donation.destroy!
     end
   rescue ActiveRecord::RecordNotFound => e
     Rails.logger.error "[!] #{self.class.name} failed to destroy donation #{donation_id} because organization or donation does does not exist"
     set_error(e)
-  rescue Errors::InsufficientAllotment => e
+  rescue Errors::InsufficientAllotment, InventoryError => e
     Rails.logger.error "[!] #{self.class.name} failed because of Insufficient Allotment"
     set_error(e)
   rescue StandardError => e

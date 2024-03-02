@@ -17,13 +17,13 @@
               <div class="mb-4">
                 <h3 class='font-bold'>Short Name</h3>
                 <p>
-                  <%= @organization.short_name || "Not Provided"%>
+                  <%= @organization.short_name || "Not Provided" %>
                 </p>
               </div>
               <div class="mb-4">
                 <h3 class='font-bold'>NDBN Membership ID</h3>
                 <p>
-                  <%= @organization.ndbn_member&.full_name || "Not Provided"%>
+                  <%= @organization.ndbn_member&.full_name || "Not Provided" %>
                 </p>
               </div>
               <div class="mb-4">
@@ -32,7 +32,7 @@
                   <% if @organization.url.blank? %>
                     Not Provided
                   <% else %>
-                    <a href=<%= @organization.url %>>
+                    <a href="<%= @organization.url %>">
                       <%= fa_icon "external-link" %>
                       <%= @organization.url %></a>
                   <% end %>
@@ -146,6 +146,18 @@
                   <%= humanize_boolean(@organization.enable_quantity_based_requests) %>
                 </p>
               </div>
+              <div class="mb-4">
+                <h3 class='font-bold'>Show Year-to-date values on distribution printout?</h3>
+                <p>
+                  <%= humanize_boolean(@organization.ytd_on_distribution_printout) %>
+                </p>
+              </div>
+              <div class="mb-4">
+                <h3 class='font-bold'>Use One step Partner invite and approve process?</h3>
+                <p>
+                  <%= humanize_boolean(@organization.one_step_partner_invite) %>
+                </p>
+              </div>
               <% if @organization.logo.attached? %>
                     <div class="mb-4">
                     <h3 class='font-bold'>Logo</h3>
@@ -153,14 +165,14 @@
                         <%= image_tag @organization.logo, class: "main_logo" %>
                       </p>
                       <p>
-                        <a href="#showTheLogo" class="btn btn-xs btn-info" data-toggle="modal">
+                        <a href="#showTheLogo" class="btn btn-xs btn-info" data-bs-toggle="modal">
                           View Original
                         </a>
                       </p>
                       <div id="showTheLogo" class="modal fade">
                         <div class="modal-dialog">
                           <%= image_tag @organization.logo, class: "thumbnail" %>
-                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         </div>
                       </div>
                     </div>

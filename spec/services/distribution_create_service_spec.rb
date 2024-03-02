@@ -4,16 +4,25 @@ RSpec.describe DistributionCreateService, type: :service do
   subject { DistributionCreateService }
   describe "call" do
     let!(:storage_location) { create(:storage_location, :with_items, item_count: 2) }
-    let!(:distribution_params) { { organization_id: @organization.id, partner_id: @partner.id, storage_location_id: storage_location.id, delivery_method: :delivery, line_items_attributes: { "0": { item_id: storage_location.items.first.id, quantity: 5 } } } }
+    let!(:distribution) {
+      Distribution.new(organization_id: @organization.id,
+        partner_id: @partner.id,
+        storage_location_id: storage_location.id,
+        delivery_method: :delivery,
+        line_items_attributes: {
+          "0": { item_id: storage_location.items.first.id, quantity: 5 }
+        })
+    }
 
     it "replaces a big distribution with a smaller one, resulting in increased stored quantities" do
       expect do
-        subject.new(distribution_params).call
+        subject.new(distribution).call
       end.to change { storage_location.reload.size }.by(-5)
+        .and change { DistributionEvent.count }.by(1)
     end
 
     it "returns a successful object with Scheduled distribution" do
-      result = subject.new(distribution_params).call
+      result = subject.new(distribution).call
       expect(result).to be_instance_of(subject)
       expect(result).to be_success
       expect(result.distribution).to be_scheduled
@@ -25,7 +34,7 @@ RSpec.describe DistributionCreateService, type: :service do
 
         expect do
           perform_enqueued_jobs only: PartnerMailerJob do
-            subject.new(distribution_params).call
+            subject.new(distribution).call
           end
         end.to change { ActionMailer::Base.deliveries.count }.by(1)
       end
@@ -36,7 +45,7 @@ RSpec.describe DistributionCreateService, type: :service do
         @partner.update!(send_reminders: false)
 
         expect(PartnerMailerJob).not_to receive(:perform_later)
-        subject.new(distribution_params).call
+        subject.new(distribution).call
       end
     end
 
@@ -46,7 +55,7 @@ RSpec.describe DistributionCreateService, type: :service do
 
         expect do
           perform_enqueued_jobs only: PartnerMailerJob do
-            subject.new(distribution_params).call
+            subject.new(distribution).call
           end
         end.not_to change { ActionMailer::Base.deliveries.count }
       end
@@ -57,7 +66,7 @@ RSpec.describe DistributionCreateService, type: :service do
 
       it "changes the status of the request" do
         expect do
-          subject.new(distribution_params, request.id).call
+          subject.new(distribution, request.id).call
           request.reload
         end.to change { request.status }
       end
@@ -69,7 +78,7 @@ RSpec.describe DistributionCreateService, type: :service do
         end
 
         it 'should not be successful' do
-          result = subject.new(distribution_params, request.id).call
+          result = subject.new(distribution, request.id).call
           expect(result.error.message).to eq("Request has already been fulfilled by Distribution #{distribution.id}")
           expect(result).not_to be_success
         end
@@ -77,18 +86,27 @@ RSpec.describe DistributionCreateService, type: :service do
     end
 
     context "when there's not sufficient inventory" do
-      let(:too_much_params) { { organization_id: @organization.id, partner_id: @partner.id, storage_location_id: storage_location.id, delivery_method: :delivery, line_items_attributes: { "0": { item_id: storage_location.items.first.id, quantity: 500 } } } }
+      let(:too_much_dist) {
+        Distribution.new(
+          organization_id: @organization.id,
+          partner_id: @partner.id,
+          storage_location_id: storage_location.id,
+          delivery_method: :delivery,
+          line_items_attributes: { "0": { item_id: storage_location.items.first.id, quantity: 500 } }
+        )
+      }
 
       it "preserves the Insufficiency error and is unsuccessful" do
-        result = subject.new(too_much_params).call
-        expect(result.error).to be_instance_of(Errors::InsufficientAllotment)
+        result = subject.new(too_much_dist).call
+        error_class = Event.read_events?(@organization) ? InventoryError : Errors::InsufficientAllotment
+        expect(result.error).to be_instance_of(error_class)
         expect(result).not_to be_success
       end
     end
 
     context "when there's multiple line items and one has insufficient inventory" do
-      let(:too_much_params) do
-        {
+      let(:too_much_dist) do
+        Distribution.new(
           organization_id: @organization.id,
           partner_id: @partner.id,
           storage_location_id: storage_location.id,
@@ -98,39 +116,46 @@ RSpec.describe DistributionCreateService, type: :service do
               "0": { item_id: storage_location.items.first.id, quantity: 2 },
               "1": { item_id: storage_location.items.last.id, quantity: 500 }
             }
-        }
+        )
       end
 
       it "preserves the Insufficiency error and is unsuccessful" do
-        result = subject.new(too_much_params).call
-        expect(result.error).to be_instance_of(Errors::InsufficientAllotment)
+        result = subject.new(too_much_dist).call
+        error_class = Event.read_events?(@organization) ? InventoryError : Errors::InsufficientAllotment
+        expect(result.error).to be_instance_of(error_class)
         expect(result).not_to be_success
       end
     end
 
     context "when it fails to save" do
-      let(:bad_params) { { organization_id: @organization.id, storage_location_id: storage_location.id, line_items_attributes: { "0": { item_id: storage_location.items.first.id, quantity: 500 } } } }
+      let(:bad_dist) {
+        Distribution.new(organization_id: @organization.id,
+          storage_location_id: storage_location.id,
+          line_items_attributes: {
+            "0": { item_id: storage_location.items.first.id, quantity: 500 }
+          })
+      }
 
       it "preserves the error and is unsuccessful" do
-        result = subject.new(bad_params).call
+        result = subject.new(bad_dist).call
         expect(result.error).to be_instance_of(ActiveRecord::RecordInvalid)
         expect(result).not_to be_success
       end
     end
 
     context "when the line item quantity is not positive" do
-      let(:params) {
-        {
+      let(:dist) {
+        Distribution.new(
           organization_id: @organization.id,
           partner_id: @partner.id,
           storage_location_id: storage_location.id,
           delivery_method: :delivery,
           line_items_attributes: { "0": { item_id: storage_location.items.first.id, quantity: 0 } }
-        }
+        )
       }
 
       it "preserves the RecordInvalid error and is unsuccessful" do
-        result = subject.new(params).call
+        result = subject.new(dist).call
         expect(result.error).to be_instance_of(ActiveRecord::RecordInvalid)
         expect(result).not_to be_success
       end

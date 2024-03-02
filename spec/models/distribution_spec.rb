@@ -36,7 +36,9 @@ RSpec.describe Distribution, type: :model do
       storage_location = create(:storage_location)
       d = build(:distribution, storage_location: storage_location)
       line_item = build(:line_item, quantity: 1)
-      create(:inventory_item, storage_location: d.storage_location, item: line_item.item)
+      TestInventory.create_inventory(@organization, {
+        storage_location.id => { line_item.item_id => 10 }
+      })
       d.line_items << line_item
       expect(d).to be_valid
     end
@@ -54,10 +56,12 @@ RSpec.describe Distribution, type: :model do
     end
 
     it "ensures that any included items are found in the associated storage location" do
-      d = build(:distribution)
-      item_missing = create(:item, name: "missing")
-      d.line_items << build(:line_item, item: item_missing)
-      expect(d).not_to be_valid
+      unless Event.read_events?(@organization) # not relevant in event world
+        d = build(:distribution)
+        item_missing = create(:item, name: "missing")
+        d.line_items << build(:line_item, item: item_missing)
+        expect(d).not_to be_valid
+      end
     end
 
     it "ensures that the issued at is no earlier than 2000" do
@@ -99,7 +103,7 @@ RSpec.describe Distribution, type: :model do
         create(:distribution, issued_at: Date.yesterday)
         # and one outside the range
         create(:distribution, issued_at: 1.year.ago)
-        expect(Distribution.during(Time.zone.now - 1.week..Time.zone.now).size).to eq(2)
+        expect(Distribution.during(Time.zone.now - 1.week..Time.zone.now + 2.days).size).to eq(2)
       end
     end
 
@@ -183,7 +187,7 @@ RSpec.describe Distribution, type: :model do
   end
 
   context "Callbacks >" do
-    it "initializes the issued_at field to default to created_at if it wasn't explicitly set" do
+    it "initializes the issued_at field to default to midnight if it wasn't explicitly set" do
       yesterday = 1.day.ago
       today = Time.zone.today
 
@@ -191,7 +195,7 @@ RSpec.describe Distribution, type: :model do
       expect(distribution.issued_at.to_date).to eq(today)
 
       distribution = create(:distribution, created_at: yesterday)
-      expect(distribution.issued_at).to eq(distribution.created_at)
+      expect(distribution.issued_at).to eq(distribution.created_at.end_of_day)
     end
 
     context "#before_save" do

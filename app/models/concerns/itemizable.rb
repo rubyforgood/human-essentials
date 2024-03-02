@@ -102,12 +102,19 @@ module Itemizable
     line_items.total
   end
 
-  def to_a
+  def line_item_values
     line_items.map do |l|
-      # When the item isn't found, it's probably just inactive. This ensures it's available.
       item = Item.find(l.item_id)
       { item_id: item.id, name: item.name, quantity: l.quantity, active: item.active }.with_indifferent_access
     end
+  end
+
+  def to_a
+    return line_item_values unless Flipper.enabled?(:deprecate_to_a)
+
+    Rails.logger.warn "Called #to_a on an Itemizable #{inspect}."
+    Rails.logger.warn caller.join("\n")
+    raise StandardError, "Calling to_a on an Itemizable is deprecated. Use #line_item_values instead."
   end
 
   private
@@ -132,6 +139,7 @@ module Itemizable
 
   def line_items_exist_in_inventory
     return if storage_location.nil?
+    return if Event.read_events?(storage_location.organization)
 
     line_items.each do |line_item|
       next unless line_item.item

@@ -67,13 +67,13 @@
           <div class="card-header p-0 border-bottom-0">
             <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
               <li class="nav-item" class="active">
-                <a class="nav-link active" id="custom-tabs-inventory-tab" data-toggle="pill" href="#custom-tabs-inventory" role="tab" aria-controls="custom-tabs-one-home-tab" aria-selected="true">Inventory</a>
+                <a class="nav-link active" id="custom-tabs-inventory-tab" data-bs-toggle="pill" href="#custom-tabs-inventory" role="tab" aria-controls="custom-tabs-one-home-tab" aria-selected="true">Inventory</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" id="custom-tabs-inventory-in-tab" data-toggle="pill" href="#custom-tabs-inventory-in" role="tab" aria-controls="custom-tabs-two-home-tab" aria-selected="false">Inventory Coming In</a>
+                <a class="nav-link" id="custom-tabs-inventory-in-tab" data-bs-toggle="pill" href="#custom-tabs-inventory-in" role="tab" aria-controls="custom-tabs-two-home-tab" aria-selected="false">Inventory Coming In</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" id="custom-tabs-inventory-out-tab" data-toggle="pill" href="#custom-tabs-inventory-out" role="tab" aria-controls="custom-tabs-three-home-tab" aria-selected="false">Inventory Going Out</a>
+                <a class="nav-link" id="custom-tabs-inventory-out-tab" data-bs-toggle="pill" href="#custom-tabs-inventory-out" role="tab" aria-controls="custom-tabs-three-home-tab" aria-selected="false">Inventory Going Out</a>
               </li>
             </ul>
           </div>
@@ -82,11 +82,11 @@
 
               <div class="tab-pane fade show active" id="custom-tabs-inventory" role="tabpanel" aria-labelledby="custom-tabs-one-home-tab">
                 <%= form_for @storage_location, method: :get do %>
-                  Show Inventory at Date: <%= date_field_tag 'version_date', params[:version_date], min: InventoryItem::EARLIEST_VERSION %>
+                  Show Inventory at Date: <%= date_field_tag 'version_date', params[:version_date], min: InventoryItem::EARLIEST_VERSION, autocomplete: "on" %>
                   <%= filter_button(text: 'View') %>
-                  <br/><small>(historical data collected since <%= Date.parse(InventoryItem::EARLIEST_VERSION).strftime("%b %-d, %Y") %>)</small>
+                  <br><small>(historical data collected since <%= Date.parse(InventoryItem::EARLIEST_VERSION).strftime("%b %-d, %Y") %>)</small>
                 <% end %>
-                <br/><br/>
+                <br><br>
                 <table class="table">
                   <thead>
                   <tr>
@@ -95,19 +95,27 @@
                   </tr>
                   </thead>
                   <tbody>
-                  <%= render partial: "inventory_item_row",
-                             collection: @storage_location.inventory_items,
-                             locals: { version_date: params[:version_date] }%>
+                  <% if @inventory %>
+                    <% @inventory.items_for_location(@storage_location.id).each do |item| %>
+                      <tr>
+                        <td><%= link_to item.name, item_path(item.item_id) %></td>
+                        <td><%= number_with_delimiter(item.quantity) %></td>
+                      </tr>
+                    <% end %>
+                  <% else %>
+                    <%= render partial: "inventory_item_row",
+                               collection: @storage_location.inventory_items,
+                               locals: { version_date: params[:version_date] } %>
+                  <% end %>
                   </tbody>
                   <tfoot>
                   <tr>
                     <td>Total</td>
-                    <td><%= @storage_location.size %></td>
+                    <td><%= @inventory ? @inventory.quantity_for(storage_location: @storage_location.id) : @storage_location.size %></td>
                   </tr>
                   </tfoot>
                 </table>
               </div><!-- /.box-body.table-responsive -->
-
 
               <div class="tab-pane fade show" id="custom-tabs-inventory-in" role="tabpanel" aria-labelledby="custom-two-home-tab">
                 <table class="table">

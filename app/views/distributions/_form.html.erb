@@ -9,9 +9,8 @@
       collection: current_organization.partners.alphabetized,
       label: "Partner",
       error: "Which partner is this distribution going to?" %>
-
     <div class='w-72'>
-      <%= f.input :issued_at, as: :datetime, ampm: true, minute_step: 15, label: "Distribution date", html5: true %>
+      <%= f.input :issued_at, as: :datetime, ampm: true, minute_step: 15, label: "Distribution date and time", html5: true, :input_html => { :value => date_place_holder&.strftime("%Y-%m-%dT%0k:%M")} %>
     </div>
     <%= f.input :reminder_email_enabled, as: :boolean, checked_value: true, unchecked_value: false, label: "Send email reminder the day before?" %>
     <%= f.input :agency_rep, label: "Agency representative" %>
@@ -25,7 +24,7 @@
       </div>
     </div>
 
-    <%= render partial: "storage_locations/source", object: f, locals: { include_inactive_items: false, include_omitted_items: true }  %>
+    <%= render partial: "storage_locations/source", object: f, locals: { include_inactive_items: false, include_omitted_items: true } %>
 
     <%= f.input :comment, label: "Comment" %>
 

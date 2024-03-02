@@ -41,6 +41,7 @@ class User < ApplicationRecord
 
   has_one :organization_role_join, class_name: "UsersRole", dependent: :destroy
   has_one :organization_role, through: :organization_role_join, class_name: "Role", source: :role
+  accepts_nested_attributes_for :organization_role_join
   has_one :organization, through: :organization_role, source: :resource, source_type: "Organization"
   has_many :organizations, through: :roles, source: :resource, source_type: "Organization"
 
@@ -69,10 +70,12 @@ class User < ApplicationRecord
   scope :partner_users, -> { with_role(Role::PARTNER, :any) }
   scope :org_users, -> { with_role(Role::ORG_USER, :any) }
   scope :search_name, ->(query) { where("name ilike ?", "%#{query}%") }
+  scope :search_email, ->(query) { where("email LIKE ?", "%#{query}%") }
 
   filterrific(
     available_filters: [
-      :search_name
+      :search_name,
+      :search_email
     ]
   )
 

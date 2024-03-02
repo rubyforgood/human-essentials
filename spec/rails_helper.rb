@@ -12,6 +12,7 @@ require "capybara-screenshot/rspec"
 require "pry"
 require 'knapsack_pro'
 require 'paper_trail/frameworks/rspec'
+require_relative 'inventory'
 
 KnapsackPro::Adapters::RSpecAdapter.bind
 
@@ -45,24 +46,30 @@ Dir[Rails.root.join("spec/controllers/shared_examples/*.rb")].sort.each { |f| re
 # If an element is hidden, Capybara should ignore it
 Capybara.ignore_hidden_elements = true
 
-# https://docs.travis-ci.com/user/chrome
-Capybara.register_driver :chrome do |app|
-  args = %w[no-sandbox disable-gpu disable-site-isolation-trials window-size=1680,1050]
-  args << "headless" unless ENV["NOT_HEADLESS"] == "true"
-  capabilities = Selenium::WebDriver::Chrome::Options.new(args: args)
-  capabilities.add_preference(:download, prompt_for_download: false, default_directory: DownloadHelper::PATH.to_s)
-  capabilities.add_preference(:browser, set_download_behavior: { behavior: 'allow' })
-
-  Capybara::Selenium::Driver.new(app, browser: :chrome, capabilities: capabilities)
+require "capybara/cuprite"
+Capybara.register_driver(:local_cuprite) do |app|
+  Capybara::Cuprite::Driver.new(
+    app,
+    window_size: [1200, 800],
+    js_errors: true,
+    headless: ENV["NOT_HEADLESS"] != "true",
+    slowmo: ENV["SLOWMO"]&.to_f,
+    process_timeout: 60,
+    timeout: 20,
+    browser_options: ENV["DOCKER"] ? { "no-sandbox" => nil } : {}
+  )
 end
 
 # Enable JS for Capybara tests
-Capybara.javascript_driver = :chrome
+Capybara.javascript_driver = :local_cuprite
+
+# disable CSS transitions and js animations
+Capybara.disable_animation = true
 
 Capybara::Screenshot.autosave_on_failure = true
 # The driver name should match the Capybara driver config name.
-Capybara::Screenshot.register_driver(:chrome) do |driver, path|
-  driver.browser.save_screenshot(path)
+Capybara::Screenshot.register_driver(:local_cuprite) do |driver, path|
+  driver.save_screenshot(path)
 end
 
 # Set the asset host so that the screenshots look nice
@@ -70,6 +77,16 @@ Capybara.asset_host = "http://localhost:3000"
 
 # Only keep the most recent run
 Capybara::Screenshot.prune_strategy = :keep_last_run
+
+# Set the directory Capybara should save screenshots to
+# This monkeypatch is needed to separate screenshots from downloads
+module Capybara
+  module Screenshot
+    def self.capybara_tmp_path
+      Rails.root.join("tmp", "screenshots")
+    end
+  end
+end
 
 RSpec.configure do |config|
   config.include Devise::Test::ControllerHelpers, type: :controller
@@ -97,6 +114,14 @@ RSpec.configure do |config|
 
   # Make FactoryBot easier.
   config.include FactoryBot::Syntax::Methods
+  config.around(:each, skip_transaction: true) do |example|
+    config.use_transactional_fixtures = false
+    example.run
+    config.use_transactional_fixtures = true
+
+    DatabaseCleaner.clean_with(:truncation)
+    seed_base_data_for_tests
+  end
 
   #
   # --------------------
@@ -200,17 +225,25 @@ RSpec.configure do |config|
 
   config.before(:each, type: :system) do
     clear_downloads
-    driven_by :chrome
+    driven_by :local_cuprite
     Capybara.server = :puma, { Silent: true }
   end
 
   config.before(:each) do
     # Defined shared @ global variables used throughout the test suite.
     define_global_variables
+
+    if ENV['EVENTS_READ'] == 'true'
+      allow(Event).to receive(:read_events?).and_return(true)
+    end
   end
 
   config.before do
     Faker::UniqueGenerator.clear # Clears used values to avoid retry limit exceeded error
+  end
+
+  config.after(:each) do
+    travel_back
   end
 
   # RSpec Rails can automatically mix in different behaviours to your tests
@@ -241,4 +274,12 @@ end
 
 def text_body(mail)
   mail.body.parts.find { |p| p.content_type =~ /text/ }.body.encoded
+end
+
+def select2(node, select_name, value, position: nil)
+  position_str = position ? "[#{position}]" : ""
+  xpath = %((//div[contains(@class, "#{select_name}")]//span[contains(@class, "select2-container")])#{position_str})
+  container = node.find(:xpath, xpath)
+  container.click
+  container.find(:xpath, '//li[contains(@class, "select2-results__option")][@role="option"]', text: value).click
 end

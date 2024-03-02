@@ -63,7 +63,7 @@ Thanks for checking us out! If you're new here, here are some things you should 
 - This project relies entirely on volunteers, so please be patient with communication
 
 ### Join us on slack 💬
-You can sign up [here](https://rubyforgood.slack.com/join/shared_invite/zt-1kfeimohe-KL~~~6Lkof7G94_7Ojd_Hw#/shared-invite/email) and find us in #human-essentials. Many helpful members are available to answer your questions. Just ask, and someone will be there to help you!
+You can sign up [here](https://join.slack.com/t/rubyforgood/shared_invite/zt-21pyz2ab8-H6JgQfGGI0Ab6MfNOZRIQA) and find us in #human-essentials. Many helpful members are available to answer your questions. Just ask, and someone will be there to help you!
 
 ##  Getting Started 🛠️
 
@@ -93,7 +93,7 @@ You can sign up [here](https://rubyforgood.slack.com/join/shared_invite/zt-1kfei
 
   ```
     Organization Admin
-    Email: org_admin1@example.com
+       Email: org_admin1@example.com
     Password: password!
 
     User
@@ -166,6 +166,12 @@ Users that are frequent contributors and are involved in discussion (join the sl
 ### Stay Scoped
 
 Try to keep your PRs limited to one particular issue, and don't make changes that are out of scope for that issue. If you notice something that needs attention but is out of scope, please [create a new issue](https://github.com/rubyforgood/human-essentials/issues/new).
+## Debugging
+If starting server directly, via `rail s` or `rail console`, or built-in debugger in RubyMine, then you can use `binding.pry` to debug. Drop the pry where you want the execution to pause.
+
+If starting via Procfile with `bin/start`, then drop a ``binding.remote_pry`` into the line where you want execution to pause at. Then run ``pry-remote`` in the terminal to connect to it.
+https://github.com/Mon-Ouie/pry-remote
+
 
 ## Testing 🧪
 ### Writing Tests/Specs

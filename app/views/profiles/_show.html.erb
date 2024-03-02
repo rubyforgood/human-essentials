@@ -2,12 +2,12 @@
   <div class="col-md-6">
     <!-- /.box-header -->
     <h2 class='text-2xl underline'>Agency Information</h2>
-    <! -- #The field for inputting the name registers it as partner.name, 
-    #not partner_profile.name, so this pulls from partner.name -->
+    <%# The field for inputting the name registers it as partner.name,  %>
+    <%# not partner_profile.name, so this pulls from partner.name %>
     <p>Name: <%= @partner.name %></p>
     <p>Agency Type: <%= partner_profile.agency_type %>
     <% if partner_profile.agency_type == "Other" && partner_profile.other_agency_type %>
-      (<%=partner_profile.other_agency_type%>)
+      (<%= partner_profile.other_agency_type %>)
     <% end %>
     </p>
     <p>Proof of Agency Status
@@ -45,11 +45,11 @@
       <p>Program Name(s): <%= partner_profile.program_name %></p>
       <p>Program Description(s): <%= partner_profile.program_description %></p>
       <p>Program Age: <%= partner_profile.program_age %></p>
-      <p>Case Management: <%= humanize_boolean(partner_profile.case_management) %></p>
-      <p>Evidence Based: <%= humanize_boolean(partner_profile.evidence_based) %></p>
+      <p>Case Management: <%= humanize_boolean_3state(partner_profile.case_management) %></p>
+      <p>Evidence Based: <%= humanize_boolean_3state(partner_profile.evidence_based) %></p>
       <p>How Are Essentials (e.g. diapers, period supplies) Used In Your Program? <%= partner_profile.essentials_use %></p>
       <p>Do You Receive Essentials from Other Sources? <%= partner_profile.receives_essentials_from_other %></p>
-      <p>Currently Providing Diapers: <%= humanize_boolean(partner_profile.currently_provide_diapers) %></p>
+      <p>Currently Providing Diapers: <%= humanize_boolean_3state(partner_profile.currently_provide_diapers) %></p>
       <br>
       <h3>Program Address (if different)</h3>
       <p>Program Address: <%= partner_profile.program_address1 %></p>
@@ -62,7 +62,7 @@
     <% if partner_profile_fields.include?('organizational_capacity') || partner_profile_fields.empty? %>
       <h2 class='text-2xl underline'>Organizational Capacity</h2>
       <p>Client Capacity: <%= partner_profile.client_capacity %></p>
-      <p>Storage Space: <%= humanize_boolean(partner_profile.storage_space) %></p>
+      <p>Storage Space: <%= humanize_boolean_3state(partner_profile.storage_space) %></p>
       <p>Storage Space Description: <%= partner_profile.describe_storage_space %></p>
       <br>
     <% end %>
@@ -76,16 +76,16 @@
         <% if served_area_col.any? %>
           <%= render partial: "partners/profiles/show/served_area_row", collection: served_area_col %>
         <% else %>
-          <tr ><td class="county-name"><%= "No County Specified" %></td><td class="client-share percent">100%</td></tr>
-        <%end %>
+          <tr><td class="county-name"><%= "No County Specified" %></td><td class="client-share percent">100%</td></tr>
+        <% end %>
       </table>
       <br>
     <% end %>
 
     <% if partner_profile_fields.include?('population_served') || partner_profile_fields.empty? %>
       <h2 class='text-2xl underline'>Population Served</h2>
-      <p>Income Requirement: <%= humanize_boolean(partner_profile.income_requirement_desc) %></p>
-      <p>Income Verification: <%= humanize_boolean(partner_profile.income_verification) %></p>
+      <p>Income Requirement: <%= humanize_boolean_3state(partner_profile.income_requirement_desc) %></p>
+      <p>Income Verification: <%= humanize_boolean_3state(partner_profile.income_verification) %></p>
       <br>
     <% end %>
   </div>
@@ -146,14 +146,14 @@
       <p>Sources of Diapers: <%= partner_profile.sources_of_diapers %> </p>
       <p>Essentials Budget:<%= partner_profile.essentials_budget %></p>
       <p>Essentials Funding Source: <%= partner_profile.essentials_funding_source %></p>
-      <br/>
+      <br>
     <% end %>
     <% if partner_profile_fields.include?('attached_documents') || partner_profile_fields.empty? %>
       <h2 class='text-2xl underline'>Other Documents</h2>
         <% partner_profile.documents.each do |document| %>
           <p><%= link_to document.filename, rails_blob_path(document, disposition: 'inline') %></p>
         <% end %>
-        <br/>
+        <br>
     <h2 class='text-2xl underline'>Settings</h2>
         <% if partner_profile.organization.enable_child_based_requests? %>
           <p>Uses Child Based Requests: <%= humanize_boolean(partner_profile.enable_child_based_requests) %></p>
@@ -164,7 +164,7 @@
         <% if partner_profile.organization.enable_quantity_based_requests? %>
           <p>Uses Quantity Based Requests: <%= humanize_boolean(partner_profile.enable_quantity_based_requests) %></p>
         <% end %>
-      <br/>
+      <br>
 <% end %>
 <!-- /.box -->
 </div>

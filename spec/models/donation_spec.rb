@@ -60,7 +60,7 @@ RSpec.describe Donation, type: :model do
   end
 
   context "Callbacks >" do
-    it "inititalizes the issued_at field to default to created_at if it wasn't explicitly set" do
+    it "inititalizes the issued_at field to default to midnight if it wasn't explicitly set" do
       yesterday = 1.day.ago
       today = Time.zone.today
 
@@ -68,7 +68,7 @@ RSpec.describe Donation, type: :model do
       expect(donation.issued_at.to_date).to eq(today)
 
       donation = create(:donation, created_at: yesterday)
-      expect(donation.issued_at).to eq(donation.created_at)
+      expect(donation.issued_at).to eq(donation.created_at.end_of_day)
     end
 
     it "automatically combines duplicate line_item records when they're created" do
@@ -92,7 +92,7 @@ RSpec.describe Donation, type: :model do
         create(:donation, issued_at: Date.yesterday)
         # and one outside the range
         create(:donation, issued_at: 1.year.ago)
-        expect(Donation.during(1.month.ago..Date.tomorrow).size).to eq(2)
+        expect(Donation.during(1.month.ago..Time.zone.now + 2.days).size).to eq(2)
       end
     end
 
@@ -221,6 +221,44 @@ RSpec.describe Donation, type: :model do
 
         it "returns source" do
           expect(donation.source_view).to eq(donation.source)
+        end
+      end
+
+      context "details" do
+        context "manufacturer" do
+          let(:manufacturer) { create(:manufacturer) }
+          let(:donation) { create(:donation, source: "Manufacturer", manufacturer: manufacturer) }
+
+          it "returns manufacturer name" do
+            expect(donation.details).to eq(manufacturer.name)
+          end
+        end
+
+        context "product drive" do
+          let(:product_drive) { create(:product_drive) }
+          let(:donation) { create(:donation, source: "Product Drive", product_drive: product_drive) }
+
+          it "returns product_drive name" do
+            expect(donation.details).to eq(product_drive.name)
+          end
+        end
+
+        context "donation site" do
+          let(:donation_site) { create(:donation_site) }
+          let(:donation) { create(:donation, source: "Donation Site", donation_site: donation_site) }
+
+          it "returns donation_site name" do
+            expect(donation.details).to eq(donation_site.name)
+          end
+        end
+
+        context "misc" do
+          let(:donation) { create(:donation, source: "Misc. Donation", comment: Faker::Lorem.paragraph) }
+
+          it "returns a truncated comment" do
+            short_comment = donation.comment.truncate(25, separator: /\s/)
+            expect(donation.details).to eq(short_comment)
+          end
         end
       end
     end

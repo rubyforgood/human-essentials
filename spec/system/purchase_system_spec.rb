@@ -61,7 +61,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           create(:purchase, storage_location: storage2)
           visit subject
           expect(page).to have_css("table tbody tr", count: 2)
-          select storage1.name, from: "filters_at_storage_location"
+          select storage1.name, from: "filters[at_storage_location]"
           click_button "Filter"
           expect(page).to have_css("table tbody tr", count: 1)
         end
@@ -73,7 +73,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           create(:purchase, vendor: vendor2)
           visit subject
           expect(page).to have_css("table tbody tr", count: 2)
-          select vendor1.business_name, from: "filters_from_vendor"
+          select vendor1.business_name, from: "filters[from_vendor]"
           click_button "Filter"
           expect(page).to have_css("table tbody tr", count: 1)
         end
@@ -105,6 +105,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           fill_in "vendor_business_name", with: "businesstest"
           fill_in "vendor_contact_name", with: "test"
           fill_in "vendor_email", with: "123@mail.ru"
+          sleep(0.3)
           click_on "vendor-submit"
           select "businesstest", from: "purchase_vendor_id"
           expect(page).to have_no_content("New Vendor")
@@ -130,7 +131,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           select Item.alphabetized.first.name, from: "purchase_line_items_attributes_0_item_id"
           select Vendor.first.business_name, from: "purchase_vendor_id"
           fill_in "purchase_line_items_attributes_0_quantity", with: "5"
-          fill_in "purchase_issued_at", with: "01/01/2001"
+          fill_in "purchase_issued_at", with: "2001-01-01"
           fill_in "purchase_amount_spent", with: "10"
 
           expect do
@@ -264,6 +265,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           within ".modal-content" do
             fill_in "barcode_item_quantity", with: 3
             select Item.alphabetized.first.name, from: "barcode_item_barcodeable_id"
+            sleep(0.3)
             click_button "Save"
           end
 

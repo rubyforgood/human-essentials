@@ -98,7 +98,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       location3 = create(:storage_location, :with_items, item: item, item_quantity: 10, name: "Baz", discarded_at: rand(2.years).seconds.ago)
       visit subject
 
-      select item.name, from: "filters_containing"
+      select item.name, from: "filters[containing]"
       click_button "Filter"
 
       expect(page).to have_css("table tr", count: 2)
@@ -160,8 +160,8 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       create(:storage_location, :with_items, item: item3, item_quantity: 10, name: "Baz")
       visit subject
 
-      expect(page.all("select#filters_containing option").map(&:text).select(&:present?)).to eq(expected_order)
-      expect(page.all("select#filters_containing option").map(&:text).select(&:present?)).not_to eq(expected_order.reverse)
+      expect(page.all('select[name="filters[containing]"] option').map(&:text).select(&:present?)).to eq(expected_order)
+      expect(page.all('select[name="filters[containing]"] option').map(&:text).select(&:present?)).not_to eq(expected_order.reverse)
     end
   end
 

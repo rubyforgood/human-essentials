@@ -31,9 +31,14 @@ class Kit < ApplicationRecord
 
   validate :at_least_one_item
 
+  # @param inventory [View::Inventory]
   # @return [Boolean]
-  def can_deactivate?
-    inventory_items.where('quantity > 0').none?
+  def can_deactivate?(inventory)
+    if inventory
+      inventory.quantity_for(item_id: item.id).zero?
+    else
+      inventory_items.where('quantity > 0').none?
+    end
   end
 
   def deactivate
