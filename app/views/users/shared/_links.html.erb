@@ -1,15 +1,14 @@
 <%- if !%w[sessions consolidated_logins].include?(controller_name) %>
-  <%= link_to "Log in", new_session_path(resource_name) %><br />
+  <%= link_to "Log in", new_session_path(resource_name) %><br>
   <%= link_to user_google_oauth2_omniauth_authorize_path, method: :post do %>
-    <img src="../img/btn_google_signin_dark_focus_web@2x.png" alt="Sign in with Google"/>
+    <img src="../img/btn_google_signin_dark_focus_web@2x.png" alt="Sign in with Google">
   <% end %>
 <% end -%>
 
 <%- if devise_mapping.registerable? && controller_name != 'registrations' %>
-  <%= link_to "Sign up", new_account_request_path %><br />
+  <%= link_to "Sign up", new_account_request_path %><br>
 <% end -%>
 
 <%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
-  <%= link_to "Forgot your password?", new_password_path(resource_name) %><br />
+  <%= link_to "Forgot your password?", new_password_path(resource_name) %><br>
 <% end -%>
-

@@ -86,14 +86,17 @@ RSpec.feature "Distributions", type: :system do
 
     context "when the quantity is lower than the on hand minimum quantity" do
       it "should display an error" do
-        item = @storage_location.inventory_items.first.item
+        item = View::Inventory.new(@organization.id).items_for_location(@storage_location.id).first.db_item
         item.update!(on_hand_minimum_quantity: 5)
-        @storage_location.inventory_items.first.update!(quantity: 20)
+        TestInventory.create_inventory(@organization,
+          {
+            @storage_location.id => { item.id => 20 }
+          })
 
         visit @url_prefix + "/distributions/new"
         select @partner.name, from: "Partner"
         select @storage_location.name, from: "From storage location"
-        select item.name, from: "distribution_line_items_attributes_0_item_id"
+        select2(page, 'distribution_line_items_item_id', item.name, position: 1)
         select @storage_location.name, from: "distribution_storage_location_id"
         fill_in "distribution_line_items_attributes_0_quantity", with: 18
 
@@ -106,9 +109,12 @@ RSpec.feature "Distributions", type: :system do
 
     context "when the quantity is lower than the on hand recommended quantity" do
       it "should display an alert" do
-        item = @storage_location.inventory_items.first.item
+        item = View::Inventory.new(@organization.id).items_for_location(@storage_location.id).first.db_item
         item.update!(on_hand_minimum_quantity: 1, on_hand_recommended_quantity: 5)
-        @storage_location.inventory_items.first.update!(quantity: 20)
+        TestInventory.create_inventory(@organization,
+          {
+            @storage_location.id => { item.id => 20 }
+          })
 
         visit @url_prefix + "/distributions/new"
         select @partner.name, from: "Partner"
@@ -133,8 +139,8 @@ RSpec.feature "Distributions", type: :system do
 
         fill_in "Comment", with: "Take my wipes... please"
 
-        item = @storage_location.inventory_items.first.item
-        quantity = @storage_location.inventory_items.first.quantity
+        item = View::Inventory.new(@organization.id).items_for_location(@storage_location.id).first
+        quantity = item.quantity
         select item.name, from: "distribution_line_items_attributes_0_item_id"
         fill_in "distribution_line_items_attributes_0_quantity", with: quantity * 2
 
@@ -144,7 +150,8 @@ RSpec.feature "Distributions", type: :system do
         end.not_to change { Distribution.count }
 
         expect(page).to have_content("New Distribution")
-        expect(page.find(".alert")).to have_content "exceed"
+        message = Event.read_events?(@organization) ? 'Could not reduce quantity' : 'items exceed the available inventory'
+        expect(page.find(".alert")).to have_content message
       end
     end
     context "when there is a default storage location" do
@@ -221,7 +228,8 @@ RSpec.feature "Distributions", type: :system do
         click_on "Save", match: :first
       end.not_to change { distribution.line_items.first.quantity }
       within ".alert" do
-        expect(page).to have_content "items exceed the available inventory"
+        message = Event.read_events?(@organization) ? 'Could not reduce quantity' : 'items exceed the available inventory'
+        expect(page).to have_content message
       end
     end
 
@@ -293,11 +301,15 @@ RSpec.feature "Distributions", type: :system do
     end
 
     context "when logged as Admin" do
-      let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: @user.organization, issued_at: Time.zone.today.prev_day, state: :complete) }
-
       before do
+        # this will fail if it runs on January 1
+        # since we're creating a distribution yesterday (i.e. last year)
+        # and it won't show any distributions for this year
+        travel_to Time.zone.local(2023, 5, 5)
         sign_in(@organization_admin)
       end
+
+      let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: @user.organization, issued_at: Time.zone.today.prev_day, state: :complete) }
 
       it "can click on Edit button and a warning appears " do
         visit @url_prefix + "/distributions"
@@ -398,31 +410,37 @@ RSpec.feature "Distributions", type: :system do
         end
         click_on "Save"
         expect(page).to have_no_content "Distribution updated!"
-        expect(page).to have_content(/items exceed the available inventory/i)
-        expect(page).to have_content 999_999, count: 1
+        message = 'items exceed the available inventory'
+        number = 999_999
+        if Event.read_events?(@organization)
+          message = 'Could not reduce quantity'
+          number = 999_899
+        end
+        expect(page).to have_content(/#{message}/i)
+        expect(page).to have_content number, count: 1
         within ".alert" do
-          expect(page).to have_content 999_999
+          expect(page).to have_content number
         end
         expect(Distribution.first.line_items.count).to eq 1
       end
 
       it "User creates duplicate line items" do
-        item_type = @distribution.line_items.first.item.name
-        first_item_name_field = 'distribution_line_items_attributes_0_item_id'
-        select(item_type, from: first_item_name_field)
+        item = @distribution.line_items.first.item
+        select2(page, 'distribution_line_items_item_id', item.name, position: 1)
         find_all(".numeric")[0].set 1
 
         click_on "Add another item"
 
+        select2(page, 'distribution_line_items_item_id', item.name, position: 2)
         find_all(".numeric")[1].set 3
 
         first("button", text: "Save").click
 
         expect(page).to have_css "td"
-        item_row = find("td", text: item_type).find(:xpath, '..')
+        item_row = find("td", text: item.name).find(:xpath, '..')
 
         # TODO: Find out how to test for item type and 4 without the dollar amounts.
-        expect(item_row).to have_content("#{item_type}\t$1.00\t$4.00\t4")
+        expect(item_row).to have_content("#{item.name}\t$1.00\t$4.00\t4")
       end
     end
   end
@@ -595,8 +613,11 @@ RSpec.feature "Distributions", type: :system do
 
   it "allows completion of corrected distribution with depleted inventory item" do
     visit @url_prefix + "/distributions/new"
-    item = @storage_location.inventory_items.first.item
-    @storage_location.inventory_items.first.update!(quantity: 20)
+    item = View::Inventory.new(@organization.id).items_for_location(@storage_location.id).first.db_item
+    TestInventory.create_inventory(@organization,
+      {
+        @storage_location.id => { item.id => 20 }
+      })
 
     select @partner.name, from: "Partner"
     select @storage_location.name, from: "From storage location"
@@ -616,8 +637,11 @@ RSpec.feature "Distributions", type: :system do
     expect(page).to have_link("Distribution Complete")
 
     expect(@storage_location.inventory_items.first.quantity).to eq(0)
+    expect(View::Inventory.new(@organization.id)
+      .quantity_for(item_id: item.id, storage_location: @storage_location.id)).to eq(0)
 
     click_link "Distribution Complete"
+    expect(page).to have_content('Distribution')
 
     expect(page).to have_content("This distribution has been marked as being completed!")
   end

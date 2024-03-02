@@ -1,13 +1,15 @@
 <tr>
-  <td><%= donation_row.source_view %></td>
+  <td><%= donation_row.source %></td>
   <td class="text-left date"><%= donation_row.issued_at.strftime("%F") %>
-  <td><%= donation_row.donation_site.try(:name) %></td>
-  <td><%= donation_row.storage_location.name %></td>
-  <td class="text-left numeric"><%= donation_row.line_items.total %></td>
-  <td class="text-left numeric"><%= dollar_value(donation_row.money_raised.to_i) %></td>
-  <td class="text-left numeric"><%= dollar_value(donation_row.value_per_itemizable) %></td>
-  <td><%= truncate donation_row.comment, length: 140, separator: /\w+/ %>
-  <td class="text-right">
-    <%= view_button_to donation_path(donation_row) %>
+    <td><%= donation_row.details %></td>
+    <td><%= donation_row.storage_location.name %></td>
+    <td class="text-left numeric"><%= donation_row.line_items.total %></td>
+    <td class="text-left numeric"><%= dollar_value(donation_row.money_raised.to_i) %></td>
+    <td class="text-left numeric"><%= dollar_value(donation_row.value_per_itemizable) %></td>
+    <td><%= truncate donation_row.comment, length: 140, separator: /\w+/ %>
+      <td class="text-right">
+        <%= view_button_to donation_path(donation_row) %>
+      </td>
+    </td>
   </td>
 </tr>

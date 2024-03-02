@@ -10,7 +10,7 @@ end
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.5.4"
+gem "pg", "~> 1.5.5"
 # Web server.
 gem "puma"
 # Rails web framework.
@@ -157,6 +157,8 @@ group :development, :test do
   gem "rubocop-rails", "~> 2.23.1"
   # Default rules for Rubocop.
   gem "standard", "~> 1.33"
+  # Erb linter.
+  gem "erb_lint"
 end
 
 group :development do
@@ -173,7 +175,7 @@ group :development do
   # Open sent e-mails in the browser instead of trying to send to a real mail server.
   gem "letter_opener"
   # Used as a dependency for Guard.
-  gem "listen", "~> 3.8.0"
+  gem "listen", "~> 3.9.0"
   # Generate a diagram based on Rails models.
   gem "rails-erd"
   # Allows to create a console in the browser.
@@ -196,7 +198,7 @@ group :test do
   # More concise test ("should") matchers
   gem 'shoulda-matchers', '~> 6.1'
   # Mock HTTP requests and ensure they are not called during tests.
-  gem "webmock", "~> 3.19"
+  gem "webmock", "~> 3.23"
   # Interface capybara to chrome headless
   gem "cuprite"
 end
@@ -210,6 +212,6 @@ if %w(mingw mswin x64_mingw jruby).include?(RUBY_PLATFORM)
 end
 
 # Use Redis for Action Cable
-gem "redis", "~> 5.0"
+gem "redis", "~> 5.1"
 
 gem "importmap-rails", "~> 2.0"

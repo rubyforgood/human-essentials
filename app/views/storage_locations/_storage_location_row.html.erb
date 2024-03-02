@@ -3,8 +3,8 @@
   <td><%= storage_location.address %></td>
   <td><%= storage_location.square_footage %></td>
   <td><%= storage_location.warehouse_type %></td>
-  <td><%= storage_location.size %></td>
-  <td><%= number_to_currency(storage_location.inventory_total_value_in_dollars) %></td>
+  <td><%= @inventory ? @inventory.quantity_for(storage_location: storage_location.id) : storage_location.size %></td>
+  <td><%= number_to_currency(storage_location.inventory_total_value_in_dollars(@inventory)) %></td>
   <td class="text-right">
     <%= view_button_to storage_location %>
     <%= edit_button_to edit_storage_location_path(storage_location) %>

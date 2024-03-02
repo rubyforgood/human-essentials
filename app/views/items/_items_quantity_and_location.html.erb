@@ -14,8 +14,7 @@
     </tr>
     </thead>
     <tbody>
-    <%= render partial: "item_row_quantity_and_storages", collection: @items_by_storage_collection_and_quantity, as: :row %>
+    <%= render partial: "item_row_quantity_and_storages", collection: @items_by_storage_collection_and_quantity.values, as: :row_item %>
     </tbody>
   </table>
 </div><!-- /.box-body.table-responsive -->
-

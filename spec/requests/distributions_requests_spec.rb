@@ -257,12 +257,13 @@ RSpec.describe "Distributions", type: :request do
       end
 
       describe "when changing storage location" do
+        let(:item) { create(:item) }
         it "updates storage quantity correctly" do
-          distribution = create(:distribution, :with_items, item_quantity: 10)
+          new_storage_location = create(:storage_location)
+          create(:donation, :with_items, item: item, item_quantity: 30, storage_location: new_storage_location)
+          distribution = create(:distribution, :with_items, item: item, item_quantity: 10)
           original_storage_location = distribution.storage_location
           line_item = distribution.line_items.first
-          new_storage_location = create(:storage_location)
-          create(:donation, :with_items, item: line_item.item, item_quantity: 30, storage_location: new_storage_location)
           line_item_params = {
             "0" => {
               "_destroy" => "false",
@@ -278,7 +279,10 @@ RSpec.describe "Distributions", type: :request do
           expect(new_storage_location.size).to eq 25
         end
 
+        # TODO this test is invalid in event-world since it's handled by the aggregate
         it "rollsback updates if quantity would go below 0" do
+          next if Event.read_events?(@organization)
+
           distribution = create(:distribution, :with_items, item_quantity: 10)
           original_storage_location = distribution.storage_location
 
