@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_01_07_015007) do
+ActiveRecord::Schema[7.0].define(version: 2024_02_07_202431) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -282,6 +282,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_07_015007) do
     t.datetime "updated_at", null: false
     t.bigint "organization_id"
     t.bigint "user_id"
+    t.string "group_id"
     t.index ["organization_id", "event_time"], name: "index_events_on_organization_id_and_event_time"
     t.index ["organization_id"], name: "index_events_on_organization_id"
     t.index ["user_id"], name: "index_events_on_user_id"
@@ -476,6 +477,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_07_015007) do
     t.boolean "enable_individual_requests", default: true, null: false
     t.boolean "enable_quantity_based_requests", default: true, null: false
     t.boolean "ytd_on_distribution_printout", default: true, null: false
+    t.boolean "one_step_partner_invite", default: false, null: false
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end

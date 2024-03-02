@@ -38,12 +38,14 @@ RSpec.describe DistributionsController, type: :controller do
       context "multiple line_items that have inventory quantity below minimum quantity" do
         let(:item1) { create(:item, name: "Item 1", organization: @organization, on_hand_minimum_quantity: 5, on_hand_recommended_quantity: 10) }
         let(:item2) { create(:item, name: "Item 2", organization: @organization, on_hand_minimum_quantity: 5, on_hand_recommended_quantity: 10) }
-        let(:storage_location) do
-          storage_location = create(:storage_location)
-          create(:inventory_item, storage_location: storage_location, item: item1, quantity: 20)
-          create(:inventory_item, storage_location: storage_location, item: item2, quantity: 20)
-
-          storage_location
+        let(:storage_location) { create(:storage_location) }
+        before(:each) do
+          TestInventory.create_inventory(@organization, {
+            storage_location.id => {
+              item1.id => 20,
+              item2.id => 20
+            }
+          })
         end
         let(:params) do
           {
@@ -75,12 +77,14 @@ RSpec.describe DistributionsController, type: :controller do
       context "multiple line_items that have inventory quantity below recommended quantity" do
         let(:item1) { create(:item, name: "Item 1", organization: @organization, on_hand_recommended_quantity: 5) }
         let(:item2) { create(:item, name: "Item 2", organization: @organization, on_hand_recommended_quantity: 5) }
-        let(:storage_location) do
-          storage_location = create(:storage_location)
-          create(:inventory_item, storage_location: storage_location, item: item1, quantity: 20)
-          create(:inventory_item, storage_location: storage_location, item: item2, quantity: 20)
-
-          storage_location
+        let(:storage_location) { create(:storage_location) }
+        before(:each) do
+          TestInventory.create_inventory(@organization, {
+            storage_location.id => {
+              item1.id => 20,
+              item2.id => 20
+            }
+          })
         end
         let(:params) do
           {
@@ -135,12 +139,14 @@ RSpec.describe DistributionsController, type: :controller do
       context "when distribution causes inventory quantity to be below recommended quantity" do
         let(:item1) { create(:item, name: "Item 1", organization: @organization, on_hand_recommended_quantity: 5) }
         let(:item2) { create(:item, name: "Item 2", organization: @organization, on_hand_recommended_quantity: 5) }
-        let(:storage_location) do
-          storage_location = create(:storage_location)
-          create(:inventory_item, storage_location: storage_location, item: item1, quantity: 20)
-          create(:inventory_item, storage_location: storage_location, item: item2, quantity: 20)
-
-          storage_location
+        let(:storage_location) { create(:storage_location) }
+        before(:each) do
+          TestInventory.create_inventory(@organization, {
+            storage_location.id => {
+              item1.id => 20,
+              item2.id => 20
+            }
+          })
         end
         let(:distribution) { create(:distribution, storage_location: storage_location) }
         let(:params) do
@@ -170,12 +176,14 @@ RSpec.describe DistributionsController, type: :controller do
       context "when distribution causes inventory quantity to be below minimum quantity" do
         let(:item1) { create(:item, name: "Item 1", organization: @organization, on_hand_minimum_quantity: 5) }
         let(:item2) { create(:item, name: "Item 2", organization: @organization, on_hand_minimum_quantity: 5) }
-        let(:storage_location) do
-          storage_location = create(:storage_location)
-          create(:inventory_item, storage_location: storage_location, item: item1, quantity: 20)
-          create(:inventory_item, storage_location: storage_location, item: item2, quantity: 20)
-
-          storage_location
+        let(:storage_location) { create(:storage_location) }
+        before(:each) do
+          TestInventory.create_inventory(@organization, {
+            storage_location.id => {
+              item1.id => 20,
+              item2.id => 20
+            }
+          })
         end
         let(:distribution) { create(:distribution, storage_location: storage_location) }
         let(:params) do
@@ -206,12 +214,14 @@ RSpec.describe DistributionsController, type: :controller do
       context "when distribution has items updated for minimum quantity" do
         let(:item1) { create(:item, name: "Item 1", organization: @organization, on_hand_minimum_quantity: 5) }
         let(:item2) { create(:item, name: "Item 2", organization: @organization, on_hand_minimum_quantity: 5) }
-        let(:storage_location) do
-          storage_location = create(:storage_location)
-          create(:inventory_item, storage_location: storage_location, item: item1, quantity: 20)
-          create(:inventory_item, storage_location: storage_location, item: item2, quantity: 20)
-
-          storage_location
+        let(:storage_location) { create(:storage_location) }
+        before(:each) do
+          TestInventory.create_inventory(@organization, {
+            storage_location.id => {
+              item1.id => 20,
+              item2.id => 20
+            }
+          })
         end
         let(:distribution) { create(:distribution, :with_items, item: item1, storage_location: storage_location) }
         let(:params) do
