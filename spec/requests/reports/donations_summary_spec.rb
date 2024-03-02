@@ -29,6 +29,59 @@ RSpec.describe "Reports::DonationsSummary", type: :request do
         expect(response.body).to include("New Donation")
         expect(response.body).to include("#{@url_prefix}/donations/new")
       end
+
+      context "with filters" do
+        before do
+          # Create a bunch of historical donations
+          create :donation, :with_items, item_quantity: 2, issued_at: 0.days.ago
+          create :donation, :with_items, item_quantity: 3, issued_at: 1.day.ago
+          create :donation, :with_items, item_quantity: 7, issued_at: 3.days.ago
+          create :donation, :with_items, item_quantity: 11, issued_at: 10.days.ago
+          create :donation, :with_items, item_quantity: 13, issued_at: 20.days.ago
+          create :donation, :with_items, item_quantity: 17, issued_at: 30.days.ago
+        end
+
+        let(:formatted_date_range) { date_range.map { _1.to_formatted_s(:date_picker) }.join(" - ") }
+
+        before do
+          get reports_donations_summary_path(@user.organization), params: {filters: {date_range: formatted_date_range}}
+        end
+
+        context "today" do
+          let(:date_range) { [0.days.ago, 0.days.ago] }
+          it "shows the correct total and links" do
+            expect(response.body).to match(%r{<span class="total_received_donations">\s*2\s*</span>})
+          end
+        end
+
+        context "yesterday" do
+          let(:date_range) { [1.day.ago, 1.day.ago] }
+          it "shows the correct total and links" do
+            expect(response.body).to match(%r{<span class="total_received_donations">\s*3\s*</span>})
+          end
+        end
+
+        context "a weekish ago" do
+          let(:date_range) { [14.days.ago, 7.days.ago] }
+          it "shows the correct total and links" do
+            expect(response.body).to match(%r{<span class="total_received_donations">\s*11\s*</span>})
+          end
+        end
+
+        context "two weekish ago" do
+          let(:date_range) { [25.days.ago, 7.days.ago] }
+          it "shows the correct total and links" do
+            expect(response.body).to match(%r{<span class="total_received_donations">\s*24\s*</span>})
+          end
+        end
+
+        context "a long time" do
+          let(:date_range) { [900.days.ago, 1.day.ago] }
+          it "shows the correct total and links" do
+            expect(response.body).to match(%r{<span class="total_received_donations">\s*51\s*</span>})
+          end
+        end
+      end
     end
   end
 
