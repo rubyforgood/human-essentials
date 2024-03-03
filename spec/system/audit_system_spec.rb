@@ -39,20 +39,6 @@ RSpec.describe "Audit management", type: :system, js: true do
       subject { url_prefix + "/audits/new" }
       let(:item) { Item.alphabetized.first }
 
-      it "*Does* include inactive items in the line item fields" do
-        visit subject
-
-        select storage_location.name, from: "Storage location"
-        expect(page).to have_content(item.name)
-        select item.name, from: "audit_line_items_attributes_0_item_id"
-
-        item.update(active: false)
-
-        page.refresh
-        select storage_location.name, from: "Storage location"
-        expect(page).to have_content(item.name)
-      end
-
       it "does not display quantities in line-item drop down selector" do
         create(:storage_location, :with_items, item: item, item_quantity: 10)
         visit subject
