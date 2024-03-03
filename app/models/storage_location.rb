@@ -142,7 +142,6 @@ class StorageLocation < ApplicationRecord
     # This is, at least for now, how we log changes to the inventory made in this call
     log = {}
     # Iterate through each of the line-items in the moving box
-    Item.reactivate(itemizable_array.map { |item_hash| item_hash[:item_id] })
     itemizable_array.each do |item_hash|
       # Locate the storage box for the item, or create a new storage box for it
       inventory_item = inventory_items.find_or_create_by!(item_id: item_hash[:item_id])

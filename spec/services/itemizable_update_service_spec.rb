@@ -1,8 +1,8 @@
 RSpec.describe ItemizableUpdateService do
   let(:storage_location) { create(:storage_location, organization: @organization, item_count: 0) }
   let(:new_storage_location) { create(:storage_location, organization: @organization, item_count: 0) }
-  let(:item1) { create(:item, organization: @organization) }
-  let(:item2) { create(:item, organization: @organization) }
+  let(:item1) { create(:item, organization: @organization, name: "My Item 1") }
+  let(:item2) { create(:item, organization: @organization, name: "My Item 2") }
   before(:each) do
     TestInventory.create_inventory(storage_location.organization, {
       storage_location.id => {
@@ -69,6 +69,12 @@ RSpec.describe ItemizableUpdateService do
       expect(storage_location.size).to eq(10)
       expect(new_storage_location.size).to eq(24)
     end
+
+    it "should raise an error if any item is inactive" do
+      item1.update!(active: false)
+      msg = "Update failed: The following items are currently inactive: My Item 1. Please reactivate them before continuing."
+      expect { subject }.to raise_error(msg)
+    end
   end
 
   describe "decreases" do
@@ -113,6 +119,12 @@ RSpec.describe ItemizableUpdateService do
       expect(itemizable.line_items.sum(&:quantity)).to eq(4)
       expect(storage_location.size).to eq(30)
       expect(new_storage_location.size).to eq(16)
+    end
+
+    it "should raise an error if any item is inactive" do
+      item1.update!(active: false)
+      msg = "Update failed: The following items are currently inactive: My Item 1. Please reactivate them before continuing."
+      expect { subject }.to raise_error(msg)
     end
   end
 end

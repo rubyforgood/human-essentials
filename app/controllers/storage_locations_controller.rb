@@ -154,8 +154,8 @@ class StorageLocationsController < ApplicationController
                                              .includes(inventory_items: :item)
                                              .find(params[:id])
                                              .inventory_items
+                                           .active
 
-      @inventory_items = @inventory_items.active unless params[:include_inactive_items] == "true"
       @inventory_items += include_omitted_items(@inventory_items.collect(&:item_id)) if params[:include_omitted_items] == "true"
       respond_to :json
     end
