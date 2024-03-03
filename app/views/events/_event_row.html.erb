@@ -5,7 +5,7 @@
   <% to_loc = event.data.items.first&.to_storage_location %>
   <tr>
     <td>
-      <%= event.user.name %>
+      <%= event.user&.name || "No Name Provided" %>
     </td>
     <td title="Internal Event ID: <%= event.id %>"><%= event.type.sub(/Event/, '') %></td>
     <td>
