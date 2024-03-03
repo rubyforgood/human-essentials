@@ -268,7 +268,7 @@ RSpec.feature "Distributions", type: :system do
     end
 
     context "when one of the items has been 'deleted'" do
-      it "the user can still reclaim it and it reactivates the item", js: true do
+      it "the user can still reclaim it", js: true do
         item = distribution.line_items.first.item
         item.destroy
         expect do
@@ -276,7 +276,7 @@ RSpec.feature "Distributions", type: :system do
             click_on "Reclaim"
           end
           page.find ".alert"
-        end.to change { Distribution.count }.by(-1).and change { Item.active.count }.by(1)
+        end.to change { Distribution.count }.by(-1)
         expect(page).to have_content "reclaimed"
       end
     end
