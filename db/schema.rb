@@ -250,7 +250,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_16_163610) do
     t.integer "organization_id"
     t.float "latitude"
     t.float "longitude"
-        t.index ["latitude", "longitude"], name: "index_donation_sites_on_latitude_and_longitude"
+    t.index ["latitude", "longitude"], name: "index_donation_sites_on_latitude_and_longitude"
     t.index ["organization_id"], name: "index_donation_sites_on_organization_id"
   end
 
