@@ -104,6 +104,19 @@ class Donation < ApplicationRecord
                       .sum("line_items.quantity")
   end
 
+  def details
+    case source
+    when SOURCES[:product_drive]
+      product_drive.name
+    when SOURCES[:manufacturer]
+      manufacturer.name
+    when SOURCES[:donation_site]
+      donation_site.name
+    when SOURCES[:misc]
+      comment&.truncate(25, separator: /\s/)
+    end
+  end
+
   def remove(item)
     # doing this will handle either an id or an object
     item_id = item.to_i
