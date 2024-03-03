@@ -4,9 +4,12 @@
 #
 #  id              :integer          not null, primary key
 #  address         :string
+#  contact_name    :string
+#  email           :string
 #  latitude        :float
 #  longitude       :float
 #  name            :string
+#  phone           :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :integer
@@ -18,7 +21,9 @@ class DonationSite < ApplicationRecord
 
   belongs_to :organization
 
-  validates :name, :address, :organization, presence: true
+  validates :name, :address, :contact_name, :organization, presence: true
+  validates :email, presence: true, format: {with: URI::MailTo::EMAIL_REGEXP}
+  validates :phone, presence: true, format: {with: /\A\+?[\d\s\-]+\z/, message: "must be a valid phone number"}
 
   has_many :donations, dependent: :destroy
 
