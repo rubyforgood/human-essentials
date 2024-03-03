@@ -285,9 +285,10 @@ RSpec.describe "Partners", type: :request do
   end
 
   describe "POST #invite_partner_user" do
-    subject { -> { post invite_partner_user_partner_path(default_params.merge(id: partner.id, partner: partner.id, email: email)) } }
+    subject { -> { post invite_partner_user_partner_path(default_params.merge(id: partner.id, partner: partner.id, email: email, name: name)) } }
     let(:partner) { create(:partner, organization: @organization) }
     let(:email) { Faker::Internet.email }
+    let(:name) { Faker::Name.unique.name }
 
     context 'when the invite successfully' do
       before do
@@ -297,6 +298,7 @@ RSpec.describe "Partners", type: :request do
         subject.call
         expect(UserInviteService).to have_received(:invite).with(
           email: email,
+          name: name,
           roles: [Role::PARTNER],
           resource: partner
         )

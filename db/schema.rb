@@ -233,8 +233,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_16_163610) do
     t.integer "organization_id"
     t.datetime "issued_at", precision: nil
     t.string "agency_rep"
-    t.integer "state", default: 5, null: false
     t.boolean "reminder_email_enabled", default: false, null: false
+    t.integer "state", default: 5, null: false
     t.integer "delivery_method", default: 0, null: false
     t.decimal "shipping_cost", precision: 8, scale: 2
     t.index ["organization_id"], name: "index_distributions_on_organization_id"
