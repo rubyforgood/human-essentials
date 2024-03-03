@@ -304,7 +304,11 @@
             <%= form_tag invite_partner_user_partner_path do %>
               <div class="input-group">
                 <span class="input-group-text" id="spn_env_fa_icon"><%= fa_icon "envelope" %></span>
-                <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon" autocomplete="on">
+                <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon" required autocomplete="off">
+              </div>
+              <div class="input-group mt-3">
+                <span class="input-group-text" id="spn_env_fa_icon"><%= fa_icon "user" %></span>
+                <input type="text" name="name" class="form-control" placeholder="Name" aria-describedby="name_icon" required autocomplete="off">
                 <%= hidden_field_tag :partner, @partner.id %><br>
               </div>
               <br>
@@ -331,7 +335,7 @@
             <%= form_tag partner_user_reset_password_users_path do %>
               <div class="input-group">
                 <span class="input-group-text" id="spn_env_fa_icon"><%= fa_icon "envelope" %></span>
-                <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon" autocomplete="on">
+                <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon" autocomplete="off">
                 <%= hidden_field_tag :partner_id, @partner.id %><br>
               </div>
               <br>
