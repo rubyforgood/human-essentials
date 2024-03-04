@@ -10,7 +10,7 @@ end
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.5.5"
+gem "pg", "~> 1.5.6"
 # Web server.
 gem "puma"
 # Rails web framework.
