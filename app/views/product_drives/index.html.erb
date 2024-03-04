@@ -38,7 +38,7 @@
             <%= form_tag(product_drives_path, method: :get, organization_id: current_organization) do |f| %>
               <div class="row">
                 <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                  <%= filter_select(scope: :by_name, collection: @product_drives, key: :name, value: :name, selected: @selected_name_filter) %>
+                  <%= filter_select(scope: :by_name, collection: @product_drives_alphabetical, key: :name, value: :name, selected: @selected_name_filter) %>
                 </div>
                 <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
                   <%= filter_select(label: "Filter by item category", scope: :by_item_category_id, collection: @item_categories, selected: @selected_item_category) %>

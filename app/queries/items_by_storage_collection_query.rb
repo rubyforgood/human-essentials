@@ -14,6 +14,7 @@ class ItemsByStorageCollectionQuery
   def call
     @items ||=  organization
                 .items
+                .active
                 .joins(' LEFT OUTER JOIN "inventory_items" ON "inventory_items"."item_id" = "items"."id"')
                 .joins(' LEFT OUTER JOIN "storage_locations" ON "storage_locations"."id" = "inventory_items"."storage_location_id"')
                 .select('
