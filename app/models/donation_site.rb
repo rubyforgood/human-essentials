@@ -24,7 +24,6 @@ class DonationSite < ApplicationRecord
   validates :name, :address, :organization, presence: true
   validates :contact_name, length: {minimum: 3}, allow_blank: true
   validates :email, format: {with: URI::MailTo::EMAIL_REGEXP}, allow_blank: true
-  validates :phone, allow_blank: true
 
   has_many :donations, dependent: :destroy
 
