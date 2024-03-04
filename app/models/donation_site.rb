@@ -21,9 +21,10 @@ class DonationSite < ApplicationRecord
 
   belongs_to :organization
 
-  validates :name, :address, :contact_name, :organization, presence: true
-  validates :email, presence: true, format: {with: URI::MailTo::EMAIL_REGEXP}
-  validates :phone, presence: true, format: {with: /\A\+?[\d\s\-]+\z/, message: "must be a valid phone number"}
+  validates :name, :address, :organization, presence: true
+  validates :contact_name, length: {minimum: 3}, allow_blank: true
+  validates :email, format: {with: URI::MailTo::EMAIL_REGEXP}, allow_blank: true
+  validates :phone, format: {with: /\A\+?[\d\s\-]+\z/, message: "must be a valid phone number"}, allow_blank: true
 
   has_many :donations, dependent: :destroy
 
