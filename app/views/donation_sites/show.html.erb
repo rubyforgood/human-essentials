@@ -31,16 +31,22 @@
           <div class="card-body p-0">
             <table class="table">
               <thead>
-              <tr>
-                <th><h3>Donation Site Name</h3></th>
-                <th><h3>Donation Site Address</h3></th>
-              </tr>
+                <tr>
+                  <th scope="col">Donation Site Name</th>
+                  <th scope="col">Donation Site Address</th>
+                  <th scope="col">Contact Name</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Phone</th>
+                </tr>
               </thead>
               <tbody>
-              <tr>
-                <td><h4><%= @donation_site.name %></h4></td>
-                <td><h4><%= @donation_site.address %></h4></td>
-              </tr>
+                <tr>
+                  <td><%= @donation_site.name %></td>
+                  <td><%= @donation_site.address %></td>
+                  <td><%= @donation_site.contact_name || "N/A" %></td>
+                  <td><%= @donation_site.email %></td>
+                  <td><%= @donation_site.phone %></td>
+                </tr>
               </tbody>
             </table>
           </div>
