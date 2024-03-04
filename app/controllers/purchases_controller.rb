@@ -32,14 +32,15 @@ class PurchasesController < ApplicationController
 
   def create
     @purchase = current_organization.purchases.new(purchase_params)
-    if PurchaseCreateService.call(@purchase)
+    begin
+      PurchaseCreateService.call(@purchase)
       flash[:notice] = "New Purchase logged!"
       redirect_to purchases_path
-    else
+    rescue => e
       load_form_collections
       @purchase.line_items.build if @purchase.line_items.count.zero?
-      flash[:error] = "Failed to create purchase due to: #{@purchase.errors.full_messages}"
-      Rails.logger.error "[!] PurchasesController#create ERROR: #{@purchase.errors.full_messages}"
+      flash[:error] = "Failed to create purchase due to: #{e.message}"
+      Rails.logger.error "[!] PurchasesController#create ERROR: #{e.message}"
       render action: :new
     end
   end

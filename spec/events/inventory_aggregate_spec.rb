@@ -709,6 +709,19 @@ RSpec.describe InventoryAggregate do
     end
 
     context "subsequent event is incorrect" do
+      it "should handle negative quantities" do
+        next unless Event.read_events?(organization) # only relevant if flag is on
+
+        donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
+        donation.line_items << build(:line_item, quantity: 100, item: item1)
+        DonationEvent.publish(donation)
+        distribution = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location1)
+        distribution.line_items << build(:line_item, quantity: 90, item: item1)
+        DistributionEvent.publish(distribution)
+        donation.line_items.first.quantity = 20
+        expect { DonationEvent.publish(donation) }.to raise_error(InventoryError)
+      end
+
       it "should add the event to the message" do
         next unless Event.read_events?(organization) # only relevant if flag is on
 
