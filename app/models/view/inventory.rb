@@ -82,7 +82,7 @@ module View
 
       if storage_location
         if item_id
-          @inventory.storage_locations[storage_location.to_i].items[item_id.to_i]&.quantity || 0
+          @inventory.storage_locations[storage_location.to_i]&.items&.dig(item_id.to_i)&.quantity || 0
         else
           @inventory.storage_locations[storage_location.to_i]&.items&.values&.map(&:quantity)&.sum || 0
         end
@@ -100,6 +100,7 @@ module View
     # @param storage_location [Integer]
     # @return [Float]
     def total_value_in_dollars(storage_location: nil)
+      return 0.0 if @inventory.storage_locations[storage_location].nil?
       total = @inventory.storage_locations[storage_location].items.values
         .map { |i| i.value_in_cents ? i.quantity * i.value_in_cents : 0 }.sum
       total.to_f / 100
