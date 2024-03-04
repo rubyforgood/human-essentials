@@ -1,7 +1,10 @@
 class RemoveInvalidInventory < ActiveRecord::Migration[7.0]
   def up
+    return if Rails.env.development?
+
     admin_role = Role.find_by(name: 'super_admin')
     user = UsersRole.where(role_id: admin_role.id).first.user
+
     StorageLocation.all.each do |loc|
       adjustment = Adjustment.new(
         organization_id: loc.organization_id,
