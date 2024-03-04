@@ -27,6 +27,18 @@ RSpec.describe DonationSite, type: :model do
     it "is invalid without an address" do
       expect(build(:donation_site, address: nil)).not_to be_valid
     end
+
+    it "is valid without an contact name" do
+      expect(build(:donation_site, contact_name: nil)).to be_valid
+    end
+
+    it "is valid without an phone" do
+      expect(build(:donation_site, phone: nil)).to be_valid
+    end
+
+    it "is valid without an email" do
+      expect(build(:donation_site, email: nil)).to be_valid
+    end
   end
   describe "import_csv" do
     it "imports storage locations from a csv file" do
