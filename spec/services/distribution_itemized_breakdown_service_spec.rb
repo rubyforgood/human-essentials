@@ -33,13 +33,11 @@ RSpec.describe DistributionItemizedBreakdownService, type: :service do
     let(:service) { described_class.new(organization: organization, distribution_ids: distribution_ids) }
 
     it "should output the expected output but in CSV format" do
-      expected_output_csv = CSV.generate do |csv|
-        csv << ["Item", "Total Distribution", "Total On Hand"]
-
-        expected_output.each do |row|
-          csv << [row[:name], row[:distributed], row[:current_onhand]]
-        end
-      end
+      expected_output_csv = <<~CSV
+        Item,Total Distribution,Total On Hand
+        A Diapers,500,100
+        B Diapers,200,200
+      CSV
 
       expect(subject).to eq(expected_output_csv)
     end
