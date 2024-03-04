@@ -154,7 +154,7 @@ group :development, :test do
   gem "rubocop"
   # Rails add-on for static analysis.
   gem 'rubocop-performance'
-  gem "rubocop-rails", "~> 2.23.1"
+  gem "rubocop-rails", "~> 2.24.0"
   # Default rules for Rubocop.
   gem "standard", "~> 1.34"
   # Erb linter.
