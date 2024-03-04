@@ -10,7 +10,7 @@ end
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.5.5"
+gem "pg", "~> 1.5.6"
 # Web server.
 gem "puma"
 # Rails web framework.
@@ -154,9 +154,9 @@ group :development, :test do
   gem "rubocop"
   # Rails add-on for static analysis.
   gem 'rubocop-performance'
-  gem "rubocop-rails", "~> 2.23.1"
+  gem "rubocop-rails", "~> 2.24.0"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.33"
+  gem "standard", "~> 1.34"
   # Erb linter.
   gem "erb_lint"
 end

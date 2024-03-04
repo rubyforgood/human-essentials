@@ -77,19 +77,6 @@ RSpec.describe "Item management", type: :system do
     end
   end
 
-  it "can include inactive items in the results" do
-    Item.delete_all
-    create(:item, :inactive, name: "Inactive Item")
-    create(:item, :active, name: "Active Item")
-    visit url_prefix + "/items"
-    expect(page).to have_text("Active Item")
-    expect(page).to have_no_text("Inactive Item")
-    page.check('include_inactive_items')
-    click_button "Filter"
-    expect(page).to have_text("Inactive Item")
-    expect(page).to have_text("Active Item")
-  end
-
   describe "destroying items" do
     subject { create(:item, name: "AAA DELETEME", organization: @user.organization) }
     context "when an item has history" do

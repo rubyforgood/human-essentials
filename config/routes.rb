@@ -95,6 +95,8 @@ Rails.application.routes.draw do
       end
     end
 
+    resources :events, only: %i(index)
+
     resources :adjustments, except: %i(edit update)
     resources :audits do
       post :finalize

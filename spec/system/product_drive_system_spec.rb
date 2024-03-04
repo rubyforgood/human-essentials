@@ -18,12 +18,14 @@ RSpec.describe "Product Drives", type: :system, js: true do
     before(:each) do
       @product_drives = [
         create(:product_drive, name: "Test name 1", start_date: 3.weeks.ago, end_date: 2.weeks.ago, virtual: true),
-        create(:product_drive, name: "Test name 2", start_date: 2.weeks.ago, end_date: 1.week.ago, virtual: false)
+        create(:product_drive, name: "Test name 2", start_date: 2.weeks.ago, end_date: 1.week.ago, virtual: false),
+        create(:product_drive, name: "Alpha Test name 3", start_date: 1.week.from_now, end_date: 2.weeks.from_now, virtual: false)
       ]
       visit subject
     end
 
-    it "Shows the expected filters with the expected values" do
+    it "Shows the expected filters with the expected values and in alphabetical order for name filter" do
+      expect(page.find("select[name='filters[by_name]']").find(:xpath, 'option[2]').text).to eq "Alpha Test name 3"
       expect(page.has_select?('filters[by_name]', with_options: @product_drives.map(&:name))).to be true
       expect(page.has_field?('filters_date_range', with: this_year))
     end
@@ -35,16 +37,16 @@ RSpec.describe "Product Drives", type: :system, js: true do
       end
     end
 
-    it 'shows only one virtual product drive' do
+    it 'shows only one virtual product drives' do
       expect(page).to have_text(/Yes/, maximum: 1)
     end
 
-    it 'shows only one non-virtual product drive' do
-      expect(page).to have_text(/No/, maximum: 1)
+    it 'shows two non-virtual product drives' do
+      expect(page).to have_text(/No/, maximum: 2)
     end
 
     it 'shows in descending order of start date' do
-      expect("Test name 2").to appear_before("Test name 1")
+      expect("Alpha Test name 3").to appear_before("Test name 1")
     end
   end
 
