@@ -24,7 +24,7 @@ class DonationSite < ApplicationRecord
   validates :name, :address, :organization, presence: true
   validates :contact_name, length: {minimum: 3}, allow_blank: true
   validates :email, format: {with: URI::MailTo::EMAIL_REGEXP}, allow_blank: true
-  validates :phone, format: {with: /\A\+?[\d\s\-]+\z/, message: "must be a valid phone number"}, allow_blank: true
+  validates :phone, allow_blank: true
 
   has_many :donations, dependent: :destroy
 
@@ -46,10 +46,10 @@ class DonationSite < ApplicationRecord
   end
 
   def self.csv_export_headers
-    %w{Name Address}
+    %w{Name Address Contact_Name Phone Email}
   end
 
   def csv_export_attributes
-    [name, address]
+    [name, address, contact_name, phone, email]
   end
 end
