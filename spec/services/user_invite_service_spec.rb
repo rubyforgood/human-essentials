@@ -61,7 +61,7 @@ RSpec.describe UserInviteService, type: :service, skip_seed: true do
       }.to change { ActionMailer::Base.deliveries.count }.by(1)
 
       user = User.find_by(email: "email2@email.com")
-      expect(user.name).to eq("Name Not Provided")
+      expect(user.display_name).to eq("Name Not Provided")
       expect(user.email).to eq("email2@email.com")
       expect(user).to have_role(Role::PARTNER, @partner)
     end
@@ -79,7 +79,7 @@ RSpec.describe UserInviteService, type: :service, skip_seed: true do
 
     user = User.find_by(email: "partner@example.com")
     expect(user.name).to eq("Partner User")
-    expect(user).not_to be_nil
+    expect(user).to be
     expect(user).to have_role(Role::PARTNER, @partner)
   end
 
@@ -94,7 +94,7 @@ RSpec.describe UserInviteService, type: :service, skip_seed: true do
       )
     }.to change(ActionMailer::Base.deliveries, :count).by(1)
 
-    expect(result.reload.name).to eq("Name Not Provided")
+    expect(result.display_name).to eq("Name Not Provided")
     expect(result.email).to eq("email2@example.com")
     expect(result.has_role?(:org_user, organization)).to be true
   end

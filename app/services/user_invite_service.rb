@@ -26,7 +26,7 @@ module UserInviteService
     end
 
     User.invite!(email: email) do |user1|
-      user1.name = name.presence || "Name Not Provided"
+      user1.name = name
       add_roles(user1, resource: resource, roles: roles)
       user1.skip_invitation = user1.errors[:email].any?
     end
