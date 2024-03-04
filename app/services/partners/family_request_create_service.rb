@@ -54,7 +54,8 @@ module Partners
     end
 
     def item_requests_attributes
-      @item_requests_attributes ||= family_requests_attributes.map do |fr_attr|
+      @item_requests_attributes ||= family_requests_attributes.filter_map do |fr_attr|
+        next if fr_attr[:item_id].blank? && fr_attr[:person_count].blank?
         {
           item_id: fr_attr[:item_id],
           quantity: convert_person_count_to_item_quantity(item_id: fr_attr[:item_id], person_count: fr_attr[:person_count])&.to_i,

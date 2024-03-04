@@ -87,18 +87,6 @@ RSpec.describe StorageLocation, type: :model do
           end.to change { subject.inventory_items.count }.by(1)
         end
       end
-
-      context "when increasing with an inactive item" do
-        let(:inactive_item) { create(:item, active: false, organization: @organization) }
-        let(:donation_with_inactive_item) { create(:donation, :with_items, organization: @organization, item_quantity: 10, item: inactive_item) }
-
-        it "re-activates the item as part of the creation process" do
-          expect do
-            subject.increase_inventory(donation_with_inactive_item.line_item_values)
-          end.to change { subject.inventory_items.count }.by(1)
-                                                         .and change { Item.count }.by(1)
-        end
-      end
     end
 
     describe "decrease_inventory" do

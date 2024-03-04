@@ -17,7 +17,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
             expect(page.all('select[name="partners_family_request[items_attributes][0][item_id]"] option').map(&:text)).to eq(expected_items)
           end
 
-          context 'WHEN they create a request inproperly' do
+          context 'WHEN they create a request improperly' do
             before {
               click_button 'Submit Essentials Request'
               click_link 'Add Another Item'
@@ -35,7 +35,57 @@ RSpec.describe "Managing requests", type: :system, js: true do
         visit new_partners_individuals_request_path
       end
 
-      context 'WHEN they create a request inproperly' do
+      context 'WHEN they create a request improperly by not inputting anything' do
+        before do
+          click_button 'Submit Essentials Request'
+        end
+
+        it 'should show an error message with the instructions ' do
+          expect(page).to have_content('Oops! Something went wrong with your Request')
+          expect(page).to have_content('Ensure each line item has a item selected AND a quantity greater than 0.')
+          expect(page).to have_content('Still need help? Submit a support ticket here and we will do our best to follow up with you via email.')
+        end
+      end
+
+      context 'WHEN they create a request with only a comment' do
+        before do
+          fill_in 'Comments', with: Faker::Lorem.paragraph
+        end
+
+        it 'should be created without any issue' do
+          expect { click_button 'Submit Essentials Request' }.to change { Request.count }.by(1)
+
+          expect(current_path).to eq(partners_request_path(Request.last.id))
+          expect(page).to have_content('Request has been successfully created!')
+          expect(page).to have_content("#{partner.organization.name} should have received the request.")
+        end
+      end
+
+      context 'WHEN they create a request with blank lines' do
+        before do
+          fill_in 'Comments', with: Faker::Lorem.paragraph
+
+          # fill in an item
+          click_link 'Add Another Item'
+          item = partner_user.partner.organization.valid_items.sample
+          last_row = find_all('tr').last
+          last_row.find('option', text: item[:name], exact_text: true).select_option
+          last_row.find_all('.form-control').last.fill_in(with: 1)
+
+          # Trigger another row but keep it empty. It should still be valid!
+          click_link 'Add Another Item'
+        end
+
+        it 'should be created without any issue' do
+          expect { click_button 'Submit Essentials Request' }.to change { Request.count }.by(1)
+
+          expect(current_path).to eq(partners_request_path(Request.last.id))
+          expect(page).to have_content('Request has been successfully created!')
+          expect(page).to have_content("#{partner.organization.name} should have received the request.")
+        end
+      end
+
+      context 'WHEN they create a request completely empty request' do
         before do
           fill_in 'Comments', with: Faker::Lorem.paragraph
 
@@ -143,7 +193,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
             expect(page.all('select[name="request[item_requests_attributes][0][item_id]"] option').map(&:text)).to eq(expected_items)
           end
 
-          context 'WHEN they create a request inproperly' do
+          context 'WHEN they create a request improperly' do
             before {
               click_button 'Submit Essentials Request'
               click_link 'Add Another Item'
@@ -162,7 +212,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
         visit new_partners_request_path
       end
 
-      context 'WHEN they create a request inproperly by not inputting anything' do
+      context 'WHEN they create a request completely empty request' do
         before do
           click_button 'Submit Essentials Request'
         end
@@ -217,6 +267,30 @@ RSpec.describe "Managing requests", type: :system, js: true do
 
           expect(expected_items).to eq(["", "", ""])
           expect(expected_quantities).to eq(["1", "1", "1"])
+        end
+      end
+
+      context 'WHEN they create a request with blank lines' do
+        before do
+          fill_in 'Comments', with: Faker::Lorem.paragraph
+
+          # fill in an item
+          click_link 'Add Another Item'
+          item = partner_user.partner.organization.valid_items.sample
+          last_row = find_all('tr').last
+          last_row.find('option', text: item[:name], exact_text: true).select_option
+          last_row.find_all('.form-control').last.fill_in(with: 1)
+
+          # Trigger another row but keep it empty. It should still be valid!
+          click_link 'Add Another Item'
+        end
+
+        it 'should be created without any issue' do
+          expect { click_button 'Submit Essentials Request' }.to change { Request.count }.by(1)
+
+          expect(current_path).to eq(partners_request_path(Request.last.id))
+          expect(page).to have_content('Request has been successfully created!')
+          expect(page).to have_content("#{partner.organization.name} should have received the request.")
         end
       end
 
