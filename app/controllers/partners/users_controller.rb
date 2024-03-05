@@ -44,7 +44,9 @@ module Partners
     private
 
     def user_params
-      params.require(:user).permit(:name, :email)
+      modified_params = params.require(:user).permit(:name, :email)
+      modified_params[:name] = nil if modified_params[:name].blank?
+      modified_params
     end
   end
 end
