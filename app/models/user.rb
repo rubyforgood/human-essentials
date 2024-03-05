@@ -35,6 +35,7 @@
 #
 
 class User < ApplicationRecord
+  before_validation :normalize_blank_name_to_nil
   has_paper_trail
   rolify
   include Discard::Model
@@ -80,6 +81,10 @@ class User < ApplicationRecord
 
   has_many :requests, class_name: "::Request", foreign_key: :partner_id, dependent: :destroy, inverse_of: :partner_user
   has_many :submitted_requests, class_name: "Request", foreign_key: :partner_user_id, dependent: :destroy, inverse_of: :partner_user
+
+  def normalize_blank_name_to_nil
+    self.name = nil if name.blank?
+  end
 
   def display_name
     name.presence || "Name Not Provided"
