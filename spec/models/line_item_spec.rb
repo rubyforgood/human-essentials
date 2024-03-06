@@ -32,6 +32,12 @@ RSpec.describe LineItem, type: :model do
       expect(build_stubbed(:line_item, :purchase, quantity: -1)).to be_valid
       expect(build_stubbed(:line_item, :purchase, quantity: 1)).to be_valid
     end
+
+    it "the quantity for kit must be a positive number" do
+      expect(build(:line_item, :kit, quantity: -1)).not_to be_valid
+      expect(build(:line_item, :kit, quantity: 0)).to be_valid
+      expect(build(:line_item, :kit, quantity: 1)).to be_valid
+    end
   end
 
   describe "package_count" do
