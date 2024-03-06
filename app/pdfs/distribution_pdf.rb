@@ -40,10 +40,28 @@ class DistributionPdf
     text @distribution.partner.profile.primary_contact_phone, align: :right
     move_down 10
 
-    text "Issued on:", style: :bold
-    font_size 12
-    text @distribution.distributed_at
-    font_size 10
+    if %w(shipped delivered).include? (@distribution.delivery_method)
+      move_up 10
+      text "Delivery address:", style: :bold
+      font_size 10
+      text @distribution.partner.profile.address1
+      text @distribution.partner.profile.address2
+      text @distribution.partner.profile.city
+      text @distribution.partner.profile.state
+      text @distribution.partner.profile.zip_code
+      move_up 40
+
+      text "Issued on:", style: :bold, align: :right
+      font_size 12
+      text @distribution.distributed_at, align: :right
+      font_size 10
+      move_down 30
+    else
+      text "Issued on:", style: :bold
+      font_size 12
+      text @distribution.distributed_at
+      font_size 10
+    end
 
     if @organization.ytd_on_distribution_printout
       move_up 22
