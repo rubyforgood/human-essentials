@@ -40,7 +40,7 @@ class DistributionPdf
     text @distribution.partner.profile.primary_contact_phone, align: :right
     move_down 10
 
-    if %w(shipped delivered).include? (@distribution.delivery_method)
+    if %w(shipped delivered).include?(@distribution.delivery_method)
       move_up 10
       text "Delivery address:", style: :bold
       font_size 10
