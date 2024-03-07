@@ -41,11 +41,6 @@ RSpec.describe Partners::IndividualsRequestsController, type: :request do
       expect(subject).to redirect_to(partners_requests_path)
     end
 
-    it "does allow approved partners" do
-      subject
-      expect(response).to be_successful
-    end
-
     context "when first reaching the new page" do
       let(:requestable_items) { [["Item 1", 1], ["Item 2", 2], ["Item 3", 3]] }
       before do
@@ -55,6 +50,7 @@ RSpec.describe Partners::IndividualsRequestsController, type: :request do
       it "has the correct select fields" do
         subject
 
+        expect(response).to be_successful
         expect(response.body).to include('<option value="">Select an item</option>')
         requestable_items.each do |item, index|
           expect(response.body).to include("<option value=\"#{index}\">#{item}</option>")
@@ -116,7 +112,7 @@ RSpec.describe Partners::IndividualsRequestsController, type: :request do
       end
     end
 
-    context "when a request empty" do
+    context "when a request is empty" do
       let(:params) do
         {
           partners_family_request:
@@ -150,7 +146,7 @@ RSpec.describe Partners::IndividualsRequestsController, type: :request do
       end
     end
 
-    context "when a has an empty row" do
+    context "when a request has an empty row" do
       it "is valid" do
         params[:partners_family_request][:items_attributes]["0"] = {person_count: nil, item_id: nil}
 
