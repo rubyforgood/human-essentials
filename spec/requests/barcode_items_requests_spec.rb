@@ -44,12 +44,6 @@ RSpec.describe "BarcodeItems", type: :request do
         end
       end
 
-      context "with a global barcode item" do
-        it "returns a 404" do
-          get edit_barcode_item_path(default_params.merge(id: create(:global_barcode_item)))
-          expect(response.status).to eq(404)
-        end
-      end
     end
 
     describe "GET #show" do
@@ -60,16 +54,9 @@ RSpec.describe "BarcodeItems", type: :request do
         end
       end
 
-      context "with a global barcode item" do
-        it "returns a 404" do
-          get barcode_item_path(default_params.merge(id: create(:global_barcode_item)))
-          expect(response.status).to eq(404)
-        end
-      end
     end
 
     describe "GET #find" do
-      let!(:global_barcode) { create(:global_barcode_item) }
       let!(:organization_barcode) { create(:barcode_item, organization: @organization) }
       let!(:other_barcode) { create(:barcode_item, organization: create(:organization)) }
 
@@ -80,14 +67,6 @@ RSpec.describe "BarcodeItems", type: :request do
           result = JSON.parse(response.body)
           expect(result["barcode_item"]["barcodeable_type"]).to eq("Item")
           expect(result["barcode_item"]["id"].to_i).to eq(organization_barcode.id)
-        end
-
-        it "can find a barcode that's universally available" do
-          get find_barcode_items_path(default_params.merge(barcode_item: { value: global_barcode.value }, format: :json))
-          expect(response).to be_successful
-          result = JSON.parse(response.body)
-          expect(result["barcode_item"]["barcodeable_type"]).to eq("BaseItem")
-          expect(result["barcode_item"]["id"].to_i).to eq(global_barcode.id)
         end
 
         context "when it's missing" do
@@ -104,15 +83,6 @@ RSpec.describe "BarcodeItems", type: :request do
         other_org = create(:organization)
         other_barcode = create(:barcode_item, organization_id: other_org.id)
         delete barcode_item_path(default_params.merge(id: other_barcode.to_param))
-        expect(response).not_to be_successful
-        expect(response).to have_error(/permission/)
-      end
-
-      it "disallows a non-superadmin to delete a global barcode" do
-        allow_any_instance_of(User).to receive(:has_role?).with(Role::SUPER_ADMIN).and_return(false)
-        allow_any_instance_of(User).to receive(:has_role?).with(Role::ORG_USER, anything).and_return(true)
-        global_barcode = create(:global_barcode_item)
-        delete barcode_item_path(default_params.merge(id: global_barcode.to_param))
         expect(response).not_to be_successful
         expect(response).to have_error(/permission/)
       end

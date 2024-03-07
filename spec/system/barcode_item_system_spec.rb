@@ -13,7 +13,6 @@ RSpec.describe "Barcode management", type: :system, js: true do
 
     it "should only show the barcodes created within the organization" do
       create(:barcode_item, organization_id: @organization.id)
-      create(:global_barcode_item)
       visit subject
       expect(page).to have_css("table tbody tr", count: 1)
     end
