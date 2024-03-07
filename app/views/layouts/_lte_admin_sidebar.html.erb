@@ -7,21 +7,6 @@
     <% end %>
   </li>
 
-  <li class="nav-item has-treeview <%= menu_open?(['barcode_items']) %>">
-    <a href="#" class="nav-link <%= active_class(['barcode_items']) %>">
-      <i class="nav-icon fa fa-barcode"></i>
-      <p>Barcode Items
-        <i class="fas fa-angle-left right"></i></p>
-    </a>
-    <ul class="nav nav-treeview">
-      <li class="nav-item <%= 'active' if current_page?(new_admin_barcode_item_path) %>">
-        <%= link_to(new_admin_barcode_item_path, class: "nav-link #{"active" if current_page?(new_admin_barcode_item_path)}") do %>
-          <i class="nav-icon fa fa-plus-circle"></i> New Barcode Item
-        <% end %>
-      </li>
-    </ul>
-  </li>
-
   <li class="nav-item has-treeview <%= menu_open?(['base_items']) %>">
     <a href="#" class="nav-link <%= active_class(['base_items']) %>">
       <i class="nav-icon fas fa-box"></i>

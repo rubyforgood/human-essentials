@@ -58,7 +58,6 @@ class Item < ApplicationRecord
   scope :by_base_item, ->(base_item) { where(base_item: base_item) }
   scope :by_partner_key, ->(partner_key) { where(partner_key: partner_key) }
 
-  scope :by_size, ->(size) { joins(:base_item).where(base_items: { size: size }) }
   scope :for_csv_export, ->(organization, *) {
     where(organization: organization)
       .includes(:base_item)
