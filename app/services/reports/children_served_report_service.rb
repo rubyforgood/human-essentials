@@ -46,15 +46,41 @@ module Reports
       .sum("line_items.quantity")
     end
 
+    # def disposable_diapers_from_kits_total
+    #   organization
+    #   .distributions
+    #   .for_year(year)
+    #   .joins(line_items: {item: :kit})
+    #   .merge(Item.disposable)
+    #   .where.not(items: {kit_id: nil})
+    #   .sum("line_items.quantity")
+    # end
+
     def disposable_diapers_from_kits_total
-      organization
-      .distributions
-      .for_year(year)
-      .joins(line_items: {item: :kit})
-      .merge(Item.disposable)
-      .where.not(items: {kit_id: nil})
-      .sum("line_items.quantity")
+      organization_id = organization.id
+      year = Time.zone.now.year
+
+      sql_query = <<-SQL
+        SELECT SUM(line_items.quantity * kit_line_items.quantity)
+        FROM distributions
+        INNER JOIN line_items ON line_items.itemizable_type = 'Distribution' AND line_items.itemizable_id = distributions.id
+        INNER JOIN items ON items.id = line_items.item_id
+        INNER JOIN kits ON kits.id = items.kit_id
+        INNER JOIN line_items AS kit_line_items ON kits.id = kit_line_items.item_id
+        INNER JOIN items AS kit_items ON kit_items.id = kit_line_items.item_id
+        INNER JOIN base_items ON base_items.partner_key = kit_items.partner_key
+        WHERE distributions.organization_id = ? 
+          AND EXTRACT(year FROM issued_at) = ?
+          AND lower(base_items.category) LIKE '%diaper%'
+          AND NOT (lower(base_items.category) LIKE '%cloth%' OR lower(base_items.name) LIKE '%cloth%')
+      SQL
+
+      result = ActiveRecord::Base.connection.execute(sql_query, organization_id, year)
+      # Fetch the sum from the result set
+      total = result.first['sum'].to_i
+      total
     end
+
 
     def total_children_served_with_loose_disposables
       organization
