@@ -14,11 +14,6 @@
         <i class="fas fa-angle-left right"></i></p>
     </a>
     <ul class="nav nav-treeview">
-      <li class="nav-item <%= 'active' if current_page?(admin_barcode_items_path) %>">
-        <%= link_to(admin_barcode_items_path, class: "nav-link #{"active" if current_page?(admin_barcode_items_path)}") do %>
-          <i class="nav-icon fa fa-circle-o"></i> All Barcodes
-        <% end %>
-      </li>
       <li class="nav-item <%= 'active' if current_page?(new_admin_barcode_item_path) %>">
         <%= link_to(new_admin_barcode_item_path, class: "nav-link #{"active" if current_page?(new_admin_barcode_item_path)}") do %>
           <i class="nav-icon fa fa-plus-circle"></i> New Barcode Item
