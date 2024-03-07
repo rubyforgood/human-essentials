@@ -43,7 +43,6 @@ RSpec.describe "BarcodeItems", type: :request do
           expect(response).to be_successful
         end
       end
-
     end
 
     describe "GET #show" do
@@ -53,7 +52,6 @@ RSpec.describe "BarcodeItems", type: :request do
           expect(response).to be_successful
         end
       end
-
     end
 
     describe "GET #find" do
