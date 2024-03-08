@@ -52,7 +52,7 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:donation_site_donation)
         visit subject
         expect(page).to have_css("table tbody tr", count: 2)
-        select Donation::SOURCES[:misc], from: "filters_by_source"
+        select Donation::SOURCES[:misc], from: "filters[by_source]"
         click_button "Filter"
         expect(page).to have_css("table tbody tr", count: 1)
       end
@@ -65,7 +65,7 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:product_drive_donation, product_drive: b, product_drive_participant: x)
         visit subject
         expect(page).to have_css("table tbody tr", count: 2)
-        select a.name, from: "filters_by_product_drive"
+        select a.name, from: "filters[by_product_drive]"
         click_button "Filter"
         expect(page).to have_css("table tbody tr", count: 1)
       end
@@ -78,7 +78,7 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:product_drive_donation, product_drive: x, product_drive_participant: b)
         visit subject
         expect(page).to have_css("table tbody tr", count: 2)
-        select a.business_name, from: "filters_by_product_drive_participant"
+        select a.business_name, from: "filters[by_product_drive_participant]"
         click_button "Filter"
         expect(page).to have_css("table tbody tr", count: 1)
       end
@@ -91,9 +91,9 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:product_drive_donation, product_drive: x, product_drive_participant: b)
         visit subject
         expect(page).to have_css("table tbody tr", count: 2)
-        select a.business_name, from: "filters_by_product_drive_participant"
+        select a.business_name, from: "filters[by_product_drive_participant]"
         click_button "Filter"
-        expect(page).to have_select("filters_by_product_drive_participant", selected: a.business_name)
+        expect(page).to have_select("filters[by_product_drive_participant]", selected: a.business_name)
       end
 
       it "Filters by manufacturer" do
@@ -103,7 +103,7 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:manufacturer_donation, manufacturer: b)
         visit subject
         expect(page).to have_css("table tbody tr", count: 2)
-        select a.name, from: "filters_from_manufacturer"
+        select a.name, from: "filters[from_manufacturer]"
         click_button "Filter"
         expect(page).to have_css("table tbody tr", count: 1)
       end
@@ -113,7 +113,7 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:donation, donation_site: location1)
         create(:donation, donation_site: location2)
         visit subject
-        select location1.name, from: "filters_from_donation_site"
+        select location1.name, from: "filters[from_donation_site]"
         click_button "Filter"
         expect(page).to have_css("table tbody tr", count: 1)
       end
@@ -124,7 +124,7 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:donation, storage_location: storage2)
         visit subject
         expect(page).to have_css("table tbody tr", count: 2)
-        select storage1.name, from: "filters_at_storage_location"
+        select storage1.name, from: "filters[at_storage_location]"
         click_button "Filter"
         expect(page).to have_css("table tbody tr", count: 1)
       end
@@ -139,10 +139,10 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:donation_site_donation, storage_location: storage1)
         visit subject
         expect(page).to have_css("table tbody tr", count: 3)
-        select Donation::SOURCES[:misc], from: "filters_by_source"
+        select Donation::SOURCES[:misc], from: "filters[by_source]"
         click_button "Filter"
         expect(page).to have_css("table tbody tr", count: 2)
-        select storage1.name, from: "filters_at_storage_location"
+        select storage1.name, from: "filters[at_storage_location]"
         click_button "Filter"
         expect(page).to have_css("table tbody tr", count: 1)
       end
@@ -170,7 +170,7 @@ RSpec.describe "Donations", type: :system, js: true do
           select StorageLocation.first.name, from: "donation_storage_location_id"
           select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
           fill_in "donation_line_items_attributes_0_quantity", with: "5"
-          fill_in "donation_issued_at", with: "01/01/2001"
+          fill_in "donation_issued_at", with: "2001-01-01"
 
           expect do
             click_button "Save"
@@ -250,7 +250,7 @@ RSpec.describe "Donations", type: :system, js: true do
           expect(page).to have_content("New Product Drive")
 
           fill_in "product_drive_name", with: "drivenametest"
-          fill_in "product_drive_start_date", with: Time.current
+          fill_in "product_drive_start_date", with: Time.current.to_date.to_s
           click_on "product_drive_submit"
           select "drivenametest", from: "donation_product_drive_id"
         end
@@ -663,7 +663,7 @@ RSpec.describe "Donations", type: :system, js: true do
 
         expect(page).to have_content "Donation #{@donation.id} has been removed!"
         # deleted the only donation, ensure total now reads 0
-        expect(page).to have_content "Total 0"
+        expect(page).to have_content "0 (Total)"
       end
     end
   end

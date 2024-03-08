@@ -112,8 +112,8 @@
                     <label>Phone:</label> <%= optional_data_text(@partner.profile.primary_contact_phone) %>
                   </div>
                   <div>
-                    <% # NOTE! The reason why the Mobile field appears for Program Manager and not the others is %>
-                    <% # because the existing table doesn't have the mobile field for the others %>
+                    <%# NOTE! The reason why the Mobile field appears for Program Manager and not the others is %>
+                    <%# because the existing table doesn't have the mobile field for the others %>
                     <label>Mobile:</label> <%= optional_data_text(@partner.profile.primary_contact_mobile) %>
                   </div>
                 </div>
@@ -300,11 +300,15 @@
             <p>
               This will invite an additional member of the partner organization to become a partner user in the system. This user will show up on the lists of users who can access this partner after being invited and you will be able to track their most recent log in as well.
             </p>
-            <br/>
+            <br>
             <%= form_tag invite_partner_user_partner_path do %>
               <div class="input-group">
                 <span class="input-group-text" id="spn_env_fa_icon"><%= fa_icon "envelope" %></span>
-                <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon">
+                <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon" required autocomplete="off">
+              </div>
+              <div class="input-group mt-3">
+                <span class="input-group-text" id="spn_env_fa_icon"><%= fa_icon "user" %></span>
+                <input type="text" name="name" class="form-control" placeholder="Name" aria-describedby="name_icon" required autocomplete="off">
                 <%= hidden_field_tag :partner, @partner.id %><br>
               </div>
               <br>
@@ -327,11 +331,11 @@
             <p>
               If your partner is unable to log in because they have forgotten their password, this will send your partner an email to reset their password so are able to can log in again. The person receiving this email should exist in the list of users who can access this partner. That list is available on the current page <a href="#partner-users">here.</a>
             </p>
-            <br/>
+            <br>
             <%= form_tag partner_user_reset_password_users_path do %>
               <div class="input-group">
                 <span class="input-group-text" id="spn_env_fa_icon"><%= fa_icon "envelope" %></span>
-                <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon">
+                <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon" autocomplete="off">
                 <%= hidden_field_tag :partner_id, @partner.id %><br>
               </div>
               <br>

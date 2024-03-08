@@ -3,6 +3,7 @@ class AdjustmentEvent < Event
   def self.publish(adjustment)
     create(
       eventable: adjustment,
+      group_id: "adjustment-#{adjustment.id}-#{SecureRandom.hex}",
       organization_id: adjustment.organization_id,
       event_time: Time.zone.now,
       data: EventTypes::InventoryPayload.new(

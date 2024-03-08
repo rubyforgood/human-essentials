@@ -12,6 +12,7 @@ Flipper.enable(:onebase)
 # ----------------------------------------------------------------------------
 # Random Record Generators
 # ----------------------------------------------------------------------------
+load "lib/dispersed_past_dates_generator.rb"
 
 def random_record(klass)
   klass.limit(1).order(Arel.sql('random()')).first
@@ -327,15 +328,21 @@ note = [
     end
   end
 
+  dates_generator = DispersedPastDatesGenerator.new
+
   Faker::Number.within(range: 32..56).times do
+    date = dates_generator.next
+
     partner_request = ::Request.new(
       partner_id: p.id,
       organization_id: p.organization_id,
       comments: Faker::Lorem.paragraph,
-      partner_user_id: p.primary_user.id
+      partner_user_id: p.primary_user.id,
+      created_at: date,
+      updated_at: date
     )
 
-    item_requests = [] 
+    item_requests = []
     Array.new(Faker::Number.within(range: 5..15)) do
       item = p.organization.items.sample
       new_item_request = Partners::ItemRequest.new(
@@ -343,7 +350,9 @@ note = [
         quantity: Faker::Number.within(range: 10..30),
         children: [],
         name: item.name,
-        partner_key: item.partner_key
+        partner_key: item.partner_key,
+        created_at: date,
+        updated_at: date
       )
       partner_request.item_requests << new_item_request
     end
@@ -388,6 +397,7 @@ StorageLocation.all.each do |sl|
     )
   end
 end
+Organization.all.each { |org| SnapshotEvent.publish(org) }
 
 # ----------------------------------------------------------------------------
 # Product Drives
@@ -458,13 +468,8 @@ def seed_quantity(item_name, organization, storage_location, quantity)
     storage_location: storage_location,
     user: User.with_role(:org_admin, organization).first
   )
-
-  LineItem.create!(quantity: quantity, item: item, itemizable: adjustment)
-
-  adjustment.reload
-  increasing_adjustment, decreasing_adjustment = adjustment.split_difference
-  adjustment.storage_location.increase_inventory increasing_adjustment
-  adjustment.storage_location.decrease_inventory decreasing_adjustment
+  adjustment.line_items = [LineItem.new(quantity: quantity, item: item, itemizable: adjustment)]
+  AdjustmentCreateService.new(adjustment).call
 end
 
 items_by_category.each do |_category, entries|
@@ -504,68 +509,61 @@ end
 # Donations
 # ----------------------------------------------------------------------------
 
+dates_generator = DispersedPastDatesGenerator.new
 # Make some donations of all sorts
 20.times.each do
   source = Donation::SOURCES.values.sample
   # Depending on which source it uses, additional data may need to be provided.
-  donation = case source
-             when Donation::SOURCES[:product_drive]
-               Donation.create! source: source,
-                                product_drive: ProductDrive.first,
-                                product_drive_participant: random_record_for_org(pdx_org, ProductDriveParticipant),
-                                storage_location: random_record_for_org(pdx_org, StorageLocation),
-                                organization: pdx_org,
-                                issued_at: Time.zone.now
-             when Donation::SOURCES[:donation_site]
-               Donation.create! source: source,
-                                donation_site: random_record_for_org(pdx_org, DonationSite),
-                                storage_location: random_record_for_org(pdx_org, StorageLocation),
-                                organization: pdx_org,
-                                issued_at: Time.zone.now
-             when Donation::SOURCES[:manufacturer]
-               Donation.create! source: source,
-                                manufacturer: random_record_for_org(pdx_org, Manufacturer),
-                                storage_location: random_record_for_org(pdx_org, StorageLocation),
-                                organization: pdx_org,
-                                issued_at: Time.zone.now
-             else
-               Donation.create! source: source,
-                                storage_location: random_record_for_org(pdx_org, StorageLocation),
-                                organization: pdx_org,
-                                issued_at: Time.zone.now
-             end
+  donation = Donation.new(source: source,
+                          storage_location: random_record_for_org(pdx_org, StorageLocation),
+                          organization: pdx_org, 
+                          issued_at: dates_generator.next)
+  case source
+  when Donation::SOURCES[:product_drive]
+    donation.product_drive = ProductDrive.first
+    donation.product_drive_participant = random_record_for_org(pdx_org, ProductDriveParticipant)
+  when Donation::SOURCES[:donation_site]
+    donation.donation_site = random_record_for_org(pdx_org, DonationSite)
+  when Donation::SOURCES[:manufacturer]
+    donation.manufacturer = random_record_for_org(pdx_org, Manufacturer)
+  end
 
   rand(1..5).times.each do
-    LineItem.create! quantity: rand(250..500), item: random_record_for_org(pdx_org, Item), itemizable: donation
+    donation.line_items.push(LineItem.new(quantity: rand(250..500), item: random_record_for_org(pdx_org, Item)))
   end
-  donation.reload
-  donation.storage_location.increase_inventory(donation)
+  DonationCreateService.call(donation)
 end
 
 # ----------------------------------------------------------------------------
 # Distributions
 # ----------------------------------------------------------------------------
+dates_generator = DispersedPastDatesGenerator.new
 
+inventory = InventoryAggregate.inventory_for(pdx_org.id)
 # Make some distributions, but don't use up all the inventory
 20.times.each do
   storage_location = random_record_for_org(pdx_org, StorageLocation)
-  stored_inventory_items_sample = storage_location.inventory_items.sample(20)
+  stored_inventory_items_sample = inventory.storage_locations[storage_location.id].items.values.sample(20)
   delivery_method = Distribution.delivery_methods.keys.sample
   shipping_cost = delivery_method == "shipped" ? (rand(20.0..100.0)).round(2).to_s : nil
-  distribution = Distribution.create!(storage_location: storage_location,
-                                      partner: random_record_for_org(pdx_org, Partner),
-                                      organization: pdx_org,
-                                      issued_at: Faker::Date.between(from: 4.days.ago, to: Time.zone.today),
-                                      delivery_method: delivery_method,
-                                      shipping_cost: shipping_cost,
-                                      comment: 'Urgent')
+  distribution = Distribution.new(
+    storage_location: storage_location,
+    partner: random_record_for_org(pdx_org, Partner),
+    organization: pdx_org,
+    issued_at: dates_generator.next,
+    delivery_method: delivery_method,
+    shipping_cost: shipping_cost,
+    comment: 'Urgent'
+  )
 
   stored_inventory_items_sample.each do |stored_inventory_item|
     distribution_qty = rand(stored_inventory_item.quantity / 2)
-    LineItem.create! quantity: distribution_qty, item: stored_inventory_item.item, itemizable: distribution if distribution_qty >= 1
+    if distribution_qty >= 1
+      distribution.line_items.push(LineItem.new(quantity: distribution_qty,
+                                                item_id: stored_inventory_item.item_id))
+    end
   end
-  distribution.reload
-  distribution.storage_location.decrease_inventory(distribution)
+  DistributionCreateService.new(distribution).call
 end
 
 # ----------------------------------------------------------------------------
@@ -633,39 +631,25 @@ comments = [
   "Nullam dictum ac lectus at scelerisque. Phasellus volutpat, sem at eleifend tristique, massa mi cursus dui, eget pharetra ligula arcu sit amet nunc."
 ]
 
-20.times do
+dates_generator = DispersedPastDatesGenerator.new
+
+25.times do
+  purchase_date = dates_generator.next
   storage_location = random_record_for_org(pdx_org, StorageLocation)
   vendor = random_record_for_org(pdx_org, Vendor)
-  Purchase.create(
+  purchase = Purchase.new(
     purchased_from: suppliers.sample,
     comment: comments.sample,
     organization_id: pdx_org.id,
     storage_location_id: storage_location.id,
     amount_spent_in_cents: rand(200..10_000),
-    issued_at: (Time.zone.today - rand(15).days),
-    created_at: (Time.zone.today - rand(15).days),
-    updated_at: (Time.zone.today - rand(15).days),
+    issued_at: purchase_date,
+    created_at: purchase_date,
+    updated_at: purchase_date,
     vendor_id: vendor.id
   )
+  PurchaseCreateService.call(purchase)
 end
-
-#re 2813_update_annual_report add some data for last year (enables system testing of reports)
-5.times do
-  storage_location = random_record_for_org(pdx_org, StorageLocation)
-  vendor = random_record_for_org(pdx_org, Vendor)
-  Purchase.create(
-    purchased_from: suppliers.sample,
-    comment: comments.sample,
-    organization_id: pdx_org.id,
-    storage_location_id: storage_location.id,
-    amount_spent_in_cents: rand(200..10_000),
-    issued_at: (Time.zone.today - 1.year),
-    created_at: (Time.zone.today - 1.year),
-    updated_at: (Time.zone.today - 1.year),
-    vendor_id: vendor.id
-  )
-end
-
 
 # ----------------------------------------------------------------------------
 # Flipper
@@ -780,12 +764,13 @@ end
 # ----------------------------------------------------------------------------
 # Transfers
 # ----------------------------------------------------------------------------
-Transfer.create!(
+transfer = Transfer.new(
   comment: Faker::Lorem.sentence,
   organization_id: pdx_org.id,
   from_id: pdx_org.id,
   to_id: sf_org.id,
   line_items: [
-    LineItem.create!(quantity: 5, item: pdx_org.items.first, itemizable: Distribution.first)
+    LineItem.new(quantity: 5, item: pdx_org.items.first)
   ]
 )
+TransferCreateService.call(transfer)

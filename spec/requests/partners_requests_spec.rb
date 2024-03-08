@@ -285,9 +285,10 @@ RSpec.describe "Partners", type: :request do
   end
 
   describe "POST #invite_partner_user" do
-    subject { -> { post invite_partner_user_partner_path(default_params.merge(id: partner.id, partner: partner.id, email: email)) } }
+    subject { -> { post invite_partner_user_partner_path(default_params.merge(id: partner.id, partner: partner.id, email: email, name: name)) } }
     let(:partner) { create(:partner, organization: @organization) }
     let(:email) { Faker::Internet.email }
+    let(:name) { Faker::Name.unique.name }
 
     context 'when the invite successfully' do
       before do
@@ -297,6 +298,7 @@ RSpec.describe "Partners", type: :request do
         subject.call
         expect(UserInviteService).to have_received(:invite).with(
           email: email,
+          name: name,
           roles: [Role::PARTNER],
           resource: partner
         )
@@ -420,6 +422,67 @@ RSpec.describe "Partners", type: :request do
         subject.call
         expect(flash[:error]).to eq("#{partner.name} failed to update partner records")
         expect(response).to redirect_to(partners_path)
+      end
+    end
+  end
+
+  describe "POST #invite_and_approve" do
+    let(:partner) { create(:partner, organization: @organization) }
+
+    context "when invitation succeeded and approval succeed" do
+      before do
+        fake_partner_invite_service = instance_double(PartnerInviteService, call: nil, errors: [])
+        allow(PartnerInviteService).to receive(:new).and_return(fake_partner_invite_service)
+
+        fake_partner_approval_service = instance_double(PartnerApprovalService, call: nil, errors: [])
+        allow(PartnerApprovalService).to receive(:new).with(partner: partner).and_return(fake_partner_approval_service)
+      end
+
+      it "sends invitation email and approve partner in single step" do
+        post invite_and_approve_partner_path(default_params.merge(id: partner.id))
+
+        expect(PartnerInviteService).to have_received(:new).with(partner: partner, force: true)
+        expect(response).to have_http_status(:found)
+
+        expect(PartnerApprovalService).to have_received(:new).with(partner: partner)
+        expect(response).to redirect_to(partners_path(organization_id: @organization.to_param))
+        expect(flash[:notice]).to eq("Partner invited and approved!")
+      end
+    end
+
+    context "when invitation failed" do
+      let(:fake_error_msg) { Faker::Games::ElderScrolls.dragon }
+
+      before do
+        fake_partner_invite_service = instance_double(PartnerInviteService, call: nil)
+        allow(PartnerInviteService).to receive(:new).with(partner: partner, force: true).and_return(fake_partner_invite_service)
+        allow(fake_partner_invite_service).to receive_message_chain(:errors, :none?).and_return(false)
+        allow(fake_partner_invite_service).to receive_message_chain(:errors, :full_messages).and_return(fake_error_msg)
+      end
+
+      it "should redirect to the partners index page with a notice flash message" do
+        post invite_and_approve_partner_path(default_params.merge(id: partner.id))
+
+        expect(response).to redirect_to(partners_path(organization_id: @organization.to_param))
+        expect(flash[:notice]).to eq("Failed to invite #{partner.name}! #{fake_error_msg}")
+      end
+    end
+
+    context "when approval fails" do
+      let(:fake_error_msg) { Faker::Games::ElderScrolls.dragon }
+
+      before do
+        fake_partner_approval_service = instance_double(PartnerApprovalService, call: nil)
+        allow(PartnerApprovalService).to receive(:new).with(partner: partner).and_return(fake_partner_approval_service)
+        allow(fake_partner_approval_service).to receive_message_chain(:errors, :none?).and_return(false)
+        allow(fake_partner_approval_service).to receive_message_chain(:errors, :full_messages).and_return(fake_error_msg)
+      end
+
+      it "should redirect to the partners index page with a notice flash message" do
+        post invite_and_approve_partner_path(default_params.merge(id: partner.id))
+
+        expect(response).to redirect_to(partners_path(organization_id: @organization.to_param))
+        expect(flash[:error]).to eq("Failed to approve partner because: #{fake_error_msg}")
       end
     end
   end

@@ -34,12 +34,16 @@ FactoryBot.define do
       end
 
       after(:build) do |transfer, evaluator|
-        item = evaluator.item || transfer.from.inventory_items.first&.item || create(:item)
+        event_item = View::Inventory.new(transfer.organization_id)
+          .items_for_location(transfer.from_id)
+          .first
+          &.db_item
+        item = evaluator.item || event_item || create(:item)
         transfer.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item, itemizable: transfer)
       end
 
       after(:create) do |instance, evaluator|
-        evaluator.from.increase_inventory(instance)
+        evaluator.from.increase_inventory(instance.line_item_values)
       end
     end
   end

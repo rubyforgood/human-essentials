@@ -112,6 +112,36 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
       end
     end
 
+    describe "one step inviting a partner" do
+      before do
+        Partner.delete_all # ensure no pre created partner
+      end
+
+      let!(:uninvited_partner) { create(:partner, :uninvited) }
+
+      context "when partner is uninvited and one step partner invite setting is on" do
+        it "shows Invite and Approve button and approves the partner when clicked" do
+          @organization.update!(one_step_partner_invite: true)
+          visit url_prefix + "/partners"
+
+          assert page.has_content? "Invite and Approve"
+          expect do
+            click_on "Invite and Approve"
+          end.to change { uninvited_partner.reload.status }.from("uninvited").to("approved")
+        end
+      end
+
+      context "when one step partner invite setting is off" do
+        it "does not show invite and approve button" do
+          @organization.update!(one_step_partner_invite: false)
+
+          visit url_prefix + "/partners"
+
+          assert page.should have_no_content "Invite and Approve"
+        end
+      end
+    end
+
     describe 'requesting recertification of a partner' do
       context 'GIVEN a user goes through the process of requesting recertification of partner' do
         let!(:partner_to_request_recertification) { create(:partner, status: 'approved') }
@@ -155,12 +185,11 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
         visit url_prefix + "/partners"
 
-        ele = find('tr', text: partner.name)
-        within(ele) { click_on "Invite" }
-        invite_alert = page.driver.browser.switch_to.alert
-        expect(invite_alert.text).to eq("Send an invitation to #{partner.name} to begin using the partner application?")
+        accept_alert("Send an invitation to #{partner.name} to begin using the partner application?") do
+          ele = find('tr', text: partner.name)
+          within(ele) { click_on "Invite" }
+        end
 
-        invite_alert.accept
         # assert page.has_content? "Partner #{partner.name} invited!", wait: page_content_wait
         # expect(page.find(".alert")).to have_content "invited!", wait: page_content_wait
       end
@@ -221,6 +250,19 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           expect(page).to_not have_selector(:link_or_button, 'View')
           expect(page).to_not have_selector(:link_or_button, 'Activate Partner Now')
           expect(page).to_not have_selector(:link_or_button, 'Add/Remind Partner')
+        end
+      end
+
+      context "when viewing an invited partner as a partner" do
+        let(:partner) { create(:partner, name: "Invited Partner", status: :invited) }
+        before do
+          sign_out(@user)
+          sign_in(partner.users.first)
+        end
+        it "redirects user to partners page root page (dashboard) with error message" do
+          visit url_prefix + "/partners/#{partner.id}"
+          expect(page).to have_content("Dashboard - #{partner.name}")
+          expect(page.find(".alert-danger")).to have_content("You must be logged in as the essentials bank's organization administrator to approve partner applications.")
         end
       end
 
@@ -389,14 +431,13 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         it 'it should say they can request every item' do
           assert page.has_content? 'All Items Requestable'
           assert page.has_content? 'Settings'
-          expect(PartnerFetchRequestableItemsService.new(partner_id: @partner.id).call).to eq(@organization.items.active.visible)
         end
       end
 
       context 'when a partner is assigned to partner group' do
         before do
           assert page.has_content? 'All Items Requestable'
-          expect(PartnerFetchRequestableItemsService.new(partner_id: @partner.id).call).to eq(@organization.items.active.visible)
+          expect(@partner.partner_group).to be_nil
         end
 
         context 'that has requestable item categories' do
@@ -415,7 +456,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
           it 'should properly indicate the requestable items and adjust the partners requestable items' do
             assert page.has_content? item_category.name
-            expect(PartnerFetchRequestableItemsService.new(partner_id: @partner.id).call).to eq(items_in_category)
+            expect { @partner.reload }.to change(@partner, :requestable_items).from([]).to(items_in_category)
           end
         end
 
@@ -429,7 +470,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
           it 'should properly indicate the requestable items and adjust the partners requestable items' do
             assert page.has_content? 'No Items Requestable'
-            expect(PartnerFetchRequestableItemsService.new(partner_id: @partner.id).call).to eq([])
+            expect { @partner.reload }.to change(@partner, :requestable_items).from([]).to([])
           end
         end
       end

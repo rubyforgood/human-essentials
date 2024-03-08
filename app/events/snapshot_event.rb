@@ -9,12 +9,10 @@ class SnapshotEvent < Event
         EventTypes::EventStorageLocation.new(
           id: loc.id,
           items: loc.inventory_items.to_h do |inv_item|
-            [inv_item.item_id, EventTypes::EventLineItem.new(
+            [inv_item.item_id, EventTypes::EventItem.new(
               quantity: inv_item.quantity,
               item_id: inv_item.item_id,
-              item_value_in_cents: inv_item.item.value_in_cents,
-              from_storage_location: nil,
-              to_storage_location: loc.id
+              storage_location_id: loc.id
             )]
           end
         )]
@@ -22,9 +20,21 @@ class SnapshotEvent < Event
   end
 
   # @param organization [Organization]
+  def self.publish_from_events(organization)
+    inventory = InventoryAggregate.inventory_for(organization.id)
+    create(
+      eventable: organization,
+      organization_id: organization.id,
+      event_time: Time.zone.now,
+      data: inventory
+    )
+  end
+
+  # @param organization [Organization]
   def self.publish(organization)
     create(
       eventable: organization,
+      group_id: "snapshot-#{SecureRandom.hex}",
       organization_id: organization.id,
       event_time: Time.zone.now,
       data: EventTypes::Inventory.new(

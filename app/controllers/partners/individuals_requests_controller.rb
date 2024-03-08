@@ -1,12 +1,11 @@
 module Partners
   class IndividualsRequestsController < BaseController
+    before_action :verify_partner_is_active
+    before_action :authorize_verified_partners
+
     def new
       @request = FamilyRequest.new({}, initial_items: 1)
-
-      requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
-      @formatted_requestable_items = requestable_items.map do |rt|
-        [rt.name, rt.id]
-      end.sort
+      @requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
     end
 
     def create
@@ -22,11 +21,10 @@ module Partners
         flash[:success] = 'Request was successfully created.'
         redirect_to partners_request_path(create_service.partner_request.id)
       else
-        @request = FamilyRequest.new({}, initial_items: 1)
+        @request = FamilyRequest.new_with_attrs(create_service.family_requests_attributes)
         @errors = create_service.errors
-        @requestable_items = Organization.find(current_partner.organization_id).valid_items.map do |item|
-          [item[:name], item[:id]]
-        end.sort
+
+        @requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
 
         Rails.logger.info("[Request Creation Failure] partner_user_id=#{current_user.id} reason=#{@errors.full_messages}")
 

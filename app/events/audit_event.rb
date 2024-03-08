@@ -5,6 +5,7 @@ class AuditEvent < Event
   def self.publish(audit)
     create(
       eventable: audit,
+      group_id: "audit-#{audit.id}-#{SecureRandom.hex}",
       organization_id: audit.organization_id,
       event_time: Time.zone.now,
       data: EventTypes::AuditPayload.new(

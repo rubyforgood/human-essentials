@@ -76,24 +76,39 @@ class Partner < ApplicationRecord
     "CAREER" => "Career technical training",
     "ABUSE" => "Child abuse resource center",
     "CHURCH" => "Church outreach ministry",
+    "COLLEGE" => "College and Universities",
     "CDC" => "Community development corporation",
-    "HEALTH" => "Community health program",
+    "HEALTH" => "Community health program or clinic",
     "OUTREACH" => "Community outreach services",
+    "LEGAL" => "Correctional Facilities / Jail / Prison / Legal System",
     "CRISIS" => "Crisis/Disaster services",
     "DISAB" => "Developmental disabilities program",
     "DOMV" => "Domestic violence shelter",
+    "ECE" => "Early Childhood Education/Childcare",
     "CHILD" => "Early childhood services",
     "EDU" => "Education program",
     "FAMILY" => "Family resource center",
     "FOOD" => "Food bank/pantry",
+    "FOSTER" => "Foster Program",
     "GOVT" => "Government Agency/Affiliate",
     "HEADSTART" => "Head Start/Early Head Start",
     "HOMEVISIT" => "Home visits",
     "HOMELESS" => "Homeless resource center",
+    "HOSP" => "Hospital",
     "INFPAN" => "Infant/Child Pantry/Closet",
+    "LIB" => "Library",
+    "MILITARY" => "Military Bases/Veteran Services",
+    "POLICE" => "Police Station",
     "PREG" => "Pregnancy resource center",
+    "PRESCH" => "Preschool",
     "REF" => "Refugee resource center",
+    "ES" => "School - Elementary School",
+    "HS" => "School - High School",
+    "MS" => "School - Middle School",
+    "SENIOR" => "Senior Center",
+    "TRIBAL" => "Tribal/Native-Based Organization",
     "TREAT" => "Treatment clinic",
+    "2YCOLLEGE" => "Two-Year College",
     "WIC" => "Women, Infants and Children",
     "OTHER" => "Other"
   }.freeze
@@ -235,6 +250,17 @@ class Partner < ApplicationRecord
   end
 
   def should_invite_because_email_changed?
-    email_changed? and (invited? or awaiting_review? or recertification_required? or approved?)
+    email_changed? &&
+      (
+        invited? ||
+        awaiting_review? ||
+        recertification_required? ||
+        approved?
+      ) &&
+      !partner_user_with_same_email_exist?
+  end
+
+  def partner_user_with_same_email_exist?
+    User.exists?(email: email) && User.find_by(email: email).has_role?(Role::PARTNER, self)
   end
 end

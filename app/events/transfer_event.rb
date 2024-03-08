@@ -3,6 +3,7 @@ class TransferEvent < Event
   def self.publish(transfer)
     create(
       eventable: transfer,
+      group_id: "transfer-#{transfer.id}-#{SecureRandom.hex}",
       organization_id: transfer.organization_id,
       event_time: Time.zone.now,
       data: EventTypes::InventoryPayload.new(

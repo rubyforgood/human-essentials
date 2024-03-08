@@ -3,6 +3,7 @@ class PurchaseEvent < Event
   def self.publish(purchase)
     create(
       eventable: purchase,
+      group_id: "purchase-#{purchase.id}-#{SecureRandom.hex}",
       organization_id: purchase.organization_id,
       event_time: Time.zone.now,
       data: EventTypes::InventoryPayload.new(

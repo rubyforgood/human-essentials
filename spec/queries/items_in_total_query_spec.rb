@@ -2,7 +2,8 @@
 
 RSpec.describe ItemsInTotalQuery do
   let!(:storage_location) { create(:storage_location, organization: @organization) }
-  let!(:other_storage_location) { create(:storage_location, :with_items, item: create(:item), item_quantity: 10, organization: @organization) }
+  let(:other_item) { create(:item) }
+  let!(:other_storage_location) { create(:storage_location, :with_items, item: other_item, item_quantity: 10, organization: @organization) }
   let!(:shared_item) { create(:item) }
   subject { ItemsInTotalQuery.new(storage_location: storage_location, organization: @organization).call }
 
@@ -11,7 +12,7 @@ RSpec.describe ItemsInTotalQuery do
       create(:donation, :with_items, item: create(:item), item_quantity: 10, storage_location: storage_location)
       create(:purchase, :with_items, item: create(:item), item_quantity: 10, storage_location: storage_location)
       create(:adjustment, :with_items, item: create(:item), item_quantity: 10, storage_location: storage_location)
-      create(:transfer, :with_items, item_quantity: 10, item: other_storage_location.inventory_items.first.item, from: other_storage_location, to: storage_location)
+      create(:transfer, :with_items, item_quantity: 10, item: other_item, from: other_storage_location, to: storage_location)
     end
 
     it "returns a sum total of all in-flows" do

@@ -103,6 +103,44 @@ RSpec.describe Item, type: :model do
         expect(Item.active.size).to be > 1
       end
     end
+
+    describe "->disposable" do
+      it "returns records associated with disposable diapers" do
+        Item.delete_all
+        base_1 = create(:base_item, category: "Diapers - Childrens")
+        base_2 = create(:base_item, category: "Diapers - Adult")
+        cloth_base = create(:base_item, category: "Diapers - Cloth (Adult)")
+
+        disposable_1 = create(:item, :active, name: "Disposable Diaper 1", partner_key: base_1.partner_key)
+        disposable_2 = create(:item, :active, name: "Disposable Diaper 2", partner_key: base_2.partner_key)
+        cloth_1 = create(:item, :active, name: "Cloth Diaper", partner_key: cloth_base.partner_key)
+
+        disposables = Item.disposable
+
+        expect(disposables.count).to eq(2)
+        expect(disposables).to include(disposable_1, disposable_2)
+        expect(disposables).to_not include(cloth_1)
+      end
+    end
+
+    describe "->cloth_diapers" do
+      it "returns records associated with disposable diapers" do
+        Item.delete_all
+        base_1 = create(:base_item, category: "Diapers - Childrens")
+        cloth_base_1 = create(:base_item, category: "Diapers - Cloth (Adult)")
+        cloth_base_2 = create(:base_item, category: "Diapers - Cloth (Kids)")
+
+        cloth_1 = create(:item, :active, name: "Cloth Diaper", partner_key: cloth_base_1.partner_key)
+        cloth_2 = create(:item, :active, name: "Disposable Diaper 2", partner_key: cloth_base_2.partner_key)
+        disposable_1 = create(:item, :active, name: "Disposable Diaper 1", partner_key: base_1.partner_key)
+
+        cloth_diapers = Item.cloth_diapers
+
+        expect(cloth_diapers.count).to eq(2)
+        expect(cloth_diapers).to include(cloth_1, cloth_2)
+        expect(cloth_diapers).to_not include(disposable_1)
+      end
+    end
   end
 
   context "Methods >" do
@@ -136,7 +174,12 @@ RSpec.describe Item, type: :model do
       it "identifies items that have been used previously" do
         no_history_item = create(:item)
         item_in_line_item = create(:line_item, :purchase).item
-        item_in_inventory_item = create(:inventory_item).item
+        item_in_inventory_item = create(:item)
+        TestInventory.create_inventory(@organization, {
+          @organization.storage_locations.first.id => {
+            item_in_inventory_item.id => 10
+          }
+        })
         item_in_barcodes = create(:barcode_item).barcodeable
 
         expect(no_history_item).not_to have_history
