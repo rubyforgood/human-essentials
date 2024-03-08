@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_18_185722) do
+ActiveRecord::Schema[7.0].define(version: 2024_02_07_202431) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -233,8 +233,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_18_185722) do
     t.integer "organization_id"
     t.datetime "issued_at", precision: nil
     t.string "agency_rep"
-    t.integer "state", default: 5, null: false
     t.boolean "reminder_email_enabled", default: false, null: false
+    t.integer "state", default: 5, null: false
     t.integer "delivery_method", default: 0, null: false
     t.decimal "shipping_cost", precision: 8, scale: 2
     t.index ["organization_id"], name: "index_distributions_on_organization_id"
@@ -274,6 +274,22 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_18_185722) do
     t.index ["storage_location_id"], name: "index_donations_on_storage_location_id"
   end
 
+  create_table "events", force: :cascade do |t|
+    t.string "type", null: false
+    t.datetime "event_time", null: false
+    t.jsonb "data"
+    t.bigint "eventable_id"
+    t.string "eventable_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "organization_id"
+    t.bigint "user_id"
+    t.string "group_id"
+    t.index ["organization_id", "event_time"], name: "index_events_on_organization_id_and_event_time"
+    t.index ["organization_id"], name: "index_events_on_organization_id"
+    t.index ["user_id"], name: "index_events_on_user_id"
+  end
+
   create_table "families", force: :cascade do |t|
     t.string "guardian_first_name"
     t.string "guardian_last_name"
@@ -295,6 +311,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_18_185722) do
     t.bigint "partner_id"
     t.boolean "military", default: false
     t.bigint "old_partner_id"
+    t.boolean "archived", default: false
     t.index ["partner_id"], name: "index_families_on_partner_id"
   end
 
@@ -308,10 +325,21 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_18_185722) do
   create_table "flipper_gates", force: :cascade do |t|
     t.string "feature_key", null: false
     t.string "key", null: false
-    t.string "value"
+    t.text "value"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.index ["feature_key", "key", "value"], name: "index_flipper_gates_on_feature_key_and_key_and_value", unique: true
+  end
+
+  create_table "inventory_discrepancies", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "event_id", null: false
+    t.json "diff"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_inventory_discrepancies_on_event_id"
+    t.index ["organization_id", "created_at"], name: "index_inventory_discrepancies_on_organization_id_and_created_at"
+    t.index ["organization_id"], name: "index_inventory_discrepancies_on_organization_id"
   end
 
   create_table "inventory_items", id: :serial, force: :cascade do |t|
@@ -450,6 +478,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_18_185722) do
     t.boolean "enable_child_based_requests", default: true, null: false
     t.boolean "enable_individual_requests", default: true, null: false
     t.boolean "enable_quantity_based_requests", default: true, null: false
+    t.boolean "ytd_on_distribution_printout", default: true, null: false
+    t.boolean "one_step_partner_invite", default: false, null: false
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
@@ -837,6 +867,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_18_185722) do
   add_foreign_key "donations", "product_drives"
   add_foreign_key "donations", "storage_locations"
   add_foreign_key "families", "partners"
+  add_foreign_key "inventory_discrepancies", "events"
+  add_foreign_key "inventory_discrepancies", "organizations"
   add_foreign_key "item_categories", "organizations"
   add_foreign_key "item_categories_partner_groups", "item_categories"
   add_foreign_key "item_categories_partner_groups", "partner_groups"

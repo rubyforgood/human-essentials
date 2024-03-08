@@ -14,6 +14,25 @@
         <%= label_tag(:account, "I am a Partner Agency to an Essentials Bank. I distribute the diapers/period supplies that I receive from essentials banks directly to the public.", class: 'form-check-label') %>
       </div>
 
+      <% if @bank_selected %>
+        <script type="module">
+            $(document).ready(function() {
+                const bankRadioButtons = $('.account_type[value="bank"]:not(:checked)');
+
+                if (bankRadioButtons.length > 0) {
+                    bankRadioButtons.eq(0).click();
+                }
+            });
+        </script>
+      <% else %>
+        <script type="module">
+            $(document).ready(function() {
+                $('#create_bank').hide()
+                $('#partner_info').hide()
+            });
+        </script>
+      <% end %>
+
       <script type="module">
           $('.account_type').change(function() {
               if (this.value === 'bank') {
@@ -23,11 +42,6 @@
                   $('#create_bank').hide()
                   $('#partner_info').show()
               }
-          })
-
-          $(document).ready(function() {
-              $('#create_bank').hide()
-              $('#partner_info').hide()
           })
       </script>
 

@@ -1,4 +1,4 @@
-<% delivery_method = (@distribution.delivery?) ? "delivery" : "pick up"%>
+<% delivery_method = (@distribution.delivery?) ? "delivery" : "pick up" %>
 <p>Hello <%= @partner.name %>,</p>
 <p>This is a friendly reminder that tomorrow, <b><%= @distribution.issued_at.strftime("%A, %B #{@distribution.issued_at.day.ordinalize} %Y at %I:%M%p") %></b>, is your distribution <b><%= delivery_method %></b> date. </p>
     <p>For more information: <a href="mailto:<%= @distribution.organization.email %>"><%= @distribution.organization.email %></a></p>

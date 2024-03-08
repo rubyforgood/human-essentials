@@ -7,8 +7,12 @@ RSpec.describe InventoryCheckService, type: :service do
     context "error" do
       let(:storage_location) do
         storage_location = create(:storage_location)
-        create(:inventory_item, storage_location: storage_location, item: item1, quantity: 4)
-        create(:inventory_item, storage_location: storage_location, item: item2, quantity: 4)
+        TestInventory.create_inventory(storage_location.organization, {
+          storage_location.id => {
+            item1.id => 4,
+            item2.id => 4
+          }
+        })
 
         storage_location
       end
@@ -28,8 +32,12 @@ RSpec.describe InventoryCheckService, type: :service do
     context "alert" do
       let(:storage_location) do
         storage_location = create(:storage_location)
-        create(:inventory_item, storage_location: storage_location, item: item1, quantity: 9)
-        create(:inventory_item, storage_location: storage_location, item: item2, quantity: 9)
+        TestInventory.create_inventory(storage_location.organization, {
+          storage_location.id => {
+            item1.id => 9,
+            item2.id => 9
+          }
+        })
 
         storage_location
       end

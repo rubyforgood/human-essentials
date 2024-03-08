@@ -31,14 +31,26 @@ class Kit < ApplicationRecord
 
   validate :at_least_one_item
 
+  # @param inventory [View::Inventory]
   # @return [Boolean]
-  def can_deactivate?
-    inventory_items.where('quantity > 0').none?
+  def can_deactivate?(inventory)
+    if inventory
+      inventory.quantity_for(item_id: item.id).zero?
+    else
+      inventory_items.where('quantity > 0').none?
+    end
   end
 
   def deactivate
     update!(active: false)
     item.update!(active: false)
+  end
+
+  # Kits can't reactivate if they have any inactive items, because now whenever they are allocated
+  # or deallocated, we are changing inventory for inactive items (which we don't allow).
+  # @return [Boolean]
+  def can_reactivate?
+    line_items.joins(:item).where(items: { active: false }).none?
   end
 
   def reactivate

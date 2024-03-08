@@ -16,6 +16,7 @@
 #  latitude                       :float
 #  longitude                      :float
 #  name                           :string
+#  one_step_partner_invite        :boolean          default(FALSE), not null
 #  partner_form_fields            :text             default([]), is an Array
 #  reminder_day                   :integer
 #  repackage_essentials           :boolean          default(FALSE), not null
@@ -23,6 +24,7 @@
 #  state                          :string
 #  street                         :string
 #  url                            :string
+#  ytd_on_distribution_printout   :boolean          default(TRUE), not null
 #  zipcode                        :string
 #  created_at                     :datetime         not null
 #  updated_at                     :datetime         not null

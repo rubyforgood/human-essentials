@@ -16,6 +16,7 @@ RSpec.describe "Organization management", type: :system, js: true do
       expect(page.find(".table.border")).to have_no_content "Make User"
     end
   end
+
   context "while signed in as an organization admin" do
     let!(:store) { create(:storage_location) }
     let!(:ndbn_member) { create(:ndbn_member, ndbn_member_id: "50000", account_name: "Best Place") }
@@ -25,6 +26,8 @@ RSpec.describe "Organization management", type: :system, js: true do
 
     describe "Viewing the organization" do
       it "can view organization details", :aggregate_failures do
+        @organization.update!(one_step_partner_invite: true)
+
         visit organization_path(@organization)
 
         expect(page.find("h1")).to have_text(@organization.name)
@@ -41,7 +44,9 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page).to have_content("Child Based Requests?")
         expect(page).to have_content("Individual Requests?")
         expect(page).to have_content("Quantity Based Requests?")
+        expect(page).to have_content("Show Year-to-date values on distribution printout?")
         expect(page).to have_content("Logo")
+        expect(page).to have_content("Use One step Partner invite and approve process?")
       end
     end
 
@@ -49,6 +54,7 @@ RSpec.describe "Organization management", type: :system, js: true do
       before do
         visit url_prefix + "/manage/edit"
       end
+
       it "is prompted with placeholder text and a more helpful error message to ensure correct URL format as a user" do
         fill_in "Url", with: "www.diaperbase.com"
         click_on "Save"
@@ -79,6 +85,13 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page).to have_content("Yes")
       end
 
+      it 'can select if the org shows year-to-date values on the distribution printout' do
+        choose('organization[ytd_on_distribution_printout]', option: false)
+
+        click_on "Save"
+        expect(page).to have_content("No")
+      end
+
       it 'can set a default storage location on the organization' do
         select(store.name, from: 'Default Storage Location')
 
@@ -93,8 +106,8 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page).to have_content(ndbn_member.full_name)
       end
 
-      it 'can select and deselect Required Partner Fields', js: true do
-        # select first option from Required Partner Fields
+      it 'can select and deselect Required Partner Fields' do
+        # select first option in from Required Partner Fields
         select('Media Information', from: 'organization_partner_form_fields', visible: false)
         click_on "Save"
         expect(page).to have_content('Media Information')
@@ -105,6 +118,20 @@ RSpec.describe "Organization management", type: :system, js: true do
         click_on "Save"
         expect(page).to_not have_content('Media Information')
         expect(@organization.reload.partner_form_fields).to eq([])
+      end
+
+      it "can disable if the org does NOT use single step invite and approve partner process" do
+        choose("organization[one_step_partner_invite]", option: false)
+
+        click_on "Save"
+        expect(page).to have_content("No")
+      end
+
+      it "can enable if the org uses single step invite and approve partner process" do
+        choose("organization[one_step_partner_invite]", option: true)
+
+        click_on "Save"
+        expect(page).to have_content("Yes")
       end
     end
 

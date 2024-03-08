@@ -4,7 +4,7 @@ $('#flash-message-container').html('')
     <% table_row_prepend.errors.full_messages.each do |err| %>
         $('#flash-message-container').prepend(`
             <div class="alert alert-danger alert-dismissable">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close" style="text-decoration: none;"><%= fa_icon('times') %></a>
+                <a href="#" class="close btn-close" data-bs-dismiss="alert" aria-label="close" style="text-decoration: none;"><%= fa_icon('times') %></a>
                 <%= err %>
             </div>
         `)
@@ -15,7 +15,6 @@ $('#flash-message-container').html('')
     $(".index tbody").prepend(
       `<%= j render(partial: "#{table_row_prepend.class.to_s.underscore}_row",
                     object: table_row_prepend,
-                    locals: {class: 'info'})
-        %>`
+                    locals: {class: 'info'}) %>`
     )
 <% end %>

@@ -9,7 +9,12 @@ class AllocateKitInventoryService
 
   def allocate
     validate_storage_location
-    allocate_inventory_items_and_increase_kit_quantity if error.nil?
+    if error.nil?
+      ApplicationRecord.transaction do
+        allocate_inventory_items_and_increase_kit_quantity
+        KitAllocateEvent.publish(@kit, @storage_location.id, @increase_by)
+      end
+    end
   rescue Errors::InsufficientAllotment => e
     kit.line_items.assign_insufficiency_errors(e.insufficient_items)
     Rails.logger.error "[!] #{self.class.name} failed because of Insufficient Allotment #{kit.organization.short_name}: #{kit.errors.full_messages} [#{e.message}]"
@@ -75,7 +80,7 @@ class AllocateKitInventoryService
   end
 
   def kit_content
-    kit.to_a.map do |item|
+    kit.line_item_values.map do |item|
       item.merge({
                    quantity: item[:quantity] * increase_by
                  })

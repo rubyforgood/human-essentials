@@ -29,7 +29,12 @@ RSpec.describe "/kits", type: :request do
 
       context "when it cannot be deactivated" do
         it "should disable the button" do
-          create(:inventory_item, item: kit.item)
+          storage_location = create(:storage_location)
+          TestInventory.create_inventory(kit.organization, {
+            storage_location.id => {
+              kit.item.id => 10
+            }
+          })
           get kits_url(default_params)
           expect(response).to be_successful
           page = Nokogiri::HTML(response.body)
@@ -66,13 +71,26 @@ RSpec.describe "/kits", type: :request do
       expect(flash[:notice]).to eq("Kit has been deactivated!")
     end
 
-    specify "PUT #reactivate" do
-      kit.deactivate
-      expect(kit).not_to be_active
-      put reactivate_kit_url(kit, default_params)
-      expect(kit.reload).to be_active
-      expect(response).to redirect_to(dashboard_path)
-      expect(flash[:notice]).to eq("Kit has been reactivated!")
+    describe "PUT #reactivate" do
+      it "cannot reactivate if it has an inactive item" do
+        kit.deactivate
+        expect(kit).not_to be_active
+        kit.line_items.first.item.update!(active: false)
+
+        put reactivate_kit_url(kit, default_params)
+        expect(kit.reload).not_to be_active
+        expect(response).to redirect_to(dashboard_path)
+        expect(flash[:alert]).to eq("Cannot reactivate kit - it has inactive items! Please reactivate the items first.")
+      end
+
+      it "should successfully reactivate" do
+        kit.deactivate
+        expect(kit).not_to be_active
+        put reactivate_kit_url(kit, default_params)
+        expect(kit.reload).to be_active
+        expect(response).to redirect_to(dashboard_path)
+        expect(flash[:notice]).to eq("Kit has been reactivated!")
+      end
     end
   end
 end
