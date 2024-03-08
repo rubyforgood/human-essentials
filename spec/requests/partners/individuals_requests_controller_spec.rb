@@ -117,7 +117,7 @@ RSpec.describe Partners::IndividualsRequestsController, type: :request do
         {
           partners_family_request:
           {
-            items_attributes: {"0" => {person_count: nil, item_id: nil}},
+            items_attributes: nil,
             comments: nil
           }
         }
@@ -136,9 +136,7 @@ RSpec.describe Partners::IndividualsRequestsController, type: :request do
 
     context "when a request has only a comment" do
       it "is valid" do
-        params[:partners_family_request][:items_attributes] = {
-          "0" => {person_count: nil, item_id: nil}
-        }
+        params[:partners_family_request][:items_attributes] = nil
 
         expect { post partners_individuals_requests_path, params: params }.to change { Request.count }.by(1)
         expect(response).to redirect_to(partners_request_path(Request.last.id))
