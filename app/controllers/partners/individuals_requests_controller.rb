@@ -1,5 +1,8 @@
 module Partners
   class IndividualsRequestsController < BaseController
+    before_action :verify_partner_is_active
+    before_action :authorize_verified_partners
+
     def new
       @request = FamilyRequest.new({}, initial_items: 1)
       @requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call

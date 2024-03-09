@@ -34,8 +34,8 @@ RSpec.describe EventDiffer do
         ),
         # missing storage_location3
         # added storage location that doesn't exist
-        StorageLocation.count + 1 => EventTypes::EventStorageLocation.new(
-          id: StorageLocation.count + 1,
+        0 => EventTypes::EventStorageLocation.new(
+          id: 0,
           items: {}
         )
       }
@@ -48,7 +48,7 @@ RSpec.describe EventDiffer do
        :type => "location"},
       {"aggregate" => true,
        "database" => false,
-       "storage_location_id" => StorageLocation.count + 1,
+       "storage_location_id" => 0,
        :type => "location"},
       {"aggregate" => 0,
        "database" => 50,
