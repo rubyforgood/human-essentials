@@ -71,7 +71,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
       sign_in(@user)
     end
 
-    let!(:storage_location) { create(:storage_location, :with_items, item_quantity: 0, organization: @organization) }
+    let!(:storage_location) { create(:storage_location, :with_items, item_quantity: 1, organization: @organization) }
     let(:org_short_name) { @organization.short_name }
     let(:org_dashboard_page) { OrganizationDashboardPage.new org_short_name: org_short_name }
 
