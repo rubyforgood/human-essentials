@@ -445,7 +445,7 @@ RSpec.describe "Partners", type: :request do
         expect(response).to have_http_status(:found)
 
         expect(PartnerApprovalService).to have_received(:new).with(partner: partner)
-        expect(response).to redirect_to(partners_path(organization_id: @organization.to_param))
+        expect(response).to redirect_to(partners_path(organization_name: @organization.to_param))
         expect(flash[:notice]).to eq("Partner invited and approved!")
       end
     end
@@ -463,7 +463,7 @@ RSpec.describe "Partners", type: :request do
       it "should redirect to the partners index page with a notice flash message" do
         post invite_and_approve_partner_path(default_params.merge(id: partner.id))
 
-        expect(response).to redirect_to(partners_path(organization_id: @organization.to_param))
+        expect(response).to redirect_to(partners_path(organization_name: @organization.to_param))
         expect(flash[:notice]).to eq("Failed to invite #{partner.name}! #{fake_error_msg}")
       end
     end
@@ -481,7 +481,7 @@ RSpec.describe "Partners", type: :request do
       it "should redirect to the partners index page with a notice flash message" do
         post invite_and_approve_partner_path(default_params.merge(id: partner.id))
 
-        expect(response).to redirect_to(partners_path(organization_id: @organization.to_param))
+        expect(response).to redirect_to(partners_path(organization_name: @organization.to_param))
         expect(flash[:error]).to eq("Failed to approve partner because: #{fake_error_msg}")
       end
     end
