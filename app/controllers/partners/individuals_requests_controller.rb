@@ -1,5 +1,8 @@
 module Partners
   class IndividualsRequestsController < BaseController
+    before_action :verify_partner_is_active
+    before_action :authorize_verified_partners
+
     def new
       @request = FamilyRequest.new({}, initial_items: 1)
       @requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
@@ -18,7 +21,7 @@ module Partners
         flash[:success] = 'Request was successfully created.'
         redirect_to partners_request_path(create_service.partner_request.id)
       else
-        @request = FamilyRequest.new({}, initial_items: 1)
+        @request = FamilyRequest.new_with_attrs(create_service.family_requests_attributes)
         @errors = create_service.errors
 
         @requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
