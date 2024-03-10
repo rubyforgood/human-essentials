@@ -8,6 +8,7 @@
 #  default_storage_location       :integer
 #  distribute_monthly             :boolean          default(FALSE), not null
 #  email                          :string
+#  email_notification_opt_in      :boolean
 #  enable_child_based_requests    :boolean          default(TRUE), not null
 #  enable_individual_requests     :boolean          default(TRUE), not null
 #  enable_quantity_based_requests :boolean          default(TRUE), not null
@@ -46,6 +47,8 @@ class Organization < ApplicationRecord
   validate :correct_logo_mime_type
   validate :some_request_type_enabled
   validate :logo_size_check, if: proc { |org| org.logo.attached? }
+  attribute :email_notification_opt_in, :boolean, default: false
+
 
   belongs_to :account_request, optional: true
   belongs_to :ndbn_member, class_name: 'NDBNMember', optional: true

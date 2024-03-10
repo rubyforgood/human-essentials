@@ -79,6 +79,7 @@ class OrganizationsController < ApplicationController
     redirect_to user_update_redirect_path, notice: "User has been reactivated."
   end
 
+
   private
 
   def authorize_user
