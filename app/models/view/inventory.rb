@@ -23,7 +23,7 @@ module View
     # @param event_time [DateTime]
     def reload(event_time = nil)
       @inventory = InventoryAggregate.inventory_for(organization_id, event_time: event_time)
-      @items = Item.where(organization_id: organization_id)
+      @items = Item.where(organization_id: organization_id).active
       @db_storage_locations = StorageLocation.where(organization_id: organization_id).active_locations
       load_item_details
     end
@@ -51,7 +51,7 @@ module View
         end
         items.concat(zero_items)
       end
-      items.sort_by(&:name)
+      items.select { |i| i.quantity.positive? }.sort_by(&:name)
     end
 
     # @param storage_location [StorageLocation]
