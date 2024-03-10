@@ -10,6 +10,8 @@ class ProductDrivesController < ApplicationController
                      .class_filter(filter_params)
                      .within_date_range(@selected_date_range)
                      .order(start_date: :desc)
+    # to be used in the name filter to sort product drives in alpha order
+    @product_drives_alphabetical = @product_drives.sort_by { |pd| pd.name.downcase }
     @item_categories = current_organization.item_categories
     @selected_name_filter = filter_params[:by_name]
     @selected_item_category = filter_params[:by_item_category_id]

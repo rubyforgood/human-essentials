@@ -195,6 +195,13 @@
           <i class="nav-icon fa fa-circle-o"></i> Annual Survey
         <% end %>
       </li>
+      <% if Event.read_events?(current_user.organization) %>
+        <li class="nav-item <%= active_class(['events']) %>">
+          <%= link_to(events_path(organization_id: current_user.organization), class: "nav-link #{active_class(['events'])}") do %>
+            <i class="nav-icon fa fa-circle-o"></i> History
+          <% end %>
+        </li>
+      <% end %>
       <li class="nav-item <%= active_class(['reports/distributions_summary']) %>">
         <%= link_to(reports_distributions_summary_path(organization_id: current_user.organization), class: "nav-link #{active_class(['reports/distributions_summary'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Distributions - Summary
