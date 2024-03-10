@@ -45,7 +45,12 @@ RSpec.describe "Items", type: :request do
       end
 
       it 'should not be able to deactivate an item in a storage location' do
-        create(:inventory_item, storage_location: storage_location, item_id: item.id)
+        TestInventory.create_inventory(
+          @organization,
+          storage_location.id => {
+            item.id => 100
+          }
+        )
         put item_path(inactive_params)
         expect(flash[:error]).to eq("Can't deactivate this item - it is currently assigned to either an active kit or a storage location!")
         expect(item.reload.active).to eq(true)

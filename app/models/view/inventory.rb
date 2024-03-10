@@ -38,7 +38,10 @@ module View
     # @param include_omitted [Boolean]
     # @return [Array<EventTypes::EventItem>]
     def items_for_location(storage_location_id, include_omitted: false)
-      items = @inventory.storage_locations[storage_location_id]&.items&.values || []
+      items = @inventory.storage_locations[storage_location_id]
+        &.items
+        &.values
+        &.select { |i| i.quantity.positive? } || []
       if include_omitted
         db_items = Item.where(organization_id: @inventory.organization_id).where.not(id: items.map(&:item_id))
         zero_items = db_items.map do |item|
@@ -51,7 +54,7 @@ module View
         end
         items.concat(zero_items)
       end
-      items.select { |i| i.quantity.positive? }.sort_by(&:name)
+      items.sort_by(&:name)
     end
 
     # @param storage_location [StorageLocation]

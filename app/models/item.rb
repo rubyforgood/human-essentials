@@ -112,9 +112,9 @@ class Item < ApplicationRecord
   end
 
   def has_inventory?
-    if Event.read_events?(self.organization)
-      inventory = View::Inventory.new(self.organization_id)
-      inventory.quantity_for(item_id: self.id).positive?
+    if Event.read_events?(organization)
+      inventory = View::Inventory.new(organization_id)
+      inventory.quantity_for(item_id: id).positive?
     else
       inventory_items.where("quantity > 0").any?
     end
