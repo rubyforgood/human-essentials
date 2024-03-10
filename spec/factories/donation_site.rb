@@ -4,7 +4,7 @@ FactoryBot.define do
     name { "Smithsonian Conservation Center" }
     address { "1500 Remount Road, Front Royal, VA 22630" }
     contact_name { nil }
-    phone { nil }
     email { nil }
+    phone { nil }
   end
 end
