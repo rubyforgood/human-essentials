@@ -3,6 +3,44 @@
 # be through one of these methods. Most of these can be adapted to display in different ways, but those alterations
 # will be evident in the source code that it's deviating from the standard.
 module UiHelper
+  # this method uses the form-input stimulus controller
+  # to make this work you need to:
+  #  - set data-controller="form-input" on the form element
+  #  - container selector needs to a unique css selector
+  def input_add_button(label, container_selector:, **html_attrs, &block)
+    default_html_attrs = {
+      class: "btn btn-outline-primary",
+      data: { form_input_target: 'addButton',
+              add_dest_selector: container_selector,
+              action: "click->form-input#addItem:prevent" }
+    }
+    content_tag :div do
+      concat(
+        link_to(label, "javascript:void(0)", default_html_attrs.merge(html_attrs))
+      )
+      concat(
+        content_tag(:template, capture(&block), data: { form_input_target: 'addTemplate' })
+      )
+    end
+  end
+
+  # this method uses the form-input stimulus controller
+  # to make this work you need to:
+  #  - set data-controller="form-input" on the form element
+  #  - container selector
+  def input_remove_button(label, container_selector:, soft: false, **html_attrs)
+    default_html_attrs = {
+      class: "btn btn-warning",
+      data: {
+        action: 'click->form-input#removeItem:prevent',
+        remove_soft: soft ? true : false,
+        remove_parent_selector: container_selector
+      }
+    }
+
+    link_to(label, 'javascript:void(0)', default_html_attrs.merge(html_attrs))
+  end
+
   def add_line_item_button(form, node, options = {})
     text = options[:text] || "Add another item"
     size = options[:size] || "md"
