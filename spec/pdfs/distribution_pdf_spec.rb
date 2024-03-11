@@ -17,25 +17,25 @@ describe DistributionPdf do
   specify "#request_data" do
     results = described_class.new(@organization, distribution).request_data
     expect(results).to eq([
-                            ["Items Received", "Requested", "Received", "Value/item", "In-Kind Value Received", "Packages"],
+      ["Items Received", "Requested", "Received", "Value/item", "In-Kind Value Received", "Packages"],
       ["Item 1", "", 50, "$1.00", "$50.00", "1"],
       ["Item 2", 30, 100, "$2.00", "$200.00", nil],
       ["Item 3", 50, "", "$3.00", nil, nil],
       ["Item 4", 120, "", "$4.00", nil, nil],
       ["", "", "", "", ""],
       ["Total Items Received", 200, 150, "", "$250.00", ""]
-                          ])
+    ])
   end
 
   specify "#non_request_data" do
     results = described_class.new(@organization, distribution).non_request_data
     expect(results).to eq([
-                            ["Items Received", "Value/item", "In-Kind Value", "Quantity", "Packages"],
+      ["Items Received", "Value/item", "In-Kind Value", "Quantity", "Packages"],
       ["Item 1", "$1.00", "$50.00", 50, "1"],
       ["Item 2", "$2.00", "$200.00", 100, nil],
       ["", "", "", "", ""],
       ["Total Items Received", "", "$250.00", 150, ""]
-                          ])
+    ])
   end
 end
 # rubocop:enable Layout/ArrayAlignment
