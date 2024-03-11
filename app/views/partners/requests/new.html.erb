@@ -31,7 +31,7 @@
             <% end %>
 
             <%= simple_form_for @partner_request, url: partners_requests_path(@partner_request, :organization_id => current_partner.organization.id),
-              html: {role: 'form', class: 'form-horizontal'}, method: :post, data: { controller: 'request-item' } do |form| %>
+              html: {role: 'form', class: 'form-horizontal'}, method: :post, data: { controller: 'form-input' } do |form| %>
               <%= form.input :comments, label: "Comments:", as: :text, class: "form-control", wrapper: :input_group %>
 
               <table class='table'>
@@ -41,12 +41,12 @@
                   <th>Quantity</th>
                 </tr>
                 </thead>
-                <tbody class='fields' data-request-item-target="addDest">
+                <tbody class='fields'>
                   <%= render 'item_request', form: form %>
                 </tbody>
               </table>
               <div>
-                <%= add_item_button('Add Another Item') do %>
+                <%= input_add_button('Add Another Item', container_selector: '.fields') do %>
                   <%= render 'item_request', form: form, object: @partner_request.item_requests.build %>
                 <% end %>
               </div>
