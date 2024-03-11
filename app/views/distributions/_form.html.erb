@@ -24,7 +24,7 @@
       </div>
     </div>
 
-    <%= render partial: "storage_locations/source", object: f, locals: { include_inactive_items: false, include_omitted_items: true } %>
+    <%= render partial: "storage_locations/source", object: f, locals: { include_omitted_items: true } %>
 
     <%= f.input :comment, label: "Comment" %>
 

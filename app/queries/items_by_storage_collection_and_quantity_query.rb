@@ -5,7 +5,6 @@ class ItemsByStorageCollectionAndQuantityQuery
   def self.call(organization:, filter_params:, inventory: nil)
     if inventory
       items = organization.items.order(name: :asc).class_filter(filter_params)
-      items = items.active if filter_params[:include_inactive_items]
       return items.to_h do |item|
         locations = inventory.storage_locations_for_item(item.id).map do |sl|
           {
@@ -31,9 +30,6 @@ class ItemsByStorageCollectionAndQuantityQuery
     end
 
     items_by_storage_collection = ItemsByStorageCollectionQuery.new(organization: organization, filter_params: filter_params).call
-    unless filter_params[:include_inactive_items]
-      items_by_storage_collection = items_by_storage_collection.active
-    end
     items_by_storage_collection_and_quantity = Hash.new
     items_by_storage_collection.each do |row|
       unless items_by_storage_collection_and_quantity.key?(row.id)
