@@ -189,6 +189,13 @@
             <i class="nav-icon fa fa-circle-o"></i> Annual Survey
           <% end %>
         </li>
+        <% if Event.read_events?(current_user.organization) %>
+          <li class="nav-item <%= active_class(['events']) %>">
+            <%= link_to(events_path(organization_id: current_user.organization), class: "nav-link #{active_class(['events'])}") do %>
+              <i class="nav-icon fa fa-circle-o"></i> History
+            <% end %>
+          </li>
+        <% end %>
       </ul>
     </li>
   <% end %>
