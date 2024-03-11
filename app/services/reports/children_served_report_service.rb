@@ -76,7 +76,7 @@ module Reports
     #   .where.not(items: {kit_id: nil})
     #   .sum("line_items.quantity")
     # end
-    
+
     def total_children_served_with_loose_disposables
       organization
       .distributions

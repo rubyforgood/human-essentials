@@ -108,8 +108,8 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
                                   })
     end
   end
-  describe "#disposable_diapers_from_kits_total" do 
-    it "calculates the number of disposable diapers that have been distributed within kits" do 
+  describe "#disposable_diapers_from_kits_total" do
+    it "calculates the number of disposable diapers that have been distributed within kits" do
       toddler_disposable_kit = create(:kit, :with_item, organization: organization)
       infant_disposable_kit = create(:kit, :with_item, organization: organization)
       infant_cloth_kit = create(:kit, :with_item, organization: organization)
