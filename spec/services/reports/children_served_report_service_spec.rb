@@ -110,7 +110,9 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
   end
   describe "#disposable_diapers_from_kits_total" do 
     it "calculates the number of disposable diapers that have been distributed within kits" do 
-      kit = create(:kit, :with_item, organization: organization)
+      toddler_disposable_kit = create(:kit, :with_item, organization: organization)
+      infant_disposable_kit = create(:kit, :with_item, organization: organization)
+      infant_cloth_kit = create(:kit, :with_item, organization: organization)
 
       within_time = Time.zone.parse("2020-05-31 14:00:00")
 
@@ -118,20 +120,24 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       create(:base_item, name: "Infant Disposable Diaper", partner_key: "infant diapers", category: "infant disposable diaper")
       create(:base_item, name: "Infant Cloth Diaper", partner_key: "infant cloth diapers", category: "cloth diaper")
 
-      toddler_disposable_kit_item = create(:item, name: "Toddler Disposable Diapers", partner_key: "toddler diapers", kit: kit)
-      infant_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", partner_key: "infant diapers", kit: kit)
-      infant_cloth_kit_item = create(:item, name: "Infant Cloth Diapers", partner_key: "infant cloth diapers", kit: kit)
+      toddler_disposable_kit_item = create(:item, name: "Toddler Disposable Diapers", partner_key: "toddler diapers")
+      infant_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", partner_key: "infant diapers")
+      infant_cloth_kit_item = create(:item, name: "Infant Cloth Diapers", partner_key: "infant cloth diapers")
+
+      toddler_disposable_kit.line_items.first.update!(item_id: toddler_disposable_kit_item.id, quantity: 5)
+      infant_disposable_kit.line_items.first.update!(item_id: infant_disposable_kit_item.id, quantity: 5)
+      infant_cloth_kit.line_items.first.update!(item_id: infant_cloth_kit_item.id, quantity: 5)
 
       infant_distribution = create(:distribution, organization: organization, issued_at: within_time)
       toddler_distribution = create(:distribution, organization: organization, issued_at: within_time)
 
-      create(:line_item, :distribution, quantity: 10, item: toddler_disposable_kit_item, itemizable: toddler_distribution)
-      create(:line_item, :distribution, quantity: 10, item: infant_disposable_kit_item, itemizable: infant_distribution)
-      create(:line_item, :distribution, quantity: 10, item: infant_cloth_kit_item, itemizable: infant_distribution)
+      create(:line_item, quantity: 10, item: toddler_disposable_kit.item, itemizable: toddler_distribution)
+      create(:line_item, quantity: 10, item: infant_disposable_kit.item, itemizable: infant_distribution)
+      create(:line_item, :distribution, quantity: 10, item: infant_cloth_kit.item, itemizable: infant_distribution)
 
       service = described_class.new(organization: organization, year: within_time.year)
 
-      expect(service.disposable_diapers_from_kits_total).to eq(20)
+      expect(service.disposable_diapers_from_kits_total).to eq(100)
     end
   end
 end
