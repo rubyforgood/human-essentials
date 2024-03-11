@@ -1,4 +1,4 @@
-<%= simple_form_for @purchase do |f| %>
+<%= simple_form_for @purchase, data: { controller: "form-input" } do |f| %>
   <div class="box-body">
 
     <div class="row">
@@ -87,7 +87,11 @@
       </div>
 
       <div class="row links justify-content-end">
-        <%= add_line_item_button f, "#purchase_line_items" %>
+        <%= input_add_button "Add Another Item", container_selector: "#purchase_line_items", id: "__add_line_item" do %>
+          <%= f.simple_fields_for :line_items do |item| %>
+            <%= render 'line_items/line_item_fields', f: item %>
+          <% end %>
+        <% end %>
       </div>
     </fieldset>
 

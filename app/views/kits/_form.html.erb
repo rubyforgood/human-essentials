@@ -1,4 +1,4 @@
-<%= simple_form_for @kit, remote: request.xhr?, html: { class: 'form-horizontal' } do |f| %>
+<%= simple_form_for @kit, remote: request.xhr?, data: { controller: "form-input" }, html: { class: 'form-horizontal' } do |f| %>
   <section class="content">
     <div class="container-fluid">
       <div class="row">
@@ -28,7 +28,11 @@
                 </div>
                 <div class="row links col-xs-12 justify-content-end">
                   <div class="col-xs-12">
-                    <%= add_line_item_button f, "#kit_line_items" %>
+                    <%= input_add_button "Add Another Item", container_selector: "#kit_line_items" do %>
+                      <%= f.simple_fields_for :line_items do |item| %>
+                        <%= render 'line_items/line_item_fields', f: item %>
+                      <% end %>
+                    <% end %>
                   </div>
                 </div>
               </fieldset>

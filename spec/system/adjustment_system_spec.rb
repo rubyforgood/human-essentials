@@ -102,7 +102,7 @@ RSpec.describe "Adjustment management", type: :system, js: true do
         fill_in "Comment", with: "something"
         select Item.last.name, from: "adjustment_line_items_attributes_0_item_id"
         fill_in "adjustment_line_items_attributes_0_quantity", with: sub_quantity.to_s
-        click_on "Add another item"
+        click_on "Add Another Item"
         within all(".line_item_section").last do
           element_1 = find(".line_item_name")
           expect(page).to have_select(element_1[:id])
