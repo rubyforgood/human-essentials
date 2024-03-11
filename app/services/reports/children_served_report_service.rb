@@ -49,9 +49,7 @@ module Reports
       SQL
 
       result = ActiveRecord::Base.connection.execute(sql_query, [organization_id, @year])
-      # Fetch the sum from the result set
-      total = result.first['sum'].to_i
-      total
+      result.first['sum'].to_i
     end
 
     private
