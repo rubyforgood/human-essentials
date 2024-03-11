@@ -23,8 +23,11 @@
                 </div>
               </div>
               <div class="row links justify-content-end">
-
-                <%= add_served_area_button f, "#served_areas" %>
+                <%= input_add_button "Add Another County", container_selector: "#served_areas", id: "__add_partner_served_area" do %>
+                  <%= f.simple_fields_for :served_areas do |served_area| %>
+                    <%= render 'served_areas/served_area_fields', f: served_area %>
+                  <% end %>
+                <% end %>
               </div>
             </fieldset>
           </div>

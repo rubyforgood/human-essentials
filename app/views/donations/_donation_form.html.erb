@@ -1,4 +1,5 @@
-<%= simple_form_for @donation do |f| %>
+<%= simple_form_for @donation, data: { controller: "form-input" } do |f| %>
+
   <div class="box-body">
 
     <div class="row">
@@ -99,7 +100,11 @@
       </div>
 
       <div class="row links justify-content-end">
-        <%= add_line_item_button f, "#donation_line_items", {} %>
+        <%= input_add_button "Add Another Item", container_selector: "#donation_line_items", id: "__add_line_item" do %>
+          <%= f.simple_fields_for :line_items do |item| %>
+            <%= render 'line_items/line_item_fields', f: item %>
+          <% end %>
+        <% end %>
       </div>
     </fieldset>
 

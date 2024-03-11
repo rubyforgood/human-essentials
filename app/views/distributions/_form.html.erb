@@ -1,4 +1,4 @@
-<%= simple_form_for distribution, html: {class: "storage-location-required"}, wrapper_mappings: { datetime: :custom_multi_select } do |f| %>
+<%= simple_form_for distribution, data: { controller: "form-input" }, html: {class: "storage-location-required"}, wrapper_mappings: { datetime: :custom_multi_select } do |f| %>
 
   <div class="box-body">
     <%= f.simple_fields_for :request do |r| %>
@@ -36,7 +36,11 @@
         <% end %>
       </div>
       <div class="row links justify-content-end">
-        <%= add_line_item_button f, "#distribution_line_items" %>
+        <%= input_add_button "Add Another Item", container_selector: "#distribution_line_items" , id: "__add_line_item" do %>
+          <%= f.simple_fields_for :line_items do |item| %>
+            <%= render 'line_items/line_item_fields', f: item %>
+          <% end %>
+        <% end %>
       </div>
 
     </fieldset>
