@@ -319,6 +319,7 @@ GEM
     libv8-node (18.16.0.0-arm64-darwin)
     libv8-node (18.16.0.0-x86_64-darwin)
     libv8-node (18.16.0.0-x86_64-linux)
+    libv8-node (18.16.0.0)
     lint_roller (1.1.0)
     listen (3.9.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
@@ -347,6 +348,7 @@ GEM
     method_source (1.0.0)
     mini_magick (4.11.0)
     mini_mime (1.1.5)
+    mini_portile2 (2.8.5)
     mini_racer (0.8.0)
       libv8-node (~> 18.16.0.0)
     minitest (5.22.2)
@@ -377,6 +379,9 @@ GEM
       net-protocol
     newrelic_rpm (9.7.1)
     nio4r (2.7.0)
+    nokogiri (1.16.2)
+      mini_portile2 (~> 2.8.2)
+      racc (~> 1.4)
     nokogiri (1.16.2-arm64-darwin)
       racc (~> 1.4)
     nokogiri (1.16.2-x86_64-darwin)
@@ -662,6 +667,7 @@ PLATFORMS
   x86_64-darwin-21
   x86_64-darwin-22
   x86_64-linux
+  ruby
 
 DEPENDENCIES
   annotate
