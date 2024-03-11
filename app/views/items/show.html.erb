@@ -77,7 +77,7 @@
                 <tbody>
                 <% total = 0; @storage_locations_containing.each do |storage|
                   location_quantity = if @inventory
-                    @inventory.quantity_for(item_id: @item.id)
+                    @inventory.quantity_for(item_id: @item.id, storage_location: storage.id)
                   else
                     storage.item_total(@item)
                   end
