@@ -43,14 +43,15 @@ class DonationsController < ApplicationController
   def create
     @donation = current_organization.donations.new(donation_params)
 
-    if DonationCreateService.call(@donation)
+    begin
+      DonationCreateService.call(@donation)
       flash[:notice] = "Donation created and logged!"
       redirect_to donations_path
-    else
+    rescue => e
       load_form_collections
       @donation.line_items.build if @donation.line_items.count.zero?
-      flash[:error] = "There was an error starting this donation, try again?"
-      Rails.logger.error "[!] DonationsController#create Error: #{@donation.errors}"
+      flash[:error] = "There was an error starting this donation: #{e.message}"
+      Rails.logger.error "[!] DonationsController#create Error: #{e.message}"
       render action: :new
     end
   end
@@ -64,6 +65,8 @@ class DonationsController < ApplicationController
   def edit
     @donation = Donation.find(params[:id])
     @donation.line_items.build
+    @audit_performed_and_finalized = Audit.finalized_since?(@donation, @donation.storage_location_id)
+
     load_form_collections
   end
 

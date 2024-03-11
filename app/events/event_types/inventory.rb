@@ -30,6 +30,13 @@ module EventTypes
     # @param to_location [Integer]
     # @param validate [Boolean]
     def move_item(item_id:, quantity:, from_location: nil, to_location: nil, validate: true)
+      if quantity.negative?
+        return move_item(item_id: item_id,
+          quantity: -quantity,
+          from_location: to_location,
+          to_location: from_location,
+          validate: validate)
+      end
       if from_location
         if storage_locations[from_location].nil? && validate
           raise "Storage location #{from_location} not found!"

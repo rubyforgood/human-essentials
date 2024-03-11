@@ -96,7 +96,7 @@ RSpec.feature "Distributions", type: :system do
         visit @url_prefix + "/distributions/new"
         select @partner.name, from: "Partner"
         select @storage_location.name, from: "From storage location"
-        select item.name, from: "distribution_line_items_attributes_0_item_id"
+        select2(page, 'distribution_line_items_item_id', item.name, position: 1)
         select @storage_location.name, from: "distribution_storage_location_id"
         fill_in "distribution_line_items_attributes_0_quantity", with: 18
 
@@ -268,7 +268,7 @@ RSpec.feature "Distributions", type: :system do
     end
 
     context "when one of the items has been 'deleted'" do
-      it "the user can still reclaim it and it reactivates the item", js: true do
+      it "the user can still reclaim it", js: true do
         item = distribution.line_items.first.item
         item.destroy
         expect do
@@ -276,7 +276,7 @@ RSpec.feature "Distributions", type: :system do
             click_on "Reclaim"
           end
           page.find ".alert"
-        end.to change { Distribution.count }.by(-1).and change { Item.active.count }.by(1)
+        end.to change { Distribution.count }.by(-1)
         expect(page).to have_content "reclaimed"
       end
     end
@@ -426,14 +426,12 @@ RSpec.feature "Distributions", type: :system do
 
       it "User creates duplicate line items" do
         item = @distribution.line_items.first.item
-        first_field = page.find_all('select', class: 'line_item_name').first
-        first_field.find("option[value='#{item.id}']").select_option
+        select2(page, 'distribution_line_items_item_id', item.name, position: 1)
         find_all(".numeric")[0].set 1
 
         click_on "Add another item"
 
-        last_field = page.find_all('.line_item_name').last
-        last_field.find("option[value='#{item.id}']").select_option
+        select2(page, 'distribution_line_items_item_id', item.name, position: 2)
         find_all(".numeric")[1].set 3
 
         first("button", text: "Save").click

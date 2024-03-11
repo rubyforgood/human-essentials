@@ -4,6 +4,7 @@ class ItemsController < ApplicationController
   def index
     @items = current_organization.items.includes(:base_item, :kit).alphabetized.class_filter(filter_params)
     @items = @items.active unless params[:include_inactive_items]
+
     @item_categories = current_organization.item_categories.includes(:items).order('name ASC')
     @kits = current_organization.kits.includes(line_items: :item, inventory_items: :storage_location)
     @storages = current_organization.storage_locations.active_locations.order(id: :asc)
@@ -63,8 +64,8 @@ class ItemsController < ApplicationController
   def show
     @item = current_organization.items.find(params[:id])
     if Event.read_events?(current_organization)
-      inventory = View::Inventory.new(current_organization.id)
-      storage_location_ids = inventory.storage_locations_for_item(@item.id)
+      @inventory = View::Inventory.new(current_organization.id)
+      storage_location_ids = @inventory.storage_locations_for_item(@item.id)
       @storage_locations_containing = StorageLocation.find(storage_location_ids)
     else
       @storage_locations_containing = current_organization.items.storage_locations_containing(@item)
@@ -74,7 +75,17 @@ class ItemsController < ApplicationController
 
   def update
     @item = current_organization.items.find(params[:id])
-    if @item.update(item_params)
+    @item.attributes = item_params
+
+    deactivated = @item.active_changed? && !@item.active
+    if deactivated && !@item.can_deactivate?
+      @base_items = BaseItem.without_kit.alphabetized
+      flash[:error] = "Can't deactivate this item - it is currently assigned to either an active kit or a storage location!"
+      render action: :edit
+      return
+    end
+
+    if @item.save
       redirect_to items_path, notice: "#{@item.name} updated!"
     else
       @base_items = BaseItem.without_kit.alphabetized
