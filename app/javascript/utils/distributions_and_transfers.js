@@ -77,10 +77,10 @@ $(function() {
   });
 
   $(document).on(
-    "cocoon:after-insert",
+    "form-input-after-insert",
     "form.storage-location-required",
     function(e) {
-      const insertedItem = $(e.detail[2]);
+      const insertedItem = $(e.detail);
       request_storage_location_and_populate_item($("select", insertedItem));
       insertedItem
         .find("input.__barcode_item_lookup")

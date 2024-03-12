@@ -129,7 +129,6 @@ GEM
     clockwork (3.0.2)
       activesupport
       tzinfo
-    cocoon (1.2.15)
     coderay (1.1.3)
     concurrent-ruby (1.2.3)
     connection_pool (2.4.1)
@@ -679,7 +678,6 @@ DEPENDENCIES
   capybara (~> 3.40)
   capybara-screenshot
   clockwork
-  cocoon
   coverband
   cuprite
   database_cleaner-active_record (~> 2.1)
