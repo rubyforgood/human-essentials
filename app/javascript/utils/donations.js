@@ -102,10 +102,10 @@ $(function() {
   });
 
   $(document).on(
-    "cocoon:after-insert",
+    "form-input-after-insert",
     "#donation_line_items",
     (e) => {
-      const insertedItem = $(e.detail[2]);
+      const insertedItem = $(e.detail);
       insertedItem
         .find("input.__barcode_item_lookup")
         .attr("id", `_barcode-lookup-${$(".nested-fields").length - 1}`)
