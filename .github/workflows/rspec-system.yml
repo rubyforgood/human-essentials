@@ -8,13 +8,12 @@ on:
     branches:
       - main
     paths-ignore:
-      - 'doc/**'
-      - '*.md'
-      - 'bin/*'
+      - "doc/**"
+      - "*.md"
+      - "bin/*"
 
 jobs:
   rspec-system:
-
     runs-on: ubuntu-latest
 
     services:
@@ -89,5 +88,5 @@ jobs:
         with:
           name: failed-browser-tests
           path: |
-            tmp/screenshots
-            tmp/capybara
+            ${{ github.workspace }}/tmp/screenshots/*.png
+            ${{ github.workspace }}/tmp/screenshots/*.html

@@ -8,13 +8,12 @@ on:
     branches:
       - main
     paths-ignore:
-      - 'doc/**'
-      - '*.md'
-      - 'bin/*'
+      - "doc/**"
+      - "*.md"
+      - "bin/*"
 
 jobs:
   rspec-system-events:
-
     runs-on: ubuntu-latest
 
     services:
@@ -89,4 +88,6 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: failed-browser-tests
-          path: tmp/capybara
+          path: |
+            ${{ github.workspace }}/tmp/screenshots/*.png
+            ${{ github.workspace }}/tmp/screenshots/*.html
