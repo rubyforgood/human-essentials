@@ -79,6 +79,17 @@ class OrganizationsController < ApplicationController
     redirect_to user_update_redirect_path, notice: "User has been reactivated."
   end
 
+  def opt_in_email_notification
+    organization = Organization.find(params[:id])
+    organization.update(email_notification_opt_in: true)
+    render json: { message: "Email notifications opted in successfully" }
+  end
+
+  def opt_out_email_notification
+    organization = Organization.find(params[:id])
+    organization.update(email_notification_opt_in: false)
+    render json: { message: "Email notifications opted out successfully" }
+  end
 
   private
 

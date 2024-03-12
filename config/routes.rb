@@ -92,6 +92,8 @@ Rails.application.routes.draw do
         post :resend_user_invitation
         post :promote_to_org_admin
         post :demote_to_user
+        put :opt_in_email_notification
+        put :opt_out_email_notification
       end
     end
 
