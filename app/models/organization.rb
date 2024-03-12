@@ -258,6 +258,14 @@ class Organization < ApplicationRecord
     year
   end
 
+  def opt_in_email_notification
+    update(email_notification_opt_in: true)
+  end
+
+  def opt_out_email_notification
+    update(email_notification_opt_in: false)
+  end
+
   private
 
   def correct_logo_mime_type
