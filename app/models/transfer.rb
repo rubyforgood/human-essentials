@@ -89,6 +89,11 @@ class Transfer < ApplicationRecord
   end
 
   def insufficient_items
-    line_items.select { |i| i.quantity > from.item_total(i.item_id) }
+    if Event.read_events?(organization)
+      inventory = View::Inventory.new(organization_id)
+      line_items.select { |i| i.quantity > inventory.quantity_for(item_id: i.item_id) }
+    else
+      line_items.select { |i| i.quantity > from.item_total(i.item_id) }
+    end
   end
 end

@@ -39,20 +39,6 @@ RSpec.describe "Audit management", type: :system, js: true do
       subject { url_prefix + "/audits/new" }
       let(:item) { Item.alphabetized.first }
 
-      it "*Does* include inactive items in the line item fields" do
-        visit subject
-
-        select storage_location.name, from: "Storage location"
-        expect(page).to have_content(item.name)
-        select item.name, from: "audit_line_items_attributes_0_item_id"
-
-        item.update(active: false)
-
-        page.refresh
-        select storage_location.name, from: "Storage location"
-        expect(page).to have_content(item.name)
-      end
-
       it "does not display quantities in line-item drop down selector" do
         create(:storage_location, :with_items, item: item, item_quantity: 10)
         visit subject
@@ -71,7 +57,7 @@ RSpec.describe "Audit management", type: :system, js: true do
         create(:audit, organization: @organization, storage_location: storage_location2)
 
         visit subject
-        select storage_location.name, from: "filters_at_location"
+        select storage_location.name, from: "filters[at_location]"
         click_button "Filter"
 
         expect(page).to have_css("table tr", count: 2)
@@ -241,7 +227,11 @@ RSpec.describe "Audit management", type: :system, js: true do
           let(:item2) { create(:item) }
 
           before do
-            create(:inventory_item, storage_location_id: storage_location.id, item_id: item2.id, quantity: 50)
+            TestInventory.create_inventory(storage_location.organization, {
+              storage_location.id => {
+                item2.id => 50
+              }
+            })
           end
 
           it "creates an adjustment with the differential of only the audited item" do

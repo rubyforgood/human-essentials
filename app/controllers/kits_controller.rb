@@ -1,6 +1,9 @@
 class KitsController < ApplicationController
   def index
     @kits = current_organization.kits.includes(line_items: :item, inventory_items: :storage_location).class_filter(filter_params)
+    if Event.read_events?(current_organization)
+      @inventory = View::Inventory.new(current_organization.id)
+    end
     unless params[:include_inactive_items]
       @kits = @kits.active
     end
@@ -44,14 +47,22 @@ class KitsController < ApplicationController
 
   def reactivate
     @kit = Kit.find(params[:id])
-    @kit.reactivate
-    redirect_back(fallback_location: dashboard_path, notice: "Kit has been reactivated!")
+    if @kit.can_reactivate?
+      @kit.reactivate
+      redirect_back(fallback_location: dashboard_path, notice: "Kit has been reactivated!")
+    else
+      redirect_back(fallback_location: dashboard_path, alert: "Cannot reactivate kit - it has inactive items! Please reactivate the items first.")
+    end
   end
 
   def allocations
     @kit = Kit.find(params[:id])
     @storage_locations = current_organization.storage_locations.active_locations
-    @item_inventories = @kit.item.inventory_items
+    if Event.read_events?(current_organization)
+      @inventory = View::Inventory.new(current_organization.id)
+    else
+      @item_inventories = @kit.item.inventory_items
+    end
 
     load_form_collections
   end

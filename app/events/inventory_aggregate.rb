@@ -21,7 +21,7 @@ module InventoryAggregate
         events = events.where("event_time > ?", last_snapshot.event_time)
       end
 
-      if event_time && event_time > last_snapshot.event_time
+      if event_time && (!last_snapshot || event_time > last_snapshot.event_time)
         events = events.where("event_time <= ?", event_time)
       end
 
@@ -29,35 +29,56 @@ module InventoryAggregate
       events.unshift(last_snapshot) if last_snapshot
 
       inventory = EventTypes::Inventory.from(organization_id)
-      events.group_by { |e| [e.eventable_type, e.eventable_id] }.each do |_, event_batch|
+      event_hash = {}
+      events.group_by(&:group_id).each do |_, event_batch|
         last_grouped_event = event_batch.max_by(&:updated_at)
-        handle(last_grouped_event, inventory, validate: validate)
+        previous_event = event_hash[last_grouped_event.eventable]
+        event_hash[last_grouped_event.eventable] = last_grouped_event
+        handle(last_grouped_event, inventory, validate: validate, previous_event: previous_event)
       end
       inventory
     end
 
     # @param event [Event]
     # @param inventory [Inventory]
+    # @param previous_event [Event]
     # @param validate [Boolean]
-    def handle(event, inventory, validate: false)
+    def handle(event, inventory, validate: false, previous_event: nil)
       handler = @handlers[event.class]
       if handler.nil?
         Rails.logger.warn("No handler found for #{event.class}, skipping")
         return
       end
-      handler.call(event, inventory, validate: validate)
+      handler.call(event, inventory, validate: validate, previous_event: previous_event)
     end
 
     # @param payload [EventTypes::InventoryPayload]
     # @param inventory [EventTypes::Inventory]
     # @param validate [Boolean]
-    def handle_inventory_event(payload, inventory, validate: true)
+    # @param previous_event [Event]
+    def handle_inventory_event(payload, inventory, validate: true, previous_event: nil)
       payload.items.each do |line_item|
+        quantity = line_item.quantity
+        if previous_event
+          previous_item = previous_event.data.items.find { |i| i.same_item?(line_item) }
+          quantity -= previous_item.quantity if previous_item
+        end
         inventory.move_item(item_id: line_item.item_id,
-          quantity: line_item.quantity,
+          quantity: quantity,
           from_location: line_item.from_storage_location,
           to_location: line_item.to_storage_location,
           validate: validate)
+      end
+      # remove the quantity from any items that are now missing
+      previous_event&.data&.items&.each do |previous_item|
+        new_item = payload.items.find { |i| i.same_item?(previous_item) }
+        if new_item.nil?
+          inventory.move_item(item_id: previous_item.item_id,
+            quantity: previous_item.quantity,
+            from_location: previous_item.to_storage_location,
+            to_location: previous_item.from_storage_location,
+            validate: validate)
+        end
       end
     end
 
@@ -72,18 +93,29 @@ module InventoryAggregate
     end
   end
 
-  on DonationEvent, DistributionEvent, AdjustmentEvent, PurchaseEvent,
-    TransferEvent, DistributionDestroyEvent, DonationDestroyEvent,
-    PurchaseDestroyEvent, TransferDestroyEvent,
-    KitAllocateEvent, KitDeallocateEvent do |event, inventory, validate: false|
+  # ignore previous events
+  on KitAllocateEvent, KitDeallocateEvent do |event, inventory, validate: false, previous_event: nil|
     handle_inventory_event(event.data, inventory, validate: validate)
+  rescue InventoryError => e
+    e.event = event
+    raise e
   end
 
-  on AuditEvent do |event, inventory, validate: false|
+  # diff previous event
+  on DonationEvent, DistributionEvent, AdjustmentEvent, PurchaseEvent,
+    TransferEvent, DistributionDestroyEvent, DonationDestroyEvent,
+    PurchaseDestroyEvent, TransferDestroyEvent do |event, inventory, validate: false, previous_event: nil|
+    handle_inventory_event(event.data, inventory, validate: validate, previous_event: previous_event)
+  rescue InventoryError => e
+    e.event = event
+    raise e
+  end
+
+  on AuditEvent do |event, inventory, validate: false, previous_event: nil|
     handle_audit_event(event.data, inventory)
   end
 
-  on SnapshotEvent do |event, inventory, validate: false|
+  on SnapshotEvent do |event, inventory, validate: false, previous_event: nil|
     inventory.storage_locations.clear
     inventory.storage_locations.merge!(event.data.storage_locations)
   end
