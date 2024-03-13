@@ -15,18 +15,23 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
       # Spec will ensure that only the required data is included.
 
       # Kits
-      kit = create(:kit, :with_item, organization: organization)
+      disposable_kit = create(:kit, :with_item, organization: organization)
+      another_disposable_kit = create(:kit, :with_item, organization: organization)
 
       create(:base_item, name: "Adult Disposable Diaper", partner_key: "adult diapers", category: "disposable diaper")
       create(:base_item, name: "Infant Disposable Diaper", partner_key: "infant diapers", category: "disposable diaper")
 
-      disposable_kit_item = create(:item, name: "Adult Disposable Diapers", partner_key: "adult diapers", kit: kit)
-      another_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", partner_key: "infant diapers", kit: kit)
+      disposable_kit_item = create(:item, name: "Adult Disposable Diapers", partner_key: "adult diapers")
+      another_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", partner_key: "infant diapers")
 
-      distribution = create(:distribution, organization: organization, issued_at: within_time)
+      disposable_kit.line_items.first.update!(item_id: disposable_kit_item.id, quantity: 5)
+      another_disposable_kit.line_items.first.update!(item_id: another_disposable_kit_item.id, quantity: 5)
 
-      create(:line_item, :distribution, quantity: 10, item: disposable_kit_item, itemizable: distribution)
-      create(:line_item, :distribution, quantity: 10, item: another_disposable_kit_item, itemizable: distribution)
+      disposable_kit_item_distribution = create(:distribution, organization: organization, issued_at: within_time)
+      another_disposable_kit_item_distribution = create(:distribution, organization: organization, issued_at: within_time)
+
+      create(:line_item, :distribution, quantity: 10, item: disposable_kit.item, itemizable: disposable_kit_item_distribution)
+      create(:line_item, :distribution, quantity: 10, item: another_disposable_kit.item, itemizable: another_disposable_kit_item_distribution)
 
       # Distributions
       distributions = create_list(:distribution, 2, issued_at: within_time, organization: organization)
@@ -142,14 +147,15 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
     end
 
     it "returns the correct quantity of disposable diapers from kits" do
-      expect(subject.send(:distributed_disposable_diapers_from_kits)).to eq(20)
+      service = described_class.new(organization: organization, year: within_time.year)
+      expect(service.distributed_disposable_diapers_from_kits).to eq(100)
     end
 
     it 'should return the proper results on #report' do
       expect(subject.report).to eq({
         entries: { "Disposable diapers distributed" => "240",
                    "Cloth diapers distributed" => "300",
-                   "Average monthly disposable diapers distributed" => "20",
+                   "Average monthly disposable diapers distributed" => "143",
                    "Total product drives" => 2,
                    "Disposable diapers collected from drives" => "600",
                    "Cloth diapers collected from drives" => "900",
