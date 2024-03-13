@@ -93,6 +93,15 @@ class ApplicationController < ActionController::Base
       current_user.has_role?(Role::ORG_ADMIN, current_organization)
   end
 
+  def require_partner
+    unless current_partner
+      respond_to do |format|
+        format.html { redirect_to dashboard_path, flash: { error: "Logged in user is not set up as a 'partner'." } }
+        format.json { render body: nil, status: :forbidden }
+      end
+    end
+  end
+
   def log_active_user
     if current_user && should_update_last_request_at?
       # we don't want the user record to validate or run callbacks when we're tracking activity
