@@ -174,7 +174,8 @@ class Partner < ApplicationRecord
       "Agency Email",
       "Contact Name",
       "Contact Phone",
-      "Contact Email"
+      "Contact Email",
+      "Notes"
     ]
   end
 
@@ -184,7 +185,8 @@ class Partner < ApplicationRecord
       email,
       contact_person[:name],
       contact_person[:phone],
-      contact_person[:email]
+      contact_person[:email],
+      notes
     ]
   end
 
