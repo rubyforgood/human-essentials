@@ -19,6 +19,7 @@
 #  home_child_count          :integer
 #  home_young_child_count    :integer
 #  military                  :boolean          default(FALSE)
+#  notes                     :string
 #  sources_of_income         :jsonb
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
@@ -78,7 +79,7 @@ module Partners
         id guardian_first_name guardian_last_name guardian_zip_code guardian_county
         guardian_phone case_manager home_adult_count home_child_count home_young_child_count
         sources_of_income guardian_employed guardian_employment_type guardian_monthly_pay
-        guardian_health_insurance comments created_at updated_at partner_id military archived
+        guardian_health_insurance comments created_at updated_at partner_id military archived notes
       ].freeze
     end
 
@@ -104,9 +105,9 @@ module Partners
         updated_at,
         partner_id,
         military,
-        archived
+        archived,
+        notes
       ]
     end
   end
 end
-
