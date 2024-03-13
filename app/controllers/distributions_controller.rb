@@ -256,7 +256,7 @@ class DistributionsController < ApplicationController
   end
 
   def distribution_params
-    params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, :reminder_email_enabled, :delivery_method, :shipping_cost, line_items_attributes: %i(item_id quantity _destroy))
+    params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, :reminder_email_enabled, :delivery_method, :shipping_cost, :custom_reminder, line_items_attributes: %i(item_id quantity _destroy))
   end
 
   def request_id
