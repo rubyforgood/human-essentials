@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_07_202431) do
+ActiveRecord::Schema[7.0].define(version: 2024_03_13_162205) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -185,6 +185,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_07_202431) do
     t.integer "item_needed_diaperid"
     t.boolean "active", default: true
     t.boolean "archived"
+    t.string "notes"
     t.index ["family_id"], name: "index_children_on_family_id"
   end
 
@@ -312,6 +313,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_07_202431) do
     t.boolean "military", default: false
     t.bigint "old_partner_id"
     t.boolean "archived", default: false
+    t.string "notes"
     t.index ["partner_id"], name: "index_families_on_partner_id"
   end
 
