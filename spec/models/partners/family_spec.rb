@@ -19,6 +19,7 @@
 #  home_child_count          :integer
 #  home_young_child_count    :integer
 #  military                  :boolean          default(FALSE)
+#  notes                     :string
 #  sources_of_income         :jsonb
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null

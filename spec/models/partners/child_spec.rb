@@ -13,6 +13,7 @@
 #  health_insurance     :jsonb
 #  item_needed_diaperid :integer
 #  last_name            :string
+#  notes                :string
 #  race                 :jsonb
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
