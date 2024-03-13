@@ -291,6 +291,7 @@ RSpec.describe Partner, type: :model do
     let(:contact_name) { "Jon Ralfeo" }
     let(:contact_email) { "jon@entertainment720.com" }
     let(:contact_phone) { "1231231234" }
+    let(:notes) { "Lorem ipsum" }
 
     before do
       partner.profile.update({
@@ -304,6 +305,7 @@ RSpec.describe Partner, type: :model do
       expect(partner.csv_export_attributes).to include(contact_name)
       expect(partner.csv_export_attributes).to include(contact_phone)
       expect(partner.csv_export_attributes).to include(contact_email)
+      expect(partner.csv_export_attributes).to include(notes)
     end
   end
 
