@@ -13,6 +13,7 @@
 #  health_insurance     :jsonb
 #  item_needed_diaperid :integer
 #  last_name            :string
+#  notes                :string
 #  race                 :jsonb
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
@@ -88,7 +89,7 @@ module Partners
     def self.csv_export_headers
       %w[
         id first_name last_name date_of_birth gender child_lives_with race agency_child_id
-        health_insurance comments created_at updated_at family_id item_needed_diaperid active archived
+        health_insurance comments created_at updated_at family_id item_needed_diaperid active archived notes
       ].freeze
     end
 
@@ -109,9 +110,9 @@ module Partners
         family_id,
         item_needed_diaperid,
         active,
-        archived
+        archived,
+        notes
       ]
     end
   end
 end
-
