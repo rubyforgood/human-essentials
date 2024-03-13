@@ -50,13 +50,11 @@ module Reports
           AND NOT (LOWER(base_items.category) LIKE '%cloth%' OR LOWER(base_items.name) LIKE '%cloth%')
       SQL
 
-      # Sanitize the conditions using ActiveRecord::Base.sanitize_sql_array
       sanitized_sql = ActiveRecord::Base.send(:sanitize_sql_array, [sql_query, organization_id, year])
 
       result = ActiveRecord::Base.connection.execute(sanitized_sql)
       result.first['sum'].to_i
     end
-
 
     private
 
