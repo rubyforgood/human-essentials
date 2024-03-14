@@ -22,16 +22,8 @@ class LineItem < ApplicationRecord
 
   validates :item_id, presence: true
   validates :quantity, numericality: { only_integer: true, less_than: MAX_INT, greater_than: MIN_INT }
-  validate :validate_quantity_for_kit
+
   scope :active, -> { joins(:item).where(items: { active: true }) }
 
   delegate :name, to: :item
-
-  private
-
-  def validate_quantity_for_kit
-    if itemizable_type == "Kit" && quantity.negative?
-      errors.add(:quantity, "must be a positive number")
-    end
-  end
 end
