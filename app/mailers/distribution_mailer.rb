@@ -9,20 +9,20 @@ class DistributionMailer < ApplicationMailer
     return if distribution.past? || distribution.partner.deactivated?
 
     @distribution = distribution
-    @partner = distribution.partner
+    @partner = @distribution.partner
     default_email_text = current_organization.default_email_text
-    @default_email_text_interpolated = interpolate_custom_text(distribution, default_email_text)
+    @default_email_text_interpolated = interpolate_custom_text(@distribution, default_email_text)
 
     @from_email = current_organization.email.presence || current_organization.users.first.email
     @distribution_changes = distribution_changes
-    pdf = DistributionPdf.new(current_organization, distribution).compute_and_render
-    attachments[format("%s %s.pdf", @partner.name, distribution.created_at.strftime("%Y-%m-%d"))] = pdf
+    pdf = DistributionPdf.new(current_organization, @distribution).compute_and_render
+    attachments[format("%s %s.pdf", @partner.name, @distribution.created_at.strftime("%Y-%m-%d"))] = pdf
     cc = [@partner.email]
-    cc.push(@partner.profile&.pick_up_email) if distribution.pick_up?
+    cc.push(@partner.profile&.pick_up_email) if @distribution.pick_up?
     cc.compact!
     cc.uniq!
 
-    mail(to: requestee_email(distribution), cc: cc, subject: "#{subject} from #{current_organization.name}")
+    mail(to: requestee_email(@distribution), cc: cc, subject: "#{subject} from #{current_organization.name}")
   end
 
   def reminder_email(distribution_id)
