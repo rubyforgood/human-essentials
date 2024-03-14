@@ -6,10 +6,11 @@ class DistributionMailer < ApplicationMailer
   #   en.distribution_mailer.partner_mailer.subject
   #
   def partner_mailer(current_organization, distribution, subject, distribution_changes)
-    return if distribution.past? || distribution.partner.deactivated?
-
     @distribution = distribution
     @partner = @distribution.partner
+
+    return if @distribution.past? || @partner.deactivated?
+
     default_email_text = current_organization.default_email_text
     @default_email_text_interpolated = interpolate_custom_text(@distribution, default_email_text)
 
