@@ -13,7 +13,7 @@
             "data-action": "change->area-served#calculateClientShareTotal keyup->area-served#calculateClientShareTotal" } %>
         </div>
         <div class="mx-2">
-          <%= input_remove_button "Remove", container_selector: "section",
+          <%= remove_element_button "Remove", container_selector: "section",
             class: "btn btn-sm btn-danger remove_served_area",
             data: { action: "click->form-input#removeItem:prevent click->served-area#zeroShareValue click->area-served#calculateClientShareTotal",
             remove_parent_selector: "section", remove_soft: false } %>
