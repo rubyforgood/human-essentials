@@ -24,83 +24,98 @@ RSpec.describe UiHelper, type: :helper do
     end
   end
 
-  describe 'input_add_button' do
+  describe 'add_element_button' do
     context "with default options" do
-      subject { helper.input_add_button("Label", container_selector: "Container") { "Block" } }
+      subject { helper.add_element_button("Label", container_selector: "Container") { "Block" } }
 
       it 'should generate a button with correct attributes' do
-        unsafe_html = CGI.unescapeHTML(subject)
+        page = Nokogiri::HTML(subject).css("div").first
+        expect(page).to_not be_nil
 
-        expect(unsafe_html).to match(/<div>/)
-        expect(unsafe_html).to match(/<a.* class="btn btn-outline-primary".*>/)
-        expect(unsafe_html).to match(/<a.* data-form-input-target="addButton".*>/)
-        expect(unsafe_html).to match(/<a.* data-add-dest-selector="Container".*>/)
-        expect(unsafe_html).to match(/<a.* data-action="click->form-input#addItem:prevent".*>/)
-        expect(unsafe_html).to match(/<a.*>Label<\/a>/)
-        expect(unsafe_html).to match(/<template.* data-form-input-target="addTemplate".*>/)
-        expect(unsafe_html).to match(/<template.*>Block<\/template>/)
+        button = page.css("a").first
+        expect(button).to_not be_nil
+        expect(button.attributes["class"].value).to eq("btn btn-outline-primary")
+        expect(button.attributes["data-form-input-target"].value).to eq("addButton")
+        expect(button.attributes["data-add-dest-selector"].value).to eq("Container")
+        expect(button.attributes["data-action"].value).to eq("click->form-input#addItem:prevent")
+        expect(button.text).to eq("Label")
+
+        template = page.css("template").first
+        expect(template).to_not be_nil
+        expect(template.attributes["data-form-input-target"].value).to eq("addTemplate")
+        expect(template.text).to eq("Block")
       end
     end
 
     context "with custom options" do
       subject {
-        helper.input_add_button("Label", container_selector: "Container", class: "Class", id: "Id",
+        helper.add_element_button("Label", container_selector: "Container", class: "Class", id: "Id",
           data: {test: "test"}) { "Block" }
       }
 
       it 'should generate a button with correct attributes' do
-        unsafe_html = CGI.unescapeHTML(subject)
+        page = Nokogiri::HTML(subject).css("div").first
+        expect(page).to_not be_nil
 
-        expect(unsafe_html).to match(/<div>/)
-        expect(unsafe_html).to match(/<a.* class="Class".*>/)
-        expect(unsafe_html).to match(/<a.* id="Id".*>/)
-        expect(unsafe_html).to match(/<a.* data-test="test".*>/)
-        expect(unsafe_html).to_not match(/<a.* data-form-input-target="addButton".*>/)
-        expect(unsafe_html).to_not match(/<a.* data-add-dest-selector="Container".*>/)
-        expect(unsafe_html).to_not match(/<a.* data-action="click->form-input#addItem:prevent".*>/)
-        expect(unsafe_html).to match(/<a.*>Label<\/a>/)
-        expect(unsafe_html).to match(/<template.* data-form-input-target="addTemplate".*>/)
-        expect(unsafe_html).to match(/<template.*>Block<\/template>/)
+        button = page.css("a").first
+        expect(button).to_not be_nil
+        expect(button.attributes["class"].value).to eq("Class")
+        expect(button.attributes["id"].value).to eq("Id")
+        expect(button.attributes["data-test"].value).to eq("test")
+        expect(button.attributes["data-form-input-target"]).to be_nil
+        expect(button.attributes["data-add-dest-selector"]).to be_nil
+        expect(button.attributes["data-action"]).to be_nil
+        expect(button.text).to eq("Label")
+
+        template = page.css("template").first
+        expect(template).to_not be_nil
+        expect(template.attributes["data-form-input-target"].value).to eq("addTemplate")
+        expect(template.text).to eq("Block")
       end
     end
   end
 
-  describe 'input_delete_button' do
+  describe 'remove_element_button' do
     context "with default options" do
-      subject { helper.input_remove_button("Label", container_selector: "Container") }
+      subject { helper.remove_element_button("Label", container_selector: "Container") }
 
       it 'should generate a button with correct attributes' do
-        unsafe_html = CGI.unescapeHTML(subject)
-        expect(unsafe_html).to match(/<a.* class="btn btn-warning".*>/)
-        expect(unsafe_html).to match(/<a.* data-action="click->form-input#removeItem:prevent".*>/)
-        expect(unsafe_html).to match(/<a.* data-remove-parent-selector="Container".*>/)
-        expect(unsafe_html).to match(/<a.* data-remove-soft="false".*>/)
-        expect(unsafe_html).to match(/<a.* href="javascript:void\(0\)".*>/)
-        expect(unsafe_html).to match(/<a.*>Label<\/a>/)
+        button = Nokogiri::HTML(subject).css("a").first
+        expect(button).to_not be_nil
+
+        expect(button.attributes["class"].value).to eq("btn btn-warning")
+        expect(button.attributes["data-action"].value).to eq("click->form-input#removeItem:prevent")
+        expect(button.attributes["data-remove-parent-selector"].value).to eq("Container")
+        expect(button.attributes["data-remove-soft"].value).to eq("false")
+        expect(button.text).to eq("Label")
+        expect(button.attributes["href"].value).to eq("javascript:void(0)")
       end
 
       context 'when soft is false' do
-        subject { helper.input_remove_button("Label", container_selector: "Container", soft: true) }
+        subject { helper.remove_element_button("Label", container_selector: "Container", soft: true) }
 
         it 'should generate a button with correct attributes' do
-          unsafe_html = CGI.unescapeHTML(subject)
-          expect(unsafe_html).to match(/<a.* data-remove-soft="true".*>/)
+          button = Nokogiri::HTML(subject).css("a").first
+          expect(button).to_not be_nil
+          expect(button.attributes["data-remove-soft"].value).to eq("true")
         end
       end
     end
 
     context "with custom options" do
-      subject { helper.input_remove_button("Label", container_selector: "Container", class: "test", data: {test: "test"}) }
+      subject { helper.remove_element_button("Label", container_selector: "Container", class: "test", data: {test: "test"}) }
 
       it 'should generate a button with correct attributes' do
-        unsafe_html = CGI.unescapeHTML(subject)
-        expect(unsafe_html).to match(/<a.* class="test".*>/)
-        expect(unsafe_html).to_not match(/<a.* data-action="click->form-input#removeItem:prevent".*>/)
-        expect(unsafe_html).to_not match(/<a.* data-remove-parent-selector="Container".*>/)
-        expect(unsafe_html).to_not match(/<a.* data-remove-soft="true".*>/)
-        expect(unsafe_html).to match(/<a.* data-test="test".*>/)
-        expect(unsafe_html).to match(/<a.* href="javascript:void\(0\)".*>/)
-        expect(unsafe_html).to match(/<a.*>Label<\/a>/)
+        button = Nokogiri::HTML(subject).css("a").first
+        expect(button).to_not be_nil
+
+        expect(button.attributes["class"].value).to eq("test")
+        expect(button.attributes["data-action"]).to be_nil
+        expect(button.attributes["data-remove-parent-selector"]).to be_nil
+        expect(button.attributes["data-remove-soft"]).to be_nil
+        expect(button.attributes["data-test"].value).to eq("test")
+        expect(button.text).to eq("Label")
+        expect(button.attributes["href"].value).to eq("javascript:void(0)")
       end
     end
   end
