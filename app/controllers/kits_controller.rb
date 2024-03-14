@@ -26,10 +26,8 @@ class KitsController < ApplicationController
       redirect_to kits_path
     else
       flash[:error] = kit_creation.errors
-                                  .full_messages
-                                  .map(&:humanize)
+                                  .map { |error| formatted_error_message(error) }
                                   .join(", ")
-
       load_form_collections
 
       @kit ||= Kit.new
@@ -114,5 +112,13 @@ class KitsController < ApplicationController
     return {} unless params.key?(:filters)
 
     params.require(:filters).slice(:by_name)
+  end
+
+  def formatted_error_message(error)
+    if error.attribute.to_s == "inventory"
+      "Sorry, we weren't able to save the kit. Validation failed: #{error.message}"
+    else
+      error.full_message.humanize
+    end
   end
 end
