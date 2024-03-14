@@ -51,6 +51,12 @@ RSpec.describe User, type: :model do
       expect(build(:partner, email: "@boooooooooo")).not_to be_valid
       expect(build(:partner, email: "boooooooooo@")).not_to be_valid
     end
+    it "requires a password with a special character and number" do
+      expect(build(:user, password: "password", password_confirmation: "password")).not_to be_valid
+      expect(build(:user, password: "a;dsfj!55", password_confirmation: "a;dsfj!55")).to be_valid
+      expect(build(:user, password: "password5", password_confirmation: "password5")).not_to be_valid
+      expect(build(:user, password: "password!5", password_confirmation: "password!5")).to be_valid
+    end
   end
 
   describe "Scopes >" do
