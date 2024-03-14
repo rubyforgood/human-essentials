@@ -46,7 +46,7 @@
                 </tbody>
               </table>
               <div>
-                <%= input_add_button('Add Another Item', container_selector: '.fields') do %>
+                <%= add_element_button('Add Another Item', container_selector: '.fields') do %>
                   <%= render 'item_request', form: form, object: @partner_request.item_requests.build %>
                 <% end %>
               </div>

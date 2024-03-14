@@ -7,7 +7,7 @@ module UiHelper
   # to make this work you need to:
   #  - set data-controller="form-input" on the form element
   #  - container selector needs to a unique css selector
-  def input_add_button(label, container_selector:, **html_attrs, &block)
+  def add_element_button(label, container_selector:, **html_attrs, &block)
     default_html_attrs = {
       class: "btn btn-outline-primary",
       data: { form_input_target: 'addButton',
@@ -28,7 +28,7 @@ module UiHelper
   # to make this work you need to:
   #  - set data-controller="form-input" on the form element
   #  - container selector
-  def input_remove_button(label, container_selector:, soft: false, **html_attrs)
+  def remove_element_button(label, container_selector:, soft: false, **html_attrs)
     default_html_attrs = {
       class: "btn btn-warning",
       data: {
