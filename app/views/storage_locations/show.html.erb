@@ -96,7 +96,7 @@
                   </thead>
                   <tbody>
                   <% if @inventory %>
-                    <% @inventory.items_for_location(@storage_location.id).each do |item| %>
+                    <% @inventory.items_for_location(@storage_location.id, include_omitted: true).each do |item| %>
                       <tr>
                         <td><%= link_to item.name, item_path(item.item_id) %></td>
                         <td><%= number_with_delimiter(item.quantity) %></td>
