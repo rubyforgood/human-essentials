@@ -64,8 +64,8 @@ class ItemsController < ApplicationController
   def show
     @item = current_organization.items.find(params[:id])
     if Event.read_events?(current_organization)
-      inventory = View::Inventory.new(current_organization.id)
-      storage_location_ids = inventory.storage_locations_for_item(@item.id)
+      @inventory = View::Inventory.new(current_organization.id)
+      storage_location_ids = @inventory.storage_locations_for_item(@item.id)
       @storage_locations_containing = StorageLocation.find(storage_location_ids)
     else
       @storage_locations_containing = current_organization.items.storage_locations_containing(@item)
