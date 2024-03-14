@@ -50,7 +50,7 @@
 
               <div>
                 <%= add_item_button('Add Another Item') do %>
-                  <%= render 'partners/individuals_requests/item_request', form: form %>
+                  <%= render 'partners/individuals_requests/item_request', form: form, object: Partners::FamilyRequest::Item.new %>
                 <% end %>
               </div>
 
