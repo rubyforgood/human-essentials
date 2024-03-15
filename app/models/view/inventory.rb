@@ -7,6 +7,9 @@ module View
   class Inventory
     class ViewInventoryItem < EventTypes::EventItem
       attribute :db_item, Types::Nominal::Any
+      def name
+        db_item&.name || "Invalid Item"
+      end
       delegate(*Item.column_names.map(&:to_sym), to: :db_item)
     end
 
@@ -116,17 +119,14 @@ module View
 
     def load_item_details
       @inventory.storage_locations.values.each do |loc|
-        loc.items.delete_if do |_, item|
+        loc.items.values.each do |item|
           db_item = @items.find { |i| i.id == item.item_id }
-          next true if db_item.nil?
-
           loc.items[item.item_id] = ViewInventoryItem.new(
             item_id: item.item_id,
             storage_location_id: loc.id,
             quantity: item.quantity,
             db_item: db_item
           )
-          false
         end
       end
     end
