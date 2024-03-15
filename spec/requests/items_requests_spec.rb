@@ -47,7 +47,7 @@ RSpec.describe "Items", type: :request do
 
       it 'should not be able to deactivate an item in a storage location' do
         TestInventory.create_inventory(
-          @organization,
+          organization,
           storage_location.id => {
             item.id => 100
           }
