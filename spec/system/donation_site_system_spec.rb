@@ -101,7 +101,7 @@ RSpec.describe "Donation Site", type: :system, js: true do
 
     it "updates an existing donation site's Address" do
       visit subject
-      fill_in "Address", with: donation_site.name + " new", match: :prefer_exact
+      fill_in "Address", with: new_address, match: :prefer_exact
       click_button "Save"
 
       expect(page.find(".alert")).to have_content "updated"
