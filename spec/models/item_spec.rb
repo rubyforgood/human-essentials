@@ -72,7 +72,7 @@ RSpec.describe Item, type: :model do
       Item.delete_all
       inactive_item = create(:line_item, :purchase).item
       item = create(:item)
-      inactive_item.destroy
+      inactive_item.deactivate!
       expect(Item.active.to_a).to match_array([item])
     end
 
