@@ -45,7 +45,7 @@ class DonationSite < ApplicationRecord
   end
 
   def self.csv_export_headers
-    %w{Name Address Contact_Name Email Phone}
+    %w{Name Address Contact Name Email Phone}
   end
 
   def csv_export_attributes
