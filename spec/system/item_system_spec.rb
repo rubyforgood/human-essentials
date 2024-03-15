@@ -77,46 +77,6 @@ RSpec.describe "Item management", type: :system do
     end
   end
 
-  describe "destroying items" do
-    subject { create(:item, name: "AAA DELETEME", organization: @user.organization) }
-    context "when an item has history" do
-      before do
-        create(:donation, :with_items, item: subject)
-      end
-      it "can be soft-deleted (deactivated) by the user" do
-        expect do
-          visit url_prefix + "/items"
-          expect(page).to have_content(subject.name)
-          within "tr[data-item-id='#{subject.id}']" do
-            accept_confirm do
-              click_on "Delete", match: :first
-            end
-          end
-          page.find(".alert-info")
-        end.to change { Item.count }.by(0).and change { Item.active.count }.by(-1)
-        subject.reload
-        expect(subject).not_to be_active
-      end
-    end
-
-    context "when an item does not have history" do
-      it "can be fully deleted by the user" do
-        subject
-        expect do
-          visit url_prefix + "/items"
-          expect(page).to have_content(subject.name)
-          within "tr[data-item-id='#{subject.id}']" do
-            accept_confirm do
-              click_on "Delete", match: :first
-            end
-          end
-          page.find(".alert-info")
-        end.to change { Item.count }.by(-1).and change { Item.active.count }.by(-1)
-        expect { subject.reload }.to raise_error(ActiveRecord::RecordNotFound)
-      end
-    end
-  end
-
   describe "restoring items" do
     let!(:item) { create(:item, :inactive, name: "AAA DELETED") }
 
