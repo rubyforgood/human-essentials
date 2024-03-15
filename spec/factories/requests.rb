@@ -8,6 +8,7 @@
 #  discarded_at    :datetime
 #  request_items   :jsonb
 #  status          :integer          default("pending")
+#  type            :integer
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  distribution_id :integer
