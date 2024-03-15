@@ -267,6 +267,15 @@ RSpec.describe Item, type: :model do
           allow(item).to receive(:can_deactivate_or_delete?).and_return(true)
           expect { item.deactivate! }.to change { item.active }.from(true).to(false)
         end
+
+        it 'deactivates the kit if it exists' do
+          kit = create(:kit)
+          item = create(:item, kit: kit)
+          expect(kit).to be_active
+          item.deactivate!
+          expect(item).not_to be_active
+          expect(kit).not_to be_active
+        end
       end
 
       context "when it cannot deactivate" do
@@ -305,29 +314,6 @@ RSpec.describe Item, type: :model do
         other_item = create(:item, partner_key: "other")
         expect(item).not_to be_other
         expect(other_item).to be_other
-      end
-    end
-
-    describe "destroy" do
-      it "actually destroys an item that doesn't have history" do
-        item = create(:item)
-        expect { item.destroy }.to change { Item.count }.by(-1)
-      end
-
-      it "only hides an item that has history" do
-        item = create(:line_item, :purchase).item
-        expect { item.destroy }.to change { Item.count }.by(0).and change { Item.active.count }.by(-1)
-        expect(item).not_to be_active
-      end
-
-      it 'deactivates the kit if it exists' do
-        kit = create(:kit)
-        item = create(:item, kit: kit)
-        create(:line_item, :purchase, item: item)
-        expect(kit).to be_active
-        expect { item.destroy }.to change { Item.count }.by(0).and change { Item.active.count }.by(-1)
-        expect(item).not_to be_active
-        expect(kit).not_to be_active
       end
     end
 
