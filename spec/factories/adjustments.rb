@@ -16,7 +16,7 @@ FactoryBot.define do
     organization { Organization.try(:first) || create(:organization) }
     storage_location
     comment { "A comment" }
-    user { organization.users.try(:first) || create(:user, organization_id: organization.id) }
+    user { organization.users.try(:first) || create(:user, organization: organization) }
 
     trait :with_items do
       storage_location { create :storage_location, :with_items, item: item || create(:item), organization: organization }
