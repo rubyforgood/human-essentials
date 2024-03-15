@@ -291,7 +291,7 @@ RSpec.describe Partner, type: :model do
     let(:contact_name) { "Jon Ralfeo" }
     let(:contact_email) { "jon@entertainment720.com" }
     let(:contact_phone) { "1231231234" }
-    let(:notes) { "Lorem ipsum" }
+    let(:notes) { "Some notes" }
 
     before do
       partner.profile.update({
@@ -299,6 +299,7 @@ RSpec.describe Partner, type: :model do
                                primary_contact_email: contact_email,
                                primary_contact_phone: contact_phone
                              })
+      partner.update(notes: notes)
     end
 
     it "includes contact person information from parnerbase" do
