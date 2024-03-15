@@ -20,6 +20,7 @@ FactoryBot.define do
   factory :partner do
     sequence(:name) { |n| "Leslie Sue, the #{n}" }
     sequence(:email) { |n| "leslie#{n}@gmail.com" }
+    notes { "Lorem ipsum" }
     send_reminders { true }
     organization_id { Organization.try(:first).try(:id) || create(:organization).id }
 
