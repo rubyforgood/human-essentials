@@ -1,22 +1,3 @@
-RSpec.configure do |config|
-  config.before(:each, type: :system) do
-    # Stub geocoding request
-    Geocoder.configure(lookup: :test)
-
-    Geocoder::Lookup::Test.set_default_stub(
-      [
-        {
-          "coordinates" => [38.921242, -78.183406],
-          "address" => "Default stubbed address",
-          "state" => "Virginia",
-          "country" => "United States",
-          "country_code" => "US"
-        }
-      ]
-    )
-  end
-end
-
 RSpec.describe "Donation Site", type: :system, js: true do
   before do
     sign_in(@user)
@@ -119,7 +100,7 @@ RSpec.describe "Donation Site", type: :system, js: true do
 
     it "updates an existing donation site's Address" do
       visit subject
-      fill_in "Address", with: donation_site.address + " new"
+      fill_in "Address", with: "123 Donation Site Way"
       click_button "Save"
 
       expect(page.find(".alert")).to have_content "updated"
