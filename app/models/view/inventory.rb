@@ -7,9 +7,6 @@ module View
   class Inventory
     class ViewInventoryItem < EventTypes::EventItem
       attribute :db_item, Types::Nominal::Any
-      def name
-        db_item&.name || "Invalid Item"
-      end
       delegate(*Item.column_names.map(&:to_sym), to: :db_item)
     end
 
@@ -26,7 +23,7 @@ module View
     # @param event_time [DateTime]
     def reload(event_time = nil)
       @inventory = InventoryAggregate.inventory_for(organization_id, event_time: event_time)
-      @items = Item.where(organization_id: organization_id).active
+      @items = Item.where(organization_id: organization_id)
       @db_storage_locations = StorageLocation.where(organization_id: organization_id).active_locations
       load_item_details
     end
