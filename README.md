@@ -124,6 +124,10 @@ You can sign up [here](https://join.slack.com/t/rubyforgood/shared_invite/zt-21p
   ```
 </details>
 
+### Additional Install Options
+
+- [Nix](doc/NIX_SETUP.md) 
+
 ## Troubleshooting 👷🏼‍♀️
 
 Please let us know by opening up an issue! We have many new contributors come through and it is likely what you experienced will happen to them as well.
