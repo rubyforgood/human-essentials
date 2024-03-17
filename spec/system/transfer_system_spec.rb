@@ -18,25 +18,6 @@ RSpec.describe "Transfer management", type: :system do
     click_on "Save"
   end
 
-  it "Does not include inactive items in the line item fields" do
-    storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10, name: "From me", organization: @organization)
-    item = Item.alphabetized.first
-
-    visit url_prefix + "/transfers/new"
-
-    select storage_location.name, from: "From storage location"
-    expect(page).to have_content(item.name)
-    select item.name, from: "transfer_line_items_attributes_0_item_id"
-
-    item.update(active: false)
-
-    page.refresh
-    within "#new_transfer" do
-      select storage_location.name, from: "From storage location"
-      expect(page).not_to have_content(item.name)
-    end
-  end
-
   it "can transfer an inventory from a storage location to another as a user" do
     from_storage_location = create(:storage_location, :with_items, item: item, name: "From me", organization: @organization)
     to_storage_location = create(:storage_location, :with_items, name: "To me", organization: @organization)

@@ -332,7 +332,7 @@ RSpec.describe Organization, type: :model do
 
   describe "total_inventory" do
     it "returns a sum total of all inventory at all storage locations" do
-      item = create(:item)
+      item = create(:item, organization: organization)
       create(:storage_location, :with_items, item: item, item_quantity: 100, organization: organization)
       create(:storage_location, :with_items, item: item, item_quantity: 150, organization: organization)
       expect(organization.total_inventory).to eq(250)
