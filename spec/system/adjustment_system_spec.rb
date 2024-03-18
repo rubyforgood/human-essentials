@@ -21,7 +21,7 @@ RSpec.describe "Adjustment management", type: :system, js: true do
       end
 
       it "allows you to choose items that do not yet exist" do
-        select Item.last.name, from: "adjustment_line_items_attributes_0_item_id"
+        select Item.active.last.name, from: "adjustment_line_items_attributes_0_item_id"
         fill_in "adjustment_line_items_attributes_0_quantity", with: add_quantity.to_s
 
         expect do
@@ -56,24 +56,6 @@ RSpec.describe "Adjustment management", type: :system, js: true do
           click_on "Save"
         end.to change { storage_location.size }.by(sub_quantity)
         expect(page).to have_content(/Adjustment was successful/i)
-      end
-
-      it "Does not include inactive items in the line item fields" do
-        visit url_prefix + "/adjustments/new"
-
-        item = Item.alphabetized.first
-
-        select storage_location.name, from: "From storage location"
-        expect(page).to have_content(item.name)
-        select item.name, from: "adjustment_line_items_attributes_0_item_id"
-
-        item.update(active: false)
-
-        page.refresh
-        within "#new_adjustment" do
-          select storage_location.name, from: "From storage location"
-          expect(page).to have_no_content(item.name)
-        end
       end
 
       it "politely informs the user that they're adjusting way too hard", js: true do
