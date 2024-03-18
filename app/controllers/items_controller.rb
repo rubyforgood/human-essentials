@@ -2,7 +2,12 @@
 # they like with their own Items.
 class ItemsController < ApplicationController
   def index
-    @items = current_organization.items.includes(:base_item, :kit).alphabetized.class_filter(filter_params)
+    @items = current_organization
+      .items
+      .includes(:base_item, :kit, :line_items)
+      .alphabetized
+      .class_filter(filter_params)
+      .group('items.id')
     @items = @items.active unless params[:include_inactive_items]
 
     @item_categories = current_organization.item_categories.includes(:items).order('name ASC')
@@ -94,10 +99,27 @@ class ItemsController < ApplicationController
     end
   end
 
+  def deactivate
+    item = current_organization.items.find(params[:id])
+    begin
+      item.deactivate!
+    rescue => e
+      flash[:error] = e.message
+      redirect_back(fallback_location: items_path)
+      return
+    end
+
+    flash[:notice] = "#{item.name} has been deactivated."
+    redirect_to items_path
+  end
+
   def destroy
     item = current_organization.items.find(params[:id])
-    ActiveRecord::Base.transaction do
-      item.destroy
+    item.destroy
+    if item.errors.any?
+      flash[:error] = item.errors.full_messages.join("\n")
+      redirect_back(fallback_location: items_path)
+      return
     end
 
     flash[:notice] = "#{item.name} has been removed."
