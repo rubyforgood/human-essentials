@@ -14,7 +14,7 @@
     </tr>
     </thead>
     <tbody>
-      <%= render partial: "items/item_row", collection: items, as: :item_row %>
+      <%= render partial: "items/item_row", collection: items, as: :item_row, locals: { inventory: inventory } %>
     </tbody>
   </table>
 </div><!-- /.box-body.table-responsive -->
