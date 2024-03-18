@@ -8,13 +8,12 @@ on:
     branches:
       - main
     paths-ignore:
-      - 'doc/**'
-      - '*.md'
-      - 'bin/*'
+      - "doc/**"
+      - "*.md"
+      - "bin/*"
 
 jobs:
   rspec-events:
-
     runs-on: ubuntu-latest
 
     services:
@@ -41,7 +40,7 @@ jobs:
         # When you run 2 parallel jobs then first job will have index 0, the second job will have index 1 etc
         ci_node_index: [0, 1]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -85,7 +84,7 @@ jobs:
           RUBYOPT='-W:no-deprecated -W:no-experimental' bin/knapsack_pro_rspec
       - name: Upload artifacts
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: failed-browser-tests
           path: tmp/screenshots
