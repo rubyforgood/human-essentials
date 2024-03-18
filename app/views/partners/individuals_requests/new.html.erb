@@ -31,7 +31,7 @@
             <% end %>
 
             <%= simple_form_for @request, url: partners_individuals_requests_path, html: {role: 'form', class: 'form-horizontal'},
-              data: {controller: 'request-item'} do |form| %>
+              data: {controller: 'form-input'} do |form| %>
 
               <%= form.input :comments, label: "Comments:", as: :text, class: "form-control", wrapper: :input_group %>
 
@@ -43,13 +43,13 @@
                   </tr>
                 </thead>
 
-                <tbody class='fields' data-request-item-target="addDest">
+                <tbody class='fields'>
                   <%= render 'partners/individuals_requests/item_request', form: form %>
                 </tbody>
               </table>
 
               <div>
-                <%= add_item_button('Add Another Item') do %>
+                <%= add_element_button('Add Another Item', container_selector: '.fields') do %>
                   <%= render 'partners/individuals_requests/item_request', form: form, object: Partners::FamilyRequest::Item.new %>
                 <% end %>
               </div>
