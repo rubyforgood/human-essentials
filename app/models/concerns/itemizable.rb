@@ -125,7 +125,7 @@ module Itemizable
   end
 
   def line_items_quantity_is_at_least(threshold)
-    return if storage_location.nil?
+    return if respond_to?(:storage_location) && storage_location.nil?
 
     line_items.each do |line_item|
       next unless line_item.item

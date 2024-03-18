@@ -94,6 +94,8 @@ class Item < ApplicationRecord
       .or(where("base_items.category = 'Miscellaneous'"))
   }
 
+  before_destroy :validate_destroy, prepend: true
+
   def self.barcoded_items
     joins(:barcode_items).order(:name).group(:id)
   end
@@ -111,20 +113,49 @@ class Item < ApplicationRecord
     Item.where(id: item_ids).find_each { |item| item.update(active: true) }
   end
 
-  # @return [Boolean]
-  def can_deactivate?
-    # Cannot deactivate if it's currently in inventory in a storage location. It doesn't make sense
-    # to have physical inventory of something we're now saying isn't valid.
-    inventory_items.where("quantity > 0").none? &&
-      # If an active kit includes this item, then changing kit allocations would change inventory
-      # for an inactive item - which we said above we don't want to allow.
-      organization.kits
-        .active
-        .joins(:line_items)
-        .where(line_items: { item_id: id}).none?
+  def has_inventory?(inventory = nil)
+    if inventory
+      inventory.quantity_for(item_id: id).positive?
+    else
+      inventory_items.where("quantity > 0").any?
+    end
   end
 
-  def deactivate
+  def is_in_kit?
+    organization.kits
+      .active
+      .joins(:line_items)
+      .where(line_items: { item_id: id}).any?
+  end
+
+  def can_delete?(inventory = nil)
+    can_deactivate_or_delete?(inventory) && line_items.none? && !barcode_count&.positive?
+  end
+
+  # @return [Boolean]
+  def can_deactivate_or_delete?(inventory = nil)
+    if inventory.nil? && Event.read_events?(organization)
+      inventory = View::Inventory.new(organization_id)
+    end
+    # Cannot deactivate if it's currently in inventory in a storage location. It doesn't make sense
+    # to have physical inventory of something we're now saying isn't valid.
+    # If an active kit includes this item, then changing kit allocations would change inventory
+    # for an inactive item - which we said above we don't want to allow.
+
+    !has_inventory?(inventory) && !is_in_kit?
+  end
+
+  def validate_destroy
+    unless can_delete?
+      errors.add(:base, "Cannot delete item - it has already been used!")
+      throw(:abort)
+    end
+  end
+
+  def deactivate!
+    unless can_deactivate_or_delete?
+      raise "Cannot deactivate item - it is in a storage location or kit!"
+    end
     if kit
       kit.deactivate
     else
@@ -134,27 +165,6 @@ class Item < ApplicationRecord
 
   def other?
     partner_key == "other"
-  end
-
-  # Override `destroy` to ensure Item isn't accidentally destroyed
-  # without first being disassociated with its historical presence
-  def destroy
-    if has_history?
-      deactivate
-    else
-      super
-    end
-  end
-
-  def has_history?
-    return true if line_items.any? || barcode_items.any?
-
-    if Event.read_events?(organization)
-      inventory = View::Inventory.new(organization_id)
-      inventory.quantity_for(item_id: id).positive?
-    else
-      inventory_items.any?
-    end
   end
 
   def self.gather_items(current_organization, global = false)
