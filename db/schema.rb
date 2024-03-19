@@ -731,7 +731,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_15_190152) do
     t.datetime "discarded_at", precision: nil
     t.text "discard_reason"
     t.integer "partner_user_id"
-    t.integer "type"
+    t.integer "request_type"
     t.index ["discarded_at"], name: "index_requests_on_discarded_at"
     t.index ["distribution_id"], name: "index_requests_on_distribution_id", unique: true
     t.index ["organization_id"], name: "index_requests_on_organization_id"
