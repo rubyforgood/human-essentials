@@ -44,6 +44,7 @@ class Request < ApplicationRecord
   scope :by_partner, ->(partner_id) { where(partner_id: partner_id) }
   # status scope to allow filtering by status
   scope :by_status, ->(status) { where(status: status) }
+  scope :by_request_type, ->(request_type) { where(request_type: request_type) }
   scope :during, ->(range) { where(created_at: range) }
   scope :for_csv_export, ->(organization, *) {
     where(organization: organization)
