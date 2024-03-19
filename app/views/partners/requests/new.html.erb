@@ -55,6 +55,7 @@
 
           </div>
               <div class="card-footer">
+                <%= hidden_field_tag :request_type, 0 %>
                 <!-- TODO(chaserx): we should add some js to prevent submission if the items selected are the blank option or any item has an empty quantity -->
                 <%= form.submit("Submit Essentials Request", class: "btn btn-primary") %> <%= link_to "Cancel Request", partners_requests_path, class: "btn btn-danger" %>
               </div>
