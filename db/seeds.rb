@@ -516,7 +516,7 @@ dates_generator = DispersedPastDatesGenerator.new
   # Depending on which source it uses, additional data may need to be provided.
   donation = Donation.new(source: source,
                           storage_location: random_record_for_org(pdx_org, StorageLocation),
-                          organization: pdx_org, 
+                          organization: pdx_org,
                           issued_at: dates_generator.next)
   case source
   when Donation::SOURCES[:product_drive]
@@ -648,6 +648,11 @@ dates_generator = DispersedPastDatesGenerator.new
     updated_at: purchase_date,
     vendor_id: vendor.id
   )
+
+  rand(1..5).times do
+    purchase.line_items.push(LineItem.new(quantity: rand(1..1000),
+                                          item_id: pdx_org.item_ids.sample))
+  end
   PurchaseCreateService.call(purchase)
 end
 
