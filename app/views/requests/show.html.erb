@@ -37,6 +37,7 @@
                 <tr>
                 <th>Request was sent by:</th>
                 <th>Request Sender:</th>
+                <th>Request Type:</th>
                 <th>Request Status:</th>
                 <th>Comments:</th>
               </tr>
@@ -45,6 +46,7 @@
               <tr>
                 <td><%= @request.partner.name %></td>
                 <td><%= @request.partner_user&.formatted_email %></td>
+                <td><%= render partial: "request_type", locals: {request_type: @request.request_type} %></td>
                 <td><%= render partial: "status", locals: {status: @request.status} %></td>
                 <td><%= @request.comments || 'None' %></td>
               </tr>

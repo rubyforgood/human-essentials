@@ -13,6 +13,9 @@
     <%= request_row.comments %>
   </td>
   <td>
+    <%= render partial: "request_type", locals: {request_type: request_row.request_type} %>
+  </td>
+  <td>
     <%= render partial: "status", locals: {status: request_row.status} %>
   </td>
   <td class="text-right">
