@@ -46,6 +46,9 @@ module Exports
         "Requestor" => ->(request) {
           request.partner.name
         },
+        "Type" => ->(request) {
+          request.request_type&.humanize
+        },
         "Status" => ->(request) {
           request.status.humanize
         }
