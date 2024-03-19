@@ -31,6 +31,7 @@ module Partners
       end
 
       create_service = Partners::FamilyRequestCreateService.new(
+        request_type: params[:request_type],
         partner_user_id: current_user.id,
         family_requests_attributes: family_requests_attributes,
         for_families: true
