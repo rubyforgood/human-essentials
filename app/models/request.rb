@@ -7,8 +7,8 @@
 #  discard_reason  :text
 #  discarded_at    :datetime
 #  request_items   :jsonb
+#  request_type    :integer
 #  status          :integer          default("pending")
-#  type            :integer
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  distribution_id :integer
@@ -32,7 +32,7 @@ class Request < ApplicationRecord
   has_many :child_item_requests, through: :item_requests
 
   enum status: { pending: 0, started: 1, fulfilled: 2, discarded: 3 }, _prefix: true
-  enum type: { quantity: 0, by_individuals: 1, child_based: 2 }, _prefix: true
+  enum request_type: { quantity: 0, by_individuals: 1, child_based: 2 }, _prefix: true
 
   validates :distribution_id, uniqueness: true, allow_nil: true
   before_save :sanitize_items_data
