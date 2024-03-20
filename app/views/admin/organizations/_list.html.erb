@@ -15,7 +15,7 @@
         <td><%= organization.name %></td>
         <td><%= link_to organization.email, "mailto:#{organization.email}" %></td>
         <td class="date"><%= organization.created_at.strftime("%F") %></td>
-        <td class="date"><%= organization.last_distributed_at %></td>
+        <td class="date"><%= organization.last_distribution_date %></td>
         <td class="text-right">
           <%= view_button_to admin_organization_path(organization.id) %>
           <%= edit_button_to edit_admin_organization_path(organization.id) %>
