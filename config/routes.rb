@@ -139,6 +139,7 @@ Rails.application.routes.draw do
       collection do
         post :import_csv
       end
+      delete :deactivate, on: :member
     end
     resources :product_drive_participants, except: [:destroy] do
       collection do
