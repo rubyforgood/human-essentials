@@ -2,18 +2,12 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
   describe "acquisition report" do
     subject { described_class.new(organization: organization, year: year) }
 
-    let(:organization) { create(:organization) }
+    let(:organization) { create(:organization, skip_items: true) }
     let(:within_time) { Time.zone.parse("2020-05-31 14:00:00") }
     let(:outside_time) { Time.zone.parse("2019-05-31 14:00:00") }
     let(:year) { 2020 }
 
     before do
-      disposable_item = organization.items.disposable.first
-      non_disposable_item = organization.items.where.not(id: organization.items.disposable).first
-
-      # We will create data both within and outside our date range, and both disposable and non disposable.
-      # Spec will ensure that only the required data is included.
-
       # Kits
       disposable_kit = create(:kit, :with_item, organization: organization)
       another_disposable_kit = create(:kit, :with_item, organization: organization)
@@ -32,6 +26,13 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
 
       create(:line_item, :distribution, quantity: 10, item: disposable_kit.item, itemizable: disposable_kit_item_distribution)
       create(:line_item, :distribution, quantity: 10, item: another_disposable_kit.item, itemizable: another_disposable_kit_item_distribution)
+
+      #create disposable and non disposable items
+      create(:base_item, name: "3T Diaper", partner_key: "toddler diapers", category: "disposable diaper")
+      create(:base_item, name: "Cloth Diapers", partner_key: "infant cloth diapers", category: "cloth diaper")
+
+      disposable_item = create(:item, name: "Disposable Diapers", partner_key: "toddler diapers")
+      non_disposable_item = create(:item, name: "Infant Cloth Diapers", partner_key: "infant cloth diapers")
 
       # Distributions
       distributions = create_list(:distribution, 2, issued_at: within_time, organization: organization)
@@ -148,6 +149,7 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
 
     it "returns the correct quantity of disposable diapers from kits" do
       service = described_class.new(organization: organization, year: within_time.year)
+      # require 'pry'; binding.pry
       expect(service.distributed_disposable_diapers_from_kits).to eq(100)
     end
 
