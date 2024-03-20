@@ -52,7 +52,7 @@ RSpec.describe DonationSite, type: :model do
   end
 
   describe "active" do
-    it "->active shows only items that are still active" do
+    it "->active shows only donation sites that are still active" do
       DonationSite.delete_all
       donation_site_1 = create(:donation_site, name: "site that will be deactivated", active: true)
       donation_site_2 = create(:donation_site, name: "site that will be active", active: true)
