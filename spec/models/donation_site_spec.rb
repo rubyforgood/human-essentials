@@ -3,6 +3,7 @@
 # Table name: donation_sites
 #
 #  id              :integer          not null, primary key
+#  active          :boolean          default(TRUE)
 #  address         :string
 #  latitude        :float
 #  longitude       :float
@@ -48,5 +49,15 @@ RSpec.describe DonationSite, type: :model do
 
   describe "versioning" do
     it { is_expected.to be_versioned }
+  end
+
+  describe "active" do
+    it "->active shows only items that are still active" do
+      DonationSite.delete_all
+      donation_site_1 = create(:donation_site, name: "site that will be deactivated", active: true)
+      donation_site_2 = create(:donation_site, name: "site that will be active", active: true)
+      donation_site_1.deactivate!
+      expect(DonationSite.active.to_a).to match_array([donation_site_2])
+    end
   end
 end
