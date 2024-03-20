@@ -648,6 +648,10 @@ dates_generator = DispersedPastDatesGenerator.new
     updated_at: purchase_date,
     vendor_id: vendor.id
   )
+
+  rand(1..5).times.each do
+    purchase.line_items.push(LineItem.new(quantity: rand(250..500), item: random_record_for_org(pdx_org, Item)))
+  end
   PurchaseCreateService.call(purchase)
 end
 
