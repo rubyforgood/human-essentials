@@ -66,10 +66,8 @@ RSpec.describe DonationSite, type: :model do
       donation.save
       expect { donation_site.destroy! }
         .to raise_error(/Failed to destroy DonationSite/)
-              .and not_change { DonationSite.count }
+        .and not_change { DonationSite.count }
       expect(donation_site.errors.full_messages).to eq(["Cannot delete record because dependent donations exist"])
     end
   end
-
-
 end
