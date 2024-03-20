@@ -19,7 +19,7 @@ def random_record(klass)
 end
 
 def random_record_for_org(org, klass)
-  klass.where(organization: org).limit(1).order(Arel.sql('random()')).first
+  klass.where(organization: org).all.sample
 end
 
 # ----------------------------------------------------------------------------
