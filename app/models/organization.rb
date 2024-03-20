@@ -264,6 +264,11 @@ class Organization < ApplicationRecord
     year
   end
 
+  def last_distributed_at
+    distribution = distributions.order(issued_at: :desc).first
+    distribution == nil ? "No distributions" : distribution[:issued_at].strftime("%F")
+  end
+
   private
 
   def correct_logo_mime_type
