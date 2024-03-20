@@ -195,7 +195,7 @@ RSpec.describe "Organizations", type: :request do
           email: @organization.email,
           url: @organization.url,
           created_at: @organization.created_at,
-          last_distribution_datet: @organization.last_distribution_date
+          last_distribution_date: @organization.last_distribution_date
         )
       end
     end

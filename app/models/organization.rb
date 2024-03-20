@@ -266,7 +266,7 @@ class Organization < ApplicationRecord
 
   def last_distribution_date
     distribution = distributions.order(issued_at: :desc).first
-    distribution == nil ? "No distributions" : distribution[:issued_at].strftime("%F")
+    distribution.nil? ? "No distributions" : distribution[:issued_at].strftime("%F")
   end
 
   private
