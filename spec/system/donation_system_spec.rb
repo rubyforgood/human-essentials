@@ -479,31 +479,6 @@ RSpec.describe "Donations", type: :system, js: true do
           end
           # form updates
         end
-
-        context "When the barcode is a global barcode" do
-          before do
-            base_item = BaseItem.first
-            # Create a global barcode item first
-            @global_barcode = create(:global_barcode_item, barcodeable: base_item)
-            # make sure there are no other items associated with that base_item in this org
-            Item.where(partner_key: base_item.partner_key).delete_all
-            # Now create an item that's associated with that base item,
-            @item = create(:item, base_item: base_item, organization: @organization, created_at: 1.week.ago)
-          end
-
-          it "Adds the oldest item it can find for the global barcode" do
-            visit @url_prefix + "/donations/new"
-            within "#donation_line_items" do
-              expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
-              Barcode.boop(@global_barcode.value)
-            end
-            expect(page).to have_xpath('//input[@id="donation_line_items_attributes_0_quantity"]')
-            expect(page.has_select?("donation_line_items_attributes_0_item_id", selected: @item.name)).to eq(true)
-            qty = page.find(:xpath, '//input[@id="donation_line_items_attributes_0_quantity"]').value
-
-            expect(qty).to eq(@global_barcode.quantity.to_s)
-          end
-        end
       end
 
       it "should not display inactive storage locations in dropdown" do

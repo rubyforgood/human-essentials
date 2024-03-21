@@ -104,22 +104,6 @@ RSpec.describe Organization, type: :model do
 
     it { is_expected.to have_many(:users).through(:roles) }
 
-    describe "barcode_items" do
-      before do
-        BarcodeItem.delete_all
-        create(:barcode_item, organization: organization)
-        create(:global_barcode_item) # global
-      end
-      it "returns only this organization's barcodes, no globals" do
-        expect(organization.barcode_items.count).to eq(1)
-      end
-      describe ".all" do
-        it "includes global barcode items also" do
-          expect(organization.barcode_items.all.count).to eq(2)
-        end
-      end
-    end
-
     describe "distributions" do
       describe "upcoming" do
         before do

@@ -49,15 +49,6 @@ RSpec.describe Item, type: :model do
       expect(subject.class).to respond_to :class_filter
     end
 
-    it "->by_size returns all items with the same size, per their BaseItem parent" do
-      size4 = create(:base_item, size: "4")
-      size_z = create(:base_item, size: "Z")
-      create(:item, base_item: size4)
-      create(:item, base_item: size4)
-      create(:item, base_item: size_z)
-      expect(Item.by_size("4").length).to eq(2)
-    end
-
     it "->alphabetized retrieves items in alphabetical order" do
       Item.delete_all
       item_c = create(:item, name: "C")

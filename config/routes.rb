@@ -64,7 +64,6 @@ Rails.application.routes.draw do
       post :add_role
       get :resource_ids, on: :collection
     end
-    resources :barcode_items
     resources :account_requests, only: [:index] do
       post :reject, on: :collection
       get :for_rejection, on: :collection

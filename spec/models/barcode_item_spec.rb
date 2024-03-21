@@ -41,78 +41,6 @@ RSpec.shared_examples "common barcode tests" do |barcode_item_factory|
 end
 
 RSpec.describe BarcodeItem, type: :model do
-  context "Barcodes of BaseItems ('Global')" do
-    let(:base_item) { create(:base_item) }
-    let(:global_barcode_item) { create(:global_barcode_item, barcodeable: base_item) }
-
-    it "updates a counter in BaseItem whenever it tracks a new barcode" do
-      expect do
-        create(:global_barcode_item, barcodeable: base_item)
-      end.to change { base_item.barcode_count }.to(1)
-    end
-
-    # These are scopes that are expressly to integrate with Filterable
-    context "filters >" do
-      it "->barcodeable_id shows only barcodes for a specific barcodeable_id" do
-        global_barcode_item
-        create(:global_barcode_item, base_item: create(:base_item))
-        results = BarcodeItem.barcodeable_id(base_item.id)
-
-        expect(results.length).to eq(1)
-        expect(results.first).to eq(global_barcode_item)
-      end
-      it "#by_base_item_partner_key returns barcodes that match the partner key" do
-        c1 = create(:base_item, partner_key: "foo")
-        c2 = create(:base_item, partner_key: "bar")
-        b1 = create(:global_barcode_item, barcodeable: c1)
-        create(:global_barcode_item, barcodeable: c2)
-        expect(BarcodeItem.by_base_item_partner_key("foo").first).to eq(b1)
-      end
-      it "->by_value returns the barcode with that value" do
-        b1 = create(:global_barcode_item, value: "DEADBEEF")
-        create(:global_barcode_item, value: "IDDQD")
-        expect(BarcodeItem.by_value("DEADBEEF").first).to eq(b1)
-      end
-    end
-
-    context "scopes >" do
-      describe "barcodeable_id" # TODO: Write test
-      describe "by_item_partner_key" # TODO: Write test
-      describe "by_base_item_partner_key" # TODO: Write test
-      describe "by_value" # TODO: Write test
-      describe "for_csv_export" # TODO: Write test
-      describe "global" do
-        it "includes all barcodes, for both base items and regular items" do
-          create(:global_barcode_item)
-          expect do
-            create(:barcode_item)
-          end.not_to change { BarcodeItem.global.length }
-        end
-      end
-    end
-
-    context "validations >" do
-      it "is valid with or without an organization" do
-        expect(build(:global_barcode_item, organization: nil)).to be_valid
-        org = Organization.try(:first) || create(:organization)
-        expect(build(:global_barcode_item, organization: org)).to be_valid
-      end
-
-      it "enforces uniqueness in the global scope" do
-        barcode = create(:global_barcode_item, value: "DEADBEEF")
-        expect(build(:global_barcode_item, value: barcode.value)).not_to be_valid
-      end
-
-      it "allows multiple barcodes to point at the same base item" do
-        base_item = BaseItem.first
-        create(:global_barcode_item, barcodeable: base_item)
-        expect(build(:global_barcode_item, barcodeable: base_item)).to be_valid
-      end
-
-      include_examples "common barcode tests", :global_barcode_item
-    end
-  end
-
   context "Organization barcodes" do
     let(:item) { create(:item) }
     let(:barcode_item) { create(:barcode_item, barcodeable: item) }
@@ -148,24 +76,9 @@ RSpec.describe BarcodeItem, type: :model do
       end
 
       it "->by_value returns the barcode with that value" do
-        b1 = create(:global_barcode_item, value: "DEADBEEF")
-        create(:global_barcode_item, value: "IDDQD")
+        b1 = create(:barcode_item, value: "DEADBEEF")
+        create(:barcode_item, value: "IDDQD")
         expect(BarcodeItem.by_value("DEADBEEF").first).to eq(b1)
-      end
-    end
-
-    context "when searching for a barcode where there is a global and local with the same value" do
-      let!(:base_item) { create(:base_item, partner_key: "foo", name: "base item") }
-      let!(:item) { create(:item, partner_key: "foo", name: "custom item", organization: @organization) }
-      let!(:other_item) { create(:item, partner_key: "foo", name: "other item", organization: create(:organization, skip_items: true)) }
-
-      let!(:global) { create(:global_barcode_item, value: "DEADBEEF", barcodeable: base_item) }
-      let!(:local) { create(:barcode_item, value: "DEADBEEF", barcodeable: item, organization: @organization) }
-      let!(:other_local) { create(:barcode_item, value: "DEADBEEF", barcodeable: other_item, organization: other_item.organization) }
-
-      it "favors the local barcode" do
-        search = BarcodeItem.find_by!(value: "DEADBEEF")
-        expect(search).to eq(local)
       end
     end
 
@@ -184,11 +97,6 @@ RSpec.describe BarcodeItem, type: :model do
       it "enforces value uniqueness within the organization" do
         barcode = create(:barcode_item, value: "DEADBEEF", organization: @organization)
         expect(build(:barcode_item, value: barcode.value, organization: @organization)).not_to be_valid
-      end
-
-      it "does not enforce value uniqueness compared with the global scope" do
-        barcode = create(:global_barcode_item, value: "DEADBEEF")
-        expect(build(:barcode_item, value: barcode.value, organization: @organization)).to be_valid
       end
 
       it "allows multiple barcodes to point at the same item" do

@@ -13,13 +13,6 @@
 #
 
 FactoryBot.define do
-  factory :global_barcode_item, class: "BarcodeItem" do
-    sequence(:value) { (SecureRandom.random_number * (10**12)).to_i } # 037000863427
-    quantity { 50 }
-    barcodeable { BaseItem.all.sample || create(:base_item) }
-    barcodeable_type { "BaseItem" }
-  end
-
   factory :barcode_item, class: "BarcodeItem" do
     organization { Organization.try(:first) || create(:organization) }
     sequence(:value) { (SecureRandom.random_number * (10**12)).to_i } # 037000863427

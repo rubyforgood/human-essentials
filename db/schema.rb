@@ -136,10 +136,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_07_202431) do
   create_table "base_items", force: :cascade do |t|
     t.string "name"
     t.string "category"
-    t.integer "barcode_count"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
-    t.string "size"
     t.integer "item_count"
     t.string "partner_key"
   end
