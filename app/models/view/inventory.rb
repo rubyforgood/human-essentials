@@ -117,15 +117,14 @@ module View
     def load_item_details
       @inventory.storage_locations.values.each do |loc|
         loc.items.delete_if do |_, item|
-          # NOTE: what does this represent? Active items?
-          db_item = @active_items.find { |active_item| active_item.id == item.item_id }
-          next true if db_item.nil?
+          item_record = @active_items.find { |active_item| active_item.id == item.item_id }
+          next true if item_record.nil?
 
           loc.items[item.item_id] = ViewInventoryItem.new(
             item_id: item.item_id,
             storage_location_id: loc.id,
             quantity: item.quantity,
-            db_item: db_item
+            db_item: item_record
           )
           false
         end
