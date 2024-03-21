@@ -1,3 +1,22 @@
+<style>
+  trix-editor {
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    margin-top: 0.5em;
+    padding: 0.5em;
+  }
+  .trix-dialog--link input[type='url'] {
+    border: 1px solid #ced4da;
+    margin: 1em 0;
+  }
+  .trix-dialog--link input[type='button'] {
+    margin-right: 1em;
+  }
+  button.trix-active {
+    background-color: #999;
+    border-color: #999;
+  }
+</style>
 <section class="content-header">
   <div class="container-fluid">
     <div class="mb-2 row">
@@ -89,7 +108,7 @@
 
                 <% default_email_text_hint = "You can use the variables <code>%{partner_name}</code>, <code>%{delivery_method}</code>, <code>%{distribution_date}</code>, and <code>%{comment}</code> to include the partner's name, delivery method, distribution date, and comments sent in the request." %>
                 <%= f.input :default_email_text, label: "Distribution Email Content", hint: default_email_text_hint.html_safe do %>
-                  <%= f.rich_text_area :default_email_text %>
+                  <%= f.rich_text_area :default_email_text, placeholder: 'Enter distribution email content...' %>
                 <% end %>
 
                 <%= f.input :logo, wrapper: :input_group do %>
