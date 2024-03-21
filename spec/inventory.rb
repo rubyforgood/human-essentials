@@ -24,7 +24,7 @@ module TestInventory
     # @param organization [Organization]
     # @param hash [Integer, Hash<Integer, Integer>]
     def create_inventory(organization, hash)
-      hash.each do |sl, items|
+      hash.each do |sl_id, items|
         line_items = items.map { |id, quantity| LineItem.new(item_id: id, quantity: quantity) }
         AuditEvent.create!(
           eventable: organization,
@@ -32,8 +32,8 @@ module TestInventory
           organization_id: organization.id,
           event_time: Time.zone.now,
           data: EventTypes::AuditPayload.new(
-            storage_location_id: sl,
-            items: EventTypes::EventLineItem.from_line_items(line_items, to: sl)
+            storage_location_id: sl_id,
+            items: EventTypes::EventLineItem.from_line_items(line_items, to: sl_id)
           )
         )
       end

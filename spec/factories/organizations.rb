@@ -55,10 +55,10 @@ FactoryBot.define do
       reminder_day { nil }
       deadline_day { nil }
     end
-    
+
     trait :with_items do
       after(:create) do |instance, evaluator|
-        Organization.seed_items(instance) 
+        Organization.seed_items(instance)
       end
     end
 

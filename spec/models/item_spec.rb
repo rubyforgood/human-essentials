@@ -21,27 +21,26 @@
 #  organization_id              :integer
 #
 
-RSpec.describe Item, type: :model do
+RSpec.describe Item, type: :model, seed_items: false do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+
   describe 'Assocations >' do
     it { should belong_to(:item_category).optional }
   end
   context "Validations >" do
-    it "must belong to an organization" do
-      expect(build(:item, organization_id: nil)).not_to be_valid
-    end
-    it "requires a Base Item base" do
-      expect(build(:item, partner_key: nil)).not_to be_valid
-    end
     it "requires a unique name" do
       item = create(:item)
       expect(build(:item, name: nil)).not_to be_valid
       expect(build(:item, name: item.name)).not_to be_valid
     end
-    it "requires that items quantity are not a negative number" do
-      expect(build(:item, distribution_quantity: -1)).not_to be_valid
-      expect(build(:item, on_hand_minimum_quantity: -1)).not_to be_valid
-      expect(build(:item, on_hand_recommended_quantity: -1)).not_to be_valid
-    end
+    it { should validate_presence_of(:name) }
+    it { should belong_to(:organization) }
+    it { should belong_to(:base_item).counter_cache(:item_count).with_primary_key(:partner_key).with_foreign_key(:partner_key).inverse_of(:items) }
+    it { should validate_numericality_of(:distribution_quantity).is_greater_than_or_equal_to(0) }
+    it { should validate_numericality_of(:on_hand_minimum_quantity).is_greater_than_or_equal_to(0) }
+    it { should validate_numericality_of(:on_hand_recommended_quantity).is_greater_than_or_equal_to(0) }
   end
 
   context "Filtering >" do
@@ -80,15 +79,15 @@ RSpec.describe Item, type: :model do
       before(:each) do
         Item.delete_all
         @c1 = create(:base_item)
-        create(:item, base_item: @c1, organization: @organization)
-        create(:item, base_item: create(:base_item), organization: @organization)
+        create(:item, base_item: @c1, organization: organization)
+        create(:item, base_item: create(:base_item), organization: organization)
       end
       it "shows the items for a particular base_item" do
         expect(Item.by_base_item(@c1).size).to eq(1)
       end
       it "can be chained to organization to constrain it to just 1 org's items" do
         create(:item, base_item: @c1, organization: create(:organization))
-        expect(@organization.items.by_base_item(@c1).size).to eq(1)
+        expect(organization.items.by_base_item(@c1).size).to eq(1)
       end
     end
 
@@ -97,8 +96,8 @@ RSpec.describe Item, type: :model do
         Item.delete_all
         c1 = create(:base_item, partner_key: "foo")
         c2 = create(:base_item, partner_key: "bar")
-        create(:item, base_item: c1, partner_key: "foo", organization: @organization)
-        create(:item, base_item: c2, partner_key: "bar", organization: @organization)
+        create(:item, base_item: c1, partner_key: "foo", organization: organization)
+        create(:item, base_item: c2, partner_key: "bar", organization: organization)
         expect(Item.by_partner_key("foo").size).to eq(1)
         expect(Item.active.size).to be > 1
       end
