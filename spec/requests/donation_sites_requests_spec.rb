@@ -50,8 +50,7 @@ RSpec.describe "DonationSites", type: :request do
     describe 'DELETE #deactivate' do
       it 'should be able to deactivate an item' do
         donation_site = create(:donation_site, organization: @organization, active: true, name: "to be deactivated")
-        donation_site_2 = create(:donation_site, organization: @organization, active: true, name: "active one")
-        params =  default_params.merge(id: donation_site.id)
+        params = default_params.merge(id: donation_site.id)
 
         expect { delete deactivate_donation_site_path(params) }.to change { donation_site.reload.active }.from(true).to(false)
           .and change { DonationSite.active.count }.by(-1)
