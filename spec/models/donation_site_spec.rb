@@ -49,4 +49,25 @@ RSpec.describe DonationSite, type: :model do
   describe "versioning" do
     it { is_expected.to be_versioned }
   end
+
+  describe "deletion" do
+    it "can be deleted if there are no donations associated with the donation site" do
+      donation_site = build(:donation_site,
+                            "address" => "1500 Remount Road, Front Royal, VA 22630")
+      donation_site.save
+      expect { donation_site.destroy! }.to change { DonationSite.count }.by(-1)
+    end
+
+    it "cannot be deleted if there is a donation associated with the donation site" do
+      donation_site = build(:donation_site,
+                            "address" => "1500 Remount Road, Front Royal, VA 22630")
+      donation_site.save
+      donation = build(:donation, source: "Donation Site", donation_site: donation_site)
+      donation.save
+      expect { donation_site.destroy! }
+        .to raise_error(/Failed to destroy DonationSite/)
+        .and not_change { DonationSite.count }
+      expect(donation_site.errors.full_messages).to eq(["Cannot delete record because dependent donations exist"])
+    end
+  end
 end
