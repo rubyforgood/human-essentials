@@ -8,6 +8,7 @@
 #  default_storage_location       :integer
 #  distribute_monthly             :boolean          default(FALSE), not null
 #  email                          :string
+#  email_notification_opt_in      :boolean
 #  enable_child_based_requests    :boolean          default(TRUE), not null
 #  enable_individual_requests     :boolean          default(TRUE), not null
 #  enable_quantity_based_requests :boolean          default(TRUE), not null
@@ -263,6 +264,20 @@ class Organization < ApplicationRecord
     end
     year
   end
+
+  def send_submission_notification(partner)
+    if email_notification_opt_in?
+      OrganizationMailer.request_submission_notification(organization: self, partner: partner).deliver_now
+      self.email_notification_opt_in = true
+      save
+      return :notification_sent
+    else
+      self.email_notification_opt_in = false
+      save
+      return :notification_not_sent
+    end
+  end
+
 
   private
 
