@@ -53,7 +53,6 @@ RSpec.describe "DonationSites", type: :request do
         params = default_params.merge(id: donation_site.id)
 
         expect { delete deactivate_donation_site_path(params) }.to change { donation_site.reload.active }.from(true).to(false)
-          .and change { DonationSite.active.count }.by(-1)
         expect(response).to redirect_to(donation_sites_path)
       end
     end

@@ -135,7 +135,7 @@ Rails.application.routes.draw do
       get :find, on: :collection
       get :font, on: :collection
     end
-    resources :donation_sites do
+    resources :donation_sites, except: [:destroy] do
       collection do
         post :import_csv
       end

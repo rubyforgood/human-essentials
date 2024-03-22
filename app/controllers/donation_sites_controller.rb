@@ -52,11 +52,6 @@ class DonationSitesController < ApplicationController
     end
   end
 
-  def destroy
-    current_organization.donation_sites.find(params[:id]).destroy
-    redirect_to donation_sites_path
-  end
-
   def deactivate
     donation_site = current_organization.donation_sites.find(params[:id])
     begin
