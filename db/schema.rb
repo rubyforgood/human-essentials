@@ -284,6 +284,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_10_132236) do
     t.datetime "updated_at", null: false
     t.bigint "organization_id"
     t.bigint "user_id"
+    t.string "group_id"
     t.index ["organization_id", "event_time"], name: "index_events_on_organization_id_and_event_time"
     t.index ["organization_id"], name: "index_events_on_organization_id"
     t.index ["user_id"], name: "index_events_on_user_id"
@@ -479,6 +480,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_10_132236) do
     t.boolean "enable_quantity_based_requests", default: true, null: false
     t.boolean "ytd_on_distribution_printout", default: true, null: false
     t.boolean "email_notification_opt_in"
+    t.boolean "one_step_partner_invite", default: false, null: false
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
