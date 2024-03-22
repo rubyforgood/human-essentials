@@ -55,16 +55,12 @@
                     <fieldset style="margin-bottom: 2rem;" class='w-70'>
                       <legend>Items in this transfer</legend>
                       <div id="transfer_line_items" class="line-item-fields" data-capture-barcode="true">
-                        <%= f.simple_fields_for :line_items do |item| %>
-                          <%= render 'line_items/line_item_fields', f: item %>
-                        <% end %>
+                        <%= render 'line_items/line_item_fields', form: f %>
                       </div>
                       <div class="row links justify-content-end">
                         <div class="col-xs-12">
                           <%= add_element_button "Add Another Item", container_selector: "#transfer_line_items", id: "__add_line_item" do %>
-                            <%= f.simple_fields_for :line_items do |item| %>
-                              <%= render 'line_items/line_item_fields', f: item %>
-                            <% end %>
+                            <%= render 'line_items/line_item_fields', form: f, object: LineItem.new %>
                           <% end %>
                         </div>
                       </div>

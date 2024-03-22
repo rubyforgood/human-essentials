@@ -18,16 +18,12 @@
                   <fieldset style="margin-bottom: 2rem;">
                     <legend>Items in this audit</legend>
                     <div id="audit_line_items" class="line-item-fields" data-capture-barcode="true">
-                      <%= f.simple_fields_for :line_items do |item| %>
-                        <%= render 'line_items/line_item_fields', f: item %>
-                      <% end %>
+                      <%= render 'line_items/line_item_fields', form: f %>
                     </div>
                     <div class="row links">
                       <div class="col-xs-12 p-3">
                         <%= add_element_button "Add Another Item", container_selector: "#audit_line_items" do %>
-                          <%= f.simple_fields_for :line_items do |item| %>
-                            <%= render 'line_items/line_item_fields', f: item %>
-                          <% end %>
+                          <%= render 'line_items/line_item_fields', form: f, object: LineItem.new %>
                         <% end %>
                       </div>
                     </div>
