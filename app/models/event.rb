@@ -88,6 +88,7 @@ class Event < ApplicationRecord
     e.message << " for #{item} in #{loc}"
     if e.event != self
       e.message.prepend("Error occurred when re-running events: #{e.event.type} on #{e.event.created_at.to_date}: ")
+      e.message += " Please contact the Human Essentials admin staff for assistance."
     end
     raise e
   end
