@@ -14,12 +14,8 @@ Flipper.enable(:onebase)
 # ----------------------------------------------------------------------------
 load "lib/dispersed_past_dates_generator.rb"
 
-def random_record(klass)
-  klass.limit(1).order(Arel.sql('random()')).first
-end
-
 def random_record_for_org(org, klass)
-  klass.where(organization: org).limit(1).order(Arel.sql('random()')).first
+  klass.where(organization: org).all.sample
 end
 
 # ----------------------------------------------------------------------------
