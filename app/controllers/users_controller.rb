@@ -29,7 +29,9 @@ class UsersController < ApplicationController
       return
     end
 
-    user = User.with_role(:partner, partner).find_by(email: params[:email])
+    user = User.with_role(:partner, partner)
+      .where("LOWER(email) = ?", params[:email].downcase)
+      .first
     if user.nil?
       redirect_back(fallback_location: root_path,
         alert: "Could not find partner user for this partner with email #{params[:email]}!")

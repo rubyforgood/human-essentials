@@ -17,6 +17,7 @@
 #  latitude                       :float
 #  longitude                      :float
 #  name                           :string
+#  one_step_partner_invite        :boolean          default(FALSE), not null
 #  partner_form_fields            :text             default([]), is an Array
 #  reminder_day                   :integer
 #  repackage_essentials           :boolean          default(FALSE), not null

@@ -8,10 +8,10 @@ module Partners
 
     attr_reader :partner_user_id, :comments, :family_requests_attributes, :partner_request
 
-    def initialize(partner_user_id:, comments: nil, for_families: false, family_requests_attributes: [])
+    def initialize(partner_user_id:, family_requests_attributes:, comments: nil, for_families: false)
       @partner_user_id = partner_user_id
       @comments = comments
-      @family_requests_attributes = family_requests_attributes
+      @family_requests_attributes = family_requests_attributes.presence || []
       @for_families = for_families
     end
 
@@ -42,10 +42,6 @@ module Partners
     private
 
     def valid?
-      if family_requests_attributes.blank?
-        errors.add(:base, 'family_requests_attributes cannot be empty')
-      end
-
       if item_requests_attributes.any? { |attr| included_items_by_id[attr[:item_id].to_i].nil? }
         errors.add(:base, 'detected a unknown item_id')
       end
@@ -54,7 +50,8 @@ module Partners
     end
 
     def item_requests_attributes
-      @item_requests_attributes ||= family_requests_attributes.map do |fr_attr|
+      @item_requests_attributes ||= family_requests_attributes.filter_map do |fr_attr|
+        next if fr_attr[:item_id].blank? && fr_attr[:person_count].blank?
         {
           item_id: fr_attr[:item_id],
           quantity: convert_person_count_to_item_quantity(item_id: fr_attr[:item_id], person_count: fr_attr[:person_count])&.to_i,

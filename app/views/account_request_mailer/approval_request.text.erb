@@ -5,5 +5,5 @@ Here are their details:
 * <%= ar.humanize %>: <%= val %>
 <% end %>
 
-Create This Organization: <%=new_admin_organization_url(token: @account_request.identity_token) %>
-Reject This Organization: <%=for_rejection_admin_account_requests_url(token: @account_request.identity_token) %>
+Create This Organization: <%= new_admin_organization_url(token: @account_request.identity_token) %>
+Reject This Organization: <%= for_rejection_admin_account_requests_url(token: @account_request.identity_token) %>

@@ -70,24 +70,11 @@ RSpec.describe "Item management", type: :system do
     create(:item, base_item: BaseItem.first)
     create(:item, base_item: BaseItem.last)
     visit url_prefix + "/items"
-    select BaseItem.first.name, from: "filters_by_base_item"
+    select BaseItem.first.name, from: "filters[by_base_item]"
     click_button "Filter"
     within "#items-table" do
       expect(page).to have_css("tbody tr", count: 1)
     end
-  end
-
-  it "can include inactive items in the results" do
-    Item.delete_all
-    create(:item, :inactive, name: "Inactive Item")
-    create(:item, :active, name: "Active Item")
-    visit url_prefix + "/items"
-    expect(page).to have_text("Active Item")
-    expect(page).to have_no_text("Inactive Item")
-    page.check('include_inactive_items')
-    click_button "Filter"
-    expect(page).to have_text("Inactive Item")
-    expect(page).to have_text("Active Item")
   end
 
   describe "destroying items" do

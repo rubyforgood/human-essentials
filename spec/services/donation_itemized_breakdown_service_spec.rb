@@ -20,7 +20,9 @@ RSpec.describe DonationItemizedBreakdownService, type: :service do
     subject { described_class.new(organization: organization, donation_ids: donation_ids).fetch }
 
     it "return the list of items donated with distributed" do
-      expect(subject).to eq(expected_output)
+      sorted_subject = subject.sort_by { |item| item[:name] }
+      sorted_expected_output = expected_output.sort_by { |item| item[:name] }
+      expect(sorted_subject).to eq(sorted_expected_output)
     end
   end
 end

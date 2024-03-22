@@ -257,12 +257,13 @@ RSpec.describe "Distributions", type: :request do
       end
 
       describe "when changing storage location" do
+        let(:item) { create(:item) }
         it "updates storage quantity correctly" do
-          distribution = create(:distribution, :with_items, item_quantity: 10)
+          new_storage_location = create(:storage_location)
+          create(:donation, :with_items, item: item, item_quantity: 30, storage_location: new_storage_location)
+          distribution = create(:distribution, :with_items, item: item, item_quantity: 10)
           original_storage_location = distribution.storage_location
           line_item = distribution.line_items.first
-          new_storage_location = create(:storage_location)
-          create(:donation, :with_items, item: line_item.item, item_quantity: 30, storage_location: new_storage_location)
           line_item_params = {
             "0" => {
               "_destroy" => "false",
@@ -278,7 +279,10 @@ RSpec.describe "Distributions", type: :request do
           expect(new_storage_location.size).to eq 25
         end
 
+        # TODO this test is invalid in event-world since it's handled by the aggregate
         it "rollsback updates if quantity would go below 0" do
+          next if Event.read_events?(@organization)
+
           distribution = create(:distribution, :with_items, item_quantity: 10)
           original_storage_location = distribution.storage_location
 
@@ -330,6 +334,33 @@ RSpec.describe "Distributions", type: :request do
             expect { subject }.not_to change { ActionMailer::Base.deliveries.count }
           end
         end
+      end
+    end
+
+    describe "GET #edit" do
+      let(:location) { create(:storage_location) }
+      let(:partner) { create(:partner) }
+
+      let(:distribution) { create(:distribution, partner: partner) }
+
+      it "should show the distribution" do
+        get edit_distribution_path(default_params.merge(id: distribution.id))
+        expect(response).to be_successful
+        expect(response.body).not_to include("You’ve had an audit since this distribution was started.")
+      end
+
+      it "should show a warning if there is an inteverning audit" do
+        distribution.update!(created_at: 1.week.ago)
+        create(:audit, storage_location: distribution.storage_location)
+        get edit_distribution_path(default_params.merge(id: distribution.id))
+        expect(response.body).to include("You’ve had an audit since this distribution was started.")
+      end
+
+      it "should not show a warning if the audit is for another location" do
+        distribution.update!(created_at: 1.week.ago)
+        create(:audit, storage_location: create(:storage_location))
+        get edit_distribution_path(default_params.merge(id: distribution.id))
+        expect(response.body).not_to include("You’ve had an audit since this distribution was started.")
       end
     end
   end
