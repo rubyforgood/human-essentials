@@ -136,11 +136,15 @@ RSpec.describe "StorageLocations", type: :request do
 
     describe "GET #show" do
       let(:item) { create(:item, name: "Test Item") }
+      let(:item2) { create(:item, name: "Test Item2") }
+      let(:item3) { create(:item, name: "Test Item3", active: false) }
+
       let(:storage_location) { create(:storage_location, organization: @organization) }
       before(:each) do
         TestInventory.create_inventory(storage_location.organization, {
           storage_location.id => {
-            item.id => 200
+            item.id => 200,
+            item2.id => 0
           }
         })
       end
@@ -153,6 +157,8 @@ RSpec.describe "StorageLocations", type: :request do
           expect(response).to be_successful
           expect(response.body).to include("Smithsonian")
           expect(response.body).to include("Test Item")
+          expect(response.body).to include("Test Item2")
+          expect(response.body).not_to include("Test Item3")
           expect(response.body).to include("200")
         end
 
@@ -184,13 +190,9 @@ RSpec.describe "StorageLocations", type: :request do
                 version_date: 1.week.ago.to_date.to_fs(:db)))
               expect(response).to be_successful
               expect(response.body).to include("Smithsonian")
-              # This behavior changes with events - it won't show the item at all.
-              if Event.read_events?(@organization)
-                expect(response.body).not_to include('Test Item')
-              else
-                expect(response.body).to include("Test Item")
-                expect(response.body).to include("N/A")
-              end
+              expect(response.body).to include("Test Item")
+              # event world doesn't care about versions
+              expect(response.body).to include("N/A") unless Event.read_events?(@organization)
             end
           end
         end

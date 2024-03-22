@@ -20,7 +20,7 @@ class DonationSite < ApplicationRecord
 
   validates :name, :address, :organization, presence: true
 
-  has_many :donations, dependent: :destroy
+  has_many :donations, dependent: :restrict_with_error
 
   include Geocodable
   include Exportable

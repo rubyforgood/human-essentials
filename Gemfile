@@ -32,7 +32,7 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.7.0"
+gem "strong_migrations", "1.8.0"
 # used in events
 gem 'dry-struct'
 
@@ -149,14 +149,14 @@ group :development, :test do
   # Add-on for command line to create a simple debugger.
   gem "pry-nav"
   # RSpec behavioral testing framework for Rails.
-  gem "rspec-rails", "~> 6.1.1"
+  gem "rspec-rails", "~> 6.1.2"
   # Static analysis / linter.
   gem "rubocop"
   # Rails add-on for static analysis.
   gem 'rubocop-performance'
   gem "rubocop-rails", "~> 2.24.0"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.34"
+  gem "standard", "~> 1.35"
   # Erb linter.
   gem "erb_lint"
 end
@@ -196,7 +196,7 @@ group :test do
   # Show code coverage.
   gem 'simplecov'
   # More concise test ("should") matchers
-  gem 'shoulda-matchers', '~> 6.1'
+  gem 'shoulda-matchers', '~> 6.2'
   # Mock HTTP requests and ensure they are not called during tests.
   gem "webmock", "~> 3.23"
   # Interface capybara to chrome headless

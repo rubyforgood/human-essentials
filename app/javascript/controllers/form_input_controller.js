@@ -1,20 +1,28 @@
-import { Controller } from "@hotwired/stimulus";
+import { Controller } from "@hotwired/stimulus"
 
-// Connects to data-controller="request-item"
+// Connects to data-controller="form-input"
 export default class extends Controller {
-  static targets = ["addButton", "addDest", "addTemplate"];
+  static targets = ["addButton", "addTemplate", "removeContainer", "addContainer"];
 
-  addItem() {
-    const template = this.addTemplateTarget.content.firstElementChild.innerHTML;
+  // requires data-add-dest-selector to be set on the add button OR
+  // data-form-input-target="addContainer" to be set on the add container
+  addItem(event) {
+    const template = this.addTemplateTarget.content.firstElementChild.outerHTML;
+    const dest = document.querySelector(event.target.dataset.addDestSelector) ||
+      this.addContainerTarget;
 
     const uniqId = new Date().getTime();
     const rendered = this.setUniqIds(template, uniqId);
 
-    this.addDestTarget.insertAdjacentHTML("beforeend", rendered);
+    dest.insertAdjacentHTML("beforeend", rendered);
+
   }
 
+  // requires data-remove-parent-selector to be set on the remove button OR
+  // data-form-input-target="removeContainer" to be set on the container to remove
   removeItem(event) {
-    const wrapper = event.target.closest("tr");
+    const wrapper = event.target.closest(event.target.dataset.removeParentSelector) ||
+      this.removeContainerTarget;
     const removeSoft = event.target.dataset.removeSoft === "false";
 
     if (removeSoft) {
