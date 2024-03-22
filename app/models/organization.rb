@@ -265,17 +265,18 @@ class Organization < ApplicationRecord
     year
   end
 
-
-def opt_in_email_notification
-  self.email_notification_opt_in = true
-  save
-end
-
-
-def opt_out_email_notification
-  self.email_notification_opt_in = false
-  save
-end
+  def send_submission_notification(partner)
+    if email_notification_opt_in?
+      OrganizationMailer.request_submission_notification(organization: self, partner: partner).deliver_now
+      self.email_notification_opt_in = true
+      save
+      return :notification_sent
+    else
+      self.email_notification_opt_in = false
+      save
+      return :notification_not_sent
+    end
+  end
 
 
   private
