@@ -90,6 +90,7 @@ RSpec.describe "Adjustment management", type: :system, js: true do
           expect(page).to have_select(element_1[:id])
           select Item.last.name, from: element_1[:id]
           element_2 = find(".quantity")
+          expect(element_2.value).to eq("")
           element_2.set sub_quantity.to_s
         end
 

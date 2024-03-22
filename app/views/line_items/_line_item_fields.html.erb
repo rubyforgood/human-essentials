@@ -1,22 +1,25 @@
-<section class="nested-fields line_item_section">
-  <div class="row mt-2 d-flex flex-row align-items-center justify-content-between">
-    <div class='d-flex flex-column justify-content-center'>
-      <div class='d-flex flex-row align-items-center'>
-        <%= render partial: "barcode_items/barcode_item_lookup", locals: {index: f.options[:child_index]} %>
-        <div id="barcode-scanner-btn" class="fa fa-barcode barcode-scanner mx-2"> </div>
-      </div>
-      <label class='my-1 mx-auto font-weight-normal'>OR</label>
-      <div class='d-flex flex-row'>
-        <span class="li-name w-100">
-          <%= f.input :item_id, collection: @items, prompt: "Choose an item", include_blank: "", label: false, input_html: { class: "my-0 line_item_name", "data-controller": "select2" } %>
-        </span>
-        <div class="li-quantity mx-2">
-          <%= f.input :quantity, placeholder: "Quantity", label: false, input_html: { class: "quantity my-0"} %>
+<%= form.simple_fields_for :line_items, defined?(object) ? object : nil  do |field| %>
+  <section class="nested-fields line_item_section">
+    <div class="row mt-2 d-flex flex-row align-items-center justify-content-between">
+      <div class='d-flex flex-column justify-content-center'>
+        <div class='d-flex flex-row align-items-center'>
+          <%= render partial: "barcode_items/barcode_item_lookup",
+            locals: { index: field&.options[:child_index] || "new_item"  } %>
+          <div id="barcode-scanner-btn" class="fa fa-barcode barcode-scanner mx-2"> </div>
+        </div>
+        <label class='my-1 mx-auto font-weight-normal'>OR</label>
+        <div class='d-flex flex-row'>
+          <span class="li-name w-100">
+            <%= field.input :item_id, collection: @items, prompt: "Choose an item", include_blank: "", label: false, input_html: { class: "my-0 line_item_name", "data-controller": "select2" } %>
+          </span>
+          <div class="li-quantity mx-2">
+            <%= field.input :quantity, placeholder: "Quantity", label: false, input_html: { class: "quantity my-0"} %>
+          </div>
         </div>
       </div>
-    </div>
 
-    <%= remove_element_button "Remove", container_selector: "section" %>
-  </div>
-  <hr class="line-item-separator">
-</section>
+      <%= remove_element_button "Remove", container_selector: "section" %>
+    </div>
+    <hr class="line-item-separator">
+  </section>
+<% end %>

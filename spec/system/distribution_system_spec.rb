@@ -432,6 +432,8 @@ RSpec.feature "Distributions", type: :system do
         click_on "Add Another Item"
 
         select2(page, 'distribution_line_items_item_id', item.name, position: 2)
+        new_select = find_all(".numeric")[1]
+        expect(new_select.value).to eq("")
         find_all(".numeric")[1].set 3
 
         first("button", text: "Save").click
