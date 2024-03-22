@@ -19,17 +19,19 @@ class AdjustmentCreateService
 
     if @adjustment.valid? && enough_inventory_for_decreases?
       ActiveRecord::Base.transaction do
-        # Make the necessary changes in the db
-        @adjustment.save
-        AdjustmentEvent.publish(adjustment)
-        # Split into positive and negative portions.
-        # N.B. -- THIS CHANGES THE ORIGINAL LINE ITEMS ON @adjustment DO **NOT** RESAVE AS THAT WILL CHANGE ANY NEGATIVE LINE ITEMS ON THE ADJUSTMENT TO POSITIVES
-        increasing_adjustment, decreasing_adjustment = @adjustment.split_difference
-        @adjustment.storage_location.increase_inventory(increasing_adjustment.line_item_values)
-        @adjustment.storage_location.decrease_inventory(decreasing_adjustment.line_item_values)
-      rescue InsufficientAllotment, InventoryError => e
-        @adjustment.errors.add(:base, e.message)
-        raise e
+        begin
+          # Make the necessary changes in the db
+          @adjustment.save
+          AdjustmentEvent.publish(adjustment)
+          # Split into positive and negative portions.
+          # N.B. -- THIS CHANGES THE ORIGINAL LINE ITEMS ON @adjustment DO **NOT** RESAVE AS THAT WILL CHANGE ANY NEGATIVE LINE ITEMS ON THE ADJUSTMENT TO POSITIVES
+          increasing_adjustment, decreasing_adjustment = @adjustment.split_difference
+          @adjustment.storage_location.increase_inventory(increasing_adjustment.line_item_values)
+          @adjustment.storage_location.decrease_inventory(decreasing_adjustment.line_item_values)
+        rescue Errors::InsufficientAllotment, InventoryError => e
+          @adjustment.errors.add(:base, e.message)
+          raise ActiveRecord::Rollback
+        end
       end
     end
     self
