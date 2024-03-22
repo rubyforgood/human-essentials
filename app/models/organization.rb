@@ -47,8 +47,6 @@ class Organization < ApplicationRecord
   validate :correct_logo_mime_type
   validate :some_request_type_enabled
   validate :logo_size_check, if: proc { |org| org.logo.attached? }
-  attribute :email_notification_opt_in, :boolean, default: false
-
 
   belongs_to :account_request, optional: true
   belongs_to :ndbn_member, class_name: 'NDBNMember', optional: true
