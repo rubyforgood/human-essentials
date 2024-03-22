@@ -28,12 +28,9 @@ RSpec.describe InventoryItem, type: :model, seed_items: false do
 
   context "Filtering >" do
     describe "->by_partner_key" do
-      before(:each) do
-        InventoryItem.delete_all
-        @item1 = create(:inventory_item)
-      end
       it "shows the Base Items by partner_key" do
-        expect(InventoryItem.by_partner_key(@item1.item.partner_key).size).to eq(1)
+        item = create(:inventory_item)
+        expect(InventoryItem.by_partner_key(item.item.partner_key).size).to eq(1)
       end
     end
   end

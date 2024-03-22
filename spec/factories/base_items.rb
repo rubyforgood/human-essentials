@@ -15,6 +15,8 @@
 
 FactoryBot.define do
   factory :base_item do
+    # TODO: Can this use Faker? This makes
+    # it a pain in the ass to make items
     sequence(:name) { |size| "#{size}T Diapers" }
     size { nil }
     sequence(:partner_key) { |n| "#{n}t_diapers" }
