@@ -35,6 +35,38 @@ RSpec.describe BaseItem, type: :model, seed_items: false do
   end
 
   describe "Methods >" do
+    describe '.seed_items' do
+      let(:fake_base_items_data) do
+        {
+          'category1' => [
+            {'name' => 'Item1', 'key' => 'key1'},
+            {'name' => 'Item2', 'key' => 'key2'}
+          ],
+          'category2' => [
+            {'name' => 'Item3', 'key' => 'key3'}
+          ]
+        }
+      end
+
+      before do
+        allow(File).to receive(:read).with(Rails.root.join("db", "base_items.json")).and_return('')
+        allow(JSON).to receive(:parse).and_return(fake_base_items_data)
+      end
+
+      it 'creates base items' do
+        expect {
+          described_class.seed_items
+        }.to change(BaseItem, :count).by(3)
+      end
+
+      it 'creates base items with correct attributes' do
+        described_class.seed_items
+
+        expect(BaseItem.exists?(name: 'Item1', category: 'category1', partner_key: 'key1')).to be_truthy
+        expect(BaseItem.exists?(name: 'Item2', category: 'category1', partner_key: 'key2')).to be_truthy
+        expect(BaseItem.exists?(name: 'Item3', category: 'category2', partner_key: 'key3')).to be_truthy
+      end
+    end
   end
 
   describe "Filtering >" do

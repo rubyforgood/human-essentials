@@ -206,6 +206,7 @@ RSpec.configure do |config|
        end
 
     seed_base_data_for_tests if !ENV["SKIP_SEED"]
+    puts "SKIPPING" if ENV["SKIP_SEED"]
   end
 
   config.before(:each, type: :system) do
@@ -216,6 +217,7 @@ RSpec.configure do |config|
 
   config.before(:each) do
     # Defined shared @ global variables used throughout the test suite.
+    # seed_base_data_for_tests if RSpec.current_example.metadata[:seed_items] != false && Organization.count.zero?
     define_global_variables if RSpec.current_example.metadata[:seed_items] != false
 
     if ENV['EVENTS_READ'] == 'true'
