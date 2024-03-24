@@ -18,8 +18,6 @@
 
 RSpec.describe Partner, type: :model, seed_items: false do
   let(:organization) { create(:organization, skip_items: true) }
-  let(:user) { create(:user, organization: organization) }
-  let(:organization_admin) { create(:organization_admin, organization: organization) }
 
   describe 'associations' do
     it { should belong_to(:organization) }
