@@ -89,7 +89,7 @@ RSpec.describe Organization, type: :model, seed_items: false do
 
     describe 'users' do
       subject { organization.users }
-      let(:organization) { create(:organization) }
+      let(:organization) { create(:organization, skip_items: true) }
 
       context 'when a organizaton has a user that has two roles' do
         let(:user) { create(:user) }
@@ -142,7 +142,7 @@ RSpec.describe Organization, type: :model, seed_items: false do
       end
     end
 
-    describe "items", seed_items: false do
+    describe "items" do
       # TODO: maybe this can be better? SO SLOW
       let(:organization) { create(:organization, :with_items) }
 
@@ -241,17 +241,23 @@ RSpec.describe Organization, type: :model, seed_items: false do
     end
 
     context "when no organization is provided" do
-      before { BaseItem.seed_items if BaseItem.count.zero? } # TODO: remove conditional when closing #4199
-
+      # TODO: this should probably have hard-coded numbers
       it "updates all organizations" do
         Organization.seed_items(organization)
-        second_organization = create(:organization)
         organization_item_count = organization.items.size
+        base_item_count = BaseItem.count
+
+        second_organization = create(:organization, skip_items: true)
         second_organization_item_count = second_organization.items.size
+
         create(:base_item, name: "Foo", partner_key: "foo")
+
         Organization.seed_items
+        organization.reload
+        second_organization.reload
+
         expect(organization.items.size).to eq(organization_item_count + 1)
-        expect(second_organization.items.size).to eq(second_organization_item_count + 1)
+        expect(second_organization.items.size).to eq(base_item_count + 1)
       end
     end
   end
@@ -335,8 +341,8 @@ RSpec.describe Organization, type: :model, seed_items: false do
   end
 
   describe 'is_active' do
-    let!(:active_organization) { create(:organization) }
-    let!(:inactive_organization) { create(:organization) }
+    let!(:active_organization) { create(:organization, skip_items: true) }
+    let!(:inactive_organization) { create(:organization, skip_items: true) }
     let!(:active_user) { create(:user, organization: active_organization, last_sign_in_at: 1.month.ago) }
     let!(:inactive_user) { create(:user, organization: inactive_organization, last_sign_in_at: 6.months.ago) }
 
@@ -478,11 +484,11 @@ RSpec.describe Organization, type: :model, seed_items: false do
   describe 'earliest reporting year' do
     # re 2813 update annual report -- allowing an earliest reporting year will let us do system testing and staging for annual reports
     it 'is the organization created year if no associated data' do
-      org = create(:organization)
+      org = create(:organization, skip_items: true)
       expect(org.earliest_reporting_year).to eq(org.created_at.year)
     end
     it 'is the year of the earliest of donation, purchase, or distribution if they are earlier ' do
-      org = create(:organization)
+      org = create(:organization, skip_items: true)
       create(:donation, organization: org, issued_at: 1.year.from_now)
       create(:purchase, organization: org, issued_at: 1.year.from_now)
       create(:distribution, organization: org, issued_at: 1.year.from_now)

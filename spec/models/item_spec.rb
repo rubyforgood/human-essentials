@@ -94,7 +94,7 @@ RSpec.describe Item, type: :model, seed_items: false do
         c1 = create(:base_item)
         create(:item, base_item: c1, organization: organization)
         create(:item, base_item: create(:base_item), organization: organization)
-        create(:item, base_item: c1, organization: create(:organization))
+        create(:item, base_item: c1, organization: create(:organization, skip_items: true))
 
         expect(organization.items.by_base_item(c1).size).to eq(1)
       end

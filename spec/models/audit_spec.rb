@@ -108,7 +108,7 @@ RSpec.describe Audit, type: :model, seed_items: false do
       storage_location1 = create(:storage_location, organization: organization)
       storage_location2 = create(:storage_location, organization: organization)
       create(:storage_location, organization: organization)
-      storage_location4 = create(:storage_location, organization: create(:organization))
+      storage_location4 = create(:storage_location, organization: create(:organization, skip_items: true))
       create(:audit, storage_location: storage_location1, organization: organization)
       create(:audit, storage_location: storage_location2, organization: organization)
       create(:audit, storage_location: storage_location4, organization: storage_location4.organization)

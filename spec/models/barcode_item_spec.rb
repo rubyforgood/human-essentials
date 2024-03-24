@@ -137,7 +137,7 @@ RSpec.describe BarcodeItem, type: :model, seed_items: false do
     context "scopes >" do
       it "->for_csv_export will accept an organization and provide all barcodes for that org" do
         barcode_item
-        create(:barcode_item, organization: create(:organization))
+        create(:barcode_item, organization: create(:organization, skip_items: true))
         results = BarcodeItem.for_csv_export(barcode_item.organization)
         expect(results).to eq([barcode_item])
       end
