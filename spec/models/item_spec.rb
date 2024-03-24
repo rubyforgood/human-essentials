@@ -322,8 +322,11 @@ RSpec.describe Item, type: :model, seed_items: false do
 
     describe "other?" do
       it "is true for items that are partner_key 'other'" do
+        Item.delete_all # TODO: Remove when closing #4199
+        BaseItem.delete_all # TODO: Remove when closing #4199
+
         item = create(:item, base_item: create(:base_item, name: "Base"))
-        other_item = create(:item, base_item: create(:base_item, name: "Other", partner_key: "other"))
+        other_item = create(:item, base_item: create(:base_item, name: "Other Item", partner_key: "other"))
         expect(item).not_to be_other
         expect(other_item).to be_other
       end
