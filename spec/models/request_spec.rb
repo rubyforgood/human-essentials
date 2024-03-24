@@ -16,7 +16,7 @@
 #  partner_user_id :integer
 #
 
-RSpec.describe Request, type: :model do
+RSpec.describe Request, type: :model, seed_items: false do
   describe "Enums >" do
     describe "#status" do
       let!(:request_pending) { create(:request) }
