@@ -23,7 +23,7 @@ FactoryBot.define do
     comment { "It's a fine day for diapers." }
     purchased_from { "Google" }
     storage_location
-    organization { Organization.try(:first) || create(:organization) }
+    organization { Organization.try(:first) || create(:organization, skip_items: true) }
     issued_at { nil }
     amount_spent_in_cents { 10_00 }
     vendor { Vendor.try(:first) || create(:vendor) }

@@ -12,22 +12,15 @@
 #  organization_id :integer
 #
 
-RSpec.describe DonationSite, type: :model do
+RSpec.describe DonationSite, type: :model, seed_items: false do
   context "Validations >" do
-    it "must belong to an organization" do
-      expect(build(:donation_site, organization_id: nil)).not_to be_valid
-    end
-    it "is invalid without a name" do
-      expect(build(:donation_site, name: nil)).not_to be_valid
-    end
-
-    it "is invalid without an address" do
-      expect(build(:donation_site, address: nil)).not_to be_valid
-    end
+    it { should belong_to(:organization) }
+    it { should validate_presence_of(:name) }
+    it { should validate_presence_of(:address) }
   end
   describe "import_csv" do
     it "imports storage locations from a csv file" do
-      organization = create(:organization)
+      organization = create(:organization, skip_items: true)
       import_file_path = Rails.root.join("spec", "fixtures", "files", "donation_sites.csv")
       data = File.read(import_file_path, encoding: "BOM|UTF-8")
       csv = CSV.parse(data, headers: true)

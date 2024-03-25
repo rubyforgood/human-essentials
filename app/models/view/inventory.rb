@@ -23,7 +23,7 @@ module View
     # @param event_time [DateTime]
     def reload(event_time = nil)
       @inventory = InventoryAggregate.inventory_for(organization_id, event_time: event_time)
-      @items = Item.where(organization_id: organization_id).active
+      @active_items = Item.where(organization_id: organization_id).active
       @db_storage_locations = StorageLocation.where(organization_id: organization_id).active_locations
       load_item_details
     end
@@ -117,14 +117,14 @@ module View
     def load_item_details
       @inventory.storage_locations.values.each do |loc|
         loc.items.delete_if do |_, item|
-          db_item = @items.find { |i| i.id == item.item_id }
-          next true if db_item.nil?
+          item_record = @active_items.find { |active_item| active_item.id == item.item_id }
+          next true if item_record.nil?
 
           loc.items[item.item_id] = ViewInventoryItem.new(
             item_id: item.item_id,
             storage_location_id: loc.id,
             quantity: item.quantity,
-            db_item: db_item
+            db_item: item_record
           )
           false
         end

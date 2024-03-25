@@ -14,7 +14,7 @@
 #
 require 'rails_helper'
 
-RSpec.describe Partners::ChildItemRequest, type: :model do
+RSpec.describe Partners::ChildItemRequest, type: :model, seed_items: false do
   describe 'associations' do
     it { should belong_to(:item_request) }
     it { should belong_to(:child) }

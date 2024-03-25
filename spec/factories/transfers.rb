@@ -16,7 +16,7 @@ FactoryBot.define do
     transient do
       storage_location { nil }
     end
-    organization { Organization.try(:first) || create(:organization) }
+    organization { Organization.try(:first) || create(:organization, skip_items: true) }
     from { nil }
     to { nil }
     comment { "A comment" }

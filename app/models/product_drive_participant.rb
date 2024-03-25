@@ -23,8 +23,9 @@ class ProductDriveParticipant < ApplicationRecord
 
   has_many :donations, inverse_of: :product_drive_participant, dependent: :destroy
 
-  validates :phone, presence: { message: "Must provide a phone or an e-mail" }, if: proc { |ddp| ddp.email.blank? }
-  validates :email, presence: { message: "Must provide a phone or an e-mail" }, if: proc { |ddp| ddp.phone.blank? }
+  # NOTE: this is a bit hard to follow. Little hard to spot the difference between the two validations
+  validates :phone, presence: { message: "Must provide a phone or an e-mail" }, if: proc { |pdp| pdp.email.blank? }
+  validates :email, presence: { message: "Must provide a phone or an e-mail" }, if: proc { |pdp| pdp.phone.blank? }
 
   scope :alphabetized, -> { order(:contact_name) }
 

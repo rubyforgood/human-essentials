@@ -11,7 +11,7 @@
 #
 require "rails_helper"
 
-RSpec.describe County, type: :model do
+RSpec.describe County, type: :model, seed_items: false do
   it { should have_many(:served_areas) }
 
   describe "versioning" do

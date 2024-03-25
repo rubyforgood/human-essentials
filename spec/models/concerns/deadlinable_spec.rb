@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Deadlinable, type: :model do
+RSpec.describe Deadlinable, type: :model, seed_items: false do
   let(:dummy_class) do
     Class.new do
       def self.name
@@ -20,7 +20,7 @@ RSpec.describe Deadlinable, type: :model do
 
   subject(:dummy) { dummy_class.new }
 
-  describe "validations" do
+  describe "validations", seed_items: false do
     it do
       is_expected.to validate_numericality_of(:deadline_day)
         .only_integer

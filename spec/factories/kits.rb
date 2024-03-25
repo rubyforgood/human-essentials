@@ -17,7 +17,9 @@ FactoryBot.define do
     organization
 
     after(:build) do |instance, _|
-      instance.line_items << create(:line_item)
+      if instance.line_items.blank?
+        instance.line_items << create(:line_item)
+      end
     end
 
     trait :with_item do

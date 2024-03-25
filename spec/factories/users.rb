@@ -41,7 +41,7 @@ FactoryBot.define do
     password { "password!" }
     password_confirmation { "password!" }
     transient do
-      organization { Organization.try(:first) || create(:organization) }
+      organization { Organization.try(:first) || create(:organization, skip_items: true) }
     end
 
     after(:create) do |user, evaluator|
