@@ -198,6 +198,7 @@ class Organization < ApplicationRecord
 
   def self.seed_items(organization = Organization.all)
     base_items = BaseItem.all.map(&:to_h)
+
     Array.wrap(organization).each do |org|
       Rails.logger.info "\n\nSeeding #{org.name}'s items...\n"
       org.seed_items(base_items)
@@ -211,6 +212,7 @@ class Organization < ApplicationRecord
     rescue ActiveRecord::RecordInvalid => e
       Rails.logger.info "[SEED] Duplicate item! #{e.record.name}"
       existing_item = items.find_by(name: e.record.name)
+      # TODO: should this be a proper error class? NameTakenError?
       if e.to_s.match(/been taken/).present? && existing_item.other?
         Rails.logger.info "Changing Item##{existing_item.id} from Other to #{e.record.partner_key}"
         existing_item.update(partner_key: e.record.partner_key)

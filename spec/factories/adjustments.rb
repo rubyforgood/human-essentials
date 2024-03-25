@@ -13,7 +13,7 @@
 
 FactoryBot.define do
   factory :adjustment do
-    organization { Organization.try(:first) || create(:organization) }
+    organization { Organization.try(:first) || create(:organization, skip_items: true) }
     storage_location
     comment { "A comment" }
     user { organization.users.try(:first) || create(:user, organization_id: organization.id) }
