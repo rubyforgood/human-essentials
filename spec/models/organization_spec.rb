@@ -32,8 +32,8 @@
 #  ndbn_member_id                 :bigint
 #
 
-RSpec.describe Organization, type: :model do
-  let(:organization) { create(:organization) }
+RSpec.describe Organization, type: :model, seed_items: false do
+  let(:organization) { create(:organization, skip_items: true) }
 
   describe "validations" do
     it "validates that attachments are png or jpgs" do
@@ -87,7 +87,7 @@ RSpec.describe Organization, type: :model do
 
     describe 'users' do
       subject { organization.users }
-      let(:organization) { create(:organization) }
+      let(:organization) { create(:organization, skip_items: true) }
 
       context 'when a organizaton has a user that has two roles' do
         let(:user) { create(:user) }
@@ -131,16 +131,19 @@ RSpec.describe Organization, type: :model do
         end
 
         it "retrieves the distributions scheduled for this week that have not yet happened" do
-          wednesday_distribution_scheduled = create(:distribution, organization: @organization, state: :scheduled, issued_at: Time.zone.local(2019, 7, 3))
-          create(:distribution, organization: @organization, state: :complete, issued_at: Time.zone.local(2019, 7, 3))
-          sunday_distribution = create(:distribution, organization: @organization, state: :scheduled, issued_at: Time.zone.local(2019, 7, 7))
-          upcoming_distributions = @organization.distributions.upcoming
+          wednesday_distribution_scheduled = create(:distribution, organization: organization, state: :scheduled, issued_at: Time.zone.local(2019, 7, 3))
+          create(:distribution, organization: organization, state: :complete, issued_at: Time.zone.local(2019, 7, 3))
+          sunday_distribution = create(:distribution, organization: organization, state: :scheduled, issued_at: Time.zone.local(2019, 7, 7))
+          upcoming_distributions = organization.distributions.upcoming
           expect(upcoming_distributions).to match_array([wednesday_distribution_scheduled, sunday_distribution])
         end
       end
     end
 
     describe "items" do
+      # TODO: maybe this can be better? SO SLOW
+      let(:organization) { create(:organization, :with_items) }
+
       before do
         organization.items.each_with_index do |item, index|
           (index + 1).times { LineItem.create!(quantity: rand(250..500), item: item, itemizable: Distribution.new) }
@@ -236,22 +239,29 @@ RSpec.describe Organization, type: :model do
     end
 
     context "when no organization is provided" do
+      # TODO: this should probably have hard-coded numbers
       it "updates all organizations" do
-        Organization.seed_items(@organization)
-        second_organization = create(:organization)
-        organization_item_count = @organization.items.size
+        Organization.seed_items(organization)
+        organization_item_count = organization.items.size
+        base_item_count = BaseItem.count
+
+        second_organization = create(:organization, skip_items: true)
         second_organization_item_count = second_organization.items.size
+
         create(:base_item, name: "Foo", partner_key: "foo")
+
         Organization.seed_items
-        expect(@organization.items.size).to eq(organization_item_count + 1)
-        expect(second_organization.items.size).to eq(second_organization_item_count + 1)
+        organization.reload
+        second_organization.reload
+
+        expect(organization.items.size).to eq(organization_item_count + 1)
+        expect(second_organization.items.size).to eq(second_organization_item_count + base_item_count + 1)
       end
     end
   end
 
   describe "#seed_items" do
     it "allows a single base item to be seeded" do
-      organization # will auto-seed existing base items
       base_item = create(:base_item, name: "Foo", partner_key: "foo").to_h
       expect do
         organization.seed_items(base_item)
@@ -259,7 +269,6 @@ RSpec.describe Organization, type: :model do
     end
 
     it "allows a collection of items to be seeded" do
-      organization # will auto-seed existing base items
       base_items = [create(:base_item, name: "Foo", partner_key: "foo").to_h, create(:base_item, name: "Bar", partner_key: "bar").to_h]
       expect do
         organization.seed_items(base_items)
@@ -268,7 +277,8 @@ RSpec.describe Organization, type: :model do
 
     context "when given an item that already exists" do
       it "gracefully skips the item" do
-        organization # will auto-seed existing base items
+        BaseItem.delete_all  # TODO: Remove when closing #4199
+
         base_item = create(:base_item, name: "Foo", partner_key: "foo")
         base_items = [base_item.to_h, BaseItem.first.to_h]
         expect do
@@ -277,16 +287,25 @@ RSpec.describe Organization, type: :model do
       end
     end
 
-    context "when given an item name that already exists, but with an 'other' partner key" do
+    context "when given a item name that already exists, but with an 'other' partner key" do
+      before do
+        unless BaseItem.find_by(partner_key: "other") # TODO: remove when closing #4199
+          create(:base_item, name: "Other", partner_key: "other")
+        end
+        @item = organization.items.create(name: "Foo", partner_key: "other", organization: organization)
+      end
+
       it "updates the old item to use the new base item as its base" do
-        organization # will auto-seed existing base items
-        item = organization.items.create(name: "Foo", partner_key: "other")
         base_item = create(:base_item, name: "Foo", partner_key: "foo")
-        base_items = [base_item.to_h, BaseItem.first.to_h]
+        # NOTE: unclear to me why this second item is being passed in. Seems unrelated to this test?
+        # atleast based on the description
+        base_items = [base_item.to_h]
+
         expect do
           organization.seed_items(base_items)
-          item.reload
-        end.to change { organization.items.size }.by(0).and change { item.partner_key }.to("foo")
+          @item.reload
+        end.to change { organization.items.size }.by(0)
+          .and change { @item.partner_key }.to("foo")
       end
     end
   end
@@ -320,8 +339,8 @@ RSpec.describe Organization, type: :model do
   end
 
   describe 'is_active' do
-    let!(:active_organization) { create(:organization) }
-    let!(:inactive_organization) { create(:organization) }
+    let!(:active_organization) { create(:organization, skip_items: true) }
+    let!(:inactive_organization) { create(:organization, skip_items: true) }
     let!(:active_user) { create(:user, organization: active_organization, last_sign_in_at: 1.month.ago) }
     let!(:inactive_user) { create(:user, organization: inactive_organization, last_sign_in_at: 6.months.ago) }
 
@@ -393,16 +412,16 @@ RSpec.describe Organization, type: :model do
 
   describe 'valid_items' do
     it 'returns an array of item partner keys' do
-      item = organization.items.first
+      item = create(:item, organization: organization)
       expected = { name: item.name, id: item.id, partner_key: item.partner_key }
       expect(organization.valid_items.count).to eq(organization.items.count)
       expect(organization.valid_items).to include(expected)
     end
-    it 'only shows active valid items' do
-      intial_count = organization.valid_items.count
-      organization.items.last.update(active: false)
-      final_count = organization.valid_items.count
-      expect(intial_count).to_not eq(final_count)
+
+    # NOTE: is this test needed? seems duplicative of the below
+    it 'only shows active items' do
+      expect { create(:item, :inactive, organization: organization) }.to change { organization.valid_items.count }.by(0)
+      expect { create(:item, :active, organization: organization) }.to change { organization.valid_items.count }.from(0).to(1)
     end
 
     context 'with invisible items' do
@@ -463,11 +482,11 @@ RSpec.describe Organization, type: :model do
   describe 'earliest reporting year' do
     # re 2813 update annual report -- allowing an earliest reporting year will let us do system testing and staging for annual reports
     it 'is the organization created year if no associated data' do
-      org = create(:organization)
+      org = create(:organization, skip_items: true)
       expect(org.earliest_reporting_year).to eq(org.created_at.year)
     end
     it 'is the year of the earliest of donation, purchase, or distribution if they are earlier ' do
-      org = create(:organization)
+      org = create(:organization, skip_items: true)
       create(:donation, organization: org, issued_at: 1.year.from_now)
       create(:purchase, organization: org, issued_at: 1.year.from_now)
       create(:distribution, organization: org, issued_at: 1.year.from_now)
