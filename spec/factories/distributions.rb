@@ -21,7 +21,7 @@ FactoryBot.define do
   factory :distribution do
     storage_location
     partner
-    organization { Organization.try(:first) || create(:organization) }
+    organization { Organization.try(:first) || create(:organization, skip_items: true) }
     issued_at { nil }
     delivery_method { :pick_up }
     state { :scheduled }
@@ -35,6 +35,7 @@ FactoryBot.define do
       storage_location { create :storage_location, :with_items, item: item, organization: organization }
 
       after(:build) do |instance, evaluator|
+        # NOTE: does this need to run if item is passed in?
         event_item = View::Inventory.new(instance.organization_id)
           .items_for_location(instance.storage_location_id)
           .first

@@ -69,12 +69,22 @@ class ProductDrive < ApplicationRecord
     @search_date_range = { start_date: dates[0], end_date: dates[1] }
   end
 
+  # TODO: this method name was confusing to me
+  # quantities are FILTERED by date then SORTED by name
+  # method name makes it sound like it's filtering by both
+  #
+  # @param date_range [Range]
+  # @return [Array<Integer>]
   def item_quantities_by_name_and_date(date_range)
     quantities = donations.joins(:line_items)
       .during(date_range)
       .group('line_items.item_id')
       .sum('line_items.quantity')
 
+    # If an org does not have an item
+    # then it is stripped from the donation
+    # This is super unexpected behavior
+    # given the other by_ methods don't do this
     organization.items.order(:name).map do |item|
       quantities[item.id] || 0
     end
