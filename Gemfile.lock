@@ -451,7 +451,7 @@ GEM
     puma (6.4.2)
       nio4r (~> 2.0)
     racc (1.7.3)
-    rack (2.2.8.1)
+    rack (2.2.9)
     rack-protection (3.1.0)
       rack (~> 2.2, >= 2.2.4)
     rack-test (2.1.0)
@@ -549,7 +549,7 @@ GEM
     rubocop-performance (1.20.2)
       rubocop (>= 1.48.1, < 2.0)
       rubocop-ast (>= 1.30.0, < 2.0)
-    rubocop-rails (2.24.0)
+    rubocop-rails (2.24.1)
       activesupport (>= 4.2.0)
       rack (>= 1.1)
       rubocop (>= 1.33.0, < 2.0)
@@ -737,7 +737,7 @@ DEPENDENCIES
   rspec-rails (~> 6.1.2)
   rubocop
   rubocop-performance
-  rubocop-rails (~> 2.24.0)
+  rubocop-rails (~> 2.24.1)
   sass-rails
   shoulda-matchers (~> 6.2)
   simple_form
