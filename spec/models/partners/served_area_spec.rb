@@ -11,7 +11,7 @@
 #
 require "rails_helper"
 
-RSpec.describe Partners::ServedArea, type: :model do
+RSpec.describe Partners::ServedArea, type: :model, seed_items: false do
   it { should belong_to(:partner_profile) }
   it { should belong_to(:county) }
 
