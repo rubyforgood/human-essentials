@@ -71,7 +71,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
       sign_in(@user)
     end
 
-    let!(:storage_location) { create(:storage_location, :with_items, item_quantity: 0, organization: @organization) }
+    let!(:storage_location) { create(:storage_location, :with_items, item_quantity: 1, organization: @organization) }
     let(:org_short_name) { @organization.short_name }
     let(:org_dashboard_page) { OrganizationDashboardPage.new org_short_name: org_short_name }
 
@@ -162,6 +162,14 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         it "has a link with the number of other requests" do
           expect(org_dashboard_page.outstanding_requests_link).to have_content num_requests - limit
+        end
+
+        context "when constrained to date range" do
+          it "does not change" do
+            expect { org_dashboard_page.select_date_filter_range "Last Month" }
+              .not_to change { org_dashboard_page.total_inventory }
+              .from 334
+          end
         end
       end
     end
