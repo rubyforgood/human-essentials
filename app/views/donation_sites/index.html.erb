@@ -40,11 +40,14 @@
               <tr>
                 <th>Donation Site</th>
                 <th>Address</th>
+                <th>Contact Name</th>
+                <th>E-mail</th>
+                <th>Phone</th>
                 <th>&nbsp;</th>
               </tr>
               <%= render partial: 'shared/table_row_form',
                          object: @donation_site,
-                         locals: {columns: [{name: :text_field}, {address: :text_field}]} %>
+                         locals: {columns: [{name: :text_field}, {address: :text_field}, {contact_name: :text_field}, {email: :text_field}, {phone: :text_field}]} %>
               </thead>
             </table>
           </div>
@@ -75,6 +78,9 @@
               <tr>
                 <th>Donation Site</th>
                 <th>Address</th>
+                <th>Contact Name</th>
+                <th>E-mail</th>
+                <th>Phone</th>
                 <th>&nbsp;</th>
               </tr>
               </thead>
