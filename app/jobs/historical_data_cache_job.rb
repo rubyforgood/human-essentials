@@ -4,4 +4,6 @@ class HistoricalDataCacheJob < ApplicationJob
 
     Rails.cache.write("#{organization.short_name}-historical-#{type}-data", HistoricalTrendService.new(organization.id, type).series)
   end
+
+  def queue_name = "low_priority"
 end
