@@ -72,7 +72,7 @@ RSpec.describe Item, type: :model do
       Item.delete_all
       inactive_item = create(:line_item, :purchase).item
       item = create(:item)
-      inactive_item.destroy
+      inactive_item.deactivate!
       expect(Item.active.to_a).to match_array([item])
     end
 
@@ -170,22 +170,141 @@ RSpec.describe Item, type: :model do
       end
     end
 
-    describe "has_history?" do
-      it "identifies items that have been used previously" do
-        no_history_item = create(:item)
-        item_in_line_item = create(:line_item, :purchase).item
-        item_in_inventory_item = create(:item)
-        TestInventory.create_inventory(@organization, {
-          @organization.storage_locations.first.id => {
-            item_in_inventory_item.id => 10
-          }
-        })
-        item_in_barcodes = create(:barcode_item).barcodeable
+    describe '#can_deactivate_or_delete?' do
+      let(:organization) { create(:organization) }
+      let(:item) { create(:item, organization: organization) }
+      let(:storage_location) { create(:storage_location, organization: organization) }
 
-        expect(no_history_item).not_to have_history
-        expect(item_in_line_item).to have_history
-        expect(item_in_inventory_item).to have_history
-        expect(item_in_barcodes).to have_history
+      context "with no inventory" do
+        it "should return true" do
+          expect(item.can_deactivate_or_delete?).to eq(true)
+        end
+      end
+
+      context "in a kit" do
+        let(:kit) { create(:kit, organization: organization) }
+        before do
+          create(:line_item, itemizable: kit, item: item)
+        end
+
+        it "should return false" do
+          expect(item.can_deactivate_or_delete?).to eq(false)
+        end
+      end
+
+      context "with inventory" do
+        before do
+          TestInventory.create_inventory(organization, {
+            storage_location.id => {
+              item.id => 5
+            }
+          })
+        end
+        it "should return false" do
+          expect(item.can_deactivate_or_delete?).to eq(false)
+        end
+      end
+    end
+
+    describe '#can_delete?' do
+      let(:organization) { create(:organization) }
+      let(:item) { create(:item, organization: organization) }
+      let(:storage_location) { create(:storage_location, organization: organization) }
+
+      context "with no inventory" do
+        it "should return true" do
+          expect(item.can_delete?).to eq(true)
+        end
+      end
+
+      context "in a kit" do
+        let(:kit) { create(:kit, organization: organization) }
+        before do
+          create(:line_item, itemizable: kit, item: item)
+        end
+
+        it "should return false" do
+          expect(item.can_delete?).to eq(false)
+        end
+      end
+
+      context "with inventory" do
+        before do
+          TestInventory.create_inventory(organization, {
+            storage_location.id => {
+              item.id => 5
+            }
+          })
+        end
+        it "should return false" do
+          expect(item.can_delete?).to eq(false)
+        end
+      end
+
+      context "with line items" do
+        before do
+          create(:donation, :with_items, item: item, storage_location: storage_location)
+        end
+        it "should return false" do
+          expect(item.can_delete?).to eq(false)
+        end
+      end
+
+      context "with barcode items" do
+        before do
+          item.barcode_count = 10
+        end
+        it "should return false" do
+          expect(item.can_delete?).to eq(false)
+        end
+      end
+    end
+
+    describe '#deactivate!' do
+      let(:item) { create(:item) }
+      context "when it can deactivate" do
+        it "should succeed" do
+          allow(item).to receive(:can_deactivate_or_delete?).and_return(true)
+          expect { item.deactivate! }.to change { item.active }.from(true).to(false)
+        end
+
+        it 'deactivates the kit if it exists' do
+          kit = create(:kit)
+          item = create(:item, kit: kit)
+          expect(kit).to be_active
+          item.deactivate!
+          expect(item).not_to be_active
+          expect(kit).not_to be_active
+        end
+      end
+
+      context "when it cannot deactivate" do
+        it "should not succeed" do
+          allow(item).to receive(:can_deactivate_or_delete?).and_return(false)
+          expect { item.deactivate! }
+            .to raise_error("Cannot deactivate item - it is in a storage location or kit!")
+            .and not_change { item.active }
+        end
+      end
+    end
+
+    describe '#destroy!' do
+      let(:item) { create(:item) }
+      context "when it can delete" do
+        it "should succeed" do
+          allow(item).to receive(:can_delete?).and_return(true)
+          expect { item.destroy! }.to change { Item.count }.by(-1)
+        end
+      end
+
+      context "when it cannot delete" do
+        it "should not succeed" do
+          allow(item).to receive(:can_delete?).and_return(false)
+          expect { item.destroy! }
+            .to raise_error(/Failed to destroy Item/)
+            .and not_change { Item.count }
+          expect(item.errors.full_messages).to eq(["Cannot delete item - it has already been used!"])
+        end
       end
     end
 
@@ -195,29 +314,6 @@ RSpec.describe Item, type: :model do
         other_item = create(:item, partner_key: "other")
         expect(item).not_to be_other
         expect(other_item).to be_other
-      end
-    end
-
-    describe "destroy" do
-      it "actually destroys an item that doesn't have history" do
-        item = create(:item)
-        expect { item.destroy }.to change { Item.count }.by(-1)
-      end
-
-      it "only hides an item that has history" do
-        item = create(:line_item, :purchase).item
-        expect { item.destroy }.to change { Item.count }.by(0).and change { Item.active.count }.by(-1)
-        expect(item).not_to be_active
-      end
-
-      it 'deactivates the kit if it exists' do
-        kit = create(:kit)
-        item = create(:item, kit: kit)
-        create(:line_item, :purchase, item: item)
-        expect(kit).to be_active
-        expect { item.destroy }.to change { Item.count }.by(0).and change { Item.active.count }.by(-1)
-        expect(item).not_to be_active
-        expect(kit).not_to be_active
       end
     end
 
