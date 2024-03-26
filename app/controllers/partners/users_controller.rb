@@ -30,7 +30,7 @@ module Partners
         resource: current_partner)
 
       if user.errors.none?
-        flash[:success] = "You have invited #{user.name} to join your organization!"
+        flash[:success] = "You have invited #{user.display_name} to join your organization!"
         redirect_to partners_users_path
       else
         flash[:error] = user.errors.full_messages.join("")
@@ -44,7 +44,9 @@ module Partners
     private
 
     def user_params
-      params.require(:user).permit(:name, :email)
+      modified_params = params.require(:user).permit(:name, :email)
+      modified_params[:name] = nil if modified_params[:name].blank?
+      modified_params
     end
   end
 end

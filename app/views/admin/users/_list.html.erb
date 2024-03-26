@@ -11,7 +11,7 @@
     <% @users.each do |user| %>
       <tr>
         <td><%= user.organization&.name %></td>
-        <td><%= user.name %></td>
+        <td><%= user.display_name %></td>
         <td><%= user.email %></td>
         <td class="text-right">
           <%= edit_button_to edit_admin_user_path(user) %>
