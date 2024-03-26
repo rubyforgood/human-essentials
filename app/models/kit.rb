@@ -30,6 +30,7 @@ class Kit < ApplicationRecord
   validates :name, uniqueness: { scope: :organization }
 
   validate :at_least_one_item
+  validate -> { line_items_quantity_is_at_least(1) }
 
   # @param inventory [View::Inventory]
   # @return [Boolean]

@@ -24,7 +24,7 @@ function new_option(item, selected) {
 };
 
 function populate_dropdowns(objects, inventory) {
-  objects.each(function(index, element) {
+  objects.each(function(_, element) {
     const selected = Number(
       $(element)
         .find(":selected")
@@ -83,7 +83,7 @@ $(function() {
       const insertedItem = $(e.detail[2]);
       request_storage_location_and_populate_item($("select", insertedItem));
       insertedItem
-        .find("#_barcode-lookup-new_line_items")
+        .find("input.__barcode_item_lookup")
         .attr("id", `_barcode-lookup-${$(".nested-fields").length - 1}`);
       control = $("select.storage-location-source");
       $.ajax({

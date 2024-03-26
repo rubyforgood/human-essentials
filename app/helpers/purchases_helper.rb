@@ -5,6 +5,6 @@ module PurchasesHelper
   end
 
   def new_purchase_default_location(purchase)
-    purchase.new_record? ? current_organization.intake_location : purchase.storage_location_id
+    purchase.storage_location_id.presence || current_organization.intake_location
   end
 end
