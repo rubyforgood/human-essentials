@@ -210,7 +210,7 @@ RSpec.configure do |config|
            {
              "latitude" => 40.7143528,
              "longitude" => -74.0059731,
-             "address" => "1500 Remount Road, Front Royal, VA",
+             "address" => "1500 Remount Road, Front Royal, VA 22630",
              "state" => "Virginia",
              "state_code" => "VA",
              "country" => "United States",
