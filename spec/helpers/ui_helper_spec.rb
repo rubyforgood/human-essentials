@@ -34,11 +34,16 @@ RSpec.describe UiHelper, type: :helper do
 
         button = page.css("a").first
         expect(button).to_not be_nil
-        expect(button.attributes["class"].value).to eq("btn btn-outline-primary")
+        expect(button.attributes["class"].value).to eq("btn btn-md btn-primary")
         expect(button.attributes["data-form-input-target"].value).to eq("addButton")
         expect(button.attributes["data-add-dest-selector"].value).to eq("Container")
         expect(button.attributes["data-action"].value).to eq("click->form-input#addItem:prevent")
-        expect(button.text).to eq("Label")
+        expect(button.attributes["role"].value).to eq("button")
+        expect(button.text.strip).to eq("Label")
+
+        icon = button.css("i").first
+        expect(icon).to_not be_nil
+        expect(icon.attributes["class"].value).to eq("fa fa-plus")
 
         template = page.css("template").first
         expect(template).to_not be_nil
@@ -65,7 +70,12 @@ RSpec.describe UiHelper, type: :helper do
         expect(button.attributes["data-form-input-target"]).to be_nil
         expect(button.attributes["data-add-dest-selector"]).to be_nil
         expect(button.attributes["data-action"]).to be_nil
-        expect(button.text).to eq("Label")
+        expect(button.attributes["role"].value).to eq("button")
+        expect(button.text.strip).to eq("Label")
+
+        icon = button.css("i").first
+        expect(icon).to_not be_nil
+        expect(icon.attributes["class"].value).to eq("fa fa-plus")
 
         template = page.css("template").first
         expect(template).to_not be_nil
@@ -83,12 +93,17 @@ RSpec.describe UiHelper, type: :helper do
         button = Nokogiri::HTML(subject).css("a").first
         expect(button).to_not be_nil
 
-        expect(button.attributes["class"].value).to eq("btn btn-warning")
+        expect(button.attributes["class"].value).to eq("btn btn-md btn-danger")
         expect(button.attributes["data-action"].value).to eq("click->form-input#removeItem:prevent")
         expect(button.attributes["data-remove-parent-selector"].value).to eq("Container")
         expect(button.attributes["data-remove-soft"].value).to eq("false")
-        expect(button.text).to eq("Label")
+        expect(button.text.strip).to eq("Label")
+        expect(button.attributes["role"].value).to eq("button")
         expect(button.attributes["href"].value).to eq("javascript:void(0)")
+
+        icon = button.css("i").first
+        expect(icon).to_not be_nil
+        expect(icon.attributes["class"].value).to eq("fa fa-trash")
       end
 
       context 'when soft is false' do
@@ -114,8 +129,13 @@ RSpec.describe UiHelper, type: :helper do
         expect(button.attributes["data-remove-parent-selector"]).to be_nil
         expect(button.attributes["data-remove-soft"]).to be_nil
         expect(button.attributes["data-test"].value).to eq("test")
-        expect(button.text).to eq("Label")
+        expect(button.text.strip).to eq("Label")
+        expect(button.attributes["role"].value).to eq("button")
         expect(button.attributes["href"].value).to eq("javascript:void(0)")
+
+        icon = button.css("i").first
+        expect(icon).to_not be_nil
+        expect(icon.attributes["class"].value).to eq("fa fa-trash")
       end
     end
   end

@@ -16,6 +16,10 @@ export default class extends Controller {
 
     dest.insertAdjacentHTML("beforeend", rendered);
 
+    var afterInsert = new CustomEvent('cocoon:after-insert',
+      { bubbles: true, detail: [rendered, event, dest.lastElementChild] });
+
+    dest.dispatchEvent(afterInsert);
   }
 
   // requires data-remove-parent-selector to be set on the remove button OR

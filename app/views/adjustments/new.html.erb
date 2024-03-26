@@ -43,7 +43,9 @@
                     kind of item.</p>
                   <p class="help">Simply enter an amount for <code>quantity</code> if you want to add that kind of item.
                   </p>
-                  <%= simple_form_for @adjustment, html: { class: "storage-location-required", id: 'new_adjustment'} do |f| %>
+                  <%= simple_form_for @adjustment,
+                    data: { controller: "form-input" },
+                    html: { class: "storage-location-required", id: 'new_adjustment'} do |f| %>
 
                     <%= render partial: "storage_locations/source", object: f, locals: { include_omitted_items: true } %>
 
@@ -52,12 +54,12 @@
                     <fieldset style="margin-bottom: 2rem;" class='w-70'>
                       <legend>Items in this adjustment</legend>
                       <div id="adjustment_line_items" class="line-item-fields" data-capture-barcode="true">
-                        <%= f.simple_fields_for :line_items do |item| %>
-                          <%= render 'line_items/line_item_fields', f: item %>
-                        <% end %>
+                        <%= render 'line_items/line_item_fields', form: f %>
                       </div>
                       <div class="row links justify-content-end">
-                        <%= add_line_item_button f, "#adjustment_line_items" %>
+                        <%= add_element_button "Add Another Item", container_selector: "#adjustment_line_items", id: "__add_line_item" do %>
+                          <%= render 'line_items/line_item_fields', form: f, object: LineItem.new %>
+                        <% end %>
                       </div>
 
                     </fieldset>
