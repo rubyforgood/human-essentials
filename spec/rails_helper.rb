@@ -162,7 +162,7 @@ RSpec.configure do |config|
 
   def seed_base_data_for_tests
     # Create base items that are used to handle seeding Organization with items
-    BaseItem.seed_items
+    seed_base_items
     # Create default organization
     organization = FactoryBot.create(:organization, name: DEFAULT_TEST_ORGANIZATION_NAME)
 
@@ -267,4 +267,22 @@ def select2(node, select_name, value, position: nil)
   container = node.find(:xpath, xpath)
   container.click
   container.find(:xpath, '//li[contains(@class, "select2-results__option")][@role="option"]', text: value).click
+end
+
+def seed_base_items
+  base_items = File.read(Rails.root.join("db", "base_items.json"))
+  items_by_category = JSON.parse(base_items)
+  base_items_data = items_by_category.map do |category, entries|
+    entries.map do |entry|
+      {
+        name: entry["name"],
+        category: category,
+        partner_key: entry["key"],
+        updated_at: Time.zone.now,
+        created_at: Time.zone.now
+      }
+    end
+  end.flatten
+
+  BaseItem.create!(base_items_data)
 end

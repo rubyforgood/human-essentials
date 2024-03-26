@@ -58,14 +58,7 @@ FactoryBot.define do
 
     trait :with_items do
       after(:create) do |instance, evaluator|
-        BaseItem.seed_items if BaseItem.count.zero?
-        Organization.seed_items(instance)
-      end
-    end
-
-    trait :with_items do
-      after(:create) do |instance, evaluator|
-        BaseItem.seed_items if BaseItem.count.zero?
+        seed_base_items if BaseItem.count.zero?
         Organization.seed_items(instance)
       end
     end
