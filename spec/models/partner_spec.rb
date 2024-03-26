@@ -291,21 +291,39 @@ RSpec.describe Partner, type: :model do
     let(:contact_name) { "Jon Ralfeo" }
     let(:contact_email) { "jon@entertainment720.com" }
     let(:contact_phone) { "1231231234" }
+    let(:agency_address) { "4744 McDermott Mountain" }
+    let(:agency_city) { "Lake Shoshana" }
+    let(:agency_state) { "ND" }
+    let(:agency_zipcode) { "09980-7010" }
+    let(:agency_website) { "bosco.example" }
+    let(:agency_type) { "HEALTH" }
     let(:notes) { "Some notes" }
 
     before do
       partner.profile.update({
                                primary_contact_name: contact_name,
                                primary_contact_email: contact_email,
-                               primary_contact_phone: contact_phone
+                               primary_contact_phone: contact_phone,
+                               address1: agency_address,
+                               city: agency_city,
+                               state: agency_state,
+                               zip_code: agency_zipcode,
+                               website: agency_website,
+                               agency_type: agency_type,
                              })
       partner.update(notes: notes)
     end
 
-    it "includes contact person information from parnerbase" do
+    it "includes contact person and agency information from parnerbase" do
       expect(partner.csv_export_attributes).to include(contact_name)
       expect(partner.csv_export_attributes).to include(contact_phone)
       expect(partner.csv_export_attributes).to include(contact_email)
+      expect(partner.csv_export_attributes).to include(agency_address)
+      expect(partner.csv_export_attributes).to include(agency_city)
+      expect(partner.csv_export_attributes).to include(agency_state)
+      expect(partner.csv_export_attributes).to include(agency_zipcode)
+      expect(partner.csv_export_attributes).to include(agency_website)
+      expect(partner.csv_export_attributes).to include(agency_type)
       expect(partner.csv_export_attributes).to include(notes)
     end
   end
