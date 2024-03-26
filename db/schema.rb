@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_16_163610) do
+ActiveRecord::Schema[7.0].define(version: 2024_03_03_144633) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -250,6 +250,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_16_163610) do
     t.integer "organization_id"
     t.float "latitude"
     t.float "longitude"
+    t.string "contact_name"
+    t.string "email"
+    t.string "phone"
     t.index ["latitude", "longitude"], name: "index_donation_sites_on_latitude_and_longitude"
     t.index ["organization_id"], name: "index_donation_sites_on_organization_id"
   end
