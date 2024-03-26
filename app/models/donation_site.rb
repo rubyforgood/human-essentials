@@ -25,7 +25,7 @@ class DonationSite < ApplicationRecord
   validates :contact_name, length: {minimum: 3}, allow_blank: true
   validates :email, format: {with: URI::MailTo::EMAIL_REGEXP, message: "is not a valid email format"}, allow_blank: true
 
-  has_many :donations, dependent: :destroy
+  has_many :donations, dependent: :restrict_with_error
 
   include Geocodable
   include Exportable
