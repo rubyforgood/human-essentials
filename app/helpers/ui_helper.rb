@@ -3,6 +3,53 @@
 # be through one of these methods. Most of these can be adapted to display in different ways, but those alterations
 # will be evident in the source code that it's deviating from the standard.
 module UiHelper
+  # this method uses the form-input stimulus controller
+  # to make this work you need to:
+  #  - set data-controller="form-input" on the form element
+  #  - container selector needs to a unique css selector
+  def add_element_button(label, container_selector:, **html_attrs, &block)
+    default_html_attrs = {
+      class: "btn btn-md btn-primary",
+      data: { form_input_target: 'addButton',
+              add_dest_selector: container_selector,
+              action: "click->form-input#addItem:prevent" },
+      role: "button",
+      href: "javascript:void(0)"
+    }
+    content_tag :div do
+      concat(
+        link_to(label, default_html_attrs.merge(html_attrs)) do
+          fa_icon "plus", text: label
+        end
+      )
+      concat(
+        content_tag(:template, capture(&block), data: { form_input_target: 'addTemplate' })
+      )
+    end
+  end
+
+  # this method uses the form-input stimulus controller
+  # to make this work you need to:
+  #  - set data-controller="form-input" on the form element
+  #  - container selector
+  def remove_element_button(label, container_selector:, soft: false, **html_attrs)
+    default_html_attrs = {
+      class: "btn btn-md btn-danger",
+      data: {
+        action: 'click->form-input#removeItem:prevent',
+        remove_soft: soft ? true : false,
+        remove_parent_selector: container_selector
+      },
+      href: "javascript:void(0)",
+      role: "button",
+      style: "width: 100px;"
+    }
+
+    link_to(label, default_html_attrs.merge(html_attrs)) do
+      fa_icon "trash", text: label
+    end
+  end
+
   def add_line_item_button(form, node, options = {})
     text = options[:text] || "Add another item"
     size = options[:size] || "md"

@@ -40,10 +40,17 @@ RSpec.describe User, type: :model do
   end
 
   context "Validations >" do
-    it "requires a name" do
-      expect(build(:user, name: nil)).not_to be_valid
+    it "user can receive a name" do
       expect(build(:user, name: "foo")).to be_valid
     end
+
+    it "without a name results in display_name 'Name Not Provided'" do
+      user = build(:user, name: nil)
+      expect(user).to be_valid
+      expect(user.name).to be_nil
+      expect(user.display_name).to eq("Name Not Provided")
+    end
+
     it "requires an email that is formatted correctly" do
       expect(build(:partner, email: nil)).not_to be_valid
       expect(build(:partner, email: "foo@bar.com")).to be_valid

@@ -802,7 +802,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_03_144633) do
     t.integer "invited_by_id"
     t.integer "invitations_count", default: 0
     t.boolean "organization_admin"
-    t.string "name", default: "Name Not Provided", null: false
+    t.string "name"
     t.boolean "super_admin", default: false
     t.datetime "last_request_at", precision: nil
     t.datetime "discarded_at", precision: nil

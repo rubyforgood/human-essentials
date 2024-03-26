@@ -11,7 +11,7 @@ class AddRoleService
     klass = Role::TITLE_TO_RESOURCE[resource_type.to_sym]
     resource = klass.find(resource_id)
     if user.has_role?(resource_type, resource)
-      raise "User #{user.name} already has role for #{resource.name}"
+      raise "User #{user.display_name} already has role for #{resource.name}"
     end
     user.add_role(resource_type, resource)
     if resource_type.to_sym == Role::ORG_ADMIN
@@ -22,7 +22,7 @@ class AddRoleService
   # @param user [User]
   def self.add_super_admin(user)
     if user.has_role?(Role::SUPER_ADMIN)
-      raise "User #{user.name} already has super admin role!"
+      raise "User #{user.display_name} already has super admin role!"
     end
     user.add_role(Role::SUPER_ADMIN)
   end
