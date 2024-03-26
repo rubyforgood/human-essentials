@@ -51,8 +51,6 @@ gem "stimulus-rails"
 
 ##### VIEWS/CONTROLLERS #####
 
-# Adds easy links to add or remove associations in a form (e.g. line items)
-gem "cocoon"
 # Adds filter support to models and views.
 gem "filterrific"
 # Generates JSON structures via a builder interface.

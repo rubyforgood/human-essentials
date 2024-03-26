@@ -50,30 +50,6 @@ module UiHelper
     end
   end
 
-  def add_line_item_button(form, node, options = {})
-    text = options[:text] || "Add another item"
-    size = options[:size] || "md"
-    type = options[:type] || "primary"
-    partial = options[:partial] || "line_items/line_item_fields"
-    link_to_add_association form, :line_items,
-                            data: {
-                              association_insertion_node: node,
-                              association_insertion_method: "append"
-                            }, id: "__add_line_item", class: "btn btn-#{size} btn-#{type}", partial: partial do
-      fa_icon "plus", text: text
-    end
-  end
-
-  def delete_line_item_button(form, options = {})
-    text = options[:text] || "Remove"
-    size = options[:text] || "sm"
-    type = options[:type] || "danger"
-
-    link_to_remove_association form, class: "btn btn-#{size} btn-#{type}", style: "width: 100px;" do
-      fa_icon "trash", text: text
-    end
-  end
-
   def delete_button_to(link, options = {})
     # Delete has a few extra options we have to consider to ensure the button works right
     data = options[:no_confirm] ? {} : { data: { confirm: options[:confirm] || "Are you sure?" } }
@@ -223,31 +199,6 @@ module UiHelper
       tag.span(field)
     else
       tag.span("Not-Provided", class: "text-muted font-weight-light")
-    end
-  end
-
-  def add_served_area_button(form, node, options = {})
-    text = options[:text] || "Add another county"
-    size = options[:size] || "md"
-    type = options[:type] || "primary"
-    partial = options[:partial] || "served_areas/served_area_fields"
-    link_to_add_association form, :served_areas,
-                           data: {
-                             association_insertion_node: node,
-                             association_insertion_method: "append"
-                           }, id: "__add_partner_served_area", class: "btn btn-#{size} btn-#{type} add-partner-served_area", partial: partial do
-      fa_icon "plus", text: text
-    end
-  end
-
-  def delete_served_area_button(form, options = {})
-    text = options[:text] || "Remove"
-    size = options[:text] || "sm"
-    type = options[:type] || "danger"
-
-    link_to_remove_association form, class: "btn btn-#{size} btn-#{type} remove_served_area", style: "width: 100px;",
-                               "data-action": "click->served-area#zeroShareValue click->area-served#calculateClientShareTotal" do
-      fa_icon "trash", text: text
     end
   end
 end

@@ -2,7 +2,6 @@
 
 pin "jquery", to: "https://ga.jspm.io/npm:jquery@3.6.1/dist/jquery.js", preload: true
 pin "admin-lte", to: "adminlte.js", preload: true
-pin "cocoon-js-vanilla", to: "cocoon-js-vanilla.js"
 pin "application", preload: true
 pin "startup", to: "startup.js", preload: true
 pin "@hotwired/turbo-rails", to: "turbo.min.js", preload: true
