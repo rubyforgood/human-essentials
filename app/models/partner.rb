@@ -172,7 +172,7 @@ class Partner < ApplicationRecord
     [
       "Agency Name",
       "Agency Email",
-      "Agency address",
+      "Agency Address",
       "Agency City",
       "Agency State",
       "Agency Zip Code",
@@ -226,7 +226,7 @@ class Partner < ApplicationRecord
       state: profile.state,
       zip_code: profile.zip_code,
       website: profile.website,
-      agency_type: profile.agency_type
+      agency_type: (profile.agency_type == AGENCY_TYPES["OTHER"]) ? "#{AGENCY_TYPES["OTHER"]}: #{profile.other_agency_type}" : profile.agency_type
     }
   end
 

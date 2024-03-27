@@ -291,12 +291,14 @@ RSpec.describe Partner, type: :model do
     let(:contact_name) { "Jon Ralfeo" }
     let(:contact_email) { "jon@entertainment720.com" }
     let(:contact_phone) { "1231231234" }
-    let(:agency_address) { "4744 McDermott Mountain" }
+    let(:agency_address1) { "4744 McDermott Mountain" }
+    let(:agency_address2) { "333 Never land street" } 
     let(:agency_city) { "Lake Shoshana" }
     let(:agency_state) { "ND" }
     let(:agency_zipcode) { "09980-7010" }
     let(:agency_website) { "bosco.example" }
-    let(:agency_type) { "HEALTH" }
+    let(:agency_type) { Partner::AGENCY_TYPES["OTHER"] }
+    let(:other_agency_type) { "Another Agency Name" }
     let(:notes) { "Some notes" }
 
     before do
@@ -304,12 +306,14 @@ RSpec.describe Partner, type: :model do
                                primary_contact_name: contact_name,
                                primary_contact_email: contact_email,
                                primary_contact_phone: contact_phone,
-                               address1: agency_address,
+                               address1: agency_address1,
+                               address2: agency_address2,
                                city: agency_city,
                                state: agency_state,
                                zip_code: agency_zipcode,
                                website: agency_website,
                                agency_type: agency_type,
+                               other_agency_type: other_agency_type,
                              })
       partner.update(notes: notes)
     end
@@ -318,12 +322,12 @@ RSpec.describe Partner, type: :model do
       expect(partner.csv_export_attributes).to include(contact_name)
       expect(partner.csv_export_attributes).to include(contact_phone)
       expect(partner.csv_export_attributes).to include(contact_email)
-      expect(partner.csv_export_attributes).to include(agency_address)
+      expect(partner.csv_export_attributes).to include("#{agency_address1}, #{agency_address2}")
       expect(partner.csv_export_attributes).to include(agency_city)
       expect(partner.csv_export_attributes).to include(agency_state)
       expect(partner.csv_export_attributes).to include(agency_zipcode)
       expect(partner.csv_export_attributes).to include(agency_website)
-      expect(partner.csv_export_attributes).to include(agency_type)
+      expect(partner.csv_export_attributes).to include("#{Partner::AGENCY_TYPES["OTHER"]}: #{other_agency_type}")
       expect(partner.csv_export_attributes).to include(notes)
     end
   end
