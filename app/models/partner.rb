@@ -221,7 +221,7 @@ class Partner < ApplicationRecord
     return {} if profile.blank?
 
     @agency_info = {
-      address: [profile.address1, profile.address2].reject(&:blank?).join(' '),
+      address: [profile.address1, profile.address2].reject(&:blank?).join(', '),
       city: profile.city,
       state: profile.state,
       zip_code: profile.zip_code,
