@@ -43,6 +43,7 @@ module Reports
                                .joins(line_items: :item)
                                .merge(Item.disposable)
                                .sum('line_items.quantity')
+      # returning 220
     end
 
     def distributed_disposable_diapers_from_kits
@@ -62,12 +63,15 @@ module Reports
           AND EXTRACT(year FROM issued_at) = ?
           AND LOWER(base_items.category) LIKE '%diaper%'
           AND NOT (LOWER(base_items.category) LIKE '%cloth%' OR LOWER(base_items.name) LIKE '%cloth%')
+          AND kit_line_items.itemizable_type = 'Kit';
       SQL
 
       sanitized_sql = ActiveRecord::Base.send(:sanitize_sql_array, [sql_query, organization_id, year])
 
       result = ActiveRecord::Base.connection.execute(sanitized_sql)
+
       result.first['sum'].to_i
+      # returning 1500
     end
 
     def total_disposable_diapers_distributed
