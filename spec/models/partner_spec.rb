@@ -314,7 +314,7 @@ RSpec.describe Partner, type: :model do
       partner.update(notes: notes)
     end
 
-    it "includes contact person and agency information from parnerbase" do
+    it "includes contact person and agency information" do
       expect(partner.csv_export_attributes).to include(contact_name)
       expect(partner.csv_export_attributes).to include(contact_phone)
       expect(partner.csv_export_attributes).to include(contact_email)
