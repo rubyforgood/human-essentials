@@ -3,9 +3,10 @@ class DistributionPdf
   include Prawn::View
   include ItemsHelper
 
-  def initialize(organization, distribution)
+  def initialize(organization, distribution, print_params = [])
     @distribution = Distribution.includes(:partner, line_items: [:item]).find_by(id: distribution.id)
     @organization = organization
+    @hide_columns = column_names_to_hide(print_params)
   end
 
   def compute_and_render
@@ -81,6 +82,12 @@ class DistributionPdf
     data = @distribution.request ? request_data : non_request_data
     has_request = @distribution.request.present?
 
+    @hide_columns.each do |col_name|
+      col_index = data.first.find_index(col_name)
+      data.each { |line| line.delete_at(col_index) } unless col_index.nil?
+    end
+    hidden_columns_length = @hide_columns.length
+
     font_size 11
     # Line item table
     table(data) do
@@ -109,7 +116,7 @@ class DistributionPdf
       row(-2).borders = [:top]
       row(-2).padding = [2, 0, 2, 0]
 
-      column(0).width = 190
+      column(0).width = 190 + (hidden_columns_length * 60)
 
       # Quantity column
       column(1..-1).row(1..-3).borders = [:left]
@@ -211,5 +218,21 @@ class DistributionPdf
         dollar_value(@distribution.value_per_itemizable),
         @distribution.line_items.total,
         ""]]
+  end
+
+  private
+
+  # def column_names_to_hide(options)
+  #   columns = []
+  #   columns.push("Value/item", "In-Kind Value") if options.include?("hide_values")
+  #   columns.push("Packages") if options.include?("hide_packages")
+  #   columns
+  # end
+
+  def column_names_to_hide(options)
+    options.each_with_object([]) do |curr, array|
+      array.push("Value/item", "In-Kind Value") if curr == "hide_values"
+      array.push("Packages") if curr == "hide_packages"
+    end
   end
 end
