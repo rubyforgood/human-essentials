@@ -6,46 +6,10 @@ class OrganizationDashboardPage < OrganizationPage
     "dashboard"
   end
 
-  def create_new_distribution
-    within distributions_section do
-      click_link "New Distribution"
-    end
-  end
-
   def create_new_donation
     within donations_section do
       click_link "New Donation"
     end
-  end
-
-  def create_new_purchase
-    within purchases_section do
-      click_link "New Purchase"
-    end
-  end
-
-  def product_drive_total_donations
-    within product_drives_section do
-      parse_formatted_integer find(".total_received_donations").text
-    end
-  end
-
-  def product_drive_total_money_raised
-    within product_drives_section do
-      parse_formatted_currency find(".total_money_raised").text
-    end
-  end
-
-  def filter_to_date_range(range_name, custom_dates = nil)
-    select_date_filter_range range_name
-
-    if custom_dates.present?
-      fill_in :filters_date_range, with: ""
-      fill_in :filters_date_range, with: custom_dates
-      page.find(:xpath, "//*[contains(text(),'- Dashboard')]").click
-    end
-
-    click_on "Filter"
   end
 
   def has_add_donation_site_call_to_action?
@@ -64,16 +28,12 @@ class OrganizationDashboardPage < OrganizationPage
     has_selector? "#org-stats-call-to-action-storage-locations"
   end
 
-  def has_product_drives_section?
-    has_selector? product_drives_selector
-  end
-
-  def has_distributions_section?
-    has_selector? distributions_section_selector
-  end
-
   def has_getting_started_guide?
     has_selector? "#getting-started-guide"
+  end
+
+  def has_low_inventory_section?
+    has_selector? low_inventory_selector
   end
 
   def has_manufacturers_section?
@@ -82,6 +42,10 @@ class OrganizationDashboardPage < OrganizationPage
 
   def has_organization_logo?
     has_selector? org_logo_selector
+  end
+
+  def has_outstanding_section?
+    has_selector? outstanding_selector
   end
 
   def manufacturers_total_donations
@@ -102,18 +66,6 @@ class OrganizationDashboardPage < OrganizationPage
     find(org_logo_selector).native[:src]
   end
 
-  def recent_product_drive_donation_links
-    within product_drives_section do
-      all(".donation a").map(&:text)
-    end
-  end
-
-  def recent_distribution_links
-    within distributions_section do
-      all(".distribution a").map(&:text)
-    end
-  end
-
   def recent_donation_links
     within donations_section do
       all(".donation a").map(&:text)
@@ -126,30 +78,8 @@ class OrganizationDashboardPage < OrganizationPage
     end
   end
 
-  def recent_purchase_links
-    within purchases_section do
-      all(".purchase a").map(&:text)
-    end
-  end
-
-  def select_date_filter_range(range_name)
-    find("#filters_date_range").click
-
-    if range_name
-      within ".container__predefined-ranges" do
-        find("button", text: range_name).click
-      end
-    end
-  end
-
   def summary_section
     find "#summary"
-  end
-
-  def total_distributed
-    within distributions_section do
-      parse_formatted_integer find(".total_distributed").text
-    end
   end
 
   def total_donations
@@ -164,22 +94,44 @@ class OrganizationDashboardPage < OrganizationPage
     end
   end
 
+  def low_inventory_section
+    find low_inventory_selector
+  end
+
+  def low_inventories
+    within low_inventory_section do
+      all("tbody > tr").map(&:text)
+    end
+  end
+
+  def outstanding_section
+    find outstanding_selector
+  end
+
+  def outstanding_requests
+    within outstanding_section do
+      all("tbody > tr")
+    end
+  end
+
+  def outstanding_requests_link
+    within outstanding_section do
+      find(".card-footer a")
+    end
+  end
+
+  def has_partner_approvals_section?
+    has_selector? "#partner_approvals.card"
+  end
+
+  def partner_approvals_section
+    find "#partner_approvals.card"
+  end
+
   private
 
-  def product_drives_section
-    find product_drives_selector
-  end
-
-  def product_drives_selector
-    "#product_drives"
-  end
-
-  def distributions_section_selector
-    "#distributions"
-  end
-
-  def distributions_section
-    find distributions_section_selector
+  def low_inventory_selector
+    "#low_inventory"
   end
 
   def donations_section
@@ -198,7 +150,7 @@ class OrganizationDashboardPage < OrganizationPage
     ".organization-logo"
   end
 
-  def purchases_section
-    find "#purchases"
+  def outstanding_selector
+    "#outstanding"
   end
 end

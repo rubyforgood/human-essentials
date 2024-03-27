@@ -1,0 +1,51 @@
+<%= render(
+  "shared/filtered_card",
+  id: "activity_graph",
+  gradient: "secondary",
+  title: "Activity Graph",
+  subtitle: @selected_date_range,
+  type: :table,
+  filter_url: reports_activity_graph_path
+) do %>
+  <% if @distribution_data.empty? %>
+    <div class="alert alert-warning" role="alert">
+      No distributions found for the selected date range.
+    </div>
+  <% else %>
+    <div class="box-body">
+      <div class="box-body text-center">
+        <h5 class="text-center"></h5>
+        <%
+            activity_chart_config = {
+              chart: {
+                type: "bar"
+              },
+              title: "",
+              xAxis: {
+                categories: @distribution_data.keys,
+                title: {
+                  text: nil
+                }
+              },
+              yAxis: {
+                title: {
+                  text: nil
+                }
+              },
+              legend: {
+                enabled: false
+              },
+              series: [
+                {
+                  data: @distribution_data.values
+                }
+              ]
+            }.to_json
+        %>
+        <div data-controller="highchart" data-highchart-config-value="<%= activity_chart_config %>">
+          <div data-highchart-target="chart"></div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>

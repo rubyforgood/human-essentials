@@ -65,6 +65,7 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       end
 
       fill_in "filterrific_search_name", with: user_names.first
+      page.find("table", text: user_names.first) # Wait for search
       user_names[1..].each do |name|
         expect(page.find("table")).not_to have_content(name)
       end
@@ -76,6 +77,7 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
 
       visit admin_users_path
       fill_in "filterrific_search_email", with: user_email
+      page.find("table", text: user_email) # Wait for search
       expect(page.find("table")).to have_content(user_email)
     end
   end
