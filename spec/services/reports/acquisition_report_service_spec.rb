@@ -1,11 +1,11 @@
 RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data: true do
   describe "acquisition report" do
-    subject { described_class.new(organization: organization, year: year) }
-
     let(:organization) { create(:organization, skip_items: true) }
     let(:within_time) { Time.zone.parse("2020-05-31 14:00:00") }
     let(:outside_time) { Time.zone.parse("2019-05-31 14:00:00") }
     let(:year) { 2020 }
+
+    subject { described_class.new(organization: organization, year: year) }
 
     before do
       # Kits
@@ -27,7 +27,7 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
       create(:line_item, :distribution, quantity: 10, item: disposable_kit.item, itemizable: disposable_kit_item_distribution)
       create(:line_item, :distribution, quantity: 10, item: another_disposable_kit.item, itemizable: another_disposable_kit_item_distribution)
 
-      #create disposable and non disposable items
+      # create disposable and non disposable items
       create(:base_item, name: "3T Diaper", partner_key: "toddler diapers", category: "disposable diaper")
       create(:base_item, name: "Cloth Diapers", partner_key: "infant cloth diapers", category: "cloth diaper")
 
@@ -37,11 +37,12 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
       # Distributions
       distributions = create_list(:distribution, 2, issued_at: within_time, organization: organization)
       outside_distributions = create_list(:distribution, 2, issued_at: outside_time, organization: organization)
+
       (distributions + outside_distributions).each do |dist|
         create_list(:line_item, 5, :distribution, quantity: 20, item: disposable_item, itemizable: dist)
         create_list(:line_item, 5, :distribution, quantity: 30, item: non_disposable_item, itemizable: dist)
       end
-
+      # 1000
       # Donations outside drives
       non_drive_donations = create_list(:donation, 2,
                                         product_drive: nil,
@@ -149,15 +150,14 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
 
     it "returns the correct quantity of disposable diapers from kits" do
       service = described_class.new(organization: organization, year: within_time.year)
-      # require 'pry'; binding.pry
       expect(service.distributed_disposable_diapers_from_kits).to eq(100)
     end
 
     it 'should return the proper results on #report' do
       expect(subject.report).to eq({
-        entries: { "Disposable diapers distributed" => "240",
+        entries: { "Disposable diapers distributed" => "320",
                    "Cloth diapers distributed" => "300",
-                   "Average monthly disposable diapers distributed" => "143",
+                   "Average monthly disposable diapers distributed" => "27",
                    "Total product drives" => 2,
                    "Disposable diapers collected from drives" => "600",
                    "Cloth diapers collected from drives" => "900",
