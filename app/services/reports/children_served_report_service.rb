@@ -71,16 +71,6 @@ module Reports
       .sum("line_items.quantity")
     end
 
-    # def disposable_diapers_from_kits_total
-    #   organization
-    #   .distributions
-    #   .for_year(year)
-    #   .joins(line_items: {item: :kit})
-    #   .merge(Item.disposable)
-    #   .where.not(items: {kit_id: nil})
-    #   .sum("line_items.quantity")
-    # end
-
     def total_children_served_with_loose_disposables
       organization
       .distributions
