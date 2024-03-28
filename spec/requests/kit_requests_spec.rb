@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "/kits", type: :request do
   let(:default_params) do
-    {organization_id: @organization.to_param}
+    {organization_name: @organization.to_param}
   end
   let!(:kit) { create(:kit, :with_item, organization: @organization) }
 

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe 'Requests', type: :request do
   let(:default_params) do
-    { organization_id: @organization.to_param }
+    { organization_name: @organization.to_param }
   end
 
   context 'When signed' do

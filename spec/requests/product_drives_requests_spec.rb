@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe "ProductDrives", type: :request, skip_seed: true do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
-  let(:default_params) { { organization_id: organization.to_param } }
+  let(:default_params) { { organization_name: organization.to_param } }
 
   context "while not signed in" do
     it "is unsuccessful" do

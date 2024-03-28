@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Distributions", type: :request do
   let(:default_params) do
-    { organization_id: @organization.to_param }
+    { organization_name: @organization.to_param }
   end
 
   let(:secret_key) { "HI MOM THIS IS ME AND I'M CODING" }
@@ -51,7 +51,7 @@ RSpec.describe "Distributions", type: :request do
 
     describe "GET #reclaim" do
       it "returns http success" do
-        get distributions_path(default_params.merge(organization_id: @organization, id: create(:distribution).id))
+        get distributions_path(default_params.merge(organization_name: @organization, id: create(:distribution).id))
         expect(response).to be_successful
       end
     end
@@ -103,7 +103,7 @@ RSpec.describe "Distributions", type: :request do
       let!(:partner) { create(:partner) }
       let(:request) { create(:request, partner: partner) }
       let(:storage_location) { create(:storage_location, :with_items) }
-      let(:default_params) { { organization_id: @organization.to_param, request_id: request.id } }
+      let(:default_params) { { organization_name: @organization.to_param, request_id: request.id } }
 
       it "returns http success" do
         get new_distribution_path(default_params)

@@ -29,7 +29,7 @@ RSpec.describe "Users - Omniauth Callbacks", type: :request do
         post "/users/auth/google_oauth2/callback"
         expect(session["google.token"]).to eq("token")
         expect(session["google.refresh_token"]).to eq("refresh token")
-        expect(response).to redirect_to("/?organization_id=#{@user.organization.short_name}")
+        expect(response).to redirect_to("/?organization_name=#{@user.organization.short_name}")
       end
     end
 

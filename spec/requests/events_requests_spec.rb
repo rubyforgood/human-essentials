@@ -4,7 +4,7 @@ RSpec.describe "Events", type: :request do
   let(:organization) { create(:organization) }
   let(:user) { create(:organization_admin, organization: organization) }
   let(:default_params) do
-    {organization_id: organization.to_param}
+    {organization_name: organization.to_param}
   end
   let(:storage_location) { create(:storage_location, organization: organization) }
   let(:storage_location2) { create(:storage_location, organization: organization) }

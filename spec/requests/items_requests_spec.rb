@@ -4,7 +4,7 @@ RSpec.describe "Items", type: :request do
   let(:organization) { create(:organization, short_name: "my_org") }
   let(:user) { create(:user, organization: organization) }
   let(:default_params) do
-    { organization_id: "my_org" }
+    { organization_name: "my_org" }
   end
 
   describe "while signed in" do
