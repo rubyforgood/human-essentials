@@ -78,7 +78,6 @@ RSpec.describe DonationSite, type: :model do
     it { is_expected.to be_versioned }
   end
 
-
   describe "active" do
     it "->active shows only donation sites that are still active" do
       DonationSite.delete_all
@@ -86,7 +85,8 @@ RSpec.describe DonationSite, type: :model do
       donation_site_2 = create(:donation_site, name: "site that will be active", active: true)
       donation_site_1.deactivate!
       expect(DonationSite.active.to_a).to match_array([donation_site_2])
-
+    end
+  end
   describe "deletion" do
     it "can be deleted if there are no donations associated with the donation site" do
       donation_site = build(:donation_site,
@@ -105,7 +105,6 @@ RSpec.describe DonationSite, type: :model do
         .to raise_error(/Failed to destroy DonationSite/)
         .and not_change { DonationSite.count }
       expect(donation_site.errors.full_messages).to eq(["Cannot delete record because dependent donations exist"])
-
     end
   end
 end
