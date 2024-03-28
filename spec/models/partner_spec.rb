@@ -292,7 +292,7 @@ RSpec.describe Partner, type: :model do
     let(:contact_email) { "jon@entertainment720.com" }
     let(:contact_phone) { "1231231234" }
     let(:agency_address1) { "4744 McDermott Mountain" }
-    let(:agency_address2) { "333 Never land street" } 
+    let(:agency_address2) { "333 Never land street" }
     let(:agency_city) { "Lake Shoshana" }
     let(:agency_state) { "ND" }
     let(:agency_zipcode) { "09980-7010" }
@@ -313,22 +313,26 @@ RSpec.describe Partner, type: :model do
                                zip_code: agency_zipcode,
                                website: agency_website,
                                agency_type: agency_type,
-                               other_agency_type: other_agency_type,
+                               other_agency_type: other_agency_type
                              })
       partner.update(notes: notes)
     end
 
-    it "includes contact person and agency information" do
-      expect(partner.csv_export_attributes).to include(contact_name)
-      expect(partner.csv_export_attributes).to include(contact_phone)
-      expect(partner.csv_export_attributes).to include(contact_email)
-      expect(partner.csv_export_attributes).to include("#{agency_address1}, #{agency_address2}")
-      expect(partner.csv_export_attributes).to include(agency_city)
-      expect(partner.csv_export_attributes).to include(agency_state)
-      expect(partner.csv_export_attributes).to include(agency_zipcode)
-      expect(partner.csv_export_attributes).to include(agency_website)
-      expect(partner.csv_export_attributes).to include("#{Partner::AGENCY_TYPES["OTHER"]}: #{other_agency_type}")
-      expect(partner.csv_export_attributes).to include(notes)
+    it "should has the info in the columns order" do
+      expect(partner.csv_export_attributes).to eq([
+        partner.name,
+        partner.email,
+        "#{agency_address1}, #{agency_address2}",
+        agency_city,
+        agency_state,
+        agency_zipcode,
+        agency_website,
+        "#{Partner::AGENCY_TYPES["OTHER"]}: #{other_agency_type}",
+        contact_name,
+        contact_phone,
+        contact_email,
+        notes
+      ])
     end
   end
 
