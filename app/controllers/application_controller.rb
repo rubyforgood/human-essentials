@@ -52,7 +52,7 @@ class ApplicationController < ActionController::Base
   def default_url_options(options = {})
     # Early return if the request is not authenticated and no
     # current_user is defined
-    return options if current_user.blank? || current_role.blank?
+    return options if current_user.blank? || current_role.blank? || current_role.name == Role::SUPER_ADMIN.to_s
 
     if current_organization.present? && !options.key?(:organization_name)
       options[:organization_name] = current_organization.to_param
