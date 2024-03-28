@@ -14,8 +14,9 @@
 
 require "rails_helper"
 
-RSpec.describe ProductDrive, type: :model do
-  let!(:product_drive) { create(:product_drive) }
+RSpec.describe ProductDrive, type: :model, seed_items: false do
+  let(:organization) { create(:organization, skip_items: true) }
+  let!(:product_drive) { create(:product_drive, organization: organization) }
   let!(:donation) { create(:donation, :with_items, item_quantity: 7, product_drive: product_drive) }
   let!(:donation2) { create(:donation, :with_items, item_quantity: 9, product_drive: product_drive) }
   let!(:extra_line_item) { create(:line_item, itemizable: donation, quantity: 4) }
@@ -35,11 +36,16 @@ RSpec.describe ProductDrive, type: :model do
   end
 
   it "calculates and returns all donated organization item quantities by name and date" do
-    create(:donation, :with_items, item_quantity: 2, product_drive: product_drive, issued_at: '26-01-2023')
+    # an organization must have an item to be able to list it with item_quantities_by_name_and_date
+    item = create(:item, organization: organization)
+
+    create(:donation, :with_items, item: item, item_quantity: 2, product_drive: product_drive, issued_at: '26-01-2023')
+
     result = product_drive.item_quantities_by_name_and_date(Time.zone.parse('23/01/2023')..Time.zone.parse('26/01/2023'))
-    expect(result.length).to eq product_drive.organization.items.count
+
+    expect(result.length).to eq product_drive.organization.items.count # TODO: probably should be hardcoded
     expect(result.count(2)).to eq(1)
-    expect(result.count(0)).to eq(product_drive.organization.items.count - 1)
+    expect(result.count(0)).to eq(product_drive.organization.items.count - 1) # TODO: probably should be hardcoded
   end
 
   it "calculates and returns all donated organization item quantities by category and date" do
