@@ -188,22 +188,22 @@ RSpec.configure do |config|
     Geocoder.configure(lookup: :test)
 
     ["1500 Remount Road, Front Royal, VA 22630",
-       "123 Donation Site Way",
-       "Smithsonian Conservation Center new"].each do |address|
-         Geocoder::Lookup::Test.add_stub(
-           address, [
-             {
-               "latitude" => 40.7143528,
-               "longitude" => -74.0059731,
-               "address" => "1500 Remount Road, Front Royal, VA",
-               "state" => "Virginia",
-               "state_code" => "VA",
-               "country" => "United States",
-               "country_code" => "US"
-             }
-           ]
-         )
-       end
+      "123 Donation Site Way",
+      "Smithsonian Conservation Center new"].each do |address|
+      Geocoder::Lookup::Test.add_stub(
+        address, [
+          {
+            "latitude" => 40.7143528,
+            "longitude" => -74.0059731,
+            "address" => "1500 Remount Road, Front Royal, VA 22630",
+            "state" => "Virginia",
+            "state_code" => "VA",
+            "country" => "United States",
+            "country_code" => "US"
+          }
+        ]
+      )
+    end
 
     seed_base_data_for_tests if !ENV["SKIP_SEED"]
   end

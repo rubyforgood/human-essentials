@@ -9,14 +9,18 @@ module UiHelper
   #  - container selector needs to a unique css selector
   def add_element_button(label, container_selector:, **html_attrs, &block)
     default_html_attrs = {
-      class: "btn btn-outline-primary",
+      class: "btn btn-md btn-primary",
       data: { form_input_target: 'addButton',
               add_dest_selector: container_selector,
-              action: "click->form-input#addItem:prevent" }
+              action: "click->form-input#addItem:prevent" },
+      role: "button",
+      href: "javascript:void(0)"
     }
     content_tag :div do
       concat(
-        link_to(label, "javascript:void(0)", default_html_attrs.merge(html_attrs))
+        link_to(label, default_html_attrs.merge(html_attrs)) do
+          fa_icon "plus", text: label
+        end
       )
       concat(
         content_tag(:template, capture(&block), data: { form_input_target: 'addTemplate' })
@@ -30,15 +34,20 @@ module UiHelper
   #  - container selector
   def remove_element_button(label, container_selector:, soft: false, **html_attrs)
     default_html_attrs = {
-      class: "btn btn-warning",
+      class: "btn btn-md btn-danger",
       data: {
         action: 'click->form-input#removeItem:prevent',
         remove_soft: soft ? true : false,
         remove_parent_selector: container_selector
-      }
+      },
+      href: "javascript:void(0)",
+      role: "button",
+      style: "width: 100px;"
     }
 
-    link_to(label, 'javascript:void(0)', default_html_attrs.merge(html_attrs))
+    link_to(label, default_html_attrs.merge(html_attrs)) do
+      fa_icon "trash", text: label
+    end
   end
 
   def add_line_item_button(form, node, options = {})

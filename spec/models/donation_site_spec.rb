@@ -4,9 +4,12 @@
 #
 #  id              :integer          not null, primary key
 #  address         :string
+#  contact_name    :string
+#  email           :string
 #  latitude        :float
 #  longitude       :float
 #  name            :string
+#  phone           :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :integer
@@ -23,6 +26,30 @@ RSpec.describe DonationSite, type: :model do
 
     it "is invalid without an address" do
       expect(build(:donation_site, address: nil)).not_to be_valid
+    end
+
+    it "is valid without an contact name" do
+      expect(build(:donation_site, contact_name: nil)).to be_valid
+    end
+
+    it "is valid without an phone" do
+      expect(build(:donation_site, phone: nil)).to be_valid
+    end
+
+    it "is valid without an email" do
+      expect(build(:donation_site, email: nil)).to be_valid
+    end
+
+    it "is valid with Contact Name" do
+      expect(build(:donation_site, contact_name: "Mr. Smith")).to be_valid
+    end
+
+    it "is valid with an email" do
+      expect(build(:donation_site, email: "smith@mail.com")).to be_valid
+    end
+
+    it "is valid with a phone number" do
+      expect(build(:donation_site, phone: "555-555-1234")).to be_valid
     end
   end
   describe "import_csv" do
