@@ -6,11 +6,6 @@ class AdminController < ApplicationController
     verboten! unless current_user.has_role?(Role::SUPER_ADMIN)
   end
 
-  # Override base controller - we don't need an organization id.
-  def default_url_options(options = {})
-    options
-  end
-
   def dashboard
     @recent_organizations = Organization.where('created_at > ?', 1.week.ago)
     @recent_users = User.where('created_at > ?', 1.week.ago).order(created_at: :desc).limit(20)
