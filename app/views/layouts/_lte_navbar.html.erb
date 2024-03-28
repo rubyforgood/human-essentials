@@ -60,7 +60,7 @@
 </li>
 <li class="nav-item dropdown">
   <a class="nav-link" data-bs-toggle="dropdown" href="#">
-    <%= current_user.name %>
+    <%= current_user.display_name %>
   </a>
   <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
     <%= link_to edit_user_registration_path(organization_name: nil), class:"dropdown-item" do %>
