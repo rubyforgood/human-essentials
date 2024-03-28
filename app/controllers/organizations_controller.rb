@@ -120,7 +120,7 @@ class OrganizationsController < ApplicationController
 
   def user_update_redirect_path
     if current_user.has_role?(Role::SUPER_ADMIN)
-      admin_organization_path(current_organization.id)
+      admin_organization_path
     else
       organization_path
     end
