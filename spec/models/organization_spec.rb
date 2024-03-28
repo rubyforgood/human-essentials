@@ -34,7 +34,6 @@
 
 RSpec.describe Organization, type: :model do
   let(:organization) { create(:organization) }
-
   describe "validations" do
     it "validates that attachments are png or jpgs" do
       expect(build(:organization,
@@ -110,9 +109,11 @@ RSpec.describe Organization, type: :model do
         create(:barcode_item, organization: organization)
         create(:global_barcode_item) # global
       end
+
       it "returns only this organization's barcodes, no globals" do
         expect(organization.barcode_items.count).to eq(1)
       end
+
       describe ".all" do
         it "includes global barcode items also" do
           expect(organization.barcode_items.all.count).to eq(2)
