@@ -23,7 +23,6 @@
 </section>
 
 <section class="content">
-
   <% unless @distribution.future? %>
     <div class="alert alert-warning" role="alert">
       The current date is past the date this distribution was scheduled for.
@@ -39,7 +38,9 @@
       you’ll need to make an adjustment to the inventory as well.
     </div>
   <% end %>
-
+  <div class="col-md-12 mb-3">
+    <%= render partial: "print_button_with_options" %> <!-- where to place ? -->
+  </div>
   <div class="container-fluid">
     <div class="row">
       <!-- left column -->
