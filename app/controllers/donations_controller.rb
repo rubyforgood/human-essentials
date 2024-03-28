@@ -104,7 +104,7 @@ class DonationsController < ApplicationController
 
   def load_form_collections
     @storage_locations = current_organization.storage_locations.active_locations.alphabetized
-    @donation_sites = current_organization.donation_sites.alphabetized
+    @donation_sites = current_organization.donation_sites.active.alphabetized
     @product_drives = current_organization.product_drives.alphabetized
     @product_drive_participants = current_organization.product_drive_participants.alphabetized
     @manufacturers = current_organization.manufacturers.alphabetized

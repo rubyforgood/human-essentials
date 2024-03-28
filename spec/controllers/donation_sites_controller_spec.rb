@@ -41,13 +41,6 @@ RSpec.describe DonationSitesController, type: :controller do
       end
     end
 
-    describe "DELETE #destroy" do
-      subject { delete :destroy, params: default_params.merge(id: create(:donation_site, organization: @organization)) }
-      it "returns http success" do
-        expect(subject).to redirect_to(donation_sites_path)
-      end
-    end
-
     context "Looking at a different organization" do
       let(:object) { create(:donation_site, organization: create(:organization)) }
       include_examples "requiring authorization"
