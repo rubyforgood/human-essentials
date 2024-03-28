@@ -6,6 +6,7 @@ describe DistributionPdf do
   let(:item2) { FactoryBot.create(:item, name: "Item 2", value_in_cents: 200) }
   let(:item3) { FactoryBot.create(:item, name: "Item 3", value_in_cents: 300) }
   let(:item4) { FactoryBot.create(:item, name: "Item 4", package_size: 25, value_in_cents: 400) }
+  let(:print_params) { {"hide_values" => "1", "hide_packages" => "1"} }
   before(:each) do
     FactoryBot.create(:line_item, itemizable: distribution, item: item1, quantity: 50)
     FactoryBot.create(:line_item, itemizable: distribution, item: item2, quantity: 100)
@@ -36,6 +37,39 @@ describe DistributionPdf do
       ["", "", "", "", ""],
       ["Total Items Received", "", "$250.00", 150, ""]
     ])
+  end
+
+  context "with request data" do
+    specify "#hide_columns" do
+      pdf = described_class.new(@organization, distribution, print_params)
+      data = pdf.request_data
+      results = pdf.hide_columns(data)
+      expect(results).to eq([
+        ["Items Received", "Requested", "Received"],
+        ["Item 1", "", 50],
+        ["Item 2", 30, 100],
+        ["Item 3", 50, ""],
+        ["Item 4", 120, ""],
+        ["", "", ""],
+        ["Total Items Received", 200, 150]
+      ])
+    end
+  end
+
+  context "with non request data" do
+    specify "#hide_columns" do
+      distribution.request = nil
+      pdf = described_class.new(@organization, distribution, print_params)
+      data = pdf.non_request_data
+      results = pdf.hide_columns(data)
+      expect(results).to eq([
+        ["Items Received", "Quantity"],
+        ["Item 1", 50],
+        ["Item 2", 100],
+        ["", ""],
+        ["Total Items Received", 150]
+      ])
+    end
   end
 end
 # rubocop:enable Layout/ArrayAlignment
