@@ -6,42 +6,49 @@ class DistributionMailer < ApplicationMailer
   #   en.distribution_mailer.partner_mailer.subject
   #
   def partner_mailer(current_organization, distribution, subject, distribution_changes)
-    return if distribution.past? || distribution.partner.deactivated?
-
-    @partner = distribution.partner
     @distribution = distribution
-    @comment = distribution.comment
-    requestee_email = distribution.request ? distribution.request.user_email : @partner.email
+    @partner = @distribution.partner
 
-    delivery_method = @distribution.delivery? ? 'delivered' : 'picked up'
-    @default_email_text = current_organization.default_email_text
-    @default_email_text_interpolated = TextInterpolatorService.new(@default_email_text.body.to_s, {
-                                                                     delivery_method: delivery_method,
-                                                                     distribution_date: @distribution.issued_at.strftime("%m/%d/%Y"),
-                                                                     partner_name: @partner.name,
-                                                                     comment: @comment
-                                                                   }).call
+    return if @distribution.past? || @partner.deactivated?
+
+    default_email_text = current_organization.default_email_text
+    @default_email_text_interpolated = interpolate_custom_text(@distribution, default_email_text)
 
     @from_email = current_organization.email.presence || current_organization.users.first.email
     @distribution_changes = distribution_changes
     pdf = DistributionPdf.new(current_organization, @distribution).compute_and_render
     attachments[format("%s %s.pdf", @partner.name, @distribution.created_at.strftime("%Y-%m-%d"))] = pdf
     cc = [@partner.email]
-    cc.push(@partner.profile&.pick_up_email) if distribution.pick_up?
+    cc.push(@partner.profile&.pick_up_email) if @distribution.pick_up?
     cc.compact!
     cc.uniq!
 
-    mail(to: requestee_email, cc: cc, subject: "#{subject} from #{current_organization.name}")
+    mail(to: requestee_email(@distribution), cc: cc, subject: "#{subject} from #{current_organization.name}")
   end
 
   def reminder_email(distribution_id)
-    distribution = Distribution.find(distribution_id)
-    @partner = distribution.partner
-    @distribution = distribution
-    requestee_email = distribution.request ? distribution.request.user_email : @partner.email
+    @distribution = Distribution.find(distribution_id)
+    @partner = @distribution.partner
 
     return if @distribution.past? || !@partner.send_reminders || @partner.deactivated?
 
-    mail(to: requestee_email, cc: @partner.email, subject: "#{@partner.name} Distribution Reminder")
+    @custom_reminder_interpolated = interpolate_custom_text(@distribution, @distribution.custom_reminder)
+
+    mail(to: requestee_email(@distribution), cc: @partner.email, subject: "#{@partner.name} Distribution Reminder")
+  end
+
+  private
+
+  def interpolate_custom_text(distribution, custom_text)
+    TextInterpolatorService.new(custom_text.body.to_s, {
+                                                          delivery_method: distribution.delivery? ? 'delivered' : 'picked up',
+                                                          distribution_date: distribution.issued_at.strftime("%m/%d/%Y"),
+                                                          partner_name: distribution.partner.name,
+                                                          comment: distribution.comment
+                                                        }).call
+  end
+
+  def requestee_email(distribution)
+    distribution.request ? distribution.request.user_email : @partner.email
   end
 end

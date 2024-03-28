@@ -36,6 +36,8 @@ class Distribution < ApplicationRecord
   include ItemsHelper
 
   has_one :request, dependent: :nullify
+  has_rich_text :custom_reminder
+
   accepts_nested_attributes_for :request
 
   validates :storage_location, :partner, :organization, :delivery_method, presence: true

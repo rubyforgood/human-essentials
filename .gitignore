@@ -24,6 +24,7 @@
 pdx_db_test
 /db/data
 dump.rdb
+/config/database.yml
 
 # Ignore all logfiles and tempfiles.
 /log/*.log
