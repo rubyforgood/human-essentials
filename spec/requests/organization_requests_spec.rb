@@ -190,7 +190,7 @@ RSpec.describe "Organizations", type: :request do
       it "runs successfully" do
         subject
         expect(@user.has_role?(:org_admin, @organization)).to eq(true)
-        expect(response).to redirect_to(admin_organization_path(@organization.id, default_params))
+        expect(response).to redirect_to(admin_organization_path(@organization.id))
       end
     end
 
@@ -202,7 +202,7 @@ RSpec.describe "Organizations", type: :request do
 
       it "runs successfully" do
         subject
-        expect(response).to redirect_to(admin_organization_path(@organization.id, default_params))
+        expect(response).to redirect_to(admin_organization_path(@organization.id))
         expect(admin_user.reload.has_role?(Role::ORG_ADMIN, admin_user.organization)).to be_falsey
       end
     end
@@ -212,7 +212,7 @@ RSpec.describe "Organizations", type: :request do
 
       it "redirect after update" do
         subject
-        expect(response).to redirect_to(admin_organization_path(@organization.id, default_params))
+        expect(response).to redirect_to(admin_organization_path(@organization.id))
       end
       it "deactivates the user" do
         expect { subject }.to change { @user.reload.discarded_at }.to be_present
@@ -225,7 +225,7 @@ RSpec.describe "Organizations", type: :request do
 
       it "redirect after update" do
         subject
-        expect(response).to redirect_to(admin_organization_path(@organization.id, default_params))
+        expect(response).to redirect_to(admin_organization_path(@organization.id))
       end
       it "reactivates the user" do
         expect { subject }.to change { @user.reload.discarded_at }.to be_nil
