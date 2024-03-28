@@ -1,6 +1,9 @@
 <tr class="<%= local_assigns[:class] %>">
   <td><%= donation_site_row.name %></td>
   <td><%= donation_site_row.address %></td>
+  <td><%= donation_site_row.contact_name %></td>
+  <td><%= donation_site_row.email %></td>
+  <td><%= donation_site_row.phone %></td>
   <td class="text-right">
     <%= view_button_to donation_site_row %>
     <%= edit_button_to edit_donation_site_path(donation_site_row) %>

@@ -5,9 +5,12 @@
 #  id              :integer          not null, primary key
 #  active          :boolean          default(TRUE)
 #  address         :string
+#  contact_name    :string
+#  email           :string
 #  latitude        :float
 #  longitude       :float
 #  name            :string
+#  phone           :string
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  organization_id :integer
@@ -20,8 +23,10 @@ class DonationSite < ApplicationRecord
   belongs_to :organization
 
   validates :name, :address, :organization, presence: true
+  validates :contact_name, length: {minimum: 3}, allow_blank: true
+  validates :email, format: {with: URI::MailTo::EMAIL_REGEXP, message: "is not a valid email format"}, allow_blank: true
 
-  has_many :donations, dependent: :destroy
+  has_many :donations, dependent: :restrict_with_error
 
   include Geocodable
   include Exportable
@@ -44,11 +49,11 @@ class DonationSite < ApplicationRecord
   end
 
   def self.csv_export_headers
-    %w{Name Address}
+    ["Name", "Address", "Contact Name", "Email", "Phone"]
   end
 
   def csv_export_attributes
-    [name, address]
+    [name, address, contact_name, email, phone]
   end
 
   def deactivate!
