@@ -11,7 +11,7 @@
 
 FactoryBot.define do
   factory :manufacturer do
-    organization { Organization.try(:first) || create(:organization) }
+    organization { Organization.try(:first) || create(:organization, skip_items: true) }
     sequence(:name) { |n| "Manufacturer #{n}" }
   end
 end
