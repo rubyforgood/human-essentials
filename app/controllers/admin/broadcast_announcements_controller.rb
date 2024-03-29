@@ -1,4 +1,4 @@
-class Admin::BroadcastAnnouncementsController < ApplicationController
+class Admin::BroadcastAnnouncementsController < AdminController
   before_action :set_broadcast_announcement, only: %i[edit update destroy]
   before_action :require_admin
 

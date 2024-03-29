@@ -56,6 +56,13 @@ FactoryBot.define do
       deadline_day { nil }
     end
 
+    trait :with_items do
+      after(:create) do |instance, evaluator|
+        seed_base_items if BaseItem.count.zero?
+        Organization.seed_items(instance)
+      end
+    end
+
     after(:create) do |instance, evaluator|
       Organization.seed_items(instance) unless evaluator.skip_items
     end

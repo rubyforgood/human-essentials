@@ -27,7 +27,7 @@ RSpec.describe "Admin", type: :request do
         get admin_dashboard_path
         expect(response).to be_successful
 
-        edit_user_path_pattern = %r{admin/users/#{user_with_name.id}/edit\?organization_id=\w+}
+        edit_user_path_pattern = %r{admin/users/#{user_with_name.id}/edit}
         expect(response.body).to match(edit_user_path_pattern)
       end
     end
@@ -44,7 +44,7 @@ RSpec.describe "Admin", type: :request do
         get admin_dashboard_path
         expect(response).to be_successful
 
-        edit_user_path_pattern = %r{admin/users/#{user_without_name.id}/edit\?organization_id=\w+}
+        edit_user_path_pattern = %r{admin/users/#{user_without_name.id}/edit}
         expect(response.body).to match(edit_user_path_pattern)
       end
     end
@@ -55,7 +55,7 @@ RSpec.describe "Admin", type: :request do
       [@organization_admin, @user].each do |u|
         sign_in(u)
         get admin_dashboard_path
-        expect(response).to redirect_to(dashboard_path)
+        expect(response).to redirect_to(dashboard_path(organization_name: u.organization))
         expect(response).to have_error
       end
     end

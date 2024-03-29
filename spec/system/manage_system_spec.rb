@@ -19,7 +19,7 @@ RSpec.describe "Organization Administration", type: :system, js: true do
     end
 
     it "can bail back to their own site as a user" do
-      expect(page).to have_xpath("//a[@href='#{dashboard_path(organization_id: @organization.to_param)}']")
+      expect(page).to have_xpath("//a[@href='#{dashboard_path(organization_name: @organization.to_param)}']")
     end
 
     it "can edit the properties for an organization as an admin" do
