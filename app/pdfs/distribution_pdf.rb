@@ -217,21 +217,22 @@ class DistributionPdf
         ""]]
   end
 
-  # private
+  def hide_columns(data)
+    column_names_to_hide.each do |col_name|
+      col_index = data.first.find_index(col_name)
+      data.each { |line| line.delete_at(col_index) } if col_index.present?
+    end
+    data
+  end
+
+  private
 
   def column_names_to_hide
+    # this method could maybe use a mapping variable to avoid so many conditionals.
     @print_params.each_with_object([]) do |(param, _), columns|
       columns.push("Value/item", "In-Kind Value Received") if param == "hide_values" && @distribution.request.present?
       columns.push("Value/item", "In-Kind Value") if param == "hide_values" && @distribution.request.nil?
       columns.push("Packages") if param == "hide_packages"
     end
-  end
-
-  def hide_columns(data)
-    column_names_to_hide.each do |col_name|
-      col_index = data.first.find_index(col_name)
-      data.each { |line| line.delete_at(col_index) } unless col_index.nil?
-    end
-    data
   end
 end
