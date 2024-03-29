@@ -118,7 +118,7 @@ class StorageLocationsController < ApplicationController
       redirect_to storage_locations_path, notice: "Storage Location deactivated successfully"
     else
       redirect_back(fallback_location: storage_locations_path,
-                    error: "Cannot deactivate storage location containing inventory items with non-zero quantities")
+        error: "Cannot deactivate storage location containing inventory items with non-zero quantities")
     end
   end
 
