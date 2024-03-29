@@ -47,7 +47,7 @@ class ApplicationController < ActionController::Base
   end
   helper_method :organization_url_options
 
-  # override Rails' default_url_options to ensure organization_id is added to
+  # override Rails' default_url_options to ensure organization_name is added to
   # each URL generated
   def default_url_options(options = {})
     # Early return if the request is not authenticated and no
