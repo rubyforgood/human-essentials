@@ -1,6 +1,6 @@
 RSpec.feature "Distributions by County", type: :system do
   let(:default_params) do
-    {organization_id: @organization.to_param}
+    {organization_name: @organization.to_param}
   end
 
   include_examples "distribution_by_county"
