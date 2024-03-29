@@ -6,7 +6,9 @@ describe DistributionPdf do
   let(:item2) { FactoryBot.create(:item, name: "Item 2", value_in_cents: 200) }
   let(:item3) { FactoryBot.create(:item, name: "Item 3", value_in_cents: 300) }
   let(:item4) { FactoryBot.create(:item, name: "Item 4", package_size: 25, value_in_cents: 400) }
-  let(:print_params) { {"hide_values" => "1", "hide_packages" => "1"} }
+  let(:params_hide_values) { {"hide_values" => "1"} }
+  let(:params_hide_packages) { {"hide_packages" => "1"} }
+
   before(:each) do
     FactoryBot.create(:line_item, itemizable: distribution, item: item1, quantity: 50)
     FactoryBot.create(:line_item, itemizable: distribution, item: item2, quantity: 100)
@@ -41,7 +43,7 @@ describe DistributionPdf do
 
   context "with request data" do
     specify "#hide_columns" do
-      pdf = described_class.new(@organization, distribution, print_params)
+      pdf = described_class.new(@organization, distribution, params_hide_values.merge(params_hide_packages))
       data = pdf.request_data
       results = pdf.hide_columns(data)
       expect(results).to eq([
@@ -54,12 +56,13 @@ describe DistributionPdf do
         ["Total Items Received", 200, 150]
       ])
     end
+    # add specs with different set of params
   end
 
   context "with non request data" do
     specify "#hide_columns" do
-      distribution.request = nil
-      pdf = described_class.new(@organization, distribution, print_params)
+      Request.find_by(distribution:).destroy
+      pdf = described_class.new(@organization, distribution, params_hide_values.merge(params_hide_packages))
       data = pdf.non_request_data
       results = pdf.hide_columns(data)
       expect(results).to eq([
@@ -70,6 +73,7 @@ describe DistributionPdf do
         ["Total Items Received", 150]
       ])
     end
+    # add specs with different set of params
   end
 end
 # rubocop:enable Layout/ArrayAlignment

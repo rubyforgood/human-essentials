@@ -86,7 +86,9 @@
             <% if @distribution.future? || current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
               <%= edit_button_to edit_distribution_path(@distribution), {text: "Make a Correction", size: "md"} %>
             <% end %>
-            <%= render partial: "print_button_with_options" %>
+            <div class="mt-1">
+              <%= render partial: "print_button_with_options" %> <!-- where to place ? -->
+            </div>
           </div>
         </div>
       </div>
