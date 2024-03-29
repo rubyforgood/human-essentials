@@ -187,3 +187,10 @@ select.selectpicker + .dropdown-toggle::after {
 .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
   background-color: #8282df
 }
+
+div.warning {
+  color: #e15563;
+  margin: 5px;
+  text-align: center;
+}
+
