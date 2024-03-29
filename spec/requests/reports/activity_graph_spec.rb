@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Reports::ActivityGraph", type: :request do
   let(:default_params) do
-    {organization_id: @organization.to_param}
+    {organization_name: @organization.to_param}
   end
 
   describe "while signed in" do
