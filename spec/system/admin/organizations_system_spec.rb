@@ -81,7 +81,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true do
       end
 
       expect(page.find("h1")).to have_text(foo_org.name)
-      expect(page).to have_link("Home", href: "#{admin_dashboard_path}?organization_id=admin")
+      expect(page).to have_link("Home", href: admin_dashboard_path)
 
       expect(page).to have_content("Organization Info")
       expect(page).to have_content("Contact Info")

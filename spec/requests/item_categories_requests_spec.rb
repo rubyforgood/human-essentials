@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "ItemCategories", type: :request do
-  let(:default_params) { {organization_id: @organization.to_param} }
+  let(:default_params) { {organization_name: @organization.to_param} }
 
   before do
     sign_in(@user)
