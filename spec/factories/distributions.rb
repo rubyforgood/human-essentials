@@ -26,6 +26,10 @@ FactoryBot.define do
     delivery_method { :pick_up }
     state { :scheduled }
 
+    trait :past do
+      issued_at { 1.week.ago }
+    end
+
     trait :with_items do
       transient do
         item_quantity { 100 }
