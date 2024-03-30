@@ -69,6 +69,10 @@ class ProductDrive < ApplicationRecord
     @search_date_range = { start_date: dates[0], end_date: dates[1] }
   end
 
+  # quantities are FILTERED by date then SORTED by name
+  #
+  # @param date_range [Range]
+  # @return [Array<Integer>]
   def item_quantities_by_name_and_date(date_range)
     quantities = donations.joins(:line_items)
       .during(date_range)

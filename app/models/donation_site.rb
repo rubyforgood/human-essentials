@@ -3,6 +3,7 @@
 # Table name: donation_sites
 #
 #  id              :integer          not null, primary key
+#  active          :boolean          default(TRUE)
 #  address         :string
 #  contact_name    :string
 #  email           :string
@@ -34,6 +35,9 @@ class DonationSite < ApplicationRecord
     where(organization: organization)
       .order(:name)
   }
+
+  scope :active, -> { where(active: true) }
+
   scope :alphabetized, -> { order(:name) }
 
   def self.import_csv(csv, organization)
@@ -50,5 +54,9 @@ class DonationSite < ApplicationRecord
 
   def csv_export_attributes
     [name, address, contact_name, email, phone]
+  end
+
+  def deactivate!
+    update!(active: false)
   end
 end
