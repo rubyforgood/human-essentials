@@ -119,7 +119,7 @@ RSpec.describe Kit, type: :model do
   describe '#can_deactivate?' do
     context 'with inventory' do
       it 'should return false' do
-        kit = create(:kit, :with_item)
+        kit = create(:kit, :with_item, organization: @organization)
         TestInventory.create_inventory(@organization, {
           @organization.storage_locations.first.id => {
             kit.item.id => 10
