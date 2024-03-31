@@ -24,7 +24,7 @@ end
 FactoryBot.define do
   factory :request do
     partner { Partner.try(:first) || create(:partner) }
-    organization { Organization.try(:first) || create(:organization, skip_items: true) }
+    organization { Organization.try(:first) || create(:organization, :with_items) }
     request_items { random_request_items }
     comments { "Urgent" }
     partner_user { ::User.partner_users.first || create(:partners_user) }
