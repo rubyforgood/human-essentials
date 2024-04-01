@@ -68,6 +68,13 @@ FactoryBot.define do
       end
     end
 
+    factory :ndbn_user do
+      name { "NDBN User" }
+      after(:create) do |user|
+        user.add_role(Role::NDBN)
+      end
+    end
+
     factory :super_admin_no_org do
       name { "Administrative User No Org" }
       after(:create) do |user, evaluator|

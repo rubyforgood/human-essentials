@@ -23,6 +23,12 @@ RSpec.describe "Admin::UsersController", type: :request do
         expect(response.body).to include('Org ABC')
         expect(response.body).to include('Partner XYZ')
       end
+
+      it 'renders a role that has no resource' do
+        AddRoleService.call(user_id: user.id, resource_type: Role::NDBN)
+        get edit_admin_user_path(user)
+        expect(response.body).to include('NDBN')
+      end
     end
 
     describe "PATCH #update" do

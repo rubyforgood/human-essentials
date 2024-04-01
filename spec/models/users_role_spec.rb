@@ -15,6 +15,13 @@ RSpec.describe UsersRole, type: :model do
       end
     end
 
+    context "for ndbn member" do
+      it "should return still return org user role" do
+        user = FactoryBot.create(:ndbn_user)
+        expect(described_class.current_role_for(user).name).to eq("org_user")
+      end
+    end
+
     context "for org admin" do
       it "should return org admin" do
         user = FactoryBot.create(:organization_admin)

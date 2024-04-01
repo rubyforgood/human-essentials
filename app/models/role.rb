@@ -30,12 +30,14 @@ class Role < ApplicationRecord
   ORG_ADMIN = :org_admin
   SUPER_ADMIN = :super_admin
   PARTNER = :partner
+  NDBN = :ndbn
 
   TITLES = {
     org_user: "Organization",
     org_admin: "Organization Admin",
     partner: "Partner",
-    super_admin: "Super admin"
+    super_admin: "Super admin",
+    ndbn: "NDBN"
   }.freeze
 
   TITLE_TO_RESOURCE = {

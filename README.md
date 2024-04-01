@@ -124,6 +124,24 @@ You can sign up [here](https://join.slack.com/t/rubyforgood/shared_invite/zt-21p
   ```
 </details>
 
+<details>
+  <summary> Other 👥 </summary>
+
+  ```
+    NDBN User (also Org Admin)
+    Email: ndbn_admin@example.com
+    Password: password!
+
+    NDBN User (also Super Admin)
+    Email: ndbn_super_admin@example.com
+    Password: password!
+
+    NDBN User (also Partner)
+    Email: ndbn_partner@example.com
+    Password: password!
+  ```
+</details>
+
 ## Troubleshooting 👷🏼‍♀️
 
 Please let us know by opening up an issue! We have many new contributors come through and it is likely what you experienced will happen to them as well.

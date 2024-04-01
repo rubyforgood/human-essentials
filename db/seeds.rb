@@ -46,10 +46,8 @@ BaseItem.find_or_create_by!(
 # ----------------------------------------------------------------------------
 # NDBN Members
 # ----------------------------------------------------------------------------
-#
-NDBNMember.create!(ndbn_member_id: 10000, account_name: "Pawnee")
-NDBNMember.create!(ndbn_member_id: 20000, account_name: "Other Spot")
-NDBNMember.create!(ndbn_member_id: 30000, account_name: "Amazing Place")
+seed_file = File.open(Rails.root.join("spec", "fixtures", "ndbn-small-import.csv"))
+SyncNDBNMembers.new(seed_file).call
 
 # ----------------------------------------------------------------------------
 # Organizations
@@ -123,19 +121,25 @@ end
 # ----------------------------------------------------------------------------
 
 [
-  { email: 'superadmin@example.com', organization_admin: false, super_admin: true },
-  { email: 'org_admin1@example.com', organization_admin: true,  organization: pdx_org },
-  { email: 'org_admin2@example.com', organization_admin: true,  organization: sf_org },
-  { email: 'user_1@example.com',     organization_admin: false, organization: pdx_org },
-  { email: 'user_2@example.com',     organization_admin: false, organization: sf_org },
-  { email: 'test@example.com',       organization_admin: false, organization: pdx_org, super_admin: true },
-  { email: 'test2@example.com',      organization_admin: true,  organization: pdx_org }
+  {email: "superadmin@example.com", organization_admin: false, super_admin: true},
+  {email: "org_admin1@example.com", organization_admin: true, organization: pdx_org},
+  {email: "org_admin2@example.com", organization_admin: true, organization: sf_org},
+  {email: "user_1@example.com", organization_admin: false, organization: pdx_org},
+  {email: "user_2@example.com", organization_admin: false, organization: sf_org},
+  {email: "test@example.com", organization_admin: false, organization: pdx_org, super_admin: true},
+  {email: "test2@example.com", organization_admin: true, organization: pdx_org},
+  {email: "ndbn_admin@example.com", organization_admin: true, organization: pdx_org, ndbn: true},
+  {email: "ndbn_super_admin@example.com", organization_admin: false, super_admin: true, ndbn: true}
 ].each do |user_data|
   user = User.create(
     email: user_data[:email],
-    password: 'password!',
-    password_confirmation: 'password!'
+    password: "password!",
+    password_confirmation: "password!"
   )
+
+  if user_data[:ndbn]
+    user.add_role(:ndbn)
+  end
 
   if user_data[:organization]
     user.add_role(:org_user, user_data[:organization])
@@ -182,6 +186,12 @@ note = [
     notes: note.sample
   },
   {
+    name: "NDBN Partner",
+    email: "ndbn_partner@example.com",
+    status: :approved,
+    notes: note.sample
+  },
+  {
     name: "Pawnee Homeless Shelter",
     email: "invited@pawneehomeless.com",
     status: :invited,
@@ -205,27 +215,28 @@ note = [
     partner.partner_group = pdx_org.partner_groups.first
   end
 
+
   profile = Partners::Profile.create!({
-                                        essentials_bank_id: p.organization_id,
-                                        partner_id: p.id,
-                                        address1: Faker::Address.street_address,
-                                        address2: "",
-                                        city: Faker::Address.city,
-                                        state: Faker::Address.state_abbr,
-                                        zip_code: Faker::Address.zip,
-                                        website: Faker::Internet.domain_name,
-                                        zips_served: Faker::Address.zip,
-                                        executive_director_name: Faker::Name.name,
-                                        executive_director_email: p.email,
-                                        executive_director_phone: Faker::PhoneNumber.phone_number,
-                                        primary_contact_name: Faker::Name.name,
-                                        primary_contact_email: Faker::Internet.email,
-                                        primary_contact_phone: Faker::PhoneNumber.phone_number,
-                                        primary_contact_mobile: Faker::PhoneNumber.phone_number,
-                                        pick_up_name: Faker::Name.name,
-                                        pick_up_email: Faker::Internet.email,
-                                        pick_up_phone: Faker::PhoneNumber.phone_number
-                                      })
+    essentials_bank_id: p.organization_id,
+    partner_id: p.id,
+    address1: Faker::Address.street_address,
+    address2: "",
+    city: Faker::Address.city,
+    state: Faker::Address.state_abbr,
+    zip_code: Faker::Address.zip,
+    website: Faker::Internet.domain_name,
+    zips_served: Faker::Address.zip,
+    executive_director_name: Faker::Name.name,
+    executive_director_email: p.email,
+    executive_director_phone: Faker::PhoneNumber.phone_number,
+    primary_contact_name: Faker::Name.name,
+    primary_contact_email: Faker::Internet.email,
+    primary_contact_phone: Faker::PhoneNumber.phone_number,
+    primary_contact_mobile: Faker::PhoneNumber.phone_number,
+    pick_up_name: Faker::Name.name,
+    pick_up_email: Faker::Internet.email,
+    pick_up_phone: Faker::PhoneNumber.phone_number
+  })
 
   user = ::User.create!(
     name: Faker::Name.name,
@@ -249,6 +260,10 @@ note = [
 
   user_2.add_role(:partner, p)
 
+  if partner_option[:email] == "ndbn_partner@example.com"
+    user = User.find_by(email: "ndbn_partner@example.com")
+    user.add_role(:ndbn)
+  end
   #
   # Skip creating records that they would have created after
   # they've accepted the invitation

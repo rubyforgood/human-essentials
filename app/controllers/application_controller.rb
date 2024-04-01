@@ -86,6 +86,10 @@ class ApplicationController < ActionController::Base
       current_user.has_role?(Role::PARTNER, current_partner)
   end
 
+  def authorize_ndbn
+    verboten! unless current_user.has_role?(Role::NDBN)
+  end
+
   def authorize_admin
     verboten! unless current_user.has_role?(Role::SUPER_ADMIN) ||
       current_user.has_role?(Role::ORG_ADMIN, current_organization)

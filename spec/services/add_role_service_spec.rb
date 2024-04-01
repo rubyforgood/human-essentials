@@ -11,6 +11,7 @@ RSpec.describe AddRoleService, type: :service do
         expect(user.has_role?(:org_admin)).to eq(false)
         expect(user.has_role?(:partner)).to eq(false)
         expect(user.has_role?(:super_admin)).to eq(false)
+        expect(user.has_role?(:ndbn)).to eq(false)
       end
 
       it "should add the user role when asked to add admin" do
@@ -19,22 +20,33 @@ RSpec.describe AddRoleService, type: :service do
         expect(user.reload.has_role?(:org_admin, org)).to eq(true)
         expect(user.has_role?(:partner)).to eq(false)
         expect(user.has_role?(:super_admin)).to eq(false)
+        expect(user.has_role?(:ndbn)).to eq(false)
       end
 
       it "works with a partner" do
         described_class.call(user_id: user.id, resource_type: "partner", resource_id: partner.id)
-        expect(user.reload.has_role?(:org_user, org)).to eq(false)
+        expect(user.reload.has_role?(:partner, partner)).to eq(true)
+        expect(user.has_role?(:org_user, org)).to eq(false)
         expect(user.has_role?(:org_admin)).to eq(false)
-        expect(user.has_role?(:partner, partner)).to eq(true)
+        expect(user.has_role?(:super_admin)).to eq(false)
+        expect(user.has_role?(:ndbn)).to eq(false)
+      end
+
+      it "works with a ndbn" do
+        described_class.call(user_id: user.id, resource_type: "ndbn")
+        expect(user.reload.has_role?(:ndbn)).to eq(true)
+        expect(user.has_role?(:org_user, org)).to eq(false)
+        expect(user.has_role?(:org_admin)).to eq(false)
         expect(user.has_role?(:super_admin)).to eq(false)
       end
 
       it "works with super admin" do
         described_class.call(user_id: user.id, resource_type: "super_admin")
-        expect(user.reload.has_role?(:org_user, org)).to eq(false)
+        expect(user.reload.has_role?(:super_admin)).to eq(true)
+        expect(user.has_role?(:org_user, org)).to eq(false)
         expect(user.has_role?(:org_admin)).to eq(false)
         expect(user.has_role?(:partner)).to eq(false)
-        expect(user.has_role?(:super_admin)).to eq(true)
+        expect(user.has_role?(:ndbn)).to eq(false)
       end
     end
 
@@ -45,9 +57,10 @@ RSpec.describe AddRoleService, type: :service do
           described_class.call(user_id: user.id, resource_type: "org_user", resource_id: org.id)
         }.to raise_error("User User XYZ already has role for Org ABC")
         expect(user.reload.has_role?(:org_user, org)).to eq(true)
-        expect(user.reload.has_role?(:org_admin)).to eq(false)
-        expect(user.reload.has_role?(:partner)).to eq(false)
-        expect(user.reload.has_role?(:super_admin)).to eq(false)
+        expect(user.has_role?(:org_admin)).to eq(false)
+        expect(user.has_role?(:partner)).to eq(false)
+        expect(user.has_role?(:super_admin)).to eq(false)
+        expect(user.has_role?(:ndbn)).to eq(false)
       end
 
       it "should raise an error for super admin" do
@@ -56,9 +69,10 @@ RSpec.describe AddRoleService, type: :service do
           described_class.call(user_id: user.id, resource_type: "super_admin")
         }.to raise_error("User User XYZ already has super admin role!")
         expect(user.reload.has_role?(:org_user, org)).to eq(false)
-        expect(user.reload.has_role?(:org_admin)).to eq(false)
-        expect(user.reload.has_role?(:partner)).to eq(false)
-        expect(user.reload.has_role?(:super_admin)).to eq(true)
+        expect(user.has_role?(:org_admin)).to eq(false)
+        expect(user.has_role?(:partner)).to eq(false)
+        expect(user.has_role?(:super_admin)).to eq(true)
+        expect(user.has_role?(:ndbn)).to eq(false)
       end
     end
   end

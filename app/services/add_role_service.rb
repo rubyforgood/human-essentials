@@ -8,11 +8,13 @@ class AddRoleService
       add_super_admin(user)
       return
     end
+
     klass = Role::TITLE_TO_RESOURCE[resource_type.to_sym]
-    resource = klass.find(resource_id)
+    resource = klass&.find(resource_id)
     if user.has_role?(resource_type, resource)
       raise "User #{user.display_name} already has role for #{resource.name}"
     end
+
     user.add_role(resource_type, resource)
     if resource_type.to_sym == Role::ORG_ADMIN
       user.add_role(:org_user, resource)
