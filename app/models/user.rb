@@ -118,6 +118,7 @@ class User < ApplicationRecord
   def switchable_roles
     all_roles = roles.to_a.group_by(&:resource_id)
     all_roles.values.each do |role_list|
+      role_list.delete_if { |r| r.name == Role::NDBN.to_s }
       if role_list.any? { |r| r.name == Role::ORG_ADMIN.to_s }
         role_list.delete_if { |r| r.name == Role::ORG_USER.to_s }
       end

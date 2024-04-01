@@ -63,7 +63,7 @@
   <!-- =============================================== -->
   <%# If there's no organization set, most of these routes won't work. %>
   <% if user_signed_in? %>
-    <% if admin_namespace? %>
+    <% if admin_namespace? || super_admin_ndbn_namespace? %>
       <%= render partial: "layouts/lte_admin_sidebar" %>
     <% else %>
       <%= render partial: "layouts/lte_sidebar" %>

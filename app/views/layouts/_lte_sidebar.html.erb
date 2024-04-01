@@ -168,6 +168,13 @@
           <i class="nav-icon fa fa-circle-o"></i> Vendors
         <% end %>
       </li>
+      <% if current_user.has_role?(Role::NDBN) %>
+        <li class="nav-item <%= active_class(['ndbm_members']) %>">
+          <%= link_to(ndbn_members_path(organization_id: current_user.organization), class: "nav-link #{active_class(['ndbn_members'])}") do %>
+            <i class="nav-icon fa fa-circle-o"></i> NDBN Member Upload
+          <% end %>
+        </li>
+      <% end %>
     </ul>
   </li>
   <% if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>

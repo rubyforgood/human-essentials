@@ -223,6 +223,8 @@ Rails.application.routes.draw do
     get "historical_trends/donations", to: "historical_trends/donations#index"
   end
 
+  resources :ndbn_members, only: %i(index create)
+
   resources :attachments, only: %i(destroy)
   get "distributions/calendar", to: "distributions#calendar"
 

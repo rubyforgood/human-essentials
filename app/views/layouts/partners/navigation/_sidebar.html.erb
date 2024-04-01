@@ -50,4 +50,12 @@
       <% end %>
     </li>
   <% end %>
+  <% if current_user.has_role?(Role::NDBN) %>
+    <li class="nav-item <%= active_class(['ndbm_members']) %>">
+      <%= link_to(ndbn_members_path(organization_id: current_user.organization_id), class: "nav-link #{active_class(['ndbn_members'])}") do %>
+        <i class="nav-icon fa fa-cloud-upload"></i>
+        NDBN Member Upload
+      <% end %>
+    </li>
+  <% end %>
 </ul>

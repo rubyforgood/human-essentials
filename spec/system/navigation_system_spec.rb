@@ -12,8 +12,23 @@ RSpec.describe "Navigation", type: :system, js: true do
 
       it "shows navigation options" do
         sidebar = page.find(".sidebar")
+        expect(sidebar).to_not have_link("NDBN Member Upload")
         links.each do |title|
           expect(sidebar).to have_link(title)
+        end
+      end
+
+      context "user has NDBN role" do
+        let(:user) do
+          user = create(:organization_admin)
+          user.add_role(:ndbn)
+          user
+        end
+
+        it "shows NDBN Member Upload" do
+          sidebar = page.find(".sidebar")
+          click_link("Community")
+          expect(sidebar).to have_link("NDBN Member Upload")
         end
       end
 
@@ -43,6 +58,7 @@ RSpec.describe "Navigation", type: :system, js: true do
 
       it "shows navigation options" do
         sidebar = page.find(".sidebar")
+        expect(sidebar).to_not have_link("NDBN Member Upload")
         links.each do |title|
           expect(sidebar).to have_link(title)
         end
@@ -57,6 +73,20 @@ RSpec.describe "Navigation", type: :system, js: true do
             expect(label).to match_style(width: "0px")
             expect(links).to include(label.text(:all))
           end
+        end
+      end
+
+      context "user has NDBN role" do
+        let(:user) do
+          user = create(:super_admin)
+          user.add_role(:ndbn)
+          user
+        end
+
+        it "shows NDBN Member Upload" do
+          sidebar = page.find(".sidebar")
+          click_link("Organizations")
+          expect(sidebar).to have_link("NDBN Member Upload")
         end
       end
     end

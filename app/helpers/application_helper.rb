@@ -75,6 +75,15 @@ module ApplicationHelper
     request.path_info.include?('admin')
   end
 
+  def super_admin_ndbn_namespace?
+    return false unless current_user
+
+    has_role = current_user.has_role?(Role::SUPER_ADMIN) && current_user.has_role?(Role::NDBN)
+    ndbn_namespace = request.path_info.include?('ndbn_members')
+
+    has_role && ndbn_namespace
+  end
+
   def fullstory_script(current_user: nil)
     base_script = <<-HTML
       window['_fs_debug'] = false;

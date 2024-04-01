@@ -1,68 +1,58 @@
 describe SyncNDBNMembers do
-  describe ".sync" do
-    subject { -> { described_class.sync } }
-    let(:ndbn_member_id) { 200040 }
-    let(:account_name) { "New Super Baby" }
-    let(:fake_html_body) do
-      <<-HTML
-      <table class="contentpaneopen">
-      <tbody><tr>
-      <td valign="top"><div class="content-wrapper" style="width: 690px;">
-      <h1>Organizational Member IDs</h1>
-      <p><strong>ID&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Account Name</strong></p>
-      <p><span style="font-size: 15px;">20040&nbsp;&nbsp;&nbsp; (914) Cares</span></p>
-      <p>#{ndbn_member_id}&nbsp;&nbsp;&nbsp; #{account_name}</p>
+  let(:large_input) { File.open(Rails.root.join("spec", "fixtures", "ndbn-large-import.csv")) }
+  let(:small_input) { File.open(Rails.root.join("spec", "fixtures", "ndbn-small-import.csv")) }
 
-      </div></td>
-      </tr>
-
-      </tbody></table>
-      HTML
-    end
-
-    before do
-      stub_request(:get, SyncNDBNMembers::NDBN_MEMBERS_PAGE).to_return(body: fake_html_body)
-    end
-
-    context "when the HTTP request does not get a response of 200" do
-      let(:failed_status_code) { 500 }
-      before do
-        stub_request(:get, SyncNDBNMembers::NDBN_MEMBERS_PAGE).to_return(status: failed_status_code)
+  describe "#sync_from_csv" do
+    # Small CSV Input
+    # Updated: 1/10/2024,
+    # NDBN Member Number,Member Name
+    # 10000 Homeless Shelter
+    # 20000 Other Spot
+    # 20000                       #Blank
+    # 30000 Amazing Place
+    # 10000 Pawnee
+    context "with a small file" do
+      let!(:service) do
+        service = SyncNDBNMembers.new(small_input)
+        service.call
+        service
       end
 
-      it "should raise an error regarding the response code" do
-        expect { subject.call }.to raise_error("SyncNDBNMembers.sync failed due to getting a status code of #{failed_status_code}")
+      it "overwrites existing names with new names if shared member id" do
+        want = ["Other Spot", "Amazing Place", "Pawnee"]
+        expect(NDBNMember.pluck(:account_name)).to match_array(want)
+      end
+
+      it "does not have errors if fields are nil" do
+        expect(service.errors).to be_empty
+      end
+
+      it "does not override if name is blank" do
+        expect(NDBNMember.find_by(ndbn_member_id: 20000).account_name).to eq("Other Spot")
       end
     end
 
-    context "when the HTTP request is successful" do
-      before do
-        stub_request(:get, SyncNDBNMembers::NDBN_MEMBERS_PAGE).to_return(body: fake_html_body)
+    context "with a large file" do
+      it "parses from an uploaded CSV file" do
+        service = SyncNDBNMembers.new(large_input)
+        service.call
+
+        expect(NDBNMember.count).to eq(83)
+
+        a_baby_center = NDBNMember.find_by(ndbn_member_id: 12001)
+        expect(a_baby_center.account_name).to eq "A Baby Center"
+
+        weld_county = NDBNMember.find_by(ndbn_member_id: 20047)
+        expect(weld_county.account_name).to eq("Covering Weld; United Way of Weld County")
       end
+    end
 
-      context "when there are no exisiting NDBN Member records" do
-        it "should create the NDBN Member records" do
-          expect { subject.call }.to change { NDBNMember.count }.from(0).to(2)
-        end
-      end
+    context "with file that is nil" do
+      it "does adds error" do
+        service = SyncNDBNMembers.new(nil)
+        service.call
 
-      context "when the account name of a NDBN Member has changed" do
-        let(:old_account_name) { "Super Baby" }
-
-        before do
-          create(:ndbn_member, ndbn_member_id: ndbn_member_id, account_name: old_account_name)
-        end
-
-        it "should update the account name of the corresponding NDBN Member" do
-          expect { subject.call }.to change { NDBNMember.find_by(ndbn_member_id: ndbn_member_id).account_name }.from(old_account_name).to(account_name)
-        end
-      end
-
-      context "when no new NDBN Member has been added" do
-        it "should not add any new NDBN Members" do
-          expect { subject.call }.to change { NDBNMember.count }.from(0).to(2)
-          expect { subject.call }.not_to change { NDBNMember.count }
-        end
+        expect(service.errors).to contain_exactly("CSV upload is required")
       end
     end
   end
