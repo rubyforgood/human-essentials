@@ -92,5 +92,4 @@ class Event < ApplicationRecord
     end
     raise e
   end
-
 end
