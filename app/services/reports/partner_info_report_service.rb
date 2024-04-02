@@ -33,7 +33,7 @@ module Reports
     end
 
     def partner_agency_counts
-      partner_agency_profiles.map(&:agency_type).tally
+      partner_agency_profiles.map(&:agency_type_description).tally
     end
 
     def partner_zipcodes_serviced

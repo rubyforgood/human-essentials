@@ -5,8 +5,8 @@
     <%# The field for inputting the name registers it as partner.name,  %>
     <%# not partner_profile.name, so this pulls from partner.name %>
     <p>Name: <%= @partner.name %></p>
-    <p>Agency Type: <%= partner_profile.agency_type %>
-    <% if partner_profile.agency_type == "Other" && partner_profile.other_agency_type %>
+    <p>Agency Type: <%= partner_profile.agency_type_description %>
+    <% if partner_profile.agency_type_OTHER? && partner_profile.other_agency_type %>
       (<%= partner_profile.other_agency_type %>)
     <% end %>
     </p>

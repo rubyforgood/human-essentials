@@ -6,9 +6,9 @@
       <dd><%= profile.partner.name %></dd>
 
       <dt>Agency Type</dt>
-      <dd><%= profile.agency_type %></dd>
+      <dd><%= profile.agency_type_description %></dd>
 
-      <% if profile.agency_type == "Other" %>
+      <% if profile.agency_type_OTHER? %>
         <dt>Other Agency Type</dt>
         <dd><%= profile.other_agency_type %></dd>
       <% end %>
