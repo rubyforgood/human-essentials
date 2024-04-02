@@ -42,7 +42,7 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
         create_list(:line_item, 5, :distribution, quantity: 20, item: disposable_item, itemizable: dist)
         create_list(:line_item, 5, :distribution, quantity: 30, item: non_disposable_item, itemizable: dist)
       end
-      # 1000
+
       # Donations outside drives
       non_drive_donations = create_list(:donation, 2,
                                         product_drive: nil,
