@@ -1,14 +1,20 @@
-import { Controller } from "@hotwired/stimulus"
+import { Controller } from "@hotwired/stimulus";
 
 // Connects to data-controller="form-input"
 export default class extends Controller {
-  static targets = ["addButton", "addTemplate", "removeContainer", "addContainer"];
+  static targets = [
+    "addButton",
+    "addTemplate",
+    "removeContainer",
+    "addContainer",
+  ];
 
   // requires data-add-dest-selector to be set on the add button OR
   // data-form-input-target="addContainer" to be set on the add container
   addItem(event) {
     const template = this.addTemplateTarget.content.firstElementChild.outerHTML;
-    const dest = document.querySelector(event.target.dataset.addDestSelector) ||
+    const dest =
+      document.querySelector(event.target.dataset.addDestSelector) ||
       this.addContainerTarget;
 
     const uniqId = new Date().getTime();
@@ -16,8 +22,10 @@ export default class extends Controller {
 
     dest.insertAdjacentHTML("beforeend", rendered);
 
-    var afterInsert = new CustomEvent('cocoon:after-insert',
-      { bubbles: true, detail: [rendered, event, dest.lastElementChild] });
+    var afterInsert = new CustomEvent("form-input-after-insert", {
+      bubbles: true,
+      detail: dest.lastElementChild,
+    });
 
     dest.dispatchEvent(afterInsert);
   }
@@ -25,7 +33,8 @@ export default class extends Controller {
   // requires data-remove-parent-selector to be set on the remove button OR
   // data-form-input-target="removeContainer" to be set on the container to remove
   removeItem(event) {
-    const wrapper = event.target.closest(event.target.dataset.removeParentSelector) ||
+    const wrapper =
+      event.target.closest(event.target.dataset.removeParentSelector) ||
       this.removeContainerTarget;
     const removeSoft = event.target.dataset.removeSoft === "false";
 
