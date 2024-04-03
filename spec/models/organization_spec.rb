@@ -8,7 +8,6 @@
 #  default_storage_location       :integer
 #  distribute_monthly             :boolean          default(FALSE), not null
 #  email                          :string
-#  email_notification_opt_in      :boolean
 #  enable_child_based_requests    :boolean          default(TRUE), not null
 #  enable_individual_requests     :boolean          default(TRUE), not null
 #  enable_quantity_based_requests :boolean          default(TRUE), not null
