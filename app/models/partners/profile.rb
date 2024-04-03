@@ -138,7 +138,7 @@ module Partners
       "2YCOLLEGE" => "Two-Year College",
       "WIC" => "Women, Infants and Children",
       "OTHER" => "Other"
-    }, prefix: 'agency_type'
+    }, prefix: "agency_type"
 
     self.ignored_columns = %w[
       evidence_based_description
