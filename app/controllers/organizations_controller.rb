@@ -69,12 +69,14 @@ class OrganizationsController < ApplicationController
     user = User.with_discarded.find_by!(id: params[:user_id])
     raise ActiveRecord::RecordNotFound unless user.has_role?(Role::ORG_USER, current_organization)
     user.discard!
+    redirect_to user_update_redirect_path, notice: "User has been deactivated."
   end
 
   def reactivate_user
     user = User.with_discarded.find_by!(id: params[:user_id])
     raise ActiveRecord::RecordNotFound unless user.has_role?(Role::ORG_USER, current_organization)
     user.undiscard!
+    redirect_to user_update_redirect_path, notice: "User has been reactivated."
   end
 
   def opt_in_email_notification
