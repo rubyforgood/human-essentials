@@ -270,11 +270,9 @@ class Organization < ApplicationRecord
       OrganizationMailer.request_submission_notification(organization: self, partner: partner).deliver_now
       self.email_notification_opt_in = true
       save
-      return :notification_sent
     else
       self.email_notification_opt_in = false
       save
-      return :notification_not_sent
     end
   end
 
