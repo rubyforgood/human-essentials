@@ -79,17 +79,6 @@ class OrganizationsController < ApplicationController
     redirect_to user_update_redirect_path, notice: "User has been reactivated."
   end
 
-  def opt_in_email_notification
-    organization = Organization.find(params[:id])
-    organization.update(email_notification_opt_in: true)
-    render json: { message: "Email notifications opted in successfully" }
-  end
-
-  def opt_out_email_notification
-    organization = Organization.find(params[:id])
-    organization.update(email_notification_opt_in: false)
-    render json: { message: "Email notifications opted out successfully" }
-  end
 
   private
 
@@ -109,7 +98,7 @@ class OrganizationsController < ApplicationController
       :repackage_essentials, :distribute_monthly,
       :ndbn_member_id, :enable_child_based_requests,
       :enable_individual_requests, :enable_quantity_based_requests,
-      :ytd_on_distribution_printout, :one_step_partner_invite,
+      :ytd_on_distribution_printout, :one_step_partner_invite, :opt_in_email_notification, :opt_out_email_notification,
       partner_form_fields: []
     )
   end
