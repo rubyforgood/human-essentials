@@ -18,11 +18,11 @@ RSpec.describe Reports::PartnerInfoReportService, type: :service, skip_seed: tru
 
     it 'should report normal values' do
       p1 = create(:partner, :uninvited, organization: organization, name: 'Partner 1')
-      p1.profile.update!(zips_served: '90210-1234', agency_type: 'CAREER')
+      p1.profile.update!(zips_served: '90210-1234', agency_type: 'career')
       p2 = create(:partner, :uninvited, organization: organization, name: 'Partner 2')
-      p2.profile.update!(zips_served: '12345', agency_type: 'CAREER')
+      p2.profile.update!(zips_served: '12345', agency_type: 'career')
       p3 = create(:partner, :uninvited, organization: organization, name: 'Partner 3')
-      p3.profile.update!(zips_served: '09876-3564', agency_type: 'EDU')
+      p3.profile.update!(zips_served: '09876-3564', agency_type: 'edu')
 
       expect(report.report).to eq({
                                     entries: { "Agency Type: Career technical training" => 2,
