@@ -9,7 +9,7 @@ end
 class OrganizationMailer < ApplicationMailer
   default from: "Please do not reply to this email as this mail box is not monitored — Human Essentials <no-reply@humanessentials.app>"
 
-  def request_submission_notification(organization:, partner:)
+    def partner_approval_request(organization:, partner:)
     @partner = partner
     @organization = organization
 
