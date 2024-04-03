@@ -265,18 +265,6 @@ class Organization < ApplicationRecord
     year
   end
 
-  def send_submission_notification(partner)
-    if email_notification_opt_in?
-      OrganizationMailer.request_submission_notification(organization: self, partner: partner).deliver_now
-      self.email_notification_opt_in = true
-      save
-    else
-      self.email_notification_opt_in = false
-      save
-    end
-  end
-
-
   private
 
   def correct_logo_mime_type
