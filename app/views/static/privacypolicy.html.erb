@@ -5,44 +5,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Human Essentials</title>
 
-  <link rel="stylesheet" href="css/main.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+
   <style>
     p {
         color: #fffbfb;
     }
-    h3 {
+    h3,
+    h4 {
         color: #fffbfb;
+        text-align: center;
     }
     body {
-        margin: 0px;
-        display: grid;
         background-color: #0c84ff;
-    }
-    footer {
-        padding: 0px;
-        padding-top: 30px;
     }
     .hero {
         height: 100%;
     }
   </style>
-
 </head>
 
 <body>
 <!--  Start Hero Section  -->
-<section class="hero">
-  <header>
-    <div class="row">
-        <nav class="top-bar" data-topbar role="navigation" style="text-align: center;">
+  <section class="hero">
+    <header>
+      <div class="grid justify-items-center pt-2">
+        <nav class="top-bar" data-topbar role="navigation">
           <img src="/img/essentials.svg" alt="Essentials Logo (icon)" title="HumanEssentials">
         </nav>
-    </div>
-  </header>
+      </div>
+    </header>
+    <div class="px-6 pb-10 space-y-1 font-sans">
 
-    <div class="row" style="text-align: center;">
-
-      <h3>Last updated: March 7th, 2022</h3>
+      <h4 class="text-lg pt-6 pb-4">Last updated: March 7th, 2022</h4>
 
       <p>
       Ruby for Good operates http://humanessentials.app (the "Site"). This page informs you of our policies regarding the collection, use and disclosure of Personal Information we receive from users of the Site.
@@ -52,13 +47,13 @@
       We use your Personal Information only for providing and improving the Site. By using the Site, you agree to the collection and use of information in accordance with this policy.
       </p>
 
-      <h3>Information Collection And Use</h3>
+      <h3 class="text-xl font-medium pt-4 pb-2">Information Collection And Use</h3>
 
       <p>
       While using our Site, we may ask you to provide us with certain personally identifiable information that can be used to contact or identify you. Personally identifiable information may include, but is not limited to your name, and email ("Personal Information").
       </p>
 
-      <h3>Log Data</h3>
+      <h3 class="text-xl font-medium pt-4 pb-2">Log Data</h3>
 
       <p>
       Like many site operators, we collect information that your browser sends whenever you visit our Site ("Log Data").
@@ -68,13 +63,13 @@
       This Log Data may include information such as your computer's Internet Protocol ("IP") address, browser type, browser version, the pages of our Site that you visit, the time and date of your visit, the time spent on those pages and other statistics.
       </p>
 
-      <h3>Communications</h3>
+      <h3 class="text-xl font-medium pt-4 pb-2">Communications</h3>
 
       <p>
       We may use your Personal Information to contact you with newsletters, website updates, and notifications of website maintenance.
       </p>
 
-      <h3>Cookies</h3>
+      <h3 class="text-xl font-medium pt-4 pb-2">Cookies</h3>
 
       <p>
       Cookies are files with small amount of data, which may include an anonymous unique identifier. Cookies are sent to your browser from a web site and stored on your computer's hard drive.
@@ -84,12 +79,14 @@
       Like many sites, we use "cookies" to collect information. You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do not accept cookies, you may not be able to use some portions of our Site.
       </p>
 
-      <h3>Security</h3>
+      <h3 class="text-xl font-medium pt-4 pb-2">Security</h3>
+
       <p>
       The security of your Personal Information is important to us, but remember that no method of transmission over the Internet, or method of electronic storage, is 100% secure. While we strive to use commercially acceptable means to protect your Personal Information, we cannot guarantee its absolute security.
       </p>
 
-      <h3>Changes To This Privacy Policy</h3>
+      <h3 class="text-xl font-medium pt-4 pb-2">Changes To This Privacy Policy</h3>
+
       <p>
       This Privacy Policy is effective as of March 7th, 2022 and will remain in effect except with respect to any changes in its provisions in the future, which will be in effect immediately after being posted on this page.
       </p>
@@ -102,43 +99,29 @@
       If we make any material changes to this Privacy Policy, we will notify you either through the email address you have provided us, or by placing a prominent notice on our website.
       </p>
 
-      <h3>Contact Us</h3>
+      <h3 class="text-xl font-medium pt-4 pb-2">Contact Us</h3>
 
       <p>
-      If you have any questions about this Privacy Policy, please contact us at info@humanessentials.app.
+      If you have any questions about this Privacy Policy, please contact us at <a href="mailto:info@humanessentials.app?Subject=Questions%20about%20Privacy%20Policy" target="_top">info@humanessentials.app</a>.
       </p>
     </div>
-</section>
-<footer>
-  <div class="row">
-    <div class="small-12 medium-4 large-4 columns">
-      <div class="copyrights">
-        <a class="logo" href="#">
-          <h1>humanessentials<span class="tld">.app</span></h1>
-        </a>
-      </div>
-    </div>
-    <div class="small-12 medium-8 large-8 columns">
-      <div class="contact_details right">
-        <nav class="social">
-          <ul class="no-bullet">
+  </section>
 
-          </ul>
-        </nav>
-
-        <div class="contact">
-          <p>Human Essentials was lovingly</p>
-          <p>swaddled by:</p>
-
-          <p><a href="http://www.pdxdiaperbank.org/">PDX Diaper Bank</a> &</p>
-          <p><a href="http://rubyforgood.org/">Ruby for Good</a></p>
+  <div class="bg-blue-900">
+    <div class="container max-w-7xl mx-auto py-32 text-white">
+      <div class="flex flex-col mx-auto text-center sm:text-left sm:flex-row space-y-10 sm:space-y-0">
+        <div class="w-full sm:w-1/2">
+          <h2 class="text-3xl">HumanEssentials.app</h2>
+        </div>
+        <div class="w-full sm:w-1/2">
+          <strong class="text-white">Human Essentials was lovingly swaddled by:</strong>
+          <div class="sm:mt-1 mt-2">
+            <a class='text-blue-400' href="http://www.pdxdiaperbank.org/">PDX Diaper Bank</a> <span class="text-white"> | </span>
+            <a class='text-blue-400' href="http://rubyforgood.org/">Ruby for Good</a>
+          </div>
         </div>
       </div>
     </div>
-
   </div>
-</footer>
-<!--  End Footer Section  -->
-
 </body>
 </html>
