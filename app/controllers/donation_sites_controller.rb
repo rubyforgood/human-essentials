@@ -4,7 +4,7 @@ class DonationSitesController < ApplicationController
   include Importable
 
   def index
-    @donation_sites = current_organization.donation_sites.all.alphabetized
+    @donation_sites = current_organization.donation_sites.active.alphabetized
     @donation_site = current_organization.donation_sites.new
     respond_to do |format|
       format.html
@@ -52,15 +52,24 @@ class DonationSitesController < ApplicationController
     end
   end
 
-  def destroy
-    current_organization.donation_sites.find(params[:id]).destroy
+  def deactivate
+    donation_site = current_organization.donation_sites.find(params[:id])
+    begin
+      donation_site.deactivate!
+    rescue => e
+      flash[:error] = e.message
+      redirect_back(fallback_location: items_path)
+      return
+    end
+
+    flash[:notice] = "#{donation_site.name} has been deactivated."
     redirect_to donation_sites_path
   end
 
   private
 
   def donation_site_params
-    params.require(:donation_site).permit(:name, :address)
+    params.require(:donation_site).permit(:name, :address, :contact_name, :email, :phone)
   end
 
   helper_method \

@@ -1,6 +1,6 @@
 RSpec.describe DistributionsController, type: :controller do
   let(:default_params) do
-    { organization_id: @organization.to_param }
+    { organization_name: @organization.to_param }
   end
 
   context "While signed in" do
@@ -14,7 +14,7 @@ RSpec.describe DistributionsController, type: :controller do
         let(:storage_location) { create(:storage_location, :with_items, item: item, item_quantity: 20) }
         let(:params) do
           {
-            organization_id: @organization.id,
+            organization_name: @organization.id,
             distribution: {
               partner_id: @partner.id,
               storage_location_id: storage_location.id,
@@ -49,7 +49,7 @@ RSpec.describe DistributionsController, type: :controller do
         end
         let(:params) do
           {
-            organization_id: @organization.id,
+            organization_name: @organization.id,
             distribution: {
               partner_id: @partner.id,
               storage_location_id: storage_location.id,
@@ -88,7 +88,7 @@ RSpec.describe DistributionsController, type: :controller do
         end
         let(:params) do
           {
-            organization_id: @organization.id,
+            organization_name: @organization.id,
             distribution: {
               partner_id: @partner.id,
               storage_location_id: storage_location.id,
@@ -115,7 +115,7 @@ RSpec.describe DistributionsController, type: :controller do
         let(:storage_location) { create(:storage_location, :with_items, item: item, item_quantity: 2) }
         let(:params) do
           {
-            organization_id: @organization.id,
+            organization_name: @organization.id,
             distribution: {
               partner_id: @partner.id,
               storage_location_id: storage_location.id,
@@ -151,7 +151,7 @@ RSpec.describe DistributionsController, type: :controller do
         let(:distribution) { create(:distribution, storage_location: storage_location) }
         let(:params) do
           {
-            organization_id: @organization.id,
+            organization_name: @organization.id,
             id: distribution.id,
             distribution: {
               storage_location_id: distribution.storage_location.id,
@@ -188,7 +188,7 @@ RSpec.describe DistributionsController, type: :controller do
         let(:distribution) { create(:distribution, storage_location: storage_location) }
         let(:params) do
           {
-            organization_id: @organization.id,
+            organization_name: @organization.id,
             id: distribution.id,
             distribution: {
               storage_location_id: distribution.storage_location.id,
@@ -226,7 +226,7 @@ RSpec.describe DistributionsController, type: :controller do
         let(:distribution) { create(:distribution, :with_items, item: item1, storage_location: storage_location) }
         let(:params) do
           {
-            organization_id: @organization.id,
+            organization_name: @organization.id,
             id: distribution.id,
             distribution: {
               storage_location_id: distribution.storage_location.id,
