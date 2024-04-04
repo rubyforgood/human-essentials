@@ -8,7 +8,7 @@ RSpec.describe "Partners profile served area behaviour when accessed as bank", t
       partner_profile: partner1.profile, client_share: 25)
   }
   let!(:default_params) do
-    {organization_id: @organization.to_param, id: partner1.id, partner_id: partner1.id}
+    {organization_name: @organization.to_param, id: partner1.id, partner_id: partner1.id}
   end
 
   context "changing the client share" do
@@ -40,9 +40,11 @@ RSpec.describe "Partners profile served area behaviour when accessed as bank", t
     end
 
     it "handles addition properly" do
-      click_on("Add another county")
+      click_on("Add Another County")
       matching = page.all(".remove_served_area") # The fields have unpredicatable numbers, so I have to count how many *soemthing* there is
       expect(matching.size).to eq(5)
+      select = page.all("select.percentage-selector").last
+      expect(select.value).to eq("")
     end
 
     it "handles deletion properly" do

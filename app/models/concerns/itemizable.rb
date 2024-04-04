@@ -13,6 +13,16 @@ module Itemizable
       line_items.each(&:destroy)
     end
 
+    # @return [Boolean]
+    def has_inactive_item?
+      inactive_items.any?
+    end
+
+    # @return [Array<Item>]
+    def inactive_items
+      line_items.map(&:item).select { |i| !i.active? }
+    end
+
     has_many :line_items, as: :itemizable, inverse_of: :itemizable do
       def assign_insufficiency_errors(insufficiency_hash)
         insufficiency_hash = insufficiency_hash.index_by { |i| i[:item_id] }
@@ -125,7 +135,7 @@ module Itemizable
   end
 
   def line_items_quantity_is_at_least(threshold)
-    return if storage_location.nil?
+    return if respond_to?(:storage_location) && storage_location.nil?
 
     line_items.each do |line_item|
       next unless line_item.item

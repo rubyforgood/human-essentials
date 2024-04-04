@@ -91,13 +91,13 @@ class StorageLocationsController < ApplicationController
 
   def import_inventory
     if params[:file].nil?
-      redirect_back(fallback_location: storage_locations_path(organization_id: current_organization))
+      redirect_back(fallback_location: storage_locations_path)
       flash[:error] = "No file was attached!"
     else
       filepath = params[:file].read
       StorageLocation.import_inventory(filepath, current_organization.id, params[:storage_location])
       flash[:notice] = "Inventory imported successfully!"
-      redirect_back(fallback_location: storage_locations_path(organization_id: current_organization))
+      redirect_back(fallback_location: storage_locations_path)
     end
   end
 
@@ -117,7 +117,7 @@ class StorageLocationsController < ApplicationController
     if svc.call
       redirect_to storage_locations_path, notice: "Storage Location deactivated successfully"
     else
-      redirect_back(fallback_location: storage_locations_path(organization_id: current_organization),
+      redirect_back(fallback_location: storage_locations_path,
         error: "Cannot deactivate storage location containing inventory items with non-zero quantities")
     end
   end
@@ -127,7 +127,7 @@ class StorageLocationsController < ApplicationController
     if @storage_location.undiscard!
       redirect_to storage_locations_path, notice: "Storage Location reactivated successfully"
     else
-      redirect_back(fallback_location: storage_locations_path(organization_id: current_organization), error: "Something didn't work quite right -- try again?")
+      redirect_back(fallback_location: storage_locations_path, error: "Something didn't work quite right -- try again?")
     end
   end
 
