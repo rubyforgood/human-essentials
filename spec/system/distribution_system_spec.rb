@@ -24,21 +24,26 @@ RSpec.feature "Distributions", type: :system do
   end
 
   context "When creating a new distribution manually" do
-    it "Allows a distribution to be created" do
-      visit @url_prefix + "/distributions/new"
+    context "when the delivery_method is not shipped" do
+      it "Allows a distribution to be created and shipping cost field not visible" do
+        visit @url_prefix + "/distributions/new"
 
-      select @partner.name, from: "Partner"
-      select @storage_location.name, from: "From storage location"
-      choose "Pick up"
+        select @partner.name, from: "Partner"
+        select @storage_location.name, from: "From storage location"
+        choose "Pick up"
 
-      fill_in "Comment", with: "Take my wipes... please"
-      fill_in "Distribution date", with: '01/01/2001 10:15:00 AM'
+        fill_in "Comment", with: "Take my wipes... please"
+        fill_in "Distribution date", with: '01/01/2001 10:15:00 AM'
 
-      expect(PartnerMailerJob).to receive(:perform_later).once
-      click_button "Save", match: :first
+        # shipping cost field should not be visible
+        expect { page.find_by_id("shipping_cost_div", wait: 2) }.to raise_error(Capybara::ElementNotFound)
 
-      expect(page).to have_content "Distributions"
-      expect(page.find(".alert-info")).to have_content "reated"
+        expect(PartnerMailerJob).to receive(:perform_later).once
+        click_button "Save", match: :first
+
+        expect(page).to have_content "Distributions"
+        expect(page.find(".alert-info")).to have_content "created"
+      end
     end
 
     it "Displays a complete form after validation errors" do
@@ -57,16 +62,41 @@ RSpec.feature "Distributions", type: :system do
       expect(page).to have_selector "#distribution_line_items"
     end
 
-    context "when the quantity is lower than the on hand minimum quantity" do
-      it "should display an error" do
+    context "when the delivery_method is shipped and shipping cost is none-negative" do
+      it "Allows a distribution to be created" do
         visit @url_prefix + "/distributions/new"
-        item = @storage_location.inventory_items.first.item
-        item.update!(on_hand_minimum_quantity: 5)
-        @storage_location.inventory_items.first.update!(quantity: 20)
 
         select @partner.name, from: "Partner"
         select @storage_location.name, from: "From storage location"
-        select item.name, from: "distribution_line_items_attributes_0_item_id"
+        choose "Shipped"
+
+        # to check if shipping_cost field exist
+        expect(page.find_by_id("shipping_cost_div")).not_to be_nil
+
+        fill_in "Shipping cost", with: '12.05'
+        fill_in "Comment", with: "Take my wipes... please"
+        fill_in "Distribution date", with: '01/01/2001 10:15:00 AM'
+
+        click_button "Save", match: :first
+
+        expect(page).to have_content "Distributions"
+        expect(page.find(".alert-info")).to have_content "created"
+      end
+    end
+
+    context "when the quantity is lower than the on hand minimum quantity" do
+      it "should display an error" do
+        item = View::Inventory.new(@organization.id).items_for_location(@storage_location.id).first.db_item
+        item.update!(on_hand_minimum_quantity: 5)
+        TestInventory.create_inventory(@organization,
+          {
+            @storage_location.id => { item.id => 20 }
+          })
+
+        visit @url_prefix + "/distributions/new"
+        select @partner.name, from: "Partner"
+        select @storage_location.name, from: "From storage location"
+        select2(page, 'distribution_line_items_item_id', item.name, position: 1)
         select @storage_location.name, from: "distribution_storage_location_id"
         fill_in "distribution_line_items_attributes_0_quantity", with: 18
 
@@ -79,11 +109,14 @@ RSpec.feature "Distributions", type: :system do
 
     context "when the quantity is lower than the on hand recommended quantity" do
       it "should display an alert" do
-        visit @url_prefix + "/distributions/new"
-        item = @storage_location.inventory_items.first.item
+        item = View::Inventory.new(@organization.id).items_for_location(@storage_location.id).first.db_item
         item.update!(on_hand_minimum_quantity: 1, on_hand_recommended_quantity: 5)
-        @storage_location.inventory_items.first.update!(quantity: 20)
+        TestInventory.create_inventory(@organization,
+          {
+            @storage_location.id => { item.id => 20 }
+          })
 
+        visit @url_prefix + "/distributions/new"
         select @partner.name, from: "Partner"
         select @storage_location.name, from: "From storage location"
         select item.name, from: "distribution_line_items_attributes_0_item_id"
@@ -106,8 +139,8 @@ RSpec.feature "Distributions", type: :system do
 
         fill_in "Comment", with: "Take my wipes... please"
 
-        item = @storage_location.inventory_items.first.item
-        quantity = @storage_location.inventory_items.first.quantity
+        item = View::Inventory.new(@organization.id).items_for_location(@storage_location.id).first
+        quantity = item.quantity
         select item.name, from: "distribution_line_items_attributes_0_item_id"
         fill_in "distribution_line_items_attributes_0_quantity", with: quantity * 2
 
@@ -117,7 +150,8 @@ RSpec.feature "Distributions", type: :system do
         end.not_to change { Distribution.count }
 
         expect(page).to have_content("New Distribution")
-        expect(page.find(".alert")).to have_content "exceed"
+        message = Event.read_events?(@organization) ? 'Could not reduce quantity' : 'items exceed the available inventory'
+        expect(page.find(".alert")).to have_content message
       end
     end
     context "when there is a default storage location" do
@@ -147,7 +181,8 @@ RSpec.feature "Distributions", type: :system do
   end
 
   context "With an existing distribution" do
-    let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: @user.organization) }
+    let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", delivery_method: delivery_method, organization: @user.organization) }
+    let(:delivery_method) { "pick_up" }
 
     before do
       sign_in(@organization_admin)
@@ -193,7 +228,8 @@ RSpec.feature "Distributions", type: :system do
         click_on "Save", match: :first
       end.not_to change { distribution.line_items.first.quantity }
       within ".alert" do
-        expect(page).to have_content "items exceed the available inventory"
+        message = Event.read_events?(@organization) ? 'Could not reduce quantity' : 'items exceed the available inventory'
+        expect(page).to have_content message
       end
     end
 
@@ -206,8 +242,33 @@ RSpec.feature "Distributions", type: :system do
       end.to change { Distribution.count }.by(-1)
     end
 
+    context "when delivery method is not shipped" do
+      it "should not display shipping_cost field" do
+        click_on "Edit", match: :first
+
+        # if element not found it will throw exception
+        expect { page.find_by_id("shipping_cost_div", wait: 2) }.to raise_error(Capybara::ElementNotFound)
+      end
+    end
+
+    context "when delivery method is shipped and shipping cost is none negative" do
+      let(:delivery_method) { "shipped" }
+
+      it "should update distribution and display shipping_cost field" do
+        click_on "Edit", match: :first
+
+        # to check if shipping_cost field exist
+        expect(page.find_by_id("shipping_cost_div")).not_to be_nil
+
+        fill_in "Shipping cost", with: 12.05
+        click_on "Save", match: :first
+        expect(page).to have_content "Distributions"
+        expect(page.find(".alert-info")).to have_content "Distribution updated!"
+      end
+    end
+
     context "when one of the items has been 'deleted'" do
-      it "the user can still reclaim it and it reactivates the item", js: true do
+      it "the user can still reclaim it", js: true do
         item = distribution.line_items.first.item
         item.destroy
         expect do
@@ -215,7 +276,7 @@ RSpec.feature "Distributions", type: :system do
             click_on "Reclaim"
           end
           page.find ".alert"
-        end.to change { Distribution.count }.by(-1).and change { Item.active.count }.by(1)
+        end.to change { Distribution.count }.by(-1)
         expect(page).to have_content "reclaimed"
       end
     end
@@ -240,11 +301,15 @@ RSpec.feature "Distributions", type: :system do
     end
 
     context "when logged as Admin" do
-      let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: @user.organization, issued_at: Time.zone.today.prev_day, state: :complete) }
-
       before do
+        # this will fail if it runs on January 1
+        # since we're creating a distribution yesterday (i.e. last year)
+        # and it won't show any distributions for this year
+        travel_to Time.zone.local(2023, 5, 5)
         sign_in(@organization_admin)
       end
+
+      let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: @user.organization, issued_at: Time.zone.today.prev_day, state: :complete) }
 
       it "can click on Edit button and a warning appears " do
         visit @url_prefix + "/distributions"
@@ -295,7 +360,7 @@ RSpec.feature "Distributions", type: :system do
   end
 
   context "When showing a individual distribution" do
-    let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: @user.organization, issued_at: Time.zone.today, state: :complete) }
+    let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: @user.organization, issued_at: Time.zone.today, state: :complete, delivery_method: "pick_up") }
 
     before { visit @url_prefix + "/distributions/#{distribution.id}" }
 
@@ -345,30 +410,39 @@ RSpec.feature "Distributions", type: :system do
         end
         click_on "Save"
         expect(page).to have_no_content "Distribution updated!"
-        expect(page).to have_content(/items exceed the available inventory/i)
-        expect(page).to have_content 999_999, count: 1
+        message = 'items exceed the available inventory'
+        number = 999_999
+        if Event.read_events?(@organization)
+          message = 'Could not reduce quantity'
+          number = 999_899
+        end
+        expect(page).to have_content(/#{message}/i)
+        expect(page).to have_content number, count: 1
         within ".alert" do
-          expect(page).to have_content 999_999
+          expect(page).to have_content number
         end
         expect(Distribution.first.line_items.count).to eq 1
       end
 
       it "User creates duplicate line items" do
-        item_type = @distribution.line_items.first.item.name
-        first_item_name_field = 'distribution_line_items_attributes_0_item_id'
-        select(item_type, from: first_item_name_field)
+        item = @distribution.line_items.first.item
+        select2(page, 'distribution_line_items_item_id', item.name, position: 1)
         find_all(".numeric")[0].set 1
 
-        click_on "Add another item"
+        click_on "Add Another Item"
+
+        select2(page, 'distribution_line_items_item_id', item.name, position: 2)
+        new_select = find_all(".numeric")[1]
+        expect(new_select.value).to eq("")
         find_all(".numeric")[1].set 3
 
         first("button", text: "Save").click
 
         expect(page).to have_css "td"
-        item_row = find("td", text: item_type).find(:xpath, '..')
+        item_row = find("td", text: item.name).find(:xpath, '..')
 
         # TODO: Find out how to test for item type and 4 without the dollar amounts.
-        expect(item_row).to have_content("#{item_type} $1.00 $4.00 4")
+        expect(item_row).to have_content("#{item.name}\t$1.00\t$4.00\t4")
       end
     end
   end
@@ -410,6 +484,7 @@ RSpec.feature "Distributions", type: :system do
 
       expect(page).to have_content("Sorry, we weren't able to save")
       find_all(".numeric")[0].set 1
+
       click_on "Save"
 
       expect(page).to have_content("Distribution Complete")
@@ -429,26 +504,26 @@ RSpec.feature "Distributions", type: :system do
     it "allows users to add items via scanning them in by barcode", js: true do
       Barcode.boop(@existing_barcode.value)
       # the form should update
+      page.find_field(id: "distribution_line_items_attributes_0_quantity", with: "50")
       qty = page.find(:xpath, '//input[@id="distribution_line_items_attributes_0_quantity"]').value
-
       expect(qty).to eq(@existing_barcode.quantity.to_s)
     end
 
-    xit "a user can add items that do not yet have a barcode" do
-      pending("fix this test")
-      page.fill_in "_barcode-lookup-0", with: "123123123321\n"
-      find('#_barcode-lookup-0').set("123123123321\n")
+    it "a user can add items that do not yet have a barcode" do
+      barcode_value = "123123123321"
+      Barcode.boop(barcode_value)
 
-      page.fill_in "Quantity", with: "50"
-      select "Adult Briefs (Large/X-Large)", from: "Item"
-      page.fill_in "Barcode", with: "123123123321"
-
-      click_on "Submit"
+      within ".modal-content" do
+        page.fill_in "Quantity", with: "51"
+        select "Adult Briefs (Large/X-Large)", from: "Item"
+        click_on "Save"
+      end
 
       visit @url_prefix + "/distributions/new"
-      page.fill_in "_barcode-lookup-0", with: "123123123321\n"
+      Barcode.boop(barcode_value)
 
-      expect(page).to have_text("50")
+      expect(page).to have_text("Adult Briefs (Large/X-Large)")
+      expect(page).to have_field("Quantity", with: "51")
     end
   end
 
@@ -468,7 +543,7 @@ RSpec.feature "Distributions", type: :system do
       # check for all distributions
       expect(page).to have_css("table tbody tr", count: 2)
       # filter
-      select(item1.name, from: "filters_by_item_id")
+      select(item1.name, from: "filters[by_item_id]")
       click_button("Filter")
       # check for filtered distributions
       expect(page).to have_css("table tbody tr", count: 1)
@@ -489,7 +564,7 @@ RSpec.feature "Distributions", type: :system do
       # check for all distributions
       expect(page).to have_css("table tbody tr", count: 2)
       # filter
-      select(item_category.name, from: "filters_by_item_category_id")
+      select(item_category.name, from: "filters[by_item_category_id]")
       click_button("Filter")
       # check for filtered distributions
       expect(page).to have_css("table tbody tr", count: 1)
@@ -509,7 +584,7 @@ RSpec.feature "Distributions", type: :system do
       # check for all distributions
       expect(page).to have_css("table tbody tr", count: 2)
       # filter
-      select(partner1.name, from: "filters_by_partner")
+      select(partner1.name, from: "filters[by_partner]")
       click_button("Filter")
       # check for filtered distributions
       expect(page).to have_css("table tbody tr", count: 1)
@@ -523,7 +598,7 @@ RSpec.feature "Distributions", type: :system do
       # check for all distributions
       expect(page).to have_css("table tbody tr", count: 2)
       # filter
-      select(distribution1.state.humanize, from: "filters_by_state")
+      select(distribution1.state.humanize, from: "filters[by_state]")
       click_button("Filter")
       # check for filtered distributions
       expect(page).to have_css("table tbody tr", count: 1)
@@ -536,5 +611,40 @@ RSpec.feature "Distributions", type: :system do
       visit subject
       expect(page).to have_no_content "Inactive R Us"
     end
+  end
+
+  it "allows completion of corrected distribution with depleted inventory item" do
+    visit @url_prefix + "/distributions/new"
+    item = View::Inventory.new(@organization.id).items_for_location(@storage_location.id).first.db_item
+    TestInventory.create_inventory(@organization,
+      {
+        @storage_location.id => { item.id => 20 }
+      })
+
+    select @partner.name, from: "Partner"
+    select @storage_location.name, from: "From storage location"
+    choose "Delivery"
+    select item.name, from: "distribution_line_items_attributes_0_item_id"
+    fill_in "distribution_line_items_attributes_0_quantity", with: 15
+
+    click_button "Save"
+
+    click_link "Make a Correction"
+
+    fill_in "distribution_line_items_attributes_0_quantity", with: 20
+
+    click_button "Save"
+
+    expect(page).to have_content("Distribution Complete")
+    expect(page).to have_link("Distribution Complete")
+
+    expect(@storage_location.inventory_items.first.quantity).to eq(0)
+    expect(View::Inventory.new(@organization.id)
+      .quantity_for(item_id: item.id, storage_location: @storage_location.id)).to eq(0)
+
+    click_link "Distribution Complete"
+    expect(page).to have_content('Distribution')
+
+    expect(page).to have_content("This distribution has been marked as being completed!")
   end
 end

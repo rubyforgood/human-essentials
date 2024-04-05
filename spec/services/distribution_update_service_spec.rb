@@ -1,7 +1,5 @@
 RSpec.describe DistributionUpdateService, type: :service do
   describe "call" do
-    # TODO: this function was extracted to the service object - do we need a parallel test?
-
     let!(:distribution) { FactoryBot.create(:distribution, :with_items, item_quantity: 10) }
     let!(:new_attributes) { { line_items_attributes: { "0": { item_id: distribution.line_items.first.item_id, quantity: 2 } } } }
 

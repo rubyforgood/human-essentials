@@ -18,7 +18,7 @@
 #  last_request_at        :datetime
 #  last_sign_in_at        :datetime
 #  last_sign_in_ip        :inet
-#  name                   :string           default("Name Not Provided"), not null
+#  name                   :string
 #  organization_admin     :boolean
 #  provider               :string
 #  remember_created_at    :datetime
@@ -41,17 +41,23 @@ FactoryBot.define do
     password { "password!" }
     password_confirmation { "password!" }
     transient do
-      organization { Organization.try(:first) || create(:organization) }
+      organization { Organization.try(:first) || create(:organization, skip_items: true) }
     end
 
     after(:create) do |user, evaluator|
-      user.add_role(Role::ORG_USER, evaluator.organization)
+      if evaluator.organization
+        user.add_role(Role::ORG_USER, evaluator.organization)
+      end
     end
 
     factory :organization_admin do
       name { "Very Organized Admin" }
       after(:create) do |user, evaluator|
-        user.add_role(Role::ORG_ADMIN, evaluator.organization)
+        if evaluator.organization
+          AddRoleService.call(user_id: user.id,
+            resource_id: evaluator.organization.id,
+            resource_type: Role::ORG_ADMIN)
+        end
       end
     end
 

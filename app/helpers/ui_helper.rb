@@ -3,27 +3,50 @@
 # be through one of these methods. Most of these can be adapted to display in different ways, but those alterations
 # will be evident in the source code that it's deviating from the standard.
 module UiHelper
-  def add_line_item_button(form, node, options = {})
-    text = options[:text] || "Add another item"
-    size = options[:size] || "md"
-    type = options[:type] || "primary"
-    partial = options[:partial] || "line_items/line_item_fields"
-    link_to_add_association form, :line_items,
-                            data: {
-                              association_insertion_node: node,
-                              association_insertion_method: "append"
-                            }, id: "__add_line_item", class: "btn btn-#{size} btn-#{type}", partial: partial do
-      fa_icon "plus", text: text
+  # this method uses the form-input stimulus controller
+  # to make this work you need to:
+  #  - set data-controller="form-input" on the form element
+  #  - container selector needs to a unique css selector
+  def add_element_button(label, container_selector:, **html_attrs, &block)
+    default_html_attrs = {
+      class: "btn btn-md btn-primary",
+      data: { form_input_target: 'addButton',
+              add_dest_selector: container_selector,
+              action: "click->form-input#addItem:prevent" },
+      role: "button",
+      href: "javascript:void(0)"
+    }
+    content_tag :div do
+      concat(
+        link_to(label, default_html_attrs.merge(html_attrs)) do
+          fa_icon "plus", text: label
+        end
+      )
+      concat(
+        content_tag(:template, capture(&block), data: { form_input_target: 'addTemplate' })
+      )
     end
   end
 
-  def delete_line_item_button(form, options = {})
-    text = options[:text] || "Remove"
-    size = options[:text] || "sm"
-    type = options[:type] || "danger"
+  # this method uses the form-input stimulus controller
+  # to make this work you need to:
+  #  - set data-controller="form-input" on the form element
+  #  - container selector
+  def remove_element_button(label, container_selector:, soft: false, **html_attrs)
+    default_html_attrs = {
+      class: "btn btn-md btn-danger",
+      data: {
+        action: 'click->form-input#removeItem:prevent',
+        remove_soft: soft ? true : false,
+        remove_parent_selector: container_selector
+      },
+      href: "javascript:void(0)",
+      role: "button",
+      style: "width: 100px;"
+    }
 
-    link_to_remove_association form, class: "btn btn-#{size} btn-#{type}", style: "width: 100px;" do
-      fa_icon "trash", text: text
+    link_to(label, default_html_attrs.merge(html_attrs)) do
+      fa_icon "trash", text: label
     end
   end
 
@@ -62,7 +85,7 @@ module UiHelper
     options[:id] = id
     additional_properties = {
       data: {
-        toggle: "dropdown"
+        "bs-toggle": "dropdown"
       },
       "aria-haspopup": true,
       "aria-expanded": true
@@ -97,7 +120,7 @@ module UiHelper
   end
 
   def modal_button_to(target_id, options = {})
-    properties = { data: { toggle: "modal" } }
+    properties = { data: { "bs-toggle": "modal" } }
     _link_to target_id, { icon: "dot-circle-o", type: "outline-primary", text: "Set 'text' option", size: "md" }.merge(options), properties
   end
 
@@ -112,7 +135,7 @@ module UiHelper
   # Generic Submit button for a form
   def submit_button(options = {}, data = {})
     disable_text = options[:disable_text] || "Saving"
-    _button_to({ text: "Save", icon: "floppy-o", type: "success", align: "pull-right" }.merge(options), data: { disable_text: disable_text }.merge(data), name: options[:name] || 'button')
+    _button_to({ text: "Save", icon: "floppy-o", type: "success", align: "pull-right" }.merge(options), data: { disable_with: disable_text }.merge(data), name: options[:name] || 'button')
   end
 
   # Like above, but POSTs to a URL instead of to a form

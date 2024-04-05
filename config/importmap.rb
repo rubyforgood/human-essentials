@@ -6,11 +6,11 @@ pin "application", preload: true
 pin "startup", to: "startup.js", preload: true
 pin "@hotwired/turbo-rails", to: "turbo.min.js", preload: true
 pin "@hotwired/stimulus", to: "stimulus.min.js", preload: true
-pin "@hotwired/stimulus-loading", to: "stimulus-loading.js", preload: true
+pin "@hotwired/stimulus-loading", to: "stimulusloading.js", preload: true
 pin_all_from "app/javascript/controllers", under: "controllers"
 pin_all_from "app/javascript/utils", under: "utils"
-pin "bootstrap", to: "https://ga.jspm.io/npm:bootstrap@4.6.2/dist/js/bootstrap.js"
-pin "popper.js", to: "https://ga.jspm.io/npm:popper.js@1.16.1/dist/umd/popper.js"
+pin "bootstrap", to: "bootstrap.min.js", preload: true
+pin "popper", to: "popper.js", preload: true
 pin "highcharts", to: "https://ga.jspm.io/npm:highcharts@10.3.2/highcharts.js"
 pin "select2", to: "https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"
 pin "trix", to: "https://ga.jspm.io/npm:trix@2.0.4/dist/trix.esm.min.js"
@@ -29,7 +29,6 @@ pin "@fullcalendar/daygrid", to: "https://ga.jspm.io/npm:@fullcalendar/daygrid@6
 pin "@fullcalendar/list", to: "https://ga.jspm.io/npm:@fullcalendar/list@6.0.1/index.js"
 pin "quagga", to: "https://ga.jspm.io/npm:quagga@0.12.1/dist/quagga.min.js"
 pin "@rails/ujs", to: "https://ga.jspm.io/npm:@rails/ujs@7.0.4/lib/assets/compiled/rails-ujs.js", preload: true
-pin "cocoon-js-vanilla", to: "https://ga.jspm.io/npm:cocoon-js-vanilla@1.3.0/index.js"
 # NOTE: This has been vendored into vendor/javascript because there isn't a JS module exported by this package
 pin "filterrific", to: "filterrific.js"
 pin "bootstrap-select", to: "https://ga.jspm.io/npm:bootstrap-select@1.13.18/dist/js/bootstrap-select.js"

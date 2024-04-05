@@ -6,10 +6,11 @@ class Admin::OrganizationsController < AdminController
 
   def update
     @organization = Organization.find(params[:id])
+
     if OrganizationUpdateService.update(@organization, organization_params)
       redirect_to admin_organizations_path, notice: "Updated organization!"
     else
-      flash[:error] = "Failed to update your organization."
+      flash[:error] = @organization.errors.full_messages.join("\n")
       render :edit
     end
   end
@@ -52,11 +53,15 @@ class Admin::OrganizationsController < AdminController
                                        email: user_params[:email],
                                        roles: [Role::ORG_USER, Role::ORG_ADMIN],
                                        resource: @organization)
+      SnapshotEvent.publish(@organization) # need one to start with
       redirect_to admin_organizations_path, notice: "Organization added!"
     else
       flash[:error] = "Failed to create Organization."
       render :new
     end
+  rescue => e
+    flash[:error] = e
+    render :new
   end
 
   def show

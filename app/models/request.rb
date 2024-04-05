@@ -17,6 +17,7 @@
 #
 
 class Request < ApplicationRecord
+  has_paper_trail
   include Discard::Model
   include Exportable
 

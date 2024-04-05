@@ -1,0 +1,28 @@
+<%= form.fields_for :served_areas, defined?(object) ? object : nil  do |f| %>
+  <section class="nested-fields partner_served_area" data-controller="served-area">
+    <div class="row mt-2 d-flex flex-row align-items-center justify-content-between">
+      <div class='d-flex flex-column justify-content-center'>
+        <div class='d-flex flex-row'>
+          <span class="pc-name">
+            <%= f.input :county_id, collection: @counties, prompt: "County or equivalent", include_blank: "",
+              label: false,    input_html: { class: "my-0 pc-county-select", "data-controller": "select2" } %>
+          </span>
+          <div class="mx-2">
+            <%= f.input :client_share, collection: 1..100, placeholder: "Client Share", label: false, input_html: {
+              class: "pc-client-share percentage-selector",
+              "data-area-served-target": "share", "data-served-area-target": "share",
+              "data-action": "change->area-served#calculateClientShareTotal keyup->area-served#calculateClientShareTotal" } %>
+          </div>
+          <div class="mx-2">
+            <%= remove_element_button "Remove", container_selector: "section",
+              class: "btn btn-sm btn-danger remove_served_area",
+              data: { action: "click->form-input#removeItem:prevent click->served-area#zeroShareValue click->area-served#calculateClientShareTotal",
+                      remove_parent_selector: "section", remove_soft: false } %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="partner-county-separator">
+  </section>
+<% end %>

@@ -34,7 +34,7 @@
           <!-- form start -->
           <div class="card-body">
             <%= render partial: "purchase_form", object: @purchase %>
-            <%= link_to "Add vendor", new_vendor_path, {:remote => true, "data-toggle" => "modal", "data-target" => "#modal-window", id: "new_vendor", "style" => "display: none;"} %>
+            <%= link_to "Add vendor", new_vendor_path, {:remote => true, "data-bs-target" => "#modal-window", id: "new_vendor", "style" => "display: none;"} %>
           </div><!-- /.box -->
         </div>
       </div>

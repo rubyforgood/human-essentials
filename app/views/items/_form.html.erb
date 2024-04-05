@@ -43,10 +43,6 @@
                 <%= f.input_field :package_size, class: "form-control" %>
               <% end %>
 
-              <%= f.input :active, label: "Item is Active?", wrapper: :input_group do %>
-                <%= f.check_box :active, {class: "input-group-text", id: "active"}, "true", "false" %>
-              <% end %>
-
               <%= f.input :visible, label: "Item is Visible to Partners?", wrapper: :input_group do %>
                 <%= f.check_box :visible_to_partners, {class: "input-group-text", id: "visible_to_partners"}, "true", "false" %>
               <% end %>

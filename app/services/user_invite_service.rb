@@ -3,19 +3,31 @@ module UserInviteService
   # @param email [String]
   # @param roles [Array<Symbol>]
   # @param resource [ApplicationRecord]
+  # @param force [Boolean]
   # @return [User]
-  def self.invite(email:, resource:, name: nil, roles: [])
+  def self.invite(email:, resource:, name: nil, roles: [], force: false)
     raise "Resource not found!" if resource.nil?
 
     user = User.find_by(email: email)
+
+    # return if user already has all the roles we're trying to add
+    if !force && user && roles.all? { |role| user.has_role?(role, resource) }
+      raise "User already has the requested role!"
+    end
+
     if user
-      user.invite!
       add_roles(user, resource: resource, roles: roles)
+      if force
+        user.invite!
+      else
+        UserMailer.role_added(user, resource, roles).deliver_later
+      end
       return user
     end
 
     User.invite!(email: email) do |user1|
-      user1.name = name if name # Does this get persisted somewhere up the line? - CLF 20230203
+      name = nil if name.blank?
+      user1.name = name.presence || nil
       add_roles(user1, resource: resource, roles: roles)
       user1.skip_invitation = user1.errors[:email].any?
     end

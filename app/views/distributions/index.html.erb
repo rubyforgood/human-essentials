@@ -59,7 +59,7 @@
                 <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-12">
                   <%= filter_select(label: "Filter by Status", scope: :by_state, collection: @statuses, key: :last, value: :first, selected: @selected_status) %>
                 </div>
-                <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                   <%= label_tag "Date Range" %>
                   <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %>
                 </div>
@@ -76,7 +76,7 @@
                       )
                     end
                   %>
-                  <%= new_button_to new_distribution_path(organization_id: current_organization), {text: "New Distribution"} %>
+                  <%= new_button_to new_distribution_path(organization_name: current_organization), {text: "New Distribution"} %>
                 </span>
               </div>
             <% end # form %>
@@ -114,6 +114,7 @@
 
                 <th class="numeric">Total value</th>
                 <th>Delivery method</th>
+                <th>Shipping Cost</th>
                 <th>Comments</th>
                 <th>State</th>
                 <th class="text-right" style="width: 400px">Actions</th>

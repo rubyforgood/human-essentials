@@ -23,10 +23,10 @@
 @import 'AdminLTE';
 @import 'bootstrap';
 @import 'simple_form-bootstrap/simple_form-bootstrap';
-@import 'bootstrap-select';
 @import 'progress_stepper';
 @import 'audits';
 @import 'modal-dialog';
+@import 'expandable_table';
 @import 'custom';
 
 .modal-dialog {
@@ -151,16 +151,46 @@ body a {
 
 #copy-calendar-button {
   margin-left: 10px;
-}
-
-.main-sidebar, .main-sidebar::before {
-  width: 270px;
-}
-
-body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-wrapper, body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-footer, body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-header {
-  margin-left: 280px;
+  height: fit-content;
 }
 
 select.selectpicker + .dropdown-toggle::after {
   display: none;
 }
+
+.percentage-selector {
+  width: 110px;
+}
+
+.form-yesno {
+  .radio-yesno {
+    width: 3rem;
+  }
+  .input-group {
+    text-align: center;
+  }
+  .collection_radio_buttons {
+    font-weight: normal !important;
+  }
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+  padding-left: 28px;
+  background-color: #575b61;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+  margin-left: 0;
+  width: 20px;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+  background-color: #8282df
+}
+
+div.warning {
+  color: #e15563;
+  margin: 5px;
+  text-align: center;
+}
+

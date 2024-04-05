@@ -10,9 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_08_173555) do
+ActiveRecord::Schema[7.0].define(version: 2024_03_20_193521) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  # Custom types defined in this database.
+  # Note that some types may not work with other database engines. Be careful if changing database.
+  create_enum "category", ["US_County", "Other"]
+  create_enum "kit_allocation_type", ["inventory_in", "inventory_out"]
 
   create_table "account_requests", force: :cascade do |t|
     t.string "name", null: false
@@ -183,6 +188,17 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_08_173555) do
     t.index ["family_id"], name: "index_children_on_family_id"
   end
 
+  create_table "counties", force: :cascade do |t|
+    t.string "name"
+    t.string "region"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.enum "category", default: "US_County", null: false, enum_type: "category"
+    t.index ["name", "region"], name: "index_counties_on_name_and_region", unique: true
+    t.index ["name"], name: "index_counties_on_name"
+    t.index ["region"], name: "index_counties_on_region"
+  end
+
   create_table "delayed_jobs", force: :cascade do |t|
     t.integer "priority", default: 0, null: false
     t.integer "attempts", default: 0, null: false
@@ -217,9 +233,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_08_173555) do
     t.integer "organization_id"
     t.datetime "issued_at", precision: nil
     t.string "agency_rep"
-    t.integer "state", default: 5, null: false
     t.boolean "reminder_email_enabled", default: false, null: false
+    t.integer "state", default: 5, null: false
     t.integer "delivery_method", default: 0, null: false
+    t.decimal "shipping_cost", precision: 8, scale: 2
     t.index ["organization_id"], name: "index_distributions_on_organization_id"
     t.index ["partner_id"], name: "index_distributions_on_partner_id"
     t.index ["storage_location_id"], name: "index_distributions_on_storage_location_id"
@@ -233,6 +250,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_08_173555) do
     t.integer "organization_id"
     t.float "latitude"
     t.float "longitude"
+    t.string "contact_name"
+    t.string "email"
+    t.string "phone"
+    t.boolean "active", default: true
     t.index ["latitude", "longitude"], name: "index_donation_sites_on_latitude_and_longitude"
     t.index ["organization_id"], name: "index_donation_sites_on_organization_id"
   end
@@ -257,6 +278,22 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_08_173555) do
     t.index ["storage_location_id"], name: "index_donations_on_storage_location_id"
   end
 
+  create_table "events", force: :cascade do |t|
+    t.string "type", null: false
+    t.datetime "event_time", null: false
+    t.jsonb "data"
+    t.bigint "eventable_id"
+    t.string "eventable_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "organization_id"
+    t.bigint "user_id"
+    t.string "group_id"
+    t.index ["organization_id", "event_time"], name: "index_events_on_organization_id_and_event_time"
+    t.index ["organization_id"], name: "index_events_on_organization_id"
+    t.index ["user_id"], name: "index_events_on_user_id"
+  end
+
   create_table "families", force: :cascade do |t|
     t.string "guardian_first_name"
     t.string "guardian_last_name"
@@ -278,6 +315,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_08_173555) do
     t.bigint "partner_id"
     t.boolean "military", default: false
     t.bigint "old_partner_id"
+    t.boolean "archived", default: false
     t.index ["partner_id"], name: "index_families_on_partner_id"
   end
 
@@ -291,10 +329,21 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_08_173555) do
   create_table "flipper_gates", force: :cascade do |t|
     t.string "feature_key", null: false
     t.string "key", null: false
-    t.string "value"
+    t.text "value"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.index ["feature_key", "key", "value"], name: "index_flipper_gates_on_feature_key_and_key_and_value", unique: true
+  end
+
+  create_table "inventory_discrepancies", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "event_id", null: false
+    t.json "diff"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_inventory_discrepancies_on_event_id"
+    t.index ["organization_id", "created_at"], name: "index_inventory_discrepancies_on_organization_id_and_created_at"
+    t.index ["organization_id"], name: "index_inventory_discrepancies_on_organization_id"
   end
 
   create_table "inventory_items", id: :serial, force: :cascade do |t|
@@ -359,6 +408,18 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_08_173555) do
     t.check_constraint "distribution_quantity >= 0", name: "distribution_quantity_nonnegative"
   end
 
+  create_table "kit_allocations", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "storage_location_id", null: false
+    t.bigint "kit_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.enum "kit_allocation_type", default: "inventory_in", null: false, enum_type: "kit_allocation_type"
+    t.index ["kit_id"], name: "index_kit_allocations_on_kit_id"
+    t.index ["organization_id"], name: "index_kit_allocations_on_organization_id"
+    t.index ["storage_location_id"], name: "index_kit_allocations_on_storage_location_id"
+  end
+
   create_table "kits", force: :cascade do |t|
     t.string "name", null: false
     t.integer "organization_id", null: false
@@ -421,6 +482,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_08_173555) do
     t.boolean "enable_child_based_requests", default: true, null: false
     t.boolean "enable_individual_requests", default: true, null: false
     t.boolean "enable_quantity_based_requests", default: true, null: false
+    t.boolean "ytd_on_distribution_printout", default: true, null: false
+    t.boolean "one_step_partner_invite", default: false, null: false
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
@@ -547,6 +610,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_08_173555) do
     t.integer "partner_user_id"
     t.index ["organization_id"], name: "index_partner_requests_on_organization_id"
     t.index ["partner_id"], name: "index_partner_requests_on_partner_id"
+  end
+
+  create_table "partner_served_areas", force: :cascade do |t|
+    t.bigint "partner_profile_id", null: false
+    t.bigint "county_id", null: false
+    t.integer "client_share"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["county_id"], name: "index_partner_served_areas_on_county_id"
+    t.index ["partner_profile_id"], name: "index_partner_served_areas_on_partner_profile_id"
   end
 
   create_table "partner_users", force: :cascade do |t|
@@ -730,7 +803,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_08_173555) do
     t.integer "invited_by_id"
     t.integer "invitations_count", default: 0
     t.boolean "organization_admin"
-    t.string "name", default: "Name Not Provided", null: false
+    t.string "name"
     t.boolean "super_admin", default: false
     t.datetime "last_request_at", precision: nil
     t.datetime "discarded_at", precision: nil
@@ -798,17 +871,24 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_08_173555) do
   add_foreign_key "donations", "product_drives"
   add_foreign_key "donations", "storage_locations"
   add_foreign_key "families", "partners"
+  add_foreign_key "inventory_discrepancies", "events"
+  add_foreign_key "inventory_discrepancies", "organizations"
   add_foreign_key "item_categories", "organizations"
   add_foreign_key "item_categories_partner_groups", "item_categories"
   add_foreign_key "item_categories_partner_groups", "partner_groups"
   add_foreign_key "items", "item_categories"
   add_foreign_key "items", "kits"
+  add_foreign_key "kit_allocations", "kits"
+  add_foreign_key "kit_allocations", "organizations"
+  add_foreign_key "kit_allocations", "storage_locations"
   add_foreign_key "kits", "organizations"
   add_foreign_key "manufacturers", "organizations"
   add_foreign_key "organizations", "account_requests"
   add_foreign_key "organizations", "ndbn_members", primary_key: "ndbn_member_id"
   add_foreign_key "partner_groups", "organizations"
   add_foreign_key "partner_requests", "users", column: "partner_user_id"
+  add_foreign_key "partner_served_areas", "counties"
+  add_foreign_key "partner_served_areas", "partner_profiles"
   add_foreign_key "partners", "storage_locations", column: "default_storage_location_id"
   add_foreign_key "product_drives", "organizations"
   add_foreign_key "requests", "distributions"

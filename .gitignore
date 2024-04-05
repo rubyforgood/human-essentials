@@ -83,3 +83,5 @@ package-lock.json
 .history/
 
 out/
+
+.vscode/

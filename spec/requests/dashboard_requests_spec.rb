@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Dashboard", type: :request do
   let(:default_params) do
-    { organization_id: @organization.to_param }
+    { organization_name: @organization.to_param }
   end
 
   context "While signed in" do
@@ -27,18 +27,32 @@ RSpec.describe "Dashboard", type: :request do
       end
 
       context "for another org" do
-        it "requires authorization" do
+        it "still displays the user's org" do
           # nother org
-          get dashboard_path(organization_id: create(:organization).to_param)
-          expect(response).to be_redirect
+          get dashboard_path(organization_name: create(:organization).to_param)
+          expect(response.body).to include(@organization.name)
         end
+      end
+    end
+
+    context "BroadcastAnnouncement card" do
+      it "displays announcements if there are valid ones" do
+        BroadcastAnnouncement.create(message: "test announcement", user_id: 1, organization_id: nil)
+        get dashboard_path(default_params)
+        expect(response.body).to include("test announcement")
+      end
+
+      it "doesn't display announcements if they are not from super admins" do
+        BroadcastAnnouncement.create(message: "test announcement", user_id: 1, organization_id: 1)
+        get dashboard_path(default_params)
+        expect(response.body).not_to include("test announcement")
       end
     end
   end
 
   context "While not signed in" do
     it "redirects for authentication" do
-      get dashboard_path(organization_id: create(:organization).to_param)
+      get dashboard_path(organization_name: create(:organization).to_param)
       expect(response).to be_redirect
     end
   end

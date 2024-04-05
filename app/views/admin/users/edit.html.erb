@@ -2,9 +2,9 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <% content_for :title, "Edit - User - #{@user.name}" %>
+        <% content_for :title, "Edit - User - #{@user.display_name}" %>
         <h1>
-          Editing User <%= @user.name %>
+          Editing User <%= @user.display_name %>
         </h1>
       </div>
       <div class="col-sm-6">
@@ -13,7 +13,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><a href="#">Editing <%= @user.name %></a></li>
+          <li class="breadcrumb-item"><a href="#">Editing <%= @user.display_name %></a></li>
         </ol>
       </div>
     </div>
@@ -28,7 +28,7 @@
         <!-- jquery validation -->
         <div class="card card-primary card-outline">
           <div class="card-header">
-            <h5 class="card-title">Update <%= @user.name %>
+            <h5 class="card-title">Update <%= @user.display_name %>
             </h5>
           </div>
           <!-- /.card-header -->
@@ -55,3 +55,7 @@
     <!-- /.row -->
   </div><!-- /.container-fluid -->
 </section>
+
+<% unless @user == current_user %>
+  <%= render partial: 'roles', object: @user, as: :user %>
+<% end %>

@@ -1,0 +1,39 @@
+<%
+    config = {
+      chart: {
+        type: 'column',
+        height: 850
+      },
+      title: {
+        text: @title
+      },
+      subtitle: {
+        text: "Cached Data, may be up to 24 hours old"
+      },
+      xAxis: {
+        categories: last_12_months,
+        crosshair: true
+      },
+      yAxis: {
+        min: 0,
+        title: {
+          text: "Line Items"
+        }
+      },
+      tooltip: {
+        style: {
+          zIndex: 100
+        },
+        shared: true,
+        useHTML: true
+      },
+      plotOptions: {
+        column: {
+          pointPadding: 0.2,
+          borderWidth: 0
+        }
+      },
+      series: @series
+    }.to_json
+%>
+<%= render partial: "shared/highcharts", locals: { config: config } %>

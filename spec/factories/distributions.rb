@@ -8,6 +8,7 @@
 #  delivery_method        :integer          default("pick_up"), not null
 #  issued_at              :datetime
 #  reminder_email_enabled :boolean          default(FALSE), not null
+#  shipping_cost          :decimal(8, 2)
 #  state                  :integer          default("scheduled"), not null
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
@@ -20,10 +21,14 @@ FactoryBot.define do
   factory :distribution do
     storage_location
     partner
-    organization { Organization.try(:first) || create(:organization) }
+    organization { Organization.try(:first) || create(:organization, skip_items: true) }
     issued_at { nil }
     delivery_method { :pick_up }
     state { :scheduled }
+
+    trait :past do
+      issued_at { 1.week.ago }
+    end
 
     trait :with_items do
       transient do
@@ -34,11 +39,12 @@ FactoryBot.define do
       storage_location { create :storage_location, :with_items, item: item, organization: organization }
 
       after(:build) do |instance, evaluator|
-        item = if evaluator.item.nil?
-                 instance.storage_location.inventory_items.first.item
-               else
-                 evaluator.item
-               end
+        # Don't remove this. Shortcutting does not work
+        event_item = View::Inventory.new(instance.organization_id)
+          .items_for_location(instance.storage_location_id)
+          .first
+          &.db_item
+        item = evaluator.item || event_item
         instance.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item)
       end
     end

@@ -18,7 +18,7 @@
 #  last_request_at        :datetime
 #  last_sign_in_at        :datetime
 #  last_sign_in_ip        :inet
-#  name                   :string           default("Name Not Provided"), not null
+#  name                   :string
 #  organization_admin     :boolean
 #  provider               :string
 #  remember_created_at    :datetime
@@ -40,16 +40,29 @@ RSpec.describe User, type: :model do
   end
 
   context "Validations >" do
-    it "requires a name" do
-      expect(build(:user, name: nil)).not_to be_valid
+    it "user can receive a name" do
       expect(build(:user, name: "foo")).to be_valid
     end
+
+    it "without a name results in display_name 'Name Not Provided'" do
+      user = build(:user, name: nil)
+      expect(user).to be_valid
+      expect(user.name).to be_nil
+      expect(user.display_name).to eq("Name Not Provided")
+    end
+
     it "requires an email that is formatted correctly" do
       expect(build(:partner, email: nil)).not_to be_valid
       expect(build(:partner, email: "foo@bar.com")).to be_valid
       expect(build(:partner, email: "boooooooooo")).not_to be_valid
       expect(build(:partner, email: "@boooooooooo")).not_to be_valid
       expect(build(:partner, email: "boooooooooo@")).not_to be_valid
+    end
+    it "requires a password with a special character and number" do
+      expect(build(:user, password: "password", password_confirmation: "password")).not_to be_valid
+      expect(build(:user, password: "a;dsfj!55", password_confirmation: "a;dsfj!55")).to be_valid
+      expect(build(:user, password: "password5", password_confirmation: "password5")).not_to be_valid
+      expect(build(:user, password: "password!5", password_confirmation: "password!5")).to be_valid
     end
   end
 
@@ -126,5 +139,9 @@ RSpec.describe User, type: :model do
       user = FactoryBot.create(:user, email: 'me@me.com')
       expect(described_class.from_omniauth(token)).to eq(user)
     end
+  end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
   end
 end

@@ -1,6 +1,6 @@
 RSpec.describe "Vendors", type: :request do
   let(:default_params) do
-    { organization_id: @organization.to_param }
+    { organization_name: @organization.to_param }
   end
 
   context "While signed in" do
@@ -139,6 +139,14 @@ RSpec.describe "Vendors", type: :request do
     context "Looking at a different organization" do
       let(:object) { create(:vendor, organization: create(:organization)) }
       include_examples "requiring authorization"
+    end
+
+    describe "when on vendors index page" do
+      it "has the correct import type" do
+        get vendors_path(default_params.merge(format: 'html'))
+
+        expect(response.body).to include('Import Vendors')
+      end
     end
   end
 

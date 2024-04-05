@@ -7,7 +7,6 @@ window.$ = jQuery
 import "startup"
 import "jquery-ui"
 import 'admin-lte'
-import "cocoon-js-vanilla";
 import 'filterrific'
 import { Turbo } from "@hotwired/turbo-rails"
 import "trix"
@@ -23,10 +22,10 @@ import listPlugin from '@fullcalendar/list';
 import toastr from 'toastr';
 import 'litepicker/ranges';
 
+import 'popper'
 import 'bootstrap'
 import 'controllers'
 
-import 'utils/adjustments'
 import 'utils/barcode_items'
 import 'utils/barcode_scan'
 import 'utils/deadline_day_pickers'

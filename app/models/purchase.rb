@@ -19,6 +19,7 @@
 #
 
 class Purchase < ApplicationRecord
+  has_paper_trail
   include MoneyRails::ActionViewExtension
 
   belongs_to :organization
@@ -78,30 +79,6 @@ class Purchase < ApplicationRecord
     item_id = item.to_i
     line_item = line_items.find_by(item_id: item_id)
     line_item&.destroy
-  end
-
-  def replace_increase!(new_purchase_params)
-    old_data = to_a
-    item_ids = line_items_attributes(new_purchase_params).map { |i| i[:item_id].to_i }
-    original_storage_location = storage_location
-
-    ActiveRecord::Base.transaction do
-      line_items.map(&:destroy!)
-      reload
-      Item.reactivate(item_ids)
-      line_items_attributes(new_purchase_params).map { |i| i.delete(:id) }
-
-      update! new_purchase_params
-
-      # Roll back distribution output by increasing storage location
-      storage_location.increase_inventory(to_a)
-      # Apply the new changes to the storage location inventory
-      original_storage_location.decrease_inventory(old_data)
-      # TODO: Discuss this -- *should* we be removing InventoryItems when they hit 0 count?
-      original_storage_location.inventory_items.where(quantity: 0).destroy_all
-    end
-  rescue ActiveRecord::RecordInvalid
-    false
   end
 
   private

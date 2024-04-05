@@ -17,6 +17,7 @@
 #
 
 class Partner < ApplicationRecord
+  has_paper_trail
   resourcify
   require "csv"
 
@@ -30,6 +31,7 @@ class Partner < ApplicationRecord
 
   belongs_to :organization
   belongs_to :partner_group, optional: true
+
   has_many :item_categories, through: :partner_group
   has_many :requestable_items, through: :item_categories, source: :items
   has_one :profile, class_name: 'Partners::Profile', dependent: :destroy
@@ -74,24 +76,39 @@ class Partner < ApplicationRecord
     "CAREER" => "Career technical training",
     "ABUSE" => "Child abuse resource center",
     "CHURCH" => "Church outreach ministry",
+    "COLLEGE" => "College and Universities",
     "CDC" => "Community development corporation",
-    "HEALTH" => "Community health program",
+    "HEALTH" => "Community health program or clinic",
     "OUTREACH" => "Community outreach services",
+    "LEGAL" => "Correctional Facilities / Jail / Prison / Legal System",
     "CRISIS" => "Crisis/Disaster services",
     "DISAB" => "Developmental disabilities program",
     "DOMV" => "Domestic violence shelter",
+    "ECE" => "Early Childhood Education/Childcare",
     "CHILD" => "Early childhood services",
     "EDU" => "Education program",
     "FAMILY" => "Family resource center",
     "FOOD" => "Food bank/pantry",
+    "FOSTER" => "Foster Program",
     "GOVT" => "Government Agency/Affiliate",
     "HEADSTART" => "Head Start/Early Head Start",
     "HOMEVISIT" => "Home visits",
     "HOMELESS" => "Homeless resource center",
+    "HOSP" => "Hospital",
     "INFPAN" => "Infant/Child Pantry/Closet",
+    "LIB" => "Library",
+    "MILITARY" => "Military Bases/Veteran Services",
+    "POLICE" => "Police Station",
     "PREG" => "Pregnancy resource center",
+    "PRESCH" => "Preschool",
     "REF" => "Refugee resource center",
+    "ES" => "School - Elementary School",
+    "HS" => "School - High School",
+    "MS" => "School - Middle School",
+    "SENIOR" => "Senior Center",
+    "TRIBAL" => "Tribal/Native-Based Organization",
     "TREAT" => "Treatment clinic",
+    "2YCOLLEGE" => "Two-Year College",
     "WIC" => "Women, Infants and Children",
     "OTHER" => "Other"
   }.freeze
@@ -101,9 +118,10 @@ class Partner < ApplicationRecord
     agency_stability
     organizational_capacity
     sources_of_funding
+    area_served
     population_served
     executive_director
-    diaper_pick_up_person
+    pick_up_person
     agency_distribution_information
     attached_documents
   ].freeze
@@ -156,7 +174,8 @@ class Partner < ApplicationRecord
       "Agency Email",
       "Contact Name",
       "Contact Phone",
-      "Contact Email"
+      "Contact Email",
+      "Notes"
     ]
   end
 
@@ -166,7 +185,8 @@ class Partner < ApplicationRecord
       email,
       contact_person[:name],
       contact_person[:phone],
-      contact_person[:email]
+      contact_person[:email],
+      notes
     ]
   end
 
@@ -232,6 +252,17 @@ class Partner < ApplicationRecord
   end
 
   def should_invite_because_email_changed?
-    email_changed? and (invited? or awaiting_review? or recertification_required? or approved?)
+    email_changed? &&
+      (
+        invited? ||
+        awaiting_review? ||
+        recertification_required? ||
+        approved?
+      ) &&
+      !partner_user_with_same_email_exist?
+  end
+
+  def partner_user_with_same_email_exist?
+    User.exists?(email: email) && User.find_by(email: email).has_role?(Role::PARTNER, self)
   end
 end

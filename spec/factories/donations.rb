@@ -22,7 +22,7 @@ FactoryBot.define do
     source { Donation::SOURCES[:misc] }
     comment { "It's a fine day for diapers." }
     storage_location
-    organization { Organization.try(:first) || create(:organization) }
+    organization { Organization.try(:first) || create(:organization, skip_items: true) }
     issued_at { nil }
 
     factory :manufacturer_donation do
@@ -53,12 +53,17 @@ FactoryBot.define do
       end
 
       after(:build) do |donation, evaluator|
-        item = evaluator.item || donation.storage_location.inventory_items.first&.item || create(:item)
+        event_item = View::Inventory.new(donation.organization_id)
+          .items_for_location(donation.storage_location_id)
+          .first
+          &.db_item
+        item = evaluator.item || event_item || create(:item)
         donation.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item, itemizable: donation)
       end
 
       after(:create) do |instance, evaluator|
-        evaluator.storage_location.increase_inventory(instance)
+        evaluator.storage_location.increase_inventory(instance.line_item_values)
+        DonationEvent.publish(instance)
       end
     end
   end

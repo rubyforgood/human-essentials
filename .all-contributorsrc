@@ -1092,6 +1092,18 @@
         "ideas",
         "questions"
       ]
+    },
+    {
+      "login": "patelkrunal31",
+      "name": "Krunal Patel",
+      "avatar_url": "https://avatars.githubusercontent.com/u/92335682?v=4",
+      "profile": "https://github.com/patelkrunal31",
+      "contributions": [
+        "code",
+        "projectManagement",
+        "ideas",
+        "questions"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -31,7 +31,7 @@ RSpec.describe 'Admin::BarcodeItemsController', type: :request do
         it 'redirects to admin_barcode_items_path' do
           post admin_barcode_items_path, params: valid_params
           expect(response).to redirect_to(
-            admin_barcode_items_path(organization_id: @super_admin.organization.short_name)
+            admin_barcode_items_path
           )
         end
 
@@ -65,7 +65,7 @@ RSpec.describe 'Admin::BarcodeItemsController', type: :request do
         it 'redirects to admin_barcode_items_path' do
           patch admin_barcode_item_path(barcode_item), params: valid_params
           expect(response).to redirect_to(
-            admin_barcode_items_path(organization_id: @super_admin.organization.short_name)
+            admin_barcode_items_path
           )
         end
 

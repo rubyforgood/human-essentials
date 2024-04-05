@@ -1,6 +1,6 @@
 <% if current_user.has_role?(Role::SUPER_ADMIN) %>
 <li class="nav-item dropdown">
-  <a class="nav-link" data-toggle="dropdown" href="#">
+  <a class="nav-link" data-bs-toggle="dropdown" href="#">
     <i class="fa fa-lock"></i> Administration
   </a>
   <ul class="dropdown-menu">
@@ -25,9 +25,9 @@
 </li>
 
 <li class="nav-item dropdown">
-  <a class="nav-link" data-toggle="dropdown" href="#">
+  <a class="nav-link" data-bs-toggle="dropdown" href="#">
     <i class="fa fa-calendar"></i>
-    <span class="badge badge-danger navbar-badge" style="background-color: #007bff"><%= current_organization.distributions.upcoming.count.to_s.gsub(/^0$/, '') %></span>
+    <span class="badge badge-danger bg-danger navbar-badge" style="background-color: #007bff"><%= current_organization.distributions.upcoming.count.to_s.gsub(/^0$/, '') %></span>
   </a>
   <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
     <a href="#" class="dropdown-item">
@@ -35,15 +35,15 @@
       remaining this week
     </a>
     <div class="dropdown-divider"></div>
-    <%= link_to_if current_organization.id.present?, "View Calendar", schedule_distributions_path(organization_id: current_organization.to_param), class: "dropdown-item dropdown-footer" %>
+    <%= link_to_if current_organization.id.present?, "View Calendar", schedule_distributions_path(organization_name: current_organization.to_param), class: "dropdown-item dropdown-footer" %>
   </div>
 </li>
 
 <li class="nav-item dropdown">
-  <a class="nav-link" data-toggle="dropdown" href="#">
+  <a class="nav-link" data-bs-toggle="dropdown" href="#">
     <i class="fa fa-bell-o"></i>
     <% if current_organization && (current_organization.requests.status_pending.size > 0 || current_organization.partners.awaiting_review.size > 0) %>
-    <span class="badge badge-warning navbar-badge" style="background-color: #ffc107"><%= (current_organization.requests.status_pending.size + current_organization.partners.awaiting_review.size) %></span>
+    <span class="badge badge-warning bg-warning navbar-badge" style="background-color: #ffc107"><%= (current_organization.requests.status_pending.size + current_organization.partners.awaiting_review.size) %></span>
     <% end %>
   </a>
   <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
@@ -59,11 +59,11 @@
   </div>
 </li>
 <li class="nav-item dropdown">
-  <a class="nav-link" data-toggle="dropdown" href="#">
-    <%= current_user.name %>
+  <a class="nav-link" data-bs-toggle="dropdown" href="#">
+    <%= current_user.display_name %>
   </a>
   <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-    <%= link_to edit_user_registration_path(organization_id: nil), class:"dropdown-item" do %>
+    <%= link_to edit_user_registration_path(organization_name: nil), class:"dropdown-item" do %>
     <i class="fa fa-cog text-aqua"></i> Account Settings
     <% end %>
     <% current_user.switchable_roles.each do |role| %>
@@ -74,7 +74,7 @@
     <% end %>
     <% if current_organization.id.present? &&
         (current_user.has_role?(Role::SUPER_ADMIN) || current_user.has_role?(Role::ORG_ADMIN, current_organization)) %>
-    <% with_options organization_id: current_user.organization.to_param do |with_org| %>
+    <% with_options organization_name: current_user.organization.to_param do |with_org| %>
 
     <div class="dropdown-divider"></div>
     <%= link_to with_org.users_path, class:"dropdown-item" do %>
@@ -87,7 +87,7 @@
     <% end %>
     <% end %>
     <div class="dropdown-divider"></div>
-    <%= link_to destroy_user_session_path(organization_id: nil), class:"dropdown-item dropdown-footer", method: :delete do %>
+    <%= link_to destroy_user_session_path(organization_name: nil), class:"dropdown-item dropdown-footer", method: :delete do %>
     <i class="fa fa-sign-out mr-2"></i> Log Out
     <% end %>
   </div>

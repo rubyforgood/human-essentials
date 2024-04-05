@@ -5,18 +5,16 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-ruby "3.1.2"
-
 ###### BASIC FRAMEWORKS ######
 
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.4.6"
+gem "pg", "~> 1.5.6"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "7.0.4.3"
+gem "rails", "7.0.8"
 
 ###### MODELS / DATABASE #######
 
@@ -24,9 +22,9 @@ gem "rails", "7.0.4.3"
 # gem 'azure-storage', '~> 0.15.0.preview', require: false
 gem 'azure-storage-blob'
 # Adds soft delete functionality for models.
-gem 'discard', '~> 1.0'
+gem 'discard', '~> 1.3'
 # Adds grouping by date/month/etc to queries.
-gem "groupdate", "~> 6.2"
+gem "groupdate", "~> 6.4"
 # Treats attributes like money, which knows about dollars and cents.
 gem "money-rails"
 # Tracks history / audits models.
@@ -34,13 +32,14 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.4.4"
+gem "strong_migrations", "1.8.0"
+# used in events
+gem 'dry-struct'
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
-gem 'bootstrap-select-rails'
 # Bootstrap is a library for HTML, CSS and JS.
-gem 'bootstrap', '~> 4.6.0'
+gem 'bootstrap', '~> 5.2'
 # SASS CSS framework (nested selectors, variables, etc.)
 gem "sass-rails"
 # Used to verify that the user is a human.
@@ -52,8 +51,6 @@ gem "stimulus-rails"
 
 ##### VIEWS/CONTROLLERS #####
 
-# Adds easy links to add or remove associations in a form (e.g. line items)
-gem "cocoon"
 # Adds filter support to models and views.
 gem "filterrific"
 # Generates JSON structures via a builder interface.
@@ -97,6 +94,8 @@ gem 'httparty'
 gem 'icalendar', require: false
 # JSON Web Token encoding / decoding (e.g. for links in e-mails)
 gem "jwt"
+# Use Newrelic for logs and APM
+gem "newrelic_rpm"
 # Used to manage periodic cron-like jobs
 gem "clockwork"
 
@@ -104,21 +103,19 @@ gem "clockwork"
 # These are gems that aren't used directly, only as dependencies for other gems.
 # Technically they don't need to be in this Gemfile at all, but we are pinning them to
 # specific versions for compatibility reasons.
-gem "mini_racer", "~> 0.6.3"
+gem "mini_racer", "~> 0.9.0"
 gem "nokogiri", ">= 1.10.4"
 gem "image_processing"
-gem "sprockets", "~> 4.0.0"
+gem "sprockets", "~> 4.2.1"
 
 group :production do
-  # Reduce the noise of logs and include custom fields to it for easier access
-  gem 'lograge'
-  # Profiler (third party app) showing performance and metrics.
-  gem "skylight"
   # Tool to detect unused code through knowing which methods are used in which files.
   gem 'coverband'
 end
 
 group :production, :staging do
+  # Reduce the noise of logs and include custom fields to it for easier access
+  gem 'lograge'
   # JS compression for deployed environments.
   gem 'terser'
 end
@@ -127,7 +124,7 @@ group :development, :test, :staging do
   # Generate models based on factory definitions.
   gem 'factory_bot_rails'
   # Ensure the database is in a clean state on every test.
-  gem "database_cleaner", '2.0.2'
+  gem "database_cleaner-active_record", '~> 2.1'
   # Generate fake data for use in tests.
   gem 'faker'
 end
@@ -150,15 +147,16 @@ group :development, :test do
   # Add-on for command line to create a simple debugger.
   gem "pry-nav"
   # RSpec behavioral testing framework for Rails.
-  gem "rspec-rails", "~> 6.0.1"
-  # Allow retrying flaky RSpec tests.
-  gem "rspec-retry"
+  gem "rspec-rails", "~> 6.1.2"
   # Static analysis / linter.
   gem "rubocop"
   # Rails add-on for static analysis.
-  gem "rubocop-rails", "~> 2.9.0"
+  gem 'rubocop-performance'
+  gem "rubocop-rails", "~> 2.24.1"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.25"
+  gem "standard", "~> 1.35"
+  # Erb linter.
+  gem "erb_lint"
 end
 
 group :development do
@@ -175,7 +173,7 @@ group :development do
   # Open sent e-mails in the browser instead of trying to send to a real mail server.
   gem "letter_opener"
   # Used as a dependency for Guard.
-  gem "listen", "~> 3.8.0"
+  gem "listen", "~> 3.9.0"
   # Generate a diagram based on Rails models.
   gem "rails-erd"
   # Allows to create a console in the browser.
@@ -184,7 +182,7 @@ end
 
 group :test do
   # Test using browsers.
-  gem "capybara", "~> 3.38"
+  gem "capybara", "~> 3.40"
   # Create screenshots when doing browser tests.
   gem "capybara-screenshot"
   # Generate Capybara tests in the browser and debug them.
@@ -196,11 +194,11 @@ group :test do
   # Show code coverage.
   gem 'simplecov'
   # More concise test ("should") matchers
-  gem 'shoulda-matchers', '~> 5.3'
-  # Selenium webdriver automatic installation and update.
-  gem 'webdrivers', '~> 5.2'
+  gem 'shoulda-matchers', '~> 6.2'
   # Mock HTTP requests and ensure they are not called during tests.
-  gem "webmock", "~> 3.18"
+  gem "webmock", "~> 3.23"
+  # Interface capybara to chrome headless
+  gem "cuprite"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
@@ -212,6 +210,6 @@ if %w(mingw mswin x64_mingw jruby).include?(RUBY_PLATFORM)
 end
 
 # Use Redis for Action Cable
-gem "redis", "~> 5.0"
+gem "redis", "~> 5.1"
 
-gem "importmap-rails", "~> 1.1"
+gem "importmap-rails", "~> 2.0"

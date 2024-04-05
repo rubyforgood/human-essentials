@@ -8,10 +8,44 @@ RSpec.describe "Admin", type: :request do
       get admin_dashboard_path
       expect(response).to be_successful
     end
-    context "with rendered views" do
-      it "shows a logout button" do
+
+    it "shows a logout button" do
+      get admin_dashboard_path
+      expect(response.body).to match(/log out/im)
+    end
+
+    context "when the user has a name" do
+      let!(:user_with_name) { create(:user, name: "John Doe", email: "john@example.com") }
+
+      it "displays the user's name" do
         get admin_dashboard_path
-        expect(response.body).to match(/log out/im)
+        expect(response.body).to include("John Doe")
+        expect(response.body).not_to include("john@example.com")
+      end
+
+      it "provides edit links for user profiles" do
+        get admin_dashboard_path
+        expect(response).to be_successful
+
+        edit_user_path_pattern = %r{admin/users/#{user_with_name.id}/edit}
+        expect(response.body).to match(edit_user_path_pattern)
+      end
+    end
+
+    context "when the user does not have a name" do
+      let!(:user_without_name) { create(:user, name: nil, email: "noname@example.com") }
+
+      it "displays the user's email" do
+        get admin_dashboard_path
+        expect(response.body).to include("noname@example.com")
+      end
+
+      it "provides edit links for user profiles" do
+        get admin_dashboard_path
+        expect(response).to be_successful
+
+        edit_user_path_pattern = %r{admin/users/#{user_without_name.id}/edit}
+        expect(response.body).to match(edit_user_path_pattern)
       end
     end
   end
@@ -21,7 +55,7 @@ RSpec.describe "Admin", type: :request do
       [@organization_admin, @user].each do |u|
         sign_in(u)
         get admin_dashboard_path
-        expect(response).to redirect_to(dashboard_path)
+        expect(response).to redirect_to(dashboard_path(organization_name: u.organization))
         expect(response).to have_error
       end
     end
