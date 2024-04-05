@@ -5,42 +5,50 @@
       <div class="col-md-12">
         <!-- jquery validation -->
         <div class="card card-primary">
-          <!-- /.card-header -->
           <!-- form start -->
           <div class="card-body">
 
-            <%= simple_form_for child, html: {role: 'form', class: 'form-horizontal'} do |form| %>
+            <%= simple_form_for child, html: { role: 'form', class: 'form-horizontal' } do |form| %>
               <%= form.label :first_name, "First Name" %>
               <%= form.text_field :first_name, class: "form-control" %>
 
               <%= form.label :last_name, "Last Name" %>
               <%= form.text_field :last_name, class: "form-control" %>
 
-              <%= form.label :item_needed, "Diaper/Item Used" %>
-              <%= form.select :item_needed_diaperid, @requestable_items,
-                              {include_blank: 'Select an item'},
-                              {class: 'form-control'} %>
-              <br>
+              <!-- Dynamic Item Addition Section -->
+              <div data-controller="dynamic-items">
+                <label>Items</label>
+                <div data-dynamic-items-target="itemsContainer">
+                  <%= form.fields_for :child_items do |child_item_form| %>
+                    <div class="nested-fields">
+                      <%= child_item_form.collection_select :item_id, Item.all, :id, :name, {}, {class: "form-control"} %>
+                      <%= link_to "Remove", "#", class: "remove_item", data: { action: "click->dynamic-items#removeItem" } %>
+                    </div>
+                  <% end %>
+                </div>
+                <template data-dynamic-items-target="template">
+                  <div class="nested-fields">
+                    <%= form.fields_for :child_items, Partners::ChildItem.new, child_index: "NEW_RECORD" do |child_item_form| %>
+                      <%= child_item_form.collection_select :item_id, Item.all, :id, :name, {}, {class: "form-control"} %>
+                      <%= link_to "Remove", "#", class: "remove_item", data: { action: "click->dynamic-items#removeItem" } %>
+                    <% end %>
+                  </div>
+                </template>
+                <%= link_to "Add New Item", "#", class: "add_item", data: { action: "click->dynamic-items#addNewItem" } %>
+              </div>
 
               <%= form.input :date_of_birth, as: :date, start_year: 20.years.ago.year, end_year: Time.current.year, label: "Date of Birth" %>
               <%= form.input :gender, collection: ["Male", "Female"], class: "form-control" %>
 
               <%= form.label :child_lives_with, "Child Lives With" %><br>
-
               <% Partners::Child::CAN_LIVE_WITH.each do |a_value| %>
-                <%= form.check_box(:child_lives_with, {:multiple => true}, a_value, nil) %>
-                <%= form.label "#{a_value}" %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <%= form.check_box(:child_lives_with, { multiple: true }, a_value, nil) %>
+                <%= form.label a_value %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <% end %>
               <br>
-              <%= form.input :race, collection: ["African American", "Caucasian", "Hispanic", "Asian", "American Indian", "Pacific Islander", "Multi-racial", "Other"], class: "form-control", :include_blank => true %>
+              <%= form.input :race, collection: ["African American", "Caucasian", "Hispanic", "Asian", "American Indian", "Pacific Islander", "Multi-racial", "Other"], class: "form-control", include_blank: true %>
               <%= form.input :agency_child_id, class: "form-control", label: "Agency Child ID" %>
-              <%#= form.label :health_insurance, 'Health Insurance' %>
-              <%= form.input :health_insurance, as: :radio_buttons,
-                             collection: [['Private Insurance', 'Private Insurance'],
-                                          ['Medicaid', 'Medicaid'],
-                                          ['Uninsured', 'Uninsured']],
-                             label: "Health Insurance",
-                              class: "form-control" %>
+              <%= form.input :health_insurance, as: :radio_buttons, collection: [['Private Insurance', 'Private Insurance'], ['Medicaid', 'Medicaid'], ['Uninsured', 'Uninsured']], label: "Health Insurance", class: "form-control" %>
 
               <%= form.label :comments %><br>
               <%= form.text_area :comments, class: "form-control" %>
@@ -53,16 +61,15 @@
               <%= form.label "Archived?" %>&nbsp;
               <%= form.check_box :archived %>
 
-              </div>
-              <div class="card-footer">
-                <%= form.submit(class: 'btn btn-primary') %>
-              </div>
+            </div>
+            <div class="card-footer">
+              <%= form.submit(class: 'btn btn-primary') %>
+            </div>
 
             <% end %>
-            </div>
-        <!-- /.card -->
+          </div>
+        </div>
       </div>
-      <!-- /.row -->
-    </div><!-- /.container-fluid -->
+    </div>
   </div>
 </section>

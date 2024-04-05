@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_03_20_193521) do
+ActiveRecord::Schema[7.0].define(version: 2024_04_05_202448) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -167,6 +167,13 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_20_193521) do
     t.integer "authorized_family_member_id"
     t.index ["child_id"], name: "index_child_item_requests_on_child_id"
     t.index ["item_request_id"], name: "index_child_item_requests_on_item_request_id"
+  end
+
+  create_table "child_items", id: false, force: :cascade do |t|
+    t.bigint "child_id", null: false
+    t.bigint "item_id", null: false
+    t.index ["child_id", "item_id"], name: "index_child_items_on_child_id_and_item_id"
+    t.index ["item_id", "child_id"], name: "index_child_items_on_item_id_and_child_id"
   end
 
   create_table "children", force: :cascade do |t|
