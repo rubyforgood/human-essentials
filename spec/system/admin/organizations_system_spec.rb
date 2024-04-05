@@ -14,7 +14,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
   end
 
   context "while logged in as a super admin and the per page limit is reached but not passed" do
-    let!(:first_org) { create(:organization, name: 'first_org')}
+    let!(:first_org) { create(:organization, name: 'first_org') }
     let!(:second_org) { create(:organization, name: 'second_org') }
     let!(:third_org) { create(:organization, name: 'third_org') }
 
