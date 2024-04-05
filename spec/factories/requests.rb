@@ -24,7 +24,7 @@ end
 FactoryBot.define do
   factory :request do
     partner { Partner.try(:first) || create(:partner) }
-    organization { Organization.try(:first) || create(:organization) }
+    organization { Organization.try(:first) || create(:organization, :with_items) }
     request_items { random_request_items }
     comments { "Urgent" }
     partner_user { ::User.partner_users.first || create(:partners_user) }
@@ -50,6 +50,18 @@ FactoryBot.define do
       keys.push(keys[0])
       # give each item a quantity of 50
       keys.map { |k| { "item_id" => k, "quantity" => 50 } }
+    }
+  end
+
+  trait :with_varied_quantities do
+    request_items {
+      # get 10 unique item ids
+      keys = Item.active.pluck(:id).sample(10)
+
+      # This *could* pass in error -- if the plucking order happens to match the end order.
+
+      item_quantities = [50, 150, 75, 125, 200, 3, 15, 88, 46, 22]
+      keys.map.with_index { |k, i| { "item_id" => k, "quantity" => item_quantities[i]} }
     }
   end
 end

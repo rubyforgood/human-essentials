@@ -41,7 +41,7 @@
               <tbody>
               <% @users.each do |user| %>
                 <tr>
-                  <td><%= user.name %></td>
+                  <td><%= user.display_name %></td>
                   <td><%= user.email %></td>
                 </tr>
               <% end %>
@@ -54,4 +54,3 @@
     </div>
   </div>
 </section>
-

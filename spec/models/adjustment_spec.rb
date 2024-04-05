@@ -25,8 +25,15 @@ RSpec.describe Adjustment, type: :model do
       expect(build(:adjustment, :with_items, item_quantity: 10, item: create(:item), storage_location: create(:storage_location))).to be_valid
     end
 
-    it "disallows you from removing inventory that doesn't exist in the storage location" do
-      expect(build(:adjustment, :with_items, item_quantity: -10, item: create(:item), storage_location: create(:storage_location))).not_to be_valid
+    it "allows you to remove all the inventory that exists in the storage location" do
+      storage_location1 = create(:storage_location, organization: @organization)
+      item1 = create(:item)
+      TestInventory.create_inventory(@organization, {
+        storage_location1.id => {
+          item1.id => 10
+        }
+      })
+      expect(build(:adjustment, :with_items, item_quantity: -10, item: item1, storage_location: storage_location1)).to be_valid
     end
   end
 
@@ -60,7 +67,11 @@ RSpec.describe Adjustment, type: :model do
       it "returns two adjustment objects" do
         item = create(:item)
         storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
-        storage_location.inventory_items << create(:inventory_item, item: create(:item), quantity: 10)
+        TestInventory.create_inventory(@organization, {
+          storage_location.id => {
+            create(:item).id => 10
+          }
+        })
         adjustment = create(:adjustment,
                             storage_location: storage_location,
                             line_items_attributes: [
@@ -77,7 +88,8 @@ RSpec.describe Adjustment, type: :model do
       it "gracefully handles adjustments with only positive" do
         item = create(:item)
         storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
-        storage_location.inventory_items << create(:inventory_item, item: create(:item), quantity: 10)
+        TestInventory.create_inventory(storage_location.organization,
+                                       storage_location.id => { create(:item).id => 10 })
         adjustment = create(:adjustment,
                             storage_location: storage_location,
                             line_items_attributes: [
@@ -93,7 +105,8 @@ RSpec.describe Adjustment, type: :model do
       it "gracefully handles adjustments with only negative" do
         item = create(:item)
         storage_location = create(:storage_location, :with_items, item: item, item_quantity: 10)
-        storage_location.inventory_items << create(:inventory_item, item: create(:item), quantity: 10)
+        TestInventory.create_inventory(storage_location.organization,
+                                       storage_location.id => { create(:item).id => 10 })
         adjustment = create(:adjustment,
                             storage_location: storage_location,
                             line_items_attributes: [
@@ -122,5 +135,9 @@ RSpec.describe Adjustment, type: :model do
 
       expect(new_adjustment.save).to be_truthy
     end
+  end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
   end
 end

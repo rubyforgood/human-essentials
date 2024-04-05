@@ -8,6 +8,7 @@
 #  delivery_method        :integer          default("pick_up"), not null
 #  issued_at              :datetime
 #  reminder_email_enabled :boolean          default(FALSE), not null
+#  shipping_cost          :decimal(8, 2)
 #  state                  :integer          default("scheduled"), not null
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
@@ -32,16 +33,63 @@ RSpec.describe Distribution, type: :model do
     end
 
     it "ensures the associated line_items are valid" do
+      storage_location = create(:storage_location)
+      d = build(:distribution, storage_location: storage_location)
+      line_item = build(:line_item, quantity: 1)
+      TestInventory.create_inventory(@organization, {
+        storage_location.id => { line_item.item_id => 10 }
+      })
+      d.line_items << line_item
+      expect(d).to be_valid
+    end
+
+    it "ensures the associated line_items are invalid with a nil quantity" do
       d = build(:distribution)
       d.line_items << build(:line_item, quantity: nil)
       expect(d).not_to be_valid
     end
 
-    it "ensures that any included items are found in the associated storage location" do
+    it "ensures the associated line_items are invalid with a zero quantity" do
       d = build(:distribution)
-      item_missing = create(:item, name: "missing")
-      d.line_items << build(:line_item, item: item_missing)
+      d.line_items << build(:line_item, quantity: 0)
       expect(d).not_to be_valid
+    end
+
+    it "ensures that any included items are found in the associated storage location" do
+      unless Event.read_events?(@organization) # not relevant in event world
+        d = build(:distribution)
+        item_missing = create(:item, name: "missing")
+        d.line_items << build(:line_item, item: item_missing)
+        expect(d).not_to be_valid
+      end
+    end
+
+    it "ensures that the issued at is no earlier than 2000" do
+      d = build(:distribution, issued_at: "1999-12-31")
+      expect(d).not_to be_valid
+    end
+
+    context "when delivery method is shipped" do
+      context "shipping cost is negative" do
+        let(:distribution) { build(:distribution, delivery_method: "shipped", shipping_cost: -13) }
+        it "will not allow to save distribution" do
+          expect(distribution).not_to be_valid
+        end
+      end
+
+      context "shipping cost is none negative" do
+        let(:distribution) { create(:distribution, delivery_method: "shipped", shipping_cost: 13.09) }
+        it "allows to save distribution" do
+          expect(distribution).to be_valid
+        end
+      end
+    end
+
+    context "when delivery method is other then shipped" do
+      let(:distribution) { create(:distribution, delivery_method: "delivery", shipping_cost: -13) }
+      it "allows to save distribution" do
+        expect(distribution).to be_valid
+      end
     end
   end
 
@@ -55,7 +103,7 @@ RSpec.describe Distribution, type: :model do
         create(:distribution, issued_at: Date.yesterday)
         # and one outside the range
         create(:distribution, issued_at: 1.year.ago)
-        expect(Distribution.during(Time.zone.now - 1.week..Time.zone.now).size).to eq(2)
+        expect(Distribution.during(Time.zone.now - 1.week..Time.zone.now + 2.days).size).to eq(2)
       end
     end
 
@@ -139,7 +187,7 @@ RSpec.describe Distribution, type: :model do
   end
 
   context "Callbacks >" do
-    it "initializes the issued_at field to default to created_at if it wasn't explicitly set" do
+    it "initializes the issued_at field to default to midnight if it wasn't explicitly set" do
       yesterday = 1.day.ago
       today = Time.zone.today
 
@@ -147,7 +195,20 @@ RSpec.describe Distribution, type: :model do
       expect(distribution.issued_at.to_date).to eq(today)
 
       distribution = create(:distribution, created_at: yesterday)
-      expect(distribution.issued_at).to eq(distribution.created_at)
+      expect(distribution.issued_at).to eq(distribution.created_at.end_of_day)
+    end
+
+    context "#before_save" do
+      context "#reset_shipping_cost" do
+        context "when delivery_method is other then shipped" do
+          let(:distribution) { create(:distribution, delivery_method: "delivery", shipping_cost: 12.05) }
+
+          it "distribution will be created successfully and the shipping_cost will be zero" do
+            expect(distribution.errors).to be_empty
+            expect(distribution.shipping_cost).to be_nil
+          end
+        end
+      end
     end
   end
 
@@ -184,6 +245,30 @@ RSpec.describe Distribution, type: :model do
         distribution.reload.combine_duplicates
         expect(distribution.line_items.size).to eq 1
         expect(distribution.line_items.first.quantity).to eq 15
+      end
+    end
+
+    describe "#copy_from_request" do
+      it "copy over relevant request information into the distrubution" do
+        item1 = create(:item, name: "Item1")
+        item2 = create(:item, name: "Item2")
+        request = create(:request,
+          organization: @organization,
+          partner_user: ::User.partner_users.first,
+          request_items: [
+            { item_id: item1.id, quantity: 15 },
+            { item_id: item2.id, quantity: 18 }
+          ])
+        distribution = Distribution.new
+        distribution.copy_from_request(request.id)
+        expect(distribution.line_items.size).to eq 2
+        expect(distribution.line_items.first.quantity).to eq 15
+        expect(distribution.line_items.second.quantity).to eq 18
+        expect(distribution.organization_id).to eq @organization.id
+        expect(distribution.partner_id).to eq request.partner_id
+        expect(distribution.agency_rep).to eq "#{request.partner_user.name} <#{request.partner_user.email}>"
+        expect(distribution.comment).to eq request.comments
+        expect(distribution.issued_at.to_date).to eq(Time.zone.today + 1.day)
       end
     end
 
@@ -242,5 +327,9 @@ RSpec.describe Distribution, type: :model do
         expect(distribution_details[7]).to eq distribution.agency_rep
       end
     end
+  end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
   end
 end

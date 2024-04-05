@@ -31,7 +31,7 @@
         <div class="card card-primary">
           <div class="card-footer">
             <div class="pull-right">
-              <%= new_button_to new_manufacturer_path(organization_id: current_organization), text: "New Manufacturer" %>
+              <%= new_button_to new_manufacturer_path(organization_name: current_organization), text: "New Manufacturer" %>
             </div>
           </div>
         </div>
@@ -53,7 +53,7 @@
               <thead>
               <tr>
                 <th>Name</th>
-                <th>Total Diapers</th>
+                <th>Total Items</th>
                 <th class="text-center">Actions</th>
               </tr>
               </thead>
@@ -70,9 +70,9 @@
   <%= render(
           layout: "shared/csv_import_modal",
           locals: {
-              title: "Import Manufacturers",
-              csv_template_url: "/manufacturers.csv",
-              csv_import_url: import_csv_manufacturers_path
+            import_type: "Manufacturers",
+            csv_template_url: "/manufacturers.csv",
+            csv_import_url: import_csv_manufacturers_path
           }
       ) do %>
     <li>Open the csv file with excel or your favourite spreadsheet program.</li>

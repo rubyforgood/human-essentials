@@ -1,6 +1,6 @@
 RSpec.describe DonationsController, type: :controller do
   let(:default_params) do
-    { organization_id: @organization.to_param }
+    { organization_name: @organization.to_param }
   end
   let(:donation) { create(:donation, organization: @organization) }
 
@@ -67,6 +67,10 @@ RSpec.describe DonationsController, type: :controller do
         expect do
           put :update, params: default_params.merge(id: donation.id, donation: donation_params)
         end.to change { donation.storage_location.inventory_items.first.quantity }.by(5)
+          .and change {
+                 View::Inventory.new(donation.organization_id)
+                   .quantity_for(storage_location: donation.storage_location_id, item_id: line_item.item_id)
+               }.by(5)
       end
 
       describe "when changing storage location" do
@@ -90,7 +94,10 @@ RSpec.describe DonationsController, type: :controller do
           expect(new_storage_location.size).to eq 8
         end
 
-        it "rollsback updates if quantity would go below 0" do
+        # TODO this test is invalid in event-world since it's handled by the aggregate
+        it "rolls back updates if quantity would go below 0" do
+          next if Event.read_events?(@organization)
+
           donation = create(:donation, :with_items, item_quantity: 10)
           original_storage_location = donation.storage_location
 
@@ -110,9 +117,8 @@ RSpec.describe DonationsController, type: :controller do
             }
           }
           donation_params = { source: donation.source, storage_location: new_storage_location, line_items_attributes: line_item_params }
-          expect do
-            put :update, params: default_params.merge(id: donation.id, donation: donation_params)
-          end.to raise_error(Errors::InsufficientAllotment)
+          put :update, params: default_params.merge(id: donation.id, donation: donation_params)
+          expect(response).not_to redirect_to(anything)
           expect(original_storage_location.size).to eq 5
           expect(new_storage_location.size).to eq 0
           expect(donation.reload.line_items.first.quantity).to eq 10
@@ -134,6 +140,10 @@ RSpec.describe DonationsController, type: :controller do
           expect do
             put :update, params: default_params.merge(id: donation.id, donation: donation_params)
           end.to change { donation.storage_location.inventory_items.first.quantity }.by(-10)
+            .and change {
+                   View::Inventory.new(donation.organization_id)
+                     .quantity_for(storage_location: donation.storage_location_id, item_id: line_item.item_id)
+                 }.by(-10)
         end
       end
     end
@@ -160,22 +170,6 @@ RSpec.describe DonationsController, type: :controller do
         expect(subject).to redirect_to(dashboard_path)
       end
     end
-
-    context "Looking at a different organization" do
-      let(:object) { create(:donation, organization: create(:organization)) }
-
-      include_examples "requiring authorization"
-
-      it "Disallows all access for Donation-specific actions" do
-        single_params = { organization_id: object.organization.to_param, id: object.id }
-
-        patch :add_item, params: single_params
-        expect(response).to be_redirect
-
-        patch :remove_item, params: single_params
-        expect(response).to be_redirect
-      end
-    end
   end
 
   context "While signed in as an organization admin >" do
@@ -188,21 +182,6 @@ RSpec.describe DonationsController, type: :controller do
       it "redirects to the index" do
         expect(subject).to redirect_to(donations_path)
       end
-    end
-  end
-
-  context "While not signed in" do
-    let(:object) { create(:donation) }
-
-    include_examples "requiring authorization"
-    it "redirects the user to the sign-in page for Donation specific actions" do
-      single_params = { organization_id: object.organization.to_param, id: object.id }
-
-      patch :add_item, params: single_params
-      expect(response).to be_redirect
-
-      patch :remove_item, params: single_params
-      expect(response).to be_redirect
     end
   end
 

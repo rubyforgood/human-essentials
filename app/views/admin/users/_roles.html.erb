@@ -1,0 +1,67 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary card-outline">
+          <div class="card-header">
+            <h5 class="card-title"><%= user.display_name %> - Roles
+            </h5>
+          </div>
+          <!-- /.card-header -->
+          <!-- form start -->
+          <div class="card-body">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Role Type</th>
+                  <th>Resource</th>
+                  <th class="text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% user.roles.each do |role| %>
+                  <tr>
+                    <td><%= role.title %></td>
+                    <td><%= link_to role.resource.name, role.resource %></td>
+                    <td class="text-right">
+                      <%= delete_button_to admin_user_remove_role_path(user, role_id: role.id),
+                                           confirm: "Are you sure you want to remove this role?" %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+            <div data-controller="double-select" data-double-select-url-value="<%= resource_ids_admin_users_url %>">
+            <h3>Add Role</h3>
+            <%= form_tag admin_user_add_role_path(user) do %>
+              <div class="form-inputs">
+                <div class="form-group">
+                  <label>Type</label>
+                  <div class="input-group">
+                    <%= select_tag :resource_type, options_for_select(@resources),
+                                     class: 'select form-control',
+                                     data: { 'double-select-target': 'source',
+                                             'action': 'double-select#sourceChanged'
+                                     } %>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Resource</label>
+                  <div class="input-group">
+                    <%= select_tag :resource_id, [], class: 'form-control', data: {
+                      'double-select-target': 'destination'
+                    } %>
+                  </div>
+                </div>
+              </div>
+              <%= submit_tag 'Add Role', class: 'btn btn-md btn-primary' %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>

@@ -3,7 +3,7 @@
   <!-- Modal content-->
   <div class="modal-content">
     <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal">&times;</button>
+      <button type="button" class="close btn-close" data-bs-dismiss="modal">&times;</button>
       <h4 class="modal-title" id="mainModalLabel">
         New Vendor
       </h4>
@@ -11,7 +11,7 @@
     <div class="modal-body">
       <% flash.each do |key, value| %>
         <div class="<%= flash_class(key) %> alert-dismissible">
-          <a href="#" class="close" data-dismiss="alert" aria-label="close" style="text-decoration: none;"><%= fa_icon('times') %></a>
+          <a href="#" class="close btn-close" data-bs-dismiss="alert" aria-label="close" style="text-decoration: none;"><%= fa_icon('times') %></a>
           <%= value %>
         </div>
       <% end %>
@@ -20,7 +20,7 @@
 
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
     </div>
   </div>
 

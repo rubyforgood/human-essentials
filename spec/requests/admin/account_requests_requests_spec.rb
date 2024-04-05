@@ -46,7 +46,7 @@ RSpec.describe 'Admin::AccountRequestsController', type: :request do
             rejection_reason: "because I said so"
           }
         }
-        redir = admin_account_requests_path(organization_id: @organization.to_param)
+        redir = admin_account_requests_path
         post reject_admin_account_requests_path(params: params)
         expect(request.flash[:notice]).to eq("Account request rejected!")
         expect(response).to redirect_to(redir)

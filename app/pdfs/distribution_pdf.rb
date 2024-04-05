@@ -21,7 +21,7 @@ class DistributionPdf
 
     image logo_image, fit: [250, 85]
 
-    bounding_box [bounds.right - 225, bounds.top], width: 225, height: 50 do
+    bounding_box [bounds.right - 225, bounds.top], width: 225, height: 85 do
       text @organization.name, align: :right
       text @organization.address, align: :right
       text @organization.email, align: :right
@@ -30,9 +30,7 @@ class DistributionPdf
     text "Issued to:", style: :bold
     font_size 12
     text @distribution.partner.name
-    font_size 10
-    text @distribution.partner.organization.address
-    move_up 34
+    move_up 24
 
     text "Partner Primary Contact:", style: :bold, align: :right
     font_size 12
@@ -42,18 +40,38 @@ class DistributionPdf
     text @distribution.partner.profile.primary_contact_phone, align: :right
     move_down 10
 
-    text "Issued on:", style: :bold
-    font_size 12
-    text @distribution.distributed_at
-    font_size 10
-    move_up 22
+    if %w(shipped delivered).include?(@distribution.delivery_method)
+      move_up 10
+      text "Delivery address:", style: :bold
+      font_size 10
+      text @distribution.partner.profile.address1
+      text @distribution.partner.profile.address2
+      text @distribution.partner.profile.city
+      text @distribution.partner.profile.state
+      text @distribution.partner.profile.zip_code
+      move_up 40
 
-    text "Items Received Year-to-Date:", style: :bold, align: :right
-    font_size 12
-    text @distribution.partner.quantity_year_to_date.to_s, align: :right
-    font_size 10
+      text "Issued on:", style: :bold, align: :right
+      font_size 12
+      text @distribution.distributed_at, align: :right
+      font_size 10
+      move_down 30
+    else
+      text "Issued on:", style: :bold
+      font_size 12
+      text @distribution.distributed_at
+      font_size 10
+    end
+
+    if @organization.ytd_on_distribution_printout
+      move_up 22
+      text "Items Received Year-to-Date:", style: :bold, align: :right
+      font_size 12
+      text @distribution.partner.quantity_year_to_date.to_s, align: :right
+      font_size 10
+    end
+
     move_down 10
-
     text "Comments:", style: :bold
     font_size 12
     text @distribution.comment
@@ -133,8 +151,12 @@ class DistributionPdf
       "In-Kind Value Received",
       "Packages"]]
 
+    inventory = nil
+    if Event.read_events?(@distribution.organization)
+      inventory = View::Inventory.new(@distribution.organization_id)
+    end
     request_items = @distribution.request.request_items.map do |request_item|
-      RequestItem.from_json(request_item, @distribution.request)
+      RequestItem.from_json(request_item, @distribution.request, inventory)
     end
     line_items = @distribution.line_items.sorted
 
@@ -157,7 +179,7 @@ class DistributionPdf
         c.quantity,
         "",
         dollar_value(c.item.value_in_cents),
-        dollar_value(c.value_per_line_item),
+        nil,
         nil]
     end
 

@@ -16,66 +16,70 @@
         </ol>
       </div>
     </div>
-  </div><!-- /.container-fluid -->
+  </div>
+  <!-- /.container-fluid -->
 </section>
-
 <section class="content">
   <div class="row">
     <div class="col-md-3 col-sm-6 col-xs-12">
       <div class="info-box">
         <span class="info-box-icon bg-blue"><i class="fa fa-gratipay"></i></span>
-
         <div class="info-box-content">
           <span class="info-box-text">Donations</span>
           <span class="info-box-number"><%= @donation_count %></span>
-        </div><!-- /.info-box-content -->
-      </div><!-- /.info-box -->
-    </div><!-- /.col -->
+        </div>
+        <!-- /.info-box-content -->
+      </div>
+      <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
     <div class="col-md-3 col-sm-6 col-xs-12">
       <div class="info-box">
         <span class="info-box-icon bg-red"><i class="fa fa-money"></i></span>
-
         <div class="info-box-content">
           <span class="info-box-text">Distributions</span>
           <span class="info-box-number"><%= @distribution_count %></span>
-        </div><!-- /.info-box-content -->
-      </div><!-- /.info-box -->
-    </div><!-- /.col -->
-
+        </div>
+        <!-- /.info-box-content -->
+      </div>
+      <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
     <!-- fix for small devices only -->
     <div class="clearfix visible-sm-block"></div>
-
     <div class="col-md-3 col-sm-6 col-xs-12">
       <div class="info-box">
         <span class="info-box-icon bg-green"><i class="fa fa-file-text"></i></span>
-
         <div class="info-box-content">
           <span class="info-box-text">Requests</span>
           <span class="info-box-number"><%= @request_count %></span>
-        </div><!-- /.info-box-content -->
-      </div><!-- /.info-box -->
-    </div><!-- /.col -->
+        </div>
+        <!-- /.info-box-content -->
+      </div>
+      <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
     <div class="col-md-3 col-sm-6 col-xs-12">
       <div class="info-box">
         <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
-
         <div class="info-box-content">
           <span class="info-box-text">Total Organizations</span>
           <span class="info-box-number"><%= @organization_count %></span>
-        </div><!-- /.info-box-content -->
-      </div><!-- /.info-box -->
-    </div><!-- /.col -->
+        </div>
+        <!-- /.info-box-content -->
+      </div>
+      <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
   </div>
-
   <div class="row">
     <div class="col-md-6">
       <!-- USERS LIST -->
       <div class="card">
         <div class="card-header border-transparent">
           <h3 class="card-title"><strong>Recently Added Users</strong></h3>
-
           <div class="card-tools">
-            <span class="badge badge-danger"><%= pluralize(@recent_users.count, "New User") %></span>
+            <span class="badge badge-danger bg-danger"><%= pluralize(@recent_users.count, "New User") %></span>
             <button type="button" class="btn btn-tool" data-card-widget="collapse">
               <i class="fas fa-minus"></i>
             </button>
@@ -88,14 +92,13 @@
         <div class="card-body users-list p-0">
           <!-- /.table-responsive -->
           <ul class="users-list clearfix">
-
-          <% @recent_users.each do |user| %>
-            <li>
-              <%= image_tag gravatar_url(user.email, 32) %>
-              <%= link_to user.name, admin_user_path(user), class: "users-list-name" %>
-              <span class="users-list-date"><%= time_ago_in_words(user.created_at) %></span>
-            </li>
-          <% end %>
+            <% @recent_users.each do |user| %>
+              <li>
+                <%= image_tag gravatar_url(user.email, 32) %>
+                <%= link_to recently_added_user_display_text(user), edit_admin_user_path(user), class: "users-list-name" %>
+                <span class="users-list-date"><%= time_ago_in_words(user.created_at) %></span>
+              </li>
+            <% end %>
           </ul>
           <br>
           <div class="text-center">
@@ -108,17 +111,14 @@
         </div>
         <!-- /.card-footer -->
       </div>
-
     </div>
-
     <div class="col-md-6">
       <!-- USERS LIST -->
       <div class="card">
         <div class="card-header border-transparent">
           <h3 class="card-title"><strong>Recently Added Organizations</strong></h3>
-
           <div class="card-tools">
-            <span class="badge badge-danger"><%= pluralize(@recent_organizations.count, "New Organization") %></span>
+            <span class="badge badge-danger bg-danger"><%= pluralize(@recent_organizations.count, "New Organization") %></span>
             <button type="button" class="btn btn-tool" data-card-widget="collapse">
               <i class="fas fa-minus"></i>
             </button>
@@ -133,8 +133,7 @@
           <ul class="users-list clearfix">
             <% @recent_organizations.each do |org| %>
               <li>
-                <%#= image_tag(org&.logo)
-                %>
+                <%#= image_tag(org&.logo) %>
                 <%= link_to org.name, admin_organization_path(org.id), class: "users-list-name" %>
                 <span class="users-list-date"><%= time_ago_in_words(org.created_at) %></span>
               </li>
@@ -147,20 +146,15 @@
         <!-- /.card-body -->
         <div class="card-footer clearfix">
           <%= link_to "View All Organizations", admin_organizations_path, class:"btn btn-sm btn-info float-left" %>
-
           <a href="#" class="btn btn-sm btn-secondary float-right">View All Orders</a>
         </div>
       </div>
     </div>
   </div>
-
-
-
   <div class="col-md-14">
     <div class="card">
       <div class="card-header border-transparent">
         <h3 class="card-title"><strong>Top 10 Uses of Other</strong></h3>
-
         <div class="card-tools">
           <button type="button" class="btn btn-tool" data-card-widget="collapse">
             <i class="fas fa-minus"></i>
@@ -175,18 +169,18 @@
         <!-- /.table-responsive -->
         <table class="table">
           <thead>
-          <tr>
-            <th>Name</th>
-            <th>Occurrence</th>
-          </tr>
+            <tr>
+              <th>Name</th>
+              <th>Occurrence</th>
+            </tr>
           </thead>
           <tbody>
-          <% @top_10_other.each do |other| %>
-            <tr>
-              <td><%= other[0] %></td>
-              <td><%= other[1] %></td>
-            </tr>
-          <% end %>
+            <% @top_10_other.each do |other| %>
+              <tr>
+                <td><%= other[0] %></td>
+                <td><%= other[1] %></td>
+              </tr>
+            <% end %>
           </tbody>
         </table>
         <div class="text-center">
@@ -202,7 +196,6 @@
     <div class="card">
       <div class="card-header border-transparent">
         <h3 class="card-title"><strong>Recently Active Users</strong></h3>
-
         <div class="card-tools">
           <button type="button" class="btn btn-tool" data-card-widget="collapse">
             <i class="fas fa-minus"></i>
@@ -217,22 +210,22 @@
         <!-- /.table-responsive -->
         <table class="table">
           <thead>
-          <tr>
-            <th>User</th>
-            <th>Email</th>
-            <th>Organization</th>
-            <th>Last Active</th>
-          </tr>
+            <tr>
+              <th>User</th>
+              <th>Email</th>
+              <th>Organization</th>
+              <th>Last Active</th>
+            </tr>
           </thead>
           <tbody>
-          <% @active_users.each do |user| %>
-            <tr>
-              <td><%= user.name %></td>
-              <td><%= user.email %></td>
-              <td><%= user.organization&.name %></td>
-              <td><%= time_ago_in_words user.last_request_at %></td>
-            </tr>
-          <% end %>
+            <% @active_users.each do |user| %>
+              <tr>
+                <td><%= user.display_name %></td>
+                <td><%= user.email %></td>
+                <td><%= user.organization&.name %></td>
+                <td><%= time_ago_in_words user.last_request_at %></td>
+              </tr>
+            <% end %>
           </tbody>
         </table>
         <div class="text-center">

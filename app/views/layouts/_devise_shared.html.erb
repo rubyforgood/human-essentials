@@ -9,13 +9,16 @@
   <!-- Bootstrap 3.3.7 -->
   <%= csrf_meta_tags %>
   <%= stylesheet_link_tag    'application', media: 'all' %>
-  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/v4-shims.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/v4-shims.css" rel="stylesheet">
 
+  <%=
+    # DO NOT LOAD ANY JAVASCRIPT BEFORE THIS!!!
+    javascript_importmap_tags
+  %>
   <%= raw fullstory_script(current_user: current_user) if Rails.env.production? %>
-  <%= javascript_importmap_tags %>
   <script type="esms-options">
   {
     "noLoadEventRetriggers": true
@@ -32,10 +35,10 @@
     $(document).ready(function() {
       <% if Rails.env.staging? %>
         // Prevents users from closing the modal by clicking outside of it or pressing the esc key
-        $('#warningModal').modal({
+        new bootstrap.Modal('#warningModal', {
           backdrop: 'static',
           keyboard: false
-        });
+        }).show();
         // Adds click event handler on the checkbox
         $('#defaultCheck1').click(function(){
           // If the checkbox is checked, enable the continue button
@@ -54,7 +57,7 @@
   <div class="login-box">
     <% if masthead_img_src %>
       <div class="login-logo text-center">
-        <img id="MastheadLogo" src=<%= masthead_img_src %> alt="Human Essentials" title="Human Essentials" class="serv_icon"/>
+        <img id="MastheadLogo" src="<%= masthead_img_src %>" alt="Human Essentials" title="Human Essentials" class="serv_icon">
       </div>
     <% end %>
 
@@ -90,7 +93,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-warning continue-btn" data-dismiss="modal" disabled>Continue To The Test Site</button>
+          <button type="button" class="btn btn-warning continue-btn" data-bs-dismiss="modal" disabled>Continue To The Test Site</button>
         </div>
       </div>
     </div>

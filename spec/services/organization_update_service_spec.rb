@@ -6,17 +6,19 @@ describe OrganizationUpdateService, skip_seed: true do
   describe "#update" do
     context "when object is valid" do
       it "should update and return true" do
-        result = described_class.update(organization, {name: "A brand NEW NEW name"})
-        expect(result).to eq(true)
+        params = {name: "A brand NEW NEW name"}
+        described_class.update(organization, params)
+        expect(organization.errors.none?).to eq(true)
         expect(organization.reload.name).to eq("A brand NEW NEW name")
       end
     end
 
     context "when object is invalid" do
       it "should not update and return false" do
-        result = described_class.update(organization, {name: "A brand NEW NEW name",
-                                                        url: "something that IS NOT A URL"})
-        expect(result).to eq(false)
+        params = {name: "A brand NEW NEW name",
+                  url: "something that IS NOT A URL"}
+        described_class.update(organization, params)
+        expect(organization.errors.any?).to eq(true)
         expect(organization.reload.name).not_to eq("A brand NEW NEW name")
       end
     end
@@ -59,10 +61,14 @@ describe OrganizationUpdateService, skip_seed: true do
             expect(partner_two.profile.enable_child_based_requests).to eq(true)
           end
         end
+
+        it "should add an error message to the organization" do
+          expect(organization.errors.full_messages).to eq(["The following partners would be unable to make requests with this update: #{partner_one.name}"])
+        end
       end
 
       context "when all of a single partner's request flags WILL NOT be disabled" do
-        before { described_class.update(organization, enable_individual_requests: false) }
+        before { described_class.update(organization, enable_individual_requests: "false") }
 
         it "should allow the disabling of request flags in organization and its partners" do
           organization.reload
@@ -129,7 +135,7 @@ describe OrganizationUpdateService, skip_seed: true do
       it "should NOT update partners' request flags when enabling request flags on the organization" do
         organization.partners.each { |p|
           p.profile.update!(
-            enable_individual_requests: false,
+            enable_individual_requests: true,
             enable_child_based_requests: false,
             enable_quantity_based_requests: false
           )
@@ -140,7 +146,7 @@ describe OrganizationUpdateService, skip_seed: true do
         expect(organization.partners.map { |p| p.profile.enable_child_based_requests })
           .to eq([false, false])
         expect(organization.partners.map { |p| p.profile.enable_individual_requests })
-          .to eq([false, false])
+          .to eq([true, true])
         expect(organization.partners.map { |p| p.profile.enable_quantity_based_requests })
           .to eq([false, false])
       end

@@ -6,21 +6,24 @@
   <title>Human Essentials</title>
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <%= csrf_meta_tags %>
-  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/v4-shims.css" rel="stylesheet" />
+
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/v4-shims.css" rel="stylesheet">
 
   <%= stylesheet_link_tag 'application', media: 'all' %>
+  <%=
+    # DO NOT LOAD ANY JAVASCRIPT BEFORE THIS!!!
+    javascript_importmap_tags
+  %>
   <%= raw fullstory_script(current_user: current_user) if Rails.env.production? %>
-  <%= javascript_importmap_tags %>
   <script type="esms-options">
   {
     "noLoadEventRetriggers": true
   }
   </script>
 
-  <%= raw fullstory_script(current_user: current_user) if Rails.env.production? %>
   <%= stylesheet_link_tag 'application', media: 'all' %>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
   <%= render 'magic_test/support' if Rails.env.test? %>
@@ -34,7 +37,7 @@
     </a>
 
     <ul class="navbar-nav ml-auto">
-      <% if user_signed_in?  %>
+      <% if user_signed_in? %>
         <%= render partial: "layouts/partners/navigation/navbar" %>
       <% end %>
     </ul>
@@ -62,7 +65,7 @@
   <div class="content-wrapper">
     <% flash.each do |key, value| %>
       <div class="<%= flash_class(key) %> alert-dismissible fade show" role="alert">
-        <a href="#" class="close" data-dismiss="alert" aria-label="Close" style="text-decoration: none;"><%= fa_icon('times') %></a>
+        <a href="#" class="close btn-close" data-bs-dismiss="alert" aria-label="Close" style="text-decoration: none;"><%= fa_icon('times') %></a>
         <%= sanitize(value, tags: %w(ul li)) %>
       </div>
     <% end %>
@@ -82,5 +85,3 @@
 </body>
 <div class="modal fade" id="modal_new" role="dialog"></div>
 </html>
-
-

@@ -1,8 +1,9 @@
-<% row_item = row.last %>
 <tr>
-<td><%= row_item[:item_name] %></td>
+<td><%= link_to(row_item[:item_name], item_url(row_item[:item_id])) %></td>
 <% @storages.each do |storage| %>
-  <td class="numeric"><%= row_item[storage.id] || "0" %></td>
+  <td class="numeric">
+    <%= row_item[:locations].find { |location| location[:id] == storage.id }&.dig(:quantity) || "0" %>
+  </td>
 <% end %>
 <td class="numeric"><%= row_item[:item_on_hand_minimum_quantity] %></td>
 <td class="numeric"><%= row_item[:item_on_hand_recommended_quantity] %></td>

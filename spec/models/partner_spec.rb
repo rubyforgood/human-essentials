@@ -218,6 +218,24 @@ RSpec.describe Partner, type: :model do
       end
     end
 
+    it "should not call the UserInviteService.invite when the partner is changing email to previously used email" do
+      previous_email = partner.email
+      partner.email = "randomtest@email.com"
+      partner.save!
+      partner.email = previous_email
+      partner.save!
+      expect(UserInviteService).not_to have_received(:invite).with(
+        email: previous_email,
+        roles: [Role::PARTNER],
+        resource: partner
+      )
+      expect(UserInviteService).to have_received(:invite).with(
+        email: "randomtest@email.com",
+        roles: [Role::PARTNER],
+        resource: partner
+      )
+    end
+
     [:uninvited, :deactivated].each do |test_status|
       it "should not call the UserInviteService.invite when the partner has status #{test_status} and the email is changed" do
         partner.status = test_status
@@ -273,6 +291,7 @@ RSpec.describe Partner, type: :model do
     let(:contact_name) { "Jon Ralfeo" }
     let(:contact_email) { "jon@entertainment720.com" }
     let(:contact_phone) { "1231231234" }
+    let(:notes) { "Some notes" }
 
     before do
       partner.profile.update({
@@ -280,12 +299,14 @@ RSpec.describe Partner, type: :model do
                                primary_contact_email: contact_email,
                                primary_contact_phone: contact_phone
                              })
+      partner.update(notes: notes)
     end
 
     it "includes contact person information from parnerbase" do
       expect(partner.csv_export_attributes).to include(contact_name)
       expect(partner.csv_export_attributes).to include(contact_phone)
       expect(partner.csv_export_attributes).to include(contact_email)
+      expect(partner.csv_export_attributes).to include(notes)
     end
   end
 
@@ -337,5 +358,9 @@ RSpec.describe Partner, type: :model do
     context "when partner don't have any related information" do
       it { is_expected.to eq({families_served: 0, children_served: 0, family_zipcodes: 0, family_zipcodes_list: []}) }
     end
+  end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
   end
 end

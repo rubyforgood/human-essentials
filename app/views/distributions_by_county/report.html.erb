@@ -1,0 +1,68 @@
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Estimated Distributions by County - #{current_organization.name}" %>
+        <h1>
+          Estimated Distributions by County for <%= current_organization.name %>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(dashboard_path) do %>
+              <i class="fa fa-dashboard"></i> Home
+            <% end %>
+          </li>
+          <li class="breadcrumb-item"><a href="#">Distributions</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="row">
+            <div class="col-sm-3 col-6">
+              <div class="description-block border-right">
+                <%= simple_form_for :filters, url: distributions_by_county_report_path(current_organization), method: :get do |f| %>
+                  <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %><br>
+                  <%= filter_button %>
+                <% end %>
+              </div>
+              <!-- /.description-block -->
+            </div>
+          </div>
+
+          <div class="card-body table-responsive p-0">
+            <table class="table table-hover">
+              <thead>
+              <tr>
+                <th>County</th>
+                <th class="numeric">Estimated total items</th>
+                <th class="numeric">Estimated total market value</th>
+              </tr>
+              </thead>
+              <tbody>
+              <% @breakdown.each do |bd| %>
+                <tr>
+                  <td><%= bd.name %></td>
+                  <td class="numeric"><%= number_with_delimiter(bd.num_items) %></td>
+                  <td class="numeric"><%= dollar_presentation(bd.amount) %></td>
+                </tr>
+              <% end %>
+
+              </tbody>
+
+            </table>
+          </div>
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+</section>

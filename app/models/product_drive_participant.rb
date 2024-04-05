@@ -17,18 +17,23 @@
 #
 
 class ProductDriveParticipant < ApplicationRecord
+  has_paper_trail
   include Provideable
   include Geocodable
 
   has_many :donations, inverse_of: :product_drive_participant, dependent: :destroy
 
-  validates :phone, presence: { message: "Must provide a phone or an e-mail" }, if: proc { |ddp| ddp.email.blank? }
-  validates :email, presence: { message: "Must provide a phone or an e-mail" }, if: proc { |ddp| ddp.phone.blank? }
+  validates :phone, presence: { message: "Must provide a phone or an e-mail" }, if: proc { |pdp| pdp.email.blank? }
+  validates :email, presence: { message: "Must provide a phone or an e-mail" }, if: proc { |pdp| pdp.phone.blank? }
 
   scope :alphabetized, -> { order(:contact_name) }
 
   def volume
     donations.map { |d| d.line_items.total }.reduce(:+)
+  end
+
+  def volume_by_product_drive(product_drive_id)
+    donations.by_product_drive(product_drive_id).map { |d| d.line_items.total }.sum
   end
 
   def donation_source_view

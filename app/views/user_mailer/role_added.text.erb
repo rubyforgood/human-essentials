@@ -1,0 +1,9 @@
+Hello <%= @user.display_name %>,
+
+This is a notification that you have been given the following roles in the Human Essentials app:
+
+<% @roles.each do |role| %>
+* <%= role.name.titleize %> for <%= @resource.name %></li>
+<% end %>
+
+Please log into https://humanessentials.app to view your new role!

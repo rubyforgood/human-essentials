@@ -18,6 +18,7 @@
 #
 
 class Donation < ApplicationRecord
+  has_paper_trail
   SOURCES = { product_drive: "Product Drive",
               manufacturer: "Manufacturer",
               donation_site: "Donation Site",
@@ -66,8 +67,6 @@ class Donation < ApplicationRecord
     { message: "must be specified since you chose '#{SOURCES[:manufacturer]}'" }, if: :from_manufacturer?
   validates :source, presence: true, inclusion: { in: SOURCES.values, message: "Must be a valid source." }
 
-  include IssuedAt
-
   # TODO: move this to Organization.donations as an extension
   scope :during, ->(range) { where(donations: { issued_at: range }) }
   scope :by_source, ->(source) {
@@ -105,24 +104,17 @@ class Donation < ApplicationRecord
                       .sum("line_items.quantity")
   end
 
-  def replace_increase!(new_donation_params)
-    old_data = to_a
-    item_ids = line_items_attributes(new_donation_params).map { |i| i[:item_id].to_i }
-    original_storage_location = storage_location
-
-    ActiveRecord::Base.transaction do
-      line_items.map(&:destroy!)
-      reload
-      Item.reactivate(item_ids)
-      line_items_attributes(new_donation_params).map { |i| i.delete(:id) }
-      update! new_donation_params
-      # Roll back distribution output by increasing storage location
-      storage_location.increase_inventory(to_a)
-      # Apply the new changes to the storage location inventory
-      original_storage_location.decrease_inventory(old_data)
+  def details
+    case source
+    when SOURCES[:product_drive]
+      product_drive.name
+    when SOURCES[:manufacturer]
+      manufacturer.name
+    when SOURCES[:donation_site]
+      donation_site.name
+    when SOURCES[:misc]
+      comment&.truncate(25, separator: /\s/)
     end
-  rescue ActiveRecord::RecordInvalid
-    false
   end
 
   def remove(item)

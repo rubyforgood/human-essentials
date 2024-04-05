@@ -1,6 +1,7 @@
 module Exports
   class ExportDistributionsCSVService
-    def initialize(distributions:, filters: [])
+    include DistributionHelper
+    def initialize(distributions:, organization:, filters: [])
       # Currently, the @distributions are already loaded by the controllers that are delegating exporting
       # to this service object; this is happening within the same request/response cycle, so it's already
       # in memory, so we can pass that collection in directly. Should this be moved to a background / async
@@ -9,6 +10,7 @@ module Exports
       # service object.
       @distributions = distributions
       @filters = filters
+      @organization = organization
     end
 
     def generate_csv
@@ -82,6 +84,9 @@ module Exports
         "Delivery Method" => ->(distribution) {
           distribution.delivery_method
         },
+        "Shipping Cost" => ->(distribution) {
+          distribution_shipping_cost(distribution.shipping_cost)
+        },
         "State" => ->(distribution) {
           distribution.state
         },
@@ -108,13 +113,9 @@ module Exports
     end
 
     def item_headers
-      # Define the item_headers by taking each item name
-      # and sort them alphabetically
-      item_names = distributions.map do |distribution|
-        distribution.line_items.map(&:item).map(&:name)
-      end.flatten
+      return @item_headers if @item_headers
 
-      item_names.sort.uniq
+      @item_headers = @organization.items.order(:created_at).distinct.select([:created_at, :name]).map(&:name)
     end
 
     def build_row_data(distribution)
@@ -125,6 +126,8 @@ module Exports
       distribution.line_items.each do |line_item|
         item_name = line_item.item.name
         item_column_idx = headers_with_indexes[item_name]
+        next unless item_column_idx
+
         row[item_column_idx] += line_item.quantity
       end
 

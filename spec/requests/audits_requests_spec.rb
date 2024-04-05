@@ -2,13 +2,21 @@ require 'rails_helper'
 
 RSpec.describe "Audits", type: :request do
   let(:default_params) do
-    { organization_id: @organization.to_param }
+    { organization_name: @organization.to_param }
   end
 
   let(:valid_attributes) do
     {
       organization_id: @organization.id,
       storage_location_id: create(:storage_location, organization: @organization).id,
+      user_id: create(:organization_admin, organization: @organization).id
+    }
+  end
+
+  let(:invalid_storage_location_attributes) do
+    {
+      organization_id: @organization.id,
+      storage_location_id: nil,
       user_id: create(:organization_admin, organization: @organization).id
     }
   end
@@ -109,6 +117,22 @@ RSpec.describe "Audits", type: :request do
           post audits_path(default_params.merge(audit: invalid_attributes))
           expect(response).to render_template(:new)
         end
+
+        it "re-renders the 'new' template with an error message when an invalid storage location is given" do
+          post audits_path(default_params.merge(audit: invalid_storage_location_attributes))
+          expect(response).to render_template(:new)
+          expect(flash[:error]).to eq("Storage location must exist")
+        end
+      end
+    end
+
+    describe 'POST #finalize' do
+      it 'sets the finalize status and saves an event' do
+        audit = create(:audit, organization: @organization)
+        expect(AuditEvent.count).to eq(0)
+        post audit_finalize_path(default_params.merge(audit_id: audit.to_param))
+        expect(audit.reload).to be_finalized
+        expect(AuditEvent.count).to eq(1)
       end
     end
 

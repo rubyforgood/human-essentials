@@ -3,10 +3,10 @@
   <div class="card-body">
     <dl>
       <dt>Clients Have An Income Requirement to Work With You</dt>
-      <dd><%= humanize_boolean(profile.income_requirement_desc) %></dd>
+      <dd><%= humanize_boolean_3state(profile.income_requirement_desc) %></dd>
 
       <dt>Do You Verify The Income Of Your Clients</dt>
-      <dd><%= humanize_boolean(profile.income_verification) %></dd>
+      <dd><%= humanize_boolean_3state(profile.income_verification) %></dd>
 
       <h6>Race/Ethnicity of Client Base</h6>
       <dt>African American</dt>
