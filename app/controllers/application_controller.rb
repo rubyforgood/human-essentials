@@ -38,6 +38,7 @@ class ApplicationController < ActionController::Base
 
     @role = Role.find_by(id: session[:current_role]) || UsersRole.current_role_for(current_user)
     session[:current_role] = @role&.id
+    UsersRole.set_last_role_for(current_user, @role)
 
     @role
   end
