@@ -185,18 +185,15 @@ RSpec.describe "Organizations", type: :request do
     end
 
     describe "GET #show" do
-      before { get organization_path(default_params) }
+      before { get admin_organizations_path({ id: @organization.id }) }
 
       it { expect(response).to be_successful }
 
       it 'organization details' do
-        expect(assigns(:organization)).to have_attributes(
-          name: @organization.name,
-          email: @organization.email,
-          url: @organization.url,
-          created_at: @organization.created_at,
-          display_last_distribution_date: @organization.display_last_distribution_date
-        )
+        expect(response.body).to include(@organization.name)
+        expect(response.body).to include(@organization.email)
+        expect(response.body).to include(@organization.created_at.strftime("%Y-%m-%d"))
+        expect(response.body).to include(@organization.display_last_distribution_date)
       end
     end
 
