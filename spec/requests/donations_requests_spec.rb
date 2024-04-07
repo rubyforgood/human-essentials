@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Donations", type: :request do
   let(:default_params) do
-    { organization_id: @organization.to_param }
+    { organization_name: @organization.to_param }
   end
 
   describe "while signed in" do
@@ -81,7 +81,34 @@ RSpec.describe "Donations", type: :request do
       end
     end
 
-    context "GET #edit" do
+    describe "GET #show" do
+      let(:item) { create(:item) }
+      let!(:donation) { create(:donation, :with_items, item: item) }
+
+      it "shows an enabled edit button" do
+        get donation_path(default_params.merge(id: donation.id))
+        page = Nokogiri::HTML(response.body)
+        edit = page.at_css("a[href='#{edit_donation_path(default_params.merge(id: donation.id))}']")
+        expect(edit.attr("class")).not_to match(/disabled/)
+        expect(response.body).not_to match(/please make the following items active:/)
+      end
+
+      context "with an inactive item" do
+        before do
+          item.update(active: false)
+        end
+
+        it "shows a disabled edit button" do
+          get donation_path(default_params.merge(id: donation.id))
+          page = Nokogiri::HTML(response.body)
+          edit = page.at_css("a[href='#{edit_donation_path(default_params.merge(id: donation.id))}']")
+          expect(edit.attr("class")).to match(/disabled/)
+          expect(response.body).to match(/please make the following items active: #{item.name}/)
+        end
+      end
+    end
+
+    describe "GET #edit" do
       context "when an finalized audit has been performed on the donated items" do
         it "shows a warning" do
           item = create(:item, organization: @organization, name: "Brightbloom Seed")

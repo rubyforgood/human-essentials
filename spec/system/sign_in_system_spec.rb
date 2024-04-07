@@ -22,7 +22,7 @@ RSpec.describe "User sign-in handling", type: :system, js: true do
       click_button "Log in"
 
       expect(page).to have_current_path(
-        dashboard_path(organization_id: @user.organization)
+        dashboard_path(organization_name: @user.organization)
       )
     end
   end
