@@ -65,6 +65,93 @@ RSpec.describe "StorageLocations", type: :request do
 
           expect(response.body.split("\n")[0]).to eq([StorageLocation.csv_export_headers, item3.name, item2.name, item1.name].join(','))
         end
+
+        context "when read_events feature toggle is enabled" do
+          let(:storage_location_with_items) { create(:storage_location, name: "Storage Location with Items", warehouse_type: StorageLocation::WAREHOUSE_TYPES.first) }
+          let(:storage_location_with_duplicate_item) { create(:storage_location, name: "Storage Location with Duplicate Items", warehouse_type: StorageLocation::WAREHOUSE_TYPES.first) }
+          let(:storage_location_with_unique_item) { create(:storage_location, name: "Storage Location with Unique Items", warehouse_type: StorageLocation::WAREHOUSE_TYPES.first) }
+          let(:item1) { create(:item, name: 'A') }
+          let(:item2) { create(:item, name: 'B') }
+          let(:item3) { create(:item, name: 'C') }
+          let(:item4) { create(:item, name: 'D') }
+
+          before do
+            allow(Event).to receive(:read_events?).and_return(true)
+            create(:item, name: 'inactive item', active: false)
+            TestInventory.create_inventory(storage_location_with_items.organization, {
+              storage_location_with_items.id => {
+                item1.id => 1,
+                item2.id => 1,
+                item3.id => 1
+              },
+              storage_location_with_duplicate_item.id => {
+                item3.id => 1
+              },
+              storage_location_with_unique_item.id => {
+                item4.id => 5
+              }
+            })
+          end
+
+          it "generates header with Storage Location fields followed by alphabetized item names" do
+            get storage_locations_path(default_params.merge(format: response_format))
+            expect(response.body.split("\n")[0]).to eq([StorageLocation.csv_export_headers, item1.name, item2.name, item3.name, item4.name].join(','))
+          end
+
+          it "generates data row for storage location with 1 of each of 3 items, and 0 of the last item" do
+            get storage_locations_path(default_params.merge(format: response_format))
+            csv_rows = response.body.split("\n")
+            storage_location_row = csv_rows.find { |line| line.start_with?(storage_location_with_items.name) }
+
+            expect(storage_location_row).to eq([
+              storage_location_with_items.name,
+              "\"" + storage_location_with_items.address + "\"",
+              storage_location_with_items.square_footage,
+              storage_location_with_items.warehouse_type,
+              3,
+              1,
+              1,
+              1,
+              0
+            ].join(","))
+          end
+
+          it "generates data row for storage location with duplicate item" do
+            get storage_locations_path(default_params.merge(format: response_format))
+            csv_rows = response.body.split("\n")
+            storage_location_row = csv_rows.find { |line| line.start_with?(storage_location_with_duplicate_item.name) }
+
+            expect(storage_location_row).to eq([
+              storage_location_with_duplicate_item.name,
+              "\"" + storage_location_with_duplicate_item.address + "\"",
+              storage_location_with_duplicate_item.square_footage,
+              storage_location_with_duplicate_item.warehouse_type,
+              1,
+              0,
+              0,
+              1,
+              0
+            ].join(","))
+          end
+
+          it "generates data row for storage location with unique item" do
+            get storage_locations_path(default_params.merge(format: response_format))
+            csv_rows = response.body.split("\n")
+            storage_location_row = csv_rows.find { |line| line.start_with?(storage_location_with_unique_item.name) }
+
+            expect(storage_location_row).to eq([
+              storage_location_with_unique_item.name,
+              "\"" + storage_location_with_unique_item.address + "\"",
+              storage_location_with_unique_item.square_footage,
+              storage_location_with_unique_item.warehouse_type,
+              5,
+              0,
+              0,
+              0,
+              5
+            ].join(","))
+          end
+        end
       end
     end
 
