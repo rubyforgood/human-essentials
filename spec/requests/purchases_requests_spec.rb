@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Purchases", type: :request do
   let(:default_params) do
-    { organization_id: @organization.to_param }
+    { organization_name: @organization.to_param }
   end
 
   context "While signed in as a user >" do
@@ -248,9 +248,30 @@ RSpec.describe "Purchases", type: :request do
     end
 
     describe "GET #show" do
-      it "returns http success" do
-        get purchase_path(default_params.merge(id: create(:purchase, organization: @organization)))
+      let(:item) { create(:item) }
+      let!(:purchase) { create(:purchase, :with_items, item: item) }
+
+      it "shows an enabled edit button" do
+        get purchase_path(default_params.merge(id: purchase.id))
         expect(response).to be_successful
+        page = Nokogiri::HTML(response.body)
+        edit = page.at_css("a[href='#{edit_purchase_path(default_params.merge(id: purchase.id))}']")
+        expect(edit.attr("class")).not_to match(/disabled/)
+        expect(response.body).not_to match(/please make the following items active:/)
+      end
+
+      context "with an inactive item" do
+        before do
+          item.update(active: false)
+        end
+
+        it "shows a disabled edit button" do
+          get purchase_path(default_params.merge(id: purchase.id))
+          page = Nokogiri::HTML(response.body)
+          edit = page.at_css("a[href='#{edit_purchase_path(default_params.merge(id: purchase.id))}']")
+          expect(edit.attr("class")).to match(/disabled/)
+          expect(response.body).to match(/please make the following items active: #{item.name}/)
+        end
       end
     end
 

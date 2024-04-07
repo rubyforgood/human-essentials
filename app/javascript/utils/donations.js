@@ -41,7 +41,7 @@ $(function() {
     `<option value="">${create_new_manufacturer_text}</option>`
   );
 
-$(document).on("change", product_drive_id, function(evt) {
+  $(document).on("change", product_drive_id, function(evt) {
     const selection = $(product_drive_id + " option")
       .filter(":selected")
       .text();
@@ -102,12 +102,12 @@ $(document).on("change", product_drive_id, function(evt) {
   });
 
   $(document).on(
-    "cocoon:after-insert",
-    "form#new_donation",
+    "form-input-after-insert",
+    "#donation_line_items",
     (e) => {
-      const insertedItem = $(e.detail[2]);
+      const insertedItem = $(e.detail);
       insertedItem
-        .find("#_barcode-lookup-new_line_items")
+        .find("input.__barcode_item_lookup")
         .attr("id", `_barcode-lookup-${$(".nested-fields").length - 1}`)
     }
   )
@@ -125,10 +125,10 @@ $(document).on("change", product_drive_id, function(evt) {
   );
 });
 
-function hide_fields_with_no_value(field_selectors){
-  $.each( field_selectors, function(index, selector){
+function hide_fields_with_no_value(field_selectors) {
+  $.each(field_selectors, function(index, selector) {
     let selected_value_text = $(selector + " select option").filter(":selected").text()
-    if(selected_value_text == "" || selected_value_text == "Choose one..." ){
+    if (selected_value_text == "" || selected_value_text == "Choose one...") {
       $(selector).hide();
     }
   });

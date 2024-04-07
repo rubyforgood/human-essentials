@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe "Users", type: :request do
   let(:partner) { create(:partner) }
   let(:default_params) do
-    { organization_id: @organization.to_param }
+    { organization_name: @organization.to_param }
   end
 
   before do
@@ -31,7 +31,7 @@ RSpec.describe "Users", type: :request do
 
     it "should send a password" do
       post partner_user_reset_password_users_path(params)
-      expect(response).to redirect_to(root_path(organization_id: @organization.to_param))
+      expect(response).to redirect_to(root_path(organization_name: @organization.to_param))
       expect(ActionMailer::Base.deliveries.size).to eq(1)
     end
 
@@ -67,7 +67,7 @@ RSpec.describe "Users", type: :request do
           role_id: @user.roles.find { |r| r.name == Role::PARTNER.to_s })
         # all bank controllers add organization_id to all routes - there's no way to
         # avoid it
-        expect(response).to redirect_to(partners_dashboard_path(organization_id: @organization.to_param))
+        expect(response).to redirect_to(partners_dashboard_path(organization_name: @organization.to_param))
       end
     end
 

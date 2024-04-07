@@ -76,7 +76,7 @@ Rails.application.routes.draw do
   match "/404", to: "errors#not_found", via: :all
   match "/500", to: "errors#internal_server_error", via: :all
 
-  scope path: ":organization_id" do
+  scope path: ":organization_name" do
     resources :users do
       get :switch_to_role, on: :collection
       post :partner_user_reset_password, on: :collection
@@ -135,10 +135,11 @@ Rails.application.routes.draw do
       get :find, on: :collection
       get :font, on: :collection
     end
-    resources :donation_sites do
+    resources :donation_sites, except: [:destroy] do
       collection do
         post :import_csv
       end
+      delete :deactivate, on: :member
     end
     resources :product_drive_participants, except: [:destroy] do
       collection do

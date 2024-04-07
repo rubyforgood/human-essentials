@@ -26,10 +26,11 @@ class Kit < ApplicationRecord
   scope :by_partner_key, ->(key) { joins(:items).where(items: { partner_key: key }) }
   scope :by_name, ->(name) { where("name ILIKE ?", "%#{name}%") }
 
-  validates :organization, :name, presence: true
+  validates :name, presence: true
   validates :name, uniqueness: { scope: :organization }
 
   validate :at_least_one_item
+  validate -> { line_items_quantity_is_at_least(1) }
 
   # @param inventory [View::Inventory]
   # @return [Boolean]

@@ -1,4 +1,4 @@
-<%= simple_form_for distribution, html: {class: "storage-location-required"}, wrapper_mappings: { datetime: :custom_multi_select } do |f| %>
+<%= simple_form_for distribution, data: { controller: "form-input" }, html: {class: "storage-location-required"}, wrapper_mappings: { datetime: :custom_multi_select } do |f| %>
 
   <div class="box-body">
     <%= f.simple_fields_for :request do |r| %>
@@ -31,12 +31,12 @@
     <fieldset style="margin-bottom: 2rem">
       <legend>Items in this distribution</legend>
       <div id="distribution_line_items" data-capture-barcode="true" class="line-item-fields">
-        <%= f.simple_fields_for :line_items do |item| %>
-          <%= render 'line_items/line_item_fields', f: item %>
-        <% end %>
+          <%= render 'line_items/line_item_fields', form: f %>
       </div>
       <div class="row links justify-content-end">
-        <%= add_line_item_button f, "#distribution_line_items" %>
+        <%= add_element_button "Add Another Item", container_selector: "#distribution_line_items" , id: "__add_line_item" do %>
+          <%= render 'line_items/line_item_fields', form: f, object: LineItem.new %>
+        <% end %>
       </div>
 
     </fieldset>
