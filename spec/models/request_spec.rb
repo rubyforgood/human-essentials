@@ -33,7 +33,6 @@ RSpec.describe Request, type: :model do
 
     describe "#request_type" do
       it "scopes by request_type" do
-
         request = Request.new
 
         request.request_type = :quantity
@@ -46,7 +45,7 @@ RSpec.describe Request, type: :model do
         assert_equal "child", request.request_type
       end
     end
-  end 
+  end
 
   describe "item data" do
     it "coerces item quantity and id to always be an integer before saving" do
