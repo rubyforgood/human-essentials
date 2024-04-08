@@ -99,7 +99,7 @@ module Partners
     validate :client_share_is_0_or_100
     validate :has_at_least_one_request_setting
 
-    enum :agency_type, {
+    AGENCY_TYPES = {
       "career" => "Career technical training",
       "abuse" => "Child abuse resource center",
       "church" => "Church outreach ministry",
@@ -138,7 +138,9 @@ module Partners
       "2ycollege" => "Two-Year College",
       "wic" => "Women, Infants and Children",
       "other" => "Other"
-    }, prefix: "agency_type"
+    }
+
+    enum :agency_type, AGENCY_TYPES.to_h { |s, _| [s, s] }, prefix: "agency_type"
 
     self.ignored_columns = %w[
       evidence_based_description
@@ -155,7 +157,7 @@ module Partners
     ]
 
     def agency_type_description
-      self.class.agency_types[agency_type]
+      AGENCY_TYPES[agency_type]
     end
 
     def client_share_total
