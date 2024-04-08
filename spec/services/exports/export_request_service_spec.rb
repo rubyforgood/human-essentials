@@ -56,7 +56,7 @@ describe Exports::ExportRequestService do
     let(:expected_headers) do
       expected_headers_item_headers = [item_2t, item_3t].map(&:name).sort
       expected_headers_item_headers << Exports::ExportRequestService::DELETED_ITEMS_COLUMN_HEADER
-      %w(Date Requestor Status) + expected_headers_item_headers
+      %w(Date Requestor Type Status) + expected_headers_item_headers
     end
 
     it "includes headers as the first row with ordered item names alphabetically with deleted item included at the end" do
