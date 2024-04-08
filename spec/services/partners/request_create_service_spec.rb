@@ -5,6 +5,7 @@ describe Partners::RequestCreateService do
     subject { described_class.new(**args).call }
     let(:args) do
       {
+        request_type: 0,
         partner_user_id: partner_user.id,
         comments: comments,
         item_requests_attributes: item_requests_attributes
