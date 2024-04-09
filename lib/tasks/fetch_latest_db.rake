@@ -30,6 +30,8 @@ task :fetch_latest_db => :environment do
   # environment.
   system("bin/rails jobs:clear")
 
+  ActiveRecord::Base.connection.reconnect!
+
   puts "Replacing all the passwords with the replacement for ease of use: '#{PASSWORD_REPLACEMENT}'"
   replace_user_passwords
 
