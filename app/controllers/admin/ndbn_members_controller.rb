@@ -9,7 +9,7 @@ class Admin::NDBNMembersController < AdminController
     if service.errors.none?
       redirect_to admin_ndbn_members_path, notice: "NDBN Members have been updated!"
     else
-      redirect_to admin_ndbn_members_path, error: service.errors.full_messages
+      redirect_to admin_ndbn_members_path, error: service.errors.full_messages.join("\n")
     end
   end
 
