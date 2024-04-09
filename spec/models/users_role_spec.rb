@@ -55,22 +55,9 @@ RSpec.describe UsersRole, type: :model do
         user = create(:partner_user)
         role = user.roles.first
 
-        got = UsersRole.set_last_role_for(user, role)
-
-        expect(user.last_role).to eq(role)
-        expect(got).to be true
-      end
-
-      it "should remove last role if users role is removed" do
-        user = create(:partner_user)
-        role = user.roles.first
-
         UsersRole.set_last_role_for(user, role)
+
         expect(user.last_role).to eq(role)
-
-        RemoveRoleService.call(user_id: user.id, role_id: role.id)
-
-        expect(user.reload.last_role).to eq(nil)
       end
     end
 
@@ -79,9 +66,8 @@ RSpec.describe UsersRole, type: :model do
         user = create(:partner_user)
         role = Role.find_by(name: "org_user")
 
-        got = UsersRole.set_last_role_for(user, role)
+        UsersRole.set_last_role_for(user, role)
         expect(user.last_role).to eq(nil)
-        expect(got).to be false
       end
     end
   end

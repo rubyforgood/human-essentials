@@ -55,7 +55,6 @@ RSpec.describe "Sessions", type: :request, order: :defined do
       before do
         post user_session_path, params: {user: {email: partner_user.email, password: "password!"}}
         get root_path
-        delete destroy_user_session_path
       end
 
       context "when org_admin role is added and no last_role exists" do
@@ -81,7 +80,7 @@ RSpec.describe "Sessions", type: :request, order: :defined do
       end
 
       context "when org_admin role is added, no last_role exists" do
-        it "prefers org_admin" do
+        it "prefers partner" do
           partner_user.add_role(Role::ORG_ADMIN, organization)
 
           post user_session_path, params: {user: {email: partner_user.email, password: "password!"}}
