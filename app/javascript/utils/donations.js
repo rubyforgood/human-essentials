@@ -92,9 +92,7 @@ $(function() {
     }
   };
 
-  $(function() {
-    handleSourceSelection();
-  });
+  $(control_id).each(handleSourceSelection);
 
   $(document).on("change", control_id, handleSourceSelection);
 
