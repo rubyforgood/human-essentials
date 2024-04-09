@@ -2,7 +2,7 @@ class Admin::NDBNMembersController < AdminController
   def index
   end
 
-  def create
+  def upload_csv
     service = SyncNDBNMembers.new(file_params)
     service.call
 

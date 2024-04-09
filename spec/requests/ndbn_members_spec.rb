@@ -30,11 +30,11 @@ RSpec.describe "NDBNMembers", type: :request do
     end
   end
 
-  describe "POST /create" do
+  describe "POST /upload_csv" do
     it "updates the index contents" do
-      params = {member_file: fixture_file_upload("spec/fixtures/ndbn-large-import.csv", "text/csv")}
+      params = {member_file: fixture_file_upload("spec/fixtures/ndbn-small-import.csv", "text/csv")}
 
-      post admin_ndbn_members_path, params: params
+      post upload_csv_admin_ndbn_members_path, params: params
 
       expect(response).to redirect_to(admin_ndbn_members_path)
       expect(flash[:notice]).to eq("NDBN Members have been updated!")
@@ -42,17 +42,18 @@ RSpec.describe "NDBNMembers", type: :request do
       get admin_ndbn_members_path
       body = response.body
 
-      expect(body).to include("A Baby Center")
-      expect(body).to include("Covering Weld; United Way of Weld County")
+      expect(body).to include("Other Spot")
+      expect(body).to include("Pawnee")
+      expect(body).to include("Amazing Place")
     end
 
     it "shows flash error if nil file provided" do
       params = {member_file: nil}
 
-      post admin_ndbn_members_path, params: params
+      post upload_csv_admin_ndbn_members_path, params: params
 
       expect(response).to be_redirect
-      expect(flash[:error]).to include("CSV upload is required")
+      expect(flash[:error]).to include("CSV upload is required.")
     end
   end
 end

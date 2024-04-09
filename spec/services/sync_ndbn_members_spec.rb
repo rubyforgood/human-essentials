@@ -1,6 +1,6 @@
 describe SyncNDBNMembers do
-  let(:large_input) { File.open(Rails.root.join("spec", "fixtures", "ndbn-large-import.csv")) }
   let(:small_input) { File.open(Rails.root.join("spec", "fixtures", "ndbn-small-import.csv")) }
+  let(:non_csv) { File.open(Rails.root.join("spec", "fixtures", "files", "logo.jpg")) }
 
   describe "#sync_from_csv" do
     # Small CSV Input
@@ -32,27 +32,20 @@ describe SyncNDBNMembers do
       end
     end
 
-    context "with a large file" do
-      it "parses from an uploaded CSV file" do
-        service = SyncNDBNMembers.new(large_input)
-        service.call
-
-        expect(NDBNMember.count).to eq(83)
-
-        a_baby_center = NDBNMember.find_by(ndbn_member_id: 12001)
-        expect(a_baby_center.account_name).to eq "A Baby Center"
-
-        weld_county = NDBNMember.find_by(ndbn_member_id: 20047)
-        expect(weld_county.account_name).to eq("Covering Weld; United Way of Weld County")
-      end
-    end
-
     context "with file that is nil" do
       it "does adds error" do
         service = SyncNDBNMembers.new(nil)
         service.call
 
-        expect(service.errors).to contain_exactly("CSV upload is required")
+        expect(service.errors).to contain_exactly("CSV upload is required.")
+      end
+    end
+    context "with file that is not CSV" do
+      it "does adds error" do
+        service = SyncNDBNMembers.new(non_csv)
+        service.call
+
+        expect(service.errors).to contain_exactly("The CSV File provided was invalid.")
       end
     end
   end
