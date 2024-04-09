@@ -20,7 +20,7 @@ class UsersRole < ApplicationRecord
   # @return [Role,nil]
   def self.current_role_for(user)
     return nil if user.nil?
-    return user.last_role unless user.last_role.nil?
+    return user.last_role if user.last_role
 
     role_order = [Role::SUPER_ADMIN, Role::ORG_ADMIN, Role::ORG_USER, Role::PARTNER]
     role_order.each do |role|
@@ -33,10 +33,9 @@ class UsersRole < ApplicationRecord
 
   # @param user [User]
   # @param role [Role]
-  # @return [Boolean]
   def self.set_last_role_for(user, role)
     users_role = UsersRole.find_by(user: user, role: role)
-    return false if users_role.nil?
+    return if users_role.nil?
 
     user.update(last_role_id: users_role.id)
   end
