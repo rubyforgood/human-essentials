@@ -34,11 +34,11 @@
               <p>Update the current NDBN members by uploading a CSV file of the
                 current members.</p>
             </div>
-            <%= form_with(url: admin_ndbn_members_path) do |form| %>
+            <%= form_with(url: upload_csv_admin_ndbn_members_path) do |form| %>
               <div class="row">
                 <%= form.label :member_file, "Select CSV File to Upload" %>
               </div>
-              <%= form.file_field :member_file, required: true %>
+              <%= form.file_field :member_file, required: true, accept: "text/csv" %>
               <%= submit_button({ text: "Upload" }) %>
             <% end %>
           </div>

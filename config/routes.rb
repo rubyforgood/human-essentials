@@ -71,7 +71,9 @@ Rails.application.routes.draw do
     end
     resources :questions
     resources :broadcast_announcements
-    resources :ndbn_members, only: %i(index create)
+    resources :ndbn_members, only: :index do
+      post :upload_csv, on: :collection
+    end
   end
 
   match "/404", to: "errors#not_found", via: :all
