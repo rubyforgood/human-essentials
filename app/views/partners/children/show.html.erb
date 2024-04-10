@@ -58,9 +58,19 @@
                     <dt>Health insurance:</dt>
                     <dd><%= @child.health_insurance %></dd>
 
-                    <dt>Item needed:</dt>
-                    <dd><%= current_partner.organization.item_id_to_display_string_map[@child.item_needed_diaperid] %></dd>
-
+                    <% if @child.child_items.present? %>
+                      <dt>Items Needed:</dt>
+                      <dd>
+                        <ul>
+                          <% @child.child_items.each do |child_item| %>
+                            <li><%= child_item.item.name %></li> <!-- Assuming `item` is the associated model and it has a `name` attribute -->
+                          <% end %>
+                        </ul>
+                      </dd>
+                    <% else %>
+                      <dt>Items Needed:</dt>
+                      <dd>No items specified</dd>
+                    <% end %>
                     <dt>Comments:</dt>
                     <dd><%= @child.comments %></dd>
                   </dl>
