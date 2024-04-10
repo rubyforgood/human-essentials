@@ -119,6 +119,7 @@ RSpec.feature "Distributions", type: :system do
         visit @url_prefix + "/distributions/new"
         select @partner.name, from: "Partner"
         select @storage_location.name, from: "From storage location"
+        expect(page).to have_css('#distribution_line_items_attributes_0_item_id', text: item.name)
         select item.name, from: "distribution_line_items_attributes_0_item_id"
         select @storage_location.name, from: "distribution_storage_location_id"
         fill_in "distribution_line_items_attributes_0_quantity", with: 18
