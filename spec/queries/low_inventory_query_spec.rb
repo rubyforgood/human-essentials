@@ -50,7 +50,15 @@ RSpec.describe LowInventoryQuery do
     context "when inventory quantity drops below minimum quantity" do
       let(:minimum_quantity) { 200 }
 
-      it { is_expected.to include inventory_item }
+      it {
+        is_expected.to include({
+          "id" => inventory_item.item.id,
+          "name" => inventory_item.item.name,
+          "on_hand_minimum_quantity" => 200,
+          "on_hand_recommended_quantity" => 0,
+          "total_quantity" => 100
+        })
+      }
     end
 
     context "when inventory quantity equals recommended quantity" do
@@ -62,7 +70,15 @@ RSpec.describe LowInventoryQuery do
     context "when inventory quantity drops below recommended quantity" do
       let(:recommended_quantity) { 200 }
 
-      it { is_expected.to include inventory_item }
+      it {
+        is_expected.to include({
+          "id" => inventory_item.item.id,
+          "name" => inventory_item.item.name,
+          "on_hand_minimum_quantity" => 0,
+          "on_hand_recommended_quantity" => 200,
+          "total_quantity" => 100
+        })
+      }
     end
   end
 end
