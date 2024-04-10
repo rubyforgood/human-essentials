@@ -184,6 +184,19 @@ RSpec.describe "Organizations", type: :request do
       sign_in(@super_admin)
     end
 
+    describe "GET #show" do
+      before { get admin_organizations_path({ id: @organization.id }) }
+
+      it { expect(response).to be_successful }
+
+      it 'organization details' do
+        expect(response.body).to include(@organization.name)
+        expect(response.body).to include(@organization.email)
+        expect(response.body).to include(@organization.created_at.strftime("%Y-%m-%d"))
+        expect(response.body).to include(@organization.display_last_distribution_date)
+      end
+    end
+
     describe "POST #promote_to_org_admin" do
       subject { post promote_to_org_admin_organization_path(default_params.merge(user_id: @user.id)) }
 
