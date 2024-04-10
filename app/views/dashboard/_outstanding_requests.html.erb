@@ -12,7 +12,7 @@
       <tr>
         <td class="date"><%= link_to item.created_at.strftime("%m/%d/%Y"), item %></td>
         <td><%= item.partner.name %></td>
-        <td><%= item.partner_user&.name %></td>
+        <td><%= item.partner_user&.formatted_email %></td>
         <td><%= item.comments %></td>
       </tr>
     <% end %>
