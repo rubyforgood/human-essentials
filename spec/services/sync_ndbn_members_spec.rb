@@ -12,40 +12,50 @@ describe SyncNDBNMembers do
     # 30000 Amazing Place
     # 10000 Pawnee
     context "with a small file" do
-      let!(:service) do
-        service = SyncNDBNMembers.new(small_input)
-        service.call
-        service
-      end
-
       it "overwrites existing names with new names if shared member id" do
         want = ["Other Spot", "Amazing Place", "Pawnee"]
+
+        SyncNDBNMembers.upload(small_input)
+
         expect(NDBNMember.pluck(:account_name)).to match_array(want)
       end
 
       it "does not have errors if fields are nil" do
-        expect(service.errors).to be_empty
+        errors = SyncNDBNMembers.upload(small_input)
+        expect(errors).to be_empty
       end
 
       it "does not override if name is blank" do
+        SyncNDBNMembers.upload(small_input)
         expect(NDBNMember.find_by(ndbn_member_id: 20000).account_name).to eq("Other Spot")
       end
     end
 
     context "with file that is nil" do
       it "does adds error" do
-        service = SyncNDBNMembers.new(nil)
-        service.call
+        errors = SyncNDBNMembers.upload(nil)
 
-        expect(service.errors).to contain_exactly("CSV upload is required.")
+        expect(errors).to contain_exactly("CSV upload is required.")
       end
     end
+
     context "with file that is not CSV" do
       it "does adds error" do
-        service = SyncNDBNMembers.new(non_csv)
-        service.call
+        errors = SyncNDBNMembers.upload(non_csv)
 
-        expect(service.errors).to contain_exactly("The CSV File provided was invalid.")
+        expect(errors).to contain_exactly("The CSV File provided was invalid.")
+      end
+    end
+
+    context "if invalid values get past the regex" do
+      before { allow(SyncNDBNMembers).to receive(:parse_csv).and_return([[1, nil], [2, nil]]) }
+
+      it "returns array of errors" do
+        errors = SyncNDBNMembers.upload(small_input)
+        expect(errors).to contain_exactly(
+          "Issue with 1:  -> Account name can't be blank",
+          "Issue with 2:  -> Account name can't be blank"
+        )
       end
     end
   end

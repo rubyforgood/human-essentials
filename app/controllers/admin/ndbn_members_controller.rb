@@ -3,13 +3,12 @@ class Admin::NDBNMembersController < AdminController
   end
 
   def upload_csv
-    service = SyncNDBNMembers.new(file_params)
-    service.call
+    errors = SyncNDBNMembers.upload(file_params)
 
-    if service.errors.none?
+    if errors.empty?
       redirect_to admin_ndbn_members_path, notice: "NDBN Members have been updated!"
     else
-      redirect_to admin_ndbn_members_path, error: service.errors.full_messages.join("\n")
+      redirect_to admin_ndbn_members_path, error: errors.join("\n")
     end
   end
 
