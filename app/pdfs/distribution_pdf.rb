@@ -82,8 +82,8 @@ class DistributionPdf
     data = @distribution.request ? request_data : non_request_data
     has_request = @distribution.request.present?
 
-    data = hide_columns(data)
-    hidden_columns_length = column_names_to_hide.length
+    # data = hide_columns(data)
+    # hidden_columns_length = column_names_to_hide.length
 
     font_size 11
     # Line item table
