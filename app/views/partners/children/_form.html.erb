@@ -16,25 +16,24 @@
               <%= form.text_field :last_name, class: "form-control" %>
 
               <!-- Dynamic Item Addition Section -->
-              <div data-controller="dynamic-items">
+              <div data-controller="form-input">
                 <label>Items</label>
-                <div data-dynamic-items-target="itemsContainer">
+                <div data-form-input-target="itemsContainer">
                   <%= form.fields_for :child_items do |child_item_form| %>
-                    <div class="nested-fields">
-                      <%= child_item_form.collection_select :item_id, Item.all, :id, :name, {}, {class: "form-control"} %>
-                      <%= link_to "Remove", "#", class: "remove_item", data: { action: "click->dynamic-items#removeItem" } %>
+                    <div class="nested-fields mb-1">
+                      <%= child_item_form.collection_select :item_id, Item.all, :id, :name, {}, {class: "form-control mb-2"} %>
+                      <%= remove_element_button("Remove Item", container_selector: ".nested-fields") %>
                     </div>
                   <% end %>
                 </div>
-                <template data-dynamic-items-target="template">
+                <%= add_element_button("Add New Item", container_selector: "[data-form-input-target='itemsContainer']") do %>
                   <div class="nested-fields">
-                    <%= form.fields_for :child_items, Partners::ChildItem.new, child_index: "NEW_RECORD" do |child_item_form| %>
-                      <%= child_item_form.collection_select :item_id, Item.all, :id, :name, {}, {class: "form-control"} %>
-                      <%= link_to "Remove", "#", class: "remove_item", data: { action: "click->dynamic-items#removeItem" } %>
+                    <%= form.fields_for :child_items, Partners::ChildItem.new, child_index: "NEW_RECORD" do |new_child_item_form| %>
+                      <%= new_child_item_form.collection_select :item_id, Item.all, :id, :name, {}, {class: "form-control"} %>
+                      <%= remove_element_button("Remove", container_selector: ".nested-fields") %>
                     <% end %>
                   </div>
-                </template>
-                <%= link_to "Add New Item", "#", class: "add_item", data: { action: "click->dynamic-items#addNewItem" } %>
+                <% end %>
               </div>
 
               <%= form.input :date_of_birth, as: :date, start_year: 20.years.ago.year, end_year: Time.current.year, label: "Date of Birth" %>
