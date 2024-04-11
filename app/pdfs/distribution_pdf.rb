@@ -6,7 +6,6 @@ class DistributionPdf
   def initialize(organization, distribution)
     @distribution = Distribution.includes(:partner, line_items: [:item]).find_by(id: distribution.id)
     @organization = organization
-    # @print_params = print_params
   end
 
   def compute_and_render
@@ -82,8 +81,8 @@ class DistributionPdf
     data = @distribution.request ? request_data : non_request_data
     has_request = @distribution.request.present?
 
-    # data = hide_columns(data)
-    # hidden_columns_length = column_names_to_hide.length
+    data = hide_columns(data)
+    hidden_columns_length = column_names_to_hide.length
 
     font_size 11
     # Line item table
@@ -217,22 +216,21 @@ class DistributionPdf
         ""]]
   end
 
-  # def hide_columns(data)
-  #   column_names_to_hide.each do |col_name|
-  #     col_index = data.first.find_index(col_name)
-  #     data.each { |line| line.delete_at(col_index) } if col_index.present?
-  #   end
-  #   data
-  # end
+  def hide_columns(data)
+    column_names_to_hide.each do |col_name|
+      col_index = data.first.find_index(col_name)
+      data.each { |line| line.delete_at(col_index) } if col_index.present?
+    end
+    data
+  end
 
-  # private
+  private
 
-  # def column_names_to_hide
-  #   # this method could maybe use a mapping variable to avoid so many conditionals.
-  #   @print_params.each_with_object([]) do |(param, _), columns|
-  #     columns.push("Value/item", "In-Kind Value Received") if param == "hide_values" && @distribution.request.present?
-  #     columns.push("Value/item", "In-Kind Value") if param == "hide_values" && @distribution.request.nil?
-  #     columns.push("Packages") if param == "hide_packages"
-  #   end
-  # end
+  def column_names_to_hide
+    in_kind_column_name = @distribution.request.present? ? "In-Kind Value Received" : "In-Kind Value"
+    columns_to_hide = []
+    columns_to_hide.push("Value/item", in_kind_column_name) if @organization.hide_value_columns_on_receipt
+    columns_to_hide.push("Packages") if @organization.hide_package_column_on_receipt
+    columns_to_hide
+  end
 end
