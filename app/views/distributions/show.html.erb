@@ -89,7 +89,6 @@
                 enabled: !@distribution.has_inactive_item?,
                 size: "md"} %>
             <% end %>
-<<<<<<< HEAD
             <%= print_button_to print_distribution_path(@distribution, format: :pdf), {size: "md"} %>
           </div>
           <% if @distribution.has_inactive_item? %>
@@ -98,12 +97,6 @@
               If you need to make a correction, please make the following items active: <%= @distribution.inactive_items.map(&:name).join(", ") %>
             </div>
           <% end %>
-=======
-            <div class="mt-1">
-              <%= render partial: "print_button_with_options" %> <!-- where to place ? -->
-            </div>
-          </div>
->>>>>>> 229af82e91c64d7338ca549d5829987efbb9065f
         </div>
       </div>
     </div>
