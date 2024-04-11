@@ -6,6 +6,12 @@ describe DistributionPdf do
   let(:item2) { FactoryBot.create(:item, name: "Item 2", value_in_cents: 200) }
   let(:item3) { FactoryBot.create(:item, name: "Item 3", value_in_cents: 300) }
   let(:item4) { FactoryBot.create(:item, name: "Item 4", package_size: 25, value_in_cents: 400) }
+  let(:org_hide_packages_and_values) do
+    FactoryBot.create(:organization, name: DEFAULT_TEST_ORGANIZATION_NAME,
+      hide_value_columns_on_receipt: true, hide_package_column_on_receipt: true)
+  end
+  let(:org_hide_packages) { FactoryBot.create(:organization, name: DEFAULT_TEST_ORGANIZATION_NAME, hide_package_column_on_receipt: true) }
+  let(:org_hide_values) { FactoryBot.create(:organization, name: DEFAULT_TEST_ORGANIZATION_NAME, hide_value_columns_on_receipt: true) }
 
   before(:each) do
     FactoryBot.create(:line_item, itemizable: distribution, item: item1, quantity: 50)
@@ -40,27 +46,28 @@ describe DistributionPdf do
   end
 
   context "with request data" do
-    specify "#hide_columns" do
-      pdf = described_class.new(@organization, distribution)
-      data = pdf.request_data
-      results = pdf.hide_columns(data)
-      expect(results).to eq([
-        ["Items Received", "Requested", "Received"],
-        ["Item 1", "", 50],
-        ["Item 2", 30, 100],
-        ["Item 3", 50, ""],
-        ["Item 4", 120, ""],
-        ["", "", ""],
-        ["Total Items Received", 200, 150]
-      ])
+    describe "#hide_columns" do
+      it "hides value and package columns when true on organization" do
+        pdf = described_class.new(org_hide_packages_and_values, distribution)
+        data = pdf.request_data
+        results = pdf.hide_columns(data)
+        expect(results).to eq([
+          ["Items Received", "Requested", "Received"],
+          ["Item 1", "", 50],
+          ["Item 2", 30, 100],
+          ["Item 3", 50, ""],
+          ["Item 4", 120, ""],
+          ["", "", ""],
+          ["Total Items Received", 200, 150]
+        ])
+      end
     end
-    # add specs with different set of params
   end
 
   context "with non request data" do
     specify "#hide_columns" do
       Request.find_by(distribution:).destroy
-      pdf = described_class.new(@organization, distribution)
+      pdf = described_class.new(org_hide_packages_and_values, distribution)
       data = pdf.non_request_data
       results = pdf.hide_columns(data)
       expect(results).to eq([
