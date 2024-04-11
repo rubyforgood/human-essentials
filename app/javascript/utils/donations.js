@@ -20,15 +20,6 @@ $(function() {
 
   const create_new_manufacturer_text = "---Create new Manufacturer---";
 
-  const fields_to_hide = [
-    product_drive_container_id,
-    product_drive_participant_container_id,
-    manufacturer_container_id,
-    donation_site_container_id
-  ]
-
-  hide_fields_with_no_value(fields_to_hide);
-
   $(product_drive_id).append(
 
     `<option value="">${create_new_product_drive_text}</option>`
@@ -70,7 +61,7 @@ $(function() {
     }
   });
 
-  $(document).on("change", control_id, function(evt) {
+  function handleSourceSelection() {
     const selection = $(control_id + " option")
       .filter(":selected")
       .text();
@@ -99,7 +90,11 @@ $(function() {
       $(donation_site_container_id).hide();
       $(manufacturer_container_id).hide();
     }
-  });
+  };
+
+  $(control_id).each(handleSourceSelection);
+
+  $(document).on("change", control_id, handleSourceSelection);
 
   $(document).on(
     "form-input-after-insert",
@@ -124,12 +119,3 @@ $(function() {
     })
   );
 });
-
-function hide_fields_with_no_value(field_selectors) {
-  $.each(field_selectors, function(index, selector) {
-    let selected_value_text = $(selector + " select option").filter(":selected").text()
-    if (selected_value_text == "" || selected_value_text == "Choose one...") {
-      $(selector).hide();
-    }
-  });
-}
