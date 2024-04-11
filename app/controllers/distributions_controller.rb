@@ -15,7 +15,7 @@ class DistributionsController < ApplicationController
     @distribution = Distribution.find(params[:id])
     respond_to do |format|
       format.any do
-        pdf = DistributionPdf.new(current_organization, @distribution)
+        pdf = DistributionPdf.new(current_organization, @distribution, print_params.to_h)
         send_data pdf.compute_and_render,
                   filename: format("%s %s.pdf", @distribution.partner.name, sortable_date(@distribution.created_at)),
                   type: "application/pdf",
@@ -300,5 +300,9 @@ class DistributionsController < ApplicationController
     if inventory_check_result.alert.present?
       flash[:alert] = inventory_check_result.alert
     end
+  end
+
+  def print_params
+    params.permit(:hide_values, :hide_packages)
   end
 end

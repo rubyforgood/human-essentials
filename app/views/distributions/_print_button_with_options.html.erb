@@ -1,0 +1,8 @@
+<%= form_with url: print_distribution_path(@distribution, format: :pdf), method: :get, class: "d-inline" do |f| %>
+  <%= submit_button({ text: "Print", icon: "print", type: "outline-dark", size: "md" }) %>
+  <!-- <span>print options : </span> does this clarify ? -->
+  <%= check_box_tag :hide_values %>
+  <%= f.label :hide_values, "hide value columns on receipt" %>
+  <%= check_box_tag :hide_packages %>
+  <%= f.label :hide_packages, "hide packages column on receipt" %>
+<% end %>
