@@ -51,6 +51,7 @@ module Partners
     end
 
     def create
+      Rails.logger.debug "Creating a new child with parameters: #{child_params.inspect}"
       family = current_partner.families.find_by!(id: params[:family_id])
       child = family.children.new(child_params)
 
@@ -62,11 +63,13 @@ module Partners
     end
 
     def update
+      Rails.logger.debug "Updating child with parameters: #{child_params.inspect}"
       child = current_partner.children.find_by(id: params[:id])
 
       if child.update(child_params)
         redirect_to child, notice: "Child was successfully updated."
       else
+        @requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
         render :edit
       end
     end

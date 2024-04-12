@@ -27,9 +27,9 @@
                   <% end %>
                 </div>
                 <%= add_element_button("Add New Item", container_selector: "[data-form-input-target='itemsContainer']") do %>
-                  <div class="nested-fields">
-                    <%= form.fields_for :child_items, Partners::ChildItem.new, child_index: "NEW_RECORD" do |new_child_item_form| %>
-                      <%= new_child_item_form.collection_select :item_id, Item.all, :id, :name, {}, {class: "form-control"} %>
+                  <div class="nested-fields" id="child_items_template" style="display: none;">
+                    <%= form.fields_for :child_items, Partners::ChildItem.new, child_index: 'NEW_RECORD' do |child_item_form| %>
+                      <%= child_item_form.collection_select :item_id, Item.all, :id, :name, {}, {class: "form-control"} %>
                       <%= remove_element_button("Remove", container_selector: ".nested-fields") %>
                     <% end %>
                   </div>
