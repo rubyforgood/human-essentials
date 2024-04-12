@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Dashboard", type: :request do
   let(:default_params) do
-    { organization_id: @organization.to_param }
+    { organization_name: @organization.to_param }
   end
 
   context "While signed in" do
@@ -29,7 +29,7 @@ RSpec.describe "Dashboard", type: :request do
       context "for another org" do
         it "still displays the user's org" do
           # nother org
-          get dashboard_path(organization_id: create(:organization).to_param)
+          get dashboard_path(organization_name: create(:organization).to_param)
           expect(response.body).to include(@organization.name)
         end
       end
@@ -52,7 +52,7 @@ RSpec.describe "Dashboard", type: :request do
 
   context "While not signed in" do
     it "redirects for authentication" do
-      get dashboard_path(organization_id: create(:organization).to_param)
+      get dashboard_path(organization_name: create(:organization).to_param)
       expect(response).to be_redirect
     end
   end

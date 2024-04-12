@@ -50,6 +50,21 @@ RSpec.describe Kit, type: :model do
       kit.value_in_cents = -5
       expect(kit).not_to be_valid
     end
+
+    it "ensures the associated line_items are invalid with a nil quantity" do
+      kit.line_items << build(:line_item, quantity: nil)
+      expect(kit).not_to be_valid
+    end
+
+    it "ensures the associated line_items are invalid with a zero quantity" do
+      kit.line_items << build(:line_item, quantity: 0)
+      expect(kit).not_to be_valid
+    end
+
+    it "ensures the associated line_items are valid with a one quantity" do
+      kit.line_items << build(:line_item, quantity: 1)
+      expect(kit).to be_valid
+    end
   end
 
   context "Filtering >" do
@@ -102,9 +117,9 @@ RSpec.describe Kit, type: :model do
   end
 
   describe '#can_deactivate?' do
-    context 'with inventory items' do
+    context 'with inventory' do
       it 'should return false' do
-        kit = create(:kit, :with_item)
+        kit = create(:kit, :with_item, organization: @organization)
         TestInventory.create_inventory(@organization, {
           @organization.storage_locations.first.id => {
             kit.item.id => 10

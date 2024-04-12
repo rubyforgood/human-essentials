@@ -411,6 +411,17 @@ RSpec.describe "Donations", type: :system, js: true do
           expect(page).to have_content("Start a new donation")
           expect(page).to have_content("must be less than")
         end
+
+        # Bug fix -- Issue #4157
+        context "when user selects Donation Site but does not enter a Site before saving" do
+          it 'displays the Donation Site field' do
+            select Donation::SOURCES[:donation_site], from: "donation_source"
+            select StorageLocation.first.name, from: "donation_storage_location_id"
+            click_button "Save"
+            expect(page).to have_css('div.donation_donation_site', visible: true)
+            expect(page).to have_content("Where was this donation dropped off?")
+          end
+        end
       end
 
       context "Via barcode entry" do
