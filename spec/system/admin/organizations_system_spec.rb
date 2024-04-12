@@ -1,4 +1,10 @@
 RSpec.describe "Admin Organization Management", type: :system, js: true, seed_items: false, skip_transaction: true do
+  around do |ex|
+    Kaminari.config.default_per_page = 3
+    ex.run
+    Kaminari.config.default_per_page = 50
+  end
+
   let(:super_admin) { create(:super_admin) }
   context "while logged in as a super admin and there are no organizations" do
     before do

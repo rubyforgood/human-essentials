@@ -61,14 +61,9 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
 
       visit admin_users_path
 
-      expect(page.find("table")).to have_content("DEFAULT ORG ADMIN")
-      expect(page.find("table")).to have_content("DEFAULT PARTNER")
-      expect(page.find("table")).to have_content("DEFAULT SUPERADMIN")
-
-      click_on "Next"
-
-      expect(page.find("table")).to have_content("DEFAULT SUPERADMIN NO ORG")
-      expect(page.find("table")).to have_content("DEFAULT USER")
+      user_names.each do |name|
+        expect(page.find("table")).to have_content(name)
+      end
 
       fill_in "filterrific_search_name", with: user_names.first
       user_names[1..].each do |name|

@@ -55,16 +55,16 @@ RSpec.describe "Requests", type: :system, js: true do
       context "with filters cleared" do
         it "displays all requests" do
           visit subject
-          expect(page).to have_css("table tbody tr", count: 3)
+          expect(page).to have_css("table tbody tr", count: 5)
           click_on "Clear Filters"
-          expect(page).to have_css("table tbody tr", count: 3)
+          expect(page).to have_css("table tbody tr", count: 5)
         end
       end
 
       context "when filtering by item" do
         it "constrains the list" do
           visit subject
-          expect(page).to have_css("table tbody tr", count: 3)
+          expect(page).to have_css("table tbody tr", count: 5)
           select(item2.name, from: "filters[by_request_item_id]")
           click_on "Filter"
           expect(page).to have_css("table tbody tr", count: 1)
@@ -74,7 +74,7 @@ RSpec.describe "Requests", type: :system, js: true do
       context "when filtering by partner" do
         it "constrains the list" do
           visit subject
-          expect(page).to have_css("table tbody tr", count: 3)
+          expect(page).to have_css("table tbody tr", count: 5)
           select(partner2.name, from: "filters[by_partner]")
           click_on 'Filter'
           expect(page).to have_css("table tbody tr", count: 1)
@@ -85,7 +85,7 @@ RSpec.describe "Requests", type: :system, js: true do
         it "constrains the list" do
           visit subject
           # check for all requests
-          expect(page).to have_css("table tbody tr", count: 3)
+          expect(page).to have_css("table tbody tr", count: 5)
           # filter
           select('Fulfilled', from: "filters[by_status]")
           click_on 'Filter'
@@ -97,7 +97,7 @@ RSpec.describe "Requests", type: :system, js: true do
       context "when exporting as CSV" do
         it "respects the applied filters" do
           visit subject
-          expect(page).to have_css("table tbody tr", count: 3)
+          expect(page).to have_css("table tbody tr", count: 5)
           select(item2.name, from: "filters[by_request_item_id]")
           click_on 'Filter'
           expect(page).to have_css("table tbody tr", count: 1)
