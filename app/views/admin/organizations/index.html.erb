@@ -44,13 +44,8 @@
               </div>
             <% end %>
           </div>
-          <div class="card-body p-0">
-            <div id="filterrific_results">
-              <%= render( partial: 'list', locals: { organizations: @organizations }) %>
-            </div>
-          </div>
-          <div class="card-footer clearfix">
-            <%= paginate @organizations %>
+          <div id="filterrific_results">
+            <%= render( partial: 'list', locals: { organizations: @organizations }) %>
           </div>
         </div>
         <!-- /.card -->
