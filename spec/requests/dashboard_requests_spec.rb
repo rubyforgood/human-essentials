@@ -37,13 +37,13 @@ RSpec.describe "Dashboard", type: :request do
 
     context "BroadcastAnnouncement card" do
       it "displays announcements if there are valid ones" do
-        BroadcastAnnouncement.create(message: "test announcement", user_id: 1, organization_id: nil)
+        BroadcastAnnouncement.create(message: "test announcement", user_id: @user.id, organization_id: nil)
         get dashboard_path(default_params)
         expect(response.body).to include("test announcement")
       end
 
       it "doesn't display announcements if they are not from super admins" do
-        BroadcastAnnouncement.create(message: "test announcement", user_id: 1, organization_id: 1)
+        BroadcastAnnouncement.create(message: "test announcement", user_id: @user.id, organization_id: @organization.id)
         get dashboard_path(default_params)
         expect(response.body).not_to include("test announcement")
       end

@@ -124,12 +124,12 @@ RSpec.describe "Admin::UsersController", type: :request do
 
     describe "POST #create" do
       it "returns http success" do
-        post admin_users_path, params: { user: { email: 'email@email.com', organization_id: 1 } }
+        post admin_users_path, params: { user: { email: @organization.email, organization_id: @organization.id } }
         expect(response).to redirect_to(admin_users_path)
       end
 
       it "preloads organizations" do
-        post admin_users_path, params: { user: { organization_id: 1 } }
+        post admin_users_path, params: { user: { organization_id: @organization.id } }
         expect(assigns(:organizations)).to eq(Organization.all.alphabetized)
       end
     end
@@ -150,7 +150,7 @@ RSpec.describe "Admin::UsersController", type: :request do
 
     describe "POST #create" do
       it "redirects" do
-        post admin_users_path, params: { user: { organization_id: 1 } }
+        post admin_users_path, params: { user: { organization_id: @organization.id } }
         expect(response).to redirect_to(dashboard_path(organization_name: @organization_admin.organization))
       end
     end
@@ -171,7 +171,7 @@ RSpec.describe "Admin::UsersController", type: :request do
 
     describe "POST #create" do
       it "redirects" do
-        post admin_users_path, params: { user: { organization_id: 1 } }
+        post admin_users_path, params: { user: { organization_id: @organization.id } }
         expect(response).to redirect_to(dashboard_path(organization_name: @user.organization))
       end
     end
