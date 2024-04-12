@@ -30,46 +30,48 @@ RSpec.describe "Donations", type: :request do
         end
 
         context "when given a product drive" do
-          let(:product_drive) { create(:product_drive) }
+          let(:product_drive) { create(:product_drive, name: "Drive Name") }
           let(:donation) { create(:donation, source: "Product Drive", product_drive: product_drive) }
 
           it "should display Product Drive and the name of the drive" do
             donation
-            expect(subject.body).to include("<td>#{donation.source}</td>")
-            expect(subject.body).to include("<td>#{product_drive.name}</td>")
+            expect(subject.body).to include("<td>Product Drive</td>")
+            expect(subject.body).to include("<td>Drive Name</td>")
           end
         end
 
         context "when given a donation site" do
-          let(:donation_site) { create(:donation_site) }
+          let(:donation_site) { create(:donation_site, name: "Site Name") }
           let(:donation) { create(:donation, source: "Donation Site", donation_site: donation_site) }
 
           it "should display Donation Site and the name of the site" do
             donation
-            expect(subject.body).to include("<td>#{donation.source}</td>")
-            expect(subject.body).to include("<td>#{donation_site.name}</td>")
+            expect(subject.body).to include("<td>Donation Site</td>")
+            expect(subject.body).to include("<td>Site Name</td>")
           end
         end
 
         context "when given a manufacturer" do
-          let(:manufacturer) { create(:manufacturer) }
+          let(:manufacturer) { create(:manufacturer, name: "Manufacturer Name") }
           let(:donation) { create(:donation, source: "Manufacturer", manufacturer: manufacturer) }
 
           it "should display Manufacturer and the manufacturer name" do
             donation
-            expect(subject.body).to include("<td>#{donation.source}</td>")
-            expect(subject.body).to include("<td>#{manufacturer.name}</td>")
+            expect(subject.body).to include("<td>Manufacturer</td>")
+            expect(subject.body).to include("<td>Manufacturer Name</td>")
           end
         end
 
         context "when given a misc donation" do
-          let(:donation) { create(:donation, source: "Misc. Donation", comment: Faker::Lorem.paragraph) }
+          let(:full_comment) { Faker::Lorem.paragraph }
+          let(:donation) { create(:donation, source: "Misc. Donation", comment: full_comment) }
 
           it "should display Misc Donation and a truncated comment" do
             donation
-            short_comment = donation.comment.truncate(25, separator: /\s/)
-            expect(subject.body).to include("<td>#{donation.source}</td>")
+            short_comment = full_comment.truncate(25, separator: /\s/)
+            expect(subject.body).to include("<td>Misc. Donation</td>")
             expect(subject.body).to include("<td>#{short_comment}</td>")
+            expect(subject.body).to_not include("<td>#{full_comment}</td>")
           end
         end
       end
