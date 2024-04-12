@@ -27,9 +27,9 @@ class AdjustmentCreateService
         increasing_adjustment, decreasing_adjustment = @adjustment.split_difference
         @adjustment.storage_location.increase_inventory(increasing_adjustment.line_item_values)
         @adjustment.storage_location.decrease_inventory(decreasing_adjustment.line_item_values)
-      rescue InsufficientAllotment, InventoryError => e
+      rescue Errors::InsufficientAllotment, InventoryError => e
         @adjustment.errors.add(:base, e.message)
-        raise e
+        raise ActiveRecord::Rollback
       end
     end
     self
