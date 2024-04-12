@@ -47,7 +47,7 @@ BaseItem.find_or_create_by!(
 # NDBN Members
 # ----------------------------------------------------------------------------
 seed_file = File.open(Rails.root.join("spec", "fixtures", "ndbn-small-import.csv"))
-SyncNDBNMembers.new(seed_file).call
+SyncNDBNMembers.upload(seed_file)
 
 # ----------------------------------------------------------------------------
 # Organizations
