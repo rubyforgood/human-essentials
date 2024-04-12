@@ -7,7 +7,6 @@ window.$ = jQuery
 import "startup"
 import "jquery-ui"
 import 'admin-lte'
-import "cocoon-js-vanilla";
 import 'filterrific'
 import { Turbo } from "@hotwired/turbo-rails"
 import "trix"

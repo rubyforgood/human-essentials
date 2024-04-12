@@ -1,8 +1,8 @@
-RSpec.describe OrganizationMailer, type: :mailer do
+RSpec.describe OrganizationMailer, type: :mailer, seed_items: false do
   describe "#partner_approval_request" do
     subject { described_class.partner_approval_request(organization: organization, partner: partner) }
-    let(:partner) { create(:partner) }
-    let(:organization) { partner.organization }
+    let(:organization) { create(:organization, skip_items: true) }
+    let(:partner) { create(:partner, organization: organization) }
 
     it "renders the body with correct text with partner information" do
       html = html_body(subject)
