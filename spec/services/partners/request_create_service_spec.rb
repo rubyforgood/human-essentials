@@ -56,14 +56,6 @@ describe Partners::RequestCreateService do
 
     context 'when the arguments are correct' do
       let(:items_to_request) { BaseItem.all.sample(3) }
-      let(:item_requests_attributes) do
-        items_to_request.map do |item|
-          ActionController::Parameters.new(
-            item_id: item.id,
-            quantity: Faker::Number.within(range: 1..10)
-          )
-        end
-      end
       let(:fake_organization_valid_items) do
         items_to_request.map do |item|
           {

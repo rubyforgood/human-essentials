@@ -59,19 +59,19 @@ RSpec.describe "/partners/dashboard", type: :request do
 
   context "BroadcastAnnouncement card" do
     it "displays announcements if there are valid ones" do
-      BroadcastAnnouncement.create(message: "test announcement", user_id: 1, organization_id: 1)
+      BroadcastAnnouncement.create(message: "test announcement", user_id: @user.id, organization_id: @organization.id)
       get partners_dashboard_path
       expect(response.body).to include("test announcement")
     end
 
     it "doesn't display announcements if there are not valid ones" do
-      BroadcastAnnouncement.create(expiry: 5.days.ago, message: "test announcement", user_id: 1, organization_id: 1)
+      BroadcastAnnouncement.create(expiry: 5.days.ago, message: "test announcement", user_id: @user.id, organization_id: @organization.id)
       get partners_dashboard_path
       expect(response.body).not_to include("test announcement")
     end
 
     it "doesn't display announcements from super admins" do
-      BroadcastAnnouncement.create(message: "test announcement", user_id: 1, organization_id: nil)
+      BroadcastAnnouncement.create(message: "test announcement", user_id: @user.id, organization_id: nil)
       get partners_dashboard_path
       expect(response.body).not_to include("test announcement")
     end
