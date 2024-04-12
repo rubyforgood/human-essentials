@@ -19,7 +19,7 @@ class Admin::NDBNMembersController < AdminController
   end
 
   def ndbn_members
-    @ndbn_members ||= NDBNMember.all
+    @ndbn_members ||= NDBNMember.all.order(:ndbn_member_id)
   end
   helper_method :ndbn_members
 end
