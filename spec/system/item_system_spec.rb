@@ -180,7 +180,7 @@ RSpec.describe "Item management", type: :system do
         let(:item) { Item.first }
 
         before do
-          find('tr', text: item.name).find('a', text: 'Edit').click
+          find("tr[data-item-id=\"#{item.id}\"]").find('a', text: 'Edit').click
           select new_item_category, from: 'Category'
           click_on 'Save'
         end
