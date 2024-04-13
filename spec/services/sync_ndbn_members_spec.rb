@@ -1,4 +1,4 @@
-describe SyncNDBNMembers do
+RSpec.describe SyncNDBNMembers do
   describe ".sync" do
     subject { -> { described_class.sync } }
     let(:ndbn_member_id) { 200040 }

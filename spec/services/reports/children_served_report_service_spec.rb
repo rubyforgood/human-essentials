@@ -1,14 +1,11 @@
 RSpec.describe Reports::ChildrenServedReportService, type: :service do
   let(:year) { 2020 }
-  let(:organization) { create(:organization) }
-
-  subject(:report) do
-    described_class.new(organization: organization, year: year)
-  end
 
   describe '#report' do
     it 'should report zero values' do
-      expect(report.report).to eq({
+      organization = create(:organization, skip_items: true)
+      report = described_class.new(organization: organization, year: year).report
+      expect(report).to eq({
                                     name: 'Children Served',
                                     entries: {
                                       'Average children served monthly' => "0",
@@ -20,8 +17,7 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
     end
 
     it 'should report normal values' do
-      Organization.seed_items(organization)
-      organization.update!(distribute_monthly: true, repackage_essentials: true)
+      organization = create(:organization, :with_items, distribute_monthly: true, repackage_essentials: true)
 
       within_time = Time.zone.parse("2020-05-31 14:00:00")
       outside_time = Time.zone.parse("2019-05-31 14:00:00")
@@ -53,7 +49,8 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       create(:line_item, :distribution, quantity: 10, item: toddler_disposable_kit_item, itemizable: infant_distribution)
       create(:line_item, :distribution, quantity: 10, item: infant_disposable_kit_item, itemizable: toddler_distribution)
 
-      expect(report.report).to eq({
+      report = described_class.new(organization: organization, year: within_time.year).report
+      expect(report).to eq({
                                     name: 'Children Served',
                                     entries: {
                                       'Average children served monthly' => "8",
@@ -65,8 +62,7 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
     end
 
     it 'should work with no distribution_quantity' do
-      Organization.seed_items(organization)
-      organization.update!(distribute_monthly: true, repackage_essentials: true)
+      organization = create(:organization, :with_items, distribute_monthly: true, repackage_essentials: true)
 
       within_time = Time.zone.parse("2020-05-31 14:00:00")
       outside_time = Time.zone.parse("2019-05-31 14:00:00")
@@ -97,7 +93,8 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       create(:line_item, :distribution, quantity: 10, item: toddler_disposable_kit_item, itemizable: infant_distribution)
       create(:line_item, :distribution, quantity: 10, item: infant_disposable_kit_item, itemizable: toddler_distribution)
 
-      expect(report.report).to eq({
+      report = described_class.new(organization: organization, year: within_time.year).report
+      expect(report).to eq({
                                     name: 'Children Served',
                                     entries: {
                                       'Average children served monthly' => "3",
@@ -109,7 +106,10 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
     end
   end
   describe "#disposable_diapers_from_kits_total" do
+    before { DatabaseCleaner.clean_with(:truncation) }
+
     it "calculates the number of disposable diapers that have been distributed within kits" do
+      organization = create(:organization, skip_items: true)
       toddler_disposable_kit = create(:kit, :with_item, organization: organization)
       infant_disposable_kit = create(:kit, :with_item, organization: organization)
       infant_cloth_kit = create(:kit, :with_item, organization: organization)

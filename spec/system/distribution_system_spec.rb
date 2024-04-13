@@ -530,10 +530,10 @@ RSpec.feature "Distributions", type: :system do
   context "when filtering on the index page" do
     subject { @url_prefix + "/distributions" }
     let(:item_category) { create(:item_category) }
-    let(:item1) { create(:item, name: "Good item", item_category: item_category) }
-    let(:item2) { create(:item, name: "Crap item") }
-    let(:partner1) { create(:partner, name: "This Guy", email: "thisguy@example.com") }
-    let(:partner2) { create(:partner, name: "Not This Guy", email: "ntg@example.com") }
+    let(:item1) { create(:item, name: "Good item", item_category: item_category, organization: @organization) }
+    let(:item2) { create(:item, name: "Crap item", organization: @organization) }
+    let(:partner1) { create(:partner, name: "This Guy", email: "thisguy@example.com", organization: @organization) }
+    let(:partner2) { create(:partner, name: "Not This Guy", email: "ntg@example.com", organization: @organization) }
 
     it "filters by item id" do
       create(:distribution, :with_items, item: item1)
@@ -555,25 +555,40 @@ RSpec.feature "Distributions", type: :system do
       expect(page).to have_css("table tbody tr td", text: stored_item1_total)
     end
 
-    it "filters by item category id" do
-      @organization.item_categories << item_category
-      create(:distribution, :with_items, item: item1)
-      create(:distribution, :with_items, item: item2)
+    context "this test needs fresh items" do
+      let(:organization) { create(:organization, skip_items: true) }
+      let(:user) { create(:user, organization: organization) }
+      let(:storage_location) { create(:storage_location, organization: organization) }
+      let(:item_category) { create(:item_category, organization: organization) }
+      let(:item1) { create(:item, name: "Good item", item_category: item_category, organization: organization) }
+      let(:item2) { create(:item, name: "Crap item", organization: organization) }
+      let(:partner1) { create(:partner, name: "This Guy", email: "thisguy@example.com", organization: organization) }
+      let(:partner2) { create(:partner, name: "Not This Guy", email: "ntg@example.com", organization: organization) }
 
-      visit subject
-      # check for all distributions
-      expect(page).to have_css("table tbody tr", count: 2)
-      # filter
-      select(item_category.name, from: "filters[by_item_category_id]")
-      click_button("Filter")
-      # check for filtered distributions
-      expect(page).to have_css("table tbody tr", count: 1)
+      it "filters by item category id" do
+        setup_storage_location(storage_location)
 
-      # check for heading text
-      expect(page).to have_css("table thead tr th", text: "Total in #{item_category.name}")
-      # check for count update
-      stored_item1_total = @storage_location.item_total(item1.id)
-      expect(page).to have_css("table tbody tr td", text: stored_item1_total)
+        sign_out(user)
+        sign_in(user)
+
+        create(:distribution, :with_items, item: item1, organization: organization)
+        create(:distribution, :with_items, item: item2, organization: organization)
+
+        visit "/#{organization.to_param}/distributions"
+        # check for all distributions
+        expect(page).to have_css("table tbody tr", count: 2)
+        # filter
+        select(item_category.name, from: "filters[by_item_category_id]")
+        click_button("Filter")
+        # check for filtered distributions
+        expect(page).to have_css("table tbody tr", count: 1)
+
+        # check for heading text
+        expect(page).to have_css("table thead tr th", text: "Total in #{item_category.name}")
+        # check for count update
+        stored_item1_total = storage_location.item_total(item1.id)
+        expect(page).to have_css("table tbody tr td", text: stored_item1_total)
+      end
     end
 
     it "filters by partner" do
