@@ -84,7 +84,8 @@
   color: #ee5034
 }
 
-.numeric {
+.numeric,
+[data-quantity] {
   text-align: right;
 }
 

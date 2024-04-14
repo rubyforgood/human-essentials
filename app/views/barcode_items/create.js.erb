@@ -15,7 +15,7 @@ toastr.success("Barcode Added to Inventory");
 // Locate the row where the barcode was entered from
 line_item = $('#' + source_field).closest('.nested-fields');
 // Set the values in the form. This is replicating some logic from barcode_items.js.erb
-$(line_item).find('input[type=number]').val(quantity);
+$(line_item).find('[data-quantity]').val(quantity);
 $(line_item).find('[value="' + item_id + '"]').attr("selected", true);
 $('#__add_line_item').trigger('click');
 $("input.__barcode_item_lookup").last().focus();

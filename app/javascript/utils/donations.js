@@ -107,10 +107,13 @@ $(function() {
     }
   )
 
+  // As of #3373, item quantity field is a string rather than numeric input type
+  // (due to cross browser inconsistencies). Therefore it needs to be converted
+  // to a number for the large donation check.
   const large_donation_boundary = 100000;
   $(document).on("submit", "form#new_donation", (e, _) =>
     $(".quantity").each(function(_, q) {
-      const quantity = q.valueAsNumber;
+      const quantity = parseInt(q.value, 10);
       if (quantity > large_donation_boundary) {
         confirm(
           `${quantity} items is a large donation! Are you sure you want to submit?`
