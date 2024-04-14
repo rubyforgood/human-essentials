@@ -27,7 +27,10 @@ describe SyncNDBNMembers do
         errors = SyncNDBNMembers.upload(invalid_input)
         expect(errors).to contain_exactly(
           "Issue with 'string,Homeless Shelter'-> NDBN member id must be an integer",
-          "Issue with '2,'-> Account name can't be blank"
+          "Issue with '2,'-> Account name can't be blank",
+          "Issue with ','-> Account name can't be blank",
+          "Issue with ','-> NDBN member id must be an integer",
+          "Issue with ','-> NDBN member can't be blank",
         )
       end
     end
