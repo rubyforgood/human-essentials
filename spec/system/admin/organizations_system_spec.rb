@@ -1,8 +1,11 @@
-RSpec.describe "Admin Organization Management", type: :system, js: true, seed_items: false, skip_transaction: true do
+RSpec.describe "Admin Organization Management", type: :system, js: true, seed_items: false do
   around do |ex|
     Kaminari.config.default_per_page = 3
     ex.run
     Kaminari.config.default_per_page = 50
+  end
+  before do
+    Organization.delete_all # should not be needed once seed_data works
   end
 
   let(:super_admin) { create(:super_admin) }
