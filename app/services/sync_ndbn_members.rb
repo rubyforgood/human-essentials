@@ -6,7 +6,8 @@ class SyncNDBNMembers
       return [e.message]
     end
 
-    member_entries.flat_map do |member_id, account_name|
+    member_entries.flat_map do |row|
+      member_id, account_name = row["NDBN Member Number"], row["Member Name"]
       ndbn_member = NDBNMember.find_or_initialize_by(ndbn_member_id: member_id)
       ndbn_member.account_name = account_name
       ndbn_member.save
@@ -23,11 +24,14 @@ class SyncNDBNMembers
   def self.parse_csv(member_file)
     raise ParseError, "CSV upload is required." if member_file.nil?
 
-    data = CSV.parse(member_file)
-    # Remove the first row because csv starts with Updated: 1/10/2024,
-    data = data.drop(1) if data.first&.first&.start_with?("Updated")
-    # Remove the headers, we are not using them.
-    data = data.drop(1) if data.first&.first&.match?(/NDBN/i)
+    data = CSV.parse(member_file, headers: true)
+
+    unless data.headers == ["NDBN Member Number", "Member Name"]
+      formatted_headers = data.headers.map { |h| "'#{h}'" }.join(", ")
+      raise ParseError, "The CSV has incorrect headers: given: #{formatted_headers} expected: 'NDBN Member Number', 'Member Name'"
+    end
+
+    data
   rescue CSV::MalformedCSVError
     raise ParseError, "The CSV File provided was invalid."
   end

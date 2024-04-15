@@ -1,10 +1,10 @@
 describe SyncNDBNMembers do
   let(:small_input) { File.open(Rails.root.join("spec", "fixtures", "ndbn-small-import.csv")) }
   let(:invalid_input) { File.open(Rails.root.join("spec", "fixtures", "ndbn-invalid-import.csv")) }
+  let(:invalid_headers) { File.open(Rails.root.join("spec", "fixtures", "ndbn-invalid-header-import.csv")) }
   let(:non_csv) { File.open(Rails.root.join("spec", "fixtures", "files", "logo.jpg")) }
 
-  describe "#sync_from_csv" do
-    # Updated: 1/10/2024,
+  describe "#upload" do
     # NDBN Member Number,Member Name
     # 10000 Homeless Shelter
     # 20000 Other Spot
@@ -14,14 +14,17 @@ describe SyncNDBNMembers do
       it "overwrites existing names with new names if shared member id" do
         want = ["Other Spot", "Amazing Place", "Pawnee"]
 
-        SyncNDBNMembers.upload(small_input)
+        errors = SyncNDBNMembers.upload(small_input)
         expect(NDBNMember.pluck(:account_name)).to match_array(want)
+        expect(errors).to be_empty
       end
     end
 
     # NDBN Member Number,Member Name
     # string,Homeless Shelter
     # 2,
+    # ,
+    # 3,Hello
     context "with file with invalid values" do
       it "returns array of errors" do
         errors = SyncNDBNMembers.upload(invalid_input)
@@ -30,7 +33,7 @@ describe SyncNDBNMembers do
           "Issue with '2,'-> Account name can't be blank",
           "Issue with ','-> Account name can't be blank",
           "Issue with ','-> NDBN member id must be an integer",
-          "Issue with ','-> NDBN member can't be blank",
+          "Issue with ','-> NDBN member can't be blank"
         )
       end
     end
@@ -48,6 +51,22 @@ describe SyncNDBNMembers do
         errors = SyncNDBNMembers.upload(non_csv)
 
         expect(errors).to contain_exactly("The CSV File provided was invalid.")
+      end
+    end
+
+    # Updated: 01/01,
+    # NDBN Member Number,Member Name
+    # 10000,Homeless Shelter
+    # 20000,Other Spot
+    # 30000,Amazing Place
+    # 10000,Pawnee
+    context "with file that has invalid headers" do
+      it "adds error" do
+        errors = SyncNDBNMembers.upload(invalid_headers)
+
+        expect(errors).to contain_exactly(
+          "The CSV has incorrect headers: given: 'Updated: 01/01', '' expected: 'NDBN Member Number', 'Member Name'"
+        )
       end
     end
   end
