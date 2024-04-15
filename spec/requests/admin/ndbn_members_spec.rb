@@ -47,13 +47,15 @@ RSpec.describe "NDBNMembers", type: :request do
       expect(body).to include("Amazing Place")
     end
 
-    it "shows flash error if nil file provided" do
-      params = {member_file: nil}
+    context "with invalid values" do
+      it "shows flash error " do
+        params = {member_file: nil}
 
-      post upload_csv_admin_ndbn_members_path, params: params
+        post upload_csv_admin_ndbn_members_path, params: params
 
-      expect(response).to be_redirect
-      expect(flash[:error]).to include("CSV upload is required.")
+        expect(response).to be_redirect
+        expect(flash[:error]).to include("CSV upload is required.")
+      end
     end
   end
 end
