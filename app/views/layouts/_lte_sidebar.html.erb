@@ -101,8 +101,8 @@
       </li>
     </ul>
   </li>
-  <li class="nav-item has-treeview <%= menu_open?(['items', 'kits', 'barcode_items', 'storage_locations', 'adjustments', 'transfers']) %>">
-    <a href="#" class="nav-link <%= active_class(['items', 'kits', 'barcode_items', 'storage_locations', 'adjustments', 'transfers']) %>">
+  <li class="nav-item has-treeview <%= menu_open?(['audits', 'items', 'kits', 'barcode_items', 'storage_locations', 'adjustments', 'transfers']) %>">
+    <a href="#" class="nav-link <%= active_class(['audits', 'items', 'kits', 'barcode_items', 'storage_locations', 'adjustments', 'transfers']) %>">
       <i class="nav-icon fa fa-pie-chart"></i>
       <p>Inventory
         <i class="fas fa-angle-left right"></i></p>
@@ -134,6 +134,13 @@
           <i class="nav-icon fa fa-circle-o"></i> Inventory Adjustments
         <% end %>
       </li>
+      <% if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
+        <li class="nav-item <%= active_class(['audits']) %>">
+          <%= link_to(audits_path(organization_name: current_user.organization), class: "nav-link #{active_class(['audits'])}") do %>
+            <i class="nav-icon fa fa-circle-o"></i> Inventory Audit
+          <% end %>
+        </li>
+      <% end %>
       <li class="nav-item <%= active_class(['transfers']) %>">
         <%= link_to(transfers_path(organization_name: current_user.organization), class: "nav-link #{active_class(['transfers'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Transfers
@@ -170,21 +177,14 @@
       </li>
     </ul>
   </li>
-  <li class='nav-item has-treeview <%= menu_open?(['audits', 'distributions_by_county', 'reports', 'reports/annual_reports']) %>'>
-    <a href='#' class='nav-link <%= active_class(['audits', 'reports/annual_reports', 'distributions_by_county', 'reports/itemized_donations', 'reports/itemized_distributions', 'reports/donations_summary', 'reports/activity_graph', 'reports/manufacturer_donations_summary', 'reports/product_drives_summary', 'purchases_summary', 'reports/distributions_summary']) %>'>
+  <li class='nav-item has-treeview <%= menu_open?(['distributions_by_county', 'reports', 'reports/annual_reports', 'historical_trends/distributions', 'historical_trends/donations', 'historical_trends/purchases']) %>'>
+    <a href='#' class='nav-link <%= active_class(['reports/annual_reports', 'distributions_by_county', 'reports/itemized_donations', 'reports/itemized_distributions', 'reports/donations_summary', 'reports/activity_graph', 'reports/manufacturer_donations_summary', 'reports/product_drives_summary', 'reports/purchases_summary', 'reports/distributions_summary', 'historical_trends/distributions', 'historical_trends/donations', 'historical_trends/purchases']) %>'>
       <i class="nav-icon fa fa-tasks"></i>
-      <p>Reporting & Auditing
+      <p>Reports
         <i class="fas fa-angle-left right"></i>
       </p>
     </a>
     <ul class="nav nav-treeview">
-      <% if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
-        <li class="nav-item <%= active_class(['audits']) %>">
-          <%= link_to(audits_path(organization_name: current_user.organization), class: "nav-link #{active_class(['audits'])}") do %>
-            <i class="nav-icon fa fa-circle-o"></i> Inventory Audit
-          <% end %>
-        </li>
-      <% end %>
       <li class="nav-item <%= active_class(['reports/activity_graph']) %>">
         <%= link_to(reports_activity_graph_path(organization_name: current_user.organization), class: "nav-link #{active_class(['reports/activity_graph'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Activity Graph
@@ -207,6 +207,11 @@
           <i class="nav-icon fa fa-circle-o"></i> Distributions - Summary
         <% end %>
       </li>
+      <li class="nav-item <%= 'active' if current_page?(historical_trends_distributions_path) %>">
+        <%= link_to(historical_trends_distributions_path, class: "nav-link #{"active" if current_page?(historical_trends_distributions_path)}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Distributions - Trends
+        <% end %>
+      </li>
       <li class="nav-item <%= active_class(['reports/itemized_distributions']) %>">
         <%= link_to(reports_itemized_distributions_path(organization_name: current_user.organization), class: "nav-link #{active_class(['reports/itemized_distributions'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Distributions - Itemized
@@ -220,6 +225,11 @@
       <li class="nav-item <%= active_class(['reports/donations_summary']) %>">
         <%= link_to(reports_donations_summary_path(organization_name: current_user.organization), class: "nav-link #{active_class(['reports/donations_summary'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Donations - Summary
+        <% end %>
+      </li>
+      <li class="nav-item <%= 'active' if current_page?(historical_trends_donations_path) %>">
+        <%= link_to(historical_trends_donations_path, class: "nav-link #{"active" if current_page?(historical_trends_donations_path)}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Donations - Trends
         <% end %>
       </li>
       <li class="nav-item <%= active_class(['reports/itemized_donations']) %>">
@@ -242,28 +252,9 @@
           <i class="nav-icon fa fa-circle-o"></i> Purchases - Summary
         <% end %>
       </li>
-    </ul>
-  </li>
-  <li class="nav-item has-treeview <%= menu_open?(['historical_trends/distributions', 'historical_trends/donations', 'historical_trends/purchases']) %>">
-    <a href="#" class="nav-link <%= active_class(['historical_trends/distributions', 'historical_trends/donations', 'historical_trends/purchases']) %>">
-      <i class="nav-icon fa fa-bar-chart"></i>
-      <p>Historical Trends
-        <i class="fas fa-angle-left right"></i></p>
-    </a>
-    <ul class="nav nav-treeview">
-      <li class="nav-item <%= 'active' if current_page?(historical_trends_donations_path) %>">
-        <%= link_to(historical_trends_donations_path, class: "nav-link #{"active" if current_page?(historical_trends_donations_path)}") do %>
-          <i class="nav-icon fa fa-circle-o"></i> Donations
-        <% end %>
-      </li>
       <li class="nav-item <%= 'active' if current_page?(historical_trends_purchases_path) %>">
         <%= link_to(historical_trends_purchases_path, class: "nav-link #{"active" if current_page?(historical_trends_purchases_path)}") do %>
-          <i class="nav-icon fa fa-circle-o"></i> Purchases
-        <% end %>
-      </li>
-      <li class="nav-item <%= 'active' if current_page?(historical_trends_distributions_path) %>">
-        <%= link_to(historical_trends_distributions_path, class: "nav-link #{"active" if current_page?(historical_trends_distributions_path)}") do %>
-          <i class="nav-icon fa fa-circle-o"></i> Distributions
+          <i class="nav-icon fa fa-circle-o"></i> Purchases - Trends
         <% end %>
       </li>
     </ul>

@@ -15,11 +15,7 @@ module ApplicationHelper
   end
 
   def active_class(name)
-    if name.find { |n| request.path.ends_with?(n) }
-      "active"
-    else
-      controller_path
-    end
+    (name.include?(controller_path) || name.include?(controller_path + '/' + action_name)) ? 'active' : controller_path
   end
 
   def menu_open?(name)
