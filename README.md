@@ -75,9 +75,10 @@ You can sign up [here](https://join.slack.com/t/rubyforgood/shared_invite/zt-21p
    - Follow one of these guides: [MacOSX](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-macos), [Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-ubuntu-18-04).
      - Do you develop on Windows? We'd love to hear (and for you to submit a PR explaining) how you do it. 🙏🏻
    - Create a `database.yml` file on `config/` directory with your database configurations. You can also copy the existing files called [`database.yml.example`](config/database.yml.example) and [`.env.example`](.env.example) and change the credentials.
-3. Run `bin/setup`
-4. Run `bin/start` and visit http://localhost:3000/ to see the human essentials page.
-5. Login as a sample user with these default credentials (which also work for [staging](https://staging.humanessentials.app/)):
+3. Clone the project and switch to its directory
+4. Run `bin/setup`
+5. Run `bin/start` and visit http://localhost:3000/ to see the human essentials page.
+6. Log in as a sample user with these default credentials (which also work for [staging](https://staging.humanessentials.app/)):
 
 <details>
   <summary> Super Users 🦸🏽‍♀️ </summary>
@@ -129,6 +130,7 @@ You can sign up [here](https://join.slack.com/t/rubyforgood/shared_invite/zt-21p
 Please let us know by opening up an issue! We have many new contributors come through and it is likely what you experienced will happen to them as well.
 
 - *"My RBENV installation didn't work!"* - The rbenv repository provides a [rbenv-doctor script](https://github.com/rbenv/rbenv-installer#rbenv-doctor) to verify the installation and check if a ruby version is installed
+- *"I see a database segmentation fault"* - If you're running Apple Silicon, adding `gssencmode: "disable"` to `config/database.yml` should resolve this.
 
 ## Contributing Guidelines 🤝
 
