@@ -210,6 +210,6 @@ if %w(mingw mswin x64_mingw jruby).include?(RUBY_PLATFORM)
 end
 
 # Use Redis for Action Cable
-gem "redis", "~> 5.1"
+gem "redis", "~> 5.2"
 
 gem "importmap-rails", "~> 2.0"
