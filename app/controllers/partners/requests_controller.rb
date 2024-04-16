@@ -30,7 +30,6 @@ module Partners
         flash[:success] = 'Request was successfully created.'
         redirect_to partners_request_path(create_service.partner_request.id)
       else
-
         @partner_request = create_service.partner_request
         @errors = create_service.errors
 
