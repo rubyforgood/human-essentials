@@ -1,5 +1,9 @@
 name: Generate PlantUML
 on: push
+  paths:
+    - 'doc/**'
+    - '*.md'
+
 jobs:
   generate_plantuml:
     runs-on: ubuntu-latest
