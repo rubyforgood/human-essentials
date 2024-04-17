@@ -31,8 +31,10 @@
           <!-- /.card-header --> <!-- form start -->
           <div class="card-body">
             <div class="row">
-              <p>Update the current NDBN members by uploading a CSV file of the
-                current members.</p>
+              <p>The Current NDBN member list is found at
+                <a
+                  href="https://docs.google.com/spreadsheets/d/1DRXeG206M0kgtUYT9lpD8fyEWRO7-a6m/edit?pli=1#gid=1068714915.">this link.</a>
+                Export the list as CSV and remove the initial 'Updated' row before uploading.</p>
             </div>
             <%= form_with(url: upload_csv_admin_ndbn_members_path) do |form| %>
               <div class="row">
@@ -59,7 +61,7 @@
               <thead>
                 <tr>
                   <th>NDBN Member Number</th>
-                  <th>NDBN Member Name</th>
+                  <th>Member Name</th>
                 </tr>
               </thead>
               <tbody>
