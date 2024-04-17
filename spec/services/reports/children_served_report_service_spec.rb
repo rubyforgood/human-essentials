@@ -106,8 +106,6 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
     end
   end
   describe "#disposable_diapers_from_kits_total" do
-    before { DatabaseCleaner.clean_with(:truncation) }
-
     it "calculates the number of disposable diapers that have been distributed within kits" do
       organization = create(:organization, skip_items: true)
       toddler_disposable_kit = create(:kit, :with_item, organization: organization)

@@ -555,7 +555,7 @@ RSpec.feature "Distributions", type: :system do
       expect(page).to have_css("table tbody tr td", text: stored_item1_total)
     end
 
-    context "this test needs fresh items" do
+    context "with fresh items" do
       let(:organization) { create(:organization, skip_items: true) }
       let(:user) { create(:user, organization: organization) }
       let(:storage_location) { create(:storage_location, organization: organization) }
