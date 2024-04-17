@@ -252,7 +252,7 @@ GEM
       rack (>= 1.4, < 4)
       rack-protection (>= 1.5.3, <= 4.0.0)
       sanitize (< 7)
-    foreman (0.87.2)
+    foreman (0.88.1)
     formatador (1.1.0)
     geocoder (1.8.2)
     globalid (1.2.1)
@@ -500,9 +500,9 @@ GEM
     rb-inotify (0.10.1)
       ffi (~> 1.0)
     recaptcha (5.16.0)
-    redis (5.1.0)
-      redis-client (>= 0.17.0)
-    redis-client (0.20.0)
+    redis (5.2.0)
+      redis-client (>= 0.22.0)
+    redis-client (0.22.0)
       connection_pool
     regexp_parser (2.9.0)
     request_store (1.5.1)
@@ -732,7 +732,7 @@ DEPENDENCIES
   rails-controller-testing
   rails-erd
   recaptcha
-  redis (~> 5.1)
+  redis (~> 5.2)
   rolify (~> 6.0)
   rspec-rails (~> 6.1.2)
   rubocop
