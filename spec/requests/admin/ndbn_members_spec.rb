@@ -25,7 +25,7 @@ RSpec.describe "NDBNMembers", type: :request do
       expect(html.css("input[type=file]").count).to eq(1)
       expect(html.css("button[type=submit]").count).to eq(1)
 
-      expect(html.css("th").map(&:text)).to match_array(["NDBN Member Number", "NDBN Member Name"])
+      expect(html.css("th").map(&:text)).to match_array(["NDBN Member Number", "Member Name"])
       expect(html.css("tbody tr td").map(&:text)).to match_array(["123", "A Baby Center"])
     end
   end
