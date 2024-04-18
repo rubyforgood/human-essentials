@@ -15,7 +15,7 @@ module ApplicationHelper
   end
 
   def active_class(name)
-    (name.include?(controller_path) || name.include?(controller_path + '/' + action_name)) ? 'active' : controller_path
+    (name.include?(controller_path) || name.include?(controller_path + '/' + action_name.to_s)) ? 'active' : controller_path
   end
 
   def menu_open?(name)
