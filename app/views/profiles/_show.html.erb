@@ -43,7 +43,6 @@
       <p>No Social Media Presence: <%= humanize_boolean(partner_profile.no_social_media_presence) %></p>
       <br>
     <% end %>
-    
     <% if partner_profile_fields.include?('agency_stability') || partner_profile_fields.empty? %>
       <h2 class='text-2xl underline'>Agency Stability</h2>
       <p>Founded <%= partner_profile.founded %></p>
