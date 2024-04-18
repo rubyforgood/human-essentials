@@ -223,6 +223,44 @@ RSpec.describe Donation, type: :model do
           expect(donation.source_view).to eq(donation.source)
         end
       end
+
+      context "details" do
+        context "manufacturer" do
+          let(:manufacturer) { create(:manufacturer) }
+          let(:donation) { create(:donation, source: "Manufacturer", manufacturer: manufacturer) }
+
+          it "returns manufacturer name" do
+            expect(donation.details).to eq(manufacturer.name)
+          end
+        end
+
+        context "product drive" do
+          let(:product_drive) { create(:product_drive) }
+          let(:donation) { create(:donation, source: "Product Drive", product_drive: product_drive) }
+
+          it "returns product_drive name" do
+            expect(donation.details).to eq(product_drive.name)
+          end
+        end
+
+        context "donation site" do
+          let(:donation_site) { create(:donation_site) }
+          let(:donation) { create(:donation, source: "Donation Site", donation_site: donation_site) }
+
+          it "returns donation_site name" do
+            expect(donation.details).to eq(donation_site.name)
+          end
+        end
+
+        context "misc" do
+          let(:donation) { create(:donation, source: "Misc. Donation", comment: Faker::Lorem.paragraph) }
+
+          it "returns a truncated comment" do
+            short_comment = donation.comment.truncate(25, separator: /\s/)
+            expect(donation.details).to eq(short_comment)
+          end
+        end
+      end
     end
   end
 

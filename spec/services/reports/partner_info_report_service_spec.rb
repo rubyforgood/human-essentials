@@ -28,7 +28,7 @@ RSpec.describe Reports::PartnerInfoReportService, type: :service do
                                     entries: { "Agency Type: Career technical training" => 2,
                                                "Agency Type: Education program" => 1,
                                                "Number of Partner Agencies" => 3,
-                                               "Zip Codes Served" => "90210-1234, 12345, 09876-3564" },
+                                               "Zip Codes Served" => "09876-3564, 12345, 90210-1234" },
                                     name: "Partner Agencies and Service Area"
                                   })
     end

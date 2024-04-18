@@ -6,7 +6,10 @@ RSpec.describe ItemsOutQuery do
 
   describe "items_out_query" do
     before do
-      items = create_list(:inventory_item, 3, storage_location: storage_location, quantity: 10).collect(&:item)
+      items = create_list(:item, 3)
+      TestInventory.create_inventory(storage_location.organization, {
+        storage_location.id => items.to_h { |i| [i.id, 10] }
+      })
       other_storage_location = create(:storage_location, organization: @organization)
       create(:transfer, :with_items, item_quantity: 8, item: items[0], to: other_storage_location, from: storage_location)
       create(:distribution, :with_items, item: items[1], item_quantity: 9, storage_location: storage_location)

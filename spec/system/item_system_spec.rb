@@ -70,63 +70,10 @@ RSpec.describe "Item management", type: :system do
     create(:item, base_item: BaseItem.first)
     create(:item, base_item: BaseItem.last)
     visit url_prefix + "/items"
-    select BaseItem.first.name, from: "filters_by_base_item"
+    select BaseItem.first.name, from: "filters[by_base_item]"
     click_button "Filter"
     within "#items-table" do
       expect(page).to have_css("tbody tr", count: 1)
-    end
-  end
-
-  it "can include inactive items in the results" do
-    Item.delete_all
-    create(:item, :inactive, name: "Inactive Item")
-    create(:item, :active, name: "Active Item")
-    visit url_prefix + "/items"
-    expect(page).to have_text("Active Item")
-    expect(page).to have_no_text("Inactive Item")
-    page.check('include_inactive_items')
-    click_button "Filter"
-    expect(page).to have_text("Inactive Item")
-    expect(page).to have_text("Active Item")
-  end
-
-  describe "destroying items" do
-    subject { create(:item, name: "AAA DELETEME", organization: @user.organization) }
-    context "when an item has history" do
-      before do
-        create(:donation, :with_items, item: subject)
-      end
-      it "can be soft-deleted (deactivated) by the user" do
-        expect do
-          visit url_prefix + "/items"
-          expect(page).to have_content(subject.name)
-          within "tr[data-item-id='#{subject.id}']" do
-            accept_confirm do
-              click_on "Delete", match: :first
-            end
-          end
-          page.find(".alert-info")
-        end.to change { Item.count }.by(0).and change { Item.active.count }.by(-1)
-        subject.reload
-        expect(subject).not_to be_active
-      end
-    end
-
-    context "when an item does not have history" do
-      it "can be fully deleted by the user" do
-        subject
-        expect do
-          visit url_prefix + "/items"
-          expect(page).to have_content(subject.name)
-          within "tr[data-item-id='#{subject.id}']" do
-            accept_confirm do
-              click_on "Delete", match: :first
-            end
-          end
-          page.find(".alert-info")
-        end.to change { Item.count }.by(-1).and change { Item.active.count }.by(-1)
-        expect { subject.reload }.to raise_error(ActiveRecord::RecordNotFound)
-      end
     end
   end
 
@@ -233,7 +180,7 @@ RSpec.describe "Item management", type: :system do
         let(:item) { Item.first }
 
         before do
-          find('tr', text: item.name).find('a', text: 'Edit').click
+          find("tr[data-item-id=\"#{item.id}\"]").find('a', text: 'Edit').click
           select new_item_category, from: 'Category'
           click_on 'Save'
         end

@@ -17,14 +17,15 @@ describe Partners::FamilyRequestCreateService do
     let(:for_families) { false }
 
     context 'when the arguments are incorrect' do
-      context 'because no family_requests_attributes were defined' do
+      context 'because no family_requests_attributes or comments were defined' do
         let(:family_requests_attributes) { [] }
+        let(:comments) { '' }
 
         it 'should return the Partners::FamilyRequestCreateService object with an error' do
           result = subject
 
           expect(result).to be_a_kind_of(Partners::FamilyRequestCreateService)
-          expect(result.errors[:base]).to eq(["family_requests_attributes cannot be empty"])
+          expect(result.errors[:base]).to eq(["completely empty request"])
         end
       end
 

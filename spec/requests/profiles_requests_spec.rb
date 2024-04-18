@@ -2,7 +2,7 @@ RSpec.describe "Profiles", type: :request do
   let(:partner) { FactoryBot.create(:partner, organization: @organization) }
 
   let(:default_params) do
-    { organization_id: @organization.to_param, id: partner.id, partner_id: partner.id }
+    { organization_name: @organization.to_param, id: partner.id, partner_id: partner.id }
   end
 
   before do

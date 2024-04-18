@@ -41,7 +41,7 @@ module DashboardHelper
   end
 
   def recently_added_user_display_text(user)
-    (user.name == "Name Not Provided") ? user.email : user.name
+    user.name.blank? ? user.email : user.display_name
   end
 
   private

@@ -133,8 +133,7 @@
           <ul class="users-list clearfix">
             <% @recent_organizations.each do |org| %>
               <li>
-                <%#= image_tag(org&.logo)
-                %>
+                <%#= image_tag(org&.logo) %>
                 <%= link_to org.name, admin_organization_path(org.id), class: "users-list-name" %>
                 <span class="users-list-date"><%= time_ago_in_words(org.created_at) %></span>
               </li>
@@ -221,7 +220,7 @@
           <tbody>
             <% @active_users.each do |user| %>
               <tr>
-                <td><%= user.name %></td>
+                <td><%= user.display_name %></td>
                 <td><%= user.email %></td>
                 <td><%= user.organization&.name %></td>
                 <td><%= time_ago_in_words user.last_request_at %></td>

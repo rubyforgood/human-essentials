@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_12_29_200106) do
+ActiveRecord::Schema[7.0].define(version: 2024_04_02_230156) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -233,8 +233,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_29_200106) do
     t.integer "organization_id"
     t.datetime "issued_at", precision: nil
     t.string "agency_rep"
-    t.integer "state", default: 5, null: false
     t.boolean "reminder_email_enabled", default: false, null: false
+    t.integer "state", default: 5, null: false
     t.integer "delivery_method", default: 0, null: false
     t.decimal "shipping_cost", precision: 8, scale: 2
     t.index ["organization_id"], name: "index_distributions_on_organization_id"
@@ -250,6 +250,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_29_200106) do
     t.integer "organization_id"
     t.float "latitude"
     t.float "longitude"
+    t.string "contact_name"
+    t.string "email"
+    t.string "phone"
+    t.boolean "active", default: true
     t.index ["latitude", "longitude"], name: "index_donation_sites_on_latitude_and_longitude"
     t.index ["organization_id"], name: "index_donation_sites_on_organization_id"
   end
@@ -284,6 +288,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_29_200106) do
     t.datetime "updated_at", null: false
     t.bigint "organization_id"
     t.bigint "user_id"
+    t.string "group_id"
     t.index ["organization_id", "event_time"], name: "index_events_on_organization_id_and_event_time"
     t.index ["organization_id"], name: "index_events_on_organization_id"
     t.index ["user_id"], name: "index_events_on_user_id"
@@ -478,6 +483,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_29_200106) do
     t.boolean "enable_individual_requests", default: true, null: false
     t.boolean "enable_quantity_based_requests", default: true, null: false
     t.boolean "ytd_on_distribution_printout", default: true, null: false
+    t.boolean "one_step_partner_invite", default: false, null: false
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
@@ -797,7 +803,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_29_200106) do
     t.integer "invited_by_id"
     t.integer "invitations_count", default: 0
     t.boolean "organization_admin"
-    t.string "name", default: "Name Not Provided", null: false
+    t.string "name"
     t.boolean "super_admin", default: false
     t.datetime "last_request_at", precision: nil
     t.datetime "discarded_at", precision: nil

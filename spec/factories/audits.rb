@@ -14,7 +14,7 @@
 
 FactoryBot.define do
   factory :audit do
-    organization { Organization.try(:first) || create(:organization) }
+    organization { Organization.try(:first) || create(:organization, skip_items: true) }
     user { nil }
     storage_location { nil }
     adjustment { nil }
@@ -32,7 +32,11 @@ FactoryBot.define do
       end
 
       after(:build) do |audit, evaluator|
-        item = evaluator.item || audit.storage_location.inventory_items.first.item
+        event_item = View::Inventory.new(audit.organization_id)
+          .items_for_location(audit.storage_location_id)
+          .first
+          &.db_item
+        item = evaluator.item || event_item || create(:item)
         audit.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item, itemizable: audit)
       end
     end

@@ -2,10 +2,10 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <% content_for :title, "New Request - #{current_user.name}" %>
+        <% content_for :title, "New Request - #{current_user.display_name}" %>
         <h1><i class="fa fa-users"></i>&nbsp;&nbsp;
           New Request
-          <small>for <%= current_user.name %></small>
+          <small>for <%= current_user.display_name %></small>
         </h1>
       </div>
       <div class="col-sm-6">
@@ -30,8 +30,8 @@
               <%= render partial: 'partners/requests/error' %>
             <% end %>
 
-            <%= simple_form_for @partner_request, url: partners_requests_path(@partner_request, :organization_id => current_partner.organization.id),
-                                html: {role: 'form', class: 'form-horizontal'}, method: :post do |form| %>
+            <%= simple_form_for @partner_request, url: partners_requests_path(@partner_request),
+              html: {role: 'form', class: 'form-horizontal'}, method: :post, data: { controller: 'form-input' } do |form| %>
               <%= form.input :comments, label: "Comments:", as: :text, class: "form-control", wrapper: :input_group %>
 
               <table class='table'>
@@ -39,7 +39,6 @@
                 <tr>
                   <th>Item Requested</th>
                   <th>Quantity</th>
-                  <th></th>
                 </tr>
                 </thead>
                 <tbody class='fields'>
@@ -47,7 +46,7 @@
                 </tbody>
               </table>
               <div>
-                <%= add_item_button('Add Another Item') do %>
+                <%= add_element_button('Add Another Item', container_selector: '.fields') do %>
                   <%= render 'item_request', form: form, object: @partner_request.item_requests.build %>
                 <% end %>
               </div>
@@ -57,7 +56,7 @@
           </div>
               <div class="card-footer">
                 <!-- TODO(chaserx): we should add some js to prevent submission if the items selected are the blank option or any item has an empty quantity -->
-                <%= form.submit("Submit Essentials Request", class: "btn btn-primary") %> <%= link_to "Cancel Request", partners_requests_path, class: "btn btn-danger" %>
+                <%= form.submit("Submit Essentials Request", class: "btn btn-success") %> <%= link_to "Cancel Request", partners_requests_path, class: "btn btn-danger" %>
               </div>
             <% end %>
         </div>
@@ -65,31 +64,3 @@
     </div>
   </div>
 </section>
-
-<script type="module">
-  $(document).ready(function() {
-    $(document).on('click', '[data-add-target][data-add-template]', (event) => {
-      var button = $(event.target)
-      var target = button.data('add-target');
-      var template = button.data("add-template");
-      var templateId = new Date().getTime();
-      var rendered = template.replace(/([\[_])([0-9]+)([\]_])/g, "$1" + templateId + '$3');
-
-      $(target).append(rendered);
-
-      event.preventDefault();
-    });
-
-    $(document).on('click', '[data-remove-item]', (event) => {
-      var button = $(event.target)
-      var wrapper = button.closest('tr')
-      if (button.data("remove-item") === "soft") {
-        wrapper.hide();
-        button.prev('input[type=hidden]').val('1');
-      } else {
-        wrapper.remove()
-      }
-      event.preventDefault();
-    });
-  })
-</script>

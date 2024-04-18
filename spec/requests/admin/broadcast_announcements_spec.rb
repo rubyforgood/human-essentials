@@ -9,7 +9,7 @@ RSpec.describe "BroadcastAnnouncements", type: :request do
       expiry: Time.zone.today,
       link: "http://google.com",
       message: "test",
-      user_id: 1,
+      user_id: @user.id,
       organization_id: nil
     }
   }
@@ -74,8 +74,8 @@ RSpec.describe "BroadcastAnnouncements", type: :request do
           expiry: Time.zone.yesterday,
           link: "http://google.com",
           message: "new_test",
-          user_id: 1,
-          organization_id: 1
+          user_id: @user.id,
+          organization_id: @organization.id
         }
       }
 
@@ -115,14 +115,14 @@ RSpec.describe "BroadcastAnnouncements", type: :request do
     describe "GET /new" do
       it "redirects" do
         get new_admin_broadcast_announcement_url
-        expect(response).to redirect_to(dashboard_path)
+        expect(response).to redirect_to(dashboard_path(organization_name: @organization_admin.organization))
       end
     end
 
     describe "POST /create" do
       it "redirects" do
-        post admin_broadcast_announcements_url, params: {user: 1, message: "test"}
-        expect(response).to redirect_to(dashboard_path)
+        post admin_broadcast_announcements_url, params: {user: @user.id, message: "test"}
+        expect(response).to redirect_to(dashboard_path(organization_name: @organization_admin.organization))
       end
     end
   end

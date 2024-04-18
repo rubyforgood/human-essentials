@@ -12,13 +12,10 @@ Flipper.enable(:onebase)
 # ----------------------------------------------------------------------------
 # Random Record Generators
 # ----------------------------------------------------------------------------
-
-def random_record(klass)
-  klass.limit(1).order(Arel.sql('random()')).first
-end
+load "lib/dispersed_past_dates_generator.rb"
 
 def random_record_for_org(org, klass)
-  klass.where(organization: org).limit(1).order(Arel.sql('random()')).first
+  klass.where(organization: org).all.sample
 end
 
 # ----------------------------------------------------------------------------
@@ -327,12 +324,18 @@ note = [
     end
   end
 
+  dates_generator = DispersedPastDatesGenerator.new
+
   Faker::Number.within(range: 32..56).times do
+    date = dates_generator.next
+
     partner_request = ::Request.new(
       partner_id: p.id,
       organization_id: p.organization_id,
       comments: Faker::Lorem.paragraph,
-      partner_user_id: p.primary_user.id
+      partner_user_id: p.primary_user.id,
+      created_at: date,
+      updated_at: date
     )
 
     item_requests = []
@@ -343,7 +346,9 @@ note = [
         quantity: Faker::Number.within(range: 10..30),
         children: [],
         name: item.name,
-        partner_key: item.partner_key
+        partner_key: item.partner_key,
+        created_at: date,
+        updated_at: date
       )
       partner_request.item_requests << new_item_request
     end
@@ -500,13 +505,15 @@ end
 # Donations
 # ----------------------------------------------------------------------------
 
+dates_generator = DispersedPastDatesGenerator.new
 # Make some donations of all sorts
 20.times.each do
   source = Donation::SOURCES.values.sample
   # Depending on which source it uses, additional data may need to be provided.
   donation = Donation.new(source: source,
                           storage_location: random_record_for_org(pdx_org, StorageLocation),
-                          organization: pdx_org, issued_at: Time.zone.now)
+                          organization: pdx_org,
+                          issued_at: dates_generator.next)
   case source
   when Donation::SOURCES[:product_drive]
     donation.product_drive = ProductDrive.first
@@ -526,6 +533,7 @@ end
 # ----------------------------------------------------------------------------
 # Distributions
 # ----------------------------------------------------------------------------
+dates_generator = DispersedPastDatesGenerator.new
 
 inventory = InventoryAggregate.inventory_for(pdx_org.id)
 # Make some distributions, but don't use up all the inventory
@@ -538,7 +546,7 @@ inventory = InventoryAggregate.inventory_for(pdx_org.id)
     storage_location: storage_location,
     partner: random_record_for_org(pdx_org, Partner),
     organization: pdx_org,
-    issued_at: Faker::Date.between(from: 4.days.ago, to: Time.zone.today),
+    issued_at: dates_generator.next,
     delivery_method: delivery_method,
     shipping_cost: shipping_cost,
     comment: 'Urgent'
@@ -619,7 +627,10 @@ comments = [
   "Nullam dictum ac lectus at scelerisque. Phasellus volutpat, sem at eleifend tristique, massa mi cursus dui, eget pharetra ligula arcu sit amet nunc."
 ]
 
-20.times do
+dates_generator = DispersedPastDatesGenerator.new
+
+25.times do
+  purchase_date = dates_generator.next
   storage_location = random_record_for_org(pdx_org, StorageLocation)
   vendor = random_record_for_org(pdx_org, Vendor)
   purchase = Purchase.new(
@@ -628,32 +639,18 @@ comments = [
     organization_id: pdx_org.id,
     storage_location_id: storage_location.id,
     amount_spent_in_cents: rand(200..10_000),
-    issued_at: (Time.zone.today - rand(15).days),
-    created_at: (Time.zone.today - rand(15).days),
-    updated_at: (Time.zone.today - rand(15).days),
+    issued_at: purchase_date,
+    created_at: purchase_date,
+    updated_at: purchase_date,
     vendor_id: vendor.id
   )
+
+  rand(1..5).times do
+    purchase.line_items.push(LineItem.new(quantity: rand(1..1000),
+                                          item_id: pdx_org.item_ids.sample))
+  end
   PurchaseCreateService.call(purchase)
 end
-
-#re 2813_update_annual_report add some data for last year (enables system testing of reports)
-5.times do
-  storage_location = random_record_for_org(pdx_org, StorageLocation)
-  vendor = random_record_for_org(pdx_org, Vendor)
-  purchase = Purchase.new(
-    purchased_from: suppliers.sample,
-    comment: comments.sample,
-    organization_id: pdx_org.id,
-    storage_location_id: storage_location.id,
-    amount_spent_in_cents: rand(200..10_000),
-    issued_at: (Time.zone.today - 1.year),
-    created_at: (Time.zone.today - 1.year),
-    updated_at: (Time.zone.today - 1.year),
-    vendor_id: vendor.id
-  )
-  PurchaseCreateService.call(purchase)
-end
-
 
 # ----------------------------------------------------------------------------
 # Flipper
