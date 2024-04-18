@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Adjustments", type: :request do
   let(:default_params) do
-    { organization_id: @organization.to_param }
+    { organization_name: @organization.to_param }
   end
 
   # This should return the minimal set of attributes required to create a valid
@@ -16,7 +16,7 @@ RSpec.describe "Adjustments", type: :request do
   end
 
   let(:invalid_attributes) do
-    { organization_id: nil }
+    { organization_name: nil }
   end
 
   # This should return the minimal set of values that should be in the session

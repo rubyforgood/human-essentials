@@ -13,7 +13,7 @@
 
 FactoryBot.define do
   factory :adjustment do
-    organization { Organization.try(:first) || create(:organization) }
+    organization { Organization.try(:first) || create(:organization, skip_items: true) }
     storage_location
     comment { "A comment" }
     user { organization.users.try(:first) || create(:user, organization_id: organization.id) }
@@ -27,7 +27,11 @@ FactoryBot.define do
       end
 
       after(:build) do |adjustment, evaluator|
-        item = evaluator.item || adjustment.storage_location.inventory_items.first.item
+        event_item = View::Inventory.new(adjustment.organization_id)
+          .items_for_location(adjustment.storage_location_id)
+          .first
+          &.db_item
+        item = evaluator.item || event_item || create(:item)
         adjustment.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item, itemizable: adjustment)
       end
     end

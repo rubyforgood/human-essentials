@@ -24,7 +24,7 @@
 FactoryBot.define do
   factory :item do
     sequence(:name) { |n| "#{n}T Diapers" }
-    organization { Organization.try(:first) || create(:organization) }
+    organization { Organization.try(:first) || create(:organization, skip_items: true) }
     partner_key { BaseItem.first&.partner_key || create(:base_item).partner_key }
     kit { nil }
 

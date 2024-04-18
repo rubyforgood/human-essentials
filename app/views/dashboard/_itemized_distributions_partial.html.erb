@@ -6,7 +6,7 @@
     <th>Total On Hand</th>
   </tr>
   </thead>
-  <% # Ordering from highest distributed to lowest %>
+  <%# Ordering from highest distributed to lowest %>
   <% (local_assigns[:itemized_breakdown] || []).each do |item| %>
     <tbody>
       <tr>

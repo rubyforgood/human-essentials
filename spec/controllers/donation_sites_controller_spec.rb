@@ -1,6 +1,6 @@
 RSpec.describe DonationSitesController, type: :controller do
   let(:default_params) do
-    { organization_id: @organization.to_param }
+    { organization_name: @organization.to_param }
   end
 
   context "While signed in" do
@@ -38,13 +38,6 @@ RSpec.describe DonationSitesController, type: :controller do
       subject { get :show, params: default_params.merge(id: create(:donation_site, organization: @organization)) }
       it "returns http success" do
         expect(subject).to be_successful
-      end
-    end
-
-    describe "DELETE #destroy" do
-      subject { delete :destroy, params: default_params.merge(id: create(:donation_site, organization: @organization)) }
-      it "returns http success" do
-        expect(subject).to redirect_to(donation_sites_path)
       end
     end
 

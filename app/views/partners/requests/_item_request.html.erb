@@ -1,10 +1,15 @@
 <%= form.fields_for :item_requests, defined?(object) ? object : nil  do |field| %>
   <tr>
-    <td><%= field.select :item_id, @formatted_requestable_items, {include_blank: 'Select an item'}, {class: 'form-control'} %></td>
-    <td><%= field.number_field :quantity, label: false, step: 1, min: 1, class: 'form-control' %></td>
     <td>
-      <%= field.hidden_field :_destroy, as: :hidden %>
-      <%= remove_item_button "Remove", soft: true %>
+      <%= field.label :item_id, "Item Requested", {class: 'sr-only'} %>
+      <%= field.select :item_id, @requestable_items, {include_blank: 'Select an item'}, {class: 'form-control'} %>
+    </td>
+    <td>
+      <%= field.label :quantity, "Quantity", {class: 'sr-only'} %>
+      <%= field.number_field :quantity, label: false, step: 1, min: 1, class: 'form-control' %>
+    </td>
+    <td>
+      <%= remove_element_button "Remove", container_selector: "tr" %>
     </td>
   </tr>
 <% end %>

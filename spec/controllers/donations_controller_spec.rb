@@ -1,6 +1,6 @@
 RSpec.describe DonationsController, type: :controller do
   let(:default_params) do
-    { organization_id: @organization.to_param }
+    { organization_name: @organization.to_param }
   end
   let(:donation) { create(:donation, organization: @organization) }
 
@@ -67,6 +67,10 @@ RSpec.describe DonationsController, type: :controller do
         expect do
           put :update, params: default_params.merge(id: donation.id, donation: donation_params)
         end.to change { donation.storage_location.inventory_items.first.quantity }.by(5)
+          .and change {
+                 View::Inventory.new(donation.organization_id)
+                   .quantity_for(storage_location: donation.storage_location_id, item_id: line_item.item_id)
+               }.by(5)
       end
 
       describe "when changing storage location" do
@@ -90,7 +94,10 @@ RSpec.describe DonationsController, type: :controller do
           expect(new_storage_location.size).to eq 8
         end
 
+        # TODO this test is invalid in event-world since it's handled by the aggregate
         it "rolls back updates if quantity would go below 0" do
+          next if Event.read_events?(@organization)
+
           donation = create(:donation, :with_items, item_quantity: 10)
           original_storage_location = donation.storage_location
 
@@ -133,6 +140,10 @@ RSpec.describe DonationsController, type: :controller do
           expect do
             put :update, params: default_params.merge(id: donation.id, donation: donation_params)
           end.to change { donation.storage_location.inventory_items.first.quantity }.by(-10)
+            .and change {
+                   View::Inventory.new(donation.organization_id)
+                     .quantity_for(storage_location: donation.storage_location_id, item_id: line_item.item_id)
+                 }.by(-10)
         end
       end
     end

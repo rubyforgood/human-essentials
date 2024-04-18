@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Admin::UsersController", type: :request do
   let(:default_params) do
-    { organization_id: @organization.id }
+    { organization_name: @organization.id }
   end
   let(:org) { FactoryBot.create(:organization, name: 'Org ABC') }
   let(:partner) { FactoryBot.create(:partner, name: 'Partner XYZ') }
@@ -28,8 +28,9 @@ RSpec.describe "Admin::UsersController", type: :request do
     describe "PATCH #update" do
       context 'with no errors' do
         it "renders index template with a successful update flash message" do
-          patch admin_user_path(user), params: { user: default_params.merge(name: 'New User 123', email: 'random@gmail.com') }
-          expect(response).to redirect_to admin_users_path(organization_id: 'admin')
+          patch admin_user_path(user), params: { user: default_params.merge(organization_id: user.organization.id,
+            name: 'New User 123', email: 'random@gmail.com') }
+          expect(response).to redirect_to admin_users_path
           expect(flash[:notice]).to eq("New User 123 updated!")
         end
       end
@@ -123,12 +124,12 @@ RSpec.describe "Admin::UsersController", type: :request do
 
     describe "POST #create" do
       it "returns http success" do
-        post admin_users_path, params: { user: { email: 'email@email.com', organization_id: 1 } }
-        expect(response).to redirect_to(admin_users_path(organization_id: 'admin'))
+        post admin_users_path, params: { user: { email: @organization.email, organization_id: @organization.id } }
+        expect(response).to redirect_to(admin_users_path)
       end
 
       it "preloads organizations" do
-        post admin_users_path, params: { user: { organization_id: 1 } }
+        post admin_users_path, params: { user: { organization_id: @organization.id } }
         expect(assigns(:organizations)).to eq(Organization.all.alphabetized)
       end
     end
@@ -143,14 +144,14 @@ RSpec.describe "Admin::UsersController", type: :request do
     describe "GET #new" do
       it "redirects" do
         get new_admin_user_path
-        expect(response).to redirect_to(dashboard_path)
+        expect(response).to redirect_to(dashboard_path(organization_name: @organization_admin.organization))
       end
     end
 
     describe "POST #create" do
       it "redirects" do
-        post admin_users_path, params: { user: { organization_id: 1 } }
-        expect(response).to redirect_to(dashboard_path)
+        post admin_users_path, params: { user: { organization_id: @organization.id } }
+        expect(response).to redirect_to(dashboard_path(organization_name: @organization_admin.organization))
       end
     end
   end
@@ -164,14 +165,14 @@ RSpec.describe "Admin::UsersController", type: :request do
     describe "GET #new" do
       it "redirects" do
         get new_admin_user_path
-        expect(response).to redirect_to(dashboard_path)
+        expect(response).to redirect_to(dashboard_path(organization_name: @user.organization))
       end
     end
 
     describe "POST #create" do
       it "redirects" do
-        post admin_users_path, params: { user: { organization_id: 1 } }
-        expect(response).to redirect_to(dashboard_path)
+        post admin_users_path, params: { user: { organization_id: @organization.id } }
+        expect(response).to redirect_to(dashboard_path(organization_name: @user.organization))
       end
     end
   end

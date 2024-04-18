@@ -16,6 +16,7 @@
 #  latitude                       :float
 #  longitude                      :float
 #  name                           :string
+#  one_step_partner_invite        :boolean          default(FALSE), not null
 #  partner_form_fields            :text             default([]), is an Array
 #  reminder_day                   :integer
 #  repackage_essentials           :boolean          default(FALSE), not null
@@ -109,6 +110,10 @@ class Organization < ApplicationRecord
     account_request&.update!(status: "admin_approved")
   end
 
+  def flipper_id
+    "Org:#{id}"
+  end
+
   ALL_PARTIALS = [
     ['Media Information', 'media_information'],
     ['Agency Stability', 'agency_stability'],
@@ -156,7 +161,7 @@ class Organization < ApplicationRecord
     self
   end
 
-  # NOTE: when finding Organizations, use Organization.find_by(short_name: params[:organization_id])
+  # NOTE: when finding Organizations, use Organization.find_by(short_name: params[:organization_name])
   def to_param
     short_name
   end
@@ -184,11 +189,16 @@ class Organization < ApplicationRecord
   end
 
   def total_inventory
-    inventory_items.sum(:quantity) || 0
+    if Event.read_events?(self)
+      View::Inventory.total_inventory(id)
+    else
+      inventory_items.sum(:quantity) || 0
+    end
   end
 
   def self.seed_items(organization = Organization.all)
     base_items = BaseItem.all.map(&:to_h)
+
     Array.wrap(organization).each do |org|
       Rails.logger.info "\n\nSeeding #{org.name}'s items...\n"
       org.seed_items(base_items)
@@ -253,6 +263,11 @@ class Organization < ApplicationRecord
       year = [year, distributions.minimum(:issued_at).year].min
     end
     year
+  end
+
+  def display_last_distribution_date
+    distribution = distributions.order(issued_at: :desc).first
+    distribution.nil? ? "No distributions" : distribution[:issued_at].strftime("%F")
   end
 
   private

@@ -1,4 +1,4 @@
-<% delivery_method = (@distribution.delivery?) ? "delivery" : "pick up"%>
+<% delivery_method = (@distribution.delivery?) ? "delivery" : "pick up" %>
 Hello <%= @partner.name %>,
 This is a friendly reminder that tomorrow, <%= @distribution.issued_at.strftime("%A, %B #{@distribution.issued_at.day.ordinalize} %Y at %I:%M%p") %>, is your distribution <%= delivery_method %> date.
 

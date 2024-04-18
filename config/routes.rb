@@ -76,7 +76,7 @@ Rails.application.routes.draw do
   match "/404", to: "errors#not_found", via: :all
   match "/500", to: "errors#internal_server_error", via: :all
 
-  scope path: ":organization_id" do
+  scope path: ":organization_name" do
     resources :users do
       get :switch_to_role, on: :collection
       post :partner_user_reset_password, on: :collection
@@ -94,6 +94,8 @@ Rails.application.routes.draw do
         post :demote_to_user
       end
     end
+
+    resources :events, only: %i(index)
 
     resources :adjustments, except: %i(edit update)
     resources :audits do
@@ -133,10 +135,11 @@ Rails.application.routes.draw do
       get :find, on: :collection
       get :font, on: :collection
     end
-    resources :donation_sites do
+    resources :donation_sites, except: [:destroy] do
       collection do
         post :import_csv
       end
+      delete :deactivate, on: :member
     end
     resources :product_drive_participants, except: [:destroy] do
       collection do
@@ -164,6 +167,7 @@ Rails.application.routes.draw do
 
     resources :profiles, only: %i(edit update)
     resources :items do
+      delete :deactivate, on: :member
       patch :restore, on: :member
       patch :remove_category, on: :member
     end
@@ -177,6 +181,7 @@ Rails.application.routes.draw do
         patch :profile
         get :approve_application
         post :invite
+        post :invite_and_approve
         post :invite_partner_user
         post :recertify_partner
         put :deactivate
