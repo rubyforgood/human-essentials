@@ -36,6 +36,18 @@
         <%= profile.city %> <%= profile.state %> <br>
         <%= profile.zip_code %>
       </address>
+
+      <% if profile.program_address1.present? || profile.program_address2.present? || profile.program_city.present? || profile.program_state.present? || profile.program_zip_code.present? %>
+        <address>
+          <strong>Program Address</strong> <br>
+          <%= profile.program_address1 %> <br>
+          <% unless profile.program_address2.blank? %>
+            <%= profile.program_address2 %> <br>
+          <% end %>
+          <%= profile.program_city %> <%= profile.program_state %> <br>
+          <%= profile.program_zip_code %>
+        </address>
+      <% end %>
     </dl>
   </div>
 </div>
