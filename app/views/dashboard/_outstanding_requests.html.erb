@@ -6,7 +6,8 @@
     title: "Outstanding Requests",
     footer: link_to("View all requests", requests_path),
     footer_options: { class: "text-center" },
-  ) do %>
+  ) do
+%>
   <% if @outstanding_requests.empty? %>
     No outstanding requests!
   <% else %>
