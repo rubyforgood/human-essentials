@@ -55,27 +55,26 @@ RSpec.describe "/partners/profiles", type: :request do
     it "updates the partner and profile" do
       partner.profile.update!(address1: "123 Main St.", address2: "New York, New York")
       put partners_profile_path(partner,
-        partner: { name: "Partnerdude", profile: {address1: "456 Main St.", address2: "Washington, DC"}})
+        partner: {name: "Partnerdude", profile: {address1: "456 Main St.", address2: "Washington, DC"}})
       expect(partner.reload.name).to eq("Partnerdude")
       expect(partner.profile.reload.address1).to eq("456 Main St.")
       expect(partner.profile.address2).to eq("Washington, DC")
       expect(response).to redirect_to(partners_profile_path)
     end
 
-    it "updates the partner program address" do 
+    it "updates the partner program address" do
       partner.profile.update!(program_address1: "123 Happy Pl.", program_address2: "suite 333", program_city: "Golden", program_state: "Colorado", program_zip_code: 80401)
 
       put partners_profile_path(partner,
-        partner: { name: partner.name,
-          profile: {
-            program_address1: "123 Happy Pl.", 
-            program_address2: "suite 333", 
-            program_city: "Golden", 
-            program_state: "Colorado", 
-            program_zip_code: 80401 }
-          }
-      )
-      
+        partner: {name: partner.name,
+                  profile: {
+                    program_address1: "123 Happy Pl.",
+                    program_address2: "suite 333",
+                    program_city: "Golden",
+                    program_state: "Colorado",
+                    program_zip_code: 80401
+                  }})
+
       partner.profile.reload
 
       expect(partner.profile.program_address1).to eq("123 Happy Pl.")

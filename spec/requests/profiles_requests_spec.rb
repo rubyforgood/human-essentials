@@ -31,13 +31,13 @@ RSpec.describe "Profiles", type: :request do
         expect(partner.profile.facebook).to eq("facebooksucks")
       end
 
-      it "updates partner program address" do 
-        new_partner_program_params = { 
-            name: partner.name, profile: {
-            program_address1: "123 Happy Pl", 
-            program_city: "Golden", 
-            program_state: "CO", 
-            program_zip_code: 80401 
+      it "updates partner program address" do
+        new_partner_program_params = {
+          name: partner.name, profile: {
+            program_address1: "123 Happy Pl",
+            program_city: "Golden",
+            program_state: "CO",
+            program_zip_code: 80401
           }
         }
 
