@@ -89,7 +89,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
         end
 
         it "has a See More link" do
-          expect(org_dashboard_page.outstanding_requests_link).to have_content "See more"
+          expect(org_dashboard_page.outstanding_requests_link).to have_content "View all requests"
         end
       end
 
@@ -126,7 +126,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
         end
 
         it "has a See More link" do
-          expect(org_dashboard_page.outstanding_requests_link).to have_content "See more"
+          expect(org_dashboard_page.outstanding_requests_link).to have_content "View all requests"
         end
       end
 
@@ -160,8 +160,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
           expect(org_dashboard_page.outstanding_requests.length).to eq limit
         end
 
-        it "has a link with the number of other requests" do
-          expect(org_dashboard_page.outstanding_requests_link).to have_content num_requests - limit
+        it "has a See More link" do
+          expect(org_dashboard_page.outstanding_requests_link).to have_content "View all requests"
         end
       end
     end
