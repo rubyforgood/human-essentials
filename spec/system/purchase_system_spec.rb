@@ -197,7 +197,7 @@ RSpec.describe "Purchases", type: :system, js: true do
 
           it "should display failure with error messages" do
             click_button "Save"
-            expect(page).to have_content('Failed to create purchase due to: Vendor must exist Amount spent is not a number Amount spent in cents must be greater than 0')
+            expect(page).to have_content("Failed to create purchase due to:\nVendor must exist\nAmount spent is not a number\nAmount spent in cents must be greater than 0")
           end
         end
       end

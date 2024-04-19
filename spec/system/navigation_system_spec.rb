@@ -48,6 +48,12 @@ RSpec.describe "Navigation", type: :system, js: true do
         end
       end
 
+      it "shows NDBN Member Upload under Organizations" do
+        sidebar = page.find(".sidebar")
+        click_link("Organizations")
+        expect(sidebar).to have_link("NDBN Member Upload")
+      end
+
       context "with collapsed sidebar" do
         before { click_link("collapse") }
 
