@@ -1,0 +1,81 @@
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Community - NDBN Member Upload" %>
+        <h1>NDBN Member Upload</h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><%= link_to(admin_ndbn_members_path) do %>
+              <i class="fa fa-dashboard"></i>
+              Home
+            <% end %>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-12">
+        <!-- jquery validation -->
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Upload NDBN Members</h3>
+          </div>
+          <!-- /.card-header --> <!-- form start -->
+          <div class="card-body">
+            <div class="row">
+              <p>The Current NDBN member list is found at
+                <a
+                  href="https://docs.google.com/spreadsheets/d/1DRXeG206M0kgtUYT9lpD8fyEWRO7-a6m/edit?pli=1#gid=1068714915.">this link.</a>
+                Export the list as CSV and remove the initial 'Updated' row before uploading.</p>
+            </div>
+            <%= form_with(url: upload_csv_admin_ndbn_members_path) do |form| %>
+              <div class="row">
+                <%= form.label :member_file, "Select CSV File to Upload" %>
+              </div>
+              <%= form.file_field :member_file, required: true, accept: "text/csv" %>
+              <%= submit_button({ text: "Upload" }) %>
+            <% end %>
+          </div>
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+    <!-- /.row -->
+  </div>
+  <!-- /.container-fluid -->
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>NDBN Member Number</th>
+                  <th>Member Name</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%- ndbn_members.each do |member| %>
+                  <tr>
+                    <td><%= member.ndbn_member_id %></td>
+                    <td><%= member.account_name %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section><!-- /.content -->
