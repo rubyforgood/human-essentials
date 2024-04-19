@@ -104,7 +104,8 @@ module InventoryAggregate
   # diff previous event
   on DonationEvent, DistributionEvent, AdjustmentEvent, PurchaseEvent,
     TransferEvent, DistributionDestroyEvent, DonationDestroyEvent,
-    PurchaseDestroyEvent, TransferDestroyEvent do |event, inventory, validate: false, previous_event: nil|
+    PurchaseDestroyEvent, TransferDestroyEvent,
+    UpdateExistingEvent do |event, inventory, validate: false, previous_event: nil|
     handle_inventory_event(event.data, inventory, validate: validate, previous_event: previous_event)
   rescue InventoryError => e
     e.event = event
