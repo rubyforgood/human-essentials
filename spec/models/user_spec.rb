@@ -30,6 +30,7 @@
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  invited_by_id          :integer
+#  last_role_id           :bigint
 #  organization_id        :integer
 #  partner_id             :bigint
 #
