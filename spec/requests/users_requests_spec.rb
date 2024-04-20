@@ -69,6 +69,17 @@ RSpec.describe "Users", type: :request do
         # avoid it
         expect(response).to redirect_to(partners_dashboard_path(organization_name: @organization.to_param))
       end
+
+      it "should set last_role to partner" do
+        @user.add_role(Role::PARTNER, partner)
+
+        partner_role = @user.roles.find { |r| r.name == Role::PARTNER.to_s }
+
+        expect do
+          get switch_to_role_users_path(@organization,
+            role_id: partner_role.id)
+        end.to change(@user, :last_role).from(nil).to(partner_role)
+      end
     end
 
     context "without a partner role" do
