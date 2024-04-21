@@ -67,6 +67,8 @@ You can sign up [here](https://join.slack.com/t/rubyforgood/shared_invite/zt-21p
 
 ##  Getting Started (Codespaces) 🛠️
 
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/rubyforgood/human-essentials/tree/bw-devcontainer-test?quickstart=1)
+
 1. [Create a new Codespace.](https://docs.github.com/en/codespaces/developing-in-a-codespace/creating-a-codespace-for-a-repository) It is recommended to open the Codespace in VS Code.
 2. Wait for the container to start. This may take a few minutes since Ruby 3.2.2 needs to be installed, the database needs to be created, and the `bin/setup` script needs to run.
 3. Run `bin/start` and visit http://localhost:3000/ to see the human essentials page.
