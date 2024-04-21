@@ -13,7 +13,6 @@
             <%= field.input :item_id, collection: @items, prompt: "Choose an item", include_blank: "", label: false, input_html: { class: "my-0 line_item_name", "data-controller": "select2" } %>
           </span>
           <div class="li-quantity mx-2">
-            <%# Numeric input types behave differently across browsers so make this a text input for consistency %>
             <%= field.input :quantity,
               as: :string,
               placeholder: "Quantity",
