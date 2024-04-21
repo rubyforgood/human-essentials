@@ -87,7 +87,7 @@ RSpec.describe Item, type: :model do
         expect(Item.by_base_item(@c1).size).to eq(1)
       end
       it "can be chained to organization to constrain it to just 1 org's items" do
-        create(:item, base_item: @c1, organization: create(:organization))
+        create(:item, name: "A", base_item: @c1, organization: create(:organization))
         expect(@organization.items.by_base_item(@c1).size).to eq(1)
       end
     end
