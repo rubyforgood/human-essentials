@@ -119,7 +119,7 @@ RSpec.feature "Distributions", type: :system do
         visit @url_prefix + "/distributions/new"
         select @partner.name, from: "Partner"
         select @storage_location.name, from: "From storage location"
-        expect(page).to have_select("distribution_line_items_attributes_0_item_id", with_options: [item.name], wait: 10)
+        find('select option[data-select2-id="3"]', wait: 10)
         select item.name, from: "distribution_line_items_attributes_0_item_id"
         fill_in "distribution_line_items_attributes_0_quantity", with: 18
 
