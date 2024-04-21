@@ -59,7 +59,7 @@ RSpec.describe ItemizableUpdateService do
       expect(storage_location.size).to eq(14)
       expect(new_storage_location.size).to eq(20)
       expect(itemizable.issued_at).to eq(2.days.ago)
-      expect(DonationEvent.count).to eq(1)
+      expect(UpdateExistingEvent.count).to eq(1)
     end
 
     it "should update quantity in different locations" do
