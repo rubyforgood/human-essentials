@@ -9,7 +9,7 @@ RSpec.describe "StorageLocations", type: :request do
     end
 
     describe "GET #index" do
-      before { create(:storage_location) }
+      before { create(:storage_location, name: "Test Storage Location", address: "123 Donation Site Way", warehouse_type: StorageLocation::WAREHOUSE_TYPES.first) }
 
       context "html" do
         let(:response_format) { 'html' }
@@ -64,6 +64,50 @@ RSpec.describe "StorageLocations", type: :request do
           get storage_locations_path(default_params.merge(format: response_format))
 
           expect(response.body.split("\n")[0]).to eq([StorageLocation.csv_export_headers, item3.name, item2.name, item1.name].join(','))
+        end
+
+        context "when read_events feature toggle is enabled" do
+          # Addresses used for storage locations must have associated geocoder stubs.
+          # See calls to Geocoder::Lookup::Test.add_stub in spec/rails_helper.rb
+          let(:storage_location_with_duplicate_item) { create(:storage_location, name: "Storage Location with Duplicate Items", address: "1500 Remount Road, Front Royal, VA 22630", warehouse_type: StorageLocation::WAREHOUSE_TYPES.first) }
+          let(:storage_location_with_items) { create(:storage_location, name: "Storage Location with Items", address: "123 Donation Site Way", warehouse_type: StorageLocation::WAREHOUSE_TYPES.first) }
+          let(:storage_location_with_unique_item) { create(:storage_location, name: "Storage Location with Unique Items", address: "Smithsonian Conservation Center new", warehouse_type: StorageLocation::WAREHOUSE_TYPES.first) }
+          let(:item1) { create(:item, name: 'A') }
+          let(:item2) { create(:item, name: 'B') }
+          let(:item3) { create(:item, name: 'C') }
+          let(:item4) { create(:item, name: 'D') }
+          let!(:inactive_item) { create(:item, name: 'inactive item', active: false) }
+
+          before do
+            allow(Event).to receive(:read_events?).and_return(true)
+
+            TestInventory.create_inventory(storage_location_with_items.organization, {
+              storage_location_with_items.id => {
+                item1.id => 1,
+                item2.id => 1,
+                item3.id => 1
+              },
+              storage_location_with_duplicate_item.id => {
+                item3.id => 1
+              },
+              storage_location_with_unique_item.id => {
+                item4.id => 5
+              }
+            })
+          end
+
+          it "Generates csv with Storage Location fields, alphabetized item names, item quantities lined up in their columns, and zeroes for no inventory" do
+            get storage_locations_path(default_params.merge(format: response_format))
+            # The first address below is quoted since it contains commas
+            csv = <<~CSV
+              Name,Address,Square Footage,Warehouse Type,Total Inventory,A,B,C,D
+              Storage Location with Duplicate Items,"1500 Remount Road, Front Royal, VA 22630",100,Residential space used,1,0,0,1,0
+              Storage Location with Items,123 Donation Site Way,100,Residential space used,3,1,1,1,0
+              Storage Location with Unique Items,Smithsonian Conservation Center new,100,Residential space used,5,0,0,0,5
+              Test Storage Location,123 Donation Site Way,100,Residential space used,0,0,0,0,0
+            CSV
+            expect(response.body).to eq(csv)
+          end
         end
       end
     end
