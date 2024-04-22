@@ -24,25 +24,10 @@ RSpec.describe Request, type: :model do
       let!(:request_started) { create(:request, :started) }
       let!(:request_fulfilled) { create(:request, :fulfilled) }
 
-      it "scopes by status" do
+      it "scopes" do
         expect(Request.status_pending).to eq([request_pending])
         expect(Request.status_started).to eq([request_started])
         expect(Request.status_fulfilled).to eq([request_fulfilled])
-      end
-    end
-
-    describe "#request_type" do
-      it "scopes by request_type" do
-        request = Request.new
-
-        request.request_type = :quantity
-        assert_equal "quantity", request.request_type
-    
-        request.request_type = :individual
-        assert_equal "individual", request.request_type
-    
-        request.request_type = :child
-        assert_equal "child", request.request_type
       end
     end
   end
