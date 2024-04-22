@@ -230,11 +230,7 @@ RSpec.describe "Purchases", type: :system, js: true do
             expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
             Barcode.boop(@existing_barcode.value)
           end
-          # the form should update
-          expect(page).to have_xpath('//input[@id="purchase_line_items_attributes_0_quantity"]')
-          qty = page.find(:xpath, '//input[@id="purchase_line_items_attributes_0_quantity"]').value
-
-          expect(qty).to eq(@existing_barcode.quantity.to_s)
+          expect(page).to have_field "purchase_line_items_attributes_0_quantity", with: @existing_barcode.quantity.to_s
         end
 
         it "User scan same barcode 2 times" do
