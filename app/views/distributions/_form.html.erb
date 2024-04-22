@@ -13,6 +13,12 @@
       <%= f.input :issued_at, as: :datetime, ampm: true, minute_step: 15, label: "Distribution date and time", html5: true, :input_html => { :value => date_place_holder&.strftime("%Y-%m-%dT%0k:%M")} %>
     </div>
     <%= f.input :reminder_email_enabled, as: :boolean, checked_value: true, unchecked_value: false, label: "Send email reminder the day before?" %>
+
+    <% default_email_text_hint = "You can use the variables <code>%{partner_name}</code>, <code>%{delivery_method}</code>, <code>%{distribution_date}</code>, and <code>%{comment}</code> to include the partner's name, delivery method, distribution date, and comments sent in the request." %>
+    <%= f.input :custom_reminder, label: "Custom Reminder Email Content", hint: default_email_text_hint.html_safe do %>
+      <%= f.rich_text_area :custom_reminder %>
+    <% end %>
+
     <%= f.input :agency_rep, label: "Agency representative" %>
 
     <div class='d-flex flex-row' data-controller="distribution-delivery">

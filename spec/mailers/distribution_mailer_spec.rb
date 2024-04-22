@@ -104,7 +104,7 @@ RSpec.describe DistributionMailer, type: :mailer, seed_items: false do
     let(:mail) { DistributionMailer.reminder_email(distribution.id) }
 
     context 'HTML format' do
-      it "renders the body with organization's email text" do
+      it "renders the body with organization's email text without a custom_reminder message" do
         html = html_body(mail)
         expect(html).to match("This is a friendly reminder")
         expect(html).to match(%(For more information: <a href="mailto:me@org.com">me@org.com</a>))
@@ -113,12 +113,42 @@ RSpec.describe DistributionMailer, type: :mailer, seed_items: false do
         expect(mail.from).to eq(["no-reply@humanessentials.app"])
         expect(mail.subject).to eq("PARTNER Distribution Reminder")
       end
+
+      it "renders the body with organization's email text with a custom_reminder message" do
+        custom_reminder = "Custom reminder message example \n\n%{delivery_method} %{distribution_date}\n\n%{partner_name}\n\n%{comment}"
+        @distribution.update!({custom_reminder: custom_reminder})
+
+        mail = DistributionMailer.reminder_email(@distribution.id)
+
+        html = html_body(mail)
+        expect(html).to match("This is a friendly reminder")
+        expect(html).to match("Custom reminder message example")
+        expect(html).to match(%(For more information: <a href="mailto:me@org.com">me@org.com</a>))
+        expect(mail.to).to eq([@distribution.request.user_email])
+        expect(mail.cc).to eq([@distribution.partner.email])
+        expect(mail.from).to eq(["no-reply@humanessentials.app"])
+        expect(mail.subject).to eq("PARTNER Distribution Reminder")
+      end
     end
 
     context 'Text format' do
-      it "renders the body with organization's email text" do
+      it "renders the body with organization's email text without a custom_reminder message" do
         text = text_body(mail)
         expect(text).to match("This is a friendly reminder")
+        expect(text).to match(%(For more information: me@org.com))
+        expect(mail.from).to eq(["no-reply@humanessentials.app"])
+        expect(mail.subject).to eq("PARTNER Distribution Reminder")
+      end
+
+      it "renders the body with organization's email text with a custom_reminder message" do
+        custom_reminder = "Custom reminder message example \n\n%{delivery_method} %{distribution_date}\n\n%{partner_name}\n\n%{comment}"
+        @distribution.update!({custom_reminder: custom_reminder})
+
+        mail = DistributionMailer.reminder_email(@distribution.id)
+
+        text = text_body(mail)
+        expect(text).to match("This is a friendly reminder")
+        expect(text).to match("Custom reminder message example")
         expect(text).to match(%(For more information: me@org.com))
         expect(mail.from).to eq(["no-reply@humanessentials.app"])
         expect(mail.subject).to eq("PARTNER Distribution Reminder")
