@@ -20,7 +20,6 @@ module Partners
       return self unless valid?
 
       request_create_svc = Partners::RequestCreateService.new(
-        request_type: @request_type.to_i,
         partner_user_id: partner_user_id,
         comments: comments,
         for_families: @for_families,
