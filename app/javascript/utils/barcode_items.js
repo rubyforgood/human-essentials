@@ -57,7 +57,7 @@ $(document).ready(function() {
           if (data['src'] != this && data['value'] == this.value) {
               line_item = this.closest('.nested-fields');
               if ($(line_item).attr('scanned_more_than_two_times') != undefined) {
-                  let current_total = parseInt($(line_item).find('input[type=number]').val());
+                  let current_total = parseInt($(line_item).find('[data-quantity]').val());
                   let current_boops = (current_total / line_item_quantity) + 1;
                   let total_boops = prompt('Enter total number of packages for this item', current_boops);
                   if (total_boops != null) {
@@ -69,12 +69,12 @@ $(document).ready(function() {
                   }
               }
               if ($(line_item).attr('scanned_more_than_two_times') != "true") {
-                line_item_quantity = Number(line_item_quantity) + Number($(line_item).find('input[type=number]').val());
+                line_item_quantity = Number(line_item_quantity) + Number($(line_item).find('[data-quantity]').val());
               }
               $(line_item).attr('scanned_more_than_two_times', true);
           }
       })
-      $(line_item).find('input[type=number]').val(line_item_quantity);
+      $(line_item).find('[data-quantity]').val(line_item_quantity);
       $(line_item).find('select').val(data['item_id']);
       $(line_item).find('select').trigger('change');
 
