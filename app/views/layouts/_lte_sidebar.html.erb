@@ -225,7 +225,7 @@
     </li>
   <% if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
     <li class="nav-item">
-      <%= link_to(organization_path, class: "nav-link") do %>
+      <%= link_to(organization_path(organization_name: nil), class: "nav-link") do %>
         <i class="nav-icon fas fa-home"></i>
         <p>My Organization</p>
       <% end %>

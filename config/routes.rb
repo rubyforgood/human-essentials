@@ -81,20 +81,20 @@ Rails.application.routes.draw do
     post :partner_user_reset_password, on: :collection
   end
 
-  scope path: ":organization_name" do
-    # Users that are organization admins can manage the organization itself
-    resource :organization, only: [:show]
-    resource :organization, path: :manage, only: %i(edit update) do
-      collection do
-        post :invite_user
-        put :deactivate_user
-        put :reactivate_user
-        post :resend_user_invitation
-        post :promote_to_org_admin
-        post :demote_to_user
-      end
+  # Users that are organization admins can manage the organization itself
+  resource :organization, only: [:show]
+  resource :organization, path: :manage, only: %i(edit update) do
+    collection do
+      post :invite_user
+      put :deactivate_user
+      put :reactivate_user
+      post :resend_user_invitation
+      post :promote_to_org_admin
+      post :demote_to_user
     end
+  end
 
+  scope path: ":organization_name" do
     resources :events, only: %i(index)
 
     resources :adjustments, except: %i(edit update)

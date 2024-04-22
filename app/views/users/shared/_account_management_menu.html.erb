@@ -2,10 +2,8 @@
   <ul class="vertical menu">
     <li><%= navigation_link_to "Account Settings", edit_user_registration_path(organization_name: nil) %></li>
 
-    <% with_options organization_name: current_user.organization.to_param do |with_org| %>
-      <li><%= navigation_link_to "All users", users_path(organization_name: nil) %></li>
-      <li><%= navigation_link_to "Add a user", new_user_path(organization_name: nil) %></li>
-      <li><%= navigation_link_to "Update organization", with_org.edit_organization_path %></li>
-    <% end %>
+    <li><%= navigation_link_to "All users", users_path(organization_name: nil) %></li>
+    <li><%= navigation_link_to "Add a user", new_user_path(organization_name: nil) %></li>
+    <li><%= navigation_link_to "Update organization", edit_organization_path(organization_name: nil) %></li>
   </ul>
 <% end %>

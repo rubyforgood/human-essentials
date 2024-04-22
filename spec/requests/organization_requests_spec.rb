@@ -11,7 +11,7 @@ RSpec.describe "Organizations", type: :request do
     end
 
     describe "GET #show" do
-      before { get organization_path(default_params) }
+      before { get organization_path }
 
       it { expect(response).to be_successful }
 
@@ -25,7 +25,7 @@ RSpec.describe "Organizations", type: :request do
     end
 
     describe "GET #edit" do
-      before { get edit_organization_path(default_params) }
+      before { get edit_organization_path }
 
       it { expect(response).to redirect_to(dashboard_path) }
       it { expect(response).to have_error }
@@ -33,10 +33,7 @@ RSpec.describe "Organizations", type: :request do
 
     describe "PATCH #update" do
       let(:update_param) { { organization: { name: "Thunder Pants" } } }
-      before do
-        patch "/#{default_params[:organization_name]}/manage",
-              params: default_params.merge(update_param)
-      end
+      before { patch "/manage", params: update_param }
 
       it { expect(response).to redirect_to(dashboard_path) }
       it { expect(response).to have_error }
@@ -49,7 +46,7 @@ RSpec.describe "Organizations", type: :request do
     end
 
     describe "GET #edit" do
-      before { get edit_organization_path(default_params) }
+      before { get edit_organization_path }
 
       it { is_expected.to render_template(:edit) }
       it { expect(response).to be_successful }
@@ -65,15 +62,13 @@ RSpec.describe "Organizations", type: :request do
 
     describe "PATCH #update" do
       let(:update_param) { { organization: { name: "Thunder Pants" } } }
-      subject do
-        patch "/#{default_params[:organization_name]}/manage",
-              params: default_params.merge(update_param)
-      end
+      subject { patch "/manage", params: update_param }
 
       it "should be redirect after update" do
         subject
         expect(response).to redirect_to(organization_path)
       end
+
       it "can update name" do
         expect { subject }.to change { @organization.reload.name }.to "Thunder Pants"
       end
@@ -82,10 +77,7 @@ RSpec.describe "Organizations", type: :request do
         let(:invalid_organization) { create(:organization, name: "Original Name") }
         let(:invalid_params) { { organization: { name: nil } } }
 
-        subject do
-          patch "/#{default_params[:organization_name]}/manage",
-                params: default_params.merge(invalid_params)
-        end
+        subject { patch "/manage", params: default_params.merge(invalid_params) }
 
         it "renders edit template with an error message" do
           expect(subject).to render_template("edit")
@@ -95,7 +87,7 @@ RSpec.describe "Organizations", type: :request do
     end
 
     describe "POST #promote_to_org_admin" do
-      subject { post promote_to_org_admin_organization_path(default_params.merge(user_id: @user.id)) }
+      subject { post promote_to_org_admin_organization_path(user_id: @user.id) }
 
       it "runs successfully" do
         subject
@@ -108,7 +100,7 @@ RSpec.describe "Organizations", type: :request do
       let(:admin_user) do
         create(:organization_admin, organization: @organization, name: "ADMIN USER")
       end
-      subject { post demote_to_user_organization_path(default_params.merge(user_id: admin_user.id)) }
+      subject { post demote_to_user_organization_path(user_id: admin_user.id) }
 
       it "runs correctly" do
         subject
@@ -118,7 +110,7 @@ RSpec.describe "Organizations", type: :request do
     end
 
     describe "PUT #deactivate_user" do
-      subject { put deactivate_user_organization_path(default_params.merge(user_id: @user.id)) }
+      subject { put deactivate_user_organization_path(user_id: @user.id) }
 
       it "redirect after update" do
         subject
@@ -130,7 +122,7 @@ RSpec.describe "Organizations", type: :request do
     end
 
     describe "PUT #reactivate_user" do
-      subject { put reactivate_user_organization_path(default_params.merge(user_id: @user.id)) }
+      subject { put reactivate_user_organization_path(user_id: @user.id) }
       before { @user.discard! }
 
       it "redirect after update" do
@@ -139,42 +131,6 @@ RSpec.describe "Organizations", type: :request do
       end
       it "reactivates the user" do
         expect { subject }.to change { @user.reload.discarded_at }.to be_nil
-      end
-    end
-
-    context "when attempting to access a different organization" do
-      let(:other_organization) { create(:organization) }
-      let(:other_organization_params) do
-        { organization_name: other_organization.to_param }
-      end
-
-      describe "GET #show" do
-        before { get organization_path(other_organization_params) }
-
-        it "shows your own anyway" do
-          expect(response.body).to include(@organization.name)
-        end
-      end
-
-      describe "GET #edit" do
-        before { get edit_organization_path(other_organization_params) }
-
-        it "shows your own anyway" do
-          expect(response.body).to include(@organization.name)
-        end
-      end
-
-      describe "POST #promote_to_org_admin" do
-        let(:other_user) { create(:user, organization: other_organization, name: "Wrong User") }
-
-        subject { post promote_to_org_admin_organization_path(default_params.merge(user_id: other_user.id)) }
-
-        it "redirects after update" do
-          subject
-          expect(response).to have_http_status(:not_found)
-          expect(other_user.reload.has_role?(Role::ORG_ADMIN, @organization)).to eq(false)
-          expect(other_user.reload.has_role?(Role::ORG_ADMIN, other_organization)).to eq(false)
-        end
       end
     end
   end

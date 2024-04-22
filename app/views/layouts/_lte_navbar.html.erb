@@ -74,16 +74,13 @@
     <% end %>
     <% if current_organization.id.present? &&
         (current_user.has_role?(Role::SUPER_ADMIN) || current_user.has_role?(Role::ORG_ADMIN, current_organization)) %>
-      <% with_options organization_name: current_user.organization.to_param do |with_org| %>
         <div class="dropdown-divider"></div>
         <%= link_to users_path(organization_name: nil), class:"dropdown-item" do %>
           <i class="fas fa-users mr-2"></i> My Co-Workers
         <% end %>
-        <div class="dropdown-divider"></div>
-        <%= link_to with_org.organization_path, class:"dropdown-item" do %>
+        <%= link_to organization_path(organization_name: nil), class:"dropdown-item" do %>
           <i class="fas fa-sitemap mr-2"></i> My Organization
         <% end %>
-      <% end %>
     <% end %>
     <div class="dropdown-divider"></div>
     <%= link_to destroy_user_session_path(organization_name: nil), class:"dropdown-item dropdown-footer", method: :delete do %>
