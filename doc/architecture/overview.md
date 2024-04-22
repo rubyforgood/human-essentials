@@ -5,8 +5,7 @@
 ## The Physical Flow of Inventory
 
 ![Physical Flow](./physical-flow.svg)
-<details><summary>(Diagram Code - Physical Flow)</summary>
-
+<!--
 ```plantuml:physical-flow
 skinparam componentStyle rectangle
 skinparam linetype ortho
@@ -27,7 +26,7 @@ rectangle "Partner" {
 [Inventory] -> [Distribution]
 [Distribution] --> [Recipient]
 ```
-</details>
+-->
 
 ![Timeline](./timeline-flow.svg)
 <details><summary>(Diagram Code - Timeline)</summary>
