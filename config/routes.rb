@@ -76,12 +76,12 @@ Rails.application.routes.draw do
   match "/404", to: "errors#not_found", via: :all
   match "/500", to: "errors#internal_server_error", via: :all
 
-  scope path: ":organization_name" do
-    resources :users do
-      get :switch_to_role, on: :collection
-      post :partner_user_reset_password, on: :collection
-    end
+  resources :users do
+    get :switch_to_role, on: :collection
+    post :partner_user_reset_password, on: :collection
+  end
 
+  scope path: ":organization_name" do
     # Users that are organization admins can manage the organization itself
     resource :organization, only: [:show]
     resource :organization, path: :manage, only: %i(edit update) do
