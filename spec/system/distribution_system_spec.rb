@@ -397,7 +397,7 @@ RSpec.feature "Distributions", type: :system do
 
       it "User creates a distribution from a donation then edits it" do
         within ".distribution_line_items_quantity" do
-          first(".numeric").set 13
+          first("[data-quantity]").set 13
         end
         click_on "Save"
         expect(page).to have_content "Distribution updated!"
@@ -406,7 +406,7 @@ RSpec.feature "Distributions", type: :system do
 
       it "User creates a distribution from a donation then tries to make the quantity too big", js: true do
         within ".distribution_line_items_quantity" do
-          first(".numeric").set 999_999
+          first("[data-quantity]").set 999_999
         end
         click_on "Save"
         expect(page).to have_no_content "Distribution updated!"
@@ -427,14 +427,14 @@ RSpec.feature "Distributions", type: :system do
       it "User creates duplicate line items" do
         item = @distribution.line_items.first.item
         select2(page, 'distribution_line_items_item_id', item.name, position: 1)
-        find_all(".numeric")[0].set 1
+        find_all("[data-quantity]")[0].set 1
 
         click_on "Add Another Item"
 
         select2(page, 'distribution_line_items_item_id', item.name, position: 2)
-        new_select = find_all(".numeric")[1]
+        new_select = find_all("[data-quantity]")[1]
         expect(new_select.value).to eq("")
-        find_all(".numeric")[1].set 3
+        find_all("[data-quantity]")[1].set 3
 
         first("button", text: "Save").click
 
@@ -483,7 +483,7 @@ RSpec.feature "Distributions", type: :system do
       end
 
       expect(page).to have_content("Sorry, we weren't able to save")
-      find_all(".numeric")[0].set 1
+      find_all("[data-quantity]")[0].set 1
 
       click_on "Save"
 
