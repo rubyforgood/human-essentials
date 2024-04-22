@@ -132,6 +132,11 @@ class StorageLocation < ApplicationRecord
   # @param loc [Integer] StorageLocation ID
   # @return [void]
   def self.import_inventory(filename, org, loc)
+    storage_location = StorageLocation.find(loc.to_i)
+    storage_location_exists = storage_location.size > 0
+    inventory_already_has_items = storage_location.items.count > 0
+    raise Errors::InventoryAlreadyHasItems if storage_location_exists && inventory_already_has_items
+
     current_org = Organization.find(org)
     adjustment = current_org.adjustments.new(storage_location_id: loc.to_i,
                                              user_id: User.with_role(Role::ORG_ADMIN, current_org).first&.id,
