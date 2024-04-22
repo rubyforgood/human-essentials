@@ -29,9 +29,8 @@ module Partners
       family_requests_attributes = children_grouped_by_item_id.map do |item_id, item_requested_children|
         { item_id: item_id, person_count: item_requested_children.size, children: item_requested_children }
       end
-
       create_service = Partners::FamilyRequestCreateService.new(
-        request_type: params[:request_type],
+        request_type: 2,
         partner_user_id: current_user.id,
         family_requests_attributes: family_requests_attributes,
         for_families: true

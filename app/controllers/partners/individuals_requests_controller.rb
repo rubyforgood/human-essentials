@@ -10,7 +10,7 @@ module Partners
 
     def create
       create_service = Partners::FamilyRequestCreateService.new(
-        request_type: params[:request_type],
+        request_type: 1,
         partner_user_id: current_user.id,
         comments: individuals_request_params[:comments],
         family_requests_attributes: individuals_request_params[:items_attributes]&.values
@@ -37,7 +37,7 @@ module Partners
 
     def individuals_request_params
       params.require(:partners_family_request)
-            .permit(:request_type, :comments, items_attributes: %i[item_id person_count])
+            .permit(:comments, items_attributes: %i[item_id person_count])
     end
   end
 end

@@ -20,7 +20,7 @@ module Partners
 
     def create
       create_service = Partners::RequestCreateService.new(
-        request_type: params[:request_type],
+        request_type: 0,
         partner_user_id: current_user.id,
         comments: partner_request_params[:comments],
         item_requests_attributes: partner_request_params[:item_requests_attributes]&.values || []
@@ -46,7 +46,7 @@ module Partners
     private
 
     def partner_request_params
-      params.require(:request).permit(:request_type, :comments, item_requests_attributes: [:item_id, :quantity])
+      params.require(:request).permit(:comments, item_requests_attributes: [:item_id, :quantity])
     end
   end
 end
