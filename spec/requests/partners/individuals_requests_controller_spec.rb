@@ -90,8 +90,9 @@ RSpec.describe Partners::IndividualsRequestsController, type: :request do
         expect(response).to be_unprocessable
         expect(response.body).to include("Oops! Something went wrong with your Request")
         expect(response.body).to include("Ensure each line item has a item selected AND a quantity greater than 0.")
-        expect(response.body).to include("Still need help? Submit a support ticket")
-        expect(response.body).to include("and we will do our best to follow up with you via email.")
+        expect(response.body).to include("Still need help? Please contact your essentials bank, #{partner.organization.name}")
+        expect(response.body).to include("Our email on record for them is:")
+        expect(response.body).to include(partner.organization.email)
       end
     end
 
@@ -129,8 +130,9 @@ RSpec.describe Partners::IndividualsRequestsController, type: :request do
         expect(response).to be_unprocessable
         expect(response.body).to include("Oops! Something went wrong with your Request")
         expect(response.body).to include("Ensure each line item has a item selected AND a quantity greater than 0.")
-        expect(response.body).to include("Still need help? Submit a support ticket")
-        expect(response.body).to include("and we will do our best to follow up with you via email.")
+        expect(response.body).to include("Still need help? Please contact your essentials bank, #{partner.organization.name}")
+        expect(response.body).to include("Our email on record for them is:")
+        expect(response.body).to include(partner.organization.email)
       end
     end
 
