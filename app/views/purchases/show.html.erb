@@ -70,7 +70,10 @@
             <%= edit_button_to edit_purchase_path(@purchase), { text: "Make a correction",
                                                                 enabled: !@purchase.has_inactive_item?,
                                                                 size: "md" } %>
-            <%= delete_button_to purchase_path(@purchase), { size: "md", confirm: "Are you sure you want to permanently remove this purchase?" } if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
+            <%= delete_button_to purchase_path(@purchase), { 
+              size: "md", 
+              enabled: !@purchase.has_inactive_item?,
+              confirm: "Are you sure you want to permanently remove this purchase?" } if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
             <% if @purchase.has_inactive_item? %>
               <div class="warning">
                 You can only correct purchases where all the items are active.
