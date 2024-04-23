@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Organizations", type: :request do
   let(:default_params) do
-    { organization_id: @organization.to_param }
+    { organization_name: @organization.to_param }
   end
 
   context "While signed in as a normal user" do
@@ -34,7 +34,7 @@ RSpec.describe "Organizations", type: :request do
     describe "PATCH #update" do
       let(:update_param) { { organization: { name: "Thunder Pants" } } }
       before do
-        patch "/#{default_params[:organization_id]}/manage",
+        patch "/#{default_params[:organization_name]}/manage",
               params: default_params.merge(update_param)
       end
 
@@ -66,7 +66,7 @@ RSpec.describe "Organizations", type: :request do
     describe "PATCH #update" do
       let(:update_param) { { organization: { name: "Thunder Pants" } } }
       subject do
-        patch "/#{default_params[:organization_id]}/manage",
+        patch "/#{default_params[:organization_name]}/manage",
               params: default_params.merge(update_param)
       end
 
@@ -83,7 +83,7 @@ RSpec.describe "Organizations", type: :request do
         let(:invalid_params) { { organization: { name: nil } } }
 
         subject do
-          patch "/#{default_params[:organization_id]}/manage",
+          patch "/#{default_params[:organization_name]}/manage",
                 params: default_params.merge(invalid_params)
         end
 
@@ -145,7 +145,7 @@ RSpec.describe "Organizations", type: :request do
     context "when attempting to access a different organization" do
       let(:other_organization) { create(:organization) }
       let(:other_organization_params) do
-        { organization_id: other_organization.to_param }
+        { organization_name: other_organization.to_param }
       end
 
       describe "GET #show" do
@@ -184,13 +184,26 @@ RSpec.describe "Organizations", type: :request do
       sign_in(@super_admin)
     end
 
+    describe "GET #show" do
+      before { get admin_organizations_path({ id: @organization.id }) }
+
+      it { expect(response).to be_successful }
+
+      it 'organization details' do
+        expect(response.body).to include(@organization.name)
+        expect(response.body).to include(@organization.email)
+        expect(response.body).to include(@organization.created_at.strftime("%Y-%m-%d"))
+        expect(response.body).to include(@organization.display_last_distribution_date)
+      end
+    end
+
     describe "POST #promote_to_org_admin" do
       subject { post promote_to_org_admin_organization_path(default_params.merge(user_id: @user.id)) }
 
       it "runs successfully" do
         subject
         expect(@user.has_role?(:org_admin, @organization)).to eq(true)
-        expect(response).to redirect_to(admin_organization_path(@organization.id, default_params))
+        expect(response).to redirect_to(admin_organization_path(@organization.id))
       end
     end
 
@@ -202,7 +215,7 @@ RSpec.describe "Organizations", type: :request do
 
       it "runs successfully" do
         subject
-        expect(response).to redirect_to(admin_organization_path(@organization.id, default_params))
+        expect(response).to redirect_to(admin_organization_path(@organization.id))
         expect(admin_user.reload.has_role?(Role::ORG_ADMIN, admin_user.organization)).to be_falsey
       end
     end
@@ -212,7 +225,7 @@ RSpec.describe "Organizations", type: :request do
 
       it "redirect after update" do
         subject
-        expect(response).to redirect_to(admin_organization_path(@organization.id, default_params))
+        expect(response).to redirect_to(admin_organization_path(@organization.id))
       end
       it "deactivates the user" do
         expect { subject }.to change { @user.reload.discarded_at }.to be_present
@@ -225,7 +238,7 @@ RSpec.describe "Organizations", type: :request do
 
       it "redirect after update" do
         subject
-        expect(response).to redirect_to(admin_organization_path(@organization.id, default_params))
+        expect(response).to redirect_to(admin_organization_path(@organization.id))
       end
       it "reactivates the user" do
         expect { subject }.to change { @user.reload.discarded_at }.to be_nil

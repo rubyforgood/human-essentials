@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Distributions", type: :request do
   let(:default_params) do
-    { organization_id: @organization.to_param }
+    { organization_name: @organization.to_param }
   end
 
   let(:secret_key) { "HI MOM THIS IS ME AND I'M CODING" }
@@ -51,24 +51,52 @@ RSpec.describe "Distributions", type: :request do
 
     describe "GET #reclaim" do
       it "returns http success" do
-        get distributions_path(default_params.merge(organization_id: @organization, id: create(:distribution).id))
+        get distributions_path(default_params.merge(organization_name: @organization, id: create(:distribution).id))
         expect(response).to be_successful
       end
     end
 
     describe "GET #index" do
+      let(:item) { create(:item) }
+      let!(:distribution) { create(:distribution, :with_items, :past, item: item, item_quantity: 10) }
+
       it "returns http success" do
         get distributions_path(default_params)
         expect(response).to be_successful
       end
 
       it "sums distribution totals accurately" do
-        distribution = create(:distribution, :with_items, item_quantity: 10)
         create(:distribution, :with_items, item_quantity: 5)
         create(:line_item, :distribution, itemizable_id: distribution.id, quantity: 7)
         get distributions_path(default_params)
         expect(assigns(:total_items_all_distributions)).to eq(22)
         expect(assigns(:total_items_paginated_distributions)).to eq(22)
+      end
+
+      it "shows an enabled edit and reclaim button" do
+        get distributions_path(default_params)
+        page = Nokogiri::HTML(response.body)
+        edit = page.at_css("a[href='#{edit_distribution_path(default_params.merge(id: distribution.id))}']")
+        reclaim = page.at_css("a.btn-danger[href='#{distribution_path(default_params.merge(id: distribution.id))}']")
+        expect(edit.attr("class")).not_to match(/disabled/)
+        expect(reclaim.attr("class")).not_to match(/disabled/)
+        expect(response.body).not_to match(/Has Inactive Items/)
+      end
+
+      context "with a disabled item" do
+        before do
+          item.update(active: false)
+        end
+
+        it "shows a disabled edit and reclaim button" do
+          get distributions_path(default_params)
+          page = Nokogiri::HTML(response.body)
+          edit = page.at_css("a[href='#{edit_distribution_path(default_params.merge(id: distribution.id))}']")
+          reclaim = page.at_css("a.btn-danger[href='#{distribution_path(default_params.merge(id: distribution.id))}']")
+          expect(edit.attr("class")).to match(/disabled/)
+          expect(reclaim.attr("class")).to match(/disabled/)
+          expect(response.body).to match(/Has Inactive Items/)
+        end
       end
     end
 
@@ -103,7 +131,7 @@ RSpec.describe "Distributions", type: :request do
       let!(:partner) { create(:partner) }
       let(:request) { create(:request, partner: partner) }
       let(:storage_location) { create(:storage_location, :with_items) }
-      let(:default_params) { { organization_id: @organization.to_param, request_id: request.id } }
+      let(:default_params) { { organization_name: @organization.to_param, request_id: request.id } }
 
       it "returns http success" do
         get new_distribution_path(default_params)
@@ -137,10 +165,8 @@ RSpec.describe "Distributions", type: :request do
     end
 
     describe "GET #show" do
-      it "returns http success" do
-        get distribution_path(default_params.merge(id: create(:distribution).id))
-        expect(response).to be_successful
-      end
+      let(:item) { create(:item) }
+      let!(:distribution) { create(:distribution, :with_items, item: item, item_quantity: 1) }
 
       it "sums distribution totals accurately" do
         distribution = create(:distribution, :with_items, item_quantity: 1)
@@ -158,8 +184,31 @@ RSpec.describe "Distributions", type: :request do
         )
         get distribution_path(default_params.merge(id: distribution.id))
 
+        expect(response).to be_successful
         expect(assigns(:total_quantity)).to eq(item_quantity + 1)
         expect(assigns(:total_package_count)).to eq(item_quantity / package_size)
+      end
+
+      it "shows an enabled edit button" do
+        get distribution_path(default_params.merge(id: distribution.id))
+        page = Nokogiri::HTML(response.body)
+        edit = page.at_css("a[href='#{edit_distribution_path(default_params.merge(id: distribution.id))}']")
+        expect(edit.attr("class")).not_to match(/disabled/)
+        expect(response.body).not_to match(/please make the following items active:/)
+      end
+
+      context "with an inactive item" do
+        before do
+          item.update(active: false)
+        end
+
+        it "shows a disabled edit button" do
+          get distribution_path(default_params.merge(id: distribution.id))
+          page = Nokogiri::HTML(response.body)
+          edit = page.at_css("a[href='#{edit_distribution_path(default_params.merge(id: distribution.id))}']")
+          expect(edit.attr("class")).to match(/disabled/)
+          expect(response.body).to match(/please make the following items active: #{item.name}/)
+        end
       end
     end
 

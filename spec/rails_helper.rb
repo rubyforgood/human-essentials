@@ -120,7 +120,7 @@ RSpec.configure do |config|
     config.use_transactional_fixtures = true
 
     DatabaseCleaner.clean_with(:truncation)
-    seed_base_data_for_tests
+    seed_base_data_for_tests if RSpec.current_example.metadata[:seed_items] != false
   end
 
   #
@@ -162,22 +162,7 @@ RSpec.configure do |config|
 
   def seed_base_data_for_tests
     # Create base items that are used to handle seeding Organization with items
-    base_items = File.read(Rails.root.join("db", "base_items.json"))
-    items_by_category = JSON.parse(base_items)
-    base_items_data = items_by_category.map do |category, entries|
-      entries.map do |entry|
-        {
-          name: entry["name"],
-          category: category,
-          partner_key: entry["key"],
-          updated_at: Time.zone.now,
-          created_at: Time.zone.now
-        }
-      end
-    end.flatten
-
-    BaseItem.create!(base_items_data)
-
+    seed_base_items
     # Create default organization
     organization = FactoryBot.create(:organization, name: DEFAULT_TEST_ORGANIZATION_NAME)
 
@@ -203,24 +188,24 @@ RSpec.configure do |config|
     Geocoder.configure(lookup: :test)
 
     ["1500 Remount Road, Front Royal, VA 22630",
-     "123 Donation Site Way",
-     "Smithsonian Conservation Center new"].each do |address|
-       Geocoder::Lookup::Test.add_stub(
-         address, [
-           {
-             "latitude" => 40.7143528,
-             "longitude" => -74.0059731,
-             "address" => "1500 Remount Road, Front Royal, VA",
-             "state" => "Virginia",
-             "state_code" => "VA",
-             "country" => "United States",
-             "country_code" => "US"
-           }
-         ]
-       )
-     end
+      "123 Donation Site Way",
+      "Smithsonian Conservation Center new"].each do |address|
+      Geocoder::Lookup::Test.add_stub(
+        address, [
+          {
+            "latitude" => 40.7143528,
+            "longitude" => -74.0059731,
+            "address" => "1500 Remount Road, Front Royal, VA 22630",
+            "state" => "Virginia",
+            "state_code" => "VA",
+            "country" => "United States",
+            "country_code" => "US"
+          }
+        ]
+      )
+    end
 
-    seed_base_data_for_tests
+    seed_base_data_for_tests if !ENV["SKIP_SEED"]
   end
 
   config.before(:each, type: :system) do
@@ -231,7 +216,7 @@ RSpec.configure do |config|
 
   config.before(:each) do
     # Defined shared @ global variables used throughout the test suite.
-    define_global_variables
+    define_global_variables if RSpec.current_example.metadata[:seed_items] != false
 
     if ENV['EVENTS_READ'] == 'true'
       allow(Event).to receive(:read_events?).and_return(true)
@@ -282,4 +267,22 @@ def select2(node, select_name, value, position: nil)
   container = node.find(:xpath, xpath)
   container.click
   container.find(:xpath, '//li[contains(@class, "select2-results__option")][@role="option"]', text: value).click
+end
+
+def seed_base_items
+  base_items = File.read(Rails.root.join("db", "base_items.json"))
+  items_by_category = JSON.parse(base_items)
+  base_items_data = items_by_category.map do |category, entries|
+    entries.map do |entry|
+      {
+        name: entry["name"],
+        category: category,
+        partner_key: entry["key"],
+        updated_at: Time.zone.now,
+        created_at: Time.zone.now
+      }
+    end
+  end.flatten
+
+  BaseItem.create!(base_items_data)
 end

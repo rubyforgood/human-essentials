@@ -23,12 +23,14 @@
   <td class="text-right">
     <%= view_button_to distribution_path(distribution_row) %>
     <% if (!distribution_row.complete? && !distribution_row.future?) || current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
-      <%= edit_button_to edit_distribution_path(distribution_row) %>
+      <%= edit_button_to edit_distribution_path(distribution_row), enabled: !distribution_row.has_inactive_item? %>
     <% end %>
     <%= print_button_to print_distribution_path(distribution_row, format: :pdf) %>
     <%= delete_button_to distribution_path(distribution_row),
           { confirm: "Are you sure you want to reclaim this distribution to #{distribution_row.partner.name}?",
             text: "Reclaim",
-            icon: "undo" } %>
+            icon: "undo", enabled: !distribution_row.has_inactive_item? } %>
+    <% if distribution_row.has_inactive_item? %>
+      <div class="warning">Has Inactive Items</div>
+    <% end %>
   </td>
-</tr>

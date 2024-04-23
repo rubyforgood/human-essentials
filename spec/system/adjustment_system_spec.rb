@@ -21,7 +21,7 @@ RSpec.describe "Adjustment management", type: :system, js: true do
       end
 
       it "allows you to choose items that do not yet exist" do
-        select Item.last.name, from: "adjustment_line_items_attributes_0_item_id"
+        select Item.active.last.name, from: "adjustment_line_items_attributes_0_item_id"
         fill_in "adjustment_line_items_attributes_0_quantity", with: add_quantity.to_s
 
         expect do
@@ -58,24 +58,6 @@ RSpec.describe "Adjustment management", type: :system, js: true do
         expect(page).to have_content(/Adjustment was successful/i)
       end
 
-      it "Does not include inactive items in the line item fields" do
-        visit url_prefix + "/adjustments/new"
-
-        item = Item.alphabetized.first
-
-        select storage_location.name, from: "From storage location"
-        expect(page).to have_content(item.name)
-        select item.name, from: "adjustment_line_items_attributes_0_item_id"
-
-        item.update(active: false)
-
-        page.refresh
-        within "#new_adjustment" do
-          select storage_location.name, from: "From storage location"
-          expect(page).to have_no_content(item.name)
-        end
-      end
-
       it "politely informs the user that they're adjusting way too hard", js: true do
         sub_quantity = -9001
         storage_location = create(:storage_location, :with_items, name: "PICK THIS ONE", item_quantity: 10, organization: @organization)
@@ -102,12 +84,13 @@ RSpec.describe "Adjustment management", type: :system, js: true do
         fill_in "Comment", with: "something"
         select Item.last.name, from: "adjustment_line_items_attributes_0_item_id"
         fill_in "adjustment_line_items_attributes_0_quantity", with: sub_quantity.to_s
-        click_on "Add another item"
+        click_on "Add Another Item"
         within all(".line_item_section").last do
           element_1 = find(".line_item_name")
           expect(page).to have_select(element_1[:id])
           select Item.last.name, from: element_1[:id]
           element_2 = find(".quantity")
+          expect(element_2.value).to eq("")
           element_2.set sub_quantity.to_s
         end
 

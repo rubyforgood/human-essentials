@@ -1,6 +1,6 @@
 <div class="tab-pane fade show active" id="custom-tabs-three-home" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
   <div class='flex justify-end mb-4'>
-    <%= new_button_to new_item_path(organization_id: current_organization), {text: "New Item"} %>
+    <%= new_button_to new_item_path(organization_name: current_organization), {text: "New Item"} %>
   </div>
 
   <table id='items-table' class="table">
@@ -14,7 +14,7 @@
     </tr>
     </thead>
     <tbody>
-      <%= render partial: "items/item_row", collection: items, as: :item_row %>
+      <%= render partial: "items/item_row", collection: items, as: :item_row, locals: { inventory: inventory } %>
     </tbody>
   </table>
 </div><!-- /.box-body.table-responsive -->
