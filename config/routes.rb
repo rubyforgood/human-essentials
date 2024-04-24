@@ -96,8 +96,9 @@ Rails.application.routes.draw do
 
   resources :events, only: %i(index)
 
+  resources :adjustments, except: %i(edit update)
+
   scope path: ":organization_name" do
-    resources :adjustments, except: %i(edit update)
     resources :audits do
       post :finalize
     end

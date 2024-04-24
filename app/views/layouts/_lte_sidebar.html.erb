@@ -130,7 +130,7 @@
         <% end %>
       </li>
       <li class="nav-item <%= active_class(['adjustments']) %>">
-        <%= link_to(adjustments_path(organization_name: current_user.organization), class: "nav-link #{active_class(['adjustments'])}") do %>
+        <%= link_to(adjustments_path(organization_name: nil), class: "nav-link #{active_class(['adjustments'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Inventory Adjustments
         <% end %>
       </li>
