@@ -29,8 +29,7 @@ rectangle "Partner" {
 -->
 
 ![Timeline](./timeline-flow.svg)
-<details><summary>(Diagram Code - Timeline)</summary>
-
+<!--
 ```plantuml:timeline-flow
 participant Donor
 participant Supplier
@@ -41,8 +40,7 @@ Partner --> Bank: Request (Optional)
 Bank -> Partner: Distribution
 Partner -> "Client/Family": Dispense
 ```
-</details>
-
+-->
 
 ### Intake
 
@@ -81,9 +79,7 @@ This section is a more detailed, and more technical, explanation of how the appl
 ## Multi-Organization
 
 ![Multi Tenancy](./multi-tenancy.svg)
-<details>
-<summary>(Diagram Code - Multi-Organization)</summary>
-
+<!--
 ```plantuml:multi-tenancy
 skinparam componentStyle rectangle
 skinparam actorStyle awesome
@@ -112,7 +108,7 @@ user_d --> [Bank A]
 user_d --> [Partner A]
 }
 ```
-</details>
+-->
 
 This application is multi-organization -- that is, each Essentials (Diaper) Bank (used interchangeably with **Organization**) has its own templated "section" of the application, and may act in that section without concern that its changes will affect other organizations (and vice versa).
 
@@ -164,9 +160,7 @@ These are barcodes that act as "fall-throughs" and will generally be used to tra
 #### Barcode Retrieval
 
 ![Barcode Retrieval](./barcode-retrieval.svg)
-<details>
-<summary>(Diagram Code - Barcode Retrieval)</summary>
-
+<!--
 ```plantuml:barcode-retrieval
 skinparam componentStyle rectangle
 skinparam linetype ortho
@@ -176,7 +170,7 @@ skinparam linetype ortho
 [Item] <. [Bank Barcode]
 [Global Barcode] <-- [Bank Barcode] : Fallback
 ```
-</details>
+-->
 
 Barcode records are either connected to an organization and an `Item`, or they are labeled "global" and connected to a `BaseItem`. When a lookup is requested, it will look up the barcode (by its value) with this order of priority (this was established in [#593](/rubyforgood/human-essentials/issues/593)):
 
@@ -189,17 +183,14 @@ For the second item, after the `BaseItem` is retrieved, it consults back to the 
 ## Partner Requests
 
 ![Partner Request](./partner-request.svg)
-<details><summary>(Diagram Code)</summary>
-
-```plantuml:partner-request
+<!-- ```plantuml:partner-request
 participant Partner as partner
 participant Bank as bank
 
 partner -> bank: Submit request
 bank -> bank: Build distribution
 bank -> partner: Fulfill distribution
-```
-</details>
+``` -->
 
 Partners may submit requests to an Essentials Bank. These list the items and quantities of each item being requested. The Essentials Bank can use this request as the starting point for a Distribution, but often makes changes to the actual Distribution to more accurately capture which actual items and quantities are being distributed.
 
