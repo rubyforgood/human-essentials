@@ -1,9 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "Annual Reports", type: :request do
-  let(:default_params) do
-    { organization_name: @organization.to_param, year: 2018 }
-  end
+  let(:default_params) { {year: 2018} }
 
   context "While signed in" do
     before do
@@ -49,7 +47,7 @@ RSpec.describe "Annual Reports", type: :request do
       end
 
       it "returns not found if the year params is not number" do
-        get reports_annual_report_path({ organization_name: @organization.to_param, year: 'invalid' })
+        get reports_annual_report_path({ year: 'invalid' })
         expect(response).to have_http_status(:not_found)
       end
     end

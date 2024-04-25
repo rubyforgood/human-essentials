@@ -185,7 +185,7 @@
           <% end %>
         </li>
         <li class="nav-item <%= active_class(['reports']) %>">
-          <%= link_to(reports_annual_reports_path(organization_name: current_user.organization), class: "nav-link #{active_class(['reports'])}") do %>
+          <%= link_to(reports_annual_reports_path(organization_name: nil), class: "nav-link #{active_class(['reports'])}") do %>
             <i class="nav-icon fa fa-circle-o"></i> Annual Survey
           <% end %>
         </li>

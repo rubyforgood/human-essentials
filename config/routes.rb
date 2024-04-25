@@ -97,14 +97,13 @@ Rails.application.routes.draw do
   resources :audits do
     post :finalize
   end
+  namespace :reports do
+    resources :annual_reports, only: [:index, :show], param: :year do
+      post :recalculate, on: :member
+    end
+  end
 
   scope path: ":organization_name" do
-    namespace :reports do
-      resources :annual_reports, only: [:index, :show], param: :year do
-        post :recalculate, on: :member
-      end
-    end
-
     resources :transfers, only: %i(index create new show destroy)
     resources :storage_locations do
       put :deactivate
