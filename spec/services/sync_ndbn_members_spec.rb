@@ -1,4 +1,4 @@
-describe SyncNDBNMembers do
+RSpec.describe SyncNDBNMembers do
   let(:small_input) { File.open(Rails.root.join("spec", "fixtures", "ndbn-small-import.csv")) }
   let(:invalid_input) { File.open(Rails.root.join("spec", "fixtures", "ndbn-invalid-import.csv")) }
   let(:invalid_headers) { File.open(Rails.root.join("spec", "fixtures", "ndbn-invalid-header-import.csv")) }

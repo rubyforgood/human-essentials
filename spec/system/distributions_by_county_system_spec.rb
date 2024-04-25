@@ -1,6 +1,6 @@
 RSpec.feature "Distributions by County", type: :system do
   let(:default_params) do
-    {organization_name: @organization.to_param}
+    {organization_name: organization.to_param}
   end
 
   include_examples "distribution_by_county"
@@ -9,15 +9,15 @@ RSpec.feature "Distributions by County", type: :system do
   let(:issued_at_last_year) { Time.current.utc.change(year: year - 1).to_datetime }
 
   before do
-    sign_in(@user)
-    @storage_location = create(:storage_location, organization: @organization)
+    sign_in(user)
+    @storage_location = create(:storage_location, organization: organization)
     setup_storage_location(@storage_location)
   end
 
   context "handles time ranges properly" do
     it("works for all time") do
-      @distribution_last_year = create(:distribution, :with_items, item: item_1, organization: @user.organization, partner: partner_1, issued_at: issued_at_last_year)
-      @distribution_current = create(:distribution, :with_items, item: item_1, organization: @user.organization, partner: partner_1, issued_at: issued_at_present)
+      @distribution_last_year = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
+      @distribution_current = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
       visit_distribution_by_county_with_specified_date_range("All Time")
       partner_1.profile.served_areas.each do |served_area|
         expect(page).to have_text(served_area.county.name)
@@ -27,8 +27,8 @@ RSpec.feature "Distributions by County", type: :system do
     end
 
     it("works for this year") do
-      @distribution_current = create(:distribution, :with_items, item: item_1, organization: @user.organization, partner: partner_1, issued_at: issued_at_present)
-      @distribution_last_year = create(:distribution, :with_items, item: item_1, organization: @user.organization, partner: partner_1, issued_at: issued_at_last_year)
+      @distribution_current = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
+      @distribution_last_year = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
 
       visit_distribution_by_county_with_specified_date_range("This Year")
 

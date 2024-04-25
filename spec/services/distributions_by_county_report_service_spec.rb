@@ -1,5 +1,4 @@
 RSpec.describe DistributionByCountyReportService, type: :service do
-  let(:organization) { create(:organization) }
   let(:year) { Time.current.year }
   let(:issued_at_last_year) { Time.current.utc.change(year: year - 1).to_datetime }
   let(:distributions) { [] }
@@ -7,12 +6,12 @@ RSpec.describe DistributionByCountyReportService, type: :service do
   include_examples "distribution_by_county"
 
   before do
-    @storage_location = create(:storage_location, organization: @organization)
+    create(:storage_location, organization: organization)
   end
 
   describe "get_breakdown" do
     it "will have 100% unspecified shows if no served_areas" do
-      distribution_1 = create(:distribution, :with_items, item: item_1, organization: @user.organization)
+      distribution_1 = create(:distribution, :with_items, item: item_1, organization: user.organization)
       breakdown = DistributionByCountyReportService.new.get_breakdown([distribution_1])
       expect(breakdown.size).to eq(1)
       expect(breakdown[0].num_items).to eq(100)
@@ -20,7 +19,7 @@ RSpec.describe DistributionByCountyReportService, type: :service do
     end
 
     it "divides the item numbers and values according to the partner profile" do
-      distribution_1 = create(:distribution, :with_items, item: item_1, organization: @user.organization, partner: partner_1)
+      distribution_1 = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1)
       breakdown = DistributionByCountyReportService.new.get_breakdown([distribution_1])
       expect(breakdown.size).to eq(5)
       expect(breakdown[4].num_items).to eq(0)
@@ -32,8 +31,8 @@ RSpec.describe DistributionByCountyReportService, type: :service do
     end
 
     it "handles multiple partners with overlapping service areas properly" do
-      distribution_p1 = create(:distribution, :with_items, item: item_1, organization: @user.organization, partner: partner_1, issued_at: issued_at_present)
-      distribution_p2 = create(:distribution, :with_items, item: item_1, organization: @user.organization, partner: partner_2, issued_at: issued_at_present)
+      distribution_p1 = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
+      distribution_p2 = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_2, issued_at: issued_at_present)
       breakdown = DistributionByCountyReportService.new.get_breakdown([distribution_p1, distribution_p2])
       num_with_45 = 0
       num_with_20 = 0
