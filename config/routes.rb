@@ -102,9 +102,9 @@ Rails.application.routes.draw do
       post :recalculate, on: :member
     end
   end
+  resources :transfers, only: %i(index create new show destroy)
 
   scope path: ":organization_name" do
-    resources :transfers, only: %i(index create new show destroy)
     resources :storage_locations do
       put :deactivate
       put :reactivate
