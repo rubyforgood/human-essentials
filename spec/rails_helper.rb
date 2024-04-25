@@ -204,8 +204,6 @@ RSpec.configure do |config|
         ]
       )
     end
-
-    seed_base_data_for_tests if !ENV["SKIP_SEED"]
   end
 
   config.before(:each, type: :system) do
@@ -214,10 +212,20 @@ RSpec.configure do |config|
     Capybara.server = :puma, { Silent: true }
   end
 
-  config.before(:each) do
-    # Defined shared @ global variables used throughout the test suite.
-    define_global_variables if RSpec.current_example.metadata[:seed_items] != false
+  config.before(:all) do
+    unless Thread.current[:skipped_last_seeding]
+      DatabaseCleaner.clean_with(:truncation)
+    end
 
+    Thread.current[:skipped_last_seeding] = true
+    unless self.class.metadata[:skip_seed]
+      seed_base_data_for_tests
+      define_global_variables
+      Thread.current[:skipped_last_seeding] = false
+    end
+  end
+
+  config.before(:each) do
     if ENV['EVENTS_READ'] == 'true'
       allow(Event).to receive(:read_events?).and_return(true)
     end
