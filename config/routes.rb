@@ -80,7 +80,6 @@ Rails.application.routes.draw do
     get :switch_to_role, on: :collection
     post :partner_user_reset_password, on: :collection
   end
-
   # Users that are organization admins can manage the organization itself
   resource :organization, only: [:show]
   resource :organization, path: :manage, only: %i(edit update) do
@@ -93,16 +92,13 @@ Rails.application.routes.draw do
       post :demote_to_user
     end
   end
-
   resources :events, only: %i(index)
-
   resources :adjustments, except: %i(edit update)
+  resources :audits do
+    post :finalize
+  end
 
   scope path: ":organization_name" do
-    resources :audits do
-      post :finalize
-    end
-
     namespace :reports do
       resources :annual_reports, only: [:index, :show], param: :year do
         post :recalculate, on: :member
