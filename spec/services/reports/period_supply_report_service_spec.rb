@@ -1,7 +1,8 @@
 RSpec.describe Reports::PeriodSupplyReportService, type: :service do
   let(:year) { 2020 }
   let(:organization) { create(:organization) }
-
+  let(:within_time) { Time.zone.parse("2020-05-31 14:00:00") }
+  let(:outside_time) { Time.zone.parse("2019-05-31 14:00:00") }
   subject(:report) do
     described_class.new(organization: organization, year: year)
   end
@@ -19,12 +20,11 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
         .to contain_exactly("Tampons", "Pads", "Adult Liners")
     end
 
-    describe "with values" do
-      before(:each) do
-        Organization.seed_items(organization)
+    before(:each) do
+        # Organization.seed_items(organization)
 
-        within_time = Time.zone.parse("2020-05-31 14:00:00")
-        outside_time = Time.zone.parse("2019-05-31 14:00:00")
+        # within_time = Time.zone.parse("2020-05-31 14:00:00")
+        # outside_time = Time.zone.parse("2019-05-31 14:00:00")
 
         period_supplies_item = organization.items.period_supplies.first
         non_period_supplies_item = organization.items.where.not(id: organization.items.period_supplies).first
@@ -101,6 +101,13 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
           create_list(:line_item, 3, :purchase, quantity: 30, item: period_supplies_item, itemizable: purchase)
           create_list(:line_item, 3, :purchase, quantity: 40, item: non_period_supplies_item, itemizable: purchase)
         end
+      end
+
+    describe "with values" do
+
+      it "returns the correct quantity of period supplies from kits" do
+        service = described_class.new(organization: organization, year: within_time.year)
+        expect(service.distributed_period_supplies_from_kits).to eq(100)
       end
 
       it "should report normal values" do
