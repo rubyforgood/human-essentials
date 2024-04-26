@@ -103,20 +103,19 @@ Rails.application.routes.draw do
     end
   end
   resources :transfers, only: %i(index create new show destroy)
+  resources :storage_locations do
+    put :deactivate
+    put :reactivate
+    collection do
+      post :import_csv
+      post :import_inventory
+    end
+    member do
+      get :inventory
+    end
+  end
 
   scope path: ":organization_name" do
-    resources :storage_locations do
-      put :deactivate
-      put :reactivate
-      collection do
-        post :import_csv
-        post :import_inventory
-      end
-      member do
-        get :inventory
-      end
-    end
-
     resources :distributions do
       get :print, on: :member
       collection do

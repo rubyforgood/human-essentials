@@ -55,7 +55,7 @@ class StorageLocationsController < ApplicationController
   def create
     @storage_location = current_organization.storage_locations.new(storage_location_params)
     if @storage_location.save
-      redirect_to storage_locations_path, notice: "New storage location added!"
+      redirect_to storage_locations_path(organization_name: nil), notice: "New storage location added!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :new
@@ -91,20 +91,20 @@ class StorageLocationsController < ApplicationController
 
   def import_inventory
     if params[:file].nil?
-      redirect_back(fallback_location: storage_locations_path)
+      redirect_back(fallback_location: storage_locations_path(organization_name: nil))
       flash[:error] = "No file was attached!"
     else
       filepath = params[:file].read
       StorageLocation.import_inventory(filepath, current_organization.id, params[:storage_location])
       flash[:notice] = "Inventory imported successfully!"
-      redirect_back(fallback_location: storage_locations_path)
+      redirect_back(fallback_location: storage_locations_path(organization_name: nil))
     end
   end
 
   def update
     @storage_location = current_organization.storage_locations.find(params[:id])
     if @storage_location.update(storage_location_params)
-      redirect_to storage_locations_path, notice: "#{@storage_location.name} updated!"
+      redirect_to storage_locations_path(organization_name: nil), notice: "#{@storage_location.name} updated!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
@@ -115,9 +115,9 @@ class StorageLocationsController < ApplicationController
     @storage_location = current_organization.storage_locations.kept.find(params[:storage_location_id])
     svc = StorageLocationDeactivateService.new(storage_location: @storage_location)
     if svc.call
-      redirect_to storage_locations_path, notice: "Storage Location deactivated successfully"
+      redirect_to storage_locations_path(organization_name: nil), notice: "Storage Location deactivated successfully"
     else
-      redirect_back(fallback_location: storage_locations_path,
+      redirect_back(fallback_location: storage_locations_path(organization_name: nil),
         error: "Cannot deactivate storage location containing inventory items with non-zero quantities")
     end
   end
@@ -125,9 +125,9 @@ class StorageLocationsController < ApplicationController
   def reactivate
     @storage_location = current_organization.storage_locations.all.find(params[:storage_location_id])
     if @storage_location.undiscard!
-      redirect_to storage_locations_path, notice: "Storage Location reactivated successfully"
+      redirect_to storage_locations_path(organization_name: nil), notice: "Storage Location reactivated successfully"
     else
-      redirect_back(fallback_location: storage_locations_path, error: "Something didn't work quite right -- try again?")
+      redirect_back(fallback_location: storage_locations_path(organization_name: nil), error: "Something didn't work quite right -- try again?")
     end
   end
 
@@ -135,10 +135,10 @@ class StorageLocationsController < ApplicationController
     @storage_location = current_organization.storage_locations.find(params[:id])
 
     if @storage_location.destroy
-      redirect_to storage_locations_path, notice: "Storage Location deleted successfully"
+      redirect_to storage_locations_path(organization_name: nil), notice: "Storage Location deleted successfully"
     else
       flash[:error] = @storage_location.errors.full_messages.join(', ')
-      redirect_to storage_locations_path
+      redirect_to storage_locations_path(organization_name: nil)
     end
   end
 

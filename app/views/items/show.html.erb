@@ -83,7 +83,7 @@
                   end
                   total += location_quantity %>
                   <tr>
-                    <td><%= link_to storage.name, storage_location_path(storage) %></td>
+                    <td><%= link_to storage.name, storage_location_path(organization_name: nil, id: storage.id) %></td>
                     <td class="text-left"><%= location_quantity %></td>
                   </tr>
                 <% end %>

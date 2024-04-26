@@ -125,7 +125,7 @@
         <% end %>
       </li>
       <li class="nav-item <%= active_class(['storage_locations']) %>">
-        <%= link_to(storage_locations_path(organization_name: current_user.organization), class: "nav-link #{active_class(['storage_locations'])}") do %>
+        <%= link_to(storage_locations_path(organization_name: nil), class: "nav-link #{active_class(['storage_locations'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Storage Locations
         <% end %>
       </li>

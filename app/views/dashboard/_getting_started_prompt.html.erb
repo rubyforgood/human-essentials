@@ -68,7 +68,7 @@
 
               <div id="org-stats-call-to-action-storage-locations">
                 <% location_link_text = location_criteria_met ? "Add More Storage Locations" : "Add a Storage Location" %>
-                <%= new_button_to new_storage_location_path, { text: location_link_text, size: "md" } %>
+                <%= new_button_to new_storage_location_path(organization_name: nil), { text: location_link_text, size: "md" } %>
               </div>
             </div>
           </div>
