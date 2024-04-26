@@ -49,7 +49,7 @@ class Item < ApplicationRecord
   has_many :storage_locations, through: :inventory_items
   has_many :donations, through: :line_items, source: :itemizable, source_type: "::Donation"
   has_many :distributions, through: :line_items, source: :itemizable, source_type: "::Distribution"
-  has_many :request_units, class_name: 'ItemRequestUnit'
+  has_many :request_units, class_name: "ItemRequestUnit", dependent: :destroy
 
   scope :active, -> { where(active: true) }
 
@@ -232,12 +232,11 @@ class Item < ApplicationRecord
   end
 
   def reporting_unit_is_supported
-    return if self.reporting_unit.blank?
+    return if reporting_unit.blank?
 
-    names = self.request_units.map(&:name)
+    names = request_units.map(&:name)
     unless names.include?(reporting_unit)
       errors.add(:reporting_unit, "is not supported")
     end
   end
-
 end

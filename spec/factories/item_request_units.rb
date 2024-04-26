@@ -12,5 +12,9 @@ FactoryBot.define do
   factory :item_request_unit do
     sequence(:name) { |n| "Unit #{n}" }
     item
+
+    before(:create) do |unit, _|
+      unit.item.organization.request_units.find_or_create_by(name: unit.name)
+    end
   end
 end
