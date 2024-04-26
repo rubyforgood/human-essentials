@@ -213,16 +213,25 @@ RSpec.configure do |config|
   end
 
   config.before(:all) do
-    unless Thread.current[:skipped_last_seeding]
+    seed_current = self.class.metadata[:skip_seed].nil? || self.class.metadata[:skip_seed] == false
+    seeded_last = Thread.current[:seeded_last]
+
+    if seeded_last && !seed_current
       DatabaseCleaner.clean_with(:truncation)
     end
 
-    Thread.current[:skipped_last_seeding] = true
-    unless self.class.metadata[:skip_seed]
+    if seeded_last && seed_current
+      define_global_variables
+    end
+
+    if !seeded_last && seed_current
       seed_base_data_for_tests
       define_global_variables
-      Thread.current[:skipped_last_seeding] = false
     end
+
+    # if !seeded_last && !seed_current do nothing
+
+    Thread.current[:seeded_last] = seed_current
   end
 
   config.before(:each) do
