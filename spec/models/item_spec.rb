@@ -12,6 +12,7 @@
 #  on_hand_recommended_quantity :integer
 #  package_size                 :integer
 #  partner_key                  :string
+#  reporting_unit               :string
 #  value_in_cents               :integer          default(0)
 #  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null
@@ -26,6 +27,16 @@ RSpec.describe Item, type: :model do
     it { should belong_to(:item_category).optional }
   end
   context "Validations >" do
+    it "must support the reporting unit" do
+      item = create(:item)
+      item.reporting_unit = "pack"
+      expect(item.valid?).to eq(false)
+      expect(item.errors.full_messages).to eq(["Reporting unit is not supported"])
+
+      create(:request_unit, name: 'pack', organization: item.organization)
+      create(:item_request_unit, item: item, name: 'pack')
+      expect(item.reload.valid?).to eq(true)
+    end
     it "must belong to an organization" do
       expect(build(:item, organization_id: nil)).not_to be_valid
     end
