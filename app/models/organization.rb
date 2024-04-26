@@ -24,6 +24,7 @@
 #  state                          :string
 #  street                         :string
 #  url                            :string
+#  uses_request_units             :boolean          default(FALSE), not null
 #  ytd_on_distribution_printout   :boolean          default(TRUE), not null
 #  zipcode                        :string
 #  created_at                     :datetime         not null
@@ -70,6 +71,7 @@ class Organization < ApplicationRecord
     has_many :transfers
     has_many :users, -> { distinct }, through: :roles
     has_many :vendors
+    has_many :request_units
   end
 
   has_many :items, dependent: :destroy do

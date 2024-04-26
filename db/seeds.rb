@@ -6,9 +6,6 @@ if Rails.env.production?
   return
 end
 
-# Activate all feature flags
-Flipper.enable(:onebase)
-
 # ----------------------------------------------------------------------------
 # Random Record Generators
 # ----------------------------------------------------------------------------
@@ -77,6 +74,27 @@ Organization.seed_items(sf_org)
 Organization.all.each do |org|
   org.items.where(value_in_cents: 0).limit(10).each do |item|
     item.update(value_in_cents: 100)
+  end
+end
+
+# ----------------------------------------------------------------------------
+# Request Units
+# ----------------------------------------------------------------------------
+
+%w(pack pad flat).each do |name|
+  RequestUnit.create!(organization: pdx_org, name: name)
+end
+
+pdx_org.items.each_with_index do |item, i|
+  if item.name == 'Pads'
+    %w(pad pack).each { |name| item.request_units.create!(name: name) }
+    item.update!(reporting_unit: 'pad')
+  elsif i == 0
+    item.request_units.create!(name: 'pack')
+  elsif i == 1
+    %w(pack flat).each do |name|
+      item.request_units.create!(name: name)
+    end
   end
 end
 

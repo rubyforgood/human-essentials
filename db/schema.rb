@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_04_02_230156) do
+ActiveRecord::Schema[7.0].define(version: 2024_04_26_135118) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -233,8 +233,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_02_230156) do
     t.integer "organization_id"
     t.datetime "issued_at", precision: nil
     t.string "agency_rep"
-    t.boolean "reminder_email_enabled", default: false, null: false
     t.integer "state", default: 5, null: false
+    t.boolean "reminder_email_enabled", default: false, null: false
     t.integer "delivery_method", default: 0, null: false
     t.decimal "shipping_cost", precision: 8, scale: 2
     t.index ["organization_id"], name: "index_distributions_on_organization_id"
@@ -372,6 +372,14 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_02_230156) do
     t.index ["partner_group_id"], name: "index_item_categories_partner_groups_on_partner_group_id"
   end
 
+  create_table "item_request_units", force: :cascade do |t|
+    t.string "name", null: false
+    t.bigint "item_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_item_request_units_on_item_id"
+  end
+
   create_table "item_requests", force: :cascade do |t|
     t.string "name"
     t.string "quantity"
@@ -402,6 +410,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_02_230156) do
     t.boolean "visible_to_partners", default: true, null: false
     t.integer "kit_id"
     t.integer "item_category_id"
+    t.string "reporting_unit"
     t.index ["kit_id"], name: "index_items_on_kit_id"
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"
@@ -484,6 +493,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_02_230156) do
     t.boolean "enable_quantity_based_requests", default: true, null: false
     t.boolean "ytd_on_distribution_printout", default: true, null: false
     t.boolean "one_step_partner_invite", default: false, null: false
+    t.boolean "uses_request_units", default: false, null: false
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
@@ -723,6 +733,14 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_02_230156) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "request_units", force: :cascade do |t|
+    t.string "name", null: false
+    t.bigint "organization_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_request_units_on_organization_id"
+  end
+
   create_table "requests", force: :cascade do |t|
     t.bigint "partner_id"
     t.bigint "organization_id"
@@ -876,6 +894,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_02_230156) do
   add_foreign_key "item_categories", "organizations"
   add_foreign_key "item_categories_partner_groups", "item_categories"
   add_foreign_key "item_categories_partner_groups", "partner_groups"
+  add_foreign_key "item_request_units", "items"
   add_foreign_key "items", "item_categories"
   add_foreign_key "items", "kits"
   add_foreign_key "kit_allocations", "kits"
@@ -891,6 +910,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_02_230156) do
   add_foreign_key "partner_served_areas", "partner_profiles"
   add_foreign_key "partners", "storage_locations", column: "default_storage_location_id"
   add_foreign_key "product_drives", "organizations"
+  add_foreign_key "request_units", "organizations"
   add_foreign_key "requests", "distributions"
   add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"
