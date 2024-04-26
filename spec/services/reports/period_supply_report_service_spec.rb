@@ -32,6 +32,25 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
         # We will create data both within and outside our date range, and both period_supplies and non period_supplies.
         # Spec will ensure that only the required data is included.
 
+         # Kits
+        period_supplies_kit = create(:kit, :with_item, organization: organization)
+        another_period_supply_kit = create(:kit, :with_item, organization: organization)
+
+        create(:base_item, name: "Adult Pads", partner_key: "adult pads", category: "Period Supplies")
+        create(:base_item, name: "Adult Tampons", partner_key: "adult tampons", category: "Period Supplies")
+
+        create(:item, name: "Adult Pads", partner_key: "adult pads")
+        create(:item, name: "Adult Tampons", partner_key: "adult tampons")
+
+        period_supplies_kit.line_items.first.update!(item_id: period_supplies_kit.id, quantity: 5)
+        another_period_supply_kit.line_items.first.update!(item_id: another_period_supply_kit.id, quantity: 5)
+
+        period_supplies_kit_distribution = create(:distribution, organization: organization, issued_at: within_time)
+        another_period_supplies_kit_distribution = create(:distribution, organization: organization, issued_at: within_time)
+
+        create(:line_item, :distribution, quantity: 10, item: period_supplies_kit.item, itemizable: period_supplies_kit_distribution)
+        create(:line_item, :distribution, quantity: 10, item: another_period_supply_kit.item, itemizable: another_period_supplies_kit_distribution)
+
         # Distributions
         distributions = create_list(:distribution, 2, issued_at: within_time, organization: organization)
         outside_distributions = create_list(:distribution, 2, issued_at: outside_time, organization: organization)
