@@ -1,68 +1,72 @@
-describe SyncNDBNMembers do
-  describe ".sync" do
-    subject { -> { described_class.sync } }
-    let(:ndbn_member_id) { 200040 }
-    let(:account_name) { "New Super Baby" }
-    let(:fake_html_body) do
-      <<-HTML
-      <table class="contentpaneopen">
-      <tbody><tr>
-      <td valign="top"><div class="content-wrapper" style="width: 690px;">
-      <h1>Organizational Member IDs</h1>
-      <p><strong>ID&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Account Name</strong></p>
-      <p><span style="font-size: 15px;">20040&nbsp;&nbsp;&nbsp; (914) Cares</span></p>
-      <p>#{ndbn_member_id}&nbsp;&nbsp;&nbsp; #{account_name}</p>
+RSpec.describe SyncNDBNMembers do
+  let(:small_input) { File.open(Rails.root.join("spec", "fixtures", "ndbn-small-import.csv")) }
+  let(:invalid_input) { File.open(Rails.root.join("spec", "fixtures", "ndbn-invalid-import.csv")) }
+  let(:invalid_headers) { File.open(Rails.root.join("spec", "fixtures", "ndbn-invalid-header-import.csv")) }
+  let(:non_csv) { File.open(Rails.root.join("spec", "fixtures", "files", "logo.jpg")) }
 
-      </div></td>
-      </tr>
+  describe "#upload" do
+    # NDBN Member Number,Member Name
+    # 10000 Homeless Shelter
+    # 20000 Other Spot
+    # 30000 Amazing Place
+    # 10000 Pawnee
+    context "with a small file" do
+      it "overwrites existing names with new names if shared member id" do
+        want = ["Other Spot", "Amazing Place", "Pawnee"]
 
-      </tbody></table>
-      HTML
-    end
-
-    before do
-      stub_request(:get, SyncNDBNMembers::NDBN_MEMBERS_PAGE).to_return(body: fake_html_body)
-    end
-
-    context "when the HTTP request does not get a response of 200" do
-      let(:failed_status_code) { 500 }
-      before do
-        stub_request(:get, SyncNDBNMembers::NDBN_MEMBERS_PAGE).to_return(status: failed_status_code)
-      end
-
-      it "should raise an error regarding the response code" do
-        expect { subject.call }.to raise_error("SyncNDBNMembers.sync failed due to getting a status code of #{failed_status_code}")
+        errors = SyncNDBNMembers.upload(small_input)
+        expect(NDBNMember.pluck(:account_name)).to match_array(want)
+        expect(errors).to be_empty
       end
     end
 
-    context "when the HTTP request is successful" do
-      before do
-        stub_request(:get, SyncNDBNMembers::NDBN_MEMBERS_PAGE).to_return(body: fake_html_body)
+    # NDBN Member Number,Member Name
+    # string,Homeless Shelter
+    # 2,
+    # ,
+    # 3,Hello
+    context "with file with invalid values" do
+      it "returns array of errors" do
+        errors = SyncNDBNMembers.upload(invalid_input)
+        expect(errors).to contain_exactly(
+          "Issue with 'string,Homeless Shelter'-> NDBN member id must be an integer",
+          "Issue with '2,'-> Account name can't be blank",
+          "Issue with ','-> Account name can't be blank",
+          "Issue with ','-> NDBN member id must be an integer",
+          "Issue with ','-> NDBN member can't be blank"
+        )
       end
+    end
 
-      context "when there are no exisiting NDBN Member records" do
-        it "should create the NDBN Member records" do
-          expect { subject.call }.to change { NDBNMember.count }.from(0).to(2)
-        end
+    context "with file that is nil" do
+      it "adds error" do
+        errors = SyncNDBNMembers.upload(nil)
+
+        expect(errors).to contain_exactly("CSV upload is required.")
       end
+    end
 
-      context "when the account name of a NDBN Member has changed" do
-        let(:old_account_name) { "Super Baby" }
+    context "with file that is not CSV" do
+      it "adds error" do
+        errors = SyncNDBNMembers.upload(non_csv)
 
-        before do
-          create(:ndbn_member, ndbn_member_id: ndbn_member_id, account_name: old_account_name)
-        end
-
-        it "should update the account name of the corresponding NDBN Member" do
-          expect { subject.call }.to change { NDBNMember.find_by(ndbn_member_id: ndbn_member_id).account_name }.from(old_account_name).to(account_name)
-        end
+        expect(errors).to contain_exactly("The CSV File provided was invalid.")
       end
+    end
 
-      context "when no new NDBN Member has been added" do
-        it "should not add any new NDBN Members" do
-          expect { subject.call }.to change { NDBNMember.count }.from(0).to(2)
-          expect { subject.call }.not_to change { NDBNMember.count }
-        end
+    # Updated: 01/01,
+    # NDBN Member Number,Member Name
+    # 10000,Homeless Shelter
+    # 20000,Other Spot
+    # 30000,Amazing Place
+    # 10000,Pawnee
+    context "with file that has invalid headers" do
+      it "adds error" do
+        errors = SyncNDBNMembers.upload(invalid_headers)
+
+        expect(errors).to contain_exactly(
+          "The CSV has incorrect headers: given: 'Updated: 01/01', '' expected: 'NDBN Member Number', 'Member Name'"
+        )
       end
     end
   end
