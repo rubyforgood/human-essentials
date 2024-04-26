@@ -14,7 +14,7 @@ module Reports
     def report
       @report ||= {name: "Period Supplies",
                    entries: {
-                     "Period supplies distributed" => number_with_delimiter(distributed_supplies),
+                     "Period supplies distributed" => number_with_delimiter(total_distributed_period_supplies),
                      "Period supplies per adult per month" => monthly_supplies&.round || 0,
                      "Period supplies" => types_of_supplies,
                      "% period supplies donated" => "#{percent_donated.round}%",
@@ -24,13 +24,43 @@ module Reports
     end
 
     # @return [Integer]
-    def distributed_supplies
+    def distributed_loose_period_supplies
       @distributed_supplies ||= organization
         .distributions
         .for_year(year)
         .joins(line_items: :item)
         .merge(Item.period_supplies)
         .sum("line_items.quantity")
+    end
+
+    def distributed_period_supplies_from_kits
+      organization_id = @organization.id
+      year = @year
+
+      sql_query = <<-SQL
+        SELECT SUM(line_items.quantity * kit_line_items.quantity)
+        FROM distributions 
+        INNER JOIN line_items ON line_items.itemizable_type = 'Distribution' AND line_items.itemizable_id = distributions.id 
+        INNER JOIN items ON items.id = line_items.item_id 
+        INNER JOIN kits ON kits.id = items.kit_id 
+        INNER JOIN line_items AS kit_line_items ON kits.id = kit_line_items.itemizable_id
+        INNER JOIN items AS kit_items ON kit_items.id = kit_line_items.item_id
+        INNER JOIN base_items ON base_items.partner_key = kit_items.partner_key 
+        WHERE distributions.organization_id = ?
+          AND EXTRACT(year FROM issued_at) = ?
+          AND LOWER(base_items.category) LIKE '%period supplies%'
+          AND NOT (LOWER(base_items.category) LIKE '%diaper%' OR LOWER(base_items.name) LIKE '%diaper%')
+          AND kit_line_items.itemizable_type = 'Kit';
+      SQL
+
+      sanitized_sql = ActiveRecord::Base.send(:sanitize_sql_array, [sql_query, organization_id, year])
+
+      result = ActiveRecord::Base.connection.execute(sanitized_sql)
+      result.first['sum'].to_i
+    end
+
+    def total_distributed_period_supplies
+      distributed_loose_period_supplies + distributed_period_supplies_from_kits
     end
 
     # @return [Integer]
