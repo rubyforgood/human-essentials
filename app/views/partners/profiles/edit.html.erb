@@ -25,7 +25,6 @@
     <div class="row">
       <!-- left column -->
       <div class="col-md-12">
-        <!-- jquery validation -->
         <div class="card-transparent">
           <%= simple_form_for current_partner, url: partners_profile_path,
             data: { controller: "form-input" },
@@ -40,9 +39,6 @@
                     <%= render partial: "partners/profiles/edit/#{partial}", locals: {form: profile_form, f: profile_form, profile: current_partner.profile} %>
                   </div>
                 <% end %>
-                <div class="col-6">
-                  <%= render partial: "partners/profiles/edit/partner_settings", locals: {form: profile_form, profile: current_partner.profile} %>
-                </div>
               </div>
               <div class="card-footer">
                 <%= form.submit("Update Information", class: "btn btn-primary") %>
