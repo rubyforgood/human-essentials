@@ -211,8 +211,18 @@ RSpec.describe StorageLocation, type: :model do
       end
 
       it "raises an error if there are already items" do
-        item = create(:item)
-        storage_location_with_items = create(:storage_location, :with_items, item: item, item_quantity: 10, organization: @organization)
+        item1 = create(:item)
+        item2 = create(:item)
+        item3 = create(:item)
+        storage_location_with_items = create(:storage_location, organization: @organization)
+        TestInventory.create_inventory(@organization,
+         {
+           storage_location_with_items.id => {
+             item1.id => 30,
+             item2.id => 10,
+             item3.id => 40
+           }
+         })
         import_file_path = Rails.root.join("spec", "fixtures", "files", "inventory.csv").read
 
         expect do
