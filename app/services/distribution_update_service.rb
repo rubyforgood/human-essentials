@@ -10,15 +10,21 @@ class DistributionUpdateService < DistributionService
       @old_issued_at = distribution.issued_at
       @old_delivery_method = distribution.delivery_method
 
-      ItemizableUpdateService.call(
-        itemizable: distribution,
-        params: @params,
-        type: :decrease,
-        event_class: DistributionEvent
-      )
+      if distribution.pending?
+        # Pending means user might still be working on it
+        # so we don't want to affect inventory at this point
+        @distribution.update!(@params)
+      else
+        ItemizableUpdateService.call(
+          itemizable: distribution,
+          params: @params,
+          type: :decrease,
+          event_class: DistributionEvent
+        )
 
-      @new_issued_at = distribution.issued_at
-      @new_delivery_method = distribution.delivery_method
+        @new_issued_at = distribution.issued_at
+        @new_delivery_method = distribution.delivery_method
+      end
     end
   end
 

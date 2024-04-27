@@ -43,6 +43,7 @@ class DistributionsController < ApplicationController
 
     @distributions = current_organization
                      .distributions
+                     .not_pending
                      .includes(:partner, :storage_location, line_items: [:item])
                      .order('issued_at DESC')
                      .apply_filters(filter_params, helpers.selected_range)
@@ -118,6 +119,42 @@ class DistributionsController < ApplicationController
     end
   end
 
+  def create_pending
+    @distribution = Distribution.create(distribution_params.merge(organization: current_organization, state: "pending"))
+    if request_id
+      @distribution.request = Request.find(request_id)
+    end
+    if @distribution.valid?
+      redirect_to confirm_distribution_path(@distribution)
+    else
+      @distribution.line_items.build if @distribution.line_items.size.zero?
+      @items = current_organization.items.alphabetized
+      if Event.read_events?(current_organization)
+        inventory = View::Inventory.new(@distribution.organization_id)
+        @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
+          inventory.quantity_for(storage_location: storage_loc.id).positive?
+        end
+      else
+        @storage_locations = current_organization.storage_locations.active_locations.has_inventory_items.alphabetized
+      end
+      respond_to do |format|
+        format.turbo_stream do
+          flash_error = insufficient_error_message(@distribution.errors.full_messages)
+          flash.now[:error] = flash_error
+          render turbo_stream: [
+            turbo_stream.replace(@distribution, partial: "form", locals: {distribution: @distribution, date_place_holder: @distribution.issued_at}),
+            turbo_stream.replace("flash", partial: "shared/flash")
+          ], status: :bad_request
+        end
+      end
+    end
+  end
+
+  def confirm
+    @dist = Distribution.includes(:line_items, :storage_location)
+                        .find_by!(id: params[:id], state: :pending)
+  end
+
   def new
     @distribution = Distribution.new
     if params[:request_id]
@@ -175,7 +212,9 @@ class DistributionsController < ApplicationController
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
     result = DistributionUpdateService.new(@distribution, distribution_params).call
 
-    if result.success?
+    if result.success? && @distribution.pending?
+      redirect_to confirm_distribution_path(@distribution)
+    elsif result.success?
       if result.resend_notification? && @distribution.partner&.send_reminders
         send_notification(current_organization.id, @distribution.id, subject: "Your Distribution Has Changed", distribution_changes: result.distribution_content.changes)
       end
@@ -192,10 +231,65 @@ class DistributionsController < ApplicationController
     end
   end
 
+  def update_from_confirm
+    @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
+    result = DistributionCreateService.new(@distribution, @distribution&.request&.id).call
+
+    if result.success?
+      session[:created_distribution_id] = result.distribution.id
+      @distribution = result.distribution
+
+      perform_inventory_check
+
+      respond_to do |format|
+        format.html do
+          redirect_to distribution_path(result.distribution), notice: "Distribution created!"
+        end
+        format.turbo_stream do
+          redirect_to distribution_path(result.distribution), notice: "Distribution created!"
+        end
+      end
+    else
+      @distribution = result.distribution
+      if request_id
+        # Using .find here instead of .find_by so we can raise a error if request_id
+        # does not match any known Request
+        @distribution.request = Request.find(request_id)
+      end
+      @distribution.line_items.build if @distribution.line_items.size.zero?
+      @items = current_organization.items.alphabetized
+      if Event.read_events?(current_organization)
+        inventory = View::Inventory.new(@distribution.organization_id)
+        @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
+          inventory.quantity_for(storage_location: storage_loc.id).positive?
+        end
+      else
+        @storage_locations = current_organization.storage_locations.active_locations.has_inventory_items.alphabetized
+      end
+
+      flash_error = insufficient_error_message(result.error.message)
+
+      respond_to do |format|
+        format.html do
+          redirect_to edit_distribution_path(result.distribution), flash: {error: flash_error}
+        end
+        format.turbo_stream do
+          flash.now[:error] = flash_error
+          render turbo_stream: [
+            turbo_stream.replace(@distribution, partial: "form", locals: {distribution: @distribution, date_place_holder: @distribution.issued_at}),
+            turbo_stream.replace("flash", partial: "shared/flash")
+          ], status: :bad_request
+        end
+      end
+    end
+  end
+
   def itemized_breakdown
     setup_date_range_picker
 
-    distributions = current_organization.distributions.during(helpers.selected_range)
+    distributions = current_organization.distributions
+      .not_pending
+      .during(helpers.selected_range)
     itemized_distribution_data_csv = DistributionItemizedBreakdownService
       .new(organization: current_organization, distribution_ids: distributions.pluck(:id))
       .fetch_csv
@@ -209,7 +303,7 @@ class DistributionsController < ApplicationController
 
   # TODO: This needs a little more context. Is it JSON only? HTML?
   def schedule
-    @pick_ups = current_organization.distributions
+    @pick_ups = current_organization.distributions.not_pending
   end
 
   def calendar
@@ -234,7 +328,10 @@ class DistributionsController < ApplicationController
   end
 
   def pickup_day
-    @pick_ups = current_organization.distributions.during(pickup_date).order(issued_at: :asc)
+    @pick_ups = current_organization.distributions
+      .not_pending
+      .during(pickup_date)
+      .order(issued_at: :asc)
     @daily_items = daily_items(@pick_ups)
     @selected_date = pickup_day_params[:during]&.to_date || Time.zone.now.to_date
   end
@@ -256,7 +353,7 @@ class DistributionsController < ApplicationController
   end
 
   def distribution_params
-    params.require(:distribution).permit(:comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, :reminder_email_enabled, :delivery_method, :shipping_cost, line_items_attributes: %i(item_id quantity _destroy))
+    params.require(:distribution).permit(:from_confirm, :comment, :agency_rep, :issued_at, :partner_id, :storage_location_id, :reminder_email_enabled, :delivery_method, :shipping_cost, line_items_attributes: %i(item_id quantity _destroy))
   end
 
   def request_id

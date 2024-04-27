@@ -10,7 +10,10 @@ class DashboardController < ApplicationController
     @purchases = current_organization.purchases.during(helpers.selected_range)
     @recent_purchases = @purchases.recent.includes(:vendor)
 
-    distributions = current_organization.distributions.includes(:partner).during(helpers.selected_range)
+    distributions = current_organization.distributions
+      .not_pending
+      .includes(:partner)
+      .during(helpers.selected_range)
     @recent_distributions = distributions.recent
 
     @itemized_donation_data = DonationItemizedBreakdownService.new(organization: current_organization, donation_ids: @donations.pluck(:id)).fetch

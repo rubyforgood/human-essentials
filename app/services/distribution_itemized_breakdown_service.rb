@@ -58,7 +58,10 @@ class DistributionItemizedBreakdownService
   attr_reader :organization, :distribution_ids
 
   def distributions
-    @distributions ||= organization.distributions.where(id: distribution_ids).includes(line_items: :item)
+    @distributions ||= organization.distributions
+      .not_pending
+      .where(id: distribution_ids)
+      .includes(line_items: :item)
   end
 
   def current_onhand_quantities(inventory)

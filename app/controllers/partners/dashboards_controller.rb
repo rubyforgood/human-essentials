@@ -9,10 +9,14 @@ module Partners
     def show
       @partner = current_partner
       @partner_requests = @partner.requests.order(created_at: :desc).limit(10)
-      @upcoming_distributions = @partner.distributions.order(issued_at: :desc)
+      @upcoming_distributions = @partner.distributions
+                                        .not_pending
                                         .where('issued_at >= ?', Time.zone.today)
-      @distributions = @partner.distributions.order(issued_at: :desc)
+                                        .order(issued_at: :desc)
+      @distributions = @partner.distributions
+                               .not_pending
                                .where('issued_at < ?', Time.zone.today)
+                               .order(issued_at: :desc)
                                .limit(5)
 
       @parent_org = Organization.find(@partner.organization_id)

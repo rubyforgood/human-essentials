@@ -56,6 +56,28 @@ module Itemizable
         end
       end
 
+      def replace!
+        # Bail if there's nothing
+        return if size.zero?
+
+        # First we'll collect all the line_items that are used
+        combined = {}
+        parent_id = first.itemizable_id
+        each do |line_item|
+          next unless line_item.valid?
+          next unless line_item.quantity != 0
+
+          combined[line_item.item_id] = line_item.quantity
+        end
+        # Delete all the existing ones in this association -- this
+        # method aliases to `delete_all`
+        clear
+        # And now recreate a new array of line_items using the replaced quantity
+        combined.each do |item_id, qty|
+          build(quantity: qty, item_id: item_id, itemizable_id: parent_id)
+        end
+      end
+
       def quantities_by_category
         results = {}
 

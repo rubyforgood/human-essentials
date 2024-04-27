@@ -8,6 +8,7 @@ module CalendarService
   def self.calendar(organization_id)
     distributions = Organization.find(organization_id)
       .distributions
+      .not_pending
       .includes(:storage_location, :partner)
       .where("issued_at > ?", 1.year.ago)
 

@@ -41,9 +41,34 @@ RSpec.feature "Distributions", type: :system do
         expect(PartnerMailerJob).to receive(:perform_later).once
         click_button "Save", match: :first
 
+        expect(page).to have_content("You are about to create a distribution for")
+        click_button "Yes, it's right"
+
         expect(page).to have_content "Distributions"
         expect(page.find(".alert-info")).to have_content "created"
       end
+    end
+
+    it "Pending (abandoned) distributions do not show up in the list" do
+      visit @url_prefix + "/distributions/new"
+
+      select @partner.name, from: "Partner"
+      select @storage_location.name, from: "From storage location"
+      choose "Pick up"
+
+      fill_in "Comment", with: "Take my wipes... please"
+
+      item = View::Inventory.new(@organization.id).items_for_location(@storage_location.id).first
+      select item.name, from: "distribution_line_items_attributes_0_item_id"
+      fill_in "distribution_line_items_attributes_0_quantity", with: 1
+
+      click_button "Save", match: :first
+      expect(page).to have_content("You are about to create a distribution for")
+      # user abandons the distribution here and navigates to distribution listing
+      visit @url_prefix + "/distributions"
+      expect(page).to have_content "0 (Total)"
+      expect(page).not_to have_content(@partner.name)
+      expect(Distribution.last.pending?).to be_truthy
     end
 
     it "Displays a complete form after validation errors" do
@@ -78,6 +103,8 @@ RSpec.feature "Distributions", type: :system do
         fill_in "Distribution date", with: '01/01/2001 10:15:00 AM'
 
         click_button "Save", match: :first
+        expect(page).to have_content("You are about to create a distribution for")
+        click_button "Yes, it's right"
 
         expect(page).to have_content "Distributions"
         expect(page.find(".alert-info")).to have_content "created"
@@ -101,6 +128,8 @@ RSpec.feature "Distributions", type: :system do
         fill_in "distribution_line_items_attributes_0_quantity", with: 18
 
         click_button "Save"
+        expect(page).to have_content("You are about to create a distribution for")
+        click_button "Yes, it's right"
 
         expect(page).not_to have_content('New Distribution')
         expect(page).to have_content("The following items have fallen below the minimum on hand quantity: #{item.name}")
@@ -124,6 +153,8 @@ RSpec.feature "Distributions", type: :system do
         fill_in "distribution_line_items_attributes_0_quantity", with: 18
 
         click_button "Save"
+        expect(page).to have_content("You are about to create a distribution for")
+        click_button "Yes, it's right"
 
         expect(page).to have_content("The following items have fallen below the recommended on hand quantity: #{item.name}")
       end
@@ -143,15 +174,16 @@ RSpec.feature "Distributions", type: :system do
         quantity = item.quantity
         select item.name, from: "distribution_line_items_attributes_0_item_id"
         fill_in "distribution_line_items_attributes_0_quantity", with: quantity * 2
+        click_button "Save", match: :first
+        click_button "Yes, it's right"
+        page.find('.alert')
 
-        expect do
-          click_button "Save", match: :first
-          page.find('.alert')
-        end.not_to change { Distribution.count }
-
-        expect(page).to have_content("New Distribution")
+        # Distribution id initially created in pending status but if something is wrong with it,
+        # user is returned to edit screen to fix it.
+        expect(page).to have_content("Edit Distribution")
         message = Event.read_events?(@organization) ? 'Could not reduce quantity' : 'items exceed the available inventory'
         expect(page.find(".alert")).to have_content message
+        expect(Distribution.last.state).to eq "pending"
       end
     end
     context "when there is a default storage location" do
@@ -380,6 +412,7 @@ RSpec.feature "Distributions", type: :system do
         choose "Pick up"
         click_button "Save"
       end
+      click_button "Yes, it's right"
     end
 
     it "completes successfully" do
@@ -461,6 +494,7 @@ RSpec.feature "Distributions", type: :system do
         choose "Delivery"
         click_on "Save"
       end
+      click_button "Yes, it's right"
 
       expect(page).to have_content("Distribution Complete")
 
@@ -481,11 +515,12 @@ RSpec.feature "Distributions", type: :system do
         choose "Delivery"
         click_on "Save"
       end
-
+      click_button "Yes, it's right"
       expect(page).to have_content("Sorry, we weren't able to save")
       find_all("[data-quantity]")[0].set 1
 
       click_on "Save"
+      click_button "Yes, it's right"
 
       expect(page).to have_content("Distribution Complete")
 
@@ -643,17 +678,19 @@ RSpec.feature "Distributions", type: :system do
     fill_in "distribution_line_items_attributes_0_quantity", with: 15
 
     click_button "Save"
-
-    click_link "Make a Correction"
+    expect(page).to have_content("You are about to create a distribution for")
+    click_link("No, I need to change something.")
 
     fill_in "distribution_line_items_attributes_0_quantity", with: 20
 
     click_button "Save"
+    expect(page).to have_content("You are about to create a distribution for")
+    click_button "Yes, it's right"
 
     expect(page).to have_content("Distribution Complete")
     expect(page).to have_link("Distribution Complete")
 
-    expect(@storage_location.inventory_items.first.quantity).to eq(0)
+    expect(@storage_location.reload.inventory_items.first.quantity).to eq(0)
     expect(View::Inventory.new(@organization.id)
       .quantity_for(item_id: item.id, storage_location: @storage_location.id)).to eq(0)
 

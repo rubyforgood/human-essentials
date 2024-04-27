@@ -7,7 +7,9 @@ module Partners
 
     def index
       @partner = current_partner
-      @distributions = @partner.distributions.order(issued_at: :desc)
+      @distributions = @partner.distributions
+        .not_pending
+        .order(issued_at: :desc)
 
       @parent_org = Organization.find(@partner.organization_id)
     end

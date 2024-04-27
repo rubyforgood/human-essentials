@@ -10,6 +10,7 @@ class DistributionCreateService < DistributionService
     perform_distribution_service do
       validate_request_not_yet_processed! if @request.present?
 
+      distribution.state = "scheduled"
       distribution.save!
 
       DistributionEvent.publish(distribution)
@@ -29,7 +30,7 @@ class DistributionCreateService < DistributionService
 
   def validate_request_not_yet_processed!
     existing_distribution = @request.distribution
-    if existing_distribution.present?
+    if existing_distribution.present? && !existing_distribution.pending?
       raise "Request has already been fulfilled by Distribution #{existing_distribution.id}"
     end
   end

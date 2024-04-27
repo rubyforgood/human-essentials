@@ -126,12 +126,15 @@ Rails.application.routes.draw do
 
     resources :distributions do
       get :print, on: :member
+      get :confirm, on: :member
       collection do
         get :schedule
         get :pickup_day
         get :itemized_breakdown
+        post :create_pending
       end
       patch :picked_up, on: :member
+      patch :update_from_confirm, on: :member
     end
 
     resources :barcode_items do

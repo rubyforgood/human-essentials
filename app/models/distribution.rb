@@ -38,14 +38,23 @@ class Distribution < ApplicationRecord
   has_one :request, dependent: :nullify
   accepts_nested_attributes_for :request
 
+  # transient attribute to allow saving distribution from a confirmation form
+  attr_accessor :from_confirm
+
   validates :storage_location, :partner, :organization, :delivery_method, presence: true
   validate :line_items_exist_in_inventory
   validate :line_items_quantity_is_positive
   validates :shipping_cost, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true, if: :shipped?
 
-  before_save :combine_distribution, :reset_shipping_cost
+  # If user goes back to edit a pending distribution, quantities should be replaced rather than combined
+  before_save :combine_distribution, :reset_shipping_cost, unless: :pending?
+  before_save :replace_line_items, if: :pending?
 
-  enum state: { scheduled: 5, complete: 10 }
+  # Pending distributions have just been created but not yet confirmed.
+  # Generally speaking, these should be filtered out of views with the not_pending scope.
+  enum state: { pending: 1, scheduled: 5, complete: 10 }
+  scope :not_pending, -> { where.not(state: 'pending') }
+
   enum delivery_method: { pick_up: 0, delivery: 1, shipped: 2 }
   scope :active, -> { joins(:line_items).joins(:items).where(items: { active: true }) }
   # add item_id scope to allow filtering distributions by item
@@ -122,6 +131,10 @@ class Distribution < ApplicationRecord
 
   def combine_distribution
     line_items.combine!
+  end
+
+  def replace_line_items
+    line_items.replace!
   end
 
   def csv_export_attributes

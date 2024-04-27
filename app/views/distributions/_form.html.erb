@@ -1,4 +1,8 @@
-<%= simple_form_for distribution, data: { controller: "form-input" }, html: {class: "storage-location-required"}, wrapper_mappings: { datetime: :custom_multi_select } do |f| %>
+<%= simple_form_for distribution,
+  url: (distribution.id.present? ? distribution_path(distribution) : create_pending_distributions_path),
+  data: { controller: "form-input" },
+  html: {class: "storage-location-required"},
+  wrapper_mappings: { datetime: :custom_multi_select } do |f| %>
 
   <div class="box-body">
     <%= f.simple_fields_for :request do |r| %>

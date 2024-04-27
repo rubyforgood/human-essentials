@@ -180,6 +180,16 @@ RSpec.describe Distribution, type: :model, skip_seed: true do
         expect(Distribution.by_location(location_1.id)).not_to include(dist2)
       end
     end
+
+    describe "not_pending" do
+      it "only returns distributions that are not pending" do
+        dist1 = create(:distribution, state: "pending")
+        dist2 = create(:distribution, state: "scheduled")
+
+        expect(Distribution.not_pending).to include(dist2)
+        expect(Distribution.not_pending).not_to include(dist1)
+      end
+    end
   end
 
   context "Callbacks >" do
