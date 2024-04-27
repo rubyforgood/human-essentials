@@ -207,9 +207,9 @@
           <i class="nav-icon fa fa-circle-o"></i> Distributions - Summary
         <% end %>
       </li>
-      <li class="nav-item <%= 'active' if current_page?(historical_trends_distributions_path) %>">
-        <%= link_to(historical_trends_distributions_path, class: "nav-link #{"active" if current_page?(historical_trends_distributions_path)}") do %>
-          <i class="nav-icon fa fa-circle-o"></i> Distributions - Trends
+      <li class="nav-item <%= active_class(['distributions_by_county']) %>">
+        <%= link_to(distributions_by_county_report_path(filters: { date_range: date_range_params }), class: "nav-link #{active_class(['distributions_by_county'])}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Distributions - By County
         <% end %>
       </li>
       <li class="nav-item <%= active_class(['reports/itemized_distributions']) %>">
@@ -217,9 +217,9 @@
           <i class="nav-icon fa fa-circle-o"></i> Distributions - Itemized
         <% end %>
       </li>
-      <li class="nav-item <%= active_class(['distributions_by_county']) %>">
-        <%= link_to(distributions_by_county_report_path(filters: { date_range: date_range_params }), class: "nav-link #{active_class(['distributions_by_county'])}") do %>
-          <i class="nav-icon fa fa-circle-o"></i> Distributions - By County
+      <li class="nav-item <%= 'active' if current_page?(historical_trends_distributions_path) %>">
+        <%= link_to(historical_trends_distributions_path, class: "nav-link #{"active" if current_page?(historical_trends_distributions_path)}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Distributions - Trends
         <% end %>
       </li>
       <li class="nav-item <%= active_class(['reports/donations_summary']) %>">
@@ -227,19 +227,19 @@
           <i class="nav-icon fa fa-circle-o"></i> Donations - Summary
         <% end %>
       </li>
-      <li class="nav-item <%= 'active' if current_page?(historical_trends_donations_path) %>">
-        <%= link_to(historical_trends_donations_path, class: "nav-link #{"active" if current_page?(historical_trends_donations_path)}") do %>
-          <i class="nav-icon fa fa-circle-o"></i> Donations - Trends
-        <% end %>
-      </li>
       <li class="nav-item <%= active_class(['reports/itemized_donations']) %>">
         <%= link_to(reports_itemized_donations_path(organization_name: current_user.organization), class: "nav-link #{active_class(['reports/itemized_donations'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Donations - Itemized
         <% end %>
       </li>
-       <li class="nav-item <%= active_class(['reports/manufacturer_donations_summary']) %>">
+      <li class="nav-item <%= active_class(['reports/manufacturer_donations_summary']) %>">
         <%= link_to(reports_manufacturer_donations_summary_path(organization_name: current_user.organization), class: "nav-link #{active_class(['reports/manufacturer_donations_summary'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Donations - Manufacturer
+        <% end %>
+      </li>
+      <li class="nav-item <%= 'active' if current_page?(historical_trends_donations_path) %>">
+        <%= link_to(historical_trends_donations_path, class: "nav-link #{"active" if current_page?(historical_trends_donations_path)}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Donations - Trends
         <% end %>
       </li>
       <li class="nav-item <%= active_class(['reports/product_drives_summary']) %>">
