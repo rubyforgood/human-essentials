@@ -21,12 +21,13 @@ $(document).ready(function() {
   barcode_item_lookup
    @brief Invokes an ajax lookup of a provided barcode value
    @param value : the barcode
-   @param organization_id : passed in as a param. This constrains the lookup
+   @param organization_name : passed in as a param. This constrains the lookup
    @param src : the DOM source, so we can callback to it.
    */
-  function barcode_item_lookup(value, organization_id,src) {
+  function barcode_item_lookup(value, organization_name,src) {
+    console.log(organization_name)
     // Hardcoding magic URLs isn't ideal but it works for now
-    $.getJSON("/" + organization_id + "/barcode_items/find.json?barcode_item[value]=" + value, {}, function(data) {
+    $.getJSON("/" + organization_name + "/barcode_items/find.json?barcode_item[value]=" + value, {}, function(data) {
          // Preserve this for reference of where we came from.
          data['src'] = src;
          data['value'] = value;

@@ -137,7 +137,7 @@
           <div class="card-body">
             <div class="position-relative mb-4">
               <div class="box-body text-center float-center">
-                <%= new_button_to new_distribution_path, {text: "New Distribution"} %>
+                <%= new_button_to new_distribution_path(organization_name: nil), {text: "New Distribution"} %>
                 <%= print_button_to distributions_by_county_report_path(filters: { date_range: date_range_params }), {text: "Distributions by County", size: "md"} %>
 
                 <h3 class="text-center">
@@ -155,7 +155,7 @@
             </div>
           </div>
           <div class="card-footer text-center">
-            <%= link_to "See more...", distributions_path %>
+            <%= link_to "See more...", distributions_path(organization_name: nil) %>
           </div>
         </div>
 
@@ -171,7 +171,7 @@
           </div>
           <div class="box-body table-responsive no-padding">
             <div class='p-2 pull-right'>
-              <%= download_button_to(itemized_breakdown_distributions_path(format: :csv, filters: { date_range: date_range_params }), {text: "Export To CSV"}) %>
+              <%= download_button_to(itemized_breakdown_distributions_path(organization_name: nil, format: :csv, filters: { date_range: date_range_params }), {text: "Export To CSV"}) %>
             </div>
 
             <%= render partial: "itemized_distributions_partial", locals: { itemized_breakdown: @itemized_distribution_data } %>

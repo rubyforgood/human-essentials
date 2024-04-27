@@ -114,18 +114,18 @@ Rails.application.routes.draw do
       get :inventory
     end
   end
+  resources :distributions do
+    get :print, on: :member
+    collection do
+      get :calendar
+      get :schedule
+      get :pickup_day
+      get :itemized_breakdown
+    end
+    patch :picked_up, on: :member
+  end
 
   scope path: ":organization_name" do
-    resources :distributions do
-      get :print, on: :member
-      collection do
-        get :schedule
-        get :pickup_day
-        get :itemized_breakdown
-      end
-      patch :picked_up, on: :member
-    end
-
     resources :barcode_items do
       get :find, on: :collection
       get :font, on: :collection
@@ -219,7 +219,6 @@ Rails.application.routes.draw do
   end
 
   resources :attachments, only: %i(destroy)
-  get "distributions/calendar", to: "distributions#calendar"
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   get "help", to: "help#show"

@@ -66,7 +66,7 @@ RSpec.describe 'Requests', type: :request do
           post start_request_path(request, default_params)
 
           expect(flash[:notice]).to eq('Request started')
-          expect(response).to redirect_to(new_distribution_path(request_id: request.id))
+          expect(response).to redirect_to(new_distribution_path(request_id: request.id, organization_name: nil))
         end
       end
 

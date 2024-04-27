@@ -8,7 +8,7 @@ RSpec.describe "Layout", type: :system do
       expect(page).to have_css("body#donations.new")
 
       distribution = create(:distribution)
-      visit url_prefix + "/distributions/#{distribution.id}/edit"
+      visit edit_distribution_path(distribution.id)
       expect(page).to have_css("body#distributions.edit")
     end
   end

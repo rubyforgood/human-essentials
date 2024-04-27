@@ -71,13 +71,13 @@
     <% end %>
   </li>
   <li class="nav-item <%= 'active' if current_page?(distributions_path) %>">
-    <%= link_to(distributions_path, class: "nav-link #{"active" if current_page?(distributions_path)}") do %>
+    <%= link_to(distributions_path(organization_name: nil), class: "nav-link #{"active" if current_page?(distributions_path)}") do %>
       <i class="nav-icon fa fa-shopping-cart"></i>
       <p>Distributions</p>
     <% end %>
   </li>
   <li class="nav-item <%= 'active' if current_page?(schedule_distributions_path) %>">
-    <%= link_to(schedule_distributions_path, class: "nav-link #{"active" if current_page?(schedule_distributions_path)}") do %>
+    <%= link_to(schedule_distributions_path(organization_name: nil), class: "nav-link #{"active" if current_page?(schedule_distributions_path)}") do %>
       <i class="nav-icon fa fa-calendar-o"></i>
       <p>Pick Ups & Deliveries</p>
     <% end %>

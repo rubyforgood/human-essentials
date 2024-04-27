@@ -74,7 +74,7 @@
               text: "Make a correction",
               enabled: !@donation.has_inactive_item?,
               size: "md" } %>
-            <%= new_button_to new_distribution_path(donation_id: @donation.id, storage_location_id: @donation.storage_location_id), { text: "Start a new Distribution" } %>
+            <%= new_button_to new_distribution_path(organization_name: nil, donation_id: @donation.id, storage_location_id: @donation.storage_location_id), { text: "Start a new Distribution" } %>
             <%= delete_button_to donation_path(@donation), { size: "md", confirm: "Are you sure you want to permanently remove this donation?" } if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
             <% if @donation.has_inactive_item? %>
               <div class="warning">
