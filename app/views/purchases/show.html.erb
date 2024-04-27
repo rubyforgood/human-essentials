@@ -79,8 +79,7 @@
             <% if @purchase.has_inactive_item? %>
               <div class="warning">
                 You can only delete or correct purchases where all the items are active.
-                If you need to delete this purchase or make a correction, please make the following items active:
-                <%= @purchase.inactive_items.map(&:name).join(", ") %>
+                If you need to delete this purchase or make a correction, please make the following items active: <%= @purchase.inactive_items.map(&:name).join(", ") %>
               </div>
             <% end %>
           </div>
