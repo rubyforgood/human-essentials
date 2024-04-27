@@ -30,6 +30,7 @@
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  invited_by_id          :integer
+#  last_role_id           :bigint
 #  organization_id        :integer
 #  partner_id             :bigint
 #
@@ -42,6 +43,10 @@ class User < ApplicationRecord
 
   has_one :organization_role_join, class_name: "UsersRole", dependent: :destroy
   has_one :organization_role, through: :organization_role_join, class_name: "Role", source: :role
+
+  belongs_to :last_role_join, class_name: "UsersRole", optional: true, inverse_of: :user, foreign_key: :last_role_id
+  has_one :last_role, through: :last_role_join, class_name: "Role", source: :role
+
   accepts_nested_attributes_for :organization_role_join
   has_one :organization, through: :organization_role, source: :resource, source_type: "Organization"
   has_many :organizations, through: :roles, source: :resource, source_type: "Organization"
