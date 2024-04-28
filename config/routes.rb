@@ -128,14 +128,14 @@ Rails.application.routes.draw do
     get :find, on: :collection
     get :font, on: :collection
   end
+  resources :donation_sites, except: [:destroy] do
+    collection do
+      post :import_csv
+    end
+    delete :deactivate, on: :member
+  end
 
   scope path: ":organization_name" do
-    resources :donation_sites, except: [:destroy] do
-      collection do
-        post :import_csv
-      end
-      delete :deactivate, on: :member
-    end
     resources :product_drive_participants, except: [:destroy] do
       collection do
         post :import_csv

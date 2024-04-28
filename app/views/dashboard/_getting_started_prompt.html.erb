@@ -92,7 +92,7 @@
 
               <div id="org-stats-call-to-action-donation-sites">
                 <% donation_link_text = donation_criteria_met ? "Add More Donation Sites" : "Add a Donation Site" %>
-                <%= new_button_to new_donation_site_path, { text: donation_link_text, size: "md" } %>
+                <%= new_button_to new_donation_site_path(organization_name: nil), { text: donation_link_text, size: "md" } %>
               </div>
             </div>
           </div>

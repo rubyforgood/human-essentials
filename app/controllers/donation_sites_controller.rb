@@ -17,7 +17,7 @@ class DonationSitesController < ApplicationController
     respond_to do |format|
       if @donation_site.save
         format.html do
-          redirect_to donation_sites_path,
+          redirect_to donation_sites_path(organization_name: nil),
                       notice: "Donation site #{@donation_site.name} added!"
         end
       else
@@ -45,7 +45,7 @@ class DonationSitesController < ApplicationController
   def update
     @donation_site = current_organization.donation_sites.find(params[:id])
     if @donation_site.update(donation_site_params)
-      redirect_to donation_sites_path, notice: "#{@donation_site.name} updated!"
+      redirect_to donation_sites_path(organization_name: nil), notice: "#{@donation_site.name} updated!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
@@ -63,7 +63,7 @@ class DonationSitesController < ApplicationController
     end
 
     flash[:notice] = "#{donation_site.name} has been deactivated."
-    redirect_to donation_sites_path
+    redirect_to donation_sites_path(organization_name: nil)
   end
 
   private
