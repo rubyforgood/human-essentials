@@ -120,7 +120,7 @@
         <% end %>
       </li>
       <li class="nav-item <%= active_class(['barcode_items']) %>">
-        <%= link_to(barcode_items_path(organization_name: current_user.organization), class: "nav-link #{active_class(['barcode_items'])}") do %>
+        <%= link_to(barcode_items_path(organization_name: nil), class: "nav-link #{active_class(['barcode_items'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Barcode Items
         <% end %>
       </li>

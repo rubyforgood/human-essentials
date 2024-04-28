@@ -124,12 +124,12 @@ Rails.application.routes.draw do
     end
     patch :picked_up, on: :member
   end
+  resources :barcode_items do
+    get :find, on: :collection
+    get :font, on: :collection
+  end
 
   scope path: ":organization_name" do
-    resources :barcode_items do
-      get :find, on: :collection
-      get :font, on: :collection
-    end
     resources :donation_sites, except: [:destroy] do
       collection do
         post :import_csv

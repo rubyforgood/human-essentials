@@ -2,10 +2,9 @@ RSpec.describe "Barcode management", type: :system, js: true do
   before do
     sign_in(@user)
   end
-  let(:url_prefix) { "/#{@organization.to_param}" }
 
   context "While viewing the barcode items index page" do
-    subject { url_prefix + "/barcode_items" }
+    subject { barcode_items_path }
 
     before do
       Item.delete_all
@@ -72,7 +71,7 @@ RSpec.describe "Barcode management", type: :system, js: true do
     it "can have a user add a new barcode" do
       Item.delete_all
       item = create(:item, name: "1T Diapers")
-      visit url_prefix + "/barcode_items/new"
+      visit new_barcode_item_path
       select item.name, from: "Item"
       fill_in "Quantity", id: "barcode_item_quantity", with: barcode_traits[:quantity]
       fill_in "Barcode", id: "barcode_item_value", with: barcode_traits[:value]
@@ -88,7 +87,7 @@ RSpec.describe "Barcode management", type: :system, js: true do
     end
 
     context "when editing an existing barcode" do
-      subject { url_prefix + "/barcode_items/#{barcode.id}/edit" }
+      subject { edit_barcode_item_path(barcode.id) }
       let!(:barcode) { create(:barcode_item, organization_id: @organization.id) }
 
       it "saves the changes if they are valid" do
@@ -111,7 +110,7 @@ RSpec.describe "Barcode management", type: :system, js: true do
   end
 
   it "prevents a user from adding a new barcode with empty attributes" do
-    visit url_prefix + "/barcode_items/new"
+    visit new_barcode_item_path
     click_button "Save"
 
     expect(page.find(".alert")).to have_content "didn't work"

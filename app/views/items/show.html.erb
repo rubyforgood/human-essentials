@@ -124,7 +124,7 @@
                 <tbody>
                 <% @barcodes_for.each do |barcode_item| %>
                   <tr>
-                    <td><%= link_to barcode_item.value, barcode_item_path(barcode_item) %></td>
+                    <td><%= link_to barcode_item.value, barcode_item_path(organization_name: nil, id: barcode_item.id) %></td>
                     <td><%= barcode_item.quantity %></td>
                   </tr>
                 <% end %>
