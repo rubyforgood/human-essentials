@@ -181,7 +181,6 @@ RSpec.describe "StorageLocations", type: :request do
     describe "POST #import_inventory" do
       context "when inventory already has items" do
         it "redirects with an error message" do
-          file = fixture_file_upload("inventory.csv", "text/csv")
           item1 = create(:item)
           item2 = create(:item)
           item3 = create(:item)
@@ -194,6 +193,7 @@ RSpec.describe "StorageLocations", type: :request do
                 item3.id => 40
               }
             })
+          file = fixture_file_upload("inventory.csv", "text/csv")
 
           params = { file: file, storage_location: storage_location_with_items.id }
           post import_inventory_storage_locations_path(organization_name: @organization.to_param), params: params
