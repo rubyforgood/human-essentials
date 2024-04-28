@@ -187,13 +187,13 @@ RSpec.describe "StorageLocations", type: :request do
           item3 = create(:item)
           storage_location_with_items = create(:storage_location, organization: @organization)
           TestInventory.create_inventory(@organization,
-           {
-             storage_location_with_items.id => {
-               item1.id => 30,
-               item2.id => 10,
-               item3.id => 40
-             }
-           })
+            {
+              storage_location_with_items.id => {
+                item1.id => 30,
+                item2.id => 10,
+                item3.id => 40
+              }
+            })
 
           params = { file: file, storage_location: storage_location_with_items.id }
           post import_inventory_storage_locations_path(organization_name: @organization.to_param), params: params
