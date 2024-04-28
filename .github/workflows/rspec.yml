@@ -6,6 +6,11 @@ on:
       - "doc/**"
       - "*.md"
       - "bin/*"
+  pull_request:
+    paths-ignore:
+      - "doc/**"
+      - "*.md"
+      - "bin/*"
 
 jobs:
   rspec:

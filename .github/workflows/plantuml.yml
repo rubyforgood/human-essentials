@@ -3,6 +3,9 @@ on: push
   paths:
     - 'doc/**'
     - '*.md'
+  pull_request:
+    - 'doc/**'
+    - '*.md'
 
 jobs:
   generate_plantuml:
