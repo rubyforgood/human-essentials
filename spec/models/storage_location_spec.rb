@@ -223,6 +223,7 @@ RSpec.describe StorageLocation, type: :model do
              item3.id => 40
            }
          })
+
         import_file_path = Rails.root.join("spec", "fixtures", "files", "inventory.csv").read
 
         expect do
