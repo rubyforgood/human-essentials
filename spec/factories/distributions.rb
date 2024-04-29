@@ -28,6 +28,7 @@ FactoryBot.define do
 
     trait :past do
       issued_at { 1.week.ago }
+      created_at { 10.days.ago }
     end
 
     trait :with_items do
