@@ -134,13 +134,13 @@ Rails.application.routes.draw do
     end
     delete :deactivate, on: :member
   end
+  resources :product_drive_participants, except: [:destroy] do
+    collection do
+      post :import_csv
+    end
+  end
 
   scope path: ":organization_name" do
-    resources :product_drive_participants, except: [:destroy] do
-      collection do
-        post :import_csv
-      end
-    end
     resources :manufacturers, except: [:destroy] do
       collection do
         post :import_csv

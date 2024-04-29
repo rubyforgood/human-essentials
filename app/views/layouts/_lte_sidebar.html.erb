@@ -154,7 +154,7 @@
         <% end %>
       </li>
       <li class="nav-item <%= active_class(['product_drive_participants']) %>">
-        <%= link_to(product_drive_participants_path(organization_name: current_user.organization), class: "nav-link #{active_class(['product_drive_participants'])}") do %>
+        <%= link_to(product_drive_participants_path(organization_name: nil), class: "nav-link #{active_class(['product_drive_participants'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Product Drive Participants
         <% end %>
       </li>
