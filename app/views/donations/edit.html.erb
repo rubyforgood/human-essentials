@@ -40,7 +40,7 @@
           <!-- /.card-header -->
           <div class="card-body">
             <%= render partial: "donation_form", object: @donation %>
-            <%= link_to "Add vendor", new_vendor_path, {:remote => true, "data-bs-toggle" => "modal", "data-bs-target" => "#modal-window", id: "new_vendor", "style" => "display: none;"} %>
+            <%= link_to "Add vendor", new_vendor_path(organization_name: nil), {:remote => true, "data-bs-toggle" => "modal", "data-bs-target" => "#modal-window", id: "new_vendor", "style" => "display: none;"} %>
           </div><!-- /.box -->
         </div>
       </div>

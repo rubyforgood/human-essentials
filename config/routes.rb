@@ -144,13 +144,13 @@ Rails.application.routes.draw do
       post :import_csv
     end
   end
+  resources :vendors, except: [:destroy] do
+    collection do
+      post :import_csv
+    end
+  end
 
   scope path: ":organization_name" do
-    resources :vendors, except: [:destroy] do
-      collection do
-        post :import_csv
-      end
-    end
     resources :kits do
       member do
         get :allocations

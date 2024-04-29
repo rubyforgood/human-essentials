@@ -164,7 +164,7 @@
         <% end %>
       </li>
       <li class="nav-item <%= active_class(['vendors']) %>">
-        <%= link_to(vendors_path(organization_name: current_user.organization), class: "nav-link #{active_class(['vendors'])}") do %>
+        <%= link_to(vendors_path(organization_name: nil), class: "nav-link #{active_class(['vendors'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Vendors
         <% end %>
       </li>
