@@ -215,6 +215,7 @@ RSpec.describe StorageLocation, type: :model do
         item2 = create(:item)
         item3 = create(:item)
         storage_location_with_items = create(:storage_location, organization: @organization)
+
         TestInventory.create_inventory(@organization,
          {
            storage_location_with_items.id => {
