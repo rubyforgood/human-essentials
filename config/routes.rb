@@ -139,13 +139,13 @@ Rails.application.routes.draw do
       post :import_csv
     end
   end
+  resources :manufacturers, except: [:destroy] do
+    collection do
+      post :import_csv
+    end
+  end
 
   scope path: ":organization_name" do
-    resources :manufacturers, except: [:destroy] do
-      collection do
-        post :import_csv
-      end
-    end
     resources :vendors, except: [:destroy] do
       collection do
         post :import_csv

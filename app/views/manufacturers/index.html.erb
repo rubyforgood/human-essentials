@@ -31,7 +31,7 @@
         <div class="card card-primary">
           <div class="card-footer">
             <div class="pull-right">
-              <%= new_button_to new_manufacturer_path(organization_name: current_organization), text: "New Manufacturer" %>
+              <%= new_button_to new_manufacturer_path(organization_name: nil), text: "New Manufacturer" %>
             </div>
           </div>
         </div>
@@ -72,7 +72,7 @@
           locals: {
             import_type: "Manufacturers",
             csv_template_url: "/manufacturers.csv",
-            csv_import_url: import_csv_manufacturers_path
+            csv_import_url: import_csv_manufacturers_path(organization_name: nil)
           }
       ) do %>
     <li>Open the csv file with excel or your favourite spreadsheet program.</li>
