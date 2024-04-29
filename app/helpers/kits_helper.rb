@@ -8,7 +8,7 @@ module KitsHelper
       span_options = {title: msg, class: "tooltip-target"}
     end
     tag.span(**span_options) do
-      deactivate_button_to(deactivate_kit_path(kit),
+      deactivate_button_to(deactivate_kit_path(organization_name: nil, id: kit.id),
         options.merge({text: "Deactivate",
           confirm: confirm_deactivate_msg(kit.name), size: "m"}))
     end

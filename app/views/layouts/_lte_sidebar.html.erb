@@ -115,7 +115,7 @@
       </li>
 
       <li class="nav-item <%= active_class(['kits']) %>">
-        <%= link_to(kits_path(organization_name: current_user.organization), class: "nav-link #{active_class(['kits'])}") do %>
+        <%= link_to(kits_path(organization_name: nil), class: "nav-link #{active_class(['kits'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Kits
         <% end %>
       </li>

@@ -23,7 +23,7 @@ class KitsController < ApplicationController
 
     if kit_creation.errors.none?
       flash[:notice] = "Kit created successfully"
-      redirect_to kits_path
+      redirect_to kits_path(organization_name: nil)
     else
       flash[:error] = kit_creation.errors
                                   .map { |error| formatted_error_message(error) }
@@ -86,7 +86,7 @@ class KitsController < ApplicationController
       flash[:notice] = "#{@kit.name} at #{@storage_location.name} quantity has changed by #{@change_by}"
     end
 
-    redirect_to allocations_kit_path(id: @kit.id)
+    redirect_to allocations_kit_path(organization_name: nil, id: @kit.id)
   end
 
   private

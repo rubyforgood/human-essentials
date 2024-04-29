@@ -1,9 +1,6 @@
 require "rails_helper"
 
 RSpec.describe "/kits", type: :request do
-  let(:default_params) do
-    {organization_name: @organization.to_param}
-  end
   let!(:kit) { create(:kit, :with_item, organization: @organization) }
 
   describe "while signed in" do
@@ -18,7 +15,7 @@ RSpec.describe "/kits", type: :request do
       end
 
       it "should include deactivate" do
-        get kits_url(default_params)
+        get kits_url
         expect(response).to be_successful
         page = Nokogiri::HTML(response.body)
         expect(response.body).not_to include("DOOBIE")
@@ -35,7 +32,7 @@ RSpec.describe "/kits", type: :request do
               kit.item.id => 10
             }
           })
-          get kits_url(default_params)
+          get kits_url
           expect(response).to be_successful
           page = Nokogiri::HTML(response.body)
           expect(page.css(".deactivate-kit-button.disabled")).not_to be_empty
@@ -46,7 +43,7 @@ RSpec.describe "/kits", type: :request do
       context "when it is already deactivated" do
         it "should show reactivate button" do
           kit.deactivate
-          get kits_url(default_params.merge(include_inactive_items: true))
+          get kits_url(include_inactive_items: true)
           expect(response).to be_successful
           page = Nokogiri::HTML(response.body)
           expect(page.css(".deactivate-kit-button")).to be_empty
@@ -56,7 +53,7 @@ RSpec.describe "/kits", type: :request do
 
       context "when show inactive is checked" do
         it "should show the inactive kit" do
-          get kits_url(default_params.merge(include_inactive_items: true))
+          get kits_url(include_inactive_items: true)
           expect(response).to be_successful
           expect(response.body).to include("DOOBIE")
         end
@@ -65,7 +62,7 @@ RSpec.describe "/kits", type: :request do
 
     specify "PUT #deactivate" do
       expect(kit).to be_active
-      put deactivate_kit_url(kit, default_params)
+      put deactivate_kit_url(kit)
       expect(kit.reload).not_to be_active
       expect(response).to redirect_to(dashboard_path)
       expect(flash[:notice]).to eq("Kit has been deactivated!")
@@ -77,7 +74,7 @@ RSpec.describe "/kits", type: :request do
         expect(kit).not_to be_active
         kit.line_items.first.item.update!(active: false)
 
-        put reactivate_kit_url(kit, default_params)
+        put reactivate_kit_url(kit)
         expect(kit.reload).not_to be_active
         expect(response).to redirect_to(dashboard_path)
         expect(flash[:alert]).to eq("Cannot reactivate kit - it has inactive items! Please reactivate the items first.")
@@ -86,7 +83,7 @@ RSpec.describe "/kits", type: :request do
       it "should successfully reactivate" do
         kit.deactivate
         expect(kit).not_to be_active
-        put reactivate_kit_url(kit, default_params)
+        put reactivate_kit_url(kit)
         expect(kit.reload).to be_active
         expect(response).to redirect_to(dashboard_path)
         expect(flash[:notice]).to eq("Kit has been reactivated!")

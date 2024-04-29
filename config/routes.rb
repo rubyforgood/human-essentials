@@ -149,17 +149,16 @@ Rails.application.routes.draw do
       post :import_csv
     end
   end
+  resources :kits do
+    member do
+      get :allocations
+      post :allocate
+      put :deactivate
+      put :reactivate
+    end
+  end
 
   scope path: ":organization_name" do
-    resources :kits do
-      member do
-        get :allocations
-        post :allocate
-        put :deactivate
-        put :reactivate
-      end
-    end
-
     resources :profiles, only: %i(edit update)
     resources :items do
       delete :deactivate, on: :member
