@@ -157,9 +157,9 @@ Rails.application.routes.draw do
       put :reactivate
     end
   end
+  resources :profiles, only: %i(edit update)
 
   scope path: ":organization_name" do
-    resources :profiles, only: %i(edit update)
     resources :items do
       delete :deactivate, on: :member
       patch :restore, on: :member

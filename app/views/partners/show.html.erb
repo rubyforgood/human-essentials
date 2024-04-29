@@ -227,7 +227,7 @@
               <% unless @partner.approved? %>
                 <%= print_button_to approve_application_partner_path(@partner), { text: "Approve Partner", icon: "thumbs-o-up", type: "success", size: "md", enabled: @partner.approvable? } %>
               <% end %>
-              <%= edit_button_to edit_profile_path(@partner), { text: "Edit Information", size: "md" } %>
+              <%= edit_button_to edit_profile_path(organization_name: nil, id: @partner.id), { text: "Edit Information", size: "md" } %>
             </div>
           </div>
           <div class="card-body p-2">
