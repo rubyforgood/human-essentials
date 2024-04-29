@@ -228,8 +228,23 @@ RSpec.describe "Dashboard", type: :system, js: true do
         let(:below_recommended_item) { create :item, organization: @organization, on_hand_minimum_quantity: 0, on_hand_recommended_quantity: 200 }
         let(:below_minimum_item) { create :item, organization: @organization, on_hand_minimum_quantity: 150, on_hand_recommended_quantity: 200 }
 
-        let!(:below_recommended_inventory_item) { create :inventory_item, item: below_recommended_item, storage_location: storage_location, quantity: 100 }
-        let!(:below_minimum_inventory_item) { create :inventory_item, item: below_minimum_item, storage_location: storage_location, quantity: 100 }
+        let!(:below_recommended_inventory_purchase) {
+          create :purchase, :with_items,
+            organization: @organization,
+            storage_location: storage_location,
+            item: below_recommended_item,
+            item_quantity: 100,
+            issued_at: Time.current
+        }
+
+        let!(:below_minimum_inventory_purchase) {
+          create :purchase, :with_items,
+            organization: @organization,
+            storage_location: storage_location,
+            item: below_minimum_item,
+            item_quantity: 100,
+            issued_at: Time.current
+        }
 
         it "displays low inventory report" do
           org_dashboard_page.visit
