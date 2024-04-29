@@ -41,7 +41,7 @@ class ItemsController < ApplicationController
     result = create.call
 
     if result.success?
-      redirect_to items_path, notice: "#{result.item.name} added!"
+      redirect_to items_path(organization_name: nil), notice: "#{result.item.name} added!"
     else
       @base_items = BaseItem.without_kit.alphabetized
       # Define a @item to be used in the `new` action to be rendered with
@@ -91,7 +91,7 @@ class ItemsController < ApplicationController
     end
 
     if @item.save
-      redirect_to items_path, notice: "#{@item.name} updated!"
+      redirect_to items_path(organization_name: nil), notice: "#{@item.name} updated!"
     else
       @base_items = BaseItem.without_kit.alphabetized
       flash[:error] = "Something didn't work quite right -- try again? #{@item.errors.map { |error| "#{error.attribute}: #{error.message}" }}"
@@ -105,12 +105,12 @@ class ItemsController < ApplicationController
       item.deactivate!
     rescue => e
       flash[:error] = e.message
-      redirect_back(fallback_location: items_path)
+      redirect_back(fallback_location: items_path(organization_name: nil))
       return
     end
 
     flash[:notice] = "#{item.name} has been deactivated."
-    redirect_to items_path
+    redirect_to items_path(organization_name: nil)
   end
 
   def destroy
@@ -118,12 +118,12 @@ class ItemsController < ApplicationController
     item.destroy
     if item.errors.any?
       flash[:error] = item.errors.full_messages.join("\n")
-      redirect_back(fallback_location: items_path)
+      redirect_back(fallback_location: items_path(organization_name: nil))
       return
     end
 
     flash[:notice] = "#{item.name} has been removed."
-    redirect_to items_path
+    redirect_to items_path(organization_name: nil)
   end
 
   def restore
@@ -133,7 +133,7 @@ class ItemsController < ApplicationController
     end
 
     flash[:notice] = "#{item.name} has been restored."
-    redirect_to items_path
+    redirect_to items_path(organization_name: nil)
   end
 
   def remove_category
@@ -142,7 +142,7 @@ class ItemsController < ApplicationController
 
     item.update!(item_category: nil)
     flash[:notice] = "#{item.name} has been removed from #{previous_category.name}."
-    redirect_to item_category_path(previous_category)
+    redirect_to item_category_path(organization_name: nil, id: previous_category.id)
   end
 
   private

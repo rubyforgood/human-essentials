@@ -109,7 +109,7 @@
     </a>
     <ul class="nav nav-treeview">
       <li class="nav-item <%= active_class(['items']) %>">
-        <%= link_to(items_path(organization_name: current_user.organization), class: "nav-link #{active_class(['items'])}") do %>
+        <%= link_to(items_path(organization_name: nil), class: "nav-link #{active_class(['items'])}") do %>
           <i class="nav-icon fa fa-circle-o"></i> Items &amp; Inventory
         <% end %>
       </li>

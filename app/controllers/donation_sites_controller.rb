@@ -58,7 +58,7 @@ class DonationSitesController < ApplicationController
       donation_site.deactivate!
     rescue => e
       flash[:error] = e.message
-      redirect_back(fallback_location: items_path)
+      redirect_back(fallback_location: items_path(organization_name: nil))
       return
     end
 

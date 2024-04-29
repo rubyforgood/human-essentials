@@ -45,7 +45,7 @@
               </tbody>
             </table>
             <div class='p-3 pull-right'>
-              <%= edit_button_to edit_item_category_path(@item_category), {size: 'lg'} %>
+              <%= edit_button_to edit_item_category_path(organization_name: nil, id: @item_category.id), {size: 'lg'} %>
             </div>
           </div>
           <!-- /.card-body -->
@@ -76,9 +76,9 @@
                 <% @item_category.items.each do |item| %>
                   <tr>
                     <td><%= item.name %> </td>
-                    <td><%= view_button_to item_path(item) %>
+                    <td><%= view_button_to item_path(organization_name: nil, id: item.id) %>
                       <% if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
-                        <%= delete_button_to(remove_category_item_path(item), method: :patch, text: "Remove from category") %>
+                        <%= delete_button_to(remove_category_item_path(organization_name: nil, id: item.id), method: :patch, text: "Remove from category") %>
                       <% end %>
                     </td>
                   </tr>

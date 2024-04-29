@@ -158,14 +158,14 @@ Rails.application.routes.draw do
     end
   end
   resources :profiles, only: %i(edit update)
+  resources :items do
+    delete :deactivate, on: :member
+    patch :restore, on: :member
+    patch :remove_category, on: :member
+  end
+  resources :item_categories, except: [:index]
 
   scope path: ":organization_name" do
-    resources :items do
-      delete :deactivate, on: :member
-      patch :restore, on: :member
-      patch :remove_category, on: :member
-    end
-    resources :item_categories, except: [:index]
     resources :partners do
       collection do
         post :import_csv

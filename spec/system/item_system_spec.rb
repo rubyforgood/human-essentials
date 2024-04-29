@@ -3,9 +3,8 @@ RSpec.describe "Item management", type: :system do
     sign_in(@user)
   end
 
-  let!(:url_prefix) { "/#{@organization.to_param}" }
   it "can create a new item as a user" do
-    visit url_prefix + "/items/new"
+    visit new_item_path
     item_traits = attributes_for(:item)
     fill_in "Name", with: item_traits[:name]
     select BaseItem.last.name, from: "Base Item"
@@ -15,14 +14,14 @@ RSpec.describe "Item management", type: :system do
   end
 
   it "can create a new item with empty attributes as a user" do
-    visit url_prefix + "/items/new"
+    visit new_item_path
     click_button "Save"
 
     expect(page.find(".alert")).to have_content "didn't work"
   end
 
   it "can create a new item with dollars decimal amount for value field" do
-    visit url_prefix + "/items/new"
+    visit new_item_path
     item_traits = attributes_for(:item)
     fill_in "Name", with: item_traits[:name]
     fill_in "item_value_in_dollars", with: '1,234.56'
@@ -36,7 +35,7 @@ RSpec.describe "Item management", type: :system do
 
   it "can update an existing item as a user" do
     item = create(:item)
-    visit url_prefix + "/items/#{item.id}/edit"
+    visit edit_item_path(item.id)
     click_button "Save"
 
     expect(page.find(".alert")).to have_content "updated"
@@ -44,7 +43,7 @@ RSpec.describe "Item management", type: :system do
 
   it "can update an existing item with empty attributes as a user" do
     item = create(:item)
-    visit url_prefix + "/items/#{item.id}/edit"
+    visit edit_item_path(item.id)
     fill_in "Name", with: ""
     click_button "Save"
 
@@ -53,10 +52,10 @@ RSpec.describe "Item management", type: :system do
 
   it "can make the item invisible to partners" do
     item = create(:item)
-    visit url_prefix + "/items/#{item.id}/edit"
+    visit edit_item_path(item.id)
     uncheck "visible_to_partners"
     click_button "Save"
-    visit url_prefix + "/items/#{item.id}/edit"
+    visit edit_item_path(item.id)
 
     # rubocop:disable Rails/DynamicFindBy
     expect(find_by_id("visible_to_partners").checked?).to be false
@@ -69,7 +68,7 @@ RSpec.describe "Item management", type: :system do
     Item.delete_all
     create(:item, base_item: BaseItem.first)
     create(:item, base_item: BaseItem.last)
-    visit url_prefix + "/items"
+    visit items_path
     select BaseItem.first.name, from: "filters[by_base_item]"
     click_button "Filter"
     within "#items-table" do
@@ -82,7 +81,7 @@ RSpec.describe "Item management", type: :system do
 
     it "allows a user to restore the item" do
       expect do
-        visit url_prefix + "/items"
+        visit items_path
         check "include_inactive_items"
         click_on "Filter"
         within "#items-table" do
@@ -114,7 +113,7 @@ RSpec.describe "Item management", type: :system do
     let!(:donation_tampons) { create(:donation, :with_items, storage_location: storage, item_quantity: num_tampons_in_donation, item: item_tampons) }
     let!(:donation_aux_tampons) { create(:donation, :with_items, storage_location: aux_storage, item_quantity: num_tampons_second_donation, item: item_tampons) }
     before do
-      visit url_prefix + "/items"
+      visit items_path
     end
 
     # Consolidated these into one to reduce the setup/teardown
@@ -161,7 +160,7 @@ RSpec.describe "Item management", type: :system do
 
   describe 'Item Category Management' do
     before do
-      visit url_prefix + "/items"
+      visit items_path
     end
 
     describe 'creating a new item category and associating to a new item' do
