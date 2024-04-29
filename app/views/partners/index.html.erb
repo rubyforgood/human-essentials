@@ -56,8 +56,8 @@
           layout: "shared/csv_import_modal",
           locals: {
             import_type: "Partners",
-            csv_template_url: "/partners.csv",
-            csv_import_url: import_csv_partners_path
+            csv_template_url: "/partners_template.csv",
+            csv_import_url: import_csv_partners_path(organization_name: nil)
           }
       ) do %>
     <li>Open the CSV file with Excel or your favourite spreadsheet program.</li>

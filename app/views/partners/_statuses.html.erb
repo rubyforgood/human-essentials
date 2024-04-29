@@ -13,11 +13,11 @@
     partner_count = partners.select(&selector).size %>
   <li>
     <%= fa_icon icon_mapping[status] || '', class: "bg-partner-#{status}  " %>
-    <%= link_to_unless partner_count.zero?, "#{partner_count} #{status.humanize}", partners_path(filters: { by_status: status }), class: ("filtering" if status == current_filtered_status) %>
+    <%= link_to_unless partner_count.zero?, "#{partner_count} #{status.humanize}", partners_path(organization_name:nil, filters: { by_status: status }), class: ("filtering" if status == current_filtered_status) %>
   </li>
   <% end %>
   <li>
     <%= fa_icon 'list-alt' %>
-    <%= link_to "#{partners.active.size} Active", partners_path, class: ("filtering" if current_filtered_status.nil?) %>
+    <%= link_to "#{partners.active.size} Active", partners_path(organization_name: nil), class: ("filtering" if current_filtered_status.nil?) %>
   </li>
 </ul>

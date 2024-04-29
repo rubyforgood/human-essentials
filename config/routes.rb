@@ -80,6 +80,7 @@ Rails.application.routes.draw do
     get :switch_to_role, on: :collection
     post :partner_user_reset_password, on: :collection
   end
+
   # Users that are organization admins can manage the organization itself
   resource :organization, only: [:show]
   resource :organization, path: :manage, only: %i(edit update) do
@@ -92,17 +93,23 @@ Rails.application.routes.draw do
       post :demote_to_user
     end
   end
+
   resources :events, only: %i(index)
+
   resources :adjustments, except: %i(edit update)
+
   resources :audits do
     post :finalize
   end
+
   namespace :reports do
     resources :annual_reports, only: [:index, :show], param: :year do
       post :recalculate, on: :member
     end
   end
+
   resources :transfers, only: %i(index create new show destroy)
+
   resources :storage_locations do
     put :deactivate
     put :reactivate
@@ -114,6 +121,7 @@ Rails.application.routes.draw do
       get :inventory
     end
   end
+
   resources :distributions do
     get :print, on: :member
     collection do
@@ -124,31 +132,37 @@ Rails.application.routes.draw do
     end
     patch :picked_up, on: :member
   end
+
   resources :barcode_items do
     get :find, on: :collection
     get :font, on: :collection
   end
+
   resources :donation_sites, except: [:destroy] do
     collection do
       post :import_csv
     end
     delete :deactivate, on: :member
   end
+
   resources :product_drive_participants, except: [:destroy] do
     collection do
       post :import_csv
     end
   end
+
   resources :manufacturers, except: [:destroy] do
     collection do
       post :import_csv
     end
   end
+
   resources :vendors, except: [:destroy] do
     collection do
       post :import_csv
     end
   end
+
   resources :kits do
     member do
       get :allocations
@@ -157,34 +171,37 @@ Rails.application.routes.draw do
       put :reactivate
     end
   end
+
   resources :profiles, only: %i(edit update)
+
   resources :items do
     delete :deactivate, on: :member
     patch :restore, on: :member
     patch :remove_category, on: :member
   end
+
   resources :item_categories, except: [:index]
 
-  scope path: ":organization_name" do
-    resources :partners do
-      collection do
-        post :import_csv
-      end
-      member do
-        get :profile
-        patch :profile
-        get :approve_application
-        post :invite
-        post :invite_and_approve
-        post :invite_partner_user
-        post :recertify_partner
-        put :deactivate
-        put :reactivate
-      end
+  resources :partners do
+    collection do
+      post :import_csv
     end
+    member do
+      get :profile
+      patch :profile
+      get :approve_application
+      post :invite
+      post :invite_and_approve
+      post :invite_partner_user
+      post :recertify_partner
+      put :deactivate
+      put :reactivate
+    end
+  end
 
-    resources :partner_groups, only: [:new, :create, :edit, :update]
+  resources :partner_groups, only: [:new, :create, :edit, :update]
 
+  scope path: ":organization_name" do
     resources :product_drives
     resources :donations do
       # collection do

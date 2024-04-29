@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Partners", (partners_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Partners", partners_path(organization_name: nil) %></li>
           <li class="breadcrumb-item"><a href="#"><%= @partner.name %></a></li>
         </ol>
       </div>
@@ -39,7 +39,7 @@
                 <div>
                   <h4 class='text-2xl underline'> Partner Details </h4>
                 </div>
-                <%= edit_button_to edit_partner_path(@partner), { text: "Edit Partner Information", icon: "pencil-square-o", type: "primary", size: "m" } %>
+                <%= edit_button_to edit_partner_path(organization_name: nil, id: @partner.id), { text: "Edit Partner Information", icon: "pencil-square-o", type: "primary", size: "m" } %>
                 <br>
                 <br>
                 <%= view_button_to '#partner-information', { text: "View Partner Information", type: "secondary", size: "m" } %>
@@ -58,14 +58,14 @@
                   <h4 class='text-2xl underline'> Partner Status </h4>
                 </div>
                 <% if @partner.deactivated? %>
-                  <%= reactivate_button_to reactivate_partner_path(@partner), { confirm: confirm_reactivate_msg(@partner.name), size: 'm' } %>
+                  <%= reactivate_button_to reactivate_partner_path(organization_name: nil, id: @partner.id), { confirm: confirm_reactivate_msg(@partner.name), size: 'm' } %>
                 <% else %>
-                  <%= deactivate_button_to deactivate_partner_path(@partner), { text: "Deactivate Partner", confirm: confirm_deactivate_msg(@partner.name), size: 'm' } %>
+                  <%= deactivate_button_to deactivate_partner_path(organization_name: nil, id: @partner.id), { text: "Deactivate Partner", confirm: confirm_deactivate_msg(@partner.name), size: 'm' } %>
                 <% end %>
                 <br>
                 <br>
                 <% unless @partner.approved? %>
-                  <%= print_button_to approve_application_partner_path(@partner), { text: "Activate Partner Now", icon: "thumbs-o-up", type: "success", size: "m" } if can_administrate? %>
+                  <%= print_button_to approve_application_partner_path(organization_name: nil, id: @partner.id), { text: "Activate Partner Now", icon: "thumbs-o-up", type: "success", size: "m" } if can_administrate? %>
                 <% end %>
               </div>
             </div>

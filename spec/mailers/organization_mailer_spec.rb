@@ -8,15 +8,15 @@ RSpec.describe OrganizationMailer, type: :mailer, seed_items: false do
       html = html_body(subject)
       expect(html).to include("<h1> You've received a request to approve the account for #{partner.name}. </h1>")
       expect(html).to include("Review This Partner")
-      expect(html).to include("#{organization.short_name}/partners/#{partner.id}#partner-information\">Review This Partner</a>")
+      expect(html).to include("/partners/#{partner.id}#partner-information\">Review This Partner</a>")
       text = text_body(subject)
       expect(text).to include("You've received a request to approve the account for #{partner.name}.")
       expect(text).to include("Review This Partner")
-      expect(text).to include("#{organization.short_name}/partners/#{partner.id}#partner-information")
+      expect(text).to include("/partners/#{partner.id}#partner-information")
     end
 
     it "includes a link to the relevant partner" do
-      expect(subject.body.encoded).to include("/#{organization.short_name}/partners/#{partner.id}#partner-information")
+      expect(subject.body.encoded).to include("/partners/#{partner.id}#partner-information")
     end
 
     it "should be sent to the partner main email with the correct subject line" do

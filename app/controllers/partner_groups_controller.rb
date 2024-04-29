@@ -8,7 +8,7 @@ class PartnerGroupsController < ApplicationController
     @partner_group = current_organization.partner_groups.new(partner_group_params)
     if @partner_group.save
       # Redirect to groups tab in Partner page.
-      redirect_to partners_path + "#nav-partner-groups", notice: "Partner group added!"
+      redirect_to partners_path(organization_name: nil) + "#nav-partner-groups", notice: "Partner group added!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :new
@@ -23,7 +23,7 @@ class PartnerGroupsController < ApplicationController
   def update
     @partner_group = current_organization.partner_groups.find(params[:id])
     if @partner_group.update(partner_group_params)
-      redirect_to partners_path + "#nav-partner-groups", notice: "Partner group edited!"
+      redirect_to partners_path(organization_name: nil) + "#nav-partner-groups", notice: "Partner group edited!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit

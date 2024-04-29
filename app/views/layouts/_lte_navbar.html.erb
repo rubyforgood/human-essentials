@@ -52,7 +52,7 @@
     Requests
     <% end %>
     <div class="dropdown-divider"></div>
-    <%= link_to(partners_path, class: "dropdown-item") do %>
+    <%= link_to(partners_path(organization_name: nil), class: "dropdown-item") do %>
     <i class="fa fa-file-text text-aqua"></i> <%= current_organization&.partners.awaiting_review.size rescue "0" %>
     Partner Agencies Pending Review
     <% end %>

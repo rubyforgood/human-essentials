@@ -89,8 +89,8 @@
         <i class="fas fa-angle-left right"></i></p>
     </a>
     <ul class="nav nav-treeview">
-      <li class="nav-item <%= 'active' if current_page?(partners_path) %>">
-        <%= link_to(partners_path, class: "nav-link #{"active" if current_page?(partners_path)}") do %>
+      <li class="nav-item <%= 'active' if current_page?partners_path(organization_name: nil) %>">
+        <%= link_to(partners_path(organization_name: nil), class: "nav-link #{"active" if current_page?partners_path(organization_name: nil)}") do %>
           <i class="nav-icon fa fa-circle-o"></i>All Partners
         <% end %>
       </li>

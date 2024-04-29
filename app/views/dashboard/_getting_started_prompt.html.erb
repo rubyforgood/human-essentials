@@ -44,7 +44,7 @@
 
               <div id="org-stats-call-to-action-partners">
                 <% partner_link_text = partner_criteria_met ? "Add More Partners" : "Add a Partner" %>
-                <%= new_button_to new_partner_path, { text: partner_link_text, size: "md" } %>
+                <%= new_button_to new_partner_path(organization_name: nil), { text: partner_link_text, size: "md" } %>
               </div>
             </div>
           </div>
