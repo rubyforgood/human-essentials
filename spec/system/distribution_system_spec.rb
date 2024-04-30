@@ -454,7 +454,7 @@ RSpec.feature "Distributions", type: :system do
       request_items = [{ "item_id" => items[0], "quantity" => 10 }, { "item_id" => items[1], "quantity" => 10 }]
       @request = create :request, organization: @organization, request_items: request_items
 
-      visit @url_prefix + "/requests/#{@request.id}"
+      visit request_path(id: @request.id)
       click_on "Fulfill request"
       within "#new_distribution" do
         select @storage_location.name, from: "From storage location"
@@ -464,9 +464,10 @@ RSpec.feature "Distributions", type: :system do
 
       expect(page).to have_content("Distribution Complete")
 
+      @request = Request.last
       @distribution = Distribution.last
-      expect(@request.reload.distribution_id).to eq @distribution.id
-      expect(@request.reload).to be_status_fulfilled
+      expect(@request.distribution_id).to eq @distribution.id
+      expect(@request).to be_status_fulfilled
     end
 
     it "maintains the connection with the request even when there are initial errors" do
@@ -474,7 +475,7 @@ RSpec.feature "Distributions", type: :system do
       request_items = [{ "item_id" => items[0], "quantity" => 1000000 }, { "item_id" => items[1], "quantity" => 10 }]
       @request = create :request, organization: @organization, request_items: request_items
 
-      visit @url_prefix + "/requests/#{@request.id}"
+      visit request_path(id: @request.id)
       click_on "Fulfill request"
       within "#new_distribution" do
         select @storage_location.name, from: "From storage location"
@@ -489,9 +490,10 @@ RSpec.feature "Distributions", type: :system do
 
       expect(page).to have_content("Distribution Complete")
 
+      @request = Request.last
       @distribution = Distribution.last
-      expect(@request.reload.distribution_id).to eq @distribution.id
-      expect(@request.reload).to be_status_fulfilled
+      expect(@request.distribution_id).to eq @distribution.id
+      expect(@request).to be_status_fulfilled
     end
   end
 

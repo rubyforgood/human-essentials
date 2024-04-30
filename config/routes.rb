@@ -210,21 +210,20 @@ Rails.application.routes.draw do
 
   resources :purchases
 
+  resources :requests, only: %i(index new show) do
+    member do
+      post :start
+    end
+  end
+  resources :requests, except: %i(destroy) do
+    resource :cancelation, only: [:new, :create], controller: 'requests/cancelation'
+    get :print, on: :member
+    collection do
+      get :partner_requests
+    end
+  end
+
   scope path: ":organization_name" do
-    resources :requests, only: %i(index new show) do
-      member do
-        post :start
-      end
-    end
-
-    resources :requests, except: %i(destroy) do
-      resource :cancelation, only: [:new, :create], controller: 'requests/cancelation'
-      get :print, on: :member
-      collection do
-        get :partner_requests
-      end
-    end
-
     get "dashboard", to: "dashboard#index"
     get "historical_trends/distributions", to: "historical_trends/distributions#index"
     get "historical_trends/purchases", to: "historical_trends/purchases#index"

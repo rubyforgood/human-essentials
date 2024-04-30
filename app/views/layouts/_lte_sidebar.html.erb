@@ -64,8 +64,8 @@
       </li>
     </ul>
   </li>
-  <li class="nav-item <%= 'active' if current_page?(requests_path) %>">
-    <%= link_to(requests_path, class: "nav-link #{active_class(['requests'])}") do %>
+  <li class="nav-item <%= 'active' if current_page?(requests_path(organization_name: nil)) %>">
+    <%= link_to(requests_path(organization_name: nil), class: "nav-link #{active_class(['requests'])}") do %>
       <i class="nav-icon fa fa-file-text"></i>
       <p>Requests</p>
     <% end %>
