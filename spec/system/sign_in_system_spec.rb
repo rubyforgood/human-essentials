@@ -21,9 +21,7 @@ RSpec.describe "User sign-in handling", type: :system, js: true do
       fill_in "Password", with: DEFAULT_USER_PASSWORD
       click_button "Log in"
 
-      expect(page).to have_current_path(
-        dashboard_path(organization_name: @user.organization)
-      )
+      expect(page).to have_current_path(dashboard_path)
     end
   end
 

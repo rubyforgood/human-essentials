@@ -55,7 +55,7 @@ RSpec.describe "Admin", type: :request do
       [@organization_admin, @user].each do |u|
         sign_in(u)
         get admin_dashboard_path
-        expect(response).to redirect_to(dashboard_path(organization_name: u.organization))
+        expect(response).to redirect_to(dashboard_path)
         expect(response).to have_error
       end
     end

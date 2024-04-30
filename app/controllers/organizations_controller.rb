@@ -5,7 +5,7 @@ class OrganizationsController < ApplicationController
 
   def show
     @organization = current_organization
-    @header_link = dashboard_path
+    @header_link = dashboard_path(organization_name: nil)
   end
 
   def edit

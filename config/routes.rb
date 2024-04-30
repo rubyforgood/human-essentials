@@ -223,8 +223,9 @@ Rails.application.routes.draw do
     end
   end
 
+  get "dashboard", to: "dashboard#index"
+
   scope path: ":organization_name" do
-    get "dashboard", to: "dashboard#index"
     get "historical_trends/distributions", to: "historical_trends/distributions#index"
     get "historical_trends/purchases", to: "historical_trends/purchases#index"
     get "historical_trends/donations", to: "historical_trends/donations#index"

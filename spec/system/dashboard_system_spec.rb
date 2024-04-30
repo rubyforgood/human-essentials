@@ -5,16 +5,15 @@ RSpec.describe "Dashboard", type: :system, js: true do
     before :each do
       @new_organization = create(:organization)
       @user = create(:user, organization: @new_organization)
-      @org_short_name = new_organization.short_name
     end
-    attr_reader :new_organization, :org_short_name, :user
+    attr_reader :new_organization, :user
 
     before do
       sign_in(user)
     end
 
     it "displays the getting started guide until the steps are completed" do
-      org_dashboard_page = OrganizationDashboardPage.new org_short_name: org_short_name
+      org_dashboard_page = OrganizationDashboardPage.new
       org_dashboard_page.visit
 
       # rubocop:disable Layout/ExtraSpacing
@@ -72,8 +71,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
     end
 
     let!(:storage_location) { create(:storage_location, :with_items, item_quantity: 1, organization: @organization) }
-    let(:org_short_name) { @organization.short_name }
-    let(:org_dashboard_page) { OrganizationDashboardPage.new org_short_name: org_short_name }
+    let(:org_dashboard_page) { OrganizationDashboardPage.new }
 
     describe "Signage" do
       it "shows their organization name unless they have a logo set" do

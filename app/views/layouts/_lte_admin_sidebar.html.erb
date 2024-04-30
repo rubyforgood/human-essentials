@@ -135,7 +135,7 @@
 
   <% if (current_user.organization.present?) %>
     <li class="nav-item">
-      <%= link_to(dashboard_path(organization_name: current_user.organization), class: "nav-link") do %>
+      <%= link_to(dashboard_path, class: "nav-link") do %>
         <i class="nav-icon fas fa-home"></i>
         <p>My Organization</p>
       <% end %>

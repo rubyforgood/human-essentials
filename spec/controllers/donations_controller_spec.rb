@@ -164,7 +164,7 @@ RSpec.describe DonationsController, type: :controller do
 
       # normal users are not authorized
       it "redirects to the dashboard path" do
-        expect(subject).to redirect_to(dashboard_path)
+        expect(subject).to redirect_to(dashboard_path(organization_name: nil))
       end
     end
   end

@@ -1,6 +1,6 @@
 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
   <li class="nav-item">
-    <%= link_to(dashboard_path(organization_name: current_user.organization), class: "nav-link #{active_class(['dashboard'])}") do %>
+    <%= link_to(dashboard_path, class: "nav-link #{active_class(['dashboard'])}") do %>
       <i class="nav-icon fas fa-tachometer-alt"></i>
       <p>Dashboard</p>
     <% end %>

@@ -16,7 +16,7 @@ RSpec.describe "Sessions", type: :request, order: :defined do
 
     it "properly accesses the organization dashboard" do
       get root_path
-      expect(response).to redirect_to(dashboard_url(@organization))
+      expect(response).to redirect_to(dashboard_url)
     end
   end
 end

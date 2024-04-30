@@ -40,16 +40,16 @@ class KitsController < ApplicationController
   def deactivate
     @kit = Kit.find(params[:id])
     @kit.deactivate
-    redirect_back(fallback_location: dashboard_path, notice: "Kit has been deactivated!")
+    redirect_back(fallback_location: dashboard_path(organization_name: nil), notice: "Kit has been deactivated!")
   end
 
   def reactivate
     @kit = Kit.find(params[:id])
     if @kit.can_reactivate?
       @kit.reactivate
-      redirect_back(fallback_location: dashboard_path, notice: "Kit has been reactivated!")
+      redirect_back(fallback_location: dashboard_path(organization_name: nil), notice: "Kit has been reactivated!")
     else
-      redirect_back(fallback_location: dashboard_path, alert: "Cannot reactivate kit - it has inactive items! Please reactivate the items first.")
+      redirect_back(fallback_location: dashboard_path(organization_name: nil), alert: "Cannot reactivate kit - it has inactive items! Please reactivate the items first.")
     end
   end
 
