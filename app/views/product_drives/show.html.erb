@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Product Drives", (product_drives_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Product Drives", product_drives_path(organization_name: nil) %></li>
         </ol>
       </div>
     </div>
@@ -89,8 +89,8 @@
             To add additional donations to this product drive, please edit that donation and select this product drive from the appropriate dropdown.
           </p>
           <div class="card-footer clearfix">
-            <%= edit_button_to edit_product_drive_path(@product_drive), { text: "Make a correction", size: "md" } %>
-            <%= delete_button_to product_drive_path(@product_drive), { confirm: "Are you sure you want to permanently remove this product drive?", size: "md" } if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
+            <%= edit_button_to edit_product_drive_path(organization_name: nil, id: @product_drive.id), { text: "Make a correction", size: "md" } %>
+            <%= delete_button_to product_drive_path(organization_name: nil, id: @product_drive.id), { confirm: "Are you sure you want to permanently remove this product drive?", size: "md" } if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
           </div>
           <!-- /.card-footer-->
         </div>

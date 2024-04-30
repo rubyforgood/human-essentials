@@ -3,11 +3,10 @@ require 'rails_helper'
 RSpec.describe "ProductDrives", type: :request, skip_seed: true do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
-  let(:default_params) { { organization_name: organization.to_param } }
 
   context "while not signed in" do
     it "is unsuccessful" do
-      get product_drives_path(default_params)
+      get product_drives_path
 
       expect(response).not_to be_successful
     end
@@ -19,6 +18,8 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
     end
 
     describe "GET #index" do
+      let(:default_params) { { } }
+
       subject { get product_drives_path(default_params) }
 
       it "returns http success" do
@@ -166,14 +167,14 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
 
     describe "GET #new" do
       it "returns http success" do
-        get new_product_drive_path(default_params)
+        get new_product_drive_path
         expect(response).to be_successful
       end
     end
 
     describe "POST#create" do
       it "returns redirect http status" do
-        post product_drives_path(default_params.merge(product_drive: attributes_for(:product_drive)))
+        post product_drives_path(product_drive: attributes_for(:product_drive))
         expect(response).to have_http_status(:redirect)
       end
     end
@@ -182,7 +183,7 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
       it "returns redirect http status" do
         product_drive = create(:product_drive, organization: organization)
 
-        put product_drive_path(default_params.merge(id: product_drive.id, product_drive: attributes_for(:product_drive)))
+        put product_drive_path(id: product_drive.id, product_drive: attributes_for(:product_drive))
         expect(response).to have_http_status(:redirect)
       end
     end
@@ -191,7 +192,7 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
       it "returns http success" do
         product_drive = create(:product_drive, organization: organization)
 
-        get edit_product_drive_path(default_params.merge(id: product_drive.id))
+        get edit_product_drive_path(id: product_drive.id)
         expect(response).to be_successful
       end
     end
@@ -200,7 +201,7 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
       it "returns http success" do
         product_drive = create(:product_drive, organization: organization)
 
-        get product_drive_path(default_params.merge(id: product_drive.id))
+        get product_drive_path(id: product_drive.id)
         expect(response).to be_successful
       end
 
@@ -209,7 +210,7 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
         participant = create(:product_drive_participant)
         create(:donation, :with_items, item_quantity: 4862167, source: Donation::SOURCES[:product_drive], product_drive: product_drive, product_drive_participant: participant)
 
-        get product_drive_path(default_params.merge(id: product_drive.id))
+        get product_drive_path(id: product_drive.id)
 
         expect(response.body).to include("4862167")
       end
@@ -219,7 +220,7 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
       it "redirects to the index" do
         product_drive = create(:product_drive, organization: organization)
 
-        delete product_drive_path(default_params.merge(id: product_drive.id))
+        delete product_drive_path(id: product_drive.id)
         expect(response).to redirect_to(product_drives_path)
       end
     end

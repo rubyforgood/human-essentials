@@ -12,14 +12,14 @@
         <i class="fas fa-angle-left right"></i></p>
     </a>
     <ul class="nav nav-treeview">
-      <li class="nav-item <%= 'active' if current_page?(product_drives_path) %>">
-        <%= link_to(product_drives_path, class: "nav-link #{"active" if current_page?(product_drives_path(organization_name: current_user.organization))}") do %>
+      <li class="nav-item <%= 'active' if current_page?(product_drives_path(organization_name: nil)) %>">
+        <%= link_to(product_drives_path(organization_name: nil), class: "nav-link #{"active" if current_page?(product_drives_path(organization_name: nil))}") do %>
           <i class="nav-icon far fa-circle"></i>
           <p>All Product Drives</p>
         <% end %>
       </li>
-      <li class="nav-item <%= 'active' if current_page?(new_product_drive_path) %>">
-        <%= link_to(new_product_drive_path, class: "nav-link #{"active" if current_page?(new_product_drive_path)}") do %>
+      <li class="nav-item <%= 'active' if current_page?(new_product_drive_path(organization_name: nil)) %>">
+        <%= link_to(new_product_drive_path(organization_name: nil), class: "nav-link #{"active" if current_page?(new_product_drive_path(organization_name: nil))}") do %>
           <i class="nav-icon far fa-circle"></i>
           <p>New Product Drive</p>
         <% end %>

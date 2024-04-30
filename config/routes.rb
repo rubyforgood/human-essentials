@@ -201,8 +201,9 @@ Rails.application.routes.draw do
 
   resources :partner_groups, only: [:new, :create, :edit, :update]
 
+  resources :product_drives
+
   scope path: ":organization_name" do
-    resources :product_drives
     resources :donations do
       # collection do
       #   get :scale
