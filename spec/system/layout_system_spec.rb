@@ -1,10 +1,8 @@
 RSpec.describe "Layout", type: :system do
-  let!(:url_prefix) { "/#{@organization.to_param}" }
-
   describe "Body CSS Data" do
     it "sets the ID to the controller and the class to the action" do
       sign_in(@user)
-      visit url_prefix + "/donations/new"
+      visit new_donation_path
       expect(page).to have_css("body#donations.new")
 
       distribution = create(:distribution)

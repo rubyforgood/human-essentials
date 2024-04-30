@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Donations", (donations_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Donations", donations_path(organization_name: nil) %></li>
           <li class="breadcrumb-item"><a href="#"><%= @donation.source %> on <%= @donation.created_at.to_fs(:distribution_date) %></a></li>
         </ol>
       </div>
@@ -70,12 +70,12 @@
             </table>
           </div>
           <div class="card-footer">
-            <%= edit_button_to edit_donation_path(@donation), {
+            <%= edit_button_to edit_donation_path(organization_name: nil, id: @donation.id), {
               text: "Make a correction",
               enabled: !@donation.has_inactive_item?,
               size: "md" } %>
             <%= new_button_to new_distribution_path(organization_name: nil, donation_id: @donation.id, storage_location_id: @donation.storage_location_id), { text: "Start a new Distribution" } %>
-            <%= delete_button_to donation_path(@donation), { size: "md", confirm: "Are you sure you want to permanently remove this donation?" } if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
+            <%= delete_button_to donation_path(organization_name: nil, id: @donation.id), { size: "md", confirm: "Are you sure you want to permanently remove this donation?" } if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
             <% if @donation.has_inactive_item? %>
               <div class="warning">
                 You can only correct donations where all the items are active.

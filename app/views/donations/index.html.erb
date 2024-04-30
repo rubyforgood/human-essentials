@@ -80,8 +80,8 @@
                 <%= filter_button %>
                 <%= clear_filter_button %>
                 <span class="float-right">
-                    <%= download_button_to(donations_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Donations", size: "md"}) if @donations.any? %>
-                  <%= new_button_to new_donation_path(organization_name: current_organization), {text: "New Donation"} %>
+                    <%= download_button_to(donations_path(organization_name: nil, format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Donations", size: "md"}) if @donations.any? %>
+                  <%= new_button_to new_donation_path(organization_name: nil), {text: "New Donation"} %>
                     </span>
               </div>
             <% end %>

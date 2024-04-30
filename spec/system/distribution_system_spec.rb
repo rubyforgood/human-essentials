@@ -372,7 +372,7 @@ RSpec.feature "Distributions", type: :system do
   context "When creating a distribution from a donation" do
     let(:donation) { create :donation, :with_items }
     before do
-      visit @url_prefix + "/donations/#{donation.id}"
+      visit donation_path(donation)
       sign_in(@organization_admin)
       click_on "Start a new Distribution"
       within "#new_distribution" do

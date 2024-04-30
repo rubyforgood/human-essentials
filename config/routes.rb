@@ -203,16 +203,12 @@ Rails.application.routes.draw do
 
   resources :product_drives
 
-  scope path: ":organization_name" do
-    resources :donations do
-      # collection do
-      #   get :scale
-      #   post :scale_intake
-      # end
-      patch :add_item, on: :member
-      patch :remove_item, on: :member
-    end
+  resources :donations do
+    patch :add_item, on: :member
+    patch :remove_item, on: :member
+  end
 
+  scope path: ":organization_name" do
     resources :purchases
     # MODIFIED route by adding destroy to
     resources :requests, only: %i(index new show) do

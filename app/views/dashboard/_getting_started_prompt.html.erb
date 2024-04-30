@@ -117,7 +117,7 @@
               </div>
 
               <div id="org-stats-call-to-action-inventory">
-                <%= new_button_to new_donation_path, { text: "Add past donation", size: "md" } %>
+                <%= new_button_to new_donation_path(organization_name: nil), { text: "Add past donation", size: "md" } %>
                 <%= new_button_to new_purchase_path, { text: "Add past purchase", size: "md" } %>
               </div>
             </div>

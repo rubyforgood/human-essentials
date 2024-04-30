@@ -124,13 +124,11 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
     describe "Donations" do
       it "has a link to create a new donation" do
-        org_new_donation_page = OrganizationNewDonationPage.new org_short_name: org_short_name
-
         org_dashboard_page.visit
 
         expect { org_dashboard_page.create_new_donation }
           .to change { page.current_path }
-          .to org_new_donation_page.path
+          .to new_donation_path
       end
 
       # as of 28 Jan 2022, the "Recent Donations" list shows up to this many items matching the date filter

@@ -33,13 +33,13 @@
         <i class="fas fa-angle-left right"></i></p>
     </a>
     <ul class="nav nav-treeview">
-      <li class="nav-item <%= 'active' if current_page?(donations_path) %>">
-        <%= link_to(donations_path(organization_name: current_user.organization), class: "nav-link #{"active" if current_page?(donations_path(organization_name: current_user.organization))}") do %>
+      <li class="nav-item <%= 'active' if current_page?(donations_path(organization_name: nil)) %>">
+        <%= link_to(donations_path(organization_name: nil), class: "nav-link #{"active" if current_page?(donations_path(organization_name: nil))}") do %>
           <i class="nav-icon fa fa-circle-o"></i> All Donations
         <% end %>
       </li>
-      <li class="nav-item <%= 'active' if current_page?(new_donation_path(organization_name: current_user.organization)) %>">
-        <%= link_to(new_donation_path(organization_name: current_user.organization), class: "nav-link #{"active" if current_page?(new_donation_path)}") do %>
+      <li class="nav-item <%= 'active' if current_page?(new_donation_path(organization_name: nil)) %>">
+        <%= link_to(new_donation_path(organization_name: nil), class: "nav-link #{"active" if current_page?(new_donation_path(organization_name: nil))}") do %>
           <i class="nav-icon fa fa-circle-o"></i> New Donation
         <% end %>
       </li>
@@ -52,7 +52,7 @@
         <i class="fas fa-angle-left right"></i></p>
     </a>
     <ul class="nav nav-treeview">
-      <li class="nav-item <%= 'active' if current_page?(donations_path) %>">
+      <li class="nav-item <%= 'active' if current_page?(donations_path(organization_name: nil)) %>">
         <%= link_to(purchases_path(organization_name: current_user.organization), class: "nav-link #{"active" if current_page?(purchases_path(organization_name: current_user.organization))}") do %>
           <i class="nav-icon fa fa-circle-o"></i> All Purchases
         <% end %>

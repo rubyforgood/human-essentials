@@ -248,7 +248,7 @@
           <div class="card-body">
             <div class="position-relative mb-4">
               <div class="box-body text-center float-center">
-                <%= new_button_to new_donation_path, {text: "New Donation"} %>
+                <%= new_button_to new_donation_path(organization_name: nil), {text: "New Donation"} %>
                 <h3 class="text-center">
                   <span class="total_received_donations">
                     <%= total_received_donations %>
@@ -265,7 +265,7 @@
             </div>
           </div>
           <div class="card-footer text-center">
-            <%= link_to "See more...", donations_path %>
+            <%= link_to "See more...", donations_path(organization_name: nil) %>
           </div>
         </div>
 
@@ -299,6 +299,7 @@
           </div>
           <div class="card-footer text-center">
             <%= link_to "See more...", donations_path(
+                organization_name: nil,
                 filters: {
                     by_source: "Product Drive"
                 }) %>
@@ -336,6 +337,7 @@
           </div>
           <div class="card-footer text-center">
             <%= link_to "See more...", donations_path(
+                organization_name: nil,
                 filters: {
                     by_source: "Manufacturer"
                 }) %>

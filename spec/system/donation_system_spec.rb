@@ -1,15 +1,11 @@
 RSpec.describe "Donations", type: :system, js: true do
-  before do
-    @url_prefix = "/#{@organization.short_name}"
-  end
-
   context "When signed in as a normal user" do
     before do
       sign_in @user
     end
 
     context "When visiting the index page" do
-      subject { @url_prefix + "/donations" }
+      subject { donations_path }
 
       before do
         create(:donation)
@@ -20,7 +16,7 @@ RSpec.describe "Donations", type: :system, js: true do
       it "Allows User to click to the new donation form" do
         find(".fa-plus").click
 
-        expect(current_path).to eq(new_donation_path(@organization))
+        expect(current_path).to eq(new_donation_path)
         expect(page).to have_content "Start a new donation"
       end
 
@@ -33,7 +29,7 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:donation, :with_items, item: item)
         item.update(active: false)
         item.reload
-        expect { visit(@url_prefix + "/donations") }.to_not raise_error
+        expect { visit(donations_path) }.to_not raise_error
       end
 
       it "should not display inactive storage locations in dropdown" do
@@ -44,7 +40,7 @@ RSpec.describe "Donations", type: :system, js: true do
     end
 
     context "When filtering on the index page" do
-      subject { @url_prefix + "/donations" }
+      subject { donations_path }
       let!(:item) { create(:item) }
 
       it "Filters by the source" do
@@ -161,7 +157,7 @@ RSpec.describe "Donations", type: :system, js: true do
 
       context "Via manual entry" do
         before do
-          visit @url_prefix + "/donations/new"
+          visit new_donation_path
         end
 
         # using this to also test user ID for events - it needs to be an actual controller action
@@ -427,7 +423,7 @@ RSpec.describe "Donations", type: :system, js: true do
       context "Via barcode entry" do
         before do
           initialize_barcodes
-          visit @url_prefix + "/donations/new"
+          visit new_donation_path
         end
 
         it "Allows User to add items by barcode", :js do
@@ -503,7 +499,7 @@ RSpec.describe "Donations", type: :system, js: true do
           end
 
           it "Adds the oldest item it can find for the global barcode" do
-            visit @url_prefix + "/donations/new"
+            visit new_donation_path
             within "#donation_line_items" do
               expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
               Barcode.boop(@global_barcode.value)
@@ -519,7 +515,7 @@ RSpec.describe "Donations", type: :system, js: true do
 
       it "should not display inactive storage locations in dropdown" do
         create(:storage_location, name: "Inactive R Us", discarded_at: Time.zone.now)
-        visit @url_prefix + "/donations/new"
+        visit new_donation_path
         expect(page).to have_no_content "Inactive R Us"
       end
     end
@@ -533,7 +529,7 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:donation, :with_items, item: item2)
         create(:donation, :with_items, item: item3)
 
-        visit @url_prefix + "/donations"
+        visit donations_path
       end
 
       it 'Displays the individual value on the index page' do
@@ -545,7 +541,7 @@ RSpec.describe "Donations", type: :system, js: true do
       end
 
       it 'Displays the total value on the show page' do
-        visit @url_prefix + "/donations/#{@donation1.id}"
+        visit donation_path(@donation1.id)
         expect(page).to have_content "$125"
       end
     end
@@ -560,7 +556,7 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:manufacturer, organization: @organization)
         create(:donation, :with_items, item: item, organization: @organization)
         @organization.reload
-        visit @url_prefix + "/donations/"
+        visit donations_path
       end
 
       it "Allows the user to edit a donation" do
@@ -624,7 +620,7 @@ RSpec.describe "Donations", type: :system, js: true do
       before do
         @donation = create(:donation, :with_items)
 
-        visit @url_prefix + "/donations/#{@donation.id}"
+        visit donation_path(@donation.id)
       end
 
       it "does not allow deletion of a donation" do
@@ -641,7 +637,7 @@ RSpec.describe "Donations", type: :system, js: true do
       context 'when there is no comment defined' do
         before do
           donation = create(:donation, :with_items, comment: nil)
-          visit @url_prefix + "/donations/#{donation.id}"
+          visit donation_path(donation.id)
         end
 
         it 'displays the None provided as the comment ' do
@@ -662,7 +658,7 @@ RSpec.describe "Donations", type: :system, js: true do
       before do
         @donation = create(:donation, :with_items, item_quantity: 1)
 
-        visit @url_prefix + "/donations/#{@donation.id}"
+        visit donation_path(@donation.id)
       end
 
       it "allows deletion of a donation" do
