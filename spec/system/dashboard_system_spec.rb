@@ -240,13 +240,11 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
     describe "Purchases" do
       it "has a link to create a new purchase" do
-        org_new_purchase_page = OrganizationNewPurchasePage.new org_short_name: org_short_name
-
         org_dashboard_page.visit
 
         expect { org_dashboard_page.create_new_purchase }
           .to change { page.current_path }
-          .to org_new_purchase_page.path
+          .to new_purchase_path
       end
 
       # as of 28 Jan 2022, the "Recent Purchases" list shows up to this many items matching the date filter

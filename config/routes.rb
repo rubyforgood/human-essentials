@@ -208,9 +208,9 @@ Rails.application.routes.draw do
     patch :remove_item, on: :member
   end
 
+  resources :purchases
+
   scope path: ":organization_name" do
-    resources :purchases
-    # MODIFIED route by adding destroy to
     resources :requests, only: %i(index new show) do
       member do
         post :start

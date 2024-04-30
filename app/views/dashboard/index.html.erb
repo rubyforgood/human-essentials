@@ -356,7 +356,7 @@
           <div class="card-body">
             <div class="position-relative mb-4">
               <div class="box-body text-center float-center">
-                <%= new_button_to new_purchase_path, {text: "New Purchase"} %>
+                <%= new_button_to new_purchase_path(organization_name: nil), {text: "New Purchase"} %>
                 <h3 class="text-center"><%= dollar_presentation(@purchases.sum(&:amount_spent_in_cents)) %>
                   spent
                   <%= @selected_date_range_label %></h3>
@@ -368,7 +368,7 @@
             </div>
           </div>
           <div class="card-footer text-center">
-            <%= link_to "See more...", purchases_path %>
+            <%= link_to "See more...", purchases_path(organization_name: nil) %>
           </div>
         </div>
 

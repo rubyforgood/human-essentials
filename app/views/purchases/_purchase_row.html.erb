@@ -6,6 +6,6 @@
   <td class="numeric"><%= dollar_value(purchase_row.amount_spent_in_cents) %></td>
   <td class="date"><%= purchase_row.issued_at.strftime("%F") %></td>
   <td class="text-right">
-    <%= view_button_to purchase_path(purchase_row) %>
+    <%= view_button_to purchase_path(organization_name: nil, id: purchase_row.id) %>
   </td>
 </tr>

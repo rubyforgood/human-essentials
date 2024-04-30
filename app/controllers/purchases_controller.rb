@@ -35,7 +35,7 @@ class PurchasesController < ApplicationController
     begin
       PurchaseCreateService.call(@purchase)
       flash[:notice] = "New Purchase logged!"
-      redirect_to purchases_path
+      redirect_to purchases_path(organization_name: nil)
     rescue => e
       load_form_collections
       @purchase.line_items.build if @purchase.line_items.count.zero?
@@ -70,7 +70,7 @@ class PurchasesController < ApplicationController
       params: purchase_params,
       type: :increase,
       event_class: PurchaseEvent)
-    redirect_to purchases_path
+    redirect_to purchases_path(organization_name: nil)
   rescue => e
     load_form_collections
     flash[:alert] = "Error updating purchase: #{e.message}"
@@ -82,7 +82,7 @@ class PurchasesController < ApplicationController
     PurchaseDestroyService.call(purchase)
 
     flash[:notice] = "Purchase #{params[:id]} has been removed!"
-    redirect_to purchases_path
+    redirect_to purchases_path(organization_name: nil)
   end
 
   private

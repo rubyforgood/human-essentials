@@ -53,12 +53,12 @@
     </a>
     <ul class="nav nav-treeview">
       <li class="nav-item <%= 'active' if current_page?(donations_path(organization_name: nil)) %>">
-        <%= link_to(purchases_path(organization_name: current_user.organization), class: "nav-link #{"active" if current_page?(purchases_path(organization_name: current_user.organization))}") do %>
+        <%= link_to(purchases_path(organization_name: nil), class: "nav-link #{"active" if current_page?(purchases_path(organization_name: nil))}") do %>
           <i class="nav-icon fa fa-circle-o"></i> All Purchases
         <% end %>
       </li>
-      <li class="nav-item <%= 'active' if current_page?(new_purchase_path(organization_name: current_user.organization)) %>">
-        <%= link_to(new_purchase_path(organization_name: current_user.organization), class: "nav-link #{"active" if current_page?(new_purchase_path)}") do %>
+      <li class="nav-item <%= 'active' if current_page?(new_purchase_path(organization_name: nil)) %>">
+        <%= link_to(new_purchase_path(organization_name: nil), class: "nav-link #{"active" if current_page?(new_purchase_path(organization_name: nil))}") do %>
           <i class="nav-icon fa fa-circle-o"></i> New Purchase
         <% end %>
       </li>
