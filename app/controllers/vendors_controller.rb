@@ -15,7 +15,7 @@ class VendorsController < ApplicationController
     @vendor = current_organization.vendors.new(vendor_params.merge(organization: current_organization))
     respond_to do |format|
       if @vendor.save
-        format.html { redirect_to vendors_path(organization_name: nil), notice: "New vendor added!" }
+        format.html { redirect_to vendors_path, notice: "New vendor added!" }
         format.js
       else
         flash[:error] = "Something didn't work quite right -- try again?"
@@ -45,7 +45,7 @@ class VendorsController < ApplicationController
   def update
     @vendor = current_organization.vendors.find(params[:id])
     if @vendor.update(vendor_params)
-      redirect_to vendors_path(organization_name: nil), notice: "#{@vendor.contact_name} updated!"
+      redirect_to vendors_path, notice: "#{@vendor.contact_name} updated!"
 
     else
       flash[:error] = "Something didn't work quite right -- try again?"

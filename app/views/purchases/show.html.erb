@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Purchases", purchases_path(organization_name: nil) %></li>
+          <li class="breadcrumb-item"><%= link_to "Purchases", purchases_path %></li>
           <li class="breadcrumb-item"><a href="#"><%= @purchase.purchased_from_view %> on <%= @purchase.issued_at.to_fs(:distribution_date) %></a></li>
         </ol>
       </div>
@@ -67,10 +67,10 @@
             </table>
           </div>
           <div class="card-footer">
-            <%= edit_button_to edit_purchase_path(organization_name: nil, id: @purchase.id), { text: "Make a correction",
+            <%= edit_button_to edit_purchase_path(id: @purchase.id), { text: "Make a correction",
                                                                 enabled: !@purchase.has_inactive_item?,
                                                                 size: "md" } %>
-            <%= delete_button_to purchase_path(organization_name: nil, id: @purchase.id), { size: "md", confirm: "Are you sure you want to permanently remove this purchase?" } if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
+            <%= delete_button_to purchase_path(id: @purchase.id), { size: "md", confirm: "Are you sure you want to permanently remove this purchase?" } if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
             <% if @purchase.has_inactive_item? %>
               <div class="warning">
                 You can only correct purchases where all the items are active.

@@ -46,7 +46,7 @@ class DonationsController < ApplicationController
     begin
       DonationCreateService.call(@donation)
       flash[:notice] = "Donation created and logged!"
-      redirect_to donations_path(organization_name: nil)
+      redirect_to donations_path
     rescue => e
       load_form_collections
       @donation.line_items.build if @donation.line_items.count.zero?
@@ -81,7 +81,7 @@ class DonationsController < ApplicationController
       params: donation_params,
       type: :increase,
       event_class: DonationEvent)
-    redirect_to donations_path(organization_name: nil)
+    redirect_to donations_path
   rescue => e
     flash[:alert] = "Error updating donation: #{e.message}"
     render "edit"
@@ -97,7 +97,7 @@ class DonationsController < ApplicationController
       flash[:error] = "Donation #{params[:id]} failed to be removed because #{service.error}"
     end
 
-    redirect_to donations_path(organization_name: nil)
+    redirect_to donations_path
   end
 
   private

@@ -1,7 +1,7 @@
 <div class="tab-pane fade" id="custom-tabs-three-categories" role="tabpanel" aria-labelledby="custom-tabs-three-categories">
 
   <div class='flex justify-end mb-4'>
-    <%= new_button_to new_item_category_path(organization_name: nil), {text: "New Item Category"} %>
+    <%= new_button_to new_item_category_path, {text: "New Item Category"} %>
   </div>
 
   <table class="table">
@@ -22,14 +22,14 @@
             <ul>
               <% item_category.items.each do |item| %>
                 <li>
-                  <%= link_to(item.name, item_path(organization_name: nil, id: item.id), class: 'text-blue-500') %>
+                  <%= link_to(item.name, item_path(id: item.id), class: 'text-blue-500') %>
                 </li>
               <% end %>
             </ul>
           </td>
           <td>
-            <%= view_button_to item_category_path(organization_name: nil, id: item_category.id) %>
-            <%= edit_button_to edit_item_category_path(organization_name: nil, id: item_category.id) %>
+            <%= view_button_to item_category_path(id: item_category.id) %>
+            <%= edit_button_to edit_item_category_path(id: item_category.id) %>
           </td>
         </tr>
       <% end %>

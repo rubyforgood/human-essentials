@@ -30,7 +30,7 @@ RSpec.describe ItemsController, type: :controller do
         let(:item) { create(:item, visible_to_partners: false) }
         subject { put :update, params: { id: item.id, item: { value_in_cents: 100, visible_to_partners: true } } }
         it "should update visible_to_partners to true" do
-          expect(subject).to redirect_to(items_path(organization_name: nil))
+          expect(subject).to redirect_to(items_path)
           expect(item.reload.visible_to_partners).to be true
         end
       end
@@ -39,7 +39,7 @@ RSpec.describe ItemsController, type: :controller do
         let(:item) { create(:item, visible_to_partners: true) }
         subject { put :update, params: { id: item.id, item: { value_in_cents: 100, visible_to_partners: false } } }
         it "should update visible_to_partners to false" do
-          expect(subject).to redirect_to(items_path(organization_name: nil))
+          expect(subject).to redirect_to(items_path)
           expect(item.reload.visible_to_partners).to be false
         end
       end
@@ -55,7 +55,7 @@ RSpec.describe ItemsController, type: :controller do
     describe "DELETE #destroy" do
       subject { delete :destroy, params: { id: create(:item, organization: @organization) } }
       it "redirects to #index" do
-        expect(subject).to redirect_to(items_path(organization_name: nil))
+        expect(subject).to redirect_to(items_path)
       end
     end
 
@@ -119,7 +119,7 @@ RSpec.describe ItemsController, type: :controller do
         it "should redirect to the item page" do
           post :create, params: item_params
 
-          expect(response).to redirect_to items_path(organization_name: nil)
+          expect(response).to redirect_to items_path
           expect(response).to have_notice
         end
       end
@@ -154,7 +154,7 @@ RSpec.describe ItemsController, type: :controller do
       it "should redirect to the previous category page" do
         patch :remove_category, params: { id: item.id }
 
-        expect(response).to redirect_to item_category_path(organization_name: nil, id: item_category.id)
+        expect(response).to redirect_to item_category_path(id: item_category.id)
         expect(response).to have_notice
       end
     end

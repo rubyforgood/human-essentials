@@ -8,7 +8,7 @@
     <td class="text-left numeric"><%= dollar_value(donation_row.value_per_itemizable) %></td>
     <td><%= truncate donation_row.comment, length: 140, separator: /\w+/ %>
       <td class="text-right">
-        <%= view_button_to donation_path(organization_name: nil, id: donation_row.id) %>
+        <%= view_button_to donation_path(id: donation_row.id) %>
       </td>
     </td>
   </td>

@@ -6,12 +6,12 @@
   <td><%= @inventory ? @inventory.quantity_for(storage_location: storage_location.id) : storage_location.size %></td>
   <td><%= number_to_currency(storage_location.inventory_total_value_in_dollars(@inventory)) %></td>
   <td class="text-right">
-    <%= view_button_to storage_location_path(organization_name: nil, id: storage_location.id)  %>
-    <%= edit_button_to edit_storage_location_path(organization_name: nil, id: storage_location.id) %>
+    <%= view_button_to storage_location_path(id: storage_location.id)  %>
+    <%= edit_button_to edit_storage_location_path(id: storage_location.id) %>
     <% if storage_location.discarded? %>
-      <%= reactivate_button_to storage_location_reactivate_path(organization_name: nil, storage_location_id: storage_location), { confirm: confirm_reactivate_msg(storage_location.name) } %>
+      <%= reactivate_button_to storage_location_reactivate_path(storage_location_id: storage_location), { confirm: confirm_reactivate_msg(storage_location.name) } %>
     <% else %>
-      <%= deactivate_button_to storage_location_deactivate_path(organization_name: nil, storage_location_id: storage_location), { confirm: confirm_deactivate_msg(storage_location.name) } %>
+      <%= deactivate_button_to storage_location_deactivate_path(storage_location_id: storage_location), { confirm: confirm_deactivate_msg(storage_location.name) } %>
     <% end %>
   </td>
 </tr>

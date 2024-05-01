@@ -6,9 +6,9 @@
   </div>
   <!-- /.card-body -->
   <div class="card-footer">
-    <%= edit_button_to edit_partner_path(organization_name: nil, id: partner.id) %>
+    <%= edit_button_to edit_partner_path(id: partner.id) %>
     <% if partner.deletable? %>
-      <%= delete_button_to partner_path(organization_name: nil, id: partner.id), {confirm: confirm_delete_msg(partner.name)} %>
+      <%= delete_button_to partner_path(id: partner.id), {confirm: confirm_delete_msg(partner.name)} %>
     <% end %>
     <span class="float-right">
     </span>

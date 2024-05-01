@@ -35,7 +35,7 @@ class ProductDrivesController < ApplicationController
     @product_drive = current_organization.product_drives.new(product_drive_params.merge(organization: current_organization))
     respond_to do |format|
       if @product_drive.save
-        format.html { redirect_to product_drives_path(organization_name: nil), notice: "New product drive added!" }
+        format.html { redirect_to product_drives_path, notice: "New product drive added!" }
         format.js
       else
         flash[:error] = "Something didn't work quite right -- try again?"
@@ -67,7 +67,7 @@ class ProductDrivesController < ApplicationController
   def update
     @product_drive = current_organization.product_drives.find(params[:id])
     if @product_drive.update(product_drive_params)
-      redirect_to product_drives_path(organization_name: nil), notice: "#{@product_drive.name} updated!"
+      redirect_to product_drives_path, notice: "#{@product_drive.name} updated!"
 
     else
       flash[:error] = "Something didn't work quite right -- try again?"
@@ -78,7 +78,7 @@ class ProductDrivesController < ApplicationController
   def destroy
     current_organization.product_drives.find(params[:id]).destroy
     respond_to do |format|
-      format.html { redirect_to product_drives_url(organization_name: nil), notice: 'Product drive was successfully destroyed.' }
+      format.html { redirect_to product_drives_url, notice: 'Product drive was successfully destroyed.' }
       format.json { head :no_content }
     end
   end

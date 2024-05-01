@@ -37,7 +37,7 @@ class RequestsController < ApplicationController
     request = Request.find(params[:id])
     request.status_started!
     flash[:notice] = "Request started"
-    redirect_to new_distribution_path(organization_name: nil, request_id: request.id)
+    redirect_to new_distribution_path(request_id: request.id)
   end
 
   private

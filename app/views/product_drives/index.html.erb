@@ -35,7 +35,7 @@
           <!-- /.card-header -->
           <!-- form start -->
           <div class="card-body">
-            <%= form_tag(product_drives_path, method: :get, organization_name: nil) do |f| %>
+            <%= form_tag(product_drives_path, method: :get) do |f| %>
               <div class="row">
                 <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
                   <%= filter_select(scope: :by_name, collection: @product_drives_alphabetical, key: :name, value: :name, selected: @selected_name_filter) %>
@@ -56,12 +56,12 @@
                   <%=
                     if @product_drives.length > 0
                       download_button_to(
-                        product_drives_path(organization_name: nil, format: :csv, filters: filter_params.merge(date_range: date_range_params)),
+                        product_drives_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)),
                         text: "Export Product Drives"
                       )
                     end
                   %>
-                  <%= new_button_to new_product_drive_path(organization_name: nil), {text: "New Product Drive"} %>
+                  <%= new_button_to new_product_drive_path, {text: "New Product Drive"} %>
                   </span>
               </div>
             <% end # form %>
@@ -107,7 +107,7 @@
                   <td class="text-right"><%= product_drive.donation_quantity_by_date(selected_range, @selected_item_category) %></td>
                   <td class="text-right"><%= product_drive.distinct_items_count_by_date(selected_range, @selected_item_category) %></td>
                   <td class="text-right"><strong><%= dollar_value(product_drive.in_kind_value) %></strong></td>
-                  <td class="text-right"><%= view_button_to product_drive_path(organization_name: nil, id: product_drive.id) %></td>
+                  <td class="text-right"><%= view_button_to product_drive_path(id: product_drive.id) %></td>
                 </tr>
               <% end %>
               </tbody>

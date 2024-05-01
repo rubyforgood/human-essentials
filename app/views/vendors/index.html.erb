@@ -32,8 +32,8 @@
           <div class="card-footer">
             <div class="pull-right">
               <%= modal_button_to("#csvImportModal", { icon: "upload", text: "Import Vendors", size: "md"}) if @vendors.empty? %>
-              <%= download_button_to(vendors_path(organization_name: nil,format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Vendors", size: "md"}) if @vendors.any? %>
-              <%= new_button_to new_vendor_path(organization_name: nil), text: "New Vendor" %>            </div>
+              <%= download_button_to(vendors_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Vendors", size: "md"}) if @vendors.any? %>
+              <%= new_button_to new_vendor_path, text: "New Vendor" %>            </div>
           </div>
         </div>
         <!-- /.card -->
@@ -75,7 +75,7 @@
           locals: {
             import_type: "Vendors",
             csv_template_url: "/vendors.csv",
-            csv_import_url: import_csv_vendors_path(organization_name: nil)
+            csv_import_url: import_csv_vendors_path
           }
       ) do %>
     <li>Open the csv file with excel or your favourite spreadsheet program.</li>

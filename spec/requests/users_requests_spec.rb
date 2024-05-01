@@ -28,8 +28,7 @@ RSpec.describe "Users", type: :request do
 
     it "should send a password" do
       post partner_user_reset_password_users_path(params)
-      # organization_name param is not required anymore but would need to override Devise to remove it
-      expect(response).to redirect_to(root_path(organization_name: @organization.to_param))
+      expect(response).to redirect_to(root_path)
       expect(ActionMailer::Base.deliveries.size).to eq(1)
     end
 

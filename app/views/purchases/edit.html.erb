@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Purchases", purchases_path(organization_name: nil) %></li>
+          <li class="breadcrumb-item"><%= link_to "Purchases", purchases_path %></li>
           <li class="breadcrumb-item"><a href="#">Editing <%= @purchase.purchased_from_view %>
             on <%= @purchase.created_at.to_fs(:distribution_date) %></a></li>
         </ol>
@@ -40,7 +40,7 @@
           <!-- form start -->
           <div class="card-body">
             <%= render partial: "purchase_form", object: @purchase %>
-            <%= link_to "Add vendor", new_vendor_path(organization_name: nil), {:remote => true, "data-bs-toggle" => "modal", "data-bs-target" => "#modal-window", id: "new_vendor", "style" => "display: none;"} %>
+            <%= link_to "Add vendor", new_vendor_path, {:remote => true, "data-bs-toggle" => "modal", "data-bs-target" => "#modal-window", id: "new_vendor", "style" => "display: none;"} %>
           </div><!-- /.box -->
         </div>
       </div>

@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "All Item Types", items_path(organization_name: nil) %></li>
+          <li class="breadcrumb-item"><%= link_to "All Item Types", items_path %></li>
           <li class="breadcrumb-item"><a href="#"><%= @item.name %></a></li>
         </ol>
       </div>
@@ -83,7 +83,7 @@
                   end
                   total += location_quantity %>
                   <tr>
-                    <td><%= link_to storage.name, storage_location_path(organization_name: nil, id: storage.id) %></td>
+                    <td><%= link_to storage.name, storage_location_path(id: storage.id) %></td>
                     <td class="text-left"><%= location_quantity %></td>
                   </tr>
                 <% end %>
@@ -124,7 +124,7 @@
                 <tbody>
                 <% @barcodes_for.each do |barcode_item| %>
                   <tr>
-                    <td><%= link_to barcode_item.value, barcode_item_path(organization_name: nil, id: barcode_item.id) %></td>
+                    <td><%= link_to barcode_item.value, barcode_item_path(id: barcode_item.id) %></td>
                     <td><%= barcode_item.quantity %></td>
                   </tr>
                 <% end %>

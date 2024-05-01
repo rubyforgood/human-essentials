@@ -6,6 +6,6 @@
   <td><%= product_drive_participant_row&.volume %></td>
   <td class="text-center">
     <%= view_button_to product_drive_participant_row %>
-    <%= edit_button_to edit_product_drive_participant_path(organization_name: nil, id: product_drive_participant_row.id) %>
+    <%= edit_button_to edit_product_drive_participant_path(id: product_drive_participant_row.id) %>
   </td>
 </tr>

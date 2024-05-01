@@ -53,10 +53,10 @@
               </div><!-- /.row -->
               <div class="card-footer">
                 <%= filter_button %>
-                <%= cancel_button_to purchases_path(organization_name: nil), {text: "Clear Filters"} %>
+                <%= cancel_button_to purchases_path, {text: "Clear Filters"} %>
                 <span class="float-right">
-                  <%= download_button_to(purchases_path(organization_name: nil, format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Purchases", size: "md"}) if @purchases.any? %>
-                  <%= new_button_to new_purchase_path(organization_name: nil), {text: "New Purchase"} %>
+                  <%= download_button_to(purchases_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Purchases", size: "md"}) if @purchases.any? %>
+                  <%= new_button_to new_purchase_path, {text: "New Purchase"} %>
                     </span>
               </div>
             <% end %>

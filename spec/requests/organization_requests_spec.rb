@@ -1,10 +1,6 @@
 require "rails_helper"
 
 RSpec.describe "Organizations", type: :request do
-  let(:default_params) do
-    { organization_name: @organization.to_param }
-  end
-
   context "While signed in as a normal user" do
     before do
       sign_in(@user)
@@ -77,7 +73,7 @@ RSpec.describe "Organizations", type: :request do
         let(:invalid_organization) { create(:organization, name: "Original Name") }
         let(:invalid_params) { { organization: { name: nil } } }
 
-        subject { patch "/manage", params: default_params.merge(invalid_params) }
+        subject { patch "/manage", params: invalid_params }
 
         it "renders edit template with an error message" do
           expect(subject).to render_template("edit")
@@ -136,12 +132,16 @@ RSpec.describe "Organizations", type: :request do
   end
 
   context 'When signed in as a super admin' do
+    let(:default_params) do
+      { organization_name: @organization.to_param }
+    end
+
     before do
       sign_in(@super_admin)
     end
 
     describe "GET #show" do
-      before { get admin_organizations_path({ id: @organization.id }) }
+      before { get admin_organizations_path(default_params.merge(id: @organization.id)) }
 
       it { expect(response).to be_successful }
 

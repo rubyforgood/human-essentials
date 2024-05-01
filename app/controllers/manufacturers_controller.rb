@@ -7,7 +7,7 @@ class ManufacturersController < ApplicationController
     @manufacturer = current_organization.manufacturers.new(manufacturer_params.merge(organization: current_organization))
     respond_to do |format|
       if @manufacturer.save
-        format.html { redirect_to manufacturers_path(organization_name: nil), notice: "New Manufacturer added!" }
+        format.html { redirect_to manufacturers_path, notice: "New Manufacturer added!" }
         format.js
       else
         flash[:error] = "Something didn't work quite right -- try again?"
@@ -37,7 +37,7 @@ class ManufacturersController < ApplicationController
   def update
     @manufacturer = current_organization.manufacturers.find(params[:id])
     if @manufacturer.update(manufacturer_params)
-      redirect_to manufacturers_path(organization_name: nil), notice: "#{@manufacturer.name} updated!"
+      redirect_to manufacturers_path, notice: "#{@manufacturer.name} updated!"
 
     else
       flash[:error] = "Something didn't work quite right -- try again?"

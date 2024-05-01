@@ -50,7 +50,7 @@
                 <%= filter_button %>
                 <%= clear_filter_button %>
                 <span class="float-right">
-                  <%= download_button_to(items_path(organization_name: nil, format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Items", size: "md"}) if @items.any? %>
+                  <%= download_button_to(items_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Items", size: "md"}) if @items.any? %>
                   </span>
               </div>
             <% end # form %>

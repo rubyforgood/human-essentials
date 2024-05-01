@@ -12,7 +12,7 @@ module Partners
         flash[:error] = "#{@partner.name} failed to update partner records"
       end
 
-      redirect_to partners_path(organization_name: nil)
+      redirect_to partners_path
     end
   end
 end

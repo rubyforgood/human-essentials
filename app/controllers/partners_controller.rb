@@ -29,7 +29,7 @@ class PartnersController < ApplicationController
     @partner = svc.partner
 
     if svc.errors.none?
-      redirect_to partners_path(organization_name: nil), notice: "Partner #{@partner.name} added!"
+      redirect_to partners_path, notice: "Partner #{@partner.name} added!"
     else
       flash[:error] = "Failed to add partner due to: #{svc.errors.full_messages}"
       render action: :new
@@ -43,9 +43,9 @@ class PartnersController < ApplicationController
     svc.call
 
     if svc.errors.none?
-      redirect_to partners_path(organization_name: nil), notice: "Partner approved!"
+      redirect_to partners_path, notice: "Partner approved!"
     else
-      redirect_to partners_path(organization_name: nil), error: "Failed to approve partner because: #{svc.errors.full_messages}"
+      redirect_to partners_path, error: "Failed to approve partner because: #{svc.errors.full_messages}"
     end
   end
 
@@ -62,12 +62,12 @@ class PartnersController < ApplicationController
       partner_approval_service.call
 
       if partner_approval_service.errors.none?
-        redirect_to partners_path(organization_name: nil), notice: "Partner invited and approved!"
+        redirect_to partners_path, notice: "Partner invited and approved!"
       else
-        redirect_to partners_path(organization_name: nil), error: "Failed to approve partner because: #{partner_approval_service.errors.full_messages}"
+        redirect_to partners_path, error: "Failed to approve partner because: #{partner_approval_service.errors.full_messages}"
       end
     else
-      redirect_to partners_path(organization_name: nil), notice: "Failed to invite #{partner.name}! #{partner_invite_service.errors.full_messages}"
+      redirect_to partners_path, notice: "Failed to invite #{partner.name}! #{partner_invite_service.errors.full_messages}"
     end
   end
 
@@ -99,7 +99,7 @@ class PartnersController < ApplicationController
   def update
     @partner = current_organization.partners.find(params[:id])
     if @partner.update(partner_params)
-      redirect_to partner_path(organization_name: nil, id: @partner.id), notice: "#{@partner.name} updated!"
+      redirect_to partner_path(id: @partner.id), notice: "#{@partner.name} updated!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
@@ -110,9 +110,9 @@ class PartnersController < ApplicationController
     partner = current_organization.partners.find(params[:id])
     if partner
       partner.destroy
-      redirect_to partners_path(organization_name: nil), notice: "Deleted #{partner.name}"
+      redirect_to partners_path, notice: "Deleted #{partner.name}"
     else
-      redirect_to partners_path(organization_name: nil), alert: "Could not find partner to delete!"
+      redirect_to partners_path, alert: "Could not find partner to delete!"
     end
   end
 
@@ -123,9 +123,9 @@ class PartnersController < ApplicationController
     svc.call
 
     if svc.errors.none?
-      redirect_to partners_path(organization_name: nil), notice: "Partner #{partner.name} invited!"
+      redirect_to partners_path, notice: "Partner #{partner.name} invited!"
     else
-      redirect_to partners_path(organization_name: nil), notice: "Failed to invite #{partner.name}! #{svc.errors.full_messages}"
+      redirect_to partners_path, notice: "Failed to invite #{partner.name}! #{svc.errors.full_messages}"
     end
   end
 
@@ -136,9 +136,9 @@ class PartnersController < ApplicationController
       roles: [Role::PARTNER],
       resource: partner)
 
-    redirect_to partner_path(organization_name: nil, id: partner.id), notice: "We have invited #{params[:email]} to #{partner.name}!"
+    redirect_to partner_path(id: partner.id), notice: "We have invited #{params[:email]} to #{partner.name}!"
   rescue StandardError => e
-    redirect_to partner_path(organization_name: nil, id: partner.id), error: "Failed to invite #{params[:email]} to #{partner.name} due to: #{e.message}"
+    redirect_to partner_path(id: partner.id), error: "Failed to invite #{params[:email]} to #{partner.name} due to: #{e.message}"
   end
 
   def recertify_partner
@@ -153,7 +153,7 @@ class PartnersController < ApplicationController
       flash[:error] = "#{@partner.name} failed to update partner records"
     end
 
-    redirect_to partners_path(organization_name: nil)
+    redirect_to partners_path
   end
 
   def deactivate
@@ -163,9 +163,9 @@ class PartnersController < ApplicationController
     svc.call
 
     if svc.errors.none?
-      redirect_to partners_path(organization_name: nil), notice: "#{@partner.name} successfully deactivated!"
+      redirect_to partners_path, notice: "#{@partner.name} successfully deactivated!"
     else
-      redirect_to partners_path(organization_name: nil), error: "#{@partner.name} failed to deactivate due to: #{svc.errors.full_messages}"
+      redirect_to partners_path, error: "#{@partner.name} failed to deactivate due to: #{svc.errors.full_messages}"
     end
   end
 
@@ -173,16 +173,16 @@ class PartnersController < ApplicationController
     @partner = current_organization.partners.find(params[:id])
 
     if @partner.status != "deactivated"
-      redirect_to(partners_path(organization_name: nil), error: "#{@partner.name} is not deactivated!") && return
+      redirect_to(partners_path, error: "#{@partner.name} is not deactivated!") && return
     end
 
     svc = PartnerReactivateService.new(partner: @partner)
     svc.call
 
     if svc.errors.none?
-      redirect_to partners_path(organization_name: nil), notice: "#{@partner.name} successfully reactivated!"
+      redirect_to partners_path, notice: "#{@partner.name} successfully reactivated!"
     else
-      redirect_to partners_path(organization_name: nil), error: "#{@partner.name} failed to reactivate due to: #{svc.errors.full_messages}"
+      redirect_to partners_path, error: "#{@partner.name} failed to reactivate due to: #{svc.errors.full_messages}"
     end
   end
 

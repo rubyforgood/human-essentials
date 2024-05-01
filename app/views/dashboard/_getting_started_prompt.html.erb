@@ -44,7 +44,7 @@
 
               <div id="org-stats-call-to-action-partners">
                 <% partner_link_text = partner_criteria_met ? "Add More Partners" : "Add a Partner" %>
-                <%= new_button_to new_partner_path(organization_name: nil), { text: partner_link_text, size: "md" } %>
+                <%= new_button_to new_partner_path, { text: partner_link_text, size: "md" } %>
               </div>
             </div>
           </div>
@@ -68,7 +68,7 @@
 
               <div id="org-stats-call-to-action-storage-locations">
                 <% location_link_text = location_criteria_met ? "Add More Storage Locations" : "Add a Storage Location" %>
-                <%= new_button_to new_storage_location_path(organization_name: nil), { text: location_link_text, size: "md" } %>
+                <%= new_button_to new_storage_location_path, { text: location_link_text, size: "md" } %>
               </div>
             </div>
           </div>
@@ -92,7 +92,7 @@
 
               <div id="org-stats-call-to-action-donation-sites">
                 <% donation_link_text = donation_criteria_met ? "Add More Donation Sites" : "Add a Donation Site" %>
-                <%= new_button_to new_donation_site_path(organization_name: nil), { text: donation_link_text, size: "md" } %>
+                <%= new_button_to new_donation_site_path, { text: donation_link_text, size: "md" } %>
               </div>
             </div>
           </div>
@@ -117,8 +117,8 @@
               </div>
 
               <div id="org-stats-call-to-action-inventory">
-                <%= new_button_to new_donation_path(organization_name: nil), { text: "Add past donation", size: "md" } %>
-                <%= new_button_to new_purchase_path(organization_name: nil), { text: "Add past purchase", size: "md" } %>
+                <%= new_button_to new_donation_path, { text: "Add past donation", size: "md" } %>
+                <%= new_button_to new_purchase_path, { text: "Add past purchase", size: "md" } %>
               </div>
             </div>
           </div>

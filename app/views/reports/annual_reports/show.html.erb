@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "All Reports", reports_annual_reports_path(organization_name: nil) %></li>
+          <li class="breadcrumb-item"><%= link_to "All Reports", reports_annual_reports_path %></li>
           <li class="breadcrumb-item"><a href="#">Reports - <%= params[:year] %></a></li>
         </ol>
       </div>
@@ -28,7 +28,7 @@
       <span class="float-right">
         <%=
           refresh_button_to(
-            recalculate_reports_annual_report_path(organization_name: nil, year: @year),
+            recalculate_reports_annual_report_path(year: @year),
               { text: "Recalculate Report" },
               method: :post
             )

@@ -69,14 +69,14 @@
               <!-- /.col -->
               <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                  <%= new_button_to new_transfer_path(organization_name: nil), {text: "Make a transfer", size: "md"} %>
+                  <%= new_button_to new_transfer_path, {text: "Make a transfer", size: "md"} %>
                 </div>
                 <!-- /.description-block -->
               </div>
               <!-- /.col -->
               <div class="col-sm-3 col-6">
                 <div class="description-block">
-                  <%= new_button_to new_adjustment_path(organization_name: nil), {text: "Make an adjustment", size: "md"} %>
+                  <%= new_button_to new_adjustment_path, {text: "Make an adjustment", size: "md"} %>
 
                 </div>
               </div>
@@ -137,7 +137,7 @@
           <div class="card-body">
             <div class="position-relative mb-4">
               <div class="box-body text-center float-center">
-                <%= new_button_to new_distribution_path(organization_name: nil), {text: "New Distribution"} %>
+                <%= new_button_to new_distribution_path, {text: "New Distribution"} %>
                 <%= print_button_to distributions_by_county_report_path(filters: { date_range: date_range_params }), {text: "Distributions by County", size: "md"} %>
 
                 <h3 class="text-center">
@@ -155,7 +155,7 @@
             </div>
           </div>
           <div class="card-footer text-center">
-            <%= link_to "See more...", distributions_path(organization_name: nil) %>
+            <%= link_to "See more...", distributions_path %>
           </div>
         </div>
 
@@ -171,7 +171,7 @@
           </div>
           <div class="box-body table-responsive no-padding">
             <div class='p-2 pull-right'>
-              <%= download_button_to(itemized_breakdown_distributions_path(organization_name: nil, format: :csv, filters: { date_range: date_range_params }), {text: "Export To CSV"}) %>
+              <%= download_button_to(itemized_breakdown_distributions_path(format: :csv, filters: { date_range: date_range_params }), {text: "Export To CSV"}) %>
             </div>
 
             <%= render partial: "itemized_distributions_partial", locals: { itemized_breakdown: @itemized_distribution_data } %>
@@ -248,7 +248,7 @@
           <div class="card-body">
             <div class="position-relative mb-4">
               <div class="box-body text-center float-center">
-                <%= new_button_to new_donation_path(organization_name: nil), {text: "New Donation"} %>
+                <%= new_button_to new_donation_path, {text: "New Donation"} %>
                 <h3 class="text-center">
                   <span class="total_received_donations">
                     <%= total_received_donations %>
@@ -265,7 +265,7 @@
             </div>
           </div>
           <div class="card-footer text-center">
-            <%= link_to "See more...", donations_path(organization_name: nil) %>
+            <%= link_to "See more...", donations_path %>
           </div>
         </div>
 
@@ -299,7 +299,6 @@
           </div>
           <div class="card-footer text-center">
             <%= link_to "See more...", donations_path(
-                organization_name: nil,
                 filters: {
                     by_source: "Product Drive"
                 }) %>
@@ -337,7 +336,6 @@
           </div>
           <div class="card-footer text-center">
             <%= link_to "See more...", donations_path(
-                organization_name: nil,
                 filters: {
                     by_source: "Manufacturer"
                 }) %>
@@ -356,7 +354,7 @@
           <div class="card-body">
             <div class="position-relative mb-4">
               <div class="box-body text-center float-center">
-                <%= new_button_to new_purchase_path(organization_name: nil), {text: "New Purchase"} %>
+                <%= new_button_to new_purchase_path, {text: "New Purchase"} %>
                 <h3 class="text-center"><%= dollar_presentation(@purchases.sum(&:amount_spent_in_cents)) %>
                   spent
                   <%= @selected_date_range_label %></h3>
@@ -368,7 +366,7 @@
             </div>
           </div>
           <div class="card-footer text-center">
-            <%= link_to "See more...", purchases_path(organization_name: nil) %>
+            <%= link_to "See more...", purchases_path %>
           </div>
         </div>
 

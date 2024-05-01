@@ -34,7 +34,7 @@
           </div>
           <ul class="list-group list-unstyled">
             <% @years.map do |year| %>
-              <li class="list-group-item-action"> <%= link_to "#{year}", reports_annual_report_path(organization_name: nil, year:), class: "list-group-item" %> </li>
+              <li class="list-group-item-action"> <%= link_to "#{year}", reports_annual_report_path(year:), class: "list-group-item" %> </li>
             <% end %>
           </ul>
         </div>

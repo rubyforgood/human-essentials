@@ -33,7 +33,7 @@ class DistributionsController < ApplicationController
       flash[:error] = "Could not destroy distribution #{params[:id]}. Please contact technical support."
     end
 
-    redirect_to distributions_path(organization_name: nil)
+    redirect_to distributions_path
   end
 
   def index
@@ -83,7 +83,7 @@ class DistributionsController < ApplicationController
 
       respond_to do |format|
         format.turbo_stream do
-          redirect_to distribution_path(organization_name: nil, id: result.distribution.id), notice: "Distribution created!"
+          redirect_to distribution_path(id: result.distribution.id), notice: "Distribution created!"
         end
       end
     else
@@ -166,7 +166,7 @@ class DistributionsController < ApplicationController
         @storage_locations = current_organization.storage_locations.active_locations.has_inventory_items.alphabetized
       end
     else
-      redirect_to distributions_path(organization_name: nil), error: 'To edit a distribution,
+      redirect_to distributions_path, error: 'To edit a distribution,
       you must be an organization admin or the current date must be later than today.'
     end
   end
@@ -182,7 +182,7 @@ class DistributionsController < ApplicationController
       schedule_reminder_email(@distribution)
 
       perform_inventory_check
-      redirect_to distribution_path(organization_name: nil, id: @distribution.id), notice: "Distribution updated!"
+      redirect_to distribution_path(id: @distribution.id), notice: "Distribution updated!"
     else
       flash[:error] = insufficient_error_message(result.error.message)
       @distribution.line_items.build if @distribution.line_items.size.zero?
@@ -230,7 +230,7 @@ class DistributionsController < ApplicationController
       flash[:error] = 'Sorry, we encountered an error when trying to mark this distribution as being completed'
     end
 
-    redirect_back(fallback_location: distribution_path(organization_name: nil))
+    redirect_back(fallback_location: distribution_path)
   end
 
   def pickup_day

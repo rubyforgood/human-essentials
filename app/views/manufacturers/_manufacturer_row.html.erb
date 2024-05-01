@@ -3,6 +3,6 @@
   <td><%= manufacturer_row&.volume %></td>
   <td class="text-center">
     <%= view_button_to manufacturer_row %>
-    <%= edit_button_to edit_manufacturer_path(organization_name: nil, id: manufacturer_row.id) %>
+    <%= edit_button_to edit_manufacturer_path(id: manufacturer_row.id) %>
   </td>
 </tr>

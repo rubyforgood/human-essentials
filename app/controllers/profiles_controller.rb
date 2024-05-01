@@ -11,7 +11,7 @@ class ProfilesController < ApplicationController
     @partner = current_organization.partners.find(params[:id])
     result = PartnerProfileUpdateService.new(@partner, edit_partner_params, edit_profile_params).call
     if result.success?
-      redirect_to partner_path(organization_name: nil, id: @partner.id) + "#partner-information", notice: "#{@partner.name} updated!"
+      redirect_to partner_path(id: @partner.id) + "#partner-information", notice: "#{@partner.name} updated!"
     else
       flash[:error] = "Something didn't work quite right -- try again?   %s " % result.error
       render action: :edit

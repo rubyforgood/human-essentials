@@ -72,8 +72,8 @@ RSpec.describe "Distributions", type: :request do
       it "shows an enabled edit and reclaim button" do
         get distributions_path
         page = Nokogiri::HTML(response.body)
-        edit = page.at_css("a[href='#{edit_distribution_path(organization_name: nil, id: distribution.id)}']")
-        reclaim = page.at_css("a.btn-danger[href='#{distribution_path(organization_name: nil, id: distribution.id)}']")
+        edit = page.at_css("a[href='#{edit_distribution_path(id: distribution.id)}']")
+        reclaim = page.at_css("a.btn-danger[href='#{distribution_path(id: distribution.id)}']")
         expect(edit.attr("class")).not_to match(/disabled/)
         expect(reclaim.attr("class")).not_to match(/disabled/)
         expect(response.body).not_to match(/Has Inactive Items/)
@@ -87,8 +87,8 @@ RSpec.describe "Distributions", type: :request do
         it "shows a disabled edit and reclaim button" do
           get distributions_path
           page = Nokogiri::HTML(response.body)
-          edit = page.at_css("a[href='#{edit_distribution_path(organization_name: nil, id: distribution.id)}']")
-          reclaim = page.at_css("a.btn-danger[href='#{distribution_path(organization_name: nil, id: distribution.id)}']")
+          edit = page.at_css("a[href='#{edit_distribution_path(id: distribution.id)}']")
+          reclaim = page.at_css("a.btn-danger[href='#{distribution_path(id: distribution.id)}']")
           expect(edit.attr("class")).to match(/disabled/)
           expect(reclaim.attr("class")).to match(/disabled/)
           expect(response.body).to match(/Has Inactive Items/)
@@ -187,7 +187,7 @@ RSpec.describe "Distributions", type: :request do
       it "shows an enabled edit button" do
         get distribution_path(id: distribution.id)
         page = Nokogiri::HTML(response.body)
-        edit = page.at_css("a[href='#{edit_distribution_path(organization_name: nil, id: distribution.id)}']")
+        edit = page.at_css("a[href='#{edit_distribution_path(id: distribution.id)}']")
         expect(edit.attr("class")).not_to match(/disabled/)
         expect(response.body).not_to match(/please make the following items active:/)
       end
@@ -200,7 +200,7 @@ RSpec.describe "Distributions", type: :request do
         it "shows a disabled edit button" do
           get distribution_path(id: distribution.id)
           page = Nokogiri::HTML(response.body)
-          edit = page.at_css("a[href='#{edit_distribution_path(organization_name: nil, id: distribution.id)}']")
+          edit = page.at_css("a[href='#{edit_distribution_path(id: distribution.id)}']")
           expect(edit.attr("class")).to match(/disabled/)
           expect(response.body).to match(/please make the following items active: #{item.name}/)
         end
@@ -230,7 +230,7 @@ RSpec.describe "Distributions", type: :request do
         end
 
         it 'redirects the user back to the distributions page' do
-          expect(subject).to redirect_to distribution_path(organization_name: nil)
+          expect(subject).to redirect_to distribution_path
         end
       end
     end

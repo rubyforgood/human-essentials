@@ -18,6 +18,6 @@
   <% end %>
   <li>
     <%= fa_icon 'list-alt' %>
-    <%= link_to "#{partners.active.size} Active", partners_path(organization_name: nil), class: ("filtering" if current_filtered_status.nil?) %>
+    <%= link_to "#{partners.active.size} Active", partners_path, class: ("filtering" if current_filtered_status.nil?) %>
   </li>
 </ul>

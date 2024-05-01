@@ -18,7 +18,7 @@ class ProductDriveParticipantsController < ApplicationController
     @product_drive_participant = current_organization.product_drive_participants.new(product_drive_participant_params.merge(organization: current_organization))
     respond_to do |format|
       if @product_drive_participant.save
-        format.html { redirect_to product_drive_participants_path(organization_name: nil), notice: "New product drive participant added!" }
+        format.html { redirect_to product_drive_participants_path, notice: "New product drive participant added!" }
         format.js
       else
         flash[:error] = "Something didn't work quite right -- try again?"
@@ -48,7 +48,7 @@ class ProductDriveParticipantsController < ApplicationController
   def update
     @product_drive_participant = current_organization.product_drive_participants.find(params[:id])
     if @product_drive_participant.update(product_drive_participant_params)
-      redirect_to product_drive_participants_path(organization_name: nil), notice: "#{@product_drive_participant.contact_name} updated!"
+      redirect_to product_drive_participants_path, notice: "#{@product_drive_participant.contact_name} updated!"
 
     else
       flash[:error] = "Something didn't work quite right -- try again?"

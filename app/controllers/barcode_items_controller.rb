@@ -24,7 +24,7 @@ class BarcodeItemsController < ApplicationController
       respond_to do |format|
         format.json { render json: @barcode_item.to_json }
         format.js
-        format.html { redirect_to barcode_items_path(organization_name: nil), notice: msg }
+        format.html { redirect_to barcode_items_path, notice: msg }
       end
     else
       flash[:error] = "Something didn't work quite right -- try again?"
@@ -76,7 +76,7 @@ class BarcodeItemsController < ApplicationController
   def update
     @barcode_item = current_organization.barcode_items.find(params[:id])
     if @barcode_item.update(barcode_item_params)
-      redirect_to barcode_items_path(organization_name: nil), notice: "Barcode updated!"
+      redirect_to barcode_items_path, notice: "Barcode updated!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
@@ -92,7 +92,7 @@ class BarcodeItemsController < ApplicationController
     rescue StandardError
       flash[:error] = "Sorry, you don't have permission to delete this barcode."
     end
-    redirect_to barcode_items_path(organization_name: nil)
+    redirect_to barcode_items_path
   end
 
   private

@@ -86,7 +86,7 @@ RSpec.describe "Donations", type: :request do
       it "shows an enabled edit button" do
         get donation_path(id: donation.id)
         page = Nokogiri::HTML(response.body)
-        edit = page.at_css("a[href='#{edit_donation_path(organization_name: nil, id: donation.id)}']")
+        edit = page.at_css("a[href='#{edit_donation_path(id: donation.id)}']")
         expect(edit.attr("class")).not_to match(/disabled/)
         expect(response.body).not_to match(/please make the following items active:/)
       end
@@ -99,7 +99,7 @@ RSpec.describe "Donations", type: :request do
         it "shows a disabled edit button" do
           get donation_path(id: donation.id)
           page = Nokogiri::HTML(response.body)
-          edit = page.at_css("a[href='#{edit_donation_path(organization_name: nil, id: donation.id)}']")
+          edit = page.at_css("a[href='#{edit_donation_path(id: donation.id)}']")
           expect(edit.attr("class")).to match(/disabled/)
           expect(response.body).to match(/please make the following items active: #{item.name}/)
         end

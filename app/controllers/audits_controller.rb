@@ -18,7 +18,7 @@ class AuditsController < ApplicationController
   end
 
   def edit
-    (redirect_to audits_path(organization_name: nil) unless @audit&.in_progress?) && return
+    (redirect_to audits_path unless @audit&.in_progress?) && return
     @storage_locations = [@audit.storage_location]
     set_items
     @audit.line_items.build if @audit.line_items.empty?
@@ -47,9 +47,9 @@ class AuditsController < ApplicationController
       AuditEvent.publish(@audit)
     end
     @audit.finalized!
-    redirect_to audit_path(organization_name: nil, id: @audit), notice: "Audit is Finalized."
+    redirect_to audit_path(id: @audit), notice: "Audit is Finalized."
   rescue => e
-    redirect_back(fallback_location: audits_path(organization_name: nil), alert: "Could not finalize audit: #{e.message}")
+    redirect_back(fallback_location: audits_path, alert: "Could not finalize audit: #{e.message}")
   end
 
   def update
@@ -90,9 +90,9 @@ class AuditsController < ApplicationController
   end
 
   def destroy
-    (redirect_to audits_path(organization_name: nil) if @audit.finalized?) && return
+    (redirect_to audits_path if @audit.finalized?) && return
     @audit.destroy!
-    redirect_to audits_path(organization_name: nil), notice: "Audit is successfully deleted."
+    redirect_to audits_path, notice: "Audit is successfully deleted."
   end
 
   private
@@ -120,7 +120,7 @@ class AuditsController < ApplicationController
   def save_audit_status_and_redirect(params)
     notice = params.key?(:save_progress) ? "Audit's progress was successfully saved." : "Audit is confirmed."
     params.key?(:save_progress) ? @audit.in_progress! : @audit.confirmed!
-    redirect_to audit_path(organization_name: nil, id: @audit), notice: notice
+    redirect_to audit_path(id: @audit), notice: notice
   end
 
   def audit_params

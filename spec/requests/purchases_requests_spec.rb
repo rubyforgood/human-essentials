@@ -251,7 +251,7 @@ RSpec.describe "Purchases", type: :request do
         get purchase_path(id: purchase.id)
         expect(response).to be_successful
         page = Nokogiri::HTML(response.body)
-        edit = page.at_css("a[href='#{edit_purchase_path(organization_name: nil, id: purchase.id)}']")
+        edit = page.at_css("a[href='#{edit_purchase_path(id: purchase.id)}']")
         expect(edit.attr("class")).not_to match(/disabled/)
         expect(response.body).not_to match(/please make the following items active:/)
       end
@@ -264,7 +264,7 @@ RSpec.describe "Purchases", type: :request do
         it "shows a disabled edit button" do
           get purchase_path(id: purchase.id)
           page = Nokogiri::HTML(response.body)
-          edit = page.at_css("a[href='#{edit_purchase_path(organization_name: nil, id: purchase.id)}']")
+          edit = page.at_css("a[href='#{edit_purchase_path(id: purchase.id)}']")
           expect(edit.attr("class")).to match(/disabled/)
           expect(response.body).to match(/please make the following items active: #{item.name}/)
         end

@@ -37,7 +37,7 @@
             </div>
             <div class="card-footer">
               <%= form.submit("Update Information", class: "btn btn-primary") %>
-              <%= link_to "Cancel Update", partner_path(organization_name: nil, id: @partner.id), class: "btn btn-danger float-right" %>
+              <%= link_to "Cancel Update", partner_path(id: @partner.id), class: "btn btn-danger float-right" %>
             </div>
           <% end %>
         </div>

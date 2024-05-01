@@ -61,7 +61,7 @@
                 <%= clear_filter_button %>
                 <%= modal_button_to("#calculateTotals", {text: "Calculate Product Totals", icon: nil, size: "md", type: "success"}) %>
                 <span class="float-right">
-                  <%= download_button_to(requests_path(organization_name: nil, format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Requests", size: "md"}) if @requests.any? %>
+                  <%= download_button_to(requests_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Requests", size: "md"}) if @requests.any? %>
                 </span>
               </div>
             <% end # form %>

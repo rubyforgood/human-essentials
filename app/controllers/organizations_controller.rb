@@ -5,7 +5,7 @@ class OrganizationsController < ApplicationController
 
   def show
     @organization = current_organization
-    @header_link = dashboard_path(organization_name: nil)
+    @header_link = dashboard_path
   end
 
   def edit
@@ -16,7 +16,7 @@ class OrganizationsController < ApplicationController
     @organization = current_organization
 
     if OrganizationUpdateService.update(@organization, organization_params)
-      redirect_to organization_path(organization_name: nil), notice: "Updated your organization!"
+      redirect_to organization_path, notice: "Updated your organization!"
     else
       flash[:error] = @organization.errors.full_messages.join("\n")
       render :edit
@@ -28,7 +28,7 @@ class OrganizationsController < ApplicationController
       name: params[:name],
       roles: [Role::ORG_USER],
       resource: Organization.find(params[:org]))
-    redirect_to organization_path(organization_name: nil), notice: "User invited to organization!"
+    redirect_to organization_path, notice: "User invited to organization!"
   rescue => e
     redirect_to organization_path, alert: e.message
   end
@@ -36,7 +36,7 @@ class OrganizationsController < ApplicationController
   def resend_user_invitation
     user = User.find(params[:user_id])
     user.invite!
-    redirect_to organization_path(organization_name: nil), notice: "User re-invited to organization!"
+    redirect_to organization_path, notice: "User re-invited to organization!"
   end
 
   def promote_to_org_admin
@@ -122,7 +122,7 @@ class OrganizationsController < ApplicationController
     if current_user.has_role?(Role::SUPER_ADMIN)
       admin_organization_path(current_organization.id)
     else
-      organization_path(organization_name: nil)
+      organization_path
     end
   end
 end

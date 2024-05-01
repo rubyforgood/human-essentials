@@ -11,11 +11,11 @@ module Requests
 
       if svc.errors.none?
         flash[:notice] = "Request #{params[:request_id]} has been removed!"
-        redirect_to requests_path(organization_name: nil)
+        redirect_to requests_path
       else
         errors = svc.errors.full_messages.join(", ")
         flash[:error] = "Request #{params[:request_id]} could not be removed because #{errors}"
-        redirect_to new_request_cancelation_path(organization_name: nil, request_id: params[:request_id])
+        redirect_to new_request_cancelation_path(request_id: params[:request_id])
       end
     end
 

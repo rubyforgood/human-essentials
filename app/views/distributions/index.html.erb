@@ -71,12 +71,12 @@
                   <%=
                     if @distributions.length > 0
                       download_button_to(
-                        distributions_path(organization_name: nil, format: :csv, filters: filter_params.merge(date_range: date_range_params)),
+                        distributions_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)),
                         text: "Export Distributions"
                       )
                     end
                   %>
-                  <%= new_button_to new_distribution_path(organization_name: nil), {text: "New Distribution"} %>
+                  <%= new_button_to new_distribution_path, {text: "New Distribution"} %>
                 </span>
               </div>
             <% end # form %>

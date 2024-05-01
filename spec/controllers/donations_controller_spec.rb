@@ -7,7 +7,7 @@ RSpec.describe DonationsController, type: :controller do
     end
 
     describe "GET #index" do
-      subject { get :index}
+      subject { get :index }
       it "returns http success" do
         expect(subject).to be_successful
       end
@@ -32,7 +32,7 @@ RSpec.describe DonationsController, type: :controller do
                       source: "Donation Site",
                       line_items: line_items }
         }
-        expect(response).to redirect_to(donations_path(organization_name: nil))
+        expect(response).to redirect_to(donations_path)
       end
 
       it "renders GET#new with error on failure" do
@@ -46,7 +46,7 @@ RSpec.describe DonationsController, type: :controller do
       it "redirects to index after update" do
         donation = create(:donation_site_donation)
         put :update, params: { id: donation.id, donation: { source: "Donation Site", donation_site_id: donation.donation_site_id } }
-        expect(response).to redirect_to(donations_path(organization_name: nil))
+        expect(response).to redirect_to(donations_path)
       end
 
       it "updates storage quantity correctly" do
@@ -164,7 +164,7 @@ RSpec.describe DonationsController, type: :controller do
 
       # normal users are not authorized
       it "redirects to the dashboard path" do
-        expect(subject).to redirect_to(dashboard_path(organization_name: nil))
+        expect(subject).to redirect_to(dashboard_path)
       end
     end
   end
@@ -177,7 +177,7 @@ RSpec.describe DonationsController, type: :controller do
     describe "DELETE #destroy" do
       subject { delete :destroy, params: { id: donation.id } }
       it "redirects to the index" do
-        expect(subject).to redirect_to(donations_path(organization_name: nil))
+        expect(subject).to redirect_to(donations_path)
       end
     end
   end

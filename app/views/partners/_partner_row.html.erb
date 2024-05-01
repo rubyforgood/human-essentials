@@ -2,7 +2,7 @@
 <% can_one_step_invite_and_approve = partner_row.organization.one_step_partner_invite %>
 
 <tr>
-  <td class='text-blue-500'><%= link_to partner_row.name, partner_path(organization_name: nil, id: partner_row.id) %></td>
+  <td class='text-blue-500'><%= link_to partner_row.name, partner_path(id: partner_row.id) %></td>
   <td><%= link_to partner_row.email, "mailto:#{partner_row.email}" %></td>
   <td><%= partner_row.partner_group&.name %></td>
   <td><%= partner_row.quota %></td>
@@ -29,21 +29,21 @@
     <% when "uninvited" %>
       <% if can_one_step_invite_and_approve %>
         <% button_options = { icon: "envelope", type: "warning", text: "Invite and Approve", size: "xs", confirm: "One step invite and approve #{partner_row.name} to begin using the partner application?" } %>
-        <%= invite_button_to(invite_and_approve_partner_path(organization_name: nil, id: partner_row.id), button_options) %>
+        <%= invite_button_to(invite_and_approve_partner_path(id: partner_row.id), button_options) %>
       <% else %>
-        <%= invite_button_to(invite_partner_path(organization_name: nil, id: partner_row.id), confirm: "Send an invitation to #{partner_row.name} to begin using the partner application?") %>
+        <%= invite_button_to(invite_partner_path(id: partner_row.id), confirm: "Send an invitation to #{partner_row.name} to begin using the partner application?") %>
       <% end %>
     <% when "invited" %>
-      <%= view_button_to partner_path(organization_name: nil, id: partner_row.id) + "#partner-information", { text: "Review Application", icon: "check", type: "warning" } %>
-      <%= invite_button_to(invite_partner_path(organization_name: nil, id: partner_row.id), confirm: "Re-send an invitation to #{partner_row.name}?", text: 'Re-send Invite') %>
+      <%= view_button_to partner_path(id: partner_row.id) + "#partner-information", { text: "Review Application", icon: "check", type: "warning" } %>
+      <%= invite_button_to(invite_partner_path(id: partner_row.id), confirm: "Re-send an invitation to #{partner_row.name}?", text: 'Re-send Invite') %>
     <% when "awaiting_review" %>
-      <%= view_button_to partner_path(organization_name: nil, id: partner_row.id) + "#partner-information", { text: "Review Application", icon: "check", type: "warning" } %>
+      <%= view_button_to partner_path(id: partner_row.id) + "#partner-information", { text: "Review Application", icon: "check", type: "warning" } %>
     <% when "approved" %>
-      <%= button_to recertify_partner_partner_path(organization_name: nil, id: partner_row.id), data: { confirm: "Recertify partner #{partner_row.name}?"}, class: "btn btn-xs bg-red" do %>
+      <%= button_to recertify_partner_partner_path(id: partner_row.id), data: { confirm: "Recertify partner #{partner_row.name}?"}, class: "btn btn-xs bg-red" do %>
         <i class="fa fa-refresh"></i> Request Recertification
       <% end %>
     <% when "deactivated" %>
-      <%= reactivate_button_to reactivate_partner_path(organization_name: nil, id: partner_row.id), {confirm: confirm_reactivate_msg(partner_row.name)} %>
+      <%= reactivate_button_to reactivate_partner_path(id: partner_row.id), {confirm: confirm_reactivate_msg(partner_row.name)} %>
     <% else %>
       &nbsp;
     <% end %>
