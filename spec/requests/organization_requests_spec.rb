@@ -133,6 +133,42 @@ RSpec.describe "Organizations", type: :request do
         expect { subject }.to change { user.reload.discarded_at }.to be_nil
       end
     end
+
+    context "when attempting to access a different organization" do
+      let(:other_organization) { create(:organization) }
+      let(:other_organization_params) do
+        { organization_name: other_organization.to_param }
+      end
+
+      describe "GET #show" do
+        before { get organization_path(other_organization_params) }
+
+        it "shows your own anyway" do
+          expect(response.body).to include(organization.name)
+        end
+      end
+
+      describe "GET #edit" do
+        before { get edit_organization_path(other_organization_params) }
+
+        it "shows your own anyway" do
+          expect(response.body).to include(organization.name)
+        end
+      end
+
+      describe "POST #promote_to_org_admin" do
+        let(:other_user) { create(:user, organization: other_organization, name: "Wrong User") }
+
+        subject { post promote_to_org_admin_organization_path(user_id: other_user.id) }
+
+        it "redirects after update" do
+          subject
+          expect(response).to have_http_status(:not_found)
+          expect(other_user.reload.has_role?(Role::ORG_ADMIN, organization)).to eq(false)
+          expect(other_user.reload.has_role?(Role::ORG_ADMIN, other_organization)).to eq(false)
+        end
+      end
+    end
   end
 
   context 'When signed in as a super admin' do
