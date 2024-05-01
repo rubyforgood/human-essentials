@@ -397,7 +397,7 @@ RSpec.feature "Distributions", type: :system do
 
       it "User creates a distribution from a donation then edits it" do
         within ".distribution_line_items_quantity" do
-          first(".numeric").set 13
+          first("[data-quantity]").set 13
         end
         click_on "Save"
         expect(page).to have_content "Distribution updated!"
@@ -406,7 +406,7 @@ RSpec.feature "Distributions", type: :system do
 
       it "User creates a distribution from a donation then tries to make the quantity too big", js: true do
         within ".distribution_line_items_quantity" do
-          first(".numeric").set 999_999
+          first("[data-quantity]").set 999_999
         end
         click_on "Save"
         expect(page).to have_no_content "Distribution updated!"
@@ -427,14 +427,14 @@ RSpec.feature "Distributions", type: :system do
       it "User creates duplicate line items" do
         item = @distribution.line_items.first.item
         select2(page, 'distribution_line_items_item_id', item.name, position: 1)
-        find_all(".numeric")[0].set 1
+        find_all("[data-quantity]")[0].set 1
 
         click_on "Add Another Item"
 
         select2(page, 'distribution_line_items_item_id', item.name, position: 2)
-        new_select = find_all(".numeric")[1]
+        new_select = find_all("[data-quantity]")[1]
         expect(new_select.value).to eq("")
-        find_all(".numeric")[1].set 3
+        find_all("[data-quantity]")[1].set 3
 
         first("button", text: "Save").click
 
@@ -483,7 +483,7 @@ RSpec.feature "Distributions", type: :system do
       end
 
       expect(page).to have_content("Sorry, we weren't able to save")
-      find_all(".numeric")[0].set 1
+      find_all("[data-quantity]")[0].set 1
 
       click_on "Save"
 
@@ -530,10 +530,10 @@ RSpec.feature "Distributions", type: :system do
   context "when filtering on the index page" do
     subject { @url_prefix + "/distributions" }
     let(:item_category) { create(:item_category) }
-    let(:item1) { create(:item, name: "Good item", item_category: item_category) }
-    let(:item2) { create(:item, name: "Crap item") }
-    let(:partner1) { create(:partner, name: "This Guy", email: "thisguy@example.com") }
-    let(:partner2) { create(:partner, name: "Not This Guy", email: "ntg@example.com") }
+    let(:item1) { create(:item, name: "Good item", item_category: item_category, organization: @organization) }
+    let(:item2) { create(:item, name: "Crap item", organization: @organization) }
+    let(:partner1) { create(:partner, name: "This Guy", email: "thisguy@example.com", organization: @organization) }
+    let(:partner2) { create(:partner, name: "Not This Guy", email: "ntg@example.com", organization: @organization) }
 
     it "filters by item id" do
       create(:distribution, :with_items, item: item1)
@@ -555,25 +555,40 @@ RSpec.feature "Distributions", type: :system do
       expect(page).to have_css("table tbody tr td", text: stored_item1_total)
     end
 
-    it "filters by item category id" do
-      @organization.item_categories << item_category
-      create(:distribution, :with_items, item: item1)
-      create(:distribution, :with_items, item: item2)
+    context "with fresh items" do
+      let(:organization) { create(:organization, skip_items: true) }
+      let(:user) { create(:user, organization: organization) }
+      let(:storage_location) { create(:storage_location, organization: organization) }
+      let(:item_category) { create(:item_category, organization: organization) }
+      let(:item1) { create(:item, name: "Good item", item_category: item_category, organization: organization) }
+      let(:item2) { create(:item, name: "Crap item", organization: organization) }
+      let(:partner1) { create(:partner, name: "This Guy", email: "thisguy@example.com", organization: organization) }
+      let(:partner2) { create(:partner, name: "Not This Guy", email: "ntg@example.com", organization: organization) }
 
-      visit subject
-      # check for all distributions
-      expect(page).to have_css("table tbody tr", count: 2)
-      # filter
-      select(item_category.name, from: "filters[by_item_category_id]")
-      click_button("Filter")
-      # check for filtered distributions
-      expect(page).to have_css("table tbody tr", count: 1)
+      it "filters by item category id" do
+        setup_storage_location(storage_location)
 
-      # check for heading text
-      expect(page).to have_css("table thead tr th", text: "Total in #{item_category.name}")
-      # check for count update
-      stored_item1_total = @storage_location.item_total(item1.id)
-      expect(page).to have_css("table tbody tr td", text: stored_item1_total)
+        sign_out(user)
+        sign_in(user)
+
+        create(:distribution, :with_items, item: item1, organization: organization)
+        create(:distribution, :with_items, item: item2, organization: organization)
+
+        visit "/#{organization.to_param}/distributions"
+        # check for all distributions
+        expect(page).to have_css("table tbody tr", count: 2)
+        # filter
+        select(item_category.name, from: "filters[by_item_category_id]")
+        click_button("Filter")
+        # check for filtered distributions
+        expect(page).to have_css("table tbody tr", count: 1)
+
+        # check for heading text
+        expect(page).to have_css("table thead tr th", text: "Total in #{item_category.name}")
+        # check for count update
+        stored_item1_total = storage_location.item_total(item1.id)
+        expect(page).to have_css("table tbody tr td", text: stored_item1_total)
+      end
     end
 
     it "filters by partner" do

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe PartnerProfileUpdateService do
+RSpec.describe PartnerProfileUpdateService do
   let(:county_1) { create(:county, name: "county1", region: "region1") }
   let(:county_2) { create(:county, name: "county2", region: "region2") }
 
@@ -40,7 +40,6 @@ describe PartnerProfileUpdateService do
           expect(result.error.to_s).to include("Validation failed: Total client share must be 0 or 100")
 
           profile.reload
-          puts profile.served_areas.size
           expect(profile.served_areas.size).to eq(0)
         end
       end
