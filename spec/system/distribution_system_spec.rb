@@ -576,7 +576,7 @@ RSpec.feature "Distributions", type: :system do
         create(:distribution, :with_items, item: item1, organization: organization)
         create(:distribution, :with_items, item: item2, organization: organization)
 
-        visit "/#{organization.to_param}/distributions"
+        visit distributions_path
         # check for all distributions
         expect(page).to have_css("table tbody tr", count: 2)
         # filter

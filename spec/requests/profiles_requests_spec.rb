@@ -37,7 +37,7 @@ RSpec.describe "Profiles", type: :request do
           }
         }
 
-        put profile_path(default_params.merge(id: partner, partner: new_partner_program_params))
+        put profile_path(id: partner, partner: new_partner_program_params)
 
         partner.profile.reload
 

@@ -72,7 +72,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           create(:purchase, vendor: vendor2, organization: organization)
 
           sign_in create(:user, organization: organization)
-          visit "/#{organization.short_name}/purchases"
+          visit purchases_path
 
           expect(page).to have_css("table tbody tr", count: 2)
           select vendor1.business_name, from: "filters[from_vendor]"

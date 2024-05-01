@@ -28,7 +28,7 @@ RSpec.describe "Users", type: :request do
   describe "POST #send_partner_user_reset_password" do
     let(:partner) { create(:partner, organization: organization) }
     let!(:user) { create(:partner_user, partner: partner, email: "me@partner.com") }
-    let(:params) { { partner_id: partner.id, email: "me@partner.com" } }
+    let(:params) { { organization_name: organization.short_name, partner_id: partner.id, email: "me@partner.com" } }
 
     it "should send a password" do
       post partner_user_reset_password_users_path(params)
@@ -67,9 +67,7 @@ RSpec.describe "Users", type: :request do
         user.add_role(Role::PARTNER, partner)
         get switch_to_role_users_path(organization,
           role_id: user.roles.find { |r| r.name == Role::PARTNER.to_s })
-        # all bank controllers add organization_id to all routes - there's no way to
-        # avoid it
-        expect(response).to redirect_to(partners_dashboard_path(organization_name: organization.to_param))
+        expect(response).to redirect_to(partners_dashboard_path)
       end
 
       it "should set last_role to partner" do
