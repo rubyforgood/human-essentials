@@ -392,6 +392,15 @@ RSpec.describe "Donations", type: :system, js: true do
           end.to change { Donation.count }.by(1)
         end
 
+        it "Requires quantity to be numeric" do
+          select Donation::SOURCES[:misc], from: "donation_source"
+          select StorageLocation.first.name, from: "donation_storage_location_id"
+          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+          fill_in "donation_line_items_attributes_0_quantity", with: "1,000"
+          click_button "Save"
+          expect(page).to have_content("Quantity is not a number")
+        end
+
         it "Displays nested errors" do
           select Donation::SOURCES[:misc], from: "donation_source"
           select StorageLocation.first.name, from: "donation_storage_location_id"

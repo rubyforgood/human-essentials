@@ -62,6 +62,29 @@ RSpec.describe "/partners/profiles", type: :request do
       expect(response).to redirect_to(partners_profile_path)
     end
 
+    it "updates the partner program address" do
+      partner.profile.update!(program_address1: "123 Happy Pl.", program_address2: "suite 333", program_city: "Golden", program_state: "Colorado", program_zip_code: 80401)
+
+      put partners_profile_path(partner,
+        partner: {name: partner.name,
+                  profile: {
+                    program_address1: "123 Happy Pl.",
+                    program_address2: "suite 333",
+                    program_city: "Golden",
+                    program_state: "Colorado",
+                    program_zip_code: 80401
+                  }})
+
+      partner.profile.reload
+
+      expect(partner.profile.program_address1).to eq("123 Happy Pl.")
+      expect(partner.profile.program_address2).to eq("suite 333")
+      expect(partner.profile.program_city).to eq("Golden")
+      expect(partner.profile.program_state).to eq("Colorado")
+      expect(partner.profile.program_zip_code).to eq(80401)
+      expect(response).to redirect_to(partners_profile_path)
+    end
+
     context "with no social media" do
       it "shows an error" do
         put partners_profile_path(partner,

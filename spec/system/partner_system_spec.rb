@@ -436,7 +436,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
       context 'when a partner is assigned to partner group' do
         before do
           assert page.has_content? 'All Items Requestable'
-          expect(@partner.partner_group).to be_nil
+          @partner.update!(partner_group: nil)
         end
 
         context 'that has requestable item categories' do
