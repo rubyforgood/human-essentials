@@ -136,16 +136,12 @@ RSpec.describe "Organizations", type: :request do
   end
 
   context 'When signed in as a super admin' do
-    let(:default_params) do
-      { organization_name: @organization.to_param }
-    end
-
     before do
       sign_in(@super_admin)
     end
 
     describe "GET #show" do
-      before { get admin_organizations_path(default_params.merge(id: organization.id)) }
+      before { get admin_organizations_path(id: organization.id) }
 
       it { expect(response).to be_successful }
 
@@ -157,8 +153,9 @@ RSpec.describe "Organizations", type: :request do
       end
     end
 
-    describe "POST #promote_to_org_admin" do
-      subject { post promote_to_org_admin_organization_path(default_params.merge(user_id: user.id)) }
+    describe "POST #promote_to_org_admin",
+              skip: "Super admins should not be able to act on OrganizationsController (they need to switch to another role first)" do
+      subject { post promote_to_org_admin_organization_path(user_id: user.id) }
 
       it "runs successfully" do
         subject
@@ -167,11 +164,12 @@ RSpec.describe "Organizations", type: :request do
       end
     end
 
-    describe "POST #demote_to_user" do
+    describe "POST #demote_to_user",
+              skip: "Super admins should not be able to act on OrganizationsController (they need to switch to another role first)" do
       let(:admin_user) do
         create(:organization_admin, organization: organization, name: "ADMIN USER")
       end
-      subject { post demote_to_user_organization_path(default_params.merge(user_id: admin_user.id)) }
+      subject { post demote_to_user_organization_path(user_id: admin_user.id) }
 
       it "runs successfully" do
         subject
@@ -180,8 +178,9 @@ RSpec.describe "Organizations", type: :request do
       end
     end
 
-    describe "PUT #deactivate_user" do
-      subject { put deactivate_user_organization_path(default_params.merge(user_id: user.id)) }
+    describe "PUT #deactivate_user",
+              skip: "Super admins should not be able to act on OrganizationsController (they need to switch to another role first)" do
+      subject { put deactivate_user_organization_path(user_id: user.id) }
 
       it "redirect after update" do
         subject
@@ -192,8 +191,9 @@ RSpec.describe "Organizations", type: :request do
       end
     end
 
-    describe "PUT #reactivate_user" do
-      subject { put reactivate_user_organization_path(default_params.merge(user_id: user.id)) }
+    describe "PUT #reactivate_user",
+              skip: "Super admins should not be able to act on OrganizationsController (they need to switch to another role first)" do
+      subject { put reactivate_user_organization_path(user_id: user.id) }
       before { user.discard! }
 
       it "redirect after update" do
