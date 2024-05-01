@@ -142,7 +142,7 @@ class ItemsController < ApplicationController
 
     item.update!(item_category: nil)
     flash[:notice] = "#{item.name} has been removed from #{previous_category.name}."
-    redirect_to item_category_path(id: previous_category.id)
+    redirect_to item_category_path(previous_category)
   end
 
   private

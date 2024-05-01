@@ -1,5 +1,5 @@
 <tr>
-  <td><%= link_to inventory_item_row.item.name, item_path(id: inventory_item_row.item.id) %></td>
+  <td><%= link_to inventory_item_row.item.name, item_path(inventory_item_row.item) %></td>
   <td>
     <% if version_date.present? %>
       <% version = inventory_item_row.paper_trail.version_at(version_date) %>

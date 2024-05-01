@@ -107,7 +107,7 @@
                   <td class="text-right"><%= product_drive.donation_quantity_by_date(selected_range, @selected_item_category) %></td>
                   <td class="text-right"><%= product_drive.distinct_items_count_by_date(selected_range, @selected_item_category) %></td>
                   <td class="text-right"><strong><%= dollar_value(product_drive.in_kind_value) %></strong></td>
-                  <td class="text-right"><%= view_button_to product_drive_path(id: product_drive.id) %></td>
+                  <td class="text-right"><%= view_button_to product_drive_path(product_drive) %></td>
                 </tr>
               <% end %>
               </tbody>

@@ -83,7 +83,7 @@ class DistributionsController < ApplicationController
 
       respond_to do |format|
         format.turbo_stream do
-          redirect_to distribution_path(id: result.distribution.id), notice: "Distribution created!"
+          redirect_to distribution_path(result.distribution), notice: "Distribution created!"
         end
       end
     else
@@ -182,7 +182,7 @@ class DistributionsController < ApplicationController
       schedule_reminder_email(@distribution)
 
       perform_inventory_check
-      redirect_to distribution_path(id: @distribution.id), notice: "Distribution updated!"
+      redirect_to distribution_path(@distribution), notice: "Distribution updated!"
     else
       flash[:error] = insufficient_error_message(result.error.message)
       @distribution.line_items.build if @distribution.line_items.size.zero?

@@ -99,7 +99,7 @@ class PartnersController < ApplicationController
   def update
     @partner = current_organization.partners.find(params[:id])
     if @partner.update(partner_params)
-      redirect_to partner_path(id: @partner.id), notice: "#{@partner.name} updated!"
+      redirect_to partner_path(@partner), notice: "#{@partner.name} updated!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
@@ -136,9 +136,9 @@ class PartnersController < ApplicationController
       roles: [Role::PARTNER],
       resource: partner)
 
-    redirect_to partner_path(id: partner.id), notice: "We have invited #{params[:email]} to #{partner.name}!"
+    redirect_to partner_path(partner), notice: "We have invited #{params[:email]} to #{partner.name}!"
   rescue StandardError => e
-    redirect_to partner_path(id: partner.id), error: "Failed to invite #{params[:email]} to #{partner.name} due to: #{e.message}"
+    redirect_to partner_path(partner), error: "Failed to invite #{params[:email]} to #{partner.name} due to: #{e.message}"
   end
 
   def recertify_partner

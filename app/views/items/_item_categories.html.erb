@@ -22,14 +22,14 @@
             <ul>
               <% item_category.items.each do |item| %>
                 <li>
-                  <%= link_to(item.name, item_path(id: item.id), class: 'text-blue-500') %>
+                  <%= link_to(item.name, item_path(item), class: 'text-blue-500') %>
                 </li>
               <% end %>
             </ul>
           </td>
           <td>
-            <%= view_button_to item_category_path(id: item_category.id) %>
-            <%= edit_button_to edit_item_category_path(id: item_category.id) %>
+            <%= view_button_to item_category_path(item_category) %>
+            <%= edit_button_to edit_item_category_path(item_category) %>
           </td>
         </tr>
       <% end %>

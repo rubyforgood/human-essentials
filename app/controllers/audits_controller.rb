@@ -47,7 +47,7 @@ class AuditsController < ApplicationController
       AuditEvent.publish(@audit)
     end
     @audit.finalized!
-    redirect_to audit_path(id: @audit), notice: "Audit is Finalized."
+    redirect_to audit_path(@audit), notice: "Audit is Finalized."
   rescue => e
     redirect_back(fallback_location: audits_path, alert: "Could not finalize audit: #{e.message}")
   end
@@ -120,7 +120,7 @@ class AuditsController < ApplicationController
   def save_audit_status_and_redirect(params)
     notice = params.key?(:save_progress) ? "Audit's progress was successfully saved." : "Audit is confirmed."
     params.key?(:save_progress) ? @audit.in_progress! : @audit.confirmed!
-    redirect_to audit_path(id: @audit), notice: notice
+    redirect_to audit_path(@audit), notice: notice
   end
 
   def audit_params

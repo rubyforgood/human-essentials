@@ -98,7 +98,7 @@
                   <% if @inventory %>
                     <% @inventory.items_for_location(@storage_location.id, include_omitted: true).each do |item| %>
                       <tr>
-                        <td><%= link_to item.name, item_path(id: item.item_id) %></td>
+                        <td><%= link_to item.name, item_path(item.item_id) %></td>
                         <td><%= number_with_delimiter(item.quantity) %></td>
                       </tr>
                     <% end %>
@@ -168,8 +168,8 @@
   layout: "shared/csv_import_modal",
   locals: {
     import_type: 'Storage Locations Instructions',
-    csv_template_url: storage_location_path(storage_location_id: @storage_location.id, format: :csv),
-    csv_import_url: import_inventory_storage_locations_path(storage_location_id: @storage_location.id)
+    csv_template_url: storage_location_path(@storage_location, format: :csv),
+    csv_import_url: import_inventory_storage_locations_path(storage_location: @storage_location.id)
   }
 ) do %>
   <li>Open the csv file with excel <br>or your favourite spreadsheet program.</li>

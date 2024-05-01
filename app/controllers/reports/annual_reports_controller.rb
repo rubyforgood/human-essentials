@@ -29,7 +29,7 @@ class Reports::AnnualReportsController < ApplicationController
   def recalculate
     year = year_param
     Reports.retrieve_report(organization: current_organization, year: year, recalculate: true)
-    redirect_to reports_annual_report_path(year:), notice: "Recalculated annual report!"
+    redirect_to reports_annual_report_path(year), notice: "Recalculated annual report!"
   end
 
   private

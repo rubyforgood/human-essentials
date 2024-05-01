@@ -82,14 +82,14 @@
             </table>
           </div>
           <div class="card-footer">
-            <%= update_button_to picked_up_distribution_path(id: @distribution.id), {text: "Distribution Complete", size: "md"} if @distribution.scheduled? %>
+            <%= update_button_to picked_up_distribution_path(@distribution), {text: "Distribution Complete", size: "md"} if @distribution.scheduled? %>
             <% if @distribution.future? || current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
-              <%= edit_button_to edit_distribution_path(id:@distribution.id), {
+              <%= edit_button_to edit_distribution_path(@distribution), {
                 text: "Make a Correction",
                 enabled: !@distribution.has_inactive_item?,
                 size: "md"} %>
             <% end %>
-            <%= print_button_to print_distribution_path(id: @distribution.id, format: :pdf), {size: "md"} %>
+            <%= print_button_to print_distribution_path(@distribution, format: :pdf), {size: "md"} %>
           </div>
           <% if @distribution.has_inactive_item? %>
             <div class="warning">

@@ -90,8 +90,8 @@
             </table>
           </div>
           <div class="card-footer flex flex-row space-x-2">
-            <%= submit_button_to start_request_path(id: @request.id), {text: "Fulfill request", size: "md"} unless @request.distribution %>
-            <%= view_button_to(distribution_path(id: @request.distribution.id), {text: "View Associated Distribution", size: "md"}) if @request.distribution %>
+            <%= submit_button_to start_request_path(@request), {text: "Fulfill request", size: "md"} unless @request.distribution %>
+            <%= view_button_to(distribution_path(@request.distribution), {text: "View Associated Distribution", size: "md"}) if @request.distribution %>
             <%= button_to 'Cancel', new_request_cancelation_path(request_id: @request.id),
                           method: :get, form_class: 'd-inline', class: 'btn btn-danger btn-md' %>
         </div>

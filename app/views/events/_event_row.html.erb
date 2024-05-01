@@ -19,17 +19,17 @@
     <td><%= event.event_time.strftime("%Y/%m/%d %H:%M:%S %Z") %></td>
     <td>
       <% if from_loc %>
-        <%= link_to storage_locs.find { |i| i.id == from_loc}.name, storage_location_path(id: from_loc) %>
+        <%= link_to storage_locs.find { |i| i.id == from_loc}.name, storage_location_path(from_loc) %>
       <% end %>
     </td>
     <td>
       <% if to_loc %>
-        <%= link_to storage_locs.find { |i| i.id == to_loc}.name, storage_location_path(id: to_loc) %>
+        <%= link_to storage_locs.find { |i| i.id == to_loc}.name, storage_location_path(to_loc) %>
       <% end %>
     </td>
     <td>
       <% event.data.items.each do |entry| %>
-        <%= link_to items.find { |i| i.id == entry.item_id}.name, item_path(id: entry.item_id) %>:
+        <%= link_to items.find { |i| i.id == entry.item_id}.name, item_path(entry.item_id) %>:
         <%= entry.from_storage_location == from_loc ? entry.quantity : -entry.quantity %><br>
       <% end %>
     </td>

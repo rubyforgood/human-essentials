@@ -28,7 +28,7 @@
       <span class="float-right">
         <%=
           refresh_button_to(
-            recalculate_reports_annual_report_path(year: @year),
+            recalculate_reports_annual_report_path(@year),
               { text: "Recalculate Report" },
               method: :post
             )

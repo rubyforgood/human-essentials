@@ -11,7 +11,7 @@
     <% end %>
   </td>
   <td class="text-right">
-    <%= update_button_to picked_up_distribution_path(id: pickup_day_row.id), {text: "Distribution Complete", size: "xs"} if !pickup_day_row.complete? %>
-    <%= view_button_to distribution_path(id: pickup_day_row.id) %>
+    <%= update_button_to picked_up_distribution_path(pickup_day_row), {text: "Distribution Complete", size: "xs"} if !pickup_day_row.complete? %>
+    <%= view_button_to distribution_path(pickup_day_row) %>
   </td>
 </tr>
