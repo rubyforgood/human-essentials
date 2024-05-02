@@ -1,4 +1,4 @@
-RSpec.describe View::Inventory do
+RSpec.describe View::Inventory, skip_seed: true do
   let(:organization) { create(:organization, skip_items: true) }
   let!(:storage_location1) { create(:storage_location, name: "SL1", organization: organization) }
   let!(:storage_location2) { create(:storage_location, name: "SL2", organization: organization) }
