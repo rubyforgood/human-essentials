@@ -1,13 +1,16 @@
 require 'rails_helper'
 
-RSpec.describe "ProductDriveParticipants", type: :request do
+RSpec.describe "ProductDriveParticipants", type: :request, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+
   let(:default_params) do
-    { organization_name: @organization.to_param }
+    { organization_name: organization.to_param }
   end
 
   context "While signed in" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     describe "GET #index" do
@@ -40,7 +43,7 @@ RSpec.describe "ProductDriveParticipants", type: :request do
 
     describe "GET #edit" do
       it "returns http success" do
-        get edit_product_drive_participant_path(default_params.merge(id: create(:product_drive_participant, organization: @user.organization)))
+        get edit_product_drive_participant_path(default_params.merge(id: create(:product_drive_participant, organization: user.organization)))
         expect(response).to be_successful
       end
     end
@@ -99,7 +102,7 @@ RSpec.describe "ProductDriveParticipants", type: :request do
 
     describe "GET #show" do
       it "returns http success" do
-        get product_drive_participant_path(default_params.merge(id: create(:product_drive_participant, organization: @organization)))
+        get product_drive_participant_path(default_params.merge(id: create(:product_drive_participant, organization: organization)))
         expect(response).to be_successful
       end
     end

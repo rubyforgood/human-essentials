@@ -1,13 +1,16 @@
 require "rails_helper"
 
-RSpec.describe "Donations", type: :request do
+RSpec.describe "Donations", type: :request, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+
   let(:default_params) do
-    { organization_name: @organization.to_param }
+    { organization_name: organization.to_param }
   end
 
   describe "while signed in" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     describe "GET #index" do
@@ -130,12 +133,12 @@ RSpec.describe "Donations", type: :request do
     describe "GET #edit" do
       context "when an finalized audit has been performed on the donated items" do
         it "shows a warning" do
-          item = create(:item, organization: @organization, name: "Brightbloom Seed")
-          storage_location = create(:storage_location, :with_items, item: item, organization: @organization)
-          donation = create(:donation, :with_items, item: item, organization: @organization, storage_location: storage_location)
+          item = create(:item, organization: organization, name: "Brightbloom Seed")
+          storage_location = create(:storage_location, :with_items, item: item, organization: organization)
+          donation = create(:donation, :with_items, item: item, organization: organization, storage_location: storage_location)
           create(:audit, :with_items, item: item, storage_location: storage_location, status: "finalized")
 
-          get edit_donation_path(@organization.to_param, donation)
+          get edit_donation_path(organization.to_param, donation)
 
           expect(response.body).to include("You’ve had an audit since this donation was started.")
           expect(response.body).to include("In the case that you are correcting a typo, rather than recording that the physical amounts being donated have changed,\n")
@@ -146,12 +149,12 @@ RSpec.describe "Donations", type: :request do
 
     context "when an non-finalized audit has been performed on the donated items" do
       it "does not shows a warning" do
-        item = create(:item, organization: @organization, name: "Brightbloom Seed")
-        storage_location = create(:storage_location, :with_items, item: item, organization: @organization)
-        donation = create(:donation, :with_items, item: item, organization: @organization, storage_location: storage_location)
+        item = create(:item, organization: organization, name: "Brightbloom Seed")
+        storage_location = create(:storage_location, :with_items, item: item, organization: organization)
+        donation = create(:donation, :with_items, item: item, organization: organization, storage_location: storage_location)
         create(:audit, :with_items, item: item, storage_location: storage_location, status: "confirmed")
 
-        get edit_donation_path(@organization.to_param, donation)
+        get edit_donation_path(organization.to_param, donation)
 
         expect(response.body).to_not include("You’ve had an audit since this donation was started.")
         expect(response.body).to_not include("In the case that you are correcting a typo, rather than recording that the physical amounts being donated have changed,\n")
@@ -161,11 +164,11 @@ RSpec.describe "Donations", type: :request do
 
     context "when no audit has been performed" do
       it "doesn't show a warning" do
-        item = create(:item, organization: @organization, name: "Brightbloom Seed")
-        storage_location = create(:storage_location, :with_items, item: item, organization: @organization)
-        donation = create(:donation, :with_items, item: item, organization: @organization, storage_location: storage_location)
+        item = create(:item, organization: organization, name: "Brightbloom Seed")
+        storage_location = create(:storage_location, :with_items, item: item, organization: organization)
+        donation = create(:donation, :with_items, item: item, organization: organization, storage_location: storage_location)
 
-        get edit_donation_path(@organization.to_param, donation)
+        get edit_donation_path(organization.to_param, donation)
 
         expect(response.body).to_not include("You’ve had an audit since this donation was started.")
         expect(response.body).to_not include("In the case that you are correcting a typo, rather than recording that the physical amounts being donated have changed,\n")
