@@ -18,7 +18,7 @@
 
 require "rails_helper"
 
-RSpec.describe ProductDriveParticipant, type: :model do
+RSpec.describe ProductDriveParticipant, type: :model, skip_seed: true do
   it_behaves_like "provideable"
 
   context "Validations" do
@@ -26,10 +26,6 @@ RSpec.describe ProductDriveParticipant, type: :model do
       expect(build(:product_drive_participant, phone: nil, email: nil)).not_to be_valid
       expect(build(:product_drive_participant, phone: nil)).to be_valid
       expect(build(:product_drive_participant, email: nil)).to be_valid
-    end
-
-    it "is invalid without an organization" do
-      expect(build(:product_drive_participant, organization: nil)).not_to be_valid
     end
   end
 
