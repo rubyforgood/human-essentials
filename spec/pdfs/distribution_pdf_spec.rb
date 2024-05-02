@@ -51,8 +51,8 @@ describe DistributionPdf do
       it "hides value and package columns when true on organization" do
         pdf = described_class.new(org_hiding_packages_and_values, distribution)
         data = pdf.request_data
-        results = pdf.hide_columns(data)
-        expect(results).to eq([
+        pdf.hide_columns(data)
+        expect(data).to eq([
           ["Items Received", "Requested", "Received"],
           ["Item 1", "", 50],
           ["Item 2", 30, 100],
@@ -66,8 +66,8 @@ describe DistributionPdf do
       it "hides value columns when true on organization" do
         pdf = described_class.new(org_hiding_values, distribution)
         data = pdf.request_data
-        results = pdf.hide_columns(data)
-        expect(results).to eq([
+        pdf.hide_columns(data)
+        expect(data).to eq([
           ["Items Received", "Requested", "Received", "Packages"],
           ["Item 1", "", 50, "1"],
           ["Item 2", 30, 100, nil],
@@ -84,8 +84,8 @@ describe DistributionPdf do
     it "hides value and package columns when true on organization" do
       pdf = described_class.new(org_hiding_packages_and_values, distribution)
       data = pdf.request_data
-      results = pdf.hide_columns(data)
-      expect(results).to eq([
+      pdf.hide_columns(data)
+      expect(data).to eq([
         ["Items Received", "Requested", "Received"],
         ["Item 1", "", 50],
         ["Item 2", 30, 100],
@@ -99,8 +99,8 @@ describe DistributionPdf do
     it "hides value columns when true on organization" do
       pdf = described_class.new(org_hiding_values, distribution)
       data = pdf.request_data
-      results = pdf.hide_columns(data)
-      expect(results).to eq([
+      pdf.hide_columns(data)
+      expect(data).to eq([
         ["Items Received", "Requested", "Received", "Packages"],
         ["Item 1", "", 50, "1"],
         ["Item 2", 30, 100, nil],
@@ -116,8 +116,8 @@ describe DistributionPdf do
       it "hides package column when true on organization" do
         pdf = described_class.new(org_hiding_packages, distribution)
         data = pdf.request_data
-        results = pdf.hide_columns(data)
-        expect(results).to eq([
+        pdf.hide_columns(data)
+        expect(data).to eq([
           ["Items Received", "Requested", "Received", "Value/item", "In-Kind Value Received"],
           ["Item 1", "", 50, "$1.00", "$50.00"],
           ["Item 2", 30, 100, "$2.00", "$200.00"],

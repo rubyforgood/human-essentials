@@ -81,7 +81,7 @@ class DistributionPdf
     data = @distribution.request ? request_data : non_request_data
     has_request = @distribution.request.present?
 
-    data = hide_columns(data)
+    hide_columns(data)
     hidden_columns_length = column_names_to_hide.length
 
     font_size 11
@@ -221,7 +221,6 @@ class DistributionPdf
       col_index = data.first.find_index(col_name)
       data.each { |line| line.delete_at(col_index) } if col_index.present?
     end
-    data
   end
 
   private
