@@ -66,6 +66,7 @@ RSpec.describe "Audit management", type: :system, js: true do
         visit subject
         click_link "New Audit"
         select storage_location.name, from: "Storage location"
+        find('select option[data-select2-id="3"]', wait: 10) # Prevents flakiness in line below (see #4248)
         select Item.last.name, from: "audit_line_items_attributes_0_item_id"
         fill_in "audit_line_items_attributes_0_quantity", with: quantity.to_s
 
@@ -88,6 +89,7 @@ RSpec.describe "Audit management", type: :system, js: true do
         visit subject
         click_link "New Audit"
         select storage_location.name, from: "Storage location"
+        find('select option[data-select2-id="3"]', wait: 10) # Prevents flakiness in line below (see #4248)
         select Item.last.name, from: "audit_line_items_attributes_0_item_id"
         fill_in "audit_line_items_attributes_0_quantity", with: quantity.to_s
 
