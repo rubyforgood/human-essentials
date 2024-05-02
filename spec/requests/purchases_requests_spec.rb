@@ -1,13 +1,16 @@
 require "rails_helper"
 
-RSpec.describe "Purchases", type: :request do
+RSpec.describe "Purchases", type: :request, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+
   let(:default_params) do
-    { organization_name: @organization.to_param }
+    { organization_name: organization.to_param }
   end
 
   context "While signed in as a user >" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     describe "GET #index" do
@@ -41,9 +44,9 @@ RSpec.describe "Purchases", type: :request do
     end
 
     describe "POST#create" do
-      let!(:storage_location) { create(:storage_location, organization: @organization) }
+      let!(:storage_location) { create(:storage_location, organization: organization) }
       let(:line_items) { [attributes_for(:line_item)] }
-      let(:vendor) { create(:vendor, organization: @organization) }
+      let(:vendor) { create(:vendor, organization: organization) }
 
       context "on success" do
         let(:purchase) do
@@ -70,7 +73,7 @@ RSpec.describe "Purchases", type: :request do
 
         it "storage location defaults to organizations storage location" do
           purchase = create(:purchase)
-          get edit_purchase_path(@organization.to_param, purchase)
+          get edit_purchase_path(organization.to_param, purchase)
           expect(response.body).to match(/(<option selected="selected" value=")[0-9]*(">Smithsonian Conservation Center<\/option>)/)
         end
       end
@@ -107,7 +110,7 @@ RSpec.describe "Purchases", type: :request do
           put purchase_path(default_params.merge(id: purchase.id, purchase: purchase_params))
         end.to change { purchase.storage_location.inventory_items.first.quantity }.by(5)
           .and change {
-            View::Inventory.new(@organization.id)
+            View::Inventory.new(organization.id)
               .quantity_for(storage_location: purchase.storage_location_id, item_id: line_item.item_id)
           }.by(5)
       end
@@ -128,7 +131,7 @@ RSpec.describe "Purchases", type: :request do
             put purchase_path(default_params.merge(id: purchase.id, purchase: purchase_params))
           end.to change { purchase.storage_location.inventory_items.first.quantity }.by(-10)
             .and change {
-                   View::Inventory.new(@organization.id)
+                   View::Inventory.new(organization.id)
                      .quantity_for(storage_location: purchase.storage_location_id, item_id: line_item.item_id)
                  }.by(-10)
         end
@@ -157,7 +160,7 @@ RSpec.describe "Purchases", type: :request do
 
         # TODO this test is invalid in event-world since it's handled by the aggregate
         it "rollsback updates if quantity would go below 0" do
-          next if Event.read_events?(@organization)
+          next if Event.read_events?(organization)
 
           purchase = create(:purchase, :with_items, item_quantity: 10)
           original_storage_location = purchase.storage_location
@@ -188,28 +191,28 @@ RSpec.describe "Purchases", type: :request do
     end
 
     describe "GET #edit" do
-      let(:storage_location) { create(:storage_location, organization: @organization) }
+      let(:storage_location) { create(:storage_location, organization: organization) }
 
       it "returns http success" do
-        get edit_purchase_path(default_params.merge(id: create(:purchase, organization: @organization)))
+        get edit_purchase_path(default_params.merge(id: create(:purchase, organization: organization)))
         expect(response).to be_successful
       end
 
       it "storage location is correct" do
         storage2 = create(:storage_location, name: "storage2")
         purchase2 = create(:purchase, storage_location: storage2)
-        get edit_purchase_path(@organization.to_param, purchase2)
+        get edit_purchase_path(organization.to_param, purchase2)
         expect(response.body).to match(/(<option selected="selected" value=")[0-9]*(">storage2<\/option>)/)
       end
 
       context "when an finalized audit has been performed on the purchased items" do
         it "shows a warning" do
-          item = create(:item, organization: @organization, name: "Brightbloom Seed")
-          storage_location = create(:storage_location, :with_items, item: item, organization: @organization)
+          item = create(:item, organization: organization, name: "Brightbloom Seed")
+          storage_location = create(:storage_location, :with_items, item: item, organization: organization)
           purchase = create(:purchase, :with_items, item: item, storage_location: storage_location)
           create(:audit, :with_items, item: item, storage_location: storage_location, status: "finalized")
 
-          get edit_purchase_path(@organization.to_param, purchase)
+          get edit_purchase_path(organization.to_param, purchase)
 
           expect(response.body).to include("You’ve had an audit since this purchase was started.")
           expect(response.body).to include("In the case that you are correcting a typo, rather than recording that the physical amounts being purchased have changed,")
@@ -219,12 +222,12 @@ RSpec.describe "Purchases", type: :request do
 
       context "when non-finalized audit has been performed on the purchased items" do
         it "does not show a warning" do
-          item = create(:item, organization: @organization, name: "Brightbloom Seed")
-          storage_location = create(:storage_location, :with_items, item: item, organization: @organization)
+          item = create(:item, organization: organization, name: "Brightbloom Seed")
+          storage_location = create(:storage_location, :with_items, item: item, organization: organization)
           purchase = create(:purchase, :with_items, item: item, storage_location: storage_location)
           create(:audit, :with_items, item: item, storage_location: storage_location, status: "confirmed")
 
-          get edit_purchase_path(@organization.to_param, purchase)
+          get edit_purchase_path(organization.to_param, purchase)
 
           expect(response.body).to_not include("You’ve had an audit since this purchase was started.")
           expect(response.body).to_not include("In the case that you are correcting a typo, rather than recording that the physical amounts being purchased have changed,")
@@ -234,11 +237,11 @@ RSpec.describe "Purchases", type: :request do
 
       context "when no audit has been performed" do
         it "does not show a warning" do
-          item = create(:item, organization: @organization, name: "Brightbloom Seed")
-          storage_location = create(:storage_location, :with_items, item: item, organization: @organization)
+          item = create(:item, organization: organization, name: "Brightbloom Seed")
+          storage_location = create(:storage_location, :with_items, item: item, organization: organization)
           purchase = create(:purchase, :with_items, item: item, storage_location: storage_location)
 
-          get edit_purchase_path(@organization.to_param, purchase)
+          get edit_purchase_path(organization.to_param, purchase)
 
           expect(response.body).to_not include("You’ve had an audit since this purchase was started.")
           expect(response.body).to_not include("In the case that you are correcting a typo, rather than recording that the physical amounts being purchased have changed,")
@@ -295,7 +298,7 @@ RSpec.describe "Purchases", type: :request do
     describe "DELETE #destroy" do
       # normal users are not authorized
       it "redirects to the dashboard" do
-        delete purchase_path(default_params.merge(id: create(:purchase, organization: @organization)))
+        delete purchase_path(default_params.merge(id: create(:purchase, organization: organization)))
         expect(response).to redirect_to(dashboard_path)
       end
 
@@ -308,12 +311,12 @@ RSpec.describe "Purchases", type: :request do
 
   context "While signed in as an organizational admin" do
     before do
-      sign_in(@organization_admin)
+      sign_in(create(:organization_admin, organization: organization))
     end
 
     describe "DELETE #destroy" do
       it "redirects to the index" do
-        delete purchase_path(default_params.merge(id: create(:purchase, organization: @organization)))
+        delete purchase_path(default_params.merge(id: create(:purchase, organization: organization)))
         expect(response).to redirect_to(purchases_path)
       end
 
