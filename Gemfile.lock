@@ -138,6 +138,7 @@ GEM
       bigdecimal
       rexml
     crass (1.0.6)
+    csv (3.3.0)
     cuprite (0.15)
       capybara (~> 3.0)
       ferrum (~> 0.14.0)
@@ -276,7 +277,8 @@ GEM
       rspec (>= 2.99.0, < 4.0)
     hashdiff (1.1.0)
     hashie (5.0.0)
-    httparty (0.21.0)
+    httparty (0.22.0)
+      csv
       mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
     i18n (1.14.4)
