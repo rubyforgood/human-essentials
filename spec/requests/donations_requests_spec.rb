@@ -95,7 +95,7 @@ RSpec.describe "Donations", type: :request do
         expect(response.body).not_to match(/please make the following items active:/)
       end
 
-      context "with an inactive item" do
+      context "with an inactive item - non organization admin user" do
         before do
           item.update(active: false)
         end
@@ -105,6 +105,23 @@ RSpec.describe "Donations", type: :request do
           page = Nokogiri::HTML(response.body)
           edit = page.at_css("a[href='#{edit_donation_path(default_params.merge(id: donation.id))}']")
           expect(edit.attr("class")).to match(/disabled/)
+          expect(response.body).to match(/please make the following items active: #{item.name}/)
+        end
+      end
+
+      context "with an inactive item - organization admin user" do
+        before do
+          sign_in(@organization_admin)
+          item.update(active: false)
+        end
+
+        it "shows a disabled edit and delete buttons" do
+          get donation_path(default_params.merge(id: donation.id))
+          page = Nokogiri::HTML(response.body)
+          edit = page.at_css("a[href='#{edit_donation_path(default_params.merge(id: donation.id))}']")
+          delete = page.at_css("a.btn-danger[href='#{donation_path(default_params.merge(id: donation.id))}']")
+          expect(edit.attr("class")).to match(/disabled/)
+          expect(delete.attr("class")).to match(/disabled/)
           expect(response.body).to match(/please make the following items active: #{item.name}/)
         end
       end
