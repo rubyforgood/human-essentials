@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Organizations", type: :request do
+RSpec.describe "Organizations", type: :request, skip_seed: true do
   let(:organization) { create(:organization, skip_items: true) }
   let(:user) { create(:user, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
@@ -185,7 +185,7 @@ RSpec.describe "Organizations", type: :request do
 
   context 'When signed in as a super admin' do
     before do
-      sign_in(@super_admin)
+      sign_in(create(:super_admin, organization: organization))
     end
 
     describe "GET #show" do

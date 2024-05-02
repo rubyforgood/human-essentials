@@ -1,12 +1,14 @@
-RSpec.describe "Profiles", type: :request do
-  let(:partner) { FactoryBot.create(:partner, organization: @organization) }
+RSpec.describe "Profiles", type: :request, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+  let(:partner) { create(:partner, organization: organization) }
 
   let(:default_params) do
-    { organization_name: @organization.to_param, id: partner.id, partner_id: partner.id }
+    { organization_name: organization.to_param, id: partner.id, partner_id: partner.id }
   end
 
   before do
-    sign_in(@user)
+    sign_in(user)
   end
 
   describe "GET #edit" do
