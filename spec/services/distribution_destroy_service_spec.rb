@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe DistributionDestroyService do
+RSpec.describe DistributionDestroyService do
   describe '#call' do
     subject { described_class.new(distribution_id).call }
     let(:distribution_id) { Faker::Number.number }

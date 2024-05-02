@@ -18,6 +18,7 @@ class RemoveRoleService
     end
 
     user_role.destroy
+
     if user_role.role.name.to_sym == Role::ORG_USER # they can't be an admin if they're not a user
       admin_role = Role.find_by(resource_id: user_role.role.resource_id, name: Role::ORG_ADMIN)
       if admin_role
