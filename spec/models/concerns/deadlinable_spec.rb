@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Deadlinable, type: :model do
+RSpec.describe Deadlinable, type: :model, skip_seed: true do
   let(:dummy_class) do
     Class.new do
       def self.name
