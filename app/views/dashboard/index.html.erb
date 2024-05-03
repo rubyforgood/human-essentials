@@ -51,7 +51,7 @@
             <div class="row">
               <div class="col-sm-3 col-6">
                 <div class="description-block border-right">
-                  <%= simple_form_for :filters, url: dashboard_path(current_organization), method: :get do |f| %>
+                  <%= simple_form_for :filters, url: dashboard_path, method: :get do |f| %>
                     <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %><br>
                     <%= filter_button %>
                   <% end %>
