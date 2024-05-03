@@ -12,9 +12,7 @@
 #
 require "rails_helper"
 
-RSpec.describe KitAllocation, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
-
+RSpec.describe KitAllocation, type: :model, skip_seed: true do
   describe "versioning" do
     it { is_expected.to be_versioned }
   end

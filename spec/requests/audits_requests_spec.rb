@@ -1,23 +1,26 @@
 require 'rails_helper'
 
-RSpec.describe "Audits", type: :request do
+RSpec.describe "Audits", type: :request, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+
   let(:default_params) do
-    { organization_name: @organization.to_param }
+    { organization_name: organization.to_param }
   end
 
   let(:valid_attributes) do
     {
-      organization_id: @organization.id,
-      storage_location_id: create(:storage_location, organization: @organization).id,
-      user_id: create(:organization_admin, organization: @organization).id
+      organization_id: organization.id,
+      storage_location_id: create(:storage_location, organization: organization).id,
+      user_id: create(:organization_admin, organization: organization).id
     }
   end
 
   let(:invalid_storage_location_attributes) do
     {
-      organization_id: @organization.id,
+      organization_id: organization.id,
       storage_location_id: nil,
-      user_id: create(:organization_admin, organization: @organization).id
+      user_id: create(:organization_admin, organization: organization).id
     }
   end
 
@@ -29,7 +32,7 @@ RSpec.describe "Audits", type: :request do
 
   describe "while signed in as an organization admin" do
     before do
-      sign_in(@organization_admin)
+      sign_in(organization_admin)
     end
 
     describe "GET #index" do
@@ -42,7 +45,7 @@ RSpec.describe "Audits", type: :request do
 
     describe "GET #show" do
       it "is successful" do
-        audit = create(:audit, organization: @organization)
+        audit = create(:audit, organization: organization)
         get audits_path(default_params.merge(id: audit.to_param))
         expect(response).to be_successful
       end
@@ -57,17 +60,17 @@ RSpec.describe "Audits", type: :request do
 
     describe "GET #edit" do
       it "is successful if the status of audit is `in_progress`" do
-        audit = create(:audit, organization: @organization)
+        audit = create(:audit, organization: organization)
         get edit_audit_path(default_params.merge(id: audit.to_param))
         expect(response).to be_successful
       end
 
       it "redirects to #index if the status of audit is not `in_progress`" do
-        audit = create(:audit, organization: @organization, status: :confirmed)
+        audit = create(:audit, organization: organization, status: :confirmed)
         get edit_audit_path(default_params.merge(id: audit.to_param))
         expect(response).to redirect_to(audits_path)
 
-        audit = create(:audit, organization: @organization, status: :finalized)
+        audit = create(:audit, organization: organization, status: :finalized)
         get edit_audit_path(default_params.merge(id: audit.to_param))
         expect(response).to redirect_to(audits_path)
       end
@@ -128,7 +131,7 @@ RSpec.describe "Audits", type: :request do
 
     describe 'POST #finalize' do
       it 'sets the finalize status and saves an event' do
-        audit = create(:audit, organization: @organization)
+        audit = create(:audit, organization: organization)
         expect(AuditEvent.count).to eq(0)
         post audit_finalize_path(default_params.merge(audit_id: audit.to_param))
         expect(audit.reload).to be_finalized
@@ -139,21 +142,21 @@ RSpec.describe "Audits", type: :request do
     describe "DELETE #destroy" do
       context "with valid params" do
         it "destroys the audit if the audit's status is `in_progress`" do
-          audit = create(:audit, organization: @organization)
+          audit = create(:audit, organization: organization)
           expect do
             delete audit_path(default_params.merge(id: audit.to_param))
           end.to change(Audit, :count).by(-1)
         end
 
         it "destroys the audit if the audit's status is `confirms`" do
-          audit = create(:audit, organization: @organization, status: :confirmed)
+          audit = create(:audit, organization: organization, status: :confirmed)
           expect do
             delete audit_path(default_params.merge(id: audit.to_param))
           end.to change(Audit, :count).by(-1)
         end
 
         it "can not destroy the audit if the audit's status is `finalized`" do
-          audit = create(:audit, organization: @organization, status: :finalized)
+          audit = create(:audit, organization: organization, status: :finalized)
           expect do
             delete audit_path(default_params.merge(id: audit.to_param))
           end.to change(Audit, :count).by(0)
