@@ -49,7 +49,7 @@ class ApplicationController < ActionController::Base
     elsif current_role.name == Role::PARTNER.to_s
       partners_dashboard_path
     elsif current_user.organization
-      dashboard_path(current_user.organization)
+      dashboard_path
     else
       "/403"
     end
