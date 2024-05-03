@@ -16,7 +16,7 @@ RSpec.describe "Donations", type: :system, js: true do
       it "Allows User to click to the new donation form" do
         find(".fa-plus").click
 
-        expect(current_path).to eq(new_donation_path(@organization))
+        expect(current_path).to eq(new_donation_path)
         expect(page).to have_content "Start a new donation"
       end
 

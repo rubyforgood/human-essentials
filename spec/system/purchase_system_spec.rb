@@ -22,7 +22,7 @@ RSpec.describe "Purchases", type: :system, js: true do
         it "User can click to the new purchase form" do
           find(".fa-plus").click
 
-          expect(current_path).to eq(new_purchase_path(@organization))
+          expect(current_path).to eq(new_purchase_path)
           expect(page).to have_content "Start a new purchase"
         end
 
@@ -206,13 +206,13 @@ RSpec.describe "Purchases", type: :system, js: true do
       context "Editing purchase" do
         it "A user can see purchased_from value" do
           purchase = create(:purchase, purchased_from: "Old Vendor", organization: @organization)
-          visit edit_purchase_path(@organization.to_param, purchase)
+          visit edit_purchase_path(purchase)
           expect(page).to have_content("Vendor (Old Vendor)")
         end
 
         it "A user can view another organizations purchase" do
           purchase = create(:purchase, organization: create(:organization))
-          visit edit_purchase_path(@user.organization.short_name, purchase)
+          visit edit_purchase_path(purchase)
           expect(page).to have_content("Still haven't found what you're looking for")
         end
       end

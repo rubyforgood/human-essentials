@@ -213,7 +213,7 @@ RSpec.describe "Audit management", type: :system, js: true do
           expect(page).not_to have_content("Finalize Audit")
           visit edit_audit_path(id: audit.to_param)
           expect(page).not_to have_current_path(edit_audit_path(@organization.to_param, audit.to_param))
-          expect(page).to have_current_path(audits_path(@organization.to_param))
+          expect(page).to have_current_path(audits_path)
         end
 
         it "should not be able to delete the audit that is finalized" do

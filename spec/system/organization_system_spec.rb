@@ -27,10 +27,10 @@ RSpec.describe "Organization management", type: :system, js: true do
       it "can view organization details", :aggregate_failures do
         @organization.update!(one_step_partner_invite: true)
 
-        visit organization_path(@organization)
+        visit organization_path
 
         expect(page.find("h1")).to have_text(@organization.name)
-        expect(page).to have_link("Home", href: dashboard_path(@organization))
+        expect(page).to have_link("Home", href: dashboard_path)
 
         expect(page).to have_content("Organization Info")
         expect(page).to have_content("Contact Info")
