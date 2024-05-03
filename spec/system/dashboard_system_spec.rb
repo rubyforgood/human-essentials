@@ -122,13 +122,11 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
     describe "Donations" do
       it "has a link to create a new donation" do
-        org_new_donation_page = OrganizationNewDonationPage.new org_short_name: org_short_name
-
         org_dashboard_page.visit
 
         expect { org_dashboard_page.create_new_donation }
           .to change { page.current_path }
-          .to org_new_donation_page.path
+          .to new_donation_path
       end
 
       # as of 28 Jan 2022, the "Recent Donations" list shows up to this many items matching the date filter
@@ -240,13 +238,11 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
     describe "Purchases" do
       it "has a link to create a new purchase" do
-        org_new_purchase_page = OrganizationNewPurchasePage.new org_short_name: org_short_name
-
         org_dashboard_page.visit
 
         expect { org_dashboard_page.create_new_purchase }
           .to change { page.current_path }
-          .to org_new_purchase_page.path
+          .to new_purchase_path
       end
 
       # as of 28 Jan 2022, the "Recent Purchases" list shows up to this many items matching the date filter
@@ -694,13 +690,11 @@ RSpec.describe "Dashboard", type: :system, js: true do
       end
 
       it "has a link to create a new distribution" do
-        org_new_distribution_page = OrganizationNewDistributionPage.new org_short_name: org_short_name
-
         expect(org_dashboard_page.visit).to have_distributions_section
 
         expect { org_dashboard_page.create_new_distribution }
           .to change { page.current_path }
-          .to org_new_distribution_page.path
+          .to new_distribution_path
       end
 
       # as of 28 Jan 2022, the "Recent Donations" list shows up to this many items matching the date filter
