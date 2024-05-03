@@ -6,6 +6,7 @@
 #  name                   :string
 #  partner_key            :string
 #  quantity               :string
+#  reporting_unit         :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  item_id                :integer
@@ -26,6 +27,16 @@ RSpec.describe Partners::ItemRequest, type: :model do
     it { should validate_numericality_of(:quantity).only_integer.is_greater_than_or_equal_to(1) }
     it { should validate_presence_of(:name) }
     it { should validate_presence_of(:partner_key) }
+
+    it "should only be able to use the item's reporting unit" do
+      item = build(:item, reporting_unit: "pack")
+      request = build(:item_request, item: item, reporting_unit: "flat")
+      expect(request.valid?).to eq(false)
+      expect(request.errors.full_messages).to eq(["Reporting unit is not supported"])
+
+      request.reporting_unit = "pack"
+      expect(request.valid?).to eq(true)
+    end
   end
 
   describe "versioning" do
