@@ -64,6 +64,12 @@
           <i class="nav-icon fa fa-plus-circle"></i> New Organization
         <% end %>
       </li>
+      <li class="nav-item <%= active_class(['ndbm_members']) %>">
+        <%= link_to(admin_ndbn_members_path, class: "nav-link #{active_class(['ndbn_members'])}") do %>
+          <i class="nav-icon fa fa-cloud-upload"></i>
+          NDBN Member Upload
+        <% end %>
+      </li>
     </ul>
   </li>
 

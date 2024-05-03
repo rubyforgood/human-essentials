@@ -209,6 +209,28 @@ RSpec.describe StorageLocation, type: :model do
         expect(donations_count).to eq Donation.count
         expect(@organization.adjustments.last.user_id).to eq(@organization.users.with_role(Role::ORG_ADMIN, @organization).first.id)
       end
+
+      it "raises an error if there are already items" do
+        item1 = create(:item)
+        item2 = create(:item)
+        item3 = create(:item)
+        storage_location_with_items = create(:storage_location, organization: @organization)
+
+        TestInventory.create_inventory(@organization,
+         {
+           storage_location_with_items.id => {
+             item1.id => 30,
+             item2.id => 10,
+             item3.id => 40
+           }
+         })
+
+        import_file_path = Rails.root.join("spec", "fixtures", "files", "inventory.csv").read
+
+        expect do
+          StorageLocation.import_inventory(import_file_path, @organization.id, storage_location_with_items.id)
+        end.to raise_error(Errors::InventoryAlreadyHasItems)
+      end
     end
 
     describe "geocode" do

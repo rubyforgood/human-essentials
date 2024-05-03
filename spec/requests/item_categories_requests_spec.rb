@@ -1,10 +1,13 @@
 require "rails_helper"
 
-RSpec.describe "ItemCategories", type: :request do
-  let(:default_params) { {organization_name: @organization.to_param} }
+RSpec.describe "ItemCategories", type: :request, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+
+  let(:default_params) { {organization_name: organization.to_param} }
 
   before do
-    sign_in(@user)
+    sign_in(user)
   end
 
   let(:valid_attributes) {
@@ -22,7 +25,7 @@ RSpec.describe "ItemCategories", type: :request do
   }
 
   describe "GET #show" do
-    let!(:item_category) { create(:item_category, organization: @organization) }
+    let!(:item_category) { create(:item_category, organization: organization) }
 
     it "renders a successful response" do
       get item_category_url(default_params.merge(id: item_category.id))
@@ -38,7 +41,7 @@ RSpec.describe "ItemCategories", type: :request do
   end
 
   describe "GET #edit" do
-    let!(:item_category) { create(:item_category, organization: @organization) }
+    let!(:item_category) { create(:item_category, organization: organization) }
 
     it "renders a successful response" do
       get edit_item_category_url(default_params.merge(id: item_category.id))
@@ -52,8 +55,8 @@ RSpec.describe "ItemCategories", type: :request do
         expect {
           post item_categories_url(default_params.merge(item_category: valid_attributes))
         }.to change(ItemCategory, :count).by(1)
-        expect(response).to redirect_to(items_path(organization: @organization))
-        expect(ItemCategory.last.organization).to eq(@organization)
+        expect(response).to redirect_to(items_path(organization: organization))
+        expect(ItemCategory.last.organization).to eq(organization)
       end
     end
 
@@ -68,7 +71,7 @@ RSpec.describe "ItemCategories", type: :request do
   end
 
   describe "PUT #update" do
-    let!(:item_category) { create(:item_category, organization: @organization) }
+    let!(:item_category) { create(:item_category, organization: organization) }
 
     context "with valid parameters" do
       let(:new_attributes) {

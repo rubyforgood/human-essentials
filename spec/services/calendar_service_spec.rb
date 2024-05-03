@@ -1,4 +1,4 @@
-describe CalendarService do
+RSpec.describe CalendarService do
   describe ".calendar" do
     it "should print the calendar correctly" do
       storage_location = create(:storage_location,
