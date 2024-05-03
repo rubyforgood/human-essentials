@@ -1,6 +1,4 @@
 RSpec.describe "Requests", type: :system, js: true do
-  let!(:url_prefix) { "/#{@organization.to_param}" }
-
   let(:item1) { create(:item, name: "Good item") }
   let(:item2) { create(:item, name: "Crap item") }
   let(:partner1) { create(:partner, name: "This Guy", email: "thisguy@example.com") }
@@ -21,7 +19,7 @@ RSpec.describe "Requests", type: :system, js: true do
   after { travel_back }
 
   context "#index" do
-    subject { url_prefix + "/requests" }
+    subject { requests_path }
 
     before do
       create(:request, :started, partner: partner1, request_items: [{ "item_id": item1.id, "quantity": '12' }])
@@ -119,7 +117,7 @@ RSpec.describe "Requests", type: :system, js: true do
   end
 
   context "#show" do
-    subject { url_prefix + "/requests/#{request.id}" }
+    subject { request_path(request.id) }
 
     let(:request_items) {
       [
@@ -179,7 +177,7 @@ RSpec.describe "Requests", type: :system, js: true do
       end
 
       it "should change to started" do
-        visit url_prefix + "/requests"
+        visit requests_path
         expect(page).to have_content "Started"
         expect(request.reload).to be_status_started
       end
@@ -208,7 +206,7 @@ RSpec.describe "Requests", type: :system, js: true do
     context 'when a bank user cancels a request' do
       let(:reason) { Faker::Lorem.sentence }
       before do
-        visit url_prefix + "/requests"
+        visit requests_path
       end
 
       it 'should set the request as canceled/discarded and contain the reason' do

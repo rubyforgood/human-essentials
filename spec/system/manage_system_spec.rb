@@ -1,5 +1,5 @@
 RSpec.describe "Organization Administration", type: :system, js: true do
-  subject { "/#{@organization.to_param}/organization" }
+  subject { organization_path }
 
   context "while signed in as a normal user" do
     before do

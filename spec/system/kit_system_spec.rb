@@ -28,10 +28,8 @@ RSpec.describe "Kit management", type: :system do
     })
   end
 
-  let!(:url_prefix) { "/#{@organization.to_param}" }
-
   it "can create a new kit as a user with the proper quantity" do
-    visit url_prefix + "/kits/new"
+    visit new_kit_path
     kit_traits = attributes_for(:kit)
 
     fill_in "Name", with: kit_traits[:name]
@@ -50,7 +48,7 @@ RSpec.describe "Kit management", type: :system do
   end
 
   it 'can allocate and deallocate quantity per storage location from kit index' do
-    visit url_prefix + "/kits/"
+    visit kits_path
 
     click_on 'Modify Allocation'
 
@@ -115,7 +113,7 @@ RSpec.describe "Kit management", type: :system do
       name: "Fake Kit"
     }
     KitCreateService.new(organization_id: @organization.id, kit_params: kit_params).tap(&:call).kit
-    visit url_prefix + "/kits/"
+    visit kits_path
     expect(page).to have_no_text("Inactive R Us")
   end
 
@@ -126,7 +124,7 @@ RSpec.describe "Kit management", type: :system do
     end
 
     it 'will not change quantity amounts when allocating' do
-      visit url_prefix + "/kits/"
+      visit kits_path
 
       click_on 'Modify Allocation'
 
@@ -177,7 +175,7 @@ RSpec.describe "Kit management", type: :system do
     end
 
     it 'will not change quantity amounts when deallocating' do
-      visit url_prefix + "/kits/"
+      visit kits_path
 
       click_on 'Modify Allocation'
 
