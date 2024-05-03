@@ -3,6 +3,7 @@ require "rails_helper"
 RSpec.describe "Purchases", type: :request, skip_seed: true do
   let(:organization) { create(:organization, skip_items: true) }
   let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
 
   let(:default_params) do
     { organization_name: organization.to_param }
@@ -279,7 +280,7 @@ RSpec.describe "Purchases", type: :request, skip_seed: true do
 
       context "with an inactive item - organization admin user" do
         before do
-          sign_in(@organization_admin)
+          sign_in(organization_admin)
           item.update(active: false)
         end
 
@@ -311,7 +312,7 @@ RSpec.describe "Purchases", type: :request, skip_seed: true do
 
   context "While signed in as an organizational admin" do
     before do
-      sign_in(create(:organization_admin, organization: organization))
+      sign_in(organization_admin)
     end
 
     describe "DELETE #destroy" do
