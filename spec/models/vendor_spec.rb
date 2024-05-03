@@ -18,7 +18,7 @@
 
 require "rails_helper"
 
-RSpec.describe Vendor, type: :model do
+RSpec.describe Vendor, type: :model, skip_seed: true do
   it_behaves_like "provideable"
 
   context "Methods" do

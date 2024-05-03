@@ -1,20 +1,24 @@
 require "rails_helper"
 
-RSpec.describe "/kits", type: :request do
+RSpec.describe "/kits", type: :request, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+
   let(:default_params) do
-    {organization_name: @organization.to_param}
+    {organization_name: organization.to_param}
   end
-  let!(:kit) { create(:kit, :with_item, organization: @organization) }
+  let!(:kit) { create(:kit, :with_item, organization: organization) }
 
   describe "while signed in" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     describe "GET #index" do
       before do
         # this shouldn't be shown
-        create(:kit, :with_item, active: false, name: "DOOBIE KIT", organization: @organization)
+        create(:kit, :with_item, active: false, name: "DOOBIE KIT", organization: organization)
       end
 
       it "should include deactivate" do

@@ -40,7 +40,6 @@ RSpec.describe PartnerProfileUpdateService do
           expect(result.error.to_s).to include("Validation failed: Total client share must be 0 or 100")
 
           profile.reload
-          puts profile.served_areas.size
           expect(profile.served_areas.size).to eq(0)
         end
       end
