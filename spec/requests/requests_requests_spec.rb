@@ -4,16 +4,12 @@ RSpec.describe 'Requests', type: :request, skip_seed: true do
   let(:organization) { create(:organization, skip_items: true) }
   let(:user) { create(:user, organization: organization) }
 
-  let(:default_params) do
-    { organization_name: organization.to_param }
-  end
-
   context 'When signed' do
     before { sign_in(user) }
 
     describe "GET #index" do
       subject do
-        get requests_path(default_params.merge(format: response_format))
+        get requests_path(format: response_format)
         response
       end
 
@@ -39,7 +35,7 @@ RSpec.describe 'Requests', type: :request, skip_seed: true do
         let(:request) { create(:request, organization: organization) }
 
         it 'responds with success' do
-          get request_path(request, default_params)
+          get request_path(request)
 
           expect(response).to have_http_status(:ok)
         end
@@ -47,7 +43,7 @@ RSpec.describe 'Requests', type: :request, skip_seed: true do
 
       context 'When the request does not exist' do
         it 'responds with not found' do
-          get request_path(1, default_params)
+          get request_path(id: 1)
 
           expect(response).to have_http_status(:not_found)
         end
@@ -60,13 +56,13 @@ RSpec.describe 'Requests', type: :request, skip_seed: true do
 
         it 'changes the request status from pending to started' do
           expect do
-            post start_request_path(request, default_params)
+            post start_request_path(request)
             request.reload
           end.to change(request, :status).from('pending').to('started')
         end
 
         it 'redirects to new_distribution_path and flashes a notice', :aggregate_failures do
-          post start_request_path(request, default_params)
+          post start_request_path(request)
 
           expect(flash[:notice]).to eq('Request started')
           expect(response).to redirect_to(new_distribution_path(request_id: request.id))
@@ -75,7 +71,7 @@ RSpec.describe 'Requests', type: :request, skip_seed: true do
 
       context 'When the request does not exist' do
         it 'responds with not found' do
-          post start_request_path(organization.id, 1)
+          post start_request_path(1)
 
           expect(response).to have_http_status(:not_found)
         end

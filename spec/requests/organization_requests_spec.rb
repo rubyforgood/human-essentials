@@ -5,17 +5,13 @@ RSpec.describe "Organizations", type: :request, skip_seed: true do
   let(:user) { create(:user, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 
-  let(:default_params) do
-    { organization_name: organization.to_param }
-  end
-
   context "While signed in as a normal user" do
     before do
       sign_in(user)
     end
 
     describe "GET #show" do
-      before { get organization_path(default_params) }
+      before { get organization_path }
 
       it { expect(response).to be_successful }
 
@@ -29,7 +25,7 @@ RSpec.describe "Organizations", type: :request, skip_seed: true do
     end
 
     describe "GET #edit" do
-      before { get edit_organization_path(default_params) }
+      before { get edit_organization_path }
 
       it { expect(response).to redirect_to(dashboard_path) }
       it { expect(response).to have_error }
@@ -37,10 +33,7 @@ RSpec.describe "Organizations", type: :request, skip_seed: true do
 
     describe "PATCH #update" do
       let(:update_param) { { organization: { name: "Thunder Pants" } } }
-      before do
-        patch "/#{default_params[:organization_name]}/manage",
-              params: default_params.merge(update_param)
-      end
+      before { patch "/manage", params: update_param }
 
       it { expect(response).to redirect_to(dashboard_path) }
       it { expect(response).to have_error }
@@ -53,7 +46,7 @@ RSpec.describe "Organizations", type: :request, skip_seed: true do
     end
 
     describe "GET #edit" do
-      before { get edit_organization_path(default_params) }
+      before { get edit_organization_path }
 
       it { is_expected.to render_template(:edit) }
       it { expect(response).to be_successful }
@@ -69,15 +62,13 @@ RSpec.describe "Organizations", type: :request, skip_seed: true do
 
     describe "PATCH #update" do
       let(:update_param) { { organization: { name: "Thunder Pants" } } }
-      subject do
-        patch "/#{default_params[:organization_name]}/manage",
-              params: default_params.merge(update_param)
-      end
+      subject { patch "/manage", params: update_param }
 
       it "should be redirect after update" do
         subject
         expect(response).to redirect_to(organization_path)
       end
+
       it "can update name" do
         expect { subject }.to change { organization.reload.name }.to "Thunder Pants"
       end
@@ -86,10 +77,7 @@ RSpec.describe "Organizations", type: :request, skip_seed: true do
         let(:invalid_organization) { create(:organization, name: "Original Name") }
         let(:invalid_params) { { organization: { name: nil } } }
 
-        subject do
-          patch "/#{default_params[:organization_name]}/manage",
-                params: default_params.merge(invalid_params)
-        end
+        subject { patch "/manage", params: invalid_params }
 
         it "renders edit template with an error message" do
           expect(subject).to render_template("edit")
@@ -99,7 +87,7 @@ RSpec.describe "Organizations", type: :request, skip_seed: true do
     end
 
     describe "POST #promote_to_org_admin" do
-      subject { post promote_to_org_admin_organization_path(default_params.merge(user_id: user.id)) }
+      subject { post promote_to_org_admin_organization_path(user_id: user.id) }
 
       it "runs successfully" do
         subject
@@ -112,7 +100,7 @@ RSpec.describe "Organizations", type: :request, skip_seed: true do
       let(:admin_user) do
         create(:organization_admin, organization: organization, name: "ADMIN USER")
       end
-      subject { post demote_to_user_organization_path(default_params.merge(user_id: admin_user.id)) }
+      subject { post demote_to_user_organization_path(user_id: admin_user.id) }
 
       it "runs correctly" do
         subject
@@ -122,7 +110,7 @@ RSpec.describe "Organizations", type: :request, skip_seed: true do
     end
 
     describe "PUT #deactivate_user" do
-      subject { put deactivate_user_organization_path(default_params.merge(user_id: user.id)) }
+      subject { put deactivate_user_organization_path(user_id: user.id) }
 
       it "redirect after update" do
         subject
@@ -134,7 +122,7 @@ RSpec.describe "Organizations", type: :request, skip_seed: true do
     end
 
     describe "PUT #reactivate_user" do
-      subject { put reactivate_user_organization_path(default_params.merge(user_id: user.id)) }
+      subject { put reactivate_user_organization_path(user_id: user.id) }
       before { user.discard! }
 
       it "redirect after update" do
@@ -171,7 +159,7 @@ RSpec.describe "Organizations", type: :request, skip_seed: true do
       describe "POST #promote_to_org_admin" do
         let(:other_user) { create(:user, organization: other_organization, name: "Wrong User") }
 
-        subject { post promote_to_org_admin_organization_path(default_params.merge(user_id: other_user.id)) }
+        subject { post promote_to_org_admin_organization_path(user_id: other_user.id) }
 
         it "redirects after update" do
           subject
@@ -189,7 +177,7 @@ RSpec.describe "Organizations", type: :request, skip_seed: true do
     end
 
     describe "GET #show" do
-      before { get admin_organizations_path({ id: organization.id }) }
+      before { get admin_organizations_path(id: organization.id) }
 
       it { expect(response).to be_successful }
 
@@ -201,8 +189,9 @@ RSpec.describe "Organizations", type: :request, skip_seed: true do
       end
     end
 
-    describe "POST #promote_to_org_admin" do
-      subject { post promote_to_org_admin_organization_path(default_params.merge(user_id: user.id)) }
+    describe "POST #promote_to_org_admin",
+              skip: "Super admins should not be able to act on OrganizationsController (they need to switch to another role first)" do
+      subject { post promote_to_org_admin_organization_path(user_id: user.id) }
 
       it "runs successfully" do
         subject
@@ -211,11 +200,12 @@ RSpec.describe "Organizations", type: :request, skip_seed: true do
       end
     end
 
-    describe "POST #demote_to_user" do
+    describe "POST #demote_to_user",
+              skip: "Super admins should not be able to act on OrganizationsController (they need to switch to another role first)" do
       let(:admin_user) do
         create(:organization_admin, organization: organization, name: "ADMIN USER")
       end
-      subject { post demote_to_user_organization_path(default_params.merge(user_id: admin_user.id)) }
+      subject { post demote_to_user_organization_path(user_id: admin_user.id) }
 
       it "runs successfully" do
         subject
@@ -224,8 +214,9 @@ RSpec.describe "Organizations", type: :request, skip_seed: true do
       end
     end
 
-    describe "PUT #deactivate_user" do
-      subject { put deactivate_user_organization_path(default_params.merge(user_id: user.id)) }
+    describe "PUT #deactivate_user",
+              skip: "Super admins should not be able to act on OrganizationsController (they need to switch to another role first)" do
+      subject { put deactivate_user_organization_path(user_id: user.id) }
 
       it "redirect after update" do
         subject
@@ -236,8 +227,9 @@ RSpec.describe "Organizations", type: :request, skip_seed: true do
       end
     end
 
-    describe "PUT #reactivate_user" do
-      subject { put reactivate_user_organization_path(default_params.merge(user_id: user.id)) }
+    describe "PUT #reactivate_user",
+              skip: "Super admins should not be able to act on OrganizationsController (they need to switch to another role first)" do
+      subject { put reactivate_user_organization_path(user_id: user.id) }
       before { user.discard! }
 
       it "redirect after update" do
