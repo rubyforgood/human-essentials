@@ -1,3 +1,13 @@
+# == Schema Information
+#
+# Table name: item_request_units
+#
+#  id         :bigint           not null, primary key
+#  name       :string           not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  item_id    :bigint
+#
 RSpec.describe ItemRequestUnit, type: :model do
   context "Validations >" do
     let(:organization) { create(:organization) }
