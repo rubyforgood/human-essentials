@@ -20,7 +20,7 @@ module ItemizableUpdateService
 
       previous = nil
       # TODO once event sourcing has been out for long enough, we can safely remove this
-      if Event.where(eventable: itemizable).none?
+      if Event.where(eventable: itemizable).none? || UpdateExistingEvent.where(eventable: itemizable).any?
         previous = itemizable.line_items.map(&:dup)
       end
 
