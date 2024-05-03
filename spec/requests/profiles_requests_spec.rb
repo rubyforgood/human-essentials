@@ -1,12 +1,14 @@
-RSpec.describe "Profiles", type: :request do
-  let(:partner) { FactoryBot.create(:partner, organization: @organization) }
+RSpec.describe "Profiles", type: :request, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+  let(:partner) { create(:partner, organization: organization) }
 
   let(:default_params) do
-    { organization_name: @organization.to_param, id: partner.id, partner_id: partner.id }
+    { organization_name: organization.to_param, id: partner.id, partner_id: partner.id }
   end
 
   before do
-    sign_in(@user)
+    sign_in(user)
   end
 
   describe "GET #edit" do
@@ -29,6 +31,28 @@ RSpec.describe "Profiles", type: :request do
         expect(partner.reload.name).to eq("Awesome Partner")
         expect(partner.profile.reload.executive_director_email).to eq("awesomepartner@example.com")
         expect(partner.profile.facebook).to eq("facebooksucks")
+      end
+
+      it "updates partner program address" do
+        new_partner_program_params = {
+          name: partner.name, profile: {
+            program_address1: "123 Happy Pl",
+            program_city: "Golden",
+            program_state: "CO",
+            program_zip_code: 80401
+          }
+        }
+
+        put profile_path(default_params.merge(id: partner, partner: new_partner_program_params))
+
+        partner.profile.reload
+
+        expect(response).to have_http_status(:redirect)
+        expect(partner.profile.program_address1).to eq("123 Happy Pl")
+        expect(partner.profile.program_address2).to be_blank
+        expect(partner.profile.program_city).to eq("Golden")
+        expect(partner.profile.program_state).to eq("CO")
+        expect(partner.profile.program_zip_code).to eq(80401)
       end
 
       it "redirects to #show" do

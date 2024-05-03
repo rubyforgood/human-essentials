@@ -1,4 +1,4 @@
-describe Exports::ExportDistributionsCSVService do
+RSpec.describe Exports::ExportDistributionsCSVService do
   describe '#generate_csv_data' do
     subject { described_class.new(distributions: distributions, organization: Organization.first, filters: filters).generate_csv_data }
     let(:distributions) { distributions }

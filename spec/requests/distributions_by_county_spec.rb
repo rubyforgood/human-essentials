@@ -1,8 +1,8 @@
 require "rails_helper"
 
-RSpec.describe "DistributionsByCounties", type: :request do
+RSpec.describe "DistributionsByCounties", type: :request, skip_seed: true do
   let(:default_params) do
-    {organization_name: @organization.to_param}
+    {organization_name: organization.to_param}
   end
 
   include_examples "distribution_by_county"
@@ -15,11 +15,11 @@ RSpec.describe "DistributionsByCounties", type: :request do
 
     context "While signed in as bank" do
       before do
-        sign_in(@user)
+        sign_in(user)
       end
 
       it "shows 'Unspecified 100%' if no served_areas" do
-        create(:distribution, :with_items, item: item_1, organization: @user.organization)
+        create(:distribution, :with_items, item: item_1, organization: organization)
         get distributions_by_county_report_path(default_params)
         expect(response.body).to include("Unspecified")
         expect(response.body).to include("100")
@@ -28,8 +28,8 @@ RSpec.describe "DistributionsByCounties", type: :request do
 
       context "basic behaviour with served areas" do
         it "handles multiple partners with overlapping service areas properly" do
-          create(:distribution, :with_items, item: item_1, organization: @user.organization, partner: partner_1, issued_at: issued_at_present)
-          create(:distribution, :with_items, item: item_1, organization: @user.organization, partner: partner_2, issued_at: issued_at_present)
+          create(:distribution, :with_items, item: item_1, organization: organization, partner: partner_1, issued_at: issued_at_present)
+          create(:distribution, :with_items, item: item_1, organization: organization, partner: partner_2, issued_at: issued_at_present)
 
           get distributions_by_county_report_path(default_params)
 

@@ -1,4 +1,4 @@
-RSpec.describe ReminderDeadlineMailer, type: :job, seed_items: false do
+RSpec.describe ReminderDeadlineMailer, type: :job do
   let(:organization) { create(:organization, skip_items: true) }
 
   describe 'notify deadline' do
