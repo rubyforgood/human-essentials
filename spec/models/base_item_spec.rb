@@ -44,8 +44,8 @@ RSpec.describe BaseItem, type: :model, skip_seed: true do
 
     describe "->by_partner_key" do
       it "shows the Base Items by partner_key" do
-        base_item = create(:base_item)
-        expect(BaseItem.by_partner_key(base_item.partner_key).size).to eq(1)
+        create(:base_item, partner_key: "UniqueString")
+        expect(BaseItem.by_partner_key("UniqueString").size).to eq(1)
         expect(BaseItem.by_partner_key("random_string").size).to eq(0)
       end
     end

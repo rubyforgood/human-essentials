@@ -28,9 +28,10 @@ RSpec.describe InventoryItem, type: :model, skip_seed: true do
 
   context "Filtering >" do
     describe "->by_partner_key" do
-      it "shows the Base Items by partner_key" do
-        item = create(:inventory_item)
-        expect(InventoryItem.by_partner_key(item.item.partner_key).size).to eq(1)
+      it "shows the Inventory Items by partner_key" do
+        create(:base_item, partner_key: "UniqueString")
+        create(:inventory_item, item: create(:item, partner_key: "UniqueString"))
+        expect(InventoryItem.by_partner_key("UniqueString").size).to eq(1)
       end
     end
   end
