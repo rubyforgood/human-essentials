@@ -1,8 +1,4 @@
 RSpec.describe DistributionsController, type: :controller do
-  let(:default_params) do
-    { organization_name: @organization.to_param }
-  end
-
   context "While signed in" do
     before do
       sign_in(@user)
