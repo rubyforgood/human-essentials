@@ -50,16 +50,11 @@ RSpec.describe LineItem, type: :model do
 
   describe "Scopes >" do
     describe "->active" do
-      let!(:active_item) { create(:item, :active) }
-      let!(:inactive_item) { create(:item, :inactive) }
-
-      before do
-        create(:line_item, :purchase, item: active_item)
-        create(:line_item, :purchase, item: inactive_item)
-      end
-
       it "retrieves only those with active status" do
-        expect(described_class.active.size).to eq(1)
+        expect do
+          create(:line_item, :purchase, item: create(:item, :active))
+          create(:line_item, :purchase, item: create(:item, :inactive))
+        end.to change { described_class.active.size }.by(1)
       end
     end
   end
