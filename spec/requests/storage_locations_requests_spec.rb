@@ -178,6 +178,31 @@ RSpec.describe "StorageLocations", type: :request do
       end
     end
 
+    describe "POST #import_inventory" do
+      context "when inventory already has items" do
+        it "redirects with an error message" do
+          item1 = create(:item)
+          item2 = create(:item)
+          item3 = create(:item)
+          storage_location_with_items = create(:storage_location, organization: @organization)
+          TestInventory.create_inventory(@organization,
+            {
+              storage_location_with_items.id => {
+                item1.id => 30,
+                item2.id => 10,
+                item3.id => 40
+              }
+            })
+          file = fixture_file_upload("inventory.csv", "text/csv")
+
+          params = { file: file, storage_location: storage_location_with_items.id }
+          post import_inventory_storage_locations_path(organization_name: @organization.to_param), params: params
+
+          expect(response).to be_redirect
+          expect(response).to have_error "Could not complete action: inventory already has items stored"
+        end
+      end
+    end
     describe "GET #show" do
       let(:item) { create(:item, name: "Test Item") }
       let(:item2) { create(:item, name: "Test Item2") }

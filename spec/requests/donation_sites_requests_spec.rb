@@ -1,13 +1,16 @@
 require "rails_helper"
 
-RSpec.describe "DonationSites", type: :request do
+RSpec.describe "DonationSites", type: :request, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+
   let(:default_params) do
-    { organization_name: @organization.to_param }
+    { organization_name: organization.to_param }
   end
 
   describe "while signed in" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     describe "GET #index" do
@@ -33,15 +36,15 @@ RSpec.describe "DonationSites", type: :request do
       end
     end
     describe 'GET #index' do
-      let!(:active_donation_site) { create(:donation_site, organization: @organization, name: "An Active Site") }
-      let!(:inactive_donation_site) { create(:donation_site, organization: @organization, active: false, name: "An Inactive Site") }
+      let!(:active_donation_site) { create(:donation_site, organization: organization, name: "An Active Site") }
+      let!(:inactive_donation_site) { create(:donation_site, organization: organization, active: false, name: "An Inactive Site") }
 
       it "should show all/only active donation sites with deactivate buttons" do
         get donation_sites_path(default_params)
         page = Nokogiri::HTML(response.body)
         expect(response.body).to include("An Active Site")
         expect(response.body).not_to include("An Inactive Site")
-        button1 = page.css(".btn[href='/#{@organization.short_name}/donation_sites/#{active_donation_site.id}/deactivate']")
+        button1 = page.css(".btn[href='/#{organization.short_name}/donation_sites/#{active_donation_site.id}/deactivate']")
         expect(button1.text.strip).to eq("Deactivate")
         expect(button1.attr('class')).not_to match(/disabled/)
       end
@@ -49,7 +52,7 @@ RSpec.describe "DonationSites", type: :request do
 
     describe 'DELETE #deactivate' do
       it 'should be able to deactivate an item' do
-        donation_site = create(:donation_site, organization: @organization, active: true, name: "to be deactivated")
+        donation_site = create(:donation_site, organization: organization, active: true, name: "to be deactivated")
         params = default_params.merge(id: donation_site.id)
 
         expect { delete deactivate_donation_site_path(params) }.to change { donation_site.reload.active }.from(true).to(false)

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "DistributionsByCounties", type: :request do
+RSpec.describe "DistributionsByCounties", type: :request, skip_seed: true do
   let(:default_params) do
     {organization_name: organization.to_param}
   end
