@@ -250,10 +250,9 @@ RSpec.describe Organization, type: :model, skip_seed: true do
 
         expect do
           Organization.seed_items
-          first_organization.reload
-          second_organization.reload
-        end.to change { first_organization.items.size }.by(1)
-          .and change { second_organization.items.size }.by(1)
+          second_organization
+        end.to change { first_organization.items.count }.by(1)
+          .and change { second_organization.items.count }.by(1)
       end
     end
   end
