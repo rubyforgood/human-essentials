@@ -1,4 +1,4 @@
-RSpec.describe DashboardHelper, type: :helper do
+RSpec.describe DashboardHelper, type: :helper, seed_db: false do
   describe "#recently_added_user_display_text" do
     context "when the user has a name" do
       it "returns the user's display name" do
