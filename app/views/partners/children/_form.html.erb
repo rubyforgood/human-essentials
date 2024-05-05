@@ -23,6 +23,7 @@
                     <div class="nested-fields mb-1">
                       <%= child_item_form.collection_select :item_id, Item.all, :id, :name, {}, {class: "form-control mb-2"} %>
                       <%= remove_element_button("Remove Item", container_selector: ".nested-fields") %>
+                      <%= child_item_form.hidden_field :_destroy %>
                     </div>
                   <% end %>
                 </div>
@@ -31,10 +32,13 @@
                     <%= form.fields_for :child_items, Partners::ChildItem.new, child_index: 'NEW_RECORD' do |child_item_form| %>
                       <%= child_item_form.collection_select :item_id, Item.all, :id, :name, {}, {class: "form-control"} %>
                       <%= remove_element_button("Remove", container_selector: ".nested-fields") %>
+                      <%= child_item_form.hidden_field :_destroy %>
+                      <%= child_item_form.hidden_field :id %>
                     <% end %>
                   </div>
                 <% end %>
               </div>
+
 
               <%= form.input :date_of_birth, as: :date, start_year: 20.years.ago.year, end_year: Time.current.year, label: "Date of Birth" %>
               <%= form.input :gender, collection: ["Male", "Female"], class: "form-control" %>

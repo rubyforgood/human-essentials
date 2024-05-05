@@ -26,7 +26,7 @@ module Partners
     end
 
     def show
-      @child = Child.includes(:child_items).find(params[:id])
+      @child = current_partner.children.includes(:child_items).find(params[:id])
       @child_item_requests = @child
                              .child_item_requests
                              .includes(:item_request)
