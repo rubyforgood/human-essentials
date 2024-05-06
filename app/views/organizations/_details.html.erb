@@ -153,6 +153,12 @@
                 </p>
               </div>
               <div class="mb-4">
+                <h3 class="font-bold">Include Signature Fields on Distribution Printout?</h3>
+                <p>
+                  <%= humanize_boolean(@organization.include_signature_fields_on_distribution_printout) %>
+                </p>
+              </div>
+              <div class="mb-4">
                 <h3 class='font-bold'>Use One step Partner invite and approve process?</h3>
                 <p>
                   <%= humanize_boolean(@organization.one_step_partner_invite) %>
