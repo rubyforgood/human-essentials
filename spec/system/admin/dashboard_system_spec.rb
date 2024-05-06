@@ -1,4 +1,4 @@
-RSpec.describe "Dashboard", type: :system, js: true do
+RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
   subject { admin_dashboard_path }
   let(:organization) { create(:organization, skip_items: true) }
   let(:super_admin) { create(:super_admin, organization: organization) }

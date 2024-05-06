@@ -1,7 +1,10 @@
-RSpec.describe "Question search", type: :system, js: true do
+RSpec.describe "Question search", type: :system, js: true, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+
   context "while logged in" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     it "filters by question title" do
