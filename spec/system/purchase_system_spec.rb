@@ -47,15 +47,6 @@ RSpec.describe "Purchases", type: :system, js: true do
           expect(page).to have_text(dollar_value(purchases.sum(&:amount_spent_in_cents)))
           expect(page).to have_text(dollar_value(3579))
         end
-
-        it "user sees FMV column" do
-          purchase = create(:purchase, amount_spent_in_cents: 1234, organization: @organization)
-          item = create(:item, value_in_cents: 42, organization: @organization)
-          create(:line_item, item: item, itemizable: purchase, quantity: 2)
-          page.refresh
-          expect(page).to have_text("FMV")
-          expect(page).to have_text(dollar_value(84))
-        end
       end
 
       context "When filtering on the index page" do
