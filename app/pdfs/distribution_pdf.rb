@@ -121,6 +121,10 @@ class DistributionPdf
       column(-1).row(-1).borders = [:left, :bottom]
     end
 
+    if @organization.include_signature_fields_on_distribution_printout
+      insert_signature_fields
+    end
+
     number_pages "Page <page> of <total>",
                  start_count_at: 1,
                  at: [bounds.right - 130, 22],
@@ -231,5 +235,32 @@ class DistributionPdf
     columns_to_hide.push("Value/item", in_kind_column_name) if @organization.hide_value_columns_on_receipt
     columns_to_hide.push("Packages") if @organization.hide_package_column_on_receipt
     columns_to_hide
+  end
+
+  def insert_signature_fields
+    move_down 20
+    signature_fields_for "Received By:"
+
+    move_down 20
+    signature_fields_for "Delivered By:"
+  end
+
+  def signature_fields_for(label)
+    # Calculate half the screen width and the gap between the two signature fields
+    half_width = bounds.width / 2
+    gap = 20
+    left_end = half_width - (gap / 2)
+    right_start = half_width + (gap / 2)
+
+    text label, style: :bold
+    move_down 30
+    stroke do
+      horizontal_line 0, left_end
+      horizontal_line right_start, bounds.width
+    end
+
+    move_down 10
+    draw_text "(Print Name)", at: [0, cursor]
+    draw_text "(Signature and Date)", at: [right_start, cursor]
   end
 end
