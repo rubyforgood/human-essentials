@@ -1,11 +1,14 @@
-RSpec.describe DonationSitesController, type: :controller do
+RSpec.describe DonationSitesController, type: :controller, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+
   let(:default_params) do
-    { organization_name: @organization.to_param }
+    { organization_name: organization.to_param }
   end
 
   context "While signed in" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     describe "GET #index" do
@@ -23,7 +26,7 @@ RSpec.describe DonationSitesController, type: :controller do
     end
 
     describe "GET #edit" do
-      subject { get :edit, params: default_params.merge(id: create(:donation_site, organization: @organization)) }
+      subject { get :edit, params: default_params.merge(id: create(:donation_site, organization: organization)) }
       it "returns http success" do
         expect(subject).to be_successful
       end
@@ -35,7 +38,7 @@ RSpec.describe DonationSitesController, type: :controller do
     end
 
     describe "GET #show" do
-      subject { get :show, params: default_params.merge(id: create(:donation_site, organization: @organization)) }
+      subject { get :show, params: default_params.merge(id: create(:donation_site, organization: organization)) }
       it "returns http success" do
         expect(subject).to be_successful
       end
