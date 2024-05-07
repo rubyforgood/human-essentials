@@ -5,7 +5,7 @@ class PurchasesController < ApplicationController
   def index
     setup_date_range_picker
     @purchases = current_organization.purchases
-                                     .includes(:line_items, :storage_location)
+                                     .includes(:storage_location, :vendor, line_items: [:item])
                                      .order(created_at: :desc)
                                      .class_filter(filter_params)
                                      .during(helpers.selected_range)
