@@ -100,18 +100,18 @@ RSpec.describe Exports::ExportDistributionsCSVService, skip_seed: true do
 
     context 'when a new item is added' do
       let(:new_item_name) { "new item" }
+      let(:original_columns_count) { 15 }
       before do
-        # let(:distributions) creates 5 items.
-        # make sure they are all created before we record the original column count
+        # if distributions are not created before new item
+        # then additional records will be created
         distributions
-        @original_columns_count = organization.items.size + non_item_headers.size
         create(:item, name: new_item_name, organization: organization)
       end
 
       it 'should add it to the end of the row' do
         expect(subject[0]).to eq(expected_headers)
           .and end_with(new_item_name)
-          .and have_attributes(size: @original_columns_count + 1)
+          .and have_attributes(size: original_columns_count + 1)
       end
 
       it 'should show up with a 0 quantity if there are none of this item in any distribution' do
@@ -133,7 +133,7 @@ RSpec.describe Exports::ExportDistributionsCSVService, skip_seed: true do
 
           expect(subject[idx + 1]).to eq(row)
             .and end_with(0)
-            .and have_attributes(size: @original_columns_count + 1)
+            .and have_attributes(size: original_columns_count + 1)
         end
       end
     end

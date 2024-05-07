@@ -7,8 +7,8 @@ RSpec.describe CalendarService, skip_seed: true do
         time_zone: "America/New_York", organization: organization)
       time_zone = ActiveSupport::TimeZone["America/New_York"]
       travel_to time_zone.local(2021, 3, 18, 0, 0, 0) do
-        partner1 = create(:partner, name: "Partner 1")
-        partner2 = create(:partner, name: "Partner 2")
+        partner1 = create(:partner, name: "Partner 1", organization: organization)
+        partner2 = create(:partner, name: "Partner 2", organization: organization)
         create(:distribution, issued_at: time_zone.local(2022, 3, 17, 10, 0, 0),
           partner: partner1, storage_location: storage_location)
         create(:distribution, issued_at: time_zone.local(2022, 2, 17, 9, 0, 0),
