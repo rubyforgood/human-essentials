@@ -70,7 +70,8 @@ RSpec.describe Exports::ExportDistributionsCSVService do
     let(:non_item_headers) do
       [
         "Partner",
-        "Date of Distribution",
+        "Initial Allocation",
+        "Scheduled for",
         "Source Inventory",
         "Total Number of #{item_name}",
         "Total Value",
@@ -90,6 +91,7 @@ RSpec.describe Exports::ExportDistributionsCSVService do
       distributions.zip(total_item_quantities).each_with_index do |(distribution, total_item_quantity), idx|
         row = [
           distribution.partner.name,
+          distribution.created_at.strftime("%m/%d/%Y"),
           distribution.issued_at.strftime("%m/%d/%Y"),
           distribution.storage_location.name,
           distribution.line_items.where(item_id: item_id).total,
@@ -124,6 +126,7 @@ RSpec.describe Exports::ExportDistributionsCSVService do
         distributions.zip(total_item_quantities).each_with_index do |(distribution, total_item_quantity), idx|
           row = [
             distribution.partner.name,
+            distribution.created_at.strftime("%m/%d/%Y"),
             distribution.issued_at.strftime("%m/%d/%Y"),
             distribution.storage_location.name,
             distribution.line_items.where(item_id: item_id).total,
