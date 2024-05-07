@@ -1,4 +1,4 @@
-RSpec.describe Exports::ExportPurchasesCSVService do
+RSpec.describe Exports::ExportPurchasesCSVService, skip_seed: true do
   describe "#generate_csv_data" do
     subject { described_class.new(purchase_ids: purchase_ids).generate_csv_data }
     let(:purchase_ids) { purchases.map(&:id) }
