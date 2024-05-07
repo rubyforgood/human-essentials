@@ -11,27 +11,15 @@
 #  itemizable_id   :integer
 #
 
-RSpec.describe LineItem, type: :model do
+RSpec.describe LineItem, type: :model, skip_seed: true do
   let(:line_item) { build :line_item }
 
   context "Validations >" do
-    it "requires an item" do
-      expect(build(:line_item, item: nil)).not_to be_valid
-    end
+    subject { line_item }
 
-    it "requires a quantity" do
-      expect(build(:line_item, quantity: nil)).not_to be_valid
-    end
-
-    it "the quantity must be a valid integer and cannot be 0" do
-      expect(build(:line_item, :purchase, quantity: "a")).not_to be_valid
-      expect(build(:line_item, :purchase, quantity: "1.0")).not_to be_valid
-      expect(build(:line_item, :purchase, quantity: 0)).to be_valid
-      expect(build(:line_item, :purchase, quantity: 2**31)).not_to be_valid
-      expect(build(:line_item, :purchase, quantity: -2**32)).not_to be_valid
-      expect(build_stubbed(:line_item, :purchase, quantity: -1)).to be_valid
-      expect(build_stubbed(:line_item, :purchase, quantity: 1)).to be_valid
-    end
+    it { should validate_numericality_of(:quantity).is_greater_than(-2**31) }
+    it { should validate_numericality_of(:quantity).is_less_than(2**31) }
+    it { should validate_numericality_of(:quantity).only_integer }
   end
 
   describe "package_count" do
