@@ -14,7 +14,6 @@ RSpec.describe "Distributions", type: :request, skip_seed: true do
   let(:hashed_id) { CGI.escape(crypt.encrypt_and_sign(organization.id)) }
   before(:each) do
     allow(Rails.application).to receive(:secret_key_base).and_return(secret_key)
-    allow(DistributionPdf).to receive(:new).and_return(double("DistributionPdf", compute_and_render: "PDF"))
   end
 
   context "While signed in" do
@@ -41,6 +40,14 @@ RSpec.describe "Distributions", type: :request, skip_seed: true do
       it "returns http success" do
         get print_distribution_path(default_params.merge(id: create(:distribution).id))
         expect(response).to be_successful
+      end
+
+      context "with signature fields enabled" do
+        it "returns http success" do
+          organization.update!(include_signature_fields_on_distribution_printout: true)
+          get print_distribution_path(default_params.merge(id: create(:distribution).id))
+          expect(response).to be_successful
+        end
       end
 
       context "with non-UTF8 characters" do
