@@ -28,6 +28,7 @@
 @import 'modal-dialog';
 @import 'expandable_table';
 @import 'custom';
+@import 'confirm';
 
 .modal-dialog {
   display: flex;
@@ -193,4 +194,3 @@ div.warning {
   margin: 5px;
   text-align: center;
 }
-

@@ -33,7 +33,7 @@
           <!-- form start -->
           <div class="card-body">
             <!-- Default box -->
-            <div class="box">
+            <div class="box" data-controller="distribution-confirmation">
               <%= render 'form', distribution: @distribution, date_place_holder: Time.zone.now.end_of_day %>
             </div><!-- /.box -->
           </div>
