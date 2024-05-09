@@ -32,18 +32,18 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
         # We will create data both within and outside our date range, and both period_supplies and non period_supplies.
         # Spec will ensure that only the required data is included.
 
-         # Kits
+        # Kits
         period_supplies_kit = create(:kit, :with_item, organization: organization)
         another_period_supply_kit = create(:kit, :with_item, organization: organization)
 
         create(:base_item, name: "Adult Pads", partner_key: "adult pads", category: "Period Supplies")
         create(:base_item, name: "Adult Tampons", partner_key: "adult tampons", category: "Period Supplies")
 
-        create(:item, name: "Adult Pads", partner_key: "adult pads")
-        create(:item, name: "Adult Tampons", partner_key: "adult tampons")
+        period_supplies_kit_item = create(:item, name: "Adult Pads", partner_key: "adult pads")
+        another_period_supplies_kit_item = create(:item, name: "Adult Tampons", partner_key: "adult tampons")
 
-        period_supplies_kit.line_items.first.update!(item_id: period_supplies_kit.id, quantity: 5)
-        another_period_supply_kit.line_items.first.update!(item_id: another_period_supply_kit.id, quantity: 5)
+        period_supplies_kit.line_items.first.update!(item_id: period_supplies_kit_item.id, quantity: 5)
+        another_period_supply_kit.line_items.first.update!(item_id: another_period_supplies_kit_item.id, quantity: 5)
 
         period_supplies_kit_distribution = create(:distribution, organization: organization, issued_at: within_time)
         another_period_supplies_kit_distribution = create(:distribution, organization: organization, issued_at: within_time)
@@ -104,10 +104,9 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
       end
 
     describe "with values" do
-
       it "returns the correct quantity of period supplies from kits" do
-        service = described_class.new(organization: organization, year: within_time.year)
-        expect(service.distributed_period_supplies_from_kits).to eq(100)
+        # require 'pry'; binding.pry
+        expect(report.distributed_period_supplies_from_kits).to eq(100)
       end
 
       it "should report normal values" do
