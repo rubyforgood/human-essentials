@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe PartnerInviteService do
+RSpec.describe PartnerInviteService, skip_seed: true do
   subject { described_class.new(partner: partner).call }
   let(:partner) { create(:partner) }
   let(:user) { instance_double(User, reload: -> {}, deliver_invitation: -> {}) }
