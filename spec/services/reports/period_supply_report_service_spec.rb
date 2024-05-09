@@ -105,7 +105,6 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
 
     describe "with values" do
       it "returns the correct quantity of period supplies from kits" do
-        # require 'pry'; binding.pry
         expect(report.distributed_period_supplies_from_kits).to eq(100)
       end
 
@@ -116,7 +115,7 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
         expect(report.report[:entries]).to match(hash_including({
           "% period supplies bought" => "60%",
           "% period supplies donated" => "40%",
-          "Period supplies distributed" => "2,000",
+          "Period supplies distributed" => "2,100",
           "Period supplies per adult per month" => 20,
           "Money spent purchasing period supplies" => "$30.00"
         }))
