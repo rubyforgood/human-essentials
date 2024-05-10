@@ -101,10 +101,6 @@ class Item < ApplicationRecord
     joins(:barcode_items).order(:name).group(:id)
   end
 
-  def self.storage_locations_containing(item)
-    StorageLocation.joins(:inventory_items).where("inventory_items.item_id = ?", item.id)
-  end
-
   def self.barcodes_for(item)
     BarcodeItem.where("barcodeable_id = ?", item.id)
   end
@@ -118,7 +114,6 @@ class Item < ApplicationRecord
     if inventory
       inventory.quantity_for(item_id: id).positive?
     else
-      inventory_items.where("quantity > 0").any?
     end
   end
 
@@ -190,16 +185,6 @@ class Item < ApplicationRecord
     ["Name", "Barcodes", "Base Item", "Quantity"]
   end
 
-  # TODO remove this method once read_events? is true everywhere
-  def csv_export_attributes
-    [
-      name,
-      barcode_count,
-      base_item.name,
-      inventory_items.sum(&:quantity)
-    ]
-  end
-
   # @param items [Array<Item>]
   # @param inventory [View::Inventory]
   # @return [String]
@@ -216,10 +201,6 @@ class Item < ApplicationRecord
 
   def default_quantity
     distribution_quantity || 50
-  end
-
-  def inventory_item_at(storage_location_id)
-    inventory_items.find_by(storage_location_id: storage_location_id)
   end
 
   private

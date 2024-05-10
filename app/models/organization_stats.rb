@@ -26,8 +26,14 @@ class OrganizationStats
   def locations_with_inventory
     return [] unless storage_locations
 
-    inventoried_storage_location_ids = InventoryItem.where(storage_location: storage_locations).pluck(:storage_location_id)
-    storage_locations.select { |location| inventoried_storage_location_ids.include? location.id }
+    if Event.read_events?(current_organization)
+      inventory = View::Inventory.new(current_organization.id)
+      storage_locations.select { |loc| inventory.storage_locations.keys.include?(loc.id) }
+    else
+      inventoried_storage_location_ids = InventoryItem.where(storage_location: storage_locations).pluck(:storage_location_id)
+      storage_locations.select { |location| inventoried_storage_location_ids.include? location.id }
+    end
+
   end
 
   private

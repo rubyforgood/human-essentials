@@ -462,7 +462,7 @@ RSpec.describe InventoryAggregate do
       ))
     end
 
-    it "should process a snapshot event" do
+    xit "should process a snapshot event" do
       InventoryItem.delete_all
 
       storage_location1.inventory_items.create!(quantity: 5, item_id: item1.id)

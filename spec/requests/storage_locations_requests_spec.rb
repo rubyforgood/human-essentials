@@ -231,40 +231,6 @@ RSpec.describe "StorageLocations", type: :request do
           expect(response.body).to include("200")
         end
 
-        context "with version date set", versioning: true do
-          let(:inventory_item) { storage_location.inventory_items.first }
-
-          context "with a version found" do
-            it "should show the version specified" do
-              travel 1.day do
-                inventory_item.update!(quantity: 100)
-              end
-              travel 1.week do
-                inventory_item.update!(quantity: 300)
-              end
-              travel 2.weeks do
-                get storage_location_path(storage_location, default_params.merge(format: response_format,
-                  version_date: 9.days.ago.to_date.to_fs(:db)))
-                expect(response).to be_successful
-                expect(response.body).to include("Smithsonian")
-                expect(response.body).to include("Test Item")
-                expect(response.body).to include("100")
-              end
-            end
-          end
-
-          context "with no version found" do
-            it "should show N/A" do
-              get storage_location_path(storage_location, default_params.merge(format: response_format,
-                version_date: 1.week.ago.to_date.to_fs(:db)))
-              expect(response).to be_successful
-              expect(response.body).to include("Smithsonian")
-              expect(response.body).to include("Test Item")
-              # event world doesn't care about versions
-              expect(response.body).to include("N/A") unless Event.read_events?(@organization)
-            end
-          end
-        end
       end
 
       context "csv" do
@@ -321,8 +287,6 @@ RSpec.describe "StorageLocations", type: :request do
       end
 
       let(:storage_location) { create(:storage_location, :with_items, organization: @organization) }
-      let(:inventory_items_at_storage_location) { storage_location.inventory_items.map(&:to_h) }
-      let(:inactive_inventory_items) { @organization.inventory_items.inactive.map(&:to_h) }
       let(:items_at_storage_location) do
         View::Inventory.new(@organization.id).items_for_location(storage_location.id).map(&method(:item_to_h))
       end
@@ -336,7 +300,6 @@ RSpec.describe "StorageLocations", type: :request do
         it "returns a collection that only includes items at the storage location" do
           get inventory_storage_location_path(storage_location, default_params.merge(format: :json))
           expect(response.parsed_body).to eq(items_at_storage_location)
-          expect(response.parsed_body).to eq(inventory_items_at_storage_location)
         end
       end
 

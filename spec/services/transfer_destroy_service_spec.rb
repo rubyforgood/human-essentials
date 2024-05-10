@@ -50,8 +50,6 @@ RSpec.describe TransferDestroyService, type: :service, skip_seed: true do
         subject
 
         # Assert that the service object calls the expected method.
-        expect(fake_from).to have_received(:increase_inventory).with(fake_items)
-        expect(fake_to).to have_received(:decrease_inventory).with(fake_items)
         expect(transfer).to have_received(:destroy!)
       end
     end

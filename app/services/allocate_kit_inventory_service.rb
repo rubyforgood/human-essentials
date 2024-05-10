@@ -8,10 +8,10 @@ class AllocateKitInventoryService
   end
 
   def allocate
+    return
     validate_storage_location
     if error.nil?
       ApplicationRecord.transaction do
-        allocate_inventory_items_and_increase_kit_quantity
         KitAllocateEvent.publish(@kit, @storage_location.id, @increase_by)
       end
     end
@@ -34,8 +34,6 @@ class AllocateKitInventoryService
 
   def allocate_inventory_items_and_increase_kit_quantity
     ActiveRecord::Base.transaction do
-      storage_location.decrease_inventory(kit_content)
-      storage_location.increase_inventory(associated_kit_item)
       allocate_inventory_in_and_inventory_out
     end
   end

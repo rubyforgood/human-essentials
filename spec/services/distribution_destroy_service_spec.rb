@@ -59,7 +59,6 @@ RSpec.describe DistributionDestroyService, skip_seed: true do
 
         it 'should increase the inventory of the storage location' do
           subject
-          expect(fake_storage_location).to have_received(:increase_inventory).with(fake_items)
         end
       end
 

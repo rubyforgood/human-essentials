@@ -16,7 +16,6 @@ module TestInventory
           }
         )
       )
-      storage_location.inventory_items.delete_all
     end
 
     # Pass in a hash of storage location ID -> { item ID -> quantity}. Blows away any current
@@ -37,7 +36,7 @@ module TestInventory
           )
         )
       end
-      create_inventory_items_from_events(organization.id)
+      #      create_inventory_items_from_events(organization.id)
     end
 
     # @param organization_id [Integer]

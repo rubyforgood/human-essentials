@@ -101,7 +101,6 @@ class DistributionsController < ApplicationController
           inventory.quantity_for(storage_location: storage_loc.id).positive?
         end
       else
-        @storage_locations = current_organization.storage_locations.active_locations.has_inventory_items.alphabetized
       end
 
       flash_error = insufficient_error_message(result.error.message)
@@ -133,7 +132,6 @@ class DistributionsController < ApplicationController
         inventory.quantity_for(storage_location: storage_loc.id).positive?
       end
     else
-      @storage_locations = current_organization.storage_locations.active_locations.has_inventory_items.alphabetized
     end
   end
 
@@ -163,7 +161,6 @@ class DistributionsController < ApplicationController
           inventory.quantity_for(storage_location: storage_loc.id).positive?
         end
       else
-        @storage_locations = current_organization.storage_locations.active_locations.has_inventory_items.alphabetized
       end
     else
       redirect_to distributions_path, error: 'To edit a distribution,

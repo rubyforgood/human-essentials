@@ -59,16 +59,9 @@ RSpec.describe "Kit management", type: :system do
     original_item_1_count = inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)
     original_item_2_count = inventory.quantity_for(item_id: existing_kit_item_2.id, storage_location: storage_location.id)
 
-    original_ii_kit_count = existing_kit.inventory_items.find_by(storage_location_id: storage_location.id)&.quantity || 0
-    original_ii_item_1_count = storage_location.inventory_items.find_by(item_id: existing_kit_item_1.id).quantity
-    original_ii_item_2_count = storage_location.inventory_items.find_by(item_id: existing_kit_item_2.id).quantity
-
     expect(original_kit_count).to eq(0)
-    expect(original_kit_count).to eq(original_ii_kit_count)
     expect(original_item_1_count).to eq(50)
-    expect(original_item_1_count).to eq(original_ii_item_1_count)
     expect(original_item_2_count).to eq(50)
-    expect(original_item_2_count).to eq(original_ii_item_2_count)
 
     select storage_location.name, from: 'kit_adjustment_storage_location_id'
 
@@ -80,12 +73,9 @@ RSpec.describe "Kit management", type: :system do
     inventory.reload
 
     # Check that the kit quantity increased by the expected amount
-    expect(existing_kit.reload.inventory_items.find_by(storage_location_id: storage_location.id).quantity).to eq(2)
     expect(inventory.quantity_for(item_id: existing_kit.item.id, storage_location: storage_location.id)).to eq(2)
 
     # Ensure each of the contained items decrease the correct amount
-    expect(storage_location.inventory_items.find_by(item_id: existing_kit_item_1.id).quantity).to eq(40)
-    expect(storage_location.inventory_items.find_by(item_id: existing_kit_item_2.id).quantity).to eq(44)
     expect(inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)).to eq(40)
     expect(inventory.quantity_for(item_id: existing_kit_item_2.id, storage_location: storage_location.id)).to eq(44)
 
@@ -96,11 +86,6 @@ RSpec.describe "Kit management", type: :system do
 
     click_on 'Save'
     inventory.reload
-
-    # Ensure each of the contained items decrease the correct amount
-    expect(existing_kit.reload.inventory_items.find_by(storage_location_id: storage_location.id).quantity).to eq(0)
-    expect(storage_location.inventory_items.find_by(item_id: existing_kit_item_1.id).quantity).to eq(50)
-    expect(storage_location.inventory_items.find_by(item_id: existing_kit_item_2.id).quantity).to eq(50)
 
     expect(inventory.quantity_for(item_id: existing_kit.item.id, storage_location: storage_location.id)).to eq(0)
     expect(inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)).to eq(50)
@@ -135,16 +120,9 @@ RSpec.describe "Kit management", type: :system do
       original_item_1_count = inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)
       original_item_2_count = inventory.quantity_for(item_id: existing_kit_item_2.id, storage_location: storage_location.id)
 
-      original_ii_kit_count = existing_kit.inventory_items.find_by(storage_location_id: storage_location.id)&.quantity || 0
-      original_ii_item_1_count = storage_location.inventory_items.find_by(item_id: existing_kit_item_1.id)&.quantity || 0
-      original_ii_item_2_count = storage_location.inventory_items.find_by(item_id: existing_kit_item_2.id)&.quantity || 0
-
       expect(original_kit_count).to eq(0)
-      expect(original_kit_count).to eq(original_ii_kit_count)
       expect(original_item_1_count).to eq(0)
-      expect(original_item_1_count).to eq(original_ii_item_1_count)
       expect(original_item_2_count).to eq(0)
-      expect(original_item_2_count).to eq(original_ii_item_2_count)
 
       select storage_location.name, from: 'kit_adjustment_storage_location_id'
 
@@ -153,10 +131,6 @@ RSpec.describe "Kit management", type: :system do
 
       click_on 'Save'
       inventory.reload
-
-      expect(existing_kit.reload.inventory_items.find_by(storage_location_id: storage_location.id)&.quantity || 0).to eq(0)
-      expect(storage_location.inventory_items.find_by(item_id: existing_kit_item_1.id)&.quantity || 0).to eq(0)
-      expect(storage_location.inventory_items.find_by(item_id: existing_kit_item_2.id)&.quantity || 0).to eq(0)
 
       expect(inventory.quantity_for(item_id: existing_kit.item.id, storage_location: storage_location.id)).to eq(0)
       expect(inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)).to eq(0)
@@ -186,16 +160,9 @@ RSpec.describe "Kit management", type: :system do
       original_item_1_count = inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)
       original_item_2_count = inventory.quantity_for(item_id: existing_kit_item_2.id, storage_location: storage_location.id)
 
-      original_ii_kit_count = existing_kit.inventory_items.find_by(storage_location_id: storage_location.id)&.quantity || 0
-      original_ii_item_1_count = storage_location.inventory_items.find_by(item_id: existing_kit_item_1.id).quantity
-      original_ii_item_2_count = storage_location.inventory_items.find_by(item_id: existing_kit_item_2.id).quantity
-
       expect(original_kit_count).to eq(0)
-      expect(original_kit_count).to eq(original_ii_kit_count)
       expect(original_item_1_count).to eq(50)
-      expect(original_item_1_count).to eq(original_ii_item_1_count)
       expect(original_item_2_count).to eq(50)
-      expect(original_item_2_count).to eq(original_ii_item_2_count)
 
       select storage_location.name, from: 'kit_adjustment_storage_location_id'
 
@@ -204,10 +171,6 @@ RSpec.describe "Kit management", type: :system do
 
       click_on 'Save'
       inventory.reload
-
-      expect(existing_kit.reload.inventory_items.find_by(storage_location_id: storage_location.id)&.quantity || 0).to eq(0)
-      expect(storage_location.inventory_items.find_by(item_id: existing_kit_item_1.id).quantity).to eq(50)
-      expect(storage_location.inventory_items.find_by(item_id: existing_kit_item_2.id).quantity).to eq(50)
 
       expect(inventory.quantity_for(item_id: existing_kit.item.id, storage_location: storage_location.id)).to eq(0)
       expect(inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)).to eq(50)

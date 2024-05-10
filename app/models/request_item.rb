@@ -13,8 +13,6 @@ class RequestItem
       on_hand = inventory.quantity_for(item_id: item.id)
       on_hand_for_location = inventory.quantity_for(storage_location: location&.id, item_id: item.id)
     else
-      on_hand = request.organization.inventory_items.where(item_id: item.id).sum(:quantity)
-      on_hand_for_location = location&.inventory_items&.where(item_id: item.id)&.sum(:quantity)
     end
     new(item, quantity, on_hand, on_hand_for_location&.positive? ? on_hand_for_location : 'N/A')
   end
