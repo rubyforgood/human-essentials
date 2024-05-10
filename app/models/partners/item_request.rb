@@ -6,6 +6,7 @@
 #  name                   :string
 #  partner_key            :string
 #  quantity               :string
+#  request_unit           :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  item_id                :integer
@@ -24,14 +25,5 @@ module Partners
     validates :quantity, numericality: { only_integer: true, greater_than_or_equal_to: 1 }
     validates :name, presence: true
     validates :partner_key, presence: true
-    validate :reporting_unit_is_supported
-
-    def reporting_unit_is_supported
-      return if reporting_unit.blank?
-
-      if reporting_unit != item.reporting_unit
-        errors.add(:reporting_unit, "is not supported")
-      end
-    end
   end
 end

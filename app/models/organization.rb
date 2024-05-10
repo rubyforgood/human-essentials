@@ -26,7 +26,6 @@
 #  state                          :string
 #  street                         :string
 #  url                            :string
-#  uses_request_units             :boolean          default(FALSE), not null
 #  ytd_on_distribution_printout   :boolean          default(TRUE), not null
 #  zipcode                        :string
 #  created_at                     :datetime         not null

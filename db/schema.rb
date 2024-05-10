@@ -389,7 +389,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_03_200211) do
     t.string "partner_key"
     t.integer "item_id"
     t.integer "old_partner_request_id"
-    t.string "reporting_unit"
+    t.string "request_unit"
     t.index ["item_id"], name: "index_item_requests_on_item_id"
     t.index ["partner_request_id"], name: "index_item_requests_on_partner_request_id"
   end
@@ -411,7 +411,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_03_200211) do
     t.boolean "visible_to_partners", default: true, null: false
     t.integer "kit_id"
     t.integer "item_category_id"
-    t.string "reporting_unit"
     t.index ["kit_id"], name: "index_items_on_kit_id"
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"
@@ -494,7 +493,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_03_200211) do
     t.boolean "enable_quantity_based_requests", default: true, null: false
     t.boolean "ytd_on_distribution_printout", default: true, null: false
     t.boolean "one_step_partner_invite", default: false, null: false
-    t.boolean "uses_request_units", default: false, null: false
     t.boolean "hide_value_columns_on_receipt", default: false
     t.boolean "hide_package_column_on_receipt", default: false
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
