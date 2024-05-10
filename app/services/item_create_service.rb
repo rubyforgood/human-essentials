@@ -7,17 +7,7 @@ class ItemCreateService
   def call
     new_item = organization.items.new(item_params)
 
-    organization.transaction do
-      new_item.save!
-
-      organization.storage_locations.each do |sl|
-        InventoryItem.create!(
-          storage_location_id: sl.id,
-          item_id: new_item.id,
-          quantity: 0
-        )
-      end
-    end
+    new_item.save!
 
     OpenStruct.new(success?: true, item: new_item)
   rescue StandardError => e

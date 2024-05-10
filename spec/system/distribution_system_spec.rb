@@ -656,7 +656,6 @@ RSpec.feature "Distributions", type: :system do
     expect(page).to have_content("Distribution Complete")
     expect(page).to have_link("Distribution Complete")
 
-    expect(@storage_location.inventory_items.first.quantity).to eq(0)
     expect(View::Inventory.new(@organization.id)
       .quantity_for(item_id: item.id, storage_location: @storage_location.id)).to eq(0)
 

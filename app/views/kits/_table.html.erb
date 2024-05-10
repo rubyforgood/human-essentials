@@ -34,13 +34,6 @@
               </tr>
             <% end %>
           <% else %>
-            <% kit.inventory_items.map do |inventory_item| %>
-              <% next if inventory_item.storage_location.discarded_at %>
-              <tr>
-                <td><%= inventory_item.storage_location.name %></td>
-                <td><%= inventory_item.quantity %></td>
-              </tr>
-            <% end %>
           <% end %>
         </table>
         <div class='align-self-center'>

@@ -15,7 +15,6 @@ class ItemsByStorageCollectionQuery
     @items ||=  organization
                 .items
                 .active
-                .joins(' LEFT OUTER JOIN "inventory_items" ON "inventory_items"."item_id" = "items"."id"')
                 .joins(' LEFT OUTER JOIN "storage_locations" ON "storage_locations"."id" = "inventory_items"."storage_location_id"')
                 .select('
                         items.id,
@@ -27,7 +26,6 @@ class ItemsByStorageCollectionQuery
                         items.on_hand_recommended_quantity,
                         storage_locations.name as storage_name,
                         storage_locations.id as storage_id,
-                        sum(inventory_items.quantity) as quantity
                       ')
                 .group("storage_locations.name, storage_locations.id, items.id, items.name")
                 .order(name: :asc).class_filter(filter_params)

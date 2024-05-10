@@ -38,7 +38,6 @@ class Kit < ApplicationRecord
     if inventory
       inventory.quantity_for(item_id: item.id).zero?
     else
-      inventory_items.where('quantity > 0').none?
     end
   end
 

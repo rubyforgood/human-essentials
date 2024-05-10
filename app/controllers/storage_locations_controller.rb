@@ -36,17 +36,6 @@ class StorageLocationsController < ApplicationController
         if Event.read_events?(current_organization)
           send_data StorageLocation.generate_csv_from_inventory(@storage_locations, @inventory), filename: "StorageLocations-#{Time.zone.today}.csv"
         else
-          active_inventory_item_names = []
-          @storage_locations.each do |storage_location|
-            active_inventory_item_names <<
-              storage_location
-              .active_inventory_items
-              .joins(:item)
-              .select('distinct items.name')
-              .pluck(:name)
-          end
-          active_inventory_item_names = active_inventory_item_names.flatten.uniq.sort
-          send_data StorageLocation.generate_csv(@storage_locations, active_inventory_item_names), filename: "StorageLocations-#{Time.zone.today}.csv"
         end
       end
     end
@@ -153,14 +142,6 @@ class StorageLocationsController < ApplicationController
         format.json { render :event_inventory }
       end
     else
-      @inventory_items = current_organization.storage_locations
-                                             .includes(inventory_items: :item)
-                                             .find(params[:id])
-                                             .inventory_items
-                                           .active
-
-      @inventory_items += include_omitted_items(@inventory_items.collect(&:item_id)) if params[:include_omitted_items] == "true"
-      respond_to :json
     end
   end
 

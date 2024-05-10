@@ -43,13 +43,6 @@ RSpec.describe ItemCreateService, type: :service, skip_seed: true do
 
         # Assert that the service object calls the expected method.
         expect(fake_organization_item).to have_received(:save!)
-        fake_organization_storage_locations.each do |sl|
-          expect(InventoryItem).to have_received(:create!).with(
-            storage_location_id: sl.id,
-            item_id: fake_organization_item.id,
-            quantity: 0
-          )
-        end
       end
     end
 

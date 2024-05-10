@@ -59,7 +59,6 @@ class KitsController < ApplicationController
     if Event.read_events?(current_organization)
       @inventory = View::Inventory.new(current_organization.id)
     else
-      @item_inventories = @kit.item.inventory_items
     end
 
     load_form_collections

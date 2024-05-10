@@ -8,6 +8,7 @@ class DeallocateKitInventoryService
   end
 
   def deallocate
+    return
     validate_storage_location
     if error.nil?
       ApplicationRecord.transaction do

@@ -44,7 +44,6 @@ class DonationItemizedBreakdownService
     if inventory
       inventory.all_items.group_by(&:name).to_h { |k, v| [k, v.sum(&:quantity)] }
     else
-      organization.inventory_items.group("items.name").sum(:quantity)
     end
   end
 

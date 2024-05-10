@@ -65,7 +65,6 @@ class DistributionItemizedBreakdownService
     if inventory
       inventory.all_items.group_by(&:name).to_h { |k, v| [k, v.sum(&:quantity)] }
     else
-      organization.inventory_items.group("items.name").sum(:quantity)
     end
   end
 
@@ -73,7 +72,6 @@ class DistributionItemizedBreakdownService
     if inventory
       inventory.all_items.group_by(&:name).to_h { |k, v| [k, v.map(&:on_hand_minimum_quantity).max] }
     else
-      organization.inventory_items.group("items.name").maximum("items.on_hand_minimum_quantity")
     end
   end
 
