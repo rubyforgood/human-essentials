@@ -1,11 +1,15 @@
-RSpec.describe "Purchases", type: :system, js: true do
+RSpec.describe "Purchases", type: :system, js: true, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+
   include ItemsHelper
 
-  let(:url_prefix) { "/#{@organization.short_name}" }
+  let(:url_prefix) { "/#{organization.short_name}" }
 
   context "while signed in as a normal user" do
     before :each do
-      sign_in @user
+      sign_in user
     end
 
     context "When visiting the index page" do
@@ -24,22 +28,22 @@ RSpec.describe "Purchases", type: :system, js: true do
         it "User can click to the new purchase form" do
           find(".fa-plus").click
 
-          expect(current_path).to eq(new_purchase_path(@organization))
+          expect(current_path).to eq(new_purchase_path(organization))
           expect(page).to have_content "Start a new purchase"
         end
 
         it "User sees purchased date column" do
-          storage1 = create(:storage_location, name: "storage1", organization: @organization)
+          storage1 = create(:storage_location, name: "storage1", organization: organization)
           purchase_date = 1.week.ago
-          create(:purchase, storage_location: storage1, issued_at: purchase_date, organization: @organization)
+          create(:purchase, storage_location: storage1, issued_at: purchase_date, organization: organization)
           page.refresh
           expect(page).to have_text("Purchased Date")
           expect(page).to have_text(1.week.ago.strftime("%Y-%m-%d"))
         end
 
         it "User sees total purchases value" do
-          purchase1 = create(:purchase, amount_spent_in_cents: 1234, organization: @organization)
-          purchase2 = create(:purchase, amount_spent_in_cents: 2345, organization: @organization)
+          purchase1 = create(:purchase, amount_spent_in_cents: 1234, organization: organization)
+          purchase2 = create(:purchase, amount_spent_in_cents: 2345, organization: organization)
           purchases = [purchase1, purchase2]
           page.refresh
           expect(page).to have_text("Total")
@@ -50,15 +54,15 @@ RSpec.describe "Purchases", type: :system, js: true do
       end
 
       context "When filtering on the index page" do
-        let!(:item) { create(:item, organization: @organization) }
-        let(:storage) { create(:storage_location, organization: @organization) }
+        let!(:item) { create(:item, organization: organization) }
+        let(:storage) { create(:storage_location, organization: organization) }
         subject { url_prefix + "/purchases" }
 
         it "User can filter the #index by storage location" do
-          storage1 = create(:storage_location, name: "storage1", organization: @organization)
-          storage2 = create(:storage_location, name: "storage2", organization: @organization)
-          create(:purchase, storage_location: storage1, organization: @organization)
-          create(:purchase, storage_location: storage2, organization: @organization)
+          storage1 = create(:storage_location, name: "storage1", organization: organization)
+          storage2 = create(:storage_location, name: "storage2", organization: organization)
+          create(:purchase, storage_location: storage1, organization: organization)
+          create(:purchase, storage_location: storage2, organization: organization)
           visit subject
           expect(page).to have_css("table tbody tr", count: 2)
           select storage1.name, from: "filters[at_storage_location]"
@@ -88,10 +92,10 @@ RSpec.describe "Purchases", type: :system, js: true do
 
     context "When creating a new purchase" do
       before(:each) do
-        @item = create(:item, organization: @organization)
-        @storage_location = create(:storage_location, organization: @organization)
-        @vendor = create(:vendor, organization: @organization)
-        @organization.reload
+        @item = create(:item, organization: organization)
+        @storage_location = create(:storage_location, organization: organization)
+        @vendor = create(:vendor, organization: organization)
+        organization.reload
       end
       subject { url_prefix + "/purchases/new" }
 
@@ -188,7 +192,7 @@ RSpec.describe "Purchases", type: :system, js: true do
           # When a user creates a purchase without it passing validation, the items
           # dropdown is not populated on the return trip.
           it "items dropdown is still repopulated even if initial submission doesn't validate" do
-            item_count = @organization.items.count + 1 # Adds 1 for the "choose an item" option
+            item_count = organization.items.count + 1 # Adds 1 for the "choose an item" option
             expect(page).to have_css("#purchase_line_items_attributes_0_item_id option", count: item_count + 1)
             click_button "Save"
 
@@ -204,26 +208,26 @@ RSpec.describe "Purchases", type: :system, js: true do
       end
 
       # Bug fix -- Issue #378
-      # A user can view another @organizations purchase
+      # A user can view another organizations purchase
       context "Editing purchase" do
         it "A user can see purchased_from value" do
-          purchase = create(:purchase, purchased_from: "Old Vendor", organization: @organization)
-          visit edit_purchase_path(@organization.to_param, purchase)
+          purchase = create(:purchase, purchased_from: "Old Vendor", organization: organization)
+          visit edit_purchase_path(organization.to_param, purchase)
           expect(page).to have_content("Vendor (Old Vendor)")
         end
 
         it "A user can view another organizations purchase" do
           purchase = create(:purchase, organization: create(:organization))
-          visit edit_purchase_path(@user.organization.short_name, purchase)
+          visit edit_purchase_path(user.organization.short_name, purchase)
           expect(page).to have_content("Still haven't found what you're looking for")
         end
       end
 
       context "via barcode entry" do
         before(:each) do
-          @existing_barcode = create(:barcode_item, organization: @organization)
+          @existing_barcode = create(:barcode_item, organization: organization)
           @item_with_barcode = @existing_barcode.item
-          @item_no_barcode = create(:item, organization: @organization)
+          @item_no_barcode = create(:item, organization: organization)
           visit url_prefix + "/purchases/new"
         end
 
@@ -288,19 +292,19 @@ RSpec.describe "Purchases", type: :system, js: true do
       subject { url_prefix + "/purchases" }
 
       it "does not allow deletion of a purchase" do
-        purchase = create(:purchase, organization: @organization)
+        purchase = create(:purchase, organization: organization)
         visit "#{subject}/#{purchase.id}"
         expect(page).to_not have_link("Delete")
       end
     end
   end
 
-  context "while signed in as an @organization admin" do
-    let!(:purchase) { create(:purchase, :with_items, item_quantity: 10, organization: @organization) }
+  context "while signed in as an organization admin" do
+    let!(:purchase) { create(:purchase, :with_items, item_quantity: 10, organization: organization) }
     subject { url_prefix + "/purchases" }
 
     before do
-      sign_in @organization_admin
+      sign_in organization_admin
     end
 
     it "allows deletion of a purchase" do
