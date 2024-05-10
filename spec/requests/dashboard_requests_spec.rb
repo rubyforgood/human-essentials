@@ -1,13 +1,16 @@
 require 'rails_helper'
 
-RSpec.describe "Dashboard", type: :request do
+RSpec.describe "Dashboard", type: :request, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+
   let(:default_params) do
-    { organization_name: @organization.to_param }
+    { organization_name: organization.to_param }
   end
 
   context "While signed in" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     describe "GET #show" do
@@ -20,7 +23,7 @@ RSpec.describe "Dashboard", type: :request do
       context 'with both roles' do
         it 'should include the switch link' do
           partner = FactoryBot.create(:partner)
-          @user.add_role(Role::PARTNER, partner)
+          user.add_role(Role::PARTNER, partner)
           get dashboard_path(default_params)
           expect(response.body).to include('switch_to_role')
         end
@@ -30,20 +33,20 @@ RSpec.describe "Dashboard", type: :request do
         it "still displays the user's org" do
           # nother org
           get dashboard_path(organization_name: create(:organization).to_param)
-          expect(response.body).to include(@organization.name)
+          expect(response.body).to include(organization.name)
         end
       end
     end
 
     context "BroadcastAnnouncement card" do
       it "displays announcements if there are valid ones" do
-        BroadcastAnnouncement.create(message: "test announcement", user_id: @user.id, organization_id: nil)
+        BroadcastAnnouncement.create(message: "test announcement", user_id: user.id, organization_id: nil)
         get dashboard_path(default_params)
         expect(response.body).to include("test announcement")
       end
 
       it "doesn't display announcements if they are not from super admins" do
-        BroadcastAnnouncement.create(message: "test announcement", user_id: @user.id, organization_id: @organization.id)
+        BroadcastAnnouncement.create(message: "test announcement", user_id: user.id, organization_id: organization.id)
         get dashboard_path(default_params)
         expect(response.body).not_to include("test announcement")
       end

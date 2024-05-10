@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "ProductDrives", type: :request, skip_seed: true do
+RSpec.describe "ProductDrives", type: :request do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
   let(:default_params) { { organization_name: organization.to_param } }

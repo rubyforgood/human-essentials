@@ -1,4 +1,4 @@
-describe DonationCreateService do
+RSpec.describe DonationCreateService, skip_seed: true do
   describe "#call" do
     let(:donation) { FactoryBot.build(:donation) }
 

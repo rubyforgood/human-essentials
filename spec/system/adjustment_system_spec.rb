@@ -21,6 +21,7 @@ RSpec.describe "Adjustment management", type: :system, js: true do
       end
 
       it "allows you to choose items that do not yet exist" do
+        find('select option[data-select2-id="3"]', wait: 10)
         select Item.active.last.name, from: "adjustment_line_items_attributes_0_item_id"
         fill_in "adjustment_line_items_attributes_0_quantity", with: add_quantity.to_s
 

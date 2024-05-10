@@ -1,13 +1,17 @@
 require 'rails_helper'
 
-RSpec.describe "Distributions", type: :request do
+RSpec.describe "Distributions", type: :request, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+
   let(:default_params) do
-    { organization_name: @organization.to_param }
+    { organization_name: organization.to_param }
   end
 
   let(:secret_key) { "HI MOM THIS IS ME AND I'M CODING" }
   let(:crypt) { ActiveSupport::MessageEncryptor.new(secret_key) }
-  let(:hashed_id) { CGI.escape(crypt.encrypt_and_sign(@organization.id)) }
+  let(:hashed_id) { CGI.escape(crypt.encrypt_and_sign(organization.id)) }
   before(:each) do
     allow(Rails.application).to receive(:secret_key_base).and_return(secret_key)
     allow(DistributionPdf).to receive(:new).and_return(double("DistributionPdf", compute_and_render: "PDF"))
@@ -15,7 +19,7 @@ RSpec.describe "Distributions", type: :request do
 
   context "While signed in" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     describe "GET #itemized_breakdown" do
@@ -51,14 +55,14 @@ RSpec.describe "Distributions", type: :request do
 
     describe "GET #reclaim" do
       it "returns http success" do
-        get distributions_path(default_params.merge(organization_name: @organization, id: create(:distribution).id))
+        get distributions_path(default_params.merge(organization_name: organization, id: create(:distribution).id))
         expect(response).to be_successful
       end
     end
 
     describe "GET #index" do
-      let(:item) { create(:item) }
-      let!(:distribution) { create(:distribution, :with_items, :past, item: item, item_quantity: 10) }
+      let(:item) { create(:item, organization: organization) }
+      let!(:distribution) { create(:distribution, :with_items, :past, item: item, item_quantity: 10, organization: organization) }
 
       it "returns http success" do
         get distributions_path(default_params)
@@ -66,7 +70,7 @@ RSpec.describe "Distributions", type: :request do
       end
 
       it "sums distribution totals accurately" do
-        create(:distribution, :with_items, item_quantity: 5)
+        create(:distribution, :with_items, item_quantity: 5, organization: organization)
         create(:line_item, :distribution, itemizable_id: distribution.id, quantity: 7)
         get distributions_path(default_params)
         expect(assigns(:total_items_all_distributions)).to eq(22)
@@ -101,8 +105,8 @@ RSpec.describe "Distributions", type: :request do
     end
 
     describe "POST #create" do
-      let!(:storage_location) { create(:storage_location) }
-      let!(:partner) { create(:partner) }
+      let!(:storage_location) { create(:storage_location, organization: organization) }
+      let!(:partner) { create(:partner, organization: organization) }
       let(:distribution) do
         { distribution: { storage_location_id: storage_location.id, partner_id: partner.id, delivery_method: :delivery } }
       end
@@ -128,10 +132,10 @@ RSpec.describe "Distributions", type: :request do
     end
 
     describe "GET #new" do
-      let!(:partner) { create(:partner) }
-      let(:request) { create(:request, partner: partner) }
-      let(:storage_location) { create(:storage_location, :with_items) }
-      let(:default_params) { { organization_name: @organization.to_param, request_id: request.id } }
+      let!(:partner) { create(:partner, organization: organization) }
+      let(:request) { create(:request, partner: partner, organization: organization) }
+      let(:storage_location) { create(:storage_location, :with_items, organization: organization) }
+      let(:default_params) { { organization_name: organization.to_param, request_id: request.id } }
 
       it "returns http success" do
         get new_distribution_path(default_params)
@@ -143,7 +147,7 @@ RSpec.describe "Distributions", type: :request do
 
       context "with org default but no partner default" do
         it "selects org default" do
-          @organization.update!(default_storage_location: storage_location.id)
+          organization.update!(default_storage_location: storage_location.id)
           get new_distribution_path(default_params)
           expect(response).to be_successful
           page = Nokogiri::HTML(response.body)
@@ -154,7 +158,7 @@ RSpec.describe "Distributions", type: :request do
       context "with partner default" do
         it "selects partner default" do
           location2 = create(:storage_location, :with_items)
-          @organization.update!(default_storage_location: location2.id)
+          organization.update!(default_storage_location: location2.id)
           partner.update!(default_storage_location_id: storage_location.id)
           get new_distribution_path(default_params)
           expect(response).to be_successful
@@ -165,11 +169,11 @@ RSpec.describe "Distributions", type: :request do
     end
 
     describe "GET #show" do
-      let(:item) { create(:item) }
-      let!(:distribution) { create(:distribution, :with_items, item: item, item_quantity: 1) }
+      let(:item) { create(:item, organization: organization) }
+      let!(:distribution) { create(:distribution, :with_items, item: item, item_quantity: 1, organization: organization) }
 
       it "sums distribution totals accurately" do
-        distribution = create(:distribution, :with_items, item_quantity: 1)
+        distribution = create(:distribution, :with_items, item_quantity: 1, organization: organization)
 
         item_quantity = 6
         package_size = 2
@@ -219,7 +223,7 @@ RSpec.describe "Distributions", type: :request do
         page = Nokogiri::HTML(response.body)
         url = page.at_css('#copy-calendar-button').attributes['data-url'].value
         hash = url.match(/\?hash=(.*)&/)[1]
-        expect(crypt.decrypt_and_verify(CGI.unescape(hash))).to eq(@organization.id)
+        expect(crypt.decrypt_and_verify(CGI.unescape(hash))).to eq(organization.id)
       end
     end
 
@@ -227,7 +231,7 @@ RSpec.describe "Distributions", type: :request do
       subject { patch picked_up_distribution_path(default_params.merge(id: distribution.id)) }
 
       context 'when the distribution is successfully updated' do
-        let(:distribution) { create(:distribution, state: :scheduled) }
+        let(:distribution) { create(:distribution, state: :scheduled, organization: organization) }
 
         it "updates the state to 'complete'" do
           subject
@@ -247,10 +251,10 @@ RSpec.describe "Distributions", type: :request do
       end
 
       it "correctly sums the item counts from distributions" do
-        first_item = create(:item)
-        second_item = create(:item)
-        first_distribution = create(:distribution)
-        second_distribution = create(:distribution)
+        first_item = create(:item, organization: organization)
+        second_item = create(:item, organization: organization)
+        first_distribution = create(:distribution, organization: organization)
+        second_distribution = create(:distribution, organization: organization)
         create(:line_item, :distribution, item_id: first_item.id, itemizable_id: first_distribution.id, quantity: 7)
         create(:line_item, :distribution, item_id: first_item.id, itemizable_id: second_distribution.id, quantity: 4)
         create(:line_item, :distribution, item_id: second_item.id, itemizable_id: second_distribution.id, quantity: 5)
@@ -261,10 +265,10 @@ RSpec.describe "Distributions", type: :request do
       end
 
       it "correctly sums the item package counts from distributions" do
-        first_item = create(:item, package_size: 2)
-        second_item = create(:item, package_size: 3)
-        first_distribution = create(:distribution)
-        second_distribution = create(:distribution)
+        first_item = create(:item, package_size: 2, organization: organization)
+        second_item = create(:item, package_size: 3, organization: organization)
+        first_distribution = create(:distribution, organization: organization)
+        second_distribution = create(:distribution, organization: organization)
 
         create(:line_item, :distribution, item_id: first_item.id, itemizable_id: first_distribution.id, quantity: 7)
         create(:line_item, :distribution, item_id: first_item.id, itemizable_id: second_distribution.id, quantity: 4)
@@ -282,10 +286,10 @@ RSpec.describe "Distributions", type: :request do
     end
 
     describe "POST #update" do
-      let(:location) { create(:storage_location) }
-      let(:partner) { create(:partner) }
+      let(:location) { create(:storage_location, organization: organization) }
+      let(:partner) { create(:partner, organization: organization) }
 
-      let(:distribution) { create(:distribution, partner: partner) }
+      let(:distribution) { create(:distribution, partner: partner, organization: organization) }
       let(:issued_at) { distribution.issued_at }
       let(:distribution_params) do
         default_params.merge(
@@ -306,11 +310,11 @@ RSpec.describe "Distributions", type: :request do
       end
 
       describe "when changing storage location" do
-        let(:item) { create(:item) }
+        let(:item) { create(:item, organization: organization) }
         it "updates storage quantity correctly" do
-          new_storage_location = create(:storage_location)
-          create(:donation, :with_items, item: item, item_quantity: 30, storage_location: new_storage_location)
-          distribution = create(:distribution, :with_items, item: item, item_quantity: 10)
+          new_storage_location = create(:storage_location, organization: organization)
+          create(:donation, :with_items, item: item, item_quantity: 30, storage_location: new_storage_location, organization: organization)
+          distribution = create(:distribution, :with_items, item: item, item_quantity: 10, organization: organization)
           original_storage_location = distribution.storage_location
           line_item = distribution.line_items.first
           line_item_params = {
@@ -330,9 +334,9 @@ RSpec.describe "Distributions", type: :request do
 
         # TODO this test is invalid in event-world since it's handled by the aggregate
         it "rollsback updates if quantity would go below 0" do
-          next if Event.read_events?(@organization)
+          next if Event.read_events?(organization)
 
-          distribution = create(:distribution, :with_items, item_quantity: 10)
+          distribution = create(:distribution, :with_items, item_quantity: 10, organization: organization)
           original_storage_location = distribution.storage_location
 
           # adjust inventory so that updating will set quantity below 0
@@ -387,8 +391,8 @@ RSpec.describe "Distributions", type: :request do
     end
 
     describe "GET #edit" do
-      let(:location) { create(:storage_location) }
-      let(:partner) { create(:partner) }
+      let(:location) { create(:storage_location, organization: organization) }
+      let(:partner) { create(:partner, organization: organization) }
 
       let(:distribution) { create(:distribution, partner: partner) }
 
@@ -400,7 +404,7 @@ RSpec.describe "Distributions", type: :request do
 
       it "should show a warning if there is an inteverning audit" do
         distribution.update!(created_at: 1.week.ago)
-        create(:audit, storage_location: distribution.storage_location)
+        create(:audit, storage_location: distribution.storage_location, organization: organization)
         get edit_distribution_path(default_params.merge(id: distribution.id))
         expect(response.body).to include("You’ve had an audit since this distribution was started.")
       end
@@ -428,7 +432,7 @@ RSpec.describe "Distributions", type: :request do
       context 'with a correct hash id' do
         it 'should render the calendar' do
           get distributions_calendar_path(hash: hashed_id)
-          expect(CalendarService).to have_received(:calendar).with(@organization.id)
+          expect(CalendarService).to have_received(:calendar).with(organization.id)
           expect(response.media_type).to include('text/calendar')
           expect(response.body).to eq('SOME ICS STRING')
         end

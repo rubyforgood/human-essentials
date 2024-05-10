@@ -1,8 +1,11 @@
 require "rails_helper"
 
-RSpec.describe "Adjustments", type: :request do
+RSpec.describe "Adjustments", type: :request, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+
   let(:default_params) do
-    { organization_name: @organization.to_param }
+    { organization_name: organization.to_param }
   end
 
   # This should return the minimal set of attributes required to create a valid
@@ -10,8 +13,8 @@ RSpec.describe "Adjustments", type: :request do
   # adjust the attributes here as well.
   let(:valid_attributes) do
     {
-      organization_id: @organization.id,
-      storage_location_id: create(:storage_location, organization: @organization).id
+      organization_id: organization.id,
+      storage_location_id: create(:storage_location, organization: organization).id
     }
   end
 
@@ -24,11 +27,11 @@ RSpec.describe "Adjustments", type: :request do
   # AdjustmentsController. Be sure to keep this updated too.
   let(:valid_session) { {} }
 
-  let(:adjustment) { Adjustment.create! valid_attributes.merge(user_id: @user.id) }
+  let(:adjustment) { Adjustment.create! valid_attributes.merge(user_id: user.id) }
 
   describe "while signed in" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     describe "GET #index" do
@@ -113,7 +116,7 @@ RSpec.describe "Adjustments", type: :request do
 
         it "assigns a user id from the current user" do
           post adjustments_path(default_params.merge(adjustment: valid_attributes))
-          expect(assigns(:adjustment).user_id).to eq(@user.id)
+          expect(assigns(:adjustment).user_id).to eq(user.id)
         end
 
         it "redirects to the #show after created adjustment" do

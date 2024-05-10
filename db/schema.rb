@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_04_11_183741) do
-
+ActiveRecord::Schema[7.0].define(version: 2024_04_19_225137) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -813,12 +812,14 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_11_183741) do
     t.string "provider"
     t.string "uid"
     t.bigint "partner_id"
+    t.bigint "last_role_id"
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_users_on_invitations_count"
     t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
     t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by_type_and_invited_by_id"
+    t.index ["last_role_id"], name: "index_users_on_last_role_id"
     t.index ["partner_id"], name: "index_users_on_partner_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
@@ -897,4 +898,5 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_11_183741) do
   add_foreign_key "requests", "distributions"
   add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"
+  add_foreign_key "users", "users_roles", column: "last_role_id", on_delete: :nullify
 end
