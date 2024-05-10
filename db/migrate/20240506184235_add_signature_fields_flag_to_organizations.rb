@@ -1,11 +1,11 @@
 class AddSignatureFieldsFlagToOrganizations < ActiveRecord::Migration[7.0]
   def up
-    add_column :organizations, :include_signature_fields_on_distribution_printout, :boolean
-    change_column_default :organizations, :include_signature_fields_on_distribution_printout, false
+    add_column :organizations, :signature_for_distribution_pdf, :boolean
+    change_column_default :organizations, :signature_for_distribution_pdf, false
   end
 
   def down
-    remove_column :organizations, :include_signature_fields_on_distribution_printout
+    remove_column :organizations, :signature_for_distribution_pdf
   end
 
 end

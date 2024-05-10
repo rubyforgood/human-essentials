@@ -121,7 +121,7 @@ class DistributionPdf
       column(-1).row(-1).borders = [:left, :bottom]
     end
 
-    if @organization.include_signature_fields_on_distribution_printout
+    if @organization.signature_for_distribution_pdf
       insert_signature_fields
     end
 
