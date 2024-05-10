@@ -83,7 +83,7 @@ RSpec.describe PartnerProfileUpdateService, skip_seed: true do
         end
       end
 
-      context "and the new values include country but are missing client share" do
+      context "and the new values include county but are missing client share" do
         it "maintains the old values and returns the correct validation error" do
           profile.reload
           expect(profile.served_areas.size).to eq(2)
