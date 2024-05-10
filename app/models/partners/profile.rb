@@ -115,7 +115,7 @@ module Partners
 
     def client_share_total
       # client_share could be nil
-      served_areas.sum { |area| area.client_share.to_i }
+      served_areas.compact.sum(&:client_share)
     end
 
     private
