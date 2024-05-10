@@ -1,7 +1,10 @@
-RSpec.describe TransfersController, type: :controller do
+RSpec.describe TransfersController, type: :controller, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+
   context "While signed in" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     describe "GET #index" do
@@ -42,9 +45,9 @@ RSpec.describe TransfersController, type: :controller do
       it "redirects to #show when successful" do
         attributes = attributes_for(
           :transfer,
-          organization_id: @organization.id,
-          to_id: create(:storage_location, organization: @organization).id,
-          from_id: create(:storage_location, organization: @organization).id
+          organization_id: organization.id,
+          to_id: create(:storage_location, organization: organization).id,
+          from_id: create(:storage_location, organization: organization).id
         )
 
         post :create, params: { transfer: attributes }
@@ -67,7 +70,7 @@ RSpec.describe TransfersController, type: :controller do
     end
 
     describe "GET #show" do
-      subject { get :show, params: { id: create(:transfer, organization: @organization) } }
+      subject { get :show, params: { id: create(:transfer, organization: organization) } }
       it "returns http success" do
         expect(subject).to be_successful
       end

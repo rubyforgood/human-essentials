@@ -1,7 +1,11 @@
-RSpec.describe "Layout", type: :system do
+RSpec.describe "Layout", type: :system, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+  let!(:url_prefix) { "/#{organization.to_param}" }
+
   describe "Body CSS Data" do
     it "sets the ID to the controller and the class to the action" do
-      sign_in(@user)
+      sign_in(user)
       visit new_donation_path
       expect(page).to have_css("body#donations.new")
 

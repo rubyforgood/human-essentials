@@ -1,4 +1,4 @@
-RSpec.describe "Help", type: :system do
+RSpec.describe "Help", type: :system, skip_seed: true do
   let(:partner) { FactoryBot.create(:partner) }
   let(:partner_user) { partner.primary_user }
 

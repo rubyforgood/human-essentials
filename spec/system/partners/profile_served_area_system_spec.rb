@@ -1,4 +1,4 @@
-RSpec.describe "Partners profile served area behaviour", type: :system, js: true do
+RSpec.describe "Partners profile served area behaviour", type: :system, js: true, skip_seed: true do
   let!(:partner1) { create(:partner) }
   let(:partner1_user) { partner1.primary_user }
   let!(:served_areas) {

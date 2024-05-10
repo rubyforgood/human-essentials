@@ -1,7 +1,10 @@
-RSpec.describe ItemsController, type: :controller do
+RSpec.describe ItemsController, type: :controller, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+
   context "While signed in" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     describe "GET #index" do
@@ -19,7 +22,7 @@ RSpec.describe ItemsController, type: :controller do
     end
 
     describe "GET #edit" do
-      subject { get :edit, params: { id: create(:item, organization: @organization) } }
+      subject { get :edit, params: { id: create(:item, organization: organization) } }
       it "returns http success" do
         expect(subject).to be_successful
       end
@@ -46,14 +49,14 @@ RSpec.describe ItemsController, type: :controller do
     end
 
     describe "GET #show" do
-      subject { get :show, params: { id: create(:item, organization: @organization) } }
+      subject { get :show, params: { id: create(:item, organization: organization) } }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
 
     describe "DELETE #destroy" do
-      subject { delete :destroy, params: { id: create(:item, organization: @organization) } }
+      subject { delete :destroy, params: { id: create(:item, organization: organization) } }
       it "redirects to #index" do
         expect(subject).to redirect_to(items_path)
       end

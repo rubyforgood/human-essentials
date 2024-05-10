@@ -12,6 +12,14 @@ RSpec.describe "Profiles", type: :request, skip_seed: true do
       get edit_profile_path(id: partner.id, partner_id: partner.id)
       expect(response).to be_successful
     end
+
+    it "renders edit partner settings partial with enabled request types only" do
+      partner.profile.organization.update!(enable_quantity_based_requests: true, enable_child_based_requests: false)
+      get edit_profile_path(default_params)
+      expect(response).to render_template(partial: "partners/profiles/edit/_partner_settings")
+      expect(response.body).to include("Enable Quantity-based Requests")
+      expect(response.body).not_to include("Enable Child-based Requests")
+    end
   end
 
   describe "POST #update" do
