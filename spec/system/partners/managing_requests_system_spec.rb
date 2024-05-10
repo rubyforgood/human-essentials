@@ -1,4 +1,4 @@
-RSpec.describe "Managing requests", type: :system, js: true do
+RSpec.describe "Managing requests", type: :system, js: true, skip_seed: true do
   describe 'creating a # individuals request' do
     let(:partner_user) { partner.primary_user }
     let!(:partner) { FactoryBot.create(:partner, status: :approved) }

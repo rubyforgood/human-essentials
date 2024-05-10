@@ -1,4 +1,4 @@
-RSpec.describe DistributionByCountyReportService, type: :service do
+RSpec.describe DistributionByCountyReportService, type: :service, skip_seed: true do
   let(:year) { Time.current.year }
   let(:issued_at_last_year) { Time.current.utc.change(year: year - 1).to_datetime }
   let(:distributions) { [] }

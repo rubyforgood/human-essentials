@@ -1,21 +1,24 @@
 # avoid Rubocop failing with an infinite loop when it checks this cop
 # rubocop:disable Layout/ArrayAlignment
-RSpec.describe DistributionPdf do
-  let(:distribution) { FactoryBot.create(:distribution) }
-  let(:item1) { FactoryBot.create(:item, name: "Item 1", package_size: 50, value_in_cents: 100) }
-  let(:item2) { FactoryBot.create(:item, name: "Item 2", value_in_cents: 200) }
-  let(:item3) { FactoryBot.create(:item, name: "Item 3", value_in_cents: 300) }
-  let(:item4) { FactoryBot.create(:item, name: "Item 4", package_size: 25, value_in_cents: 400) }
+RSpec.describe DistributionPdf, seed_db: false do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:distribution) { create(:distribution, organization: organization) }
+
+  let(:item1) { create(:item, name: "Item 1", package_size: 50, value_in_cents: 100) }
+  let(:item2) { create(:item, name: "Item 2", value_in_cents: 200) }
+  let(:item3) { create(:item, name: "Item 3", value_in_cents: 300) }
+  let(:item4) { create(:item, name: "Item 4", package_size: 25, value_in_cents: 400) }
+
   before(:each) do
-    FactoryBot.create(:line_item, itemizable: distribution, item: item1, quantity: 50)
-    FactoryBot.create(:line_item, itemizable: distribution, item: item2, quantity: 100)
-    FactoryBot.create(:request, distribution: distribution,
+    create(:line_item, itemizable: distribution, item: item1, quantity: 50)
+    create(:line_item, itemizable: distribution, item: item2, quantity: 100)
+    create(:request, distribution: distribution,
       request_items: [{"item_id" => item2.id, "quantity" => 30},
         {"item_id" => item3.id, "quantity" => 50}, {"item_id" => item4.id, "quantity" => 120}])
   end
 
   specify "#request_data" do
-    results = described_class.new(@organization, distribution).request_data
+    results = described_class.new(organization, distribution).request_data
     expect(results).to eq([
       ["Items Received", "Requested", "Received", "Value/item", "In-Kind Value Received", "Packages"],
       ["Item 1", "", 50, "$1.00", "$50.00", "1"],
@@ -28,7 +31,7 @@ RSpec.describe DistributionPdf do
   end
 
   specify "#non_request_data" do
-    results = described_class.new(@organization, distribution).non_request_data
+    results = described_class.new(organization, distribution).non_request_data
     expect(results).to eq([
       ["Items Received", "Value/item", "In-Kind Value", "Quantity", "Packages"],
       ["Item 1", "$1.00", "$50.00", 50, "1"],

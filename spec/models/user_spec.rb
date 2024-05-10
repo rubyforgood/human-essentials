@@ -35,11 +35,7 @@
 #  partner_id             :bigint
 #
 
-RSpec.describe User, type: :model do
-  it "has a valid factory" do
-    expect(build(:user)).to be_valid
-  end
-
+RSpec.describe User, type: :model, skip_seed: true do
   context "Validations >" do
     it "user can receive a name" do
       expect(build(:user, name: "foo")).to be_valid
@@ -59,6 +55,7 @@ RSpec.describe User, type: :model do
       expect(build(:partner, email: "@boooooooooo")).not_to be_valid
       expect(build(:partner, email: "boooooooooo@")).not_to be_valid
     end
+
     it "requires a password with a special character and number" do
       expect(build(:user, password: "password", password_confirmation: "password")).not_to be_valid
       expect(build(:user, password: "a;dsfj!55", password_confirmation: "a;dsfj!55")).to be_valid
@@ -89,6 +86,9 @@ RSpec.describe User, type: :model do
       let!(:a_name_user) { create(:user, name: 'Amanda') }
       let!(:deactivated_a_name_user) { create(:user, name: 'Alice', discarded_at: discarded_at) }
       let!(:deactivated_z_name_user) { create(:user, name: 'Zeke', discarded_at: discarded_at) }
+      let!(:user) { create(:user, name: "DEFAULT USER") }
+      let!(:organization_admin) { create(:organization_admin, name: "DEFAULT ORG ADMIN") }
+      let!(:super_admin) { create(:organization_admin, name: "DEFAULT SUPERADMIN") }
 
       it "retrieves users in the correct order" do
         alphabetized_list = described_class.org_users.with_discarded.alphabetized
@@ -96,9 +96,9 @@ RSpec.describe User, type: :model do
         expect(alphabetized_list).to eq(
           [
             a_name_user,
-            @organization_admin,
-            @super_admin,
-            @user,
+            organization_admin,
+            super_admin,
+            user,
             z_name_user,
             deactivated_a_name_user,
             deactivated_z_name_user
@@ -137,7 +137,7 @@ RSpec.describe User, type: :model do
       # can't use instance_double since AuthHash uses Hashie for dynamically created methods
       token = double(OmniAuth::AuthHash, info: {'email' => 'me@me.com'})
       expect(described_class.from_omniauth(token)).to eq(nil)
-      user = FactoryBot.create(:user, email: 'me@me.com')
+      user = create(:user, email: 'me@me.com')
       expect(described_class.from_omniauth(token)).to eq(user)
     end
   end

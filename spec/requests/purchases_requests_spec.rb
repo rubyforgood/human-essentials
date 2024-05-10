@@ -20,15 +20,26 @@ RSpec.describe "Purchases", type: :request, skip_seed: true do
         response
       end
 
-      before { create(:purchase) }
-
       context "html" do
         let(:response_format) { 'html' }
 
-        it { is_expected.to be_successful }
+        it "returns success when a purchase exists" do
+          create(:purchase)
+          expect(subject).to be_successful
+        end
+
+        it "shows the FMV column" do
+          purchase = create(:purchase, amount_spent_in_cents: 1234, organization: organization)
+          item = create(:item, value_in_cents: 42, organization: organization)
+          create(:line_item, item: item, itemizable: purchase, quantity: 2)
+
+          expect(subject.body).to include("FMV")
+          expect(subject.body).to include("$0.84")
+        end
       end
 
       context "csv" do
+        before { create(:purchase) }
         let(:response_format) { 'csv' }
 
         it { is_expected.to be_successful }
