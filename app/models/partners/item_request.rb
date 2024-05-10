@@ -6,7 +6,6 @@
 #  name                   :string
 #  partner_key            :string
 #  quantity               :string
-#  request_unit           :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  item_id                :integer
@@ -25,5 +24,15 @@ module Partners
     validates :quantity, numericality: { only_integer: true, greater_than_or_equal_to: 1 }
     validates :name, presence: true
     validates :partner_key, presence: true
+    validate :request_unit_is_supported
+
+    def request_unit_is_supported
+      return if request_unit.blank?
+
+      names = request.organization.request_units.map(&:name)
+      unless names.include?(request_unit)
+        errors.add(:request_unit, "is not supported")
+      end
+    end
   end
 end
