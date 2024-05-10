@@ -88,7 +88,6 @@ end
 pdx_org.items.each_with_index do |item, i|
   if item.name == 'Pads'
     %w(pad pack).each { |name| item.request_units.create!(name: name) }
-    item.update!(reporting_unit: 'pad')
   elsif i == 0
     item.request_units.create!(name: 'pack')
   elsif i == 1

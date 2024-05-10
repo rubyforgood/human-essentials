@@ -12,7 +12,6 @@
 #  on_hand_recommended_quantity :integer
 #  package_size                 :integer
 #  partner_key                  :string
-#  reporting_unit               :string
 #  value_in_cents               :integer          default(0)
 #  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null
@@ -41,7 +40,6 @@ class Item < ApplicationRecord
   validates :distribution_quantity, numericality: { greater_than: 0 }, allow_blank: true
   validates :on_hand_recommended_quantity, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
   validates :on_hand_minimum_quantity, numericality: { greater_than_or_equal_to: 0 }
-  validate :reporting_unit_is_supported
 
   has_many :line_items, dependent: :destroy
   has_many :inventory_items, dependent: :destroy
@@ -229,14 +227,5 @@ class Item < ApplicationRecord
 
   def update_associated_kit_name
     kit.update(name: name)
-  end
-
-  def reporting_unit_is_supported
-    return if reporting_unit.blank?
-
-    names = request_units.map(&:name)
-    unless names.include?(reporting_unit)
-      errors.add(:reporting_unit, "is not supported")
-    end
   end
 end
