@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe ProductDriveHelper, type: :helper do
+RSpec.describe ProductDriveHelper, type: :helper, seed_db: false do
   describe '#is_virtual' do
     context 'when the product drive was held virtually' do
       let(:product_drive) { build(:product_drive, virtual: true) }

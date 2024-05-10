@@ -1,4 +1,4 @@
-RSpec.describe "NDBN Members Upload", type: :system do
+RSpec.describe "NDBN Members Upload", type: :system, skip_seed: true do
   it "CSV upload flow functions without error" do
     user = create(:super_admin)
     sign_in(user)

@@ -1,6 +1,6 @@
-RSpec.describe RemoveRoleService, type: :service do
-  let(:user) { FactoryBot.create(:user, name: "User XYZ") }
-  let(:org) { FactoryBot.create(:organization, name: "Org ABC") }
+RSpec.describe RemoveRoleService, type: :service, skip_seed: true do
+  let(:org) { create(:organization, name: "Org ABC", skip_items: true) }
+  let(:user) { create(:user, name: "User XYZ", organization: nil) }
   let!(:role) { Role.create!(resource_type: "Organization", name: "org_user", resource_id: org.id) }
 
   describe "#call" do

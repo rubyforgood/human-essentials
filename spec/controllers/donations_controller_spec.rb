@@ -1,12 +1,16 @@
-RSpec.describe DonationsController, type: :controller do
+RSpec.describe DonationsController, type: :controller, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+
   let(:default_params) do
-    { organization_name: @organization.to_param }
+    { organization_name: organization.to_param }
   end
-  let(:donation) { create(:donation, organization: @organization) }
+  let(:donation) { create(:donation, organization: organization) }
 
   context "While signed in as a normal user >" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     describe "GET #index" do
@@ -96,7 +100,7 @@ RSpec.describe DonationsController, type: :controller do
 
         # TODO this test is invalid in event-world since it's handled by the aggregate
         it "rolls back updates if quantity would go below 0" do
-          next if Event.read_events?(@organization)
+          next if Event.read_events?(organization)
 
           donation = create(:donation, :with_items, item_quantity: 10)
           original_storage_location = donation.storage_location
@@ -174,7 +178,7 @@ RSpec.describe DonationsController, type: :controller do
 
   context "While signed in as an organization admin >" do
     before do
-      sign_in(@organization_admin)
+      sign_in(organization_admin)
     end
 
     describe "DELETE #destroy" do

@@ -6,7 +6,7 @@
 #  role_id :bigint
 #  user_id :bigint
 #
-RSpec.describe UsersRole, type: :model do
+RSpec.describe UsersRole, type: :model, skip_seed: true do
   describe "#current_role_for" do
     context "when last_role is nil" do
       context "for org user" do
