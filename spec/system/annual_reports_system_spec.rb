@@ -1,12 +1,15 @@
-RSpec.describe "Annual Reports", type: :system, js: true do
-  let(:url_prefix) { "/#{@organization.short_name}" }
+RSpec.describe "Annual Reports", type: :system, js: true, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+
+  let(:url_prefix) { "/#{organization.short_name}" }
 
   context "while signed in as an organization admin" do
     subject { url_prefix + "/reports/annual_reports" }
-    let!(:purchase) { create(:purchase, :with_items, item_quantity: 10, issued_at: 1.year.ago) }
+    let!(:purchase) { create(:purchase, :with_items, item_quantity: 10, issued_at: 1.year.ago, organization: organization) }
 
     before do
-      sign_in @organization_admin
+      sign_in organization_admin
       visit subject.to_s
     end
 

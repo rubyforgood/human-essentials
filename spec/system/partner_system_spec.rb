@@ -1,9 +1,14 @@
 Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in the test
-  RSpec.describe "Partner management", type: :system, js: true do
+  RSpec.describe "Partner management", type: :system, js: true, skip_seed: true do
+    let(:organization) { create(:organization, skip_items: true) }
+    let(:user) { create(:user, organization: organization) }
+    let(:organization_admin) { create(:organization_admin, organization: organization) }
+    let(:partner) { create(:partner, organization: organization) }
+
     before do
-      sign_in(@user)
+      sign_in(user)
     end
-    let!(:url_prefix) { "/#{@organization.to_param}" }
+    let!(:url_prefix) { "/#{organization.to_param}" }
     let!(:page_content_wait) { 10 } # allow up to 10 seconds for content to load in the test
 
     describe 'approving a partner that is awaiting approval' do
@@ -62,7 +67,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         end
         before do
           visit url_prefix + "/partners"
-          assert page.has_content? "Partner Agencies for #{@organization.name}"
+          assert page.has_content? "Partner Agencies for #{organization.name}"
 
           click_on 'New Partner Agency'
 
@@ -94,7 +99,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         end
         before do
           visit url_prefix + "/partners"
-          assert page.has_content? "Partner Agencies for #{@organization.name}"
+          assert page.has_content? "Partner Agencies for #{organization.name}"
           click_on 'New Partner Agency'
 
           fill_in 'Name *', with: partner_attributes[:name]
@@ -104,7 +109,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
         it 'should have not added a new partner and indicate the failure' do
           assert page.has_content? "Failed to add partner due to: "
-          assert page.has_content? "New Partner for #{@organization.name}"
+          assert page.has_content? "New Partner for #{organization.name}"
 
           partner = Partner.find_by(name: partner_attributes[:name])
           expect(partner).to eq(nil)
@@ -121,7 +126,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
       context "when partner is uninvited and one step partner invite setting is on" do
         it "shows Invite and Approve button and approves the partner when clicked" do
-          @organization.update!(one_step_partner_invite: true)
+          organization.update!(one_step_partner_invite: true)
           visit url_prefix + "/partners"
 
           assert page.has_content? "Invite and Approve"
@@ -133,11 +138,11 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
       context "when one step partner invite setting is off" do
         it "does not show invite and approve button" do
-          @organization.update!(one_step_partner_invite: false)
+          organization.update!(one_step_partner_invite: false)
 
           visit url_prefix + "/partners"
 
-          assert page.should have_no_content "Invite and Approve"
+          expect(page).to_not have_content "Invite and Approve"
         end
       end
     end
@@ -147,8 +152,8 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         let!(:partner_to_request_recertification) { create(:partner, status: 'approved') }
 
         before do
-          sign_in(@user)
-          visit partners_path(@organization)
+          sign_in(user)
+          visit partners_path(organization)
         end
 
         it 'should notify the user that its been successful and change the partner status' do
@@ -156,7 +161,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
             find_button('Request Recertification').click
           end
 
-          assert page.has_content? "#{partner_to_request_recertification.name} recertification successfully requested!"
+          expect(page).to have_content "#{partner_to_request_recertification.name} recertification successfully requested!"
           expect(partner_to_request_recertification.reload.recertification_required?).to eq(true)
         end
       end
@@ -164,10 +169,11 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
     describe "#index" do
       before(:each) do
-        @uninvited = create(:partner, name: "Bcd", status: :uninvited)
-        @invited = create(:partner, name: "Abc", status: :invited)
-        @approved = create(:partner, :approved, name: "Cde", status: :approved)
-        @deactivated = create(:partner, name: "Def", status: :deactivated)
+        partner
+        @uninvited = create(:partner, name: "Bcd", status: :uninvited, organization: organization)
+        @invited = create(:partner, name: "Abc", status: :invited, organization: organization)
+        @approved = create(:partner, :approved, name: "Cde", status: :approved, organization: organization)
+        @deactivated = create(:partner, name: "Def", status: :deactivated, organization: organization)
         visit url_prefix + "/partners"
       end
 
@@ -180,7 +186,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
       end
 
       it "allows a user to invite a partner", js: true do
-        partner = create(:partner, name: 'Charities')
+        partner = create(:partner, name: 'Charities', organization: organization)
         partner.primary_user.delete
 
         visit url_prefix + "/partners"
@@ -190,8 +196,8 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           within(ele) { click_on "Invite" }
         end
 
-        # assert page.has_content? "Partner #{partner.name} invited!", wait: page_content_wait
-        # expect(page.find(".alert")).to have_content "invited!", wait: page_content_wait
+        expect(page).to have_content "Partner #{partner.name} invited!", wait: page_content_wait
+        expect(page.find(".alert")).to have_content "invited!", wait: page_content_wait
       end
 
       it "shows invite button only for unapproved partners" do
@@ -256,7 +262,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
       context "when viewing an invited partner as a partner" do
         let(:partner) { create(:partner, name: "Invited Partner", status: :invited) }
         before do
-          sign_out(@user)
+          sign_out(user)
           sign_in(partner.users.first)
         end
         it "redirects user to partners page root page (dashboard) with error message" do
@@ -418,14 +424,14 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
     describe 'changing partner group association' do
       before do
-        sign_in(@user)
-        visit url_prefix + "/partners/#{@partner.id}"
+        sign_in(user)
+        visit url_prefix + "/partners/#{partner.id}"
       end
       let!(:existing_partner_group) { create(:partner_group) }
 
       context 'when the partner has no partner group' do
         before do
-          expect(@partner.partner_group).to be_nil
+          expect(partner.partner_group).to be_nil
         end
 
         it 'it should say they can request every item' do
@@ -437,12 +443,12 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
       context 'when a partner is assigned to partner group' do
         before do
           assert page.has_content? 'All Items Requestable'
-          @partner.update!(partner_group: nil)
+          partner.update!(partner_group: nil)
         end
 
         context 'that has requestable item categories' do
           let!(:item_category) do
-            ic = create(:item_category, organization: @organization)
+            ic = create(:item_category, organization: organization)
             existing_partner_group.item_categories << ic
             ic
           end
@@ -456,7 +462,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
           it 'should properly indicate the requestable items and adjust the partners requestable items' do
             assert page.has_content? item_category.name
-            expect { @partner.reload }.to change(@partner, :requestable_items).from([]).to(match_array(items_in_category))
+            expect { partner.reload }.to change(partner, :requestable_items).from([]).to(match_array(items_in_category))
           end
         end
 
@@ -470,7 +476,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
           it 'should properly indicate the requestable items and adjust the partners requestable items' do
             assert page.has_content? 'No Items Requestable'
-            expect { @partner.reload }.to change(@partner, :requestable_items).from([]).to([])
+            expect { partner.reload }.to change(partner, :requestable_items).from([]).to([])
           end
         end
       end
@@ -478,12 +484,12 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
     describe "partner group management", type: :system, js: true do
       before do
-        sign_in(@user)
+        sign_in(user)
       end
 
-      let!(:url_prefix) { "/#{@organization.to_param}" }
-      let!(:item_category_1) { create(:item_category, organization: @organization) }
-      let!(:item_category_2) { create(:item_category, organization: @organization) }
+      let!(:url_prefix) { "/#{organization.to_param}" }
+      let!(:item_category_1) { create(:item_category, organization: organization) }
+      let!(:item_category_2) { create(:item_category, organization: organization) }
       let!(:items_in_category_1) { create_list(:item, 3, item_category_id: item_category_1.id) }
       let!(:items_in_category_2) { create_list(:item, 3, item_category_id: item_category_2.id) }
 
@@ -507,7 +513,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
       end
 
       describe 'editing a existing partner group' do
-        let!(:existing_partner_group) { create(:partner_group, organization: @organization) }
+        let!(:existing_partner_group) { create(:partner_group, organization: organization) }
         before do
           existing_partner_group.item_categories << item_category_1
         end
