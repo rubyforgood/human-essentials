@@ -141,7 +141,7 @@ RSpec.describe ItemizableUpdateService, skip_seed: true do
           create(:line_item, item_id: item2.id, quantity: 10)
         ]
         create(:donation,
-          organization: @organization,
+          organization: organization,
           storage_location: storage_location,
           line_items: line_items,
           issued_at: 1.day.ago)
@@ -158,23 +158,23 @@ RSpec.describe ItemizableUpdateService, skip_seed: true do
       it "should send an itemizable event if it already exists" do
         DonationEvent.publish(itemizable)
         expect(DonationEvent.count).to eq(1)
-        expect(View::Inventory.total_inventory(@organization.id)).to eq(60)
+        expect(View::Inventory.total_inventory(organization.id)).to eq(60)
 
         described_class.call(itemizable: itemizable, params: attributes, type: :increase, event_class: DonationEvent)
 
         expect(DonationEvent.count).to eq(2)
-        expect(View::Inventory.total_inventory(@organization.id)).to eq(95)
+        expect(View::Inventory.total_inventory(organization.id)).to eq(95)
       end
 
       it "should send an update event if it does not exist" do
         expect(DonationEvent.count).to eq(0)
-        expect(View::Inventory.total_inventory(@organization.id)).to eq(40)
+        expect(View::Inventory.total_inventory(organization.id)).to eq(40)
 
         described_class.call(itemizable: itemizable, params: attributes, type: :increase, event_class: DonationEvent)
 
         expect(DonationEvent.count).to eq(0)
         expect(UpdateExistingEvent.count).to eq(1)
-        expect(View::Inventory.total_inventory(@organization.id)).to eq(75) # 40 - 5 (item1) - 10 (item2) + 50 (item3)
+        expect(View::Inventory.total_inventory(organization.id)).to eq(75) # 40 - 5 (item1) - 10 (item2) + 50 (item3)
       end
     end
     describe "with distributions" do
@@ -191,7 +191,7 @@ RSpec.describe ItemizableUpdateService, skip_seed: true do
           create(:line_item, item_id: item2.id, quantity: 5)
         ]
         create(:distribution,
-          organization: @organization,
+          organization: organization,
           storage_location: storage_location,
           line_items: line_items,
           issued_at: 1.day.ago)
@@ -205,23 +205,23 @@ RSpec.describe ItemizableUpdateService, skip_seed: true do
       it "should send an itemizable event if it already exists" do
         DistributionEvent.publish(itemizable)
         expect(DistributionEvent.count).to eq(1)
-        expect(View::Inventory.total_inventory(@organization.id)).to eq(40)
+        expect(View::Inventory.total_inventory(organization.id)).to eq(40)
 
         described_class.call(itemizable: itemizable, params: attributes, type: :decrease, event_class: DistributionEvent)
 
         expect(DistributionEvent.count).to eq(2)
-        expect(View::Inventory.total_inventory(@organization.id)).to eq(42)
+        expect(View::Inventory.total_inventory(organization.id)).to eq(42)
       end
 
       it "should send an update event if it does not exist" do
         expect(DistributionEvent.count).to eq(0)
-        expect(View::Inventory.total_inventory(@organization.id)).to eq(50)
+        expect(View::Inventory.total_inventory(organization.id)).to eq(50)
 
         described_class.call(itemizable: itemizable, params: attributes, type: :decrease, event_class: DistributionEvent)
 
         expect(DistributionEvent.count).to eq(0)
         expect(UpdateExistingEvent.count).to eq(1)
-        expect(View::Inventory.total_inventory(@organization.id)).to eq(52) # 50 + 3 (item1) + 5 (item2) +- 6 (item3)
+        expect(View::Inventory.total_inventory(organization.id)).to eq(52) # 50 + 3 (item1) + 5 (item2) +- 6 (item3)
       end
     end
   end
