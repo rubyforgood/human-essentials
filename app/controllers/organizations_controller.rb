@@ -98,6 +98,7 @@ class OrganizationsController < ApplicationController
       :ndbn_member_id, :enable_child_based_requests,
       :enable_individual_requests, :enable_quantity_based_requests,
       :ytd_on_distribution_printout, :one_step_partner_invite,
+      :hide_value_columns_on_receipt, :hide_package_column_on_receipt,
       partner_form_fields: []
     )
   end
