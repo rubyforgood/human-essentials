@@ -1,9 +1,10 @@
-RSpec.describe ItemizableUpdateService do
-  let(:storage_location) { create(:storage_location, organization: @organization, item_count: 0) }
-  let(:new_storage_location) { create(:storage_location, organization: @organization, item_count: 0) }
-  let(:item1) { create(:item, organization: @organization, name: "My Item 1") }
-  let(:item2) { create(:item, organization: @organization, name: "My Item 2") }
-  let(:item3) { create(:item, organization: @organization, name: "My Item 3") }
+RSpec.describe ItemizableUpdateService, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:storage_location) { create(:storage_location, organization: organization, item_count: 0) }
+  let(:new_storage_location) { create(:storage_location, organization: organization, item_count: 0) }
+  let(:item1) { create(:item, organization: organization, name: "My Item 1") }
+  let(:item2) { create(:item, organization: organization, name: "My Item 2") }
+  let(:item3) { create(:item, organization: organization, name: "My Item 3") }
   before(:each) do
     TestInventory.create_inventory(storage_location.organization, {
       storage_location.id => {
@@ -30,7 +31,7 @@ RSpec.describe ItemizableUpdateService do
         create(:line_item, item_id: item2.id, quantity: 5)
       ]
       create(:donation,
-        organization: @organization,
+        organization: organization,
         storage_location: storage_location,
         line_items: line_items,
         issued_at: 1.day.ago)
@@ -85,7 +86,7 @@ RSpec.describe ItemizableUpdateService do
         create(:line_item, item_id: item2.id, quantity: 5)
       ]
       create(:distribution,
-        organization: @organization,
+        organization: organization,
         storage_location: storage_location,
         line_items: line_items,
         issued_at: 1.day.ago)

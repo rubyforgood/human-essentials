@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe PartnerProfileUpdateService do
+RSpec.describe PartnerProfileUpdateService, skip_seed: true do
   let(:county_1) { create(:county, name: "county1", region: "region1") }
   let(:county_2) { create(:county, name: "county2", region: "region2") }
 
