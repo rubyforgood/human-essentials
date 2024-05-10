@@ -11,6 +11,8 @@
 #  enable_child_based_requests    :boolean          default(TRUE), not null
 #  enable_individual_requests     :boolean          default(TRUE), not null
 #  enable_quantity_based_requests :boolean          default(TRUE), not null
+#  hide_package_column_on_receipt :boolean          default(FALSE)
+#  hide_value_columns_on_receipt  :boolean          default(FALSE)
 #  intake_location                :integer
 #  invitation_text                :text
 #  latitude                       :float
