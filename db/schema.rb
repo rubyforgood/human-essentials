@@ -484,6 +484,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_19_225137) do
     t.boolean "enable_quantity_based_requests", default: true, null: false
     t.boolean "ytd_on_distribution_printout", default: true, null: false
     t.boolean "one_step_partner_invite", default: false, null: false
+    t.boolean "hide_value_columns_on_receipt", default: false
+    t.boolean "hide_package_column_on_receipt", default: false
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
