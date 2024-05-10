@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe KitCreateService do
+RSpec.describe KitCreateService, skip_seed: true do
   describe '#call' do
     subject { described_class.new(**args).call }
     let(:args) do
@@ -9,15 +9,17 @@ RSpec.describe KitCreateService do
         kit_params: kit_params
       }
     end
-    let!(:organization_id) { FactoryBot.create(:organization).id }
+    let(:organization) { create(:organization, skip_items: true) }
+    let!(:organization_id) { organization.id }
     let(:kit_params) do
       attrs = FactoryBot.attributes_for(:kit)
       attrs.merge!({ line_items_attributes: line_items_attr })
       attrs
     end
 
-    let(:line_items_attr) do
-      Item.first(3).map do |item|
+    let!(:line_items_attr) do
+      items = create_list(:item, 3, organization: organization)
+      items.map do |item|
         {
           item_id: item.id,
           quantity: Faker::Number.number(digits: 2)
