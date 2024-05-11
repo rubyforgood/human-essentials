@@ -18,12 +18,8 @@ RSpec.describe "ProductDrives", type: :request do
     end
 
     describe "GET #index" do
-      let(:default_params) { { } }
-
-      subject { get product_drives_path(default_params) }
-
       it "returns http success" do
-        subject
+        get product_drives_path
 
         expect(response).to be_successful
       end
@@ -33,7 +29,6 @@ RSpec.describe "ProductDrives", type: :request do
           date_range: date_range_picker_params(Date.parse('20/01/2000'), Date.parse('22/01/2000')),
           by_name: "AAAA"
         }
-        default_params[:filters] = filter_params
 
         product_drive = create(:product_drive, organization: organization, name: "AAAA", start_date: '20/01/2000', end_date: '22/01/2000')
 
@@ -42,7 +37,7 @@ RSpec.describe "ProductDrives", type: :request do
         product_drive_four = create(:product_drive, organization: organization, name: "AAAA", start_date: '20/01/1990', end_date: '22/01/1990')
         product_drive_five = create(:product_drive, organization: organization, name: "AAAA", start_date: '20/01/2022', end_date: '22/01/2022')
 
-        subject
+        get product_drives_path(filters: filter_params)
 
         expect(response).to be_successful
 
@@ -55,10 +50,8 @@ RSpec.describe "ProductDrives", type: :request do
       end
 
       context "csv" do
-        before { default_params.merge!(format: :csv) }
-
         it 'is successful' do
-          subject
+          get product_drives_path(format: :csv)
 
           expect(response).to be_successful
           expect(response.header['Content-Type']).to include 'text/csv'
@@ -71,15 +64,13 @@ RSpec.describe "ProductDrives", type: :request do
           create(:product_drive, name: 'product_drive', organization: organization)
           create(:product_drive, name: 'unassociated_product_drive', organization: create(:organization))
 
-          subject
+          get product_drives_path(format: :csv)
 
           expect(response.body).to include('product_drive')
           expect(response.body).not_to include('unassociated_product_drive')
         end
 
         it 'returns ONLY the product drives within a selected date range (inclusive)' do
-          default_params[:filters] = { date_range: date_range_picker_params(Date.parse('30/01/1979'), Date.parse('30/01/1982')) }
-
           create(
             :product_drive,
             name: 'early_product_drive',
@@ -110,7 +101,7 @@ RSpec.describe "ProductDrives", type: :request do
             organization: organization
           )
 
-          subject
+          get product_drives_path(format: :csv, filters: { date_range: date_range_picker_params(Date.parse('30/01/1979'), Date.parse('30/01/1982')) })
 
           expect(response.body).to include('product_drive_within_date_range')
           expect(response.body).to include('product_drive_on_date_range')
@@ -128,7 +119,7 @@ RSpec.describe "ProductDrives", type: :request do
           create(:line_item, :donation, itemizable_id: donation.id, item_id: active_item.id, quantity: 4)
           create(:line_item, :donation, itemizable_id: donation.id, item_id: inactive_item.id, quantity: 5)
 
-          subject
+          get product_drives_path(format: :csv)
 
           row = response.body.split("\n")[1]
           cells = row.split(',')
@@ -140,7 +131,6 @@ RSpec.describe "ProductDrives", type: :request do
         end
 
         it "only counts items within the selected date range" do
-          default_params[:filters] = { date_range: date_range_picker_params(Date.parse('20/01/2023'), Date.parse('25/01/2023')) }
           item = organization.items.first
           product_drive = create(
             :product_drive,
@@ -155,7 +145,7 @@ RSpec.describe "ProductDrives", type: :request do
           donation = create(:product_drive_donation, product_drive: product_drive, issued_at: '26/01/2023')
           create(:line_item, :donation, itemizable_id: donation.id, item_id: item.id, quantity: 10)
 
-          subject
+          get product_drives_path(format: :csv, filters: { date_range: date_range_picker_params(Date.parse('20/01/2023'), Date.parse('25/01/2023')) })
 
           row = response.body.split("\n")[1]
           cells = row.split(',')
