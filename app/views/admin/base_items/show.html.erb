@@ -45,7 +45,7 @@
               <% @items.each do |item| %>
                 <tr id="item-row-<%= item.to_param %>">
                   <td><%= item.name %></td>
-                  <td><%= item.organization.name %></td>
+                  <td><%= item.organization.name %> (id: <%= item.organization.id %>)</td>
                 </tr>
               <% end %>
               </tbody>
