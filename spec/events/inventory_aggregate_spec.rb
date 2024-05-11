@@ -25,8 +25,8 @@ RSpec.describe InventoryAggregate, skip_seed: true do
 
     it "should process a donation event" do
       donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
-      donation.line_items << build(:line_item, quantity: 50, item: item1, itemizable_type: "Donation", itemizable_id: donation.id)
-      donation.line_items << build(:line_item, quantity: 30, item: item2, itemizable_type: "Donation", itemizable_id: donation.id)
+      donation.line_items << build(:line_item, quantity: 50, item: item1, itemizable: donation)
+      donation.line_items << build(:line_item, quantity: 30, item: item2, itemizable: donation)
       DonationEvent.publish(donation)
 
       # 30 + 50 = 80, 10 + 30 = 40
@@ -56,8 +56,8 @@ RSpec.describe InventoryAggregate, skip_seed: true do
 
     it "should process a distribution event" do
       dist = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location1)
-      dist.line_items << build(:line_item, quantity: 20, item: item1, itemizable_type: "Distribution", itemizable_id: dist.id)
-      dist.line_items << build(:line_item, quantity: 5, item: item2, itemizable_type: "Distribution", itemizable_id: dist.id)
+      dist.line_items << build(:line_item, quantity: 20, item: item1, itemizable: dist)
+      dist.line_items << build(:line_item, quantity: 5, item: item2, itemizable: dist)
       DistributionEvent.publish(dist)
 
       # 30 - 20 = 10, 10 - 5 = 5
@@ -88,8 +88,8 @@ RSpec.describe InventoryAggregate, skip_seed: true do
     it "should process a donation event after a new storage location is created" do
       new_loc = FactoryBot.create(:storage_location, organization: organization)
       donation = FactoryBot.create(:donation, organization: organization, storage_location: new_loc)
-      donation.line_items << build(:line_item, quantity: 20, item: item1, itemizable_type: "Donation", itemizable_id: donation.id)
-      donation.line_items << build(:line_item, quantity: 5, item: item2, itemizable_type: "Donation", itemizable_id: donation.id)
+      donation.line_items << build(:line_item, quantity: 20, item: item1, itemizable: donation)
+      donation.line_items << build(:line_item, quantity: 5, item: item2, itemizable: donation)
       DonationEvent.publish(donation)
 
       # 30 - 20 = 10, 10 - 5 = 5
@@ -126,8 +126,8 @@ RSpec.describe InventoryAggregate, skip_seed: true do
 
     it "should process a donation destroyed event" do
       donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
-      donation.line_items << build(:line_item, quantity: 20, item: item1, itemizable_type: "Donation", itemizable_id: donation.id)
-      donation.line_items << build(:line_item, quantity: 5, item: item2, itemizable_type: "Donation", itemizable_id: donation.id)
+      donation.line_items << build(:line_item, quantity: 20, item: item1, itemizable: donation)
+      donation.line_items << build(:line_item, quantity: 5, item: item2, itemizable: donation)
       DonationEvent.publish(donation)
       DonationDestroyEvent.publish(donation)
 
@@ -158,8 +158,8 @@ RSpec.describe InventoryAggregate, skip_seed: true do
 
     it "should process a purchase destroyed event" do
       purchase = FactoryBot.create(:purchase, organization: organization, storage_location: storage_location1)
-      purchase.line_items << build(:line_item, quantity: 20, item: item1, itemizable_type: "Purchase", itemizable_id: purchase.id)
-      purchase.line_items << build(:line_item, quantity: 5, item: item2, itemizable_type: "Purchase", itemizable_id: purchase.id)
+      purchase.line_items << build(:line_item, quantity: 20, item: item1, itemizable: purchase)
+      purchase.line_items << build(:line_item, quantity: 5, item: item2, itemizable: purchase)
       PurchaseEvent.publish(purchase)
       PurchaseDestroyEvent.publish(purchase)
 
@@ -191,8 +191,8 @@ RSpec.describe InventoryAggregate, skip_seed: true do
 
     it "should process an adjustment event" do
       adjustment = FactoryBot.create(:adjustment, organization: organization, storage_location: storage_location1)
-      adjustment.line_items << build(:line_item, quantity: 20, item: item1, itemizable_type: "Adjustment", itemizable_id: adjustment.id)
-      adjustment.line_items << build(:line_item, quantity: -5, item: item2, itemizable_type: "Adjustment", itemizable_id: adjustment.id)
+      adjustment.line_items << build(:line_item, quantity: 20, item: item1, itemizable: adjustment)
+      adjustment.line_items << build(:line_item, quantity: -5, item: item2, itemizable: adjustment)
       AdjustmentEvent.publish(adjustment)
 
       # 30 + 20 = 50, 10 - 5 = 5
@@ -222,8 +222,8 @@ RSpec.describe InventoryAggregate, skip_seed: true do
 
     it "should process a purchase event" do
       purchase = FactoryBot.create(:purchase, organization: organization, storage_location: storage_location1)
-      purchase.line_items << build(:line_item, quantity: 50, item: item1, itemizable_type: "Purchase", itemizable_id: purchase.id)
-      purchase.line_items << build(:line_item, quantity: 30, item: item2, itemizable_type: "Purchase", itemizable_id: purchase.id)
+      purchase.line_items << build(:line_item, quantity: 50, item: item1, itemizable: purchase)
+      purchase.line_items << build(:line_item, quantity: 30, item: item2, itemizable: purchase)
       PurchaseEvent.publish(purchase)
 
       # 30 + 50 = 80, 10 + 30 = 40
@@ -253,8 +253,8 @@ RSpec.describe InventoryAggregate, skip_seed: true do
 
     it "should process a distribution destroyed event" do
       dist = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location1)
-      dist.line_items << build(:line_item, quantity: 20, item: item1, itemizable_type: "Distribution", itemizable_id: dist.id)
-      dist.line_items << build(:line_item, quantity: 10, item: item2, itemizable_type: "Distribution", itemizable_id: dist.id)
+      dist.line_items << build(:line_item, quantity: 20, item: item1, itemizable: dist)
+      dist.line_items << build(:line_item, quantity: 10, item: item2, itemizable: dist)
       DistributionEvent.publish(dist)
       DistributionDestroyEvent.publish(dist)
 
@@ -286,8 +286,8 @@ RSpec.describe InventoryAggregate, skip_seed: true do
 
     it "should process a transfer event" do
       transfer = FactoryBot.create(:transfer, organization: organization, from: storage_location1, to: storage_location2)
-      transfer.line_items << build(:line_item, quantity: 20, item: item1, itemizable_type: "Transfer", itemizable_id: transfer.id)
-      transfer.line_items << build(:line_item, quantity: 5, item: item2, itemizable_type: "Transfer", itemizable_id: transfer.id)
+      transfer.line_items << build(:line_item, quantity: 20, item: item1, itemizable: transfer)
+      transfer.line_items << build(:line_item, quantity: 5, item: item2, itemizable: transfer)
       TransferEvent.publish(transfer)
 
       # 30 - 20 = 10, 10 - 5 = 5
@@ -319,8 +319,8 @@ RSpec.describe InventoryAggregate, skip_seed: true do
 
     it "should process a transfer destroy event" do
       transfer = FactoryBot.create(:transfer, organization: organization, from: storage_location2, to: storage_location1)
-      transfer.line_items << build(:line_item, quantity: 5, item: item2, itemizable_type: "Transfer", itemizable_id: transfer.id)
-      transfer.line_items << build(:line_item, quantity: 3, item: item3, itemizable_type: "Transfer", itemizable_id: transfer.id)
+      transfer.line_items << build(:line_item, quantity: 5, item: item2, itemizable: transfer)
+      transfer.line_items << build(:line_item, quantity: 3, item: item3, itemizable: transfer)
       TransferEvent.publish(transfer)
       TransferDestroyEvent.publish(transfer)
 
@@ -352,8 +352,8 @@ RSpec.describe InventoryAggregate, skip_seed: true do
 
     it "should process an audit event" do
       audit = FactoryBot.create(:audit, organization: organization, storage_location: storage_location1)
-      audit.line_items << build(:line_item, quantity: 20, item: item1, itemizable_type: "Audit", itemizable_id: audit.id)
-      audit.line_items << build(:line_item, quantity: 10, item: item3, itemizable_type: "Audit", itemizable_id: audit.id)
+      audit.line_items << build(:line_item, quantity: 20, item: item1, itemizable: audit)
+      audit.line_items << build(:line_item, quantity: 10, item: item3, itemizable: audit)
       AuditEvent.publish(audit)
 
       described_class.handle(AuditEvent.last, inventory)
@@ -381,14 +381,11 @@ RSpec.describe InventoryAggregate, skip_seed: true do
     end
 
     it "should process a kit allocation event" do
-      # These are temp values used to prevent creating extra storage locations
-      temp_donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
-      temp_line_item = build(:line_item, quantity: 20, item: item1, itemizable_type: "Donation", itemizable_id: temp_donation.id)
+      kit = FactoryBot.create(:kit, :with_item, organization: organization)
 
-      kit = FactoryBot.create(:kit, :with_item, organization: organization, line_items: [temp_line_item])
       kit.line_items = []
-      kit.line_items << build(:line_item, quantity: 10, item: item1, itemizable_type: "Kit", itemizable_id: kit.id)
-      kit.line_items << build(:line_item, quantity: 3, item: item2, itemizable_type: "Kit", itemizable_id: kit.id)
+      kit.line_items << build(:line_item, quantity: 10, item: item1, itemizable: kit)
+      kit.line_items << build(:line_item, quantity: 3, item: item2, itemizable: kit)
       KitAllocateEvent.publish(kit, storage_location1.id, 2)
 
       # 30 - (10*2) = 10, 10 - (3*2) = 4
@@ -419,11 +416,7 @@ RSpec.describe InventoryAggregate, skip_seed: true do
     end
 
     it "should process a kit deallocation event" do
-      # These are temp values used to prevent creating extra storage locations
-      temp_donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
-      temp_line_item = build(:line_item, quantity: 20, item: item1, itemizable_type: "Donation", itemizable_id: temp_donation.id)
-
-      kit = FactoryBot.create(:kit, :with_item, organization: organization, line_items: [temp_line_item])
+      kit = FactoryBot.create(:kit, :with_item, organization: organization)
       TestInventory.create_inventory(organization,
         {
           storage_location1.id => {
@@ -440,8 +433,8 @@ RSpec.describe InventoryAggregate, skip_seed: true do
       inventory = InventoryAggregate.inventory_for(organization.id) # reload
 
       kit.line_items = []
-      kit.line_items << build(:line_item, quantity: 20, item: item1, itemizable_type: "Kit", itemizable_id: kit.id)
-      kit.line_items << build(:line_item, quantity: 5, item: item2, itemizable_type: "Kit", itemizable_id: kit.id)
+      kit.line_items << build(:line_item, quantity: 20, item: item1, itemizable: kit)
+      kit.line_items << build(:line_item, quantity: 5, item: item2, itemizable: kit)
       KitDeallocateEvent.publish(kit, storage_location1, 2)
 
       # 30 + (20*2) = 70, 10 + (5*2) = 20
@@ -507,29 +500,29 @@ RSpec.describe InventoryAggregate, skip_seed: true do
     it "should process multiple events" do
       item4 = FactoryBot.create(:item, organization: organization)
       donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
-      donation.line_items << build(:line_item, quantity: 50, item: item1, itemizable_type: "Donation", itemizable_id: donation.id)
-      donation.line_items << build(:line_item, quantity: 30, item: item2, itemizable_type: "Donation", itemizable_id: donation.id)
+      donation.line_items << build(:line_item, quantity: 50, item: item1, itemizable: donation)
+      donation.line_items << build(:line_item, quantity: 30, item: item2, itemizable: donation)
       DonationEvent.publish(donation)
 
       donation2 = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
-      donation2.line_items << build(:line_item, quantity: 30, item: item1, itemizable_type: "Donation", itemizable_id: donation2.id)
+      donation2.line_items << build(:line_item, quantity: 30, item: item1, itemizable: donation)
       DonationEvent.publish(donation2)
 
       donation3 = FactoryBot.create(:donation, organization: organization, storage_location: storage_location2)
-      donation3.line_items << build(:line_item, quantity: 50, item: item2, itemizable_type: "Donation", itemizable_id: donation3.id)
+      donation3.line_items << build(:line_item, quantity: 50, item: item2, itemizable: donation)
       DonationEvent.publish(donation3)
 
       # correction event
-      donation3.line_items = [build(:line_item, quantity: 40, item: item2, itemizable_type: "Donation", itemizable_id: donation3.id)]
-      donation3.line_items << build(:line_item, quantity: 50, item: item4, itemizable_type: "Donation", itemizable_id: donation3.id)
+      donation3.line_items = [build(:line_item, quantity: 40, item: item2, itemizable: donation)]
+      donation3.line_items << build(:line_item, quantity: 50, item: item4, itemizable: donation)
       DonationEvent.publish(donation3)
 
       dist = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location1)
-      dist.line_items << build(:line_item, quantity: 10, item: item1, itemizable_type: "Distribution", itemizable_id: dist.id)
+      dist.line_items << build(:line_item, quantity: 10, item: item1, itemizable: dist)
       DistributionEvent.publish(dist)
 
       dist2 = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location2)
-      dist2.line_items << build(:line_item, quantity: 15, item: item2, itemizable_type: "Distribution", itemizable_id: dist2.id)
+      dist2.line_items << build(:line_item, quantity: 15, item: item2, itemizable: dist)
       DistributionEvent.publish(dist2)
 
       result = InventoryAggregate.inventory_for(organization.id)
@@ -556,15 +549,15 @@ RSpec.describe InventoryAggregate, skip_seed: true do
 
     it "should handle changing storage location" do
       donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
-      donation.line_items << build(:line_item, quantity: 50, item: item2, itemizable_type: "Donation", itemizable_id: donation.id)
+      donation.line_items << build(:line_item, quantity: 50, item: item2, itemizable: donation)
       DonationEvent.publish(donation)
 
       donation2 = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
-      donation2.line_items << build(:line_item, quantity: 50, item: item1, itemizable_type: "Donation", itemizable_id: donation2.id)
+      donation2.line_items << build(:line_item, quantity: 50, item: item1, itemizable: donation)
       DonationEvent.publish(donation2)
 
       donation2.update!(storage_location_id: storage_location2.id)
-      donation2.line_items = [build(:line_item, quantity: 30, item: item1, itemizable_type: "Donation", itemizable_id: donation2.id)]
+      donation2.line_items = [build(:line_item, quantity: 30, item: item1, itemizable: donation)]
       DonationEvent.publish(donation2)
 
       result = InventoryAggregate.inventory_for(organization.id)
@@ -590,15 +583,15 @@ RSpec.describe InventoryAggregate, skip_seed: true do
 
     it "should handle intervening audits" do
       donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
-      donation.line_items << build(:line_item, quantity: 30, item: item1, itemizable_type: "Donation", itemizable_id: donation.id)
+      donation.line_items << build(:line_item, quantity: 30, item: item1, itemizable: donation)
       DonationEvent.publish(donation)
 
       dist = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location1)
-      dist.line_items << build(:line_item, quantity: 10, item: item1, itemizable_type: "Distribution", itemizable_id: dist.id)
+      dist.line_items << build(:line_item, quantity: 10, item: item1, itemizable: dist)
       DistributionEvent.publish(dist)
 
       audit = FactoryBot.create(:audit, organization: organization, storage_location: storage_location1)
-      audit.line_items << build(:line_item, quantity: 50, item: item1, itemizable_type: "Audit", itemizable_id: audit.id)
+      audit.line_items << build(:line_item, quantity: 50, item: item1, itemizable: audit)
       AuditEvent.publish(audit)
 
       dist.line_items[0].quantity = 40 # this should be a NOW event and remove another 30
@@ -620,11 +613,11 @@ RSpec.describe InventoryAggregate, skip_seed: true do
 
     it "should handle timing correctly" do
       donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
-      donation.line_items << build(:line_item, quantity: 30, item: item1, itemizable_type: "Donation", itemizable_id: donation.id)
+      donation.line_items << build(:line_item, quantity: 30, item: item1, itemizable: donation)
       DonationEvent.publish(donation)
 
       dist = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location1)
-      dist.line_items << build(:line_item, quantity: 10, item: item1, itemizable_type: "Distribution", itemizable_id: dist.id)
+      dist.line_items << build(:line_item, quantity: 10, item: item1, itemizable: dist)
       DistributionEvent.publish(dist)
 
       # correction event
@@ -652,8 +645,8 @@ RSpec.describe InventoryAggregate, skip_seed: true do
     it "should ignore unusable snapshots" do
       freeze_time do
         donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
-        donation.line_items << build(:line_item, quantity: 50, item: item1, itemizable_type: "Donation", itemizable_id: donation.id)
-        donation.line_items << build(:line_item, quantity: 30, item: item2, itemizable_type: "Donation", itemizable_id: donation.id)
+        donation.line_items << build(:line_item, quantity: 50, item: item1, itemizable: donation)
+        donation.line_items << build(:line_item, quantity: 30, item: item2, itemizable: donation)
         DonationEvent.publish(donation)
 
         travel 1.minute
@@ -676,7 +669,7 @@ RSpec.describe InventoryAggregate, skip_seed: true do
 
         travel 1.minute
         # correction event - should ruin the snapshot since it's updating a previous event
-        donation.line_items = [build(:line_item, quantity: 40, item: item1, itemizable_type: "Donation", itemizable_id: donation.id)]
+        donation.line_items = [build(:line_item, quantity: 40, item: item1, itemizable: donation)]
         event = DonationEvent.publish(donation)
         event.update!(event_time: donation.created_at)
       end
