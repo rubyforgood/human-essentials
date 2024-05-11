@@ -188,57 +188,5 @@ RSpec.describe "Organizations", type: :request, skip_seed: true do
         expect(response.body).to include(organization.display_last_distribution_date)
       end
     end
-
-    describe "POST #promote_to_org_admin",
-              skip: "Super admins should not be able to act on OrganizationsController (they need to switch to another role first)" do
-      subject { post promote_to_org_admin_organization_path(user_id: user.id) }
-
-      it "runs successfully" do
-        subject
-        expect(user.has_role?(:org_admin, organization)).to eq(true)
-        expect(response).to redirect_to(admin_organization_path(organization.id))
-      end
-    end
-
-    describe "POST #demote_to_user",
-              skip: "Super admins should not be able to act on OrganizationsController (they need to switch to another role first)" do
-      let(:admin_user) do
-        create(:organization_admin, organization: organization, name: "ADMIN USER")
-      end
-      subject { post demote_to_user_organization_path(user_id: admin_user.id) }
-
-      it "runs successfully" do
-        subject
-        expect(response).to redirect_to(admin_organization_path(organization.id))
-        expect(admin_user.reload.has_role?(Role::ORG_ADMIN, admin_user.organization)).to be_falsey
-      end
-    end
-
-    describe "PUT #deactivate_user",
-              skip: "Super admins should not be able to act on OrganizationsController (they need to switch to another role first)" do
-      subject { put deactivate_user_organization_path(user_id: user.id) }
-
-      it "redirect after update" do
-        subject
-        expect(response).to redirect_to(admin_organization_path(organization.id))
-      end
-      it "deactivates the user" do
-        expect { subject }.to change { user.reload.discarded_at }.to be_present
-      end
-    end
-
-    describe "PUT #reactivate_user",
-              skip: "Super admins should not be able to act on OrganizationsController (they need to switch to another role first)" do
-      subject { put reactivate_user_organization_path(user_id: user.id) }
-      before { user.discard! }
-
-      it "redirect after update" do
-        subject
-        expect(response).to redirect_to(admin_organization_path(organization.id))
-      end
-      it "reactivates the user" do
-        expect { subject }.to change { user.reload.discarded_at }.to be_nil
-      end
-    end
   end
 end
