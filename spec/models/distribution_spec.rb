@@ -18,7 +18,7 @@
 #
 
 RSpec.describe Distribution, type: :model, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+  let(:organization) { create(:organization) }
 
   it_behaves_like "itemizable"
 
@@ -28,7 +28,7 @@ RSpec.describe Distribution, type: :model, skip_seed: true do
     it { should validate_presence_of(:storage_location) }
 
     it "ensures the associated line_items are valid" do
-      organization = create(:organization, skip_items: true)
+      organization = create(:organization)
       storage_location = create(:storage_location, organization: organization)
       d = build(:distribution, storage_location: storage_location)
       line_item = build(:line_item, quantity: 1, item: create(:item, organization: organization))
@@ -287,7 +287,7 @@ RSpec.describe Distribution, type: :model, skip_seed: true do
   end
 
   context "CSV export >" do
-    let(:organization_2) { create(:organization, skip_items: true) }
+    let(:organization_2) { create(:organization) }
     let(:item1) { create(:item, organization: organization) }
     let(:item2) { create(:item, organization: organization) }
     let!(:distribution_1) { create(:distribution, :with_items, item: item1, organization: organization, issued_at: 3.days.ago) }

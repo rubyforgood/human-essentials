@@ -1,6 +1,6 @@
 Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in the test
   RSpec.describe "Partner management", type: :system, js: true, skip_seed: true do
-    let(:organization) { create(:organization, skip_items: true) }
+    let(:organization) { create(:organization) }
     let(:user) { create(:user, organization: organization) }
     let(:organization_admin) { create(:organization_admin, organization: organization) }
     let(:partner) { create(:partner, organization: organization) }

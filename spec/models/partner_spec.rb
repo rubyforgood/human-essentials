@@ -252,7 +252,7 @@ RSpec.describe Partner, type: :model, skip_seed: true do
   end
 
   describe "import_csv" do
-    let(:organization) { create(:organization, skip_items: true) }
+    let(:organization) { create(:organization) }
 
     it "imports partners from a csv file and prevents multiple imports" do
       before_import = Partner.count

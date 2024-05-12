@@ -12,7 +12,7 @@
 #
 
 RSpec.describe Transfer, type: :model, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+  let(:organization) { create(:organization) }
 
   it_behaves_like "itemizable"
 
@@ -29,7 +29,7 @@ RSpec.describe Transfer, type: :model, skip_seed: true do
 
     it "must only use storage locations that belong to the organization (no hacks!)" do
       transfer = build(:transfer)
-      other_org = create(:organization, skip_items: true)
+      other_org = create(:organization)
       other_storage = create(:storage_location, organization: other_org)
       transfer.from = other_storage
       expect(transfer).not_to be_valid
@@ -74,7 +74,7 @@ RSpec.describe Transfer, type: :model, skip_seed: true do
       storage_location1 = create(:storage_location, name: "loc1", organization: organization)
       storage_location2 = create(:storage_location, name: "loc2", organization: organization)
       storage_location3 = create(:storage_location, name: "loc3", organization: organization)
-      storage_location4 = create(:storage_location, name: "loc4", organization: create(:organization, skip_items: true))
+      storage_location4 = create(:storage_location, name: "loc4", organization: create(:organization))
       storage_location5 = create(:storage_location, name: "loc5", organization: storage_location4.organization)
       create(:transfer, from: storage_location3, to: storage_location1, organization: organization)
       create(:transfer, from: storage_location3, to: storage_location2, organization: organization)

@@ -16,7 +16,7 @@
 #  organization_id :integer
 #
 RSpec.describe StorageLocation, type: :model, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+  let(:organization) { create(:organization) }
 
   context "Validations >" do
     it { is_expected.to validate_presence_of(:name) }

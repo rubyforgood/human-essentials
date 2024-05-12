@@ -1,6 +1,6 @@
 RSpec.describe AddRoleService, type: :service, skip_seed: true do
   let(:user) { create(:user, name: "User XYZ") }
-  let(:org) { create(:organization, name: "Org ABC", skip_items: true) }
+  let(:org) { create(:organization, name: "Org ABC") }
   let(:partner) { create(:partner, name: "Partner 123") }
 
   describe "#call" do

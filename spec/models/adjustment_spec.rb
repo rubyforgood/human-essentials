@@ -16,7 +16,7 @@ RSpec.describe Adjustment, type: :model, skip_seed: true do
   # This mixes feature specs with model specs... idealy we do not want to do this
   # it_behaves_like "pagination"
   #
-  let(:organization) { create(:organization, skip_items: true) }
+  let(:organization) { create(:organization) }
 
   context "Validations >" do
     it "must belong to an organization" do
@@ -61,7 +61,7 @@ RSpec.describe Adjustment, type: :model, skip_seed: true do
       storage_location1 = create(:storage_location, organization: organization)
       storage_location2 = create(:storage_location, organization: organization)
       create(:storage_location, organization: organization)
-      storage_location4 = create(:storage_location, organization: create(:organization, skip_items: true))
+      storage_location4 = create(:storage_location, organization: create(:organization))
       create(:adjustment, storage_location: storage_location1, organization: organization)
       create(:adjustment, storage_location: storage_location2, organization: organization)
       create(:adjustment, storage_location: storage_location4, organization: storage_location4.organization)

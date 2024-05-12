@@ -1,5 +1,5 @@
 RSpec.describe "Profiles", type: :request, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
   let(:partner) { create(:partner, organization: organization) }
 

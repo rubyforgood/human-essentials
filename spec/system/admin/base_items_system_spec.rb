@@ -1,5 +1,5 @@
 RSpec.describe "Base Item Admin", type: :system, js: true, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
   let(:super_admin) { create(:super_admin, organization: organization) }
   let(:super_admin_no_org) { create(:super_admin, organization: nil) }

@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe ApplicationHelper, type: :helper, seed_db: false do
-  let(:organization) { create(:organization, skip_items: true) }
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 
   describe "default_title_content" do
@@ -43,7 +43,7 @@ RSpec.describe ApplicationHelper, type: :helper, seed_db: false do
 
   describe "can_administrate?" do
     let(:org_1) { organization }
-    let(:org_2) { create(:organization, skip_items: true) }
+    let(:org_2) { create(:organization) }
 
     helper do
       def current_organization; end

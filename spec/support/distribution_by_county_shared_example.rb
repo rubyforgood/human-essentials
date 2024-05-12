@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 shared_examples_for "distribution_by_county" do
-  let(:organization) { create(:organization, skip_items: true) }
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 

@@ -1,7 +1,7 @@
 # avoid Rubocop failing with an infinite loop when it checks this cop
 # rubocop:disable Layout/ArrayAlignment
 describe DistributionPdf, seed_db: false do
-  let(:organization) { create(:organization, skip_items: true) }
+  let(:organization) { create(:organization) }
   let(:distribution) { create(:distribution, organization: organization) }
   let(:item1) { FactoryBot.create(:item, name: "Item 1", package_size: 50, value_in_cents: 100) }
   let(:item2) { FactoryBot.create(:item, name: "Item 2", value_in_cents: 200) }

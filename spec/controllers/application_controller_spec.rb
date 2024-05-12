@@ -1,5 +1,5 @@
 RSpec.describe ApplicationController, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+  let(:organization) { create(:organization) }
 
   describe "current_organization" do
     before(:each) do
@@ -15,8 +15,8 @@ RSpec.describe ApplicationController, skip_seed: true do
     end
 
     context "As an org user" do
-      let(:org) { create(:organization, skip_items: true) }
-      let(:org2) { create(:organization, skip_items: true) }
+      let(:org) { create(:organization) }
+      let(:org2) { create(:organization) }
       let(:user) { create(:user, organization: org) }
       before(:each) do
         user.add_role(Role::ORG_USER, org2) # add a second role

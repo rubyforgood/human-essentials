@@ -15,7 +15,7 @@
 require "rails_helper"
 
 RSpec.describe ProductDrive, type: :model, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+  let(:organization) { create(:organization) }
   let(:product_drive) { create(:product_drive, organization: organization) }
   let!(:donation) { create(:donation, :with_items, item_quantity: 7, product_drive: product_drive) }
   let!(:donation2) { create(:donation, :with_items, item_quantity: 9, product_drive: product_drive) }

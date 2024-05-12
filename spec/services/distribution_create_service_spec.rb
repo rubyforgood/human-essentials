@@ -1,5 +1,5 @@
 RSpec.describe DistributionCreateService, type: :service, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+  let(:organization) { create(:organization) }
   let(:partner) { create(:partner, organization: organization) }
 
   include ActiveJob::TestHelper

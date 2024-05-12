@@ -1,5 +1,5 @@
 RSpec.describe "Vendor", type: :system, js: true, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 
   before do

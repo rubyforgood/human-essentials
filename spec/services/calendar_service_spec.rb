@@ -1,5 +1,5 @@
 RSpec.describe CalendarService, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+  let(:organization) { create(:organization) }
 
   describe ".calendar" do
     it "should print the calendar correctly" do

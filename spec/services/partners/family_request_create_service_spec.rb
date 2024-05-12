@@ -11,7 +11,7 @@ RSpec.describe Partners::FamilyRequestCreateService, skip_seed: true do
         family_requests_attributes: family_requests_attributes
       }
     end
-    let(:organization) { create(:organization, skip_items: true) }
+    let(:organization) { create(:organization) }
     let(:partner) { create(:partner, organization: organization) }
     let(:partner_user) { partner.primary_user }
     let(:comments) { Faker::Lorem.paragraph }

@@ -1,5 +1,5 @@
 RSpec.describe "Barcode Items Admin", type: :system, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+  let(:organization) { create(:organization) }
   let(:super_admin) { create(:super_admin, organization: organization) }
 
   let!(:base_item) { create(:base_item) }

@@ -1,6 +1,6 @@
 RSpec.describe Reports::SummaryReportService, type: :service, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
-  let(:another_organization) { create(:organization, skip_items: true) }
+  let(:organization) { create(:organization) }
+  let(:another_organization) { create(:organization) }
   let(:year) { 2020 }
 
   subject(:report) do

@@ -9,7 +9,7 @@ RSpec.describe KitCreateService, skip_seed: true do
         kit_params: kit_params
       }
     end
-    let(:organization) { create(:organization, skip_items: true) }
+    let(:organization) { create(:organization) }
     let!(:organization_id) { organization.id }
     let(:kit_params) do
       attrs = FactoryBot.attributes_for(:kit)

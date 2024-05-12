@@ -14,7 +14,7 @@
 require 'rails_helper'
 
 RSpec.describe Kit, type: :model, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+  let(:organization) { create(:organization) }
 
   let(:kit) { build(:kit, name: "Test Kit") }
 

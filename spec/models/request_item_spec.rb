@@ -4,7 +4,7 @@
 RSpec.describe RequestItem, type: :model, skip_seed: true do
   context "Methods >" do
     describe "#from_json" do
-      let(:organization) { create(:organization, skip_items: true) }
+      let(:organization) { create(:organization) }
       let(:inventory) { View::Inventory.new(organization.id) }
       let(:location) { create :storage_location, organization: organization }
       let(:other_location) { create :storage_location, organization: organization }

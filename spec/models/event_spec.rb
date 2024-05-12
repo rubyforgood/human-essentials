@@ -15,7 +15,7 @@
 #  user_id         :bigint
 #
 RSpec.describe Event, type: :model, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+  let(:organization) { create(:organization) }
 
   describe "#most_recent_snapshot" do
     let(:eventable) { FactoryBot.create(:distribution, organization_id: organization.id) }

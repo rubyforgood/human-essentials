@@ -41,7 +41,7 @@ RSpec.describe AccountRequest, type: :model, skip_seed: true do
 
     context 'when the email provided is already used by an existing organization' do
       before do
-        create(:organization, skip_items: true, email: account_request.email)
+        create(:organization, email: account_request.email)
       end
 
       it 'should not allow the email' do
@@ -118,7 +118,7 @@ RSpec.describe AccountRequest, type: :model, skip_seed: true do
 
     context 'when the account request has a associated organization' do
       before do
-        create(:organization, skip_items: true, account_request_id: account_request.id)
+        create(:organization, account_request_id: account_request.id)
       end
 
       it 'should return true' do

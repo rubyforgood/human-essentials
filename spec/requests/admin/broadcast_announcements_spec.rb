@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "BroadcastAnnouncements", type: :request, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+  let(:organization) { create(:organization) }
   let(:user) { create(:super_admin, organization: organization) }
   let(:super_admin) { create(:super_admin, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }

@@ -1,5 +1,5 @@
 RSpec.describe "Layout", type: :system, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
   let!(:url_prefix) { "/#{organization.to_param}" }
 

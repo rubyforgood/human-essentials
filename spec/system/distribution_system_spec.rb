@@ -1,5 +1,5 @@
 RSpec.feature "Distributions", type: :system, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
   let(:storage_location) { create(:storage_location, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
@@ -570,7 +570,7 @@ RSpec.feature "Distributions", type: :system, skip_seed: true do
     end
 
     context "with fresh items" do
-      let(:organization) { create(:organization, skip_items: true) }
+      let(:organization) { create(:organization) }
       let(:user) { create(:user, organization: organization) }
       let(:storage_location) { create(:storage_location, organization: organization) }
       let(:item_category) { create(:item_category, organization: organization) }

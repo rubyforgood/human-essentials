@@ -16,7 +16,7 @@
 require "rails_helper"
 
 RSpec.describe BaseItem, type: :model, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+  let(:organization) { create(:organization) }
 
   describe "Validations >" do
     it { should validate_presence_of(:name) }
