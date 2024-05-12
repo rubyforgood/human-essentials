@@ -169,7 +169,6 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
     describe "#index" do
       before(:each) do
-        partner
         @uninvited = create(:partner, name: "Bcd", status: :uninvited, organization: organization)
         @invited = create(:partner, name: "Abc", status: :invited, organization: organization)
         @approved = create(:partner, :approved, name: "Cde", status: :approved, organization: organization)
@@ -181,7 +180,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         expect(page).to have_css("table tr", count: 5, wait: page_content_wait)
         expect(page.find(:xpath, "//table/tbody/tr[1]/td[1]")).to have_content(@invited.name)
         expect(page.find(:xpath, "//table/tbody/tr[3]/td[1]")).to have_content(@approved.name)
-        expect(page.find(:xpath, %(//*[@id="partner-status"]))).to have_content("4 Active")
+        expect(page.find(:xpath, %(//*[@id="partner-status"]))).to have_content("3 Active")
         expect(page.find(:xpath, %(//*[@id="partner-status"]))).to have_content("1 Deactivated")
       end
 
