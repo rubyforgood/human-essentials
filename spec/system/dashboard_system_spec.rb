@@ -1,20 +1,19 @@
 require 'ostruct'
 
-RSpec.describe "Dashboard", type: :system, js: true do
+RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+
   context "With a new essentials bank" do
-    before :each do
-      @new_organization = create(:organization)
-      @user = create(:user, organization: @new_organization)
-      @org_short_name = new_organization.short_name
-    end
-    attr_reader :new_organization, :org_short_name, :user
+    let!(:org_short_name) { organization.short_name }
 
     before do
       sign_in(user)
     end
 
     it "displays the getting started guide until the steps are completed" do
-      org_dashboard_page = OrganizationDashboardPage.new org_short_name: org_short_name
+      org_dashboard_page = OrganizationDashboardPage.new(org_short_name: org_short_name)
       org_dashboard_page.visit
 
       # rubocop:disable Layout/ExtraSpacing
@@ -27,7 +26,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
       expect(org_dashboard_page).not_to have_add_inventory_call_to_action
 
       # After we create a partner, ensure that we are on step 2 (Storage Locations)
-      @partner = create(:partner, organization: new_organization)
+      create(:partner, organization: organization)
       org_dashboard_page.visit
 
       expect(org_dashboard_page).to     have_getting_started_guide
@@ -37,7 +36,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
       expect(org_dashboard_page).not_to have_add_inventory_call_to_action
 
       # After we create a storage location, ensure that we are on step 3 (Donation Site)
-      create(:storage_location, organization: new_organization)
+      create(:storage_location, organization: organization)
       org_dashboard_page.visit
 
       expect(org_dashboard_page).to     have_getting_started_guide
@@ -47,7 +46,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
       expect(org_dashboard_page).not_to have_add_inventory_call_to_action
 
       # After we create a donation site, ensure that we are on step 4 (Inventory)
-      create(:donation_site, organization: new_organization)
+      create(:donation_site, organization: organization)
       org_dashboard_page.visit
 
       expect(org_dashboard_page).to     have_getting_started_guide
@@ -59,7 +58,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
       # rubocop:enable Layout/ExtraSpacing
 
       # After we add inventory to a storage location, ensure that the getting starting guide is gone
-      create(:storage_location, :with_items, item_quantity: 125, organization: new_organization)
+      create(:storage_location, :with_items, item_quantity: 125, organization: organization)
       org_dashboard_page.visit
 
       expect(org_dashboard_page).not_to have_getting_started_guide
@@ -68,11 +67,11 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
   context "With an existing essentials bank" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
-    let!(:storage_location) { create(:storage_location, :with_items, item_quantity: 1, organization: @organization) }
-    let(:org_short_name) { @organization.short_name }
+    let!(:storage_location) { create(:storage_location, :with_items, item_quantity: 1, organization: organization) }
+    let(:org_short_name) { organization.short_name }
     let(:org_dashboard_page) { OrganizationDashboardPage.new org_short_name: org_short_name }
 
     describe "Signage" do
@@ -96,7 +95,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
     describe "Inventory Totals" do
       describe "Summary" do
         before do
-          create_list(:storage_location, 3, :with_items, item_quantity: 111, organization: @organization)
+          create_list(:storage_location, 3, :with_items, item_quantity: 111, organization: organization)
           org_dashboard_page.visit
         end
 
@@ -194,7 +193,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
             def create_next_donation(donation_date:)
               quantity_in_donation = @item_quantity.next
-              create :donation, :with_items, issued_at: donation_date, item_quantity: quantity_in_donation, storage_location: storage_location, organization: @organization
+              create :donation, :with_items, issued_at: donation_date, item_quantity: quantity_in_donation, storage_location: storage_location, organization: organization
 
               quantity_in_donation
             end
@@ -313,7 +312,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
             def create_next_purchase(purchase_date:)
               quantity_in_purchase = @item_quantity.next
-              create :purchase, :with_items, issued_at: purchase_date, item_quantity: quantity_in_purchase, storage_location: storage_location, organization: @organization
+              create :purchase, :with_items, issued_at: purchase_date, item_quantity: quantity_in_purchase, storage_location: storage_location, organization: organization
 
               quantity_in_purchase
             end
@@ -382,7 +381,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
         quantity_in_donation = @item_quantity.next
         drive = @product_drives.sample
 
-        create :product_drive_donation, :with_items, product_drive: drive.drive, product_drive_participant: @product_drive_participant, issued_at: donation_date, item_quantity: quantity_in_donation, storage_location: storage_location, organization: @organization,
+        create :product_drive_donation, :with_items, product_drive: drive.drive, product_drive_participant: @product_drive_participant, issued_at: donation_date, item_quantity: quantity_in_donation, storage_location: storage_location, organization: organization,
           money_raised: @money_raised_on_each_product_drive
 
         OpenStruct.new drive_name: drive.name, quantity: quantity_in_donation, money_raised: @money_raised_on_each_product_drive
@@ -507,8 +506,8 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
           # create a different donation -- which shouldn't get included in to our totals or shown under product drive
           quantity_in_donation = @item_quantity.next
-          manufacturer = create :manufacturer, name: "Manufacturer for product drive test", organization: @organization
-          create :manufacturer_donation, :with_items, manufacturer: manufacturer, issued_at: test_time, item_quantity: quantity_in_donation, storage_location: storage_location, organization: @organization, money_raised: @money_raised_on_each_manufacturer_donation
+          manufacturer = create :manufacturer, name: "Manufacturer for product drive test", organization: organization
+          create :manufacturer_donation, :with_items, manufacturer: manufacturer, issued_at: test_time, item_quantity: quantity_in_donation, storage_location: storage_location, organization: organization, money_raised: @money_raised_on_each_manufacturer_donation
 
           org_dashboard_page.visit
         end
@@ -602,7 +601,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
             def create_next_manufacturer_donation(manufacturer:, donation_date:)
               quantity_in_donation = @item_quantity.next
 
-              create :manufacturer_donation, :with_items, manufacturer: manufacturer, issued_at: donation_date, item_quantity: quantity_in_donation, storage_location: storage_location, organization: @organization
+              create :manufacturer_donation, :with_items, manufacturer: manufacturer, issued_at: donation_date, item_quantity: quantity_in_donation, storage_location: storage_location, organization: organization
 
               quantity_in_donation
             end
@@ -612,7 +611,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
               @item_quantity.rewind
               manufacturer_name = "In-date-range Manufacturer #{index}"
 
-              manufacturer = create :manufacturer, name: manufacturer_name, organization: @organization
+              manufacturer = create :manufacturer, name: manufacturer_name, organization: organization
 
               # Ensure at least 1 donation in the filtered period
               donation_quantities = Array.new(rand(1..3)) do
@@ -634,7 +633,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
               prefix, date = _1
 
               manufacturer_name = "#{prefix}-date-range Manufacturer"
-              manufacturer = create :manufacturer, name: manufacturer_name, organization: @organization
+              manufacturer = create :manufacturer, name: manufacturer_name, organization: organization
               quantity_donated = create_next_manufacturer_donation manufacturer: manufacturer, donation_date: date
 
               OpenStruct.new manufacturer_name: manufacturer_name, total_quantity_donated: quantity_donated
@@ -755,14 +754,14 @@ RSpec.describe "Dashboard", type: :system, js: true do
             # without relying on fetching info from production code
             @partners = (1..rand(2..5)).map do
               name = "Partner #{_1}"
-              OpenStruct.new name: name, partner: create(:partner, name: name, organization: @organization)
+              OpenStruct.new name: name, partner: create(:partner, name: name, organization: organization)
             end
 
             def create_next_product_drive_distribution(date_picker:)
               quantity_in_distribution = @item_quantity.next
               partner = @partners.sample
 
-              create :distribution, :with_items, partner: partner.partner, issued_at: date_picker, item_quantity: quantity_in_distribution, storage_location: storage_location, organization: @organization
+              create :distribution, :with_items, partner: partner.partner, issued_at: date_picker, item_quantity: quantity_in_distribution, storage_location: storage_location, organization: organization
 
               OpenStruct.new partner_name: partner.name, quantity: quantity_in_distribution
             end
