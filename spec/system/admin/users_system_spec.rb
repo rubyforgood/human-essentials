@@ -95,6 +95,7 @@ RSpec.describe "Admin Users Management", type: :system, js: true, skip_seed: tru
 
       visit admin_users_path
       fill_in "filterrific_search_email", with: user_email
+      page.find("table", text: user_email) # Wait for search
       expect(page).to have_element("table", text: user_email)
     end
   end
