@@ -688,6 +688,63 @@ RSpec.describe InventoryAggregate, skip_seed: true do
         }
       ))
     end
+
+    it "should handle multiple UpdateExisting events" do
+      TestInventory.create_inventory(organization,
+        {
+          storage_location1.id => {
+            item1.id => 70,
+            item2.id => 60,
+            item3.id => 20
+          }
+        })
+      donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
+      donation.line_items << build(:line_item, quantity: 50, item: item1)
+      donation.line_items << build(:line_item, quantity: 30, item: item2)
+      donation.save!
+
+      attributes = {line_items_attributes: {"0": {item_id: item1.id, quantity: 40}, "1": {item_id: item2.id, quantity: 25}}}
+      ItemizableUpdateService.call(itemizable: donation, type: :increase, event_class: DonationEvent, params: attributes)
+
+      result = InventoryAggregate.inventory_for(organization.id)
+      expect(result).to eq(EventTypes::Inventory.new(
+        organization_id: organization.id,
+        storage_locations: {
+          storage_location1.id => EventTypes::EventStorageLocation.new(
+            id: storage_location1.id,
+            items: {
+              # (orig donation) 50 - (new donation) 40 = 10; (orig inventory)70 - (diff)10 = 60
+              # (orig donation) 30 - (new donation) 25 = 5; (orig inventory)60 - (diff)5 = 55
+              # no change to item3 so still 20
+              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 60, storage_location_id: storage_location1.id),
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 55, storage_location_id: storage_location1.id),
+              item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 20, storage_location_id: storage_location1.id)
+            }
+          )
+        }
+      ))
+
+      attributes = {line_items_attributes: {"0": {item_id: item1.id, quantity: 35}, "1": {item_id: item2.id, quantity: 30}}}
+      ItemizableUpdateService.call(itemizable: donation, type: :increase, event_class: DonationEvent, params: attributes)
+
+      result = InventoryAggregate.inventory_for(organization.id)
+      expect(result).to eq(EventTypes::Inventory.new(
+        organization_id: organization.id,
+        storage_locations: {
+          storage_location1.id => EventTypes::EventStorageLocation.new(
+            id: storage_location1.id,
+            items: {
+              # (orig donation) 50 - (new donation) 35 = 15; (orig inventory)70 - (diff)15 = 55
+              # item2 back to original 60
+              # no change to item3 so still 20
+              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 55, storage_location_id: storage_location1.id),
+              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 60, storage_location_id: storage_location1.id),
+              item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 20, storage_location_id: storage_location1.id)
+            }
+          )
+        }
+      ))
+    end
   end
 
   describe "validation" do
