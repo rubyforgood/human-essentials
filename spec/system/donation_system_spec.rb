@@ -1,11 +1,15 @@
-RSpec.describe "Donations", type: :system, js: true do
+RSpec.describe "Donations", type: :system, js: true, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+
   before do
-    @url_prefix = "/#{@organization.short_name}"
+    @url_prefix = "/#{organization.short_name}"
   end
 
   context "When signed in as a normal user" do
     before do
-      sign_in @user
+      sign_in user
     end
 
     context "When visiting the index page" do
@@ -20,7 +24,7 @@ RSpec.describe "Donations", type: :system, js: true do
       it "Allows User to click to the new donation form" do
         find(".fa-plus").click
 
-        expect(current_path).to eq(new_donation_path(@organization))
+        expect(current_path).to eq(new_donation_path(organization))
         expect(page).to have_content "Start a new donation"
       end
 
@@ -150,13 +154,13 @@ RSpec.describe "Donations", type: :system, js: true do
 
     context "When creating a new donation" do
       before do
-        create(:item, organization: @organization)
-        create(:storage_location, organization: @organization)
-        create(:donation_site, organization: @organization)
-        create(:product_drive, organization: @organization)
-        create(:product_drive_participant, organization: @organization)
-        create(:manufacturer, organization: @organization)
-        @organization.reload
+        create(:item, organization: organization)
+        create(:storage_location, organization: organization)
+        create(:donation_site, organization: organization)
+        create(:product_drive, organization: organization)
+        create(:product_drive_participant, organization: organization)
+        create(:manufacturer, organization: organization)
+        organization.reload
       end
 
       context "Via manual entry" do
@@ -176,7 +180,7 @@ RSpec.describe "Donations", type: :system, js: true do
             click_button "Save"
           end.to change { Donation.count }.by(1)
 
-          expect(DonationEvent.last.user).to eq(@user)
+          expect(DonationEvent.last.user).to eq(user)
           expect(Donation.last.issued_at).to eq(Time.zone.parse("2001-01-01"))
         end
 
@@ -365,7 +369,7 @@ RSpec.describe "Donations", type: :system, js: true do
         # When a user creates a donation without it passing validation, the items
         # dropdown is not populated on the return trip.
         it "Repopulates items dropdown even if initial submission doesn't validate" do
-          item_count = @organization.items.count + 1 # Adds 1 for the "choose an item" option
+          item_count = organization.items.count + 1 # Adds 1 for the "choose an item" option
           expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']/option", count: item_count + 1)
           click_button "Save"
 
@@ -394,6 +398,15 @@ RSpec.describe "Donations", type: :system, js: true do
             # wait for the next page to load
             expect(page).not_to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']")
           end.to change { Donation.count }.by(1)
+        end
+
+        it "Requires quantity to be numeric" do
+          select Donation::SOURCES[:misc], from: "donation_source"
+          select StorageLocation.first.name, from: "donation_storage_location_id"
+          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+          fill_in "donation_line_items_attributes_0_quantity", with: "1,000"
+          click_button "Save"
+          expect(page).to have_content("Quantity is not a number")
         end
 
         it "Displays nested errors" do
@@ -499,7 +512,7 @@ RSpec.describe "Donations", type: :system, js: true do
             # make sure there are no other items associated with that base_item in this org
             Item.where(partner_key: base_item.partner_key).delete_all
             # Now create an item that's associated with that base item,
-            @item = create(:item, base_item: base_item, organization: @organization, created_at: 1.week.ago)
+            @item = create(:item, base_item: base_item, organization: organization, created_at: 1.week.ago)
           end
 
           it "Adds the oldest item it can find for the global barcode" do
@@ -552,14 +565,14 @@ RSpec.describe "Donations", type: :system, js: true do
 
     context "When editing an existing donation" do
       before do
-        item = create(:item, organization: @organization, name: "Rare Candy")
-        create(:storage_location, organization: @organization)
-        create(:donation_site, organization: @organization)
-        create(:product_drive, organization: @organization)
-        create(:product_drive_participant, organization: @organization)
-        create(:manufacturer, organization: @organization)
-        create(:donation, :with_items, item: item, organization: @organization)
-        @organization.reload
+        item = create(:item, organization: organization, name: "Rare Candy")
+        create(:storage_location, organization: organization)
+        create(:donation_site, organization: organization)
+        create(:product_drive, organization: organization)
+        create(:product_drive_participant, organization: organization)
+        create(:manufacturer, organization: organization)
+        create(:donation, :with_items, item: item, organization: organization)
+        organization.reload
         visit @url_prefix + "/donations/"
       end
 
@@ -655,7 +668,7 @@ RSpec.describe "Donations", type: :system, js: true do
 
   context "while signed in as an organization admin" do
     before do
-      sign_in(@organization_admin)
+      sign_in(organization_admin)
     end
 
     context "When viewing an existing donation" do

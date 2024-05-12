@@ -1,10 +1,14 @@
-RSpec.describe "Organization management", type: :system, js: true do
+RSpec.describe "Organization management", type: :system, js: true, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+
   include ActionView::RecordIdentifier
-  let!(:url_prefix) { "/#{@organization.to_param}" }
+  let!(:url_prefix) { "/#{organization.to_param}" }
 
   context "while signed in as a normal user" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     it "can see summary details about the organization as a user" do
@@ -21,17 +25,17 @@ RSpec.describe "Organization management", type: :system, js: true do
     let!(:store) { create(:storage_location) }
     let!(:ndbn_member) { create(:ndbn_member, ndbn_member_id: "50000", account_name: "Best Place") }
     before do
-      sign_in(@organization_admin)
+      sign_in(organization_admin)
     end
 
     describe "Viewing the organization" do
       it "can view organization details", :aggregate_failures do
-        @organization.update!(one_step_partner_invite: true)
+        organization.update!(one_step_partner_invite: true)
 
-        visit organization_path(@organization)
+        visit organization_path(organization)
 
-        expect(page.find("h1")).to have_text(@organization.name)
-        expect(page).to have_link("Home", href: dashboard_path(@organization))
+        expect(page.find("h1")).to have_text(organization.name)
+        expect(page).to have_link("Home", href: dashboard_path(organization))
 
         expect(page).to have_content("Organization Info")
         expect(page).to have_content("Contact Info")
@@ -111,13 +115,13 @@ RSpec.describe "Organization management", type: :system, js: true do
         select('Media Information', from: 'organization_partner_form_fields', visible: false)
         click_on "Save"
         expect(page).to have_content('Media Information')
-        expect(@organization.reload.partner_form_fields).to eq(['media_information'])
+        expect(organization.reload.partner_form_fields).to eq(['media_information'])
         # deselect previously chosen Required Partner Field
         click_on "Edit"
         unselect('Media Information', from: 'organization_partner_form_fields', visible: false)
         click_on "Save"
         expect(page).to_not have_content('Media Information')
-        expect(@organization.reload.partner_form_fields).to eq([])
+        expect(organization.reload.partner_form_fields).to eq([])
       end
 
       it "can disable if the org does NOT use single step invite and approve partner process" do

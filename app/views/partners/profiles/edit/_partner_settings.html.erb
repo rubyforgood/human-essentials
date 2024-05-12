@@ -7,23 +7,21 @@
             <h3 class="card-title"><strong>Settings</strong></h3>
           </div>
           <div class="card-body">
-            <% if form.object.organization.enable_child_based_requests? %>
-              <%= form.input :enable_child_based_requests, label: "Enable Child-based Requests (unclick if you only do bulk requests)",
-                             as: :boolean,
-                             class: "form-control", wrapper: :input_group %>
-            <% end %>
-
-            <% if form.object.organization.enable_individual_requests? %>
-              <%= form.input :enable_individual_requests, label: "Enable Requests for Individuals",
-                             as: :boolean,
-                             class: "form-control", wrapper: :input_group %>
-            <% end %>
-
             <% if form.object.organization.enable_quantity_based_requests? %>
-              <%= form.input :enable_quantity_based_requests, label: "Enable Quantity-based Requests",
-                             as: :boolean,
-                             class: "form-control", wrapper: :input_group %>
+              <%= form.check_box :enable_quantity_based_requests, as: :boolean %>&nbsp;
+              <%= form.label :enable_quantity_based_requests, "Enable Quantity-based Requests" %>
             <% end %>
+            <br>
+            <% if form.object.organization.enable_child_based_requests? %>
+              <%= form.check_box :enable_child_based_requests, as: :boolean %>&nbsp;
+              <%= form.label :enable_child_based_requests, "Enable Child-based Requests (unclick if you only do bulk requests)" %>
+            <% end %>
+            <br>
+            <% if form.object.organization.enable_individual_requests? %>
+              <%= form.check_box :enable_individual_requests, as: :boolean %>&nbsp;
+              <%= form.label :enable_individual_requests, "Enable Requests for Individuals" %>
+            <% end %>
+            <br>
           </div>
         </div>
       </div>

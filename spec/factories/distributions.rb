@@ -28,6 +28,7 @@ FactoryBot.define do
 
     trait :past do
       issued_at { 1.week.ago }
+      created_at { 10.days.ago }
     end
 
     trait :with_items do
@@ -45,7 +46,7 @@ FactoryBot.define do
           .first
           &.db_item
         item = evaluator.item || event_item
-        instance.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item)
+        instance.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item, itemizable: instance)
       end
     end
   end

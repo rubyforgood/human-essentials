@@ -36,6 +36,16 @@
         <%= profile.city %> <%= profile.state %> <br>
         <%= profile.zip_code %>
       </address>
+
+      <address>
+        <strong>Program / Delivery Address (if different)</strong> <br>
+        <%= profile.program_address1 %> <br>
+        <% unless profile.program_address2.blank? %>
+          <%= profile.program_address2 %> <br>
+        <% end %>
+        <%= profile.program_city %> <%= profile.program_state %> <br>
+        <%= profile.program_zip_code %>
+      </address>
     </dl>
   </div>
 </div>
