@@ -18,7 +18,7 @@ FactoryBot.define do
 
     after(:build) do |instance, _|
       if instance.line_items.blank?
-        instance.line_items << create(:line_item, item: create(:item, organization: instance.organization))
+        instance.line_items << create(:line_item, item: create(:item, organization: instance.organization), itemizable: instance)
       end
     end
 
