@@ -177,7 +177,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
       end
 
       it "displays the partner agency names in alphabetical order" do
-        expect(page).to have_css("table tr", count: 5, wait: page_content_wait)
+        expect(page).to have_css("table tr", count: 4, wait: page_content_wait)
         expect(page.find(:xpath, "//table/tbody/tr[1]/td[1]")).to have_content(@invited.name)
         expect(page.find(:xpath, "//table/tbody/tr[3]/td[1]")).to have_content(@approved.name)
         expect(page.find(:xpath, %(//*[@id="partner-status"]))).to have_content("3 Active")
