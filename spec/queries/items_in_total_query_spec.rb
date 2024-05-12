@@ -1,6 +1,6 @@
 # Spec for /app/queries/items_in_total_query.rb
 
-RSpec.describe ItemsInTotalQuery, seed_db: false do
+RSpec.describe ItemsInTotalQuery do
   let(:organization) { create(:organization) }
   let!(:storage_location) { create(:storage_location, organization: organization) }
   let(:other_item) { create(:item, organization: organization) }

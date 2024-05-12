@@ -1,6 +1,6 @@
 # Spec for /app/queries/items_out_total_query.rb
 
-RSpec.describe ItemsOutTotalQuery, seed_db: false do
+RSpec.describe ItemsOutTotalQuery do
   let(:organization) { create(:organization) }
   let!(:storage_location) { create(:storage_location, organization: organization) }
   subject { ItemsOutTotalQuery.new(storage_location: storage_location, organization: organization).call }
