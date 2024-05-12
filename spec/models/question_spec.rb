@@ -11,7 +11,7 @@
 #
 require "rails_helper"
 
-RSpec.describe Question, type: :model do
+RSpec.describe Question, type: :model, skip_seed: true do
   describe "scope for_partners" do
     it "should filter out questions that aren't meant for partners" do
       question_1 = build(:question)

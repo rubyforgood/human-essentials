@@ -1,12 +1,15 @@
 require 'rails_helper'
 
-RSpec.describe 'Requests', type: :request do
+RSpec.describe 'Requests', type: :request, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+
   let(:default_params) do
-    { organization_name: @organization.to_param }
+    { organization_name: organization.to_param }
   end
 
   context 'When signed' do
-    before { sign_in(@user) }
+    before { sign_in(user) }
 
     describe "GET #index" do
       subject do
@@ -33,7 +36,7 @@ RSpec.describe 'Requests', type: :request do
 
     describe 'GET #show' do
       context 'When the request exists' do
-        let(:request) { create(:request, organization: @organization) }
+        let(:request) { create(:request, organization: organization) }
 
         it 'responds with success' do
           get request_path(request, default_params)
@@ -53,7 +56,7 @@ RSpec.describe 'Requests', type: :request do
 
     describe 'POST #start' do
       context 'When request exists' do
-        let(:request) { create(:request, organization: @organization) }
+        let(:request) { create(:request, organization: organization) }
 
         it 'changes the request status from pending to started' do
           expect do
@@ -72,7 +75,7 @@ RSpec.describe 'Requests', type: :request do
 
       context 'When the request does not exist' do
         it 'responds with not found' do
-          post start_request_path(@organization.id, 1)
+          post start_request_path(organization.id, 1)
 
           expect(response).to have_http_status(:not_found)
         end

@@ -88,7 +88,11 @@ RSpec.describe "Audit management", type: :system, js: true do
       it "should be able to confirm the audit from the #new page", js: true do
         visit subject
         click_link "New Audit"
-        select storage_location.name, from: "Storage location"
+
+        await_select2("#audit_line_items_attributes_0_item_id") do
+          select storage_location.name, from: "Storage location"
+        end
+
         select Item.last.name, from: "audit_line_items_attributes_0_item_id"
         fill_in "audit_line_items_attributes_0_quantity", with: quantity.to_s
 

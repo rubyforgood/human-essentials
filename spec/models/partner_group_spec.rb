@@ -11,7 +11,7 @@
 #  updated_at      :datetime         not null
 #  organization_id :bigint
 #
-RSpec.describe PartnerGroup, type: :model do
+RSpec.describe PartnerGroup, type: :model, skip_seed: true do
   describe 'associations' do
     it { should belong_to(:organization) }
     it { should have_many(:partners) }
@@ -43,10 +43,6 @@ RSpec.describe PartnerGroup, type: :model do
   # rubocop:enable Rails/SkipsModelValidations
 
   context "Validations >" do
-    it "must belong to an organization" do
-      expect(build(:partner_group, organization_id: nil)).not_to be_valid
-    end
-
     it "requires a unique name within an organization" do
       expect(build(:partner_group, name: nil)).not_to be_valid
       create(:partner_group, name: "Foo")

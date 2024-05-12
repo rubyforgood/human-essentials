@@ -99,6 +99,9 @@ class StorageLocationsController < ApplicationController
       flash[:notice] = "Inventory imported successfully!"
       redirect_back(fallback_location: storage_locations_path)
     end
+  rescue Errors::InventoryAlreadyHasItems => e
+    flash[:error] = e.message
+    redirect_back(fallback_location: storage_locations_path(organization_id: current_organization))
   end
 
   def update

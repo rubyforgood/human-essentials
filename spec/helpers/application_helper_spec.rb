@@ -1,6 +1,9 @@
 require "rails_helper"
 
-RSpec.describe ApplicationHelper, type: :helper do
+RSpec.describe ApplicationHelper, type: :helper, seed_db: false do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+
   describe "default_title_content" do
     helper do
       def current_organization; end
@@ -11,8 +14,6 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
 
     context "Organization exists" do
-      let(:organization) { create :organization }
-
       it "returns the organization's name" do
         expect(helper.default_title_content).to eq organization.name
       end
@@ -34,8 +35,8 @@ RSpec.describe ApplicationHelper, type: :helper do
   end
 
   describe "can_administrate?" do
-    let(:org_1) { @organization }
-    let(:org_2) { create :organization }
+    let(:org_1) { organization }
+    let(:org_2) { create(:organization, skip_items: true) }
 
     helper do
       def current_organization; end
