@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Partners::FamilyRequestsController, type: :request do
+RSpec.describe Partners::FamilyRequestsController, type: :request, skip_seed: true do
   let(:partner) { create(:partner) }
   let(:params) do
     children.each_with_object({}) do |child, hash|

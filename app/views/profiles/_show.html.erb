@@ -23,6 +23,17 @@
     <p>State: <%= partner_profile.state %></p>
     <p>Zip Code: <%= partner_profile.zip_code %></p>
     <br>
+    <br>
+    <% if partner_profile.program_address1.present? || partner_profile.program_address2.present? || partner_profile.program_city.present? || partner_profile.program_state.present? || partner_profile.program_zip_code.present? %>
+      <h3>Program / Delivery Address (if different)</h3>
+      <p>Program Address: <%= partner_profile.program_address1 %></p>
+      <p>Program Address: <%= partner_profile.program_address2 %></p>
+      <p>Program City: <%= partner_profile.program_city %></p>
+      <p>Program State: <%= partner_profile.program_state %></p>
+      <p>Program Zip Code: <%= partner_profile.program_zip_code %></p>
+      <br>
+    <% end %>
+
     <% if partner_profile_fields.include?('media_information') || partner_profile_fields.empty? %>
       <h2 class='text-2xl underline'>Media Information</h2>
       <p>Website: <%= partner_profile.website %></p>
@@ -50,14 +61,6 @@
       <p>How Are Essentials (e.g. diapers, period supplies) Used In Your Program? <%= partner_profile.essentials_use %></p>
       <p>Do You Receive Essentials from Other Sources? <%= partner_profile.receives_essentials_from_other %></p>
       <p>Currently Providing Diapers: <%= humanize_boolean_3state(partner_profile.currently_provide_diapers) %></p>
-      <br>
-      <h3>Program / Delivery Address (if different)</h3>
-      <p>Program Address: <%= partner_profile.program_address1 %></p>
-      <p>Program Address: <%= partner_profile.program_address2 %></p>
-      <p>Program City: <%= partner_profile.program_city %></p>
-      <p>Program State: <%= partner_profile.program_state %></p>
-      <p>Program Zip Code: <%= partner_profile.program_zip_code %></p>
-      <br>
     <% end %>
     <% if partner_profile_fields.include?('organizational_capacity') || partner_profile_fields.empty? %>
       <h2 class='text-2xl underline'>Organizational Capacity</h2>

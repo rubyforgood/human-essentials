@@ -1,10 +1,12 @@
 require 'rails_helper'
 
-RSpec.describe "/partners/requests", type: :request do
+RSpec.describe "/partners/requests", type: :request, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:partner) { create(:partner, organization: organization) }
+  let(:partner_user) { partner.primary_user }
+
   describe "GET #index" do
     subject { -> { get partners_requests_path } }
-    let(:partner_user) { partner.primary_user }
-    let(:partner) { create(:partner) }
     let(:item1) { create(:item, name: "First item") }
     let(:item2) { create(:item, name: "Second item") }
 
@@ -34,8 +36,6 @@ RSpec.describe "/partners/requests", type: :request do
 
   describe "GET #new" do
     subject { get new_partners_request_path }
-    let(:partner_user) { partner.primary_user }
-    let(:partner) { create(:partner) }
 
     before do
       sign_in(partner_user)
@@ -93,21 +93,21 @@ RSpec.describe "/partners/requests", type: :request do
 
   describe "POST #create" do
     subject { post partners_requests_path, params: request_attributes }
+    let(:item1) { create(:item, name: "First item", organization: organization) }
+
     let(:request_attributes) do
       {
         request: {
           comments: Faker::Lorem.paragraph,
           item_requests_attributes: {
             "0" => {
-              item_id: Item.all.sample.id,
+              item_id: item1.id,
               quantity: Faker::Number.within(range: 4..13)
             }
           }
         }
       }
     end
-    let(:partner_user) { partner.primary_user }
-    let(:partner) { create(:partner) }
 
     before do
       sign_in(partner_user)
@@ -129,8 +129,9 @@ RSpec.describe "/partners/requests", type: :request do
         expect(response).to be_unprocessable
         expect(response.body).to include("Oops! Something went wrong with your Request")
         expect(response.body).to include("Ensure each line item has a item selected AND a quantity greater than 0.")
-        expect(response.body).to include("Still need help? Submit a support ticket")
-        expect(response.body).to include("and we will do our best to follow up with you via email.")
+        expect(response.body).to include("Still need help? Please contact your essentials bank, #{partner.organization.name}")
+        expect(response.body).to include("Our email on record for them is:")
+        expect(response.body).to include(partner.organization.email)
       end
     end
 
@@ -172,8 +173,9 @@ RSpec.describe "/partners/requests", type: :request do
         expect(response).to be_unprocessable
         expect(response.body).to include("Oops! Something went wrong with your Request")
         expect(response.body).to include("Ensure each line item has a item selected AND a quantity greater than 0.")
-        expect(response.body).to include("Still need help? Submit a support ticket")
-        expect(response.body).to include("and we will do our best to follow up with you via email.")
+        expect(response.body).to include("Still need help? Please contact your essentials bank, #{partner.organization.name}")
+        expect(response.body).to include("Our email on record for them is:")
+        expect(response.body).to include(partner.organization.email)
       end
     end
 

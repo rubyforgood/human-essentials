@@ -204,8 +204,6 @@ RSpec.configure do |config|
         ]
       )
     end
-
-    seed_base_data_for_tests if !ENV["SKIP_SEED"]
   end
 
   config.before(:each, type: :system) do
@@ -214,10 +212,29 @@ RSpec.configure do |config|
     Capybara.server = :puma, { Silent: true }
   end
 
-  config.before(:each) do
-    # Defined shared @ global variables used throughout the test suite.
-    define_global_variables if RSpec.current_example.metadata[:seed_items] != false
+  config.before(:all) do
+    seed_current = self.class.metadata[:skip_seed].nil? || self.class.metadata[:skip_seed] == false
+    seeded_last = Thread.current[:seeded_last]
 
+    if seeded_last && !seed_current
+      DatabaseCleaner.clean_with(:truncation)
+    end
+
+    if seeded_last && seed_current
+      define_global_variables
+    end
+
+    if !seeded_last && seed_current
+      seed_base_data_for_tests
+      define_global_variables
+    end
+
+    # if !seeded_last && !seed_current do nothing
+
+    Thread.current[:seeded_last] = seed_current
+  end
+
+  config.before(:each) do
     if ENV['EVENTS_READ'] == 'true'
       allow(Event).to receive(:read_events?).and_return(true)
     end
@@ -267,6 +284,29 @@ def select2(node, select_name, value, position: nil)
   container = node.find(:xpath, xpath)
   container.click
   container.find(:xpath, '//li[contains(@class, "select2-results__option")][@role="option"]', text: value).click
+end
+
+# Runs the provided block of code that will change select2 dropdown. Waits until
+# select2 javascript has finished running to return
+#
+# @param select2 [String] The CSS selector for the Select2 dropdown element.
+# @param container [String, nil] The CSS selector for the container element
+# @yield Block to execute that will trigger Select2 change
+#
+# @example Usage
+#   # Wait for Select2 dropdown with CSS selector '.select2' inside container '.container'
+#   await_select2('.select2', '.container') do
+#     # Perform actions that trigger a change in the Select2 dropdown
+#   end
+def await_select2(select2, container = nil, &block)
+  page_html = Nokogiri::HTML.parse(page.body)
+  page_html = page_html.css(container).first unless container.nil?
+  select2_element = page_html.css(select2).first
+  current_id = select2_element.children.first["data-select2-id"]
+
+  yield
+
+  find("#{container} select option[data-select2-id=\"#{current_id.to_i + 1}\"]", wait: 10)
 end
 
 def seed_base_items

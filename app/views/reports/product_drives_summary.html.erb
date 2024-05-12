@@ -1,0 +1,29 @@
+<%= render(
+  "shared/filtered_card",
+  id: "product_drives",
+  gradient: "secondary",
+  title: "Product Drives",
+  subtitle: @selected_date_range,
+  type: :table,
+  filter_url: reports_product_drives_summary_path,
+  footer_options: { class: "text-center" },
+  footer: link_to("See more...", product_drives_path),
+) do %>
+
+  <h3 class="text-center">
+    <span class="total_received_donations">
+      <%= total_received_from_product_drives %>
+    </span> items
+    received <%= @selected_date_range_label %>
+  </h3>
+  <h4 class="text-center">
+    <span class="total_money_raised">
+      <%= dollar_presentation( total_received_money_donations_from_product_drives) %>
+    </span> raised  <%= @selected_date_range_label %>
+  </h4>
+  <div class="box-body">
+    <h4>Recent Donations from Product Drives</h4>
+    <%= render partial: "product_drive", collection: @recent_donations.by_source(:product_drive), as: :donation %>
+  </div>
+
+<% end %>

@@ -71,6 +71,9 @@ Rails.application.routes.draw do
     end
     resources :questions
     resources :broadcast_announcements
+    resources :ndbn_members, only: :index do
+      post :upload_csv, on: :collection
+    end
   end
 
   match "/404", to: "errors#not_found", via: :all
@@ -106,6 +109,14 @@ Rails.application.routes.draw do
       resources :annual_reports, only: [:index, :show], param: :year do
         post :recalculate, on: :member
       end
+      get :donations_summary
+      get :manufacturer_donations_summary
+      get :product_drives_summary
+      get :purchases_summary
+      get :itemized_donations
+      get :itemized_distributions
+      get :distributions_summary
+      get :activity_graph
     end
 
     resources :transfers, only: %i(index create new show destroy)

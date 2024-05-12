@@ -1,8 +1,10 @@
 require "rails_helper"
 
-RSpec.describe Partners::IndividualsRequestsController, type: :request do
-  let(:partner) { create(:partner, status: :approved) }
+RSpec.describe Partners::IndividualsRequestsController, type: :request, skip_seed: true do
+  let(:organization) { create(:organization, :with_items) }
+  let(:partner) { create(:partner, status: :approved, organization: organization) }
   let(:partner_user) { partner.primary_user }
+
   let(:items_to_select) { partner_user.partner.organization.valid_items.sample(3) }
   let(:items_attributes) do
     items_to_select.each_with_index.each_with_object({}) do |(item, index), hash|
@@ -90,8 +92,9 @@ RSpec.describe Partners::IndividualsRequestsController, type: :request do
         expect(response).to be_unprocessable
         expect(response.body).to include("Oops! Something went wrong with your Request")
         expect(response.body).to include("Ensure each line item has a item selected AND a quantity greater than 0.")
-        expect(response.body).to include("Still need help? Submit a support ticket")
-        expect(response.body).to include("and we will do our best to follow up with you via email.")
+        expect(response.body).to include("Still need help? Please contact your essentials bank, #{partner.organization.name}")
+        expect(response.body).to include("Our email on record for them is:")
+        expect(response.body).to include(partner.organization.email)
       end
     end
 
@@ -129,8 +132,9 @@ RSpec.describe Partners::IndividualsRequestsController, type: :request do
         expect(response).to be_unprocessable
         expect(response.body).to include("Oops! Something went wrong with your Request")
         expect(response.body).to include("Ensure each line item has a item selected AND a quantity greater than 0.")
-        expect(response.body).to include("Still need help? Submit a support ticket")
-        expect(response.body).to include("and we will do our best to follow up with you via email.")
+        expect(response.body).to include("Still need help? Please contact your essentials bank, #{partner.organization.name}")
+        expect(response.body).to include("Our email on record for them is:")
+        expect(response.body).to include(partner.organization.email)
       end
     end
 

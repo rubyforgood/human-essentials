@@ -1,4 +1,4 @@
-RSpec.describe DistributionUpdateService, type: :service do
+RSpec.describe DistributionUpdateService, type: :service, skip_seed: true do
   describe "call" do
     let!(:distribution) { FactoryBot.create(:distribution, :with_items, item_quantity: 10) }
     let!(:new_attributes) { { line_items_attributes: { "0": { item_id: distribution.line_items.first.item_id, quantity: 2 } } } }

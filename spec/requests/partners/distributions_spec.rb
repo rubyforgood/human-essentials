@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "/partners/distributions", type: :request do
+RSpec.describe "/partners/distributions", type: :request, skip_seed: true do
   let(:partner) { create(:partner) }
   let(:partner_user) { partner.primary_user }
 

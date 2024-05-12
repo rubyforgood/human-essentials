@@ -54,4 +54,10 @@ module Errors
       "KitAllocation not found for given kit"
     end
   end
+
+  class InventoryAlreadyHasItems < StandardError
+    def message
+      "Could not complete action: inventory already has items stored"
+    end
+  end
 end

@@ -1,8 +1,11 @@
-RSpec.describe "Vendor", type: :system, js: true do
+RSpec.describe "Vendor", type: :system, js: true, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+
   before do
-    sign_in(@user)
+    sign_in(user)
   end
-  let(:url_prefix) { "/#{@organization.to_param}" }
+  let(:url_prefix) { "/#{organization.to_param}" }
 
   context "When a user views the index page" do
     before(:each) do

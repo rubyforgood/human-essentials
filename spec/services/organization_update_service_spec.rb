@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe OrganizationUpdateService, skip_seed: true do
+RSpec.describe OrganizationUpdateService, skip_seed: true do
   let(:organization) { create(:organization) }
 
   describe "#update" do

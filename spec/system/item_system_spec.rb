@@ -1,14 +1,19 @@
-RSpec.describe "Item management", type: :system do
+RSpec.describe "Item management", type: :system, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+
   before do
-    sign_in(@user)
+    sign_in(user)
   end
 
-  let!(:url_prefix) { "/#{@organization.to_param}" }
+  let!(:url_prefix) { "/#{organization.to_param}" }
   it "can create a new item as a user" do
-    visit url_prefix + "/items/new"
+    create(:base_item, name: "BaseItem")
     item_traits = attributes_for(:item)
+
+    visit url_prefix + "/items/new"
     fill_in "Name", with: item_traits[:name]
-    select BaseItem.last.name, from: "Base Item"
+    select "BaseItem", from: "Base Item"
     click_button "Save"
 
     expect(page.find(".alert")).to have_content "added"
@@ -22,11 +27,14 @@ RSpec.describe "Item management", type: :system do
   end
 
   it "can create a new item with dollars decimal amount for value field" do
-    visit url_prefix + "/items/new"
+    create(:base_item, name: "BaseItem")
     item_traits = attributes_for(:item)
+
+    visit url_prefix + "/items/new"
+
     fill_in "Name", with: item_traits[:name]
     fill_in "item_value_in_dollars", with: '1,234.56'
-    select BaseItem.last.name, from: "Base Item"
+    select "BaseItem", from: "Base Item"
     click_button "Save"
 
     expect(page.find(".alert")).to have_content "added"
@@ -67,10 +75,13 @@ RSpec.describe "Item management", type: :system do
 
   it "can filter the #index by base item as a user" do
     Item.delete_all
-    create(:item, base_item: BaseItem.first)
-    create(:item, base_item: BaseItem.last)
+    base_item1 = create(:base_item, name: "First Base Item")
+    base_item2 = create(:base_item)
+    create(:item, base_item: base_item1)
+    create(:item, base_item: base_item2)
+
     visit url_prefix + "/items"
-    select BaseItem.first.name, from: "filters[by_base_item]"
+    select "First Base Item", from: "filters[by_base_item]"
     click_button "Filter"
     within "#items-table" do
       expect(page).to have_css("tbody tr", count: 1)
@@ -160,6 +171,9 @@ RSpec.describe "Item management", type: :system do
   end
 
   describe 'Item Category Management' do
+    let!(:base_item) { create(:base_item, name: "BaseItem") }
+    let!(:item) { create(:item, name: "SomeRandomItem", organization: organization) }
+
     before do
       visit url_prefix + "/items"
     end
@@ -177,8 +191,6 @@ RSpec.describe "Item management", type: :system do
       end
 
       context 'and associating to a existing item' do
-        let(:item) { Item.first }
-
         before do
           find("tr[data-item-id=\"#{item.id}\"]").find('a', text: 'Edit').click
           select new_item_category, from: 'Category'
@@ -196,7 +208,7 @@ RSpec.describe "Item management", type: :system do
 
         before do
           click_on 'New Item'
-          select BaseItem.first.name, from: 'Base Item'
+          select "BaseItem", from: 'Base Item'
           fill_in 'Name *', with: new_item_name
           select new_item_category, from: 'Category'
 
