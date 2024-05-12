@@ -699,8 +699,8 @@ RSpec.describe InventoryAggregate, skip_seed: true do
           }
         })
       donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
-      donation.line_items << build(:line_item, quantity: 50, item: item1)
-      donation.line_items << build(:line_item, quantity: 30, item: item2)
+      donation.line_items << build(:line_item, quantity: 50, item: item1, itemizable: donation)
+      donation.line_items << build(:line_item, quantity: 30, item: item2, itemizable: donation)
       donation.save!
 
       attributes = {line_items_attributes: {"0": {item_id: item1.id, quantity: 40}, "1": {item_id: item2.id, quantity: 25}}}
