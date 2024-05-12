@@ -118,10 +118,12 @@ RSpec.feature "Distributions", type: :system do
 
         visit @url_prefix + "/distributions/new"
         select @partner.name, from: "Partner"
-        select @storage_location.name, from: "From storage location"
-        page.driver.wait_for_network_idle
+
+        await_select2("#distribution_line_items_attributes_0_item_id") do
+          select @storage_location.name, from: "From storage location"
+        end
+
         select item.name, from: "distribution_line_items_attributes_0_item_id"
-        select @storage_location.name, from: "distribution_storage_location_id"
         fill_in "distribution_line_items_attributes_0_quantity", with: 18
 
         click_button "Save"

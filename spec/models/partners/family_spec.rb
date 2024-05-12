@@ -28,7 +28,7 @@
 
 require "rails_helper"
 
-RSpec.describe Partners::Family, type: :model do
+RSpec.describe Partners::Family, type: :model, skip_seed: true do
   describe "associations" do
     it { should belong_to(:partner) }
     it { should have_many(:children).dependent(:destroy) }

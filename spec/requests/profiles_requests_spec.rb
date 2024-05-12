@@ -1,18 +1,28 @@
-RSpec.describe "Profiles", type: :request do
-  let(:partner) { FactoryBot.create(:partner, organization: @organization) }
+RSpec.describe "Profiles", type: :request, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+  let(:partner) { create(:partner, organization: organization) }
 
   let(:default_params) do
-    { organization_name: @organization.to_param, id: partner.id, partner_id: partner.id }
+    { organization_name: organization.to_param, id: partner.id, partner_id: partner.id }
   end
 
   before do
-    sign_in(@user)
+    sign_in(user)
   end
 
   describe "GET #edit" do
     it "returns http success" do
       get edit_profile_path(default_params)
       expect(response).to be_successful
+    end
+
+    it "renders edit partner settings partial with enabled request types only" do
+      partner.profile.organization.update!(enable_quantity_based_requests: true, enable_child_based_requests: false)
+      get edit_profile_path(default_params)
+      expect(response).to render_template(partial: "partners/profiles/edit/_partner_settings")
+      expect(response.body).to include("Enable Quantity-based Requests")
+      expect(response.body).not_to include("Enable Child-based Requests")
     end
   end
 

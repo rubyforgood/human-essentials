@@ -1,11 +1,14 @@
-RSpec.describe "Transfers", type: :request do
+RSpec.describe "Transfers", type: :request, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+
   let(:valid_params) do
-    { organization_name: @organization.short_name }
+    { organization_name: organization.short_name }
   end
 
   context "While signed in" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     describe "GET #index" do
@@ -26,8 +29,8 @@ RSpec.describe "Transfers", type: :request do
         it { is_expected.to be_successful }
 
         context 'when filtering by date' do
-          let!(:old_transfer) { create(:transfer, created_at: 7.days.ago, organization: @organization) }
-          let!(:new_transfer) { create(:transfer, created_at: 1.day.ago, organization: @organization) }
+          let!(:old_transfer) { create(:transfer, created_at: 7.days.ago, organization: organization) }
+          let!(:new_transfer) { create(:transfer, created_at: 1.day.ago, organization: organization) }
 
           context 'when date parameters are supplied' do
             it 'only returns the correct obejects' do
@@ -58,9 +61,9 @@ RSpec.describe "Transfers", type: :request do
       it "redirects to #index when successful" do
         attributes = attributes_for(
           :transfer,
-          organization_id: @organization.id,
-          to_id: create(:storage_location, organization: @organization).id,
-          from_id: create(:storage_location, organization: @organization).id
+          organization_id: organization.id,
+          to_id: create(:storage_location, organization: organization).id,
+          from_id: create(:storage_location, organization: organization).id
         )
 
         expect { post transfers_path(valid_params.merge(transfer: attributes)) }
@@ -86,7 +89,7 @@ RSpec.describe "Transfers", type: :request do
     end
 
     describe "GET #show" do
-      subject { get transfer_path(valid_params.merge(id: create(:transfer, organization: @organization))) }
+      subject { get transfer_path(valid_params.merge(id: create(:transfer, organization: organization))) }
       it "returns http success" do
         subject
         expect(response).to be_successful
@@ -94,7 +97,7 @@ RSpec.describe "Transfers", type: :request do
     end
 
     describe 'DELETE #destroy' do
-      let(:transfer_id) { create(:transfer, organization: @organization).id.to_s }
+      let(:transfer_id) { create(:transfer, organization: organization).id.to_s }
       let(:fake_destroy_service) { instance_double(TransferDestroyService) }
       subject { delete transfer_path(valid_params.merge(id: transfer_id)) }
       before do

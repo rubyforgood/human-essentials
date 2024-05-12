@@ -1,4 +1,4 @@
-RSpec.describe Reports::ChildrenServedReportService, type: :service do
+RSpec.describe Reports::ChildrenServedReportService, type: :service, skip_seed: true do
   let(:year) { 2020 }
 
   describe '#report' do
