@@ -1,18 +1,12 @@
 class LowInventoryQuery
   def self.call(organization)
     if Event.read_events?(organization)
-      inventory = InventoryAggregate.inventory_for(organization.id)
-
-      items = {}
-      inventory.storage_locations.values.each do |storage_location|
-        storage_location.items.values.each do |item|
-          items[item.item_id] = items[item.item_id].to_i + item.quantity
-        end
-      end
+      inventory = View::Inventory.new(organization.id)
+      items = inventory.all_items
 
       low_inventory_items = []
-      items.each do |item_id, quantity|
-        item = Item.find(item_id)
+      items.each do |item|
+        quantity = inventory.quantity_for(item_id: item.id)
         if quantity < item.on_hand_minimum_quantity.to_i || quantity < item.on_hand_recommended_quantity.to_i
           low_inventory_items.push(OpenStruct.new(
             id: item.id,
