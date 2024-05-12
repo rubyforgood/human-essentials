@@ -1,20 +1,19 @@
 require 'ostruct'
 
-RSpec.describe "Dashboard", type: :system, js: true do
+RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+
   context "With a new essentials bank" do
-    before :each do
-      @new_organization = create(:organization)
-      @user = create(:user, organization: @new_organization)
-      @org_short_name = new_organization.short_name
-    end
-    attr_reader :new_organization, :org_short_name, :user
+    let!(:org_short_name) { organization.short_name }
 
     before do
       sign_in(user)
     end
 
     it "displays the getting started guide until the steps are completed" do
-      org_dashboard_page = OrganizationDashboardPage.new org_short_name: org_short_name
+      org_dashboard_page = OrganizationDashboardPage.new(org_short_name: org_short_name)
       org_dashboard_page.visit
 
       # rubocop:disable Layout/ExtraSpacing
@@ -27,7 +26,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
       expect(org_dashboard_page).not_to have_add_inventory_call_to_action
 
       # After we create a partner, ensure that we are on step 2 (Storage Locations)
-      @partner = create(:partner, organization: new_organization)
+      create(:partner, organization: organization)
       org_dashboard_page.visit
 
       expect(org_dashboard_page).to     have_getting_started_guide
@@ -37,7 +36,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
       expect(org_dashboard_page).not_to have_add_inventory_call_to_action
 
       # After we create a storage location, ensure that we are on step 3 (Donation Site)
-      create(:storage_location, organization: new_organization)
+      create(:storage_location, organization: organization)
       org_dashboard_page.visit
 
       expect(org_dashboard_page).to     have_getting_started_guide
@@ -47,7 +46,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
       expect(org_dashboard_page).not_to have_add_inventory_call_to_action
 
       # After we create a donation site, ensure that we are on step 4 (Inventory)
-      create(:donation_site, organization: new_organization)
+      create(:donation_site, organization: organization)
       org_dashboard_page.visit
 
       expect(org_dashboard_page).to     have_getting_started_guide
@@ -59,7 +58,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
       # rubocop:enable Layout/ExtraSpacing
 
       # After we add inventory to a storage location, ensure that the getting starting guide is gone
-      create(:storage_location, :with_items, item_quantity: 125, organization: new_organization)
+      create(:storage_location, :with_items, item_quantity: 125, organization: organization)
       org_dashboard_page.visit
 
       expect(org_dashboard_page).not_to have_getting_started_guide
@@ -68,21 +67,25 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
   context "With an existing essentials bank" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
-    let!(:storage_location) { create(:storage_location, :with_items, item_quantity: 1, organization: @organization) }
-    let(:org_short_name) { @organization.short_name }
+    let!(:storage_location) { create(:storage_location, :with_items, item_quantity: 1, organization: organization) }
+    let(:org_short_name) { organization.short_name }
     let(:org_dashboard_page) { OrganizationDashboardPage.new org_short_name: org_short_name }
 
     describe "Outstanding Requests" do
       it "has a card" do
         org_dashboard_page.visit
+        org_dashboard_page.outstanding_section # wait for the section
         expect(org_dashboard_page).to have_outstanding_section
       end
 
       context "when empty" do
-        before { org_dashboard_page.visit }
+        before do
+          org_dashboard_page.visit
+          org_dashboard_page.outstanding_section # wait for the section
+        end
 
         it "displays a message" do
           expect(org_dashboard_page.outstanding_section).to have_content "No outstanding requests!"
@@ -97,6 +100,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
         let!(:request) { create :request, :pending }
         let!(:outstanding_request) do
           org_dashboard_page.visit
+          org_dashboard_page.outstanding_section # wait for the section
           requests = org_dashboard_page.outstanding_requests
           expect(requests.length).to eq 1
           requests.first
@@ -133,18 +137,22 @@ RSpec.describe "Dashboard", type: :system, js: true do
       it "does display a started request" do
         create :request, :started
         org_dashboard_page.visit
+        org_dashboard_page.outstanding_section # wait for the section
         expect(org_dashboard_page.outstanding_requests.length).to eq 1
       end
 
       it "does not display a fulfilled request" do
         create :request, :fulfilled
         org_dashboard_page.visit
-        expect(org_dashboard_page.outstanding_requests).to be_empty
+        org_dashboard_page.outstanding_section # wait for the section
+        expect(org_dashboard_page.outstanding_section).to have_content "No outstanding requests!"
+        # expect(org_dashboard_page.outstanding_requests).to be_empty
       end
 
       it "does not display a discarded request" do
         create :request, :discarded
         org_dashboard_page.visit
+        org_dashboard_page.outstanding_section # wait for the section
         expect(org_dashboard_page.outstanding_requests).to be_empty
       end
 
@@ -154,6 +162,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
         before do
           create_list :request, num_requests, :pending
           org_dashboard_page.visit
+          org_dashboard_page.outstanding_section # wait for the section
         end
 
         it "displays a limited number of requests" do
@@ -225,12 +234,12 @@ RSpec.describe "Dashboard", type: :system, js: true do
       end
 
       context "with low inventory" do
-        let(:below_recommended_item) { create :item, organization: @organization, on_hand_minimum_quantity: 0, on_hand_recommended_quantity: 200 }
-        let(:below_minimum_item) { create :item, organization: @organization, on_hand_minimum_quantity: 150, on_hand_recommended_quantity: 200 }
+        let(:below_recommended_item) { create :item, organization: organization, on_hand_minimum_quantity: 0, on_hand_recommended_quantity: 200 }
+        let(:below_minimum_item) { create :item, organization: organization, on_hand_minimum_quantity: 150, on_hand_recommended_quantity: 200 }
 
         let!(:below_recommended_inventory_purchase) {
           create :purchase, :with_items,
-            organization: @organization,
+            organization: organization,
             storage_location: storage_location,
             item: below_recommended_item,
             item_quantity: 100,
@@ -239,7 +248,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
 
         let!(:below_minimum_inventory_purchase) {
           create :purchase, :with_items,
-            organization: @organization,
+            organization: organization,
             storage_location: storage_location,
             item: below_minimum_item,
             item_quantity: 100,

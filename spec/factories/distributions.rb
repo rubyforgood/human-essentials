@@ -46,7 +46,7 @@ FactoryBot.define do
           .first
           &.db_item
         item = evaluator.item || event_item
-        instance.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item)
+        instance.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item, itemizable: instance)
       end
     end
   end
