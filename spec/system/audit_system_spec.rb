@@ -4,7 +4,7 @@ RSpec.describe "Audit management", type: :system, js: true, skip_seed: true do
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 
   let(:quantity) { 7 }
-  let(:item) { create(:item) }
+  let(:item) { create(:item, organization: organization) }
   let!(:storage_location) { create(:storage_location, :with_items, item: item, item_quantity: 10, organization: organization) }
 
   context "while signed in as a normal user" do

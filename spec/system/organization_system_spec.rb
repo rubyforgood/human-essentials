@@ -21,7 +21,7 @@ RSpec.describe "Organization management", type: :system, js: true, skip_seed: tr
   end
 
   context "while signed in as an organization admin" do
-    let!(:store) { create(:storage_location) }
+    let!(:store) { create(:storage_location, organization: organization) }
     let!(:ndbn_member) { create(:ndbn_member, ndbn_member_id: "50000", account_name: "Best Place") }
     before do
       sign_in(organization_admin)
