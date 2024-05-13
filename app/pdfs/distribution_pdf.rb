@@ -239,14 +239,14 @@ class DistributionPdf
 
   def insert_signature_fields
     move_down 20
-    signature_fields_for "Received By:"
+    signature_lines_for "Received By:"
 
     move_down 20
-    signature_fields_for "Delivered By:"
+    signature_lines_for "Delivered By:"
   end
 
-  def signature_fields_for(label)
-    # Calculate half the screen width and the gap between the two signature fields
+  def signature_lines_for(label)
+    # Calculate half the screen width and the gap between the two signature lines
     half_width = bounds.width / 2
     gap = 20
     left_end = half_width - (gap / 2)
