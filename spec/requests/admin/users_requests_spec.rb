@@ -1,17 +1,22 @@
 require 'rails_helper'
 
-RSpec.describe "Admin::UsersController", type: :request do
+RSpec.describe "Admin::UsersController", type: :request, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+  let(:super_admin) { create(:super_admin, organization: organization) }
+
   let(:default_params) do
-    { organization_name: @organization.id }
+    { organization_name: organization.id }
   end
-  let(:org) { FactoryBot.create(:organization, name: 'Org ABC') }
-  let(:partner) { FactoryBot.create(:partner, name: 'Partner XYZ') }
-  let(:user) { FactoryBot.create(:user, organization: org, name: 'User 123') }
+
+  let(:org) { create(:organization, name: 'Org ABC', skip_items: true) }
+  let(:partner) { create(:partner, name: 'Partner XYZ', organization: org) }
+  let(:user) { create(:user, organization: org, name: 'User 123') }
 
   context "When logged in as a super admin" do
     before do
-      sign_in(@super_admin)
-      create(:organization)
+      sign_in(super_admin)
       AddRoleService.call(user_id: user.id, resource_type: Role::PARTNER, resource_id: partner.id)
     end
 
@@ -124,12 +129,12 @@ RSpec.describe "Admin::UsersController", type: :request do
 
     describe "POST #create" do
       it "returns http success" do
-        post admin_users_path, params: { user: { email: @organization.email, organization_id: @organization.id } }
+        post admin_users_path, params: { user: { email: organization.email, organization_id: organization.id } }
         expect(response).to redirect_to(admin_users_path)
       end
 
       it "preloads organizations" do
-        post admin_users_path, params: { user: { organization_id: @organization.id } }
+        post admin_users_path, params: { user: { organization_id: organization.id } }
         expect(assigns(:organizations)).to eq(Organization.all.alphabetized)
       end
     end
@@ -137,7 +142,7 @@ RSpec.describe "Admin::UsersController", type: :request do
 
   context "When logged in as an organization_admin" do
     before do
-      sign_in @organization_admin
+      sign_in organization_admin
       create(:organization)
     end
 
@@ -150,7 +155,7 @@ RSpec.describe "Admin::UsersController", type: :request do
 
     describe "POST #create" do
       it "redirects" do
-        post admin_users_path, params: { user: { organization_id: @organization.id } }
+        post admin_users_path, params: { user: { organization_id: organization.id } }
         expect(response).to redirect_to(dashboard_path)
       end
     end
@@ -158,7 +163,7 @@ RSpec.describe "Admin::UsersController", type: :request do
 
   context "When logged in as a non-admin user" do
     before do
-      sign_in @user
+      sign_in user
       create(:organization)
     end
 
@@ -171,7 +176,7 @@ RSpec.describe "Admin::UsersController", type: :request do
 
     describe "POST #create" do
       it "redirects" do
-        post admin_users_path, params: { user: { organization_id: @organization.id } }
+        post admin_users_path, params: { user: { organization_id: organization.id } }
         expect(response).to redirect_to(dashboard_path)
       end
     end

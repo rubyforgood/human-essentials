@@ -1,6 +1,9 @@
-RSpec.describe "Donation Site", type: :system, js: true do
+RSpec.describe "Donation Site", type: :system, js: true, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+
   before do
-    sign_in(@user)
+    sign_in(user)
   end
 
   let(:donation_site) { create(:donation_site) }

@@ -29,8 +29,15 @@ RSpec.describe ApplicationHelper, type: :helper, seed_db: false do
   end
 
   describe "active_class" do
-    it "Returns the controller name" do
-      expect(helper.active_class("foo")).to eq "application"
+    it "Is not active with another controller" do
+      expect(params).to receive(:[]).with(:controller).twice.and_return("bar")
+      expect(params).to receive(:[]).with(:action).and_return(nil)
+      expect(helper.active_class(["foo"])).to eq ""
+    end
+
+    it "Is active with the current controller" do
+      expect(params).to receive(:[]).with(:controller).and_return("foo")
+      expect(helper.active_class(["foo"])).to eq "active"
     end
   end
 

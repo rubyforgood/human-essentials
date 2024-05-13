@@ -1,9 +1,13 @@
-RSpec.describe "Organization Administration", type: :system, js: true do
+RSpec.describe "Organization Administration", type: :system, js: true, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+
   subject { organization_path }
 
   context "while signed in as a normal user" do
     before do
-      sign_in(@user)
+      sign_in(user)
       visit subject
     end
 
@@ -14,7 +18,7 @@ RSpec.describe "Organization Administration", type: :system, js: true do
 
   context "while signed in as an organization admin" do
     before do
-      sign_in(@organization_admin)
+      sign_in(organization_admin)
       visit subject
     end
 
@@ -33,14 +37,14 @@ RSpec.describe "Organization Administration", type: :system, js: true do
     context "When looking at a single organization" do
       before do
         user = create(:user, email: "yet_another_user@website.com")
-        user.add_role(Role::ORG_USER, @organization)
+        user.add_role(Role::ORG_USER, organization)
         visit subject
       end
 
       it "can view details about an organization, including the users as an admin" do
-        expect(page).to have_content(@organization.email)
-        expect(page).to have_content(@organization.address)
-        @organization.users.each do |u|
+        expect(page).to have_content(organization.email)
+        expect(page).to have_content(organization.address)
+        organization.users.each do |u|
           expect(page).to have_content(u.email)
         end
       end

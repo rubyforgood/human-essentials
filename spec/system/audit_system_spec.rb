@@ -1,11 +1,15 @@
-RSpec.describe "Audit management", type: :system, js: true do
+RSpec.describe "Audit management", type: :system, js: true, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+
   let(:quantity) { 7 }
   let(:item) { create(:item) }
-  let!(:storage_location) { create(:storage_location, :with_items, item: item, item_quantity: 10, organization: @organization) }
+  let!(:storage_location) { create(:storage_location, :with_items, item: item, item_quantity: 10, organization: organization) }
 
   context "while signed in as a normal user" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     it "should not be able to visit the audits #index page" do
@@ -31,12 +35,11 @@ RSpec.describe "Audit management", type: :system, js: true do
 
   context "while signed in as an organization admin" do
     before do
-      sign_in(@organization_admin)
+      sign_in(organization_admin)
     end
 
     context "when starting a new audit" do
       subject { new_audit_path }
-      let(:item) { Item.alphabetized.first }
 
       it "does not display quantities in line-item drop down selector" do
         create(:storage_location, :with_items, item: item, item_quantity: 10)
@@ -51,9 +54,9 @@ RSpec.describe "Audit management", type: :system, js: true do
       subject { audits_path }
 
       it "should be able to filter the #index by storage location" do
-        storage_location2 = create(:storage_location, name: "there", organization: @organization)
-        create(:audit, organization: @organization, storage_location: storage_location)
-        create(:audit, organization: @organization, storage_location: storage_location2)
+        storage_location2 = create(:storage_location, name: "there", organization: organization)
+        create(:audit, organization: organization, storage_location: storage_location)
+        create(:audit, organization: organization, storage_location: storage_location2)
 
         visit subject
         select storage_location.name, from: "filters[at_location]"
@@ -65,10 +68,12 @@ RSpec.describe "Audit management", type: :system, js: true do
       it "should be able to save progress of an audit" do
         visit subject
         click_link "New Audit"
+
         await_select2("#audit_line_items_attributes_0_item_id") do
           select storage_location.name, from: "Storage location"
         end
-        select Item.last.name, from: "audit_line_items_attributes_0_item_id"
+
+        select item.name, from: "audit_line_items_attributes_0_item_id"
         fill_in "audit_line_items_attributes_0_quantity", with: quantity.to_s
 
         expect do
@@ -111,7 +116,7 @@ RSpec.describe "Audit management", type: :system, js: true do
     end
 
     context "with an existing audit" do
-      subject { audit_path(id: audit.to_param) }
+      subject { audit_path(audit) }
 
       let(:audit) { create(:audit, :with_items, storage_location: storage_location, item: item, item_quantity: quantity) }
 
@@ -140,7 +145,7 @@ RSpec.describe "Audit management", type: :system, js: true do
       end
 
       it "should be able to confirm the audit from the #edit page" do
-        visit edit_audit_path(id: audit.to_param)
+        visit edit_audit_path(audit)
         expect(page).to have_content("Confirm Audit")
         accept_confirm do
           click_button "Confirm Audit"
@@ -155,7 +160,7 @@ RSpec.describe "Audit management", type: :system, js: true do
     end
 
     context "with a confirmed audit" do
-      subject { audit_path(id: audit.to_param) }
+      subject { audit_path(audit) }
       let(:audit) { create(:audit, :with_items, storage_location: storage_location, item: item, item_quantity: quantity, status: :confirmed) }
 
       it "should be able to edit the audit that is confirmed" do
@@ -213,8 +218,8 @@ RSpec.describe "Audit management", type: :system, js: true do
           expect(page).not_to have_content("Resume Audit")
           expect(page).not_to have_content("Delete Audit")
           expect(page).not_to have_content("Finalize Audit")
-          visit edit_audit_path(id: audit.to_param)
-          expect(page).not_to have_current_path(edit_audit_path(@organization.to_param, audit.to_param))
+          visit edit_audit_path(audit)
+          expect(page).not_to have_current_path(edit_audit_path(audit))
           expect(page).to have_current_path(audits_path)
         end
 

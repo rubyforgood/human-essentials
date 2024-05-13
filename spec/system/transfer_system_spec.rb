@@ -1,6 +1,10 @@
-RSpec.describe "Transfer management", type: :system do
+RSpec.describe "Transfer management", type: :system, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+
   before do
-    sign_in(@user)
+    sign_in(user)
   end
   let(:item) { create(:item) }
 
@@ -18,17 +22,17 @@ RSpec.describe "Transfer management", type: :system do
   end
 
   it "can transfer an inventory from a storage location to another as a user" do
-    from_storage_location = create(:storage_location, :with_items, item: item, name: "From me", organization: @organization)
-    to_storage_location = create(:storage_location, :with_items, name: "To me", organization: @organization)
+    from_storage_location = create(:storage_location, :with_items, item: item, name: "From me", organization: organization)
+    to_storage_location = create(:storage_location, :with_items, name: "To me", organization: organization)
     create_transfer("10", from_storage_location.name, to_storage_location.name)
     expect(page).to have_content("10 items have been transferred")
   end
 
   it "can delete a transfer to undo the inventory count changes" do
-    from_storage_location = create(:storage_location, :with_items, item: item, name: "From me", organization: @organization)
-    to_storage_location = create(:storage_location, :with_items, name: "To me", organization: @organization)
+    from_storage_location = create(:storage_location, :with_items, item: item, name: "From me", organization: organization)
+    to_storage_location = create(:storage_location, :with_items, name: "To me", organization: organization)
 
-    inventory = View::Inventory.new(@organization.id)
+    inventory = View::Inventory.new(organization.id)
     original_from_storage_item_count = inventory.quantity_for(storage_location: from_storage_location.id, item_id: item.id)
     original_from_ii_storage_item_count = from_storage_location.inventory_items.find_by(item_id: item.id).quantity
     expect(original_from_storage_item_count).to eq(original_from_ii_storage_item_count)
@@ -61,10 +65,10 @@ RSpec.describe "Transfer management", type: :system do
   end
 
   it 'shows a error when deleting a transfer that causes an insufficient inventory counts' do
-    from_storage_location = create(:storage_location, :with_items, item: item, name: "From me", organization: @organization)
-    to_storage_location = create(:storage_location, :with_items, name: "To me", organization: @organization)
+    from_storage_location = create(:storage_location, :with_items, item: item, name: "From me", organization: organization)
+    to_storage_location = create(:storage_location, :with_items, name: "To me", organization: organization)
 
-    inventory = View::Inventory.new(@organization.id)
+    inventory = View::Inventory.new(organization.id)
     original_from_storage_item_count = inventory.quantity_for(storage_location: from_storage_location.id, item_id: item.id)
     original_from_ii_storage_item_count = from_storage_location.inventory_items.find_by(item_id: item.id).quantity
     expect(original_from_storage_item_count).to eq(original_from_ii_storage_item_count)
@@ -104,8 +108,8 @@ RSpec.describe "Transfer management", type: :system do
   end
 
   context "when there's insufficient inventory at the origin to cover the move" do
-    let!(:from_storage_location) { create(:storage_location, :with_items, item: item, item_quantity: 10, name: "From me", organization: @organization) }
-    let!(:to_storage_location) { create(:storage_location, :with_items, name: "To me", organization: @organization) }
+    let!(:from_storage_location) { create(:storage_location, :with_items, item: item, item_quantity: 10, name: "From me", organization: organization) }
+    let!(:to_storage_location) { create(:storage_location, :with_items, name: "To me", organization: organization) }
 
     scenario "User can transfer an inventory from a storage location to another" do
       create_transfer("100", from_storage_location.name, to_storage_location.name)
@@ -116,10 +120,10 @@ RSpec.describe "Transfer management", type: :system do
   context "when viewing the index page" do
     subject { transfers_path }
     it "can filter the #index by storage location both from and to as a user" do
-      from_storage_location = create(:storage_location, name: "here", organization: @organization)
-      to_storage_location = create(:storage_location, name: "there", organization: @organization)
-      create(:transfer, organization: @organization, from: from_storage_location, to: to_storage_location)
-      create(:transfer, organization: @organization, from: to_storage_location, to: from_storage_location)
+      from_storage_location = create(:storage_location, name: "here", organization: organization)
+      to_storage_location = create(:storage_location, name: "there", organization: organization)
+      create(:transfer, organization: organization, from: from_storage_location, to: to_storage_location)
+      create(:transfer, organization: organization, from: to_storage_location, to: from_storage_location)
 
       visit subject
       select to_storage_location.name, from: "filters[to_location]"

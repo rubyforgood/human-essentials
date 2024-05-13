@@ -1,17 +1,21 @@
-RSpec.describe "Adjustment management", type: :system, js: true do
-  let!(:storage_location) { create(:storage_location, :with_items, organization: @organization) }
+RSpec.describe "Adjustment management", type: :system, js: true, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+
+  let!(:storage_location) { create(:storage_location, :with_items, organization: organization) }
   let(:add_quantity) { 10 }
   let(:sub_quantity) { -10 }
 
   subject { adjustments_path }
 
   before do
-    sign_in(@user)
+    sign_in(user)
   end
 
   context "With a new adjustment" do
     context "with a storage location that is bare", js: true do
-      let!(:bare_storage_location) { create(:storage_location, name: "We Got Nothin", organization: @organization) }
+      let!(:bare_storage_location) { create(:storage_location, name: "We Got Nothin", organization: organization) }
 
       before do
         visit subject
@@ -60,7 +64,7 @@ RSpec.describe "Adjustment management", type: :system, js: true do
 
       it "politely informs the user that they're adjusting way too hard", js: true do
         sub_quantity = -9001
-        storage_location = create(:storage_location, :with_items, name: "PICK THIS ONE", item_quantity: 10, organization: @organization)
+        storage_location = create(:storage_location, :with_items, name: "PICK THIS ONE", item_quantity: 10, organization: organization)
         visit adjustments_path
         click_on "New Adjustment"
         select storage_location.name, from: "From storage location"
@@ -77,7 +81,7 @@ RSpec.describe "Adjustment management", type: :system, js: true do
       it "politely informs the user if they try to adjust down below zero, even if they use multiple adjustments to do so" do
         sub_quantity = -9
 
-        storage_location = create(:storage_location, :with_items, name: "PICK THIS ONE", item_quantity: 10, organization: @organization)
+        storage_location = create(:storage_location, :with_items, name: "PICK THIS ONE", item_quantity: 10, organization: organization)
         visit adjustments_path
         click_on "New Adjustment"
         select storage_location.name, from: "From storage location"
@@ -110,9 +114,9 @@ RSpec.describe "Adjustment management", type: :system, js: true do
   end
 
   it "can filter the #index by storage location" do
-    storage_location2 = create(:storage_location, name: "there", organization: @organization)
-    create(:adjustment, organization: @organization, storage_location: storage_location)
-    create(:adjustment, organization: @organization, storage_location: storage_location2)
+    storage_location2 = create(:storage_location, name: "there", organization: organization)
+    create(:adjustment, organization: organization, storage_location: storage_location)
+    create(:adjustment, organization: organization, storage_location: storage_location2)
 
     visit subject
     select storage_location.name, from: "filters[at_location]"
@@ -122,12 +126,12 @@ RSpec.describe "Adjustment management", type: :system, js: true do
   end
 
   it "can filter the #index by user" do
-    storage_location2 = create(:storage_location, name: "there", organization: @organization)
-    create(:adjustment, organization: @organization, storage_location: storage_location, user_id: @user.id)
-    create(:adjustment, organization: @organization, storage_location: storage_location2, user_id: @organization_admin.id)
+    storage_location2 = create(:storage_location, name: "there", organization: organization)
+    create(:adjustment, organization: organization, storage_location: storage_location, user_id: user.id)
+    create(:adjustment, organization: organization, storage_location: storage_location2, user_id: organization_admin.id)
 
     visit subject
-    select @user.name, from: "filters[by_user]"
+    select user.name, from: "filters[by_user]"
     click_on "Filter"
 
     expect(page).to have_css("table tr", count: 2)

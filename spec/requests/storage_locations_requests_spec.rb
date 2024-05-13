@@ -1,7 +1,11 @@
-RSpec.describe "StorageLocations", type: :request do
+RSpec.describe "StorageLocations", type: :request, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+
   context "While signed in" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     describe "GET #index" do
@@ -117,7 +121,7 @@ RSpec.describe "StorageLocations", type: :request do
 
     describe "GET #edit" do
       it "returns http success" do
-        get edit_storage_location_path(id: create(:storage_location, organization: @organization))
+        get edit_storage_location_path(id: create(:storage_location, organization: organization))
         expect(response).to be_successful
       end
     end
@@ -180,8 +184,8 @@ RSpec.describe "StorageLocations", type: :request do
           item1 = create(:item)
           item2 = create(:item)
           item3 = create(:item)
-          storage_location_with_items = create(:storage_location, organization: @organization)
-          TestInventory.create_inventory(@organization,
+          storage_location_with_items = create(:storage_location, organization: organization)
+          TestInventory.create_inventory(organization,
             {
               storage_location_with_items.id => {
                 item1.id => 30,
@@ -192,7 +196,7 @@ RSpec.describe "StorageLocations", type: :request do
           file = fixture_file_upload("inventory.csv", "text/csv")
 
           params = { file: file, storage_location: storage_location_with_items.id }
-          post import_inventory_storage_locations_path(organization_name: @organization.to_param), params: params
+          post import_inventory_storage_locations_path(organization_name: organization.to_param), params: params
 
           expect(response).to be_redirect
           expect(response).to have_error "Could not complete action: inventory already has items stored"
@@ -204,7 +208,7 @@ RSpec.describe "StorageLocations", type: :request do
       let(:item2) { create(:item, name: "Test Item2") }
       let(:item3) { create(:item, name: "Test Item3", active: false) }
 
-      let(:storage_location) { create(:storage_location, organization: @organization) }
+      let(:storage_location) { create(:storage_location, organization: organization) }
       before(:each) do
         TestInventory.create_inventory(storage_location.organization, {
           storage_location.id => {
@@ -257,7 +261,7 @@ RSpec.describe "StorageLocations", type: :request do
               expect(response.body).to include("Smithsonian")
               expect(response.body).to include("Test Item")
               # event world doesn't care about versions
-              expect(response.body).to include("N/A") unless Event.read_events?(@organization)
+              expect(response.body).to include("N/A") unless Event.read_events?(organization)
             end
           end
         end
@@ -275,14 +279,14 @@ RSpec.describe "StorageLocations", type: :request do
 
     describe "GET #destroy" do
       it "redirects to #index" do
-        delete storage_location_path(id: create(:storage_location, organization: @organization))
+        delete storage_location_path(id: create(:storage_location, organization: organization))
         expect(response).to redirect_to(storage_locations_path)
       end
     end
 
     describe "PUT #deactivate" do
       context "with inventory" do
-        let(:storage_location) { create(:storage_location, :with_items, organization: @organization) }
+        let(:storage_location) { create(:storage_location, :with_items, organization: organization) }
 
         it "does not discard" do
           put storage_location_deactivate_path(storage_location_id: storage_location.id, format: :json)
@@ -290,7 +294,7 @@ RSpec.describe "StorageLocations", type: :request do
         end
       end
 
-      let(:storage_location) { create(:storage_location, organization: @organization) }
+      let(:storage_location) { create(:storage_location, organization: organization) }
 
       it "discards" do
         put storage_location_deactivate_path(storage_location_id: storage_location.id, format: :json)
@@ -299,7 +303,7 @@ RSpec.describe "StorageLocations", type: :request do
     end
 
     describe "PUT #reactivate" do
-      let(:storage_location) { create(:storage_location, organization: @organization, discarded_at: Time.zone.now) }
+      let(:storage_location) { create(:storage_location, organization: organization, discarded_at: Time.zone.now) }
 
       it "undiscards" do
         put storage_location_reactivate_path(storage_location_id: storage_location.id, format: :json)
@@ -316,14 +320,14 @@ RSpec.describe "StorageLocations", type: :request do
         }
       end
 
-      let(:storage_location) { create(:storage_location, :with_items, organization: @organization) }
+      let(:storage_location) { create(:storage_location, :with_items, organization: organization) }
       let(:inventory_items_at_storage_location) { storage_location.inventory_items.map(&:to_h) }
-      let(:inactive_inventory_items) { @organization.inventory_items.inactive.map(&:to_h) }
+      let(:inactive_inventory_items) { organization.inventory_items.inactive.map(&:to_h) }
       let(:items_at_storage_location) do
-        View::Inventory.new(@organization.id).items_for_location(storage_location.id).map(&method(:item_to_h))
+        View::Inventory.new(organization.id).items_for_location(storage_location.id).map(&method(:item_to_h))
       end
       let(:inactive_items) do
-        View::Inventory.new(@organization.id).items_for_location(storage_location.id)
+        View::Inventory.new(organization.id).items_for_location(storage_location.id)
           .select { |i| !i.active }
           .map(&method(:item_to_h))
       end
@@ -337,10 +341,12 @@ RSpec.describe "StorageLocations", type: :request do
       end
 
       context "when also including inactive items" do
+        let(:organization) { create(:organization, :with_items) }
+
         it "returns a collection that also includes items that have been deactivated" do
-          @organization.items.first.update(active: false)
+          organization.items.first.update(active: false)
           get inventory_storage_location_path(storage_location, format: :json, include_deactivated_items: true)
-          @organization.items.first.update(active: true)
+          organization.items.first.update(active: true)
           expect(response.parsed_body).to eq(items_at_storage_location + inactive_items)
           expect(response.parsed_body).to eq(inventory_items_at_storage_location + inactive_inventory_items)
         end
@@ -349,7 +355,7 @@ RSpec.describe "StorageLocations", type: :request do
       context "when also including omitted items" do
         it "returns a collection that also includes all items, but with zeroed quantities" do
           get inventory_storage_location_path(storage_location, format: :json, include_omitted_items: true)
-          expect(response.parsed_body.count).to eq(@organization.items.count)
+          expect(response.parsed_body.count).to eq(organization.items.count)
         end
 
         it "contains a collection of ducktyped entries that respond the same" do

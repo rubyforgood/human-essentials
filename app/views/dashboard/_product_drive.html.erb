@@ -1,5 +1,0 @@
-  <div class="float-center donation">
-    <%= link_to donation do %>
-      <%= number_with_delimiter donation.line_items.total %> from <%= donation.product_drive&.name || donation.product_drive_participant.business_name %>
-    <% end %>
-  </div>

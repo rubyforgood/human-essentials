@@ -1,0 +1,82 @@
+<%
+  # Allows locals to be optional
+  footer ||= nil
+  footer_div ||= nil
+  header_div ||= nil
+  id ||= nil
+  subtitle ||= nil
+  title ||= nil
+  type ||= :box # or :table or :plain
+
+  options ||= {}
+  options.symbolize_keys!
+  options[:class] ||= ""
+  options[:class] += " card"
+  options[:id] = id if id
+%>
+<%= content_tag(:div, **options) do %>
+  <%=
+    header_div ||
+      begin
+        gradient ||= "primary"
+
+        header_options ||= {}
+        header_options.symbolize_keys!
+        header_options[:class] ||= ""
+        header_options[:class] += " card-header border-0 bg-gradient-#{gradient}"
+
+        header ||=
+          begin
+            title = h title
+            title += " ".html_safe + content_tag(:small, subtitle) if subtitle
+            content_tag :h3, title, class: "card-title"
+          end
+
+        content_tag(:div, **header_options) do
+  %>
+          <%= header %>
+          <div class="card-tools">
+            <% if type == :table %>
+              <button type="button" class="btn btn-tool" data-card-widget="remove">
+                <i class="fas fa-times"></i>
+              </button>
+            <% else %>
+              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+              </button>
+            <% end %>
+          </div>
+        <% end
+      end %>
+  <% case type.to_sym
+    when :box %>
+      <div class="card-body">
+        <div class="position-relative mb-4">
+          <div class="box-body text-center float-center">
+            <%= yield %>
+          </div>
+        </div>
+      </div>
+    <% when :plain %>
+      <div class="card-body">
+        <%= yield %>
+      </div>
+    <% when :table %>
+      <div class="box-body table-responsive no-padding">
+        <%= yield %>
+      </div>
+  <% else
+    raise "Unknown card type: #{type}"
+  end %>
+
+  <%=
+    footer_div ||
+      if footer
+        footer_options ||= {}
+        footer_options.symbolize_keys!
+        footer_options[:class] ||= ""
+        footer_options[:class] += " card-footer"
+        content_tag(:div, footer, **footer_options)
+      end
+  %>
+<% end %>

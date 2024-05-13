@@ -27,7 +27,7 @@ RSpec.describe "Dashboard", type: :request, skip_seed: true do
 
       context "for another org" do
         it "still displays the user's org" do
-          # nother org
+          # another org
           get dashboard_path(organization_name: create(:organization).to_param)
           expect(response.body).to include(organization.name)
         end
