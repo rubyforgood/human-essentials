@@ -122,7 +122,7 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
             create(:line_item, :donation, itemizable_id: donation.id, item_id: active_item.id, quantity: 4)
             create(:line_item, :donation, itemizable_id: donation.id, item_id: inactive_item.id, quantity: 5)
 
-          get product_drives_path(format: :csv)
+            get product_drives_path(format: :csv)
 
             row = response.body.split("\n")[1]
             cells = row.split(',')
@@ -133,22 +133,22 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
             expect(cells.count('0')).to eq(organization.items.count - 2)
           end
 
-        it "only counts items within the selected date range" do
-          item = organization.items.first
-          product_drive = create(
-            :product_drive,
-            name: 'product_drive_within_date_range',
-            start_date: '20/01/2023',
-            end_date: '30/01/2023',
-            organization: organization
-          )
+          it "only counts items within the selected date range" do
+            item = organization.items.first
+            product_drive = create(
+              :product_drive,
+              name: 'product_drive_within_date_range',
+              start_date: '20/01/2023',
+              end_date: '30/01/2023',
+              organization: organization
+            )
 
             donation = create(:product_drive_donation, product_drive: product_drive, issued_at: '21/01/2023')
             create(:line_item, :donation, itemizable_id: donation.id, item_id: item.id, quantity: 4)
             donation = create(:product_drive_donation, product_drive: product_drive, issued_at: '26/01/2023')
             create(:line_item, :donation, itemizable_id: donation.id, item_id: item.id, quantity: 10)
 
-          get product_drives_path(format: :csv, filters: { date_range: date_range_picker_params(Date.parse('20/01/2023'), Date.parse('25/01/2023')) })
+            get product_drives_path(format: :csv, filters: { date_range: date_range_picker_params(Date.parse('20/01/2023'), Date.parse('25/01/2023')) })
 
             row = response.body.split("\n")[1]
             cells = row.split(',')

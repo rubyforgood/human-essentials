@@ -26,7 +26,7 @@ RSpec.describe "Users - Omniauth Callbacks", type: :request, skip_seed: true do
     context "with a valid user" do
       it "redirects correctly" do
         organization = create(:organization, skip_items: true)
-        user = create(:user, email: "me@me.com", organization: organization)
+        create(:user, email: "me@me.com", organization: organization)
 
         post "/users/auth/google_oauth2/callback"
 
