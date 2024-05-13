@@ -238,7 +238,14 @@ class DistributionPdf
   end
 
   def insert_signature_fields
-    move_down 20
+    # Signatures lines shouldn't be separated by a page break, so if we can't fit both lines together we make a new page
+    cannot_fit_both_lines = cursor < 130
+    if cannot_fit_both_lines
+      start_new_page
+    else
+      move_down 20
+    end
+
     signature_lines_for "Received By:"
 
     move_down 20
