@@ -699,8 +699,8 @@ RSpec.describe InventoryAggregate, skip_seed: true do
           }
         })
       donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
-      donation.line_items << build(:line_item, quantity: 50, item: item1)
-      donation.line_items << build(:line_item, quantity: 30, item: item2)
+      donation.line_items << build(:line_item, quantity: 50, item: item1, itemizable: donation)
+      donation.line_items << build(:line_item, quantity: 30, item: item2, itemizable: donation)
       donation.save!
 
       attributes = {line_items_attributes: {"0": {item_id: item1.id, quantity: 40}, "1": {item_id: item2.id, quantity: 25}}}
@@ -757,7 +757,7 @@ RSpec.describe InventoryAggregate, skip_seed: true do
         DonationEvent.publish(donation)
 
         distribution = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location1)
-        distribution.line_items << build(:line_item, quantity: 100, item: item1)
+        distribution.line_items << build(:line_item, quantity: 100, item: item1, itemizable: distribution)
         expect { DistributionEvent.publish(distribution) }.to raise_error do |e|
           expect(e).to be_a(InventoryError)
           expect(e.event).to be_a(DistributionEvent)
@@ -771,10 +771,10 @@ RSpec.describe InventoryAggregate, skip_seed: true do
         next unless Event.read_events?(organization) # only relevant if flag is on
 
         donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
-        donation.line_items << build(:line_item, quantity: 100, item: item1)
+        donation.line_items << build(:line_item, quantity: 100, item: item1, itemizable: donation)
         DonationEvent.publish(donation)
         distribution = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location1)
-        distribution.line_items << build(:line_item, quantity: 90, item: item1)
+        distribution.line_items << build(:line_item, quantity: 90, item: item1, itemizable: distribution)
         DistributionEvent.publish(distribution)
         donation.line_items.first.quantity = 20
         expect { DonationEvent.publish(donation) }.to raise_error(InventoryError)
@@ -785,19 +785,19 @@ RSpec.describe InventoryAggregate, skip_seed: true do
 
         travel_to Time.zone.local(2023, 5, 5)
         donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
-        donation.line_items << build(:line_item, quantity: 50, item: item1)
+        donation.line_items << build(:line_item, quantity: 50, item: item1, itemizable: donation)
         DonationEvent.publish(donation)
 
         travel 1.minute
 
         distribution = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location1)
-        distribution.line_items << build(:line_item, quantity: 10, item: item1)
+        distribution.line_items << build(:line_item, quantity: 10, item: item1, itemizable: distribution)
         DistributionEvent.publish(distribution)
 
         travel 1.minute
 
         distribution2 = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location1)
-        distribution2.line_items << build(:line_item, quantity: 20, item: item1)
+        distribution2.line_items << build(:line_item, quantity: 20, item: item1, itemizable: distribution2)
         DistributionEvent.publish(distribution2)
 
         travel 1.minute
