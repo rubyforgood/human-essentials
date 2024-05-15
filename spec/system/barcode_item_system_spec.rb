@@ -1,8 +1,13 @@
-RSpec.describe "Barcode management", type: :system, js: true do
+RSpec.describe "Barcode management", type: :system, js: true, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+  let(:base_item) { create(:base_item) }
+
   before do
-    sign_in(@user)
+    sign_in(user)
   end
-  let(:url_prefix) { "/#{@organization.to_param}" }
+  let(:url_prefix) { "/#{organization.to_param}" }
 
   context "While viewing the barcode items index page" do
     subject { url_prefix + "/barcode_items" }
@@ -12,15 +17,15 @@ RSpec.describe "Barcode management", type: :system, js: true do
     end
 
     it "should only show the barcodes created within the organization" do
-      create(:barcode_item, organization_id: @organization.id)
+      create(:barcode_item, organization_id: organization.id)
       create(:global_barcode_item)
       visit subject
       expect(page).to have_css("table tbody tr", count: 1)
     end
 
     it "can have a user filter the #index by barcode value" do
-      b = create(:barcode_item, organization: @organization)
-      create(:barcode_item, organization: @organization)
+      b = create(:barcode_item, organization: organization)
+      create(:barcode_item, organization: organization)
       visit subject
       fill_in "filters[by_value]", with: b.value
       click_button "Filter"
@@ -44,8 +49,8 @@ RSpec.describe "Barcode management", type: :system, js: true do
     end
 
     it "can have a user filter the #index by item type" do
-      b = create(:barcode_item, organization: @organization)
-      create(:barcode_item, organization: @organization)
+      b = create(:barcode_item, organization: organization)
+      create(:barcode_item, organization: organization)
       visit subject
       select b.item.name, from: "filters[barcodeable_id]"
       click_button "Filter"
@@ -54,10 +59,11 @@ RSpec.describe "Barcode management", type: :system, js: true do
     end
 
     it "can have a user filter the #index by base item type" do
-      item = create(:item, name: "Red 1T Diapers", base_item: BaseItem.first)
-      item2 = create(:item, name: "Blue 1T Diapers", base_item: BaseItem.first)
-      create(:barcode_item, organization: @organization, barcodeable: item)
-      create(:barcode_item, organization: @organization, barcodeable: item2)
+      item = create(:item, name: "Red 1T Diapers", base_item: base_item)
+      item2 = create(:item, name: "Blue 1T Diapers", base_item: base_item)
+      create(:barcode_item, organization: organization, barcodeable: item)
+      create(:barcode_item, organization: organization, barcodeable: item2)
+
       visit subject
       select BaseItem.first.name, from: "filters[by_item_partner_key]"
       click_button "Filter"
@@ -67,7 +73,7 @@ RSpec.describe "Barcode management", type: :system, js: true do
   end
 
   context "With organization-specific barcodes" do
-    let(:barcode_traits) { attributes_for(:barcode_item, organization_id: @organization.id) }
+    let(:barcode_traits) { attributes_for(:barcode_item, organization_id: organization.id) }
 
     it "can have a user add a new barcode" do
       Item.delete_all
@@ -89,7 +95,7 @@ RSpec.describe "Barcode management", type: :system, js: true do
 
     context "when editing an existing barcode" do
       subject { url_prefix + "/barcode_items/#{barcode.id}/edit" }
-      let!(:barcode) { create(:barcode_item, organization_id: @organization.id) }
+      let!(:barcode) { create(:barcode_item, organization_id: organization.id) }
 
       it "saves the changes if they are valid" do
         create(:item)

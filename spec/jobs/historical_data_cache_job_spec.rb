@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe HistoricalDataCacheJob, type: :job do
+RSpec.describe HistoricalDataCacheJob, type: :job, skip_seed: true do
   include ActiveJob::TestHelper
 
   let(:organization) { create(:organization) }

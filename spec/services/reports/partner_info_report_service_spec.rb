@@ -1,4 +1,4 @@
-RSpec.describe Reports::PartnerInfoReportService, type: :service do
+RSpec.describe Reports::PartnerInfoReportService, type: :service, skip_seed: true do
   let(:year) { 2020 }
   let(:organization) { create(:organization) }
   let(:another_organization) { create(:organization) }

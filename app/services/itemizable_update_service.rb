@@ -18,6 +18,12 @@ module ItemizableUpdateService
       apply_change_method = (type == :increase) ? :increase_inventory : :decrease_inventory
       undo_change_method = (type == :increase) ? :decrease_inventory : :increase_inventory
 
+      previous = nil
+      # TODO once event sourcing has been out for long enough, we can safely remove this
+      if Event.where(eventable: itemizable).none? || UpdateExistingEvent.where(eventable: itemizable).any?
+        previous = itemizable.line_items.map(&:dup)
+      end
+
       line_item_attrs = Array.wrap(params[:line_items_attributes]&.values)
       line_item_attrs.each { |attr| attr.delete(:id) }
 
@@ -27,7 +33,11 @@ module ItemizableUpdateService
         params:              params,
         from_location:       from_location,
         to_location:         to_location)
-      event_class&.publish(itemizable)
+      if previous
+        UpdateExistingEvent.publish(itemizable, previous)
+      else
+        event_class&.publish(itemizable)
+      end
     end
   end
 

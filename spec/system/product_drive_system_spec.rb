@@ -1,9 +1,12 @@
-RSpec.describe "Product Drives", type: :system, js: true do
+RSpec.describe "Product Drives", type: :system, js: true, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+
   include DateRangeHelper
 
   before do
-    sign_in @user
-    @url_prefix = "/#{@organization.id}"
+    sign_in user
+    @url_prefix = "/#{organization.id}"
   end
 
   context "When visiting the index page without parameters" do
