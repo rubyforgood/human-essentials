@@ -165,10 +165,4 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service, skip_seed: 
       expect(service.disposable_diapers_from_kits_total).to eq(100)
     end
   end
-
-
-
-
-
-
 end

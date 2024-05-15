@@ -157,7 +157,7 @@ RSpec.describe Item, type: :model, skip_seed: true do
         wipes_base = create(:base_item, category: "Wipes - Adults", partner_key: "adult_wipes")
 
         child_disposable_item = create(:item, :active, name: "Item 1", base_item: child_base, organization: organization)
-        adult_cloth_item  = create(:item, :active, name: "Item 2", base_item: adult_cloth_base, organization: organization)
+        adult_cloth_item = create(:item, :active, name: "Item 2", base_item: adult_cloth_base, organization: organization)
         child_cloth_item = create(:item, :active, name: "Item 3", base_item: child_cloth_base, organization: organization)
         adult_brief_item = create(:item, :active, name: "Item 4", base_item: adult_brief_base, organization: organization)
         adult_incontinence_item = create(:item, :active, name: "Item 5", base_item: adult_incontinence_base, organization: organization)
@@ -173,10 +173,6 @@ RSpec.describe Item, type: :model, skip_seed: true do
       end
     end
   end
-
-
-
-
 
   context "Methods >" do
     describe "storage_locations_containing" do
