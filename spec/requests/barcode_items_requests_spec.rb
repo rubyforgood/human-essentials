@@ -1,7 +1,11 @@
-RSpec.describe "BarcodeItems", type: :request do
+RSpec.describe "BarcodeItems", type: :request, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+
   context "While signed in" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     describe "GET #index" do
@@ -10,7 +14,7 @@ RSpec.describe "BarcodeItems", type: :request do
         response
       end
 
-      before { create(:barcode_item) }
+      before { create(:barcode_item, organization: organization) }
 
       context "html" do
         let(:response_format) { 'html' }
@@ -66,8 +70,9 @@ RSpec.describe "BarcodeItems", type: :request do
 
     describe "GET #find" do
       let!(:global_barcode) { create(:global_barcode_item) }
-      let!(:organization_barcode) { create(:barcode_item, organization: @organization) }
-      let!(:other_barcode) { create(:barcode_item, organization: create(:organization)) }
+      let!(:organization_barcode) { create(:barcode_item, organization: organization) }
+      let(:other_organization) { create(:organization, skip_items: true) }
+      let!(:other_barcode) { create(:barcode_item, organization: other_organization) }
 
       context "via ajax" do
         it "can find a barcode that is scoped to just this organization" do
@@ -97,9 +102,9 @@ RSpec.describe "BarcodeItems", type: :request do
 
     describe "DELETE #destroy" do
       it "disallows a user to delete someone else's barcode" do
-        other_org = create(:organization)
-        other_barcode = create(:barcode_item, organization_id: other_org.id)
-        delete barcode_item_path(id: other_barcode.to_param)
+        other_org = create(:organization, skip_items: true)
+        other_barcode = create(:barcode_item, organization: other_org)
+        delete barcode_item_path(other_barcode)
         expect(response).not_to be_successful
         expect(response).to have_error(/permission/)
       end
@@ -108,19 +113,19 @@ RSpec.describe "BarcodeItems", type: :request do
         allow_any_instance_of(User).to receive(:has_role?).with(Role::SUPER_ADMIN).and_return(false)
         allow_any_instance_of(User).to receive(:has_role?).with(Role::ORG_USER, anything).and_return(true)
         global_barcode = create(:global_barcode_item)
-        delete barcode_item_path(id: global_barcode.to_param)
+        delete barcode_item_path(global_barcode)
         expect(response).not_to be_successful
         expect(response).to have_error(/permission/)
       end
 
       it "redirects to the index" do
-        delete barcode_item_path(id: create(:barcode_item, organization_id: @organization.id))
+        delete barcode_item_path(id: create(:barcode_item, organization_id: organization.id))
         expect(subject).to redirect_to(barcode_items_path)
       end
     end
 
     context "Looking at a different organization" do
-      let(:object) { create(:barcode_item, organization: create(:organization)) }
+      let(:object) { create(:barcode_item, organization: create(:organization, skip_items: true)) }
       include_examples "requiring authorization"
     end
   end
