@@ -5,7 +5,7 @@ describe Partners::FamilyRequestCreateService do
     subject { described_class.new(**args).call }
     let(:args) do
       {
-        request_type: 0,
+        request_type: "quantity",
         partner_user_id: partner_user.id,
         comments: comments,
         for_families: for_families,
@@ -109,7 +109,7 @@ describe Partners::FamilyRequestCreateService do
         let(:fake_request_create_service) { instance_double(Partners::RequestCreateService, call: -> {}, errors: [], partner_request: -> {}) }
 
         before do
-          allow(Partners::RequestCreateService).to receive(:new).with(request_type: 0, partner_user_id: partner_user.id, comments: comments, for_families: false, item_requests_attributes: contain_exactly(*expected_item_request_attributes)).and_return(fake_request_create_service)
+          allow(Partners::RequestCreateService).to receive(:new).with(request_type: "quantity", partner_user_id: partner_user.id, comments: comments, for_families: false, item_requests_attributes: contain_exactly(*expected_item_request_attributes)).and_return(fake_request_create_service)
         end
 
         it 'should send the correct request payload to the Partners::RequestCreateService and call it' do

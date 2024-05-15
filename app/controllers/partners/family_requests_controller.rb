@@ -30,7 +30,7 @@ module Partners
         { item_id: item_id, person_count: item_requested_children.size, children: item_requested_children }
       end
       create_service = Partners::FamilyRequestCreateService.new(
-        request_type: 2,
+        request_type: "child",
         partner_user_id: current_user.id,
         family_requests_attributes: family_requests_attributes,
         for_families: true

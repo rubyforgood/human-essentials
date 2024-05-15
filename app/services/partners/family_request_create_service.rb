@@ -8,8 +8,7 @@ module Partners
 
     attr_reader :partner_user_id, :comments, :family_requests_attributes, :partner_request
 
-    def initialize(request_type:, partner_user_id:, family_requests_attributes:, comments: nil, for_families: false)
-      @request_type = request_type
+    def initialize(partner_user_id:, family_requests_attributes:, comments: nil, for_families: false)
       @partner_user_id = partner_user_id
       @comments = comments
       @family_requests_attributes = family_requests_attributes.presence || []
@@ -20,7 +19,6 @@ module Partners
       return self unless valid?
 
       request_create_svc = Partners::RequestCreateService.new(
-        request_type: @request_type.to_i,
         partner_user_id: partner_user_id,
         comments: comments,
         for_families: @for_families,

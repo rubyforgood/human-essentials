@@ -4,8 +4,7 @@ module Partners
 
     attr_reader :partner_request
 
-    def initialize(request_type:, partner_user_id:, comments: nil, for_families: false, item_requests_attributes: [], additional_attrs: {})
-      @request_type = request_type
+    def initialize(partner_user_id:, comments: nil, for_families: false, item_requests_attributes: [], additional_attrs: {})
       @partner_user_id = partner_user_id
       @comments = comments
       @for_families = for_families
@@ -15,7 +14,7 @@ module Partners
 
     def call
       @partner_request = ::Request.new(
-        request_type: @request_type.to_i,
+        request_type: request_type,
         partner_id: partner.id,
         organization_id: organization_id,
         comments: comments,
@@ -102,6 +101,10 @@ module Partners
 
     def partner
       @partner ||= ::User.find(partner_user_id).partner
+    end
+
+    def request_type 
+      @for_families ? "child" : "individual"
     end
   end
 end

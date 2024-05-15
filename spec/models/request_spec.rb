@@ -7,7 +7,7 @@
 #  discard_reason  :text
 #  discarded_at    :datetime
 #  request_items   :jsonb
-#  request_type    :integer
+#  request_type    :string
 #  status          :integer          default("pending")
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
