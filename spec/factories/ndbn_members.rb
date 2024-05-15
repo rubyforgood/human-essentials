@@ -10,6 +10,6 @@
 FactoryBot.define do
   factory :ndbn_member, class: NDBNMember do
     sequence(:ndbn_member_id) { |n| n }
-    account_name { "MyString" }
+    account_name { Faker::Lorem.sentence(word_count: 2) }
   end
 end
