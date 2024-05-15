@@ -1,13 +1,16 @@
 require "rails_helper"
 
-RSpec.describe "Reports::ItemizedDistributions", type: :request do
+RSpec.describe "Reports::ItemizedDistributions", type: :request, skip_seed: true do
+  let(:organization) { create(:organization, skip_items: true) }
+  let(:user) { create(:user, organization: organization) }
+
   let(:default_params) do
-    {organization_name: @organization.to_param}
+    {organization_name: organization.to_param}
   end
 
   describe "while signed in" do
     before do
-      sign_in @user
+      sign_in user
     end
 
     describe "GET #index" do
@@ -33,7 +36,7 @@ RSpec.describe "Reports::ItemizedDistributions", type: :request do
     end
 
     context "with a distribution" do
-      let(:distribution) { create(:distribution, :with_items, organization: @organization) }
+      let(:distribution) { create(:distribution, :with_items, organization: organization) }
 
       it "Shows an item from the distribution" do
         distribution
