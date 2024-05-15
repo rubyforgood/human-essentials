@@ -27,7 +27,8 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service, skip_see
                            "Adult Incontinence Pads",
                            "Underpads (Pack)",
                            "Adult Liners",
-                           "Wipes (Adult)")
+                            "Adult Cloth Diapers (Large/XL/XXL)",
+                            "Adult Cloth Diapers (Small/Medium)")
     end
 
     describe 'with values' do
@@ -115,7 +116,8 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service, skip_see
                              "Adult Incontinence Pads",
                              "Underpads (Pack)",
                              "Adult Liners",
-                             "Wipes (Adult)")
+                              "Adult Cloth Diapers (Large/XL/XXL)",
+                              "Adult Cloth Diapers (Small/Medium)")
       end
 
       it 'should handle null distribution quantity' do
@@ -138,7 +140,8 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service, skip_see
                              "Adult Incontinence Pads",
                              "Underpads (Pack)",
                              "Adult Liners",
-                             "Wipes (Adult)")
+                              "Adult Cloth Diapers (Large/XL/XXL)",
+                              "Adult Cloth Diapers (Small/Medium)")
       end
     end
   end

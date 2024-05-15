@@ -112,39 +112,71 @@ RSpec.describe Item, type: :model, skip_seed: true do
     describe "->disposable" do
       it "returns records associated with disposable diapers" do
         base_1 = create(:base_item, category: "Diapers - Childrens")
-        base_2 = create(:base_item, category: "Diapers - Adult")
+        adult_base = create(:base_item, category: "Diapers - Adult")
         cloth_base = create(:base_item, category: "Diapers - Cloth (Adult)")
 
         disposable_1 = create(:item, :active, name: "Disposable Diaper 1", base_item: base_1, organization: organization)
-        disposable_2 = create(:item, :active, name: "Disposable Diaper 2", base_item: base_2, organization: organization)
+        adult_1 = create(:item, :active, name: "Adult Diaper 1", base_item: adult_base, organization: organization)
         cloth_1 = create(:item, :active, name: "Cloth Diaper", base_item: cloth_base, organization: organization)
 
         disposables = Item.disposable
 
-        expect(disposables.count).to eq(2)
-        expect(disposables).to include(disposable_1, disposable_2)
-        expect(disposables).to_not include(cloth_1)
+        expect(disposables.count).to eq(1)
+        expect(disposables).to include(disposable_1)
+        expect(disposables).to_not include(adult_1, cloth_1)
       end
     end
 
     describe "->cloth_diapers" do
-      it "returns records associated with disposable diapers" do
-        base_1 = create(:base_item, category: "Diapers - Childrens")
-        cloth_base_1 = create(:base_item, category: "Diapers - Cloth (Adult)")
-        cloth_base_2 = create(:base_item, category: "Diapers - Cloth (Kids)")
+      it "returns records associated with cloth diapers" do
+        disposable_base = create(:base_item, category: "Diapers - Childrens")
+        adult_cloth_base = create(:base_item, category: "Diapers - Cloth (Adult)")
+        cloth_base = create(:base_item, category: "Diapers - Cloth (Kids)")
 
-        cloth_1 = create(:item, :active, name: "Cloth Diaper", base_item: cloth_base_1, organization: organization)
-        cloth_2 = create(:item, :active, name: "Disposable Diaper 2", base_item: cloth_base_2, organization: organization)
-        disposable_1 = create(:item, :active, name: "Disposable Diaper 1", base_item: base_1, organization: organization)
+        cloth_item = create(:item, :active, name: "Cloth Diaper", base_item: cloth_base, organization: organization)
+        adult_cloth_item = create(:item, :active, name: "Adult_Cloth Diaper 1", base_item: adult_cloth_base, organization: organization)
+        disposable_item = create(:item, :active, name: "Disposable Diaper 1", base_item: disposable_base, organization: organization)
 
         cloth_diapers = Item.cloth_diapers
 
-        expect(cloth_diapers.count).to eq(2)
-        expect(cloth_diapers).to include(cloth_1, cloth_2)
-        expect(cloth_diapers).to_not include(disposable_1)
+        expect(cloth_diapers.count).to eq(1)
+        expect(cloth_diapers).to include(cloth_item)
+        expect(cloth_diapers).to_not include(disposable_item, adult_cloth_item)
+      end
+    end
+
+    describe "->adult_incontinence" do
+      it "returns records associated with adult incontinence" do
+        child_base = create(:base_item, category: "Diapers - Childrens")
+        adult_cloth_base = create(:base_item, category: "Diapers - Cloth (Adult)")
+        child_cloth_base = create(:base_item, category: "Diapers - Cloth (Kids)")
+        adult_brief_base = create(:base_item, category: "Diapers - Adult")
+        pad_base = create(:base_item, category: "random", partner_key: "underpads")
+        adult_incontinence_base = create(:base_item, category: "random", partner_key: "adult_incontinence")
+        liner_base = create(:base_item, category: "random", partner_key: "liners")
+        wipes_base = create(:base_item, category: "Wipes - Adults", partner_key: "adult_wipes")
+
+        child_disposable_item = create(:item, :active, name: "Item 1", base_item: child_base, organization: organization)
+        adult_cloth_item  = create(:item, :active, name: "Item 2", base_item: adult_cloth_base, organization: organization)
+        child_cloth_item = create(:item, :active, name: "Item 3", base_item: child_cloth_base, organization: organization)
+        adult_brief_item = create(:item, :active, name: "Item 4", base_item: adult_brief_base, organization: organization)
+        adult_incontinence_item = create(:item, :active, name: "Item 5", base_item: adult_incontinence_base, organization: organization)
+        pad_item = create(:item, :active, name: "Item 6", base_item: pad_base, organization: organization)
+        liner_item = create(:item, :active, name: "Item 7", base_item: liner_base, organization: organization)
+        wipes_item = create(:item, :active, name: "Item 8", base_item: wipes_base, organization: organization)
+
+        ai_items = Item.adult_incontinence
+
+        expect(ai_items.count).to eq(5)
+        expect(ai_items).to include(adult_cloth_item, adult_brief_item, adult_incontinence_item, pad_item, liner_item)
+        expect(ai_items).to_not include(child_disposable_item, child_cloth_item, wipes_item)
       end
     end
   end
+
+
+
+
 
   context "Methods >" do
     describe "storage_locations_containing" do
