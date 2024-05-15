@@ -1,4 +1,4 @@
-RSpec.describe "Barcode Items Admin", type: :system, skip_seed: true do
+RSpec.describe "Barcode Items Admin", type: :system do
   let(:organization) { create(:organization) }
   let(:super_admin) { create(:super_admin, organization: organization) }
 

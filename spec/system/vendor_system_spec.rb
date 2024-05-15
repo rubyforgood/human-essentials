@@ -1,4 +1,4 @@
-RSpec.describe "Vendor", type: :system, js: true, skip_seed: true do
+RSpec.describe "Vendor", type: :system, js: true do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 

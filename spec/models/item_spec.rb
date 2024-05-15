@@ -21,7 +21,7 @@
 #  organization_id              :integer
 #
 
-RSpec.describe Item, type: :model, skip_seed: true do
+RSpec.describe Item, type: :model do
   let(:organization) { create(:organization) }
 
   describe 'Assocations >' do

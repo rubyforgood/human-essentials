@@ -17,7 +17,7 @@
 #  storage_location_id    :integer
 #
 
-RSpec.describe Distribution, type: :model, skip_seed: true do
+RSpec.describe Distribution, type: :model do
   let(:organization) { create(:organization) }
 
   it_behaves_like "itemizable"

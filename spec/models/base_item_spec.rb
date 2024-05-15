@@ -15,7 +15,7 @@
 
 require "rails_helper"
 
-RSpec.describe BaseItem, type: :model, skip_seed: true do
+RSpec.describe BaseItem, type: :model do
   let(:organization) { create(:organization) }
 
   describe "Validations >" do

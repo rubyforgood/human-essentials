@@ -1,7 +1,7 @@
 # == No Schema Information
 #
 
-RSpec.describe RequestItem, type: :model, skip_seed: true do
+RSpec.describe RequestItem, type: :model do
   context "Methods >" do
     describe "#from_json" do
       let(:organization) { create(:organization) }

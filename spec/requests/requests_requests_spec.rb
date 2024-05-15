@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Requests', type: :request, skip_seed: true do
+RSpec.describe 'Requests', type: :request do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 

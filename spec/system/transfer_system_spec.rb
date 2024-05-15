@@ -1,4 +1,4 @@
-RSpec.describe "Transfer management", type: :system, skip_seed: true do
+RSpec.describe "Transfer management", type: :system do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }

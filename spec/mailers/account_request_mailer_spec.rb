@@ -1,4 +1,4 @@
-RSpec.describe AccountRequestMailer, type: :mailer, skip_seed: true do
+RSpec.describe AccountRequestMailer, type: :mailer do
   describe '#confirmation' do
     let(:mail) { AccountRequestMailer.confirmation(account_request_id: account_request_id) }
     let(:account_request_id) { account_request.id }

@@ -13,7 +13,7 @@
 #
 require "rails_helper"
 
-RSpec.describe BroadcastAnnouncement, type: :model, skip_seed: true do
+RSpec.describe BroadcastAnnouncement, type: :model do
   it { should belong_to(:organization).optional }
   it { should belong_to(:user) }
   it { should validate_presence_of(:message) }

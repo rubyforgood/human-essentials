@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe PartnerFetchRequestableItemsService, skip_seed: true do
+RSpec.describe PartnerFetchRequestableItemsService do
   describe '#call' do
     subject { described_class.new(partner_id: partner.id).call }
     let!(:organization) { create(:organization, items: org_items) }

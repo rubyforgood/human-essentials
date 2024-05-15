@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Partners::FamilyRequestCreateService, skip_seed: true do
+RSpec.describe Partners::FamilyRequestCreateService do
   describe '#call' do
     subject { described_class.new(**args).call }
     let(:args) do

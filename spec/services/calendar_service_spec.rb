@@ -1,4 +1,4 @@
-RSpec.describe CalendarService, skip_seed: true do
+RSpec.describe CalendarService do
   let(:organization) { create(:organization) }
 
   describe ".calendar" do

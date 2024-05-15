@@ -1,4 +1,4 @@
-RSpec.describe InventoryCheckService, type: :service, skip_seed: true do
+RSpec.describe InventoryCheckService, type: :service do
   let(:organization) { create(:organization) }
 
   subject { InventoryCheckService }

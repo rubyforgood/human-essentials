@@ -14,7 +14,7 @@
 #  organization_id :bigint
 #  user_id         :bigint
 #
-RSpec.describe Event, type: :model, skip_seed: true do
+RSpec.describe Event, type: :model do
   let(:organization) { create(:organization) }
 
   describe "#most_recent_snapshot" do

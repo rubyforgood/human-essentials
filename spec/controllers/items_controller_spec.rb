@@ -1,4 +1,4 @@
-RSpec.describe ItemsController, type: :controller, skip_seed: true do
+RSpec.describe ItemsController, type: :controller do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 

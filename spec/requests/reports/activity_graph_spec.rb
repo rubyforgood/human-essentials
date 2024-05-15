@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Reports::ActivityGraph", type: :request, skip_seed: true do
+RSpec.describe "Reports::ActivityGraph", type: :request do
   let(:organization) { create(:organization, skip_items: true) }
   let(:user) { create(:user, organization: organization) }
 

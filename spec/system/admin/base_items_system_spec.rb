@@ -1,4 +1,4 @@
-RSpec.describe "Base Item Admin", type: :system, js: true, skip_seed: true do
+RSpec.describe "Base Item Admin", type: :system, js: true do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
   let(:super_admin) { create(:super_admin, organization: organization) }

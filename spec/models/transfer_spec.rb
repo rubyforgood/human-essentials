@@ -11,7 +11,7 @@
 #  to_id           :integer
 #
 
-RSpec.describe Transfer, type: :model, skip_seed: true do
+RSpec.describe Transfer, type: :model do
   let(:organization) { create(:organization) }
 
   it_behaves_like "itemizable"

@@ -1,4 +1,4 @@
-RSpec.describe "Partners", type: :request, skip_seed: true do
+RSpec.describe "Partners", type: :request do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 

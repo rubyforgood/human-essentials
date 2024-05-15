@@ -1,4 +1,4 @@
-RSpec.describe DonationSitesController, type: :controller, skip_seed: true do
+RSpec.describe DonationSitesController, type: :controller do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 

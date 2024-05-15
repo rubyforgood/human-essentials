@@ -1,7 +1,7 @@
 =begin
 require "rails_helper"
 
-RSpec.describe AdminsController, type: :controller, skip_seed: true do
+RSpec.describe AdminsController, type: :controller do
   let(:organization) { create(:organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 

@@ -1,4 +1,4 @@
-RSpec.describe DistributionCreateService, type: :service, skip_seed: true do
+RSpec.describe DistributionCreateService, type: :service do
   let(:organization) { create(:organization) }
   let(:partner) { create(:partner, organization: organization) }
 

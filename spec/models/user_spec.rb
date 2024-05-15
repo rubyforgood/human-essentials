@@ -35,7 +35,7 @@
 #  partner_id             :bigint
 #
 
-RSpec.describe User, type: :model, skip_seed: true do
+RSpec.describe User, type: :model do
   context "Validations >" do
     it "user can receive a name" do
       expect(build(:user, name: "foo")).to be_valid

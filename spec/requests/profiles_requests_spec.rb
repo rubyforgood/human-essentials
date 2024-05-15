@@ -1,4 +1,4 @@
-RSpec.describe "Profiles", type: :request, skip_seed: true do
+RSpec.describe "Profiles", type: :request do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
   let(:partner) { create(:partner, organization: organization) }

@@ -1,4 +1,4 @@
-RSpec.describe RequestsTotalItemsService, type: :service, skip_seed: true do
+RSpec.describe RequestsTotalItemsService, type: :service do
   describe '#calculate' do
     let(:organization) { create(:organization) }
     subject { described_class.new(requests: requests).calculate }

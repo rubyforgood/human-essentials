@@ -1,4 +1,4 @@
-RSpec.describe "User sign-in handling", type: :system, js: true, skip_seed: true do
+RSpec.describe "User sign-in handling", type: :system, js: true do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 

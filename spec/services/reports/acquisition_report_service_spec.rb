@@ -1,4 +1,4 @@
-RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data: true, skip_seed: true do
+RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data: true do
   describe "acquisition report" do
     let(:organization) { create(:organization) }
     let(:within_time) { Time.zone.parse("2020-05-31 14:00:00") }

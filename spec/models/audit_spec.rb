@@ -14,7 +14,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Audit, type: :model, skip_seed: true do
+RSpec.describe Audit, type: :model do
   let(:organization) { create(:organization) }
 
   it_behaves_like "itemizable"

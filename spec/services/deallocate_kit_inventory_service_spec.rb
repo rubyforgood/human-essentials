@@ -1,4 +1,4 @@
-RSpec.describe DeallocateKitInventoryService, type: :service, skip_seed: true do
+RSpec.describe DeallocateKitInventoryService, type: :service do
   let(:organization) { create(:organization) }
   let(:item1) { create(:item, name: "Item11", organization: organization, on_hand_minimum_quantity: 5) }
   let(:item2) { create(:item, name: "Item 2", organization: organization, on_hand_minimum_quantity: 1) }

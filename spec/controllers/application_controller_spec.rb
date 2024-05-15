@@ -1,4 +1,4 @@
-RSpec.describe ApplicationController, skip_seed: true do
+RSpec.describe ApplicationController do
   let(:organization) { create(:organization) }
 
   describe "current_organization" do

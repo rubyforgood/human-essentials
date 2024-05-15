@@ -1,6 +1,10 @@
 require "rails_helper"
 
-RSpec.describe "DistributionsByCounties", type: :request, skip_seed: true do
+RSpec.describe "DistributionsByCounties", type: :request do
+  let(:default_params) do
+    {organization_name: organization.to_param}
+  end
+
   include_examples "distribution_by_county"
 
   context "While not signed in" do

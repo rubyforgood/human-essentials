@@ -1,4 +1,4 @@
-RSpec.describe Exports::ExportDistributionsCSVService, skip_seed: true do
+RSpec.describe Exports::ExportDistributionsCSVService do
   let(:organization) { create(:organization) }
 
   describe '#generate_csv_data' do

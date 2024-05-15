@@ -15,7 +15,7 @@
 #  updated_at      :datetime         not null
 #  organization_id :integer
 #
-RSpec.describe StorageLocation, type: :model, skip_seed: true do
+RSpec.describe StorageLocation, type: :model do
   let(:organization) { create(:organization) }
 
   context "Validations >" do

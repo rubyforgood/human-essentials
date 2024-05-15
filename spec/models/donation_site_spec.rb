@@ -16,7 +16,7 @@
 #  organization_id :integer
 #
 
-RSpec.describe DonationSite, type: :model, skip_seed: true do
+RSpec.describe DonationSite, type: :model do
   context "Validations >" do
     it { should belong_to(:organization) }
     it { should validate_presence_of(:name) }

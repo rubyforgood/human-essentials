@@ -1,4 +1,4 @@
-RSpec.describe "Annual Reports", type: :system, js: true, skip_seed: true do
+RSpec.describe "Annual Reports", type: :system, js: true do
   let(:organization) { create(:organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 

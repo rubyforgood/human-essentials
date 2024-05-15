@@ -11,7 +11,7 @@
 #  user_id             :bigint
 #
 
-RSpec.describe Adjustment, type: :model, skip_seed: true do
+RSpec.describe Adjustment, type: :model do
   it_behaves_like "itemizable"
   # This mixes feature specs with model specs... idealy we do not want to do this
   # it_behaves_like "pagination"

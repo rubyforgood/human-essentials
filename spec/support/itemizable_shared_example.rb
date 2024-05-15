@@ -1,4 +1,4 @@
-shared_examples_for "itemizable", skip_seed: true do
+shared_examples_for "itemizable" do
   let(:model_f) { described_class.to_s.underscore.to_sym }
   let(:organization) { create(:organization) }
   let(:item) { create(:item) }

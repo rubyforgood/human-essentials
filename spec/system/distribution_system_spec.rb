@@ -1,4 +1,4 @@
-RSpec.feature "Distributions", type: :system, skip_seed: true do
+RSpec.feature "Distributions", type: :system do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
   let(:storage_location) { create(:storage_location, organization: organization) }

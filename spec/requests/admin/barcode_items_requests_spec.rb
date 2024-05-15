@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Admin::BarcodeItemsController', type: :request, skip_seed: true do
+RSpec.describe 'Admin::BarcodeItemsController', type: :request do
   let(:organization) { create(:organization) }
 
   context 'while signed in as a super admin' do

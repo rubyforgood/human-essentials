@@ -1,4 +1,4 @@
-RSpec.describe RemoveRoleService, type: :service, skip_seed: true do
+RSpec.describe RemoveRoleService, type: :service do
   let(:org) { create(:organization, name: "Org ABC") }
   let(:user) { create(:user, name: "User XYZ", organization: nil) }
   let!(:role) { Role.create!(resource_type: "Organization", name: "org_user", resource_id: org.id) }

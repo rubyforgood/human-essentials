@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "ProductDriveParticipants", type: :request, skip_seed: true do
+RSpec.describe "ProductDriveParticipants", type: :request do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 

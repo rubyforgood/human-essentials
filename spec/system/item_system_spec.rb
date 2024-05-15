@@ -1,4 +1,4 @@
-RSpec.describe "Item management", type: :system, skip_seed: true do
+RSpec.describe "Item management", type: :system do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 

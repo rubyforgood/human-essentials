@@ -1,4 +1,4 @@
-RSpec.describe "Adjustment management", type: :system, js: true, skip_seed: true do
+RSpec.describe "Adjustment management", type: :system, js: true do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }

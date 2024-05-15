@@ -34,7 +34,7 @@
 #  ndbn_member_id                 :bigint
 #
 
-RSpec.describe Organization, type: :model, skip_seed: true do
+RSpec.describe Organization, type: :model do
   let(:organization) { create(:organization) }
 
   describe "validations" do

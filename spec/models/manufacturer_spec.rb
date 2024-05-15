@@ -11,7 +11,7 @@
 
 require "rails_helper"
 
-RSpec.describe Manufacturer, type: :model, skip_seed: true do
+RSpec.describe Manufacturer, type: :model do
   context "Validations" do
     subject { build(:manufacturer) }
 

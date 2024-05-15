@@ -13,7 +13,7 @@
 #
 require 'rails_helper'
 
-RSpec.describe Kit, type: :model, skip_seed: true do
+RSpec.describe Kit, type: :model do
   let(:organization) { create(:organization) }
 
   let(:kit) { build(:kit, name: "Test Kit") }

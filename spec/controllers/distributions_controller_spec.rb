@@ -1,4 +1,4 @@
-RSpec.describe DistributionsController, type: :controller, skip_seed: true do
+RSpec.describe DistributionsController, type: :controller do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
   let(:partner) { create(:partner, organization: organization) }

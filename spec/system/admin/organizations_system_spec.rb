@@ -1,4 +1,4 @@
-RSpec.describe "Admin Organization Management", type: :system, js: true, skip_seed: true do
+RSpec.describe "Admin Organization Management", type: :system, js: true do
   let(:organization) { create(:organization) }
   let(:super_admin) { create(:super_admin, organization: organization) }
   let(:super_admin_no_org) { create(:super_admin, organization: nil) }
