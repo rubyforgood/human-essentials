@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Purchases", type: :request do
-  let(:organization) { create(:organization, skip_items: true) }
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 
   context "while signed in" do

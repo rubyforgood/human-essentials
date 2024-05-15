@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Reports::ManufacturerDonationsSummary", type: :request do
-  let(:organization) { create(:organization, skip_items: true) }
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 
   describe "while signed in" do
