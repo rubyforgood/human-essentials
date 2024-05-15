@@ -6,6 +6,7 @@
 #  name                   :string
 #  partner_key            :string
 #  quantity               :string
+#  request_unit           :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  item_id                :integer
@@ -28,17 +29,21 @@ RSpec.describe Partners::ItemRequest, type: :model, skip_seed: true do
     it { should validate_presence_of(:name) }
     it { should validate_presence_of(:partner_key) }
 
-    it "should only be able to use organization's request units" do
-      request_unit = create(:request_unit, name: 'pack', organization: organization)
+    it "should only be able to use item's request units" do
+      unit = create(:unit, organization: organization, name: 'pack')
+      item = create(:item, organization: organization)
+      item_unit = create(:item_unit, name: 'pack', item: item)
       request = build(:request, organization: organization)
 
-      item_request = build(:item_request, request_unit: "flat", request: request)
+      item_request = build(:item_request, request_unit: "flat", request: request, item: item)
 
       expect(item_request.valid?).to eq(false)
       expect(item_request.errors.full_messages).to eq(["Request unit is not supported"])
 
-      request_unit.update!(name: 'flat')
+      unit.update!(name: 'flat')
       organization.reload
+      item_unit.update!(name: 'flat')
+      item.reload
       expect(item_request.valid?).to eq(true)
     end
   end

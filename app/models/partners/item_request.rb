@@ -6,6 +6,7 @@
 #  name                   :string
 #  partner_key            :string
 #  quantity               :string
+#  request_unit           :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  item_id                :integer
@@ -29,7 +30,7 @@ module Partners
     def request_unit_is_supported
       return if request_unit.blank?
 
-      names = request.organization.request_units.map(&:name)
+      names = item.request_units.map(&:name)
       unless names.include?(request_unit)
         errors.add(:request_unit, "is not supported")
       end

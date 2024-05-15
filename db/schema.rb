@@ -372,14 +372,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_03_200211) do
     t.index ["partner_group_id"], name: "index_item_categories_partner_groups_on_partner_group_id"
   end
 
-  create_table "item_request_units", force: :cascade do |t|
-    t.string "name", null: false
-    t.bigint "item_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["item_id"], name: "index_item_request_units_on_item_id"
-  end
-
   create_table "item_requests", force: :cascade do |t|
     t.string "name"
     t.string "quantity"
@@ -392,6 +384,14 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_03_200211) do
     t.string "request_unit"
     t.index ["item_id"], name: "index_item_requests_on_item_id"
     t.index ["partner_request_id"], name: "index_item_requests_on_partner_request_id"
+  end
+
+  create_table "item_units", force: :cascade do |t|
+    t.string "name", null: false
+    t.bigint "item_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_item_units_on_item_id"
   end
 
   create_table "items", id: :serial, force: :cascade do |t|
@@ -734,14 +734,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_03_200211) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "request_units", force: :cascade do |t|
-    t.string "name", null: false
-    t.bigint "organization_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["organization_id"], name: "index_request_units_on_organization_id"
-  end
-
   create_table "requests", force: :cascade do |t|
     t.bigint "partner_id"
     t.bigint "organization_id"
@@ -797,6 +789,14 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_03_200211) do
     t.datetime "updated_at", precision: nil, null: false
     t.integer "organization_id"
     t.index ["organization_id"], name: "index_transfers_on_organization_id"
+  end
+
+  create_table "units", force: :cascade do |t|
+    t.string "name", null: false
+    t.bigint "organization_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_units_on_organization_id"
   end
 
   create_table "users", id: :serial, force: :cascade do |t|
@@ -897,7 +897,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_03_200211) do
   add_foreign_key "item_categories", "organizations"
   add_foreign_key "item_categories_partner_groups", "item_categories"
   add_foreign_key "item_categories_partner_groups", "partner_groups"
-  add_foreign_key "item_request_units", "items"
+  add_foreign_key "item_units", "items"
   add_foreign_key "items", "item_categories"
   add_foreign_key "items", "kits"
   add_foreign_key "kit_allocations", "kits"
@@ -913,9 +913,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_03_200211) do
   add_foreign_key "partner_served_areas", "partner_profiles"
   add_foreign_key "partners", "storage_locations", column: "default_storage_location_id"
   add_foreign_key "product_drives", "organizations"
-  add_foreign_key "request_units", "organizations"
   add_foreign_key "requests", "distributions"
   add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"
+  add_foreign_key "units", "organizations"
   add_foreign_key "users", "users_roles", column: "last_role_id", on_delete: :nullify
 end
