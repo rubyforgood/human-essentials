@@ -536,6 +536,8 @@ dates_generator = DispersedPastDatesGenerator.new
 inventory = InventoryAggregate.inventory_for(pdx_org.id)
 # Make some distributions, but don't use up all the inventory
 20.times.each do
+  issued_at = dates_generator.next
+
   storage_location = random_record_for_org(pdx_org, StorageLocation)
   stored_inventory_items_sample = inventory.storage_locations[storage_location.id].items.values.sample(20)
   delivery_method = Distribution.delivery_methods.keys.sample
@@ -544,7 +546,8 @@ inventory = InventoryAggregate.inventory_for(pdx_org.id)
     storage_location: storage_location,
     partner: random_record_for_org(pdx_org, Partner),
     organization: pdx_org,
-    issued_at: dates_generator.next,
+    issued_at: issued_at,
+    created_at: 3.days.ago(issued_at),
     delivery_method: delivery_method,
     shipping_cost: shipping_cost,
     comment: 'Urgent'

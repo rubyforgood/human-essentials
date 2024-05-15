@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Items", type: :request do
+RSpec.describe "Items", type: :request, skip_seed: true do
   let(:organization) { create(:organization, short_name: "my_org") }
   let(:user) { create(:user, organization: organization) }
   let(:default_params) do

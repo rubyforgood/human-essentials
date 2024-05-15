@@ -14,14 +14,14 @@
 #
 require "rails_helper"
 
-RSpec.describe Partners::AuthorizedFamilyMember, type: :model do
+RSpec.describe Partners::AuthorizedFamilyMember, type: :model, skip_seed: true do
   describe 'associations' do
     it { should belong_to(:family) }
     it { should have_many(:child_item_requests).dependent(:nullify) }
   end
 
   describe "#display_name" do
-    let(:partners_family) { FactoryBot.create(:partners_family) }
+    let(:partners_family) { create(:partners_family) }
     let(:authorized_family_member) { partners_family.create_authorized }
 
     it "should return the family member's first and last name" do

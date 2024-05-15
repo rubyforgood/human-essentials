@@ -1,9 +1,10 @@
-RSpec.describe RequestsTotalItemsService, type: :service do
+RSpec.describe RequestsTotalItemsService, type: :service, skip_seed: true do
   describe '#calculate' do
+    let(:organization) { create(:organization, skip_items: true) }
     subject { described_class.new(requests: requests).calculate }
 
     context 'when the request items is not blank' do
-      let(:sample_items) { Item.active.sample(3) }
+      let(:sample_items) { create_list(:item, 3, organization: organization) }
       let(:item_names) { sample_items.pluck(:name) }
       let(:item_ids) { sample_items.pluck(:id) }
       let(:requests) do

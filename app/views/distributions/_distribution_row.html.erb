@@ -1,7 +1,8 @@
 <tr <%= 'class="highlight"' if distribution_row.id == @highlight_id %>>
   <td><%= distribution_row.id %></td>
   <td><%= distribution_row.partner.name %></td>
-  <td class="date"><%= (distribution_row.issued_at.presence || distribution_row.created_at).strftime("%m/%d/%Y") %> </td>
+  <td class="date"><%= distribution_row.created_at.strftime("%m/%d/%Y") %></td>
+  <td class="date"><%= (distribution_row.issued_at.presence || distribution_row.created_at).strftime("%m/%d/%Y") %></td>
   <td><%= distribution_row.storage_location.name %></td>
 
   <!-- Quantity -->

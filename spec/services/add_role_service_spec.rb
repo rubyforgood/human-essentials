@@ -1,7 +1,7 @@
-RSpec.describe AddRoleService, type: :service do
-  let(:user) { FactoryBot.create(:user, name: "User XYZ") }
-  let(:org) { FactoryBot.create(:organization, name: "Org ABC") }
-  let(:partner) { FactoryBot.create(:partner, name: "Partner 123") }
+RSpec.describe AddRoleService, type: :service, skip_seed: true do
+  let(:user) { create(:user, name: "User XYZ") }
+  let(:org) { create(:organization, name: "Org ABC", skip_items: true) }
+  let(:partner) { create(:partner, name: "Partner 123") }
 
   describe "#call" do
     context "when the role does not yet exist" do

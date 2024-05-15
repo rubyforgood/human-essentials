@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Partners::FetchPartnersToRemindNowService do
+RSpec.describe Partners::FetchPartnersToRemindNowService, skip_seed: true do
   describe ".fetch" do
     subject { described_class.new.fetch }
     let(:current_day) { 14 }
