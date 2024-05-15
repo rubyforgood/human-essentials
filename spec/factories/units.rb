@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: request_units
+# Table name: units
 #
 #  id              :bigint           not null, primary key
 #  name            :string           not null
@@ -9,7 +9,7 @@
 #  organization_id :bigint
 #
 FactoryBot.define do
-  factory :request_unit do
+  factory :unit do
     sequence(:name) { |n| "Unit #{n}" }
     organization
   end
