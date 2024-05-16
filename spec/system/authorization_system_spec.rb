@@ -12,8 +12,8 @@ RSpec.describe "Authorization", type: :system, js: true, skip_seed: true do
 
   it "redirects to the organization dashboard when authorized" do
     sign_in(user)
-    visit dashboard_path(user.organization)
+    visit dashboard_path
 
-    expect(current_path).to eql "/#{user.organization.short_name}/dashboard"
+    expect(current_path).to eql "/dashboard"
   end
 end

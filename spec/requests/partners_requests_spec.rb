@@ -2,17 +2,13 @@ RSpec.describe "Partners", type: :request, skip_seed: true do
   let(:organization) { create(:organization, skip_items: true) }
   let(:user) { create(:user, organization: organization) }
 
-  let(:default_params) do
-    { organization_name: organization.to_param }
-  end
-
   before do
     sign_in(user)
   end
 
   describe "GET #index" do
     subject do
-      get partners_path(default_params.merge(format: response_format))
+      get partners_path(format: response_format)
       response
     end
 
@@ -38,7 +34,7 @@ RSpec.describe "Partners", type: :request, skip_seed: true do
   end
 
   describe 'POST #create' do
-    subject { -> { post partners_path(default_params.merge(partner_attrs)) } }
+    subject { -> { post partners_path(partner_attrs) } }
 
     context 'when given valid partner attributes in the params' do
       let(:partner_attrs) do
@@ -57,7 +53,7 @@ RSpec.describe "Partners", type: :request, skip_seed: true do
 
       it 'redirect to the partners index page' do
         subject.call
-        expect(response).to redirect_to(partners_path(default_params))
+        expect(response).to redirect_to(partners_path)
       end
     end
 
@@ -87,7 +83,7 @@ RSpec.describe "Partners", type: :request, skip_seed: true do
 
   describe "GET #show" do
     subject do
-      get partner_path(partner, default_params.merge(format: response_format))
+      get partner_path(partner, format: response_format)
       response
     end
 
@@ -151,14 +147,14 @@ RSpec.describe "Partners", type: :request, skip_seed: true do
 
   describe "GET #new" do
     it "returns http success" do
-      get new_partner_path(default_params)
+      get new_partner_path
       expect(response).to be_successful
     end
   end
 
   describe "GET #edit" do
     it "returns http success" do
-      get edit_partner_path(default_params.merge(id: create(:partner, organization: organization)))
+      get edit_partner_path(id: create(:partner, organization: organization))
       expect(response).to be_successful
     end
   end
@@ -168,7 +164,7 @@ RSpec.describe "Partners", type: :request, skip_seed: true do
 
     context "with a csv file" do
       let(:file) { fixture_file_upload("#{model_class.name.underscore.pluralize}.csv", "text/csv") }
-      subject { post import_csv_partners_path(default_params), params: { file: file } }
+      subject { post import_csv_partners_path, params: { file: file } }
 
       it "invokes .import_csv" do
         expect(model_class).to respond_to(:import_csv).with(2).arguments
@@ -187,19 +183,19 @@ RSpec.describe "Partners", type: :request, skip_seed: true do
 
     context "without a csv file" do
       it "redirects to :index" do
-        post import_csv_partners_path(default_params)
+        post import_csv_partners_path
         expect(response).to be_redirect
       end
 
       it "presents a flash error message" do
-        post import_csv_partners_path(default_params)
+        post import_csv_partners_path
         expect(response).to have_error "No file was attached!"
       end
     end
 
     context "csv file with wrong headers" do
       let(:file) { fixture_file_upload("wrong_headers.csv", "text/csv") }
-      subject { post import_csv_partners_path(default_params), params: { file: file } }
+      subject { post import_csv_partners_path, params: { file: file } }
 
       it "redirects to :index" do
         subject
@@ -218,12 +214,12 @@ RSpec.describe "Partners", type: :request, skip_seed: true do
       partner_params = { partner: { name: "A Partner", email: "partner@example.com", send_reminders: "false" } }
 
       it "creates a new partner" do
-        post partners_path(default_params.merge(partner_params))
+        post partners_path(partner_params)
         expect(response).to have_http_status(:found)
       end
 
       it "redirects to #index" do
-        post partners_path(default_params.merge(partner_params))
+        post partners_path(partner_params)
         expect(response).to redirect_to(partners_path)
       end
     end
@@ -232,7 +228,7 @@ RSpec.describe "Partners", type: :request, skip_seed: true do
       partner_params = { partner: { name: "", email: "" } }
 
       it "renders :new" do
-        post partners_path(default_params.merge(partner_params))
+        post partners_path(partner_params)
         expect(response).to render_template(:new)
       end
     end
@@ -244,13 +240,13 @@ RSpec.describe "Partners", type: :request, skip_seed: true do
 
       it "update partner" do
         partner = create(:partner, organization: organization)
-        put partner_path(default_params.merge(id: partner, partner: partner_params))
+        put partner_path(id: partner, partner: partner_params)
         expect(response).to have_http_status(:found)
       end
 
       it "redirects to #show" do
         partner = create(:partner, organization: organization)
-        put partner_path(default_params.merge(id: partner, partner: partner_params))
+        put partner_path(id: partner, partner: partner_params)
         expect(response).to redirect_to(partner_path(partner))
       end
     end
@@ -260,7 +256,7 @@ RSpec.describe "Partners", type: :request, skip_seed: true do
 
       it "renders :edit" do
         partner = create(:partner, organization: organization)
-        put partner_path(default_params.merge(id: partner, partner: partner_params))
+        put partner_path(id: partner, partner: partner_params)
         expect(response).to render_template(:edit)
       end
     end
@@ -268,7 +264,7 @@ RSpec.describe "Partners", type: :request, skip_seed: true do
 
   describe "DELETE #destroy" do
     it "redirects to #index" do
-      delete partner_path(default_params.merge(id: create(:partner, organization: organization)))
+      delete partner_path(id: create(:partner, organization: organization))
       expect(response).to redirect_to(partners_path)
     end
   end
@@ -281,14 +277,14 @@ RSpec.describe "Partners", type: :request, skip_seed: true do
     end
 
     it "sends the invite" do
-      post invite_partner_path(default_params.merge(id: partner.id))
+      post invite_partner_path(id: partner.id)
       expect(PartnerInviteService).to have_received(:new).with(partner: partner, force: true)
       expect(response).to have_http_status(:found)
     end
   end
 
   describe "POST #invite_partner_user" do
-    subject { -> { post invite_partner_user_partner_path(default_params.merge(id: partner.id, partner: partner.id, email: email, name: name)) } }
+    subject { -> { post invite_partner_user_partner_path(id: partner.id, partner: partner.id, email: email, name: name) } }
     let(:partner) { create(:partner, organization: organization) }
     let(:email) { Faker::Internet.email }
     let(:name) { Faker::Name.unique.name }
@@ -329,7 +325,7 @@ RSpec.describe "Partners", type: :request, skip_seed: true do
 
     context "when the partner successfully deactivates" do
       it "changes the partner status to deactivated and redirects with flash" do
-        put deactivate_partner_path(default_params.merge(id: partner.id))
+        put deactivate_partner_path(id: partner.id)
 
         expect(partner.reload.status).to eq("deactivated")
         expect(response).to redirect_to(partners_path)
@@ -339,7 +335,7 @@ RSpec.describe "Partners", type: :request, skip_seed: true do
   end
 
   describe "GET #approve_application" do
-    subject { -> { get approve_application_partner_path(default_params.merge(id: partner.id)) } }
+    subject { -> { get approve_application_partner_path(id: partner.id) } }
     let(:partner) { create(:partner, organization: organization) }
     let(:fake_partner_approval_service) { instance_double(PartnerApprovalService, call: -> {}) }
 
@@ -354,7 +350,7 @@ RSpec.describe "Partners", type: :request, skip_seed: true do
       end
 
       it 'should redirect to the partners index page with a success flash message' do
-        expect(response).to redirect_to(partners_path(organization_name: organization.to_param))
+        expect(response).to redirect_to(partners_path)
         expect(flash[:notice]).to eq("Partner approved!")
       end
     end
@@ -368,7 +364,7 @@ RSpec.describe "Partners", type: :request, skip_seed: true do
       end
 
       it 'should redirect to the partners index page with a failure flash message' do
-        expect(response).to redirect_to(partners_path(organization_name: organization.to_param))
+        expect(response).to redirect_to(partners_path)
         expect(flash[:error]).to eq("Failed to approve partner because: #{fake_error_msg}")
       end
     end
@@ -379,7 +375,7 @@ RSpec.describe "Partners", type: :request, skip_seed: true do
       let(:partner) { create(:partner, organization: organization, status: "deactivated") }
 
       it "changes the partner status to approved and redirects with flash" do
-        put reactivate_partner_path(default_params.merge(id: partner.id))
+        put reactivate_partner_path(id: partner.id)
 
         expect(partner.reload.status).to eq('approved')
         expect(response).to redirect_to(partners_path)
@@ -390,13 +386,13 @@ RSpec.describe "Partners", type: :request, skip_seed: true do
     context "when trying to reactivate a partner who is not deactivated " do
       let(:partner) { create(:partner, organization: organization, status: "approved") }
       it "fails to change the partner status to reactivated and redirects with flash error message" do
-        put reactivate_partner_path(default_params.merge(id: partner.id))
+        put reactivate_partner_path(id: partner.id)
       end
     end
   end
 
   describe "POST #recertify_partner" do
-    subject { -> { post recertify_partner_partner_path(default_params.merge(id: partner.id)) } }
+    subject { -> { post recertify_partner_partner_path(id: partner.id) } }
     let(:partner) { create(:partner, organization: organization) }
     let(:fake_service) { instance_double(PartnerRequestRecertificationService, call: -> {}) }
 
@@ -442,13 +438,13 @@ RSpec.describe "Partners", type: :request, skip_seed: true do
       end
 
       it "sends invitation email and approve partner in single step" do
-        post invite_and_approve_partner_path(default_params.merge(id: partner.id))
+        post invite_and_approve_partner_path(id: partner.id)
 
         expect(PartnerInviteService).to have_received(:new).with(partner: partner, force: true)
         expect(response).to have_http_status(:found)
 
         expect(PartnerApprovalService).to have_received(:new).with(partner: partner)
-        expect(response).to redirect_to(partners_path(organization_name: organization.to_param))
+        expect(response).to redirect_to(partners_path)
         expect(flash[:notice]).to eq("Partner invited and approved!")
       end
     end
@@ -464,9 +460,9 @@ RSpec.describe "Partners", type: :request, skip_seed: true do
       end
 
       it "should redirect to the partners index page with a notice flash message" do
-        post invite_and_approve_partner_path(default_params.merge(id: partner.id))
+        post invite_and_approve_partner_path(id: partner.id)
 
-        expect(response).to redirect_to(partners_path(organization_name: organization.to_param))
+        expect(response).to redirect_to(partners_path)
         expect(flash[:notice]).to eq("Failed to invite #{partner.name}! #{fake_error_msg}")
       end
     end
@@ -482,9 +478,9 @@ RSpec.describe "Partners", type: :request, skip_seed: true do
       end
 
       it "should redirect to the partners index page with a notice flash message" do
-        post invite_and_approve_partner_path(default_params.merge(id: partner.id))
+        post invite_and_approve_partner_path(id: partner.id)
 
-        expect(response).to redirect_to(partners_path(organization_name: organization.to_param))
+        expect(response).to redirect_to(partners_path)
         expect(flash[:error]).to eq("Failed to approve partner because: #{fake_error_msg}")
       end
     end

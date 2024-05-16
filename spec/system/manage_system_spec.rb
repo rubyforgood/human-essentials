@@ -3,7 +3,7 @@ RSpec.describe "Organization Administration", type: :system, js: true, skip_seed
   let(:user) { create(:user, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 
-  subject { "/#{organization.to_param}/organization" }
+  subject { organization_path }
 
   context "while signed in as a normal user" do
     before do
@@ -23,7 +23,7 @@ RSpec.describe "Organization Administration", type: :system, js: true, skip_seed
     end
 
     it "can bail back to their own site as a user" do
-      expect(page).to have_xpath("//a[@href='#{dashboard_path(organization_name: organization.to_param)}']")
+      expect(page).to have_xpath("//a[@href='#{dashboard_path}']")
     end
 
     it "can edit the properties for an organization as an admin" do

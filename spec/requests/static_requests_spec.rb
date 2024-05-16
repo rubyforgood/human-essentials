@@ -33,7 +33,7 @@ RSpec.describe "Static", type: :request, skip_seed: true do
     describe "GET #index" do
       it "redirects to organization dashboard" do
         get root_path
-        expect(response).to redirect_to(dashboard_url(organization))
+        expect(response).to redirect_to(dashboard_url)
       end
     end
   end

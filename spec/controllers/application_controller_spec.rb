@@ -91,8 +91,7 @@ RSpec.describe ApplicationController, skip_seed: true do
       let(:user) { create(:super_admin, organization: organization) }
 
       it "links to the general dashboard" do
-        org_name = organization.short_name
-        expect(controller.dashboard_path_from_current_role).to eq "/#{org_name}/dashboard"
+        expect(controller.dashboard_path_from_current_role).to eq "/dashboard"
       end
     end
   end

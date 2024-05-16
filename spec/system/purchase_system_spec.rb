@@ -5,15 +5,13 @@ RSpec.describe "Purchases", type: :system, js: true, skip_seed: true do
 
   include ItemsHelper
 
-  let(:url_prefix) { "/#{organization.short_name}" }
-
   context "while signed in as a normal user" do
     before :each do
       sign_in user
     end
 
     context "When visiting the index page" do
-      subject { url_prefix + "/purchases" }
+      subject { purchases_path }
 
       context "In the middle of the year" do
         before :each do
@@ -28,7 +26,7 @@ RSpec.describe "Purchases", type: :system, js: true, skip_seed: true do
         it "User can click to the new purchase form" do
           find(".fa-plus").click
 
-          expect(current_path).to eq(new_purchase_path(organization))
+          expect(current_path).to eq(new_purchase_path)
           expect(page).to have_content "Start a new purchase"
         end
 
@@ -56,7 +54,7 @@ RSpec.describe "Purchases", type: :system, js: true, skip_seed: true do
       context "When filtering on the index page" do
         let!(:item) { create(:item, organization: organization) }
         let(:storage) { create(:storage_location, organization: organization) }
-        subject { url_prefix + "/purchases" }
+        subject { purchases_path }
 
         it "User can filter the #index by storage location" do
           storage1 = create(:storage_location, name: "storage1", organization: organization)
@@ -78,7 +76,7 @@ RSpec.describe "Purchases", type: :system, js: true, skip_seed: true do
           create(:purchase, vendor: vendor2, organization: organization)
 
           sign_in create(:user, organization: organization)
-          visit "/#{organization.short_name}/purchases"
+          visit purchases_path
 
           expect(page).to have_css("table tbody tr", count: 2)
           select vendor1.business_name, from: "filters[from_vendor]"
@@ -97,7 +95,7 @@ RSpec.describe "Purchases", type: :system, js: true, skip_seed: true do
         @vendor = create(:vendor, organization: organization)
         organization.reload
       end
-      subject { url_prefix + "/purchases/new" }
+      subject { new_purchase_path }
 
       context "via manual entry" do
         before(:each) do
@@ -145,7 +143,7 @@ RSpec.describe "Purchases", type: :system, js: true, skip_seed: true do
             click_button "Save"
           end.to change { Purchase.count }.by(1)
 
-          visit url_prefix + "/purchases/#{Purchase.last.id}"
+          visit purchase_path(Purchase.last)
 
           expected_date = "January 1 2001 (entered: #{Purchase.last.created_at.to_fs(:distribution_date)})"
           expected_breadcrumb_date = "#{@vendor.business_name} on January 1 2001"
@@ -156,7 +154,7 @@ RSpec.describe "Purchases", type: :system, js: true, skip_seed: true do
         end
 
         it "Does not include inactive items in the line item fields" do
-          visit url_prefix + "/purchases/new"
+          visit new_purchase_path
 
           select @storage_location.name, from: "purchase_storage_location_id"
           expect(page).to have_content(@item.name)
@@ -212,13 +210,13 @@ RSpec.describe "Purchases", type: :system, js: true, skip_seed: true do
       context "Editing purchase" do
         it "A user can see purchased_from value" do
           purchase = create(:purchase, purchased_from: "Old Vendor", organization: organization)
-          visit edit_purchase_path(organization.to_param, purchase)
+          visit edit_purchase_path(purchase)
           expect(page).to have_content("Vendor (Old Vendor)")
         end
 
         it "A user can view another organizations purchase" do
           purchase = create(:purchase, organization: create(:organization))
-          visit edit_purchase_path(user.organization.short_name, purchase)
+          visit edit_purchase_path(purchase)
           expect(page).to have_content("Still haven't found what you're looking for")
         end
       end
@@ -228,7 +226,7 @@ RSpec.describe "Purchases", type: :system, js: true, skip_seed: true do
           @existing_barcode = create(:barcode_item, organization: organization)
           @item_with_barcode = @existing_barcode.item
           @item_no_barcode = create(:item, organization: organization)
-          visit url_prefix + "/purchases/new"
+          visit new_purchase_path
         end
 
         it "a user can add items via scanning them in by barcode" do
@@ -289,7 +287,7 @@ RSpec.describe "Purchases", type: :system, js: true, skip_seed: true do
     end
 
     context "When visiting an existing purchase" do
-      subject { url_prefix + "/purchases" }
+      subject { purchases_path }
 
       it "does not allow deletion of a purchase" do
         purchase = create(:purchase, organization: organization)
@@ -301,7 +299,7 @@ RSpec.describe "Purchases", type: :system, js: true, skip_seed: true do
 
   context "while signed in as an organization admin" do
     let!(:purchase) { create(:purchase, :with_items, item_quantity: 10, organization: organization) }
-    subject { url_prefix + "/purchases" }
+    subject { purchases_path }
 
     before do
       sign_in organization_admin
