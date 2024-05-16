@@ -42,6 +42,12 @@ RSpec.feature "Distributions", type: :system do
         expect(PartnerMailerJob).to receive(:perform_later).once
         click_button "Save", match: :first
 
+        expect(page).to have_selector('#distributionConfirmationModal')
+        expect(page).to have_content("You are about to create a distribution for")
+        expect(find(:element, "data-testid": "distribution-confirmation-partner")).to have_text(partner.name)
+        expect(find(:element, "data-testid": "distribution-confirmation-storage")).to have_text(storage_location.name)
+        click_button "Yes, it's correct"
+
         expect(page).to have_content "Distributions"
         expect(page.find(".alert-info")).to have_content "created"
       end
@@ -80,6 +86,12 @@ RSpec.feature "Distributions", type: :system do
 
         click_button "Save", match: :first
 
+        expect(page).to have_selector('#distributionConfirmationModal')
+        expect(page).to have_content("You are about to create a distribution for")
+        expect(find(:element, "data-testid": "distribution-confirmation-partner")).to have_text(partner.name)
+        expect(find(:element, "data-testid": "distribution-confirmation-storage")).to have_text(storage_location.name)
+        click_button "Yes, it's correct"
+
         expect(page).to have_content "Distributions"
         expect(page.find(".alert-info")).to have_content "created"
       end
@@ -102,6 +114,12 @@ RSpec.feature "Distributions", type: :system do
         fill_in "distribution_line_items_attributes_0_quantity", with: 18
 
         click_button "Save"
+
+        expect(page).to have_selector('#distributionConfirmationModal')
+        expect(page).to have_content("You are about to create a distribution for")
+        expect(find(:element, "data-testid": "distribution-confirmation-partner")).to have_text(partner.name)
+        expect(find(:element, "data-testid": "distribution-confirmation-storage")).to have_text(storage_location.name)
+        click_button "Yes, it's correct"
 
         expect(page).not_to have_content('New Distribution')
         expect(page).to have_content("The following items have fallen below the minimum on hand quantity: #{item.name}")
@@ -129,6 +147,12 @@ RSpec.feature "Distributions", type: :system do
 
         click_button "Save"
 
+        expect(page).to have_selector('#distributionConfirmationModal')
+        expect(page).to have_content("You are about to create a distribution for")
+        expect(find(:element, "data-testid": "distribution-confirmation-partner")).to have_text(partner.name)
+        expect(find(:element, "data-testid": "distribution-confirmation-storage")).to have_text(storage_location.name)
+        click_button "Yes, it's correct"
+
         expect(page).to have_content("The following items have fallen below the recommended on hand quantity: #{item.name}")
       end
     end
@@ -150,6 +174,13 @@ RSpec.feature "Distributions", type: :system do
 
         expect do
           click_button "Save", match: :first
+
+          expect(page).to have_selector('#distributionConfirmationModal')
+          expect(page).to have_content("You are about to create a distribution for")
+          expect(find(:element, "data-testid": "distribution-confirmation-partner")).to have_text(partner.name)
+          expect(find(:element, "data-testid": "distribution-confirmation-storage")).to have_text(storage_location.name)
+          click_button "Yes, it's correct"
+
           page.find('.alert')
         end.not_to change { Distribution.count }
 
@@ -180,7 +211,11 @@ RSpec.feature "Distributions", type: :system do
     select "", from: "From storage location"
 
     click_button "Save", match: :first
-    page.find('.alert')
+
+    expect(page).to have_selector('#distributionConfirmationModal')
+    expect(page).to have_content("You are about to create a distribution for")
+    click_button "Yes, it's correct"
+
     expect(page).to have_css('.alert.error', text: /storage location/i)
   end
 
@@ -384,6 +419,10 @@ RSpec.feature "Distributions", type: :system do
         choose "Pick up"
         click_button "Save"
       end
+      expect(page).to have_selector('#distributionConfirmationModal')
+      expect(page).to have_content("You are about to create a distribution for")
+      expect(find(:element, "data-testid": "distribution-confirmation-partner")).to have_text(partner.name)
+      click_button "Yes, it's correct"
     end
 
     it "completes successfully" do
@@ -413,6 +452,7 @@ RSpec.feature "Distributions", type: :system do
           first("[data-quantity]").set 999_999
         end
         click_on "Save"
+
         expect(page).to have_no_content "Distribution updated!"
         message = 'items exceed the available inventory'
         number = 999_999
@@ -466,6 +506,11 @@ RSpec.feature "Distributions", type: :system do
         click_on "Save"
       end
 
+      expect(page).to have_selector('#distributionConfirmationModal')
+      expect(page).to have_content("You are about to create a distribution for")
+      expect(find(:element, "data-testid": "distribution-confirmation-storage")).to have_text(storage_location.name)
+      click_button "Yes, it's correct"
+
       expect(page).to have_content("Distribution Complete")
 
       @request = Request.last
@@ -487,10 +532,22 @@ RSpec.feature "Distributions", type: :system do
         click_on "Save"
       end
 
+      expect(page).to have_selector('#distributionConfirmationModal')
+      expect(page).to have_content("You are about to create a distribution for")
+      expect(find(:element, "data-testid": "distribution-confirmation-partner")).to have_text(@request.partner.name)
+      expect(find(:element, "data-testid": "distribution-confirmation-storage")).to have_text(storage_location.name)
+      click_button "Yes, it's correct"
+
       expect(page).to have_content("Sorry, we weren't able to save")
       find_all("[data-quantity]")[0].set 1
 
       click_on "Save"
+
+      expect(page).to have_selector('#distributionConfirmationModal')
+      expect(page).to have_content("You are about to create a distribution for")
+      expect(find(:element, "data-testid": "distribution-confirmation-partner")).to have_text(@request.partner.name)
+      expect(find(:element, "data-testid": "distribution-confirmation-storage")).to have_text(storage_location.name)
+      click_button "Yes, it's correct"
 
       expect(page).to have_content("Distribution Complete")
 
@@ -657,6 +714,12 @@ RSpec.feature "Distributions", type: :system do
     fill_in "distribution_line_items_attributes_0_quantity", with: 15
 
     click_button "Save"
+
+    expect(page).to have_selector('#distributionConfirmationModal')
+    expect(page).to have_content("You are about to create a distribution for")
+    expect(find(:element, "data-testid": "distribution-confirmation-partner")).to have_text(partner.name)
+    expect(find(:element, "data-testid": "distribution-confirmation-storage")).to have_text(storage_location.name)
+    click_button "Yes, it's correct"
 
     click_link "Make a Correction"
 
