@@ -6,11 +6,10 @@ RSpec.describe "Transfer management", type: :system, skip_seed: true do
   before do
     sign_in(user)
   end
-  let!(:url_prefix) { "/#{organization.to_param}" }
   let(:item) { create(:item) }
 
   def create_transfer(amount, from_name, to_name)
-    visit url_prefix + "/transfers"
+    visit transfers_path
     click_link "New Transfer"
     within "form#new_transfer" do
       select from_name, from: "From storage location"
@@ -104,7 +103,7 @@ RSpec.describe "Transfer management", type: :system, skip_seed: true do
 
   it 'should not include inactive storage locations in dropdowns when creating a new transfer' do
     create(:storage_location, name: "Inactive R Us", discarded_at: Time.zone.now)
-    visit url_prefix + "/transfers/new"
+    visit new_transfer_path
     expect(page).to have_no_text 'Inactive R Us'
   end
 
@@ -119,7 +118,7 @@ RSpec.describe "Transfer management", type: :system, skip_seed: true do
   end
 
   context "when viewing the index page" do
-    subject { url_prefix + "/transfers" }
+    subject { transfers_path }
     it "can filter the #index by storage location both from and to as a user" do
       from_storage_location = create(:storage_location, name: "here", organization: organization)
       to_storage_location = create(:storage_location, name: "there", organization: organization)

@@ -20,7 +20,7 @@ RSpec.describe "Sessions", type: :request, order: :defined, skip_seed: true do
 
     it "properly accesses the organization dashboard" do
       get root_path
-      expect(response).to redirect_to(dashboard_url(organization))
+      expect(response).to redirect_to(dashboard_url)
     end
   end
 
@@ -78,7 +78,7 @@ RSpec.describe "Sessions", type: :request, order: :defined, skip_seed: true do
             post user_session_path, params: {user: {email: partner_user.email, password: "password!"}}
             get root_path
 
-            expect(response).to redirect_to(dashboard_url(organization))
+            expect(response).to redirect_to(dashboard_url)
           end
         end
       end
@@ -104,7 +104,7 @@ RSpec.describe "Sessions", type: :request, order: :defined, skip_seed: true do
       it "signs in as org_admin role" do
         post user_session_path, params: {user: {email: partner_user.email, password: "password!"}}
         get root_path
-        expect(response).to redirect_to(dashboard_url(organization))
+        expect(response).to redirect_to(dashboard_url)
       end
     end
   end

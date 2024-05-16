@@ -4,10 +4,6 @@ RSpec.describe "Reports::DonationsSummary", type: :request, skip_seed: true do
   let(:organization) { create(:organization, skip_items: true) }
   let(:user) { create(:user, organization: organization) }
 
-  let(:default_params) do
-    {organization_name: organization.to_param}
-  end
-
   describe "while signed in" do
     before do
       sign_in user
@@ -15,7 +11,7 @@ RSpec.describe "Reports::DonationsSummary", type: :request, skip_seed: true do
 
     describe "GET #index" do
       subject do
-        get reports_donations_summary_path(default_params.merge(format: response_format))
+        get reports_donations_summary_path(format: response_format)
         response
       end
       let(:response_format) { "html" }
@@ -25,7 +21,7 @@ RSpec.describe "Reports::DonationsSummary", type: :request, skip_seed: true do
 
     context "when visiting the summary page" do
       before do
-        get reports_donations_summary_path(default_params)
+        get reports_donations_summary_path
       end
 
       it "has a link to create a new donation" do
@@ -91,7 +87,7 @@ RSpec.describe "Reports::DonationsSummary", type: :request, skip_seed: true do
   describe "while not signed in" do
     describe "GET /index" do
       subject do
-        get reports_donations_summary_path(default_params)
+        get reports_donations_summary_path
         response
       end
 

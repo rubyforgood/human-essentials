@@ -10,13 +10,10 @@ RSpec.describe "Partners profile served area behaviour when accessed as bank", t
     partner1.profile.served_areas << create_list(:partners_served_area, 4,
       partner_profile: partner1.profile, client_share: 25)
   }
-  let!(:default_params) do
-    {organization_name: organization.to_param, id: partner1.id, partner_id: partner1.id}
-  end
 
   context "changing the client share" do
     before do
-      visit edit_profile_path(default_params)
+      visit edit_profile_path(id: partner1.id, partner_id: partner1.id)
     end
 
     it "handles an invalid total client share properly" do

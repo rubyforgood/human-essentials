@@ -3,10 +3,6 @@ RSpec.describe DistributionsController, type: :controller, skip_seed: true do
   let(:user) { create(:user, organization: organization) }
   let(:partner) { create(:partner, organization: organization) }
 
-  let(:default_params) do
-    { organization_name: organization.to_param }
-  end
-
   context "While signed in" do
     before do
       sign_in(user)

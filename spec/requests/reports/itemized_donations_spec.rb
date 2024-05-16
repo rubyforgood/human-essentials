@@ -4,10 +4,6 @@ RSpec.describe "Reports::ItemizedDonations", type: :request, skip_seed: true do
   let(:organization) { create(:organization, skip_items: true) }
   let(:user) { create(:user, organization: organization) }
 
-  let(:default_params) do
-    {organization_name: organization.to_param}
-  end
-
   describe "while signed in" do
     before do
       sign_in user
@@ -15,7 +11,7 @@ RSpec.describe "Reports::ItemizedDonations", type: :request, skip_seed: true do
 
     describe "GET #index" do
       subject do
-        get reports_itemized_donations_path(default_params.merge(format: response_format))
+        get reports_itemized_donations_path(format: response_format)
         response
       end
       let(:response_format) { "html" }
@@ -25,12 +21,12 @@ RSpec.describe "Reports::ItemizedDonations", type: :request, skip_seed: true do
 
     context "without any donations" do
       it "can load the page" do
-        get reports_itemized_donations_path(default_params)
+        get reports_itemized_donations_path
         expect(response.body).to include("Itemized Donations")
       end
 
       it "has no items" do
-        get reports_itemized_donations_path(default_params)
+        get reports_itemized_donations_path
         expect(response.body).to include("No itemized donations found for the selected date range.")
       end
     end
@@ -40,7 +36,7 @@ RSpec.describe "Reports::ItemizedDonations", type: :request, skip_seed: true do
 
       it "Shows an item from the donation" do
         donation
-        get reports_itemized_donations_path(default_params)
+        get reports_itemized_donations_path
         expect(response.body).to include(donation.items.first.name)
       end
     end
@@ -49,7 +45,7 @@ RSpec.describe "Reports::ItemizedDonations", type: :request, skip_seed: true do
   describe "while not signed in" do
     describe "GET /index" do
       subject do
-        get reports_itemized_donations_path(default_params)
+        get reports_itemized_donations_path
         response
       end
 

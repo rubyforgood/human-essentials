@@ -1,8 +1,4 @@
 RSpec.feature "Distributions by County", type: :system do
-  let(:default_params) do
-    {organization_name: organization.to_param}
-  end
-
   include_examples "distribution_by_county"
 
   let(:year) { Time.current.year }
@@ -41,7 +37,7 @@ RSpec.feature "Distributions by County", type: :system do
   end
 
   def visit_distribution_by_county_with_specified_date_range(date_range_string)
-    visit dashboard_path(default_params)
+    visit dashboard_path
 
     click_on "Reports"
     find(".menu-open a", text: "Distributions - By County")

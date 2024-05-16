@@ -6,7 +6,7 @@ RSpec.describe "Annual Reports", type: :request, skip_seed: true do
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 
   let(:default_params) do
-    { organization_name: organization.to_param, year: 2018 }
+    { year: 2018 }
   end
 
   context "While signed in" do
@@ -53,7 +53,7 @@ RSpec.describe "Annual Reports", type: :request, skip_seed: true do
       end
 
       it "returns not found if the year params is not number" do
-        get reports_annual_report_path({ organization_name: organization.to_param, year: 'invalid' })
+        get reports_annual_report_path({ year: 'invalid' })
         expect(response).to have_http_status(:not_found)
       end
     end
