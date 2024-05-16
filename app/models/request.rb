@@ -60,6 +60,10 @@ class Request < ApplicationRecord
     partner_user_id ? User.find_by(id: partner_user_id).email : Partner.find_by(id: partner_id).email
   end
 
+  def request_type_label
+    request_type&.first&.capitalize
+  end 
+
   private
 
   def sanitize_items_data

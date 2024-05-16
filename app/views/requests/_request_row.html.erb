@@ -13,7 +13,7 @@
     <%= request_row.comments %>
   </td>
   <td>
-    <%= request_row&.request_type&.first&.capitalize %>
+    <%= request_row.request_type_label %>
   </td>
   <td>
     <%= render partial: "status", locals: {status: request_row.status} %>
