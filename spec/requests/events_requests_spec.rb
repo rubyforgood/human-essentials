@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Events", type: :request, skip_seed: true do
+RSpec.describe "Events", type: :request do
   let(:organization) { create(:organization) }
   let(:user) { create(:organization_admin, organization: organization) }
   let(:storage_location) { create(:storage_location, organization: organization) }

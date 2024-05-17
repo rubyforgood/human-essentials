@@ -1,4 +1,4 @@
-RSpec.describe InventoryAggregate, skip_seed: true do
+RSpec.describe InventoryAggregate do
   let(:organization) { FactoryBot.create(:organization, :with_items) }
   let(:storage_location1) { FactoryBot.create(:storage_location, organization: organization) }
   let(:storage_location2) { FactoryBot.create(:storage_location, organization: organization) }

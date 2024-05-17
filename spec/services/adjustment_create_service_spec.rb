@@ -1,7 +1,7 @@
-RSpec.describe AdjustmentCreateService, type: :service, skip_seed: true do
+RSpec.describe AdjustmentCreateService, type: :service do
   include ActiveJob::TestHelper
 
-  let(:organization) { create(:organization, skip_items: true) }
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 
   subject { AdjustmentCreateService }

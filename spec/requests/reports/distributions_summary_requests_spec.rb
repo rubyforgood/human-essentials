@@ -1,7 +1,7 @@
 require "rails_helper"
 
-RSpec.describe "Distributions", type: :request, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe "Distributions", type: :request do
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 
   context "while signed in" do

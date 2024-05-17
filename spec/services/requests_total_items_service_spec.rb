@@ -1,6 +1,6 @@
-RSpec.describe RequestsTotalItemsService, type: :service, skip_seed: true do
+RSpec.describe RequestsTotalItemsService, type: :service do
   describe '#calculate' do
-    let(:organization) { create(:organization, skip_items: true) }
+    let(:organization) { create(:organization) }
     subject { described_class.new(requests: requests).calculate }
 
     context 'when the request items is not blank' do

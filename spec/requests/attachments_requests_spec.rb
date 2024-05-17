@@ -1,4 +1,4 @@
-RSpec.describe "Attachments", type: :request, skip_seed: true do
+RSpec.describe "Attachments", type: :request do
   before do
     sign_in(create(:user))
   end

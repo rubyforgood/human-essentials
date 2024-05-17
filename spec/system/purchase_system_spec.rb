@@ -1,5 +1,5 @@
-RSpec.describe "Purchases", type: :system, js: true, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe "Purchases", type: :system, js: true do
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 
@@ -69,7 +69,7 @@ RSpec.describe "Purchases", type: :system, js: true, skip_seed: true do
         end
 
         it "User can filter the #index by vendor" do
-          organization = create(:organization, skip_items: true)
+          organization = create(:organization)
           vendor1 = create(:vendor, business_name: "vendor 1", organization: organization)
           vendor2 = create(:vendor, business_name: "vendor 2", organization: organization)
           create(:purchase, vendor: vendor1, organization: organization)
