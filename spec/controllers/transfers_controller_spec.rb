@@ -1,5 +1,5 @@
-RSpec.describe TransfersController, type: :controller, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe TransfersController, type: :controller do
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 
   context "While signed in" do

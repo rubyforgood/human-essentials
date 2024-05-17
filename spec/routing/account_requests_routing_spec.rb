@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe AccountRequestsController, type: :routing, skip_seed: true do
+RSpec.describe AccountRequestsController, type: :routing do
   describe "routing" do
     it "routes to #new" do
       expect(get: "/account_requests/new").to route_to("account_requests#new")

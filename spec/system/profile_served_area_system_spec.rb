@@ -1,5 +1,5 @@
-RSpec.describe "Partners profile served area behaviour when accessed as bank", type: :system, js: true, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe "Partners profile served area behaviour when accessed as bank", type: :system, js: true do
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 
   before do

@@ -16,7 +16,7 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
     # I'm looking at you, spec/system/request_system_spec.rb:4
     described_class.destroy_all
   end
-  let(:organization) { create(:organization, skip_items: true) }
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 
   let!(:very_old) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(2000, 7, 31), :organization => organization) }

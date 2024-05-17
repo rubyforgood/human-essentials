@@ -1,5 +1,5 @@
-RSpec.describe "BarcodeItems", type: :request, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe "BarcodeItems", type: :request do
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 
@@ -71,7 +71,7 @@ RSpec.describe "BarcodeItems", type: :request, skip_seed: true do
     describe "GET #find" do
       let!(:global_barcode) { create(:global_barcode_item) }
       let!(:organization_barcode) { create(:barcode_item, organization: organization) }
-      let(:other_organization) { create(:organization, skip_items: true) }
+      let(:other_organization) { create(:organization) }
       let!(:other_barcode) { create(:barcode_item, organization: other_organization) }
 
       context "via ajax" do
@@ -102,7 +102,7 @@ RSpec.describe "BarcodeItems", type: :request, skip_seed: true do
 
     describe "DELETE #destroy" do
       it "disallows a user to delete someone else's barcode" do
-        other_org = create(:organization, skip_items: true)
+        other_org = create(:organization)
         other_barcode = create(:barcode_item, organization: other_org)
         delete barcode_item_path(other_barcode)
         expect(response).not_to be_successful
@@ -125,7 +125,7 @@ RSpec.describe "BarcodeItems", type: :request, skip_seed: true do
     end
 
     context "Looking at a different organization" do
-      let(:object) { create(:barcode_item, organization: create(:organization, skip_items: true)) }
+      let(:object) { create(:barcode_item, organization: create(:organization)) }
       include_examples "requiring authorization"
     end
   end

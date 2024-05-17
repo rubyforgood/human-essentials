@@ -21,8 +21,8 @@
 #  organization_id              :integer
 #
 
-RSpec.describe Item, type: :model, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe Item, type: :model do
+  let(:organization) { create(:organization) }
 
   describe 'Assocations >' do
     it { should belong_to(:item_category).optional }
@@ -89,7 +89,7 @@ RSpec.describe Item, type: :model, skip_seed: true do
         c1 = create(:base_item)
         create(:item, base_item: c1, organization: organization)
         create(:item, base_item: create(:base_item), organization: organization)
-        create(:item, base_item: c1, organization: create(:organization, skip_items: true))
+        create(:item, base_item: c1, organization: create(:organization))
 
         expect(organization.items.by_base_item(c1).size).to eq(1)
       end

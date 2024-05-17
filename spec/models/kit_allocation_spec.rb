@@ -12,7 +12,7 @@
 #
 require "rails_helper"
 
-RSpec.describe KitAllocation, type: :model, skip_seed: true do
+RSpec.describe KitAllocation, type: :model do
   describe "versioning" do
     it { is_expected.to be_versioned }
   end

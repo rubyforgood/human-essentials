@@ -21,7 +21,7 @@ FactoryBot.define do
   factory :distribution do
     storage_location
     partner
-    organization { Organization.try(:first) || create(:organization, skip_items: true) }
+    organization { Organization.try(:first) || create(:organization) }
     issued_at { nil }
     delivery_method { :pick_up }
     state { :scheduled }
