@@ -112,7 +112,6 @@ RSpec.describe ItemsController, type: :controller do
             post :create, params: default_params.merge(item_params)
           end.to change { Item.count }.by(1)
         end
-
         it "should accept params with dollar signs, periods, and commas" do
           item_params["value_in_cents"] = "$5,432.10"
           post :create, params: default_params.merge(item_params)
@@ -125,6 +124,27 @@ RSpec.describe ItemsController, type: :controller do
 
           expect(response).to redirect_to items_path
           expect(response).to have_notice
+        end
+      end
+
+      context "with an already existing item name" do
+        let(:item_params) do
+          {
+            item: {
+              name: "Really Good Item",
+              partner_key: create(:base_item).partner_key,
+              value_in_cents: 1001,
+              package_size: 5,
+              distribution_quantity: 30
+            }
+          }
+        end
+        it "shouldn't create an item with the same name" do
+          create(:item, name: "Really Good Item", organization: @organization)
+          post :create, params: default_params.merge(item_params)
+
+          expect(flash[:error]).to eq("An item with that name already exists (could be an inactive item).")
+          expect(response).to render_template(:new)
         end
       end
 
