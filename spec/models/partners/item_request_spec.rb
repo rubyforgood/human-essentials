@@ -30,7 +30,7 @@ RSpec.describe Partners::ItemRequest, type: :model do
     it { should validate_presence_of(:partner_key) }
 
     it "should only be able to use item's request units" do
-      unit = create(:unit, organization: organization, name: 'pack')
+      create(:unit, organization: organization, name: 'pack')
       create(:unit, organization: organization, name: 'flat')
       item = create(:item, organization: organization)
       item_unit = create(:item_unit, name: 'pack', item: item)
