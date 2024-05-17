@@ -1,5 +1,5 @@
-RSpec.describe ItemizableUpdateService, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe ItemizableUpdateService do
+  let(:organization) { create(:organization) }
   let(:storage_location) { create(:storage_location, organization: organization, item_count: 0) }
   let(:new_storage_location) { create(:storage_location, organization: organization, item_count: 0) }
   let(:item1) { create(:item, organization: organization, name: "My Item 1") }

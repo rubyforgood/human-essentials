@@ -22,7 +22,7 @@ FactoryBot.define do
     sequence(:email) { |n| "leslie#{n}@gmail.com" }
     notes { "Lorem ipsum" }
     send_reminders { true }
-    organization_id { Organization.try(:first).try(:id) || create(:organization, skip_items: true).id }
+    organization_id { Organization.try(:first).try(:id) || create(:organization).id }
 
     trait :approved do
       status { :approved }

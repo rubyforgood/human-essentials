@@ -1,7 +1,7 @@
 require "rails_helper"
 
-RSpec.describe "BroadcastAnnouncements", type: :request, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe "BroadcastAnnouncements", type: :request do
+  let(:organization) { create(:organization) }
   let(:user) { create(:super_admin, organization: organization) }
   let(:super_admin) { create(:super_admin, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
@@ -121,14 +121,14 @@ RSpec.describe "BroadcastAnnouncements", type: :request, skip_seed: true do
     describe "GET /new" do
       it "redirects" do
         get new_admin_broadcast_announcement_url
-        expect(response).to redirect_to(dashboard_path(organization_name: organization_admin.organization))
+        expect(response).to redirect_to(dashboard_path)
       end
     end
 
     describe "POST /create" do
       it "redirects" do
         post admin_broadcast_announcements_url, params: {user: user.id, message: "test"}
-        expect(response).to redirect_to(dashboard_path(organization_name: organization_admin.organization))
+        expect(response).to redirect_to(dashboard_path)
       end
     end
   end

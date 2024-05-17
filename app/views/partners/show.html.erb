@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Partners", (partners_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Partners", partners_path %></li>
           <li class="breadcrumb-item"><a href="#"><%= @partner.name %></a></li>
         </ol>
       </div>
@@ -337,6 +337,7 @@
                 <span class="input-group-text" id="spn_env_fa_icon"><%= fa_icon "envelope" %></span>
                 <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon" autocomplete="off">
                 <%= hidden_field_tag :partner_id, @partner.id %><br>
+                <%= hidden_field_tag :organization_name, current_organization %>
               </div>
               <br>
               <%= submit_button({ text: "Reset Password", icon: "envelope" }) %>

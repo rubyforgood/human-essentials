@@ -14,7 +14,7 @@
 
 FactoryBot.define do
   factory :audit do
-    organization { Organization.try(:first) || create(:organization, skip_items: true) }
+    organization { Organization.try(:first) || create(:organization) }
     user { nil }
     storage_location { nil }
     adjustment { nil }

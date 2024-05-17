@@ -1,5 +1,5 @@
-RSpec.describe Exports::ExportDistributionsCSVService, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe Exports::ExportDistributionsCSVService do
+  let(:organization) { create(:organization) }
 
   describe '#generate_csv_data' do
     subject { described_class.new(distributions: distributions, organization: organization, filters: filters).generate_csv_data }

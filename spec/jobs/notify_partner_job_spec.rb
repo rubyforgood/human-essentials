@@ -1,4 +1,4 @@
-RSpec.describe NotifyPartnerJob, job: true, skip_seed: true do
+RSpec.describe NotifyPartnerJob, job: true do
   describe "#perform" do
     let(:request) { create(:request) }
     let(:mailer) { double(:mailer) }

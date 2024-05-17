@@ -1,5 +1,5 @@
-RSpec.describe 'Account request flow', type: :system, js: true, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe 'Account request flow', type: :system, js: true do
+  let(:organization) { create(:organization) }
   let(:super_admin) { create(:super_admin, organization: organization) }
 
   context 'when in staging' do

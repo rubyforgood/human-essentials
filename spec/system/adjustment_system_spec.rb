@@ -1,14 +1,13 @@
-RSpec.describe "Adjustment management", type: :system, js: true, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe "Adjustment management", type: :system, js: true do
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 
-  let!(:url_prefix) { "/#{organization.to_param}" }
   let!(:storage_location) { create(:storage_location, :with_items, organization: organization) }
   let(:add_quantity) { 10 }
   let(:sub_quantity) { -10 }
 
-  subject { url_prefix + "/adjustments" }
+  subject { adjustments_path }
 
   before do
     sign_in(user)
@@ -66,7 +65,7 @@ RSpec.describe "Adjustment management", type: :system, js: true, skip_seed: true
       it "politely informs the user that they're adjusting way too hard", js: true do
         sub_quantity = -9001
         storage_location = create(:storage_location, :with_items, name: "PICK THIS ONE", item_quantity: 10, organization: organization)
-        visit url_prefix + "/adjustments"
+        visit adjustments_path
         click_on "New Adjustment"
         select storage_location.name, from: "From storage location"
         fill_in "Comment", with: "something"
@@ -83,7 +82,7 @@ RSpec.describe "Adjustment management", type: :system, js: true, skip_seed: true
         sub_quantity = -9
 
         storage_location = create(:storage_location, :with_items, name: "PICK THIS ONE", item_quantity: 10, organization: organization)
-        visit url_prefix + "/adjustments"
+        visit adjustments_path
         click_on "New Adjustment"
         select storage_location.name, from: "From storage location"
         fill_in "Comment", with: "something"
@@ -109,7 +108,7 @@ RSpec.describe "Adjustment management", type: :system, js: true, skip_seed: true
 
     it "should not display inactive storage locations in dropdown" do
       create(:storage_location, name: "Inactive R Us", discarded_at: Time.zone.now)
-      visit url_prefix + "/adjustments/new"
+      visit new_adjustment_path
       expect(page).to have_no_content "Inactive R Us"
     end
   end

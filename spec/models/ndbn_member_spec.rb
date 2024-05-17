@@ -9,7 +9,7 @@
 #
 require "rails_helper"
 
-RSpec.describe NDBNMember, type: :model, skip_seed: true do
+RSpec.describe NDBNMember, type: :model do
   describe "validations" do
     subject { build(:ndbn_member) }
     it { should validate_presence_of(:ndbn_member_id) }

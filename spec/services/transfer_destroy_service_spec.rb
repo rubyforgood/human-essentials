@@ -1,4 +1,4 @@
-RSpec.describe TransferDestroyService, type: :service, skip_seed: true do
+RSpec.describe TransferDestroyService, type: :service do
   describe '#call' do
     subject { described_class.new(transfer_id: transfer_id).call }
     let(:transfer_id) { transfer.id }

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Exports::ExportRequestService, skip_seed: true do
+RSpec.describe Exports::ExportRequestService do
   let(:org) { create(:organization) }
 
   let(:item_3t) { create :item, name: "3T Diapers" }

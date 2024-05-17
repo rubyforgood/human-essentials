@@ -1,4 +1,4 @@
-RSpec.describe "Coworking invitations", type: :system, js: true, skip_seed: true do
+RSpec.describe "Coworking invitations", type: :system, js: true do
   describe 'inviting a new user as a partner user' do
     let(:partner_user) { partner.primary_user }
     let!(:partner) { FactoryBot.create(:partner) }
