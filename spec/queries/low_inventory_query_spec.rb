@@ -1,7 +1,7 @@
 RSpec.describe LowInventoryQuery do
   subject { LowInventoryQuery.call(organization).map { |r| r.to_h.symbolize_keys } }
 
-  let(:organization) { create :organization, skip_items: true }
+  let(:organization) { create :organization }
   let(:storage_location) { create :storage_location, organization: organization }
 
   let(:minimum_quantity) { 0 }

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe "Dashboard", type: :request, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe "Dashboard", type: :request do
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 
   context "While signed in" do

@@ -1,9 +1,9 @@
-RSpec.describe Reports::ChildrenServedReportService, type: :service, skip_seed: true do
+RSpec.describe Reports::ChildrenServedReportService, type: :service do
   let(:year) { 2020 }
 
   describe '#report' do
     it 'should report zero values' do
-      organization = create(:organization, skip_items: true)
+      organization = create(:organization)
       report = described_class.new(organization: organization, year: year).report
       expect(report).to eq({
                                     name: 'Children Served',
@@ -107,7 +107,7 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service, skip_seed: 
   end
   describe "#disposable_diapers_from_kits_total" do
     it "calculates the number of disposable diapers that have been distributed within kits this year" do
-      organization = create(:organization, skip_items: true)
+      organization = create(:organization)
 
       # create disposable/ nondisposable base items
       create(:base_item, name: "Toddler Disposable Diaper", partner_key: "toddler diapers", category: "disposable diaper")

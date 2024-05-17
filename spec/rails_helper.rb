@@ -120,7 +120,6 @@ RSpec.configure do |config|
     config.use_transactional_fixtures = true
 
     DatabaseCleaner.clean_with(:truncation)
-    seed_base_data_for_tests if RSpec.current_example.metadata[:seed_items] != false
   end
 
   #
@@ -141,40 +140,6 @@ RSpec.configure do |config|
   DEFAULT_TEST_PARTNER_NAME = "DEFAULT PARTNER"
   DEFAULT_USER_PASSWORD = "password!"
   # rubocop:enable Lint/ConstantDefinitionInBlock
-
-  def define_global_variables
-    @organization = Organization.find_by!(name: DEFAULT_TEST_ORGANIZATION_NAME)
-
-    user_names = [
-      DEFAULT_TEST_USER_NAME,
-      DEFAULT_TEST_ORG_ADMIN_USER_NAME,
-      DEFAULT_TEST_SUPER_ADMIN_USER_NAME,
-      DEFAULT_TEST_SUPER_ADMIN_NO_ORG_USER_NAME
-    ]
-    users = User.where(name: user_names)
-    @organization_admin = users.find { |u| u.name == DEFAULT_TEST_ORG_ADMIN_USER_NAME }
-    @user = users.find { |u| u.name == DEFAULT_TEST_USER_NAME }
-    @super_admin = users.find { |u| u.name == DEFAULT_TEST_SUPER_ADMIN_USER_NAME }
-    @super_admin_no_org = users.find { |u| u.name == DEFAULT_TEST_SUPER_ADMIN_NO_ORG_USER_NAME }
-
-    @partner = Partner.find_by!(name: DEFAULT_TEST_PARTNER_NAME)
-  end
-
-  def seed_base_data_for_tests
-    # Create base items that are used to handle seeding Organization with items
-    seed_base_items
-    # Create default organization
-    organization = FactoryBot.create(:organization, name: DEFAULT_TEST_ORGANIZATION_NAME)
-
-    # Create default users
-    FactoryBot.create(:organization_admin, organization: organization, name: DEFAULT_TEST_ORG_ADMIN_USER_NAME)
-    FactoryBot.create(:user, organization: organization, name: DEFAULT_TEST_USER_NAME)
-    FactoryBot.create(:super_admin, name: DEFAULT_TEST_SUPER_ADMIN_USER_NAME)
-    FactoryBot.create(:super_admin_no_org, name: DEFAULT_TEST_SUPER_ADMIN_NO_ORG_USER_NAME)
-
-    # Seed with default partner record
-    FactoryBot.create(:partner, organization: organization, name: DEFAULT_TEST_PARTNER_NAME)
-  end
 
   # --------------------
   # END - Seeding helpers for tests setup
@@ -210,28 +175,6 @@ RSpec.configure do |config|
     clear_downloads
     driven_by :local_cuprite
     Capybara.server = :puma, { Silent: true }
-  end
-
-  config.before(:all) do
-    seed_current = self.class.metadata[:skip_seed].nil? || self.class.metadata[:skip_seed] == false
-    seeded_last = Thread.current[:seeded_last]
-
-    if seeded_last && !seed_current
-      DatabaseCleaner.clean_with(:truncation)
-    end
-
-    if seeded_last && seed_current
-      define_global_variables
-    end
-
-    if !seeded_last && seed_current
-      seed_base_data_for_tests
-      define_global_variables
-    end
-
-    # if !seeded_last && !seed_current do nothing
-
-    Thread.current[:seeded_last] = seed_current
   end
 
   config.before(:each) do

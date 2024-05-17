@@ -1,5 +1,5 @@
-RSpec.describe "User sign-in handling", type: :system, js: true, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe "User sign-in handling", type: :system, js: true do
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 
   subject { new_user_session_path }

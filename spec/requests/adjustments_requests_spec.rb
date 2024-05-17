@@ -1,7 +1,7 @@
 require "rails_helper"
 
-RSpec.describe "Adjustments", type: :request, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe "Adjustments", type: :request do
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 
   # This should return the minimal set of attributes required to create a valid

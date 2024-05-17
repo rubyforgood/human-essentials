@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :donation_site do
-    organization { Organization.try(:first) || create(:organization, skip_items: true) }
+    organization { Organization.try(:first) || create(:organization) }
     name { Faker::Company.name }
     address { "1500 Remount Road, Front Royal, VA 22630" }
     active { true }
