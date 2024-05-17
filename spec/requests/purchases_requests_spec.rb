@@ -1,13 +1,9 @@
 require "rails_helper"
 
-RSpec.describe "Purchases", type: :request, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe "Purchases", type: :request do
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
-
-  let(:default_params) do
-    { organization_name: organization.to_param }
-  end
 
   context "While signed in as a user >" do
     before do
@@ -16,7 +12,7 @@ RSpec.describe "Purchases", type: :request, skip_seed: true do
 
     describe "GET #index" do
       subject do
-        get purchases_path(default_params.merge(format: response_format))
+        get purchases_path(format: response_format)
         response
       end
 
@@ -48,7 +44,7 @@ RSpec.describe "Purchases", type: :request, skip_seed: true do
 
     describe "GET #new" do
       subject do
-        get new_purchase_path(default_params)
+        get new_purchase_path
         response
       end
 
@@ -70,7 +66,7 @@ RSpec.describe "Purchases", type: :request, skip_seed: true do
         end
 
         it "redirects to GET#edit" do
-          expect { post purchases_path(default_params.merge(purchase: purchase)) }
+          expect { post purchases_path(purchase: purchase) }
             .to change { Purchase.count }.by(1)
             .and change { PurchaseEvent.count }.by(1)
           expect(response).to redirect_to(purchases_path)
@@ -78,21 +74,21 @@ RSpec.describe "Purchases", type: :request, skip_seed: true do
 
         it "accepts :amount_spent_in_cents with dollar signs, commas, and periods" do
           formatted_purchase = purchase.merge(amount_spent: "$1,000.54")
-          post purchases_path(default_params.merge(purchase: formatted_purchase))
+          post purchases_path(purchase: formatted_purchase)
 
           expect(Purchase.last.amount_spent_in_cents).to eq 100_054
         end
 
         it "storage location defaults to organizations storage location" do
           purchase = create(:purchase)
-          get edit_purchase_path(organization.to_param, purchase)
+          get edit_purchase_path(purchase)
           expect(response.body).to match(/(<option selected="selected" value=")[0-9]*(">Smithsonian Conservation Center<\/option>)/)
         end
       end
 
       context "on failure" do
         it "renders GET#new with error" do
-          post purchases_path(default_params.merge(purchase: { storage_location_id: nil, amount_spent: nil }))
+          post purchases_path(purchase: { storage_location_id: nil, amount_spent: nil })
           expect(response).to be_successful # Will render :new
           expect(response.body).to include('Failed to create purchase due to')
         end
@@ -102,7 +98,7 @@ RSpec.describe "Purchases", type: :request, skip_seed: true do
     describe "PUT#update" do
       it "redirects to index after update" do
         purchase = create(:purchase, purchased_from: "Google")
-        put purchase_path(default_params.merge(id: purchase.id, purchase: { purchased_from: "Google" }))
+        put purchase_path(id: purchase.id, purchase: { purchased_from: "Google" })
         expect(response).to redirect_to(purchases_path)
       end
 
@@ -119,7 +115,7 @@ RSpec.describe "Purchases", type: :request, skip_seed: true do
         }
         purchase_params = { source: "Purchase Site", line_items_attributes: line_item_params }
         expect do
-          put purchase_path(default_params.merge(id: purchase.id, purchase: purchase_params))
+          put purchase_path(id: purchase.id, purchase: purchase_params)
         end.to change { purchase.storage_location.inventory_items.first.quantity }.by(5)
           .and change {
             View::Inventory.new(organization.id)
@@ -140,7 +136,7 @@ RSpec.describe "Purchases", type: :request, skip_seed: true do
           }
           purchase_params = { source: "Purchase Site", line_items_attributes: line_item_params }
           expect do
-            put purchase_path(default_params.merge(id: purchase.id, purchase: purchase_params))
+            put purchase_path(id: purchase.id, purchase: purchase_params)
           end.to change { purchase.storage_location.inventory_items.first.quantity }.by(-10)
             .and change {
                    View::Inventory.new(organization.id)
@@ -165,7 +161,7 @@ RSpec.describe "Purchases", type: :request, skip_seed: true do
           }
           purchase_params = { storage_location_id: new_storage_location.id, line_items_attributes: line_item_params }
           expect do
-            put purchase_path(default_params.merge(id: purchase.id, purchase: purchase_params))
+            put purchase_path(id: purchase.id, purchase: purchase_params)
           end.to change { original_storage_location.size }.by(-10) # removes the whole purchase of 10
           expect(new_storage_location.size).to eq 8
         end
@@ -193,7 +189,7 @@ RSpec.describe "Purchases", type: :request, skip_seed: true do
             }
           }
           purchase_params = { storage_location: new_storage_location, line_items_attributes: line_item_params }
-          put purchase_path(default_params.merge(id: purchase.id, purchase: purchase_params))
+          put purchase_path(id: purchase.id, purchase: purchase_params)
           expect(response).not_to redirect_to(anything)
           expect(original_storage_location.size).to eq 5
           expect(new_storage_location.size).to eq 0
@@ -206,14 +202,14 @@ RSpec.describe "Purchases", type: :request, skip_seed: true do
       let(:storage_location) { create(:storage_location, organization: organization) }
 
       it "returns http success" do
-        get edit_purchase_path(default_params.merge(id: create(:purchase, organization: organization)))
+        get edit_purchase_path(id: create(:purchase, organization: organization))
         expect(response).to be_successful
       end
 
       it "storage location is correct" do
         storage2 = create(:storage_location, name: "storage2")
         purchase2 = create(:purchase, storage_location: storage2)
-        get edit_purchase_path(organization.to_param, purchase2)
+        get edit_purchase_path(purchase2)
         expect(response.body).to match(/(<option selected="selected" value=")[0-9]*(">storage2<\/option>)/)
       end
 
@@ -224,7 +220,7 @@ RSpec.describe "Purchases", type: :request, skip_seed: true do
           purchase = create(:purchase, :with_items, item: item, storage_location: storage_location)
           create(:audit, :with_items, item: item, storage_location: storage_location, status: "finalized")
 
-          get edit_purchase_path(organization.to_param, purchase)
+          get edit_purchase_path(purchase)
 
           expect(response.body).to include("You’ve had an audit since this purchase was started.")
           expect(response.body).to include("In the case that you are correcting a typo, rather than recording that the physical amounts being purchased have changed,")
@@ -239,7 +235,7 @@ RSpec.describe "Purchases", type: :request, skip_seed: true do
           purchase = create(:purchase, :with_items, item: item, storage_location: storage_location)
           create(:audit, :with_items, item: item, storage_location: storage_location, status: "confirmed")
 
-          get edit_purchase_path(organization.to_param, purchase)
+          get edit_purchase_path(purchase)
 
           expect(response.body).to_not include("You’ve had an audit since this purchase was started.")
           expect(response.body).to_not include("In the case that you are correcting a typo, rather than recording that the physical amounts being purchased have changed,")
@@ -253,7 +249,7 @@ RSpec.describe "Purchases", type: :request, skip_seed: true do
           storage_location = create(:storage_location, :with_items, item: item, organization: organization)
           purchase = create(:purchase, :with_items, item: item, storage_location: storage_location)
 
-          get edit_purchase_path(organization.to_param, purchase)
+          get edit_purchase_path(purchase)
 
           expect(response.body).to_not include("You’ve had an audit since this purchase was started.")
           expect(response.body).to_not include("In the case that you are correcting a typo, rather than recording that the physical amounts being purchased have changed,")
@@ -267,10 +263,10 @@ RSpec.describe "Purchases", type: :request, skip_seed: true do
       let!(:purchase) { create(:purchase, :with_items, item: item) }
 
       it "shows an enabled edit button" do
-        get purchase_path(default_params.merge(id: purchase.id))
+        get purchase_path(id: purchase.id)
         expect(response).to be_successful
         page = Nokogiri::HTML(response.body)
-        edit = page.at_css("a[href='#{edit_purchase_path(default_params.merge(id: purchase.id))}']")
+        edit = page.at_css("a[href='#{edit_purchase_path(id: purchase.id)}']")
         expect(edit.attr("class")).not_to match(/disabled/)
         expect(response.body).not_to match(/please make the following items active:/)
       end
@@ -281,9 +277,9 @@ RSpec.describe "Purchases", type: :request, skip_seed: true do
         end
 
         it "shows a disabled edit button" do
-          get purchase_path(default_params.merge(id: purchase.id))
+          get purchase_path(id: purchase.id)
           page = Nokogiri::HTML(response.body)
-          edit = page.at_css("a[href='#{edit_purchase_path(default_params.merge(id: purchase.id))}']")
+          edit = page.at_css("a[href='#{edit_purchase_path(id: purchase.id)}']")
           expect(edit.attr("class")).to match(/disabled/)
           expect(response.body).to match(/please make the following items active: #{item.name}/)
         end
@@ -296,10 +292,10 @@ RSpec.describe "Purchases", type: :request, skip_seed: true do
         end
 
         it "shows a disabled edit and delete buttons" do
-          get purchase_path(default_params.merge(id: purchase.id))
+          get purchase_path(purchase.id)
           page = Nokogiri::HTML(response.body)
-          edit = page.at_css("a[href='#{edit_purchase_path(default_params.merge(id: purchase.id))}']")
-          delete = page.at_css("a.btn-danger[href='#{purchase_path(default_params.merge(id: purchase.id))}']")
+          edit = page.at_css("a[href='#{edit_purchase_path(purchase.id)}']")
+          delete = page.at_css("a.btn-danger[href='#{purchase_path(purchase.id)}']")
           expect(edit.attr("class")).to match(/disabled/)
           expect(delete.attr("class")).to match(/disabled/)
           expect(response.body).to match(/please make the following items active: #{item.name}/)
@@ -310,13 +306,13 @@ RSpec.describe "Purchases", type: :request, skip_seed: true do
     describe "DELETE #destroy" do
       # normal users are not authorized
       it "redirects to the dashboard" do
-        delete purchase_path(default_params.merge(id: create(:purchase, organization: organization)))
+        delete purchase_path(id: create(:purchase, organization: organization))
         expect(response).to redirect_to(dashboard_path)
       end
 
       it "does not delete a purchase" do
         purchase = create(:purchase, purchased_from: "Google")
-        expect { delete purchase_path(default_params.merge(id: purchase.id)) }.to_not change(Purchase, :count)
+        expect { delete purchase_path(id: purchase.id) }.to_not change(Purchase, :count)
       end
     end
   end
@@ -328,24 +324,24 @@ RSpec.describe "Purchases", type: :request, skip_seed: true do
 
     describe "DELETE #destroy" do
       it "redirects to the index" do
-        delete purchase_path(default_params.merge(id: create(:purchase, organization: organization)))
+        delete purchase_path(id: create(:purchase, organization: organization))
         expect(response).to redirect_to(purchases_path)
       end
 
       it "decreases storage location inventory" do
         purchase = create(:purchase, :with_items, item_quantity: 10)
         storage_location = purchase.storage_location
-        expect { delete purchase_path(default_params.merge(id: purchase.id)) }.to change { storage_location.size }.by(-10)
+        expect { delete purchase_path(id: purchase.id) }.to change { storage_location.size }.by(-10)
       end
 
       it "deletes a purchase" do
         purchase = create(:purchase, purchased_from: "Google")
-        expect { delete purchase_path(default_params.merge(id: purchase.id)) }.to change(Purchase, :count).by(-1)
+        expect { delete purchase_path(id: purchase.id) }.to change(Purchase, :count).by(-1)
       end
 
       it "displays the proper flash notice" do
         purchase_id = create(:purchase, purchased_from: "Google").id.to_s
-        delete purchase_path(default_params.merge(id: purchase_id))
+        delete purchase_path(id: purchase_id)
         expect(response).to have_notice "Purchase #{purchase_id} has been removed!"
       end
     end

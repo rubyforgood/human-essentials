@@ -1,11 +1,15 @@
 RSpec.describe "Admin Organization Management", type: :system, js: true do
+  let(:organization) { create(:organization) }
+  let(:super_admin) { create(:super_admin, organization: organization) }
+  let(:super_admin_no_org) { create(:super_admin, organization: nil) }
+
   let!(:foo_org) { create(:organization, name: 'foo') }
   let!(:bar_org) { create(:organization, name: 'bar') }
   let!(:baz_org) { create(:organization, name: 'baz') }
 
   context "While signed in as an Administrative User (super admin)" do
     before :each do
-      sign_in(@super_admin)
+      sign_in(super_admin)
     end
 
     it "filters by organizations by name in organizations index page" do
@@ -91,7 +95,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true do
   end
   context "While signed in as an Administrative User with no organization (super admin no org)" do
     before :each do
-      sign_in(@super_admin_no_org)
+      sign_in(super_admin_no_org)
     end
 
     it "creates a new organization" do

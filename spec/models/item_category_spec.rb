@@ -11,7 +11,7 @@
 #
 require 'rails_helper'
 
-RSpec.describe ItemCategory, type: :model, skip_seed: true do
+RSpec.describe ItemCategory, type: :model do
   describe 'validations' do
     subject { build(:item_category) }
 

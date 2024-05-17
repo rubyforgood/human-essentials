@@ -1,4 +1,4 @@
-RSpec.describe DeadlineService, type: :service, skip_seed: true do
+RSpec.describe DeadlineService, type: :service do
   let(:organization) { build_stubbed(:organization, :without_deadlines) }
   let(:partner_group) { build_stubbed(:partner_group, :without_deadlines, organization: organization) }
   let(:partner) { build_stubbed(:partner, organization: organization, partner_group: partner_group) }

@@ -1,5 +1,5 @@
-RSpec.describe "Admin::Organizations", type: :request, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe "Admin::Organizations", type: :request do
+  let(:organization) { create(:organization) }
   let(:default_params) do
     { organization_name: organization.id }
   end

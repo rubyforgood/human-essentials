@@ -1,10 +1,6 @@
-RSpec.describe ItemsController, type: :controller, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe ItemsController, type: :controller do
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
-
-  let(:default_params) do
-    { organization_name: organization.to_param }
-  end
 
   context "While signed in" do
     before do
@@ -12,21 +8,21 @@ RSpec.describe ItemsController, type: :controller, skip_seed: true do
     end
 
     describe "GET #index" do
-      subject { get :index, params: default_params }
+      subject { get :index }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
 
     describe "GET #new" do
-      subject { get :new, params: default_params }
+      subject { get :new }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
 
     describe "GET #edit" do
-      subject { get :edit, params: default_params.merge(id: create(:item, organization: organization)) }
+      subject { get :edit, params: { id: create(:item, organization: organization) } }
       it "returns http success" do
         expect(subject).to be_successful
       end
@@ -35,7 +31,7 @@ RSpec.describe ItemsController, type: :controller, skip_seed: true do
     describe "PUT #update" do
       context "visible" do
         let(:item) { create(:item, visible_to_partners: false) }
-        subject { put :update, params: default_params.merge(id: item.id, item: { value_in_cents: 100, visible_to_partners: true }) }
+        subject { put :update, params: { id: item.id, item: { value_in_cents: 100, visible_to_partners: true } } }
         it "should update visible_to_partners to true" do
           expect(subject).to redirect_to(items_path)
           expect(item.reload.visible_to_partners).to be true
@@ -44,7 +40,7 @@ RSpec.describe ItemsController, type: :controller, skip_seed: true do
 
       context "invisible" do
         let(:item) { create(:item, visible_to_partners: true) }
-        subject { put :update, params: default_params.merge(id: item.id, item: { value_in_cents: 100, visible_to_partners: false }) }
+        subject { put :update, params: { id: item.id, item: { value_in_cents: 100, visible_to_partners: false } } }
         it "should update visible_to_partners to false" do
           expect(subject).to redirect_to(items_path)
           expect(item.reload.visible_to_partners).to be false
@@ -53,14 +49,14 @@ RSpec.describe ItemsController, type: :controller, skip_seed: true do
     end
 
     describe "GET #show" do
-      subject { get :show, params: default_params.merge(id: create(:item, organization: organization)) }
+      subject { get :show, params: { id: create(:item, organization: organization) } }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
 
     describe "DELETE #destroy" do
-      subject { delete :destroy, params: default_params.merge(id: create(:item, organization: organization)) }
+      subject { delete :destroy, params: { id: create(:item, organization: organization) } }
       it "redirects to #index" do
         expect(subject).to redirect_to(items_path)
       end
@@ -72,7 +68,7 @@ RSpec.describe ItemsController, type: :controller, skip_seed: true do
 
         it "re-activates the item" do
           expect do
-            patch :restore, params: default_params.merge(id: item.id)
+            patch :restore, params: { id: item.id }
           end.to change { Item.active.size }.by(1)
         end
       end
@@ -81,7 +77,7 @@ RSpec.describe ItemsController, type: :controller, skip_seed: true do
         let!(:item) { create(:item, :active) }
         it "does nothing" do
           expect do
-            patch :restore, params: default_params.merge(id: item.id)
+            patch :restore, params: { id: item.id }
           end.to change { Item.active.size }.by(0)
         end
       end
@@ -90,7 +86,7 @@ RSpec.describe ItemsController, type: :controller, skip_seed: true do
         let!(:external_item) { create(:item, :inactive, organization: create(:organization)) }
         it "does nothing" do
           expect do
-            patch :restore, params: default_params.merge(id: external_item.id)
+            patch :restore, params: { id: external_item.id }
           end.to change { Item.active.size }.by(0)
         end
       end
@@ -112,19 +108,19 @@ RSpec.describe ItemsController, type: :controller, skip_seed: true do
       context "with valid params" do
         it "should create an item" do
           expect do
-            post :create, params: default_params.merge(item_params)
+            post :create, params: item_params
           end.to change { Item.count }.by(1)
         end
 
         it "should accept params with dollar signs, periods, and commas" do
           item_params["value_in_cents"] = "$5,432.10"
-          post :create, params: default_params.merge(item_params)
+          post :create, params: item_params
 
           expect(response).not_to have_error
         end
 
         it "should redirect to the item page" do
-          post :create, params: default_params.merge(item_params)
+          post :create, params: item_params
 
           expect(response).to redirect_to items_path
           expect(response).to have_notice
@@ -137,7 +133,7 @@ RSpec.describe ItemsController, type: :controller, skip_seed: true do
         end
 
         it "should show an error" do
-          post :create, params: default_params.merge(bad_params)
+          post :create, params: bad_params
 
           expect(response).to have_error
         end
@@ -154,14 +150,14 @@ RSpec.describe ItemsController, type: :controller, skip_seed: true do
       let!(:item) { create(:item, item_category: item_category) }
 
       it "should remove an item's category" do
-        patch :remove_category, params: default_params.merge(id: item.id)
+        patch :remove_category, params: { id: item.id }
         expect(item.reload.item_category).to be_nil
       end
 
       it "should redirect to the previous category page" do
-        patch :remove_category, params: default_params.merge(id: item.id)
+        patch :remove_category, params: { id: item.id }
 
-        expect(response).to redirect_to item_category_path(item_category)
+        expect(response).to redirect_to item_category_path(id: item_category.id)
         expect(response).to have_notice
       end
     end
