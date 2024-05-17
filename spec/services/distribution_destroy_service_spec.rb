@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe DistributionDestroyService, skip_seed: true do
+RSpec.describe DistributionDestroyService do
   describe '#call' do
     subject { described_class.new(distribution_id).call }
     let(:distribution_id) { Faker::Number.number }

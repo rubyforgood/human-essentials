@@ -1,5 +1,5 @@
-RSpec.describe "Requests", type: :system, js: true, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe "Requests", type: :system, js: true do
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 
   let(:item1) { create(:item, name: "Good item") }

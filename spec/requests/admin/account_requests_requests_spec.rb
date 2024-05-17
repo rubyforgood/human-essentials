@@ -1,7 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe 'Admin::AccountRequestsController', type: :request, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe 'Admin::AccountRequestsController', type: :request do
+  let(:organization) { create(:organization) }
 
   context 'while signed in as a super admin' do
     before do

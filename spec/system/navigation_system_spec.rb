@@ -1,4 +1,4 @@
-RSpec.describe "Navigation", type: :system, js: true, skip_seed: true do
+RSpec.describe "Navigation", type: :system, js: true do
   describe "sidebar on home" do
     before do
       sign_in(user)

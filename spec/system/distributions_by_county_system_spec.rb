@@ -1,4 +1,4 @@
-RSpec.feature "Distributions by County", type: :system, skip_seed: true do
+RSpec.feature "Distributions by County", type: :system do
   include_examples "distribution_by_county"
 
   let(:year) { Time.current.year }

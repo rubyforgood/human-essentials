@@ -1,4 +1,4 @@
-RSpec.describe PartnerMailerJob, type: :job, skip_seed: true do
+RSpec.describe PartnerMailerJob, type: :job do
   describe "conditionally sending the emails" do
     let(:organization) { create :organization }
     let(:mailer_subject) { 'PartnerMailerJob subject' }

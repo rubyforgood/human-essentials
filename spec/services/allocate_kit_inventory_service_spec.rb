@@ -1,5 +1,5 @@
-RSpec.describe AllocateKitInventoryService, type: :service, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe AllocateKitInventoryService, type: :service do
+  let(:organization) { create(:organization) }
   let(:item) { create(:item, name: "Item", organization: organization, on_hand_minimum_quantity: 15) }
   let(:item_out_of_stock) { create(:item, name: "Item out of stock", organization: organization, on_hand_minimum_quantity: 0) }
 
@@ -20,7 +20,7 @@ RSpec.describe AllocateKitInventoryService, type: :service, skip_seed: true do
     let(:kit) { Kit.create(params) }
 
     context "when the Store location organization doesn't match" do
-      let(:wrong_organization) { create(:organization, skip_items: true) }
+      let(:wrong_organization) { create(:organization) }
       let(:wrong_storage) { create(:storage_location, organization: wrong_organization) }
       let(:params) do
         {

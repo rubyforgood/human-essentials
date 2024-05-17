@@ -1,5 +1,5 @@
-RSpec.describe "Partners", type: :request, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe "Partners", type: :request do
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 
   before do

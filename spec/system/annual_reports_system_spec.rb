@@ -1,5 +1,5 @@
-RSpec.describe "Annual Reports", type: :system, js: true, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe "Annual Reports", type: :system, js: true do
+  let(:organization) { create(:organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 
   let(:url_prefix) { "/#{organization.short_name}" }

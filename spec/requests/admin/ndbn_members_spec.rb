@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "NDBNMembers", type: :request, skip_seed: true do
+RSpec.describe "NDBNMembers", type: :request do
   let(:user) { create(:super_admin) }
 
   before do
