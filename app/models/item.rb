@@ -221,6 +221,10 @@ class Item < ApplicationRecord
     inventory_items.find_by(storage_location_id: storage_location_id)
   end
 
+  def self.existing_item_with_same_name?(organization_id, name)
+    where(organization_id: organization_id, name: name).exists?
+  end
+
   private
 
   def update_associated_kit_name
