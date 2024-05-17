@@ -1,8 +1,10 @@
 require "rails_helper"
 
 RSpec.describe Partners::IndividualsRequestsController, type: :request do
-  let(:partner) { create(:partner, status: :approved) }
+  let(:organization) { create(:organization, :with_items) }
+  let(:partner) { create(:partner, status: :approved, organization: organization) }
   let(:partner_user) { partner.primary_user }
+
   let(:items_to_select) { partner_user.partner.organization.valid_items.sample(3) }
   let(:items_attributes) do
     items_to_select.each_with_index.each_with_object({}) do |(item, index), hash|

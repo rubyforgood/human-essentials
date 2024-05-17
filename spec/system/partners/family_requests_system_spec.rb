@@ -1,4 +1,4 @@
-RSpec.describe "Family requests", type: :system, js: true, skip_seed: true do
+RSpec.describe "Family requests", type: :system, js: true do
   let(:partner) { FactoryBot.create(:partner) }
   let(:partner_user) { partner.primary_user }
   let(:family) { create(:partners_family, guardian_last_name: "Morales", partner: partner) }

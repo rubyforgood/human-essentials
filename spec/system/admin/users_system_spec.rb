@@ -1,7 +1,12 @@
 RSpec.describe "Admin Users Management", type: :system, js: true do
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+  let(:super_admin) { create(:super_admin, organization: organization) }
+
   context "While signed in as an Administrative User (super admin)" do
     before do
-      sign_in(@super_admin)
+      sign_in(super_admin)
     end
 
     it "creates an user" do
@@ -16,11 +21,14 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
     end
 
     it "edits an existing user" do
+      create(:user, organization: organization, name: "AAlphabetically First User")
+
       visit admin_users_path
       click_link "Edit", match: :first
-      expect(page).to have_content("Update #{@organization_admin.name}")
+      expect(page).to have_content("Update AAlphabetically First User")
+
       fill_in "user_name", with: "TestUser"
-      select(@organization.name, from: 'user_organization_id')
+      select(organization.name, from: 'user_organization_id')
       click_on "Save"
 
       expect(page.find(".alert")).to have_content "TestUser updated"
@@ -28,12 +36,13 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       # Check if the organization role has been updated
       tbody = find('#filterrific_results table tbody')
       first_row = tbody.find('tr', text: 'TestUser')
-      expect(first_row).to have_text(@organization.name)
+      expect(first_row).to have_text(organization.name)
     end
 
     it 'adds a role' do
-      user = FactoryBot.create(:user, name: 'User 123')
-      FactoryBot.create(:partner, name: 'Partner ABC')
+      user = create(:user, name: 'User 123', organization: organization)
+      create(:partner, name: 'Partner ABC', organization: organization)
+
       visit edit_admin_user_path(user)
       expect(page).to have_content('User 123')
       select "Partner", from: "resource_type"
@@ -48,7 +57,10 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
     end
 
     it "deletes an existing user" do
+      create(:user, organization: organization, name: "AAlphabetically First User")
+
       visit admin_users_path
+
       page.accept_confirm do
         click_link "Delete", match: :first
       end
@@ -57,25 +69,33 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
     end
 
     it "filters users by name" do
-      user_names = User.all.pluck(:name)
+      create(:user, name: "UserA", organization: organization)
+      create(:user, name: "UserB", organization: organization)
+      create(:user, name: "UserC", organization: organization)
+
+      user_names = ["UserA", "UserB", "UserC"]
 
       visit admin_users_path
+
       user_names.each do |name|
         expect(page.find("table")).to have_content(name)
       end
 
       fill_in "filterrific_search_name", with: user_names.first
+
       user_names[1..].each do |name|
         expect(page.find("table")).not_to have_content(name)
       end
+
       expect(page.find("table")).to have_content(user_names.first)
     end
 
     it "filters users by email" do
-      user_email = @organization_admin.email
+      user_email = organization_admin.email
 
       visit admin_users_path
       fill_in "filterrific_search_email", with: user_email
+      page.find("table", text: user_email) # Wait for search
       expect(page).to have_element("table", text: user_email)
     end
   end

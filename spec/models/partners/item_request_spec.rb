@@ -15,7 +15,7 @@
 #
 require "rails_helper"
 
-RSpec.describe Partners::ItemRequest, type: :model, skip_seed: true do
+RSpec.describe Partners::ItemRequest, type: :model do
   let(:organization) { create(:organization) }
   describe 'associations' do
     it { should belong_to(:request).class_name('::Request').with_foreign_key(:partner_request_id) }

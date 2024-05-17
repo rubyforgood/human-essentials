@@ -1,10 +1,9 @@
-RSpec.describe "Organization management", type: :system, js: true, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe "Organization management", type: :system, js: true do
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 
   include ActionView::RecordIdentifier
-  let!(:url_prefix) { "/#{organization.to_param}" }
 
   context "while signed in as a normal user" do
     before do
@@ -12,17 +11,17 @@ RSpec.describe "Organization management", type: :system, js: true, skip_seed: tr
     end
 
     it "can see summary details about the organization as a user" do
-      visit url_prefix + "/organization"
+      visit organization_path
     end
 
     it "cannot see 'Make user' button for admins" do
-      visit url_prefix + "/organization"
+      visit organization_path
       expect(page.find(".table.border")).to have_no_content "Make User"
     end
   end
 
   context "while signed in as an organization admin" do
-    let!(:store) { create(:storage_location) }
+    let!(:store) { create(:storage_location, organization: organization) }
     let!(:ndbn_member) { create(:ndbn_member, ndbn_member_id: "50000", account_name: "Best Place") }
     before do
       sign_in(organization_admin)
@@ -32,10 +31,10 @@ RSpec.describe "Organization management", type: :system, js: true, skip_seed: tr
       it "can view organization details", :aggregate_failures do
         organization.update!(one_step_partner_invite: true)
 
-        visit organization_path(organization)
+        visit organization_path
 
         expect(page.find("h1")).to have_text(organization.name)
-        expect(page).to have_link("Home", href: dashboard_path(organization))
+        expect(page).to have_link("Home", href: dashboard_path)
 
         expect(page).to have_content("Organization Info")
         expect(page).to have_content("Contact Info")
@@ -56,7 +55,7 @@ RSpec.describe "Organization management", type: :system, js: true, skip_seed: tr
 
     describe "Editing the organization" do
       before do
-        visit url_prefix + "/manage/edit"
+        visit edit_organization_path
       end
 
       it "is prompted with placeholder text and a more helpful error message to ensure correct URL format as a user" do
@@ -141,7 +140,7 @@ RSpec.describe "Organization management", type: :system, js: true, skip_seed: tr
 
     it "can add a new user to an organization" do
       allow(User).to receive(:invite!).and_return(true)
-      visit url_prefix + "/organization"
+      visit organization_path
       click_on "Invite User to this Organization"
       within "#addUserModal" do
         fill_in "email", with: "some_new_user@website.com"
@@ -152,19 +151,19 @@ RSpec.describe "Organization management", type: :system, js: true, skip_seed: tr
 
     it "can re-invite a user to an organization after 7 days" do
       create(:user, name: "Ye Olde Invited User", invitation_sent_at: Time.current - 7.days)
-      visit url_prefix + "/organization"
+      visit organization_path
       expect(page).to have_xpath("//i[@alt='Re-send invitation']")
     end
 
     it "can see 'Make user' button for admins" do
       create(:organization_admin)
-      visit url_prefix + "/organization"
+      visit organization_path
       expect(page.find(".table.border")).to have_content "Make User"
     end
 
     it "can deactivate a user in the organization" do
       user = create(:user, name: "User to be deactivated")
-      visit url_prefix + "/organization"
+      visit organization_path
       accept_confirm do
         click_button dom_id(user, "dropdownMenu")
         click_link dom_id(user)
@@ -176,7 +175,7 @@ RSpec.describe "Organization management", type: :system, js: true, skip_seed: tr
 
     it "can re-activate a user in the organization" do
       user = create(:user, :deactivated)
-      visit url_prefix + "/organization"
+      visit organization_path
       accept_confirm do
         click_button dom_id(user, "dropdownMenu")
         click_link dom_id(user)
