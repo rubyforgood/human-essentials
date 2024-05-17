@@ -31,6 +31,7 @@ RSpec.describe Partners::ItemRequest, type: :model, skip_seed: true do
 
     it "should only be able to use item's request units" do
       unit = create(:unit, organization: organization, name: 'pack')
+      create(:unit, organization: organization, name: 'flat')
       item = create(:item, organization: organization)
       item_unit = create(:item_unit, name: 'pack', item: item)
       request = build(:request, organization: organization)
@@ -40,8 +41,6 @@ RSpec.describe Partners::ItemRequest, type: :model, skip_seed: true do
       expect(item_request.valid?).to eq(false)
       expect(item_request.errors.full_messages).to eq(["Request unit is not supported"])
 
-      unit.update!(name: 'flat')
-      organization.reload
       item_unit.update!(name: 'flat')
       item.reload
       expect(item_request.valid?).to eq(true)
