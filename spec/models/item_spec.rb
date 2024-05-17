@@ -204,6 +204,23 @@ RSpec.describe Item, type: :model do
           expect(item.can_deactivate_or_delete?).to eq(false)
         end
       end
+
+      context ".existing_item_with_same_name?" do
+        it "should return true if the item name exist in the same organization" do
+          create(:item, name: "Item 1", organization: organization)
+          expect(Item.existing_item_with_same_name?(organization, "Item 1")).to eq(true)
+        end
+        it "should return false if the item name doesn't exist in the same organization" do
+          create(:item, name: "Item 1", organization: organization)
+          expect(Item.existing_item_with_same_name?(organization, "New Item")).to eq(false)
+        end
+        it "should return false if the item name exist in a different organization" do
+          organization = create(:organization)
+          different_organization = create(:organization)
+          create(:item, name: "Item 1", organization: different_organization)
+          expect(Item.existing_item_with_same_name?(organization, "Item 1")).to eq(false)
+        end
+      end
     end
 
     describe '#can_delete?' do
