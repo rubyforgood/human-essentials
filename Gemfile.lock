@@ -355,7 +355,7 @@ GEM
     mini_mime (1.1.5)
     mini_racer (0.12.0)
       libv8-node (~> 21.7.2.0)
-    minitest (5.22.3)
+    minitest (5.23.0)
     monetize (1.12.0)
       money (~> 6.12)
     money (6.16.0)
@@ -511,13 +511,14 @@ GEM
       redis-client (>= 0.22.0)
     redis-client (0.22.1)
       connection_pool
-    regexp_parser (2.9.1)
+    regexp_parser (2.9.2)
     request_store (1.5.1)
       rack (>= 1.4)
     responders (3.1.1)
       actionpack (>= 5.2)
       railties (>= 5.2)
-    rexml (3.2.6)
+    rexml (3.2.8)
+      strscan (>= 3.0.9)
     rolify (6.0.1)
     rouge (4.1.2)
     rspec (3.13.0)
@@ -557,7 +558,7 @@ GEM
     rubocop-performance (1.21.0)
       rubocop (>= 1.48.1, < 2.0)
       rubocop-ast (>= 1.31.1, < 2.0)
-    rubocop-rails (2.24.1)
+    rubocop-rails (2.25.0)
       activesupport (>= 4.2.0)
       rack (>= 1.1)
       rubocop (>= 1.33.0, < 2.0)
@@ -626,6 +627,7 @@ GEM
       railties (>= 6.0.0)
     strong_migrations (1.8.0)
       activerecord (>= 5.2)
+    strscan (3.1.0)
     terser (1.2.2)
       execjs (>= 0.3.0, < 3)
     thor (1.3.1)
@@ -744,7 +746,7 @@ DEPENDENCIES
   rspec-rails (~> 6.1.2)
   rubocop
   rubocop-performance
-  rubocop-rails (~> 2.24.1)
+  rubocop-rails (~> 2.25.0)
   sass-rails
   shoulda-matchers (~> 6.2)
   simple_form
