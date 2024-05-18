@@ -63,7 +63,7 @@ RSpec.feature "Distributions", type: :system do
           storage_location.id => { item.id => 20 }
         })
 
-      visit url_prefix + "/distributions/new"
+      visit new_distribution_path
       select partner.name, from: "Partner"
       select storage_location.name, from: "From storage location"
       select2(page, 'distribution_line_items_item_id', item.name, position: 1)
@@ -82,7 +82,7 @@ RSpec.feature "Distributions", type: :system do
         click_button "No, I need to make changes"
       end
 
-      expect(page).to have_current_path(new_distribution_path(organization))
+      expect(page).to have_current_path(new_distribution_path)
     end
 
     it "Displays a complete form after validation errors" do
@@ -565,7 +565,7 @@ RSpec.feature "Distributions", type: :system do
       expect(page).to have_selector('#distributionConfirmationModal')
       within "#distributionConfirmationModal" do
         expect(page).to have_content("You are about to create a distribution for")
-        expect(find(:element, "data-testid": "distribution-confirmation-partner")).to have_text(@request.partner.name)
+        expect(find(:element, "data-testid": "distribution-confirmation-partner")).to have_text(Request.last.partner.name)
         expect(find(:element, "data-testid": "distribution-confirmation-storage")).to have_text(storage_location.name)
         request_items.each do |item|
           expect(page).to have_content(Item.find(item["item_id"]).name)
@@ -598,7 +598,7 @@ RSpec.feature "Distributions", type: :system do
       expect(page).to have_selector('#distributionConfirmationModal')
       within "#distributionConfirmationModal" do
         expect(page).to have_content("You are about to create a distribution for")
-        expect(find(:element, "data-testid": "distribution-confirmation-partner")).to have_text(@request.partner.name)
+        expect(find(:element, "data-testid": "distribution-confirmation-partner")).to have_text(Request.last.partner.name)
         expect(find(:element, "data-testid": "distribution-confirmation-storage")).to have_text(storage_location.name)
         request_items.each do |item|
           expect(page).to have_content(Item.find(item["item_id"]).name)
@@ -615,7 +615,7 @@ RSpec.feature "Distributions", type: :system do
       expect(page).to have_selector('#distributionConfirmationModal')
       within "#distributionConfirmationModal" do
         expect(page).to have_content("You are about to create a distribution for")
-        expect(find(:element, "data-testid": "distribution-confirmation-partner")).to have_text(@request.partner.name)
+        expect(find(:element, "data-testid": "distribution-confirmation-partner")).to have_text(Request.last.partner.name)
         expect(find(:element, "data-testid": "distribution-confirmation-storage")).to have_text(storage_location.name)
         request_items.each do |item|
           expect(page).to have_content(Item.find(item["item_id"]).name)
