@@ -66,6 +66,26 @@ class Item < ApplicationRecord
       .alphabetized
   }
 
+
+  # Scopes - explanation of business rules for filtering scopes as of 20240518.  This is currently a mess.
+  # 1/  Disposable.   Disposables are only the disposable diapers for children.  So we deliberately exclude adult and cloth
+  # 2/  Cloth.  Cloth diapers for children.  Exclude adult cloth.
+  # 3/  Adult incontinence.  Items for adult incontinence -- diapers, ai pads, but not adult wipes.
+  # 4/  Period supplies.  We have a category for menstrual supplies, which includes pads and tampons as indicated below, but also liners.
+  #        In discussion with the business about liners being in AI vs period supplies.   Because what we have is almost
+  #        certainly wrong.
+  # 5/  Other -- Miscellaneous,  plus a few things that have been specifically called out
+  # Known holes and ambiguities as of 20240518.  Working on these with the business
+  # 1/  It looks to me like we are totally excluding adult cloth.  a *very* small value, but...
+  # 2/  Liners.   Liners are a big problem.  *Trying* to get  straight answer from the business so that we don't doublecount
+  #                because liners can, in the real world, be menstrual supplies or AI, and different banks are going to have
+  #                different uses.   Complicating factor -- there are, apparently, some products that are used for AI,
+  #                but not menstrual, some that are used for menstrual, but not AI, and some that are used for either.
+  # 3/  Period supplies -- currently we just have it as tampons and pads.  CL thinks it should be category: menstrual supplies,
+  #                 but see liner issues above.  (note:  "Period supplies" category, in the code below, doesn't exist)
+  # 4/  Looks like we are double counting cloth training pants
+  # 4/  Things we might not be counting:    Wipes -- Childrens
+
   scope :disposable, -> {
     joins(:base_item)
       .where("lower(base_items.category) LIKE '%diaper%'")
