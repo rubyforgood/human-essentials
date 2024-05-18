@@ -193,6 +193,13 @@ RSpec.describe "Requests", type: :system, js: true do
           fill_in "Comment", with: "Take my wipes... please"
           click_on "Save"
 
+          expect(page).to have_selector('#distributionConfirmationModal')
+          within "#distributionConfirmationModal" do
+            expect(page).to have_content("You are about to create a distribution for")
+            expect(find(:element, "data-testid": "distribution-confirmation-storage")).to have_text(storage_location.name)
+            click_button "Yes, it's correct"
+          end
+
           expect(page).not_to have_content("New Distribution")
           expect(page).to have_content "Distributions"
           expect(page).to have_content "Distribution created"
