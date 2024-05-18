@@ -66,7 +66,6 @@ class Item < ApplicationRecord
       .alphabetized
   }
 
-
   # Scopes - explanation of business rules for filtering scopes as of 20240518.  This is currently a mess.
   # 1/  Disposable.   Disposables are only the disposable diapers for children.  So we deliberately exclude adult and cloth
   # 2/  Cloth.  Cloth diapers for children.  Exclude adult cloth.
