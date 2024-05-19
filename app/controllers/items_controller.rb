@@ -1,7 +1,7 @@
 # Provides full CRUD to Items. Every item is rooted in a BaseItem, but Diaperbanks have full control to do whatever
 # they like with their own Items.
 class ItemsController < ApplicationController
-  rescue_from ActiveRecord::RecordInvalid, with: :record_invalid!
+  before_action :check_for_existing_item_name, only: [:create], if: :item_params_valid?
 
   def index
     @items = current_organization
@@ -45,7 +45,8 @@ class ItemsController < ApplicationController
     if result.success?
       redirect_to items_path, notice: "#{result.item.name} added!"
     else
-      raise ActiveRecord::RecordInvalid.new(result.item)
+      flash[:error] = "Something didn't work quite right -- try again?"
+      prepare_new_action_render
     end
   end
 
@@ -177,18 +178,24 @@ class ItemsController < ApplicationController
     )
   end
 
-  def record_invalid!(exception)
+  def prepare_new_action_render
+    # Define a @item to be used in the `new` action to be rendered with
+    # the provided parameters. This is required to render the page again
+    # with the error + the invalid parameters
+    @base_items = BaseItem.without_kit.alphabetized
+    @item = current_organization.items.new(item_params)
+    render action: :new
+  end
+
+  def check_for_existing_item_name
     if Item.existing_item_with_same_name?(current_organization.id, item_params[:name])
       flash[:error] = "An item with that name already exists (could be an inactive item)."
-    else
-      flash[:error] = "Something didn't work quite right -- try again?"
+      prepare_new_action_render
     end
-      # Define a @item to be used in the `new` action to be rendered with
-      # the provided parameters. This is required to render the page again
-      # with the error + the invalid parameters
-      @base_items = BaseItem.without_kit.alphabetized
-      @item = current_organization.items.new(item_params)
-      render action: :new
+  end
+
+  def item_params_valid?
+    item_params[:name].present?
   end
 
   helper_method \
