@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Distributions", (distributions_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Distributions", distributions_path %></li>
           <li class="breadcrumb-item"><a href="#"><%= @distribution.partner.name %>
             <% if @distribution.persisted? %>
               <%= "(#{@distribution.created_at.strftime("%m/%d/%Y")})" %></li>

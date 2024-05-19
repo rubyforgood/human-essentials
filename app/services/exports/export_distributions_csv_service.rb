@@ -63,8 +63,11 @@ module Exports
         "Partner" => ->(distribution) {
           distribution.partner.name
         },
-        "Date of Distribution" => ->(distribution) {
-          distribution.issued_at.strftime("%m/%d/%Y")
+        "Initial Allocation" => ->(distribution) {
+          distribution.created_at.strftime("%m/%d/%Y")
+        },
+        "Scheduled for" => ->(distribution) {
+          (distribution.issued_at.presence || distribution.created_at).strftime("%m/%d/%Y")
         },
         "Source Inventory" => ->(distribution) {
           distribution.storage_location.name

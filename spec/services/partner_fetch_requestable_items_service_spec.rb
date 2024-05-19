@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe PartnerFetchRequestableItemsService do
   describe '#call' do
     subject { described_class.new(partner_id: partner.id).call }
-    let!(:organization) { create(:organization, skip_items: true, items: org_items) }
+    let!(:organization) { create(:organization, items: org_items) }
     let(:partner) { create(:partner, organization: organization) }
     let(:org_items) { [] }
     let(:items_list) {

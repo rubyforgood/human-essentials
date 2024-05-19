@@ -1,5 +1,5 @@
 RSpec.describe AllocateKitInventoryService, type: :service do
-  let(:organization) { create :organization }
+  let(:organization) { create(:organization) }
   let(:item) { create(:item, name: "Item", organization: organization, on_hand_minimum_quantity: 15) }
   let(:item_out_of_stock) { create(:item, name: "Item out of stock", organization: organization, on_hand_minimum_quantity: 0) }
 
@@ -20,7 +20,8 @@ RSpec.describe AllocateKitInventoryService, type: :service do
     let(:kit) { Kit.create(params) }
 
     context "when the Store location organization doesn't match" do
-      let(:wrong_storage) { create(:storage_location) }
+      let(:wrong_organization) { create(:organization) }
+      let(:wrong_storage) { create(:storage_location, organization: wrong_organization) }
       let(:params) do
         {
           organization_id: organization.id,
@@ -177,7 +178,7 @@ RSpec.describe AllocateKitInventoryService, type: :service do
 
           service = AllocateKitInventoryService.new(kit: kit, storage_location: storage_location, increase_by: quantity_of_kits).allocate
 
-          message = Event.read_events?(@organization) ? "Could not reduce quantity" : "items exceed the available inventory"
+          message = Event.read_events?(organization) ? "Could not reduce quantity" : "items exceed the available inventory"
           expect(service.error).to include(message)
 
           expect(item_inventory.reload.quantity).to eq(quantity_of_items)

@@ -40,8 +40,8 @@ RSpec.shared_examples "common barcode tests" do |barcode_item_factory|
   end
 end
 
-RSpec.describe BarcodeItem, type: :model, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe BarcodeItem, type: :model do
+  let(:organization) { create(:organization) }
 
   context "Barcodes of BaseItems ('Global')" do
     let(:base_item) { create(:base_item) }
@@ -135,7 +135,7 @@ RSpec.describe BarcodeItem, type: :model, skip_seed: true do
     context "scopes >" do
       it "->for_csv_export will accept an organization and provide all barcodes for that org" do
         barcode_item
-        create(:barcode_item, organization: create(:organization, skip_items: true))
+        create(:barcode_item, organization: create(:organization))
         results = BarcodeItem.for_csv_export(barcode_item.organization)
         expect(results).to eq([barcode_item])
       end
@@ -159,7 +159,7 @@ RSpec.describe BarcodeItem, type: :model, skip_seed: true do
     context "when searching for a barcode where there is a global and local with the same value" do
       let!(:base_item) { create(:base_item, partner_key: "foo", name: "base item") }
       let!(:item) { create(:item, partner_key: "foo", name: "custom item", organization: organization) }
-      let!(:other_item) { create(:item, partner_key: "foo", name: "other item", organization: create(:organization, skip_items: true)) }
+      let!(:other_item) { create(:item, partner_key: "foo", name: "other item", organization: create(:organization)) }
 
       let!(:global) { create(:global_barcode_item, value: "DEADBEEF", barcodeable: base_item) }
       let!(:local) { create(:barcode_item, value: "DEADBEEF", barcodeable: item, organization: organization) }
@@ -176,7 +176,7 @@ RSpec.describe BarcodeItem, type: :model, skip_seed: true do
 
       it "does not enforces value uniqueness across organizations" do
         barcode = create(:barcode_item, value: "DEADBEEF", organization: organization)
-        expect(build(:barcode_item, value: barcode.value, organization: create(:organization, skip_items: true))).to be_valid
+        expect(build(:barcode_item, value: barcode.value, organization: create(:organization))).to be_valid
       end
 
       it "enforces value uniqueness within the organization" do
