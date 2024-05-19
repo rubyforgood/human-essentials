@@ -222,7 +222,8 @@ class Item < ApplicationRecord
   end
 
   def self.existing_item_with_same_name?(organization_id, name)
-    where(organization_id: organization_id, name: name).exists?
+    where(organization_id: organization_id).where("LOWER(name) = ?", name.downcase)
+      .exists?
   end
 
   private
