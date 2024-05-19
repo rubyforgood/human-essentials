@@ -128,20 +128,39 @@ RSpec.describe ItemsController, type: :controller do
       end
 
       context "with an already existing item name" do
-        let(:item_params) do
-          {
-            item: {
-              name: "Really Good Item",
-              partner_key: create(:base_item).partner_key,
-              value_in_cents: 1001,
-              package_size: 5,
-              distribution_quantity: 30
-            }
-          }
-        end
         it "shouldn't create an item with the same name" do
-          create(:item, name: "Really Good Item", organization: @organization)
           post :create, params: default_params.merge(item_params)
+
+          item_params_with_same_name =
+            {
+              item: {
+                name: "Really Good Item",
+                partner_key: create(:base_item).partner_key,
+                value_in_cents: 1001,
+                package_size: 5,
+                distribution_quantity: 30
+              }
+            }
+          post :create, params: default_params.merge(item_params_with_same_name)
+
+          expect(flash[:error]).to eq("An item with that name already exists (could be an inactive item).")
+          expect(response).to render_template(:new)
+        end
+
+        it "shouldn't create an item with the same name, case-insensitively" do
+          post :create, params: default_params.merge(item_params)
+
+          item_params_with_same_name_lower_case =
+            {
+              item: {
+                name: "really good item",
+                partner_key: create(:base_item).partner_key,
+                value_in_cents: 1001,
+                package_size: 5,
+                distribution_quantity: 30
+              }
+            }
+          post :create, params: default_params.merge(item_params_with_same_name_lower_case)
 
           expect(flash[:error]).to eq("An item with that name already exists (could be an inactive item).")
           expect(response).to render_template(:new)
