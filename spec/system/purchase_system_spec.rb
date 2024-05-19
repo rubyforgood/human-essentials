@@ -50,9 +50,9 @@ RSpec.describe "Purchases", type: :system, js: true do
           expect(page).to have_text(dollar_value(3579))
         end
 
-        it "User sees comments value" do
-          purchase1 = create(:purchase, amount_spent_in_cents: 1234, comment: 'Purchase comment 1', organization: @organization)
-          purchase2 = create(:purchase, amount_spent_in_cents: 2345, comment: 'Purchase comment 2', organization: @organization)
+        it "User sees comments" do
+          create(:purchase, amount_spent_in_cents: 1234, comment: 'Purchase comment 1', organization: organization)
+          create(:purchase, amount_spent_in_cents: 2345, comment: 'Purchase comment 2', organization: organization)
           page.refresh
           expect(page).to have_text("Comments")
           expect(page).to have_text('Purchase comment 1')
