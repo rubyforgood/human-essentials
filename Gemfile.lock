@@ -105,7 +105,7 @@ GEM
       erubi (~> 1.4)
       parser (>= 2.4)
       smart_properties
-    bigdecimal (3.1.6)
+    bigdecimal (3.1.8)
     bindex (0.8.1)
     binding_of_caller (1.0.1)
       debug_inspector (>= 1.2.0)
@@ -352,11 +352,11 @@ GEM
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
     lumberjack (1.2.9)
-    magic_test (0.0.9)
+    magic_test (0.1.0)
       capybara (>= 3.0)
       pry
       pry-stack_explorer
-      rails (>= 6.0)
+      rails (>= 5.0)
     mail (2.8.1)
       mini_mime (>= 0.1.1)
       net-imap
@@ -470,7 +470,7 @@ GEM
       pry (~> 0.13)
     psych (5.1.2)
       stringio
-    public_suffix (5.0.4)
+    public_suffix (5.0.5)
     puma (6.4.2)
       nio4r (~> 2.0)
     racc (1.7.3)
