@@ -24,13 +24,13 @@ RSpec.describe "StorageLocations", type: :request do
 
           it "does not includes the inactive location" do
             get storage_locations_path(format: response_format)
-            expect(response.parsed_body).to_not include(discarded_storage_location.name)
+            expect(response.body).to_not include(discarded_storage_location.name)
           end
 
           context "with include_inactive_locations" do
             it "includes the inactive location" do
               get storage_locations_path(include_inactive_storage_locations: "1", format: response_format)
-              expect(response.parsed_body).to include(discarded_storage_location.name)
+              expect(response.body).to include(discarded_storage_location.name)
             end
           end
         end
