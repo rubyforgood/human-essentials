@@ -2,7 +2,7 @@ module Partners
   class RequestCreateService
     include ServiceObjectErrorsMixin
 
-    attr_reader :partner_request
+    attr_reader :partner_request, :request_type
 
     def initialize(request_type:, partner_user_id:, comments: nil, for_families: false, item_requests_attributes: [], additional_attrs: {})
       @request_type = request_type
@@ -102,10 +102,6 @@ module Partners
 
     def partner
       @partner ||= ::User.find(partner_user_id).partner
-    end
-
-    def request_type 
-      @for_families ? "child" : "individual"
     end
   end
 end
