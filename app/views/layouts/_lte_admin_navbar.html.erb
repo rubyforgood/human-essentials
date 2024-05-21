@@ -2,11 +2,19 @@
   <a class="nav-link" data-bs-toggle="dropdown" href="#">
     <%= current_user.display_name %>
   </a>
+
   <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-    <%= link_to "Switch To: to be implemented", "#", class:"dropdown-item" %>
+    <% current_user.switchable_roles.each do |role| %>
+      <% next if role == current_role %>
+      <%= link_to switch_to_role_users_path(role_id: role.id), class:"dropdown-item" do %>
+        <i class="fa fa-repeat text-aqua"></i><%= "Switch to: #{role.resource&.name || "Super Admin"}" %>
+      <% end %>
+    <% end %>
+
     <div class="dropdown-divider"></div>
+
     <%= link_to destroy_user_session_path, class:"dropdown-item dropdown-footer", method: :delete do %>
-    <i class="fa fa-sign-out mr-2"></i> Log Out
+      <i class="fa fa-sign-out mr-2"></i> Log Out
     <% end %>
   </div>
 </li>
