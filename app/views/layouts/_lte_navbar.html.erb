@@ -69,7 +69,7 @@
     <% current_user.switchable_roles.each do |role| %>
       <% next if role == current_role %>
       <%= link_to switch_to_role_users_path(role_id: role.id), class:"dropdown-item" do %>
-        <i class="fa fa-repeat text-aqua"></i><%= "Switch to: #{role.resource.name}" %>
+        <i class="fa fa-repeat text-aqua"></i><%= "Switch to: #{role.resource&.name || "Super Admin"}" %>
       <% end %>
     <% end %>
     <% if current_organization.id.present? &&
