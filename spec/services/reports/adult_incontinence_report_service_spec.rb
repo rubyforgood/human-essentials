@@ -1,4 +1,4 @@
-RSpec.describe Reports::AdultIncontinenceReportService, type: :service, skip_seed: true do
+RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
   let(:year) { 2020 }
   let(:organization) { create(:organization, :with_items) }
 

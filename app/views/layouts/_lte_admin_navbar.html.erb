@@ -16,7 +16,7 @@
         <li class="user-body">
           <ul class="list-group">
             <li class="list-group-item">
-              <%= fa_icon "cog" %> <%= navigation_link_to "Account Settings", edit_user_registration_path(organization_name: nil) %>
+              <%= fa_icon "cog" %> <%= navigation_link_to "Account Settings", edit_user_registration_path %>
             </li>
           </ul>
         </li>
@@ -26,7 +26,7 @@
             <!-- <a href="#" class="btn btn-default btn-flat">Profile</a> -->
           </div>
           <div class="pull-right">
-            <%= delete_button_to destroy_user_session_path(organization_name: nil), {text: "Log out", icon: "sign-out", no_confirm: true, size: "md"} %>
+            <%= delete_button_to destroy_user_session_path, {text: "Log out", icon: "sign-out", no_confirm: true, size: "md"} %>
           </div>
         </li>
       </ul>

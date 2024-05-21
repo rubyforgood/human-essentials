@@ -1,11 +1,11 @@
-RSpec.describe "Admin Organization Management", type: :system, js: true, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe "Admin Organization Management", type: :system, js: true do
+  let(:organization) { create(:organization) }
   let(:super_admin) { create(:super_admin, organization: organization) }
   let(:super_admin_no_org) { create(:super_admin, organization: nil) }
 
-  let!(:foo_org) { create(:organization, name: 'foo', skip_items: true) }
-  let!(:bar_org) { create(:organization, name: 'bar', skip_items: true) }
-  let!(:baz_org) { create(:organization, name: 'baz', skip_items: true) }
+  let!(:foo_org) { create(:organization, name: 'foo') }
+  let!(:bar_org) { create(:organization, name: 'bar') }
+  let!(:baz_org) { create(:organization, name: 'baz') }
 
   context "While signed in as an Administrative User (super admin)" do
     before :each do

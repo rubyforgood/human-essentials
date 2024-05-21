@@ -1,19 +1,17 @@
 require 'ostruct'
 
-RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe "Dashboard", type: :system, js: true do
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 
   context "With a new essentials bank" do
-    let!(:org_short_name) { organization.short_name }
-
     before do
       sign_in(user)
     end
 
     it "displays the getting started guide until the steps are completed" do
-      org_dashboard_page = OrganizationDashboardPage.new(org_short_name: org_short_name)
+      org_dashboard_page = OrganizationDashboardPage.new
       org_dashboard_page.visit
 
       # rubocop:disable Layout/ExtraSpacing
@@ -71,8 +69,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
     end
 
     let!(:storage_location) { create(:storage_location, :with_items, item_quantity: 1, organization: organization) }
-    let(:org_short_name) { organization.short_name }
-    let(:org_dashboard_page) { OrganizationDashboardPage.new org_short_name: org_short_name }
+    let(:org_dashboard_page) { OrganizationDashboardPage.new }
 
     describe "Outstanding Requests" do
       it "has a card" do
@@ -126,7 +123,7 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
         it "links to the request" do
           expect { outstanding_request.find('a').click }
             .to change { page.current_path }
-            .to "/#{org_short_name}/requests/#{request.id}"
+            .to request_path(request.id)
         end
 
         it "has a See More link" do
@@ -213,13 +210,13 @@ RSpec.describe "Dashboard", type: :system, js: true, skip_seed: true do
               expect(page).to have_content partner.name
               expect(page).to have_content partner.profile.primary_contact_email
               expect(page).to have_content partner.profile.primary_contact_name
-              expect(page).to have_link "Review Application", href: partner_path(organization_name: org, id: partner) + "#partner-information"
+              expect(page).to have_link "Review Application", href: partner_path(id: partner) + "#partner-information"
             end
             [partner_hidden1, partner_hidden2].each do |hidden_partner|
               expect(page).to_not have_content hidden_partner.name
               expect(page).to_not have_content hidden_partner.profile.primary_contact_email
               expect(page).to_not have_content hidden_partner.profile.primary_contact_name
-              expect(page).to_not have_link "Review Application", href: partner_path(organization_name: org, id: hidden_partner) + "#partner-information"
+              expect(page).to_not have_link "Review Application", href: partner_path(id: hidden_partner) + "#partner-information"
             end
           end
         end

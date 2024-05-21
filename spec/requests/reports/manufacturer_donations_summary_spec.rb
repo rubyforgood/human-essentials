@@ -1,12 +1,8 @@
 require "rails_helper"
 
-RSpec.describe "Reports::ManufacturerDonationsSummary", type: :request, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe "Reports::ManufacturerDonationsSummary", type: :request do
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
-
-  let(:default_params) do
-    {organization_name: organization.to_param}
-  end
 
   describe "while signed in" do
     before do
@@ -15,7 +11,7 @@ RSpec.describe "Reports::ManufacturerDonationsSummary", type: :request, skip_see
 
     describe "GET #index" do
       subject do
-        get reports_manufacturer_donations_summary_path(default_params.merge(format: response_format))
+        get reports_manufacturer_donations_summary_path(format: response_format)
         response
       end
       let(:response_format) { "html" }
@@ -27,7 +23,7 @@ RSpec.describe "Reports::ManufacturerDonationsSummary", type: :request, skip_see
   describe "while not signed in" do
     describe "GET /index" do
       subject do
-        get reports_manufacturer_donations_summary_path(default_params)
+        get reports_manufacturer_donations_summary_path
         response
       end
 

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Users - Omniauth Callbacks", type: :request, skip_seed: true do
+RSpec.describe "Users - Omniauth Callbacks", type: :request do
   before do
     Rails.application.env_config["devise.mapping"] = Devise.mappings[:user]
     OmniAuth.config.test_mode = true
@@ -25,14 +25,14 @@ RSpec.describe "Users - Omniauth Callbacks", type: :request, skip_seed: true do
   describe "GET #google_oauth2" do
     context "with a valid user" do
       it "redirects correctly" do
-        organization = create(:organization, skip_items: true)
-        user = create(:user, email: "me@me.com", organization: organization)
+        organization = create(:organization)
+        create(:user, email: "me@me.com", organization: organization)
 
         post "/users/auth/google_oauth2/callback"
 
         expect(session["google.token"]).to eq("token")
         expect(session["google.refresh_token"]).to eq("refresh token")
-        expect(response).to redirect_to("/?organization_name=#{user.organization.short_name}")
+        expect(response).to redirect_to(root_path)
       end
     end
 

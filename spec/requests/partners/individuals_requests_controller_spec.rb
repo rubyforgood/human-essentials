@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Partners::IndividualsRequestsController, type: :request, skip_seed: true do
+RSpec.describe Partners::IndividualsRequestsController, type: :request do
   let(:organization) { create(:organization, :with_items) }
   let(:partner) { create(:partner, status: :approved, organization: organization) }
   let(:partner_user) { partner.primary_user }

@@ -1,5 +1,5 @@
-RSpec.describe "User sign-in handling", type: :system, js: true, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe "User sign-in handling", type: :system, js: true do
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 
   subject { new_user_session_path }
@@ -24,9 +24,7 @@ RSpec.describe "User sign-in handling", type: :system, js: true, skip_seed: true
       fill_in "Password", with: DEFAULT_USER_PASSWORD
       click_button "Log in"
 
-      expect(page).to have_current_path(
-        dashboard_path(organization_name: user.organization)
-      )
+      expect(page).to have_current_path(dashboard_path)
     end
   end
 
