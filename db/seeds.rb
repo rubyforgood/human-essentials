@@ -81,13 +81,13 @@ end
 # Request Units
 # ----------------------------------------------------------------------------
 
-%w(pack pad flat).each do |name|
-  RequestUnit.create!(organization: pdx_org, name: name)
+%w(pack box flat).each do |name|
+  Unit.create!(organization: pdx_org, name: name)
 end
 
 pdx_org.items.each_with_index do |item, i|
   if item.name == 'Pads'
-    %w(pad pack).each { |name| item.request_units.create!(name: name) }
+    %w(box pack).each { |name| item.request_units.create!(name: name) }
   elsif i == 0
     item.request_units.create!(name: 'pack')
   elsif i == 1
@@ -354,7 +354,20 @@ note = [
     )
 
     item_requests = []
-    Array.new(Faker::Number.within(range: 5..15)) do
+    pads = p.organization.items.find_by(name: 'Pads')
+    new_item_request = Partners::ItemRequest.new(
+      item_id: pads.id,
+      quantity: Faker::Number.within(range: 10..30),
+      children: [],
+      name: pads.name,
+      partner_key: pads.partner_key,
+      created_at: date,
+      updated_at: date,
+      request_unit: 'pack'
+    )
+    partner_request.item_requests << new_item_request
+
+    Array.new(Faker::Number.within(range: 4..14)) do
       item = p.organization.items.sample
       new_item_request = Partners::ItemRequest.new(
         item_id: item.id,
