@@ -49,7 +49,11 @@ class ItemsController < ApplicationController
       # with the error + the invalid parameters
       @item = current_organization.items.new(item_params)
 
-      flash[:error] = "An item with that name already exists (could be an inactive item)."
+      if result.error.is_a?(ActiveRecord::RecordInvalid) && create.send(:item_params)[:name].present?
+        flash[:error] = "An item with that name already exists (could be an inactive item)."
+      else
+        flash[:error] = "Something didn't work quite right -- try again?"
+      end
       render action: :new
     end
   end
