@@ -130,7 +130,6 @@ You can sign up [here](https://join.slack.com/t/rubyforgood/shared_invite/zt-21p
 Please let us know by opening up an issue! We have many new contributors come through and it is likely what you experienced will happen to them as well.
 
 - *"My RBENV installation didn't work!"* - The rbenv repository provides a [rbenv-doctor script](https://github.com/rbenv/rbenv-installer#rbenv-doctor) to verify the installation and check if a ruby version is installed
-- *"I see a database segmentation fault"* - If you're running Apple Silicon, adding `gssencmode: "disable"` to `config/database.yml` should resolve this.
 
 ## Contributing Guidelines 🤝
 
