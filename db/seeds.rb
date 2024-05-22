@@ -88,9 +88,9 @@ end
 pdx_org.items.each_with_index do |item, i|
   if item.name == 'Pads'
     %w(box pack).each { |name| item.request_units.create!(name: name) }
-  elsif i == 0
+  elsif item.name == 'Wipes (Baby)'
     item.request_units.create!(name: 'pack')
-  elsif i == 1
+  elsif item.name == 'Kids Pull-Ups (5T-6T)'
     %w(pack flat).each do |name|
       item.request_units.create!(name: name)
     end
