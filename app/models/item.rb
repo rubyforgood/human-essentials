@@ -35,6 +35,7 @@ class Item < ApplicationRecord
   belongs_to :item_category, optional: true
 
   validates :name, uniqueness: { scope: :organization, case_sensitive: false }
+
   validates :name, presence: true
   validates :organization, presence: true
   validates :distribution_quantity, numericality: { greater_than: 0 }, allow_blank: true
