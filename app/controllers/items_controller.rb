@@ -54,6 +54,7 @@ class ItemsController < ApplicationController
       else
         flash[:error] = "Something didn't work quite right -- try again?"
       end
+
       render action: :new
     end
   end
