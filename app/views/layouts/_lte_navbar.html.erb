@@ -50,8 +50,7 @@
         <i class="fa fa-repeat text-aqua"></i><%= "Switch to: #{role.resource&.name || "Super Admin"}" %>
       <% end %>
     <% end %>
-    <% if current_organization.id.present? &&
-        (current_user.has_role?(Role::SUPER_ADMIN) || current_user.has_role?(Role::ORG_ADMIN, current_organization)) %>
+    <% if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
         <div class="dropdown-divider"></div>
         <%= link_to users_path, class:"dropdown-item" do %>
           <i class="fas fa-users mr-2"></i> My Co-Workers
