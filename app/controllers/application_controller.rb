@@ -37,29 +37,8 @@ class ApplicationController < ActionController::Base
     return nil unless current_user
 
     @role = Role.find_by(id: session[:current_role]) || UsersRole.current_role_for(current_user)
-    session[:current_role] = @role&.id
 
     @role
-  end
-
-  def organization_url_options(options = {})
-    options.merge(organization_name: current_organization.to_param)
-  end
-  helper_method :organization_url_options
-
-  # override Rails' default_url_options to ensure organization_name is added to
-  # each URL generated
-  def default_url_options(options = {})
-    # Early return if the request is not authenticated and no
-    # current_user is defined
-    return options if current_user.blank? || current_role.blank? || current_role.name == Role::SUPER_ADMIN.to_s
-
-    if current_organization.present? && !options.key?(:organization_name)
-      options[:organization_name] = current_organization.to_param
-    elsif current_role.name == Role::ORG_ADMIN.to_s
-      options[:organization_name] = current_user.organization.to_param
-    end
-    options
   end
 
   def dashboard_path_from_current_role
@@ -70,7 +49,7 @@ class ApplicationController < ActionController::Base
     elsif current_role.name == Role::PARTNER.to_s
       partners_dashboard_path
     elsif current_user.organization
-      dashboard_path(current_user.organization)
+      dashboard_path
     else
       "/403"
     end

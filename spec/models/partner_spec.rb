@@ -45,10 +45,6 @@ RSpec.describe Partner, type: :model do
   end
 
   context "Validations >" do
-    it "must belong to an organization" do
-      expect(build(:partner, organization_id: nil)).not_to be_valid
-    end
-
     it "requires a unique name within an organization" do
       expect(build(:partner, name: nil)).not_to be_valid
       create(:partner, name: "Foo")
@@ -73,10 +69,7 @@ RSpec.describe Partner, type: :model do
       expect(build(:partner, email: "boooooooooo")).not_to be_valid
     end
 
-    it "validates the quota is a number but it is not required" do
-      is_expected.to validate_numericality_of(:quota)
-      expect(build(:partner, email: "foo@bar.com", quota: "")).to be_valid
-    end
+    it { should validate_numericality_of(:quota).allow_nil }
   end
 
   context "callbacks" do
@@ -342,15 +335,15 @@ RSpec.describe Partner, type: :model do
 
   describe "#impact_metrics" do
     subject { partner.impact_metrics }
-    let(:partner) { FactoryBot.create(:partner) }
+    let(:partner) { create(:partner) }
 
     context "when partner has related information" do
-      let!(:family1) { FactoryBot.create(:partners_family, guardian_zip_code: "45612-123", partner: partner) }
-      let!(:family2) { FactoryBot.create(:partners_family, guardian_zip_code: "45612-126", partner: partner) }
-      let!(:family3) { FactoryBot.create(:partners_family, guardian_zip_code: "45612-123", partner: partner) }
+      let!(:family1) { create(:partners_family, guardian_zip_code: "45612-123", partner: partner) }
+      let!(:family2) { create(:partners_family, guardian_zip_code: "45612-126", partner: partner) }
+      let!(:family3) { create(:partners_family, guardian_zip_code: "45612-123", partner: partner) }
 
-      let!(:child1) { FactoryBot.create_list(:partners_child, 2, family: family1) }
-      let!(:child2) { FactoryBot.create_list(:partners_child, 2, family: family3) }
+      let!(:child1) { create_list(:partners_child, 2, family: family1) }
+      let!(:child2) { create_list(:partners_child, 2, family: family3) }
 
       it { is_expected.to eq({families_served: 3, children_served: 4, family_zipcodes: 2, family_zipcodes_list: %w[45612-123 45612-126]}) }
     end

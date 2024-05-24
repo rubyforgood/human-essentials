@@ -1,26 +1,31 @@
 RSpec.describe "Kit management", type: :system do
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
+
   before do
-    sign_in(@user)
+    sign_in(user)
   end
-  let!(:storage_location) { create(:storage_location, organization: @organization) }
+
+  let!(:storage_location) { create(:storage_location, organization: organization) }
   let!(:existing_kit) do
     kit_params = {
-      organization_id: @organization.id,
+      organization_id: organization.id,
       name: Faker::Appliance.equipment,
       line_items_attributes: {
         "0": { item_id: existing_kit_item_1.id, quantity: existing_kit_item_1_quantity },
         "1": { item_id: existing_kit_item_2.id, quantity: existing_kit_item_2_quantity }
       }
     }
-    kit_creation_service = KitCreateService.new(organization_id: @organization.id, kit_params: kit_params).tap(&:call)
+    kit_creation_service = KitCreateService.new(organization_id: organization.id, kit_params: kit_params).tap(&:call)
     kit_creation_service.kit
   end
+
   let!(:existing_kit_item_1) { create(:item) }
   let!(:existing_kit_item_1_quantity) { 5 }
   let!(:existing_kit_item_2) { create(:item) }
   let!(:existing_kit_item_2_quantity) { 3 }
   before(:each) do
-    TestInventory.create_inventory(@organization, {
+    TestInventory.create_inventory(organization, {
       storage_location.id => {
         existing_kit_item_1.id => 50,
         existing_kit_item_2.id => 50
@@ -28,10 +33,8 @@ RSpec.describe "Kit management", type: :system do
     })
   end
 
-  let!(:url_prefix) { "/#{@organization.to_param}" }
-
   it "can create a new kit as a user with the proper quantity" do
-    visit url_prefix + "/kits/new"
+    visit new_kit_path
     kit_traits = attributes_for(:kit)
 
     fill_in "Name", with: kit_traits[:name]
@@ -50,11 +53,11 @@ RSpec.describe "Kit management", type: :system do
   end
 
   it 'can allocate and deallocate quantity per storage location from kit index' do
-    visit url_prefix + "/kits/"
+    visit kits_path
 
     click_on 'Modify Allocation'
 
-    inventory = View::Inventory.new(@organization.id)
+    inventory = View::Inventory.new(organization.id)
     original_kit_count = inventory.quantity_for(item_id: existing_kit.item.id, storage_location: storage_location.id)
     original_item_1_count = inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)
     original_item_2_count = inventory.quantity_for(item_id: existing_kit_item_2.id, storage_location: storage_location.id)
@@ -108,14 +111,14 @@ RSpec.describe "Kit management", type: :system do
   end
 
   it 'should not display inactive storage locations under allocations' do
-    inactive_location = create(:storage_location, organization_id: @organization.id, name: "Inactive R Us", discarded_at: Time.zone.now)
+    inactive_location = create(:storage_location, organization_id: organization.id, name: "Inactive R Us", discarded_at: Time.zone.now)
     setup_storage_location(inactive_location)
     kit_params = {
-      organization_id: @organization.id,
+      organization_id: organization.id,
       name: "Fake Kit"
     }
-    KitCreateService.new(organization_id: @organization.id, kit_params: kit_params).tap(&:call).kit
-    visit url_prefix + "/kits/"
+    KitCreateService.new(organization_id: organization.id, kit_params: kit_params).tap(&:call).kit
+    visit kits_path
     expect(page).to have_no_text("Inactive R Us")
   end
 
@@ -126,11 +129,11 @@ RSpec.describe "Kit management", type: :system do
     end
 
     it 'will not change quantity amounts when allocating' do
-      visit url_prefix + "/kits/"
+      visit kits_path
 
       click_on 'Modify Allocation'
 
-      inventory = View::Inventory.new(@organization.id)
+      inventory = View::Inventory.new(organization.id)
       original_kit_count = inventory.quantity_for(item_id: existing_kit.item.id, storage_location: storage_location.id)
       original_item_1_count = inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)
       original_item_2_count = inventory.quantity_for(item_id: existing_kit_item_2.id, storage_location: storage_location.id)
@@ -167,7 +170,7 @@ RSpec.describe "Kit management", type: :system do
   context 'when there is no kit quantity' do
     before do
       # Force there to be no kit quantity available
-      TestInventory.create_inventory(@organization, {
+      TestInventory.create_inventory(organization, {
         storage_location.id => {
           existing_kit.item.id => 0,
           existing_kit_item_1.id => 50,
@@ -177,11 +180,11 @@ RSpec.describe "Kit management", type: :system do
     end
 
     it 'will not change quantity amounts when deallocating' do
-      visit url_prefix + "/kits/"
+      visit kits_path
 
       click_on 'Modify Allocation'
 
-      inventory = View::Inventory.new(@organization.id)
+      inventory = View::Inventory.new(organization.id)
       original_kit_count = inventory.quantity_for(item_id: existing_kit.item.id, storage_location: storage_location.id)
       original_item_1_count = inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)
       original_item_2_count = inventory.quantity_for(item_id: existing_kit_item_2.id, storage_location: storage_location.id)

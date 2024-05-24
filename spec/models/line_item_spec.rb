@@ -15,23 +15,11 @@ RSpec.describe LineItem, type: :model do
   let(:line_item) { build :line_item }
 
   context "Validations >" do
-    it "requires an item" do
-      expect(build(:line_item, item: nil)).not_to be_valid
-    end
+    subject { line_item }
 
-    it "requires a quantity" do
-      expect(build(:line_item, quantity: nil)).not_to be_valid
-    end
-
-    it "the quantity must be a valid integer and cannot be 0" do
-      expect(build(:line_item, :purchase, quantity: "a")).not_to be_valid
-      expect(build(:line_item, :purchase, quantity: "1.0")).not_to be_valid
-      expect(build(:line_item, :purchase, quantity: 0)).to be_valid
-      expect(build(:line_item, :purchase, quantity: 2**31)).not_to be_valid
-      expect(build(:line_item, :purchase, quantity: -2**32)).not_to be_valid
-      expect(build_stubbed(:line_item, :purchase, quantity: -1)).to be_valid
-      expect(build_stubbed(:line_item, :purchase, quantity: 1)).to be_valid
-    end
+    it { should validate_numericality_of(:quantity).is_greater_than(-2**31) }
+    it { should validate_numericality_of(:quantity).is_less_than(2**31) }
+    it { should validate_numericality_of(:quantity).only_integer }
   end
 
   describe "package_count" do
@@ -50,16 +38,11 @@ RSpec.describe LineItem, type: :model do
 
   describe "Scopes >" do
     describe "->active" do
-      let!(:active_item) { create(:item, :active) }
-      let!(:inactive_item) { create(:item, :inactive) }
-
-      before do
-        create(:line_item, :purchase, item: active_item)
-        create(:line_item, :purchase, item: inactive_item)
-      end
-
       it "retrieves only those with active status" do
-        expect(described_class.active.size).to eq(1)
+        expect do
+          create(:line_item, :purchase, item: create(:item, :active))
+          create(:line_item, :purchase, item: create(:item, :inactive))
+        end.to change { described_class.active.size }.by(1)
       end
     end
   end

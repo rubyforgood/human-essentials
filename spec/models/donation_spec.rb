@@ -23,9 +23,9 @@ RSpec.describe Donation, type: :model do
   # it_behaves_like "pagination"
 
   context "Validations >" do
-    it "must belong to an organization" do
-      expect(build(:donation, organization_id: nil)).not_to be_valid
-    end
+    it { should belong_to(:organization) }
+    it { should belong_to(:storage_location) }
+
     it "requires a donation_site if the source is 'Donation Site'" do
       expect(build_stubbed(:donation_site_donation, source: "Donation Site", donation_site: nil)).not_to be_valid
       expect(build(:donation, source: "Misc. Donation", donation_site: nil)).to be_valid
@@ -44,9 +44,6 @@ RSpec.describe Donation, type: :model do
     it "requires a source from the list of available sources" do
       expect(build(:donation, source: nil)).not_to be_valid
       expect(build(:donation, source: "Something new")).not_to be_valid
-    end
-    it "requires an inventory (storage location)" do
-      expect(build(:donation, storage_location_id: nil)).not_to be_valid
     end
     it "is invalid when the line items are invalid" do
       d = build(:donation)

@@ -1,4 +1,4 @@
-describe Exports::ExportDonationsCSVService do
+RSpec.describe Exports::ExportDonationsCSVService do
   describe '#generate_csv_data' do
     subject { described_class.new(donation_ids: donation_ids).generate_csv_data }
     let(:donation_ids) { donations.map(&:id) }

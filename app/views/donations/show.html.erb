@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Donations", (donations_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Donations", donations_path %></li>
           <li class="breadcrumb-item"><a href="#"><%= @donation.source %> on <%= @donation.created_at.to_fs(:distribution_date) %></a></li>
         </ol>
       </div>
@@ -75,11 +75,16 @@
               enabled: !@donation.has_inactive_item?,
               size: "md" } %>
             <%= new_button_to new_distribution_path(donation_id: @donation.id, storage_location_id: @donation.storage_location_id), { text: "Start a new Distribution" } %>
-            <%= delete_button_to donation_path(@donation), { size: "md", confirm: "Are you sure you want to permanently remove this donation?" } if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
+            <% if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
+              <%= delete_button_to donation_path(@donation), {
+                size: "md",
+                enabled: !@donation.has_inactive_item?,
+                confirm: "Are you sure you want to permanently remove this donation?" } %>
+            <% end %>
             <% if @donation.has_inactive_item? %>
               <div class="warning">
-                You can only correct donations where all the items are active.
-                If you need to make a correction, please make the following items active: <%= @donation.inactive_items.map(&:name).join(", ") %>
+                You can only delete or correct donations where all the items are active.
+                If you need to delete this donation or make a correction, please make the following items active: <%= @donation.inactive_items.map(&:name).join(", ") %>
               </div>
             <% end %>
           </div>

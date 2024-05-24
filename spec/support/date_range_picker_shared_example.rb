@@ -16,16 +16,18 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
     # I'm looking at you, spec/system/request_system_spec.rb:4
     described_class.destroy_all
   end
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
 
-  let!(:very_old) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(2000, 7, 31)) }
-  let!(:recent) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(2019, 7, 24)) }
-  let!(:today) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(2019, 7, 31)) }
+  let!(:very_old) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(2000, 7, 31), :organization => organization) }
+  let!(:recent) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(2019, 7, 24), :organization => organization) }
+  let!(:today) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(2019, 7, 31), :organization => organization) }
 
   context "when choosing 'All Time'" do
     before do
-      sign_out @user
+      sign_out user
       travel_to Time.zone.local(2019, 7, 31)
-      sign_in @user
+      sign_in user
     end
 
     after do
@@ -43,9 +45,9 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
 
   context "when choosing 'Last Month'" do
     before do
-      sign_out @user
+      sign_out user
       travel_to Time.zone.local(2019, 8, 1)
-      sign_in @user
+      sign_in user
     end
 
     after do

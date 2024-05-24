@@ -1,6 +1,6 @@
 RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data: true do
   describe "acquisition report" do
-    let(:organization) { create(:organization, skip_items: true) }
+    let(:organization) { create(:organization) }
     let(:within_time) { Time.zone.parse("2020-05-31 14:00:00") }
     let(:outside_time) { Time.zone.parse("2019-05-31 14:00:00") }
     let(:year) { 2020 }
@@ -9,17 +9,17 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
 
     before do
       # Kits
-      disposable_kit = create(:kit, :with_item, organization: organization)
-      another_disposable_kit = create(:kit, :with_item, organization: organization)
-
       create(:base_item, name: "Adult Disposable Diaper", partner_key: "adult diapers", category: "disposable diaper")
       create(:base_item, name: "Infant Disposable Diaper", partner_key: "infant diapers", category: "disposable diaper")
 
       disposable_kit_item = create(:item, name: "Adult Disposable Diapers", partner_key: "adult diapers")
       another_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", partner_key: "infant diapers")
 
-      disposable_kit.line_items.first.update!(item_id: disposable_kit_item.id, quantity: 5)
-      another_disposable_kit.line_items.first.update!(item_id: another_disposable_kit_item.id, quantity: 5)
+      disposable_line_item = create(:line_item, item: disposable_kit_item, quantity: 5)
+      another_disposable_line_item = create(:line_item, item: another_disposable_kit_item, quantity: 5)
+
+      disposable_kit = create(:kit, :with_item, organization: organization, line_items: [disposable_line_item])
+      another_disposable_kit = create(:kit, :with_item, organization: organization, line_items: [another_disposable_line_item])
 
       disposable_kit_item_distribution = create(:distribution, organization: organization, issued_at: within_time)
       another_disposable_kit_item_distribution = create(:distribution, organization: organization, issued_at: within_time)

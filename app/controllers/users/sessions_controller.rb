@@ -17,7 +17,8 @@ class Users::SessionsController < Devise::SessionsController
   # POST /resource/sign_in
   def create
     super
-    session[:current_role] = UsersRole.current_role_for(current_user)&.id
+    session[:current_role] ||= UsersRole.current_role_for(current_user)&.id
+    UsersRole.set_last_role_for(current_user, @role)
   end
 
   # DELETE /resource/sign_out

@@ -18,25 +18,21 @@
 #
 
 RSpec.describe Distribution, type: :model do
+  let(:organization) { create(:organization) }
+
   it_behaves_like "itemizable"
 
   context "Validations >" do
-    it "must belong to an organization" do
-      expect(build(:distribution, organization: nil)).not_to be_valid
-    end
-    it "requires a storage location" do
-      expect(build(:distribution, storage_location: nil)).not_to be_valid
-    end
-
-    it "requires a partner" do
-      expect(build(:distribution, partner: nil)).not_to be_valid
-    end
+    it { should validate_presence_of(:organization) }
+    it { should validate_presence_of(:partner) }
+    it { should validate_presence_of(:storage_location) }
 
     it "ensures the associated line_items are valid" do
-      storage_location = create(:storage_location)
+      organization = create(:organization)
+      storage_location = create(:storage_location, organization: organization)
       d = build(:distribution, storage_location: storage_location)
-      line_item = build(:line_item, quantity: 1)
-      TestInventory.create_inventory(@organization, {
+      line_item = build(:line_item, quantity: 1, item: create(:item, organization: organization))
+      TestInventory.create_inventory(organization, {
         storage_location.id => { line_item.item_id => 10 }
       })
       d.line_items << line_item
@@ -56,7 +52,7 @@ RSpec.describe Distribution, type: :model do
     end
 
     it "ensures that any included items are found in the associated storage location" do
-      unless Event.read_events?(@organization) # not relevant in event world
+      unless Event.read_events?(organization) # not relevant in event world
         d = build(:distribution)
         item_missing = create(:item, name: "missing")
         d.line_items << build(:line_item, item: item_missing)
@@ -118,8 +114,8 @@ RSpec.describe Distribution, type: :model do
         end
 
         it "doesn't include distributions past Sunday" do
-          sunday_distribution = create(:distribution, organization: @organization, issued_at: Time.zone.local(2019, 6, 30))
-          create(:distribution, organization: @organization, issued_at: Time.zone.local(2019, 7, 1))
+          sunday_distribution = create(:distribution, organization: organization, issued_at: Time.zone.local(2019, 6, 30))
+          create(:distribution, organization: organization, issued_at: Time.zone.local(2019, 7, 1))
           distributions = Distribution.this_week
           expect(distributions.count).to eq(1)
           expect(distributions.first).to eq(sunday_distribution)
@@ -136,9 +132,9 @@ RSpec.describe Distribution, type: :model do
         end
 
         it "includes distributions as early as Monday and as late as upcoming Sunday" do
-          create(:distribution, organization: @organization, issued_at: Time.zone.local(2019, 6, 30))
-          tuesday_distribution = create(:distribution, organization: @organization, issued_at: Time.zone.local(2019, 7, 2))
-          sunday_distribution = create(:distribution, organization: @organization, issued_at: Time.zone.local(2019, 7, 7))
+          create(:distribution, organization: organization, issued_at: Time.zone.local(2019, 6, 30))
+          tuesday_distribution = create(:distribution, organization: organization, issued_at: Time.zone.local(2019, 7, 2))
+          sunday_distribution = create(:distribution, organization: organization, issued_at: Time.zone.local(2019, 7, 7))
           distributions = Distribution.this_week
           expect(distributions.count).to eq(2)
           expect(distributions.first).to eq(tuesday_distribution)
@@ -250,11 +246,11 @@ RSpec.describe Distribution, type: :model do
 
     describe "#copy_from_request" do
       it "copy over relevant request information into the distrubution" do
-        item1 = create(:item, name: "Item1")
-        item2 = create(:item, name: "Item2")
+        item1 = create(:item, name: "Item1", organization: organization)
+        item2 = create(:item, name: "Item2", organization: organization)
         request = create(:request,
-          organization: @organization,
-          partner_user: ::User.partner_users.first,
+          organization: organization,
+          partner_user: create(:partner_user),
           request_items: [
             { item_id: item1.id, quantity: 15 },
             { item_id: item2.id, quantity: 18 }
@@ -264,7 +260,7 @@ RSpec.describe Distribution, type: :model do
         expect(distribution.line_items.size).to eq 2
         expect(distribution.line_items.first.quantity).to eq 15
         expect(distribution.line_items.second.quantity).to eq 18
-        expect(distribution.organization_id).to eq @organization.id
+        expect(distribution.organization_id).to eq organization.id
         expect(distribution.partner_id).to eq request.partner_id
         expect(distribution.agency_rep).to eq "#{request.partner_user.name} <#{request.partner_user.email}>"
         expect(distribution.comment).to eq request.comments
@@ -292,29 +288,29 @@ RSpec.describe Distribution, type: :model do
 
   context "CSV export >" do
     let(:organization_2) { create(:organization) }
-    let(:item1) { create(:item) }
-    let(:item2) { create(:item) }
-    let!(:distribution_1) { create(:distribution, :with_items, item: item1, organization: @organization, issued_at: 3.days.ago) }
-    let!(:distribution_2) { create(:distribution, :with_items, item: item2, organization: @organization, issued_at: 1.day.ago) }
+    let(:item1) { create(:item, organization: organization) }
+    let(:item2) { create(:item, organization: organization) }
+    let!(:distribution_1) { create(:distribution, :with_items, item: item1, organization: organization, issued_at: 3.days.ago) }
+    let!(:distribution_2) { create(:distribution, :with_items, item: item2, organization: organization, issued_at: 1.day.ago) }
     let!(:distribution_3) { create(:distribution, organization: organization_2, issued_at: Time.zone.today) }
 
     describe "for_csv_export >" do
       it "filters only to the given organization" do
-        expect(Distribution.for_csv_export(@organization)).to match_array [distribution_1, distribution_2]
+        expect(Distribution.for_csv_export(organization)).to match_array [distribution_1, distribution_2]
       end
 
       it "filters only to the given filter" do
-        expect(Distribution.for_csv_export(@organization, { by_item_id: item1.id })).to match_array [distribution_1]
+        expect(Distribution.for_csv_export(organization, { by_item_id: item1.id })).to match_array [distribution_1]
       end
 
       it "filters only to the given issue time range" do
-        expect(Distribution.for_csv_export(@organization, {}, 4.days.ago..2.days.ago)).to match_array [distribution_1]
+        expect(Distribution.for_csv_export(organization, {}, 4.days.ago..2.days.ago)).to match_array [distribution_1]
       end
     end
 
     describe "csv_export_attributes" do
-      let(:item) { create(:item) }
-      let!(:distribution) { create(:distribution, :with_items, item: item, organization: @organization, issued_at: 3.days.ago) }
+      let(:item) { create(:item, organization: organization) }
+      let!(:distribution) { create(:distribution, :with_items, item: item, organization: organization, issued_at: 3.days.ago) }
 
       it "returns the set of attributes which define a row in case of distribution export" do
         distribution_details = [distribution].map(&:csv_export_attributes).first
