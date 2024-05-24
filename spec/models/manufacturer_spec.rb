@@ -13,10 +13,11 @@ require "rails_helper"
 
 RSpec.describe Manufacturer, type: :model do
   context "Validations" do
-    it "must belong to an organization" do
-      expect(build(:manufacturer, organization: nil)).not_to be_valid
-      expect(build(:manufacturer, organization: create(:organization))).to be_valid
-    end
+    subject { build(:manufacturer) }
+
+    it { should belong_to(:organization) }
+    it { should validate_presence_of(:name) }
+
     it "must have a unique name within organization" do
       manufacturer = create(:manufacturer)
       expect(build(:manufacturer, name: nil)).not_to be_valid
@@ -54,7 +55,7 @@ RSpec.describe Manufacturer, type: :model do
       let(:organization) { create(:organization) }
 
       it "returns true if manufacturer exists in an organization" do
-        manufacturer = FactoryBot.create(:manufacturer, organization_id: organization.id)
+        manufacturer = create(:manufacturer, organization_id: organization.id)
         expect(manufacturer.send(:exists_in_org?)).to eq(true)
       end
     end

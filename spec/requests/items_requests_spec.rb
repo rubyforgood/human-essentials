@@ -3,9 +3,6 @@ require "rails_helper"
 RSpec.describe "Items", type: :request do
   let(:organization) { create(:organization, short_name: "my_org") }
   let(:user) { create(:user, organization: organization) }
-  let(:default_params) do
-    { organization_name: "my_org" }
-  end
 
   describe "while signed in" do
     before do
@@ -14,7 +11,7 @@ RSpec.describe "Items", type: :request do
 
     describe "GET #index" do
       subject do
-        get items_path(default_params.merge(format: response_format))
+        get items_path(format: response_format)
         response
       end
 
@@ -38,7 +35,7 @@ RSpec.describe "Items", type: :request do
     describe 'DELETE #deactivate' do
       let(:item) { create(:item, organization: organization, active: true) }
       let(:storage_location) { create(:storage_location, organization: organization) }
-      let(:params) { default_params.merge(id: item.id) }
+      let(:params) { {id: item.id} }
 
       it 'should be able to deactivate an item' do
         expect { delete deactivate_item_path(params) }.to change { item.reload.active }.from(true).to(false)
@@ -61,7 +58,7 @@ RSpec.describe "Items", type: :request do
     describe 'DELETE #destroy' do
       let!(:item) { create(:item, organization: organization, active: true) }
       let(:storage_location) { create(:storage_location, organization: organization) }
-      let(:params) { default_params.merge(id: item.id) }
+      let(:params) { {id: item.id} }
 
       it 'should be able to delete an item' do
         expect { delete item_path(params) }.to change { Item.count }.by(-1)
@@ -98,18 +95,18 @@ RSpec.describe "Items", type: :request do
       end
 
       it "should show all active items with corresponding buttons" do
-        get items_path(default_params)
+        get items_path
         page = Nokogiri::HTML(response.body)
         expect(response.body).to include("ACTIVEITEM")
         expect(response.body).to include("NODEACTIVATE")
         expect(response.body).to include("NODELETE")
         expect(response.body).not_to include("NOSIR")
-        button1 = page.css(".btn.btn-danger[href='/my_org/items/#{item.id}']")
+        button1 = page.css(".btn.btn-danger[href='/items/#{item.id}']")
         expect(button1.text.strip).to eq("Delete")
-        button2 = page.css(".btn[href='/my_org/items/#{non_delete_item.id}/deactivate']")
+        button2 = page.css(".btn[href='/items/#{non_delete_item.id}/deactivate']")
         expect(button2.text.strip).to eq("Deactivate")
         expect(button2.attr('class')).not_to match(/disabled/)
-        button3 = page.css(".btn[href='/my_org/items/#{non_deactivate_item.id}/deactivate']")
+        button3 = page.css(".btn[href='/items/#{non_deactivate_item.id}/deactivate']")
         expect(button3.text.strip).to eq("Deactivate")
         expect(button3.attr('class')).to match(/disabled/)
       end

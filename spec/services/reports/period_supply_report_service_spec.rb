@@ -1,6 +1,6 @@
 RSpec.describe Reports::PeriodSupplyReportService, type: :service do
   let(:year) { 2020 }
-  let(:organization) { create(:organization) }
+  let(:organization) { create(:organization, :with_items) }
 
   subject(:report) do
     described_class.new(organization: organization, year: year)

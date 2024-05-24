@@ -37,7 +37,8 @@ class Item < ApplicationRecord
   validates :name, uniqueness: { scope: :organization }
   validates :name, presence: true
   validates :organization, presence: true
-  validates :distribution_quantity, :on_hand_recommended_quantity, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
+  validates :distribution_quantity, numericality: { greater_than: 0 }, allow_blank: true
+  validates :on_hand_recommended_quantity, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
   validates :on_hand_minimum_quantity, numericality: { greater_than_or_equal_to: 0 }
 
   has_many :line_items, dependent: :destroy
@@ -46,6 +47,7 @@ class Item < ApplicationRecord
   has_many :storage_locations, through: :inventory_items
   has_many :donations, through: :line_items, source: :itemizable, source_type: "::Donation"
   has_many :distributions, through: :line_items, source: :itemizable, source_type: "::Distribution"
+  has_many :request_units, class_name: "ItemUnit", dependent: :destroy
 
   scope :active, -> { where(active: true) }
 

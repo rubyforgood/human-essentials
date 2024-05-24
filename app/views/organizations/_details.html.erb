@@ -158,6 +158,18 @@
                   <%= humanize_boolean(@organization.one_step_partner_invite) %>
                 </p>
               </div>
+              <div class="mb-4">
+                <h3 class='font-bold'>Hide value columns on receipt:</h3>
+                <p>
+                  <%= humanize_boolean(@organization.hide_value_columns_on_receipt) %>
+                </p>
+              </div>
+              <div class="mb-4">
+                <h3 class='font-bold'>Hide package column on receipt:</h3>
+                <p>
+                  <%= humanize_boolean(@organization.hide_package_column_on_receipt) %>
+                </p>
+              </div>
               <% if @organization.logo.attached? %>
                     <div class="mb-4">
                     <h3 class='font-bold'>Logo</h3>

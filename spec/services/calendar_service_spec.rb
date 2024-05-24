@@ -1,12 +1,14 @@
-describe CalendarService do
+RSpec.describe CalendarService do
+  let(:organization) { create(:organization) }
+
   describe ".calendar" do
     it "should print the calendar correctly" do
       storage_location = create(:storage_location,
-        time_zone: "America/New_York")
+        time_zone: "America/New_York", organization: organization)
       time_zone = ActiveSupport::TimeZone["America/New_York"]
       travel_to time_zone.local(2021, 3, 18, 0, 0, 0) do
-        partner1 = create(:partner, name: "Partner 1")
-        partner2 = create(:partner, name: "Partner 2")
+        partner1 = create(:partner, name: "Partner 1", organization: organization)
+        partner2 = create(:partner, name: "Partner 2", organization: organization)
         create(:distribution, issued_at: time_zone.local(2022, 3, 17, 10, 0, 0),
           partner: partner1, storage_location: storage_location)
         create(:distribution, issued_at: time_zone.local(2022, 2, 17, 9, 0, 0),
@@ -15,7 +17,7 @@ describe CalendarService do
           partner: partner2, storage_location: storage_location)
         create(:distribution, issued_at: time_zone.local(2023, 3, 17),
           partner: partner2, storage_location: storage_location)
-        result = described_class.calendar(@organization.id)
+        result = described_class.calendar(organization.id)
         expected = <<~ICAL
           BEGIN:VCALENDAR
           VERSION:2.0

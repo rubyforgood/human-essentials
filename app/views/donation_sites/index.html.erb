@@ -55,7 +55,7 @@
             <div class="pull-right">
               <%= modal_button_to("#csvImportModal", {icon: "upload", text: "Import Donation Sites", size: "md"}) if @donation_sites.empty? %>
               <%= download_button_to(donation_sites_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Donation Sites", size: "md"}) if @donation_sites.any? %>
-              <%= new_button_to new_donation_site_path(organization_name: current_organization), {text: "New Donation Site"} %>
+              <%= new_button_to new_donation_site_path, {text: "New Donation Site"} %>
             </div>
           </div>
         </div>

@@ -47,7 +47,9 @@ RSpec.describe Request, type: :model do
   end
 
   describe "total_items" do
-    let(:request) { create(:request, request_items: [{ item_id: Item.active.first.id, quantity: 15 }, { item_id: Item.active.last.id, quantity: 18 }]) }
+    let(:id_one) { create(:item).id }
+    let(:id_two) { create(:item).id }
+    let(:request) { create(:request, request_items: [{ item_id: id_one, quantity: 15 }, { item_id: id_two, quantity: 18 }]) }
 
     it "adds the quantity of all items in the request" do
       expect(request.total_items).to eq(33)

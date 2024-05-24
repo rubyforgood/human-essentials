@@ -1,6 +1,10 @@
 require "rails_helper"
 
 RSpec.describe "Static", type: :request do
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+
   describe "Not signed in" do
     describe "GET #index" do
       it "returns http success" do
@@ -23,13 +27,13 @@ RSpec.describe "Static", type: :request do
 
   describe "Signed in" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     describe "GET #index" do
       it "redirects to organization dashboard" do
         get root_path
-        expect(response).to redirect_to(dashboard_url(@organization))
+        expect(response).to redirect_to(dashboard_url)
       end
     end
   end
@@ -51,13 +55,14 @@ RSpec.describe "Static", type: :request do
 
   describe "Super user without org signed in" do
     before do
-      sign_in(@super_admin_no_org)
+      sign_in(create(:super_admin, organization: nil))
     end
 
     describe "GET #index" do
       it "redirects to admin dashboard" do
         get root_path
-        expect(response).to redirect_to(admin_dashboard_url(@admin))
+
+        expect(response).to redirect_to(admin_dashboard_url)
       end
     end
   end

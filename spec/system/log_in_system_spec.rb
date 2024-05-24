@@ -1,7 +1,10 @@
 RSpec.describe "Authentication", type: :system, js: true do
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
+
   describe "Success" do
     it "should show dashboard upon signin" do
-      sign_in(@user)
+      sign_in(user)
       visit "/"
       expect(page.find("h1")).to have_content "Dashboard"
     end

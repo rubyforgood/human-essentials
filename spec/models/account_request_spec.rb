@@ -18,7 +18,7 @@
 require 'rails_helper'
 
 RSpec.describe AccountRequest, type: :model do
-  let(:account_request) { FactoryBot.create(:account_request) }
+  let(:account_request) { create(:account_request) }
 
   describe 'associations' do
     it { should have_one(:organization).class_name('Organization') }
@@ -41,7 +41,7 @@ RSpec.describe AccountRequest, type: :model do
 
     context 'when the email provided is already used by an existing organization' do
       before do
-        FactoryBot.create(:organization, email: account_request.email)
+        create(:organization, email: account_request.email)
       end
 
       it 'should not allow the email' do
@@ -118,7 +118,7 @@ RSpec.describe AccountRequest, type: :model do
 
     context 'when the account request has a associated organization' do
       before do
-        FactoryBot.create(:organization, account_request_id: account_request.id)
+        create(:organization, account_request_id: account_request.id)
       end
 
       it 'should return true' do
@@ -130,9 +130,12 @@ RSpec.describe AccountRequest, type: :model do
   specify '#confirm!' do
     mail_double = instance_double(ActionMailer::MessageDelivery, deliver_later: nil)
     allow(AccountRequestMailer).to receive(:approval_request).and_return(mail_double)
+
     freeze_time do
       expect(account_request.confirmed_at).to be_nil
+
       account_request.confirm!
+
       expect(account_request.reload.confirmed_at).to eq(Time.zone.now)
       expect(account_request).to be_user_confirmed
       expect(AccountRequestMailer).to have_received(:approval_request)
@@ -144,7 +147,9 @@ RSpec.describe AccountRequest, type: :model do
   specify '#reject!' do
     mail_double = instance_double(ActionMailer::MessageDelivery, deliver_later: nil)
     allow(AccountRequestMailer).to receive(:rejection).and_return(mail_double)
+
     account_request.reject!('because I said so')
+
     expect(account_request.reload.rejection_reason).to eq('because I said so')
     expect(account_request).to be_rejected
     expect(AccountRequestMailer).to have_received(:rejection)

@@ -15,17 +15,22 @@
 require 'rails_helper'
 
 RSpec.describe Audit, type: :model do
+  let(:organization) { create(:organization) }
+
   it_behaves_like "itemizable"
 
   context "Validations >" do
+    let(:user) { create(:user, organization: organization) }
+    let(:organization_admin) { create(:organization_admin, organization: organization) }
+
     it "must belong to an organization" do
       expect(build(:audit, storage_location: create(:storage_location), organization_id: nil)).not_to be_valid
-      expect(build(:audit, organization: @organization)).to be_valid
+      expect(build(:audit, organization: organization)).to be_valid
     end
 
     it "must belong to an organization admin of its organization" do
-      expect(build(:audit, storage_location: create(:storage_location, organization: @organization), user: @user, organization: @organization)).not_to be_valid
-      expect(build(:audit, storage_location: create(:storage_location, organization: @organization), user: @organization_admin,  organization: @organization)).to be_valid
+      expect(build(:audit, storage_location: create(:storage_location, organization: organization), user: user, organization: organization)).not_to be_valid
+      expect(build(:audit, storage_location: create(:storage_location, organization: organization), user: organization_admin,  organization: organization)).to be_valid
     end
 
     it "can not have line items that has quantity as negative integer" do
@@ -101,28 +106,28 @@ RSpec.describe Audit, type: :model do
 
   context "Methods >" do
     it "`self.storage_locations_audited_for` returns only storage_locations that are used for one org" do
-      storage_location1 = create(:storage_location, organization: @organization)
-      storage_location2 = create(:storage_location, organization: @organization)
-      create(:storage_location, organization: @organization)
+      storage_location1 = create(:storage_location, organization: organization)
+      storage_location2 = create(:storage_location, organization: organization)
+      create(:storage_location, organization: organization)
       storage_location4 = create(:storage_location, organization: create(:organization))
-      create(:audit, storage_location: storage_location1, organization: @organization)
-      create(:audit, storage_location: storage_location2, organization: @organization)
+      create(:audit, storage_location: storage_location1, organization: organization)
+      create(:audit, storage_location: storage_location2, organization: organization)
       create(:audit, storage_location: storage_location4, organization: storage_location4.organization)
-      expect(Audit.storage_locations_audited_for(@organization).to_a).to match_array([storage_location1, storage_location2])
+      expect(Audit.storage_locations_audited_for(organization).to_a).to match_array([storage_location1, storage_location2])
     end
 
     it "`self.finalized_since?` returns true iff some finalized audit occurred after itemizable created_at that shares item for location(s)" do
-      storage_location1 = create(:storage_location, :with_items, item_quantity: 10, organization: @organization)
-      storage_location2 = create(:storage_location, :with_items, item_quantity: 10, organization: @organization)
-      storage_location3 = create(:storage_location, :with_items, item_quantity: 10, organization: @organization)
-      storage_location4 = create(:storage_location, organization: @organization)
-      storage_location5 = create(:storage_location, :with_items,  item_quantity: 10, organization: @organization)
+      storage_location1 = create(:storage_location, :with_items, item_quantity: 10, organization: organization)
+      storage_location2 = create(:storage_location, :with_items, item_quantity: 10, organization: organization)
+      storage_location3 = create(:storage_location, :with_items, item_quantity: 10, organization: organization)
+      storage_location4 = create(:storage_location, organization: organization)
+      storage_location5 = create(:storage_location, :with_items,  item_quantity: 10, organization: organization)
 
       create(:audit, storage_location: storage_location2, status: "finalized", line_items_attributes: [{item_id: storage_location2.items.first.id, quantity: 10}])
 
-      xfer1 = create(:transfer, :with_items, item_quantity: 5, item: storage_location1.items.first, from: storage_location1, to: storage_location2, organization: @organization)
-      xfer2 = create(:transfer, :with_items, item_quantity: 5, item: storage_location1.items.first, from: storage_location1, to: storage_location3, organization: @organization)
-      xfer3 = create(:transfer, :with_items, item_quantity: 10, item: storage_location2.items.first, from: storage_location2, to: storage_location3, organization: @organization)
+      xfer1 = create(:transfer, :with_items, item_quantity: 5, item: storage_location1.items.first, from: storage_location1, to: storage_location2, organization: organization)
+      xfer2 = create(:transfer, :with_items, item_quantity: 5, item: storage_location1.items.first, from: storage_location1, to: storage_location3, organization: organization)
+      xfer3 = create(:transfer, :with_items, item_quantity: 10, item: storage_location2.items.first, from: storage_location2, to: storage_location3, organization: organization)
 
       create(:audit, storage_location: storage_location1, status: "finalized", line_items_attributes: [{item_id: storage_location1.items.first.id, quantity: 5}])
       create(:audit, storage_location: storage_location3, status: "finalized", line_items_attributes: [{item_id: storage_location3.items.first.id, quantity: 10}])

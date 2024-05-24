@@ -6,9 +6,6 @@ if Rails.env.production?
   return
 end
 
-# Activate all feature flags
-Flipper.enable(:onebase)
-
 # ----------------------------------------------------------------------------
 # Random Record Generators
 # ----------------------------------------------------------------------------
@@ -46,10 +43,8 @@ BaseItem.find_or_create_by!(
 # ----------------------------------------------------------------------------
 # NDBN Members
 # ----------------------------------------------------------------------------
-#
-NDBNMember.create!(ndbn_member_id: 10000, account_name: "Pawnee")
-NDBNMember.create!(ndbn_member_id: 20000, account_name: "Other Spot")
-NDBNMember.create!(ndbn_member_id: 30000, account_name: "Amazing Place")
+seed_file = File.open(Rails.root.join("spec", "fixtures", "ndbn-small-import.csv"))
+SyncNDBNMembers.upload(seed_file)
 
 # ----------------------------------------------------------------------------
 # Organizations
@@ -79,6 +74,26 @@ Organization.seed_items(sf_org)
 Organization.all.each do |org|
   org.items.where(value_in_cents: 0).limit(10).each do |item|
     item.update(value_in_cents: 100)
+  end
+end
+
+# ----------------------------------------------------------------------------
+# Request Units
+# ----------------------------------------------------------------------------
+
+%w(pack box flat).each do |name|
+  Unit.create!(organization: pdx_org, name: name)
+end
+
+pdx_org.items.each_with_index do |item, i|
+  if item.name == 'Pads'
+    %w(box pack).each { |name| item.request_units.create!(name: name) }
+  elsif item.name == 'Wipes (Baby)'
+    item.request_units.create!(name: 'pack')
+  elsif item.name == 'Kids Pull-Ups (5T-6T)'
+    %w(pack flat).each do |name|
+      item.request_units.create!(name: name)
+    end
   end
 end
 
@@ -339,7 +354,20 @@ note = [
     )
 
     item_requests = []
-    Array.new(Faker::Number.within(range: 5..15)) do
+    pads = p.organization.items.find_by(name: 'Pads')
+    new_item_request = Partners::ItemRequest.new(
+      item_id: pads.id,
+      quantity: Faker::Number.within(range: 10..30),
+      children: [],
+      name: pads.name,
+      partner_key: pads.partner_key,
+      created_at: date,
+      updated_at: date,
+      request_unit: 'pack'
+    )
+    partner_request.item_requests << new_item_request
+
+    Array.new(Faker::Number.within(range: 4..14)) do
       item = p.organization.items.sample
       new_item_request = Partners::ItemRequest.new(
         item_id: item.id,
@@ -538,6 +566,8 @@ dates_generator = DispersedPastDatesGenerator.new
 inventory = InventoryAggregate.inventory_for(pdx_org.id)
 # Make some distributions, but don't use up all the inventory
 20.times.each do
+  issued_at = dates_generator.next
+
   storage_location = random_record_for_org(pdx_org, StorageLocation)
   stored_inventory_items_sample = inventory.storage_locations[storage_location.id].items.values.sample(20)
   delivery_method = Distribution.delivery_methods.keys.sample
@@ -546,7 +576,8 @@ inventory = InventoryAggregate.inventory_for(pdx_org.id)
     storage_location: storage_location,
     partner: random_record_for_org(pdx_org, Partner),
     organization: pdx_org,
-    issued_at: dates_generator.next,
+    issued_at: issued_at,
+    created_at: 3.days.ago(issued_at),
     delivery_method: delivery_method,
     shipping_cost: shipping_cost,
     comment: 'Urgent'

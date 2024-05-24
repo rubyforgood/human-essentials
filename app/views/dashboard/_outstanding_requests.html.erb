@@ -1,0 +1,35 @@
+<%=
+  render(
+    "shared/card",
+    id: "outstanding",
+    gradient: "warning",
+    title: "Outstanding Requests",
+    footer: link_to("View all requests", requests_path),
+    footer_options: { class: "text-center" },
+  ) do
+%>
+  <% if @outstanding_requests.empty? %>
+    No outstanding requests!
+  <% else %>
+    <table class="table table-hover striped">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Partner</th>
+          <th>Requestor</th>
+          <th>Comments</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @outstanding_requests.take(25).each do |item| %>
+          <tr>
+            <td class="date"><%= link_to item.created_at.strftime("%m/%d/%Y"), item %></td>
+            <td><%= item.partner.name %></td>
+            <td><%= item.partner_user&.formatted_email %></td>
+            <td><%= item.comments %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+<% end %>

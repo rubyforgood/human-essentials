@@ -120,7 +120,6 @@ RSpec.configure do |config|
     config.use_transactional_fixtures = true
 
     DatabaseCleaner.clean_with(:truncation)
-    seed_base_data_for_tests if RSpec.current_example.metadata[:seed_items] != false
   end
 
   #
@@ -141,40 +140,6 @@ RSpec.configure do |config|
   DEFAULT_TEST_PARTNER_NAME = "DEFAULT PARTNER"
   DEFAULT_USER_PASSWORD = "password!"
   # rubocop:enable Lint/ConstantDefinitionInBlock
-
-  def define_global_variables
-    @organization = Organization.find_by!(name: DEFAULT_TEST_ORGANIZATION_NAME)
-
-    user_names = [
-      DEFAULT_TEST_USER_NAME,
-      DEFAULT_TEST_ORG_ADMIN_USER_NAME,
-      DEFAULT_TEST_SUPER_ADMIN_USER_NAME,
-      DEFAULT_TEST_SUPER_ADMIN_NO_ORG_USER_NAME
-    ]
-    users = User.where(name: user_names)
-    @organization_admin = users.find { |u| u.name == DEFAULT_TEST_ORG_ADMIN_USER_NAME }
-    @user = users.find { |u| u.name == DEFAULT_TEST_USER_NAME }
-    @super_admin = users.find { |u| u.name == DEFAULT_TEST_SUPER_ADMIN_USER_NAME }
-    @super_admin_no_org = users.find { |u| u.name == DEFAULT_TEST_SUPER_ADMIN_NO_ORG_USER_NAME }
-
-    @partner = Partner.find_by!(name: DEFAULT_TEST_PARTNER_NAME)
-  end
-
-  def seed_base_data_for_tests
-    # Create base items that are used to handle seeding Organization with items
-    seed_base_items
-    # Create default organization
-    organization = FactoryBot.create(:organization, name: DEFAULT_TEST_ORGANIZATION_NAME)
-
-    # Create default users
-    FactoryBot.create(:organization_admin, organization: organization, name: DEFAULT_TEST_ORG_ADMIN_USER_NAME)
-    FactoryBot.create(:user, organization: organization, name: DEFAULT_TEST_USER_NAME)
-    FactoryBot.create(:super_admin, name: DEFAULT_TEST_SUPER_ADMIN_USER_NAME)
-    FactoryBot.create(:super_admin_no_org, name: DEFAULT_TEST_SUPER_ADMIN_NO_ORG_USER_NAME)
-
-    # Seed with default partner record
-    FactoryBot.create(:partner, organization: organization, name: DEFAULT_TEST_PARTNER_NAME)
-  end
 
   # --------------------
   # END - Seeding helpers for tests setup
@@ -204,8 +169,6 @@ RSpec.configure do |config|
         ]
       )
     end
-
-    seed_base_data_for_tests if !ENV["SKIP_SEED"]
   end
 
   config.before(:each, type: :system) do
@@ -215,9 +178,6 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    # Defined shared @ global variables used throughout the test suite.
-    define_global_variables if RSpec.current_example.metadata[:seed_items] != false
-
     if ENV['EVENTS_READ'] == 'true'
       allow(Event).to receive(:read_events?).and_return(true)
     end
@@ -267,6 +227,29 @@ def select2(node, select_name, value, position: nil)
   container = node.find(:xpath, xpath)
   container.click
   container.find(:xpath, '//li[contains(@class, "select2-results__option")][@role="option"]', text: value).click
+end
+
+# Runs the provided block of code that will change select2 dropdown. Waits until
+# select2 javascript has finished running to return
+#
+# @param select2 [String] The CSS selector for the Select2 dropdown element.
+# @param container [String, nil] The CSS selector for the container element
+# @yield Block to execute that will trigger Select2 change
+#
+# @example Usage
+#   # Wait for Select2 dropdown with CSS selector '.select2' inside container '.container'
+#   await_select2('.select2', '.container') do
+#     # Perform actions that trigger a change in the Select2 dropdown
+#   end
+def await_select2(select2, container = nil, &block)
+  page_html = Nokogiri::HTML.parse(page.body)
+  page_html = page_html.css(container).first unless container.nil?
+  select2_element = page_html.css(select2).first
+  current_id = select2_element.children.first["data-select2-id"]
+
+  yield
+
+  find("#{container} select option[data-select2-id=\"#{current_id.to_i + 1}\"]", wait: 10)
 end
 
 def seed_base_items

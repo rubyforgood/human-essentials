@@ -27,10 +27,6 @@ RSpec.describe ProductDriveParticipant, type: :model do
       expect(build(:product_drive_participant, phone: nil)).to be_valid
       expect(build(:product_drive_participant, email: nil)).to be_valid
     end
-
-    it "is invalid without an organization" do
-      expect(build(:product_drive_participant, organization: nil)).not_to be_valid
-    end
   end
 
   context "Methods" do
