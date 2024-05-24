@@ -1,6 +1,6 @@
 RSpec.describe RemoveRoleService, type: :service do
-  let(:user) { FactoryBot.create(:user, name: "User XYZ") }
-  let(:org) { FactoryBot.create(:organization, name: "Org ABC") }
+  let(:org) { create(:organization, name: "Org ABC") }
+  let(:user) { create(:user, name: "User XYZ", organization: nil) }
   let!(:role) { Role.create!(resource_type: "Organization", name: "org_user", resource_id: org.id) }
 
   describe "#call" do
@@ -16,6 +16,17 @@ RSpec.describe RemoveRoleService, type: :service do
         described_class.call(user_id: user.id, role_id: role.id)
         expect(user.reload.has_role?(:org_user, org)).to eq(false)
         expect(user.reload.has_role?(:org_admin, org)).to eq(false)
+      end
+
+      it "should remove last role if users role is removed" do
+        AddRoleService.call(user_id: user.id, resource_type: "org_user", resource_id: org.id)
+        UsersRole.set_last_role_for(user, role)
+        expect(user.last_role).to eq(role)
+
+        described_class.call(user_id: user.id, role_id: role.id)
+
+        expect(user.reload.has_role?(:org_user, org)).to eq(false)
+        expect(user.reload.last_role).to eq(nil)
       end
 
       it "should work with a type and ID instead of role ID" do

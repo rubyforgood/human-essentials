@@ -1,9 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe 'Admin::AccountRequestsController', type: :request do
+  let(:organization) { create(:organization) }
+
   context 'while signed in as a super admin' do
     before do
-      sign_in(@super_admin)
+      sign_in(create(:super_admin, organization: organization))
     end
 
     describe 'GET #index' do
@@ -14,7 +16,7 @@ RSpec.describe 'Admin::AccountRequestsController', type: :request do
     end
 
     describe 'GET #for_rejection' do
-      let(:account_request) { FactoryBot.create(:account_request, organization_name: 'Test Org 1') }
+      let(:account_request) { create(:account_request, organization_name: 'Test Org 1') }
 
       context 'with an invalid token' do
         it 'should show a not found message' do
@@ -26,7 +28,7 @@ RSpec.describe 'Admin::AccountRequestsController', type: :request do
 
       context 'with a valid token' do
         it 'should show the request' do
-          FactoryBot.create(:account_request, organization_name: 'Test Org 2')
+          create(:account_request, organization_name: 'Test Org 2')
           allow(AccountRequest).to receive(:get_by_identity_token).and_return(account_request)
           get for_rejection_admin_account_requests_path(token: 'my token')
           expect(response.body).to match(/Test Org 1/)
