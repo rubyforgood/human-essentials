@@ -233,8 +233,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_19_201258) do
     t.integer "organization_id"
     t.datetime "issued_at", precision: nil
     t.string "agency_rep"
-    t.boolean "reminder_email_enabled", default: false, null: false
     t.integer "state", default: 5, null: false
+    t.boolean "reminder_email_enabled", default: false, null: false
     t.integer "delivery_method", default: 0, null: false
     t.decimal "shipping_cost", precision: 8, scale: 2
     t.index ["organization_id"], name: "index_distributions_on_organization_id"
@@ -381,8 +381,17 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_19_201258) do
     t.string "partner_key"
     t.integer "item_id"
     t.integer "old_partner_request_id"
+    t.string "request_unit"
     t.index ["item_id"], name: "index_item_requests_on_item_id"
     t.index ["partner_request_id"], name: "index_item_requests_on_partner_request_id"
+  end
+
+  create_table "item_units", force: :cascade do |t|
+    t.string "name", null: false
+    t.bigint "item_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_item_units_on_item_id"
   end
 
   create_table "items", id: :serial, force: :cascade do |t|
@@ -782,6 +791,14 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_19_201258) do
     t.index ["organization_id"], name: "index_transfers_on_organization_id"
   end
 
+  create_table "units", force: :cascade do |t|
+    t.string "name", null: false
+    t.bigint "organization_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_units_on_organization_id"
+  end
+
   create_table "users", id: :serial, force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -880,6 +897,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_19_201258) do
   add_foreign_key "item_categories", "organizations"
   add_foreign_key "item_categories_partner_groups", "item_categories"
   add_foreign_key "item_categories_partner_groups", "partner_groups"
+  add_foreign_key "item_units", "items"
   add_foreign_key "items", "item_categories"
   add_foreign_key "items", "kits"
   add_foreign_key "kit_allocations", "kits"
@@ -898,5 +916,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_19_201258) do
   add_foreign_key "requests", "distributions"
   add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"
+  add_foreign_key "units", "organizations"
   add_foreign_key "users", "users_roles", column: "last_role_id", on_delete: :nullify
 end
