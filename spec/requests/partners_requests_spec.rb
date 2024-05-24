@@ -283,10 +283,6 @@ RSpec.describe "Partners", type: :request do
     end
   end
 
-    subject { -> { post invite_partner_user_partner_path(id: partner.id, partner: partner.id, email: email, name: name) } }
-    let(:partner) { create(:partner, organization: organization) }
-    let(:name) { Faker::Name.unique.name }
-          name: name,
   describe "PUT #deactivate" do
     let(:partner) { create(:partner, organization: organization, status: "approved") }
 
