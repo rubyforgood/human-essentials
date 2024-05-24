@@ -14,7 +14,7 @@ gem "pg", "~> 1.5.6"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "7.0.8"
+gem "rails", "7.1.3.3"
 
 ###### MODELS / DATABASE #######
 
@@ -51,8 +51,6 @@ gem "stimulus-rails"
 
 ##### VIEWS/CONTROLLERS #####
 
-# Adds easy links to add or remove associations in a form (e.g. line items)
-gem "cocoon"
 # Adds filter support to models and views.
 gem "filterrific"
 # Generates JSON structures via a builder interface.
@@ -105,7 +103,7 @@ gem "clockwork"
 # These are gems that aren't used directly, only as dependencies for other gems.
 # Technically they don't need to be in this Gemfile at all, but we are pinning them to
 # specific versions for compatibility reasons.
-gem "mini_racer", "~> 0.8.0"
+gem "mini_racer", "~> 0.12.0"
 gem "nokogiri", ">= 1.10.4"
 gem "image_processing"
 gem "sprockets", "~> 4.2.1"
@@ -149,14 +147,14 @@ group :development, :test do
   # Add-on for command line to create a simple debugger.
   gem "pry-nav"
   # RSpec behavioral testing framework for Rails.
-  gem "rspec-rails", "~> 6.1.1"
+  gem "rspec-rails", "~> 6.1.2"
   # Static analysis / linter.
   gem "rubocop"
   # Rails add-on for static analysis.
   gem 'rubocop-performance'
-  gem "rubocop-rails", "~> 2.24.0"
+  gem "rubocop-rails", "~> 2.25.0"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.35"
+  gem "standard", "~> 1.36"
   # Erb linter.
   gem "erb_lint"
 end
@@ -196,7 +194,7 @@ group :test do
   # Show code coverage.
   gem 'simplecov'
   # More concise test ("should") matchers
-  gem 'shoulda-matchers', '~> 6.1'
+  gem 'shoulda-matchers', '~> 6.2'
   # Mock HTTP requests and ensure they are not called during tests.
   gem "webmock", "~> 3.23"
   # Interface capybara to chrome headless
@@ -212,6 +210,6 @@ if %w(mingw mswin x64_mingw jruby).include?(RUBY_PLATFORM)
 end
 
 # Use Redis for Action Cable
-gem "redis", "~> 5.1"
+gem "redis", "~> 5.2"
 
 gem "importmap-rails", "~> 2.0"

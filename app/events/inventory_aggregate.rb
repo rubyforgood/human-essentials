@@ -32,6 +32,11 @@ module InventoryAggregate
       event_hash = {}
       events.group_by(&:group_id).each do |_, event_batch|
         last_grouped_event = event_batch.max_by(&:updated_at)
+        # don't do grouping for UpdateExistingEvents
+        if event_batch.any? { |e| e.is_a?(UpdateExistingEvent) }
+          handle(last_grouped_event, inventory, validate: validate)
+          next
+        end
         previous_event = event_hash[last_grouped_event.eventable]
         event_hash[last_grouped_event.eventable] = last_grouped_event
         handle(last_grouped_event, inventory, validate: validate, previous_event: previous_event)
@@ -104,7 +109,8 @@ module InventoryAggregate
   # diff previous event
   on DonationEvent, DistributionEvent, AdjustmentEvent, PurchaseEvent,
     TransferEvent, DistributionDestroyEvent, DonationDestroyEvent,
-    PurchaseDestroyEvent, TransferDestroyEvent do |event, inventory, validate: false, previous_event: nil|
+    PurchaseDestroyEvent, TransferDestroyEvent,
+    UpdateExistingEvent do |event, inventory, validate: false, previous_event: nil|
     handle_inventory_event(event.data, inventory, validate: validate, previous_event: previous_event)
   rescue InventoryError => e
     e.event = event

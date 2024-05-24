@@ -124,7 +124,17 @@ class StorageLocation < ApplicationRecord
   end
 
   # NOTE: We should generalize this elsewhere -- Importable concern?
+  # Requires a user with the ORG_ADMIN role, or it will fail silently
+  # First user with role from org found will be used for adjustment creation
+  #
+  # @param filename [String]
+  # @param org [Integer] Organization ID
+  # @param loc [Integer] StorageLocation ID
+  # @return [void]
   def self.import_inventory(filename, org, loc)
+    storage_location = StorageLocation.find(loc.to_i)
+    raise Errors::InventoryAlreadyHasItems unless storage_location.empty_inventory?
+
     current_org = Organization.find(org)
     adjustment = current_org.adjustments.new(storage_location_id: loc.to_i,
                                              user_id: User.with_role(Role::ORG_ADMIN, current_org).first&.id,

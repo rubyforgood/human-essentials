@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_07_202431) do
+ActiveRecord::Schema[7.0].define(version: 2024_05_19_201258) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -233,8 +233,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_07_202431) do
     t.integer "organization_id"
     t.datetime "issued_at", precision: nil
     t.string "agency_rep"
-    t.boolean "reminder_email_enabled", default: false, null: false
     t.integer "state", default: 5, null: false
+    t.boolean "reminder_email_enabled", default: false, null: false
     t.integer "delivery_method", default: 0, null: false
     t.decimal "shipping_cost", precision: 8, scale: 2
     t.index ["organization_id"], name: "index_distributions_on_organization_id"
@@ -250,6 +250,10 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_07_202431) do
     t.integer "organization_id"
     t.float "latitude"
     t.float "longitude"
+    t.string "contact_name"
+    t.string "email"
+    t.string "phone"
+    t.boolean "active", default: true
     t.index ["latitude", "longitude"], name: "index_donation_sites_on_latitude_and_longitude"
     t.index ["organization_id"], name: "index_donation_sites_on_organization_id"
   end
@@ -377,8 +381,17 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_07_202431) do
     t.string "partner_key"
     t.integer "item_id"
     t.integer "old_partner_request_id"
+    t.string "request_unit"
     t.index ["item_id"], name: "index_item_requests_on_item_id"
     t.index ["partner_request_id"], name: "index_item_requests_on_partner_request_id"
+  end
+
+  create_table "item_units", force: :cascade do |t|
+    t.string "name", null: false
+    t.bigint "item_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_item_units_on_item_id"
   end
 
   create_table "items", id: :serial, force: :cascade do |t|
@@ -480,6 +493,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_07_202431) do
     t.boolean "enable_quantity_based_requests", default: true, null: false
     t.boolean "ytd_on_distribution_printout", default: true, null: false
     t.boolean "one_step_partner_invite", default: false, null: false
+    t.boolean "hide_value_columns_on_receipt", default: false
+    t.boolean "hide_package_column_on_receipt", default: false
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
@@ -776,6 +791,14 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_07_202431) do
     t.index ["organization_id"], name: "index_transfers_on_organization_id"
   end
 
+  create_table "units", force: :cascade do |t|
+    t.string "name", null: false
+    t.bigint "organization_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_units_on_organization_id"
+  end
+
   create_table "users", id: :serial, force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -799,19 +822,21 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_07_202431) do
     t.integer "invited_by_id"
     t.integer "invitations_count", default: 0
     t.boolean "organization_admin"
-    t.string "name", default: "Name Not Provided", null: false
+    t.string "name"
     t.boolean "super_admin", default: false
     t.datetime "last_request_at", precision: nil
     t.datetime "discarded_at", precision: nil
     t.string "provider"
     t.string "uid"
     t.bigint "partner_id"
+    t.bigint "last_role_id"
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_users_on_invitations_count"
     t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
     t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by_type_and_invited_by_id"
+    t.index ["last_role_id"], name: "index_users_on_last_role_id"
     t.index ["partner_id"], name: "index_users_on_partner_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
@@ -872,6 +897,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_07_202431) do
   add_foreign_key "item_categories", "organizations"
   add_foreign_key "item_categories_partner_groups", "item_categories"
   add_foreign_key "item_categories_partner_groups", "partner_groups"
+  add_foreign_key "item_units", "items"
   add_foreign_key "items", "item_categories"
   add_foreign_key "items", "kits"
   add_foreign_key "kit_allocations", "kits"
@@ -890,4 +916,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_07_202431) do
   add_foreign_key "requests", "distributions"
   add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"
+  add_foreign_key "units", "organizations"
+  add_foreign_key "users", "users_roles", column: "last_role_id", on_delete: :nullify
 end

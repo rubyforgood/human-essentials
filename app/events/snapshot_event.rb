@@ -1,5 +1,5 @@
 class SnapshotEvent < Event
-  serialize :data, EventTypes::StructCoder.new(EventTypes::Inventory)
+  serialize :data, coder: EventTypes::StructCoder.new(EventTypes::Inventory)
 
   # @param organization [Organization]
   # @return [Hash<Integer, EventTypes::EventStorageLocation>]

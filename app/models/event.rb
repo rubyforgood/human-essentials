@@ -29,7 +29,7 @@ class Event < ApplicationRecord
       .where("type = 'SnapshotEvent' OR (item->>'from_storage_location')=? OR (item->>'to_storage_location')=?", loc_id, loc_id)
   }
 
-  serialize :data, EventTypes::StructCoder.new(EventTypes::InventoryPayload)
+  serialize :data, coder: EventTypes::StructCoder.new(EventTypes::InventoryPayload)
 
   belongs_to :eventable, polymorphic: true
   belongs_to :user, optional: true
@@ -88,20 +88,8 @@ class Event < ApplicationRecord
     e.message << " for #{item} in #{loc}"
     if e.event != self
       e.message.prepend("Error occurred when re-running events: #{e.event.type} on #{e.event.created_at.to_date}: ")
-      e.message += " Please contact the Human Essentials admin staff for assistance."
+      e.message << " Please contact the Human Essentials admin staff for assistance."
     end
     raise e
-  end
-
-  after_create_commit do
-    inventory = InventoryAggregate.inventory_for(organization_id)
-    diffs = EventDiffer.check_difference(inventory)
-    if diffs.any?
-      InventoryDiscrepancy.create!(
-        event_id: id,
-        organization_id: organization_id,
-        diff: diffs
-      )
-    end
   end
 end

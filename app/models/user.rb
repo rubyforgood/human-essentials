@@ -18,7 +18,7 @@
 #  last_request_at        :datetime
 #  last_sign_in_at        :datetime
 #  last_sign_in_ip        :inet
-#  name                   :string           default("Name Not Provided"), not null
+#  name                   :string
 #  organization_admin     :boolean
 #  provider               :string
 #  remember_created_at    :datetime
@@ -30,17 +30,23 @@
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  invited_by_id          :integer
+#  last_role_id           :bigint
 #  organization_id        :integer
 #  partner_id             :bigint
 #
 
 class User < ApplicationRecord
+  before_validation :normalize_blank_name_to_nil
   has_paper_trail
   rolify
   include Discard::Model
 
   has_one :organization_role_join, class_name: "UsersRole", dependent: :destroy
   has_one :organization_role, through: :organization_role_join, class_name: "Role", source: :role
+
+  belongs_to :last_role_join, class_name: "UsersRole", optional: true, inverse_of: :user, foreign_key: :last_role_id
+  has_one :last_role, through: :last_role_join, class_name: "Role", source: :role
+
   accepts_nested_attributes_for :organization_role_join
   has_one :organization, through: :organization_role, source: :resource, source_type: "Organization"
   has_many :organizations, through: :roles, source: :resource, source_type: "Organization"
@@ -59,7 +65,6 @@ class User < ApplicationRecord
          :timeoutable
   devise :omniauthable, omniauth_providers: [:google_oauth2]
 
-  validates :name, presence: true
   validates :email, presence: true, uniqueness: {case_sensitive: false},
   format: {with: URI::MailTo::EMAIL_REGEXP, on: :create}
 
@@ -81,6 +86,14 @@ class User < ApplicationRecord
 
   has_many :requests, class_name: "::Request", foreign_key: :partner_id, dependent: :destroy, inverse_of: :partner_user
   has_many :submitted_requests, class_name: "Request", foreign_key: :partner_user_id, dependent: :destroy, inverse_of: :partner_user
+
+  def normalize_blank_name_to_nil
+    self.name = nil if name.blank?
+  end
+
+  def display_name
+    name.presence || "Name Not Provided"
+  end
 
   def formatted_email
     email.present? ? "#{name} <#{email}>" : ""

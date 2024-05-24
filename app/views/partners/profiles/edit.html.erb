@@ -25,9 +25,10 @@
     <div class="row">
       <!-- left column -->
       <div class="col-md-12">
-        <!-- jquery validation -->
         <div class="card-transparent">
-          <%= simple_form_for current_partner, url: partners_profile_path, html: {role: 'form', class: 'form-horizontal'} do |form| %>
+          <%= simple_form_for current_partner, url: partners_profile_path,
+            data: { controller: "form-input" },
+            html: {role: 'form', class: 'form-horizontal'} do |form| %>
             <%= form.simple_fields_for :profile, current_partner.profile do |profile_form| %>
               <div class="row">
                 <div class="col-6">

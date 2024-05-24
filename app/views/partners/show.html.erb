@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Partners", (partners_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Partners", partners_path %></li>
           <li class="breadcrumb-item"><a href="#"><%= @partner.name %></a></li>
         </ol>
       </div>
@@ -154,7 +154,7 @@
                 <tbody>
                 <% @partner_users.each do |user| %>
                   <tr>
-                    <td><%= user.name %></td>
+                    <td><%= user.display_name %></td>
                     <td><%= user.email %></td>
                     <td><%= user.invitation_sent_at && user.invitation_sent_at.strftime('%B %-d, %Y') %></td>
                     <td><%= user.last_sign_in_at && user.last_sign_in_at.strftime('%B %-d, %Y') %></td>
@@ -308,7 +308,7 @@
               </div>
               <div class="input-group mt-3">
                 <span class="input-group-text" id="spn_env_fa_icon"><%= fa_icon "user" %></span>
-                <input type="text" name="name" class="form-control" placeholder="Name" aria-describedby="name_icon" required autocomplete="off">
+                <input type="text" name="name" class="form-control" placeholder="Name" aria-describedby="name_icon" autocomplete="off">
                 <%= hidden_field_tag :partner, @partner.id %><br>
               </div>
               <br>
@@ -337,6 +337,7 @@
                 <span class="input-group-text" id="spn_env_fa_icon"><%= fa_icon "envelope" %></span>
                 <input type="email" name="email" class="form-control" placeholder="Email" aria-describedby="spn_env_fa_icon" autocomplete="off">
                 <%= hidden_field_tag :partner_id, @partner.id %><br>
+                <%= hidden_field_tag :organization_name, current_organization %>
               </div>
               <br>
               <%= submit_button({ text: "Reset Password", icon: "envelope" }) %>

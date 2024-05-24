@@ -1,9 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe 'Admin::BarcodeItemsController', type: :request do
+  let(:organization) { create(:organization) }
+
   context 'while signed in as a super admin' do
     before do
-      sign_in(@super_admin)
+      sign_in(create(:super_admin, organization: organization))
     end
 
     describe 'GET #index' do
@@ -31,7 +33,7 @@ RSpec.describe 'Admin::BarcodeItemsController', type: :request do
         it 'redirects to admin_barcode_items_path' do
           post admin_barcode_items_path, params: valid_params
           expect(response).to redirect_to(
-            admin_barcode_items_path(organization_id: 'admin')
+            admin_barcode_items_path
           )
         end
 
@@ -65,7 +67,7 @@ RSpec.describe 'Admin::BarcodeItemsController', type: :request do
         it 'redirects to admin_barcode_items_path' do
           patch admin_barcode_item_path(barcode_item), params: valid_params
           expect(response).to redirect_to(
-            admin_barcode_items_path(organization_id: 'admin')
+            admin_barcode_items_path
           )
         end
 

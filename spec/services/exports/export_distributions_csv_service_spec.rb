@@ -1,28 +1,21 @@
-describe Exports::ExportDistributionsCSVService do
-  describe '#generate_csv_data' do
-    subject { described_class.new(distributions: distributions, organization: Organization.first, filters: filters).generate_csv_data }
-    let(:distributions) { distributions }
+RSpec.describe Exports::ExportDistributionsCSVService do
+  let(:organization) { create(:organization) }
 
-    let(:duplicate_item) do
-      FactoryBot.create(
-        :item, name: Faker::Appliance.equipment + SecureRandom.hex(4)
-      )
-    end
+  describe '#generate_csv_data' do
+    subject { described_class.new(distributions: distributions, organization: organization, filters: filters).generate_csv_data }
+
+    let(:duplicate_item) { create(:item, name: "Dupe Item", organization: organization) }
 
     let(:items_lists) do
       [
         [
           [duplicate_item, 5],
-          [
-            FactoryBot.create(:item, name: Faker::Appliance.equipment + SecureRandom.hex(4)),
-            7
-          ],
+          [create(:item, organization: organization), 7],
           [duplicate_item, 3]
         ],
+
         *(Array.new(3) do |i|
-          [[FactoryBot.create(
-            :item, name: Faker::Appliance.equipment + SecureRandom.hex(4)
-          ), i + 1]]
+          [[create(:item, organization: organization), i + 1]]
         end)
       ]
     end
@@ -48,11 +41,9 @@ describe Exports::ExportDistributionsCSVService do
       end
     end
 
-    let(:item_id) { distributions.flatten.first.line_items.first.item_id }
+    let(:item_id) { duplicate_item.id }
+    let(:item_name) { duplicate_item.name }
     let(:filters) { {by_item_id: item_id} }
-    let(:item_name) { Item.find(item_id).name }
-    let(:organization) { distributions.first.organization }
-
     let(:all_org_items) { Item.where(organization:).uniq.sort_by(&:created_at) }
 
     let(:total_item_quantities) do
@@ -70,7 +61,8 @@ describe Exports::ExportDistributionsCSVService do
     let(:non_item_headers) do
       [
         "Partner",
-        "Date of Distribution",
+        "Initial Allocation",
+        "Scheduled for",
         "Source Inventory",
         "Total Number of #{item_name}",
         "Total Value",
@@ -90,6 +82,7 @@ describe Exports::ExportDistributionsCSVService do
       distributions.zip(total_item_quantities).each_with_index do |(distribution, total_item_quantity), idx|
         row = [
           distribution.partner.name,
+          distribution.created_at.strftime("%m/%d/%Y"),
           distribution.issued_at.strftime("%m/%d/%Y"),
           distribution.storage_location.name,
           distribution.line_items.where(item_id: item_id).total,
@@ -108,22 +101,26 @@ describe Exports::ExportDistributionsCSVService do
     end
 
     context 'when a new item is added' do
-      let!(:original_columns_count) { organization.items.size + non_item_headers.size }
       let(:new_item_name) { "new item" }
+      let(:original_columns_count) { 15 }
       before do
-        create(:item, name: new_item_name, organization:)
+        # if distributions are not created before new item
+        # then additional records will be created
+        distributions
+        create(:item, name: new_item_name, organization: organization)
       end
 
       it 'should add it to the end of the row' do
         expect(subject[0]).to eq(expected_headers)
           .and end_with(new_item_name)
-          .and have_attributes(size: original_columns_count + 1)
+          .and have_attributes(size: 17)
       end
 
       it 'should show up with a 0 quantity if there are none of this item in any distribution' do
         distributions.zip(total_item_quantities).each_with_index do |(distribution, total_item_quantity), idx|
           row = [
             distribution.partner.name,
+            distribution.created_at.strftime("%m/%d/%Y"),
             distribution.issued_at.strftime("%m/%d/%Y"),
             distribution.storage_location.name,
             distribution.line_items.where(item_id: item_id).total,
@@ -139,13 +136,13 @@ describe Exports::ExportDistributionsCSVService do
 
           expect(subject[idx + 1]).to eq(row)
             .and end_with(0)
-            .and have_attributes(size: original_columns_count + 1)
+            .and have_attributes(size: 17)
         end
       end
     end
 
     context 'when there are no distributions but the report is requested' do
-      subject { described_class.new(distributions: [], organization: Organization.first, filters: filters).generate_csv_data }
+      subject { described_class.new(distributions: [], organization: organization, filters: filters).generate_csv_data }
       it 'returns a csv with only headers and no rows' do
         header_row = subject[0]
         expect(header_row).to eq(expected_headers)

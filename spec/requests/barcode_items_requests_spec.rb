@@ -1,20 +1,20 @@
 RSpec.describe "BarcodeItems", type: :request do
-  let(:default_params) do
-    { organization_id: @organization.to_param }
-  end
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
 
   context "While signed in" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     describe "GET #index" do
       subject do
-        get barcode_items_path(default_params.merge(format: response_format))
+        get barcode_items_path(format: response_format)
         response
       end
 
-      before { create(:barcode_item) }
+      before { create(:barcode_item, organization: organization) }
 
       context "html" do
         let(:response_format) { 'html' }
@@ -31,7 +31,7 @@ RSpec.describe "BarcodeItems", type: :request do
 
     describe "GET #new" do
       it "returns http success" do
-        get new_barcode_item_path(default_params)
+        get new_barcode_item_path
         expect(response).to be_successful
       end
     end
@@ -39,14 +39,14 @@ RSpec.describe "BarcodeItems", type: :request do
     describe "GET #edit" do
       context "with a normal barcode item" do
         it "returns http success" do
-          get edit_barcode_item_path(default_params.merge(id: create(:barcode_item)))
+          get edit_barcode_item_path(id: create(:barcode_item))
           expect(response).to be_successful
         end
       end
 
       context "with a global barcode item" do
         it "returns a 404" do
-          get edit_barcode_item_path(default_params.merge(id: create(:global_barcode_item)))
+          get edit_barcode_item_path(id: create(:global_barcode_item))
           expect(response.status).to eq(404)
         end
       end
@@ -55,14 +55,14 @@ RSpec.describe "BarcodeItems", type: :request do
     describe "GET #show" do
       context "with a normal barcode item" do
         it "returns http success" do
-          get barcode_item_path(default_params.merge(id: create(:barcode_item)))
+          get barcode_item_path(id: create(:barcode_item))
           expect(response).to be_successful
         end
       end
 
       context "with a global barcode item" do
         it "returns a 404" do
-          get barcode_item_path(default_params.merge(id: create(:global_barcode_item)))
+          get barcode_item_path(id: create(:global_barcode_item))
           expect(response.status).to eq(404)
         end
       end
@@ -70,12 +70,13 @@ RSpec.describe "BarcodeItems", type: :request do
 
     describe "GET #find" do
       let!(:global_barcode) { create(:global_barcode_item) }
-      let!(:organization_barcode) { create(:barcode_item, organization: @organization) }
-      let!(:other_barcode) { create(:barcode_item, organization: create(:organization)) }
+      let!(:organization_barcode) { create(:barcode_item, organization: organization) }
+      let(:other_organization) { create(:organization) }
+      let!(:other_barcode) { create(:barcode_item, organization: other_organization) }
 
       context "via ajax" do
         it "can find a barcode that is scoped to just this organization" do
-          get find_barcode_items_path(default_params.merge(barcode_item: { value: organization_barcode.value }, format: :json))
+          get find_barcode_items_path(barcode_item: { value: organization_barcode.value }, format: :json)
           expect(response).to be_successful
           result = JSON.parse(response.body)
           expect(result["barcode_item"]["barcodeable_type"]).to eq("Item")
@@ -83,7 +84,7 @@ RSpec.describe "BarcodeItems", type: :request do
         end
 
         it "can find a barcode that's universally available" do
-          get find_barcode_items_path(default_params.merge(barcode_item: { value: global_barcode.value }, format: :json))
+          get find_barcode_items_path(barcode_item: { value: global_barcode.value }, format: :json)
           expect(response).to be_successful
           result = JSON.parse(response.body)
           expect(result["barcode_item"]["barcodeable_type"]).to eq("BaseItem")
@@ -92,7 +93,7 @@ RSpec.describe "BarcodeItems", type: :request do
 
         context "when it's missing" do
           it "returns a 404" do
-            get find_barcode_items_path(default_params.merge(barcode_item: { value: other_barcode.value }, format: :json))
+            get find_barcode_items_path(barcode_item: { value: other_barcode.value }, format: :json)
             expect(response.status).to eq(404)
           end
         end
@@ -102,8 +103,8 @@ RSpec.describe "BarcodeItems", type: :request do
     describe "DELETE #destroy" do
       it "disallows a user to delete someone else's barcode" do
         other_org = create(:organization)
-        other_barcode = create(:barcode_item, organization_id: other_org.id)
-        delete barcode_item_path(default_params.merge(id: other_barcode.to_param))
+        other_barcode = create(:barcode_item, organization: other_org)
+        delete barcode_item_path(other_barcode)
         expect(response).not_to be_successful
         expect(response).to have_error(/permission/)
       end
@@ -112,13 +113,13 @@ RSpec.describe "BarcodeItems", type: :request do
         allow_any_instance_of(User).to receive(:has_role?).with(Role::SUPER_ADMIN).and_return(false)
         allow_any_instance_of(User).to receive(:has_role?).with(Role::ORG_USER, anything).and_return(true)
         global_barcode = create(:global_barcode_item)
-        delete barcode_item_path(default_params.merge(id: global_barcode.to_param))
+        delete barcode_item_path(global_barcode)
         expect(response).not_to be_successful
         expect(response).to have_error(/permission/)
       end
 
       it "redirects to the index" do
-        delete barcode_item_path(default_params.merge(id: create(:barcode_item, organization_id: @organization.id)))
+        delete barcode_item_path(id: create(:barcode_item, organization_id: organization.id))
         expect(subject).to redirect_to(barcode_items_path)
       end
     end

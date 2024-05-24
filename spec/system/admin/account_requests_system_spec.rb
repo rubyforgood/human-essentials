@@ -1,4 +1,6 @@
 RSpec.describe "Account Requests Admin", type: :system do
+  let(:super_admin) { create(:super_admin) }
+
   context "while signed in as a super admin" do
     let!(:request1) { create(:account_request, confirmed_at: Time.zone.today, status: 'admin_approved') }
     let!(:request2) {
@@ -11,7 +13,7 @@ RSpec.describe "Account Requests Admin", type: :system do
     let!(:request6) { create(:account_request, created_at: Time.zone.today - 2.days, status: 'started') }
 
     before do
-      sign_in(@super_admin)
+      sign_in(super_admin)
     end
 
     around do |ex|

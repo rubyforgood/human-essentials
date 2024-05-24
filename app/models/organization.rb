@@ -11,6 +11,8 @@
 #  enable_child_based_requests    :boolean          default(TRUE), not null
 #  enable_individual_requests     :boolean          default(TRUE), not null
 #  enable_quantity_based_requests :boolean          default(TRUE), not null
+#  hide_package_column_on_receipt :boolean          default(FALSE)
+#  hide_value_columns_on_receipt  :boolean          default(FALSE)
 #  intake_location                :integer
 #  invitation_text                :text
 #  latitude                       :float
@@ -70,6 +72,7 @@ class Organization < ApplicationRecord
     has_many :transfers
     has_many :users, -> { distinct }, through: :roles
     has_many :vendors
+    has_many :request_units, class_name: 'Unit'
   end
 
   has_many :items, dependent: :destroy do
@@ -161,7 +164,7 @@ class Organization < ApplicationRecord
     self
   end
 
-  # NOTE: when finding Organizations, use Organization.find_by(short_name: params[:organization_id])
+  # NOTE: when finding Organizations, use Organization.find_by(short_name: params[:organization_name])
   def to_param
     short_name
   end
@@ -198,6 +201,7 @@ class Organization < ApplicationRecord
 
   def self.seed_items(organization = Organization.all)
     base_items = BaseItem.all.map(&:to_h)
+
     Array.wrap(organization).each do |org|
       Rails.logger.info "\n\nSeeding #{org.name}'s items...\n"
       org.seed_items(base_items)
@@ -262,6 +266,11 @@ class Organization < ApplicationRecord
       year = [year, distributions.minimum(:issued_at).year].min
     end
     year
+  end
+
+  def display_last_distribution_date
+    distribution = distributions.order(issued_at: :desc).first
+    distribution.nil? ? "No distributions" : distribution[:issued_at].strftime("%F")
   end
 
   private

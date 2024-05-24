@@ -1,11 +1,9 @@
 <% content_for :sidebar do %>
   <ul class="vertical menu">
-    <li><%= navigation_link_to "Account Settings", edit_user_registration_path(organization_id: nil) %></li>
+    <li><%= navigation_link_to "Account Settings", edit_user_registration_path %></li>
 
-    <% with_options organization_id: current_user.organization.to_param do |with_org| %>
-      <li><%= navigation_link_to "All users", with_org.users_path %></li>
-      <li><%= navigation_link_to "Add a user", with_org.new_user_path %></li>
-      <li><%= navigation_link_to "Update organization", with_org.edit_organization_path %></li>
-    <% end %>
+    <li><%= navigation_link_to "All users", users_path %></li>
+    <li><%= navigation_link_to "Add a user", new_user_path %></li>
+    <li><%= navigation_link_to "Update organization", edit_organization_path %></li>
   </ul>
 <% end %>
