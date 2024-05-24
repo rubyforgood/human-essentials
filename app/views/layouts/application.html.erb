@@ -48,7 +48,7 @@
       <% if user_signed_in? %>
         <% if current_organization.present? %>
           <%= render partial: "layouts/lte_navbar" %>
-        <% elsif user_signed_in? && admin_namespace? %>
+        <% elsif admin_namespace? %>
           <%= render partial: "layouts/lte_admin_navbar" %>
         <% end %>
       <% else %>
