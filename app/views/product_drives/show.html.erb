@@ -14,13 +14,12 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Product Drives", (product_drives_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Product Drives", product_drives_path %></li>
         </ol>
       </div>
     </div>
   </div><!-- /.container-fluid -->
 </section>
-
 
 <section class="content">
   <div class="container-fluid">
@@ -81,7 +80,7 @@
                   <td><%= donation.line_items.count(&:quantity) %></td>
                   <td><strong><%= dollar_value(donation.value_per_itemizable) %></strong></td>
                 </tr>
-              <% end%>
+              <% end %>
               </tbody>
             </table>
           </div>
@@ -93,6 +92,51 @@
             <%= edit_button_to edit_product_drive_path(@product_drive), { text: "Make a correction", size: "md" } %>
             <%= delete_button_to product_drive_path(@product_drive), { confirm: "Are you sure you want to permanently remove this product drive?", size: "md" } if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
           </div>
+          <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
+              <tr>
+                <th>Business Name</th>
+                <th>Contact Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>Items for this Drive</th>
+                <th>Total Items (for all drives)</th>
+                <th>Comment</th>
+              </tr>
+              </thead>
+              <tbody>
+              <% @product_drive.product_drive_participants.each do |participant| %>
+                <tr>
+                  <td><%= participant.business_name %></td>
+                  <td><%= participant.contact_name %></td>
+                  <td><%= participant.phone %></td>
+                  <td><%= participant.email %></td>
+                  <td><%= participant.address %></td>
+                  <td><%= participant.volume_by_product_drive(@product_drive.id) %></td>
+                  <td><%= participant.volume %></td>
+                  <td><%= participant.comment %></td>
+                </tr>
+              <% end %>
+              </tbody>
+            </table>
+          </div>
+          <!-- /.card-body -->
           <!-- /.card-footer-->
         </div>
         <!-- /.card -->

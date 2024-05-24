@@ -1,23 +1,24 @@
 RSpec.describe DonationsController, type: :controller do
-  let(:default_params) do
-    { organization_id: @organization.to_param }
-  end
-  let(:donation) { create(:donation, organization: @organization) }
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+
+  let(:donation) { create(:donation, organization: organization) }
 
   context "While signed in as a normal user >" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     describe "GET #index" do
-      subject { get :index, params: default_params }
+      subject { get :index }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
 
     describe "GET #new" do
-      subject { get :new, params: default_params }
+      subject { get :new }
       it "returns http success" do
         expect(subject).to be_successful
       end
@@ -29,17 +30,17 @@ RSpec.describe DonationsController, type: :controller do
       let(:line_items) { [attributes_for(:line_item)] }
 
       it "redirects to GET#edit on success" do
-        post :create, params: default_params.merge(
+        post :create, params: {
           donation: { storage_location_id: storage_location.id,
                       donation_site_id: donation_site.id,
                       source: "Donation Site",
                       line_items: line_items }
-        )
+        }
         expect(response).to redirect_to(donations_path)
       end
 
       it "renders GET#new with error on failure" do
-        post :create, params: default_params.merge(donation: { storage_location_id: nil, donation_site_id: nil, source: nil })
+        post :create, params: { donation: { storage_location_id: nil, donation_site_id: nil, source: nil } }
         expect(response).to be_successful # Will render :new
         expect(response).to have_error(/error/i)
       end
@@ -48,7 +49,7 @@ RSpec.describe DonationsController, type: :controller do
     describe "PUT#update" do
       it "redirects to index after update" do
         donation = create(:donation_site_donation)
-        put :update, params: default_params.merge(id: donation.id, donation: { source: "Donation Site", donation_site_id: donation.donation_site_id })
+        put :update, params: { id: donation.id, donation: { source: "Donation Site", donation_site_id: donation.donation_site_id } }
         expect(response).to redirect_to(donations_path)
       end
 
@@ -65,8 +66,12 @@ RSpec.describe DonationsController, type: :controller do
         }
         donation_params = { source: donation.source, line_items_attributes: line_item_params }
         expect do
-          put :update, params: default_params.merge(id: donation.id, donation: donation_params)
+          put :update, params: { id: donation.id, donation: donation_params }
         end.to change { donation.storage_location.inventory_items.first.quantity }.by(5)
+          .and change {
+                 View::Inventory.new(donation.organization_id)
+                   .quantity_for(storage_location: donation.storage_location_id, item_id: line_item.item_id)
+               }.by(5)
       end
 
       describe "when changing storage location" do
@@ -85,12 +90,15 @@ RSpec.describe DonationsController, type: :controller do
           }
           donation_params = { storage_location_id: new_storage_location.id, line_items_attributes: line_item_params }
           expect do
-            put :update, params: default_params.merge(id: donation.id, donation: donation_params)
+            put :update, params: { id: donation.id, donation: donation_params }
           end.to change { original_storage_location.size }.by(-10) # removes the whole donation of 10
           expect(new_storage_location.size).to eq 8
         end
 
+        # TODO this test is invalid in event-world since it's handled by the aggregate
         it "rolls back updates if quantity would go below 0" do
+          next if Event.read_events?(organization)
+
           donation = create(:donation, :with_items, item_quantity: 10)
           original_storage_location = donation.storage_location
 
@@ -110,7 +118,7 @@ RSpec.describe DonationsController, type: :controller do
             }
           }
           donation_params = { source: donation.source, storage_location: new_storage_location, line_items_attributes: line_item_params }
-          put :update, params: default_params.merge(id: donation.id, donation: donation_params)
+          put :update, params: { id: donation.id, donation: donation_params }
           expect(response).not_to redirect_to(anything)
           expect(original_storage_location.size).to eq 5
           expect(new_storage_location.size).to eq 0
@@ -131,28 +139,32 @@ RSpec.describe DonationsController, type: :controller do
           }
           donation_params = { source: donation.source, line_items_attributes: line_item_params }
           expect do
-            put :update, params: default_params.merge(id: donation.id, donation: donation_params)
+            put :update, params: { id: donation.id, donation: donation_params }
           end.to change { donation.storage_location.inventory_items.first.quantity }.by(-10)
+            .and change {
+                   View::Inventory.new(donation.organization_id)
+                     .quantity_for(storage_location: donation.storage_location_id, item_id: line_item.item_id)
+                 }.by(-10)
         end
       end
     end
 
     describe "GET #edit" do
-      subject { get :edit, params: default_params.merge(id: donation.id) }
+      subject { get :edit, params: { id: donation.id } }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
 
     describe "GET #show" do
-      subject { get :show, params: default_params.merge(id: donation.id) }
+      subject { get :show, params: { id: donation.id } }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
 
     describe "DELETE #destroy" do
-      subject { delete :destroy, params: default_params.merge(id: donation.id) }
+      subject { delete :destroy, params: { id: donation.id } }
 
       # normal users are not authorized
       it "redirects to the dashboard path" do
@@ -163,11 +175,11 @@ RSpec.describe DonationsController, type: :controller do
 
   context "While signed in as an organization admin >" do
     before do
-      sign_in(@organization_admin)
+      sign_in(organization_admin)
     end
 
     describe "DELETE #destroy" do
-      subject { delete :destroy, params: default_params.merge(id: donation.id) }
+      subject { delete :destroy, params: { id: donation.id } }
       it "redirects to the index" do
         expect(subject).to redirect_to(donations_path)
       end

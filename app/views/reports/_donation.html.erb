@@ -1,0 +1,9 @@
+<br>
+<div class="pull-left donation">
+  <%= link_to donation do %>
+    <%= number_with_delimiter donation.line_items.total %> items from <%= donation.source %>
+  <% end %>
+</div>
+<div class="pull-right">
+  <%= distance_of_time_in_words_to_now donation.created_at %> ago
+</div>

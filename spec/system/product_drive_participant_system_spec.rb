@@ -1,14 +1,16 @@
 RSpec.describe " Participant", type: :system, js: true do
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
+
   before do
-    sign_in(@user)
+    sign_in(user)
   end
 
-  let(:url_prefix) { "/#{@organization.to_param}" }
   let(:product_drive) { create(:product_drive) }
   let(:product_drive_participant) { create(:product_drive_participant) }
 
   context "When a user views the index page" do
-    subject { url_prefix + "/product_drive_participants" }
+    subject { product_drive_participants_path }
 
     before(:each) do
       @second = create(:product_drive_participant, business_name: "Bcd")
@@ -36,14 +38,14 @@ RSpec.describe " Participant", type: :system, js: true do
       end
 
       it "allows single  Participants to show semi-detailed stats about donations from that product drive" do
-        visit url_prefix + "/product_drive_participants/#{product_drive_participant.to_param}"
+        visit product_drive_participant_path(product_drive_participant)
         expect(page).to have_xpath("//table/tbody/tr", count: 3)
       end
     end
   end
 
   context "when creating new product drive participants" do
-    subject { url_prefix + "/product_drive_participants/new" }
+    subject { new_product_drive_participant_path }
 
     it "allows a user to create a new product drive instance" do
       visit subject
@@ -68,7 +70,7 @@ RSpec.describe " Participant", type: :system, js: true do
   end
 
   context "when editing an existing product drive participant" do
-    subject { url_prefix + "/product_drive_participants/#{product_drive_participant.id}/edit" }
+    subject { edit_product_drive_participant_path(product_drive_participant.id) }
 
     it "allows a user to update the contact info for a product drive participant" do
       new_email = "foo@bar.com"

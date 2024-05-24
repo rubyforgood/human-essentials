@@ -19,6 +19,21 @@
                   <span class="input-group-text"><i class="fa fa-address-card-o"></i></span>
                   <%= f.input_field :address, class: "form-control" %>
                 <% end %>
+
+                <%= f.input :contact_name, label: "Contact Name", wrapper: :input_group do %>
+                  <span class="input-group-text"><i class="fas fa-id-badge"></i></span>
+                  <%= f.input_field :contact_name, class: "form-control" %>
+                <% end %>
+
+                <%= f.input :email, label: "Email", wrapper: :input_group do %>
+                  <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                  <%= f.input_field :email, class: "form-control" %>
+                <% end %>
+
+                <%= f.input :phone, label: "Phone", wrapper: :input_group do %>
+                  <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                  <%= f.input_field :phone, class: "form-control" %>
+                <% end %>
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">

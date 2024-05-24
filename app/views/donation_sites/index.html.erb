@@ -22,7 +22,6 @@
   </div><!-- /.container-fluid -->
 </section>
 
-
 <section class="content">
   <div class="container-fluid">
     <div class="row">
@@ -41,12 +40,14 @@
               <tr>
                 <th>Donation Site</th>
                 <th>Address</th>
+                <th>Contact Name</th>
+                <th>E-mail</th>
+                <th>Phone</th>
                 <th>&nbsp;</th>
               </tr>
               <%= render partial: 'shared/table_row_form',
                          object: @donation_site,
-                         locals: {columns: [{name: :text_field}, {address: :text_field}]}
-              %>
+                         locals: {columns: [{name: :text_field}, {address: :text_field}, {contact_name: :text_field}, {email: :text_field}, {phone: :text_field}]} %>
               </thead>
             </table>
           </div>
@@ -54,7 +55,7 @@
             <div class="pull-right">
               <%= modal_button_to("#csvImportModal", {icon: "upload", text: "Import Donation Sites", size: "md"}) if @donation_sites.empty? %>
               <%= download_button_to(donation_sites_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Donation Sites", size: "md"}) if @donation_sites.any? %>
-              <%= new_button_to new_donation_site_path(organization_id: current_organization), {text: "New Donation Site"} %>
+              <%= new_button_to new_donation_site_path, {text: "New Donation Site"} %>
             </div>
           </div>
         </div>
@@ -77,6 +78,9 @@
               <tr>
                 <th>Donation Site</th>
                 <th>Address</th>
+                <th>Contact Name</th>
+                <th>E-mail</th>
+                <th>Phone</th>
                 <th>&nbsp;</th>
               </tr>
               </thead>

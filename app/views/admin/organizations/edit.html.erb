@@ -79,7 +79,6 @@
                   <%= f.rich_text_area :default_email_text %>
                 <% end %>
 
-
                 <%= f.input :logo, wrapper: :input_group do %>
 
                   <% if @organization.logo.attached? %>
@@ -88,14 +87,14 @@
                         <%= image_tag @organization.logo %>
                       </p>
                       <p>
-                        <a href="#showTheLogo" class="btn btn-xs btn-info" data-toggle="modal">
+                        <a href="#showTheLogo" class="btn btn-xs btn-info" data-bs-toggle="modal">
                           View Original
                         </a>
                       </p>
                       <div id="showTheLogo" class="modal fade">
                         <div class="modal-dialog">
                           <%= image_tag @organization.logo, class: "thumbnail" %>
-                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         </div>
                       </div>
                     </div>

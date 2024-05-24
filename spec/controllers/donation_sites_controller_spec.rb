@@ -1,29 +1,28 @@
 RSpec.describe DonationSitesController, type: :controller do
-  let(:default_params) do
-    { organization_id: @organization.to_param }
-  end
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
 
   context "While signed in" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     describe "GET #index" do
-      subject { get :index, params: default_params }
+      subject { get :index }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
 
     describe "GET #new" do
-      subject { get :new, params: default_params }
+      subject { get :new }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
 
     describe "GET #edit" do
-      subject { get :edit, params: default_params.merge(id: create(:donation_site, organization: @organization)) }
+      subject { get :edit, params: { id: create(:donation_site, organization: organization) } }
       it "returns http success" do
         expect(subject).to be_successful
       end
@@ -35,16 +34,9 @@ RSpec.describe DonationSitesController, type: :controller do
     end
 
     describe "GET #show" do
-      subject { get :show, params: default_params.merge(id: create(:donation_site, organization: @organization)) }
+      subject { get :show, params: { id: create(:donation_site, organization: organization) } }
       it "returns http success" do
         expect(subject).to be_successful
-      end
-    end
-
-    describe "DELETE #destroy" do
-      subject { delete :destroy, params: default_params.merge(id: create(:donation_site, organization: @organization)) }
-      it "returns http success" do
-        expect(subject).to redirect_to(donation_sites_path)
       end
     end
 

@@ -18,6 +18,7 @@
 #
 
 class Donation < ApplicationRecord
+  has_paper_trail
   SOURCES = { product_drive: "Product Drive",
               manufacturer: "Manufacturer",
               donation_site: "Donation Site",
@@ -101,6 +102,19 @@ class Donation < ApplicationRecord
                       .group(:source)
                       .group_by_day("donations.created_at")
                       .sum("line_items.quantity")
+  end
+
+  def details
+    case source
+    when SOURCES[:product_drive]
+      product_drive.name
+    when SOURCES[:manufacturer]
+      manufacturer.name
+    when SOURCES[:donation_site]
+      donation_site.name
+    when SOURCES[:misc]
+      comment&.truncate(25, separator: /\s/)
+    end
   end
 
   def remove(item)

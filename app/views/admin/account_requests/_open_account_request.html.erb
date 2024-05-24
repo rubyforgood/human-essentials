@@ -2,13 +2,13 @@
   <td><%= open_account_request.created_at&.strftime("%m/%d/%Y") %></td>
   <td>
     <%= open_account_request.organization_name %>
-    <br/><%= open_account_request.organization_website %>
+    <br><%= open_account_request.organization_website %>
   </td>
   <td><%= open_account_request.request_details %></td>
   <td><%= open_account_request.status.titleize %></td>
   <td>
     <%= open_account_request.name %>
-    <br/><%= open_account_request.email %>
+    <br><%= open_account_request.email %>
   </td>
   <td><%= js_button(text: 'Reject',
                     icon: 'ban',

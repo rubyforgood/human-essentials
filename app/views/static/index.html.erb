@@ -1,8 +1,8 @@
 <!doctype html>
 <html class="no-js" lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Human Essentials</title>
 
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
@@ -29,7 +29,7 @@
                 <a class="hidden md:block" href="#about">About</a>
                 <a class="hidden md:block" href="#testimonials">Testimonials</a>
                 <a class="hidden md:block" href="#contact">Contact</a>
-                <a href=<%= new_user_session_path %>>
+                <a href="<%= new_user_session_path %>">
                   <button class="flex flex-row items-center w-full px-4 py-2 bg-green-500 hover:bg-green-600 rounded-2xl text-md">
                   <span class='text-lg'>Login</span>
                   </button>
@@ -44,9 +44,9 @@
         <div class="flex flex-col justify-center items-center mx-auto lg:mx-0 text-center lg:text-left">
           <div class="text-4xl">
             <div>
-              <h2 class="">The easiest and most love-filled <br/> way to manage your <br/> Human Essentials bank.</h2>
+              <h2 class="">The easiest and most love-filled <br> way to manage your <br> Human Essentials bank.</h2>
               <p class='text-lg font-normal mb-3 mt-2'>Ready to make yourself more efficient?</p>
-              <a href=<%="#{new_account_request_path}"%>><button type="button" class="text-2xl bg-green-600 text-white px-3 py-2 rounded-2xl hover:bg-green-700">
+              <a href="<%= new_account_request_path %>"><button type="button" class="text-2xl bg-green-600 text-white px-3 py-2 rounded-2xl hover:bg-green-700">
                 Register your bank here for free!
               </button></a>
             </div>
@@ -58,15 +58,13 @@
       </div>
     </div>
 
-
     <div class="container max-w-7xl mx-auto pt-5" id="about">
       <div class="text-center mt-10">
-        <h2 class="text-4xl text-gray-600">The Human Essentials app removes the <br/> complexity from your day</h2>
+        <h2 class="text-4xl text-gray-600">The Human Essentials app removes the <br> complexity from your day</h2>
         <p class="mt-1 text-gray-400">and lets you spend time helping those who need it.</p>
         <a href="mailto:info@humanessentials.app?Subject=Essentials%20Interest"><button type="button" class="text-lg bg-green-500 text-white px-3 py-2 rounded-2xl mt-5">Get In Touch</button></a>
       </div>
     </div>
-
 
     <div class="w-3/4 mx-auto py-24">
 
@@ -98,7 +96,7 @@
           </div>
           <div class="text-center">
             <h3 class="text-3xl">Report Generation</h3>
-            <p class="text-gray-400 mt-2">Generate pdfs of partner distribution invoices for easy printing and sending.</p>
+            <p class="text-gray-400 mt-2">Generate PDFs of partner distribution invoices for easy printing and sending.</p>
           </div>
         </div>
 
@@ -108,7 +106,7 @@
           </div>
           <div class="text-center">
             <h3 class="text-3xl">Barcode Scanning</h3>
-            <p class="text-gray-400 mt-2">Quickly add or remove inventory with the scan of a barcode. The adjusting and transfering of inventory is also supported as well as creating your own barcodes.</p>
+            <p class="text-gray-400 mt-2">Quickly add or remove inventory with the scan of a barcode. Creating your own barcodes is also supported.</p>
           </div>
         </div>
       </div>
@@ -120,7 +118,7 @@
           </div>
           <div class="text-center">
             <h3 class="text-3xl">Inventory Management</h3>
-            <p class="text-gray-400 mt-2">Easily keep track of the items in your inventory regardless of their storage location.</p>
+            <p class="text-gray-400 mt-2">Easily keep track of the items in your inventory regardless of their storage location. Adjust and transfer your inventory between locations as needed.</p>
           </div>
         </div>
 
@@ -129,8 +127,8 @@
             <%= image_tag("dashboard-image.svg", class: "app-images") %>
           </div>
           <div class="text-center">
-            <h3 class="text-3xl">Dashboard Vizualization</h3>
-            <p class="text-gray-400 mt-2">Quickly view your inventory, donations, purchases and distributions on a single page.</p>
+            <h3 class="text-3xl">Dashboard Visualization</h3>
+            <p class="text-gray-400 mt-2">Quickly view your inventory, donations, purchases, and distributions on a single page.</p>
           </div>
         </div>
       </div>
@@ -161,11 +159,10 @@
     <div class="container max-w-7xl mx-auto py-32" id="contact">
       <div class="text-center">
         <h2 class="text-4xl">Want to use the Human Essentials App?</h2>
-        <p class="text-gray-500 mt-2">After the demo, you will be able to request your own account.</p>
-        <a href=<%="#{new_account_request_path}"%>><button type="button" class="text-lg bg-green-500 text-white px-3 py-2 mt-5 rounded-2xl">Request A Demo</button></a>
+        <a href="<%= new_account_request_path %>"><button type="button" class="text-lg bg-green-500 text-white px-3 py-2 mt-5 rounded-2xl">Request An Account</button></a>
 
-        <br/><br/>
-        <p class="text-gray-500">Have questions? Email us at <a class='text-blue-500' href="mailto:info@humanessentials.app?Subject=Essentials%20Interest" target="_top" >info@humanessentials.app</a></p>
+        <br><br>
+        <p class="text-gray-500">Have questions? Email us at <a class='text-blue-500' href="mailto:info@humanessentials.app?Subject=Essentials%20Interest" target="_top">info@humanessentials.app</a></p>
       </div>
     </div>
 

@@ -1,4 +1,7 @@
 RSpec.describe "User sign-in handling", type: :system, js: true do
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
+
   subject { new_user_session_path }
 
   before do
@@ -17,13 +20,11 @@ RSpec.describe "User sign-in handling", type: :system, js: true do
 
   context "when users are valid and belong to an organization" do
     it "redirects to user's dashboard" do
-      fill_in "Email", with: @user.email
+      fill_in "Email", with: user.email
       fill_in "Password", with: DEFAULT_USER_PASSWORD
       click_button "Log in"
 
-      expect(page).to have_current_path(
-        dashboard_path(organization_id: @user.organization)
-      )
+      expect(page).to have_current_path(dashboard_path)
     end
   end
 
@@ -40,13 +41,19 @@ RSpec.describe "User sign-in handling", type: :system, js: true do
   end
 
   context "when users are valid and don't belong to an organization" do
-    it "redirects to home " do
-      user_no_org = create(:user, organization: nil)
+    let(:user_no_org) { User.create(email: 'no-org-user@example.org2', password: 'password!') }
+
+    before do
+      user_no_org.add_role(:org_user)
+      visit new_user_session_path
+
       fill_in "Email", with: user_no_org.email
       fill_in "Password", with: user_no_org.password
       click_button "Log in"
+    end
 
-      expect(page).to have_current_path(root_path)
+    it "redirects to 403" do
+      expect(page).to have_current_path("/403")
     end
   end
 end

@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Distributions", (distributions_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Distributions", distributions_path %></li>
           <li class="breadcrumb-item"><a href="#">Edit Distribution</a></li>
         </ol>
       </div>
@@ -22,15 +22,21 @@
   </div><!-- /.container-fluid -->
 </section>
 
-
-
 <section class="content">
 
   <% unless @distribution.future? %>
-    <div class="alert alert-warning" , role="alert">
+    <div class="alert alert-warning" role="alert">
       The current date is past the date this distribution was scheduled for.
       Please be very careful when editing this record;
       the contents should match what was given to the recipient.
+    </div>
+  <% end %>
+  <% if @audit_warning %>
+    <div class="alert alert-warning" role="alert">
+      You’ve had an audit since this distribution was started.
+      In the rare case that you are correcting a typo,
+      rather than recording that the physical amounts being distributed have changed,
+      you’ll need to make an adjustment to the inventory as well.
     </div>
   <% end %>
 
@@ -46,9 +52,10 @@
             <!-- Default box -->
             <div class="box">
               <div class="box-body">
-                <%= render 'form', distribution: @distribution %>
+                <%= render 'form', distribution: @distribution, date_place_holder: @distribution.issued_at %>
               </div>
-          </div><!-- /.box -->
+            </div><!-- /.box -->
+          </div>
         </div>
       </div>
     </div>

@@ -20,15 +20,6 @@ $(function() {
 
   const create_new_manufacturer_text = "---Create new Manufacturer---";
 
-  const fields_to_hide = [
-    product_drive_container_id,
-    product_drive_participant_container_id,
-    manufacturer_container_id,
-    donation_site_container_id
-  ]
-
-  hide_fields_with_no_value(fields_to_hide);
-
   $(product_drive_id).append(
 
     `<option value="">${create_new_product_drive_text}</option>`
@@ -41,7 +32,7 @@ $(function() {
     `<option value="">${create_new_manufacturer_text}</option>`
   );
 
-$(document).on("change", product_drive_id, function(evt) {
+  $(document).on("change", product_drive_id, function(evt) {
     const selection = $(product_drive_id + " option")
       .filter(":selected")
       .text();
@@ -70,7 +61,7 @@ $(document).on("change", product_drive_id, function(evt) {
     }
   });
 
-  $(document).on("change", control_id, function(evt) {
+  function handleSourceSelection() {
     const selection = $(control_id + " option")
       .filter(":selected")
       .text();
@@ -99,15 +90,19 @@ $(document).on("change", product_drive_id, function(evt) {
       $(donation_site_container_id).hide();
       $(manufacturer_container_id).hide();
     }
-  });
+  };
+
+  $(control_id).each(handleSourceSelection);
+
+  $(document).on("change", control_id, handleSourceSelection);
 
   $(document).on(
-    "cocoon:after-insert",
-    "form#new_donation",
+    "form-input-after-insert",
+    "#donation_line_items",
     (e) => {
-      const insertedItem = $(e.detail[2]);
+      const insertedItem = $(e.detail);
       insertedItem
-        .find("#_barcode-lookup-new_line_items")
+        .find("input.__barcode_item_lookup")
         .attr("id", `_barcode-lookup-${$(".nested-fields").length - 1}`)
     }
   )
@@ -115,7 +110,7 @@ $(document).on("change", product_drive_id, function(evt) {
   const large_donation_boundary = 100000;
   $(document).on("submit", "form#new_donation", (e, _) =>
     $(".quantity").each(function(_, q) {
-      const quantity = q.valueAsNumber;
+      const quantity = parseInt(q.value, 10);
       if (quantity > large_donation_boundary) {
         confirm(
           `${quantity} items is a large donation! Are you sure you want to submit?`
@@ -124,12 +119,3 @@ $(document).on("change", product_drive_id, function(evt) {
     })
   );
 });
-
-function hide_fields_with_no_value(field_selectors){
-  $.each( field_selectors, function(index, selector){
-    let selected_value_text = $(selector + " select option").filter(":selected").text()
-    if(selected_value_text == "" || selected_value_text == "Choose one..." ){
-      $(selector).hide();
-    }
-  });
-}

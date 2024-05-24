@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Inventory Transfers", (transfers_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Inventory Transfers", transfers_path %></li>
           <li class="breadcrumb-item"><a href="#">New Transfer</a></li>
         </ol>
       </div>
@@ -40,7 +40,9 @@
                 </div>
                 <div class="box-body">
 
-                  <%= simple_form_for @transfer, html: { class: "storage-location-required", id: 'new_transfer' } do |f| %>
+                  <%= simple_form_for @transfer,
+                    data: { controller: "form-input" },
+                    html: { class: "storage-location-required", id: 'new_transfer' } do |f| %>
                     <%= render partial: "storage_locations/source", object: f, locals: {label: "From storage location", error: "Which location are you moving inventory from?", association_field: :from} %>
 
                     <%= f.association :to,
@@ -53,13 +55,13 @@
                     <fieldset style="margin-bottom: 2rem;" class='w-70'>
                       <legend>Items in this transfer</legend>
                       <div id="transfer_line_items" class="line-item-fields" data-capture-barcode="true">
-                        <%= f.simple_fields_for :line_items do |item| %>
-                          <%= render 'line_items/line_item_fields', f: item %>
-                        <% end %>
+                        <%= render 'line_items/line_item_fields', form: f %>
                       </div>
                       <div class="row links justify-content-end">
                         <div class="col-xs-12">
-                          <%= add_line_item_button f, "#transfer_line_items" %>
+                          <%= add_element_button "Add Another Item", container_selector: "#transfer_line_items", id: "__add_line_item" do %>
+                            <%= render 'line_items/line_item_fields', form: f, object: LineItem.new %>
+                          <% end %>
                         </div>
                       </div>
 

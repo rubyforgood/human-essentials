@@ -21,12 +21,16 @@ RSpec.describe Partners::AuthorizedFamilyMember, type: :model do
   end
 
   describe "#display_name" do
-    let(:partners_family) { FactoryBot.create(:partners_family) }
+    let(:partners_family) { create(:partners_family) }
     let(:authorized_family_member) { partners_family.create_authorized }
 
     it "should return the family member's first and last name" do
       expect(authorized_family_member.display_name).to eq("#{authorized_family_member.first_name} #{authorized_family_member.last_name}")
     end
+  end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
   end
 end
 

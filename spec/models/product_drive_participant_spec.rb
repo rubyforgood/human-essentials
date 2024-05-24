@@ -27,19 +27,28 @@ RSpec.describe ProductDriveParticipant, type: :model do
       expect(build(:product_drive_participant, phone: nil)).to be_valid
       expect(build(:product_drive_participant, email: nil)).to be_valid
     end
-
-    it "is invalid without an organization" do
-      expect(build(:product_drive_participant, organization: nil)).not_to be_valid
-    end
   end
 
   context "Methods" do
     describe "volume" do
-      it "retrieves the amount of product that has been donated through this product drive" do
+      it "retrieves the amount of product that has been donated by participant" do
         dd = create(:product_drive)
         ddp = create(:product_drive_participant)
         create(:donation, :with_items, item_quantity: 10, source: Donation::SOURCES[:product_drive], product_drive: dd, product_drive_participant: ddp)
         expect(ddp.volume).to eq(10)
+      end
+    end
+
+    describe "volume_by_product_drive" do
+      it "retrieves the amount of product that has been donated through specific product drive" do
+        drive1 = create(:product_drive)
+        drive2 = create(:product_drive)
+        participant = create(:product_drive_participant)
+        create(:donation, :with_items, item_quantity: 10, source: Donation::SOURCES[:product_drive], product_drive: drive1, product_drive_participant: participant)
+        create(:donation, :with_items, item_quantity: 9, source: Donation::SOURCES[:product_drive], product_drive: drive2, product_drive_participant: participant)
+        expect(participant.volume).to eq(19)
+        expect(participant.volume_by_product_drive(drive1.id)).to eq(10)
+        expect(participant.volume_by_product_drive(drive2.id)).to eq(9)
       end
     end
 
@@ -62,5 +71,9 @@ RSpec.describe ProductDriveParticipant, type: :model do
         end
       end
     end
+  end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
   end
 end

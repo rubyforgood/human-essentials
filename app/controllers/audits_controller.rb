@@ -10,7 +10,11 @@ class AuditsController < ApplicationController
   end
 
   def show
-    @inventory_items = @audit.storage_location.inventory_items
+    if Event.read_events?(@audit.organization)
+      @items = View::Inventory.items_for_location(@audit.storage_location)
+    else
+      @inventory_items = @audit.storage_location.inventory_items
+    end
   end
 
   def edit
@@ -38,11 +42,14 @@ class AuditsController < ApplicationController
 
     increasing_adjustment, decreasing_adjustment = @audit.adjustment.split_difference
     ActiveRecord::Base.transaction do
-      @audit.storage_location.increase_inventory increasing_adjustment
-      @audit.storage_location.decrease_inventory decreasing_adjustment
+      @audit.storage_location.increase_inventory(increasing_adjustment.line_item_values)
+      @audit.storage_location.decrease_inventory(decreasing_adjustment.line_item_values)
+      AuditEvent.publish(@audit)
     end
     @audit.finalized!
     redirect_to audit_path(@audit), notice: "Audit is Finalized."
+  rescue => e
+    redirect_back(fallback_location: audits_path, alert: "Could not finalize audit: #{e.message}")
   end
 
   def update
@@ -50,7 +57,7 @@ class AuditsController < ApplicationController
     if @audit.update(audit_params)
       save_audit_status_and_redirect(params)
     else
-      flash[:error] = "Something didn't work quite right -- try again?"
+      flash[:error] = @audit.errors.full_messages.join("\n")
       @storage_locations = [@audit.storage_location]
       set_items
       @audit.line_items.build if @audit.line_items.empty?
@@ -77,7 +84,7 @@ class AuditsController < ApplicationController
       @audit.line_items.build if @audit.line_items.empty?
       render :new
     end
-  rescue Errors::InsufficientAllotment => e
+  rescue Errors::InsufficientAllotment, InventoryError => e
     flash[:error] = e.message
     render :new
   end
@@ -92,7 +99,8 @@ class AuditsController < ApplicationController
 
   def handle_audit_errors
     error_message = @audit.errors.uniq(&:attribute).map do |error|
-      "#{error.attribute.capitalize} ".tr("_", " ") + error.message
+      attr = (error.attribute.to_s == 'base') ? '' : error.attribute.capitalize
+      "#{attr} ".tr("_", " ") + error.message
     end
     flash[:error] = error_message.join(", ")
   end

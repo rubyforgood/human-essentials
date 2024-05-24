@@ -18,12 +18,12 @@
                   <th scope="col">Last Sign in</th>
                   <th scope="col">Status</th>
                   <th scope="col">Reinvite</th>
-                  <th scope="col"><span class="sr-only">Actions</span></th>
+                  <th scope="col"><span class="sr-only visually-hidden">Actions</span></th>
                 </tr>
               </thead>
 
               <tbody>
-                <%= render partial: "/users/organization_user", 
+                <%= render partial: "/users/organization_user",
                            collection: @organization.users.with_discarded.alphabetized,
                            as: :user,
                            locals: { current_organization: current_organization || @organization } %>

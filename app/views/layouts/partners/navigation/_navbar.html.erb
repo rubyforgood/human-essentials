@@ -1,5 +1,5 @@
 <li class="nav-item dropdown">
-  <a class="nav-link" data-toggle="dropdown" href="#">
+  <a class="nav-link" data-bs-toggle="dropdown" href="#">
     <%= current_user.email %>
     <i class="fa fa-caret-down"></i>
   </a>
@@ -21,7 +21,7 @@
     <div class="dropdown-divider"></div>
     <% current_user.switchable_roles.each do |role| %>
       <% next if role == current_role %>
-      <%= link_to switch_to_role_users_path(organization_id: current_partner.organization_id, role_id: role.id), class:"dropdown-item" do %>
+      <%= link_to switch_to_role_users_path(role_id: role.id), class:"dropdown-item" do %>
         <i class="fa fa-repeat text-aqua"></i><%= "Switch to: #{role.resource.name}" %>
       <% end %>
     <% end %>

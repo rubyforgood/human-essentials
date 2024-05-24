@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Purchases", (purchases_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Purchases", purchases_path %></li>
           <li class="breadcrumb-item"><a href="#">Editing <%= @purchase.purchased_from_view %>
             on <%= @purchase.created_at.to_fs(:distribution_date) %></a></li>
         </ol>
@@ -25,6 +25,12 @@
 
 <section class="content">
   <div class="container-fluid">
+    <% if @audit_performed_and_finalized %>
+      <div class="card-header border-0 bg-gradient-warning">
+        You’ve had an audit since this purchase was started. In the case that you are correcting a typo, rather than recording that the physical amounts being purchased have changed,
+        you’ll need to make an adjustment to the inventory as well.
+      </div>
+    <% end %>
     <div class="row">
       <!-- left column -->
       <div class="col-md-12">
@@ -34,7 +40,7 @@
           <!-- form start -->
           <div class="card-body">
             <%= render partial: "purchase_form", object: @purchase %>
-            <%= link_to "Add vendor", new_vendor_path, {:remote => true, "data-toggle" => "modal", "data-target" => "#modal-window", id: "new_vendor", "style" => "display: none;"} %>
+            <%= link_to "Add vendor", new_vendor_path, {:remote => true, "data-bs-toggle" => "modal", "data-bs-target" => "#modal-window", id: "new_vendor", "style" => "display: none;"} %>
           </div><!-- /.box -->
         </div>
       </div>

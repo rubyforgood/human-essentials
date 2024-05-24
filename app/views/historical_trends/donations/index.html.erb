@@ -8,23 +8,10 @@
         text: @title
       },
       subtitle: {
-        text: "Source: humanessentials.app"
+        text: "Cached Data, may be up to 24 hours old"
       },
       xAxis: {
-        categories: [
-          'Jan',
-          'Feb',
-          'Mar',
-          'Apr',
-          'May',
-          'Jun',
-          'Jul',
-          'Aug',
-          'Sep',
-          'Oct',
-          'Nov',
-          'Dec'
-        ],
+        categories: last_12_months,
         crosshair: true
       },
       yAxis: {
@@ -48,5 +35,5 @@
       },
       series: @series
     }.to_json
-  %>
-<%= render partial: "shared/highcharts", locals: { config: config }%>
+%>
+<%= render partial: "shared/highcharts", locals: { config: config } %>

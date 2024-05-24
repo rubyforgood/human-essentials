@@ -1,3 +1,3 @@
 You've received a request to approve the account for <%= @partner.name %>.
 
-Review This Organization: <%=partner_url(organization_id: @organization.short_name, id: @partner.id, anchor: "partner-information") %>
+Review This Partner: <%= partner_url(id: @partner.id, anchor: "partner-information") %>

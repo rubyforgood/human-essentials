@@ -26,21 +26,30 @@
               <td> Quantity </td>
             </tr>
           </thead>
-          <% kit.inventory_items.map do |inventory_item| %>
-            <% next if inventory_item.storage_location.discarded_at %>
-            <tr>
-              <td><%= inventory_item.storage_location.name %></td>
-              <td><%= inventory_item.quantity %></td>
-            </tr>
+          <% if @inventory %>
+            <% @inventory.all_items.select { |i| i.item_id == kit.item.id}.each do |item| %>
+              <tr>
+                <td><%= @inventory.storage_location_name(item.storage_location_id) %></td>
+                <td><%= item.quantity %></td>
+              </tr>
+            <% end %>
+          <% else %>
+            <% kit.inventory_items.map do |inventory_item| %>
+              <% next if inventory_item.storage_location.discarded_at %>
+              <tr>
+                <td><%= inventory_item.storage_location.name %></td>
+                <td><%= inventory_item.quantity %></td>
+              </tr>
+            <% end %>
           <% end %>
         </table>
         <div class='align-self-center'>
-          <%= edit_button_to allocations_kit_path(organization_id: current_organization.id, id: kit.id), { text: "Modify Allocation" } %>
+          <%= edit_button_to allocations_kit_path(kit), { text: "Modify Allocation" } %>
         </div>
       </td>
       <td>
         <% if kit.active %>
-          <%= deactivate_kit_button(kit) %>
+          <%= deactivate_kit_button(kit, @inventory) %>
         <% else %>
           <%= reactivate_button_to reactivate_kit_path(kit),
                                    { confirm: confirm_reactivate_msg(kit.name),

@@ -29,10 +29,14 @@ RSpec.describe Partners::Child, type: :model do
 
   describe "#display_name" do
     subject { partners_child }
-    let(:partners_child) { FactoryBot.create(:partners_child) }
+    let(:partners_child) { create(:partners_child) }
 
     it "should return a child's first and last name" do
       expect(subject.display_name).to eq("#{subject.first_name} #{subject.last_name}")
     end
+  end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
   end
 end

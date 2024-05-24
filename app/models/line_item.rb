@@ -12,6 +12,7 @@
 #
 
 class LineItem < ApplicationRecord
+  has_paper_trail
   include ItemQuantity
   MAX_INT = 2**31
   MIN_INT = -2**31
@@ -21,6 +22,7 @@ class LineItem < ApplicationRecord
 
   validates :item_id, presence: true
   validates :quantity, numericality: { only_integer: true, less_than: MAX_INT, greater_than: MIN_INT }
+
   scope :active, -> { joins(:item).where(items: { active: true }) }
 
   delegate :name, to: :item

@@ -1,7 +1,7 @@
 <section class="container mx-auto my-6">
   <h2 class="font-weight-bold"><%= title %></h2>
 
-  <table class="rounded-lg w-100 shadow-lg bg-white">
+  <table class="rounded-3 w-100 shadow-lg bg-white">
     <thead>
       <tr class="border-bottom border-dark">
         <th scope="col" class="p-4" style='width:150px'><%= date_header %></th>
@@ -15,14 +15,14 @@
           <td class="p-4 w-40">
             <i class="text-primary far fa-file-alt mr-1"></i>
             <%= dist.issued_at.strftime("%m/%d/%Y") %>
-            <br/>
+            <br>
             <%= print_button_to print_partners_distribution_path(dist, format: :pdf) %>
           </td>
           <td class="p-4"><%= dist.line_items.total %></td>
           <td class="p-4 d-flex flex-wrap">
             <% dist.line_items.map do |item| %>
-              <span class="mx-2 mb-2 p-2 lg:mb-0 border border-dark rounded-sm">
-                <%= item.quantity %> <%= item.name%>
+              <span class="mx-2 mb-2 p-2 lg:mb-0 border border-dark rounded-1">
+                <%= item.quantity %> <%= item.name %>
               </span>
             <% end %>
           </td>

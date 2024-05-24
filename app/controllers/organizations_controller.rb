@@ -16,7 +16,7 @@ class OrganizationsController < ApplicationController
     @organization = current_organization
 
     if OrganizationUpdateService.update(@organization, organization_params)
-      redirect_to organization_path(@organization), notice: "Updated your organization!"
+      redirect_to organization_path, notice: "Updated your organization!"
     else
       flash[:error] = @organization.errors.full_messages.join("\n")
       render :edit
@@ -48,7 +48,7 @@ class OrganizationsController < ApplicationController
         resource_id: current_organization.id)
       redirect_to user_update_redirect_path, notice: "User has been promoted!"
     rescue => e
-      redirect_back(fallback_location: organization_path(current_organization), alert: e.message)
+      redirect_back(fallback_location: organization_path, alert: e.message)
     end
   end
 
@@ -61,7 +61,7 @@ class OrganizationsController < ApplicationController
         resource_id: current_organization.id)
       redirect_to user_update_redirect_path, notice: notice
     rescue => e
-      redirect_back(fallback_location: organization_path(current_organization), alert: e.message)
+      redirect_back(fallback_location: organization_path, alert: e.message)
     end
   end
 
@@ -87,6 +87,8 @@ class OrganizationsController < ApplicationController
   end
 
   def organization_params
+    request_type_formatter(params)
+
     params.require(:organization).permit(
       :name, :short_name, :street, :city, :state,
       :zipcode, :email, :url, :logo, :intake_location,
@@ -95,8 +97,26 @@ class OrganizationsController < ApplicationController
       :repackage_essentials, :distribute_monthly,
       :ndbn_member_id, :enable_child_based_requests,
       :enable_individual_requests, :enable_quantity_based_requests,
+      :ytd_on_distribution_printout, :one_step_partner_invite,
+      :hide_value_columns_on_receipt, :hide_package_column_on_receipt,
       partner_form_fields: []
     )
+  end
+
+  def request_type_formatter(params)
+    if params[:organization][:enable_individual_requests] == "false"
+      params[:organization][:enable_child_based_requests] = false
+    end
+
+    if params[:organization][:enable_child_based_requests] == "false"
+      params[:organization][:enable_individual_requests] = false
+    end
+
+    if params[:organization][:enable_quantity_based_requests] == "false"
+      params[:organization][:enable_quantity_based_requests] = false
+    end
+
+    params
   end
 
   def user_update_redirect_path

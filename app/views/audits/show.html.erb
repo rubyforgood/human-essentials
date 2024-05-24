@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "All Audits", (audits_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "All Audits", audits_path %></li>
           <li class="breadcrumb-item">Audit (<%= @audit.created_at.strftime("%m/%d/%Y") %>) - <%= @audit.status.titleize %></li>
         </ol>
       </div>
@@ -50,13 +50,24 @@
               </tr>
               </thead>
               <tbody>
-              <% @inventory_items.each do |inventory_item|  %>
-                <% line_item = @audit.line_items.find_by(item: inventory_item.item) %>
-                <tr class="<%= line_item.nil? ? "negative" : (line_item.quantity.equal?(inventory_item.quantity) ? "positive" : "highlight") %>">
-                  <td><%= inventory_item.item.name %></td>
-                  <td><%= line_item&.quantity&.abs || "Not Audited" %></td>
-                  <td><%= inventory_item.quantity %></td>
-                </tr>
+              <% if @items %>
+                <% @items.each do |inventory_item| %>
+                  <% line_item = @audit.line_items.find { |i| i.item_id == inventory_item.item_id } %>
+                  <tr class="<%= line_item.nil? ? "negative" : (line_item.quantity.equal?(inventory_item.quantity) ? "positive" : "highlight") %>">
+                    <td><%= inventory_item.name %></td>
+                    <td><%= line_item&.quantity&.abs || "Not Audited" %></td>
+                    <td><%= inventory_item.quantity %></td>
+                  </tr>
+                <% end %>
+              <% else %>
+                <% @inventory_items.each do |inventory_item| %>
+                  <% line_item = @audit.line_items.find_by(item: inventory_item.item) %>
+                  <tr class="<%= line_item.nil? ? "negative" : (line_item.quantity.equal?(inventory_item.quantity) ? "positive" : "highlight") %>">
+                    <td><%= inventory_item.item.name %></td>
+                    <td><%= line_item&.quantity&.abs || "Not Audited" %></td>
+                    <td><%= inventory_item.quantity %></td>
+                  </tr>
+                <% end %>
               <% end %>
               </tbody>
             </table>

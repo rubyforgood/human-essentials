@@ -1,0 +1,20 @@
+<div class="tab-pane fade" id="custom-tabs-three-inventory" role="tabpanel" aria-labelledby="custom-tabs-three-inventory-tab">
+  <div class='flex justify-end mb-4'>
+    <%= new_button_to new_item_path, {text: "New Item"} %>
+  </div>
+
+  <table class="table table-items-location">
+    <thead>
+    <tr>
+      <th></th>
+      <th>Name</th>
+      <th class="numeric">Quantity</th>
+      <th class="numeric">Minimum Quantity</th>
+      <th class="numeric">Recommended Quantity</th>
+    </tr>
+    </thead>
+    <tbody>
+      <%= render partial: "item_row_inventory", collection: @items_by_storage_collection_and_quantity, as: :row %>
+    </tbody>
+  </table>
+</div><!-- /.box-body.table-responsive -->

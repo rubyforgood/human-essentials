@@ -16,6 +16,8 @@
 #  organization_id :integer
 #
 RSpec.describe StorageLocation, type: :model do
+  let(:organization) { create(:organization) }
+
   context "Validations >" do
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:address) }
@@ -24,8 +26,8 @@ RSpec.describe StorageLocation, type: :model do
 
   context "Callbacks >" do
     describe "before_destroy" do
-      let(:item) { create(:item) }
-      subject { create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization) }
+      let(:item) { create(:item, organization: organization) }
+      subject { create(:storage_location, :with_items, item_quantity: 10, item: item, organization: organization) }
 
       it "does not delete storage locations with inventory items on it" do
         subject.destroy
@@ -34,7 +36,7 @@ RSpec.describe StorageLocation, type: :model do
       end
 
       it "deletes storage locations with no inventory items on it" do
-        subject.inventory_items.destroy_all
+        TestInventory.clear_inventory(subject)
         subject.destroy
 
         expect(StorageLocation.count).to eq(0)
@@ -63,71 +65,63 @@ RSpec.describe StorageLocation, type: :model do
   end
 
   context "Methods >" do
-    let!(:item) { create(:item) }
-    subject { create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization) }
+    let(:item) { create(:item) }
+    subject { create(:storage_location, :with_items, item_quantity: 10, item: item, organization: organization) }
 
     describe "increase_inventory" do
       context "With existing inventory" do
-        let(:donation) { create(:donation, :with_items, item_quantity: 66, organization: @organization) }
+        let(:donation) { create(:donation, :with_items, item_quantity: 66, organization: organization) }
 
         it "increases inventory quantities from an itemizable object" do
           expect do
-            subject.increase_inventory(donation.to_a)
+            subject.increase_inventory(donation.line_item_values)
           end.to change { subject.size }.by(66)
         end
       end
 
       context "when providing a new item that does not yet exist" do
-        let(:mystery_item) { create(:item, organization: @organization) }
-        let(:donation_with_new_items) { create(:donation, :with_items, organization: @organization, item_quantity: 10, item: mystery_item) }
+        let(:mystery_item) { create(:item, organization: organization) }
+        let(:donation_with_new_items) { create(:donation, :with_items, organization: organization, item_quantity: 10, item: mystery_item) }
 
         it "creates those new inventory items in the storage location" do
           expect do
-            subject.increase_inventory(donation_with_new_items.to_a)
+            subject.increase_inventory(donation_with_new_items.line_item_values)
           end.to change { subject.inventory_items.count }.by(1)
-        end
-      end
-
-      context "when increasing with an inactive item" do
-        let(:inactive_item) { create(:item, active: false, organization: @organization) }
-        let(:donation_with_inactive_item) { create(:donation, :with_items, organization: @organization, item_quantity: 10, item: inactive_item) }
-
-        it "re-activates the item as part of the creation process" do
-          expect do
-            subject.increase_inventory(donation_with_inactive_item.to_a)
-          end.to change { subject.inventory_items.count }.by(1)
-                                                         .and change { Item.count }.by(1)
         end
       end
     end
 
     describe "decrease_inventory" do
-      let(:item) { create(:item) }
-      let(:distribution) { create(:distribution, :with_items, item: item, item_quantity: 66) }
+      let(:item) { create(:item, organization: organization) }
+      let(:distribution) { create(:distribution, :with_items, item: item, item_quantity: 66, organization: organization) }
 
       it "decreases inventory quantities from an itemizable object" do
-        storage_location = create(:storage_location, :with_items, item_quantity: 100, item: item, organization: @organization)
+        storage_location = create(:storage_location, :with_items, item_quantity: 100, item: item, organization: organization)
         expect do
-          storage_location.decrease_inventory(distribution.to_a)
+          storage_location.decrease_inventory(distribution.line_item_values)
         end.to change { storage_location.size }.by(-66)
       end
 
       context "when there is insufficient inventory available" do
-        let(:distribution_but_too_much) { create(:distribution, :with_items, item: item, item_quantity: 9001) }
+        let(:distribution_but_too_much) { create(:distribution, :with_items, item: item, item_quantity: 9001, organization: organization) }
 
         it "gives informative errors" do
-          storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization)
+          next if Event.read_events?(organization)
+
+          storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: organization)
           expect do
-            storage_location.decrease_inventory(distribution_but_too_much.to_a).errors
+            storage_location.decrease_inventory(distribution_but_too_much.line_item_values).errors
           end.to raise_error(Errors::InsufficientAllotment)
         end
 
         it "does not change inventory quantities if there is an error" do
-          storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: @organization)
+          next if Event.read_events?(organization)
+
+          storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: organization)
           starting_size = storage_location.size
           begin
-            storage_location.decrease_inventory(distribution.to_a)
-          rescue Errors::InsufficientAllotment
+            storage_location.decrease_inventory(distribution.line_item_values)
+          rescue Errors::InsufficientAllotment, InventoryError
           end
           storage_location.reload
           expect(storage_location.size).to eq(starting_size)
@@ -135,24 +129,12 @@ RSpec.describe StorageLocation, type: :model do
       end
     end
 
-    describe "StorageLocation.item_total" do
-      it "gathers the final total of a single item across all inventories" do
-        item = create(:item)
-        storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item)
-        create(:storage_location, :with_items, item_quantity: 10, item: item)
-        # This inventory_item will not be included, because it will be for a different item
-        create(:inventory_item, storage_location_id: storage_location.id, quantity: 10)
-
-        expect(StorageLocation.item_total(item.id)).to eq(20)
-      end
-    end
-
     describe "StorageLocation.items_inventoried" do
       it "returns a collection of items that are stored within inventories" do
-        create_list(:item, 3)
-        create(:storage_location, :with_items, item: Item.first, item_quantity: 5)
-        create(:storage_location, :with_items, item: Item.last, item_quantity: 5)
-        expect(StorageLocation.items_inventoried.length).to eq(2)
+        items = create_list(:item, 3, organization: organization)
+        create(:storage_location, :with_items, item: items[0], item_quantity: 5, organization: organization)
+        create(:storage_location, :with_items, item: items[2], item_quantity: 5, organization: organization)
+        expect(StorageLocation.items_inventoried(organization).length).to eq(2)
       end
     end
 
@@ -167,8 +149,12 @@ RSpec.describe StorageLocation, type: :model do
     describe "size" do
       it "returns total quantity of all items in this storage location" do
         storage_location = create(:storage_location)
-        create(:inventory_item, storage_location_id: storage_location.id, quantity: 10)
-        create(:inventory_item, storage_location_id: storage_location.id, quantity: 10)
+        TestInventory.create_inventory(storage_location.organization, {
+          storage_location.id => {
+            create(:item).id => 10,
+            create(:item).id => 10
+          }
+        })
         expect(storage_location.size).to eq(20)
       end
     end
@@ -178,15 +164,23 @@ RSpec.describe StorageLocation, type: :model do
         storage_location = create(:storage_location)
         item1 = create(:item, value_in_cents: 1_00)
         item2 = create(:item, value_in_cents: 2_00)
-        create(:inventory_item, storage_location_id: storage_location.id, item_id: item1.id, quantity: 10)
-        create(:inventory_item, storage_location_id: storage_location.id, item_id: item2.id, quantity: 10)
+        TestInventory.create_inventory(storage_location.organization, {
+          storage_location.id => {
+            item1.id => 10,
+            item2.id => 10
+          }
+        })
         expect(storage_location.inventory_total_value_in_dollars).to eq(30)
       end
 
       it "returns a value including cents if the total isn't an even dollar amount" do
         storage_location = create(:storage_location)
         item1 = create(:item, value_in_cents: 1_15)
-        create(:inventory_item, storage_location_id: storage_location.id, item_id: item1.id, quantity: 5)
+        TestInventory.create_inventory(storage_location.organization, {
+          storage_location.id => {
+            item1.id => 5
+          }
+        })
         expect(storage_location.inventory_total_value_in_dollars).to eq(5.75)
       end
 
@@ -202,20 +196,51 @@ RSpec.describe StorageLocation, type: :model do
         import_file_path = Rails.root.join("spec", "fixtures", "files", "storage_locations.csv")
         data = File.read(import_file_path, encoding: "BOM|UTF-8")
         csv = CSV.parse(data, headers: true)
-        StorageLocation.import_csv(csv, @organization.id)
+        StorageLocation.import_csv(csv, organization.id)
         expect(StorageLocation.count).to eq before_import + 1
       end
     end
 
     describe "import_inventory" do
+      # org must be seeded with items for csv items to be importable
+      let(:organization) { create(:organization, :with_items) }
+
       it "imports storage locations from a csv file" do
+        # import inventory requires an admin user
+        # adjustment will be created by the first user with the ORG_ADMIN role
+        user = create(:organization_admin, organization: organization)
+
         donations_count = Donation.count
-        storage_location = create(:storage_location, organization_id: @organization.id)
+        storage_location = create(:storage_location, organization: organization)
         import_file_path = Rails.root.join("spec", "fixtures", "files", "inventory.csv").read
-        StorageLocation.import_inventory(import_file_path, @organization.id, storage_location.id)
+
+        StorageLocation.import_inventory(import_file_path, organization.id, storage_location.id)
+
         expect(storage_location.size).to eq 14_842
         expect(donations_count).to eq Donation.count
-        expect(@organization.adjustments.last.user_id).to eq(@organization.users.with_role(Role::ORG_ADMIN, @organization).first.id)
+        expect(organization.adjustments.last.user_id).to eq(user.id)
+      end
+
+      it "raises an error if there are already items" do
+        item1 = create(:item, organization: organization)
+        item2 = create(:item, organization: organization)
+        item3 = create(:item, organization: organization)
+        storage_location_with_items = create(:storage_location, organization: organization)
+
+        TestInventory.create_inventory(organization,
+         {
+           storage_location_with_items.id => {
+             item1.id => 30,
+             item2.id => 10,
+             item3.id => 40
+           }
+         })
+
+        import_file_path = Rails.root.join("spec", "fixtures", "files", "inventory.csv").read
+
+        expect do
+          StorageLocation.import_inventory(import_file_path, organization.id, storage_location_with_items.id)
+        end.to raise_error(Errors::InventoryAlreadyHasItems)
       end
     end
 
@@ -243,13 +268,21 @@ RSpec.describe StorageLocation, type: :model do
         quantity1 = rand(100..1000)
         quantity2 = rand(100..1000)
         quantity3 = rand(100..1000)
-        create(:inventory_item, storage_location_id: storage_location.id, item_id: item1.id, quantity: quantity1)
-        create(:inventory_item, storage_location_id: storage_location.id, item_id: item2.id, quantity: quantity2)
-        create(:inventory_item, storage_location_id: storage_location.id, item_id: item3.id, quantity: quantity3)
-        create(:inventory_item, storage_location_id: storage_location.id, item_id: inactive_item.id, quantity: 1)
+        TestInventory.create_inventory(storage_location.organization, {
+          storage_location.id => {
+            item1.id => quantity1,
+            item2.id => quantity2,
+            item3.id => quantity3,
+            inactive_item.id => 1
+          }
+        })
         sum = quantity1 + quantity2 + quantity3
         expect(storage_location.csv_export_attributes).to eq([name, address, square_footage, warehouse_type, sum, quantity3, quantity2, quantity1])
       end
     end
+  end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
   end
 end

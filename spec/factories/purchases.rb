@@ -42,12 +42,17 @@ FactoryBot.define do
       end
 
       after(:build) do |purchase, evaluator|
-        item = evaluator.item || purchase.storage_location.inventory_items.first&.item || create(:item)
+        event_item = View::Inventory.new(purchase.organization_id)
+          .items_for_location(purchase.storage_location_id)
+          .first
+          &.db_item
+        item = evaluator.item || event_item || create(:item)
         purchase.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item, itemizable: purchase)
       end
 
       after(:create) do |instance, evaluator|
-        evaluator.storage_location.increase_inventory(instance)
+        evaluator.storage_location.increase_inventory(instance.line_item_values)
+        PurchaseEvent.publish(instance)
       end
     end
   end

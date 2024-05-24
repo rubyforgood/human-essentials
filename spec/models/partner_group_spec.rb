@@ -43,10 +43,6 @@ RSpec.describe PartnerGroup, type: :model do
   # rubocop:enable Rails/SkipsModelValidations
 
   context "Validations >" do
-    it "must belong to an organization" do
-      expect(build(:partner_group, organization_id: nil)).not_to be_valid
-    end
-
     it "requires a unique name within an organization" do
       expect(build(:partner_group, name: nil)).not_to be_valid
       create(:partner_group, name: "Foo")
@@ -65,5 +61,9 @@ RSpec.describe PartnerGroup, type: :model do
         expect(partner_group).not_to be_valid
       end
     end
+  end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
   end
 end

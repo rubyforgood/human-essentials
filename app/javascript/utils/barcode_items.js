@@ -12,7 +12,7 @@ $(document).ready(function() {
   */
   function capture_entry(event) {
     if (event.which == '10' || event.which == '13') {
-      barcode_item_lookup(event.target.value, $(event.target).data("organization-id"),event.target);
+      barcode_item_lookup(event.target.value, event.target);
       event.preventDefault();
     }
   }
@@ -21,12 +21,11 @@ $(document).ready(function() {
   barcode_item_lookup
    @brief Invokes an ajax lookup of a provided barcode value
    @param value : the barcode
-   @param organization_id : passed in as a param. This constrains the lookup
    @param src : the DOM source, so we can callback to it.
    */
-  function barcode_item_lookup(value, organization_id,src) {
+  function barcode_item_lookup(value, src) {
     // Hardcoding magic URLs isn't ideal but it works for now
-    $.getJSON("/" + organization_id + "/barcode_items/find.json?barcode_item[value]=" + value, {}, function(data) {
+    $.getJSON("/barcode_items/find.json?barcode_item[value]=" + value, {}, function(data) {
          // Preserve this for reference of where we came from.
          data['src'] = src;
          data['value'] = value;
@@ -57,7 +56,7 @@ $(document).ready(function() {
           if (data['src'] != this && data['value'] == this.value) {
               line_item = this.closest('.nested-fields');
               if ($(line_item).attr('scanned_more_than_two_times') != undefined) {
-                  let current_total = parseInt($(line_item).find('input[type=number]').val());
+                  let current_total = parseInt($(line_item).find('[data-quantity]').val());
                   let current_boops = (current_total / line_item_quantity) + 1;
                   let total_boops = prompt('Enter total number of packages for this item', current_boops);
                   if (total_boops != null) {
@@ -69,12 +68,12 @@ $(document).ready(function() {
                   }
               }
               if ($(line_item).attr('scanned_more_than_two_times') != "true") {
-                line_item_quantity = Number(line_item_quantity) + Number($(line_item).find('input[type=number]').val());
+                line_item_quantity = Number(line_item_quantity) + Number($(line_item).find('[data-quantity]').val());
               }
               $(line_item).attr('scanned_more_than_two_times', true);
           }
       })
-      $(line_item).find('input[type=number]').val(line_item_quantity);
+      $(line_item).find('[data-quantity]').val(line_item_quantity);
       $(line_item).find('select').val(data['item_id']);
       $(line_item).find('select').trigger('change');
 
@@ -94,7 +93,7 @@ $(document).ready(function() {
     $("#barcode_item_value").val(value);
     // Saving this to the modal so the modal knows which field to trigger when it's done.
     $("#trigger-field-id").val($(src).attr('id'));
-    $("#newBarcode").modal();
+    new bootstrap.Modal('#newBarcode').show()
     $("#barcode_item_quantity").focus();
   }
 });
