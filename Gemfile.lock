@@ -115,7 +115,7 @@ GEM
       sassc-rails (>= 2.0.0)
     brakeman (6.1.2)
       racc
-    bugsnag (6.26.4)
+    bugsnag (6.27.0)
       concurrent-ruby (~> 1.0)
     builder (3.2.4)
     bullet (7.1.6)
@@ -328,7 +328,7 @@ GEM
       activerecord
       kaminari-core (= 1.2.2)
     kaminari-core (1.2.2)
-    knapsack_pro (7.3.0)
+    knapsack_pro (7.4.0)
       rake
     language_server-protocol (3.17.0.3)
     launchy (3.0.0)
