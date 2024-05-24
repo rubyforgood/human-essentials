@@ -43,14 +43,17 @@
                 <% end %>
                 <% if @sources.present? %>
                   <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                    <%= label_tag "by Source" %>
-                    <%= select_tag "filters[by_source]", options_for_select(@sources, @selected_source), {include_blank: true, class: "form-control"} %>
+                    <% id = "filter_#{SecureRandom.uuid}" %>
+                    <%= label_tag id, "Filter by Source" %>
+                    <%= select_tag "filters[by_source]",
+                    options_for_select(@sources, @selected_source),
+                    { include_blank: true, class: "form-control", id: id } %>
                   </div>
                 <% end %>
                 <% if @product_drives.present? %>
                   <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
                     <%= filter_select(scope: :by_product_drive, collection: @product_drives, selected: @selected_product_drive) %>
-                    
+
                   </div>
                 <% end %>
                 <% if @product_drive_participants.present? %>
@@ -78,7 +81,7 @@
                 <%= clear_filter_button %>
                 <span class="float-right">
                     <%= download_button_to(donations_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Donations", size: "md"}) if @donations.any? %>
-                  <%= new_button_to new_donation_path(organization_id: current_organization), {text: "New Donation"} %>
+                  <%= new_button_to new_donation_path, {text: "New Donation"} %>
                     </span>
               </div>
             <% end %>
@@ -99,20 +102,20 @@
           <div class="card-body table-responsive p-0">
             <table class="table table-hover">
               <thead>
-              <tr>
-                <th>Source</th>
-                <th>Date</th>
-                <th>Donation Site</th>
-                <th>Storage Location</th>
-                <th>Quantity of Items</th>
-                <th>Money Raised</th>
-                <th>In Kind Value</th>
-                <th>Comments</th>
-                <th>Actions</th>
-              </tr>
+                <tr>
+                  <th>Source</th>
+                  <th>Date</th>
+                  <th>Details</th>
+                  <th>Storage Location</th>
+                  <th>Quantity of Items</th>
+                  <th>Money Raised</th>
+                  <th>In Kind Value</th>
+                  <th>Comments</th>
+                  <th>Actions</th>
+                </tr>
               </thead>
               <tbody>
-              <%= render partial: "donation_row", collection: @paginated_donations %>
+                <%= render partial: "donation_row", collection: @paginated_donations %>
               </tbody>
               <tfoot>
               <tr>
@@ -124,7 +127,7 @@
                   <strong id="donation_quantity">
                     <%= @donations_quantity %> (Total)
                   </strong>
-                  <br/>
+                  <br>
                   <%= @paginated_donations_quantity %> (This page)
                 </td>
                 <td class="text-left numeric"><strong><%= dollar_value(@total_money_raised) %></strong></td>

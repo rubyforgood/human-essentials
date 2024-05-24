@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Distributions", (distributions_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Distributions", distributions_path %></li>
           <li class="breadcrumb-item"><a href="#">New Distribution</a></li>
         </ol>
       </div>
@@ -34,7 +34,7 @@
           <div class="card-body">
             <!-- Default box -->
             <div class="box">
-              <%= render 'form', distribution: @distribution %>
+              <%= render 'form', distribution: @distribution, date_place_holder: Time.zone.now.end_of_day %>
             </div><!-- /.box -->
           </div>
         </div>

@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Donations", (donations_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Donations", donations_path %></li>
           <li class="breadcrumb-item"><a href="#">New Donation</a></li>
         </ol>
       </div>
@@ -34,9 +34,9 @@
           <!-- form start -->
           <div class="card-body">
             <%= render partial: "donation_form", object: @donation %>
-            <%= link_to "Add product drive", new_product_drive_path, {:remote => true, "data-toggle" => "modal", "data-target" => "#modal-window", id: "new_product_drive", "style" => "display: none;"} %>
-            <%= link_to "Add product drive participant", new_product_drive_participant_path, {:remote => true, "data-toggle" => "modal", "data-target" => "#modal-window", id: "new_participant", "style" => "display: none;"} %>
-            <%= link_to "Add manufacturer", new_manufacturer_path, {:remote => true, "data-toggle" => "modal", "data-target" => "#modal-window", id: "new_manufacturer", "style" => "display: none;"} %>
+            <%= link_to "Add product drive", new_product_drive_path, {:remote => true, "data-bs-target" => "#modal-window", id: "new_product_drive", "style" => "display: none;"} %>
+            <%= link_to "Add product drive participant", new_product_drive_participant_path, {:remote => true, "data-bs-target" => "#modal-window", id: "new_participant", "style" => "display: none;"} %>
+            <%= link_to "Add manufacturer", new_manufacturer_path, {:remote => true, "data-bs-target" => "#modal-window", id: "new_manufacturer", "style" => "display: none;"} %>
           </div><!-- /.box -->
         </div>
       </div>

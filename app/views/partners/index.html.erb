@@ -30,13 +30,13 @@
           <div class="card-header p-0 border-bottom-0 text-md">
             <ul class="nav nav-tabs" id="nav-tab" role="tablist">
               <li class="nav-item" class="active">
-                <a class="nav-link active" id="nav-partners-tab" data-toggle="pill" href="#nav-partners" role="tab" aria-controls="nav-partners" aria-selected="true">
+                <a class="nav-link active" id="nav-partners-tab" data-bs-toggle="pill" href="#nav-partners" role="tab" aria-controls="nav-partners" aria-selected="true">
                   Partners
                 </a>
               </li>
               </li>
               <li class="nav-item">
-                <a class="nav-link" id="nav-partners-groups-tab" data-toggle="pill" href="#nav-partner-groups" role="tab" aria-controls="nav-partner-groups" aria-selected="false">Groups</a>
+                <a class="nav-link" id="nav-partners-groups-tab" data-bs-toggle="pill" href="#nav-partner-groups" role="tab" aria-controls="nav-partner-groups" aria-selected="false">Groups</a>
               </li>
             </ul>
           </div>
@@ -56,7 +56,7 @@
           layout: "shared/csv_import_modal",
           locals: {
             import_type: "Partners",
-            csv_template_url: "/partners.csv",
+            csv_template_url: "/partners_template.csv",
             csv_import_url: import_csv_partners_path
           }
       ) do %>

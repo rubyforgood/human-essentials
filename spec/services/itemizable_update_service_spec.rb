@@ -1,12 +1,22 @@
 RSpec.describe ItemizableUpdateService do
-  let(:storage_location) { create(:storage_location, organization: @organization, item_count: 0) }
-  let(:new_storage_location) { create(:storage_location, organization: @organization, item_count: 0) }
-  let(:item1) { create(:item, organization: @organization) }
-  let(:item2) { create(:item, organization: @organization) }
-  let!(:ii1) { create(:inventory_item, storage_location: storage_location, item: item1, quantity: 10) }
-  let!(:ii2) { create(:inventory_item, storage_location: new_storage_location, item: item2, quantity: 10) }
-  let!(:ii3) { create(:inventory_item, storage_location: storage_location, item: item2, quantity: 10) }
-  let!(:ii4) { create(:inventory_item, storage_location: new_storage_location, item: item1, quantity: 10) }
+  let(:organization) { create(:organization) }
+  let(:storage_location) { create(:storage_location, organization: organization, item_count: 0) }
+  let(:new_storage_location) { create(:storage_location, organization: organization, item_count: 0) }
+  let(:item1) { create(:item, organization: organization, name: "My Item 1") }
+  let(:item2) { create(:item, organization: organization, name: "My Item 2") }
+  let(:item3) { create(:item, organization: organization, name: "My Item 3") }
+  before(:each) do
+    TestInventory.create_inventory(storage_location.organization, {
+      storage_location.id => {
+        item1.id => 10,
+        item2.id => 10
+      },
+      new_storage_location.id => {
+        item1.id => 10,
+        item2.id => 10
+      }
+    })
+  end
 
   around(:each) do |ex|
     freeze_time do
@@ -21,7 +31,7 @@ RSpec.describe ItemizableUpdateService do
         create(:line_item, item_id: item2.id, quantity: 5)
       ]
       create(:donation,
-        organization: @organization,
+        organization: organization,
         storage_location: storage_location,
         line_items: line_items,
         issued_at: 1.day.ago)
@@ -35,7 +45,10 @@ RSpec.describe ItemizableUpdateService do
     end
 
     subject do
-      described_class.call(itemizable: itemizable, params: attributes, type: :increase)
+      described_class.call(itemizable: itemizable,
+        params: attributes,
+        type: :increase,
+        event_class: DonationEvent)
     end
 
     it "should update quantity in same storage location" do
@@ -47,6 +60,7 @@ RSpec.describe ItemizableUpdateService do
       expect(storage_location.size).to eq(14)
       expect(new_storage_location.size).to eq(20)
       expect(itemizable.issued_at).to eq(2.days.ago)
+      expect(UpdateExistingEvent.count).to eq(1)
     end
 
     it "should update quantity in different locations" do
@@ -57,6 +71,12 @@ RSpec.describe ItemizableUpdateService do
       expect(storage_location.size).to eq(10)
       expect(new_storage_location.size).to eq(24)
     end
+
+    it "should raise an error if any item is inactive" do
+      item1.update!(active: false)
+      msg = "Update failed: The following items are currently inactive: My Item 1. Please reactivate them before continuing."
+      expect { subject }.to raise_error(msg)
+    end
   end
 
   describe "decreases" do
@@ -66,7 +86,7 @@ RSpec.describe ItemizableUpdateService do
         create(:line_item, item_id: item2.id, quantity: 5)
       ]
       create(:distribution,
-        organization: @organization,
+        organization: organization,
         storage_location: storage_location,
         line_items: line_items,
         issued_at: 1.day.ago)
@@ -101,6 +121,108 @@ RSpec.describe ItemizableUpdateService do
       expect(itemizable.line_items.sum(&:quantity)).to eq(4)
       expect(storage_location.size).to eq(30)
       expect(new_storage_location.size).to eq(16)
+    end
+
+    it "should raise an error if any item is inactive" do
+      item1.update!(active: false)
+      msg = "Update failed: The following items are currently inactive: My Item 1. Please reactivate them before continuing."
+      expect { subject }.to raise_error(msg)
+    end
+  end
+
+  describe "events" do
+    before(:each) do
+      allow(Event).to receive(:read_events?).and_return(true)
+    end
+    describe "with donations" do
+      let(:itemizable) do
+        line_items = [
+          create(:line_item, item_id: item1.id, quantity: 10),
+          create(:line_item, item_id: item2.id, quantity: 10)
+        ]
+        create(:donation,
+          organization: organization,
+          storage_location: storage_location,
+          line_items: line_items,
+          issued_at: 1.day.ago)
+      end
+      before(:each) do
+        allow(Event).to receive(:read_events?).and_return(true)
+      end
+      let(:attributes) do
+        {
+          issued_at: 2.days.ago,
+          line_items_attributes: {"0": {item_id: item1.id, quantity: 5}, "1": {item_id: item3.id, quantity: 50}}
+        }
+      end
+      it "should send an itemizable event if it already exists" do
+        DonationEvent.publish(itemizable)
+        expect(DonationEvent.count).to eq(1)
+        expect(View::Inventory.total_inventory(organization.id)).to eq(60)
+
+        described_class.call(itemizable: itemizable, params: attributes, type: :increase, event_class: DonationEvent)
+
+        expect(DonationEvent.count).to eq(2)
+        expect(View::Inventory.total_inventory(organization.id)).to eq(95)
+      end
+
+      it "should send an update event if it does not exist" do
+        expect(DonationEvent.count).to eq(0)
+        expect(View::Inventory.total_inventory(organization.id)).to eq(40)
+
+        described_class.call(itemizable: itemizable, params: attributes, type: :increase, event_class: DonationEvent)
+
+        expect(DonationEvent.count).to eq(0)
+        expect(UpdateExistingEvent.count).to eq(1)
+        expect(View::Inventory.total_inventory(organization.id)).to eq(75) # 40 - 5 (item1) - 10 (item2) + 50 (item3)
+      end
+    end
+    describe "with distributions" do
+      before(:each) do
+        TestInventory.create_inventory(storage_location.organization, {
+          storage_location.id => {
+            item3.id => 10
+          }
+        })
+      end
+      let(:itemizable) do
+        line_items = [
+          create(:line_item, item_id: item1.id, quantity: 5),
+          create(:line_item, item_id: item2.id, quantity: 5)
+        ]
+        create(:distribution,
+          organization: organization,
+          storage_location: storage_location,
+          line_items: line_items,
+          issued_at: 1.day.ago)
+      end
+      let(:attributes) do
+        {
+          issued_at: 2.days.ago,
+          line_items_attributes: {"0": {item_id: item1.id, quantity: 2}, "1": {item_id: item3.id, quantity: 6}}
+        }
+      end
+      it "should send an itemizable event if it already exists" do
+        DistributionEvent.publish(itemizable)
+        expect(DistributionEvent.count).to eq(1)
+        expect(View::Inventory.total_inventory(organization.id)).to eq(40)
+
+        described_class.call(itemizable: itemizable, params: attributes, type: :decrease, event_class: DistributionEvent)
+
+        expect(DistributionEvent.count).to eq(2)
+        expect(View::Inventory.total_inventory(organization.id)).to eq(42)
+      end
+
+      it "should send an update event if it does not exist" do
+        expect(DistributionEvent.count).to eq(0)
+        expect(View::Inventory.total_inventory(organization.id)).to eq(50)
+
+        described_class.call(itemizable: itemizable, params: attributes, type: :decrease, event_class: DistributionEvent)
+
+        expect(DistributionEvent.count).to eq(0)
+        expect(UpdateExistingEvent.count).to eq(1)
+        expect(View::Inventory.total_inventory(organization.id)).to eq(52) # 50 + 3 (item1) + 5 (item2) +- 6 (item3)
+      end
     end
   end
 end

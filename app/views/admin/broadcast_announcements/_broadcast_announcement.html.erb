@@ -3,8 +3,8 @@
   <td><%= link_to  broadcast_announcement.link, broadcast_announcement.link %></td>
   <td><%= broadcast_announcement.user&.name || "N/A" %></td>
   <td><%= broadcast_announcement.expiry %>
-    <% if broadcast_announcement.expired? %> 
-      <span class="badge badge-danger">Expired</span>
+    <% if broadcast_announcement.expired? %>
+      <span class="badge badge-danger bg-danger">Expired</span>
     <% end %>
   </td>
   <td class="text-right">

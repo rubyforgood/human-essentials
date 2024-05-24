@@ -19,6 +19,7 @@ require 'time_util'
 #
 
 class Distribution < ApplicationRecord
+  has_paper_trail
   # Distributions are issued from a single storage location, so we associate
   # them so that on-hand amounts can be verified
   belongs_to :storage_location
@@ -112,7 +113,7 @@ class Distribution < ApplicationRecord
     request.request_items.each do |item|
       line_items.new(
         quantity: item["quantity"],
-        item: Item.joins(:inventory_items).eager_load(:base_item).find_by(organization: request.organization, id: item["item_id"]),
+        item: Item.eager_load(:base_item).find_by(organization: request.organization, id: item["item_id"]),
         itemizable_id: request.id,
         itemizable_type: "Distribution"
       )

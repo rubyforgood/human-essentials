@@ -4,6 +4,7 @@
       <th>Organization</th>
       <th>Contact E-mail</th>
       <th class="date">Added On</th>
+      <th class="date">Last Distribution Date</th>
       <th class="text-right">Actions</th>
     </tr>
   </thead>
@@ -14,6 +15,7 @@
         <td><%= organization.name %></td>
         <td><%= link_to organization.email, "mailto:#{organization.email}" %></td>
         <td class="date"><%= organization.created_at.strftime("%F") %></td>
+        <td class="date"><%= organization.display_last_distribution_date %></td>
         <td class="text-right">
           <%= view_button_to admin_organization_path(organization.id) %>
           <%= edit_button_to edit_admin_organization_path(organization.id) %>

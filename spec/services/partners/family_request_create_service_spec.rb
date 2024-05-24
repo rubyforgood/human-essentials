@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Partners::FamilyRequestCreateService do
+RSpec.describe Partners::FamilyRequestCreateService do
   describe '#call' do
     subject { described_class.new(**args).call }
     let(:args) do
@@ -11,20 +11,22 @@ describe Partners::FamilyRequestCreateService do
         family_requests_attributes: family_requests_attributes
       }
     end
+    let(:organization) { create(:organization) }
+    let(:partner) { create(:partner, organization: organization) }
     let(:partner_user) { partner.primary_user }
-    let(:partner) { create(:partner) }
     let(:comments) { Faker::Lorem.paragraph }
     let(:for_families) { false }
 
     context 'when the arguments are incorrect' do
-      context 'because no family_requests_attributes were defined' do
+      context 'because no family_requests_attributes or comments were defined' do
         let(:family_requests_attributes) { [] }
+        let(:comments) { '' }
 
         it 'should return the Partners::FamilyRequestCreateService object with an error' do
           result = subject
 
           expect(result).to be_a_kind_of(Partners::FamilyRequestCreateService)
-          expect(result.errors[:base]).to eq(["family_requests_attributes cannot be empty"])
+          expect(result.errors[:base]).to eq(["completely empty request"])
         end
       end
 
@@ -44,7 +46,9 @@ describe Partners::FamilyRequestCreateService do
       end
     end
 
-    context 'when the arguments are correct' do
+    context 'when the arguments are correct and org has items' do
+      let(:organization) { create(:organization, :with_items) }
+
       context 'with children' do
         let(:items_to_request) { partner_user.partner.organization.items.all.sample(2) }
         let(:first_item_id) { items_to_request.first.id.to_i }

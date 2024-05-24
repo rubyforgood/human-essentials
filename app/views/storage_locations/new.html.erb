@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Storage Locations", (storage_locations_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Storage Locations", storage_locations_path %></li>
           <li class="breadcrumb-item"><a href="#">New Storage Location</a></li>
         </ol>
       </div>
@@ -23,4 +23,3 @@
 </section>
 
 <%= render partial: "form", object: @storage_location %>
-

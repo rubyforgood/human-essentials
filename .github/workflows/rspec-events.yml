@@ -1,0 +1,92 @@
+name: rspec-events
+
+on:
+  push:
+    paths-ignore:
+      - "doc/**"
+      - "*.md"
+      - "bin/*"
+  pull_request:
+    paths-ignore:
+      - "doc/**"
+      - "*.md"
+      - "bin/*"
+
+jobs:
+  rspec-events:
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: postgres:12.3
+        env:
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    # https://help.github.com/en/articles/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix
+    strategy:
+      fail-fast: false
+      matrix:
+        # Set N number of parallel jobs you want to run tests on.
+        # Use higher number if you have slow tests to split them on more parallel jobs.
+        # Remember to update ci_node_index below to 0..N-1
+        ci_node_total: [2]
+        # set N-1 indexes for parallel jobs
+        # When you run 2 parallel jobs then first job will have index 0, the second job will have index 1 etc
+        ci_node_index: [0, 1]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get -yqq install libpq-dev
+      - name: Build App
+        env:
+          POSTGRES_HOST: localhost
+          DATABASE_HOST: localhost
+          PG_USERNAME: postgres
+          PG_PASSWORD: password
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_PORT: 5432
+          RAILS_ENV: test
+        run: |
+          bundle exec rake db:create
+          bundle exec rake db:schema:load
+      - name: Run rspec with events
+        env:
+          POSTGRES_HOST: localhost
+          DATABASE_HOST: localhost
+          PG_USERNAME: postgres
+          PG_PASSWORD: password
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_PORT: 5432
+          PGHOST: localhost
+          PGUSER: postgres
+          RAILS_ENV: test
+          KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: ${{ secrets.KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC }}
+          KNAPSACK_PRO_CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
+          KNAPSACK_PRO_CI_NODE_INDEX: ${{ matrix.ci_node_index }}
+          KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
+          KNAPSACK_PRO_LOG_LEVEL: info
+          KNAPSACK_PRO_TEST_FILE_EXCLUDE_PATTERN: "{spec/system/**{,/*/**}/*_spec.rb,spec/requests/**{,/*/**}/*_spec.rb}"
+          EVENTS_READ: true
+        run: |
+          RUBYOPT='-W:no-deprecated -W:no-experimental' bin/knapsack_pro_rspec
+      - name: Upload artifacts
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: failed-browser-tests
+          path: |
+            tmp/screenshots
+            tmp/capybara

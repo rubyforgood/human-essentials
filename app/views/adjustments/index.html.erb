@@ -34,7 +34,7 @@
               <div class="row">
                 <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
                   <%= filter_select(label: "Filter by Storage Location", scope: :at_location, collection: @storage_locations, key: :id, value: :name, selected: @selected_location) %>
-                  
+
                 </div>
                 <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
                    <%= filter_select(scope: :by_user, collection: @users, key: :id, value: :name, selected: @selected_user) %>
@@ -53,8 +53,8 @@
                         adjustments_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)),
                         text: "Export Adjustments"
                       ) if @adjustments.any? %>
-                
-                  <%= new_button_to new_adjustment_path(organization_id: current_organization), {text: "New Adjustment"} %>
+
+                  <%= new_button_to new_adjustment_path, {text: "New Adjustment"} %>
                   </span>
               </div>
             <% end # form %>

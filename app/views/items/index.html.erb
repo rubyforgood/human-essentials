@@ -71,27 +71,32 @@
           <div class="card-header p-0 border-bottom-0 text-md">
             <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
               <li class="nav-item" class="active">
-                <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill" href="#custom-tabs-three-home" role="tab" aria-controls="custom-tabs-three-home" aria-selected="true">Item
+                <a class="nav-link active" id="custom-tabs-three-home-tab" data-bs-toggle="pill" href="#custom-tabs-three-home" role="tab" aria-controls="custom-tabs-three-home" aria-selected="true">Item
                   List</a>
               </li>
               </li>
               <li class="nav-item">
-                <a class="nav-link" id="custom-tabs-three-profile-tab" data-toggle="pill" href="#custom-tabs-three-categories" role="tab" aria-controls="custom-tabs-three-categories" aria-selected="false">Item Categories</a>
+                <a class="nav-link" id="custom-tabs-three-categories-tab" data-bs-toggle="pill" href="#custom-tabs-three-categories" role="tab" aria-controls="custom-tabs-three-categories" aria-selected="false">Item Categories</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" id="custom-tabs-three-profile-tab" data-toggle="pill" href="#custom-tabs-three-profile" role="tab" aria-controls="custom-tabs-three-profile" aria-selected="false">Items,
+                <a class="nav-link" id="custom-tabs-three-profile-tab" data-bs-toggle="pill" href="#custom-tabs-three-profile" role="tab" aria-controls="custom-tabs-three-profile" aria-selected="false">Items,
                   Quantity, and Location</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" id="custom-tabs-three-kits-tab" data-toggle="pill" href="#custom-tabs-three-kits" role="tab" aria-controls="custom-tabs-three-kits" aria-selected="false">Kits</a>
+                <a class="nav-link" id="custom-tabs-three-inventory-tab" data-bs-toggle="pill" href="#custom-tabs-three-inventory" role="tab" aria-controls="custom-tabs-three-inventory" aria-selected="false">
+                  Item Inventory</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="custom-tabs-three-kits-tab" data-bs-toggle="pill" href="#custom-tabs-three-kits" role="tab" aria-controls="custom-tabs-three-kits" aria-selected="false">Kits</a>
               </li>
             </ul>
           </div>
           <div class="card-body">
             <div class="tab-content" id="custom-tabs-three-tabContent">
-              <%= render partial: 'item_list', locals: { items: @items } %>
+              <%= render partial: 'item_list', locals: { items: @items, inventory: @inventory } %>
               <%= render partial: 'item_categories', locals: { item_categories: @item_categories } %>
               <%= render partial: 'items_quantity_and_location' %>
+              <%= render partial: 'items_inventory' %>
               <%= render partial: 'kits' %>
             </div>
           </div>

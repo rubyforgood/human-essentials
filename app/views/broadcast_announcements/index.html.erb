@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "All Partners", (partners_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "All Partners", partners_path %></li>
           <li class="breadcrumb-item"><%= link_to "Broadcast Announcements", broadcast_announcements_path %></li>
         </ol>
       </div>
@@ -31,7 +31,7 @@
           <!-- /.card-header -->
           <div class="card-body">
             <div class='flex justify-end mb-4'>
-              <%= new_button_to new_broadcast_announcement_path(organization_id: current_organization), {text: "New Announcement"} %>
+              <%= new_button_to new_broadcast_announcement_path, {text: "New Announcement"} %>
             </div>
             <table class="table table-responsive-md">
               <thead>

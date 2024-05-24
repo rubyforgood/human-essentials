@@ -2,21 +2,21 @@
   <ul class="nav navbar-nav">
     <!-- User Account: style can be found in dropdown.less -->
     <li class="dropdown user user-menu">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-        <span class="hidden-xs"><%= current_user.name %></span>
+      <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
+        <span class="hidden-xs"><%= current_user.display_name %></span>
       </a>
       <ul class="dropdown-menu">
         <!-- User image -->
         <li class="user-body">
           <p class="text-center">
-            <b><%= current_user.name %></b>
+            <b><%= current_user.display_name %></b>
           </p>
         </li>
         <!-- Menu Body -->
         <li class="user-body">
           <ul class="list-group">
             <li class="list-group-item">
-              <%= fa_icon "cog" %> <%= navigation_link_to "Account Settings", edit_user_registration_path(organization_id: nil) %>
+              <%= fa_icon "cog" %> <%= navigation_link_to "Account Settings", edit_user_registration_path %>
             </li>
           </ul>
         </li>
@@ -26,7 +26,7 @@
             <!-- <a href="#" class="btn btn-default btn-flat">Profile</a> -->
           </div>
           <div class="pull-right">
-            <%= delete_button_to destroy_user_session_path(organization_id: nil), {text: "Log out", icon: "sign-out", no_confirm: true, size: "md"} %>
+            <%= delete_button_to destroy_user_session_path, {text: "Log out", icon: "sign-out", no_confirm: true, size: "md"} %>
           </div>
         </li>
       </ul>

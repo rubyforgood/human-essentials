@@ -48,7 +48,7 @@
                 <%= clear_filter_button %>
                 <span class="float-right">
                 <%= download_button_to(transfers_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Transfers", size: "md"}) if @transfers.any? %>
-                  <%= new_button_to new_transfer_path(organization_id: current_organization), {text: "New Transfer"} %>
+                  <%= new_button_to new_transfer_path, {text: "New Transfer"} %>
                   </span>
               </div>
             <% end # form %>

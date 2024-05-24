@@ -1,12 +1,14 @@
 RSpec.describe "Storage Locations", type: :system, js: true do
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
+
   before do
-    sign_in(@user)
+    sign_in(user)
   end
-  let!(:url_prefix) { "/#{@organization.to_param}" }
   let(:storage_location) { create(:storage_location) }
 
   context "when creating a new storage location" do
-    subject { url_prefix + "/storage_locations/new" }
+    subject { new_storage_location_path }
 
     it "User creates a new storage location" do
       visit subject
@@ -39,7 +41,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
   end
 
   context "when editing an existing storage location" do
-    subject { url_prefix + "/storage_locations/#{storage_location.id}/edit" }
+    subject { edit_storage_location_path(storage_location.id) }
 
     it "User updates an existing storage location" do
       visit subject
@@ -62,7 +64,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
   end
 
   context "when viewing the index" do
-    subject { url_prefix + "/storage_locations" }
+    subject { storage_locations_path }
 
     # BUG#1008
     it "shows totals that are the sum totals of all inputs" do
@@ -98,7 +100,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       location3 = create(:storage_location, :with_items, item: item, item_quantity: 10, name: "Baz", discarded_at: rand(2.years).seconds.ago)
       visit subject
 
-      select item.name, from: "filters_containing"
+      select item.name, from: "filters[containing]"
       click_button "Filter"
 
       expect(page).to have_css("table tr", count: 2)
@@ -160,8 +162,8 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       create(:storage_location, :with_items, item: item3, item_quantity: 10, name: "Baz")
       visit subject
 
-      expect(page.all("select#filters_containing option").map(&:text).select(&:present?)).to eq(expected_order)
-      expect(page.all("select#filters_containing option").map(&:text).select(&:present?)).not_to eq(expected_order.reverse)
+      expect(page.all('select[name="filters[containing]"] option').map(&:text).select(&:present?)).to eq(expected_order)
+      expect(page.all('select[name="filters[containing]"] option').map(&:text).select(&:present?)).not_to eq(expected_order.reverse)
     end
   end
 
@@ -169,7 +171,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
     let(:item) { create(:item, name: "AAA Diapers") }
     let!(:storage_location) { create(:storage_location, :with_items, item: item, name: "here") }
     let!(:adjustment) { create(:adjustment, :with_items, storage_location: storage_location) }
-    subject { url_prefix + "/storage_locations/" + storage_location.id.to_s }
+    subject { storage_location_path(storage_location.id) }
 
     it "Items in (adjustments)" do
       visit subject

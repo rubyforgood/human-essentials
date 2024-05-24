@@ -2,11 +2,11 @@ name: brakeman
 
 on:
   push:
-    branches:
-      - main
+    paths-ignore:
+      - 'doc/**'
+      - '*.md'
+      - 'bin/*'
   pull_request:
-    branches:
-      - main
     paths-ignore:
       - 'doc/**'
       - '*.md'
@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1

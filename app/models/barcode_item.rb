@@ -13,6 +13,7 @@
 #
 
 class BarcodeItem < ApplicationRecord
+  has_paper_trail
   belongs_to :organization, optional: true
   belongs_to :barcodeable, polymorphic: true, dependent: :destroy, counter_cache: :barcode_count
 
@@ -30,12 +31,12 @@ class BarcodeItem < ApplicationRecord
 
   # Because it's a polymorphic association, we have to do this join manually.
   scope :by_item_partner_key, ->(partner_key) do
-    joins("INNER JOIN items ON items.id = barcode_items.barcodeable_id") \
+    joins("INNER JOIN items ON items.id = barcode_items.barcodeable_id")
       .where(barcodeable_type: "Item", items: { partner_key: partner_key })
   end
 
   scope :by_base_item_partner_key, ->(partner_key) do
-    joins("INNER JOIN base_items ON base_items.id = barcode_items.barcodeable_id") \
+    joins("INNER JOIN base_items ON base_items.id = barcode_items.barcodeable_id")
       .where(barcodeable_type: "BaseItem", base_items: { partner_key: partner_key })
   end
 

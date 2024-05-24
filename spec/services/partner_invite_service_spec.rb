@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe PartnerInviteService do
+RSpec.describe PartnerInviteService do
   subject { described_class.new(partner: partner).call }
   let(:partner) { create(:partner) }
   let(:user) { instance_double(User, reload: -> {}, deliver_invitation: -> {}) }
@@ -24,6 +24,7 @@ describe PartnerInviteService do
     subject
     expect(UserInviteService).to have_received(:invite).with(
       email: partner.email,
+      name: partner.name,
       roles: [Role::PARTNER],
       resource: partner,
       force: false
@@ -37,6 +38,7 @@ describe PartnerInviteService do
       subject
       expect(UserInviteService).to have_received(:invite).with(
         email: partner.email,
+        name: partner.name,
         roles: [Role::PARTNER],
         resource: partner,
         force: true

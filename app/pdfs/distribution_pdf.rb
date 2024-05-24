@@ -40,18 +40,38 @@ class DistributionPdf
     text @distribution.partner.profile.primary_contact_phone, align: :right
     move_down 10
 
-    text "Issued on:", style: :bold
-    font_size 12
-    text @distribution.distributed_at
-    font_size 10
-    move_up 22
+    if %w(shipped delivered).include?(@distribution.delivery_method)
+      move_up 10
+      text "Delivery address:", style: :bold
+      font_size 10
+      text @distribution.partner.profile.address1
+      text @distribution.partner.profile.address2
+      text @distribution.partner.profile.city
+      text @distribution.partner.profile.state
+      text @distribution.partner.profile.zip_code
+      move_up 40
 
-    text "Items Received Year-to-Date:", style: :bold, align: :right
-    font_size 12
-    text @distribution.partner.quantity_year_to_date.to_s, align: :right
-    font_size 10
+      text "Issued on:", style: :bold, align: :right
+      font_size 12
+      text @distribution.distributed_at, align: :right
+      font_size 10
+      move_down 30
+    else
+      text "Issued on:", style: :bold
+      font_size 12
+      text @distribution.distributed_at
+      font_size 10
+    end
+
+    if @organization.ytd_on_distribution_printout
+      move_up 22
+      text "Items Received Year-to-Date:", style: :bold, align: :right
+      font_size 12
+      text @distribution.partner.quantity_year_to_date.to_s, align: :right
+      font_size 10
+    end
+
     move_down 10
-
     text "Comments:", style: :bold
     font_size 12
     text @distribution.comment
@@ -60,6 +80,9 @@ class DistributionPdf
 
     data = @distribution.request ? request_data : non_request_data
     has_request = @distribution.request.present?
+
+    hide_columns(data)
+    hidden_columns_length = column_names_to_hide.length
 
     font_size 11
     # Line item table
@@ -89,7 +112,7 @@ class DistributionPdf
       row(-2).borders = [:top]
       row(-2).padding = [2, 0, 2, 0]
 
-      column(0).width = 190
+      column(0).width = 190 + (hidden_columns_length * 60)
 
       # Quantity column
       column(1..-1).row(1..-3).borders = [:left]
@@ -131,8 +154,12 @@ class DistributionPdf
       "In-Kind Value Received",
       "Packages"]]
 
+    inventory = nil
+    if Event.read_events?(@distribution.organization)
+      inventory = View::Inventory.new(@distribution.organization_id)
+    end
     request_items = @distribution.request.request_items.map do |request_item|
-      RequestItem.from_json(request_item, @distribution.request)
+      RequestItem.from_json(request_item, @distribution.request, inventory)
     end
     line_items = @distribution.line_items.sorted
 
@@ -187,5 +214,22 @@ class DistributionPdf
         dollar_value(@distribution.value_per_itemizable),
         @distribution.line_items.total,
         ""]]
+  end
+
+  def hide_columns(data)
+    column_names_to_hide.each do |col_name|
+      col_index = data.first.find_index(col_name)
+      data.each { |line| line.delete_at(col_index) } if col_index.present?
+    end
+  end
+
+  private
+
+  def column_names_to_hide
+    in_kind_column_name = @distribution.request.present? ? "In-Kind Value Received" : "In-Kind Value"
+    columns_to_hide = []
+    columns_to_hide.push("Value/item", in_kind_column_name) if @organization.hide_value_columns_on_receipt
+    columns_to_hide.push("Packages") if @organization.hide_package_column_on_receipt
+    columns_to_hide
   end
 end

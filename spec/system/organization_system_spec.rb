@@ -1,34 +1,40 @@
 RSpec.describe "Organization management", type: :system, js: true do
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+
   include ActionView::RecordIdentifier
-  let!(:url_prefix) { "/#{@organization.to_param}" }
 
   context "while signed in as a normal user" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     it "can see summary details about the organization as a user" do
-      visit url_prefix + "/organization"
+      visit organization_path
     end
 
     it "cannot see 'Make user' button for admins" do
-      visit url_prefix + "/organization"
+      visit organization_path
       expect(page.find(".table.border")).to have_no_content "Make User"
     end
   end
+
   context "while signed in as an organization admin" do
-    let!(:store) { create(:storage_location) }
+    let!(:store) { create(:storage_location, organization: organization) }
     let!(:ndbn_member) { create(:ndbn_member, ndbn_member_id: "50000", account_name: "Best Place") }
     before do
-      sign_in(@organization_admin)
+      sign_in(organization_admin)
     end
 
     describe "Viewing the organization" do
       it "can view organization details", :aggregate_failures do
-        visit organization_path(@organization)
+        organization.update!(one_step_partner_invite: true)
 
-        expect(page.find("h1")).to have_text(@organization.name)
-        expect(page).to have_link("Home", href: dashboard_path(@organization))
+        visit organization_path
+
+        expect(page.find("h1")).to have_text(organization.name)
+        expect(page).to have_link("Home", href: dashboard_path)
 
         expect(page).to have_content("Organization Info")
         expect(page).to have_content("Contact Info")
@@ -41,14 +47,17 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page).to have_content("Child Based Requests?")
         expect(page).to have_content("Individual Requests?")
         expect(page).to have_content("Quantity Based Requests?")
+        expect(page).to have_content("Show Year-to-date values on distribution printout?")
         expect(page).to have_content("Logo")
+        expect(page).to have_content("Use One step Partner invite and approve process?")
       end
     end
 
     describe "Editing the organization" do
       before do
-        visit url_prefix + "/manage/edit"
+        visit edit_organization_path
       end
+
       it "is prompted with placeholder text and a more helpful error message to ensure correct URL format as a user" do
         fill_in "Url", with: "www.diaperbase.com"
         click_on "Save"
@@ -79,6 +88,13 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page).to have_content("Yes")
       end
 
+      it 'can select if the org shows year-to-date values on the distribution printout' do
+        choose('organization[ytd_on_distribution_printout]', option: false)
+
+        click_on "Save"
+        expect(page).to have_content("No")
+      end
+
       it 'can set a default storage location on the organization' do
         select(store.name, from: 'Default Storage Location')
 
@@ -95,24 +111,36 @@ RSpec.describe "Organization management", type: :system, js: true do
 
       it 'can select and deselect Required Partner Fields' do
         # select first option in from Required Partner Fields
-        find('.partner_fields_dropdown').click.find(:xpath, '//*[@id="organization_partner_form_fields"]/option[1]').click
+        select('Media Information', from: 'organization_partner_form_fields', visible: false)
         click_on "Save"
         expect(page).to have_content('Media Information')
-        expect(@organization.reload.partner_form_fields).to eq(['media_information'])
-
-        # deselect previously choosen Required Partner Field
+        expect(organization.reload.partner_form_fields).to eq(['media_information'])
+        # deselect previously chosen Required Partner Field
         click_on "Edit"
-        find('.partner_fields_dropdown').click.find(:xpath, '//*[@id="organization_partner_form_fields"]/option[1]').click
+        unselect('Media Information', from: 'organization_partner_form_fields', visible: false)
         click_on "Save"
-
         expect(page).to_not have_content('Media Information')
-        expect(@organization.reload.partner_form_fields).to eq([])
+        expect(organization.reload.partner_form_fields).to eq([])
+      end
+
+      it "can disable if the org does NOT use single step invite and approve partner process" do
+        choose("organization[one_step_partner_invite]", option: false)
+
+        click_on "Save"
+        expect(page).to have_content("No")
+      end
+
+      it "can enable if the org uses single step invite and approve partner process" do
+        choose("organization[one_step_partner_invite]", option: true)
+
+        click_on "Save"
+        expect(page).to have_content("Yes")
       end
     end
 
     it "can add a new user to an organization" do
       allow(User).to receive(:invite!).and_return(true)
-      visit url_prefix + "/organization"
+      visit organization_path
       click_on "Invite User to this Organization"
       within "#addUserModal" do
         fill_in "email", with: "some_new_user@website.com"
@@ -123,19 +151,19 @@ RSpec.describe "Organization management", type: :system, js: true do
 
     it "can re-invite a user to an organization after 7 days" do
       create(:user, name: "Ye Olde Invited User", invitation_sent_at: Time.current - 7.days)
-      visit url_prefix + "/organization"
+      visit organization_path
       expect(page).to have_xpath("//i[@alt='Re-send invitation']")
     end
 
     it "can see 'Make user' button for admins" do
       create(:organization_admin)
-      visit url_prefix + "/organization"
+      visit organization_path
       expect(page.find(".table.border")).to have_content "Make User"
     end
 
     it "can deactivate a user in the organization" do
       user = create(:user, name: "User to be deactivated")
-      visit url_prefix + "/organization"
+      visit organization_path
       accept_confirm do
         click_button dom_id(user, "dropdownMenu")
         click_link dom_id(user)
@@ -147,7 +175,7 @@ RSpec.describe "Organization management", type: :system, js: true do
 
     it "can re-activate a user in the organization" do
       user = create(:user, :deactivated)
-      visit url_prefix + "/organization"
+      visit organization_path
       accept_confirm do
         click_button dom_id(user, "dropdownMenu")
         click_link dom_id(user)

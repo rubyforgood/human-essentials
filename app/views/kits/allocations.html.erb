@@ -14,7 +14,7 @@
             <i class="fa fa-dashboard"></i> Home
           <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Items", (items_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Items", items_path %></li>
           <li class="breadcrumb-item"><a href="#">Kit Allocations</a></li>
         </ol>
       </div>
@@ -50,14 +50,25 @@
                       <td> On Hand Quantity </td>
                     </thead>
                     <tbody>
+                    <% if @inventory %>
+                      <% @inventory.all_items.select { |i| i.item_id == @kit.item.id }.each do |ii| %>
+                        <tr id="storage_location_<%= ii.storage_location_id %>">
+                          <td> <%= @inventory.storage_location_name(ii.storage_location_id) %> </td>
+                          <td>
+                            <strong><%= ii.quantity %></strong>
+                          </td>
+                        </tr>
+                      <% end %>
+                    <% else %>
                       <% @item_inventories.order('id ASC').each do |ii| %>
-                        <tr id="storage_location_<%=ii.storage_location.id %>">
+                        <tr id="storage_location_<%= ii.storage_location.id %>">
                           <td> <%= ii.storage_location.name %> </td>
                           <td>
                             <strong><%= ii.quantity %></strong>
                           </td>
                         </tr>
                       <% end %>
+                    <% end %>
                     <tbody>
                   </table>
                 </div>
@@ -67,7 +78,7 @@
                     <div class='col-md-4'>
                       <div class="form-group">
                         <%= label_tag "Storage Location" %>
-                        <%= f.collection_select :storage_location_id, @storage_locations, :id, :name, { include_blank: true }, class: "form-control"%>
+                        <%= f.collection_select :storage_location_id, @storage_locations, :id, :name, { include_blank: true }, class: "form-control" %>
                       </div>
 
                       <div class="form-group">

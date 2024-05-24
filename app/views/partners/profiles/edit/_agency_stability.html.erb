@@ -8,7 +8,8 @@
           </div>
           <div class="card-body">
             <%= form.input :founded, label: "Year Founded", class: "form-control", wrapper: :input_group %>
-            <%= form.input :form_990, label: "Form 990 Filed", as: :boolean, class: "form-control", wrapper: :input_group %>
+            <%= form.input :form_990, label: "Form 990 Filed", as: :radio_buttons, class: "form-control",
+                           wrapper: :input_group, wrapper_html: {class: "form-yesno"}, input_html: {class: "radio-yesno"} %>
             <label class="control-label col-md-3">Form 990</label>
             <% if profile.proof_of_form_990.attached? %>
               <div class="col-md-8">
@@ -24,37 +25,16 @@
             <%= form.input :program_name, label: "Program Name(s)", class: "form-control", wrapper: :input_group %>
             <%= form.input :program_description, label: "Program Description(s)", class: "form-control", wrapper: :input_group %>
             <%= form.input :program_age, label: "Agency Age", class: "form-control", wrapper: :input_group %>
-            <%= form.input :evidence_based, label: "Evidence Based?", as: :boolean,
-                           class: "form-control", wrapper: :input_group %>
-            <%= form.input :case_management, label: "Case Management", class: "form-control", wrapper: :input_group %>
+            <%= form.input :evidence_based, label: "Evidence Based?", as: :radio_buttons, class: "form-control",
+                           wrapper: :input_group, wrapper_html: {class: "form-yesno"}, input_html: {class: "radio-yesno"} %>
+            <%= form.input :case_management, label: "Case Management", as: :radio_buttons, class: "form-control",
+                           wrapper: :input_group, wrapper_html: {class: "form-yesno"}, input_html: {class: "radio-yesno"} %>
             <%= form.input :essentials_use, label: "How Are Essentials (e.g. diapers, period supplies) Used In Your Program?", as: :text,
                            class: "form-control", wrapper: :input_group %>
             <%= form.input :receives_essentials_from_other, label: "Do You Receive Essentials From Other Sources?",
                            class: "form-control", wrapper: :input_group %>
-            <%= form.input :currently_provide_diapers, label: "Currently Providing Diapers?", as: :boolean,
-                           class: "form-control", wrapper: :input_group %>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card">
-          <div class="bg-white card-header">
-            <h3 class="card-title"><strong>Program Address (if different)</strong></h3>
-          </div>
-          <div class="card-body">
-            <%= form.input :program_address1, label: "Address (line 1)", class: "form-control", wrapper: :input_group %>
-            <%= form.input :program_address2, label: "Address (line 2)", class: "form-control", wrapper: :input_group %>
-            <%= form.input :program_city, label: "City", class: "form-control", wrapper: :input_group %>
-            <%= form.input :program_state, label: "State", class: "form-control", wrapper: :input_group %>
-            <%= form.input :program_zip_code, label: "Zip Code", class: "form-control", wrapper: :input_group %>
-          </div>
+            <%= form.input :currently_provide_diapers, label: "Currently Providing Diapers?", as: :radio_buttons,
+                           class: "form-control", wrapper: :input_group, wrapper_html: {class: "form-yesno"}, input_html: {class: "radio-yesno"} %>
         </div>
       </div>
     </div>

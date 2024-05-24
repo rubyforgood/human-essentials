@@ -9,7 +9,12 @@ class DeallocateKitInventoryService
 
   def deallocate
     validate_storage_location
-    deallocate_inventory_items if error.nil?
+    if error.nil?
+      ApplicationRecord.transaction do
+        deallocate_inventory_items
+        KitDeallocateEvent.publish(@kit, @storage_location, @decrease_by)
+      end
+    end
   rescue StandardError => e
     Rails.logger.error "[!] #{self.class.name} failed to allocate items for a kit #{kit.name}: #{storage_location.errors.full_messages} [#{e.inspect}]"
     set_error(e)
@@ -83,7 +88,7 @@ class DeallocateKitInventoryService
   end
 
   def kit_content
-    kit.to_a.map do |item|
+    kit.line_item_values.map do |item|
       item.merge({
                    quantity: item[:quantity] * decrease_by
                  })

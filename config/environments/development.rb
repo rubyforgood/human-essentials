@@ -18,6 +18,7 @@ Rails.application.configure do
   # Do not eager load code on boot.
   config.eager_load = false
   config.hosts << "diaper.test"
+  config.hosts << ".app.github.dev"
 
   # Show full error reports.
   config.consider_all_requests_local = true
@@ -85,7 +86,7 @@ Rails.application.configure do
 
   require "socket"
   require "ipaddr"
-  config.web_console.whitelisted_ips = Socket.ip_address_list.reduce([]) do |res, addrinfo|
+  config.web_console.allowed_ips = Socket.ip_address_list.reduce([]) do |res, addrinfo|
     addrinfo.ipv4? ? res << IPAddr.new(addrinfo.ip_address).mask(24) : res
   end
 end

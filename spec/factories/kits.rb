@@ -17,12 +17,14 @@ FactoryBot.define do
     organization
 
     after(:build) do |instance, _|
-      instance.line_items << create(:line_item)
+      if instance.line_items.blank?
+        instance.line_items << create(:line_item, item: create(:item, organization: instance.organization), itemizable: instance)
+      end
     end
 
     trait :with_item do
       after(:create) do |instance, _|
-        create(:item, kit: instance)
+        create(:item, kit: instance, organization: instance.organization)
       end
     end
   end

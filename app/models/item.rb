@@ -22,6 +22,7 @@
 #
 
 class Item < ApplicationRecord
+  has_paper_trail
   include Filterable
   include Exportable
   include Valuable
@@ -36,7 +37,8 @@ class Item < ApplicationRecord
   validates :name, uniqueness: { scope: :organization }
   validates :name, presence: true
   validates :organization, presence: true
-  validates :distribution_quantity, :on_hand_recommended_quantity, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
+  validates :distribution_quantity, numericality: { greater_than: 0 }, allow_blank: true
+  validates :on_hand_recommended_quantity, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
   validates :on_hand_minimum_quantity, numericality: { greater_than_or_equal_to: 0 }
 
   has_many :line_items, dependent: :destroy
@@ -45,6 +47,7 @@ class Item < ApplicationRecord
   has_many :storage_locations, through: :inventory_items
   has_many :donations, through: :line_items, source: :itemizable, source_type: "::Donation"
   has_many :distributions, through: :line_items, source: :itemizable, source_type: "::Distribution"
+  has_many :request_units, class_name: "ItemUnit", dependent: :destroy
 
   scope :active, -> { where(active: true) }
 
@@ -70,6 +73,11 @@ class Item < ApplicationRecord
       .where.not("lower(base_items.category) LIKE '%cloth%' OR lower(base_items.name) LIKE '%cloth%'")
   }
 
+  scope :cloth_diapers, -> {
+    joins(:base_item)
+      .where("lower(base_items.category) LIKE '%cloth%' OR lower(base_items.name) LIKE '%cloth%'")
+  }
+
   scope :adult_incontinence, -> {
     joins(:base_item)
       .where(items: { partner_key: %w(adult_incontinence underpads liners) })
@@ -88,6 +96,8 @@ class Item < ApplicationRecord
       .or(where("base_items.category = 'Miscellaneous'"))
   }
 
+  before_destroy :validate_destroy, prepend: true
+
   def self.barcoded_items
     joins(:barcode_items).order(:name).group(:id)
   end
@@ -105,7 +115,49 @@ class Item < ApplicationRecord
     Item.where(id: item_ids).find_each { |item| item.update(active: true) }
   end
 
-  def deactivate
+  def has_inventory?(inventory = nil)
+    if inventory
+      inventory.quantity_for(item_id: id).positive?
+    else
+      inventory_items.where("quantity > 0").any?
+    end
+  end
+
+  def is_in_kit?
+    organization.kits
+      .active
+      .joins(:line_items)
+      .where(line_items: { item_id: id}).any?
+  end
+
+  def can_delete?(inventory = nil)
+    can_deactivate_or_delete?(inventory) && line_items.none? && !barcode_count&.positive?
+  end
+
+  # @return [Boolean]
+  def can_deactivate_or_delete?(inventory = nil)
+    if inventory.nil? && Event.read_events?(organization)
+      inventory = View::Inventory.new(organization_id)
+    end
+    # Cannot deactivate if it's currently in inventory in a storage location. It doesn't make sense
+    # to have physical inventory of something we're now saying isn't valid.
+    # If an active kit includes this item, then changing kit allocations would change inventory
+    # for an inactive item - which we said above we don't want to allow.
+
+    !has_inventory?(inventory) && !is_in_kit?
+  end
+
+  def validate_destroy
+    unless can_delete?
+      errors.add(:base, "Cannot delete item - it has already been used!")
+      throw(:abort)
+    end
+  end
+
+  def deactivate!
+    unless can_deactivate_or_delete?
+      raise "Cannot deactivate item - it is in a storage location or kit!"
+    end
     if kit
       kit.deactivate
     else
@@ -115,20 +167,6 @@ class Item < ApplicationRecord
 
   def other?
     partner_key == "other"
-  end
-
-  # Override `destroy` to ensure Item isn't accidentally destroyed
-  # without first being disassociated with its historical presence
-  def destroy
-    if has_history?
-      deactivate
-    else
-      super
-    end
-  end
-
-  def has_history?
-    !(line_items.empty? && inventory_items.empty? && barcode_items.empty?)
   end
 
   def self.gather_items(current_organization, global = false)
@@ -153,6 +191,7 @@ class Item < ApplicationRecord
     ["Name", "Barcodes", "Base Item", "Quantity"]
   end
 
+  # TODO remove this method once read_events? is true everywhere
   def csv_export_attributes
     [
       name,
@@ -160,6 +199,20 @@ class Item < ApplicationRecord
       base_item.name,
       inventory_items.sum(&:quantity)
     ]
+  end
+
+  # @param items [Array<Item>]
+  # @param inventory [View::Inventory]
+  # @return [String]
+  def self.generate_csv_from_inventory(items, inventory)
+    item_quantities = items.to_h { |i| [i.id, inventory.quantity_for(item_id: i.id)] }
+    CSV.generate(headers: true) do |csv|
+      csv_data = items.map do |item|
+        attributes = [item.name, item.barcode_count, item.base_item.name, item_quantities[item.id]]
+        attributes.map { |attr| normalize_csv_attribute(attr) }
+      end
+      ([csv_export_headers] + csv_data).each { |row| csv << row }
+    end
   end
 
   def default_quantity

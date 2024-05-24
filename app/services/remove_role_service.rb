@@ -14,10 +14,11 @@ class RemoveRoleService
     unless user_role
       user = User.find(user_id)
       role = Role.find(role_id)
-      raise "User #{user.name} does not have role for #{role.resource.name}!"
+      raise "User #{user.display_name} does not have role for #{role.resource.name}!"
     end
 
     user_role.destroy
+
     if user_role.role.name.to_sym == Role::ORG_USER # they can't be an admin if they're not a user
       admin_role = Role.find_by(resource_id: user_role.role.resource_id, name: Role::ORG_ADMIN)
       if admin_role

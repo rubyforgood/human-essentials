@@ -15,7 +15,8 @@
 require "rails_helper"
 
 RSpec.describe ProductDrive, type: :model do
-  let!(:product_drive) { create(:product_drive) }
+  let(:organization) { create(:organization) }
+  let(:product_drive) { create(:product_drive, organization: organization) }
   let!(:donation) { create(:donation, :with_items, item_quantity: 7, product_drive: product_drive) }
   let!(:donation2) { create(:donation, :with_items, item_quantity: 9, product_drive: product_drive) }
   let!(:extra_line_item) { create(:line_item, itemizable: donation, quantity: 4) }
@@ -35,11 +36,35 @@ RSpec.describe ProductDrive, type: :model do
   end
 
   it "calculates and returns all donated organization item quantities by name and date" do
-    create(:donation, :with_items, item_quantity: 2, product_drive: product_drive, issued_at: '26-01-2023')
+    # an organization must have an item to be able to list it with item_quantities_by_name_and_date
+    item = create(:item, organization: organization)
+
+    create(:donation, :with_items, item: item, item_quantity: 2, product_drive: product_drive, issued_at: '26-01-2023')
+
     result = product_drive.item_quantities_by_name_and_date(Time.zone.parse('23/01/2023')..Time.zone.parse('26/01/2023'))
-    expect(result.length).to eq product_drive.organization.items.count
-    expect(result.count(2)).to eq(1)
-    expect(result.count(0)).to eq(product_drive.organization.items.count - 1)
+
+    # result contains donation, donation2, extra_line_item, created donation
+    # [0, 0, 0, 2] since only created donation falls within the date range
+    # everything else has current date for issued_at
+    expect(result.length).to eq(4) # donation, donation2, extra_line_item, created donation
+    expect(result.count(2)).to eq(1) # items with 2 quantity: created donation
+    expect(result.count(0)).to eq(3) # items with 0 quantity: donation, donation2, extra_line_item
+  end
+
+  it "calculates and returns all donated organization item quantities by category and date" do
+    item_category_1 = create(:item_category, id: 1)
+    item_category_2 = create(:item_category, id: 2)
+    item_1 = create(:item, name: "item_1", item_category_id: item_category_1.id)
+    item_2 = create(:item, name: "item_2", item_category_id: item_category_2.id)
+    donation = create(:donation, product_drive: product_drive, issued_at: '26-01-2023')
+    line_item_1 = create(:line_item, itemizable: donation, item: item_1, quantity: 4)
+    line_item_2 = create(:line_item, itemizable: donation, item: item_2, quantity: 5)
+
+    donation.line_items << line_item_1
+    donation.line_items << line_item_2
+
+    result = product_drive.donation_quantity_by_date(Time.zone.parse('23/01/2023')..Time.zone.parse('26/01/2023'), 1)
+    expect(result).to eq(4)
   end
 
   describe "validations" do
@@ -49,7 +74,11 @@ RSpec.describe ProductDrive, type: :model do
   end
 
   describe "associations" do
-    let!(:donation) { create(:donation) }
+    let!(:product_drive_participant) { create(:product_drive_participant) }
+    let!(:donation) { create(:product_drive_donation, product_drive_participant: product_drive_participant) }
+    let!(:product_drive2) { create(:product_drive) }
+    let!(:donation2) { create(:donation, :with_items, item_quantity: 7, product_drive: product_drive2, product_drive_participant: product_drive_participant) }
+
     subject { create(:product_drive) }
 
     it "has_many donations" do
@@ -57,11 +86,17 @@ RSpec.describe ProductDrive, type: :model do
 
       expect(subject.donations).to include(donation)
     end
+    it "has_many product_drive_participants through donations" do
+      subject.donations << donation
+      is_expected.to have_many(:product_drive_participants).through(:donations)
+      expect(subject.product_drive_participants).to include(donation.product_drive_participant)
+    end
   end
 
   describe "distinct_items" do
-    let!(:item_1) { create(:item, name: "item_1") }
-    let!(:item_2) { create(:item, name: "item_2") }
+    let!(:item_category) { create(:item_category, id: 1) }
+    let!(:item_1) { create(:item, name: "item_1", item_category_id: 1) }
+    let!(:item_2) { create(:item, name: "item_2", item_category_id: 1) }
     let!(:item_3) { create(:item, name: "item_3") }
     let!(:item_4) { create(:item, name: "item_4") }
 
@@ -72,10 +107,6 @@ RSpec.describe ProductDrive, type: :model do
       line_item_1_1 = create(:line_item, itemizable: donation_1, item: item_1, quantity: 4)
       line_item_1_2 = create(:line_item, itemizable: donation_1, item: item_2, quantity: 5)
       line_item_1_3 = create(:line_item, itemizable: donation_1, item: item_3, quantity: 6)
-
-      print line_item_1_1.item_id
-      print line_item_1_2.item_id
-      print line_item_1_3.item_id
 
       donation_1.line_items << line_item_1_1
       donation_1.line_items << line_item_1_2
@@ -113,7 +144,7 @@ RSpec.describe ProductDrive, type: :model do
       expect(product_drive.distinct_items_count).to eq 3
     end
 
-    it("counts the distince items correctly by given date") do
+    it("counts the distinct items correctly by given date") do
       product_drive = create(:product_drive)
       donation_within_date = create(:donation, product_drive: product_drive, issued_at: '26-01-2023')
       donation_out_of_date = create(:donation, product_drive: product_drive, issued_at: '20-01-2023')
@@ -125,6 +156,24 @@ RSpec.describe ProductDrive, type: :model do
 
       expect(product_drive.distinct_items_count_by_date(Time.zone.parse('23/01/2023')..Time.zone.parse('26/01/2023')))
         .to eq(1)
+    end
+
+    it("counts the distinct items correctly by given category") do
+      product_drive = create(:product_drive)
+      donation_within_date = create(:donation, product_drive: product_drive, issued_at: '26-01-2023')
+      donation_out_of_date = create(:donation, product_drive: product_drive, issued_at: '20-01-2023')
+      line_item_1 = create(:line_item, itemizable: donation_within_date, item: item_1, quantity: 4)
+      line_item_2 = create(:line_item, itemizable: donation_within_date, item: item_2, quantity: 5)
+      line_item_3 = create(:line_item, itemizable: donation_within_date, item: item_3, quantity: 6)
+      line_item_4 = create(:line_item, itemizable: donation_out_of_date, item: item_1, quantity: 7)
+
+      donation_within_date.line_items << line_item_1
+      donation_within_date.line_items << line_item_2
+      donation_within_date.line_items << line_item_3
+      donation_out_of_date.line_items << line_item_4
+
+      expect(product_drive.distinct_items_count_by_date(Time.zone.parse('23/01/2023')..Time.zone.parse('26/01/2023'), 1))
+        .to eq(2)
     end
   end
 
@@ -139,6 +188,31 @@ RSpec.describe ProductDrive, type: :model do
 
       it "does not return other_name" do
         expect(described_class.by_name('some_name')).not_to include(product_drive2)
+      end
+    end
+
+    describe ".by_item_category_id" do
+      let!(:item_category) { create(:item_category, id: 1) }
+      let!(:item) { create(:item, name: "item_1", item_category_id: 1) }
+      let!(:product_drive1) { create(:product_drive, name: 'some_name') }
+      let!(:product_drive2) { create(:product_drive, name: 'other_name') }
+
+      it "returns the product_drive with name some_name" do
+        donation = create(:donation, product_drive: product_drive1)
+        line_item = create(:line_item, itemizable: donation, item: item, quantity: 4)
+
+        donation.line_items << line_item
+
+        expect(described_class.by_item_category_id(1)).to include(product_drive1)
+      end
+
+      it "does not return other_name" do
+        donation = create(:donation, product_drive: product_drive1)
+        line_item = create(:line_item, itemizable: donation, item: item, quantity: 4)
+
+        donation.line_items << line_item
+
+        expect(described_class.by_item_category_id(1)).not_to include(product_drive2)
       end
     end
 
@@ -172,5 +246,9 @@ RSpec.describe ProductDrive, type: :model do
     it "returns formatted text" do
       expect(product_drive.donation_source_view).to eq("Test Drive (product drive)")
     end
+  end
+
+  describe "versioning" do
+    it { is_expected.to be_versioned }
   end
 end

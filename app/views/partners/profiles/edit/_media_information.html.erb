@@ -11,7 +11,8 @@
             <%= form.input :facebook, label: "Facebook", class: "form-control", wrapper: :input_group %>
             <%= form.input :twitter, label: "Twitter", class: "form-control", wrapper: :input_group %>
             <%= form.input :instagram, label: "Instagram", class: "form-control", wrapper: :input_group %>
-            <%= form.input :no_social_media_presence, label: "No Social Media Presence", as: :boolean, class: "form-control", wrapper: :input_group %>
+            <%= form.check_box :no_social_media_presence, as: :boolean %>&nbsp;
+            <%= form.label :no_social_media_presence, "No Social Media Presence" %>
           </div>
         </div>
       </div>

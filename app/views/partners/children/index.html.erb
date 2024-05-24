@@ -46,11 +46,12 @@
                           class: 'filterrific-periodically-observed form-control'
                       ) %>
                 </div>
-                <div class="col-3">
-                  <%= f.label :search_comments, "Show Active Only?" %>
+                <div class="col-2">
+                  <%= f.label :search_active, "Show Active Only?" %>
+                  <br>
                   <%= f.check_box(
                           :search_active,
-                          class: 'filterrific-periodically-observed form-control'
+                          class: 'filterrific-periodically-observed'
                       ) %>
                 </div>
                 <div class="col-3">

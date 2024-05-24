@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_16_055847) do
+ActiveRecord::Schema[7.0].define(version: 2024_05_19_201258) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -250,6 +250,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_16_055847) do
     t.integer "organization_id"
     t.float "latitude"
     t.float "longitude"
+    t.string "contact_name"
+    t.string "email"
+    t.string "phone"
+    t.boolean "active", default: true
     t.index ["latitude", "longitude"], name: "index_donation_sites_on_latitude_and_longitude"
     t.index ["organization_id"], name: "index_donation_sites_on_organization_id"
   end
@@ -274,6 +278,22 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_16_055847) do
     t.index ["storage_location_id"], name: "index_donations_on_storage_location_id"
   end
 
+  create_table "events", force: :cascade do |t|
+    t.string "type", null: false
+    t.datetime "event_time", null: false
+    t.jsonb "data"
+    t.bigint "eventable_id"
+    t.string "eventable_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "organization_id"
+    t.bigint "user_id"
+    t.string "group_id"
+    t.index ["organization_id", "event_time"], name: "index_events_on_organization_id_and_event_time"
+    t.index ["organization_id"], name: "index_events_on_organization_id"
+    t.index ["user_id"], name: "index_events_on_user_id"
+  end
+
   create_table "families", force: :cascade do |t|
     t.string "guardian_first_name"
     t.string "guardian_last_name"
@@ -295,6 +315,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_16_055847) do
     t.bigint "partner_id"
     t.boolean "military", default: false
     t.bigint "old_partner_id"
+    t.boolean "archived", default: false
     t.index ["partner_id"], name: "index_families_on_partner_id"
   end
 
@@ -308,10 +329,21 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_16_055847) do
   create_table "flipper_gates", force: :cascade do |t|
     t.string "feature_key", null: false
     t.string "key", null: false
-    t.string "value"
+    t.text "value"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.index ["feature_key", "key", "value"], name: "index_flipper_gates_on_feature_key_and_key_and_value", unique: true
+  end
+
+  create_table "inventory_discrepancies", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "event_id", null: false
+    t.json "diff"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_inventory_discrepancies_on_event_id"
+    t.index ["organization_id", "created_at"], name: "index_inventory_discrepancies_on_organization_id_and_created_at"
+    t.index ["organization_id"], name: "index_inventory_discrepancies_on_organization_id"
   end
 
   create_table "inventory_items", id: :serial, force: :cascade do |t|
@@ -349,8 +381,17 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_16_055847) do
     t.string "partner_key"
     t.integer "item_id"
     t.integer "old_partner_request_id"
+    t.string "request_unit"
     t.index ["item_id"], name: "index_item_requests_on_item_id"
     t.index ["partner_request_id"], name: "index_item_requests_on_partner_request_id"
+  end
+
+  create_table "item_units", force: :cascade do |t|
+    t.string "name", null: false
+    t.bigint "item_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_item_units_on_item_id"
   end
 
   create_table "items", id: :serial, force: :cascade do |t|
@@ -450,6 +491,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_16_055847) do
     t.boolean "enable_child_based_requests", default: true, null: false
     t.boolean "enable_individual_requests", default: true, null: false
     t.boolean "enable_quantity_based_requests", default: true, null: false
+    t.boolean "ytd_on_distribution_printout", default: true, null: false
+    t.boolean "one_step_partner_invite", default: false, null: false
+    t.boolean "hide_value_columns_on_receipt", default: false
+    t.boolean "hide_package_column_on_receipt", default: false
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
@@ -746,6 +791,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_16_055847) do
     t.index ["organization_id"], name: "index_transfers_on_organization_id"
   end
 
+  create_table "units", force: :cascade do |t|
+    t.string "name", null: false
+    t.bigint "organization_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_units_on_organization_id"
+  end
+
   create_table "users", id: :serial, force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -769,19 +822,21 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_16_055847) do
     t.integer "invited_by_id"
     t.integer "invitations_count", default: 0
     t.boolean "organization_admin"
-    t.string "name", default: "Name Not Provided", null: false
+    t.string "name"
     t.boolean "super_admin", default: false
     t.datetime "last_request_at", precision: nil
     t.datetime "discarded_at", precision: nil
     t.string "provider"
     t.string "uid"
     t.bigint "partner_id"
+    t.bigint "last_role_id"
     t.index ["discarded_at"], name: "index_users_on_discarded_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_users_on_invitations_count"
     t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
     t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by_type_and_invited_by_id"
+    t.index ["last_role_id"], name: "index_users_on_last_role_id"
     t.index ["partner_id"], name: "index_users_on_partner_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
@@ -837,9 +892,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_16_055847) do
   add_foreign_key "donations", "product_drives"
   add_foreign_key "donations", "storage_locations"
   add_foreign_key "families", "partners"
+  add_foreign_key "inventory_discrepancies", "events"
+  add_foreign_key "inventory_discrepancies", "organizations"
   add_foreign_key "item_categories", "organizations"
   add_foreign_key "item_categories_partner_groups", "item_categories"
   add_foreign_key "item_categories_partner_groups", "partner_groups"
+  add_foreign_key "item_units", "items"
   add_foreign_key "items", "item_categories"
   add_foreign_key "items", "kits"
   add_foreign_key "kit_allocations", "kits"
@@ -858,4 +916,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_16_055847) do
   add_foreign_key "requests", "distributions"
   add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"
+  add_foreign_key "units", "organizations"
+  add_foreign_key "users", "users_roles", column: "last_role_id", on_delete: :nullify
 end

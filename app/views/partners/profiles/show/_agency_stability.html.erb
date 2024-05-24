@@ -6,7 +6,7 @@
       <dd><%= profile.founded %></dd>
 
       <dt>Form 990 Filed</dt>
-      <dd><%= humanize_boolean(profile.form_990) %></dd>
+      <dd><%= humanize_boolean_3state(profile.form_990) %></dd>
 
       <dt>Form 990</dt>
       <% if profile.proof_of_form_990.attached? %>
@@ -26,10 +26,10 @@
       <dd><%= profile.program_age %></dd>
 
       <dt>Case Management</dt>
-      <dd><%= humanize_boolean(profile.case_management) %></dd>
+      <dd><%= humanize_boolean_3state(profile.case_management) %></dd>
 
       <dt>Evidence Based</dt>
-      <dd><%= humanize_boolean(profile.evidence_based) %></dd>
+      <dd><%= humanize_boolean_3state(profile.evidence_based) %></dd>
 
       <dt>How Are Essentials (e.g. diapers, period supplies) Used In Your Program?</dt>
       <dd><%= profile.essentials_use %></dd>
@@ -38,17 +38,7 @@
       <dd><%= profile.receives_essentials_from_other %></dd>
 
       <dt>Current Providing Diapers</dt>
-      <dd><%= humanize_boolean(profile.currently_provide_diapers) %></dd>
-
-      <address>
-        <strong>Program Address (if different)</strong> <br>
-        <%= profile.program_address1 %> <br>
-        <% unless profile.program_address2.blank? %>
-          <%= profile.program_address2 %> <br>
-        <% end %>
-        <%= profile.program_city %> <%= profile.program_state %> <br>
-        <%= profile.program_zip_code %>
-      </address>
+      <dd><%= humanize_boolean_3state(profile.currently_provide_diapers) %></dd>
     </dl>
   </div>
 </div>

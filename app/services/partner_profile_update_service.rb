@@ -16,9 +16,8 @@ class PartnerProfileUpdateService
 
       if @return_value
         @profile.served_areas.destroy_all
-        @profile.reload
-        @profile.update!(@profile_params)
-        @profile.reload
+        @profile.attributes = @profile_params
+        @profile.save!(context: :edit)
       end
     end
   end
@@ -28,6 +27,7 @@ class PartnerProfileUpdateService
       @profile.transaction do
         yield block
       end
+      @profile.reload
     rescue ActiveRecord::RecordNotFound => e
       Rails.logger.error "[!] #{self.class.name} failed to update profile #{@profile.id} because it does not exist"
       set_error(e)
