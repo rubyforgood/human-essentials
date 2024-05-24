@@ -1,4 +1,4 @@
-RSpec.describe RequestsConfirmationMailer, type: :mailer, seed_items: false do
+RSpec.describe RequestsConfirmationMailer, type: :mailer do
   let(:organization) { create(:organization, :with_items) }
   let(:request) { create(:request, organization: organization) }
   let(:mail) { RequestsConfirmationMailer.confirmation_email(request) }

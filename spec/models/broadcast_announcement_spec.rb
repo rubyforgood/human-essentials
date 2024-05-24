@@ -46,30 +46,35 @@ RSpec.describe BroadcastAnnouncement, type: :model do
   end
 
   context "filter_announcements" do
+    let(:organization) { create(:organization) }
+    let(:user) { create(:user, organization: organization) }
+    let(:user_id) { user.id }
+    let(:organization_id) { organization.id }
+
     it "should include only announcements from the passed organization" do
-      BroadcastAnnouncement.create!(message: "test", user_id: @user.id, organization_id: @organization.id)
-      BroadcastAnnouncement.create!(message: "test", user_id: @user.id, organization_id: @organization.id)
-      BroadcastAnnouncement.create!(message: "test", user_id: @user.id)
-      BroadcastAnnouncement.create!(message: "test", user_id: @user.id, organization_id: 0)
-      expect(BroadcastAnnouncement.filter_announcements(@organization.id).count).to eq(2)
+      create(:broadcast_announcement, message: "test", user_id: user_id, organization_id: organization_id)
+      create(:broadcast_announcement, message: "test", user_id: user_id, organization_id: organization_id)
+      create(:broadcast_announcement, message: "test", user_id: user_id)
+      create(:broadcast_announcement, message: "test", user_id: user_id, organization_id: create(:organization).id)
+      expect(BroadcastAnnouncement.filter_announcements(organization_id).count).to eq(2)
     end
 
     it "shouldn't include expired announcements" do
-      BroadcastAnnouncement.create!(message: "test", user_id: @user.id, organization_id: @organization.id)
-      BroadcastAnnouncement.create!(message: "test", user_id: @user.id, expiry: 2.days.ago, organization_id: @organization.id)
-      BroadcastAnnouncement.create!(message: "test", user_id: @user.id, expiry: 5.days.ago, organization_id: @organization.id)
-      BroadcastAnnouncement.create!(message: "test", user_id: @user.id, expiry: Time.zone.today, organization_id: @organization.id)
-      expect(BroadcastAnnouncement.filter_announcements(@organization.id).count).to eq(2)
+      create(:broadcast_announcement, message: "test", user_id: user_id, organization_id: organization_id)
+      create(:broadcast_announcement, message: "test", user_id: user_id, expiry: 2.days.ago, organization_id: organization_id)
+      create(:broadcast_announcement, message: "test", user_id: user_id, expiry: 5.days.ago, organization_id: organization_id)
+      create(:broadcast_announcement, message: "test", user_id: user_id, expiry: Time.zone.today, organization_id: organization_id)
+      expect(BroadcastAnnouncement.filter_announcements(organization_id).count).to eq(2)
     end
 
     it "sorts announcements from most recently created to last" do
-      announcement_1 = BroadcastAnnouncement.create!(message: "test", user_id: @user.id, organization_id: @organization.id, created_at: Time.zone.today)
-      announcement_2 = BroadcastAnnouncement.create!(message: "test", user_id: @user.id, organization_id: @organization.id, created_at: 2.days.ago)
-      announcement_3 = BroadcastAnnouncement.create!(message: "test", user_id: @user.id, organization_id: @organization.id, expiry: 1.day.ago, created_at: 3.days.ago)
-      announcement_4 = BroadcastAnnouncement.create!(message: "test", user_id: @user.id, organization_id: @organization.id, created_at: 4.days.ago)
+      announcement_1 = create(:broadcast_announcement, message: "test", user_id: user_id, organization_id: organization_id, created_at: Time.zone.today)
+      announcement_2 = create(:broadcast_announcement, message: "test", user_id: user_id, organization_id: organization_id, created_at: 2.days.ago)
+      announcement_3 = create(:broadcast_announcement, message: "test", user_id: user_id, organization_id: organization_id, expiry: 1.day.ago, created_at: 3.days.ago)
+      announcement_4 = create(:broadcast_announcement, message: "test", user_id: user_id, organization_id: organization_id, created_at: 4.days.ago)
 
-      expect(BroadcastAnnouncement.filter_announcements(@organization.id)).to eq([announcement_1, announcement_2, announcement_4])
-      expect(BroadcastAnnouncement.filter_announcements(@organization.id).include?(announcement_3)).to be(false)
+      expect(BroadcastAnnouncement.filter_announcements(organization_id)).to eq([announcement_1, announcement_2, announcement_4])
+      expect(BroadcastAnnouncement.filter_announcements(organization_id).include?(announcement_3)).to be(false)
     end
   end
 

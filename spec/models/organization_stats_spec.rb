@@ -1,6 +1,5 @@
 # == No Schema Information
 #
-
 RSpec.describe OrganizationStats, type: :model do
   let(:partners) { [] }
   let(:storage_locations) { [] }

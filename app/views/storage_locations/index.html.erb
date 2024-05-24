@@ -49,9 +49,9 @@
                 <%= filter_button %>
                 <%= clear_filter_button %>
                 <span class="float-right">
-                <%= modal_button_to("#csvImportModal", {icon: "upload", text: "Import Storage Locations"}) if @storage_locations.empty? %>
+                  <%= modal_button_to("#csvImportModal", {icon: "upload", text: "Import Storage Locations"}) if @storage_locations.empty? %>
                   <%= download_button_to(storage_locations_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Storage Locations", size: "md"}) if @storage_locations.any? %>
-                  <%= new_button_to new_storage_location_path(organization_name: current_organization), {text: "New Storage Location"} %>
+                  <%= new_button_to new_storage_location_path, {text: "New Storage Location"} %>
                   </span>
               </div>
             <% end # form %>
@@ -95,7 +95,7 @@
           layout: "shared/csv_import_modal",
           locals: {
             import_type: 'Storage Locations',
-            csv_template_url: "/storage_locations.csv",
+            csv_template_url: "/storage_locations_template.csv",
             csv_import_url: import_csv_storage_locations_path
           }
       ) do %>

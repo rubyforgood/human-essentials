@@ -5,7 +5,7 @@ class PurchasesController < ApplicationController
   def index
     setup_date_range_picker
     @purchases = current_organization.purchases
-                                     .includes(:line_items, :storage_location)
+                                     .includes(:storage_location, :vendor, line_items: [:item])
                                      .order(created_at: :desc)
                                      .class_filter(filter_params)
                                      .during(helpers.selected_range)
@@ -39,7 +39,7 @@ class PurchasesController < ApplicationController
     rescue => e
       load_form_collections
       @purchase.line_items.build if @purchase.line_items.count.zero?
-      flash[:error] = "Failed to create purchase due to: #{e.message}"
+      flash[:error] = "Failed to create purchase due to:\n#{e.message}"
       Rails.logger.error "[!] PurchasesController#create ERROR: #{e.message}"
       render action: :new
     end

@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Purchases", (purchases_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Purchases", purchases_path %></li>
           <li class="breadcrumb-item"><a href="#"><%= @purchase.purchased_from_view %> on <%= @purchase.issued_at.to_fs(:distribution_date) %></a></li>
         </ol>
       </div>
@@ -70,11 +70,16 @@
             <%= edit_button_to edit_purchase_path(@purchase), { text: "Make a correction",
                                                                 enabled: !@purchase.has_inactive_item?,
                                                                 size: "md" } %>
-            <%= delete_button_to purchase_path(@purchase), { size: "md", confirm: "Are you sure you want to permanently remove this purchase?" } if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
+            <% if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
+              <%= delete_button_to purchase_path(@purchase), {
+                size: "md",
+                enabled: !@purchase.has_inactive_item?,
+                confirm: "Are you sure you want to permanently remove this purchase?" } %>
+            <% end %>
             <% if @purchase.has_inactive_item? %>
               <div class="warning">
-                You can only correct purchases where all the items are active.
-                If you need to make a correction, please make the following items active: <%= @purchase.inactive_items.map(&:name).join(", ") %>
+                You can only delete or correct purchases where all the items are active.
+                If you need to delete this purchase or make a correction, please make the following items active: <%= @purchase.inactive_items.map(&:name).join(", ") %>
               </div>
             <% end %>
           </div>

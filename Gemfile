@@ -14,7 +14,7 @@ gem "pg", "~> 1.5.6"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "7.0.8"
+gem "rails", "7.1.3.3"
 
 ###### MODELS / DATABASE #######
 
@@ -103,7 +103,7 @@ gem "clockwork"
 # These are gems that aren't used directly, only as dependencies for other gems.
 # Technically they don't need to be in this Gemfile at all, but we are pinning them to
 # specific versions for compatibility reasons.
-gem "mini_racer", "~> 0.9.0"
+gem "mini_racer", "~> 0.12.0"
 gem "nokogiri", ">= 1.10.4"
 gem "image_processing"
 gem "sprockets", "~> 4.2.1"
@@ -152,9 +152,9 @@ group :development, :test do
   gem "rubocop"
   # Rails add-on for static analysis.
   gem 'rubocop-performance'
-  gem "rubocop-rails", "~> 2.24.1"
+  gem "rubocop-rails", "~> 2.25.0"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.35"
+  gem "standard", "~> 1.36"
   # Erb linter.
   gem "erb_lint"
 end
@@ -210,6 +210,6 @@ if %w(mingw mswin x64_mingw jruby).include?(RUBY_PLATFORM)
 end
 
 # Use Redis for Action Cable
-gem "redis", "~> 5.1"
+gem "redis", "~> 5.2"
 
 gem "importmap-rails", "~> 2.0"

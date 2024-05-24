@@ -1,0 +1,27 @@
+<%= render(
+  "shared/filtered_card",
+  id: "donations",
+  title: "Donations (All Sources)",
+  subtitle: @selected_date_range,
+  footer_options: { class: "text-center" },
+  footer: link_to("See more...", donations_path),
+  filter_url: reports_donations_summary_path
+) do %>
+  <%= new_button_to new_donation_path, {text: "New Donation"} %>
+  <h3 class="text-center">
+    <span class="total_received_donations">
+      <%= total_received_donations %>
+    </span>
+    items
+    received <%= @selected_date_range_label %>
+  </h3>
+  <h4 class="text-center">
+    <%= dollar_presentation(total_received_money_donations) %>
+    raised  <%= @selected_date_range_label %>
+  </h4>
+  <div class="box-body">
+    <h4>Recent Donations</h4>
+    <%= render partial: "donation", collection: @recent_donations, as: :donation %>
+  </div>
+<% end %>
+</section>

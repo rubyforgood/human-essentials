@@ -30,6 +30,7 @@
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  invited_by_id          :integer
+#  last_role_id           :bigint
 #  organization_id        :integer
 #  partner_id             :bigint
 #
@@ -41,7 +42,7 @@ FactoryBot.define do
     password { "password!" }
     password_confirmation { "password!" }
     transient do
-      organization { Organization.try(:first) || create(:organization, skip_items: true) }
+      organization { Organization.try(:first) || create(:organization) }
     end
 
     after(:create) do |user, evaluator|

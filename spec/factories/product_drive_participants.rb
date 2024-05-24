@@ -18,7 +18,7 @@
 
 FactoryBot.define do
   factory :product_drive_participant do
-    organization { Organization.try(:first) || create(:organization, skip_items: true) }
+    organization { Organization.try(:first) || create(:organization) }
     contact_name { "Don Draper" }
     business_name { "Awesome Business" }
     sequence(:email) { |n| "don#{n}@scdp.com" }

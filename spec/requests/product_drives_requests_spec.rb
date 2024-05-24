@@ -1,13 +1,12 @@
 require 'rails_helper'
 
-RSpec.describe "ProductDrives", type: :request, skip_seed: true do
+RSpec.describe "ProductDrives", type: :request do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
-  let(:default_params) { { organization_name: organization.to_param } }
 
   context "while not signed in" do
     it "is unsuccessful" do
-      get product_drives_path(default_params)
+      get product_drives_path
 
       expect(response).not_to be_successful
     end
@@ -19,10 +18,8 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
     end
 
     describe "GET #index" do
-      subject { get product_drives_path(default_params) }
-
       it "returns http success" do
-        subject
+        get product_drives_path
 
         expect(response).to be_successful
       end
@@ -32,7 +29,6 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
           date_range: date_range_picker_params(Date.parse('20/01/2000'), Date.parse('22/01/2000')),
           by_name: "AAAA"
         }
-        default_params[:filters] = filter_params
 
         product_drive = create(:product_drive, organization: organization, name: "AAAA", start_date: '20/01/2000', end_date: '22/01/2000')
 
@@ -41,7 +37,7 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
         product_drive_four = create(:product_drive, organization: organization, name: "AAAA", start_date: '20/01/1990', end_date: '22/01/1990')
         product_drive_five = create(:product_drive, organization: organization, name: "AAAA", start_date: '20/01/2022', end_date: '22/01/2022')
 
-        subject
+        get product_drives_path(filters: filter_params)
 
         expect(response).to be_successful
 
@@ -54,10 +50,8 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
       end
 
       context "csv" do
-        before { default_params.merge!(format: :csv) }
-
         it 'is successful' do
-          subject
+          get product_drives_path(format: :csv)
 
           expect(response).to be_successful
           expect(response.header['Content-Type']).to include 'text/csv'
@@ -70,15 +64,13 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
           create(:product_drive, name: 'product_drive', organization: organization)
           create(:product_drive, name: 'unassociated_product_drive', organization: create(:organization))
 
-          subject
+          get product_drives_path(format: :csv)
 
           expect(response.body).to include('product_drive')
           expect(response.body).not_to include('unassociated_product_drive')
         end
 
         it 'returns ONLY the product drives within a selected date range (inclusive)' do
-          default_params[:filters] = { date_range: date_range_picker_params(Date.parse('30/01/1979'), Date.parse('30/01/1982')) }
-
           create(
             :product_drive,
             name: 'early_product_drive',
@@ -109,7 +101,7 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
             organization: organization
           )
 
-          subject
+          get product_drives_path(format: :csv, filters: { date_range: date_range_picker_params(Date.parse('30/01/1979'), Date.parse('30/01/1982')) })
 
           expect(response.body).to include('product_drive_within_date_range')
           expect(response.body).to include('product_drive_on_date_range')
@@ -117,63 +109,66 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
           expect(response.body).not_to include('late_product_drive')
         end
 
-        it "returns the quantity of all organization's items" do
-          product_drive = create(:product_drive, name: 'product_drive', organization: organization)
+        context "when organization has items" do
+          let(:organization) { create(:organization, :with_items) }
 
-          active_item, inactive_item = organization.items.first(2)
-          inactive_item.update!(active: false)
+          it "returns the quantity of all organization's items" do
+            product_drive = create(:product_drive, name: 'product_drive', organization: organization)
 
-          donation = create(:product_drive_donation, product_drive: product_drive)
-          create(:line_item, :donation, itemizable_id: donation.id, item_id: active_item.id, quantity: 4)
-          create(:line_item, :donation, itemizable_id: donation.id, item_id: inactive_item.id, quantity: 5)
+            active_item, inactive_item = organization.items.first(2)
+            inactive_item.update!(active: false)
 
-          subject
+            donation = create(:product_drive_donation, product_drive: product_drive)
+            create(:line_item, :donation, itemizable_id: donation.id, item_id: active_item.id, quantity: 4)
+            create(:line_item, :donation, itemizable_id: donation.id, item_id: inactive_item.id, quantity: 5)
 
-          row = response.body.split("\n")[1]
-          cells = row.split(',')
-          expect(response.body).to include(active_item.name)
-          expect(response.body).to include(inactive_item.name)
-          expect(cells.count('4')).to eq(1)
-          expect(cells.count('5')).to eq(1)
-          expect(cells.count('0')).to eq(organization.items.count - 2)
-        end
+            get product_drives_path(format: :csv)
 
-        it "only counts items within the selected date range" do
-          default_params[:filters] = { date_range: date_range_picker_params(Date.parse('20/01/2023'), Date.parse('25/01/2023')) }
-          item = organization.items.first
-          product_drive = create(
-            :product_drive,
-            name: 'product_drive_within_date_range',
-            start_date: '20/01/2023',
-            end_date: '30/01/2023',
-            organization: organization
-          )
+            row = response.body.split("\n")[1]
+            cells = row.split(',')
+            expect(response.body).to include(active_item.name)
+            expect(response.body).to include(inactive_item.name)
+            expect(cells.count('4')).to eq(1)
+            expect(cells.count('5')).to eq(1)
+            expect(cells.count('0')).to eq(organization.items.count - 2)
+          end
 
-          donation = create(:product_drive_donation, product_drive: product_drive, issued_at: '21/01/2023')
-          create(:line_item, :donation, itemizable_id: donation.id, item_id: item.id, quantity: 4)
-          donation = create(:product_drive_donation, product_drive: product_drive, issued_at: '26/01/2023')
-          create(:line_item, :donation, itemizable_id: donation.id, item_id: item.id, quantity: 10)
+          it "only counts items within the selected date range" do
+            item = organization.items.first
+            product_drive = create(
+              :product_drive,
+              name: 'product_drive_within_date_range',
+              start_date: '20/01/2023',
+              end_date: '30/01/2023',
+              organization: organization
+            )
 
-          subject
+            donation = create(:product_drive_donation, product_drive: product_drive, issued_at: '21/01/2023')
+            create(:line_item, :donation, itemizable_id: donation.id, item_id: item.id, quantity: 4)
+            donation = create(:product_drive_donation, product_drive: product_drive, issued_at: '26/01/2023')
+            create(:line_item, :donation, itemizable_id: donation.id, item_id: item.id, quantity: 10)
 
-          row = response.body.split("\n")[1]
-          cells = row.split(',')
-          expect(cells.count('4')).to eq(2)
-          expect(cells.count('0')).to eq(organization.items.count - 1)
+            get product_drives_path(format: :csv, filters: { date_range: date_range_picker_params(Date.parse('20/01/2023'), Date.parse('25/01/2023')) })
+
+            row = response.body.split("\n")[1]
+            cells = row.split(',')
+            expect(cells.count('4')).to eq(2)
+            expect(cells.count('0')).to eq(organization.items.count - 1)
+          end
         end
       end
     end
 
     describe "GET #new" do
       it "returns http success" do
-        get new_product_drive_path(default_params)
+        get new_product_drive_path
         expect(response).to be_successful
       end
     end
 
     describe "POST#create" do
       it "returns redirect http status" do
-        post product_drives_path(default_params.merge(product_drive: attributes_for(:product_drive)))
+        post product_drives_path(product_drive: attributes_for(:product_drive))
         expect(response).to have_http_status(:redirect)
       end
     end
@@ -182,7 +177,7 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
       it "returns redirect http status" do
         product_drive = create(:product_drive, organization: organization)
 
-        put product_drive_path(default_params.merge(id: product_drive.id, product_drive: attributes_for(:product_drive)))
+        put product_drive_path(id: product_drive.id, product_drive: attributes_for(:product_drive))
         expect(response).to have_http_status(:redirect)
       end
     end
@@ -191,7 +186,7 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
       it "returns http success" do
         product_drive = create(:product_drive, organization: organization)
 
-        get edit_product_drive_path(default_params.merge(id: product_drive.id))
+        get edit_product_drive_path(id: product_drive.id)
         expect(response).to be_successful
       end
     end
@@ -200,7 +195,7 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
       it "returns http success" do
         product_drive = create(:product_drive, organization: organization)
 
-        get product_drive_path(default_params.merge(id: product_drive.id))
+        get product_drive_path(id: product_drive.id)
         expect(response).to be_successful
       end
 
@@ -209,7 +204,7 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
         participant = create(:product_drive_participant)
         create(:donation, :with_items, item_quantity: 4862167, source: Donation::SOURCES[:product_drive], product_drive: product_drive, product_drive_participant: participant)
 
-        get product_drive_path(default_params.merge(id: product_drive.id))
+        get product_drive_path(id: product_drive.id)
 
         expect(response.body).to include("4862167")
       end
@@ -219,7 +214,7 @@ RSpec.describe "ProductDrives", type: :request, skip_seed: true do
       it "redirects to the index" do
         product_drive = create(:product_drive, organization: organization)
 
-        delete product_drive_path(default_params.merge(id: product_drive.id))
+        delete product_drive_path(id: product_drive.id)
         expect(response).to redirect_to(product_drives_path)
       end
     end

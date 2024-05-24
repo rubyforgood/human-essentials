@@ -1,14 +1,11 @@
 RSpec.describe Reports::ChildrenServedReportService, type: :service do
   let(:year) { 2020 }
-  let(:organization) { create(:organization) }
-
-  subject(:report) do
-    described_class.new(organization: organization, year: year)
-  end
 
   describe '#report' do
     it 'should report zero values' do
-      expect(report.report).to eq({
+      organization = create(:organization)
+      report = described_class.new(organization: organization, year: year).report
+      expect(report).to eq({
                                     name: 'Children Served',
                                     entries: {
                                       'Average children served monthly' => "0",
@@ -20,8 +17,7 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
     end
 
     it 'should report normal values' do
-      Organization.seed_items(organization)
-      organization.update!(distribute_monthly: true, repackage_essentials: true)
+      organization = create(:organization, :with_items, distribute_monthly: true, repackage_essentials: true)
 
       within_time = Time.zone.parse("2020-05-31 14:00:00")
       outside_time = Time.zone.parse("2019-05-31 14:00:00")
@@ -53,7 +49,8 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       create(:line_item, :distribution, quantity: 10, item: toddler_disposable_kit_item, itemizable: infant_distribution)
       create(:line_item, :distribution, quantity: 10, item: infant_disposable_kit_item, itemizable: toddler_distribution)
 
-      expect(report.report).to eq({
+      report = described_class.new(organization: organization, year: within_time.year).report
+      expect(report).to eq({
                                     name: 'Children Served',
                                     entries: {
                                       'Average children served monthly' => "8",
@@ -65,8 +62,7 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
     end
 
     it 'should work with no distribution_quantity' do
-      Organization.seed_items(organization)
-      organization.update!(distribute_monthly: true, repackage_essentials: true)
+      organization = create(:organization, :with_items, distribute_monthly: true, repackage_essentials: true)
 
       within_time = Time.zone.parse("2020-05-31 14:00:00")
       outside_time = Time.zone.parse("2019-05-31 14:00:00")
@@ -97,7 +93,8 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       create(:line_item, :distribution, quantity: 10, item: toddler_disposable_kit_item, itemizable: infant_distribution)
       create(:line_item, :distribution, quantity: 10, item: infant_disposable_kit_item, itemizable: toddler_distribution)
 
-      expect(report.report).to eq({
+      report = described_class.new(organization: organization, year: within_time.year).report
+      expect(report).to eq({
                                     name: 'Children Served',
                                     entries: {
                                       'Average children served monthly' => "3",
@@ -109,34 +106,55 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
     end
   end
   describe "#disposable_diapers_from_kits_total" do
-    it "calculates the number of disposable diapers that have been distributed within kits" do
-      toddler_disposable_kit = create(:kit, :with_item, organization: organization)
-      infant_disposable_kit = create(:kit, :with_item, organization: organization)
-      infant_cloth_kit = create(:kit, :with_item, organization: organization)
+    it "calculates the number of disposable diapers that have been distributed within kits this year" do
+      organization = create(:organization)
 
-      within_time = Time.zone.parse("2020-05-31 14:00:00")
-
+      # create disposable/ nondisposable base items
       create(:base_item, name: "Toddler Disposable Diaper", partner_key: "toddler diapers", category: "disposable diaper")
       create(:base_item, name: "Infant Disposable Diaper", partner_key: "infant diapers", category: "infant disposable diaper")
       create(:base_item, name: "Infant Cloth Diaper", partner_key: "infant cloth diapers", category: "cloth diaper")
 
-      toddler_disposable_kit_item = create(:item, name: "Toddler Disposable Diapers", partner_key: "toddler diapers")
-      infant_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", partner_key: "infant diapers")
-      infant_cloth_kit_item = create(:item, name: "Infant Cloth Diapers", partner_key: "infant cloth diapers")
+      # create disposable/ nondisposable items
+      toddler_disposable_kit_item = create(:item, name: "Toddler Disposable Diaper", partner_key: "toddler diapers", organization: organization)
+      infant_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", partner_key: "infant diapers", organization: organization)
+      infant_cloth_kit_item = create(:item, name: "Infant Cloth Diapers", partner_key: "infant cloth diapers", organization: organization)
 
-      toddler_disposable_kit.line_items.first.update!(item_id: toddler_disposable_kit_item.id, quantity: 5)
-      infant_disposable_kit.line_items.first.update!(item_id: infant_disposable_kit_item.id, quantity: 5)
-      infant_cloth_kit.line_items.first.update!(item_id: infant_cloth_kit_item.id, quantity: 5)
+      # create line items that contain the d/nd items
+      toddler_disposable_line_item = create(:line_item, item: toddler_disposable_kit_item, quantity: 5)
+      infant_disposable_line_item = create(:line_item, item: infant_disposable_kit_item, quantity: 5)
+      infant_cloth_line_item = create(:line_item, item: infant_cloth_kit_item, quantity: 5)
 
+      # create kits that contain the d/nd line items
+      toddler_disposable_kit = create(:kit, organization: organization, line_items: [toddler_disposable_line_item])
+      infant_disposable_kit = create(:kit, organization: organization, line_items: [infant_disposable_line_item])
+      infant_cloth_kit = create(:kit, organization: organization, line_items: [infant_cloth_line_item])
+
+      # create items which have the kits
+      create(:base_item, name: "Unrelated Base", partner_key: "unrelated base", category: "unrelated base")
+      infant_disposable_dist_item = create(:item, name: "Dist Item 1", organization: organization, partner_key: "unrelated base", kit: toddler_disposable_kit)
+      toddler_disposable_dist_item = create(:item, name: "Dist Item 2", organization: organization, partner_key: "unrelated base", kit: infant_disposable_kit)
+      infant_cloth_dist_item = create(:item, name: "Dist Item 3", organization: organization, partner_key: "unrelated base", kit: infant_cloth_kit)
+
+      within_time = Time.zone.parse("2020-05-31 14:00:00")
+
+      # create empty distributions
       infant_distribution = create(:distribution, organization: organization, issued_at: within_time)
       toddler_distribution = create(:distribution, organization: organization, issued_at: within_time)
 
-      create(:line_item, quantity: 10, item: toddler_disposable_kit.item, itemizable: toddler_distribution)
-      create(:line_item, quantity: 10, item: infant_disposable_kit.item, itemizable: infant_distribution)
-      create(:line_item, :distribution, quantity: 10, item: infant_cloth_kit.item, itemizable: infant_distribution)
+      # add line items to distributions which contain the d/nd kits
+      create(:line_item, quantity: 10, item: toddler_disposable_dist_item, itemizable: toddler_distribution)
+      create(:line_item, quantity: 10, item: infant_disposable_dist_item, itemizable: infant_distribution)
+      create(:line_item, :distribution, quantity: 10, item: infant_cloth_dist_item, itemizable: infant_distribution)
 
       service = described_class.new(organization: organization, year: within_time.year)
 
+      # Find distributions, that has a
+      # Line item, that has an
+      # Item, which has a
+      # Kit, which has a
+      # Line item, which has an
+      # Item, which is a disposable diaper.
+      # And then add all those quantities up
       expect(service.disposable_diapers_from_kits_total).to eq(100)
     end
   end

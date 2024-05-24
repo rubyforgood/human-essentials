@@ -1,18 +1,17 @@
 require 'rails_helper'
 
 RSpec.describe "ProductDriveParticipants", type: :request do
-  let(:default_params) do
-    { organization_name: @organization.to_param }
-  end
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
 
   context "While signed in" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     describe "GET #index" do
       subject do
-        get product_drive_participants_path(default_params.merge(format: response_format))
+        get product_drive_participants_path(format: response_format)
         response
       end
 
@@ -33,14 +32,14 @@ RSpec.describe "ProductDriveParticipants", type: :request do
 
     describe "GET #new" do
       it "returns http success" do
-        get new_product_drive_participant_path(default_params)
+        get new_product_drive_participant_path
         expect(response).to be_successful
       end
     end
 
     describe "GET #edit" do
       it "returns http success" do
-        get edit_product_drive_participant_path(default_params.merge(id: create(:product_drive_participant, organization: @user.organization)))
+        get edit_product_drive_participant_path(id: create(:product_drive_participant, organization: user.organization))
         expect(response).to be_successful
       end
     end
@@ -50,7 +49,7 @@ RSpec.describe "ProductDriveParticipants", type: :request do
 
       context "with a csv file" do
         let(:file) { fixture_file_upload("#{model_class.name.underscore.pluralize}.csv", "text/csv") }
-        subject { post import_csv_product_drive_participants_path(default_params), params: { file: file } }
+        subject { post import_csv_product_drive_participants_path, params: { file: file } }
 
         it "invokes .import_csv" do
           expect(model_class).to respond_to(:import_csv).with(2).arguments
@@ -68,7 +67,7 @@ RSpec.describe "ProductDriveParticipants", type: :request do
       end
 
       context "without a csv file" do
-        subject { post import_csv_product_drive_participants_path(default_params) }
+        subject { post import_csv_product_drive_participants_path }
 
         it "redirects to :index" do
           subject
@@ -83,7 +82,7 @@ RSpec.describe "ProductDriveParticipants", type: :request do
 
       context "csv file with wrong headers" do
         let(:file) { fixture_file_upload("wrong_headers.csv", "text/csv") }
-        subject { post import_csv_product_drive_participants_path(default_params), params: { file: file } }
+        subject { post import_csv_product_drive_participants_path, params: { file: file } }
 
         it "redirects" do
           subject
@@ -99,19 +98,19 @@ RSpec.describe "ProductDriveParticipants", type: :request do
 
     describe "GET #show" do
       it "returns http success" do
-        get product_drive_participant_path(default_params.merge(id: create(:product_drive_participant, organization: @organization)))
+        get product_drive_participant_path(id: create(:product_drive_participant, organization: organization))
         expect(response).to be_successful
       end
     end
 
     describe "XHR #create" do
       it "successful create" do
-        post product_drive_participants_path(default_params.merge(product_drive_participant: { name: "test", email: "123@mail.ru" }, xhr: true))
+        post product_drive_participants_path(product_drive_participant: { name: "test", email: "123@mail.ru" }, xhr: true)
         expect(response).to be_successful
       end
 
       it "flash error" do
-        post product_drive_participants_path(default_params.merge(product_drive_participant: { name: "test" }, xhr: true))
+        post product_drive_participants_path(product_drive_participant: { name: "test" }, xhr: true)
         expect(response).to be_successful
         expect(response).to have_error(/try again/i)
       end
@@ -119,14 +118,14 @@ RSpec.describe "ProductDriveParticipants", type: :request do
 
     describe "POST #create" do
       it "successful create" do
-        post product_drive_participants_path(default_params.merge(product_drive_participant:
-          { business_name: "businesstest", contact_name: "test", email: "123@mail.ru" }))
+        post product_drive_participants_path(product_drive_participant:
+          { business_name: "businesstest", contact_name: "test", email: "123@mail.ru" })
         expect(response).to redirect_to(product_drive_participants_path)
         expect(response).to have_notice(/added!/i)
       end
 
       it "flash error" do
-        post product_drive_participants_path(default_params.merge(product_drive_participant: { name: "test" }, xhr: true))
+        post product_drive_participants_path(product_drive_participant: { name: "test" }, xhr: true)
         expect(response).to be_successful
         expect(response).to have_error(/try again/i)
       end

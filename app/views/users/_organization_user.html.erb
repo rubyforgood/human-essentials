@@ -22,25 +22,25 @@
             <li>
               <%=
                   edit_button_to(
-                    promote_to_org_admin_organization_path(current_organization, user_id: user.id),
+                    promote_to_org_admin_organization_path(user_id: user.id),
                     {text: 'Make admin'},
                     {method: :post, rel: "nofollow", data: {confirm: 'This will promote the user to admin status. Are you sure that you want to submit this?', size: 'xs'}}
                   )
               %>
             </li>
             <li>
-              <%= deactivate_button_to deactivate_user_organization_path(current_organization, user_id: user.id),
+              <%= deactivate_button_to deactivate_user_organization_path(user_id: user.id),
                   {id: dom_id(user), method: :post, class: 'deactivate', rel: "nofollow", data: {confirm: 'This will deactivate the user. Are you sure that you want to submit this?', size: 'xs'}} %>
             </li>
           <% else %>
-            <%= reactivate_button_to reactivate_user_organization_path(current_organization, user_id: user.id),
+            <%= reactivate_button_to reactivate_user_organization_path(user_id: user.id),
                 {id: dom_id(user), method: :post, class: 'reactivate', rel: "nofollow", data: {confirm: 'This will reactivate the user. Are you sure that you want to submit this?', size: 'xs'}} %>
           <% end %>
         </ul>
       </div>
     <% end %>
     <% if current_user.has_role?(Role::ORG_ADMIN, current_organization) && user.has_role?(Role::ORG_ADMIN, current_organization) %>
-      <%= edit_button_to demote_to_user_organization_path(current_organization, user_id: user.id),
+      <%= edit_button_to demote_to_user_organization_path(user_id: user.id),
                  {text: 'Make User'},
                  {method: :post, rel: "nofollow", data: {confirm: 'This will demote the admin to user status. Are you sure that you want to submit this?', size: 'xs'}} unless user.id == current_user.id %>
     <% end %>

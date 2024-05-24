@@ -22,17 +22,10 @@ RSpec.describe Purchase, type: :model do
   it_behaves_like "itemizable"
 
   context "Validations >" do
-    it "must belong to an organization" do
-      expect(build(:purchase, organization_id: nil)).not_to be_valid
-    end
-    it "requires an inventory (storage location)" do
-      expect(build(:purchase, storage_location_id: nil)).not_to be_valid
-    end
-    it "is invalid when the line items are invalid" do
-      d = build(:purchase)
-      d.line_items << build(:line_item, quantity: nil)
-      expect(d).not_to be_valid
-    end
+    it { should belong_to(:organization) }
+    it { should belong_to(:storage_location) }
+    it { should belong_to(:vendor) }
+
     it "is valid if categories have no values" do
       d = build(:purchase, amount_spent_in_cents: 450)
       expect(d).to be_valid

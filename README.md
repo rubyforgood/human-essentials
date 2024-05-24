@@ -65,7 +65,7 @@ Thanks for checking us out! If you're new here, here are some things you should 
 ### Join us on slack 💬
 You can sign up [here](https://join.slack.com/t/rubyforgood/shared_invite/zt-21pyz2ab8-H6JgQfGGI0Ab6MfNOZRIQA) and find us in #human-essentials. Many helpful members are available to answer your questions. Just ask, and someone will be there to help you!
 
-##  Getting Started 🛠️
+##  Getting Started (Local Environment) 🛠️
 
 1. Install Ruby
    - Install the version specified in [`.ruby-version`](.ruby-version).
@@ -123,6 +123,15 @@ You can sign up [here](https://join.slack.com/t/rubyforgood/shared_invite/zt-21p
     Password: password!
   ```
 </details>
+
+##  Getting Started (Codespaces - EXPERIMENTAL) 🛠️
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/rubyforgood/human-essentials/tree/main?quickstart=1)
+
+1. Follow the link above or follow instructions to [create a new Codespace.](https://docs.github.com/en/codespaces/developing-in-a-codespace/creating-a-codespace-for-a-repository); You can use the web editor, or even better open the Codespace in VSCode
+2. Wait for the container to start. This will take a few (10-15) minutes since Ruby needs to be installed, the database needs to be created, and the `bin/setup` script needs to run
+3. Run `bin/start` and visit the URL that pops in VSCode up to see the human essentials page
+4. Login as a sample user with these default credentials (which also work for [staging](https://staging.humanessentials.app/)):
 
 ## Troubleshooting 👷🏼‍♀️
 
@@ -411,4 +420,3 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
-

@@ -1,16 +1,17 @@
 RSpec.describe "Requests", type: :system, js: true do
-  let!(:url_prefix) { "/#{@organization.to_param}" }
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
 
   let(:item1) { create(:item, name: "Good item") }
   let(:item2) { create(:item, name: "Crap item") }
   let(:partner1) { create(:partner, name: "This Guy", email: "thisguy@example.com") }
   let(:partner2) { create(:partner, name: "That Guy", email: "ntg@example.com") }
-  let!(:storage_location) { create(:storage_location, organization: @organization) }
+  let!(:storage_location) { create(:storage_location, organization: organization) }
 
   before do
-    sign_in(@user)
+    sign_in(user)
     travel_to Time.zone.local(2020, 1, 1)
-    TestInventory.create_inventory(@organization, {
+    TestInventory.create_inventory(organization, {
       storage_location.id => {
         item1.id => 500,
         item2.id => 500
@@ -21,7 +22,7 @@ RSpec.describe "Requests", type: :system, js: true do
   after { travel_back }
 
   context "#index" do
-    subject { url_prefix + "/requests" }
+    subject { requests_path }
 
     before do
       create(:request, :started, partner: partner1, request_items: [{ "item_id": item1.id, "quantity": '12' }])
@@ -119,7 +120,7 @@ RSpec.describe "Requests", type: :system, js: true do
   end
 
   context "#show" do
-    subject { url_prefix + "/requests/#{request.id}" }
+    subject { request_path(request.id) }
 
     let(:request_items) {
       [
@@ -127,7 +128,7 @@ RSpec.describe "Requests", type: :system, js: true do
         { item_id: item2.id, quantity: 100}
       ]
     }
-    let!(:request) { create(:request, request_items: request_items, organization: @organization) }
+    let!(:request) { create(:request, request_items: request_items, organization: organization) }
 
     it "should show the request with a request sender if a partner user is set" do
       visit subject
@@ -154,10 +155,10 @@ RSpec.describe "Requests", type: :system, js: true do
       # Create a secondary storage location to test the sum view of estimated on-hand items
       # Add inventory items to both storage locations
       ####
-      second_storage_location = create(:storage_location, organization: @organization)
+      second_storage_location = create(:storage_location, organization: organization)
       TestInventory.clear_inventory(storage_location)
       travel 1.second
-      TestInventory.create_inventory(@organization,
+      TestInventory.create_inventory(organization,
         {
           storage_location.id => {
             item1.id => 234,
@@ -179,7 +180,7 @@ RSpec.describe "Requests", type: :system, js: true do
       end
 
       it "should change to started" do
-        visit url_prefix + "/requests"
+        visit requests_path
         expect(page).to have_content "Started"
         expect(request.reload).to be_status_started
       end
@@ -203,12 +204,12 @@ RSpec.describe "Requests", type: :system, js: true do
   end
 
   describe 'canceling a request as a bank user' do
-    let!(:request) { create(:request, organization: @organization) }
+    let!(:request) { create(:request, organization: organization) }
 
     context 'when a bank user cancels a request' do
       let(:reason) { Faker::Lorem.sentence }
       before do
-        visit url_prefix + "/requests"
+        visit requests_path
       end
 
       it 'should set the request as canceled/discarded and contain the reason' do

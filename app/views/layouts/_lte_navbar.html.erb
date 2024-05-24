@@ -35,7 +35,7 @@
       remaining this week
     </a>
     <div class="dropdown-divider"></div>
-    <%= link_to_if current_organization.id.present?, "View Calendar", schedule_distributions_path(organization_name: current_organization.to_param), class: "dropdown-item dropdown-footer" %>
+    <%= link_to_if current_organization.id.present?, "View Calendar", schedule_distributions_path, class: "dropdown-item dropdown-footer" %>
   </div>
 </li>
 
@@ -63,7 +63,7 @@
     <%= current_user.display_name %>
   </a>
   <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-    <%= link_to edit_user_registration_path(organization_name: nil), class:"dropdown-item" do %>
+    <%= link_to edit_user_registration_path, class:"dropdown-item" do %>
     <i class="fa fa-cog text-aqua"></i> Account Settings
     <% end %>
     <% current_user.switchable_roles.each do |role| %>
@@ -74,20 +74,16 @@
     <% end %>
     <% if current_organization.id.present? &&
         (current_user.has_role?(Role::SUPER_ADMIN) || current_user.has_role?(Role::ORG_ADMIN, current_organization)) %>
-    <% with_options organization_name: current_user.organization.to_param do |with_org| %>
-
-    <div class="dropdown-divider"></div>
-    <%= link_to with_org.users_path, class:"dropdown-item" do %>
-    <i class="fas fa-users mr-2"></i> My Co-Workers
+        <div class="dropdown-divider"></div>
+        <%= link_to users_path, class:"dropdown-item" do %>
+          <i class="fas fa-users mr-2"></i> My Co-Workers
+        <% end %>
+        <%= link_to organization_path, class:"dropdown-item" do %>
+          <i class="fas fa-sitemap mr-2"></i> My Organization
+        <% end %>
     <% end %>
     <div class="dropdown-divider"></div>
-    <%= link_to with_org.organization_path, class:"dropdown-item" do %>
-    <i class="fas fa-sitemap mr-2"></i> My Organization
-    <% end %>
-    <% end %>
-    <% end %>
-    <div class="dropdown-divider"></div>
-    <%= link_to destroy_user_session_path(organization_name: nil), class:"dropdown-item dropdown-footer", method: :delete do %>
+    <%= link_to destroy_user_session_path, class:"dropdown-item dropdown-footer", method: :delete do %>
     <i class="fa fa-sign-out mr-2"></i> Log Out
     <% end %>
   </div>
