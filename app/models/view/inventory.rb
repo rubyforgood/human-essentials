@@ -54,7 +54,7 @@ module View
         end
         items.concat(zero_items)
       end
-      items.sort_by(&:name)
+      items.sort_by { |item| item.name.downcase }
     end
 
     # @param storage_location [StorageLocation]
