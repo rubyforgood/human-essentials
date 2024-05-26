@@ -48,6 +48,9 @@
                   </div>
                 <% end %>
                 <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                  <%= filter_select(scope: :by_request_type, collection: @request_types, key: :last, value: :first, selected: @selected_request_type) %>
+                </div>
+                <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                   <%= filter_select(scope: :by_status, collection: @statuses, key: :last, value: :first, selected: @selected_status) %>
                 </div>
                 <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
@@ -92,6 +95,7 @@
                 <th>Request Sender</th>
                 <th># of Items (Request Limit)</th>
                 <th>Comments</th>
+                <th>Type</th>
                 <th>Status</th>
                 <th class="text-right">Actions</th>
               </tr>

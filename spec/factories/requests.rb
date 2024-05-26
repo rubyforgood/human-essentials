@@ -7,6 +7,7 @@
 #  discard_reason  :text
 #  discarded_at    :datetime
 #  request_items   :jsonb
+#  request_type    :string
 #  status          :integer          default("pending")
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
@@ -40,6 +41,18 @@ FactoryBot.define do
 
   trait :pending do
     status { 'pending' }
+  end
+
+  trait :quantity do
+    request_type { 'quantity' }
+  end
+
+  trait :individual do
+    request_type { 'individual' }
+  end
+
+  trait :child do
+    request_type { 'child' }
   end
 
   trait :with_duplicates do

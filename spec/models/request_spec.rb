@@ -7,6 +7,7 @@
 #  discard_reason  :text
 #  discarded_at    :datetime
 #  request_items   :jsonb
+#  request_type    :string
 #  status          :integer          default("pending")
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
@@ -53,6 +54,16 @@ RSpec.describe Request, type: :model do
 
     it "adds the quantity of all items in the request" do
       expect(request.total_items).to eq(33)
+    end
+  end
+
+  describe "request_type_label" do
+    let(:id_one) { create(:item).id }
+    let(:id_two) { create(:item).id }
+    let(:request) { create(:request, request_items: [{ item_id: id_one, quantity: 15 }, { item_id: id_two, quantity: 18 }], request_type: "individual") }
+
+    it "returns the the first letter of the request_type capitalized" do
+      expect(request.request_type_label).to eq("I")
     end
   end
 
