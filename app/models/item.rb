@@ -66,24 +66,16 @@ class Item < ApplicationRecord
       .alphabetized
   }
 
-  # Scopes - explanation of business rules for filtering scopes as of 20240518.  This is currently a mess.
+  # Scopes - explanation of business rules for filtering scopes as of 20240527.  This was a mess, but is much better now.
   # 1/  Disposable.   Disposables are only the disposable diapers for children.  So we deliberately exclude adult and cloth
-  # 2/  Cloth.  Cloth diapers for children.  Exclude adult cloth.
+  # 2/  Cloth.  Cloth diapers for children.  Exclude adult cloth. Cloth training pants also go here.
   # 3/  Adult incontinence.  Items for adult incontinence -- diapers, ai pads, but not adult wipes.
-  # 4/  Period supplies.  We have a category for menstrual supplies, which includes pads and tampons as indicated below, but also liners.
-  #        In discussion with the business about liners being in AI vs period supplies.   Because what we have is almost
-  #        certainly wrong.
-  # 5/  Other -- Miscellaneous,  plus a few things that have been specifically called out
-  # Known holes and ambiguities as of 20240518.  Working on these with the business
-  # 1/  It looks to me like we are totally excluding adult cloth.  a *very* small value, but...
-  # 2/  Liners.   Liners are a big problem.  *Trying* to get  straight answer from the business so that we don't doublecount
-  #                because liners can, in the real world, be menstrual supplies or AI, and different banks are going to have
-  #                different uses.   Complicating factor -- there are, apparently, some products that are used for AI,
-  #                but not menstrual, some that are used for menstrual, but not AI, and some that are used for either.
-  # 3/  Period supplies -- currently we just have it as tampons and pads.  CL thinks it should be category: menstrual supplies,
-  #                 but see liner issues above.  (note:  "Period supplies" category, in the code below, doesn't exist)
-  # 4/  Looks like we are double counting cloth training pants
-  # 4/  Things we might not be counting:    Wipes -- Childrens
+  # 4/  Period supplies.  All things with 'menstrual in the category'
+  # 5/  Other -- Miscellaneous, and wipes
+  # Known holes and ambiguities as of 20240527.  Working on these with the business
+  # 1/  Liners.   We are adding a new item for AI liners,  and renaming the current liners to be specficially for periods,
+  # having confirmed with the business that the majority of liners are for menstrual use.
+  # However, there is a product which can be used for either, so we are still sussing out what to do about that.
 
   scope :disposable, -> {
     joins(:base_item)
@@ -94,26 +86,24 @@ class Item < ApplicationRecord
 
   scope :cloth_diapers, -> {
     joins(:base_item)
-      .where("lower(base_items.category) LIKE '%cloth%' OR lower(base_items.name) LIKE '%cloth%'")
+      .where("lower(base_items.category) LIKE '%cloth%'")
+      .or(where("base_items.category = 'Training Pants'"))
       .where.not("lower(base_items.category) LIKE '%adult%'")
   }
 
   scope :adult_incontinence, -> {
     joins(:base_item)
-      .where(items: { partner_key: %w(adult_incontinence underpads liners) })
-      .or(where("items.partner_key LIKE '%adult%' AND items.partner_key NOT LIKE '%cloth%' AND items.partner_key NOT LIKE '%wipes'"))
-      .or(where("lower(base_items.category) LIKE '%adult%' AND lower(base_items.category) NOT LIKE '%wipes%'"))
+      .where("lower(base_items.category) LIKE '%adult%' AND lower(base_items.category) NOT LIKE '%wipes%'")
   }
 
   scope :period_supplies, -> {
     joins(:base_item)
-      .where(items: { partner_key: %w(tampons pads) })
-      .or(where("base_items.category = 'Period Supplies'"))
+      .where("lower(base_items.category) LIKE '%menstrual%'")
   }
 
   scope :other_categories, -> {
     joins(:base_item)
-      .where(items: { partner_key: %w(cloth_training_pants wipes adult_wipes) })
+      .where("lower(base_items.category) LIKE '%wipes%'")
       .or(where("base_items.category = 'Miscellaneous'"))
   }
 

@@ -2,7 +2,7 @@ desc "Update the development db to what is being used in prod"
 BACKUP_CONTAINER_NAME = 'backups'
 PASSWORD_REPLACEMENT = 'password'
 
-task :fetch_latest_db => :environment do
+task :fetch_latest_db do
   if Rails.env.production?
     raise "You may not run this backup script in production!"
   end
@@ -30,10 +30,10 @@ task :fetch_latest_db => :environment do
   # environment.
   system("bin/rails jobs:clear")
 
-  ActiveRecord::Base.connection.reconnect!
+  #  ActiveRecord::Base.connection.reconnect!
 
-  puts "Replacing all the passwords with the replacement for ease of use: '#{PASSWORD_REPLACEMENT}'"
-  replace_user_passwords
+  #puts "Replacing all the passwords with the replacement for ease of use: '#{PASSWORD_REPLACEMENT}'"
+  #replace_user_passwords
 
   puts "DONE!"
 end

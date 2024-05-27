@@ -25,8 +25,8 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service, skip_see
                            "Adult Briefs (XS/Small)",
                            "Adult Briefs (XXS)",
                            "Adult Incontinence Pads",
+                            "Liners (Incontinence)",
                            "Underpads (Pack)",
-                           "Adult Liners",
                             "Adult Cloth Diapers (Large/XL/XXL)",
                             "Adult Cloth Diapers (Small/Medium)")
     end
@@ -115,7 +115,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service, skip_see
                              "Adult Briefs (XXS)",
                              "Adult Incontinence Pads",
                              "Underpads (Pack)",
-                             "Adult Liners",
+                             "Liners (Incontinence)",
                               "Adult Cloth Diapers (Large/XL/XXL)",
                               "Adult Cloth Diapers (Small/Medium)")
       end
@@ -139,7 +139,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service, skip_see
                              "Adult Briefs (XXS)",
                              "Adult Incontinence Pads",
                              "Underpads (Pack)",
-                             "Adult Liners",
+                             "Liners (Incontinence)",
                               "Adult Cloth Diapers (Large/XL/XXL)",
                               "Adult Cloth Diapers (Small/Medium)")
       end
