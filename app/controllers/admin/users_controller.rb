@@ -5,7 +5,7 @@ class Admin::UsersController < AdminController
 
   def index
     @filterrific = initialize_filterrific(
-      User.includes(:organization).alphabetized,
+      User.includes(roles: :resource).alphabetized,
       params[:filterrific],
       available_filters: [:search_name, :search_email]
     ) || return

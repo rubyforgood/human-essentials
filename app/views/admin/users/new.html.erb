@@ -38,10 +38,6 @@
 
                   <%= simple_form_for @user, url: admin_users_path do |f| %>
                     <div class="form-inputs">
-                      <%= f.input :organization_id, label: "Organization", wrapper: :input_group, required: true, autofocus: true do %>
-                        <span class="input-group-text"><%= fa_icon "building" %></span>
-                        <%= f.input_field :organization_id, collection: @organizations, class: "form-control" %>
-                      <% end %>
                       <%= render 'admin/users/user_form_fields', f: f %>
 
                     </div>
