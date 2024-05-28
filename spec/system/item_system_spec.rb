@@ -22,7 +22,7 @@ RSpec.describe "Item management", type: :system do
     visit new_item_path
     click_button "Save"
 
-    expect(page.find(".alert")).to have_content "didn't work"
+    expect(page.find(".alert")).to have_content "Base item must exist and Name"
   end
 
   it "can create a new item with dollars decimal amount for value field" do
