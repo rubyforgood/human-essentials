@@ -95,7 +95,7 @@ RSpec.describe "Items", type: :request do
 
         it "shouldn't create an item with the same name" do
           expect { post items_path, params: item_params }.to_not change { Item.count }
-          expect(flash[:error]).to eq("An item with that name already exists (could be an inactive item).")
+          expect(flash[:error]).to eq "Name - An item with that name already exists (could be an inactive item)."
           expect(response).to render_template(:new)
         end
       end
