@@ -1,8 +1,7 @@
 desc "Update the development db to what is being used in prod"
 BACKUP_CONTAINER_NAME = 'backups'
-PASSWORD_REPLACEMENT = 'password'
 
-task :fetch_latest_db => :environment do
+task :fetch_latest_db  do
   if Rails.env.production?
     raise "You may not run this backup script in production!"
   end
@@ -19,7 +18,7 @@ task :fetch_latest_db => :environment do
   db_host = ENV["PG_HOST"].presence || "localhost"
   system("pg_restore --clean --no-acl --no-owner -h #{db_host} -d diaper_dev -U #{db_username} #{backup_filepath}")
 
-  puts "Done!"
+  puts "Restore is Done! Note that we expect a lot of errors (at least 381, but it may grow) above because we deleted the database and things can't be dropped or altered that don't exist"
 
   # Update the ar_internal_metadata table to have the correct environment
   # This is needed because attempting to drop the development DB will
@@ -30,12 +29,7 @@ task :fetch_latest_db => :environment do
   # environment.
   system("bin/rails jobs:clear")
 
-  ActiveRecord::Base.connection.reconnect!
-
-  puts "Replacing all the passwords with the replacement for ease of use: '#{PASSWORD_REPLACEMENT}'"
-  replace_user_passwords
-
-  puts "DONE!"
+  puts "ALL DONE!"
 end
 
 private
@@ -85,13 +79,4 @@ def fetch_file_path(backup)
   File.join(Rails.root, 'tmp', backup.name)
 end
 
-def replace_user_passwords
-  # Generate the encrypted password so that we can quickly update
-  # all users with `update_all`
 
-  u = User.new(password: PASSWORD_REPLACEMENT)
-  u.save
-  encrypted_password = u.encrypted_password
-
-  User.all.update_all(encrypted_password: encrypted_password)
-end
