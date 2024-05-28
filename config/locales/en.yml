@@ -31,4 +31,12 @@
 
 en:
   hello: "Hello world"
+  activerecord:
+    errors:
+      models:
+        item:
+          attributes:
+            name:
+              taken:  "- An item with that name already exists (could be an inactive item)."
+
 
