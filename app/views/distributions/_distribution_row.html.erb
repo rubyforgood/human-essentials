@@ -23,7 +23,7 @@
 
   <td class="text-right">
     <%= view_button_to distribution_path(distribution_row) %>
-    <% if (!distribution_row.complete? && !distribution_row.future?) || current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
+    <% if (!distribution_row.complete? && !distribution_row.future?) || current_user.has_active_role?(Role::ORG_ADMIN, current_organization) %>
       <%= edit_button_to edit_distribution_path(distribution_row), enabled: !distribution_row.has_inactive_item? %>
     <% end %>
     <%= print_button_to print_distribution_path(distribution_row, format: :pdf) %>

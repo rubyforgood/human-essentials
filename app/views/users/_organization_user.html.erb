@@ -11,7 +11,7 @@
   <td><%= user.invitation_status %></td>
   <td nowrap><%= reinvite_user_link(user) %></td>
   <td>
-    <% unless user.has_role?(Role::SUPER_ADMIN) || user.has_role?(Role::ORG_ADMIN, current_organization) %>
+    <% unless user.has_active_role?(Role::SUPER_ADMIN) || user.has_active_role?(Role::ORG_ADMIN, current_organization) %>
       <div class="dropdown">
         <button class="btn btn-default dropdown-toggle" type="button" id="<%= dom_id(user, "dropdownMenu") %>" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
           Actions
@@ -39,7 +39,7 @@
         </ul>
       </div>
     <% end %>
-    <% if current_user.has_role?(Role::ORG_ADMIN, current_organization) && user.has_role?(Role::ORG_ADMIN, current_organization) %>
+    <% if current_user.has_active_role?(Role::ORG_ADMIN, current_organization) && user.has_active_role?(Role::ORG_ADMIN, current_organization) %>
       <%= edit_button_to demote_to_user_organization_path(user_id: user.id),
                  {text: 'Make User'},
                  {method: :post, rel: "nofollow", data: {confirm: 'This will demote the admin to user status. Are you sure that you want to submit this?', size: 'xs'}} unless user.id == current_user.id %>

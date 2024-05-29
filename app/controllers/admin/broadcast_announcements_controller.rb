@@ -3,7 +3,7 @@ class Admin::BroadcastAnnouncementsController < AdminController
   before_action :require_admin
 
   def require_admin
-    verboten! unless current_user.has_role?(Role::SUPER_ADMIN)
+    verboten! unless current_user.has_active_role?(Role::SUPER_ADMIN)
   end
 
   def index

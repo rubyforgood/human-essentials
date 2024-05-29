@@ -490,7 +490,7 @@ def seed_quantity(item_name, organization, storage_location, quantity)
   adjustment = organization.adjustments.create!(
     comment: "Starting inventory",
     storage_location: storage_location,
-    user: User.with_role(:org_admin, organization).first
+    user: User.with_active_role(:org_admin, organization).first
   )
   adjustment.line_items = [LineItem.new(quantity: quantity, item: item, itemizable: adjustment)]
   AdjustmentCreateService.new(adjustment).call

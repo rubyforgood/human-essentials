@@ -15,7 +15,7 @@ Rails.application.routes.draw do
   }
 
   if Rails.env.production?
-    authenticate :user, lambda { |u| u.has_role?(Role::SUPER_ADMIN) } do
+    authenticate :user, lambda { |u| u.has_active_role?(Role::SUPER_ADMIN) } do
       mount Coverband::Reporters::Web.new, at: '/coverage'
     end
   end
@@ -24,7 +24,7 @@ Rails.application.routes.draw do
   # Mount web interface to see delayed job status and queue length.
   # Visible only to logged in users with the `super_admin` role
   #
-  authenticated :user, ->(user) { user.has_role?(Role::SUPER_ADMIN) } do
+  authenticated :user, ->(user) { user.has_active_role?(Role::SUPER_ADMIN) } do
     mount DelayedJobWeb, at: "/delayed_job"
   end
 

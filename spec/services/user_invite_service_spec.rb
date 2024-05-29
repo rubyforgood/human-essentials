@@ -122,6 +122,7 @@ RSpec.describe UserInviteService, type: :service do
     expect(result.name).to be_nil
     expect(result.email).to eq("email2@example.com")
     expect(result.has_role?(:org_user, organization)).to be true
+    expect(result.has_active_role?(:org_user, organization)).to be true
   end
 
   # simulating a blank name specifically in as "" such as a form submission would do.
@@ -140,5 +141,6 @@ RSpec.describe UserInviteService, type: :service do
     expect(result.name).to be_nil
     expect(result.email).to eq("email2@example.com")
     expect(result.has_role?(:org_user, organization)).to be true
+    expect(result.has_active_role?(:org_user, organization)).to be true
   end
 end

@@ -134,7 +134,7 @@
           <i class="nav-icon fa fa-circle-o"></i> Inventory Adjustments
         <% end %>
       </li>
-      <% if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
+      <% if current_user.has_active_role?(Role::ORG_ADMIN, current_organization) %>
         <li class="nav-item <%= active_class(['audits']) %>">
           <%= link_to(audits_path, class: "nav-link #{active_class(['audits'])}") do %>
             <i class="nav-icon fa fa-circle-o"></i> Inventory Audit
@@ -259,7 +259,7 @@
       </li>
     </ul>
   </li>
-  <% if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
+  <% if current_user.has_active_role?(Role::ORG_ADMIN, current_organization) %>
     <li class="nav-item <%= 'active' if current_page?(organization_path) %>">
       <%= link_to(organization_path, class: "nav-link #{'active' if current_page?(organization_path)}") do %>
         <i class="nav-icon fas fa-home"></i>

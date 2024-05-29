@@ -112,10 +112,10 @@ class User < ApplicationRecord
   end
 
   def kind
-    return "super" if has_role?(Role::SUPER_ADMIN)
-    return "admin" if has_role?(Role::ORG_ADMIN, organization)
-    return "normal" if has_role?(Role::ORG_USER, organization)
-    return "partner" if has_role?(Role::PARTNER, partner)
+    return "super" if has_active_role?(Role::SUPER_ADMIN)
+    return "admin" if has_active_role?(Role::ORG_ADMIN, organization)
+    return "normal" if has_active_role?(Role::ORG_USER, organization)
+    return "partner" if has_active_role?(Role::PARTNER, partner)
 
     "normal"
   end
@@ -140,6 +140,10 @@ class User < ApplicationRecord
     false
   end
 
+  # @param role_name [String] the name of the role to filter by.
+  # @param resource [String, Symbol, nil] the resource to filter by (optional).
+  #   If `:any`, the resource will be ignored in the filter.
+  # @return [Array<User>] an array of users that have the specified active role and resource.
   def self.with_active_role(role_name, resource = nil)
     roles = {name: role_name}.merge((resource == :any) ? {} : {resource: resource})
 

@@ -91,7 +91,7 @@ RSpec.describe "Organizations", type: :request do
 
       it "runs successfully" do
         subject
-        expect(user.has_role?(Role::ORG_ADMIN, organization)).to eq(true)
+        expect(user.has_active_role?(Role::ORG_ADMIN, organization)).to eq(true)
         expect(response).to redirect_to(organization_path)
       end
     end
@@ -104,20 +104,33 @@ RSpec.describe "Organizations", type: :request do
 
       it "runs correctly" do
         subject
-        expect(admin_user.reload.has_role?(Role::ORG_ADMIN, admin_user.organization)).to be_falsey
+        expect(admin_user.reload.has_active_role?(Role::ORG_ADMIN, admin_user.organization)).to be_falsey
         expect(response).to redirect_to(organization_path)
       end
     end
 
     describe "PUT #deactivate_user" do
-      subject { put deactivate_user_organization_path(user_id: user.id) }
+      context "when user is org user" do
+        subject { put deactivate_user_organization_path(user_id: user.id) }
 
-      it "redirect after update" do
-        subject
-        expect(response).to redirect_to(organization_path)
-      end
-      it "deactivates the user" do
-        expect { subject }.to change { user.reload.discarded_at }.to be_present
+        it "redirect after update" do
+          subject
+          expect(response).to redirect_to(organization_path)
+        end
+
+        it "discards the user" do
+          expect { subject }.to change { user.reload.discarded? }.from(false).to(true)
+        end
+
+        xit "deactivates the org user role" do
+          role = user.roles.find_by(resource: organization, name: Role::ORG_USER)
+          user_role = UsersRole.find_by(user: user, role: role)
+
+          subject
+
+          expect { user_role.reload }.to change { user_role.deactivated? }.from(false).to(true)
+          expect { user.reload }.to_not change { user.discarded? }
+        end
       end
     end
 
@@ -164,8 +177,8 @@ RSpec.describe "Organizations", type: :request do
         it "redirects after update" do
           subject
           expect(response).to have_http_status(:not_found)
-          expect(other_user.reload.has_role?(Role::ORG_ADMIN, organization)).to eq(false)
-          expect(other_user.reload.has_role?(Role::ORG_ADMIN, other_organization)).to eq(false)
+          expect(other_user.reload.has_active_role?(Role::ORG_ADMIN, organization)).to eq(false)
+          expect(other_user.reload.has_active_role?(Role::ORG_ADMIN, other_organization)).to eq(false)
         end
       end
     end

@@ -151,7 +151,7 @@ class DistributionsController < ApplicationController
   def edit
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
     if (!@distribution.complete? && @distribution.future?) ||
-        current_user.has_role?(Role::ORG_ADMIN, current_organization)
+        current_user.has_active_role?(Role::ORG_ADMIN, current_organization)
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
       @audit_warning = current_organization.audits

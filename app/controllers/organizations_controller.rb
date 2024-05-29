@@ -41,7 +41,7 @@ class OrganizationsController < ApplicationController
 
   def promote_to_org_admin
     user = User.find(params[:user_id])
-    raise ActiveRecord::RecordNotFound unless user.has_role?(Role::ORG_USER, current_organization)
+    raise ActiveRecord::RecordNotFound unless user.has_active_role?(Role::ORG_USER, current_organization)
     begin
       AddRoleService.call(user_id: user.id,
         resource_type: Role::ORG_ADMIN,
@@ -54,7 +54,7 @@ class OrganizationsController < ApplicationController
 
   def demote_to_user
     user = User.find(params[:user_id])
-    raise ActiveRecord::RecordNotFound unless user.has_role?(Role::ORG_ADMIN, current_organization)
+    raise ActiveRecord::RecordNotFound unless user.has_active_role?(Role::ORG_ADMIN, current_organization)
     begin
       RemoveRoleService.call(user_id: params[:user_id],
         resource_type: Role::ORG_ADMIN,
@@ -65,25 +65,28 @@ class OrganizationsController < ApplicationController
     end
   end
 
+  # decativation of a user
   def deactivate_user
     user = User.with_discarded.find_by!(id: params[:user_id])
-    raise ActiveRecord::RecordNotFound unless user.has_role?(Role::ORG_USER, current_organization)
+    raise ActiveRecord::RecordNotFound unless user.has_active_role?(Role::ORG_USER, current_organization)
     user.discard!
+    DeactivateRoleService.call(user_id: user.id, resource_type: Role::ORG_USER, resource_id: current_organization.id)
     redirect_to user_update_redirect_path, notice: "User has been deactivated."
   end
 
   def reactivate_user
     user = User.with_discarded.find_by!(id: params[:user_id])
-    raise ActiveRecord::RecordNotFound unless user.has_role?(Role::ORG_USER, current_organization)
+    raise ActiveRecord::RecordNotFound unless user.has_active_role?(Role::ORG_USER, current_organization)
     user.undiscard!
+    ActivateRoleService.call(user_id: user.id, resource_type: Role::ORG_USER, resource_id: current_organization.id)
     redirect_to user_update_redirect_path, notice: "User has been reactivated."
   end
 
   private
 
   def authorize_user
-    verboten! unless current_user.has_role?(Role::SUPER_ADMIN) ||
-      current_user.has_role?(Role::ORG_USER, current_organization)
+    verboten! unless current_user.has_active_role?(Role::SUPER_ADMIN) ||
+      current_user.has_active_role?(Role::ORG_USER, current_organization)
   end
 
   def organization_params
@@ -120,7 +123,7 @@ class OrganizationsController < ApplicationController
   end
 
   def user_update_redirect_path
-    if current_user.has_role?(Role::SUPER_ADMIN)
+    if current_user.has_active_role?(Role::SUPER_ADMIN)
       admin_organization_path(current_organization.id)
     else
       organization_path

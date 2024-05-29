@@ -1,3 +1,25 @@
+<% if current_user.has_active_role?(Role::SUPER_ADMIN) %>
+<li class="nav-item dropdown">
+  <a class="nav-link" data-bs-toggle="dropdown" href="#">
+    <i class="fa fa-lock"></i> Administration
+  </a>
+  <ul class="dropdown-menu">
+    <li>
+      <%= navigation_link_to "Dashboard", admin_dashboard_path %>
+    </li>
+    <li>
+      <%= navigation_link_to "Organizations", admin_organizations_path %>
+    </li>
+    <li>
+      <%= navigation_link_to "Base items", admin_base_items_path %>
+    </li>
+    <li>
+      <%= navigation_link_to "Users", admin_users_path %>
+    </li>
+  </ul>
+</li>
+<% end %>
+
 <li id="help" class="nav-item dropdown">
   <%= link_to 'Need Help?', help_path, class: 'nav-link bg-yellow-400 mx-2 font-bold rounded-2xl' %>
 </li>
@@ -50,7 +72,7 @@
         <i class="fa fa-repeat text-aqua"></i><%= "Switch to: #{role.resource&.name || "Super Admin"}" %>
       <% end %>
     <% end %>
-    <% if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
+    <% if current_user.has_active_role?(Role::ORG_ADMIN, current_organization) %>
         <div class="dropdown-divider"></div>
         <%= link_to users_path, class:"dropdown-item" do %>
           <i class="fas fa-users mr-2"></i> My Co-Workers

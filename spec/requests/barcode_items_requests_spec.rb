@@ -110,8 +110,8 @@ RSpec.describe "BarcodeItems", type: :request do
       end
 
       it "disallows a non-superadmin to delete a global barcode" do
-        allow_any_instance_of(User).to receive(:has_role?).with(Role::SUPER_ADMIN).and_return(false)
-        allow_any_instance_of(User).to receive(:has_role?).with(Role::ORG_USER, anything).and_return(true)
+        allow_any_instance_of(User).to receive(:has_active_role?).with(Role::SUPER_ADMIN).and_return(false)
+        allow_any_instance_of(User).to receive(:has_active_role?).with(Role::ORG_USER, anything).and_return(true)
         global_barcode = create(:global_barcode_item)
         delete barcode_item_path(global_barcode)
         expect(response).not_to be_successful
