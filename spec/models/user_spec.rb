@@ -130,6 +130,105 @@ RSpec.describe User, type: :model do
     it "discarded?" do
       expect(build(:user, :deactivated).discarded?).to be true
     end
+
+    describe "#with_active_role" do
+      let(:org1) { create(:organization) }
+      let(:org2) { create(:organization) }
+
+      before do
+        create(:user, name: "Active Same Org User", organization: org1)
+        create(:user, name: "Active Different Org User", organization: org2)
+
+        create(:user, name: "Inactive Same Org User", organization: org1)
+        UsersRole.last.update(deactivated: true)
+
+        create(:user, name: "Nil Same Org User", organization: org1)
+        UsersRole.last.update(deactivated: nil)
+
+        create(:user, name: "Inactive Different Org User", organization: org2)
+        UsersRole.last.update(deactivated: true)
+      end
+
+      it "shows only active users for the specified organization" do
+        users = User.with_active_role(Role::ORG_USER, org1).pluck(:name)
+        expect(users).to contain_exactly("Active Same Org User", "Nil Same Org User")
+      end
+
+      it "shows active users for any org if :any specified" do
+        users = User.with_active_role(Role::ORG_USER, :any).pluck(:name)
+        expect(users).to contain_exactly("Active Same Org User", "Active Different Org User", "Nil Same Org User")
+      end
+
+      it "correctly expects no resource if nil is specified" do
+        users = User.with_active_role(Role::SUPER_ADMIN, nil).pluck(:name)
+        expect(users).to be_empty
+
+        create(:super_admin, name: "Super Admin")
+        expect(User.with_active_role(Role::SUPER_ADMIN, nil).pluck(:name)).to contain_exactly("Super Admin")
+      end
+    end
+
+    describe "#has_active_role?" do
+      let(:user) { create(:user) }
+      let(:organization) { user.organization }
+      let(:role) { Role.find_by(name: Role::ORG_USER, resource: organization) }
+      let!(:users_role) { UsersRole.find_by(user: user, role: role) }
+
+      context "when the user role is deactivated" do
+        before { users_role.update(deactivated: true) }
+
+        it { expect(user.has_active_role?(Role::ORG_USER, organization)).to be false }
+      end
+
+      context "when the user role is not deactivated" do
+        before { users_role.update(deactivated: false) }
+
+        it { expect(user.has_active_role?(Role::ORG_USER, organization)).to be true }
+      end
+
+      context "when user role deactivation is nil" do
+        before { users_role.update(deactivated: nil) }
+
+        it { expect(user.has_active_role?(Role::ORG_USER, organization)).to be true }
+      end
+
+      context "when resource is :any" do
+        it 'returns true if the users has the active role for any resource' do
+          org2 = create(:organization)
+          role2 = create(:role, name: Role::ORG_USER, resource: org2)
+          create(:users_role, user: user, role: role2, deactivated: true)
+
+          aggregate_failures do
+            expect(user.has_active_role?(Role::ORG_USER, :any)).to be true
+            expect(user.has_active_role?(Role::ORG_USER, organization)).to be true
+            expect(user.has_active_role?(Role::ORG_USER, org2)).to be false
+          end
+        end
+
+        it 'returns false if the users does not have the active role for any resource' do
+          org2 = create(:organization)
+          role2 = create(:role, name: Role::ORG_USER, resource: org2)
+          create(:users_role, user: user, role: role2, deactivated: true)
+
+          users_role.update(deactivated: true)
+
+          expect(user.has_active_role?(Role::ORG_USER, :any)).to be false
+        end
+      end
+
+      context "when no resource is provided" do
+        let(:role) { create(:role, name: Role::SUPER_ADMIN, resource: nil) }
+        let!(:users_role) { create(:users_role, user: user, role: role) }
+
+        it { expect(user.has_active_role?(Role::SUPER_ADMIN)).to be true }
+      end
+
+      context "when user role does not exist" do
+        let(:user) { create(:user) }
+        let(:organization) { create(:organization) }
+        it { expect(user.has_active_role?(Role::ORG_USER, organization)).to be false }
+      end
+    end
   end
 
   describe 'omniauth' do

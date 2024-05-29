@@ -140,6 +140,28 @@ class User < ApplicationRecord
     false
   end
 
+  def self.with_active_role(role_name, resource = nil)
+    roles = {name: role_name}.merge((resource == :any) ? {} : {resource: resource})
+
+    User.joins(:roles)
+      .where(
+        roles: roles,
+        "users_roles.deactivated": [false, nil]
+      )
+  end
+
+  def has_active_role?(role_name, resource = nil)
+    roles = {name: role_name}.merge((resource == :any) ? {} : {resource: resource})
+
+    UsersRole.joins(:role)
+      .where(
+        user: self,
+        roles: roles,
+        deactivated: [false, nil]
+      )
+      .exists?
+  end
+
   def self.from_omniauth(access_token)
     data = access_token.info
     User.find_by(email: data["email"])

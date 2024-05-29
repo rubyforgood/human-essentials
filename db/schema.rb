@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_05_19_201258) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_25_215030) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -233,8 +233,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_19_201258) do
     t.integer "organization_id"
     t.datetime "issued_at", precision: nil
     t.string "agency_rep"
-    t.integer "state", default: 5, null: false
     t.boolean "reminder_email_enabled", default: false, null: false
+    t.integer "state", default: 5, null: false
     t.integer "delivery_method", default: 0, null: false
     t.decimal "shipping_cost", precision: 8, scale: 2
     t.index ["organization_id"], name: "index_distributions_on_organization_id"
@@ -833,6 +833,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_19_201258) do
   create_table "users_roles", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "role_id"
+    t.boolean "deactivated", default: false
     t.index ["role_id"], name: "index_users_roles_on_role_id"
     t.index ["user_id", "role_id"], name: "index_users_roles_on_user_id_and_role_id"
     t.index ["user_id"], name: "index_users_roles_on_user_id"
