@@ -1,18 +1,17 @@
 require "rails_helper"
 
 RSpec.describe "Reports::ActivityGraph", type: :request do
-  let(:default_params) do
-    {organization_name: @organization.to_param}
-  end
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
 
   describe "while signed in" do
     before do
-      sign_in @user
+      sign_in user
     end
 
     describe "GET #index" do
       subject do
-        get reports_activity_graph_path(default_params.merge(format: response_format))
+        get reports_activity_graph_path(format: response_format)
         response
       end
       let(:response_format) { "html" }
@@ -24,7 +23,7 @@ RSpec.describe "Reports::ActivityGraph", type: :request do
   describe "while not signed in" do
     describe "GET /index" do
       subject do
-        get reports_activity_graph_path(default_params)
+        get reports_activity_graph_path
         response
       end
 

@@ -1,4 +1,4 @@
-RSpec.describe "Account Requests Admin", type: :system, skip_seed: true do
+RSpec.describe "Account Requests Admin", type: :system do
   let(:super_admin) { create(:super_admin) }
 
   context "while signed in as a super admin" do

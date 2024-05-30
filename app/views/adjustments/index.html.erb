@@ -54,7 +54,7 @@
                         text: "Export Adjustments"
                       ) if @adjustments.any? %>
 
-                  <%= new_button_to new_adjustment_path(organization_name: current_organization), {text: "New Adjustment"} %>
+                  <%= new_button_to new_adjustment_path, {text: "New Adjustment"} %>
                   </span>
               </div>
             <% end # form %>

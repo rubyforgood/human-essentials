@@ -1,6 +1,6 @@
 require "rspec"
 
-RSpec.describe HistoricalTrendsHelper, seed_db: false do
+RSpec.describe HistoricalTrendsHelper do
   describe "#last_12_months" do
     it "returns the last 12 months starting from July when the current month is June" do
       allow_any_instance_of(Time).to receive(:month).and_return(6)

@@ -16,7 +16,7 @@
 #  partner_group_id            :bigint
 #
 
-RSpec.describe Partner, type: :model, skip_seed: true do
+RSpec.describe Partner, type: :model do
   describe 'associations' do
     it { should belong_to(:organization) }
     it { should belong_to(:partner_group).optional }
@@ -252,7 +252,7 @@ RSpec.describe Partner, type: :model, skip_seed: true do
   end
 
   describe "import_csv" do
-    let(:organization) { create(:organization, skip_items: true) }
+    let(:organization) { create(:organization) }
 
     it "imports partners from a csv file and prevents multiple imports" do
       before_import = Partner.count

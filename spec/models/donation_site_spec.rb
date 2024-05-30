@@ -16,7 +16,7 @@
 #  organization_id :integer
 #
 
-RSpec.describe DonationSite, type: :model, skip_seed: true do
+RSpec.describe DonationSite, type: :model do
   context "Validations >" do
     it { should belong_to(:organization) }
     it { should validate_presence_of(:name) }
@@ -24,7 +24,7 @@ RSpec.describe DonationSite, type: :model, skip_seed: true do
   end
   describe "import_csv" do
     it "imports storage locations from a csv file" do
-      organization = create(:organization, skip_items: true)
+      organization = create(:organization)
       import_file_path = Rails.root.join("spec", "fixtures", "files", "donation_sites.csv")
       data = File.read(import_file_path, encoding: "BOM|UTF-8")
       csv = CSV.parse(data, headers: true)
