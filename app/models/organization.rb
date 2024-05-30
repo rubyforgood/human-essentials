@@ -73,6 +73,7 @@ class Organization < ApplicationRecord
     has_many :transfers
     has_many :users, -> { distinct }, through: :roles
     has_many :vendors
+    has_many :request_units, class_name: 'Unit'
   end
 
   has_many :items, dependent: :destroy do

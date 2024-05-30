@@ -1,15 +1,11 @@
 require "rails_helper"
 
-RSpec.describe "DistributionsByCounties", type: :request, skip_seed: true do
-  let(:default_params) do
-    {organization_name: organization.to_param}
-  end
-
+RSpec.describe "DistributionsByCounties", type: :request do
   include_examples "distribution_by_county"
 
   context "While not signed in" do
     it "redirects for authentication" do
-      get distributions_by_county_report_path(default_params)
+      get distributions_by_county_report_path
       expect(response).to be_redirect
     end
 
@@ -20,7 +16,7 @@ RSpec.describe "DistributionsByCounties", type: :request, skip_seed: true do
 
       it "shows 'Unspecified 100%' if no served_areas" do
         create(:distribution, :with_items, item: item_1, organization: organization)
-        get distributions_by_county_report_path(default_params)
+        get distributions_by_county_report_path
         expect(response.body).to include("Unspecified")
         expect(response.body).to include("100")
         expect(response.body).to include("$1,050.00")
@@ -31,7 +27,7 @@ RSpec.describe "DistributionsByCounties", type: :request, skip_seed: true do
           create(:distribution, :with_items, item: item_1, organization: organization, partner: partner_1, issued_at: issued_at_present)
           create(:distribution, :with_items, item: item_1, organization: organization, partner: partner_2, issued_at: issued_at_present)
 
-          get distributions_by_county_report_path(default_params)
+          get distributions_by_county_report_path
 
           expect(response.body).to include("45") # First ones are definitely combined
           expect(response.body).to include("$472.50")

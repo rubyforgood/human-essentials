@@ -1,18 +1,17 @@
 require "rails_helper"
 
 RSpec.describe "Reports::ProductDrivesSummary", type: :request do
-  let(:default_params) do
-    {organization_name: @organization.to_param}
-  end
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
 
   describe "while signed in" do
     before do
-      sign_in @user
+      sign_in user
     end
 
     describe "GET #index" do
       subject do
-        get reports_product_drives_summary_path(default_params.merge(format: response_format))
+        get reports_product_drives_summary_path(format: response_format)
         response
       end
       let(:response_format) { "html" }
@@ -23,25 +22,25 @@ RSpec.describe "Reports::ProductDrivesSummary", type: :request do
     context "with filters" do
       before do
         # Create a bunch of historical product_drives
-        create :product_drive_donation, :with_items, item_quantity: 2, money_raised: 700, issued_at: 0.days.ago
-        create :product_drive_donation, :with_items, item_quantity: 3, money_raised: 700, issued_at: 1.day.ago
-        create :product_drive_donation, :with_items, item_quantity: 7, money_raised: 700, issued_at: 3.days.ago
-        create :product_drive_donation, :with_items, item_quantity: 11, money_raised: 700, issued_at: 10.days.ago
-        create :product_drive_donation, :with_items, item_quantity: 13, money_raised: 700, issued_at: 20.days.ago
-        create :product_drive_donation, :with_items, item_quantity: 17, money_raised: 700, issued_at: 30.days.ago
+        create :product_drive_donation, :with_items, item_quantity: 2, money_raised: 700, issued_at: 0.days.ago, organization: organization
+        create :product_drive_donation, :with_items, item_quantity: 3, money_raised: 700, issued_at: 1.day.ago, organization: organization
+        create :product_drive_donation, :with_items, item_quantity: 7, money_raised: 700, issued_at: 3.days.ago, organization: organization
+        create :product_drive_donation, :with_items, item_quantity: 11, money_raised: 700, issued_at: 10.days.ago, organization: organization
+        create :product_drive_donation, :with_items, item_quantity: 13, money_raised: 700, issued_at: 20.days.ago, organization: organization
+        create :product_drive_donation, :with_items, item_quantity: 17, money_raised: 700, issued_at: 30.days.ago, organization: organization
 
-        create :product_drive_donation, :with_items, item_quantity: 12, money_raised: 1700, issued_at: 0.days.ago
-        create :product_drive_donation, :with_items, item_quantity: 13, money_raised: 1700, issued_at: 1.day.ago
-        create :product_drive_donation, :with_items, item_quantity: 17, money_raised: 1700, issued_at: 3.days.ago
-        create :product_drive_donation, :with_items, item_quantity: 111, money_raised: 1700, issued_at: 10.days.ago
-        create :product_drive_donation, :with_items, item_quantity: 113, money_raised: 1700, issued_at: 20.days.ago
-        create :product_drive_donation, :with_items, item_quantity: 117, money_raised: 1700, issued_at: 30.days.ago
+        create :product_drive_donation, :with_items, item_quantity: 12, money_raised: 1700, issued_at: 0.days.ago, organization: organization
+        create :product_drive_donation, :with_items, item_quantity: 13, money_raised: 1700, issued_at: 1.day.ago, organization: organization
+        create :product_drive_donation, :with_items, item_quantity: 17, money_raised: 1700, issued_at: 3.days.ago, organization: organization
+        create :product_drive_donation, :with_items, item_quantity: 111, money_raised: 1700, issued_at: 10.days.ago, organization: organization
+        create :product_drive_donation, :with_items, item_quantity: 113, money_raised: 1700, issued_at: 20.days.ago, organization: organization
+        create :product_drive_donation, :with_items, item_quantity: 117, money_raised: 1700, issued_at: 30.days.ago, organization: organization
       end
 
       let(:formatted_date_range) { date_range.map { _1.to_formatted_s(:date_picker) }.join(" - ") }
 
       before do
-        get reports_product_drives_summary_path(@user.organization), params: {filters: {date_range: formatted_date_range}}
+        get reports_product_drives_summary_path(user.organization), params: {filters: {date_range: formatted_date_range}}
       end
 
       context "today" do
@@ -89,7 +88,7 @@ RSpec.describe "Reports::ProductDrivesSummary", type: :request do
   describe "while not signed in" do
     describe "GET /index" do
       subject do
-        get reports_product_drives_summary_path(default_params)
+        get reports_product_drives_summary_path
         response
       end
 

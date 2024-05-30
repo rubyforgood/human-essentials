@@ -34,7 +34,7 @@
               <%= modal_button_to("#csvImportModal", {icon: "upload", text: "Import Product Drive Participants", size: "md"}) if @product_drive_participants.empty? %>
               <%= download_button_to(product_drive_participants_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Product Drive Participants", size: "md"}) if @product_drive_participants.any? %>
 
-              <%= new_button_to new_product_drive_participant_path(organization_name: current_organization), text: "New Product Drive Participant" %>
+              <%= new_button_to new_product_drive_participant_path, text: "New Product Drive Participant" %>
             </div>
           </div>
         </div>

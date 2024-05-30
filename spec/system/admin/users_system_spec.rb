@@ -1,5 +1,5 @@
-RSpec.describe "Admin Users Management", type: :system, js: true, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe "Admin Users Management", type: :system, js: true do
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
   let(:super_admin) { create(:super_admin, organization: organization) }
@@ -97,6 +97,31 @@ RSpec.describe "Admin Users Management", type: :system, js: true, skip_seed: tru
       fill_in "filterrific_search_email", with: user_email
       page.find("table", text: user_email) # Wait for search
       expect(page).to have_element("table", text: user_email)
+    end
+
+    context "with an organization admin role" do
+      before do
+        super_admin.remove_role(Role::ORG_USER, organization)
+        super_admin.add_role(Role::ORG_ADMIN, organization)
+      end
+
+      it "can see link to switch to the other role" do
+        visit admin_dashboard_path
+        click_link "Administrative User", match: :first
+        expect(page).to have_content "Switch to: #{organization.name}"
+      end
+    end
+
+    context "without another role" do
+      before do
+        super_admin.remove_role(Role::ORG_USER, organization)
+      end
+
+      it "does not see link to switch to another role" do
+        visit admin_dashboard_path
+        click_link "Administrative User", match: :first
+        expect(page).not_to have_content "Switch to: #{organization.name}"
+      end
     end
   end
 end

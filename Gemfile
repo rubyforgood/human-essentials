@@ -14,7 +14,7 @@ gem "pg", "~> 1.5.6"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "7.0.8"
+gem "rails", "7.1.3.3"
 
 ###### MODELS / DATABASE #######
 
@@ -152,9 +152,9 @@ group :development, :test do
   gem "rubocop"
   # Rails add-on for static analysis.
   gem 'rubocop-performance'
-  gem "rubocop-rails", "~> 2.24.1"
+  gem "rubocop-rails", "~> 2.25.0"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.35"
+  gem "standard", "~> 1.36"
   # Erb linter.
   gem "erb_lint"
 end

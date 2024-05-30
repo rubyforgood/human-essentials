@@ -11,7 +11,7 @@
 #  itemizable_id   :integer
 #
 
-RSpec.describe LineItem, type: :model, skip_seed: true do
+RSpec.describe LineItem, type: :model do
   let(:line_item) { build :line_item }
 
   context "Validations >" do

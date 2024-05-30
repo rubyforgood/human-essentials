@@ -1,7 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe "Admin::UsersController", type: :request, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe "Admin::UsersController", type: :request do
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
   let(:super_admin) { create(:super_admin, organization: organization) }
@@ -10,7 +10,7 @@ RSpec.describe "Admin::UsersController", type: :request, skip_seed: true do
     { organization_name: organization.id }
   end
 
-  let(:org) { create(:organization, name: 'Org ABC', skip_items: true) }
+  let(:org) { create(:organization, name: 'Org ABC') }
   let(:partner) { create(:partner, name: 'Partner XYZ', organization: org) }
   let(:user) { create(:user, organization: org, name: 'User 123') }
 
@@ -149,14 +149,14 @@ RSpec.describe "Admin::UsersController", type: :request, skip_seed: true do
     describe "GET #new" do
       it "redirects" do
         get new_admin_user_path
-        expect(response).to redirect_to(dashboard_path(organization_name: organization_admin.organization))
+        expect(response).to redirect_to(dashboard_path)
       end
     end
 
     describe "POST #create" do
       it "redirects" do
         post admin_users_path, params: { user: { organization_id: organization.id } }
-        expect(response).to redirect_to(dashboard_path(organization_name: organization_admin.organization))
+        expect(response).to redirect_to(dashboard_path)
       end
     end
   end
@@ -170,14 +170,14 @@ RSpec.describe "Admin::UsersController", type: :request, skip_seed: true do
     describe "GET #new" do
       it "redirects" do
         get new_admin_user_path
-        expect(response).to redirect_to(dashboard_path(organization_name: user.organization))
+        expect(response).to redirect_to(dashboard_path)
       end
     end
 
     describe "POST #create" do
       it "redirects" do
         post admin_users_path, params: { user: { organization_id: organization.id } }
-        expect(response).to redirect_to(dashboard_path(organization_name: user.organization))
+        expect(response).to redirect_to(dashboard_path)
       end
     end
   end

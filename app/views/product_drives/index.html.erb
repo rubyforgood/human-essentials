@@ -35,7 +35,7 @@
           <!-- /.card-header -->
           <!-- form start -->
           <div class="card-body">
-            <%= form_tag(product_drives_path, method: :get, organization_name: current_organization) do |f| %>
+            <%= form_tag(product_drives_path, method: :get) do |f| %>
               <div class="row">
                 <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
                   <%= filter_select(scope: :by_name, collection: @product_drives_alphabetical, key: :name, value: :name, selected: @selected_name_filter) %>
@@ -61,7 +61,7 @@
                       )
                     end
                   %>
-                  <%= new_button_to new_product_drive_path(organization_name: current_organization), {text: "New Product Drive"} %>
+                  <%= new_button_to new_product_drive_path, {text: "New Product Drive"} %>
                   </span>
               </div>
             <% end # form %>
