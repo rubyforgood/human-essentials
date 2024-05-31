@@ -99,7 +99,7 @@ class OrganizationsController < ApplicationController
       :enable_individual_requests, :enable_quantity_based_requests,
       :ytd_on_distribution_printout, :one_step_partner_invite,
       :hide_value_columns_on_receipt, :hide_package_column_on_receipt,
-      partner_form_fields: []
+      partner_form_fields: [], request_units_attributes: [:id, :name]
     )
   end
 

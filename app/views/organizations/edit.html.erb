@@ -40,7 +40,9 @@
   </div><!-- /.container-fluid -->
 </section>
 
-<%= simple_form_for current_organization, url: {controller: "organizations", action: "update"} do |f| %>
+<%= simple_form_for current_organization,
+  data: { controller: "form-input" },
+  url: {controller: "organizations", action: "update"} do |f| %>
   <section class="content">
     <div class="container-fluid">
       <div class="row">
@@ -100,6 +102,9 @@
 
                 <%= f.input :repackage_essentials, label: 'Does your bank repackage essentials?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
                 <%= f.input :distribute_monthly, label: 'Does your bank distribute monthly?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
+
+                <%= render 'units/request_units' , f: f %>
+
                 <%= f.input :enable_child_based_requests, label: 'Enable partners to make child-based requests?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
                 <%= f.input :enable_individual_requests, label: 'Enable partners to make requests for individuals?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
                 <%= f.input :enable_quantity_based_requests, label: 'Enable partners to make quantity-based requests?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>

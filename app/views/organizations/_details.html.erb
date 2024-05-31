@@ -126,6 +126,22 @@
                 </p>
               </div>
               <div class="mb-4">
+                <h3 class='font-bold'>Custom Request Units</h3>
+                <p>
+                  <% if @organization.request_units.length > 0 %>
+                    <% @organization.request_units.map do |unit| %>
+                      <%= fa_icon "angle-right" %>
+                      <span >
+                          <%= unit.name.titlecase %>
+                      </span> <br>
+                    <% end %>
+                  <% else %>
+                    <%= fa_icon "angle-right" %>
+                    <span> None </span>
+                  <% end %>
+                </p>
+              </div>
+              <div class="mb-4">
                 <h3 class='font-bold'>Child Based Requests?</h3>
                 <p>
                   <%= fa_icon "child" %>

@@ -1,0 +1,15 @@
+<table class='table'>
+  <thead>
+    <tr>
+      <th>Custom request units used (please use singular form -- e.g. pack, not packs)</th>
+    </tr>
+  </thead>
+  <tbody id='request-fields'>
+    <%= render 'units/unit_line_item' , f: f, object: :request_units %>
+  </tbody>
+</table>
+<div>
+  <%= add_element_button('Add Another Item', container_selector: '#request-fields' ) do %>
+    <%= render 'units/unit_line_item' , f: f, object: Unit.new %>
+  <% end %>
+</div>

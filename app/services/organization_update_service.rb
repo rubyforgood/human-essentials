@@ -15,6 +15,7 @@ class OrganizationUpdateService
       if params.has_key?("partner_form_fields")
         params["partner_form_fields"].delete_if { |field| field == "" }
       end
+      organization.request_units.destroy_all
       result = organization.update(params)
       return false unless result
       update_partner_flags(organization)
