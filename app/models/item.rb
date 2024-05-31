@@ -34,7 +34,7 @@ class Item < ApplicationRecord
   belongs_to :kit, optional: true
   belongs_to :item_category, optional: true
 
-  validates :name, uniqueness: { scope: :organization }
+  validates :name, uniqueness: { scope: :organization, case_sensitive: false, message: "- An item with that name already exists (could be an inactive item)." }
   validates :name, presence: true
   validates :organization, presence: true
   validates :distribution_quantity, numericality: { greater_than: 0 }, allow_blank: true
