@@ -43,6 +43,29 @@ RSpec.describe "Items", type: :request do
       end
     end
 
+    describe "GET #edit" do
+      it "shows the selected request_units" do
+        Flipper.enable(:enable_packs)
+        organization_units = create_list(:unit, 3, organization: organization)
+        selected_unit = organization_units.first
+        item = create(:item, organization: organization)
+        create(:item_unit, item: item, name: selected_unit.name)
+
+        get edit_item_path(item)
+
+        parsed_body = Nokogiri::HTML(response.body)
+        checkboxes = parsed_body.css("input[type='checkbox'][name='item[request_unit_ids][]']")
+        expect(checkboxes.length).to eq organization_units.length
+        checkboxes.each do |checkbox|
+          if checkbox['value'] == selected_unit.id.to_s
+            expect(checkbox['checked']).to eq('checked')
+          else
+            expect(checkbox['checked']).to be_nil
+          end
+        end
+      end
+    end
+
     describe 'DELETE #deactivate' do
       let(:item) { create(:item, organization: organization, active: true) }
       let(:storage_location) { create(:storage_location, organization: organization) }
