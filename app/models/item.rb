@@ -67,32 +67,44 @@ class Item < ApplicationRecord
       .alphabetized
   }
 
+  # Scopes - explanation of business rules for filtering scopes as of 20240527.  This was a mess, but is much better now.
+  # 1/  Disposable.   Disposables are only the disposable diapers for children.  So we deliberately exclude adult and cloth
+  # 2/  Cloth.  Cloth diapers for children.  Exclude adult cloth. Cloth training pants also go here.
+  # 3/  Adult incontinence.  Items for adult incontinence -- diapers, ai pads, but not adult wipes.
+  # 4/  Period supplies.  All things with 'menstrual in the category'
+  # 5/  Other -- Miscellaneous, and wipes
+  # Known holes and ambiguities as of 20240527.  Working on these with the business
+  # 1/  Liners.   We are adding a new item for AI liners,  and renaming the current liners to be specficially for periods,
+  # having confirmed with the business that the majority of liners are for menstrual use.
+  # However, there is a product which can be used for either, so we are still sussing out what to do about that.
+
   scope :disposable, -> {
     joins(:base_item)
       .where("lower(base_items.category) LIKE '%diaper%'")
       .where.not("lower(base_items.category) LIKE '%cloth%' OR lower(base_items.name) LIKE '%cloth%'")
+      .where.not("lower(base_items.category) LIKE '%adult%'")
   }
 
   scope :cloth_diapers, -> {
     joins(:base_item)
-      .where("lower(base_items.category) LIKE '%cloth%' OR lower(base_items.name) LIKE '%cloth%'")
+      .where("lower(base_items.category) LIKE '%cloth%'")
+      .or(where("base_items.category = 'Training Pants'"))
+      .where.not("lower(base_items.category) LIKE '%adult%'")
   }
 
   scope :adult_incontinence, -> {
     joins(:base_item)
-      .where(items: { partner_key: %w(adult_incontinence underpads liners) })
-      .or(where("items.partner_key LIKE '%adult%' AND items.partner_key NOT LIKE '%cloth%'"))
+      .where("lower(base_items.category) LIKE '%adult%' AND lower(base_items.category) NOT LIKE '%wipes%'")
   }
 
   scope :period_supplies, -> {
     joins(:base_item)
-      .where(items: { partner_key: %w(tampons pads) })
-      .or(where("base_items.category = 'Period Supplies'"))
+      .where("lower(base_items.category) LIKE '%menstrual%'")
   }
 
   scope :other_categories, -> {
     joins(:base_item)
-      .where(items: { partner_key: %w(cloth_training_pants wipes adult_wipes) })
+      .where("lower(base_items.category) LIKE '%wipes%'")
       .or(where("base_items.category = 'Miscellaneous'"))
   }
 
