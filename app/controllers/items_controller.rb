@@ -48,7 +48,6 @@ class ItemsController < ApplicationController
       # the provided parameters. This is required to render the page again
       # with the error + the invalid parameters
       @item = current_organization.items.new(item_params)
-
       flash[:error] = result.error.record.errors.full_messages.to_sentence
       render action: :new
     end
