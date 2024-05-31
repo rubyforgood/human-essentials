@@ -32,6 +32,17 @@ RSpec.describe "Items", type: :request do
       end
     end
 
+    describe "GET #new" do
+      it "shows the organization request_units options if they exist" do
+        Flipper.enable(:enable_packs)
+        organization_units = create_list(:unit, 3, organization: organization)
+        get new_item_path
+        organization_units.each do |unit|
+          expect(response.body).to include unit.name
+        end
+      end
+    end
+
     describe 'DELETE #deactivate' do
       let(:item) { create(:item, organization: organization, active: true) }
       let(:storage_location) { create(:storage_location, organization: organization) }
