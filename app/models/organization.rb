@@ -214,7 +214,7 @@ class Organization < ApplicationRecord
     rescue ActiveRecord::RecordInvalid => e
       Rails.logger.info "[SEED] Duplicate item! #{e.record.name}"
       existing_item = items.find_by(name: e.record.name)
-      if e.to_s.match(/been taken/).present? && existing_item.other?
+      if e.to_s.match(/already exists/).present? && existing_item.other?
         Rails.logger.info "Changing Item##{existing_item.id} from Other to #{e.record.partner_key}"
         existing_item.update(partner_key: e.record.partner_key)
         existing_item.reload
