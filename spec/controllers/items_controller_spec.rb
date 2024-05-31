@@ -46,6 +46,17 @@ RSpec.describe ItemsController, type: :controller do
           expect(item.reload.visible_to_partners).to be false
         end
       end
+
+      context "request units" do
+        let(:item) { create(:item) }
+        let(:item_unit) { create(:item_unit, item: item) }
+        subject { put :update, params: { id: item.id, item: { request_unit_ids: [item_unit.id] } } }
+        it "should update the item's request units" do
+          expect(item.request_units).to be_empty
+          expect(subject).to redirect_to(items_path)
+          expect(item.reload.request_units).to eq [item_unit]
+        end
+      end
     end
 
     describe "GET #show" do
