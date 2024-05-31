@@ -178,7 +178,8 @@ class ItemsController < ApplicationController
       :on_hand_recommended_quantity,
       :distribution_quantity,
       :visible_to_partners,
-      :active
+      :active,
+      :request_unit_ids
     )
   end
 
