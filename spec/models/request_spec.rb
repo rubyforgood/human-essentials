@@ -56,6 +56,39 @@ RSpec.describe Request, type: :model do
     end
   end
 
+  describe "validations" do
+    let(:item_one) { create(:item) }
+    let(:item_two) { create(:item) }
+    subject { build(:request, request_items: request_items) }
+
+    context "when request_items have unique item_ids" do
+      let(:request_items) do
+        [
+          { "item_id" => item_one.id, "quantity" => 5 },
+          { "item_id" => item_two.id, "quantity" => 3 }
+        ]
+      end
+
+      it "is valid" do
+        expect(subject).to be_valid
+      end
+    end
+
+    context "when request_items do not have unique item_ids" do
+      let(:request_items) do
+        [
+          { "item_id" => item_one.id, "quantity" => 5 },
+          { "item_id" => item_one.id, "quantity" => 3 }
+        ]
+      end
+
+      it "is not valid" do
+        expect(subject).to_not be_valid
+        expect(subject.errors[:request_items]).to include("should have unique item_ids")
+      end
+    end
+  end
+
   describe "versioning" do
     it { is_expected.to be_versioned }
   end

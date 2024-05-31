@@ -33,6 +33,7 @@ class Request < ApplicationRecord
   enum status: { pending: 0, started: 1, fulfilled: 2, discarded: 3 }, _prefix: true
 
   validates :distribution_id, uniqueness: true, allow_nil: true
+  validate :item_requests_uniqueness_by_item_id
   before_save :sanitize_items_data
 
   include Filterable
@@ -58,6 +59,13 @@ class Request < ApplicationRecord
   end
 
   private
+
+  def item_requests_uniqueness_by_item_id
+    item_ids = request_items.map { |item| item["item_id"] }
+    if item_ids.uniq.length != item_ids.length
+      errors.add(:request_items, "should have unique item_ids")
+    end
+  end
 
   def sanitize_items_data
     return unless request_items && request_items_changed?
