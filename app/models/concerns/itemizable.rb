@@ -119,14 +119,6 @@ module Itemizable
     end
   end
 
-  def to_a
-    return line_item_values unless Flipper.enabled?(:deprecate_to_a)
-
-    Rails.logger.warn "Called #to_a on an Itemizable #{inspect}."
-    Rails.logger.warn caller.join("\n")
-    raise StandardError, "Calling to_a on an Itemizable is deprecated. Use #line_item_values instead."
-  end
-
   private
 
   # From Controller parameters

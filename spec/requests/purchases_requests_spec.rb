@@ -32,6 +32,12 @@ RSpec.describe "Purchases", type: :request do
           expect(subject.body).to include("FMV")
           expect(subject.body).to include("$0.84")
         end
+
+        it "shows the Comments column" do
+          create(:purchase, comment: "Purchase Comment", organization: organization)
+          expect(subject.body).to include("Comments")
+          expect(subject.body).to include("Purchase Comment")
+        end
       end
 
       context "csv" do
