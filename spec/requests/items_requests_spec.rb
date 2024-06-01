@@ -111,6 +111,31 @@ RSpec.describe "Items", type: :request do
       end
     end
 
+    describe "CREATE #create" do
+      let!(:existing_item) { create(:item, organization: organization, name: "Really Good Item") }
+
+      describe "with an already existing item name" do
+        let(:item_params) do
+          {
+            item: {
+              name: "really good item",
+              partner_key: create(:base_item).partner_key,
+              value_in_cents: 1001,
+              package_size: 5,
+              distribution_quantity: 30
+            }
+          }
+        end
+
+        it "shouldn't create an item with the same name" do
+          expect { post items_path, params: item_params }.to_not change { Item.count }
+
+          expect(flash[:error]).to eq("Name - An item with that name already exists (could be an inactive item)")
+          expect(response).to render_template(:new)
+        end
+      end
+    end
+
     describe 'GET #index' do
       let(:storage_location) { create(:storage_location, organization: organization) }
       let!(:item) { create(:item, organization: organization, name: "ACTIVEITEM") }
