@@ -48,6 +48,7 @@ RSpec.describe ItemsController, type: :controller do
       end
 
       context "request units" do
+        before(:each) { Flipper.enable(:enable_packs) }
         let(:item) { create(:item, organization:) }
         let(:unit) { create(:unit, organization:) }
         it "should add new item's request units" do
@@ -154,6 +155,7 @@ RSpec.describe ItemsController, type: :controller do
         end
 
         it "should accept request_unit ids and create request_units" do
+          Flipper.enable(:enable_packs)
           unit = create(:unit, organization: organization)
           item_params[:item] = item_params[:item].merge({request_unit_ids: [unit.id]})
           post :create, params: item_params

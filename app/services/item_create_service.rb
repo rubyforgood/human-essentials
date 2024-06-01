@@ -9,8 +9,9 @@ class ItemCreateService
     new_item = organization.items.new(item_params)
     organization.transaction do
       new_item.save!
-      pp new_item.errors
-      new_item.sync_request_units!(@request_unit_ids)
+      if Flipper.enabled?(:enable_packs)
+        new_item.sync_request_units!(@request_unit_ids)
+      end
 
       organization.storage_locations.each do |sl|
         InventoryItem.create!(

@@ -177,18 +177,24 @@ class ItemsController < ApplicationController
       :on_hand_recommended_quantity,
       :distribution_quantity,
       :visible_to_partners,
-      :active,
-      request_unit_ids: []
+      :active
     )
-    @item_params.delete(:request_unit_ids)
-    @item_params
   end
 
   def request_unit_ids
     params.require(:item).permit(request_unit_ids: []).fetch(:request_unit_ids, [])
   end
 
+  # We need to update both the item and the request_units together and fail together
   def update_item
+    if Flipper.enabled?(:enable_packs)
+      update_item_and_request_units
+    else
+      @item.save
+    end
+  end
+
+  def update_item_and_request_units
     begin
       Item.transaction do
         @item.save!
