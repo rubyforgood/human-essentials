@@ -99,6 +99,14 @@ class ItemsController < ApplicationController
     end
   end
 
+  def request_units
+    # print "hello"
+    print params[:id]
+    item = Item.find(params[:id])
+    print item.request_units.inspect
+
+  end
+
   def deactivate
     item = current_organization.items.find(params[:id])
     begin
