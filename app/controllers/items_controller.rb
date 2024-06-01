@@ -179,7 +179,7 @@ class ItemsController < ApplicationController
       :distribution_quantity,
       :visible_to_partners,
       :active,
-      :request_unit_ids
+      request_unit_ids: []
     )
   end
 
