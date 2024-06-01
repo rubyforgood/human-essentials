@@ -10,6 +10,11 @@ class RequestsConfirmationMailer < ApplicationMailer
 
   private
 
+  # fetch_items
+  #
+  # Fetches sorted items associated with the current Request object.
+  #
+  # @return Array of request_items with item names
   def fetch_items(request)
     items_sorted = request.request_items.sort_by { |k| k['item_id'] }
     item_ids = items_sorted&.map { |item| item['item_id'] }
