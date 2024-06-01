@@ -37,7 +37,11 @@ class ItemsController < ApplicationController
   end
 
   def create
-    create = ItemCreateService.new(organization_id: current_organization.id, item_params: item_params, request_unit_ids:)
+    if Flipper.enabled?(:enable_packs)
+      create = ItemCreateService.new(organization_id: current_organization.id, item_params: item_params, request_unit_ids:)
+    else
+      create = ItemCreateService.new(organization_id: current_organization.id, item_params: item_params)
+    end
     result = create.call
 
     if result.success?
