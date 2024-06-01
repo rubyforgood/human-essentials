@@ -85,6 +85,44 @@ RSpec.feature "Distributions", type: :system do
       expect(page).to have_current_path(new_distribution_path)
     end
 
+    it "Does not display a confirmation modal when there are validation errors" do
+      item = View::Inventory.new(organization.id).items_for_location(storage_location.id).first.db_item
+      item.update!(on_hand_minimum_quantity: 5)
+      TestInventory.create_inventory(organization,
+        {
+          storage_location.id => { item.id => 20 }
+        })
+
+      visit new_distribution_path
+      # Forget to fill out partner
+      select storage_location.name, from: "From storage location"
+      select2(page, 'distribution_line_items_item_id', item.name, position: 1)
+      select storage_location.name, from: "distribution_storage_location_id"
+      fill_in "distribution_line_items_attributes_0_quantity", with: 6
+
+      click_button "Save"
+
+      expect(page).to have_css('.alert.error', text: /partner/i)
+
+      # Fix validation error by filling in a partner
+      select partner.name, from: "Partner"
+      click_button "Save"
+
+      # Now the confirmation modal should show up
+      expect(page).to have_selector('#distributionConfirmationModal')
+      within "#distributionConfirmationModal" do
+        expect(page).to have_content("You are about to create a distribution for")
+        expect(find(:element, "data-testid": "distribution-confirmation-partner")).to have_text(partner.name)
+        expect(find(:element, "data-testid": "distribution-confirmation-storage")).to have_text(storage_location.name)
+        expect(page).to have_content(item.name)
+        expect(page).to have_content("6")
+        click_button "Yes, it's correct"
+      end
+
+      expect(page).to have_content "Distributions"
+      expect(page.find(".alert-info")).to have_content "created"
+    end
+
     it "Displays a complete form after validation errors" do
       visit new_distribution_path
 
@@ -257,12 +295,6 @@ RSpec.feature "Distributions", type: :system do
     select "", from: "From storage location"
 
     click_button "Save", match: :first
-
-    expect(page).to have_selector('#distributionConfirmationModal')
-    within "#distributionConfirmationModal" do
-      expect(page).to have_content("You are about to create a distribution for")
-      click_button "Yes, it's correct"
-    end
 
     expect(page).to have_css('.alert.error', text: /storage location/i)
   end

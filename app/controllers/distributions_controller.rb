@@ -10,6 +10,7 @@ class DistributionsController < ApplicationController
   before_action :enable_turbo!, only: %i[new show]
   skip_before_action :authenticate_user!, only: %i(calendar)
   skip_before_action :authorize_user, only: %i(calendar)
+  skip_before_action :verify_authenticity_token, only: :validate
 
   def print
     @distribution = Distribution.find(params[:id])
@@ -69,6 +70,11 @@ class DistributionsController < ApplicationController
         send_data Exports::ExportDistributionsCSVService.new(distributions: @distributions, organization: current_organization, filters: filter_params).generate_csv, filename: "Distributions-#{Time.zone.today}.csv"
       end
     end
+  end
+
+  def validate
+    dist = Distribution.new(distribution_params.merge(organization: current_organization))
+    render json: {valid: dist.valid?}
   end
 
   def create
