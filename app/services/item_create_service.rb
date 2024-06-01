@@ -1,8 +1,7 @@
 class ItemCreateService
-  def initialize(organization_id:, item_params:)
+  def initialize(organization_id:, item_params:, request_unit_ids: [])
     @organization_id = organization_id
-    @request_unit_ids = item_params.fetch(:request_unit_ids, [])
-    item_params.delete(:request_unit_ids)
+    @request_unit_ids = request_unit_ids
     @item_params = item_params
   end
 
@@ -10,7 +9,8 @@ class ItemCreateService
     new_item = organization.items.new(item_params)
     organization.transaction do
       new_item.save!
-      create_request_units!(new_item)
+      pp new_item.errors
+      new_item.sync_request_units!(@request_unit_ids)
 
       organization.storage_locations.each do |sl|
         InventoryItem.create!(
@@ -32,12 +32,5 @@ class ItemCreateService
 
   def organization
     @organization ||= Organization.find(organization_id)
-  end
-
-  def create_request_units!(item)
-    return if @request_unit_ids.empty?
-    organization.request_units.where(id: @request_unit_ids).pluck(:name).each do |name|
-      item.request_units.create!(name:)
-    end
   end
 end
