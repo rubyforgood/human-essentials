@@ -15,7 +15,8 @@ class OrganizationsController < ApplicationController
   def update
     @organization = current_organization
 
-    if OrganizationUpdateService.update(@organization, organization_params)
+    @units = Unit.where(params.dig(:request_units_attributes)&.dig(:name))
+    if OrganizationUpdateService.update(@organization, @units, organization_params)
       redirect_to organization_path, notice: "Updated your organization!"
     else
       flash[:error] = @organization.errors.full_messages.join("\n")

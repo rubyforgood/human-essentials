@@ -1,5 +1,5 @@
 <%= f.fields_for :request_units, defined?(object) ? object : nil do |field| %>
-  <tr data-form-input-target="removeContainer">
+  <tr data-form-input-target="removeContainer" data-controller="form-input" id = "td-remove" >
     <td>
       <%= field.input_field :name, class: "form-control" %>
     </td>
@@ -8,4 +8,3 @@
     </td>
   </tr>
   <% end %>
-
