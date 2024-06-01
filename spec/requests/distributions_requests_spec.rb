@@ -41,7 +41,7 @@ RSpec.describe "Distributions", type: :request do
       context "with signature lines enabled" do
         it "returns http success" do
           organization.update!(signature_for_distribution_pdf: true)
-          get print_distribution_path(default_params.merge(id: create(:distribution).id))
+          get print_distribution_path(id: create(:distribution).id)
           expect(response).to be_successful
         end
       end
