@@ -60,8 +60,14 @@ module Partners
         pre_existing_entry = items[input_item['item_id']]
         if pre_existing_entry
           pre_existing_entry.quantity = (pre_existing_entry.quantity.to_i + input_item['quantity'].to_i).to_s
-          # TODO: Is the following the correct way to merge?
-          pre_existing_entry.children += input_item['children'] || []
+          # NOTE: When this code was written (and maybe it's still the
+          # case as you read it!), the FamilyRequestsController does a
+          # ton of calculation to translate children to item quantities.
+          # If that logic is incorrect, there's not much we can do here
+          # to fix things. Could make sense to move more of that logic
+          # into one of the service objects that instantiate the Request
+          # object (either this one or the FamilyRequestCreateService).
+          pre_existing_entry.children = (pre_existing_entry.children + input_item['children'] || []).uniq
         else
           items[input_item['item_id']] = Partners::ItemRequest.new(
             item_id: input_item['item_id'],
