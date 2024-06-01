@@ -67,7 +67,7 @@ module Partners
           # to fix things. Could make sense to move more of that logic
           # into one of the service objects that instantiate the Request
           # object (either this one or the FamilyRequestCreateService).
-          pre_existing_entry.children = (pre_existing_entry.children + input_item['children'] || []).uniq
+          pre_existing_entry.children = (pre_existing_entry.children + (input_item['children'] || [])).uniq
         else
           items[input_item['item_id']] = Partners::ItemRequest.new(
             item_id: input_item['item_id'],
