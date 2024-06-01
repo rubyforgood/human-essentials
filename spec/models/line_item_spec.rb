@@ -23,7 +23,7 @@ RSpec.describe LineItem, type: :model do
       invalid_line_items = [line_item_1, line_item_2, line_item_3]
       invalid_line_items.each do |line_item|
         expect(line_item).not_to be_valid
-        expect(line_item.errors[:quantity]).to include("is not a number - Note: commas are not allowed")
+        expect(line_item.errors[:quantity]).to include("is not a number. Note: commas are not allowed")
       end
     end
   end

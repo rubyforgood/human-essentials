@@ -21,7 +21,7 @@ class LineItem < ApplicationRecord
   belongs_to :item
 
   validates :item_id, presence: true
-  validates :quantity, numericality: { only_integer: true, less_than: MAX_INT, greater_than: MIN_INT, message: "is not a number - Note: commas are not allowed" }
+  validates :quantity, numericality: { only_integer: true, less_than: MAX_INT, greater_than: MIN_INT, message: "is not a number. Note: commas are not allowed" }
 
   scope :active, -> { joins(:item).where(items: { active: true }) }
 
