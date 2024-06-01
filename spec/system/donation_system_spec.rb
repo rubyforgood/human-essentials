@@ -402,7 +402,7 @@ RSpec.describe "Donations", type: :system, js: true do
           select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
           fill_in "donation_line_items_attributes_0_quantity", with: "1,000"
           click_button "Save"
-          expect(page).to have_content("Quantity is not a number - Note: commas are not allowed")
+          expect(page).to have_content("Quantity is not a number. Note: commas are not allowed")
         end
 
         it "Displays nested errors" do
