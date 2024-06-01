@@ -48,8 +48,8 @@ RSpec.describe "/partners/dashboard", type: :request do
       create(:item_request, request: request, quantity: 7, request_unit: "Pack", item: item2)
       get partners_dashboard_path
 
-      expect(response.body).to match(/1\s+Pack\s+--\s+#{item1.name}/m)
-      expect(response.body).to match(/7\s+Packs\s+--\s+#{item2.name}/m)
+      expect(response.body).to match(/1\s+Pack\s+—\s+#{item1.name}/m)
+      expect(response.body).to match(/7\s+Packs\s+—\s+#{item2.name}/m)
     end
 
     it "skips units when are not provided" do
