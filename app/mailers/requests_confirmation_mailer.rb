@@ -19,12 +19,12 @@ class RequestsConfirmationMailer < ApplicationMailer
   end
 
   def combined_items(request)
-    return [] if request.request_items.size == 0
+    return [] if request.item_requests.size == 0
     # convert items into a hash of (id => list of items with that ID)
-    grouped = request.request_items.group_by { |i| i['item_id'] }
+    grouped = request.item_requests.group_by { |item_request| item_request.item_id }
     # convert hash into an array of items with combined quantities
     grouped.map do |id, items|
-      { 'item_id' => id, 'quantity' => items.map { |i| i['quantity'] }.sum }
+      { 'item_id' => id, 'quantity' => items.map { |i| i.quantity.to_i }.sum }
     end
   end
 end
