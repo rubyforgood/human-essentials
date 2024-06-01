@@ -2,7 +2,14 @@ class DedupItemRequestsInRequests < ActiveRecord::Migration[7.1]
   disable_ddl_transaction!
 
   def up
-    Request.find_each do |request|
+    # There's some really gross request data in Jan 2023 and earlier
+    # that we don't want to get swept up in this migration. We'll need
+    # to fix it some day but for now we'll make recent-ish, well-formed
+    # data obey the dedup requirement, which will reduce weird edge
+    # cases when fulfilling requests + editing distributions.
+    start_date = Date.new(2023, 6, 1)
+
+    Request.where(created_at: start_date..).find_each do |request|
       grouped_item_requests = request.item_requests.to_a.group_by(&:item_id)
 
       Request.transaction do
