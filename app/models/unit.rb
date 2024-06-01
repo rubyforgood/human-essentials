@@ -10,4 +10,5 @@
 #
 class Unit < ApplicationRecord
   belongs_to :organization
+  validates_uniqueness_of :name, scope: :organization
 end
