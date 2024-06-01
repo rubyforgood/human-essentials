@@ -37,7 +37,7 @@ class ItemsController < ApplicationController
   end
 
   def create
-    create = ItemCreateService.new(organization_id: current_organization.id, item_params: item_params)
+    create = ItemCreateService.new(organization_id: current_organization.id, item_params: item_params, request_unit_ids:)
     result = create.call
 
     if result.success?
@@ -177,27 +177,22 @@ class ItemsController < ApplicationController
       :on_hand_recommended_quantity,
       :distribution_quantity,
       :visible_to_partners,
-      :active
+      :active,
+      request_unit_ids: []
     )
+    @item_params.delete(:request_unit_ids)
+    @item_params
   end
 
   def request_unit_ids
-    params.require(:item).permit(request_unit_ids: []).fetch(:request_unit_ids)
-  end
-
-  def sync_item_units!
-    # clear them out and recreate
-    @item.request_units.clear
-    current_organization.request_units.where(id: request_unit_ids).pluck(:name).each do |name|
-      @item.request_units.create!(name:)
-    end
+    params.require(:item).permit(request_unit_ids: []).fetch(:request_unit_ids, [])
   end
 
   def update_item
     begin
       Item.transaction do
         @item.save!
-        sync_item_units!
+        @item.sync_request_units!(request_unit_ids)
       end
     rescue
       return false
