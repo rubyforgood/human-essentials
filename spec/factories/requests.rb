@@ -30,7 +30,9 @@ FactoryBot.define do
     partner_user { ::User.partner_users.first || create(:partners_user) }
     after(:build) do |request|
       request.request_items.each do |request_item|
-        item = Item.find(request_item['item_id'])
+        # This allows for invalid item ids (related to item deletion specs)
+        item = Item.find_or_initialize_by(id: request_item['item_id'])
+        next unless item.persisted?
         item_request = Partners::ItemRequest.new(
           item_id: request_item['item_id'],
           quantity: request_item['quantity'],
