@@ -144,6 +144,26 @@ RSpec.describe "Items", type: :request do
         expect(button3.text.strip).to eq("Deactivate")
         expect(button3.attr('class')).to match(/disabled/)
       end
+
+      context "custom request items" do
+        before(:each) { Flipper.enable(:enable_packs) }
+
+        it "does not show the column if the organization does not use custom request units" do
+          get items_path
+          expect(response.body).not_to include("Custom Request Units")
+        end
+
+        it "shows the column if there are custom request units defined" do
+          units = create_list(:unit, 3, organization:)
+          units.each do |unit|
+            create(:item_unit, item:, name: unit.name)
+          end
+          expect(item.request_units).not_to be_empty
+          get items_path
+          expect(response.body).to include("Custom Request Units")
+          expect(response.body).to include(item.request_units.pluck(:name).join(', '))
+        end
+      end
     end
   end
 end
