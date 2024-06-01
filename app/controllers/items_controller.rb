@@ -4,7 +4,7 @@ class ItemsController < ApplicationController
   def index
     @items = current_organization
       .items
-      .includes(:base_item, :kit, :line_items)
+      .includes(:base_item, :kit, :line_items, :request_units)
       .alphabetized
       .class_filter(filter_params)
       .group('items.id')
