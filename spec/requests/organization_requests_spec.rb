@@ -4,6 +4,7 @@ RSpec.describe "Organizations", type: :request do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
+  let!(:unit) { create(:unit, name: "WolfPack", organization: organization)}
 
   context "While signed in as a normal user" do
     before do
@@ -21,6 +22,14 @@ RSpec.describe "Organizations", type: :request do
           email: organization.email,
           url: organization.url
         )
+      end
+
+      context "when enable_packs flipper is on" do
+        it "displays organization's custom units" do
+          Flipper.enable(:enable_packs)
+          get organization_path
+          expect(response.body).to include unit.name.titlecase
+        end
       end
     end
 
@@ -57,6 +66,15 @@ RSpec.describe "Organizations", type: :request do
                                             email: organization.email,
                                             url: organization.url
                                           )
+      end
+
+      context "when enable_packs flipper is on" do
+        it "should display custom units and units form" do
+          Flipper.enable(:enable_packs)
+          get edit_organization_path
+          expect(response.body).to include ("Custom request units used (please use singular form -- e.g. pack, not packs)")
+          expect(response.body).to include unit.name
+        end
       end
     end
 

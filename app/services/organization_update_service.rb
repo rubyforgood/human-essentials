@@ -15,8 +15,15 @@ class OrganizationUpdateService
       if params.has_key?("partner_form_fields")
         params["partner_form_fields"].delete_if { |field| field == "" }
       end
-      organization.request_units.destroy_all
-      result = organization.update(params)
+
+      if Flipper.enabled?(:enable_packs)
+        # Should be updated to not allow deletion of units in use
+        organization.request_units.destroy_all
+        result = organization.update(params)
+      else
+        result = organization.update(params.except(:request_units_attributes))
+      end
+
       return false unless result
       update_partner_flags(organization)
       true

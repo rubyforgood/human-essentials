@@ -1,12 +1,11 @@
 <%= f.fields_for :request_units, defined?(object) ? object : nil do |field| %>
   <tr data-form-input-target="removeContainer">
     <td>
-        <!-- <%= f.input :whatever, label: "Whatever" , wrapper: :input_group do %> -->
-          <%= field.input_field :name, class: "form-control" %>
-            <!-- <% end %> -->
+      <%= field.input_field :name, class: "form-control" %>
     </td>
     <td>
-      <%= remove_element_button "Remove" , container_selector: '#td-remove' %>
+      <%= remove_element_button "Remove" , container_selector: '#td-remove'%>
     </td>
   </tr>
   <% end %>
+
