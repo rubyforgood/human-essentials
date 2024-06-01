@@ -49,12 +49,12 @@ RSpec.describe ItemsController, type: :controller do
 
       context "request units" do
         let(:item) { create(:item) }
-        let(:item_unit) { create(:item_unit, item: item) }
-        subject { put :update, params: { id: item.id, item: { request_unit_ids: [item_unit.id] } } }
+        let(:unit) { create(:unit, organization: organization) }
+        subject { put :update, params: { id: item.id, item: { request_unit_ids: [unit.id] } } }
         it "should update the item's request units" do
           expect(item.request_units).to be_empty
           expect(subject).to redirect_to(items_path)
-          expect(item.reload.request_units).to eq [item_unit]
+          expect(item.reload.request_units).to eq [unit.id]
         end
       end
     end
@@ -128,6 +128,15 @@ RSpec.describe ItemsController, type: :controller do
           post :create, params: item_params
 
           expect(response).not_to have_error
+        end
+
+        it "should accept request_unit ids and create request_units" do
+          unit = create(:unit, organization: organization)
+          item_params[:item] = item_params[:item].merge({request_unit_ids: [unit.id]})
+          post :create, params: item_params
+          expect(response).not_to have_error
+          newly_created_item = Item.last
+          expect(newly_created_item.request_units.pluck(:name)).to match_array [unit.name]
         end
 
         it "should redirect to the item page" do
