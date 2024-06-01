@@ -61,9 +61,9 @@ class Request < ApplicationRecord
   private
 
   def item_requests_uniqueness_by_item_id
-    item_ids = request_items.map { |item| item["item_id"] }
+    item_ids = item_requests.map(&:item_id)
     if item_ids.uniq.length != item_ids.length
-      errors.add(:request_items, "should have unique item_ids")
+      errors.add(:item_requests, "should have unique item_ids")
     end
   end
 
