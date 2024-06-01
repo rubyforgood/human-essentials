@@ -81,7 +81,6 @@ class ItemsController < ApplicationController
   def update
     @item = current_organization.items.find(params[:id])
     @item.attributes = item_params
-
     deactivated = @item.active_changed? && !@item.active
     if deactivated && !@item.can_deactivate?
       @base_items = BaseItem.without_kit.alphabetized
@@ -90,7 +89,7 @@ class ItemsController < ApplicationController
       return
     end
 
-    if @item.save
+    if update_item
       redirect_to items_path, notice: "#{@item.name} updated!"
     else
       @base_items = BaseItem.without_kit.alphabetized
@@ -178,9 +177,32 @@ class ItemsController < ApplicationController
       :on_hand_recommended_quantity,
       :distribution_quantity,
       :visible_to_partners,
-      :active,
-      request_unit_ids: []
+      :active
     )
+  end
+
+  def request_unit_ids
+    params.require(:item).permit(request_unit_ids: []).fetch(:request_unit_ids)
+  end
+
+  def sync_item_units!
+    # clear them out and recreate
+    @item.request_units.clear
+    current_organization.request_units.where(id: request_unit_ids).pluck(:name).each do |name|
+      @item.request_units.create!(name:)
+    end
+  end
+
+  def update_item
+    begin
+      Item.transaction do
+        @item.save!
+        sync_item_units!
+      end
+    rescue
+      return false
+    end
+    true
   end
 
   helper_method \
