@@ -28,20 +28,6 @@ FactoryBot.define do
     request_items { random_request_items }
     comments { "Urgent" }
     partner_user { ::User.partner_users.first || create(:partners_user) }
-    after(:build) do |request|
-      request.request_items.each do |request_item|
-        # This allows for invalid item ids (related to item deletion specs)
-        item = Item.find_or_initialize_by(id: request_item['item_id'])
-        next unless item.persisted?
-        item_request = Partners::ItemRequest.new(
-          item_id: request_item['item_id'],
-          quantity: request_item['quantity'],
-          name: item.name,
-          partner_key: item.partner_key
-        )
-        request.item_requests << item_request
-      end
-    end
   end
 
   trait :started do
