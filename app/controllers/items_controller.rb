@@ -4,7 +4,7 @@ class ItemsController < ApplicationController
   def index
     @items = current_organization
       .items
-      .includes(:base_item, :kit, :line_items)
+      .includes(:base_item, :kit, :line_items, :request_units)
       .alphabetized
       .class_filter(filter_params)
       .group('items.id')
@@ -37,7 +37,11 @@ class ItemsController < ApplicationController
   end
 
   def create
-    create = ItemCreateService.new(organization_id: current_organization.id, item_params: item_params)
+    create = if Flipper.enabled?(:enable_packs)
+      ItemCreateService.new(organization_id: current_organization.id, item_params: item_params, request_unit_ids:)
+    else
+      ItemCreateService.new(organization_id: current_organization.id, item_params: item_params)
+    end
     result = create.call
 
     if result.success?
@@ -80,7 +84,6 @@ class ItemsController < ApplicationController
   def update
     @item = current_organization.items.find(params[:id])
     @item.attributes = item_params
-
     deactivated = @item.active_changed? && !@item.active
     if deactivated && !@item.can_deactivate?
       @base_items = BaseItem.without_kit.alphabetized
@@ -89,7 +92,7 @@ class ItemsController < ApplicationController
       return
     end
 
-    if @item.save
+    if update_item
       redirect_to items_path, notice: "#{@item.name} updated!"
     else
       @base_items = BaseItem.without_kit.alphabetized
@@ -179,6 +182,31 @@ class ItemsController < ApplicationController
       :visible_to_partners,
       :active
     )
+  end
+
+  def request_unit_ids
+    params.require(:item).permit(request_unit_ids: []).fetch(:request_unit_ids, [])
+  end
+
+  # We need to update both the item and the request_units together and fail together
+  def update_item
+    if Flipper.enabled?(:enable_packs)
+      update_item_and_request_units
+    else
+      @item.save
+    end
+  end
+
+  def update_item_and_request_units
+    begin
+      Item.transaction do
+        @item.save!
+        @item.sync_request_units!(request_unit_ids)
+      end
+    rescue
+      return false
+    end
+    true
   end
 
   helper_method \
