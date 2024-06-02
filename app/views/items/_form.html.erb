@@ -45,7 +45,7 @@
 
               <% if Flipper.enabled?(:enable_packs) %>
                 <%= f.input :request_units, label: "Additional Custom Request Units" do %>
-                  <%= f.association :request_units, as: :check_boxes, collection: current_organization.request_units, checked: selected_request_units(@item), label_method: :name, value_method: :id, class: "form-check-input" %>
+                  <%= f.association :request_units, as: :check_boxes, collection: current_organization.request_units, checked: selected_item_request_units(@item), label_method: :name, value_method: :id, class: "form-check-input" %>
                 <% end %>
               <% end %>
 
