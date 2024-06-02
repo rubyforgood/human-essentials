@@ -9,7 +9,7 @@ class OrganizationUpdateService
     # @param organization [Organization]
     # @param params [ActionDispatch::Http::Parameters]
     # @return [Boolean]
-    def update(organization, units, params)
+    def update(organization, params)
       return false unless valid?(organization, params)
 
       if params.has_key?("partner_form_fields")
@@ -17,13 +17,11 @@ class OrganizationUpdateService
       end
 
       if Flipper.enabled?(:enable_packs)
-        # Should be updated to not allow deletion of units in use
-        organization_units = organization.request_units.pluck(:name)
-        new_units = units.pluck(:name)
-        units_to_delete = organization_units - new_units
-        #organization.request_units.destroy_all
-        result = organization.update(params)
-        organization.request_units.where(name: units_to_delete).destroy_all
+        # Needs logic to keep units that are in use
+        units = params[:request_units_attributes].to_h.values
+        new_units = units.map{|unit| Unit.find_or_initialize_by(unit)}
+        result = organization.update(params.except(:request_units_attributes))
+        organization.request_units = new_units
       else
         result = organization.update(params)
       end

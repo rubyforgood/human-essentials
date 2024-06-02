@@ -1,10 +1,11 @@
-<%= f.fields_for :request_units, defined?(object) ? object : nil do |field| %>
-  <tr data-form-input-target="removeContainer" data-controller="form-input" id = "td-remove" >
+<%= f.fields_for :request_units, defined?(object) ? object : nil, include_id: false do |field| %>
+  <tr data-form-input-target="removeContainer" data-controller="form-input" id="td-remove" >
     <td>
       <%= field.input_field :name, class: "form-control" %>
+      <%= field.hidden_field(:id)%>
     </td>
     <td>
-      <%= remove_element_button "Remove" , container_selector: '#td-remove'%>
+      <%= remove_element_button "Remove" , container_selector: 'whatecwer'%>
     </td>
   </tr>
-  <% end %>
+<% end %>
