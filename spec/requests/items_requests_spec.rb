@@ -32,6 +32,40 @@ RSpec.describe "Items", type: :request do
       end
     end
 
+    describe "GET #new" do
+      it "shows the organization request_units options if they exist" do
+        Flipper.enable(:enable_packs)
+        organization_units = create_list(:unit, 3, organization: organization)
+        get new_item_path
+        organization_units.each do |unit|
+          expect(response.body).to include unit.name
+        end
+      end
+    end
+
+    describe "GET #edit" do
+      it "shows the selected request_units" do
+        Flipper.enable(:enable_packs)
+        organization_units = create_list(:unit, 3, organization: organization)
+        selected_unit = organization_units.first
+        item = create(:item, organization: organization)
+        create(:item_unit, item: item, name: selected_unit.name)
+
+        get edit_item_path(item)
+
+        parsed_body = Nokogiri::HTML(response.body)
+        checkboxes = parsed_body.css("input[type='checkbox'][name='item[request_unit_ids][]']")
+        expect(checkboxes.length).to eq organization_units.length
+        checkboxes.each do |checkbox|
+          if checkbox['value'] == selected_unit.id.to_s
+            expect(checkbox['checked']).to eq('checked')
+          else
+            expect(checkbox['checked']).to be_nil
+          end
+        end
+      end
+    end
+
     describe 'DELETE #deactivate' do
       let(:item) { create(:item, organization: organization, active: true) }
       let(:storage_location) { create(:storage_location, organization: organization) }
@@ -134,6 +168,26 @@ RSpec.describe "Items", type: :request do
         button3 = page.css(".btn[href='/items/#{non_deactivate_item.id}/deactivate']")
         expect(button3.text.strip).to eq("Deactivate")
         expect(button3.attr('class')).to match(/disabled/)
+      end
+
+      context "custom request items" do
+        before(:each) { Flipper.enable(:enable_packs) }
+
+        it "does not show the column if the organization does not use custom request units" do
+          get items_path
+          expect(response.body).not_to include("Custom Request Units")
+        end
+
+        it "shows the column if there are custom request units defined" do
+          units = create_list(:unit, 3, organization:)
+          units.each do |unit|
+            create(:item_unit, item:, name: unit.name)
+          end
+          expect(item.request_units).not_to be_empty
+          get items_path
+          expect(response.body).to include("Custom Request Units")
+          expect(response.body).to include(item.request_units.pluck(:name).join(', '))
+        end
       end
     end
   end

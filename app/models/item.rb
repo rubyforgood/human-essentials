@@ -235,6 +235,13 @@ class Item < ApplicationRecord
     inventory_items.find_by(storage_location_id: storage_location_id)
   end
 
+  def sync_request_units!(unit_ids)
+    request_units.clear
+    organization.request_units.where(id: unit_ids).pluck(:name).each do |name|
+      request_units.create!(name:)
+    end
+  end
+
   private
 
   def update_associated_kit_name

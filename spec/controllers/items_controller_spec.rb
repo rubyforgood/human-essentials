@@ -46,6 +46,41 @@ RSpec.describe ItemsController, type: :controller do
           expect(item.reload.visible_to_partners).to be false
         end
       end
+
+      context "request units" do
+        before(:each) { Flipper.enable(:enable_packs) }
+        let(:item) { create(:item, organization:) }
+        let(:unit) { create(:unit, organization:) }
+        it "should add new item's request units" do
+          expect(item.request_units).to be_empty
+          request = put :update, params: { id: item.id, item: { request_unit_ids: [unit.id] } }
+          expect(request).to redirect_to(items_path)
+          expect(response).not_to have_error
+          expect(item.request_units.reload.pluck(:name)).to match_array [unit.name]
+        end
+
+        it "should remove item request units" do
+          # add an existing unit
+          create(:item_unit, item:, name: unit.name)
+          expect(item.request_units.size).to eq 1
+          request = put :update, params: { id: item.id, item: { request_unit_ids: [""] } }
+          expect(response).not_to have_error
+          expect(request).to redirect_to(items_path)
+          expect(item.request_units.reload).to be_empty
+        end
+
+        it "should add and remove request units at the same time" do
+          # attach a different unit to the item
+          unit_to_remove = create(:unit, organization:)
+          create(:item_unit, item:, name: unit_to_remove.name)
+          expect(item.request_units.pluck(:name)).to match_array [unit_to_remove.name]
+          request = put :update, params: { id: item.id, item: { request_unit_ids: [unit.id] } }
+          expect(response).not_to have_error
+          expect(request).to redirect_to(items_path)
+          # We should have removed the existing unit and replaced it with the new one
+          expect(item.request_units.reload.pluck(:name)).to match_array [unit.name]
+        end
+      end
     end
 
     describe "GET #show" do
@@ -117,6 +152,16 @@ RSpec.describe ItemsController, type: :controller do
           post :create, params: item_params
 
           expect(response).not_to have_error
+        end
+
+        it "should accept request_unit ids and create request_units" do
+          Flipper.enable(:enable_packs)
+          unit = create(:unit, organization: organization)
+          item_params[:item] = item_params[:item].merge({request_unit_ids: [unit.id]})
+          post :create, params: item_params
+          expect(response).not_to have_error
+          newly_created_item = Item.last
+          expect(newly_created_item.request_units.pluck(:name)).to match_array [unit.name]
         end
 
         it "should redirect to the item page" do
