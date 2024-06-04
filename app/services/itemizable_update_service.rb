@@ -15,6 +15,8 @@ module ItemizableUpdateService
       from_location = to_location = itemizable.storage_location
       to_location = StorageLocation.find(params[:storage_location_id]) if params[:storage_location_id]
 
+      verify_intervening_audit_on_storage_location_items(itemizable: itemizable, from_location_id: from_location.id, to_location_id: to_location.id)
+
       apply_change_method = (type == :increase) ? :increase_inventory : :decrease_inventory
       undo_change_method = (type == :increase) ? :decrease_inventory : :increase_inventory
 
@@ -57,5 +59,22 @@ module ItemizableUpdateService
     itemizable.reload
     # Apply the new changes to the storage location inventory
     to_location.public_send(apply_change_method, itemizable.line_item_values)
+  end
+
+  # @param itemizable [Itemizable]
+  # @param from_location [StorageLocation]
+  # @param to_location [StorageLocation]
+  def self.verify_intervening_audit_on_storage_location_items(itemizable:, from_location_id:, to_location_id:)
+    return unless from_location_id != to_location_id && Audit.finalized_since?(itemizable, [from_location_id, to_location_id])
+
+    itemizable_type = itemizable.class.name.downcase
+    case itemizable_type
+    when "distribution"
+      raise "Cannot change the storage location because there has been an intervening audit of some items. " \
+      "If you need to change the storage location, please reclaim this distribution and create a new distribution from the new storage location."
+    else
+      raise "Cannot change the storage location because there has been an intervening audit of some items. " \
+      "If you need to change the storage location, please delete this #{itemizable_type} and create a new #{itemizable_type} with the new storage location."
+    end
   end
 end
