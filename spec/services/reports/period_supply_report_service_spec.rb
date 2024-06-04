@@ -133,6 +133,10 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
         it "returns the correct quantity of donated period supplies from kits" do 
           expect(report.donated_items_from_kits).to eq(50)
         end
+
+        it "returns the correct quantity of donated period supplies from kits" do 
+          expect(report.purchased_kits).to eq(0)
+        end
       end
     end
   end
