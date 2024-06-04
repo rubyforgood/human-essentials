@@ -95,7 +95,7 @@ module Reports
     def percent_bought
       return 0.0 if total_supplies.zero?
 
-      (purchased_supplies / total_supplies.to_f) * 100
+      ((purchased_supplies + purchased_kits) / total_supplies.to_f) * 100
     end
 
     # @return [String]
@@ -111,6 +111,15 @@ module Reports
         .merge(Item.period_supplies)
         .where(itemizable: organization.purchases.for_year(year))
         .sum(:quantity)
+    end
+
+    def purchased_kits
+    organization
+      .purchases
+      .for_year(year)
+      .joins(line_items: { item: :kit })
+      .select('kits.id')
+      .distinct.count
     end
 
     # @return [Integer]
