@@ -16,5 +16,10 @@
     }
   },
 
+  // DOCKER env variable passed to Cuprite to enable --no-sandbox so Chrome can run in Docker
+  "remoteEnv": {
+    "DOCKER": "true"
+  },
+
   "postCreateCommand": ".devcontainer/post-create.sh"
  }
