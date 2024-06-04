@@ -15,7 +15,7 @@ module Reports
       @report ||= {name: "Period Supplies",
                    entries: {
                      "Period supplies distributed" => number_with_delimiter(total_distributed_period_supplies),
-                     "Period supplies per adult per month" => monthly_supplies&.round || 0,
+                     "Period supplies per adult per month" => (monthly_supplies || 0 + distributed_period_supplies_from_kits_per_month)&.round,
                      "Period supplies" => types_of_supplies,
                      "% period supplies donated" => "#{percent_donated.round}%",
                      "% period supplies bought" => "#{percent_bought.round}%",
@@ -57,6 +57,10 @@ module Reports
 
       result = ActiveRecord::Base.connection.execute(sanitized_sql)
       result.first['sum'].to_i
+    end
+
+    def distributed_period_supplies_from_kits_per_month
+      distributed_period_supplies_from_kits / 12 
     end
 
     def total_distributed_period_supplies

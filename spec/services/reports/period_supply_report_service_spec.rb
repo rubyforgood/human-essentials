@@ -1,30 +1,32 @@
 RSpec.describe Reports::PeriodSupplyReportService, type: :service do
   let(:year) { 2020 }
   let(:organization) { create(:organization) }
-  let(:within_time) { Time.zone.parse("2020-05-31 14:00:00") }
-  let(:outside_time) { Time.zone.parse("2019-05-31 14:00:00") }
+  
   subject(:report) do
     described_class.new(organization: organization, year: year)
   end
 
   describe "#report" do
-    it "should report zero values" do
-      expect(report.report[:entries]).to match(hash_including({
-        "% period supplies bought" => "0%",
-        "% period supplies donated" => "0%",
-        "Period supplies distributed" => "0",
-        "Period supplies per adult per month" => 0,
-        "Money spent purchasing period supplies" => "$0.00"
-      }))
-      expect(report.report[:entries]["Period supplies"].split(", "))
-        .to contain_exactly("Tampons", "Pads", "Adult Liners")
+    context "with no values" do 
+      it "should report zero values" do
+        expect(report.report[:entries]).to match(hash_including({
+          "% period supplies bought" => "0%",
+          "% period supplies donated" => "0%",
+          "Period supplies distributed" => "0",
+          "Period supplies per adult per month" => 0,
+          "Money spent purchasing period supplies" => "$0.00"
+        }))
+        expect(report.report[:entries]["Period supplies"].split(", "))
+          .to contain_exactly("Tampons", "Pads", "Adult Liners")
+      end
     end
 
-    before(:each) do
+    context "with values" do 
+      before(:each) do
         # Organization.seed_items(organization)
 
-        # within_time = Time.zone.parse("2020-05-31 14:00:00")
-        # outside_time = Time.zone.parse("2019-05-31 14:00:00")
+        within_time = Time.zone.parse("2020-05-31 14:00:00")
+        outside_time = Time.zone.parse("2019-05-31 14:00:00")
 
         period_supplies_item = organization.items.period_supplies.first
         non_period_supplies_item = organization.items.where.not(id: organization.items.period_supplies).first
@@ -103,24 +105,25 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
         end
       end
 
-    describe "with values" do
-      it "returns the correct quantity of period supplies from kits" do
-        expect(report.distributed_period_supplies_from_kits).to eq(100)
-      end
+      describe "with values" do
+        it "should report normal values" do
+          organization.items.period_supplies.first.update!(distribution_quantity: 20)
 
-      it "should report normal values" do
-        organization.items.period_supplies.first.update!(distribution_quantity: 20)
-
-        expect(report.report[:name]).to eq("Period Supplies")
-        expect(report.report[:entries]).to match(hash_including({
-          "% period supplies bought" => "60%",
-          "% period supplies donated" => "40%",
-          "Period supplies distributed" => "2,100",
-          "Period supplies per adult per month" => 20,
-          "Money spent purchasing period supplies" => "$30.00"
-        }))
-        expect(report.report[:entries]["Period supplies"].split(", "))
+          expect(report.report[:name]).to eq("Period Supplies")
+          expect(report.report[:entries]).to match(hash_including({
+            "% period supplies bought" => "60%",
+            "% period supplies donated" => "40%",
+            "Period supplies distributed" => "2,100",
+            "Period supplies per adult per month" => 20,
+            "Money spent purchasing period supplies" => "$30.00"
+            }))
+          expect(report.report[:entries]["Period supplies"].split(", "))
           .to contain_exactly("Tampons", "Pads", "Adult Liners")
+        end
+
+        it "returns the correct quantity of period supplies from kits" do
+          expect(report.distributed_period_supplies_from_kits).to eq(100)
+        end
       end
     end
   end
