@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: item_request_units
+# Table name: item_units
 #
 #  id         :bigint           not null, primary key
 #  name       :string           not null

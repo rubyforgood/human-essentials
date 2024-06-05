@@ -19,7 +19,7 @@ class OrganizationUpdateService
       if Flipper.enabled?(:enable_packs)
         # Needs logic to keep units that are in use
         units = params[:request_units_attributes].to_h.values
-        new_units = units.map{|unit| Unit.find_or_initialize_by(unit)}
+        new_units = units.map { |unit| Unit.find_or_initialize_by(unit) }
         result = organization.update(params.except(:request_units_attributes))
         organization.request_units = new_units
       else

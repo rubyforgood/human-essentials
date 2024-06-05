@@ -11,5 +11,5 @@
 class Unit < ApplicationRecord
   belongs_to :organization
   # This validation prevent duplicates except when creating two units of the same name at the same time (on the organization update page)
-  validates_uniqueness_of :name, scope: :organization
+  validates :name, uniqueness: {scope: :organization}
 end

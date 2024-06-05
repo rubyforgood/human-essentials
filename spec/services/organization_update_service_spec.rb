@@ -14,7 +14,7 @@ RSpec.describe OrganizationUpdateService do
 
       it "Should add request_units to the organization if flipper is on" do
         Flipper.enable(:enable_packs)
-        params = {request_units_attributes:{"1"=>{"name"=>"newpack"}}}
+        params = {request_units_attributes: {"1" => {"name" => "newpack"}}}
         described_class.update(organization, params)
         expect(organization.errors.none?).to eq(true)
         expect(organization.reload.request_units.pluck(:name)).to match_array(["newpack"])
