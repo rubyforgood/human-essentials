@@ -12,6 +12,7 @@ import { Controller } from "@hotwired/stimulus"
  * If the pre-check fails, it submits the form to the server for full validation and render with the errors.
 
  * The modal shows the user what they're about to submit, including items and quantities to distribute.
+ * If multiple items have the same name, the quantities will be combined into a single row for display.
  * If the user clicks the "Yes..." button from the modal, it submits the form.
  * If the user clicks the "No..." button from the modal, it closes and user remains on the same url.
  */
@@ -34,7 +35,7 @@ export default class extends Controller {
 
   openModal(event) {
     event.preventDefault();
-    this.debugFormData();
+    // this.debugFormData();
 
     const formData = new FormData(this.formTarget);
     const formObject = this.buildNestedObject(formData);
@@ -94,14 +95,21 @@ export default class extends Controller {
     this.storageNameTarget.textContent = storageName;
   }
 
+  // Iterate over the items and if any items have the same name, then combine their quantities.
   populateItemsAndQuantities() {
-    let itemsHtml = "";
+    let combinedItems = {};
     this.itemSelectionTargets.forEach((itemSel, index) => {
       const itemName = itemSel.selectedOptions[0].text;
-      const itemQuantity = this.quantityTargets[index].value;
-      itemsHtml += `<tr><td>${itemName}</td><td>${itemQuantity}</td></tr>`;
+      if (combinedItems.hasOwnProperty(itemName)) {
+        combinedItems[itemName] += Number(this.quantityTargets[index].value);
+      } else {
+        combinedItems[itemName] = Number(this.quantityTargets[index].value);
+      }
     });
-    this.tbodyTarget.innerHTML = itemsHtml;
+    const combinedItemsHtml = Object.entries(combinedItems)
+      .map(([itemName, quantity]) => `<tr><td>${itemName}</td><td>${quantity}</td></tr>`)
+      .join('');
+    this.tbodyTarget.innerHTML = combinedItemsHtml;
   }
 
   debugFormData() {

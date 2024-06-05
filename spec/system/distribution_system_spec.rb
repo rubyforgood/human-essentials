@@ -55,7 +55,7 @@ RSpec.feature "Distributions", type: :system do
       end
     end
 
-    it "Displays a confirmation modal and allows user to return to the new form" do
+    it "Displays a confirmation modal with combined items and allows user to return to the new form" do
       item = View::Inventory.new(organization.id).items_for_location(storage_location.id).first.db_item
       item.update!(on_hand_minimum_quantity: 5)
       TestInventory.create_inventory(organization,
@@ -68,7 +68,13 @@ RSpec.feature "Distributions", type: :system do
       select storage_location.name, from: "From storage location"
       select2(page, 'distribution_line_items_item_id', item.name, position: 1)
       select storage_location.name, from: "distribution_storage_location_id"
-      fill_in "distribution_line_items_attributes_0_quantity", with: 18
+      fill_in "distribution_line_items_attributes_0_quantity", with: 15
+
+      # This will fill in another item row with the same item but an additional quantity of 3
+      click_on "Add Another Item"
+      quantity_fields = all('input[data-distribution-confirmation-target="quantity"]')
+      second_quantity_field = quantity_fields[1]
+      second_quantity_field&.fill_in(with: '3')
 
       click_button "Save"
 
@@ -78,6 +84,7 @@ RSpec.feature "Distributions", type: :system do
         expect(find(:element, "data-testid": "distribution-confirmation-partner")).to have_text(partner.name)
         expect(find(:element, "data-testid": "distribution-confirmation-storage")).to have_text(storage_location.name)
         expect(page).to have_content(item.name)
+        # There are two line items in the form for the same quantity (15 + 3 = 18)
         expect(page).to have_content("18")
         click_button "No, I need to make changes"
       end
