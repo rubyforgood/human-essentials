@@ -21,7 +21,7 @@ class AccountRequest < ApplicationRecord
   validates :email, presence: true, uniqueness: true
   validates :request_details, presence: true, length: { minimum: 50 }
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
-  validates :organization_website, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "it should look like 'http://www.example.com'" }, allow_blank: true
+  validates :organization_website, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "should look like 'http://www.example.com'" }, allow_blank: true
 
   validate :email_not_already_used_by_organization
   validate :email_not_already_used_by_user
