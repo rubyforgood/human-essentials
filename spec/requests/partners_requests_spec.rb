@@ -107,7 +107,22 @@ RSpec.describe "Partners", type: :request do
     context "html" do
       let(:response_format) { 'html' }
 
-      it { is_expected.to be_successful }
+      context "without org admin" do
+        it 'should not show the manage users button' do
+          expect(subject).to be_successful
+          expect(subject.body).not_to include("Manage Users")
+        end
+      end
+
+      context "without org admin" do
+        before(:each) do
+          user.add_role(Role::ORG_ADMIN, organization)
+        end
+        it 'should show the manage users button' do
+          expect(subject).to be_successful
+          expect(subject.body).to include("Manage Users")
+        end
+      end
 
       context "when the partner is invited" do
         it "includes impact metrics" do
