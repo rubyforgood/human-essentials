@@ -1,5 +1,5 @@
 def set_up_flipper
-  flipper_app = Flipper::UI.app(Flipper.instance) do |builder|
+  flipper_app = Flipper::UI.app(Flipper.instance, rack_protection: {except: :http_origin}) do |builder|
     builder.use Rack::Auth::Basic do |username, password|
       username == ENV["FLIPPER_USERNAME"] && password == ENV["FLIPPER_PASSWORD"]
     end
