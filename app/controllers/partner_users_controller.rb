@@ -29,7 +29,7 @@ class PartnerUsersController < ApplicationController
     user = User.find(params[:id])
 
     if user.remove_role(Role::PARTNER, @partner)
-      redirect_back(fallback_location: "/", notice: "Access to #{user.name} has been revoked.")
+      redirect_back(fallback_location: "/", notice: "Access to #{@partner.name} has been revoked for #{user.display_name}.")
     else
       redirect_back(fallback_location: "/", alert: "Invitation failed. Check the form for errors.")
     end
