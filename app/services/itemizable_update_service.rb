@@ -65,7 +65,7 @@ module ItemizableUpdateService
   # @param from_location [StorageLocation]
   # @param to_location [StorageLocation]
   def self.verify_intervening_audit_on_storage_location_items(itemizable:, from_location_id:, to_location_id:)
-    return unless from_location_id != to_location_id && Audit.finalized_since?(itemizable, [from_location_id, to_location_id])
+    return if from_location_id == to_location_id || !Audit.finalized_since?(itemizable, [from_location_id, to_location_id])
 
     itemizable_type = itemizable.class.name.downcase
     case itemizable_type
