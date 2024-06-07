@@ -35,7 +35,6 @@ export default class extends Controller {
 
   openModal(event) {
     event.preventDefault();
-    // this.debugFormData();
 
     const formData = new FormData(this.formTarget);
     const formObject = this.buildNestedObject(formData);
@@ -51,12 +50,10 @@ export default class extends Controller {
     .then((response) => response.json())
     .then((data) => {
       if (data.valid) {
-        console.log("=== DistributionConfirmationController VALID");
         this.populatePartnerAndStorage();
         this.populateItemsAndQuantities();
         $(this.modalTarget).modal("show");
       } else {
-        console.log("=== DistributionConfirmationController INVALID");
         this.formTarget.requestSubmit();
       }
     })
