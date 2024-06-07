@@ -335,17 +335,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_19_201258) do
     t.index ["feature_key", "key", "value"], name: "index_flipper_gates_on_feature_key_and_key_and_value", unique: true
   end
 
-  create_table "inventory_discrepancies", force: :cascade do |t|
-    t.bigint "organization_id", null: false
-    t.bigint "event_id", null: false
-    t.json "diff"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["event_id"], name: "index_inventory_discrepancies_on_event_id"
-    t.index ["organization_id", "created_at"], name: "index_inventory_discrepancies_on_organization_id_and_created_at"
-    t.index ["organization_id"], name: "index_inventory_discrepancies_on_organization_id"
-  end
-
   create_table "inventory_items", id: :serial, force: :cascade do |t|
     t.integer "storage_location_id"
     t.integer "item_id"
@@ -495,6 +484,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_19_201258) do
     t.boolean "one_step_partner_invite", default: false, null: false
     t.boolean "hide_value_columns_on_receipt", default: false
     t.boolean "hide_package_column_on_receipt", default: false
+    t.boolean "signature_for_distribution_pdf", default: false
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
@@ -892,8 +882,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_19_201258) do
   add_foreign_key "donations", "product_drives"
   add_foreign_key "donations", "storage_locations"
   add_foreign_key "families", "partners"
-  add_foreign_key "inventory_discrepancies", "events"
-  add_foreign_key "inventory_discrepancies", "organizations"
   add_foreign_key "item_categories", "organizations"
   add_foreign_key "item_categories_partner_groups", "item_categories"
   add_foreign_key "item_categories_partner_groups", "partner_groups"
