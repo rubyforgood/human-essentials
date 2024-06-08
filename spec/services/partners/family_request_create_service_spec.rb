@@ -55,6 +55,7 @@ RSpec.describe Partners::FamilyRequestCreateService do
         let(:second_item_id) { items_to_request.second.id.to_i }
         let(:child1) { create(:partners_child) }
         let(:child2) { create(:partners_child) }
+        let(:child3) { create(:partners_child) }
         let(:family_requests_attributes) do
           [
             {
@@ -66,6 +67,11 @@ RSpec.describe Partners::FamilyRequestCreateService do
               item_id: second_item_id,
               person_count: 2,
               children: [child1, child2]
+            },
+            {
+              item_id: second_item_id,
+              person_count: 2,
+              children: [child1, child3]
             }
           ]
         end
@@ -85,7 +91,12 @@ RSpec.describe Partners::FamilyRequestCreateService do
           expect(first_item_request.children).to contain_exactly(child1)
 
           second_item_request = partner_request.item_requests.find_by(item_id: second_item_id)
-          expect(second_item_request.children).to contain_exactly(child1, child2)
+          # testing the de-duping logic of request create service
+          expect(second_item_request.children).to contain_exactly(child1, child2, child3)
+          expect(second_item_request.children.count).to eq(3)
+
+          expect(first_item_request.quantity.to_i).to eq(first_item_request.item.default_quantity)
+          expect(second_item_request.quantity.to_i).to eq(second_item_request.item.default_quantity * 4)
         end
       end
 
