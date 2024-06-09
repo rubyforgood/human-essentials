@@ -14,8 +14,13 @@ export default class extends Controller {
      * This is a workaround to auto focus on the select2 input when it is opened.
      */
     $(this.element).on('select2:open', function (e) {
-      $(".select2-search__field")[0].focus();
-    })
+      let select2Instance = $(e.target).data('select2');
+      if (select2Instance) {
+        let searchField = select2Instance.dropdown.$search || select2Instance.selection.$search;
+        if (searchField) {
+          searchField.focus();
+        }
+      }
+    });
   }
-
 }
