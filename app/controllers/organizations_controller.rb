@@ -101,7 +101,7 @@ class OrganizationsController < ApplicationController
       :hide_value_columns_on_receipt, :hide_package_column_on_receipt,
       :signature_for_distribution_pdf,
       partner_form_fields: [],
-      request_units_attributes: [:id, :organization_id, :name]
+      request_unit_ids: []
     )
   end
 
