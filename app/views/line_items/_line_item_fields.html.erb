@@ -10,30 +10,14 @@
         <label class='my-1 mx-auto font-weight-normal'>OR</label>
         <div class='d-flex flex-row'>
           <span class="li-name w-100">
-            <%= field.input :item_id,
-              collection: @items,
-              prompt: "Choose an item",
-              include_blank: "",
-              label: false,
-              input_html: {
-                data: {
-                  distribution_confirmation_target: "itemSelection"
-                },
-                class: "my-0 line_item_name", "data-controller": "select2"
-              } %>
+            <%= field.input :item_id, collection: @items, prompt: "Choose an item", include_blank: "", label: false, input_html: { class: "my-0 line_item_name", "data-controller": "select2" } %>
           </span>
           <div class="li-quantity mx-2">
             <%= field.input :quantity,
               as: :string,
               placeholder: "Quantity",
               label: false,
-              input_html: {
-                data: {
-                  distribution_confirmation_target: "quantity",
-                  quantity: ""
-                },
-                class: "quantity my-0"
-              } %>
+              input_html: { class: "quantity my-0", data: { quantity: "" } } %>
           </div>
         </div>
       </div>

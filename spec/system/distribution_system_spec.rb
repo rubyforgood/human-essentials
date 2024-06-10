@@ -72,7 +72,7 @@ RSpec.feature "Distributions", type: :system do
 
       # This will fill in another item row with the same item but an additional quantity of 3
       click_on "Add Another Item"
-      quantity_fields = all('input[data-distribution-confirmation-target="quantity"]')
+      quantity_fields = all('input[data-quantity]')
       second_quantity_field = quantity_fields[1]
       second_quantity_field&.fill_in(with: '3')
 

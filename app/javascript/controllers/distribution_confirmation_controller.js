@@ -10,23 +10,18 @@ import { Controller } from "@hotwired/stimulus"
  * If the pre-check passes, it shows the modal. Because the confirmation modal should only be shown
  * when the form data can pass initial validation.
  * If the pre-check fails, it submits the form to the server for full validation and render with the errors.
+ *
+ * The pre-check validation endpoint also returns the html body to display in the modal if validation passes,
+ * which includes the partner the distribution is going to, the storage location the distribution is from,
+ * and the items/quantities to be distributed.
 
- * The modal shows the user what they're about to submit, including items and quantities to distribute.
- * If multiple items have the same name, the quantities will be combined into a single row for display.
  * If the user clicks the "Yes..." button from the modal, it submits the form.
  * If the user clicks the "No..." button from the modal, it closes and user remains on the same url.
  */
 export default class extends Controller {
   static targets = [
     "modal",
-    "form",
-    "partnerSelection",
-    "storageSelection",
-    "partnerName",
-    "storageName",
-    "itemSelection",
-    "quantity",
-    "tbody"
+    "form"
   ]
 
   static values = {
@@ -50,15 +45,14 @@ export default class extends Controller {
     .then((response) => response.json())
     .then((data) => {
       if (data.valid) {
-        this.populatePartnerAndStorage();
-        this.populateItemsAndQuantities();
+        this.modalTarget.innerHTML = data.body;
         $(this.modalTarget).modal("show");
       } else {
         this.formTarget.requestSubmit();
       }
     })
     .catch((error) => {
-      // Something went wrong trying to talk to server validation endpoint
+      // Something went wrong in communication to server validation endpoint
       // In this case, just submit the form as if the user had clicked Save.
       // NICE TO HAVE: Send to bugsnag but need to install/configure https://www.npmjs.com/package/@bugsnag/js
       console.log(`=== DistributionConfirmationController ERROR ${error}`);
@@ -83,30 +77,6 @@ export default class extends Controller {
     }
 
     return formObject;
-  }
-
-  populatePartnerAndStorage() {
-    const partnerName = this.partnerSelectionTarget.selectedOptions[0].text;
-    const storageName = this.storageSelectionTarget.selectedOptions[0].text;
-    this.partnerNameTarget.textContent = partnerName;
-    this.storageNameTarget.textContent = storageName;
-  }
-
-  // Iterate over the items and if any items have the same name, then combine their quantities.
-  populateItemsAndQuantities() {
-    let combinedItems = {};
-    this.itemSelectionTargets.forEach((itemSel, index) => {
-      const itemName = itemSel.selectedOptions[0].text;
-      if (combinedItems.hasOwnProperty(itemName)) {
-        combinedItems[itemName] += Number(this.quantityTargets[index].value);
-      } else {
-        combinedItems[itemName] = Number(this.quantityTargets[index].value);
-      }
-    });
-    const combinedItemsHtml = Object.entries(combinedItems)
-      .map(([itemName, quantity]) => `<tr><td>${itemName}</td><td>${quantity}</td></tr>`)
-      .join('');
-    this.tbodyTarget.innerHTML = combinedItemsHtml;
   }
 
   debugFormData() {
