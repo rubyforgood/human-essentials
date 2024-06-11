@@ -25,6 +25,11 @@ RSpec.describe " Participant", type: :system, js: true do
       expect(page.find(:xpath, "//table/tbody/tr[3]/td[1]")).to have_content(@third.business_name)
     end
 
+    it "allows single Participants to show comments" do
+      visit product_drive_participant_path(product_drive_participant)
+      expect(page).to have_xpath("//table/tbody/tr/td", text: @first.comment)
+    end
+
     context "When the s have donations associated with them already" do
       before(:each) do
         create(:donation, :with_items, created_at: 1.day.ago, item_quantity: 10, source: Donation::SOURCES[:product_drive], product_drive: product_drive, product_drive_participant: product_drive_participant)
@@ -53,6 +58,7 @@ RSpec.describe " Participant", type: :system, js: true do
       fill_in "Contact Name", with: product_drive_participant_traits[:contact_name]
       fill_in "Business Name", with: product_drive_participant_traits[:business_name]
       fill_in "Phone", with: product_drive_participant_traits[:phone]
+      fill_in "Comment", with: product_drive_participant_traits[:comment]
 
       expect do
         click_button "Save"
@@ -72,16 +78,21 @@ RSpec.describe " Participant", type: :system, js: true do
   context "when editing an existing product drive participant" do
     subject { edit_product_drive_participant_path(product_drive_participant.id) }
 
-    it "allows a user to update the contact info for a product drive participant" do
+    it "allows a user to update the contact info and comments for a product drive participant" do
       new_email = "foo@bar.com"
+      new_comment = "test comment"
       visit subject
       fill_in "Phone", with: ""
       fill_in "E-mail", with: new_email
+      fill_in "Comment", with: new_comment
       click_button "Save"
 
       expect(page.find(".alert")).to have_content "updated"
       expect(page).to have_content(product_drive_participant.contact_name)
       expect(page).to have_content(new_email)
+
+      visit product_drive_participant_path(product_drive_participant)
+      expect(page).to have_content(new_comment)
     end
 
     it "does not allow a user to update a product drive participant with empty attributes" do
