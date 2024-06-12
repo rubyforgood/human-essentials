@@ -25,24 +25,24 @@ RSpec.describe " Participant", type: :system, js: true do
       expect(page.find(:xpath, "//table/tbody/tr[3]/td[1]")).to have_content(@third.business_name)
     end
 
-    it "allows single Participants to show comments" do
+    it "allows single participants to show comments" do
       visit product_drive_participant_path(product_drive_participant)
       expect(page).to have_xpath("//table/tbody/tr/td", text: @first.comment)
     end
 
-    context "When the s have donations associated with them already" do
+    context "When the participants have donations associated with them already" do
       before(:each) do
         create(:donation, :with_items, created_at: 1.day.ago, item_quantity: 10, source: Donation::SOURCES[:product_drive], product_drive: product_drive, product_drive_participant: product_drive_participant)
         create(:donation, :with_items, created_at: 1.week.ago, item_quantity: 15, source: Donation::SOURCES[:product_drive], product_drive: product_drive, product_drive_participant: product_drive_participant)
       end
 
-      it "shows existing  Participants in the #index with some summary stats" do
+      it "shows existing participants in the #index with some summary stats" do
         visit subject
         expect(page).to have_xpath("//table/tbody/tr/td", text: product_drive_participant.business_name)
         expect(page).to have_xpath("//table/tbody/tr/td", text: "25")
       end
 
-      it "allows single  Participants to show semi-detailed stats about donations from that product drive" do
+      it "allows single participants to show semi-detailed stats about donations from that product drive" do
         visit product_drive_participant_path(product_drive_participant)
         expect(page).to have_xpath("//table/tbody/tr", count: 3)
       end
@@ -52,7 +52,7 @@ RSpec.describe " Participant", type: :system, js: true do
   context "when creating new product drive participants" do
     subject { new_product_drive_participant_path }
 
-    it "allows a user to create a new product drive instance" do
+    it "allows a user to create a new product drive participant" do
       visit subject
       product_drive_participant_traits = attributes_for(:product_drive_participant)
       fill_in "Contact Name", with: product_drive_participant_traits[:contact_name]
@@ -67,7 +67,7 @@ RSpec.describe " Participant", type: :system, js: true do
       expect(page.find(".alert")).to have_content "added"
     end
 
-    it "does not allow a user to add a new product drive instance with empty attributes" do
+    it "does not allow a user to add a new product drive participant with empty attributes" do
       visit subject
       click_button "Save"
 
