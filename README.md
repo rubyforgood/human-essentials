@@ -62,19 +62,6 @@ Thanks for checking us out! Check out our [Contributing Guidelines](https://gith
 
 Please feel free to contribute! Priority will be given to pull requests that address outstanding issues and have appropriate test coverage. Focus on issues tagged with the next milestone for higher priority.
 
-To contribute:
-* Identify an unassigned issue
-* Assign the issue to yourself to avoid duplicated efforts (or request assignment by adding a comment)
-* Fork the repo if you're not a contributor yet
-* Create a new branch for the issue using the format `XXX-brief-description-of-feature`, where `XXX` is the issue number
-* If you create a new model run `bundle exec annotate` from the root of the app
-* Create tests to validate that your work fixes the Issue (if you need help with this, please reach out!)
-* Commit locally using descriptive messages that indicate the affected parts of the app
-* Ensure all tests pass successfully; if any fail, fix the issues causing the failures
-* Make a final commit if tests needed fixing
-* Push up the branch
-* Create a pull request and indicate the addressed issue in the title
-
 ### Squashing Commits
 
 Consider the balance of "polluting the git log with commit messages" vs. "providing useful detail about the history of changes in the git log". If you have several smaller commits that serve a one purpose, you are encouraged to squash them into a single commit. There's no hard and fast rule here about this (for now), just use your best judgement. Please don't squash other people's commits. Everyone who contributes here deserves credit for their work! :)

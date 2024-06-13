@@ -14,9 +14,8 @@ Many helpful members are available to answer your questions. Just ask, and someo
 
 You won't be yelled at for giving your best effort. The worst that can happen is that you'll be politely asked to change something. We appreciate any sort of contributions, and don't want a wall of rules to get in the way of that.
 
-# Contributing Steps
-## Getting Started
-### Local Environment 🛠️
+# Getting Started
+## Local Environment 🛠️
 1. Install Ruby
    - Install the version specified in [`.ruby-version`](.ruby-version).
    - Visit the [Install Ruby on Rails](https://gorails.com/setup/osx/12-monterey) guide by GoRails for Ubuntu, Windows, and macOSX setup. ⚠️ Follow only the Installing Ruby step, as our project setup differs ⚠️ It is highly recommended you use a ruby version manager such as [rbenv](https://github.com/rbenv/rbenv), [asdf](https://asdf-vm.com/), or [rvm](https://rvm.io/).
@@ -30,7 +29,7 @@ You won't be yelled at for giving your best effort. The worst that can happen is
 5. Run `bin/start` and visit http://localhost:3000/ to see the human essentials page.
 6. Log in as a sample user with the default [credentials](#credentials).
  
-### Credentials
+## Credentials
  These credentials also work for [staging](https://staging.humanessentials.app/):
 
 <details>
@@ -78,7 +77,7 @@ You won't be yelled at for giving your best effort. The worst that can happen is
   ```
 </details>
 
-### Codespaces - EXPERIMENTAL 🛠️
+## Codespaces - EXPERIMENTAL 🛠️
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/rubyforgood/human-essentials/tree/main?quickstart=1)
 
@@ -87,11 +86,26 @@ You won't be yelled at for giving your best effort. The worst that can happen is
 3. Run `bin/start` and visit the URL that pops in VSCode up to see the human essentials page
 4. Login as a sample user with the default [credentials](#credentials).
 
-### Troubleshooting 👷🏼‍♀️
+## Troubleshooting 👷🏼‍♀️
 
 Please let us know by opening up an issue! We have many new contributors come through and it is likely what you experienced will happen to them as well.
 
 - *"My RBENV installation didn't work!"* - The rbenv repository provides a [rbenv-doctor script](https://github.com/rbenv/rbenv-installer#rbenv-doctor) to verify the installation and check if a ruby version is installed
+
+# Contributing workflow
+
+1. **Identify an unassigned issue**.
+2. **Assign it** to avoid duplicated efforts (or request assignment by adding a comment).
+3. **Fork the repo** if you're not a contributor yet.
+4. **Create a new branch** for the issue using the format `XXX-brief-description-of-feature`, where `XXX` is the issue number.
+5. **Commit fixes locally** using descriptive messages that indicate the affected parts of the app
+6. If you create a new model run `bundle exec annotate` from the root of the app
+7. **Create RSpec tests** to validate that your work fixes the issue (if you need help with this, please reach out!) 
+8. **Run the tests** and make sure all tests pass successfully; if any fail, fix the issues causing the failures.
+9. **Final commit** if tests needed fixing.
+10. **Squash smaller commits.**
+11. **Push** up the branch
+12. **Create a pull request** and indicate the addressed issue in the title
 
 ## Issues  
 All work is organized by issues.  
@@ -118,18 +132,3 @@ If you are so inclined, you can open a draft PR as you continue to work on it.
 ## 🤝 Contributing Guidelines
 
 Please feel free to contribute! While we welcome all contributions to this app, pull-requests that address outstanding Issues *and* have appropriate test coverage for them will be strongly prioritized. In particular, addressing issues that are tagged with the next milestone should be prioritized higher.
-
-To contribute, do these things:
-
- * **Identify an issue** you want to work on that is not currently assigned to anyone
- * **Assign it** or have it assigned to yourself (so that no one else works on it while you are)
- * (If not already a Contributor, fork the repo first)
- * **Checkout a new issue branch** -- there's no absolute requirements on this, but we encourage the branch name format `XXX-brief-description-of-feature` where `XXX` is the issue number.
- * **Do the work** -- discuss any questions on the Issues as needed (we try to be pretty good about answering questions!)
- * (If you created a new model, run `bundle exec annotate` from the root of the app)
- * **Create tests** to provide proof that your work fixes the Issue (if you need help with this, please reach out!)
- * **Commit locally**, using descriptive commit messages that acknowledge, to the best of your ability, the parts of the app that are affected by the commit.
- * **Run the tests** and make sure they run green; if they don't, fix whatever broke so that the tests pass
- * **Final commit** if any tests had to be fixed
- * **Push** up the branch
- * **Create a Pull Request** - Please indicate which issue it addresses in your pull-request title.
