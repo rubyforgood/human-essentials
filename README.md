@@ -68,11 +68,6 @@ If starting server directly, via `rail s` or `rail console`, or built-in debugge
 If starting via Procfile with `bin/start`, then drop a ``binding.remote_pry`` into the line where you want execution to pause at. Then run ``pry-remote`` in the terminal to connect to it.
 https://github.com/Mon-Ouie/pry-remote
 
-
-### Additional Notes
-
-- Only commit the schema.rb only if you have committed anything that would change the DB schema (i.e. a migration).
-
 # Acknowledgements
 Thanks to Rachel (from PDX Diaperbank) for all of her insight, support, and assistance with this application, and Sarah ( http://www.sarahkasiske.com/ ) for her wonderful design and CSS work at Ruby For Good '17!
 

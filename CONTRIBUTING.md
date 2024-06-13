@@ -126,6 +126,8 @@ Only take multiple issues if they are related and you can solve all of them at t
 
 Consider the balance of "polluting the git log with commit messages" vs. "providing useful detail about the history of changes in the git log". If you have several smaller commits that serve a one purpose, you are encouraged to squash them into a single commit. There's no hard and fast rule here about this (for now), just use your best judgement. Please don't squash other people's commits. Everyone who contributes here deserves credit for their work! :)
 
+Only commit the schema.rb only if you have committed anything that would change the DB schema (i.e. a migration).
+
 ## Pull Requests  
 ### Stay scoped
 
