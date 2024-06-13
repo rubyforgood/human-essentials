@@ -190,15 +190,23 @@ The human-essentials & partner application should ideally be deployed on a weekl
 - SSH access to our servers (usually granted to core maintainers)
 - Login credentials to our [Mailchimp](https://mailchimp.com/) account
 
+### Steps
+#### 1. Merge main into production branch 
+All deploys deploy from the production branch, which keeps track of what is currently in production.
 
-### Tag & Release
-1. Push a tag with the appropriate semantic versioning. Refer to the [releases](https://github.com/rubyforgood/human-essentials/releases) for the correct versioning. For example, if the last release was `2.1.0` and you're making a hotfix, use `2.1.1`
+```sh
+git checkout production
+git merge main
+```
+
+#### 2. Tag & Release
+1. Push a tag with the appropriate date versioning. Refer to the [releases](https://github.com/rubyforgood/human-essentials/releases) for the correct versioning. For example, if you are deploying on June 23, 2024:
 
     ```sh
-    git tag x.y.z
-    git push --tags
+    git tag 2024.06.23
+    git push origin tag 2024.06.23
     ```
-2. Publish a release associated to that tag pushed up in the previous step [here](https://github.com/rubyforgood/human-essentials/releases/new). Include details about the release's updates (we use this to notify our stakeholders on updates via email).
+2. Publish a release, associated to that tag pushed up in the previous step, [here](https://github.com/rubyforgood/human-essentials/releases/new). Include details about the release's updates (we use this to notify our stakeholders on updates via email).
 
 ### Running delayed jobs
 
