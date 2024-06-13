@@ -105,7 +105,10 @@ Please let us know by opening up an issue! We have many new contributors come th
 9. **Final commit** if tests needed fixing.
 10. **Squash smaller commits.** Read guidelines [here](#squashing-commits).
 11. **Push** up the branch
-12. **Create a pull request** and indicate the addressed issue (e.g. `Resolves #1`) in the title. Read guidelines [here](#pull-requests).
+12. **Create a pull request** and indicate the addressed issue (e.g. `Resolves #1`) in the title, which will ensure the issue gets closed automatically when the pull request gets merged. Read PR guidelines [here](#pull-requests).
+13. **Code review**: At this point, someone will work with you on doing a code review. If the automated tests gives :+1: to the PR merging, we can then do any additional (staging) testing as needed. 
+
+14. **Merge**: Finally if all looks good the core team will merge your code in; if your feature branch was in this main repository, the branch will be deleted after the PR is merged. Deploys are currently done about once a week!
 
 ## Issues  
 Please feel free to contribute! While we welcome all contributions to this app, pull-requests that address outstanding Issues *and* have appropriate test coverage for them will be strongly prioritized. In particular, addressing issues that are tagged with the next milestone should be prioritized higher.
@@ -130,16 +133,10 @@ Try to keep your PRs limited to one particular issue, and don't make changes tha
 
 If you are so inclined, you can open a draft PR as you continue to work on it. Sometimes we want to get a PR up there and going so that other people can review it or provide feedback, but maybe it's incomplete. This is OK, but if you do it, please tag your PR with `in-progress` label so that we know not to review / merge it.
 
-### Steps
+## Tests
 1. Run the tests. We only take pull requests with passing tests, and it's great to know that you have a clean slate: `bundle exec rake`
 
 2. Add a test for your change. If you are adding functionality or fixing a  bug, you should add a test!
 
 3. Run linters and fix any linting errors they brings up.  
    - `bin/lint`
-
-4. Push to your branch/fork and submit a pull request. Include the issue number (ex. `Resolves #1`) in the PR description. This will ensure the issue gets closed automatically when the pull request gets merged.
-
-5. At this point, someone will work with you on doing a code review. If the automated tests gives :+1: to the PR merging, we can then do any additional (staging) testing as needed. 
-
-6. Finally if all looks good the core team will merge your code in; if your feature branch was in this main repository, the branch will be deleted after the PR is merged. Deploys are currently done about once a week!
