@@ -58,10 +58,6 @@ Use as an Organization or Contribute as an Individual/Team to this Project:
 
 Thanks for checking us out! Check out our [Contributing Guidelines](https://github.com/rubyforgood/human-essentials/blob/main/CONTRIBUTING.md) on how to contribute.
 
-### Becoming a Repo Contributor
-
-Users that are frequent contributors and are involved in discussion (join the slack channel! :)) may be given direct Contributor access to the Repo so they can submit Pull Requests directly instead of Forking first.
-
 ## Debugging
 If starting server directly, via `rail s` or `rail console`, or built-in debugger in RubyMine, then you can use `binding.pry` to debug. Drop the pry where you want the execution to pause.
 

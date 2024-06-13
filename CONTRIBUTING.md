@@ -96,7 +96,7 @@ Please let us know by opening up an issue! We have many new contributors come th
 
 1. **Identify an unassigned issue**. Read more [here](#issues) about how to pick a good issue.
 2. **Assign it** to avoid duplicated efforts (or request assignment by adding a comment).
-3. **Fork the repo** if you're not a contributor yet.
+3. **Fork the repo** if you're not a contributor yet. Read about becoming a contributor [here](#becoming-a-repo-contributor).
 4. **Create a new branch** for the issue using the format `XXX-brief-description-of-feature`, where `XXX` is the issue number.
 5. **Commit fixes locally** using descriptive messages that indicate the affected parts of the app
 6. If you create a new model run `bundle exec annotate` from the root of the app
@@ -121,6 +121,10 @@ All work is organized by issues.
 If you would like to contribute, please ask for an issue to be assigned to you.  
 If you would like to contribute something that is not represented by an issue, please make an issue and assign yourself.  
 Only take multiple issues if they are related and you can solve all of them at the same time with the same pull request.  
+
+## Becoming a Repo Contributor
+
+Users that are frequent contributors and are involved in discussion (join the slack channel! :)) may be given direct Contributor access to the Repo so they can submit Pull Requests directly instead of Forking first.
 
 ## Squashing commits
 
