@@ -58,10 +58,6 @@ Use as an Organization or Contribute as an Individual/Team to this Project:
 
 Thanks for checking us out! Check out our [Contributing Guidelines](https://github.com/rubyforgood/human-essentials/blob/main/CONTRIBUTING.md) on how to contribute.
 
-### Squashing Commits
-
-Consider the balance of "polluting the git log with commit messages" vs. "providing useful detail about the history of changes in the git log". If you have several smaller commits that serve a one purpose, you are encouraged to squash them into a single commit. There's no hard and fast rule here about this (for now), just use your best judgement. Please don't squash other people's commits. Everyone who contributes here deserves credit for their work! :)
-
 ### Pull Request Merging
 
 At this point, someone will work with you on doing a code review. If the automated tests gives :+1: to the PR merging, we can then do any additional (staging) testing as needed. Finally if all looks good the core team will merge your code in; if your feature branch was in this main repository, the branch will be deleted after the PR is merged. Deploys are currently done about once a week!

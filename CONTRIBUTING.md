@@ -103,7 +103,7 @@ Please let us know by opening up an issue! We have many new contributors come th
 7. **Create RSpec tests** to validate that your work fixes the issue (if you need help with this, please reach out!) 
 8. **Run the tests** and make sure all tests pass successfully; if any fail, fix the issues causing the failures.
 9. **Final commit** if tests needed fixing.
-10. **Squash smaller commits.**
+10. **Squash smaller commits.** Read guidelines [here](#squashing-commits).
 11. **Push** up the branch
 12. **Create a pull request** and indicate the addressed issue in the title
 
@@ -116,6 +116,10 @@ All work is organized by issues.
 If you would like to contribute, please ask for an issue to be assigned to you.  
 If you would like to contribute something that is not represented by an issue, please make an issue and assign yourself.  
 Only take multiple issues if they are related and you can solve all of them at the same time with the same pull request.  
+
+## Squashing commits
+
+Consider the balance of "polluting the git log with commit messages" vs. "providing useful detail about the history of changes in the git log". If you have several smaller commits that serve a one purpose, you are encouraged to squash them into a single commit. There's no hard and fast rule here about this (for now), just use your best judgement. Please don't squash other people's commits. Everyone who contributes here deserves credit for their work! :)
 
 ### Pull Requests  
 If you are so inclined, you can open a draft PR as you continue to work on it.
