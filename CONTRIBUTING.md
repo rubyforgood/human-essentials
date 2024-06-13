@@ -14,8 +14,86 @@ Many helpful members are available to answer your questions. Just ask, and someo
 
 You won't be yelled at for giving your best effort. The worst that can happen is that you'll be politely asked to change something. We appreciate any sort of contributions, and don't want a wall of rules to get in the way of that.
 
-## Contributing Steps  
-### Issues  
+# Contributing Steps
+## Getting Started
+### Local Environment 🛠️
+1. Install Ruby
+   - Install the version specified in [`.ruby-version`](.ruby-version).
+   - Visit the [Install Ruby on Rails](https://gorails.com/setup/osx/12-monterey) guide by GoRails for Ubuntu, Windows, and macOSX setup. ⚠️ Follow only the Installing Ruby step, as our project setup differs ⚠️ It is highly recommended you use a ruby version manager such as [rbenv](https://github.com/rbenv/rbenv), [asdf](https://asdf-vm.com/), or [rvm](https://rvm.io/).
+   - Verify that your Ruby installation works by running `ruby -v`.
+2. Install Postgres
+   - Follow one of these guides: [MacOSX](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-macos), [Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-ubuntu-18-04).
+     - Do you develop on Windows? We'd love to hear (and for you to submit a PR explaining) how you do it. 🙏🏻
+   - Create a `database.yml` file on `config/` directory with your database configurations. You can also copy the existing files called [`database.yml.example`](config/database.yml.example) and [`.env.example`](.env.example) and change the credentials.
+3. Clone the project and switch to its directory
+4. Run `bin/setup`
+5. Run `bin/start` and visit http://localhost:3000/ to see the human essentials page.
+6. Log in as a sample user with the default [credentials](#credentials).
+ 
+### Credentials
+ These credentials also work for [staging](https://staging.humanessentials.app/):
+
+<details>
+  <summary> Super Users 🦸🏽‍♀️ </summary>
+
+  ```
+    username: superadmin@example.com
+    password: password!
+  ```
+</details>
+
+<details>
+  <summary> Bank Users 🏦 </summary>
+
+  ```
+    Organization Admin
+       Email: org_admin1@example.com
+    Password: password!
+
+    User
+    Email: user_1@example.com
+    Password: password!
+  ```
+</details>
+
+<details>
+  <summary> Partner Users 👥 </summary>
+
+  ```
+    Verified Partner
+    Email: verified@example.com
+    Password: password!
+
+    Invited Partner
+    Email: invited@pawneehomeless.com
+    Password: password!
+
+    Unverified Partner
+    Email: unverified@pawneepregnancy.com
+    Password: password!
+
+    Recertification Required Partner
+    Email: recertification_required@example.com
+    Password: password!
+  ```
+</details>
+
+### Codespaces - EXPERIMENTAL 🛠️
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/rubyforgood/human-essentials/tree/main?quickstart=1)
+
+1. Follow the link above or follow instructions to [create a new Codespace.](https://docs.github.com/en/codespaces/developing-in-a-codespace/creating-a-codespace-for-a-repository); You can use the web editor, or even better open the Codespace in VSCode
+2. Wait for the container to start. This will take a few (10-15) minutes since Ruby needs to be installed, the database needs to be created, and the `bin/setup` script needs to run
+3. Run `bin/start` and visit the URL that pops in VSCode up to see the human essentials page
+4. Login as a sample user with the default [credentials](#credentials).
+
+### Troubleshooting 👷🏼‍♀️
+
+Please let us know by opening up an issue! We have many new contributors come through and it is likely what you experienced will happen to them as well.
+
+- *"My RBENV installation didn't work!"* - The rbenv repository provides a [rbenv-doctor script](https://github.com/rbenv/rbenv-installer#rbenv-doctor) to verify the installation and check if a ruby version is installed
+
+## Issues  
 All work is organized by issues.  
 [Find issues here.](https://github.com/rubyforgood/human-essentials/issues)  
 
