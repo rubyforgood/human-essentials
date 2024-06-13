@@ -100,7 +100,7 @@ Please let us know by opening up an issue! We have many new contributors come th
 4. **Create a new branch** for the issue using the format `XXX-brief-description-of-feature`, where `XXX` is the issue number.
 5. **Commit fixes locally** using descriptive messages that indicate the affected parts of the app
 6. If you create a new model run `bundle exec annotate` from the root of the app
-7. **Create RSpec tests** to validate that your work fixes the issue (if you need help with this, please reach out!). Read guidelines [here](#writing-browsersystemfeature-testsspecs)
+7. **Create RSpec tests** to validate that your work fixes the issue (if you need help with this, please reach out!). Read guidelines [here](#writing-browsersystemfeature-testsspecs).
 8. **Run the tests** and make sure all tests pass successfully; if any fail, fix the issues causing the failures. Read guidelines [here](#test-before-submitting-pull-requests).
 9. **Final commit** if tests needed fixing.
 10. **Squash smaller commits.** Read guidelines [here](#squashing-commits).
@@ -108,7 +108,9 @@ Please let us know by opening up an issue! We have many new contributors come th
 12. **Create a pull request** and indicate the addressed issue (e.g. `Resolves #1`) in the title, which will ensure the issue gets closed automatically when the pull request gets merged. Read PR guidelines [here](#pull-requests).
 13. **Code review**: At this point, someone will work with you on doing a code review. If the automated tests gives :+1: to the PR merging, we can then do any additional (staging) testing as needed. 
 
-14. **Merge**: Finally if all looks good the core team will merge your code in; if your feature branch was in this main repository, the branch will be deleted after the PR is merged. Deploys are currently done about once a week!
+14. **Merge**: Finally if all looks good the core team will merge your code in; if your feature branch was in this main repository, the branch will be deleted after the PR is merged. 
+
+15. Deploys are currently done about once a week! Read the deployment process [here](#deployment-process).
 
 ## Issues  
 Please feel free to contribute! While we welcome all contributions to this app, pull-requests that address outstanding Issues *and* have appropriate test coverage for them will be strongly prioritized. In particular, addressing issues that are tagged with the next milestone should be prioritized higher.
@@ -168,3 +170,30 @@ and run the spec using this command: `MAGIC_TEST=1 NOT_HEADLESS=true bundle exec
     expect(my_code).to be_valid
   end
 ```
+
+## Deployment Process
+The human-essentials & partner application should ideally be deployed on a weekly or bi-weekly schedule depending on the merged updates in the main branch. This is the process we take to deploy updates from our main branch to our servers.
+
+### Requirements
+- SSH access to our servers (usually granted to core maintainers)
+- Login credentials to our [Mailchimp](https://mailchimp.com/) account
+
+
+### Tag & Release
+1. Push a tag with the appropriate semantic versioning. Refer to the [releases](https://github.com/rubyforgood/human-essentials/releases) for the correct versioning. For example, if the last release was `2.1.0` and you're making a hotfix, use `2.1.1`
+
+    ```sh
+    git tag x.y.z
+    git push --tags
+    ```
+2. Publish a release associated to that tag pushed up in the previous step [here](https://github.com/rubyforgood/human-essentials/releases/new). Include details about the release's updates (we use this to notify our stakeholders on updates via email).
+
+### Running delayed jobs
+
+Run delayed jobs locally with the `rake jobs:work` command. This is necessary to view any emails in your browser. Alternatively, you can run a specific delayed job by opening a Rails console and doing something like:
+
+```ruby
+Delayed::Job.last.invoke_job
+```
+
+You can replace the `last` query with any other query (e.g. `Delayed::Job.find(123)`).
