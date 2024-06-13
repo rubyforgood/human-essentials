@@ -100,8 +100,8 @@ Please let us know by opening up an issue! We have many new contributors come th
 4. **Create a new branch** for the issue using the format `XXX-brief-description-of-feature`, where `XXX` is the issue number.
 5. **Commit fixes locally** using descriptive messages that indicate the affected parts of the app
 6. If you create a new model run `bundle exec annotate` from the root of the app
-7. **Create RSpec tests** to validate that your work fixes the issue (if you need help with this, please reach out!) 
-8. **Run the tests** and make sure all tests pass successfully; if any fail, fix the issues causing the failures.
+7. **Create RSpec tests** to validate that your work fixes the issue (if you need help with this, please reach out!). Read guidelines [here](#writing-browsersystemfeature-testsspecs)
+8. **Run the tests** and make sure all tests pass successfully; if any fail, fix the issues causing the failures. Read guidelines [here](#test-before-submitting-pull-requests).
 9. **Final commit** if tests needed fixing.
 10. **Squash smaller commits.** Read guidelines [here](#squashing-commits).
 11. **Push** up the branch
@@ -133,10 +133,38 @@ Try to keep your PRs limited to one particular issue, and don't make changes tha
 
 If you are so inclined, you can open a draft PR as you continue to work on it. Sometimes we want to get a PR up there and going so that other people can review it or provide feedback, but maybe it's incomplete. This is OK, but if you do it, please tag your PR with `in-progress` label so that we know not to review / merge it.
 
-## Tests
-1. Run the tests. We only take pull requests with passing tests, and it's great to know that you have a clean slate: `bundle exec rake`
+## Tests 🧪
+### Writing Browser/System/Feature Tests/Specs
 
-2. Add a test for your change. If you are adding functionality or fixing a  bug, you should add a test!
+Add a test for your change. If you are adding functionality or fixing a  bug, you should add a test!
 
-3. Run linters and fix any linting errors they brings up.  
-   - `bin/lint`
+If you are inexperienced in writing tests or get stuck on one, please reach out for help :). You probably don't need to write new tests when simple re-stylings are done (ie. the page may look slightly different but the Test suite is unaffected by those changes).
+
+If you need to see a browser/system spec run in the browser, you can use the following env variable:
+
+```
+NOT_HEADLESS=true bundle exec rspec
+```
+
+We've added [magic_test](https://github.com/bullet-train-co/magic_test) which makes creating browser specs much easier. It allows you to record actions on the browser running the specs and easily paste them into the spec. You can do this by adding `magic_test` within your system spec:
+```rb
+ it "does some browser stuff" do
+   magic_test
+ end
+```
+and run the spec using this command: `MAGIC_TEST=1 NOT_HEADLESS=true bundle exec rspec <path_to_spec>`
+
+**See videos of it in action [here](https://twitter.com/andrewculver/status/1366062684802846721)**
+
+### Test before submitting pull requests
+- Before submitting a pull request, run all tests and rake tasks with `bundle exec rake` and run lints with `bin/lint`. Fix any broken tests and lints before submitting a pull request.
+- You can run all the tests without rake tasks with `bundle exec rspec`
+- You can run a single test with `bundle exec rspec {path_to_test_name}_spec.rb` or on a specific line by appending `:LineNumber`
+- If you need to skip a failing test, place `pending("Reason you are skipping the test")` into the `it` block rather than skipping with `xit`. This will allow rspec to deliver the error message without causing the test suite to fail.
+
+```ruby
+  it "works!" do
+    pending("Need to implement this")
+    expect(my_code).to be_valid
+  end
+```

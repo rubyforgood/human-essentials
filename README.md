@@ -68,40 +68,6 @@ If starting server directly, via `rail s` or `rail console`, or built-in debugge
 If starting via Procfile with `bin/start`, then drop a ``binding.remote_pry`` into the line where you want execution to pause at. Then run ``pry-remote`` in the terminal to connect to it.
 https://github.com/Mon-Ouie/pry-remote
 
-## Testing 🧪
-### Writing Tests/Specs
-- Run all the tests with `bundle exec rspec`
-- Run a single test with `bundle exec rspec {path_to_test_name}_spec.rb`
-
-Make sure all tests run clean & green before submitting a Pull Request. If you are inexperienced in writing tests or get stuck on one, please reach out for help :). You probably don't need to write new tests when simple re-stylings are done (ie. the page may look slightly different but the Test suite is unaffected by those changes).
-
-*Tip: If you need to skip a failing test, place `pending("Reason you are skipping the test")` into the `it` block rather than skipping with `xit`. This will allow rspec to deliver the error message without causing the test suite to fail.*
-
-```ruby
-  it "works!" do
-    pending("Need to implement this")
-    expect(my_code).to be_valid
-  end
-```
-
-### Writing Browser/System/Feature Specs
-
-If you need to see a browser/system spec run in the browser, you can use the following env variable:
-
-```
-NOT_HEADLESS=true bundle exec rspec
-```
-
-We've added [magic_test](https://github.com/bullet-train-co/magic_test) which makes creating browser specs much easier. It allows you to record actions on the browser running the specs and easily paste them into the spec. You can do this by adding `magic_test` within your system spec:
-```rb
- it "does some browser stuff" do
-   magic_test
- end
-```
-and run the spec using this command: `MAGIC_TEST=1 NOT_HEADLESS=true bundle exec rspec <path_to_spec>`
-
-**See videos of it in action [here](https://twitter.com/andrewculver/status/1366062684802846721)**
-
 # Deployment Process 🚀
 The human-essentials & partner application should ideally be deployed on a weekly or bi-weekly schedule depending on the merged updates in the main branch. This is the process we take to deploy updates from our main branch to our servers.
 
