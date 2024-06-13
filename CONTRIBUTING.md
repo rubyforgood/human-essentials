@@ -92,9 +92,9 @@ Please let us know by opening up an issue! We have many new contributors come th
 
 - *"My RBENV installation didn't work!"* - The rbenv repository provides a [rbenv-doctor script](https://github.com/rbenv/rbenv-installer#rbenv-doctor) to verify the installation and check if a ruby version is installed
 
-# Contributing workflow
+# 🤝 Contributing workflow
 
-1. **Identify an unassigned issue**.
+1. **Identify an unassigned issue**. Read more [here](#issues) about how to pick a good issue.
 2. **Assign it** to avoid duplicated efforts (or request assignment by adding a comment).
 3. **Fork the repo** if you're not a contributor yet.
 4. **Create a new branch** for the issue using the format `XXX-brief-description-of-feature`, where `XXX` is the issue number.
@@ -108,6 +108,8 @@ Please let us know by opening up an issue! We have many new contributors come th
 12. **Create a pull request** and indicate the addressed issue in the title
 
 ## Issues  
+Please feel free to contribute! While we welcome all contributions to this app, pull-requests that address outstanding Issues *and* have appropriate test coverage for them will be strongly prioritized. In particular, addressing issues that are tagged with the next milestone should be prioritized higher.
+
 All work is organized by issues.  
 [Find issues here.](https://github.com/rubyforgood/human-essentials/issues)  
 
@@ -128,7 +130,3 @@ If you are so inclined, you can open a draft PR as you continue to work on it.
    - `bin/lint`
 
 1. Push to your branch/fork and submit a pull request. Include the issue number (ex. `Resolves #1`) in the PR description. This will ensure the issue gets closed automatically when the pull request gets merged.
-
-## 🤝 Contributing Guidelines
-
-Please feel free to contribute! While we welcome all contributions to this app, pull-requests that address outstanding Issues *and* have appropriate test coverage for them will be strongly prioritized. In particular, addressing issues that are tagged with the next milestone should be prioritized higher.

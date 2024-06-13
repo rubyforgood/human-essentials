@@ -58,10 +58,6 @@ Use as an Organization or Contribute as an Individual/Team to this Project:
 
 Thanks for checking us out! Check out our [Contributing Guidelines](https://github.com/rubyforgood/human-essentials/blob/main/CONTRIBUTING.md) on how to contribute.
 
-## Contributing Guidelines 🤝
-
-Please feel free to contribute! Priority will be given to pull requests that address outstanding issues and have appropriate test coverage. Focus on issues tagged with the next milestone for higher priority.
-
 ### Squashing Commits
 
 Consider the balance of "polluting the git log with commit messages" vs. "providing useful detail about the history of changes in the git log". If you have several smaller commits that serve a one purpose, you are encouraged to squash them into a single commit. There's no hard and fast rule here about this (for now), just use your best judgement. Please don't squash other people's commits. Everyone who contributes here deserves credit for their work! :)
