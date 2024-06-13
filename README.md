@@ -56,14 +56,7 @@ Use as an Organization or Contribute as an Individual/Team to this Project:
 
 # Welcome Contributors! 👋
 
-Thanks for checking us out! If you're new here, here are some things you should know:
-- Issues tagged "Help Wanted" are self-contained and great for new contributors
-- Pull Requests are reviewed within a week or so
-- Ensure your build passes (`rubocop -a` is often necessary) and addresses the issue requirements
-- This project relies entirely on volunteers, so please be patient with communication
-
-### Join us on slack 💬
-You can sign up [here](https://join.slack.com/t/rubyforgood/shared_invite/zt-2k5ezv241-Ia2Iac3amxDS8CuhOr69ZA) and find us in #human-essentials. Many helpful members are available to answer your questions. Just ask, and someone will be there to help you!
+Thanks for checking us out! Check out our [Contributing Guidelines](https://github.com/rubyforgood/human-essentials/blob/main/CONTRIBUTING.md) on how to contribute.
 
 ##  Getting Started (Local Environment) 🛠️
 

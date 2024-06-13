@@ -1,8 +1,17 @@
-# Contributing  
+# Welcome Contributors! 👋
 We ♥ contributors! By participating in this project, you agree to abide by the Ruby for Good [code of conduct](https://github.com/rubyforgood/human-essentials/blob/main/code-of-conduct.md).
 
-If you have any questions about an issue, comment on the issue, open a new issue or ask in [the RubyForGood slack](https://join.slack.com/t/rubyforgood/shared_invite/zt-21pyz2ab8-H6JgQfGGI0Ab6MfNOZRIQA). human-essentials has a `#human-essentials` channel in the Slack. Our channel in slack also contains a zoom link for office hours every day office hours are held.  
+If you're new here, here are some things you should know:
+- Issues tagged "Help Wanted" are self-contained and great for new contributors
+- Pull Requests are reviewed within a week or so
+- Ensure your build passes linting and tests and addresses the issue requirements
+- This project relies entirely on volunteers, so please be patient with communication
+
+# Communication 💬
+If you have any questions about an issue, comment on the issue, open a new issue, or ask in [the RubyForGood slack](https://join.slack.com/t/rubyforgood/shared_invite/zt-2k5ezv241-Ia2Iac3amxDS8CuhOr69ZA). human-essentials has a `#human-essentials` channel in the Slack. Our channel in slack also contains a zoom link for office hours every day office hours are held.  
   
+Many helpful members are available to answer your questions. Just ask, and someone will be there to help you!
+
 You won't be yelled at for giving your best effort. The worst that can happen is that you'll be politely asked to change something. We appreciate any sort of contributions, and don't want a wall of rules to get in the way of that.
 
 ## Contributing Steps  
