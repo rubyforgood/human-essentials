@@ -105,7 +105,7 @@ Please let us know by opening up an issue! We have many new contributors come th
 9. **Final commit** if tests needed fixing.
 10. **Squash smaller commits.** Read guidelines [here](#squashing-commits).
 11. **Push** up the branch
-12. **Create a pull request** and indicate the addressed issue in the title
+12. **Create a pull request** and indicate the addressed issue (e.g. `Resolves #1`) in the title. Read guidelines [here](#pull-requests).
 
 ## Issues  
 Please feel free to contribute! While we welcome all contributions to this app, pull-requests that address outstanding Issues *and* have appropriate test coverage for them will be strongly prioritized. In particular, addressing issues that are tagged with the next milestone should be prioritized higher.
@@ -121,16 +121,25 @@ Only take multiple issues if they are related and you can solve all of them at t
 
 Consider the balance of "polluting the git log with commit messages" vs. "providing useful detail about the history of changes in the git log". If you have several smaller commits that serve a one purpose, you are encouraged to squash them into a single commit. There's no hard and fast rule here about this (for now), just use your best judgement. Please don't squash other people's commits. Everyone who contributes here deserves credit for their work! :)
 
-### Pull Requests  
-If you are so inclined, you can open a draft PR as you continue to work on it.
+## Pull Requests  
+### Stay scoped
 
-1. Follow [the setup guide](https://github.com/rubyforgood/human-essentials#%EF%B8%8F-getting-started) to get the project working locally.
+Try to keep your PRs limited to one particular issue, and don't make changes that are out of scope for that issue. If you notice something that needs attention but is out of scope, please [create a new issue](https://github.com/rubyforgood/human-essentials/issues/new).
 
-1. Run the tests. We only take pull requests with passing tests, and it's great to know that you have a clean slate: `bundle exec rspec`
+### In-flight pull requests
 
-1. Add a test for your change. If you are adding functionality or fixing a  bug, you should add a test!
+If you are so inclined, you can open a draft PR as you continue to work on it. Sometimes we want to get a PR up there and going so that other people can review it or provide feedback, but maybe it's incomplete. This is OK, but if you do it, please tag your PR with `in-progress` label so that we know not to review / merge it.
 
-1. Run linters and fix any linting errors they brings up.  
+### Steps
+1. Run the tests. We only take pull requests with passing tests, and it's great to know that you have a clean slate: `bundle exec rake`
+
+2. Add a test for your change. If you are adding functionality or fixing a  bug, you should add a test!
+
+3. Run linters and fix any linting errors they brings up.  
    - `bin/lint`
 
-1. Push to your branch/fork and submit a pull request. Include the issue number (ex. `Resolves #1`) in the PR description. This will ensure the issue gets closed automatically when the pull request gets merged.
+4. Push to your branch/fork and submit a pull request. Include the issue number (ex. `Resolves #1`) in the PR description. This will ensure the issue gets closed automatically when the pull request gets merged.
+
+5. At this point, someone will work with you on doing a code review. If the automated tests gives :+1: to the PR merging, we can then do any additional (staging) testing as needed. 
+
+6. Finally if all looks good the core team will merge your code in; if your feature branch was in this main repository, the branch will be deleted after the PR is merged. Deploys are currently done about once a week!

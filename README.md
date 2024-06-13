@@ -58,21 +58,9 @@ Use as an Organization or Contribute as an Individual/Team to this Project:
 
 Thanks for checking us out! Check out our [Contributing Guidelines](https://github.com/rubyforgood/human-essentials/blob/main/CONTRIBUTING.md) on how to contribute.
 
-### Pull Request Merging
-
-At this point, someone will work with you on doing a code review. If the automated tests gives :+1: to the PR merging, we can then do any additional (staging) testing as needed. Finally if all looks good the core team will merge your code in; if your feature branch was in this main repository, the branch will be deleted after the PR is merged. Deploys are currently done about once a week!
-
-### In-flight Pull Requests
-
-Sometimes we want to get a PR up there and going so that other people can review it or provide feedback, but maybe it's incomplete. This is OK, but if you do it, please tag your PR with `in-progress` label so that we know not to review / merge it.
-
 ### Becoming a Repo Contributor
 
 Users that are frequent contributors and are involved in discussion (join the slack channel! :)) may be given direct Contributor access to the Repo so they can submit Pull Requests directly instead of Forking first.
-
-### Stay Scoped
-
-Try to keep your PRs limited to one particular issue, and don't make changes that are out of scope for that issue. If you notice something that needs attention but is out of scope, please [create a new issue](https://github.com/rubyforgood/human-essentials/issues/new).
 
 ## Debugging
 If starting server directly, via `rail s` or `rail console`, or built-in debugger in RubyMine, then you can use `binding.pry` to debug. Drop the pry where you want the execution to pause.
