@@ -98,7 +98,7 @@ Please let us know by opening up an issue! We have many new contributors come th
 2. **Assign it** to avoid duplicated efforts (or request assignment by adding a comment).
 3. **Fork the repo** if you're not a contributor yet. Read about becoming a contributor [here](#becoming-a-repo-contributor).
 4. **Create a new branch** for the issue using the format `XXX-brief-description-of-feature`, where `XXX` is the issue number.
-5. **Commit fixes locally** using descriptive messages that indicate the affected parts of the app
+5. **Commit fixes locally** using descriptive messages that indicate the affected parts of the app. Read debugging tips [here](#debugging).
 6. If you create a new model run `bundle exec annotate` from the root of the app
 7. **Create RSpec tests** to validate that your work fixes the issue (if you need help with this, please reach out!). Read guidelines [here](#writing-browsersystemfeature-testsspecs).
 8. **Run the tests** and make sure all tests pass successfully; if any fail, fix the issues causing the failures. Read guidelines [here](#test-before-submitting-pull-requests).
@@ -125,6 +125,12 @@ Only take multiple issues if they are related and you can solve all of them at t
 ## Becoming a Repo Contributor
 
 Users that are frequent contributors and are involved in discussion (join the slack channel! :)) may be given direct Contributor access to the Repo so they can submit Pull Requests directly instead of Forking first.
+
+## Debugging
+If starting server directly, via `rail s` or `rail console`, or built-in debugger in RubyMine, or running `bundle exec rspec path/to/spec.rb:line_no`, then you can use `binding.pry` to debug. Drop the pry where you want the execution to pause.
+
+If starting via Procfile with `bin/start`, then drop a ``binding.remote_pry`` into the line where you want execution to pause at. Then run ``pry-remote`` in the terminal to connect to it.
+https://github.com/Mon-Ouie/pry-remote
 
 ## Squashing commits
 

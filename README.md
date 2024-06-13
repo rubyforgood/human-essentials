@@ -58,12 +58,6 @@ Use as an Organization or Contribute as an Individual/Team to this Project:
 
 Thanks for checking us out! Check out our [Contributing Guidelines](https://github.com/rubyforgood/human-essentials/blob/main/CONTRIBUTING.md) on how to contribute.
 
-## Debugging
-If starting server directly, via `rail s` or `rail console`, or built-in debugger in RubyMine, then you can use `binding.pry` to debug. Drop the pry where you want the execution to pause.
-
-If starting via Procfile with `bin/start`, then drop a ``binding.remote_pry`` into the line where you want execution to pause at. Then run ``pry-remote`` in the terminal to connect to it.
-https://github.com/Mon-Ouie/pry-remote
-
 # Acknowledgements
 Thanks to Rachel (from PDX Diaperbank) for all of her insight, support, and assistance with this application, and Sarah ( http://www.sarahkasiske.com/ ) for her wonderful design and CSS work at Ruby For Good '17!
 
