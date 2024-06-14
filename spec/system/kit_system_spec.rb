@@ -217,4 +217,24 @@ RSpec.describe "Kit management", type: :system do
       expect(inventory.quantity_for(item_id: existing_kit_item_2.id, storage_location: storage_location.id)).to eq(50)
     end
   end
+
+  describe "when missing required fields" do
+    it "displays error indicating missing field and preserves filled out fields" do
+      visit new_kit_path
+      kit_traits = attributes_for(:kit)
+
+      find(:css, '#kit_value_in_dollars').set('10.10')
+
+      item = Item.last
+      quantity_per_kit = 5
+      select item.name, from: "kit_line_items_attributes_0_item_id"
+      find(:css, '#kit_line_items_attributes_0_quantity').set(quantity_per_kit)
+
+      click_button "Save"
+
+      expect(page.find(".alert")).to have_content "Name can't be blank"
+      expect(page).to have_content(kit_traits[:quantity])
+      expect(page).to have_content(item.name)
+    end
+  end
 end
