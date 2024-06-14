@@ -26,12 +26,12 @@ class KitsController < ApplicationController
       redirect_to kits_path
     else
       flash[:error] = kit_creation.errors
-                                  .map { |error| formatted_error_message(error) }
-                                  .join(", ")
-      load_form_collections
+        .map { |error| formatted_error_message(error) }
+        .join(", ")
 
-      @kit ||= Kit.new
-      @kit.line_items.build
+      @kit = Kit.new(kit_params)
+      load_form_collections
+      @kit.line_items.build if @kit.line_items.empty?
 
       render :new
     end
