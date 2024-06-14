@@ -39,6 +39,9 @@ RSpec.describe AccountRequest, type: :model do
     it { should allow_value(Faker::Internet.email).for(:email) }
     it { should_not allow_value("not_email").for(:email) }
 
+    it { should allow_value(Faker::Internet.url).for(:organization_website) }
+    it { should_not allow_value("www.example.com").for(:organization_website) }
+
     context 'when the email provided is already used by an existing organization' do
       before do
         create(:organization, email: account_request.email)
