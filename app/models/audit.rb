@@ -41,7 +41,7 @@ class Audit < ApplicationRecord
     item_ids = itemizable.line_items.pluck(:item_id)
     where(status: "finalized")
       .where(storage_location_id: location_ids)
-      .where(created_at: itemizable.created_at..)
+      .where(updated_at: itemizable.created_at..)
       .joins(:line_items)
       .where(line_items: {item_id: item_ids})
       .exists?
