@@ -68,7 +68,7 @@ RSpec.describe PartnerUsersController, type: :request do
       }.to change { partner_user.roles.count }.from(1).to(0)
 
       expect(response).to redirect_to(root_path)
-      expect(flash[:notice]).to eq("Access to #{partner_user.name} has been revoked.")
+      expect(flash[:notice]).to eq("Access to #{partner.name} has been revoked for #{partner_user.name}.")
     end
 
     it "redirects back with alert if the user role removal fails" do
