@@ -418,7 +418,7 @@ RSpec.describe "Donations", type: :system, js: true do
             expect(page).to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']")
           end.not_to change { Donation.count }
           expect(page).to have_content("Start a new donation")
-          expect(page).to have_content("Quantity is not a number. Note: commas are not allowed")
+          expect(page).to have_content("must be less than")
         end
 
         # Bug fix -- Issue #4157

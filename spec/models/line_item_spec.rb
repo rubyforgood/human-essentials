@@ -15,16 +15,20 @@ RSpec.describe LineItem, type: :model do
   let(:line_item) { build :line_item }
 
   context "Validations >" do
-    let(:line_item_1) { build :line_item, quantity: 2**31 }
-    let(:line_item_2) { build :line_item, quantity: -2**31 }
-    let(:line_item_3) { build :line_item, quantity: "1,203" }
+    let(:line_item_1) { build :line_item, quantity: 2**33 }
+    let(:line_item_2) { build :line_item, quantity: -2**32 }
+    let(:line_item_3) { build :line_item, quantity: "91,203" }
 
     it 'validates numericality of quantity' do
-      invalid_line_items = [line_item_1, line_item_2, line_item_3]
-      invalid_line_items.each do |line_item|
-        expect(line_item).not_to be_valid
-        expect(line_item.errors[:quantity]).to include("is not a number. Note: commas are not allowed")
-      end
+      expect(line_item_1).not_to be_valid
+      expect(line_item_2).not_to be_valid
+      expect(line_item_1.errors[:quantity]).to include("must be less than 2147483648")
+      expect(line_item_2.errors[:quantity]).to include("must be greater than -2147483648")
+    end
+
+    it 'validates numericality of quantity' do
+      expect(line_item_3).not_to be_valid
+      expect(line_item_3.errors[:quantity]).to include("is not a number. Note: commas are not allowed")
     end
   end
 

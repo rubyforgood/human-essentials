@@ -21,9 +21,18 @@ class LineItem < ApplicationRecord
   belongs_to :item
 
   validates :item_id, presence: true
-  validates :quantity, numericality: { only_integer: true, less_than: MAX_INT, greater_than: MIN_INT, message: "is not a number. Note: commas are not allowed" }
+  validates :quantity, numericality: { only_integer: true, message: "is not a number. Note: commas are not allowed" }
+  validate :quantity_must_be_a_number_within_range
 
   scope :active, -> { joins(:item).where(items: { active: true }) }
 
   delegate :name, to: :item
+
+  def quantity_must_be_a_number_within_range
+    if quantity > MAX_INT
+      errors.add(:quantity, "must be less than #{MAX_INT}")
+    elsif quantity < MIN_INT
+      errors.add(:quantity, "must be greater than #{MIN_INT}")
+    end
+  end
 end
