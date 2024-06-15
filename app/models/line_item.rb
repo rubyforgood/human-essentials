@@ -29,9 +29,9 @@ class LineItem < ApplicationRecord
   delegate :name, to: :item
 
   def quantity_must_be_a_number_within_range
-    if quantity > MAX_INT
+    if quantity && quantity > MAX_INT
       errors.add(:quantity, "must be less than #{MAX_INT}")
-    elsif quantity < MIN_INT
+    elsif quantity && quantity < MIN_INT
       errors.add(:quantity, "must be greater than #{MIN_INT}")
     end
   end
