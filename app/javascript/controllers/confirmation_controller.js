@@ -35,10 +35,13 @@ export default class extends Controller {
     fetch(this.preCheckPathValue, {
       method: "POST",
       headers: {
+        "X-CSRF-Token": this.getMetaToken(),
+        "X-Requested-With": "XMLHttpRequest",
         "Content-Type": "application/json",
         Accept: "application/json"
       },
       body: JSON.stringify(formObject),
+      credentials: "same-origin"
     })
     .then((response) => response.json())
     .then((data) => {
@@ -58,12 +61,24 @@ export default class extends Controller {
     });
   }
 
-  // Prepare the form data for submission as expected by Rails
+  getMetaToken() {
+    const metaTokenElement = document.querySelector("meta[name='csrf-token']");
+    return metaTokenElement
+      ? metaTokenElement.content
+      : "default_test_csrf_token";
+  }
+
+  // Prepare the form data for submission as expected by Rails, excluding
+  // the form level authenticity token because that is specific to creation.
+  // This controller needs to submit a validation only request.
   buildNestedObject(formData) {
     let formObject = {};
-
     for (let [key, value] of formData.entries()) {
-      const keys = key.split(/[\[\]]+/).filter((k) => k); // Split and filter out empty strings
+      if (key === "authenticity_token") {
+        continue;
+      }
+
+      const keys = key.split(/[\[\]]+/).filter((k) => k);
       keys.reduce((obj, k, i) => {
         if (i === keys.length - 1) {
           obj[k] = value;

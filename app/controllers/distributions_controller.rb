@@ -10,7 +10,6 @@ class DistributionsController < ApplicationController
   before_action :enable_turbo!, only: %i[new show]
   skip_before_action :authenticate_user!, only: %i(calendar)
   skip_before_action :authorize_user, only: %i(calendar)
-  skip_before_action :verify_authenticity_token, only: :validate
 
   def print
     @distribution = Distribution.find(params[:id])
