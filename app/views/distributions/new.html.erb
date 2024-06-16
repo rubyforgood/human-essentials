@@ -34,8 +34,8 @@
           <div class="card-body">
             <!-- Default box -->
             <div class="box"
-              data-controller="distribution-confirmation"
-              data-distribution-confirmation-pre-check-path-value="<%= validate_distributions_path(format: :json) %>">
+              data-controller="confirmation"
+              data-confirmation-pre-check-path-value="<%= validate_distributions_path(format: :json) %>">
               <%= render 'form', distribution: @distribution, date_place_holder: Time.zone.now.end_of_day %>
             </div><!-- /.box -->
           </div>

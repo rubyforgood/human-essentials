@@ -1,5 +1,5 @@
 <%= simple_form_for distribution,
-                    data: { controller: "form-input", distribution_confirmation_target: "form" },
+                    data: { controller: "form-input", confirmation_target: "form" },
                     html: { class: "storage-location-required" },
                     wrapper_mappings: { datetime: :custom_multi_select } do |f| %>
 
@@ -46,11 +46,11 @@
     </fieldset>
   </div>
   <div class="card-footer">
-    <%= submit_button({}, { action: "click->distribution-confirmation#openModal" }) %>
+    <%= submit_button({}, { action: "click->confirmation#openModal" }) %>
   </div>
 <% end %>
 
-<%# Confirmation modal: See distribution_confirmation_controller.js for how this gets displayed %>
+<%# Confirmation modal: See confirmation_controller.js for how this gets displayed %>
 <%# and app/controllers/distributions_controller.rb#validate for how it gets populated. %>
 <div id="distributionConfirmationModal"
   class="modal confirm"
@@ -58,5 +58,5 @@
   aria-hidden="true"
   tabindex="-1"
   data-bs-backdrop="static"
-  data-distribution-confirmation-target="modal">
+  data-confirmation-target="modal">
 </div>

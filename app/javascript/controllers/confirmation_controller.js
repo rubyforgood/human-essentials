@@ -1,9 +1,9 @@
 import { Controller } from "@hotwired/stimulus"
 
 /**
- * Connects to data-controller="distribution-confirmation"
- * Displays a confirmation modal with the details of the Distribution form.
- * Launched when the user clicks Save from the Distribution Form.
+ * Connects to data-controller="confirmation"
+ * Displays a confirmation modal with the details of the form that user just submitted.
+ * Launched when the user clicks Save from the form.
 
  * First runs a "pre-check" on the form data to a validation endpoint,
  * which is specified in the controller's `preCheckPathValue` property.
@@ -11,9 +11,7 @@ import { Controller } from "@hotwired/stimulus"
  * when the form data can pass initial validation.
  * If the pre-check fails, it submits the form to the server for full validation and render with the errors.
  *
- * The pre-check validation endpoint also returns the html body to display in the modal if validation passes,
- * which includes the partner the distribution is going to, the storage location the distribution is from,
- * and the items/quantities to be distributed.
+ * The pre-check validation endpoint also returns the html body to display in the modal if validation passes.
 
  * If the user clicks the "Yes..." button from the modal, it submits the form.
  * If the user clicks the "No..." button from the modal, it closes and user remains on the same url.
@@ -55,7 +53,7 @@ export default class extends Controller {
       // Something went wrong in communication to server validation endpoint
       // In this case, just submit the form as if the user had clicked Save.
       // NICE TO HAVE: Send to bugsnag but need to install/configure https://www.npmjs.com/package/@bugsnag/js
-      console.log(`=== DistributionConfirmationController ERROR ${error}`);
+      console.log(`=== ConfirmationController ERROR ${error}`);
       this.formTarget.requestSubmit();
     });
   }
@@ -81,7 +79,7 @@ export default class extends Controller {
 
   debugFormData() {
     const formData = new FormData(this.formTarget);
-    let formDataString = "=== DistributionConfirmationController FormData:\n";
+    let formDataString = "=== ConfirmationController FormData:\n";
     for (const [key, value] of formData.entries()) {
       formDataString += `${key}: ${value}\n`;
     }
