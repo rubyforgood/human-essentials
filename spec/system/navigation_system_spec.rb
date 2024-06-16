@@ -63,7 +63,7 @@ RSpec.describe "Navigation", type: :system, js: true do
 
     context "with superadmin user" do
       let(:user) { create(:super_admin) }
-      let(:links) { ["Admin Dashboard", "Barcode Items", "Base Items", "Organizations", "Partners", "Users", "Announcements", "Account Requests", "FAQ", "My Organization"] }
+      let(:links) { ["Admin Dashboard", "Barcode Items", "Base Items", "Organizations", "Partners", "Users", "Announcements", "Account Requests", "FAQ"] }
 
       it "shows navigation options" do
         sidebar = page.find(".sidebar")
