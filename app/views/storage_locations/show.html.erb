@@ -102,6 +102,13 @@
                         <td><%= number_with_delimiter(item.quantity) %></td>
                       </tr>
                     <% end %>
+                  <% elsif @legacy_inventory %>
+                    <% @legacy_inventory.each do |item| %>
+                      <tr>
+                        <td><%= link_to item.name, item_path(item.item_id) %></td>
+                        <td><%= number_with_delimiter(item.quantity) %></td>
+                      </tr>
+                    <% end %>
                   <% else %>
                     <%= render partial: "inventory_item_row",
                                collection: @storage_location.inventory_items.joins(:item).where(items: { active: true }),
