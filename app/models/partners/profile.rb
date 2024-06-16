@@ -99,6 +99,49 @@ module Partners
     validate :client_share_is_0_or_100
     validate :has_at_least_one_request_setting
 
+    AGENCY_TYPES = {
+      "career" => "Career technical training",
+      "abuse" => "Child abuse resource center",
+      "church" => "Church outreach ministry",
+      "college" => "College and Universities",
+      "cdc" => "Community development corporation",
+      "health" => "Community health program or clinic",
+      "outreach" => "Community outreach services",
+      "legal" => "Correctional Facilities / Jail / Prison / Legal System",
+      "crisis" => "Crisis/Disaster services",
+      "disab" => "Developmental disabilities program",
+      "domv" => "Domestic violence shelter",
+      "ece" => "Early Childhood Education/Childcare",
+      "child" => "Early childhood services",
+      "edu" => "Education program",
+      "family" => "Family resource center",
+      "food" => "Food bank/pantry",
+      "foster" => "Foster Program",
+      "govt" => "Government Agency/Affiliate",
+      "headstart" => "Head Start/Early Head Start",
+      "homevisit" => "Home visits",
+      "homeless" => "Homeless resource center",
+      "hosp" => "Hospital",
+      "infpan" => "Infant/Child Pantry/Closet",
+      "lib" => "Library",
+      "military" => "Military Bases/Veteran Services",
+      "police" => "Police Station",
+      "preg" => "Pregnancy resource center",
+      "presch" => "Preschool",
+      "ref" => "Refugee resource center",
+      "es" => "School - Elementary School",
+      "hs" => "School - High School",
+      "ms" => "School - Middle School",
+      "senior" => "Senior Center",
+      "tribal" => "Tribal/Native-Based Organization",
+      "treat" => "Treatment clinic",
+      "2ycollege" => "Two-Year College",
+      "wic" => "Women, Infants and Children",
+      "other" => "Other"
+    }
+
+    enum :agency_type, AGENCY_TYPES.to_h { |s, _| [s, s] }, prefix: "agency_type"
+
     self.ignored_columns = %w[
       evidence_based_description
       program_client_improvement
@@ -112,6 +155,10 @@ module Partners
       pick_up_method
       ages_served
     ]
+
+    def agency_type_description
+      AGENCY_TYPES[agency_type]
+    end
 
     def client_share_total
       # client_share could be nil
