@@ -34,7 +34,7 @@ class Item < ApplicationRecord
   belongs_to :kit, optional: true
   belongs_to :item_category, optional: true
 
-  validates :name, uniqueness: { scope: :organization }
+  validates :name, uniqueness: { scope: :organization, case_sensitive: false, message: "- An item with that name already exists (could be an inactive item)" }
   validates :name, presence: true
   validates :organization, presence: true
   validates :distribution_quantity, numericality: { greater_than: 0 }, allow_blank: true
@@ -233,6 +233,13 @@ class Item < ApplicationRecord
 
   def inventory_item_at(storage_location_id)
     inventory_items.find_by(storage_location_id: storage_location_id)
+  end
+
+  def sync_request_units!(unit_ids)
+    request_units.clear
+    organization.request_units.where(id: unit_ids).pluck(:name).each do |name|
+      request_units.create!(name:)
+    end
   end
 
   private
