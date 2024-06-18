@@ -25,11 +25,6 @@ RSpec.describe " Participant", type: :system, js: true do
       expect(page.find(:xpath, "//table/tbody/tr[3]/td[1]")).to have_content(@third.business_name)
     end
 
-    it "allows single participants to show comments" do
-      visit product_drive_participant_path(product_drive_participant)
-      expect(page).to have_xpath("//table/tbody/tr/td", text: @first.comment)
-    end
-
     context "When the participants have donations associated with them already" do
       before(:each) do
         create(:donation, :with_items, created_at: 1.day.ago, item_quantity: 10, source: Donation::SOURCES[:product_drive], product_drive: product_drive, product_drive_participant: product_drive_participant)

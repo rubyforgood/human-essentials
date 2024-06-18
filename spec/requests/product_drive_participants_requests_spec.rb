@@ -97,9 +97,11 @@ RSpec.describe "ProductDriveParticipants", type: :request do
     end
 
     describe "GET #show" do
-      it "returns http success" do
-        get product_drive_participant_path(id: create(:product_drive_participant, organization: organization))
+      it "returns http success and displays comments" do
+        @participant = create(:product_drive_participant, organization: organization)
+        get product_drive_participant_path(id: @participant)
         expect(response).to be_successful
+        expect(response.body).to include(@participant.comment)
       end
     end
 
