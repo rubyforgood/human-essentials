@@ -182,38 +182,3 @@ and run the spec using this command: `MAGIC_TEST=1 NOT_HEADLESS=true bundle exec
     expect(my_code).to be_valid
   end
 ```
-
-## Deployment Process
-The human-essentials & partner application should ideally be deployed on a weekly or bi-weekly schedule depending on the merged updates in the main branch. This is the process we take to deploy updates from our main branch to our servers.
-
-### Requirements
-- SSH access to our servers (usually granted to core maintainers)
-- Login credentials to our [Mailchimp](https://mailchimp.com/) account
-
-### Steps
-#### 1. Merge main into production branch 
-All deploys deploy from the production branch, which keeps track of what is currently in production.
-
-```sh
-git checkout production
-git merge main
-```
-
-#### 2. Tag & Release
-1. Push a tag with the appropriate date versioning. Refer to the [releases](https://github.com/rubyforgood/human-essentials/releases) for the correct versioning. For example, if you are deploying on June 23, 2024:
-
-    ```sh
-    git tag 2024.06.23
-    git push origin tag 2024.06.23
-    ```
-2. Publish a release, associated to that tag pushed up in the previous step, [here](https://github.com/rubyforgood/human-essentials/releases/new). Include details about the release's updates (we use this to notify our stakeholders on updates via email).
-
-### Running delayed jobs
-
-Run delayed jobs locally with the `rake jobs:work` command. This is necessary to view any emails in your browser. Alternatively, you can run a specific delayed job by opening a Rails console and doing something like:
-
-```ruby
-Delayed::Job.last.invoke_job
-```
-
-You can replace the `last` query with any other query (e.g. `Delayed::Job.find(123)`).
