@@ -16,15 +16,12 @@ class OrganizationUpdateService
         params["partner_form_fields"].delete_if { |field| field == "" }
       end
 
-      if Flipper.enabled?(:enable_packs)
+      if Flipper.enabled?(:enable_packs) && params[:request_unit_names]
         # Find or create units for the organization
-        request_unit_ids = params[:request_unit_ids].reject(&:blank?).map do |request_unit_id|
-          if Unit.find_by(organization: organization, id: request_unit_id)
-            request_unit_id
-          else
-            Unit.find_or_create_by(organization: organization, name: request_unit_id).id
-          end
+        request_unit_ids = params[:request_unit_names].reject(&:blank?).map do |request_unit_name|
+          Unit.find_or_create_by(organization: organization, name: request_unit_name).id
         end
+        params.delete(:request_unit_names)
         params[:request_unit_ids] = request_unit_ids
       end
 
