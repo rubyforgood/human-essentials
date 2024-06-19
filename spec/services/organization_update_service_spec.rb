@@ -12,19 +12,14 @@ RSpec.describe OrganizationUpdateService do
         expect(organization.reload.name).to eq("A brand NEW NEW name")
       end
 
-      it "Should add request_units to the organization if flipper is on" do
+      it "Should set request_units on the organization" do
         Flipper.enable(:enable_packs)
-        params = {request_unit_ids: ["newpack"]}
+        params = {request_unit_names: ["newpack"]}
         described_class.update(organization, params)
         expect(organization.errors.none?).to eq(true)
         expect(organization.reload.request_units.pluck(:name)).to match_array(["newpack"])
       end
     end
-
-    # organization with request_units box, flat
-    # on update, if params dont include new unit pack, organization.testunits also include
-    # if params dont include any units, org doesnt include any units
-    # if flipper is off, units dont change
 
     context "when object is invalid" do
       it "should not update and return false" do
