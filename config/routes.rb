@@ -1,5 +1,5 @@
 def set_up_flipper
-  flipper_app = Flipper::UI.app(Flipper.instance) do |builder|
+  flipper_app = Flipper::UI.app(Flipper.instance, rack_protection: {except: :http_origin}) do |builder|
     builder.use Rack::Auth::Basic do |username, password|
       username == ENV["FLIPPER_USERNAME"] && password == ENV["FLIPPER_PASSWORD"]
     end
@@ -194,6 +194,12 @@ Rails.application.routes.draw do
   resources :item_categories, except: [:index]
 
   resources :partners do
+    resources :users, only: [:index, :create, :destroy], controller: 'partner_users' do
+      member do
+        post :resend_invitation
+      end
+    end
+
     collection do
       post :import_csv
     end

@@ -6,9 +6,6 @@ if Rails.env.production?
   return
 end
 
-# Activate all feature flags
-Flipper.enable(:onebase)
-
 # ----------------------------------------------------------------------------
 # Random Record Generators
 # ----------------------------------------------------------------------------
@@ -77,6 +74,26 @@ Organization.seed_items(sf_org)
 Organization.all.each do |org|
   org.items.where(value_in_cents: 0).limit(10).each do |item|
     item.update(value_in_cents: 100)
+  end
+end
+
+# ----------------------------------------------------------------------------
+# Request Units
+# ----------------------------------------------------------------------------
+
+%w(pack box flat).each do |name|
+  Unit.create!(organization: pdx_org, name: name)
+end
+
+pdx_org.items.each_with_index do |item, i|
+  if item.name == 'Pads'
+    %w(box pack).each { |name| item.request_units.create!(name: name) }
+  elsif item.name == 'Wipes (Baby)'
+    item.request_units.create!(name: 'pack')
+  elsif item.name == 'Kids Pull-Ups (5T-6T)'
+    %w(pack flat).each do |name|
+      item.request_units.create!(name: name)
+    end
   end
 end
 
@@ -288,7 +305,7 @@ note = [
     family.home_child_count.times do
       Partners::Child.create!(
         family: family,
-        first_name: family.guardian_first_name,
+        first_name: Faker::Name.unique.first_name,
         last_name: family.guardian_last_name,
         date_of_birth: Faker::Date.birthday(min_age: 5, max_age: 18),
         gender: Faker::Gender.binary_type,
@@ -306,7 +323,7 @@ note = [
     family.home_young_child_count.times do
       Partners::Child.create!(
         family: family,
-        first_name: family.guardian_first_name,
+        first_name: Faker::Name.unique.first_name,
         last_name: family.guardian_last_name,
         date_of_birth: Faker::Date.birthday(min_age: 0, max_age: 5),
         gender: Faker::Gender.binary_type,
@@ -336,10 +353,23 @@ note = [
       updated_at: date
     )
 
-    item_requests = []
-    Array.new(Faker::Number.within(range: 5..15)) do
-      item = p.organization.items.sample
-      new_item_request = Partners::ItemRequest.new(
+    pads = p.organization.items.find_by(name: 'Pads')
+    new_item_request = Partners::ItemRequest.new(
+      item_id: pads.id,
+      quantity: Faker::Number.within(range: 10..30),
+      children: [],
+      name: pads.name,
+      partner_key: pads.partner_key,
+      created_at: date,
+      updated_at: date,
+      request_unit: 'pack'
+    )
+    partner_request.item_requests << new_item_request
+
+    items = p.organization.items.sample(Faker::Number.within(range: 4..14)) - [pads]
+
+    partner_request.item_requests += items.map do |item|
+      Partners::ItemRequest.new(
         item_id: item.id,
         quantity: Faker::Number.within(range: 10..30),
         children: [],
@@ -348,7 +378,6 @@ note = [
         created_at: date,
         updated_at: date
       )
-      partner_request.item_requests << new_item_request
     end
 
     partner_request.request_items = partner_request.item_requests.map do |ir|
