@@ -9,6 +9,7 @@ class RequestsConfirmationMailer < ApplicationMailer
 
   private
 
+  # TODO: remove the need to de-duplicate items in the request
   def fetch_items(request)
     combined = combined_items(request)
     item_ids = combined&.map { |item| item['item_id'] }

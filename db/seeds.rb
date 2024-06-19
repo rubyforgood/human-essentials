@@ -353,7 +353,6 @@ note = [
       updated_at: date
     )
 
-    item_requests = []
     pads = p.organization.items.find_by(name: 'Pads')
     new_item_request = Partners::ItemRequest.new(
       item_id: pads.id,
@@ -367,9 +366,10 @@ note = [
     )
     partner_request.item_requests << new_item_request
 
-    Array.new(Faker::Number.within(range: 4..14)) do
-      item = p.organization.items.sample
-      new_item_request = Partners::ItemRequest.new(
+    items = p.organization.items.sample(Faker::Number.within(range: 4..14)) - [pads]
+
+    partner_request.item_requests += items.map do |item|
+      Partners::ItemRequest.new(
         item_id: item.id,
         quantity: Faker::Number.within(range: 10..30),
         children: [],
@@ -378,7 +378,6 @@ note = [
         created_at: date,
         updated_at: date
       )
-      partner_request.item_requests << new_item_request
     end
 
     partner_request.request_items = partner_request.item_requests.map do |ir|
