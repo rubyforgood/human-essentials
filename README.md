@@ -63,7 +63,7 @@ Thanks for checking us out! If you're new here, here are some things you should 
 - This project relies entirely on volunteers, so please be patient with communication
 
 ### Join us on slack 💬
-You can sign up [here](https://join.slack.com/t/rubyforgood/shared_invite/zt-21pyz2ab8-H6JgQfGGI0Ab6MfNOZRIQA) and find us in #human-essentials. Many helpful members are available to answer your questions. Just ask, and someone will be there to help you!
+You can sign up [here](https://join.slack.com/t/rubyforgood/shared_invite/zt-2k5ezv241-Ia2Iac3amxDS8CuhOr69ZA) and find us in #human-essentials. Many helpful members are available to answer your questions. Just ask, and someone will be there to help you!
 
 ##  Getting Started (Local Environment) 🛠️
 
@@ -75,9 +75,10 @@ You can sign up [here](https://join.slack.com/t/rubyforgood/shared_invite/zt-21p
    - Follow one of these guides: [MacOSX](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-macos), [Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-ubuntu-18-04).
      - Do you develop on Windows? We'd love to hear (and for you to submit a PR explaining) how you do it. 🙏🏻
    - Create a `database.yml` file on `config/` directory with your database configurations. You can also copy the existing files called [`database.yml.example`](config/database.yml.example) and [`.env.example`](.env.example) and change the credentials.
-3. Run `bin/setup`
-4. Run `bin/start` and visit http://localhost:3000/ to see the human essentials page.
-5. Login as a sample user with these default credentials (which also work for [staging](https://staging.humanessentials.app/)):
+3. Clone the project and switch to its directory
+4. Run `bin/setup`
+5. Run `bin/start` and visit http://localhost:3000/ to see the human essentials page.
+6. Log in as a sample user with these default credentials (which also work for [staging](https://staging.humanessentials.app/)):
 
 <details>
   <summary> Super Users 🦸🏽‍♀️ </summary>
@@ -175,12 +176,12 @@ Users that are frequent contributors and are involved in discussion (join the sl
 ### Stay Scoped
 
 Try to keep your PRs limited to one particular issue, and don't make changes that are out of scope for that issue. If you notice something that needs attention but is out of scope, please [create a new issue](https://github.com/rubyforgood/human-essentials/issues/new).
+
 ## Debugging
 If starting server directly, via `rail s` or `rail console`, or built-in debugger in RubyMine, then you can use `binding.pry` to debug. Drop the pry where you want the execution to pause.
 
 If starting via Procfile with `bin/start`, then drop a ``binding.remote_pry`` into the line where you want execution to pause at. Then run ``pry-remote`` in the terminal to connect to it.
 https://github.com/Mon-Ouie/pry-remote
-
 
 ## Testing 🧪
 ### Writing Tests/Specs

@@ -17,8 +17,11 @@ RSpec.describe "/partners/dashboard", type: :request do
 
   describe "GET #index" do
     it "displays requests that are pending" do
-      create(:request, :pending, partner: partner, request_items: [{item_id: item1.id, quantity: "16"}])
-      create(:request, :pending, partner: partner, request_items: [{item_id: item2.id, quantity: "16"}])
+      request1 = create(:request, :pending, partner: partner, request_items: [])
+      create(:item_request, request: request1, quantity: 16, item: item1)
+
+      request2 = create(:request, :pending, partner: partner, request_items: [])
+      create(:item_request, request: request2, quantity: 16, item: item2)
 
       get partners_dashboard_path
 
@@ -34,6 +37,29 @@ RSpec.describe "/partners/dashboard", type: :request do
 
       expect(response.body).to_not include(item1.name)
       expect(response.body).to_not include(item2.name)
+    end
+
+    it "shows units" do
+      Flipper.enable(:enable_packs)
+      create(:item_unit, item: item1, name: "Pack")
+      create(:item_unit, item: item2, name: "Pack")
+      request = create(:request, :pending, partner: partner, request_items: [])
+      create(:item_request, request: request, quantity: 1, request_unit: "Pack", item: item1)
+      create(:item_request, request: request, quantity: 7, request_unit: "Pack", item: item2)
+      get partners_dashboard_path
+
+      expect(response.body).to match(/1\s+Pack\s+—\s+#{item1.name}/m)
+      expect(response.body).to match(/7\s+Packs\s+—\s+#{item2.name}/m)
+    end
+
+    it "skips units when are not provided" do
+      Flipper.enable(:enable_packs)
+      create(:item_unit, item: item1, name: "Pack")
+      request = create(:request, :pending, partner: partner, request_items: [])
+      create(:item_request, request: request, quantity: 7, item: item1)
+      get partners_dashboard_path
+
+      expect(response.body).to match(/7\s+#{item1.name}/m)
     end
   end
 
