@@ -11,13 +11,7 @@
     <% @users.each do |user| %>
       <tr>
         <td>
-          <% user.roles.each do |role| %>
-            <% if role.resource_type == 'Organization' %>
-              <%= role.resource.name %>
-            <% elsif role.resource_type == 'Partner' %>
-              , <%= role.resource.name %>
-            <% end %>
-          <% end %>
+          <%= user.roles.map { |role| role.resource&.name }.compact.join(', ') %>
         </td>
         <td><%= user.display_name %></td>
         <td><%= user.email %></td>
