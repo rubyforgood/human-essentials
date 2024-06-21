@@ -6,6 +6,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
     let(:partner) { create(:partner, organization: organization) }
 
     before do
+      user.add_role(:org_admin)
       sign_in(user)
     end
     let!(:page_content_wait) { 10 } # allow up to 10 seconds for content to load in the test
