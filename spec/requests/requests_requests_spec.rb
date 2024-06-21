@@ -58,15 +58,6 @@ RSpec.describe 'Requests', type: :request do
         end
       end
 
-      context 'When organization does not have a default storage location' do
-        let(:request) { create(:request, organization: organization) }
-        it 'shows the column Default storage location inventory' do
-          get request_path(request)
-
-          expect(response.body).not_to include('Default storage location inventory')
-        end
-      end
-
       context 'When partner has a default storage location' do
         let(:storage_location) { create(:storage_location) }
         let(:request) { create(:request, partner: create(:partner, default_storage_location_id: storage_location.id)) }
@@ -77,9 +68,9 @@ RSpec.describe 'Requests', type: :request do
         end
       end
 
-      context 'When partner does not have a default storage location' do
-        let(:request) { create(:request) }
-        it 'shows the column Default storage location inventory' do
+      context 'When partner or organization does not have a default storage location' do
+        let(:request) { create(:request, organization: organization) }
+        it 'does not show the column Default storage location inventory' do
           get request_path(request)
 
           expect(response.body).not_to include('Default storage location inventory')
