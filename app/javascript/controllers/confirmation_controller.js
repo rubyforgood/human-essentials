@@ -38,7 +38,7 @@ export default class extends Controller {
         "X-CSRF-Token": this.getMetaToken(),
         "X-Requested-With": "XMLHttpRequest",
         "Content-Type": "application/json",
-        Accept: "application/json"
+        "Accept": "application/json"
       },
       body: JSON.stringify(formObject),
       credentials: "same-origin"
