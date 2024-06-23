@@ -109,28 +109,34 @@ RSpec.describe "Organizations", type: :request do
       end
     end
 
-    describe "PUT #deactivate_user" do
-      subject { put deactivate_user_organization_path(user_id: user.id) }
+    describe "POST #remove_user" do
+      subject { post remove_user_organization_path(user_id: user.id) }
 
-      it "redirect after update" do
-        subject
-        expect(response).to redirect_to(organization_path)
-      end
-      it "deactivates the user" do
-        expect { subject }.to change { user.reload.discarded_at }.to be_present
-      end
-    end
+      context "when user is org user" do
+        it "redirect after update" do
+          subject
+          expect(response).to redirect_to(organization_path)
+        end
 
-    describe "PUT #reactivate_user" do
-      subject { put reactivate_user_organization_path(user_id: user.id) }
-      before { user.discard! }
+        it "removes the org user role" do
+          role = user.roles.find_by(resource: organization, name: Role::ORG_USER)
+          user_role = UsersRole.find_by(user: user, role: role)
+          expect(user_role).to_not be_nil
 
-      it "redirect after update" do
-        subject
-        expect(response).to redirect_to(organization_path)
+          subject
+
+          expect(UsersRole.find_by(user: user, role: role)).to be_nil
+        end
       end
-      it "reactivates the user" do
-        expect { subject }.to change { user.reload.discarded_at }.to be_nil
+
+      context "when user is not an org user" do
+        let(:user) { create(:user, organization: create(:organization)) }
+
+        it 'raises an error' do
+          subject
+
+          expect(response).to be_not_found
+        end
       end
     end
 
