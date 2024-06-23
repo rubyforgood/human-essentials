@@ -118,7 +118,15 @@
                   <tfoot>
                   <tr>
                     <td>Total</td>
-                    <td><%= @inventory ? @inventory.quantity_for(storage_location: @storage_location.id) : @storage_location.size %></td>
+                    <td>
+                      <% if @inventory %>
+                        <%= number_with_delimiter(@inventory.quantity_for(storage_location: @storage_location.id)) %>
+                      <% elsif @legacy_inventory %>
+                        <%= number_with_delimiter(@legacy_inventory.map(&:quantity).sum) %>
+                      <% else %>
+                        <%= number_with_delimiter(@storage_location.size) %>
+                      <% end %>
+                    </td>
                   </tr>
                   </tfoot>
                 </table>
