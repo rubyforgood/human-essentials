@@ -71,6 +71,22 @@ class DistributionsController < ApplicationController
     end
   end
 
+  # This endpoint is in support of displaying a confirmation modal before a distribution is created.
+  # Since the modal should only be shown for a valid distribution, client side JS will invoke this
+  # endpoint, and if the distribution is valid, this endpoint also returns the HTML for the modal content.
+  # Important: The distribution model is intentionally NOT saved to the database at this point because
+  # the user has not yet confirmed that they want to create it.
+  def validate
+    @dist = Distribution.new(distribution_params.merge(organization: current_organization))
+    @dist.line_items.combine!
+    if @dist.valid?
+      body = render_to_string(template: 'distributions/validate', formats: [:html], layout: false)
+      render json: {valid: true, body: body}
+    else
+      render json: {valid: false}
+    end
+  end
+
   def create
     dist = Distribution.new(distribution_params.merge(organization: current_organization))
     result = DistributionCreateService.new(dist, request_id).call

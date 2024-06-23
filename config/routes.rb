@@ -136,6 +136,7 @@ Rails.application.routes.draw do
   resources :distributions do
     get :print, on: :member
     collection do
+      post :validate
       get :calendar
       get :schedule
       get :pickup_day
