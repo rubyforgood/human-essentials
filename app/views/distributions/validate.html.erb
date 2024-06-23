@@ -1,0 +1,42 @@
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Distribution Confirmation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="lead">You are about to create a distribution for
+          <span class="fw-bolder fst-italic"
+            data-testid="distribution-confirmation-partner"><%= @dist.partner_name %></span>
+          from
+          <span class="fw-bolder fst-italic"
+            data-testid="distribution-confirmation-storage"><%= @dist.storage_location.name %></span>
+        </p>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Item Name</th>
+                <th>Quantity</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @dist.line_items.each do |line_item| %>
+                <tr>
+                  <td><%= line_item.name %></td>
+                  <td><%= line_item.quantity %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+
+          <div class="message fs-5">
+            <p>Please confirm that the above list is what you want to distribute.</p>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="No I need to make changes">No, I need to make changes</button>
+        <button type="button" class="btn btn-primary" data-action="confirmation#submitForm">Yes, it's correct</button>
+      </div>
+    </div>
+  </div>
