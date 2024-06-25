@@ -1,7 +1,6 @@
 1. Introduction
    1. Is Human Essentials right for you? (what we help with and what we don't)
-   2. A typical 'day' with the system
-   3. Support 
+   2. Support 
 2. Getting started
    1. Partner Agencies
    2. Storage Locations
