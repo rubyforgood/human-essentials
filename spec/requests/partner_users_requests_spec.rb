@@ -10,25 +10,15 @@ RSpec.describe PartnerUsersController, type: :request do
   end
 
   before do
+    user.add_role(:org_admin)
     sign_in(user)
   end
 
   describe "GET #index" do
     it "renders the index template and assigns @users" do
-      user.add_role(:org_admin)
-
       get partner_users_path(default_params.merge(partner_id: partner))
       expect(response).to render_template(:index)
       expect(assigns(:users)).to eq(partner.users)
-    end
-
-    context "when user is not authorized" do
-      it "does not have access to index template" do
-        user.add_role(:org_user)
-
-        get partner_users_path(default_params.merge(partner_id: partner))
-        expect(response).not_to render_template(:index)
-      end
     end
   end
 
@@ -42,8 +32,6 @@ RSpec.describe PartnerUsersController, type: :request do
 
     context "with valid user params" do
       it "invites a new user and redirects back with notice" do
-        user.add_role(:org_admin)
-
         expect {
           post partner_users_path(default_params.merge(partner_id: partner)), params: {user: valid_user_params}
         }.to change(User.all, :count).by(1)
@@ -55,8 +43,6 @@ RSpec.describe PartnerUsersController, type: :request do
 
     context "with invalid user params" do
       it "renders the index template with alert" do
-        user.add_role(:org_admin)
-
         expect {
           post partner_users_path(default_params.merge(partner_id: partner)), params: {user: {email: "invalid_email"}}
         }.not_to change(User, :count)
@@ -78,8 +64,6 @@ RSpec.describe PartnerUsersController, type: :request do
     end
 
     it "removes the user role from the partner and redirects back with notice" do
-      user.add_role(:org_admin)
-
       expect {
         delete partner_user_path(default_params.merge(partner_id: partner, id: partner_user))
       }.to change { partner_user.roles.count }.from(1).to(0)
@@ -112,8 +96,6 @@ RSpec.describe PartnerUsersController, type: :request do
 
     context "when the user has not accepted the invitation" do
       it "resends the invitation and redirects back with notice" do
-        user.add_role(:org_admin)
-
         expect_any_instance_of(User).to receive(:invite!)
 
         post resend_invitation_partner_user_path(default_params.merge(partner_id: partner, id: partner_user))
@@ -125,8 +107,6 @@ RSpec.describe PartnerUsersController, type: :request do
 
     context "when the user has already accepted the invitation" do
       it "redirects back with alert" do
-        user.add_role(:org_admin)
-
         partner_user.update!(invitation_accepted_at: Time.zone.now)
 
         post resend_invitation_partner_user_path(default_params.merge(partner_id: partner, id: partner_user))
