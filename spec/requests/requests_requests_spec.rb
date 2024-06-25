@@ -68,7 +68,7 @@ RSpec.describe 'Requests', type: :request do
         end
       end
 
-      context 'When partner or organization does not have a default storage location' do
+      context 'When neither partner nor organization has a default storage location' do
         let(:request) { create(:request, organization: organization) }
         it 'does not show the column Default storage location inventory' do
           get request_path(request)
