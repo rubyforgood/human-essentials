@@ -73,8 +73,6 @@ RSpec.describe PartnerUsersController, type: :request do
     end
 
     it "redirects back with alert if the user role removal fails" do
-      user.add_role(:org_admin)
-
       allow_any_instance_of(User).to receive(:remove_role).and_return(false)
 
       delete partner_user_path(default_params.merge(partner_id: partner, id: partner_user))
