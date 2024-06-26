@@ -128,7 +128,7 @@ RSpec.describe "Requests", type: :system, js: true do
         { item_id: item2.id, quantity: 100}
       ]
     }
-    let!(:request) { create(:request, request_items: request_items, organization: organization) }
+    let!(:request) { create(:request, request_items: request_items, organization: create(:organization, default_storage_location: 1)) }
 
     it "should show the request with a request sender if a partner user is set" do
       visit subject
