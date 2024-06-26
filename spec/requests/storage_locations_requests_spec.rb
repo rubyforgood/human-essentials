@@ -365,6 +365,26 @@ RSpec.describe "StorageLocations", type: :request do
           expect(collection.last.keys).to match_array(%w[item_id item_name quantity])
         end
       end
+
+      context "when inventory items are in reverse alphabetical order" do
+        let(:inventory_item4) { create(:inventory_item, storage_location: storage_location, item: create(:item, name: 'Underpads (Pack)', organization: organization)) }
+        let(:inventory_item3) { create(:inventory_item, storage_location: storage_location, item: create(:item, name: 'Swimmers', organization: organization)) }
+        let(:inventory_item2) { create(:inventory_item, storage_location: storage_location, item: create(:item, name: 'Bibs (Adult & Child)', organization: organization)) }
+        let(:inventory_item1) { create(:inventory_item, storage_location: storage_location, item: create(:item, name: 'Adult Briefs (XXL)', organization: organization)) }
+    
+        it "returns inventory items in alphabetical order of their names" do
+          get inventory_storage_location_path(storage_location, format: :json)
+          collection = response.parsed_body
+          item_names = collection.map { |inventory_item| inventory_item['item_name'] }
+    
+          sorted_names = storage_location.inventory_items
+                                .includes(:item)
+                                .sort_by { |inventory_item| inventory_item.item.name }
+                                .map { |inventory_item| inventory_item.item.name }
+          
+          expect(item_names).to eq(sorted_names)
+        end
+      end
     end
 
     context "Looking at a different organization" do
