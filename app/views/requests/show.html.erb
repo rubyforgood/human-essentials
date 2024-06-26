@@ -65,8 +65,8 @@
               <tr>
                 <th>Item</th>
                 <th>Quantity</th>
-                <% default_storage_location = @request.organization.default_storage_location ||
-                                              @request.partner.default_storage_location_id %>
+                <% default_storage_location = @request.partner.default_storage_location_id ||
+                                              @request.organization.default_storage_location %>
                 <% if default_storage_location %>
                   <th>Default storage location inventory</th>
                 <% end %>
