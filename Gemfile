@@ -14,7 +14,7 @@ gem "pg", "~> 1.5.6"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "7.1.3.3"
+gem "rails", "7.1.3.4"
 
 ###### MODELS / DATABASE #######
 
@@ -147,14 +147,14 @@ group :development, :test do
   # Add-on for command line to create a simple debugger.
   gem "pry-nav"
   # RSpec behavioral testing framework for Rails.
-  gem "rspec-rails", "~> 6.1.2"
+  gem "rspec-rails", "~> 6.1.3"
   # Static analysis / linter.
   gem "rubocop"
   # Rails add-on for static analysis.
   gem 'rubocop-performance'
   gem "rubocop-rails", "~> 2.25.0"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.36"
+  gem "standard", "~> 1.37"
   # Erb linter.
   gem "erb_lint"
 end

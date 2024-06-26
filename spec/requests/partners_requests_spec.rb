@@ -107,7 +107,22 @@ RSpec.describe "Partners", type: :request do
     context "html" do
       let(:response_format) { 'html' }
 
-      it { is_expected.to be_successful }
+      context "without org admin" do
+        it 'should not show the manage users button' do
+          expect(subject).to be_successful
+          expect(subject.body).not_to include("Manage Users")
+        end
+      end
+
+      context "without org admin" do
+        before(:each) do
+          user.add_role(Role::ORG_ADMIN, organization)
+        end
+        it 'should show the manage users button' do
+          expect(subject).to be_successful
+          expect(subject.body).to include("Manage Users")
+        end
+      end
 
       context "when the partner is invited" do
         it "includes impact metrics" do
@@ -280,43 +295,6 @@ RSpec.describe "Partners", type: :request do
       post invite_partner_path(id: partner.id)
       expect(PartnerInviteService).to have_received(:new).with(partner: partner, force: true)
       expect(response).to have_http_status(:found)
-    end
-  end
-
-  describe "POST #invite_partner_user" do
-    subject { -> { post invite_partner_user_partner_path(id: partner.id, partner: partner.id, email: email, name: name) } }
-    let(:partner) { create(:partner, organization: organization) }
-    let(:email) { Faker::Internet.email }
-    let(:name) { Faker::Name.unique.name }
-
-    context 'when the invite successfully' do
-      before do
-        allow(UserInviteService).to receive(:invite)
-      end
-      it "send the invite" do
-        subject.call
-        expect(UserInviteService).to have_received(:invite).with(
-          email: email,
-          name: name,
-          roles: [Role::PARTNER],
-          resource: partner
-        )
-        expect(response).to redirect_to(partner_path(partner))
-        expect(flash[:notice]).to eq("We have invited #{email} to #{partner.name}!")
-      end
-    end
-
-    context 'when there is an error in invite' do
-      let(:error_message) { 'Error message' }
-      before do
-        allow(UserInviteService).to receive(:invite).and_raise(StandardError.new(error_message))
-      end
-
-      it 'redirect to partner url with error message' do
-        subject.call
-        expect(response).to redirect_to(partner_path(partner))
-        expect(flash[:error]).to eq("Failed to invite #{email} to #{partner.name} due to: #{error_message}")
-      end
     end
   end
 
