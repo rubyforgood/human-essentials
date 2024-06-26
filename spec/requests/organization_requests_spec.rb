@@ -113,19 +113,13 @@ RSpec.describe "Organizations", type: :request do
       subject { post remove_user_organization_path(user_id: user.id) }
 
       context "when user is org user" do
-        it "redirect after update" do
+        it "redirects after update" do
           subject
           expect(response).to redirect_to(organization_path)
         end
 
         it "removes the org user role" do
-          role = user.roles.find_by(resource: organization, name: Role::ORG_USER)
-          user_role = UsersRole.find_by(user: user, role: role)
-          expect(user_role).to_not be_nil
-
-          subject
-
-          expect(UsersRole.find_by(user: user, role: role)).to be_nil
+          expect { subject }.to change { user.has_role?(Role::ORG_USER, organization) }.from(true).to(false)
         end
       end
 
