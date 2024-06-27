@@ -172,5 +172,42 @@ RSpec.describe "Donations", type: :request do
         expect(response.body).to_not include("you’ll need to make an adjustment to the inventory as well.")
       end
     end
+
+    # Bug fix - Issue #4172
+    context "when donated items are distributed to less than donated amount " \
+    "and you edit the donation to less than distributed amount" do
+      it "shows a warning and displays original names and amounts" do
+        item = create(:item, organization: organization, name: "Brightbloom Seed")
+        storage_location = create(:storage_location, :with_items, item: item, item_quantity: 0, organization: organization)
+        original_quantity = 100
+        donation = create(:donation, :with_items, item: item, item_quantity: original_quantity, organization: organization, storage_location: storage_location)
+        distribution = {
+          storage_location_id: storage_location.id,
+          partner_id: create(:partner).id,
+          delivery_method: :delivery,
+          line_items_attributes: {
+            "0": { item_id: item.id, quantity: 90 }
+          }
+        }
+
+        post distributions_path(distribution: distribution, format: :turbo_stream)
+
+        edited_donation = {
+          storage_location_id: storage_location.id,
+          line_items_attributes: {
+            "0": { item_id: item.id, quantity: 1 }
+          }
+        }
+        put donation_path(id: donation.id, donation: edited_donation)
+
+        expect(response).to redirect_to(edit_donation_path(donation))
+
+        get response.headers['Location']
+
+        expect(flash[:alert]).to include("Error updating donation: Requested items exceed the available inventory")
+        expect(response.body).to include(item.name)
+        expect(response.body).to include(original_quantity.to_s)
+      end
+    end
   end
 end
