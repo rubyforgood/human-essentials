@@ -156,6 +156,9 @@ GEM
       database_cleaner-core (~> 2.0.0)
     database_cleaner-core (2.0.1)
     date (3.3.4)
+    debug (1.9.2)
+      irb (~> 1.10)
+      reline (>= 0.3.8)
     debug_inspector (1.2.0)
     delayed_job (4.1.11)
       activesupport (>= 3.0, < 8.0)
@@ -711,6 +714,7 @@ DEPENDENCIES
   coverband
   cuprite
   database_cleaner-active_record (~> 2.1)
+  debug (>= 1.0.0)
   delayed_job_active_record
   delayed_job_web
   devise (>= 4.7.1)
