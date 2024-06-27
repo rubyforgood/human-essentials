@@ -204,7 +204,12 @@ RSpec.describe "Donations", type: :request do
 
         get response.headers['Location']
 
-        expect(flash[:alert]).to include("Error updating donation: Requested items exceed the available inventory")
+        if Event.read_events?(organization)
+          expect(flash[:alert]).to include("Error updating donation: Could not reduce quantity by 99 - current quantity is 10 for Brightbloom Seed")
+        else # TODO remove this branch when switching to events
+          expect(flash[:alert]).to include("Error updating donation: Requested items exceed the available inventory")
+        end
+
         expect(response.body).to include(item.name)
         expect(response.body).to include(original_quantity.to_s)
       end
