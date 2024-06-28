@@ -50,6 +50,9 @@ Rails.application.routes.draw do
     resources :distributions, only: [:index] do
       get :print, on: :member
     end
+    resources :donations, only: [:index] do
+      get :print, on: :member
+    end
   end
 
   # This is where a superadmin CRUDs all the things
@@ -221,6 +224,7 @@ Rails.application.routes.draw do
   resources :product_drives
 
   resources :donations do
+    get :print, on: :member
     patch :add_item, on: :member
     patch :remove_item, on: :member
   end
