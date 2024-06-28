@@ -50,6 +50,17 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page).to have_content("Show Year-to-date values on distribution printout?")
         expect(page).to have_content("Logo")
         expect(page).to have_content("Use One step Partner invite and approve process?")
+
+        expect(page).to_not have_content("Custom Request Units")
+      end
+
+      it "Shows custom request units when enabled", :aggregate_failures do
+        Flipper.enable(:enable_packs)
+        organization.update!(one_step_partner_invite: true)
+
+        visit organization_path
+
+        expect(page).to have_content("Custom Request Units")
       end
     end
 
