@@ -79,7 +79,15 @@ class StorageLocationsController < ApplicationController
     @items_in = ItemsInQuery.new(organization: current_organization, storage_location: @storage_location).call
     @items_in_total = ItemsInTotalQuery.new(organization: current_organization, storage_location: @storage_location).call
     if Event.read_events?(current_organization)
-      @inventory = View::Inventory.new(current_organization.id, event_time: params[:version_date])
+      if View::Inventory.within_snapshot?(current_organization.id, params[:version_date])
+        @inventory = View::Inventory.new(current_organization.id, event_time: params[:version_date])
+      else
+        @legacy_inventory = View::Inventory.legacy_inventory_for_storage_location(
+          current_organization.id,
+          @storage_location.id,
+          params[:version_date]
+        )
+      end
     end
 
     respond_to do |format|
