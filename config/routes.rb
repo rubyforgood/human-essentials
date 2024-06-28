@@ -190,6 +190,7 @@ Rails.application.routes.draw do
     delete :deactivate, on: :member
     patch :restore, on: :member
     patch :remove_category, on: :member
+    post :request_units, on: :member
   end
 
   resources :item_categories, except: [:index]

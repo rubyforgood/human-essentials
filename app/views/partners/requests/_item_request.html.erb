@@ -2,12 +2,23 @@
   <tr>
     <td>
       <%= field.label :item_id, "Item Requested", {class: 'sr-only'} %>
-      <%= field.select :item_id, @requestable_items, {include_blank: 'Select an item'}, {class: 'form-control'} %>
+      <%= field.select :item_id, options_for_select(@requestable_items),
+        {include_blank: 'Select an item'},
+        class: 'form-control',
+        data: {
+          controller: 'item-select',
+          action: 'item-select#update_units'
+        }
+      %>
     </td>
     <td>
       <%= field.label :quantity, "Quantity", {class: 'sr-only'} %>
       <%= field.number_field :quantity, label: false, step: 1, min: 1, class: 'form-control' %>
     </td>
+    <%# <td> %>
+      <%# <%= field.label :unit, "Units(if applicable)", {class: 'sr-only'} %> %>
+      <%# <%= field.select :unit, @requestable_items, {include_blank: 'Select an item'}, {class: 'form-control'} %> %>
+    <%# </td> %>
     <td>
       <%= remove_element_button "Remove", container_selector: "tr" %>
     </td>

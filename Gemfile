@@ -107,6 +107,7 @@ gem "mini_racer", "~> 0.12.0"
 gem "nokogiri", ">= 1.10.4"
 gem "image_processing"
 gem "sprockets", "~> 4.2.1"
+gem 'requestjs-rails'
 
 group :production do
   # Tool to detect unused code through knowing which methods are used in which files.
