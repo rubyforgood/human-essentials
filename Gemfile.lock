@@ -336,9 +336,6 @@ GEM
       childprocess (~> 5.0)
     letter_opener (1.10.0)
       launchy (>= 2.2, < 4)
-    libv8-node (21.7.2.0-arm64-darwin)
-    libv8-node (21.7.2.0-x86_64-darwin)
-    libv8-node (21.7.2.0-x86_64-linux)
     lint_roller (1.1.0)
     listen (3.9.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
@@ -367,8 +364,6 @@ GEM
     method_source (1.1.0)
     mini_magick (4.11.0)
     mini_mime (1.1.5)
-    mini_racer (0.12.0)
-      libv8-node (~> 21.7.2.0)
     minitest (5.24.0)
     monetize (1.12.0)
       money (~> 6.12)
@@ -747,7 +742,6 @@ DEPENDENCIES
   lograge
   magic_test
   matrix
-  mini_racer (~> 0.12.0)
   money-rails
   newrelic_rpm
   nokogiri (>= 1.10.4)
