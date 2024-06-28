@@ -84,7 +84,7 @@ class DonationsController < ApplicationController
     redirect_to donations_path
   rescue => e
     flash[:alert] = "Error updating donation: #{e.message}"
-    render "edit"
+    redirect_back(fallback_location: edit_donation_path)
   end
 
   def destroy
