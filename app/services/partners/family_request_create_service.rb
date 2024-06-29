@@ -39,6 +39,15 @@ module Partners
       self
     end
 
+    def create_only
+      Partners::RequestCreateService.new(
+        partner_user_id: partner_user_id,
+        comments: comments,
+        for_families: @for_families,
+        item_requests_attributes: item_requests_attributes
+      ).create_only
+    end
+
     private
 
     def valid?

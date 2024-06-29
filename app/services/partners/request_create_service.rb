@@ -44,6 +44,16 @@ module Partners
       self
     end
 
+    def create_only
+      partner_request = ::Request.new(partner_id: partner.id,
+        organization_id: organization_id,
+        comments: comments,
+        partner_user_id: partner_user_id)
+      partner_request = populate_item_request(partner_request)
+      partner_request.assign_attributes(additional_attrs)
+      partner_request
+    end
+
     private
 
     attr_reader :partner_user_id, :comments, :item_requests_attributes, :additional_attrs

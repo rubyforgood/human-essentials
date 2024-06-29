@@ -41,6 +41,21 @@ module Partners
       end
     end
 
+    def validate
+      @partner_request = Partners::RequestCreateService.new(
+        partner_user_id: current_user.id,
+        comments: partner_request_params[:comments],
+        item_requests_attributes: partner_request_params[:item_requests_attributes]&.values || []
+      ).create_only
+
+      if @partner_request.valid?
+        body = render_to_string(template: 'partners/requests/validate', formats: [:html], layout: false)
+        render json: {valid: true, body: body}
+      else
+        render json: {valid: false}
+      end
+    end
+
     private
 
     def partner_request_params
