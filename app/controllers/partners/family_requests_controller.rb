@@ -44,5 +44,35 @@ module Partners
         redirect_to new_partners_family_request_path, error: "Request failed! #{create_service.errors.map { |error| error.message.to_s }}}"
       end
     end
+
+    def validate
+      children_ids = []
+
+      params.each do |key, _|
+        is_child, id = key.split('-')
+        if is_child == 'child'
+          children_ids << id
+        end
+      end
+
+      children = current_partner.children.active.where(id: children_ids).where.not(item_needed_diaperid: [nil, 0])
+
+      children_grouped_by_item_id = children.group_by(&:item_needed_diaperid)
+      family_requests_attributes = children_grouped_by_item_id.map do |item_id, item_requested_children|
+        { item_id: item_id, person_count: item_requested_children.size, children: item_requested_children }
+      end
+
+      @partner_request = Partners::FamilyRequestCreateService.new(
+        partner_user_id: current_user.id,
+        family_requests_attributes: family_requests_attributes,
+        for_families: true
+      ).create_only
+      if @partner_request.valid?
+        body = render_to_string(template: 'partners/requests/validate', formats: [:html], layout: false)
+        render json: {valid: true, body: body}
+      else
+        render json: {valid: false}
+      end
+    end
   end
 end

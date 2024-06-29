@@ -87,6 +87,39 @@ RSpec.describe Request, type: :model do
         expect(subject.errors[:item_requests]).to include("should have unique item_ids")
       end
     end
+
+    context "when request is completely empty" do
+      let(:empty_request) { build(:request, comments: "", item_requests: []) }
+
+      it "is not valid" do
+        expect(empty_request).to_not be_valid
+        expect(empty_request.errors[:base]).to include("completely empty request")
+      end
+    end
+
+    context "when request has comments" do
+      let(:request_with_comments) { build(:request, comments: "Some comments", item_requests: []) }
+
+      it "is valid" do
+        expect(request_with_comments).to be_valid
+      end
+    end
+
+    context "when request has item_requests" do
+      let(:request_with_item_requests) { build(:request, comments: "", item_requests: [build(:item_request, item: item_one, quantity: 5)]) }
+
+      it "is valid" do
+        expect(request_with_item_requests).to be_valid
+      end
+    end
+
+    context "when request has both comments and item_requests" do
+      let(:request_with_both) { build(:request, comments: "Some comments", item_requests: [build(:item_request, item: item_two, quantity: 3)]) }
+
+      it "is valid" do
+        expect(request_with_both).to be_valid
+      end
+    end
   end
 
   describe "versioning" do
