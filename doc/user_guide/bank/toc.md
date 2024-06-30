@@ -2,8 +2,8 @@
    1. Is Human Essentials right for you? (what we help with and what we don't)
    2. Support 
 2. Getting started
-   1. Partner Agencies
-   2. Storage Locations
+   1. Storage Locations
+   2. Partner Agencies
    3. Donation sites
    4. Inventory
    5. Adding your staff
@@ -22,6 +22,7 @@
    3. Announcements
 5. Inventory 
    1. Items
+   2. Storage Locations, revisited
    2. Audits
    3. Kits
    4. Barcodes
