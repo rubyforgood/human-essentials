@@ -107,6 +107,14 @@ RSpec.describe "Transfer management", type: :system do
     expect(page).to have_no_text 'Inactive R Us'
   end
 
+  # 4438 - Bug Fix
+  it "add item button should be activated when from storage location is selected after rendering again on failure" do
+    from_storage_location = create(:storage_location, :with_items, item: item, name: "From me", organization: organization)
+    create_transfer('', '', '')
+    select from_storage_location.name, from: "From storage location"
+    expect(page).not_to have_css("#__add_line_item.disabled")
+  end
+
   context "when there's insufficient inventory at the origin to cover the move" do
     let!(:from_storage_location) { create(:storage_location, :with_items, item: item, item_quantity: 10, name: "From me", organization: organization) }
     let!(:to_storage_location) { create(:storage_location, :with_items, name: "To me", organization: organization) }

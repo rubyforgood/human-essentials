@@ -306,6 +306,15 @@ RSpec.feature "Distributions", type: :system do
     expect(page).to have_css('.alert.error', text: /storage location/i)
   end
 
+  # 4438- Bug Fix
+  it "add item button gets activated when storage location is selected after rendering again on errors" do
+    visit new_distribution_path
+
+    select storage_location.name, from: "From storage location"
+
+    expect(page).not_to have_css('#__add_line_item.disabled')
+  end
+
   context "With an existing distribution" do
     let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", delivery_method: delivery_method, organization: user.organization) }
     let(:delivery_method) { "pick_up" }
