@@ -78,10 +78,12 @@ class DonationPdf
         move_down 10
       end
 
-      if @donation.money_raised
-        font_size 12
-        text "<strong>Money Raised In Dollars: </strong>#{dollar_value(@donation.money_raised)}", inline_format: true
+      font_size 12
+      money_raised = "$0.00"
+      if !@donation.money_raised.nil? && @donation.money_raised > 0
+        money_raised = dollar_value(@donation.money_raised)
       end
+      text "<strong>Money Raised In Dollars: </strong>#{money_raised}", inline_format: true
 
       move_down 10
       font_size 12
