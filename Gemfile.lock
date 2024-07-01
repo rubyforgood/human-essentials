@@ -542,7 +542,7 @@ GEM
     responders (3.1.1)
       actionpack (>= 5.2)
       railties (>= 5.2)
-    rexml (3.3.0)
+    rexml (3.3.1)
       strscan
     rolify (6.0.1)
     rouge (4.1.2)
@@ -636,7 +636,7 @@ GEM
       actionpack (>= 5.2)
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
-    standard (1.37.0)
+    standard (1.39.0)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.0)
       rubocop (~> 1.64.0)
@@ -778,7 +778,7 @@ DEPENDENCIES
   simple_form
   simplecov
   sprockets (~> 4.2.1)
-  standard (~> 1.37)
+  standard (~> 1.39)
   stimulus-rails
   strong_migrations (= 1.8.0)
   terser
