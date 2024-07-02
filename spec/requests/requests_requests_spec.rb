@@ -48,6 +48,34 @@ RSpec.describe 'Requests', type: :request do
           expect(response).to have_http_status(:not_found)
         end
       end
+
+      context 'When organization has a default storage location' do
+        let(:request) { create(:request, organization: create(:organization, default_storage_location: 1)) }
+        it 'shows the column Default storage location inventory' do
+          get request_path(request)
+
+          expect(response.body).to include('Default storage location inventory')
+        end
+      end
+
+      context 'When partner has a default storage location' do
+        let(:storage_location) { create(:storage_location) }
+        let(:request) { create(:request, partner: create(:partner, default_storage_location_id: storage_location.id)) }
+        it 'shows the column Default storage location inventory' do
+          get request_path(request)
+
+          expect(response.body).to include('Default storage location inventory')
+        end
+      end
+
+      context 'When neither partner nor organization has a default storage location' do
+        let(:request) { create(:request, organization: organization) }
+        it 'does not show the column Default storage location inventory' do
+          get request_path(request)
+
+          expect(response.body).not_to include('Default storage location inventory')
+        end
+      end
     end
 
     describe 'POST #start' do
