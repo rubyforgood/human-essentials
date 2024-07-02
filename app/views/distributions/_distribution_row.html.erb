@@ -32,6 +32,6 @@
             text: "Reclaim",
             icon: "undo", enabled: !distribution_row.has_inactive_item? } %>
     <% if distribution_row.has_inactive_item? %>
-      <div class="warning">Has Inactive Items</div>
+      <div class="low_priority_warning">Has Inactive Items</div>
     <% end %>
   </td>
