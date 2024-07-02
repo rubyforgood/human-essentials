@@ -12,7 +12,7 @@ RSpec.describe Reports::SummaryReportService, type: :service do
       expect(report.report).to eq({
                                     entries: { "% difference in yearly donations" => "0%",
                                                "% difference in total money donated" => "0%",
-                                               "% difference in diaper donations" => "0%" },
+                                               "% difference in disposable diaper donations" => "0%" },
                                     name: "Year End Summary"
                                   })
     end
@@ -47,7 +47,7 @@ RSpec.describe Reports::SummaryReportService, type: :service do
         expect(report.report).to eq({
           entries: { "% difference in yearly donations" => "+200%",
                      "% difference in total money donated" => "+800%",
-                     "% difference in diaper donations" => "+200%" },
+                     "% difference in disposable diaper donations" => "+200%" },
           name: "Year End Summary"
         })
       end
@@ -79,7 +79,7 @@ RSpec.describe Reports::SummaryReportService, type: :service do
         expect(report.report).to eq({
           entries: { "% difference in yearly donations" => "-67%",
                      "% difference in total money donated" => "0%",
-                     "% difference in diaper donations" => "-67%" },
+                     "% difference in disposable diaper donations" => "-67%" },
           name: "Year End Summary"
         })
       end
