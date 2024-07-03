@@ -16,7 +16,7 @@ module Reports
                     entries: {
                       '% difference in yearly donations' => percent_donations,
                       '% difference in total money donated' => percent_money,
-                      '% difference in diaper donations' => percent_diapers
+                      '% difference in disposable diaper donations' => percent_diapers
                     } }
     end
 
