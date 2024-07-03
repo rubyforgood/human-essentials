@@ -77,6 +77,10 @@ FactoryBot.define do
       end
     end
 
+    trait :no_roles do
+      organization { nil }
+    end
+
     trait :deactivated do
       discarded_at { Time.zone.now }
     end
