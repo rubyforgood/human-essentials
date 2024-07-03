@@ -89,8 +89,7 @@ Rails.application.routes.draw do
   resource :organization, path: :manage, only: %i(edit update) do
     collection do
       post :invite_user
-      put :deactivate_user
-      put :reactivate_user
+      post :remove_user
       post :resend_user_invitation
       post :promote_to_org_admin
       post :demote_to_user
