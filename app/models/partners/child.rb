@@ -25,6 +25,7 @@ module Partners
     serialize :child_lives_with, Array
     belongs_to :family
     has_many :child_item_requests, dependent: :destroy
+    has_and_belongs_to_many :requested_items, class_name: 'Item'
 
     include Filterable
     include Exportable
@@ -88,7 +89,7 @@ module Partners
     def self.csv_export_headers
       %w[
         id first_name last_name date_of_birth gender child_lives_with race agency_child_id
-        health_insurance comments created_at updated_at family_id item_needed_diaperid active archived
+        health_insurance comments created_at updated_at family_id requested_item_ids active archived
       ].freeze
     end
 
@@ -107,7 +108,7 @@ module Partners
         created_at,
         updated_at,
         family_id,
-        item_needed_diaperid,
+        requested_item_ids,
         active,
         archived
       ]
