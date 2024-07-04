@@ -16,11 +16,21 @@
               <%= form.label :last_name, "Last Name" %>
               <%= form.text_field :last_name, class: "form-control" %>
 
-              <%= form.label :item_needed, "Diaper/Item Used" %>
-              <%= form.select :item_needed_diaperid, @requestable_items,
-                              {include_blank: 'Select an item'},
-                              {class: 'form-control'} %>
+              <div class="requestable-items-container">
+                <%= form.label :item_needed, "Items Requested" %>
+                <%= form.select(
+                  :requested_item_ids,
+                  @requestable_items,
+                  { include_hidden: true },
+                  {
+                    multiple: true,
+                    class: "form-control custom-select",
+                    "data-controller": "select2",
+                    "data-select2-config-value": "{}",
+                  },
+                ) %>
               <br>
+              </div>
 
               <%= form.input :date_of_birth, as: :date, start_year: 20.years.ago.year, end_year: Time.current.year, label: "Date of Birth" %>
               <%= form.input :gender, collection: ["Male", "Female"], class: "form-control" %>
@@ -53,16 +63,15 @@
               <%= form.label "Archived?" %>&nbsp;
               <%= form.check_box :archived %>
 
-              </div>
               <div class="card-footer">
                 <%= form.submit(class: 'btn btn-primary') %>
               </div>
-
             <% end %>
-            </div>
-        <!-- /.card -->
+          </div>
+        </div>
       </div>
-      <!-- /.row -->
-    </div><!-- /.container-fluid -->
-  </div>
+      <!-- /.card -->
+    </div>
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
 </section>
