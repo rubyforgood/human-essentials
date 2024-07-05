@@ -135,7 +135,7 @@ class Item < ApplicationRecord
     end
   end
 
-  def is_in_kit?(kits=nil)
+  def is_in_kit?(kits = nil)
     if kits
       kits.any? { |k| k.line_items.map(&:item_id).include?(id) }
     else
