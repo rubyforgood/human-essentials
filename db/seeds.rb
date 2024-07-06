@@ -77,6 +77,12 @@ Organization.all.each do |org|
   end
 end
 
+# Set minimum and recomended inventory levels for items at the Pawnee Diaper Bank Organization
+half_items_count = (pdx_org.items.count/2).to_i
+min_value = 1500
+recomended_value = 2000
+pdx_org.items.limit(half_items_count).update_all(on_hand_minimum_quantity: min_value, on_hand_recommended_quantity: recomended_value)
+
 # ----------------------------------------------------------------------------
 # Request Units
 # ----------------------------------------------------------------------------
