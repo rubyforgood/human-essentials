@@ -2,7 +2,24 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/postgres
 {
   "dockerComposeFile": "docker-compose.yml",
-  "forwardPorts": [3000, 5432],
+  "features": {
+    "ghcr.io/devcontainers/features/desktop-lite:1": {}
+  },
+  "forwardPorts": [3000, 5432, 6080],
+  "portsAttributes": {
+    "3000": {
+      "label": "Application",
+      "onAutoForward": "silent"
+    },
+    "5432": {
+      "label": "Database",
+      "onAutoForward": "silent"
+    },
+    "6080": {
+      "label": "Desktop",
+      "onAutoForward": "silent"
+    }
+  },
   "workspaceFolder": "/workspaces/human-essentials",
   "service": "app",
   "customizations": {
