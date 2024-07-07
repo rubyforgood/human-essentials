@@ -31,6 +31,14 @@ RSpec.describe "Organizations", type: :request do
           expect(response.body).to include unit.name.titlecase
         end
       end
+
+      context "when enable_packs flipper is off" do
+        it "does not display organization's custom units" do
+          Flipper.disable(:enable_packs)
+          get organization_path
+          expect(response.body).to_not include unit.name.titlecase
+        end
+      end
     end
 
     describe "GET #edit" do
@@ -74,6 +82,15 @@ RSpec.describe "Organizations", type: :request do
           get edit_organization_path
           expect(response.body).to include("Custom request units used (please use singular form -- e.g. pack, not packs)")
           expect(response.body).to include unit.name
+        end
+      end
+
+      context "when enable_packs flipper is off" do
+        it "should not display custom units and units form" do
+          Flipper.disable(:enable_packs)
+          get edit_organization_path
+          expect(response.body).to_not include("Custom request units used (please use singular form -- e.g. pack, not packs)")
+          expect(response.body).to_not include unit.name
         end
       end
     end
