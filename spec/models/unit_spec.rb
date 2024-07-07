@@ -8,7 +8,6 @@
 #  updated_at      :datetime         not null
 #  organization_id :bigint
 #
-require "rails_helper"
 
 RSpec.describe Unit, type: :model do
   let!(:organization) { create(:organization) }
