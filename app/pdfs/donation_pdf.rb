@@ -6,25 +6,24 @@ class DonationPdf
   class DonorInfo
     attr_reader :name, :address, :email
 
-    def initialize(donation = nil)
+    def initialize(donation)
       if donation.nil?
-        @name = @address = @email = nil
-        return
+        raise "Must pass a Donation object"
       end
       case donation.source
-      when "Donation Site"
+      when Donation::SOURCES[:donation_site]
         @name = donation.donation_site.name
         @address = donation.donation_site.address
         @email = donation.donation_site.email
-      when "Manufacturer"
+      when Donation::SOURCES[:manufacturer]
         @name = donation.manufacturer.name
         @address = nil
         @email = nil
-      when "Product Drive"
+      when Donation::SOURCES[:product_drive]
         @name = donation.product_drive_participant.business_name
         @address = donation.product_drive_participant.address
         @email = donation.product_drive_participant.email
-      when "Misc. Donation"
+      when Donation::SOURCES[:misc]
         @name = "Misc. Donation"
         @address = nil
         @email = nil
@@ -80,7 +79,7 @@ class DonationPdf
 
       font_size 12
       money_raised = "$0.00"
-      if !@donation.money_raised.nil? && @donation.money_raised > 0
+      if @donation.money_raised && @donation.money_raised > 0
         money_raised = dollar_value(@donation.money_raised)
       end
       text "<strong>Money Raised In Dollars: </strong>#{money_raised}", inline_format: true
