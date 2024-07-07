@@ -169,31 +169,19 @@ RSpec.describe "Organization management", type: :system, js: true do
     it "can see 'Make user' button for admins" do
       create(:organization_admin)
       visit organization_path
-      expect(page.find(".table.border")).to have_content "Make User"
+      expect(page.find(".table.border")).to have_content "Demote to User"
     end
 
-    it "can deactivate a user in the organization" do
-      user = create(:user, name: "User to be deactivated")
+    it "can remove a user from the organization" do
+      user = create(:user, name: "User to be deactivated", organization: organization)
       visit organization_path
       accept_confirm do
         click_button dom_id(user, "dropdownMenu")
-        click_link dom_id(user)
+        click_link "Remove User"
       end
 
-      expect(page).to have_content("User has been deactivated")
-      expect(user.reload.discarded_at).to be_present
-    end
-
-    it "can re-activate a user in the organization" do
-      user = create(:user, :deactivated)
-      visit organization_path
-      accept_confirm do
-        click_button dom_id(user, "dropdownMenu")
-        click_link dom_id(user)
-      end
-
-      expect(page).to have_content("User has been reactivated")
-      expect(user.reload.discarded_at).to be_nil
+      expect(page).to have_content("User has been removed!")
+      expect(user.has_role?(Role::ORG_USER)).to be false
     end
   end
 end

@@ -93,7 +93,7 @@
           </div>
           <div class="card-body">
             <div class="tab-content" id="custom-tabs-three-tabContent">
-              <%= render partial: 'item_list', locals: { items: @items, inventory: @inventory } %>
+              <%= render partial: 'item_list', locals: { items: @items, inventory: @inventory, kits: @kits.active } %>
               <%= render partial: 'item_categories', locals: { item_categories: @item_categories } %>
               <%= render partial: 'items_quantity_and_location' %>
               <%= render partial: 'items_inventory' %>

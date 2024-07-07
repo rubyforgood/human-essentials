@@ -265,7 +265,8 @@ RSpec.describe "Donations", type: :system, js: true do
           fill_in "product_drive_participant_business_name", with: "businesstest"
           fill_in "product_drive_participant_contact_name", with: "test"
           fill_in "product_drive_participant_email", with: "123@mail.ru"
-          click_on "diaper-drive-participant-submit"
+          fill_in "product_drive_participant_comment", with: "test comment"
+          click_on "product-drive-participant-submit"
           select "businesstest", from: "donation_product_drive_participant_id"
         end
 
@@ -402,7 +403,7 @@ RSpec.describe "Donations", type: :system, js: true do
           select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
           fill_in "donation_line_items_attributes_0_quantity", with: "1,000"
           click_button "Save"
-          expect(page).to have_content("Quantity is not a number")
+          expect(page).to have_content("Quantity is not a number. Note: commas are not allowed")
         end
 
         it "Displays nested errors" do
