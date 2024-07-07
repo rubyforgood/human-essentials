@@ -11,4 +11,8 @@ if [ "$RUBY_VERSION" != "3.2.2" ]; then
   echo "Ruby $RUBY_VERSION installed"
 fi
 
+nvm install node
+rbenv init bash
+rbenv init zsh
+
 bin/setup
