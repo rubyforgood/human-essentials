@@ -1,4 +1,5 @@
 task :kill_postgres_connections => :environment do
+  puts "Killing existing Postgres connections - you may be prompted for your computer admin password"
   db_name = Rails.configuration.database_configuration[Rails.env]['database']
   sh = <<EOF
 ps xa \

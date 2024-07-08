@@ -15,15 +15,25 @@ RSpec.describe LineItem, type: :model do
   let(:line_item) { build :line_item }
 
   context "Validations >" do
-    subject { line_item }
+    let(:line_item_1) { build :line_item, quantity: 2**33 }
+    let(:line_item_2) { build :line_item, quantity: -2**32 }
+    let(:line_item_3) { build :line_item, quantity: "91,203" }
 
-    it { should validate_numericality_of(:quantity).is_greater_than(-2**31) }
-    it { should validate_numericality_of(:quantity).is_less_than(2**31) }
-    it { should validate_numericality_of(:quantity).only_integer }
+    it 'validates numericality of quantity' do
+      expect(line_item_1).not_to be_valid
+      expect(line_item_2).not_to be_valid
+      expect(line_item_1.errors[:quantity]).to include("must be less than 2147483648")
+      expect(line_item_2.errors[:quantity]).to include("must be greater than -2147483648")
+    end
+
+    it 'validates numericality of quantity' do
+      expect(line_item_3).not_to be_valid
+      expect(line_item_3.errors[:quantity]).to include("is not a number. Note: commas are not allowed")
+    end
   end
 
   describe "package_count" do
-    it "is equal to the quanity divided by the package_size" do
+    it "is equal to the quantity divided by the package_size" do
       item = create(:item, package_size: 10)
       line_item = create(:line_item, :purchase, quantity: 100, item_id: item.id)
       expect(line_item.package_count).to eq("10")
