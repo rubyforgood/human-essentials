@@ -19,110 +19,116 @@ class DistributionPdf
                    Organization::DIAPER_APP_LOGO
                  end
 
-    image logo_image, fit: [250, 85]
+    footer_height = 35
 
-    bounding_box [bounds.right - 225, bounds.top], width: 225, height: 85 do
-      text @organization.name, align: :right
-      text @organization.address, align: :right
-      text @organization.email, align: :right
-    end
+    # Bounding box containing non-footer elements
+    bounding_box [bounds.left, bounds.top], width: bounds.width, height: bounds.height - footer_height do
+      image logo_image, fit: [250, 85]
 
-    text "Issued to:", style: :bold
-    font_size 12
-    text @distribution.partner.name
-    move_up 24
+      bounding_box [bounds.right - 225, bounds.top], width: 225, height: 85 do
+        text @organization.name, align: :right
+        text @organization.address, align: :right
+        text @organization.email, align: :right
+      end
 
-    text "Partner Primary Contact:", style: :bold, align: :right
-    font_size 12
-    text @distribution.partner.profile.primary_contact_name, align: :right
-    font_size 10
-    text @distribution.partner.profile.primary_contact_email, align: :right
-    text @distribution.partner.profile.primary_contact_phone, align: :right
-    move_down 10
-
-    if %w(shipped delivered).include?(@distribution.delivery_method)
-      move_up 10
-      text "Delivery address:", style: :bold
-      font_size 10
-      text @distribution.partner.profile.address1
-      text @distribution.partner.profile.address2
-      text @distribution.partner.profile.city
-      text @distribution.partner.profile.state
-      text @distribution.partner.profile.zip_code
-      move_up 40
-
-      text "Issued on:", style: :bold, align: :right
+      text "Issued to:", style: :bold
       font_size 12
-      text @distribution.distributed_at, align: :right
-      font_size 10
-      move_down 30
-    else
-      text "Issued on:", style: :bold
+      text @distribution.partner.name
+      move_up 24
+
+      text "Partner Primary Contact:", style: :bold, align: :right
       font_size 12
-      text @distribution.distributed_at
+      text @distribution.partner.profile.primary_contact_name, align: :right
       font_size 10
-    end
+      text @distribution.partner.profile.primary_contact_email, align: :right
+      text @distribution.partner.profile.primary_contact_phone, align: :right
+      move_down 10
 
-    if @organization.ytd_on_distribution_printout
-      move_up 22
-      text "Items Received Year-to-Date:", style: :bold, align: :right
+      if %w(shipped delivered).include?(@distribution.delivery_method)
+        move_up 10
+        text "Delivery address:", style: :bold
+        font_size 10
+        text @distribution.partner.profile.address1
+        text @distribution.partner.profile.address2
+        text @distribution.partner.profile.city
+        text @distribution.partner.profile.state
+        text @distribution.partner.profile.zip_code
+        move_up 40
+
+        text "Issued on:", style: :bold, align: :right
+        font_size 12
+        text @distribution.distributed_at, align: :right
+        font_size 10
+        move_down 30
+      else
+        text "Issued on:", style: :bold
+        font_size 12
+        text @distribution.distributed_at
+        font_size 10
+      end
+
+      if @organization.ytd_on_distribution_printout
+        move_up 22
+        text "Items Received Year-to-Date:", style: :bold, align: :right
+        font_size 12
+        text @distribution.partner.quantity_year_to_date.to_s, align: :right
+        font_size 10
+      end
+
+      move_down 10
+      text "Comments:", style: :bold
       font_size 12
-      text @distribution.partner.quantity_year_to_date.to_s, align: :right
-      font_size 10
-    end
+      text @distribution.comment
 
-    move_down 10
-    text "Comments:", style: :bold
-    font_size 12
-    text @distribution.comment
+      move_down 20
 
-    move_down 20
+      data = @distribution.request ? request_data : non_request_data
+      has_request = @distribution.request.present?
 
-    data = @distribution.request ? request_data : non_request_data
-    has_request = @distribution.request.present?
+      hide_columns(data)
+      hidden_columns_length = column_names_to_hide.length
 
-    hide_columns(data)
-    hidden_columns_length = column_names_to_hide.length
+      font_size 11
 
-    font_size 11
-    # Line item table
-    table(data) do
-      self.header = true
-      self.cell_style = {
-        padding: has_request ? [5, 10, 5, 10] : [5, 20, 5, 20]
-      }
-      self.row_colors = %w(dddddd ffffff)
+      # Line item table
+      table(data) do
+        self.header = true
+        self.cell_style = {
+          padding: has_request ? [5, 10, 5, 10] : [5, 20, 5, 20]
+        }
+        self.row_colors = %w(dddddd ffffff)
 
-      cells.borders = []
+        cells.borders = []
 
-      # Header row
-      row(0).borders = [:bottom]
-      row(0).border_width = 2
-      row(0).font_style = :bold
-      row(0).size = has_request ? 8 : 9
-      row(0).column(1..-1).borders = %i(bottom left)
+        # Header row
+        row(0).borders = [:bottom]
+        row(0).border_width = 2
+        row(0).font_style = :bold
+        row(0).size = has_request ? 8 : 9
+        row(0).column(1..-1).borders = %i(bottom left)
 
-      # Total Items footer row
-      row(-1).borders = [:top]
-      row(-1).font_style = :bold
-      row(-1).column(1..-1).borders = %i(top left)
-      row(-1).column(1..-1).border_left_color = "aaaaaa"
+        # Total Items footer row
+        row(-1).borders = [:top]
+        row(-1).font_style = :bold
+        row(-1).column(1..-1).borders = %i(top left)
+        row(-1).column(1..-1).border_left_color = "aaaaaa"
 
-      # Footer spacing row
-      row(-2).borders = [:top]
-      row(-2).padding = [2, 0, 2, 0]
+        # Footer spacing row
+        row(-2).borders = [:top]
+        row(-2).padding = [2, 0, 2, 0]
 
-      column(0).width = 190 + (hidden_columns_length * 60)
+        column(0).width = 190 + (hidden_columns_length * 60)
 
-      # Quantity column
-      column(1..-1).row(1..-3).borders = [:left]
-      column(1..-1).row(1..-3).border_left_color = "aaaaaa"
-      column(1).style align: :right
-      column(-1).row(-1).borders = [:left, :bottom]
-    end
+        # Quantity column
+        column(1..-1).row(1..-3).borders = [:left]
+        column(1..-1).row(1..-3).border_left_color = "aaaaaa"
+        column(1).style align: :right
+        column(-1).row(-1).borders = [:left, :bottom]
+      end
 
-    if @organization.signature_for_distribution_pdf
-      insert_signature_fields
+      if @organization.signature_for_distribution_pdf
+        insert_signature_fields
+      end
     end
 
     number_pages "Page <page> of <total>",
@@ -132,7 +138,7 @@ class DistributionPdf
 
     repeat :all do
       # Page footer
-      bounding_box [bounds.left, bounds.bottom + 35], width: bounds.width do
+      bounding_box [bounds.left, bounds.bottom + footer_height], width: bounds.width do
         stroke_bounds
         font "OpenSans"
         font_size 9

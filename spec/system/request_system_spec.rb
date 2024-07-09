@@ -1,5 +1,5 @@
 RSpec.describe "Requests", type: :system, js: true do
-  let(:organization) { create(:organization) }
+  let(:organization) { create(:organization, default_storage_location: 1) }
   let(:user) { create(:user, organization: organization) }
 
   let(:item1) { create(:item, name: "Good item") }
@@ -133,7 +133,7 @@ RSpec.describe "Requests", type: :system, js: true do
     it "should show the request with a request sender if a partner user is set" do
       visit subject
       expect(page).to have_content("Request from #{request.partner.name}")
-      expect(page).to have_content("Fulfillment Location Inventory")
+      expect(page).to have_content("Default storage location inventory")
       expect(page).to have_content("Request Sender:")
       partner_user = request.partner_user
       expect(page).to have_content("#{partner_user.name} <#{partner_user.email}>")
@@ -145,7 +145,7 @@ RSpec.describe "Requests", type: :system, js: true do
       request.save!
       visit subject
       expect(page).to have_content("Request from #{request.partner.name}")
-      expect(page).to have_content("Fulfillment Location Inventory")
+      expect(page).to have_content("Default storage location inventory")
       expect(page).to have_content("Request Sender:")
       expect(page).not_to have_content("#{partner_user.name} <#{partner_user.email}>")
     end
@@ -192,6 +192,13 @@ RSpec.describe "Requests", type: :system, js: true do
           select storage_location.name, from: "From storage location"
           fill_in "Comment", with: "Take my wipes... please"
           click_on "Save"
+
+          expect(page).to have_selector('#distributionConfirmationModal')
+          within "#distributionConfirmationModal" do
+            expect(page).to have_content("You are about to create a distribution for")
+            expect(find(:element, "data-testid": "distribution-confirmation-storage")).to have_text(storage_location.name)
+            click_button "Yes, it's correct"
+          end
 
           expect(page).not_to have_content("New Distribution")
           expect(page).to have_content "Distributions"
