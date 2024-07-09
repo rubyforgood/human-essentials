@@ -190,5 +190,44 @@ RSpec.describe "Items", type: :request do
         end
       end
     end
+
+    describe 'GET #show' do
+      let!(:base_item) { create(:base_item, name: 'BASEITEM') }
+      let!(:item_category) { create(:item_category, name: 'CURRENTCATEGORY') }
+      let!(:item) { create(:item, organization: organization, name: "ACTIVEITEM", item_category_id: item_category.id, distribution_quantity: 2000, on_hand_recommended_quantity: 2348, package_size: 100, value_in_cents: 20000, on_hand_minimum_quantity: 1200, visible_to_partners: true) }
+      let!(:item_unit_1) { create(:item_unit, item: item, name: 'ITEM1') }
+      let!(:item_unit_2) { create(:item_unit, item: item, name: 'ITEM2') }
+      it 'shows complete item details except custom request' do
+        get item_path(id: item.id)
+        expect(response.body).to include('Base Item')
+        expect(response.body).to include('BASEITEM')
+        expect(response.body).to include('Name')
+        expect(response.body).to include("ACTIVEITEM")
+        expect(response.body).to include('Category')
+        expect(response.body).to include('CURRENTCATEGORY')
+        expect(response.body).to include('Value Per Item')
+        expect(response.body).to include('20000')
+        expect(response.body).to include('Quantity Per Indivudual')
+        expect(response.body).to include('2000')
+        expect(response.body).to include('On hand minimum quantity')
+        expect(response.body).to include('1200')
+        expect(response.body).to include('On hand recommended quantity')
+        expect(response.body).to include('2348')
+        expect(response.body).to include('Package Size')
+        expect(response.body).to include('100')
+        expect(response.body).not_to include('Custom Units')
+        expect(response.body).not_to include("#ITEM1; ITEM2")
+        expect(response.body).to include('Item is visible to partners')
+        expect(response.body).to include('Yes')
+      end
+
+      it 'shows custom request units when flipper enabled' do
+        Flipper.enable(:enable_packs)
+        get item_path(id: item.id)
+        print(response.body)
+        expect(response.body).to include('Custom Units')
+        expect(response.body).to include("ITEM1; ITEM2")
+      end
+    end
   end
 end
