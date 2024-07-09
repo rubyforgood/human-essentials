@@ -68,6 +68,8 @@ module Partners
         for_families: true
       ).create_only
       if @partner_request.valid?
+        @total_items = @partner_request.total_items_fromstr
+        @quota_exceeded = @total_items > current_partner.quota.to_i
         body = render_to_string(template: 'partners/requests/validate', formats: [:html], layout: false)
         render json: {valid: true, body: body}
       else
