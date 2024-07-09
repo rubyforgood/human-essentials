@@ -137,7 +137,7 @@ If you want to connect via Shopify Ruby LSP VSCode extension or rdbg, start the 
 ### Codespaces
 When running tests in browser, visit the forwarded port 6080 URL to see the browser in Codespaces. You can also visit this port to access the GUI desktop in Codespaces.
 
-In VSCode Run and Debug view, there are some helpful defaults for running RSpec tests in browser at your cursor as well as attaching to a live server.
+In VSCode Run and Debug view, there are some helpful defaults for running RSpec tests in browser at your cursor as well as attaching to a live server. Make sure the Ruby LSP server is started before debugging.
 
 ## Squashing commits
 
