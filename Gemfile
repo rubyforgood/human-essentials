@@ -32,7 +32,7 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-gem "strong_migrations", "1.8.0"
+gem "strong_migrations", "2.0.0"
 # used in events
 gem 'dry-struct'
 
@@ -153,9 +153,9 @@ group :development, :test do
   gem "rubocop"
   # Rails add-on for static analysis.
   gem 'rubocop-performance'
-  gem "rubocop-rails", "~> 2.25.0"
+  gem "rubocop-rails", "~> 2.25.1"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.37"
+  gem "standard", "~> 1.39"
   # Erb linter.
   gem "erb_lint"
 end
