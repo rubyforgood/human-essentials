@@ -16,8 +16,9 @@
               <%= form.label :last_name, "Last Name" %>
               <%= form.text_field :last_name, class: "form-control" %>
 
+              <%= @requestable_items.map(&:last).intersect?(child.requested_item_ids) %>
               <div class="requestable-items-container">
-                <%= form.label :item_needed, "Items Requested" %>
+                <%= form.label :item_needed, "Item(s) Requested" %>
                 <%= form.select(
                   :requested_item_ids,
                   @requestable_items,
