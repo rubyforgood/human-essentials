@@ -23,18 +23,18 @@ RSpec.describe "Dashboard", type: :system, js: true do
       expect(org_dashboard_page).not_to have_add_donation_site_call_to_action
       expect(org_dashboard_page).not_to have_add_inventory_call_to_action
 
-      # After we create a partner, ensure that we are on step 2 (Partner Agency)
-      create(:partner, organization: organization)
+      # After we create a storage, ensure that we are on step 2 (Partner Agency)
+      create(:storage_location, organization: organization)
       org_dashboard_page.visit
 
       expect(org_dashboard_page).to     have_getting_started_guide
-      expect(org_dashboard_page).not_to have_add_partner_call_to_action
-      expect(org_dashboard_page).to     have_add_storage_location_call_to_action
+      expect(org_dashboard_page).to     have_add_partner_call_to_action
+      expect(org_dashboard_page).not_to have_add_storage_location_call_to_action
       expect(org_dashboard_page).not_to have_add_donation_site_call_to_action
       expect(org_dashboard_page).not_to have_add_inventory_call_to_action
 
-      # After we create a storage location, ensure that we are on step 3 (Donation Site)
-      create(:storage_location, organization: organization)
+      # After we create a partner agency, ensure that we are on step 3 (Donation Site)
+      create(:partner, organization: organization)
       org_dashboard_page.visit
 
       expect(org_dashboard_page).to     have_getting_started_guide
