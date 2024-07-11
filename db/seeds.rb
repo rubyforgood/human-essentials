@@ -422,6 +422,23 @@ StorageLocation.all.each do |sl|
 end
 Organization.all.each { |org| SnapshotEvent.publish(org) }
 
+# Set minimum and recomended inventory levels for items at the Pawnee Diaper Bank Organization
+half_items_count = (pdx_org.items.count/2).to_i
+low_items = pdx_org.items.left_joins(:inventory_items)
+  .select('items.*, SUM(inventory_items.quantity) AS total_quantity')
+  .group('items.id')
+  .order('total_quantity')
+  .limit(half_items_count)
+
+min_qty = low_items.first.total_quantity
+max_qty = low_items.last.total_quantity
+
+low_items.each do |item|
+  min_value = rand((min_qty / 10).floor..(max_qty/10).ceil) * 10
+  recomended_value = rand((min_value/10).ceil..1000) * 10
+  item.update(on_hand_minimum_quantity: min_value, on_hand_recommended_quantity: recomended_value)
+end
+
 # ----------------------------------------------------------------------------
 # Product Drives
 # ----------------------------------------------------------------------------
