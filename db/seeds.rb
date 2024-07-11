@@ -292,6 +292,8 @@ note = [
     )
   end
 
+  requestable_items = PartnerFetchRequestableItemsService.new(partner_id: p.id).call.map(&:last)
+
   families.each do |family|
     Partners::AuthorizedFamilyMember.create!(
       first_name: Faker::Name.first_name,
@@ -316,7 +318,7 @@ note = [
         comments: Faker::Lorem.paragraph,
         active: Faker::Boolean.boolean,
         archived: false,
-        item_needed_diaperid: p.organization.item_id_to_display_string_map.key(Partners::Child::CHILD_ITEMS.sample)
+        requested_item_ids: requestable_items.sample(rand(4))
       )
     end
 
@@ -334,7 +336,7 @@ note = [
         comments: Faker::Lorem.paragraph,
         active: Faker::Boolean.boolean,
         archived: false,
-        item_needed_diaperid: p.organization.item_id_to_display_string_map.key(Partners::Child::CHILD_ITEMS.sample)
+        requested_item_ids: requestable_items.sample(rand(4))
       )
     end
   end
