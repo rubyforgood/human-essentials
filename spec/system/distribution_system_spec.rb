@@ -182,6 +182,10 @@ RSpec.feature "Distributions", type: :system do
     click_button "Save", match: :first
     page.find('.alert')
     expect(page).to have_css('.alert.error', text: /storage location/i)
+
+    # 4438- Bug Fix
+    select storage_location.name, from: "From storage location"
+    expect(page).not_to have_css('#__add_line_item.disabled')
   end
 
   context "With an existing distribution" do
