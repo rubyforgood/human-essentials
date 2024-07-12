@@ -24,16 +24,26 @@ export default class extends Controller {
     }
   }
 
+  connect() {
+    this.itemSelected();
+  }
+
   itemSelected() {
     if (!this.hasRequestSelectTarget) {
       return;
     }
     let option = this.itemSelectTarget.options[this.itemSelectTarget.selectedIndex]
     let units = this.itemUnitsValue[option.value]
-    this.clearOptions()
-    this.addOption('', 'Units')
-    for (const [index, [name, displayName]] of Object.entries(Object.entries(units))) {
-      this.addOption(name, displayName, index === "0")
+    if (!units || Object.keys(units).length === 0) {
+      this.requestSelectTarget.style.display = 'none';
+    }
+    else {
+      this.requestSelectTarget.style.display = 'inline';
+      this.clearOptions()
+      this.addOption('', 'Units')
+      for (const [index, [name, displayName]] of Object.entries(Object.entries(units))) {
+        this.addOption(name, displayName, index === "0")
+      }
     }
   }
 
