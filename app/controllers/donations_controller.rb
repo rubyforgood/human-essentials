@@ -77,14 +77,27 @@ class DonationsController < ApplicationController
 
   def update
     @donation = Donation.find(params[:id])
+    @original_source = @donation.source
     ItemizableUpdateService.call(itemizable: @donation,
       params: donation_params,
       type: :increase,
       event_class: DonationEvent)
+    flash.clear
+    flash[:notice] = "Donation updated!"
     redirect_to donations_path
   rescue => e
     flash[:alert] = "Error updating donation: #{e.message}"
-    redirect_back(fallback_location: edit_donation_path)
+    load_form_collections
+    # calling new(donation_params) triggers a validation error if line_item quantity is invalid
+    @previous_input = Donation.new(donation_params.except(:line_items_attributes))
+    line_items = []
+    donation_params[:line_items_attributes].values.each { |attr|
+      attr.delete(:_destroy)
+      line_items.push(attr)
+    }
+    @previous_input.line_items.build(line_items)
+
+    render "edit", status: :conflict
   end
 
   def destroy
@@ -116,7 +129,7 @@ class DonationsController < ApplicationController
     params[:donation][:money_raised] = money_raised.gsub(/[$,.]/, "") if money_raised
 
     money_raised_in_dollars = params[:donation][:money_raised_in_dollars]
-    params[:donation][:money_raised] = money_raised_in_dollars.gsub(/[$,]/, "").to_d * 100 if money_raised_in_dollars
+    params[:donation][:money_raised] = (money_raised_in_dollars.gsub(/[$,]/, "").to_d * 100).to_s if money_raised_in_dollars
   end
 
   def donation_params
