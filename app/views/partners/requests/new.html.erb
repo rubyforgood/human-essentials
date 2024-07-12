@@ -39,15 +39,18 @@
                 <tr>
                   <th>Item Requested</th>
                   <th>Quantity</th>
+                  <% if current_partner.organization.request_units.any? %>
+                    <th>Units (if applicable)</th>
+                  <% end %>
                 </tr>
                 </thead>
                 <tbody class='fields'>
-                  <%= render 'item_request', form: form %>
+                  <%= render partial: 'item_request', locals: { form: form, item_units: @item_units } %>
                 </tbody>
               </table>
               <div>
                 <%= add_element_button('Add Another Item', container_selector: '.fields') do %>
-                  <%= render 'item_request', form: form, object: @partner_request.item_requests.build %>
+                  <%= render partial: 'item_request', locals: { form: form, item_units: @item_units }, object: @partner_request.item_requests.build %>
                 <% end %>
               </div>
 

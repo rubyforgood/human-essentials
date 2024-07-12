@@ -12,6 +12,10 @@ module Partners
       @partner_request.item_requests.build
 
       @requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
+      # hash of (item ID => hash of (request unit name => request unit plural name))
+      @item_units = current_partner.organization.items.to_h do |i|
+        [i.id, i.request_units.to_h { |u| [u.name, u.name.pluralize] }]
+      end
     end
 
     def show
@@ -44,7 +48,7 @@ module Partners
     private
 
     def partner_request_params
-      params.require(:request).permit(:comments, item_requests_attributes: [:item_id, :quantity])
+      params.require(:request).permit(:comments, item_requests_attributes: [:item_id, :quantity, :request_unit])
     end
   end
 end
