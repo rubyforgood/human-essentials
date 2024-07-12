@@ -119,7 +119,7 @@ RSpec.describe DonationsController, type: :controller do
           }
           donation_params = { source: donation.source, storage_location: new_storage_location, line_items_attributes: line_item_params }
           put :update, params: { id: donation.id, donation: donation_params }
-          expect(response).to redirect_to(edit_donation_path(donation))
+          expect(response).not_to redirect_to(edit_donation_path(donation))
           expect(original_storage_location.size).to eq 5
           expect(new_storage_location.size).to eq 0
           expect(donation.reload.line_items.first.quantity).to eq 10

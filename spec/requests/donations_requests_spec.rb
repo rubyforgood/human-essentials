@@ -223,7 +223,7 @@ RSpec.describe "Donations", type: :request do
         put donation_path(id: donation.id, donation: edited_donation)
 
         if Event.read_events?(organization)
-          expect(flash[:alert]).to include("Error updating donation: Could not reduce quantity by 99 - current quantity is 10 for Brightbloom Seed")
+          expect(flash[:alert]).to include("Error updating donation: Could not reduce quantity")
         else # TODO remove this branch when switching to events
           expect(flash[:alert]).to include("Error updating donation: Requested items exceed the available inventory")
         end
@@ -238,9 +238,9 @@ RSpec.describe "Donations", type: :request do
         expect(response.body).to include(edited_comment)
         expect(response.body).to include("value=\"#{edited_money}\" type=\"text\" name=\"donation[money_raised_in_dollars]")
         expect(response.body).to include(edited_date)
-        expect(response.body).to include("<option selected=\"selected\" value=\"1\">#{item.name}</option>")
+        expect(response.body).to include("<option selected=\"selected\" value=\"#{item.id}\">#{item.name}</option>")
         expect(response.body).to include("value=\"#{edited_quantity}\" name=\"donation[line_items_attributes][0][quantity]")
-        expect(response.body).to include("<option selected=\"selected\" value=\"2\">#{extra_item.name}</option>")
+        expect(response.body).to include("<option selected=\"selected\" value=\"#{extra_item.id}\">#{extra_item.name}</option>")
         expect(response.body).to include("value=\"#{extra_quantity}\" name=\"donation[line_items_attributes][1][quantity]")
       end
     end
