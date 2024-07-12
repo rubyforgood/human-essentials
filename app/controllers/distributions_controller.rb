@@ -225,7 +225,14 @@ class DistributionsController < ApplicationController
 
   # TODO: This needs a little more context. Is it JSON only? HTML?
   def schedule
-    @pick_ups = current_organization.distributions
+    respond_to do |format|
+      format.html
+      format.json do
+        start_at = params[:start].to_datetime
+        end_at = params[:end].to_datetime
+        @pick_ups = current_organization.distributions.includes(:partner).where(issued_at: start_at..end_at)
+      end
+    end
   end
 
   def calendar
