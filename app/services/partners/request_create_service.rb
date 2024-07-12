@@ -71,6 +71,7 @@ module Partners
         else
           items[input_item['item_id']] = Partners::ItemRequest.new(
             item_id: input_item['item_id'],
+            request_unit: input_item['request_unit'],
             quantity: input_item['quantity'],
             children: input_item['children'] || [], # will create ChildItemRequests if there are any
             name: fetch_organization_item_name(input_item['item_id']),
