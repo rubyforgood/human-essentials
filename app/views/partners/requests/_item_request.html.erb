@@ -4,8 +4,8 @@
       <%= field.label :item_id, "Item Requested", {class: 'sr-only'} %>
       <%= field.select :item_id, @requestable_items, {include_blank: 'Select an item'},
                        data: { :'item-units-target' => 'itemSelect',
-                               action: 'change->item-units#itemSelected',
-                               class: 'form-control' } %>
+                               action: 'change->item-units#itemSelected'},
+                               class: 'form-control' %>
     </td>
     <td>
       <%= field.label :quantity, "Quantity", {class: 'sr-only'} %>
