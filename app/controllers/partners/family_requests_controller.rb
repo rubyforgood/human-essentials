@@ -23,9 +23,9 @@ module Partners
         end
       end
 
-      children = current_partner.children.active.where(id: children_ids).where.not(item_needed_diaperid: [nil, 0])
+      children = current_partner.children.active.where(id: children_ids).joins(:requested_items).select('children.*', :item_id)
 
-      children_grouped_by_item_id = children.group_by(&:item_needed_diaperid)
+      children_grouped_by_item_id = children.group_by(&:item_id)
       family_requests_attributes = children_grouped_by_item_id.map do |item_id, item_requested_children|
         { item_id: item_id, person_count: item_requested_children.size, children: item_requested_children }
       end
