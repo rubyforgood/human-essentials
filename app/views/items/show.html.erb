@@ -30,20 +30,51 @@
         <div class="card">
           <div class="card-body p-0">
             <table class="table">
-              <thead>
+            <tbody>
+              <tr>
+                <th>Base Item</th>
+                <td><%= @item.base_item.name %></td>
+              </tr>
+              <tr>
+                <th>Name</th>
+                <td><%= @item.name %></td>
+              </tr>
+              <tr>
+                <th>Category</th>
+                <td><%= @item&.item_category&.name %></td>
+              </tr>
               <tr>
                 <th>Value Per Item</th>
-                <th>Distribution Quantity</th>
-                <th>Package Size</th>
+                <td><%= @item.value_in_cents || 0 %></td>
               </tr>
-              </thead>
-              <tbody>
               <tr>
-                <td><%= @item.value_in_cents ? @item.value_in_cents : 0 %></td>
-                <td><%= @item.distribution_quantity ? @item.distribution_quantity : 0 %></td>
-                <td><%= @item.package_size ? @item.package_size : 0 %></td>
+                <th>Quantity Per Indivudual</th>
+                <td><%= @item.distribution_quantity || 0 %></td>
               </tr>
-              </tbody>
+              <tr>
+                <th>On hand minimum quantity</th>
+                <td><%= @item.on_hand_minimum_quantity || 0 %></td>
+              </tr>
+              <tr>
+                <th>On hand recommended quantity</th>
+                <td><%= @item.on_hand_recommended_quantity || 0 %></td>
+              </tr>
+              <tr>
+                <th>Package Size</th>
+                <td><%= @item.package_size || 0 %></td>
+              </tr>
+              <tr>
+                <% if Flipper.enabled?(:enable_packs) %>
+                  <th>Custom Units</th>
+                  <% item_units = @item.request_units&.pluck("item_units.name") %>
+                  <td><%= item_units&.join("; ") %></td>
+                <% end %>
+              </tr>
+              <tr>
+                <th>Item is visible to partners</th>
+                <td><%= @item.visible_to_partners ? 'Yes' : 'No' %></td>
+              </tr>
+            </tbody>
             </table>
           </div>
           <!-- /.card-body -->

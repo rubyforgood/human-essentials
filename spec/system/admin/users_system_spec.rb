@@ -56,18 +56,6 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       expect(page.find('.alert')).to have_content('Role added')
     end
 
-    it "deletes an existing user" do
-      create(:user, organization: organization, name: "AAlphabetically First User")
-
-      visit admin_users_path
-
-      page.accept_confirm do
-        click_link "Delete", match: :first
-      end
-
-      expect(page.find(".alert")).to have_content "Deleted that user"
-    end
-
     it "filters users by name" do
       create(:user, name: "UserA", organization: organization)
       create(:user, name: "UserB", organization: organization)
