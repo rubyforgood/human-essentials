@@ -99,6 +99,7 @@ RSpec.describe "/partners/requests", type: :request do
       create(:item_unit, item: item3, name: "flat")
       request = create(
         :request,
+        :with_item_requests,
         partner_id: partner.id,
         partner_user_id: partner_user.id,
         request_items: [
