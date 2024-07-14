@@ -18,6 +18,10 @@ module DateRangeHelper
       "this month"
     when "last month"
       "last month"
+    when "last 12 months"
+      "last 12 months"
+    when "prior year"
+      "prior year"
     else
       selected_range_described
     end
