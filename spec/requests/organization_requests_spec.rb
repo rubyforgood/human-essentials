@@ -304,8 +304,6 @@ RSpec.describe "Organizations", type: :request do
           expect(response.body).to include("Yes")
         end
       end
-
-
     end
 
     describe "POST #promote_to_org_admin" do
