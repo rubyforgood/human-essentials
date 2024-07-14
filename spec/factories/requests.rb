@@ -31,17 +31,19 @@ FactoryBot.define do
 
     # For compatibility we can take in a list of request_items and turn it into a
     # list of item_requests
-    after(:build) do |request|
-      if request.item_requests.empty?
-        request.request_items.each do |request_item|
-          item = Item.find(request_item['item_id'])
-          request.item_requests << Partners::ItemRequest.new(
-            item_id: item.id,
-            quantity: request_item['quantity'],
-            name: item.name,
-            partner_key: item.partner_key,
-            request_unit: request_item["request_unit"]
-          )
+    trait :with_item_requests do
+      after(:build) do |request|
+        if request.item_requests.empty?
+          request.request_items.each do |request_item|
+            item = Item.find(request_item['item_id'])
+            request.item_requests << Partners::ItemRequest.new(
+              item_id: item.id,
+              quantity: request_item['quantity'],
+              name: item.name,
+              partner_key: item.partner_key,
+              request_unit: request_item["request_unit"]
+            )
+          end
         end
       end
     end
