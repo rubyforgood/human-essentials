@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe "Audits", type: :request do
   let(:organization) { create(:organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }

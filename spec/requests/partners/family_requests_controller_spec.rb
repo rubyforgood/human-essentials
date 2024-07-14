@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe Partners::FamilyRequestsController, type: :request do
   let(:partner) { create(:partner) }
   let(:params) do

@@ -7,7 +7,6 @@
 #  updated_at     :datetime         not null
 #  ndbn_member_id :bigint           not null, primary key
 #
-require "rails_helper"
 
 RSpec.describe NDBNMember, type: :model do
   describe "validations" do
