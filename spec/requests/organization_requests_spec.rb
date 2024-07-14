@@ -162,7 +162,7 @@ RSpec.describe "Organizations", type: :request do
           Flipper.enable(:enable_packs)
           get edit_organization_path
           expect(response.body).to include("Custom request units used (please use singular form -- e.g. pack, not packs)")
-          expect(response.body).to include unit.name
+          expect(response.body).to include "WolfPack"
         end
       end
 
@@ -171,7 +171,7 @@ RSpec.describe "Organizations", type: :request do
           Flipper.disable(:enable_packs)
           get edit_organization_path
           expect(response.body).to_not include("Custom request units used (please use singular form -- e.g. pack, not packs)")
-          expect(response.body).to_not include unit.name
+          expect(response.body).to_not include "WolfPack"
         end
       end
     end
