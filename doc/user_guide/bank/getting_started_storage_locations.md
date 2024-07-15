@@ -8,7 +8,7 @@ When you are inputting donations, or purchases, you will specify the storage loc
 
 How do you enter a storage location?   If you haven't any storage locations yet, you can click on "Add a Storage Location" in the "Just Starting?" sequence at the top of your dashboard.  
 
-[TODO:   Add screen shot of dashboard -- it's going to be different when the user guide is finished than it is at drafting]
+![navigation](images/gs_getting_started_step_1.png)
 
 You can also click on "Inventory", then "Storage Locations" in the left-hand menu, then "New Storage Locations"
 
