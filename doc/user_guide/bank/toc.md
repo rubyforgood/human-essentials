@@ -6,7 +6,8 @@
    2. Partner Agencies
    3. Donation sites
    4. Inventory
-   5. Adding your staff
+   5. Customization and other organization-level info
+   6. Adding your staff
       1. Levels of access
       2. User management
 3. Everyday essentials 
@@ -19,6 +20,7 @@
 4. Partner Management
    1. The request/distribution cycle 
    2. The partner approval cycle
+      i Partner profiles
    3. Announcements
 5. Inventory 
    1. Items
