@@ -76,6 +76,57 @@ RSpec.describe 'Requests', type: :request do
           expect(response.body).not_to include('Default storage location inventory')
         end
       end
+
+      context 'When packs are enabled' do
+        before { Flipper.enable(:enable_packs) }
+        let(:item) { create(:item, name: "Item", organization: organization) }
+        let(:request) { create(:request, organization: organization) }
+
+        it 'shows a units column if any item has custom units' do
+          create(:item_unit, item: item, name: "Pack")
+          create(:item_request, request: request, request_unit: "Pack", item: item)
+
+          get request_path(request)
+
+          expect(response.body).to include('Units (if applicable)')
+        end
+
+        it 'does not show a units column if no items have custom units' do
+          create(:item_request, request: request, request_unit: nil, item: item)
+
+          get request_path(request)
+
+          expect(response.body).to_not include('Units (if applicable)')
+        end
+
+        it 'displays custom units in units column if applicable' do
+          create(:item_unit, item: item, name: "Pack")
+          create(:item_request, request: request, request_unit: "Pack", item: item)
+
+          get request_path(request)
+
+          expect(response.body).to include('<td>Packs</td>')
+        end
+
+        it 'does not display anything in units column if not applicable' do
+          create(:item_unit, item: item, name: "Pack")
+          create(:item_request, request: request, request_unit: nil, item: item)
+
+          get request_path(request)
+
+          expect(response.body).to_not include('<td>Packs</td>')
+        end
+      end
+
+      context 'When packs are not enabled' do
+        let(:request) { create(:request, organization: organization) }
+
+        it 'does not show a units column' do
+          get request_path(request)
+
+          expect(response.body).not_to include('Units (if applicable)')
+        end
+      end
     end
 
     describe 'POST #start' do
