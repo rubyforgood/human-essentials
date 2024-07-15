@@ -54,9 +54,6 @@ RSpec.feature "Distributions by County", type: :system do
 
       visit_distribution_by_county_with_specified_date_range("Last 12 Months")
 
-      puts 'distribution_current = ' + @distribution_current
-      puts 'distribution_last_year = ' + @distribution_last_year
-      
       partner_1.profile.served_areas.each do |served_area|
         expect(page).to have_text(served_area.county.name)
       end
