@@ -34,6 +34,35 @@ RSpec.feature "Distributions by County", type: :system do
       expect(page).to have_text("25", count: 4)
       expect(page).to have_text("$262.50", count: 4)
     end
+
+    it("works for prior year") do
+      @distribution_current = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
+      @distribution_last_year = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
+
+      visit_distribution_by_county_with_specified_date_range("Prior Year")
+
+      partner_1.profile.served_areas.each do |served_area|
+        expect(page).to have_text(served_area.county.name)
+      end
+      expect(page).to have_text("25", count: 4)
+      expect(page).to have_text("$262.50", count: 4)
+    end
+
+    it("works for last 12 months") do
+      @distribution_current = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
+      @distribution_last_year = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
+
+      visit_distribution_by_county_with_specified_date_range("Last 12 Months")
+
+      puts 'distribution_current = ' + @distribution_current
+      puts 'distribution_last_year = ' + @distribution_last_year
+      
+      partner_1.profile.served_areas.each do |served_area|
+        expect(page).to have_text(served_area.county.name)
+      end
+      expect(page).to have_text("25", count: 4)
+      expect(page).to have_text("$262.50", count: 4)
+    end
   end
 
   def visit_distribution_by_county_with_specified_date_range(date_range_string)
