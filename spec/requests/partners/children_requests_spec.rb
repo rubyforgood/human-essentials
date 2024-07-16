@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe "/partners/children", type: :request do
   let(:partner_user) { partner.primary_user }
   let(:partner) { create(:partner) }

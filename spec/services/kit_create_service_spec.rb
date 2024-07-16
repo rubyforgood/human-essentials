@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe KitCreateService do
   describe '#call' do
     subject { described_class.new(**args).call }

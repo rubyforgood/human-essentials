@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe HistoricalTrendService, type: :service do
   let(:organization) { create(:organization) }
   let(:type) { "Donation" }
