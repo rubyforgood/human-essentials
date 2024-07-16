@@ -1,3 +1,20 @@
+# == Schema Information
+#
+# Table name: donation_sites
+#
+#  id              :integer          not null, primary key
+#  active          :boolean          default(TRUE)
+#  address         :string
+#  contact_name    :string
+#  email           :string
+#  latitude        :float
+#  longitude       :float
+#  name            :string
+#  phone           :string
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  organization_id :integer
+#
 FactoryBot.define do
   factory :donation_site do
     organization { Organization.try(:first) || create(:organization) }
