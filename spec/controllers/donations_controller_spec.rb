@@ -58,7 +58,6 @@ RSpec.describe DonationsController, type: :controller do
         line_item = donation.line_items.first
         line_item_params = {
           "0" => {
-            "_destroy" => "false",
             item_id: line_item.item_id,
             quantity: "15",
             id: line_item.id
@@ -82,7 +81,6 @@ RSpec.describe DonationsController, type: :controller do
           line_item = donation.line_items.first
           line_item_params = {
             "0" => {
-              "_destroy" => "false",
               item_id: line_item.item_id,
               quantity: "8",
               id: line_item.id
@@ -111,7 +109,6 @@ RSpec.describe DonationsController, type: :controller do
           line_item = donation.line_items.first
           line_item_params = {
             "0" => {
-              "_destroy" => "false",
               item_id: line_item.item_id,
               quantity: "1",
               id: line_item.id
@@ -127,24 +124,19 @@ RSpec.describe DonationsController, type: :controller do
       end
 
       describe "when removing a line item" do
-        it "updates storage invetory item quantity correctly" do
-          donation = create(:donation, :with_items, item_quantity: 10)
-          line_item = donation.line_items.first
-          line_item_params = {
-            "0" => {
-              "_destroy" => "true",
-              item_id: line_item.item_id,
-              id: line_item.id
-            }
-          }
-          donation_params = { source: donation.source, line_items_attributes: line_item_params }
+        it "updates storage inventory item quantity correctly" do
+          item_id = 1
+          item_quantity = 10
+          donation = create(:donation, :with_items, item: create(:item, id: item_id), item_quantity: item_quantity)
+          # if all line items including blanks are deleted line_items_attributes parameter is not sent
+          donation_params = { source: donation.source }
           expect do
             put :update, params: { id: donation.id, donation: donation_params }
-          end.to change { donation.storage_location.inventory_items.first.quantity }.by(-10)
+          end.to change { donation.storage_location.inventory_items.first.quantity }.by(-1 * item_quantity)
             .and change {
                    View::Inventory.new(donation.organization_id)
-                     .quantity_for(storage_location: donation.storage_location_id, item_id: line_item.item_id)
-                 }.by(-10)
+                     .quantity_for(storage_location: donation.storage_location_id, item_id: item_id)
+                 }.by(-1 * item_quantity)
         end
       end
     end
