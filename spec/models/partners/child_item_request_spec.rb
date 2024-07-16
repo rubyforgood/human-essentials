@@ -12,7 +12,6 @@
 #  child_id                    :bigint
 #  item_request_id             :bigint
 #
-require 'rails_helper'
 
 RSpec.describe Partners::ChildItemRequest, type: :model do
   describe 'associations' do

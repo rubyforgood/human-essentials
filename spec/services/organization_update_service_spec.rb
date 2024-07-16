@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe OrganizationUpdateService do
   let(:organization) { create(:organization) }
 

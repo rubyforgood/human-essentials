@@ -12,8 +12,6 @@
 #  user_id             :bigint
 #
 
-require 'rails_helper'
-
 RSpec.describe Audit, type: :model do
   let(:organization) { create(:organization) }
 

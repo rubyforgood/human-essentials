@@ -11,7 +11,6 @@
 #  updated_at          :datetime         not null
 #  organization_id     :integer          not null
 #
-require 'rails_helper'
 
 RSpec.describe Kit, type: :model do
   let(:organization) { create(:organization) }
