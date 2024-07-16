@@ -23,7 +23,7 @@ RSpec.describe "Sessions", type: :request, order: :defined do
   end
 
   describe "POST #create" do
-    let(:partner_user) { create(:partner_user) }
+    let(:partner_user) { create(:partners_user) }
     let(:partner_role) { partner_user.roles.first }
     let(:organization) { create(:organization) }
 

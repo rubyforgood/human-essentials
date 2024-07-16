@@ -1,6 +1,6 @@
 RSpec.describe CustomDeviseMailer, type: :mailer do
   describe "#invitation_instructions" do
-    let(:user) { create(:partner_user) }
+    let(:user) { create(:partners_user) }
     let(:mail) { described_class.invitation_instructions(user, SecureRandom.uuid) }
 
     context "when partner is invited" do
@@ -12,7 +12,7 @@ RSpec.describe CustomDeviseMailer, type: :mailer do
       end
 
       let(:user) do
-        create(:partner_user, partner: partner)
+        create(:partners_user, partner: partner)
       end
 
       it "invites to primary user" do
@@ -23,7 +23,7 @@ RSpec.describe CustomDeviseMailer, type: :mailer do
 
     context "when other partner users invited" do
       let(:partner) { create(:partner) }
-      let(:user) { create(:partner_user, partner: partner) }
+      let(:user) { create(:partners_user, partner: partner) }
 
       it "invites to partner user" do
         expect(mail.subject).to eq("You've been invited to #{user.partner.name}'s Human Essentials account")

@@ -32,14 +32,14 @@ RSpec.describe UsersRole, type: :model do
 
       context "for partner user" do
         it "should return partner user" do
-          user = create(:partner_user)
+          user = create(:partners_user)
           expect(UsersRole.current_role_for(user).name).to eq("partner")
         end
       end
     end
     context "when last_role is not nil" do
       it "should return last role" do
-        user = create(:partner_user)
+        user = create(:partners_user)
 
         UsersRole.set_last_role_for(user, user.roles.last)
 
@@ -52,7 +52,7 @@ RSpec.describe UsersRole, type: :model do
   describe "#set_last_role_for" do
     context "when user has the role" do
       it "should set last role" do
-        user = create(:partner_user)
+        user = create(:partners_user)
         role = user.roles.first
 
         UsersRole.set_last_role_for(user, role)
@@ -63,7 +63,7 @@ RSpec.describe UsersRole, type: :model do
 
     context "when user does not have the role" do
       it "should not set last role" do
-        user = create(:partner_user)
+        user = create(:partners_user)
         role = Role.find_by(name: "org_user")
 
         UsersRole.set_last_role_for(user, role)
