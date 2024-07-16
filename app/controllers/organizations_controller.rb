@@ -99,7 +99,8 @@ class OrganizationsController < ApplicationController
       :ytd_on_distribution_printout, :one_step_partner_invite,
       :hide_value_columns_on_receipt, :hide_package_column_on_receipt,
       :signature_for_distribution_pdf,
-      partner_form_fields: []
+      partner_form_fields: [],
+      request_unit_names: []
     )
   end
 

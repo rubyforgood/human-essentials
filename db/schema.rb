@@ -188,6 +188,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_11_020808) do
     t.index ["family_id"], name: "index_children_on_family_id"
   end
 
+  create_table "children_items", id: false, force: :cascade do |t|
+    t.bigint "child_id", null: false
+    t.bigint "item_id", null: false
+    t.index ["child_id", "item_id"], name: "index_children_items_on_child_id_and_item_id", unique: true
+    t.index ["item_id", "child_id"], name: "index_children_items_on_item_id_and_child_id", unique: true
+  end
+
   create_table "counties", force: :cascade do |t|
     t.string "name"
     t.string "region"
