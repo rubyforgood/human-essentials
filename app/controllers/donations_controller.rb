@@ -90,12 +90,7 @@ class DonationsController < ApplicationController
     load_form_collections
     # calling new(donation_params) triggers a validation error if line_item quantity is invalid
     @previous_input = Donation.new(donation_params.except(:line_items_attributes))
-    line_items = []
-    donation_params[:line_items_attributes].values.each { |attr|
-      attr.delete(:_destroy)
-      line_items.push(attr)
-    }
-    @previous_input.line_items.build(line_items)
+    @previous_input.line_items.build(donation_params[:line_items_attributes].values)
 
     render "edit", status: :conflict
   end
@@ -136,7 +131,7 @@ class DonationsController < ApplicationController
     strip_unnecessary_params
     clean_donation_money_raised
     params = compact_line_items
-    params.require(:donation).permit(:source, :comment, :storage_location_id, :money_raised, :issued_at, :donation_site_id, :product_drive_id, :product_drive_participant_id, :manufacturer_id, line_items_attributes: %i(id item_id quantity _destroy)).merge(organization: current_organization)
+    params.require(:donation).permit(:source, :comment, :storage_location_id, :money_raised, :issued_at, :donation_site_id, :product_drive_id, :product_drive_participant_id, :manufacturer_id, line_items_attributes: %i(id item_id quantity)).merge(organization: current_organization)
   end
 
   def donation_item_params
