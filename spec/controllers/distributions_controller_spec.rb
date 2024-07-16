@@ -223,7 +223,9 @@ RSpec.describe DistributionsController, type: :controller do
             }
           })
         end
-        let(:distribution) { create(:distribution, :with_items, item: item1, storage_location: storage_location, organization: organization) }
+        original_quantity = 20
+        new_quantity = 4
+        let(:distribution) { create(:distribution, :with_items, item: item1, item_quantity: original_quantity, storage_location: storage_location, organization: organization) }
         let(:params) do
           {
             organization_name: organization.id,
@@ -232,8 +234,8 @@ RSpec.describe DistributionsController, type: :controller do
               storage_location_id: distribution.storage_location.id,
               line_items_attributes:
                 {
-                  "0": { item_id: item1.id, quantity: 4 },
-                  "1": { item_id: item2.id, quantity: 4 }
+                  "0": { item_id: item1.id, quantity: new_quantity },
+                  "1": { item_id: item2.id, quantity: new_quantity }
                 }
             }
           }
@@ -249,8 +251,8 @@ RSpec.describe DistributionsController, type: :controller do
             updates: [
               {
                 name: item1.name,
-                new_quantity: 4,
-                old_quantity: 100
+                new_quantity: new_quantity,
+                old_quantity: original_quantity
               }
             ]
           }

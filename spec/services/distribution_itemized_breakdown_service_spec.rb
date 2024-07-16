@@ -1,5 +1,6 @@
 RSpec.describe DistributionItemizedBreakdownService, type: :service do
   let(:organization) { create(:organization) }
+  let(:storage_location) { create(:storage_location, organization: organization) }
   let(:distribution_ids) { [distribution_1, distribution_2, distribution_3].map(&:id) }
   let(:item_a) do
     create(:item, organization: organization, on_hand_minimum_quantity: 9999, name: "A Diapers")
@@ -7,9 +8,18 @@ RSpec.describe DistributionItemizedBreakdownService, type: :service do
   let(:item_b) do
     create(:item, organization: organization, on_hand_minimum_quantity: 5, name: "B Diapers")
   end
-  let(:distribution_1) { create(:distribution, :with_items, item: item_a, item_quantity: 500, organization: organization) }
-  let(:distribution_2) { create(:distribution, :with_items, item: item_b, item_quantity: 100, organization: organization) }
-  let(:distribution_3) { create(:distribution, :with_items, item: item_b, item_quantity: 100, organization: organization) }
+
+  before(:each) {
+    TestInventory.create_inventory(organization, {
+      storage_location.id => {
+        item_a.id => 600,
+        item_b.id => 400
+      }
+    })
+  }
+  let(:distribution_1) { create(:distribution, :with_items, item: item_a, item_quantity: 500, organization: organization, storage_location: storage_location) }
+  let(:distribution_2) { create(:distribution, :with_items, item: item_b, item_quantity: 100, organization: organization, storage_location: storage_location) }
+  let(:distribution_3) { create(:distribution, :with_items, item: item_b, item_quantity: 100, organization: organization, storage_location: storage_location) }
   let(:expected_output) do
     [
       {name: item_a.name, distributed: 500, current_onhand: 100, onhand_minimum: item_a.on_hand_minimum_quantity, below_onhand_minimum: true},

@@ -181,7 +181,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
     end
 
     it "Items out (distributions)" do
-      create(:distribution, :with_items, storage_location: storage_location)
+      create(:distribution, :with_items, item: item, storage_location: storage_location)
       visit subject
       find("#custom-tabs-inventory-out-tab").click
 

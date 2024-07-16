@@ -34,10 +34,10 @@ FactoryBot.define do
     trait :with_items do
       transient do
         item_quantity { 100 }
-        item { nil }
+        item { create(:item) }
       end
 
-      storage_location { create :storage_location, :with_items, item: item, organization: organization }
+      storage_location { create :storage_location, :with_items, item: item, item_quantity: item_quantity, organization: organization }
 
       after(:build) do |instance, evaluator|
         # Don't remove this. Shortcutting does not work
@@ -47,6 +47,11 @@ FactoryBot.define do
           &.db_item
         item = evaluator.item || event_item
         instance.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item, itemizable: instance)
+      end
+
+      after(:create) do |instance, evaluator|
+        evaluator.storage_location.decrease_inventory(instance.line_item_values)
+        DistributionEvent.publish(instance)
       end
     end
   end
