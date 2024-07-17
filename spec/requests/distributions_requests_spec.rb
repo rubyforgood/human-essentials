@@ -413,6 +413,27 @@ RSpec.describe "Distributions", type: :request do
         get edit_distribution_path(id: distribution.id)
         expect(response.body).not_to include("You’ve had an audit since this distribution was started.")
       end
+
+      # Bug fix #4537
+      context "when distribution sets storage location total inventory to zero" do
+        let(:item1) { create(:item, name: "Item 1", organization: organization) }
+        let(:test_storage_name) { "Test Storage" }
+        let(:storage_location) { create(:storage_location, name: test_storage_name, organization: organization) }
+        before(:each) do
+          quantity = 20
+          TestInventory.create_inventory(organization, {
+            storage_location.id => {
+              item1.id => quantity
+            }
+          })
+          @distribution_all = create(:distribution, :with_items, item: item1, item_quantity: quantity, storage_location: storage_location, organization: organization)
+          DistributionCreateService.new(@distribution_all).call
+        end
+        it "allows you to select the original storage location for the distribution" do
+          get edit_distribution_path(id: @distribution_all.id)
+          expect(response.body).to include("<option selected=\"selected\" value=\"#{storage_location.id}\">#{test_storage_name}</option>")
+        end
+      end
     end
   end
 
