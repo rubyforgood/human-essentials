@@ -148,7 +148,7 @@ RSpec.describe "Items", type: :request do
           }
         })
         create(:adjustment, :with_items, organization: organization,
-          item: non_delete_item, storage_location: storage_location)
+          item: non_delete_item, item_quantity: 0, storage_location: storage_location)
       end
 
       it "should show all active items with corresponding buttons" do
