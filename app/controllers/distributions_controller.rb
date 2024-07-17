@@ -176,7 +176,7 @@ class DistributionsController < ApplicationController
       if Event.read_events?(current_organization)
         inventory = View::Inventory.new(@distribution.organization_id)
         @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
-          inventory.quantity_for(storage_location: storage_loc.id).positive?
+          !inventory.quantity_for(storage_location: storage_loc.id).negative?
         end
       else
         @storage_locations = current_organization.storage_locations.active_locations.has_inventory_items.alphabetized
