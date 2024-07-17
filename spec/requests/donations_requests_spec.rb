@@ -182,11 +182,22 @@ RSpec.describe "Donations", type: :request do
         storage_location = create(:storage_location, :with_items, item: item, item_quantity: 0, organization: organization)
         extra_item_name = "Extra Item"
         extra_item = create(:item, organization: organization, name: extra_item_name)
+        item_to_delete_name = "Item To Delete"
+        item_to_delete = create(:item, organization: organization, name: item_to_delete_name)
         TestInventory.create_inventory(organization, { storage_location.id => { item.id => 0, extra_item.id => 1 } })
         original_quantity = 100
         original_source = Donation::SOURCES[:manufacturer]
         original_date = DateTime.new(2024)
-        donation = create(:manufacturer_donation, :with_items, item: item, item_quantity: original_quantity, issued_at: original_date, organization: organization, storage_location: storage_location, source: original_source)
+        donation = create(:manufacturer_donation, issued_at: original_date, organization: organization, storage_location: storage_location, source: original_source)
+        add_item_donation = donation.as_json.merge({
+          line_items_attributes: {
+            "0": { item_id: item.id, quantity: original_quantity },
+            "1": { item_id: item_to_delete.id, quantity: 1 }
+          }
+        })
+
+        put donation_path(id: donation.id, donation: add_item_donation)
+
         distribution = {
           storage_location_id: storage_location.id,
           partner_id: create(:partner).id,
@@ -211,6 +222,7 @@ RSpec.describe "Donations", type: :request do
         extra_quantity = 1
         edited_quantity = 1
 
+        # deleted item is removed from line_items_attributes entirely
         edited_donation = {
           source: edited_source,
           product_drive_id: edited_source_drive.id,
@@ -247,6 +259,7 @@ RSpec.describe "Donations", type: :request do
         expect(response.body).to include("value=\"#{edited_quantity}\" name=\"donation[line_items_attributes][0][quantity]")
         expect(response.body).to include("<option selected=\"selected\" value=\"#{extra_item.id}\">#{extra_item_name}</option>")
         expect(response.body).to include("value=\"#{extra_quantity}\" name=\"donation[line_items_attributes][1][quantity]")
+        expect(response.body).not_to include("<option selected=\"selected\" value=\"#{item_to_delete.id}\">#{item_to_delete_name}</option>")
       end
     end
   end
