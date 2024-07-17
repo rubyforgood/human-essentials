@@ -61,9 +61,8 @@ FactoryBot.define do
         donation.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item, itemizable: donation)
       end
 
-      after(:create) do |instance, evaluator|
-        evaluator.storage_location.increase_inventory(instance.line_item_values)
-        DonationEvent.publish(instance)
+      after(:create) do |donation, evaluator|
+        DonationCreateService.call(donation)
       end
     end
   end

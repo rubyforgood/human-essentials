@@ -34,6 +34,10 @@ FactoryBot.define do
         item = evaluator.item || event_item || create(:item)
         adjustment.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item, itemizable: adjustment)
       end
+
+      after(:create) do |adjustment, evaluator|
+        AdjustmentCreateService.new(adjustment).call
+      end
     end
   end
 end

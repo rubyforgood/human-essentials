@@ -170,7 +170,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
   context "when viewing an existing storage location" do
     let(:item) { create(:item, name: "AAA Diapers") }
     let!(:storage_location) { create(:storage_location, :with_items, item: item, name: "here") }
-    let!(:adjustment) { create(:adjustment, :with_items, storage_location: storage_location) }
+    let!(:adjustment) { create(:adjustment, :with_items, item: item, storage_location: storage_location) }
     subject { storage_location_path(storage_location.id) }
 
     it "Items in (adjustments)" do

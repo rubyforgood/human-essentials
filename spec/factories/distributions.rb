@@ -50,8 +50,7 @@ FactoryBot.define do
       end
 
       after(:create) do |instance, evaluator|
-        evaluator.storage_location.decrease_inventory(instance.line_item_values)
-        DistributionEvent.publish(instance)
+        DistributionCreateService.new(instance).call
       end
     end
   end
