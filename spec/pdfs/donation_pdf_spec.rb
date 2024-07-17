@@ -1,7 +1,10 @@
 describe DonationPdf do
-  let(:donation_site) { create(:donation_site) }
+  let(:donation_site) { create(:donation_site, name: "Site X", address: "1500 Remount Road, Front Royal, VA 22630", email: "test@example.com") }
   let(:organization) { create(:organization) }
-  let(:donation) { create(:donation, organization: organization, donation_site: donation_site, source: Donation::SOURCES[:donation_site]) }
+  let(:donation) do
+    create(:donation, organization: organization, donation_site: donation_site, source: Donation::SOURCES[:donation_site],
+      comment: "A donation comment")
+  end
   let(:item1) { FactoryBot.create(:item, name: "Item 1", package_size: 50, value_in_cents: 100) }
   let(:item2) { FactoryBot.create(:item, name: "Item 2", value_in_cents: 200) }
   let(:item3) { FactoryBot.create(:item, name: "Item 3", value_in_cents: 300) }
