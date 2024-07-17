@@ -177,9 +177,11 @@ RSpec.describe "Donations", type: :request do
     context "when donated items are distributed to less than donated amount " \
     "and you edit the donation to less than distributed amount" do
       it "shows a warning and displays original names and amounts and info the user entered" do
-        item = create(:item, organization: organization, name: "Brightbloom Seed")
+        item_name = "Brightbloom Seed"
+        item = create(:item, organization: organization, name: item_name)
         storage_location = create(:storage_location, :with_items, item: item, item_quantity: 0, organization: organization)
-        extra_item = create(:item, organization: organization, name: "Extra Item")
+        extra_item_name = "Extra Item"
+        extra_item = create(:item, organization: organization, name: extra_item_name)
         TestInventory.create_inventory(organization, { storage_location.id => { item.id => 0, extra_item.id => 1 } })
         original_quantity = 100
         original_source = Donation::SOURCES[:manufacturer]
@@ -197,9 +199,12 @@ RSpec.describe "Donations", type: :request do
         post distributions_path(distribution: distribution, format: :turbo_stream)
 
         edited_source = Donation::SOURCES[:product_drive]
-        edited_source_drive = create(:product_drive, organization: organization)
-        edited_source_drive_participant = create(:product_drive_participant, organization: organization)
-        edited_storage_location = create(:storage_location, name: "Test Storage", organization: organization)
+        edited_source_drive_name = "Test Product Drive"
+        edited_source_drive = create(:product_drive, name: edited_source_drive_name, organization: organization)
+        edited_source_drive_participant_business_name = "Test Business Name"
+        edited_source_drive_participant = create(:product_drive_participant, business_name: edited_source_drive_participant_business_name, organization: organization)
+        edited_storage_location_name = "Test Storage"
+        edited_storage_location = create(:storage_location, name: edited_storage_location_name, organization: organization)
         edited_money = 10.0
         edited_comment = "New test comment"
         edited_date = "2019-01-01"
@@ -232,15 +237,15 @@ RSpec.describe "Donations", type: :request do
         expect(response.body).to include("Editing Donation\n          <small>from #{original_source}")
         expect(response.body).to include("<li class=\"breadcrumb-item\">\n            <a href=\"#\">Editing #{original_source}")
         expect(response.body).to include("<option selected=\"selected\" value=\"#{edited_source}\">#{edited_source}</option>")
-        expect(response.body).to include("<option selected=\"selected\" value=\"#{edited_source_drive.id}\">#{edited_source_drive.name}</option>")
-        expect(response.body).to include("<option selected=\"selected\" value=\"#{edited_source_drive_participant.id}\">#{edited_source_drive_participant.business_name}</option>")
-        expect(response.body).to include("<option selected=\"selected\" value=\"#{edited_storage_location.id}\">#{edited_storage_location.name}</option>")
+        expect(response.body).to include("<option selected=\"selected\" value=\"#{edited_source_drive.id}\">#{edited_source_drive_name}</option>")
+        expect(response.body).to include("<option selected=\"selected\" value=\"#{edited_source_drive_participant.id}\">#{edited_source_drive_participant_business_name}</option>")
+        expect(response.body).to include("<option selected=\"selected\" value=\"#{edited_storage_location.id}\">#{edited_storage_location_name}</option>")
         expect(response.body).to include(edited_comment)
         expect(response.body).to include("value=\"#{edited_money}\" type=\"text\" name=\"donation[money_raised_in_dollars]")
         expect(response.body).to include(edited_date)
-        expect(response.body).to include("<option selected=\"selected\" value=\"#{item.id}\">#{item.name}</option>")
+        expect(response.body).to include("<option selected=\"selected\" value=\"#{item.id}\">#{item_name}</option>")
         expect(response.body).to include("value=\"#{edited_quantity}\" name=\"donation[line_items_attributes][0][quantity]")
-        expect(response.body).to include("<option selected=\"selected\" value=\"#{extra_item.id}\">#{extra_item.name}</option>")
+        expect(response.body).to include("<option selected=\"selected\" value=\"#{extra_item.id}\">#{extra_item_name}</option>")
         expect(response.body).to include("value=\"#{extra_quantity}\" name=\"donation[line_items_attributes][1][quantity]")
       end
     end
