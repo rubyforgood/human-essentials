@@ -83,6 +83,9 @@
                 <tr>
                   <td><%= item.name %></td>
                   <td><%= item.quantity %></td>
+                  <% if custom_units %>
+                    <td><%= item.unit&.capitalize&.pluralize(item.quantity) %></td>
+                  <% end %>
                   <% if default_storage_location %>
                     <td><%= item.on_hand_for_location %></td>
                   <% end %>
