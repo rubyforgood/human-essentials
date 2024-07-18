@@ -36,23 +36,39 @@ class DistributionPdf
       text @distribution.partner.name
       move_up 24
 
+      profile = @distribution.partner.profile
+
       text "Partner Primary Contact:", style: :bold, align: :right
       font_size 12
-      text @distribution.partner.profile.primary_contact_name, align: :right
+      text profile.primary_contact_name, align: :right
       font_size 10
-      text @distribution.partner.profile.primary_contact_email, align: :right
-      text @distribution.partner.profile.primary_contact_phone, align: :right
+      text profile.primary_contact_email, align: :right
+      text profile.primary_contact_phone, align: :right
       move_down 10
 
-      if %w(shipped delivered).include?(@distribution.delivery_method)
+      if @distribution.delivery? || @distribution.shipped?
+        if profile.program_address1.blank?
+          address1 = profile.address1
+          address2 = profile.address2
+          city = profile.city
+          state = profile.state
+          zip_code = profile.zip_code
+        else
+          address1 = profile.program_address1
+          address2 = profile.program_address2
+          city = profile.program_city
+          state = profile.program_state
+          zip_code = profile.program_zip_code.to_s
+        end
+
         move_up 10
         text "Delivery address:", style: :bold
         font_size 10
-        text @distribution.partner.profile.address1
-        text @distribution.partner.profile.address2
-        text @distribution.partner.profile.city
-        text @distribution.partner.profile.state
-        text @distribution.partner.profile.zip_code
+        text address1
+        text address2
+        text city
+        text state
+        text zip_code
         move_up 40
 
         text "Issued on:", style: :bold, align: :right
