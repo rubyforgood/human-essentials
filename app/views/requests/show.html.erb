@@ -66,7 +66,7 @@
                 <th>Item</th>
                 <th>Quantity</th>
                 <% custom_units = Flipper.enabled?(:enable_packs) &&
-                            @request.item_requests.any? { |item| item.request_unit } %>
+                                  @request.item_requests.any? { |item| item.request_unit } %>
                 <% if custom_units %>
                   <th>Units (if applicable)</th>
                 <% end %>
