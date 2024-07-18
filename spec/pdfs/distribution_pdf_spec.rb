@@ -1,3 +1,9 @@
+require_relative("../support/distribution_pdf_helper")
+
+RSpec.configure do |c|
+  c.include DistributionPDFHelper
+end
+
 describe DistributionPdf do
   let(:organization) {
     create(:organization,
@@ -27,11 +33,7 @@ describe DistributionPdf do
     let(:distribution) { create(:distribution, organization: organization, storage_location: storage_location) }
 
     before(:each) do
-      create(:line_item, itemizable: distribution, item: item1, quantity: 50)
-      create(:line_item, itemizable: distribution, item: item2, quantity: 100)
-      create(:request, distribution: distribution,
-        request_items: [{"item_id" => item2.id, "quantity" => 30},
-          {"item_id" => item3.id, "quantity" => 50}, {"item_id" => item4.id, "quantity" => 120}])
+      create_line_items_request(distribution)
     end
 
     specify "#request_data" do
@@ -139,6 +141,80 @@ describe DistributionPdf do
             ["Total Items Received", 200, 150, "", "$250.00"]
           ])
         end
+      end
+    end
+  end
+
+  describe "address pdf output" do
+    let(:partner) {
+      create(:partner, :uninvited, without_profile: true,
+        name: "Leslie Sue",
+        organization: organization)
+    }
+    # there is a helper test at the bottom to regenerate these PDFs easily
+    let(:expected_pickup_file_path) { Rails.root.join("spec", "fixtures", "files", "distribution_pickup.pdf") }
+    let(:expected_pickup_file) { IO.binread(expected_pickup_file_path) }
+    let(:expected_same_address_file_path) { Rails.root.join("spec", "fixtures", "files", "distribution_same_address.pdf") }
+    let(:expected_same_address_file) { IO.binread(expected_same_address_file_path) }
+    let(:expected_different_address_file_path) { Rails.root.join("spec", "fixtures", "files", "distribution_program_address.pdf") }
+    let(:expected_different_address_file) { IO.binread(expected_different_address_file_path) }
+
+    context "when the organization doesn't have a different program address" do
+      before(:each) do
+        create_profile_without_program_address
+      end
+      it "prints the address if the delivery type is delivery" do
+        compare_pdf(create_dist(:delivery), expected_same_address_file)
+      end
+      it "prints the address if the delivery type is shipped" do
+        compare_pdf(create_dist(:shipped), expected_same_address_file)
+      end
+      it "doesn't print the address if the delivery type is pickup" do
+        compare_pdf(create_dist(:pick_up), expected_pickup_file)
+      end
+    end
+    context "when the organization has a different program/delivery address" do
+      before(:each) do
+        create_profile_with_program_address
+      end
+      it "prints the delivery address if the delivery type is delivery" do
+        compare_pdf(create_dist(:delivery), expected_different_address_file)
+      end
+      it "prints the delivery address if the delivery type is shipped" do
+        compare_pdf(create_dist(:shipped), expected_different_address_file)
+      end
+      it "doesn't print any address if the delivery type is pickup" do
+        compare_pdf(create_dist(:pick_up), expected_pickup_file)
+      end
+    end
+    # this test is a helper function to regenerate expected PDFs, only commit with it skipped
+    # rubocop:disable Lint/LiteralAsCondition
+    if false
+      # rubocop:enable Lint/LiteralAsCondition
+      it "skip this helper function for regenerating the expected pdfs", type: :request do
+        user = create(:user, organization: organization)
+        sign_in(user)
+
+        profile = create_profile_without_program_address
+
+        dist = create_dist(:pick_up)
+        get print_distribution_path(dist)
+        File.binwrite(expected_pickup_file_path, response.body)
+        dist.destroy
+
+        dist = create_dist(:shipped)
+        get print_distribution_path(dist)
+        File.binwrite(expected_same_address_file_path, response.body)
+        dist.destroy
+
+        profile.destroy
+        create_profile_with_program_address
+
+        dist = create_dist(:shipped)
+        get print_distribution_path(dist)
+        File.binwrite(expected_different_address_file_path, response.body)
+
+        raise "Do not commit this helper function"
       end
     end
   end
