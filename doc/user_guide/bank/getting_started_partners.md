@@ -10,6 +10,8 @@
 
 4/  The usual way to handle bringing on partners to be able to make requests is to invite them,  then have them fill in their profile before approving them, so that you get the information from them that your bank needs for grants, etc.   However, if that's not how you want to work,  it is also possible to invite and approve them in one step.
 
+5/  A lot of banks set up a partner as a proxy for their direct distribution.  This is allowed, and you can switch back and forth between being a bank and a partner with the same login  
+
 ## Adding a single partner
 Click on the "Add a Partner" button on your "Getting started" screen
 (you can also click on "Partner Agencies", then "All Partners", then "Add a Partner")

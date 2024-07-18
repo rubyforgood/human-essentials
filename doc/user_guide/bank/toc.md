@@ -21,6 +21,7 @@
    1. [The request/distribution cycle](pm_request_distribution_cycle.md)
    2. [Adding a partner](pm_adding_a_partner.md)
    3. [Importing partners](pm_importing_partners.md)
+   4. [Administering partner users](pm_partner_user_admin.md)
    4. The partner approval cycle 
       1. [Inviting a partner](pm_inviting_a_partner.md) 
       2. [Partner profiles](pm_partner_profiles.md) 
@@ -44,13 +45,14 @@
 7. Getting information out of the system
    1. [Exports](exports.md)
    2. Reports
-      1[Summary reports](reports_summary_reports.md)
-      2[Itemized reports](reports_itemized_reports.md)
-      3[Trends](reports_trends.md)
-      4Specialty reports
+      1. [Summary reports](reports_summary_reports.md)
+      2. [Itemized reports](reports_itemized_reports.md)
+      3. [Trends](reports_trends.md)
+      4. Specialty reports
          1. [Annual Survey](reports_annual_survey.md)
          2. [Distributions by county](reports_distribution_by_county.md)
          3. [Manufacturer donations](reports_manufacturers_donations.md)
          4. [Activity graph](reports_activity_graph.md)
 8. [User management](user_management.md)
-9. [But I need to do something different!](asking_for_changes.md)
+9. [Signing out, and other things you can access by clicking on your name](top_right_menu.md)
+[But I need to do something different!](asking_for_changes.md)
