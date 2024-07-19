@@ -1,9 +1,15 @@
 class BackfillPartnerChildRequestedItems < ActiveRecord::Migration[7.1]
-  def change
+  def up
     return unless Rails.env.production?
 
-    Partners::Child.unscoped.where.not(item_needed_diaperid: nil).each do |child|
-      child.requested_items << Item.find_by(id: child.item_needed_diaperid)
+    safety_assured do
+      execute <<-SQL
+      INSERT INTO children_items (child_id, item_id)
+      SELECT children.id, items.id
+      FROM children
+      LEFT JOIN items ON children.item_needed_diaperid = items.id
+      WHERE items.id IS NOT NULL AND children.item_needed_diaperid IS NOT NULL
+      SQL
     end
   end
 end

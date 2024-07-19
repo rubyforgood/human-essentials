@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe ProductDriveHelper, type: :helper do
   describe '#is_virtual' do
     context 'when the product drive was held virtually' do

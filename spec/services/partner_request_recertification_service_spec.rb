@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe PartnerRequestRecertificationService do
   describe '#call' do
     subject { described_class.new(partner: partner).call }

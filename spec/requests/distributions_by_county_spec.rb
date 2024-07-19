@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe "DistributionsByCounties", type: :request do
   include_examples "distribution_by_county"
 

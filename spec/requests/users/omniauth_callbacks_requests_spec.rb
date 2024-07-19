@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe "Users - Omniauth Callbacks", type: :request do
   before do
     Rails.application.env_config["devise.mapping"] = Devise.mappings[:user]
