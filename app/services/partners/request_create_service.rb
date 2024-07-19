@@ -26,10 +26,6 @@ module Partners
         end
       end
 
-      if @partner_request.comments.blank? && @partner_request.item_requests.blank?
-        errors.add(:base, 'completely empty request')
-      end
-
       return self if errors.present?
 
       Request.transaction do
