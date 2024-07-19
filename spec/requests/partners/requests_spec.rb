@@ -100,6 +100,7 @@ RSpec.describe "/partners/requests", type: :request do
           item_requests_attributes: {
             "0" => {
               item_id: item1.id,
+              request_unit: 'pack',
               quantity: Faker::Number.within(range: 4..13)
             }
           }
@@ -109,6 +110,8 @@ RSpec.describe "/partners/requests", type: :request do
 
     before do
       sign_in(partner_user)
+      FactoryBot.create(:unit, organization: organization, name: 'pack')
+      FactoryBot.create(:item_unit, item: item1, name: 'pack')
     end
 
     context 'when given valid parameters' do
