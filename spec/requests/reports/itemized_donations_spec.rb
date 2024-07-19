@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe "Reports::ItemizedDonations", type: :request do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }

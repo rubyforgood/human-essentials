@@ -15,7 +15,6 @@
 #  updated_at           :datetime         not null
 #  ndbn_member_id       :bigint
 #
-require 'rails_helper'
 
 RSpec.describe AccountRequest, type: :model do
   let(:account_request) { create(:account_request) }

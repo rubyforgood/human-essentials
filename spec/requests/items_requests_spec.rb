@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe "Items", type: :request do
   let(:organization) { create(:organization, short_name: "my_org") }
   let(:user) { create(:user, organization: organization) }

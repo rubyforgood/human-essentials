@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe ProfileUpdateService do
   describe "#update" do
     let(:partner) { create(:partner, name: "Partnerrific") }
