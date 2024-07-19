@@ -14,21 +14,7 @@ module Partners
     end
 
     def create
-      children_ids = []
-
-      params.each do |key, _|
-        is_child, id = key.split('-')
-        if is_child == 'child'
-          children_ids << id
-        end
-      end
-
-      children = current_partner.children.active.where(id: children_ids).joins(:requested_items).select('children.*', :item_id)
-
-      children_grouped_by_item_id = children.group_by(&:item_id)
-      family_requests_attributes = children_grouped_by_item_id.map do |item_id, item_requested_children|
-        { item_id: item_id, person_count: item_requested_children.size, children: item_requested_children }
-      end
+      family_requests_attributes = build_family_requests_attributes(params)
 
       create_service = Partners::FamilyRequestCreateService.new(
         partner_user_id: current_user.id,
@@ -46,6 +32,26 @@ module Partners
     end
 
     def validate
+      family_requests_attributes = build_family_requests_attributes(params)
+
+      @partner_request = Partners::FamilyRequestCreateService.new(
+        partner_user_id: current_user.id,
+        family_requests_attributes: family_requests_attributes,
+        for_families: true
+      ).create_only
+      if @partner_request.valid?
+        @total_items = @partner_request.total_items_fromstr
+        @quota_exceeded = current_partner.quota_exceeded?(@total_items)
+        body = render_to_string(template: 'partners/requests/validate', formats: [:html], layout: false)
+        render json: {valid: true, body: body}
+      else
+        render json: {valid: false}
+      end
+    end
+
+    private
+
+    def build_family_requests_attributes(params)
       children_ids = []
 
       params.each do |key, _|
@@ -55,25 +61,11 @@ module Partners
         end
       end
 
-      children = current_partner.children.active.where(id: children_ids).where.not(item_needed_diaperid: [nil, 0])
+      children = current_partner.children.active.where(id: children_ids).joins(:requested_items).select('children.*', :item_id)
 
-      children_grouped_by_item_id = children.group_by(&:item_needed_diaperid)
-      family_requests_attributes = children_grouped_by_item_id.map do |item_id, item_requested_children|
+      children_grouped_by_item_id = children.group_by(&:item_id)
+      children_grouped_by_item_id.map do |item_id, item_requested_children|
         { item_id: item_id, person_count: item_requested_children.size, children: item_requested_children }
-      end
-
-      @partner_request = Partners::FamilyRequestCreateService.new(
-        partner_user_id: current_user.id,
-        family_requests_attributes: family_requests_attributes,
-        for_families: true
-      ).create_only
-      if @partner_request.valid?
-        @total_items = @partner_request.total_items_fromstr
-        @quota_exceeded = @total_items > current_partner.quota.to_i
-        body = render_to_string(template: 'partners/requests/validate', formats: [:html], layout: false)
-        render json: {valid: true, body: body}
-      else
-        render json: {valid: false}
       end
     end
   end

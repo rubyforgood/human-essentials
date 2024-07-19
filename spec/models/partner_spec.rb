@@ -379,6 +379,28 @@ RSpec.describe Partner, type: :model do
     end
   end
 
+  describe "#quota_exceeded?" do
+    it "returns true if partner has a quota and the total given is greater than quota" do
+      partner = build_stubbed(:partner, quota: 100)
+      expect(partner.quota_exceeded?(200)).to eq(true)
+    end
+
+    it "returns false if partner has a quota and the total given is equal to quota" do
+      partner = build_stubbed(:partner, quota: 100)
+      expect(partner.quota_exceeded?(100)).to eq(false)
+    end
+
+    it "returns false if partner has a quota and the total given is less than quota" do
+      partner = build_stubbed(:partner, quota: 100)
+      expect(partner.quota_exceeded?(50)).to eq(false)
+    end
+
+    it "returns false if partner has no quota" do
+      partner = build_stubbed(:partner, quota: nil)
+      expect(partner.quota_exceeded?(50)).to eq(false)
+    end
+  end
+
   describe "versioning" do
     it { is_expected.to be_versioned }
   end
