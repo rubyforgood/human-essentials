@@ -39,7 +39,7 @@
                 <tr>
                   <th>Item Requested</th>
                   <th>Quantity</th>
-                  <% if current_partner.organization.request_units.any? %>
+                  <% if Flipper.enabled?(:enable_packs) && current_partner.organization.request_units.any? %>
                     <th>Units (if applicable)</th>
                   <% end %>
                 </tr>

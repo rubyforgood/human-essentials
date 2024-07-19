@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe "/partners/requests", type: :request do
   let(:organization) { create(:organization) }
   let(:partner) { create(:partner, organization: organization) }

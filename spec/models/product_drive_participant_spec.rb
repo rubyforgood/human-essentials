@@ -16,8 +16,6 @@
 #  organization_id :integer
 #
 
-require "rails_helper"
-
 RSpec.describe ProductDriveParticipant, type: :model do
   it_behaves_like "provideable"
 

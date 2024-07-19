@@ -12,7 +12,7 @@
       <%= field.number_field :quantity, label: false, step: 1, min: 1, class: 'form-control' %>
     </td>
 
-    <% if current_partner.organization.request_units.any? %>
+    <% if Flipper.enabled?(:enable_packs) && current_partner.organization.request_units.any? %>
       <td>
         <%= field.label :request_unit, "Unit", {class: 'sr-only'} %>
         <%= field.select :request_unit, [], {include_blank: 'Units'},

@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe Exports::ExportRequestService do
   let(:org) { create(:organization) }
 
