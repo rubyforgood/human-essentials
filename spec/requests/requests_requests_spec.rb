@@ -82,38 +82,23 @@ RSpec.describe 'Requests', type: :request do
         let(:item) { create(:item, name: "Item", organization: organization) }
         let(:request) { create(:request, organization: organization) }
 
-        it 'shows a units column if any item has custom units' do
+        it 'shows a units column and custom unit if any item has custom units' do
           create(:item_unit, item: item, name: "Pack")
           create(:item_request, request: request, request_unit: "Pack", item: item)
 
           get request_path(request)
 
           expect(response.body).to include('Units (if applicable)')
+          expect(response.body).to include('<td>Packs</td>')
         end
 
-        it 'does not show a units column if no items have custom units' do
+        it 'does not show a units column or any unit if no items have custom units' do
+          create(:item_unit, item: item, name: "Pack")
           create(:item_request, request: request, request_unit: nil, item: item)
 
           get request_path(request)
 
           expect(response.body).to_not include('Units (if applicable)')
-        end
-
-        it 'displays custom units in units column if applicable' do
-          create(:item_unit, item: item, name: "Pack")
-          create(:item_request, request: request, request_unit: "Pack", item: item)
-
-          get request_path(request)
-
-          expect(response.body).to include('<td>Packs</td>')
-        end
-
-        it 'does not display anything in units column if not applicable' do
-          create(:item_unit, item: item, name: "Pack")
-          create(:item_request, request: request, request_unit: nil, item: item)
-
-          get request_path(request)
-
           expect(response.body).to_not include('<td>Packs</td>')
         end
       end
