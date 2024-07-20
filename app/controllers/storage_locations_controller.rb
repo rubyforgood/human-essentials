@@ -165,6 +165,7 @@ class StorageLocationsController < ApplicationController
                                              .includes(inventory_items: :item)
                                              .find(params[:id])
                                              .inventory_items
+                                             .alphabetized
                                            .active
 
       @inventory_items += include_omitted_items(@inventory_items.collect(&:item_id)) if params[:include_omitted_items] == "true"
