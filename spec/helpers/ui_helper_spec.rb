@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe UiHelper, type: :helper do
   describe 'optional_data_text' do
     subject { helper.optional_data_text(field) }

@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe "Adjustments", type: :request do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
