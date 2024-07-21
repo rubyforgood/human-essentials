@@ -1,4 +1,7 @@
 DRAFT USER GUIDE
+
+This user guide is meant for users of the human essentials app at essentials banks.  As of July 21, 2024, it is a work in progress.  If you are interested in helping out, please reach out to @cielf.
+
 1. Introduction
    1. [Is Human Essentials right for you?](intro_i.md) (what we help with and what we don't)
    2. [Support](intro_ii.md) 
