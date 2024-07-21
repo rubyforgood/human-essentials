@@ -1,3 +1,4 @@
+DRAFT USER GUIDE
 # Getting started -- partners
 
 ## Things you need to know about partners before deciding how you are handling them

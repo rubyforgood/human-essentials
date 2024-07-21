@@ -1,3 +1,4 @@
+DRAFT USER GUIDE
 1. Introduction
    1. [Is Human Essentials right for you?](intro_i.md) (what we help with and what we don't)
    2. [Support](intro_ii.md) 
