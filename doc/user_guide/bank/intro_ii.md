@@ -1,3 +1,5 @@
+DRAFT USER GUIDE
+
 # Support
 
 There are a few ways to get support -- some are better than others.
