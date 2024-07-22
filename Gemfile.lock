@@ -780,6 +780,7 @@ DEPENDENCIES
   guard-rspec
   icalendar
   importmap-rails (~> 2.1)
+  ice_cube
   jbuilder
   jwt
   kaminari
