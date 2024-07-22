@@ -1,8 +1,8 @@
 # Pick Ups & Deliveries Calendar
 
-The calendar shows the pickup and delivery schedule. It shows past and upcoming distributions in a given month.
+Pick Ups & Deliveries shows scheduled and completed distributions in a calendar format on a monthly basis.
 
-Click on the "Pick Ups & Deliveries" section to view the distributions. 
+Click on "Pick Ups & Deliveries" in the left-hand menu to view the calendar.
 
 ![PickUps & Delivery Calendar](images/pickup&delivery.jpg)
 
@@ -11,9 +11,9 @@ The Distribution Schedule page shows details including the Partner,the time of d
 
 ![Specific Day Distribution](images/specific_day_distribution_schedule.jpg)
 
-If the distribution has been done, you can mark it as complete by clicking on "Distribution Complete". Marking the distribution as complete does not remove it from the calendar.
+Once the partner has the distributed goods, clicking "Distribution Complete" changes the status of the distribution from "Scheduled" to "Complete", so you can track what is still in your hands and what is with your partners in the community. It does not, at this time, remove it from the calendar.
 
-Click "View" for more details on the source location, the agency representative, the delivery method, the shipping cost, comments and the state of the distribution.
+Click "View" for details on the distribution's source location, agency representative, delivery method, shipping cost, comments, and state. This also shows a list of items included in the distribution.
 
 ![Distribution from Source Inventory to Partner](images/distribution_from_source_to_partner.jpg)
 
