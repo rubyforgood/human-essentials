@@ -2,14 +2,14 @@
 #
 # Table name: partner_groups
 #
-#  id              :bigint           not null, primary key
-#  deadline_day    :integer
-#  name            :string
-#  reminder_day    :integer
-#  send_reminders  :boolean          default(FALSE), not null
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  organization_id :bigint
+#  id                :bigint           not null, primary key
+#  deadline_day      :integer
+#  name              :string
+#  reminder_schedule :string           saved in iCal format, eg "RRULE:FREQ=MONTHLY;BYMONTHDAY=14"
+#  send_reminders    :boolean          default(FALSE), not null
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#  organization_id   :bigint
 #
 class PartnerGroup < ApplicationRecord
   has_paper_trail
@@ -21,5 +21,5 @@ class PartnerGroup < ApplicationRecord
 
   validates :organization, presence: true
   validates :name, presence: true, uniqueness: { scope: :organization }
-  validates :deadline_day, :reminder_day, presence: true, if: :send_reminders?
+  validates :deadline_day, :reminder_schedule, presence: true, if: :send_reminders?
 end

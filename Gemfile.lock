@@ -731,6 +731,7 @@ DEPENDENCIES
   guard-rspec
   httparty
   icalendar
+  ice_cube
   image_processing
   importmap-rails (~> 2.0)
   jbuilder
@@ -781,4 +782,4 @@ DEPENDENCIES
   webmock (~> 3.23)
 
 BUNDLED WITH
-   2.5.14
+   2.5.15

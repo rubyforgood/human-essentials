@@ -92,7 +92,7 @@ class OrganizationsController < ApplicationController
       :name, :short_name, :street, :city, :state,
       :zipcode, :email, :url, :logo, :intake_location,
       :default_storage_location, :default_email_text,
-      :invitation_text, :reminder_day, :deadline_day,
+      :invitation_text, :reminder_schedule, :deadline_day,
       :repackage_essentials, :distribute_monthly,
       :ndbn_member_id, :enable_child_based_requests,
       :enable_individual_requests, :enable_quantity_based_requests,

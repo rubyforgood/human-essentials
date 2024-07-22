@@ -20,7 +20,7 @@
 #  name                           :string
 #  one_step_partner_invite        :boolean          default(FALSE), not null
 #  partner_form_fields            :text             default([]), is an Array
-#  reminder_day                   :integer
+#  reminder_schedule              :string           saved in iCal format, eg "RRULE:FREQ=MONTHLY;BYMONTHDAY=14"
 #  repackage_essentials           :boolean          default(FALSE), not null
 #  short_name                     :string
 #  signature_for_distribution_pdf :boolean          default(FALSE)

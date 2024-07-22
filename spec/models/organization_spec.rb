@@ -20,7 +20,7 @@
 #  name                           :string
 #  one_step_partner_invite        :boolean          default(FALSE), not null
 #  partner_form_fields            :text             default([]), is an Array
-#  reminder_day                   :integer
+#  reminder_schedule              :string
 #  repackage_essentials           :boolean          default(FALSE), not null
 #  short_name                     :string
 #  signature_for_distribution_pdf :boolean          default(FALSE)
@@ -447,13 +447,18 @@ RSpec.describe Organization, type: :model do
     end
   end
 
-  describe 'reminder_day' do
-    it "can only contain numbers 1-28" do
-      expect(build(:organization, reminder_day: 28)).to be_valid
-      expect(build(:organization, reminder_day: 1)).to be_valid
-      expect(build(:organization, reminder_day: 0)).to_not be_valid
-      expect(build(:organization, reminder_day: -5)).to_not be_valid
-      expect(build(:organization, reminder_day: 29)).to_not be_valid
+  describe 'reminder_schedule' do
+    it "cannot exceed 28" do
+      schedule = IceCube::Schedule.new(Date.new(2022, 1, 1))
+      valid_days = [1, 28]
+      valid_days.each do |day|
+        schedule.add_recurrence_rule IceCube::Rule.monthly.day_of_month(day)
+        expect(build(:organization, reminder_schedule: schedule.to_ical)).to be_valid
+        schedule.remove_recurrence_rule(schedule.recurrence_rules.first)
+      end
+      schedule.add_recurrence_rule IceCube::Rule.monthly.day_of_month(29)
+      expect(build(:organization, reminder_schedule: schedule.to_ical)).to_not be_valid
+      schedule.remove_recurrence_rule(schedule.recurrence_rules.first)
     end
   end
   describe 'deadline_day' do
