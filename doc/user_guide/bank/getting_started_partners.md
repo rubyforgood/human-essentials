@@ -17,7 +17,7 @@ DRAFT USER GUIDE
 Click on the "Add a Partner" button on your "Getting started" screen
 (you can also click on "Partner Agencies", then "All Partners", then "Add a Partner")
 
-![navigation](images/gs_just_starting_step_1.png)
+![navigation](images/getting_started/partners/gs_just_starting_step_2.png)
 
 Further details on adding a partner can be found [here](pm_adding_a_partner.md)
 

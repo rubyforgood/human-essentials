@@ -9,15 +9,15 @@ When you are inputting donations, or purchases, you will specify the storage loc
 
 How do you enter a storage location?   If you haven't any storage locations yet, you can click on "Add a Storage Location" in the "Just Starting?" sequence at the top of your dashboard.  
 
-![navigation](images/gs_just_starting_step_1.png)
+![navigation](images/getting_started/storage_locations/gs_just_starting_step_1.png)
 
 You can also click on "Inventory", then "Storage Locations" in the left-hand menu, then "New Storage Locations"
 
-![navigation](images/gs_storage_locations_navigation.png)
+![navigation](images/getting_started/storage_locations/gs_storage_locations_navigation.png)
 
 Either of these will bring up the new storage location screen
 
-![navigation](images/new_storage_location.png)
+![navigation](images/getting_started/storage_locations/new_storage_location.png)
 
 Fill in the information:
 - Name and Address are mandatory
@@ -30,6 +30,6 @@ Click "Save"
 
 You'll see a list of your storage locations.  Click "New Storage Location" if you want to enter another locations.
 
-![navigation](images/storage_location_index.png)
+![storage location index](images/getting_started/storage_locations/storage_location_index.png)
 
 Next step:  [Entering or uploading your initial partner list](getting_started_partners.md) 
