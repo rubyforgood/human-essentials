@@ -20,7 +20,7 @@ This user guide is meant for users of the human essentials app at essentials ban
    3. [Purchases](essentials_purchases.md)
    4. [Requests](essentials_requests.md)
    5. [Distributions](essentials_distributions.md)
-   6. [Pickups and Deliveries Calendar](essentials_calendar.md)
+   6. [Pick Ups and Deliveries](essentials_pick_ups.md)
 4. Partner Management
    1. [The request/distribution cycle](pm_request_distribution_cycle.md)
    2. [Adding a partner](pm_adding_a_partner.md)
