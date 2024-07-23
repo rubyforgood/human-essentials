@@ -188,26 +188,14 @@ RSpec.describe "Donations", type: :request do
         original_quantity = 100
         original_source = Donation::SOURCES[:manufacturer]
         original_date = DateTime.new(2024)
-        donation = create(:manufacturer_donation, issued_at: original_date, organization: organization, storage_location: storage_location, source: original_source)
-        add_item_donation = donation.as_json.merge({
-          line_items_attributes: {
-            "0": { item_id: item.id, quantity: original_quantity },
-            "1": { item_id: item_to_delete.id, quantity: 1 }
-          }
-        })
+        donation = build(:manufacturer_donation, issued_at: original_date, organization: organization, storage_location: storage_location, source: original_source)
+        donation.line_items << build(:line_item, item: item, quantity: original_quantity)
+        donation.line_items << build(:line_item, item: item_to_delete, quantity: 1)
 
-        put donation_path(id: donation.id, donation: add_item_donation)
+        DonationCreateService.call(donation)
 
-        distribution = {
-          storage_location_id: storage_location.id,
-          partner_id: create(:partner).id,
-          delivery_method: :delivery,
-          line_items_attributes: {
-            "0": { item_id: item.id, quantity: 90 }
-          }
-        }
-
-        post distributions_path(distribution: distribution, format: :turbo_stream)
+        # simulate distribution by setting item inventory to 10
+        TestInventory.create_inventory(organization, { storage_location.id => { item.id => 10, extra_item.id => 1 } })
 
         edited_source = Donation::SOURCES[:product_drive]
         edited_source_drive_name = "Test Product Drive"
