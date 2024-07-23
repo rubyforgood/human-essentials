@@ -2,8 +2,8 @@ module DistributionPDFHelper
   private def create_profile(program_address1, program_address2, program_city, program_state, program_zip)
     create(:partner_profile,
       partner_id: partner.id,
-      primary_contact_name: "Jaqueline Kihn DDS",
-      primary_contact_email: "van@durgan.example",
+      primary_contact_name: profile_name,
+      primary_contact_email: profile_email,
       address1: "Example Address 1",
       address2: "",
       city: "Example City",

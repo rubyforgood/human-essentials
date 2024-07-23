@@ -151,6 +151,8 @@ describe DistributionPdf do
         name: "Leslie Sue",
         organization: organization)
     }
+    let(:profile_name) { "Jaqueline Kihn DDS" }
+    let(:profile_email) { "van@durgan.example" }
     # there is a helper test at the bottom to regenerate these PDFs easily
     let(:expected_pickup_file_path) { Rails.root.join("spec", "fixtures", "files", "distribution_pickup.pdf") }
     let(:expected_pickup_file) { IO.binread(expected_pickup_file_path) }
@@ -159,7 +161,34 @@ describe DistributionPdf do
     let(:expected_different_address_file_path) { Rails.root.join("spec", "fixtures", "files", "distribution_program_address.pdf") }
     let(:expected_different_address_file) { IO.binread(expected_different_address_file_path) }
 
-    context "when the organization doesn't have a different program address" do
+    context "when the partner has no addresses" do
+      before(:each) do
+        create(:partner_profile,
+          partner_id: partner.id,
+          primary_contact_name: profile_name,
+          primary_contact_email: profile_email,
+          address1: "",
+          address2: "",
+          city: "",
+          state: "",
+          zip_code: "",
+          program_address1: "",
+          program_address2: "",
+          program_city: "",
+          program_state: "",
+          program_zip_code: "")
+      end
+      it "doesn't print any address if the delivery type is pickup" do
+        compare_pdf(create_dist(:pick_up), expected_pickup_file)
+      end
+      it "doesn't print any address if the delivery type is delivery" do
+        compare_pdf(create_dist(:delivery), expected_pickup_file)
+      end
+      it "doesn't print any address if the delivery type is shipped" do
+        compare_pdf(create_dist(:shipped), expected_pickup_file)
+      end
+    end
+    context "when the partner doesn't have a different program address" do
       before(:each) do
         create_profile_without_program_address
       end
@@ -173,7 +202,7 @@ describe DistributionPdf do
         compare_pdf(create_dist(:pick_up), expected_pickup_file)
       end
     end
-    context "when the organization has a different program/delivery address" do
+    context "when the partner has a different program/delivery address" do
       before(:each) do
         create_profile_with_program_address
       end
