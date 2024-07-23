@@ -46,7 +46,8 @@ class DistributionPdf
       text profile.primary_contact_phone, align: :right
       move_down 10
 
-      if @distribution.delivery? || @distribution.shipped?
+      if (profile.address1.present? || profile.program_address1.present?) &&
+          (@distribution.delivery? || @distribution.shipped?)
         if profile.program_address1.blank?
           address1 = profile.address1
           address2 = profile.address2
