@@ -44,7 +44,7 @@ module DistributionPDFHelper
       pdf_file = pdf.compute_and_render
       expect(pdf_file).to eq(expected_file)
     rescue RSpec::Expectations::ExpectationNotMetError => e
-      File.binwrite(Rails.root.join("tmp", "failed_match_distribution_" + delivery_method.to_s + "_" + Time.current.to_s + ".pdf"), pdf_file)
+      File.binwrite(Rails.root.join("tmp", "failed_match_distribution_" + distribution.delivery_method.to_s + "_" + Time.current.to_s + ".pdf"), pdf_file)
       raise e.class, "PDF does not match, written to tmp/", cause: nil
     end
   end
