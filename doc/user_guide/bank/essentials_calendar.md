@@ -6,7 +6,7 @@ Click on "Pick Ups & Deliveries" in the left-hand menu to view the calendar.
 
 ![PickUps & Delivery Calendar](images/pickup&delivery.jpg)
 
-Click on any scheduled distribution to view more details about it.
+Click on any scheduled distribution to view details on all the distributions for that day.
 The Distribution Schedule page shows details including the Partner,the time of distribution, source inventory, the total number of items, and the status of the distribution.
 
 ![Specific Day Distribution](images/specific_day_distribution_schedule.jpg)
