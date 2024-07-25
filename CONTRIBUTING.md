@@ -2,6 +2,7 @@
 We ♥ contributors! By participating in this project, you agree to abide by the Ruby for Good [code of conduct](https://github.com/rubyforgood/human-essentials/blob/main/code-of-conduct.md).
 
 If you're new here, here are some things you should know:
+- A great introductory overview of the application is available at the [wiki](https://github.com/rubyforgood/human-essentials/wiki/Application-Overview).
 - Issues tagged "Help Wanted" are self-contained and great for new contributors
 - Pull Requests are reviewed within a week or so
 - Ensure your build passes linting and tests and addresses the issue requirements
@@ -150,29 +151,45 @@ If you are so inclined, you can open a draft PR as you continue to work on it. S
 ## Tests 🧪
 ### Writing Browser/System/Feature Tests/Specs
 
-Add a test for your change. If you are adding functionality or fixing a  bug, you should add a test!
+Add a test for your change. If you are adding functionality or fixing a bug, you should add a test!
 
-If you are inexperienced in writing tests or get stuck on one, please reach out for help :). You probably don't need to write new tests when simple re-stylings are done (ie. the page may look slightly different but the Test suite is unaffected by those changes).
+If you are inexperienced in writing tests or get stuck on one, please reach out for help :)
 
-If you need to see a browser/system spec run in the browser, you can use the following env variable:
+#### Guidelines
+- When creating factories, in each RSpec test, hard code all values that you check with a RSpec matcher. Don't check FactoryBot default values. See [#4217](https://github.com/rubyforgood/human-essentials/issues/4217) for why.
+- Write tests to pass with Event Sourcing turned both on and off, see the [Event Sourcing wiki page](https://github.com/rubyforgood/human-essentials/wiki/Event-Sourcing).
+- Keep individual tests tightly scoped, only test the endpoint that you want to test. E.g. create inventory directly using `TestInventory` rather than using an additional endpoint.
+- You probably don't need to write new tests when simple re-stylings are done (ie. the page may look slightly different but the Test suite is unaffected by those changes).
 
-```
-NOT_HEADLESS=true bundle exec rspec
-```
-
-We've added [magic_test](https://github.com/bullet-train-co/magic_test) which makes creating browser specs much easier. It allows you to record actions on the browser running the specs and easily paste them into the spec. You can do this by adding `magic_test` within your system spec:
-```rb
- it "does some browser stuff" do
-   magic_test
- end
-```
-and run the spec using this command: `MAGIC_TEST=1 NOT_HEADLESS=true bundle exec rspec <path_to_spec>`
-
-**See videos of it in action [here](https://twitter.com/andrewculver/status/1366062684802846721)**
+#### Useful Tips
+- If you need to see a browser/system spec run in the browser, you can use the following env variable
+    ```
+    NOT_HEADLESS=true bundle exec rspec
+    ```
+- We've added [magic_test](https://github.com/bullet-train-co/magic_test) which makes creating browser specs much easier. It allows you to record actions on the browser running the specs and easily paste them into the spec. You can do this by adding `magic_test` within your system spec:
+    ```rb
+    it "does some browser stuff" do
+    magic_test
+    end
+    ```
+    and run the spec using this command: 
+    ```
+    MAGIC_TEST=1 NOT_HEADLESS=true bundle exec rspec <path_to_spec>`
+    ```
+    **See videos of it in action [here](https://twitter.com/andrewculver/status/1366062684802846721)**
+- Helpful classes for viewing and modifying inventory include `View::Inventory`, `TestInventory` and various `CreateService` services, see the [Event Sourcing wiki page](https://github.com/rubyforgood/human-essentials/wiki/Event-Sourcing).
 
 ### Test before submitting pull requests
-- Before submitting a pull request, run all tests and rake tasks with `bundle exec rake` and run lints with `bin/lint`. Fix any broken tests and lints before submitting a pull request.
-- You can run all the tests without rake tasks with `bundle exec rspec`
+Before submitting a pull request, run all tests and lints. Fix any broken tests and lints before submitting a pull request.
+
+#### Continuous Integration
+- There are Github Actions workflows which will run all tests with and without Event Sourcing in parallel using Knapsack and lints whenever you push a commit to your fork.
+- Once your first PR has been merged, all commits pushed to an open PR will also run these workflows.
+
+#### Local testing
+- Run all lints with `bin/lint`. 
+- Run all tests without Event Sourcing with `bundle exec rspec`
+- Run all tests with Event Sourcing with `EVENTS_READ=true bundle exec rspec`
 - You can run a single test with `bundle exec rspec {path_to_test_name}_spec.rb` or on a specific line by appending `:LineNumber`
 - If you need to skip a failing test, place `pending("Reason you are skipping the test")` into the `it` block rather than skipping with `xit`. This will allow rspec to deliver the error message without causing the test suite to fail.
 
