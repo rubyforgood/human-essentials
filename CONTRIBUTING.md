@@ -78,11 +78,16 @@ You won't be yelled at for giving your best effort. The worst that can happen is
   ```
 </details>
 
-## Codespaces - EXPERIMENTAL 🛠️
+## Codespaces and Dev Container - EXPERIMENTAL 🛠️
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/rubyforgood/human-essentials/tree/main?quickstart=1)
 
-1. Follow the link above or follow instructions to [create a new Codespace.](https://docs.github.com/en/codespaces/developing-in-a-codespace/creating-a-codespace-for-a-repository); You can use the web editor, or even better open the Codespace in VSCode
+[![Clone and open in VSCode Dev Container](https://img.shields.io/static/v1?label=Dev%20Containers&message=Clone%20and%20Open%20in%20VSCode&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/rubyforgood/human-essentials)
+
+1. Create the container:
+    - To run the container on a Github VM, follow the Codespace link above. You can connect to the Codespace using VSCode or the VSCode web editor.
+    - Or follow instructions to [create a new Codespace.](https://docs.github.com/en/codespaces/developing-in-a-codespace/creating-a-codespace-for-a-repository)
+    - To clone this repo and run the container locally, fork the repo. Follow instructions to [install VSCode and Docker](https://code.visualstudio.com/docs/devcontainers/containers). In your fork, click the Dev Container link above.
 2. Wait for the container to start. This will take a few (10-15) minutes since Ruby needs to be installed, the database needs to be created, and the `bin/setup` script needs to run
 3. Run `bin/start` and visit the URL that pops in VSCode up to see the human essentials page
 4. Login as a sample user with the default [credentials](#credentials).
