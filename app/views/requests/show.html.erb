@@ -65,6 +65,11 @@
               <tr>
                 <th>Item</th>
                 <th>Quantity</th>
+                <% custom_units = Flipper.enabled?(:enable_packs) &&
+                                  @request.item_requests.any? { |item| item.request_unit } %>
+                <% if custom_units %>
+                  <th>Units (if applicable)</th>
+                <% end %>
                 <% default_storage_location = @request.partner.default_storage_location_id ||
                                               @request.organization.default_storage_location %>
                 <% if default_storage_location %>
@@ -78,6 +83,9 @@
                 <tr>
                   <td><%= item.name %></td>
                   <td><%= item.quantity %></td>
+                  <% if custom_units %>
+                    <td><%= item.unit&.capitalize&.pluralize(item.quantity) %></td>
+                  <% end %>
                   <% if default_storage_location %>
                     <td><%= item.on_hand_for_location %></td>
                   <% end %>
