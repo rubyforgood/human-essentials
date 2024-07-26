@@ -1,4 +1,5 @@
 <%= form.simple_fields_for :line_items, defined?(object) ? object : nil  do |field| %>
+  <% requested = field.object.requested_item %>
   <section class="nested-fields line_item_section">
     <div class="row mt-2 d-flex flex-row align-items-center justify-content-between">
       <div class='d-flex flex-column justify-content-center'>
@@ -10,15 +11,34 @@
         <label class='my-1 mx-auto font-weight-normal'>OR</label>
         <div class='d-flex flex-row'>
           <span class="li-name w-100">
-            <%= field.input :item_id, collection: @items, prompt: "Choose an item", include_blank: "", label: false, input_html: { class: "my-0 line_item_name", "data-controller": "select2" } %>
+            <%= field.input :item_id,
+                            disabled: requested.present?,
+                            collection: @items, prompt: "Choose an item",
+                            include_blank: "",
+                            label: false,
+                            input_html: { class: "my-0 line_item_name", "data-controller": "select2" } %>
+            <% if requested.present? %>
+              <%= field.input :item_id, as: :hidden %>
+            <% end %>
           </span>
           <div class="li-quantity mx-2">
             <%= field.input :quantity,
-              as: :string,
-              placeholder: "Quantity",
-              label: false,
-              input_html: { class: "quantity my-0", data: { quantity: "" } } %>
+                            as: :string,
+                            placeholder: "Quantity",
+                            label: false,
+                            input_html: { class: "quantity my-0", data: { quantity: "" } } %>
           </div>
+          <% if form.object.request %>
+            <div class="li-requested mx-2">
+              <% if requested&.request_unit.present? %>
+                <%= pluralize(requested.quantity, requested.request_unit) %>
+              <% elsif requested %>
+                <%= requested.quantity %>
+              <% else %>
+                N/A
+              <% end %>
+            </div>
+          <% end %>
         </div>
       </div>
 
