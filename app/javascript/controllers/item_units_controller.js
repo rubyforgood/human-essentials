@@ -36,6 +36,7 @@ export default class extends Controller {
     let units = this.itemUnitsValue[option.value]
     if (!units || Object.keys(units).length === 0) {
       this.requestSelectTarget.style.display = 'none';
+      this.requestSelectTarget.selectedIndex = -1;
     }
     else {
       this.requestSelectTarget.style.display = 'inline';
