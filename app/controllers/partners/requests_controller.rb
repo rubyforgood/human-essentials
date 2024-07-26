@@ -40,6 +40,12 @@ module Partners
         @errors = create_service.errors
 
         @requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
+        if Flipper.enabled?(:enable_packs)
+          # hash of (item ID => hash of (request unit name => request unit plural name))
+          @item_units = current_partner.organization.items.to_h do |i|
+            [i.id, i.request_units.to_h { |u| [u.name, u.name.pluralize] }]
+          end
+        end
 
         Rails.logger.info("[Request Creation Failure] partner_user_id=#{current_user.id} reason=#{@errors.full_messages}")
 
