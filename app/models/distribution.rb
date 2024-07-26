@@ -102,6 +102,31 @@ class Distribution < ApplicationRecord
     self.storage_location = StorageLocation.find(storage_location_id) if storage_location_id
   end
 
+  # This is meant for the Edit page - we will be adding any request items that aren't in the
+  # distribution for whatever reason, with zero quantity.
+  def initialize_request_items
+    return if request.nil?
+
+    item_ids = Set.new
+    line_items.each do |line_item|
+      item_request = request.item_requests.find { |r| r.item_id == line_item.item_id }
+      if item_request
+        item_ids.add(item_request)
+        line_item.requested_item = item_request
+      end
+    end
+
+    request.item_requests.each do |item_request|
+      next if item_ids.include?(item_request)
+
+      line_items.new(
+        requested_item: item_request,
+        quantity: 0,
+        item_id: item_request.item_id
+      )
+    end
+  end
+
   def copy_from_request(request_id)
     request = Request.find(request_id)
     self.request = request
@@ -110,12 +135,12 @@ class Distribution < ApplicationRecord
     self.agency_rep = request.partner_user&.formatted_email
     self.comment = request.comments
     self.issued_at = Time.zone.today + 1.day
-    request.request_items.each do |item|
+    request.item_requests.each do |item_request|
       line_items.new(
-        quantity: item["quantity"],
-        item: Item.eager_load(:base_item).find_by(organization: request.organization, id: item["item_id"]),
-        itemizable_id: request.id,
-        itemizable_type: "Distribution"
+        requested_item: item_request,
+        # if there is a custom unit, don't prefill with the quantity - they have to enter it
+        quantity: item_request.request_unit.present? ? nil : item_request.quantity,
+        item_id: item_request.item_id
       )
     end
   end
@@ -148,7 +173,7 @@ class Distribution < ApplicationRecord
   private
 
   def line_items_quantity_is_positive
-    line_items_quantity_is_at_least(1)
+    line_items_quantity_is_at_least(0)
   end
 
   def reset_shipping_cost
