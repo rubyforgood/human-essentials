@@ -42,7 +42,7 @@ This user guide is meant for users of the human essentials app at essentials ban
    5. [Inventory Adjustments](inventory_barcodes.md)
    6. [Transfers](inventory_transfers.md)
 6. Your community
-   1. [Product Drives](community_product_drives.md)
+   1. [Product Drive Participants](community_product_drive_participants.md)
    2. [Donation Sites](community_donation_sites.md)
    3. [Vendors](community_vendors.md)
    4. [Manufacturers](community_manufacturers.md)
