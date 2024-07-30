@@ -7,3 +7,5 @@ Here are their details:
 
 Create This Organization: <%= new_admin_organization_url(token: @account_request.identity_token) %>
 Reject This Organization: <%= for_rejection_admin_account_requests_url(token: @account_request.identity_token) %>
+
+These messages expire. If you receive a message that the token has expired, please go <%= link_to "here", new_user_password_url %> and provide your email to set a new password.
