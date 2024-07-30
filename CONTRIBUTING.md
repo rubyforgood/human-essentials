@@ -87,7 +87,7 @@ You won't be yelled at for giving your best effort. The worst that can happen is
 1. Create the container:
     - To run the container on a Github VM, follow the Codespace link above. You can connect to the Codespace using VSCode or the VSCode web editor.
     - Or follow instructions to [create a new Codespace.](https://docs.github.com/en/codespaces/developing-in-a-codespace/creating-a-codespace-for-a-repository)
-    - To clone this repo and run the container locally, fork the repo. Follow instructions to [install VSCode and Docker](https://code.visualstudio.com/docs/devcontainers/containers). In your fork, click the Dev Container link above.
+    - To clone this repo and run the container locally, follow instructions to [install VSCode and Docker](https://code.visualstudio.com/docs/devcontainers/containers). Click the Dev Container link above. Don't forget to add a git remote pointing to your fork once the container is setup and you want to push changes.
 2. Wait for the container to start. This will take a few (10-15) minutes since Ruby needs to be installed, the database needs to be created, and the `bin/setup` script needs to run
 3. Run `bin/start` and visit the URL that pops in VSCode up to see the human essentials page
 4. Login as a sample user with the default [credentials](#credentials).
@@ -98,7 +98,13 @@ Please let us know by opening up an issue! We have many new contributors come th
 
 - *"My RBENV installation didn't work!"* - The rbenv repository provides a [rbenv-doctor script](https://github.com/rbenv/rbenv-installer#rbenv-doctor) to verify the installation and check if a ruby version is installed
 
-# 🤝 Contributing workflow
+# Wiki Contribution Workflow
+1. Follow this [SO post](https://stackoverflow.com/a/56480628/13342792) to force push the main repo's Wiki to your fork's Wiki.
+2. Make edits to your fork's Wiki.
+3. Create a documentation issue about your changes. Make sure to note which pages you changed and link to your fork's Wiki.
+4. Someone will review and approve your changes and merge them into the main Wiki following this [SO post](https://stackoverflow.com/a/56810747/13342792)
+
+# 🤝 Code Contribution Workflow
 
 1. **Identify an unassigned issue**. Read more [here](#issues) about how to pick a good issue.
 2. **Assign it** to avoid duplicated efforts (or request assignment by adding a comment).
@@ -161,6 +167,7 @@ Add a test for your change. If you are adding functionality or fixing a bug, you
 If you are inexperienced in writing tests or get stuck on one, please reach out for help :)
 
 #### Guidelines
+- Prefer request tests over system tests (which run much slower) unless you need to test Javascript or other interactivity
 - When creating factories, in each RSpec test, hard code all values that you check with a RSpec matcher. Don't check FactoryBot default values. See [#4217](https://github.com/rubyforgood/human-essentials/issues/4217) for why.
 - Write tests to pass with Event Sourcing turned both on and off, see the [Event Sourcing wiki page](https://github.com/rubyforgood/human-essentials/wiki/Event-Sourcing).
 - Keep individual tests tightly scoped, only test the endpoint that you want to test. E.g. create inventory directly using `TestInventory` rather than using an additional endpoint.
