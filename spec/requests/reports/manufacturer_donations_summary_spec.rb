@@ -40,7 +40,7 @@ RSpec.describe "Reports::ManufacturerDonationsSummary", type: :request do
           ]
         end
 
-        it "shows correct total donations" do
+        it "shows correct total received donations" do
           get reports_manufacturer_donations_summary_path(user.organization), params: {filters: {date_range: formatted_date_range}}
 
           expect(response.body).to match(%r{<span class="total_received_donations">\s*29\s*</span>})
