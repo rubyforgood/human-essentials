@@ -2,7 +2,7 @@
 
 If you conduct product drives, the product drive participants list lets you manage the participant's contact information and see their donation history.
 
-To manage product drive participants, click on " Product Drive Participants" under the "Community" section.
+To manage product drive participants, click on "Product Drive Participants" under the "Community" section.
 
 ![Product Drive Participants](images/community/product_drive_participants/product_drive_page.jpg)
 
@@ -16,7 +16,9 @@ To add a new participant, click on the "+ New Product Drive Participant" button,
 
 After saving the participant's details there will be a new row in the Product Drive Participants page.
 
-You can also add new participants "on the fly" as you enter the donations, through the new [donation screen](essentials_donations.md).
+You can also add new participants "on the fly" as you enter the donations, through the [New Donation](essentials_donations.md) page.
+
+[TODO: link to new donations ]
 
 ## Viewing participant information
 
