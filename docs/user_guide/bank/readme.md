@@ -17,22 +17,24 @@ This user guide is meant for users of the human essentials app at essentials ban
 3. Everyday essentials 
    1. [Your dashboard](essentials_dashboard.md)
    2. [Donations](essentials_donations.md)
+      1. [Product Drives](product_drives.md)
    3. [Purchases](essentials_purchases.md)
    4. [Requests](essentials_requests.md)
    5. [Distributions](essentials_distributions.md)
    6. [Pick Ups and Deliveries](essentials_pick_ups.md)
 4. Partner Management
-   1. [The request/distribution cycle](pm_request_distribution_cycle.md)
+   1. [Partner statuses (or what can partners do when)](pm_partner_statuses.md)
    2. [Adding a partner](pm_adding_a_partner.md)
    3. [Importing partners](pm_importing_partners.md)
    4. [Administering partner users](pm_partner_user_admin.md)
-   4. The partner approval cycle 
+   5. The partner approval cycle 
       1. [Inviting a partner](pm_inviting_a_partner.md) 
       2. [Partner profiles](pm_partner_profiles.md) 
       3. [Approving a partner](pm_approving_a_partner.md)
       4. [Requesting recertification](pm_requesting_recertification.md)
       5. [Making a partner inactive](pm_making_a_partner_inactive.md)
-   5. [Announcements](pm_announcements.md)
+   6. [Announcements](pm_announcements.md)
+   7. [Partner Groups](pm_partner_groups.md)
 5. Inventory 
    1. [Items](inventory_items.md)
    2. [Storage Locations](inventory_storage_locations.md)
@@ -59,4 +61,4 @@ This user guide is meant for users of the human essentials app at essentials ban
          4. [Activity graph](reports_activity_graph.md)
 8. [User management](user_management.md)
 9. [Signing out, and other things you can access by clicking on your name](top_right_menu.md)
-[But I need to do something different!](asking_for_changes.md)
+10. [But I need to do something different!](asking_for_changes.md)

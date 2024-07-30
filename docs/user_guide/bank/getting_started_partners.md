@@ -13,6 +13,7 @@ DRAFT USER GUIDE
 
 5/  A lot of banks set up a partner as a proxy for their direct distribution.  This is allowed, and you can switch back and forth between being a bank and a partner with the same login  
 
+6/  You can group partners, and allow those groups to request different sets of items (One thing some banks use this for is handling grants that are geographically constrained.)
 ## Adding a single partner
 Click on the "Add a Partner" button on your "Getting started" screen
 (you can also click on "Partner Agencies", then "All Partners", then "Add a Partner")
