@@ -51,7 +51,7 @@ FactoryBot.define do
       end
     end
 
-    factory :partners_user do
+    factory :partner_user do
       name { "Partner User" }
       sequence(:email) { |n| "partner_user_#{n}@example.com" }
       password { "password!" }

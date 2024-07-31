@@ -25,7 +25,7 @@ RSpec.describe "Users", type: :request do
 
   describe "POST #send_partner_user_reset_password" do
     let(:partner) { create(:partner, organization: organization) }
-    let!(:user) { create(:partners_user, partner: partner, email: "me@partner.com") }
+    let!(:user) { create(:partner_user, partner: partner, email: "me@partner.com") }
     let(:params) { { organization_name: organization.short_name, partner_id: partner.id, email: "me@partner.com" } }
 
     it "should send a password" do
