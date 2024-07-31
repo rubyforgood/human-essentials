@@ -26,6 +26,11 @@ RSpec.describe "Donations", type: :request do
           expect(subject.body).to include("<th>Source</th>")
           expect(subject.body).to include("<th>Details</th>")
         end
+        it "shows a print button" do
+          page = Nokogiri::HTML(subject.body)
+          pdf = page.at_css("a[href*='print.pdf']")
+          expect(pdf.text).to include("Print")
+        end
 
         context "when given a product drive" do
           let(:product_drive) { create(:product_drive, name: "Drive Name") }
@@ -81,9 +86,26 @@ RSpec.describe "Donations", type: :request do
       end
     end
 
+    describe "GET #print" do
+      let(:item) { create(:item) }
+      let!(:donation) { create(:donation, :with_items, item: item) }
+
+      it "returns http success" do
+        get print_donation_path(id: donation.id)
+        expect(response).to be_successful
+      end
+    end
+
     describe "GET #show" do
       let(:item) { create(:item) }
       let!(:donation) { create(:donation, :with_items, item: item) }
+
+      it "shows a print button" do
+        get donation_path(id: donation.id)
+        page = Nokogiri::HTML(response.body)
+        pdf = page.at_css("a[href*='#{print_donation_path(id: donation.id)}']")
+        expect(pdf.text).to include("Print")
+      end
 
       it "shows an enabled edit button" do
         get donation_path(id: donation.id)

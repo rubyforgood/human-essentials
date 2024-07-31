@@ -32,7 +32,9 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-gem "strong_migrations", "2.0.0"
+# Pinned to 1.8.0 because 2.0.0 no longer support postgres v10
+# And as of now we are using postgres v10 in production
+gem "strong_migrations", "1.8.0"
 # used in events
 gem 'dry-struct'
 
@@ -198,6 +200,8 @@ group :test do
   gem "webmock", "~> 3.23"
   # Interface capybara to chrome headless
   gem "cuprite"
+  # Read PDF files for tests
+  gem "pdf-reader"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
