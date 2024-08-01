@@ -120,7 +120,7 @@ GEM
     bugsnag (6.27.1)
       concurrent-ruby (~> 1.0)
     builder (3.3.0)
-    bullet (7.1.6)
+    bullet (7.2.0)
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.11)
     capybara (3.40.0)
