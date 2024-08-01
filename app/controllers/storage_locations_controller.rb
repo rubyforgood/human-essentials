@@ -168,6 +168,7 @@ class StorageLocationsController < ApplicationController
                                            .active
 
       @inventory_items += include_omitted_items(@inventory_items.collect(&:item_id)) if params[:include_omitted_items] == "true"
+      @inventory_items.to_a.sort_by! { |inventory_item| inventory_item.item.name.downcase }
       respond_to :json
     end
   end
