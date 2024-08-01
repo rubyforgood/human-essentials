@@ -100,7 +100,7 @@
                               <td><%= @kit.name %></td>
                               <td data-base-quantity='-1' class='text-bold'></td>
                             </tr>
-                            <% @kit.line_items.each do |li| %>
+                            <% @kit.item.line_items.each do |li| %>
                               <tr>
                                 <td> <%= li.item.name %> </td>
                                 <td data-base-quantity="<%= li.quantity %>" class='text-bold'></td>

@@ -22,7 +22,9 @@
               <fieldset style="margin-bottom: 2rem;" class='w-70'>
                 <legend>Items in this Kit</legend>
                 <div id="kit_line_items" class="line-item-fields" data-capture-barcode="true">
-                  <%= render 'line_items/line_item_fields', form: f %>
+                  <%= f.simple_fields_for @kit.item do |i| %>
+                    <%= render 'line_items/line_item_fields', form: i %>
+                  <% end %>
                 </div>
                 <div class="row links col-xs-12 justify-content-end">
                   <div class="col-xs-12">

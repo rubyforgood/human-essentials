@@ -1,11 +1,11 @@
 class KitsController < ApplicationController
   def index
-    @kits = current_organization.kits.includes(line_items: :item, inventory_items: :storage_location).class_filter(filter_params)
+    @items_housing_a_kit = current_organization.items.housing_a_kit.includes(line_items: :item, inventory_items: :storage_location).class_filter(filter_params)
     if Event.read_events?(current_organization)
       @inventory = View::Inventory.new(current_organization.id)
     end
     unless params[:include_inactive_items]
-      @kits = @kits.active
+      @items_housing_a_kit = @items_housing_a_kit.active
     end
     @selected_filter_name = filter_params[:by_name]
   end
@@ -14,7 +14,8 @@ class KitsController < ApplicationController
     load_form_collections
 
     @kit = current_organization.kits.new
-    @kit.line_items.build
+    @kit.item = current_organization.items.new
+    @kit.item.line_items.build
   end
 
   def create
@@ -29,9 +30,12 @@ class KitsController < ApplicationController
         .map { |error| formatted_error_message(error) }
         .join(", ")
 
-      @kit = Kit.new(kit_params)
+      @kit = Kit.new(kit_params.except(:item))
+      @kit.item = current_organization.items.new(kit_params[:item])
       load_form_collections
-      @kit.line_items.build if @kit.line_items.empty?
+      if @kit.item.line_items.empty?
+        @kit.item.line_items.build
+      end
 
       render :new
     end
@@ -100,7 +104,7 @@ class KitsController < ApplicationController
       :name,
       :visible_to_partners,
       :value_in_dollars,
-      line_items_attributes: [:item_id, :quantity, :_destroy]
+      item: [line_items_attributes: [:item_id, :quantity]]
     )
   end
 

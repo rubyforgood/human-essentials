@@ -42,8 +42,8 @@ RSpec.describe "Kit management", type: :system do
 
     item = Item.last
     quantity_per_kit = 5
-    select item.name, from: "kit_line_items_attributes_0_item_id"
-    find(:css, '#kit_line_items_attributes_0_quantity').set(quantity_per_kit)
+    select item.name, from: "kit_item_line_items_attributes_0_item_id"
+    find(:css, '#kit_item_line_items_attributes_0_quantity').set(quantity_per_kit)
 
     click_button "Save"
 
@@ -227,8 +227,8 @@ RSpec.describe "Kit management", type: :system do
 
       item = Item.last
       quantity_per_kit = 5
-      select item.name, from: "kit_line_items_attributes_0_item_id"
-      find(:css, '#kit_line_items_attributes_0_quantity').set(quantity_per_kit)
+      select item.name, from: "kit_item_line_items_attributes_0_item_id"
+      find(:css, '#kit_item_line_items_attributes_0_quantity').set(quantity_per_kit)
 
       click_button "Save"
 
