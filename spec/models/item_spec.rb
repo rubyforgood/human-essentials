@@ -57,6 +57,29 @@ RSpec.describe Item, type: :model do
       expect(Item.by_size("4").length).to eq(2)
     end
 
+    it "->housing_a_kit returns all items which belongs_to (house) a kit" do
+      name = "test kit"
+      kit_params = attributes_for(:kit, name: name)
+      kit_params[:line_items_attributes] = [{item_id: create(:item).id, quantity: 1}] # shouldn't be counted
+      KitCreateService.new(organization_id: organization.id, kit_params: kit_params).call
+
+      create(:item) # shouldn't be counted
+      expect(Item.housing_a_kit.count).to eq(1)
+      expect(Item.housing_a_kit.first.name = name)
+    end
+
+    it "->loose returns all items which do not belongs_to a kit" do
+      name = "A"
+      item = create(:item, name: name, organization: organization)
+
+      kit_params = attributes_for(:kit)
+      kit_params[:line_items_attributes] = [{item_id: item.id, quantity: 1}]
+      KitCreateService.new(organization_id: organization.id, kit_params: kit_params).call # shouldn't be counted
+
+      expect(Item.loose.count).to eq(1)
+      expect(Item.loose.first.name = name)
+    end
+
     it "->alphabetized retrieves items in alphabetical order" do
       item_c = create(:item, name: "C")
       item_b = create(:item, name: "B")
