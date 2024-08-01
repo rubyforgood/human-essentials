@@ -12,12 +12,12 @@
     <%= view_button_to item_path(item_row) %>
     <%= edit_button_to edit_item_path(item_row) %>
     <% if item_row.active? %>
-      <% if item_row.can_delete?(inventory, kits) %>
+      <% if item_row.can_delete?(inventory, items_housing_a_kit) %>
         <%= delete_button_to item_path(item_row),
                              text: 'Delete',
                              confirm: confirm_delete_msg(item_row.name) %>
       <% else %>
-        <% can_deactivate =  item_row.can_deactivate_or_delete?(inventory, kits) %>
+        <% can_deactivate =  item_row.can_deactivate_or_delete?(inventory, items_housing_a_kit) %>
         <%= delete_button_to deactivate_item_path(item_row),
                              text: 'Deactivate',
                              enabled: can_deactivate,

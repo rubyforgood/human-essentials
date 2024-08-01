@@ -1,11 +1,11 @@
 class KitsController < ApplicationController
   def index
-    @kits = current_organization.kits.includes(line_items: :item, inventory_items: :storage_location).class_filter(filter_params)
+    @items_housing_a_kit = current_organization.items.housing_a_kit.includes(line_items: :item, inventory_items: :storage_location).class_filter(filter_params)
     if Event.read_events?(current_organization)
       @inventory = View::Inventory.new(current_organization.id)
     end
     unless params[:include_inactive_items]
-      @kits = @kits.active
+      @items_housing_a_kit = @items_housing_a_kit.active
     end
     @selected_filter_name = filter_params[:by_name]
   end
@@ -100,7 +100,7 @@ class KitsController < ApplicationController
       :name,
       :visible_to_partners,
       :value_in_dollars,
-      line_items_attributes: [:item_id, :quantity, :_destroy]
+      line_items_attributes: [:item_id, :quantity]
     )
   end
 
