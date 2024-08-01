@@ -27,7 +27,7 @@ FactoryBot.define do
     organization { Organization.try(:first) || create(:organization, :with_items) }
     request_items { random_request_items }
     comments { "Urgent" }
-    partner_user { ::User.partner_users.first || create(:partners_user) }
+    partner_user { ::User.partner_users.first || create(:partner_user) }
 
     # For compatibility we can take in a list of request_items and turn it into a
     # list of item_requests
