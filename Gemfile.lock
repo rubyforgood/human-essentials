@@ -153,7 +153,7 @@ GEM
     cuprite (0.15.1)
       capybara (~> 3.0)
       ferrum (~> 0.15.0)
-    database_cleaner-active_record (2.1.0)
+    database_cleaner-active_record (2.2.0)
       activerecord (>= 5.a)
       database_cleaner-core (~> 2.0.0)
     database_cleaner-core (2.0.1)
@@ -720,7 +720,7 @@ DEPENDENCIES
   clockwork
   coverband
   cuprite
-  database_cleaner-active_record (~> 2.1)
+  database_cleaner-active_record (~> 2.2)
   delayed_job_active_record
   delayed_job_web
   devise (>= 4.7.1)
