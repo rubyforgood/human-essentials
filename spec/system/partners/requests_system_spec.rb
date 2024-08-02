@@ -59,7 +59,7 @@ RSpec.describe "Partners profile served area behaviour", type: :system, js: true
         expect(request.item_requests[0].request_unit).to eq("pack")
         expect(request.item_requests[1].quantity).to eq("20")
         expect(request.item_requests[1].item_id).to eq(item2.id)
-        expect(request.item_requests[1].request_unit).to eq("")
+        expect(request.item_requests[1].request_unit).to eq(nil)
       end
     end
   end
