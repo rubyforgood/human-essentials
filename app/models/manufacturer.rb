@@ -21,16 +21,18 @@ class Manufacturer < ApplicationRecord
 
   scope :alphabetized, -> { order(:name) }
 
-  def volume(date_range = nil)
-    scope = donations.joins(:line_items)
-    scope = scope.where(issued_at: date_range) if date_range
-    scope.sum(:quantity)
-  end
-
   def self.by_donation_count(count = 10, date_range = nil)
-    # selects manufacturers that have donation qty > 0 in the timeframe
+    # selects manufacturers that have donation qty > 0 in the provided date range
     # and sorts them by highest volume of donation
-    select { |m| m.volume(date_range).positive? }.sort.first(count)
+    manufacturers = select do |m|
+      donation_volume = m.donations.joins(:line_items).where(issued_at: date_range).sum(:quantity)
+      if donation_volume.positive?
+        m.instance_variable_set(:@num_of_donations, donation_volume)
+        m
+      end
+    end
+
+    manufacturers.sort_by { |m| -m.instance_variable_get(:@num_of_donations) }.first(count)
   end
 
   private

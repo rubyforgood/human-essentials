@@ -7,9 +7,8 @@ class ReportsController < ApplicationController
   end
 
   def manufacturer_donations_summary
-    @date_range = helpers.selected_range
-    @recent_donations_from_manufacturers = current_organization.donations.during(@date_range).by_source(:manufacturer)
-    @top_manufacturers = current_organization.manufacturers.by_donation_count(10, @date_range)
+    @recent_donations_from_manufacturers = current_organization.donations.during(helpers.selected_range).by_source(:manufacturer)
+    @top_manufacturers = current_organization.manufacturers.by_donation_count(10, helpers.selected_range)
   end
 
   def purchases_summary

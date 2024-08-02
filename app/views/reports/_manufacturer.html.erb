@@ -1,5 +1,5 @@
 <div class="float-center manufacturer">
   <%= link_to manufacturer do %>
-    <%= manufacturer.name %> (<%= number_with_delimiter(manufacturer.volume(@date_range)) %>)
+    <%= manufacturer.name %> (<%= number_with_delimiter(manufacturer.instance_variable_get(:@num_of_donations)) %>)
   <% end %>
 </div>
