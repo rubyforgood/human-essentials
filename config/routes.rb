@@ -36,19 +36,13 @@ Rails.application.routes.draw do
     resource :dashboard, only: [:show]
     resource :help, only: [:show]
     resources :requests, only: [:show, :new, :index, :create] do
-      collection do
-        post :validate
-      end
+      post :validate, on: :collection
     end
     resources :individuals_requests, only: [:new, :create] do
-      collection do
-        post :validate
-      end
+      post :validate, on: :collection
     end
     resources :family_requests, only: [:new, :create] do
-      collection do
-        post :validate
-      end
+      post :validate, on: :collection
     end
     resources :users, only: [:index, :new, :create, :edit, :update]
     resource :profile, only: [:show, :edit, :update]
