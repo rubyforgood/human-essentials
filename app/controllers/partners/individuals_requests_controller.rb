@@ -37,7 +37,7 @@ module Partners
         partner_user_id: current_user.id,
         comments: individuals_request_params[:comments],
         family_requests_attributes: individuals_request_params[:items_attributes]&.values
-      ).create_only
+      ).initialize_only
       if @partner_request.valid?
         @total_items = @partner_request.total_items_fromstr
         @quota_exceeded = current_partner.quota_exceeded?(@total_items)

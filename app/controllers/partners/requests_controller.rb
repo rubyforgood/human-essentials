@@ -46,7 +46,7 @@ module Partners
         partner_user_id: current_user.id,
         comments: partner_request_params[:comments],
         item_requests_attributes: partner_request_params[:item_requests_attributes]&.values || []
-      ).create_only
+      ).initialize_only
 
       if @partner_request.valid?
         @total_items = @partner_request.total_items_fromstr

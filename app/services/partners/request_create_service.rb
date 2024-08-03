@@ -40,7 +40,7 @@ module Partners
       self
     end
 
-    def create_only
+    def initialize_only
       partner_request = ::Request.new(partner_id: partner.id,
         organization_id: organization_id,
         comments: comments,

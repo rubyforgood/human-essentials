@@ -144,8 +144,8 @@ RSpec.describe Partners::RequestCreateService do
     end
   end
 
-  describe "#create_only" do
-    subject { described_class.new(**args).create_only }
+  describe "#initialize_only" do
+    subject { described_class.new(**args).initialize_only }
     let(:args) do
       {
         partner_user_id: partner_user.id,
