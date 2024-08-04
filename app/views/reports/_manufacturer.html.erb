@@ -1,5 +1,5 @@
 <div class="float-center manufacturer">
   <%= link_to manufacturer do %>
-    <%= manufacturer.name %> (<%= number_with_delimiter(manufacturer.instance_variable_get(:@num_of_donations)) %>)
+    <%= manufacturer.name %> (<%= number_with_delimiter(manufacturer.donation_count) %>)
   <% end %>
 </div>
