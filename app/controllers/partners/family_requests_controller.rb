@@ -40,7 +40,7 @@ module Partners
         for_families: true
       ).initialize_only
       if @partner_request.valid?
-        @total_items = @partner_request.total_items_fromstr
+        @total_items = @partner_request.total_items
         @quota_exceeded = current_partner.quota_exceeded?(@total_items)
         body = render_to_string(template: 'partners/requests/validate', formats: [:html], layout: false)
         render json: {valid: true, body: body}

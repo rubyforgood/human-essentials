@@ -50,9 +50,14 @@ RSpec.describe Request, type: :model do
     let(:id_one) { create(:item).id }
     let(:id_two) { create(:item).id }
     let(:request) { create(:request, request_items: [{ item_id: id_one, quantity: 15 }, { item_id: id_two, quantity: 18 }]) }
+    let(:request_with_strings) { create(:request, request_items: [{ item_id: id_one, quantity: "15" }, { item_id: id_two, quantity: "18" }]) }
 
     it "adds the quantity of all items in the request" do
       expect(request.total_items).to eq(33)
+    end
+
+    it "adds the quantity of all items in the request when they are strings" do
+      expect(request_with_strings.total_items).to eq(33)
     end
   end
 
