@@ -4,8 +4,6 @@ module Partners
 
     protect_from_forgery with: :exception
 
-    before_action :require_partner
-
     def index; end
 
     def show
