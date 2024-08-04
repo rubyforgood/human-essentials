@@ -1,6 +1,4 @@
-require 'rails_helper'
-
-describe PartnerApprovalService do
+RSpec.describe PartnerApprovalService do
   describe '#call' do
     subject { described_class.new(partner: partner).call }
     let(:partner) { create(:partner) }

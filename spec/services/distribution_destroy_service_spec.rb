@@ -1,6 +1,4 @@
-require 'rails_helper'
-
-describe DistributionDestroyService do
+RSpec.describe DistributionDestroyService do
   describe '#call' do
     subject { described_class.new(distribution_id).call }
     let(:distribution_id) { Faker::Number.number }
@@ -31,8 +29,19 @@ describe DistributionDestroyService do
 
       context 'and the operations succeed' do
         let(:fake_storage_location) { instance_double(StorageLocation) }
+        let(:fake_items) do
+          [
+            {
+              item_id: Faker::Number.number,
+              item: Faker::Lorem.word,
+              quantity_on_hand: Faker::Number.number,
+              quantity_requested: Faker::Number.number
+            }
+          ]
+        end
         before do
           allow(distribution).to receive(:storage_location).and_return(fake_storage_location)
+          allow(distribution).to receive(:line_item_values).and_return(fake_items)
           allow(fake_storage_location).to receive(:increase_inventory)
         end
 
@@ -48,7 +57,7 @@ describe DistributionDestroyService do
 
         it 'should increase the inventory of the storage location' do
           subject
-          expect(fake_storage_location).to have_received(:increase_inventory).with(distribution)
+          expect(fake_storage_location).to have_received(:increase_inventory).with(fake_items)
         end
       end
 
@@ -95,8 +104,9 @@ describe DistributionDestroyService do
 
         before do
           allow(distribution).to receive(:storage_location).and_return(fake_storage_location)
+          allow(distribution).to receive(:line_item_values).and_return(fake_insufficient_items)
           allow(fake_storage_location).to receive(:increase_inventory)
-            .with(distribution)
+            .with(fake_insufficient_items)
             .and_raise(fake_insufficient_allotment_error)
         end
 

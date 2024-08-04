@@ -10,20 +10,41 @@
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  eventable_id    :bigint
+#  group_id        :string
 #  organization_id :bigint
 #  user_id         :bigint
 #
 class Event < ApplicationRecord
-  scope :for_organization, ->(organization_id) { where(organization_id: organization_id).order(:event_time) }
+  include Filterable
+  scope :for_organization, ->(organization_id) { where(organization_id: organization_id).order(:event_time, :updated_at) }
   scope :without_snapshots, -> { where("type != 'SnapshotEvent'") }
+  scope :during, ->(range) { where(events: {created_at: range}) }
+  scope :by_type, ->(type) { where(type: type) }
+  scope :by_item, ->(item_id) {
+    joins("left join lateral jsonb_array_elements(data->'items') AS item ON true")
+      .where("type = 'SnapshotEvent' OR (item->>'item_id')=? ", item_id)
+  }
+  scope :by_storage_location, ->(loc_id) {
+    joins("left join lateral jsonb_array_elements(data->'items') AS item ON true")
+      .where("type = 'SnapshotEvent' OR (item->>'from_storage_location')=? OR (item->>'to_storage_location')=?", loc_id, loc_id)
+  }
 
-  serialize :data, EventTypes::StructCoder.new(EventTypes::InventoryPayload)
+  serialize :data, coder: EventTypes::StructCoder.new(EventTypes::InventoryPayload)
 
   belongs_to :eventable, polymorphic: true
   belongs_to :user, optional: true
+  belongs_to :organization
 
   before_create do
     self.user_id = PaperTrail.request&.whodunnit
+  end
+  after_create :validate_inventory
+
+  # @return [Array<OpenStruct>]
+  def self.types_for_select
+    descendants.map { |klass|
+      OpenStruct.new(name: klass.name.sub("Event", "").titleize, value: klass.name)
+    }.sort_by(&:name)
   end
 
   # Returns the most recent "usable" snapshot. A snapshot is unusable if there is another event
@@ -53,15 +74,22 @@ class Event < ApplicationRecord
     SnapshotEvent.find_by_sql(query, [organization_id]).first
   end
 
-  after_create_commit do
-    inventory = InventoryAggregate.inventory_for(organization_id)
-    diffs = EventDiffer.check_difference(inventory)
-    if diffs.any?
-      InventoryDiscrepancy.create!(
-        event_id: id,
-        organization_id: organization_id,
-        diff: diffs
-      )
+  def self.read_events?(organization)
+    Flipper.enabled?(:read_events, organization)
+  end
+
+  def validate_inventory
+    return unless Event.read_events?(organization)
+
+    InventoryAggregate.inventory_for(organization_id, validate: true)
+  rescue InventoryError => e
+    item = Item.find_by(id: e.item_id)&.name || "Item ID #{e.item_id}"
+    loc = StorageLocation.find_by(id: e.storage_location_id)&.name || "Storage Location ID #{e.storage_location_id}"
+    e.message << " for #{item} in #{loc}"
+    if e.event != self
+      e.message.prepend("Error occurred when re-running events: #{e.event.type} on #{e.event.created_at.to_date}: ")
+      e.message << " Please contact the Human Essentials admin staff for assistance."
     end
+    raise e
   end
 end

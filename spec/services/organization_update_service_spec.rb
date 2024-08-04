@@ -1,6 +1,4 @@
-require "rails_helper"
-
-describe OrganizationUpdateService, skip_seed: true do
+RSpec.describe OrganizationUpdateService do
   let(:organization) { create(:organization) }
 
   describe "#update" do
@@ -10,6 +8,14 @@ describe OrganizationUpdateService, skip_seed: true do
         described_class.update(organization, params)
         expect(organization.errors.none?).to eq(true)
         expect(organization.reload.name).to eq("A brand NEW NEW name")
+      end
+
+      it "Should set request_units on the organization" do
+        Flipper.enable(:enable_packs)
+        params = {request_unit_names: ["newpack"]}
+        described_class.update(organization, params)
+        expect(organization.errors.none?).to eq(true)
+        expect(organization.reload.request_units.pluck(:name)).to match_array(["newpack"])
       end
     end
 

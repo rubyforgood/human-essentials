@@ -1,6 +1,6 @@
 <div class="tab-pane fade" id="custom-tabs-three-profile" role="tabpanel" aria-labelledby="custom-tabs-three-profile-tab">
   <div class='flex justify-end mb-4'>
-    <%= new_button_to new_item_path(organization_id: current_organization), {text: "New Item"} %>
+    <%= new_button_to new_item_path, {text: "New Item"} %>
   </div>
 
   <table class="table table-items-location">
@@ -14,8 +14,7 @@
     </tr>
     </thead>
     <tbody>
-    <%= render partial: "item_row_quantity_and_storages", collection: @items_by_storage_collection_and_quantity, as: :row %>
+    <%= render partial: "item_row_quantity_and_storages", collection: @items_by_storage_collection_and_quantity.values, as: :row_item %>
     </tbody>
   </table>
 </div><!-- /.box-body.table-responsive -->
-

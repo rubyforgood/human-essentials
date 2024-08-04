@@ -1,7 +1,7 @@
 module Exports
   class ExportDistributionsCSVService
     include DistributionHelper
-    def initialize(distributions:, filters: [])
+    def initialize(distributions:, organization:, filters: [])
       # Currently, the @distributions are already loaded by the controllers that are delegating exporting
       # to this service object; this is happening within the same request/response cycle, so it's already
       # in memory, so we can pass that collection in directly. Should this be moved to a background / async
@@ -10,6 +10,7 @@ module Exports
       # service object.
       @distributions = distributions
       @filters = filters
+      @organization = organization
     end
 
     def generate_csv
@@ -62,8 +63,11 @@ module Exports
         "Partner" => ->(distribution) {
           distribution.partner.name
         },
-        "Date of Distribution" => ->(distribution) {
-          distribution.issued_at.strftime("%m/%d/%Y")
+        "Initial Allocation" => ->(distribution) {
+          distribution.created_at.strftime("%m/%d/%Y")
+        },
+        "Scheduled for" => ->(distribution) {
+          (distribution.issued_at.presence || distribution.created_at).strftime("%m/%d/%Y")
         },
         "Source Inventory" => ->(distribution) {
           distribution.storage_location.name
@@ -114,15 +118,7 @@ module Exports
     def item_headers
       return @item_headers if @item_headers
 
-      item_names = Set.new
-
-      distributions.each do |distribution|
-        distribution.line_items.each do |line_item|
-          item_names.add(line_item.item.name)
-        end
-      end
-
-      @item_headers = item_names.sort
+      @item_headers = @organization.items.order(:created_at).distinct.select([:created_at, :name]).map(&:name)
     end
 
     def build_row_data(distribution)
@@ -133,6 +129,8 @@ module Exports
       distribution.line_items.each do |line_item|
         item_name = line_item.item.name
         item_column_idx = headers_with_indexes[item_name]
+        next unless item_column_idx
+
         row[item_column_idx] += line_item.quantity
       end
 

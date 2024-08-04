@@ -42,23 +42,28 @@ FactoryBot.define do
     end
 
     trait :with_items do
+      transient do
+        item_quantity { 100 }
+        item { nil }
+      end
       storage_location do
         create :storage_location, :with_items,
                item: item || create(:item, value_in_cents: 100),
                organization: organization
       end
-      transient do
-        item_quantity { 100 }
-        item { nil }
-      end
 
       after(:build) do |donation, evaluator|
-        item = evaluator.item || donation.storage_location.inventory_items.first&.item || create(:item)
+        event_item = View::Inventory.new(donation.organization_id)
+          .items_for_location(donation.storage_location_id)
+          .first
+          &.db_item
+        item = evaluator.item || event_item || create(:item)
         donation.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item, itemizable: donation)
       end
 
       after(:create) do |instance, evaluator|
-        evaluator.storage_location.increase_inventory(instance)
+        evaluator.storage_location.increase_inventory(instance.line_item_values)
+        DonationEvent.publish(instance)
       end
     end
   end

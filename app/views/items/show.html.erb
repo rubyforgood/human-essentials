@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "All Item Types", (items_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "All Item Types", items_path %></li>
           <li class="breadcrumb-item"><a href="#"><%= @item.name %></a></li>
         </ol>
       </div>
@@ -30,20 +30,51 @@
         <div class="card">
           <div class="card-body p-0">
             <table class="table">
-              <thead>
+            <tbody>
+              <tr>
+                <th>Base Item</th>
+                <td><%= @item.base_item.name %></td>
+              </tr>
+              <tr>
+                <th>Name</th>
+                <td><%= @item.name %></td>
+              </tr>
+              <tr>
+                <th>Category</th>
+                <td><%= @item&.item_category&.name %></td>
+              </tr>
               <tr>
                 <th>Value Per Item</th>
-                <th>Distribution Quantity</th>
-                <th>Package Size</th>
+                <td><%= @item.value_in_cents || 0 %></td>
               </tr>
-              </thead>
-              <tbody>
               <tr>
-                <td><%= @item.value_in_cents ? @item.value_in_cents : 0 %></td>
-                <td><%= @item.distribution_quantity ? @item.distribution_quantity : 0 %></td>
-                <td><%= @item.package_size ? @item.package_size : 0 %></td>
+                <th>Quantity Per Indivudual</th>
+                <td><%= @item.distribution_quantity || 0 %></td>
               </tr>
-              </tbody>
+              <tr>
+                <th>On hand minimum quantity</th>
+                <td><%= @item.on_hand_minimum_quantity || 0 %></td>
+              </tr>
+              <tr>
+                <th>On hand recommended quantity</th>
+                <td><%= @item.on_hand_recommended_quantity || 0 %></td>
+              </tr>
+              <tr>
+                <th>Package Size</th>
+                <td><%= @item.package_size || 0 %></td>
+              </tr>
+              <tr>
+                <% if Flipper.enabled?(:enable_packs) %>
+                  <th>Custom Units</th>
+                  <% item_units = @item.request_units&.pluck("item_units.name") %>
+                  <td><%= item_units&.join("; ") %></td>
+                <% end %>
+              </tr>
+              <tr>
+                <th>Item is visible to partners</th>
+                <td><%= @item.visible_to_partners ? 'Yes' : 'No' %></td>
+              </tr>
+            </tbody>
             </table>
           </div>
           <!-- /.card-body -->
@@ -76,10 +107,15 @@
                 </thead>
                 <tbody>
                 <% total = 0; @storage_locations_containing.each do |storage|
-                  total += storage.item_total(@item)   %>
+                  location_quantity = if @inventory
+                    @inventory.quantity_for(item_id: @item.id, storage_location: storage.id)
+                  else
+                    storage.item_total(@item)
+                  end
+                  total += location_quantity %>
                   <tr>
                     <td><%= link_to storage.name, storage_location_path(storage) %></td>
-                    <td class="text-left"><%= storage.item_total(@item) %></td>
+                    <td class="text-left"><%= location_quantity %></td>
                   </tr>
                 <% end %>
                 <tr>

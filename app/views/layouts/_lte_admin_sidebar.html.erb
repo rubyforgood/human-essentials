@@ -1,14 +1,14 @@
 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
   <li class="nav-item">
-    <%= link_to(admin_dashboard_path, class: "nav-link #{active_class(['dashboard'])}") do %>
+    <%= link_to(admin_dashboard_path, class: "nav-link #{active_class(['admin/dashboard'])}") do %>
       <i class="nav-icon fas fa-tachometer-alt"></i>
       <p>Admin Dashboard</p>
     <% end %>
   </li>
 
-  <li class="nav-item has-treeview <%= menu_open?(['barcode_items']) %>">
-    <a href="#" class="nav-link <%= active_class(['barcode_items']) %>">
+  <li class="nav-item has-treeview <%= menu_open?(['admin/barcode_items']) %>">
+    <a href="#" class="nav-link <%= active_class(['admin/barcode_items']) %>">
       <i class="nav-icon fa fa-barcode"></i>
       <p>Barcode Items
         <i class="fas fa-angle-left right"></i></p>
@@ -27,8 +27,8 @@
     </ul>
   </li>
 
-  <li class="nav-item has-treeview <%= menu_open?(['base_items']) %>">
-    <a href="#" class="nav-link <%= active_class(['base_items']) %>">
+  <li class="nav-item has-treeview <%= menu_open?(['admin/base_items']) %>">
+    <a href="#" class="nav-link <%= active_class(['admin/base_items']) %>">
       <i class="nav-icon fas fa-box"></i>
       <p>Base Items
         <i class="fas fa-angle-left right"></i></p>
@@ -47,8 +47,8 @@
     </ul>
   </li>
 
-  <li class="nav-item has-treeview <%= menu_open?(['organizations']) %>">
-    <a href="#" class="nav-link <%= active_class(['organizations']) %>">
+  <li class="nav-item has-treeview <%= menu_open?(['admin/organizations', 'admin/ndbn_members']) %>">
+    <a href="#" class="nav-link <%= active_class(['admin/organizations', 'admin/ndbn_members']) %>">
       <i class="nav-icon fas fa-sitemap"></i>
       <p>Organizations
         <i class="fas fa-angle-left right"></i></p>
@@ -64,11 +64,17 @@
           <i class="nav-icon fa fa-plus-circle"></i> New Organization
         <% end %>
       </li>
+      <li class="nav-item <%= active_class(['admin/ndbn_members']) %>">
+        <%= link_to(admin_ndbn_members_path, class: "nav-link #{active_class(['admin/ndbn_members'])}") do %>
+          <i class="nav-icon fa fa-cloud-upload"></i>
+          NDBN Member Upload
+        <% end %>
+      </li>
     </ul>
   </li>
 
-  <li class="nav-item has-treeview <%= menu_open?(['partners']) %>">
-    <a href="#" class="nav-link <%= active_class(['partners']) %>">
+  <li class="nav-item has-treeview <%= menu_open?(['admin/partners']) %>">
+    <a href="#" class="nav-link <%= active_class(['admin/partners']) %>">
       <i class="nav-icon fas fa-people-carry"></i>
       <p>Partners
         <i class="fas fa-angle-left right"></i></p>
@@ -82,8 +88,8 @@
     </ul>
   </li>
 
-  <li class="nav-item has-treeview <%= menu_open?(['users']) %>">
-    <a href="#" class="nav-link <%= active_class(['users']) %>">
+  <li class="nav-item has-treeview <%= menu_open?(['admin/users']) %>">
+    <a href="#" class="nav-link <%= active_class(['admin/users']) %>">
       <i class="nav-icon fas fa-users"></i>
       <p>Users
         <i class="fas fa-angle-left right"></i>
@@ -110,7 +116,7 @@
     <% end %>
   </li>
 
-  <li class="nav-item <%= active_class(['account_requests']) %>">
+  <li class="nav-item <%= active_class(['admin/account_requests']) %>">
     <%= link_to(admin_account_requests_path, class: "nav-link #{"active" if current_page?(admin_account_requests_path)}") do %>
       <i class="nav-icon fa fa-sticky-note"></i>
       <p>Account Requests</p>
@@ -123,21 +129,12 @@
       <p>FAQ</p>
     <% end %>
   </li>
-  
+
   <% if Rails.env.production? %>
     <li class="nav-item">
       <%= link_to("/coverage", class: "nav-link") do %>
         <i class="nav-icon fa-solid fa-chart-bar"></i>
         <p>Coverband</p>
-      <% end %>
-    </li>
-  <% end %>
-
-  <% if (current_user.organization.present?) %>
-    <li class="nav-item">
-      <%= link_to(dashboard_path(organization_id: current_user.organization), class: "nav-link") do %>
-        <i class="nav-icon fas fa-home"></i>
-        <p>My Organization</p>
       <% end %>
     </li>
   <% end %>

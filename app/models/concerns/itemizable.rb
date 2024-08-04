@@ -13,6 +13,16 @@ module Itemizable
       line_items.each(&:destroy)
     end
 
+    # @return [Boolean]
+    def has_inactive_item?
+      inactive_items.any?
+    end
+
+    # @return [Array<Item>]
+    def inactive_items
+      line_items.map(&:item).select { |i| !i.active? }
+    end
+
     has_many :line_items, as: :itemizable, inverse_of: :itemizable do
       def assign_insufficiency_errors(insufficiency_hash)
         insufficiency_hash = insufficiency_hash.index_by { |i| i[:item_id] }
@@ -102,9 +112,8 @@ module Itemizable
     line_items.total
   end
 
-  def to_a
+  def line_item_values
     line_items.map do |l|
-      # When the item isn't found, it's probably just inactive. This ensures it's available.
       item = Item.find(l.item_id)
       { item_id: item.id, name: item.name, quantity: l.quantity, active: item.active }.with_indifferent_access
     end
@@ -118,7 +127,7 @@ module Itemizable
   end
 
   def line_items_quantity_is_at_least(threshold)
-    return if storage_location.nil?
+    return if respond_to?(:storage_location) && storage_location.nil?
 
     line_items.each do |line_item|
       next unless line_item.item
@@ -132,6 +141,7 @@ module Itemizable
 
   def line_items_exist_in_inventory
     return if storage_location.nil?
+    return if Event.read_events?(storage_location.organization)
 
     line_items.each do |line_item|
       next unless line_item.item

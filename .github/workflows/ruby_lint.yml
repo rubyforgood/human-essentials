@@ -2,27 +2,22 @@ name: rubocop lint
 
 on:
   push:
-    branches:
-      - main
     paths-ignore:
-      - 'doc/**'
-      - '*.md'
-      - 'bin/*'
+      - "doc/**"
+      - "*.md"
+      - "bin/*"
   pull_request:
-    branches:
-      - main
     paths-ignore:
-      - 'doc/**'
-      - '*.md'
-      - 'bin/*'
+      - "doc/**"
+      - "*.md"
+      - "bin/*"
 
 jobs:
   ruby_lint:
-
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -31,3 +26,5 @@ jobs:
 
       - name: lint
         run: bundle exec rubocop
+      - name: lint erb files
+        run: bundle exec erblint --lint-all

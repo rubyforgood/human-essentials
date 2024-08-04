@@ -4,7 +4,8 @@
 RSpec.describe RequestItem, type: :model do
   context "Methods >" do
     describe "#from_json" do
-      let(:organization) { create :organization }
+      let(:organization) { create(:organization) }
+      let(:inventory) { View::Inventory.new(organization.id) }
       let(:location) { create :storage_location, organization: organization }
       let(:other_location) { create :storage_location, organization: organization }
       let(:request) { build :request, organization: organization, request_items: request_item_json }
@@ -19,26 +20,20 @@ RSpec.describe RequestItem, type: :model do
 
       subject do
         organization.update!(default_storage_location: location.id)
-        described_class.from_json(request_item_json.first, request)
+        described_class.from_json(request_item_json.first, request, inventory)
       end
 
       before(:each) do
-        create(:inventory_item,
-          storage_location: other_location,
-          item_id: item1.id,
-          quantity: 10)
-        create(:inventory_item,
-          storage_location: location,
-          item_id: item1.id,
-          quantity: 20)
-        create(:inventory_item,
-          storage_location: other_location,
-          item_id: item2.id,
-          quantity: 30)
-        create(:inventory_item,
-          storage_location: location,
-          item_id: item2.id,
-          quantity: 40)
+        TestInventory.create_inventory(organization, {
+          other_location.id => {
+            item1.id => 10,
+            item2.id => 30
+          },
+          location.id => {
+            item1.id => 20,
+            item2.id => 40
+          }
+        })
       end
 
       it 'has the correct name' do

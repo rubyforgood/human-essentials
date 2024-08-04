@@ -3,12 +3,27 @@
   <td><%= item_row.name %></td>
   <td><%= item_row.distribution_quantity %></td>
   <td class="numeric"><%= dollar_value(item_row.value_in_cents) %></td>
+  <% if Flipper.enabled?(:enable_packs) %>
+    <% unless current_organization.request_units.empty? %>
+     <td><%= item_row.request_units.pluck(:name).join(', ') %></td>
+    <% end %>
+  <% end %>
   <td class="text-right">
     <%= view_button_to item_path(item_row) %>
     <%= edit_button_to edit_item_path(item_row) %>
-    <% if item_row.kit.blank? %>
-      <%= delete_button_to item_path(item_row), { confirm: confirm_delete_msg(item_row.name) } if item_row.active %>
+    <% if item_row.active? %>
+      <% if item_row.can_delete?(inventory, kits) %>
+        <%= delete_button_to item_path(item_row),
+                             text: 'Delete',
+                             confirm: confirm_delete_msg(item_row.name) %>
+      <% else %>
+        <% can_deactivate =  item_row.can_deactivate_or_delete?(inventory, kits) %>
+        <%= delete_button_to deactivate_item_path(item_row),
+                             text: 'Deactivate',
+                             enabled: can_deactivate,
+                             confirm: confirm_deactivate_msg(item_row.name) %>
      <% end %>
+    <% end %>
     <%= restore_button_to restore_item_path(item_row), { confirm: confirm_restore_msg(item_row.name) } unless item_row.active %>
   </td>
 </tr>

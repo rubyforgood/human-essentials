@@ -54,7 +54,14 @@
               <span class='text-2xl font-bold'>Requested Items:</span>
               <ul class='text-lg'>
                 <% @partner_request.item_requests.each do |item| %>
-                  <li><%= item.quantity %> of <%= item.name %></li>
+                  <li>
+                    <%= item.quantity %>
+                    <% if Flipper.enabled?(:enable_packs) && item.request_unit %>
+                      <%= item.request_unit.pluralize(item.quantity.to_i) %>
+                    <% end %>
+                    of
+                    <%= item.name %>
+                  </li>
                 <% end %>
               </ul>
             </div>
@@ -69,4 +76,3 @@
     </div>
   </div>
 </section>
-

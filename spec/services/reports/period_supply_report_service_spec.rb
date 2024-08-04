@@ -1,6 +1,6 @@
 RSpec.describe Reports::PeriodSupplyReportService, type: :service do
   let(:year) { 2020 }
-  let(:organization) { create(:organization) }
+  let(:organization) { create(:organization, :with_items) }
 
   subject(:report) do
     described_class.new(organization: organization, year: year)
@@ -16,7 +16,7 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
         "Money spent purchasing period supplies" => "$0.00"
       }))
       expect(report.report[:entries]["Period supplies"].split(", "))
-        .to contain_exactly("Tampons", "Pads", "Adult Liners")
+        .to contain_exactly("Tampons", "Pads", "Liners (Menstrual)")
     end
 
     describe "with values" do
@@ -96,7 +96,7 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
           "Money spent purchasing period supplies" => "$30.00"
         }))
         expect(report.report[:entries]["Period supplies"].split(", "))
-          .to contain_exactly("Tampons", "Pads", "Adult Liners")
+          .to contain_exactly("Tampons", "Pads", "Liners (Menstrual)")
       end
     end
   end

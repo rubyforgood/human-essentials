@@ -1,7 +1,14 @@
-<%= form.fields_for(:items) do |field| %>
+<%= form.fields_for :items, defined?(object) ? object : nil  do |field| %>
   <tr>
-    <td><%= field.input :item_id, collection: @formatted_requestable_items, label: false, allow_blank: true, class: 'form-control' %></td>
-    <td><%= field.number_field :person_count, as: :integer, label: false, step: 1, min: 1, class: 'form-control' %></td>
-    <td><%= remove_item_button "Remove" %></td>
+    <td>
+      <%= field.label :item_id, "Item Requested", {class: 'sr-only'} %>
+      <%= field.select :item_id, @requestable_items, {include_blank: 'Select an item'}, {class: 'form-control'} %>
+
+    </td>
+    <td>
+      <%= field.label :person_count, "Number of Individuals", {class: 'sr-only'} %>
+      <%= field.number_field :person_count, as: :integer, label: false, step: 1, min: 1, class: 'form-control' %>
+    </td>
+      <td><%= remove_element_button "Remove", container_selector: "tr" %></td>
   </tr>
 <% end %>

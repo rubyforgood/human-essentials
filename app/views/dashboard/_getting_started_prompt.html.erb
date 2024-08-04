@@ -3,127 +3,137 @@
 <% location_criteria_met = org_stats.storage_locations_added > 0 %>
 <% donation_criteria_met = org_stats.donation_sites_added > 0 %>
 <% inventory_criteria_met = org_stats.locations_with_inventory.length > 0 %>
-<% criterias = [ partner_criteria_met, location_criteria_met, donation_criteria_met, inventory_criteria_met ] %>
+<% criterias = [ location_criteria_met, partner_criteria_met, donation_criteria_met, inventory_criteria_met ] %>
 <% current_step = criterias.find_index(false) %>
 
 <% if current_step.present? %>
-  <div class="col-md-12">
-    <div class="box box-primary" id="getting-started-guide">
-      <div class="box-header with-border">
-        <h2 class="box-title">
-          Just Starting?
-          <small>Here are some things you may need to set up:</small>
-        </h2>
-      </div>
 
-      <div class="box-body org-stats">
-        <div class="col-md-12">
-          <%= render partial: "getting_started_progress_stepper", locals: {
-            current_step: current_step,
-            criterias: criterias,
-            lines: ["line-right", "line-right line-left", "line-right line-left", "line-left"],
-            step_labels: ["Partner Agencies", "Storage Locations", "Donation Sites", "Inventory"]
-          } %>
-        </div>
+  <%= render(
+    "shared/card",
+    id: "summary",
+    header: "Getting Started",
+    type: :plain,
+  ) do %>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="box box-primary" id="getting-started-guide">
+          <div class="box-header with-border">
+            <h2 class="box-title">
+              Just Starting?
+              <small>Here are some things you may need to set up:</small>
+            </h2>
+          </div>
 
-        <div class="col-md-12 org-stats-box-container<%= current_step == 0 ? '' : ' d-none visible-xs' %>">
-          <div class="org-stats-box">
-            <div class="box-body text-center position-relative">
-              <div class="org-stats-icon">
-                <% if partner_criteria_met %>
-                  <i class="fa fa-check-circle-o fa-2x success" aria-hidden="true"></i>
-                <% else %>
-                  <i class="fa fa-users fa-2x" aria-hidden="true"></i>
-                <% end %>
-                <h4><%= pluralize(org_stats.partners_added, 'Partner Agency') %> Added</h4>
-              </div>
+          <div class="box-body org-stats">
+            <div class="col-md-12">
+              <%= render partial: "getting_started_progress_stepper", locals: {
+                current_step: current_step,
+                criterias: criterias,
+                lines: ["line-right", "line-right line-left", "line-right line-left", "line-left"],
+                step_labels: ["Storage Locations", "Partner Agencies", "Donation Sites", "Inventory"]
+              } %>
+            </div>
 
-              <p class="org-stats-desc">
-                To start building your community in Human Essentials, import a list of your current partner agencies or add them individually.
-              </p>
+            <div class="col-md-12 org-stats-box-container<%= current_step == 0 ? '' : ' d-none visible-xs' %>">
+              <div class="org-stats-box">
+                <div class="box-body text-center position-relative">
+                  <div class="org-stats-icon">
+                    <% if location_criteria_met %>
+                      <i class="fa fa-check-circle-o fa-2x success" aria-hidden="true"></i>
+                    <% else %>
+                      <i class="fa fa-map-marker fa-2x" aria-hidden="true"></i>
+                    <% end %>
+                    <h4><%= pluralize(org_stats.storage_locations_added, 'Storage Location') %> Added</h4>
+                  </div>
 
-              <div id="org-stats-call-to-action-partners">
-                <% partner_link_text = partner_criteria_met ? "Add More Partners" : "Add a Partner" %>
-                <%= new_button_to new_partner_path, { text: partner_link_text, size: "md" } %>
+                  <p class="org-stats-desc">
+                    Add details for all Storage Locations you use for your inventory.
+                  </p>
+
+                  <div id="org-stats-call-to-action-storage-locations">
+                    <% location_link_text = location_criteria_met ? "Add More Storage Locations" : "Add a Storage Location" %>
+                    <%= new_button_to new_storage_location_path, { text: location_link_text, size: "md" } %>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        <div class="col-md-12 org-stats-box-container<%= current_step == 1 ? '' : ' d-none visible-xs' %>">
-          <div class="org-stats-box">
-            <div class="box-body text-center position-relative">
-              <div class="org-stats-icon">
-                <% if location_criteria_met %>
-                  <i class="fa fa-check-circle-o fa-2x success" aria-hidden="true"></i>
-                <% else %>
-                  <i class="fa fa-map-marker fa-2x" aria-hidden="true"></i>
-                <% end %>
-                <h4><%= pluralize(org_stats.storage_locations_added, 'Storage Location') %> Added</h4>
-              </div>
+            <div class="col-md-12 org-stats-box-container<%= current_step == 1 ? '' : ' d-none visible-xs' %>">
+              <div class="org-stats-box">
+                <div class="box-body text-center position-relative">
+                  <div class="org-stats-icon">
+                    <% if partner_criteria_met %>
+                      <i class="fa fa-check-circle-o fa-2x success" aria-hidden="true"></i>
+                    <% else %>
+                      <i class="fa fa-users fa-2x" aria-hidden="true"></i>
+                    <% end %>
+                    <h4><%= pluralize(org_stats.partners_added, 'Partner Agency') %> Added</h4>
+                  </div>
 
-              <p class="org-stats-desc">
-                Add details for all Storage Locations you use for your inventory.
-              </p>
+                  <p class="org-stats-desc">
+                    To start building your community in Human Essentials, import a list of your current partner agencies or add them individually.
+                  </p>
 
-              <div id="org-stats-call-to-action-storage-locations">
-                <% location_link_text = location_criteria_met ? "Add More Storage Locations" : "Add a Storage Location" %>
-                <%= new_button_to new_storage_location_path, { text: location_link_text, size: "md" } %>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-12 org-stats-box-container<%= current_step == 2 ? '' : ' d-none visible-xs' %>">
-          <div class="org-stats-box">
-            <div class="box-body text-center position-relative">
-              <div class="org-stats-icon">
-                <% if donation_criteria_met %>
-                  <i class="fa fa-check-circle-o fa-2x success" aria-hidden="true"></i>
-                <% else %>
-                  <i class="fa fa-home fa-2x" aria-hidden="true"></i>
-                <% end %>
-                <h4><%= pluralize(org_stats.donation_sites_added, 'Donation Site') %> Added</h4>
-              </div>
-
-              <p class="org-stats-desc">
-                Add any community sites (including your primary storage facility) that accept donations on your behalf.
-              </p>
-
-              <div id="org-stats-call-to-action-donation-sites">
-                <% donation_link_text = donation_criteria_met ? "Add More Donation Sites" : "Add a Donation Site" %>
-                <%= new_button_to new_donation_site_path, { text: donation_link_text, size: "md" } %>
+                  <div id="org-stats-call-to-action-partners">
+                    <% partner_link_text = partner_criteria_met ? "Add More Partners" : "Add a Partner" %>
+                    <%= new_button_to new_partner_path, { text: partner_link_text, size: "md" } %>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        <div class="col-md-12 org-stats-box-container<%= current_step == 3 ? '' : ' d-none visible-xs' %>">
-          <div class="org-stats-box">
-            <div class="box-body text-center position-relative">
-              <div class="org-stats-icon">
-                <% if inventory_criteria_met %>
-                  <i class="fa fa-check-circle-o fa-2x success" aria-hidden="true"></i>
-                <% else %>
-                  <i class="fa fa-pie-chart fa-2x" aria-hidden="true"></i>
-                <% end %>
-                <h4><%= pluralize(org_stats.locations_with_inventory.length, 'Storage Location') %> with Inventory</h4>
+            <div class="col-md-12 org-stats-box-container<%= current_step == 2 ? '' : ' d-none visible-xs' %>">
+              <div class="org-stats-box">
+                <div class="box-body text-center position-relative">
+                  <div class="org-stats-icon">
+                    <% if donation_criteria_met %>
+                      <i class="fa fa-check-circle-o fa-2x success" aria-hidden="true"></i>
+                    <% else %>
+                      <i class="fa fa-home fa-2x" aria-hidden="true"></i>
+                    <% end %>
+                    <h4><%= pluralize(org_stats.donation_sites_added, 'Donation Site') %> Added</h4>
+                  </div>
+
+                  <p class="org-stats-desc">
+                    Add any community sites (including your primary storage facility) that accept donations on your behalf.
+                  </p>
+
+                  <div id="org-stats-call-to-action-donation-sites">
+                    <% donation_link_text = donation_criteria_met ? "Add More Donation Sites" : "Add a Donation Site" %>
+                    <%= new_button_to new_donation_site_path, { text: donation_link_text, size: "md" } %>
+                  </div>
+                </div>
               </div>
+            </div>
 
-              <div class="org-stats-desc">
-                <p>
-                  As an essentials bank, you might already have inventory on hand. These items might have come from previous donations/purchases. If you have multiple sources or want to add inventory to multiple storage locations, you can create multiple donations or purchases while specifying the correct date, source, and location.
-                </p>
-              </div >
+            <div class="col-md-12 org-stats-box-container<%= current_step == 3 ? '' : ' d-none visible-xs' %>">
+              <div class="org-stats-box">
+                <div class="box-body text-center position-relative">
+                  <div class="org-stats-icon">
+                    <% if inventory_criteria_met %>
+                      <i class="fa fa-check-circle-o fa-2x success" aria-hidden="true"></i>
+                    <% else %>
+                      <i class="fa fa-pie-chart fa-2x" aria-hidden="true"></i>
+                    <% end %>
+                    <h4><%= pluralize(org_stats.locations_with_inventory.length, 'Storage Location') %> with Inventory</h4>
+                  </div>
 
-              <div id="org-stats-call-to-action-inventory">
-                <%= new_button_to new_donation_path, { text: "Add past donation", size: "md" } %>
-                <%= new_button_to new_purchase_path, { text: "Add past purchase", size: "md" } %>
+                  <div class="org-stats-desc">
+                    <p>
+                      As an essentials bank, you might already have inventory on hand. These items might have come from previous donations/purchases. If you have multiple sources or want to add inventory to multiple storage locations, you can create multiple donations or purchases while specifying the correct date, source, and location.
+                    </p>
+                  </div>
+
+                  <div id="org-stats-call-to-action-inventory">
+                    <%= new_button_to new_donation_path, { text: "Add past donation", size: "md" } %>
+                    <%= new_button_to new_purchase_path, { text: "Add past purchase", size: "md" } %>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  <% end %>
 <% end %>

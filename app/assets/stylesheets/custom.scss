@@ -16,7 +16,8 @@
 
 #calendar {
     background-color: #ffffff;
-    width: 100%
+    width: 100%;
+    height: 80%
 }
 
 #csvImportModal .modal-dialog.onboarding_steps .modal-body li {
@@ -83,10 +84,17 @@
   color: #ee5034
 }
 
-.numeric {
+.numeric,
+.quantity {
   text-align: right;
 }
 
 .percent {
   text-align: right;
+}
+
+.confirm {
+  .message {
+    margin-top: 40px;
+  }
 }

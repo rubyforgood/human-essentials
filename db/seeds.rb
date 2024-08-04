@@ -6,19 +6,13 @@ if Rails.env.production?
   return
 end
 
-# Activate all feature flags
-Flipper.enable(:onebase)
-
 # ----------------------------------------------------------------------------
 # Random Record Generators
 # ----------------------------------------------------------------------------
-
-def random_record(klass)
-  klass.limit(1).order(Arel.sql('random()')).first
-end
+load "lib/dispersed_past_dates_generator.rb"
 
 def random_record_for_org(org, klass)
-  klass.where(organization: org).limit(1).order(Arel.sql('random()')).first
+  klass.where(organization: org).all.sample
 end
 
 # ----------------------------------------------------------------------------
@@ -49,10 +43,8 @@ BaseItem.find_or_create_by!(
 # ----------------------------------------------------------------------------
 # NDBN Members
 # ----------------------------------------------------------------------------
-#
-NDBNMember.create!(ndbn_member_id: 10000, account_name: "Pawnee")
-NDBNMember.create!(ndbn_member_id: 20000, account_name: "Other Spot")
-NDBNMember.create!(ndbn_member_id: 30000, account_name: "Amazing Place")
+seed_file = File.open(Rails.root.join("spec", "fixtures", "ndbn-small-import.csv"))
+SyncNDBNMembers.upload(seed_file)
 
 # ----------------------------------------------------------------------------
 # Organizations
@@ -82,6 +74,26 @@ Organization.seed_items(sf_org)
 Organization.all.each do |org|
   org.items.where(value_in_cents: 0).limit(10).each do |item|
     item.update(value_in_cents: 100)
+  end
+end
+
+# ----------------------------------------------------------------------------
+# Request Units
+# ----------------------------------------------------------------------------
+
+%w(pack box flat).each do |name|
+  Unit.create!(organization: pdx_org, name: name)
+end
+
+pdx_org.items.each_with_index do |item, i|
+  if item.name == 'Pads'
+    %w(box pack).each { |name| item.request_units.create!(name: name) }
+  elsif item.name == 'Wipes (Baby)'
+    item.request_units.create!(name: 'pack')
+  elsif item.name == 'Kids Pull-Ups (5T-6T)'
+    %w(pack flat).each do |name|
+      item.request_units.create!(name: name)
+    end
   end
 end
 
@@ -280,6 +292,8 @@ note = [
     )
   end
 
+  requestable_items = PartnerFetchRequestableItemsService.new(partner_id: p.id).call.map(&:last)
+
   families.each do |family|
     Partners::AuthorizedFamilyMember.create!(
       first_name: Faker::Name.first_name,
@@ -293,7 +307,7 @@ note = [
     family.home_child_count.times do
       Partners::Child.create!(
         family: family,
-        first_name: family.guardian_first_name,
+        first_name: Faker::Name.unique.first_name,
         last_name: family.guardian_last_name,
         date_of_birth: Faker::Date.birthday(min_age: 5, max_age: 18),
         gender: Faker::Gender.binary_type,
@@ -304,14 +318,14 @@ note = [
         comments: Faker::Lorem.paragraph,
         active: Faker::Boolean.boolean,
         archived: false,
-        item_needed_diaperid: p.organization.item_id_to_display_string_map.key(Partners::Child::CHILD_ITEMS.sample)
+        requested_item_ids: requestable_items.sample(rand(4))
       )
     end
 
     family.home_young_child_count.times do
       Partners::Child.create!(
         family: family,
-        first_name: family.guardian_first_name,
+        first_name: Faker::Name.unique.first_name,
         last_name: family.guardian_last_name,
         date_of_birth: Faker::Date.birthday(min_age: 0, max_age: 5),
         gender: Faker::Gender.binary_type,
@@ -322,30 +336,50 @@ note = [
         comments: Faker::Lorem.paragraph,
         active: Faker::Boolean.boolean,
         archived: false,
-        item_needed_diaperid: p.organization.item_id_to_display_string_map.key(Partners::Child::CHILD_ITEMS.sample)
+        requested_item_ids: requestable_items.sample(rand(4))
       )
     end
   end
 
+  dates_generator = DispersedPastDatesGenerator.new
+
   Faker::Number.within(range: 32..56).times do
+    date = dates_generator.next
+
     partner_request = ::Request.new(
       partner_id: p.id,
       organization_id: p.organization_id,
       comments: Faker::Lorem.paragraph,
-      partner_user_id: p.primary_user.id
+      partner_user_id: p.primary_user.id,
+      created_at: date,
+      updated_at: date
     )
 
-    item_requests = []
-    Array.new(Faker::Number.within(range: 5..15)) do
-      item = p.organization.items.sample
-      new_item_request = Partners::ItemRequest.new(
+    pads = p.organization.items.find_by(name: 'Pads')
+    new_item_request = Partners::ItemRequest.new(
+      item_id: pads.id,
+      quantity: Faker::Number.within(range: 10..30),
+      children: [],
+      name: pads.name,
+      partner_key: pads.partner_key,
+      created_at: date,
+      updated_at: date,
+      request_unit: 'pack'
+    )
+    partner_request.item_requests << new_item_request
+
+    items = p.organization.items.sample(Faker::Number.within(range: 4..14)) - [pads]
+
+    partner_request.item_requests += items.map do |item|
+      Partners::ItemRequest.new(
         item_id: item.id,
         quantity: Faker::Number.within(range: 10..30),
         children: [],
         name: item.name,
-        partner_key: item.partner_key
+        partner_key: item.partner_key,
+        created_at: date,
+        updated_at: date
       )
-      partner_request.item_requests << new_item_request
     end
 
     partner_request.request_items = partner_request.item_requests.map do |ir|
@@ -389,6 +423,23 @@ StorageLocation.all.each do |sl|
   end
 end
 Organization.all.each { |org| SnapshotEvent.publish(org) }
+
+# Set minimum and recomended inventory levels for items at the Pawnee Diaper Bank Organization
+half_items_count = (pdx_org.items.count/2).to_i
+low_items = pdx_org.items.left_joins(:inventory_items)
+  .select('items.*, SUM(inventory_items.quantity) AS total_quantity')
+  .group('items.id')
+  .order('total_quantity')
+  .limit(half_items_count)
+
+min_qty = low_items.first.total_quantity
+max_qty = low_items.last.total_quantity
+
+low_items.each do |item|
+  min_value = rand((min_qty / 10).floor..(max_qty/10).ceil) * 10
+  recomended_value = rand((min_value/10).ceil..1000) * 10
+  item.update(on_hand_minimum_quantity: min_value, on_hand_recommended_quantity: recomended_value)
+end
 
 # ----------------------------------------------------------------------------
 # Product Drives
@@ -500,13 +551,15 @@ end
 # Donations
 # ----------------------------------------------------------------------------
 
+dates_generator = DispersedPastDatesGenerator.new
 # Make some donations of all sorts
 20.times.each do
   source = Donation::SOURCES.values.sample
   # Depending on which source it uses, additional data may need to be provided.
   donation = Donation.new(source: source,
                           storage_location: random_record_for_org(pdx_org, StorageLocation),
-                          organization: pdx_org, issued_at: Time.zone.now)
+                          organization: pdx_org,
+                          issued_at: dates_generator.next)
   case source
   when Donation::SOURCES[:product_drive]
     donation.product_drive = ProductDrive.first
@@ -526,10 +579,13 @@ end
 # ----------------------------------------------------------------------------
 # Distributions
 # ----------------------------------------------------------------------------
+dates_generator = DispersedPastDatesGenerator.new
 
 inventory = InventoryAggregate.inventory_for(pdx_org.id)
 # Make some distributions, but don't use up all the inventory
 20.times.each do
+  issued_at = dates_generator.next
+
   storage_location = random_record_for_org(pdx_org, StorageLocation)
   stored_inventory_items_sample = inventory.storage_locations[storage_location.id].items.values.sample(20)
   delivery_method = Distribution.delivery_methods.keys.sample
@@ -538,7 +594,8 @@ inventory = InventoryAggregate.inventory_for(pdx_org.id)
     storage_location: storage_location,
     partner: random_record_for_org(pdx_org, Partner),
     organization: pdx_org,
-    issued_at: Faker::Date.between(from: 4.days.ago, to: Time.zone.today),
+    issued_at: issued_at,
+    created_at: 3.days.ago(issued_at),
     delivery_method: delivery_method,
     shipping_cost: shipping_cost,
     comment: 'Urgent'
@@ -619,7 +676,10 @@ comments = [
   "Nullam dictum ac lectus at scelerisque. Phasellus volutpat, sem at eleifend tristique, massa mi cursus dui, eget pharetra ligula arcu sit amet nunc."
 ]
 
-20.times do
+dates_generator = DispersedPastDatesGenerator.new
+
+25.times do
+  purchase_date = dates_generator.next
   storage_location = random_record_for_org(pdx_org, StorageLocation)
   vendor = random_record_for_org(pdx_org, Vendor)
   purchase = Purchase.new(
@@ -628,32 +688,18 @@ comments = [
     organization_id: pdx_org.id,
     storage_location_id: storage_location.id,
     amount_spent_in_cents: rand(200..10_000),
-    issued_at: (Time.zone.today - rand(15).days),
-    created_at: (Time.zone.today - rand(15).days),
-    updated_at: (Time.zone.today - rand(15).days),
+    issued_at: purchase_date,
+    created_at: purchase_date,
+    updated_at: purchase_date,
     vendor_id: vendor.id
   )
+
+  rand(1..5).times do
+    purchase.line_items.push(LineItem.new(quantity: rand(1..1000),
+                                          item_id: pdx_org.item_ids.sample))
+  end
   PurchaseCreateService.call(purchase)
 end
-
-#re 2813_update_annual_report add some data for last year (enables system testing of reports)
-5.times do
-  storage_location = random_record_for_org(pdx_org, StorageLocation)
-  vendor = random_record_for_org(pdx_org, Vendor)
-  purchase = Purchase.new(
-    purchased_from: suppliers.sample,
-    comment: comments.sample,
-    organization_id: pdx_org.id,
-    storage_location_id: storage_location.id,
-    amount_spent_in_cents: rand(200..10_000),
-    issued_at: (Time.zone.today - 1.year),
-    created_at: (Time.zone.today - 1.year),
-    updated_at: (Time.zone.today - 1.year),
-    vendor_id: vendor.id
-  )
-  PurchaseCreateService.call(purchase)
-end
-
 
 # ----------------------------------------------------------------------------
 # Flipper

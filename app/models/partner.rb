@@ -76,24 +76,39 @@ class Partner < ApplicationRecord
     "CAREER" => "Career technical training",
     "ABUSE" => "Child abuse resource center",
     "CHURCH" => "Church outreach ministry",
+    "COLLEGE" => "College and Universities",
     "CDC" => "Community development corporation",
-    "HEALTH" => "Community health program",
+    "HEALTH" => "Community health program or clinic",
     "OUTREACH" => "Community outreach services",
+    "LEGAL" => "Correctional Facilities / Jail / Prison / Legal System",
     "CRISIS" => "Crisis/Disaster services",
     "DISAB" => "Developmental disabilities program",
     "DOMV" => "Domestic violence shelter",
+    "ECE" => "Early Childhood Education/Childcare",
     "CHILD" => "Early childhood services",
     "EDU" => "Education program",
     "FAMILY" => "Family resource center",
     "FOOD" => "Food bank/pantry",
+    "FOSTER" => "Foster Program",
     "GOVT" => "Government Agency/Affiliate",
     "HEADSTART" => "Head Start/Early Head Start",
     "HOMEVISIT" => "Home visits",
     "HOMELESS" => "Homeless resource center",
+    "HOSP" => "Hospital",
     "INFPAN" => "Infant/Child Pantry/Closet",
+    "LIB" => "Library",
+    "MILITARY" => "Military Bases/Veteran Services",
+    "POLICE" => "Police Station",
     "PREG" => "Pregnancy resource center",
+    "PRESCH" => "Preschool",
     "REF" => "Refugee resource center",
+    "ES" => "School - Elementary School",
+    "HS" => "School - High School",
+    "MS" => "School - Middle School",
+    "SENIOR" => "Senior Center",
+    "TRIBAL" => "Tribal/Native-Based Organization",
     "TREAT" => "Treatment clinic",
+    "2YCOLLEGE" => "Two-Year College",
     "WIC" => "Women, Infants and Children",
     "OTHER" => "Other"
   }.freeze
@@ -157,9 +172,16 @@ class Partner < ApplicationRecord
     [
       "Agency Name",
       "Agency Email",
+      "Agency Address",
+      "Agency City",
+      "Agency State",
+      "Agency Zip Code",
+      "Agency Website",
+      "Agency Type",
       "Contact Name",
       "Contact Phone",
-      "Contact Email"
+      "Contact Email",
+      "Notes"
     ]
   end
 
@@ -167,9 +189,16 @@ class Partner < ApplicationRecord
     [
       name,
       email,
+      agency_info[:address],
+      agency_info[:city],
+      agency_info[:state],
+      agency_info[:zip_code],
+      agency_info[:website],
+      agency_info[:agency_type],
       contact_person[:name],
       contact_person[:phone],
-      contact_person[:email]
+      contact_person[:email],
+      notes
     ]
   end
 
@@ -183,6 +212,21 @@ class Partner < ApplicationRecord
       email: profile.primary_contact_email,
       phone: profile.primary_contact_phone ||
              profile.primary_contact_mobile
+    }
+  end
+
+  def agency_info
+    return @agency_info if @agency_info
+
+    return {} if profile.blank?
+
+    @agency_info = {
+      address: [profile.address1, profile.address2].select(&:present?).join(', '),
+      city: profile.city,
+      state: profile.state,
+      zip_code: profile.zip_code,
+      website: profile.website,
+      agency_type: (profile.agency_type == AGENCY_TYPES["OTHER"]) ? "#{AGENCY_TYPES["OTHER"]}: #{profile.other_agency_type}" : profile.agency_type
     }
   end
 

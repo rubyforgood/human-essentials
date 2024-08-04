@@ -2,8 +2,8 @@ desc "Update the development db to what is being used in prod"
 BACKUP_CONTAINER_NAME = 'backups'
 PASSWORD_REPLACEMENT = 'password'
 
-task :fetch_latest_db => :environment do
-  if Rails.env.production?
+task :fetch_latest_db do
+  if ENV["RAILS_ENV"] == "production"
     raise "You may not run this backup script in production!"
   end
 
@@ -11,13 +11,14 @@ task :fetch_latest_db => :environment do
 
   puts "Recreating databases..."
   system("bin/rails db:environment:set RAILS_ENV=development")
-  system("rails db:drop db:create")
+  system("bin/rails db:drop db:create")
 
   puts "Restoring the database with #{backup.name}"
   backup_filepath = fetch_file_path(backup)
   db_username = ENV["PG_USERNAME"].presence || ENV["USER"].presence || "postgres"
   db_host = ENV["PG_HOST"].presence || "localhost"
-  system("pg_restore --clean --no-acl --no-owner -h #{db_host} -d diaper_dev -U #{db_username} #{backup_filepath}")
+  db_password = ENV["PG_PASSWORD"].presence
+  system("PGPASSWORD='#{db_password}' pg_restore --clean --no-acl --no-owner -h #{db_host} -d diaper_dev -U #{db_username} #{backup_filepath}")
 
   puts "Done!"
 
@@ -31,9 +32,20 @@ task :fetch_latest_db => :environment do
   system("bin/rails jobs:clear")
 
   puts "Replacing all the passwords with the replacement for ease of use: '#{PASSWORD_REPLACEMENT}'"
-  replace_user_passwords
+  system("bin/rails db:replace_user_passwords")
 
   puts "DONE!"
+end
+
+namespace :db do
+  desc "Replace all user passwords with the replacement password"
+  task :replace_user_passwords => :environment do
+    if Rails.env.production?
+      raise "You may not run this backup script in production!"
+    end
+
+    replace_user_passwords
+  end
 end
 
 private

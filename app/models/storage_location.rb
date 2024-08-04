@@ -46,7 +46,7 @@ class StorageLocation < ApplicationRecord
   validates :name, :address, :organization, presence: true
   validates :warehouse_type, inclusion: { in: WAREHOUSE_TYPES },
                              allow_blank: true
-  before_destroy :verify_inventory_items, prepend: true
+  before_destroy :validate_empty_inventory, prepend: true
 
   include Discard::Model
   include Geocodable
@@ -63,16 +63,18 @@ class StorageLocation < ApplicationRecord
   scope :for_csv_export, ->(organization, *) { where(organization: organization) }
   scope :active_locations, -> { where(discarded_at: nil) }
 
-  def self.item_total(item_id)
-    StorageLocation.select("quantity")
-                   .joins(:inventory_items)
-                   .where("inventory_items.item_id = ?", item_id)
-                   .collect(&:quantity)
-                   .reduce(:+)
-  end
-
-  def self.items_inventoried
-    Item.joins(:storage_locations).select(:id, :name).group(:id, :name).order(name: :asc)
+  # @param organization [Organization]
+  # @param inventory [View::Inventory]
+  def self.items_inventoried(organization, inventory = nil)
+    if inventory
+      inventory
+        .all_items
+        .uniq(&:item_id)
+        .sort_by(&:name)
+        .map { |i| OpenStruct.new(name: i.name, id: i.item_id) }
+    else
+      organization.items.joins(:storage_locations).select(:id, :name).group(:id, :name).order(name: :asc)
+    end
   end
 
   def item_total(item_id)
@@ -89,12 +91,16 @@ class StorageLocation < ApplicationRecord
     .sum(:quantity)
   end
 
-  def inventory_total_value_in_dollars
-    inventory_total_value = inventory_items.joins(:item).map do |inventory_item|
-      value_in_cents = inventory_item.item.try(:value_in_cents)
-      value_in_cents * inventory_item.quantity
-    end.reduce(:+)
-    inventory_total_value.present? ? (inventory_total_value.to_f / 100) : 0
+  def inventory_total_value_in_dollars(inventory = nil)
+    if inventory
+      inventory.total_value_in_dollars(storage_location: id)
+    else
+      inventory_total_value = inventory_items.joins(:item).map do |inventory_item|
+        value_in_cents = inventory_item.item.try(:value_in_cents)
+        value_in_cents * inventory_item.quantity
+      end.reduce(:+)
+      inventory_total_value.present? ? (inventory_total_value.to_f / 100) : 0
+    end
   end
 
   def to_csv
@@ -118,7 +124,17 @@ class StorageLocation < ApplicationRecord
   end
 
   # NOTE: We should generalize this elsewhere -- Importable concern?
+  # Requires a user with the ORG_ADMIN role, or it will fail silently
+  # First user with role from org found will be used for adjustment creation
+  #
+  # @param filename [String]
+  # @param org [Integer] Organization ID
+  # @param loc [Integer] StorageLocation ID
+  # @return [void]
   def self.import_inventory(filename, org, loc)
+    storage_location = StorageLocation.find(loc.to_i)
+    raise Errors::InventoryAlreadyHasItems unless storage_location.empty_inventory?
+
     current_org = Organization.find(org)
     adjustment = current_org.adjustments.new(storage_location_id: loc.to_i,
                                              user_id: User.with_role(Role::ORG_ADMIN, current_org).first&.id,
@@ -131,18 +147,11 @@ class StorageLocation < ApplicationRecord
     AdjustmentCreateService.new(adjustment).call
   end
 
-  def remove_empty_items
-    inventory_items.where(quantity: 0).delete_all
-  end
-
   # FIXME: After this is stable, revisit how we do logging
   def increase_inventory(itemizable_array)
-    itemizable_array = itemizable_array.to_a
-
     # This is, at least for now, how we log changes to the inventory made in this call
     log = {}
     # Iterate through each of the line-items in the moving box
-    Item.reactivate(itemizable_array.map { |item_hash| item_hash[:item_id] })
     itemizable_array.each do |item_hash|
       # Locate the storage box for the item, or create a new storage box for it
       inventory_item = inventory_items.find_or_create_by!(item_id: item_hash[:item_id])
@@ -161,8 +170,6 @@ class StorageLocation < ApplicationRecord
 
   # TODO: re-evaluate this for optimization
   def decrease_inventory(itemizable_array)
-    itemizable_array = itemizable_array.to_a
-
     # This is, at least for now, how we log changes to the inventory made in this call
     log = {}
     # This tracks items that have insufficient inventory counts to be reduced as much
@@ -184,7 +191,7 @@ class StorageLocation < ApplicationRecord
     end
     # NOTE: Could this be handled by a validation instead?
     # If we found any insufficiencies
-    unless insufficient_items.empty?
+    if insufficient_items.any? && !Event.read_events?(organization)
       # Raise this custom error with information about each of the items that showed insufficient
       # This bails out of the method!
       raise Errors::InsufficientAllotment.new(
@@ -211,8 +218,8 @@ class StorageLocation < ApplicationRecord
     log
   end
 
-  def verify_inventory_items
-    unless empty_inventory_items?
+  def validate_empty_inventory
+    unless empty_inventory?
       errors.add(:base, "Cannot delete storage location containing inventory items with non-zero quantities")
       throw(:abort)
     end
@@ -222,14 +229,39 @@ class StorageLocation < ApplicationRecord
     ["Name", "Address", "Square Footage", "Warehouse Type", "Total Inventory"]
   end
 
+  # TODO remove this method once read_events? is true everywhere
   def csv_export_attributes
     attributes = [name, address, square_footage, warehouse_type, total_active_inventory_count]
     active_inventory_items.sort_by { |inv_item| inv_item.item.name }.each { |item| attributes << item.quantity }
     attributes
   end
 
-  def empty_inventory_items?
-    inventory_items.map(&:quantity).uniq.reject(&:zero?).empty?
+  # @param storage_locations [Array<StorageLocation>]
+  # @param inventory [View::Inventory]
+  # @return [String]
+  def self.generate_csv_from_inventory(storage_locations, inventory)
+    all_items = inventory.all_items.uniq(&:item_id).sort_by(&:name)
+    additional_headers = all_items.map(&:name).uniq
+    CSV.generate(headers: true) do |csv|
+      csv_data = storage_locations.map do |sl|
+        total_quantity = inventory.quantity_for(storage_location: sl.id)
+        attributes = [sl.name, sl.address, sl.square_footage, sl.warehouse_type, total_quantity] +
+          all_items.map { |i| inventory.quantity_for(storage_location: sl.id, item_id: i.item_id) }
+        attributes.map { |attr| normalize_csv_attribute(attr) }
+      end
+      ([csv_export_headers + additional_headers] + csv_data).each do |row|
+        csv << row
+      end
+    end
+  end
+
+  def empty_inventory?
+    if Event.read_events?(organization)
+      inventory = View::Inventory.new(organization_id)
+      inventory.quantity_for(storage_location: id).zero?
+    else
+      inventory_items.map(&:quantity).all?(&:zero?)
+    end
   end
 
   def active_inventory_items

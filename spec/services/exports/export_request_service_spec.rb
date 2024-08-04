@@ -1,6 +1,4 @@
-require "rails_helper"
-
-describe Exports::ExportRequestService do
+RSpec.describe Exports::ExportRequestService do
   let(:org) { create(:organization) }
 
   let(:item_3t) { create :item, name: "3T Diapers" }
@@ -25,26 +23,25 @@ describe Exports::ExportRequestService do
            request_items: [{ item_id: 0, quantity: 200 }, { item_id: -1, quantity: 200 }])
   end
 
-  let!(:duplicate_items) do
+  let!(:unique_items) do
     [
       {item_id: item_3t.id, quantity: 2},
-      {item_id: item_2t.id, quantity: 3},
-      {item_id: item_3t.id, quantity: 5}
+      {item_id: item_2t.id, quantity: 3}
     ]
   end
 
-  let!(:duplicate_item_quantities) do
-    duplicate_items.each_with_object(Hash.new(0)) do |item, hsh|
+  let!(:item_quantities) do
+    unique_items.each_with_object(Hash.new(0)) do |item, hsh|
       hsh[item[:item_id]] += item[:quantity]
     end
   end
 
-  let!(:request_with_duplicate_items) do
+  let!(:request_with_items) do
     create(
       :request,
       :started,
       organization: org,
-      request_items: duplicate_items
+      request_items: unique_items
     )
   end
 
@@ -78,8 +75,8 @@ describe Exports::ExportRequestService do
       item_column_idx = expected_headers.each_with_index.to_h[Exports::ExportRequestService::DELETED_ITEMS_COLUMN_HEADER]
       expect(subject.fourth[item_column_idx]).to eq(400)
 
-      expect(subject.fifth[item_2t_column_idx]).to eq(duplicate_item_quantities[item_2t.id])
-      expect(subject.fifth[item_3t_column_idx]).to eq(duplicate_item_quantities[item_3t.id])
+      expect(subject.fifth[item_2t_column_idx]).to eq(item_quantities[item_2t.id])
+      expect(subject.fifth[item_3t_column_idx]).to eq(item_quantities[item_3t.id])
     end
   end
 end

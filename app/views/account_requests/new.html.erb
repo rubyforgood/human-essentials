@@ -13,7 +13,7 @@
         <%= radio_button_tag(:account, :partner, false, class: 'form-check-input account_type') %>
         <%= label_tag(:account, "I am a Partner Agency to an Essentials Bank. I distribute the diapers/period supplies that I receive from essentials banks directly to the public.", class: 'form-check-label') %>
       </div>
-      
+
       <% if @bank_selected %>
         <script type="module">
             $(document).ready(function() {
@@ -60,7 +60,7 @@
         <%= simple_form_for(@account_request) do |f| %>
           <%= f.error_notification %>
           <%= render partial: "shared/flash" %>
-        
+
           <div class="form-inputs">
             <div class="form-inputs">
               <%= f.input :name, autofocus: true %>
@@ -75,7 +75,7 @@
             </div>
 
             <div class="form-inputs">
-              <%= f.input :organization_website %>
+              <%= f.input :organization_website, placeholder: "https://www.example.com" %>
             </div>
 
             <div class="form-inputs">

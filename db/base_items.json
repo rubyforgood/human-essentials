@@ -41,12 +41,13 @@
   ],
   "Incontinence Pads - Adult": [
     { "key": "adult_incontinence", "name": "Adult Incontinence Pads", "qty": { "arbor": 0, "pdxdb": 2304 } },
-    { "key": "underpads", "name": "Underpads (Pack)", "qty": { "arbor": 0, "pdxdb": 2 } }
+    { "key": "underpads", "name": "Underpads (Pack)", "qty": { "arbor": 0, "pdxdb": 2 } },
+    {"key":  "ai_liners", "name":  "Liners (Incontinence)", "qty":  { "arbor": 0, "pdxdb": 1024 } }
   ],
-  "Period Supplies": [
+  "Menstrual Supplies/Items": [
     { "key": "pads", "name": "Pads", "qty": { "arbor": 0, "pdxdb": 1232 } },
     { "key": "tampons", "name": "Tampons", "qty": { "arbor": 0, "pdxdb": 5162 } },
-    { "key": "liners", "name": "Adult Liners", "qty": { "arbor": 0, "pdxdb": 5162 } }
+    { "key": "liners", "name": "Liners (Menstrual)", "qty": { "arbor": 0, "pdxdb": 5162 } }
   ],
   "Miscellaneous": [
     { "key": "bed_pad_cloth", "name": "Bed Pads (Cloth)", "qty": { "arbor": 0, "pdxdb": 44 } },

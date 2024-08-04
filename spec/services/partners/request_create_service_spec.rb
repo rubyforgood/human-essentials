@@ -1,6 +1,4 @@
-require 'rails_helper'
-
-describe Partners::RequestCreateService do
+RSpec.describe Partners::RequestCreateService do
   describe '#call' do
     subject { described_class.new(**args).call }
     let(:args) do
@@ -56,14 +54,6 @@ describe Partners::RequestCreateService do
 
     context 'when the arguments are correct' do
       let(:items_to_request) { BaseItem.all.sample(3) }
-      let(:item_requests_attributes) do
-        items_to_request.map do |item|
-          ActionController::Parameters.new(
-            item_id: item.id,
-            quantity: Faker::Number.within(range: 1..10)
-          )
-        end
-      end
       let(:fake_organization_valid_items) do
         items_to_request.map do |item|
           {
@@ -92,6 +82,41 @@ describe Partners::RequestCreateService do
       it 'should notify the Partner via email' do
         subject
         expect(NotifyPartnerJob).to have_received(:perform_now).with(Request.last.id)
+      end
+
+      it 'should have created item requests' do
+        subject
+        expect(Partners::ItemRequest.count).to eq(item_requests_attributes.count)
+      end
+
+      context 'when we have duplicate item as part of request' do
+        let(:duplicate_item) { FactoryBot.create(:item) }
+        let(:unique_item) { FactoryBot.create(:item) }
+        let(:item_requests_attributes) do
+          [
+            ActionController::Parameters.new(
+              item_id: duplicate_item.id,
+              quantity: 3
+            ),
+            ActionController::Parameters.new(
+              item_id: unique_item.id,
+              quantity: 7
+            ),
+            ActionController::Parameters.new(
+              item_id: duplicate_item.id,
+              quantity: 5
+            )
+          ]
+        end
+        it 'should add the quantity of the duplicate item' do
+          subject
+          aggregate_failures {
+            expect(Partners::ItemRequest.count).to eq(2)
+            expect(Partners::ItemRequest.find_by(item_id: duplicate_item.id).quantity).to eq("8")
+            expect(Partners::ItemRequest.find_by(item_id: unique_item.id).quantity).to eq("7")
+            expect(Partners::ItemRequest.first.item_id).to eq(duplicate_item.id)
+          }
+        end
       end
 
       context 'but a unexpected error occured during the save' do

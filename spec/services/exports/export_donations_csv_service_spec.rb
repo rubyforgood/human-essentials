@@ -1,22 +1,13 @@
-describe Exports::ExportDonationsCSVService do
+RSpec.describe Exports::ExportDonationsCSVService do
   describe '#generate_csv_data' do
     subject { described_class.new(donation_ids: donation_ids).generate_csv_data }
     let(:donation_ids) { donations.map(&:id) }
-    let(:duplicate_item) do
-      FactoryBot.create(
-        :item, name: Faker::Appliance.equipment
-      )
-    end
+    let(:duplicate_item) { FactoryBot.create(:item) }
     let(:items_lists) do
       [
         [
           [duplicate_item, 5],
-          [
-            FactoryBot.create(
-              :item, name: Faker::Appliance.equipment
-            ),
-            7
-          ],
+          [FactoryBot.create(:item), 7],
           [duplicate_item, 3]
         ],
         *(Array.new(3) do |i|
@@ -56,7 +47,7 @@ describe Exports::ExportDonationsCSVService do
       [
         "Source",
         "Date",
-        "Donation Site",
+        "Details",
         "Storage Location",
         "Quantity of Items",
         "Variety of Items",
@@ -87,9 +78,9 @@ describe Exports::ExportDonationsCSVService do
 
       donations.zip(total_item_quantities).each_with_index do |(donation, total_item_quantity), idx|
         row = [
-          donation.source_view,
+          donation.source,
           donation.issued_at.strftime("%F"),
-          donation.donation_site.try(:name),
+          donation.details,
           donation.storage_view,
           donation.line_items.total,
           total_item_quantity.count(&:positive?),

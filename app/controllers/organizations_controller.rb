@@ -16,7 +16,7 @@ class OrganizationsController < ApplicationController
     @organization = current_organization
 
     if OrganizationUpdateService.update(@organization, organization_params)
-      redirect_to organization_path(@organization), notice: "Updated your organization!"
+      redirect_to organization_path, notice: "Updated your organization!"
     else
       flash[:error] = @organization.errors.full_messages.join("\n")
       render :edit
@@ -48,7 +48,7 @@ class OrganizationsController < ApplicationController
         resource_id: current_organization.id)
       redirect_to user_update_redirect_path, notice: "User has been promoted!"
     rescue => e
-      redirect_back(fallback_location: organization_path(current_organization), alert: e.message)
+      redirect_back(fallback_location: organization_path, alert: e.message)
     end
   end
 
@@ -61,22 +61,21 @@ class OrganizationsController < ApplicationController
         resource_id: current_organization.id)
       redirect_to user_update_redirect_path, notice: notice
     rescue => e
-      redirect_back(fallback_location: organization_path(current_organization), alert: e.message)
+      redirect_back(fallback_location: organization_path, alert: e.message)
     end
   end
 
-  def deactivate_user
-    user = User.with_discarded.find_by!(id: params[:user_id])
+  def remove_user
+    user = User.find(params[:user_id])
     raise ActiveRecord::RecordNotFound unless user.has_role?(Role::ORG_USER, current_organization)
-    user.discard!
-    redirect_to user_update_redirect_path, notice: "User has been deactivated."
-  end
-
-  def reactivate_user
-    user = User.with_discarded.find_by!(id: params[:user_id])
-    raise ActiveRecord::RecordNotFound unless user.has_role?(Role::ORG_USER, current_organization)
-    user.undiscard!
-    redirect_to user_update_redirect_path, notice: "User has been reactivated."
+    begin
+      RemoveRoleService.call(user_id: params[:user_id],
+        resource_type: Role::ORG_USER,
+        resource_id: current_organization.id)
+      redirect_to user_update_redirect_path, notice: "User has been removed!"
+    rescue => e
+      redirect_back(fallback_location: organization_path, alert: e.message)
+    end
   end
 
   private
@@ -97,7 +96,11 @@ class OrganizationsController < ApplicationController
       :repackage_essentials, :distribute_monthly,
       :ndbn_member_id, :enable_child_based_requests,
       :enable_individual_requests, :enable_quantity_based_requests,
-      :ytd_on_distribution_printout, partner_form_fields: []
+      :ytd_on_distribution_printout, :one_step_partner_invite,
+      :hide_value_columns_on_receipt, :hide_package_column_on_receipt,
+      :signature_for_distribution_pdf,
+      partner_form_fields: [],
+      request_unit_names: []
     )
   end
 

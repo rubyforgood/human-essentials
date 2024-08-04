@@ -1,9 +1,6 @@
 <tr>
   <td>
-    <%= user.name %>
-    <% if user.discarded? %>
-      <span class="badge badge-danger bg-danger">Deactivated</span>
-    <% end %>
+    <%= user.display_name %>
   </td>
   <td><%= user.email %></td>
   <td><%= user.kind %> </td>
@@ -11,45 +8,34 @@
   <td><%= user.invitation_status %></td>
   <td nowrap><%= reinvite_user_link(user) %></td>
   <td>
-      <% unless user.has_role?(Role::SUPER_ADMIN) || user.has_role?(Role::ORG_ADMIN, current_organization) %>
-        <div class="dropdown">
-          <button class="btn btn-default dropdown-toggle" type="button" id=<%= dom_id(user, "dropdownMenu") %> data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-            Actions
-            <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu">
-            <% if user.kept? %>
-              <li>
-                <%=
-                  edit_button_to(
-                    promote_to_org_admin_organization_path(current_organization, user_id: user.id),
-                    {text: 'Make admin'},
-                    {method: :post, rel: "nofollow", data: {confirm: 'This will promote the user to admin status. Are you sure that you want to submit this?', size: 'xs'}}
-                  )
-                %>
-              </li>
-
-              <li>
-                <%= deactivate_button_to deactivate_user_organization_path(current_organization, user_id: user.id),
-                  {id: dom_id(user), method: :post, class: 'deactivate', rel: "nofollow", data: {confirm: 'This will deactivate the user. Are you sure that you want to submit this?', size: 'xs'}}
-                %>
-              </li>
-            <% else %>
-              <%= reactivate_button_to reactivate_user_organization_path(current_organization, user_id: user.id),
-                {id: dom_id(user), method: :post, class: 'reactivate', rel: "nofollow", data: {confirm: 'This will reactivate the user. Are you sure that you want to submit this?', size: 'xs'}}
-              %>
-            <% end %>
-          </ul>
-        </div>
-      <% end %>
-      <% if current_user.has_role?(Role::ORG_ADMIN, current_organization) && user.has_role?(Role::ORG_ADMIN, current_organization) %>
-        <%= edit_button_to demote_to_user_organization_path(current_organization, user_id: user.id),
-                 {text: 'Make User'},
+    <% unless user.has_role?(Role::SUPER_ADMIN) || user.has_role?(Role::ORG_ADMIN, current_organization) %>
+      <div class="dropdown">
+        <button class="btn btn-default dropdown-toggle" type="button" id="<%= dom_id(user, "dropdownMenu") %>" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+          Actions
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+          <li>
+            <%=
+              edit_button_to(
+                promote_to_org_admin_organization_path(user_id: user.id),
+                {text: 'Promote to Admin'},
+                {method: :post, rel: "nofollow", data: {confirm: 'This will promote the user to admin status. Are you sure that you want to submit this?', size: 'xs'}}
+              )
+            %>
+          </li>
+          <li>
+            <%= delete_button_to remove_user_organization_path(user_id: user.id),
+              {id: dom_id(user), method: :post, class: 'deactivate', text: "Remove User", rel: "nofollow", data: {confirm: 'This will revoke the user\'s organization permissions. Are you sure that you want to submit this?', size: 'xs'}} %>
+          </li>
+        </ul>
+      </div>
+    <% end %>
+    <% if current_user.has_role?(Role::ORG_ADMIN, current_organization) && user.has_role?(Role::ORG_ADMIN, current_organization) %>
+      <%= edit_button_to demote_to_user_organization_path(user_id: user.id),
+                 {text: 'Demote to User'},
                  {method: :post, rel: "nofollow", data: {confirm: 'This will demote the admin to user status. Are you sure that you want to submit this?', size: 'xs'}} unless user.id == current_user.id %>
-      <% end %>
-      </td>
+    <% end %>
   </td>
+</td>
 </tr>
-
-
-

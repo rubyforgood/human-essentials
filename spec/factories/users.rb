@@ -18,7 +18,7 @@
 #  last_request_at        :datetime
 #  last_sign_in_at        :datetime
 #  last_sign_in_ip        :inet
-#  name                   :string           default("Name Not Provided"), not null
+#  name                   :string
 #  organization_admin     :boolean
 #  provider               :string
 #  remember_created_at    :datetime
@@ -30,6 +30,7 @@
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  invited_by_id          :integer
+#  last_role_id           :bigint
 #  organization_id        :integer
 #  partner_id             :bigint
 #
@@ -47,6 +48,22 @@ FactoryBot.define do
     after(:create) do |user, evaluator|
       if evaluator.organization
         user.add_role(Role::ORG_USER, evaluator.organization)
+      end
+    end
+
+    factory :partner_user do
+      name { "Partner User" }
+      sequence(:email) { |n| "partner_user_#{n}@example.com" }
+      password { "password!" }
+      password_confirmation { "password!" }
+      invitation_sent_at { Time.current - 1.day }
+      last_sign_in_at { Time.current }
+      organization { nil }
+      transient do
+        partner { Partner.first || create(:partner) }
+      end
+      after(:create) do |instance, evaluator|
+        instance.add_role(Role::PARTNER, evaluator.partner)
       end
     end
 
@@ -74,6 +91,10 @@ FactoryBot.define do
         user.add_role(Role::SUPER_ADMIN)
         user.remove_role(Role::ORG_USER, evaluator.organization)
       end
+    end
+
+    trait :no_roles do
+      organization { nil }
     end
 
     trait :deactivated do

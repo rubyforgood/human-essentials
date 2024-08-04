@@ -5,7 +5,7 @@
         <% content_for :title, "#{@distribution.storage_location.name} - Distributions - #{current_organization.name}" %>
         <h1>
           Distribution
-          <small>from <%= @distribution.storage_location.name %> to <b><%=@distribution.partner.name %></b></small>
+          <small>from <%= @distribution.storage_location.name %> to <b><%= @distribution.partner.name %></b></small>
         </h1>
       </div>
       <div class="col-sm-6">
@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Distributions", (distributions_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Distributions", distributions_path %></li>
           <li class="breadcrumb-item"><a href="#"><%= @distribution.partner.name %>
             <% if @distribution.persisted? %>
               <%= "(#{@distribution.created_at.strftime("%m/%d/%Y")})" %></li>
@@ -24,7 +24,6 @@
     </div>
   </div><!-- /.container-fluid -->
 </section>
-
 
 <section class="content">
   <div class="container-fluid">
@@ -85,9 +84,19 @@
           <div class="card-footer">
             <%= update_button_to picked_up_distribution_path(@distribution), {text: "Distribution Complete", size: "md"} if @distribution.scheduled? %>
             <% if @distribution.future? || current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
-              <%= edit_button_to edit_distribution_path(@distribution), {text: "Make a Correction", size: "md"} %>
+              <%= edit_button_to edit_distribution_path(@distribution), {
+                text: "Make a Correction",
+                enabled: !@distribution.has_inactive_item?,
+                size: "md"} %>
             <% end %>
-            <%= print_button_to print_distribution_path(@distribution, format: :pdf), {size: "md"} %>                        </div>
+            <%= print_button_to print_distribution_path(@distribution, format: :pdf), {size: "md"} %>
+          </div>
+          <% if @distribution.has_inactive_item? %>
+            <div class="low_prioirty_warning">
+              You can only correct distributions where all the items are active.
+              If you need to make a correction, please make the following items active: <%= @distribution.inactive_items.map(&:name).join(", ") %>
+            </div>
+          <% end %>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 <div class="tab-pane fade show active" id="custom-tabs-three-home" role="tabpanel" aria-labelledby="custom-tabs-three-home-tab">
   <div class='flex justify-end mb-4'>
-    <%= new_button_to new_item_path(organization_id: current_organization), {text: "New Item"} %>
+    <%= new_button_to new_item_path, {text: "New Item"} %>
   </div>
 
   <table id='items-table' class="table">
@@ -10,13 +10,16 @@
       <th>Name</th>
       <th>Quantity Per Individual</th>
       <th>Fair Market Value (per item)</th>
+      <% if Flipper.enabled?(:enable_packs) %>
+        <% unless current_organization.request_units.empty? %>
+          <th>Custom Request Units</th>
+        <% end %>
+      <% end %>
       <th class="text-center">Actions</th>
     </tr>
     </thead>
     <tbody>
-      <%= render partial: "items/item_row", collection: items, as: :item_row %>
+      <%= render partial: "items/item_row", collection: items, as: :item_row, locals: { inventory: inventory, kits: kits } %>
     </tbody>
   </table>
 </div><!-- /.box-body.table-responsive -->
-
-

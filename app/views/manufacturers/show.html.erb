@@ -14,14 +14,13 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Manufacturers", (manufacturers_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Manufacturers", manufacturers_path %></li>
           <li class="breadcrumb-item"><%= @manufacturer.name %></li>
         </ol>
       </div>
     </div>
   </div><!-- /.container-fluid -->
 </section>
-
 
 <section class="content">
   <div class="container-fluid">
@@ -48,8 +47,7 @@
                   <td><%= donation.created_at.strftime("%m/%d/%Y") %></td>
                   <td><%= donation.line_items.total %></td>
                   <td>
-                    <%= view_button_to donation, { text: "View donation details" }
-                    %>
+                    <%= view_button_to donation, { text: "View donation details" } %>
                   </td>
                 </tr>
               <% end %>
@@ -63,23 +61,3 @@
     </div>
   </div>
 </section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

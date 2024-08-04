@@ -1,7 +1,7 @@
 RSpec.shared_examples "csv import" do
   context "with a csv file" do
     let(:file) { Rack::Test::UploadedFile.new "spec/fixtures/files/#{model_class.name.underscore.pluralize}.csv", "text/csv" }
-    subject { post :import_csv, params: default_params.merge(file: file) }
+    subject { post :import_csv, params: {file: file} }
 
     it "invokes .import_csv" do
       expect(model_class).to respond_to(:import_csv).with(2).arguments
@@ -17,7 +17,7 @@ RSpec.shared_examples "csv import" do
   end
 
   context "without a csv file" do
-    subject { post :import_csv, params: default_params }
+    subject { post :import_csv }
 
     it "redirects to :index" do
       expect(subject).to be_redirect
@@ -30,7 +30,7 @@ RSpec.shared_examples "csv import" do
 
   context "csv file with wrong headers" do
     let(:file) { Rack::Test::UploadedFile.new "spec/fixtures/files/wrong_headers.csv", "text/csv" }
-    subject { post :import_csv, params: default_params.merge(file: file) }
+    subject { post :import_csv, params: {file: file} }
 
     it "redirects to :index" do
       expect(subject).to be_redirect

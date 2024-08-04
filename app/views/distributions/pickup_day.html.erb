@@ -13,8 +13,8 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Distributions", (distributions_path) %></li>
-          <li class="breadcrumb-item"><%= link_to "Schedule", (schedule_distributions_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Distributions", distributions_path %></li>
+          <li class="breadcrumb-item"><%= link_to "Schedule", schedule_distributions_path %></li>
         </ol>
       </div>
     </div>
@@ -76,7 +76,7 @@
               </tr>
               </thead>
               <tbody>
-                <%= render partial: "daily_item_row", collection: @daily_items%>
+                <%= render partial: "daily_item_row", collection: @daily_items %>
               </tbody>
             </table>
           </div>

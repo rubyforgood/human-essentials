@@ -66,8 +66,24 @@ class DistributionsController < ApplicationController
     respond_to do |format|
       format.html
       format.csv do
-        send_data Exports::ExportDistributionsCSVService.new(distributions: @distributions, filters: filter_params).generate_csv, filename: "Distributions-#{Time.zone.today}.csv"
+        send_data Exports::ExportDistributionsCSVService.new(distributions: @distributions, organization: current_organization, filters: filter_params).generate_csv, filename: "Distributions-#{Time.zone.today}.csv"
       end
+    end
+  end
+
+  # This endpoint is in support of displaying a confirmation modal before a distribution is created.
+  # Since the modal should only be shown for a valid distribution, client side JS will invoke this
+  # endpoint, and if the distribution is valid, this endpoint also returns the HTML for the modal content.
+  # Important: The distribution model is intentionally NOT saved to the database at this point because
+  # the user has not yet confirmed that they want to create it.
+  def validate
+    @dist = Distribution.new(distribution_params.merge(organization: current_organization))
+    @dist.line_items.combine!
+    if @dist.valid?
+      body = render_to_string(template: 'distributions/validate', formats: [:html], layout: false)
+      render json: {valid: true, body: body}
+    else
+      render json: {valid: false}
     end
   end
 
@@ -95,7 +111,14 @@ class DistributionsController < ApplicationController
       end
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
-      @storage_locations = current_organization.storage_locations.active_locations.alphabetized
+      if Event.read_events?(current_organization)
+        inventory = View::Inventory.new(@distribution.organization_id)
+        @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
+          inventory.quantity_for(storage_location: storage_loc.id).positive?
+        end
+      else
+        @storage_locations = current_organization.storage_locations.active_locations.has_inventory_items.alphabetized
+      end
 
       flash_error = insufficient_error_message(result.error.message)
 
@@ -120,7 +143,14 @@ class DistributionsController < ApplicationController
       @distribution.copy_from_donation(params[:donation_id], params[:storage_location_id])
     end
     @items = current_organization.items.alphabetized
-    @storage_locations = current_organization.storage_locations.active_locations.has_inventory_items.alphabetized
+    if Event.read_events?(current_organization)
+      inventory = View::Inventory.new(current_organization.id)
+      @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
+        inventory.quantity_for(storage_location: storage_loc.id).positive?
+      end
+    else
+      @storage_locations = current_organization.storage_locations.active_locations.has_inventory_items.alphabetized
+    end
   end
 
   def show
@@ -140,10 +170,17 @@ class DistributionsController < ApplicationController
         current_user.has_role?(Role::ORG_ADMIN, current_organization)
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
-      @storage_locations = current_organization.storage_locations.active_locations.has_inventory_items.alphabetized
       @audit_warning = current_organization.audits
         .where(storage_location_id: @distribution.storage_location_id)
         .where("updated_at > ?", @distribution.created_at).any?
+      if Event.read_events?(current_organization)
+        inventory = View::Inventory.new(@distribution.organization_id)
+        @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
+          !inventory.quantity_for(storage_location: storage_loc.id).negative?
+        end
+      else
+        @storage_locations = current_organization.storage_locations.active_locations.has_inventory_items.alphabetized
+      end
     else
       redirect_to distributions_path, error: 'To edit a distribution,
       you must be an organization admin or the current date must be later than today.'
@@ -188,7 +225,14 @@ class DistributionsController < ApplicationController
 
   # TODO: This needs a little more context. Is it JSON only? HTML?
   def schedule
-    @pick_ups = current_organization.distributions
+    respond_to do |format|
+      format.html
+      format.json do
+        start_at = params[:start].to_datetime
+        end_at = params[:end].to_datetime
+        @pick_ups = current_organization.distributions.includes(:partner).where(issued_at: start_at..end_at)
+      end
+    end
   end
 
   def calendar

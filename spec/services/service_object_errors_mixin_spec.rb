@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
-
-describe ServiceObjectErrorsMixin do
+RSpec.describe ServiceObjectErrorsMixin do
   describe 'self.included' do
     before do
       stub_const 'TestClass', Class.new

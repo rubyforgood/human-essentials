@@ -1,14 +1,16 @@
 =begin
-require "rails_helper"
 
 RSpec.describe AdminsController, type: :controller do
+  let(:organization) { create(:organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+
   let(:default_params) do
-    { organization_id: @organization.id }
+    { organization_id: organization.id }
   end
 
   context "When logged in as an organization admin" do
     before do
-      sign_in(@organization_admin)
+      sign_in(organization_admin)
     end
 
     describe "GET #new" do
@@ -34,28 +36,28 @@ RSpec.describe AdminsController, type: :controller do
 
     describe "GET #show" do
       it "returns http success" do
-        get :show, params: { id: @organization.id }
+        get :show, params: { id: organization.id }
         expect(response).to be_successful
       end
     end
 
     describe "GET #edit" do
       it "returns http success" do
-        get :edit, params: { id: @organization.id }
+        get :edit, params: { id: organization.id }
         expect(response).to be_successful
       end
     end
 
     describe "PUT #update" do
       it "redirect" do
-        put :update, params: { id: @organization.id, organization: { name: "Foo" } }
+        put :update, params: { id: organization.id, organization: { name: "Foo" } }
         expect(response).to be_redirect
       end
     end
 
     describe "DELETE #destroy" do
       it "redirects" do
-        delete :destroy, params: { id: @organization.id }
+        delete :destroy, params: { id: organization.id }
         expect(response).to be_redirect
       end
     end
@@ -63,7 +65,7 @@ RSpec.describe AdminsController, type: :controller do
 
   context "When logged in as a non-admin user" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     describe "GET #new" do
@@ -89,14 +91,14 @@ RSpec.describe AdminsController, type: :controller do
 
     describe "GET #edit" do
       it "redirects" do
-        get :edit, params: { id: @organization.id }
+        get :edit, params: { id: organization.id }
         expect(response).to be_redirect
       end
     end
 
     describe "PUT #update" do
       it "redirects" do
-        put :update, params: { id: @organization.id, organization: { name: "Foo" } }
+        put :update, params: { id: organization.id, organization: { name: "Foo" } }
         expect(response).to be_redirect
       end
     end

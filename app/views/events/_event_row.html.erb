@@ -1,0 +1,37 @@
+<% if event.is_a?(SnapshotEvent) %>
+  <%= render partial: "snapshot_event_row", object: event, as: :event, locals: { items: items, storage_locs: storage_locs } %>
+<% else %>
+  <% from_loc = event.data.items.first&.from_storage_location %>
+  <% to_loc = event.data.items.first&.to_storage_location %>
+  <tr>
+    <td>
+      <%= event.user&.name || "No Name Provided" %>
+    </td>
+    <td title="Internal Event ID: <%= event.id %>"><%= event.type.sub(/Event/, '') %></td>
+    <td>
+      <%= link_to event.eventable_id, event.eventable %>
+      <%= link_to(
+          events_path(eventable_type: event.eventable_type, eventable_id: event.eventable_id),
+          class: 'btn btn-md') do %>
+        <i class="fa fa-filter"></i>
+      <% end %>
+    </td>
+    <td><%= event.event_time.strftime("%Y/%m/%d %H:%M:%S %Z") %></td>
+    <td>
+      <% if from_loc %>
+        <%= link_to storage_locs.find { |i| i.id == from_loc}.name, storage_location_path(from_loc) %>
+      <% end %>
+    </td>
+    <td>
+      <% if to_loc %>
+        <%= link_to storage_locs.find { |i| i.id == to_loc}.name, storage_location_path(to_loc) %>
+      <% end %>
+    </td>
+    <td>
+      <% event.data.items.each do |entry| %>
+        <%= link_to items.find { |i| i.id == entry.item_id}.name, item_path(entry.item_id) %>:
+        <%= entry.from_storage_location == from_loc ? entry.quantity : -entry.quantity %><br>
+      <% end %>
+    </td>
+  </tr>
+<% end %>

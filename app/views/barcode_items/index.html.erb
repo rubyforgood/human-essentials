@@ -48,7 +48,7 @@
                 <span class="float-right">
                   <%= download_button_to(barcode_items_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Barcode Items", size: "md"}) if @barcode_items.any? %>
                   <%= download_button_to(font_barcode_items_path, {text: "Download Barcode Font"}) %>
-                  <%= new_button_to new_barcode_item_path(organization_id: current_organization), {text: "New Barcode"} %>
+                  <%= new_button_to new_barcode_item_path, {text: "New Barcode"} %>
                   </span>
               </div>
             <% end # form %>
