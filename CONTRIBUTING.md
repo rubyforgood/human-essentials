@@ -83,7 +83,7 @@ You won't be yelled at for giving your best effort. The worst that can happen is
 
 1. Follow the link above or follow instructions to [create a new Codespace.](https://docs.github.com/en/codespaces/developing-in-a-codespace/creating-a-codespace-for-a-repository); You can use the web editor, or even better open the Codespace in VSCode
 2. Wait for the container to start. This will take a few (10-15) minutes since Ruby needs to be installed, the database needs to be created, and the `bin/setup` script needs to run
-3. Run `bin/start` and visit the URL that pops in VSCode up to see the human essentials page
+3. Run `bin/start`. On the Ports tab, visit the forwarded port 3000 URL marked as Application to see the human essentials page. 
 4. Login as a sample user with the default [credentials](#credentials).
 
 ## Troubleshooting 👷🏼‍♀️
@@ -131,6 +131,13 @@ If starting server directly, via `rail s` or `rail console`, or built-in debugge
 
 If starting via Procfile with `bin/start`, then drop a ``binding.remote_pry`` into the line where you want execution to pause at. Then run ``pry-remote`` in the terminal to connect to it.
 https://github.com/Mon-Ouie/pry-remote
+
+If you want to connect via Shopify Ruby LSP VSCode extension or rdbg, start the server with `bundle exec rdbg -O -n -c -- bin/rails server -p 3000`
+
+### Codespaces
+When running tests in browser, visit the forwarded port 6080 URL to see the browser in Codespaces. You can also visit this port to access the GUI desktop in Codespaces.
+
+In VSCode Run and Debug view, there are some helpful defaults for running RSpec tests in browser at your cursor as well as attaching to a live server. Make sure the Ruby LSP server is started before debugging.
 
 ## Squashing commits
 

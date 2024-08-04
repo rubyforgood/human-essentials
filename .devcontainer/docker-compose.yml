@@ -9,6 +9,9 @@ services:
     volumes:
       - ../..:/workspaces:cached
 
+    # Increase shared memory for Chrome to run in Fluxbox
+    shm_size: "2gb"
+
     # Overrides default command so things don't shut down after the process ends.
     command: sleep infinity
 
