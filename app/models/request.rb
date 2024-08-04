@@ -36,7 +36,7 @@ class Request < ApplicationRecord
   validate :item_requests_uniqueness_by_item_id
   validate :not_completely_empty
 
-  before_save :sanitize_items_data
+  after_validation :sanitize_items_data
 
   include Filterable
   # add request item scope to allow filtering distributions by request item
@@ -54,10 +54,6 @@ class Request < ApplicationRecord
 
   def total_items
     request_items.sum { |item| item["quantity"] }
-  end
-
-  def total_items_fromstr
-    request_items.sum { |item| item["quantity"].to_i }
   end
 
   def user_email
