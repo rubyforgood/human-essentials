@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe PartnerFetchRequestableItemsService do
   describe '#call' do
     subject { described_class.new(partner_id: partner.id).call }

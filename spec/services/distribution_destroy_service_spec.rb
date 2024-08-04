@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe DistributionDestroyService do
   describe '#call' do
     subject { described_class.new(distribution_id).call }

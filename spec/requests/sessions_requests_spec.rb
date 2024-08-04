@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe "Sessions", type: :request, order: :defined do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }

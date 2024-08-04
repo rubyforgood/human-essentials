@@ -2,6 +2,19 @@
 class DonationsController < ApplicationController
   before_action :authorize_admin, only: [:destroy]
 
+  def print
+    @donation = Donation.find(params[:id])
+    respond_to do |format|
+      format.any do
+        pdf = DonationPdf.new(current_organization, @donation)
+        send_data pdf.compute_and_render,
+          filename: format("%s %s.pdf", @donation.source, sortable_date(@donation.created_at)),
+          type: "application/pdf",
+          disposition: "inline"
+      end
+    end
+  end
+
   def index
     setup_date_range_picker
 

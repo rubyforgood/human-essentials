@@ -65,18 +65,17 @@ class OrganizationsController < ApplicationController
     end
   end
 
-  def deactivate_user
-    user = User.with_discarded.find_by!(id: params[:user_id])
+  def remove_user
+    user = User.find(params[:user_id])
     raise ActiveRecord::RecordNotFound unless user.has_role?(Role::ORG_USER, current_organization)
-    user.discard!
-    redirect_to user_update_redirect_path, notice: "User has been deactivated."
-  end
-
-  def reactivate_user
-    user = User.with_discarded.find_by!(id: params[:user_id])
-    raise ActiveRecord::RecordNotFound unless user.has_role?(Role::ORG_USER, current_organization)
-    user.undiscard!
-    redirect_to user_update_redirect_path, notice: "User has been reactivated."
+    begin
+      RemoveRoleService.call(user_id: params[:user_id],
+        resource_type: Role::ORG_USER,
+        resource_id: current_organization.id)
+      redirect_to user_update_redirect_path, notice: "User has been removed!"
+    rescue => e
+      redirect_back(fallback_location: organization_path, alert: e.message)
+    end
   end
 
   private
@@ -100,7 +99,8 @@ class OrganizationsController < ApplicationController
       :ytd_on_distribution_printout, :one_step_partner_invite,
       :hide_value_columns_on_receipt, :hide_package_column_on_receipt,
       :signature_for_distribution_pdf,
-      partner_form_fields: []
+      partner_form_fields: [],
+      request_unit_names: []
     )
   end
 
