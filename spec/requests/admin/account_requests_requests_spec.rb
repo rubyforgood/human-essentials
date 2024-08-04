@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe 'Admin::AccountRequestsController', type: :request do
   let(:organization) { create(:organization) }
 

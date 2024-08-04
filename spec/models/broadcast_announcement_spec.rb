@@ -11,7 +11,6 @@
 #  organization_id :bigint
 #  user_id         :bigint           not null
 #
-require "rails_helper"
 
 RSpec.describe BroadcastAnnouncement, type: :model do
   it { should belong_to(:organization).optional }

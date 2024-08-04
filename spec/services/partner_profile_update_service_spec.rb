@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe PartnerProfileUpdateService do
   let(:county_1) { create(:county, name: "county1", region: "region1") }
   let(:county_2) { create(:county, name: "county2", region: "region2") }

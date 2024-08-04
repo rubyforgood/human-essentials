@@ -235,20 +235,77 @@ RSpec.describe "StorageLocations", type: :request do
           let(:inventory_item) { storage_location.inventory_items.first }
 
           context "with a version found" do
-            it "should show the version specified" do
-              travel 1.day do
-                inventory_item.update!(quantity: 100)
+            context "with events_read on" do
+              before(:each) { allow(Event).to receive(:read_events?).and_return(true) }
+              context "before active events" do
+                it "should show the version specified" do
+                  travel 1.day do
+                    inventory_item.update!(quantity: 100)
+                  end
+                  travel 1.week do
+                    inventory_item.update!(quantity: 300)
+                  end
+                  travel 8.days do
+                    SnapshotEvent.delete_all
+                    SnapshotEvent.publish(organization)
+                  end
+                  travel 2.weeks do
+                    get storage_location_path(storage_location, format: response_format,
+                      version_date: 9.days.ago.to_date.to_fs(:db))
+                    expect(response).to be_successful
+                    expect(response.body).to include("Smithsonian")
+                    expect(response.body).to include("Test Item")
+                    expect(response.body).to include("100")
+                  end
+                end
               end
-              travel 1.week do
-                inventory_item.update!(quantity: 300)
+
+              context "with active events" do
+                it 'should show the right version' do
+                  travel 1.day do
+                    TestInventory.create_inventory(organization, {
+                      storage_location.id => {
+                        item.id => 100,
+                        item2.id => 0
+                      }
+                    })
+                  end
+                  travel 1.week do
+                    TestInventory.create_inventory(organization, {
+                      storage_location.id => {
+                        item.id => 300,
+                        item2.id => 0
+                      }
+                    })
+                  end
+                  travel 2.weeks do
+                    get storage_location_path(storage_location, format: response_format,
+                      version_date: 9.days.ago.to_date.to_fs(:db))
+                    expect(response).to be_successful
+                    expect(response.body).to include("Smithsonian")
+                    expect(response.body).to include("Test Item")
+                    expect(response.body).to include("100")
+                  end
+                end
               end
-              travel 2.weeks do
-                get storage_location_path(storage_location, format: response_format,
-                  version_date: 9.days.ago.to_date.to_fs(:db))
-                expect(response).to be_successful
-                expect(response.body).to include("Smithsonian")
-                expect(response.body).to include("Test Item")
-                expect(response.body).to include("100")
+            end
+            context "with events_read off" do
+              before(:each) { allow(Event).to receive(:read_events?).and_return(false) }
+              it "should show the version specified" do
+                travel 1.day do
+                  inventory_item.update!(quantity: 100)
+                end
+                travel 1.week do
+                  inventory_item.update!(quantity: 300)
+                end
+                travel 2.weeks do
+                  get storage_location_path(storage_location, format: response_format,
+                    version_date: 9.days.ago.to_date.to_fs(:db))
+                  expect(response).to be_successful
+                  expect(response.body).to include("Smithsonian")
+                  expect(response.body).to include("Test Item")
+                  expect(response.body).to include("100")
+                end
               end
             end
           end
@@ -337,6 +394,12 @@ RSpec.describe "StorageLocations", type: :request do
           get inventory_storage_location_path(storage_location, format: :json)
           expect(response.parsed_body).to eq(items_at_storage_location)
           expect(response.parsed_body).to eq(inventory_items_at_storage_location)
+        end
+
+        it "returns items sorted alphabetically by item name" do
+          get inventory_storage_location_path(storage_location, format: :json)
+          sorted_items = inventory_items_at_storage_location.sort_by { |item| item['item_name'].downcase }
+          expect(response.parsed_body).to eq(sorted_items)
         end
       end
 
