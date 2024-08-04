@@ -9,7 +9,6 @@
 #  county_id          :bigint           not null
 #  partner_profile_id :bigint           not null
 #
-require "rails_helper"
 
 RSpec.describe Partners::ServedArea, type: :model do
   it { should belong_to(:partner_profile) }

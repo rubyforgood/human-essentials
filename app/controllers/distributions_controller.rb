@@ -176,7 +176,7 @@ class DistributionsController < ApplicationController
       if Event.read_events?(current_organization)
         inventory = View::Inventory.new(@distribution.organization_id)
         @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
-          inventory.quantity_for(storage_location: storage_loc.id).positive?
+          !inventory.quantity_for(storage_location: storage_loc.id).negative?
         end
       else
         @storage_locations = current_organization.storage_locations.active_locations.has_inventory_items.alphabetized
@@ -225,7 +225,14 @@ class DistributionsController < ApplicationController
 
   # TODO: This needs a little more context. Is it JSON only? HTML?
   def schedule
-    @pick_ups = current_organization.distributions
+    respond_to do |format|
+      format.html
+      format.json do
+        start_at = params[:start].to_datetime
+        end_at = params[:end].to_datetime
+        @pick_ups = current_organization.distributions.includes(:partner).where(issued_at: start_at..end_at)
+      end
+    end
   end
 
   def calendar

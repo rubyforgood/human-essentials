@@ -161,7 +161,7 @@ RSpec.describe Partner, type: :model do
       context 'when it has a profile and users' do
         it 'should return false' do
           create(:partner_profile, partner_id: partner.id)
-          create(:partners_user, email: partner.email, name: partner.name, partner: partner)
+          create(:partner_user, email: partner.email, name: partner.name, partner: partner)
           expect(partner.reload).not_to be_deletable
         end
       end

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe Partners::FamilyRequestCreateService do
   describe '#call' do
     subject { described_class.new(**args).call }
