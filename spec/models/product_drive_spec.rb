@@ -12,8 +12,6 @@
 #  organization_id :bigint
 #
 
-require "rails_helper"
-
 RSpec.describe ProductDrive, type: :model do
   let(:organization) { create(:organization) }
   let(:product_drive) { create(:product_drive, organization: organization) }

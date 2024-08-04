@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe "NDBNMembers", type: :request do
   let(:user) { create(:super_admin) }
 
