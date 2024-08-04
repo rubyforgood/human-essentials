@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe Partners::IndividualsRequestsController, type: :request do
   let(:organization) { create(:organization, :with_items) }
   let(:partner) { create(:partner, status: :approved, organization: organization) }

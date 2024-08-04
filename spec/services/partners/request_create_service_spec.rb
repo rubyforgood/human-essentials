@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe Partners::RequestCreateService do
   describe '#call' do
     subject { described_class.new(**args).call }

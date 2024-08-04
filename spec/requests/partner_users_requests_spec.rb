@@ -1,7 +1,5 @@
 # spec/requests/partner_users_controller_spec.rb
 
-require "rails_helper"
-
 RSpec.describe PartnerUsersController, type: :request do
   let!(:partner) { create(:partner) } # Assuming you have a factory for creating partners
   let!(:user) { create(:user) } # Assuming you have a factory for creating users

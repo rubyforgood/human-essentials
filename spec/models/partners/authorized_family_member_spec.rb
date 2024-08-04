@@ -12,7 +12,6 @@
 #  updated_at    :datetime         not null
 #  family_id     :bigint
 #
-require "rails_helper"
 
 RSpec.describe Partners::AuthorizedFamilyMember, type: :model do
   describe 'associations' do
