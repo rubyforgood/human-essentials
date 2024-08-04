@@ -23,6 +23,9 @@ updates:
   - dependency-name: geocoder
     versions:
     - 1.6.7
+  - dependency-name: strong_migrations
+    versions:
+     - 1.8.0
   - dependency-name: devise_invitable
     versions:
     - 2.0.4
