@@ -5,6 +5,7 @@ RSpec.describe Exports::ExportRequestService do
   let!(:request_3t) do
     create(:request,
            :started,
+           :with_item_requests,
            organization: org,
            request_items: [{ item_id: item_3t.id, quantity: 150 }])
   end
@@ -13,14 +14,21 @@ RSpec.describe Exports::ExportRequestService do
   let!(:request_2t) do
     create(:request,
            :fulfilled,
+           :with_item_requests,
            organization: org,
            request_items: [{ item_id: item_2t.id, quantity: 100 }])
   end
+  let(:item_deleted1) { create :item, :inactive, name: "Inactive Diapers1" }
+  let(:item_deleted2) { create :item, :inactive, name: "Inactive Diapers2" }
   let!(:request_with_deleted_items) do
-    create(:request,
+    request = create(:request,
            :fulfilled,
+           :with_item_requests,
            organization: org,
-           request_items: [{ item_id: 0, quantity: 200 }, { item_id: -1, quantity: 200 }])
+           request_items: [{ item_id: item_deleted1.id, quantity: 200 }, { item_id: item_deleted2.id, quantity: 200 }])
+    item_deleted1.delete
+    item_deleted2.delete
+    request.reload
   end
 
   let!(:unique_items) do
@@ -40,6 +48,7 @@ RSpec.describe Exports::ExportRequestService do
     create(
       :request,
       :started,
+      :with_item_requests,
       organization: org,
       request_items: unique_items
     )

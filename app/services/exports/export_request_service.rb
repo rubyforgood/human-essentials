@@ -61,7 +61,8 @@ module Exports
     end
 
     def compute_item_headers
-      item_names = items.pluck(:name)
+      # This reaches into the item and handles weirdly deleted items
+      item_names = items.flat_map(&:item).compact.map(&:name)
 
       # Adding this to handle cases in which a requested item
       # has been deleted. Normally this wouldn't be neccessary,
@@ -75,8 +76,8 @@ module Exports
 
       row += Array.new(item_headers.size, 0)
 
-      request.request_items.each do |request_item|
-        item_name = fetch_item_name(request_item['item_id']) || DELETED_ITEMS_COLUMN_HEADER
+      request.item_requests.each do |item_request|
+        item_name = fetch_item_name(item_request) || DELETED_ITEMS_COLUMN_HEADER
         item_column_idx = headers_with_indexes[item_name]
 
         if item_name == DELETED_ITEMS_COLUMN_HEADER
@@ -84,29 +85,23 @@ module Exports
           # does not match any existing Item.
           row[item_column_idx] ||= 0
         end
-        row[item_column_idx] += request_item['quantity']
+        row[item_column_idx] += item_request.quantity.to_i
       end
 
       row
     end
 
-    def fetch_item_name(item_id)
-      @item_name_to_id_map ||= items.inject({}) do |acc, item|
-        acc[item.id] = item.name
-        acc
-      end
-
-      @item_name_to_id_map[item_id]
+    def fetch_item_name(item_request)
+      # The item_request has the item name, but we go ahead and try to get it
+      # off of the real item. Weirdly we do this because the item might have
+      # been deleted historically without deleting the request.
+      item_request.item&.name
     end
 
     def items
       return @items if @items
-
-      item_ids = requests.flat_map do |request|
-        request.request_items.map { |item| item['item_id'] }
-      end
-
-      @items ||= Item.where(id: item_ids)
+      @items ||= Set.new(requests.flat_map(&:item_requests)).to_a
+      @items
     end
   end
 end
