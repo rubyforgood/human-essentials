@@ -2,10 +2,21 @@ module Partners
   class BaseController < ApplicationController
     layout 'partners/application'
 
+    before_action :require_partner
+
     private
 
     def redirect_to_root
       redirect_to root_path
+    end
+
+    def require_partner
+      unless current_partner
+        respond_to do |format|
+          format.html { redirect_to dashboard_path, flash: { error: "Logged in user is not set up as a 'partner'." } }
+          format.json { render body: nil, status: :forbidden }
+        end
+      end
     end
 
     def verify_partner_is_active
