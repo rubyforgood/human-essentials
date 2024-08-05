@@ -100,7 +100,7 @@ GEM
       erubi (>= 1.0.0)
       rack (>= 0.9.0)
       rouge (>= 1.0.0)
-    better_html (2.0.2)
+    better_html (2.1.1)
       actionview (>= 6.0)
       activesupport (>= 6.0)
       ast (~> 2.0)
@@ -209,12 +209,12 @@ GEM
       dry-inflector (~> 1.0)
       dry-logic (~> 1.4)
       zeitwerk (~> 2.6)
-    erb_lint (0.5.0)
+    erb_lint (0.6.0)
       activesupport
       better_html (>= 2.0.1)
       parser (>= 2.7.1.4)
       rainbow
-      rubocop
+      rubocop (>= 1)
       smart_properties
     erubi (1.13.0)
     execjs (2.9.1)
@@ -438,7 +438,7 @@ GEM
       activerecord (>= 6.1)
       request_store (~> 1.4)
     parallel (1.25.1)
-    parser (3.3.3.0)
+    parser (3.3.4.0)
       ast (~> 2.4.1)
       racc
     pdf-core (0.9.0)
@@ -549,7 +549,7 @@ GEM
     responders (3.1.1)
       actionpack (>= 5.2)
       railties (>= 5.2)
-    rexml (3.3.1)
+    rexml (3.3.4)
       strscan
     rolify (6.0.1)
     rouge (4.1.2)
