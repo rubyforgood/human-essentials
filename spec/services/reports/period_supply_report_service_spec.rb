@@ -23,7 +23,7 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
 
     context "with values" do 
       before(:each) do
-        # Organization.seed_items(organization)
+        Organization.seed_items(organization)
 
         within_time = Time.zone.parse("2020-05-31 14:00:00")
         outside_time = Time.zone.parse("2019-05-31 14:00:00")
@@ -38,25 +38,41 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
         period_supplies_kit = create(:kit, :with_item, organization: organization)
         another_period_supply_kit = create(:kit, :with_item, organization: organization)
         donated_period_supply_kit = create(:kit, :with_item, organization: organization)
+        purchased_period_supply_kit = create(:kit, :with_item, organization: organization)
 
-        create(:base_item, name: "Adult Pads", partner_key: "adult pads", category: "Period Supplies")
-        create(:base_item, name: "Adult Tampons", partner_key: "adult tampons", category: "Period Supplies")
+        create(:base_item, name: "Adult Pads", partner_key: "adult pads", category: "Menstral Supplies")
+        create(:base_item, name: "Adult Tampons", partner_key: "adult tampons", category: "Menstral Supplies")
 
         period_supplies_kit_item = create(:item, name: "Adult Pads", partner_key: "adult pads")
         another_period_supplies_kit_item = create(:item, name: "Adult Tampons", partner_key: "adult tampons")
+        purchased_period_supplies_kit_item = create(:item, name: "Liners", partner_key: "adult tampons")
 
         period_supplies_kit.line_items.first.update!(item_id: period_supplies_kit_item.id, quantity: 5)
         another_period_supply_kit.line_items.first.update!(item_id: another_period_supplies_kit_item.id, quantity: 5)
         donated_period_supply_kit.line_items.first.update!(item_id: another_period_supplies_kit_item.id, quantity: 5)
+        purchased_period_supply_kit.line_items.first.update!(item_id: purchased_period_supplies_kit_item.id, quantity: 5)
 
         period_supplies_kit_distribution = create(:distribution, organization: organization, issued_at: within_time)
         another_period_supplies_kit_distribution = create(:distribution, organization: organization, issued_at: within_time)
 
         kit_donation = create(:donation, product_drive: nil, issued_at: within_time, money_raised: 1000, organization: organization)
 
+        kit_purchase = create(:purchase, issued_at: within_time, organization: organization, purchased_from: "TikTok Shop", amount_spent_in_cents: 1000, amount_spent_on_period_supplies_cents: 1000, line_items: [
+          create(:line_item, :purchase, item: period_supplies_kit_item, quantity: 5),
+          create(:line_item, :purchase, item: purchased_period_supplies_kit_item, quantity: 5)
+        ])
+
         create(:line_item, :distribution, quantity: 10, item: period_supplies_kit.item, itemizable: period_supplies_kit_distribution)
         create(:line_item, :distribution, quantity: 10, item: another_period_supply_kit.item, itemizable: another_period_supplies_kit_distribution)
+
         create(:line_item, :donation, quantity: 10, item: donated_period_supply_kit.item, itemizable: kit_donation)
+
+        create(:line_item, :purchase, quantity: 30, item: purchased_period_supply_kit.item, itemizable: kit_purchase)
+
+        # create(:purchase, issued_at: within_time, organization: organization, line_items: [
+        #   create(:line_item, :purchase, item: period_supplies_kit_item, quantity: 5),
+        #   create(:line_item, :purchase, item: purchased_period_supply_kit_item, quantity: 5)
+        # ])
 
         # Distributions
         distributions = create_list(:distribution, 2, issued_at: within_time, organization: organization)
@@ -116,11 +132,11 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
 
           expect(report.report[:name]).to eq("Period Supplies")
           expect(report.report[:entries]).to match(hash_including({
-            "% period supplies bought" => "51%",
-            "% period supplies donated" => "49%",
+            "% period supplies bought" => "66%",
+            "% period supplies donated" => "34%",
             "Period supplies distributed" => "2,100",
             "Period supplies per adult per month" => 20,
-            "Money spent purchasing period supplies" => "$30.00"
+            "Money spent purchasing period supplies" => "$40.00"
             }))
           expect(report.report[:entries]["Period supplies"].split(", "))
           .to contain_exactly("Tampons", "Pads", "Adult Liners")
@@ -131,11 +147,11 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
         end
 
         it "returns the correct quantity of donated period supplies from kits" do 
-          expect(report.donated_items_from_kits).to eq(50)
+          expect(report.donated_supplies_from_kits).to eq(50)
         end
 
-        it "returns the correct quantity of donated period supplies from kits" do 
-          expect(report.purchased_kits).to eq(0)
+        it "returns the correct quantity of purchased items in kits" do 
+          expect(report.purchased_supplies_from_kits).to eq(150)
         end
       end
     end
