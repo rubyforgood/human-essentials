@@ -6,7 +6,7 @@ module Partners
     def index
       @filterrific = initialize_filterrific(
         current_partner.children
-                       .includes(:family)
+                       .includes(:family, :requested_items)
                        .order(sort_order),
         params[:filterrific]
       ) || return
