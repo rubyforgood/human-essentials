@@ -1,6 +1,6 @@
 RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
   let(:year) { 2020 }
-  let(:organization) { create(:organization) }
+  let(:organization) { create(:organization, :with_items) }
 
   subject(:report) do
     described_class.new(organization: organization, year: year)
@@ -25,15 +25,14 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
                            "Adult Briefs (XS/Small)",
                            "Adult Briefs (XXS)",
                            "Adult Incontinence Pads",
+                            "Liners (Incontinence)",
                            "Underpads (Pack)",
-                           "Adult Liners",
-                           "Wipes (Adult)")
+                            "Adult Cloth Diapers (Large/XL/XXL)",
+                            "Adult Cloth Diapers (Small/Medium)")
     end
 
     describe 'with values' do
       before(:each) do
-        Organization.seed_items(organization)
-
         within_time = Time.zone.parse("2020-05-31 14:00:00")
         outside_time = Time.zone.parse("2019-05-31 14:00:00")
 
@@ -116,8 +115,9 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
                              "Adult Briefs (XXS)",
                              "Adult Incontinence Pads",
                              "Underpads (Pack)",
-                             "Adult Liners",
-                             "Wipes (Adult)")
+                             "Liners (Incontinence)",
+                              "Adult Cloth Diapers (Large/XL/XXL)",
+                              "Adult Cloth Diapers (Small/Medium)")
       end
 
       it 'should handle null distribution quantity' do
@@ -139,8 +139,9 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
                              "Adult Briefs (XXS)",
                              "Adult Incontinence Pads",
                              "Underpads (Pack)",
-                             "Adult Liners",
-                             "Wipes (Adult)")
+                             "Liners (Incontinence)",
+                              "Adult Cloth Diapers (Large/XL/XXL)",
+                              "Adult Cloth Diapers (Small/Medium)")
       end
     end
   end

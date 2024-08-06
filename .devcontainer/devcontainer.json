@@ -1,0 +1,42 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/postgres
+{
+  "dockerComposeFile": "docker-compose.yml",
+  "features": {
+    "ghcr.io/devcontainers/features/desktop-lite:1": {}
+  },
+  "forwardPorts": [3000, 5432, 6080],
+  "portsAttributes": {
+    "3000": {
+      "label": "Application",
+      "onAutoForward": "silent"
+    },
+    "5432": {
+      "label": "Database",
+      "onAutoForward": "silent"
+    },
+    "6080": {
+      "label": "Desktop",
+      "onAutoForward": "silent"
+    }
+  },
+  "workspaceFolder": "/workspaces/human-essentials",
+  "service": "app",
+  "customizations": {
+    "vscode": {
+      "extensions": ["Shopify.ruby-extensions-pack"],
+      "settings": {
+        "rubyLsp.rubyVersionManager": {
+          "identifier": "rvm"
+        }
+      }
+    }
+  },
+
+  // DOCKER env variable passed to Cuprite to enable --no-sandbox so Chrome can run in Docker
+  "remoteEnv": {
+    "DOCKER": "true"
+  },
+
+  "postCreateCommand": "bash -i .devcontainer/post-create.sh"
+ }

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe "/account_requests", type: :request do
   describe "GET #new" do
     it "renders a successful response" do
@@ -37,7 +35,7 @@ RSpec.describe "/account_requests", type: :request do
     context 'when given a token that has already been confirmed' do
       let!(:account_request) { FactoryBot.create(:account_request) }
       before do
-        FactoryBot.create(:organization, account_request_id: account_request.id)
+        create(:organization, account_request_id: account_request.id)
       end
 
       it 'should render a error that says that is code provided is invalid' do

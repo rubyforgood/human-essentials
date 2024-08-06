@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Product Drive Participants", (product_drive_participants_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Product Drive Participants", product_drive_participants_path %></li>
           <li class="breadcrumb-item"><%= @product_drive_participant.contact_name %></li>
         </ol>
       </div>
@@ -37,6 +37,7 @@
                 <th>Phone</th>
                 <th>Email</th>
                 <th>Address</th>
+                <th>Comment</th>
               </tr>
               </thead>
               <tbody>
@@ -46,6 +47,7 @@
                 <td><%= @product_drive_participant.phone %></td>
                 <td><%= @product_drive_participant.email %></td>
                 <td><%= @product_drive_participant.address %></td>
+                <td><%= @product_drive_participant.comment %></td>
               </tr>
               </tbody>
             </table>

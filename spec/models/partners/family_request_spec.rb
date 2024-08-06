@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe Partners::FamilyRequest do
   describe "Partners::FamilyRequest.new_with_attrs" do
     it "creates a new FamilyRequest with attributes" do

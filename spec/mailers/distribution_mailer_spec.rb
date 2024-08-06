@@ -1,5 +1,5 @@
-RSpec.describe DistributionMailer, type: :mailer, seed_items: false do
-  let(:organization) { create(:organization, skip_items: true, name: "TEST ORG") }
+RSpec.describe DistributionMailer, type: :mailer do
+  let(:organization) { create(:organization, name: "TEST ORG") }
   let(:user) { create(:user, organization: organization) }
   let(:partner) { create(:partner, name: 'PARTNER', organization_id: organization.id) }
   let(:distribution) { create(:distribution, organization: user.organization, comment: "Distribution comment", partner: partner) }
