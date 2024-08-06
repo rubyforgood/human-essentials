@@ -48,13 +48,12 @@ module Reports
         INNER JOIN base_items ON base_items.partner_key = kit_items.partner_key 
         WHERE distributions.organization_id = ?
           AND EXTRACT(year FROM issued_at) = ?
-          AND LOWER(base_items.category) LIKE '%period supplies%'
+          AND LOWER(base_items.category) LIKE '%menstral supplies%'
           AND NOT (LOWER(base_items.category) LIKE '%diaper%' OR LOWER(base_items.name) LIKE '%diaper%')
           AND kit_line_items.itemizable_type = 'Kit';
       SQL
 
       sanitized_sql = ActiveRecord::Base.send(:sanitize_sql_array, [sql_query, organization_id, year])
-
       result = ActiveRecord::Base.connection.execute(sanitized_sql)
       result.first['sum'].to_i
     end
@@ -114,12 +113,15 @@ module Reports
     end
 
     def purchased_kits
-    organization
-      .purchases
-      .for_year(year)
-      .joins(line_items: { item: :kit })
-      .select('kits.id')
-      .distinct.count
+      organization
+        .purchases
+        .for_year(year)
+        .joins(line_items: { item: :kit })
+        .where('kits.id IS NOT NULL')
+        .merge(Item.period_supplies)
+        .select('items.kit_id')
+        .distinct
+        .count
     end
 
     # @return [Integer]
@@ -152,7 +154,7 @@ module Reports
         INNER JOIN base_items ON base_items.partner_key = kit_items.partner_key 
         WHERE donations.organization_id = ?
           AND EXTRACT(year FROM issued_at) = ?
-          AND LOWER(base_items.category) LIKE '%period supplies%'
+          AND LOWER(base_items.category) LIKE '%menstral supplies%'
           AND NOT (LOWER(base_items.category) LIKE '%diaper%' OR LOWER(base_items.name) LIKE '%diaper%')
           AND kit_line_items.itemizable_type = 'Kit';
       SQL
