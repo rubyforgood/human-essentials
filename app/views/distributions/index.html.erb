@@ -76,7 +76,7 @@
                       )
                     end
                   %>
-                  <%= new_button_to new_distribution_path(organization_name: current_organization), {text: "New Distribution"} %>
+                  <%= new_button_to new_distribution_path, {text: "New Distribution"} %>
                 </span>
               </div>
             <% end # form %>
@@ -99,6 +99,7 @@
               <tr>
                 <th>ID</th>
                 <th>Partner</th>
+                <th class="date">Inital Allocation</th>
                 <th class="date">Date of Distribution</th>
                 <th>Source Inventory</th>
 

@@ -1,13 +1,15 @@
 RSpec.describe "Product Drives", type: :system, js: true do
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
+
   include DateRangeHelper
 
   before do
-    sign_in @user
-    @url_prefix = "/#{@organization.id}"
+    sign_in user
   end
 
   context "When visiting the index page without parameters" do
-    let(:subject) { @url_prefix + "/product_drives" }
+    let(:subject) { product_drives_path }
 
     around do |example|
       travel_to Time.zone.local(2019, 7, 1)
@@ -51,7 +53,7 @@ RSpec.describe "Product Drives", type: :system, js: true do
   end
 
   context 'when creating a normal product drive' do
-    let(:subject) { @url_prefix + "/product_drives/new" }
+    let(:subject) { new_product_drive_path }
 
     before { visit subject }
 
@@ -84,7 +86,7 @@ RSpec.describe "Product Drives", type: :system, js: true do
   end
 
   context 'when creating a Virtual Product Drive' do
-    let(:subject) { @url_prefix + "/product_drives/new" }
+    let(:subject) { new_product_drive_path }
 
     before { visit subject }
 
@@ -121,7 +123,7 @@ RSpec.describe "Product Drives", type: :system, js: true do
 
   context 'when showing a Product Drive with no end date' do
     let(:new_product_drive) { create(:product_drive, name: 'Endless drive', start_date: 3.weeks.ago, end_date: '') }
-    let(:subject) { @url_prefix + "/product_drives/#{new_product_drive.id}" }
+    let(:subject) { product_drive_path(new_product_drive.id) }
 
     it 'must be able to show the product drive' do
       visit subject

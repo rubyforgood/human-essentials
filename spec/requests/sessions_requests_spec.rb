@@ -1,22 +1,24 @@
-require "rails_helper"
-
 RSpec.describe "Sessions", type: :request, order: :defined do
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+
   context "Sign in as user without logging off as an admin" do
     before do
       # sign in as an org_admin
-      sign_in(@organization_admin)
+      sign_in(organization_admin)
       # sign in as a user without explicitly logging as org_admin
-      sign_in(@user)
+      sign_in(user)
     end
 
     it "cannot access admin dashboard" do
       get root_path
-      expect(response).not_to redirect_to(admin_dashboard_url(@organization_admin))
+      expect(response).not_to redirect_to(admin_dashboard_url(organization_admin))
     end
 
     it "properly accesses the organization dashboard" do
       get root_path
-      expect(response).to redirect_to(dashboard_url(@organization))
+      expect(response).to redirect_to(dashboard_url)
     end
   end
 
@@ -74,7 +76,7 @@ RSpec.describe "Sessions", type: :request, order: :defined do
             post user_session_path, params: {user: {email: partner_user.email, password: "password!"}}
             get root_path
 
-            expect(response).to redirect_to(dashboard_url(organization))
+            expect(response).to redirect_to(dashboard_url)
           end
         end
       end
@@ -100,7 +102,7 @@ RSpec.describe "Sessions", type: :request, order: :defined do
       it "signs in as org_admin role" do
         post user_session_path, params: {user: {email: partner_user.email, password: "password!"}}
         get root_path
-        expect(response).to redirect_to(dashboard_url(organization))
+        expect(response).to redirect_to(dashboard_url)
       end
     end
   end

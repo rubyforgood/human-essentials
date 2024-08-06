@@ -79,7 +79,15 @@ class StorageLocationsController < ApplicationController
     @items_in = ItemsInQuery.new(organization: current_organization, storage_location: @storage_location).call
     @items_in_total = ItemsInTotalQuery.new(organization: current_organization, storage_location: @storage_location).call
     if Event.read_events?(current_organization)
-      @inventory = View::Inventory.new(current_organization.id, event_time: params[:version_date])
+      if View::Inventory.within_snapshot?(current_organization.id, params[:version_date])
+        @inventory = View::Inventory.new(current_organization.id, event_time: params[:version_date])
+      else
+        @legacy_inventory = View::Inventory.legacy_inventory_for_storage_location(
+          current_organization.id,
+          @storage_location.id,
+          params[:version_date]
+        )
+      end
     end
 
     respond_to do |format|
@@ -99,6 +107,9 @@ class StorageLocationsController < ApplicationController
       flash[:notice] = "Inventory imported successfully!"
       redirect_back(fallback_location: storage_locations_path)
     end
+  rescue Errors::InventoryAlreadyHasItems => e
+    flash[:error] = e.message
+    redirect_back(fallback_location: storage_locations_path(organization_id: current_organization))
   end
 
   def update
@@ -157,6 +168,7 @@ class StorageLocationsController < ApplicationController
                                            .active
 
       @inventory_items += include_omitted_items(@inventory_items.collect(&:item_id)) if params[:include_omitted_items] == "true"
+      @inventory_items.to_a.sort_by! { |inventory_item| inventory_item.item.name.downcase }
       respond_to :json
     end
   end

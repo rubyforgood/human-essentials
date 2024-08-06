@@ -1,5 +1,5 @@
 RSpec.describe DeallocateKitInventoryService, type: :service do
-  let(:organization) { create :organization }
+  let(:organization) { create(:organization) }
   let(:item1) { create(:item, name: "Item11", organization: organization, on_hand_minimum_quantity: 5) }
   let(:item2) { create(:item, name: "Item 2", organization: organization, on_hand_minimum_quantity: 1) }
 
@@ -27,7 +27,8 @@ RSpec.describe DeallocateKitInventoryService, type: :service do
     let(:kit_item_inventory) { InventoryItem.find_by(storage_location_id: storage_location.id, item_id: kit.item.id) }
 
     context "when the storage location organization doesn't match" do
-      let(:wrong_storage) { create(:storage_location) }
+      let(:wrong_organization) { create(:organization) }
+      let(:wrong_storage) { create(:storage_location, organization: wrong_organization) }
       let(:params) do
         {
           organization_id: organization.id,
