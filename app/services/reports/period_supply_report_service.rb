@@ -34,28 +34,7 @@ module Reports
     end
 
     def distributed_period_supplies_from_kits
-      organization_id = @organization.id
-      year = @year
-
-      sql_query = <<-SQL
-        SELECT SUM(line_items.quantity * kit_line_items.quantity)
-        FROM distributions 
-        INNER JOIN line_items ON line_items.itemizable_type = 'Distribution' AND line_items.itemizable_id = distributions.id 
-        INNER JOIN items ON items.id = line_items.item_id 
-        INNER JOIN kits ON kits.id = items.kit_id 
-        INNER JOIN line_items AS kit_line_items ON kits.id = kit_line_items.itemizable_id
-        INNER JOIN items AS kit_items ON kit_items.id = kit_line_items.item_id
-        INNER JOIN base_items ON base_items.partner_key = kit_items.partner_key 
-        WHERE distributions.organization_id = ?
-          AND EXTRACT(year FROM issued_at) = ?
-          AND LOWER(base_items.category) LIKE '%menstral supplies%'
-          AND NOT (LOWER(base_items.category) LIKE '%diaper%' OR LOWER(base_items.name) LIKE '%diaper%')
-          AND kit_line_items.itemizable_type = 'Kit';
-      SQL
-
-      sanitized_sql = ActiveRecord::Base.send(:sanitize_sql_array, [sql_query, organization_id, year])
-      result = ActiveRecord::Base.connection.execute(sanitized_sql)
-      result.first['sum'].to_i
+      kit_items_calculation('distributions', 'Distribution')
     end
 
     def distributed_period_supplies_from_kits_per_month
@@ -87,14 +66,14 @@ module Reports
     def percent_donated
       return 0.0 if total_supplies.zero?
 
-      (donated_supplies / total_supplies.to_f) * 100
+      (total_donated_supplies / total_supplies.to_f) * 100
     end
 
     # @return [Float]
     def percent_bought
       return 0.0 if total_supplies.zero?
 
-      ((purchased_supplies + purchased_kits) / total_supplies.to_f) * 100
+      (total_purchased_supplies / total_supplies.to_f) * 100
     end
 
     # @return [String]
@@ -105,79 +84,58 @@ module Reports
     ###### HELPER METHODS ######
 
     # @return [Integer]
-    def purchased_supplies
+    def total_purchased_supplies
       @purchased_supplies ||= LineItem.joins(:item)
         .merge(Item.period_supplies)
         .where(itemizable: organization.purchases.for_year(year))
         .sum(:quantity)
+
+      @purchased_supplies + purchased_supplies_from_kits
     end
 
-    def purchased_kits
-      organization
-        .purchases
-        .for_year(year)
-        .joins(line_items: { item: :kit })
-        .where('kits.id IS NOT NULL')
-        .merge(Item.period_supplies)
-        .select('items.kit_id')
-        .distinct
-        .count
-    end
-
-    def purchased_period_supplies_from_kits
-      organization_id = @organization.id
-      year = @year
-
-      sql_query = <<-SQL
-        SELECT SUM(line_items.quantity * kit_line_items.quantity)
-        FROM purchases
-        INNER JOIN line_items ON line_items.itemizable_type = 'Purchase' AND line_items.itemizable_id = purchases.id 
-        INNER JOIN items ON items.id = line_items.item_id 
-        INNER JOIN kits ON kits.id = items.kit_id 
-        INNER JOIN line_items AS kit_line_items ON kits.id = kit_line_items.itemizable_id
-        INNER JOIN items AS kit_items ON kit_items.id = kit_line_items.item_id
-        INNER JOIN base_items ON base_items.partner_key = kit_items.partner_key 
-        WHERE purchases.organization_id = ?
-          AND EXTRACT(year FROM issued_at) = ?
-          AND LOWER(base_items.category) LIKE '%menstral supplies%'
-          AND NOT (LOWER(base_items.category) LIKE '%diaper%' OR LOWER(base_items.name) LIKE '%diaper%')
-          AND kit_line_items.itemizable_type = 'Kit';
-      SQL
-
-      sanitized_sql = ActiveRecord::Base.send(:sanitize_sql_array, [sql_query, organization_id, year])
-      result = ActiveRecord::Base.connection.execute(sanitized_sql)
-      result.first['sum'].to_i
+    def purchased_supplies_from_kits
+      kit_items_calculation('purchases', 'Purchase')
     end
 
     # @return [Integer]
     def total_supplies
-      @total_supplies ||= purchased_supplies + donated_supplies
+      @total_supplies ||= total_purchased_supplies + total_donated_supplies
     end
 
     # @return [Integer]
-    def donated_supplies
+    def total_donated_supplies
       loose_donated_supplies = LineItem.joins(:item)
         .merge(Item.period_supplies)
         .where(itemizable: organization.donations.for_year(year))
         .sum(:quantity)
 
-      loose_donated_supplies + donated_items_from_kits
+      loose_donated_supplies + donated_supplies_from_kits
     end
 
-    def donated_items_from_kits
+    def donated_supplies_from_kits
+      kit_items_calculation('donations', 'Donation')
+    end
+
+    private
+
+    def kit_items_calculation(itemizable_type, string_itemizable_type)
       organization_id = @organization.id
       year = @year
 
+      # Sanitize and validate inputs
+      itemizable_type = ActiveRecord::Base.connection.quote_table_name(itemizable_type)
+      string_itemizable_type = ActiveRecord::Base.connection.quote(string_itemizable_type)
+
       sql_query = <<-SQL
         SELECT SUM(line_items.quantity * kit_line_items.quantity)
-        FROM donations 
-        INNER JOIN line_items ON line_items.itemizable_type = 'Donation' AND line_items.itemizable_id = donations.id 
+        FROM #{itemizable_type} 
+        INNER JOIN line_items ON line_items.itemizable_type = #{string_itemizable_type} AND line_items.itemizable_id = #{itemizable_type}.id 
         INNER JOIN items ON items.id = line_items.item_id 
         INNER JOIN kits ON kits.id = items.kit_id 
         INNER JOIN line_items AS kit_line_items ON kits.id = kit_line_items.itemizable_id
         INNER JOIN items AS kit_items ON kit_items.id = kit_line_items.item_id
         INNER JOIN base_items ON base_items.partner_key = kit_items.partner_key 
-        WHERE donations.organization_id = ?
+        WHERE #{itemizable_type}.organization_id = ?
           AND EXTRACT(year FROM issued_at) = ?
           AND LOWER(base_items.category) LIKE '%menstral supplies%'
           AND NOT (LOWER(base_items.category) LIKE '%diaper%' OR LOWER(base_items.name) LIKE '%diaper%')
@@ -185,7 +143,6 @@ module Reports
       SQL
 
       sanitized_sql = ActiveRecord::Base.send(:sanitize_sql_array, [sql_query, organization_id, year])
-
       result = ActiveRecord::Base.connection.execute(sanitized_sql)
       result.first['sum'].to_i
     end
