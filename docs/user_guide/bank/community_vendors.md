@@ -10,6 +10,8 @@ This page shows all previously entered vendors -- business name, contact name, p
 
 To add a new vendor, click on the "+ New Vendor" button, add their details including the business name, contact name, phone, email, and address.
 
+![New Vendor](images/community/vendors/new_vendor.jpg)
+
 You must enter at least one of business name or contact name. We recommend that you enter the business name, as this is used when selecting the vendor on entering purchases.
 
 ![Add Vendor](images/community/vendors/add_vendor.jpg)
