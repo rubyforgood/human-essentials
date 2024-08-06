@@ -147,6 +147,8 @@ group :development, :test do
   gem "pry-remote"
   # Add-on for command line to create a simple debugger.
   gem "pry-nav"
+  # Debugger which supports rdbg and Shopify Ruby LSP VSCode extension
+  gem "debug", ">= 1.0.0"
   # RSpec behavioral testing framework for Rails.
   gem "rspec-rails", "~> 6.1.3"
   # Static analysis / linter.
