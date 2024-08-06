@@ -28,6 +28,7 @@ FactoryBot.define do
     request_items { random_request_items }
     comments { "Urgent" }
     partner_user { ::User.partner_users.first || create(:partners_user) }
+    item_requests { [] }
   end
 
   trait :started do
