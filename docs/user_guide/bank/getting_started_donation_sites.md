@@ -1,0 +1,1 @@
+Not yet written - we are reviewing the getting started material and donation sites are an optional component.

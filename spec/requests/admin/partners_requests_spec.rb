@@ -1,9 +1,11 @@
-require 'rails_helper'
-
 RSpec.describe "Admin::Partners", type: :request do
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+
   context "When logged in as a super admin" do
     before do
-      sign_in(@super_admin)
+      sign_in(create(:super_admin, organization: nil))
     end
 
     let(:partner) { create(:partner) }

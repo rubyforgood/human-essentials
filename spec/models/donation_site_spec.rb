@@ -18,40 +18,9 @@
 
 RSpec.describe DonationSite, type: :model do
   context "Validations >" do
-    it "must belong to an organization" do
-      expect(build(:donation_site, organization_id: nil)).not_to be_valid
-    end
-    it "is invalid without a name" do
-      expect(build(:donation_site, name: nil)).not_to be_valid
-    end
-
-    it "is invalid without an address" do
-      expect(build(:donation_site, address: nil)).not_to be_valid
-    end
-
-    it "is valid without an contact name" do
-      expect(build(:donation_site, contact_name: nil)).to be_valid
-    end
-
-    it "is valid without an phone" do
-      expect(build(:donation_site, phone: nil)).to be_valid
-    end
-
-    it "is valid without an email" do
-      expect(build(:donation_site, email: nil)).to be_valid
-    end
-
-    it "is valid with Contact Name" do
-      expect(build(:donation_site, contact_name: "Mr. Smith")).to be_valid
-    end
-
-    it "is valid with an email" do
-      expect(build(:donation_site, email: "smith@mail.com")).to be_valid
-    end
-
-    it "is valid with a phone number" do
-      expect(build(:donation_site, phone: "555-555-1234")).to be_valid
-    end
+    it { should belong_to(:organization) }
+    it { should validate_presence_of(:name) }
+    it { should validate_presence_of(:address) }
   end
   describe "import_csv" do
     it "imports storage locations from a csv file" do

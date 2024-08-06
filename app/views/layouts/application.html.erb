@@ -45,17 +45,17 @@
     </a>
 
     <ul class="navbar-nav ml-auto">
-      <% if user_signed_in? && current_organization.present? %>
-        <% if admin_namespace? %>
-          <%= render partial: "layouts/lte_admin_navbar" %>
-        <% else %>
+      <% if user_signed_in? %>
+        <% if current_organization.present? %>
           <%= render partial: "layouts/lte_navbar" %>
+        <% elsif admin_namespace? %>
+          <%= render partial: "layouts/lte_admin_navbar" %>
         <% end %>
       <% else %>
         <div class="navbar-custom-menu">
           <ul class="nav navbar-nav">
             <li class="user user-menu">
-              <%= delete_button_to destroy_user_session_path(organization_name: nil), {text: "Log out", icon: "sign-out", no_confirm: true, size: "md"} %>
+              <%= delete_button_to destroy_user_session_path, {text: "Log out", icon: "sign-out", no_confirm: true, size: "md"} %>
             </li>
           </ul>
         </div>
