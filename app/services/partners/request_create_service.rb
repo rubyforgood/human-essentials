@@ -26,10 +26,6 @@ module Partners
         end
       end
 
-      if @partner_request.comments.blank? && @partner_request.item_requests.blank?
-        errors.add(:base, 'completely empty request')
-      end
-
       return self if errors.present?
 
       Request.transaction do
@@ -42,6 +38,16 @@ module Partners
       end
 
       self
+    end
+
+    def initialize_only
+      partner_request = ::Request.new(partner_id: partner.id,
+        organization_id: organization_id,
+        comments: comments,
+        partner_user_id: partner_user_id)
+      partner_request = populate_item_request(partner_request)
+      partner_request.assign_attributes(additional_attrs)
+      partner_request
     end
 
     private

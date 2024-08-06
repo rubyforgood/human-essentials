@@ -57,6 +57,11 @@ RSpec.describe "Family requests", type: :system, js: true do
       end
 
       find('input[type="submit"]').click
+      expect(page).to have_selector("#partnerFamilyRequestConfirmationModal")
+      within "#partnerFamilyRequestConfirmationModal" do
+        click_button "Yes, it's correct"
+      end
+
       expect(page).to have_text("Request Details")
       click_link "Your Previous Requests"
       expect(page).to have_text("Request History")
@@ -90,4 +95,3 @@ RSpec.describe "Family requests", type: :system, js: true do
     end
   end
 end
-

@@ -250,6 +250,10 @@ class Partner < ApplicationRecord
     }
   end
 
+  def quota_exceeded?(total)
+    quota.present? && total > quota
+  end
+
   private
 
   def families_served_count
