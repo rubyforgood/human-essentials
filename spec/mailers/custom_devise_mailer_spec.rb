@@ -1,4 +1,4 @@
-RSpec.describe CustomDeviseMailer, type: :mailer, seed_items: false do
+RSpec.describe CustomDeviseMailer, type: :mailer do
   describe "#invitation_instructions" do
     let(:user) { create(:partner_user) }
     let(:mail) { described_class.invitation_instructions(user, SecureRandom.uuid) }

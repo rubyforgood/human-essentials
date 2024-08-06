@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe DonationDestroyService do
   describe '#call' do
     subject { described_class.new(organization_id: organization_id, donation_id: donation_id) }

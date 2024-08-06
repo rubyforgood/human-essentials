@@ -9,7 +9,7 @@ class TransferCreateService
           TransferEvent.publish(transfer)
         end
       else
-        raise StandardError.new(transfer.errors.full_messages.join("</br>"))
+        raise StandardError.new(transfer.errors.full_messages.join(", "))
       end
     end
   end

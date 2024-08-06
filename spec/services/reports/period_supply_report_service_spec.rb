@@ -1,7 +1,7 @@
 RSpec.describe Reports::PeriodSupplyReportService, type: :service do
   let(:year) { 2020 }
   let(:organization) { create(:organization, :with_items) }
-  
+
   subject(:report) do
     described_class.new(organization: organization, year: year)
   end
@@ -19,7 +19,6 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
         expect(report.report[:entries]["Period supplies"].split(", "))
           .to contain_exactly("Tampons", "Pads", "Adult Liners")
       end
-    end
 
     context "with values" do 
       before(:each) do
@@ -68,11 +67,6 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
         create(:line_item, :donation, quantity: 10, item: donated_period_supply_kit.item, itemizable: kit_donation)
 
         create(:line_item, :purchase, quantity: 30, item: purchased_period_supply_kit.item, itemizable: kit_purchase)
-
-        # create(:purchase, issued_at: within_time, organization: organization, line_items: [
-        #   create(:line_item, :purchase, item: period_supplies_kit_item, quantity: 5),
-        #   create(:line_item, :purchase, item: purchased_period_supply_kit_item, quantity: 5)
-        # ])
 
         # Distributions
         distributions = create_list(:distribution, 2, issued_at: within_time, organization: organization)
@@ -129,7 +123,6 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
       describe "with values" do
         it "should report normal values" do
           organization.items.period_supplies.first.update!(distribution_quantity: 20)
-
           expect(report.report[:name]).to eq("Period Supplies")
           expect(report.report[:entries]).to match(hash_including({
             "% period supplies bought" => "66%",

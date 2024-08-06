@@ -1,5 +1,12 @@
 # Encapsulates methods that need some business logic
 module PartnersHelper
+  def display_requested_items(partner, child)
+    ids = child.requested_item_ids
+    ids.map do |item_id|
+      partner.organization.item_id_to_display_string_map[item_id]
+    end.join(', ')
+  end
+
   def show_header_column_class(partner, additional_classes: "")
     if partner.quota.present?
       "col-sm-3 col-3 #{additional_classes}"
