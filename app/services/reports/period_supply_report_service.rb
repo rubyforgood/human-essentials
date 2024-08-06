@@ -124,6 +124,31 @@ module Reports
         .count
     end
 
+    def purchased_period_supplies_from_kits
+      organization_id = @organization.id
+      year = @year
+
+      sql_query = <<-SQL
+        SELECT SUM(line_items.quantity * kit_line_items.quantity)
+        FROM purchases
+        INNER JOIN line_items ON line_items.itemizable_type = 'Purchase' AND line_items.itemizable_id = purchases.id 
+        INNER JOIN items ON items.id = line_items.item_id 
+        INNER JOIN kits ON kits.id = items.kit_id 
+        INNER JOIN line_items AS kit_line_items ON kits.id = kit_line_items.itemizable_id
+        INNER JOIN items AS kit_items ON kit_items.id = kit_line_items.item_id
+        INNER JOIN base_items ON base_items.partner_key = kit_items.partner_key 
+        WHERE purchases.organization_id = ?
+          AND EXTRACT(year FROM issued_at) = ?
+          AND LOWER(base_items.category) LIKE '%menstral supplies%'
+          AND NOT (LOWER(base_items.category) LIKE '%diaper%' OR LOWER(base_items.name) LIKE '%diaper%')
+          AND kit_line_items.itemizable_type = 'Kit';
+      SQL
+
+      sanitized_sql = ActiveRecord::Base.send(:sanitize_sql_array, [sql_query, organization_id, year])
+      result = ActiveRecord::Base.connection.execute(sanitized_sql)
+      result.first['sum'].to_i
+    end
+
     # @return [Integer]
     def total_supplies
       @total_supplies ||= purchased_supplies + donated_supplies
