@@ -34,11 +34,11 @@ module Reports
     end
 
     def distributed_period_supplies_from_kits
-      kit_items_calculation('distributions', 'Distribution')
+      kit_items_calculation("distributions", "Distribution")
     end
 
     def distributed_period_supplies_from_kits_per_month
-      distributed_period_supplies_from_kits / 12 
+      distributed_period_supplies_from_kits / 12
     end
 
     def total_distributed_period_supplies
@@ -94,7 +94,7 @@ module Reports
     end
 
     def purchased_supplies_from_kits
-      kit_items_calculation('purchases', 'Purchase')
+      kit_items_calculation("purchases", "Purchase")
     end
 
     # @return [Integer]
@@ -113,7 +113,7 @@ module Reports
     end
 
     def donated_supplies_from_kits
-      kit_items_calculation('donations', 'Donation')
+      kit_items_calculation("donations", "Donation")
     end
 
     private
@@ -144,7 +144,7 @@ module Reports
 
       sanitized_sql = ActiveRecord::Base.send(:sanitize_sql_array, [sql_query, organization_id, year])
       result = ActiveRecord::Base.connection.execute(sanitized_sql)
-      result.first['sum'].to_i
+      result.first["sum"].to_i
     end
   end
 end
