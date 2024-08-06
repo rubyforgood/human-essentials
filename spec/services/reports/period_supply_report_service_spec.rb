@@ -1,13 +1,13 @@
 RSpec.describe Reports::PeriodSupplyReportService, type: :service do
   let(:year) { 2020 }
   let(:organization) { create(:organization, :with_items) }
-  
+
   subject(:report) do
     described_class.new(organization: organization, year: year)
   end
 
   describe "#report" do
-    context "with no values" do 
+    context "with no values" do
       it "should report zero values" do
         expect(report.report[:entries]).to match(hash_including({
           "% period supplies bought" => "0%",
@@ -21,7 +21,7 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
       end
     end
 
-    context "with values" do 
+    context "with values" do
       before(:each) do
         Organization.seed_items(organization)
 
@@ -137,20 +137,20 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
             "Period supplies distributed" => "2,100",
             "Period supplies per adult per month" => 20,
             "Money spent purchasing period supplies" => "$40.00"
-            }))
+          }))
           expect(report.report[:entries]["Period supplies"].split(", "))
-          .to contain_exactly("Tampons", "Pads", "Liners (Menstrual)")
+            .to contain_exactly("Tampons", "Pads", "Liners (Menstrual)")
         end
 
         it "returns the correct quantity of period supplies from kits" do
           expect(report.distributed_period_supplies_from_kits).to eq(100)
         end
 
-        it "returns the correct quantity of donated period supplies from kits" do 
+        it "returns the correct quantity of donated period supplies from kits" do
           expect(report.donated_supplies_from_kits).to eq(50)
         end
 
-        it "returns the correct quantity of purchased items in kits" do 
+        it "returns the correct quantity of purchased items in kits" do
           expect(report.purchased_supplies_from_kits).to eq(150)
         end
       end
