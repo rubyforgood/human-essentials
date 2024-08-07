@@ -1,5 +1,7 @@
 class BackfillPartnerChildRequestedItems < ActiveRecord::Migration[7.1]
   def up
+    return unless Rails.env.production?
+
     safety_assured do
       execute <<-SQL
       INSERT INTO children_items (child_id, item_id)
