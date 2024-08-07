@@ -194,6 +194,7 @@ note = [
     name: "Pawnee Parent Service",
     email: "verified@example.com",
     status: :approved,
+    quota: 500,
     notes: note.sample
   },
   {
