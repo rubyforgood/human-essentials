@@ -63,6 +63,7 @@ class KitCreateService
                        organization_id: organization.id
                      })
   end
+
   def valid?
     if organization.blank?
       errors.add(:organization_id, 'does not match any Organization')
@@ -83,6 +84,5 @@ class KitCreateService
     kit.valid?
 
     @kit_validation_errors = kit.errors
-
   end
 end
