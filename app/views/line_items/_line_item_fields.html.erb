@@ -28,7 +28,7 @@
                             label: false,
                             input_html: { class: "quantity my-0", data: { quantity: "" } } %>
           </div>
-          <% if form.object.request %>
+          <% if form.object.respond_to?(:request) && form_object.request %>
             <div class="li-requested mx-2">
               <% if requested&.request_unit.present? %>
                 <%= pluralize(requested.quantity, requested.request_unit) %>

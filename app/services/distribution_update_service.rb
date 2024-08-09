@@ -9,7 +9,7 @@ class DistributionUpdateService < DistributionService
     perform_distribution_service do
       @old_issued_at = distribution.issued_at
       @old_delivery_method = distribution.delivery_method
-      @params[:line_items_attributes]&.delete_if { |_, a| a[:quantity].to_i.zero?}
+      @params[:line_items_attributes]&.delete_if { |_, a| a[:quantity].to_i.zero? }
 
       # remove line_items with zero quantity
 
