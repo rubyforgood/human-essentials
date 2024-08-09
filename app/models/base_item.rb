@@ -46,6 +46,6 @@ class BaseItem < ApplicationRecord
       end
     end
     # Create global 'Kit' base item
-    KitCreateService.FindOrCreateKitBaseItem
+    KitCreateService.FindOrCreateKitBaseItem!
   end
 end
