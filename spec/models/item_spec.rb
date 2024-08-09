@@ -22,6 +22,8 @@
 #
 
 RSpec.describe Item, type: :model do
+  it_behaves_like "itemizable"
+
   let(:organization) { create(:organization) }
 
   describe 'Assocations >' do
@@ -40,6 +42,42 @@ RSpec.describe Item, type: :model do
     it { should validate_numericality_of(:distribution_quantity).is_greater_than(0) }
     it { should validate_numericality_of(:on_hand_minimum_quantity).is_greater_than_or_equal_to(0) }
     it { should validate_numericality_of(:on_hand_recommended_quantity).is_greater_than_or_equal_to(0) }
+
+    context "Doesn't house a kit >" do
+      it "ensures associated line_items are empty" do
+        item = create(:item)
+        item.line_items << build(:line_item, quantity: 1)
+        expect(item).not_to be_valid
+      end
+    end
+
+    context "Houses a kit >" do
+      before :each do
+        kit_params = attributes_for(:kit)
+        kit_params[:line_items_attributes] = [{item_id: create(:item, organization: organization).id, quantity: 1}]
+        @item = KitCreateService.new(organization_id: organization.id, kit_params: kit_params).call.kit.item
+      end
+
+      it "requires at least one item" do
+        @item.line_items = []
+        expect(@item).not_to be_valid
+      end
+
+      it "ensures the associated line_items are invalid with a nil quantity" do
+        @item.line_items << build(:line_item, quantity: nil)
+        expect(@item).not_to be_valid
+      end
+
+      it "ensures the associated line_items are invalid with a zero quantity" do
+        @item.line_items << build(:line_item, quantity: 0)
+        expect(@item).not_to be_valid
+      end
+
+      it "ensures the associated line_items are valid with a one quantity" do
+        @item.line_items << build(:line_item, quantity: 1)
+        expect(@item).to be_valid
+      end
+    end
   end
 
   context "Filtering >" do
