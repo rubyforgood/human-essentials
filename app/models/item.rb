@@ -42,6 +42,11 @@ class Item < ApplicationRecord
   validates :on_hand_recommended_quantity, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
   validates :on_hand_minimum_quantity, numericality: { greater_than_or_equal_to: 0 }
 
+  validate :at_least_one_item, if: -> { kit.present? }
+  validate -> { line_items_quantity_is_at_least(1) }, if: -> { kit.present? }
+
+  validate :has_no_line_items, if: -> { kit.blank? }
+
   has_many :line_items, dependent: :destroy
   has_many :inventory_items, dependent: :destroy
   has_many :barcode_items, as: :barcodeable, dependent: :destroy
@@ -249,6 +254,18 @@ class Item < ApplicationRecord
   end
 
   private
+
+  def at_least_one_item
+    unless line_items.any?
+      errors.add(:base, "At least one item is required")
+    end
+  end
+
+  def has_no_line_items
+    unless line_items.none?
+      errors.add(:base, "You cannot add line items to an item that doesn't house a kit")
+    end
+  end
 
   def update_associated_kit_name
     kit.update(name: name)

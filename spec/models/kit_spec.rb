@@ -30,26 +30,6 @@ RSpec.describe Kit, type: :model do
         build(:kit, name: subject.name, organization: organization)
       ).not_to be_valid
     end
-
-    it "requires at least one item" do
-      kit.line_items = []
-      expect(kit).not_to be_valid
-    end
-
-    it "ensures the associated line_items are invalid with a nil quantity" do
-      kit.line_items << build(:line_item, quantity: nil)
-      expect(kit).not_to be_valid
-    end
-
-    it "ensures the associated line_items are invalid with a zero quantity" do
-      kit.line_items << build(:line_item, quantity: 0)
-      expect(kit).not_to be_valid
-    end
-
-    it "ensures the associated line_items are valid with a one quantity" do
-      kit.line_items << build(:line_item, quantity: 1)
-      expect(kit).to be_valid
-    end
   end
 
   context "Filtering >" do
