@@ -58,10 +58,13 @@ RSpec.describe Kit, type: :model do
     end
 
     it "->alphabetized retrieves items in alphabetical order" do
-      kit_c = create(:kit, name: "KitC")
-      kit_b = create(:kit, name: "KitB")
-      kit_a = create(:kit, name: "KitA")
-      alphabetized_list = [kit_a.name, kit_b.name, kit_c.name]
+      a_name = "KitA"
+      b_name = "KitB"
+      c_name = "KitC"
+      create(:kit, name: c_name)
+      create(:kit, name: b_name)
+      create(:kit, name: a_name)
+      alphabetized_list = [a_name, b_name, c_name]
 
       expect(Kit.alphabetized.count).to eq(3)
       expect(Kit.alphabetized.map(&:name)).to eq(alphabetized_list)
@@ -107,7 +110,7 @@ RSpec.describe Kit, type: :model do
   end
 
   describe '#can_deactivate?' do
-    let(:kit) { create(:kit, :with_item, organization: organization) }
+    let(:kit) { create(:kit, organization: organization) }
 
     context 'with inventory' do
       it 'should return false' do
@@ -131,7 +134,11 @@ RSpec.describe Kit, type: :model do
   end
 
   specify 'deactivate and reactivate' do
-    kit = create(:kit, :with_item)
+    params = FactoryBot.attributes_for(:kit)
+    params[:line_items_attributes] = [
+      {item_id: create(:item).id, quantity: 1}
+    ]
+    kit = KitCreateService.new(organization_id: organization.id, kit_params: params).call.kit
     expect(kit.active).to eq(true)
     expect(kit.item.active).to eq(true)
     kit.deactivate
