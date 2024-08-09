@@ -13,7 +13,6 @@
 #
 class Kit < ApplicationRecord
   has_paper_trail
-  include Itemizable
   include Filterable
   include Valuable
 
@@ -28,9 +27,6 @@ class Kit < ApplicationRecord
 
   validates :name, presence: true
   validates :name, uniqueness: { scope: :organization }
-
-  validate :at_least_one_item
-  validate -> { line_items_quantity_is_at_least(1) }
 
   # @param inventory [View::Inventory]
   # @return [Boolean]
@@ -57,13 +53,5 @@ class Kit < ApplicationRecord
   def reactivate
     update!(active: true)
     item.update!(active: true)
-  end
-
-  private
-
-  def at_least_one_item
-    unless line_items.any?
-      errors.add(:base, 'At least one item is required')
-    end
   end
 end

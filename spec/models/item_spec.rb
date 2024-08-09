@@ -22,6 +22,8 @@
 #
 
 RSpec.describe Item, type: :model do
+  it_behaves_like "itemizable"
+
   let(:organization) { create(:organization) }
 
   describe 'Assocations >' do
@@ -40,6 +42,42 @@ RSpec.describe Item, type: :model do
     it { should validate_numericality_of(:distribution_quantity).is_greater_than(0) }
     it { should validate_numericality_of(:on_hand_minimum_quantity).is_greater_than_or_equal_to(0) }
     it { should validate_numericality_of(:on_hand_recommended_quantity).is_greater_than_or_equal_to(0) }
+
+    context "Doesn't house a kit >" do
+      it "ensures associated line_items are empty" do
+        item = create(:item)
+        item.line_items << build(:line_item, quantity: 1)
+        expect(item).not_to be_valid
+      end
+    end
+
+    context "Houses a kit >" do
+      before :each do
+        kit_params = attributes_for(:kit)
+        kit_params[:line_items_attributes] = [{item_id: create(:item, organization: organization).id, quantity: 1}]
+        @item = KitCreateService.new(organization_id: organization.id, kit_params: kit_params).call.kit.item
+      end
+
+      it "requires at least one item" do
+        @item.line_items = []
+        expect(@item).not_to be_valid
+      end
+
+      it "ensures the associated line_items are invalid with a nil quantity" do
+        @item.line_items << build(:line_item, quantity: nil)
+        expect(@item).not_to be_valid
+      end
+
+      it "ensures the associated line_items are invalid with a zero quantity" do
+        @item.line_items << build(:line_item, quantity: 0)
+        expect(@item).not_to be_valid
+      end
+
+      it "ensures the associated line_items are valid with a one quantity" do
+        @item.line_items << build(:line_item, quantity: 1)
+        expect(@item).to be_valid
+      end
+    end
   end
 
   context "Filtering >" do
@@ -55,6 +93,29 @@ RSpec.describe Item, type: :model do
       create(:item, base_item: size4, organization: organization)
       create(:item, base_item: size_z, organization: organization)
       expect(Item.by_size("4").length).to eq(2)
+    end
+
+    it "->housing_a_kit returns all items which belongs_to (house) a kit" do
+      name = "test kit"
+      kit_params = attributes_for(:kit, name: name)
+      kit_params[:line_items_attributes] = [{item_id: create(:item).id, quantity: 1}] # shouldn't be counted
+      KitCreateService.new(organization_id: organization.id, kit_params: kit_params).call
+
+      create(:item) # shouldn't be counted
+      expect(Item.housing_a_kit.count).to eq(1)
+      expect(Item.housing_a_kit.first.name = name)
+    end
+
+    it "->loose returns all items which do not belongs_to a kit" do
+      name = "A"
+      item = create(:item, name: name, organization: organization)
+
+      kit_params = attributes_for(:kit)
+      kit_params[:line_items_attributes] = [{item_id: item.id, quantity: 1}]
+      KitCreateService.new(organization_id: organization.id, kit_params: kit_params).call # shouldn't be counted
+
+      expect(Item.loose.count).to eq(1)
+      expect(Item.loose.first.name = name)
     end
 
     it "->alphabetized retrieves items in alphabetical order" do
@@ -236,9 +297,12 @@ RSpec.describe Item, type: :model do
       end
 
       context "in a kit" do
-        let(:kit) { create(:kit, organization: organization) }
         before do
-          create(:line_item, itemizable: kit, item: item)
+          params = FactoryBot.attributes_for(:kit)
+          params[:line_items_attributes] = [
+            {item_id: item.id, quantity: 1}
+          ]
+          KitCreateService.new(organization_id: organization.id, kit_params: params).call
         end
 
         it "should return false" do
@@ -271,10 +335,12 @@ RSpec.describe Item, type: :model do
       end
 
       context "in a kit" do
-        let(:kit) { create(:kit, organization: organization) }
-
         before do
-          create(:line_item, itemizable: kit, item: item)
+          params = FactoryBot.attributes_for(:kit)
+          params[:line_items_attributes] = [
+            {item_id: item.id, quantity: 1}
+          ]
+          KitCreateService.new(organization_id: organization.id, kit_params: params).call
         end
 
         it "should return false" do
@@ -362,6 +428,19 @@ RSpec.describe Item, type: :model do
       end
     end
 
+    describe '#is_in_kit?' do
+      it "is true for items that are in a kit and false otherwise" do
+        item_not_in_kit = create(:item, organization: organization)
+        item_in_kit = create(:item, organization: organization)
+
+        kit_params = attributes_for(:kit)
+        kit_params[:line_items_attributes] = [{item_id: item_in_kit.id, quantity: 1}]
+        KitCreateService.new(organization_id: organization.id, kit_params: kit_params).call
+        expect(item_in_kit.is_in_kit?).to be true
+        expect(item_not_in_kit.is_in_kit?).to be false
+      end
+    end
+
     describe "other?" do
       it "is true for items that are partner_key 'other'" do
         item = create(:item, base_item: create(:base_item, name: "Base"))
@@ -424,8 +503,9 @@ RSpec.describe Item, type: :model do
       let(:kit) { create(:kit, name: "my kit") }
 
       it "updates kit name" do
-        item.update(name: "my new name")
-        expect(item.name).to eq kit.name
+        name = "my new name"
+        item.update(name: name)
+        expect(kit.name).to eq name
       end
     end
 

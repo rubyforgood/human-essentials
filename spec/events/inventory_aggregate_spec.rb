@@ -381,11 +381,14 @@ RSpec.describe InventoryAggregate do
     end
 
     it "should process a kit allocation event" do
-      kit = FactoryBot.create(:kit, :with_item, organization: organization)
+      params = FactoryBot.attributes_for(:kit)
+      params[:line_items_attributes] = [
+        {item_id: item1.id, quantity: 10},
+        {item_id: item2.id, quantity: 3}
+      ]
 
-      kit.line_items = []
-      kit.line_items << build(:line_item, quantity: 10, item: item1, itemizable: kit)
-      kit.line_items << build(:line_item, quantity: 3, item: item2, itemizable: kit)
+      kit = KitCreateService.new(organization_id: organization.id, kit_params: params).call.kit
+
       KitAllocateEvent.publish(kit, storage_location1.id, 2)
 
       # 30 - (10*2) = 10, 10 - (3*2) = 4
@@ -416,7 +419,14 @@ RSpec.describe InventoryAggregate do
     end
 
     it "should process a kit deallocation event" do
-      kit = FactoryBot.create(:kit, :with_item, organization: organization)
+      params = FactoryBot.attributes_for(:kit)
+      params[:line_items_attributes] = [
+        {item_id: item1.id, quantity: 20},
+        {item_id: item2.id, quantity: 5}
+      ]
+
+      kit = KitCreateService.new(organization_id: organization.id, kit_params: params).call.kit
+
       TestInventory.create_inventory(organization,
         {
           storage_location1.id => {
@@ -432,9 +442,6 @@ RSpec.describe InventoryAggregate do
         })
       inventory = InventoryAggregate.inventory_for(organization.id) # reload
 
-      kit.line_items = []
-      kit.line_items << build(:line_item, quantity: 20, item: item1, itemizable: kit)
-      kit.line_items << build(:line_item, quantity: 5, item: item2, itemizable: kit)
       KitDeallocateEvent.publish(kit, storage_location1, 2)
 
       # 30 + (20*2) = 70, 10 + (5*2) = 20

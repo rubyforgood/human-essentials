@@ -1,11 +1,23 @@
 class KitCreateService
   include ServiceObjectErrorsMixin
 
+  KIT_BASE_ITEM_ATTRS = {
+    name: 'Kit',
+    category: 'kit',
+    partner_key: 'kit'
+  }.freeze
+
   attr_reader :kit
+
+  def self.FindOrCreateKitBaseItem!
+    BaseItem.find_or_create_by!(KIT_BASE_ITEM_ATTRS)
+  end
 
   def initialize(organization_id:, kit_params:)
     @organization_id = organization_id
     @kit_params = kit_params
+    @kit_params_with_organization = kit_params.merge({organization_id: organization.id})
+      .except(:line_items_attributes)  # #3707 line items point to item_housing_kit, not the kit
   end
 
   def call
@@ -13,24 +25,23 @@ class KitCreateService
 
     organization.transaction do
       # Create the Kit record
-      @kit = Kit.new(kit_params_with_organization)
+      @kit = Kit.new(@kit_params_with_organization)
       @kit.save!
 
-      # Create a BaseItem that houses each
-      # kit item created.
-      kit_base_item = fetch_or_create_kit_base_item
+      # Find or create the BaseItem for all items housing kits
+      item_housing_a_kit_base_item = KitCreateService.FindOrCreateKitBaseItem!
 
-      # Create the Item.
-      item_creation = ItemCreateService.new(
+      # Create the item housing the kit along with associated line items (#3707)
+      item_housing_kit_creation = ItemCreateService.new(
         organization_id: organization.id,
-        item_params: {
-          name: kit.name,
-          partner_key: kit_base_item.partner_key,
-          kit_id: kit.id
-        }
+        item_params: kit_params.merge(
+          kit_id: @kit.id,
+          partner_key: item_housing_a_kit_base_item.partner_key,
+          name: @kit.name
+        )
       )
 
-      item_creation_result = item_creation.call
+      item_creation_result = item_housing_kit_creation.call
       unless item_creation_result.success?
         raise item_creation_result.error
       end
@@ -45,27 +56,8 @@ class KitCreateService
   private
 
   attr_reader :organization_id, :kit_params
-
   def organization
     @organization ||= Organization.find_by(id: organization_id)
-  end
-
-  def kit_params_with_organization
-    kit_params.merge({
-                       organization_id: organization.id
-                     })
-  end
-
-  def fetch_or_create_kit_base_item
-    BaseItem.find_or_create_by!({
-                                  name: 'Kit',
-                                  category: 'kit',
-                                  partner_key: 'kit'
-                                })
-  end
-
-  def partner_key_for_kits
-    'kit'
   end
 
   def valid?
@@ -84,20 +76,9 @@ class KitCreateService
   def kit_validation_errors
     return @kit_validation_errors if @kit_validation_errors
 
-    kit = Kit.new(kit_params_with_organization)
+    kit = Kit.new(@kit_params_with_organization)
     kit.valid?
 
     @kit_validation_errors = kit.errors
   end
-
-  def associated_item_params
-    {
-      kit: kit.name
-    }
-  end
-
-  def partner_key_for(name)
-    "kit_#{name.underscore.gsub(/\s+/, '_')}"
-  end
 end
-
