@@ -173,7 +173,7 @@ class Distribution < ApplicationRecord
   private
 
   def line_items_quantity_is_positive
-    line_items_quantity_is_at_least(0)
+    line_items_quantity_is_at_least(1)
   end
 
   def reset_shipping_cost
