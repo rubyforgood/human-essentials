@@ -8,13 +8,10 @@ export default class extends Controller {
     "itemUnits": Object
   }
 
-  addOption(val, text, selected) {
+  addOption(val, text) {
     let option = document.createElement("option");
     option.value = val;
     option.text = text;
-    if (selected) {
-      option.selected = true;
-    }
     this.requestSelectTarget.appendChild(option);
   }
 
@@ -43,7 +40,7 @@ export default class extends Controller {
       this.clearOptions()
       this.addOption('', 'Units')
       for (const [index, [name, displayName]] of Object.entries(Object.entries(units))) {
-        this.addOption(name, displayName, index === "0")
+        this.addOption(name, displayName)
       }
     }
   }

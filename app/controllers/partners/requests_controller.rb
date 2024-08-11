@@ -11,13 +11,7 @@ module Partners
       @partner_request = ::Request.new
       @partner_request.item_requests.build
 
-      @requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
-      if Flipper.enabled?(:enable_packs)
-        # hash of (item ID => hash of (request unit name => request unit plural name))
-        @item_units = current_partner.organization.items.to_h do |i|
-          [i.id, i.request_units.to_h { |u| [u.name, u.name.pluralize] }]
-        end
-      end
+      fetch_items
     end
 
     def show
@@ -39,13 +33,7 @@ module Partners
         @partner_request = create_service.partner_request
         @errors = create_service.errors
 
-        @requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
-        if Flipper.enabled?(:enable_packs)
-          # hash of (item ID => hash of (request unit name => request unit plural name))
-          @item_units = current_partner.organization.items.to_h do |i|
-            [i.id, i.request_units.to_h { |u| [u.name, u.name.pluralize] }]
-          end
-        end
+        fetch_items
 
         Rails.logger.info("[Request Creation Failure] partner_user_id=#{current_user.id} reason=#{@errors.full_messages}")
 
@@ -58,5 +46,16 @@ module Partners
     def partner_request_params
       params.require(:request).permit(:comments, item_requests_attributes: [:item_id, :quantity, :request_unit])
     end
+
+    def fetch_items
+      @requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
+      if Flipper.enabled?(:enable_packs)
+        # hash of (item ID => hash of (request unit name => request unit plural name))
+        @item_units = Item.where(id: @requestable_items.to_h.values).to_h do |i|
+          [i.id, i.request_units.to_h { |u| [u.name, u.name.pluralize] }]
+        end
+      end
+    end
+
   end
 end
