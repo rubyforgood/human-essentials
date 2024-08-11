@@ -37,7 +37,7 @@ RSpec.describe "Partners profile served area behaviour", type: :system, js: true
         expect(page).not_to have_selector("#request_item_requests_attributes_0_request_unit", visible: true)
         select "Item 1", from: "request_item_requests_attributes_0_item_id"
         expect(page).to have_selector("#request_item_requests_attributes_0_request_unit", visible: true)
-        expect(page).to have_select("request_item_requests_attributes_0_request_unit", selected: "packs", options: ["Units", "packs"])
+        expect(page).to have_select("request_item_requests_attributes_0_request_unit", selected: "Units", options: ["Units", "packs"])
         select "packs", from: "request_item_requests_attributes_0_request_unit"
         click_on "Add Another Item"
 
