@@ -38,6 +38,7 @@ export default class extends Controller {
     else {
       this.requestSelectTarget.style.display = 'inline';
       this.clearOptions()
+      this.addOption('-1', 'Please select a unit')
       this.addOption('', 'Units')
       for (const [index, [name, displayName]] of Object.entries(Object.entries(units))) {
         this.addOption(name, displayName)

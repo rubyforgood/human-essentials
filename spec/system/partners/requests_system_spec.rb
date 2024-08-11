@@ -31,13 +31,30 @@ RSpec.describe "Partners profile served area behaviour", type: :system, js: true
         Flipper.enable(:enable_packs)
       end
 
+      it "should require a unit selection" do
+        visit new_partners_request_path
+        expect(Request.count).to eq(0)
+        expect(page).not_to have_selector("#request_item_requests_attributes_0_request_unit", visible: true)
+        select "Item 1", from: "request_item_requests_attributes_0_item_id"
+        expect(page).to have_selector("#request_item_requests_attributes_0_request_unit", visible: true)
+        expect(page).to have_select("request_item_requests_attributes_0_request_unit",
+          selected: "Please select a unit",
+          options: ["Please select a unit", "Units", "packs"])
+        fill_in "request_item_requests_attributes_0_quantity", with: 50
+        click_on "Submit Essentials Request"
+        expect(Request.count).to eq(0)
+        expect(page).to have_text "Please ensure a unit is selected for each item that supports it."
+      end
+
       it "should show packs on selection" do
         visit new_partners_request_path
         expect(Request.count).to eq(0)
         expect(page).not_to have_selector("#request_item_requests_attributes_0_request_unit", visible: true)
         select "Item 1", from: "request_item_requests_attributes_0_item_id"
         expect(page).to have_selector("#request_item_requests_attributes_0_request_unit", visible: true)
-        expect(page).to have_select("request_item_requests_attributes_0_request_unit", selected: "Units", options: ["Units", "packs"])
+        expect(page).to have_select("request_item_requests_attributes_0_request_unit",
+          selected: "Please select a unit",
+          options: ["Please select a unit", "Units", "packs"])
         select "packs", from: "request_item_requests_attributes_0_request_unit"
         click_on "Add Another Item"
 
