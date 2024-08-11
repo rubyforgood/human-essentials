@@ -34,7 +34,9 @@ class Request < ApplicationRecord
 
   validates :distribution_id, uniqueness: true, allow_nil: true
   validate :item_requests_uniqueness_by_item_id
-  before_save :sanitize_items_data
+  validate :not_completely_empty
+
+  after_validation :sanitize_items_data
 
   include Filterable
   # add request item scope to allow filtering distributions by request item
@@ -72,6 +74,12 @@ class Request < ApplicationRecord
 
     self.request_items = request_items.map do |item|
       item.merge("item_id" => item["item_id"]&.to_i, "quantity" => item["quantity"]&.to_i)
+    end
+  end
+
+  def not_completely_empty
+    if comments.blank? && item_requests.blank?
+      errors.add(:base, "completely empty request")
     end
   end
 end
