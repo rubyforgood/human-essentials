@@ -53,18 +53,16 @@ module Reports
 
       sql_query = <<-SQL
         SELECT SUM(line_items.quantity * kit_line_items.quantity)
-        FROM distributions 
-        INNER JOIN line_items ON line_items.itemizable_type = 'Distribution' AND line_items.itemizable_id = distributions.id 
-        INNER JOIN items ON items.id = line_items.item_id 
-        INNER JOIN kits ON kits.id = items.kit_id 
-        INNER JOIN line_items AS kit_line_items ON kits.id = kit_line_items.itemizable_id
-        INNER JOIN items AS kit_items ON kit_items.id = kit_line_items.item_id
-        INNER JOIN base_items ON base_items.partner_key = kit_items.partner_key 
+        FROM distributions
+        INNER JOIN line_items ON line_items.itemizable_type = 'Distribution' AND line_items.itemizable_id = distributions.id
+        INNER JOIN items AS items_housing_a_kit ON items_housing_a_kit.id = line_items.item_id AND items_housing_a_kit.kit_id IS NOT NULL
+        INNER JOIN line_items AS kit_line_items ON kit_line_items.itemizable_id = items_housing_a_kit.id AND kit_line_items.itemizable_type = 'Item'
+        INNER JOIN items AS items_in_kit ON items_in_kit.id = kit_line_items.item_id
+        INNER JOIN base_items AS base_items_in_kit ON base_items_in_kit.partner_key = items_in_kit.partner_key
         WHERE distributions.organization_id = ?
           AND EXTRACT(year FROM issued_at) = ?
-          AND LOWER(base_items.category) LIKE '%diaper%'
-          AND NOT (LOWER(base_items.category) LIKE '%cloth%' OR LOWER(base_items.name) LIKE '%cloth%')
-          AND kit_line_items.itemizable_type = 'Kit';
+          AND LOWER(base_items_in_kit.category) LIKE '%diaper%'
+          AND NOT (LOWER(base_items_in_kit.category) LIKE '%cloth%' OR LOWER(base_items_in_kit.name) LIKE '%cloth%')
       SQL
 
       sanitized_sql = ActiveRecord::Base.send(:sanitize_sql_array, [sql_query, organization_id, year])
