@@ -389,11 +389,12 @@ RSpec.describe Item, type: :model do
         end
 
         it 'deactivates the kit if it exists' do
-          kit = create(:kit)
-          item = create(:item, kit: kit)
+          kit_params = attributes_for(:kit)
+          kit_params[:line_items_attributes] = [{item_id: create(:item).id, quantity: 1}]
+          kit = KitCreateService.new(organization_id: organization.id, kit_params: kit_params).call.kit
           expect(kit).to be_active
-          item.deactivate!
-          expect(item).not_to be_active
+          kit.item.deactivate!
+          expect(kit.item).not_to be_active
           expect(kit).not_to be_active
         end
       end
@@ -497,22 +498,23 @@ RSpec.describe Item, type: :model do
   end
 
   describe "after update" do
-    let(:item) { create(:item, name: "my item", kit: kit) }
-
     context "when item has the kit" do
-      let(:kit) { create(:kit, name: "my kit") }
+      let(:kit) {
+        kit_params = attributes_for(:kit)
+        kit_params[:line_items_attributes] = [{item_id: create(:item).id, quantity: 1}]
+        KitCreateService.new(organization_id: organization.id, kit_params: kit_params).call.kit
+      }
 
       it "updates kit name" do
         name = "my new name"
-        item.update(name: name)
+        kit.item.update(name: name)
         expect(kit.name).to eq name
       end
     end
 
     context "when item does not have kit" do
-      let(:kit) { nil }
-
       it "does not raise any errors" do
+        item = create(:item)
         allow_any_instance_of(Kit).to receive(:update).and_return(true)
         expect {
           item.update(name: "my new name")
