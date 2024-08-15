@@ -47,7 +47,7 @@ class Item < ApplicationRecord
 
   validate :has_no_line_items, if: -> { kit.blank? }
 
-  has_many :line_items, dependent: :destroy
+  has_many :contained_in_line_items, class_name: "LineItem", dependent: :destroy
   has_many :inventory_items, dependent: :destroy
   has_many :barcode_items, as: :barcodeable, dependent: :destroy
   has_many :storage_locations, through: :inventory_items
@@ -154,7 +154,7 @@ class Item < ApplicationRecord
   end
 
   def can_delete?(inventory = nil, kits = nil)
-    can_deactivate_or_delete?(inventory, kits) && line_items.none? && !barcode_count&.positive?
+    can_deactivate_or_delete?(inventory, kits) && contained_in_line_items.none? && !barcode_count&.positive?
   end
 
   # @return [Boolean]

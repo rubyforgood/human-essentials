@@ -26,8 +26,13 @@ RSpec.describe Item, type: :model do
 
   let(:organization) { create(:organization) }
 
-  describe 'Assocations >' do
+  describe 'Associations >' do
     it { should belong_to(:item_category).optional }
+    it "should return line items containing the item" do
+      item = create(:item)
+      create(:line_item, item: item)
+      expect(item.contained_in_line_items.count).to eq(1)
+    end
   end
   context "Validations >" do
     it "requires a unique name" do
@@ -44,8 +49,10 @@ RSpec.describe Item, type: :model do
     it { should validate_numericality_of(:on_hand_recommended_quantity).is_greater_than_or_equal_to(0) }
 
     context "Doesn't house a kit >" do
-      it "ensures associated line_items are empty" do
+      it "ensures associated itemizable line_items don't exist without invalidating associated line_items" do
         item = create(:item)
+        create(:line_item, item: item)
+        expect(item).to be_valid
         item.line_items << build(:line_item, quantity: 1)
         expect(item).not_to be_valid
       end
