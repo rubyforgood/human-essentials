@@ -500,7 +500,7 @@ def seed_quantity(item_name, organization, storage_location, quantity)
   AdjustmentCreateService.new(adjustment).call
 end
 
-items_by_category.each do |_category, entries|
+JSON.parse(File.read(Rails.root.join("db", "base_items.json"))).each do |_category, entries|
   entries.each do |entry|
     seed_quantity(entry['name'], pdx_org, inv_arbor, entry['qty']['arbor'])
     seed_quantity(entry['name'], pdx_org, inv_pdxdb, entry['qty']['pdxdb'])
