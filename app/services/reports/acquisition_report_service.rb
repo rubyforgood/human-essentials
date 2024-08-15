@@ -62,11 +62,12 @@ module Reports
         WHERE distributions.organization_id = ?
           AND EXTRACT(year FROM issued_at) = ?
           AND LOWER(base_items_in_kit.category) LIKE '%diaper%'
-          AND NOT (LOWER(base_items_in_kit.category) LIKE '%cloth%' OR LOWER(base_items_in_kit.name) LIKE '%cloth%')
+          AND NOT (((LOWER(base_items_in_kit.category) LIKE '%cloth%') OR (LOWER(base_items_in_kit.name) LIKE '%cloth%')))
+          AND NOT (LOWER(base_items_in_kit.category) LIKE '%adult%')
       SQL
+      # TODO duplicated code from Item.disposable scope, and ChildrenServedReportService. merge when working on #3652
 
       sanitized_sql = ActiveRecord::Base.send(:sanitize_sql_array, [sql_query, organization_id, year])
-
       result = ActiveRecord::Base.connection.execute(sanitized_sql)
 
       result.first['sum'].to_i
