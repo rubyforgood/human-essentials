@@ -17,19 +17,15 @@ RSpec.describe AllocateKitInventoryService, type: :service do
   end
 
   describe "#error" do
-    let(:kit) { Kit.create(params) }
+    let(:kit) {
+      kit_params = attributes_for(:kit)
+      kit_params[:line_items_attributes] = [{ "0": { item_id: item_out_of_stock.id, quantity: 5 } }]
+      KitCreateService.new(organization_id: organization.id, kit_params: kit_params).call.kit
+    }
 
     context "when the Store location organization doesn't match" do
       let(:wrong_organization) { create(:organization) }
       let(:wrong_storage) { create(:storage_location, organization: wrong_organization) }
-      let(:params) do
-        {
-          organization_id: organization.id,
-          line_items_attributes: {
-            "0": { item_id: item_out_of_stock.id, quantity: 5 }
-          }
-        }
-      end
 
       it "returns error" do
         service = AllocateKitInventoryService.new(kit: kit, storage_location: wrong_storage, increase_by: 1).allocate
@@ -83,9 +79,9 @@ RSpec.describe AllocateKitInventoryService, type: :service do
         expect(inventory.quantity_for(storage_location: storage_location.id, item_id: kit.item.id)).to eq(2)
 
         # Check that Inventory out decreased by allocated kit's line_items and their respective quantities
-        expect(inventory_out.line_items.count).to eq(kit.line_items.count)
-        expect(inventory_out.line_items.first.item_id).to eq(kit.line_items.first.item_id)
-        expect(inventory_out.line_items.first.quantity).to eq(kit.line_items.first.quantity * -increase_by)
+        expect(inventory_out.line_items.count).to eq(kit.item.line_items.count)
+        expect(inventory_out.line_items.first.item_id).to eq(kit.item.line_items.first.item_id)
+        expect(inventory_out.line_items.first.quantity).to eq(kit.item.line_items.first.quantity * -increase_by)
 
         # Check inventory in increased by number of kits allocated
         expect(inventory_in.line_items.first.quantity).to eq(increase_by)
@@ -107,7 +103,7 @@ RSpec.describe AllocateKitInventoryService, type: :service do
           expect(@second_call.error).to be_nil
 
           # Check inventory out decreases both time with the increase_by value
-          expect(inventory_out.line_items.first.quantity).to eq(kit.line_items.first.quantity * -(increase_by + second_increase_by))
+          expect(inventory_out.line_items.first.quantity).to eq(kit.item.line_items.first.quantity * -(increase_by + second_increase_by))
 
           # Check inventory in increase both time with increase_by value
           expect(inventory_in.line_items.first.quantity).to eq(increase_by + second_increase_by)
@@ -133,8 +129,8 @@ RSpec.describe AllocateKitInventoryService, type: :service do
           end
 
           it "inventory out for that kit contains both line_items with their respective quantity" do
-            expect(inventory_out.line_items[0].quantity).to eq(kit.line_items[0].quantity * -increase_by)
-            expect(inventory_out.line_items[1].quantity).to eq(kit.line_items[1].quantity * -increase_by)
+            expect(inventory_out.line_items[0].quantity).to eq(kit.item.line_items[0].quantity * -increase_by)
+            expect(inventory_out.line_items[1].quantity).to eq(kit.item.line_items[1].quantity * -increase_by)
           end
         end
 
@@ -151,8 +147,8 @@ RSpec.describe AllocateKitInventoryService, type: :service do
             expect(@second_call.error).to be_nil
 
             expect(inventory_in.line_items.first.quantity).to eq(increase_by + second_increase_by)
-            expect(inventory_out.line_items[0].quantity).to eq(kit.line_items[0].quantity * -(increase_by + second_increase_by))
-            expect(inventory_out.line_items[1].quantity).to eq(kit.line_items[1].quantity * -(increase_by + second_increase_by))
+            expect(inventory_out.line_items[0].quantity).to eq(kit.item.line_items[0].quantity * -(increase_by + second_increase_by))
+            expect(inventory_out.line_items[1].quantity).to eq(kit.item.line_items[1].quantity * -(increase_by + second_increase_by))
           end
         end
       end
