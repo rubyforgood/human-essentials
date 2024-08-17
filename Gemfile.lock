@@ -672,7 +672,7 @@ GEM
     tilt (2.2.0)
     timeout (0.4.1)
     ttfunk (1.7.0)
-    turbo-rails (1.4.0)
+    turbo-rails (2.0.6)
       actionpack (>= 6.0.0)
       activejob (>= 6.0.0)
       railties (>= 6.0.0)
