@@ -41,6 +41,17 @@ class RequestsController < ApplicationController
   end
 
   def print_unfulfilled
+    @requests = Request.where(status: [0, 1]).limit(2)
+    # respond
+    respond_to do |format|
+      format.any do
+        pdf = PicklistsPdf.new(current_organization, @requests)
+        send_data pdf.compute_and_render,
+          filename: format("Picklists_%s.pdf", Time.current.to_fs(:long)),
+          type: "application/pdf",
+          disposition: "inline"
+      end
+    end
   end
 
   private
