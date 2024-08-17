@@ -40,6 +40,9 @@ class RequestsController < ApplicationController
     redirect_to new_distribution_path(request_id: request.id)
   end
 
+  def print_unfulfilled
+  end
+
   private
 
   def load_items
