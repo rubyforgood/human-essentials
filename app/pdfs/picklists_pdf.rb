@@ -98,7 +98,7 @@ class PicklistsPdf
          row(0).borders = [:bottom]
          row(0).border_width = 2
          row(0).font_style = :bold
-         row(0).size = 9
+         row(0).size = 10
          row(0).column(1..-1).borders = %i(bottom left)
       end
     end
@@ -131,7 +131,7 @@ class PicklistsPdf
   def request_data
     data = [["Items Requested",
       "Quantity",
-      "",
+      "[X]",
       "Differences / Comments"]]
 
     request = @requests.first
@@ -142,7 +142,7 @@ class PicklistsPdf
     data + request_items.map do |request_item|
       [request_item.item.name,
         request_item.quantity,
-        "",
+        "[  ]",
         ""]
     end
   end
