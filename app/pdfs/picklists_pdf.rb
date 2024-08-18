@@ -82,14 +82,15 @@ class PicklistsPdf
 
       move_down 20
 
-      data = request_data
+      items = build_items
+      data = custom_units ? data_with_units(items) : data_no_units(items)
 
       font_size 11
 
       # Line item table
       table(data) do
         self.header = true
-        self.cell_style = { padding: [5, 20, 5, 20]}
+        self.cell_style = { padding: [5, 10, 5, 10]}
         self.row_colors = %w(dddddd ffffff)
 
         cells.borders = []
@@ -128,20 +129,42 @@ class PicklistsPdf
     render
   end
 
-  def request_data
+  def build_items
+    request = @requests.first
+    request_items = request.request_items.map do |request_item|
+      RequestItem.from_json(request_item, request)
+    end
+  end
+
+  def custom_units
+    Flipper.enabled?(:enable_packs) && @request.item_requests.any? { |item| item.request_unit }
+  end
+
+  def data_with_units(items)
+    data = [["Items Requested",
+      "Quantity",
+      "Unit (if applicable)",
+      "[X]",
+      "Differences / Comments"]]
+
+    data + items.map do |i|
+      [i.item.name,
+        i.quantity,
+        i.unit&.capitalize&.pluralize(i.quantity),
+        "[  ]",
+        ""]
+    end
+  end
+
+  def data_no_units(items)
     data = [["Items Requested",
       "Quantity",
       "[X]",
       "Differences / Comments"]]
 
-    request = @requests.first
-    request_items = request.request_items.map do |request_item|
-      RequestItem.from_json(request_item, request)
-    end
-
-    data + request_items.map do |request_item|
-      [request_item.item.name,
-        request_item.quantity,
+    data + items.map do |i|
+      [i.item.name,
+        i.quantity,
         "[  ]",
         ""]
     end
