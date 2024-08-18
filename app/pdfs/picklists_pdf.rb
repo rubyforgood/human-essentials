@@ -5,110 +5,108 @@ class PicklistsPdf
 
   def initialize(organization, requests)
     @requests = requests # does this need to be Request.includes(XXX).etc? Investigate.
-    @organization = organization
-    @request = @requests.first # temporary for single picklist only
+    @organization = organization# temporary for single picklist only
   end
 
   def compute_and_render
     font_families["OpenSans"] = PrawnRails.config["font_families"][:OpenSans]
     font "OpenSans"
     font_size 10
-
-    logo_image = if @organization.logo.attached?
-                   StringIO.open(@organization.logo.download)
-                 else
-                   Organization::DIAPER_APP_LOGO
-                 end
-
     footer_height = 35
 
-    # Bounding box containing non-footer elements
-    bounding_box [bounds.left, bounds.top], width: bounds.width, height: bounds.height - footer_height do
-      image logo_image, fit: [250, 85]
+    @requests.each do |request|
+      logo_image = if @organization.logo.attached?
+                    StringIO.open(@organization.logo.download)
+                  else
+                    Organization::DIAPER_APP_LOGO
+                  end
 
-      bounding_box [bounds.right - 225, bounds.top], width: 225, height: 85 do
-        text @organization.name, align: :right
-        text @organization.address, align: :right
-        text @organization.email, align: :right
-      end
+      # Bounding box containing non-footer elements
+      bounding_box [bounds.left, bounds.top], width: bounds.width, height: bounds.height - footer_height do
+        image logo_image, fit: [250, 85]
 
-      text "Requested by:", style: :bold
-      font_size 12
-      text @request.partner.name
-      move_up 24
+        bounding_box [bounds.right - 225, bounds.top], width: 225, height: 85 do
+          text @organization.name, align: :right
+          text @organization.address, align: :right
+          text @organization.email, align: :right
+        end
 
-      text "Partner Primary Contact:", style: :bold, align: :right
-      font_size 12
-      text @request.partner.profile.primary_contact_name, align: :right
-      font_size 10
-      text @request.partner.profile.primary_contact_email, align: :right
-      text @request.partner.profile.primary_contact_phone, align: :right
-      move_down 10
-
-      if @request.partner.profile.pick_up_name.present?
-        move_up 10
-        text "Partner Pickup Person:", style: :bold
+        text "Requested by:", style: :bold
         font_size 12
-        text @request.partner.profile.pick_up_name
-        font_size 10
-        text @request.partner.profile.pick_up_email
-        text @request.partner.profile.pick_up_phone
+        text request.partner.name
         move_up 24
 
-        text "Requested on:", style: :bold, align: :right
+        text "Partner Primary Contact:", style: :bold, align: :right
         font_size 12
-        text @request.created_at.to_fs(:date_picker), align: :right
+        text request.partner.profile.primary_contact_name, align: :right
         font_size 10
-        move_down 30
-      else
-        text "Requested on:", style: :bold
+        text request.partner.profile.primary_contact_email, align: :right
+        text request.partner.profile.primary_contact_phone, align: :right
+        move_down 10
+
+        if request.partner.profile.pick_up_name.present?
+          move_up 10
+          text "Partner Pickup Person:", style: :bold
+          font_size 12
+          text request.partner.profile.pick_up_name
+          font_size 10
+          text request.partner.profile.pick_up_email
+          text request.partner.profile.pick_up_phone
+          move_up 24
+
+          text "Requested on:", style: :bold, align: :right
+          font_size 12
+          text request.created_at.to_fs(:date_picker), align: :right
+          font_size 10
+          move_down 30
+        else
+          text "Requested on:", style: :bold
+          font_size 12
+          text request.created_at.to_fs(:date_picker)
+          font_size 10
+        end
+
+        if @organization.ytd_on_distribution_printout
+          move_up 22
+          text "Items Received Year-to-Date:", style: :bold, align: :right
+          font_size 12
+          text request.partner.quantity_year_to_date.to_s, align: :right
+          font_size 10
+        end
+
+        move_down 10
+        text "Comments:", style: :bold
         font_size 12
-        text @request.created_at.to_fs(:date_picker)
-        font_size 10
+        text request.comments
+
+        move_down 20
+
+        # items = build_items(request)
+        items = request.item_requests
+        data = has_custom_units?(request) ? data_with_units(items) : data_no_units(items)
+
+        font_size 11
+
+        # Line item table
+        table(data) do
+          self.header = true
+          self.cell_style = { padding: [5, 10, 5, 10]}
+          self.row_colors = %w(dddddd ffffff)
+
+          cells.borders = []
+
+          # Header row
+          row(0).borders = [:bottom]
+          row(0).border_width = 2
+          row(0).font_style = :bold
+          row(0).size = 10
+          row(0).column(1..-1).borders = %i(bottom left)
+        end
       end
 
-      if @organization.ytd_on_distribution_printout
-        move_up 22
-        text "Items Received Year-to-Date:", style: :bold, align: :right
-        font_size 12
-        text @request.partner.quantity_year_to_date.to_s, align: :right
-        font_size 10
-      end
-
-      move_down 10
-      text "Comments:", style: :bold
-      font_size 12
-      text @request.comments
-
-      move_down 20
-
-      items = build_items
-      data = custom_units ? data_with_units(items) : data_no_units(items)
-
-      font_size 11
-
-      # Line item table
-      table(data) do
-        self.header = true
-        self.cell_style = { padding: [5, 10, 5, 10]}
-        self.row_colors = %w(dddddd ffffff)
-
-        cells.borders = []
-
-         # Header row
-         row(0).borders = [:bottom]
-         row(0).border_width = 2
-         row(0).font_style = :bold
-         row(0).size = 10
-         row(0).column(1..-1).borders = %i(bottom left)
-      end
+      start_new_page unless request == @requests.last
     end
 
-    number_pages "Page <page> of <total>",
-                 start_count_at: 1,
-                 at: [bounds.right - 130, 22],
-                 align: :right
-    
     repeat :all do
       # Page footer
       bounding_box [bounds.left, bounds.bottom + footer_height], width: bounds.width do
@@ -126,18 +124,16 @@ class PicklistsPdf
       end
     end
 
+    number_pages "Page <page> of <total>",
+                  start_count_at: 1,
+                  at: [bounds.right - 130, 22],
+                  align: :right
+
     render
   end
 
-  def build_items
-    request = @requests.first
-    request_items = request.request_items.map do |request_item|
-      RequestItem.from_json(request_item, request)
-    end
-  end
-
-  def custom_units
-    Flipper.enabled?(:enable_packs) && @request.item_requests.any? { |item| item.request_unit }
+  def has_custom_units?(request)
+    Flipper.enabled?(:enable_packs) && request.item_requests.any? { |item| item.request_unit }
   end
 
   def data_with_units(items)
@@ -150,7 +146,7 @@ class PicklistsPdf
     data + items.map do |i|
       [i.item.name,
         i.quantity,
-        i.unit&.capitalize&.pluralize(i.quantity),
+        i.request_unit&.capitalize&.pluralize(i.quantity),
         "[  ]",
         ""]
     end
