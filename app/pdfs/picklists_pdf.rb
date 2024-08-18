@@ -4,8 +4,8 @@ class PicklistsPdf
   include ItemsHelper
 
   def initialize(organization, requests)
-    @requests = requests # does this need to be Request.includes(XXX).etc? Investigate.
-    @organization = organization# temporary for single picklist only
+    @requests = requests
+    @organization = organization
   end
 
   def compute_and_render
@@ -16,10 +16,10 @@ class PicklistsPdf
 
     @requests.each do |request|
       logo_image = if @organization.logo.attached?
-                    StringIO.open(@organization.logo.download)
-                  else
-                    Organization::DIAPER_APP_LOGO
-                  end
+        StringIO.open(@organization.logo.download)
+      else
+        Organization::DIAPER_APP_LOGO
+      end
 
       # Bounding box containing non-footer elements
       bounding_box [bounds.left, bounds.top], width: bounds.width, height: bounds.height - footer_height do
@@ -89,10 +89,10 @@ class PicklistsPdf
         font_size 11
 
         # Line item table
-        table(data, :width => bounds.width, :column_widths => { 1 => 65, -2 => 35 }) do
+        table(data, width: bounds.width, column_widths: {1 => 65, -2 => 35}) do
           self.header = true
-          self.cell_style = { padding: [5, 10, 5, 10]}
-          self.row_colors = %w(dddddd ffffff)
+          self.cell_style = {padding: [5, 10, 5, 10]}
+          self.row_colors = %w[dddddd ffffff]
 
           cells.borders = []
 
@@ -101,7 +101,7 @@ class PicklistsPdf
           row(0).border_width = 2
           row(0).font_style = :bold
           row(0).size = 10
-          row(0).column(1..-1).borders = %i(bottom left)
+          row(0).column(1..-1).borders = %i[bottom left]
         end
       end
 
@@ -126,9 +126,9 @@ class PicklistsPdf
     end
 
     number_pages "Page <page> of <total>",
-                  start_count_at: 1,
-                  at: [bounds.right - 130, 22],
-                  align: :right
+      start_count_at: 1,
+      at: [bounds.right - 130, 22],
+      align: :right
 
     render
   end
@@ -167,5 +167,3 @@ class PicklistsPdf
     end
   end
 end
-
-  
