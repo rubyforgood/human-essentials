@@ -7,7 +7,7 @@ Some things to know:
 * If you are accepting requests from partners,  you initiate the distribution by "fulfilling" the partner request. (see [Requests](essentials_requests.md))
 
 ## Seeing a list of your distributions
-To view a list of your distributions,  click on 'Distributions' in the left hand menu.  This brings up a list of all your distributions for the current year.   You can change what distributions ar displayed using the distribution filters at the top of the list.
+To view a list of your distributions,  click on 'Distributions' in the left hand menu.  This brings up a list of all your distributions for the current year.   You can change what distributions are displayed using the distribution filters at the top of the list.
 
 
 ### Filtering the distribution list
