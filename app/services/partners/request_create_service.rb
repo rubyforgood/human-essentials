@@ -26,10 +26,6 @@ module Partners
         end
       end
 
-      if @partner_request.comments.blank? && @partner_request.item_requests.blank?
-        errors.add(:base, 'completely empty request')
-      end
-
       return self if errors.present?
 
       Request.transaction do
@@ -42,6 +38,16 @@ module Partners
       end
 
       self
+    end
+
+    def initialize_only
+      partner_request = ::Request.new(partner_id: partner.id,
+        organization_id: organization_id,
+        comments: comments,
+        partner_user_id: partner_user_id)
+      partner_request = populate_item_request(partner_request)
+      partner_request.assign_attributes(additional_attrs)
+      partner_request
     end
 
     private
@@ -69,8 +75,13 @@ module Partners
           # object (either this one or the FamilyRequestCreateService).
           pre_existing_entry.children = (pre_existing_entry.children + (input_item['children'] || [])).uniq
         else
+          if input_item['request_unit'].to_s == '-1' # nothing selected
+            errors.add(:base, "Please select a unit for #{Item.find(input_item["item_id"]).name}")
+            next
+          end
           items[input_item['item_id']] = Partners::ItemRequest.new(
             item_id: input_item['item_id'],
+            request_unit: input_item['request_unit'],
             quantity: input_item['quantity'],
             children: input_item['children'] || [], # will create ChildItemRequests if there are any
             name: fetch_organization_item_name(input_item['item_id']),

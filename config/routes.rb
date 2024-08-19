@@ -35,9 +35,15 @@ Rails.application.routes.draw do
   namespace :partners do
     resource :dashboard, only: [:show]
     resource :help, only: [:show]
-    resources :requests, only: [:show, :new, :index, :create]
-    resources :individuals_requests, only: [:new, :create]
-    resources :family_requests, only: [:new, :create]
+    resources :requests, only: [:show, :new, :index, :create] do
+      post :validate, on: :collection
+    end
+    resources :individuals_requests, only: [:new, :create] do
+      post :validate, on: :collection
+    end
+    resources :family_requests, only: [:new, :create] do
+      post :validate, on: :collection
+    end
     resources :users, only: [:index, :new, :create, :edit, :update]
     resource :profile, only: [:show, :edit, :update]
     resource :approval_request, only: [:create]
