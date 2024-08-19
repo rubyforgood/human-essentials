@@ -89,7 +89,7 @@ module Partners
     def self.csv_export_headers
       %w[
         id first_name last_name date_of_birth gender child_lives_with race agency_child_id
-        health_insurance comments created_at updated_at family_id requested_item_ids active archived
+        health_insurance comments created_at updated_at guardian_last_name guardian_first_name requested_items active archived
       ].freeze
     end
 
@@ -107,8 +107,9 @@ module Partners
         comments,
         created_at,
         updated_at,
-        family_id,
-        requested_item_ids,
+        family.guardian_last_name,
+        family.guardian_first_name,
+        requested_items.map(&:name).join(", "),
         active,
         archived
       ]

@@ -2,6 +2,7 @@
 We ♥ contributors! By participating in this project, you agree to abide by the Ruby for Good [code of conduct](https://github.com/rubyforgood/human-essentials/blob/main/code-of-conduct.md).
 
 If you're new here, here are some things you should know:
+- A great introductory overview of the application is available at the [wiki](https://github.com/rubyforgood/human-essentials/wiki/Application-Overview).
 - Issues tagged "Help Wanted" are self-contained and great for new contributors
 - Pull Requests are reviewed within a week or so
 - Ensure your build passes linting and tests and addresses the issue requirements
@@ -77,13 +78,18 @@ You won't be yelled at for giving your best effort. The worst that can happen is
   ```
 </details>
 
-## Codespaces - EXPERIMENTAL 🛠️
+## Codespaces and Dev Container - EXPERIMENTAL 🛠️
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/rubyforgood/human-essentials/tree/main?quickstart=1)
 
-1. Follow the link above or follow instructions to [create a new Codespace.](https://docs.github.com/en/codespaces/developing-in-a-codespace/creating-a-codespace-for-a-repository); You can use the web editor, or even better open the Codespace in VSCode
+[![Clone and open in VSCode Dev Container](https://img.shields.io/static/v1?label=Dev%20Containers&message=Clone%20and%20Open%20in%20VSCode&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/rubyforgood/human-essentials)
+
+1. Create the container:
+    - To run the container on a Github VM, follow the Codespace link above. You can connect to the Codespace using VSCode or the VSCode web editor.
+    - Or follow instructions to [create a new Codespace.](https://docs.github.com/en/codespaces/developing-in-a-codespace/creating-a-codespace-for-a-repository)
+    - To clone this repo and run the container locally, follow instructions to [install VSCode and Docker](https://code.visualstudio.com/docs/devcontainers/containers). Click the Dev Container link above. Don't forget to add a git remote pointing to your fork once the container is setup and you want to push changes.
 2. Wait for the container to start. This will take a few (10-15) minutes since Ruby needs to be installed, the database needs to be created, and the `bin/setup` script needs to run
-3. Run `bin/start` and visit the URL that pops in VSCode up to see the human essentials page
+3. Run `bin/start`. On the Ports tab, visit the forwarded port 3000 URL marked as Application to see the human essentials page. 
 4. Login as a sample user with the default [credentials](#credentials).
 
 ## Troubleshooting 👷🏼‍♀️
@@ -92,7 +98,13 @@ Please let us know by opening up an issue! We have many new contributors come th
 
 - *"My RBENV installation didn't work!"* - The rbenv repository provides a [rbenv-doctor script](https://github.com/rbenv/rbenv-installer#rbenv-doctor) to verify the installation and check if a ruby version is installed
 
-# 🤝 Contributing workflow
+# Wiki Contribution Workflow
+1. Follow this [SO post](https://stackoverflow.com/a/56480628/13342792) to force push the main repo's Wiki to your fork's Wiki.
+2. Make edits to your fork's Wiki.
+3. Create a documentation issue about your changes. Make sure to note which pages you changed and link to your fork's Wiki.
+4. Someone will review and approve your changes and merge them into the main Wiki following this [SO post](https://stackoverflow.com/a/56810747/13342792)
+
+# 🤝 Code Contribution Workflow
 
 1. **Identify an unassigned issue**. Read more [here](#issues) about how to pick a good issue.
 2. **Assign it** to avoid duplicated efforts (or request assignment by adding a comment).
@@ -132,6 +144,13 @@ If starting server directly, via `rail s` or `rail console`, or built-in debugge
 If starting via Procfile with `bin/start`, then drop a ``binding.remote_pry`` into the line where you want execution to pause at. Then run ``pry-remote`` in the terminal to connect to it.
 https://github.com/Mon-Ouie/pry-remote
 
+If you want to connect via Shopify Ruby LSP VSCode extension or rdbg, start the server with `bundle exec rdbg -O -n -c -- bin/rails server -p 3000`
+
+### Codespaces
+When running tests in browser, visit the forwarded port 6080 URL to see the browser in Codespaces. You can also visit this port to access the GUI desktop in Codespaces.
+
+In VSCode Run and Debug view, there are some helpful defaults for running RSpec tests in browser at your cursor as well as attaching to a live server. Make sure the Ruby LSP server is started before debugging.
+
 ## Squashing commits
 
 Consider the balance of "polluting the git log with commit messages" vs. "providing useful detail about the history of changes in the git log". If you have several smaller commits that serve a one purpose, you are encouraged to squash them into a single commit. There's no hard and fast rule here about this (for now), just use your best judgement. Please don't squash other people's commits. Everyone who contributes here deserves credit for their work! :)
@@ -150,29 +169,46 @@ If you are so inclined, you can open a draft PR as you continue to work on it. S
 ## Tests 🧪
 ### Writing Browser/System/Feature Tests/Specs
 
-Add a test for your change. If you are adding functionality or fixing a  bug, you should add a test!
+Add a test for your change. If you are adding functionality or fixing a bug, you should add a test!
 
-If you are inexperienced in writing tests or get stuck on one, please reach out for help :). You probably don't need to write new tests when simple re-stylings are done (ie. the page may look slightly different but the Test suite is unaffected by those changes).
+If you are inexperienced in writing tests or get stuck on one, please reach out for help :)
 
-If you need to see a browser/system spec run in the browser, you can use the following env variable:
+#### Guidelines
+- Prefer request tests over system tests (which run much slower) unless you need to test Javascript or other interactivity
+- When creating factories, in each RSpec test, hard code all values that you check with a RSpec matcher. Don't check FactoryBot default values. See [#4217](https://github.com/rubyforgood/human-essentials/issues/4217) for why.
+- Write tests to pass with Event Sourcing turned both on and off, see the [Event Sourcing wiki page](https://github.com/rubyforgood/human-essentials/wiki/Event-Sourcing).
+- Keep individual tests tightly scoped, only test the endpoint that you want to test. E.g. create inventory directly using `TestInventory` rather than using an additional endpoint.
+- You probably don't need to write new tests when simple re-stylings are done (ie. the page may look slightly different but the Test suite is unaffected by those changes).
 
-```
-NOT_HEADLESS=true bundle exec rspec
-```
-
-We've added [magic_test](https://github.com/bullet-train-co/magic_test) which makes creating browser specs much easier. It allows you to record actions on the browser running the specs and easily paste them into the spec. You can do this by adding `magic_test` within your system spec:
-```rb
- it "does some browser stuff" do
-   magic_test
- end
-```
-and run the spec using this command: `MAGIC_TEST=1 NOT_HEADLESS=true bundle exec rspec <path_to_spec>`
-
-**See videos of it in action [here](https://twitter.com/andrewculver/status/1366062684802846721)**
+#### Useful Tips
+- If you need to see a browser/system spec run in the browser, you can use the following env variable
+    ```
+    NOT_HEADLESS=true bundle exec rspec
+    ```
+- We've added [magic_test](https://github.com/bullet-train-co/magic_test) which makes creating browser specs much easier. It allows you to record actions on the browser running the specs and easily paste them into the spec. You can do this by adding `magic_test` within your system spec:
+    ```rb
+    it "does some browser stuff" do
+    magic_test
+    end
+    ```
+    and run the spec using this command: 
+    ```
+    MAGIC_TEST=1 NOT_HEADLESS=true bundle exec rspec <path_to_spec>`
+    ```
+    **See videos of it in action [here](https://twitter.com/andrewculver/status/1366062684802846721)**
+- Helpful classes for viewing and modifying inventory include `View::Inventory`, `TestInventory` and various `CreateService` services, see the [Event Sourcing wiki page](https://github.com/rubyforgood/human-essentials/wiki/Event-Sourcing).
 
 ### Test before submitting pull requests
-- Before submitting a pull request, run all tests and rake tasks with `bundle exec rake` and run lints with `bin/lint`. Fix any broken tests and lints before submitting a pull request.
-- You can run all the tests without rake tasks with `bundle exec rspec`
+Before submitting a pull request, run all tests and lints. Fix any broken tests and lints before submitting a pull request.
+
+#### Continuous Integration
+- There are Github Actions workflows which will run all tests with and without Event Sourcing in parallel using Knapsack and lints whenever you push a commit to your fork.
+- Once your first PR has been merged, all commits pushed to an open PR will also run these workflows.
+
+#### Local testing
+- Run all lints with `bin/lint`. 
+- Run all tests without Event Sourcing with `bundle exec rspec`
+- Run all tests with Event Sourcing with `EVENTS_READ=true bundle exec rspec`
 - You can run a single test with `bundle exec rspec {path_to_test_name}_spec.rb` or on a specific line by appending `:LineNumber`
 - If you need to skip a failing test, place `pending("Reason you are skipping the test")` into the `it` block rather than skipping with `xit`. This will allow rspec to deliver the error message without causing the test suite to fail.
 
