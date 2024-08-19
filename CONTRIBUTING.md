@@ -176,7 +176,6 @@ If you are inexperienced in writing tests or get stuck on one, please reach out 
 #### Guidelines
 - Prefer request tests over system tests (which run much slower) unless you need to test Javascript or other interactivity
 - When creating factories, in each RSpec test, hard code all values that you check with a RSpec matcher. Don't check FactoryBot default values. See [#4217](https://github.com/rubyforgood/human-essentials/issues/4217) for why.
-- Write tests to pass with Event Sourcing turned both on and off, see the [Event Sourcing wiki page](https://github.com/rubyforgood/human-essentials/wiki/Event-Sourcing).
 - Keep individual tests tightly scoped, only test the endpoint that you want to test. E.g. create inventory directly using `TestInventory` rather than using an additional endpoint.
 - You probably don't need to write new tests when simple re-stylings are done (ie. the page may look slightly different but the Test suite is unaffected by those changes).
 
@@ -202,13 +201,12 @@ If you are inexperienced in writing tests or get stuck on one, please reach out 
 Before submitting a pull request, run all tests and lints. Fix any broken tests and lints before submitting a pull request.
 
 #### Continuous Integration
-- There are Github Actions workflows which will run all tests with and without Event Sourcing in parallel using Knapsack and lints whenever you push a commit to your fork.
+- There are Github Actions workflows which will run all tests in parallel using Knapsack and lints whenever you push a commit to your fork.
 - Once your first PR has been merged, all commits pushed to an open PR will also run these workflows.
 
 #### Local testing
-- Run all lints with `bin/lint`. 
-- Run all tests without Event Sourcing with `bundle exec rspec`
-- Run all tests with Event Sourcing with `EVENTS_READ=true bundle exec rspec`
+- Run all lints with `bin/lint`.
+- Run all tests with `bundle exec rspec`
 - You can run a single test with `bundle exec rspec {path_to_test_name}_spec.rb` or on a specific line by appending `:LineNumber`
 - If you need to skip a failing test, place `pending("Reason you are skipping the test")` into the `it` block rather than skipping with `xit`. This will allow rspec to deliver the error message without causing the test suite to fail.
 
