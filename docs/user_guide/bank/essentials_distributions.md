@@ -4,7 +4,7 @@ Distributions are where you record what you allocate to your partner agencies.
 
 Some things to know:    
 * Once you save a distribution,  those items are allocated to the partner, and are no longer part of your inventory in the system. 
-* If you are accepting requests from partners,  you initiate the distribution bu "fulfilling" the partner request. (see [Requests](essentials_requests.md))
+* If you are accepting requests from partners,  you initiate the distribution by "fulfilling" the partner request. (see [Requests](essentials_requests.md))
 
 ## Seeing a list of your distributions
 To view a list of your distributions,  click on 'Distributions' in the left hand menu.  This brings up a list of all your distributions for the current year.   You can change what distributions ar displayed using the distribution filters at the top of the list.
