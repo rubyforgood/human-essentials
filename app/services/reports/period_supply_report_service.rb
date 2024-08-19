@@ -138,7 +138,7 @@ module Reports
         WHERE #{itemizable_type}.organization_id = ?
           AND EXTRACT(year FROM issued_at) = ?
           AND LOWER(base_items.category) LIKE '%menstral supplies%'
-          AND NOT (LOWER(base_items.category) LIKE '%diaper%' OR LOWER(base_items.name) LIKE '%diaper%')
+          AND NOT (LOWER(base_items.category) LIKE '%diaper%' OR LOWER(base_items.name) LIKE '%cloth%')
           AND kit_line_items.itemizable_type = 'Kit';
       SQL
 
