@@ -45,7 +45,7 @@ FactoryBot.define do
 
       # Create associated records
       create(:partner_profile, partner_id: partner.id)
-      create(:partners_user, email: partner.email, name: partner.name, partner: partner)
+      create(:partner_user, email: partner.email, name: partner.name, partner: partner)
     end
   end
 end
