@@ -16,7 +16,7 @@ To view a list of your distributions,  click on 'Distributions' in the left hand
 
 When you have been using human essentials for a few months, your distribution list may grow to the point that you really need to be able to narrow things down to find a particular distribution.
 
-To help with that,  you can filter the distribution list by several aspects: item,  item category, partner, source inventory (i.e. storage location) and distribution status, and date range.  
+To help with that, you can filter the distribution list by several aspects: item, item category, partner, source inventory (i.e. storage location) and distribution status, and date range.
 If you pick several things,  you will get only the distributions that match all of them.
 
 
