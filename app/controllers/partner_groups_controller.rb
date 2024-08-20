@@ -21,11 +21,14 @@ class PartnerGroupsController < ApplicationController
   def edit
     @partner_group = current_organization.partner_groups.find(params[:id])
     set_items_categories
+    @reminder_schedule = ReminderSchedule.from_ical(@partner_group.reminder_schedule)
+    @item_categories = current_organization.item_categories
   end
 
   def update
     @partner_group = current_organization.partner_groups.find(params[:id])
-    if @partner_group.update(partner_group_params)
+    reminder_schedule = ReminderSchedule.new(reminder_schedule_params).create_schedule
+    if @partner_group.update(partner_group_params.merge!(reminder_schedule:))
       redirect_to partners_path + "#nav-partner-groups", notice: "Partner group edited!"
     else
       flash.now[:error] = "Something didn't work quite right -- try again?"
@@ -52,7 +55,11 @@ class PartnerGroupsController < ApplicationController
   end
 
   def partner_group_params
-    params.require(:partner_group).permit(:name, :send_reminders, :deadline_day, :reminder_schedule, item_category_ids: [])
+    params.require(:partner_group).permit(:name, :send_reminders, :reminder_schedule, :deadline_day, item_category_ids: [])
+  end
+
+  def reminder_schedule_params
+    params.require(:reminder_schedule).permit(:every_n_months, :date_or_week_day, :date, :day_of_week, :every_nth_day)
   end
 
   def set_items_categories
