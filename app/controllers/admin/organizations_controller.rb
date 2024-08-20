@@ -2,12 +2,13 @@
 class Admin::OrganizationsController < AdminController
   def edit
     @organization = Organization.find(params[:id])
+    @reminder_schedule = ReminderSchedule.from_ical(@organization.reminder_schedule)
   end
 
   def update
     @organization = Organization.find(params[:id])
-
-    if OrganizationUpdateService.update(@organization, organization_params)
+    reminder_schedule = ReminderSchedule.new(reminder_schedule_params).create_schedule
+    if OrganizationUpdateService.update(@organization, organization_params.merge!(reminder_schedule:))
       redirect_to admin_organizations_path, notice: "Updated organization!"
     else
       flash[:error] = @organization.errors.full_messages.join("\n")
@@ -31,6 +32,7 @@ class Admin::OrganizationsController < AdminController
 
   def new
     @organization = Organization.new
+    @reminder_schedule = ReminderSchedule.new
     account_request = params[:token] && AccountRequest.get_by_identity_token(params[:token])
 
     @user = User.new
@@ -45,8 +47,9 @@ class Admin::OrganizationsController < AdminController
   end
 
   def create
-    @organization = Organization.new(organization_params)
-
+    @reminder_schedule = ReminderSchedule.new(reminder_schedule_params)
+    final_params = organization_params.merge!(reminder_schedule: @reminder_schedule.create_schedule)
+    @organization = Organization.new(final_params)
     if @organization.save
       Organization.seed_items(@organization)
       @user = UserInviteService.invite(name: user_params[:name],
@@ -88,5 +91,9 @@ class Admin::OrganizationsController < AdminController
 
   def user_params
     params.require(:organization).require(:user).permit(:name, :email)
+  end
+
+  def reminder_schedule_params
+    params.require(:reminder_schedule).permit(:every_n_months, :date_or_week_day, :date, :day_of_week, :every_nth_day)
   end
 end

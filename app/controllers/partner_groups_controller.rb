@@ -1,11 +1,14 @@
 class PartnerGroupsController < ApplicationController
   def new
     @partner_group = current_organization.partner_groups.new
+    @reminder_schedule = ReminderSchedule.new
     @item_categories = current_organization.item_categories
   end
 
   def create
-    @partner_group = current_organization.partner_groups.new(partner_group_params)
+    @reminder_schedule = ReminderSchedule.new(reminder_schedule_params)
+    final_params = partner_group_params.merge!(reminder_schedule: @reminder_schedule.create_schedule)
+    @partner_group = current_organization.partner_groups.new(final_params)
     if @partner_group.save
       # Redirect to groups tab in Partner page.
       redirect_to partners_path + "#nav-partner-groups", notice: "Partner group added!"
