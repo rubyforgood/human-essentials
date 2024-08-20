@@ -13,12 +13,13 @@ class OrganizationsController < ApplicationController
 
   def edit
     @organization = current_organization
+    @reminder_schedule = ReminderSchedule.from_ical(@organization.reminder_schedule)
   end
 
   def update
     @organization = current_organization
-
-    if OrganizationUpdateService.update(@organization, organization_params)
+    @reminder_schedule = ReminderSchedule.new(reminder_schedule_params)
+    if OrganizationUpdateService.update(@organization, organization_params.merge!(reminder_schedule:@reminder_schedule.create_schedule))
       redirect_to organization_path, notice: "Updated your organization!"
     else
       flash.now[:error] = @organization.errors.full_messages.join("\n")
@@ -105,6 +106,10 @@ class OrganizationsController < ApplicationController
       partner_form_fields: [],
       request_unit_names: []
     )
+  end
+
+  def reminder_schedule_params
+    params.require(:reminder_schedule).permit(:every_n_months, :date_or_week_day, :date, :day_of_week, :every_nth_day)
   end
 
   def request_type_formatter(params)

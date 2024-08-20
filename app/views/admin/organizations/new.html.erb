@@ -48,8 +48,7 @@
                 <%= f.input :city %>
                 <%= f.input :state, collection: us_states, class: "form-control", placeholder: "state" %>
                 <%= f.input :zipcode %>
-                <%= f.input :reminder_day, class: "form-control", placeholder: "Reminder day" %>
-                <%= f.input :deadline_day, class: "form-control", placeholder: "Deadline day" %>
+                <%= render 'shared/deadline_day_fields', f: f %>
                 <%= f.simple_fields_for :account_request do |account_request| %>
                   <%= account_request.input :ndbn_member, label: 'NDBN Membership', wrapper: :input_group do %>
                     <%= account_request.association :ndbn_member, label_method: :full_name, value_method: :id, label: false %>

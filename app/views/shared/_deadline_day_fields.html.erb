@@ -13,6 +13,7 @@
       label: 'Send reminders every X months',
       class: "deadline-day-pickers__reminder-day form-control",
       hint: "Enter the number of months between reminders",
+      :placeholder => "1",
       :input_html => {:style=> 'width: 100px'}
       %>
       
@@ -26,7 +27,7 @@
       <%= t.input :date, wrapper: :input_group, wrapper_html: { class: 'mb-3' },
       label: 'Reminder date' do %>
       <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-      <%= t.number_field :date, as: :integer,
+      <%= t.number_field :date,
       class: "deadline-day-pickers__reminder-day form-control",
       placeholder: "Reminder day",
       :input_html => {:style=> 'width: 100px'}
@@ -45,7 +46,8 @@
       <%= t.input :day_of_week, collection: t.object.week_day_collection,
       class: "deadline-day-pickers__reminder-day form-control",
       label: false,
-      default: 0,
+      show_blank: true,
+      default: 1,
       :input_html => {:style=> 'width: 200px'}
       %>
       <% end %>

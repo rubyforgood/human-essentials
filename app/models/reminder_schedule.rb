@@ -13,17 +13,18 @@ class ReminderSchedule
 
   def initialize(attributes = {})
     super
+    @every_nth_collection = EVERY_NTH_COLLECTION
+    @week_day_collection = WEEK_DAY_COLLECTION
+    @date_or_week_day_collection = DATE_OR_WEEK_DAY_COLLECTION
+    return if attributes.blank?
+
     @every_n_months = every_n_months.to_i
     @date = date.to_i
     @day_of_week = day_of_week.to_i
     @every_nth_day = every_nth_day.to_i
-    @every_nth_collection = EVERY_NTH_COLLECTION
-    @week_day_collection = WEEK_DAY_COLLECTION
-    @date_or_week_day_collection = DATE_OR_WEEK_DAY_COLLECTION
   end
 
   def create_schedule
-    binding.pry
     schedule = IceCube::Schedule.new(Time.zone.now.to_date)
     if date_or_week_day == 'date'
       schedule.add_recurrence_rule(IceCube::Rule.monthly(every_n_months).day_of_month(date))
@@ -31,6 +32,11 @@ class ReminderSchedule
       schedule.add_recurrence_rule(IceCube::Rule.monthly(every_n_months).day_of_week(day_of_week => [every_nth_day]))
     end
     schedule.to_ical
+  end
+
+  def self.show_description(ical)
+    schedule = IceCube::Schedule.from_ical(ical)
+    schedule.recurrence_rules.first.to_s
   end
 
   def self.from_ical(ical)
@@ -47,8 +53,8 @@ class ReminderSchedule
   end
 
   private
-  EVERY_NTH_COLLECTION = [['First', 1], ['Second', 2], ['Third', 3], ['Fourth', 4], ['Last', -1]].freeze
-  WEEK_DAY_COLLECTION = [['Monday', 0], ['Tuesday', 1], ['Wednesday', 2], ['Thursday', 3], ['Friday', 4], ['Saturday', 5], ['Sunday', 6]].freeze
+  EVERY_NTH_COLLECTION = [['First', 1], ['Second', 2], ['Third', 3], ['Fourth', 4]].freeze
+  WEEK_DAY_COLLECTION = [['Sunday'], ['Monday', 1], ['Tuesday', 2], ['Wednesday', 3], ['Thursday', 4], ['Friday', 5], ['Saturday', 6]].freeze
   DATE_OR_WEEK_DAY_COLLECTION = [['date', 'Date'] ,['week_day', 'Day of the Week']].freeze
 
 end
