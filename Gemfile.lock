@@ -139,6 +139,13 @@ GEM
       activesupport
       tzinfo
     coderay (1.1.3)
+    coffee-rails (5.0.0)
+      coffee-script (>= 2.2.0)
+      railties (>= 5.2.0)
+    coffee-script (2.4.1)
+      coffee-script-source
+      execjs
+    coffee-script-source (1.12.2)
     concurrent-ruby (1.3.3)
     connection_pool (2.4.1)
     coverband (6.1.2)
@@ -313,6 +320,10 @@ GEM
     jbuilder (2.12.0)
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
+    jquery-rails (4.6.0)
+      rails-dom-testing (>= 1, < 3)
+      railties (>= 4.2.0)
+      thor (>= 0.14, < 2.0)
     json (2.7.2)
     jwt (2.8.2)
       base64
@@ -525,6 +536,12 @@ GEM
     rdoc (6.7.0)
       psych (>= 4.0.0)
     recaptcha (5.17.0)
+    recurring_select (3.0.1)
+      coffee-rails (>= 3.1)
+      ice_cube (>= 0.11)
+      jquery-rails (>= 3.0)
+      rails (>= 5.2)
+      sass-rails (>= 4.0)
     redis (5.2.0)
       redis-client (>= 0.22.0)
     redis-client (0.22.1)
@@ -762,6 +779,7 @@ DEPENDENCIES
   rails-controller-testing
   rails-erd
   recaptcha
+  recurring_select
   redis (~> 5.2)
   rolify (~> 6.0)
   rspec-rails (~> 6.1.3)
@@ -782,4 +800,4 @@ DEPENDENCIES
   webmock (~> 3.23)
 
 BUNDLED WITH
-   2.5.15
+   2.5.16

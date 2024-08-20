@@ -6,16 +6,51 @@
               current_month: Date::MONTHNAMES[Date.current.month],
               next_month: Date::MONTHNAMES[Date.current.next_month.month]
             }) do %>
-  <div class="deadline-day-pickers__reminder-container">
-    <%= f.input :reminder_day, wrapper: :input_group, wrapper_html: { class: 'mb-0' },
-                label: 'Reminder day (Day of month an e-mail reminder is sent to partners to submit requests)' do %>
+
+    <%= simple_fields_for @reminder_schedule do |t| %>
+      <%= t.input :every_n_months,
+      as: :integer,
+      label: 'Send reminders every X months',
+      class: "deadline-day-pickers__reminder-day form-control",
+      hint: "Enter the number of months between reminders",
+      :input_html => {:style=> 'width: 100px'}
+      %>
+      
+      <%= t.input :date_or_week_day, wrapper: :input_group, wrapper_html: { class: 'mb-3' },
+      label: 'Send reminders on a specific date (eg "the 5th") or a day of the week (eg "the first Tuesday")?' do %>
+      <%= t.collection_radio_buttons :date_or_week_day, t.object.date_or_week_day_collection, :first, :last do |b| %>
+        <%= b.label(class:"input-group-text mr-3") { b.radio_button + b.text } %>
+        <% end %> 
+      <% end %>
+
+      <%= t.input :date, wrapper: :input_group, wrapper_html: { class: 'mb-3' },
+      label: 'Reminder date' do %>
       <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-      <%= f.number_field :reminder_day,
-                         class: "deadline-day-pickers__reminder-day form-control",
-                         placeholder: "Reminder day" %>
+      <%= t.number_field :date, as: :integer,
+      class: "deadline-day-pickers__reminder-day form-control",
+      placeholder: "Reminder day",
+      :input_html => {:style=> 'width: 100px'}
+      %>
+      <% end %>
+
+      <%= t.input :every_nth_day, wrapper: :input_group, wrapper_html: { class: 'mb-3'},
+      label: 'Reminder day of the week' do %>
+      <%= t.input :every_nth_day, collection: t.object.every_nth_collection,
+      class: "deadline-day-pickers__reminder-day form-control",
+      label: false,
+      default: 1,
+      :input_html => {}
+      %>
+
+      <%= t.input :day_of_week, collection: t.object.week_day_collection,
+      class: "deadline-day-pickers__reminder-day form-control",
+      label: false,
+      default: 0,
+      :input_html => {:style=> 'width: 200px'}
+      %>
+      <% end %>
+
     <% end %>
-    <small class="mb-3 d-block form-text text-muted deadline-day-pickers__reminder-day-text"></small>
-  </div>
 
   <div class="deadline-day-pickers__deadline-container">
     <%= f.input :deadline_day, wrapper: :input_group, wrapper_html: { class: 'mb-0' },
