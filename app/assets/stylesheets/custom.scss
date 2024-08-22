@@ -98,3 +98,15 @@
     margin-top: 40px;
   }
 }
+
+#week_day_fields, #date_fields {
+  display: none;
+}
+
+#reminder_schedule_date_or_week_day_week_day:checked ~ #week_day_fields {
+  display: block;
+}
+
+#reminder_schedule_date_or_week_day_date:checked ~ #date_fields {
+  display: block
+}
