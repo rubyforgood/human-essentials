@@ -53,6 +53,9 @@
                   <i class="fa fa-envelope"></i> Resend Invitation
                 <% end %>
               <% end %>
+              <%= button_to reset_password_partner_user_path(partner, user), method: :post, data: { confirm: "Are you sure?" }, class: "btn btn-info btn-xs mb-2" do %>
+                  <i class="fa fa-ban"></i> Reset Password
+              <% end %>
               <%= button_to partner_user_path(partner, user), method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger btn-xs" do %>
                   <i class="fa fa-ban"></i> Remove Access
               <% end %>
