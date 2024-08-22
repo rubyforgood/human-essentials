@@ -16,14 +16,16 @@
       :placeholder => "1",
       :input_html => {:style=> 'width: 100px'}
       %>
-      
-      <%= t.input :date_or_week_day, wrapper: :input_group, wrapper_html: { class: 'mb-3' },
-      label: 'Send reminders on a specific date (eg "the 5th") or a day of the week (eg "the first Tuesday")?' do %>
-      <%= t.collection_radio_buttons :date_or_week_day, t.object.date_or_week_day_collection, :first, :last do |b| %>
-        <%= b.label(class:"input-group-text mr-3") { b.radio_button + b.text } %>
-        <% end %> 
-      <% end %>
 
+      <%= t.label :date_or_week_day, 'Send reminders on a specific date (eg "the 5th") or a day of the week (eg "the first Tuesday")?' %>
+      <br>
+      <%= t.radio_button :date_or_week_day, 'date', label: 'Date'%>
+      <%= t.label :date_or_week_day, 'Date' %>
+      <br>
+      <%= t.radio_button :date_or_week_day, 'week_day', label: 'Week Day' %>
+      <%= t.label :date_or_week_day, 'Week Day' %>
+
+      <div id="date_fields">
       <%= t.input :date, wrapper: :input_group, wrapper_html: { class: 'mb-3' },
       label: 'Reminder date' do %>
       <span class="input-group-text"><i class="fa fa-calendar"></i></span>
@@ -33,7 +35,9 @@
       :input_html => {:style=> 'width: 100px'}
       %>
       <% end %>
+      </div>
 
+      <div id="week_day_fields">
       <%= t.input :every_nth_day, wrapper: :input_group, wrapper_html: { class: 'mb-3'},
       label: 'Reminder day of the week' do %>
       <%= t.input :every_nth_day, collection: t.object.every_nth_collection,
@@ -50,8 +54,8 @@
       default: 1,
       :input_html => {:style=> 'width: 200px'}
       %>
+      </div>
       <% end %>
-
     <% end %>
 
   <div class="deadline-day-pickers__deadline-container">
