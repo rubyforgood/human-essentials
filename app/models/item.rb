@@ -44,7 +44,6 @@ class Item < ApplicationRecord
   has_many :line_items, dependent: :destroy
   has_many :inventory_items, dependent: :destroy
   has_many :barcode_items, as: :barcodeable, dependent: :destroy
-  has_many :storage_locations, through: :inventory_items
   has_many :donations, through: :line_items, source: :itemizable, source_type: "::Donation"
   has_many :distributions, through: :line_items, source: :itemizable, source_type: "::Distribution"
   has_many :request_units, class_name: "ItemUnit", dependent: :destroy
@@ -147,9 +146,7 @@ class Item < ApplicationRecord
 
   # @return [Boolean]
   def can_deactivate_or_delete?(inventory = nil, kits = nil)
-    if inventory.nil? && Event.read_events?(organization)
-      inventory = View::Inventory.new(organization_id)
-    end
+    inventory ||= View::Inventory.new(organization_id)
     # Cannot deactivate if it's currently in inventory in a storage location. It doesn't make sense
     # to have physical inventory of something we're now saying isn't valid.
     # If an active kit includes this item, then changing kit allocations would change inventory

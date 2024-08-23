@@ -18,10 +18,7 @@ class DistributionItemizedBreakdownService
   #
   # @return [Array]
   def fetch
-    inventory = nil
-    if Event.read_events?(@organization)
-      inventory = View::Inventory.new(@organization.id)
-    end
+    inventory = View::Inventory.new(@organization.id)
     current_onhand = current_onhand_quantities(inventory)
     current_min_onhand = current_onhand_minimums(inventory)
     items_distributed = fetch_items_distributed

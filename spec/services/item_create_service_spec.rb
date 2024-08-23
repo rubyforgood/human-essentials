@@ -25,9 +25,6 @@ RSpec.describe ItemCreateService, type: :service do
       allow(fake_organization_items).to receive(:new).with(item_params).and_return(fake_organization_item)
       allow(organization).to receive(:storage_locations).and_return(fake_organization_storage_locations)
 
-      # Add a spy on InventoryItem to ensure this method is being
-      # called in our specs and service object.
-      allow(InventoryItem).to receive(:create!)
     end
 
     context 'when there are no issues' do
@@ -64,24 +61,6 @@ RSpec.describe ItemCreateService, type: :service do
 
         before do
           allow(fake_organization_item).to receive(:save!).and_raise(fake_error)
-        end
-
-        it 'should return a OpenStruct with the raised error' do
-          expect(subject).to be_a_kind_of(OpenStruct)
-          expect(subject.success?).to eq(false)
-          expect(subject.error).to eq(fake_error)
-        end
-      end
-
-      context 'because a inventory item creation failed and raised an error' do
-        let(:fake_error) { StandardError.new('random-error') }
-
-        before do
-          allow(InventoryItem).to receive(:create!).with(
-            storage_location_id: fake_organization_storage_locations.first.id,
-            item_id: fake_organization_item.id,
-            quantity: 0
-          ).and_raise(fake_error)
         end
 
         it 'should return a OpenStruct with the raised error' do

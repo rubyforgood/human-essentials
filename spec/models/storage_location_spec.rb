@@ -45,16 +45,6 @@ RSpec.describe StorageLocation, type: :model do
   end
 
   context "Filtering >" do
-    it "->containing yields only inventories that have that item" do
-      item = create(:item)
-      item2 = create(:item)
-      storage_location = create(:storage_location, :with_items, item: item, item_quantity: 5)
-      create(:storage_location, :with_items, item: item2, item_quantity: 5)
-      results = StorageLocation.containing(item.id)
-      expect(results.length).to eq(1)
-      expect(results.first).to eq(storage_location)
-    end
-
     it "->active_locations yields only storage locations that haven't been discarded" do
       create(:storage_location, name: "Active Location")
       create(:storage_location, name: "Inactive Location", discarded_at: Time.zone.now)
@@ -81,32 +71,6 @@ RSpec.describe StorageLocation, type: :model do
     describe "decrease_inventory" do
       let(:item) { create(:item, organization: organization) }
       let(:distribution) { create(:distribution, :with_items, item: item, item_quantity: 66, organization: organization) }
-
-      context "when there is insufficient inventory available" do
-        let(:distribution_but_too_much) { create(:distribution, :with_items, item: item, item_quantity: 9001, organization: organization) }
-
-        it "gives informative errors" do
-          next if Event.read_events?(organization)
-
-          storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: organization)
-          expect do
-            storage_location.decrease_inventory(distribution_but_too_much.line_item_values).errors
-          end.to raise_error(Errors::InsufficientAllotment)
-        end
-
-        it "does not change inventory quantities if there is an error" do
-          next if Event.read_events?(organization)
-
-          storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: organization)
-          starting_size = storage_location.size
-          begin
-            storage_location.decrease_inventory(distribution.line_item_values)
-          rescue Errors::InsufficientAllotment, InventoryError
-          end
-          storage_location.reload
-          expect(storage_location.size).to eq(starting_size)
-        end
-      end
     end
 
     describe "StorageLocation.items_inventoried" do

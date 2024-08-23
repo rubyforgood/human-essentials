@@ -36,22 +36,7 @@ module TestInventory
           )
         )
       end
-      #      create_inventory_items_from_events(organization.id)
     end
 
-    # @param organization_id [Integer]
-    def create_inventory_items_from_events(organization_id)
-      inventory = View::Inventory.new(organization_id)
-      InventoryItem.joins(:storage_location)
-        .where(storage_locations: {organization_id: organization_id})
-        .delete_all
-      inventory.all_items.each do |item|
-        InventoryItem.create!(
-          item_id: item.item_id,
-          storage_location_id: item.storage_location_id,
-          quantity: item.quantity
-        )
-      end
-    end
   end
 end

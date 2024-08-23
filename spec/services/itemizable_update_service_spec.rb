@@ -159,9 +159,6 @@ RSpec.describe ItemizableUpdateService do
   end
 
   describe "events" do
-    before(:each) do
-      allow(Event).to receive(:read_events?).and_return(true)
-    end
     describe "with donations" do
       let(:itemizable) do
         line_items = [
@@ -173,9 +170,6 @@ RSpec.describe ItemizableUpdateService do
           storage_location: storage_location,
           line_items: line_items,
           issued_at: 1.day.ago)
-      end
-      before(:each) do
-        allow(Event).to receive(:read_events?).and_return(true)
       end
       let(:attributes) do
         {

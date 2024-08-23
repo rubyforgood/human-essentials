@@ -13,10 +13,7 @@ class DonationItemizedBreakdownService
   end
 
   def fetch
-    inventory = nil
-    if Event.read_events?(@organization)
-      inventory = View::Inventory.new(@organization.id)
-    end
+    inventory = View::Inventory.new(@organization.id)
     items_donated = fetch_items_donated
     current_onhand = current_onhand_quantities(inventory)
 
