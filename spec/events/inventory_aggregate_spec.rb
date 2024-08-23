@@ -618,7 +618,7 @@ RSpec.describe InventoryAggregate do
         DonationEvent.publish(donation)
 
         travel 1.minute
-        SnapshotEvent.publish_from_events(organization)
+        SnapshotEvent.publish(organization)
 
         # check inventory at this point
         inventory = described_class.inventory_for(organization.id)

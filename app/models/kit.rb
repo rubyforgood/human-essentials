@@ -19,7 +19,6 @@ class Kit < ApplicationRecord
 
   belongs_to :organization
   has_one :item, dependent: :restrict_with_exception
-  has_many :inventory_items, through: :item
 
   scope :active, -> { where(active: true) }
   scope :alphabetized, -> { order(:name) }
