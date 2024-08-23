@@ -6,9 +6,6 @@ if Rails.env.production?
   return
 end
 
-# Activate all feature flags
-Flipper.enable(:onebase)
-
 # ----------------------------------------------------------------------------
 # Random Record Generators
 # ----------------------------------------------------------------------------
@@ -77,6 +74,26 @@ Organization.seed_items(sf_org)
 Organization.all.each do |org|
   org.items.where(value_in_cents: 0).limit(10).each do |item|
     item.update(value_in_cents: 100)
+  end
+end
+
+# ----------------------------------------------------------------------------
+# Request Units
+# ----------------------------------------------------------------------------
+
+%w(pack box flat).each do |name|
+  Unit.create!(organization: pdx_org, name: name)
+end
+
+pdx_org.items.each_with_index do |item, i|
+  if item.name == 'Pads'
+    %w(box pack).each { |name| item.request_units.create!(name: name) }
+  elsif item.name == 'Wipes (Baby)'
+    item.request_units.create!(name: 'pack')
+  elsif item.name == 'Kids Pull-Ups (5T-6T)'
+    %w(pack flat).each do |name|
+      item.request_units.create!(name: name)
+    end
   end
 end
 
@@ -177,6 +194,7 @@ note = [
     name: "Pawnee Parent Service",
     email: "verified@example.com",
     status: :approved,
+    quota: 500,
     notes: note.sample
   },
   {
@@ -275,6 +293,8 @@ note = [
     )
   end
 
+  requestable_items = PartnerFetchRequestableItemsService.new(partner_id: p.id).call.map(&:last)
+
   families.each do |family|
     Partners::AuthorizedFamilyMember.create!(
       first_name: Faker::Name.first_name,
@@ -288,7 +308,7 @@ note = [
     family.home_child_count.times do
       Partners::Child.create!(
         family: family,
-        first_name: family.guardian_first_name,
+        first_name: Faker::Name.unique.first_name,
         last_name: family.guardian_last_name,
         date_of_birth: Faker::Date.birthday(min_age: 5, max_age: 18),
         gender: Faker::Gender.binary_type,
@@ -299,14 +319,14 @@ note = [
         comments: Faker::Lorem.paragraph,
         active: Faker::Boolean.boolean,
         archived: false,
-        item_needed_diaperid: p.organization.item_id_to_display_string_map.key(Partners::Child::CHILD_ITEMS.sample)
+        requested_item_ids: requestable_items.sample(rand(4))
       )
     end
 
     family.home_young_child_count.times do
       Partners::Child.create!(
         family: family,
-        first_name: family.guardian_first_name,
+        first_name: Faker::Name.unique.first_name,
         last_name: family.guardian_last_name,
         date_of_birth: Faker::Date.birthday(min_age: 0, max_age: 5),
         gender: Faker::Gender.binary_type,
@@ -317,7 +337,7 @@ note = [
         comments: Faker::Lorem.paragraph,
         active: Faker::Boolean.boolean,
         archived: false,
-        item_needed_diaperid: p.organization.item_id_to_display_string_map.key(Partners::Child::CHILD_ITEMS.sample)
+        requested_item_ids: requestable_items.sample(rand(4))
       )
     end
   end
@@ -336,10 +356,23 @@ note = [
       updated_at: date
     )
 
-    item_requests = []
-    Array.new(Faker::Number.within(range: 5..15)) do
-      item = p.organization.items.sample
-      new_item_request = Partners::ItemRequest.new(
+    pads = p.organization.items.find_by(name: 'Pads')
+    new_item_request = Partners::ItemRequest.new(
+      item_id: pads.id,
+      quantity: Faker::Number.within(range: 10..30),
+      children: [],
+      name: pads.name,
+      partner_key: pads.partner_key,
+      created_at: date,
+      updated_at: date,
+      request_unit: 'pack'
+    )
+    partner_request.item_requests << new_item_request
+
+    items = p.organization.items.sample(Faker::Number.within(range: 4..14)) - [pads]
+
+    partner_request.item_requests += items.map do |item|
+      Partners::ItemRequest.new(
         item_id: item.id,
         quantity: Faker::Number.within(range: 10..30),
         children: [],
@@ -348,7 +381,6 @@ note = [
         created_at: date,
         updated_at: date
       )
-      partner_request.item_requests << new_item_request
     end
 
     partner_request.request_items = partner_request.item_requests.map do |ir|
@@ -392,6 +424,23 @@ StorageLocation.all.each do |sl|
   end
 end
 Organization.all.each { |org| SnapshotEvent.publish(org) }
+
+# Set minimum and recomended inventory levels for items at the Pawnee Diaper Bank Organization
+half_items_count = (pdx_org.items.count/2).to_i
+low_items = pdx_org.items.left_joins(:inventory_items)
+  .select('items.*, SUM(inventory_items.quantity) AS total_quantity')
+  .group('items.id')
+  .order('total_quantity')
+  .limit(half_items_count)
+
+min_qty = low_items.first.total_quantity
+max_qty = low_items.last.total_quantity
+
+low_items.each do |item|
+  min_value = rand((min_qty / 10).floor..(max_qty/10).ceil) * 10
+  recomended_value = rand((min_value/10).ceil..1000) * 10
+  item.update(on_hand_minimum_quantity: min_value, on_hand_recommended_quantity: recomended_value)
+end
 
 # ----------------------------------------------------------------------------
 # Product Drives

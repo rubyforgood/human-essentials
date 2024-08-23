@@ -1,6 +1,4 @@
-require "rails_helper"
-
-RSpec.describe Partners::FamilyRequest, skip_seed: true do
+RSpec.describe Partners::FamilyRequest do
   describe "Partners::FamilyRequest.new_with_attrs" do
     it "creates a new FamilyRequest with attributes" do
       attributes = [{item_id: 1, person_count: 3}]

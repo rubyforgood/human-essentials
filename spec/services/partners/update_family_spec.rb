@@ -1,6 +1,4 @@
-require "rails_helper"
-
-RSpec.describe Partners::UpdateFamily, skip_seed: true do
+RSpec.describe Partners::UpdateFamily do
   describe "#call" do
     subject { described_class.archive(family) }
     let(:family) { FactoryBot.create(:partners_family) }

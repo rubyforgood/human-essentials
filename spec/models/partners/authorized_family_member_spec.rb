@@ -12,9 +12,8 @@
 #  updated_at    :datetime         not null
 #  family_id     :bigint
 #
-require "rails_helper"
 
-RSpec.describe Partners::AuthorizedFamilyMember, type: :model, skip_seed: true do
+RSpec.describe Partners::AuthorizedFamilyMember, type: :model do
   describe 'associations' do
     it { should belong_to(:family) }
     it { should have_many(:child_item_requests).dependent(:nullify) }

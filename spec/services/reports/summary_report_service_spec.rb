@@ -1,6 +1,6 @@
-RSpec.describe Reports::SummaryReportService, type: :service, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
-  let(:another_organization) { create(:organization, skip_items: true) }
+RSpec.describe Reports::SummaryReportService, type: :service do
+  let(:organization) { create(:organization) }
+  let(:another_organization) { create(:organization) }
   let(:year) { 2020 }
 
   subject(:report) do
@@ -12,7 +12,7 @@ RSpec.describe Reports::SummaryReportService, type: :service, skip_seed: true do
       expect(report.report).to eq({
                                     entries: { "% difference in yearly donations" => "0%",
                                                "% difference in total money donated" => "0%",
-                                               "% difference in diaper donations" => "0%" },
+                                               "% difference in disposable diaper donations" => "0%" },
                                     name: "Year End Summary"
                                   })
     end
@@ -47,7 +47,7 @@ RSpec.describe Reports::SummaryReportService, type: :service, skip_seed: true do
         expect(report.report).to eq({
           entries: { "% difference in yearly donations" => "+200%",
                      "% difference in total money donated" => "+800%",
-                     "% difference in diaper donations" => "+200%" },
+                     "% difference in disposable diaper donations" => "+200%" },
           name: "Year End Summary"
         })
       end
@@ -79,7 +79,7 @@ RSpec.describe Reports::SummaryReportService, type: :service, skip_seed: true do
         expect(report.report).to eq({
           entries: { "% difference in yearly donations" => "-67%",
                      "% difference in total money donated" => "0%",
-                     "% difference in diaper donations" => "-67%" },
+                     "% difference in disposable diaper donations" => "-67%" },
           name: "Year End Summary"
         })
       end

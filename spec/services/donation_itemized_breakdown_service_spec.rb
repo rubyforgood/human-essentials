@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe DonationItemizedBreakdownService, type: :service, skip_seed: true do
+RSpec.describe DonationItemizedBreakdownService, type: :service do
   let(:organization) { create(:organization) }
   let(:donation_ids) { [donation_1, donation_2, donation_3].map(&:id) }
   let(:item_a) { create(:item, organization: organization) }

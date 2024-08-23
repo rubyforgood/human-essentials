@@ -1,0 +1,33 @@
+
+<%= render(
+  "shared/filtered_card",
+  id: "manufacturers",
+  gradient: "success",
+  title: "Manufacturer Donations",
+  subtitle: @selected_date_range,
+  filter_url: reports_manufacturer_donations_summary_path,
+  footer_options: { class: "text-center" },
+  footer: link_to("See more...", donations_path(
+    filters: {
+      by_source: "Manufacturer"
+    }
+  )),
+) do %>
+
+  <%= new_button_to new_donation_path, {text: "New Donation"} %>
+  <h3 class="text-center">
+    <span class="total_received_donations">
+      <%= number_with_delimiter(@recent_donations_from_manufacturers.sum { |d| d.line_items.total }) %>
+    </span>
+    items donated <%= @selected_date_range_label %>
+  by
+  <span class="num_manufacturers_donated">
+    <%= pluralize(@recent_donations_from_manufacturers.group_by(&:manufacturer).count, 'Manufacturer') %>
+  </span>
+  </h3>
+  <div class="box-body">
+    <h4>Top Manufacturer Donations</h4>
+    <%= render partial: "manufacturer", collection: @top_manufacturers, as: :manufacturer %>
+  </div>
+
+<% end %>

@@ -79,9 +79,8 @@
 #  essentials_bank_id             :bigint
 #  partner_id                     :integer
 #
-require "rails_helper"
 
-RSpec.describe Partners::Profile, type: :model, skip_seed: true do
+RSpec.describe Partners::Profile, type: :model do
   describe "associations" do
     it { should have_one_attached(:proof_of_partner_status) }
     it { should have_one_attached(:proof_of_form_990) }

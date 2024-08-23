@@ -1,5 +1,5 @@
-RSpec.describe "Admin", type: :request, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe "Admin", type: :request do
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 
@@ -59,7 +59,7 @@ RSpec.describe "Admin", type: :request, skip_seed: true do
       [organization_admin, user].each do |u|
         sign_in(u)
         get admin_dashboard_path
-        expect(response).to redirect_to(dashboard_path(organization_name: u.organization))
+        expect(response).to redirect_to(dashboard_path)
         expect(response).to have_error
       end
     end

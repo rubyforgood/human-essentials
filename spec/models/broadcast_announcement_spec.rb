@@ -11,9 +11,8 @@
 #  organization_id :bigint
 #  user_id         :bigint           not null
 #
-require "rails_helper"
 
-RSpec.describe BroadcastAnnouncement, type: :model, skip_seed: true do
+RSpec.describe BroadcastAnnouncement, type: :model do
   it { should belong_to(:organization).optional }
   it { should belong_to(:user) }
   it { should validate_presence_of(:message) }
@@ -46,7 +45,7 @@ RSpec.describe BroadcastAnnouncement, type: :model, skip_seed: true do
   end
 
   context "filter_announcements" do
-    let(:organization) { create(:organization, skip_items: true) }
+    let(:organization) { create(:organization) }
     let(:user) { create(:user, organization: organization) }
     let(:user_id) { user.id }
     let(:organization_id) { organization.id }
@@ -55,7 +54,7 @@ RSpec.describe BroadcastAnnouncement, type: :model, skip_seed: true do
       create(:broadcast_announcement, message: "test", user_id: user_id, organization_id: organization_id)
       create(:broadcast_announcement, message: "test", user_id: user_id, organization_id: organization_id)
       create(:broadcast_announcement, message: "test", user_id: user_id)
-      create(:broadcast_announcement, message: "test", user_id: user_id, organization_id: create(:organization, skip_items: true).id)
+      create(:broadcast_announcement, message: "test", user_id: user_id, organization_id: create(:organization).id)
       expect(BroadcastAnnouncement.filter_announcements(organization_id).count).to eq(2)
     end
 

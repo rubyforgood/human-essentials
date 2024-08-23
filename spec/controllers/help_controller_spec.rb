@@ -1,7 +1,5 @@
-require 'rails_helper'
-
-RSpec.describe HelpController, type: :controller, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe HelpController, type: :controller do
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 
   let(:default_params) do

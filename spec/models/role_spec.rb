@@ -10,9 +10,8 @@
 #  old_resource_id :bigint
 #  resource_id     :bigint
 #
-require "rails_helper"
 
-RSpec.describe Role, type: :model, skip_seed: true do
+RSpec.describe Role, type: :model do
   describe "Validations" do
     it { should validate_inclusion_of(:resource_type).in_array(Rolify.resource_types) }
   end

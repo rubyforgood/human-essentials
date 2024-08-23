@@ -125,6 +125,24 @@
                   <%= humanize_boolean(@organization.distribute_monthly) %>
                 </p>
               </div>
+              <% if Flipper.enabled?(:enable_packs) %>
+                <div class="mb-4">
+                  <h3 class='font-bold'>Custom Request Units</h3>
+                  <p>
+                    <% if @organization.request_units.length > 0 %>
+                      <% @organization.request_units.map do |unit| %>
+                        <%= fa_icon "angle-right" %>
+                        <span>
+                            <%= unit.name.titlecase %>
+                        </span> <br>
+                      <% end %>
+                    <% else %>
+                      <%= fa_icon "angle-right" %>
+                      <span> None </span>
+                    <% end %>
+                  </p>
+                </div>
+              <% end %>
               <div class="mb-4">
                 <h3 class='font-bold'>Child Based Requests?</h3>
                 <p>
@@ -150,6 +168,12 @@
                 <h3 class='font-bold'>Show Year-to-date values on distribution printout?</h3>
                 <p>
                   <%= humanize_boolean(@organization.ytd_on_distribution_printout) %>
+                </p>
+              </div>
+              <div class="mb-4">
+                <h3 class="font-bold">Include Signature Lines on Distribution Printout?</h3>
+                <p>
+                  <%= humanize_boolean(@organization.signature_for_distribution_pdf) %>
                 </p>
               </div>
               <div class="mb-4">

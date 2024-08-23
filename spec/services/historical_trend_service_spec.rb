@@ -1,6 +1,4 @@
-require "rails_helper"
-
-RSpec.describe HistoricalTrendService, type: :service, skip_seed: true do
+RSpec.describe HistoricalTrendService, type: :service do
   let(:organization) { create(:organization) }
   let(:type) { "Donation" }
   let(:service) { described_class.new(organization.id, type) }

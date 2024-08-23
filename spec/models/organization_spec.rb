@@ -23,6 +23,7 @@
 #  reminder_day                   :integer
 #  repackage_essentials           :boolean          default(FALSE), not null
 #  short_name                     :string
+#  signature_for_distribution_pdf :boolean          default(FALSE)
 #  state                          :string
 #  street                         :string
 #  url                            :string
@@ -34,8 +35,8 @@
 #  ndbn_member_id                 :bigint
 #
 
-RSpec.describe Organization, type: :model, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe Organization, type: :model do
+  let(:organization) { create(:organization) }
 
   describe "validations" do
     it "validates that attachments are png or jpgs" do
@@ -89,7 +90,7 @@ RSpec.describe Organization, type: :model, skip_seed: true do
 
     describe 'users' do
       subject { organization.users }
-      let(:organization) { create(:organization, skip_items: true) }
+      let(:organization) { create(:organization) }
 
       context 'when a organizaton has a user that has two roles' do
         let(:user) { create(:user) }
@@ -245,8 +246,8 @@ RSpec.describe Organization, type: :model, skip_seed: true do
 
     context "when no organization is provided" do
       it "updates all organizations" do
-        first_organization = create(:organization, skip_items: true)
-        second_organization = create(:organization, skip_items: true)
+        first_organization = create(:organization)
+        second_organization = create(:organization)
 
         create(:base_item, name: "Foo", partner_key: "foo")
 
@@ -330,8 +331,8 @@ RSpec.describe Organization, type: :model, skip_seed: true do
   end
 
   describe 'is_active' do
-    let!(:active_organization) { create(:organization, skip_items: true) }
-    let!(:inactive_organization) { create(:organization, skip_items: true) }
+    let!(:active_organization) { create(:organization) }
+    let!(:inactive_organization) { create(:organization) }
     let!(:active_user) { create(:user, organization: active_organization, last_sign_in_at: 1.month.ago) }
     let!(:inactive_user) { create(:user, organization: inactive_organization, last_sign_in_at: 6.months.ago) }
 
@@ -410,7 +411,7 @@ RSpec.describe Organization, type: :model, skip_seed: true do
     end
 
     context 'with invisible items' do
-      let!(:organization) { create(:organization, skip_items: true) }
+      let!(:organization) { create(:organization) }
       let!(:item1) { create(:item, organization: organization, active: true, visible_to_partners: true) }
       let!(:item2) { create(:item, organization: organization, active: true, visible_to_partners: false) }
       let!(:item3) { create(:item, organization: organization, active: false, visible_to_partners: true) }
@@ -467,11 +468,11 @@ RSpec.describe Organization, type: :model, skip_seed: true do
   describe 'earliest reporting year' do
     # re 2813 update annual report -- allowing an earliest reporting year will let us do system testing and staging for annual reports
     it 'is the organization created year if no associated data' do
-      org = create(:organization, skip_items: true)
+      org = create(:organization)
       expect(org.earliest_reporting_year).to eq(org.created_at.year)
     end
     it 'is the year of the earliest of donation, purchase, or distribution if they are earlier ' do
-      org = create(:organization, skip_items: true)
+      org = create(:organization)
       create(:donation, organization: org, issued_at: 1.year.from_now)
       create(:purchase, organization: org, issued_at: 1.year.from_now)
       create(:distribution, organization: org, issued_at: 1.year.from_now)

@@ -1,7 +1,5 @@
-require "rails_helper"
-
-RSpec.describe ApplicationHelper, type: :helper, seed_db: false do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe ApplicationHelper, type: :helper do
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 
   describe "default_title_content" do
@@ -29,14 +27,21 @@ RSpec.describe ApplicationHelper, type: :helper, seed_db: false do
   end
 
   describe "active_class" do
-    it "Returns the controller name" do
-      expect(helper.active_class("foo")).to eq "application"
+    it "Is not active with another controller" do
+      expect(params).to receive(:[]).with(:controller).twice.and_return("bar")
+      expect(params).to receive(:[]).with(:action).and_return(nil)
+      expect(helper.active_class(["foo"])).to eq ""
+    end
+
+    it "Is active with the current controller" do
+      expect(params).to receive(:[]).with(:controller).and_return("foo")
+      expect(helper.active_class(["foo"])).to eq "active"
     end
   end
 
   describe "can_administrate?" do
     let(:org_1) { organization }
-    let(:org_2) { create(:organization, skip_items: true) }
+    let(:org_2) { create(:organization) }
 
     helper do
       def current_organization; end
