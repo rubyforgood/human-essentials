@@ -83,8 +83,7 @@ RSpec.describe OrganizationStats, type: :model do
           storage_location_1.id => {
             item.id => 50
           }
-        }
-        )
+        })
       end
 
       it "should return storage location" do

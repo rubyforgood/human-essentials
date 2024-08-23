@@ -329,7 +329,6 @@ RSpec.describe "Distributions", type: :request do
           end.to change { original_storage_location.size }.by(10) # removes the whole distribution of 10 - increasing inventory
           expect(new_storage_location.size).to eq 25
         end
-
       end
 
       context "mail follow up" do

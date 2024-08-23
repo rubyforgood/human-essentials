@@ -121,9 +121,9 @@ RSpec.describe "Purchases", type: :request do
         expect do
           put purchase_path(id: purchase.id, purchase: purchase_params)
         end.to change {
-            View::Inventory.new(organization.id)
-              .quantity_for(storage_location: purchase.storage_location_id, item_id: line_item.item_id)
-          }.by(5)
+                 View::Inventory.new(organization.id)
+                   .quantity_for(storage_location: purchase.storage_location_id, item_id: line_item.item_id)
+               }.by(5)
       end
 
       describe "when removing a line item" do
@@ -140,7 +140,7 @@ RSpec.describe "Purchases", type: :request do
           purchase_params = { source: "Purchase Site", line_items_attributes: line_item_params }
           expect do
             put purchase_path(id: purchase.id, purchase: purchase_params)
-          end.to  change {
+          end.to change {
                    View::Inventory.new(organization.id)
                      .quantity_for(storage_location: purchase.storage_location_id, item_id: line_item.item_id)
                  }.by(-10)
@@ -167,7 +167,6 @@ RSpec.describe "Purchases", type: :request do
           end.to change { original_storage_location.size }.by(-10) # removes the whole purchase of 10
           expect(new_storage_location.size).to eq 8
         end
-
       end
     end
 

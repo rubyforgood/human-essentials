@@ -24,7 +24,6 @@ RSpec.describe ItemCreateService, type: :service do
       allow(organization).to receive(:items).and_return(fake_organization_items)
       allow(fake_organization_items).to receive(:new).with(item_params).and_return(fake_organization_item)
       allow(organization).to receive(:storage_locations).and_return(fake_organization_storage_locations)
-
     end
 
     context 'when there are no issues' do

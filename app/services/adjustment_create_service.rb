@@ -39,7 +39,6 @@ def enough_inventory_for_decreases?
   return false if @adjustment.storage_location.nil?
   @adjustment.line_items.each do |line_item|
     next unless line_item.quantity.negative?
-
   end
   @adjustment.errors.none?
 end

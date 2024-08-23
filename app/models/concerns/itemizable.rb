@@ -138,5 +138,4 @@ module Itemizable
                 "needs to be at least #{threshold}")
     end
   end
-
 end

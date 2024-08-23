@@ -4,7 +4,7 @@
 class ItemsByStorageCollectionAndQuantityQuery
   def self.call(organization:, filter_params:, inventory:)
     items = organization.items.active.order(name: :asc).class_filter(filter_params)
-    return items.to_h do |item|
+    items.to_h do |item|
       locations = inventory.storage_locations_for_item(item.id).map do |sl|
         {
           id: sl,

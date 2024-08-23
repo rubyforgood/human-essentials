@@ -91,7 +91,6 @@ RSpec.describe DonationsController, type: :controller do
           end.to change { original_storage_location.size }.by(-10) # removes the whole donation of 10
           expect(new_storage_location.size).to eq 8
         end
-
       end
 
       describe "when removing a line item" do
@@ -103,7 +102,7 @@ RSpec.describe DonationsController, type: :controller do
           donation_params = { source: donation.source }
           expect do
             put :update, params: { id: donation.id, donation: donation_params }
-          end.to  change {
+          end.to change {
                    View::Inventory.new(donation.organization_id)
                      .quantity_for(storage_location: donation.storage_location_id, item_id: item_id)
                  }.by(-1 * item_quantity)

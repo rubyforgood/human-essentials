@@ -37,6 +37,5 @@ module TestInventory
         )
       end
     end
-
   end
 end

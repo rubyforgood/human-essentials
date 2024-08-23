@@ -65,7 +65,6 @@ RSpec.describe StorageLocation, type: :model do
         it "increases inventory quantities from an itemizable object" do
         end
       end
-
     end
 
     describe "decrease_inventory" do

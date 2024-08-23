@@ -55,7 +55,7 @@ RSpec.describe AdjustmentCreateService, type: :service do
       expect do
         adjustment_params = {user_id: user.id, organization_id: organization.id, storage_location_id: storage_location.id, line_items_attributes: {"0": {item_id: storage_location.items.first.id, quantity: -5}}}
         subject.new(adjustment_params).call
-      end.to  change { item1_inventory_quantity }.by(-5)
+      end.to change { item1_inventory_quantity }.by(-5)
       expect(AdjustmentEvent.count).to eq(1)
       event = AdjustmentEvent.last
       expect(event.data).to eq(EventTypes::InventoryPayload.new(
@@ -93,7 +93,7 @@ RSpec.describe AdjustmentCreateService, type: :service do
                                "2": {item_id: storage_location.items.first.id, quantity: 2}
                              }}
         subject.new(adjustment_params).call
-      end.to  change { item1_inventory_quantity }.by(1)
+      end.to change { item1_inventory_quantity }.by(1)
       adjustment = Adjustment.last
       expect(adjustment.line_items.count).to eq(1)
       expect(adjustment.line_items[0].quantity).to eq(1)
@@ -110,7 +110,7 @@ RSpec.describe AdjustmentCreateService, type: :service do
                                "2": {item_id: item_1.id, quantity: 2}
                              }}
         subject.new(adjustment_params).call
-      end.to  change { item1_inventory_quantity }.by(-7)
+      end.to change { item1_inventory_quantity }.by(-7)
       adjustment = Adjustment.last
       expect(adjustment.line_items.count).to eq(1)
       expect(adjustment.line_items[0].quantity).to eq(-7)
@@ -126,7 +126,7 @@ RSpec.describe AdjustmentCreateService, type: :service do
                                "0": {item_id: item_1.id, quantity: quantity}
                              }}
         subject.new(adjustment_params).call
-      end.to  change { item1_inventory_quantity }.by(0)
+      end.to change { item1_inventory_quantity }.by(0)
     end
 
     it "gives an error if we attempt to adjust inventory below 0" do
