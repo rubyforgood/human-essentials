@@ -13,7 +13,6 @@ class RequestItem
     if inventory
       on_hand = inventory.quantity_for(item_id: item.id)
       on_hand_for_location = inventory.quantity_for(storage_location: location&.id, item_id: item.id)
-    else
     end
     new(item, quantity, unit, on_hand, on_hand_for_location&.positive? ? on_hand_for_location : 'N/A')
   end

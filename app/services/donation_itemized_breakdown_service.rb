@@ -40,7 +40,6 @@ class DonationItemizedBreakdownService
   def current_onhand_quantities(inventory)
     if inventory
       inventory.all_items.group_by(&:name).to_h { |k, v| [k, v.sum(&:quantity)] }
-    else
     end
   end
 

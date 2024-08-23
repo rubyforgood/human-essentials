@@ -228,50 +228,50 @@ RSpec.describe "StorageLocations", type: :request do
           expect(response.body).to include("200")
         end
 
-          context "before active events" do
-            it "should show the version specified" do
-              travel 8.days do
-                SnapshotEvent.delete_all
-                SnapshotEvent.publish(organization)
-              end
-              travel 2.weeks do
-                get storage_location_path(storage_location, format: response_format,
-                  version_date: 9.days.ago.to_date.to_fs(:db))
-                expect(response).to be_successful
-                expect(response.body).to include("Smithsonian")
-                expect(response.body).to include("Test Item")
-                expect(response.body).to include("100")
-              end
+        context "before active events" do
+          it "should show the version specified" do
+            travel 8.days do
+              SnapshotEvent.delete_all
+              SnapshotEvent.publish(organization)
+            end
+            travel 2.weeks do
+              get storage_location_path(storage_location, format: response_format,
+                version_date: 9.days.ago.to_date.to_fs(:db))
+              expect(response).to be_successful
+              expect(response.body).to include("Smithsonian")
+              expect(response.body).to include("Test Item")
+              expect(response.body).to include("100")
             end
           end
-          context "with active events" do
-            it 'should show the right version' do
-              travel 1.day do
-                TestInventory.create_inventory(organization, {
-                  storage_location.id => {
-                    item.id => 100,
-                    item2.id => 0
-                  }
-                })
-              end
-              travel 1.week do
-                TestInventory.create_inventory(organization, {
-                  storage_location.id => {
-                    item.id => 300,
-                    item2.id => 0
-                  }
-                })
-              end
-              travel 2.weeks do
-                get storage_location_path(storage_location, format: response_format,
-                  version_date: 9.days.ago.to_date.to_fs(:db))
-                expect(response).to be_successful
-                expect(response.body).to include("Smithsonian")
-                expect(response.body).to include("Test Item")
-                expect(response.body).to include("100")
-              end
+        end
+        context "with active events" do
+          it 'should show the right version' do
+            travel 1.day do
+              TestInventory.create_inventory(organization, {
+                storage_location.id => {
+                  item.id => 100,
+                  item2.id => 0
+                }
+              })
+            end
+            travel 1.week do
+              TestInventory.create_inventory(organization, {
+                storage_location.id => {
+                  item.id => 300,
+                  item2.id => 0
+                }
+              })
+            end
+            travel 2.weeks do
+              get storage_location_path(storage_location, format: response_format,
+                version_date: 9.days.ago.to_date.to_fs(:db))
+              expect(response).to be_successful
+              expect(response.body).to include("Smithsonian")
+              expect(response.body).to include("Test Item")
+              expect(response.body).to include("100")
             end
           end
+        end
       end
 
       context "csv" do

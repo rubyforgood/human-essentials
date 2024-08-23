@@ -11,5 +11,4 @@ class SnapshotEvent < Event
       data: inventory
     )
   end
-
 end

@@ -77,10 +77,7 @@ class StorageLocation < ApplicationRecord
   end
 
   def inventory_total_value_in_dollars(inventory = nil)
-    if inventory
-      inventory.total_value_in_dollars(storage_location: id)
-    else
-    end
+    inventory&.total_value_in_dollars(storage_location: id)
   end
 
   def to_csv
@@ -161,5 +158,4 @@ class StorageLocation < ApplicationRecord
     inventory = View::Inventory.new(organization_id)
     inventory.quantity_for(storage_location: id).zero?
   end
-
 end

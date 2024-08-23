@@ -27,7 +27,7 @@ class OrganizationStats
     return [] unless storage_locations
 
     inventory = View::Inventory.new(current_organization.id)
-    storage_locations.select { |loc| inventory.storage_locations.keys.include?(loc.id) }
+    storage_locations.select { |loc| inventory.storage_locations.key?(loc.id) }
   end
 
   private

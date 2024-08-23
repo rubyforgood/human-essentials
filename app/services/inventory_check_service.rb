@@ -37,7 +37,6 @@ class InventoryCheckService
         if @inventory
           quantity = @inventory.quantity_for(storage_location: @distribution.storage_location_id, item_id: line_item.item_id)
           quantity < (line_item.item.on_hand_minimum_quantity || 0)
-        else
         end
       end.map(&:item_id)
 
@@ -54,7 +53,6 @@ class InventoryCheckService
         if @inventory
           quantity = @inventory.quantity_for(storage_location: @distribution.storage_location_id, item_id: line_item.item_id)
           quantity < (line_item.item.on_hand_recommended_quantity || 0)
-        else
         end
       end.map(&:item_id)
 

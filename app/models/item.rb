@@ -123,10 +123,7 @@ class Item < ApplicationRecord
   end
 
   def has_inventory?(inventory = nil)
-    if inventory
-      inventory.quantity_for(item_id: id).positive?
-    else
-    end
+    inventory&.quantity_for(item_id: id)&.positive?
   end
 
   def is_in_kit?(kits = nil)
@@ -217,13 +214,13 @@ class Item < ApplicationRecord
     distribution_quantity || 50
   end
 
-  end
-
   def sync_request_units!(unit_ids)
     request_units.clear
     organization.request_units.where(id: unit_ids).pluck(:name).each do |name|
       request_units.create!(name:)
     end
+  end
+
   private
 
   def update_associated_kit_name
