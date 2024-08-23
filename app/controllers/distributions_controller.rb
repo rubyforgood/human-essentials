@@ -115,7 +115,6 @@ class DistributionsController < ApplicationController
       @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
         inventory.quantity_for(storage_location: storage_loc.id).positive?
       end
-      end
 
       flash_error = insufficient_error_message(result.error.message)
 
