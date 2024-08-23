@@ -1,11 +1,7 @@
-RSpec.describe DistributionsController, type: :controller, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe DistributionsController, type: :controller do
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
   let(:partner) { create(:partner, organization: organization) }
-
-  let(:default_params) do
-    { organization_name: organization.to_param }
-  end
 
   context "While signed in" do
     before do

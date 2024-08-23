@@ -9,9 +9,7 @@
 #  organization_id :bigint
 #
 
-require "rails_helper"
-
-RSpec.describe Manufacturer, type: :model, skip_seed: true do
+RSpec.describe Manufacturer, type: :model do
   context "Validations" do
     subject { build(:manufacturer) }
 
@@ -52,7 +50,7 @@ RSpec.describe Manufacturer, type: :model, skip_seed: true do
 
   context "Private Methods" do
     describe "#exists_in_org?" do
-      let(:organization) { create(:organization, skip_items: true) }
+      let(:organization) { create(:organization) }
 
       it "returns true if manufacturer exists in an organization" do
         manufacturer = create(:manufacturer, organization_id: organization.id)

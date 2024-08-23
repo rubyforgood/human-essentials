@@ -10,6 +10,7 @@ default: &default
 
 development: &development
   <<: *default
+  gssencmode: "disable"
   timeout: 5000
 
 staging:

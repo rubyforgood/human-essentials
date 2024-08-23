@@ -19,12 +19,12 @@
 #  agency_child_id      :string
 #  family_id            :bigint
 #
-require "rails_helper"
 
-RSpec.describe Partners::Child, type: :model, skip_seed: true do
+RSpec.describe Partners::Child, type: :model do
   describe 'associations' do
     it { should belong_to(:family) }
     it { should have_many(:child_item_requests).dependent(:destroy) }
+    it { should have_and_belong_to_many(:requested_items).class_name('Item') }
   end
 
   describe "#display_name" do

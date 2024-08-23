@@ -23,6 +23,7 @@
 #  reminder_day                   :integer
 #  repackage_essentials           :boolean          default(FALSE), not null
 #  short_name                     :string
+#  signature_for_distribution_pdf :boolean          default(FALSE)
 #  state                          :string
 #  street                         :string
 #  url                            :string
@@ -60,13 +61,9 @@ FactoryBot.define do
 
     trait :with_items do
       after(:create) do |instance, evaluator|
-        seed_base_items if BaseItem.count.zero?
-        Organization.seed_items(instance)
+        seed_base_items if BaseItem.count.zero? # seeds 45 base items if none exist
+        Organization.seed_items(instance) # creates 1 item for each base item
       end
-    end
-
-    after(:create) do |instance, evaluator|
-      Organization.seed_items(instance) unless evaluator.skip_items
     end
   end
 end

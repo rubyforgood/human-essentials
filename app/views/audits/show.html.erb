@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "All Audits", (audits_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "All Audits", audits_path %></li>
           <li class="breadcrumb-item">Audit (<%= @audit.created_at.strftime("%m/%d/%Y") %>) - <%= @audit.status.titleize %></li>
         </ol>
       </div>

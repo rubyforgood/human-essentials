@@ -1,4 +1,4 @@
-RSpec.describe Reports::AdultIncontinenceReportService, type: :service, skip_seed: true do
+RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
   let(:year) { 2020 }
   let(:organization) { create(:organization, :with_items) }
 
@@ -25,9 +25,10 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service, skip_see
                            "Adult Briefs (XS/Small)",
                            "Adult Briefs (XXS)",
                            "Adult Incontinence Pads",
+                            "Liners (Incontinence)",
                            "Underpads (Pack)",
-                           "Adult Liners",
-                           "Wipes (Adult)")
+                            "Adult Cloth Diapers (Large/XL/XXL)",
+                            "Adult Cloth Diapers (Small/Medium)")
     end
 
     describe 'with values' do
@@ -114,8 +115,9 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service, skip_see
                              "Adult Briefs (XXS)",
                              "Adult Incontinence Pads",
                              "Underpads (Pack)",
-                             "Adult Liners",
-                             "Wipes (Adult)")
+                             "Liners (Incontinence)",
+                              "Adult Cloth Diapers (Large/XL/XXL)",
+                              "Adult Cloth Diapers (Small/Medium)")
       end
 
       it 'should handle null distribution quantity' do
@@ -137,8 +139,9 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service, skip_see
                              "Adult Briefs (XXS)",
                              "Adult Incontinence Pads",
                              "Underpads (Pack)",
-                             "Adult Liners",
-                             "Wipes (Adult)")
+                             "Liners (Incontinence)",
+                              "Adult Cloth Diapers (Large/XL/XXL)",
+                              "Adult Cloth Diapers (Small/Medium)")
       end
     end
   end

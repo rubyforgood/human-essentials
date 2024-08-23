@@ -7,9 +7,8 @@
 #  updated_at     :datetime         not null
 #  ndbn_member_id :bigint           not null, primary key
 #
-require "rails_helper"
 
-RSpec.describe NDBNMember, type: :model, skip_seed: true do
+RSpec.describe NDBNMember, type: :model do
   describe "validations" do
     subject { build(:ndbn_member) }
     it { should validate_presence_of(:ndbn_member_id) }

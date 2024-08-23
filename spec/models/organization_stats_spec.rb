@@ -1,6 +1,6 @@
 # == No Schema Information
 #
-RSpec.describe OrganizationStats, type: :model, skip_seed: true do
+RSpec.describe OrganizationStats, type: :model do
   let(:current_org) { create(:organization) }
 
   subject { described_class.new(current_org) }

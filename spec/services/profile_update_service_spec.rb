@@ -1,6 +1,4 @@
-require "rails_helper"
-
-RSpec.describe ProfileUpdateService, skip_seed: true do
+RSpec.describe ProfileUpdateService do
   describe "#update" do
     let(:partner) { create(:partner, name: "Partnerrific") }
     let(:partner_user) { partner.primary_user }

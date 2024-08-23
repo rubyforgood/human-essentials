@@ -1,10 +1,10 @@
-require 'rails_helper'
-
 RSpec.describe "/partners/requests", type: :request do
+  let(:organization) { create(:organization) }
+  let(:partner) { create(:partner, organization: organization) }
+  let(:partner_user) { partner.primary_user }
+
   describe "GET #index" do
     subject { -> { get partners_requests_path } }
-    let(:partner_user) { partner.primary_user }
-    let(:partner) { create(:partner) }
     let(:item1) { create(:item, name: "First item") }
     let(:item2) { create(:item, name: "Second item") }
 
@@ -34,8 +34,6 @@ RSpec.describe "/partners/requests", type: :request do
 
   describe "GET #new" do
     subject { get new_partners_request_path }
-    let(:partner_user) { partner.primary_user }
-    let(:partner) { create(:partner) }
 
     before do
       sign_in(partner_user)
@@ -89,28 +87,63 @@ RSpec.describe "/partners/requests", type: :request do
       get partners_request_path(other_request)
       expect(response.code).to eq("404")
     end
+
+    it 'should show the units if they are provided and enabled' do
+      item1 = create(:item, name: "First item")
+      item2 = create(:item, name: "Second item")
+      item3 = create(:item, name: "Third item")
+      create(:item_unit, item: item1, name: "flat")
+      create(:item_unit, item: item2, name: "flat")
+      create(:item_unit, item: item3, name: "flat")
+      request = create(
+        :request,
+        :with_item_requests,
+        partner_id: partner.id,
+        partner_user_id: partner_user.id,
+        request_items: [
+          {item_id: item1.id, quantity: '125'},
+          {item_id: item2.id, quantity: '559', request_unit: 'flat'},
+          {item_id: item3.id, quantity: '1', request_unit: 'flat'}
+        ]
+      )
+
+      Flipper.enable(:enable_packs)
+      get partners_request_path(request)
+      expect(response.body).to match(/125\s+of\s+First item/m)
+      expect(response.body).to match(/559\s+flats\s+of\s+Second item/m)
+      expect(response.body).to match(/1\s+flat\s+of\s+Third item/m)
+
+      Flipper.disable(:enable_packs)
+      get partners_request_path(request)
+      expect(response.body).to match(/125\s+of\s+First item/m)
+      expect(response.body).to match(/559\s+of\s+Second item/m)
+      expect(response.body).to match(/1\s+of\s+Third item/m)
+    end
   end
 
   describe "POST #create" do
     subject { post partners_requests_path, params: request_attributes }
+    let(:item1) { create(:item, name: "First item", organization: organization) }
+
     let(:request_attributes) do
       {
         request: {
           comments: Faker::Lorem.paragraph,
           item_requests_attributes: {
             "0" => {
-              item_id: Item.all.sample.id,
+              item_id: item1.id,
+              request_unit: 'pack',
               quantity: Faker::Number.within(range: 4..13)
             }
           }
         }
       }
     end
-    let(:partner_user) { partner.primary_user }
-    let(:partner) { create(:partner) }
 
     before do
       sign_in(partner_user)
+      FactoryBot.create(:unit, organization: organization, name: 'pack')
+      FactoryBot.create(:item_unit, item: item1, name: 'pack')
     end
 
     context 'when given valid parameters' do

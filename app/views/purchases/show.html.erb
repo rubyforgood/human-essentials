@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Purchases", (purchases_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Purchases", purchases_path %></li>
           <li class="breadcrumb-item"><a href="#"><%= @purchase.purchased_from_view %> on <%= @purchase.issued_at.to_fs(:distribution_date) %></a></li>
         </ol>
       </div>
@@ -77,7 +77,7 @@
                 confirm: "Are you sure you want to permanently remove this purchase?" } %>
             <% end %>
             <% if @purchase.has_inactive_item? %>
-              <div class="warning">
+              <div class="low_priority_warning">
                 You can only delete or correct purchases where all the items are active.
                 If you need to delete this purchase or make a correction, please make the following items active: <%= @purchase.inactive_items.map(&:name).join(", ") %>
               </div>

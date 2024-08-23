@@ -16,7 +16,7 @@
 #  partner_group_id            :bigint
 #
 
-RSpec.describe Partner, type: :model, skip_seed: true do
+RSpec.describe Partner, type: :model do
   describe 'associations' do
     it { should belong_to(:organization) }
     it { should belong_to(:partner_group).optional }
@@ -161,7 +161,7 @@ RSpec.describe Partner, type: :model, skip_seed: true do
       context 'when it has a profile and users' do
         it 'should return false' do
           create(:partner_profile, partner_id: partner.id)
-          create(:partners_user, email: partner.email, name: partner.name, partner: partner)
+          create(:partner_user, email: partner.email, name: partner.name, partner: partner)
           expect(partner.reload).not_to be_deletable
         end
       end
@@ -252,7 +252,7 @@ RSpec.describe Partner, type: :model, skip_seed: true do
   end
 
   describe "import_csv" do
-    let(:organization) { create(:organization, skip_items: true) }
+    let(:organization) { create(:organization) }
 
     it "imports partners from a csv file and prevents multiple imports" do
       before_import = Partner.count
@@ -284,22 +284,48 @@ RSpec.describe Partner, type: :model, skip_seed: true do
     let(:contact_name) { "Jon Ralfeo" }
     let(:contact_email) { "jon@entertainment720.com" }
     let(:contact_phone) { "1231231234" }
+    let(:agency_address1) { "4744 McDermott Mountain" }
+    let(:agency_address2) { "333 Never land street" }
+    let(:agency_city) { "Lake Shoshana" }
+    let(:agency_state) { "ND" }
+    let(:agency_zipcode) { "09980-7010" }
+    let(:agency_website) { "bosco.example" }
+    let(:agency_type) { Partner::AGENCY_TYPES["OTHER"] }
+    let(:other_agency_type) { "Another Agency Name" }
     let(:notes) { "Some notes" }
 
     before do
       partner.profile.update({
                                primary_contact_name: contact_name,
                                primary_contact_email: contact_email,
-                               primary_contact_phone: contact_phone
+                               primary_contact_phone: contact_phone,
+                               address1: agency_address1,
+                               address2: agency_address2,
+                               city: agency_city,
+                               state: agency_state,
+                               zip_code: agency_zipcode,
+                               website: agency_website,
+                               agency_type: agency_type,
+                               other_agency_type: other_agency_type
                              })
       partner.update(notes: notes)
     end
 
-    it "includes contact person information from parnerbase" do
-      expect(partner.csv_export_attributes).to include(contact_name)
-      expect(partner.csv_export_attributes).to include(contact_phone)
-      expect(partner.csv_export_attributes).to include(contact_email)
-      expect(partner.csv_export_attributes).to include(notes)
+    it "should has the info in the columns order" do
+      expect(partner.csv_export_attributes).to eq([
+        partner.name,
+        partner.email,
+        "#{agency_address1}, #{agency_address2}",
+        agency_city,
+        agency_state,
+        agency_zipcode,
+        agency_website,
+        "#{Partner::AGENCY_TYPES["OTHER"]}: #{other_agency_type}",
+        contact_name,
+        contact_phone,
+        contact_email,
+        notes
+      ])
     end
   end
 
@@ -350,6 +376,28 @@ RSpec.describe Partner, type: :model, skip_seed: true do
 
     context "when partner don't have any related information" do
       it { is_expected.to eq({families_served: 0, children_served: 0, family_zipcodes: 0, family_zipcodes_list: []}) }
+    end
+  end
+
+  describe "#quota_exceeded?" do
+    it "returns true if partner has a quota and the total given is greater than quota" do
+      partner = build_stubbed(:partner, quota: 100)
+      expect(partner.quota_exceeded?(200)).to eq(true)
+    end
+
+    it "returns false if partner has a quota and the total given is equal to quota" do
+      partner = build_stubbed(:partner, quota: 100)
+      expect(partner.quota_exceeded?(100)).to eq(false)
+    end
+
+    it "returns false if partner has a quota and the total given is less than quota" do
+      partner = build_stubbed(:partner, quota: 100)
+      expect(partner.quota_exceeded?(50)).to eq(false)
+    end
+
+    it "returns false if partner has no quota" do
+      partner = build_stubbed(:partner, quota: nil)
+      expect(partner.quota_exceeded?(50)).to eq(false)
     end
   end
 

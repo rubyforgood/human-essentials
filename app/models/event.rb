@@ -29,7 +29,7 @@ class Event < ApplicationRecord
       .where("type = 'SnapshotEvent' OR (item->>'from_storage_location')=? OR (item->>'to_storage_location')=?", loc_id, loc_id)
   }
 
-  serialize :data, EventTypes::StructCoder.new(EventTypes::InventoryPayload)
+  serialize :data, coder: EventTypes::StructCoder.new(EventTypes::InventoryPayload)
 
   belongs_to :eventable, polymorphic: true
   belongs_to :user, optional: true

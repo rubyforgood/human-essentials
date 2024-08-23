@@ -11,10 +11,9 @@
 #  updated_at          :datetime         not null
 #  organization_id     :integer          not null
 #
-require 'rails_helper'
 
-RSpec.describe Kit, type: :model, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe Kit, type: :model do
+  let(:organization) { create(:organization) }
 
   let(:kit) { build(:kit, name: "Test Kit") }
 
@@ -59,10 +58,11 @@ RSpec.describe Kit, type: :model, skip_seed: true do
     end
 
     it "->alphabetized retrieves items in alphabetical order" do
-      kit_c = create(:kit, name: "C")
-      kit_b = create(:kit, name: "B")
-      kit_a = create(:kit, name: "A")
+      kit_c = create(:kit, name: "KitC")
+      kit_b = create(:kit, name: "KitB")
+      kit_a = create(:kit, name: "KitA")
       alphabetized_list = [kit_a.name, kit_b.name, kit_c.name]
+
       expect(Kit.alphabetized.count).to eq(3)
       expect(Kit.alphabetized.map(&:name)).to eq(alphabetized_list)
     end

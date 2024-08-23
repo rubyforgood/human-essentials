@@ -15,9 +15,8 @@
 #  updated_at           :datetime         not null
 #  ndbn_member_id       :bigint
 #
-require 'rails_helper'
 
-RSpec.describe AccountRequest, type: :model, skip_seed: true do
+RSpec.describe AccountRequest, type: :model do
   let(:account_request) { create(:account_request) }
 
   describe 'associations' do
@@ -39,9 +38,12 @@ RSpec.describe AccountRequest, type: :model, skip_seed: true do
     it { should allow_value(Faker::Internet.email).for(:email) }
     it { should_not allow_value("not_email").for(:email) }
 
+    it { should allow_value(Faker::Internet.url).for(:organization_website) }
+    it { should_not allow_value("www.example.com").for(:organization_website) }
+
     context 'when the email provided is already used by an existing organization' do
       before do
-        create(:organization, skip_items: true, email: account_request.email)
+        create(:organization, email: account_request.email)
       end
 
       it 'should not allow the email' do
@@ -118,7 +120,7 @@ RSpec.describe AccountRequest, type: :model, skip_seed: true do
 
     context 'when the account request has a associated organization' do
       before do
-        create(:organization, skip_items: true, account_request_id: account_request.id)
+        create(:organization, account_request_id: account_request.id)
       end
 
       it 'should return true' do

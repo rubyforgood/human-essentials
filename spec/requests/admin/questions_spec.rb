@@ -1,6 +1,4 @@
-require "rails_helper"
-
-RSpec.describe "Admin::Questions", type: :request, skip_seed: true do
+RSpec.describe "Admin::Questions", type: :request do
   context "while signed in as a super admin" do
     before do
       sign_in(create(:super_admin, organization: nil))

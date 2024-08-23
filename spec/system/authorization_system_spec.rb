@@ -1,5 +1,5 @@
-RSpec.describe "Authorization", type: :system, js: true, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe "Authorization", type: :system, js: true do
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 
   it "redirects to the dashboard when unauthorized user attempts access" do
@@ -12,8 +12,8 @@ RSpec.describe "Authorization", type: :system, js: true, skip_seed: true do
 
   it "redirects to the organization dashboard when authorized" do
     sign_in(user)
-    visit dashboard_path(user.organization)
+    visit dashboard_path
 
-    expect(current_path).to eql "/#{user.organization.short_name}/dashboard"
+    expect(current_path).to eql "/dashboard"
   end
 end

@@ -12,10 +12,8 @@
 #  user_id             :bigint
 #
 
-require 'rails_helper'
-
-RSpec.describe Audit, type: :model, skip_seed: true do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe Audit, type: :model do
+  let(:organization) { create(:organization) }
 
   it_behaves_like "itemizable"
 
@@ -109,7 +107,7 @@ RSpec.describe Audit, type: :model, skip_seed: true do
       storage_location1 = create(:storage_location, organization: organization)
       storage_location2 = create(:storage_location, organization: organization)
       create(:storage_location, organization: organization)
-      storage_location4 = create(:storage_location, organization: create(:organization, skip_items: true))
+      storage_location4 = create(:storage_location, organization: create(:organization))
       create(:audit, storage_location: storage_location1, organization: organization)
       create(:audit, storage_location: storage_location2, organization: organization)
       create(:audit, storage_location: storage_location4, organization: storage_location4.organization)
