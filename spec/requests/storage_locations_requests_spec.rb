@@ -328,7 +328,6 @@ RSpec.describe "StorageLocations", type: :request do
       end
 
       let(:storage_location) { create(:storage_location, :with_items, organization: organization) }
-      let(:inactive_inventory_items) { organization.inventory_items.inactive.map(&:to_h) }
       let(:items_at_storage_location) do
         View::Inventory.new(organization.id).items_for_location(storage_location.id).map(&method(:item_to_h))
       end
@@ -346,7 +345,7 @@ RSpec.describe "StorageLocations", type: :request do
 
         it "returns items sorted alphabetically by item name" do
           get inventory_storage_location_path(storage_location, format: :json)
-          sorted_items = inventory_items_at_storage_location.sort_by { |item| item['item_name'].downcase }
+          sorted_items = items_at_storage_location.sort_by { |item| item['item_name'].downcase }
           expect(response.parsed_body).to eq(sorted_items)
         end
       end
@@ -359,7 +358,6 @@ RSpec.describe "StorageLocations", type: :request do
           get inventory_storage_location_path(storage_location, format: :json, include_deactivated_items: true)
           organization.items.first.update(active: true)
           expect(response.parsed_body).to eq(items_at_storage_location + inactive_items)
-          expect(response.parsed_body).to eq(inventory_items_at_storage_location + inactive_inventory_items)
         end
       end
 
