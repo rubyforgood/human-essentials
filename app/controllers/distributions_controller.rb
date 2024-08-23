@@ -109,7 +109,11 @@ class DistributionsController < ApplicationController
         # does not match any known Request
         @distribution.request = Request.find(request_id)
       end
-      @distribution.line_items.build if @distribution.line_items.size.zero?
+      if @distribution.line_items.size.zero?
+        @distribution.line_items.build
+      elsif request_id
+        @distribution.initialize_request_items
+      end
       @items = current_organization.items.alphabetized
       if Event.read_events?(current_organization)
         inventory = View::Inventory.new(@distribution.organization_id)
