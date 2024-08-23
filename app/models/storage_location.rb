@@ -32,7 +32,6 @@ class StorageLocation < ApplicationRecord
            dependent: :destroy
   has_many :donations, dependent: :destroy
   has_many :distributions, dependent: :destroy
-  has_many :items, through: :inventory_items
   has_many :transfers_from, class_name: "Transfer",
                             inverse_of: :from,
                             foreign_key: :id,
@@ -159,11 +158,8 @@ class StorageLocation < ApplicationRecord
   end
 
   def empty_inventory?
-    if Event.read_events?(organization)
-      inventory = View::Inventory.new(organization_id)
-      inventory.quantity_for(storage_location: id).zero?
-    else
-    end
+    inventory = View::Inventory.new(organization_id)
+    inventory.quantity_for(storage_location: id).zero?
   end
 
 end

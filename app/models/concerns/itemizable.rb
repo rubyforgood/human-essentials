@@ -139,9 +139,4 @@ module Itemizable
     end
   end
 
-  def line_items_exist_in_inventory
-    return if storage_location.nil?
-    return if Event.read_events?(storage_location.organization)
-
-  end
 end

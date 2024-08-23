@@ -8,10 +8,7 @@ class InventoryCheckService
   end
 
   def call
-    @inventory = nil
-    if Event.read_events?(@distribution.organization)
-      @inventory = View::Inventory.new(@distribution.organization_id)
-    end
+    @inventory = View::Inventory.new(@distribution.organization_id)
     unless items_below_minimum_quantity.empty?
       set_error
     end

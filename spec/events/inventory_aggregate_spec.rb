@@ -462,38 +462,6 @@ RSpec.describe InventoryAggregate do
         }
       ))
     end
-
-    xit "should process a snapshot event" do
-      InventoryItem.delete_all
-
-      storage_location1.inventory_items.create!(quantity: 5, item_id: item1.id)
-      storage_location1.inventory_items.create!(quantity: 10, item_id: item2.id)
-      storage_location2.inventory_items.create!(quantity: 15, item_id: item2.id)
-      storage_location2.inventory_items.create!(quantity: 20, item_id: item3.id)
-      SnapshotEvent.publish(organization)
-
-      described_class.handle(SnapshotEvent.last, inventory)
-      result = InventoryAggregate.inventory_for(organization.id)
-      expect(result).to eq(EventTypes::Inventory.new(
-        organization_id: organization.id,
-        storage_locations: {
-          storage_location1.id => EventTypes::EventStorageLocation.new(
-            id: storage_location1.id,
-            items: {
-              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 5, storage_location_id: storage_location1.id),
-              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 10, storage_location_id: storage_location1.id)
-            }
-          ),
-          storage_location2.id => EventTypes::EventStorageLocation.new(
-            id: storage_location2.id,
-            items: {
-              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 15, storage_location_id: storage_location2.id),
-              item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 20, storage_location_id: storage_location2.id)
-            }
-          )
-        }
-      ))
-    end
   end
 
   describe "multiple events" do
@@ -750,8 +718,6 @@ RSpec.describe InventoryAggregate do
   describe "validation" do
     context "current event is incorrect" do
       it "should raise a bare error" do
-        next unless Event.read_events?(organization) # only relevant if flag is on
-
         donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
         donation.line_items << build(:line_item, quantity: 50, item: item1)
         DonationEvent.publish(donation)
@@ -768,8 +734,6 @@ RSpec.describe InventoryAggregate do
 
     context "subsequent event is incorrect" do
       it "should handle negative quantities" do
-        next unless Event.read_events?(organization) # only relevant if flag is on
-
         donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
         donation.line_items << build(:line_item, quantity: 100, item: item1, itemizable: donation)
         DonationEvent.publish(donation)
@@ -781,8 +745,6 @@ RSpec.describe InventoryAggregate do
       end
 
       it "should add the event to the message" do
-        next unless Event.read_events?(organization) # only relevant if flag is on
-
         travel_to Time.zone.local(2023, 5, 5)
         donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
         donation.line_items << build(:line_item, quantity: 50, item: item1, itemizable: donation)

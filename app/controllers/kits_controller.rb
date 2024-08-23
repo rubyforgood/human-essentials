@@ -1,9 +1,7 @@
 class KitsController < ApplicationController
   def index
-    @kits = current_organization.kits.includes(line_items: :item, inventory_items: :storage_location).class_filter(filter_params)
-    if Event.read_events?(current_organization)
-      @inventory = View::Inventory.new(current_organization.id)
-    end
+    @kits = current_organization.kits.includes(line_items: :item).class_filter(filter_params)
+    @inventory = View::Inventory.new(current_organization.id)
     unless params[:include_inactive_items]
       @kits = @kits.active
     end
@@ -56,10 +54,7 @@ class KitsController < ApplicationController
   def allocations
     @kit = Kit.find(params[:id])
     @storage_locations = current_organization.storage_locations.active_locations
-    if Event.read_events?(current_organization)
-      @inventory = View::Inventory.new(current_organization.id)
-    else
-    end
+    @inventory = View::Inventory.new(current_organization.id)
 
     load_form_collections
   end
@@ -68,16 +63,6 @@ class KitsController < ApplicationController
     @kit = Kit.find(params[:id])
     @storage_location = current_organization.storage_locations.active_locations.find(kit_adjustment_params[:storage_location_id])
     @change_by = kit_adjustment_params[:change_by].to_i
-
-    if @change_by.positive?
-      service = AllocateKitInventoryService.new(kit: @kit, storage_location: @storage_location, increase_by: @change_by)
-      service.allocate
-      flash[:error] = service.error if service.error
-    elsif @change_by.negative?
-      service = DeallocateKitInventoryService.new(kit: @kit, storage_location: @storage_location, decrease_by: @change_by.abs)
-      service.deallocate
-      flash[:error] = service.error if service.error
-    end
 
     if service.error
       flash[:error] = service.error

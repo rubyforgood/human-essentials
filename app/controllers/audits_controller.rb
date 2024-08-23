@@ -10,10 +10,7 @@ class AuditsController < ApplicationController
   end
 
   def show
-    if Event.read_events?(@audit.organization)
-      @items = View::Inventory.items_for_location(@audit.storage_location)
-    else
-    end
+    @items = View::Inventory.items_for_location(@audit.storage_location)
   end
 
   def edit

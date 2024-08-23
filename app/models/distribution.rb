@@ -39,7 +39,6 @@ class Distribution < ApplicationRecord
   accepts_nested_attributes_for :request
 
   validates :storage_location, :partner, :organization, :delivery_method, presence: true
-  validate :line_items_exist_in_inventory
   validate :line_items_quantity_is_positive
   validates :shipping_cost, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true, if: :shipped?
 
