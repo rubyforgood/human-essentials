@@ -67,8 +67,10 @@ module Exports
         if item_request.item
           item = item_request.item
           item_names << item.name
-          item.request_units.each do |unit|
-            item_names << "#{item.name} - #{unit.name}"
+          if Flipper.enabled?(:enable_packs)
+            item.request_units.each do |unit|
+              item_names << "#{item.name} - #{unit.name}"
+            end
           end
         end
       end
@@ -100,7 +102,7 @@ module Exports
       # off of the real item. Weirdly we do this because the item might have
       # been deleted historically without deleting the request.
       if item_request.item
-        if item_request.request_unit
+        if Flipper.enabled?(:enable_packs) && item_request.request_unit
           "#{item_request.name} - #{item_request.request_unit}"
         else
           item_request.name
