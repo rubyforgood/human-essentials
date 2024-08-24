@@ -62,7 +62,16 @@ module Exports
 
     def compute_item_headers
       # This reaches into the item and handles weirdly deleted items
-      item_names = items.flat_map(&:item).compact.map(&:name)
+      item_names = []
+      items.each do |item_request|
+        if item_request.item
+          if item_request.request_unit
+            item_names << "#{item_request.name} (#{item_request.request_unit})"
+          else
+            item_names << item_request.name
+          end
+        end
+      end
 
       # Adding this to handle cases in which a requested item
       # has been deleted. Normally this wouldn't be neccessary,
@@ -95,7 +104,13 @@ module Exports
       # The item_request has the item name, but we go ahead and try to get it
       # off of the real item. Weirdly we do this because the item might have
       # been deleted historically without deleting the request.
-      item_request.item&.name
+      if item_request.item
+        if item_request.request_unit
+          "#{item_request.name} (#{item_request.request_unit})"
+        else
+          item_request.name
+        end
+      end
     end
 
     def items
