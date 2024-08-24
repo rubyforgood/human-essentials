@@ -51,6 +51,13 @@ class PartnerUsersController < ApplicationController
     end
   end
 
+  def reset_password
+    user = User.find(params[:id])
+
+    user.send_reset_password_instructions
+    redirect_back(fallback_location: root_path, notice: "Password e-mail sent!")
+  end
+
   private
 
   def set_partner

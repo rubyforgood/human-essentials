@@ -75,8 +75,13 @@ module Partners
           # object (either this one or the FamilyRequestCreateService).
           pre_existing_entry.children = (pre_existing_entry.children + (input_item['children'] || [])).uniq
         else
+          if input_item['request_unit'].to_s == '-1' # nothing selected
+            errors.add(:base, "Please select a unit for #{Item.find(input_item["item_id"]).name}")
+            next
+          end
           items[input_item['item_id']] = Partners::ItemRequest.new(
             item_id: input_item['item_id'],
+            request_unit: input_item['request_unit'],
             quantity: input_item['quantity'],
             children: input_item['children'] || [], # will create ChildItemRequests if there are any
             name: fetch_organization_item_name(input_item['item_id']),
