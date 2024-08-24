@@ -5,6 +5,12 @@ module Partners
     def edit
       @counties = County.in_category_name_order
       @client_share_total = current_partner.profile.client_share_total
+
+      if Flipper.enabled?("partner_step_form")
+        render "partners/profiles/step/edit"
+      else
+        render "edit"
+      end
     end
 
     def update
