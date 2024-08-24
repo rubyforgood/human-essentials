@@ -65,10 +65,10 @@ module Exports
       item_names = []
       item_requests.each do |item_request|
         if item_request.item
-          if item_request.request_unit
-            item_names << "#{item_request.name} (#{item_request.request_unit})"
-          else
-            item_names << item_request.name
+          item = item_request.item
+          item_names << item.name
+          item.request_units.each do |unit|
+            item_names << "#{item.name} - #{unit.name}"
           end
         end
       end
@@ -88,12 +88,7 @@ module Exports
       request.item_requests.each do |item_request|
         item_name = fetch_item_name(item_request) || DELETED_ITEMS_COLUMN_HEADER
         item_column_idx = headers_with_indexes[item_name]
-
-        if item_name == DELETED_ITEMS_COLUMN_HEADER
-          # Add to the deleted column for every item that
-          # does not match any existing Item.
-          row[item_column_idx] ||= 0
-        end
+        row[item_column_idx] ||= 0
         row[item_column_idx] += item_request.quantity.to_i
       end
 
@@ -106,7 +101,7 @@ module Exports
       # been deleted historically without deleting the request.
       if item_request.item
         if item_request.request_unit
-          "#{item_request.name} (#{item_request.request_unit})"
+          "#{item_request.name} - #{item_request.request_unit}"
         else
           item_request.name
         end
