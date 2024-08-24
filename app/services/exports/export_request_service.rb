@@ -71,6 +71,12 @@ module Exports
             item.request_units.each do |unit|
               item_names << "#{item.name} - #{unit.name}"
             end
+
+            # It's possible that the unit is no longer valid, so we'd
+            # add that individually
+            if item_request.request_unit.present? && !item.request_units.pluck(:name).include?(item_request.request_unit)
+              item_names << "#{item.name} - #{item_request.request_unit}"
+            end
           end
         end
       end

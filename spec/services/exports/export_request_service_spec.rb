@@ -178,6 +178,20 @@ RSpec.describe Exports::ExportRequestService do
           0    # <DELETED_ITEMS>
         ])
       end
+
+      it "has expected data even when the unit was deleted" do
+        item_4t.request_units.destroy_all
+        expect(subject[6]).to eq([
+          request_4t_pack.created_at.strftime("%m/%d/%Y").to_s,
+          request_4t_pack.partner.name,
+          request_4t_pack.status.humanize,
+          0,   # 2T Diapers
+          0,   # 3T Diapers
+          0,   # 4T Diapers
+          153, # 4T Diapers - pack
+          0    # <DELETED_ITEMS>
+        ])
+      end
     end
   end
 
