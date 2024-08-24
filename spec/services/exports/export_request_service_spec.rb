@@ -1,7 +1,17 @@
 RSpec.describe Exports::ExportRequestService do
   let(:org) { create(:organization) }
 
+  let(:item_2t) { create :item, name: "2T Diapers" }
   let(:item_3t) { create :item, name: "3T Diapers" }
+  let(:item_4t) {
+    item = create :item, name: "4T Diapers"
+    create(:item_unit, item: item, name: "pack")
+    item
+  }
+
+  let(:item_deleted1) { create :item, :inactive, name: "Inactive Diapers1" }
+  let(:item_deleted2) { create :item, :inactive, name: "Inactive Diapers2" }
+
   let!(:request_3t) do
     create(:request,
            :started,
@@ -10,7 +20,6 @@ RSpec.describe Exports::ExportRequestService do
            request_items: [{ item_id: item_3t.id, quantity: 150 }])
   end
 
-  let(:item_2t) { create :item, name: "2T Diapers" }
   let!(:request_2t) do
     create(:request,
            :fulfilled,
@@ -18,8 +27,7 @@ RSpec.describe Exports::ExportRequestService do
            organization: org,
            request_items: [{ item_id: item_2t.id, quantity: 100 }])
   end
-  let(:item_deleted1) { create :item, :inactive, name: "Inactive Diapers1" }
-  let(:item_deleted2) { create :item, :inactive, name: "Inactive Diapers2" }
+
   let!(:request_with_deleted_items) do
     request = create(:request,
            :fulfilled,
@@ -31,27 +39,39 @@ RSpec.describe Exports::ExportRequestService do
     request.reload
   end
 
-  let!(:unique_items) do
-    [
-      {item_id: item_3t.id, quantity: 2},
-      {item_id: item_2t.id, quantity: 3}
-    ]
-  end
-
-  let!(:item_quantities) do
-    unique_items.each_with_object(Hash.new(0)) do |item, hsh|
-      hsh[item[:item_id]] += item[:quantity]
-    end
-  end
-
-  let!(:request_with_items) do
+  let!(:request_with_multiple_items) do
     create(
       :request,
       :started,
       :with_item_requests,
       organization: org,
-      request_items: unique_items
+      request_items: [
+        {item_id: item_3t.id, quantity: 2},
+        {item_id: item_2t.id, quantity: 3},
+        {item_id: item_4t.id, quantity: 4, request_unit: "pack"}
+      ]
     )
+  end
+
+  let!(:request_4t) do
+    # create(:unit, organization: org, name: "pack")
+    create(:request,
+           :started,
+           :with_item_requests,
+           organization: org,
+           request_items: [
+             { item_id: item_4t.id, quantity: 77 }
+           ])
+  end
+
+  let!(:request_4t_pack) do
+    create(:request,
+           :started,
+           :with_item_requests,
+           organization: org,
+           request_items: [
+             { item_id: item_4t.id, quantity: 153, request_unit: "pack" }
+           ])
   end
 
   subject do
@@ -59,33 +79,99 @@ RSpec.describe Exports::ExportRequestService do
   end
 
   describe ".generate_csv_data" do
-    let(:expected_headers) do
-      expected_headers_item_headers = [item_2t, item_3t].map(&:name).sort
-      expected_headers_item_headers << Exports::ExportRequestService::DELETED_ITEMS_COLUMN_HEADER
-      %w(Date Requestor Status) + expected_headers_item_headers
-    end
-
     it "includes headers as the first row with ordered item names alphabetically with deleted item included at the end" do
-      expect(subject.first).to eq(expected_headers)
+      expect(subject.first).to eq([
+        "Date",
+        "Requestor",
+        "Status",
+        "2T Diapers",
+        "3T Diapers",
+        "4T Diapers",
+        "4T Diapers - pack",
+        "<DELETED_ITEMS>"
+      ])
     end
 
-    it "includes rows for each request with correct columns of item quantity" do
-      expect(subject.second).to include(request_3t.created_at.strftime("%m/%d/%Y").to_s)
+    it "includes rows for each request" do
+      expect(subject.count).to eq(7)
+    end
 
-      item_2t_column_idx = expected_headers.each_with_index.to_h[item_2t.name]
-      item_3t_column_idx = expected_headers.each_with_index.to_h[item_3t.name]
+    it "has expected data for the 3T Diapers request" do
+      expect(subject[1]).to eq([
+        request_3t.created_at.strftime("%m/%d/%Y").to_s,
+        request_3t.partner.name,
+        request_3t.status.humanize,
+        0,   # 2T Diapers
+        150, # 3T Diapers
+        0,   # 4T Diapers
+        0,   # 4T Diapers - pack
+        0    # <DELETED_ITEMS>
+      ])
+    end
 
-      expect(subject.second[item_3t_column_idx]).to eq(150)
+    it "has expected data for the 2T Diapers request" do
+      expect(subject[2]).to eq([
+        request_2t.created_at.strftime("%m/%d/%Y").to_s,
+        request_2t.partner.name,
+        request_2t.status.humanize,
+        100, # 2T Diapers
+        0,   # 3T Diapers
+        0,   # 4T Diapers
+        0,   # 4T Diapers - pack
+        0    # <DELETED_ITEMS>
+      ])
+    end
 
-      expect(subject.third).to include(request_2t.created_at.strftime("%m/%d/%Y").to_s)
-      expect(subject.third[item_2t_column_idx]).to eq(100)
+    it "has expected data for the request with deleted items" do
+      expect(subject[3]).to eq([
+        request_with_deleted_items.created_at.strftime("%m/%d/%Y").to_s,
+        request_with_deleted_items.partner.name,
+        request_with_deleted_items.status.humanize,
+        0,   # 2T Diapers
+        0,   # 3T Diapers
+        0,   # 4T Diapers
+        0,   # 4T Diapers - pack
+        400  # <DELETED_ITEMS>
+      ])
+    end
 
-      expect(subject.fourth).to include(request_3t.created_at.strftime("%m/%d/%Y").to_s)
-      item_column_idx = expected_headers.each_with_index.to_h[Exports::ExportRequestService::DELETED_ITEMS_COLUMN_HEADER]
-      expect(subject.fourth[item_column_idx]).to eq(400)
+    it "has expected data for the request with multiple items" do
+      expect(subject[4]).to eq([
+        request_with_multiple_items.created_at.strftime("%m/%d/%Y").to_s,
+        request_with_multiple_items.partner.name,
+        request_with_multiple_items.status.humanize,
+        3,   # 2T Diapers
+        2,   # 3T Diapers
+        0,   # 4T Diapers
+        4,   # 4T Diapers - pack
+        0    # <DELETED_ITEMS>
+      ])
+    end
 
-      expect(subject.fifth[item_2t_column_idx]).to eq(item_quantities[item_2t.id])
-      expect(subject.fifth[item_3t_column_idx]).to eq(item_quantities[item_3t.id])
+    it "has expected data for the request with 4T diapers without pack unit" do
+      expect(subject[5]).to eq([
+        request_4t.created_at.strftime("%m/%d/%Y").to_s,
+        request_4t.partner.name,
+        request_4t.status.humanize,
+        0,   # 2T Diapers
+        0,   # 3T Diapers
+        77,  # 4T Diapers
+        0,   # 4T Diapers - pack
+        0    # <DELETED_ITEMS>
+      ])
+    end
+
+    it "has expected data for the request with 4T diapers with pack unit" do
+      expect(subject[6]).to eq([
+        request_4t_pack.created_at.strftime("%m/%d/%Y").to_s,
+        request_4t_pack.partner.name,
+        request_4t_pack.status.humanize,
+        0,   # 2T Diapers
+        0,   # 3T Diapers
+        0,   # 4T Diapers
+        153, # 4T Diapers - pack
+        0    # <DELETED_ITEMS>
+      ])
     end
   end
 end
