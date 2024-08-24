@@ -101,6 +101,12 @@ RSpec.describe Partners::Profile, type: :model do
         expect(subject).to_not be_valid
         expect(subject.errors[:base]).to include("At least one request type must be set")
       end
+
+      it "sets error at field level when feature flag enabled for partner step form" do
+        allow(Flipper).to receive(:enabled?).with("partner_step_form").and_return(true)
+        expect(subject).to_not be_valid
+        expect(subject.errors[:enable_child_based_requests]).to include("At least one request type must be set")
+      end
     end
 
     context "at least one request type is set to true" do
@@ -265,6 +271,22 @@ RSpec.describe Partners::Profile, type: :model do
         profile.reload
         expect(profile.client_share_total).to eq(99)
         expect(profile.valid?).to eq(false)
+        expect(profile.errors[:base]).to include("Total client share must be 0 or 100")
+      end
+
+      it "sets error at field level when feature flag enabled for partner step form" do
+        allow(Flipper).to receive(:enabled?).with("partner_step_form").and_return(true)
+
+        profile = create(:partner_profile)
+        county1 = create(:county, name: "county1", region: "region1")
+        county2 = create(:county, name: "county2", region: "region2")
+        create(:partners_served_area, partner_profile: profile, county: county1, client_share: 50)
+        create(:partners_served_area, partner_profile: profile, county: county2, client_share: 49)
+        profile.reload
+
+        expect(profile.client_share_total).to eq(99)
+        expect(profile.valid?).to eq(false)
+        expect(profile.errors[:client_share]).to include("Total client share must be 0 or 100")
       end
 
       it "is valid if client share sum is 100" do
