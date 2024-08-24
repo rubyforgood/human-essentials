@@ -3,11 +3,11 @@ RSpec.describe Exports::ExportRequestService do
 
   let(:item_2t) { create :item, name: "2T Diapers" }
   let(:item_3t) { create :item, name: "3T Diapers" }
-  let(:item_4t) {
-    item = create :item, name: "4T Diapers"
-    create(:item_unit, item: item, name: "pack")
-    item
-  }
+  let(:item_4t) do
+    create :item, name: "4T Diapers" do |item|
+      create(:item_unit, item: item, name: "pack")
+    end
+  end
 
   let(:item_deleted1) { create :item, :inactive, name: "Inactive Diapers1" }
   let(:item_deleted2) { create :item, :inactive, name: "Inactive Diapers2" }
