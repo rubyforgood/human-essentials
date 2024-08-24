@@ -61,9 +61,9 @@ module Exports
     end
 
     def compute_item_headers
-      # This reaches into the item and handles weirdly deleted items
+      # This reaches into the item, handling invalid deleted items
       item_names = []
-      items.each do |item_request|
+      item_requests.each do |item_request|
         if item_request.item
           if item_request.request_unit
             item_names << "#{item_request.name} (#{item_request.request_unit})"
@@ -113,10 +113,10 @@ module Exports
       end
     end
 
-    def items
-      return @items if @items
-      @items ||= Set.new(requests.flat_map(&:item_requests)).to_a
-      @items
+    def item_requests
+      return @item_requests if @item_requests
+      @item_requests ||= Set.new(requests.flat_map(&:item_requests)).to_a
+      @item_requests
     end
   end
 end
