@@ -21,6 +21,11 @@ class Manufacturer < ApplicationRecord
 
   scope :alphabetized, -> { order(:name) }
 
+  def volume
+    # returns 0 instead of nil when Manufacturer exists without any donations
+    donations.joins(:line_items).sum(:quantity)
+  end
+
   def self.by_donation_count(count = 10, date_range = nil)
     # selects manufacturers that have donation qty > 0 in the provided date range
     # and sorts them by highest volume of donation
