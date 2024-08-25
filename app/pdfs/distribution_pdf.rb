@@ -122,7 +122,6 @@ class DistributionPdf
         # Quantity column
         column(1..-1).row(1..-3).borders = [:left]
         column(1..-1).row(1..-3).border_left_color = "aaaaaa"
-        column(1).style align: :right
         column(-1).row(-1).borders = [:left, :bottom]
       end
 
@@ -178,20 +177,30 @@ class DistributionPdf
     end
 
     data += line_items.map do |c|
-      request_item = request_items.find { |i| i.item.id == c.item_id }
+      request_item = request_items.find { |i| i.item&.id == c.item_id }
+      if Flipper.enabled?(:enable_packs) && request_item&.unit
+        request_qty = "#{request_item.quantity} #{request_item.unit.pluralize(c.quantity)}"
+      else
+        request_qty = request_item&.quantity || ""
+      end
       [c.item.name,
-        request_item&.quantity || "",
+        request_qty,
         c.quantity,
         dollar_value(c.item.value_in_cents),
         dollar_value(c.value_per_line_item),
         c.package_count]
     end
 
-    data += requested_not_received.sort_by(&:name).map do |c|
-      [c.item.name,
-        c.quantity,
+    data += requested_not_received.sort_by(&:name).map do |request_item|
+      if Flipper.enabled?(:enable_packs) && request_item.unit
+        request_qty = "#{request_item.quantity} #{request_item.unit.pluralize(request_item.quantity)}"
+      else
+        request_qty = request_item.quantity || ""
+      end
+      [request_item.item.name,
+        request_qty,
         "",
-        dollar_value(c.item.value_in_cents),
+        dollar_value(request_item.item.value_in_cents),
         nil,
         nil]
     end
