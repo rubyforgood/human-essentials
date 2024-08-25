@@ -35,5 +35,14 @@ FactoryBot.define do
     trait :inactive do
       active { false }
     end
+
+    trait :with_unit do
+      transient do
+        unit { "pack" }
+      end
+      after(:create) do |item, evaluator|
+        create(:item_unit, name: evaluator.unit, item: item)
+      end
+    end
   end
 end
