@@ -109,7 +109,11 @@ class DistributionsController < ApplicationController
         # does not match any known Request
         @distribution.request = Request.find(request_id)
       end
-      @distribution.line_items.build if @distribution.line_items.size.zero?
+      if @distribution.line_items.size.zero?
+        @distribution.line_items.build
+      elsif request_id
+        @distribution.initialize_request_items
+      end
       @items = current_organization.items.alphabetized
       if Event.read_events?(current_organization)
         inventory = View::Inventory.new(@distribution.organization_id)
@@ -166,6 +170,7 @@ class DistributionsController < ApplicationController
 
   def edit
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
+    @distribution.initialize_request_items
     if (!@distribution.complete? && @distribution.future?) ||
         current_user.has_role?(Role::ORG_ADMIN, current_organization)
       @distribution.line_items.build if @distribution.line_items.size.zero?
@@ -202,6 +207,7 @@ class DistributionsController < ApplicationController
     else
       flash[:error] = insufficient_error_message(result.error.message)
       @distribution.line_items.build if @distribution.line_items.size.zero?
+      @distribution.initialize_request_items
       @items = current_organization.items.alphabetized
       @storage_locations = current_organization.storage_locations.active_locations.alphabetized
       render :edit
