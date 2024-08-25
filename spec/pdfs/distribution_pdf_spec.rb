@@ -23,7 +23,8 @@ describe DistributionPdf do
       request_items: [
         {"item_id" => item2.id, "quantity" => 30},
         {"item_id" => item3.id, "quantity" => 50},
-        {"item_id" => item4.id, "quantity" => 120, "request_unit" => "pack"}])
+        {"item_id" => item4.id, "quantity" => 120, "request_unit" => "pack"}
+])
   end
 
   specify "#request_data" do

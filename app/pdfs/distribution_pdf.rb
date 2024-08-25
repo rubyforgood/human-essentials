@@ -178,10 +178,10 @@ class DistributionPdf
 
     data += line_items.map do |c|
       request_item = request_items.find { |i| i.item&.id == c.item_id }
-      if Flipper.enabled?(:enable_packs) && request_item&.unit
-        request_qty = "#{request_item.quantity} #{request_item.unit.pluralize(c.quantity)}"
+      request_qty = if Flipper.enabled?(:enable_packs) && request_item&.unit
+        "#{request_item.quantity} #{request_item.unit.pluralize(c.quantity)}"
       else
-        request_qty = request_item&.quantity || ""
+        request_item&.quantity || ""
       end
       [c.item.name,
         request_qty,
@@ -192,10 +192,10 @@ class DistributionPdf
     end
 
     data += requested_not_received.sort_by(&:name).map do |request_item|
-      if Flipper.enabled?(:enable_packs) && request_item.unit
-        request_qty = "#{request_item.quantity} #{request_item.unit.pluralize(request_item.quantity)}"
+      request_qty = if Flipper.enabled?(:enable_packs) && request_item.unit
+        "#{request_item.quantity} #{request_item.unit.pluralize(request_item.quantity)}"
       else
-        request_qty = request_item.quantity || ""
+        request_item.quantity || ""
       end
       [request_item.item.name,
         request_qty,
