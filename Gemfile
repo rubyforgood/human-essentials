@@ -10,7 +10,7 @@ end
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.5.6"
+gem "pg", "~> 1.5.7"
 # Web server.
 gem "puma"
 # Rails web framework.
@@ -125,7 +125,7 @@ group :development, :test, :staging do
   # Generate models based on factory definitions.
   gem 'factory_bot_rails'
   # Ensure the database is in a clean state on every test.
-  gem "database_cleaner-active_record", '~> 2.1'
+  gem "database_cleaner-active_record", '~> 2.2'
   # Generate fake data for use in tests.
   gem 'faker'
 end
@@ -147,6 +147,8 @@ group :development, :test do
   gem "pry-remote"
   # Add-on for command line to create a simple debugger.
   gem "pry-nav"
+  # Debugger which supports rdbg and Shopify Ruby LSP VSCode extension
+  gem "debug", ">= 1.0.0"
   # RSpec behavioral testing framework for Rails.
   gem "rspec-rails", "~> 6.1.3"
   # Static analysis / linter.
