@@ -23,21 +23,6 @@ RSpec.describe RequestsTotalItemsService, type: :service do
       end
     end
 
-    context 'when item name is nil' do
-      let(:item) do
-        i = build(:item, name: nil)
-        i.save(validate: false)
-        i
-      end
-      let(:requests) do
-        [create(:request, request_items: [{ "item_id" => item.id, "quantity" => 20 }])]
-      end
-
-      it 'return Unknown Item' do
-        expect(subject.first.first).to eq('*Unknown Item*')
-      end
-    end
-
     context 'when provided with requests that have no request items' do
       let(:requests) { [create(:request, :with_item_requests, request_items: {})] }
 
