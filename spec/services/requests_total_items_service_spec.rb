@@ -9,8 +9,8 @@ RSpec.describe RequestsTotalItemsService, type: :service do
       let(:item_ids) { sample_items.pluck(:id) }
       let(:requests) do
         [
-          create(:request, request_items: item_ids.map { |k| { "item_id" => k, "quantity" => 20 } }),
-          create(:request, request_items: item_ids.map { |k| { "item_id" => k, "quantity" => 10 } })
+          create(:request, :with_item_requests, request_items: item_ids.map { |k| { "item_id" => k, "quantity" => 20 } }),
+          create(:request, :with_item_requests, request_items: item_ids.map { |k| { "item_id" => k, "quantity" => 10 } })
         ]
       end
 
@@ -39,7 +39,7 @@ RSpec.describe RequestsTotalItemsService, type: :service do
     end
 
     context 'when provided with requests that have no request items' do
-      let(:requests) { [create(:request, request_items: {})] }
+      let(:requests) { [create(:request, :with_item_requests, request_items: {})] }
 
       it { is_expected.to be_blank }
     end
