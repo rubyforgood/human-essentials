@@ -1,3 +1,11 @@
+<%
+  partner_list = if defined?(source) && source == 'new'
+                   current_organization.partners.where.not(status: 'deactivated').alphabetized
+                 else
+                   current_organization.partners.alphabetized
+                 end
+%>
+
 <%= simple_form_for distribution,
                     data: { controller: "form-input", confirmation_target: "form" },
                     html: { class: "storage-location-required" },
@@ -9,7 +17,7 @@
     <% end %>
 
     <%= f.association :partner,
-      collection: current_organization.partners.alphabetized,
+      collection: partner_list,
       label: "Partner",
       error: "Which partner is this distribution going to?" %>
 
