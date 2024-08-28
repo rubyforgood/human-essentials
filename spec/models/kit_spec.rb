@@ -68,16 +68,6 @@ RSpec.describe Kit, type: :model do
   end
 
   context "Value >" do
-    describe ".value_per_itemizable" do
-      it "calculates values from associated items" do
-        kit.line_items = [
-          create(:line_item, item: create(:item, value_in_cents: 100)),
-          create(:line_item, item: create(:item, value_in_cents: 90))
-        ]
-        expect(kit.value_per_itemizable).to eq(190)
-      end
-    end
-
     it "converts dollars to cents" do
       kit.value_in_dollars = 5.50
       expect(kit.value_in_cents).to eq(550)

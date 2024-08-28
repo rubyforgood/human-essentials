@@ -61,7 +61,7 @@ RSpec.describe Item, type: :model do
     context "Houses a kit >" do
       before :each do
         kit_params = attributes_for(:kit)
-        kit_params[:line_items_attributes] = [{item_id: create(:item, organization: organization).id, quantity: 1}]
+        kit_params[:line_items_attributes] = [{item_id: create(:item, value_in_cents: 100, organization: organization).id, quantity: 1}]
         @item = KitCreateService.new(organization_id: organization.id, kit_params: kit_params).call.kit.item
       end
 
@@ -267,6 +267,19 @@ RSpec.describe Item, type: :model do
   end
 
   context "Methods >" do
+    describe "value_per_itemizable when housing a kit" do
+      # TODO: this spec may be unnecessary because there are no references to this,
+      # all value calculations rely on item_housing_kit.value_in_cents
+      it "calculates values from associated items" do
+        kit_params = attributes_for(:kit)
+        kit_params[:line_items_attributes] = [
+          {item_id: create(:item, value_in_cents: 100).id, quantity: 1},
+          {item_id: create(:item, value_in_cents: 90).id, quantity: 1}
+        ]
+        item_housing_kit = KitCreateService.new(organization_id: organization.id, kit_params: kit_params).call.kit.item
+        expect(item_housing_kit.value_per_itemizable).to eq(190)
+      end
+    end
     describe "storage_locations_containing" do
       it "retrieves all storage locations that contain an item" do
         item = create(:item)
