@@ -21,7 +21,7 @@
 #  one_step_partner_invite        :boolean          default(FALSE), not null
 #  partner_form_fields            :text             default([]), is an Array
 #  receive_email_on_requests      :boolean          default(FALSE), not null
-#  reminder_schedule              :string           saved in iCal format, eg "RRULE:FREQ=MONTHLY;BYMONTHDAY=14"
+#  reminder_schedule              :string
 #  repackage_essentials           :boolean          default(FALSE), not null
 #  short_name                     :string
 #  signature_for_distribution_pdf :boolean          default(FALSE)
@@ -91,6 +91,10 @@ class Organization < ApplicationRecord
     def upcoming
       this_week.scheduled.where(issued_at: Time.zone.today..)
     end
+  end
+
+  before_save do
+    self.reminder_schedule = create_schedule
   end
 
   after_create do

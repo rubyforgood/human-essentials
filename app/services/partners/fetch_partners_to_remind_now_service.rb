@@ -19,6 +19,7 @@ module Partners
         .where(partner_groups: {reminder_schedule: nil})
         .where(send_reminders: true)
         .where.not(organizations: {deadline_day: nil})
+        .where.not(organizations: {reminder_schedule: nil})
         .where.not(status: deactivated_status)
 
       filtered_organizations = partners_with_only_organization_reminders.select do |partner|

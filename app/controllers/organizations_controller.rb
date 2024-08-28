@@ -13,13 +13,12 @@ class OrganizationsController < ApplicationController
 
   def edit
     @organization = current_organization
-    @reminder_schedule = ReminderSchedule.from_ical(@organization.reminder_schedule)
+    @organization.from_ical(@organization.reminder_schedule)
   end
 
   def update
     @organization = current_organization
-    @reminder_schedule = ReminderSchedule.new(reminder_schedule_params)
-    if OrganizationUpdateService.update(@organization, organization_params.merge!(reminder_schedule:@reminder_schedule.create_schedule))
+    if OrganizationUpdateService.update(@organization, organization_params)
       redirect_to organization_path, notice: "Updated your organization!"
     else
       flash.now[:error] = @organization.errors.full_messages.join("\n")
@@ -102,14 +101,11 @@ class OrganizationsController < ApplicationController
       :enable_individual_requests, :enable_quantity_based_requests,
       :ytd_on_distribution_printout, :one_step_partner_invite,
       :hide_value_columns_on_receipt, :hide_package_column_on_receipt,
-      :signature_for_distribution_pdf, :receive_email_on_requests,
-      partner_form_fields: [],
+      :signature_for_distribution_pdf, :every_n_months,
+      :date_or_week_day, :date, :day_of_week, :every_nth_day,
+      partner_form_fields: []
       request_unit_names: []
     )
-  end
-
-  def reminder_schedule_params
-    params.require(:reminder_schedule).permit(:every_n_months, :date_or_week_day, :date, :day_of_week, :every_nth_day)
   end
 
   def request_type_formatter(params)
