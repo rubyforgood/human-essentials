@@ -64,12 +64,15 @@ RSpec.describe Kit, type: :model do
   end
 
   describe '#can_deactivate?' do
-    let(:kit) { create(:kit, organization: organization) }
+    let(:kit) {
+      kit_params = attributes_for(:kit)
+      kit_params[:line_items_attributes] = [{item_id: create(:item).id, quantity: 1}]
+      KitCreateService.new(organization_id: organization.id, kit_params: kit_params).call.kit
+    }
 
     context 'with inventory' do
       it 'should return false' do
-        item = create(:item, :active, organization: organization, kit: kit)
-        storage_location = create(:storage_location, :with_items, organization: organization, item: item)
+        storage_location = create(:storage_location, organization: organization)
 
         TestInventory.create_inventory(organization, {
           storage_location.id => {

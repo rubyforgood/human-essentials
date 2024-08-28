@@ -46,7 +46,7 @@ class Kit < ApplicationRecord
   # or deallocated, we are changing inventory for inactive items (which we don't allow).
   # @return [Boolean]
   def can_reactivate?
-    line_items.joins(:item).where(items: { active: false }).none?
+    item.line_items.joins(:item).where(items: { active: false }).none?
   end
 
   def reactivate
