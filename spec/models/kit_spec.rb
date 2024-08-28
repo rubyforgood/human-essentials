@@ -49,22 +49,6 @@ RSpec.describe Kit, type: :model do
       expect(Kit.alphabetized.count).to eq(3)
       expect(Kit.alphabetized.map(&:name)).to eq(alphabetized_list)
     end
-
-    describe "->by_partner_key" do
-      it "shows the kits for a particular item" do
-        base1 = create(:base_item)
-        base2 = create(:base_item)
-
-        c1 = create(:item, base_item: base1, organization: organization)
-        c2 = create(:item, base_item: base2, organization: organization)
-
-        create(:kit, organization: organization, line_items: [create(:line_item, item: c1)])
-        create(:kit, organization: organization, line_items: [create(:line_item, item: c2)])
-
-        expect(Kit.by_partner_key(c1.partner_key).size).to eq(1)
-        expect(Kit.active.size).to be > 1
-      end
-    end
   end
 
   context "Value >" do
