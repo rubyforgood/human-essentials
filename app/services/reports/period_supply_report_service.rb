@@ -137,7 +137,7 @@ module Reports
         INNER JOIN base_items ON base_items.partner_key = kit_items.partner_key 
         WHERE #{itemizable_type}.organization_id = ?
           AND EXTRACT(year FROM issued_at) = ?
-          AND LOWER(base_items.category) LIKE '%menstral supplies%'
+          AND LOWER(base_items.category) LIKE '%menstrual  supplies%'
           AND NOT (LOWER(base_items.category) LIKE '%diaper%' OR LOWER(base_items.name) LIKE '%cloth%')
           AND kit_line_items.itemizable_type = 'Kit';
       SQL
