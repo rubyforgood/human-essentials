@@ -66,7 +66,7 @@
                 <h3 class='font-bold'>Reminder Schedule</h3>
                 <p>
                   <%= fa_icon "calendar" %>
-                  <%= @organization.reminder_schedule.blank? ? 'Not defined' : ReminderSchedule.show_description(@organization.reminder_schedule) %>
+                  <%= @organization.reminder_schedule.blank? ? 'Not defined' : @organization.show_description(@organization.reminder_schedule) %>
                 </p>
               </div>
               <div class="mb-4">

@@ -1,68 +1,62 @@
 <%= tag.div(class: 'deadline-day-pickers',
             data: {
-              min: Deadlinable::MIN_DAY_OF_MONTH,
-              max: Deadlinable::MAX_DAY_OF_MONTH,
               current_day: Date.current.mday,
               current_month: Date::MONTHNAMES[Date.current.month],
               next_month: Date::MONTHNAMES[Date.current.next_month.month]
             }) do %>
 
-    <%= simple_fields_for @reminder_schedule do |t| %>
-      <%= t.input :every_n_months,
+      <%= f.input :every_n_months,
       as: :integer,
       label: 'Send reminders every X months',
       class: "deadline-day-pickers__reminder-day form-control",
       hint: "Enter the number of months between reminders",
       :placeholder => "1",
-      :input_html => {:style=> 'width: 100px'}
-      %>
+      :input_html => {:style=> 'width: 100px', :min => 0, :max => 12} %>
 
-      <%= t.label :date_or_week_day, 'Send reminders on a specific date (eg "the 5th") or a day of the week (eg "the first Tuesday")?' %>
+      <%= f.label :date_or_week_day, 'Send reminders on a specific date (eg "the 5th") or a day of the week (eg "the first Tuesday")?' %>
       <br>
-      <%= t.radio_button :date_or_week_day, 'date', label: 'Date'%>
-      <%= t.label :date_or_week_day, 'Date' %>
+      <%= f.radio_button :date_or_week_day, 'date', label: 'Date', id: 'toggle-to-date' %>
+      <%= f.label :date_or_week_day, 'Date' %>
       <br>
-      <%= t.radio_button :date_or_week_day, 'week_day', label: 'Week Day' %>
-      <%= t.label :date_or_week_day, 'Week Day' %>
+      <%= f.radio_button :date_or_week_day, 'week_day', label: 'Week Day', id: 'toggle-to-week-day' %>
+      <%= f.label :date_or_week_day, 'Week Day' %>
 
-      <div id="date_fields">
-      <%= t.input :date, wrapper: :input_group, wrapper_html: { class: 'mb-3' },
+      <div id="date-fields">
+      <%= f.input :date, as: :integer, wrapper: :input_group, wrapper_html: { class: 'mb-3' },
       label: 'Reminder date' do %>
       <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-      <%= t.number_field :date,
+      <%= f.number_field :date,
+      min: Deadlinable::MIN_DAY_OF_MONTH,
+      max: Deadlinable::MAX_DAY_OF_MONTH,
       class: "deadline-day-pickers__reminder-day form-control",
-      placeholder: "Reminder day",
-      :input_html => {:style=> 'width: 100px'}
-      %>
+      placeholder: "Reminder day" %>
       <% end %>
       </div>
 
-      <div id="week_day_fields">
-      <%= t.input :every_nth_day, wrapper: :input_group, wrapper_html: { class: 'mb-3'},
+      <div id="week-day-fields">
+      <%= f.input :every_nth_day, wrapper: :input_group, wrapper_html: { class: 'mb-3'},
       label: 'Reminder day of the week' do %>
-      <%= t.input :every_nth_day, collection: t.object.every_nth_collection,
+      <%= f.input :every_nth_day, collection: Deadlinable::EVERY_NTH_COLLECTION,
       class: "deadline-day-pickers__reminder-day form-control",
-      label: false,
       default: 1,
-      :input_html => {}
-      %>
+      label: false %>
 
-      <%= t.input :day_of_week, collection: t.object.week_day_collection,
+      <%= f.input :day_of_week, collection: Deadlinable::WEEK_DAY_COLLECTION,
       class: "deadline-day-pickers__reminder-day form-control",
       label: false,
       show_blank: true,
       default: 1,
-      :input_html => {:style=> 'width: 200px'}
-      %>
+      :input_html => {:style=> 'width: 200px'} %>
       </div>
       <% end %>
-    <% end %>
 
   <div class="deadline-day-pickers__deadline-container">
-    <%= f.input :deadline_day, wrapper: :input_group, wrapper_html: { class: 'mb-0' },
+    <%= f.input :deadline_day, wrapper: :input_group, wrapper_html: { class: 'mb-0', min: 0, max: 28 },
                 label: 'Deadline day (Final day of month to submit requests)' do %>
       <span class="input-group-text"><i class="fa fa-calendar"></i></span>
       <%= f.number_field :deadline_day,
+                         min: Deadlinable::MIN_DAY_OF_MONTH,
+                         max: Deadlinable::MAX_DAY_OF_MONTH,
                          class: "deadline-day-pickers__deadline-day form-control",
                          placeholder: "Deadline day" %>
     <% end %>

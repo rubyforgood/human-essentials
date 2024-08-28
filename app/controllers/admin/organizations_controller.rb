@@ -2,13 +2,12 @@
 class Admin::OrganizationsController < AdminController
   def edit
     @organization = Organization.find(params[:id])
-    @reminder_schedule = ReminderSchedule.from_ical(@organization.reminder_schedule)
+    @organization.from_ical(@organization.reminder_schedule)
   end
 
   def update
     @organization = Organization.find(params[:id])
-    reminder_schedule = ReminderSchedule.new(reminder_schedule_params).create_schedule
-    if OrganizationUpdateService.update(@organization, organization_params.merge!(reminder_schedule:))
+    if OrganizationUpdateService.update(@organization, organization_params)
       redirect_to admin_organizations_path, notice: "Updated organization!"
     else
       flash[:error] = @organization.errors.full_messages.join("\n")
@@ -32,7 +31,7 @@ class Admin::OrganizationsController < AdminController
 
   def new
     @organization = Organization.new
-    @reminder_schedule = ReminderSchedule.new
+    @organization.from_ical(@organization.reminder_schedule)
     account_request = params[:token] && AccountRequest.get_by_identity_token(params[:token])
 
     @user = User.new
@@ -47,9 +46,7 @@ class Admin::OrganizationsController < AdminController
   end
 
   def create
-    @reminder_schedule = ReminderSchedule.new(reminder_schedule_params)
-    final_params = organization_params.merge!(reminder_schedule: @reminder_schedule.create_schedule)
-    @organization = Organization.new(final_params)
+    @organization = Organization.new(organization_params)
     if @organization.save
       Organization.seed_items(@organization)
       @user = UserInviteService.invite(name: user_params[:name],
@@ -85,15 +82,12 @@ class Admin::OrganizationsController < AdminController
 
   def organization_params
     params.require(:organization)
-          .permit(:name, :short_name, :street, :city, :state, :zipcode, :email, :url, :logo, :intake_location, :default_email_text, :account_request_id, :reminder_schedule, :deadline_day,
+          .permit(:name, :short_name, :street, :city, :state, :zipcode, :email, :url, :logo, :intake_location, :default_email_text, :account_request_id,
+                  :every_n_months, :date_or_week_day, :date, :day_of_week, :every_nth_day, :deadline_day,
                   users_attributes: %i(name email organization_admin), account_request_attributes: %i(ndbn_member_id id))
   end
 
   def user_params
     params.require(:organization).require(:user).permit(:name, :email)
-  end
-
-  def reminder_schedule_params
-    params.require(:reminder_schedule).permit(:every_n_months, :date_or_week_day, :date, :day_of_week, :every_nth_day)
   end
 end

@@ -1,14 +1,11 @@
 class PartnerGroupsController < ApplicationController
   def new
     @partner_group = current_organization.partner_groups.new
-    @reminder_schedule = ReminderSchedule.new
     @item_categories = current_organization.item_categories
   end
 
   def create
-    @reminder_schedule = ReminderSchedule.new(reminder_schedule_params)
-    final_params = partner_group_params.merge!(reminder_schedule: @reminder_schedule.create_schedule)
-    @partner_group = current_organization.partner_groups.new(final_params)
+    @partner_group = current_organization.partner_groups.new(partner_group_params)
     if @partner_group.save
       # Redirect to groups tab in Partner page.
       redirect_to partners_path + "#nav-partner-groups", notice: "Partner group added!"
@@ -20,14 +17,13 @@ class PartnerGroupsController < ApplicationController
 
   def edit
     @partner_group = current_organization.partner_groups.find(params[:id])
-    @reminder_schedule = ReminderSchedule.from_ical(@partner_group.reminder_schedule)
+    @partner_group.from_ical(@partner_group.reminder_schedule)
     @item_categories = current_organization.item_categories
   end
 
   def update
     @partner_group = current_organization.partner_groups.find(params[:id])
-    reminder_schedule = ReminderSchedule.new(reminder_schedule_params).create_schedule
-    if @partner_group.update(partner_group_params.merge!(reminder_schedule:))
+    if @partner_group.update(partner_group_params)
       redirect_to partners_path + "#nav-partner-groups", notice: "Partner group edited!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"
@@ -38,10 +34,8 @@ class PartnerGroupsController < ApplicationController
   private
 
   def partner_group_params
-    params.require(:partner_group).permit(:name, :send_reminders, :reminder_schedule, :deadline_day, item_category_ids: [])
-  end
-
-  def reminder_schedule_params
-    params.require(:reminder_schedule).permit(:every_n_months, :date_or_week_day, :date, :day_of_week, :every_nth_day)
+    params.require(:partner_group).permit(:name, :send_reminders, :reminder_schedule,
+      :deadline_day, :every_n_months, :date_or_week_day,
+      :date, :day_of_week, :every_nth_day, item_category_ids: [])
   end
 end

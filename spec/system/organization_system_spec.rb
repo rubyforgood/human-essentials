@@ -68,10 +68,16 @@ RSpec.describe "Organization management", type: :system, js: true do
       end
 
       it "can set a reminder and a deadline day" do
-        fill_in "organization_reminder_day", with: 12
+        # TODO: change here
+        fill_in "organization_every_n_months", with: 1
+        choose 'toggle-to-week-day'
+        select "First", from: "organization_every_nth_day"
+        select "Friday", from: "organization_day_of_week"
+
         fill_in "organization_deadline_day", with: 16
         click_on "Save"
         expect(page.find(".alert")).to have_content "Updated"
+        expect(page).to have_content("Monthly on the 1st Friday")
       end
 
       it 'can select if the org repackages essentials' do

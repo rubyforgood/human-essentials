@@ -448,17 +448,11 @@ RSpec.describe Organization, type: :model do
   end
 
   describe 'reminder_schedule' do
-    it "cannot exceed 28" do
-      schedule = IceCube::Schedule.new(Date.new(2022, 1, 1))
-      valid_days = [1, 28]
-      valid_days.each do |day|
-        schedule.add_recurrence_rule IceCube::Rule.monthly.day_of_month(day)
-        expect(build(:organization, reminder_schedule: schedule.to_ical)).to be_valid
-        schedule.remove_recurrence_rule(schedule.recurrence_rules.first)
-      end
-      schedule.add_recurrence_rule IceCube::Rule.monthly.day_of_month(29)
-      expect(build(:organization, reminder_schedule: schedule.to_ical)).to_not be_valid
-      schedule.remove_recurrence_rule(schedule.recurrence_rules.first)
+    it "cannot exceed 28 if date_or_week_day is date" do
+      expect(build(:organization, every_n_months: 1, date_or_week_day: 'date', date: 28)).to be_valid
+      expect(build(:organization, every_n_months: 1, date_or_week_day: 'date', date: 29)).to_not be_valid
+      expect(build(:organization, every_n_months: 1, date_or_week_day: 'date', date: 0)).to_not be_valid
+      expect(build(:organization, every_n_months: 1, date_or_week_day: 'date', date: -5)).to_not be_valid
     end
   end
   describe 'deadline_day' do

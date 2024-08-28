@@ -496,6 +496,13 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           # Click on the second item category
           find("input#partner_group_item_category_ids_#{item_category_2.id}").click
 
+          # Opt in to sending deadline reminders
+          check 'Yes'
+
+          fill_in "partner_group_every_n_months", with: 1, wait: page_content_wait
+          choose 'toggle-to-date'
+          fill_in "partner_group_date", with: 1
+          fill_in "partner_group_deadline_day", with: 25
           find_button('Add Partner Group').click
 
           assert page.has_content? 'Group Name', wait: page_content_wait
@@ -530,6 +537,25 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           assert page.has_content? 'New Group Name', wait: page_content_wait
           refute page.has_content? item_category_1.name
           assert page.has_content? item_category_2.name
+        end
+
+        it 'should be able to edit a custom reminder schedule' do
+          visit partners_path
+
+          click_on 'Groups'
+          assert page.has_content? existing_partner_group.name, wait: page_content_wait
+
+          click_on 'Edit'
+          # Opt in to sending deadline reminders
+          check 'Yes'
+          fill_in "partner_group_every_n_months", with: 2, wait: page_content_wait
+          choose 'toggle-to-week-day'
+          select "Second", from: "partner_group_every_nth_day"
+          select "Thursday", from: "partner_group_day_of_week"
+          fill_in "partner_group_deadline_day", with: 24
+
+          find_button('Update Partner Group').click
+          assert page.has_content? 'Every 2 months on the 2nd Thursday', wait: page_content_wait
         end
       end
     end
