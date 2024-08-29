@@ -81,9 +81,10 @@ class PicklistsPdf
 
         move_down 20
 
-        # items = build_items(request)
-        items = request.item_requests
-        data = has_custom_units?(request) ? data_with_units(items) : data_no_units(items)
+        items = request.request_items.map do |request_item|
+          RequestItem.from_json(request_item, request)
+        end
+        data = has_custom_units?(items) ? data_with_units(items) : data_no_units(items)
 
         font_size 11
 
@@ -132,8 +133,8 @@ class PicklistsPdf
     render
   end
 
-  def has_custom_units?(request)
-    Flipper.enabled?(:enable_packs) && request.item_requests.any? { |item| item.request_unit }
+  def has_custom_units?(items)
+    Flipper.enabled?(:enable_packs) && items.any? { |item| item.unit }
   end
 
   def data_with_units(items)
@@ -146,7 +147,7 @@ class PicklistsPdf
     data + items.map do |i|
       [i.item.name,
         i.quantity,
-        i.request_unit&.capitalize&.pluralize(i.quantity),
+        i.unit&.capitalize&.pluralize(i.quantity),
         "[  ]",
         ""]
     end

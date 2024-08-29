@@ -41,7 +41,7 @@ class RequestsController < ApplicationController
   end
 
   def print_unfulfilled
-    requests = Request.includes(partner: [:profile], item_requests: [:item]).where(status: [0, 1])
+    requests = Request.includes(partner: [:profile]).where(status: [0, 1])
 
     respond_to do |format|
       format.any do
