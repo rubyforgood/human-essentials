@@ -21,6 +21,13 @@ RSpec.describe "Items", type: :request do
         let(:response_format) { 'html' }
 
         it { is_expected.to be_successful }
+        it "is successful with created kit" do
+          kit_params = attributes_for(:kit)
+          kit_params[:line_items_attributes] = [{ item_id: create(:item).id, quantity: 2}]
+          KitCreateService.new(organization_id: organization.id, kit_params: kit_params).call.kit
+
+          expect(subject).to be_successful
+        end
       end
 
       context "csv" do

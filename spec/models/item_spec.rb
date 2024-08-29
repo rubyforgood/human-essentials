@@ -450,15 +450,26 @@ RSpec.describe Item, type: :model do
     end
 
     describe '#is_in_kit?' do
-      it "is true for items that are in a kit and false otherwise" do
-        item_not_in_kit = create(:item, organization: organization)
-        item_in_kit = create(:item, organization: organization)
+      before :each do
+        @item_not_in_kit = create(:item, organization: organization)
+        @item_in_kit = create(:item, organization: organization)
 
         kit_params = attributes_for(:kit)
-        kit_params[:line_items_attributes] = [{item_id: item_in_kit.id, quantity: 1}]
-        KitCreateService.new(organization_id: organization.id, kit_params: kit_params).call
-        expect(item_in_kit.is_in_kit?).to be true
-        expect(item_not_in_kit.is_in_kit?).to be false
+        kit_params[:line_items_attributes] = [{item_id: @item_in_kit.id, quantity: 1}]
+        @kit = KitCreateService.new(organization_id: organization.id, kit_params: kit_params).call.kit
+      end
+      it "is true for items that are in a kit and false otherwise" do
+        expect(@item_in_kit.is_in_kit?).to be true
+        expect(@item_not_in_kit.is_in_kit?).to be false
+      end
+      it "checks if true if item is contained in given list of items housing kits" do
+        kit_params = attributes_for(:kit)
+        kit_params[:line_items_attributes] = [{item_id: create(:item).id, quantity: 1}]
+        kit_with_new_item = KitCreateService.new(organization_id: organization.id, kit_params: kit_params).call.kit
+
+        expect(@item_in_kit.is_in_kit?([@kit.item])).to be true
+        expect(@item_not_in_kit.is_in_kit?([@kit.item])).to be false
+        expect(@item_in_kit.is_in_kit?([kit_with_new_item.item])).to be false
       end
     end
 

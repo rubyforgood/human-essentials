@@ -141,9 +141,9 @@ class Item < ApplicationRecord
     end
   end
 
-  def is_in_kit?(kits = nil)
-    if kits
-      kits.any? { |k| k.item.line_items.map(&:item_id).include?(id) }
+  def is_in_kit?(items_housing_kits = nil)
+    if items_housing_kits
+      items_housing_kits.any? { |k| k.line_items.map(&:item_id).include?(id) }
     else
       organization.items
         .active
@@ -153,12 +153,12 @@ class Item < ApplicationRecord
     end
   end
 
-  def can_delete?(inventory = nil, kits = nil)
-    can_deactivate_or_delete?(inventory, kits) && contained_in_line_items.none? && !barcode_count&.positive?
+  def can_delete?(inventory = nil, items_housing_kits = nil)
+    can_deactivate_or_delete?(inventory, items_housing_kits) && contained_in_line_items.none? && !barcode_count&.positive?
   end
 
   # @return [Boolean]
-  def can_deactivate_or_delete?(inventory = nil, kits = nil)
+  def can_deactivate_or_delete?(inventory = nil, items_housing_kits = nil)
     if inventory.nil? && Event.read_events?(organization)
       inventory = View::Inventory.new(organization_id)
     end
@@ -167,7 +167,7 @@ class Item < ApplicationRecord
     # If an active kit includes this item, then changing kit allocations would change inventory
     # for an inactive item - which we said above we don't want to allow.
 
-    !has_inventory?(inventory) && !is_in_kit?(kits)
+    !has_inventory?(inventory) && !is_in_kit?(items_housing_kits)
   end
 
   def validate_destroy
