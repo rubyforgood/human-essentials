@@ -89,7 +89,7 @@ class PicklistsPdf
         font_size 11
 
         # Line item table
-        table(data) do
+        table(data, :width => bounds.width, :column_widths => { 1 => 65, -2 => 35 }) do
           self.header = true
           self.cell_style = { padding: [5, 10, 5, 10]}
           self.row_colors = %w(dddddd ffffff)
