@@ -17,6 +17,15 @@ You won't be yelled at for giving your best effort. The worst that can happen is
 
 # Getting Started
 ## Local Environment 🛠️
+
+Do you develop on Windows?
+#### Windows Subsystem for Linux (WSL2) - Windows Only
+Follow [documentation](https://docs.microsoft.com/en-us/windows/wsl/install-win10) from Microsoft for enabling and installing WSL2 on your machine.
+
+Make sure to install **Ubuntu** as your Linux distribution. (This should be default.)
+
+**Note:** If you run into any issues with a command not running, restart your machine.
+
 1. Install Ruby
    - Install the version specified in [`.ruby-version`](.ruby-version).
    - Visit the [Install Ruby on Rails](https://gorails.com/setup/osx/12-monterey) guide by GoRails for Ubuntu, Windows, and macOSX setup. ⚠️ Follow only the Installing Ruby step, as our project setup differs ⚠️ It is highly recommended you use a ruby version manager such as [rbenv](https://github.com/rbenv/rbenv), [asdf](https://asdf-vm.com/), or [rvm](https://rvm.io/).
