@@ -30,26 +30,6 @@ RSpec.describe Kit, type: :model do
         build(:kit, name: subject.name, organization: organization)
       ).not_to be_valid
     end
-
-    it "requires at least one item" do
-      kit.line_items = []
-      expect(kit).not_to be_valid
-    end
-
-    it "ensures the associated line_items are invalid with a nil quantity" do
-      kit.line_items << build(:line_item, quantity: nil)
-      expect(kit).not_to be_valid
-    end
-
-    it "ensures the associated line_items are invalid with a zero quantity" do
-      kit.line_items << build(:line_item, quantity: 0)
-      expect(kit).not_to be_valid
-    end
-
-    it "ensures the associated line_items are valid with a one quantity" do
-      kit.line_items << build(:line_item, quantity: 1)
-      expect(kit).to be_valid
-    end
   end
 
   context "Filtering >" do
@@ -58,43 +38,20 @@ RSpec.describe Kit, type: :model do
     end
 
     it "->alphabetized retrieves items in alphabetical order" do
-      kit_c = create(:kit, name: "KitC")
-      kit_b = create(:kit, name: "KitB")
-      kit_a = create(:kit, name: "KitA")
-      alphabetized_list = [kit_a.name, kit_b.name, kit_c.name]
+      a_name = "KitA"
+      b_name = "KitB"
+      c_name = "KitC"
+      create(:kit, name: c_name)
+      create(:kit, name: b_name)
+      create(:kit, name: a_name)
+      alphabetized_list = [a_name, b_name, c_name]
 
       expect(Kit.alphabetized.count).to eq(3)
       expect(Kit.alphabetized.map(&:name)).to eq(alphabetized_list)
     end
-
-    describe "->by_partner_key" do
-      it "shows the kits for a particular item" do
-        base1 = create(:base_item)
-        base2 = create(:base_item)
-
-        c1 = create(:item, base_item: base1, organization: organization)
-        c2 = create(:item, base_item: base2, organization: organization)
-
-        create(:kit, organization: organization, line_items: [create(:line_item, item: c1)])
-        create(:kit, organization: organization, line_items: [create(:line_item, item: c2)])
-
-        expect(Kit.by_partner_key(c1.partner_key).size).to eq(1)
-        expect(Kit.active.size).to be > 1
-      end
-    end
   end
 
   context "Value >" do
-    describe ".value_per_itemizable" do
-      it "calculates values from associated items" do
-        kit.line_items = [
-          create(:line_item, item: create(:item, value_in_cents: 100)),
-          create(:line_item, item: create(:item, value_in_cents: 90))
-        ]
-        expect(kit.value_per_itemizable).to eq(190)
-      end
-    end
-
     it "converts dollars to cents" do
       kit.value_in_dollars = 5.50
       expect(kit.value_in_cents).to eq(550)
@@ -107,12 +64,15 @@ RSpec.describe Kit, type: :model do
   end
 
   describe '#can_deactivate?' do
-    let(:kit) { create(:kit, :with_item, organization: organization) }
+    let(:kit) {
+      kit_params = attributes_for(:kit)
+      kit_params[:line_items_attributes] = [{item_id: create(:item).id, quantity: 1}]
+      KitCreateService.new(organization_id: organization.id, kit_params: kit_params).call.kit
+    }
 
     context 'with inventory' do
       it 'should return false' do
-        item = create(:item, :active, organization: organization, kit: kit)
-        storage_location = create(:storage_location, :with_items, organization: organization, item: item)
+        storage_location = create(:storage_location, organization: organization)
 
         TestInventory.create_inventory(organization, {
           storage_location.id => {
@@ -131,7 +91,11 @@ RSpec.describe Kit, type: :model do
   end
 
   specify 'deactivate and reactivate' do
-    kit = create(:kit, :with_item)
+    params = FactoryBot.attributes_for(:kit)
+    params[:line_items_attributes] = [
+      {item_id: create(:item).id, quantity: 1}
+    ]
+    kit = KitCreateService.new(organization_id: organization.id, kit_params: params).call.kit
     expect(kit.active).to eq(true)
     expect(kit.item.active).to eq(true)
     kit.deactivate

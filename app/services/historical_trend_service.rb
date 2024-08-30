@@ -7,7 +7,7 @@ class HistoricalTrendService
   def series
     # Preload line_items with a single query to avoid N+1 queries.
     items_with_line_items = @organization.items.active
-      .includes(:line_items)
+      .includes(:contained_in_line_items)
       .where(line_items: {itemizable_type: @type, created_at: 1.year.ago.beginning_of_month..Time.current})
       .order(:name)
 
@@ -17,7 +17,7 @@ class HistoricalTrendService
     items_with_line_items.each_with_object([]) do |item, array_of_items|
       dates = default_dates.deep_dup
 
-      item.line_items.each do |line_item|
+      item.contained_in_line_items.each do |line_item|
         month = line_item.created_at.month
         index = month_offset.index(month) + 1
         dates[index] = dates[index] + line_item.quantity

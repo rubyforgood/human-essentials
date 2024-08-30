@@ -83,18 +83,20 @@ class Organization < ApplicationRecord
 
     def during(date_start, date_end = Time.zone.now.strftime("%Y-%m-%d"))
       select("COUNT(line_items.id) as amount, name")
-        .joins(:line_items)
-        .where("line_items.created_at BETWEEN ? and ?", date_start, date_end)
-        .group(:name)
+      .joins(:contained_in_line_items)
+      .merge(LineItem.where(created_at: date_start..date_end))
+      .group(:name)
     end
 
     def top(limit = 5)
       order('count(line_items.id) DESC')
+        .joins(:contained_in_line_items)
         .limit(limit)
     end
 
     def bottom(limit = 5)
       order('count(line_items.id) ASC')
+        .joins(:contained_in_line_items)
         .limit(limit)
     end
   end

@@ -162,15 +162,27 @@ RSpec.describe StorageLocation, type: :model do
     describe "inventory_total_value_in_dollars" do
       it "returns total value of all items in this storage location" do
         storage_location = create(:storage_location)
-        item1 = create(:item, value_in_cents: 1_00)
-        item2 = create(:item, value_in_cents: 2_00)
+        item1 = create(:item, value_in_cents: 100)
+        item2 = create(:item, value_in_cents: 200)
+
+        kit_params = attributes_for(:kit)
+        kit_params[:value_in_cents] = 50
+        # values of kit line_items should be ignored
+        kit_params[:line_items_attributes] = [
+          {item_id: create(:item, value_in_cents: 150), quantity: 2},
+          {item_id: create(:item, value_in_cents: 250), quantity: 3}
+        ]
+        item_housing_kit = KitCreateService.new(organization_id: storage_location.organization.id, kit_params: kit_params).call.kit.item
+
         TestInventory.create_inventory(storage_location.organization, {
           storage_location.id => {
             item1.id => 10,
-            item2.id => 10
+            item2.id => 10,
+            item_housing_kit.id => 15
           }
         })
-        expect(storage_location.inventory_total_value_in_dollars).to eq(30)
+        # ((10 * 100) + (10 * 200) + (15 * 50)) / 100 = 187.50
+        expect(storage_location.inventory_total_value_in_dollars).to eq(37.50)
       end
 
       it "returns a value including cents if the total isn't an even dollar amount" do

@@ -31,46 +31,7 @@ module Reports
       total_children_served / 12.0
     end
 
-    def disposable_diapers_from_kits_total
-      organization_id = @organization.id
-      year = @year
-
-      sql_query = <<-SQL
-        SELECT SUM(line_items.quantity * kit_line_items.quantity)
-        FROM distributions 
-        INNER JOIN line_items ON line_items.itemizable_type = 'Distribution' AND line_items.itemizable_id = distributions.id 
-        INNER JOIN items ON items.id = line_items.item_id 
-        INNER JOIN kits ON kits.id = items.kit_id 
-        INNER JOIN line_items AS kit_line_items ON kits.id = kit_line_items.itemizable_id
-        INNER JOIN items AS kit_items ON kit_items.id = kit_line_items.item_id
-        INNER JOIN base_items ON base_items.partner_key = kit_items.partner_key 
-        WHERE distributions.organization_id = ?
-          AND EXTRACT(year FROM issued_at) = ?
-          AND LOWER(base_items.category) LIKE '%diaper%'
-          AND NOT (LOWER(base_items.category) LIKE '%cloth%' OR LOWER(base_items.name) LIKE '%cloth%')
-          AND NOT (LOWER(base_items.category) LIKE '%adult%')
-      SQL
-
-      sanitized_sql = ActiveRecord::Base.send(:sanitize_sql_array, [sql_query, organization_id, year])
-
-      result = ActiveRecord::Base.connection.execute(sanitized_sql)
-      result.first['sum'].to_i
-    end
-
     private
-
-    def total_disposable_diapers_distributed
-      loose_disposable_distribution_total + disposable_diapers_from_kits_total
-    end
-
-    def loose_disposable_distribution_total
-      organization
-      .distributions
-      .for_year(year)
-      .joins(line_items: :item)
-      .merge(Item.disposable)
-      .sum("line_items.quantity")
-    end
 
     def total_children_served_with_loose_disposables
       organization
@@ -78,18 +39,33 @@ module Reports
       .for_year(year)
       .joins(line_items: :item)
       .merge(Item.disposable)
-      .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50)')
+      .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50)') # if item.default_quantity changes, this should change too
     end
 
     def children_served_with_kits_containing_disposables
-      organization
-      .distributions
-      .for_year(year)
-      .joins(line_items: {item: :kit})
-      .merge(Item.disposable)
-      .where.not(items: {kit_id: nil})
-      .distinct
-      .count("kits.id")
+      organization_id = @organization.id
+      year = @year
+
+      # SUM assumes 1 person per kit, this will be changed by #4542
+      # if item.default_quantity changes, COALESCE(items_in_kit.distribution_quantity, 50) should change too
+      sql_query = <<-SQL
+      SELECT SUM((line_items.quantity * kit_line_items.quantity) / CAST(COALESCE(items_in_kit.distribution_quantity, 50) AS DECIMAL))
+      FROM distributions
+      INNER JOIN line_items ON line_items.itemizable_type = 'Distribution' AND line_items.itemizable_id = distributions.id
+      INNER JOIN items AS items_housing_a_kit ON items_housing_a_kit.id = line_items.item_id AND items_housing_a_kit.kit_id IS NOT NULL
+      INNER JOIN line_items AS kit_line_items ON kit_line_items.itemizable_id = items_housing_a_kit.id AND kit_line_items.itemizable_type = 'Item'
+      INNER JOIN items AS items_in_kit ON items_in_kit.id = kit_line_items.item_id
+      INNER JOIN base_items AS base_items_in_kit ON base_items_in_kit.partner_key = items_in_kit.partner_key
+      WHERE distributions.organization_id = ?
+        AND EXTRACT(year FROM issued_at) = ?
+        AND LOWER(base_items_in_kit.category) LIKE '%diaper%'
+        AND NOT (((LOWER(base_items_in_kit.category) LIKE '%cloth%') OR (LOWER(base_items_in_kit.name) LIKE '%cloth%')))
+        AND NOT (LOWER(base_items_in_kit.category) LIKE '%adult%')
+      SQL
+      # TODO duplicated code from Item.disposable scope, and AcquisitionReportService. merge when working on #3652
+      sanitized_sql = ActiveRecord::Base.send(:sanitize_sql_array, [sql_query, organization_id, year])
+      result = ActiveRecord::Base.connection.execute(sanitized_sql)
+      result.first['sum'].to_f.ceil
     end
   end
 end

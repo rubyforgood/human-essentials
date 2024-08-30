@@ -8,12 +8,12 @@
 </tr>
 </thead>
 <tbody>
-  <% @kits.each do |kit| %>
+  <% @items_housing_a_kit.each do |item_housing_a_kit| %>
     <tr>
-      <td><%= kit.name %></td>
+      <td><%= item_housing_a_kit.name %></td>
       <td>
         <ul>
-          <% kit.line_items.quantities_by_name.map do |id, item_hash| %>
+          <% item_housing_a_kit.line_items.quantities_by_name.map do |id, item_hash| %>
             <li><%= "#{item_hash[:quantity]} #{item_hash[:name]}" %></li>
           <% end %>
         </ul>
@@ -27,14 +27,14 @@
             </tr>
           </thead>
           <% if @inventory %>
-            <% @inventory.all_items.select { |i| i.item_id == kit.item.id}.each do |item| %>
+            <% @inventory.all_items.select { |i| i.item_id == item_housing_a_kit.id}.each do |item| %>
               <tr>
                 <td><%= @inventory.storage_location_name(item.storage_location_id) %></td>
                 <td><%= item.quantity %></td>
               </tr>
             <% end %>
           <% else %>
-            <% kit.inventory_items.map do |inventory_item| %>
+            <% item_housing_a_kit.inventory_items.map do |inventory_item| %>
               <% next if inventory_item.storage_location.discarded_at %>
               <tr>
                 <td><%= inventory_item.storage_location.name %></td>
@@ -44,15 +44,15 @@
           <% end %>
         </table>
         <div class='align-self-center'>
-          <%= edit_button_to allocations_kit_path(kit), { text: "Modify Allocation" } %>
+          <%= edit_button_to allocations_kit_path(item_housing_a_kit.kit), { text: "Modify Allocation" } %>
         </div>
       </td>
       <td>
-        <% if kit.active %>
-          <%= deactivate_kit_button(kit, @inventory) %>
+        <% if item_housing_a_kit.kit.active %>
+          <%= deactivate_kit_button(item_housing_a_kit.kit, @inventory) %>
         <% else %>
-          <%= reactivate_button_to reactivate_kit_path(kit),
-                                   { confirm: confirm_reactivate_msg(kit.name),
+          <%= reactivate_button_to reactivate_kit_path(item_housing_a_kit.kit),
+                                   { confirm: confirm_reactivate_msg(item_housing_a_kit.name),
                                      class: 'reactivate-kit-button',
                                      size: 'm' } %>
         <% end %>

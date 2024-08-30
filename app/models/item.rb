@@ -26,6 +26,7 @@ class Item < ApplicationRecord
   include Filterable
   include Exportable
   include Valuable
+  include Itemizable
 
   after_update :update_associated_kit_name, if: -> { kit.present? }
 
@@ -41,7 +42,12 @@ class Item < ApplicationRecord
   validates :on_hand_recommended_quantity, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
   validates :on_hand_minimum_quantity, numericality: { greater_than_or_equal_to: 0 }
 
-  has_many :line_items, dependent: :destroy
+  validate :at_least_one_item, if: -> { kit.present? }
+  validate -> { line_items_quantity_is_at_least(1) }, if: -> { kit.present? }
+
+  validate :has_no_line_items, if: -> { kit.blank? }
+
+  has_many :contained_in_line_items, class_name: "LineItem", dependent: :destroy
   has_many :inventory_items, dependent: :destroy
   has_many :barcode_items, as: :barcodeable, dependent: :destroy
   has_many :storage_locations, through: :inventory_items
@@ -51,8 +57,8 @@ class Item < ApplicationRecord
 
   scope :active, -> { where(active: true) }
 
-  # Add spec for these
-  scope :kits, -> { where.not(kit_id: nil) }
+  # :housing_a_kit are items which house a kit, NOT items is_in_kit
+  scope :housing_a_kit, -> { where.not(kit_id: nil) }
   scope :loose, -> { where(kit_id: nil) }
 
   scope :visible, -> { where(visible_to_partners: true) }
@@ -135,23 +141,24 @@ class Item < ApplicationRecord
     end
   end
 
-  def is_in_kit?(kits = nil)
-    if kits
-      kits.any? { |k| k.line_items.map(&:item_id).include?(id) }
+  def is_in_kit?(items_housing_kits = nil)
+    if items_housing_kits
+      items_housing_kits.any? { |k| k.line_items.map(&:item_id).include?(id) }
     else
-      organization.kits
+      organization.items
         .active
+        .housing_a_kit
         .joins(:line_items)
         .where(line_items: { item_id: id}).any?
     end
   end
 
-  def can_delete?(inventory = nil, kits = nil)
-    can_deactivate_or_delete?(inventory, kits) && line_items.none? && !barcode_count&.positive?
+  def can_delete?(inventory = nil, items_housing_kits = nil)
+    can_deactivate_or_delete?(inventory, items_housing_kits) && contained_in_line_items.none? && !barcode_count&.positive?
   end
 
   # @return [Boolean]
-  def can_deactivate_or_delete?(inventory = nil, kits = nil)
+  def can_deactivate_or_delete?(inventory = nil, items_housing_kits = nil)
     if inventory.nil? && Event.read_events?(organization)
       inventory = View::Inventory.new(organization_id)
     end
@@ -160,7 +167,7 @@ class Item < ApplicationRecord
     # If an active kit includes this item, then changing kit allocations would change inventory
     # for an inactive item - which we said above we don't want to allow.
 
-    !has_inventory?(inventory) && !is_in_kit?(kits)
+    !has_inventory?(inventory) && !is_in_kit?(items_housing_kits)
   end
 
   def validate_destroy
@@ -247,6 +254,18 @@ class Item < ApplicationRecord
   end
 
   private
+
+  def at_least_one_item
+    unless line_items.any?
+      errors.add(:base, "At least one item is required")
+    end
+  end
+
+  def has_no_line_items
+    unless line_items.none?
+      errors.add(:base, "You cannot add line items to an item that doesn't house a kit")
+    end
+  end
 
   def update_associated_kit_name
     kit.update(name: name)
