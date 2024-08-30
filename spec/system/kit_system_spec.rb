@@ -20,10 +20,12 @@ RSpec.describe "Kit management", type: :system do
     kit_creation_service.kit
   end
 
-  let!(:existing_kit_item_1) { create(:item) }
+  let!(:existing_kit_item_1) { create(:item, name: existing_kit_item_name_1) }
   let!(:existing_kit_item_1_quantity) { 5 }
-  let!(:existing_kit_item_2) { create(:item) }
+  let!(:existing_kit_item_name_1) { "TEST ITEM 1" }
+  let!(:existing_kit_item_2) { create(:item, name: existing_kit_item_name_2) }
   let!(:existing_kit_item_2_quantity) { 3 }
+  let!(:existing_kit_item_name_2) { "TEST ITEM 2" }
   before(:each) do
     TestInventory.create_inventory(organization, {
       storage_location.id => {
@@ -35,21 +37,26 @@ RSpec.describe "Kit management", type: :system do
 
   it "can create a new kit as a user with the proper quantity" do
     visit new_kit_path
-    kit_traits = attributes_for(:kit)
+    kit_name = "TEST KIT"
 
-    fill_in "Name", with: kit_traits[:name]
+    fill_in "Name", with: kit_name
     find(:css, '#kit_value_in_dollars').set('10.10')
 
-    item = Item.last
     quantity_per_kit = 5
-    select item.name, from: "kit_item_line_items_attributes_0_item_id"
+    select existing_kit_item_name_1, from: "kit_item_line_items_attributes_0_item_id"
     find(:css, '#kit_item_line_items_attributes_0_quantity').set(quantity_per_kit)
+
+    find(:xpath, "//a[text()=' Add Another Item']").click
+
+    find(:xpath, "(//select[contains(@id, 'kit_item_line_items_attributes')])[2]").find(:option, existing_kit_item_name_2).select_option
+    find(:xpath, "(//input[contains(@id, 'kit_item_line_items_attributes')])[2]").set(quantity_per_kit)
 
     click_button "Save"
 
     expect(page.find(".alert")).to have_content "Kit created successfully"
-    expect(page).to have_content(kit_traits[:name])
-    expect(page).to have_content("#{quantity_per_kit} #{item.name}")
+    expect(page).to have_content(kit_name)
+    expect(page).to have_content("#{quantity_per_kit} #{existing_kit_item_name_1}")
+    expect(page).to have_content("#{quantity_per_kit} #{existing_kit_item_name_2}")
   end
 
   it 'can allocate and deallocate quantity per storage location from kit index' do

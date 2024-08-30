@@ -29,7 +29,9 @@
                 <div class="row links col-xs-12 justify-content-end">
                   <div class="col-xs-12">
                     <%= add_element_button "Add Another Item", container_selector: "#kit_line_items" do %>
-                      <%= render 'line_items/line_item_fields', form: f, object: LineItem.new %>
+                      <%= f.simple_fields_for @kit.item do |i| %>
+                        <%= render 'line_items/line_item_fields', form: i, object: LineItem.new %>
+                      <% end %>
                     <% end %>
                   </div>
                 </div>
