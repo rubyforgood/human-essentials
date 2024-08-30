@@ -44,6 +44,7 @@
 </section>
 
 <%= render partial: 'rejection_modal' %>
+<%= render partial: 'close_admin_modal' %>
 
 <section class="content-header">
   <div class="container-fluid">
@@ -108,9 +109,10 @@
   $(() => {
     $('.reject-button').click((event) => {
       event.preventDefault();
-      $('#account_request_rejection_reason').val('');
-      $('#reject_account_request_id').val($(event.target).data('requestId'));
-      $('#rejection-modal').modal('show');
+      let classModal = $(event.target).data('modal')
+      $(`#${classModal}-modal #account_request_rejection_reason`).val('');
+      $(`#${classModal}-modal #reject_account_request_id`).val($(event.target).data('requestId'));
+      $(`#${classModal}-modal`).modal('show');
     })
   })
 </script>

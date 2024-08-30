@@ -13,5 +13,10 @@
   <td><%= js_button(text: 'Reject',
                     icon: 'ban',
                     class: 'reject-button',
-                    data: { request_id: open_account_request.id }) %></td>
+                    data: { request_id: open_account_request.id, modal: 'rejection' }) %></td>
+  <td><%= js_button(text: 'Close(Admin)',
+                  icon: 'times',
+                  class: 'reject-button',
+                  data: { request_id: open_account_request.id, modal: 'close' }) %></td>
+
 </tr>
