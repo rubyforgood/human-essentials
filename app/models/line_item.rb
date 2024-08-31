@@ -28,6 +28,10 @@ class LineItem < ApplicationRecord
 
   delegate :name, to: :item
 
+  # Used in a distribution that was initialized from a request. The `item_request` will be
+  # populated here.
+  attr_accessor :requested_item
+
   def quantity_must_be_a_number_within_range
     if quantity && quantity > MAX_INT
       errors.add(:quantity, "must be less than #{MAX_INT}")
