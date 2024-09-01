@@ -108,7 +108,7 @@ module Exports
       # off of the real item. Weirdly we do this because the item might have
       # been deleted historically without deleting the request.
       if item_request.item
-        if Flipper.enabled?(:enable_packs) && item_request.request_unit
+        if Flipper.enabled?(:enable_packs) && item_request.request_unit.present?
           "#{item_request.name} - #{item_request.request_unit}"
         else
           item_request.name
