@@ -17,13 +17,21 @@ You won't be yelled at for giving your best effort. The worst that can happen is
 
 # Getting Started
 ## Local Environment 🛠️
+
+#### Install WSL2 first if Using Windows
+Follow [documentation](https://docs.microsoft.com/en-us/windows/wsl/install-win10) from Microsoft for enabling and installing Windows Subsystem For Linux 2 on your machine.
+
+Make sure to install **Ubuntu** as your Linux distribution. (This should be default.)
+
+**Note:** If you run into any issues with a command not running, restart your machine.
+
+
 1. Install Ruby
    - Install the version specified in [`.ruby-version`](.ruby-version).
    - Visit the [Install Ruby on Rails](https://gorails.com/setup/osx/12-monterey) guide by GoRails for Ubuntu, Windows, and macOSX setup. ⚠️ Follow only the Installing Ruby step, as our project setup differs ⚠️ It is highly recommended you use a ruby version manager such as [rbenv](https://github.com/rbenv/rbenv), [asdf](https://asdf-vm.com/), or [rvm](https://rvm.io/).
    - Verify that your Ruby installation works by running `ruby -v`.
 2. Install Postgres
    - Follow one of these guides: [MacOSX](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-macos), [Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-ubuntu-18-04).
-     - Do you develop on Windows? We'd love to hear (and for you to submit a PR explaining) how you do it. 🙏🏻
    - Create a `database.yml` file on `config/` directory with your database configurations. You can also copy the existing files called [`database.yml.example`](config/database.yml.example) and [`.env.example`](.env.example) and change the credentials.
 3. Clone the project and switch to its directory
 4. Run `bin/setup`
