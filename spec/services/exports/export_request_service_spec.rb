@@ -60,7 +60,7 @@ RSpec.describe Exports::ExportRequestService do
            :with_item_requests,
            organization: org,
            request_items: [
-             { item_id: item_4t.id, quantity: 77 }
+             { item_id: item_4t.id, quantity: 77, request_unit: "" }
            ])
   end
 
