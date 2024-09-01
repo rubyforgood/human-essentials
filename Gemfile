@@ -157,7 +157,7 @@ group :development, :test do
   gem 'rubocop-performance'
   gem "rubocop-rails", "~> 2.25.1"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.39"
+  gem "standard", "~> 1.40"
   # Erb linter.
   gem "erb_lint"
 end
