@@ -9,8 +9,8 @@ If you're new here, here are some things you should know:
 - This project relies entirely on volunteers, so please be patient with communication
 
 # Communication 💬
-If you have any questions about an issue, comment on the issue, open a new issue, or ask in [the RubyForGood slack](https://join.slack.com/t/rubyforgood/shared_invite/zt-2k5ezv241-Ia2Iac3amxDS8CuhOr69ZA). human-essentials has a `#human-essentials` channel in the Slack. Our channel in slack also contains a zoom link for office hours every day office hours are held.  
-  
+If you have any questions about an issue, comment on the issue, open a new issue, or ask in [the RubyForGood slack](https://join.slack.com/t/rubyforgood/shared_invite/zt-2k5ezv241-Ia2Iac3amxDS8CuhOr69ZA). human-essentials has a `#human-essentials` channel in the Slack. Our channel in slack also contains a zoom link for office hours every day office hours are held.
+
 Many helpful members are available to answer your questions. Just ask, and someone will be there to help you!
 
 You won't be yelled at for giving your best effort. The worst that can happen is that you'll be politely asked to change something. We appreciate any sort of contributions, and don't want a wall of rules to get in the way of that.
@@ -37,7 +37,7 @@ Make sure to install **Ubuntu** as your Linux distribution. (This should be defa
 4. Run `bin/setup`
 5. Run `bin/start` and visit http://localhost:3000/ to see the human essentials page.
 6. Log in as a sample user with the default [credentials](#credentials).
- 
+
 ## Credentials
  These credentials also work for [staging](https://staging.humanessentials.app/):
 
@@ -97,7 +97,7 @@ Make sure to install **Ubuntu** as your Linux distribution. (This should be defa
     - Or follow instructions to [create a new Codespace.](https://docs.github.com/en/codespaces/developing-in-a-codespace/creating-a-codespace-for-a-repository)
     - To clone this repo and run the container locally, follow instructions to [install VSCode and Docker](https://code.visualstudio.com/docs/devcontainers/containers). Click the Dev Container link above. Don't forget to add a git remote pointing to your fork once the container is setup and you want to push changes.
 2. Wait for the container to start. This will take a few (10-15) minutes since Ruby needs to be installed, the database needs to be created, and the `bin/setup` script needs to run
-3. Run `bin/start`. On the Ports tab, visit the forwarded port 3000 URL marked as Application to see the human essentials page. 
+3. Run `bin/start`. On the Ports tab, visit the forwarded port 3000 URL marked as Application to see the human essentials page.
 4. Login as a sample user with the default [credentials](#credentials).
 
 ## Troubleshooting 👷🏼‍♀️
@@ -126,21 +126,21 @@ Please let us know by opening up an issue! We have many new contributors come th
 10. **Squash smaller commits.** Read guidelines [here](#squashing-commits).
 11. **Push** up the branch
 12. **Create a pull request** and indicate the addressed issue (e.g. `Resolves #1`) in the title, which will ensure the issue gets closed automatically when the pull request gets merged. Read PR guidelines [here](#pull-requests).
-13. **Code review**: At this point, someone will work with you on doing a code review. The automated tests will run linting, rspec, and brakeman tests. If the automated tests give :+1: to the PR merging, we can then do any additional (staging) testing as needed. 
+13. **Code review**: At this point, someone will work with you on doing a code review. The automated tests will run linting, rspec, and brakeman tests. If the automated tests give :+1: to the PR merging, we can then do any additional (staging) testing as needed.
 
-14. **Merge**: Finally if all looks good the core team will merge your code in; if your feature branch was in this main repository, the branch will be deleted after the PR is merged. 
+14. **Merge**: Finally if all looks good the core team will merge your code in; if your feature branch was in this main repository, the branch will be deleted after the PR is merged.
 
 15. Deploys are currently done about once a week! Read the deployment process [here](#deployment-process).
 
-## Issues  
+## Issues
 Please feel free to contribute! While we welcome all contributions to this app, pull-requests that address outstanding Issues *and* have appropriate test coverage for them will be strongly prioritized. In particular, addressing issues that are tagged with the next milestone should be prioritized higher.
 
-All work is organized by issues.  
-[Find issues here.](https://github.com/rubyforgood/human-essentials/issues)  
+All work is organized by issues.
+[Find issues here.](https://github.com/rubyforgood/human-essentials/issues)
 
-If you would like to contribute, please ask for an issue to be assigned to you.  
-If you would like to contribute something that is not represented by an issue, please make an issue and assign yourself.  
-Only take multiple issues if they are related and you can solve all of them at the same time with the same pull request.  
+If you would like to contribute, please ask for an issue to be assigned to you.
+If you would like to contribute something that is not represented by an issue, please make an issue and assign yourself.
+Only take multiple issues if they are related and you can solve all of them at the same time with the same pull request.
 
 ## Becoming a Repo Contributor
 
@@ -165,7 +165,7 @@ Consider the balance of "polluting the git log with commit messages" vs. "provid
 
 Only commit the schema.rb only if you have committed anything that would change the DB schema (i.e. a migration).
 
-## Pull Requests  
+## Pull Requests
 ### Stay scoped
 
 Try to keep your PRs limited to one particular issue, and don't make changes that are out of scope for that issue. If you notice something that needs attention but is out of scope, please [create a new issue](https://github.com/rubyforgood/human-essentials/issues/new).
@@ -184,7 +184,6 @@ If you are inexperienced in writing tests or get stuck on one, please reach out 
 #### Guidelines
 - Prefer request tests over system tests (which run much slower) unless you need to test Javascript or other interactivity
 - When creating factories, in each RSpec test, hard code all values that you check with a RSpec matcher. Don't check FactoryBot default values. See [#4217](https://github.com/rubyforgood/human-essentials/issues/4217) for why.
-- Write tests to pass with Event Sourcing turned both on and off, see the [Event Sourcing wiki page](https://github.com/rubyforgood/human-essentials/wiki/Event-Sourcing).
 - Keep individual tests tightly scoped, only test the endpoint that you want to test. E.g. create inventory directly using `TestInventory` rather than using an additional endpoint.
 - You probably don't need to write new tests when simple re-stylings are done (ie. the page may look slightly different but the Test suite is unaffected by those changes).
 
@@ -199,7 +198,7 @@ If you are inexperienced in writing tests or get stuck on one, please reach out 
     magic_test
     end
     ```
-    and run the spec using this command: 
+    and run the spec using this command:
     ```
     MAGIC_TEST=1 NOT_HEADLESS=true bundle exec rspec <path_to_spec>`
     ```
@@ -210,13 +209,12 @@ If you are inexperienced in writing tests or get stuck on one, please reach out 
 Before submitting a pull request, run all tests and lints. Fix any broken tests and lints before submitting a pull request.
 
 #### Continuous Integration
-- There are Github Actions workflows which will run all tests with and without Event Sourcing in parallel using Knapsack and lints whenever you push a commit to your fork.
+- There are Github Actions workflows which will run all tests in parallel using Knapsack and lints whenever you push a commit to your fork.
 - Once your first PR has been merged, all commits pushed to an open PR will also run these workflows.
 
 #### Local testing
-- Run all lints with `bin/lint`. 
-- Run all tests without Event Sourcing with `bundle exec rspec`
-- Run all tests with Event Sourcing with `EVENTS_READ=true bundle exec rspec`
+- Run all lints with `bin/lint`.
+- Run all tests with `bundle exec rspec`
 - You can run a single test with `bundle exec rspec {path_to_test_name}_spec.rb` or on a specific line by appending `:LineNumber`
 - If you need to skip a failing test, place `pending("Reason you are skipping the test")` into the `it` block rather than skipping with `xit`. This will allow rspec to deliver the error message without causing the test suite to fail.
 
