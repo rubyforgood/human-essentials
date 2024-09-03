@@ -171,9 +171,7 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    if ENV['EVENTS_READ'] == 'true'
-      allow(Event).to receive(:read_events?).and_return(true)
-    end
+    allow(Event).to receive(:read_events?).and_return(true)
   end
 
   config.before do
