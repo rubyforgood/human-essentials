@@ -8,10 +8,7 @@ class InventoryCheckService
   end
 
   def call
-    @inventory = nil
-    if Event.read_events?(@distribution.organization)
-      @inventory = View::Inventory.new(@distribution.organization_id)
-    end
+    @inventory = View::Inventory.new(@distribution.organization_id)
     unless items_below_minimum_quantity.empty?
       set_error
     end
@@ -40,9 +37,6 @@ class InventoryCheckService
         if @inventory
           quantity = @inventory.quantity_for(storage_location: @distribution.storage_location_id, item_id: line_item.item_id)
           quantity < (line_item.item.on_hand_minimum_quantity || 0)
-        else
-          inventory_item = line_item.item.inventory_item_at(@distribution.storage_location.id)
-          inventory_item.lower_than_on_hand_minimum_quantity?
         end
       end.map(&:item_id)
 
@@ -59,9 +53,6 @@ class InventoryCheckService
         if @inventory
           quantity = @inventory.quantity_for(storage_location: @distribution.storage_location_id, item_id: line_item.item_id)
           quantity < (line_item.item.on_hand_recommended_quantity || 0)
-        else
-          inventory_item = line_item.item.inventory_item_at(@distribution.storage_location.id)
-          inventory_item.lower_than_on_hand_recommended_quantity?
         end
       end.map(&:item_id)
 

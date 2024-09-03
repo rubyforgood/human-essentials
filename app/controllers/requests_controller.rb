@@ -45,11 +45,7 @@ class RequestsController < ApplicationController
   def load_items
     return unless @request.request_items
 
-    inventory = nil
-    if Event.read_events?(@request.organization)
-      inventory = View::Inventory.new(@request.organization_id)
-    end
-
+    inventory = View::Inventory.new(@request.organization_id)
     @request.request_items.map { |json| RequestItem.from_json(json, @request, inventory) }
   end
 

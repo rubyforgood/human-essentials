@@ -45,16 +45,6 @@ RSpec.describe StorageLocation, type: :model do
   end
 
   context "Filtering >" do
-    it "->containing yields only inventories that have that item" do
-      item = create(:item)
-      item2 = create(:item)
-      storage_location = create(:storage_location, :with_items, item: item, item_quantity: 5)
-      create(:storage_location, :with_items, item: item2, item_quantity: 5)
-      results = StorageLocation.containing(item.id)
-      expect(results.length).to eq(1)
-      expect(results.first).to eq(storage_location)
-    end
-
     it "->active_locations yields only storage locations that haven't been discarded" do
       create(:storage_location, name: "Active Location")
       create(:storage_location, name: "Inactive Location", discarded_at: Time.zone.now)
@@ -73,20 +63,6 @@ RSpec.describe StorageLocation, type: :model do
         let(:donation) { create(:donation, :with_items, item_quantity: 66, organization: organization) }
 
         it "increases inventory quantities from an itemizable object" do
-          expect do
-            subject.increase_inventory(donation.line_item_values)
-          end.to change { subject.size }.by(66)
-        end
-      end
-
-      context "when providing a new item that does not yet exist" do
-        let(:mystery_item) { create(:item, organization: organization) }
-        let(:donation_with_new_items) { create(:donation, :with_items, organization: organization, item_quantity: 10, item: mystery_item) }
-
-        it "creates those new inventory items in the storage location" do
-          expect do
-            subject.increase_inventory(donation_with_new_items.line_item_values)
-          end.to change { subject.inventory_items.count }.by(1)
         end
       end
     end
@@ -94,39 +70,6 @@ RSpec.describe StorageLocation, type: :model do
     describe "decrease_inventory" do
       let(:item) { create(:item, organization: organization) }
       let(:distribution) { create(:distribution, :with_items, item: item, item_quantity: 66, organization: organization) }
-
-      it "decreases inventory quantities from an itemizable object" do
-        storage_location = create(:storage_location, :with_items, item_quantity: 100, item: item, organization: organization)
-        expect do
-          storage_location.decrease_inventory(distribution.line_item_values)
-        end.to change { storage_location.size }.by(-66)
-      end
-
-      context "when there is insufficient inventory available" do
-        let(:distribution_but_too_much) { create(:distribution, :with_items, item: item, item_quantity: 9001, organization: organization) }
-
-        it "gives informative errors" do
-          next if Event.read_events?(organization)
-
-          storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: organization)
-          expect do
-            storage_location.decrease_inventory(distribution_but_too_much.line_item_values).errors
-          end.to raise_error(Errors::InsufficientAllotment)
-        end
-
-        it "does not change inventory quantities if there is an error" do
-          next if Event.read_events?(organization)
-
-          storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: organization)
-          starting_size = storage_location.size
-          begin
-            storage_location.decrease_inventory(distribution.line_item_values)
-          rescue Errors::InsufficientAllotment, InventoryError
-          end
-          storage_location.reload
-          expect(storage_location.size).to eq(starting_size)
-        end
-      end
     end
 
     describe "StorageLocation.items_inventoried" do

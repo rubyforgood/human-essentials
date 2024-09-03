@@ -62,7 +62,6 @@ FactoryBot.define do
       end
 
       after(:create) do |instance, evaluator|
-        evaluator.storage_location.increase_inventory(instance.line_item_values)
         DonationEvent.publish(instance)
       end
     end
