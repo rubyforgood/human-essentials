@@ -293,6 +293,58 @@ RSpec.feature "Distributions", type: :system do
       visit new_distribution_path
       expect(page).to have_no_content "Inactive R Us"
     end
+
+    context "Deactivated partners should not be displayed in partner dropdown" do
+      before do
+        valid_partner = create(:partner, name: 'Active Partner', organization: organization, status: "approved")
+        deactivated_partner = create(:partner, name: 'Deactivated Partner', organization: organization, status: "deactivated")
+      end
+
+      it "should not display deactivated partners on new distribution" do
+        visit new_distribution_path
+        expect(page).to have_no_content "Deactivated Partner"
+        expect(page).to have_content "Active Partner"
+      end
+
+      it "should not display deactivated partners after error and re-render of form" do
+        visit new_distribution_path
+
+        select "Test Partner", from: "Partner"
+        select "Test Storage Location", from: "From storage location"
+        choose "Delivery"
+
+        fill_in "Comment", with: "Take my wipes... please"
+
+        item = View::Inventory.new(organization.id).items_for_location(storage_location.id).first
+        quantity = item.quantity
+        select item.name, from: "distribution_line_items_attributes_0_item_id"
+        fill_in "distribution_line_items_attributes_0_quantity", with: quantity * 2
+
+        expect do
+          click_button "Save", match: :first
+
+          expect(page).to have_selector('#distributionConfirmationModal')
+          within "#distributionConfirmationModal" do
+            expect(page).to have_content("You are about to create a distribution for")
+            expect(find(:element, "data-testid": "distribution-confirmation-partner")).to have_text("Test Partner")
+            expect(find(:element, "data-testid": "distribution-confirmation-storage")).to have_text("Test Storage Location")
+            expect(page).to have_content(item.name)
+            expect(page).to have_content(quantity * 2)
+            click_button "Yes, it's correct"
+          end
+
+          page.find('.alert')
+        end.not_to change { Distribution.count }
+
+        expect(page).to have_content("New Distribution")
+        message = Event.read_events?(organization) ? 'Could not reduce quantity' : 'items exceed the available inventory'
+        expect(page.find(".alert")).to have_content message
+
+        visit new_distribution_path
+        expect(page).to have_no_content "Deactivated Partner"
+        expect(page).to have_content "Active Partner"
+      end
+    end
   end
 
   it "errors if user does not fill storage_location" do
@@ -409,6 +461,14 @@ RSpec.feature "Distributions", type: :system do
         end.to change { Distribution.count }.by(-1)
         expect(page).to have_content "reclaimed"
       end
+    end
+
+    it "should display deactivated partners in partner dropdown" do
+      valid_partner = create(:partner, name: 'Active Partner', organization: organization, status: "approved")
+      deactivated_partner = create(:partner, name: 'Deactivated Partner', organization: organization, status: "deactivated")
+      click_on "Edit", match: :first
+      expect(page).to have_content "Deactivated Partner"
+      expect(page).to have_content "Active Partner"
     end
   end
 
