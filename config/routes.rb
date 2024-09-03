@@ -206,6 +206,7 @@ Rails.application.routes.draw do
     resources :users, only: [:index, :create, :destroy], controller: 'partner_users' do
       member do
         post :resend_invitation
+        post :reset_password
       end
     end
 

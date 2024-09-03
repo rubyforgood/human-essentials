@@ -86,6 +86,16 @@ RSpec.describe "/partners/dashboard", type: :request do
     end
   end
 
+  context "without a partner role" do
+    it "should redirect to the organization dashboard" do
+      partner_user.add_role(Role::ORG_USER, @organization)
+      partner_user.remove_role(Role::PARTNER, partner)
+      allow(UsersRole).to receive(:current_role_for).and_return(partner_user.roles.find_by(name: "partner"))
+      get partners_dashboard_path
+      expect(response).to redirect_to(dashboard_path)
+    end
+  end
+
   context "BroadcastAnnouncement card" do
     it "displays announcements if there are valid ones" do
       BroadcastAnnouncement.create(message: "test announcement", user_id: user.id, organization_id: organization.id)
