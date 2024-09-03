@@ -296,8 +296,8 @@ RSpec.feature "Distributions", type: :system do
 
     context "Deactivated partners should not be displayed in partner dropdown" do
       before do
-        valid_partner = create(:partner, name: 'Active Partner', organization: organization, status: "approved")
-        deactivated_partner = create(:partner, name: 'Deactivated Partner', organization: organization, status: "deactivated")
+        create(:partner, name: 'Active Partner', organization: organization, status: "approved")
+        create(:partner, name: 'Deactivated Partner', organization: organization, status: "deactivated")
       end
 
       it "should not display deactivated partners on new distribution" do
@@ -464,8 +464,8 @@ RSpec.feature "Distributions", type: :system do
     end
 
     it "should display deactivated partners in partner dropdown" do
-      valid_partner = create(:partner, name: 'Active Partner', organization: organization, status: "approved")
-      deactivated_partner = create(:partner, name: 'Deactivated Partner', organization: organization, status: "deactivated")
+      create(:partner, name: 'Active Partner', organization: organization, status: "approved")
+      create(:partner, name: 'Deactivated Partner', organization: organization, status: "deactivated")
       click_on "Edit", match: :first
       expect(page).to have_content "Deactivated Partner"
       expect(page).to have_content "Active Partner"
