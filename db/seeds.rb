@@ -707,6 +707,8 @@ end
 # ----------------------------------------------------------------------------
 
 Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "new_logo")
+Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "read_events")
+Flipper.enable(:read_events)
 
 # ----------------------------------------------------------------------------
 # Account Requests
