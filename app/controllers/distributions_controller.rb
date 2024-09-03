@@ -130,7 +130,7 @@ class DistributionsController < ApplicationController
         format.turbo_stream do
           flash.now[:error] = flash_error
           render turbo_stream: [
-            turbo_stream.replace(@distribution, partial: "form", locals: {distribution: @distribution, date_place_holder: @distribution.issued_at}),
+            turbo_stream.replace(@distribution, partial: "form", locals: {distribution: @distribution, date_place_holder: @distribution.issued_at, source: 'new'}),
             turbo_stream.replace("flash", partial: "shared/flash")
           ], status: :bad_request
         end
