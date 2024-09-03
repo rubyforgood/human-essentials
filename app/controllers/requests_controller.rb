@@ -8,7 +8,11 @@ class RequestsController < ApplicationController
                 .undiscarded
                 .during(helpers.selected_range)
                 .class_filter(filter_params)
-
+    @unfulfilled_requests = current_organization
+      .requests
+      .includes(partner: [:profile])
+      .where(status: [:pending, :started])
+      .order(created_at: :desc)
     @paginated_requests = @requests.page(params[:page])
     @calculate_product_totals = RequestsTotalItemsService.new(requests: @requests).calculate
     @items = current_organization.items.alphabetized
@@ -41,11 +45,9 @@ class RequestsController < ApplicationController
   end
 
   def print_unfulfilled
-    requests = Request.includes(partner: [:profile]).where(status: [0, 1])
-
     respond_to do |format|
       format.any do
-        pdf = PicklistsPdf.new(current_organization, requests)
+        pdf = PicklistsPdf.new(current_organization, @unfulfilled_requests)
         send_data pdf.compute_and_render,
           filename: format("Picklists_%s.pdf", Time.current.to_fs(:long)),
           type: "application/pdf",
