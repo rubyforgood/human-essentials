@@ -8,7 +8,11 @@ class RequestsController < ApplicationController
                 .undiscarded
                 .during(helpers.selected_range)
                 .class_filter(filter_params)
-
+    @unfulfilled_requests = current_organization
+      .requests
+      .includes(partner: [:profile])
+      .where(status: [:pending, :started])
+      .order(created_at: :desc)
     @paginated_requests = @requests.page(params[:page])
     @calculate_product_totals = RequestsTotalItemsService.new(requests: @requests).calculate
     @items = current_organization.items.alphabetized
@@ -38,6 +42,18 @@ class RequestsController < ApplicationController
     request.status_started!
     flash[:notice] = "Request started"
     redirect_to new_distribution_path(request_id: request.id)
+  end
+
+  def print_unfulfilled
+    respond_to do |format|
+      format.any do
+        pdf = PicklistsPdf.new(current_organization, @unfulfilled_requests)
+        send_data pdf.compute_and_render,
+          filename: format("Picklists_%s.pdf", Time.current.to_fs(:long)),
+          type: "application/pdf",
+          disposition: "inline"
+      end
+    end
   end
 
   private
