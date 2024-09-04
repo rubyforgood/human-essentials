@@ -8,7 +8,7 @@ RSpec.describe "Navigation", type: :system, js: true do
     context "with organization admin" do
       let(:user) { create(:organization_admin) }
       # 2389 Links was missing Forecasting, which is available to an organization admin
-      let(:links) { ["Dashboard", "Donations", "Purchases", "Requests", "Product Drives", "Distributions", "Pick Ups & Deliveries", "Partner Agencies", "Inventory", "Community", "Reports", "My Organization"] }
+      let(:links) { ["Dashboard", "Donations", "Purchases", "Requests", "Distributions", "Pick Ups & Deliveries", "Partner Agencies", "Inventory", "Community", "Reports", "My Organization"] }
 
       it "shows navigation options" do
         sidebar = page.find(".sidebar")
