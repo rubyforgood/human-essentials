@@ -264,7 +264,20 @@ RSpec.describe "Purchases", type: :request do
 
     describe "GET #show" do
       let(:item) { create(:item) }
-      let!(:purchase) { create(:purchase, :with_items, item: item) }
+      let(:storage_location) { create(:storage_location, organization: organization, name: 'Some Storage') }
+      let(:vendor) { create(:vendor, organization: organization, business_name: 'Another Business') }
+      let!(:purchase) { create(:purchase, :with_items, item: item, storage_location: storage_location, comment: 'Fine day for diapers, it is.') }
+
+      it "shows the purchase info" do
+        escaped_html_comment = CGI.escapeHTML(purchase.comment_view)
+        date_of_purchase = "#{purchase.issued_at.to_fs(:distribution_date)} (entered: #{purchase.created_at.to_fs(:distribution_date)})"
+
+        get purchase_path(id: purchase.id)
+        expect(response.body).to include(date_of_purchase)
+        expect(response.body).to include(purchase.purchased_from_view)
+        expect(response.body).to include(purchase.storage_view)
+        expect(response.body).to include(escaped_html_comment)
+      end
 
       it "shows an enabled edit button" do
         get purchase_path(id: purchase.id)
