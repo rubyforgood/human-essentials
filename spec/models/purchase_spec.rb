@@ -156,6 +156,21 @@ RSpec.describe Purchase, type: :model do
         expect(purchase.storage_view).to eq("Smithsonian Conservation Center")
       end
     end
+
+    describe "comment_view" do
+      context "when comment is nil" do
+        let!(:purchase) { create(:purchase, :with_items, comment: nil) }
+        it "returns empty string" do
+          expect(purchase.comment_view).to eq("")
+        end
+      end
+      context "when comment is present" do
+        let!(:purchase) { create(:purchase, :with_items, comment: "This is a comment") }
+        it "returns comment" do
+          expect(purchase.comment_view).to eq("This is a comment")
+        end
+      end
+    end
   end
 
   describe "versioning" do

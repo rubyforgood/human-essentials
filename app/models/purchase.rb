@@ -69,6 +69,10 @@ class Purchase < ApplicationRecord
     vendor.nil? ? purchased_from : vendor.business_name
   end
 
+  def comment_view
+    comment.nil? ? "" : comment
+  end
+
   # @return [Integer]
   def amount_spent_in_dollars
     amount_spent.dollars.to_f
