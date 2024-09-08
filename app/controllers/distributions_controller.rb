@@ -115,6 +115,8 @@ class DistributionsController < ApplicationController
         @distribution.initialize_request_items
       end
       @items = current_organization.items.alphabetized
+      @partner_list = current_organization.partners.where.not(status: 'deactivated').alphabetized
+
       if Event.read_events?(current_organization)
         inventory = View::Inventory.new(@distribution.organization_id)
         @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
@@ -130,7 +132,7 @@ class DistributionsController < ApplicationController
         format.turbo_stream do
           flash.now[:error] = flash_error
           render turbo_stream: [
-            turbo_stream.replace(@distribution, partial: "form", locals: {distribution: @distribution, date_place_holder: @distribution.issued_at, source: 'new'}),
+            turbo_stream.replace(@distribution, partial: "form", locals: {distribution: @distribution, date_place_holder: @distribution.issued_at}),
             turbo_stream.replace("flash", partial: "shared/flash")
           ], status: :bad_request
         end
@@ -147,6 +149,8 @@ class DistributionsController < ApplicationController
       @distribution.copy_from_donation(params[:donation_id], params[:storage_location_id])
     end
     @items = current_organization.items.alphabetized
+    @partner_list = current_organization.partners.where.not(status: 'deactivated').alphabetized
+
     if Event.read_events?(current_organization)
       inventory = View::Inventory.new(current_organization.id)
       @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
@@ -175,6 +179,7 @@ class DistributionsController < ApplicationController
         current_user.has_role?(Role::ORG_ADMIN, current_organization)
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
+      @partner_list = current_organization.partners.alphabetized
       @audit_warning = current_organization.audits
         .where(storage_location_id: @distribution.storage_location_id)
         .where("updated_at > ?", @distribution.created_at).any?
