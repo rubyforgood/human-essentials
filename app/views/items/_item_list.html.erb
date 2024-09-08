@@ -8,6 +8,9 @@
     <tr>
       <th>Category</th>
       <th>Name</th>
+      <% if current_user.has_role?(Role::ORG_ADMIN, current_organization) || current_user.has_role?(Role::ORG_USER, current_organization) %>
+        <th>Add. Info</th>
+      <% end %>
       <th>Quantity Per Individual</th>
       <th>Fair Market Value (per item)</th>
       <% if Flipper.enabled?(:enable_packs) %>

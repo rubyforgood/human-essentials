@@ -74,6 +74,12 @@
                 <th>Item is visible to partners</th>
                 <td><%= @item.visible_to_partners ? 'Yes' : 'No' %></td>
               </tr>
+              <% if current_user.has_role?(Role::ORG_ADMIN, current_organization) || current_user.has_role?(Role::ORG_USER, current_organization) %>
+                <tr>
+                  <th>Additional Information (Bank Use Only)</th>
+                  <td><%= @item.additional_info %></td>
+                </tr>
+              <% end %>
             </tbody>
             </table>
           </div>
