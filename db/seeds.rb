@@ -214,6 +214,12 @@ note = [
     email: "recertification_required@example.com",
     status: :recertification_required,
     notes: note.sample
+  },
+  {
+    name: "Pawnee Country Clerk",
+    email: "waiting@example.com",
+    status: :awaiting_review,
+    notes: note.sample
   }
 ].each do |partner_option|
   p = Partner.find_or_create_by!(partner_option) do |partner|
