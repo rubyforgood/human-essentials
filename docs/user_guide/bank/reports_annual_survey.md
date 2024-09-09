@@ -1,7 +1,7 @@
 DRAFT USER GUIDE
 ## Annual Survey
 The annual survey contains information useful for completing the NDBN or Alliance for Period Supplies annual survey, but also for grant writing.
-Each year's annual survey becomes available January 1 of the following
+Each year's annual survey becomes available January 1 of the following year.
 
 ## How to get the report
 
