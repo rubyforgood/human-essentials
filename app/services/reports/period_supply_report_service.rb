@@ -15,7 +15,7 @@ module Reports
       @report ||= {name: "Period Supplies",
                    entries: {
                      "Period supplies distributed" => number_with_delimiter(total_distributed_period_supplies),
-                     "Period supplies per adult per month" => (monthly_supplies || 0 + distributed_period_supplies_from_kits_per_month)&.round,
+                     "Period supplies per adult per month" => (monthly_supplies + distributed_period_supplies_from_kits_per_month)&.round,
                      "Period supplies" => types_of_supplies,
                      "% period supplies donated" => "#{percent_donated.round}%",
                      "% period supplies bought" => "#{percent_bought.round}%",
@@ -38,7 +38,7 @@ module Reports
     end
 
     def distributed_period_supplies_from_kits_per_month
-      distributed_period_supplies_from_kits / 12
+      distributed_period_supplies_from_kits / 12 || 0
     end
 
     def total_distributed_period_supplies
@@ -55,7 +55,7 @@ module Reports
         .for_year(year)
         .joins(line_items: :item)
         .merge(Item.period_supplies)
-        .average("COALESCE(items.distribution_quantity, 50)")
+        .average("COALESCE(items.distribution_quantity, 50)") || 0
     end
 
     def types_of_supplies
@@ -137,7 +137,7 @@ module Reports
         INNER JOIN base_items ON base_items.partner_key = kit_items.partner_key 
         WHERE #{itemizable_type}.organization_id = ?
           AND EXTRACT(year FROM issued_at) = ?
-          AND LOWER(base_items.category) LIKE '%menstrual  supplies%'
+          AND LOWER(base_items.category) LIKE '%menstrual supplies%'
           AND NOT (LOWER(base_items.category) LIKE '%diaper%' OR LOWER(base_items.name) LIKE '%cloth%')
           AND kit_line_items.itemizable_type = 'Kit';
       SQL
