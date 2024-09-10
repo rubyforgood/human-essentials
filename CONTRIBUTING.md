@@ -83,6 +83,10 @@ Make sure to install **Ubuntu** as your Linux distribution. (This should be defa
     Recertification Required Partner
     Email: recertification_required@example.com
     Password: password!
+
+    Waiting Approval Partner
+    Email: waiting@example.com
+    Password: password!
   ```
 </details>
 
