@@ -41,8 +41,8 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
         purchased_period_supply_kit = create(:kit, :with_item, organization: organization)
         pad_and_tampon_kit = create(:kit, :with_item, organization: organization)
 
-        create(:base_item, name: "Adult Pads", partner_key: "adult pads", category: "Menstrual  Supplies")
-        create(:base_item, name: "Adult Tampons", partner_key: "adult tampons", category: "Menstrual  Supplies")
+        create(:base_item, name: "Adult Pads", partner_key: "adult pads", category: "Menstrual Supplies")
+        create(:base_item, name: "Adult Tampons", partner_key: "adult tampons", category: "Menstrual Supplies")
 
         period_supplies_kit_item = create(:item, name: "Adult Pads", partner_key: "adult pads")
         another_period_supplies_kit_item = create(:item, name: "Adult Tampons", partner_key: "adult tampons")
@@ -143,7 +143,7 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
             "% period supplies bought" => "67%",
             "% period supplies donated" => "33%",
             "Period supplies distributed" => "2,300",
-            "Period supplies per adult per month" => 20,
+            "Period supplies per adult per month" => 45,
             "Money spent purchasing period supplies" => "$40.00"
           }))
           expect(report.report[:entries]["Period supplies"].split(", "))
