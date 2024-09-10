@@ -216,7 +216,7 @@ note = [
     notes: note.sample
   },
   {
-    name: "Pawnee Country Clerk",
+    name: "Pawnee Middle School",
     email: "waiting@example.com",
     status: :awaiting_review,
     notes: note.sample
