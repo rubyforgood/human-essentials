@@ -167,6 +167,36 @@ RSpec.describe Partners::Profile, type: :model do
     end
   end
 
+  describe "pick up email address validation" do
+    context "number of email addresses" do
+      let(:profile) { build(:partner_profile, pick_up_email: "a@b.c, a@b.c, a@b.c, a@b.c") }
+      it "should not allow more than three email addresses" do
+        expect(profile.valid?).to eq(false)
+        profile.update(pick_up_email: "a@b.c, a@b.c, a@b.c")
+        expect(profile.valid?).to eq(true)
+      end
+
+      it "should allow optional whitespace between email addresses" do
+        profile.update(pick_up_email: "a@b.c,a@b.c")
+        expect(profile.valid?).to eq(true)
+      end
+    end
+
+    context "invalid emails" do
+      let(:profile) { build(:partner_profile, pick_up_email: "a@b.c, a@b.c, asdf") }
+      it "should not allow invalid email addresses" do
+        expect(profile.valid?).to eq(false)
+        profile.update(pick_up_email: "a@b.c")
+        expect(profile.valid?).to eq(true)
+      end
+
+      it "should handle nil value" do
+        profile.update(pick_up_email: nil)
+        expect(profile.valid?).to eq(true)
+      end
+    end
+  end
+
   describe "client share behaviour" do
     context "no served areas" do
       let(:profile) { build(:partner_profile) }
