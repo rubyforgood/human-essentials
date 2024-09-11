@@ -101,6 +101,7 @@ class OrganizationsController < ApplicationController
       :signature_for_distribution_pdf, :every_n_months,
       :date_or_week_day, :date, :day_of_week, :every_nth_day,
       partner_form_fields: []
+      request_unit_names: []
     )
   end
 

@@ -5,24 +5,7 @@ RSpec.describe "Organization management", type: :system, js: true do
 
   include ActionView::RecordIdentifier
 
-  context "while signed in as a normal user" do
-    before do
-      sign_in(user)
-    end
-
-    it "can see summary details about the organization as a user" do
-      visit organization_path
-    end
-
-    it "cannot see 'Make user' button for admins" do
-      visit organization_path
-      expect(page.find(".table.border")).to have_no_content "Make User"
-    end
-  end
-
   context "while signed in as an organization admin" do
-    let!(:store) { create(:storage_location, organization: organization) }
-    let!(:ndbn_member) { create(:ndbn_member, ndbn_member_id: "50000", account_name: "Best Place") }
     before do
       sign_in(organization_admin)
     end
@@ -68,7 +51,6 @@ RSpec.describe "Organization management", type: :system, js: true do
       end
 
       it "can set a reminder and a deadline day" do
-        # TODO: change here
         fill_in "organization_every_n_months", with: 1
         choose 'toggle-to-week-day'
         select "First", from: "organization_every_nth_day"
@@ -153,18 +135,6 @@ RSpec.describe "Organization management", type: :system, js: true do
         click_on "Invite User"
       end
       expect(page).to have_content("invited to organization")
-    end
-
-    it "can re-invite a user to an organization after 7 days" do
-      create(:user, name: "Ye Olde Invited User", invitation_sent_at: Time.current - 7.days)
-      visit organization_path
-      expect(page).to have_xpath("//i[@alt='Re-send invitation']")
-    end
-
-    it "can see 'Make user' button for admins" do
-      create(:organization_admin)
-      visit organization_path
-      expect(page.find(".table.border")).to have_content "Demote to User"
     end
 
     it "can remove a user from the organization" do

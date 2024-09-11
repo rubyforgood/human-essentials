@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe Partners::RequestCreateService do
   describe '#call' do
     subject { described_class.new(**args).call }
@@ -143,6 +141,35 @@ RSpec.describe Partners::RequestCreateService do
           end
         end
       end
+    end
+  end
+
+  describe "#initialize_only" do
+    subject { described_class.new(**args).initialize_only }
+    let(:args) do
+      {
+        partner_user_id: partner_user.id,
+        comments: comments,
+        item_requests_attributes: item_requests_attributes
+      }
+    end
+    let(:partner_user) { partner.primary_user }
+    let(:partner) { create(:partner) }
+    let(:comments) { Faker::Lorem.paragraph }
+    let(:item) { FactoryBot.create(:item) }
+    let(:item_requests_attributes) do
+      [
+        ActionController::Parameters.new(
+          item_id: item.id,
+          quantity: 25
+        )
+      ]
+    end
+
+    it "creates a partner request in memory only" do
+      expect(subject.id).to be_nil
+      expect(subject.item_requests.first.item.name).to eq(item.name)
+      expect(subject.item_requests.first.quantity).to eq("25")
     end
   end
 end

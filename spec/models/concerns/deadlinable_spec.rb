@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe Deadlinable, type: :model do
   let(:dummy_class) do
     Class.new do

@@ -1,0 +1,53 @@
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Request Confirmation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
+        <%# Items and quantities %>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Item Name</th>
+              <th>Total Items</th>
+              <% if Flipper.enabled?(:enable_packs) && @partner_request.item_requests.any?( &:request_unit ) %>
+                <th>Units</th>
+              <% end %>
+            </tr>
+          </thead>
+          <tbody>
+            <% @partner_request.item_requests.each do |line_item| %>
+              <tr>
+                <td><%= line_item.name %></td>
+                <td><%= line_item.quantity %></td>
+                <% if Flipper.enabled?(:enable_packs) && @partner_request.item_requests.any?( &:request_unit ) %>
+                  <td><%= line_item.request_unit %></td>
+                <% end %>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+
+        <%# Confirmation message %>
+        <div class="message fs-5">
+          <p>Please confirm that the above list is what you meant to request.</p>
+        </div>
+
+        <%# Quota exceeded warning %>
+        <% if @quota_exceeded %>
+          <div class="alert alert-warning" role="alert">
+            You are ordering
+            <span class="fw-bolder fst-italic"><%= @total_items %></span>
+            total items, are you sure?
+          </div>
+        <% end %>
+      </div>
+
+      <%# Actions %>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="No I need to make changes">No, I need to make changes</button>
+        <button type="button" class="btn btn-primary" data-action="confirmation#submitForm">Yes, it's correct</button>
+      </div>
+    </div>
+  </div>

@@ -139,7 +139,7 @@ class Organization < ApplicationRecord
 
   has_one_attached :logo
 
-  accepts_nested_attributes_for :users, :account_request
+  accepts_nested_attributes_for :users, :account_request, :request_units
 
   include Geocodable
 

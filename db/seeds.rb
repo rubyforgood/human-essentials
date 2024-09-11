@@ -194,6 +194,7 @@ note = [
     name: "Pawnee Parent Service",
     email: "verified@example.com",
     status: :approved,
+    quota: 500,
     notes: note.sample
   },
   {
@@ -212,6 +213,12 @@ note = [
     name: "Pawnee Senior Citizens Center",
     email: "recertification_required@example.com",
     status: :recertification_required,
+    notes: note.sample
+  },
+  {
+    name: "Pawnee Middle School",
+    email: "waiting@example.com",
+    status: :awaiting_review,
     notes: note.sample
   }
 ].each do |partner_option|
@@ -292,6 +299,8 @@ note = [
     )
   end
 
+  requestable_items = PartnerFetchRequestableItemsService.new(partner_id: p.id).call.map(&:last)
+
   families.each do |family|
     Partners::AuthorizedFamilyMember.create!(
       first_name: Faker::Name.first_name,
@@ -316,7 +325,7 @@ note = [
         comments: Faker::Lorem.paragraph,
         active: Faker::Boolean.boolean,
         archived: false,
-        item_needed_diaperid: p.organization.item_id_to_display_string_map.key(Partners::Child::CHILD_ITEMS.sample)
+        requested_item_ids: requestable_items.sample(rand(4))
       )
     end
 
@@ -334,7 +343,7 @@ note = [
         comments: Faker::Lorem.paragraph,
         active: Faker::Boolean.boolean,
         archived: false,
-        item_needed_diaperid: p.organization.item_id_to_display_string_map.key(Partners::Child::CHILD_ITEMS.sample)
+        requested_item_ids: requestable_items.sample(rand(4))
       )
     end
   end
@@ -421,6 +430,23 @@ StorageLocation.all.each do |sl|
   end
 end
 Organization.all.each { |org| SnapshotEvent.publish(org) }
+
+# Set minimum and recomended inventory levels for items at the Pawnee Diaper Bank Organization
+half_items_count = (pdx_org.items.count/2).to_i
+low_items = pdx_org.items.left_joins(:inventory_items)
+  .select('items.*, SUM(inventory_items.quantity) AS total_quantity')
+  .group('items.id')
+  .order('total_quantity')
+  .limit(half_items_count)
+
+min_qty = low_items.first.total_quantity
+max_qty = low_items.last.total_quantity
+
+low_items.each do |item|
+  min_value = rand((min_qty / 10).floor..(max_qty/10).ceil) * 10
+  recomended_value = rand((min_value/10).ceil..1000) * 10
+  item.update(on_hand_minimum_quantity: min_value, on_hand_recommended_quantity: recomended_value)
+end
 
 # ----------------------------------------------------------------------------
 # Product Drives
@@ -687,6 +713,8 @@ end
 # ----------------------------------------------------------------------------
 
 Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "new_logo")
+Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "read_events")
+Flipper.enable(:read_events)
 
 # ----------------------------------------------------------------------------
 # Account Requests

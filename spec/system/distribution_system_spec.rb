@@ -304,6 +304,10 @@ RSpec.feature "Distributions", type: :system do
     click_button "Save", match: :first
 
     expect(page).to have_css('.alert.error', text: /storage location/i)
+
+    # 4438- Bug Fix
+    select storage_location.name, from: "From storage location"
+    expect(page).not_to have_css('#__add_line_item.disabled')
   end
 
   context "With an existing distribution" do
@@ -592,6 +596,8 @@ RSpec.feature "Distributions", type: :system do
       items = storage_location.items.pluck(:id).sample(2)
       request_items = [{ "item_id" => items[0], "quantity" => 10 }, { "item_id" => items[1], "quantity" => 10 }]
       @request = create :request, organization: organization, request_items: request_items
+      create(:item_request, request: @request, item_id: items[0], quantity: 10)
+      create(:item_request, request: @request, item_id: items[1], quantity: 10)
 
       visit request_path(id: @request.id)
       click_on "Fulfill request"
@@ -625,6 +631,8 @@ RSpec.feature "Distributions", type: :system do
       items = storage_location.items.pluck(:id).sample(2)
       request_items = [{ "item_id" => items[0], "quantity" => 1000000 }, { "item_id" => items[1], "quantity" => 10 }]
       @request = create :request, organization: organization, request_items: request_items
+      create(:item_request, request: @request, item_id: items[0], quantity: 1000000)
+      create(:item_request, request: @request, item_id: items[1], quantity: 10)
 
       visit request_path(id: @request.id)
       click_on "Fulfill request"

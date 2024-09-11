@@ -79,7 +79,6 @@
 #  essentials_bank_id             :bigint
 #  partner_id                     :integer
 #
-require "rails_helper"
 
 RSpec.describe Partners::Profile, type: :model do
   describe "associations" do

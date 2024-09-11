@@ -35,9 +35,15 @@ Rails.application.routes.draw do
   namespace :partners do
     resource :dashboard, only: [:show]
     resource :help, only: [:show]
-    resources :requests, only: [:show, :new, :index, :create]
-    resources :individuals_requests, only: [:new, :create]
-    resources :family_requests, only: [:new, :create]
+    resources :requests, only: [:show, :new, :index, :create] do
+      post :validate, on: :collection
+    end
+    resources :individuals_requests, only: [:new, :create] do
+      post :validate, on: :collection
+    end
+    resources :family_requests, only: [:new, :create] do
+      post :validate, on: :collection
+    end
     resources :users, only: [:index, :new, :create, :edit, :update]
     resource :profile, only: [:show, :edit, :update]
     resource :approval_request, only: [:create]
@@ -48,6 +54,9 @@ Rails.application.routes.draw do
     resources :families
     resources :authorized_family_members
     resources :distributions, only: [:index] do
+      get :print, on: :member
+    end
+    resources :donations, only: [:index] do
       get :print, on: :member
     end
   end
@@ -197,6 +206,7 @@ Rails.application.routes.draw do
     resources :users, only: [:index, :create, :destroy], controller: 'partner_users' do
       member do
         post :resend_invitation
+        post :reset_password
       end
     end
 
@@ -220,6 +230,7 @@ Rails.application.routes.draw do
   resources :product_drives
 
   resources :donations do
+    get :print, on: :member
     patch :add_item, on: :member
     patch :remove_item, on: :member
   end
