@@ -28,7 +28,6 @@ $(document).ready(function () {
 
     if (reminder_day) {
       $(container).find(reminder_container_selector).find(server_validation_selector).remove();
-
       if (reminder_day === deadline_day) {
         $reminder_text.removeClass('text-muted').addClass('text-danger');
 
