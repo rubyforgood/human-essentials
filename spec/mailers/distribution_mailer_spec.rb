@@ -43,7 +43,7 @@ RSpec.describe DistributionMailer, type: :mailer do
         expect(mail.body.encoded).to match("picked up")
       end
 
-      context 'when parners profile pick_up_email is present' do
+      context 'when partners profile pick_up_email is present' do
         it 'sends email to the primary contact and partner`s pickup person' do
           expect(mail.cc.first).to match(partner.email)
           expect(mail.cc.second).to match(pick_up_email)
