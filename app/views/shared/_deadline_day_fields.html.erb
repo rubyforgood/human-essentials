@@ -22,7 +22,7 @@
       <%= f.label :date_or_week_day, 'Week Day' %>
 
       <div id="date-fields">
-      <%= f.input :date, as: :integer, wrapper: :input_group, wrapper_html: { class: 'mb-3' },
+      <%= f.input :date, as: :integer, wrapper: :input_group,
       label: 'Reminder date' do %>
       <span class="input-group-text"><i class="fa fa-calendar"></i></span>
       <%= f.number_field :date,
@@ -32,6 +32,7 @@
       placeholder: "Reminder day" %>
       <% end %>
       </div>
+      <small class="mb-3 d-block form-text text-muted deadline-day-pickers__reminder-day-text"></small>
 
       <div id="week-day-fields">
       <%= f.input :every_nth_day, wrapper: :input_group, wrapper_html: { class: 'mb-3'},
