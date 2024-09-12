@@ -1,4 +1,6 @@
 class PartnerGroupsController < ApplicationController
+  before_action :set_partner_groups, only: %i[edit destroy]
+
   def new
     @partner_group = current_organization.partner_groups.new
     @item_categories = current_organization.item_categories
@@ -16,7 +18,6 @@ class PartnerGroupsController < ApplicationController
   end
 
   def edit
-    @partner_group = current_organization.partner_groups.find(params[:id])
     @item_categories = current_organization.item_categories
   end
 
@@ -30,7 +31,19 @@ class PartnerGroupsController < ApplicationController
     end
   end
 
+  def destroy
+    @partner_group.destroy
+
+    respond_to do |format|
+      format.html { redirect_to partners_path + "#nav-partner-groups", notice: "Partner Group was successfully destroyed." }
+    end
+  end
+
   private
+
+  def set_partner_groups
+    @partner_group = current_organization.partner_groups.find(params[:id])
+  end
 
   def partner_group_params
     params.require(:partner_group).permit(:name, :send_reminders, :deadline_day, :reminder_day, item_category_ids: [])
