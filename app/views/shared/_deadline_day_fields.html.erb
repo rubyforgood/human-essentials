@@ -39,7 +39,6 @@
       label: 'Reminder day of the week' do %>
       <%= f.input :every_nth_day, collection: Deadlinable::EVERY_NTH_COLLECTION,
       class: "deadline-day-pickers__reminder-day form-control",
-      default: 1,
       label: false %>
 
       <%= f.input :day_of_week, collection: Deadlinable::WEEK_DAY_COLLECTION,
