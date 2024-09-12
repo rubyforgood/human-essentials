@@ -147,10 +147,10 @@ module Partners
     end
 
     def pick_up_email_addresses
-      # pick_up_email is a string of comma-separated emails, check specs details
+      # pick_up_email is a string of comma-separated emails, check specs for details
       return if pick_up_email.nil?
 
-      emails = pick_up_email.delete(" ").split(",")
+      emails = pick_up_email.delete(" ").delete_prefix(",").delete_suffix(",").split(",")
       if emails.size > 3
         errors.add(:pick_up_email, "There can't be more than three pick up email addresses")
         nil
