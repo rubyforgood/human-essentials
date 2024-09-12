@@ -10,7 +10,7 @@ class OrganizationsController < ApplicationController
 
   def edit
     @organization = current_organization
-    @organization.from_ical(@organization.reminder_schedule)
+    @organization.get_values_from_reminder_schedule
   end
 
   def update
@@ -100,7 +100,7 @@ class OrganizationsController < ApplicationController
       :hide_value_columns_on_receipt, :hide_package_column_on_receipt,
       :signature_for_distribution_pdf, :every_n_months,
       :date_or_week_day, :date, :day_of_week, :every_nth_day,
-      partner_form_fields: []
+      partner_form_fields: [],
       request_unit_names: []
     )
   end

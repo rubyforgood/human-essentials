@@ -22,7 +22,7 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
           context "as matched by day of the week" do
             before do
               partner.organization.update(every_n_months: 1, date_or_week_day: "week_day",
-              day_of_week: 2, every_nth_day: 2, deadline_day: current_day + 2)
+                day_of_week: 2, every_nth_day: 2, deadline_day: current_day + 2)
             end
             it "should include that partner" do
               schedule = IceCube::Schedule.from_ical partner.organization.reminder_schedule
@@ -55,7 +55,7 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
         context "that is not for today" do
           before do
             partner.organization.update(every_n_months: 1, date_or_week_day: "date",
-            date: current_day - 1, deadline_day: current_day + 2)
+              date: current_day - 1, deadline_day: current_day + 2)
           end
 
           it "should NOT include that partner" do
@@ -66,11 +66,11 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
         context "AND a partner group that does have them defined" do
           before do
             partner_group = create(:partner_group, every_n_months: 1, date_or_week_day: "date",
-            date: current_day, deadline_day: current_day + 2)
+              date: current_day, deadline_day: current_day + 2)
             partner_group.partners << partner
 
             partner.organization.update(every_n_months: 1, date_or_week_day: "date",
-            date: current_day - 1, deadline_day: current_day + 2)
+              date: current_day - 1, deadline_day: current_day + 2)
           end
 
           it "should remind based on the partner group instead of the organization level reminder" do
@@ -98,7 +98,7 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
           context "that is for today" do
             before do
               partner_group = create(:partner_group, every_n_months: 1, date_or_week_day: "date",
-              date: current_day, deadline_day: current_day + 2)
+                date: current_day, deadline_day: current_day + 2)
               partner_group.partners << partner
             end
 
@@ -120,7 +120,7 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
           context "that is not for today" do
             before do
               partner_group = create(:partner_group, every_n_months: 1, date_or_week_day: "date",
-              date: current_day - 1, deadline_day: current_day + 2)
+                date: current_day - 1, deadline_day: current_day + 2)
               partner_group.partners << partner
             end
 

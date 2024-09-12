@@ -111,7 +111,9 @@ class Organization < ApplicationRecord
   end
 
   before_save do
-    self.reminder_schedule = create_schedule
+    if should_update_reminder_schedule
+      self.reminder_schedule = create_schedule
+    end
   end
 
   after_create do

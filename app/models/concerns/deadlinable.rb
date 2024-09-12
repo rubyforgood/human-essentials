@@ -3,7 +3,7 @@ module Deadlinable
   MIN_DAY_OF_MONTH = 1
   MAX_DAY_OF_MONTH = 28
   EVERY_NTH_COLLECTION = [["First", 1], ["Second", 2], ["Third", 3], ["Fourth", 4]].freeze
-  WEEK_DAY_COLLECTION = [["Sunday"], ["Monday", 1], ["Tuesday", 2], ["Wednesday", 3], ["Thursday", 4], ["Friday", 5], ["Saturday", 6]].freeze
+  WEEK_DAY_COLLECTION = [["Sunday", 0], ["Monday", 1], ["Tuesday", 2], ["Wednesday", 3], ["Thursday", 4], ["Friday", 5], ["Saturday", 6]].freeze
 
   included do
     attr_accessor :every_n_months, :date_or_week_day, :date, :day_of_week, :every_nth_day
@@ -14,7 +14,7 @@ module Deadlinable
     validate :reminder_is_within_range?, if: -> { every_n_months.present? }
     validates :date_or_week_day, inclusion: {in: %w[date week_day]}, if: -> { every_n_months.present? }
     validates :date, presence: true, if: -> { date_or_week_day == "date" && every_n_months.present? }
-    validates :day_of_week, presence: true, if: -> { date_or_week_day == "week_day" && every_n_months.present? }, inclusion: {in: %w[1 2 3 4 5 6 7]}
+    validates :day_of_week, presence: true, if: -> { date_or_week_day == "week_day" && every_n_months.present? }, inclusion: {in: %w[0 1 2 3 4 5 6]}
     validates :every_nth_day, presence: true, if: -> { date_or_week_day == "week_day" && every_n_months.present? }, inclusion: {in: %w[1 2 3 4]}
   end
 
@@ -34,13 +34,27 @@ module Deadlinable
     schedule = IceCube::Schedule.from_ical(ical)
     rule = schedule.recurrence_rules.first.instance_values
     date = rule["validations"][:day_of_month]&.first&.value
-    self.every_n_months = rule["interval"]
-    self.date_or_week_day = date ? "date" : "week_day"
-    self.date = date
-    self.day_of_week = rule["validations"][:day_of_week]&.first&.day,
-      self.every_nth_day = rule["validations"][:day_of_week]&.first&.occ
+
+    results = {}
+    results[:every_n_months] = rule["interval"]
+    results[:date_or_week_day] = date ? "date" : "week_day"
+    results[:date] = date
+    results[:day_of_week] = rule["validations"][:day_of_week]&.first&.day
+    results[:every_nth_day] = rule["validations"][:day_of_week]&.first&.occ
+    results
   rescue
     nil
+  end
+
+  def get_values_from_reminder_schedule
+    return if reminder_schedule.blank?
+    results = from_ical(reminder_schedule)
+    return if results.nil?
+    self.every_n_months = results[:every_n_months]
+    self.date_or_week_day = results[:date_or_week_day]
+    self.date = results[:date]
+    self.day_of_week = results[:day_of_week]
+    self.every_nth_day = results[:every_nth_day]
   end
 
   private
@@ -57,6 +71,18 @@ module Deadlinable
     if date_or_week_day == "date" && date.to_i < MIN_DAY_OF_MONTH || date.to_i > MAX_DAY_OF_MONTH
       errors.add(:date, "Reminder day must be between #{MIN_DAY_OF_MONTH} and #{MAX_DAY_OF_MONTH}")
     end
+  end
+
+  def should_update_reminder_schedule
+    if reminder_schedule.blank?
+      return every_n_months.present?
+    end
+    sched = from_ical(reminder_schedule)
+    every_n_months != sched[:every_n_months].presence.to_s ||
+      date_or_week_day != sched[:date_or_week_day].presence.to_s ||
+      date != sched[:date].presence.to_s ||
+      day_of_week != sched[:day_of_week].presence.to_s ||
+      every_nth_day != sched[:every_nth_day].presence.to_s
   end
 
   def create_schedule

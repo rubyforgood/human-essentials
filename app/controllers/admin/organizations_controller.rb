@@ -2,7 +2,7 @@
 class Admin::OrganizationsController < AdminController
   def edit
     @organization = Organization.find(params[:id])
-    @organization.from_ical(@organization.reminder_schedule)
+    @organization.get_values_from_reminder_schedule
   end
 
   def update
@@ -31,7 +31,7 @@ class Admin::OrganizationsController < AdminController
 
   def new
     @organization = Organization.new
-    @organization.from_ical(@organization.reminder_schedule)
+    @organization.get_values_from_reminder_schedule
     account_request = params[:token] && AccountRequest.get_by_identity_token(params[:token])
 
     @user = User.new

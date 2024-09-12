@@ -17,7 +17,7 @@ class PartnerGroupsController < ApplicationController
 
   def edit
     @partner_group = current_organization.partner_groups.find(params[:id])
-    @partner_group.from_ical(@partner_group.reminder_schedule)
+    @partner_group.get_values_from_reminder_schedule
     @item_categories = current_organization.item_categories
   end
 
