@@ -29,8 +29,9 @@ class DistributionMailer < ApplicationMailer
     cc = [@partner.email]
     if distribution.pick_up? && @partner.profile&.pick_up_email
       pick_up_emails = @partner.profile.pick_up_email.delete(" ").split(",")
-      (cc << pick_up_emails).flatten! if pick_up_emails
+      cc.push(pick_up_emails)
     end
+    cc.flatten!
     cc.compact!
     cc.uniq!
 
