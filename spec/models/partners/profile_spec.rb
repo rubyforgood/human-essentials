@@ -169,29 +169,31 @@ RSpec.describe Partners::Profile, type: :model do
 
   describe "pick up email address validation" do
     context "number of email addresses" do
-      let(:profile) { build(:partner_profile, pick_up_email: "a@b.c, a@b.c, a@b.c, a@b.c") }
+      let(:profile) { build(:partner_profile, pick_up_email: "pick_up@org.com, pick_up2@org.com, pick_up3@org.com, pick_up4@org.com") }
       it "should not allow more than three email addresses" do
         expect(profile.valid?).to eq(false)
-        profile.update(pick_up_email: "a@b.c, a@b.c, a@b.c")
+        profile.update(pick_up_email: "pick_up@org.com, pick_up2@org.com, pick_up3@org.com")
         expect(profile.valid?).to eq(true)
       end
 
       it "should allow optional whitespace between email addresses" do
-        profile.update(pick_up_email: "a@b.c,a@b.c")
+        profile.update(pick_up_email: "pick_up@org.com, pick_up2@org.com")
+        expect(profile.valid?).to eq(true)
+        profile.update(pick_up_email: "eick_up@org.com,pick_up2@org.com")
         expect(profile.valid?).to eq(true)
       end
 
       it "should disregard commas at the beginning or end of the string" do
-        profile.update(pick_up_email: ", a@b.c, a@b.c, ")
+        profile.update(pick_up_email: ", pick_up@org.com, pick_up2@org.com,")
         expect(profile.valid?).to eq(true)
       end
     end
 
     context "invalid emails" do
-      let(:profile) { build(:partner_profile, pick_up_email: "a@b.c, a@b.c, asdf") }
+      let(:profile) { build(:partner_profile, pick_up_email: "pick_up@org.com, pick_up2@org.com, asdf") }
       it "should not allow invalid email addresses" do
         expect(profile.valid?).to eq(false)
-        profile.update(pick_up_email: "a@b.c")
+        profile.update(pick_up_email: "pick_up@org.com, pick_up2@org.com")
         expect(profile.valid?).to eq(true)
       end
 
