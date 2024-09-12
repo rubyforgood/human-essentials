@@ -111,4 +111,23 @@ RSpec.describe PartnerUsersController, type: :request do
       end
     end
   end
+
+  describe "POST #reset_password" do
+    let!(:partner_user) do
+      UserInviteService.invite(
+        email: "meow@example.com",
+        name: "Meow Mix",
+        roles: [Role::PARTNER],
+        resource: partner
+      )
+    end
+
+    context "when a bank needs to reset a partner user's password" do
+      it "resends the reset password email and redirects back to root_path" do
+        expect { post reset_password_partner_user_path(default_params.merge(partner_id: partner, id: partner_user)) }.to change { ActionMailer::Base.deliveries.count }.by(1)
+        expect(response).to redirect_to(root_path)
+        expect(flash[:notice]).to eq("Password e-mail sent!")
+      end
+    end
+  end
 end

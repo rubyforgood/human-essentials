@@ -395,6 +395,12 @@ RSpec.describe "StorageLocations", type: :request do
           expect(response.parsed_body).to eq(items_at_storage_location)
           expect(response.parsed_body).to eq(inventory_items_at_storage_location)
         end
+
+        it "returns items sorted alphabetically by item name" do
+          get inventory_storage_location_path(storage_location, format: :json)
+          sorted_items = inventory_items_at_storage_location.sort_by { |item| item['item_name'].downcase }
+          expect(response.parsed_body).to eq(sorted_items)
+        end
       end
 
       context "when also including inactive items" do

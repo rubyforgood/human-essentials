@@ -596,6 +596,8 @@ RSpec.feature "Distributions", type: :system do
       items = storage_location.items.pluck(:id).sample(2)
       request_items = [{ "item_id" => items[0], "quantity" => 10 }, { "item_id" => items[1], "quantity" => 10 }]
       @request = create :request, organization: organization, request_items: request_items
+      create(:item_request, request: @request, item_id: items[0], quantity: 10)
+      create(:item_request, request: @request, item_id: items[1], quantity: 10)
 
       visit request_path(id: @request.id)
       click_on "Fulfill request"
@@ -629,6 +631,8 @@ RSpec.feature "Distributions", type: :system do
       items = storage_location.items.pluck(:id).sample(2)
       request_items = [{ "item_id" => items[0], "quantity" => 1000000 }, { "item_id" => items[1], "quantity" => 10 }]
       @request = create :request, organization: organization, request_items: request_items
+      create(:item_request, request: @request, item_id: items[0], quantity: 1000000)
+      create(:item_request, request: @request, item_id: items[1], quantity: 10)
 
       visit request_path(id: @request.id)
       click_on "Fulfill request"

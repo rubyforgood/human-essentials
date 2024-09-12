@@ -9,7 +9,7 @@
     <% end %>
 
     <%= f.association :partner,
-      collection: current_organization.partners.alphabetized,
+      collection: @partner_list,
       label: "Partner",
       error: "Which partner is this distribution going to?" %>
 
@@ -33,13 +33,18 @@
     <%= f.input :comment, label: "Comment" %>
 
     <fieldset style="margin-bottom: 2rem">
-      <legend>Items in this distribution</legend>
+      <div class="distribution-title">
+        <legend class="<%= 'with-request' if distribution.request %>">Items in this distribution</legend>
+        <% if distribution.request %>
+          <div class="distribution-request-unit">Requested</div>
+        <% end %>
+      </div>
       <div id="distribution_line_items" data-capture-barcode="true" class="line-item-fields">
-          <%= render 'line_items/line_item_fields', form: f %>
+          <%= render 'line_items/line_item_fields', form: f, locals: { show_request_items: true } %>
       </div>
       <div class="row links justify-content-end">
         <%= add_element_button "Add Another Item", container_selector: "#distribution_line_items" , id: "__add_line_item" do %>
-          <%= render 'line_items/line_item_fields', form: f, object: LineItem.new %>
+          <%= render 'line_items/line_item_fields', form: f, object: LineItem.new, locals: { show_request_items: true } %>
         <% end %>
       </div>
 
