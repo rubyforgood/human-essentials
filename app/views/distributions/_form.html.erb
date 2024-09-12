@@ -9,7 +9,7 @@
     <% end %>
 
     <%= f.association :partner,
-      collection: current_organization.partners.alphabetized,
+      collection: @partner_list,
       label: "Partner",
       error: "Which partner is this distribution going to?" %>
 
