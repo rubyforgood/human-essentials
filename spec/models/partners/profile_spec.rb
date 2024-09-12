@@ -180,6 +180,11 @@ RSpec.describe Partners::Profile, type: :model do
         profile.update(pick_up_email: "a@b.c,a@b.c")
         expect(profile.valid?).to eq(true)
       end
+
+      it "should disregard commas at the beginning or end of the string" do
+        profile.update(pick_up_email: ", a@b.c, a@b.c, ")
+        expect(profile.valid?).to eq(true)
+      end
     end
 
     context "invalid emails" do
