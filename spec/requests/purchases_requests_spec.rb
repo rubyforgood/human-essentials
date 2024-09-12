@@ -266,17 +266,16 @@ RSpec.describe "Purchases", type: :request do
       let(:item) { create(:item) }
       let(:storage_location) { create(:storage_location, organization: organization, name: 'Some Storage') }
       let(:vendor) { create(:vendor, organization: organization, business_name: 'Another Business') }
-      let!(:purchase) { create(:purchase, :with_items, item: item, storage_location: storage_location, comment: 'Fine day for diapers, it is.') }
+      let!(:purchase) { create(:purchase, :with_items, comment: 'Fine day for diapers, it is.', created_at: 1.month.ago, issued_at: 1.day.ago, item: item, storage_location: storage_location, vendor: vendor) }
 
       it "shows the purchase info" do
-        escaped_html_comment = CGI.escapeHTML(purchase.comment)
-        date_of_purchase = "#{purchase.issued_at.to_fs(:distribution_date)} (entered: #{purchase.created_at.to_fs(:distribution_date)})"
+        date_of_purchase = "#{1.day.ago.to_fs(:distribution_date)} (entered: #{1.month.ago.to_fs(:distribution_date)})"
 
         get purchase_path(id: purchase.id)
         expect(response.body).to include(date_of_purchase)
-        expect(response.body).to include(purchase.purchased_from_view)
-        expect(response.body).to include(purchase.storage_view)
-        expect(response.body).to include(escaped_html_comment)
+        expect(response.body).to include('Another Business')
+        expect(response.body).to include('Some Storage')
+        expect(response.body).to include('Fine day for diapers, it is.')
       end
 
       it "shows an enabled edit button" do
