@@ -217,6 +217,11 @@ describe DistributionPdf do
       end
     end
     # this test is a helper function to regenerate expected PDFs, only commit with it skipped
+    # this is written as a RSpec so we don't have duplicated code for setting up the RSpec test environment
+    # call this test to generate PDFs from terminal by
+    #   1) setting to `if true`
+    #   2) calling the test's line number from terminal e.g. `bundle exec rspec spec/pdfs/distribution_pdf_spec.rb:228`
+    #   3) disable the test afterwards by setting to `if false`
     # rubocop:disable Lint/LiteralAsCondition
     if false
       # rubocop:enable Lint/LiteralAsCondition

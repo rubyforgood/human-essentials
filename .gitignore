@@ -49,8 +49,10 @@ dump.rdb
 .DS_Store
 .ruby-gemset
 *.pdf
-!spec/fixtures/files/*.pdf
 /spec/example_failures.txt
+
+# Track, don't ignore, RSpec comparison PDFs
+!spec/fixtures/files/*.pdf
 
 # Ignore Docker stuff (see issues #503, #603)
 Dockerfile
