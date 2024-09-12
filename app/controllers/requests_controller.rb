@@ -41,7 +41,11 @@ class RequestsController < ApplicationController
   end
 
   def print_unfulfilled
-    requests = Request.includes(partner: [:profile]).where(status: [0, 1])
+    requests = current_organization
+      .requests
+      .includes(:item_requests, partner: [:profile])
+      .where(status: [:pending, :started])
+      .order(created_at: :desc)
 
     respond_to do |format|
       format.any do
