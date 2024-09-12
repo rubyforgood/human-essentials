@@ -269,7 +269,7 @@ RSpec.describe "Purchases", type: :request do
       let!(:purchase) { create(:purchase, :with_items, item: item, storage_location: storage_location, comment: 'Fine day for diapers, it is.') }
 
       it "shows the purchase info" do
-        escaped_html_comment = CGI.escapeHTML(purchase.comment_view)
+        escaped_html_comment = CGI.escapeHTML(purchase.comment)
         date_of_purchase = "#{purchase.issued_at.to_fs(:distribution_date)} (entered: #{purchase.created_at.to_fs(:distribution_date)})"
 
         get purchase_path(id: purchase.id)
