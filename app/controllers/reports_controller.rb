@@ -1,5 +1,6 @@
 class ReportsController < ApplicationController
   before_action :setup_date_range_picker
+  before_action :authorize_org_user
 
   def donations_summary
     @donations = current_organization.donations.during(helpers.selected_range)
