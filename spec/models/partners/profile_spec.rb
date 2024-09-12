@@ -187,6 +187,11 @@ RSpec.describe Partners::Profile, type: :model do
         profile.update(pick_up_email: ", pick_up@org.com, pick_up2@org.com,")
         expect(profile.valid?).to eq(true)
       end
+
+      it "should not allow repeated email addresses" do
+        profile.update(pick_up_email: "pick_up@org.com, pick_up2@org.com, pick_up@org.com")
+        expect(profile.valid?).to eq(false)
+      end
     end
 
     context "invalid emails" do
