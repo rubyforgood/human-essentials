@@ -8,7 +8,7 @@
 - I have added tests that prove my fix is effective or that my feature works,
 - New and existing unit tests pass locally with my changes ("bundle exec rake"),
 - Title include "WIP" if work is in progress.
-- I acknowledge that I will *not* force push my branch if any review activity has already happened.
+- I acknowledge that I will *not* force push my branch once reviews have started.
 
 -->
 
