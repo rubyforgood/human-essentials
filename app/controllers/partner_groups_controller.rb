@@ -35,7 +35,7 @@ class PartnerGroupsController < ApplicationController
     @partner_group.destroy
 
     respond_to do |format|
-      format.html { redirect_to partners_path + "#nav-partner-groups", notice: "Partner Group was successfully destroyed." }
+      format.html { redirect_to partners_path + "#nav-partner-groups", notice: "Partner Group was successfully deleted." }
     end
   end
 
