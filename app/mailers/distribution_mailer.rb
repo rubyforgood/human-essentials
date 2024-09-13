@@ -28,7 +28,7 @@ class DistributionMailer < ApplicationMailer
     attachments[format("%s %s.pdf", @partner.name, @distribution.created_at.strftime("%Y-%m-%d"))] = pdf
     cc = [@partner.email]
     if distribution.pick_up? && @partner.profile&.pick_up_email
-      pick_up_emails = @partner.profile.pick_up_email.delete(" ").split(",")
+      pick_up_emails = @partner.profile.split_pick_up_emails
       cc.push(pick_up_emails)
     end
     cc.flatten!
