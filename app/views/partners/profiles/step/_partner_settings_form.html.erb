@@ -1,0 +1,31 @@
+<%= simple_form_for partner, url: partners_profile_path do |f| %>
+  <%= f.fields_for :profile, profile do |pf| %>
+    <!-- Settings Section -->
+    <% if pf.object.organization.enable_quantity_based_requests? %>
+      <div class="form-group">
+        <%= pf.check_box :enable_quantity_based_requests, as: :boolean %>&nbsp;
+        <%= pf.label :enable_quantity_based_requests, "Enable Quantity-based Requests" %>
+      </div>
+    <% end %>
+
+    <% if pf.object.organization.enable_child_based_requests? %>
+      <div class="form-group">
+        <%= pf.check_box :enable_child_based_requests, as: :boolean %>&nbsp;
+        <%= pf.label :enable_child_based_requests, "Enable Child-based Requests (unclick if you only do bulk requests)" %>
+      </div>
+    <% end %>
+
+    <% if pf.object.organization.enable_individual_requests? %>
+      <div class="form-group">
+        <%= pf.check_box :enable_individual_requests, as: :boolean %>&nbsp;
+        <%= pf.label :enable_individual_requests, "Enable Requests for Individuals" %>
+      </div>
+    <% end %>
+  <% end %>
+
+  <!-- Submit Buttons -->
+  <div class="form-group mt-4 d-flex justify-content-start">
+    <%= f.button :submit, 'Save and Next', class: 'btn btn-primary mr-2' %>
+    <%= f.button :submit, 'Submit for Approval', class: 'btn btn-success' %>
+  </div>
+<% end %>

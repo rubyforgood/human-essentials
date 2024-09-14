@@ -51,8 +51,10 @@
     </div>
   <% end %>
 
-  <%# Buttons: FIXME: 4504 need separate actions for these %>
+  <%# FIXME: 4504 need separate actions for these %>
+  <%# TODO: 4504 hidden field may not be the best way to populate open_section %>
   <div class="form-group mt-4 d-flex justify-content-start">
+    <%= hidden_field_tag :open_section, 'program_delivery_address' %>
     <%= f.button :submit, 'Save and Next', class: 'btn btn-primary mr-2' %>
     <%= f.button :submit, 'Submit for Approval', class: 'btn btn-success' %>
   </div>

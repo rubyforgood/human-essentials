@@ -7,6 +7,7 @@ module Partners
       @client_share_total = current_partner.profile.client_share_total
 
       if Flipper.enabled?("partner_step_form")
+        # TODO: 4504 need to populate `open_section` param with the correct value
         render "partners/profiles/step/edit"
       else
         render "edit"
@@ -17,11 +18,18 @@ module Partners
       @counties = County.in_category_name_order
       result = PartnerProfileUpdateService.new(current_partner, partner_params, profile_params).call
       if result.success?
-        flash[:success] = "Details were successfully updated."
-        redirect_to partners_profile_path
+        if Flipper.enabled?("partner_step_form")
+          # TODO: 4504 need better logic to determine which section to open
+          # TODO: 4504 do we also need a flash message to let user know that section was updated
+          open_section = params[:open_section] || "agency_information"
+          redirect_to edit_partners_profile_path(open_section: open_section)
+        else
+          flash[:success] = "Details were successfully updated."
+          redirect_to partners_profile_path
+        end
       else
         flash[:error] = "There is a problem. Try again:  %s" % result.error
-        render :edit
+        render Flipper.enabled?("partner_step_form") ? "partners/profiles/step/edit" : :edit
       end
     end
 
