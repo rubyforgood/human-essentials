@@ -1,5 +1,5 @@
 class PartnerGroupsController < ApplicationController
-  before_action :set_partner_groups, only: %i[edit destroy]
+  before_action :set_partner_group, only: %i[edit destroy]
 
   def new
     @partner_group = current_organization.partner_groups.new
@@ -41,7 +41,7 @@ class PartnerGroupsController < ApplicationController
 
   private
 
-  def set_partner_groups
+  def set_partner_group
     @partner_group = current_organization.partner_groups.find(params[:id])
   end
 

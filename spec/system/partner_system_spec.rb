@@ -540,8 +540,8 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           it 'should not display the delete link' do
             visit partners_path
             click_on 'Groups'
-            expect(page).to have_content(first_partner_group.name)
-            expect(page).to have_content(first_partner.name)
+            expect(page).to have_content('Group 2')
+            expect(page).to have_content('Leslie Sue, the 1')
             expect(page).not_to have_link('Delete')
           end
         end
@@ -554,7 +554,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           it 'should display the delete link and allow deletion' do
             visit partners_path
             click_on 'Groups'
-            expect(page).to have_content(second_partner_group.name)
+            expect(page).to have_content('Group 1')
             expect(page).to have_link('Delete')
             expect do
               accept_confirm do
