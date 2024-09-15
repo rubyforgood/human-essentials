@@ -190,6 +190,13 @@ RSpec.describe Partners::Profile, type: :model do
       profile.update(pick_up_email: "")
       expect(profile.split_pick_up_emails).to match_array([])
     end
+
+    it "should correctly split strings" do
+      profile.update(pick_up_email: "test me, pick_up@org.com, pick_up2@org.com, test me")
+      expect(profile.split_pick_up_emails).to match_array(["test", "me", "pick_up@org.com", "pick_up2@org.com", "test", "me"])
+      profile.update(pick_up_email: "test me. pick_up@org.com, pick_up2@org.com. test me")
+      expect(profile.split_pick_up_emails).to match_array(["test", "me.", "pick_up@org.com", "pick_up2@org.com.", "test", "me"])
+    end
   end
 
   describe "pick up email address validation" do
@@ -211,8 +218,25 @@ RSpec.describe Partners::Profile, type: :model do
       let(:profile) { build(:partner_profile, pick_up_email: "pick_up@org.com, pick_up2@org.com, asdf") }
       it "should not allow invalid email addresses" do
         expect(profile).to_not be_valid
+        profile.update(pick_up_email: "test me, pick_up@org.com, pick_up2@org.com, test me")
+        expect(profile).to_not be_valid
         profile.update(pick_up_email: "pick_up@org.com, pick_up2@org.com")
         expect(profile).to be_valid
+      end
+
+      it "should not allow input having emails separated by non-word characters" do
+        profile.update(pick_up_email: "test me. pick_up@org.com, pick_up2@org.com. test me")
+        expect(profile).to_not be_valid
+        profile.update(pick_up_email: "pick_up@org.com. pick_up2@org.com")
+        expect(profile).to_not be_valid
+        profile.update(pick_up_email: "pick_up@org.com.pick_up2@org.com")
+        expect(profile).to_not be_valid
+        profile.update(pick_up_email: "pick_up@org.com/ pick_up2@org.com/ pick_up3@org.com")
+        expect(profile).to_not be_valid
+        profile.update(pick_up_email: "pick_up@org.com- pick_up2@org.com- pick_up3@org.com")
+        expect(profile).to_not be_valid
+        profile.update(pick_up_email: "pick_up@org.com' pick_up2@org.com' pick_up3@org.com")
+        expect(profile).to_not be_valid
       end
 
       it "should handle nil value" do
