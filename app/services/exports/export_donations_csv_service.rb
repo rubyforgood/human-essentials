@@ -80,6 +80,9 @@ module Exports
         "Variety of Items" => ->(donation) {
           donation.line_items.map(&:name).uniq.size
         },
+        "In-Kind Value" => ->(donation) {
+          donation.value_per_itemizable
+        },
         "Comments" => ->(donation) {
           donation.comment
         }

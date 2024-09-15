@@ -51,6 +51,7 @@ RSpec.describe Exports::ExportDonationsCSVService do
         "Storage Location",
         "Quantity of Items",
         "Variety of Items",
+        "In-Kind Value",
         "Comments"
       ] + expected_item_headers
     end
@@ -84,6 +85,7 @@ RSpec.describe Exports::ExportDonationsCSVService do
           donation.storage_view,
           donation.line_items.total,
           total_item_quantity.count(&:positive?),
+          donation.value_per_itemizable,
           donation.comment
         ]
 
