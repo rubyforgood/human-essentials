@@ -122,7 +122,7 @@ module Partners
     def split_pick_up_emails
       return nil if pick_up_email.nil?
 
-      pick_up_email.delete(" ").delete_prefix(",").delete_suffix(",").split(",")
+      pick_up_email.split(/,|\s+/).compact_blank
     end
 
     private
