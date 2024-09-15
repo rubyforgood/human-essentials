@@ -70,6 +70,12 @@ RSpec.describe Partner, type: :model do
     end
 
     it { should validate_numericality_of(:quota).allow_nil }
+
+    it "validates that the quota is greater than or equal to 0" do
+      expect(build(:partner, quota: -1)).not_to be_valid
+      expect(build(:partner, quota: 0)).to be_valid
+      expect(build(:partner, quota: 1)).to be_valid
+    end
   end
 
   context "callbacks" do
