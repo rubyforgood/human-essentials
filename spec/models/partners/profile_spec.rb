@@ -169,28 +169,26 @@ RSpec.describe Partners::Profile, type: :model do
 
   describe "split pick up email" do
     let(:profile) { build(:partner_profile, pick_up_email: "pick_up@org.com, pick_up2@org.com") }
-    context "should handle different inputs" do
-      it "should disregard commas at the beginning or end of the string" do
-        profile.update(pick_up_email: ", pick_up@org.com, pick_up2@org.com,")
-        expect(profile.split_pick_up_emails).to match_array(["pick_up@org.com", "pick_up2@org.com"])
-      end
+    it "should disregard commas at the beginning or end of the string" do
+      profile.update(pick_up_email: ", pick_up@org.com, pick_up2@org.com,")
+      expect(profile.split_pick_up_emails).to match_array(["pick_up@org.com", "pick_up2@org.com"])
+    end
 
-      it "should allow optional whitespace between email addresses" do
-        profile.update(pick_up_email: "pick_up@org.com, pick_up2@org.com")
-        expect(profile.split_pick_up_emails).to match_array(["pick_up@org.com", "pick_up2@org.com"])
-        profile.update(pick_up_email: "pick_up@org.com,pick_up2@org.com")
-        expect(profile.split_pick_up_emails).to match_array(["pick_up@org.com", "pick_up2@org.com"])
-      end
+    it "should allow optional whitespace between email addresses" do
+      profile.update(pick_up_email: "pick_up@org.com, pick_up2@org.com")
+      expect(profile.split_pick_up_emails).to match_array(["pick_up@org.com", "pick_up2@org.com"])
+      profile.update(pick_up_email: "pick_up@org.com,pick_up2@org.com")
+      expect(profile.split_pick_up_emails).to match_array(["pick_up@org.com", "pick_up2@org.com"])
+    end
 
-      it "should handle nil value" do
-        profile.update(pick_up_email: nil)
-        expect(profile.split_pick_up_emails).to be_nil
-      end
+    it "should handle nil value" do
+      profile.update(pick_up_email: nil)
+      expect(profile.split_pick_up_emails).to be_nil
+    end
 
-      it "should return empty array if for when pick_up_email is an empty string" do
-        profile.update(pick_up_email: "")
-        expect(profile.split_pick_up_emails).to match_array([])
-      end
+    it "should return empty array if for when pick_up_email is an empty string" do
+      profile.update(pick_up_email: "")
+      expect(profile.split_pick_up_emails).to match_array([])
     end
   end
 
