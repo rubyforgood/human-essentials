@@ -22,9 +22,9 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           visit partners_path
 
           assert page.has_content? partner_awaiting_approval.name
-          click_on 'Review Application'
+          click_on "Review Applicant's Profile"
 
-          assert page.has_content?('Application & Information')
+          assert page.has_content?('Partner Profile')
           click_on 'Approve Partner'
           assert page.has_content? 'Partner approved!'
 
@@ -45,7 +45,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
           assert page.has_content? partner_awaiting_approval.name
 
-          click_on 'Review Application'
+          click_on "Review Applicant's Profile"
           click_on 'Approve Partner'
           assert page.has_content? "Failed to approve partner because: #{fake_error_msg}"
 
@@ -539,5 +539,5 @@ end
 def visit_approval_page(partner_name:)
   visit partners_path
   ele = find('tr', text: partner_name)
-  within(ele) { click_on "Review Application" }
+  within(ele) { click_on "Review Applicant's Profile" }
 end
