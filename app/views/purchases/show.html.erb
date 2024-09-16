@@ -30,17 +30,28 @@
           <div class="card-body p-0">
             <table class="table">
               <thead>
-              <tr>
-                <th>Date of Purchase:</th>
-                <th>Vendor:</th>
-                <th>Storage Location:</th>
-              </tr>
+                <tr>
+                  <th>Date of Purchase:</th>
+                  <th>Vendor:</th>
+                  <th>Storage Location:</th>
+                </tr>
               </thead>
               <tbody>
               <tr>
-              <td><%= @purchase.issued_at.to_fs(:distribution_date) %> (entered: <%= @purchase.created_at.to_fs(:distribution_date) %>)</td>
-              <td><%= @purchase.purchased_from_view %></td>
-              <td><%= @purchase.storage_view %></td>
+                <td><%= @purchase.issued_at.to_fs(:distribution_date) %> (entered: <%= @purchase.created_at.to_fs(:distribution_date) %>)</td>
+                <td><%= @purchase.purchased_from_view %></td>
+                <td><%= @purchase.storage_view %></td>
+              </tr>
+            </table>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Comment:</th>
+                </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <td><%= @purchase.comment || '' %></td>
               </tr>
             </table>
           </div>
