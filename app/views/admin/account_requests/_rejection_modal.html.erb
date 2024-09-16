@@ -1,19 +1,18 @@
-<div class="modal" id="rejection-modal">
+<div class="modal" id="reject-modal">
   <div class="modal-dialog">
-
-    <!-- Modal content-->
+    <!-- Dynamic modal content-->
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title">
-          Reject Account Request
+        <h4 class="modal-title" style="text-transform:capitalize">
         </h4>
         <button type="button" class="close btn-close" data-bs-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">
-        <%= simple_form_for AccountRequest.new, url: reject_admin_account_requests_path, method: :post do |f| %>
+        <%= simple_form_for AccountRequest.new, url: '', method: :post do |f| %>
           <%= f.hidden_field :id, id: :reject_account_request_id %>
           <div class="form-inputs">
             <%= f.input :rejection_reason, required: true, autofocus: true, wrapper: :input_group %>
+            <a class="text-danger" style="display:none">Reason must be provided</a>
           </div>
           <%= submit_button %>
         <% end %>
@@ -23,14 +22,24 @@
   </div>
 
 </div>
-
+<!-- set url and title dynamically -->
 <script type="module">
   $(() => {
     $('.reject-button').click((event) => {
       event.preventDefault();
+      let url = `/admin/account_requests/${$(event.target).data('modal')}`
+
       $('#account_request_rejection_reason').val('');
       $('#reject_account_request_id').val($(event.target).data('requestId'));
-      $('#rejection-modal').modal('show');
+      $('#new_account_request').attr('action', url)
+      $('.modal-title').text(`${$(event.target).data('modal')} Account Request`)
+      $('#reject-modal').modal('show');
+    })
+    $('button[type="submit"]').click((event) => {
+      if($('#reject-modal #account_request_rejection_reason').val().trim() === ''){
+        event.preventDefault();
+        $('.text-danger').show()
+      }
     })
   })
 </script>

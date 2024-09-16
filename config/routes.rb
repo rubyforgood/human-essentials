@@ -76,6 +76,7 @@ Rails.application.routes.draw do
     resources :barcode_items
     resources :account_requests, only: [:index] do
       post :reject, on: :collection
+      post :close, on: :collection
       get :for_rejection, on: :collection
     end
     resources :questions
