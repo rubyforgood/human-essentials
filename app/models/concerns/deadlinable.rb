@@ -2,20 +2,19 @@ module Deadlinable
   extend ActiveSupport::Concern
   MIN_DAY_OF_MONTH = 1
   MAX_DAY_OF_MONTH = 28
-  EVERY_NTH_COLLECTION = [["First", 1], ["Second", 2], ["Third", 3], ["Fourth", 4]].freeze
+  EVERY_NTH_COLLECTION = [["First", 1], ["Second", 2], ["Third", 3], ["Fourth", 4], ["Last", -1]].freeze
   WEEK_DAY_COLLECTION = [["Sunday", 0], ["Monday", 1], ["Tuesday", 2], ["Wednesday", 3], ["Thursday", 4], ["Friday", 5], ["Saturday", 6]].freeze
 
   included do
-    attr_accessor :every_n_months, :date_or_week_day, :date, :day_of_week, :every_nth_day
+    attr_accessor :date_or_week_day, :date, :day_of_week, :every_nth_day
     attr_reader :every_nth_collection, :week_day_collection, :date_or_week_day_collection
     validates :deadline_day, numericality: {only_integer: true, less_than_or_equal_to: MAX_DAY_OF_MONTH,
                                             greater_than_or_equal_to: MIN_DAY_OF_MONTH, allow_nil: true}
-    validate :reminder_on_deadline_day?, if: -> { every_n_months.present? }
-    validate :reminder_is_within_range?, if: -> { every_n_months.present? }
-    validates :date_or_week_day, inclusion: {in: %w[date week_day]}, if: -> { every_n_months.present? }
-    validates :date, presence: true, if: -> { date_or_week_day == "date" && every_n_months.present? }
-    validates :day_of_week, presence: true, if: -> { date_or_week_day == "week_day" && every_n_months.present? }, inclusion: {in: %w[0 1 2 3 4 5 6]}
-    validates :every_nth_day, presence: true, if: -> { date_or_week_day == "week_day" && every_n_months.present? }, inclusion: {in: %w[1 2 3 4]}
+    validate :reminder_on_deadline_day?, if: -> { date.present? }
+    validate :reminder_is_within_range?, if: -> { date.present? }
+    validates :date_or_week_day, inclusion: {in: %w[date week_day]}, if: -> { date_or_week_day.present? }
+    validates :day_of_week, if: -> { day_of_week.present? }, inclusion: {in: %w[0 1 2 3 4 5 6]}
+    validates :every_nth_day, if: -> { every_nth_day.present? }, inclusion: {in: %w[1 2 3 4 -1]}
   end
 
   def convert_to_reminder_schedule(day)
@@ -36,7 +35,6 @@ module Deadlinable
     date = rule["validations"][:day_of_month]&.first&.value
 
     results = {}
-    results[:every_n_months] = rule["interval"]
     results[:date_or_week_day] = date ? "date" : "week_day"
     results[:date] = date
     results[:day_of_week] = rule["validations"][:day_of_week]&.first&.day
@@ -50,7 +48,6 @@ module Deadlinable
     return if reminder_schedule.blank?
     results = from_ical(reminder_schedule)
     return if results.nil?
-    self.every_n_months = results[:every_n_months]
     self.date_or_week_day = results[:date_or_week_day]
     self.date = results[:date]
     self.day_of_week = results[:day_of_week]
@@ -75,11 +72,10 @@ module Deadlinable
 
   def should_update_reminder_schedule
     if reminder_schedule.blank?
-      return every_n_months.present?
+      return date_or_week_day.present?
     end
     sched = from_ical(reminder_schedule)
-    every_n_months != sched[:every_n_months].presence.to_s ||
-      date_or_week_day != sched[:date_or_week_day].presence.to_s ||
+    date_or_week_day != sched[:date_or_week_day].presence.to_s ||
       date != sched[:date].presence.to_s ||
       day_of_week != sched[:day_of_week].presence.to_s ||
       every_nth_day != sched[:every_nth_day].presence.to_s
@@ -87,11 +83,13 @@ module Deadlinable
 
   def create_schedule
     schedule = IceCube::Schedule.new(Time.zone.now.to_date)
-    return nil if every_n_months.blank? || every_n_months.to_i.zero?
+    return nil if date_or_week_day.blank?
     if date_or_week_day == "date"
-      schedule.add_recurrence_rule(IceCube::Rule.monthly(every_n_months.to_i).day_of_month(date.to_i))
+      return nil if date.blank?
+      schedule.add_recurrence_rule(IceCube::Rule.monthly(1).day_of_month(date.to_i))
     else
-      schedule.add_recurrence_rule(IceCube::Rule.monthly(every_n_months.to_i).day_of_week(day_of_week.to_i => [every_nth_day.to_i]))
+      return nil if day_of_week.blank? || every_nth_day.blank?
+      schedule.add_recurrence_rule(IceCube::Rule.monthly(1).day_of_week(day_of_week.to_i => [every_nth_day.to_i]))
     end
     schedule.to_ical
   rescue

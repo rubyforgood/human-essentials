@@ -5,14 +5,6 @@
               next_month: Date::MONTHNAMES[Date.current.next_month.month]
             }) do %>
 
-      <%= f.input :every_n_months,
-      as: :integer,
-      label: 'Send reminders every X months',
-      class: "deadline-day-pickers__reminder-day form-control",
-      hint: "Enter the number of months between reminders",
-      :placeholder => "1",
-      :input_html => {:style=> 'width: 100px', :min => 0, :max => 12} %>
-
       <%= f.label :date_or_week_day, 'Send reminders on a specific date (eg "the 5th") or a day of the week (eg "the first Tuesday")?' %>
       <br>
       <%= f.radio_button :date_or_week_day, 'date', label: 'Date', id: 'toggle-to-date' %>
