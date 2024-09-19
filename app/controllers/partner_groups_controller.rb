@@ -32,10 +32,13 @@ class PartnerGroupsController < ApplicationController
   end
 
   def destroy
-    @partner_group.destroy
-
-    respond_to do |format|
-      format.html { redirect_to partners_path + "#nav-partner-groups", notice: "Partner Group was successfully deleted." }
+    if @partner_group.partners.any?
+      redirect_to partners_path + "#nav-partner-groups", alert: "Partner Group cannot be deleted."
+    else
+      @partner_group.destroy
+      respond_to do |format|
+        format.html { redirect_to partners_path + "#nav-partner-groups", notice: "Partner Group was successfully deleted." }
+      end
     end
   end
 
