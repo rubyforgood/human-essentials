@@ -1,6 +1,6 @@
 # Donation Sites
 
-Donation sites are places where people drop off supplies and donations. You can manage the sites' information on the "Donation Sites" page under the "Community" section. 
+Donation sites are places where people drop off donations. You can manage the sites' information on the "Donation Sites" page under the "Community" section. 
 
 ![Donation Sites](images/community/donation_sites/donation_sites.jpg)
 
@@ -22,13 +22,13 @@ After saving the site's details there will be a new row on the Donation Sites pa
 
 ## Viewing Donation Site information
 
-Click on "View" which shows the donation site name, address, contact name, e-mail, phone number, storage location, quantity of items, variety of items	and lets you view the full details of each donation from the source section. 
+Clicking on the "view" button beside a donation site will show detailed information for that site, including the donation site name, address, contact name, e-mail, phone number, storage location. It also shows a list of the donations for that site including the quantity of items and variety of items. You can drill down to see the full details of each donation by clicking "View donation details".
 
 ![Donation Sites Details](images/community/donation_sites/donation_sites_details.jpg)
 
 ## Editing Donation Site information
 
-Clicking on the "Edit" button lets you edit the donation sites's details where you can change the name, address, contact name, email and phone number.
+Clicking on the "Edit" button beside a donation site in the donation site list lets you edit the name, address, contact name, email and phone number.
 
 ![Edit Donation Site Details](images/community/donation_sites/edit_donation_site.jpg)
 
@@ -40,6 +40,6 @@ Use the "Deactivate" button to delete information about a donation site that is 
 
 ## Exporting Donation Sites
 
-You can export all the donation sites by clicking on the "Export Donation Sites" button.
+You can export the active donation sites by clicking on the "Export Donation Sites" button. This will provide a .csv file containing the name, address, and contact information for each active donation site.
 
 ![Export Donation Sites](images/community/donation_sites/export_donation_sites.jpg)
