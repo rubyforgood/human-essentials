@@ -449,10 +449,10 @@ RSpec.describe Organization, type: :model do
 
   describe 'reminder_schedule' do
     it "cannot exceed 28 if date_or_week_day is date" do
-      expect(build(:organization, every_n_months: 1, date_or_week_day: 'date', date: 28)).to be_valid
-      expect(build(:organization, every_n_months: 1, date_or_week_day: 'date', date: 29)).to_not be_valid
-      expect(build(:organization, every_n_months: 1, date_or_week_day: 'date', date: 0)).to_not be_valid
-      expect(build(:organization, every_n_months: 1, date_or_week_day: 'date', date: -5)).to_not be_valid
+      expect(build(:organization, date_or_week_day: 'date', date: 28)).to be_valid
+      expect(build(:organization, date_or_week_day: 'date', date: 29)).to_not be_valid
+      expect(build(:organization, date_or_week_day: 'date', date: 0)).to_not be_valid
+      expect(build(:organization, date_or_week_day: 'date', date: -5)).to_not be_valid
     end
   end
   describe 'deadline_day' do

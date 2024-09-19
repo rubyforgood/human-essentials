@@ -499,7 +499,6 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           # Opt in to sending deadline reminders
           check 'Yes'
 
-          fill_in "partner_group_every_n_months", with: 1, wait: page_content_wait
           choose 'toggle-to-date'
           fill_in "partner_group_date", with: 1
           fill_in "partner_group_deadline_day", with: 25
@@ -548,14 +547,13 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           click_on 'Edit'
           # Opt in to sending deadline reminders
           check 'Yes'
-          fill_in "partner_group_every_n_months", with: 2, wait: page_content_wait
-          choose 'toggle-to-week-day'
+          choose 'toggle-to-week-day', wait: page_content_wait
           select "Second", from: "partner_group_every_nth_day"
           select "Thursday", from: "partner_group_day_of_week"
           fill_in "partner_group_deadline_day", with: 24
 
           find_button('Update Partner Group').click
-          assert page.has_content? 'Every 2 months on the 2nd Thursday', wait: page_content_wait
+          assert page.has_content? 'Monthly on the 2nd Thursday', wait: page_content_wait
         end
       end
     end

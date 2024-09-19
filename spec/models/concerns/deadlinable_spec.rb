@@ -33,35 +33,36 @@ RSpec.describe Deadlinable, type: :model do
         .allow_nil
     end
 
-    it 'validates the date field presence if date_or_week_day is "date"' do
-      dummy.every_n_months = 1
-      dummy.date_or_week_day = "date"
-      is_expected.to validate_presence_of(:date)
-    end
-
-    it 'validate the day_of_week field presence if date_or_week_day is "week_day"' do
-      dummy.every_n_months = 1
-      dummy.date_or_week_day = "week_day"
-      is_expected.to validate_presence_of(:day_of_week)
-      is_expected.to validate_presence_of(:every_nth_day)
-    end
-
     it "validates the date_or_week_day field inclusion" do
-      dummy.every_n_months = 1
       is_expected.to validate_inclusion_of(:date_or_week_day).in_array(%w[date week_day])
     end
 
+    it "validates the day of week field inclusion" do
+      dummy.day_of_week = "0"
+      expect(dummy).to be_valid
+      dummy.day_of_week = "A"
+      expect(dummy).not_to be_valid
+    end
+
+    it "validates the date_or_week_day field inclusion" do
+      dummy.every_nth_day = "1"
+      expect(dummy).to be_valid
+      dummy.every_nth_day = "B"
+      expect(dummy).not_to be_valid
+    end
+
     it "validates that the reminder schedule's date fall within the range" do
-      dummy.every_n_months = 1
       dummy.date_or_week_day = "date"
       dummy.date = 29
 
       expect(dummy).not_to be_valid
       expect(dummy.errors.added?(:date, "Reminder day must be between 1 and 28")).to be_truthy
+
+      dummy.date = -1
+      expect(dummy).not_to be_valid
     end
 
     it "validates that reminder day is not the same as deadline day" do
-      dummy.every_n_months = 1
       dummy.date_or_week_day = "date"
       dummy.date = dummy.deadline_day
 

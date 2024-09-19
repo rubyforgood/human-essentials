@@ -98,8 +98,8 @@ class OrganizationsController < ApplicationController
       :enable_individual_requests, :enable_quantity_based_requests,
       :ytd_on_distribution_printout, :one_step_partner_invite,
       :hide_value_columns_on_receipt, :hide_package_column_on_receipt,
-      :signature_for_distribution_pdf, :every_n_months,
-      :date_or_week_day, :date, :day_of_week, :every_nth_day,
+      :signature_for_distribution_pdf, :date_or_week_day, :date, :day_of_week,
+      :every_nth_day,
       partner_form_fields: [],
       request_unit_names: []
     )

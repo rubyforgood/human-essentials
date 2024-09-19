@@ -36,8 +36,8 @@ RSpec.describe PartnerGroup, type: :model do
 
     describe 'reminder_schedule day > 28 and <=0' do
       it 'raises error if unmet' do
-        expect { partner_group.update!(every_n_months: 1, date_or_week_day: 'date', date: 29) }.to raise_error(ActiveRecord::RecordInvalid)
-        expect { partner_group.update!(every_n_months: 1, date_or_week_day: 'date', date: -5) }.to raise_error(ActiveRecord::RecordInvalid)
+        expect { partner_group.update!(date_or_week_day: 'date', date: 29) }.to raise_error(ActiveRecord::RecordInvalid)
+        expect { partner_group.update!(date_or_week_day: 'date', date: -5) }.to raise_error(ActiveRecord::RecordInvalid)
       end
     end
   end

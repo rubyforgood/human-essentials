@@ -84,7 +84,7 @@ class Admin::OrganizationsController < AdminController
   def organization_params
     params.require(:organization)
           .permit(:name, :short_name, :street, :city, :state, :zipcode, :email, :url, :logo, :intake_location, :default_email_text, :account_request_id,
-                  :every_n_months, :date_or_week_day, :date, :day_of_week, :every_nth_day, :deadline_day,
+                  :date_or_week_day, :date, :day_of_week, :every_nth_day, :deadline_day,
                   users_attributes: %i(name email organization_admin), account_request_attributes: %i(ndbn_member_id id))
   end
 
