@@ -85,7 +85,7 @@ RSpec.describe Exports::ExportDonationsCSVService do
           donation.storage_view,
           donation.line_items.total,
           total_item_quantity.count(&:positive?),
-          donation.value_per_itemizable,
+          donation.in_kind_value_money,
           donation.comment
         ]
 
