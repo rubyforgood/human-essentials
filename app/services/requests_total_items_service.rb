@@ -6,39 +6,29 @@ class RequestsTotalItemsService
   def calculate
     return unless requests
 
-    request_items_array = []
-
-    request_items.each do |items|
-      items.each do |json|
-        request_items_array << [item_name(json['item_id']), json['quantity']]
-      end
+    totals = {}
+    item_requests.each do |item_request|
+      name = item_name(item_request)
+      totals[name] ||= 0
+      totals[name] += item_request.quantity.to_i
     end
 
-    request_items_array.inject({}) do |item, (quantity, total)|
-      item[quantity] ||= 0
-      item[quantity] += total.to_i
-      item
-    end
+    totals
   end
 
   private
 
   attr_accessor :requests
 
-  def request_items
-    @request_items ||= requests.pluck(:request_items)
+  def item_requests
+    @item_requests ||= requests.flat_map(&:item_requests)
   end
 
-  def request_items_ids
-    request_items.flat_map { |jitem| jitem.map { |item| item["item_id"] } }
-  end
-
-  def items_names
-    @items_names ||= Item.where(id: request_items_ids).as_json(only: [:id, :name])
-  end
-
-  def item_name(id)
-    item_found = items_names.find { |item| item["id"] == id }
-    item_found&.fetch('name') || '*Unknown Item*'
+  def item_name(item_request)
+    if Flipper.enabled?(:enable_packs) && item_request.request_unit
+      "#{item_request.name} - #{item_request.request_unit}"
+    else
+      item_request.name
+    end
   end
 end
