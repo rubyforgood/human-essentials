@@ -81,7 +81,7 @@ module Exports
           donation.line_items.map(&:name).uniq.size
         },
         "In-Kind Value" => ->(donation) {
-          donation.value_per_itemizable
+          donation.in_kind_value_money
         },
         "Comments" => ->(donation) {
           donation.comment
