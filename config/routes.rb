@@ -226,7 +226,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :partner_groups, only: [:new, :create, :edit, :update]
+  resources :partner_groups, only: %i(new create edit update destroy)
 
   resources :product_drives
 
