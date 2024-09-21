@@ -15,7 +15,7 @@ class AdjustmentsController < ApplicationController
     @paginated_adjustments = @adjustments.page(params[:page])
 
     @storage_locations = Adjustment.storage_locations_adjusted_for(current_organization).uniq
-    @users = current_organization.users
+    @users = current_organization.users.sort_by { |user| user.name.to_s.downcase }
 
     respond_to do |format|
       format.html

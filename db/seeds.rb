@@ -149,7 +149,9 @@ end
   user = User.create(
     email: user_data[:email],
     password: 'password!',
-    password_confirmation: 'password!'
+    password_confirmation: 'password!',
+    organization: user_data[:organization], # Any reason not to set this?
+    name: user_data[:email].split('@').first # Any reason not to set this?
   )
 
   if user_data[:organization]
