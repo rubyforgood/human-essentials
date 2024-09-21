@@ -7,8 +7,9 @@ module Partners
       @client_share_total = current_partner.profile.client_share_total
 
       if Flipper.enabled?("partner_step_form")
-        # TODO: 4504 need to populate `open_section` param with the correct value
-        # @open_section = ...
+        @open_section = params[:open_section] || "agency_information"
+        # temp debug
+        Rails.logger.info("=== [ProfilesController#edit] open_section=#{@open_section}")
         render "partners/profiles/step/edit"
       else
         render "edit"
@@ -20,10 +21,8 @@ module Partners
       result = PartnerProfileUpdateService.new(current_partner, partner_params, profile_params).call
       if result.success?
         if Flipper.enabled?("partner_step_form")
-          # TODO: 4504 need better logic to determine which section to open
-          # TODO: 4504 maybe the open_section logic doesn't belong here but rather in `edit` action
-          # TODO: 4504 do we also need a flash message to let user know that section was updated
-          open_section = params[:open_section] || "agency_information"
+          submitted_partial = params[:submitted_partial]
+          open_section = next_step(submitted_partial)
           redirect_to edit_partners_profile_path(open_section: open_section)
         else
           flash[:success] = "Details were successfully updated."
@@ -36,6 +35,37 @@ module Partners
     end
 
     private
+
+    # TODO: 4504 move this to somewhere easier to test like a service
+    # TODO: 4504 implement logic to determine which section should be next -> complexity dynamics!
+    # Make use of partner.partials_to_show for dynamic sections
+    # | Partial                         | Converted to Step | Type    | Default   | Next                            |
+    # | ------------------------------- | ----------------- | ------- | --------- | ------------------------------- |
+    # | agency_information_form         | true              | static  | expanded  | program_delivery_address_form   |
+    # | program_delivery_address_form   | true              | static  | collapsed | media_information               |
+    # | media_information               | true              | dynamic | collapsed | agency_stability                |
+    # | agency_stability                | true              | dynamic | collapsed | organizational_capacity         |
+    # | organizational_capacity         | true              | dynamic | collapsed | sources_of_funding              |
+    # | sources_of_funding              | true              | dynamic | collapsed | area_served                     |
+    # | area_served                     | true              | dynamic | collapsed | population_served               |
+    # | population_served               | true              | dynamic | collapsed | executive_director              |
+    # | executive_director              | true              | dynamic | collapsed | pick_up_person                  |
+    # | pick_up_person                  | true              | dynamic | collapsed | agency_distribution_information |
+    # | agency_distribution_information | true              | dynamic | collapsed | attached_documents              |
+    # | attached_documents              | true              | dynamic | collapsed | partner_settings                |
+    # | partner_settings                | true              | static  | collapsed | NA                              |
+    def next_step(submitted_partial)
+      case submitted_partial
+      when "agency_information"
+        "program_delivery_address"
+      when "program_delivery_address"
+        "media_information"
+      when "partner_settings"
+        "NA"
+      else
+        "agency_information"
+      end
+    end
 
     def partner_params
       params.require(:partner).permit(:name)
