@@ -20,6 +20,7 @@
   </div><!-- /.container-fluid -->
 </section>
 
+<%# TODO: 4504 more descriptive id than accordionExample %>
 <div class="accordion" id="accordionExample">
 
   <%# Agency Information: By default, this section is expanded and is always rendered %>
@@ -60,6 +61,21 @@
   <%# Have to figure out which one should be open and the rest are collapsed based on what section user just finished editing %>
   <%# Then always render partner_settings %>
   <%# See `app/views/partners/profiles/edit.html.erb` for original logic %>
+  <% current_partner.partials_to_show.each do |partial| %>
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <%# TODO: 4504 How to populate the title? %>
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#<%= partial %>" aria-expanded="false" aria-controls="<%= partial %>">
+          <%= partial %>
+        </button>
+      </h2>
+      <div id="<%= partial %>" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+        <div class="accordion-body">
+          <%= render "partners/profiles/step/#{partial}_form", partner: current_partner, profile: current_partner.profile %>
+        </div>
+      </div>
+  </div>
+  <% end %>
 
   <%# Settings: This is always rendered, by default collapsed %>
   <div class="accordion-item">

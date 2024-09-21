@@ -1,0 +1,20 @@
+<%= simple_form_for partner, url: partners_profile_path do |f| %>
+  <%= f.fields_for :profile, profile do |pf| %>
+    <h3><strong>Pick Up Person</strong></h3>
+
+    <div class="form-group">
+      <%= pf.input :pick_up_name, label: "Pick Up Person Name", class: "form-control" %>
+    </div>
+    <div class="form-group">
+      <%= pf.input :pick_up_phone, label: "Pick Up Person's Phone #", class: "form-control" %>
+    </div>
+    <div class="form-group">
+      <%= pf.input :pick_up_email, label: "Pick Up Person's Email", class: "form-control" %>
+    </div>
+  <% end %>
+
+  <div class="form-group mt-4 d-flex justify-content-start">
+    <%= f.button :submit, 'Save and Next', class: 'btn btn-primary mr-2' %>
+    <%= f.button :submit, 'Submit for Approval', class: 'btn btn-success' %>
+  </div>
+<% end %>

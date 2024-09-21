@@ -8,6 +8,7 @@ module Partners
 
       if Flipper.enabled?("partner_step_form")
         # TODO: 4504 need to populate `open_section` param with the correct value
+        # @open_section = ...
         render "partners/profiles/step/edit"
       else
         render "edit"
@@ -20,6 +21,7 @@ module Partners
       if result.success?
         if Flipper.enabled?("partner_step_form")
           # TODO: 4504 need better logic to determine which section to open
+          # TODO: 4504 maybe the open_section logic doesn't belong here but rather in `edit` action
           # TODO: 4504 do we also need a flash message to let user know that section was updated
           open_section = params[:open_section] || "agency_information"
           redirect_to edit_partners_profile_path(open_section: open_section)

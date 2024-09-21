@@ -1,0 +1,32 @@
+<%= simple_form_for partner, url: partners_profile_path do |f| %>
+  <h3><strong>Area Served (County / Client Share %)</strong></h3>
+
+  <fieldset style="margin-bottom: 2rem">
+    <legend></legend>
+    <div id="served_areas" class="partner-served-area-fields partner-served-areas">
+      <%= render 'served_areas/served_area_fields', form: f %>
+    </div>
+
+    <div class="partner-served_areas-total-row row">
+      <div class="partners-served-areas-total-prompt col-w">Total is:</div>
+      <span id="partners-served-areas-client-share-total" class="partners-served-areas-total-value col-2 numeric" data-area-served-target="total">
+        <%= @client_share_total %> %
+      </span>
+      <div id="partners-served-areas-client-share-total-warning" class="partners-served-areas-total-warning col-8" data-area-served-target="warning">
+        The total client share must be either 0 or 100 %.
+      </div>
+    </div>
+
+    <%# TODO: #4504 figure out how to make this work in the `step` dir of forms %>
+    <div class="row links justify-content-end">
+      <%= add_element_button "Add Another County", container_selector: "#served_areas", id: "__add_partner_served_area" do %>
+        <%= render 'served_areas/served_area_fields', form: f, object: Partners::ServedArea.new %>
+      <% end %>
+    </div>
+  </fieldset>
+
+  <div class="form-group mt-4 d-flex justify-content-start">
+    <%= f.button :submit, 'Save and Next', class: 'btn btn-primary mr-2' %>
+    <%= f.button :submit, 'Submit for Approval', class: 'btn btn-success' %>
+  </div>
+<% end %>
