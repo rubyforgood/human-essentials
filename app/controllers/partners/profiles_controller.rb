@@ -8,8 +8,6 @@ module Partners
 
       if Flipper.enabled?("partner_step_form")
         @open_section = params[:open_section] || "agency_information"
-        # temp debug
-        Rails.logger.info("=== [ProfilesController#edit] open_section=#{@open_section}")
         render "partners/profiles/step/edit"
       else
         render "edit"
@@ -54,15 +52,14 @@ module Partners
     # | attached_documents              | true              | dynamic | collapsed | partner_settings                |
     # | partner_settings                | true              | static  | collapsed | NA                              |
     def next_step(submitted_partial)
-      case submitted_partial
-      when "agency_information"
-        "program_delivery_address"
-      when "program_delivery_address"
-        current_partner.partials_to_show.first
-      when current_partner.partials_to_show.include?(submitted_partial)
+      if current_partner.partials_to_show.include?(submitted_partial)
         next_partner_partial(submitted_partial)
-      when "partner_settings"
-        # TODO: 4504 what to do here? It's the last section
+      elsif submitted_partial == "agency_information"
+        "program_delivery_address"
+      elsif submitted_partial == "program_delivery_address"
+        current_partner.partials_to_show.first
+      elsif submitted_partial == "partner_settings"
+        # TODO: 4504 Handle last one, maybe should never even be getting here?
         "NA"
       else
         "agency_information"
@@ -72,11 +69,7 @@ module Partners
     # TODO: 4504 move this to somewhere easier to test like a service
     def next_partner_partial(submitted_partial)
       index = current_partner.partials_to_show.index(submitted_partial)
-      if index
-        current_partner.partials_to_show[index + 1]
-      else
-        "agency_information"
-      end
+      index.nil? ? "agency_information" : current_partner.partials_to_show[index + 1]
     end
 
     def partner_params
