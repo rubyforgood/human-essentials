@@ -61,10 +61,10 @@
                 <%= clear_filter_button %>
                 <%= modal_button_to("#calculateTotals", {text: "Calculate Product Totals", icon: nil, size: "md", type: "success"}) %>
                 <span class="float-right">
-                  <% if @unfulfilled_requests.exists? %>
+                  <% if @unfulfilled_requests_count > 0 %>
                     <%= print_button_to(
                       print_unfulfilled_requests_path(format: :pdf),
-                      text: "Print Unfulfilled Picklists (#{@unfulfilled_requests.size})",
+                      text: "Print Unfulfilled Picklists (#{@unfulfilled_requests_count})",
                       size: "md") %>
                   <% end %>
                   <%= download_button_to(requests_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Requests", size: "md"}) if @requests.any? %>
