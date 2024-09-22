@@ -1,4 +1,4 @@
-<%= simple_form_for partner, url: partners_profile_path, html: { multipart: true } do |f| %>
+<%= simple_form_for partner, url: partners_profile_path(submitted_partial: "attached_documents"), html: { multipart: true } do |f| %>
   <%= f.fields_for :profile, profile do |pf| %>
     <div class="form-group">
       <h3><strong>Additional Documents</strong></h3>

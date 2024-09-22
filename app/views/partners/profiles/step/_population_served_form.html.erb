@@ -1,4 +1,4 @@
-<%= simple_form_for partner, url: partners_profile_path do |f| %>
+<%= simple_form_for partner, url: partners_profile_path(submitted_partial: "population_served") do |f| %>
   <%= f.fields_for :profile, profile do |pf| %>
     <h3><strong>Population Served</strong></h3>
 
