@@ -1,4 +1,4 @@
-<%= simple_form_for partner, url: partners_profile_path do |f| %>
+<%= simple_form_for partner, url: partners_profile_path(submitted_partial: "media_information") do |f| %>
   <%= f.fields_for :profile, profile do |pf| %>
     <div class="form-group">
       <%= pf.input :website, label: "Website", class: "form-control" %>

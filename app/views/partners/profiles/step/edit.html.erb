@@ -21,6 +21,7 @@
 </section>
 
 <%# TODO: 4504 more descriptive id than accordionExample %>
+<%# TODO: 4504 make use of open_section instance var to target accordion sections for which should be open and the rest should be collapsed %>
 <div class="accordion" id="accordionExample">
 
   <%# Agency Information: By default, this section is expanded and is always rendered %>
@@ -56,11 +57,6 @@
     </div>
   </div>
 
-  <%# TODO: 4504 loop through `current_partner.partials_to_show.each do |partial|` rendering accordion sections %>
-  <%# Make sure to name the new partials in `step` subdir matching `ALL_PARTIALS` in app/models/partner.rb  %>
-  <%# Have to figure out which one should be open and the rest are collapsed based on what section user just finished editing %>
-  <%# Then always render partner_settings %>
-  <%# See `app/views/partners/profiles/edit.html.erb` for original logic %>
   <% current_partner.partials_to_show.each do |partial| %>
     <div class="accordion-item">
       <h2 class="accordion-header">

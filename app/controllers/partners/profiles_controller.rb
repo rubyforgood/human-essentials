@@ -41,8 +41,8 @@ module Partners
     # Make use of partner.partials_to_show for dynamic sections
     # | Partial                         | Converted to Step | Type    | Default   | Next                            |
     # | ------------------------------- | ----------------- | ------- | --------- | ------------------------------- |
-    # | agency_information_form         | true              | static  | expanded  | program_delivery_address_form   |
-    # | program_delivery_address_form   | true              | static  | collapsed | media_information               |
+    # | agency_information              | true              | static  | expanded  | program_delivery_address   |
+    # | program_delivery_address        | true              | static  | collapsed | media_information               |
     # | media_information               | true              | dynamic | collapsed | agency_stability                |
     # | agency_stability                | true              | dynamic | collapsed | organizational_capacity         |
     # | organizational_capacity         | true              | dynamic | collapsed | sources_of_funding              |
@@ -59,9 +59,21 @@ module Partners
       when "agency_information"
         "program_delivery_address"
       when "program_delivery_address"
-        "media_information"
+        current_partner.partials_to_show.first
+      when current_partner.partials_to_show.include?(submitted_partial)
+        next_partner_partial(submitted_partial)
       when "partner_settings"
         "NA"
+      else
+        "agency_information"
+      end
+    end
+
+    # TODO: 4504 move this to somewhere easier to test like a service
+    def next_partner_partial(submitted_partial)
+      index = current_partner.partials_to_show.index(submitted_partial)
+      if index
+        current_partner.partials_to_show[index + 1]
       else
         "agency_information"
       end

@@ -1,4 +1,4 @@
-<%= simple_form_for partner, url: partners_profile_path do |f| %>
+<%= simple_form_for partner, url: partners_profile_path(submitted_partial: "program_delivery_address") do |f| %>
   <%= f.fields_for :profile, profile do |pf| %>
     <div class="form-group">
       <%= pf.input :program_address1, label: "Address (line 1)", class: "form-control" %>
