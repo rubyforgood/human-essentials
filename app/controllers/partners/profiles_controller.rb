@@ -20,7 +20,7 @@ module Partners
       if result.success?
         if Flipper.enabled?("partner_step_form")
           submitted_partial = params[:submitted_partial]
-          open_section = next_step(submitted_partial)
+          open_section = Partners::NextStepService.new(current_partner, submitted_partial).call
           redirect_to edit_partners_profile_path(open_section: open_section)
         else
           flash[:success] = "Details were successfully updated."
@@ -33,44 +33,6 @@ module Partners
     end
 
     private
-
-    # TODO: 4504 move this to somewhere easier to test like a service
-    # Make use of partner.partials_to_show for dynamic sections
-    # | Partial                         | Converted to Step | Type    | Default   | Next                            |
-    # | ------------------------------- | ----------------- | ------- | --------- | ------------------------------- |
-    # | agency_information              | true              | static  | expanded  | program_delivery_address   |
-    # | program_delivery_address        | true              | static  | collapsed | media_information               |
-    # | media_information               | true              | dynamic | collapsed | agency_stability                |
-    # | agency_stability                | true              | dynamic | collapsed | organizational_capacity         |
-    # | organizational_capacity         | true              | dynamic | collapsed | sources_of_funding              |
-    # | sources_of_funding              | true              | dynamic | collapsed | area_served                     |
-    # | area_served                     | true              | dynamic | collapsed | population_served               |
-    # | population_served               | true              | dynamic | collapsed | executive_director              |
-    # | executive_director              | true              | dynamic | collapsed | pick_up_person                  |
-    # | pick_up_person                  | true              | dynamic | collapsed | agency_distribution_information |
-    # | agency_distribution_information | true              | dynamic | collapsed | attached_documents              |
-    # | attached_documents              | true              | dynamic | collapsed | partner_settings                |
-    # | partner_settings                | true              | static  | collapsed | NA                              |
-    def next_step(submitted_partial)
-      if current_partner.partials_to_show.include?(submitted_partial)
-        next_partner_partial(submitted_partial)
-      elsif submitted_partial == "agency_information"
-        "program_delivery_address"
-      elsif submitted_partial == "program_delivery_address"
-        current_partner.partials_to_show.first
-      elsif submitted_partial == "partner_settings"
-        # TODO: 4504 Handle last one, maybe should never even be getting here?
-        "NA"
-      else
-        "agency_information"
-      end
-    end
-
-    # TODO: 4504 move this to somewhere easier to test like a service
-    def next_partner_partial(submitted_partial)
-      index = current_partner.partials_to_show.index(submitted_partial)
-      index.nil? ? "agency_information" : current_partner.partials_to_show[index + 1]
-    end
 
     def partner_params
       params.require(:partner).permit(:name)
