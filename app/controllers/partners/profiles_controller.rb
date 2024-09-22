@@ -37,7 +37,6 @@ module Partners
     private
 
     # TODO: 4504 move this to somewhere easier to test like a service
-    # TODO: 4504 implement logic to determine which section should be next -> complexity dynamics!
     # Make use of partner.partials_to_show for dynamic sections
     # | Partial                         | Converted to Step | Type    | Default   | Next                            |
     # | ------------------------------- | ----------------- | ------- | --------- | ------------------------------- |
@@ -63,6 +62,7 @@ module Partners
       when current_partner.partials_to_show.include?(submitted_partial)
         next_partner_partial(submitted_partial)
       when "partner_settings"
+        # TODO: 4504 what to do here? It's the last section
         "NA"
       else
         "agency_information"

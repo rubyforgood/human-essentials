@@ -25,64 +25,57 @@
 <div class="accordion" id="accordionExample">
 
   <%# Agency Information: By default, this section is expanded and is always rendered %>
-  <%# TODO: 4504 Use `open_section` instance var to determine which accordion to expand, all others should be collapsed %>
   <div class="accordion-item">
     <h2 class="accordion-header">
-      <%# TODO: 4504 add the .collapsed class to the button and set its aria-expanded attribute to false if should be hidden %>
-      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#agency_information" aria-expanded="true" aria-controls="agency_information">
+      <button class="accordion-button <%= @open_section != 'agency_information' ? 'collapsed' : '' %>" type="button" data-bs-toggle="collapse" data-bs-target="#agency_information" aria-expanded="<%= @open_section == 'agency_information' %>" aria-controls="agency_information">
         Agency Information
       </button>
     </h2>
-    <%# TODO: 4504 remove the `show` class if this section should be collapsed %>
-    <div id="agency_information" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+    <div id="agency_information" class="accordion-collapse collapse <%= @open_section == 'agency_information' ? 'show' : '' %>" data-bs-parent="#accordionExample">
       <div class="accordion-body">
         <%= render 'partners/profiles/step/agency_information_form', partner: current_partner, profile: current_partner.profile %>
       </div>
     </div>
   </div>
 
-  <%# Program Delivery Address: This is always rendered, by default collapsed %>
+  <%# Program Delivery Address: By default, this section is collapsed and always rendered %>
   <div class="accordion-item">
     <h2 class="accordion-header">
-      <%# TODO: 4504 drop the .collapsed class from the button and set its aria-expanded attribute to true if should be expanded %>
-      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#program_delivery_address" aria-expanded="false" aria-controls="program_delivery_address">
+      <button class="accordion-button <%= @open_section != 'program_delivery_address' ? 'collapsed' : '' %>" type="button" data-bs-toggle="collapse" data-bs-target="#program_delivery_address" aria-expanded="<%= @open_section == 'program_delivery_address' %>" aria-controls="program_delivery_address">
         Program / Delivery Address
       </button>
     </h2>
-    <%# TODO: 4504 add the `show` class if this section should be expanded %>
-    <div id="program_delivery_address" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+    <div id="program_delivery_address" class="accordion-collapse collapse <%= @open_section == 'program_delivery_address' ? 'show' : '' %>" data-bs-parent="#accordionExample">
       <div class="accordion-body">
         <%= render 'partners/profiles/step/program_delivery_address_form', partner: current_partner, profile: current_partner.profile %>
       </div>
     </div>
   </div>
 
+  <%# Dynamically rendered partials based on partner.partials_to_show %>
   <% current_partner.partials_to_show.each do |partial| %>
     <div class="accordion-item">
       <h2 class="accordion-header">
-        <%# TODO: 4504 How to populate the title? %>
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#<%= partial %>" aria-expanded="false" aria-controls="<%= partial %>">
-          <%= partial %>
+        <button class="accordion-button <%= @open_section != partial ? 'collapsed' : '' %>" type="button" data-bs-toggle="collapse" data-bs-target="#<%= partial %>" aria-expanded="<%= @open_section == partial %>" aria-controls="<%= partial %>">
+          <%= partial.humanize %>
         </button>
       </h2>
-      <div id="<%= partial %>" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+      <div id="<%= partial %>" class="accordion-collapse collapse <%= @open_section == partial ? 'show' : '' %>" data-bs-parent="#accordionExample">
         <div class="accordion-body">
           <%= render "partners/profiles/step/#{partial}_form", partner: current_partner, profile: current_partner.profile %>
         </div>
       </div>
-  </div>
+    </div>
   <% end %>
 
-  <%# Settings: This is always rendered, by default collapsed %>
+  <%# Settings: By default, this section is collapsed %>
   <div class="accordion-item">
     <h2 class="accordion-header">
-      <%# TODO: 4504 drop the .collapsed class from the button and set its aria-expanded attribute to true if should be expanded %>
-      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#settings" aria-expanded="false" aria-controls="settings">
+      <button class="accordion-button <%= @open_section != 'partner_settings' ? 'collapsed' : '' %>" type="button" data-bs-toggle="collapse" data-bs-target="#settings" aria-expanded="<%= @open_section == 'partner_settings' %>" aria-controls="settings">
         Settings
       </button>
     </h2>
-    <%# TODO: 4504 add the `show` class if this section should be expanded %>
-    <div id="settings" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+    <div id="settings" class="accordion-collapse collapse <%= @open_section == 'partner_settings' ? 'show' : '' %>" data-bs-parent="#accordionExample">
       <div class="accordion-body">
         <%= render 'partners/profiles/step/partner_settings_form', partner: current_partner, profile: current_partner.profile %>
       </div>
