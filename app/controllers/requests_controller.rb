@@ -8,7 +8,7 @@ class RequestsController < ApplicationController
                 .undiscarded
                 .during(helpers.selected_range)
                 .class_filter(filter_params)
-    @unfulfilled_requests = current_organization.requests.where(status: [:pending, :started])
+    @unfulfilled_requests_count = current_organization.requests.where(status: [:pending, :started]).count
     @paginated_requests = @requests.page(params[:page])
     @calculate_product_totals = RequestsTotalItemsService.new(requests: @requests).calculate
     @items = current_organization.items.alphabetized
