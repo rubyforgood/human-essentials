@@ -81,8 +81,8 @@ class PicklistsPdf
 
         move_down 20
 
-        items = request.item_requests
-        data = has_custom_units?(items) ? data_with_units(items) : data_no_units(items)
+        line_items = request.item_requests
+        data = has_custom_units?(line_items) ? data_with_units(line_items) : data_no_units(line_items)
 
         font_size 11
 
@@ -131,39 +131,39 @@ class PicklistsPdf
     render
   end
 
-  def has_custom_units?(items)
-    Flipper.enabled?(:enable_packs) && items.any? { |item| item.request_unit }
+  def has_custom_units?(line_items)
+    Flipper.enabled?(:enable_packs) && line_items.any? { |line_item| line_item.request_unit }
   end
 
-  def data_with_units(items)
+  def data_with_units(line_items)
     data = [["Items Requested",
       "Quantity",
       "Unit (if applicable)",
       "[X]",
       "Differences / Comments"]]
 
-    data + items.map do |i|
-      item_name = Item.find(i.item_id).name
+    data + line_items.map do |line_item|
+      item_name = Item.find(line_item.item_id).name
 
       [item_name,
-        i.quantity,
-        i.request_unit&.capitalize&.pluralize(i.quantity),
+        line_item.quantity,
+        line_item.request_unit&.capitalize&.pluralize(line_item.quantity),
         "[  ]",
         ""]
     end
   end
 
-  def data_no_units(items)
+  def data_no_units(line_items)
     data = [["Items Requested",
       "Quantity",
       "[X]",
       "Differences / Comments"]]
 
-    data + items.map do |i|
-      item_name = Item.find(i.item_id).name
+    data + line_items.map do |line_item|
+      item_name = Item.find(line_item.item_id).name
 
       [item_name,
-        i.quantity,
+        line_item.quantity,
         "[  ]",
         ""]
     end
