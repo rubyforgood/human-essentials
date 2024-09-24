@@ -51,7 +51,7 @@ class Partner < ApplicationRecord
   validates :email, presence: true, uniqueness: { case_sensitive: false },
     format: { with: URI::MailTo::EMAIL_REGEXP, on: :create }
 
-  validates :quota, numericality: true, allow_blank: true
+  validates :quota, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
 
   validate :correct_document_mime_type
 
