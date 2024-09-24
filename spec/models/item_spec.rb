@@ -47,7 +47,7 @@ RSpec.describe Item, type: :model do
       expect(subject.class).to respond_to :class_filter
     end
 
-    it "->by_size returns all items with the same size, per their BaseItem parent" do
+    specify "->by_size returns all items with the same size, per their BaseItem parent" do
       size4 = create(:base_item, size: "4", name: "Size 4 Diaper")
       size_z = create(:base_item, size: "Z", name: "Size Z Diaper")
 
@@ -57,7 +57,7 @@ RSpec.describe Item, type: :model do
       expect(Item.by_size("4").length).to eq(2)
     end
 
-    it "->housing_a_kit returns all items which belongs_to (house) a kit" do
+    specify "->housing_a_kit returns all items which belongs_to (house) a kit" do
       name = "test kit"
       kit_params = attributes_for(:kit, name: name)
       kit_params[:line_items_attributes] = [{item_id: create(:item).id, quantity: 1}] # shouldn't be counted
@@ -68,7 +68,7 @@ RSpec.describe Item, type: :model do
       expect(Item.housing_a_kit.first.name = name)
     end
 
-    it "->loose returns all items which do not belongs_to a kit" do
+    specify "->loose returns all items which do not belongs_to a kit" do
       name = "A"
       item = create(:item, name: name, organization: organization)
 
@@ -80,7 +80,7 @@ RSpec.describe Item, type: :model do
       expect(Item.loose.first.name = name)
     end
 
-    it "->alphabetized retrieves items in alphabetical order" do
+    specify "->alphabetized retrieves items in alphabetical order" do
       item_c = create(:item, name: "C")
       item_b = create(:item, name: "B")
       item_a = create(:item, name: "A")
@@ -90,7 +90,7 @@ RSpec.describe Item, type: :model do
       expect(Item.alphabetized.map(&:name)).to eq(alphabetized_list)
     end
 
-    it "->active shows items that are still active" do
+    specify "->active shows items that are still active" do
       inactive_item = create(:line_item, :purchase).item
       item = create(:item)
       inactive_item.deactivate!
