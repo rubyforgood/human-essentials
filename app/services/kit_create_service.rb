@@ -9,7 +9,7 @@ class KitCreateService
 
   attr_reader :kit
 
-  def self.FindOrCreateKitBaseItem!
+  def self.find_or_create_kit_base_item!
     BaseItem.find_or_create_by!(KIT_BASE_ITEM_ATTRS)
   end
 
@@ -27,7 +27,7 @@ class KitCreateService
       @kit.save!
 
       # Find or create the BaseItem for all items housing kits
-      item_housing_a_kit_base_item = KitCreateService.FindOrCreateKitBaseItem!
+      item_housing_a_kit_base_item = KitCreateService.find_or_create_kit_base_item!
 
       # Create the item
       item_creation = ItemCreateService.new(

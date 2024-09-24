@@ -10,7 +10,7 @@ RSpec.describe "Admin::BaseItems", type: :request do
     end
 
     it "doesn't let you delete the Kit base item" do
-      kit_base_item = KitCreateService.FindOrCreateKitBaseItem!
+      kit_base_item = KitCreateService.find_or_create_kit_base_item!
       delete admin_base_item_path(id: kit_base_item.id)
       expect(flash[:alert]).to include("You cannot delete the Kits base item")
       expect(response).to be_redirect
