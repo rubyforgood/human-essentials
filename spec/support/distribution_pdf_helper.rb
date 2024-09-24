@@ -38,11 +38,19 @@ module DistributionPDFHelper
     dist
   end
 
-  def compare_pdf(distribution, expected_file)
+  def compare_pdf(distribution, expected_file_path)
     pdf = DistributionPdf.new(organization, distribution)
     begin
       pdf_file = pdf.compute_and_render
-      expect(pdf_file).to eq(expected_file)
+
+      # For ease of generating comparison PDFs, check if GENERATE_COMPARISON_PDFS is set to true
+      # and if so overwrite the expected file with current output
+      overwrite_expected_file = ENV["GENERATE_COMPARISON_PDFS"] || false
+      if overwrite_expected_file
+        File.binwrite(expected_file_path, pdf_file)
+      end
+
+      expect(pdf_file).to eq(IO.binread(expected_file_path))
     rescue RSpec::Expectations::ExpectationNotMetError => e
       File.binwrite(Rails.root.join("tmp", "failed_match_distribution_" + distribution.delivery_method.to_s + "_" + Time.current.to_s + ".pdf"), pdf_file)
       raise e.class, "PDF does not match, written to tmp/", cause: nil

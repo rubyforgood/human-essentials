@@ -153,13 +153,12 @@ describe DistributionPdf do
     }
     let(:profile_name) { "Jaqueline Kihn DDS" }
     let(:profile_email) { "van@durgan.example" }
-    # there is a helper test at the bottom to regenerate these PDFs easily
+    # Run
+    #   GENERATE_COMPARISON_PDFS=true bundle exec rspec --tag use_to_generate_pdfs spec/pdfs/distribution_pdf_spec.rb
+    # to generate these PDF files
     let(:expected_pickup_file_path) { Rails.root.join("spec", "fixtures", "files", "distribution_pickup.pdf") }
-    let(:expected_pickup_file) { IO.binread(expected_pickup_file_path) }
     let(:expected_same_address_file_path) { Rails.root.join("spec", "fixtures", "files", "distribution_same_address.pdf") }
-    let(:expected_same_address_file) { IO.binread(expected_same_address_file_path) }
     let(:expected_different_address_file_path) { Rails.root.join("spec", "fixtures", "files", "distribution_program_address.pdf") }
-    let(:expected_different_address_file) { IO.binread(expected_different_address_file_path) }
 
     context "when the partner has no addresses" do
       before(:each) do
@@ -178,77 +177,42 @@ describe DistributionPdf do
           program_state: "",
           program_zip_code: "")
       end
-      it "doesn't print any address if the delivery type is pickup" do
-        compare_pdf(create_dist(:pick_up), expected_pickup_file)
+      it "doesn't print any address if the delivery type is pickup", use_to_generate_pdfs: true do
+        compare_pdf(create_dist(:pick_up), expected_pickup_file_path)
       end
       it "doesn't print any address if the delivery type is delivery" do
-        compare_pdf(create_dist(:delivery), expected_pickup_file)
+        compare_pdf(create_dist(:delivery), expected_pickup_file_path)
       end
       it "doesn't print any address if the delivery type is shipped" do
-        compare_pdf(create_dist(:shipped), expected_pickup_file)
+        compare_pdf(create_dist(:shipped), expected_pickup_file_path)
       end
     end
     context "when the partner doesn't have a different program address" do
       before(:each) do
         create_profile_without_program_address
       end
-      it "prints the address if the delivery type is delivery" do
-        compare_pdf(create_dist(:delivery), expected_same_address_file)
+      it "prints the address if the delivery type is delivery", use_to_generate_pdfs: true do
+        compare_pdf(create_dist(:delivery), expected_same_address_file_path)
       end
       it "prints the address if the delivery type is shipped" do
-        compare_pdf(create_dist(:shipped), expected_same_address_file)
+        compare_pdf(create_dist(:shipped), expected_same_address_file_path)
       end
       it "doesn't print the address if the delivery type is pickup" do
-        compare_pdf(create_dist(:pick_up), expected_pickup_file)
+        compare_pdf(create_dist(:pick_up), expected_pickup_file_path)
       end
     end
     context "when the partner has a different program/delivery address" do
       before(:each) do
         create_profile_with_program_address
       end
-      it "prints the delivery address if the delivery type is delivery" do
-        compare_pdf(create_dist(:delivery), expected_different_address_file)
+      it "prints the delivery address if the delivery type is delivery", use_to_generate_pdfs: true do
+        compare_pdf(create_dist(:delivery), expected_different_address_file_path)
       end
       it "prints the delivery address if the delivery type is shipped" do
-        compare_pdf(create_dist(:shipped), expected_different_address_file)
+        compare_pdf(create_dist(:shipped), expected_different_address_file_path)
       end
       it "doesn't print any address if the delivery type is pickup" do
-        compare_pdf(create_dist(:pick_up), expected_pickup_file)
-      end
-    end
-    # this test is a helper function to regenerate expected PDFs, only commit with it skipped
-    # this is written as a RSpec so we don't have duplicated code for setting up the RSpec test environment
-    # call this test to generate PDFs from terminal by
-    #   1) setting to `if true`
-    #   2) calling the test's line number from terminal e.g. `bundle exec rspec spec/pdfs/distribution_pdf_spec.rb:228`
-    #   3) disable the test afterwards by setting to `if false`
-    # rubocop:disable Lint/LiteralAsCondition
-    if false
-      # rubocop:enable Lint/LiteralAsCondition
-      it "skip this helper function for regenerating the expected pdfs", type: :request do
-        user = create(:user, organization: organization)
-        sign_in(user)
-
-        profile = create_profile_without_program_address
-
-        dist = create_dist(:pick_up)
-        get print_distribution_path(dist)
-        File.binwrite(expected_pickup_file_path, response.body)
-        dist.destroy
-
-        dist = create_dist(:shipped)
-        get print_distribution_path(dist)
-        File.binwrite(expected_same_address_file_path, response.body)
-        dist.destroy
-
-        profile.destroy
-        create_profile_with_program_address
-
-        dist = create_dist(:shipped)
-        get print_distribution_path(dist)
-        File.binwrite(expected_different_address_file_path, response.body)
-
-        raise "Do not commit this helper function"
+        compare_pdf(create_dist(:pick_up), expected_pickup_file_path)
       end
     end
   end
