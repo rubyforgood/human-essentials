@@ -40,11 +40,20 @@ FactoryBot.define do
       status { :awaiting_review }
     end
 
+    transient do
+      pick_up_person { false }
+    end
+
     after(:create) do |partner, evaluator|
       next if evaluator.try(:without_profile)
 
       # Create associated records
-      create(:partner_profile, partner_id: partner.id)
+      if evaluator.pick_up_person
+        create(:partner_profile, :with_pickup_person, partner_id: partner.id)
+      else
+        create(:partner_profile, partner_id: partner.id)
+      end
+
       create(:partner_user, email: partner.email, name: partner.name, partner: partner)
     end
   end

@@ -86,5 +86,11 @@ FactoryBot.define do
     website { "http://some-site.org" }
     primary_contact_email { Faker::Internet.email }
     primary_contact_name { Faker::Name.name }
+
+    trait :with_pickup_person do
+      pick_up_name { "Paul Bunyan" }
+      pick_up_email { "paul@kenton.com" }
+      pick_up_phone { "503-123-4567" }
+    end
   end
 end
