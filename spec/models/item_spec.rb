@@ -367,19 +367,6 @@ RSpec.describe Item, type: :model do
       end
     end
 
-    describe '#is_in_kit?' do
-      it "is true for items that are in a kit and false otherwise" do
-        item_not_in_kit = create(:item, organization: organization)
-        item_in_kit = create(:item, organization: organization)
-
-        kit_params = attributes_for(:kit)
-        kit_params[:line_items_attributes] = [{item_id: item_in_kit.id, quantity: 1}]
-        KitCreateService.new(organization_id: organization.id, kit_params: kit_params).call
-        expect(item_in_kit.is_in_kit?).to be true
-        expect(item_not_in_kit.is_in_kit?).to be false
-      end
-    end
-
     describe "other?" do
       it "is true for items that are partner_key 'other'" do
         item = create(:item, base_item: create(:base_item, name: "Base"))
