@@ -169,7 +169,7 @@ class DonationsController < ApplicationController
 
   # If line_items have submitted with empty rows, clear those out first.
   def compact_line_items
-    return params unless params[:donation].key?(:line_items_attributes)
+    return params unless params[:donation].key?(:line_item_attributes)
 
     params[:donation][:line_items_attributes].delete_if { |_row, data| data["quantity"].blank? && data["item_id"].blank? }
     params
