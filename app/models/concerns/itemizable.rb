@@ -1,5 +1,5 @@
 # Creates a veritable powerhouse.
-# This module provides Duck Typed behaviors for anything that shuttles LINE ITEMS (not items)
+# This module provides Duck Typed behaviors for anything that shuttle Items
 # throughout the system. e.g. things that `has_many :line_items` -- this provides
 # all the logic about how those kinds of things behave.
 module Itemizable
