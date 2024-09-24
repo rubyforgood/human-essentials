@@ -1,17 +1,7 @@
 class KitCreateService
   include ServiceObjectErrorsMixin
 
-  KIT_BASE_ITEM_ATTRS = {
-    name: 'Kit',
-    category: 'kit',
-    partner_key: 'kit'
-  }
-
   attr_reader :kit
-
-  def self.FindOrCreateKitBaseItem!
-    BaseItem.find_or_create_by!(KIT_BASE_ITEM_ATTRS)
-  end
 
   def initialize(organization_id:, kit_params:)
     @organization_id = organization_id
@@ -26,15 +16,16 @@ class KitCreateService
       @kit = Kit.new(kit_params_with_organization)
       @kit.save!
 
-      # Find or create the BaseItem for all items housing kits
-      item_housing_a_kit_base_item = KitCreateService.FindOrCreateKitBaseItem!
+      # Create a BaseItem that houses each
+      # kit item created.
+      kit_base_item = fetch_or_create_kit_base_item
 
       # Create the item
       item_creation = ItemCreateService.new(
         organization_id: organization.id,
         item_params: {
           name: kit.name,
-          partner_key: item_housing_a_kit_base_item.partner_key,
+          partner_key: kit_base_item.partner_key,
           kit_id: kit.id
         }
       )
@@ -54,6 +45,7 @@ class KitCreateService
   private
 
   attr_reader :organization_id, :kit_params
+
   def organization
     @organization ||= Organization.find_by(id: organization_id)
   end
@@ -62,6 +54,18 @@ class KitCreateService
     kit_params.merge({
                        organization_id: organization.id
                      })
+  end
+
+  def fetch_or_create_kit_base_item
+    BaseItem.find_or_create_by!({
+                                  name: 'Kit',
+                                  category: 'kit',
+                                  partner_key: 'kit'
+                                })
+  end
+
+  def partner_key_for_kits
+    'kit'
   end
 
   def valid?
@@ -84,5 +88,15 @@ class KitCreateService
     kit.valid?
 
     @kit_validation_errors = kit.errors
+  end
+
+  def associated_item_params
+    {
+      kit: kit.name
+    }
+  end
+
+  def partner_key_for(name)
+    "kit_#{name.underscore.gsub(/\s+/, '_')}"
   end
 end

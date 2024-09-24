@@ -19,11 +19,26 @@ end
 # Script-Global Variables
 # ----------------------------------------------------------------------------
 
+# Initial starting qty for our test organizations
+base_items = File.read(Rails.root.join("db", "base_items.json"))
+items_by_category = JSON.parse(base_items)
+
 # ----------------------------------------------------------------------------
 # Base Items
 # ----------------------------------------------------------------------------
 
-BaseItem.seed_base_items
+items_by_category.each do |category, entries|
+  entries.each do |entry|
+    BaseItem.find_or_create_by!(name: entry["name"], category: category, partner_key: entry["key"])
+  end
+end
+
+# Create global 'Kit' base item
+BaseItem.find_or_create_by!(
+  name: 'Kit',
+  category: 'kit',
+  partner_key: 'kit'
+)
 
 # ----------------------------------------------------------------------------
 # NDBN Members
