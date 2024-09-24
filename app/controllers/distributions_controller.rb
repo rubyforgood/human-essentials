@@ -48,9 +48,9 @@ class DistributionsController < ApplicationController
                      .apply_filters(filter_params, helpers.selected_range)
     @paginated_distributions = @distributions.page(params[:page])
     @items = current_organization.items.alphabetized
-    @item_categories = current_organization.item_categories
+    @item_categories = current_organization.item_categories.alphabetized
     @storage_locations = current_organization.storage_locations.active_locations.alphabetized
-    @partners = @distributions.collect(&:partner).uniq.sort_by(&:name)
+    @partners = @distributions.collect(&:partner).uniq.alphabetized
     @selected_item = filter_params[:by_item_id].presence
     @total_value_all_distributions = total_value(@distributions)
     @total_items_all_distributions = total_items(@distributions, @selected_item)

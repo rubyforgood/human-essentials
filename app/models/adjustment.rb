@@ -32,7 +32,7 @@ class Adjustment < ApplicationRecord
   validate :storage_locations_belong_to_organization
 
   def self.storage_locations_adjusted_for(organization)
-    includes(:storage_location).joins(:storage_location).where(organization_id: organization.id, storage_location: {discarded_at: nil}).collect(&:storage_location)
+    includes(:storage_location).joins(:storage_location).where(organization_id: organization.id, storage_location: {discarded_at: nil}).collect(&:storage_location).sort
   end
 
   def split_difference

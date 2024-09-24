@@ -16,8 +16,7 @@
             <%= field.input :item_id,
                             disabled: requested.present?,
                             collection: @items,
-                            prompt: "Choose an item",
-                            include_blank: false, # We've got a prompt, so no need for an include blank
+                            include_blank: false,
                             label: false,
                             input_html: { class: "my-0 line_item_name", "data-controller": "select2" } %>
             <% if requested.present? %>

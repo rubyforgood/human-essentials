@@ -14,8 +14,8 @@ class EventsController < ApplicationController
     if params.dig(:filters, :date_range).present?
       @events = @events.during(helpers.selected_range)
     end
-    @items = current_organization.items.sort_by(&:name)
-    @locations = current_organization.storage_locations
+    @items = current_organization.items.alphabetized
+    @locations = current_organization.storage_locations.alphabetized
 
     respond_to do |format|
       format.html do
