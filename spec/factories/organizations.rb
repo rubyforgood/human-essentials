@@ -34,6 +34,7 @@
 #  account_request_id             :integer
 #  ndbn_member_id                 :bigint
 #
+require 'seed_base_items'
 
 FactoryBot.define do
   factory :organization do
@@ -61,7 +62,7 @@ FactoryBot.define do
 
     trait :with_items do
       after(:create) do |instance, evaluator|
-        BaseItem.seed_base_items if BaseItem.count.zero? # seeds 45 base items if none exist
+        seed_base_items if BaseItem.count.zero? # seeds 45 base items if none exist
         Organization.seed_items(instance) # creates 1 item for each base item
       end
     end
