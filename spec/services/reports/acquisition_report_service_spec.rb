@@ -15,17 +15,13 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
       disposable_kit_item = create(:item, name: "Adult Disposable Diapers", partner_key: "adult diapers")
       another_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", partner_key: "infant diapers")
 
-      params = FactoryBot.attributes_for(:kit)
-      params[:line_items_attributes] = [
+      disposable_kit = create_kit(organization: organization, line_items_attributes: [
         {item_id: disposable_kit_item.id, quantity: 5}
-      ]
-      disposable_kit = KitCreateService.new(organization_id: organization.id, kit_params: params).call.kit
+      ])
 
-      params = FactoryBot.attributes_for(:kit)
-      params[:line_items_attributes] = [
+      another_disposable_kit = create_kit(organization: organization, line_items_attributes: [
         {item_id: another_disposable_kit_item.id, quantity: 5}
-      ]
-      another_disposable_kit = KitCreateService.new(organization_id: organization.id, kit_params: params).call.kit
+      ])
 
       disposable_kit_item_distribution = create(:distribution, organization: organization, issued_at: within_time)
       another_disposable_kit_item_distribution = create(:distribution, organization: organization, issued_at: within_time)

@@ -23,9 +23,7 @@ FactoryBot.define do
     end
 
     # See #3652, changes to this factory are in progress
-    # For now, to create corresponding item and line item and persist to database call KitCreateService with:
-    # kit_params = attributes_for(:kit)
-    # kit_params[:line_items_attributes] = [{ item_id: _id_, quantity: _quantity_, ...}]
-    # KitCreateService.new(organization_id: organization.id, kit_params: kit_params).call.kit
+    # For now, to create corresponding item and line item and persist to database call create_kit
+    # from spec/support/kit_helper.rb
   end
 end

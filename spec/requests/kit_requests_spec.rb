@@ -4,11 +4,7 @@ RSpec.describe "/kits", type: :request do
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 
   let!(:kit) {
-    params = FactoryBot.attributes_for(:kit)
-    params[:line_items_attributes] = [
-      {item_id: create(:item).id, quantity: 1}
-    ]
-    KitCreateService.new(organization_id: organization.id, kit_params: params).call.kit
+    create_kit(organization: organization)
   }
 
   describe "while signed in" do
@@ -19,11 +15,7 @@ RSpec.describe "/kits", type: :request do
     describe "GET #index" do
       before do
         # this shouldn't be shown
-        params = FactoryBot.attributes_for(:kit, active: false, name: "DOOBIE KIT")
-        params[:line_items_attributes] = [
-          {item_id: create(:item).id, quantity: 1}
-        ]
-        KitCreateService.new(organization_id: organization.id, kit_params: params).call
+        create_kit(organization: organization, active: false, name: "DOOBIE KIT")
       end
 
       it "should include deactivate" do

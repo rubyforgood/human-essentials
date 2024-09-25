@@ -237,11 +237,9 @@ RSpec.describe Item, type: :model do
 
       context "in a kit" do
         before do
-          params = FactoryBot.attributes_for(:kit)
-          params[:line_items_attributes] = [
+          create_kit(organization: organization, line_items_attributes: [
             {item_id: item.id, quantity: 1}
-          ]
-          KitCreateService.new(organization_id: organization.id, kit_params: params).call
+          ])
         end
 
         it "should return false" do
@@ -275,11 +273,9 @@ RSpec.describe Item, type: :model do
 
       context "in a kit" do
         before do
-          params = FactoryBot.attributes_for(:kit)
-          params[:line_items_attributes] = [
+          create_kit(organization: organization, line_items_attributes: [
             {item_id: item.id, quantity: 1}
-          ]
-          KitCreateService.new(organization_id: organization.id, kit_params: params).call
+          ])
         end
 
         it "should return false" do

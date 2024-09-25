@@ -134,11 +134,7 @@ RSpec.describe Kit, type: :model do
   end
 
   specify 'deactivate and reactivate' do
-    params = FactoryBot.attributes_for(:kit)
-    params[:line_items_attributes] = [
-      {item_id: create(:item).id, quantity: 1}
-    ]
-    kit = KitCreateService.new(organization_id: organization.id, kit_params: params).call.kit
+    kit = create_kit(organization: organization)
     expect(kit.active).to eq(true)
     expect(kit.item.active).to eq(true)
     kit.deactivate

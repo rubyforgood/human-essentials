@@ -381,13 +381,10 @@ RSpec.describe InventoryAggregate do
     end
 
     it "should process a kit allocation event" do
-      params = FactoryBot.attributes_for(:kit)
-      params[:line_items_attributes] = [
+      kit = create_kit(organization: organization, line_items_attributes: [
         {item_id: item1.id, quantity: 10},
         {item_id: item2.id, quantity: 3}
-      ]
-
-      kit = KitCreateService.new(organization_id: organization.id, kit_params: params).call.kit
+      ])
 
       KitAllocateEvent.publish(kit, storage_location1.id, 2)
 
@@ -419,13 +416,10 @@ RSpec.describe InventoryAggregate do
     end
 
     it "should process a kit deallocation event" do
-      params = FactoryBot.attributes_for(:kit)
-      params[:line_items_attributes] = [
+      kit = create_kit(organization: organization, line_items_attributes: [
         {item_id: item1.id, quantity: 20},
         {item_id: item2.id, quantity: 5}
-      ]
-
-      kit = KitCreateService.new(organization_id: organization.id, kit_params: params).call.kit
+      ])
 
       TestInventory.create_inventory(organization,
         {
