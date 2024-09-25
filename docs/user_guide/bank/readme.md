@@ -6,12 +6,13 @@ This user guide is meant for users of the human essentials app at essentials ban
    1. [Is Human Essentials right for you?](intro_i.md) (what we help with and what we don't)
    2. [Support](intro_ii.md) 
 2. Getting started
-   1. [Storage Locations](getting_started_storage_locations.md)
-   2. [Partner Agencies](getting_started_partners.md)
-   3. [Donation sites](getting_started_donation_sites.md)
-   4. [Inventory](getting_started_inventory.md)
-   5. [Customization and other organization-level info](getting_started_customization.md)
-   6. Adding your staff
+   1. [Some choices you'll want to think about at the start. ](getting_started_choices.md)
+   3. [Storage Locations](getting_started_storage_locations.md)
+   3. [Partner Agencies](getting_started_partners.md)
+   4. [Donation sites](getting_started_donation_sites.md)
+   5. [Inventory](getting_started_inventory.md)
+   6. [Customization and other organization-level info](getting_started_customization.md)
+   7. Adding your staff
       1. [Levels of access](getting_started_access_levels.md)
       2. [User management](getting_started_user_management.md)
 3. Everyday essentials 
@@ -23,16 +24,20 @@ This user guide is meant for users of the human essentials app at essentials ban
    6. [Pick Ups and Deliveries](essentials_pick_ups.md)
 4. Partner Management
    1. [The request/distribution cycle](pm_request_distribution_cycle.md)
-   2. [Adding a partner](pm_adding_a_partner.md)
-   3. [Importing partners](pm_importing_partners.md)
-   4. [Administering partner users](pm_partner_user_admin.md)
-   4. The partner approval cycle 
+   2. [Importing partners](pm_importing_partners.md)
+   3. [Adding a partner](pm_adding_a_partner.md)
+   4. [Partner Groups](pm_partner_groups.md)
+   5. [Editing a Partner](pm_editing partners.md)
+   5. The partner approval cycle 
       1. [Inviting a partner](pm_inviting_a_partner.md) 
       2. [Partner profiles](pm_partner_profiles.md) 
       3. [Approving a partner](pm_approving_a_partner.md)
       4. [Requesting recertification](pm_requesting_recertification.md)
-      5. [Making a partner inactive](pm_making_a_partner_inactive.md)
-   5. [Announcements](pm_announcements.md)
+   6. [Making a partner inactive](pm_making_a_partner_inactive.md)
+   7. [Reactivating a partner](pm_parter_reactivation.md)
+   7. [Administering partner users](pm_partner_user_admin.md)
+   8. [Other partner information](pm_other_information.md)
+   9. [Announcements](pm_announcements.md)
 5. Inventory 
    1. [Items](inventory_items.md)
    2. [Storage Locations](inventory_storage_locations.md)

@@ -76,6 +76,7 @@ Rails.application.routes.draw do
     resources :barcode_items
     resources :account_requests, only: [:index] do
       post :reject, on: :collection
+      post :close, on: :collection
       get :for_rejection, on: :collection
     end
     resources :questions
@@ -206,6 +207,7 @@ Rails.application.routes.draw do
     resources :users, only: [:index, :create, :destroy], controller: 'partner_users' do
       member do
         post :resend_invitation
+        post :reset_password
       end
     end
 
@@ -224,7 +226,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :partner_groups, only: [:new, :create, :edit, :update]
+  resources :partner_groups, only: %i(new create edit update destroy)
 
   resources :product_drives
 

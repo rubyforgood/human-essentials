@@ -214,6 +214,12 @@ note = [
     email: "recertification_required@example.com",
     status: :recertification_required,
     notes: note.sample
+  },
+  {
+    name: "Pawnee Middle School",
+    email: "waiting@example.com",
+    status: :awaiting_review,
+    notes: note.sample
   }
 ].each do |partner_option|
   p = Partner.find_or_create_by!(partner_option) do |partner|
@@ -707,6 +713,8 @@ end
 # ----------------------------------------------------------------------------
 
 Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "new_logo")
+Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "read_events")
+Flipper.enable(:read_events)
 
 # ----------------------------------------------------------------------------
 # Account Requests
