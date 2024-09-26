@@ -8,9 +8,9 @@ class ItemsController < ApplicationController
       .alphabetized
       .class_filter(filter_params)
       .group('items.id')
-    @items = @items.active unless params[:include_inactive_items]
+    @items = @items.active.alphabetized unless params[:include_inactive_items]
 
-    @item_categories = current_organization.item_categories.includes(:items).order('name ASC')
+    @item_categories = current_organization.item_categories.includes(:items).alphabetized
     @kits = current_organization.kits.includes(line_items: :item, inventory_items: :storage_location)
     @storages = current_organization.storage_locations.active_locations.order(id: :asc)
 
@@ -59,13 +59,13 @@ class ItemsController < ApplicationController
 
   def new
     @base_items = BaseItem.without_kit.alphabetized
-    @item_categories = current_organization.item_categories
+    @item_categories = current_organization.item_categories.alphabetized
     @item = current_organization.items.new
   end
 
   def edit
     @base_items = BaseItem.without_kit.alphabetized
-    @item_categories = current_organization.item_categories
+    @item_categories = current_organization.item_categories.alphabetized
     @item = current_organization.items.find(params[:id])
   end
 

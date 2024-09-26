@@ -11,4 +11,6 @@
 class Unit < ApplicationRecord
   belongs_to :organization
   validates :name, uniqueness: {scope: :organization}
+
+  scope :alphabetized, -> { order('LOWER(name)') }
 end

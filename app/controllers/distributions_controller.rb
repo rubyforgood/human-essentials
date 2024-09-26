@@ -50,7 +50,7 @@ class DistributionsController < ApplicationController
     @items = current_organization.items.alphabetized
     @item_categories = current_organization.item_categories.alphabetized
     @storage_locations = current_organization.storage_locations.active_locations.alphabetized
-    @partners = @distributions.collect(&:partner).uniq.alphabetized
+    @partners = @distributions.collect(&:partner).uniq
     @selected_item = filter_params[:by_item_id].presence
     @total_value_all_distributions = total_value(@distributions)
     @total_items_all_distributions = total_items(@distributions, @selected_item)
