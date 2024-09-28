@@ -33,10 +33,10 @@
             <%= form_with(url: barcode_items_path, method: :get) do |f| %>
               <div class="row">
                 <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                  <%= filter_select(label: "Filter by Item Category", scope: :barcodeable_id, collection: @items.alphabetized, key: :id, value: :name, selected: @selected_barcodeable_id) %>
+                  <%= filter_select(label: "Filter by Item Category", scope: :barcodeable_id, collection: @items, key: :id, value: :name, selected: @selected_barcodeable_id) %>
                 </div>
                 <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                  <%= filter_select(label: "Filter by Base Item", scope: :by_item_partner_key, collection: @base_items.order('name'), key: :partner_key, value: :name, selected: @selected_partner_key) %>
+                  <%= filter_select(label: "Filter by Base Item", scope: :by_item_partner_key, collection: @base_items, key: :partner_key, value: :name, selected: @selected_partner_key) %>
                 </div>
                 <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
                   <%= filter_text(label: "Filter By Barcode (Boop it!)", scope: :by_value, selected: @selected_barcode_id) %>

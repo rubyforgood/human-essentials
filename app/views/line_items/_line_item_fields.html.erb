@@ -15,8 +15,8 @@
           <span class="li-name w-100">
             <%= field.input :item_id,
                             disabled: requested.present?,
-                            collection: @items, prompt: "Choose an item",
-                            include_blank: "",
+                            collection: @items,
+                            include_blank: false,
                             label: false,
                             input_html: { class: "my-0 line_item_name", "data-controller": "select2" } %>
             <% if requested.present? %>

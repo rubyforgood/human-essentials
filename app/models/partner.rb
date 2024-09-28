@@ -63,7 +63,7 @@ class Partner < ApplicationRecord
       .order(:name)
   }
 
-  scope :alphabetized, -> { order(:name) }
+  scope :alphabetized, -> { order('LOWER(name)') }
   scope :active, -> { where.not(status: :deactivated) }
 
   include Filterable

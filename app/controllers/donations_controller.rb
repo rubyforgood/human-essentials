@@ -34,15 +34,15 @@ class DonationsController < ApplicationController
     @paginated_donations_quantity = @paginated_donations.collect(&:total_quantity).sum
     @total_value_all_donations = total_value(@donations)
     @total_money_raised = total_money_raised(@donations)
-    @storage_locations = @donations.filter_map { |donation| donation.storage_location if !donation.storage_location.discarded_at }.compact.uniq.sort
+    @storage_locations = @donations.filter_map { |donation| donation.storage_location if !donation.storage_location.discarded_at }.compact.uniq.sort_by { |sl| sl.name.to_s.downcase }
     @selected_storage_location = filter_params[:at_storage_location]
-    @sources = @donations.collect(&:source).uniq.sort
+    @sources = @donations.collect(&:source).uniq.sort_by { |source| source.to_s.downcase }
     @selected_source = filter_params[:by_source]
-    @donation_sites = @donations.collect(&:donation_site).compact.uniq.sort_by { |site| site.name.downcase }
+    @donation_sites = @donations.collect(&:donation_site).compact.uniq.sort_by { |site| site.name.to_s.downcase }
     @selected_donation_site = filter_params[:from_donation_site]
     @selected_product_drive = filter_params[:by_product_drive]
     @selected_product_drive_participant = filter_params[:by_product_drive_participant]
-    @manufacturers = @donations.collect(&:manufacturer).compact.uniq.sort
+    @manufacturers = @donations.collect(&:manufacturer).compact.uniq.sort_by { |manufacturer| manufacturer.name.to_s.downcase }
     @selected_manufacturer = filter_params[:from_manufacturer]
 
     respond_to do |format|

@@ -46,7 +46,7 @@
                                     selected: params.dig(:filters, :by_type)) %>
                 </div>
                 <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                  <%= filter_select(scope: :by_storage_location, collection: current_organization.storage_locations,
+                  <%= filter_select(scope: :by_storage_location, collection: @locations,
                                     selected:params.dig(:filters, :by_storage_location)) %>
                 </div>
                 <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">

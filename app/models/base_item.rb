@@ -23,7 +23,7 @@ class BaseItem < ApplicationRecord
 
   scope :by_partner_key, ->(partner_key) { where(partner_key: partner_key) }
   scope :without_kit, -> { where.not(name: 'Kit') }
-  scope :alphabetized, -> { order(:name) }
+  scope :alphabetized, -> { order('LOWER(name)') }
 
   def to_h
     { partner_key: partner_key, name: name }

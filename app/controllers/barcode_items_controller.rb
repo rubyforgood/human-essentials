@@ -2,7 +2,7 @@
 # anomaly here is the :find action, which has some special logic built-in to it, see the comments below.
 class BarcodeItemsController < ApplicationController
   def index
-    @items = Item.gather_items(current_organization, @global)
+    @items = Item.gather_items(current_organization, @global).alphabetized
     @base_items = BaseItem.alphabetized
     @selected_barcodeable_id = filter_params[:barcodeable_id]
     @selected_partner_key = filter_params[:by_item_partner_key]
