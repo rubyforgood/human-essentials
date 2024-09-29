@@ -19,7 +19,7 @@
   <td><%= distribution_row.delivery_method.humanize %></td>
   <td><%= distribution_shipping_cost(distribution_row.shipping_cost) %></td>
   <td><%= distribution_row.comment %></td>
-  <td><%= distribution_row.state&.humanize %></td>
+  <td><%= distribution_row.status&.humanize %></td>
 
   <td class="text-right">
     <%= view_button_to distribution_path(distribution_row) %>

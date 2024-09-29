@@ -9,7 +9,7 @@
 #  issued_at              :datetime
 #  reminder_email_enabled :boolean          default(FALSE), not null
 #  shipping_cost          :decimal(8, 2)
-#  state                  :integer          default("scheduled"), not null
+#  status                 :integer          default("scheduled"), not null
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  organization_id        :integer
@@ -24,7 +24,7 @@ FactoryBot.define do
     organization { Organization.try(:first) || create(:organization) }
     issued_at { nil }
     delivery_method { :pick_up }
-    state { :scheduled }
+    status { :scheduled }
 
     trait :past do
       issued_at { 1.week.ago }

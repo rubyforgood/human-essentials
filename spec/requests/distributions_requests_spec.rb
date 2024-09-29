@@ -309,11 +309,11 @@ RSpec.describe "Distributions", type: :request do
       subject { patch picked_up_distribution_path(id: distribution.id) }
 
       context 'when the distribution is successfully updated' do
-        let(:distribution) { create(:distribution, state: :scheduled, organization: organization) }
+        let(:distribution) { create(:distribution, status: :scheduled, organization: organization) }
 
-        it "updates the state to 'complete'" do
+        it "updates the status to 'complete'" do
           subject
-          expect(distribution.reload.state).to eq 'complete'
+          expect(distribution.reload.status).to eq 'complete'
         end
 
         it 'redirects the user back to the distributions page' do
