@@ -32,26 +32,6 @@ module Partners
       end
     end
 
-    def submit_for_approval
-      current_partner.update!(status: "awaiting_review")
-      flash[:success] = "Profile awaiting review."
-      redirect_to partners_profile_path
-    end
-
-    # TODO: 4504 - move logic to model for now as its not enough to be in a service
-    # def submit_for_approval
-    #   @partner = current_partner
-    #   @profile = @partner.profile
-
-    #   # Add your custom approval logic here
-    #   if @profile.submit_for_approval!
-    #     redirect_to partner_user_root_path, notice: "Profile submitted for approval successfully."
-    #   else
-    #     flash.now[:error] = "There was an error submitting your profile for approval."
-    #     render :edit
-    #   end
-    # end
-
     private
 
     def partner_params
