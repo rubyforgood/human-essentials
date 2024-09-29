@@ -136,9 +136,9 @@ RSpec.describe Organization, type: :model do
         end
 
         it "retrieves the distributions scheduled for this week that have not yet happened" do
-          wednesday_distribution_scheduled = create(:distribution, organization: organization, state: :scheduled, issued_at: Time.zone.local(2019, 7, 3))
-          create(:distribution, organization: organization, state: :complete, issued_at: Time.zone.local(2019, 7, 3))
-          sunday_distribution = create(:distribution, organization: organization, state: :scheduled, issued_at: Time.zone.local(2019, 7, 7))
+          wednesday_distribution_scheduled = create(:distribution, organization: organization, status: :scheduled, issued_at: Time.zone.local(2019, 7, 3))
+          create(:distribution, organization: organization, status: :complete, issued_at: Time.zone.local(2019, 7, 3))
+          sunday_distribution = create(:distribution, organization: organization, status: :scheduled, issued_at: Time.zone.local(2019, 7, 7))
           upcoming_distributions = organization.distributions.upcoming
           expect(upcoming_distributions).to match_array([wednesday_distribution_scheduled, sunday_distribution])
         end

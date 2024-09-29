@@ -40,7 +40,7 @@
                 <th>Delivery method:</th>
                 <th>Shipping cost:</th>
                 <th>Comments:</th>
-                <th>State:</th>
+                <th>Status:</th>
               </tr>
               </thead>
               <tbody>
@@ -51,7 +51,7 @@
                 <td><%= @distribution.delivery_method.humanize %></td>
                 <td><%= distribution_shipping_cost(@distribution.shipping_cost) %></td>
                 <td><%= @distribution.comment %></td>
-                <td><%= @distribution.state&.humanize %></td>
+                <td><%= @distribution.status&.humanize %></td>
               </tr>
             </table>
           </div>

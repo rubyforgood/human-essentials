@@ -68,7 +68,7 @@ RSpec.describe Exports::ExportDistributionsCSVService do
         "Total Value",
         "Delivery Method",
         "Shipping Cost",
-        "State",
+        "Status",
         "Agency Representative",
         "Comments"
       ]
@@ -89,7 +89,7 @@ RSpec.describe Exports::ExportDistributionsCSVService do
           distribution.cents_to_dollar(distribution.line_items.total_value),
           distribution.delivery_method,
           "$#{distribution.shipping_cost.to_f}",
-          distribution.state,
+          distribution.status,
           distribution.agency_rep,
           distribution.comment
         ]
@@ -127,7 +127,7 @@ RSpec.describe Exports::ExportDistributionsCSVService do
             distribution.cents_to_dollar(distribution.line_items.total_value),
             distribution.delivery_method,
             "$#{distribution.shipping_cost.to_f}",
-            distribution.state,
+            distribution.status,
             distribution.agency_rep,
             distribution.comment
           ]
