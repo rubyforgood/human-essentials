@@ -24,9 +24,7 @@
   <% end %>
 
   <!-- Submit Buttons -->
-  <%# TODO: 4504 remove Save and Next button because this is the last section %>
   <div class="form-group mt-4 d-flex justify-content-start">
-    <%= f.button :submit, 'Save and Next', class: 'btn btn-primary mr-2' %>
-    <%= f.button :submit, 'Submit for Approval', class: 'btn btn-success' %>
+    <%= link_to 'Submit for Approval', submit_for_approval_partners_profile_path, method: :post, class: 'btn btn-success' %>
   </div>
 <% end %>

@@ -51,9 +51,8 @@
     </div>
   <% end %>
 
-  <%# FIXME: 4504 Implement Submit for Approval, that's different logic than Save and Next %>
   <div class="form-group mt-4 d-flex justify-content-start">
     <%= f.button :submit, 'Save and Next', class: 'btn btn-primary mr-2' %>
-    <%= f.button :submit, 'Submit for Approval', class: 'btn btn-success' %>
+    <%= link_to 'Submit for Approval', submit_for_approval_partners_profile_path, method: :post, class: 'btn btn-success' %>
   </div>
 <% end %>

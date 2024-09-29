@@ -34,7 +34,8 @@ module Partners
       elsif @submitted_partial == "program_delivery_address"
         @partner.partials_to_show.first
       elsif @submitted_partial == "partner_settings"
-        # TODO: 4504 Not sure what to do for last section, go back to first for now
+        # Should never get here because app/views/partners/profiles/step/_partner_settings_form.html.erb
+        # doesn't have a next button
         "agency_information"
       else
         "agency_information"
