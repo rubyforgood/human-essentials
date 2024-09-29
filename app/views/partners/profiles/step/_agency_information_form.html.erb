@@ -1,4 +1,4 @@
-<%= simple_form_for partner, url: partners_profile_path(submitted_partial: "agency_information"), html: { multipart: true } do |f| %>
+<%= simple_form_for partner, data: { controller: "form-input" }, url: partners_profile_path(submitted_partial: "agency_information"), html: { multipart: true } do |f| %>
   <div class="form-group">
     <%= f.input :name, label: "Agency Name", required: true, class: "form-control" %>
   </div>

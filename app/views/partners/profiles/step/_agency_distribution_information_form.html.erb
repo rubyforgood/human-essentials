@@ -1,4 +1,4 @@
-<%= simple_form_for partner, url: partners_profile_path(submitted_partial: "agency_distribution_information") do |f| %>
+<%= simple_form_for partner, data: { controller: "form-input" }, url: partners_profile_path(submitted_partial: "agency_distribution_information") do |f| %>
   <%= f.fields_for :profile, profile do |pf| %>
     <h3><strong>Agency Distribution Information</strong></h3>
 

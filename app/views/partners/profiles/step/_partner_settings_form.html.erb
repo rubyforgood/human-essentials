@@ -1,4 +1,4 @@
-<%= simple_form_for partner, url: partners_profile_path(submitted_partial: "partner_settings") do |f| %>
+<%= simple_form_for partner, data: { controller: "form-input" }, url: partners_profile_path(submitted_partial: "partner_settings") do |f| %>
   <%= f.fields_for :profile, profile do |pf| %>
     <!-- Settings Section -->
     <% if pf.object.organization.enable_quantity_based_requests? %>
