@@ -53,10 +53,8 @@
                 <%= f.check_box :visible_to_partners, {class: "input-group-text", id: "visible_to_partners"}, "true", "false" %>
               <% end %>
 
-              <% if current_user.has_role?(Role::ORG_ADMIN, current_organization) || current_user.has_role?(Role::ORG_USER, current_organization) %>
-                <%= f.input :additional_info, label: "Additional Information (Bank Use Only)", wrapper: :input_group do %>
-                  <%= f.text_field :additional_info, class: "form-control" %>
-                <% end %>
+              <%= f.input :additional_info, label: "Additional Information (Bank Use Only)", wrapper: :input_group do %>
+                <%= f.text_field :additional_info, class: "form-control" %>
               <% end %>
             </div>
             <!-- /.card-body -->
