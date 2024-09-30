@@ -150,14 +150,14 @@ group :development, :test do
   # Debugger which supports rdbg and Shopify Ruby LSP VSCode extension
   gem "debug", ">= 1.0.0"
   # RSpec behavioral testing framework for Rails.
-  gem "rspec-rails", "~> 6.1.3"
+  gem "rspec-rails", "~> 6.1.4"
   # Static analysis / linter.
   gem "rubocop"
   # Rails add-on for static analysis.
   gem 'rubocop-performance'
   gem "rubocop-rails", "~> 2.25.1"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.39"
+  gem "standard", "~> 1.40"
   # Erb linter.
   gem "erb_lint"
 end
