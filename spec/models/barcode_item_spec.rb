@@ -84,7 +84,7 @@ RSpec.describe BarcodeItem, type: :model do
       describe "by_value" # TODO: Write test
       describe "for_csv_export" # TODO: Write test
       describe "global" do
-        it "includes all barcodes, for both base items and regular items" do
+        it "only includes barcode for base items, since those are available globally" do
           create(:global_barcode_item)
           expect do
             create(:barcode_item)
