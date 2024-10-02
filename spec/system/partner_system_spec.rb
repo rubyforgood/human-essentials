@@ -500,7 +500,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           check 'Yes'
 
           choose 'toggle-to-date'
-          fill_in "partner_group_date", with: 1
+          fill_in "partner_group_day_of_month", with: 1
           fill_in "partner_group_deadline_day", with: 25
           find_button('Add Partner Group').click
 

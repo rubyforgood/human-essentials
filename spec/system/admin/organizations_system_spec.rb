@@ -117,7 +117,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
         fill_in "organization_user_email", with: admin_user_params[:email]
 
         choose 'toggle-to-date'
-        fill_in "organization_date", with: 1
+        fill_in "organization_day_of_month", with: 1
 
         click_on "Save"
       end

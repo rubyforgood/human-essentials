@@ -35,6 +35,6 @@ class PartnerGroupsController < ApplicationController
 
   def partner_group_params
     params.require(:partner_group).permit(:name, :send_reminders, :reminder_schedule,
-      :deadline_day, :date_or_week_day, :date, :day_of_week, :every_nth_day, item_category_ids: [])
+      :deadline_day, :by_month_or_week, :day_of_month, :day_of_week, :every_nth_day, item_category_ids: [])
   end
 end
