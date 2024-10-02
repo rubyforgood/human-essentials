@@ -8,6 +8,7 @@ RSpec.describe PartnerUsersController, type: :request do
   end
 
   before do
+    user.add_role(:org_admin)
     sign_in(user)
   end
 
