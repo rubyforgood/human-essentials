@@ -54,8 +54,9 @@
                         <span class='text-gray-600 text-bold font-italic'>No</span>
                       <% end %>
                     </td>
-                    <td class="text-right">
+                    <td class="text-left">
                       <%= edit_button_to edit_partner_group_path(pg) %>
+                      <%= delete_button_to(partner_group_path(pg),{confirm: confirm_delete_msg(pg.name)}) if pg.partners.none? %>
                     </td>
                   </tr>
                 <% end %>

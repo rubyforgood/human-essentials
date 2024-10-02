@@ -98,6 +98,7 @@ module Partners
 
     validate :client_share_is_0_or_100
     validate :has_at_least_one_request_setting
+    validate :pick_up_email_addresses
 
     self.ignored_columns = %w[
       evidence_based_description
@@ -116,6 +117,12 @@ module Partners
     def client_share_total
       # client_share could be nil
       served_areas.map(&:client_share).compact.sum
+    end
+
+    def split_pick_up_emails
+      return nil if pick_up_email.nil?
+
+      pick_up_email.split(/,|\s+/).compact_blank
     end
 
     private
@@ -142,6 +149,23 @@ module Partners
     def has_at_least_one_request_setting
       if !(enable_child_based_requests || enable_individual_requests || enable_quantity_based_requests)
         errors.add(:base, "At least one request type must be set")
+      end
+    end
+
+    def pick_up_email_addresses
+      # pick_up_email is a string of comma-separated emails, check specs for details
+      return if pick_up_email.nil?
+
+      emails = split_pick_up_emails
+      if emails.size > 3
+        errors.add(:pick_up_email, "There can't be more than three pick up email addresses.")
+        nil
+      end
+      if emails.uniq.size != emails.size
+        errors.add(:pick_up_email, "There should not be repeated email addresses.")
+      end
+      emails.each do |e|
+        errors.add(:pick_up_email, "Invalid email address for '#{e}'.") unless e.match? URI::MailTo::EMAIL_REGEXP
       end
     end
   end
