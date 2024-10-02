@@ -33,8 +33,8 @@ RSpec.describe Deadlinable, type: :model do
         .allow_nil
     end
 
-    it "validates the date_or_week_day field inclusion" do
-      is_expected.to validate_inclusion_of(:date_or_week_day).in_array(%w[date week_day])
+    it "validates the by_month_or_week field inclusion" do
+      is_expected.to validate_inclusion_of(:by_month_or_week).in_array(%w[day_of_month day_of_week])
     end
 
     it "validates the day of week field inclusion" do
@@ -44,7 +44,7 @@ RSpec.describe Deadlinable, type: :model do
       expect(dummy).not_to be_valid
     end
 
-    it "validates the date_or_week_day field inclusion" do
+    it "validates the by_month_or_week field inclusion" do
       dummy.every_nth_day = "1"
       expect(dummy).to be_valid
       dummy.every_nth_day = "B"
@@ -52,22 +52,22 @@ RSpec.describe Deadlinable, type: :model do
     end
 
     it "validates that the reminder schedule's date fall within the range" do
-      dummy.date_or_week_day = "date"
-      dummy.date = 29
+      dummy.by_month_or_week = "day_of_month"
+      dummy.day_of_month = 29
 
       expect(dummy).not_to be_valid
-      expect(dummy.errors.added?(:date, "Reminder day must be between 1 and 28")).to be_truthy
+      expect(dummy.errors.added?(:day_of_month, "Reminder day must be between 1 and 28")).to be_truthy
 
-      dummy.date = -1
+      dummy.day_of_month = -1
       expect(dummy).not_to be_valid
     end
 
     it "validates that reminder day is not the same as deadline day" do
-      dummy.date_or_week_day = "date"
-      dummy.date = dummy.deadline_day
+      dummy.by_month_or_week = "day_of_month"
+      dummy.day_of_month = dummy.deadline_day
 
       expect(dummy).not_to be_valid
-      expect(dummy.errors.added?(:date, "Reminder must not be the same as deadline date")).to be_truthy
+      expect(dummy.errors.added?(:day_of_month, "Reminder must not be the same as deadline date")).to be_truthy
     end
   end
 end

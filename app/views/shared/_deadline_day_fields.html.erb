@@ -5,19 +5,19 @@
               next_month: Date::MONTHNAMES[Date.current.next_month.month]
             }) do %>
 
-      <%= f.label :date_or_week_day, 'Send reminders on a specific date (eg "the 5th") or a day of the week (eg "the first Tuesday")?' %>
+      <%= f.label :by_month_or_week, 'Send reminders on a specific day of the month (e.g. "the 5th") or a day of the week (eg "the first Tuesday")?' %>
       <br>
-      <%= f.radio_button :date_or_week_day, 'date', label: 'Date', id: 'toggle-to-date' %>
-      <%= f.label :date_or_week_day, 'Date' %>
+      <%= f.radio_button :by_month_or_week, 'day_of_month', label: 'Day of Month', id: 'toggle-to-date' %>
+      <%= f.label :by_month_or_week, 'Day of Month' %>
       <br>
-      <%= f.radio_button :date_or_week_day, 'week_day', label: 'Week Day', id: 'toggle-to-week-day' %>
-      <%= f.label :date_or_week_day, 'Week Day' %>
+      <%= f.radio_button :by_month_or_week, 'day_of_week', label: 'Day of the Week', id: 'toggle-to-week-day' %>
+      <%= f.label :by_month_or_week, 'Day of the Week' %>
 
       <div id="date-fields">
-      <%= f.input :date, as: :integer, wrapper: :input_group,
+      <%= f.input :day_of_month, as: :integer, wrapper: :input_group,
       label: 'Reminder date' do %>
       <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-      <%= f.number_field :date,
+      <%= f.number_field :day_of_month,
       min: Deadlinable::MIN_DAY_OF_MONTH,
       max: Deadlinable::MAX_DAY_OF_MONTH,
       class: "deadline-day-pickers__reminder-day form-control",
@@ -33,7 +33,7 @@
       class: "deadline-day-pickers__reminder-day form-control",
       label: false %>
 
-      <%= f.input :day_of_week, collection: Deadlinable::WEEK_DAY_COLLECTION,
+      <%= f.input :day_of_week, collection: Deadlinable::DAY_OF_WEEK_COLLECTION,
       class: "deadline-day-pickers__reminder-day form-control",
       label: false,
       show_blank: true,
