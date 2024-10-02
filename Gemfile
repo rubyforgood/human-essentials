@@ -199,7 +199,7 @@ group :test do
   # More concise test ("should") matchers
   gem 'shoulda-matchers', '~> 6.2'
   # Mock HTTP requests and ensure they are not called during tests.
-  gem "webmock", "~> 3.23"
+  gem "webmock", "~> 3.24"
   # Interface capybara to chrome headless
   gem "cuprite"
   # Read PDF files for tests
