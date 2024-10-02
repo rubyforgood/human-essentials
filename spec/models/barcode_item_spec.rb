@@ -70,6 +70,14 @@ RSpec.describe BarcodeItem, type: :model do
         create(:global_barcode_item, barcodeable: c2)
         expect(BarcodeItem.by_base_item_partner_key("foo").first).to eq(b1)
       end
+      it "#by_item_partner_key returns barcodes that match the partner key" do
+        base_item = create(:base_item, partner_key: "somekey")
+        c1 = create(:item, partner_key: "somekey", base_item: base_item)
+        c2 = create(:item, partner_key: "bar", base_item: base_item)
+        b1 = create(:barcode_item, barcodeable: c1)
+        create(:barcode_item, barcodeable: c2)
+        expect(BarcodeItem.by_item_partner_key("somekey").first).to eq(b1)
+      end
       it "->by_value returns the barcode with that value" do
         b1 = create(:global_barcode_item, value: "DEADBEEF")
         create(:global_barcode_item, value: "IDDQD")
@@ -79,8 +87,7 @@ RSpec.describe BarcodeItem, type: :model do
 
     context "scopes >" do
       # The following scopes are tested in the filter tests above:
-      # barcodeable_id, by_base_item_partner_key, by_value
-      describe "by_item_partner_key" # TODO: Write test
+      # barcodeable_id, by_base_item_partner_key, by_item_partner_key, by_value
       describe "for_csv_export" # TODO: Write test
       describe "global" do
         it "only includes barcode for base items, since those are available globally" do
