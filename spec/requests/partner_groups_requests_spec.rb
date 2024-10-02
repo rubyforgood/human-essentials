@@ -12,7 +12,7 @@ RSpec.describe PartnerGroupsController, type: :request do
     describe "GET #new" do
       subject { get new_partner_group_path }
 
-      it "renders the new template and assings variables correctly" do
+      it "renders the new template and assigns variables correctly" do
         get new_partner_group_path
 
         expect(response).to render_template(:new)
