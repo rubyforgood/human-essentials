@@ -58,25 +58,29 @@ RSpec.describe BarcodeItem, type: :model do
       it "->barcodeable_id shows only barcodes for a specific barcodeable_id" do
         global_barcode_item
         create(:global_barcode_item, base_item: create(:base_item))
-        results = BarcodeItem.barcodeable_id(base_item.id)
+        items = BarcodeItem.barcodeable_id(base_item.id)
 
-        expect(results.length).to eq(1)
-        expect(results.first).to eq(global_barcode_item)
+        expect(items.length).to eq(1)
+        expect(items.first).to eq(global_barcode_item)
       end
       it "#by_base_item_partner_key returns barcodes that match the partner key" do
         c1 = create(:base_item, partner_key: "foo")
         c2 = create(:base_item, partner_key: "bar")
         b1 = create(:global_barcode_item, barcodeable: c1)
         create(:global_barcode_item, barcodeable: c2)
-        expect(BarcodeItem.by_base_item_partner_key("foo").first).to eq(b1)
+        items = BarcodeItem.by_base_item_partner_key("foo")
+        expect(items).to have_attributes(length: 1)
+        expect(items.first).to eq(b1)
       end
       it "#by_item_partner_key returns barcodes that match the partner key" do
-        base_item = create(:base_item, partner_key: "somekey")
-        c1 = create(:item, partner_key: "somekey", base_item: base_item)
-        c2 = create(:item, partner_key: "bar", base_item: base_item)
-        b1 = create(:barcode_item, barcodeable: c1)
-        create(:barcode_item, barcodeable: c2)
-        expect(BarcodeItem.by_item_partner_key("somekey").first).to eq(b1)
+        b1 = create(:barcode_item) # this will create an item and base item
+
+        # explicitly create a base item here so the partner key is different
+        other_base = create(:base_item, partner_key: "somethingelse")
+        create(:barcode_item, barcodeable: other_base)
+        items = BarcodeItem.by_item_partner_key(b1.barcodeable.partner_key)
+        expect(items).to have_attributes(length: 1)
+        expect(items.first).to eq(b1)
       end
       it "->by_value returns the barcode with that value" do
         b1 = create(:global_barcode_item, value: "DEADBEEF")
