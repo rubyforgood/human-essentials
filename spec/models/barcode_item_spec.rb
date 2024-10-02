@@ -78,10 +78,9 @@ RSpec.describe BarcodeItem, type: :model do
     end
 
     context "scopes >" do
-      describe "barcodeable_id" # TODO: Write test
+      # The following scopes are tested in the filter tests above:
+      # barcodeable_id, by_base_item_partner_key, by_value
       describe "by_item_partner_key" # TODO: Write test
-      describe "by_base_item_partner_key" # TODO: Write test
-      describe "by_value" # TODO: Write test
       describe "for_csv_export" # TODO: Write test
       describe "global" do
         it "only includes barcode for base items, since those are available globally" do
