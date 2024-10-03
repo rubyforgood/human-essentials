@@ -1,4 +1,4 @@
-RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data: true do
+RSpec.describe Reports::DiaperReportService, type: :service, persisted_data: true do
   describe "acquisition report" do
     let(:organization) { create(:organization) }
     let(:within_time) { Time.zone.parse("2020-05-31 14:00:00") }
@@ -175,7 +175,7 @@ RSpec.describe Reports::AcquisitionReportService, type: :service, persisted_data
                    "Money spent purchasing diapers" => "$60.00",
                    "Purchased from" => "Google, Walmart",
                    "Vendors diapers purchased through" => "Vendor 1, Vendor 2"},
-        name: "Diaper Acquisition"
+        name: "Diapers"
       })
     end
   end
