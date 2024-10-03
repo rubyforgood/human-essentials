@@ -1,4 +1,6 @@
 RSpec.describe "Admin Organization Management", type: :system, js: true, seed_items: false do
+  include ActionView::RecordIdentifier
+
   around do |ex|
     Kaminari.config.default_per_page = 3
     ex.run
@@ -150,6 +152,16 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
       expect(page).to have_content("Contact Info")
       expect(page).to have_content("Default email text")
       expect(page).to have_content("Users")
+    end
+
+    it "can edit a user within an organization" do
+      user = create(:user, name: "User to be edited", organization: foo_org)
+      visit admin_organization_path({id: foo_org.id})
+
+      click_button dom_id(user, "dropdownMenu")
+      click_link "Edit User"
+
+      expect(page).to have_content("Editing User #{user.name}")
     end
   end
 end
