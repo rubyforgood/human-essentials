@@ -10,7 +10,7 @@ require 'time_util'
 #  issued_at              :datetime
 #  reminder_email_enabled :boolean          default(FALSE), not null
 #  shipping_cost          :decimal(8, 2)
-#  status                 :integer          default("scheduled"), not null
+#  state                  :integer          default("scheduled"), not null
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  organization_id        :integer
@@ -45,7 +45,7 @@ class Distribution < ApplicationRecord
 
   before_save :combine_distribution, :reset_shipping_cost
 
-  enum status: { scheduled: 5, complete: 10 }
+  enum state: { scheduled: 5, complete: 10 }
   enum delivery_method: { pick_up: 0, delivery: 1, shipped: 2 }
   scope :active, -> { joins(:line_items).joins(:items).where(items: { active: true }) }
   # add item_id scope to allow filtering distributions by item
@@ -55,8 +55,8 @@ class Distribution < ApplicationRecord
   scope :by_partner, ->(partner_id) { where(partner_id: partner_id) }
   # location scope to allow filtering distributions by location
   scope :by_location, ->(storage_location_id) { where(storage_location_id: storage_location_id) }
-  # status scope to allow filtering by status
-  scope :by_status, ->(status) { where(status: status) }
+  # state scope to allow filtering by state
+  scope :by_state, ->(state) { where(state: state) }
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
   scope :future, -> { where("issued_at >= :tomorrow", tomorrow: Time.zone.tomorrow) }
   scope :during, ->(range) { where(distributions: { issued_at: range }) }
@@ -157,7 +157,7 @@ class Distribution < ApplicationRecord
       total_quantity,
       cents_to_dollar(line_items.total_value),
       delivery_method,
-      status,
+      state,
       agency_rep
     ]
   end

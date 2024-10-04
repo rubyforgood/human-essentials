@@ -9,7 +9,7 @@
 #  issued_at              :datetime
 #  reminder_email_enabled :boolean          default(FALSE), not null
 #  shipping_cost          :decimal(8, 2)
-#  status                 :integer          default("scheduled"), not null
+#  state                  :integer          default("scheduled"), not null
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  organization_id        :integer
@@ -317,7 +317,7 @@ RSpec.describe Distribution, type: :model do
         expect(distribution_details[2]).to eq distribution.storage_location.name
         expect(distribution_details[3]).to eq distribution.line_items.total
         expect(distribution_details[5]).to eq distribution.delivery_method
-        expect(distribution_details[6]).to eq distribution.status
+        expect(distribution_details[6]).to eq distribution.state
         expect(distribution_details[7]).to eq distribution.agency_rep
       end
     end

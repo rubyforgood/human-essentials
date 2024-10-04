@@ -51,7 +51,7 @@
                 <td><%= @distribution.delivery_method.humanize %></td>
                 <td><%= distribution_shipping_cost(@distribution.shipping_cost) %></td>
                 <td><%= @distribution.comment %></td>
-                <td><%= @distribution.status&.humanize %></td>
+                <td><%= @distribution.state&.humanize %></td>
               </tr>
             </table>
           </div>
