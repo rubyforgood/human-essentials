@@ -129,6 +129,21 @@ RSpec.describe "Distributions", type: :request do
         expect(response).to have_http_status(400)
         expect(response).to have_error
       end
+
+      context "Deactivated partners should not be displayed in partner dropdown" do
+        before do
+          create(:partner, name: 'Active Partner', organization: organization, status: "approved")
+          create(:partner, name: 'Deactivated Partner', organization: organization, status: "deactivated")
+        end
+
+        it "should not display deactivated partners after error and re-render of form" do
+          post distributions_path(distribution: { comment: nil, partner_id: nil, storage_location_id: nil }, format: :turbo_stream)
+          expect(response).to have_http_status(400)
+          expect(response).to have_error
+          expect(response.body).not_to include("Deactivated Partner")
+          expect(response.body).to include("Active Partner")
+        end
+      end
     end
 
     describe "GET #new" do
@@ -176,6 +191,19 @@ RSpec.describe "Distributions", type: :request do
           expect(response).to be_successful
           page = Nokogiri::HTML(response.body)
           expect(page.css(%(#distribution_storage_location_id option[selected][value="#{storage_location.id}"]))).not_to be_empty
+        end
+      end
+
+      context "Deactivated partners should not be displayed in partner dropdown" do
+        before do
+          create(:partner, name: 'Active Partner', organization: organization, status: "approved")
+          create(:partner, name: 'Deactivated Partner', organization: organization, status: "deactivated")
+        end
+
+        it "should not display deactivated partners on new distribution" do
+          get new_distribution_path(default_params)
+          expect(response.body).not_to include("Deactivated Partner")
+          expect(response.body).to include("Active Partner")
         end
       end
 
@@ -462,6 +490,14 @@ RSpec.describe "Distributions", type: :request do
         create(:audit, storage_location: create(:storage_location))
         get edit_distribution_path(id: distribution.id)
         expect(response.body).not_to include("You’ve had an audit since this distribution was started.")
+      end
+
+      it "should display deactivated partners in partner dropdown" do
+        create(:partner, name: 'Active Partner', organization: organization, status: "approved")
+        create(:partner, name: 'Deactivated Partner', organization: organization, status: "deactivated")
+        get edit_distribution_path(id: distribution.id)
+        expect(response.body).to include("Deactivated Partner")
+        expect(response.body).to include("Active Partner")
       end
 
       context 'with units' do

@@ -167,6 +167,85 @@ RSpec.describe Partners::Profile, type: :model do
     end
   end
 
+  describe "split pick up email" do
+    let(:profile) { build(:partner_profile, pick_up_email: "pick_up@org.com, pick_up2@org.com") }
+    it "should disregard commas at the beginning or end of the string" do
+      profile.update(pick_up_email: ", pick_up@org.com, pick_up2@org.com,")
+      expect(profile.split_pick_up_emails).to match_array(["pick_up@org.com", "pick_up2@org.com"])
+    end
+
+    it "should allow optional whitespace between email addresses" do
+      profile.update(pick_up_email: "pick_up@org.com, pick_up2@org.com")
+      expect(profile.split_pick_up_emails).to match_array(["pick_up@org.com", "pick_up2@org.com"])
+      profile.update(pick_up_email: "pick_up@org.com,pick_up2@org.com")
+      expect(profile.split_pick_up_emails).to match_array(["pick_up@org.com", "pick_up2@org.com"])
+    end
+
+    it "should handle nil value" do
+      profile.update(pick_up_email: nil)
+      expect(profile.split_pick_up_emails).to be_nil
+    end
+
+    it "should return empty array if for when pick_up_email is an empty string" do
+      profile.update(pick_up_email: "")
+      expect(profile.split_pick_up_emails).to match_array([])
+    end
+
+    it "should correctly split strings" do
+      profile.update(pick_up_email: "test me, pick_up@org.com, pick_up2@org.com, test me")
+      expect(profile.split_pick_up_emails).to match_array(["test", "me", "pick_up@org.com", "pick_up2@org.com", "test", "me"])
+      profile.update(pick_up_email: "test me. pick_up@org.com, pick_up2@org.com. test me")
+      expect(profile.split_pick_up_emails).to match_array(["test", "me.", "pick_up@org.com", "pick_up2@org.com.", "test", "me"])
+    end
+  end
+
+  describe "pick up email address validation" do
+    context "number of email addresses" do
+      let(:profile) { build(:partner_profile, pick_up_email: "pick_up@org.com, pick_up2@org.com, pick_up3@org.com, pick_up4@org.com") }
+      it "should not allow more than three email addresses" do
+        expect(profile).to_not be_valid
+        profile.update(pick_up_email: "pick_up@org.com, pick_up2@org.com, pick_up3@org.com")
+        expect(profile).to be_valid
+      end
+
+      it "should not allow repeated email addresses" do
+        profile.update(pick_up_email: "pick_up@org.com, pick_up2@org.com, pick_up@org.com")
+        expect(profile).to_not be_valid
+      end
+    end
+
+    context "invalid emails" do
+      let(:profile) { build(:partner_profile, pick_up_email: "pick_up@org.com, pick_up2@org.com, asdf") }
+      it "should not allow invalid email addresses" do
+        expect(profile).to_not be_valid
+        profile.update(pick_up_email: "test me, pick_up@org.com, pick_up2@org.com, test me")
+        expect(profile).to_not be_valid
+        profile.update(pick_up_email: "pick_up@org.com, pick_up2@org.com")
+        expect(profile).to be_valid
+      end
+
+      it "should not allow input having emails separated by non-word characters" do
+        profile.update(pick_up_email: "test me. pick_up@org.com, pick_up2@org.com. test me")
+        expect(profile).to_not be_valid
+        profile.update(pick_up_email: "pick_up@org.com. pick_up2@org.com")
+        expect(profile).to_not be_valid
+        profile.update(pick_up_email: "pick_up@org.com.pick_up2@org.com")
+        expect(profile).to_not be_valid
+        profile.update(pick_up_email: "pick_up@org.com/ pick_up2@org.com/ pick_up3@org.com")
+        expect(profile).to_not be_valid
+        profile.update(pick_up_email: "pick_up@org.com- pick_up2@org.com- pick_up3@org.com")
+        expect(profile).to_not be_valid
+        profile.update(pick_up_email: "pick_up@org.com' pick_up2@org.com' pick_up3@org.com")
+        expect(profile).to_not be_valid
+      end
+
+      it "should handle nil value" do
+        profile.update(pick_up_email: nil)
+        expect(profile).to be_valid
+      end
+    end
+  end
+
   describe "client share behaviour" do
     context "no served areas" do
       let(:profile) { build(:partner_profile) }
