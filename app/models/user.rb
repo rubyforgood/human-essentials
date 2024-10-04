@@ -111,6 +111,12 @@ class User < ApplicationRecord
     "invited" if invitation_sent_at.present?
   end
 
+  def mark_invitation_status_as_accepted!
+    self.invitation_sent_at = Time.current
+    self.invitation_accepted_at = Time.current
+    save!
+  end
+
   def kind
     return "super" if has_role?(Role::SUPER_ADMIN)
     return "admin" if has_role?(Role::ORG_ADMIN, organization)

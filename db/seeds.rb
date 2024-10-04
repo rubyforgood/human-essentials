@@ -833,3 +833,7 @@ transfer = Transfer.new(
   ]
 )
 TransferCreateService.call(transfer)
+
+User.where(invitation_token: nil).each do |user| 
+  user.mark_invitation_status_as_accepted!
+end
