@@ -91,7 +91,7 @@ module Exports
           distribution_shipping_cost(distribution.shipping_cost)
         },
         "Status" => ->(distribution) {
-          distribution.status
+          distribution.state
         },
         "Agency Representative" => ->(distribution) {
           distribution.agency_rep

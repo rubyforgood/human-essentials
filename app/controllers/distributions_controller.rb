@@ -58,10 +58,10 @@ class DistributionsController < ApplicationController
     @total_items_paginated_distributions = total_items(@paginated_distributions, @selected_item)
     @selected_item_category = filter_params[:by_item_category_id]
     @selected_partner = filter_params[:by_partner]
-    @selected_status = filter_params[:by_status]
+    @selected_status = filter_params[:by_state]
     @selected_location = filter_params[:by_location]
     # FIXME: one of these needs to be removed but it's unclear which at this point
-    @statuses = Distribution.statuses.transform_keys(&:humanize)
+    @statuses = Distribution.states.transform_keys(&:humanize)
 
     respond_to do |format|
       format.html
@@ -322,7 +322,7 @@ class DistributionsController < ApplicationController
     def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).permit(:by_item_id, :by_item_category_id, :by_partner, :by_status, :by_location)
+    params.require(:filters).permit(:by_item_id, :by_item_category_id, :by_partner, :by_state, :by_location)
   end
 
   def perform_inventory_check

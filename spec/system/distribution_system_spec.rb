@@ -442,8 +442,8 @@ RSpec.feature "Distributions", type: :system do
 
   context "When attempting to edit a distribution" do
     context "after the distribution issued_at has passed or it has been marked complete" do
-      let!(:past_distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: user.organization, issued_at: Time.zone.yesterday, status: :scheduled) }
-      let!(:complete_distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: user.organization, issued_at: Time.zone.today, status: :complete) }
+      let!(:past_distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: user.organization, issued_at: Time.zone.yesterday, state: :scheduled) }
+      let!(:complete_distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: user.organization, issued_at: Time.zone.today, state: :complete) }
 
       it "does not contain a Edit button" do
         visit distributions_path
@@ -467,7 +467,7 @@ RSpec.feature "Distributions", type: :system do
         sign_in(organization_admin)
       end
 
-      let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: user.organization, issued_at: Time.zone.today.prev_day, status: :complete) }
+      let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: user.organization, issued_at: Time.zone.today.prev_day, state: :complete) }
 
       it "can click on Edit button and a warning appears " do
         visit distributions_path
@@ -518,7 +518,7 @@ RSpec.feature "Distributions", type: :system do
   end
 
   context "When showing a individual distribution" do
-    let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: user.organization, issued_at: Time.zone.today, status: :complete, delivery_method: "pick_up") }
+    let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", organization: user.organization, issued_at: Time.zone.today, state: :complete, delivery_method: "pick_up") }
 
     before { visit distribution_path(distribution.id) }
 
@@ -825,15 +825,15 @@ RSpec.feature "Distributions", type: :system do
       expect(page).to have_css("table tbody tr", count: 1)
     end
 
-    it "filters by status" do
-      distribution1 = create(:distribution, status: "scheduled")
-      create(:distribution, status: "complete")
+    it "filters by state" do
+      distribution1 = create(:distribution, state: "scheduled")
+      create(:distribution, state: "complete")
 
       visit subject
       # check for all distributions
       expect(page).to have_css("table tbody tr", count: 2)
       # filter
-      select(distribution1.status.humanize, from: "filters[by_status]")
+      select(distribution1.state.humanize, from: "filters[by_state]")
       click_button("Filter")
       # check for filtered distributions
       expect(page).to have_css("table tbody tr", count: 1)
