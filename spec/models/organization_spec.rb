@@ -20,7 +20,7 @@
 #  name                           :string
 #  one_step_partner_invite        :boolean          default(FALSE), not null
 #  partner_form_fields            :text             default([]), is an Array
-#  reminder_day                   :integer
+#  reminder_schedule              :string
 #  repackage_essentials           :boolean          default(FALSE), not null
 #  short_name                     :string
 #  signature_for_distribution_pdf :boolean          default(FALSE)
@@ -447,13 +447,12 @@ RSpec.describe Organization, type: :model do
     end
   end
 
-  describe 'reminder_day' do
-    it "can only contain numbers 1-28" do
-      expect(build(:organization, reminder_day: 28)).to be_valid
-      expect(build(:organization, reminder_day: 1)).to be_valid
-      expect(build(:organization, reminder_day: 0)).to_not be_valid
-      expect(build(:organization, reminder_day: -5)).to_not be_valid
-      expect(build(:organization, reminder_day: 29)).to_not be_valid
+  describe 'reminder_schedule' do
+    it "cannot exceed 28 if by_month_or_week is day_of_month" do
+      expect(build(:organization, by_month_or_week: 'day_of_month', day_of_month: 28)).to be_valid
+      expect(build(:organization, by_month_or_week: 'day_of_month', day_of_month: 29)).to_not be_valid
+      expect(build(:organization, by_month_or_week: 'day_of_month', day_of_month: 0)).to_not be_valid
+      expect(build(:organization, by_month_or_week: 'day_of_month', day_of_month: -5)).to_not be_valid
     end
   end
   describe 'deadline_day' do

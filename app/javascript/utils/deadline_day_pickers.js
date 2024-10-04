@@ -6,6 +6,7 @@ $(document).ready(function () {
   const deadline_selector = '.deadline-day-pickers__deadline-day';
   const reminder_container_selector = '.deadline-day-pickers__reminder-container';
   const deadline_container_selector = '.deadline-day-pickers__deadline-container';
+  const day_of_week_toggle_selector = '#toggle-to-week-day';
 
   const reminder_text_selector = '.deadline-day-pickers__reminder-day-text';
   const deadline_text_selector = '.deadline-day-pickers__deadline-day-text';
@@ -18,6 +19,7 @@ $(document).ready(function () {
     const $deadline = $container.find(deadline_selector);
     const $reminder_text = $container.find(reminder_text_selector);
     const $deadline_text = $container.find(deadline_text_selector);
+    const $day_of_week_toggle = $container.find(day_of_week_toggle_selector)[0];
 
     const reminder_day = parseInt($reminder.val());
     const deadline_day = parseInt($deadline.val());
@@ -29,17 +31,20 @@ $(document).ready(function () {
     if (reminder_day) {
       $(container).find(reminder_container_selector).find(server_validation_selector).remove();
 
-      if (reminder_day === deadline_day) {
+      if (reminder_day === deadline_day && !$day_of_week_toggle.checked) {
         $reminder_text.removeClass('text-muted').addClass('text-danger');
 
         $reminder_text.text('Reminder day cannot be the same as deadline day.');
-      } else {
+      } 
+        else if ($day_of_week_toggle.checked){
+          $reminder_text.text('');
+        }
+      else {
         $reminder_text.removeClass('text-danger').addClass('text-muted');
-
-        const next_reminder_month = (current_day >= reminder_day) ? next_month : current_month;
-        $reminder_text.text(`Your next reminder will be sent on ${reminder_day} ${next_reminder_month}.`);
+          const next_reminder_month = (current_day >= reminder_day) ? next_month : current_month;
+          $reminder_text.text(`Your next reminder will be sent on ${reminder_day} ${next_reminder_month}.`);
+        }
       }
-    }
 
     if (deadline_day) {
       $(container).find(deadline_container_selector).find(server_validation_selector).remove();

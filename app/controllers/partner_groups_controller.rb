@@ -18,6 +18,8 @@ class PartnerGroupsController < ApplicationController
   end
 
   def edit
+    @partner_group = current_organization.partner_groups.find(params[:id])
+    @partner_group.get_values_from_reminder_schedule
     @item_categories = current_organization.item_categories
   end
 
@@ -49,6 +51,7 @@ class PartnerGroupsController < ApplicationController
   end
 
   def partner_group_params
-    params.require(:partner_group).permit(:name, :send_reminders, :deadline_day, :reminder_day, item_category_ids: [])
+    params.require(:partner_group).permit(:name, :send_reminders, :reminder_schedule,
+      :deadline_day, :by_month_or_week, :day_of_month, :day_of_week, :every_nth_day, item_category_ids: [])
   end
 end

@@ -4,9 +4,8 @@ RSpec.describe ReminderDeadlineMailer, type: :job do
   describe 'notify deadline' do
     let(:today) { Date.new(2022, 1, 10) }
     let(:partner) { create(:partner, organization: organization) }
-
     before(:each) do
-      organization.update!(reminder_day: today.day, deadline_day: 1)
+      organization.update!(deadline_day: 1)
     end
 
     subject { described_class.notify_deadline(partner) }

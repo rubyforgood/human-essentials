@@ -116,6 +116,9 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
         fill_in "organization_user_name", with: admin_user_params[:name]
         fill_in "organization_user_email", with: admin_user_params[:email]
 
+        choose 'toggle-to-date'
+        fill_in "organization_day_of_month", with: 1
+
         click_on "Save"
       end
 
@@ -124,7 +127,6 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
       within("tr.#{org_params[:short_name]}") do
         first(:link, "View").click
       end
-
       expect(page).to have_content(org_params[:name])
       expect(page).to have_content("Remount")
       expect(page).to have_content("Front Royal")

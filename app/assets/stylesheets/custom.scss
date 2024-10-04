@@ -98,3 +98,15 @@
     margin-top: 40px;
   }
 }
+
+#week-day-fields, #date-fields {
+  display: none;
+}
+
+#toggle-to-week-day:checked ~ #week-day-fields {
+  display: block;
+}
+
+#toggle-to-date:checked ~ #date-fields {
+  display: block
+}

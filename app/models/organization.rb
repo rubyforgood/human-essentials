@@ -20,7 +20,7 @@
 #  name                           :string
 #  one_step_partner_invite        :boolean          default(FALSE), not null
 #  partner_form_fields            :text             default([]), is an Array
-#  reminder_day                   :integer
+#  reminder_schedule              :string
 #  repackage_essentials           :boolean          default(FALSE), not null
 #  short_name                     :string
 #  signature_for_distribution_pdf :boolean          default(FALSE)
@@ -107,6 +107,12 @@ class Organization < ApplicationRecord
   has_many :distributions, dependent: :destroy do
     def upcoming
       this_week.scheduled.where('issued_at >= ?', Time.zone.today)
+    end
+  end
+
+  before_save do
+    if should_update_reminder_schedule
+      self.reminder_schedule = create_schedule
     end
   end
 
