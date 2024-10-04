@@ -34,7 +34,10 @@ describe PicklistsPdf do
 
     context "When partner pickup person is set" do
       it "renders pickup person details" do
-        partner = create(:partner, pick_up_person: true)
+        partner = create(:partner)
+        partner.profile.pick_up_name = "Paul Bunyan"
+        partner.profile.pick_up_email = "paul@kenton.com"
+        partner.profile.pick_up_phone = "503-123-4567"
         request = create(:request, :pending, organization: organization, partner: partner)
         pdf = described_class.new(organization, [request])
         pdf_test = PDF::Reader.new(StringIO.new(pdf.compute_and_render))
