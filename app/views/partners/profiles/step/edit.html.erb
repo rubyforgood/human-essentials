@@ -21,7 +21,7 @@
 </section>
 
 <%# TODO: 4504 more descriptive id than accordionExample %>
-<div class="accordion" id="accordionExample">
+<div class="accordion" id="accordionExample" data-controller="accordion">
 
   <%# Agency Information: By default, this section is expanded and is always rendered %>
   <div class="accordion-item">
@@ -30,7 +30,11 @@
         Agency Information
       </button>
     </h2>
-    <div id="agency_information" class="accordion-collapse collapse <%= @open_section == 'agency_information' ? 'show' : '' %>" data-bs-parent="#accordionExample">
+    <%# TODO: 4504 remove data-accordion-target, we can get everything from top level accordion element %>
+    <div id="agency_information"
+        class="accordion-collapse collapse <%= @open_section == 'agency_information' ? 'show' : '' %>"
+        data-bs-parent="#accordionExample"
+        data-accordion-target="tbd">
       <div class="accordion-body">
         <%= render 'partners/profiles/step/agency_information_form', partner: current_partner, profile: current_partner.profile %>
       </div>
