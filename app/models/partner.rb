@@ -157,7 +157,7 @@ class Partner < ApplicationRecord
   end
 
   # better to extract this outside of the model
-  def self.import_csv(csv, organization_id)
+  def self.import_csv(csv, organization_id, errors = [])
     organization = Organization.find(organization_id)
 
     csv.each do |row|
@@ -165,7 +165,11 @@ class Partner < ApplicationRecord
 
       svc = PartnerCreateService.new(organization: organization, partner_attrs: hash_rows)
       svc.call
+      if svc.errors.present?
+        errors << "#{svc.partner.name}: #{svc.partner.errors.full_messages.to_sentence}"
+      end
     end
+    errors.empty? ? nil : errors
   end
 
   def self.csv_export_headers

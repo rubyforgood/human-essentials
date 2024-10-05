@@ -121,6 +121,7 @@ class StorageLocation < ApplicationRecord
       loc.organization_id = organization
       loc.save!
     end
+    nil
   end
 
   # NOTE: We should generalize this elsewhere -- Importable concern?
