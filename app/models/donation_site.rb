@@ -46,6 +46,7 @@ class DonationSite < ApplicationRecord
       loc.organization_id = organization
       loc.save!
     end
+    nil
   end
 
   def self.csv_export_headers
