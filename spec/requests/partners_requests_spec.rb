@@ -238,8 +238,8 @@ RSpec.describe "Partners", type: :request do
 
       it "presents a flash notice message displaying the import errors" do
         subject
-        expect(response).to have_notice(/The following #{model_class.name.underscore.humanize.pluralize} did not import successfully:/)
-        expect(response).to have_notice(/Partner 2: Email is invalid/)
+        expect(response).to have_error(/The following #{model_class.name.underscore.humanize.pluralize} did not import successfully:/)
+        expect(response).to have_error(/Partner 2: Email is invalid/)
       end
     end
   end
