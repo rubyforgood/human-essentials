@@ -19,26 +19,12 @@ end
 # Script-Global Variables
 # ----------------------------------------------------------------------------
 
-# Initial starting qty for our test organizations
-base_items = File.read(Rails.root.join("db", "base_items.json"))
-items_by_category = JSON.parse(base_items)
-
 # ----------------------------------------------------------------------------
 # Base Items
 # ----------------------------------------------------------------------------
 
-items_by_category.each do |category, entries|
-  entries.each do |entry|
-    BaseItem.find_or_create_by!(name: entry["name"], category: category, partner_key: entry["key"])
-  end
-end
-
-# Create global 'Kit' base item
-BaseItem.find_or_create_by!(
-  name: 'Kit',
-  category: 'kit',
-  partner_key: 'kit'
-)
+require 'seed_base_items'
+seed_base_items
 
 # ----------------------------------------------------------------------------
 # NDBN Members
@@ -521,7 +507,7 @@ def seed_quantity(item_name, organization, storage_location, quantity)
   AdjustmentCreateService.new(adjustment).call
 end
 
-items_by_category.each do |_category, entries|
+JSON.parse(File.read(Rails.root.join("db", "base_items.json"))).each do |_category, entries|
   entries.each do |entry|
     seed_quantity(entry['name'], pdx_org, inv_arbor, entry['qty']['arbor'])
     seed_quantity(entry['name'], pdx_org, inv_pdxdb, entry['qty']['pdxdb'])

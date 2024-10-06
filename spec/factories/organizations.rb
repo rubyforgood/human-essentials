@@ -34,6 +34,7 @@
 #  account_request_id             :integer
 #  ndbn_member_id                 :bigint
 #
+require 'seed_base_items'
 
 FactoryBot.define do
   factory :organization do
