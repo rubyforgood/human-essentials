@@ -19,6 +19,13 @@
 RSpec.describe Vendor, type: :model do
   it_behaves_like "provideable"
 
+  context "Validations" do
+    it "validates that a business name is present" do
+      expect(build(:vendor, business_name: "Diaper Enterprises")).to be_valid
+      expect(build(:vendor, business_name: nil)).to_not be_valid
+    end
+  end
+
   context "Methods" do
     describe "volume" do
       it "retrieves the amount of product that has been bought from this vendor" do
