@@ -20,21 +20,25 @@
   </div><!-- /.container-fluid -->
 </section>
 
-<%# TODO: 4504 more descriptive id than accordionExample %>
-<div class="accordion" id="accordionExample" data-controller="accordion">
+<div class="accordion mx-5 mt-3" id="accordionExample" data-controller="accordion">
 
   <%# Agency Information: By default, this section is expanded and is always rendered %>
   <div class="accordion-item">
     <h2 class="accordion-header">
       <button class="accordion-button <%= @open_section != 'agency_information' ? 'collapsed' : '' %>" type="button" data-bs-toggle="collapse" data-bs-target="#agency_information" aria-expanded="<%= @open_section == 'agency_information' %>" aria-controls="agency_information">
-        Agency Information
+        <div class='d-flex justify-content-between align-items-center w-100'>
+          <div class='fs-4'>
+            <i class="fa fa-edit mr-2"></i>Agency Information
+          </div>
+          <div>
+            <i class="fs-4 fa fa-check-circle text-success mr-2"></i>
+          </div>
+        </div>
       </button>
     </h2>
-    <%# TODO: 4504 remove data-accordion-target, we can get everything from top level accordion element %>
     <div id="agency_information"
         class="accordion-collapse collapse <%= @open_section == 'agency_information' ? 'show' : '' %>"
-        data-bs-parent="#accordionExample"
-        data-accordion-target="tbd">
+        data-bs-parent="#accordionExample">
       <div class="accordion-body">
         <%= render 'partners/profiles/step/agency_information_form', partner: current_partner, profile: current_partner.profile %>
       </div>
@@ -45,7 +49,14 @@
   <div class="accordion-item">
     <h2 class="accordion-header">
       <button class="accordion-button <%= @open_section != 'program_delivery_address' ? 'collapsed' : '' %>" type="button" data-bs-toggle="collapse" data-bs-target="#program_delivery_address" aria-expanded="<%= @open_section == 'program_delivery_address' %>" aria-controls="program_delivery_address">
-        Program / Delivery Address
+        <div class='d-flex justify-content-between align-items-center w-100'>
+          <div class='fs-4'>
+            <i class="fa fa-map mr-2"></i>Program / Delivery Address
+          </div>
+          <div>
+            <i class="fs-4 fa fa-times-circle text-danger mr-2"></i>
+          </div>
+        </div>
       </button>
     </h2>
     <div id="program_delivery_address" class="accordion-collapse collapse <%= @open_section == 'program_delivery_address' ? 'show' : '' %>" data-bs-parent="#accordionExample">
@@ -60,7 +71,14 @@
     <div class="accordion-item">
       <h2 class="accordion-header">
         <button class="accordion-button <%= @open_section != partial ? 'collapsed' : '' %>" type="button" data-bs-toggle="collapse" data-bs-target="#<%= partial %>" aria-expanded="<%= @open_section == partial %>" aria-controls="<%= partial %>">
-          <%= partial.humanize %>
+          <div class='d-flex justify-content-between align-items-center w-100'>
+            <div class='fs-4'>
+              <i class="fa fa-cogs mr-2"></i><%= partial.humanize %>
+            </div>
+            <div>
+              <i class="fs-4 fa fa-check-circle text-success mr-2"></i>
+            </div>
+          </div>
         </button>
       </h2>
       <div id="<%= partial %>" class="accordion-collapse collapse <%= @open_section == partial ? 'show' : '' %>" data-bs-parent="#accordionExample">
@@ -75,7 +93,14 @@
   <div class="accordion-item">
     <h2 class="accordion-header">
       <button class="accordion-button <%= @open_section != 'partner_settings' ? 'collapsed' : '' %>" type="button" data-bs-toggle="collapse" data-bs-target="#settings" aria-expanded="<%= @open_section == 'partner_settings' %>" aria-controls="settings">
-        Settings
+        <div class='d-flex justify-content-between align-items-center w-100'>
+          <div class='fs-4'>
+            <i class="fa fa-cog mr-2"></i>Settings
+          </div>
+          <div>
+            <i class="fs-4 fa fa-check-circle text-success mr-2"></i>
+          </div>
+        </div>
       </button>
     </h2>
     <div id="settings" class="accordion-collapse collapse <%= @open_section == 'partner_settings' ? 'show' : '' %>" data-bs-parent="#accordionExample">
