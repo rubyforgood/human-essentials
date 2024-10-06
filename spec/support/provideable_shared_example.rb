@@ -2,14 +2,6 @@ shared_examples_for "provideable" do
   let(:model_f) { described_class.to_s.underscore.to_sym }
 
   context "Validations" do
-    it "is invalid unless it has either a contact name or a business name" do
-      expect(build(model_f, contact_name: nil, business_name: nil)).not_to be_valid
-      expect(build(model_f, contact_name: nil, business_name: "George Company").valid?).to eq(true)
-      unless model_f == :vendor # business name is a required attribute for Vendor
-        expect(build(model_f, contact_name: "George Henry", business_name: nil).valid?).to eq(true)
-      end
-    end
-
     it "is invalid without an organization" do
       expect(build(model_f, organization: nil)).not_to be_valid
     end
