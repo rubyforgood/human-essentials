@@ -1,6 +1,4 @@
 RSpec.describe "Admin Organization Management", type: :system, js: true, seed_items: false do
-  include ActionView::RecordIdentifier
-
   around do |ex|
     Kaminari.config.default_per_page = 3
     ex.run
