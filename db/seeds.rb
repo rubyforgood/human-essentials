@@ -125,11 +125,18 @@ end
 # ----------------------------------------------------------------------------
 Organization.all.each do |org|
   # Setup the Partner Group & their item categories
-  partner_group = FactoryBot.create(:partner_group, organization: org)
+  partner_group_one = FactoryBot.create(:partner_group, organization: org)
 
   total_item_categories_to_add = Faker::Number.between(from: 1, to: 2)
   org.item_categories.sample(total_item_categories_to_add).each do |item_category|
-    partner_group.item_categories << item_category
+    partner_group_one.item_categories << item_category
+  end
+
+  next unless org.name == pdx_org.name
+
+  partner_group_two = FactoryBot.create(:partner_group, organization: org)
+  org.item_categories.each do |item_category|
+    partner_group_two.item_categories << item_category
   end
 end
 
@@ -219,6 +226,12 @@ note = [
     name: "Pawnee Middle School",
     email: "waiting@example.com",
     status: :awaiting_review,
+    notes: note.sample
+  },
+  {
+    name: "Second Street Community Outreach",
+    status: :approved,
+    email: "approved_2@example.com",
     notes: note.sample
   }
 ].each do |partner_option|
