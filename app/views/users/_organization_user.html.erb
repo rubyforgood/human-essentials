@@ -17,11 +17,10 @@
         <ul class="dropdown-menu">
           <li>
             <%=
-              edit_button_to(
-                promote_to_org_admin_organization_path(user_id: user.id),
-                {text: 'Promote to Admin'},
-                {method: :post, rel: "nofollow", data: {confirm: 'This will promote the user to admin status. Are you sure that you want to submit this?', size: 'xs'}}
-              )
+            edit_button_to(
+              edit_admin_user_path(user),
+              {text: 'Edit User'}
+            )
             %>
           </li>
           <li>
