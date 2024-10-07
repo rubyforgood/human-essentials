@@ -237,7 +237,12 @@ note = [
 ].each do |partner_option|
   p = Partner.find_or_create_by!(partner_option) do |partner|
     partner.organization = pdx_org
-    partner.partner_group = pdx_org.partner_groups.first
+
+    if partner_option[:name] == "Second Street Community Outreach"
+      partner.partner_group = pdx_org.partner_groups.find_by(name: 'Group 2')
+    else
+      partner.partner_group = pdx_org.partner_groups.first
+    end
   end
 
   profile = Partners::Profile.create!({
