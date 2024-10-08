@@ -61,6 +61,10 @@ FactoryBot.define do
       status { 'pending' }
     end
 
+    trait :discarded do
+      status { 'discarded' }
+    end
+
     trait :with_varied_quantities do
       request_items {
         # get 10 unique item ids
