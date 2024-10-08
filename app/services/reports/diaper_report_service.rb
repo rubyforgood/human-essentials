@@ -1,5 +1,5 @@
 module Reports
-  class AcquisitionReportService
+  class DiaperReportService
     include ActionView::Helpers::NumberHelper
     attr_reader :year, :organization
 
@@ -12,7 +12,7 @@ module Reports
 
     # @return [Hash]
     def report
-      @report ||= { name: 'Diaper Acquisition',
+      @report ||= { name: 'Diapers',
                     entries: {
                       'Disposable diapers distributed' => number_with_delimiter(total_disposable_diapers_distributed),
                       'Cloth diapers distributed' => number_with_delimiter(distributed_cloth_diapers),
