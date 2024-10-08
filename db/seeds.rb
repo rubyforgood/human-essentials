@@ -834,6 +834,19 @@ transfer = Transfer.new(
 )
 TransferCreateService.call(transfer)
 
+# ----------------------------------------------------------------------------
+# Users invitation status
+# ----------------------------------------------------------------------------
+# Mark users `invitation_status` as `accepted`
+# 
+# Addresses and resolves issue #4689, which can be found in:
+# https://github.com/rubyforgood/human-essentials/issues/4689
+def mark_invitation_status_as_accepted!(user)
+  user.invitation_sent_at = Time.current
+  user.invitation_accepted_at = Time.current
+  user.save!
+end
+
 User.where(invitation_token: nil).each do |user| 
-  user.mark_invitation_status_as_accepted!
+  mark_invitation_status_as_accepted!(user)
 end
