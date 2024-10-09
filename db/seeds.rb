@@ -70,6 +70,11 @@ sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization
 end
 Organization.seed_items(sf_org)
 
+# At least one of the items is marked as inactive
+Organization.all.each do |org|
+  org.items.order(created_at: :desc).last.update(active: false)
+end
+
 # Assign a value to some organization items to verify totals are working
 Organization.all.each do |org|
   org.items.where(value_in_cents: 0).limit(10).each do |item|
@@ -417,11 +422,19 @@ inv_pdxdb = StorageLocation.find_or_create_by!(name: "Pawnee Main Bank (Office)"
   inventory.square_footage = 20_000
 end
 
+inactive_storage = StorageLocation.find_or_create_by!(name: "Inactive Storage Location") do |inventory|
+  inventory.address = "Unknown"
+  inventory.organization = pdx_org
+  inventory.warehouse_type = StorageLocation::WAREHOUSE_TYPES[2]
+  inventory.square_footage = 5_000
+  inventory.discarded_at = DateTime.now
+end
+
 #
 # Define all the InventoryItem for each of the StorageLocation
 #
 StorageLocation.all.each do |sl|
-  sl.organization.items.each do |item|
+  sl.organization.items.active.each do |item|
     InventoryItem.create!(
       storage_location: sl,
       item: item,
