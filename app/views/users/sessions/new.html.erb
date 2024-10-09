@@ -1,3 +1,21 @@
+<style>
+    .password-input-wrapper {
+        position: relative;
+    }
+
+    .password-field {
+        padding-right: 40px; /* Space for the icon */
+    }
+
+    .toggle-password {
+        position: absolute;
+        right: 10px;
+        top: 70%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #999;
+    }
+</style>
 <%= render partial: "shared/flash" %>
 <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
   <div class="login-box">
@@ -12,7 +30,12 @@
           <%= f.input :email, autofocus: true %>
         </div>
         <div class="form-inputs">
-          <%= f.input :password, autofocus: true %>
+          <div class="password-input-wrapper">
+            <%= f.input :password, autofocus: true, input_html: { id: 'password_field', class: 'password-field' } %>
+            <span id="toggle_password" class="toggle-password">
+              <i class="fas fa-eye-slash"></i>
+            </span>
+          </div>
         </div>
         <div class="col-12 text-center">
           <%= f.button :submit, "Log in", class: "btn btn-primary btn-block" %>
@@ -37,3 +60,20 @@
 <%= link_to user_google_oauth2_omniauth_authorize_path, method: :post do %>
   <img src="../img/btn_google_signin_dark_focus_web@2x.png" alt="Sign in with Google">
 <% end %>
+
+<script>
+    document.getElementById('toggle_password').onclick = function () {
+        const passwordField = document.getElementById('password_field');
+        const icon = this.querySelector('i');
+
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        } else {
+            passwordField.type = 'password';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        }
+    };
+</script>
