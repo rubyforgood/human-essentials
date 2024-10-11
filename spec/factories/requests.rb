@@ -28,6 +28,7 @@ FactoryBot.define do
     request_items { random_request_items }
     comments { "Urgent" }
     partner_user { ::User.partner_users.first || create(:partner_user) }
+    item_requests { [] }
 
     # For compatibility we can take in a list of request_items and turn it into a
     # list of item_requests

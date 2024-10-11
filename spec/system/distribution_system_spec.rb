@@ -130,6 +130,34 @@ RSpec.feature "Distributions", type: :system do
       expect(page.find(".alert-info")).to have_content "created"
     end
 
+    # Issue #4644
+    it "Disables confirmation and modal close buttons after clicking confirm" do
+      item = View::Inventory.new(organization.id).items_for_location(storage_location.id).first.db_item
+      item.update!(on_hand_minimum_quantity: 5)
+      TestInventory.create_inventory(organization,
+        {
+          storage_location.id => { item.id => 20 }
+        })
+
+      visit new_distribution_path
+      select "Test Partner", from: "Partner"
+      select "Test Storage Location", from: "From storage location"
+      select2(page, 'distribution_line_items_item_id', item.name, position: 1)
+      select "Test Storage Location", from: "distribution_storage_location_id"
+      fill_in "distribution_line_items_attributes_0_quantity", with: 15
+
+      click_button "Save"
+
+      # Disable form submission so form doesn't immediately submit and we can check button state
+      page.execute_script("$('form#new_distribution').attr('action', 'javascript: void(0);');")
+
+      click_button(id: "modalYes")
+
+      expect(page).to have_button(id: "modalYes", visible: false, disabled: true)
+      expect(page).to have_button(id: "modalNo", visible: false, disabled: true)
+      expect(page).to have_button(id: "modalClose", visible: false, disabled: true)
+    end
+
     it "Displays a complete form after validation errors" do
       visit new_distribution_path
 
@@ -588,6 +616,8 @@ RSpec.feature "Distributions", type: :system do
       items = storage_location.items.pluck(:id).sample(2)
       request_items = [{ "item_id" => items[0], "quantity" => 10 }, { "item_id" => items[1], "quantity" => 10 }]
       @request = create :request, organization: organization, request_items: request_items
+      create(:item_request, request: @request, item_id: items[0], quantity: 10)
+      create(:item_request, request: @request, item_id: items[1], quantity: 10)
 
       visit request_path(id: @request.id)
       click_on "Fulfill request"
@@ -621,6 +651,8 @@ RSpec.feature "Distributions", type: :system do
       items = storage_location.items.pluck(:id).sample(2)
       request_items = [{ "item_id" => items[0], "quantity" => 1000000 }, { "item_id" => items[1], "quantity" => 10 }]
       @request = create :request, organization: organization, request_items: request_items
+      create(:item_request, request: @request, item_id: items[0], quantity: 1000000)
+      create(:item_request, request: @request, item_id: items[1], quantity: 10)
 
       visit request_path(id: @request.id)
       click_on "Fulfill request"
