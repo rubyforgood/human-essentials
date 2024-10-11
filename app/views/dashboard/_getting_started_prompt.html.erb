@@ -75,7 +75,6 @@
                   </p>
 
                   <div id="org-stats-call-to-action-partners">
-                    <%= modal_button_to("#csvImportModal", { text: "Import Partners", icon: "upload", size: "md" }) %>
                     <% partner_link_text = partner_criteria_met ? "Add More Partners" : "Add a Partner" %>
                     <%= new_button_to new_partner_path, { text: partner_link_text, size: "md" } %>
                   </div>
@@ -136,18 +135,5 @@
         </div>
       </div>
     </div>
-
-    <%= render(
-        layout: "shared/csv_import_modal",
-        locals: {
-          import_type: "Partners",
-          csv_template_url: "/partners_template.csv",
-          csv_import_url: import_csv_partners_path,
-        },
-      ) do %>
-      <li>Open the CSV file with Excel or your favourite spreadsheet program.</li>
-      <li>Delete the sample data and enter your partner agency names and addresses in the appropriate columns.</li>
-      <li>Save the file as a CSV file.</li>
-    <% end %>
   <% end %>
 <% end %>

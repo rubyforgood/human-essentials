@@ -87,10 +87,6 @@ Make sure to install **Ubuntu** as your Linux distribution. (This should be defa
     Waiting Approval Partner
     Email: waiting@example.com
     Password: password!
-    
-    Another approved partner (with all groups):
-    Email: approved_2@example.com
-    Pasword: password!
   ```
 </details>
 

@@ -21,11 +21,7 @@ class OrganizationDashboardPage < OrganizationPage
   end
 
   def has_add_partner_call_to_action?
-    has_selector? call_to_action_partner_selector
-  end
-
-  def has_add_partner_call_to_action_with_two_links?
-    has_add_partner_call_to_action? && partner_cta_has_two_links?
+    has_selector? "#org-stats-call-to-action-partners"
   end
 
   def has_add_storage_location_call_to_action?
@@ -156,19 +152,5 @@ class OrganizationDashboardPage < OrganizationPage
 
   def outstanding_selector
     "#outstanding"
-  end
-
-  def call_to_action_partner
-    find call_to_action_partner_selector
-  end
-
-  def call_to_action_partner_selector
-    "#org-stats-call-to-action-partners"
-  end
-
-  def partner_cta_has_two_links?
-    within call_to_action_partner do
-      all("a", count: 2)
-    end
   end
 end

@@ -157,17 +157,6 @@ RSpec.describe "Admin::Organizations", type: :request do
         get admin_organization_path({ id: organization.id })
         expect(response).to be_successful
       end
-
-      context "with an organization user" do
-        let!(:user) { create(:user, organization: organization) }
-
-        it "provides links to edit the user" do
-          get admin_organization_path({ id: organization.id })
-
-          expect(response.body).to include("Edit User")
-          expect(response.body).to include(edit_admin_user_path(user.id))
-        end
-      end
     end
 
     describe "PUT #update" do
