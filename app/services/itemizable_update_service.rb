@@ -17,9 +17,6 @@ module ItemizableUpdateService
 
       verify_intervening_audit_on_storage_location_items(itemizable: itemizable, from_location_id: from_location.id, to_location_id: to_location.id)
 
-      apply_change_method = (type == :increase) ? :increase_inventory : :decrease_inventory
-      undo_change_method = (type == :increase) ? :decrease_inventory : :increase_inventory
-
       previous = nil
       # TODO once event sourcing has been out for long enough, we can safely remove this
       if Event.where(eventable: itemizable).none? || UpdateExistingEvent.where(eventable: itemizable).any?
@@ -29,12 +26,7 @@ module ItemizableUpdateService
       line_item_attrs = Array.wrap(params[:line_items_attributes]&.values)
       line_item_attrs.each { |attr| attr.delete(:id) }
 
-      update_storage_location(itemizable:          itemizable,
-        apply_change_method: apply_change_method,
-        undo_change_method:  undo_change_method,
-        params:              params,
-        from_location:       from_location,
-        to_location:         to_location)
+      update_storage_location(itemizable: itemizable, params: params)
       if previous
         UpdateExistingEvent.publish(itemizable, previous)
       else
@@ -44,19 +36,13 @@ module ItemizableUpdateService
   end
 
   # @param itemizable [Itemizable]
-  # @param apply_change_method [Symbol]
-  # @param undo_change_method [Symbol]
   # @param params [Hash] Parameters passed from the controller. Should include `line_item_attributes`.
-  # @param from_location [StorageLocation]
-  # @param to_location [StorageLocation]
-  def self.update_storage_location(itemizable:, apply_change_method:, undo_change_method:,
-    params:, from_location:, to_location:)
+  def self.update_storage_location(itemizable:, params:)
     # Delete the line items -- they'll be replaced later
     itemizable.line_items.delete_all
     # Update the current model with the new parameters
     itemizable.update!(params)
     itemizable.reload
-    # Apply the new changes to the storage location inventory
   end
 
   # @param itemizable [Itemizable]

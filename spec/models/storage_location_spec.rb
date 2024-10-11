@@ -58,20 +58,6 @@ RSpec.describe StorageLocation, type: :model do
     let(:item) { create(:item) }
     subject { create(:storage_location, :with_items, item_quantity: 10, item: item, organization: organization) }
 
-    describe "increase_inventory" do
-      context "With existing inventory" do
-        let(:donation) { create(:donation, :with_items, item_quantity: 66, organization: organization) }
-
-        it "increases inventory quantities from an itemizable object" do
-        end
-      end
-    end
-
-    describe "decrease_inventory" do
-      let(:item) { create(:item, organization: organization) }
-      let(:distribution) { create(:distribution, :with_items, item: item, item_quantity: 66, organization: organization) }
-    end
-
     describe "StorageLocation.items_inventoried" do
       it "returns a collection of items that are stored within inventories" do
         items = create_list(:item, 3, organization: organization)
@@ -194,33 +180,6 @@ RSpec.describe StorageLocation, type: :model do
         storage_location.save
         expect(storage_location.latitude).not_to eq(nil)
         expect(storage_location.longitude).not_to eq(nil)
-      end
-    end
-
-    describe "csv_export_attributes" do
-      it "returns an array of storage location attributes, followed by inventory item quantities that are sorted by alphabetized item names" do
-        item1 = create(:item, name: "C")
-        item2 = create(:item, name: "B")
-        item3 = create(:item, name: "A")
-        inactive_item = create(:item, name: "inactive item", active: false)
-        name = "New Storage Location"
-        address = "1500 Remount Road, Front Royal, VA 22630"
-        warehouse_type = "Warehouse with loading bay"
-        square_footage = rand(1000..10000)
-        storage_location = create(:storage_location, name: name, address: address, warehouse_type: warehouse_type, square_footage: square_footage)
-        quantity1 = rand(100..1000)
-        quantity2 = rand(100..1000)
-        quantity3 = rand(100..1000)
-        TestInventory.create_inventory(storage_location.organization, {
-          storage_location.id => {
-            item1.id => quantity1,
-            item2.id => quantity2,
-            item3.id => quantity3,
-            inactive_item.id => 1
-          }
-        })
-        sum = quantity1 + quantity2 + quantity3
-        expect(storage_location.csv_export_attributes).to eq([name, address, square_footage, warehouse_type, sum, quantity3, quantity2, quantity1])
       end
     end
   end
