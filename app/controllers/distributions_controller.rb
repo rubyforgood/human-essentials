@@ -51,12 +51,16 @@ class DistributionsController < ApplicationController
     @item_categories = current_organization.item_categories
     @storage_locations = current_organization.storage_locations.active_locations.alphabetized
     @partners = @distributions.collect(&:partner).uniq.sort_by(&:name)
+
     @selected_item = filter_params[:by_item_id].presence
-    @total_value_all_distributions = total_value(@distributions)
-    @total_items_all_distributions = total_items(@distributions, @selected_item)
-    @total_value_paginated_distributions = total_value(@paginated_distributions)
-    @total_items_paginated_distributions = total_items(@paginated_distributions, @selected_item)
     @selected_item_category = filter_params[:by_item_category_id]
+
+    @total_items_all_distributions = total_items(@distributions, @selected_item, @selected_item_category) 
+    @total_items_paginated_distributions = total_items(@paginated_distributions, @selected_item, @selected_item_category) 
+
+    @total_value_all_distributions = total_value(@distributions)
+    @total_value_paginated_distributions = total_value(@paginated_distributions)
+ 
     @selected_partner = filter_params[:by_partner]
     @selected_status = filter_params[:by_state]
     @selected_location = filter_params[:by_location]
@@ -297,9 +301,15 @@ class DistributionsController < ApplicationController
     params.dig(:distribution, :request_attributes, :id)
   end
 
-  def total_items(distributions, item)
+  def total_items(distributions, item, item_category)
     query = LineItem.where(itemizable_type: "Distribution", itemizable_id: distributions.pluck(:id))
-    query = query.where(item_id: item.to_i) if item
+    
+    query = query.where(item_id: item.to_i) if item.present?
+
+    if item_category.present?
+      query = query.joins(:item).where(items: { item_category_id: item_category.to_i })
+    end
+    
     query.sum('quantity')
   end
 
