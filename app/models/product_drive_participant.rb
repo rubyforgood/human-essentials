@@ -25,6 +25,8 @@ class ProductDriveParticipant < ApplicationRecord
 
   validates :phone, presence: { message: "Must provide a phone or an e-mail" }, if: proc { |pdp| pdp.email.blank? }
   validates :email, presence: { message: "Must provide a phone or an e-mail" }, if: proc { |pdp| pdp.phone.blank? }
+  validates :contact_name, presence: { message: "Must provide a name or a business name" }, if: proc { |pdp| pdp.business_name.blank? }
+  validates :business_name, presence: { message: "Must provide a name or a business name" }, if: proc { |pdp| pdp.contact_name.blank? }
   validates :comment, length: { maximum: 500 }
 
   scope :alphabetized, -> { order(:contact_name) }
