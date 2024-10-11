@@ -129,11 +129,38 @@ RSpec.describe "Distributions", type: :request do
         expect(response).to have_http_status(400)
         expect(response).to have_error
       end
+
+      context "Deactivated partners should not be displayed in partner dropdown" do
+        before do
+          create(:partner, name: 'Active Partner', organization: organization, status: "approved")
+          create(:partner, name: 'Deactivated Partner', organization: organization, status: "deactivated")
+        end
+
+        it "should not display deactivated partners after error and re-render of form" do
+          post distributions_path(distribution: { comment: nil, partner_id: nil, storage_location_id: nil }, format: :turbo_stream)
+          expect(response).to have_http_status(400)
+          expect(response).to have_error
+          expect(response.body).not_to include("Deactivated Partner")
+          expect(response.body).to include("Active Partner")
+        end
+      end
     end
 
     describe "GET #new" do
       let!(:partner) { create(:partner, organization: organization) }
-      let(:request) { create(:request, partner: partner, organization: organization) }
+      let(:request) { create(:request, partner: partner, organization: organization, item_requests: item_requests) }
+      let(:items) {
+        [
+          create(:item, :with_unit, organization: organization, name: 'Item 1', unit: 'pack'),
+          create(:item, organization: organization, name: 'Item 2')
+        ]
+      }
+      let(:item_requests) {
+        [
+          create(:item_request, item: items[0], quantity: 50, request_unit: 'pack'),
+          create(:item_request, item: items[1], quantity: 25)
+        ]
+      }
       let(:storage_location) { create(:storage_location, :with_items, organization: organization) }
       let(:default_params) { { request_id: request.id } }
 
@@ -164,6 +191,57 @@ RSpec.describe "Distributions", type: :request do
           expect(response).to be_successful
           page = Nokogiri::HTML(response.body)
           expect(page.css(%(#distribution_storage_location_id option[selected][value="#{storage_location.id}"]))).not_to be_empty
+        end
+      end
+
+      context "Deactivated partners should not be displayed in partner dropdown" do
+        before do
+          create(:partner, name: 'Active Partner', organization: organization, status: "approved")
+          create(:partner, name: 'Deactivated Partner', organization: organization, status: "deactivated")
+        end
+
+        it "should not display deactivated partners on new distribution" do
+          get new_distribution_path(default_params)
+          expect(response.body).not_to include("Deactivated Partner")
+          expect(response.body).to include("Active Partner")
+        end
+      end
+
+      context 'with units' do
+        before(:each) do
+          Flipper.enable(:enable_packs)
+        end
+
+        it 'should behave correctly' do
+          get new_distribution_path(default_params)
+          expect(response).to be_successful
+          page = Nokogiri::HTML(response.body)
+
+          # should have a disabled select and a hidden input
+          expect(page.css('select[disabled][name="distribution[line_items_attributes][0][item_id]"]')).not_to be_empty
+          expect(page.css('input[name="distribution[line_items_attributes][0][item_id]"]')).not_to be_empty
+          expect(page.css('select[disabled][name="distribution[line_items_attributes][1][item_id]"]')).not_to be_empty
+          expect(page.css('input[name="distribution[line_items_attributes][1][item_id]"]')).not_to be_empty
+
+          # input with packs should be blank
+          expect(page.css('#distribution_line_items_attributes_0_quantity').attr('value')).to eq(nil)
+
+          # input with no packs should show quantity
+          expect(page.css('#distribution_line_items_attributes_1_quantity').attr('value').value).to eq('25')
+        end
+
+        context 'with no request' do
+          it 'should have no inputs' do
+            get new_distribution_path({})
+            expect(response).to be_successful
+            page = Nokogiri::HTML(response.body)
+
+            # blank input shown
+            expect(page.css('select[name="distribution[line_items_attributes][0][item_id]"]')).not_to be_empty
+            expect(page.css('#distribution_line_items_attributes_0_quantity').attr('value')).to eq(nil)
+            # in the template
+            expect(page.css('select[name="distribution[line_items_attributes][1][item_id]"]')).not_to be_empty
+          end
         end
       end
     end
@@ -381,6 +459,84 @@ RSpec.describe "Distributions", type: :request do
         create(:audit, storage_location: create(:storage_location))
         get edit_distribution_path(id: distribution.id)
         expect(response.body).not_to include("You’ve had an audit since this distribution was started.")
+      end
+
+      it "should display deactivated partners in partner dropdown" do
+        create(:partner, name: 'Active Partner', organization: organization, status: "approved")
+        create(:partner, name: 'Deactivated Partner', organization: organization, status: "deactivated")
+        get edit_distribution_path(id: distribution.id)
+        expect(response.body).to include("Deactivated Partner")
+        expect(response.body).to include("Active Partner")
+      end
+
+      context 'with units' do
+        let!(:request) {
+          create(:request,
+            partner: partner,
+            organization: organization,
+            distribution_id: distribution.id,
+            item_requests: item_requests)
+        }
+        let(:items) {
+          [
+            create(:item, :with_unit, organization: organization, name: 'Item 1', unit: 'pack'),
+            create(:item, organization: organization, name: 'Item 2'),
+            create(:item, organization: organization, name: 'Item 3')
+          ]
+        }
+        let!(:item_requests) {
+          [
+            create(:item_request, item: items[0], quantity: 50, request_unit: 'pack'),
+            create(:item_request, item: items[1], quantity: 25)
+          ]
+        }
+        before(:each) do
+          Flipper.enable(:enable_packs)
+          create(:line_item, itemizable: distribution, item_id: items[0].id, quantity: 25)
+          create(:line_item, itemizable: distribution, item_id: items[2].id, quantity: 10)
+        end
+
+        it 'should behave correctly' do
+          get edit_distribution_path(id: distribution.id)
+          expect(response).to be_successful
+          page = Nokogiri::HTML(response.body)
+
+          # should have a regular select and no hidden input
+          expect(page.css('select[disabled][name="distribution[line_items_attributes][0][item_id]"]')).not_to be_empty
+          expect(page.css('input[name="distribution[line_items_attributes][0][item_id]"]')).not_to be_empty
+
+          # should have a regular select and no hidden input
+          expect(page.css('select[name="distribution[line_items_attributes][1][item_id]"]')).not_to be_empty
+          expect(page.css('select[disabled][name="distribution[line_items_attributes][1][item_id]"]')).to be_empty
+          expect(page.css('input[name="distribution[line_items_attributes][1][item_id]"]')).to be_empty
+
+          # should have a disabled select and a hidden input
+          expect(page.css('select[disabled][name="distribution[line_items_attributes][2][item_id]"]')).not_to be_empty
+          expect(page.css('input[name="distribution[line_items_attributes][2][item_id]"]')).not_to be_empty
+
+          # existing inputs should show numbers
+          expect(page.css('#distribution_line_items_attributes_0_quantity').attr('value').value).to eq('25')
+          expect(page.css('#distribution_line_items_attributes_1_quantity').attr('value').value).to eq('10')
+
+          # input from request should show 0
+          expect(page.css('#distribution_line_items_attributes_2_quantity').attr('value').value).to eq('0')
+        end
+
+        context 'with no request' do
+          it 'should have everything enabled' do
+            request.destroy
+            get edit_distribution_path(id: distribution.id)
+            expect(response).to be_successful
+            page = Nokogiri::HTML(response.body)
+
+            expect(page.css('select[name="distribution[line_items_attributes][0][item_id]"]')).not_to be_empty
+            expect(page.css('select[disabled][name="distribution[line_items_attributes][0][item_id]"]')).to be_empty
+            expect(page.css('input[name="distribution[line_items_attributes][0][item_id]"]')).to be_empty
+            expect(page.css('select[name="distribution[line_items_attributes][1][item_id]"]')).not_to be_empty
+            expect(page.css('select[disabled][name="distribution[line_items_attributes][1][item_id]"]')).to be_empty
+            expect(page.css('input[name="distribution[line_items_attributes][1][item_id]"]')).to be_empty
+          end
+        end
       end
 
       # Bug fix #4537
