@@ -1,10 +1,9 @@
 module ItemizableUpdateService
   # @param itemizable [Itemizable]
-  # @param type [Symbol] :increase or :decrease - if the original line items added quantities (purchases or
-  # donations), use :increase. If the original line_items reduced quantities (distributions) use :decrease.
   # @param params [Hash] Parameters passed from the controller. Should include `line_item_attributes`.
   # @param event_class [Class<Event>] the event class to publish the itemizable to.
-  def self.call(itemizable:, type: :increase, params: {}, event_class: nil)
+  def self.call(itemizable:, params: {}, event_class: nil)
+    original_storage_location = itemizable.storage_location
     StorageLocation.transaction do
       item_ids = params[:line_items_attributes]&.values&.map { |i| i[:item_id].to_i } || []
       inactive_item_names = Item.where(id: item_ids, active: false).pluck(:name)
@@ -28,7 +27,7 @@ module ItemizableUpdateService
 
       update_storage_location(itemizable: itemizable, params: params)
       if previous
-        UpdateExistingEvent.publish(itemizable, previous)
+        UpdateExistingEvent.publish(itemizable, previous, original_storage_location)
       else
         event_class&.publish(itemizable)
       end
