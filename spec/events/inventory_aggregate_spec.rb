@@ -672,7 +672,7 @@ RSpec.describe InventoryAggregate do
       donation.save!
 
       attributes = {line_items_attributes: {"0": {item_id: item1.id, quantity: 40}, "1": {item_id: item2.id, quantity: 25}}}
-      ItemizableUpdateService.call(itemizable: donation, type: :increase, event_class: DonationEvent, params: attributes)
+      ItemizableUpdateService.call(itemizable: donation, event_class: DonationEvent, params: attributes)
 
       result = InventoryAggregate.inventory_for(organization.id)
       expect(result).to eq(EventTypes::Inventory.new(
@@ -693,7 +693,7 @@ RSpec.describe InventoryAggregate do
       ))
 
       attributes = {line_items_attributes: {"0": {item_id: item1.id, quantity: 35}, "1": {item_id: item2.id, quantity: 30}}}
-      ItemizableUpdateService.call(itemizable: donation, type: :increase, event_class: DonationEvent, params: attributes)
+      ItemizableUpdateService.call(itemizable: donation, event_class: DonationEvent, params: attributes)
 
       result = InventoryAggregate.inventory_for(organization.id)
       expect(result).to eq(EventTypes::Inventory.new(

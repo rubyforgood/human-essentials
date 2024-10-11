@@ -33,8 +33,9 @@ class Kit < ApplicationRecord
 
   # @param inventory [View::Inventory]
   # @return [Boolean]
-  def can_deactivate?(inventory)
-    inventory&.quantity_for(item_id: item.id)&.zero?
+  def can_deactivate?(inventory=nil)
+    inventory ||= View::Inventory.new(self.organization_id)
+    inventory.quantity_for(item_id: item.id).zero?
   end
 
   def deactivate

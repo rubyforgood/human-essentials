@@ -38,12 +38,17 @@ class UpdateExistingEvent < Event
     end
 
     # @param itemizable [Itemizable]
-    def publish(itemizable, previous_line_items)
+    # @param previous_line_items [Array<LineItem>]
+    # @param original_storage_location [StorageLocation]
+    def publish(itemizable, previous_line_items, original_storage_location)
       dir = direction(itemizable)
-      previous_items = item_quantities(previous_line_items, itemizable.storage_location, dir)
+      previous_items = item_quantities(previous_line_items, original_storage_location, dir)
       current_items = item_quantities(itemizable.line_items, itemizable.storage_location, dir)
-      diff_items = diff(previous_items, current_items)
-
+      diff_items = if original_storage_location.id == itemizable.storage_location.id
+                     diff(previous_items, current_items)
+                   else
+                     previous_items.values.map(&:negative) + current_items.values # remove from the old
+                   end
       create(
         eventable: itemizable,
         group_id: "existing-#{itemizable.id}-#{SecureRandom.hex}",
