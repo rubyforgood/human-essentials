@@ -59,18 +59,25 @@ class StorageLocation < ApplicationRecord
   # @param organization [Organization]
   # @param inventory [View::Inventory]
   def self.items_inventoried(organization, inventory = nil)
-    if inventory
-      inventory
-        .all_items
-        .uniq(&:item_id)
-        .sort_by(&:name)
-        .map { |i| OpenStruct.new(name: i.name, id: i.item_id) }
-    else
-      organization.items.joins(:storage_locations).select(:id, :name).group(:id, :name).order(name: :asc)
-    end
+    inventory ||= View::Inventory.new(organization.id)
+    inventory
+      .all_items
+      .uniq(&:item_id)
+      .sort_by(&:name)
+      .map { |i| OpenStruct.new(name: i.name, id: i.item_id) }
   end
 
+  # @return [Array<Item>]
+  def items
+    View::Inventory.new(self.organization_id).items_for_location(self.id).map(&:db_item)
+  end
+
+  # @param item_id [Integer]
+  # @return [Integer]
   def item_total(item_id)
+    View::Inventory.new(self.organization_id).
+      quantity_for(storage_location: self.id, item_id: item_id).
+      map(&:quantity).sum
   end
 
   def total_active_inventory_count
