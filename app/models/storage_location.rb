@@ -69,21 +69,25 @@ class StorageLocation < ApplicationRecord
 
   # @return [Array<Item>]
   def items
-    View::Inventory.new(self.organization_id).items_for_location(self.id).map(&:db_item)
+    View::Inventory.items_for_location(self).map(&:db_item)
+  end
+
+  # @return [Integer]
+  def size
+    View::Inventory.items_for_location(self).map(&:quantity).sum
   end
 
   # @param item_id [Integer]
   # @return [Integer]
   def item_total(item_id)
     View::Inventory.new(self.organization_id).
-      quantity_for(storage_location: self.id, item_id: item_id).
-      map(&:quantity).sum
+      quantity_for(storage_location: self.id, item_id: item_id)
   end
 
-  def total_active_inventory_count
-  end
-
+  # @param inventory [View::Inventory]
+  # @return [Integer]
   def inventory_total_value_in_dollars(inventory = nil)
+    inventory ||= View::Inventory.new(self.organization_id)
     inventory&.total_value_in_dollars(storage_location: id)
   end
 

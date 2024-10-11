@@ -7,8 +7,8 @@ RSpec.describe TransferDestroyService, type: :service do
     # Create a double StorageLocation that behaves like how we want to use
     # it within the service object. The benefit is that we aren't testing
     # ActiveRecord and the database.
-    let(:fake_from) { instance_double(StorageLocation, increase_inventory: -> {}, id: 1) }
-    let(:fake_to) { instance_double(StorageLocation, decrease_inventory: -> {}, id: 1) }
+    let(:fake_from) { instance_double(StorageLocation, id: 1) }
+    let(:fake_to) { instance_double(StorageLocation, id: 1) }
     let(:fake_items) do
       [
         {
@@ -30,12 +30,6 @@ RSpec.describe TransferDestroyService, type: :service do
       allow(transfer).to receive(:to).and_return(fake_to)
       allow(transfer).to receive(:destroy!)
       allow(transfer).to receive(:line_item_values).and_return(fake_items)
-
-      # Now that that the `transfer.from` and `transfer.to` is stubbed
-      # to return the doubles of StorageLocation, we must program them
-      # to expect the `increase_inventory` and `decrease_inventory`
-      allow(fake_from).to receive(:increase_inventory).with(fake_items)
-      allow(fake_to).to receive(:decrease_inventory).with(fake_items)
     end
 
     context 'when there are no issues' do
@@ -67,32 +61,15 @@ RSpec.describe TransferDestroyService, type: :service do
         end
       end
 
-      context 'because undoing the transfer inventory changes by increasing the inventory of `from` failed' do
-        let(:fake_error) { Errors::InsufficientAllotment.new('msg') }
-
+      context 'because the event publish failed' do
         before do
-          allow(transfer).to receive(:line_item_values).and_return(fake_items)
-          allow(fake_from).to receive(:increase_inventory).with(fake_items).and_raise(fake_error)
+          allow(TransferDestroyEvent).to receive(:publish).and_raise('OH NOES')
         end
 
         it 'should return a OpenStruct with the raised error' do
           expect(subject).to be_a_kind_of(OpenStruct)
           expect(subject.success?).to eq(false)
-          expect(subject.error).to eq(fake_error)
-        end
-      end
-
-      context 'because undoing the transfer inventory changes by decreasing the inventory of `to` failed' do
-        let(:fake_error) { Errors::InsufficientAllotment.new('random-error') }
-        before do
-          allow(transfer).to receive(:line_item_values).and_return(fake_items)
-          allow(fake_to).to receive(:decrease_inventory).with(transfer.line_item_values).and_raise(fake_error)
-        end
-
-        it 'should return a OpenStruct with the raised error' do
-          expect(subject).to be_a_kind_of(OpenStruct)
-          expect(subject.success?).to eq(false)
-          expect(subject.error).to eq(fake_error)
+          expect(subject.error.message).to eq('OH NOES')
         end
       end
 
