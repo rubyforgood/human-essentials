@@ -153,7 +153,7 @@ class Partner < ApplicationRecord
   end
 
   def approvable?
-    invited? || awaiting_review?
+    invited? || awaiting_review? || deactivated?
   end
 
   # better to extract this outside of the model
