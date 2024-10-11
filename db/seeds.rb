@@ -427,13 +427,14 @@ inactive_storage = StorageLocation.find_or_create_by!(name: "Inactive Storage Lo
   inventory.organization = pdx_org
   inventory.warehouse_type = StorageLocation::WAREHOUSE_TYPES[2]
   inventory.square_footage = 5_000
-  inventory.discarded_at = DateTime.now
 end
+
+inactive_storage.discard
 
 #
 # Define all the InventoryItem for each of the StorageLocation
 #
-StorageLocation.all.each do |sl|
+StorageLocation.active_locations.each do |sl|
   sl.organization.items.active.each do |item|
     InventoryItem.create!(
       storage_location: sl,
@@ -577,7 +578,7 @@ dates_generator = DispersedPastDatesGenerator.new
   source = Donation::SOURCES.values.sample
   # Depending on which source it uses, additional data may need to be provided.
   donation = Donation.new(source: source,
-                          storage_location: random_record_for_org(pdx_org, StorageLocation),
+                          storage_location: StorageLocation.active_locations.sample,
                           organization: pdx_org,
                           issued_at: dates_generator.next)
   case source
@@ -606,7 +607,7 @@ inventory = InventoryAggregate.inventory_for(pdx_org.id)
 20.times.each do
   issued_at = dates_generator.next
 
-  storage_location = random_record_for_org(pdx_org, StorageLocation)
+  storage_location = StorageLocation.active_locations.sample
   stored_inventory_items_sample = inventory.storage_locations[storage_location.id].items.values.sample(20)
   delivery_method = Distribution.delivery_methods.keys.sample
   shipping_cost = delivery_method == "shipped" ? (rand(20.0..100.0)).round(2).to_s : nil
@@ -700,7 +701,7 @@ dates_generator = DispersedPastDatesGenerator.new
 
 25.times do
   purchase_date = dates_generator.next
-  storage_location = random_record_for_org(pdx_org, StorageLocation)
+  storage_location = StorageLocation.active_locations.sample
   vendor = random_record_for_org(pdx_org, Vendor)
   purchase = Purchase.new(
     purchased_from: suppliers.sample,
