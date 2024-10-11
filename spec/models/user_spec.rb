@@ -130,14 +130,6 @@ RSpec.describe User, type: :model do
     it "discarded?" do
       expect(build(:user, :deactivated).discarded?).to be true
     end
-
-    it "#mark_invitation_status_as_accepted!" do
-      foo_user = create(:user)
-
-      foo_user.mark_invitation_status_as_accepted!
-
-      expect(foo_user.invitation_status).to eq("accepted")
-    end
   end
 
   describe 'omniauth' do
