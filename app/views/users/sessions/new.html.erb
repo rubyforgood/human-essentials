@@ -3,10 +3,6 @@
         position: relative;
     }
 
-    .password-field {
-        padding-right: 40px; /* Space for the icon */
-    }
-
     .toggle-password {
         position: absolute;
         right: 10px;
@@ -29,11 +25,11 @@
         <div class="form-inputs">
           <%= f.input :email, autofocus: true %>
         </div>
-        <div class="form-inputs">
+        <div class="form-inputs" data-controller="password-visibility">
           <div class="password-input-wrapper">
-            <%= f.input :password, autofocus: true, input_html: { id: 'password_field', class: 'password-field' } %>
-            <span id="toggle_password" class="toggle-password">
-              <i class="fas fa-eye-slash"></i>
+            <%= f.input :password, autofocus: true, input_html: { data: { password_visibility_target: 'password' } } %>
+            <span class="toggle-password">
+              <i class="fas fa-eye-slash" data-action="click->password-visibility#toggle" data-password-visibility-target="icon"></i>
             </span>
           </div>
         </div>
@@ -60,20 +56,3 @@
 <%= link_to user_google_oauth2_omniauth_authorize_path, method: :post do %>
   <img src="../img/btn_google_signin_dark_focus_web@2x.png" alt="Sign in with Google">
 <% end %>
-
-<script>
-    document.getElementById('toggle_password').onclick = function () {
-        const passwordField = document.getElementById('password_field');
-        const icon = this.querySelector('i');
-
-        if (passwordField.type === 'password') {
-            passwordField.type = 'text';
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
-        } else {
-            passwordField.type = 'password';
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
-        }
-    };
-</script>
