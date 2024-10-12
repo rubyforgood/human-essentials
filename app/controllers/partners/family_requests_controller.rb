@@ -61,7 +61,7 @@ module Partners
         end
       end
 
-      children = current_partner.children.active.where(id: children_ids).joins(:requested_items).select('children.*', :item_id)
+      children = current_partner.children.where(id: children_ids).joins(:requested_items).select('children.*', :item_id)
 
       children_grouped_by_item_id = children.group_by(&:item_id)
       children_grouped_by_item_id.map do |item_id, item_requested_children|

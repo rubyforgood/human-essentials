@@ -68,7 +68,7 @@ RSpec.describe Exports::ExportDistributionsCSVService do
         "Total Value",
         "Delivery Method",
         "Shipping Cost",
-        "State",
+        "Status",
         "Agency Representative",
         "Comments"
       ]
