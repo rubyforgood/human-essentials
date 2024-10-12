@@ -13,6 +13,15 @@
     spent
     <%= @selected_date_range_label %>
   </h3>
+  <div class="box-body" style="margin: 40px">
+    <h4> Total spent on diapers: <%= dollar_presentation @diapers %></h4>
+    <h4> Total spent on period supplies: <%= dollar_presentation @period_supplies %> </h4>
+    <h4> Total spent on adult incontinence: <%= dollar_presentation @adult_incontinence %> </h4>
+    <h4> Total spent on other: <%= dollar_presentation @other %> </h4>
+  </div>
+  <div style="margin: 40px">
+    <h4> Total items: <%= @total_items %> </h4>
+  </div>
   <div class="box-body">
     <h4>Recent purchases</h4>
     <%= render partial: "purchase", collection: @recent_purchases, as: :purchase %>

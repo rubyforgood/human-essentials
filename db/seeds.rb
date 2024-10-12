@@ -709,6 +709,7 @@ end
 # ----------------------------------------------------------------------------
 
 suppliers = %w(Target Wegmans Walmart Walgreens)
+amount_items = %w(period_supplies diapers adult_incontinence other)
 comments = [
   "Maecenas ante lectus, vestibulum pellentesque arcu sed, eleifend lacinia elit. Cras accumsan varius nisl, a commodo ligula consequat nec. Aliquam tincidunt diam id placerat rutrum.",
   "Integer a molestie tortor. Duis pretium urna eget congue porta. Fusce aliquet dolor quis viverra volutpat.",
@@ -726,12 +727,17 @@ dates_generator = DispersedPastDatesGenerator.new
     comment: comments.sample,
     organization_id: pdx_org.id,
     storage_location_id: storage_location.id,
-    amount_spent_in_cents: rand(200..10_000),
     issued_at: purchase_date,
     created_at: purchase_date,
     updated_at: purchase_date,
-    vendor_id: vendor.id
+    vendor_id: vendor.id,
+    amount_spent_on_period_supplies_cents: rand(0..5_000),
+    amount_spent_on_diapers_cents: rand(0..5_000),
+    amount_spent_on_adult_incontinence_cents: rand(0..5_000),
+    amount_spent_on_other_cents: rand(0..5_000)
   )
+
+  purchase.amount_spent_in_cents = amount_items.map{|i| purchase.send("amount_spent_on_#{i}_cents")}.sum
 
   rand(1..5).times do
     purchase.line_items.push(LineItem.new(quantity: rand(1..1000),
