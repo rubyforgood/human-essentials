@@ -26,7 +26,7 @@ class RequestsTotalItemsService
 
   def item_name(item_request)
     if Flipper.enabled?(:enable_packs) && item_request.request_unit
-      "#{item_request.name} - #{item_request.request_unit}"
+      "#{item_request.name} - #{item_request.request_unit.pluralize}"
     else
       item_request.name
     end
