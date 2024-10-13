@@ -61,7 +61,25 @@ module Exports
     end
 
     def compute_item_headers
-      item_names = items.pluck(:name)
+      # This reaches into the item, handling invalid deleted items
+      item_names = []
+      item_requests.each do |item_request|
+        if item_request.item
+          item = item_request.item
+          item_names << item.name
+          if Flipper.enabled?(:enable_packs)
+            item.request_units.each do |unit|
+              item_names << "#{item.name} - #{unit.name}"
+            end
+
+            # It's possible that the unit is no longer valid, so we'd
+            # add that individually
+            if item_request.request_unit.present? && !item.request_units.pluck(:name).include?(item_request.request_unit)
+              item_names << "#{item.name} - #{item_request.request_unit}"
+            end
+          end
+        end
+      end
 
       # Adding this to handle cases in which a requested item
       # has been deleted. Normally this wouldn't be neccessary,
@@ -75,38 +93,33 @@ module Exports
 
       row += Array.new(item_headers.size, 0)
 
-      request.request_items.each do |request_item|
-        item_name = fetch_item_name(request_item['item_id']) || DELETED_ITEMS_COLUMN_HEADER
+      request.item_requests.each do |item_request|
+        item_name = fetch_item_name(item_request) || DELETED_ITEMS_COLUMN_HEADER
         item_column_idx = headers_with_indexes[item_name]
-
-        if item_name == DELETED_ITEMS_COLUMN_HEADER
-          # Add to the deleted column for every item that
-          # does not match any existing Item.
-          row[item_column_idx] ||= 0
-        end
-        row[item_column_idx] += request_item['quantity']
+        row[item_column_idx] ||= 0
+        row[item_column_idx] += item_request.quantity.to_i
       end
 
       row
     end
 
-    def fetch_item_name(item_id)
-      @item_name_to_id_map ||= items.inject({}) do |acc, item|
-        acc[item.id] = item.name
-        acc
+    def fetch_item_name(item_request)
+      # The item_request has the item name, but we go ahead and try to get it
+      # off of the real item. Weirdly we do this because the item might have
+      # been deleted historically without deleting the request.
+      if item_request.item
+        if Flipper.enabled?(:enable_packs) && item_request.request_unit.present?
+          "#{item_request.name} - #{item_request.request_unit}"
+        else
+          item_request.name
+        end
       end
-
-      @item_name_to_id_map[item_id]
     end
 
-    def items
-      return @items if @items
-
-      item_ids = requests.flat_map do |request|
-        request.request_items.map { |item| item['item_id'] }
-      end
-
-      @items ||= Item.where(id: item_ids)
+    def item_requests
+      return @item_requests if @item_requests
+      @item_requests ||= Set.new(requests.flat_map(&:item_requests)).to_a
+      @item_requests
     end
   end
 end
