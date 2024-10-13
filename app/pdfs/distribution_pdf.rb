@@ -178,13 +178,8 @@ class DistributionPdf
 
     data += line_items.map do |c|
       request_item = request_items.find { |i| i.item&.id == c.item_id }
-      request_qty = if Flipper.enabled?(:enable_packs) && request_item&.unit
-        "#{request_item.quantity} #{request_item.unit.pluralize(c.quantity)}"
-      else
-        request_item&.quantity || ""
-      end
       [c.item.name,
-        request_qty,
+        request_display_qty(request_item),
         c.quantity,
         dollar_value(c.item.value_in_cents),
         dollar_value(c.value_per_line_item),
@@ -192,13 +187,8 @@ class DistributionPdf
     end
 
     data += requested_not_received.sort_by(&:name).map do |request_item|
-      request_qty = if Flipper.enabled?(:enable_packs) && request_item.unit
-        "#{request_item.quantity} #{request_item.unit.pluralize(request_item.quantity)}"
-      else
-        request_item.quantity || ""
-      end
       [request_item.item.name,
-        request_qty,
+        request_display_qty(request_item),
         "",
         dollar_value(request_item.item.value_in_cents),
         nil,
@@ -284,5 +274,13 @@ class DistributionPdf
     move_down 10
     draw_text "(Print Name)", at: [0, cursor]
     draw_text "(Signature and Date)", at: [right_start, cursor]
+  end
+
+  def request_display_qty(request_item)
+    if Flipper.enabled?(:enable_packs) && request_item&.unit
+      "#{request_item.quantity} #{request_item.unit.pluralize(request_item.quantity)}"
+    else
+      request_item&.quantity || ""
+    end
   end
 end
