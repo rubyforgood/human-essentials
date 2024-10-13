@@ -73,6 +73,7 @@ RSpec.describe "StorageLocations", type: :request do
 
         it "includes headers followed by alphabetized item names" do
           storage_location_with_items = create(:storage_location)
+          Item.delete_all
           item1 = create(:item, name: 'C')
           item2 = create(:item, name: 'B')
           item3 = create(:item, name: 'A')
