@@ -72,15 +72,13 @@ RSpec.describe "Transfer management", type: :system do
     expect(inventory.quantity_for(storage_location: from_storage_location.id, item_id: item.id)).to eq(original_from_storage_item_count - transfer_amount)
     expect(inventory.quantity_for(storage_location: to_storage_location.id, item_id: item.id)).to eq(transfer_amount)
 
-    allow_any_instance_of(StorageLocation).to receive(:decrease_inventory).and_raise(
-      Errors::InsufficientAllotment.new('error-msg', [])
-    )
+    allow(TransferDestroyEvent).to receive(:publish).and_raise('OH NOES')
 
     accept_confirm do
       click_link 'Delete'
     end
 
-    expect(page).to have_content(/error-msg/)
+    expect(page).to have_content(/OH NOES/)
     inventory.reload
 
     # Assert that the inventory did not change in response

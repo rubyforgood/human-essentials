@@ -63,11 +63,14 @@ class KitsController < ApplicationController
     @kit = Kit.find(params[:id])
     @storage_location = current_organization.storage_locations.active_locations.find(kit_adjustment_params[:storage_location_id])
     @change_by = kit_adjustment_params[:change_by].to_i
-
-    if service.error
-      flash[:error] = service.error
-    else
-      flash[:notice] = "#{@kit.name} at #{@storage_location.name} quantity has changed by #{@change_by}"
+    begin
+      if @change_by.positive?
+        KitAllocateEvent.publish(@kit, @storage_location.id, @change_by)
+      else
+        KitDeallocateEvent.publish(@kit, @storage_location.id, -@change_by)
+      end
+    rescue => e
+      flash[:error] = e.message
     end
 
     redirect_to allocations_kit_path(id: @kit.id)
