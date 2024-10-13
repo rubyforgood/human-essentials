@@ -84,6 +84,10 @@ Rails.application.configure do
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
+  # Adds comments to rendered views so you know which partials are being rendered
+  # more easily.
+  config.action_view.annotate_rendered_view_with_filenames = true
+
   require "socket"
   require "ipaddr"
   config.web_console.allowed_ips = Socket.ip_address_list.reduce([]) do |res, addrinfo|

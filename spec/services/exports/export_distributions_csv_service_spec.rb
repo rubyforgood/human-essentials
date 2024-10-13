@@ -44,7 +44,7 @@ RSpec.describe Exports::ExportDistributionsCSVService do
     let(:item_id) { duplicate_item.id }
     let(:item_name) { duplicate_item.name }
     let(:filters) { {by_item_id: item_id} }
-    let(:all_org_items) { Item.where(organization:).uniq.sort_by(&:created_at) }
+    let(:all_org_items) { Item.where(organization:).uniq.sort_by { |item| item.name.downcase } }
 
     let(:total_item_quantities) do
       template = all_org_items.pluck(:name).index_with(0)
@@ -68,7 +68,7 @@ RSpec.describe Exports::ExportDistributionsCSVService do
         "Total Value",
         "Delivery Method",
         "Shipping Cost",
-        "State",
+        "Status",
         "Agency Representative",
         "Comments"
       ]

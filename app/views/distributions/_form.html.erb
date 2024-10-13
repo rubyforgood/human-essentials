@@ -9,7 +9,7 @@
     <% end %>
 
     <%= f.association :partner,
-      collection: current_organization.partners.alphabetized,
+      collection: @partner_list,
       label: "Partner",
       error: "Which partner is this distribution going to?" %>
 
@@ -36,6 +36,7 @@
       <div class="distribution-title">
         <legend class="<%= 'with-request' if distribution.request %>">Items in this distribution</legend>
         <% if distribution.request %>
+          <div class="distribution-request-unit">Quantity - Total Units</div>
           <div class="distribution-request-unit">Requested</div>
         <% end %>
       </div>

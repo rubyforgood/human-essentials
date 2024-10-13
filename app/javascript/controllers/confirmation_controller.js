@@ -102,6 +102,9 @@ export default class extends Controller {
   }
 
   submitForm() {
+    $(this.modalTarget).find('#modalClose').prop('disabled', true);
+    $(this.modalTarget).find('#modalYes').prop('disabled', true);
+    $(this.modalTarget).find('#modalNo').prop('disabled', true);
     $(this.modalTarget).modal("hide");
     this.formTarget.requestSubmit();
   }
