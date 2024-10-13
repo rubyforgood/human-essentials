@@ -139,7 +139,7 @@ RSpec.describe AdjustmentCreateService, type: :service do
                            }}
       result = subject.new(adjustment_params).call
       expect(result.adjustment.errors.size).to be > 0
-      expect(result.adjustment.errors[:inventory][0]).to include("items exceed the available inventory")
+      expect(result.adjustment.errors[:base][0]).to include("Could not reduce quantity")
     end
 
     it "handles adjustments to multiple items" do
