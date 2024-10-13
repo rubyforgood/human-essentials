@@ -435,7 +435,7 @@ RSpec.describe InventoryAggregate do
       kit.line_items = []
       kit.line_items << build(:line_item, quantity: 20, item: item1, itemizable: kit)
       kit.line_items << build(:line_item, quantity: 5, item: item2, itemizable: kit)
-      KitDeallocateEvent.publish(kit, storage_location1, 2)
+      KitDeallocateEvent.publish(kit, storage_location1.id, 2)
 
       # 30 + (20*2) = 70, 10 + (5*2) = 20
       described_class.handle(KitDeallocateEvent.last, inventory)
