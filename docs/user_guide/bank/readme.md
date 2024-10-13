@@ -64,4 +64,4 @@ This user guide is meant for users of the human essentials app at essentials ban
          4. [Activity graph](reports_activity_graph.md)
 8. [User management](user_management.md)
 9. [Signing out, and other things you can access by clicking on your name](top_right_menu.md)
-[But I need to do something different!](asking_for_changes.md)
+10. [But I need to do something different!](asking_for_changes.md)
