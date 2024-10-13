@@ -22,12 +22,12 @@ module EventTypes
     # @return [EventTypes::EventLineItem]
     def negative
       self.class.new(
-          quantity: -self.quantity,
-          item_id: self.item_id,
-          item_value_in_cents: self.item_value_in_cents,
-          from_storage_location: self.from_storage_location,
-          to_storage_location: self.to_storage_location
-        )
+        quantity: -quantity,
+        item_id: item_id,
+        item_value_in_cents: item_value_in_cents,
+        from_storage_location: from_storage_location,
+        to_storage_location: to_storage_location
+      )
     end
 
     # @param line_item [LineItem]

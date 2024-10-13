@@ -80,14 +80,14 @@ class StorageLocation < ApplicationRecord
   # @param item_id [Integer]
   # @return [Integer]
   def item_total(item_id)
-    View::Inventory.new(self.organization_id).
-      quantity_for(storage_location: self.id, item_id: item_id)
+    View::Inventory.new(organization_id)
+      .quantity_for(storage_location: id, item_id: item_id)
   end
 
   # @param inventory [View::Inventory]
   # @return [Integer]
   def inventory_total_value_in_dollars(inventory = nil)
-    inventory ||= View::Inventory.new(self.organization_id)
+    inventory ||= View::Inventory.new(organization_id)
     inventory&.total_value_in_dollars(storage_location: id)
   end
 

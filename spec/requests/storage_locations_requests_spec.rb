@@ -229,18 +229,20 @@ RSpec.describe "StorageLocations", type: :request do
         end
 
         context "with version date set" do
-          let!(:inventory_item) { InventoryItem.create!(storage_location_id: storage_location.id,
-                                                        item_id: item.id,
-                                                        quantity: 200) }
+          let!(:inventory_item) {
+            InventoryItem.create!(storage_location_id: storage_location.id,
+              item_id: item.id,
+              quantity: 200)
+          }
 
           context "before active events" do
             it "should show the version specified" do
               travel 1.day do
                 inventory_item.update!(quantity: 100)
-                end
+              end
               travel 1.week do
                 inventory_item.update!(quantity: 300)
-                end
+              end
               travel 8.days do
                 SnapshotEvent.delete_all
                 SnapshotEvent.publish(organization)

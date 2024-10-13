@@ -45,10 +45,10 @@ class UpdateExistingEvent < Event
       previous_items = item_quantities(previous_line_items, original_storage_location, dir)
       current_items = item_quantities(itemizable.line_items, itemizable.storage_location, dir)
       diff_items = if original_storage_location.id == itemizable.storage_location.id
-                     diff(previous_items, current_items)
-                   else
-                     previous_items.values.map(&:negative) + current_items.values # remove from the old
-                   end
+        diff(previous_items, current_items)
+      else
+        previous_items.values.map(&:negative) + current_items.values # remove from the old
+      end
       create(
         eventable: itemizable,
         group_id: "existing-#{itemizable.id}-#{SecureRandom.hex}",
