@@ -51,15 +51,6 @@ RSpec.describe Distribution, type: :model do
       expect(d).not_to be_valid
     end
 
-    it "ensures that any included items are found in the associated storage location" do
-      unless Event.read_events?(organization) # not relevant in event world
-        d = build(:distribution)
-        item_missing = create(:item, name: "missing")
-        d.line_items << build(:line_item, item: item_missing)
-        expect(d).not_to be_valid
-      end
-    end
-
     it "ensures that the issued at is no earlier than 2000" do
       d = build(:distribution, issued_at: "1999-12-31")
       expect(d).not_to be_valid

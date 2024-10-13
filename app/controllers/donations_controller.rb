@@ -93,7 +93,6 @@ class DonationsController < ApplicationController
     @original_source = @donation.source
     ItemizableUpdateService.call(itemizable: @donation,
       params: donation_params,
-      type: :increase,
       event_class: DonationEvent)
     flash.clear
     flash[:notice] = "Donation updated!"

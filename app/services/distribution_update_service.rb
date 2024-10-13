@@ -16,7 +16,6 @@ class DistributionUpdateService < DistributionService
       ItemizableUpdateService.call(
         itemizable: distribution,
         params: @params,
-        type: :decrease,
         event_class: DistributionEvent
       )
 

@@ -101,8 +101,7 @@ RSpec.describe DistributionCreateService, type: :service do
 
       it "preserves the Insufficiency error and is unsuccessful" do
         result = subject.new(too_much_dist).call
-        error_class = Event.read_events?(organization) ? InventoryError : Errors::InsufficientAllotment
-        expect(result.error).to be_instance_of(error_class)
+        expect(result.error).to be_instance_of(InventoryError)
         expect(result).not_to be_success
       end
     end
@@ -124,8 +123,7 @@ RSpec.describe DistributionCreateService, type: :service do
 
       it "preserves the Insufficiency error and is unsuccessful" do
         result = subject.new(too_much_dist).call
-        error_class = Event.read_events?(organization) ? InventoryError : Errors::InsufficientAllotment
-        expect(result.error).to be_instance_of(error_class)
+        expect(result.error).to be_instance_of(InventoryError)
         expect(result).not_to be_success
       end
     end
