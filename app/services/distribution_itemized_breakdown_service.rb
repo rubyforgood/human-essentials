@@ -59,15 +59,11 @@ class DistributionItemizedBreakdownService
   end
 
   def current_onhand_quantities(inventory)
-    if inventory
-      inventory.all_items.group_by(&:name).to_h { |k, v| [k, v.sum(&:quantity)] }
-    end
+    inventory.all_items.group_by(&:name).to_h { |k, v| [k, v.sum(&:quantity)] }
   end
 
   def current_onhand_minimums(inventory)
-    if inventory
-      inventory.all_items.group_by(&:name).to_h { |k, v| [k, v.map(&:on_hand_minimum_quantity).max] }
-    end
+    inventory.all_items.group_by(&:name).to_h { |k, v| [k, v.map(&:on_hand_minimum_quantity).max] }
   end
 
   def fetch_items_distributed
