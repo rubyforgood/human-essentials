@@ -19,7 +19,7 @@ This is pretty much what it sounds like - a list of the requests from your partn
 ![bottom of dashboard page](images/essentials/dashboard/essentials_dashboard_2.png)
 
 #### Partner Approvals
-This lists the partner profiles that have been submitted for approval.  Partners can not submit requests until they have been approved.  To review the application, click on the "Review Application" button beside the partner in the Action colum.  For more details on that, see [Approving a partner](pm_approving_a_partner.md)
+This lists the partner profiles that have been submitted for approval.  Partners can not submit requests until they have been approved.  To review the application, click on the "Review Applicant's Profile" button beside the partner in the Action column.  For more details on that, see [Approving a partner](pm_approving_a_partner.md)
 
 #### Bank-wide Low Inventory
 This lists items whose *bank-wide* inventory has fallen below the recommended or minimum quantity levels you have set on the items. If the item's level in inventory across the bank has fallen below the minimum quantity, it will appear in red.

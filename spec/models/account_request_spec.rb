@@ -129,6 +129,18 @@ RSpec.describe AccountRequest, type: :model do
     end
   end
 
+  describe '#can_be_closed?' do
+    it 'returns true when the status can be closed' do
+      subject.status = %w[started user_confirmed].sample
+      expect(subject.can_be_closed?).to eq(true)
+    end
+
+    it 'returns false when the status cannot be closed' do
+      subject.status = 'rejected'
+      expect(subject.can_be_closed?).to eq(false)
+    end
+  end
+
   specify '#confirm!' do
     mail_double = instance_double(ActionMailer::MessageDelivery, deliver_later: nil)
     allow(AccountRequestMailer).to receive(:approval_request).and_return(mail_double)
@@ -157,6 +169,12 @@ RSpec.describe AccountRequest, type: :model do
     expect(AccountRequestMailer).to have_received(:rejection)
       .with(account_request_id: account_request.id)
     expect(mail_double).to have_received(:deliver_later)
+  end
+
+  specify "#close!" do
+    account_request.close!('because I said so')
+    expect(account_request.reload.rejection_reason).to eq('because I said so')
+    expect(account_request).to be_admin_closed
   end
 
   describe "versioning" do

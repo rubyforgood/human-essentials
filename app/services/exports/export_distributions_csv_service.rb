@@ -90,7 +90,7 @@ module Exports
         "Shipping Cost" => ->(distribution) {
           distribution_shipping_cost(distribution.shipping_cost)
         },
-        "State" => ->(distribution) {
+        "Status" => ->(distribution) {
           distribution.state
         },
         "Agency Representative" => ->(distribution) {
@@ -118,7 +118,7 @@ module Exports
     def item_headers
       return @item_headers if @item_headers
 
-      @item_headers = @organization.items.order(:created_at).distinct.select([:created_at, :name]).map(&:name)
+      @item_headers = @organization.items.select("DISTINCT ON (LOWER(name)) items.name").order("LOWER(name) ASC").map(&:name)
     end
 
     def build_row_data(distribution)
