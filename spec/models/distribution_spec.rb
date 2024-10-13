@@ -250,11 +250,9 @@ RSpec.describe Distribution, type: :model do
         item2 = create(:item, name: "Item2", organization: organization)
         request = create(:request,
           organization: organization,
-          partner_user: create(:partner_user),
-          request_items: [
-            { item_id: item1.id, quantity: 15 },
-            { item_id: item2.id, quantity: 18 }
-          ])
+          partner_user: create(:partner_user))
+        create(:item_request, request: request, item_id: item1.id, quantity: 15)
+        create(:item_request, request: request, item_id: item2.id, quantity: 18)
         distribution = Distribution.new
         distribution.copy_from_request(request.id)
         expect(distribution.line_items.size).to eq 2
