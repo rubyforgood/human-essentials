@@ -48,7 +48,6 @@ RSpec.describe DonationDestroyService do
     end
 
     context 'when the donation destroy fails' do
-
       before do
         allow(DonationDestroyEvent).to receive(:publish).and_raise('OH NOES')
       end
