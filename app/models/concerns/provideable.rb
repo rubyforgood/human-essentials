@@ -8,9 +8,6 @@ module Provideable
   included do
     belongs_to :organization # Automatically validates presence as of Rails 5
 
-    validates :contact_name, presence: { message: "Must provide a name or a business name" }, if: proc { |ddp| ddp.business_name.blank? }
-    validates :business_name, presence: { message: "Must provide a name or a business name" }, if: proc { |ddp| ddp.contact_name.blank? }
-
     scope :for_csv_export, ->(organization, *) {
       where(organization: organization).order(:business_name)
     }
