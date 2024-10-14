@@ -15,14 +15,14 @@ module Provideable
       where(organization: organization).order(:business_name)
     }
 
-    def self.import_csv(csv, organization)
+    def self.import_csv(csv, organization, errors = [])
       csv.each do |row|
         loc = new(row.to_hash)
         loc.organization_id = organization
 
         loc.save!
       end
-      nil
+      errors
     end
 
     def self.csv_export_headers

@@ -169,7 +169,7 @@ class Partner < ApplicationRecord
         errors << "#{svc.partner.name}: #{svc.partner.errors.full_messages.to_sentence}"
       end
     end
-    errors.empty? ? nil : errors
+    errors
   end
 
   def self.csv_export_headers

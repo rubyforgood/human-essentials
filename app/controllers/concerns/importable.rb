@@ -28,7 +28,7 @@ module Importable
       csv = CSV.parse(data, headers: true).reject { |row| row.to_hash.values.any?(&:nil?) }
       if csv.count.positive? && csv.first.headers.all? { |header| !header.nil? }
         errors = resource_model.import_csv(csv, current_organization.id)
-        if errors.nil?
+        if errors.empty?
           flash[:notice] = "#{resource_model_humanized} were imported successfully!"
         else
           flash[:error] = "The following #{resource_model_humanized} did not import successfully:\n#{errors.join("\n")}"
