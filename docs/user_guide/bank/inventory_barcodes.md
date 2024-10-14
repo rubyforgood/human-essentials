@@ -8,8 +8,9 @@ You can set up Human Essentials to enable reading barcodes for input of items wh
 
 - barcode readers
 - making your own barcodes 
-- ]
-- 
+
+]
+
 ## The Barcodes page
 You can reach the barcodes page, where you will administer your organizations barcodes, by clicking "Inventory", then "Barcode Items"
 

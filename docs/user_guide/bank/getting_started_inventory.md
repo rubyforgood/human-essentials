@@ -3,8 +3,11 @@ DRAFT USER GUIDE
 When we set up your organization, we provide a default set of items ranging from adult briefs to kids (newborn) 
 to tampons. You can modify this list at any time, through the [Inventory Items](inventory_items.md) feature.  
 This section of the guide will take you through a couple of ways to get your initial inventory in.
+
 [TODO:  Rewrite once we have audits available as a starting strategy]
-[TODO:  Really -- this should just be inventory adjustment front and center -- but that's not how the system works atm]
+
+[TODO:  Really -- this should just be Audits front and center -- but that's not how the system works atm]
+
 ## Adding a past donation
 One easy way to get your current inventory set up is to just enter a donation per storage location with all of the current inventory, and put a 
 comment on it to indicate that this was your starting inventory.  The values you enter there will be included in your donation reports for the year, 
@@ -24,3 +27,6 @@ inventory, however it was acquired, out of donation and purchase reports.  The d
 
 ![navigation to enter new inventory adjustment](images/getting_started/inventory/gs_inventory_3.png)
 
+[Prior: Donation Sites](getting_started_donation_sites.md) [Next: Customization and other organizational-level info](getting_started_customization.md)
+
+[TODO:  Will need to update this when we remove Donation Sites from Getting Started ]

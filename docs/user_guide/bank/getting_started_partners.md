@@ -11,8 +11,9 @@ DRAFT USER GUIDE
 
 4/  The usual way to handle bringing on partners to be able to make requests is to invite them,  then have them fill in their profile before approving them, so that you get the information from them that your bank needs for grants, etc.   However, if that's not how you want to work,  it is also possible to invite and approve them in one step.
 
-5/  A lot of banks set up a partner as a proxy for their direct distribution.  This is allowed, and you can switch back and forth between being a bank and a partner with the same login  
+5/  A lot of banks set up a partner as a proxy for their direct distribution.  This is allowed, and you can switch back and forth between being a bank and a partner with the same login
 
+6/  You can group partners, and allow those groups to request different sets of items (One thing some banks use this for is handling grants that are geographically constrained.)
 ## Adding a single partner
 Click on the "Add a Partner" button on your "Getting started" screen
 (you can also click on "Partner Agencies", then "All Partners", then "Add a Partner")
@@ -23,3 +24,5 @@ Further details on adding a partner can be found [here](pm_adding_a_partner.md)
 
 ## Importing partners
 For details on how to do a bulk import of your partners, please click [here](pm_importing_partners.md)
+
+[Prior: Storage Locations](getting_started_storage_locations.md)[Next: Donation sites](getting_started_donation_sites.md)
