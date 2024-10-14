@@ -30,7 +30,7 @@ So,  how does this work?
 Please note that you can edit distributions (e.g. if you have more product come in before pickup).  The partner does not get a new email if you do that.[TODO: Confirm]
 
 
-[Prior: Pick ups and deliveries](essentials_pick_ups.md) [Next: importing partners](pm_importing_partners.md)
+[Prior: Pick ups and deliveries](essentials_pick_ups.md) [Next: Partner statuses](pm_partner_statuses.md)
 
 
 

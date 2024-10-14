@@ -22,4 +22,4 @@ Click on "View" for more details about the manufacturer which shows the date of 
 
 Click the "Edit" button to edit the manufacturer's name.
 
-![Edit Manufacturer Details](images/community/manufacturers/edit_manufacturer.jpg)
+[Prior: Vendors](community_vendors.md)[Next: Exports](exports.md)
