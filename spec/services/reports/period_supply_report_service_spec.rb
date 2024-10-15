@@ -13,7 +13,6 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
           "% period supplies bought" => "0%",
           "% period supplies donated" => "0%",
           "Period supplies distributed" => "0",
-          "Period supplies per adult per month" => 0,
           "Money spent purchasing period supplies" => "$0.00"
         }))
         expect(report.report[:entries]["Period supplies"].split(", "))
@@ -77,11 +76,6 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
 
         create(:line_item, :purchase, quantity: 30, item: purchased_period_supply_kit.item, itemizable: kit_purchase)
 
-        # create(:purchase, issued_at: within_time, organization: organization, line_items: [
-        #   create(:line_item, :purchase, item: period_supplies_kit_item, quantity: 5),
-        #   create(:line_item, :purchase, item: purchased_period_supply_kit_item, quantity: 5)
-        # ])
-
         # Distributions
         distributions = create_list(:distribution, 2, issued_at: within_time, organization: organization)
         outside_distributions = create_list(:distribution, 2, issued_at: outside_time, organization: organization)
@@ -143,7 +137,6 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
             "% period supplies bought" => "67%",
             "% period supplies donated" => "33%",
             "Period supplies distributed" => "2,300",
-            "Period supplies per adult per month" => 45,
             "Money spent purchasing period supplies" => "$40.00"
           }))
           expect(report.report[:entries]["Period supplies"].split(", "))
