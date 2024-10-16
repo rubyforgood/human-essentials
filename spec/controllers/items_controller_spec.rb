@@ -182,6 +182,16 @@ RSpec.describe ItemsController, type: :controller do
 
           expect(response).to have_error
         end
+
+        it "should load and assign item categories when rendering new" do
+          # Create some item categories for the organization
+          create_list(:item_category, 3, organization: organization)
+
+          post :create, params: bad_params
+
+          expect(response).to render_template(:new)
+          expect(assigns(:item_categories)).to eq(organization.item_categories.order('name ASC'))
+        end
       end
     end
 

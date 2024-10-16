@@ -1,6 +1,6 @@
 class Admin::PartnersController < AdminController
   def index
-    @partners = Partner.all.includes(:organization).order('LOWER(name)')
+    @partners = Partner.all.includes(:organization).order("LOWER(name)")
   end
 
   def show
