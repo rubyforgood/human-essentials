@@ -14,6 +14,11 @@ class ReportsController < ApplicationController
   def purchases_summary
     @purchases = current_organization.purchases.during(helpers.selected_range)
     @recent_purchases = @purchases.recent.includes(:vendor)
+    @period_supplies = @purchases.sum(:amount_spent_on_period_supplies_cents)
+    @diapers = @purchases.sum(:amount_spent_on_diapers_cents)
+    @adult_incontinence = @purchases.sum(:amount_spent_on_adult_incontinence_cents)
+    @other = @purchases.sum(:amount_spent_on_other_cents)
+    @total_items = @purchases.joins(:line_items).sum(:quantity)
   end
 
   def product_drives_summary
