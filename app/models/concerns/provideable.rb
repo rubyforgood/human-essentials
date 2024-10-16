@@ -19,6 +19,7 @@ module Provideable
 
         loc.save!
       end
+      []
     end
 
     def self.csv_export_headers
