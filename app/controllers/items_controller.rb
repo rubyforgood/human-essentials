@@ -51,6 +51,7 @@ class ItemsController < ApplicationController
       # Define a @item to be used in the `new` action to be rendered with
       # the provided parameters. This is required to render the page again
       # with the error + the invalid parameters
+      @item_categories = current_organization.item_categories
       @item = current_organization.items.new(item_params)
       flash[:error] = result.error.record.errors.full_messages.to_sentence
       render action: :new
