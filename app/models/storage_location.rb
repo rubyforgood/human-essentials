@@ -115,13 +115,13 @@ class StorageLocation < ApplicationRecord
   end
 
   # NOTE: We should generalize this elsewhere -- Importable concern?
-  def self.import_csv(csv, organization, errors = [])
+  def self.import_csv(csv, organization)
     csv.each do |row|
       loc = StorageLocation.new(row.to_hash)
       loc.organization_id = organization
       loc.save!
     end
-    errors
+    []
   end
 
   # NOTE: We should generalize this elsewhere -- Importable concern?

@@ -157,7 +157,8 @@ class Partner < ApplicationRecord
   end
 
   # better to extract this outside of the model
-  def self.import_csv(csv, organization_id, errors = [])
+  def self.import_csv(csv, organization_id)
+    errors = []
     organization = Organization.find(organization_id)
 
     csv.each do |row|
