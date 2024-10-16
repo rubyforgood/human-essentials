@@ -1,6 +1,4 @@
-=begin
-
-RSpec.describe AdminsController, type: :controller do
+RSpec.describe AdminController, type: :controller do
   let(:organization) { create(:organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 
@@ -104,4 +102,3 @@ RSpec.describe AdminsController, type: :controller do
     end
   end
 end
-=end
