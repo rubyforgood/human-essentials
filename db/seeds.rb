@@ -23,8 +23,8 @@ end
 # Base Items
 # ----------------------------------------------------------------------------
 
-require 'seed_base_items'
-seed_base_items
+require 'seeds'
+Seeds.seed_base_items
 
 # ----------------------------------------------------------------------------
 # NDBN Members
@@ -856,10 +856,10 @@ TransferCreateService.call(transfer)
 # Users invitation status
 # ----------------------------------------------------------------------------
 # Mark users `invitation_status` as `accepted`
-# 
+#
 # Addresses and resolves issue #4689, which can be found in:
 # https://github.com/rubyforgood/human-essentials/issues/4689
-User.where(invitation_token: nil).each do |user| 
+User.where(invitation_token: nil).each do |user|
   user.update!(
     invitation_sent_at: Time.current,
     invitation_accepted_at: Time.current

@@ -42,7 +42,6 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
         create_list(:line_item, 5, :distribution, quantity: 200, item: disposable_item, itemizable: dist)
         create_list(:line_item, 5, :distribution, quantity: 300, item: non_disposable_item, itemizable: dist)
       end
-      # within_time total distributed i
 
       infant_distribution = create(:distribution, organization: organization, issued_at: within_time)
       toddler_distribution = create(:distribution, organization: organization, issued_at: within_time)
