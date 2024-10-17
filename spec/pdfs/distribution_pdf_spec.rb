@@ -154,9 +154,6 @@ describe DistributionPdf do
     }
     let(:profile_name) { "Jaqueline Kihn DDS" }
     let(:profile_email) { "van@durgan.example" }
-    # Run
-    #   GENERATE_COMPARISON_PDFS=true bundle exec rspec --tag use_to_generate_pdfs spec/pdfs/distribution_pdf_spec.rb
-    # to generate these PDF files
     let(:expected_pickup_file_path) { Rails.root.join("spec", "fixtures", "files", "distribution_pickup.pdf") }
     let(:expected_same_address_file_path) { Rails.root.join("spec", "fixtures", "files", "distribution_same_address.pdf") }
     let(:expected_different_address_file_path) { Rails.root.join("spec", "fixtures", "files", "distribution_program_address.pdf") }
@@ -178,7 +175,7 @@ describe DistributionPdf do
           program_state: "",
           program_zip_code: "")
       end
-      it "doesn't print any address if the delivery type is pickup", use_to_generate_pdfs: true do
+      it "doesn't print any address if the delivery type is pickup" do
         compare_pdf(create_dist(:pick_up), expected_pickup_file_path)
       end
       it "doesn't print any address if the delivery type is delivery" do
@@ -192,7 +189,7 @@ describe DistributionPdf do
       before(:each) do
         create_profile_without_program_address
       end
-      it "prints the address if the delivery type is delivery", use_to_generate_pdfs: true do
+      it "prints the address if the delivery type is delivery" do
         compare_pdf(create_dist(:delivery), expected_same_address_file_path)
       end
       it "prints the address if the delivery type is shipped" do
@@ -206,7 +203,7 @@ describe DistributionPdf do
       before(:each) do
         create_profile_with_program_address
       end
-      it "prints the delivery address if the delivery type is delivery", use_to_generate_pdfs: true do
+      it "prints the delivery address if the delivery type is delivery" do
         compare_pdf(create_dist(:delivery), expected_different_address_file_path)
       end
       it "prints the delivery address if the delivery type is shipped" do

@@ -1,14 +1,16 @@
 module DistributionPDFHelper
-  private def create_profile(program_address1, program_address2, program_city, program_state, program_zip)
+  def create_profile(program_address1, program_address2, program_city, program_state, program_zip,
+    address1 = "Example Address 1", city = "Example City", state = "Example State", zip = "12345")
+
     create(:partner_profile,
       partner_id: partner.id,
       primary_contact_name: profile_name,
       primary_contact_email: profile_email,
-      address1: "Example Address 1",
+      address1: address1,
       address2: "",
-      city: "Example City",
-      state: "Example State",
-      zip_code: "12345",
+      city: city,
+      state: state,
+      zip_code: zip,
       program_address1: program_address1,
       program_address2: program_address2,
       program_city: program_city,
@@ -47,17 +49,27 @@ module DistributionPDFHelper
     begin
       pdf_file = pdf.compute_and_render
 
-      # For ease of generating comparison PDFs, check if GENERATE_COMPARISON_PDFS is set to true
-      # and if so overwrite the expected file with current output
-      overwrite_expected_file = ENV["GENERATE_COMPARISON_PDFS"] || false
-      if overwrite_expected_file
-        File.binwrite(expected_file_path, pdf_file)
-      end
-
       expect(pdf_file).to eq(IO.binread(expected_file_path))
     rescue RSpec::Expectations::ExpectationNotMetError => e
       File.binwrite(Rails.root.join("tmp", "failed_match_distribution_" + distribution.delivery_method.to_s + "_" + Time.current.to_s + ".pdf"), pdf_file)
       raise e.class, "PDF does not match, written to tmp/", cause: nil
     end
+  end
+
+  # helper function you can call from Rails console to create comparison pdfs
+  def create_comparison_pdfs
+    # create_inventory
+
+    # create_profile no address
+    pdf_file = DistributionPdf.new(organization, create_dist(:pickup)).compute_and_render
+    File.binwrite(:expected_pickup_file_path, pdf_file)
+
+    # create_profile without_program_address
+    pdf_file = DistributionPdf.new(organization, create_dist(:delivery)).compute_and_render
+    File.binwrite(:expected_same_address_file_path, pdf_file)
+
+    # create_profile_with_program_address
+    pdf_file = DistributionPdf.new(organization, create_dist(:shipped)).compute_and_render
+    File.binwrite(:expected_different_address_file_path, pdf_file)
   end
 end
