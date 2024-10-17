@@ -18,9 +18,13 @@ describe DistributionPdf do
   before(:each) do
     create(:line_item, itemizable: distribution, item: item1, quantity: 50)
     create(:line_item, itemizable: distribution, item: item2, quantity: 100)
-    create(:request, distribution: distribution,
-      request_items: [{"item_id" => item2.id, "quantity" => 30},
-        {"item_id" => item3.id, "quantity" => 50}, {"item_id" => item4.id, "quantity" => 120}])
+    create(:item_unit, item: item4, name: "pack")
+    create(:request, :with_item_requests, distribution: distribution,
+      request_items: [
+        {"item_id" => item2.id, "quantity" => 30},
+        {"item_id" => item3.id, "quantity" => 50},
+        {"item_id" => item4.id, "quantity" => 120, "request_unit" => "pack"}
+])
   end
 
   specify "#request_data" do
@@ -31,6 +35,20 @@ describe DistributionPdf do
       ["Item 2", 30, 100, "$2.00", "$200.00", nil],
       ["Item 3", 50, "", "$3.00", nil, nil],
       ["Item 4", 120, "", "$4.00", nil, nil],
+      ["", "", "", "", ""],
+      ["Total Items Received", 200, 150, "", "$250.00", ""]
+    ])
+  end
+
+  specify "#request_data with custom units feature" do
+    Flipper.enable(:enable_packs)
+    results = described_class.new(organization, distribution).request_data
+    expect(results).to eq([
+      ["Items Received", "Requested", "Received", "Value/item", "In-Kind Value Received", "Packages"],
+      ["Item 1", "", 50, "$1.00", "$50.00", "1"],
+      ["Item 2", 30, 100, "$2.00", "$200.00", nil],
+      ["Item 3", 50, "", "$3.00", nil, nil],
+      ["Item 4", "120 packs", "", "$4.00", nil, nil],
       ["", "", "", "", ""],
       ["Total Items Received", 200, 150, "", "$250.00", ""]
     ])
