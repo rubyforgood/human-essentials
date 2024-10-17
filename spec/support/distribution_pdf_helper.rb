@@ -27,9 +27,13 @@ module DistributionPDFHelper
   def create_line_items_request(distribution)
     create(:line_item, itemizable: distribution, item: item1, quantity: 50)
     create(:line_item, itemizable: distribution, item: item2, quantity: 100)
-    create(:request, distribution: distribution,
-      request_items: [{"item_id" => item2.id, "quantity" => 30},
-        {"item_id" => item3.id, "quantity" => 50}, {"item_id" => item4.id, "quantity" => 120}])
+    create(:item_unit, item: item4, name: "pack")
+    create(:request, :with_item_requests, distribution: distribution,
+      request_items: [
+        {"item_id" => item2.id, "quantity" => 30},
+        {"item_id" => item3.id, "quantity" => 50},
+        {"item_id" => item4.id, "quantity" => 120, "request_unit" => "pack"}
+])
   end
 
   def create_dist(delivery_method)

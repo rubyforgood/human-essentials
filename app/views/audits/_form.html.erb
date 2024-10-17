@@ -31,7 +31,9 @@
                   </fieldset>
 
                   <div class="card-footer">
-                    <%= submit_button({ text: 'Confirm Audit', name: 'confirm_audit', icon: 'check-circle', align: 'left', size: 'md'}, {confirm: 'Are you sure?'}) %>
+                    <%= submit_button({ text: 'Confirm Audit', name: 'confirm_audit', icon: 'check-circle', align: 'left', size: 'md'}, {
+                        confirm: "Are you sure?\n\nPlease note that this audit must also be finalized by someone with organization admin rights before changes to inventory will take place.\n\nWe strongly recommend completing that step before doing any further actions that affect inventory.",
+                    }) %>
                     <%= submit_button({text: 'Save Progress', name: 'save_progress', size: 'md'}) %>
                   </div>
                 <% end %>
