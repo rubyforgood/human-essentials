@@ -1,12 +1,20 @@
 RSpec.describe "Admin::BaseItems", type: :request do
-  let(:organization) { create(:organization) }
+  let(:organization) { create(:organization, :with_items) }
   let(:user) { create(:user, organization: organization) }
+  let(:super_admin) { create(:super_admin, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 
-  # TODO: should this be testing something?
   context "while signed in as a super admin" do
     before do
-      sign_in(@super_admin)
+      sign_in(super_admin)
+    end
+
+    it "doesn't let you delete the Kit base item" do
+      kit_base_item = KitCreateService.find_or_create_kit_base_item!
+      delete admin_base_item_path(id: kit_base_item.id)
+      expect(flash[:alert]).to include("You cannot delete the Kits base item")
+      expect(response).to be_redirect
+      expect(BaseItem.exists?(kit_base_item.id)).to be true
     end
   end
 
@@ -16,51 +24,58 @@ RSpec.describe "Admin::BaseItems", type: :request do
     end
 
     describe "GET #new" do
-      it "returns http success" do
+      it "denies access and redirects" do
         get new_admin_base_item_path
-        expect(response).to have_http_status(:found)
+        expect(flash[:error]).to eq("Access Denied.")
+        expect(response).to redirect_to(dashboard_path)
       end
     end
 
     describe "POST #create" do
-      it "redirects" do
-        post admin_base_items_path(organization: attributes_for(:organization))
-        expect(response).to be_redirect
+      it "denies access and redirects" do
+        post admin_base_items_path(id: BaseItem.first.id)
+        expect(flash[:error]).to eq("Access Denied.")
+        expect(response).to redirect_to(dashboard_path)
       end
     end
 
     describe "GET #index" do
-      it "returns http success" do
+      it "denies access and redirects" do
         get admin_base_items_path
-        expect(response).to have_http_status(:found)
+        expect(flash[:error]).to eq("Access Denied.")
+        expect(response).to redirect_to(dashboard_path)
       end
     end
 
     describe "GET #show" do
-      it "returns http success" do
-        get admin_base_item_path(id: organization.id)
-        expect(response).to have_http_status(:found)
+      it "denies access and redirects" do
+        get admin_base_item_path(id: BaseItem.first.id)
+        expect(flash[:error]).to eq("Access Denied.")
+        expect(response).to redirect_to(dashboard_path)
       end
     end
 
     describe "GET #edit" do
-      it "returns http success" do
-        get edit_admin_base_item_path(id: organization.id)
-        expect(response).to have_http_status(:found)
+      it "denies access and redirects" do
+        get edit_admin_base_item_path(id: BaseItem.first.id)
+        expect(flash[:error]).to eq("Access Denied.")
+        expect(response).to redirect_to(dashboard_path)
       end
     end
 
     describe "PUT #update" do
-      it "redirect" do
-        put admin_base_item_path(id: organization.id, organization: { name: "Foo" })
-        expect(response).to be_redirect
+      it "denies access and redirects" do
+        put admin_base_item_path(id: BaseItem.first.id)
+        expect(flash[:error]).to eq("Access Denied.")
+        expect(response).to redirect_to(dashboard_path)
       end
     end
 
     describe "DELETE #destroy" do
-      it "redirects" do
-        delete admin_base_item_path(id: organization.id)
-        expect(response).to be_redirect
+      it "denies access and redirects" do
+        delete admin_base_item_path(id: BaseItem.first.id)
+        expect(flash[:error]).to eq("Access Denied.")
+        expect(response).to redirect_to(dashboard_path)
       end
     end
   end
