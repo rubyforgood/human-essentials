@@ -26,7 +26,7 @@ RSpec.describe "Annual Reports", type: :system, js: true do
       visit subject
       year = 1.year.ago.year
       click_on(year.to_s)
-      expect(page).to have_content("Diaper Acquisition")
+      expect(page).to have_selector("h1", text: "Diapers")
       expect(page).to have_content("Warehouse and Storage")
       expect(page).to have_content("Adult Incontinence")
       expect(page).to have_content("Other Items")
