@@ -20,7 +20,7 @@ class KitCreateService
       # kit item created.
       kit_base_item = fetch_or_create_kit_base_item
 
-      # Create the Item.
+      # Create the item
       item_creation = ItemCreateService.new(
         organization_id: organization.id,
         item_params: {
@@ -100,4 +100,3 @@ class KitCreateService
     "kit_#{name.underscore.gsub(/\s+/, '_')}"
   end
 end
-
