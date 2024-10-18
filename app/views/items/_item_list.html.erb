@@ -8,14 +8,14 @@
     <tr>
       <th>Category</th>
       <th>Name</th>
-      <th>Quantity Per Individual</th>
-      <th>Fair Market Value (per item)</th>
+      <th class = "text-right">Quantity Per Individual</th>
+      <th class = "text-right">Fair Market Value (per item)</th>
       <% if Flipper.enabled?(:enable_packs) %>
         <% unless current_organization.request_units.empty? %>
           <th>Custom Request Units</th>
         <% end %>
       <% end %>
-      <th class="text-center">Actions</th>
+      <th class = "text-right">Actions</th>
     </tr>
     </thead>
     <tbody>
