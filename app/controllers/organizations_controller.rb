@@ -1,7 +1,7 @@
 # Provides limited R/W to a scope-limited organization resource (member-routes-only)
 class OrganizationsController < ApplicationController
   before_action :authorize_admin, except: [:show]
-  before_action :authorize_user, only: [:show]
+  before_action :authorize_org_user, only: [:show]
 
   def show
     @organization = current_organization
@@ -79,11 +79,6 @@ class OrganizationsController < ApplicationController
   end
 
   private
-
-  def authorize_user
-    verboten! unless current_user.has_role?(Role::SUPER_ADMIN) ||
-      current_user.has_role?(Role::ORG_USER, current_organization)
-  end
 
   def organization_params
     request_type_formatter(params)
