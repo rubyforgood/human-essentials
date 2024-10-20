@@ -30,7 +30,7 @@ module Clockwork
     end
   end
 
-  every(4.hours, "Backup prod DB to Azure blob storage", :if => lambda { |_| Rails.env.production? }) do
+  every(4.hours, "Backup prod DB to Azure blob storage", if: lambda { |_| Rails.env.production? }) do
     rake = Rake.application
     rake.init
     rake.load_rakefile
