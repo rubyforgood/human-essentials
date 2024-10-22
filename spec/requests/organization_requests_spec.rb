@@ -403,5 +403,23 @@ RSpec.describe "Organizations", type: :request do
         expect(response.body).to include(organization.display_last_distribution_date)
       end
     end
+
+    describe "POST #promote_to_org_admin" do
+      before { post promote_to_org_admin_organization_path(user_id: user.id, organization_name: organization.short_name) }
+
+      it "promotes the user to org_admin" do
+        expect(user.has_role?(Role::ORG_ADMIN, organization)).to eq(true)
+        expect(response).to redirect_to(admin_organization_path({ id: organization.id }))
+      end
+    end
+
+    describe "POST #demote_to_user" do
+      before { post demote_to_user_organization_path(user_id: admin_user.id, organization_name: organization.short_name) }
+
+      it "demotes the org_admin to user" do
+        expect(admin_user.reload.has_role?(Role::ORG_ADMIN, admin_user.organization)).to be_falsey
+        expect(response).to redirect_to(admin_organization_path({ id: organization.id }))
+      end
+    end
   end
 end

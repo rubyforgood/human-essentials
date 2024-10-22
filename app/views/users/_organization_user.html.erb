@@ -17,10 +17,11 @@
         <ul class="dropdown-menu">
           <li>
             <%=
-            edit_button_to(
-              edit_admin_user_path(user),
-              {text: 'Edit User'}
-            )
+              edit_button_to(
+                promote_to_org_admin_organization_path(user_id: user.id, organization_name: current_organization.short_name),
+                {text: 'Promote to Admin'},
+                {method: :post, rel: "nofollow", data: {confirm: 'This will promote the user to admin status. Are you sure that you want to submit this?', size: 'xs'}}
+              )
             %>
           </li>
           <li>
@@ -30,8 +31,8 @@
         </ul>
       </div>
     <% end %>
-    <% if current_user.has_role?(Role::ORG_ADMIN, current_organization) && user.has_role?(Role::ORG_ADMIN, current_organization) %>
-      <%= edit_button_to demote_to_user_organization_path(user_id: user.id),
+    <% if current_user.is_admin?(current_organization) && user.has_role?(Role::ORG_ADMIN, current_organization) %>
+      <%= edit_button_to demote_to_user_organization_path(user_id: user.id, organization_name: current_organization.short_name),
                  {text: 'Demote to User'},
                  {method: :post, rel: "nofollow", data: {confirm: 'This will demote the admin to user status. Are you sure that you want to submit this?', size: 'xs'}} unless user.id == current_user.id %>
     <% end %>
