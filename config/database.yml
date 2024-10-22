@@ -20,7 +20,7 @@ staging:
   database: <%= ENV['POSTGRESQL_DATABASE'] %>
   host: <%= ENV['POSTGRESQL_ADDRESS'] %>
 
-nano config/database.ymltest:
+test:
   <<: *default
   database: diaper_test
   timeout: 5000
