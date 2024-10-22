@@ -16,13 +16,15 @@
         </button>
         <ul class="dropdown-menu">
           <li>
-            <%=
-              edit_button_to(
-                promote_to_org_admin_organization_path(user_id: user.id, organization_name: current_organization.short_name),
+            <% if current_user.has_role?(Role::SUPER_ADMIN) %>
+              <%= edit_button_to(edit_admin_user_path(user), { text: 'Edit User' }) %>
+            <% else %>
+              <%= edit_button_to(
+                promote_to_org_admin_organization_path(user_id: user.id),
                 {text: 'Promote to Admin'},
                 {method: :post, rel: "nofollow", data: {confirm: 'This will promote the user to admin status. Are you sure that you want to submit this?', size: 'xs'}}
-              )
-            %>
+              ) %>
+            <% end %>
           </li>
           <li>
             <%= delete_button_to remove_user_organization_path(user_id: user.id),
