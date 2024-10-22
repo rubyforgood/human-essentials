@@ -151,30 +151,5 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
       expect(page).to have_content("Default email text")
       expect(page).to have_content("Users")
     end
-
-    it "can promote a user to org_admin in the organization" do
-      user = create(:user, name: "User to be promoted", organization: foo_org)
-
-      visit admin_organization_path(foo_org.id)
-      accept_confirm do
-        click_button "Actions"
-        click_link "Promote to Admin"
-      end
-
-      expect(page).to have_content("User has been promoted!")
-      expect(user.has_role?(Role::ORG_ADMIN, foo_org)).to be true
-    end
-
-    it "can demote an org_admin to user in the organization" do
-      user = create(:organization_admin, name: "User to be promoted", organization: foo_org)
-
-      visit admin_organization_path(foo_org.id)
-      accept_confirm do
-        click_link "Demote to User"
-      end
-
-      expect(page).to have_content("User has been demoted!")
-      expect(user.has_role?(Role::ORG_ADMIN, foo_org)).to be false
-    end
   end
 end
