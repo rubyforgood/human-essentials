@@ -11,8 +11,8 @@ class TransfersController < ApplicationController
                                      .during(helpers.selected_range)
     @selected_from = filter_params[:from_location]
     @selected_to = filter_params[:to_location]
-    @from_storage_locations = Transfer.storage_locations_transferred_from_in(current_organization)
-    @to_storage_locations = Transfer.storage_locations_transferred_to_in(current_organization)
+    @from_storage_locations = StorageLocation.with_transfers_from(current_organization)
+    @to_storage_locations = StorageLocation.with_transfers_to(current_organization)
     respond_to do |format|
       format.html
       format.csv { send_data Transfer.generate_csv(@transfers), filename: "Transfers-#{Time.zone.today}.csv" }

@@ -35,11 +35,11 @@ class StorageLocation < ApplicationRecord
   has_many :items, through: :inventory_items
   has_many :transfers_from, class_name: "Transfer",
                             inverse_of: :from,
-                            foreign_key: :id,
+                            foreign_key: :from_id,
                             dependent: :destroy
   has_many :transfers_to, class_name: "Transfer",
                           inverse_of: :to,
-                          foreign_key: :id,
+                          foreign_key: :to_id,
                           dependent: :destroy
   has_many :kit_allocations, dependent: :destroy
 
@@ -75,6 +75,14 @@ class StorageLocation < ApplicationRecord
     else
       organization.items.joins(:storage_locations).select(:id, :name).group(:id, :name).order(name: :asc)
     end
+  end
+
+  def self.with_transfers_to(organization)
+    joins(:transfers_to).where(organization_id: organization.id).distinct.order(:name)
+  end
+
+  def self.with_transfers_from(organization)
+    joins(:transfers_from).where(organization_id: organization.id).distinct.order(:name)
   end
 
   def item_total(item_id)
