@@ -1,5 +1,6 @@
 RSpec.describe "Purchases", type: :request do
   let(:organization) { create(:organization) }
+  let(:storage_location) { create(:storage_location, name: "Pawane Location", organization: organization) }
   let(:user) { create(:user, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 
@@ -48,11 +49,15 @@ RSpec.describe "Purchases", type: :request do
 
     describe "GET #new" do
       subject do
+        organization.update!(default_storage_location: storage_location)
         get new_purchase_path
         response
       end
 
       it { is_expected.to be_successful }
+      it "should include the storage location name" do
+        expect(subject.body).to include("Pawane Location")
+      end
     end
 
     describe "POST#create" do

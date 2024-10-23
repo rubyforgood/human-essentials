@@ -5,6 +5,6 @@ module PurchasesHelper
   end
 
   def new_purchase_default_location(purchase)
-    purchase.storage_location_id.presence || current_organization.intake_location
+    current_organization.default_storage_location || purchase.storage_location_id.presence || current_organization.intake_location
   end
 end
