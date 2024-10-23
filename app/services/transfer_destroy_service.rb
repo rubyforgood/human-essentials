@@ -28,7 +28,5 @@ class TransferDestroyService
   end
 
   def revert_inventory_transfer!
-    transfer.to.decrease_inventory(transfer.line_item_values)
-    transfer.from.increase_inventory(transfer.line_item_values)
   end
 end

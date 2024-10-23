@@ -13,10 +13,7 @@ class DonationItemizedBreakdownService
   end
 
   def fetch
-    inventory = nil
-    if Event.read_events?(@organization)
-      inventory = View::Inventory.new(@organization.id)
-    end
+    inventory = View::Inventory.new(@organization.id)
     items_donated = fetch_items_donated
     current_onhand = current_onhand_quantities(inventory)
 
@@ -41,11 +38,7 @@ class DonationItemizedBreakdownService
   end
 
   def current_onhand_quantities(inventory)
-    if inventory
-      inventory.all_items.group_by(&:name).to_h { |k, v| [k, v.sum(&:quantity)] }
-    else
-      organization.inventory_items.group("items.name").sum(:quantity)
-    end
+    inventory.all_items.group_by(&:name).to_h { |k, v| [k, v.sum(&:quantity)] }
   end
 
   def fetch_items_donated

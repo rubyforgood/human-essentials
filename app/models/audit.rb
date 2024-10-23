@@ -28,7 +28,6 @@ class Audit < ApplicationRecord
   enum status: { in_progress: 0, confirmed: 1, finalized: 2 }
 
   validates :storage_location, :organization, presence: true
-  validate :line_items_exist_in_inventory
   validate :line_items_quantity_is_not_negative
   validate :line_items_unique_by_item_id
   validate :user_is_organization_admin_of_the_organization

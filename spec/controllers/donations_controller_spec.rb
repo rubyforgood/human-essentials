@@ -66,8 +66,7 @@ RSpec.describe DonationsController, type: :controller do
         donation_params = { source: donation.source, line_items_attributes: line_item_params }
         expect do
           put :update, params: { id: donation.id, donation: donation_params }
-        end.to change { donation.storage_location.inventory_items.first.quantity }.by(5)
-          .and change {
+        end.to change {
                  View::Inventory.new(donation.organization_id)
                    .quantity_for(storage_location: donation.storage_location_id, item_id: line_item.item_id)
                }.by(5)
@@ -92,35 +91,6 @@ RSpec.describe DonationsController, type: :controller do
           end.to change { original_storage_location.size }.by(-10) # removes the whole donation of 10
           expect(new_storage_location.size).to eq 8
         end
-
-        # TODO this test is invalid in event-world since it's handled by the aggregate
-        it "rolls back updates if quantity would go below 0" do
-          next if Event.read_events?(organization)
-
-          donation = create(:donation, :with_items, item_quantity: 10)
-          original_storage_location = donation.storage_location
-
-          # adjust inventory so that updating will set quantity below 0
-          inventory_item = original_storage_location.inventory_items.last
-          inventory_item.quantity = 5
-          inventory_item.save!
-
-          new_storage_location = create(:storage_location)
-          line_item = donation.line_items.first
-          line_item_params = {
-            "0" => {
-              item_id: line_item.item_id,
-              quantity: "1",
-              id: line_item.id
-            }
-          }
-          donation_params = { source: donation.source, storage_location: new_storage_location, line_items_attributes: line_item_params }
-          put :update, params: { id: donation.id, donation: donation_params }
-          expect(response).not_to redirect_to(edit_donation_path(donation))
-          expect(original_storage_location.size).to eq 5
-          expect(new_storage_location.size).to eq 0
-          expect(donation.reload.line_items.first.quantity).to eq 10
-        end
       end
 
       describe "when removing a line item" do
@@ -132,8 +102,7 @@ RSpec.describe DonationsController, type: :controller do
           donation_params = { source: donation.source }
           expect do
             put :update, params: { id: donation.id, donation: donation_params }
-          end.to change { donation.storage_location.inventory_items.first.quantity }.by(-1 * item_quantity)
-            .and change {
+          end.to change {
                    View::Inventory.new(donation.organization_id)
                      .quantity_for(storage_location: donation.storage_location_id, item_id: item_id)
                  }.by(-1 * item_quantity)
