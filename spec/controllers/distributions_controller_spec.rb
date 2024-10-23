@@ -263,8 +263,54 @@ RSpec.describe DistributionsController, type: :controller do
           expect(flash[:notice]).to eq("Distribution updated!")
           expect(flash[:error]).to be_nil
           expect(flash[:alert]).to be_nil
+
         end
       end
+
+      context "verify totals in 'Total in Category Diapers'" do
+        let(:item) { create(:item, name: "Diapers", organization: organization) }
+        let(:storage_location) { create(:storage_location, organization: organization) }
+      
+        before(:each) do
+          TestInventory.create_inventory(organization, {
+            storage_location.id => {
+              item.id => 20
+            }
+          })
+        end
+        let(:distribution) { create(:distribution, storage_location: storage_location) }
+        let(:params) do
+          {
+            organization_name: organization.id,
+            id: distribution.id,
+            distribution: {
+              storage_location_id: distribution.storage_location.id,
+              line_items_attributes:
+                {
+                  "0": { item_id: item.id, quantity: 15 },
+                }
+            }
+          }
+        end  
+              
+        it "ensures the totals in 'Total in Category Diapers' match" do
+          post :create, params: {
+            organization_name: organization.id,
+            distribution: {
+              partner_id: partner.id,
+              storage_location_id: storage_location.id,
+              line_items_attributes: {
+                "0": { item_id: item.id, quantity: 15 }
+              }
+            }
+          }.merge(format: :turbo_stream) 
+      
+          total_in_category_diapers = LineItem.where(item_id: item.id).sum(:quantity) 
+          expect(total_in_category_diapers).to eq(15)
+        end
+      end
+      
+      
     end
   end
 end
