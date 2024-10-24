@@ -182,8 +182,8 @@ RSpec.describe ItemsController, type: :controller do
 
           expect(response).to have_error
         end
-      end 
-    end 
+      end
+    end
 
     context "Looking at a different organization" do
       let(:object) { create(:item, organization: create(:organization)) }
