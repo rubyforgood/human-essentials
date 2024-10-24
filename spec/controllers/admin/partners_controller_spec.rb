@@ -5,8 +5,8 @@ RSpec.describe Admin::PartnersController, type: :controller do
     let(:super_admin) { create(:super_admin) }
     
     # Ensure partners are created before the test
-    let!(:partner1) { create(:partner, name: "alpha", organization: organization) }
     let!(:partner2) { create(:partner, name: "Bravo", organization: organization) }
+    let!(:partner1) { create(:partner, name: "alpha", organization: organization) }
     let!(:partner3) { create(:partner, name: "Zeus", organization: organization) }
   
     let(:default_params) do
