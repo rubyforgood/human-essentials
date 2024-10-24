@@ -111,6 +111,7 @@ RSpec.describe "Items", type: :request do
 
     describe "CREATE #create" do
       let!(:existing_item) { create(:item, organization: organization, name: "Really Good Item") }
+      let!(:item_category) { create(:item_category, organization: organization, name: "Test Category") }
 
       describe "with an already existing item name" do
         let(:item_params) do
@@ -130,6 +131,39 @@ RSpec.describe "Items", type: :request do
 
           expect(flash[:error]).to eq("Name - An item with that name already exists (could be an inactive item)")
           expect(response).to render_template(:new)
+        end
+      end
+    end
+
+    describe "with invalid parameters" do
+      let(:invalid_item_params) do
+        {
+          item: {
+            name: "",  # Invalid name
+            partner_key: create(:base_item).partner_key,
+            value_in_cents: -100,  # Invalid value
+            package_size: nil,
+            distribution_quantity: nil
+          }
+        }
+      end
+  
+      it "loads and displays the item categories when rendering new" do
+        # Create some item categories for the organization
+        item_categories = create_list(:item_category, 3, organization: organization)
+  
+        # Attempt to create an item with invalid parameters
+        post items_path, params: invalid_item_params
+  
+        # Expect to render the new template
+        expect(response).to render_template(:new)
+  
+        # Ensure the item categories are assigned in the controller
+        expect(assigns(:item_categories)).to eq(organization.item_categories.order('name ASC'))
+  
+        # Verify the categories are included in the response body
+        item_categories.each do |category|
+          expect(response.body).to include("<option value=\"#{category.id}\">#{category.name}</option>")
         end
       end
     end
