@@ -22,9 +22,7 @@ Either of these will bring up the new storage location screen
 Fill in the information:
 - Name and Address are mandatory
 - Square Footage and Warehouse Type are used for the Annual Survey (our collection of information corresponding to the NDBN Annual Survey)
-- Set Time Zone to the local time zone for the storage location.  This impacts the Pickup & Deliveries calendar but not much else.  
-
-[TODO:  Understand *How* timezone affects the P&D calendar]
+- Set Time Zone to the local time zone for the storage location.
 
 Click "Save"
 

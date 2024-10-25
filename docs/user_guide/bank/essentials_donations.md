@@ -9,7 +9,7 @@ In Human Essentials you enter in-kind donations by specifying where they came fr
 
 To view a list of all your donations, click on 'Donations', then "All Donations" in the left-hand menu,
 
-[TODO:  Insert navigational screenshot here.]
+![Navigating to Donations](images/essentials/donations/essentials_donations_1.png)
 
 This screen includes a filter so you can narrow down your search to a particular donation, and some basic information on each donation:
 - Source -- Whether this comes from a [Product Drive](product_drives.md),  Manufacturer, Donation Site, or Miscellaneous Donation
@@ -22,11 +22,10 @@ This screen includes a filter so you can narrow down your search to a particular
 - Comments
 - Actions - you can view or print donations from this screen.  Other actions are available on the view screen.
 
-[TODO:  talk about the totals]
-
 ### Filtering the donation list
 
-[TODO: Insert mini screenshot of just the filtration section here]
+
+![Donations Filter Section](images/essentials/donations/essentials_donations_2.png)
 
 When you have been using human essentials for a few months, your donation list may grow to the point that you really need to be able to narrow things down to find a particular donation.
 
@@ -44,7 +43,22 @@ Clicking "Clear filters" will blank out the filters that are drop-down selection
 To enter a new donation, click "Donations", then "New Donation" on the left hand menu, or click the +New Donation button on the Donations list.
 
 
-[TODO:  Insert navigational screenshot here.]
+![Navigation to New Donations](images/essentials/donations/essentials_donations_3.png)
+
+Here you can enter all the information for your donation:
+
+- Source
+  - What kind of donation this is.  You have a choice of product drive, donation site, manufacturer or misc. donation.  If you pick anything but misc. donation,  you will be prompted for more details.
+- Storage Location
+- Money raised in dollars (optional)
+- Comment (optional)
+- Issued On 
+  - This is the date that the donation was made.  Note that inventory changes happen as of when you enter  the information.  They are not back-dated.
+- Items in this donation
+  - If you have set up [barcodes ](inventory_barcodes.md) for the items you are receiving,  you can use your barcode reader to enter your items.  Otherwise, pick the item from "Choose an item", and enter the number of that item in "Quantity".
+  - Click "add another item" as needed to get room for more items.
+
+When you are finished entering your information, click 'Save'.  
 
 ### Information entered in Donations
 #### Source
@@ -55,8 +69,7 @@ For Product Drive, Manufacturer, or Donation Site, you will further specify the 
 If  you specify Product drive,  you'll also need to specify the particular drive and participant for the donation -- but you can enter them "on the fly", here. You can view summaries for the product drives in [Product Drives](product_drives.md), and manage the contact info for a product drive participant under [Community | Product Drive Participants](community_product_drive_participants.md).
 ##### *Donation Site
 Donation Site is meant to capture the concept of any place you have a more-or-less permanent place people can drop off donations at, such as your main office, or community locations such as fire halls, etc.
-You can see the donations for each donation site and manage their contaact information under [Community|Donation Sites](community_donation_sites.md).  Unlike product drives, you can't create a new donation site 'on the fly' through the fields here.
-[TODO:  Check if there is a good reason for that,  or if we're just inconsistent.  I think a new donation site is just as likely as a new manufacturer!]
+You can see the donations for each donation site and manage their contact information under [Community|Donation Sites](community_donation_sites.md).  Unlike product drives, you can't create a new donation site 'on the fly' through the fields here.
 
 ##### *Manufacturer
 This is for the donations that come straight from the manufacturer.  You can view the total donations and a donation breakdown for each manufacturer under [Community | Manufacturers](community_manufacturers.md)
@@ -86,12 +99,38 @@ When you are done entering your items,  click "Save".  Barring any errors, this 
 
 ## Viewing the details of a donation
 To view the details of a donation, click on the "View" button beside the donation on the All Donations page.
-[TODO:  Navigational screenshot]
-Here you'll see the donation, and have the opportunity to make a correction, to delete the donation, to print it.   You can also start a new distribution from this page.  [TODO:  Write up a reason we have this button here?!]
+
+![Navigation to New Donations](images/essentials/donations/essentials_donations_4.png)
+
+Here you'll see the donation, including:
+- Date 
+- Source 
+- Donation Site
+- Storage Location
+- for each Item in the donation
+  - Item name
+  - Quantity in the donation
+  - Total in-kind value for that item
+- Total quantity of items, and
+- Total in-kind value
+- Comment
+
+You can make a correction, to delete the donation, to print it.   You can also start a new distribution from this page.  (This is a convenience for banks that distribute the bulk of their donations immediately, and don't fulfill partner requests.)
+
+![Single Donation View](images/essentials/donations/essentials_donations_5.png)
+
 
 ## Editing a donation
-Donations shouldn't need to be updated very often -- you usually have all the information you need when you enter them the first time.  Differences in the physical count, or new information may occasion a need for a correction, though.  If you need to correct a donation,  you first "View" it, then "Make a Correction"
-[TODO:  Navigational screenshots]
+Donations shouldn't need to be updated very often -- you usually have all the information you need when you enter them the first time.  Differences in the physical count, or new information may occasion a need for a correction, though.  If you need to correct a donation,  you first "View" it (see above), then "Make a Correction"
+
+
+![Navigation to Edit a Donation](images/essentials/donations/essentials_donations_6.png)
+
+Here, you can change all the information on the donation, including adding and removing items.  
+
+##### Note that changes you make to the levels of items will take effect as of the date you made the changes.  They will not be back-dated to the "issued on" date
+
+##### Note also that donations do not currently work well with kits.  We have an open issue for this.
 
 ## Deleting a donation
 Hopefully you won't need to delete a donation - but it's certainly possible that you might have entered a duplicate.   Should you need to delete the donation,  "View" it from the All Donations page, then click 'Delete'.  You'll be asked to confirm your decision.  Use this with extreme caution - because you won't be able to undelete it!
