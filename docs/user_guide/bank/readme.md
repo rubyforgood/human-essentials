@@ -7,7 +7,7 @@ This user guide is meant for users of the human essentials app at essentials ban
    2. [Support](intro_ii.md) 
 2. Getting started
    1. [Some choices you'll want to think about at the start. ](getting_started_choices.md)
-   3. [Storage Locations](getting_started_storage_locations.md)
+   2. [Storage Locations](getting_started_storage_locations.md)
    3. [Partner Agencies](getting_started_partners.md)
    4. [Donation sites](getting_started_donation_sites.md)
    5. [Inventory](getting_started_inventory.md)

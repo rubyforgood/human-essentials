@@ -1,7 +1,5 @@
 DRAFT USER GUIDE
-# Signing out and other things for the top right menu
-
-(TODO:  Need a better title)
+# Account Management
 
 ## Logging out
 You can log out be clicking your name in the top right corner, then clicking 'Log out'.
@@ -22,6 +20,8 @@ Then click save.
 
 ## My organization
 If you are an org admin,  you can also manage your organization and users through the top-right menu.  This goes to the same screen as clicking on "My Organization" in the left-hand menu.  For details, see [Customization](getting_started_customization.md) and [User Management](user_management.md)
+[TODO:  Add switching to partner ]
+
 
 
 [Prior: User management](user_management.md) [Next: Asking for changes](asking_for_changes.md)
