@@ -61,7 +61,7 @@ if you have any questions about this!
 
 
 ### Reminder day (Day of month an e-mail reminder is sent to partners to submit requests)
- At this point, we send those emails once a month on the day of the month you indicate here.
+ [TODO:  This will need updating with the day of week/day of month update]At this point, we send those emails once a month on the day of the month you indicate here.
 If you do not pick a day, no reminder emails are sent.
 
 ### Deadline day (Final day of the month to submit requests)
@@ -124,6 +124,9 @@ These fields are only here to be reported on the annual survey.
 ### Does your bank distribute monthly
 
 ## Custom Units
+
+NOTE:  This is not yet implemented as of Oct 12, 2024. 
+
 The number of items throughout the bank's view of the system is the number of units (e.g. diapers), but 
 partners often think in terms of packs of diapers.   Because banks were getting a lot of partners requesting the number of packs of diapers, instead of the number of diapers, we have introduced the ability for banks to allow the partners to request other units (e.g. packs)
 
@@ -172,3 +175,5 @@ You can customize this quite a bit!  [TODO:  expand.   Maybe provide a real life
 ## Logo
 
 The logo that you upload here will appear several places throughout the system, including on your distribution and donation printouts.  Larger logos will impact your performace -- the 763 x 188 size is a good guideline.
+
+[Prior: Inventory](getting_started_inventory.md) [Next:  Adding your Staff - levels of access](getting_started_access_levels.md)

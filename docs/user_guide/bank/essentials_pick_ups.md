@@ -35,3 +35,5 @@ Select "From URL"and paste the URL you copied in the "URL of calendar" section a
 ![Add Calendar](images/essentials/pickups/add_calendar.jpg)
 
 Events from the Human Essentials Pick Ups & Deliveries Calendar should be accessible to you on Google Calendar when the sync is complete.
+
+[Prior: Distributions](essentials_distributions.md)[Next: Partner Management:  Request/Distribution Cycle](pm_request_distribution_cycle.md)

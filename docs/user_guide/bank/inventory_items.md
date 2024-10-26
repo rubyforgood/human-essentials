@@ -3,6 +3,8 @@ DRAFT USER GUIDE
 ## Introduction
 Your bank is initialized with  a basic set of items that contains many common product types that essentials banks distribute.   These items represent the stock you have for distribution.  Here is the current default list:  
 
+[TODO: Bulletize this list.]
+
 Adult Briefs (Large/X-Large),
 Adult Briefs (Medium/Large),
 Adult Briefs (Small/Medium),
@@ -64,6 +66,7 @@ You can add more items, basing them off our base item list, and customize them. 
  - adding minimum and recommended bank-wide inventory levels (which enable warnings, and drive the low inventory list in your dashboard)
  - creating [kits](inventory_kits.md) that will contain items (the inventory levels will show the items that are yet not in the kits)
  - remove the items from your lists on a go-forward basis.
+ - 
 [TODO:  links pointing to each of these things]
 
 ## The Items & Inventory Views
@@ -77,7 +80,10 @@ Clicking "View" will bring up details on the item, including all the things you 
 [ToDo: screenshot]
 The fields are:
 - Base item -- this is the "base item" for this item -- which determines what section it is in for the Annual Survey.  You can also search by base item (at this time)
-- Category -- this is a category you define (see Item Categories, below [TODO:  put the link in])
+- Category -- this is a category you define (see Item Categories, below 
+- 
+- [TODO:  put the link in])
+- 
 - Value per Item -- this is currently shown in cents (there is a request to change it to dollars in our list).  This is used for any "Fair Market Value" values -- including on donation and distribution printouts.  
 Note: We only have one 'value per item' per item -- so it's always the current fair market value not the historical.  If provided, this is used for the value column on the distribution and donation printouts (unless you hide those columns when [customizing your bank](getting_started_customization.md))
 - Quantity per individual -- This is used for two things:  1/  If you have enabled "request by individual" for your partners (and they use it), this is the number of items that will be in their request per individual they request for.  (so, if it's 25, and they indicate 3 individuals,  you will receive a request for 75 of that item).  It is also used in the annual survey for the estimated people served -- we take the total of the item that was distributed, and divide it by this number to get the number of people helped.  **NOTE** We use 50 for this if you don't give a value.
