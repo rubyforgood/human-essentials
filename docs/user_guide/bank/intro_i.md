@@ -34,3 +34,4 @@ sponsors who provide funding or in-kind services for the servers that the system
 - donor tax receipts 
 - direct distribution -- there are some things that help with that in the partner side, and some banks run a partner for their direct distribution, but it is not our strength.
 
+[Next: Support](intro_ii.md)

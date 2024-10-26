@@ -40,3 +40,5 @@ You can export all the vendors by clicking on the "Export Vendors" button.
 Currently we are only providing the vendors' contact information in the export.
 
 ![Export Vendors](images/community/vendors/export_vendors.jpg)
+
+[Prior:  Donation Sites](community_donation_sites.md)[Next: Manufacturers](community_manufacturers.md)

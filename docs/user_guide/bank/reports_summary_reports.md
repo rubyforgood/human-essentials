@@ -23,3 +23,5 @@ The "recent donations" section shows recently entered donations that match the d
 ## Purchase Summary
 This merely gives the amount spent during the period, along with recently entered purchases that match the date filter.  The filter works on the issued on date, but the ordering is by the creation date of the purchase.
 [TODO: Marked up Screenshots]
+
+[Prior:  Exports](exports.md)[Next: Itemized reports](reports_itemized_reports.md)
