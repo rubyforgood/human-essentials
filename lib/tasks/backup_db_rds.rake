@@ -1,5 +1,5 @@
 desc "Update the development db to what is being used in prod"
-task :backup_db => :environment do
+task :backup_db_rds => :environment do
   system("echo Performing dump of the database.")
 
   current_time = Time.current.strftime("%Y%m%d%H%M%S")
