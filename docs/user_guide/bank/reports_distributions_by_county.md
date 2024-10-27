@@ -11,7 +11,7 @@ We use the area served information entered in each partner's [profile](pm_partne
   
 **N.B.** If you are using kits, please note that this treats each kit as an item,  rather than counting the items within the kits separately.
 
-If you want to see a time period other than the current year,  change the date range and click "Filter".  We recommend you use the little pop-up gizmo to enter your date range, as the format of the date range is very fussy.
+If you want to see a time period other than the default of 60 days prior to 30 days forward from today,  change the date range and click "Filter".  We recommend you use the little pop-up gizmo to enter your date range, as the format of the date range is very fussy.
 
 ![distributions_by_county_with_date_range_gizmo](images/reports/reports_distributions_by_county_2.png)
 
