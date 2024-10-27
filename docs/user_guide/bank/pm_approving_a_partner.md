@@ -3,22 +3,23 @@ DRAFT USER GUIDE
 
 [TODO: Upcoming change review -- terminology.   I feel like these are going to be done before the first pass is through so I'm leaving the screenshots out for the nonce.]
 
-# Approving partners
+# Approving Partners
 
-There are three paths in to reviewing a partner's information before approving them to make requests -- 
+There are three paths in to reviewing a Partner's information before approving them to make requests -- 
 
 1/  There is a list of partners awaiting approvals on the dashboard.   To start the approval process, click "Review Application";
 
-[TODO: Screenshot]
+
+![Navigation to review application_from dashboard](images/partners/partners_review_application_from_dashboard.png)
+
+or
 
 2/  Click "Partner Agencies" and "All Partners" in the left-hand menu, then "Review Application" beside the partner.
 
-[TODO:  Screenshot]
 
-or 
-3/ Click "Partner Agencies" and "All Partners" in the left-hand menu, then click the partner name.  Scroll down to see the partner profile information, which starts just below the "Approve Partner" button
+![Navigation to review application_from partner_list](images/partners/partners_review_application_navigation.png)
 
-[TODO: Screenshot]
+
 
 ----------------------------------
 

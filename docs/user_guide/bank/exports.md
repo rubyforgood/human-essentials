@@ -1,44 +1,38 @@
-DRAFT USER GUIDE
+READY FOR REVIEW
 # Exports
-[TODO:  Screenshots throughout,  if we need them]
 
 There are several exports available to allow you to use the information from the application in other apps.
 These all export files in .csv format, which is importable by all common spreadsheet programs.
 Many of these can be filtered down to the information you might need for a specific communication need.
 
 The exports available include (in alphabetical order): 
-- adjustments
-- annual survey
-- barcode items
-- distributions
-- donations
-- donation sites
-- items
-- partners
-- product drives
-- product drive participants
-- purchases
-- requests
-- storage locations
-- transfers
-- vendors
+- Adjustments
+- Annual Survey
+- Barcode Items
+- Distributions
+- Donations
+- Donation Sites
+- Items
+- Partners
+- Product Drives
+- Product Drive Participants
+- Purchases
+- Requests
+- Storage Locations
+- Transfers
+- Vendors
 
-## Adjustments 
-[TODO:  The adjustments export needs to be better to be actually useful]
+## Adjustments
+
 ### Navigating to export adjustments
 Click "Inventory", then "Inventory Adjustments" in the left-hand menu.  Then click "Export Adjustments", 
 
 ### Contents of adjustment export
 Creation date, Organization, Storage Area, Comment, # of changes.
 
-### Notes:  
-We have improving the adjustments export to include the changes made in each adjustment on our todo list. We'll also remove the organization as redundant information.
-
-Please reach out if this is a priority for you.
-
+[! NOTE]  We have improving the adjustments export to include the changes made in each adjustment on our todo list. We'll also remove the organization as redundant information. Please reach out if this is a priority for you.
 
 ## Annual Survey 
-[TODO:  Raise question -- shouldn't this be an export *across* years?]
 ### Navigating to export annual survey
 Click "Reports", then "Annual Survey" in the left-hand menu.  Then click the year of the report you want to export.  Then click "Export Report."
 ### Contents of annual report export
@@ -48,23 +42,23 @@ For more information on these, please see the [Annual Survey Report](reports_ann
 - Disposable diapers distributed,
 - Cloth diapers distributed,  
 - Average monthly disposable diapers distributed,  
-- Total product drives,  
+- Total Product Drives,  
 - Disposable diapers collected from drives,  
 - Cloth diapers collected from drives,  
-- Money raised from product drives,  
-- Total product drives (virtual),  
-- Money raised from product drives (virtual),  
+- Money raised from Product Drives,  
+- Total Product Drives (virtual),  
+- Money raised from Product Drives (virtual),  
 - Disposable diapers collected from drives (virtual),  
 - Cloth diapers collected from drives (virtual), 
 - Disposable diapers donated, 
 - % disposable diapers donated, 
 - % cloth diapers donated, 
-- Disposable diapers purchased,  
-- % disposable diapers purchased, 
-- % cloth diapers purchased, 
+- Disposable diapers Purchased,  
+- % disposable diapers Purchased, 
+- % cloth diapers Purchased, 
 - Money spent purchasing diapers, 
 - Purchased from, 
-- Vendors diapers purchased through, 
+- Vendors diapers Purchased through, 
 - Total storage locations, 
 - Total square footage, 
 - Largest storage site type, 
@@ -92,13 +86,13 @@ For more information on these, please see the [Annual Survey Report](reports_ann
 - Total children served,  
 - Repackages diapers?,  
 - Monthly diaper distributions?,  
-- % difference in yearly donations,  
+- % difference in yearly Donations,  
 - % difference in total money donated,  
-- % difference in disposable diaper donations
+- % difference in disposable diaper Donations
 ## Barcode Items
-### Navigating to export barcode items
+### Navigating to export barcode Items
 Click "Inventory" then "Barcode Items" in the left-hand menu.   Then click "Export Barcode Items."
-### Contents of barcode items export
+### Contents of barcode Items export
 For each Barcode Item:
 - Item Type,
 - Quantity in the Box, 
@@ -107,13 +101,13 @@ For each Barcode Item:
 ### Navigating to export distributions
 Click "Distributions" in the left hand menu.  Click the "Export Distributions" button.
 ### Filtering the distributions export
-The distributions export shows the same distributions as are in the main distributions page, and the filtering works the same way.
+The Distributions export shows the same Distributions as are in the main Distributions page, and the filtering works the same way.
 Before clicking the export button, you can filter by any of:
 - date range (we recommend you use the calendar-style selection rather than typing it in, as the format is a bit fussy.)
-- item
-- item category
-- partner
-- source inventory (i.e. storage location)
+- Item
+- Item Category
+- Partner
+- source inventory (i.e. Storage Location)
 - status (i.e. scheduled or complete)
 
 Specify the filtration you want, then click "filter".   
@@ -131,18 +125,16 @@ For each of the distributions in the filtered list:
 - State,
 - Agency Representative,
 - Comments, 
-- and the quantity in the distribution for each of your bank's items.
+- and the quantity in the distribution for each of your bank's Items.
 
-Note:  This includes inactive items as well as active ones.
-[TODO:  confirm that that statement is accurate]
+[!NOTE] This includes inactive Items as well as active ones. 
 
 ## Donations
 
-
-### Navigating to export donations
+### Navigating to export Donations
 Click "Donations", then "All Donations" in the left hand menu, then click 'Export Donations'.
-### Filtering the donations export
-The donations export shows the same donations as are in the main donations page, and the filtering works the same way.
+### Filtering the Donations export
+The Donations export shows the same Donations as are in the main Donations page, and the filtering works the same way.
 You can filter by any of:
 - Storage Location
 - Source (i.e. Manufacturer, Product Drive, or Misc. Donation)
@@ -153,41 +145,54 @@ You can filter by any of:
 
 When you have selected your filters,  click "Filter", then "Export Donations"
 
-### Contents of the donations export
-For each of the donations in the filtered list:
+### Contents of the Donations export
+For each of the Donations in the filtered list:
 - Source
 - Date (this is the date you enter in the donation, rather than the date it was put into the system)
-- Details (this is the manufacturer name or the product drive)
+- Details (this is the manufacturer name or the Product Drive)
 - Storage Location,
-- Quantity of Items (the total quantity of items)
-- Variety of Items (the number of different items)
+- Quantity of Items (the total quantity of Items)
+- Variety of Items (the number of different Items)
 - In-Kind Value,
 - Comments, 
-- and the quantity of each of your organization's items in the donations.
+- and the quantity of each of your organization's Items in the Donations.
 
 ## Donation Sites
-The donation sites export is not yet implemented.  If this is a priority for you, please reach out.
+### Navigating to export Donation Sites
+Click "Community", then "Donation Sites" in the left hand menu.   Then click "Export Donation Sites"
+### Contents of the Donation Sites export
+For each active Donation Site:
+- site name
+- address
+- contact name
+- e-mail
+- phone
+
+
+
+
+
+
 
 ## Items
-### Navigating to export items
+### Navigating to export Items
 Click "Inventory", then "Items & Inventory" in the left hand menu.  Then click "Export Items"
-### Filtering the item export
-By default, the export will contain all active items.
-You can filter it differently by only including the items for a specific base item,
-or by also including inactive items.
+### Filtering the Item export
+By default, the export will contain all active Items.
+You can filter it differently by only including the Items for a specific base Item,
+or by also including inactive Items.
 Select what you wish to filter by,than click "Filter".
 
-### Contents of the item export
-For each filtered item, the export includes:
+### Contents of the Item export
+For each filtered Item, the export includes:
 - Name,
-- Barcodes (each barcode associated with that item),
+- Barcodes (each barcode associated with that Item),
 - Base Item,
 - Quantity (across your entire bank)
 
 ## Partners
 The partners export contains high level information about the partner.  It does not contain the information in the partner profile.
 
-[TODO:  Do we neeed a partner profile export?]
 ### Navigating to export partners
 Click "Partner Agencies", then "All Partners" in the left-hand menu.  Then click "Export Partner Agencies"
 ### Filtering the partner export
@@ -198,11 +203,9 @@ You can export different groups of partners by clicking the partner filters whic
 - Awaiting review
 - Approved
 - Error 
-- - (TODO:  Check if error is a current thing, or perhaps a relic of the two db system?)
 - Recertification required
 - Decactivated
 - Active
-[TODO:  add contents]
 
 ### Partner Export contents
 For each partner in the filtered list:
@@ -220,19 +223,19 @@ For each partner in the filtered list:
 - Notes
 
 ## Product Drives
-### Navigating to export product drives
+### Navigating to export Product Drives
 Click 'Community', then 'All Product Drives' in the left hand menu,  then click "Export Product Drives"
-### Filtering the product drives
-The product drives can be filtered by 
+### Filtering the Product Drives
+The Product Drives can be filtered by 
 - name, 
-- item category, and 
+- Item category, and 
 - date range.  
 
-It is defaulted to all drives, this year. [TODO:  This will need updating when we change the default timespan]
+It is defaulted to all drives that overlap the default time period of 60 days back, 30 days forward.
 To filter the export, make your selections, then click "Filter" before clicking "Export Product Drives".
 
 ### Product Drive Export content
-For each filtered product drive, the export will contain:
+For each filtered Product Drive, the export will contain:
 - Product Drive Name,
 - Start Date,
 - End Date,
@@ -240,10 +243,10 @@ For each filtered product drive, the export will contain:
 - Quantity of Items,
 - Variety of Items,
 - In Kind Value, and 
-- the quantity donated for each item in alphabetical order.
+- the quantity donated for each Item in alphabetical order.
 - 
 ## Product Drive Participants
-### Navigating to export product drive participants
+### Navigating to export Product Drive participants
 Click 'Community', then 'Product Drive Participants' in the left hand menu,  then click "Export Product Drive Participants"
 ### Product Drive Participant Export content
 - Business Name,
@@ -251,24 +254,22 @@ Click 'Community', then 'Product Drive Participants' in the left hand menu,  the
 - Phone,
 - Email,
 - Total Diapers
-  - The title for this should be Total Items, as that is what is shown.
-  - [TODO:  initialize issue for this discrepency]
+  - The title for this should be Total Items, as that is what is shown.  We have an issue in the queue to fix that
 ## Purchases
-### Navigating to export purchases
+### Navigating to export Purchases
 Click 'Purchases', then 'All Purchases' in the left hand menu.  Then click "Export Purchases"
-### Filtering exported purchases
-You can filter the purchases by:
+### Filtering exported Purchases
+You can filter the Purchases by:
 - Storage location
 - Vendor
 - Purchase date
 
-The default is all storage locations and vendors, and the current year 
-[TODO:  update this when we change to 60 days prior, 30 days forward]
+The default is all storage locations and vendors, and the default period of 60 days prior, 30 days forward from today's date.
 
 Make your selection and click "Filter"  before clicking "Export Purchases"
 ### Content of Purchases Export
-For each purchase in the filtered list:
-- Purchases from (the vendor name) (TODO:  Shouldn't this be Purchased from,  or Vendor?)
+For each Purchase in the filtered list:
+- Purchases from (the Vendor name) 
 - Storage Location,
 - Purchased Date,
 - Quantity of Items,
@@ -279,39 +280,37 @@ For each purchase in the filtered list:
 - Spent on Period Supplies,
 - Spent on Other,
 - Comment, and
-- the quantity of each item included in the purchase.
+- the quantity of each Item included in the Purchase.
 
 ## Requests
-### Navigating to export requests
+### Navigating to export Requests
 Click 'Requests' in the left-hand menu, then "Export Requests"
-### Filtering exported requests
-You can filter the exported requests by the following:
+### Filtering exported Requests
+You can filter the exported Requests by the following:
 - Item
 - Partner
 - Status (Pending, Started, Fulfilled, Discarded)
 - Date Range
 Make your selection, then click 'Filter' before clicking 'Export Requests'
 
-The default is all requests in the current year
+The default is all Requests in the last 60 days
 
-(TODO: update the default if we get to that before this is published)
-
-### Contents of requests export
-For each filtered request,
+### Contents of Requests export
+For each filtered Request,
 - Date,
 - Requestor (i.e. partner)
 - Status, and
-- the quantity of each item requested.  
-  - Note: If you have packs enabled (upcoming feature), there will be a column for each unit that you have enabled for each item.  Otherwise, one column per item.
+- the quantity of each Item requested.  
+  - Note: If you have packs enabled (upcoming feature), there will be a column for each unit that you have enabled for each Item.  Otherwise, one column per Item.
 
 ## Storage Locations
 ### Navigating to export storage locations
 Click "Inventory", then "Storage Locations" in the left-hand menu. Then click "Export Storage Locations"
 ### Filtering exported Storage Locations
-You can filter the exported list by Item.  This will give all storage locations that have ever had that item, *not* those with current inventory.
+You can filter the exported list by Item.  This will give all storage locations that have ever had that Item, *not* those with current inventory.
 (Note:  including inactive is currently broken)
 [TODO: Write up including inactive]
-[TODO:  Check that by item filter works for export storage location]
+[TODO:  Check that by Item filter works for export storage location]
 The default is all active storage locations.
 [TODO:  IT looks like the export doesn't include the inactive when selected.]
 Make your selections, then click "Filter" before clicking "Export Storage Locations"
@@ -322,7 +321,7 @@ For each storage location in the filtered list:
 - Square Footage,
 - Warehouse Type,
 - Total Inventory, and 
-- Quantity for each of the organization's items.
+- Quantity for each of the organization's Items.
 
 ## Transfers
 ### Navigating to export transfers
@@ -334,7 +333,7 @@ You can filter the transfers by:
 - date range.  
   - Note that this is the date the transfer was entered in the system, which may or may not be when it happened.
 
-The default is all the transfers for the current year (Note: we are soon changing this to 60 days prior, 30 days forward from today).
+The default is all the transfers for the period of 60 days prior, 30 days forward from today.
 
 Make you selection and click 'Filter' before clicking "Export Transfers".
 
@@ -344,7 +343,7 @@ For each selected transfer:
 - To,
 - Comment,
 - Total Moved
-- (TODO:  Really?  This should have the total moved for each item.   Make an issue to make it so.)
+[! NOTE] We have an issue in the queue to provide the total moved for each Item.
 
 ## Vendors
 ### Navigating to Export Vendors

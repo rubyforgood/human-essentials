@@ -8,11 +8,11 @@ We want to do a final pass to make everything consistent with the style guide be
 
 ## Capitalization
 ### Headings
-The first letter of a heading is capitalized.  After that,use lower case except for nouns that are always capitalized (see below)
-### Objects in the app
+In documentaion, use title case for the main header for each page,  then use sentence case (see this page as an example).
+### When quoting the system 
 Match the text to what is in the application.  For instance, if a button says "Manage Product drives".  That being said,  if there is something in the app that is inconsistent,  let's get that fixed.
-### Always capitalize
-Essentially, if it has a view in Human Essentials,  capitalize it
+### Otherwise, always capitalize
+Essentially, if you are referring to an object that has a view in Human Essentials,  capitalize it
 - Bank
 - Partner
 - Account
@@ -25,6 +25,12 @@ Essentially, if it has a view in Human Essentials,  capitalize it
 - Request
 - Inventory
 - Audit
+
+Also :
+- Human Essentials
+- Essentials Bank
+
 ## Hyphenation
 left-hand menu
 in-kind value
+email, not e-mail
