@@ -65,6 +65,11 @@ RSpec.describe Distribution, type: :model do
       expect(d).not_to be_valid
     end
 
+    it "ensures that the issued at is no later than 1 year" do
+      d = build(:distribution, issued_at: DateTime.now.next_year(2).to_s)
+      expect(d).not_to be_valid
+    end
+
     context "when delivery method is shipped" do
       context "shipping cost is negative" do
         let(:distribution) { build(:distribution, delivery_method: "shipped", shipping_cost: -13) }
