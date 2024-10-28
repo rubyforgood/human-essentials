@@ -23,6 +23,7 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
   let!(:recent) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(2019, 7, 24), :organization => organization) }
   let!(:today) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(2019, 7, 31), :organization => organization) }
   let!(:one_year_ahead) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(2020, 7, 31), :organization => organization) }
+  let!(:two_years_ahead) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(2021, 7, 31), :organization => organization) }
 
   context "when choosing 'All Time'" do
     before do
