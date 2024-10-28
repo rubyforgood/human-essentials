@@ -22,6 +22,7 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
   let!(:very_old) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(2000, 7, 31), :organization => organization) }
   let!(:recent) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(2019, 7, 24), :organization => organization) }
   let!(:today) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(2019, 7, 31), :organization => organization) }
+  let!(:one_year_ahead) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(2020, 7, 31), :organization => organization) }
 
   context "when choosing 'All Time'" do
     before do
@@ -36,10 +37,10 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
 
     it "shows all the records" do
       visit subject
-      date_range = "#{Time.zone.local(1919, 7, 1).to_formatted_s(:date_picker)} - #{Time.zone.local(2019, 7, 31).to_formatted_s(:date_picker)}"
+      date_range = "#{Time.zone.local(1919, 7, 1).to_formatted_s(:date_picker)} - #{Time.zone.local(2020, 7, 31).to_formatted_s(:date_picker)}"
       fill_in "filters_date_range", with: date_range
       find(:id, 'filters_date_range').native.send_keys(:enter)
-      expect(page).to have_css("table tbody tr", count: 3)
+      expect(page).to have_css("table tbody tr", count: 4)
     end
   end
 
