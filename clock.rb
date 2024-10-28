@@ -34,6 +34,6 @@ module Clockwork
     rake = Rake.application
     rake.init
     rake.load_rakefile
-    rake["backup_db"].invoke
+    rake["backup_db_rds"].invoke
   end
 end
