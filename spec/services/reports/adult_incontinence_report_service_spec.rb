@@ -10,9 +10,11 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
     it 'should report zero values' do
       expect(report.report[:name]).to eq("Adult Incontinence")
       expect(report.report[:entries]).to match(hash_including({
+                                      "Adult incontinence supplies distributed" => 0,
+                                      "Adults Assisted Per Month" => 0,
                                       "% adult incontinence bought" => "0%",
                                       "% adult incontinence supplies donated" => "0%",
-                                      "Adult incontinence supplies distributed" => "0",
+                                      "Adult incontinence supplies distributed" => "0", # rubocop:disable Lint/DuplicateHashKey
                                       "Adult incontinence supplies per adult per month" => 0,
                                       "Money spent purchasing adult incontinence supplies" => "$0.00"
                                   }))

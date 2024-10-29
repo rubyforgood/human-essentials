@@ -1,3 +1,11 @@
+# Add a field for the number of adults assisted per month. (after Adult incontinence supplies distributed)
+
+# This is the number of adults assisted with 'loose' (i.e. not in kit) items plus the number of adults assisted with kits.
+# The number of adults assisted with 'loose' items is the number of those items distributed divided by the quantity-per-individual for those items (or 50, if no quantity is defined) / 12
+# The number of adults assisted with kit items is the number of kits that contain adult incontinence supplies distributed divided by the "quantity per individual" on the kit item. if there is no quantity per individual provided, assume that quantity is 1.
+
+
+
 module Reports
   class AdultIncontinenceReportService
     include ActionView::Helpers::NumberHelper
@@ -14,8 +22,9 @@ module Reports
     def report
       @report ||= { name: 'Adult Incontinence',
                     entries: {
-                      'Adult incontinence supplies distributed' => number_with_delimiter(distributed_supplies),
-                      'Adult incontinence supplies per adult per month' => monthly_supplies&.round || 0,
+                      'Adult incontinence supplies distributed' => number_with_delimiter(distributed_loose_supplies + distributed_adult_incontinence_items_from_kits),
+                      'Adults Assisted Per Month' => adults_served_per_month.round,
+                      'Adult incontinence supplies per adult per month' => (monthly_supplies&.round || 0) / (adults_served_per_month.round.nonzero? || 1),
                       'Adult incontinence supplies' => types_of_supplies,
                       '% adult incontinence supplies donated' => "#{percent_donated.round}%",
                       '% adult incontinence bought' => "#{percent_bought.round}%",
@@ -24,7 +33,7 @@ module Reports
     end
 
     # @return [Integer]
-    def distributed_supplies
+    def distributed_loose_supplies
       @distributed_supplies ||= organization
                                 .distributions
                                 .for_year(year)
@@ -90,6 +99,55 @@ module Reports
                                     .merge(Item.adult_incontinence)
                                     .where(itemizable: organization.donations.for_year(year))
                                     .sum(:quantity)
+    end
+
+    def distributed_adult_incontinence_items_from_kits
+      organization_id = @organization.id
+      year = @year
+
+      sql_query = <<-SQL
+        SELECT SUM(line_items.quantity * kit_line_items.quantity)
+        FROM distributions 
+        INNER JOIN line_items ON line_items.itemizable_type = 'Distribution' AND line_items.itemizable_id = distributions.id 
+        INNER JOIN items ON items.id = line_items.item_id 
+        INNER JOIN kits ON kits.id = items.kit_id 
+        INNER JOIN line_items AS kit_line_items ON kits.id = kit_line_items.itemizable_id
+        INNER JOIN items AS kit_items ON kit_items.id = kit_line_items.item_id
+        INNER JOIN base_items ON base_items.partner_key = kit_items.partner_key 
+        WHERE distributions.organization_id = ?
+          AND EXTRACT(year FROM issued_at) = ?
+          AND LOWER(base_items.category) LIKE '%adult%'
+          AND NOT (LOWER(base_items.category) LIKE '%cloth%' OR LOWER(base_items.name) LIKE '%cloth%')
+          AND kit_line_items.itemizable_type = 'Kit';
+      SQL
+
+      sanitized_sql = ActiveRecord::Base.send(:sanitize_sql_array, [sql_query, organization_id, year])
+
+      result = ActiveRecord::Base.connection.execute(sanitized_sql)
+
+      result.first['sum'].to_i
+    end
+
+    def adults_served_per_month
+      total_people_served_with_loose_supplies + total_people_served_with_supplies_from_kits
+    end
+
+    def total_people_served_with_loose_supplies
+      organization
+        .distributions
+        .for_year(year)
+        .joins(line_items: :item)
+        .merge(Item.adult_incontinence)
+        .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50)') / 12
+    end
+
+    def total_people_served_with_supplies_from_kits
+      organization
+      .distributions.for_year(year)
+      .joins(line_items: {item: :kit})
+      .merge(Item.adult_incontinence)
+      .where.not(items: {kit_id: nil})
+      .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50)') / 12
     end
   end
 end
