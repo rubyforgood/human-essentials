@@ -54,6 +54,10 @@ RSpec.describe Donation, type: :model do
       d = build(:donation, issued_at: '1999-12-31')
       expect(d).not_to be_valid
     end
+    it "ensures that the issued at is no later than 1 year" do
+      d = build(:donation, issued_at: DateTime.now.next_year(2).to_s)
+      expect(d).not_to be_valid
+    end
   end
 
   context "Callbacks >" do
