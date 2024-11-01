@@ -90,7 +90,11 @@
           </p>
           <div class="card-footer clearfix">
             <%= edit_button_to edit_product_drive_path(@product_drive), { text: "Make a correction", size: "md" } %>
-            <%= delete_button_to product_drive_path(@product_drive), { confirm: "Are you sure you want to permanently remove this product drive?", size: "md" } if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
+            <% if @product_drive.can_delete?(current_user) %>
+              <%= delete_button_to product_drive_path(@product_drive),
+                                   confirm: "Are you sure you want to permanently remove this product drive?",
+                                   size: "md" %>
+            <% end %>
           </div>
           <!-- /.card-footer-->
         </div>

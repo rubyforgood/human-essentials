@@ -69,6 +69,10 @@ class ProductDrive < ApplicationRecord
     @search_date_range = { start_date: dates[0], end_date: dates[1] }
   end
 
+  def can_delete?(user)
+    user.has_role?(Role::ORG_ADMIN, organization) && donations.empty?
+  end
+
   # quantities are FILTERED by date then SORTED by name
   #
   # @param date_range [Range]
