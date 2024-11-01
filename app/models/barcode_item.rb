@@ -51,9 +51,9 @@ class BarcodeItem < ApplicationRecord
 
   # aliases of barcodeable
   belongs_to :item, polymorphic: true, dependent: :destroy,
-             counter_cache: :barcode_count, foreign_key: :barcodeable_id, foreign_type: :barcodeable_type
+    counter_cache: :barcode_count, foreign_key: :barcodeable_id, foreign_type: :barcodeable_type
   belongs_to :base_item, polymorphic: true, dependent: :destroy,
-             counter_cache: :barcode_count, foreign_key: :barcodeable_id, foreign_type: :barcodeable_type
+    counter_cache: :barcode_count, foreign_key: :barcodeable_id, foreign_type: :barcodeable_type
 
   def to_h
     {
