@@ -20,7 +20,8 @@ class Transfer < ApplicationRecord
   include Itemizable
   include Filterable
   include Exportable
-  alias_attribute :storage_location, :from # to make it play nice with Itemizable
+  # to make it play nice with Itemizable - alias of `from`
+  belongs_to :storage_location, class_name: "StorageLocation", inverse_of: :transfers_from, foreign_key: :from_id
   scope :from_location, ->(location_id) { where(from_id: location_id) }
   scope :to_location, ->(location_id) { where(to_id: location_id) }
   scope :for_csv_export, ->(organization, *) {
