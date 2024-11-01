@@ -297,6 +297,6 @@ class Organization < ApplicationRecord
   end
 
   def logo_size_check
-    errors.add(:logo, 'File size is greater than 1 MB') if logo.byte_size > 1.megabytes
+    errors.add(:logo, 'File size is greater than 1 MB') if logo.byte_size > 1.megabyte
   end
 end
