@@ -130,4 +130,34 @@ RSpec.describe "Product Drives", type: :system, js: true do
       expect(page).to have_content 'Endless drive'
     end
   end
+
+  context "when deleting a Product drive" do
+    let(:new_product_drive) { create(:product_drive, name: 'New Test', start_date: 3.weeks.ago, end_date: 3.weeks.from_now, organization: organization) }
+    let(:subject) { product_drive_path(new_product_drive.id) }
+
+    context "when user is a org_admin" do
+      before do
+        user.add_role(:org_admin, organization)
+      end
+
+      it "must delete" do
+        visit subject
+        click_on 'Delete'
+        expect(page).to have_content 'Product drive was successfully destroyed.'
+      end
+
+      it "must not delete if there are donations" do
+        create(:donation, product_drive: new_product_drive)
+        visit subject
+        expect(page).not_to have_button 'Delete'
+      end
+    end
+
+    context "when user is not a org_admin" do
+      it "must not delete" do
+        visit subject
+        expect(page).not_to have_button 'Delete'
+      end
+    end
+  end
 end
