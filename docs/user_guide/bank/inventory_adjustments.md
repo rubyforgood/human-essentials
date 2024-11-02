@@ -9,9 +9,7 @@ Note that inventory adjustments are permanent -- if you need to reverse them,  y
 
 Unlike the audit, there is no review step.  The changes to inventory are made immediately.
 
-You can not edit inventory adjustments.  
-
-[TODO:  Who can make these?]
+You can not edit inventory adjustments.
 
 ## The inventory adjustment page
 You can manage your inventory adjustments through the inventory adjustment page.  Click on "Inventory" in the left-hand menu, then "Imventry Adjustments"

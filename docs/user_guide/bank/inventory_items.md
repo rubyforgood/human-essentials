@@ -118,16 +118,12 @@ All the information about an item category is in the list of all of them,  but y
 You can also remove items from the category by clicking "Remove from category" beside the item.   This will hide them from any partner groups that have this category.  
 
 #### Editing an item category
-[TODO:  "Update Record on this isn't our usual terminology  -- should be Edit Item Category -- add that to the inbox]
-
 To edit the name and description of an item category,   To view an item category,  you click on Inventory, then Items & Inventory, then the Item Categories tab, then the "Edit" button beside the category you wish to edit.  
 [TODO: Screenshot]
 
 Update the category name (still needs to be unique) and category description, and click save.  This will take you to the item category view [Add pointer to above], which lets you change the items in the category.
 
 ### Items, Quantity and Location tab
-
-[TODO:  We should highlight the bank-wide ones that are below the minimum.  Add that to the inbox ]
 
 This tab shows all the item inventory across all the storage locations, along with each item's minimum quantity, recommended quantity, and bank-wide quantity.  
 

@@ -1,5 +1,4 @@
-DRAFT USER GUIDE
-
+READY FOR REVIEW
 # Manufacturers Donations Report
 
 To access this report,  click 'Reports", then "Donations - Manufacturers"
@@ -8,7 +7,6 @@ To access this report,  click 'Reports", then "Donations - Manufacturers"
 
 
 This shows the number of items donated by Manufacturers over the indicated time period (default 60 days prior to 30 days forward from today), as well as the top Manufacturers donating in that time period.
-[TODO:  Confirm -- is this true -- or is this still broken?]
 
 From here, you can click on the listed Manufacturers to see a breakdown of their Donations.
 

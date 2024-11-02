@@ -67,19 +67,16 @@ This includes the following fields:
 - Comments, and
 - the current status.
   [TODO: add screenhot of view]
-  [TODO:  check -- do we use "state" throughout -- I feel like we probably use "status"]
 ## Editing a Distribution
 To edit a Distribution,  click on "Edit" beside the Distribution in the list,  or on "Make a Correction" in the view.
 
 If the Distribution is in the past,  you will see a warning to that effect -- because we assumed that you wouldn't normally need to change the Distribution once it had gone out the door!
 We will give you a stern warning if there has been an Audit since the Distribution was entered, and you may be prevented from changing some Distribution information (such as the storage location), because we just don't know how to handle some of those cases.
-[TODO:  More writing about the PACKS version]
 [TODO:  screenshot]
 ## Printing a Distribution
 Printing a Distribution produces an invoice-like page that can be used as a packing slip.  This is the same as the pdf that is emailed to the Partner when a new Distribution is saved.
 
 It is somewhat configurable -- there are options on your [Organization](getting_started_customization.md#customizing-the-distribution-printout) page to allow you to: a) add a place for a signature, or b) hide certain columns in the printout.
-[TODO:  point that at the exact location in the document]
 
 Please note that your logo (also configurable on the [Organization](getting_started_customization.md#logo) ) is included on this printout -- we strongly advice keeping it fairly small, as a large logo will just be resized anyway, and will potentially break this function.
 
