@@ -41,11 +41,10 @@ This is included on the Annual Survey report.  That's the only effect.
 Your Essentials Bank's website address.  This is mostly used during the account request process, so we can check if you are a good fit before you invest a lot of time and energy into the system.
 
 #### Email
-Your Essential Bank's email address.  This is shown to the partners on their help page, and is included in reminder emails, so please use an email that is monitored.   This email is also included on distribution and donation printouts and the annual survey 
-[TODO:  Confirm each of those.]
+Your Essential Bank's email address.  This is shown to the partners on their help page, and is included in reminder emails, so please use an email that is monitored.   This email is also included on distribution and donation printouts.
 
 #### Address
-Your Essential Bank's primary address.   This is shown on the distribution and donation printouts, and the annual survey [TODO:  Confirm annual survey]
+Your Essential Bank's primary address.   This is shown on the distribution and donation printouts.
 
 ------------
 ## Reminder Emails (optional)
