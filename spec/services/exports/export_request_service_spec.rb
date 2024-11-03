@@ -54,7 +54,6 @@ RSpec.describe Exports::ExportRequestService do
   end
 
   let!(:request_4t) do
-    # create(:unit, organization: org, name: "pack")
     create(:request,
            :started,
            :with_item_requests,
