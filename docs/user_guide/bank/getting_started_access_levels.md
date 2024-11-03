@@ -44,4 +44,8 @@ This bit is for information only -- A limited number of Human Essentials staff h
 - Administer users (we need it because every once in awhile, the organization admin for a bank will leave without promoting someone else to that role.)
 - Administer "Base Items"
 - Administer the list of NDBN members
-- Administer some organization settings [TODO:  Raise the question of whether we *should* be administering most of this -- we don't have rights to change any of the more recently added values on the org.]
+- Administer some organization settings 
+
+[TODO:  Raise the question of whether we *should* be administering most of this -- we don't have rights to change any of the more recently added values on the org.]
+
+[Prior: Customization](getting_started_customization.md)[Next: User Management](getting_started_user_management.md)
