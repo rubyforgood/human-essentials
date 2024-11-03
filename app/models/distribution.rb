@@ -45,8 +45,8 @@ class Distribution < ApplicationRecord
 
   before_save :combine_distribution, :reset_shipping_cost
 
-  enum state: { scheduled: 5, complete: 10 }
-  enum delivery_method: { pick_up: 0, delivery: 1, shipped: 2 }
+  enum :state, { scheduled: 5, complete: 10 }
+  enum :delivery_method, { pick_up: 0, delivery: 1, shipped: 2 }
   scope :active, -> { joins(:line_items).joins(:items).where(items: { active: true }) }
   # add item_id scope to allow filtering distributions by item
   scope :by_item_id, ->(item_id) { joins(:items).where(items: { id: item_id }) }
