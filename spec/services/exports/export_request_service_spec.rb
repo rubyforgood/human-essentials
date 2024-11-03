@@ -92,7 +92,7 @@ RSpec.describe Exports::ExportRequestService do
           "2T Diapers",
           "3T Diapers",
           "4T Diapers",
-          "4T Diapers - pack",
+          "4T Diapers - packs",
           "<DELETED_ITEMS>"
         ])
       end

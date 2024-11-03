@@ -62,20 +62,20 @@ module Exports
 
     def compute_item_headers
       # This reaches into the item, handling invalid deleted items
-      item_names = []
+      item_names = Set.new
       item_requests.each do |item_request|
         if item_request.item
           item = item_request.item
           item_names << item.name
           if Flipper.enabled?(:enable_packs)
             item.request_units.each do |unit|
-              item_names << "#{item.name} - #{unit.name}"
+              item_names << "#{item.name} - #{unit.name.pluralize}"
             end
 
             # It's possible that the unit is no longer valid, so we'd
             # add that individually
-            if item_request.request_unit.present? && !item.request_units.pluck(:name).include?(item_request.request_unit)
-              item_names << "#{item.name} - #{item_request.request_unit}"
+            if item_request.request_unit.present?
+              item_names << "#{item.name} - #{item_request.request_unit.pluralize}"
             end
           end
         end
