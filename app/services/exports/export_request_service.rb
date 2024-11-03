@@ -94,26 +94,13 @@ module Exports
       row += Array.new(item_headers.size, 0)
 
       request.item_requests.each do |item_request|
-        item_name = fetch_item_name(item_request) || DELETED_ITEMS_COLUMN_HEADER
+        item_name = item_request.name_with_unit || DELETED_ITEMS_COLUMN_HEADER
         item_column_idx = headers_with_indexes[item_name]
         row[item_column_idx] ||= 0
         row[item_column_idx] += item_request.quantity.to_i
       end
 
       row
-    end
-
-    def fetch_item_name(item_request)
-      # The item_request has the item name, but we go ahead and try to get it
-      # off of the real item. Weirdly we do this because the item might have
-      # been deleted historically without deleting the request.
-      if item_request.item
-        if Flipper.enabled?(:enable_packs) && item_request.request_unit.present?
-          "#{item_request.name} - #{item_request.request_unit}"
-        else
-          item_request.name
-        end
-      end
     end
 
     def item_requests
