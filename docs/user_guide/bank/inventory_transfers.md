@@ -51,4 +51,4 @@ To export a list of the transfers, click "Export Transfers" on the transfers pag
 The details in the export are lacking -- it doesn't show each item, but only the total.
 [TODO:  Add a better export to the Things to do]
 
-[Prior:  Adjustments](inventory_adjustments.md) [Next: Product Drive Participants](community_product_drive_participants.md)
+[Prior:  Adjustments](inventory_adjustments.md) [Next: Product Drives](community_product_drives.md)

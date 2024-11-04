@@ -312,6 +312,16 @@ RSpec.describe Item, type: :model do
           expect(item.can_delete?).to eq(false)
         end
       end
+
+      context "in a request" do
+        before do
+          create(:request, request_items: [{"item_id" => item.id, "quantity" => 5}])
+        end
+
+        it "should return false" do
+          expect(item.can_delete?).to eq(false)
+        end
+      end
     end
 
     describe '#deactivate!' do
