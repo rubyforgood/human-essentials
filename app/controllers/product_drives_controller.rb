@@ -1,6 +1,7 @@
 class ProductDrivesController < ApplicationController
   include Importable
   before_action :set_product_drive, only: [:show, :edit, :update, :destroy]
+  before_action :verify_role, only: :destroy
 
   def index
     setup_date_range_picker
@@ -76,7 +77,15 @@ class ProductDrivesController < ApplicationController
   end
 
   def destroy
-    current_organization.product_drives.find(params[:id]).destroy
+    product_drive = current_organization.product_drives.find(params[:id])
+    product_drive.destroy
+
+    if product_drive.errors.any?
+      flash[:error] = product_drive.errors.full_messages.join("\n")
+      redirect_back(fallback_location: product_drives_url)
+      return
+    end
+
     respond_to do |format|
       format.html { redirect_to product_drives_url, notice: 'Product drive was successfully destroyed.' }
       format.json { head :no_content }
@@ -84,6 +93,13 @@ class ProductDrivesController < ApplicationController
   end
 
   private
+
+  def verify_role
+    return if current_user.has_role?(Role::ORG_ADMIN, current_organization)
+
+    flash[:error] = 'You are not allowed to perform this action.'
+    redirect_to product_drives_url
+  end
 
   # Use callbacks to share common setup or constraints between actions.
   def set_product_drive
