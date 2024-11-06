@@ -84,6 +84,13 @@
               </thead>
               <tbody>
               <%= render partial: "storage_location_row", collection: @storage_locations, as: :storage_location %>
+              <tr>
+                <td colspan="4"><strong>Total</strong></td>
+                <td>
+                  <%= @storage_locations.sum { |sl| sl.inventory_total_quantity(@inventory) } %>
+                </td>
+                <td><%= number_to_currency(@storage_locations.sum(&:inventory_total_value_in_dollars)) %></td>
+              </tr>
               </tbody>
             </table>
           </div>

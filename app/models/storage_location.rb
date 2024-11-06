@@ -98,6 +98,14 @@ class StorageLocation < ApplicationRecord
     inventory&.total_value_in_dollars(storage_location: id)
   end
 
+  def inventory_total_quantity(inventory = nil)
+    if inventory
+      inventory.quantity_for(storage_location: id)
+    else
+      size
+    end
+  end
+
   def to_csv
     org = organization
 
