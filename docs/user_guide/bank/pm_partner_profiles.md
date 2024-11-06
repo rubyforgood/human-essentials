@@ -36,7 +36,7 @@ The high level sections of the partner profile are:
 - Additional Documents
 - Settings (not configurable)
 
-## Agency Information (not configurable)
+### Agency Information (not configurable)
 This section contains basic agency information that most, if not all, partners will need to provide:
 - Agency Name
 - Agency Type
@@ -48,14 +48,14 @@ This section contains basic agency information that most, if not all, partners w
 - State
 - Zip Code
 
-## Program / Delivery Address (if different)
+### Program / Delivery Address (if different)
 Sometimes, a large agency may have a separate address for a specific program or for deliveries/shipping.
 - Address
 - City
 - State
 - Zip Code
 
-## Media Information
+### Media Information
 This provides a place for the agency to indicate their major communication outlets. 
 
 *If* the bank chooses to ask for this information,  the partner must fill in at least one of the fields:
@@ -68,7 +68,7 @@ This provides a place for the agency to indicate their major communication outle
 
 
 
-## Agency Stability
+### Agency Stability
 This section is about the maturity of the agency. 
 
 None of these fields are mandatory. 
@@ -84,20 +84,20 @@ None of these fields are mandatory.
 - Do You Receive Essentials From Other Sources?
 - Currently Providing Diapers?
 
-## Organization Capacity
+### Organization Capacity
 This section has specific questions about the volume of the agency's needs.
 - Client Capacity
 - Storage Space (yes/no)
 - Storage Space Description
 
-## Sources of Funding
+### Sources of Funding
 How does the agency get its funding?
 - Sources of Funding
 - How do you currently obtain diapers?
 - Essentials Budget
 - Essentials Funding Source
 
-## Area Served (County/Client Share %)
+### Area Served (County/Client Share %)
 This asks what county/county equivalents the agency serves and what proportion of their client share is in which area.
 
 At this time, this only covers U.S. counties.   We believe the list covers *all* of the U.S, including some areas that are not counties.    
@@ -107,12 +107,12 @@ The sum of the client share has to be either 0 or 100, and the numbers have to b
 
 You start out with 1 county, but can add more with the "Add Another County button"
 
-## Population Served
+### Population Served
 This section has only two questions: 
 - Clients Have An Income Requirement to Work With You?
 - Do You Verify The Income Of Your Clients?
 - 
-## Race/Ethnicity of Client Base
+### Race/Ethnicity of Client Base
 This section is comprised of questions about the race/ethnicity of the client base and the poverty level of the client base.
 There is no check on whether the numbers add up to 100 -- because there may be overlap.
 
@@ -126,22 +126,25 @@ There is no check on whether the numbers add up to 100 -- because there may be o
 - % Greater than 2 times FPL
 - % Poverty Unknown
 
-## Executive Director
+### Executive Director
 Contact information for the head of the agency:
 - Executive Director Name
 - Executive Director Phone
 - Executive Director Email
-[TODO:  Check if this is ever used for outgoing email]
-## Primary Contact
+
+- [TODO:  Check if this is ever used for outgoing email]
+### Primary Contact
 Contact information for your bank's primary contact 
 - Primary Contact Name
 - Primary Contact Phone
 - Primary Contact Cell
 - Primary Contact Email
+
 [TODO:  Check if 1/  Primary Contact email is defaulted on partner creation, and 2/ confirm that this is used for outgoing emails.  Also what about multiple emails -- we need to either restrict to a single, or do the same thing as with the pickup person about them.]
 
-## Pick Up Person
+### Pick Up Person
 The Pick Up person will receive an email when the distribution is scheduled.
+
 [TODO: Check -- is it only on pickups, or do they get it for deliveries too?]
 
 - Pick Up Person Name
@@ -149,17 +152,17 @@ The Pick Up person will receive an email when the distribution is scheduled.
 - Pick Up Person's Email
 Note this can be multiple, comma-separated emails.
 
-## Agency Distribution Information
+### Agency Distribution Information
 This section is about the agency's practices when distributing to their clients.
 - Distribution Times
 - New Client Times
 - More Docs Required 
   - This is meant to be the documentation required for new clients
 
-## Additional Documents
+### Additional Documents
 This is a place to upload additional documents that you need from your partner.
 
-## Settings (not configurable)
+### Settings (not configurable)
 Many banks restrict the partners to one kind of request (see [Customization](getting_started_customization.md)).  If you don't, the partner can still simplify their request experience by unclicking the items that don't apply.
 Only the options that you haven't already turned off will show up here,  and at least one has to be checked.
 - Enable Quantity-based Requests

@@ -158,14 +158,14 @@ module Partners
 
       emails = split_pick_up_emails
       if emails.size > 3
-        errors.add(:pick_up_email, "There can't be more than three pick up email addresses.")
+        errors.add(:pick_up_email, "can't have more than three email addresses")
         nil
       end
       if emails.uniq.size != emails.size
-        errors.add(:pick_up_email, "There should not be repeated email addresses.")
+        errors.add(:pick_up_email, "should not have repeated email addresses")
       end
       emails.each do |e|
-        errors.add(:pick_up_email, "Invalid email address for '#{e}'.") unless e.match? URI::MailTo::EMAIL_REGEXP
+        errors.add(:pick_up_email, "is invalid") unless e.match? URI::MailTo::EMAIL_REGEXP
       end
     end
   end

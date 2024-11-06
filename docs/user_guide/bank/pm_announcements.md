@@ -5,6 +5,10 @@ DRAFT USER GUIDE
 Partner announcements are a great way to let your partners know about temporary situations -- like when you need to put some limits on what you can give out of a particular size.  Some banks also use them to point to other resources.
 These announcements appear on the partner's dashboard,  so they'll be there whenever the partner logs in.
 
+You can add multiple announcements, with links to additional information, and either have an expiry date or delete them when they are no longer useful. The announcments will be shown in reverse chronological order 
+
+[TODO:  confirm that there isn't something odd, like the ones with expiries showing first]
+
 ## How to create an announcement
 
 Click on "Partner Agencies" in the left hand menu, then "Partner Announcement".   This will bring up a list of all your partner announcements.

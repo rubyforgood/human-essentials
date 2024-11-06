@@ -30,7 +30,7 @@ class OrganizationUpdateService
       result = organization.update(org_params)
 
       return false unless result
-      update_partner_flags(organization)
+      return false unless update_partner_flags(organization)
       true
     end
 
@@ -46,6 +46,9 @@ class OrganizationUpdateService
         next if organization.send(field)
         organization.partners.each do |partner|
           partner.profile.update!(field => organization.send(field))
+        rescue ActiveRecord::RecordInvalid => e
+          organization.errors.add(:base, "Profile for partner '#{e.record.partner.name}' had error(s) preventing the organization from being saved. #{e.message}")
+          return false
         end
       end
     end
