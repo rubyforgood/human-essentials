@@ -25,12 +25,15 @@ or
 In any of these cases, you can view all the answers in the profile.  If something needs changing, you can do it yourself by clicking the "Edit Information" button,  or the partner can make the change.   
 
 See [Partner profiles](partner_profiles.md) for details on the partner profile.
+
 [TODO:  Link should go to the part of partner profiles that lists all the fields]
 
 Once you have reviewed the partner's info, and want to approve them to make requests,  click the "Approve Partner " button.   
+
 [TODO: Screenshot]
 
 You should see a "Partner Approved!" message,  and the status of the partner will show as "Approved"
+
 [TODO: Screenshot]
 
 [Prior - Partner Profiles](pm_partner_profiles.md) [Next - Requesting Recertification](pm_requesting_recertification.md)

@@ -9,6 +9,10 @@ To manage the rights for your essentials bank users:
 
 Click on the My Organisation view, then  scroll down to the bottom. There is a user administration section there.
 
+You can also manage the users in your partners, see [Administering partner users](pm_partner_user_admin.md) 
+
+
+
 ![navigation users in organization](images/getting_started/user_admin/gs_user_admin_navigation.png)
 
 ## Inviting new users
@@ -31,6 +35,9 @@ To remove a user, just click on the "actions" button beside their information, a
 ![remove_user](images/getting_started/user_admin/gs_user_admin_remove_user.png)
 ## What to do if your admin has left without assigning a new one.
 Send an email to info@humanessentials.app (or DM one of the human essentials staff on slack) explaining the situation, and we'll walk you through our process for getting a new admin set up.
+[Prior:  Levels of Access](getting_started_access_levels.md)
+[Next:  Everyday Essentials -- your dashboard](essentials_dashboard.md)
+
 
 
 

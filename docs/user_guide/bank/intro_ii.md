@@ -27,3 +27,4 @@ We publish the zoom, and (when we remember) in the Announcements in Human Essent
 ## For partners:
 We recommend that the partners seek support through the banks.  Each bank has their own particular way of doing things, and the development team doesn't want to mess that up.
 
+[Prior: Is Human Essentials right for you?](intro_i.md)[Next: Getting started - Some choices you'll want to think about at the start](getting_started_choices.md)

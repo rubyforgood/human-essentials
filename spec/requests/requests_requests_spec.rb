@@ -26,6 +26,21 @@ RSpec.describe 'Requests', type: :request do
 
         it { is_expected.to be_successful }
       end
+
+      context "when there are pending or started requests" do
+        it "shows print unfulfilled picklists button with correct quantity" do
+          Request.delete_all
+
+          create(:request, :pending)
+          create(:request, :started)
+          create(:request, :fulfilled)
+          create(:request, :discarded)
+
+          get requests_path
+
+          expect(response.body).to include('Print Unfulfilled Picklists (2)')
+        end
+      end
     end
 
     describe 'GET #show' do

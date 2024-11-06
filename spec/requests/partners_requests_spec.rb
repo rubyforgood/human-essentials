@@ -222,6 +222,26 @@ RSpec.describe "Partners", type: :request do
         expect(response).to have_error "Check headers in file!"
       end
     end
+
+    context "csv file with invalid email address" do
+      let(:file) { fixture_file_upload("partners_with_invalid_email.csv", "text/csv") }
+      subject { post import_csv_partners_path, params: { file: file } }
+
+      it "invokes .import_csv" do
+        expect(model_class).to respond_to(:import_csv).with(2).arguments
+      end
+
+      it "redirects to :index" do
+        subject
+        expect(response).to be_redirect
+      end
+
+      it "presents a flash notice message displaying the import errors" do
+        subject
+        expect(response).to have_error(/The following #{model_class.name.underscore.humanize.pluralize} did not import successfully:/)
+        expect(response).to have_error(/Partner 2: Email is invalid/)
+      end
+    end
   end
 
   describe "POST #create" do

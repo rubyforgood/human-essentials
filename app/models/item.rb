@@ -126,6 +126,10 @@ class Item < ApplicationRecord
     inventory&.quantity_for(item_id: id)&.positive?
   end
 
+  def in_request?
+    Request.by_request_item_id(id).exists?
+  end
+
   def is_in_kit?(kits = nil)
     if kits
       kits.any? { |k| k.line_items.map(&:item_id).include?(id) }
@@ -138,7 +142,7 @@ class Item < ApplicationRecord
   end
 
   def can_delete?(inventory = nil, kits = nil)
-    can_deactivate_or_delete?(inventory, kits) && line_items.none? && !barcode_count&.positive?
+    can_deactivate_or_delete?(inventory, kits) && line_items.none? && !barcode_count&.positive? && !in_request?
   end
 
   # @return [Boolean]

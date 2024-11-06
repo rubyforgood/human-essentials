@@ -490,6 +490,7 @@ RSpec.describe "Donations", type: :system, js: true do
             click_on "Save"
           end
 
+          # form updates
           within "#donation_line_items" do
             barcode_field = page.find(:xpath, "//input[@id='_barcode-lookup-0']").value
             expect(barcode_field).to eq(new_barcode)
@@ -498,7 +499,12 @@ RSpec.describe "Donations", type: :system, js: true do
             item_field = page.find(:xpath, "//select[@id='donation_line_items_attributes_0_item_id']").value
             expect(item_field).to eq(Item.first.id.to_s)
           end
-          # form updates
+
+          # new line item was added and has focus
+          within "#donation_line_items" do
+            expect(page).to have_xpath("//input[@id='_barcode-lookup-1']")
+            expect(page).to have_css('#_barcode-lookup-1', focused: true)
+          end
         end
 
         context "When the barcode is a global barcode" do
