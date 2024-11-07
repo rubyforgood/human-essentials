@@ -10,13 +10,20 @@ There are three partner statuses, which have different impacts on how you intera
 
 ## Uninvited
 You can add Partners without inviting them to the system.  In this case, you can make Distributions to them in the system.  The Partners can not sign in to the system,  and so will not directly provide the information in the Partner Profile.  This is the status of freshly imported partners.
-The Partners will still get emails regarding deadlines and Distributions (assuming you have set them up to do so)
-[TODO:  expand -- what are the conditions under which partners get which emails -- ]
-[TODO: Check:  do we have an add and invite on the import, or just add]
+The Partners will still get emails regarding deadlines and Distributions (assuming you have set them up to do so through your bank's [customization](getting_started_customization.md#reminder-emails-optional) and any [Partner Groups](pm_partner_groups.md#do-you-want-to-send-deadline-reminders-to-them-every-month) they belong to.
+
+If you import your partners, they will be imported as Uninvited.
+
 
 ## Invited
-Once you invite a Partner, we set up the Partner's email as a user, and send an email to allow them to provide a password.
-[TODO: Details of email]  .  If you use the "Invite and Approve"  option,  the Partner's status will be "Approved"
+Once you invite a Partner, we set up the Partner's email as a user, send an email to allow them to provide a password, and set their status to 
+"Invited".
+
+Sample email: 
+
+![Details of email](images/partners/partners_invitation_email.png)  
+
+If you use the "Invite and Approve"  option,  the Partner's status will be "Approved"
 
 Invited Partners have access to the Partner Profile.  They cannot, however, make Requests.
 
@@ -25,8 +32,10 @@ The 'standard' sequence is for the Partners to fill in some information in the P
 However, many banks get the information from their Partners in other ways.  Some, for instance, will fill in the information themselves while on a call with the Partner.
 
 ## Awaiting review
-Once a Partner has been invited, they will use the "Edit my Profile" function in their view of the system to provide the information.  After saving the screen, they can "submit for approval" - which changes the status to "Awaiting review.   This partner will now appear on your dashboard, in the "Partner Approvals" section.  The Partner will not be able to make Requests until they are approved.
-[TODO:  Provide a shot of the partner's view]
+Once a Partner has been invited, they will use the "Edit my Profile" function in their view of the system to provide the information.  They can save their progress, and then "submit for approval" - which changes the status to "Awaiting review.   This partner will now appear on your dashboard, in the "Partner Approvals" section.  The Partner will not be able to make Requests until they are approved.
+
+[TODO:  Provide a shot of the partner's view (waiting until final review *or* we have the partner profile rework in)] 
+
 ## Approved
 Approved Partners can make Requests.
 Note:  There is no system-required information for Partner approval -- you can approve them as soon as they are invited.
