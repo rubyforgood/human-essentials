@@ -1,10 +1,10 @@
-Draft User Guide
+READY FOR REVIEW
 # Inviting a Partner
 
 Before a Partner can make Requests,  they have to be invited and approved.
 
 When they are invited,  they will receive an email with a link so that they can set up their password.
-These links expire [TODO:  How long?],  but if they don't respond in time,  
+These links expire in a couple of weeks,  but if they don't respond in time,  
 you can direct them to use the "Forgot your password?" function on the sign-in page
 (https://humanessentials.app/signin) to get a new link to set their password.
 
@@ -47,7 +47,7 @@ your annual reports.
 ![Inviting a Partner screenshot](images/partners/partners_inviting.png)
 
 # How to invite and approve a Partner
-First, make sure that you have "Use one-step Partner invate and approve process" chosen in  ["My Organization"](getting_started_customization.md).
+First, make sure that you have "Use one-step Partner invite and approve process" chosen in  ["My Organization"](getting_started_customization.md).
 Then...
 
 1/  Click on "Partner Agencies" in the left hand menu, then "All Partners"

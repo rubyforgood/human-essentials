@@ -1,4 +1,4 @@
-DRAFT USER GUIDE
+READY FOR REVIEW
 
 # Partner reactivation
 
@@ -10,7 +10,7 @@ This will bring up a list of all the deactivated partners. You can then click on
 Then click on the "Reactivate" button beside the partner.  Click "Ok" on the confirmation window that pops up.
 
 
-[TODO: screenshot]
+![Navigation for reactivating a Partner](images/partners/partners_viewing_and_reactivating_deactivated.png)
 
 This will bring them up in the same status as they were when you deactivated them.
 
