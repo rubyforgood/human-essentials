@@ -1,33 +1,30 @@
 DRAFT USER GUIDE
 
-
-[TODO: Upcoming change review -- terminology.   I feel like these are going to be done before the first pass is through so I'm leaving the screenshots out for the nonce.]
-
 # Approving Partners
 
-There are three paths in to reviewing a Partner's information before approving them to make requests -- 
+There are three paths in to reviewing a Partner's information before approving them to make Requests -- 
 
-1/  There is a list of partners awaiting approvals on the dashboard.   To start the approval process, click "Review Application";
+1/  There is a list of Partners awaiting approvals on the dashboard.   To start the approval process, click "Review Application";
 
 
 ![Navigation to review application_from dashboard](images/partners/partners_review_application_from_dashboard.png)
 
 or
 
-2/  Click "Partner Agencies" and "All Partners" in the left-hand menu, then "Review Application" beside the partner.
+2/  Click "Partner Agencies" and "All Partners" in the left-hand menu, then "Review Applicant's Profile" beside the partner.
 
 
 ![Navigation to review application_from partner_list](images/partners/partners_review_application_navigation.png)
 
+
+3/  Click "Partner Agencies" and "All Partners" in the left-hand menu, then click the Partner's name.  Scroll down to view the Partner Profile information, and click "Approve Partner" if it has what is needed.
 
 
 ----------------------------------
 
 In any of these cases, you can view all the answers in the profile.  If something needs changing, you can do it yourself by clicking the "Edit Information" button,  or the partner can make the change.   
 
-See [Partner profiles](partner_profiles.md) for details on the partner profile.
-
-[TODO:  Link should go to the part of partner profiles that lists all the fields]
+See [Partner profiles](pm_partner_profiles.md#viewing-a-partner-profile) for details on the partner profile.
 
 Once you have reviewed the partner's info, and want to approve them to make requests,  click the "Approve Partner " button.   
 
