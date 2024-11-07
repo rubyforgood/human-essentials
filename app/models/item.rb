@@ -44,7 +44,6 @@ class Item < ApplicationRecord
   has_many :line_items, dependent: :destroy
   has_many :inventory_items, dependent: :destroy
   has_many :barcode_items, as: :barcodeable, dependent: :destroy
-  has_many :storage_locations, through: :inventory_items
   has_many :donations, through: :line_items, source: :itemizable, source_type: "::Donation"
   has_many :distributions, through: :line_items, source: :itemizable, source_type: "::Distribution"
   has_many :request_units, class_name: "ItemUnit", dependent: :destroy
@@ -114,10 +113,6 @@ class Item < ApplicationRecord
     joins(:barcode_items).order(:name).group(:id)
   end
 
-  def self.storage_locations_containing(item)
-    StorageLocation.joins(:inventory_items).where("inventory_items.item_id = ?", item.id)
-  end
-
   def self.barcodes_for(item)
     BarcodeItem.where("barcodeable_id = ?", item.id)
   end
@@ -128,11 +123,7 @@ class Item < ApplicationRecord
   end
 
   def has_inventory?(inventory = nil)
-    if inventory
-      inventory.quantity_for(item_id: id).positive?
-    else
-      inventory_items.where("quantity > 0").any?
-    end
+    inventory&.quantity_for(item_id: id)&.positive?
   end
 
   def in_request?
@@ -156,9 +147,7 @@ class Item < ApplicationRecord
 
   # @return [Boolean]
   def can_deactivate_or_delete?(inventory = nil, kits = nil)
-    if inventory.nil? && Event.read_events?(organization)
-      inventory = View::Inventory.new(organization_id)
-    end
+    inventory ||= View::Inventory.new(organization_id)
     # Cannot deactivate if it's currently in inventory in a storage location. It doesn't make sense
     # to have physical inventory of something we're now saying isn't valid.
     # If an active kit includes this item, then changing kit allocations would change inventory
@@ -211,16 +200,6 @@ class Item < ApplicationRecord
     ["Name", "Barcodes", "Base Item", "Quantity"]
   end
 
-  # TODO remove this method once read_events? is true everywhere
-  def csv_export_attributes
-    [
-      name,
-      barcode_count,
-      base_item.name,
-      inventory_items.sum(&:quantity)
-    ]
-  end
-
   # @param items [Array<Item>]
   # @param inventory [View::Inventory]
   # @return [String]
@@ -237,10 +216,6 @@ class Item < ApplicationRecord
 
   def default_quantity
     distribution_quantity || 50
-  end
-
-  def inventory_item_at(storage_location_id)
-    inventory_items.find_by(storage_location_id: storage_location_id)
   end
 
   def sync_request_units!(unit_ids)
