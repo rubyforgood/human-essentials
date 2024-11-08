@@ -1,56 +1,54 @@
 DRAFT USER GUIDE
 # Items
 ## Introduction
-Your bank is initialized with  a basic set of items that contains many common product types that essentials banks distribute.   These items represent the stock you have for distribution.  Here is the current default list:  
+Your bank is initialized with  a basic set of Items that contains many common product types that essentials banks distribute.   These items represent the stock you have for distribution.  Here is the current default list:  
 
-[TODO: Bulletize this list.]
-
-Adult Briefs (Large/X-Large),
-Adult Briefs (Medium/Large),
-Adult Briefs (Small/Medium),
-Adult Briefs (XS/Small),
-Adult Briefs (XXL),
-Adult Briefs (XXS),
-Adult Briefs (XXXL),
-Adult Cloth Diapers (Large/XL/XXL),
-Adult Cloth Diapers (Small/Medium),
-Adult Incontinence Pads,
-Bed Pads (Cloth),
-Bed Pads (Disposable),
-Bibs (Adult & Child),
-Cloth Diapers (AIO's/Pocket),
-Cloth Diapers (Covers),
-Cloth Diapers (Plastic Cover Pants),
-Cloth Diapers (Prefolds & Fitted),
-Cloth Inserts (For Cloth Diapers),
-Cloth Potty Training Pants/Underwear,
-Cloth Swimmers (Kids),
-Diaper Rash Cream/Powder,
-Disposable Inserts,
-Kids (Newborn),
-Kids (Preemie),
-Kids (Size 1),
-Kids (Size 2),
-Kids (Size 3),
-Kids (Size 4),
-Kids (Size 5),
-Kids (Size 6),
-Kids (Size 7),
-Kids L/XL (60-125 lbs),
-Kids Pull-Ups (2T-3T),
-Kids Pull-Ups (3T-4T),
-Kids Pull-Ups (4T-5T),
-Kids Pull-Ups (5T-6T),
-Kids S/M (38-65 lbs),
-Liners (Incontinence),
-Liners (Menstrual),
-Other,
-Pads,
-Swimmers,
-Tampons,
-Underpads (Pack),
-Wipes (Adult),
-Wipes (Baby)
+- Adult Briefs (Large/X-Large),
+- Adult Briefs (Medium/Large),
+- Adult Briefs (Small/Medium),
+- Adult Briefs (XS/Small),
+- Adult Briefs (XXL),
+- Adult Briefs (XXS),
+- Adult Briefs (XXXL),
+- Adult Cloth Diapers (Large/XL/XXL),
+- Adult Cloth Diapers (Small/Medium),
+- Adult Incontinence Pads,
+- Bed Pads (Cloth),
+- Bed Pads (Disposable),
+- Bibs (Adult & Child),
+- Cloth Diapers (AIO's/Pocket),
+- Cloth Diapers (Covers),
+- Cloth Diapers (Plastic Cover Pants),
+- Cloth Diapers (Prefolds & Fitted),
+- Cloth Inserts (For Cloth Diapers),
+- Cloth Potty Training Pants/Underwear,
+- Cloth Swimmers (Kids),
+- Diaper Rash Cream/Powder,
+- Disposable Inserts,
+- Kids (Newborn),
+- Kids (Preemie),
+- Kids (Size 1),
+- Kids (Size 2),
+- Kids (Size 3),
+- Kids (Size 4),
+- Kids (Size 5),
+- Kids (Size 6),
+- Kids (Size 7),
+- Kids L/XL (60-125 lbs),
+- Kids Pull-Ups (2T-3T),
+- Kids Pull-Ups (3T-4T),
+- Kids Pull-Ups (4T-5T),
+- Kids Pull-Ups (5T-6T),
+- Kids S/M (38-65 lbs),
+- Liners (Incontinence),
+- Liners (Menstrual),
+- Other,
+- Pads,
+- Swimmers,
+- Tampons,
+- Underpads (Pack),
+- Wipes (Adult), and
+- Wipes (Baby)
 
 
 
@@ -120,16 +118,12 @@ All the information about an item category is in the list of all of them,  but y
 You can also remove items from the category by clicking "Remove from category" beside the item.   This will hide them from any partner groups that have this category.  
 
 #### Editing an item category
-[TODO:  "Update Record on this isn't our usual terminology  -- should be Edit Item Category -- add that to the inbox]
-
 To edit the name and description of an item category,   To view an item category,  you click on Inventory, then Items & Inventory, then the Item Categories tab, then the "Edit" button beside the category you wish to edit.  
 [TODO: Screenshot]
 
 Update the category name (still needs to be unique) and category description, and click save.  This will take you to the item category view [Add pointer to above], which lets you change the items in the category.
 
 ### Items, Quantity and Location tab
-
-[TODO:  We should highlight the bank-wide ones that are below the minimum.  Add that to the inbox ]
 
 This tab shows all the item inventory across all the storage locations, along with each item's minimum quantity, recommended quantity, and bank-wide quantity.  
 
