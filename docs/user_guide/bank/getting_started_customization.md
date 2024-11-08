@@ -70,7 +70,7 @@ if you have any questions about this!
 
 
 #### Reminder day (Day of month an e-mail reminder is sent to partners to submit requests)
- [TODO:  This will need updating with the day of week/day of month update]At this point, we send those emails once a month on the day of the month you indicate here.
+At this point, we send those emails once a month on the day of the month you indicate here.
 If you do not pick a day, no reminder emails are sent.
 
 #### Deadline day (Final day of the month to submit requests)
@@ -105,7 +105,7 @@ You can also specify a different default Storage Location on any Partner, which 
 If you specify a default Storage Location, it will be pre-populated as the Storage Location when you are adding new distributions.
 
 #### Custom Partner Invitation Message
-[TODO:  Ensure that this is working!] 
+[TODO:  Ensure that this is working!] [TODO:  Get it fixed!  Because it is not!]
 
 When you invite a Partner, they get an email.  This field lets you specify the message you are sending to them.  Just text -- we don't have any personalization capability for this email at this time.
 
