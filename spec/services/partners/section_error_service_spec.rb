@@ -1,8 +1,8 @@
 require "rails_helper"
 
 RSpec.describe Partners::SectionErrorService, type: :service do
-  describe "#call" do
-    subject { described_class.new(error_keys).call }
+  describe ".sections_with_errors" do
+    subject { Partners::SectionErrorService.sections_with_errors(error_keys) }
 
     context "when error keys map to multiple sections" do
       let(:error_keys) { [:website, :pick_up_email, :enable_quantity_based_requests] }
