@@ -97,13 +97,16 @@ RSpec.describe Partners::Profile, type: :model do
     subject { build(:partner_profile, enable_child_based_requests: false, enable_individual_requests: false, enable_quantity_based_requests: false) }
 
     context "no settings are set to true" do
-      it "should not be valid" do
+      it "sets error at base when feature flag disabled for partner step form" do
+        allow(Flipper).to receive(:enabled?).with("partner_step_form").and_return(false)
+
         expect(subject).to_not be_valid
         expect(subject.errors[:base]).to include("At least one request type must be set")
       end
 
       it "sets error at field level when feature flag enabled for partner step form" do
         allow(Flipper).to receive(:enabled?).with("partner_step_form").and_return(true)
+
         expect(subject).to_not be_valid
         expect(subject.errors[:enable_child_based_requests]).to include("At least one request type must be set")
       end
@@ -262,7 +265,9 @@ RSpec.describe Partners::Profile, type: :model do
     end
 
     context "multiple" do
-      it "sums the client shares " do
+      it "sums the client shares and sets error at base when feature flag disabled for partner step form" do
+        allow(Flipper).to receive(:enabled?).with("partner_step_form").and_return(false)
+
         profile = create(:partner_profile)
         county1 = create(:county, name: "county1", region: "region1")
         county2 = create(:county, name: "county2", region: "region2")
