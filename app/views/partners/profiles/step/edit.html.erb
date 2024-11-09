@@ -33,80 +33,12 @@
     <%= render 'partners/profiles/step/form_actions', f: f, partner: current_partner %>
 
     <div class="accordion mx-5 mt-3" id="accordionExample">
-
-      <%# Agency Information %>
-      <div class="accordion-item">
-        <h2 class="accordion-header">
-          <button class="accordion-button <%= section_with_errors?('agency_information', @sections_with_errors) ? '' : 'collapsed' %>" type="button" data-bs-toggle="collapse" data-bs-target="#agency_information" aria-expanded="<%= section_with_errors?('agency_information', @sections_with_errors) %>" aria-controls="agency_information">
-            <div class='d-flex justify-content-between align-items-center w-100'>
-              <div class='fs-4'>
-                <i class="fa fa-edit mr-2"></i>Agency Information
-              </div>
-            </div>
-          </button>
-        </h2>
-        <div id="agency_information" class="accordion-collapse collapse <%= section_with_errors?('agency_information', @sections_with_errors) ? 'show' : '' %>">
-          <div class="accordion-body">
-            <%= render 'partners/profiles/step/agency_information_form', f: f, partner: current_partner, profile: current_partner.profile %>
-          </div>
-        </div>
-      </div>
-
-      <%# Program Delivery Address %>
-      <div class="accordion-item">
-        <h2 class="accordion-header">
-          <button class="accordion-button <%= section_with_errors?('program_delivery_address', @sections_with_errors) ? '' : 'collapsed' %>" type="button" data-bs-toggle="collapse" data-bs-target="#program_delivery_address" aria-expanded="<%= section_with_errors?('program_delivery_address', @sections_with_errors) %>" aria-controls="program_delivery_address">
-            <div class='d-flex justify-content-between align-items-center w-100'>
-              <div class='fs-4'>
-                <i class="fa fa-map mr-2"></i>Program / Delivery Address
-              </div>
-            </div>
-          </button>
-        </h2>
-        <div id="program_delivery_address" class="accordion-collapse collapse <%= section_with_errors?('program_delivery_address', @sections_with_errors) ? 'show' : '' %>">
-          <div class="accordion-body">
-            <%= render 'partners/profiles/step/program_delivery_address_form', f: f, partner: current_partner, profile: current_partner.profile %>
-          </div>
-        </div>
-      </div>
-
-      <%# Based on partner.partials_to_show %>
+      <%= render 'partners/profiles/step/accordion_section', f: f, partner: current_partner, section_id: 'agency_information', section_title: 'Agency Information', icon_class: 'fa-edit', partial_name: 'agency_information', sections_with_errors: @sections_with_errors %>
+      <%= render 'partners/profiles/step/accordion_section', f: f, partner: current_partner, section_id: 'program_delivery_address', section_title: 'Program / Delivery Address', icon_class: 'fa-map', partial_name: 'program_delivery_address', sections_with_errors: @sections_with_errors %>
       <% current_partner.partials_to_show.each do |partial| %>
-        <div class="accordion-item">
-          <h2 class="accordion-header">
-            <button class="accordion-button <%= section_with_errors?(partial, @sections_with_errors) ? '' : 'collapsed' %>" type="button" data-bs-toggle="collapse" data-bs-target="#<%= partial %>" aria-expanded="<%= section_with_errors?(partial, @sections_with_errors) %>" aria-controls="<%= partial %>">
-              <div class='d-flex justify-content-between align-items-center w-100'>
-                <div class='fs-4'>
-                  <i class="fa fa-cogs mr-2"></i><%= partial_display_name(partial) %>
-                </div>
-              </div>
-            </button>
-          </h2>
-          <div id="<%= partial %>" class="accordion-collapse collapse <%= section_with_errors?(partial, @sections_with_errors) ? 'show' : '' %>">
-            <div class="accordion-body">
-              <%= render "partners/profiles/step/#{partial}_form", f: f, partner: current_partner, profile: current_partner.profile %>
-            </div>
-          </div>
-        </div>
+        <%= render 'partners/profiles/step/accordion_section', f: f, partner: current_partner, section_id: partial, section_title: partial_display_name(partial), icon_class: 'fa-cogs', partial_name: partial, sections_with_errors: @sections_with_errors %>
       <% end %>
-
-      <%# Partner Settings %>
-      <div class="accordion-item">
-        <h2 class="accordion-header">
-          <button class="accordion-button <%= section_with_errors?('partner_settings', @sections_with_errors) ? '' : 'collapsed' %>" type="button" data-bs-toggle="collapse" data-bs-target="#partner_settings" aria-expanded="<%= section_with_errors?('partner_settings', @sections_with_errors) %>" aria-controls="partner_settings">
-            <div class='d-flex justify-content-between align-items-center w-100'>
-              <div class='fs-4'>
-                <i class="fa fa-cog mr-2"></i>Settings
-              </div>
-            </div>
-          </button>
-        </h2>
-        <div id="partner_settings" class="accordion-collapse collapse <%= section_with_errors?('partner_settings', @sections_with_errors) ? 'show' : '' %>">
-          <div class="accordion-body">
-            <%= render 'partners/profiles/step/partner_settings_form', f: f, partner: current_partner, profile: current_partner.profile %>
-          </div>
-        </div>
-      </div>
+      <%= render 'partners/profiles/step/accordion_section', f: f, partner: current_partner, section_id: 'partner_settings', section_title: 'Settings', icon_class: 'fa-cog', partial_name: 'partner_settings', sections_with_errors: @sections_with_errors %>
     </div>
 
     <%= render 'partners/profiles/step/form_actions', f: f, partner: current_partner %>
