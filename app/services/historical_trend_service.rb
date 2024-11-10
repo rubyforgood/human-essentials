@@ -4,26 +4,35 @@ class HistoricalTrendService
     @type = type
   end
 
+  # Returns: [{:name=>"Adult Briefs (XXL)", :data=>[0, 0, 0, 0, 0, 0, 0, 0, 0, 416, 0, 0], :visible=>false}]
+  # :data contains quantity from 11 months ago to current month
   def series
-    # Preload line_items with a single query to avoid N+1 queries.
-    items_with_line_items = @organization.items.active
-      .includes(:line_items)
-      .where(line_items: {itemizable_type: @type, created_at: 1.year.ago.beginning_of_month..Time.current})
-      .order(:name)
+    type_symbol = @type.tableize.to_sym # :distributions, :donations, :purchases
+    records_for_type = @organization.send(type_symbol)
+      .includes(items: :line_items)
+      .where(issued_at: 1.year.ago.beginning_of_month..Time.current)
 
-    month_offset = [*1..12].rotate(Time.zone.today.month)
-    default_dates = (1..12).index_with { |i| 0 }
+    array_of_items = []
 
-    items_with_line_items.each_with_object([]) do |item, array_of_items|
-      dates = default_dates.deep_dup
+    records_for_type.each do |record|
+      index = record.issued_at.month - Date.current.month - 1
 
-      item.line_items.each do |line_item|
-        month = line_item.created_at.month
-        index = month_offset.index(month) + 1
-        dates[index] = dates[index] + line_item.quantity
+      record.line_items.each do |line_item|
+        name = line_item.item.name
+        quantity = line_item.quantity
+        next if quantity.zero?
+
+        if (existing_item = array_of_items.find { |item| item[:name] == name })
+          quantity_per_month = existing_item[:data]
+          quantity_per_month[index] += quantity
+        else
+          quantity_per_month = Array.new(12, 0)
+          quantity_per_month[index] += quantity
+          array_of_items << {name:, data: quantity_per_month, visible: false}
+        end
       end
-
-      array_of_items << {name: item.name, data: dates.values, visible: false} unless dates.values.sum.zero?
     end
+
+    array_of_items.sort_by { |item| item[:name] }
   end
 end
