@@ -31,10 +31,6 @@ module PartnersHelper
     partner.invited? || partner.recertification_required?
   end
 
-  def submit_for_approval_disabled?(partner_profile)
-    partner_profile.errors.any?
-  end
-
   # In step-wise editing of the partner profile, the partial name is used as the section header by default.
   # This helper allows overriding the header with a custom display name if needed.
   def partial_display_name(partial)
