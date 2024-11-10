@@ -16,20 +16,6 @@ describe PartnersHelper, type: :helper do
     end
   end
 
-  describe "submit_for_approval_disabled?" do
-    it "returns true if partner profile has errors" do
-      profile = build_stubbed(:partner_profile)
-      profile.errors.add(:base, "Some error message")
-
-      expect(helper.submit_for_approval_disabled?(profile)).to be_truthy
-    end
-
-    it "returns false if partner profile is valid" do
-      profile = build_stubbed(:partner_profile)
-      expect(helper.submit_for_approval_disabled?(profile)).to be_falsey
-    end
-  end
-
   describe "partial_display_name" do
     it "returns the humanized name by default" do
       expect(helper.partial_display_name("agency_stability")).to eq("Agency stability")

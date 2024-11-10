@@ -86,8 +86,8 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       expect(page).to have_css("#pick_up_person.accordion-collapse.collapse.show", visible: true)
       expect(page).to have_css("#partner_settings.accordion-collapse.collapse.show", visible: true)
 
-      # Submit for Approval is disabled
-      expect(page).to have_css("span.btn.btn-success.disabled", text: "Submit Profile for Approval")
+      # Submit for Approval is still enabled
+      expect(page).to have_link("Submit Profile for Approval", href: partners_approval_request_path)
     end
   end
 end

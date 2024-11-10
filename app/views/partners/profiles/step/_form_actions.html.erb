@@ -4,10 +4,6 @@
   <%= f.button :submit, "Save Progress", class: 'btn btn-primary mr-2', data: { action: "click->accordion#disableOpenClose" } %>
 
   <% if show_submit_for_approval?(current_partner) %>
-    <% if submit_for_approval_disabled?(current_partner.profile) %>
-      <span class="btn btn-success disabled">Submit Profile for Approval</span>
-    <% else %>
-      <%= link_to 'Submit Profile for Approval', partners_approval_request_path, method: :post, class: 'btn btn-success' %>
-    <% end %>
+    <%= link_to 'Submit Profile for Approval', partners_approval_request_path, method: :post, class: 'btn btn-success' %>
   <% end %>
 </div>
