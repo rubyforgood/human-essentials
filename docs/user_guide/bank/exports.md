@@ -59,7 +59,7 @@ For more information on these, please see the [Annual Survey Report](reports_ann
 - Money spent purchasing diapers, 
 - Purchased from, 
 - Vendors diapers Purchased through, 
-- Total storage locations, 
+- Total Storage Locations, 
 - Total square footage, 
 - Largest storage site type, 
 - Adult incontinence supplies distributed, 
@@ -264,7 +264,7 @@ You can filter the Purchases by:
 - Vendor
 - Purchase date
 
-The default is all storage locations and vendors, and the default period of 60 days prior, 30 days forward from today's date.
+The default is all Storage Locations and vendors, and the default period of 60 days prior, 30 days forward from today's date.
 
 Make your selection and click "Filter"  before clicking "Export Purchases"
 ### Content of Purchases Export
@@ -304,18 +304,17 @@ For each filtered Request,
   - Note: If you have packs enabled (upcoming feature), there will be a column for each unit that you have enabled for each Item.  Otherwise, one column per Item.
 
 ## Storage Locations
-### Navigating to export storage locations
+### Navigating to export Storage Locations
 Click "Inventory", then "Storage Locations" in the left-hand menu. Then click "Export Storage Locations"
 ### Filtering exported Storage Locations
-You can filter the exported list by Item.  This will give all storage locations that have ever had that Item, *not* those with current inventory.
-(Note:  including inactive is currently broken)
-[TODO: Write up including inactive]
-[TODO:  Check that by Item filter works for export storage location]
-The default is all active storage locations.
-[TODO:  IT looks like the export doesn't include the inactive when selected.]
+You can filter the exported list by Item.  This will give all Storage Locations that have ever had that Item, *not* just those with current inventory.
+(Note:  including inactive Storage Locations is not working at time of writing)
+
+The default is all active Storage Locations.
+
 Make your selections, then click "Filter" before clicking "Export Storage Locations"
-### Contents of storage location exports
-For each storage location in the filtered list:
+### Contents of Storage Location exports
+For each Storage Location in the filtered list:
 - Name,
 - Address,
 - Square Footage,
@@ -324,21 +323,21 @@ For each storage location in the filtered list:
 - Quantity for each of the organization's Items.
 
 ## Transfers
-### Navigating to export transfers
+### Navigating to export Transfers
 Click "Inventory", then "Transfers" in the left-hand menu. Then click "Export Storage Locations"
-### Filtering exported transfers
-You can filter the transfers by:
+### Filtering exported Transfers
+You can filter the Transfers by:
 - From location
 - To location
 - date range.  
-  - Note that this is the date the transfer was entered in the system, which may or may not be when it happened.
+  - Note that this is the date the Transfer was entered in the system, which may or may not be when it happened.
 
-The default is all the transfers for the period of 60 days prior, 30 days forward from today.
+The default is all the Transfers for the period of 60 days prior, 30 days forward from today.
 
 Make you selection and click 'Filter' before clicking "Export Transfers".
 
-### Contents of transfers exports
-For each selected transfer:
+### Contents of Transfers export
+For each selected Transfer:
 - From,
 - To,
 - Comment,
