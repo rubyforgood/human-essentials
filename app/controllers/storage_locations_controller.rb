@@ -14,7 +14,7 @@ class StorageLocationsController < ApplicationController
     @items = StorageLocation.items_inventoried(current_organization, @inventory)
     @include_inactive_storage_locations = params[:include_inactive_storage_locations].present?
     @storage_locations = current_organization.storage_locations.alphabetized
-    if @inventory && filter_params[:containing].present?
+    if filter_params[:containing].present?
       containing_ids = @inventory.storage_locations.keys.select do |sl|
         @inventory.quantity_for(item_id: filter_params[:containing], storage_location: sl).positive?
       end
@@ -23,9 +23,8 @@ class StorageLocationsController < ApplicationController
       @storage_locations = @storage_locations.class_filter(filter_params)
     end
 
-    unless @include_inactive_storage_locations
-      @storage_locations = @storage_locations.kept
-    end
+    @storage_locations = @storage_locations.kept unless @include_inactive_storage_locations
+    @inventory_item_totals = @storage_locations.to_h { |loc| [loc.id, @inventory.quantity_for(storage_location: loc.id)] }
 
     respond_to do |format|
       format.html
