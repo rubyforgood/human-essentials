@@ -291,13 +291,11 @@ class DistributionsController < ApplicationController
 
   def total_items(distributions, item, item_category)
     query = LineItem.where(itemizable_type: "Distribution", itemizable_id: distributions.pluck(:id))
-    
     query = query.where(item_id: item.to_i) if item.present?
 
     if item_category.present?
-      query = query.joins(:item).where(items: { item_category_id: item_category.to_i })
+      query = query.joins(:item).where(items: {item_category_id: item_category.to_i})
     end
-    
     query.sum('quantity')
   end
 
