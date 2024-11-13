@@ -20,7 +20,11 @@ module Partners
       if result.success?
         flash[:success] = "Details were successfully updated."
         if Flipper.enabled?("partner_step_form")
-          redirect_to edit_partners_profile_path
+          if params[:save_review]
+            redirect_to partners_profile_path
+          else
+            redirect_to edit_partners_profile_path
+          end
         else
           redirect_to partners_profile_path
         end

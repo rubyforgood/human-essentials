@@ -43,12 +43,10 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       all("input[type='submit'][value='Save Progress']").last.click
       expect(page).to have_css(".alert-success", text: "Details were successfully updated.")
 
-      # Submit for Approval
-      expect(page).to have_link("Submit Profile for Approval", href: partners_approval_request_path)
-      first(:link, "Submit Profile for Approval").click
+      # Submit and Review
+      all("input[type='submit'][value='Save and Review']").last.click
       expect(current_path).to eq(partners_profile_path)
-      expect(page).to have_css(".alert-success", text: "You have submitted your details for approval.")
-      expect(page).to have_css(".badge", text: "Awaiting Review")
+      expect(page).to have_css(".alert-success", text: "Details were successfully updated.")
     end
 
     it "displays the edit view with sections containing validation errors expanded" do
@@ -86,8 +84,19 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       expect(page).to have_css("#pick_up_person.accordion-collapse.collapse.show", visible: true)
       expect(page).to have_css("#partner_settings.accordion-collapse.collapse.show", visible: true)
 
-      # Submit for Approval is still enabled
-      expect(page).to have_link("Submit Profile for Approval", href: partners_approval_request_path)
+      # Try to Submit and Review from error state
+      all("input[type='submit'][value='Save and Review']").last.click
+
+      # Expect an alert-danger message containing validation errors
+      expect(page).to have_css(".alert-danger", text: /There is a problem/)
+      expect(page).to have_content("No social media presence must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.")
+      expect(page).to have_content("Enable child based requests At least one request type must be set")
+      expect(page).to have_content("Pick up email can't have more than three email addresses")
+
+      # Expect media section, executive director section, and partner settings section to be opened
+      expect(page).to have_css("#media_information.accordion-collapse.collapse.show", visible: true)
+      expect(page).to have_css("#pick_up_person.accordion-collapse.collapse.show", visible: true)
+      expect(page).to have_css("#partner_settings.accordion-collapse.collapse.show", visible: true)
     end
   end
 end
