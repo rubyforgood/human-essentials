@@ -1,9 +1,6 @@
 <%# locals: (f:, partner:) %>
 
 <div class="form-group mt-4 d-flex justify-content-start mx-5">
-  <%= f.button :submit, "Save Progress", class: 'btn btn-primary mr-2', data: { action: "click->accordion#disableOpenClose" } %>
-
-  <% if show_submit_for_approval?(current_partner) %>
-    <%= link_to 'Submit Profile for Approval', partners_approval_request_path, method: :post, class: 'btn btn-success' %>
-  <% end %>
+  <%= f.submit "Save Progress", class: 'btn btn-primary mr-2', data: { action: "click->accordion#disableOpenClose" } %>
+  <%= f.submit "Save and Review", name: "save_review", class: 'btn btn-success' %>
 </div>
