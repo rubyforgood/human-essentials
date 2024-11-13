@@ -25,14 +25,14 @@ You can also extract the report to a csv file by clicking "Export Report" (B)
 ### Calculation notes
 
 1/ We are in the process of changing the calculations so that items in kits appear in the totals for each value.  
-At time of writing, the # of disposable and cloth diapers distributed include any diapers in kits,  but period supplies, adult incontinence, and other do not.
+At time of writing, the # of disposable and cloth diapers distributed include any diapers in kits,  and  period supplies also include period supplies in kits, but adult incontinence, and other do not.
 At time of writing, purchased/donated supplies do not include any kit purchases/donations. ( We only know of one bank that currently has kits donated.)
 
 2/ % donated / purchased is based on the number of items acquired,  not the number of items distributed.
 
 3/ How we calculate per person values:  
-    If you have entered a non-zero value for an [item](inventory_items.md) in the quantity per individual field, we use that value.  Otherwise, we assume 50 of the item per individual. 
-[TODO:  When inventory_items.md is written,  point the above link to the right place in it.]
+    If you have entered a non-zero value for an [item](inventory_items.md#editing-an-item) in the quantity per individual field, we use that value.  Otherwise, we assume 50 of the item per individual. 
+
 
 
 [Prior: Trends](reports_trends.md)        [Next: Distributions by County](reports_distributions_by_county.md)

@@ -48,8 +48,7 @@ class Partner < ApplicationRecord
   validates :organization, presence: true
   validates :name, presence: true, uniqueness: { scope: :organization }
 
-  validates :email, presence: true, uniqueness: { case_sensitive: false },
-    format: { with: URI::MailTo::EMAIL_REGEXP, on: :create }
+  validates :email, presence: true, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
 
   validates :quota, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
 
