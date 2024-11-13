@@ -55,12 +55,12 @@ class DistributionsController < ApplicationController
     @selected_item = filter_params[:by_item_id].presence
     @selected_item_category = filter_params[:by_item_category_id]
 
-    @total_items_all_distributions = total_items(@distributions, @selected_item, @selected_item_category) 
-    @total_items_paginated_distributions = total_items(@paginated_distributions, @selected_item, @selected_item_category) 
+    @total_items_all_distributions = total_items(@distributions, @selected_item, @selected_item_category)
+    @total_items_paginated_distributions = total_items(@paginated_distributions, @selected_item, @selected_item_category)
 
     @total_value_all_distributions = total_value(@distributions)
     @total_value_paginated_distributions = total_value(@paginated_distributions)
- 
+
     @selected_partner = filter_params[:by_partner]
     @selected_status = filter_params[:by_state]
     @selected_location = filter_params[:by_location]
