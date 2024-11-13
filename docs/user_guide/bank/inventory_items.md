@@ -1,4 +1,4 @@
-DRAFT USER GUIDE
+READY FOR REVIEW
 # Items
 ## Introduction
 Your bank is initialized with  a basic set of Items that contains many common product types that essentials banks distribute.   These Items represent the stock you have for distribution.  Here is the current default list:  
@@ -68,7 +68,7 @@ This shows all of your Items, and allows you access to view/edit/and delete them
 #### Viewing an Item
 Clicking "View" will bring up details on the Item, including all the things you can change, and a breakdown of the inventory at each location you currently have stock at.
 
-![Navigation to view an Item](images/inventory/inventory_items_viewnavigation.png)
+![Navigation to view an Item](images/inventory/inventory_items_view_navigation.png)
 ![View Item page](images/inventory/inventory_items_view.png)
 The fields are:
 - Base Item -- this is the "Base Item" for this Item -- which determines what section it is in for the Annual Survey.  You can also search by Base Item (at this time)
@@ -83,6 +83,10 @@ The fields are:
 - On hand recommended quantity -- This is the amount you want to have on hand -- if you don't have this, it will appear in the low inventory list on your dashboard, just not in red.
 - Package size -- If you use this, the calculated number of packages for the Item will appear on the distribution printout, unless you hide it when [customizing your bank](getting_started_customization.md).
 - Item visible to partners -- This is useful if you have Items that you do not want the partners directly requesting.   Uses include: Items you don't get very often,  or Items you only have because they are going into kits you haven't assembled yet. You can uncheck this to hide those Items from all your partners.
+#### Filtering your item list
+The most common thing you'll when filtering your item list is to include inactive items.  If you have deactivated an item, but are going to offer it again,  you'll need to check the "Also include inactive Items" box in the filter, and then click "Filter" to show it, so that you can reactivate it.
+
+
 #### Editing an Item
 Clicking "Edit" beside an Item on the Item list lets you edit the Item definition, with the fields as described above.
 ![Navigation to edit an Item](images/inventory/inventory_items_edit_navigation.png)
@@ -100,6 +104,16 @@ Deactivating an Item removes it whenever you are entering a new distribution/don
 You can still see deactivated items in most reports, and can include them in your filtered lists.
 
 ![Item list showing delete and deactivate buttons](images/inventory/inventory_items_delete_vs_deactivate.png)
+
+#### Reactivating an Item
+To reactivate an Item,  you'll need to
+(1) click "Also include inactive Items"
+(2) click "Filter", then
+(3) click "Restore" beside the Item you wish to reactivate.
+
+Click 'Ok' on the confirmation screen that appears.
+
+![Item Reactivation sequence](images/inventory/inventory_items_reactivation.png)
 
 ### Item Categories
 
@@ -146,10 +160,9 @@ This tab shows the bank-wide inventory for each Item.   Clicking the + beside th
 ![Navigation to Item Inventory tab](images/inventory/inventory_items_inventory_navigation.png)
 
 ### Kits tab
-This shows the same information as the main [Kits](inventory_kits.md) view. 
+This shows the same information as the main [Kits](inventory_kits.md) list. 
 ![Navigation to the Kits tab ](images/inventory/inventory_items_kits_navigation.png)
 
-[TODO:  Add a filter section]
 
 
 [Prior: Partner Announcements](pm_announcements.md)[Next: Storage Locations](inventory_storage_locations.md)
