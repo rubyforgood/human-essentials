@@ -263,7 +263,6 @@ RSpec.describe DistributionsController, type: :controller do
           expect(flash[:notice]).to eq("Distribution updated!")
           expect(flash[:error]).to be_nil
           expect(flash[:alert]).to be_nil
-
         end
       end
 
@@ -287,7 +286,7 @@ RSpec.describe DistributionsController, type: :controller do
               storage_location_id: distribution.storage_location.id,
               line_items_attributes:
                 {
-                  "0": {item_id: item.id, quantity: 15},
+                  "0": {item_id: item.id, quantity: 15}
                 }
             }
           }
@@ -309,8 +308,6 @@ RSpec.describe DistributionsController, type: :controller do
           expect(total_in_category_diapers).to eq(15)
         end
       end
-
-
     end
   end
 end
