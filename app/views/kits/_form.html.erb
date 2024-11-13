@@ -25,11 +25,9 @@
                   <%= render 'line_items/line_item_fields', form: f %>
                 </div>
                 <div class="row links col-xs-12 justify-content-end">
-                  <div class="col-xs-12">
-                    <%= add_element_button "Add Another Item", container_selector: "#kit_line_items" do %>
-                      <%= render 'line_items/line_item_fields', form: f, object: LineItem.new %>
-                    <% end %>
-                  </div>
+                  <%= add_element_button "Add Another Item", container_selector: "#kit_line_items" do %>
+                    <%= render 'line_items/line_item_fields', form: f, object: LineItem.new %>
+                  <% end %>
                 </div>
               </fieldset>
 
