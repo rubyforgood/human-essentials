@@ -14,12 +14,13 @@ This shows all your Storage Locations, and allows you to navigate to view, edit,
 To add a Storage Location,  click "New Storage Location" on the Storage Location summary page.
 
 ![Navigation to add a Storage Location](images/inventory/inventory_storage_locations_add_navigation.png)
-
-The square footage and storage site type information are used in the annual survey report.  
-[TODO:  Is the address used anywhere?  (Distribution printout? maybe? Maybe available for the distribution email?)]
-
-[TODO:  Speak intelligently on how the time zone is used]
-[TODO:  Screenshot]
+This brings up the New Storage Location page
+![New Storage Location  page](images/inventory/inventory_storage_locations_add.png)
+- Name is mandatory, and is used in drop-downs throughout the system to indicate the Storage Location
+- Address is also mandatory, but is information only.
+- Square Footage is used in the annual survey report
+- Warehouse Type is used in the annual survey report
+- Time Zone is used with the pickup and deliveries calendar, particularly with allowing you to sync your pickups calendar with Google Calendar
 
 ## Storage location view
 To view a Storage Location, click the "View" button beside it in the Storage Location summary page.
@@ -29,14 +30,12 @@ The view has three tabs:  Inventory, Inventory Coming In, and Inventory Going Ou
 
 Here you see the current levels of inventory for the chosen Storage Location.   You can see the inventory levels for past dates by choosing the date in "Show Inventory at Date" and clicking "View"
 That shows the inventory at the beginning of the day.
-[TODO:  Screenshot]
+![Storage Location - Inventory tab](images/inventory/inventory_storage_location_view_inventory.png)
 
 ### Inventory Coming In
 This shows the sum of all the inventory coming in ([Purchases](essentials_purchases.md), [Donations](essentials_donations.md), [Adjustments](inventory_adjustments.md), [Transfers](inventory_transfers.md), and  [positive changes for kit allocations.deallocations](inventory_kits.md)) for the given Storage Location for all time
 
 [TODO: Check that that is exactly what it is doing]
-
-[TODO: Would this be more useful with a date range, and is that feasible?]
 
 [TODO:  Screenshot]
 
@@ -46,13 +45,11 @@ This shows the sum of all the inventory going out ([Distributions](essentials_pu
 
 [TODO: Check that that is exactly what it is doing]
 
-[TODO: Would this be more useful with a date range, and is that feasible?]
-
 [TODO:  Screenshot]
 
 ## Editing a Storage Location
 You can edit your Storage Location (though it seems a very rare event), by clicking "Edit" beside the Storage Location in the Storage Location Summary Page.
-The same fields are as available as for your new Storage Locations.  Make your updates and click save.
+The same fields are as available as for [New Storage Locations](inventory_storage_locations.md).  Make your updates and click save.
 
 ## Deactivating a Storage Location
 You can only deactivate a Storage Location if the inventory for all its items is 0.
