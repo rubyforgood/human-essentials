@@ -1,8 +1,8 @@
-DRAFT USER GUIDE
-
-[TODO:  Screenshots throughout.   Waiting for Partner Profiles rework.]
+READY FOR REVIEW
 
 # Partner Profiles
+
+[!NOTE]  We are in progress of reworking the Partner Profiles.  In the interest of not duplicating effort,  we have not included the screenshots in this section until that is ready for launch.
 
 Partner Profiles allow you to gather and hold a lot of information about your Partners that may be useful for meeting your regulatory requirements, managing their experience, and for grant-writing.  
 
@@ -66,8 +66,6 @@ This provides a place for the agency to indicate their major communication outle
 - Instagram
 - No Social Media Presence
 
-
-
 ### Agency Stability
 This section is about the maturity of the agency. 
 
@@ -105,7 +103,7 @@ Let us know if you need more!
 
 The sum of the client share has to be either 0 or 100, and the numbers have to be positive whole numbers.
 
-You start out with 1 county, but can add more with the "Add Another County button"
+You start out with space for 1 county, but can add more with the "Add Another County button"
 
 ### Population Served
 This section has only two questions: 
@@ -148,7 +146,7 @@ The Pick up person will receive an email (as well as the person who made the Req
 - Pick Up Person Name
 - Pick Up Person's Phone #
 - Pick Up Person's Email 
-  - Note this can be multiple, comma-separated emails.
+  - This can be multiple, comma-separated emails.
 
 ### Agency Distribution Information
 This section is about the agency's practices when distributing to their clients.

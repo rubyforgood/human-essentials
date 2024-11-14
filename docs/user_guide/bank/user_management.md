@@ -81,4 +81,4 @@ You might be able to get faster turnaround by reaching out on the human essentia
 ## Managing Partner access
 See [Administering Partner Users](pm_partner_user_admin.md)
 
-[Prior: Activity graph](reports_activity_graph.md) [Next: Account Management](account_management.md)
+[Prior:  History](reports_history.md) [Next: Account Management](account_management.md)
