@@ -2,13 +2,12 @@
     "uninvited": 'ban',
     "invited": 'envelope',
     "awaiting_review": 'question-circle',
-    "approved": 'check-circle',
-    "error": 'exclamation-circle'
+    "approved": 'check-circle'
   }.with_indifferent_access
   current_filtered_status = params.dig(:filters, :by_status) %>
 
 <ul id="partner-status">
-  <% partners.statuses.each do |status, _|
+  <% partners.statuses.except("error").each do |status, _|
     selector = (status + "?").to_sym
     partner_count = partners.select(&selector).size %>
   <li>
