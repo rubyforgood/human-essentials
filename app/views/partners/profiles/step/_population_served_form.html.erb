@@ -1,0 +1,58 @@
+<%= f.fields_for :profile, profile do |pf| %>
+  <div class="form-group">
+    <%= pf.input :income_requirement_desc, label: "Clients Have An Income Requirement to Work With You?",
+              as: :radio_buttons, class: "form-control", wrapper: :input_group,
+              wrapper_html: {class: "form-yesno"}, input_html: {class: "radio-yesno"} %>
+  </div>
+
+  <div class="form-group">
+    <%= pf.input :income_verification, label: "Do You Verify The Income Of Your Clients?",
+              as: :radio_buttons, class: "form-control", wrapper: :input_group,
+              wrapper_html: {class: "form-yesno"}, input_html: {class: "radio-yesno"} %>
+  </div>
+
+  <h3 class="pt-3"><strong>Race/Ethnicity of Client Base</strong></h3>
+
+  <div class="form-group">
+    <%= pf.input :population_black, label: "% African American", as: :integer, class: "form-control", wrapper: :input_group %>
+  </div>
+  <div class="form-group">
+    <%= pf.input :population_white, label: "% Caucasian", as: :integer, class: "form-control", wrapper: :input_group %>
+  </div>
+  <div class="form-group">
+    <%= pf.input :population_hispanic, label: "% Hispanic", as: :integer, class: "form-control", wrapper: :input_group %>
+  </div>
+  <div class="form-group">
+    <%= pf.input :population_asian, label: "% Asian", as: :integer, class: "form-control", wrapper: :input_group %>
+  </div>
+  <div class="form-group">
+    <%= pf.input :population_american_indian, label: "% American Indian", as: :integer, class: "form-control", wrapper: :input_group %>
+  </div>
+  <div class="form-group">
+    <%= pf.input :population_island, label: "% Pacific Island", as: :integer, class: "form-control", wrapper: :input_group %>
+  </div>
+  <div class="form-group">
+    <%= pf.input :population_multi_racial, label: "% Multi-racial", as: :integer, class: "form-control", wrapper: :input_group %>
+  </div>
+  <div class="form-group">
+    <%= pf.input :population_other, label: "% Other", as: :integer, class: "form-control", wrapper: :input_group %>
+  </div>
+  <div class="form-group">
+    <%= pf.input :zips_served, label: "Zip Codes Served", class: "form-control", wrapper: :input_group %>
+  </div>
+
+  <h3 class="pt-3"><strong>Poverty Information of Those Served</strong></h3>
+
+  <div class="form-group">
+    <%= pf.input :at_fpl_or_below, label: "% At FPL or Below", as: :integer, class: "form-control", wrapper: :input_group %>
+  </div>
+  <div class="form-group">
+    <%= pf.input :above_1_2_times_fpl, label: "% Above 1-2 times FPL", as: :integer, class: "form-control", wrapper: :input_group %>
+  </div>
+  <div class="form-group">
+    <%= pf.input :greater_2_times_fpl, label: "% Greater than 2 times FPL", as: :integer, class: "form-control", wrapper: :input_group %>
+  </div>
+  <div class="form-group">
+    <%= pf.input :poverty_unknown, label: "% Poverty Unknown", as: :integer, class: "form-control", wrapper: :input_group %>
+  </div>
+<% end %>
