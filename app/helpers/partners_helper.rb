@@ -27,6 +27,20 @@ module PartnersHelper
     end
   end
 
+  # In step-wise editing of the partner profile, the partial name is used as the section header by default.
+  # This helper allows overriding the header with a custom display name if needed.
+  def partial_display_name(partial)
+    custom_names = {
+      'attached_documents' => 'Additional Documents'
+    }
+
+    custom_names[partial] || partial.humanize
+  end
+
+  def section_with_errors?(section, sections_with_errors = [])
+    sections_with_errors.include?(section)
+  end
+
   def partner_status_badge(partner)
     if partner.status == "approved"
       tag.span partner.display_status, class: %w(badge badge-pill badge-primary bg-primary float-right)
