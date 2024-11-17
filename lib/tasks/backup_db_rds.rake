@@ -1,10 +1,11 @@
 desc "Update the development db to what is being used in prod"
 task :backup_db_rds => :environment do
-  system("echo Performing dump of the database.")
+  logger = Logger.new(STDOUT)
+  logger.info("Performing dump of the database.")
 
   current_time = Time.current.strftime("%Y%m%d%H%M%S")
 
-  system("echo Copying of the database...")
+  logger.info("Copying the database...")
   backup_filename = "#{current_time}.rds.dump"
   system("PGPASSWORD='#{ENV["DIAPER_DB_PASSWORD"]}' pg_dump -Fc -v --host=#{ENV["DIAPER_DB_HOST"]} --username=#{ENV["DIAPER_DB_USERNAME"]} --dbname=#{ENV["DIAPER_DB_DATABASE"]} -f #{backup_filename}")
 
@@ -16,6 +17,6 @@ task :backup_db_rds => :environment do
     storage_access_key: account_key
   )
 
-  system("echo Uploading #{backup_filename}")
+  logger.info("Uploading #{backup_filename}")
   blob_client.create_block_blob("backups", backup_filename, File.read(backup_filename))
 end
