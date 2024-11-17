@@ -6,10 +6,9 @@ class RequestsTotalItemsService
   def calculate
     return unless requests
 
-    totals = {}
+    totals = Hash.new(0)
     item_requests.each do |item_request|
       name = item_name(item_request)
-      totals[name] ||= 0
       totals[name] += item_request.quantity.to_i
     end
 
