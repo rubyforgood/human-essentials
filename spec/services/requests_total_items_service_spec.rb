@@ -28,7 +28,7 @@ RSpec.describe RequestsTotalItemsService, type: :service do
           Flipper.enable(:enable_packs)
         end
 
-        it 'return the names of items correctly' do
+        it 'returns the names of items correctly' do
           expect(subject.keys).to eq(item_names + item_names.map { |k| "#{k} - bundles" })
         end
 
