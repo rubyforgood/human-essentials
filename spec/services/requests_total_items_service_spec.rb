@@ -4,7 +4,12 @@ RSpec.describe RequestsTotalItemsService, type: :service do
     subject { described_class.new(requests: requests).calculate }
 
     context 'when the request items is not blank' do
-      let(:sample_items) { create_list(:item, 3, :with_unit, organization: organization, unit: "bundle") }
+      let(:sample_items) do
+        create_list(:item, 3, :with_unit, organization: organization, unit: "bundle") do |item, n|
+          item.name = "item_name_#{n}"
+          item.save!
+        end
+      end
       let(:item_names) { sample_items.pluck(:name) }
       let(:item_ids) { sample_items.pluck(:id) }
       let(:requests) do
@@ -20,7 +25,11 @@ RSpec.describe RequestsTotalItemsService, type: :service do
       end
 
       it 'return the names of items correctly' do
-        expect(subject.keys).to eq(item_names)
+        expect(subject.keys).to eq([
+          "item_name_0",
+          "item_name_1",
+          "item_name_2"
+        ])
       end
 
       context 'when custom request units are specified and enabled' do
@@ -29,17 +38,24 @@ RSpec.describe RequestsTotalItemsService, type: :service do
         end
 
         it 'returns the names of items correctly' do
-          expect(subject.keys).to eq(item_names + item_names.map { |k| "#{k} - bundles" })
+          expect(subject.keys).to eq([
+            "item_name_0",
+            "item_name_1",
+            "item_name_2",
+            "item_name_0 - bundles",
+            "item_name_1 - bundles",
+            "item_name_2 - bundles"
+          ])
         end
 
         it 'returns items with correct quantities calculated' do
           expect(subject).to eq({
-            sample_items.first.name => 20,
-            sample_items.first.name + " - bundles" => 60,
-            sample_items.second.name => 20,
-            sample_items.second.name + " - bundles" => 60,
-            sample_items.third.name => 20,
-            sample_items.third.name + " - bundles" => 60
+            "item_name_0" => 20,
+            "item_name_0 - bundles" => 60,
+            "item_name_1" => 20,
+            "item_name_1 - bundles" => 60,
+            "item_name_2" => 20,
+            "item_name_2 - bundles" => 60
           })
         end
       end
