@@ -22,7 +22,8 @@ class HistoricalTrendService
         quantity = line_item.quantity
         next if quantity.zero?
 
-        if (existing_item = array_of_items.find { |item| item[:name] == name })
+        existing_item = array_of_items.find { |item| item[:name] == name }
+        if existing_item
           quantity_per_month = existing_item[:data]
           quantity_per_month[index] += quantity
         else
