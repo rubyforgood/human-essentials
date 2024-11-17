@@ -8,8 +8,7 @@ class RequestsTotalItemsService
 
     totals = Hash.new(0)
     item_requests.each do |item_request|
-      name = item_name(item_request)
-      totals[name] += item_request.quantity.to_i
+      totals[item_request.name_with_unit] += item_request.quantity.to_i
     end
 
     totals
@@ -21,13 +20,5 @@ class RequestsTotalItemsService
 
   def item_requests
     @item_requests ||= requests.flat_map(&:item_requests)
-  end
-
-  def item_name(item_request)
-    if Flipper.enabled?(:enable_packs) && item_request.request_unit.present?
-      "#{item_request.name} - #{item_request.request_unit.pluralize}"
-    else
-      item_request.name
-    end
   end
 end
