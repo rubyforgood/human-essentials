@@ -32,7 +32,7 @@ RSpec.describe RequestsTotalItemsService, type: :service do
           expect(subject.keys).to eq(item_names + item_names.map { |k| "#{k} - bundles" })
         end
 
-        it 'return items with correct quantities calculated' do
+        it 'returns items with correct quantities calculated' do
           expect(subject).to eq({
             sample_items.first.name => 20,
             sample_items.first.name + " - bundles" => 60,
