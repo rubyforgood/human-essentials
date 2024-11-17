@@ -1,6 +1,6 @@
-DRAFT USER GUIDE
+READY FOR REVIEW
 # Trends Reports
-The trends reports (one each for Distributions, Donations, and Purchases) give you a picture of the activity on any item over the last 12 months. 
+The trends reports (one each for Distributions, Donations, and Purchases) give you a picture of the activity on any Item over the last 12 months. 
 
 The examples below will use the Distributions - Trends report, but everything is basically the same for Donations- Trends and Purchases - Trends.
 
@@ -13,19 +13,19 @@ This will bring up a blank "Monthly" Distributions report, like so:
 
 ![Blank trends report](images/reports/reports_trends_1.png)
 
-To see the activity on a particular item, click on that item.   You can click on as many as you want -- if, for instance, you want compare the distributions of multiple sizes, you can do that -- but in general, fewer will be better.
+To see the activity on a particular Item, click on that Item.   You can click on as many as you want -- if, for instance, you want compare the Distributions of multiple sizes, you can do that -- but in general, fewer will be better.
 
 (Our test data only has very recent data in it, so you'll see more bars, unless of course, you are a brand new bank!)
 
 ![trends report with 2 items](images/reports/reports_trends_2.png)
 
-You can also hover over any month to see the numerical levels for the chosen items for that month.  
+You can also hover over any month to see the numerical levels for the chosen Items for that month.  
 
 ![trends report with breakout](images/reports/reports_trends_3.png)
 
-To clear the items - either click on them again,  or click "Deselect All"
+To clear the Items - either click on them again,  or click "Deselect All"
 
-You can click "Select All" to see *all* the items,  but that will produce a very busy visual.
+You can click "Select All" to see *all* the Items. That will produce a very busy visual, indeed.
 
 
 

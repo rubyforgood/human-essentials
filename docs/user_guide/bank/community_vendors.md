@@ -1,43 +1,40 @@
+READY FOR REVIEW
 # Vendors
 
-The vendors list lets you manage vendor contact information and view your purchases from each. To access it, click on "Vendors" under the "Community" section.
+The Vendors list lets you manage Vendor contact information and view your Purchases from each Vendor. To access it, click on "Vendors" under the "Community" section.
 
 ![Vendors](images/community/vendors/vendors_page.jpg)
 
-This page shows all previously entered vendors -- business name, contact name, phone, email, and total items -- and lets you view or edit them.
+This page shows all previously entered Vendors -- business name, contact name, phone, email, and total items -- and lets you view or edit them.
 
-## Adding vendors
+## Adding Vendors
 
-To add a new vendor, click on the "+ New Vendor" button, add their details including the business name, contact name, phone, email, and address.
+To add a new Vendor, click on the "+ New Vendor" button, add their details including the business name (mandatory), contact name, phone, email, and address.
 
-![New Vendor](images/community/vendors/new_vendor.jpg)
+![New Vendor Navigation](images/community/vendors/new_vendor.jpg)
 
-You must enter at least one of business name or contact name. We recommend that you enter the business name, as this is used when selecting the vendor on entering purchases.
+![Vendor informtiaon to be entered](images/community/vendors/add_vendor.jpg)
 
-![Add Vendor](images/community/vendors/add_vendor.jpg)
+After saving the Vendor's details there will be a new row in the Vendors page.
 
-After saving the vendor's details there will be a new row in the Vendors page.
+You can also add a new Vendor "on the fly" as you enter the Purchases, through the [New Purchase](essentials_purchases.md#entering-a-new-purchase) page.
 
-You can also add a new vendor "on the fly" as you enter the purchases, through the [New Purchase](essentials_purchases.md) page.
+## Viewing Vendor information
 
-[TODO: link to New Purchase section of essentials purchases] 
-
-## Viewing vendor information
-
-Click on "View" for more details about the vendor which also shows the date of each purchase, volume (total items in the purchase), and lets you view the full details of each purchase.
+Click on "View" for more details about the Vendor which also shows the date of each Purchase, volume (total items in the Purchase), and lets you view the full details of each Purchase.
 
 ![Vendor Details](images/community/vendors/vendor_details.jpg)
 
 ## Editing vendors
 
-Click the "Edit" button to edit the vendor's contact information.
+Click the "Edit" button to edit the Vendor's contact information.
 
 ![Edit Vendor Details](images/community/vendors/edit_vendors.jpg)
 
 ## Exporting vendors
 
-You can export all the vendors by clicking on the "Export Vendors" button.
-Currently we are only providing the vendors' contact information in the export.
+You can export all the Vendors by clicking on the "Export Vendors" button.
+Currently we are only providing the Vendors' contact information in the export.
 
 ![Export Vendors](images/community/vendors/export_vendors.jpg)
 
