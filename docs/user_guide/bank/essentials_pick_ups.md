@@ -7,7 +7,7 @@ Click on "Pick Ups & Deliveries" in the left-hand menu to view the calendar.
 
 ![PickUps & Delivery Calendar](images/essentials/pick_ups/pickup&delivery.jpg)
 
-Click on any scheduled Eistribution to view details on all the Eistributions for that day.
+Click on any scheduled Distribution to view details on all the Distributions for that day.
 The Distribution Schedule page shows details including the Partner,the time of Distribution, Storage Location, the total number of items, and the status of the Distribution.
 
 ![Specific Day Distribution](images/essentials/pick_ups/specific_day_distribution_schedule.jpg)
