@@ -60,13 +60,11 @@ RSpec.describe "Kit management", type: :system do
     find(:id, "_barcode-lookup-0").set(new_barcode).send_keys(:enter)
 
     within "#newBarcode" do
-      quantity_field = find("#barcode_item_quantity")
-      expect(quantity_field.value).to eq("")
-      quantity_field.set(quantity)
+      expect(page).to have_field("Quantity", with: "")
+      fill_in "Quantity", with: quantity
 
-      item_field = find("#barcode_item_barcodeable_id")
-      expect(item_field.value).to eq("")
-      select(Item.last.name, from: item_field[:id])
+      expect(page).to have_field("Item", with: "")
+      select(Item.last.name, from: "barcode_item[barcodeable_id]")
     end
 
     within ".modal-footer" do
