@@ -125,7 +125,7 @@ module ApplicationHelper
     current_organization.default_storage_location
   end
 
-  def set_default_location(source_object)
+  def default_location(source_object)
     current_organization.default_storage_location || source_object.storage_location_id.presence || current_organization.intake_location
   end
 end
