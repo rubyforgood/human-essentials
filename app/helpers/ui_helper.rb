@@ -14,7 +14,6 @@ module UiHelper
               add_dest_selector: container_selector,
               action: "click->form-input#addItem:prevent" },
       role: "button",
-      id: "__add_line_item",
       href: "javascript:void(0)"
     }
     content_tag :div do

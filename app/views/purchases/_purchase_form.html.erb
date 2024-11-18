@@ -86,7 +86,7 @@
       </div>
 
       <div class="row links justify-content-end">
-        <%= add_element_button "Add Another Item", container_selector: "#purchase_line_items" do %>
+        <%= add_element_button "Add Another Item", container_selector: "#purchase_line_items", id: "__add_line_item" do %>
           <%= render 'line_items/line_item_fields', form: f, object: LineItem.new %>
         <% end %>
       </div>
