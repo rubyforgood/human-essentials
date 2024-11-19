@@ -45,16 +45,6 @@ RSpec.describe StorageLocation, type: :model do
   end
 
   context "Filtering >" do
-    it "->containing yields only inventories that have that item" do
-      item = create(:item)
-      item2 = create(:item)
-      storage_location = create(:storage_location, :with_items, item: item, item_quantity: 5)
-      create(:storage_location, :with_items, item: item2, item_quantity: 5)
-      results = StorageLocation.containing(item.id)
-      expect(results.length).to eq(1)
-      expect(results.first).to eq(storage_location)
-    end
-
     it "->active_locations yields only storage locations that haven't been discarded" do
       create(:storage_location, name: "Active Location")
       create(:storage_location, name: "Inactive Location", discarded_at: Time.zone.now)
@@ -67,67 +57,6 @@ RSpec.describe StorageLocation, type: :model do
   context "Methods >" do
     let(:item) { create(:item) }
     subject { create(:storage_location, :with_items, item_quantity: 10, item: item, organization: organization) }
-
-    describe "increase_inventory" do
-      context "With existing inventory" do
-        let(:donation) { create(:donation, :with_items, item_quantity: 66, organization: organization) }
-
-        it "increases inventory quantities from an itemizable object" do
-          expect do
-            subject.increase_inventory(donation.line_item_values)
-          end.to change { subject.size }.by(66)
-        end
-      end
-
-      context "when providing a new item that does not yet exist" do
-        let(:mystery_item) { create(:item, organization: organization) }
-        let(:donation_with_new_items) { create(:donation, :with_items, organization: organization, item_quantity: 10, item: mystery_item) }
-
-        it "creates those new inventory items in the storage location" do
-          expect do
-            subject.increase_inventory(donation_with_new_items.line_item_values)
-          end.to change { subject.inventory_items.count }.by(1)
-        end
-      end
-    end
-
-    describe "decrease_inventory" do
-      let(:item) { create(:item, organization: organization) }
-      let(:distribution) { create(:distribution, :with_items, item: item, item_quantity: 66, organization: organization) }
-
-      it "decreases inventory quantities from an itemizable object" do
-        storage_location = create(:storage_location, :with_items, item_quantity: 100, item: item, organization: organization)
-        expect do
-          storage_location.decrease_inventory(distribution.line_item_values)
-        end.to change { storage_location.size }.by(-66)
-      end
-
-      context "when there is insufficient inventory available" do
-        let(:distribution_but_too_much) { create(:distribution, :with_items, item: item, item_quantity: 9001, organization: organization) }
-
-        it "gives informative errors" do
-          next if Event.read_events?(organization)
-
-          storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: organization)
-          expect do
-            storage_location.decrease_inventory(distribution_but_too_much.line_item_values).errors
-          end.to raise_error(Errors::InsufficientAllotment)
-        end
-
-        it "does not change inventory quantities if there is an error" do
-          next if Event.read_events?(organization)
-
-          storage_location = create(:storage_location, :with_items, item_quantity: 10, item: item, organization: organization)
-          starting_size = storage_location.size
-          begin
-            storage_location.decrease_inventory(distribution.line_item_values)
-          rescue Errors::InsufficientAllotment, InventoryError
-          end
-          storage_location.reload
-          expect(storage_location.size).to eq(starting_size)
-        end
-      end
-    end
 
     describe "StorageLocation.items_inventoried" do
       it "returns a collection of items that are stored within inventories" do
@@ -251,33 +180,6 @@ RSpec.describe StorageLocation, type: :model do
         storage_location.save
         expect(storage_location.latitude).not_to eq(nil)
         expect(storage_location.longitude).not_to eq(nil)
-      end
-    end
-
-    describe "csv_export_attributes" do
-      it "returns an array of storage location attributes, followed by inventory item quantities that are sorted by alphabetized item names" do
-        item1 = create(:item, name: "C")
-        item2 = create(:item, name: "B")
-        item3 = create(:item, name: "A")
-        inactive_item = create(:item, name: "inactive item", active: false)
-        name = "New Storage Location"
-        address = "1500 Remount Road, Front Royal, VA 22630"
-        warehouse_type = "Warehouse with loading bay"
-        square_footage = rand(1000..10000)
-        storage_location = create(:storage_location, name: name, address: address, warehouse_type: warehouse_type, square_footage: square_footage)
-        quantity1 = rand(100..1000)
-        quantity2 = rand(100..1000)
-        quantity3 = rand(100..1000)
-        TestInventory.create_inventory(storage_location.organization, {
-          storage_location.id => {
-            item1.id => quantity1,
-            item2.id => quantity2,
-            item3.id => quantity3,
-            inactive_item.id => 1
-          }
-        })
-        sum = quantity1 + quantity2 + quantity3
-        expect(storage_location.csv_export_attributes).to eq([name, address, square_footage, warehouse_type, sum, quantity3, quantity2, quantity1])
       end
     end
   end

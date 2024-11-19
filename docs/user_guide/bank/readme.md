@@ -1,6 +1,6 @@
-DRAFT USER GUIDE
+READY FOR REVIEW
 
-This user guide is meant for users of the human essentials app at essentials banks.  As of October 25, 2024, it is a work in progress.  If you are interested in helping out, please reach out to @cielf.
+This user guide is meant for users of Human Essentials at essentials banks.  As of November 2, 2024, it is a work in progress.  If you are interested in helping out, please reach out to @cielf.
 
 1. Introduction
    1. [Is Human Essentials right for you?](intro_i.md) (what we help with and what we don't)
@@ -64,6 +64,9 @@ This user guide is meant for users of the human essentials app at essentials ban
          2. [Distributions by county](reports_distribution_by_county.md)
          3. [Manufacturer donations](reports_manufacturers_donations.md)
          4. [Activity graph](reports_activity_graph.md)
+         5. [History](reports_history.md)
 8. [User management](user_management.md)
 9. [Account Management](account_management.md)
 10. [But I need to do something different!](asking_for_changes.md)
+11. Special Topics
+    1. [Custom Units](special_custom_units.md)
