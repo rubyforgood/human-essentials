@@ -148,9 +148,19 @@ RSpec.describe "Items", type: :request do
         }
       end
 
+      let(:categories) do
+        [
+          FactoryBot.create(:item_category, name: 'Apples', organization: organization),
+          FactoryBot.create(:item_category, name: 'Umbrella', organization: organization),
+          FactoryBot.create(:item_category, name: 'Bananas', organization: organization)
+        ]
+      end
+    
+      before do
+        categories  # Ensure categories are created before the request
+      end
+
       it "loads and displays the item categories when rendering new" do
-        # Create some item categories for the organization
-        item_categories = create_list(:item_category, 3, organization: organization)
 
         # Attempt to create an item with invalid parameters
         post items_path, params: invalid_item_params
@@ -162,7 +172,7 @@ RSpec.describe "Items", type: :request do
         expect(assigns(:item_categories)).to eq(organization.item_categories.order('name ASC'))
 
         # Verify the categories are included in the response body
-        item_categories.each do |category|
+        categories.each do |category|
           expect(response.body).to include("<option value=\"#{category.id}\">#{category.name}</option>")
         end
       end
