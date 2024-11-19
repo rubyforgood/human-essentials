@@ -142,13 +142,23 @@ module Partners
       # their allocation actually is
       total = client_share_total
       if total != 0 && total != 100
-        errors.add(:base, "Total client share must be 0 or 100")
+        if Flipper.enabled?("partner_step_form")
+          # need to set errors on specific fields within the form so that it can be mapped to a section
+          errors.add(:client_share, "Total client share must be 0 or 100")
+        else
+          errors.add(:base, "Total client share must be 0 or 100")
+        end
       end
     end
 
     def has_at_least_one_request_setting
       if !(enable_child_based_requests || enable_individual_requests || enable_quantity_based_requests)
-        errors.add(:base, "At least one request type must be set")
+        if Flipper.enabled?("partner_step_form")
+          # need to set errors on specific fields within the form so that it can be mapped to a section
+          errors.add(:enable_child_based_requests, "At least one request type must be set")
+        else
+          errors.add(:base, "At least one request type must be set")
+        end
       end
     end
 
