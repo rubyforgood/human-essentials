@@ -8,29 +8,6 @@ RSpec.describe DistributionsController, type: :controller do
       sign_in(user)
     end
 
-    describe "GET #index" do
-      let(:params) do
-        {
-          filters: {
-            by_item_id: 1,
-            by_item_category_id: 1,
-            by_partner: 1,
-            by_state: "NY",
-            by_location: 1,
-            date_range: "July 1, 1919 - July 31, 2020"
-          }
-        }
-      end
-
-      before { get :index, params: params }
-
-      it do
-        should permit(:by_item_id, :by_item_category_id, :by_partner, :by_state, :by_location, :date_range)
-          .for(:index, verb: :get, params: params)
-          .on(:filters)
-      end
-    end
-
     describe "POST #create" do
       context "when distribution causes inventory quantity to be below minimum quantity" do
         let(:item) { create(:item, name: "Item 1", organization: organization, on_hand_minimum_quantity: 5) }

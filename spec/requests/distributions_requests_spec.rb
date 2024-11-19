@@ -70,6 +70,23 @@ RSpec.describe "Distributions", type: :request do
         expect(response).to be_successful
       end
 
+      it "permits valid filter params" do
+        params = {
+          filters: {
+            by_item_id: 1,
+            by_item_category_id: 1,
+            by_partner: 1,
+            by_state: "NY",
+            by_location: 1,
+            date_range: "July 1, 1919 - July 31, 2020"
+          }
+        }
+
+        assert_not_logged("Unpermitted parameter") do
+          get distributions_path, params: params
+        end
+      end
+
       it "sums distribution totals accurately" do
         create(:distribution, :with_items, item_quantity: 5, organization: organization)
         create(:line_item, :distribution, itemizable_id: distribution.id, quantity: 7)
