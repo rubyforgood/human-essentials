@@ -23,8 +23,9 @@ class StorageLocationsController < ApplicationController
       @storage_locations = @storage_locations.class_filter(filter_params)
     end
 
-    @storage_locations = @storage_locations.kept unless @include_inactive_storage_locations
-    @inventory_item_totals = @storage_locations.to_h { |loc| [loc.id, @inventory.quantity_for(storage_location: loc.id)] }
+    unless @include_inactive_storage_locations
+      @storage_locations = @storage_locations.kept
+    end
 
     respond_to do |format|
       format.html
