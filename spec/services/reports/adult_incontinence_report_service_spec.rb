@@ -14,7 +14,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
                                       "Adults Assisted Per Month" => 0,
                                       "% adult incontinence bought" => "0%",
                                       "% adult incontinence supplies donated" => "0%",
-                                      "Adult incontinence supplies distributed" => "0", # rubocop:disable Lint/DuplicateHashKey
+                                      "Adult incontinence supplies distributed" => "0",
                                       "Adult incontinence supplies per adult per month" => 0,
                                       "Money spent purchasing adult incontinence supplies" => "$0.00"
                                   }))
@@ -42,6 +42,14 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
         adult_incontinence_item = organization.items.adult_incontinence.first
         non_adult_incontinence_item = organization.items.where.not(id: organization.items.adult_incontinence).first
 
+      # kits
+        kit = create(:kit, organization: organization)
+
+        create(:base_item, name: "Adult Pads", partner_key: "adult pads", category: "adult pads")
+        create(:base_item, name: "Adult wipes", partner_key: "adult wipes", category: "adult wipes")
+
+        adult_kit_item_1 = create(:item, name: "Adult Pads", partner_key: "adult pads", kit: kit)
+        adult_kit_item_2 = create(:item, name: "Adult Wipes", partner_key: "adult wipes", kit: kit)
         # We will create data both within and outside our date range, and both adult_incontinence and non adult_incontinence.
         # Spec will ensure that only the required data is included.
 
@@ -52,6 +60,12 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
           create_list(:line_item, 5, :distribution, quantity: 200, item: adult_incontinence_item, itemizable: dist)
           create_list(:line_item, 5, :distribution, quantity: 30, item: non_adult_incontinence_item, itemizable: dist)
         end
+
+        kit_distribution_1 = create(:distribution, organization: organization, issued_at: within_time)
+        kit_distribution_2 = create(:distribution, organization: organization, issued_at: within_time)
+
+        create(:line_item, :distribution, quantity: 10, item: adult_kit_item_1, itemizable: kit_distribution_1)
+        create(:line_item, :distribution, quantity: 10, item: adult_kit_item_2, itemizable: kit_distribution_2)
 
         # Donations
         donations = create_list(:donation, 2,
@@ -104,8 +118,9 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
         expect(report.report[:entries]).to match(hash_including({
                                           "% adult incontinence bought" => "60%",
                                           "% adult incontinence supplies donated" => "40%",
-                                          "Adult incontinence supplies distributed" => "2,000",
-                                          "Adult incontinence supplies per adult per month" => 20,
+                                          "Adults Assisted Per Month" => 8,
+                                          "Adult incontinence supplies distributed" => "2,040",
+                                          "Adult incontinence supplies per adult per month" => 3,
                                           "Money spent purchasing adult incontinence supplies" => "$30.00"
                                         }))
         expect(report.report[:entries]['Adult incontinence supplies'].split(', '))
@@ -119,7 +134,8 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
                              "Adult Incontinence Pads",
                              "Underpads (Pack)",
                              "Adult Liners",
-                             "Wipes (Adult)")
+                             "Wipes (Adult)",
+                             "1T Diapers") #item auto generated with the creation of a kit
       end
 
       it 'should handle null distribution quantity' do
@@ -127,8 +143,9 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
         expect(report.report[:entries]).to match(hash_including({
                                           "% adult incontinence bought" => "60%",
                                           "% adult incontinence supplies donated" => "40%",
-                                          "Adult incontinence supplies distributed" => "2,000",
-                                          "Adult incontinence supplies per adult per month" => 50,
+                                          "Adult incontinence supplies distributed" => "2,040",
+                                          "Adults Assisted Per Month" => 3,
+                                          "Adult incontinence supplies per adult per month" => 16,
                                           "Money spent purchasing adult incontinence supplies" => "$30.00"
                                       }))
         expect(report.report[:entries]['Adult incontinence supplies'].split(', '))
@@ -142,7 +159,8 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
                              "Adult Incontinence Pads",
                              "Underpads (Pack)",
                              "Adult Liners",
-                             "Wipes (Adult)")
+                             "Wipes (Adult)",
+                             "2T Diapers") #item auto generated with the creation of a kit
       end
     end
   end

@@ -56,6 +56,7 @@ module Reports
     end
 
     def types_of_supplies
+      # require 'pry'; binding.pry
       organization.items.adult_incontinence.map(&:name).uniq.sort.join(', ')
     end
 
@@ -129,10 +130,10 @@ module Reports
     end
 
     def adults_served_per_month
-      total_people_served_with_loose_supplies + total_people_served_with_supplies_from_kits
+      total_people_served_with_loose_supplies_per_month + total_people_served_with_supplies_from_kits_per_month
     end
 
-    def total_people_served_with_loose_supplies
+    def total_people_served_with_loose_supplies_per_month
       organization
         .distributions
         .for_year(year)
@@ -141,7 +142,7 @@ module Reports
         .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50)') / 12
     end
 
-    def total_people_served_with_supplies_from_kits
+    def total_people_served_with_supplies_from_kits_per_month
       organization
       .distributions.for_year(year)
       .joins(line_items: {item: :kit})
