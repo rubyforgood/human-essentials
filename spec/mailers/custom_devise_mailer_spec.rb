@@ -32,7 +32,8 @@ RSpec.describe CustomDeviseMailer, type: :mailer do
     end
 
     context "when user is invited" do
-      let(:user) { create(:user) }
+      let(:invitation_sent_at) { Time.zone.now }
+      let(:user) { create(:user, invitation_sent_at: invitation_sent_at) }
 
       it "invites to user" do
         expect(mail.subject).to eq("Your Human Essentials App Account Approval")
@@ -40,7 +41,7 @@ RSpec.describe CustomDeviseMailer, type: :mailer do
       end
 
       it "has invite expiration message" do
-        expect(mail.html_part.body).to include("For security reasons these invitations expire. This invitation will expire in 8 hours or if a new password reset is triggered.")
+        expect(mail.html_part.body).to include("This invitation will be due in #{user.invitation_due_at.strftime("%B %d, %Y %I:%M %p")} GMT.")
       end
     end
   end
