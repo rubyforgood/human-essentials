@@ -84,4 +84,32 @@ RSpec.describe LowInventoryQuery do
       })
     }
   end
+
+  context "when items are in multiple storage locations" do
+    let(:recommended_quantity) { 300 }
+    let(:secondary_storage_location) { create :storage_location, organization: organization }
+    let!(:secondary_purchase) {
+      create :purchase,
+        :with_items,
+        organization: organization,
+        storage_location: secondary_storage_location,
+        item: item,
+        item_quantity: inventory_item_quantity,
+        issued_at: Time.current
+    }
+
+    it {
+      expect(subject.count).to eq 1
+    }
+
+    it {
+      is_expected.to include({
+        id: item.id,
+        name: item.name,
+        on_hand_minimum_quantity: 0,
+        on_hand_recommended_quantity: 300,
+        total_quantity: 200
+      })
+    }
+  end
 end
