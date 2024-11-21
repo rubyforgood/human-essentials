@@ -3,7 +3,7 @@ import $ from 'jquery';
 // Place all the behaviors and hooks related to the matching controller here.
 // All this logic will automatically be available in application.js.
 
-function new_option(item, selected) {
+function newOption(item, selected) {
   if (selected == null) {
     selected = false;
   }
@@ -23,7 +23,7 @@ function new_option(item, selected) {
   return content;
 };
 
-function populate_dropdowns(objects, inventory) {
+function populateDropdowns(objects, inventory) {
   objects.each(function(_, element) {
     const selected = Number(
       $(element)
@@ -33,7 +33,7 @@ function populate_dropdowns(objects, inventory) {
     let options = "";
     $.each(inventory, function(index) {
       const item_id = Number(inventory[index].item_id);
-      options += new_option(inventory[index], selected === item_id);
+      options += newOption(inventory[index], selected === item_id);
     });
     $(element)
       .find("option")
@@ -43,29 +43,26 @@ function populate_dropdowns(objects, inventory) {
   });
 }
 
-function request_storage_location_and_populate_item(item_to_populate) {
-  const control = $("select.storage-location-source");
-  if (control.length > 0 && control.val() !== "") {
-    return $.ajax({
-      url: control
-        .data("storage-location-inventory-path")
-        .replace(":id", control.val()),
-      dataType: "json",
-      success(data) {
-        return populate_dropdowns($(item_to_populate), data);
-      }
-    });
-  }
-};
+function fetchDropdownOptions(control) {
+  return $.ajax({
+    url: control
+      .data("storage-location-inventory-path")
+      .replace(":id", control.val()),
+    dataType: "json",
+    success(data) {
+      return data
+    }
+  });
+}
 
 $(function() {
   let control = $("select.storage-location-source");
+  let dropdownOptions = {};
   const storage_location_required =
     $("form.storage-location-required").length > 0;
-  const default_item = $(".line-item-fields select");
 
+  // store and populate item dropdown options when storage location is chosen
   $(document).on("change", "select.storage-location-source", function() {
-    const default_item = $(".line-item-fields select");
     control = $("select.storage-location-source");
     if (storage_location_required && !control.val()) {
       $("#__add_line_item").addClass("disabled");
@@ -74,28 +71,25 @@ $(function() {
       $("#__add_line_item").removeClass("disabled");
     }
 
-    request_storage_location_and_populate_item(default_item);
+    if (control.length > 0 && control.val() !== "") {
+      fetchDropdownOptions(control)
+        .then((data) => {
+          dropdownOptions = data;
+          populateDropdowns($(".line-item-fields select"), dropdownOptions);
+        });
+    }
   });
 
+  // Populate newly added item fields with stored dropdown options
   $(document).on(
     "form-input-after-insert",
     "form.storage-location-required",
     function(e) {
       const insertedItem = $(e.detail);
-      request_storage_location_and_populate_item($("select", insertedItem));
+      populateDropdowns($("select", insertedItem), dropdownOptions);
       insertedItem
         .find("input.__barcode_item_lookup")
         .attr("id", `_barcode-lookup-${$(".nested-fields").length - 1}`);
-      control = $("select.storage-location-source");
-      $.ajax({
-        url: control
-          .data("storage-location-inventory-path")
-          .replace(":id", control.val()),
-        dataType: "json",
-        success(data) {
-          return populate_dropdowns($("select", insertedItem), data);
-        }
-      });
     }
   );
 
@@ -103,7 +97,19 @@ $(function() {
     if (storage_location_required && !control.val()) {
       $("#__add_line_item").addClass("disabled");
     }
+  });
 
-    request_storage_location_and_populate_item(default_item);
+  // Workaround for when a user opens a select2 dropdown and then an ajax
+  // request changes the dropdown options while it is opened. In this case,
+  // when an option is selected, we reselect that option in the new list
+  // if the option exists in the new list of dropdown options.
+  $("select.line_item_name").on('select2:select', function (e) {
+    const selectedOption = e.params.data.id;
+
+    $(e.target)
+      .has(`option[value=${selectedOption}]`)
+      .select2()
+      .val(selectedOption)
+      .trigger('change');
   });
 });
