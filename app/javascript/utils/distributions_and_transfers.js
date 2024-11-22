@@ -23,6 +23,13 @@ function newOption(item, selected) {
   return content;
 };
 
+// Workaround to refresh item dropdown results for select2.
+function rerenderDropdown(element) {
+  const oldScrollTop = element.data('select2').$results.scrollTop();
+  element.select2('close').select2('open');
+  element.data('select2').$results.scrollTop(oldScrollTop);
+}
+
 function populateDropdowns(objects, inventory) {
   objects.each(function(_, element) {
     const selected = Number(
@@ -40,6 +47,11 @@ function populateDropdowns(objects, inventory) {
       .remove()
       .end()
       .append(options);
+    // If this select element is currently open, the option list is
+    // now stale and needs to be refreshed.
+    if ($(element).data('select2')?.isOpen()) {
+      rerenderDropdown($(element))
+    }
   });
 }
 
@@ -86,10 +98,10 @@ $(function() {
     "form.storage-location-required",
     function(e) {
       const insertedItem = $(e.detail);
-      populateDropdowns($("select", insertedItem), dropdownOptions);
       insertedItem
         .find("input.__barcode_item_lookup")
         .attr("id", `_barcode-lookup-${$(".nested-fields").length - 1}`);
+      populateDropdowns($("select", insertedItem), dropdownOptions);
     }
   );
 
@@ -97,19 +109,15 @@ $(function() {
     if (storage_location_required && !control.val()) {
       $("#__add_line_item").addClass("disabled");
     }
-  });
 
-  // Workaround for when a user opens a select2 dropdown and then an ajax
-  // request changes the dropdown options while it is opened. In this case,
-  // when an option is selected, we reselect that option in the new list
-  // if the option exists in the new list of dropdown options.
-  $("select.line_item_name").on('select2:select', function (e) {
-    const selectedOption = e.params.data.id;
-
-    $(e.target)
-      .has(`option[value=${selectedOption}]`)
-      .select2()
-      .val(selectedOption)
-      .trigger('change');
+    // If on page load, a storage location has been selected,
+    // fetch inventory and populate dropdown options.
+    if (control.length > 0 && control.val() !== "") {
+      fetchDropdownOptions(control)
+        .then((data) => {
+          dropdownOptions = data;
+          populateDropdowns($(".line-item-fields select"), dropdownOptions);
+        });
+    }
   });
 });
