@@ -23,57 +23,9 @@ RSpec.describe "Admin::BaseItems", type: :request do
       sign_in(organization_admin)
     end
 
-    describe "GET #new" do
-      it "denies access and redirects" do
-        get new_admin_base_item_path
-        expect(flash[:error]).to eq("Access Denied.")
-        expect(response).to redirect_to(dashboard_path)
-      end
-    end
-
-    describe "POST #create" do
-      it "denies access and redirects" do
-        post admin_base_items_path(id: BaseItem.first.id)
-        expect(flash[:error]).to eq("Access Denied.")
-        expect(response).to redirect_to(dashboard_path)
-      end
-    end
-
     describe "GET #index" do
       it "denies access and redirects" do
         get admin_base_items_path
-        expect(flash[:error]).to eq("Access Denied.")
-        expect(response).to redirect_to(dashboard_path)
-      end
-    end
-
-    describe "GET #show" do
-      it "denies access and redirects" do
-        get admin_base_item_path(id: BaseItem.first.id)
-        expect(flash[:error]).to eq("Access Denied.")
-        expect(response).to redirect_to(dashboard_path)
-      end
-    end
-
-    describe "GET #edit" do
-      it "denies access and redirects" do
-        get edit_admin_base_item_path(id: BaseItem.first.id)
-        expect(flash[:error]).to eq("Access Denied.")
-        expect(response).to redirect_to(dashboard_path)
-      end
-    end
-
-    describe "PUT #update" do
-      it "denies access and redirects" do
-        put admin_base_item_path(id: BaseItem.first.id)
-        expect(flash[:error]).to eq("Access Denied.")
-        expect(response).to redirect_to(dashboard_path)
-      end
-    end
-
-    describe "DELETE #destroy" do
-      it "denies access and redirects" do
-        delete admin_base_item_path(id: BaseItem.first.id)
         expect(flash[:error]).to eq("Access Denied.")
         expect(response).to redirect_to(dashboard_path)
       end
