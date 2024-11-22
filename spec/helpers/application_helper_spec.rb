@@ -146,7 +146,7 @@ RSpec.describe ApplicationHelper, type: :helper do
 
     context "returns storage_location_id if present" do
       let(:purchase) { build(:purchase, storage_location_id: 2) }
-      subject { helper.set_default_location(purchase) }
+      subject { helper.default_location(purchase) }
 
       it { is_expected.to eq(2) }
     end
@@ -159,7 +159,7 @@ RSpec.describe ApplicationHelper, type: :helper do
         allow(helper).to receive(:current_organization).and_return(organization)
       end
 
-      subject { helper.set_default_location(purchase) }
+      subject { helper.default_location(purchase) }
 
       it { is_expected.to eq(1) }
     end
