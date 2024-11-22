@@ -70,6 +70,16 @@ sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization
 end
 Organization.seed_items(sf_org)
 
+sc_org = Organization.find_or_create_by!(short_name: "sc_bank") do |organization|
+  organization.name    = "Second City Essentials Bank"
+  organization.street  = "P.O. Box 12345"
+  organization.city    = "Second City"
+  organization.state   = "IL"
+  organization.zipcode = "60614"
+  organization.email   = "info@scdiaperbank.org"
+end
+Organization.seed_items(sc_org)
+
 # At least one of the items is marked as inactive
 Organization.all.each do |org|
   org.items.order(created_at: :desc).last.update(active: false)
@@ -153,8 +163,10 @@ end
   { email: 'superadmin@example.com', organization_admin: false, super_admin: true },
   { email: 'org_admin1@example.com', organization_admin: true,  organization: pdx_org },
   { email: 'org_admin2@example.com', organization_admin: true,  organization: sf_org },
+  { email: 'second_city_admin@example.com', organization_admin: true,  organization: sf_org },
   { email: 'user_1@example.com',     organization_admin: false, organization: pdx_org },
   { email: 'user_2@example.com',     organization_admin: false, organization: sf_org },
+  { email: 'user_3@example.com',     organization_admin: false, organization: sc_org },
   { email: 'test@example.com',       organization_admin: false, organization: pdx_org, super_admin: true },
   { email: 'test2@example.com',      organization_admin: true,  organization: pdx_org }
 ].each do |user_data|
@@ -237,6 +249,13 @@ note = [
     name: "Second Street Community Outreach",
     status: :approved,
     email: "approved_2@example.com",
+    notes: note.sample
+  },
+  {
+    name: "Second City Senior Center",
+    email: "second_city_senior_center@example.com",
+    status: :approved,
+    quota: 500,
     notes: note.sample
   }
 ].each do |partner_option|
