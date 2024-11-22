@@ -222,15 +222,6 @@ RSpec.describe Item, type: :model do
   end
 
   context "Methods >" do
-    describe "storage_locations_containing" do
-      it "retrieves all storage locations that contain an item" do
-        item = create(:item)
-        storage_location = create(:storage_location, :with_items, item: item, item_quantity: 12)
-        create(:storage_location)
-        expect(Item.storage_locations_containing(item).first).to eq(storage_location)
-      end
-    end
-
     describe "barcodes_for" do
       it "retrieves all BarcodeItems associated with an item" do
         item = create(:item)
@@ -331,6 +322,16 @@ RSpec.describe Item, type: :model do
         before do
           item.barcode_count = 10
         end
+        it "should return false" do
+          expect(item.can_delete?).to eq(false)
+        end
+      end
+
+      context "in a request" do
+        before do
+          create(:request, request_items: [{"item_id" => item.id, "quantity" => 5}])
+        end
+
         it "should return false" do
           expect(item.can_delete?).to eq(false)
         end

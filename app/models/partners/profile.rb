@@ -142,13 +142,23 @@ module Partners
       # their allocation actually is
       total = client_share_total
       if total != 0 && total != 100
-        errors.add(:base, "Total client share must be 0 or 100")
+        if Flipper.enabled?("partner_step_form")
+          # need to set errors on specific fields within the form so that it can be mapped to a section
+          errors.add(:client_share, "Total client share must be 0 or 100")
+        else
+          errors.add(:base, "Total client share must be 0 or 100")
+        end
       end
     end
 
     def has_at_least_one_request_setting
       if !(enable_child_based_requests || enable_individual_requests || enable_quantity_based_requests)
-        errors.add(:base, "At least one request type must be set")
+        if Flipper.enabled?("partner_step_form")
+          # need to set errors on specific fields within the form so that it can be mapped to a section
+          errors.add(:enable_child_based_requests, "At least one request type must be set")
+        else
+          errors.add(:base, "At least one request type must be set")
+        end
       end
     end
 
@@ -158,14 +168,14 @@ module Partners
 
       emails = split_pick_up_emails
       if emails.size > 3
-        errors.add(:pick_up_email, "There can't be more than three pick up email addresses.")
+        errors.add(:pick_up_email, "can't have more than three email addresses")
         nil
       end
       if emails.uniq.size != emails.size
-        errors.add(:pick_up_email, "There should not be repeated email addresses.")
+        errors.add(:pick_up_email, "should not have repeated email addresses")
       end
       emails.each do |e|
-        errors.add(:pick_up_email, "Invalid email address for '#{e}'.") unless e.match? URI::MailTo::EMAIL_REGEXP
+        errors.add(:pick_up_email, "is invalid") unless e.match? URI::MailTo::EMAIL_REGEXP
       end
     end
   end

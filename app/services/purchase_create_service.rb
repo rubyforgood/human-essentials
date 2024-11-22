@@ -5,7 +5,6 @@ class PurchaseCreateService
         unless purchase.save
           raise purchase.errors.full_messages.join("\n")
         end
-        purchase.storage_location.increase_inventory(purchase.line_item_values)
         PurchaseEvent.publish(purchase)
       end
     end

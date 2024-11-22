@@ -12,8 +12,7 @@ class ReportsController < ApplicationController
   end
 
   def purchases_summary
-    @purchases = current_organization.purchases.during(helpers.selected_range)
-    @recent_purchases = @purchases.recent.includes(:vendor)
+    @summary_struct = Purchase.organization_summary_by_dates(current_organization, helpers.selected_range)
   end
 
   def product_drives_summary
