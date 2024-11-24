@@ -3,55 +3,26 @@ import $ from 'jquery';
 // Place all the behaviors and hooks related to the matching controller here.
 // All this logic will automatically be available in application.js.
 
-function newOption(item, selected) {
-  if (selected == null) {
-    selected = false;
-  }
-  let content = `<option value="${item.item_id}"`;
-  if (selected) {
-    content += " selected";
-  }
-  content += ">";
-  content += item.item_name;
-  if (
-    $("select.storage-location-source").attr("id") !==
-    "audit_storage_location_id"
-  ) {
-    content += ` (${item.quantity})`;
-  }
-  content += "</option>\n";
-  return content;
+function newOption(item, selectedValue, includeQuantity) {
+  const text = includeQuantity ? item.item_name + ` (${item.quantity})` : item.item_name;
+  const value = Number(item.item_id);
+  const isSelected = selectedValue === value;
+  return new Option(text, value, isSelected, isSelected);
 };
 
-// Workaround to refresh item dropdown results for select2.
-function rerenderDropdown(element) {
-  const oldScrollTop = element.data('select2').$results.scrollTop();
-  element.select2('close').select2('open');
-  element.data('select2').$results.scrollTop(oldScrollTop);
-}
-
 function populateDropdowns(objects, inventory) {
+  const includeQuantity = $("select.storage-location-source").attr("id") !== "audit_storage_location_id";
+
   objects.each(function(_, element) {
-    const selected = Number(
+    const selectedValue = Number(
       $(element)
         .find(":selected")
         .val()
     );
-    let options = "";
-    $.each(inventory, function(index) {
-      const item_id = Number(inventory[index].item_id);
-      options += newOption(inventory[index], selected === item_id);
-    });
+    const options = inventory.map(item => newOption(item, selectedValue, includeQuantity));
     $(element)
-      .find("option")
-      .remove()
-      .end()
+      .empty()
       .append(options);
-    // If this select element is currently open, the option list is
-    // now stale and needs to be refreshed.
-    if ($(element).data('select2')?.isOpen()) {
-      rerenderDropdown($(element))
-    }
   });
 }
 
@@ -62,14 +33,24 @@ function fetchDropdownOptions(control) {
       .replace(":id", control.val()),
     dataType: "json",
     success(data) {
-      return data
+      return data;
     }
   });
 }
 
+function fetchAndPopulateDropdownOptions(control) {
+  if (control.length > 0 && control.val() !== "") {
+    return fetchDropdownOptions(control)
+      .then((data) => {
+        populateDropdowns($(".line-item-fields select"), data);
+        return data;
+      });
+  }
+}
+
 $(function() {
   let control = $("select.storage-location-source");
-  let dropdownOptions = {};
+  let dropdownOptions;
   const storage_location_required =
     $("form.storage-location-required").length > 0;
 
@@ -83,13 +64,9 @@ $(function() {
       $("#__add_line_item").removeClass("disabled");
     }
 
-    if (control.length > 0 && control.val() !== "") {
-      fetchDropdownOptions(control)
-        .then((data) => {
-          dropdownOptions = data;
-          populateDropdowns($(".line-item-fields select"), dropdownOptions);
-        });
-    }
+    fetchAndPopulateDropdownOptions(control)?.then(data => {
+      dropdownOptions = data;
+    });
   });
 
   // Populate newly added item fields with stored dropdown options
@@ -101,7 +78,9 @@ $(function() {
       insertedItem
         .find("input.__barcode_item_lookup")
         .attr("id", `_barcode-lookup-${$(".nested-fields").length - 1}`);
-      populateDropdowns($("select", insertedItem), dropdownOptions);
+      if (dropdownOptions) {
+        populateDropdowns($("select", insertedItem), dropdownOptions);
+      }
     }
   );
 
@@ -110,14 +89,24 @@ $(function() {
       $("#__add_line_item").addClass("disabled");
     }
 
-    // If on page load, a storage location has been selected,
-    // fetch inventory and populate dropdown options.
-    if (control.length > 0 && control.val() !== "") {
-      fetchDropdownOptions(control)
-        .then((data) => {
-          dropdownOptions = data;
-          populateDropdowns($(".line-item-fields select"), dropdownOptions);
-        });
-    }
+    // If on page load a storage location has been selected, fetch inventory
+    // and populate dropdown options.
+    fetchAndPopulateDropdownOptions(control)?.then(data => {
+      dropdownOptions = data;
+    });
+  });
+
+  // Workaround for when a user opens a select2 dropdown and then an ajax
+  // request changes the dropdown options while it is opened. In this case,
+  // when an option is selected, we reselect that option in the new list
+  // if the option exists in the new list of dropdown options.
+  $("select.line_item_name").on('select2:select', function (e) {
+    const selectedOption = e.params.data.id;
+
+    $(e.target)
+      .has(`option[value=${selectedOption}]`)
+      .select2()
+      .val(selectedOption)
+      .trigger('change');
   });
 });
