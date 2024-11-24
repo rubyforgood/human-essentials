@@ -7,6 +7,7 @@ class ReminderDeadlineJob < ApplicationJob
 
   def perform
     remind_these_partners = Partners::FetchPartnersToRemindNowService.new.fetch
+    Rails.logger.info("Partners to remind: #{remind_these_partners.map(&:id)}")
 
     remind_these_partners.each do |partner|
       ReminderDeadlineMailer.notify_deadline(partner).deliver_later

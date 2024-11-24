@@ -1,8 +1,6 @@
-DRAFT USER GUIDE
+READY FOR REVIEW
 
-This page is a work in progress until we are all done.
-
-# Some up front things to think about
+# Some Things to Think about before Getting Started
 
 Human Essentials is designed to help you manage your inventory and your relationship with partners, while also providing at least some information to help with your grant writing.
 
