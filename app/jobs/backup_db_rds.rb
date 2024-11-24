@@ -1,7 +1,7 @@
 # to be called from Clock
 module BackupDbRds
   def run
-    logger = Logger.new(STDOUT)
+    logger = Logger.new($stdout)
     logger.info("Performing dump of the database.")
 
     current_time = Time.current.strftime("%Y%m%d%H%M%S")
@@ -20,6 +20,5 @@ module BackupDbRds
 
     logger.info("Uploading #{backup_filename}")
     blob_client.create_block_blob("backups", backup_filename, File.read(backup_filename))
-
   end
 end
