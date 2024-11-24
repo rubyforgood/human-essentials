@@ -34,8 +34,7 @@ module Clockwork
     BackupDbRds.run
   end
 
-  every(1.day, "Send reminder emails", at: "12:00", if: lambda { |_| Rails.env.production?}) do
+  every(1.day, "Send reminder emails", at: "12:00", if: lambda { |_| Rails.env.production? }) do
     ReminderDeadlineJob.perform_now
   end
-
 end
