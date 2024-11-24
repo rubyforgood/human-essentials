@@ -11,6 +11,8 @@ function newOption(item, selectedValue, includeQuantity) {
 };
 
 function populateDropdowns(objects, inventory) {
+  if (!inventory) return;
+
   const includeQuantity = $("select.storage-location-source").attr("id") !== "audit_storage_location_id";
 
   objects.each(function(_, element) {
@@ -75,12 +77,10 @@ $(function() {
     "form.storage-location-required",
     function(e) {
       const insertedItem = $(e.detail);
+      populateDropdowns($("select", insertedItem), dropdownOptions);
       insertedItem
         .find("input.__barcode_item_lookup")
         .attr("id", `_barcode-lookup-${$(".nested-fields").length - 1}`);
-      if (dropdownOptions) {
-        populateDropdowns($("select", insertedItem), dropdownOptions);
-      }
     }
   );
 
