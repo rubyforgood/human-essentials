@@ -1,6 +1,6 @@
 # to be called from Clock
 module BackupDbRds
-  def run
+  def self.run
     logger = Logger.new($stdout)
     logger.info("Performing dump of the database.")
 
