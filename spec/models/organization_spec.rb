@@ -302,6 +302,17 @@ RSpec.describe Organization, type: :model do
     end
   end
 
+  describe "#seed_random_item_with_name" do
+    it "adds an item with the given name" do
+      base_item = create(:base_item, name: "Foo", partner_key: "foo").to_h
+      expect do
+        expect( organization.items.find_by(name: "NotFoo", partner_key: "foo") ).to be_nil
+        organization.seed_random_item_with_name( "NotFoo" )
+        expect( organization.items.find_by(name: "NotFoo", partner_key: "foo") ).to_not be_nil
+      end.to change { organization.items.size }.by(1)
+    end
+  end
+
   describe "#short_name" do
     it "can only contain valid characters" do
       expect(build(:organization, short_name: "asdf")).to be_valid
