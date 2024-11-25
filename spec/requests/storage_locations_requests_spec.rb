@@ -9,7 +9,12 @@ RSpec.describe "StorageLocations", type: :request do
     end
 
     describe "GET #index" do
-      before { create(:storage_location, name: "Test Storage Location", address: "123 Donation Site Way", warehouse_type: StorageLocation::WAREHOUSE_TYPES.first) }
+      let!(:storage_location) do
+        create(:storage_location,
+          name: "Test Storage Location",
+          address: "123 Donation Site Way",
+          warehouse_type: StorageLocation::WAREHOUSE_TYPES.first)
+      end
 
       context "html" do
         let(:response_format) { 'html' }
@@ -32,6 +37,29 @@ RSpec.describe "StorageLocations", type: :request do
               get storage_locations_path(include_inactive_storage_locations: "1", format: response_format)
               expect(response.body).to include(discarded_storage_location.name)
             end
+          end
+        end
+
+        context "with empty storage location" do
+          it "shows a deactivate button" do
+            get storage_locations_path(format: response_format)
+            page = Nokogiri::HTML(response.body)
+            deactivate_link = page.at_css("a[href='#{storage_location_deactivate_path(storage_location)}']")
+            expect(deactivate_link.attr("class")).not_to match(/disabled/)
+          end
+        end
+
+        context "with nonempty storage location" do
+          before do
+            TestInventory.create_inventory(storage_location.organization,
+              { storage_location.id => { create(:item, name: "A").id => 1 } })
+          end
+
+          it "shows a disabled deactivate button" do
+            get storage_locations_path(format: response_format)
+            page = Nokogiri::HTML(response.body)
+            deactivate_link = page.at_css("a[href='#{storage_location_deactivate_path(storage_location)}']")
+            expect(deactivate_link.attr("class")).to match(/disabled/)
           end
         end
       end
