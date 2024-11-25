@@ -94,7 +94,7 @@ module Exports
       row += Array.new(item_headers.size, 0)
 
       request.item_requests.each do |item_request|
-        item_name = item_request.name_with_unit || DELETED_ITEMS_COLUMN_HEADER
+        item_name = item_request.name_with_unit(0) || DELETED_ITEMS_COLUMN_HEADER
         item_column_idx = headers_with_indexes[item_name]
         row[item_column_idx] ||= 0
         row[item_column_idx] += item_request.quantity.to_i

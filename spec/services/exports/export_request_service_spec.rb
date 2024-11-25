@@ -76,7 +76,7 @@ RSpec.describe Exports::ExportRequestService do
            organization: org,
            partner: partner,
            request_items: [
-             { item_id: item_4t.id, quantity: 153, request_unit: "pack" }
+             { item_id: item_4t.id, quantity: 1, request_unit: "pack" }
            ])
   end
 
@@ -180,7 +180,7 @@ RSpec.describe Exports::ExportRequestService do
           0,   # 2T Diapers
           0,   # 3T Diapers
           0,   # 4T Diapers
-          153, # 4T Diapers - packs
+          1,   # 4T Diapers - packs
           0    # <DELETED_ITEMS>
         ])
       end
@@ -194,7 +194,7 @@ RSpec.describe Exports::ExportRequestService do
           0,   # 2T Diapers
           0,   # 3T Diapers
           0,   # 4T Diapers
-          153, # 4T Diapers - packs
+          1, # 4T Diapers - packs
           0    # <DELETED_ITEMS>
         ])
       end
@@ -290,7 +290,7 @@ RSpec.describe Exports::ExportRequestService do
           "Started",
           0,   # 2T Diapers
           0,   # 3T Diapers
-          153, # 4T Diapers
+          1,   # 4T Diapers
           0    # <DELETED_ITEMS>
         ])
       end
