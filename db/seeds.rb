@@ -102,18 +102,20 @@ end
 # Request Units
 # ----------------------------------------------------------------------------
 
-%w(pack box flat).each do |name|
-  Unit.create!(organization: pdx_org, name: name)
-end
+Organization.all.each do |org|
+  %w(pack box flat).each do |name|
+    Unit.create!(organization: org, name: name)
+  end
 
-pdx_org.items.each_with_index do |item, i|
-  if item.name == 'Pads'
-    %w(box pack).each { |name| item.request_units.create!(name: name) }
-  elsif item.name == 'Wipes (Baby)'
-    item.request_units.create!(name: 'pack')
-  elsif item.name == 'Kids Pull-Ups (5T-6T)'
-    %w(pack flat).each do |name|
-      item.request_units.create!(name: name)
+  org.items.each_with_index do |item, i|
+    if item.name == 'Pads'
+      %w(box pack).each { |name| item.request_units.create!(name: name) }
+    elsif item.name == 'Wipes (Baby)'
+      item.request_units.create!(name: 'pack')
+    elsif item.name == 'Kids Pull-Ups (5T-6T)'
+      %w(pack flat).each do |name|
+        item.request_units.create!(name: name)
+      end
     end
   end
 end
