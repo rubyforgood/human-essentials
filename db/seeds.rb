@@ -264,16 +264,22 @@ note = [
     email: "second_city_senior_center@example.com",
     status: :approved,
     quota: 500,
-    notes: note.sample
+    notes: note.sample,
+    organization: sc_org
   }
 ].each do |partner_option|
   p = Partner.find_or_create_by!(partner_option) do |partner|
-    partner.organization = pdx_org
+
+    if partner_option.key?(:organization)
+      partner.organization = partner_option[:organization]
+    else
+      partner.organization = pdx_org
+    end
 
     if partner_option[:name] == "Second Street Community Outreach"
       partner.partner_group = pdx_org.partner_groups.find_by(name: 'Group 2')
     else
-      partner.partner_group = pdx_org.partner_groups.first
+      partner.partner_group = partner.organization.partner_groups.first
     end
   end
 
