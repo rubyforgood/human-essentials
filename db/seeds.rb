@@ -85,6 +85,12 @@ Organization.all.each do |org|
   org.items.order(created_at: :desc).last.update(active: false)
 end
 
+# Add a couple unique items based on random base items named after the sc_bank
+# so it will be clear if they are showing up where they aren't supposed to be
+4.times.each do |time|
+  sc_org.seed_random_item_with_name( "Second City Item ##{time+1}" )
+end
+
 # Assign a value to some organization items to verify totals are working
 Organization.all.each do |org|
   org.items.where(value_in_cents: 0).limit(10).each do |item|
