@@ -3,7 +3,7 @@ module Exports
     DELETED_ITEMS_COLUMN_HEADER = '<DELETED_ITEMS>'.freeze
 
     def initialize(requests)
-      @requests = requests.includes(:partner)
+      @requests = requests.includes(:partner, {item_requests: :item})
     end
 
     def generate_csv
@@ -63,7 +63,7 @@ module Exports
     def compute_item_headers
       # This reaches into the item, handling invalid deleted items
       item_names = Set.new
-      item_requests.each do |item_request|
+      all_item_requests.each do |item_request|
         if item_request.item
           item = item_request.item
           item_names << item.name
@@ -103,10 +103,10 @@ module Exports
       row
     end
 
-    def item_requests
-      return @item_requests if @item_requests
-      @item_requests ||= Set.new(requests.flat_map(&:item_requests)).to_a
-      @item_requests
+    def all_item_requests
+      return @all_item_requests if @all_item_requests
+      @all_item_requests ||= Partners::ItemRequest.where(request: requests).includes(item: :request_units)
+      @all_item_requests
     end
   end
 end
