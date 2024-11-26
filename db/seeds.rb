@@ -720,20 +720,22 @@ BroadcastAnnouncement.create(
 # ----------------------------------------------------------------------------
 
 # Create some Vendors so Purchases can have vendor_ids
-Vendor.create(
-  contact_name: Faker::FunnyName.two_word_name,
-  email: Faker::Internet.email,
-  phone: Faker::PhoneNumber.cell_phone,
-  comment: Faker::Lorem.paragraph(sentence_count: 2),
-  organization_id: pdx_org.id,
-  address: "#{Faker::Address.street_address} #{Faker::Address.city}, #{Faker::Address.state_abbr} #{Faker::Address.zip_code}",
-  business_name: Faker::Company.name,
-  latitude: rand(-90.000000000...90.000000000),
-  longitude: rand(-180.000000000...180.000000000),
-  created_at: (Time.zone.today - rand(15).days),
-  updated_at: (Time.zone.today - rand(15).days),
-)
-4.times do
+Organization.all.each do |org|
+  Vendor.create(
+    contact_name: Faker::FunnyName.two_word_name,
+    email: Faker::Internet.email,
+    phone: Faker::PhoneNumber.cell_phone,
+    comment: Faker::Lorem.paragraph(sentence_count: 2),
+    organization_id: org.id,
+    address: "#{Faker::Address.street_address} #{Faker::Address.city}, #{Faker::Address.state_abbr} #{Faker::Address.zip_code}",
+    business_name: Faker::Company.name,
+    latitude: rand(-90.000000000...90.000000000),
+    longitude: rand(-180.000000000...180.000000000),
+    created_at: (Time.zone.today - rand(15).days),
+    updated_at: (Time.zone.today - rand(15).days),
+  )
+end
+3.times do
   Vendor.create(
     contact_name: Faker::FunnyName.two_word_name,
     email: Faker::Internet.email,
@@ -763,32 +765,36 @@ comments = [
 
 dates_generator = DispersedPastDatesGenerator.new
 
-25.times do
-  purchase_date = dates_generator.next
-  storage_location = StorageLocation.active_locations.sample
-  vendor = random_record_for_org(pdx_org, Vendor)
-  purchase = Purchase.new(
-    purchased_from: suppliers.sample,
-    comment: comments.sample,
-    organization_id: pdx_org.id,
-    storage_location_id: storage_location.id,
-    issued_at: purchase_date,
-    created_at: purchase_date,
-    updated_at: purchase_date,
-    vendor_id: vendor.id,
-    amount_spent_on_period_supplies_cents: rand(0..5_000),
-    amount_spent_on_diapers_cents: rand(0..5_000),
-    amount_spent_on_adult_incontinence_cents: rand(0..5_000),
-    amount_spent_on_other_cents: rand(0..5_000)
-  )
+[ pdx_org, sc_org ].each do |org|
+  25.times do
+    purchase_date = dates_generator.next
+    storage_location = org.storage_locations.active_locations.sample
+    vendor = random_record_for_org(org, Vendor)
+    purchase = Purchase.new(
+      purchased_from: suppliers.sample,
+      comment: comments.sample,
+      organization_id: org.id,
+      storage_location_id: storage_location.id,
+      issued_at: purchase_date,
+      created_at: purchase_date,
+      updated_at: purchase_date,
+      vendor_id: vendor.id,
+      amount_spent_on_period_supplies_cents: rand(0..5_000),
+      amount_spent_on_diapers_cents: rand(0..5_000),
+      amount_spent_on_adult_incontinence_cents: rand(0..5_000),
+      amount_spent_on_other_cents: rand(0..5_000)
+    )
 
-  purchase.amount_spent_in_cents = amount_items.map{|i| purchase.send("amount_spent_on_#{i}_cents")}.sum
+    purchase.amount_spent_in_cents = amount_items.map{|i| purchase.send("amount_spent_on_#{i}_cents")}.sum
 
-  rand(1..5).times do
-    purchase.line_items.push(LineItem.new(quantity: rand(1..1000),
-                                          item_id: pdx_org.item_ids.sample))
+    rand(1..5).times do
+      purchase.line_items.push(
+        LineItem.new(quantity: rand(1..1000),
+        item_id: org.item_ids.sample)
+      )
+    end
+    PurchaseCreateService.call(purchase)
   end
-  PurchaseCreateService.call(purchase)
 end
 
 # ----------------------------------------------------------------------------
