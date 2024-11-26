@@ -171,7 +171,7 @@ end
   { email: 'superadmin@example.com', organization_admin: false, super_admin: true },
   { email: 'org_admin1@example.com', organization_admin: true,  organization: pdx_org },
   { email: 'org_admin2@example.com', organization_admin: true,  organization: sf_org },
-  { email: 'second_city_admin@example.com', organization_admin: true,  organization: sf_org },
+  { email: 'second_city_admin@example.com', organization_admin: true,  organization: sc_org },
   { email: 'user_1@example.com',     organization_admin: false, organization: pdx_org },
   { email: 'user_2@example.com',     organization_admin: false, organization: sf_org },
   { email: 'user_3@example.com',     organization_admin: false, organization: sc_org },
@@ -469,6 +469,18 @@ end
 inv_pdxdb = StorageLocation.find_or_create_by!(name: "Pawnee Main Bank (Office)") do |inventory|
   inventory.address = "Unknown"
   inventory.organization = pdx_org
+  inventory.warehouse_type = StorageLocation::WAREHOUSE_TYPES[1]
+  inventory.square_footage = 20_000
+end
+inv_scbulk = StorageLocation.find_or_create_by!(name: "Second City Bulk Storage") do |inventory|
+  inventory.address = "Unknown"
+  inventory.organization = sc_org
+  inventory.warehouse_type = StorageLocation::WAREHOUSE_TYPES[0]
+  inventory.square_footage = 10_000
+end
+inv_scoffice = StorageLocation.find_or_create_by!(name: "Second City Main Bank (Office)") do |inventory|
+  inventory.address = "Unknown"
+  inventory.organization = sc_org
   inventory.warehouse_type = StorageLocation::WAREHOUSE_TYPES[1]
   inventory.square_footage = 20_000
 end
