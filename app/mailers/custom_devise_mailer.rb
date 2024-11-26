@@ -1,4 +1,6 @@
 class CustomDeviseMailer < Devise::Mailer
+  default from: '"[DO NOT REPLY] Human Essentials" <accounts@humanessentials.app>'
+
   protected
 
   def subject_for(key)
