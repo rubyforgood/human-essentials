@@ -201,15 +201,17 @@ end
 # Donation Sites
 # ----------------------------------------------------------------------------
 
-[
-  { name: "Pawnee Hardware",       address: "1234 SE Some Ave., Pawnee, OR 12345" },
-  { name: "Parks Department",      address: "2345 NE Some St., Pawnee, OR 12345" },
-  { name: "Waffle House",          address: "3456 Some Bay., Pawnee, OR 12345" },
-  { name: "Eagleton Country Club", address: "4567 Some Blvd., Eagleton, OR 12345" }
-].each do |donation_option|
-  DonationSite.find_or_create_by!(name: donation_option[:name]) do |donation|
-    donation.address = donation_option[:address]
-    donation.organization = pdx_org
+Organization.all.each do |org|
+  [
+    { name: "#{org.city} Hardware",         address: "1234 SE Some Ave., #{org.city}, #{org.state} 12345" },
+    { name: "#{org.city} Parks Department", address: "2345 NE Some St., #{org.city}, #{org.state} 12345" },
+    { name: "Waffle House",                 address: "3456 Some Bay., #{org.city}, #{org.state} 12345" },
+    { name: "Eagleton Country Club",        address: "4567 Some Blvd., Eagleton, #{org.state} 12345" }
+  ].each do |donation_option|
+    DonationSite.find_or_create_by!(address: donation_option[:address]) do |donation|
+      donation.name = donation_option[:name]
+      donation.organization = org
+    end
   end
 end
 
@@ -525,60 +527,50 @@ low_items.each do |item|
   item.update(on_hand_minimum_quantity: min_value, on_hand_recommended_quantity: recomended_value)
 end
 
+Organization.all.each do |org|
 # ----------------------------------------------------------------------------
 # Product Drives
 # ----------------------------------------------------------------------------
 
-[
-  {
-    name: 'Pamper the Poopsies',
-    start_date: Time.current,
-    organization: pdx_org
-  }
-].each { |drive| ProductDrive.create! drive }
+  [
+    { name: "First Product Drive",
+      start_date: 3.years.ago,
+      end_date: 3.years.ago,
+      organization: org },
+    { name: "Best Product Drive",
+      start_date: 3.weeks.ago,
+      end_date: 2.weeks.ago,
+      organization: org },
+    { name: "Second Best Product Drive",
+      start_date: 2.weeks.ago,
+      end_date: 1.week.ago,
+      organization: org },
+  ].each { |product_drive| ProductDrive.find_or_create_by! product_drive }
 
 # ----------------------------------------------------------------------------
 # Product Drive Participants
 # ----------------------------------------------------------------------------
 
-[
-  { business_name: "A Good Place to Collect Diapers",
-    contact_name: "fred",
-    email: "good@place.is",
-    organization: pdx_org },
-  { business_name: "A Mediocre Place to Collect Diapers",
-    contact_name: "wilma",
-    email: "ok@place.is",
-    organization: pdx_org }
-].each { |participant| ProductDriveParticipant.create! participant }
-
-# ----------------------------------------------------------------------------
-# Product Drives
-# ----------------------------------------------------------------------------
-
-[
-  { name: "First Product Drive",
-    start_date: 3.years.ago,
-    end_date: 3.years.ago,
-    organization: sf_org },
-  { name: "Best Product Drive",
-    start_date: 3.weeks.ago,
-    end_date: 2.weeks.ago,
-    organization: sf_org },
-  { name: "Second Best Product Drive",
-    start_date: 2.weeks.ago,
-    end_date: 1.week.ago,
-    organization: pdx_org }
-].each { |product_drive| ProductDrive.find_or_create_by! product_drive }
+  [
+    { business_name: "A Good Place to Collect Diapers",
+      contact_name: "fred",
+      email: "good@place.is",
+      organization: org },
+    { business_name: "A Mediocre Place to Collect Diapers",
+      contact_name: "wilma",
+      email: "ok@place.is",
+      organization: org }
+  ].each { |participant| ProductDriveParticipant.create! participant }
 
 # ----------------------------------------------------------------------------
 # Manufacturers
 # ----------------------------------------------------------------------------
 
-[
-  { name: "Manufacturer 1", organization: pdx_org },
-  { name: "Manufacturer 2", organization: pdx_org }
-].each { |manu| Manufacturer.find_or_create_by! manu }
+  [
+    { name: "Manufacturer 1", organization: org },
+    { name: "Manufacturer 2", organization: org }
+  ].each { |manu| Manufacturer.find_or_create_by! manu }
+end
 
 # ----------------------------------------------------------------------------
 # Line Items
