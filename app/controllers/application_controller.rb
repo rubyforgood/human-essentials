@@ -65,6 +65,11 @@ class ApplicationController < ActionController::Base
       current_user.has_role?(Role::PARTNER, current_partner)
   end
 
+  def authorize_org_user
+    verboten!('That screen is not available. Please switch to the correct role and try again.') unless current_user.has_role?(Role::SUPER_ADMIN) ||
+      current_user.has_role?(Role::ORG_USER, current_organization)
+  end
+
   def authorize_admin
     verboten! unless current_user.has_role?(Role::SUPER_ADMIN) ||
       current_user.has_role?(Role::ORG_ADMIN, current_organization)
@@ -97,9 +102,9 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def verboten!
+  def verboten!(message = 'Access Denied.')
     respond_to do |format|
-      format.html { redirect_to dashboard_path_from_current_role, flash: { error: "Access Denied." } }
+      format.html { redirect_to dashboard_path_from_current_role, flash: { error: message } }
       format.json { render body: nil, status: :forbidden }
     end
   end

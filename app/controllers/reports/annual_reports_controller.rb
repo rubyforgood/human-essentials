@@ -1,5 +1,6 @@
 class Reports::AnnualReportsController < ApplicationController
   before_action :validate_show_params, only: [:show, :recalculate]
+  before_action :authorize_org_user
 
   def index
     # 2813_update_annual_report -- changed to earliest_reporting_year
