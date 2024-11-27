@@ -1,11 +1,3 @@
-# Add a field for the number of adults assisted per month. (after Adult incontinence supplies distributed)
-
-# This is the number of adults assisted with 'loose' (i.e. not in kit) items plus the number of adults assisted with kits.
-# The number of adults assisted with 'loose' items is the number of those items distributed divided by the quantity-per-individual for those items (or 50, if no quantity is defined) / 12
-# The number of adults assisted with kit items is the number of kits that contain adult incontinence supplies distributed divided by the "quantity per individual" on the kit item. if there is no quantity per individual provided, assume that quantity is 1.
-
-
-
 module Reports
   class AdultIncontinenceReportService
     include ActionView::Helpers::NumberHelper
@@ -148,7 +140,7 @@ module Reports
       .joins(line_items: {item: :kit})
       .merge(Item.adult_incontinence)
       .where.not(items: {kit_id: nil})
-      .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50)') / 12
+      .sum('line_items.quantity / COALESCE(items.distribution_quantity, 1)') / 12
     end
   end
 end
