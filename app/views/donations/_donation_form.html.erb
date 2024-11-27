@@ -6,6 +6,8 @@
       <div class="col-xs-8 col-md-6 col-lg-3">
         <%= f.input :source,
                     collection: Donation::SOURCES.values,
+                    selected: donation_form.source,
+                    include_blank: true,
                     label: "Source",
                     error: "What effort or initiative did this donation come from?",
                     wrapper: :input_group %>
@@ -16,6 +18,8 @@
       <div class="col-xs-8 col-md-6 col-lg-3">
         <%= f.association :donation_site,
                           collection: @donation_sites,
+                          selected: donation_form.donation_site_id,
+                          include_blank: true,
                           label: "Donation Site",
                           error: "Where was this donation dropped off?",
                           wrapper: :input_group %>
@@ -25,6 +29,8 @@
       <div class="col-xs-8 col-md-6 col-lg-3">
         <%= f.association :product_drive,
                           collection: @product_drives,
+                          selected: donation_form.product_drive_id,
+                          include_blank: true,
                           label_method: lambda { |x| "#{x.try(:name) }" },
                           label: "Product Drive",
                           error: "Which product drive was this from?",
@@ -33,6 +39,8 @@
       <div class="col-xs-8 col-md-6 col-lg-3">
         <%= f.association :product_drive_participant,
                           collection: @product_drive_participants,
+                          selected: donation_form.product_drive_participant_id,
+                          include_blank: true,
                           label_method: lambda { |x| "#{x.try(:business_name) }" },
                           label: "Product Drive Participant",
                           error: "Which product drive participant was this from?",
@@ -44,7 +52,8 @@
       <div class="col-xs-8 col-md-6 col-lg-3">
         <%= f.association :manufacturer,
                           collection: @manufacturers,
-                          prompt: "Choose one...",
+                          selected: donation_form.manufacturer_id,
+                          include_blank: true,
                           label_method: lambda { |x| "#{x.try(:name) }" },
                           label: "Manufacturer",
                           error: "Which Manufacturer was this from?",
@@ -58,7 +67,7 @@
                           collection: @storage_locations,
                           label: "Storage Location",
                           error: "Where is it being stored?",
-                          selected: f.object.storage_location&.id || current_organization.intake_location,
+                          selected: donation_form.storage_location&.id || current_organization.intake_location,
                           include_blank: true,
                           wrapper: :input_group %>
       </div>
@@ -68,15 +77,18 @@
       <div class="col-xs-8 col-md-6 col-lg-3">
         <%= f.input :money_raised_in_dollars, as: :money_raised_in_dollars, wrapper: :input_group do %>
           <span class="input-group-text"><i class="fa fa-usd"></i></span>
-          <%= f.input_field :money_raised_in_dollars, class: "form-control" %>
+          <%= f.input_field :money_raised_in_dollars,
+                            class: "form-control",
+                            value: donation_form.money_raised_in_dollars %>
         <% end %>
       </div>
     </div>
 
     <div class="row">
       <div class="col-xs-8 col-md-6">
-        <%= f.input :comment,
-                    wrapper: :input_group %>
+        <%= f.input :comment, wrapper: :input_group do %>
+          <%= f.text_area :comment, value: donation_form.comment, cols: 90, rows: 2, class: "text optional form-control" %>
+        <% end %>
       </div>
     </div>
 
@@ -86,7 +98,8 @@
                     label: "Issued on",
                     as: :date,
                     html5: true,
-                    wrapper: :input_group %>
+                    wrapper: :input_group,
+                    input_html: { value: donation_form.issued_at } %>
       </div>
     </div>
 
@@ -94,7 +107,7 @@
       <legend>Items in this donation</legend>
       <div id="donation_line_items" data-capture-barcode="true">
 
-        <%= render 'line_items/line_item_fields', form: f %>
+        <%= render 'line_items/line_item_fields', form: f, object: donation_form.line_items %>
       </div>
 
       <div class="row links justify-content-end">

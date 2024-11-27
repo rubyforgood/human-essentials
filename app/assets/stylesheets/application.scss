@@ -188,9 +188,34 @@ select.selectpicker + .dropdown-toggle::after {
   background-color: #8282df
 }
 
-div.warning {
-  color: #e15563;
+div.low_priority_warning {
   margin: 5px;
   text-align: center;
 }
 
+.distribution-title {
+  display: flex;
+}
+
+legend.with-request {
+  float: none;
+  width: 80%;
+  display: inline-block;
+}
+
+div.distribution-request-unit {
+  display: inline-block;
+  flex: 1;
+  text-align: right;
+  margin-right: 20px;
+  font-size: 1.5em;
+}
+
+.li-requested {
+  font-size: 1.5em;
+  width: 100px;
+  min-width: 100px;
+  text-align: right;
+  margin-right: 20px;
+  white-space: nowrap;
+}

@@ -15,7 +15,7 @@
 FactoryBot.define do
   factory :partner_group do
     sequence(:name) { |n| "Group #{n}" }
-    organization { Organization.try(:first) || create(:organization, skip_items: true) }
+    organization { Organization.try(:first) || create(:organization) }
     reminder_day { 14 }
     deadline_day { 28 }
 

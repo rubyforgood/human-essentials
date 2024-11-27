@@ -1,0 +1,32 @@
+<% if @broadcast_announcements.any? %>
+  <div class="shared/card" id="distributions">
+    <div class="card-header border-0 bg-gradient-warning">
+      <h3 class="card-title">Announcements
+        <small>from Human Essentials</small></h3>
+      <div class="card-tools">
+        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+          <i class="fas fa-minus"></i>
+        </button>
+      </div>
+    </div>
+    <div class="card-body">
+      <ul class="list-group list-group-flush">
+        <% @broadcast_announcements.each do |announcement| %>
+          <li class="list-group-item">
+            <strong><%= if announcement.created_at.strftime("%Y") == DateTime.now.strftime("%Y")
+                          announcement.created_at.strftime("%B %d")
+                        else
+                          announcement.created_at.strftime("%B %d %Y")
+                        end %></strong>
+            <br>
+            <%= announcement.message %>
+            <% unless announcement.link == '' %>
+              <br>
+              <a href="<%= announcement.link %>" class="btn btn-primary">more info</a>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+<% end %>

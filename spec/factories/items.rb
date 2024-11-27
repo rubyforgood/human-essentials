@@ -24,7 +24,7 @@
 FactoryBot.define do
   factory :item do
     sequence(:name) { |n| "#{n}T Diapers" }
-    organization { Organization.try(:first) || create(:organization, skip_items: true) }
+    organization { Organization.try(:first) || create(:organization) }
     partner_key { BaseItem.first&.partner_key || create(:base_item).partner_key }
     kit { nil }
 
@@ -34,6 +34,15 @@ FactoryBot.define do
 
     trait :inactive do
       active { false }
+    end
+
+    trait :with_unit do
+      transient do
+        unit { "pack" }
+      end
+      after(:create) do |item, evaluator|
+        create(:item_unit, name: evaluator.unit, item: item)
+      end
     end
   end
 end

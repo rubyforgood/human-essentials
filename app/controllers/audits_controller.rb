@@ -10,11 +10,7 @@ class AuditsController < ApplicationController
   end
 
   def show
-    if Event.read_events?(@audit.organization)
-      @items = View::Inventory.items_for_location(@audit.storage_location)
-    else
-      @inventory_items = @audit.storage_location.inventory_items
-    end
+    @items = View::Inventory.items_for_location(@audit.storage_location)
   end
 
   def edit
@@ -28,24 +24,7 @@ class AuditsController < ApplicationController
     @audit.adjustment = Adjustment.new(organization_id: @audit.organization_id, storage_location_id: @audit.storage_location_id, user_id: current_user.id, comment: 'Created Automatically through the Auditing Process')
     @audit.save
 
-    inventory_items = @audit.storage_location.inventory_items
-
-    inventory_items.each do |inventory_item|
-      line_item = @audit.line_items.find_by(item: inventory_item.item)
-
-      next if line_item.nil?
-
-      if line_item.quantity != inventory_item.quantity
-        @audit.adjustment.line_items.create(item_id: inventory_item.item.id, quantity: line_item.quantity - inventory_item.quantity)
-      end
-    end
-
-    increasing_adjustment, decreasing_adjustment = @audit.adjustment.split_difference
-    ActiveRecord::Base.transaction do
-      @audit.storage_location.increase_inventory(increasing_adjustment.line_item_values)
-      @audit.storage_location.decrease_inventory(decreasing_adjustment.line_item_values)
-      AuditEvent.publish(@audit)
-    end
+    AuditEvent.publish(@audit)
     @audit.finalized!
     redirect_to audit_path(@audit), notice: "Audit is Finalized."
   rescue => e

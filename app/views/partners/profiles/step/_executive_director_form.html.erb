@@ -1,0 +1,26 @@
+<%= f.fields_for :profile, profile do |pf| %>
+  <div class="form-group">
+    <%= pf.input :executive_director_name, label: "Executive Director Name", class: "form-control" %>
+  </div>
+  <div class="form-group">
+    <%= pf.input :executive_director_phone, label: "Executive Director Phone", class: "form-control" %>
+  </div>
+  <div class="form-group">
+    <%= pf.input :executive_director_email, label: "Executive Director Email", class: "form-control" %>
+  </div>
+
+  <h3 class="pt-3"><strong>Primary Contact</strong></h3>
+
+  <div class="form-group">
+    <%= pf.input :primary_contact_name, label: "Primary Contact Name", class: "form-control" %>
+  </div>
+  <div class="form-group">
+    <%= pf.input :primary_contact_phone, label: "Primary Contact Phone", class: "form-control" %>
+  </div>
+  <div class="form-group">
+    <%= pf.input :primary_contact_mobile, label: "Primary Contact Cell", class: "form-control" %>
+  </div>
+  <div class="form-group">
+    <%= pf.input :primary_contact_email, label: "Primary Contact Email", class: "form-control" %>
+  </div>
+<% end %>

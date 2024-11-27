@@ -13,6 +13,31 @@ module View
     attr_accessor :inventory, :organization_id
     delegate :storage_locations, to: :inventory
 
+    # @param event_time [ActiveSupport::TimeWithZone]
+    # @return [Boolean]
+    def self.within_snapshot?(organization_id, event_time)
+      return true if event_time.blank?
+
+      event = SnapshotEvent.where(organization_id: organization_id).first
+      event && event.created_at < event_time
+    end
+
+    # @param organization_id [Integer]
+    # @param storage_location_id [Integer]
+    # @param event_time [ActiveSupport::TimeWithZone]
+    # @return [Array<ViewInventoryItem>]
+    def self.legacy_inventory_for_storage_location(organization_id, storage_location_id, event_time)
+      items = Organization.find(organization_id).inventory_items.where(storage_location_id: storage_location_id)
+      items.map do |item|
+        ViewInventoryItem.new(
+          item_id: item.item_id,
+          quantity: item.paper_trail.version_at(event_time)&.quantity || 0,
+          storage_location_id: storage_location_id,
+          db_item: item.item
+        )
+      end
+    end
+
     # @param organization_id [Integer]
     # @param event_time [DateTime]
     def initialize(organization_id, event_time: nil)

@@ -1,7 +1,13 @@
 RSpec.describe "Base Item Admin", type: :system, js: true do
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
+  let(:super_admin) { create(:super_admin, organization: organization) }
+  let(:super_admin_no_org) { create(:super_admin, organization: nil) }
+  let(:base_item) { create(:base_item) }
+
   context "While signed in as an Administrative User (super admin)" do
     before do
-      sign_in(@super_admin)
+      sign_in(super_admin)
     end
 
     let!(:url_prefix) {}
@@ -30,7 +36,6 @@ RSpec.describe "Base Item Admin", type: :system, js: true do
       before do
         visit edit_admin_base_item_path(base_item)
       end
-      let(:base_item) { BaseItem.first }
 
       it "should succeed when changing the name" do
         fill_in "Name", with: base_item.name + " new"
@@ -46,8 +51,7 @@ RSpec.describe "Base Item Admin", type: :system, js: true do
     end
 
     it "can view a listing of all Base Items that shows a summary of its sub-items" do
-      base_item = BaseItem.first
-      create_list(:item, 2, base_item: base_item)
+      create_list(:item, 2, base_item: base_item, organization: organization)
       count = base_item.item_count
       visit admin_base_items_path
       expect(page).to have_content(base_item.name)
@@ -57,7 +61,6 @@ RSpec.describe "Base Item Admin", type: :system, js: true do
     end
 
     it "can view a single Base Item" do
-      base_item = BaseItem.first
       visit admin_base_item_path(base_item)
       expect(page).to have_content(base_item.name)
     end
@@ -65,7 +68,7 @@ RSpec.describe "Base Item Admin", type: :system, js: true do
 
   context "While signed in as an Administrative User with no organization (super admin no org)" do
     before do
-      sign_in(@super_admin_no_org)
+      sign_in(super_admin_no_org)
     end
 
     let!(:url_prefix) {}
@@ -94,7 +97,6 @@ RSpec.describe "Base Item Admin", type: :system, js: true do
       before do
         visit edit_admin_base_item_path(base_item)
       end
-      let(:base_item) { BaseItem.first }
 
       it "should succeed when changing the name" do
         fill_in "Name", with: base_item.name + " new"
@@ -110,8 +112,7 @@ RSpec.describe "Base Item Admin", type: :system, js: true do
     end
 
     it "can view a listing of all Base Items that shows a summary of its sub-items" do
-      base_item = BaseItem.first
-      create_list(:item, 2, base_item: base_item)
+      create_list(:item, 2, base_item: base_item, organization: organization)
       count = base_item.item_count
       visit admin_base_items_path
       expect(page).to have_content(base_item.name)
@@ -121,7 +122,6 @@ RSpec.describe "Base Item Admin", type: :system, js: true do
     end
 
     it "can view a single Base Item" do
-      base_item = BaseItem.first
       visit admin_base_item_path(base_item)
       expect(page).to have_content(base_item.name)
     end
@@ -129,16 +129,18 @@ RSpec.describe "Base Item Admin", type: :system, js: true do
 
   context "While signed in as a normal user" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
     it "should have a normal user not see anything" do
       visit new_admin_base_item_path
       expect(page).to have_content("Access Denied")
+
       visit admin_base_items_path
       expect(page).to have_content("Access Denied")
-      base_item = create(:base_item)
+
       visit admin_base_item_path(base_item)
       expect(page).to have_content("Access Denied")
+
       visit edit_admin_base_item_path(base_item)
       expect(page).to have_content("Access Denied")
     end

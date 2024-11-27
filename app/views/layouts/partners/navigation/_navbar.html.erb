@@ -21,7 +21,7 @@
     <div class="dropdown-divider"></div>
     <% current_user.switchable_roles.each do |role| %>
       <% next if role == current_role %>
-      <%= link_to switch_to_role_users_path(organization_name: current_partner.organization, role_id: role.id), class:"dropdown-item" do %>
+      <%= link_to switch_to_role_users_path(role_id: role.id), class:"dropdown-item" do %>
         <i class="fa fa-repeat text-aqua"></i><%= "Switch to: #{role.resource.name}" %>
       <% end %>
     <% end %>

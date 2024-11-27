@@ -18,6 +18,7 @@ Rails.application.configure do
   # Do not eager load code on boot.
   config.eager_load = false
   config.hosts << "diaper.test"
+  config.hosts << ".app.github.dev"
 
   # Show full error reports.
   config.consider_all_requests_local = true
@@ -82,6 +83,10 @@ Rails.application.configure do
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+
+  # Adds comments to rendered views so you know which partials are being rendered
+  # more easily.
+  config.action_view.annotate_rendered_view_with_filenames = true
 
   require "socket"
   require "ipaddr"

@@ -1,4 +1,4 @@
-RSpec.describe User, type: :mailer, seed_items: false do
+RSpec.describe User, type: :mailer do
   describe "#role_added" do
     let(:user) { create(:user, email: "me@me.com") }
     let(:partner) { create(:partner, name: "Partner 1") }

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe PartnerInviteService do
   subject { described_class.new(partner: partner).call }
   let(:partner) { create(:partner) }

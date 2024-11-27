@@ -27,7 +27,11 @@ class DistributionMailer < ApplicationMailer
     pdf = DistributionPdf.new(current_organization, @distribution).compute_and_render
     attachments[format("%s %s.pdf", @partner.name, @distribution.created_at.strftime("%Y-%m-%d"))] = pdf
     cc = [@partner.email]
-    cc.push(@partner.profile&.pick_up_email) if distribution.pick_up?
+    if distribution.pick_up? && @partner.profile&.pick_up_email
+      pick_up_emails = @partner.profile.split_pick_up_emails
+      cc.push(pick_up_emails)
+    end
+    cc.flatten!
     cc.compact!
     cc.uniq!
 

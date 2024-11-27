@@ -12,7 +12,7 @@ $(document).ready(function() {
   */
   function capture_entry(event) {
     if (event.which == '10' || event.which == '13') {
-      barcode_item_lookup(event.target.value, $(event.target).data("organization-id"),event.target);
+      barcode_item_lookup(event.target.value, event.target);
       event.preventDefault();
     }
   }
@@ -21,12 +21,11 @@ $(document).ready(function() {
   barcode_item_lookup
    @brief Invokes an ajax lookup of a provided barcode value
    @param value : the barcode
-   @param organization_id : passed in as a param. This constrains the lookup
    @param src : the DOM source, so we can callback to it.
    */
-  function barcode_item_lookup(value, organization_id,src) {
+  function barcode_item_lookup(value, src) {
     // Hardcoding magic URLs isn't ideal but it works for now
-    $.getJSON("/" + organization_id + "/barcode_items/find.json?barcode_item[value]=" + value, {}, function(data) {
+    $.getJSON("/barcode_items/find.json?barcode_item[value]=" + value, {}, function(data) {
          // Preserve this for reference of where we came from.
          data['src'] = src;
          data['value'] = value;

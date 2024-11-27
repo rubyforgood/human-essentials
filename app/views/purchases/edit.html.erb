@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Purchases", (purchases_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Purchases", purchases_path %></li>
           <li class="breadcrumb-item"><a href="#">Editing <%= @purchase.purchased_from_view %>
             on <%= @purchase.created_at.to_fs(:distribution_date) %></a></li>
         </ol>

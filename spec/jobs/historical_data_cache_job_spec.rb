@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe HistoricalDataCacheJob, type: :job do
   include ActiveJob::TestHelper
 

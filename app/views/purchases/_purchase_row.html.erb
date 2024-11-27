@@ -1,9 +1,11 @@
 <tr>
   <td><%= purchase_row.purchased_from_view %></td>
   <td><%= purchase_row.storage_location.name %></td>
+  <td><%= purchase_row.comment %></td>
   <td class="numeric"><%= purchase_row.line_items.total %></td>
   <td class="numeric"><%= purchase_row.line_items.size %></td>
   <td class="numeric"><%= dollar_value(purchase_row.amount_spent_in_cents) %></td>
+  <td class="numeric"><%= dollar_value(purchase_row.value_per_itemizable) %></td>
   <td class="date"><%= purchase_row.issued_at.strftime("%F") %></td>
   <td class="text-right">
     <%= view_button_to purchase_path(purchase_row) %>

@@ -1,0 +1,24 @@
+<%# locals: (f:, partner:, section_id:, section_title:, icon_class:, partial_name:, sections_with_errors:) %>
+
+<div class="accordion-item">
+  <h2 class="accordion-header">
+    <button
+      class="accordion-button <%= section_with_errors?(section_id, sections_with_errors) ? '' : 'collapsed' %>"
+      type="button" data-bs-toggle="collapse" data-bs-target="#<%= section_id %>"
+      aria-expanded="<%= section_with_errors?(section_id, sections_with_errors) %>"
+      aria-controls="<%= section_id %>">
+      <div class="d-flex justify-content-between align-items-center w-100">
+        <div class="fs-4">
+          <i class="fa <%= icon_class %> mr-2"></i>
+          <%= section_title %>
+        </div>
+      </div>
+    </button>
+  </h2>
+  <div id="<%= section_id %>"
+    class="accordion-collapse collapse <%= section_with_errors?(section_id, sections_with_errors) ? 'show' : '' %>">
+    <div class="accordion-body">
+      <%= render "partners/profiles/step/#{partial_name}_form" , f: f, partner: partner, profile: partner.profile %>
+    </div>
+  </div>
+</div>

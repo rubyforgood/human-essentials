@@ -1,0 +1,20 @@
+<div class="card card-primary">
+  <div class="card-header">
+    <h3 class="card-title">Invite New User</h3>
+  </div>
+
+  <%= simple_form_for user, url: partner_users_path(partner) do |f| %>
+    <div class="card-body">
+      <div class="form-group">
+        <%= f.input :name, label: "Name", placeholder: "Name", required: true %>
+      </div>
+      <div class="form-group">
+        <%= f.input :email, label: "Email", placeholder: "Email", required: true %>
+      </div>
+    </div>
+
+    <div class="card-footer">
+      <%= f.submit "Invite User", class: 'btn btn-primary float-right' %>
+    </div>
+  <% end %>
+</div>

@@ -92,3 +92,19 @@
 .percent {
   text-align: right;
 }
+
+.confirm {
+  .message {
+    margin-top: 40px;
+  }
+}
+
+.accordion-button.saving::after {
+  background-image:  none;
+  content: "Saving...";
+  font-size: 0.875rem;
+  color: #005568;
+  transform: none;
+  width: 3rem;
+  cursor: not-allowed;
+}

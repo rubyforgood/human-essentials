@@ -1,0 +1,37 @@
+<%= render(
+  "shared/filtered_card",
+  id: "purchases",
+  gradient: "secondary",
+  title: "Itemized Distributions",
+  subtitle: @selected_date_range,
+  type: :table,
+  filter_url: reports_itemized_distributions_path
+) do %>
+
+  <% if @itemized_distribution_data.empty? %>
+    <div class="alert alert-warning" role="alert">
+      No itemized distributions found for the selected date range.
+    </div>
+  <% else %>
+    <table class="table table-hover striped text-left">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th class="text-right">Total Distributed</th>
+          <th class="text-right">Total On Hand</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @itemized_distribution_data.each do |item| %>
+          <tr>
+            <td><%= item[:name] %></td>
+            <td class="text-right"><%= item[:distributed] %></td>
+            <td class="text-right <%= 'table-danger' if item[:below_onhand_minimum] %>">
+              <%= item[:current_onhand] || "Unknown" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+<% end %>

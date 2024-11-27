@@ -58,8 +58,8 @@
                     <dt>Health insurance:</dt>
                     <dd><%= @child.health_insurance %></dd>
 
-                    <dt>Item needed:</dt>
-                    <dd><%= current_partner.organization.item_id_to_display_string_map[@child.item_needed_diaperid] %></dd>
+                    <dt>Item(s) needed:</dt>
+                    <dd><%= display_requested_items(current_partner, @child) %></dd>
 
                     <dt>Comments:</dt>
                     <dd><%= @child.comments %></dd>

@@ -1,0 +1,37 @@
+<%
+  id ||= nil
+  title ||= nil
+  subtitle ||= nil
+  footer ||= nil
+%>
+
+<div class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="description-block border-right">
+          <%= simple_form_for :filters, url: filter_url, method: :get, html: {class: 'd-flex'} do |f| %>
+            <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control col-10"} %><br>
+            <%= filter_button class: 'col-2' %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <%= render("shared/card",
+          id: id,
+          gradient: "secondary",
+          title: title,
+          subtitle: subtitle,
+          footer_options: { class: "text-center" },
+          footer: footer
+          ) do
+
+            yield
+
+          end %>
+      </div>
+    </div>
+  </div>
+</div>

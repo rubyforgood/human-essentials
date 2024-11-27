@@ -9,7 +9,6 @@
 #  updated_at      :datetime         not null
 #  organization_id :integer          not null
 #
-require 'rails_helper'
 
 RSpec.describe ItemCategory, type: :model do
   describe 'validations' do

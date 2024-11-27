@@ -22,9 +22,10 @@
 module Partners
   class Child < Base
     has_paper_trail
-    serialize :child_lives_with, Array
+    serialize :child_lives_with, type: Array
     belongs_to :family
     has_many :child_item_requests, dependent: :destroy
+    has_and_belongs_to_many :requested_items, class_name: 'Item'
 
     include Filterable
     include Exportable
@@ -88,7 +89,7 @@ module Partners
     def self.csv_export_headers
       %w[
         id first_name last_name date_of_birth gender child_lives_with race agency_child_id
-        health_insurance comments created_at updated_at family_id item_needed_diaperid active archived
+        health_insurance comments created_at updated_at guardian_last_name guardian_first_name requested_items active archived
       ].freeze
     end
 
@@ -106,8 +107,9 @@ module Partners
         comments,
         created_at,
         updated_at,
-        family_id,
-        item_needed_diaperid,
+        family.guardian_last_name,
+        family.guardian_first_name,
+        requested_items.map(&:name).join(", "),
         active,
         archived
       ]

@@ -1,9 +1,7 @@
-require "rails_helper"
-
 RSpec.describe "Admin::Questions", type: :request do
   context "while signed in as a super admin" do
     before do
-      sign_in(@super_admin_no_org)
+      sign_in(create(:super_admin, organization: nil))
     end
 
     describe "GET #index" do

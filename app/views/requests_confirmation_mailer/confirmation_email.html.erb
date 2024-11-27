@@ -3,7 +3,14 @@
 <p>This is an email confirmation that the <%= @organization.name %> has received your request of:</p>
 <ul>
   <% @request_items.each do |item| %>
-    <li><%= item['name'] %> - <%= item['quantity'] || item['person_count'] %></li>
+    <li><%= item['name'] %> -
+    <% if Flipper.enabled?(:enable_packs) && item['unit'] %>
+    <%= pluralize(item['quantity'] || item['person_count'], item['unit']) %>
+    <% else %>
+    <%= item['quantity'] || item['person_count'] %>
+    <% end %>
+    </li>
+
   <% end %>
 </ul>
 

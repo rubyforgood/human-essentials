@@ -15,7 +15,8 @@
 #  user_id         :bigint
 #
 RSpec.describe Event, type: :model do
-  let(:organization) { FactoryBot.create(:organization) }
+  let(:organization) { create(:organization) }
+
   describe "#most_recent_snapshot" do
     let(:eventable) { FactoryBot.create(:distribution, organization_id: organization.id) }
     let(:data) { EventTypes::Inventory.new(storage_locations: {}, organization_id: organization.id) }

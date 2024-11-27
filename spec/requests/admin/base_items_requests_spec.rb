@@ -1,6 +1,9 @@
-require 'rails_helper'
-
 RSpec.describe "Admin::BaseItems", type: :request do
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+
+  # TODO: should this be testing something?
   context "while signed in as a super admin" do
     before do
       sign_in(@super_admin)
@@ -9,7 +12,7 @@ RSpec.describe "Admin::BaseItems", type: :request do
 
   context "When logged in as an organization admin" do
     before do
-      sign_in(@organization_admin)
+      sign_in(organization_admin)
     end
 
     describe "GET #new" do
@@ -35,28 +38,28 @@ RSpec.describe "Admin::BaseItems", type: :request do
 
     describe "GET #show" do
       it "returns http success" do
-        get admin_base_item_path(id: @organization.id)
+        get admin_base_item_path(id: organization.id)
         expect(response).to have_http_status(:found)
       end
     end
 
     describe "GET #edit" do
       it "returns http success" do
-        get edit_admin_base_item_path(id: @organization.id)
+        get edit_admin_base_item_path(id: organization.id)
         expect(response).to have_http_status(:found)
       end
     end
 
     describe "PUT #update" do
       it "redirect" do
-        put admin_base_item_path(id: @organization.id, organization: { name: "Foo" })
+        put admin_base_item_path(id: organization.id, organization: { name: "Foo" })
         expect(response).to be_redirect
       end
     end
 
     describe "DELETE #destroy" do
       it "redirects" do
-        delete admin_base_item_path(id: @organization.id)
+        delete admin_base_item_path(id: organization.id)
         expect(response).to be_redirect
       end
     end

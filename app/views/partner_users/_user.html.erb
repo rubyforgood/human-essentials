@@ -1,0 +1,32 @@
+  <tr>
+    <td><%= user.id %></td>
+    <td><%= user.name %></td>
+    <td><%= user.email %></td>
+    <td>
+      <% if user.last_sign_in_at.present? %>
+        <%= user.last_sign_in_at.strftime('%B %-d, %Y') %>
+      <% else %>
+        <span class="badge bg-danger">Never</span>
+      <% end %>
+    </td>
+    <td>
+      <% if user.invitation_accepted_at %>
+        <span class="badge bg-success">Accepted</span>
+      <% else %>
+        <div class='d-flex flex-column justify-content-center align-items-start'>
+          <span class="badge bg-warning">
+            <div>Waiting Acceptance</div>
+          </span>
+          <small>Last invite sent
+            <strong><%= time_ago_in_words(user.invitation_sent_at) %> ago</strong> on <%= user.invitation_sent_at.strftime('%B %-d, %Y') %>
+          </small>
+        </div>
+      <% end %>
+    </td>
+    <td class='d-flex'>
+      <% unless user.invitation_accepted_at %>
+        <%= button_to "Resend Invite", resend_invitation_partner_user_path(partner, user), method: :post, class: "btn btn-primary btn-sm mr-2" %>
+      <% end %>
+      <%= button_to "Remove Access", partner_user_path(partner, user), method: :delete, data: { confirm: "Are you sure you want to remove access to #{user.name} to access #{partner.name}?" }, class: "btn btn-danger btn-sm" %>
+    </td>
+  </tr>

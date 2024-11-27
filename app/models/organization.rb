@@ -11,6 +11,8 @@
 #  enable_child_based_requests    :boolean          default(TRUE), not null
 #  enable_individual_requests     :boolean          default(TRUE), not null
 #  enable_quantity_based_requests :boolean          default(TRUE), not null
+#  hide_package_column_on_receipt :boolean          default(FALSE)
+#  hide_value_columns_on_receipt  :boolean          default(FALSE)
 #  intake_location                :integer
 #  invitation_text                :text
 #  latitude                       :float
@@ -21,6 +23,7 @@
 #  reminder_day                   :integer
 #  repackage_essentials           :boolean          default(FALSE), not null
 #  short_name                     :string
+#  signature_for_distribution_pdf :boolean          default(FALSE)
 #  state                          :string
 #  street                         :string
 #  url                            :string
@@ -70,6 +73,7 @@ class Organization < ApplicationRecord
     has_many :transfers
     has_many :users, -> { distinct }, through: :roles
     has_many :vendors
+    has_many :request_units, class_name: 'Unit'
   end
 
   has_many :items, dependent: :destroy do
@@ -131,7 +135,7 @@ class Organization < ApplicationRecord
 
   has_one_attached :logo
 
-  accepts_nested_attributes_for :users, :account_request
+  accepts_nested_attributes_for :users, :account_request, :request_units
 
   include Geocodable
 
@@ -189,11 +193,7 @@ class Organization < ApplicationRecord
   end
 
   def total_inventory
-    if Event.read_events?(self)
-      View::Inventory.total_inventory(id)
-    else
-      inventory_items.sum(:quantity) || 0
-    end
+    View::Inventory.total_inventory(id)
   end
 
   def self.seed_items(organization = Organization.all)
@@ -212,7 +212,7 @@ class Organization < ApplicationRecord
     rescue ActiveRecord::RecordInvalid => e
       Rails.logger.info "[SEED] Duplicate item! #{e.record.name}"
       existing_item = items.find_by(name: e.record.name)
-      if e.to_s.match(/been taken/).present? && existing_item.other?
+      if e.to_s.match(/already exists/).present? && existing_item.other?
         Rails.logger.info "Changing Item##{existing_item.id} from Other to #{e.record.partner_key}"
         existing_item.update(partner_key: e.record.partner_key)
         existing_item.reload
