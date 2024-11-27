@@ -98,7 +98,7 @@ class CleanupPartnerAgencyTypes < ActiveRecord::Migration[7.1]
     profiles.each_record do |profile|
       profile.other_agency_type = profile.agency_type
       profile.agency_type = Partner::AGENCY_TYPES['OTHER']
-      profile.save
+      profile.save!
     end
 
   end
