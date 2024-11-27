@@ -40,8 +40,8 @@ RSpec.describe CustomDeviseMailer, type: :mailer do
         expect(mail.html_part.body).to include("Your request has been approved and you're invited to become an user of the Human Essentials inventory management system!")
       end
 
-      it "has invite expiration message" do
-        expect(mail.html_part.body).to include("This invitation will be due in #{user.invitation_due_at.strftime("%B %d, %Y %I:%M %p")} GMT.")
+      it "has invite expiration message and reset instructions" do
+        expect(mail.html_part.body).to include("This invitation will expire at #{user.invitation_due_at.strftime("%B %d, %Y %I:%M %p")} GMT or if a new password reset is triggered.")
       end
 
       it "has reset instructions" do
