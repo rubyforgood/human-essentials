@@ -1,16 +1,13 @@
 RSpec.describe "Annual Reports", type: :system, js: true do
-  let(:organization) { create(:organization) }
-  let(:organization_admin) { create(:organization_admin, organization: organization) }
-
-  let(:url_prefix) { "/#{organization.short_name}" }
+  let(:url_prefix) { "/#{@organization.short_name}" }
 
   context "while signed in as an organization admin" do
-    subject { reports_annual_reports_path }
-    let!(:purchase) { create(:purchase, :with_items, item_quantity: 10, issued_at: 1.year.ago, organization: organization) }
+    subject { url_prefix + "/reports/annual_reports" }
+    let!(:purchase) { create(:purchase, :with_items, item_quantity: 10, issued_at: 1.year.ago) }
 
     before do
-      sign_in organization_admin
-      visit subject
+      sign_in @organization_admin
+      visit subject.to_s
     end
 
     it("exists") do
@@ -23,10 +20,10 @@ RSpec.describe "Annual Reports", type: :system, js: true do
     end
 
     it "has all the sub-reports we expect" do
-      visit subject
+      visit subject.to_s
       year = 1.year.ago.year
       click_on(year.to_s)
-      expect(page).to have_selector("h1", text: "Diapers")
+      expect(page).to have_content("Diaper Acquisition")
       expect(page).to have_content("Warehouse and Storage")
       expect(page).to have_content("Adult Incontinence")
       expect(page).to have_content("Other Items")

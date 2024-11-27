@@ -1,6 +1,6 @@
 RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
   let(:year) { 2020 }
-  let(:organization) { create(:organization, :with_items) }
+  let(:organization) { create(:organization) }
 
   subject(:report) do
     described_class.new(organization: organization, year: year)
@@ -27,14 +27,15 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
                            "Adult Briefs (XS/Small)",
                            "Adult Briefs (XXS)",
                            "Adult Incontinence Pads",
-                            "Liners (Incontinence)",
                            "Underpads (Pack)",
-                            "Adult Cloth Diapers (Large/XL/XXL)",
-                            "Adult Cloth Diapers (Small/Medium)")
+                           "Adult Liners",
+                           "Wipes (Adult)")
     end
 
     describe 'with values' do
       before(:each) do
+        Organization.seed_items(organization)
+
         within_time = Time.zone.parse("2020-05-31 14:00:00")
         outside_time = Time.zone.parse("2019-05-31 14:00:00")
 

@@ -63,11 +63,8 @@ module Exports
         "Partner" => ->(distribution) {
           distribution.partner.name
         },
-        "Initial Allocation" => ->(distribution) {
-          distribution.created_at.strftime("%m/%d/%Y")
-        },
-        "Scheduled for" => ->(distribution) {
-          (distribution.issued_at.presence || distribution.created_at).strftime("%m/%d/%Y")
+        "Date of Distribution" => ->(distribution) {
+          distribution.issued_at.strftime("%m/%d/%Y")
         },
         "Source Inventory" => ->(distribution) {
           distribution.storage_location.name
@@ -90,7 +87,7 @@ module Exports
         "Shipping Cost" => ->(distribution) {
           distribution_shipping_cost(distribution.shipping_cost)
         },
-        "Status" => ->(distribution) {
+        "State" => ->(distribution) {
           distribution.state
         },
         "Agency Representative" => ->(distribution) {
@@ -118,7 +115,7 @@ module Exports
     def item_headers
       return @item_headers if @item_headers
 
-      @item_headers = @organization.items.select("DISTINCT ON (LOWER(name)) items.name").order("LOWER(name) ASC").map(&:name)
+      @item_headers = @organization.items.order(:created_at).distinct.select([:created_at, :name]).map(&:name)
     end
 
     def build_row_data(distribution)

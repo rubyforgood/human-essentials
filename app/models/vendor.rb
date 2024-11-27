@@ -23,8 +23,6 @@ class Vendor < ApplicationRecord
 
   has_many :purchases, inverse_of: :vendor, dependent: :destroy
 
-  validates :business_name, presence: true
-
   scope :alphabetized, -> { order(:business_name) }
 
   def volume

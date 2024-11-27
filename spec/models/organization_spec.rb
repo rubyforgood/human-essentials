@@ -11,8 +11,6 @@
 #  enable_child_based_requests    :boolean          default(TRUE), not null
 #  enable_individual_requests     :boolean          default(TRUE), not null
 #  enable_quantity_based_requests :boolean          default(TRUE), not null
-#  hide_package_column_on_receipt :boolean          default(FALSE)
-#  hide_value_columns_on_receipt  :boolean          default(FALSE)
 #  intake_location                :integer
 #  invitation_text                :text
 #  latitude                       :float
@@ -23,7 +21,6 @@
 #  reminder_day                   :integer
 #  repackage_essentials           :boolean          default(FALSE), not null
 #  short_name                     :string
-#  signature_for_distribution_pdf :boolean          default(FALSE)
 #  state                          :string
 #  street                         :string
 #  url                            :string
@@ -37,7 +34,6 @@
 
 RSpec.describe Organization, type: :model do
   let(:organization) { create(:organization) }
-
   describe "validations" do
     it "validates that attachments are png or jpgs" do
       expect(build(:organization,
@@ -136,18 +132,16 @@ RSpec.describe Organization, type: :model do
         end
 
         it "retrieves the distributions scheduled for this week that have not yet happened" do
-          wednesday_distribution_scheduled = create(:distribution, organization: organization, state: :scheduled, issued_at: Time.zone.local(2019, 7, 3))
-          create(:distribution, organization: organization, state: :complete, issued_at: Time.zone.local(2019, 7, 3))
-          sunday_distribution = create(:distribution, organization: organization, state: :scheduled, issued_at: Time.zone.local(2019, 7, 7))
-          upcoming_distributions = organization.distributions.upcoming
+          wednesday_distribution_scheduled = create(:distribution, organization: @organization, state: :scheduled, issued_at: Time.zone.local(2019, 7, 3))
+          create(:distribution, organization: @organization, state: :complete, issued_at: Time.zone.local(2019, 7, 3))
+          sunday_distribution = create(:distribution, organization: @organization, state: :scheduled, issued_at: Time.zone.local(2019, 7, 7))
+          upcoming_distributions = @organization.distributions.upcoming
           expect(upcoming_distributions).to match_array([wednesday_distribution_scheduled, sunday_distribution])
         end
       end
     end
 
     describe "items" do
-      let(:organization) { create(:organization, :with_items) }
-
       before do
         organization.items.each_with_index do |item, index|
           (index + 1).times { LineItem.create!(quantity: rand(250..500), item: item, itemizable: Distribution.new) }
@@ -236,32 +230,29 @@ RSpec.describe Organization, type: :model do
   describe ".seed_items" do
     context "when provided with an organization to seed" do
       it "loads the base items into Item records" do
-        create(:base_item, name: "Foo", partner_key: "foo")
-
+        base_items_count = BaseItem.count
         Organization.seed_items(organization)
-
-        expect(organization.items.count).to eq(1)
+        expect(organization.items.count).to eq(base_items_count)
       end
     end
 
     context "when no organization is provided" do
       it "updates all organizations" do
-        first_organization = create(:organization)
+        Organization.seed_items(@organization)
         second_organization = create(:organization)
-
+        organization_item_count = @organization.items.size
+        second_organization_item_count = second_organization.items.size
         create(:base_item, name: "Foo", partner_key: "foo")
-
-        expect do
-          Organization.seed_items
-          second_organization
-        end.to change { first_organization.items.count }.by(1)
-          .and change { second_organization.items.count }.by(1)
+        Organization.seed_items
+        expect(@organization.items.size).to eq(organization_item_count + 1)
+        expect(second_organization.items.size).to eq(second_organization_item_count + 1)
       end
     end
   end
 
   describe "#seed_items" do
     it "allows a single base item to be seeded" do
+      organization # will auto-seed existing base items
       base_item = create(:base_item, name: "Foo", partner_key: "foo").to_h
       expect do
         organization.seed_items(base_item)
@@ -269,6 +260,7 @@ RSpec.describe Organization, type: :model do
     end
 
     it "allows a collection of items to be seeded" do
+      organization # will auto-seed existing base items
       base_items = [create(:base_item, name: "Foo", partner_key: "foo").to_h, create(:base_item, name: "Bar", partner_key: "bar").to_h]
       expect do
         organization.seed_items(base_items)
@@ -277,6 +269,7 @@ RSpec.describe Organization, type: :model do
 
     context "when given an item that already exists" do
       it "gracefully skips the item" do
+        organization # will auto-seed existing base items
         base_item = create(:base_item, name: "Foo", partner_key: "foo")
         base_items = [base_item.to_h, BaseItem.first.to_h]
         expect do
@@ -287,17 +280,14 @@ RSpec.describe Organization, type: :model do
 
     context "when given an item name that already exists, but with an 'other' partner key" do
       it "updates the old item to use the new base item as its base" do
-        create(:base_item, name: "Other", partner_key: "other")
-        item = organization.items.create(name: "Foo", partner_key: "other", organization: organization)
-
+        organization # will auto-seed existing base items
+        item = organization.items.create(name: "Foo", partner_key: "other")
         base_item = create(:base_item, name: "Foo", partner_key: "foo")
-        base_items = [base_item.to_h]
-
+        base_items = [base_item.to_h, BaseItem.first.to_h]
         expect do
           organization.seed_items(base_items)
           item.reload
-        end.to change { organization.items.size }.by(0)
-          .and change { item.partner_key }.to("foo")
+        end.to change { organization.items.size }.by(0).and change { item.partner_key }.to("foo")
       end
     end
   end
@@ -404,14 +394,20 @@ RSpec.describe Organization, type: :model do
 
   describe 'valid_items' do
     it 'returns an array of item partner keys' do
-      item = create(:item, organization: organization)
+      item = organization.items.first
       expected = { name: item.name, id: item.id, partner_key: item.partner_key }
       expect(organization.valid_items.count).to eq(organization.items.count)
       expect(organization.valid_items).to include(expected)
     end
+    it 'only shows active valid items' do
+      intial_count = organization.valid_items.count
+      organization.items.last.update(active: false)
+      final_count = organization.valid_items.count
+      expect(intial_count).to_not eq(final_count)
+    end
 
     context 'with invisible items' do
-      let!(:organization) { create(:organization) }
+      let!(:organization) { create(:organization, skip_items: true) }
       let!(:item1) { create(:item, organization: organization, active: true, visible_to_partners: true) }
       let!(:item2) { create(:item, organization: organization, active: true, visible_to_partners: false) }
       let!(:item3) { create(:item, organization: organization, active: false, visible_to_partners: true) }

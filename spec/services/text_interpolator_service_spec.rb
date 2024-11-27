@@ -1,3 +1,5 @@
+require 'rails_helper'
+
 RSpec.describe TextInterpolatorService, type: :service do
   describe '#call' do
     subject { described_class.new(text, interpolations).call }

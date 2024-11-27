@@ -1,17 +1,16 @@
-RSpec.describe "BroadcastAnnouncements", type: :request do
-  let(:organization) { create(:organization) }
-  let(:user) { create(:user, organization: organization) }
+require "rails_helper"
 
+RSpec.describe "BroadcastAnnouncements", type: :request do
   before do
-    sign_in(user)
+    sign_in(@user)
   end
   let(:valid_attributes) {
     {
       expiry: Time.zone.today,
       link: "http://google.com",
       message: "test",
-      user_id: user.id,
-      organization_id: organization.id
+      user_id: @user.id,
+      organization_id: @organization.id
     }
   }
 
@@ -75,8 +74,8 @@ RSpec.describe "BroadcastAnnouncements", type: :request do
           expiry: Time.zone.yesterday,
           link: "http://google.com",
           message: "new_test",
-          user_id: user.id,
-          organization_id: organization.id
+          user_id: @user.id,
+          organization_id: @organization.id
         }
       }
 

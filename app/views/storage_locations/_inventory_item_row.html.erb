@@ -1,0 +1,11 @@
+<tr>
+  <td><%= link_to inventory_item_row.item.name, item_path(inventory_item_row.item) %></td>
+  <td>
+    <% if version_date.present? %>
+      <% version = inventory_item_row.paper_trail.version_at(version_date) %>
+      <%= version ? number_with_delimiter(version.quantity) : "N/A" %>
+    <% else %>
+      <%= number_with_delimiter(inventory_item_row.quantity) %>
+    <% end %>
+  </td>
+</tr>

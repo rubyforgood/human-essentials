@@ -1,17 +1,15 @@
 RSpec.describe "Vendor", type: :system, js: true do
-  let(:organization) { create(:organization) }
-  let(:user) { create(:user, organization: organization) }
-
   before do
-    sign_in(user)
+    sign_in(@user)
   end
+  let(:url_prefix) { "/#{@organization.to_param}" }
 
   context "When a user views the index page" do
     before(:each) do
       @second = create(:vendor, business_name: "Bcd")
       @first = create(:vendor, business_name: "Abc")
       @third = create(:vendor, business_name: "Cde")
-      visit vendors_path
+      visit url_prefix + "/vendors"
     end
     it "should have the vendor names in alphabetical order" do
       expect(page).to have_xpath("//table//tr", count: 4)
@@ -21,7 +19,7 @@ RSpec.describe "Vendor", type: :system, js: true do
   end
 
   context "when creating a new vendor" do
-    subject { new_vendor_path }
+    subject { url_prefix + "/vendors/new" }
 
     it "can create a new vendor instance as a user" do
       visit subject
@@ -47,7 +45,7 @@ RSpec.describe "Vendor", type: :system, js: true do
 
   context "when editing an existing vendor" do
     let!(:vendor) { create(:vendor) }
-    subject { edit_vendor_path(vendor.id) }
+    subject { url_prefix + "/vendors/#{vendor.id}/edit" }
     it "can update the contact info for a vendor as a user" do
       new_email = "foo@bar.com"
       visit subject
@@ -78,13 +76,13 @@ RSpec.describe "Vendor", type: :system, js: true do
     end
 
     it "can have existing vendors show in the #index with some summary stats" do
-      visit vendors_path
+      visit url_prefix + "/vendors"
       expect(page).to have_xpath("//table/tbody/tr/td", text: @vendor.business_name)
       expect(page).to have_xpath("//table/tbody/tr/td", text: "25")
     end
 
     it "can have a single vendor show semi-detailed stats about purchases" do
-      visit vendor_path(@vendor.to_param)
+      visit url_prefix + "/vendors/#{@vendor.to_param}"
       expect(page).to have_xpath("//table/tbody/tr", count: 3)
       expect(page).to have_xpath("//table/tbody/tr/td", text: "10")
     end

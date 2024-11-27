@@ -10,6 +10,7 @@
 #  old_resource_id :bigint
 #  resource_id     :bigint
 #
+require "rails_helper"
 
 RSpec.describe Role, type: :model do
   describe "Validations" do

@@ -1,3 +1,5 @@
+require "rails_helper"
+
 RSpec.describe Exports::ExportReportCSVService do
   describe ".generate_csv_data" do
     it "creates CSV data including headers" do

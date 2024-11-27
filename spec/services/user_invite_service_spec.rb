@@ -1,28 +1,25 @@
-RSpec.describe UserInviteService, type: :service do
-  let(:organization) { create(:organization) }
-  let(:partner) { create(:partner, organization: organization) }
-
+RSpec.describe UserInviteService, type: :service, skip_seed: true do
+  let(:organization) { FactoryBot.create(:organization) }
   before(:each) do
     allow(UserMailer).to receive(:role_added).and_return(double(:mail, deliver_later: nil))
   end
 
   context "with existing user" do
     let!(:user) do
-      create(:user, email: "email@email.com", organization: organization)
+      User.create!(name: "Some Name", email: "email@email.com", password: "blahblah!")
     end
 
     it "should raise an error when reinviting an existing user with the same role" do
       expect {
-        described_class.invite(email: user.email, resource: organization)
-      }.to raise_error("User already has the requested role!")
-        .and not_change { ActionMailer::Base.deliveries.count }
-
+        expect { described_class.invite(email: "email@email.com", resource: @organization) }
+          .to raise_error("User already has the requested role!")
+      }.not_to change { ActionMailer::Base.deliveries.count }
       expect(UserMailer).not_to have_received(:role_added)
     end
 
     context "with force: true" do
       it "should reinvite the user" do
-        expect { described_class.invite(email: "email@email.com", resource: organization, force: true) }
+        expect { described_class.invite(email: "email@email.com", resource: @organization, force: true) }
           .to change { ActionMailer::Base.deliveries.count }
         expect(UserMailer).not_to have_received(:role_added)
       end
@@ -59,7 +56,7 @@ RSpec.describe UserInviteService, type: :service do
         @result = UserInviteService.invite(
           email: "email2@email.com",
           roles: [Role::PARTNER],
-          resource: partner
+          resource: @partner
         )
       }.to change { ActionMailer::Base.deliveries.count }.by(1)
 
@@ -69,7 +66,7 @@ RSpec.describe UserInviteService, type: :service do
       expect(user.name).to be_nil
       expect(user.name).not_to eq("")
       expect(user.email).to eq("email2@email.com")
-      expect(user).to have_role(Role::PARTNER, partner)
+      expect(user).to have_role(Role::PARTNER, @partner)
     end
   end
 
@@ -79,7 +76,7 @@ RSpec.describe UserInviteService, type: :service do
         name: "Partner User",
         email: "partner@example.com",
         roles: [Role::PARTNER],
-        resource: partner
+        resource: @partner
       )
     }.to change { ActionMailer::Base.deliveries.count }.by(1)
 
@@ -87,7 +84,7 @@ RSpec.describe UserInviteService, type: :service do
     expect(user.name).to eq("Partner User")
     expect(user).to be_truthy
     expect(user).not_to be_nil
-    expect(user).to have_role(Role::PARTNER, partner)
+    expect(user).to have_role(Role::PARTNER, @partner)
   end
 
   it "should invite a user with name '' with default role" do

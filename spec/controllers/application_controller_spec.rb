@@ -1,6 +1,4 @@
 RSpec.describe ApplicationController do
-  let(:organization) { create(:organization) }
-
   describe "current_organization" do
     before(:each) do
       allow(controller).to receive(:current_user).and_return(user)
@@ -8,7 +6,7 @@ RSpec.describe ApplicationController do
     end
 
     context "As a partner user" do
-      let(:user) { create(:partner_user) }
+      let(:user) { create(:partners_user) }
       it "should return nil" do
         expect(controller.current_organization).to eq(nil)
       end
@@ -43,16 +41,16 @@ RSpec.describe ApplicationController do
     end
 
     context "As an org user" do
-      let(:user) { create(:user, organization: organization) }
+      let(:user) { create(:user) }
       it "should return nil" do
         expect(controller.current_partner).to eq(nil)
       end
     end
 
     context "As a partner user" do
-      let(:partner) { create(:partner, organization: organization) }
-      let(:partner2) { create(:partner, organization: organization) }
-      let(:user) { create(:partner_user, partner: partner) }
+      let(:partner) { create(:partner) }
+      let(:partner2) { create(:partner) }
+      let(:user) { create(:partners_user, partner: partner) }
       before(:each) do
         user.add_role(Role::PARTNER, partner2) # add a second role
       end
@@ -88,10 +86,11 @@ RSpec.describe ApplicationController do
     end
 
     context "As a user without super admin status" do
-      let(:user) { create(:super_admin, organization: organization) }
+      let(:user) { create(:super_admin) }
 
       it "links to the general dashboard" do
-        expect(controller.dashboard_path_from_current_role).to eq "/dashboard"
+        org_name = @organization.short_name
+        expect(controller.dashboard_path_from_current_role).to eq "/#{org_name}/dashboard"
       end
     end
   end

@@ -1,6 +1,11 @@
+require "rails_helper"
+
 RSpec.describe "Events", type: :request do
   let(:organization) { create(:organization) }
   let(:user) { create(:organization_admin, organization: organization) }
+  let(:default_params) do
+    {organization_name: organization.to_param}
+  end
   let(:storage_location) { create(:storage_location, organization: organization) }
   let(:storage_location2) { create(:storage_location, organization: organization) }
   let(:item) { create(:item, organization: organization, name: "Item1") }
@@ -10,7 +15,7 @@ RSpec.describe "Events", type: :request do
     before { sign_in(user) }
 
     describe "GET #index" do
-      let(:params) { {format: "html"} }
+      let(:params) { default_params.merge(format: "html") }
 
       subject do
         get events_path(params)
@@ -48,7 +53,9 @@ RSpec.describe "Events", type: :request do
       end
 
       context "with type filter" do
-        let(:params) { {format: "html", filters: {by_type: "DonationEvent"}} }
+        let(:params) do
+          default_params.merge(format: "html", filters: {by_type: "DonationEvent"})
+        end
 
         it "should not include the adjustment" do
           subject
@@ -63,7 +70,9 @@ RSpec.describe "Events", type: :request do
       end
 
       context "with item filter" do
-        let(:params) { {format: "html", filters: {by_item: item.id}} }
+        let(:params) do
+          default_params.merge(format: "html", filters: {by_item: item.id})
+        end
 
         it "should not include the other item" do
           subject
@@ -78,7 +87,9 @@ RSpec.describe "Events", type: :request do
       end
 
       context "with storage location filter" do
-        let(:params) { {format: "html", filters: {by_storage_location: storage_location.id}} }
+        let(:params) do
+          default_params.merge(format: "html", filters: {by_storage_location: storage_location.id})
+        end
 
         it "should not include the other storage location" do
           subject
@@ -94,12 +105,10 @@ RSpec.describe "Events", type: :request do
 
       context "with date filter" do
         let(:params) {
-          {
-            format: "html",
+          default_params.merge(format: "html",
             filters: {filters: {
               date_range: date_range_picker_params(3.days.ago, Time.zone.tomorrow)
-            }}
-          }
+            }})
         }
 
         it "should not include the old donation" do
@@ -118,7 +127,9 @@ RSpec.describe "Events", type: :request do
         let(:donation) do
           create(:donation, :with_items, item: item, organization: organization, item_quantity: 44)
         end
-        let(:params) { {format: "html", eventable_id: donation.id, eventable_type: "Donation"} }
+        let(:params) do
+          default_params.merge(format: "html", eventable_id: donation.id, eventable_type: "Donation")
+        end
         before do
           DonationEvent.publish(donation)
           donation.line_items.first.quantity = 33

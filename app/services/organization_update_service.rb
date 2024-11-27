@@ -12,25 +12,12 @@ class OrganizationUpdateService
     def update(organization, params)
       return false unless valid?(organization, params)
 
-      org_params = params.dup
-
-      if org_params.has_key?("partner_form_fields")
-        org_params["partner_form_fields"] = org_params["partner_form_fields"].reject(&:blank?)
+      if params.has_key?("partner_form_fields")
+        params["partner_form_fields"].delete_if { |field| field == "" }
       end
-
-      if Flipper.enabled?(:enable_packs) && org_params[:request_unit_names]
-        # Find or create units for the organization
-        request_unit_ids = org_params[:request_unit_names].reject(&:blank?).map do |request_unit_name|
-          Unit.find_or_create_by(organization: organization, name: request_unit_name).id
-        end
-        org_params.delete(:request_unit_names)
-        org_params[:request_unit_ids] = request_unit_ids
-      end
-
-      result = organization.update(org_params)
-
+      result = organization.update(params)
       return false unless result
-      return false unless update_partner_flags(organization)
+      update_partner_flags(organization)
       true
     end
 
@@ -46,9 +33,6 @@ class OrganizationUpdateService
         next if organization.send(field)
         organization.partners.each do |partner|
           partner.profile.update!(field => organization.send(field))
-        rescue ActiveRecord::RecordInvalid => e
-          organization.errors.add(:base, "Profile for partner '#{e.record.partner.name}' had error(s) preventing the organization from being saved. #{e.message}")
-          return false
         end
       end
     end

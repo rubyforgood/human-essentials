@@ -1,14 +1,12 @@
 RSpec.describe InventoryCheckService, type: :service do
-  let(:organization) { create(:organization) }
-
   subject { InventoryCheckService }
   describe "call" do
-    let(:item1) { create(:item, name: "Item 1", organization: organization, on_hand_minimum_quantity: 5, on_hand_recommended_quantity: 10) }
-    let(:item2) { create(:item, name: "Item 2", organization: organization, on_hand_minimum_quantity: 5, on_hand_recommended_quantity: 10) }
+    let(:item1) { create(:item, name: "Item 1", organization: @organization, on_hand_minimum_quantity: 5, on_hand_recommended_quantity: 10) }
+    let(:item2) { create(:item, name: "Item 2", organization: @organization, on_hand_minimum_quantity: 5, on_hand_recommended_quantity: 10) }
 
     context "error" do
       let(:storage_location) do
-        storage_location = create(:storage_location, organization: organization)
+        storage_location = create(:storage_location)
         TestInventory.create_inventory(storage_location.organization, {
           storage_location.id => {
             item1.id => 4,
@@ -33,7 +31,7 @@ RSpec.describe InventoryCheckService, type: :service do
 
     context "alert" do
       let(:storage_location) do
-        storage_location = create(:storage_location, organization: organization)
+        storage_location = create(:storage_location)
         TestInventory.create_inventory(storage_location.organization, {
           storage_location.id => {
             item1.id => 9,

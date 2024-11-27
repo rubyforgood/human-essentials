@@ -90,8 +90,7 @@ $(document).ready(function(){
       format: "MMMM D, YYYY",
       ranges: {
         customRanges: {
-          'Default': [today.minus({'months': 2}).toJSDate(), today.plus({'months': 1}).toJSDate()],
-          'All Time': [today.minus({ 'years': 100 }).toJSDate(), today.plus({ 'years': 1 }).toJSDate()],
+          'All Time': [today.minus({ 'years': 100}).toJSDate(), today.toJSDate()],
           'Today': [today.toJSDate(), today.toJSDate()],
           'Yesterday': [today.minus({'days': 1}).toJSDate(), today.minus({'days': 1}).toJSDate()],
           'Last 7 Days': [today.minus({'days': 6}).toJSDate(), today.toJSDate()],

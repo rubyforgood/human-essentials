@@ -1,6 +1,6 @@
 RSpec.describe "Attachments", type: :request do
   before do
-    sign_in(create(:user))
+    sign_in(@user)
   end
 
   describe "DELETE #destroy" do

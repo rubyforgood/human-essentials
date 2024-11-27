@@ -1,15 +1,12 @@
 RSpec.describe DistributionCreateService, type: :service do
-  let(:organization) { create(:organization) }
-  let(:partner) { create(:partner, organization: organization) }
-
   include ActiveJob::TestHelper
 
   subject { DistributionCreateService }
   describe "call" do
-    let!(:storage_location) { create(:storage_location, :with_items, item_count: 2, organization: organization) }
+    let!(:storage_location) { create(:storage_location, :with_items, item_count: 2) }
     let!(:distribution) {
-      Distribution.new(organization_id: organization.id,
-        partner_id: partner.id,
+      Distribution.new(organization_id: @organization.id,
+        partner_id: @partner.id,
         storage_location_id: storage_location.id,
         delivery_method: :delivery,
         line_items_attributes: {
@@ -33,7 +30,7 @@ RSpec.describe DistributionCreateService, type: :service do
 
     context "partner has send reminders setting set to true" do
       it "Sends a PartnerMailer" do
-        partner.update!(send_reminders: true)
+        @partner.update!(send_reminders: true)
 
         expect do
           perform_enqueued_jobs only: PartnerMailerJob do
@@ -45,7 +42,7 @@ RSpec.describe DistributionCreateService, type: :service do
 
     context "partner has send reminders setting set to false" do
       it "does not send a PartnerMailer" do
-        partner.update!(send_reminders: false)
+        @partner.update!(send_reminders: false)
 
         expect(PartnerMailerJob).not_to receive(:perform_later)
         subject.new(distribution).call
@@ -54,7 +51,7 @@ RSpec.describe DistributionCreateService, type: :service do
 
     context "partner is deactivated" do
       it "does not send an email" do
-        partner.update!(send_reminders: true, status: "deactivated")
+        @partner.update!(send_reminders: true, status: "deactivated")
 
         expect do
           perform_enqueued_jobs only: PartnerMailerJob do
@@ -65,7 +62,7 @@ RSpec.describe DistributionCreateService, type: :service do
     end
 
     context "when provided with a request ID" do
-      let!(:request) { create(:request, organization: organization) }
+      let!(:request) { create(:request) }
 
       it "changes the status of the request" do
         expect do
@@ -75,7 +72,7 @@ RSpec.describe DistributionCreateService, type: :service do
       end
 
       context 'and the request already has a distribution associated with it' do
-        let(:distribution) { create(:distribution, organization: organization) }
+        let(:distribution) { create(:distribution) }
         before do
           request.update!(distribution_id: distribution.id)
         end
@@ -91,8 +88,8 @@ RSpec.describe DistributionCreateService, type: :service do
     context "when there's not sufficient inventory" do
       let(:too_much_dist) {
         Distribution.new(
-          organization_id: organization.id,
-          partner_id: partner.id,
+          organization_id: @organization.id,
+          partner_id: @partner.id,
           storage_location_id: storage_location.id,
           delivery_method: :delivery,
           line_items_attributes: { "0": { item_id: storage_location.items.first.id, quantity: 500 } }
@@ -101,7 +98,8 @@ RSpec.describe DistributionCreateService, type: :service do
 
       it "preserves the Insufficiency error and is unsuccessful" do
         result = subject.new(too_much_dist).call
-        expect(result.error).to be_instance_of(InventoryError)
+        error_class = Event.read_events?(@organization) ? InventoryError : Errors::InsufficientAllotment
+        expect(result.error).to be_instance_of(error_class)
         expect(result).not_to be_success
       end
     end
@@ -109,8 +107,8 @@ RSpec.describe DistributionCreateService, type: :service do
     context "when there's multiple line items and one has insufficient inventory" do
       let(:too_much_dist) do
         Distribution.new(
-          organization_id: organization.id,
-          partner_id: partner.id,
+          organization_id: @organization.id,
+          partner_id: @partner.id,
           storage_location_id: storage_location.id,
           delivery_method: :delivery,
           line_items_attributes:
@@ -123,14 +121,15 @@ RSpec.describe DistributionCreateService, type: :service do
 
       it "preserves the Insufficiency error and is unsuccessful" do
         result = subject.new(too_much_dist).call
-        expect(result.error).to be_instance_of(InventoryError)
+        error_class = Event.read_events?(@organization) ? InventoryError : Errors::InsufficientAllotment
+        expect(result.error).to be_instance_of(error_class)
         expect(result).not_to be_success
       end
     end
 
     context "when it fails to save" do
       let(:bad_dist) {
-        Distribution.new(organization_id: organization.id,
+        Distribution.new(organization_id: @organization.id,
           storage_location_id: storage_location.id,
           line_items_attributes: {
             "0": { item_id: storage_location.items.first.id, quantity: 500 }
@@ -147,8 +146,8 @@ RSpec.describe DistributionCreateService, type: :service do
     context "when the line item quantity is not positive" do
       let(:dist) {
         Distribution.new(
-          organization_id: organization.id,
-          partner_id: partner.id,
+          organization_id: @organization.id,
+          partner_id: @partner.id,
           storage_location_id: storage_location.id,
           delivery_method: :delivery,
           line_items_attributes: { "0": { item_id: storage_location.items.first.id, quantity: 0 } }

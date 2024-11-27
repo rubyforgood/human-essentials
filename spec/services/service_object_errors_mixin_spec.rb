@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'rails_helper'
+
 RSpec.describe ServiceObjectErrorsMixin do
   describe 'self.included' do
     before do

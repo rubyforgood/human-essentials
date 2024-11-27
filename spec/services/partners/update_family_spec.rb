@@ -1,3 +1,5 @@
+require "rails_helper"
+
 RSpec.describe Partners::UpdateFamily do
   describe "#call" do
     subject { described_class.archive(family) }

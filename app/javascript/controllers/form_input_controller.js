@@ -27,7 +27,6 @@ export default class extends Controller {
       detail: dest.lastElementChild,
     });
 
-    dest.lastElementChild.scrollIntoView();
     dest.dispatchEvent(afterInsert);
   }
 

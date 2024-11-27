@@ -14,12 +14,12 @@ module ApplicationHelper
     end
   end
 
-  def active_class(controller_action_names)
-    (controller_action_names.include?(params[:controller]) || controller_action_names.include?("#{params[:controller]}/#{params[:action]}")) ? 'active' : ''
+  def active_class(name)
+    name.include?(controller_path) ? "active" : controller_path
   end
 
-  def menu_open?(controller_action_names)
-    (controller_action_names.include?(params[:controller]) || controller_action_names.include?("#{params[:controller]}/#{params[:action]}")) ? 'menu-open' : ''
+  def menu_open?(name)
+    name.include?(controller_path) ? 'menu-open' : ''
   end
 
   def can_administrate?
