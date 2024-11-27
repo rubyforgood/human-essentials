@@ -106,9 +106,10 @@ module DistributionPDFHelper
     dist = create_dist(partner, storage_creation, delivery_method)
     pdf_file = DistributionPdf.new(storage_creation.organization, dist).compute_and_render
     File.binwrite(expected_file_path, pdf_file)
-    profile.destroy
-    dist.destroy
-    partner.destroy
+    profile.destroy!
+    dist.request.destroy!
+    dist.destroy!
+    partner.destroy!
   end
 
   # helper function that can be called from Rails console to generate comparison PDFs
@@ -120,11 +121,11 @@ module DistributionPDFHelper
     create_comparison_pdf(storage_creation, DistributionPDFHelper.instance_method(:create_profile_without_program_address), file_paths.expected_same_address_file_path, :shipped)
     create_comparison_pdf(storage_creation, DistributionPDFHelper.instance_method(:create_profile_with_program_address), file_paths.expected_different_address_file_path, :delivery)
 
-    storage_creation.storage_location.destroy
-    storage_creation.items[0].destroy
-    storage_creation.items[1].destroy
-    storage_creation.items[2].destroy
-    storage_creation.items[3].destroy
-    storage_creation.organization.destroy
+    storage_creation.storage_location.destroy!
+    storage_creation.items[0].destroy!
+    storage_creation.items[1].destroy!
+    storage_creation.items[2].destroy!
+    storage_creation.items[3].destroy!
+    storage_creation.organization.destroy!
   end
 end
