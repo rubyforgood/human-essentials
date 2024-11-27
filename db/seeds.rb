@@ -628,63 +628,66 @@ end
 # ----------------------------------------------------------------------------
 
 dates_generator = DispersedPastDatesGenerator.new
-# Make some donations of all sorts
-20.times.each do
-  source = Donation::SOURCES.values.sample
-  # Depending on which source it uses, additional data may need to be provided.
-  donation = Donation.new(source: source,
-                          storage_location: StorageLocation.active_locations.sample,
-                          organization: pdx_org,
-                          issued_at: dates_generator.next)
-  case source
-  when Donation::SOURCES[:product_drive]
-    donation.product_drive = ProductDrive.first
-    donation.product_drive_participant = random_record_for_org(pdx_org, ProductDriveParticipant)
-  when Donation::SOURCES[:donation_site]
-    donation.donation_site = random_record_for_org(pdx_org, DonationSite)
-  when Donation::SOURCES[:manufacturer]
-    donation.manufacturer = random_record_for_org(pdx_org, Manufacturer)
-  end
+[ pdx_org, sc_org ].each do |org|
+  # Make some donations of all sorts
+  20.times.each do
+    source = Donation::SOURCES.values.sample
+    # Depending on which source it uses, additional data may need to be provided.
+    donation = Donation.new(
+      source: source,
+      storage_location: org.storage_locations.active_locations.sample,
+      organization: org,
+      issued_at: dates_generator.next
+    )
+    case source
+    when Donation::SOURCES[:product_drive]
+      donation.product_drive = org.product_drives.find_by(name: "Best Product Drive")
+      donation.product_drive_participant = random_record_for_org(org, ProductDriveParticipant)
+    when Donation::SOURCES[:donation_site]
+      donation.donation_site = random_record_for_org(org, DonationSite)
+    when Donation::SOURCES[:manufacturer]
+      donation.manufacturer = random_record_for_org(org, Manufacturer)
+    end
 
-  rand(1..5).times.each do
-    donation.line_items.push(LineItem.new(quantity: rand(250..500), item: random_record_for_org(pdx_org, Item)))
+    rand(1..5).times.each do
+      donation.line_items.push(LineItem.new(quantity: rand(250..500), item: random_record_for_org(org, Item)))
+    end
+    DonationCreateService.call(donation)
   end
-  DonationCreateService.call(donation)
-end
 
 # ----------------------------------------------------------------------------
 # Distributions
 # ----------------------------------------------------------------------------
-dates_generator = DispersedPastDatesGenerator.new
 
-inventory = InventoryAggregate.inventory_for(pdx_org.id)
-# Make some distributions, but don't use up all the inventory
-20.times.each do
-  issued_at = dates_generator.next
+  inventory = InventoryAggregate.inventory_for(org.id)
+  # Make some distributions, but don't use up all the inventory
+  20.times.each do
+    issued_at = dates_generator.next
 
-  storage_location = StorageLocation.active_locations.sample
-  stored_inventory_items_sample = inventory.storage_locations[storage_location.id].items.values.sample(20)
-  delivery_method = Distribution.delivery_methods.keys.sample
-  shipping_cost = delivery_method == "shipped" ? (rand(20.0..100.0)).round(2).to_s : nil
-  distribution = Distribution.new(
-    storage_location: storage_location,
-    partner: random_record_for_org(pdx_org, Partner),
-    organization: pdx_org,
-    issued_at: issued_at,
-    created_at: 3.days.ago(issued_at),
-    delivery_method: delivery_method,
-    shipping_cost: shipping_cost,
-    comment: 'Urgent'
-  )
+    storage_location = org.storage_locations.active_locations.sample
+    stored_inventory_items_sample = inventory.storage_locations[storage_location.id].items.values.sample(20)
+    delivery_method = Distribution.delivery_methods.keys.sample
+    shipping_cost = delivery_method == "shipped" ? (rand(20.0..100.0)).round(2).to_s : nil
+    distribution = Distribution.new(
+      storage_location: storage_location,
+      partner: random_record_for_org(org, Partner),
+      organization: org,
+      issued_at: issued_at,
+      created_at: 3.days.ago(issued_at),
+      delivery_method: delivery_method,
+      shipping_cost: shipping_cost,
+      comment: 'Urgent'
+    )
 
-  stored_inventory_items_sample.each do |stored_inventory_item|
-    distribution_qty = rand(stored_inventory_item.quantity / 2)
-    if distribution_qty >= 1
-      distribution.line_items.push(LineItem.new(quantity: distribution_qty,
-                                                item_id: stored_inventory_item.item_id))
+    stored_inventory_items_sample.each do |stored_inventory_item|
+      distribution_qty = rand(stored_inventory_item.quantity / 2)
+      if distribution_qty >= 1
+        distribution.line_items.push(LineItem.new(quantity: distribution_qty,
+                                                  item_id: stored_inventory_item.item_id))
+      end
     end
+    DistributionCreateService.new(distribution).call
   end
-  DistributionCreateService.new(distribution).call
 end
 
 # ----------------------------------------------------------------------------
