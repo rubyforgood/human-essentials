@@ -135,7 +135,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
                              "Underpads (Pack)",
                              "Adult Liners",
                              "Wipes (Adult)",
-                             "1T Diapers") #item auto generated with the creation of a kit
+                             "1T Diapers")
       end
 
       it 'should handle null distribution quantity' do
@@ -160,7 +160,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
                              "Underpads (Pack)",
                              "Adult Liners",
                              "Wipes (Adult)",
-                             "2T Diapers") #item auto generated with the creation of a kit
+                             "2T Diapers")
       end
     end
   end
