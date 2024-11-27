@@ -23,7 +23,6 @@ module Partners
       end
     end
 
-    # partner user creation
     def create
       user = UserInviteService.invite(name: user_params[:name],
         email: user_params[:email],

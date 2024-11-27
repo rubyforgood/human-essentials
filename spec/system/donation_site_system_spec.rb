@@ -1,15 +1,13 @@
 RSpec.describe "Donation Site", type: :system, js: true do
-  let(:organization) { create(:organization) }
-  let(:user) { create(:user, organization: organization) }
-
   before do
-    sign_in(user)
+    sign_in(@user)
   end
 
+  let(:url_prefix) { "/#{@organization.to_param}" }
   let(:donation_site) { create(:donation_site) }
 
   context "When a user views the index page" do
-    subject { donation_sites_path }
+    subject { url_prefix + "/donation_sites" }
 
     it "should show donation sites in alphabetical order" do
       create(:donation_site, name: "Bcd")
@@ -56,7 +54,7 @@ RSpec.describe "Donation Site", type: :system, js: true do
   end
 
   context "When creating a new donation site" do
-    subject { new_donation_site_path }
+    subject { url_prefix + "/donation_sites/new" }
 
     it "creates a new donation site as a user only with the required fields" do
       visit subject
@@ -90,7 +88,7 @@ RSpec.describe "Donation Site", type: :system, js: true do
   end
 
   context "with an existing donation site" do
-    subject { edit_donation_site_path(donation_site.id) }
+    subject { url_prefix + "/donation_sites/#{donation_site.id}/edit" }
 
     it "updates an existing donation site's Name" do
       visit subject

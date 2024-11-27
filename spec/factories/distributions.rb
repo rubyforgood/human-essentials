@@ -21,14 +21,13 @@ FactoryBot.define do
   factory :distribution do
     storage_location
     partner
-    organization { Organization.try(:first) || create(:organization) }
+    organization { Organization.try(:first) || create(:organization, skip_items: true) }
     issued_at { nil }
     delivery_method { :pick_up }
     state { :scheduled }
 
     trait :past do
       issued_at { 1.week.ago }
-      created_at { 10.days.ago }
     end
 
     trait :with_items do
@@ -46,7 +45,7 @@ FactoryBot.define do
           .first
           &.db_item
         item = evaluator.item || event_item
-        instance.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item, itemizable: instance)
+        instance.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item)
       end
     end
   end

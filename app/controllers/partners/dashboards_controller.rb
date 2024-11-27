@@ -24,7 +24,9 @@ module Partners
 
       @families = @partner.families
       @children = @partner.children
-      @inventory = View::Inventory.new(@partner.organization_id)
+      if Event.read_events?(@partner.organization)
+        @inventory = View::Inventory.new(@partner.organization_id)
+      end
 
       @broadcast_announcements = BroadcastAnnouncement.filter_announcements(@parent_org)
     end

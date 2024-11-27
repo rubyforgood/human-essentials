@@ -1,6 +1,6 @@
 RSpec.describe Reports::OtherProductsReportService, type: :service do
   let(:year) { 2020 }
-  let(:organization) { create(:organization, :with_items) }
+  let(:organization) { create(:organization) }
 
   subject(:report) do
     described_class.new(organization: organization, year: year)
@@ -21,6 +21,8 @@ RSpec.describe Reports::OtherProductsReportService, type: :service do
     end
 
     it 'should report normal values' do
+      Organization.seed_items(organization)
+
       within_time = Time.zone.parse("2020-05-31 14:00:00")
       outside_time = Time.zone.parse("2019-05-31 14:00:00")
 

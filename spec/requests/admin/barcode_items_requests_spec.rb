@@ -1,9 +1,9 @@
-RSpec.describe 'Admin::BarcodeItemsController', type: :request do
-  let(:organization) { create(:organization) }
+require 'rails_helper'
 
+RSpec.describe 'Admin::BarcodeItemsController', type: :request do
   context 'while signed in as a super admin' do
     before do
-      sign_in(create(:super_admin, organization: organization))
+      sign_in(@super_admin)
     end
 
     describe 'GET #index' do

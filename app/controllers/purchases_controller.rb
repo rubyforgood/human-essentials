@@ -5,7 +5,7 @@ class PurchasesController < ApplicationController
   def index
     setup_date_range_picker
     @purchases = current_organization.purchases
-                                     .includes(:storage_location, :vendor, line_items: [:item])
+                                     .includes(:line_items, :storage_location)
                                      .order(created_at: :desc)
                                      .class_filter(filter_params)
                                      .during(helpers.selected_range)
@@ -68,6 +68,7 @@ class PurchasesController < ApplicationController
     @purchase = current_organization.purchases.find(params[:id])
     ItemizableUpdateService.call(itemizable: @purchase,
       params: purchase_params,
+      type: :increase,
       event_class: PurchaseEvent)
     redirect_to purchases_path
   rescue => e

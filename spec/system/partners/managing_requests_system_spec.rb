@@ -44,11 +44,7 @@ RSpec.describe "Managing requests", type: :system, js: true do
 
         context 'THEN a request records will be created' do
           it "creates the correct request" do
-            click_button 'Submit Essentials Request'
-            expect(page).to have_selector('#partnerIndividualRequestConfirmationModal')
-            within "#partnerIndividualRequestConfirmationModal" do
-              click_button "Yes, it's correct"
-            end
+            expect { click_button 'Submit Essentials Request' }.to change { Request.count }.by(1)
 
             created_request = Request.last
             expected_items = item_details.map { |item| {"item_id" => item[:id], "quantity" => item[:quantity_per_person] * item[:person_count]} }
@@ -63,9 +59,8 @@ RSpec.describe "Managing requests", type: :system, js: true do
   end
 
   describe 'creating a new quantity request' do
-    let(:organization) { FactoryBot.create(:organization, :with_items) }
     let(:partner_user) { partner.primary_user }
-    let!(:partner) { FactoryBot.create(:partner, organization: organization, quota: 1) }
+    let!(:partner) { FactoryBot.create(:partner) }
 
     context 'GIVEN a partner user is permitted to make a request' do
       before do
@@ -99,24 +94,17 @@ RSpec.describe "Managing requests", type: :system, js: true do
             last_row.find_all('.form-control').last.fill_in(with: item[:quantity])
           end
 
-          # Remove the last item
-          last_row = find_all('tr').last
-          last_row.find('a', text: 'Remove').click
+          # delete an item
+          find_all('td').last.click
 
           # Trigger another row but keep it empty. It should still be valid!
           click_link 'Add Another Item'
         end
 
         context 'THEN a request records will be created ' do
-          it "displays confirmation modal with quota warning and creates the correct request" do
-            click_button 'Submit Essentials Request'
-            expect(page).to have_selector('.alert-warning')
-            expect(page).to have_text('You are ordering')
-            expect(page).to have_text('total items, are you sure?')
-            expect(page).to have_selector('#partnerRequestConfirmationModal')
-            within "#partnerRequestConfirmationModal" do
-              click_button "Yes, it's correct"
-            end
+          it "creates the correct request" do
+            expect { click_button 'Submit Essentials Request' }.to change { Request.count }.by(1)
+
             created_request = Request.last
             expected_items = item_details.map { |item| {"item_id" => item[:id], "quantity" => item[:quantity]} }
             deleted_item = expected_items.pop

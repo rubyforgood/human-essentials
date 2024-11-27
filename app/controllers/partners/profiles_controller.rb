@@ -5,13 +5,6 @@ module Partners
     def edit
       @counties = County.in_category_name_order
       @client_share_total = current_partner.profile.client_share_total
-
-      if Flipper.enabled?("partner_step_form")
-        @sections_with_errors = []
-        render "partners/profiles/step/edit"
-      else
-        render "edit"
-      end
     end
 
     def update
@@ -19,24 +12,10 @@ module Partners
       result = PartnerProfileUpdateService.new(current_partner, partner_params, profile_params).call
       if result.success?
         flash[:success] = "Details were successfully updated."
-        if Flipper.enabled?("partner_step_form")
-          if params[:save_review]
-            redirect_to partners_profile_path
-          else
-            redirect_to edit_partners_profile_path
-          end
-        else
-          redirect_to partners_profile_path
-        end
+        redirect_to partners_profile_path
       else
-        flash.now[:error] = "There is a problem. Try again:  %s" % result.error
-        if Flipper.enabled?("partner_step_form")
-          error_keys = current_partner.profile.errors.attribute_names
-          @sections_with_errors = Partners::SectionErrorService.sections_with_errors(error_keys)
-          render "partners/profiles/step/edit"
-        else
-          render :edit
-        end
+        flash[:error] = "There is a problem. Try again:  %s" % result.error
+        render :edit
       end
     end
 

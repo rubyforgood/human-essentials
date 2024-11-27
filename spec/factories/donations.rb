@@ -22,7 +22,7 @@ FactoryBot.define do
     source { Donation::SOURCES[:misc] }
     comment { "It's a fine day for diapers." }
     storage_location
-    organization { Organization.try(:first) || create(:organization) }
+    organization { Organization.try(:first) || create(:organization, skip_items: true) }
     issued_at { nil }
 
     factory :manufacturer_donation do
@@ -42,14 +42,14 @@ FactoryBot.define do
     end
 
     trait :with_items do
-      transient do
-        item_quantity { 100 }
-        item { nil }
-      end
       storage_location do
         create :storage_location, :with_items,
                item: item || create(:item, value_in_cents: 100),
                organization: organization
+      end
+      transient do
+        item_quantity { 100 }
+        item { nil }
       end
 
       after(:build) do |donation, evaluator|
@@ -62,6 +62,7 @@ FactoryBot.define do
       end
 
       after(:create) do |instance, evaluator|
+        evaluator.storage_location.increase_inventory(instance.line_item_values)
         DonationEvent.publish(instance)
       end
     end

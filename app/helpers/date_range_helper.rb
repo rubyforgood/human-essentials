@@ -1,7 +1,7 @@
 # Encapsulates methods used on the Dashboard that need some business logic
 module DateRangeHelper
   def date_range_params
-    params.dig(:filters, :date_range).presence || default_date
+    params.dig(:filters, :date_range).presence || this_year
   end
 
   def date_range_label
@@ -23,10 +23,8 @@ module DateRangeHelper
     end
   end
 
-  def default_date
-    start_date = 2.months.ago.to_date
-    end_date = 1.month.from_now.to_date
-    "#{start_date.strftime("%B %d, %Y")} - #{end_date.strftime("%B %d, %Y")}"
+  def this_year
+    "January 1, #{Time.zone.today.year} - December 31, #{Time.zone.today.year}"
   end
 
   def selected_interval

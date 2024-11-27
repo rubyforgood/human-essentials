@@ -19,6 +19,7 @@ class Kit < ApplicationRecord
 
   belongs_to :organization
   has_one :item, dependent: :restrict_with_exception
+  has_many :inventory_items, through: :item
 
   scope :active, -> { where(active: true) }
   scope :alphabetized, -> { order(:name) }
@@ -33,9 +34,12 @@ class Kit < ApplicationRecord
 
   # @param inventory [View::Inventory]
   # @return [Boolean]
-  def can_deactivate?(inventory = nil)
-    inventory ||= View::Inventory.new(organization_id)
-    inventory.quantity_for(item_id: item.id).zero?
+  def can_deactivate?(inventory)
+    if inventory
+      inventory.quantity_for(item_id: item.id).zero?
+    else
+      inventory_items.where('quantity > 0').none?
+    end
   end
 
   def deactivate
