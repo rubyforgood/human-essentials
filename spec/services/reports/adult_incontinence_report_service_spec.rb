@@ -160,7 +160,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
                              "Adult Liners",
                              "Wipes (Adult)",
                              "1T Diapers")
-      end 
+      end
     end
   end
 end
