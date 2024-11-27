@@ -43,6 +43,11 @@ RSpec.describe CustomDeviseMailer, type: :mailer do
       it "has invite expiration message" do
         expect(mail.html_part.body).to include("This invitation will be due in #{user.invitation_due_at.strftime("%B %d, %Y %I:%M %p")} GMT.")
       end
+
+      it "has reset instructions" do
+        expect(mail.html_part.body).to match(%r{<p>If your invitation has an expired message, go <a href="http://.+?/users/password/new">here</a> and enter your email address to reset your password.</p>})
+        expect(mail.html_part.body).to include("Feel free to ignore this email if you are not interested or if you feel it was sent by mistake.")
+      end
     end
   end
 end
