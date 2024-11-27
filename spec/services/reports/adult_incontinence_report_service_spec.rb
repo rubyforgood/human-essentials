@@ -42,7 +42,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
         adult_incontinence_item = organization.items.adult_incontinence.first
         non_adult_incontinence_item = organization.items.where.not(id: organization.items.adult_incontinence).first
 
-      # kits
+        # kits
         kit = create(:kit, organization: organization)
 
         create(:base_item, name: "Adult Pads", partner_key: "adult pads", category: "adult pads")
@@ -135,7 +135,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
                              "Underpads (Pack)",
                              "Adult Liners",
                              "Wipes (Adult)",
-                             "1T Diapers") #item auto generated with the creation of a kit
+                             "1T Diapers") # item auto generated with the creation of a kit
       end
 
       it 'should handle null distribution quantity' do
@@ -160,7 +160,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
                              "Underpads (Pack)",
                              "Adult Liners",
                              "Wipes (Adult)",
-                             "2T Diapers") #item auto generated with the creation of a kit
+                             "2T Diapers") # item auto generated with the creation of a kit
       end
     end
   end
