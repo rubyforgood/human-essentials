@@ -1,4 +1,7 @@
 RSpec.describe 'Account request flow', type: :system, js: true do
+  let(:organization) { create(:organization) }
+  let(:super_admin) { create(:super_admin, organization: organization) }
+
   context 'when in staging' do
     before do
       allow(Rails.env).to receive(:staging?).and_return(true)
@@ -53,7 +56,7 @@ RSpec.describe 'Account request flow', type: :system, js: true do
       expect(page).to have_content('We will be processing your request now.')
 
       # Access link within email sent to admin user to process the request.
-      sign_in(@super_admin)
+      sign_in(super_admin)
       visit new_admin_organization_path(token: created_account_request.identity_token)
 
       fill_in 'Short name', with: 'fakeshortname'

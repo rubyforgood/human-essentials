@@ -17,6 +17,6 @@
   </td>
   <td class="text-right">
     <%= view_button_to request_path(request_row) %>
-    <%= button_to 'Cancel', new_request_cancelation_path(organization: @organization, request_id: request_row.id), method: :get, class: 'btn btn-danger btn-xs' %>
+    <%= button_to 'Cancel', new_request_cancelation_path(request_id: request_row.id), method: :get, class: 'btn btn-danger btn-xs' %>
   </td>
 </tr>

@@ -1,11 +1,12 @@
-RSpec.describe DistributionMailer, type: :mailer, seed_items: false do
-  let(:organization) { create(:organization, skip_items: true, name: "TEST ORG") }
+RSpec.describe DistributionMailer, type: :mailer do
+  let(:organization) { create(:organization, name: "TEST ORG") }
   let(:user) { create(:user, organization: organization) }
   let(:partner) { create(:partner, name: 'PARTNER', organization_id: organization.id) }
   let(:distribution) { create(:distribution, organization: user.organization, comment: "Distribution comment", partner: partner) }
   let(:request) { create(:request, distribution: distribution) }
 
-  let(:pick_up_email) { 'pick_up@org.com' }
+  let(:pick_up_email) { 'pick_up@org.com, second_pick_up@org.com' }
+  let(:pick_up_emails) { ['pick_up@org.com', 'second_pick_up@org.com'] }
 
   before do
     organization.default_email_text = "Default email text example\n\n%{delivery_method} %{distribution_date}\n\n%{partner_name}\n\n%{comment}"
@@ -23,7 +24,7 @@ RSpec.describe DistributionMailer, type: :mailer, seed_items: false do
       expect(mail.body.encoded).to match("Default email text example")
       expect(mail.html_part.body).to match(%(From: <a href="mailto:me@org.com">me@org.com</a>))
       expect(mail.to).to eq([distribution.request.user_email])
-      expect(mail.cc).to eq([distribution.partner.email, pick_up_email])
+      expect(mail.cc).to eq([distribution.partner.email, pick_up_emails.first, pick_up_emails.second])
       expect(mail.from).to eq(["no-reply@humanessentials.app"])
       expect(mail.subject).to eq("test subject from TEST ORG")
     end
@@ -43,10 +44,11 @@ RSpec.describe DistributionMailer, type: :mailer, seed_items: false do
         expect(mail.body.encoded).to match("picked up")
       end
 
-      context 'when parners profile pick_up_email is present' do
-        it 'sends email to the primary contact and partner`s pickup person' do
+      context 'when partners profile pick_up_email is present' do
+        it 'sends email to the primary contact and partner`s pickup persons' do
           expect(mail.cc.first).to match(partner.email)
-          expect(mail.cc.second).to match(pick_up_email)
+          expect(mail.cc.second).to match(pick_up_emails.first)
+          expect(mail.cc.third).to match(pick_up_emails.second)
         end
 
         context 'when pickup person happens to be the same as the primary contact' do

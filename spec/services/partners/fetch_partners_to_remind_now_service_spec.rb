@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe Partners::FetchPartnersToRemindNowService do
   describe ".fetch" do
     subject { described_class.new.fetch }

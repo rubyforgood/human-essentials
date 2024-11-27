@@ -1,0 +1,15 @@
+<%= f.fields_for :profile, profile do |pf| %>
+  <h3><strong>Agency Distribution Information</strong></h3>
+
+  <div class="form-group">
+    <%= pf.input :distribution_times, label: "Distribution Times", class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= pf.input :new_client_times, label: "New Client Times", class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= pf.input :more_docs_required, label: "More Docs Required", class: "form-control" %>
+  </div>
+<% end %>

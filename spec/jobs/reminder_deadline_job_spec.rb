@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe ReminderDeadlineJob, type: :job do
   describe '#perform' do
     subject { -> { described_class.perform_now } }

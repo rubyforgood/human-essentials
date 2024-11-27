@@ -66,6 +66,7 @@ $(function() {
 
   $(document).on("change", "select.storage-location-source", function() {
     const default_item = $(".line-item-fields select");
+    control = $("select.storage-location-source");
     if (storage_location_required && !control.val()) {
       $("#__add_line_item").addClass("disabled");
     }

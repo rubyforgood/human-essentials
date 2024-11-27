@@ -18,6 +18,8 @@ class PartnerProfileUpdateService
         @profile.served_areas.destroy_all
         @profile.attributes = @profile_params
         @profile.save!(context: :edit)
+      else
+        @error = "Partner '#{@partner.name}' had error(s) preventing the profile from being updated: #{@partner.errors.full_messages.join(", ")}"
       end
     end
   end

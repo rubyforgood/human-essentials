@@ -1,5 +1,5 @@
-RSpec.describe ReminderDeadlineMailer, type: :job, seed_items: false do
-  let(:organization) { create(:organization, skip_items: true) }
+RSpec.describe ReminderDeadlineMailer, type: :job do
+  let(:organization) { create(:organization) }
 
   describe 'notify deadline' do
     let(:today) { Date.new(2022, 1, 10) }

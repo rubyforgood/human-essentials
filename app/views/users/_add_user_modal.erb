@@ -7,7 +7,7 @@
       </div><!-- modal-header -->
       <div class="modal-body">
         <div class="box-body">
-          <%= form_tag invite_user_organization_path(organization_name: current_organization.name) do %>
+          <%= form_tag invite_user_organization_path do %>
             <div class="input-group">
               <span class="input-group-text" id="spn_usr_fa_icon"><%= fa_icon "user" %></span>
               <input type="text" name="name" class="form-control" placeholder="Name" aria-describedby="spn_usr_fa_icon">

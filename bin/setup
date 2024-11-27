@@ -54,8 +54,10 @@ FileUtils.chdir APP_ROOT do
   system!("bundle check") || system!("bundle install")
 
   unless File.exist?('.env')
-    log "== Setup .env file from .env.example =="
+    log "== Setting up .env file from .env.example =="
     system!('cp .env.example .env')
+    log  "Check .env to see if your database credentials are correct.\nPress Enter to continue...", color: :red
+    gets
   end
 
   log "== Preparing database =="

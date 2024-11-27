@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe PurchasesHelper, type: :helper do
   describe "#new_purchase_default_location" do
     helper do

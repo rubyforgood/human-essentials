@@ -52,7 +52,7 @@
         <div class="navbar-custom-menu">
           <ul class="nav navbar-nav">
             <li class="user user-menu">
-              <%= delete_button_to destroy_user_session_path(organization_name: nil), { text: "Log out", icon: "sign-out", no_confirm: true, size: "md" } %>
+              <%= delete_button_to destroy_user_session_path, { text: "Log out", icon: "sign-out", no_confirm: true, size: "md" } %>
             </li>
           </ul>
         </div>

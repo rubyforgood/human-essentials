@@ -1,8 +1,11 @@
 RSpec.describe "User account management", type: :system, js: true do
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
+
   subject { "/users/edit" }
 
   before do
-    sign_in(@user)
+    sign_in(user)
   end
 
   context 'when in staging' do
@@ -27,7 +30,7 @@ RSpec.describe "User account management", type: :system, js: true do
     end
 
     it "should change an user name" do
-      name = @user.name + "aaa"
+      name = user.name + "aaa"
       fill_in "Name", with: name
       fill_in "user_current_password", with: DEFAULT_USER_PASSWORD
       click_button "Save"

@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe Partners::FamilyRequestsController, type: :request do
   let(:partner) { create(:partner) }
   let(:params) do
@@ -34,7 +32,7 @@ RSpec.describe Partners::FamilyRequestsController, type: :request do
       # Set one child as deactivated and the other as active but
       # without a item_needed_diaperid
       children[0].update(active: false)
-      children[1].update(item_needed_diaperid: nil)
+      children[1].update(requested_item_ids: [])
     end
     subject { post partners_family_requests_path, params: params }
 
@@ -56,6 +54,16 @@ RSpec.describe Partners::FamilyRequestsController, type: :request do
       subject
 
       expect(response.request.flash[:notice]).to eql "Requested items successfully!"
+    end
+
+    it "creates the correct child item requests" do
+      partner.update!(status: :approved)
+
+      subject
+
+      expect(Partners::ChildItemRequest.find_by(child_id: children[0].id)).to be_present
+      expect(Partners::ChildItemRequest.find_by(child_id: children[1].id)).to be_nil
+      expect(Partners::ChildItemRequest.find_by(child_id: children[2].id)).to be_present
     end
   end
 end

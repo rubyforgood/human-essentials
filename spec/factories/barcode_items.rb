@@ -21,7 +21,7 @@ FactoryBot.define do
   end
 
   factory :barcode_item, class: "BarcodeItem" do
-    organization { Organization.try(:first) || create(:organization, skip_items: true) }
+    organization { Organization.try(:first) || create(:organization) }
     sequence(:value) { (SecureRandom.random_number * (10**12)).to_i } # 037000863427
     quantity { 50 }
     barcodeable { nil }

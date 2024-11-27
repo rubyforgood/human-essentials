@@ -136,6 +136,10 @@ class Donation < ApplicationRecord
     storage_location.nil? ? "N/A" : storage_location.name
   end
 
+  def in_kind_value_money
+    Money.new(value_per_itemizable)
+  end
+
   private
 
   def combine_duplicates

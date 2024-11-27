@@ -1,0 +1,34 @@
+<%= render(
+  "shared/card",
+  id: "partner_approvals",
+  title: "Partner Approvals",
+  class: "wide-table",
+  type: @partners_awaiting_review.blank? ? :box : :table
+) do %>
+  <% if @partners_awaiting_review.present? %>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Partner Name</th>
+          <th>Primary Contact Name</th>
+          <th>Primary Contact Email</th>
+          <th>Review Requested</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <% @partners_awaiting_review.each do |partner| %>
+        <tr>
+          <td><%= partner.name %></td>
+          <td><%= partner.profile.primary_contact_name %></td>
+          <td><%= partner.profile.primary_contact_email %></td>
+          <td><%= partner.updated_at.strftime("%B %d %Y") %></td>
+          <td>
+            <%= view_button_to partner_path(partner) + "#partner-information", { text: "Review Application", icon: "check", type: "warning", class: 'badge' } %>
+          </td>
+        </tr>
+      <% end %>
+    </table>
+  <% else %>
+    No partners waiting for approval
+  <% end %>
+<% end %>

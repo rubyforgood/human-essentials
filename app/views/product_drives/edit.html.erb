@@ -13,7 +13,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Product Drives", (product_drives_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Product Drives", product_drives_path %></li>
           <li class="breadcrumb-item"><a href="#">Editing <%= @product_drive.name %> on <%= @product_drive.created_at.to_fs(:distribution_date) %></a></li>
         </ol>
       </div>

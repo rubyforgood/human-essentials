@@ -1,0 +1,24 @@
+<%= render(
+  "shared/filtered_card",
+  id: "distributions",
+  gradient: "secondary",
+  title: "Distributions",
+  subtitle: @selected_date_range,
+  footer_options: { class: "text-center" },
+  footer: link_to("See more...", distributions_path),
+  filter_url: reports_distributions_summary_path
+) do %>
+  <%= new_button_to new_distribution_path, {text: "New Distribution"} %>
+
+  <h3 class="text-center">
+    <span class="total_distributed">
+      <%= total_distributed %>
+    </span>
+    items distributed <%= @selected_date_range_label %>
+  </h3>
+  <h4 class="text-center">(<%= future_distributed %> items scheduled for future distribution)</h4>
+  <div class="box-body">
+    <h4>Recent distributions</h4>
+    <%= render partial: "distribution", collection: @recent_distributions, as: :distribution %>
+  </div>
+<% end %>

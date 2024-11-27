@@ -25,9 +25,10 @@
                 <li>
                   <%= f.file_field :file, accept: 'text/csv', class: 'form-control-file', style: "margin: auto;" %>
                 </li>
-                <li style="margin-bottom: 27px;">Then click the "Import CSV" button to import your <%= import_type.downcase %>.</li>                  <%= button_tag class: "btn btn-md btn-info" do %>
-                    <i class="fa fa-upload"></i> Import CSV
-                  <% end %>
+                <li style="margin-bottom: 27px;">Then click the "Import CSV" button to import your <%= import_type.downcase %>.</li>
+                <%= button_tag class: "btn btn-md btn-info", data: { disable_with: "Importing" } do %>
+                  <i class="fa fa-upload"></i> Import CSV
+                <% end %>
               </ul>
             <% end #form %>
           </div>

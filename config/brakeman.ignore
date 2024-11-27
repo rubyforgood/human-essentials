@@ -1,13 +1,36 @@
 {
   "ignored_warnings": [
     {
+      "warning_type": "Command Injection",
+      "warning_code": 14,
+      "fingerprint": "5dd8c58cca239b1a2527f25255c49c8800a31e5ec8cb8e31e14003fc435dd677",
+      "check_name": "Execute",
+      "message": "Possible command injection",
+      "file": "app/jobs/backup_db_rds.rb",
+      "line": 11,
+      "link": "https://brakemanscanner.org/docs/warning_types/command_injection/",
+      "code": "system(\"PGPASSWORD='#{ENV[\"DIAPER_DB_PASSWORD\"]}' pg_dump -Fc -v --host=#{ENV[\"DIAPER_DB_HOST\"]} --username=#{ENV[\"DIAPER_DB_USERNAME\"]} --dbname=#{ENV[\"DIAPER_DB_DATABASE\"]} -f #{\"#{Time.current.strftime(\"%Y%m%d%H%M%S\")}.rds.dump\"}\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "BackupDbRds",
+        "method": "s(:self).run"
+      },
+      "user_input": "ENV[\"DIAPER_DB_PASSWORD\"]",
+      "confidence": "Medium",
+      "cwe_id": [
+        77
+      ],
+      "note": ""
+    },
+    {
       "warning_type": "Dynamic Render Path",
       "warning_code": 15,
       "fingerprint": "82ef033042422190ef49507207d51ed6ccd9593483630925baf0bf6c5e65033e",
       "check_name": "Render",
       "message": "Render path contains parameter value",
       "file": "app/controllers/static_controller.rb",
-      "line": 25,
+      "line": 20,
       "link": "https://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
       "code": "render(template => \"static/#{params[:name]}\", {})",
       "render_path": null,
@@ -18,29 +41,12 @@
       },
       "user_input": "params[:name]",
       "confidence": "Medium",
-      "note": ""
-    },
-    {
-      "warning_type": "SQL Injection",
-      "warning_code": 0,
-      "fingerprint": "db8503246322c7079274c6aa7e68675a336b4d8dd4fb9c2bb6c566545b139c8a",
-      "check_name": "SQL",
-      "message": "Possible SQL injection",
-      "file": "config/initializers/postgres.rb",
-      "line": 9,
-      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
-      "code": "connection.select_all(\"select pg_terminate_backend(pg_stat_activity.pid) from pg_stat_activity where datname='#{configuration_hash[:database]}' AND state='idle';\")",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "PostgreSQLDatabaseTasks",
-        "method": "drop"
-      },
-      "user_input": "configuration_hash[:database]",
-      "confidence": "Medium",
+      "cwe_id": [
+        22
+      ],
       "note": ""
     }
   ],
-  "updated": "2021-04-24 20:03:05 -0700",
-  "brakeman_version": "4.10.1"
+  "updated": "2024-11-24 10:40:00 -0500",
+  "brakeman_version": "6.2.1"
 }

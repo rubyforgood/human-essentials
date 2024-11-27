@@ -31,7 +31,7 @@ module Partners
     belongs_to :partner, class_name: '::Partner'
     has_many :children, dependent: :destroy
     has_many :authorized_family_members, dependent: :destroy
-    serialize :sources_of_income, Array
+    serialize :sources_of_income, type: Array
     validates :guardian_first_name, :guardian_last_name, :guardian_zip_code, presence: true
 
     include Filterable

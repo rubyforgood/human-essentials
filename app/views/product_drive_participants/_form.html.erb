@@ -34,10 +34,14 @@
                   <span class="input-group-text"><i class="fa fa-home"></i></span>
                   <%= f.input_field :address, class: "form-control" %>
                 <% end %>
+                <%= f.input :comment, label: "Comment", wrapper: :input_group do %>
+                  <span class="input-group-text"><i class="fa fa-comment"></i></span>
+                  <%= f.input_field :comment, as: :text, class: "form-control" %>
+                <% end %>
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
-                  <%= submit_button({id: "diaper-drive-participant-submit"}) %>
+                  <%= submit_button({id: "product-drive-participant-submit"}) %>
                 </div>
               <% end %>
               </div>

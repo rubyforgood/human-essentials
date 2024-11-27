@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe "/partners/profiles", type: :request do
   let(:partner) { create(:partner, name: "Partnerrific") }
   let(:partner_user) { partner.primary_user }
@@ -20,6 +18,14 @@ RSpec.describe "/partners/profiles", type: :request do
       expect(response.body).to include("<dt>Current Providing Diapers</dt>\n      <dd>Unspecified</dd>")
       expect(response.body).to include("<dt>Form 990 Filed</dt>\n      <dd>No</dd>")
       expect(response.body).to include("<dt>Do You Verify The Income Of Your Clients</dt>\n      <dd>Yes</dd>")
+    end
+
+    it "renders show partner settings partial with enabled request types only" do
+      partner.profile.organization.update!(enable_quantity_based_requests: true, enable_child_based_requests: false)
+      get partners_profile_path(partner)
+      expect(response).to render_template(partial: "partners/profiles/show/_partner_settings")
+      expect(response.body).to include("<dt>Uses Quantity Based Requests</dt>")
+      expect(response.body).not_to include("<dt>Uses Child Based Requests</dt>")
     end
   end
 
@@ -48,6 +54,14 @@ RSpec.describe "/partners/profiles", type: :request do
       get edit_partners_profile_path(partner)
       expect(response.body).not_to include("type=\"radio\" value=\"true\" checked=\"checked\" name=\"partner[profile][storage_space]\" id=\"partner_profile_storage_space_true\" />")
       expect(response.body).to include("type=\"radio\" value=\"false\" checked=\"checked\" name=\"partner[profile][storage_space]\" id=\"partner_profile_storage_space_false\"")
+    end
+
+    it "renders edit partner settings partial with enabled request types only" do
+      partner.profile.organization.update!(enable_quantity_based_requests: true, enable_child_based_requests: false)
+      get edit_partners_profile_path(partner)
+      expect(response).to render_template(partial: "partners/profiles/edit/_partner_settings")
+      expect(response.body).to include("Enable Quantity-based Requests")
+      expect(response.body).not_to include("Enable Child-based Requests")
     end
   end
 

@@ -26,7 +26,7 @@ RSpec.describe "Approval process for partners", type: :system, js: true do
 
       context 'AND they fill out the form and submit it' do
         before do
-          click_on 'My Organization'
+          click_on 'My Profile'
           assert page.has_content? 'Uninvited'
           click_on 'Update Information'
 
@@ -76,7 +76,7 @@ RSpec.describe "Approval process for partners", type: :system, js: true do
       partner.profile.update(website: '', facebook: '', twitter: '', instagram: '', no_social_media_presence: false, partner_status: 'pending')
       login_as(partner_user)
       visit partner_user_root_path
-      click_on 'My Organization'
+      click_on 'My Profile'
       click_on 'Submit for Approval'
     end
 

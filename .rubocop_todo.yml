@@ -225,7 +225,6 @@ Layout/SpaceInsideHashLiteralBraces:
     - 'app/models/product_drive_participant.rb'
     - 'app/models/distribution.rb'
     - 'app/models/donation.rb'
-    - 'app/models/inventory_item.rb'
     - 'app/models/item.rb'
     - 'app/models/item_category.rb'
     - 'app/models/kit.rb'

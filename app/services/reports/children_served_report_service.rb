@@ -48,6 +48,7 @@ module Reports
           AND EXTRACT(year FROM issued_at) = ?
           AND LOWER(base_items.category) LIKE '%diaper%'
           AND NOT (LOWER(base_items.category) LIKE '%cloth%' OR LOWER(base_items.name) LIKE '%cloth%')
+          AND NOT (LOWER(base_items.category) LIKE '%adult%')
       SQL
 
       sanitized_sql = ActiveRecord::Base.send(:sanitize_sql_array, [sql_query, organization_id, year])

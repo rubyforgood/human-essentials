@@ -19,17 +19,17 @@
 #  agency_child_id      :string
 #  family_id            :bigint
 #
-require "rails_helper"
 
 RSpec.describe Partners::Child, type: :model do
   describe 'associations' do
     it { should belong_to(:family) }
     it { should have_many(:child_item_requests).dependent(:destroy) }
+    it { should have_and_belong_to_many(:requested_items).class_name('Item') }
   end
 
   describe "#display_name" do
     subject { partners_child }
-    let(:partners_child) { FactoryBot.create(:partners_child) }
+    let(:partners_child) { create(:partners_child) }
 
     it "should return a child's first and last name" do
       expect(subject.display_name).to eq("#{subject.first_name} #{subject.last_name}")

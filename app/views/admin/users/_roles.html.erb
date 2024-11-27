@@ -24,7 +24,7 @@
                 <% user.roles.each do |role| %>
                   <tr>
                     <td><%= role.title %></td>
-                    <td><%= link_to role.resource.name, role.resource %></td>
+                    <td><%= role.resource.name %> (id: <%= role.resource.id %>)</td>
                     <td class="text-right">
                       <%= delete_button_to admin_user_remove_role_path(user, role_id: role.id),
                                            confirm: "Are you sure you want to remove this role?" %>

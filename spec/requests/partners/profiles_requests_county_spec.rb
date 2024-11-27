@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe "/partners/profiles", type: :request do
   describe "basic" do
     let(:organization) { create(:organization, name: "Favourite Bank", partner_form_fields: []) }

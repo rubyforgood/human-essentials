@@ -9,15 +9,12 @@ class StorageLocationsController < ApplicationController
   end
 
   def index
-    if Event.read_events?(current_organization)
-      @inventory = View::Inventory.new(current_organization.id)
-    end
-
+    @inventory = View::Inventory.new(current_organization.id)
     @selected_item_category = filter_params[:containing]
     @items = StorageLocation.items_inventoried(current_organization, @inventory)
     @include_inactive_storage_locations = params[:include_inactive_storage_locations].present?
     @storage_locations = current_organization.storage_locations.alphabetized
-    if @inventory && filter_params[:containing].present?
+    if filter_params[:containing].present?
       containing_ids = @inventory.storage_locations.keys.select do |sl|
         @inventory.quantity_for(item_id: filter_params[:containing], storage_location: sl).positive?
       end
@@ -33,21 +30,7 @@ class StorageLocationsController < ApplicationController
     respond_to do |format|
       format.html
       format.csv do
-        if Event.read_events?(current_organization)
-          send_data StorageLocation.generate_csv_from_inventory(@storage_locations, @inventory), filename: "StorageLocations-#{Time.zone.today}.csv"
-        else
-          active_inventory_item_names = []
-          @storage_locations.each do |storage_location|
-            active_inventory_item_names <<
-              storage_location
-              .active_inventory_items
-              .joins(:item)
-              .select('distinct items.name')
-              .pluck(:name)
-          end
-          active_inventory_item_names = active_inventory_item_names.flatten.uniq.sort
-          send_data StorageLocation.generate_csv(@storage_locations, active_inventory_item_names), filename: "StorageLocations-#{Time.zone.today}.csv"
-        end
+        send_data StorageLocation.generate_csv_from_inventory(@storage_locations, @inventory), filename: "StorageLocations-#{Time.zone.today}.csv"
       end
     end
   end
@@ -78,8 +61,14 @@ class StorageLocationsController < ApplicationController
     @items_out_total = ItemsOutTotalQuery.new(organization: current_organization, storage_location: @storage_location).call
     @items_in = ItemsInQuery.new(organization: current_organization, storage_location: @storage_location).call
     @items_in_total = ItemsInTotalQuery.new(organization: current_organization, storage_location: @storage_location).call
-    if Event.read_events?(current_organization)
+    if View::Inventory.within_snapshot?(current_organization.id, params[:version_date])
       @inventory = View::Inventory.new(current_organization.id, event_time: params[:version_date])
+    else
+      @legacy_inventory = View::Inventory.legacy_inventory_for_storage_location(
+        current_organization.id,
+        @storage_location.id,
+        params[:version_date]
+      )
     end
 
     respond_to do |format|
@@ -99,6 +88,9 @@ class StorageLocationsController < ApplicationController
       flash[:notice] = "Inventory imported successfully!"
       redirect_back(fallback_location: storage_locations_path)
     end
+  rescue Errors::InventoryAlreadyHasItems => e
+    flash[:error] = e.message
+    redirect_back(fallback_location: storage_locations_path(organization_id: current_organization))
   end
 
   def update
@@ -143,21 +135,10 @@ class StorageLocationsController < ApplicationController
   end
 
   def inventory
-    if Event.read_events?(current_organization)
-      @items = View::Inventory.items_for_location(StorageLocation.find(params[:id]),
-        include_omitted: params[:include_omitted_items] == "true")
-      respond_to do |format|
-        format.json { render :event_inventory }
-      end
-    else
-      @inventory_items = current_organization.storage_locations
-                                             .includes(inventory_items: :item)
-                                             .find(params[:id])
-                                             .inventory_items
-                                           .active
-
-      @inventory_items += include_omitted_items(@inventory_items.collect(&:item_id)) if params[:include_omitted_items] == "true"
-      respond_to :json
+    @items = View::Inventory.items_for_location(StorageLocation.find(params[:id]),
+      include_omitted: params[:include_omitted_items] == "true")
+    respond_to do |format|
+      format.json { render :event_inventory }
     end
   end
 
