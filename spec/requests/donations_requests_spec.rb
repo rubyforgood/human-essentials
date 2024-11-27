@@ -247,11 +247,7 @@ RSpec.describe "Donations", type: :request do
 
         put donation_path(id: donation.id, donation: edited_donation)
 
-        if Event.read_events?(organization)
-          expect(flash[:alert]).to include("Error updating donation: Could not reduce quantity")
-        else # TODO remove this branch when switching to events
-          expect(flash[:alert]).to include("Error updating donation: Requested items exceed the available inventory")
-        end
+        expect(flash[:alert]).to include("Error updating donation: Could not reduce quantity")
 
         expect(response.body).to include("Edit - Donations - #{original_source}")
         expect(response.body).to include("Editing Donation\n          <small>from #{original_source}")

@@ -45,7 +45,7 @@ class DistributionsController < ApplicationController
                      .distributions
                      .includes(:partner, :storage_location, line_items: [:item])
                      .order('issued_at DESC')
-                     .apply_filters(filter_params, helpers.selected_range)
+                     .apply_filters(filter_params.except(:date_range), helpers.selected_range)
     @paginated_distributions = @distributions.page(params[:page])
     @items = current_organization.items.alphabetized
     @item_categories = current_organization.item_categories
@@ -117,13 +117,9 @@ class DistributionsController < ApplicationController
       @items = current_organization.items.alphabetized
       @partner_list = current_organization.partners.where.not(status: 'deactivated').alphabetized
 
-      if Event.read_events?(current_organization)
-        inventory = View::Inventory.new(@distribution.organization_id)
-        @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
-          inventory.quantity_for(storage_location: storage_loc.id).positive?
-        end
-      else
-        @storage_locations = current_organization.storage_locations.active_locations.has_inventory_items.alphabetized
+      inventory = View::Inventory.new(@distribution.organization_id)
+      @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
+        inventory.quantity_for(storage_location: storage_loc.id).positive?
       end
 
       flash_error = insufficient_error_message(result.error.message)
@@ -151,13 +147,9 @@ class DistributionsController < ApplicationController
     @items = current_organization.items.alphabetized
     @partner_list = current_organization.partners.where.not(status: 'deactivated').alphabetized
 
-    if Event.read_events?(current_organization)
-      inventory = View::Inventory.new(current_organization.id)
-      @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
-        inventory.quantity_for(storage_location: storage_loc.id).positive?
-      end
-    else
-      @storage_locations = current_organization.storage_locations.active_locations.has_inventory_items.alphabetized
+    inventory = View::Inventory.new(current_organization.id)
+    @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
+      inventory.quantity_for(storage_location: storage_loc.id).positive?
     end
   end
 
@@ -183,13 +175,9 @@ class DistributionsController < ApplicationController
       @audit_warning = current_organization.audits
         .where(storage_location_id: @distribution.storage_location_id)
         .where("updated_at > ?", @distribution.created_at).any?
-      if Event.read_events?(current_organization)
-        inventory = View::Inventory.new(@distribution.organization_id)
-        @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
-          !inventory.quantity_for(storage_location: storage_loc.id).negative?
-        end
-      else
-        @storage_locations = current_organization.storage_locations.active_locations.has_inventory_items.alphabetized
+      inventory = View::Inventory.new(@distribution.organization_id)
+      @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
+        !inventory.quantity_for(storage_location: storage_loc.id).negative?
       end
     else
       redirect_to distributions_path, error: 'To edit a distribution,
@@ -322,7 +310,7 @@ class DistributionsController < ApplicationController
     def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).permit(:by_item_id, :by_item_category_id, :by_partner, :by_state, :by_location)
+    params.require(:filters).permit(:by_item_id, :by_item_category_id, :by_partner, :by_state, :by_location, :date_range)
   end
 
   def perform_inventory_check
