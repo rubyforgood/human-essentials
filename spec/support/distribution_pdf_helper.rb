@@ -1,4 +1,7 @@
 module DistributionPDFHelper
+  StorageCreation = Data.define(:organization, :storage_location, :items)
+  FilePaths = Data.define(:expected_pickup_file_path, :expected_same_address_file_path, :expected_different_address_file_path)
+
   def create_organization_storage_items
     org = FactoryBot.create(:organization,
       name: "Essentials Bank 1",
@@ -14,7 +17,7 @@ module DistributionPDFHelper
     item3 = FactoryBot.create(:item, name: "Item 3", value_in_cents: 300)
     item4 = FactoryBot.create(:item, name: "Item 4", package_size: 25, value_in_cents: 400)
 
-    [org, storage_location, item1, item2, item3, item4]
+    StorageCreation.new(org, storage_location, [item1, item2, item3, item4])
   end
 
   def create_partner(organization)
@@ -23,11 +26,12 @@ module DistributionPDFHelper
       organization: organization)
   end
 
-  def create_file_paths
+  def get_file_paths
     expected_pickup_file_path = Rails.root.join("spec", "fixtures", "files", "distribution_pickup.pdf")
     expected_same_address_file_path = Rails.root.join("spec", "fixtures", "files", "distribution_same_address.pdf")
     expected_different_address_file_path = Rails.root.join("spec", "fixtures", "files", "distribution_program_address.pdf")
-    [expected_pickup_file_path, expected_same_address_file_path, expected_different_address_file_path]
+
+    FilePaths.new(expected_pickup_file_path, expected_same_address_file_path, expected_different_address_file_path)
   end
 
   private def create_profile(partner:, program_address1:, program_address2:, program_city:, program_state:, program_zip:,
@@ -61,22 +65,22 @@ module DistributionPDFHelper
     create_profile(partner: partner, program_address1: "Example Program Address 1", program_address2: "", program_city: "Example Program City", program_state: "Example Program State", program_zip: 54321)
   end
 
-  def create_line_items_request(distribution, item1, item2, item3, item4)
-    FactoryBot.create(:line_item, itemizable: distribution, item: item1, quantity: 50)
-    FactoryBot.create(:line_item, itemizable: distribution, item: item2, quantity: 100)
-    FactoryBot.create(:item_unit, item: item4, name: "pack")
+  def create_line_items_request(distribution, storage_creation)
+    FactoryBot.create(:line_item, itemizable: distribution, item: storage_creation.items[0], quantity: 50)
+    FactoryBot.create(:line_item, itemizable: distribution, item: storage_creation.items[1], quantity: 100)
+    FactoryBot.create(:item_unit, item: storage_creation.items[3], name: "pack")
     FactoryBot.create(:request, :with_item_requests, distribution: distribution,
       request_items: [
-        {"item_id" => item2.id, "quantity" => 30},
-        {"item_id" => item3.id, "quantity" => 50},
-        {"item_id" => item4.id, "quantity" => 120, "request_unit" => "pack"}
+        {"item_id" => storage_creation.items[1].id, "quantity" => 30},
+        {"item_id" => storage_creation.items[2].id, "quantity" => 50},
+        {"item_id" => storage_creation.items[3].id, "quantity" => 120, "request_unit" => "pack"}
 ])
   end
 
-  def create_dist(partner, organization, storage_location, item1, item2, item3, item4, delivery_method)
+  def create_dist(partner, storage_creation, delivery_method)
     Time.zone = "America/Los_Angeles"
-    dist = FactoryBot.create(:distribution, partner: partner, delivery_method: delivery_method, issued_at: DateTime.new(2024, 7, 4, 0, 0, 0, "-07:00"), organization: organization, storage_location: storage_location)
-    create_line_items_request(dist, item1, item2, item3, item4)
+    dist = FactoryBot.create(:distribution, partner: partner, delivery_method: delivery_method, issued_at: DateTime.new(2024, 7, 4, 0, 0, 0, "-07:00"), organization: storage_creation.organization, storage_location: storage_creation.storage_location)
+    create_line_items_request(dist, storage_creation)
     dist
   end
 
@@ -96,11 +100,11 @@ module DistributionPDFHelper
     end
   end
 
-  private def create_comparison_pdf(organization, storage_location, item1, item2, item3, item4, profile_create_method, expected_file_path, delivery_method)
-    partner = create_partner(organization)
+  private def create_comparison_pdf(storage_creation, profile_create_method, expected_file_path, delivery_method)
+    partner = create_partner(storage_creation.organization)
     profile = profile_create_method.bind_call(Class.new.extend(DistributionPDFHelper), partner)
-    dist = create_dist(partner, organization, storage_location, item1, item2, item3, item4, delivery_method)
-    pdf_file = DistributionPdf.new(organization, dist).compute_and_render
+    dist = create_dist(partner, storage_creation, delivery_method)
+    pdf_file = DistributionPdf.new(storage_creation.organization, dist).compute_and_render
     File.binwrite(expected_file_path, pdf_file)
     profile.destroy
     dist.destroy
@@ -109,18 +113,18 @@ module DistributionPDFHelper
 
   # helper function that can be called from Rails console to generate comparison PDFs
   def create_comparison_pdfs
-    org, storage_location, item1, item2, item3, item4 = create_organization_storage_items
-    expected_pickup_file_path, expected_same_address_file_path, expected_different_address_file_path = create_file_paths
+    storage_creation = create_organization_storage_items
+    file_paths = get_file_paths
 
-    create_comparison_pdf(org, storage_location, item1, item2, item3, item4, DistributionPDFHelper.instance_method(:create_profile_no_address), expected_pickup_file_path, :pick_up)
-    create_comparison_pdf(org, storage_location, item1, item2, item3, item4, DistributionPDFHelper.instance_method(:create_profile_without_program_address), expected_same_address_file_path, :shipped)
-    create_comparison_pdf(org, storage_location, item1, item2, item3, item4, DistributionPDFHelper.instance_method(:create_profile_with_program_address), expected_different_address_file_path, :delivery)
+    create_comparison_pdf(storage_creation, DistributionPDFHelper.instance_method(:create_profile_no_address), file_paths.expected_pickup_file_path, :pick_up)
+    create_comparison_pdf(storage_creation, DistributionPDFHelper.instance_method(:create_profile_without_program_address), file_paths.expected_same_address_file_path, :shipped)
+    create_comparison_pdf(storage_creation, DistributionPDFHelper.instance_method(:create_profile_with_program_address), file_paths.expected_different_address_file_path, :delivery)
 
-    storage_location.destroy
-    item1.destroy
-    item2.destroy
-    item3.destroy
-    item4.destroy
-    org.destroy
+    storage_creation.storage_location.destroy
+    storage_creation.items[0].destroy
+    storage_creation.items[1].destroy
+    storage_creation.items[2].destroy
+    storage_creation.items[3].destroy
+    storage_creation.organization.destroy
   end
 end
