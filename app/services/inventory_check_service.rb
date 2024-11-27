@@ -48,7 +48,7 @@ class InventoryCheckService
     # Done this way to prevent N+1 query on items
     unless @items_below_recommended_quantity
       item_ids = @distribution.line_items.select do |line_item|
-        quantity = @inventory.quantity_for(storage_location: @distribution.storage_location_id, item_id: line_item.item_id)
+        quantity = @inventory.quantity_for(item_id: line_item.item_id)
         quantity < (line_item.item.on_hand_recommended_quantity || 0)
       end.map(&:item_id)
 
