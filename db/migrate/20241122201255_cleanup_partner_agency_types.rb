@@ -85,7 +85,7 @@ class CleanupPartnerAgencyTypes < ActiveRecord::Migration[7.1]
       profiles = Partners::Profile.where(agency_type: type_pair[0])
       profiles.each do |profile|
         profile.agency_type = Partner::AGENCY_TYPES[type_pair[1]]
-        profile.save
+        profile.save!
       end
 
     end
