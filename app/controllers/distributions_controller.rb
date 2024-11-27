@@ -316,11 +316,13 @@ class DistributionsController < ApplicationController
   def perform_inventory_check
     inventory_check_result = InventoryCheckService.new(@distribution).call
 
-    if inventory_check_result.error.present?
-      flash[:error] = inventory_check_result.error
-    end
-    if inventory_check_result.alert.present?
-      flash[:alert] = inventory_check_result.alert
+    if inventory_check_result.minimum_alert.present? && inventory_check_result.recommended_alert.present?
+      flash[:alert] = inventory_check_result.minimum_alert
+      flash[:alert] += inventory_check_result.recommended_alert
+    elsif inventory_check_result.minimum_alert.present?
+      flash[:alert] = inventory_check_result.minimum_alert
+    elsif inventory_check_result.recommended_alert.present?
+      flash[:alert] = inventory_check_result.recommended_alert
     end
   end
 end
