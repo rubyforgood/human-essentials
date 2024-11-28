@@ -1,7 +1,7 @@
 class LowInventoryQuery
   def self.call(organization)
     inventory = View::Inventory.new(organization.id)
-    items = inventory.all_items
+    items = inventory.all_items.uniq(&:item_id)
 
     low_inventory_items = []
     items.each do |item|

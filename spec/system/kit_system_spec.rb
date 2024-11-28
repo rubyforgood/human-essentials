@@ -52,6 +52,32 @@ RSpec.describe "Kit management", type: :system do
     expect(page).to have_content("#{quantity_per_kit} #{item.name}")
   end
 
+  it "can add items correctly" do
+    visit new_kit_path
+    new_barcode = "1234567890"
+    quantity = "1"
+
+    find(:id, "_barcode-lookup-0").set(new_barcode).send_keys(:enter)
+
+    within "#newBarcode" do
+      expect(page).to have_field("Quantity", with: "")
+      fill_in "Quantity", with: quantity
+
+      expect(page).to have_field("Item", with: "")
+      select(Item.last.name, from: "barcode_item[barcodeable_id]")
+    end
+
+    within ".modal-footer" do
+      click_button "Save"
+    end
+
+    expect(page).to have_content("Barcode Added to Inventory")
+    # Check that item details have been filled in via javascript
+    expect(page).to have_field("kit_line_items_attributes_0_quantity", with: quantity)
+    # Check that new field has been added via javascript
+    expect(page).to have_css(".line_item_section", count: 2)
+  end
+
   it 'can allocate and deallocate quantity per storage location from kit index' do
     visit kits_path
 

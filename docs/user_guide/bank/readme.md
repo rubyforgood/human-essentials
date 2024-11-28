@@ -64,6 +64,7 @@ This user guide is meant for users of Human Essentials at essentials banks.  As 
          2. [Distributions by county](reports_distribution_by_county.md)
          3. [Manufacturer donations](reports_manufacturers_donations.md)
          4. [Activity graph](reports_activity_graph.md)
+         5. [History](reports_history.md)
 8. [User management](user_management.md)
 9. [Account Management](account_management.md)
 10. [But I need to do something different!](asking_for_changes.md)

@@ -45,7 +45,7 @@ class DistributionsController < ApplicationController
                      .distributions
                      .includes(:partner, :storage_location, line_items: [:item])
                      .order('issued_at DESC')
-                     .apply_filters(filter_params, helpers.selected_range)
+                     .apply_filters(filter_params.except(:date_range), helpers.selected_range)
     @paginated_distributions = @distributions.page(params[:page])
     @items = current_organization.items.alphabetized
     @item_categories = current_organization.item_categories
@@ -310,7 +310,7 @@ class DistributionsController < ApplicationController
     def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).permit(:by_item_id, :by_item_category_id, :by_partner, :by_state, :by_location)
+    params.require(:filters).permit(:by_item_id, :by_item_category_id, :by_partner, :by_state, :by_location, :date_range)
   end
 
   def perform_inventory_check
