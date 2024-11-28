@@ -1,7 +1,9 @@
 require_relative("../support/distribution_pdf_helper")
+require_relative("../../lib/test_helpers/pdf_comparison_test_factory")
 
 RSpec.configure do |c|
   c.include DistributionPDFHelper
+  c.include PDFComparisonTestFactory
 end
 
 describe DistributionPdf do
@@ -18,9 +20,10 @@ describe DistributionPdf do
     let(:org_hiding_values) { create(:organization, name: DEFAULT_TEST_ORGANIZATION_NAME, hide_value_columns_on_receipt: true) }
 
     let(:distribution) { create(:distribution, organization: organization, storage_location: storage_location) }
+    let(:partner) { create(:partner) }
 
     before(:each) do
-      create_line_items_request(distribution, storage_creation)
+      create_line_items_request(distribution, partner, storage_creation)
     end
 
     specify "#request_data with custom units feature" do
