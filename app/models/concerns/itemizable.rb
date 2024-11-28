@@ -18,9 +18,13 @@ module Itemizable
       inactive_items.any?
     end
 
-    # @return [Array<Item>]
+    # @return [Array<Item>] or [Item::ActiveRecord_Relation]
     def inactive_items
-      line_items.map(&:item).select { |i| !i.active? }
+      if line_items.loaded?
+        line_items.map(&:item).select { |i| !i.active? }
+      else
+        items.inactive
+      end
     end
 
     has_many :line_items, as: :itemizable, inverse_of: :itemizable do

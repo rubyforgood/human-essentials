@@ -5,17 +5,8 @@
   <td class="date"><%= (distribution_row.issued_at.presence || distribution_row.created_at).strftime("%m/%d/%Y") %></td>
   <td><%= distribution_row.storage_location.name %></td>
 
-  <!-- Quantity -->
-  <% if filter_params[:by_item_id].present? %>
-    <td class="numeric"><%= quantity_by_item_id(distribution_row, filter_params[:by_item_id]) %></td>
-  <% elsif filter_params[:by_item_category_id].present? %>
-    <td class="numeric"><%= quantity_by_item_category_id(distribution_row, filter_params[:by_item_category_id]) %></td>
-  <% else %>
-    <td class="numeric"><%= distribution_row.line_items.total %></td>
-  <% end %>
-  <!-- End Quantity -->
-
-  <td class="numeric"><%= dollar_value(distribution_row.value_per_itemizable) %></td>
+  <td class="numeric"><%= fetch_distribution_quantity(distribution_row.id) %></td>
+  <td class="numeric"><%= dollar_value(fetch_distribution_value(distribution_row.id)) %></td>
   <td><%= distribution_row.delivery_method.humanize %></td>
   <td><%= distribution_shipping_cost(distribution_row.shipping_cost) %></td>
   <td><%= distribution_row.comment %></td>

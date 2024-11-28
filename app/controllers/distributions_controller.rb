@@ -43,19 +43,20 @@ class DistributionsController < ApplicationController
 
     @distributions = current_organization
                      .distributions
-                     .includes(:partner, :storage_location, line_items: [:item])
-                     .order('issued_at DESC')
+                     .includes(:partner, :storage_location)
                      .apply_filters(filter_params.except(:date_range), helpers.selected_range)
-    @paginated_distributions = @distributions.page(params[:page])
-    @items = current_organization.items.alphabetized
-    @item_categories = current_organization.item_categories
-    @storage_locations = current_organization.storage_locations.active_locations.alphabetized
-    @partners = @distributions.collect(&:partner).uniq.sort_by(&:name)
+    @paginated_distributions = @distributions.order('issued_at DESC').page(params[:page])
+    @items = current_organization.items.alphabetized.select(:id, :name)
+    @item_categories = current_organization.item_categories.select(:id, :name)
+    @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select(:id, :name)
+    @partners = Partner.joins(:distributions).where(distributions: @distributions).distinct.order(:name).select(:id, :name)
     @selected_item = filter_params[:by_item_id].presence
-    @total_value_all_distributions = total_value(@distributions)
-    @total_items_all_distributions = total_items(@distributions, @selected_item)
-    @total_value_paginated_distributions = total_value(@paginated_distributions)
-    @total_items_paginated_distributions = total_items(@paginated_distributions, @selected_item)
+    @distribution_totals = @distributions.unscope(:order, :includes).to_totals_hash
+    @total_value_all_distributions = total_value(@distribution_totals)
+    @total_items_all_distributions = total_quantity(@distribution_totals)
+    paginated_ids = @paginated_distributions.ids
+    @total_value_paginated_distributions = total_value(@distribution_totals.slice(*paginated_ids))
+    @total_items_paginated_distributions = total_quantity(@distribution_totals.slice(*paginated_ids))
     @selected_item_category = filter_params[:by_item_category_id]
     @selected_partner = filter_params[:by_partner]
     @selected_status = filter_params[:by_state]
@@ -285,14 +286,22 @@ class DistributionsController < ApplicationController
     params.dig(:distribution, :request_attributes, :id)
   end
 
-  def total_items(distributions, item)
-    query = LineItem.where(itemizable_type: "Distribution", itemizable_id: distributions.pluck(:id))
-    query = query.where(item_id: item.to_i) if item
-    query.sum('quantity')
+  helper_method :fetch_distribution_value
+  def fetch_distribution_value(id)
+    @distribution_totals.dig(id, :value)
   end
 
-  def total_value(distributions)
-    distributions.sum(&:value_per_itemizable)
+  helper_method :fetch_distribution_quantity
+  def fetch_distribution_quantity(id)
+    @distribution_totals.dig(id, :quantity)
+  end
+
+  def total_value(distribution_totals)
+    distribution_totals.sum { |id, totals| totals[:value] }
+  end
+
+  def total_quantity(distribution_totals)
+    distribution_totals.sum { |id, totals| totals[:quantity] }
   end
 
   def daily_items(pick_ups)

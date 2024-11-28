@@ -62,7 +62,7 @@ RSpec.describe "Distributions", type: :request do
     end
 
     describe "GET #index" do
-      let(:item) { create(:item, organization: organization) }
+      let(:item) { create(:item, value_in_cents: 100, organization: organization) }
       let!(:distribution) { create(:distribution, :with_items, :past, item: item, item_quantity: 10, organization: organization) }
 
       it "returns http success" do
@@ -101,6 +101,77 @@ RSpec.describe "Distributions", type: :request do
           expect(edit.attr("class")).to match(/disabled/)
           expect(reclaim.attr("class")).to match(/disabled/)
           expect(response.body).to match(/Has Inactive Items/)
+        end
+      end
+
+      context "when filtering by item id" do
+        let!(:item_2) { create(:item, value_in_cents: 100, organization: organization) }
+        let(:params) { { filters: { by_item_id: item.id } } }
+
+        before do
+          distribution.line_items << create(:line_item, item: item_2, quantity: 10)
+        end
+
+        it "shows value and quantity for that item in distributions" do
+          get distributions_path, params: params
+
+          page = Nokogiri::HTML(response.body)
+          item_quantity, item_value = page.css("table tbody tr td.numeric")
+
+          # total value/quantity of distribution
+          expect(distribution.total_quantity).to eq(20)
+          expect(distribution.value_per_itemizable).to eq(2000)
+
+          # displays value/quantity of filtered item in distribution
+          expect(item_quantity.text).to eq("10")
+          expect(item_value.text).to eq("$10.00")
+        end
+
+        it "changes the total quantity/value headers" do
+          get distributions_path, params: params
+
+          page = Nokogiri::HTML(response.body)
+          item_total_header, item_value_header = page.css("table thead tr th.numeric")
+
+          expect(item_total_header.text).to eq("Total #{item.name}")
+          expect(item_value_header.text).to eq("Value of #{item.name}")
+        end
+      end
+
+      context "when filtering by item category id" do
+        let!(:item_category) { create(:item_category, organization:) }
+        let!(:item_category_2) { create(:item_category, organization:) }
+        let!(:item_2) { create(:item, item_category: item_category_2, value_in_cents: 100, organization: organization) }
+        let(:params) { { filters: { by_item_category_id: item.item_category_id } } }
+
+        before do
+          item.update(item_category: item_category)
+          distribution.line_items << create(:line_item, item: item_2, quantity: 10)
+        end
+
+        it "shows value and quantity for that item category in distributions" do
+          get distributions_path, params: params
+
+          page = Nokogiri::HTML(response.body)
+          item_quantity, item_value = page.css("table tbody tr td.numeric")
+
+          # total value/quantity of distribution
+          expect(distribution.total_quantity).to eq(20)
+          expect(distribution.value_per_itemizable).to eq(2000)
+
+          # displays value/quantity of filtered item in distribution
+          expect(item_quantity.text).to eq("10")
+          expect(item_value.text).to eq("$10.00")
+        end
+
+        it "changes the total quantity/value headers" do
+          get distributions_path, params: params
+
+          page = Nokogiri::HTML(response.body)
+          item_total_header, item_value_header = page.css("table thead tr th.numeric")
+
+          expect(item_total_header.text).to eq("Total in #{item_category.name}")
+          expect(item_value_header.text).to eq("Value of #{item_category.name}")
         end
       end
     end
