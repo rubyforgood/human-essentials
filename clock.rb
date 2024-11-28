@@ -31,9 +31,10 @@ module Clockwork
   end
 
   every(4.hours, "Backup prod DB to Azure blob storage", if: lambda { |_| Rails.env.production? }) do
-    rake = Rake.application
-    rake.init
-    rake.load_rakefile
-    rake["backup_db_rds"].invoke
+    BackupDbRds.run
+  end
+
+  every(1.day, "Send reminder emails", at: "12:00", if: lambda { |_| Rails.env.production? }) do
+    ReminderDeadlineJob.perform_now
   end
 end

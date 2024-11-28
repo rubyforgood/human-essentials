@@ -48,6 +48,58 @@ RSpec.describe "Audit management", type: :system, js: true do
 
         find('option', text: item.name.to_s)
       end
+
+      context "when adding new items" do
+        let!(:existing_barcode) { create(:barcode_item) }
+        let(:item_with_barcode) { existing_barcode.item }
+
+        it "allows user to add items by barcode" do
+          visit new_audit_path
+
+          within "#audit_line_items" do
+            # Scan existing barcode
+            expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
+            Barcode.boop(existing_barcode.value)
+
+            # Ensure item quantity and name have been filled in
+            expect(page).to have_field "_barcode-lookup-0", with: existing_barcode.value
+            expect(page).to have_field "audit_line_items_attributes_0_quantity", with: existing_barcode.quantity.to_s
+            expect(page).to have_field "audit_line_items_attributes_0_item_id", with: existing_barcode.item.id.to_s
+          end
+        end
+
+        it "allows user to add items that do not yet have a barcode", :js do
+          item_without_barcode = create(:item)
+          new_barcode = "00000000"
+          new_item_name = item_without_barcode.name
+
+          visit new_audit_path
+
+          # Scan new barcode
+          within "#audit_line_items" do
+            expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
+            Barcode.boop(new_barcode)
+          end
+
+          # Item lookup finds no barcode and responds by prompting user to choose an item and quantity
+          within "#newBarcode" do
+            fill_in "Quantity", with: 10
+            select new_item_name, from: "Item"
+            expect(page).to have_field("barcode_item_quantity", with: '10')
+            expect(page).to have_field("barcode_item_value", with: new_barcode)
+            click_on "Save"
+          end
+
+          within "#audit_line_items" do
+            # Ensure item fields have been filled in
+            expect(page).to have_field "audit_line_items_attributes_0_quantity", with: '10'
+            expect(page).to have_field "audit_line_items_attributes_0_item_id", with: item_without_barcode.id.to_s
+
+            # Ensure new line item was added and has focus
+            expect(page).to have_field("_barcode-lookup-1", focused: true)
+          end
+        end
+      end
     end
 
     context "when viewing the audits index" do
