@@ -13,11 +13,12 @@ RSpec.describe RequestsTotalItemsService, type: :service do
       let(:item_names) { sample_items.pluck(:name) }
       let(:item_ids) { sample_items.pluck(:id) }
       let(:requests) do
-        [
+        local_requests = [
           create(:request, :with_item_requests, request_items: item_ids.map { |k| { "item_id" => k, "quantity" => 20 } }),
           create(:request, :with_item_requests, request_items: item_ids.map { |k| { "item_id" => k, "quantity" => 10, "request_unit" => "bundle" } }),
           create(:request, :with_item_requests, request_items: item_ids.map { |k| { "item_id" => k, "quantity" => 50, "request_unit" => "bundle" } })
         ]
+        Request.where(id: local_requests.map(&:id))
       end
 
       it 'return items with correct quantities calculated' do
@@ -62,13 +63,13 @@ RSpec.describe RequestsTotalItemsService, type: :service do
     end
 
     context 'when provided with requests that have no request items' do
-      let(:requests) { [create(:request, :with_item_requests, request_items: {})] }
+      let(:requests) { Request.where(id: [create(:request, :with_item_requests, request_items: {})].map(&:id)) }
 
       it { is_expected.to be_blank }
     end
 
     context 'when provided requests is nil' do
-      let(:requests) { nil }
+      let(:requests) { Request.where(id: nil) }
 
       it { is_expected.to be_blank }
     end

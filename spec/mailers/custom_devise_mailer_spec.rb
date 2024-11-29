@@ -7,6 +7,7 @@ RSpec.describe CustomDeviseMailer, type: :mailer do
       let(:partner) do
         partner = create(:partner, :uninvited)
         partner.primary_user.delete
+        partner.organization.update!(invitation_text: "Custom Invitation Text")
         partner.reload
         partner
       end
@@ -17,6 +18,7 @@ RSpec.describe CustomDeviseMailer, type: :mailer do
 
       it "invites to primary user" do
         expect(mail.subject).to eq("You've been invited to be a partner with #{user.partner.organization.name}")
+        expect(mail.html_part.body).to include(partner.organization.invitation_text)
         expect(mail.html_part.body).to include("You've been invited to become a partner with <strong>#{user.partner.organization.name}!</strong>")
       end
     end

@@ -1,6 +1,6 @@
 class RequestsTotalItemsService
   def initialize(requests:)
-    @requests = requests
+    @requests = requests.includes(item_requests: {item: :request_units})
   end
 
   def calculate
