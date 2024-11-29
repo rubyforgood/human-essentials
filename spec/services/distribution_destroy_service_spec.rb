@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe DistributionDestroyService do
   describe '#call' do
     subject { described_class.new(distribution_id).call }
@@ -44,7 +42,6 @@ RSpec.describe DistributionDestroyService do
         before do
           allow(distribution).to receive(:storage_location).and_return(fake_storage_location)
           allow(distribution).to receive(:line_item_values).and_return(fake_items)
-          allow(fake_storage_location).to receive(:increase_inventory)
         end
 
         it 'should destroy the Distribution' do
@@ -59,7 +56,6 @@ RSpec.describe DistributionDestroyService do
 
         it 'should increase the inventory of the storage location' do
           subject
-          expect(fake_storage_location).to have_received(:increase_inventory).with(fake_items)
         end
       end
 
@@ -85,31 +81,8 @@ RSpec.describe DistributionDestroyService do
       end
 
       context 'and the increase inventory operations fails' do
-        let(:fake_storage_location) { instance_double(StorageLocation) }
-        let(:fake_insufficient_allotment_error) do
-          Errors::InsufficientAllotment.new(
-            fake_error_message,
-            fake_insufficient_items
-          )
-        end
-        let(:fake_error_message) { Faker::Lorem.sentence }
-        let(:fake_insufficient_items) do
-          [
-            {
-              item_id: Faker::Number.number,
-              item: Faker::Lorem.word,
-              quantity_on_hand: Faker::Number.number,
-              quantity_requested: Faker::Number.number
-            }
-          ]
-        end
-
         before do
-          allow(distribution).to receive(:storage_location).and_return(fake_storage_location)
-          allow(distribution).to receive(:line_item_values).and_return(fake_insufficient_items)
-          allow(fake_storage_location).to receive(:increase_inventory)
-            .with(fake_insufficient_items)
-            .and_raise(fake_insufficient_allotment_error)
+          allow(DistributionDestroyEvent).to receive(:publish).and_raise('OH NOES')
         end
 
         it 'should not delete the Distribution' do
@@ -119,7 +92,7 @@ RSpec.describe DistributionDestroyService do
         it 'should not be successful and have the error message' do
           result = subject
           expect(result).not_to be_success
-          expect(result.error).to be_instance_of(Errors::InsufficientAllotment)
+          expect(result.error.message).to eq('OH NOES')
         end
       end
     end

@@ -70,6 +70,12 @@ RSpec.describe Partner, type: :model do
     end
 
     it { should validate_numericality_of(:quota).allow_nil }
+
+    it "validates that the quota is greater than or equal to 0" do
+      expect(build(:partner, quota: -1)).not_to be_valid
+      expect(build(:partner, quota: 0)).to be_valid
+      expect(build(:partner, quota: 1)).to be_valid
+    end
   end
 
   context "callbacks" do
@@ -161,7 +167,7 @@ RSpec.describe Partner, type: :model do
       context 'when it has a profile and users' do
         it 'should return false' do
           create(:partner_profile, partner_id: partner.id)
-          create(:partners_user, email: partner.email, name: partner.name, partner: partner)
+          create(:partner_user, email: partner.email, name: partner.name, partner: partner)
           expect(partner.reload).not_to be_deletable
         end
       end
@@ -376,6 +382,28 @@ RSpec.describe Partner, type: :model do
 
     context "when partner don't have any related information" do
       it { is_expected.to eq({families_served: 0, children_served: 0, family_zipcodes: 0, family_zipcodes_list: []}) }
+    end
+  end
+
+  describe "#quota_exceeded?" do
+    it "returns true if partner has a quota and the total given is greater than quota" do
+      partner = build_stubbed(:partner, quota: 100)
+      expect(partner.quota_exceeded?(200)).to eq(true)
+    end
+
+    it "returns false if partner has a quota and the total given is equal to quota" do
+      partner = build_stubbed(:partner, quota: 100)
+      expect(partner.quota_exceeded?(100)).to eq(false)
+    end
+
+    it "returns false if partner has a quota and the total given is less than quota" do
+      partner = build_stubbed(:partner, quota: 100)
+      expect(partner.quota_exceeded?(50)).to eq(false)
+    end
+
+    it "returns false if partner has no quota" do
+      partner = build_stubbed(:partner, quota: nil)
+      expect(partner.quota_exceeded?(50)).to eq(false)
     end
   end
 

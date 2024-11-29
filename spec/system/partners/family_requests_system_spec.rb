@@ -57,9 +57,30 @@ RSpec.describe "Family requests", type: :system, js: true do
       end
 
       find('input[type="submit"]').click
+      expect(page).to have_selector("#partnerFamilyRequestConfirmationModal")
+      within "#partnerFamilyRequestConfirmationModal" do
+        click_button "Yes, it's correct"
+      end
+
       expect(page).to have_text("Request Details")
       click_link "Your Previous Requests"
       expect(page).to have_text("Request History")
+    end
+
+    # Issue #4644
+    it "disables confirmation and modal close buttons after clicking confirm" do
+      visit partners_requests_path
+      find('a[aria-label="Create a request for a child or family"]').click
+      click_button("Submit Essentials Request")
+
+      # Disable form submission so form doesn't immediately submit and we can check button state
+      page.execute_script("$(\"form[action='/partners/family_requests']\").attr('action', 'javascript: void(0);');")
+
+      click_button(id: "modalYes")
+
+      expect(page).to have_button(id: "modalYes", visible: false, disabled: true)
+      expect(page).to have_button(id: "modalNo", visible: false, disabled: true)
+      expect(page).to have_button(id: "modalClose", visible: false, disabled: true)
     end
   end
 
@@ -90,4 +111,3 @@ RSpec.describe "Family requests", type: :system, js: true do
     end
   end
 end
-

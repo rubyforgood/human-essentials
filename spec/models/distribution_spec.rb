@@ -51,17 +51,13 @@ RSpec.describe Distribution, type: :model do
       expect(d).not_to be_valid
     end
 
-    it "ensures that any included items are found in the associated storage location" do
-      unless Event.read_events?(organization) # not relevant in event world
-        d = build(:distribution)
-        item_missing = create(:item, name: "missing")
-        d.line_items << build(:line_item, item: item_missing)
-        expect(d).not_to be_valid
-      end
-    end
-
     it "ensures that the issued at is no earlier than 2000" do
       d = build(:distribution, issued_at: "1999-12-31")
+      expect(d).not_to be_valid
+    end
+
+    it "ensures that the issued at is no later than 1 year" do
+      d = build(:distribution, issued_at: DateTime.now.next_year(2).to_s)
       expect(d).not_to be_valid
     end
 
@@ -250,11 +246,9 @@ RSpec.describe Distribution, type: :model do
         item2 = create(:item, name: "Item2", organization: organization)
         request = create(:request,
           organization: organization,
-          partner_user: create(:partner_user),
-          request_items: [
-            { item_id: item1.id, quantity: 15 },
-            { item_id: item2.id, quantity: 18 }
-          ])
+          partner_user: create(:partner_user))
+        create(:item_request, request: request, item_id: item1.id, quantity: 15)
+        create(:item_request, request: request, item_id: item2.id, quantity: 18)
         distribution = Distribution.new
         distribution.copy_from_request(request.id)
         expect(distribution.line_items.size).to eq 2

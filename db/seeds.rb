@@ -70,6 +70,11 @@ sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization
 end
 Organization.seed_items(sf_org)
 
+# At least one of the items is marked as inactive
+Organization.all.each do |org|
+  org.items.order(created_at: :desc).last.update(active: false)
+end
+
 # Assign a value to some organization items to verify totals are working
 Organization.all.each do |org|
   org.items.where(value_in_cents: 0).limit(10).each do |item|
@@ -125,11 +130,18 @@ end
 # ----------------------------------------------------------------------------
 Organization.all.each do |org|
   # Setup the Partner Group & their item categories
-  partner_group = FactoryBot.create(:partner_group, organization: org)
+  partner_group_one = FactoryBot.create(:partner_group, organization: org)
 
   total_item_categories_to_add = Faker::Number.between(from: 1, to: 2)
   org.item_categories.sample(total_item_categories_to_add).each do |item_category|
-    partner_group.item_categories << item_category
+    partner_group_one.item_categories << item_category
+  end
+
+  next unless org.name == pdx_org.name
+
+  partner_group_two = FactoryBot.create(:partner_group, organization: org)
+  org.item_categories.each do |item_category|
+    partner_group_two.item_categories << item_category
   end
 end
 
@@ -194,6 +206,7 @@ note = [
     name: "Pawnee Parent Service",
     email: "verified@example.com",
     status: :approved,
+    quota: 500,
     notes: note.sample
   },
   {
@@ -213,11 +226,28 @@ note = [
     email: "recertification_required@example.com",
     status: :recertification_required,
     notes: note.sample
+  },
+  {
+    name: "Pawnee Middle School",
+    email: "waiting@example.com",
+    status: :awaiting_review,
+    notes: note.sample
+  },
+  {
+    name: "Second Street Community Outreach",
+    status: :approved,
+    email: "approved_2@example.com",
+    notes: note.sample
   }
 ].each do |partner_option|
   p = Partner.find_or_create_by!(partner_option) do |partner|
     partner.organization = pdx_org
-    partner.partner_group = pdx_org.partner_groups.first
+
+    if partner_option[:name] == "Second Street Community Outreach"
+      partner.partner_group = pdx_org.partner_groups.find_by(name: 'Group 2')
+    else
+      partner.partner_group = pdx_org.partner_groups.first
+    end
   end
 
   profile = Partners::Profile.create!({
@@ -410,11 +440,20 @@ inv_pdxdb = StorageLocation.find_or_create_by!(name: "Pawnee Main Bank (Office)"
   inventory.square_footage = 20_000
 end
 
+inactive_storage = StorageLocation.find_or_create_by!(name: "Inactive Storage Location") do |inventory|
+  inventory.address = "Unknown"
+  inventory.organization = pdx_org
+  inventory.warehouse_type = StorageLocation::WAREHOUSE_TYPES[2]
+  inventory.square_footage = 5_000
+end
+
+inactive_storage.discard
+
 #
 # Define all the InventoryItem for each of the StorageLocation
 #
-StorageLocation.all.each do |sl|
-  sl.organization.items.each do |item|
+StorageLocation.active_locations.each do |sl|
+  sl.organization.items.active.each do |item|
     InventoryItem.create!(
       storage_location: sl,
       item: item,
@@ -557,7 +596,7 @@ dates_generator = DispersedPastDatesGenerator.new
   source = Donation::SOURCES.values.sample
   # Depending on which source it uses, additional data may need to be provided.
   donation = Donation.new(source: source,
-                          storage_location: random_record_for_org(pdx_org, StorageLocation),
+                          storage_location: StorageLocation.active_locations.sample,
                           organization: pdx_org,
                           issued_at: dates_generator.next)
   case source
@@ -586,7 +625,7 @@ inventory = InventoryAggregate.inventory_for(pdx_org.id)
 20.times.each do
   issued_at = dates_generator.next
 
-  storage_location = random_record_for_org(pdx_org, StorageLocation)
+  storage_location = StorageLocation.active_locations.sample
   stored_inventory_items_sample = inventory.storage_locations[storage_location.id].items.values.sample(20)
   delivery_method = Distribution.delivery_methods.keys.sample
   shipping_cost = delivery_method == "shipped" ? (rand(20.0..100.0)).round(2).to_s : nil
@@ -670,6 +709,7 @@ end
 # ----------------------------------------------------------------------------
 
 suppliers = %w(Target Wegmans Walmart Walgreens)
+amount_items = %w(period_supplies diapers adult_incontinence other)
 comments = [
   "Maecenas ante lectus, vestibulum pellentesque arcu sed, eleifend lacinia elit. Cras accumsan varius nisl, a commodo ligula consequat nec. Aliquam tincidunt diam id placerat rutrum.",
   "Integer a molestie tortor. Duis pretium urna eget congue porta. Fusce aliquet dolor quis viverra volutpat.",
@@ -680,19 +720,24 @@ dates_generator = DispersedPastDatesGenerator.new
 
 25.times do
   purchase_date = dates_generator.next
-  storage_location = random_record_for_org(pdx_org, StorageLocation)
+  storage_location = StorageLocation.active_locations.sample
   vendor = random_record_for_org(pdx_org, Vendor)
   purchase = Purchase.new(
     purchased_from: suppliers.sample,
     comment: comments.sample,
     organization_id: pdx_org.id,
     storage_location_id: storage_location.id,
-    amount_spent_in_cents: rand(200..10_000),
     issued_at: purchase_date,
     created_at: purchase_date,
     updated_at: purchase_date,
-    vendor_id: vendor.id
+    vendor_id: vendor.id,
+    amount_spent_on_period_supplies_cents: rand(0..5_000),
+    amount_spent_on_diapers_cents: rand(0..5_000),
+    amount_spent_on_adult_incontinence_cents: rand(0..5_000),
+    amount_spent_on_other_cents: rand(0..5_000)
   )
+
+  purchase.amount_spent_in_cents = amount_items.map{|i| purchase.send("amount_spent_on_#{i}_cents")}.sum
 
   rand(1..5).times do
     purchase.line_items.push(LineItem.new(quantity: rand(1..1000),
@@ -706,6 +751,8 @@ end
 # ----------------------------------------------------------------------------
 
 Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "new_logo")
+Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "read_events")
+Flipper.enable(:read_events)
 
 # ----------------------------------------------------------------------------
 # Account Requests
@@ -824,3 +871,17 @@ transfer = Transfer.new(
   ]
 )
 TransferCreateService.call(transfer)
+
+# ----------------------------------------------------------------------------
+# Users invitation status
+# ----------------------------------------------------------------------------
+# Mark users `invitation_status` as `accepted`
+# 
+# Addresses and resolves issue #4689, which can be found in:
+# https://github.com/rubyforgood/human-essentials/issues/4689
+User.where(invitation_token: nil).each do |user| 
+  user.update!(
+    invitation_sent_at: Time.current,
+    invitation_accepted_at: Time.current
+  )
+end

@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe PartnerProfileUpdateService do
   let(:county_1) { create(:county, name: "county1", region: "region1") }
   let(:county_2) { create(:county, name: "county2", region: "region2") }
@@ -45,6 +43,7 @@ RSpec.describe PartnerProfileUpdateService do
         end
       end
     end
+
     context "when served area client shares pre-exist" do
       let!(:original_served_area_1) { create(:partners_served_area, partner_profile: profile, county: county_1, client_share: 51) }
       let!(:original_served_area_2) { create(:partners_served_area, partner_profile: profile, county: county_2, client_share: 49) }
@@ -89,10 +88,34 @@ RSpec.describe PartnerProfileUpdateService do
           expect(profile.served_areas.size).to eq(2)
           result = PartnerProfileUpdateService.new(profile.partner, partner_params, incorrect_attributes_missing_client_share).call
           expect(result.success?).to eq(false)
-          expect(result.error.to_s).to include("Validation failed: Served areas client share is not a number, Served areas client share is not included in the list")
+          expect(result.error.to_s).to include("Validation failed: Served areas client share is not a number, Served areas client share Client share must be between 1 and 100 inclusive")
           profile.reload
           expect(profile.served_areas.size).to eq(2)
         end
+      end
+    end
+
+    context "when the partner has invalid attributes" do
+      let(:partner) { profile.partner }
+
+      before do
+        # Want to have an invalid email on purpose
+        # rubocop:disable Rails::SkipsModelValidations
+        partner.update_columns(email: "not/an_email")
+        # rubocop:enable Rails::SkipsModelValidations
+      end
+
+      it "returns failure" do
+        result = PartnerProfileUpdateService.new(partner, partner_params, basic_correct_attributes).call
+        expect(result.success?).to eq(false)
+        expect(result.error.to_s).to include("Partner '#{partner.name}' had error(s) preventing the profile from being updated: Email is invalid")
+      end
+
+      it "doesn't update the partner profile" do
+        old_pick_up_email = profile.pick_up_email
+        valid_profile_params = {pick_up_email: "new_email@test.com "}
+        PartnerProfileUpdateService.new(profile.partner, partner_params, valid_profile_params).call
+        expect(profile.pick_up_email).to eq(old_pick_up_email)
       end
     end
   end

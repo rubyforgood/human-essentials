@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe "/partners/dashboard", type: :request do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
@@ -85,6 +83,16 @@ RSpec.describe "/partners/dashboard", type: :request do
       allow(UsersRole).to receive(:current_role_for).and_return(partner_user.roles.find_by(name: "partner"))
       get partners_dashboard_path
       expect(response.body).to include("switch_to_role")
+    end
+  end
+
+  context "without a partner role" do
+    it "should redirect to the organization dashboard" do
+      partner_user.add_role(Role::ORG_USER, @organization)
+      partner_user.remove_role(Role::PARTNER, partner)
+      allow(UsersRole).to receive(:current_role_for).and_return(partner_user.roles.find_by(name: "partner"))
+      get partners_dashboard_path
+      expect(response).to redirect_to(dashboard_path)
     end
   end
 

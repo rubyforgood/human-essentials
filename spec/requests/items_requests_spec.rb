@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe "Items", type: :request do
   let(:organization) { create(:organization, short_name: "my_org") }
   let(:user) { create(:user, organization: organization) }
@@ -207,7 +205,7 @@ RSpec.describe "Items", type: :request do
         expect(response.body).to include('CURRENTCATEGORY')
         expect(response.body).to include('Value Per Item')
         expect(response.body).to include('20000')
-        expect(response.body).to include('Quantity Per Indivudual')
+        expect(response.body).to include('Quantity per Individual')
         expect(response.body).to include('2000')
         expect(response.body).to include('On hand minimum quantity')
         expect(response.body).to include('1200')

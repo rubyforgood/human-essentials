@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe "Purchases", type: :request do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
@@ -12,6 +10,10 @@ RSpec.describe "Purchases", type: :request do
     describe "GET #index" do
       it "shows a list of recent purchases" do
         get reports_purchases_summary_path
+        expect(response.body).to include("Total spent on diapers")
+        expect(response.body).to include("Total spent on adult incontinence")
+        expect(response.body).to include("Total spent on other")
+        expect(response.body).to include("Total items")
         expect(response.body).to include("Recent purchases")
       end
     end

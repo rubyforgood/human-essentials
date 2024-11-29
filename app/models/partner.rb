@@ -48,10 +48,9 @@ class Partner < ApplicationRecord
   validates :organization, presence: true
   validates :name, presence: true, uniqueness: { scope: :organization }
 
-  validates :email, presence: true, uniqueness: { case_sensitive: false },
-    format: { with: URI::MailTo::EMAIL_REGEXP, on: :create }
+  validates :email, presence: true, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
 
-  validates :quota, numericality: true, allow_blank: true
+  validates :quota, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
 
   validate :correct_document_mime_type
 
@@ -158,6 +157,7 @@ class Partner < ApplicationRecord
 
   # better to extract this outside of the model
   def self.import_csv(csv, organization_id)
+    errors = []
     organization = Organization.find(organization_id)
 
     csv.each do |row|
@@ -165,7 +165,11 @@ class Partner < ApplicationRecord
 
       svc = PartnerCreateService.new(organization: organization, partner_attrs: hash_rows)
       svc.call
+      if svc.errors.present?
+        errors << "#{svc.partner.name}: #{svc.partner.errors.full_messages.to_sentence}"
+      end
     end
+    errors
   end
 
   def self.csv_export_headers
@@ -248,6 +252,10 @@ class Partner < ApplicationRecord
       family_zipcodes: family_zipcodes_count,
       family_zipcodes_list: family_zipcodes_list
     }
+  end
+
+  def quota_exceeded?(total)
+    quota.present? && total > quota
   end
 
   private

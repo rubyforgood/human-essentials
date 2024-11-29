@@ -19,7 +19,6 @@
 #  agency_child_id      :string
 #  family_id            :bigint
 #
-require "rails_helper"
 
 RSpec.describe Partners::Child, type: :model do
   describe 'associations' do

@@ -170,12 +170,6 @@ RSpec.configure do |config|
     Capybara.server = :puma, { Silent: true }
   end
 
-  config.before(:each) do
-    if ENV['EVENTS_READ'] == 'true'
-      allow(Event).to receive(:read_events?).and_return(true)
-    end
-  end
-
   config.before do
     Faker::UniqueGenerator.clear # Clears used values to avoid retry limit exceeded error
   end

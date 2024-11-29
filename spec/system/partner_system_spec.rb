@@ -22,9 +22,9 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           visit partners_path
 
           assert page.has_content? partner_awaiting_approval.name
-          click_on 'Review Application'
+          click_on "Review Applicant's Profile"
 
-          assert page.has_content?('Application & Information')
+          assert page.has_content?('Partner Profile')
           click_on 'Approve Partner'
           assert page.has_content? 'Partner approved!'
 
@@ -45,7 +45,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
           assert page.has_content? partner_awaiting_approval.name
 
-          click_on 'Review Application'
+          click_on "Review Applicant's Profile"
           click_on 'Approve Partner'
           assert page.has_content? "Failed to approve partner because: #{fake_error_msg}"
 
@@ -380,6 +380,106 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
       end
     end
 
+    describe "#edit_profile" do
+      let!(:partner) { create(:partner, name: "Frank") }
+      subject { edit_profile_path(partner.id) }
+
+      context "when step-wise editing is enabled" do
+        before do
+          Flipper.enable(:partner_step_form)
+          visit subject
+        end
+
+        it "displays all sections in a closed state by default" do
+          within ".accordion" do
+            expect(page).to have_css("#agency_information.accordion-collapse.collapse", visible: false)
+            expect(page).to have_css("#program_delivery_address.accordion-collapse.collapse", visible: false)
+
+            partner.partials_to_show.each do |partial|
+              expect(page).to have_css("##{partial}.accordion-collapse.collapse", visible: false)
+            end
+          end
+        end
+
+        it "allows sections to be opened, closed, filled in any order, and reviewed" do
+          # Media
+          find("button[data-bs-target='#media_information']").click
+          expect(page).to have_css("#media_information.accordion-collapse.collapse.show", visible: true)
+          within "#media_information" do
+            fill_in "Website", with: "https://www.example.com"
+          end
+          find("button[data-bs-target='#media_information']").click
+          expect(page).to have_css("#media_information.accordion-collapse.collapse", visible: false)
+
+          # Executive director
+          find("button[data-bs-target='#executive_director']").click
+          expect(page).to have_css("#executive_director.accordion-collapse.collapse.show", visible: true)
+          within "#executive_director" do
+            fill_in "Executive Director Name", with: "Lisa Smith"
+          end
+
+          # Save Progress
+          all("input[type='submit'][value='Save Progress']").last.click
+          expect(page).to have_css(".alert-success", text: "Details were successfully updated.")
+
+          # Save and Review
+          all("input[type='submit'][value='Save and Review']").last.click
+          expect(current_path).to eq(partner_path(partner.id))
+          expect(page).to have_css(".alert-success", text: "Details were successfully updated.")
+        end
+
+        it "displays the edit view with sections containing validation errors expanded" do
+          # Open up Media section and clear out website value
+          find("button[data-bs-target='#media_information']").click
+          within "#media_information" do
+            fill_in "Website", with: ""
+          end
+
+          # Open Pick up person section and fill in 4 email addresses
+          find("button[data-bs-target='#pick_up_person']").click
+          within "#pick_up_person" do
+            fill_in "Pick Up Person's Email", with: "email1@example.com, email2@example.com, email3@example.com, email4@example.com"
+          end
+
+          # Open Partner Settings section and uncheck all options
+          find("button[data-bs-target='#partner_settings']").click
+          within "#partner_settings" do
+            uncheck "Enable Quantity-based Requests" if has_checked_field?("Enable Quantity-based Requests")
+            uncheck "Enable Child-based Requests (unclick if you only do bulk requests)" if has_checked_field?("Enable Child-based Requests (unclick if you only do bulk requests)")
+            uncheck "Enable Requests for Individuals" if has_checked_field?("Enable Requests for Individuals")
+          end
+
+          # Save Progress
+          all("input[type='submit'][value='Save Progress']").last.click
+
+          # Expect an alert-danger message containing validation errors
+          expect(page).to have_css(".alert-danger", text: /There is a problem/)
+          expect(page).to have_content("No social media presence must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.")
+          expect(page).to have_content("Enable child based requests At least one request type must be set")
+          expect(page).to have_content("Pick up email can't have more than three email addresses")
+
+          # Expect media section, executive director section, and partner settings section to be opened
+          expect(page).to have_css("#media_information.accordion-collapse.collapse.show", visible: true)
+          expect(page).to have_css("#pick_up_person.accordion-collapse.collapse.show", visible: true)
+          expect(page).to have_css("#partner_settings.accordion-collapse.collapse.show", visible: true)
+
+          # Try to Submit and Review from error state
+          all("input[type='submit'][value='Save and Review']").last.click
+
+          # Expect an alert-danger message containing validation errors
+          expect(page).to have_css(".alert-danger", text: /There is a problem/)
+          expect(page).to have_content("No social media presence must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.")
+          expect(page).to have_content("Enable child based requests At least one request type must be set")
+          expect(page).to have_content("Pick up email can't have more than three email addresses")
+
+          # Expect media section, executive director section, and partner settings section to be opened
+          expect(page).to have_css("#media_information.accordion-collapse.collapse.show", visible: true)
+          expect(page).to have_css("#pick_up_person.accordion-collapse.collapse.show", visible: true)
+          expect(page).to have_css("#partner_settings.accordion-collapse.collapse.show", visible: true)
+        end
+      end
+    end
+
     describe "#approve_partner" do
       let(:tooltip_message) do
         "Partner has not requested approval yet. Partners are able to request approval by going into 'My Organization' and clicking 'Request Approval' button."
@@ -539,5 +639,5 @@ end
 def visit_approval_page(partner_name:)
   visit partners_path
   ele = find('tr', text: partner_name)
-  within(ele) { click_on "Review Application" }
+  within(ele) { click_on "Review Applicant's Profile" }
 end

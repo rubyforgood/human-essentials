@@ -16,8 +16,6 @@
 #  organization_id :integer
 #
 
-require "rails_helper"
-
 RSpec.describe ProductDriveParticipant, type: :model do
   it_behaves_like "provideable"
 
@@ -27,6 +25,13 @@ RSpec.describe ProductDriveParticipant, type: :model do
       expect(build(:product_drive_participant, phone: nil)).to be_valid
       expect(build(:product_drive_participant, email: nil)).to be_valid
     end
+
+    it "is invalid unless it has either a contact name or a business name" do
+      expect(build(:product_drive_participant, contact_name: nil, business_name: nil)).not_to be_valid
+      expect(build(:product_drive_participant, contact_name: nil, business_name: "George Company").valid?).to eq(true)
+      expect(build(:product_drive_participant, contact_name: "George Henry", business_name: nil).valid?).to eq(true)
+    end
+
     it "is invalid if the comment field has more than 500 characters" do
       long_comment = "a" * 501
       expect(build(:product_drive_participant, comment: long_comment)).not_to be_valid
