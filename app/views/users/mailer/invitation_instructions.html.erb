@@ -346,6 +346,7 @@
                     <p>Hello <%= @resource.email %></p>
                     <% if @resource.partner.present? && is_primary_partner %>
                       <p>You've been invited to become a partner with <strong><%= organization.name %>!</strong></p>
+                      <p><%= organization.invitation_text %></p>
                       <p>Please click the link below to accept your invitation and create an account and you'll be able to begin requesting distributions.</p>
                       <p><strong> Please contact <%= organization.email %> if you are encountering any issues. </strong></p>
                     <% elsif @resource.partner.present? && !is_primary_partner %>

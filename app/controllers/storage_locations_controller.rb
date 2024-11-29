@@ -14,7 +14,7 @@ class StorageLocationsController < ApplicationController
     @items = StorageLocation.items_inventoried(current_organization, @inventory)
     @include_inactive_storage_locations = params[:include_inactive_storage_locations].present?
     @storage_locations = current_organization.storage_locations.alphabetized
-    if @inventory && filter_params[:containing].present?
+    if filter_params[:containing].present?
       containing_ids = @inventory.storage_locations.keys.select do |sl|
         @inventory.quantity_for(item_id: filter_params[:containing], storage_location: sl).positive?
       end
