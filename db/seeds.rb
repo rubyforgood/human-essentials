@@ -35,9 +35,9 @@ end
 
 # Create global 'Kit' base item
 BaseItem.find_or_create_by!(
-  name: 'Kit',
-  category: 'kit',
-  partner_key: 'kit'
+  name: "Kit",
+  category: "kit",
+  partner_key: "kit"
 )
 
 # ----------------------------------------------------------------------------
@@ -51,48 +51,48 @@ SyncNDBNMembers.upload(seed_file)
 # ----------------------------------------------------------------------------
 
 pdx_org = Organization.find_or_create_by!(short_name: "diaper_bank") do |organization|
-  organization.name    = "Pawnee Diaper Bank"
-  organization.street  = "P.O. Box 22613"
-  organization.city    = "Pawnee"
-  organization.state   = "Indiana"
+  organization.name = "Pawnee Diaper Bank"
+  organization.street = "P.O. Box 22613"
+  organization.city = "Pawnee"
+  organization.state = "Indiana"
   organization.zipcode = "12345"
-  organization.email   = "info@pawneediaper.org"
+  organization.email = "info@pawneediaper.org"
 end
 Organization.seed_items(pdx_org)
 
 sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization|
-  organization.name    = "SF Diaper Bank"
-  organization.street  = "P.O. Box 12345"
-  organization.city    = "San Francisco"
-  organization.state   = "CA"
+  organization.name = "SF Diaper Bank"
+  organization.street = "P.O. Box 12345"
+  organization.city = "San Francisco"
+  organization.state = "CA"
   organization.zipcode = "90210"
-  organization.email   = "info@sfdiaperbank.org"
+  organization.email = "info@sfdiaperbank.org"
 end
 Organization.seed_items(sf_org)
 
 sc_org = Organization.find_or_create_by!(short_name: "sc_bank") do |organization|
-  organization.name    = "Second City Essentials Bank"
-  organization.street  = "P.O. Box 12345"
-  organization.city    = "Second City"
-  organization.state   = "IL"
+  organization.name = "Second City Essentials Bank"
+  organization.street = "P.O. Box 12345"
+  organization.city = "Second City"
+  organization.state = "IL"
   organization.zipcode = "60614"
-  organization.email   = "info@scdiaperbank.org"
+  organization.email = "info@scdiaperbank.org"
 end
 Organization.seed_items(sc_org)
 
 # At least one of the items is marked as inactive
-Organization.all.each do |org|
+Organization.all.find_each do |org|
   org.items.order(created_at: :desc).last.update(active: false)
 end
 
 # Add a couple unique items based on random base items named after the sc_bank
 # so it will be clear if they are showing up where they aren't supposed to be
 4.times.each do |time|
-  sc_org.seed_random_item_with_name( "Second City Item ##{time+1}" )
+  sc_org.seed_random_item_with_name("Second City Item ##{time + 1}")
 end
 
 # Assign a value to some organization items to verify totals are working
-Organization.all.each do |org|
+Organization.all.find_each do |org|
   org.items.where(value_in_cents: 0).limit(10).each do |item|
     item.update(value_in_cents: 100)
   end
@@ -102,18 +102,18 @@ end
 # Request Units
 # ----------------------------------------------------------------------------
 
-Organization.all.each do |org|
-  %w(pack box flat).each do |name|
+Organization.all.find_each do |org|
+  %w[pack box flat].each do |name|
     Unit.create!(organization: org, name: name)
   end
 
   org.items.each_with_index do |item, i|
-    if item.name == 'Pads'
-      %w(box pack).each { |name| item.request_units.create!(name: name) }
-    elsif item.name == 'Wipes (Baby)'
-      item.request_units.create!(name: 'pack')
-    elsif item.name == 'Kids Pull-Ups (5T-6T)'
-      %w(pack flat).each do |name|
+    if item.name == "Pads"
+      %w[box pack].each { |name| item.request_units.create!(name: name) }
+    elsif item.name == "Wipes (Baby)"
+      item.request_units.create!(name: "pack")
+    elsif item.name == "Kids Pull-Ups (5T-6T)"
+      %w[pack flat].each do |name|
         item.request_units.create!(name: name)
       end
     end
@@ -124,8 +124,8 @@ end
 # Item Categories
 # ----------------------------------------------------------------------------
 
-Organization.all.each do |org|
-  ['Diapers', 'Period Supplies', 'Adult Incontinence'].each do |letter|
+Organization.all.find_each do |org|
+  ["Diapers", "Period Supplies", "Adult Incontinence"].each do |letter|
     FactoryBot.create(:item_category, organization: org, name: "Category #{letter}")
   end
 end
@@ -134,19 +134,19 @@ end
 # Item < - > ItemCategory
 # ----------------------------------------------------------------------------
 
-Organization.all.each do |org|
+Organization.all.find_each do |org|
   # Added `nil` to randomly choose to not categorize items sometimes via sample
   item_category_ids = org.item_categories.map(&:id) + [nil]
 
   org.items.each do |item|
-    item.update_column(:item_category_id, item_category_ids.sample)
+    item.update(item_category_id: item_category_ids.sample)
   end
 end
 
 # ----------------------------------------------------------------------------
 # Partner Group & Item Categories
 # ----------------------------------------------------------------------------
-Organization.all.each do |org|
+Organization.all.find_each do |org|
   # Setup the Partner Group & their item categories
   partner_group_one = FactoryBot.create(:partner_group, organization: org)
 
@@ -168,20 +168,20 @@ end
 # ----------------------------------------------------------------------------
 
 [
-  { email: 'superadmin@example.com', organization_admin: false, super_admin: true },
-  { email: 'org_admin1@example.com', organization_admin: true,  organization: pdx_org },
-  { email: 'org_admin2@example.com', organization_admin: true,  organization: sf_org },
-  { email: 'second_city_admin@example.com', organization_admin: true,  organization: sc_org },
-  { email: 'user_1@example.com',     organization_admin: false, organization: pdx_org },
-  { email: 'user_2@example.com',     organization_admin: false, organization: sf_org },
-  { email: 'second_city_user@example.com',  organization_admin: false, organization: sc_org },
-  { email: 'test@example.com',       organization_admin: false, organization: pdx_org, super_admin: true },
-  { email: 'test2@example.com',      organization_admin: true,  organization: pdx_org }
+  {email: "superadmin@example.com", organization_admin: false, super_admin: true},
+  {email: "org_admin1@example.com", organization_admin: true, organization: pdx_org},
+  {email: "org_admin2@example.com", organization_admin: true, organization: sf_org},
+  {email: "second_city_admin@example.com", organization_admin: true, organization: sc_org},
+  {email: "user_1@example.com", organization_admin: false, organization: pdx_org},
+  {email: "user_2@example.com", organization_admin: false, organization: sf_org},
+  {email: "second_city_user@example.com", organization_admin: false, organization: sc_org},
+  {email: "test@example.com", organization_admin: false, organization: pdx_org, super_admin: true},
+  {email: "test2@example.com", organization_admin: true, organization: pdx_org}
 ].each do |user_data|
   user = User.create(
     email: user_data[:email],
-    password: 'password!',
-    password_confirmation: 'password!'
+    password: "password!",
+    password_confirmation: "password!"
   )
 
   if user_data[:organization]
@@ -201,12 +201,12 @@ end
 # Donation Sites
 # ----------------------------------------------------------------------------
 
-Organization.all.each do |org|
+Organization.all.find_each do |org|
   [
-    { name: "#{org.city} Hardware",         address: "1234 SE Some Ave., #{org.city}, #{org.state} 12345" },
-    { name: "#{org.city} Parks Department", address: "2345 NE Some St., #{org.city}, #{org.state} 12345" },
-    { name: "Waffle House",                 address: "3456 Some Bay., #{org.city}, #{org.state} 12345" },
-    { name: "Eagleton Country Club",        address: "4567 Some Blvd., Eagleton, #{org.state} 12345" }
+    {name: "#{org.city} Hardware", address: "1234 SE Some Ave., #{org.city}, #{org.state} 12345"},
+    {name: "#{org.city} Parks Department", address: "2345 NE Some St., #{org.city}, #{org.state} 12345"},
+    {name: "Waffle House", address: "3456 Some Bay., #{org.city}, #{org.state} 12345"},
+    {name: "Eagleton Country Club", address: "4567 Some Blvd., Eagleton, #{org.state} 12345"}
   ].each do |donation_option|
     DonationSite.find_or_create_by!(address: donation_option[:address]) do |donation|
       donation.name = donation_option[:name]
@@ -271,41 +271,40 @@ note = [
   }
 ].each do |partner_option|
   p = Partner.find_or_create_by!(partner_option) do |partner|
-
-    if partner_option.key?(:organization)
-      partner.organization = partner_option[:organization]
+    partner.organization = if partner_option.key?(:organization)
+      partner_option[:organization]
     else
-      partner.organization = pdx_org
+      pdx_org
     end
 
-    if partner_option[:name] == "Second Street Community Outreach"
-      partner.partner_group = pdx_org.partner_groups.find_by(name: 'Group 2')
+    partner.partner_group = if partner_option[:name] == "Second Street Community Outreach"
+      pdx_org.partner_groups.find_by(name: "Group 2")
     else
-      partner.partner_group = partner.organization.partner_groups.first
+      partner.organization.partner_groups.first
     end
   end
 
-  profile = Partners::Profile.create!({
-                                        essentials_bank_id: p.organization_id,
-                                        partner_id: p.id,
-                                        address1: Faker::Address.street_address,
-                                        address2: "",
-                                        city: Faker::Address.city,
-                                        state: Faker::Address.state_abbr,
-                                        zip_code: Faker::Address.zip,
-                                        website: Faker::Internet.domain_name,
-                                        zips_served: Faker::Address.zip,
-                                        executive_director_name: Faker::Name.name,
-                                        executive_director_email: p.email,
-                                        executive_director_phone: Faker::PhoneNumber.phone_number,
-                                        primary_contact_name: Faker::Name.name,
-                                        primary_contact_email: Faker::Internet.email,
-                                        primary_contact_phone: Faker::PhoneNumber.phone_number,
-                                        primary_contact_mobile: Faker::PhoneNumber.phone_number,
-                                        pick_up_name: Faker::Name.name,
-                                        pick_up_email: Faker::Internet.email,
-                                        pick_up_phone: Faker::PhoneNumber.phone_number
-                                      })
+  Partners::Profile.create!({
+    essentials_bank_id: p.organization_id,
+    partner_id: p.id,
+    address1: Faker::Address.street_address,
+    address2: "",
+    city: Faker::Address.city,
+    state: Faker::Address.state_abbr,
+    zip_code: Faker::Address.zip,
+    website: Faker::Internet.domain_name,
+    zips_served: Faker::Address.zip,
+    executive_director_name: Faker::Name.name,
+    executive_director_email: p.email,
+    executive_director_phone: Faker::PhoneNumber.phone_number,
+    primary_contact_name: Faker::Name.name,
+    primary_contact_email: Faker::Internet.email,
+    primary_contact_phone: Faker::PhoneNumber.phone_number,
+    primary_contact_mobile: Faker::PhoneNumber.phone_number,
+    pick_up_name: Faker::Name.name,
+    pick_up_email: Faker::Internet.email,
+    pick_up_phone: Faker::PhoneNumber.phone_number
+  })
 
   user = ::User.create!(
     name: Faker::Name.name,
@@ -333,7 +332,7 @@ note = [
   # Skip creating records that they would have created after
   # they've accepted the invitation
   #
-  next if p.status == 'uninvited'
+  next if p.status == "uninvited"
 
   families = (1..Faker::Number.within(range: 4..13)).to_a.map do
     Partners::Family.create!(
@@ -420,7 +419,7 @@ note = [
       updated_at: date
     )
 
-    pads = p.organization.items.find_by(name: 'Pads')
+    pads = p.organization.items.find_by(name: "Pads")
     new_item_request = Partners::ItemRequest.new(
       item_id: pads.id,
       quantity: Faker::Number.within(range: 10..30),
@@ -429,7 +428,7 @@ note = [
       partner_key: pads.partner_key,
       created_at: date,
       updated_at: date,
-      request_unit: 'pack'
+      request_unit: "pack"
     )
     partner_request.item_requests << new_item_request
 
@@ -474,13 +473,13 @@ inv_pdxdb = StorageLocation.find_or_create_by!(name: "Pawnee Main Bank (Office)"
   inventory.warehouse_type = StorageLocation::WAREHOUSE_TYPES[1]
   inventory.square_footage = 20_000
 end
-inv_scbulk = StorageLocation.find_or_create_by!(name: "Second City Bulk Storage") do |inventory|
+StorageLocation.find_or_create_by!(name: "Second City Bulk Storage") do |inventory|
   inventory.address = "Unknown"
   inventory.organization = sc_org
   inventory.warehouse_type = StorageLocation::WAREHOUSE_TYPES[0]
   inventory.square_footage = 10_000
 end
-inv_scoffice = StorageLocation.find_or_create_by!(name: "Second City Main Bank (Office)") do |inventory|
+StorageLocation.find_or_create_by!(name: "Second City Main Bank (Office)") do |inventory|
   inventory.address = "Unknown"
   inventory.organization = sc_org
   inventory.warehouse_type = StorageLocation::WAREHOUSE_TYPES[1]
@@ -508,67 +507,67 @@ StorageLocation.active_locations.each do |sl|
     )
   end
 end
-Organization.all.each { |org| SnapshotEvent.publish(org) }
+Organization.all.find_each { |org| SnapshotEvent.publish(org) }
 
 # Set minimum and recomended inventory levels for items at the Pawnee Diaper Bank Organization
-half_items_count = (pdx_org.items.count/2).to_i
+half_items_count = (pdx_org.items.count / 2).to_i
 low_items = pdx_org.items.left_joins(:inventory_items)
-  .select('items.*, SUM(inventory_items.quantity) AS total_quantity')
-  .group('items.id')
-  .order('total_quantity')
+  .select("items.*, SUM(inventory_items.quantity) AS total_quantity")
+  .group("items.id")
+  .order("total_quantity")
   .limit(half_items_count)
 
 min_qty = low_items.first.total_quantity
 max_qty = low_items.last.total_quantity
 
 low_items.each do |item|
-  min_value = rand((min_qty / 10).floor..(max_qty/10).ceil) * 10
-  recomended_value = rand((min_value/10).ceil..1000) * 10
+  min_value = rand((min_qty / 10).floor..(max_qty / 10).ceil) * 10
+  recomended_value = rand((min_value / 10).ceil..1000) * 10
   item.update(on_hand_minimum_quantity: min_value, on_hand_recommended_quantity: recomended_value)
 end
 
-Organization.all.each do |org|
-# ----------------------------------------------------------------------------
-# Product Drives
-# ----------------------------------------------------------------------------
+Organization.all.find_each do |org|
+  # ----------------------------------------------------------------------------
+  # Product Drives
+  # ----------------------------------------------------------------------------
 
   [
-    { name: "First Product Drive",
-      start_date: 3.years.ago,
-      end_date: 3.years.ago,
-      organization: org },
-    { name: "Best Product Drive",
-      start_date: 3.weeks.ago,
-      end_date: 2.weeks.ago,
-      organization: org },
-    { name: "Second Best Product Drive",
-      start_date: 2.weeks.ago,
-      end_date: 1.week.ago,
-      organization: org },
+    {name: "First Product Drive",
+     start_date: 3.years.ago,
+     end_date: 3.years.ago,
+     organization: org},
+    {name: "Best Product Drive",
+     start_date: 3.weeks.ago,
+     end_date: 2.weeks.ago,
+     organization: org},
+    {name: "Second Best Product Drive",
+     start_date: 2.weeks.ago,
+     end_date: 1.week.ago,
+     organization: org}
   ].each { |product_drive| ProductDrive.find_or_create_by! product_drive }
 
-# ----------------------------------------------------------------------------
-# Product Drive Participants
-# ----------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+  # Product Drive Participants
+  # ----------------------------------------------------------------------------
 
   [
-    { business_name: "A Good Place to Collect Diapers",
-      contact_name: "fred",
-      email: "good@place.is",
-      organization: org },
-    { business_name: "A Mediocre Place to Collect Diapers",
-      contact_name: "wilma",
-      email: "ok@place.is",
-      organization: org }
+    {business_name: "A Good Place to Collect Diapers",
+     contact_name: "fred",
+     email: "good@place.is",
+     organization: org},
+    {business_name: "A Mediocre Place to Collect Diapers",
+     contact_name: "wilma",
+     email: "ok@place.is",
+     organization: org}
   ].each { |participant| ProductDriveParticipant.create! participant }
 
-# ----------------------------------------------------------------------------
-# Manufacturers
-# ----------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+  # Manufacturers
+  # ----------------------------------------------------------------------------
 
   [
-    { name: "Manufacturer 1", organization: org },
-    { name: "Manufacturer 2", organization: org }
+    {name: "Manufacturer 1", organization: org},
+    {name: "Manufacturer 2", organization: org}
   ].each { |manu| Manufacturer.find_or_create_by! manu }
 end
 
@@ -592,8 +591,8 @@ end
 
 items_by_category.each do |_category, entries|
   entries.each do |entry|
-    seed_quantity(entry['name'], pdx_org, inv_arbor, entry['qty']['arbor'])
-    seed_quantity(entry['name'], pdx_org, inv_pdxdb, entry['qty']['pdxdb'])
+    seed_quantity(entry["name"], pdx_org, inv_arbor, entry["qty"]["arbor"])
+    seed_quantity(entry["name"], pdx_org, inv_pdxdb, entry["qty"]["pdxdb"])
   end
 end
 
@@ -602,19 +601,19 @@ end
 # ----------------------------------------------------------------------------
 
 [
-  { value: "10037867880046", name: "Kids (Size 5)",         quantity: 108 },
-  { value: "10037867880053", name: "Kids (Size 6)",         quantity: 92 },
-  { value: "10037867880039", name: "Kids (Size 4)",         quantity: 124 },
-  { value: "803516626364",   name: "Kids (Size 1)",         quantity: 40 },
-  { value: "036000406535",   name: "Kids (Size 1)",         quantity: 44 },
-  { value: "037000863427",   name: "Kids (Size 1)",         quantity: 35 },
-  { value: "041260379000",   name: "Kids (Size 3)",         quantity: 160 },
-  { value: "074887711700",   name: "Wipes (Baby)",          quantity: 8 },
-  { value: "036000451306",   name: "Kids Pull-Ups (4T-5T)", quantity: 56 },
-  { value: "037000862246",   name: "Kids (Size 4)",         quantity: 92 },
-  { value: "041260370236",   name: "Kids (Size 4)",         quantity: 68 },
-  { value: "036000407679",   name: "Kids (Size 4)",         quantity: 24 },
-  { value: "311917152226",   name: "Kids (Size 4)",         quantity: 82 },
+  {value: "10037867880046", name: "Kids (Size 5)", quantity: 108},
+  {value: "10037867880053", name: "Kids (Size 6)", quantity: 92},
+  {value: "10037867880039", name: "Kids (Size 4)", quantity: 124},
+  {value: "803516626364", name: "Kids (Size 1)", quantity: 40},
+  {value: "036000406535", name: "Kids (Size 1)", quantity: 44},
+  {value: "037000863427", name: "Kids (Size 1)", quantity: 35},
+  {value: "041260379000", name: "Kids (Size 3)", quantity: 160},
+  {value: "074887711700", name: "Wipes (Baby)", quantity: 8},
+  {value: "036000451306", name: "Kids Pull-Ups (4T-5T)", quantity: 56},
+  {value: "037000862246", name: "Kids (Size 4)", quantity: 92},
+  {value: "041260370236", name: "Kids (Size 4)", quantity: 68},
+  {value: "036000407679", name: "Kids (Size 4)", quantity: 24},
+  {value: "311917152226", name: "Kids (Size 4)", quantity: 82}
 ].each do |item|
   BarcodeItem.find_or_create_by!(value: item[:value]) do |barcode|
     barcode.item = pdx_org.items.find_by(name: item[:name])
@@ -623,12 +622,12 @@ end
   end
 end
 
-# ----------------------------------------------------------------------------
-# Donations
-# ----------------------------------------------------------------------------
-
 dates_generator = DispersedPastDatesGenerator.new
-[ pdx_org, sc_org ].each do |org|
+[pdx_org, sc_org].each do |org|
+  # ----------------------------------------------------------------------------
+  # Donations
+  # ----------------------------------------------------------------------------
+
   # Make some donations of all sorts
   20.times.each do
     source = Donation::SOURCES.values.sample
@@ -655,9 +654,9 @@ dates_generator = DispersedPastDatesGenerator.new
     DonationCreateService.call(donation)
   end
 
-# ----------------------------------------------------------------------------
-# Distributions
-# ----------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+  # Distributions
+  # ----------------------------------------------------------------------------
 
   inventory = InventoryAggregate.inventory_for(org.id)
   # Make some distributions, but don't use up all the inventory
@@ -667,7 +666,7 @@ dates_generator = DispersedPastDatesGenerator.new
     storage_location = org.storage_locations.active_locations.sample
     stored_inventory_items_sample = inventory.storage_locations[storage_location.id].items.values.sample(20)
     delivery_method = Distribution.delivery_methods.keys.sample
-    shipping_cost = delivery_method == "shipped" ? (rand(20.0..100.0)).round(2).to_s : nil
+    shipping_cost = (delivery_method == "shipped") ? rand(20.0..100.0).round(2).to_s : nil
     distribution = Distribution.new(
       storage_location: storage_location,
       partner: random_record_for_org(org, Partner),
@@ -676,14 +675,14 @@ dates_generator = DispersedPastDatesGenerator.new
       created_at: 3.days.ago(issued_at),
       delivery_method: delivery_method,
       shipping_cost: shipping_cost,
-      comment: 'Urgent'
+      comment: "Urgent"
     )
 
     stored_inventory_items_sample.each do |stored_inventory_item|
       distribution_qty = rand(stored_inventory_item.quantity / 2)
       if distribution_qty >= 1
         distribution.line_items.push(LineItem.new(quantity: distribution_qty,
-                                                  item_id: stored_inventory_item.item_id))
+          item_id: stored_inventory_item.item_id))
       end
     end
     DistributionCreateService.new(distribution).call
@@ -695,18 +694,18 @@ end
 # ----------------------------------------------------------------------------
 
 BroadcastAnnouncement.create(
-  user: User.find_by(email: 'superadmin@example.com'),
+  user: User.find_by(email: "superadmin@example.com"),
   message: "This is the staging /demo server. There may be new features here! Stay tuned!",
   link: "https://example.com",
-  expiry: Date.today + 7.days,
+  expiry: Time.zone.today + 7.days,
   organization: nil
 )
 
 BroadcastAnnouncement.create(
-  user: User.find_by(email: 'org_admin1@example.com'),
+  user: User.find_by(email: "org_admin1@example.com"),
   message: "This is the staging /demo server. There may be new features here! Stay tuned!",
   link: "https://example.com",
-  expiry: Date.today + 10.days,
+  expiry: Time.zone.today + 10.days,
   organization: pdx_org
 )
 
@@ -715,7 +714,7 @@ BroadcastAnnouncement.create(
 # ----------------------------------------------------------------------------
 
 # Create some Vendors so Purchases can have vendor_ids
-Organization.all.each do |org|
+Organization.all.find_each do |org|
   Vendor.create(
     contact_name: Faker::FunnyName.two_word_name,
     email: Faker::Internet.email,
@@ -727,7 +726,7 @@ Organization.all.each do |org|
     latitude: rand(-90.000000000...90.000000000),
     longitude: rand(-180.000000000...180.000000000),
     created_at: (Time.zone.today - rand(15).days),
-    updated_at: (Time.zone.today - rand(15).days),
+    updated_at: (Time.zone.today - rand(15).days)
   )
 end
 3.times do
@@ -742,7 +741,7 @@ end
     latitude: rand(-90.000000000...90.000000000),
     longitude: rand(-180.000000000...180.000000000),
     created_at: (Time.zone.today - rand(15).days),
-    updated_at: (Time.zone.today - rand(15).days),
+    updated_at: (Time.zone.today - rand(15).days)
   )
 end
 
@@ -750,8 +749,8 @@ end
 # Purchases
 # ----------------------------------------------------------------------------
 
-suppliers = %w(Target Wegmans Walmart Walgreens)
-amount_items = %w(period_supplies diapers adult_incontinence other)
+suppliers = %w[Target Wegmans Walmart Walgreens]
+amount_items = %w[period_supplies diapers adult_incontinence other]
 comments = [
   "Maecenas ante lectus, vestibulum pellentesque arcu sed, eleifend lacinia elit. Cras accumsan varius nisl, a commodo ligula consequat nec. Aliquam tincidunt diam id placerat rutrum.",
   "Integer a molestie tortor. Duis pretium urna eget congue porta. Fusce aliquet dolor quis viverra volutpat.",
@@ -760,7 +759,7 @@ comments = [
 
 dates_generator = DispersedPastDatesGenerator.new
 
-[ pdx_org, sc_org ].each do |org|
+[pdx_org, sc_org].each do |org|
   25.times do
     purchase_date = dates_generator.next
     storage_location = org.storage_locations.active_locations.sample
@@ -780,12 +779,12 @@ dates_generator = DispersedPastDatesGenerator.new
       amount_spent_on_other_cents: rand(0..5_000)
     )
 
-    purchase.amount_spent_in_cents = amount_items.map{|i| purchase.send("amount_spent_on_#{i}_cents")}.sum
+    purchase.amount_spent_in_cents = amount_items.map { |i| purchase.send("amount_spent_on_#{i}_cents") }.sum
 
     rand(1..5).times do
       purchase.line_items.push(
         LineItem.new(quantity: rand(1..1000),
-        item_id: org.item_ids.sample)
+          item_id: org.item_ids.sample)
       )
     end
     PurchaseCreateService.call(purchase)
@@ -805,12 +804,12 @@ Flipper.enable(:read_events)
 # ----------------------------------------------------------------------------
 # Add some Account Requests to fill up the account requests admin page
 
-[{ organization_name: "Telluride Diaper Bank",    website: "TDB.com", confirmed_at: nil },
- { organization_name: "Ouray Diaper Bank",        website: "ODB.com",   confirmed_at: nil },
- { organization_name: "Canon City Diaper Bank",   website: "CCDB.com",  confirmed_at: nil },
- { organization_name: "Golden Diaper Bank",       website: "GDB.com",   confirmed_at: (Time.zone.today - rand(15).days) },
- { organization_name: "Westminster Diaper Bank",  website: "WDB.com",   confirmed_at: (Time.zone.today - rand(15).days) },
- { organization_name: "Lakewood Diaper Bank",     website: "LDB.com",   confirmed_at: (Time.zone.today - rand(15).days) }].each do |account_request|
+[{organization_name: "Telluride Diaper Bank", website: "TDB.com", confirmed_at: nil},
+  {organization_name: "Ouray Diaper Bank", website: "ODB.com", confirmed_at: nil},
+  {organization_name: "Canon City Diaper Bank", website: "CCDB.com", confirmed_at: nil},
+  {organization_name: "Golden Diaper Bank", website: "GDB.com", confirmed_at: (Time.zone.today - rand(15).days)},
+  {organization_name: "Westminster Diaper Bank", website: "WDB.com", confirmed_at: (Time.zone.today - rand(15).days)},
+  {organization_name: "Lakewood Diaper Bank", website: "LDB.com", confirmed_at: (Time.zone.today - rand(15).days)}].each do |account_request|
   AccountRequest.create(
     name: Faker::Name.unique.name,
     email: Faker::Internet.unique.email,
@@ -865,7 +864,7 @@ end
 # ----------------------------------------------------------------------------
 # Counties
 # ----------------------------------------------------------------------------
-Rake::Task['db:load_us_counties'].invoke
+Rake::Task["db:load_us_counties"].invoke
 
 # ----------------------------------------------------------------------------
 # Partner Counties
@@ -882,16 +881,15 @@ partner_ids.each do |partner_id|
   profile = partner.profile
   num_counties_for_partner = Faker::Number.within(range: 1..10)
   remaining_percentage = 100
-  share_ceiling = 100/num_counties_for_partner  #arbitrary,  so I can do the math easily
+  share_ceiling = 100 / num_counties_for_partner  # arbitrary,  so I can do the math easily
   county_index = 0
 
   county_ids_for_this_partner = county_ids.sample(num_counties_for_partner)
   county_ids_for_this_partner.each do |county_id|
-    client_share = 0
-    if county_index ==  num_counties_for_partner - 1
-      client_share = remaining_percentage
+    client_share = if county_index == num_counties_for_partner - 1
+      remaining_percentage
     else
-      client_share = Faker::Number.within(range:1..share_ceiling)
+      Faker::Number.within(range: 1..share_ceiling)
     end
 
     Partners::ServedArea.create(
@@ -900,7 +898,7 @@ partner_ids.each do |partner_id|
       client_share: client_share
     )
     county_index += 1
-    remaining_percentage = remaining_percentage - client_share
+    remaining_percentage -= client_share
   end
 end
 
@@ -925,7 +923,7 @@ TransferCreateService.call(transfer)
 #
 # Addresses and resolves issue #4689, which can be found in:
 # https://github.com/rubyforgood/human-essentials/issues/4689
-User.where(invitation_token: nil).each do |user|
+User.where(invitation_token: nil).find_each do |user|
   user.update!(
     invitation_sent_at: Time.current,
     invitation_accepted_at: Time.current
