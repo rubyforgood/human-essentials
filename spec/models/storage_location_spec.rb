@@ -52,6 +52,32 @@ RSpec.describe StorageLocation, type: :model do
       expect(results.length).to eq(1)
       expect(results.first.discarded_at).to be_nil
     end
+
+    it "->with_transfers_to yields storage locations with transfers to an organization" do
+      storage_location1 = create(:storage_location, name: "loc1", organization: organization)
+      storage_location2 = create(:storage_location, name: "loc2", organization: organization)
+      storage_location3 = create(:storage_location, name: "loc3", organization: organization)
+      storage_location4 = create(:storage_location, name: "loc4", organization: create(:organization))
+      storage_location5 = create(:storage_location, name: "loc5", organization: storage_location4.organization)
+      create(:transfer, from: storage_location3, to: storage_location1, organization: organization)
+      create(:transfer, from: storage_location3, to: storage_location2, organization: organization)
+      create(:transfer, from: storage_location5, to: storage_location4, organization: storage_location4.organization)
+
+      expect(StorageLocation.with_transfers_to(organization).to_a).to match_array([storage_location1, storage_location2])
+    end
+
+    it "->with_transfers_from yields storage locations with transfers from an organization" do
+      storage_location1 = create(:storage_location, name: "loc1", organization: organization)
+      storage_location2 = create(:storage_location, name: "loc2", organization: organization)
+      storage_location3 = create(:storage_location, name: "loc3", organization: organization)
+      storage_location4 = create(:storage_location, name: "loc4", organization: create(:organization))
+      storage_location5 = create(:storage_location, name: "loc5", organization: storage_location4.organization)
+      create(:transfer, from: storage_location3, to: storage_location1, organization: organization)
+      create(:transfer, from: storage_location3, to: storage_location2, organization: organization)
+      create(:transfer, from: storage_location5, to: storage_location4, organization: storage_location4.organization)
+
+      expect(StorageLocation.with_transfers_from(organization).to_a).to match_array([storage_location3])
+    end
   end
 
   context "Methods >" do
@@ -180,21 +206,6 @@ RSpec.describe StorageLocation, type: :model do
         storage_location.save
         expect(storage_location.latitude).not_to eq(nil)
         expect(storage_location.longitude).not_to eq(nil)
-      end
-    end
-
-    describe "self.with_transfers_to and self.with_transfers_from" do
-      it "returns storage locations with transfers to/from for an organization" do
-        storage_location1 = create(:storage_location, name: "loc1", organization: organization)
-        storage_location2 = create(:storage_location, name: "loc2", organization: organization)
-        storage_location3 = create(:storage_location, name: "loc3", organization: organization)
-        storage_location4 = create(:storage_location, name: "loc4", organization: create(:organization))
-        storage_location5 = create(:storage_location, name: "loc5", organization: storage_location4.organization)
-        create(:transfer, from: storage_location3, to: storage_location1, organization: organization)
-        create(:transfer, from: storage_location3, to: storage_location2, organization: organization)
-        create(:transfer, from: storage_location5, to: storage_location4, organization: storage_location4.organization)
-        expect(StorageLocation.with_transfers_to(organization).to_a).to match_array([storage_location1, storage_location2])
-        expect(StorageLocation.with_transfers_from(organization).to_a).to match_array([storage_location3])
       end
     end
   end

@@ -55,6 +55,12 @@ class StorageLocation < ApplicationRecord
   scope :alphabetized, -> { order(:name) }
   scope :for_csv_export, ->(organization, *) { where(organization: organization) }
   scope :active_locations, -> { where(discarded_at: nil) }
+  scope :with_transfers_to, ->(organization) {
+    joins(:transfers_to).where(organization_id: organization.id).distinct.order(:name)
+  }
+  scope :with_transfers_from, ->(organization) {
+    joins(:transfers_from).where(organization_id: organization.id).distinct.order(:name)
+  }
 
   # @param organization [Organization]
   # @param inventory [View::Inventory]
@@ -70,14 +76,6 @@ class StorageLocation < ApplicationRecord
   # @return [Array<Item>]
   def items
     View::Inventory.items_for_location(self).map(&:db_item)
-  end
-
-  def self.with_transfers_to(organization)
-    joins(:transfers_to).where(organization_id: organization.id).distinct.order(:name)
-  end
-
-  def self.with_transfers_from(organization)
-    joins(:transfers_from).where(organization_id: organization.id).distinct.order(:name)
   end
 
   # @return [Integer]
