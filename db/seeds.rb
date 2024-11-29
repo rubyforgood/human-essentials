@@ -174,7 +174,7 @@ end
   { email: 'second_city_admin@example.com', organization_admin: true,  organization: sc_org },
   { email: 'user_1@example.com',     organization_admin: false, organization: pdx_org },
   { email: 'user_2@example.com',     organization_admin: false, organization: sf_org },
-  { email: 'user_3@example.com',     organization_admin: false, organization: sc_org },
+  { email: 'second_city_user@example.com',  organization_admin: false, organization: sc_org },
   { email: 'test@example.com',       organization_admin: false, organization: pdx_org, super_admin: true },
   { email: 'test2@example.com',      organization_admin: true,  organization: pdx_org }
 ].each do |user_data|
