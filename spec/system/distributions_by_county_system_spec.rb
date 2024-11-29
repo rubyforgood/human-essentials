@@ -1,8 +1,8 @@
 RSpec.feature "Distributions by County", type: :system do
   include_examples "distribution_by_county"
 
-  let(:year) { Time.current.year }
-  let(:issued_at_last_year) { Time.current.utc.change(year: year - 1).to_datetime }
+  let(:current_year) { Time.current.year }
+  let(:issued_at_last_year) { Time.current.utc.change(year: current_year - 1).to_datetime }
 
   before do
     sign_in(user)
@@ -36,8 +36,17 @@ RSpec.feature "Distributions by County", type: :system do
     end
 
     it("works for prior year") do
-      @distribution_current = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
-      @distribution_last_year = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
+      # Should NOT return distribution issued before previous calendar year
+      last_day_of_two_years_ago = Time.current.utc.change(year: current_year - 2, month: 12, day: 31).to_datetime
+      create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: last_day_of_two_years_ago)
+
+      # Should return distribution issued during previous calendar year
+      one_year_ago = issued_at_last_year
+      create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: one_year_ago)
+
+      # Should NOT return distribution issued after previous calendar year
+      first_day_of_current_year = Time.current.utc.change(year: current_year, month: 1, day: 1).to_datetime
+      create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: first_day_of_current_year)
 
       visit_distribution_by_county_with_specified_date_range("Prior Year")
 
@@ -49,8 +58,17 @@ RSpec.feature "Distributions by County", type: :system do
     end
 
     it("works for last 12 months") do
-      @distribution_current = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
-      @distribution_last_year = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
+      # Should NOT return disitribution issued before 12 months ago
+      one_year_and_one_day_ago = 1.year.ago.prev_day.to_datetime
+      create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: one_year_and_one_day_ago)
+
+      # Should return distribution issued during previous 12 months
+      today = issued_at_present
+      create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: today)
+
+      # Should NOT return distribution issued in the future
+      tomorrow = 1.day.from_now.to_datetime
+      create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: tomorrow)
 
       visit_distribution_by_county_with_specified_date_range("Last 12 Months")
 
