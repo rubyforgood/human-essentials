@@ -318,6 +318,7 @@ class DistributionsController < ApplicationController
 
     if inventory_check_result.minimum_alert.present? && inventory_check_result.recommended_alert.present?
       flash[:alert] = inventory_check_result.minimum_alert
+      flash[:alert] += "\n"
       flash[:alert] += inventory_check_result.recommended_alert
     elsif inventory_check_result.minimum_alert.present?
       flash[:alert] = inventory_check_result.minimum_alert
