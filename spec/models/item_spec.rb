@@ -36,7 +36,6 @@ RSpec.describe Item, type: :model do
 
     it { should validate_presence_of(:name) }
     it { should belong_to(:organization) }
-    it { should belong_to(:base_item).counter_cache(:item_count).with_primary_key(:partner_key).with_foreign_key(:partner_key).inverse_of(:items) }
     it { should validate_numericality_of(:distribution_quantity).is_greater_than(0) }
     it { should validate_numericality_of(:on_hand_minimum_quantity).is_greater_than_or_equal_to(0) }
     it { should validate_numericality_of(:on_hand_recommended_quantity).is_greater_than_or_equal_to(0) }

@@ -30,7 +30,7 @@ class AccountRequest < ApplicationRecord
 
   has_one :organization, dependent: :nullify
 
-  enum status: %w[started user_confirmed admin_approved rejected admin_closed].map { |v| [v, v] }.to_h
+  enum :status, %w[started user_confirmed admin_approved rejected admin_closed].map { |v| [v, v] }.to_h
 
   scope :requested, -> { where(status: %w[started user_confirmed]) }
   scope :closed, -> { where(status: %w[admin_approved rejected admin_closed]) }

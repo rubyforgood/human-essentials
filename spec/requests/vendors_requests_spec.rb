@@ -104,7 +104,8 @@ RSpec.describe "Vendors", type: :request do
     describe "DELETE #destroy" do
       subject { delete vendor_path(id: create(:vendor)) }
       it "does not have a route for this" do
-        expect { subject }.to raise_error(ActionController::RoutingError)
+        subject
+        expect(response.code).to eq('404')
       end
     end
 
