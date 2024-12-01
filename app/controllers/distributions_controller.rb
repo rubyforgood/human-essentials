@@ -43,9 +43,10 @@ class DistributionsController < ApplicationController
 
     @distributions = current_organization
                      .distributions
+                     .order(issued_at: :desc)
                      .includes(:partner, :storage_location)
                      .apply_filters(filter_params.except(:date_range), helpers.selected_range)
-    @paginated_distributions = @distributions.order('issued_at DESC').page(params[:page])
+    @paginated_distributions = @distributions.page(params[:page])
     @items = current_organization.items.alphabetized.select(:id, :name)
     @item_categories = current_organization.item_categories.select(:id, :name)
     @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select(:id, :name)
@@ -54,9 +55,9 @@ class DistributionsController < ApplicationController
     @distribution_totals = @distributions.unscope(:order, :includes).to_totals_hash
     @total_value_all_distributions = total_value(@distribution_totals)
     @total_items_all_distributions = total_quantity(@distribution_totals)
-    paginated_ids = @paginated_distributions.ids
-    @total_value_paginated_distributions = total_value(@distribution_totals.slice(*paginated_ids))
-    @total_items_paginated_distributions = total_quantity(@distribution_totals.slice(*paginated_ids))
+    paginated_distribution_totals = @distribution_totals.slice(*@paginated_distributions.ids)
+    @total_value_paginated_distributions = total_value(paginated_distribution_totals)
+    @total_items_paginated_distributions = total_quantity(paginated_distribution_totals)
     @selected_item_category = filter_params[:by_item_category_id]
     @selected_partner = filter_params[:by_partner]
     @selected_status = filter_params[:by_state]
