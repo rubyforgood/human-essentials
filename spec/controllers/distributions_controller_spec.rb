@@ -103,7 +103,8 @@ RSpec.describe DistributionsController, type: :controller do
             TestInventory.create_inventory(organization, {
               storage_location.id => {
                 first_item.id => 20,
-                second_item.id => 20}
+                second_item.id => 20
+              }
             })
           end
           it "displays an error for both minimum and recommended quantity for an organization" do
