@@ -59,38 +59,5 @@ FactoryBot.define do
         end
       end
     end
-
-    trait :with_items_mixed do
-      with_items
-
-      transient do
-        second_item_quantity { 100 }
-        second_item { nil }
-      end
-
-      after(:create) do |storage_location, evaluator|
-        if evaluator.second_item.nil? && !evaluator.second_item_count.zero?
-          second_item_count = evaluator.item_count
-
-          TestInventory.create_inventory(
-            storage_location.organization, {
-              storage_location.id => (0...second_item_count).to_h do
-                second_item = create(:second_item, organization_id: storage_location.organization_id)
-                [second_item.id, evaluator.item_quantity]
-              end
-            }
-          )
-        elsif evaluator.second_item
-          second_item = evaluator.second_item
-          second_item.save if second_item.new_record?
-          TestInventory.create_inventory(
-            storage_location.organization,
-            {
-              storage_location.id => {second_item.id => evaluator.item_quantity}
-            }
-          )
-        end
-      end
-    end
   end
 end

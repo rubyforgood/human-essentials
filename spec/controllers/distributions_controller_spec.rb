@@ -84,7 +84,7 @@ RSpec.describe DistributionsController, type: :controller do
 
         context "when distribution causes inventory quantity to be below recommended quantity for an organization" do
           let(:second_item) { create(:item, name: "Item 2", organization: organization, on_hand_minimum_quantity: 5, on_hand_recommended_quantity: 10) }
-          let(:storage_location) { create(:storage_location, :with_items_mixed, item: first_item, second_item: second_item, item_quantity: 20, organization: organization) }
+          let(:storage_location) { create(:storage_location, organization: organization) }
           let(:params) do
             {
               organization_name: organization.id,
@@ -98,6 +98,13 @@ RSpec.describe DistributionsController, type: :controller do
                   }
               }
             }
+          end
+          before do
+            TestInventory.create_inventory(organization, {
+              storage_location.id => {
+                first_item.id => 20,
+                second_item.id => 20}
+            })
           end
           it "displays an error for both minimum and recommended quantity for an organization" do
             expect(subject).to have_http_status(:redirect)
