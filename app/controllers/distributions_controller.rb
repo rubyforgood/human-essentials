@@ -121,11 +121,6 @@ class DistributionsController < ApplicationController
       @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
         inventory.quantity_for(storage_location: storage_loc.id).positive?
       end
-      if @distribution.storage_location.present?
-        @item_labels_with_quantities = inventory
-          .items_for_location(@distribution.storage_location.id, include_omitted: true)
-          .map(&:to_dropdown_option)
-      end
 
       flash_error = insufficient_error_message(result.error.message)
 

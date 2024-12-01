@@ -699,7 +699,7 @@ RSpec.feature "Distributions", type: :system do
     end
   end
 
-  context "with dropdown options changed while open", skip: "select2:select event is not triggered in cuprite" do
+  context "with dropdown options changed while open", skip: "select2 not working correctly with cuprite" do
     it "preserves selected option" do
       item_1, item_2, item_3 = View::Inventory.new(organization.id).items_for_location(storage_location.id).map(&:db_item)
       TestInventory.create_inventory(
@@ -717,10 +717,10 @@ RSpec.feature "Distributions", type: :system do
       page.execute_script("$('select.storage-location-source').val('1').trigger('change')")
 
       # Wait for ajax call to repopulate the select2 dropdown options
-      expect(page).to have_content("#{item_3.name} (30)")
+      expect(page).to have_css("li.select2-results__option", text: "3T Diapers (30)")
 
       # Select the old option name (without the quantity shown)
-      page.find("li.select2-results__option", text: /\A3T Diapers\z/).click
+      page.find("li.select2-results__option", text: "3T Diapers (30)").click
 
       # Ensure new dropdown option is selected (rather than first option in dropdown - the default)
       expect(page).to have_select("distribution_line_items_attributes_0_item_id", selected: "#{item_3.name} (30)")

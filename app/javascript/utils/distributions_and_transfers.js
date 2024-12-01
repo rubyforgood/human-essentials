@@ -3,11 +3,24 @@ import $ from 'jquery';
 // Place all the behaviors and hooks related to the matching controller here.
 // All this logic will automatically be available in application.js.
 
-function newOption(item, selectedValue, includeQuantity) {
-  const text = includeQuantity ? item.item_name + ` (${item.quantity})` : item.item_name;
-  const value = Number(item.item_id);
-  const isSelected = selectedValue === value;
-  return new Option(text, value, isSelected, isSelected);
+function new_option(item, selected) {
+  if (selected == null) {
+    selected = false;
+  }
+  let content = `<option value="${item.item_id}"`;
+  if (selected) {
+    content += " selected";
+  }
+  content += ">";
+  content += item.item_name;
+  if (
+    $("select.storage-location-source").attr("id") !==
+    "audit_storage_location_id"
+  ) {
+    content += ` (${item.quantity})`;
+  }
+  content += "</option>\n";
+  return content;
 };
 
 // Workaround to refresh item dropdown results for select2.
@@ -17,20 +30,22 @@ function rerenderDropdown(element) {
   element.data('select2').$results.scrollTop(oldScrollTop);
 }
 
-function populateDropdowns(objects, inventory) {
-  if (!inventory) return;
-
-  const includeQuantity = $("select.storage-location-source").attr("id") !== "audit_storage_location_id";
-
+function populate_dropdowns(objects, inventory) {
   objects.each(function(_, element) {
-    const selectedValue = Number(
+    const selected = Number(
       $(element)
         .find(":selected")
         .val()
     );
-    const options = inventory.map(item => newOption(item, selectedValue, includeQuantity));
+    let options = "";
+    $.each(inventory, function(index) {
+      const item_id = Number(inventory[index].item_id);
+      options += new_option(inventory[index], selected === item_id);
+    });
     $(element)
-      .empty()
+      .find("option")
+      .remove()
+      .end()
       .append(options);
     // If this select element is currently open, the option list is
     // now stale and needs to be refreshed.
@@ -40,36 +55,29 @@ function populateDropdowns(objects, inventory) {
   });
 }
 
-function fetchDropdownOptions(control) {
-  return $.ajax({
-    url: control
-      .data("storage-location-inventory-path")
-      .replace(":id", control.val()),
-    dataType: "json",
-    success(data) {
-      return data;
-    }
-  });
-}
-
-function fetchAndPopulateDropdownOptions(control) {
+function request_storage_location_and_populate_item(item_to_populate) {
+  const control = $("select.storage-location-source");
   if (control.length > 0 && control.val() !== "") {
-    return fetchDropdownOptions(control)
-      .then((data) => {
-        populateDropdowns($(".line-item-fields select"), data);
-        return data;
-      });
+    return $.ajax({
+      url: control
+        .data("storage-location-inventory-path")
+        .replace(":id", control.val()),
+      dataType: "json",
+      success(data) {
+        return populate_dropdowns($(item_to_populate), data);
+      }
+    });
   }
-}
+};
 
 $(function() {
   let control = $("select.storage-location-source");
-  let dropdownOptions;
   const storage_location_required =
     $("form.storage-location-required").length > 0;
+  const default_item = $(".line-item-fields select");
 
-  // store and populate item dropdown options when storage location is chosen
   $(document).on("change", "select.storage-location-source", function() {
+    const default_item = $(".line-item-fields select");
     control = $("select.storage-location-source");
     if (storage_location_required && !control.val()) {
       $("#__add_line_item").addClass("disabled");
@@ -78,21 +86,28 @@ $(function() {
       $("#__add_line_item").removeClass("disabled");
     }
 
-    fetchAndPopulateDropdownOptions(control)?.then(data => {
-      dropdownOptions = data;
-    });
+    request_storage_location_and_populate_item(default_item);
   });
 
-  // Populate newly added item fields with stored dropdown options
   $(document).on(
     "form-input-after-insert",
     "form.storage-location-required",
     function(e) {
       const insertedItem = $(e.detail);
-      populateDropdowns($("select", insertedItem), dropdownOptions);
+      request_storage_location_and_populate_item($("select", insertedItem));
       insertedItem
         .find("input.__barcode_item_lookup")
         .attr("id", `_barcode-lookup-${$(".nested-fields").length - 1}`);
+      control = $("select.storage-location-source");
+      $.ajax({
+        url: control
+          .data("storage-location-inventory-path")
+          .replace(":id", control.val()),
+        dataType: "json",
+        success(data) {
+          return populate_dropdowns($("select", insertedItem), data);
+        }
+      });
     }
   );
 
@@ -101,10 +116,6 @@ $(function() {
       $("#__add_line_item").addClass("disabled");
     }
 
-    // If on page load a storage location has been selected, fetch inventory
-    // and populate dropdown options.
-    fetchAndPopulateDropdownOptions(control)?.then(data => {
-      dropdownOptions = data;
-    });
+    request_storage_location_and_populate_item(default_item);
   });
 });

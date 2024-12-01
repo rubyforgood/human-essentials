@@ -130,17 +130,6 @@ RSpec.describe "Distributions", type: :request do
         expect(response).to have_error
       end
 
-      it "renders #new with item quantities in dropdowns listed" do
-        create(:item, :with_unit, organization: organization, name: 'Item 1', unit: 'pack')
-
-        post distributions_path(distribution: distribution.except(:partner_id), format: :turbo_stream)
-
-        expect(response).to have_http_status(400)
-        expect(flash[:error]).to include("Sorry, we weren't able to save the distribution.")
-
-        expect(response.body).to include("Item 1 (0)")
-      end
-
       context "Deactivated partners should not be displayed in partner dropdown" do
         before do
           create(:partner, name: 'Active Partner', organization: organization, status: "approved")
