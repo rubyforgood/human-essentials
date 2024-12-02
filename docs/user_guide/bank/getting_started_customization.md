@@ -115,6 +115,8 @@ Hello [Partner's email]
 
 You've been invited to become a partner with Pawnee Diaper Bank!
 
+[Customer Partner Invitation Message If Present]
+
 Please click the link below to accept your invitation and create an account and you'll be able to begin requesting Distributions.
 
 Please contact [Bank's email] if you are encountering any issues.
