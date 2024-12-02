@@ -8,6 +8,11 @@ RSpec.feature "Distributions by County", type: :system do
     sign_in(user)
     @storage_location = create(:storage_location, organization: organization)
     setup_storage_location(@storage_location)
+    travel_to Time.zone.local(2024, 11, 24, 0, 0, 0)
+  end
+
+  after(:each) do
+    travel_back
   end
 
   context "handles time ranges properly" do
