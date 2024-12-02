@@ -28,7 +28,7 @@ RSpec.describe "Approval process for partners", type: :system, js: true do
         before do
           click_on 'My Profile'
           assert page.has_content? 'Uninvited'
-          click_on 'Update Information'
+          all('a', text: 'Update Information').last.click
 
           fill_in 'Other Agency Type', with: 'Lorem'
 
@@ -41,7 +41,7 @@ RSpec.describe "Approval process for partners", type: :system, js: true do
           click_on 'Update Information'
           assert page.has_content? 'Details were successfully updated.'
 
-          find_link(text: 'Submit for Approval').click
+          all('a', text: 'Submit for Approval').last.click
           assert page.has_content? 'You have submitted your details for approval.'
           assert page.has_content? 'Awaiting Review'
         end
@@ -77,7 +77,7 @@ RSpec.describe "Approval process for partners", type: :system, js: true do
       login_as(partner_user)
       visit partner_user_root_path
       click_on 'My Profile'
-      click_on 'Submit for Approval'
+      all('a', text: 'Submit for Approval').last.click
     end
 
     it "should render an error message", :aggregate_failures do

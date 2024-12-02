@@ -1,0 +1,31 @@
+<%# locals: (partner:) %>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-primary">
+          <div class="card-footer">
+            <% if partner.approved? %>
+              <%= link_to '', class: 'btn btn-info disabled' do %>
+                <i class="fa fa-check"></i> Approved
+              <% end %>
+            <% elsif partner.awaiting_review? %>
+              <%= link_to '', class: "btn btn-warning disabled" do %>
+                <i class="fa fa-clock"></i> Pending Approval
+              <% end %>
+            <% else %>
+              <%= link_to partners_approval_request_path, method: :post, class: "btn btn-success" do %>
+                <i class="fa fa-paper-plane"></i> Submit for Approval
+              <% end %>
+            <% end %>
+
+            <%= link_to edit_partners_profile_path, class: 'btn btn-primary' do %>
+              <i class="fa fa-pencil"></i> Update Information
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -29,14 +29,6 @@ class Transfer < ApplicationRecord
   }
   scope :during, ->(range) { where(created_at: range) }
 
-  def self.storage_locations_transferred_to_in(organization)
-    includes(:to).where(organization_id: organization.id).distinct(:to_id).collect(&:to).uniq.sort_by(&:name)
-  end
-
-  def self.storage_locations_transferred_from_in(organization)
-    includes(:from).where(organization_id: organization.id).distinct(:from_id).collect(&:from).uniq.sort_by(&:name)
-  end
-
   validates :from, :to, :organization, presence: true
   validate :storage_locations_belong_to_organization
   validate :storage_locations_must_be_different
