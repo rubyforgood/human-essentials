@@ -238,21 +238,3 @@ def await_select2(select2, container = nil, &block)
 
   find("#{container} select option[data-select2-id=\"#{current_id.to_i + 1}\"]", wait: 10)
 end
-
-def seed_base_items
-  base_items = File.read(Rails.root.join("db", "base_items.json"))
-  items_by_category = JSON.parse(base_items)
-  base_items_data = items_by_category.map do |category, entries|
-    entries.map do |entry|
-      {
-        name: entry["name"],
-        category: category,
-        partner_key: entry["key"],
-        updated_at: Time.zone.now,
-        created_at: Time.zone.now
-      }
-    end
-  end.flatten
-
-  BaseItem.create!(base_items_data)
-end
