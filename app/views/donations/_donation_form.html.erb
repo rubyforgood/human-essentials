@@ -39,7 +39,7 @@
       <div class="col-xs-8 col-md-6 col-lg-3">
         <%= f.association :product_drive_participant,
                           collection: @product_drive_participants,
-                          selected: donation_form.product_drive_participant_id,
+                          selected: default_location(@donation),
                           include_blank: true,
                           label_method: lambda { |x| "#{x.try(:business_name) }" },
                           label: "Product Drive Participant",
