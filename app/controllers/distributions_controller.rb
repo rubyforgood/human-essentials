@@ -45,14 +45,14 @@ class DistributionsController < ApplicationController
                      .distributions
                      .order(issued_at: :desc)
                      .includes(:partner, :storage_location)
-                     .class_filter(filter_params)
+                     .class_filter(scope_filters)
     @paginated_distributions = @distributions.page(params[:page])
     @items = current_organization.items.alphabetized.select(:id, :name)
     @item_categories = current_organization.item_categories.select(:id, :name)
     @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select(:id, :name)
     @partners = Partner.joins(:distributions).where(distributions: @distributions).distinct.order(:name).select(:id, :name)
     @selected_item = filter_params[:by_item_id].presence
-    @distribution_totals = DistributionTotalsService.new(current_organization.distributions, filter_params)
+    @distribution_totals = DistributionTotalsService.new(current_organization.distributions, scope_filters)
     @total_value_all_distributions = @distribution_totals.total_value
     @total_items_all_distributions = @distribution_totals.total_quantity
     paginated_ids = @paginated_distributions.ids
@@ -68,7 +68,7 @@ class DistributionsController < ApplicationController
     respond_to do |format|
       format.html
       format.csv do
-        send_data Exports::ExportDistributionsCSVService.new(distributions: @distributions, organization: current_organization, filters: filter_params).generate_csv, filename: "Distributions-#{Time.zone.today}.csv"
+        send_data Exports::ExportDistributionsCSVService.new(distributions: @distributions, organization: current_organization, filters: scope_filters).generate_csv, filename: "Distributions-#{Time.zone.today}.csv"
       end
     end
   end
@@ -298,6 +298,12 @@ class DistributionsController < ApplicationController
     end
   end
 
+  def scope_filters
+    filter_params
+      .except(:date_range)
+      .merge(during: helpers.selected_range)
+  end
+
   helper_method \
     def filter_params
     return {} unless params.key?(:filters)
@@ -305,8 +311,6 @@ class DistributionsController < ApplicationController
     params
       .require(:filters)
       .permit(:by_item_id, :by_item_category_id, :by_partner, :by_state, :by_location, :date_range)
-      .except(:date_range)
-      .merge(during: helpers.selected_range)
   end
 
   def perform_inventory_check
