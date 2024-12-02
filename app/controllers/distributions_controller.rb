@@ -52,12 +52,12 @@ class DistributionsController < ApplicationController
     @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select(:id, :name)
     @partners = Partner.joins(:distributions).where(distributions: @distributions).distinct.order(:name).select(:id, :name)
     @selected_item = filter_params[:by_item_id].presence
-    @distribution_totals = @distributions.unscope(:order, :includes).to_totals_hash
-    @total_value_all_distributions = total_value(@distribution_totals)
-    @total_items_all_distributions = total_quantity(@distribution_totals)
-    paginated_distribution_totals = @distribution_totals.slice(*@paginated_distributions.ids)
-    @total_value_paginated_distributions = total_value(paginated_distribution_totals)
-    @total_items_paginated_distributions = total_quantity(paginated_distribution_totals)
+    @distribution_totals = DistributionTotalsService.new(@distributions.unscope(:order, :includes))
+    @total_value_all_distributions = @distribution_totals.total_value
+    @total_items_all_distributions = @distribution_totals.total_quantity
+    paginated_ids = @paginated_distributions.ids
+    @total_value_paginated_distributions = @distribution_totals.total_value(paginated_ids)
+    @total_items_paginated_distributions = @distribution_totals.total_quantity(paginated_ids)
     @selected_item_category = filter_params[:by_item_category_id]
     @selected_partner = filter_params[:by_partner]
     @selected_status = filter_params[:by_state]
@@ -285,24 +285,6 @@ class DistributionsController < ApplicationController
 
   def request_id
     params.dig(:distribution, :request_attributes, :id)
-  end
-
-  helper_method :fetch_distribution_value
-  def fetch_distribution_value(id)
-    @distribution_totals.dig(id, :value)
-  end
-
-  helper_method :fetch_distribution_quantity
-  def fetch_distribution_quantity(id)
-    @distribution_totals.dig(id, :quantity)
-  end
-
-  def total_value(distribution_totals)
-    distribution_totals.sum { |id, totals| totals[:value] }
-  end
-
-  def total_quantity(distribution_totals)
-    distribution_totals.sum { |id, totals| totals[:quantity] }
   end
 
   def daily_items(pick_ups)

@@ -74,24 +74,6 @@ class Distribution < ApplicationRecord
 
   delegate :name, to: :partner, prefix: true
 
-  # Returns hash of total quantity and value of items per distribution
-  # Ex: {7=>{quantity: 13309, value: 43000}, 22=>{quantity: 0, value: 0}, ...)
-  #
-  # @return [Hash<Integer, Hash<Symbol, Integer>>]
-  def self.to_totals_hash
-    left_joins(line_items: [:item])
-      .group("distributions.id, line_items.id, items.id")
-      .pluck(
-        Arel.sql(
-          "distributions.id,
-          sum(line_items.quantity) OVER (PARTITION BY distributions.id) AS quantity,
-          sum(COALESCE(items.value_in_cents, 0) * line_items.quantity) OVER (PARTITION BY distributions.id) AS value"
-        )
-      ).to_h do |(id, quantity, value)|
-        [id, {quantity: quantity || 0, value: value || 0}]
-      end
-  end
-
   def distributed_at
     if is_midnight(issued_at)
       issued_at.to_fs(:distribution_date)

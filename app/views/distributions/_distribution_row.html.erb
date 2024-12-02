@@ -5,8 +5,8 @@
   <td class="date"><%= (distribution_row.issued_at.presence || distribution_row.created_at).strftime("%m/%d/%Y") %></td>
   <td><%= distribution_row.storage_location.name %></td>
 
-  <td class="numeric"><%= fetch_distribution_quantity(distribution_row.id) %></td>
-  <td class="numeric"><%= dollar_value(fetch_distribution_value(distribution_row.id)) %></td>
+  <td class="numeric"><%= @distribution_totals.fetch_quantity(distribution_row.id) %></td>
+  <td class="numeric"><%= dollar_value(@distribution_totals.fetch_value(distribution_row.id)) %></td>
   <td><%= distribution_row.delivery_method.humanize %></td>
   <td><%= distribution_shipping_cost(distribution_row.shipping_cost) %></td>
   <td><%= distribution_row.comment %></td>
