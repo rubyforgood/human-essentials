@@ -45,14 +45,14 @@ class DistributionsController < ApplicationController
                      .distributions
                      .order(issued_at: :desc)
                      .includes(:partner, :storage_location)
-                     .apply_filters(filter_params.except(:date_range), helpers.selected_range)
+                     .class_filter(filter_params)
     @paginated_distributions = @distributions.page(params[:page])
     @items = current_organization.items.alphabetized.select(:id, :name)
     @item_categories = current_organization.item_categories.select(:id, :name)
     @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select(:id, :name)
     @partners = Partner.joins(:distributions).where(distributions: @distributions).distinct.order(:name).select(:id, :name)
     @selected_item = filter_params[:by_item_id].presence
-    @distribution_totals = DistributionTotalsService.new(@distributions.unscope(:order, :includes))
+    @distribution_totals = DistributionTotalsService.new(current_organization.distributions, filter_params)
     @total_value_all_distributions = @distribution_totals.total_value
     @total_items_all_distributions = @distribution_totals.total_quantity
     paginated_ids = @paginated_distributions.ids
@@ -302,7 +302,11 @@ class DistributionsController < ApplicationController
     def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).permit(:by_item_id, :by_item_category_id, :by_partner, :by_state, :by_location, :date_range)
+    params
+      .require(:filters)
+      .permit(:by_item_id, :by_item_category_id, :by_partner, :by_state, :by_location, :date_range)
+      .except(:date_range)
+      .merge(during: helpers.selected_range)
   end
 
   def perform_inventory_check

@@ -113,15 +113,7 @@
                 <% end %>
                 <!-- End Quantity -->
 
-                <!-- Value -->
-                <% if filter_params[:by_item_id].present? %>
-                  <th class="numeric">Value of <%= @items.find { |i| i.id == filter_params[:by_item_id].to_i }&.name %></th>
-                <% elsif filter_params[:by_item_category_id].present? %>
-                  <th class="numeric">Value of <%= @item_categories.find { |ic| ic.id == filter_params[:by_item_category_id].to_i }&.name %></th>
-                <% else %>
-                  <th class="numeric">Total Value</th>
-                <% end %>
-                <!-- End Value -->
+                <th class="numeric">Total Value</th>
 
                 <th>Delivery Method</th>
                 <th>Shipping Cost</th>

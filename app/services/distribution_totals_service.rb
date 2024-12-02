@@ -1,46 +1,65 @@
 class DistributionTotalsService
-  def initialize(distributions)
-    @distribution_totals = calculate_totals(distributions)
+  def initialize(distributions, filter_params)
+    @filter_params = filter_params
+    @distribution_quantities = calculate_quantities(distributions)
+    @distribution_values = calculate_values(distributions)
   end
 
   def total_quantity(filter_ids = [])
-    totals = filter_ids.present? ? distribution_totals.slice(*filter_ids) : distribution_totals
-    totals.sum { |_, totals| totals[:quantity] }
+    totals = filter_ids.present? ? @distribution_quantities.slice(*filter_ids) : @distribution_quantities
+    totals.sum { |_, quantity| quantity }
   end
 
   def total_value(filter_ids = [])
-    totals = filter_ids.present? ? distribution_totals.slice(*filter_ids) : distribution_totals
-    totals.sum { |_, totals| totals[:value] }
+    totals = filter_ids.present? ? @distribution_values.slice(*filter_ids) : @distribution_values
+    totals.sum { |_, value| value }
   end
 
   def fetch_value(id)
-    distribution_totals.dig(id, :value)
+    @distribution_values.fetch(id)
   end
 
   def fetch_quantity(id)
-    distribution_totals.dig(id, :quantity)
+    @distribution_quantities.fetch(id)
   end
 
   private
 
-  attr_reader :distribution_totals
+  attr_reader :filter_params
 
-  # Returns hash of total quantity and value of items per distribution
-  # Ex: {7=>{quantity: 13309, value: 43000}, 22=>{quantity: 0, value: 0}, ...)
+  # Returns hash of total quantity of items per distribution
+  # Quantity of items after item filtering (id/category)
   #
-  # @return [Hash<Integer, Hash<Symbol, Integer>>]
-  def calculate_totals(distributions)
+  # @return [Hash<Integer, Integer>]
+  def calculate_quantities(distributions)
     distributions
+      .class_filter(filter_params)
       .left_joins(line_items: [:item])
       .group("distributions.id, line_items.id, items.id")
       .pluck(
         Arel.sql(
           "distributions.id,
-          sum(line_items.quantity) OVER (PARTITION BY distributions.id) AS quantity,
-          sum(COALESCE(items.value_in_cents, 0) * line_items.quantity) OVER (PARTITION BY distributions.id) AS value"
+          COALESCE(SUM(line_items.quantity) OVER (PARTITION BY distributions.id), 0) AS quantity"
         )
-      ).to_h do |(id, quantity, value)|
-        [id, {quantity: quantity || 0, value: value || 0}]
-      end
+      )
+      .to_h
+  end
+
+  # Returns hash of total value of items per distribution WIHOUT item id/category filter
+  # Value of entire distribution (not reduced by filtered items)
+  #
+  # @return [Hash<Integer, Integer>]
+  def calculate_values(distributions)
+    distributions
+      .where(id: distributions.class_filter(filter_params))
+      .left_joins(line_items: [:item])
+      .group("distributions.id, line_items.id, items.id")
+      .pluck(
+        Arel.sql(
+          "distributions.id,
+          COALESCE(SUM(COALESCE(items.value_in_cents, 0) * line_items.quantity) OVER (PARTITION BY distributions.id), 0) AS value"
+        )
+      )
+      .to_h
   end
 end
