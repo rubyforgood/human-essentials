@@ -72,10 +72,10 @@ Organization.seed_items(sf_org)
 
 sc_org = Organization.find_or_create_by!(short_name: "sc_bank") do |organization|
   organization.name = "Second City Essentials Bank"
-  organization.street = "P.O. Box 12345"
-  organization.city = "Second City"
-  organization.state = "IL"
-  organization.zipcode = "60614"
+  organization.street = Faker::Address.street_address
+  organization.city = Faker::Address.city
+  organization.state = Faker::Address.state_abbr
+  organization.zipcode = Faker::Address.zip_code
   organization.email = "info@scdiaperbank.org"
 end
 Organization.seed_items(sc_org)
@@ -478,13 +478,13 @@ inv_pdxdb = StorageLocation.find_or_create_by!(name: "Pawnee Main Bank (Office)"
   inventory.square_footage = 20_000
 end
 StorageLocation.find_or_create_by!(name: "Second City Bulk Storage") do |inventory|
-  inventory.address = "Unknown"
+  inventory.address = "#{Faker::Address.street_address}, #{sc_org.city}, #{sc_org.state} #{sc_org.zipcode}"
   inventory.organization = sc_org
   inventory.warehouse_type = StorageLocation::WAREHOUSE_TYPES[0]
   inventory.square_footage = 10_000
 end
 StorageLocation.find_or_create_by!(name: "Second City Main Bank (Office)") do |inventory|
-  inventory.address = "Unknown"
+  inventory.address = "#{Faker::Address.street_address}, #{sc_org.city}, #{sc_org.state} #{sc_org.zipcode}"
   inventory.organization = sc_org
   inventory.warehouse_type = StorageLocation::WAREHOUSE_TYPES[1]
   inventory.square_footage = 20_000
