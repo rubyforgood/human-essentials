@@ -80,6 +80,10 @@ sc_org = Organization.find_or_create_by!(short_name: "sc_bank") do |organization
 end
 Organization.seed_items(sc_org)
 
+# The list of organizations that will have donations, purchases, requests, distributions,
+# and the records those rely on generated.
+complete_orgs = [pdx_org, sc_org]
+
 # At least one of the items is marked as inactive
 Organization.all.find_each do |org|
   org.items.order(created_at: :desc).last.update(active: false)
@@ -102,7 +106,7 @@ end
 # Request Units
 # ----------------------------------------------------------------------------
 
-Organization.all.find_each do |org|
+complete_orgs.each do |org|
   %w[pack box flat].each do |name|
     Unit.create!(organization: org, name: name)
   end
@@ -201,7 +205,7 @@ end
 # Donation Sites
 # ----------------------------------------------------------------------------
 
-Organization.all.find_each do |org|
+complete_orgs.each do |org|
   [
     {name: "#{org.city} Hardware", address: "1234 SE Some Ave., #{org.city}, #{org.state} 12345"},
     {name: "#{org.city} Parks Department", address: "2345 NE Some St., #{org.city}, #{org.state} 12345"},
@@ -526,7 +530,7 @@ low_items.each do |item|
   item.update(on_hand_minimum_quantity: min_value, on_hand_recommended_quantity: recomended_value)
 end
 
-Organization.all.find_each do |org|
+complete_orgs.each do |org|
   # ----------------------------------------------------------------------------
   # Product Drives
   # ----------------------------------------------------------------------------
@@ -623,7 +627,7 @@ end
 end
 
 dates_generator = DispersedPastDatesGenerator.new
-[pdx_org, sc_org].each do |org|
+complete_orgs.each do |org|
   # ----------------------------------------------------------------------------
   # Donations
   # ----------------------------------------------------------------------------
@@ -714,7 +718,7 @@ BroadcastAnnouncement.create(
 # ----------------------------------------------------------------------------
 
 # Create some Vendors so Purchases can have vendor_ids
-Organization.all.find_each do |org|
+complete_orgs.each do |org|
   Vendor.create(
     contact_name: Faker::FunnyName.two_word_name,
     email: Faker::Internet.email,
@@ -759,7 +763,7 @@ comments = [
 
 dates_generator = DispersedPastDatesGenerator.new
 
-[pdx_org, sc_org].each do |org|
+complete_orgs.each do |org|
   25.times do
     purchase_date = dates_generator.next
     storage_location = org.storage_locations.active_locations.sample
