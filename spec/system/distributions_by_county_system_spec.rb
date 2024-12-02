@@ -18,8 +18,9 @@ RSpec.feature "Distributions by County", type: :system do
       partner_1.profile.served_areas.each do |served_area|
         expect(page).to have_text(served_area.county.name)
       end
-      expect(page).to have_text("50", count: 4)
-      expect(page).to have_text("$525.00", count: 4)
+
+      expect(page).to have_css("table tbody tr td", text: "50", exact_text: true, count: 4)
+      expect(page).to have_css("table tbody tr td", text: "$525.00", exact_text: true, count: 4)
     end
 
     it("works for this year") do
@@ -31,8 +32,9 @@ RSpec.feature "Distributions by County", type: :system do
       partner_1.profile.served_areas.each do |served_area|
         expect(page).to have_text(served_area.county.name)
       end
-      expect(page).to have_text("25", count: 4)
-      expect(page).to have_text("$262.50", count: 4)
+
+      expect(page).to have_css("table tbody tr td", text: "25", exact_text: true, count: 4)
+      expect(page).to have_css("table tbody tr td", text: "$262.50", exact_text: true, count: 4)
     end
 
     it("works for prior year") do
@@ -53,8 +55,8 @@ RSpec.feature "Distributions by County", type: :system do
       partner_1.profile.served_areas.each do |served_area|
         expect(page).to have_text(served_area.county.name)
       end
-      expect(page).to have_text("25", count: 4)
-      expect(page).to have_text("$262.50", count: 4)
+      expect(page).to have_css("table tbody tr td", text: "25", exact_text: true, count: 4)
+      expect(page).to have_css("table tbody tr td", text: "$262.50", exact_text: true, count: 4)
     end
 
     it("works for last 12 months") do
@@ -75,8 +77,8 @@ RSpec.feature "Distributions by County", type: :system do
       partner_1.profile.served_areas.each do |served_area|
         expect(page).to have_text(served_area.county.name)
       end
-      expect(page).to have_text("25", count: 4)
-      expect(page).to have_text("$262.50", count: 4)
+      expect(page).to have_css("table tbody tr td", text: "25", exact_text: true, count: 4)
+      expect(page).to have_css("table tbody tr td", text: "$262.50", exact_text: true, count: 4)
     end
   end
 
