@@ -8,7 +8,7 @@ RSpec.describe ApplicationController do
     end
 
     context "As a partner user" do
-      let(:user) { create(:partners_user) }
+      let(:user) { create(:partner_user) }
       it "should return nil" do
         expect(controller.current_organization).to eq(nil)
       end
@@ -52,7 +52,7 @@ RSpec.describe ApplicationController do
     context "As a partner user" do
       let(:partner) { create(:partner, organization: organization) }
       let(:partner2) { create(:partner, organization: organization) }
-      let(:user) { create(:partners_user, partner: partner) }
+      let(:user) { create(:partner_user, partner: partner) }
       before(:each) do
         user.add_role(Role::PARTNER, partner2) # add a second role
       end

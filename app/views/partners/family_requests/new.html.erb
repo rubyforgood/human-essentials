@@ -69,8 +69,10 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-md-12">
-        <div class="card mb-4">
-          <%= form_with(url: partners_family_requests_path, method: 'post') do %>
+        <div class="card mb-4"
+          data-controller="confirmation"
+          data-confirmation-pre-check-path-value="<%= validate_partners_family_requests_path(format: :json) %>">
+          <%= form_with(url: partners_family_requests_path, method: 'post', data: { confirmation_target: "form" }) do |f| %>
             <div id="filterrific_results">
               <%= render(
                 partial: 'partners/family_requests/list',
@@ -81,10 +83,21 @@
             <hr>
 
             <div class="card-footer">
-              <%= submit_tag("Submit Essentials Request", class: "btn btn-primary") %>
+              <%= submit_tag("Submit Essentials Request", class: "btn btn-primary", data: { action: "click->confirmation#openModal" }) %>
               <%= link_to "Cancel Request", partners_requests_path, class: "btn btn-danger" %>
             </div>
           <% end %>
+
+          <%# Confirmation modal: See confirmation_controller.js for how this gets displayed %>
+          <%# and app/controllers/partners/family_requests_controller.rb#validate for how it gets populated. %>
+          <div id="partnerFamilyRequestConfirmationModal"
+            class="modal confirm"
+            aria-labelledby="partnerFamilyRequestConfirmationModal"
+            aria-hidden="true"
+            tabindex="-1"
+            data-bs-backdrop="static"
+            data-confirmation-target="modal">
+          </div>
         </div>
       </div>
     </div>

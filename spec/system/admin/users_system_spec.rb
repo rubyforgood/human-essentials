@@ -56,18 +56,6 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       expect(page.find('.alert')).to have_content('Role added')
     end
 
-    it "deletes an existing user" do
-      create(:user, organization: organization, name: "AAlphabetically First User")
-
-      visit admin_users_path
-
-      page.accept_confirm do
-        click_link "Delete", match: :first
-      end
-
-      expect(page.find(".alert")).to have_content "Deleted that user"
-    end
-
     it "filters users by name" do
       create(:user, name: "UserA", organization: organization)
       create(:user, name: "UserB", organization: organization)
@@ -97,6 +85,31 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       fill_in "filterrific_search_email", with: user_email
       page.find("table", text: user_email) # Wait for search
       expect(page).to have_element("table", text: user_email)
+    end
+
+    context "with an organization admin role" do
+      before do
+        super_admin.remove_role(Role::ORG_USER, organization)
+        super_admin.add_role(Role::ORG_ADMIN, organization)
+      end
+
+      it "can see link to switch to the other role" do
+        visit admin_dashboard_path
+        click_link "Administrative User", match: :first
+        expect(page).to have_content "Switch to: #{organization.name}"
+      end
+    end
+
+    context "without another role" do
+      before do
+        super_admin.remove_role(Role::ORG_USER, organization)
+      end
+
+      it "does not see link to switch to another role" do
+        visit admin_dashboard_path
+        click_link "Administrative User", match: :first
+        expect(page).not_to have_content "Switch to: #{organization.name}"
+      end
     end
   end
 end

@@ -29,10 +29,6 @@ module Partners
         end
       end
 
-      if @partner_request.comments.blank? && @partner_request.item_requests.blank?
-        errors.add(:base, 'completely empty request')
-      end
-
       return self if errors.present?
 
       Request.transaction do
@@ -47,6 +43,16 @@ module Partners
       self
     end
 
+    def initialize_only
+      partner_request = ::Request.new(partner_id: partner.id,
+        organization_id: organization_id,
+        comments: comments,
+        partner_user_id: partner_user_id)
+      partner_request = populate_item_request(partner_request)
+      partner_request.assign_attributes(additional_attrs)
+      partner_request
+    end
+
     private
 
     attr_reader :partner_user_id, :comments, :item_requests_attributes, :additional_attrs
@@ -57,15 +63,37 @@ module Partners
         attrs['item_id'].blank? && attrs['quantity'].blank?
       end
 
-      item_requests = formatted_line_items.map do |ira|
-        Partners::ItemRequest.new(
-          item_id: ira['item_id'],
-          quantity: ira['quantity'],
-          children: ira['children'] || [], # will create ChildItemRequests if there are any
-          name: fetch_organization_item_name(ira['item_id']),
-          partner_key: fetch_organization_partner_key(ira['item_id'])
-        )
+      items = {}
+
+      formatted_line_items.each do |input_item|
+        pre_existing_entry = items[input_item['item_id']]
+        if pre_existing_entry
+          pre_existing_entry.quantity = (pre_existing_entry.quantity.to_i + input_item['quantity'].to_i).to_s
+          # NOTE: When this code was written (and maybe it's still the
+          # case as you read it!), the FamilyRequestsController does a
+          # ton of calculation to translate children to item quantities.
+          # If that logic is incorrect, there's not much we can do here
+          # to fix things. Could make sense to move more of that logic
+          # into one of the service objects that instantiate the Request
+          # object (either this one or the FamilyRequestCreateService).
+          pre_existing_entry.children = (pre_existing_entry.children + (input_item['children'] || [])).uniq
+        else
+          if input_item['request_unit'].to_s == '-1' # nothing selected
+            errors.add(:base, "Please select a unit for #{Item.find(input_item["item_id"]).name}")
+            next
+          end
+          items[input_item['item_id']] = Partners::ItemRequest.new(
+            item_id: input_item['item_id'],
+            request_unit: input_item['request_unit'],
+            quantity: input_item['quantity'],
+            children: input_item['children'] || [], # will create ChildItemRequests if there are any
+            name: fetch_organization_item_name(input_item['item_id']),
+            partner_key: fetch_organization_partner_key(input_item['item_id'])
+          )
+        end
       end
+
+      item_requests = items.values
 
       partner_request.item_requests << item_requests
 

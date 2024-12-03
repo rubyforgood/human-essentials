@@ -35,7 +35,10 @@ class Request < ApplicationRecord
   enum request_type: %w[quantity individual child].map { |v| [v, v] }.to_h
 
   validates :distribution_id, uniqueness: true, allow_nil: true
-  before_save :sanitize_items_data
+  validate :item_requests_uniqueness_by_item_id
+  validate :not_completely_empty
+
+  after_validation :sanitize_items_data
 
   include Filterable
   # add request item scope to allow filtering distributions by request item
@@ -66,11 +69,24 @@ class Request < ApplicationRecord
 
   private
 
+  def item_requests_uniqueness_by_item_id
+    item_ids = item_requests.map(&:item_id)
+    if item_ids.uniq.length != item_ids.length
+      errors.add(:item_requests, "should have unique item_ids")
+    end
+  end
+
   def sanitize_items_data
     return unless request_items && request_items_changed?
 
     self.request_items = request_items.map do |item|
       item.merge("item_id" => item["item_id"]&.to_i, "quantity" => item["quantity"]&.to_i)
+    end
+  end
+
+  def not_completely_empty
+    if comments.blank? && item_requests.blank?
+      errors.add(:base, "completely empty request")
     end
   end
 end

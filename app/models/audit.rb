@@ -28,7 +28,6 @@ class Audit < ApplicationRecord
   enum status: { in_progress: 0, confirmed: 1, finalized: 2 }
 
   validates :storage_location, :organization, presence: true
-  validate :line_items_exist_in_inventory
   validate :line_items_quantity_is_not_negative
   validate :line_items_unique_by_item_id
   validate :user_is_organization_admin_of_the_organization
@@ -41,7 +40,7 @@ class Audit < ApplicationRecord
     item_ids = itemizable.line_items.pluck(:item_id)
     where(status: "finalized")
       .where(storage_location_id: location_ids)
-      .where(created_at: itemizable.created_at..)
+      .where(updated_at: itemizable.created_at..)
       .joins(:line_items)
       .where(line_items: {item_id: item_ids})
       .exists?

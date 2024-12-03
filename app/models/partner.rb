@@ -48,10 +48,9 @@ class Partner < ApplicationRecord
   validates :organization, presence: true
   validates :name, presence: true, uniqueness: { scope: :organization }
 
-  validates :email, presence: true, uniqueness: { case_sensitive: false },
-    format: { with: URI::MailTo::EMAIL_REGEXP, on: :create }
+  validates :email, presence: true, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
 
-  validates :quota, numericality: true, allow_blank: true
+  validates :quota, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
 
   validate :correct_document_mime_type
 
@@ -158,6 +157,7 @@ class Partner < ApplicationRecord
 
   # better to extract this outside of the model
   def self.import_csv(csv, organization_id)
+    errors = []
     organization = Organization.find(organization_id)
 
     csv.each do |row|
@@ -165,13 +165,23 @@ class Partner < ApplicationRecord
 
       svc = PartnerCreateService.new(organization: organization, partner_attrs: hash_rows)
       svc.call
+      if svc.errors.present?
+        errors << "#{svc.partner.name}: #{svc.partner.errors.full_messages.to_sentence}"
+      end
     end
+    errors
   end
 
   def self.csv_export_headers
     [
       "Agency Name",
       "Agency Email",
+      "Agency Address",
+      "Agency City",
+      "Agency State",
+      "Agency Zip Code",
+      "Agency Website",
+      "Agency Type",
       "Contact Name",
       "Contact Phone",
       "Contact Email",
@@ -183,6 +193,12 @@ class Partner < ApplicationRecord
     [
       name,
       email,
+      agency_info[:address],
+      agency_info[:city],
+      agency_info[:state],
+      agency_info[:zip_code],
+      agency_info[:website],
+      agency_info[:agency_type],
       contact_person[:name],
       contact_person[:phone],
       contact_person[:email],
@@ -200,6 +216,21 @@ class Partner < ApplicationRecord
       email: profile.primary_contact_email,
       phone: profile.primary_contact_phone ||
              profile.primary_contact_mobile
+    }
+  end
+
+  def agency_info
+    return @agency_info if @agency_info
+
+    return {} if profile.blank?
+
+    @agency_info = {
+      address: [profile.address1, profile.address2].select(&:present?).join(', '),
+      city: profile.city,
+      state: profile.state,
+      zip_code: profile.zip_code,
+      website: profile.website,
+      agency_type: (profile.agency_type == AGENCY_TYPES["OTHER"]) ? "#{AGENCY_TYPES["OTHER"]}: #{profile.other_agency_type}" : profile.agency_type
     }
   end
 
@@ -221,6 +252,10 @@ class Partner < ApplicationRecord
       family_zipcodes: family_zipcodes_count,
       family_zipcodes_list: family_zipcodes_list
     }
+  end
+
+  def quota_exceeded?(total)
+    quota.present? && total > quota
   end
 
   private

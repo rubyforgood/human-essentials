@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe "Admin::Questions", type: :request do
   context "while signed in as a super admin" do
     before do

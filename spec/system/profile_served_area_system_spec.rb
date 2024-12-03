@@ -35,7 +35,7 @@ RSpec.describe "Partners profile served area behaviour when accessed as bank", t
       expect(page).to have_content("100 %")
       expect(page).not_to have_content("The total client share must be either 0 or 100 %")
       click_on "Update Information"
-      expect(page).to have_content("Application & Information")
+      expect(page).to have_content("Partner Profile")
       expect(page).to have_content("26 %")
     end
 

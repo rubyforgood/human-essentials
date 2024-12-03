@@ -114,13 +114,6 @@ RSpec.configure do |config|
 
   # Make FactoryBot easier.
   config.include FactoryBot::Syntax::Methods
-  config.around(:each, skip_transaction: true) do |example|
-    config.use_transactional_fixtures = false
-    example.run
-    config.use_transactional_fixtures = true
-
-    DatabaseCleaner.clean_with(:truncation)
-  end
 
   #
   # --------------------
@@ -175,12 +168,6 @@ RSpec.configure do |config|
     clear_downloads
     driven_by :local_cuprite
     Capybara.server = :puma, { Silent: true }
-  end
-
-  config.before(:each) do
-    if ENV['EVENTS_READ'] == 'true'
-      allow(Event).to receive(:read_events?).and_return(true)
-    end
   end
 
   config.before do

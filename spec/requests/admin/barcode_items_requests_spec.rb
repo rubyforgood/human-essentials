@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe 'Admin::BarcodeItemsController', type: :request do
   let(:organization) { create(:organization) }
 

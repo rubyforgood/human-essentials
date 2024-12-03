@@ -29,7 +29,7 @@ class Event < ApplicationRecord
       .where("type = 'SnapshotEvent' OR (item->>'from_storage_location')=? OR (item->>'to_storage_location')=?", loc_id, loc_id)
   }
 
-  serialize :data, EventTypes::StructCoder.new(EventTypes::InventoryPayload)
+  serialize :data, coder: EventTypes::StructCoder.new(EventTypes::InventoryPayload)
 
   belongs_to :eventable, polymorphic: true
   belongs_to :user, optional: true
@@ -74,13 +74,7 @@ class Event < ApplicationRecord
     SnapshotEvent.find_by_sql(query, [organization_id]).first
   end
 
-  def self.read_events?(organization)
-    Flipper.enabled?(:read_events, organization)
-  end
-
   def validate_inventory
-    return unless Event.read_events?(organization)
-
     InventoryAggregate.inventory_for(organization_id, validate: true)
   rescue InventoryError => e
     item = Item.find_by(id: e.item_id)&.name || "Item ID #{e.item_id}"

@@ -67,7 +67,16 @@
               <tr>
                 <th>Item</th>
                 <th>Quantity</th>
-                <th>Fulfillment Location Inventory</th>
+                <% custom_units = Flipper.enabled?(:enable_packs) &&
+                                  @request.item_requests.any? { |item| item.request_unit } %>
+                <% if custom_units %>
+                  <th>Units (if applicable)</th>
+                <% end %>
+                <% default_storage_location = @request.partner.default_storage_location_id ||
+                                              @request.organization.default_storage_location %>
+                <% if default_storage_location %>
+                  <th>Default storage location inventory</th>
+                <% end %>
                 <th>Total Inventory</th>
               </tr>
               </thead>
@@ -76,7 +85,12 @@
                 <tr>
                   <td><%= item.name %></td>
                   <td><%= item.quantity %></td>
-                  <td><%= item.on_hand_for_location %></td>
+                  <% if custom_units %>
+                    <td><%= item.unit&.capitalize&.pluralize(item.quantity) %></td>
+                  <% end %>
+                  <% if default_storage_location %>
+                    <td><%= item.on_hand_for_location %></td>
+                  <% end %>
                   <td><%= item.on_hand %></td>
                 </tr>
               <% end %>
@@ -96,6 +110,7 @@
             <%= view_button_to(distribution_path(@request.distribution), {text: "View Associated Distribution", size: "md"}) if @request.distribution %>
             <%= button_to 'Cancel', new_request_cancelation_path(request_id: @request.id),
                           method: :get, form_class: 'd-inline', class: 'btn btn-danger btn-md' %>
+          </div>
         </div>
       </div>
     </div>

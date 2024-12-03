@@ -12,6 +12,8 @@ module InventoryAggregate
     # @param event_time [DateTime]
     # @param validate [Boolean]
     # @return [EventTypes::Inventory]
+    # This method can take a block so that you can build up the history of a particular item over
+    # time, for instance
     def inventory_for(organization_id, event_time: nil, validate: false)
       last_snapshot = Event.most_recent_snapshot(organization_id)
 
@@ -35,11 +37,13 @@ module InventoryAggregate
         # don't do grouping for UpdateExistingEvents
         if event_batch.any? { |e| e.is_a?(UpdateExistingEvent) }
           handle(last_grouped_event, inventory, validate: validate)
+          yield last_grouped_event, inventory if block_given?
           next
         end
-        previous_event = event_hash[last_grouped_event.eventable]
-        event_hash[last_grouped_event.eventable] = last_grouped_event
+        previous_event = event_hash[[last_grouped_event.eventable_type, last_grouped_event.eventable_id]]
+        event_hash[[last_grouped_event.eventable_type, last_grouped_event.eventable_id]] = last_grouped_event
         handle(last_grouped_event, inventory, validate: validate, previous_event: previous_event)
+        yield last_grouped_event, inventory if block_given?
       end
       inventory
     end

@@ -1,4 +1,7 @@
-<%= simple_form_for distribution, data: { controller: "form-input" }, html: {class: "storage-location-required"}, wrapper_mappings: { datetime: :custom_multi_select } do |f| %>
+<%= simple_form_for distribution,
+                    data: { controller: "form-input", confirmation_target: "form" },
+                    html: { class: "storage-location-required" },
+                    wrapper_mappings: { datetime: :custom_multi_select } do |f| %>
 
   <div class="box-body">
     <%= f.simple_fields_for :request do |r| %>
@@ -6,9 +9,10 @@
     <% end %>
 
     <%= f.association :partner,
-      collection: current_organization.partners.alphabetized,
+      collection: @partner_list,
       label: "Partner",
       error: "Which partner is this distribution going to?" %>
+
     <div class='w-72'>
       <%= f.input :issued_at, as: :datetime, ampm: true, minute_step: 15, label: "Distribution date and time", html5: true, :input_html => { :value => date_place_holder&.strftime("%Y-%m-%dT%0k:%M")} %>
     </div>
@@ -29,20 +33,36 @@
     <%= f.input :comment, label: "Comment" %>
 
     <fieldset style="margin-bottom: 2rem">
-      <legend>Items in this distribution</legend>
+      <div class="distribution-title">
+        <legend class="<%= 'with-request' if distribution.request %>">Items in this distribution</legend>
+        <% if distribution.request %>
+          <div class="distribution-request-unit">Quantity - Total Units</div>
+          <div class="distribution-request-unit">Requested</div>
+        <% end %>
+      </div>
       <div id="distribution_line_items" data-capture-barcode="true" class="line-item-fields">
-          <%= render 'line_items/line_item_fields', form: f %>
+          <%= render 'line_items/line_item_fields', form: f, locals: { show_request_items: true } %>
       </div>
       <div class="row links justify-content-end">
         <%= add_element_button "Add Another Item", container_selector: "#distribution_line_items" , id: "__add_line_item" do %>
-          <%= render 'line_items/line_item_fields', form: f, object: LineItem.new %>
+          <%= render 'line_items/line_item_fields', form: f, object: LineItem.new, locals: { show_request_items: true } %>
         <% end %>
       </div>
 
     </fieldset>
   </div>
   <div class="card-footer">
-    <%= submit_button %>
-  </div>
+    <%= submit_button({}, { action: "click->confirmation#openModal" }) %>
   </div>
 <% end %>
+
+<%# Confirmation modal: See confirmation_controller.js for how this gets displayed %>
+<%# and app/controllers/distributions_controller.rb#validate for how it gets populated. %>
+<div id="distributionConfirmationModal"
+  class="modal confirm"
+  aria-labelledby="distributionConfirmationModal"
+  aria-hidden="true"
+  tabindex="-1"
+  data-bs-backdrop="static"
+  data-confirmation-target="modal">
+</div>

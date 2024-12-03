@@ -45,7 +45,7 @@ class DistributionsController < ApplicationController
                      .distributions
                      .includes(:partner, :storage_location, line_items: [:item])
                      .order('issued_at DESC')
-                     .apply_filters(filter_params, helpers.selected_range)
+                     .apply_filters(filter_params.except(:date_range), helpers.selected_range)
     @paginated_distributions = @distributions.page(params[:page])
     @items = current_organization.items.alphabetized
     @item_categories = current_organization.item_categories
@@ -71,6 +71,22 @@ class DistributionsController < ApplicationController
     end
   end
 
+  # This endpoint is in support of displaying a confirmation modal before a distribution is created.
+  # Since the modal should only be shown for a valid distribution, client side JS will invoke this
+  # endpoint, and if the distribution is valid, this endpoint also returns the HTML for the modal content.
+  # Important: The distribution model is intentionally NOT saved to the database at this point because
+  # the user has not yet confirmed that they want to create it.
+  def validate
+    @dist = Distribution.new(distribution_params.merge(organization: current_organization))
+    @dist.line_items.combine!
+    if @dist.valid?
+      body = render_to_string(template: 'distributions/validate', formats: [:html], layout: false)
+      render json: {valid: true, body: body}
+    else
+      render json: {valid: false}
+    end
+  end
+
   def create
     dist = Distribution.new(distribution_params.merge(organization: current_organization))
     result = DistributionCreateService.new(dist, request_id).call
@@ -93,15 +109,17 @@ class DistributionsController < ApplicationController
         # does not match any known Request
         @distribution.request = Request.find(request_id)
       end
-      @distribution.line_items.build if @distribution.line_items.size.zero?
+      if @distribution.line_items.size.zero?
+        @distribution.line_items.build
+      elsif request_id
+        @distribution.initialize_request_items
+      end
       @items = current_organization.items.alphabetized
-      if Event.read_events?(current_organization)
-        inventory = View::Inventory.new(@distribution.organization_id)
-        @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
-          inventory.quantity_for(storage_location: storage_loc.id).positive?
-        end
-      else
-        @storage_locations = current_organization.storage_locations.active_locations.has_inventory_items.alphabetized
+      @partner_list = current_organization.partners.where.not(status: 'deactivated').alphabetized
+
+      inventory = View::Inventory.new(@distribution.organization_id)
+      @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
+        inventory.quantity_for(storage_location: storage_loc.id).positive?
       end
 
       flash_error = insufficient_error_message(result.error.message)
@@ -127,13 +145,11 @@ class DistributionsController < ApplicationController
       @distribution.copy_from_donation(params[:donation_id], params[:storage_location_id])
     end
     @items = current_organization.items.alphabetized
-    if Event.read_events?(current_organization)
-      inventory = View::Inventory.new(current_organization.id)
-      @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
-        inventory.quantity_for(storage_location: storage_loc.id).positive?
-      end
-    else
-      @storage_locations = current_organization.storage_locations.active_locations.has_inventory_items.alphabetized
+    @partner_list = current_organization.partners.where.not(status: 'deactivated').alphabetized
+
+    inventory = View::Inventory.new(current_organization.id)
+    @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
+      inventory.quantity_for(storage_location: storage_loc.id).positive?
     end
   end
 
@@ -150,20 +166,18 @@ class DistributionsController < ApplicationController
 
   def edit
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
+    @distribution.initialize_request_items
     if (!@distribution.complete? && @distribution.future?) ||
         current_user.has_role?(Role::ORG_ADMIN, current_organization)
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
+      @partner_list = current_organization.partners.alphabetized
       @audit_warning = current_organization.audits
         .where(storage_location_id: @distribution.storage_location_id)
         .where("updated_at > ?", @distribution.created_at).any?
-      if Event.read_events?(current_organization)
-        inventory = View::Inventory.new(@distribution.organization_id)
-        @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
-          inventory.quantity_for(storage_location: storage_loc.id).positive?
-        end
-      else
-        @storage_locations = current_organization.storage_locations.active_locations.has_inventory_items.alphabetized
+      inventory = View::Inventory.new(@distribution.organization_id)
+      @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
+        !inventory.quantity_for(storage_location: storage_loc.id).negative?
       end
     else
       redirect_to distributions_path, error: 'To edit a distribution,
@@ -186,6 +200,7 @@ class DistributionsController < ApplicationController
     else
       flash[:error] = insufficient_error_message(result.error.message)
       @distribution.line_items.build if @distribution.line_items.size.zero?
+      @distribution.initialize_request_items
       @items = current_organization.items.alphabetized
       @storage_locations = current_organization.storage_locations.active_locations.alphabetized
       render :edit
@@ -209,7 +224,14 @@ class DistributionsController < ApplicationController
 
   # TODO: This needs a little more context. Is it JSON only? HTML?
   def schedule
-    @pick_ups = current_organization.distributions
+    respond_to do |format|
+      format.html
+      format.json do
+        start_at = params[:start].to_datetime
+        end_at = params[:end].to_datetime
+        @pick_ups = current_organization.distributions.includes(:partner).where(issued_at: start_at..end_at)
+      end
+    end
   end
 
   def calendar
@@ -288,7 +310,7 @@ class DistributionsController < ApplicationController
     def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).permit(:by_item_id, :by_item_category_id, :by_partner, :by_state, :by_location)
+    params.require(:filters).permit(:by_item_id, :by_item_category_id, :by_partner, :by_state, :by_location, :date_range)
   end
 
   def perform_inventory_check

@@ -54,184 +54,34 @@ Use as an Organization or Contribute as an Individual/Team to this Project:
 - [NGO Adoption Info](ngo.md) - information about how to use this DPG
 - [Skills Based Volunteering Info](sbv.md) - information about how to volunteer
 
-# Welcome Contributors! 👋
+## Welcome Contributors! 👋
 
-Thanks for checking us out! If you're new here, here are some things you should know:
-- Issues tagged "Help Wanted" are self-contained and great for new contributors
-- Pull Requests are reviewed within a week or so
-- Ensure your build passes (`rubocop -a` is often necessary) and addresses the issue requirements
-- This project relies entirely on volunteers, so please be patient with communication
+Thanks for checking us out! Check out our [Contributing Guidelines](https://github.com/rubyforgood/human-essentials/blob/main/CONTRIBUTING.md) on how to contribute.
 
-### Join us on slack 💬
-You can sign up [here](https://join.slack.com/t/rubyforgood/shared_invite/zt-21pyz2ab8-H6JgQfGGI0Ab6MfNOZRIQA) and find us in #human-essentials. Many helpful members are available to answer your questions. Just ask, and someone will be there to help you!
-
-##  Getting Started (Local Environment) 🛠️
-
-1. Install Ruby
-   - Install the version specified in [`.ruby-version`](.ruby-version).
-   - Visit the [Install Ruby on Rails](https://gorails.com/setup/osx/12-monterey) guide by GoRails for Ubuntu, Windows, and macOSX setup. ⚠️ Follow only the Installing Ruby step, as our project setup differs ⚠️ It is highly recommended you use a ruby version manager such as [rbenv](https://github.com/rbenv/rbenv), [asdf](https://asdf-vm.com/), or [rvm](https://rvm.io/).
-   - Verify that your Ruby installation works by running `ruby -v`.
-2. Install Postgres
-   - Follow one of these guides: [MacOSX](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-macos), [Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-ruby-on-rails-application-on-ubuntu-18-04).
-     - Do you develop on Windows? We'd love to hear (and for you to submit a PR explaining) how you do it. 🙏🏻
-   - Create a `database.yml` file on `config/` directory with your database configurations. You can also copy the existing files called [`database.yml.example`](config/database.yml.example) and [`.env.example`](.env.example) and change the credentials.
-3. Run `bin/setup`
-4. Run `bin/start` and visit http://localhost:3000/ to see the human essentials page.
-5. Login as a sample user with these default credentials (which also work for [staging](https://staging.humanessentials.app/)):
-
-<details>
-  <summary> Super Users 🦸🏽‍♀️ </summary>
-
-  ```
-    username: superadmin@example.com
-    password: password!
-  ```
-</details>
-
-<details>
-  <summary> Bank Users 🏦 </summary>
-
-  ```
-    Organization Admin
-       Email: org_admin1@example.com
-    Password: password!
-
-    User
-    Email: user_1@example.com
-    Password: password!
-  ```
-</details>
-
-<details>
-  <summary> Partner Users 👥 </summary>
-
-  ```
-    Verified Partner
-    Email: verified@example.com
-    Password: password!
-
-    Invited Partner
-    Email: invited@pawneehomeless.com
-    Password: password!
-
-    Unverified Partner
-    Email: unverified@pawneepregnancy.com
-    Password: password!
-
-    Recertification Required Partner
-    Email: recertification_required@example.com
-    Password: password!
-  ```
-</details>
-
-##  Getting Started (Codespaces - EXPERIMENTAL) 🛠️
-
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/rubyforgood/human-essentials/tree/main?quickstart=1)
-
-1. Follow the link above or follow instructions to [create a new Codespace.](https://docs.github.com/en/codespaces/developing-in-a-codespace/creating-a-codespace-for-a-repository); You can use the web editor, or even better open the Codespace in VSCode
-2. Wait for the container to start. This will take a few (10-15) minutes since Ruby needs to be installed, the database needs to be created, and the `bin/setup` script needs to run
-3. Run `bin/start` and visit the URL that pops in VSCode up to see the human essentials page
-4. Login as a sample user with these default credentials (which also work for [staging](https://staging.humanessentials.app/)):
-
-## Troubleshooting 👷🏼‍♀️
-
-Please let us know by opening up an issue! We have many new contributors come through and it is likely what you experienced will happen to them as well.
-
-- *"My RBENV installation didn't work!"* - The rbenv repository provides a [rbenv-doctor script](https://github.com/rbenv/rbenv-installer#rbenv-doctor) to verify the installation and check if a ruby version is installed
-
-## Contributing Guidelines 🤝
-
-Please feel free to contribute! Priority will be given to pull requests that address outstanding issues and have appropriate test coverage. Focus on issues tagged with the next milestone for higher priority.
-
-To contribute:
-* Identify an unassigned issue
-* Assign the issue to yourself to avoid duplicated efforts (or request assignment by adding a comment)
-* Fork the repo if you're not a contributor yet
-* Create a new branch for the issue using the format `XXX-brief-description-of-feature`, where `XXX` is the issue number
-* If you create a new model run `bundle exec annotate` from the root of the app
-* Create tests to validate that your work fixes the Issue (if you need help with this, please reach out!)
-* Commit locally using descriptive messages that indicate the affected parts of the app
-* Ensure all tests pass successfully; if any fail, fix the issues causing the failures
-* Make a final commit if tests needed fixing
-* Push up the branch
-* Create a pull request and indicate the addressed issue in the title
-
-### Squashing Commits
-
-Consider the balance of "polluting the git log with commit messages" vs. "providing useful detail about the history of changes in the git log". If you have several smaller commits that serve a one purpose, you are encouraged to squash them into a single commit. There's no hard and fast rule here about this (for now), just use your best judgement. Please don't squash other people's commits. Everyone who contributes here deserves credit for their work! :)
-
-### Pull Request Merging
-
-At this point, someone will work with you on doing a code review. If the automated tests gives :+1: to the PR merging, we can then do any additional (staging) testing as needed. Finally if all looks good the core team will merge your code in; if your feature branch was in this main repository, the branch will be deleted after the PR is merged. Deploys are currently done about once a week!
-
-### In-flight Pull Requests
-
-Sometimes we want to get a PR up there and going so that other people can review it or provide feedback, but maybe it's incomplete. This is OK, but if you do it, please tag your PR with `in-progress` label so that we know not to review / merge it.
-
-### Becoming a Repo Contributor
-
-Users that are frequent contributors and are involved in discussion (join the slack channel! :)) may be given direct Contributor access to the Repo so they can submit Pull Requests directly instead of Forking first.
-
-### Stay Scoped
-
-Try to keep your PRs limited to one particular issue, and don't make changes that are out of scope for that issue. If you notice something that needs attention but is out of scope, please [create a new issue](https://github.com/rubyforgood/human-essentials/issues/new).
-## Debugging
-If starting server directly, via `rail s` or `rail console`, or built-in debugger in RubyMine, then you can use `binding.pry` to debug. Drop the pry where you want the execution to pause.
-
-If starting via Procfile with `bin/start`, then drop a ``binding.remote_pry`` into the line where you want execution to pause at. Then run ``pry-remote`` in the terminal to connect to it.
-https://github.com/Mon-Ouie/pry-remote
-
-
-## Testing 🧪
-### Writing Tests/Specs
-- Run all the tests with `bundle exec rspec`
-- Run a single test with `bundle exec rspec {path_to_test_name}_spec.rb`
-
-Make sure all tests run clean & green before submitting a Pull Request. If you are inexperienced in writing tests or get stuck on one, please reach out for help :). You probably don't need to write new tests when simple re-stylings are done (ie. the page may look slightly different but the Test suite is unaffected by those changes).
-
-*Tip: If you need to skip a failing test, place `pending("Reason you are skipping the test")` into the `it` block rather than skipping with `xit`. This will allow rspec to deliver the error message without causing the test suite to fail.*
-
-```ruby
-  it "works!" do
-    pending("Need to implement this")
-    expect(my_code).to be_valid
-  end
-```
-
-### Writing Browser/System/Feature Specs
-
-If you need to see a browser/system spec run in the browser, you can use the following env variable:
-
-```
-NOT_HEADLESS=true bundle exec rspec
-```
-
-We've added [magic_test](https://github.com/bullet-train-co/magic_test) which makes creating browser specs much easier. It allows you to record actions on the browser running the specs and easily paste them into the spec. You can do this by adding `magic_test` within your system spec:
-```rb
- it "does some browser stuff" do
-   magic_test
- end
-```
-and run the spec using this command: `MAGIC_TEST=1 NOT_HEADLESS=true bundle exec rspec <path_to_spec>`
-
-**See videos of it in action [here](https://twitter.com/andrewculver/status/1366062684802846721)**
-
-# Deployment Process 🚀
+## Deployment Process
 The human-essentials & partner application should ideally be deployed on a weekly or bi-weekly schedule depending on the merged updates in the main branch. This is the process we take to deploy updates from our main branch to our servers.
 
 ### Requirements
 - SSH access to our servers (usually granted to core maintainers)
 - Login credentials to our [Mailchimp](https://mailchimp.com/) account
 
+### Steps
+#### 1. Merge main into production branch 
+All deploys deploy from the production branch, which keeps track of what is currently in production.
 
-### Tag & Release
-1. Push a tag with the appropriate semantic versioning. Refer to the [releases](https://github.com/rubyforgood/human-essentials/releases) for the correct versioning. For example, if the last release was `2.1.0` and you're making a hotfix, use `2.1.1`
+```sh
+git checkout production
+git merge main
+```
+
+#### 2. Tag & Release
+1. Push a tag with the appropriate date versioning. Refer to the [releases](https://github.com/rubyforgood/human-essentials/releases) for the correct versioning. For example, if you are deploying on June 23, 2024:
 
     ```sh
-    git tag x.y.z
-    git push --tags
+    git tag 2024.06.23
+    git push origin tag 2024.06.23
     ```
-2. Publish a release associated to that tag pushed up in the previous step [here](https://github.com/rubyforgood/human-essentials/releases/new). Include details about the release's updates (we use this to notify our stakeholders on updates via email).
+2. Publish a release, associated to that tag pushed up in the previous step, [here](https://github.com/rubyforgood/human-essentials/releases/new). Include details about the release's updates (we use this to notify our stakeholders on updates via email).
 
 ### Running delayed jobs
 
@@ -242,10 +92,6 @@ Delayed::Job.last.invoke_job
 ```
 
 You can replace the `last` query with any other query (e.g. `Delayed::Job.find(123)`).
-
-### Additional Notes
-
-- Only commit the schema.rb only if you have committed anything that would change the DB schema (i.e. a migration).
 
 # Acknowledgements
 Thanks to Rachel (from PDX Diaperbank) for all of her insight, support, and assistance with this application, and Sarah ( http://www.sarahkasiske.com/ ) for her wonderful design and CSS work at Ruby For Good '17!

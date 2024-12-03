@@ -13,8 +13,6 @@
 #  updated_at    :datetime         not null
 #
 
-require "rails_helper"
-
 RSpec.describe BaseItem, type: :model do
   let(:organization) { create(:organization) }
 

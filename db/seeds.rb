@@ -6,9 +6,6 @@ if Rails.env.production?
   return
 end
 
-# Activate all feature flags
-Flipper.enable(:onebase)
-
 # ----------------------------------------------------------------------------
 # Random Record Generators
 # ----------------------------------------------------------------------------
@@ -73,10 +70,35 @@ sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization
 end
 Organization.seed_items(sf_org)
 
+# At least one of the items is marked as inactive
+Organization.all.each do |org|
+  org.items.order(created_at: :desc).last.update(active: false)
+end
+
 # Assign a value to some organization items to verify totals are working
 Organization.all.each do |org|
   org.items.where(value_in_cents: 0).limit(10).each do |item|
     item.update(value_in_cents: 100)
+  end
+end
+
+# ----------------------------------------------------------------------------
+# Request Units
+# ----------------------------------------------------------------------------
+
+%w(pack box flat).each do |name|
+  Unit.create!(organization: pdx_org, name: name)
+end
+
+pdx_org.items.each_with_index do |item, i|
+  if item.name == 'Pads'
+    %w(box pack).each { |name| item.request_units.create!(name: name) }
+  elsif item.name == 'Wipes (Baby)'
+    item.request_units.create!(name: 'pack')
+  elsif item.name == 'Kids Pull-Ups (5T-6T)'
+    %w(pack flat).each do |name|
+      item.request_units.create!(name: name)
+    end
   end
 end
 
@@ -108,11 +130,18 @@ end
 # ----------------------------------------------------------------------------
 Organization.all.each do |org|
   # Setup the Partner Group & their item categories
-  partner_group = FactoryBot.create(:partner_group, organization: org)
+  partner_group_one = FactoryBot.create(:partner_group, organization: org)
 
   total_item_categories_to_add = Faker::Number.between(from: 1, to: 2)
   org.item_categories.sample(total_item_categories_to_add).each do |item_category|
-    partner_group.item_categories << item_category
+    partner_group_one.item_categories << item_category
+  end
+
+  next unless org.name == pdx_org.name
+
+  partner_group_two = FactoryBot.create(:partner_group, organization: org)
+  org.item_categories.each do |item_category|
+    partner_group_two.item_categories << item_category
   end
 end
 
@@ -177,6 +206,7 @@ note = [
     name: "Pawnee Parent Service",
     email: "verified@example.com",
     status: :approved,
+    quota: 500,
     notes: note.sample
   },
   {
@@ -196,11 +226,28 @@ note = [
     email: "recertification_required@example.com",
     status: :recertification_required,
     notes: note.sample
+  },
+  {
+    name: "Pawnee Middle School",
+    email: "waiting@example.com",
+    status: :awaiting_review,
+    notes: note.sample
+  },
+  {
+    name: "Second Street Community Outreach",
+    status: :approved,
+    email: "approved_2@example.com",
+    notes: note.sample
   }
 ].each do |partner_option|
   p = Partner.find_or_create_by!(partner_option) do |partner|
     partner.organization = pdx_org
-    partner.partner_group = pdx_org.partner_groups.first
+
+    if partner_option[:name] == "Second Street Community Outreach"
+      partner.partner_group = pdx_org.partner_groups.find_by(name: 'Group 2')
+    else
+      partner.partner_group = pdx_org.partner_groups.first
+    end
   end
 
   profile = Partners::Profile.create!({
@@ -275,6 +322,8 @@ note = [
     )
   end
 
+  requestable_items = PartnerFetchRequestableItemsService.new(partner_id: p.id).call.map(&:last)
+
   families.each do |family|
     Partners::AuthorizedFamilyMember.create!(
       first_name: Faker::Name.first_name,
@@ -288,7 +337,7 @@ note = [
     family.home_child_count.times do
       Partners::Child.create!(
         family: family,
-        first_name: family.guardian_first_name,
+        first_name: Faker::Name.unique.first_name,
         last_name: family.guardian_last_name,
         date_of_birth: Faker::Date.birthday(min_age: 5, max_age: 18),
         gender: Faker::Gender.binary_type,
@@ -299,14 +348,14 @@ note = [
         comments: Faker::Lorem.paragraph,
         active: Faker::Boolean.boolean,
         archived: false,
-        item_needed_diaperid: p.organization.item_id_to_display_string_map.key(Partners::Child::CHILD_ITEMS.sample)
+        requested_item_ids: requestable_items.sample(rand(4))
       )
     end
 
     family.home_young_child_count.times do
       Partners::Child.create!(
         family: family,
-        first_name: family.guardian_first_name,
+        first_name: Faker::Name.unique.first_name,
         last_name: family.guardian_last_name,
         date_of_birth: Faker::Date.birthday(min_age: 0, max_age: 5),
         gender: Faker::Gender.binary_type,
@@ -317,7 +366,7 @@ note = [
         comments: Faker::Lorem.paragraph,
         active: Faker::Boolean.boolean,
         archived: false,
-        item_needed_diaperid: p.organization.item_id_to_display_string_map.key(Partners::Child::CHILD_ITEMS.sample)
+        requested_item_ids: requestable_items.sample(rand(4))
       )
     end
   end
@@ -336,10 +385,23 @@ note = [
       updated_at: date
     )
 
-    item_requests = []
-    Array.new(Faker::Number.within(range: 5..15)) do
-      item = p.organization.items.sample
-      new_item_request = Partners::ItemRequest.new(
+    pads = p.organization.items.find_by(name: 'Pads')
+    new_item_request = Partners::ItemRequest.new(
+      item_id: pads.id,
+      quantity: Faker::Number.within(range: 10..30),
+      children: [],
+      name: pads.name,
+      partner_key: pads.partner_key,
+      created_at: date,
+      updated_at: date,
+      request_unit: 'pack'
+    )
+    partner_request.item_requests << new_item_request
+
+    items = p.organization.items.sample(Faker::Number.within(range: 4..14)) - [pads]
+
+    partner_request.item_requests += items.map do |item|
+      Partners::ItemRequest.new(
         item_id: item.id,
         quantity: Faker::Number.within(range: 10..30),
         children: [],
@@ -348,7 +410,6 @@ note = [
         created_at: date,
         updated_at: date
       )
-      partner_request.item_requests << new_item_request
     end
 
     partner_request.request_items = partner_request.item_requests.map do |ir|
@@ -379,11 +440,20 @@ inv_pdxdb = StorageLocation.find_or_create_by!(name: "Pawnee Main Bank (Office)"
   inventory.square_footage = 20_000
 end
 
+inactive_storage = StorageLocation.find_or_create_by!(name: "Inactive Storage Location") do |inventory|
+  inventory.address = "Unknown"
+  inventory.organization = pdx_org
+  inventory.warehouse_type = StorageLocation::WAREHOUSE_TYPES[2]
+  inventory.square_footage = 5_000
+end
+
+inactive_storage.discard
+
 #
 # Define all the InventoryItem for each of the StorageLocation
 #
-StorageLocation.all.each do |sl|
-  sl.organization.items.each do |item|
+StorageLocation.active_locations.each do |sl|
+  sl.organization.items.active.each do |item|
     InventoryItem.create!(
       storage_location: sl,
       item: item,
@@ -392,6 +462,23 @@ StorageLocation.all.each do |sl|
   end
 end
 Organization.all.each { |org| SnapshotEvent.publish(org) }
+
+# Set minimum and recomended inventory levels for items at the Pawnee Diaper Bank Organization
+half_items_count = (pdx_org.items.count/2).to_i
+low_items = pdx_org.items.left_joins(:inventory_items)
+  .select('items.*, SUM(inventory_items.quantity) AS total_quantity')
+  .group('items.id')
+  .order('total_quantity')
+  .limit(half_items_count)
+
+min_qty = low_items.first.total_quantity
+max_qty = low_items.last.total_quantity
+
+low_items.each do |item|
+  min_value = rand((min_qty / 10).floor..(max_qty/10).ceil) * 10
+  recomended_value = rand((min_value/10).ceil..1000) * 10
+  item.update(on_hand_minimum_quantity: min_value, on_hand_recommended_quantity: recomended_value)
+end
 
 # ----------------------------------------------------------------------------
 # Product Drives
@@ -509,7 +596,7 @@ dates_generator = DispersedPastDatesGenerator.new
   source = Donation::SOURCES.values.sample
   # Depending on which source it uses, additional data may need to be provided.
   donation = Donation.new(source: source,
-                          storage_location: random_record_for_org(pdx_org, StorageLocation),
+                          storage_location: StorageLocation.active_locations.sample,
                           organization: pdx_org,
                           issued_at: dates_generator.next)
   case source
@@ -538,7 +625,7 @@ inventory = InventoryAggregate.inventory_for(pdx_org.id)
 20.times.each do
   issued_at = dates_generator.next
 
-  storage_location = random_record_for_org(pdx_org, StorageLocation)
+  storage_location = StorageLocation.active_locations.sample
   stored_inventory_items_sample = inventory.storage_locations[storage_location.id].items.values.sample(20)
   delivery_method = Distribution.delivery_methods.keys.sample
   shipping_cost = delivery_method == "shipped" ? (rand(20.0..100.0)).round(2).to_s : nil
@@ -622,6 +709,7 @@ end
 # ----------------------------------------------------------------------------
 
 suppliers = %w(Target Wegmans Walmart Walgreens)
+amount_items = %w(period_supplies diapers adult_incontinence other)
 comments = [
   "Maecenas ante lectus, vestibulum pellentesque arcu sed, eleifend lacinia elit. Cras accumsan varius nisl, a commodo ligula consequat nec. Aliquam tincidunt diam id placerat rutrum.",
   "Integer a molestie tortor. Duis pretium urna eget congue porta. Fusce aliquet dolor quis viverra volutpat.",
@@ -632,19 +720,24 @@ dates_generator = DispersedPastDatesGenerator.new
 
 25.times do
   purchase_date = dates_generator.next
-  storage_location = random_record_for_org(pdx_org, StorageLocation)
+  storage_location = StorageLocation.active_locations.sample
   vendor = random_record_for_org(pdx_org, Vendor)
   purchase = Purchase.new(
     purchased_from: suppliers.sample,
     comment: comments.sample,
     organization_id: pdx_org.id,
     storage_location_id: storage_location.id,
-    amount_spent_in_cents: rand(200..10_000),
     issued_at: purchase_date,
     created_at: purchase_date,
     updated_at: purchase_date,
-    vendor_id: vendor.id
+    vendor_id: vendor.id,
+    amount_spent_on_period_supplies_cents: rand(0..5_000),
+    amount_spent_on_diapers_cents: rand(0..5_000),
+    amount_spent_on_adult_incontinence_cents: rand(0..5_000),
+    amount_spent_on_other_cents: rand(0..5_000)
   )
+
+  purchase.amount_spent_in_cents = amount_items.map{|i| purchase.send("amount_spent_on_#{i}_cents")}.sum
 
   rand(1..5).times do
     purchase.line_items.push(LineItem.new(quantity: rand(1..1000),
@@ -658,6 +751,8 @@ end
 # ----------------------------------------------------------------------------
 
 Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "new_logo")
+Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "read_events")
+Flipper.enable(:read_events)
 
 # ----------------------------------------------------------------------------
 # Account Requests
@@ -776,3 +871,17 @@ transfer = Transfer.new(
   ]
 )
 TransferCreateService.call(transfer)
+
+# ----------------------------------------------------------------------------
+# Users invitation status
+# ----------------------------------------------------------------------------
+# Mark users `invitation_status` as `accepted`
+# 
+# Addresses and resolves issue #4689, which can be found in:
+# https://github.com/rubyforgood/human-essentials/issues/4689
+User.where(invitation_token: nil).each do |user| 
+  user.update!(
+    invitation_sent_at: Time.current,
+    invitation_accepted_at: Time.current
+  )
+end

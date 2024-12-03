@@ -265,7 +265,8 @@ RSpec.describe "Donations", type: :system, js: true do
           fill_in "product_drive_participant_business_name", with: "businesstest"
           fill_in "product_drive_participant_contact_name", with: "test"
           fill_in "product_drive_participant_email", with: "123@mail.ru"
-          click_on "diaper-drive-participant-submit"
+          fill_in "product_drive_participant_comment", with: "test comment"
+          click_on "product-drive-participant-submit"
           select "businesstest", from: "donation_product_drive_participant_id"
         end
 
@@ -402,7 +403,7 @@ RSpec.describe "Donations", type: :system, js: true do
           select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
           fill_in "donation_line_items_attributes_0_quantity", with: "1,000"
           click_button "Save"
-          expect(page).to have_content("Quantity is not a number")
+          expect(page).to have_content("Quantity is not a number. Note: commas are not allowed")
         end
 
         it "Displays nested errors" do
@@ -452,6 +453,9 @@ RSpec.describe "Donations", type: :system, js: true do
           qty = page.find(:xpath, '//input[@id="donation_line_items_attributes_0_quantity"]').value
 
           expect(qty).to eq(@existing_barcode.quantity.to_s)
+
+          # the form should add another empty line
+          expect(page).to have_field("_barcode-lookup-1", focused: true)
         end
 
         it "Updates the line item when the same barcode is scanned twice", :js do
@@ -489,6 +493,7 @@ RSpec.describe "Donations", type: :system, js: true do
             click_on "Save"
           end
 
+          # form updates
           within "#donation_line_items" do
             barcode_field = page.find(:xpath, "//input[@id='_barcode-lookup-0']").value
             expect(barcode_field).to eq(new_barcode)
@@ -497,7 +502,12 @@ RSpec.describe "Donations", type: :system, js: true do
             item_field = page.find(:xpath, "//select[@id='donation_line_items_attributes_0_item_id']").value
             expect(item_field).to eq(Item.first.id.to_s)
           end
-          # form updates
+
+          # new line item was added and has focus
+          within "#donation_line_items" do
+            expect(page).to have_xpath("//input[@id='_barcode-lookup-1']")
+            expect(page).to have_css('#_barcode-lookup-1', focused: true)
+          end
         end
 
         context "When the barcode is a global barcode" do
