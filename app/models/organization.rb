@@ -225,9 +225,9 @@ class Organization < ApplicationRecord
 
   def seed_random_item_with_name(name)
     base_items = BaseItem.all.map(&:to_h)
-    base_item = Array.wrap(base_items).sample()
+    base_item = Array.wrap(base_items).sample
     base_item[:name] = name
-    self.seed_items( base_item )
+    seed_items(base_item)
   end
 
   def valid_items
