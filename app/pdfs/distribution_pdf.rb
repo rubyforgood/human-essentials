@@ -40,10 +40,10 @@ class DistributionPdf
 
       text "Partner Primary Contact:", style: :bold, align: :right
       font_size 12
-      text profile.primary_contact_name, align: :right
+      text (profile.primary_contact_name.presence || " "), align: :right
       font_size 10
-      text profile.primary_contact_email, align: :right
-      text profile.primary_contact_phone, align: :right
+      text (profile.primary_contact_email.presence || " "), align: :right
+      text (profile.primary_contact_phone.presence || " "), align: :right
 
       if (profile.address1.present? || profile.program_address1.present?) &&
           (@distribution.delivery? || @distribution.shipped?)

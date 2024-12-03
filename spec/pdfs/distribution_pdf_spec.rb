@@ -143,6 +143,7 @@ describe DistributionPdf do
     let(:expected_pickup_file_path) { file_paths.expected_pickup_file_path }
     let(:expected_same_address_file_path) { file_paths.expected_same_address_file_path }
     let(:expected_incomplete_address_file_path) { file_paths.expected_incomplete_address_file_path }
+    let(:expected_no_contact_file_path) { file_paths.expected_no_contact_file_path }
 
     context "when the partner has no addresses" do
       before(:each) do
@@ -186,11 +187,13 @@ describe DistributionPdf do
         compare_pdf(organization, create_dist(partner, storage_creation, :pick_up), expected_pickup_file_path)
       end
     end
-    context "when the partner delivery address is incomplete" do
-      it "formats output correctly" do
-        create_profile_with_incomplete_address(partner)
-        compare_pdf(organization, create_dist(partner, storage_creation, :delivery), expected_incomplete_address_file_path)
-      end
+    it "formats output correctly when the partner delivery address is incomplete" do
+      create_profile_with_incomplete_address(partner)
+      compare_pdf(organization, create_dist(partner, storage_creation, :delivery), expected_incomplete_address_file_path)
+    end
+    it "formats output correctly when the partner profile contact info does not exist" do
+      create_profile_no_contact_with_program_address(partner)
+      compare_pdf(organization, create_dist(partner, storage_creation, :delivery), expected_no_contact_file_path)
     end
   end
 end
