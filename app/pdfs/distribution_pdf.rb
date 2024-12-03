@@ -44,7 +44,6 @@ class DistributionPdf
       font_size 10
       text profile.primary_contact_email, align: :right
       text profile.primary_contact_phone, align: :right
-      move_down 10
 
       if (profile.address1.present? || profile.program_address1.present?) &&
           (@distribution.delivery? || @distribution.shipped?)
@@ -62,7 +61,6 @@ class DistributionPdf
           zip_code = profile.program_zip_code.to_s
         end
 
-        move_up 10
         text "Delivery address:", style: :bold
         font_size 10
         text address1
@@ -70,19 +68,13 @@ class DistributionPdf
         text city
         text state
         text zip_code
-        move_up 40
-
-        text "Issued on:", style: :bold, align: :right
-        font_size 12
-        text @distribution.distributed_at, align: :right
-        font_size 10
-        move_down 30
-      else
-        text "Issued on:", style: :bold
-        font_size 12
-        text @distribution.distributed_at
-        font_size 10
       end
+
+      move_down 10
+      text "Issued on:", style: :bold
+      font_size 12
+      text @distribution.distributed_at
+      font_size 10
 
       if @organization.ytd_on_distribution_printout
         move_up 22

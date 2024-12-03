@@ -5,7 +5,7 @@ module DistributionPDFHelper
       pdf_file = pdf.compute_and_render
 
       # Run the following from Rails sandbox console (bin/rails/console --sandbox) to regenerate these comparison PDFs:
-      # => load "lib/pdf_comparison_test_factory.rb"
+      # => load "lib/test_helpers/pdf_comparison_test_factory.rb"
       # => Rails::ConsoleMethods.send(:prepend, PDFComparisonTestFactory)
       # => create_comparison_pdfs
       expect(pdf_file).to eq(IO.binread(expected_file_path))
