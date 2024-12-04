@@ -2,7 +2,7 @@ module Partners
   class RequestCreateService
     include ServiceObjectErrorsMixin
 
-    attr_reader :partner_request, :request_type
+    attr_reader :partner_request
 
     def initialize(request_type:, partner_user_id:, comments: nil, item_requests_attributes: [], additional_attrs: {})
       @partner_user_id = partner_user_id
