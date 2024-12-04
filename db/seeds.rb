@@ -465,7 +465,7 @@ note = [
       unique_item = sc_org_unique_items[index]
       # Make sure we don't violate item request uniqueness if the unique_item was
       # randomly selected already
-      if !partner_request.item_requests.any? {|item_request| item_request.item_id == unique_item.id }
+      if !partner_request.item_requests.any? { |item_request| item_request.item_id == unique_item.id }
         partner_request.item_requests << Partners::ItemRequest.new(
           item_id: unique_item.id,
           quantity: Faker::Number.within(range: 10..30),
@@ -534,22 +534,34 @@ StorageLocation.active_locations.each do |sl|
 end
 Organization.all.find_each { |org| SnapshotEvent.publish(org) }
 
-# Set minimum and recomended inventory levels for items at the Pawnee Diaper Bank Organization
-half_items_count = (pdx_org.items.count / 2).to_i
-low_items = pdx_org.items.left_joins(:inventory_items)
-  .select("items.*, SUM(inventory_items.quantity) AS total_quantity")
-  .group("items.id")
-  .order("total_quantity")
-  .limit(half_items_count)
+# Set minimum and recomended inventory levels for the complete organizations
+# Only set inventory levels for the half of each org's items with the lowest stock
+complete_orgs.each do |org|
+  half_items_count = (org.items.count / 2).to_i
+  low_items = org.items.left_joins(:inventory_items)
+    .select("items.*, SUM(inventory_items.quantity) AS total_quantity")
+    .group("items.id")
+    .order("total_quantity")
+    .limit(half_items_count).to_a
 
-min_qty = low_items.first.total_quantity
-max_qty = low_items.last.total_quantity
+  min_qty = low_items.first.total_quantity
+  max_qty = low_items.last.total_quantity
 
-low_items.each do |item|
-  min_value = rand((min_qty / 10).floor..(max_qty / 10).ceil) * 10
-  recomended_value = rand((min_value / 10).ceil..1000) * 10
-  item.update(on_hand_minimum_quantity: min_value, on_hand_recommended_quantity: recomended_value)
+  # Ensure at least one of the items unqiue to the Second City Bank has minimum
+  # and recommended quantities set
+  if (org == sc_org) && !(low_items & sc_org_unique_items).any?
+    low_items << sc_org_unique_items.last
+  end
+
+  low_items.each do |item|
+    min_value = rand((min_qty / 10).floor..(max_qty / 10).ceil) * 10
+    recomended_value = rand((min_value / 10).ceil..1000) * 10
+    item.update(on_hand_minimum_quantity: min_value, on_hand_recommended_quantity: recomended_value)
+  end
 end
+
+# Reload, since some of the items in sc_org_unique_items will have been altered
+sc_org_unique_items.reload
 
 complete_orgs.each do |org|
   # ----------------------------------------------------------------------------
@@ -983,4 +995,25 @@ User.where(invitation_token: nil).find_each do |user|
     invitation_sent_at: Time.current,
     invitation_accepted_at: Time.current
   )
+end
+
+# Guarantee that at least one of the items unique to the Second City Bank has an
+# inventory less than the recommended quantity.
+item_to_make_scarce = sc_org_unique_items.where("on_hand_recommended_quantity > ?", 0).first
+sc_org.storage_locations.each do |location|
+  num_on_hand = location.item_total(item_to_make_scarce.id)
+  if num_on_hand > item_to_make_scarce.on_hand_recommended_quantity
+    num_to_remove = item_to_make_scarce.on_hand_recommended_quantity - 1 - num_on_hand
+    adjustment = sc_org.adjustments.create!(
+      comment: "Ensuring example of item below recommended inventory",
+      storage_location: location,
+      user: User.with_role(:org_admin, sc_org).first
+    )
+    adjustment.line_items = [LineItem.new(
+      quantity: num_to_remove,
+      item: item_to_make_scarce,
+      itemizable: adjustment
+    )]
+    AdjustmentCreateService.new(adjustment).call
+  end
 end
