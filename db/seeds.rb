@@ -95,6 +95,9 @@ end
   sc_org.seed_random_item_with_name("Second City Item ##{time + 1}")
 end
 
+# Keep a list of these unique items so its easy to use them for later records
+sc_org_unique_items = sc_org.items.where("name ilike ?", "%Second City Item #%")
+
 # Assign a value to some organization items to verify totals are working
 Organization.all.find_each do |org|
   org.items.where(value_in_cents: 0).limit(10).each do |item|
@@ -411,7 +414,7 @@ note = [
 
   dates_generator = DispersedPastDatesGenerator.new
 
-  Faker::Number.within(range: 32..56).times do
+  Faker::Number.within(range: 32..56).times do |index|
     date = dates_generator.next
 
     partner_request = ::Request.new(
@@ -455,6 +458,24 @@ note = [
         item_id: ir.item_id,
         quantity: ir.quantity
       }
+    end
+
+    # Guarantee that there is a request for the items unique to the Second City Bank
+    if (p.organization == sc_org) && (index < 4)
+      unique_item = sc_org_unique_items[index]
+      # Make sure we don't violate item request uniqueness if the unique_item was
+      # randomly selected already
+      if !partner_request.item_requests.any? {|item_request| item_request.item_id == unique_item.id }
+        partner_request.item_requests << Partners::ItemRequest.new(
+          item_id: unique_item.id,
+          quantity: Faker::Number.within(range: 10..30),
+          children: [],
+          name: unique_item.name,
+          partner_key: unique_item.partner_key,
+          created_at: date,
+          updated_at: date
+        )
+      end
     end
 
     partner_request.save!
@@ -633,7 +654,7 @@ complete_orgs.each do |org|
   # ----------------------------------------------------------------------------
 
   # Make some donations of all sorts
-  20.times.each do
+  20.times.each do |index|
     source = Donation::SOURCES.values.sample
     # Depending on which source it uses, additional data may need to be provided.
     donation = Donation.new(
@@ -655,6 +676,12 @@ complete_orgs.each do |org|
     rand(1..5).times.each do
       donation.line_items.push(LineItem.new(quantity: rand(250..500), item: random_record_for_org(org, Item)))
     end
+
+    # Guarantee that there are at least a few donations for the items unique to the Second City Bank
+    if (org == sc_org) && (index < 4)
+      donation.line_items.push(LineItem.new(quantity: rand(250..500), item: sc_org_unique_items[index]))
+    end
+
     DonationCreateService.call(donation)
   end
 
@@ -664,7 +691,7 @@ complete_orgs.each do |org|
 
   inventory = InventoryAggregate.inventory_for(org.id)
   # Make some distributions, but don't use up all the inventory
-  20.times.each do
+  20.times.each do |index|
     issued_at = dates_generator.next
 
     storage_location = org.storage_locations.active_locations.sample
@@ -689,6 +716,19 @@ complete_orgs.each do |org|
           item_id: stored_inventory_item.item_id))
       end
     end
+
+    # Guarantee that there are at least a few distributions for the items unique to the Second City Bank
+    if (org == sc_org) && (index < 4)
+      unique_item_id = sc_org_unique_items[index].id
+      distribution_qty = rand(storage_location.item_total(unique_item_id) / 2)
+      distribution.line_items.push(
+        LineItem.new(
+          quantity: distribution_qty,
+          item_id: unique_item_id
+        )
+      )
+    end
+
     DistributionCreateService.new(distribution).call
   end
 end
@@ -764,7 +804,7 @@ comments = [
 dates_generator = DispersedPastDatesGenerator.new
 
 complete_orgs.each do |org|
-  25.times do
+  25.times do |index|
     purchase_date = dates_generator.next
     storage_location = org.storage_locations.active_locations.sample
     vendor = random_record_for_org(org, Vendor)
@@ -791,6 +831,17 @@ complete_orgs.each do |org|
           item_id: org.item_ids.sample)
       )
     end
+
+    # Guarantee that there are at least a few purchases for the items unique to the Second City Bank
+    if (org == sc_org) && (index < 4)
+      purchase.line_items.push(
+        LineItem.new(
+          quantity: rand(1..1000),
+          item_id: sc_org_unique_items[index].id
+        )
+      )
+    end
+
     PurchaseCreateService.call(purchase)
   end
 end
