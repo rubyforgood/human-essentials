@@ -74,6 +74,7 @@ class Partner < ApplicationRecord
   AGENCY_TYPES = {
     "CAREER" => "Career technical training",
     "ABUSE" => "Child abuse resource center",
+    "BNB" => "Basic Needs Bank",
     "CHURCH" => "Church outreach ministry",
     "COLLEGE" => "College and Universities",
     "CDC" => "Community development corporation",
@@ -82,6 +83,7 @@ class Partner < ApplicationRecord
     "LEGAL" => "Correctional Facilities / Jail / Prison / Legal System",
     "CRISIS" => "Crisis/Disaster services",
     "DISAB" => "Developmental disabilities program",
+    "DISTRICT" => "School District",
     "DOMV" => "Domestic violence shelter",
     "ECE" => "Early Childhood Education/Childcare",
     "CHILD" => "Early childhood services",
@@ -96,6 +98,7 @@ class Partner < ApplicationRecord
     "HOSP" => "Hospital",
     "INFPAN" => "Infant/Child Pantry/Closet",
     "LIB" => "Library",
+    "MHEALTH" => "Mental Health",
     "MILITARY" => "Military Bases/Veteran Services",
     "POLICE" => "Police Station",
     "PREG" => "Pregnancy resource center",
