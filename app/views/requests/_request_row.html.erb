@@ -13,7 +13,9 @@
     <%= request_row.comments %>
   </td>
   <td>
-    <%= request_row.request_type_label %>
+    <abbr title=<%= request_row.request_type&.humanize %> class='text-decoration-none'>
+      <%= request_row.request_type_label %>
+    </abbr>
   </td>
   <td>
     <%= render partial: "status", locals: {status: request_row.status} %>
