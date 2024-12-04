@@ -4,11 +4,10 @@ module Partners
 
     attr_reader :partner_request, :request_type
 
-    def initialize(request_type:, partner_user_id:, comments: nil, for_families: false, item_requests_attributes: [], additional_attrs: {})
+    def initialize(request_type:, partner_user_id:, comments: nil, item_requests_attributes: [], additional_attrs: {})
       @request_type = request_type
       @partner_user_id = partner_user_id
       @comments = comments
-      @for_families = for_families
       @item_requests_attributes = item_requests_attributes
       @additional_attrs = additional_attrs
     end

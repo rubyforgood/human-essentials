@@ -10,7 +10,6 @@ module Partners
 
     def create
       create_service = Partners::FamilyRequestCreateService.new(
-        request_type: "individual",
         partner_user_id: current_user.id,
         comments: individuals_request_params[:comments],
         family_requests_attributes: individuals_request_params[:items_attributes]&.values

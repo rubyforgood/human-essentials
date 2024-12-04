@@ -22,7 +22,6 @@ module Partners
         request_type: request_type,
         partner_user_id: partner_user_id,
         comments: comments,
-        for_families: @for_families,
         item_requests_attributes: item_requests_attributes
       )
 
@@ -44,7 +43,7 @@ module Partners
       Partners::RequestCreateService.new(
         partner_user_id: partner_user_id,
         comments: comments,
-        for_families: @for_families,
+        request_type: request_type,
         item_requests_attributes: item_requests_attributes
       ).initialize_only
     end

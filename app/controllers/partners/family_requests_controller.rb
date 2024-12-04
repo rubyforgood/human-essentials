@@ -17,7 +17,6 @@ module Partners
       family_requests_attributes = build_family_requests_attributes(params)
 
       create_service = Partners::FamilyRequestCreateService.new(
-        request_type: "child",
         partner_user_id: current_user.id,
         family_requests_attributes: family_requests_attributes,
         for_families: true
