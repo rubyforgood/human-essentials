@@ -44,6 +44,7 @@ module Partners
 
     def validate
       @partner_request = Partners::RequestCreateService.new(
+        request_type: "quantity",
         partner_user_id: current_user.id,
         comments: partner_request_params[:comments],
         item_requests_attributes: partner_request_params[:item_requests_attributes]&.values || []
