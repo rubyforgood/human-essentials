@@ -31,19 +31,21 @@ class DistributionPdf
         text @organization.email, align: :right
       end
 
-      text "Issued to:", style: :bold
-      font_size 12
-      text @distribution.partner.name
-      move_up 24
-
       profile = @distribution.partner.profile
 
-      text "Partner Primary Contact:", style: :bold, align: :right
       font_size 12
+      text "Partner Primary Contact:", style: :bold, align: :right
       text (profile.primary_contact_name.presence || " "), align: :right
       font_size 10
       text (profile.primary_contact_email.presence || " "), align: :right
       text (profile.primary_contact_phone.presence || " "), align: :right
+      move_up 40
+
+      text "Issued to:", style: :bold
+      font_size 12
+      text @distribution.partner.name
+      font_size 10
+      move_down 10
 
       if (profile.address1.present? || profile.program_address1.present?) &&
           (@distribution.delivery? || @distribution.shipped?)
