@@ -58,28 +58,17 @@ FactoryBot.define do
       status { 'fulfilled' }
     end
 
-  trait :quantity do
-    request_type { 'quantity' }
-  end
+    trait :quantity do
+      request_type { 'quantity' }
+    end
 
-  trait :individual do
-    request_type { 'individual' }
-  end
+    trait :individual do
+      request_type { 'individual' }
+    end
 
-  trait :child do
-    request_type { 'child' }
-  end
-
-  trait :with_duplicates do
-    request_items {
-      # get 3 unique item ids
-      keys = Item.active.pluck(:id).sample(3)
-      # add an extra of the first key, so we have one duplicated item
-      keys.push(keys[0])
-      # give each item a quantity of 50
-      keys.map { |k| { "item_id" => k, "quantity" => 50 } }
-    }
-  end
+    trait :child do
+      request_type { 'child' }
+    end
 
     trait :pending do
       status { 'pending' }

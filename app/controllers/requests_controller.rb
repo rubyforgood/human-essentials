@@ -13,12 +13,12 @@ class RequestsController < ApplicationController
     @calculate_product_totals = RequestsTotalItemsService.new(requests: @requests).calculate
     @items = current_organization.items.alphabetized
     @partners = current_organization.partners.order(:name)
-    @selected_partner = filter_params[:by_partner]
+    @statuses = Request.statuses.transform_keys(&:humanize)
     @partner_users = User.where(id: @paginated_requests.pluck(:partner_user_id))
     @request_types = Request.request_types.transform_keys(&:humanize)
     @selected_request_type = filter_params[:by_request_type]
     @selected_request_item = filter_params[:by_request_item_id]
-    @statuses = Request.statuses.transform_keys(&:humanize)
+    @selected_partner = filter_params[:by_partner]
     @selected_status = filter_params[:by_status]
 
     respond_to do |format|

@@ -65,7 +65,7 @@ class Request < ApplicationRecord
 
   def request_type_label
     request_type&.first&.capitalize
-  end 
+  end
 
   private
 
