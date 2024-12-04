@@ -129,9 +129,7 @@ RSpec.describe Request, type: :model do
   end
 
   describe "request_type_label" do
-    let(:id_one) { create(:item).id }
-    let(:id_two) { create(:item).id }
-    let(:request) { create(:request, request_items: [{ item_id: id_one, quantity: 15 }, { item_id: id_two, quantity: 18 }], request_type: "individual") }
+    let(:request) { build(:request, request_type: "individual") }
 
     it "returns the the first letter of the request_type capitalized" do
       expect(request.request_type_label).to eq("I")
