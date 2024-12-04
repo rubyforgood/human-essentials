@@ -46,7 +46,7 @@
               <tr>
                 <td><%= @request.partner.name %></td>
                 <td><%= @request.partner_user&.formatted_email %></td>
-                <td><%= @request.request_type_label %></td>
+                <td><%= @request.request_type&.humanize %></td>
                 <td><%= render partial: "status", locals: {status: @request.status} %></td>
                 <td><%= @request.comments || 'None' %></td>
               </tr>
