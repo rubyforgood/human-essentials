@@ -861,14 +861,18 @@ end
 # ----------------------------------------------------------------------------
 # Transfers
 # ----------------------------------------------------------------------------
+from_id, to_id = pdx_org.storage_locations.active_locations.limit(2).pluck(:id)
+quantity = 5
+inventory = View::Inventory.new(pdx_org.id)
+# Ensure storage location has enough of item for transfer to succeed
+item = inventory.items_for_location(from_id).find { _1.quantity > quantity }.db_item
+
 transfer = Transfer.new(
   comment: Faker::Lorem.sentence,
   organization_id: pdx_org.id,
-  from_id: pdx_org.id,
-  to_id: sf_org.id,
-  line_items: [
-    LineItem.new(quantity: 5, item: pdx_org.items.first)
-  ]
+  from_id: from_id,
+  to_id: to_id,
+  line_items: [ LineItem.new(quantity: quantity, item: item) ]
 )
 TransferCreateService.call(transfer)
 
