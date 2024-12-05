@@ -3,7 +3,7 @@ class CleanupInvalidPartnerProfiles < ActiveRecord::Migration[7.1]
     # ActiveRecord::Base.logger = Logger.new(STDOUT)
     invalid_profiles = Partners::Profile.all.reject(&:valid?)
 
-    return if !invalid_profiles
+    return if !invalid_profiles.present?
 
     invalid_profiles.each do |profile|
       # address invalid social media section
@@ -38,11 +38,11 @@ class CleanupInvalidPartnerProfiles < ActiveRecord::Migration[7.1]
         if pick_up == "none" or pick_up == "na" or pick_up == "n/a" or pick_up == "see above"
           profile.pick_up_email = ""
         else
-          profile.pick_up_email.sub!("/",",")
-          profile.pick_up_email.sub!(";",",")
-          profile.pick_up_email.sub!(" or ", ", ")
-          profile.pick_up_email.sub!(" and ", ", ")
-          profile.pick_up_email.sub!(" & ", ", ")
+          profile.pick_up_email.gsub!("/",",")
+          profile.pick_up_email.gsub!(";",",")
+          profile.pick_up_email.gsub!(" or ", ", ")
+          profile.pick_up_email.gsub!(" and ", ", ")
+          profile.pick_up_email.gsub!(" & ", ", ")
         end
 
         if(!profile.valid?)  ## If we can't fix the email,  append it to the name so we don't lose the information aspect
