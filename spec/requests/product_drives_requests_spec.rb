@@ -209,11 +209,37 @@ RSpec.describe "ProductDrives", type: :request do
     end
 
     describe "DELETE #destroy" do
-      it "redirects to the index" do
-        product_drive = create(:product_drive, organization: organization)
+      let(:product_drive) { create(:product_drive, organization: organization) }
 
-        delete product_drive_path(id: product_drive.id)
-        expect(response).to redirect_to(product_drives_path)
+      context 'when user is not a org_admin' do
+        it "does not delete the product drive" do
+          delete product_drive_path(id: product_drive.id)
+          follow_redirect!
+
+          expect(response.body).to include('You are not allowed to perform this action.')
+        end
+      end
+
+      context 'when user is a org_admin' do
+        before do
+          user.add_role(Role::ORG_ADMIN, organization)
+        end
+
+        it 'deletes the product drive' do
+          delete product_drive_path(id: product_drive.id)
+          follow_redirect!
+
+          expect(response.body).to include('Product drive was successfully destroyed.')
+        end
+
+        it "does not delete the product drive if it has donations" do
+          user.add_role(Role::ORG_ADMIN, organization)
+          create(:donation, product_drive: product_drive)
+          delete product_drive_path(id: product_drive.id)
+          follow_redirect!
+
+          expect(response.body).to include('Cannot delete product drive with donations.')
+        end
       end
     end
   end
