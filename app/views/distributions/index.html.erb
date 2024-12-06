@@ -69,7 +69,7 @@
                 <%= clear_filter_button %>
                 <span class="float-right">
                   <%=
-                    if @distributions.length > 0
+                    if @distributions.any?
                       download_button_to(
                         distributions_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)),
                         text: "Export Distributions"
@@ -114,6 +114,7 @@
                 <!-- End Quantity -->
 
                 <th class="numeric">Total Value</th>
+
                 <th>Delivery Method</th>
                 <th>Shipping Cost</th>
                 <th>Comments</th>

@@ -53,6 +53,7 @@ class Item < ApplicationRecord
   # Add spec for these
   scope :kits, -> { where.not(kit_id: nil) }
   scope :loose, -> { where(kit_id: nil) }
+  scope :inactive, -> { where.not(active: true) }
 
   scope :visible, -> { where(visible_to_partners: true) }
   scope :alphabetized, -> { order(:name) }
