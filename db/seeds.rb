@@ -91,8 +91,8 @@ end
 
 # Add a couple unique items based on random base items named after the sc_bank
 # so it will be clear if they are showing up where they aren't supposed to be
-4.times.each do |time|
-  sc_org.seed_random_item_with_name("Second City Item ##{time + 1}")
+4.times.each do |index|
+  sc_org.seed_random_item_with_name("Second City Item ##{index + 1}")
 end
 
 # Keep a list of these unique items so its easy to use them for later records
