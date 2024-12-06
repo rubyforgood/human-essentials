@@ -53,13 +53,36 @@ Make sure to install **Ubuntu** as your Linux distribution. (This should be defa
 <details>
   <summary> Bank Users 🏦 </summary>
 
+  Pawnee Diaper Bank
   ```
     Organization Admin
-       Email: org_admin1@example.com
+    Email: org_admin1@example.com
     Password: password!
 
     User
     Email: user_1@example.com
+    Password: password!
+  ```
+
+  SF Diaper Bank
+  ```
+    Organization Admin
+    Email: org_admin2@example.com
+    Password: password!
+
+    User
+    Email: user_2@example.com
+    Password: password!
+  ```
+
+  Second City Essentials Bank
+  ```
+    Organization Admin
+    Email: second_city_admin@example.com
+    Password: password!
+
+    User
+    Email: second_city_user@example.com
     Password: password!
   ```
 </details>
@@ -67,6 +90,7 @@ Make sure to install **Ubuntu** as your Linux distribution. (This should be defa
 <details>
   <summary> Partner Users 👥 </summary>
 
+  Partners in Pawnee Diaper Bank partner groups
   ```
     Verified Partner
     Email: verified@example.com
@@ -87,10 +111,17 @@ Make sure to install **Ubuntu** as your Linux distribution. (This should be defa
     Waiting Approval Partner
     Email: waiting@example.com
     Password: password!
-    
-    Another approved partner (with all groups):
+
+    Another verified partner (in second partner group):
     Email: approved_2@example.com
-    Pasword: password!
+    Password: password!
+  ```
+
+  Partners in Second City Essentials Bank partner group
+  ```
+    Verified partner
+    Email: second_city_senior_center@example.com
+    Password: password!
   ```
 </details>
 
