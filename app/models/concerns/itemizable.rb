@@ -20,11 +20,7 @@ module Itemizable
 
     # @return [Array<Item>] or [Item::ActiveRecord_Relation]
     def inactive_items
-      if line_items.loaded?
-        line_items.map(&:item).select { |i| !i.active? }
-      else
-        items.inactive
-      end
+      line_items.map(&:item).select { |i| !i.active? }
     end
 
     has_many :line_items, as: :itemizable, inverse_of: :itemizable do
@@ -98,6 +94,8 @@ module Itemizable
     end
 
     has_many :items, through: :line_items
+    has_many :inactive_items, -> { inactive }, through: :line_items, source: :item
+
     accepts_nested_attributes_for :line_items,
                                   allow_destroy: true,
                                   reject_if: proc { |l| l[:item_id].blank? || l[:quantity].blank? }

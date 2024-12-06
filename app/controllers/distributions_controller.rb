@@ -64,6 +64,7 @@ class DistributionsController < ApplicationController
     @selected_location = filter_params[:by_location]
     # FIXME: one of these needs to be removed but it's unclear which at this point
     @statuses = Distribution.states.transform_keys(&:humanize)
+    @distributions_with_inactive_items = @distributions.joins(:inactive_items).pluck(:id)
 
     respond_to do |format|
       format.html
