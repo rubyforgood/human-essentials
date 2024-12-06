@@ -7,7 +7,8 @@ describe DonationPdf do
   end
   let(:product_drive) { create(:product_drive, name: "Second Best Product Drive") }
   let(:product_drive_participant) {
-    create(:product_drive_participant, business_name: "A Good Place to Collect Diapers", email: "good@place.is") }
+    create(:product_drive_participant, business_name: "A Good Place to Collect Diapers", email: "good@place.is")
+  }
   let(:product_drive_donation) do
     create(:donation, organization: organization, product_drive: product_drive, source: Donation::SOURCES[:product_drive],
       product_drive_participant: product_drive_participant, comment: "A product drive donation")
