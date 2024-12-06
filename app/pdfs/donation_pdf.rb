@@ -20,9 +20,13 @@ class DonationPdf
         @address = nil
         @email = nil
       when Donation::SOURCES[:product_drive]
-        @name = donation.product_drive_participant.business_name
-        @address = donation.product_drive_participant.address
-        @email = donation.product_drive_participant.email
+        if donation.product_drive_participant
+          @name = donation.product_drive_participant.business_name
+          @address = donation.product_drive_participant.address
+          @email = donation.product_drive_participant.email
+        else
+          @name = donation.product_drive.name
+        end
       when Donation::SOURCES[:misc]
         @name = "Misc. Donation"
         @address = nil
