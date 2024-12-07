@@ -33,7 +33,7 @@ RSpec.describe TransferDestroyService, type: :service do
     end
 
     context 'when there are no issues' do
-      it 'should return a success monad with success? evaluating to true' do
+      it 'should return a success monad with success? returning true' do
         expect { subject }.to change { TransferDestroyEvent.count }.by(1)
         expect(subject).to be_a_kind_of(TransferDestroyService::Success)
         expect(subject.success?).to eq(true)
