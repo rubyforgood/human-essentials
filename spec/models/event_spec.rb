@@ -18,11 +18,11 @@ RSpec.describe Event, type: :model do
   let(:organization) { create(:organization) }
 
   describe "::types_for_select" do
-    let(:event_a) { Class.new }
-    let(:event_z) { Class.new }
+    let(:a_event) { Class.new { def self.name = "AEvent" } }
+    let(:z_event) { Class.new { def self.name = "ZEvent" } }
 
     before do
-      allow(described_class).to receive(:descendants).and_return([event_z, event_a])
+      allow(described_class).to receive(:descendants).and_return([z_event, a_event])
     end
 
     it "returns an array of ids and names" do
