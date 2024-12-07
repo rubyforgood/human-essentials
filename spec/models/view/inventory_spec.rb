@@ -143,4 +143,19 @@ RSpec.describe View::Inventory do
       expect(results.count { |i| i.item_id == item3.id }).to eq(1)
     end
   end
+
+  describe "#items_for_select" do
+    it "returns an array with length equal to number of unique inventory items" do
+      results = subject.items_for_select
+      expect(results.size).to eq(3)
+    end
+
+    it "returns an array of item ids and names sorted by item name" do
+      results = subject.items_for_select
+      ids = results.map(&:id)
+      names = results.map(&:name)
+      expect(ids).to eq([item3.id, item2.id, item1.id])
+      expect(names).to eq([item3.name, item2.name, item1.name])
+    end
+  end
 end
