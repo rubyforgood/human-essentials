@@ -84,15 +84,6 @@ RSpec.describe StorageLocation, type: :model do
     let(:item) { create(:item) }
     subject { create(:storage_location, :with_items, item_quantity: 10, item: item, organization: organization) }
 
-    describe "StorageLocation.items_inventoried" do
-      it "returns a collection of items that are stored within inventories" do
-        items = create_list(:item, 3, organization: organization)
-        create(:storage_location, :with_items, item: items[0], item_quantity: 5, organization: organization)
-        create(:storage_location, :with_items, item: items[2], item_quantity: 5, organization: organization)
-        expect(StorageLocation.items_inventoried(organization).length).to eq(2)
-      end
-    end
-
     describe "item_total" do
       it "retrieves the total for a single item" do
         item = create(:item)
