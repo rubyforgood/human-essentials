@@ -25,7 +25,7 @@ class DonationPdf
           @address = donation.product_drive_participant.address
           @email = donation.product_drive_participant.email
         else
-          @name = donation.product_drive.name
+          @name = "Product Drive -- #{donation.product_drive.name}"
         end
       when Donation::SOURCES[:misc]
         @name = "Misc. Donation"
