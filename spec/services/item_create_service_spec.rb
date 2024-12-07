@@ -27,8 +27,8 @@ RSpec.describe ItemCreateService, type: :service do
     end
 
     context 'when there are no issues' do
-      it 'should return an OpenStruct with success? set to true and the item' do
-        expect(subject).to be_a_kind_of(OpenStruct)
+      it 'should return a success monad with success? evaluating to true and the item' do
+        expect(subject).to be_a_kind_of(ItemCreateService::Success)
         expect(subject.success?).to eq(true)
         expect(subject.item).to eq(fake_organization_item)
       end
@@ -49,7 +49,7 @@ RSpec.describe ItemCreateService, type: :service do
         end
 
         it 'should return a OpenStruct with an ActiveRecord::RecordNotFound error' do
-          expect(subject).to be_a_kind_of(OpenStruct)
+          expect(subject).to be_a_kind_of(ItemCreateService::Failure)
           expect(subject.success?).to eq(false)
           expect(subject.error).to be_a_kind_of(ActiveRecord::RecordNotFound)
         end
@@ -63,7 +63,7 @@ RSpec.describe ItemCreateService, type: :service do
         end
 
         it 'should return a OpenStruct with the raised error' do
-          expect(subject).to be_a_kind_of(OpenStruct)
+          expect(subject).to be_a_kind_of(ItemCreateService::Failure)
           expect(subject.success?).to eq(false)
           expect(subject.error).to eq(fake_error)
         end
