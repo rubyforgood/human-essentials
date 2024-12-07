@@ -1,4 +1,7 @@
 class TransferDestroyService
+  Success = Data.define { def success? = true }
+  Failure = Data.define(:error) { def success? = false }
+
   def initialize(transfer_id:)
     @transfer_id = transfer_id
   end
@@ -13,9 +16,9 @@ class TransferDestroyService
       transfer.destroy!
     end
 
-    OpenStruct.new(success?: true)
+    Success.new
   rescue StandardError => e
-    OpenStruct.new(success?: false, error: e)
+    Failure.new(error: e)
   end
 
   private

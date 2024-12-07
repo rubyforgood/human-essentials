@@ -84,7 +84,7 @@ class Purchase < ApplicationRecord
   def self.organization_summary_by_dates(organization, date_range)
     purchases = where(organization: organization).during(date_range)
 
-    OpenStruct.new(
+    {
       amount_spent: purchases.sum(:amount_spent_in_cents),
       recent_purchases: purchases.recent.includes(:vendor),
       period_supplies: purchases.sum(:amount_spent_on_period_supplies_cents),
@@ -92,7 +92,7 @@ class Purchase < ApplicationRecord
       adult_incontinence: purchases.sum(:amount_spent_on_adult_incontinence_cents),
       other: purchases.sum(:amount_spent_on_other_cents),
       total_items: purchases.joins(:line_items).sum(:quantity)
-    )
+    }
   end
 
   private
