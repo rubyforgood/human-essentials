@@ -43,7 +43,7 @@ class Event < ApplicationRecord
   # @return [Array<Option>]
   def self.types_for_select
     descendants.map do |klass|
-      Option.new(id: klass.name.sub("Event", "").titleize, name: klass.name)
+      Option.new(name: klass.name.sub("Event", "").titleize, id: klass.name)
     end.sort_by(&:name)
   end
 
