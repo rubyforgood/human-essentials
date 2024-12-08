@@ -30,7 +30,8 @@ RSpec.describe "Creating a parner child", type: :system, js: true do
       expect(page).to have_text("Child Last Name")
       expect(page).to have_text("01234")
       expect(page).to have_text("Some Comment")
-      expect(page).to have_text("Item 1, Item 2")
+      expect(page).to have_text("Item 1")
+      expect(page).to have_text("Item 2")
     end
   end
 end
