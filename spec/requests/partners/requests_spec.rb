@@ -209,7 +209,7 @@ RSpec.describe "/partners/requests", type: :request do
                   item_id: item2.id,
                   request_unit: 'box',
                   quantity: 17
-                },
+                }
               }
             }
           }
@@ -238,7 +238,7 @@ RSpec.describe "/partners/requests", type: :request do
                   item_id: item1.id,
                   request_unit: 'box',
                   quantity: 17
-                },
+                }
               }
             }
           }
