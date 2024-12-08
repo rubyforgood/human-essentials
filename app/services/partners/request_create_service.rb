@@ -65,6 +65,10 @@ module Partners
       formatted_line_items.each do |input_item|
         pre_existing_entry = items[input_item['item_id']]
         if pre_existing_entry
+          if pre_existing_entry.request_unit != input_item['request_unit']
+            errors.add(:base, "Please use the same unit for every #{Item.find(input_item['item_id']).name}")
+            next
+          end
           pre_existing_entry.quantity = (pre_existing_entry.quantity.to_i + input_item['quantity'].to_i).to_s
           # NOTE: When this code was written (and maybe it's still the
           # case as you read it!), the FamilyRequestsController does a
