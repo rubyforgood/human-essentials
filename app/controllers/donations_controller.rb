@@ -20,7 +20,7 @@ class DonationsController < ApplicationController
 
     @donations = current_organization.donations
                                      .includes(:storage_location, :donation_site, :product_drive, :product_drive_participant, :manufacturer, line_items: [:item])
-                                     .order(created_at: :desc)
+                                     .order(issued_at: :desc)
                                      .class_filter(filter_params)
                                      .during(helpers.selected_range)
     @paginated_donations = @donations.page(params[:page])
