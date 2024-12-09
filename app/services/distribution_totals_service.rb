@@ -50,7 +50,7 @@ class DistributionTotalsService
   #
   # @return [Hash<Integer, Integer>]
   def calculate_values(distributions)
-    distributions
+    Distribution
       .where(id: distributions.class_filter(filter_params))
       .left_joins(line_items: [:item])
       .group("distributions.id, line_items.id, items.id")

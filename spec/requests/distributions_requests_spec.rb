@@ -175,6 +175,18 @@ RSpec.describe "Distributions", type: :request do
           expect(item_total_header.text).to eq("Total in #{item_category.name}")
           expect(item_value_header.text).to eq("Total Value")
         end
+
+        it "doesn't show duplicate distributions" do
+          # Add another item in given category so that a JOIN clauses would produce duplicates
+          item.update(item_category: item_category_2, value_in_cents: 50)
+
+          get distributions_path, params: params
+
+          page = Nokogiri::HTML(response.body)
+          distribution_rows = page.css("table tbody tr")
+
+          expect(distribution_rows.count).to eq(1)
+        end
       end
     end
 
