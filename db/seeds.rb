@@ -753,7 +753,8 @@ end
 Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "new_logo")
 Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "read_events")
 Flipper.enable(:read_events)
-
+Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "partner_step_form")
+Flipper.enable(:partner_step_form)
 # ----------------------------------------------------------------------------
 # Account Requests
 # ----------------------------------------------------------------------------
