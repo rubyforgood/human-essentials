@@ -142,7 +142,7 @@ class Item < ApplicationRecord
   end
 
   def can_delete?(inventory = nil, kits = nil)
-    can_deactivate_or_delete?(inventory, kits) && line_items.none? && !barcode_count&.positive? && !in_request?
+    can_deactivate_or_delete?(inventory, kits) && line_items.none? && !barcode_count&.positive? && !in_request? && kit.blank?
   end
 
   # @return [Boolean]
