@@ -103,6 +103,24 @@ RSpec.describe "Distributions", type: :request do
           expect(response.body).to match(/Has Inactive Items/)
         end
       end
+
+      context "with filters" do
+        it "shows all active partners in dropdown filter unrestricted by current filter" do
+          inactive_partner_name = create(:partner, :deactivated, organization:).name
+          active_partner_name = distribution.partner.name
+
+          # Filter by date with no distributions
+          params = { filters: { date_range: "January 1,9999 - January 1,9999"} }
+
+          get distributions_path, params: params
+          page = Nokogiri::HTML(response.body)
+          partner_select = page.at_css("select[name='filters[by_partner]']")
+
+          expect(partner_select).to be_present
+          expect(partner_select.text).to include(active_partner_name)
+          expect(partner_select.text).not_to include(inactive_partner_name)
+        end
+      end
     end
 
     describe "POST #create" do
