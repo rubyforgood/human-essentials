@@ -1,6 +1,7 @@
 # frozen_String_literal: true
 
 class PartnerUsersController < ApplicationController
+  before_action :authorize_admin
   before_action :set_partner, only: %i[index create destroy resend_invitation]
 
   def index
