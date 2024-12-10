@@ -19,26 +19,12 @@ end
 # Script-Global Variables
 # ----------------------------------------------------------------------------
 
-# Initial starting qty for our test organizations
-base_items = File.read(Rails.root.join("db", "base_items.json"))
-items_by_category = JSON.parse(base_items)
-
 # ----------------------------------------------------------------------------
 # Base Items
 # ----------------------------------------------------------------------------
 
-items_by_category.each do |category, entries|
-  entries.each do |entry|
-    BaseItem.find_or_create_by!(name: entry["name"], category: category, partner_key: entry["key"])
-  end
-end
-
-# Create global 'Kit' base item
-BaseItem.find_or_create_by!(
-  name: 'Kit',
-  category: 'kit',
-  partner_key: 'kit'
-)
+require 'seeds'
+Seeds.seed_base_items
 
 # ----------------------------------------------------------------------------
 # NDBN Members
@@ -553,7 +539,7 @@ def seed_quantity(item_name, organization, storage_location, quantity)
   AdjustmentCreateService.new(adjustment).call
 end
 
-items_by_category.each do |_category, entries|
+JSON.parse(File.read(Rails.root.join("db", "base_items.json"))).each do |_category, entries|
   entries.each do |entry|
     seed_quantity(entry['name'], pdx_org, inv_arbor, entry['qty']['arbor'])
     seed_quantity(entry['name'], pdx_org, inv_pdxdb, entry['qty']['pdxdb'])
@@ -861,14 +847,18 @@ end
 # ----------------------------------------------------------------------------
 # Transfers
 # ----------------------------------------------------------------------------
+from_id, to_id = pdx_org.storage_locations.active_locations.limit(2).pluck(:id)
+quantity = 5
+inventory = View::Inventory.new(pdx_org.id)
+# Ensure storage location has enough of item for transfer to succeed
+item = inventory.items_for_location(from_id).find { _1.quantity > quantity }.db_item
+
 transfer = Transfer.new(
   comment: Faker::Lorem.sentence,
   organization_id: pdx_org.id,
-  from_id: pdx_org.id,
-  to_id: sf_org.id,
-  line_items: [
-    LineItem.new(quantity: 5, item: pdx_org.items.first)
-  ]
+  from_id: from_id,
+  to_id: to_id,
+  line_items: [ LineItem.new(quantity: quantity, item: item) ]
 )
 TransferCreateService.call(transfer)
 
@@ -876,10 +866,10 @@ TransferCreateService.call(transfer)
 # Users invitation status
 # ----------------------------------------------------------------------------
 # Mark users `invitation_status` as `accepted`
-# 
+#
 # Addresses and resolves issue #4689, which can be found in:
 # https://github.com/rubyforgood/human-essentials/issues/4689
-User.where(invitation_token: nil).each do |user| 
+User.where(invitation_token: nil).each do |user|
   user.update!(
     invitation_sent_at: Time.current,
     invitation_accepted_at: Time.current

@@ -233,7 +233,7 @@ RSpec.feature "Distributions", type: :system do
         end
 
         expect(page).not_to have_content('New Distribution')
-        expect(page).to have_content("The following items have fallen below the minimum on hand quantity: #{item.name}")
+        expect(page).to have_content("The following items have fallen below the minimum on hand quantity, bank-wide: #{item.name}")
       end
     end
 
@@ -268,7 +268,7 @@ RSpec.feature "Distributions", type: :system do
           click_button "Yes, it's correct"
         end
 
-        expect(page).to have_content("The following items have fallen below the recommended on hand quantity: #{item.name}")
+        expect(page).to have_content("The following items have fallen below the recommended on hand quantity, bank-wide: #{item.name}")
       end
     end
 
