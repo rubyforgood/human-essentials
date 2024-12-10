@@ -1,5 +1,6 @@
 RSpec.describe "Donations", type: :request do
   let(:organization) { create(:organization) }
+  let(:storage_location) { create(:storage_location, name: "Pawane Location", organization: organization) }
   let(:user) { create(:user, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 
@@ -83,6 +84,19 @@ RSpec.describe "Donations", type: :request do
         let(:response_format) { 'csv' }
 
         it { is_expected.to be_successful }
+      end
+    end
+
+    describe "GET #new" do
+      subject do
+        organization.update!(default_storage_location: storage_location)
+        get new_donation_path
+        response
+      end
+
+      it { is_expected.to be_successful }
+      it "should include the storage location name" do
+        expect(subject.body).to include("Pawane Location")
       end
     end
 
@@ -247,18 +261,14 @@ RSpec.describe "Donations", type: :request do
 
         put donation_path(id: donation.id, donation: edited_donation)
 
-        if Event.read_events?(organization)
-          expect(flash[:alert]).to include("Error updating donation: Could not reduce quantity")
-        else # TODO remove this branch when switching to events
-          expect(flash[:alert]).to include("Error updating donation: Requested items exceed the available inventory")
-        end
+        expect(flash[:alert]).to include("Error updating donation: Could not reduce quantity")
 
         expect(response.body).to include("Edit - Donations - #{original_source}")
         expect(response.body).to include("Editing Donation\n          <small>from #{original_source}")
         expect(response.body).to include("<li class=\"breadcrumb-item\">\n            <a href=\"#\">Editing #{original_source}")
         expect(response.body).to include("<option selected=\"selected\" value=\"#{edited_source}\">#{edited_source}</option>")
         expect(response.body).to include("<option selected=\"selected\" value=\"#{edited_source_drive.id}\">#{edited_source_drive_name}</option>")
-        expect(response.body).to include("<option selected=\"selected\" value=\"#{edited_source_drive_participant.id}\">#{edited_source_drive_participant_business_name}</option>")
+        expect(response.body).to include("<option value=\"#{edited_source_drive_participant.id}\">#{edited_source_drive_participant_business_name}</option>")
         expect(response.body).to include("<option selected=\"selected\" value=\"#{edited_storage_location.id}\">#{edited_storage_location_name}</option>")
         expect(response.body).to include(edited_comment)
         expect(response.body).to include("value=\"#{edited_money}\" type=\"text\" name=\"donation[money_raised_in_dollars]")

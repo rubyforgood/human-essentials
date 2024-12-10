@@ -22,7 +22,7 @@
                     </div>
                     <div class="row links">
                       <div class="col-xs-12 p-3">
-                        <%= add_element_button "Add Another Item", container_selector: "#audit_line_items" do %>
+                        <%= add_element_button "Add Another Item", container_selector: "#audit_line_items", id: "__add_line_item" do %>
                           <%= render 'line_items/line_item_fields', form: f, object: LineItem.new %>
                         <% end %>
                       </div>

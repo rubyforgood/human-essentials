@@ -80,6 +80,10 @@ RSpec.describe Purchase, type: :model do
       p = build(:purchase, issued_at: "1999-12-31")
       expect(p).not_to be_valid
     end
+    it "ensures that the issued at is no later than 1 year" do
+      p = build(:purchase, issued_at: DateTime.now.next_year(2).to_s)
+      expect(p).not_to be_valid
+    end
   end
 
   context "Callbacks >" do

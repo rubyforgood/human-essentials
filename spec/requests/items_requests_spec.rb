@@ -205,7 +205,7 @@ RSpec.describe "Items", type: :request do
         expect(response.body).to include('CURRENTCATEGORY')
         expect(response.body).to include('Value Per Item')
         expect(response.body).to include('20000')
-        expect(response.body).to include('Quantity Per Indivudual')
+        expect(response.body).to include('Quantity per Individual')
         expect(response.body).to include('2000')
         expect(response.body).to include('On hand minimum quantity')
         expect(response.body).to include('1200')
@@ -222,7 +222,7 @@ RSpec.describe "Items", type: :request do
       it 'shows custom request units when flipper enabled' do
         Flipper.enable(:enable_packs)
         get item_path(id: item.id)
-        print(response.body)
+
         expect(response.body).to include('Custom Units')
         expect(response.body).to include("ITEM1; ITEM2")
       end

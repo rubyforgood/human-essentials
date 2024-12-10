@@ -134,6 +134,19 @@ RSpec.describe "Organizations", type: :request do
         expect(response.body).to include "Demote to User"
       end
 
+      it "can see 'Promote to User' button for users" do
+        get organization_path
+
+        within(".content") do
+          expect(response.body).to have_link("Actions")
+        end
+
+        within "#dropdown-toggle" do
+          expect(response.body).to have_link("Promote User")
+          expect(response.body).to have_link("Remove User")
+        end
+      end
+
       it "can re-invite a user to an organization after 7 days" do
         create(:user, name: "Ye Olde Invited User", invitation_sent_at: Time.current - 7.days)
         get organization_path
@@ -311,6 +324,7 @@ RSpec.describe "Organizations", type: :request do
         subject
         expect(user.has_role?(Role::ORG_ADMIN, organization)).to eq(true)
         expect(response).to redirect_to(organization_path)
+        expect(flash[:notice]).to eq("User has been promoted!")
       end
     end
 
@@ -321,6 +335,7 @@ RSpec.describe "Organizations", type: :request do
         subject
         expect(admin_user.reload.has_role?(Role::ORG_ADMIN, admin_user.organization)).to be_falsey
         expect(response).to redirect_to(organization_path)
+        expect(flash[:notice]).to eq("User has been demoted!")
       end
     end
 
@@ -401,6 +416,43 @@ RSpec.describe "Organizations", type: :request do
         expect(response.body).to include(organization.email)
         expect(response.body).to include(organization.created_at.strftime("%Y-%m-%d"))
         expect(response.body).to include(organization.display_last_distribution_date)
+      end
+
+      it "can see 'Edit User' button for users" do
+        within(".content") do
+          expect(response.body).to have_link("Actions")
+        end
+
+        within "#dropdown-toggle" do
+          expect(response.body).to have_link("Edit User")
+          expect(response.body).to have_link("Remove User")
+        end
+      end
+
+      it "can see 'Demote User' button for organizaiton admins" do
+        within(".content") do
+          expect(response.body).to have_link("Demote to User")
+        end
+      end
+    end
+
+    describe "POST #promote_to_org_admin" do
+      before { post promote_to_org_admin_organization_path(user_id: user.id, organization_name: organization.short_name) }
+
+      it "promotes the user to org_admin" do
+        expect(user.has_role?(Role::ORG_ADMIN, organization)).to eq(true)
+        expect(response).to redirect_to(admin_organization_path({ id: organization.id }))
+        expect(flash[:notice]).to eq("User has been promoted!")
+      end
+    end
+
+    describe "POST #demote_to_user" do
+      before { post demote_to_user_organization_path(user_id: admin_user.id, organization_name: organization.short_name) }
+
+      it "demotes the org_admin to user" do
+        expect(admin_user.reload.has_role?(Role::ORG_ADMIN, admin_user.organization)).to be_falsey
+        expect(response).to redirect_to(admin_organization_path({ id: organization.id }))
+        expect(flash[:notice]).to eq("User has been demoted!")
       end
     end
   end

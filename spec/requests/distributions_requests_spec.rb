@@ -62,7 +62,7 @@ RSpec.describe "Distributions", type: :request do
     end
 
     describe "GET #index" do
-      let(:item) { create(:item, organization: organization) }
+      let(:item) { create(:item, value_in_cents: 100, organization: organization) }
       let!(:distribution) { create(:distribution, :with_items, :past, item: item, item_quantity: 10, organization: organization) }
 
       it "returns http success" do
@@ -101,6 +101,91 @@ RSpec.describe "Distributions", type: :request do
           expect(edit.attr("class")).to match(/disabled/)
           expect(reclaim.attr("class")).to match(/disabled/)
           expect(response.body).to match(/Has Inactive Items/)
+        end
+      end
+
+      context "when filtering by item id" do
+        let!(:item_2) { create(:item, value_in_cents: 100, organization: organization) }
+        let(:params) { { filters: { by_item_id: item.id } } }
+
+        before do
+          distribution.line_items << create(:line_item, item: item_2, quantity: 10)
+        end
+
+        it "shows value and quantity for that item in distributions" do
+          get distributions_path, params: params
+
+          page = Nokogiri::HTML(response.body)
+          item_quantity, item_value = page.css("table tbody tr td.numeric")
+
+          # total value/quantity of distribution
+          expect(distribution.total_quantity).to eq(20)
+          expect(distribution.value_per_itemizable).to eq(2000)
+
+          # displays quantity of filtered item in distribution
+          # displays total value of distribution
+          expect(item_quantity.text).to eq("10")
+          expect(item_value.text).to eq("$20.00")
+        end
+
+        it "changes the total quantity header" do
+          get distributions_path, params: params
+
+          page = Nokogiri::HTML(response.body)
+          item_total_header, item_value_header = page.css("table thead tr th.numeric")
+
+          expect(item_total_header.text).to eq("Total #{item.name}")
+          expect(item_value_header.text).to eq("Total Value")
+        end
+      end
+
+      context "when filtering by item category id" do
+        let!(:item_category) { create(:item_category, organization:) }
+        let!(:item_category_2) { create(:item_category, organization:) }
+        let!(:item_2) { create(:item, item_category: item_category_2, value_in_cents: 100, organization: organization) }
+        let(:params) { { filters: { by_item_category_id: item.item_category_id } } }
+
+        before do
+          item.update(item_category: item_category)
+          distribution.line_items << create(:line_item, item: item_2, quantity: 10)
+        end
+
+        it "shows value and quantity for that item category in distributions" do
+          get distributions_path, params: params
+
+          page = Nokogiri::HTML(response.body)
+          item_quantity, item_value = page.css("table tbody tr td.numeric")
+
+          # total value/quantity of distribution
+          expect(distribution.total_quantity).to eq(20)
+          expect(distribution.value_per_itemizable).to eq(2000)
+
+          # displays quantity of filtered item in distribution
+          # displays total value of distribution
+          expect(item_quantity.text).to eq("10")
+          expect(item_value.text).to eq("$20.00")
+        end
+
+        it "changes the total quantity header" do
+          get distributions_path, params: params
+
+          page = Nokogiri::HTML(response.body)
+          item_total_header, item_value_header = page.css("table thead tr th.numeric")
+
+          expect(item_total_header.text).to eq("Total in #{item_category.name}")
+          expect(item_value_header.text).to eq("Total Value")
+        end
+
+        it "doesn't show duplicate distributions" do
+          # Add another item in given category so that a JOIN clauses would produce duplicates
+          item.update(item_category: item_category_2, value_in_cents: 50)
+
+          get distributions_path, params: params
+
+          page = Nokogiri::HTML(response.body)
+          distribution_rows = page.css("table tbody tr")
+
+          expect(distribution_rows.count).to eq(1)
         end
       end
     end
@@ -406,37 +491,6 @@ RSpec.describe "Distributions", type: :request do
             put distribution_path(id: distribution.id, distribution: distribution_params)
           end.to change { original_storage_location.size }.by(10) # removes the whole distribution of 10 - increasing inventory
           expect(new_storage_location.size).to eq 25
-        end
-
-        # TODO this test is invalid in event-world since it's handled by the aggregate
-        it "rollsback updates if quantity would go below 0" do
-          next if Event.read_events?(organization)
-
-          distribution = create(:distribution, :with_items, item_quantity: 10, organization: organization)
-          original_storage_location = distribution.storage_location
-
-          # adjust inventory so that updating will set quantity below 0
-          inventory_item = original_storage_location.inventory_items.last
-          inventory_item.quantity = 5
-          inventory_item.save!
-
-          new_storage_location = create(:storage_location)
-          line_item = distribution.line_items.first
-          line_item_params = {
-            "0" => {
-              "_destroy" => "false",
-              item_id: line_item.item_id,
-              quantity: "20",
-              id: line_item.id
-            }
-          }
-          distribution_params = { storage_location_id: new_storage_location.id, line_items_attributes: line_item_params }
-          expect do
-            put :update, params: { id: donation.id, distribution: distribution_params }
-          end.to raise_error(NameError)
-          expect(original_storage_location.size).to eq 5
-          expect(new_storage_location.size).to eq 0
-          expect(distribution.reload.line_items.first.quantity).to eq 10
         end
       end
 

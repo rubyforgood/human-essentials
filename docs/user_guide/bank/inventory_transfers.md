@@ -1,54 +1,59 @@
-DRAFT USER GUIDE
+READY FOR REVIEW
 # Transfers
-If you have multiple storage locations, sometimes you have to move inventory between them.  
-[TODO:  Throughout - doublecheck what requires org_admin, vs what needs org user]
+If you have multiple Storage Locations, sometimes you have to move inventory between them.  
 ## Working with Transfers
-To start working with transfers, click "Inventory",  then "Transfers" in the left-hand menu.
-That will bring up the transfers page, which lists all your past transfers in chronological order.  From here you can make a new transfer, add a transfer, view the details of a past transfer or delete it.
-You can filter the transfers based on source (From), destination(to), and date.
+To start working with Transfers, click "Inventory",  then "Transfers" in the left-hand menu.
+That will bring up the Transfers page, which lists all your past Transfers in chronological order.  
+![Navigation to Transfers](images/inventory/inventory_transfers_navigation.png)
 
-[TODO: Screenshot]
-## Adding a transfer
-To add a transfer, click the "+New Transfer" button on the transfers page.  That will bring up this screen.
+You can filter the Transfers based on source (From), destination(to), and date.
+From here you can make a new Transfer, add a Transfer, view the details of a past Transfer or delete it.
 
-[TODO: Screenshot]
+## Adding a Transfer
+To add a Transfer, click the "+New Transfer" button on the Transfers page. 
+![New Transfer navigation](images/inventory/inventory_transfers_new_navigation.png)
+That will bring up the New Inventory Transfer page.
+![New Transfer](images/inventory/inventory_transfers_new.png)
 
-Specify where the items being moved are coming from, in "From Storage Location," and where they are going to in "To storage location".
+Specify where the Items being moved are coming from, in "From Storage Location," and where they are going to in "To Storage Location".
 
-The Comment field is a good place to note the reason for the transfer, but you can leave it blank.
+The Comment field is a good place to note the reason for the Transfer, but you can leave it blank.
 
-Then select the item and quantity for each item that is being transferred.  If you have [barcodes](inventory_barcodes.md) set up,  you can use your barcode reader to "boop" in the materials being transfered.
+Then select the Item and quantity for each Item that is being Transferred.  If you have [barcodes](inventory_barcodes.md) set up,  you can use your barcode reader to "boop" in the materials being Transfered.
 
-When you are done, click "Save".  The system will check that you have enough inventory in "From" to cover the transfer.  If so, the inventory changes will take place immediately.
+When you are done, click "Save".  The system will check that you have enough inventory in "From" to cover the Transfer.  If so, the inventory changes will take place immediately.
 
-[TODO:  Make clear on each item where it might be unclear when the inventory changes happen.   Probably should write something in the intro for that too]
+## Viewing the details of a Transfer
+To view the details of a Transfer, click the "view" button beside it in the Transfers list.
 
-## Viewing the details of a transfer
-To view the details of a transfer, click the "view" button beside it in the transfers list.
+![view Transfer navigation](images/inventory/inventory_transfers_view_navigation.png)
+This lists all the Items in the Transfer, and how much was transferred, as well as your comment.
+![view Transfer](images/inventory/inventory_transfers_view.png)
+## Deleting a Transfer
 
-[TODO: Screenshot]  
+This should not happen very often!  
 
-This lists all the items in the transfer, and how much was transferred, as well as your comment.
+To delete a Transfer, click the "delete" button beside the Transfer.  
+[Delete Transfer navigation](images/inventory/inventory_transfers_delete.png)
 
-## Deleting a transfer
-
-To delete a transfer, click the "delete" button beside the transfer, and press "OK" to confirm.
-This check that the inventory levels in the two storage locations will allow the change.  If they will, it will roll back the inventory changes that were made when you entered the transfer.
+Then press "OK" to confirm.
+This will check that the inventory levels in the two Storage Locations will allow the change.  If they will, it will roll back the inventory changes that were made when you entered the Transfer.
 
 ##### ** N.B. This is not undoable  *** 
 
 ----
 
-Note:  If you do delete the wrong transfer, you don't have to panic, but it will be a hassle. You can find a record of any transfer made since September 2024 in the "History" Report to grab the numbers and re-enter it.  The inventory changes in that case will be as of the date you re-enter, though.
+[!NOTE]  If you do delete the wrong Transfer, you can find a record of any Transfer made since September 2024 in the "History" Report.  There you can find the amount transferred  for each Item, so that you could re-enter them.  The inventory changes in that case will be as of the date you re-enter, though.
 
 ----
 
-## Exporting transfers
-To export a list of the transfers, click "Export Transfers" on the transfers page
-[TODO: Screenshot]
-[TODO : screenshot of sample export]
+## Exporting Transfers
+To export a list of the Transfers, click "Export Transfers" on the Transfers page
+![Navigation to Transfer export](images/inventory/inventory_transfers_export_navigation.png)
 
-The details in the export are lacking -- it doesn't show each item, but only the total.
-[TODO:  Add a better export to the Things to do]
+The details in the export are lacking -- it doesn't show each Item, but only the total.
+![Sample Transfer export](images/inventory/inventory_transfers_export.png)
 
-[Prior:  Adjustments](inventory_adjustments.md) [Next: Product Drive Participants](community_product_drive_participants.md)
+(Expanding it to include the Items transferred is a task on our things to do.  Please [reach out](intro_ii.md)) if this is a high priority for you.)
+
+[Prior:  Adjustments](inventory_adjustments.md) [Next: Product Drives](community_product_drives.md)
