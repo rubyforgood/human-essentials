@@ -128,10 +128,9 @@ module Partners
     def county_list_by_region
       # provides a county list in case insensitive alpha order, by region, then county name
       counties = served_areas.map(&:county).uniq
-      counties.sort_by!{ |county| [county.region.downcase, county.name.downcase]}  # Our current world only has the US states, so downcasing the region doesn't really matter.
+      counties.sort_by! { |county| [county.region.downcase, county.name.downcase] }  # Our current world only has the US states, so downcasing the region doesn't really matter.
       counties.pluck(:name).join("; ")
     end
-
 
     private
 

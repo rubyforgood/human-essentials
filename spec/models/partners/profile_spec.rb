@@ -310,8 +310,8 @@ RSpec.describe Partners::Profile, type: :model do
   describe "county_list" do
     it "provides a county list in human-alpha by county within region order" do
       county_1 = create(:county, name: "High County, Maine", region: "Maine")
-      county_2 = create(:county, name: "laRue County, Louisiana", region: "Louisiana" )
-      county_3 = create(:county, name: "Ste. Anne County, Louisiana", region: "Louisiana" )
+      county_2 = create(:county, name: "laRue County, Louisiana", region: "Louisiana")
+      county_3 = create(:county, name: "Ste. Anne County, Louisiana", region: "Louisiana")
       profile = create(:partner_profile)
       create(:partners_served_area, partner_profile: profile, county: county_1, client_share: 50)
       create(:partners_served_area, partner_profile: profile, county: county_2, client_share: 40)

@@ -315,8 +315,6 @@ RSpec.describe Partner, type: :model do
                                other_agency_type: other_agency_type
                              })
       partner.update(notes: notes)
-
-
     end
 
     it "should have the expected info in the columns order" do
