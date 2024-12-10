@@ -21,6 +21,7 @@ FactoryBot.define do
     organization { Organization.try(:first) || create(:organization) }
     contact_name { "Don Draper" }
     business_name { "Awesome Business" }
+    address { "123 Front Street, Atlanta, Georgia, 54321" }
     sequence(:email) { |n| "don#{n}@scdp.com" }
     phone { "212-555-1111" }
     comment { "A bit of a lush and philanderer." }
