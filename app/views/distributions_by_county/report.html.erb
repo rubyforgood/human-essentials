@@ -50,9 +50,9 @@
               <tbody>
               <% @breakdown.each do |bd| %>
                 <tr>
-                  <td><%= bd.name %></td>
-                  <td class="numeric"><%= number_with_delimiter(bd.num_items) %></td>
-                  <td class="numeric"><%= dollar_presentation(bd.amount) %></td>
+                  <td><%= bd["name"] %></td>
+                  <td class="numeric"><%= number_with_delimiter(bd["quantity"]) %></td>
+                  <td class="numeric"><%= dollar_presentation(bd["amount"]) %></td>
                 </tr>
               <% end %>
 
