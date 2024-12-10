@@ -186,7 +186,8 @@ class Partner < ApplicationRecord
       "Contact Phone",
       "Contact Email",
       "Notes",
-      "Providing Diapers"
+      "Providing Diapers",
+      "Providing Period Supplies"
     ]
   end
 
@@ -204,12 +205,17 @@ class Partner < ApplicationRecord
       contact_person[:phone],
       contact_person[:email],
       notes,
-      providing_diapers
+      providing_diapers,
+      providing_period_supplies
     ]
   end
 
   def providing_diapers
     distributions.with_diapers.any? ? "Y" : "N"
+  end
+
+  def providing_period_supplies
+    distributions.with_period_supplies.any? ? "Y" : "N"
   end
 
   def contact_person
