@@ -342,18 +342,17 @@ RSpec.describe Partner, type: :model do
       let(:providing_diapers) { "Y" }
       let(:providing_period_supplies) { "Y" }
       let(:distribution) { create(:distribution, partner: partner) }
-      let(:item) { create(:item) }
 
       shared_examples "providing_diapers check" do |scope|
         before do
+          case scope
+          when :disposable
+            item = create(:item, base_item: create(:base_item, category: "Diapers - Childrens"))
+          when :cloth_diapers
+            item = create(:item, base_item: create(:base_item, category: "Diapers - Cloth (Kids)"))
+          end
+
           create(:line_item, item: item, itemizable: distribution)
-
-          # Mock both scopes to return empty collection by default
-          allow(Item).to receive(:disposable) { Item.none }
-          allow(Item).to receive(:cloth_diapers) { Item.none }
-
-          # Mock the given scope to at least satisfy one item
-          allow(Item).to receive(scope) { Item.where(id: item.id) }
         end
 
         it "should have Y as providing_diapers" do
@@ -371,9 +370,8 @@ RSpec.describe Partner, type: :model do
 
       context "with a period supplies item" do
         before do
+          item = create(:item, base_item: create(:base_item, category: "Menstrual Supplies/Items"))
           create(:line_item, item: item, itemizable: distribution)
-          # Mock the given scope to at least satisfy one item
-          allow(Item).to receive(:period_supplies) { Item.where(id: item.id) }
         end
 
         it "should have Y as providing_period_supplies" do
