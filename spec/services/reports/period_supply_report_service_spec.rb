@@ -34,11 +34,11 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
         # Spec will ensure that only the required data is included.
 
         # Kits
-        period_supplies_kit = create(:kit, :with_item, organization: organization)
-        another_period_supply_kit = create(:kit, :with_item, organization: organization)
-        donated_period_supply_kit = create(:kit, :with_item, organization: organization)
-        purchased_period_supply_kit = create(:kit, :with_item, organization: organization)
-        pad_and_tampon_kit = create(:kit, :with_item, organization: organization)
+        period_supplies_kit = create_kit(organization: organization)
+        another_period_supply_kit = create_kit(organization: organization)
+        donated_period_supply_kit = create_kit(organization: organization)
+        purchased_period_supply_kit = create_kit(organization: organization)
+        pad_and_tampon_kit = create_kit(organization: organization)
 
         create(:base_item, name: "Adult Pads", partner_key: "adult pads", category: "Menstrual Supplies")
         create(:base_item, name: "Adult Tampons", partner_key: "adult tampons", category: "Menstrual Supplies")

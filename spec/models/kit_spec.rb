@@ -110,7 +110,7 @@ RSpec.describe Kit, type: :model do
   end
 
   describe '#can_deactivate?' do
-    let(:kit) { create(:kit, organization: organization) }
+    let(:kit) { create_kit(organization: organization) }
 
     context 'with inventory' do
       it 'should return false' do
