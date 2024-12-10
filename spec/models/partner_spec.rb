@@ -299,6 +299,7 @@ RSpec.describe Partner, type: :model do
     let(:agency_type) { Partner::AGENCY_TYPES["OTHER"] }
     let(:other_agency_type) { "Another Agency Name" }
     let(:notes) { "Some notes" }
+    let(:providing_diapers) { "N" }
 
     before do
       partner.profile.update({
@@ -330,8 +331,40 @@ RSpec.describe Partner, type: :model do
         contact_name,
         contact_phone,
         contact_email,
-        notes
+        notes,
+        providing_diapers
       ])
+    end
+
+    context "when partner has a distribution" do
+      let(:providing_diapers) { "Y" }
+      let(:distribution) { create(:distribution, partner: partner) }
+      let(:item) { create(:item) }
+
+      shared_examples "providing_diapers check" do |scope|
+        before do
+          create(:line_item, item: item, itemizable: distribution)
+
+          # Mock both scopes to return empty collection by default
+          allow(Item).to receive(:disposable) { Item.none }
+          allow(Item).to receive(:cloth_diapers) { Item.none }
+
+          # Mock the given scope to at least satisfy one item
+          allow(Item).to receive(scope) { Item.where(id: item.id) }
+        end
+
+        it "should have Y as providing_diapers" do
+          expect(partner.csv_export_attributes[12]).to eq(providing_diapers)
+        end
+      end
+
+      context "with a disposable item" do
+        include_examples "providing_diapers check", :disposable
+      end
+
+      context "with a cloth diaper item" do
+        include_examples "providing_diapers check", :cloth_diapers
+      end
     end
   end
 
