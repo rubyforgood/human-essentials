@@ -1,5 +1,7 @@
 # [Super Admin] Manage the BaseItems -- this is the only place in the app where Base Items can be
 # added / modified. Base Items are both the template and common thread for regular Items
+#
+# See #4656, BaseItems are pending significant changes/possible deletion
 class Admin::BaseItemsController < AdminController
   def edit
     @base_item = BaseItem.find(params[:id])
@@ -40,7 +42,9 @@ class Admin::BaseItemsController < AdminController
 
   def destroy
     @base_item = BaseItem.includes(:items).find(params[:id])
-    if @base_item.items.any? && @base_item.destroy
+    if @base_item.id == KitCreateService.find_or_create_kit_base_item!.id
+      redirect_to admin_base_items_path, alert: "You cannot delete the Kits base item. This is reserved for all Kits."
+    elsif @base_item.items.empty? && @base_item.destroy
       redirect_to admin_base_items_path, notice: "Base Item deleted!"
     else
       redirect_to admin_base_items_path, alert: "Failed to delete Base Item. Are there still items attached?"
