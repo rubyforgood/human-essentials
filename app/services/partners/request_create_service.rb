@@ -4,19 +4,22 @@ module Partners
 
     attr_reader :partner_request
 
-    def initialize(partner_user_id:, comments: nil, for_families: false, item_requests_attributes: [], additional_attrs: {})
+    def initialize(request_type:, partner_user_id:, comments: nil, item_requests_attributes: [], additional_attrs: {})
       @partner_user_id = partner_user_id
       @comments = comments
-      @for_families = for_families
+      @request_type = request_type
       @item_requests_attributes = item_requests_attributes
       @additional_attrs = additional_attrs
     end
 
     def call
-      @partner_request = ::Request.new(partner_id: partner.id,
+      @partner_request = ::Request.new(
+        partner_id: partner.id,
         organization_id: organization_id,
         comments: comments,
-        partner_user_id: partner_user_id)
+        request_type: request_type,
+        partner_user_id: partner_user_id
+      )
       @partner_request = populate_item_request(@partner_request)
       @partner_request.assign_attributes(additional_attrs)
 
@@ -44,6 +47,7 @@ module Partners
       partner_request = ::Request.new(partner_id: partner.id,
         organization_id: organization_id,
         comments: comments,
+        request_type: request_type,
         partner_user_id: partner_user_id)
       partner_request = populate_item_request(partner_request)
       partner_request.assign_attributes(additional_attrs)
@@ -52,7 +56,7 @@ module Partners
 
     private
 
-    attr_reader :partner_user_id, :comments, :item_requests_attributes, :additional_attrs
+    attr_reader :partner_user_id, :comments, :item_requests_attributes, :additional_attrs, :request_type
 
     def populate_item_request(partner_request)
       # Exclude any line item that is completely empty
