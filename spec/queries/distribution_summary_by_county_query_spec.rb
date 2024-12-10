@@ -1,21 +1,33 @@
 RSpec.describe DistributionSummaryByCountyQuery do
-  let(:year) { Time.current.year }
-  let(:issued_at_last_year) { Time.current.change(year: year - 1).to_datetime }
-  let(:distributions) { [] }
-  let(:organization_id) { organization.id }
-  let(:start_date) { nil }
-  let(:end_date) { nil }
-  let(:params) { {organization_id:, start_date:, end_date:} }
-
-  include_examples "distribution_by_county"
-
-  before do
-    create(:storage_location, organization: organization)
+  let(:organization) { create(:organization, name: "Some Unique Name") }
+  let(:item_1) { create(:item, value_in_cents: 1050, organization: organization) }
+  let(:partner_1) do
+    create(:partner, organization:, without_profile: true) do |p|
+      p.profile = create(:partner_profile, partner: p, organization:) do |pp|
+        pp.served_areas = create_list(:partners_served_area, 4, partner_profile: pp, client_share: 25) do |sa|
+          sa.county = create(:county)
+        end
+      end
+    end
+  end
+  let(:partner_2) do
+    create(:partner, organization:, without_profile: true) do |p|
+      p.profile = create(:partner_profile, partner: p, organization:) do |pp|
+        pp.served_areas = create_list(:partners_served_area, 5, partner_profile: pp, client_share: 20) do |sa, i|
+          # create one overlapping service area
+          sa.county = i.zero? ? partner_1.profile.served_areas[0].county : create(:county)
+        end
+      end
+    end
   end
 
-  describe "get_breakdown" do
+  let(:now) { Time.current.to_datetime }
+
+  let(:params) { {organization_id: organization.id, start_date: nil, end_date: nil} }
+
+  describe "call" do
     it "will have 100% unspecified shows if no served_areas" do
-      create(:distribution, :with_items, item: item_1, organization: user.organization)
+      create(:distribution, :with_items, item: item_1, organization: organization)
       breakdown = DistributionSummaryByCountyQuery.new(**params).call
       expect(breakdown.size).to eq(1)
       expect(breakdown[0]["quantity"]).to eq(100)
@@ -23,7 +35,7 @@ RSpec.describe DistributionSummaryByCountyQuery do
     end
 
     it "divides the item numbers and values according to the partner profile" do
-      create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1)
+      create(:distribution, :with_items, item: item_1, organization: organization, partner: partner_1)
       breakdown = DistributionSummaryByCountyQuery.new(**params).call
       expect(breakdown.size).to eq(5)
       expect(breakdown[4]["quantity"]).to eq(0)
@@ -35,8 +47,8 @@ RSpec.describe DistributionSummaryByCountyQuery do
     end
 
     it "handles multiple partners with overlapping service areas properly" do
-      create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
-      create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_2, issued_at: issued_at_present)
+      create(:distribution, :with_items, item: item_1, organization: organization, partner: partner_1, issued_at: now)
+      create(:distribution, :with_items, item: item_1, organization: organization, partner: partner_2, issued_at: now)
       breakdown = DistributionSummaryByCountyQuery.new(**params).call
       num_with_45 = 0
       num_with_20 = 0
