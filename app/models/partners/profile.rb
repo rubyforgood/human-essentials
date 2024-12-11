@@ -91,6 +91,7 @@ module Partners
 
     has_many :served_areas, foreign_key: "partner_profile_id", class_name: "Partners::ServedArea", dependent: :destroy, inverse_of: :partner_profile
 
+    has_many :counties, through: :served_areas
     accepts_nested_attributes_for :served_areas, allow_destroy: true
 
     has_many_attached :documents
@@ -127,9 +128,7 @@ module Partners
 
     def county_list_by_region
       # provides a county list in case insensitive alpha order, by region, then county name
-      counties = served_areas.map(&:county).uniq
-      counties.sort_by! { |county| [county.region.downcase, county.name.downcase] }  # Our current world only has the US states, so downcasing the region doesn't really matter.
-      counties.pluck(:name).join("; ")
+      self.counties.order(%w(lower(region) lower(name))).pluck(:name).join("; ")
     end
 
     private
