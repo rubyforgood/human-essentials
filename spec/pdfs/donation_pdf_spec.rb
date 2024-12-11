@@ -82,17 +82,17 @@ describe DonationPdf do
     it "renders correctly" do
       pdf = described_class.new(organization, product_drive_donation)
       pdf_test = PDF::Reader.new(StringIO.new(pdf.compute_and_render))
-      expect(pdf_test.page(1).text).to include(product_drive_donation.product_drive_participant.business_name)
-      expect(pdf_test.page(1).text).to include(product_drive_donation.product_drive_participant.email)
-      expect(pdf_test.page(1).text).to include(product_drive_donation.product_drive_participant.address)
-      expect(pdf_test.page(1).text).to include(product_drive_donation.comment)
+      expect(pdf_test.page(1).text).to include("A Good Place to Collect Diapers")
+      expect(pdf_test.page(1).text).to include("good@place.is")
+      expect(pdf_test.page(1).text).to include("123 Front Street, Atlanta, Georgia, 54321")
+      expect(pdf_test.page(1).text).to include("A product drive donation")
     end
 
     it "renders correctly without a product drive participant" do
       pdf = described_class.new(organization, product_drive_donation_without_participant)
       pdf_test = PDF::Reader.new(StringIO.new(pdf.compute_and_render))
-      expect(pdf_test.page(1).text).to include(product_drive_donation_without_participant.product_drive.name)
-      expect(pdf_test.page(1).text).to include(product_drive_donation_without_participant.comment)
+      expect(pdf_test.page(1).text).to include("Product Drive -- Second Best Product Drive")
+      expect(pdf_test.page(1).text).to include("A product drive donation")
     end
   end
 end
