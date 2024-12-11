@@ -171,7 +171,7 @@ class DistributionsController < ApplicationController
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
     @distribution.initialize_request_items
     if (!@distribution.complete? && @distribution.future?) ||
-        current_user.has_role?(Role::ORG_ADMIN, current_organization)
+        current_user.has_cached_role?(Role::ORG_ADMIN, current_organization)
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.alphabetized
       @partner_list = current_organization.partners.alphabetized
