@@ -11,7 +11,7 @@ class StorageLocationsController < ApplicationController
   def index
     @inventory = View::Inventory.new(current_organization.id)
     @selected_item_category = filter_params[:containing]
-    @items = StorageLocation.items_inventoried(current_organization, @inventory)
+    @items = @inventory.items_for_select
     @include_inactive_storage_locations = params[:include_inactive_storage_locations].present?
     @storage_locations = current_organization.storage_locations.alphabetized
     if filter_params[:containing].present?

@@ -1,4 +1,7 @@
 class ItemCreateService
+  Success = Data.define(:item) { def success? = true }
+  Failure = Data.define(:error) { def success? = false }
+
   def initialize(organization_id:, item_params:, request_unit_ids: [])
     @organization_id = organization_id
     @request_unit_ids = request_unit_ids
@@ -12,9 +15,9 @@ class ItemCreateService
       new_item.sync_request_units!(@request_unit_ids)
     end
 
-    OpenStruct.new(success?: true, item: new_item)
+    Success.new(item: new_item)
   rescue StandardError => e
-    OpenStruct.new(success?: false, error: e)
+    Failure.new(error: e)
   end
 
   private
