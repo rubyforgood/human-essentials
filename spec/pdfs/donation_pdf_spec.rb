@@ -7,7 +7,7 @@ describe DonationPdf do
   end
   let(:product_drive) { create(:product_drive, name: "Second Best Product Drive") }
   let(:product_drive_participant) {
-    create(:product_drive_participant, business_name: "A Good Place to Collect Diapers", address: "123 Front Street, Atlanta, Georgia, 54321", email: "good@place.is")
+    create(:product_drive_participant, business_name: "A Good Place to Collect Diapers", address: "1500 Remount Road, Front Royal, VA 22630", email: "good@place.is")
   }
   let(:product_drive_donation) do
     create(:donation, organization: organization, product_drive: product_drive, source: Donation::SOURCES[:product_drive],
@@ -31,7 +31,6 @@ describe DonationPdf do
   before(:each) do
     create(:line_item, itemizable: donation, item: item1, quantity: 50)
     create(:line_item, itemizable: donation, item: item2, quantity: 100)
-    allow_any_instance_of(ProductDriveParticipant).to receive(:geocode).and_return(true)
   end
 
   specify "#donation_data" do
@@ -84,7 +83,7 @@ describe DonationPdf do
       pdf_test = PDF::Reader.new(StringIO.new(pdf.compute_and_render))
       expect(pdf_test.page(1).text).to include("A Good Place to Collect Diapers")
       expect(pdf_test.page(1).text).to include("good@place.is")
-      expect(pdf_test.page(1).text).to include("123 Front Street, Atlanta, Georgia, 54321")
+      expect(pdf_test.page(1).text).to include("1500 Remount Road, Front Royal, VA 22630")
       expect(pdf_test.page(1).text).to include("A product drive donation")
     end
 
