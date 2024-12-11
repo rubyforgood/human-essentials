@@ -73,6 +73,10 @@ class Distribution < ApplicationRecord
     where("issued_at > :start_date AND issued_at <= :end_date",
           start_date: Time.zone.today.beginning_of_week.beginning_of_day, end_date: Time.zone.today.end_of_week.end_of_day)
   end
+  scope :in_last_12_months, -> do
+    where("issued_at > :start_date AND issued_at <= :end_date",
+          start_date: 12.months.ago.beginning_of_day, end_date: Time.zone.today.end_of_day)
+  end
 
   delegate :name, to: :partner, prefix: true
 

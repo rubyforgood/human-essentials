@@ -211,11 +211,11 @@ class Partner < ApplicationRecord
   end
 
   def providing_diapers
-    distributions.with_diapers.any? ? "Y" : "N"
+    distributions.in_last_12_months.with_diapers.any? ? "Y" : "N"
   end
 
   def providing_period_supplies
-    distributions.with_period_supplies.any? ? "Y" : "N"
+    distributions.in_last_12_months.with_period_supplies.any? ? "Y" : "N"
   end
 
   def contact_person
