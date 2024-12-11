@@ -139,6 +139,34 @@ RSpec.describe Distribution, type: :model do
       end
     end
 
+    describe "in_last_12_months >" do
+      context "when the current date is December 31, 2023" do
+        before do
+          travel_to Time.zone.local(2023, 12, 31)
+        end
+
+        after do
+          travel_back
+        end
+
+        it "includes distributions issued within the last 12 months" do
+          included_distribution = create(:distribution, organization: organization, issued_at: Time.zone.local(2023, 1, 1))
+          excluded_distribution = create(:distribution, organization: organization, issued_at: Time.zone.local(2022, 12, 30))
+          distributions = Distribution.in_last_12_months
+          expect(distributions).to include(included_distribution)
+          expect(distributions).not_to include(excluded_distribution)
+        end
+
+        it "includes distributions up to the current date and excludes future ones" do
+          current_distribution = create(:distribution, organization: organization, issued_at: Time.zone.local(2023, 12, 31))
+          future_distribution = create(:distribution, organization: organization, issued_at: Time.zone.local(2024, 1, 1))
+          distributions = Distribution.in_last_12_months
+          expect(distributions).to include(current_distribution)
+          expect(distributions).not_to include(future_distribution)
+        end
+      end
+    end
+
     describe "by_item_id >" do
       it "only returns distributions with given item id" do
         # create 2 items with unique ids
