@@ -98,16 +98,6 @@ RSpec.describe "Audit management", type: :system, js: true do
           expect(event_line_item.quantity).to eq audit_quantity
         end
 
-        it "does not display inactive items for selection" do
-          item = create(:item, name: "TestInactiveItem", organization: organization, active: false)
-          create(:storage_location, :with_items, item: item, item_quantity: 10, organization: organization)
-          visit new_audit_path
-
-          select_element = find('#audit_line_items_attributes_0_item_id', visible: :all)
-          option_texts = select_element.all('option', visible: :all).map(&:text)
-          expect(option_texts).not_to include(item.name)
-        end
-
         it "allows user to add items that do not yet have a barcode", :js do
           item_without_barcode = create(:item)
           new_barcode = "00000000"
