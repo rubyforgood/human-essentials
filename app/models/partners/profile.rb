@@ -128,7 +128,7 @@ module Partners
 
     def county_list_by_region
       # provides a county list in case insensitive alpha order, by region, then county name
-      self.counties.order(%w(lower(region) lower(name))).pluck(:name).join("; ")
+      counties.order(%w(lower(region) lower(name))).pluck(:name).join("; ")
     end
 
     private
