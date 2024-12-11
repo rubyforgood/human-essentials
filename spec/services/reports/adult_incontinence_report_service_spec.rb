@@ -10,7 +10,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
     it 'should report zero values' do
       expect(report.report[:name]).to eq("Adult Incontinence")
       expect(report.report[:entries]).to match(hash_including({
-                                      "Adult incontinence supplies distributed" => 0,
+                                      "Adult incontinence supplies distributed" => "0",
                                       "Adults Assisted Per Month" => 0,
                                       "% adult incontinence bought" => "0%",
                                       "% adult incontinence supplies donated" => "0%",
@@ -120,7 +120,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
                                           "% adult incontinence supplies donated" => "40%",
                                           "Adults Assisted Per Month" => 10,
                                           "Adult incontinence supplies distributed" => "2,040",
-                                          "Adult incontinence supplies per adult per month" => 2,
+                                          "Adult incontinence supplies per adult per month" => 17.0,
                                           "Money spent purchasing adult incontinence supplies" => "$30.00"
                                         }))
         expect(report.report[:entries]['Adult incontinence supplies'].split(', '))
@@ -135,7 +135,8 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
                              "Underpads (Pack)",
                              "Adult Liners",
                              "Wipes (Adult)",
-                             "1T Diapers")
+                             "1T Diapers",
+                             "2T Diapers")
       end
 
       it 'should handle null distribution quantity' do
@@ -144,8 +145,8 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
                                           "% adult incontinence bought" => "60%",
                                           "% adult incontinence supplies donated" => "40%",
                                           "Adult incontinence supplies distributed" => "2,040",
-                                          "Adults Assisted Per Month" => 4,
-                                          "Adult incontinence supplies per adult per month" => 12,
+                                          "Adults Assisted Per Month" => 5,
+                                          "Adult incontinence supplies per adult per month" => 34,
                                           "Money spent purchasing adult incontinence supplies" => "$30.00"
                                       }))
         expect(report.report[:entries]['Adult incontinence supplies'].split(', '))
@@ -160,7 +161,8 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
                              "Underpads (Pack)",
                              "Adult Liners",
                              "Wipes (Adult)",
-                             "2T Diapers")
+                             "3T Diapers",
+                             "4T Diapers")
       end
     end
   end

@@ -16,7 +16,7 @@ module Reports
                     entries: {
                       'Adult incontinence supplies distributed' => number_with_delimiter(distributed_loose_supplies + distributed_adult_incontinence_items_from_kits),
                       'Adults Assisted Per Month' => adults_served_per_month.round,
-                      'Adult incontinence supplies per adult per month' => (monthly_supplies&.round || 0) / (adults_served_per_month.round.nonzero? || 1),
+                      'Adult incontinence supplies per adult per month' => supplies_per_adult_per_month.round,
                       'Adult incontinence supplies' => types_of_supplies,
                       '% adult incontinence supplies donated' => "#{percent_donated.round}%",
                       '% adult incontinence bought' => "#{percent_bought.round}%",
@@ -35,20 +35,19 @@ module Reports
     end
 
     # @return [Integer]
+    def total_supplies_distributed
+      distributed_loose_supplies + distributed_adult_incontinence_items_from_kits
+    end
+
     def monthly_supplies
-      # NOTE: This is asking "per adult per month" but there doesn't seem to be much difference
-      # in calculating per month or per any other time frame, since all it's really asking
-      # is the value of the `distribution_quantity` field for the items we're giving out.
-      organization
-        .distributions
-        .for_year(year)
-        .joins(line_items: :item)
-        .merge(Item.adult_incontinence)
-        .average('COALESCE(items.distribution_quantity, 50)')
+      total_supplies_distributed / 12.0
+    end
+
+    def supplies_per_adult_per_month
+      monthly_supplies / (adults_served_per_month.nonzero? || 1)
     end
 
     def types_of_supplies
-      # require 'pry'; binding.pry
       organization.items.adult_incontinence.map(&:name).uniq.sort.join(', ')
     end
 
@@ -122,7 +121,7 @@ module Reports
     end
 
     def adults_served_per_month
-      (total_people_served_with_loose_supplies_per_month + total_people_served_with_supplies_from_kits_per_month) /12
+      (total_people_served_with_loose_supplies_per_month + total_people_served_with_supplies_from_kits_per_month) / 12
     end
 
     def total_people_served_with_loose_supplies_per_month
@@ -132,7 +131,7 @@ module Reports
         .joins(line_items: :item)
         .merge(Item.adult_incontinence)
         .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50)')
-    end
+    end # returing 100
 
     def total_people_served_with_supplies_from_kits_per_month
       organization
