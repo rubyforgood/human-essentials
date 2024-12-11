@@ -81,8 +81,8 @@ class OrganizationsController < ApplicationController
   private
 
   def authorize_user
-    verboten! unless current_user.has_role?(Role::SUPER_ADMIN) ||
-      current_user.has_role?(Role::ORG_USER, current_organization)
+    verboten! unless current_user.has_cached_role?(Role::SUPER_ADMIN) ||
+      current_user.has_cached_role?(Role::ORG_USER, current_organization)
   end
 
   def organization_params
@@ -121,7 +121,7 @@ class OrganizationsController < ApplicationController
   end
 
   def user_update_redirect_path
-    if current_user.has_role?(Role::SUPER_ADMIN)
+    if current_user.has_cached_role?(Role::SUPER_ADMIN)
       admin_organization_path(current_organization.id)
     else
       organization_path
