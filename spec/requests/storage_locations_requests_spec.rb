@@ -15,6 +15,12 @@ RSpec.describe "StorageLocations", type: :request do
           address: "123 Donation Site Way",
           warehouse_type: StorageLocation::WAREHOUSE_TYPES.first)
       end
+      let!(:storage_location2) do
+        create(:storage_location,
+          name: "Test Storage Location 1",
+          address: "123 Donation Site Way",
+          warehouse_type: StorageLocation::WAREHOUSE_TYPES.first)
+      end
 
       context "html" do
         let(:response_format) { 'html' }
@@ -22,6 +28,25 @@ RSpec.describe "StorageLocations", type: :request do
         it "succeeds" do
           get storage_locations_path(format: response_format)
           expect(response).to be_successful
+        end
+
+        it "displays grand total across storage locations" do
+          item1 = create(:item, name: "Item A", value_in_cents: 100)
+          item2 = create(:item, name: "Item B", value_in_cents: 200)
+
+          TestInventory.create_inventory(storage_location.organization,
+            { storage_location.id => { item1.id => 2, item2.id => 1 } })
+          TestInventory.create_inventory(storage_location2.organization,
+            { storage_location2.id => { item1.id => 3 } })
+          get storage_locations_path(format: response_format)
+          page = Nokogiri::HTML(response.body)
+
+          total_row = page.at("table tbody tr:last-child")
+          total_inventory = total_row.css("td.text-right")[0].text.strip
+          total_value = total_row.css("td.text-right")[1].text.strip
+
+          expect(total_inventory).to eq("6")
+          expect(total_value).to eq("$7.00")
         end
 
         context "with inactive locations" do
