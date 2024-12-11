@@ -447,7 +447,6 @@ RSpec.describe Item, type: :model do
   end
 
   describe "kit items" do
-
     context "with kit and regular items" do
       let(:organization) { create(:organization) }
       let(:kit) { create(:kit, organization: organization) }
