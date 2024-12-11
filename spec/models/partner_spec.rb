@@ -381,7 +381,7 @@ RSpec.describe Partner, type: :model do
     end
 
     context "when partner only has distribution older than a 12 months" do
-      let(:distribution) { create(:distribution, issued_at: 24.months.ago.beginning_of_day, partner: partner) }
+      let(:distribution) { create(:distribution, issued_at: (12.months.ago.beginning_of_day - 1.day), partner: partner) }
       let(:disposable_diapers_item) { create(:item, base_item: create(:base_item, category: "Diapers - Childrens")) }
       let(:cloth_diapers_item) { create(:item, base_item: create(:base_item, category: "Diapers - Cloth (Kids)")) }
       let(:period_supplies_item) { create(:item, base_item: create(:base_item, category: "Menstrual Supplies/Items")) }
