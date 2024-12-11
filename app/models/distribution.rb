@@ -47,6 +47,8 @@ class Distribution < ApplicationRecord
   enum state: { scheduled: 5, complete: 10 }
   enum delivery_method: { pick_up: 0, delivery: 1, shipped: 2 }
   scope :active, -> { joins(:line_items).joins(:items).where(items: { active: true }) }
+  scope :with_diapers, -> { joins(line_items: :item).merge(Item.disposable.or(Item.cloth_diapers)) }
+  scope :with_period_supplies, -> { joins(line_items: :item).merge(Item.period_supplies) }
   # add item_id scope to allow filtering distributions by item
   scope :by_item_id, ->(item_id) { includes(:items).where(items: { id: item_id }) }
   # partner scope to allow filtering by partner
@@ -70,6 +72,10 @@ class Distribution < ApplicationRecord
   scope :this_week, -> do
     where("issued_at > :start_date AND issued_at <= :end_date",
           start_date: Time.zone.today.beginning_of_week.beginning_of_day, end_date: Time.zone.today.end_of_week.end_of_day)
+  end
+  scope :in_last_12_months, -> do
+    where("issued_at > :start_date AND issued_at <= :end_date",
+          start_date: 12.months.ago.beginning_of_day, end_date: Time.zone.today.end_of_day)
   end
 
   delegate :name, to: :partner, prefix: true

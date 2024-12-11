@@ -299,6 +299,8 @@ RSpec.describe Partner, type: :model do
     let(:agency_type) { Partner::AGENCY_TYPES["OTHER"] }
     let(:other_agency_type) { "Another Agency Name" }
     let(:notes) { "Some notes" }
+    let(:providing_diapers) { "N" }
+    let(:providing_period_supplies) { "N" }
 
     before do
       partner.profile.update({
@@ -330,8 +332,73 @@ RSpec.describe Partner, type: :model do
         contact_name,
         contact_phone,
         contact_email,
-        notes
+        notes,
+        providing_diapers,
+        providing_period_supplies
       ])
+    end
+
+    context "when partner has a distribution in the last 12 months" do
+      let(:providing_diapers) { "Y" }
+      let(:providing_period_supplies) { "Y" }
+      let(:distribution) { create(:distribution, partner: partner) }
+
+      shared_examples "providing_diapers check" do |scope|
+        before do
+          case scope
+          when :disposable
+            item = create(:item, base_item: create(:base_item, category: "Diapers - Childrens"))
+          when :cloth_diapers
+            item = create(:item, base_item: create(:base_item, category: "Diapers - Cloth (Kids)"))
+          end
+
+          create(:line_item, item: item, itemizable: distribution)
+        end
+
+        it "should have Y as providing_diapers" do
+          expect(partner.csv_export_attributes[12]).to eq(providing_diapers)
+        end
+      end
+
+      context "with a disposable item" do
+        include_examples "providing_diapers check", :disposable
+      end
+
+      context "with a cloth diaper item" do
+        include_examples "providing_diapers check", :cloth_diapers
+      end
+
+      context "with a period supplies item" do
+        before do
+          item = create(:item, base_item: create(:base_item, category: "Menstrual Supplies/Items"))
+          create(:line_item, item: item, itemizable: distribution)
+        end
+
+        it "should have Y as providing_period_supplies" do
+          expect(partner.csv_export_attributes[13]).to eq(providing_period_supplies)
+        end
+      end
+    end
+
+    context "when partner only has distribution older than a 12 months" do
+      let(:distribution) { create(:distribution, issued_at: 24.months.ago.beginning_of_day, partner: partner) }
+      let(:disposable_diapers_item) { create(:item, base_item: create(:base_item, category: "Diapers - Childrens")) }
+      let(:cloth_diapers_item) { create(:item, base_item: create(:base_item, category: "Diapers - Cloth (Kids)")) }
+      let(:period_supplies_item) { create(:item, base_item: create(:base_item, category: "Menstrual Supplies/Items")) }
+
+      before do
+        create(:line_item, item: disposable_diapers_item, itemizable: distribution)
+        create(:line_item, item: cloth_diapers_item, itemizable: distribution)
+        create(:line_item, item: period_supplies_item, itemizable: distribution)
+      end
+
+      it "should have N as providing_diapers" do
+        expect(partner.csv_export_attributes[12]).to eq(providing_diapers)
+      end
+
+      it "should have N as providing_period_supplies" do
+        expect(partner.csv_export_attributes[13]).to eq(providing_period_supplies)
+      end
     end
   end
 
