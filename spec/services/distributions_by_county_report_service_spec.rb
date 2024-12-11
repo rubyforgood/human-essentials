@@ -1,6 +1,6 @@
 RSpec.describe DistributionByCountyReportService, type: :service do
   let(:year) { Time.current.year }
-  let(:issued_at_last_year) { Time.current.utc.change(year: year - 1).to_datetime }
+  let(:issued_at_last_year) { Time.current.change(year: year - 1).to_datetime }
   let(:distributions) { [] }
 
   include_examples "distribution_by_county"
