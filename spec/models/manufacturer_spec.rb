@@ -53,11 +53,12 @@ RSpec.describe Manufacturer, type: :model do
         today = Time.zone.today
         from = (today-1.month).beginning_of_day
         to = today.end_of_day
-        dates_in_order = []
-        4.times do
-          dates_in_order << Faker::Date.between(from: from, to: to)
-        end
-        dates_in_order.sort.reverse
+        dates_in_order = [
+          today,
+          today-1.day,
+          today-2.day,
+          today-3.day,
+        ]
 
         @mfg1 = create(:manufacturer)
         create(:donation, :with_items, item_quantity: 5, source: Donation::SOURCES[:manufacturer], manufacturer: @mfg1, issued_at: dates_in_order[0])
