@@ -122,7 +122,7 @@ module Reports
     end
 
     def adults_served_per_month
-      total_people_served_with_loose_supplies_per_month + total_people_served_with_supplies_from_kits_per_month
+      (total_people_served_with_loose_supplies_per_month + total_people_served_with_supplies_from_kits_per_month) /12
     end
 
     def total_people_served_with_loose_supplies_per_month
@@ -131,16 +131,17 @@ module Reports
         .for_year(year)
         .joins(line_items: :item)
         .merge(Item.adult_incontinence)
-        .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50)') / 12
+        .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50)')
     end
 
     def total_people_served_with_supplies_from_kits_per_month
       organization
-      .distributions.for_year(year)
-      .joins(line_items: {item: :kit})
-      .merge(Item.adult_incontinence)
-      .where.not(items: {kit_id: nil})
-      .sum('line_items.quantity / COALESCE(items.distribution_quantity, 1)') / 12
+        .distributions
+        .for_year(year)
+        .joins(line_items: {item: :kit})
+        .merge(Item.adult_incontinence)
+        .where.not(items: {kit_id: nil})
+        .sum('line_items.quantity / COALESCE(items.distribution_quantity, 1)')
     end
   end
 end

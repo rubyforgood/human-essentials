@@ -14,7 +14,6 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
                                       "Adults Assisted Per Month" => 0,
                                       "% adult incontinence bought" => "0%",
                                       "% adult incontinence supplies donated" => "0%",
-                                      "Adult incontinence supplies distributed" => "0",
                                       "Adult incontinence supplies per adult per month" => 0,
                                       "Money spent purchasing adult incontinence supplies" => "$0.00"
                                   }))
@@ -42,14 +41,15 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
         adult_incontinence_item = organization.items.adult_incontinence.first
         non_adult_incontinence_item = organization.items.where.not(id: organization.items.adult_incontinence).first
 
-      # kits
-        kit = create(:kit, organization: organization)
+        # kits
+        kit_1 = create(:kit, organization: organization)
+        kit_2 = create(:kit, organization: organization)
 
         create(:base_item, name: "Adult Pads", partner_key: "adult pads", category: "adult pads")
         create(:base_item, name: "Adult wipes", partner_key: "adult wipes", category: "adult wipes")
 
-        adult_kit_item_1 = create(:item, name: "Adult Pads", partner_key: "adult pads", kit: kit)
-        adult_kit_item_2 = create(:item, name: "Adult Wipes", partner_key: "adult wipes", kit: kit)
+        adult_kit_item_1 = create(:item, name: "Adult Pads", partner_key: "adult pads", kit: kit_1)
+        adult_kit_item_2 = create(:item, name: "Adult Wipes", partner_key: "adult wipes", kit: kit_2)
         # We will create data both within and outside our date range, and both adult_incontinence and non adult_incontinence.
         # Spec will ensure that only the required data is included.
 
@@ -118,7 +118,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
         expect(report.report[:entries]).to match(hash_including({
                                           "% adult incontinence bought" => "60%",
                                           "% adult incontinence supplies donated" => "40%",
-                                          "Adults Assisted Per Month" => 9,
+                                          "Adults Assisted Per Month" => 10,
                                           "Adult incontinence supplies distributed" => "2,040",
                                           "Adult incontinence supplies per adult per month" => 2,
                                           "Money spent purchasing adult incontinence supplies" => "$30.00"
