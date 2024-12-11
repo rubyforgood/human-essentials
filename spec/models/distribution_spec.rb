@@ -176,6 +176,39 @@ RSpec.describe Distribution, type: :model do
         expect(Distribution.by_location(location_1.id)).not_to include(dist2)
       end
     end
+
+    describe "with_diapers >" do
+      let(:disposable_item) { create(:item, base_item: create(:base_item, category: "Diapers - Childrens")) }
+      let(:cloth_diaper_item) { create(:item, base_item: create(:base_item, category: "Diapers - Cloth (Kids)")) }
+      let(:non_diaper_item) { create(:item, base_item: create(:base_item, category: "Menstrual Supplies/Items")) }
+
+      it "only includes distributions with disposable or cloth_diaper items" do
+        dist1 = create(:distribution, :with_items, item: disposable_item)
+        dist2 = create(:distribution, :with_items, item: cloth_diaper_item)
+        dist3 = create(:distribution, :with_items, item: non_diaper_item)
+
+        distributions = Distribution.with_diapers
+        expect(distributions.count).to eq(2)
+        expect(distributions).to include(dist1)
+        expect(distributions).to include(dist2)
+        expect(distributions).not_to include(dist3)
+      end
+    end
+
+    describe "with_period_supplies >" do
+      let(:period_supplies_item) { create(:item, base_item: create(:base_item, category: "Menstrual Supplies/Items")) }
+      let(:non_period_supplies_item) { create(:item, base_item: create(:base_item, category: "Diapers - Childrens")) }
+
+      it "only includes distributions with period supplies items" do
+        dist1 = create(:distribution, :with_items, item: period_supplies_item)
+        dist2 = create(:distribution, :with_items, item: non_period_supplies_item)
+
+        distributions = Distribution.with_period_supplies
+        expect(distributions.count).to eq(1)
+        expect(distributions).to include(dist1)
+        expect(distributions).not_to include(dist2)
+      end
+    end
   end
 
   context "Callbacks >" do
