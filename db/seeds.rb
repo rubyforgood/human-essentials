@@ -19,26 +19,12 @@ end
 # Script-Global Variables
 # ----------------------------------------------------------------------------
 
-# Initial starting qty for our test organizations
-base_items = File.read(Rails.root.join("db", "base_items.json"))
-items_by_category = JSON.parse(base_items)
-
 # ----------------------------------------------------------------------------
 # Base Items
 # ----------------------------------------------------------------------------
 
-items_by_category.each do |category, entries|
-  entries.each do |entry|
-    BaseItem.find_or_create_by!(name: entry["name"], category: category, partner_key: entry["key"])
-  end
-end
-
-# Create global 'Kit' base item
-BaseItem.find_or_create_by!(
-  name: 'Kit',
-  category: 'kit',
-  partner_key: 'kit'
-)
+require 'seeds'
+Seeds.seed_base_items
 
 # ----------------------------------------------------------------------------
 # NDBN Members
@@ -553,7 +539,7 @@ def seed_quantity(item_name, organization, storage_location, quantity)
   AdjustmentCreateService.new(adjustment).call
 end
 
-items_by_category.each do |_category, entries|
+JSON.parse(File.read(Rails.root.join("db", "base_items.json"))).each do |_category, entries|
   entries.each do |entry|
     seed_quantity(entry['name'], pdx_org, inv_arbor, entry['qty']['arbor'])
     seed_quantity(entry['name'], pdx_org, inv_pdxdb, entry['qty']['pdxdb'])
@@ -753,7 +739,8 @@ end
 Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "new_logo")
 Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "read_events")
 Flipper.enable(:read_events)
-
+Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "partner_step_form")
+Flipper.enable(:partner_step_form)
 # ----------------------------------------------------------------------------
 # Account Requests
 # ----------------------------------------------------------------------------
@@ -880,10 +867,10 @@ TransferCreateService.call(transfer)
 # Users invitation status
 # ----------------------------------------------------------------------------
 # Mark users `invitation_status` as `accepted`
-# 
+#
 # Addresses and resolves issue #4689, which can be found in:
 # https://github.com/rubyforgood/human-essentials/issues/4689
-User.where(invitation_token: nil).each do |user| 
+User.where(invitation_token: nil).each do |user|
   user.update!(
     invitation_sent_at: Time.current,
     invitation_accepted_at: Time.current
