@@ -41,6 +41,13 @@ RSpec.describe "Donations", type: :system, js: true do
         visit subject
         expect(page).to have_no_content "Inactive R Us"
       end
+
+      it "orders donations by when donation occurred" do
+        create(:donation, issued_at: Time.zone.yesterday, comment: "Created first")
+        create(:donation, issued_at: Time.zone.now, comment: "Created second")
+        visit subject
+        expect("Created second").to appear_before("Created first")
+      end
     end
 
     context "When filtering on the index page" do
