@@ -35,7 +35,7 @@ RSpec.describe TransferDestroyService, type: :service do
     context 'when there are no issues' do
       it 'should return a success monad with success? returning true' do
         expect { subject }.to change { TransferDestroyEvent.count }.by(1)
-        expect(subject).to be_a_kind_of(TransferDestroyService::Success)
+        expect(subject).to be_a_kind_of(Success)
         expect(subject.success?).to eq(true)
       end
 
@@ -55,7 +55,7 @@ RSpec.describe TransferDestroyService, type: :service do
         end
 
         it 'should return a failure monad with an ActiveRecord::RecordNotFound error' do
-          expect(subject).to be_a_kind_of(TransferDestroyService::Failure)
+          expect(subject).to be_a_kind_of(Failure)
           expect(subject.success?).to eq(false)
           expect(subject.error).to be_a_kind_of(ActiveRecord::RecordNotFound)
         end
@@ -67,7 +67,7 @@ RSpec.describe TransferDestroyService, type: :service do
         end
 
         it 'should return a failure monad with the raised error' do
-          expect(subject).to be_a_kind_of(TransferDestroyService::Failure)
+          expect(subject).to be_a_kind_of(Failure)
           expect(subject.success?).to eq(false)
           expect(subject.error.message).to eq('OH NOES')
         end
@@ -80,7 +80,7 @@ RSpec.describe TransferDestroyService, type: :service do
         end
 
         it 'should return a failure monad with the raised error' do
-          expect(subject).to be_a_kind_of(TransferDestroyService::Failure)
+          expect(subject).to be_a_kind_of(Failure)
           expect(subject.success?).to eq(false)
           expect(subject.error).to eq(fake_error)
         end
@@ -93,7 +93,7 @@ RSpec.describe TransferDestroyService, type: :service do
       end
 
       it 'should return an failure monad with the raised error' do
-        expect(subject).to be_a_kind_of(TransferDestroyService::Failure)
+        expect(subject).to be_a_kind_of(Failure)
         expect(subject.success?).to eq(false)
         expect(subject.error).to be_a_kind_of(StandardError)
       end

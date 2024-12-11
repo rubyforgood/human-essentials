@@ -1,7 +1,4 @@
 class TransferDestroyService
-  Success = Data.define { def success? = true }
-  Failure = Data.define(:error) { def success? = false }
-
   def initialize(transfer_id:)
     @transfer_id = transfer_id
   end

@@ -1,6 +1,11 @@
 class ItemCreateService
-  Success = Data.define(:item) { def success? = true }
-  Failure = Data.define(:error) { def success? = false }
+  Success = Class.new(::Success) do
+    attr_reader :item
+
+    def initialize(item:)
+      @item = item
+    end
+  end
 
   def initialize(organization_id:, item_params:, request_unit_ids: [])
     @organization_id = organization_id
