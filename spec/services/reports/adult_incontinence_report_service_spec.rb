@@ -164,8 +164,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
                             "2T Diapers",
                             "Adult Cloth Diapers (Large/XL/XXL)",
                             "Adult Cloth Diapers (Small/Medium)",
-                            "Adult Pads", "Liners (Incontinence)"
-                            )
+                            "Adult Pads", "Liners (Incontinence)")
       end
     end
   end
