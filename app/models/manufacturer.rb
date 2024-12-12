@@ -26,7 +26,7 @@ class Manufacturer < ApplicationRecord
     donations.joins(:line_items).sum(:quantity)
   end
 
-  def self.by_donation_date(count=10, date_range=nil)
+  def self.by_donation_date(count = 10, date_range = nil)
     # selects manufacturers that have donation qty > 0 in the provided date range
     # and sorts them by the date of the most recent donation
     joins(donations: :line_items).where(donations: { issued_at: date_range })
