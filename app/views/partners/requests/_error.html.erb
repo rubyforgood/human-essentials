@@ -9,7 +9,7 @@
     <p class='text-lg font-bold'>
       Ensure each line item has a item selected AND a quantity greater than 0.
       <% if Flipper.enabled?(:enable_packs) && current_partner.organization.request_units.any? %>
-        Please ensure a unit is selected for each item that supports it.
+        Please ensure a single unit is selected for each item that supports it.
       <% end %>
     </p>
     <p class='text-md'>
