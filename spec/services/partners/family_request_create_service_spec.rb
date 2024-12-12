@@ -96,6 +96,28 @@ RSpec.describe Partners::FamilyRequestCreateService do
           expect(first_item_request.quantity.to_i).to eq(first_item_request.item.default_quantity)
           expect(second_item_request.quantity.to_i).to eq(second_item_request.item.default_quantity * 4)
         end
+
+        context "with for_families false" do
+          let(:for_families) { false }
+
+          it "creates a request of type individual" do
+            expect { subject }.to change { Request.count }.by(1)
+
+            partner_request = Request.last
+            expect(partner_request.request_type).to eq("individual")
+          end
+        end
+
+        context "with for_families true" do
+          let(:for_families) { true }
+
+          it "creates a request of type child" do
+            expect { subject }.to change { Request.count }.by(1)
+
+            partner_request = Request.last
+            expect(partner_request.request_type).to eq("child")
+          end
+        end
       end
 
       context 'without children' do
@@ -120,7 +142,7 @@ RSpec.describe Partners::FamilyRequestCreateService do
         let(:fake_request_create_service) { instance_double(Partners::RequestCreateService, call: -> {}, errors: [], partner_request: -> {}) }
 
         before do
-          allow(Partners::RequestCreateService).to receive(:new).with(partner_user_id: partner_user.id, comments: comments, for_families: false, item_requests_attributes: contain_exactly(*expected_item_request_attributes)).and_return(fake_request_create_service)
+          allow(Partners::RequestCreateService).to receive(:new).with(partner_user_id: partner_user.id, request_type: "individual", comments: comments, item_requests_attributes: contain_exactly(*expected_item_request_attributes)).and_return(fake_request_create_service)
         end
 
         it 'should send the correct request payload to the Partners::RequestCreateService and call it' do
