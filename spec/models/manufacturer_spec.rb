@@ -48,7 +48,7 @@ RSpec.describe Manufacturer, type: :model do
     end
 
     describe "by_donation_date" do
-      before(:all) do
+      before do
         # Prepare manufacturers with donations for tests
         today = Time.zone.today
         from = (today - 1.month).beginning_of_day
