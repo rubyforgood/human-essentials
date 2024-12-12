@@ -19,7 +19,6 @@ module Diaper
     config.load_defaults 7.0
     config.legacy_connection_handling = false
     config.action_dispatch.return_only_media_type_on_content_type = false
-    config.exceptions_app = routes
 
     config.active_job.queue_adapter = :delayed_job
 

@@ -120,6 +120,10 @@ class User < ApplicationRecord
     "normal"
   end
 
+  def is_admin?(org)
+    has_role?(Role::ORG_ADMIN, org) || has_role?(Role::SUPER_ADMIN)
+  end
+
   def switchable_roles
     all_roles = roles.to_a.group_by(&:resource_id)
     all_roles.values.each do |role_list|

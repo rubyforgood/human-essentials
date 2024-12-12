@@ -21,7 +21,7 @@ module Partners
       request_create_svc = Partners::RequestCreateService.new(
         partner_user_id: partner_user_id,
         comments: comments,
-        for_families: @for_families,
+        request_type: request_type,
         item_requests_attributes: item_requests_attributes
       )
 
@@ -37,6 +37,15 @@ module Partners
       end
 
       self
+    end
+
+    def initialize_only
+      Partners::RequestCreateService.new(
+        partner_user_id: partner_user_id,
+        comments: comments,
+        request_type: request_type,
+        item_requests_attributes: item_requests_attributes
+      ).initialize_only
     end
 
     private
@@ -71,6 +80,10 @@ module Partners
 
     def included_items_by_id
       @included_items_by_id ||= Item.where(id: family_requests_attributes.pluck(:item_id)).index_by(&:id)
+    end
+
+    def request_type
+      @for_families ? "child" : "individual"
     end
   end
 end

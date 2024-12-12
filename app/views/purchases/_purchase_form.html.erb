@@ -18,7 +18,7 @@
                           collection: @storage_locations,
                           label: "Storage Location",
                           error: "Where is it being stored?",
-                          selected: new_purchase_default_location(@purchase),
+                          selected: default_location(@purchase),
                           wrapper: :input_group %>
       </div>
     </div>
@@ -27,7 +27,8 @@
       <div class="col-xs-8 col-md-6">
         <%= f.input :amount_spent,
                     label: "Purchase Total",
-                    wrapper: :input_group %>
+                    wrapper: :input_group,
+                    required: true %>
       </div>
     </div>
 

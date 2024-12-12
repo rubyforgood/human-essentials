@@ -14,12 +14,12 @@ module ApplicationHelper
     end
   end
 
-  def active_class(name)
-    name.include?(controller_path) ? "active" : controller_path
+  def active_class(controller_action_names)
+    (controller_action_names.include?(params[:controller]) || controller_action_names.include?("#{params[:controller]}/#{params[:action]}")) ? 'active' : ''
   end
 
-  def menu_open?(name)
-    name.include?(controller_path) ? 'menu-open' : ''
+  def menu_open?(controller_action_names)
+    (controller_action_names.include?(params[:controller]) || controller_action_names.include?("#{params[:controller]}/#{params[:action]}")) ? 'menu-open' : ''
   end
 
   def can_administrate?
@@ -123,5 +123,9 @@ module ApplicationHelper
       return source_object.partner.default_storage_location_id
     end
     current_organization.default_storage_location
+  end
+
+  def default_location(source_object)
+    current_organization.default_storage_location || source_object.storage_location_id.presence || current_organization.intake_location
   end
 end

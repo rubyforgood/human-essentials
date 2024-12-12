@@ -1,5 +1,5 @@
 class AuditEvent < Event
-  serialize :data, EventTypes::StructCoder.new(EventTypes::AuditPayload)
+  serialize :data, coder: EventTypes::StructCoder.new(EventTypes::AuditPayload)
 
   # @param audit [Audit]
   def self.publish(audit)

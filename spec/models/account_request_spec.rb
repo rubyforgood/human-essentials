@@ -15,10 +15,9 @@
 #  updated_at           :datetime         not null
 #  ndbn_member_id       :bigint
 #
-require 'rails_helper'
 
 RSpec.describe AccountRequest, type: :model do
-  let(:account_request) { FactoryBot.create(:account_request) }
+  let(:account_request) { create(:account_request) }
 
   describe 'associations' do
     it { should have_one(:organization).class_name('Organization') }
@@ -39,9 +38,12 @@ RSpec.describe AccountRequest, type: :model do
     it { should allow_value(Faker::Internet.email).for(:email) }
     it { should_not allow_value("not_email").for(:email) }
 
+    it { should allow_value(Faker::Internet.url).for(:organization_website) }
+    it { should_not allow_value("www.example.com").for(:organization_website) }
+
     context 'when the email provided is already used by an existing organization' do
       before do
-        FactoryBot.create(:organization, email: account_request.email)
+        create(:organization, email: account_request.email)
       end
 
       it 'should not allow the email' do
@@ -118,7 +120,7 @@ RSpec.describe AccountRequest, type: :model do
 
     context 'when the account request has a associated organization' do
       before do
-        FactoryBot.create(:organization, account_request_id: account_request.id)
+        create(:organization, account_request_id: account_request.id)
       end
 
       it 'should return true' do
@@ -127,12 +129,27 @@ RSpec.describe AccountRequest, type: :model do
     end
   end
 
+  describe '#can_be_closed?' do
+    it 'returns true when the status can be closed' do
+      subject.status = %w[started user_confirmed].sample
+      expect(subject.can_be_closed?).to eq(true)
+    end
+
+    it 'returns false when the status cannot be closed' do
+      subject.status = 'rejected'
+      expect(subject.can_be_closed?).to eq(false)
+    end
+  end
+
   specify '#confirm!' do
     mail_double = instance_double(ActionMailer::MessageDelivery, deliver_later: nil)
     allow(AccountRequestMailer).to receive(:approval_request).and_return(mail_double)
+
     freeze_time do
       expect(account_request.confirmed_at).to be_nil
+
       account_request.confirm!
+
       expect(account_request.reload.confirmed_at).to eq(Time.zone.now)
       expect(account_request).to be_user_confirmed
       expect(AccountRequestMailer).to have_received(:approval_request)
@@ -144,12 +161,20 @@ RSpec.describe AccountRequest, type: :model do
   specify '#reject!' do
     mail_double = instance_double(ActionMailer::MessageDelivery, deliver_later: nil)
     allow(AccountRequestMailer).to receive(:rejection).and_return(mail_double)
+
     account_request.reject!('because I said so')
+
     expect(account_request.reload.rejection_reason).to eq('because I said so')
     expect(account_request).to be_rejected
     expect(AccountRequestMailer).to have_received(:rejection)
       .with(account_request_id: account_request.id)
     expect(mail_double).to have_received(:deliver_later)
+  end
+
+  specify "#close!" do
+    account_request.close!('because I said so')
+    expect(account_request.reload.rejection_reason).to eq('because I said so')
+    expect(account_request).to be_admin_closed
   end
 
   describe "versioning" do

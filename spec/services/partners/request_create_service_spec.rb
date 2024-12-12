@@ -1,16 +1,16 @@
-require 'rails_helper'
-
 RSpec.describe Partners::RequestCreateService do
   describe '#call' do
     subject { described_class.new(**args).call }
     let(:args) do
       {
         partner_user_id: partner_user.id,
+        request_type: request_type,
         comments: comments,
         item_requests_attributes: item_requests_attributes
       }
     end
     let(:partner_user) { partner.primary_user }
+    let(:request_type) { nil }
     let(:partner) { create(:partner) }
     let(:comments) { Faker::Lorem.paragraph }
     let(:item_requests_attributes) do
@@ -86,6 +86,71 @@ RSpec.describe Partners::RequestCreateService do
         expect(NotifyPartnerJob).to have_received(:perform_now).with(Request.last.id)
       end
 
+      it 'should have created item requests' do
+        subject
+        expect(Partners::ItemRequest.count).to eq(item_requests_attributes.count)
+      end
+
+      context "when request_type is child" do
+        let(:request_type) { "child" }
+
+        it "creates a request with of that type" do
+          expect { subject }.to change { Request.count }.by(1)
+
+          expect(Request.last.request_type).to eq("child")
+        end
+      end
+
+      context "when request_type is individual" do
+        let(:request_type) { "individual" }
+
+        it "creates a request with of that type" do
+          expect { subject }.to change { Request.count }.by(1)
+
+          expect(Request.last.request_type).to eq("individual")
+        end
+      end
+
+      context "when request_type is quantity" do
+        let(:request_type) { "quantity" }
+
+        it "creates a request with of that type" do
+          expect { subject }.to change { Request.count }.by(1)
+
+          expect(Request.last.request_type).to eq("quantity")
+        end
+      end
+
+      context 'when we have duplicate item as part of request' do
+        let(:duplicate_item) { FactoryBot.create(:item) }
+        let(:unique_item) { FactoryBot.create(:item) }
+        let(:item_requests_attributes) do
+          [
+            ActionController::Parameters.new(
+              item_id: duplicate_item.id,
+              quantity: 3
+            ),
+            ActionController::Parameters.new(
+              item_id: unique_item.id,
+              quantity: 7
+            ),
+            ActionController::Parameters.new(
+              item_id: duplicate_item.id,
+              quantity: 5
+            )
+          ]
+        end
+        it 'should add the quantity of the duplicate item' do
+          subject
+          aggregate_failures {
+            expect(Partners::ItemRequest.count).to eq(2)
+            expect(Partners::ItemRequest.find_by(item_id: duplicate_item.id).quantity).to eq("8")
+            expect(Partners::ItemRequest.find_by(item_id: unique_item.id).quantity).to eq("7")
+            expect(Partners::ItemRequest.first.item_id).to eq(duplicate_item.id)
+          }
+        end
+      end
+
       context 'but a unexpected error occured during the save' do
         let(:error_message) { 'boom' }
 
@@ -108,6 +173,37 @@ RSpec.describe Partners::RequestCreateService do
           end
         end
       end
+    end
+  end
+
+  describe "#initialize_only" do
+    subject { described_class.new(**args).initialize_only }
+    let(:args) do
+      {
+        partner_user_id: partner_user.id,
+        request_type: request_type,
+        comments: comments,
+        item_requests_attributes: item_requests_attributes
+      }
+    end
+    let(:partner_user) { partner.primary_user }
+    let(:partner) { create(:partner) }
+    let(:request_type) { "child" }
+    let(:comments) { Faker::Lorem.paragraph }
+    let(:item) { FactoryBot.create(:item) }
+    let(:item_requests_attributes) do
+      [
+        ActionController::Parameters.new(
+          item_id: item.id,
+          quantity: 25
+        )
+      ]
+    end
+
+    it "creates a partner request in memory only" do
+      expect(subject.id).to be_nil
+      expect(subject.item_requests.first.item.name).to eq(item.name)
+      expect(subject.item_requests.first.quantity).to eq("25")
     end
   end
 end

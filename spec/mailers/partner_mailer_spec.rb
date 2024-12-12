@@ -1,4 +1,4 @@
-RSpec.describe PartnerMailer, type: :mailer, seed_items: false do
+RSpec.describe PartnerMailer, type: :mailer do
   describe "#recertification_request" do
     subject { PartnerMailer.recertification_request(partner: partner) }
     let(:partner) { create(:partner) }
@@ -28,7 +28,7 @@ RSpec.describe PartnerMailer, type: :mailer, seed_items: false do
 
     it "renders the body with text that indicates the result and a link to their dashboard" do
       expect(subject.body.encoded).to include("Hi #{partner.name}")
-      expect(subject.body.encoded).to include("#{partner.organization.name} has approved your application.")
+      expect(subject.body.encoded).to include("You have been approved to make requests for essentials to #{partner.organization.name}.")
       expect(subject.body.encoded).to include("/partners/dashboard")
     end
   end

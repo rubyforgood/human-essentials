@@ -14,7 +14,7 @@
               <i class="fa fa-dashboard"></i> Home
             <% end %>
           </li>
-          <li class="breadcrumb-item"><%= link_to "Distributions", (distributions_path) %></li>
+          <li class="breadcrumb-item"><%= link_to "Distributions", distributions_path %></li>
           <li class="breadcrumb-item"><a href="#"><%= @distribution.partner.name %>
             <% if @distribution.persisted? %>
               <%= "(#{@distribution.created_at.strftime("%m/%d/%Y")})" %></li>
@@ -40,7 +40,7 @@
                 <th>Delivery method:</th>
                 <th>Shipping cost:</th>
                 <th>Comments:</th>
-                <th>State:</th>
+                <th>Status:</th>
               </tr>
               </thead>
               <tbody>
@@ -92,7 +92,7 @@
             <%= print_button_to print_distribution_path(@distribution, format: :pdf), {size: "md"} %>
           </div>
           <% if @distribution.has_inactive_item? %>
-            <div class="warning">
+            <div class="low_prioirty_warning">
               You can only correct distributions where all the items are active.
               If you need to make a correction, please make the following items active: <%= @distribution.inactive_items.map(&:name).join(", ") %>
             </div>

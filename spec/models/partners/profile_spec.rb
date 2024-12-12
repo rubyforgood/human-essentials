@@ -79,7 +79,6 @@
 #  essentials_bank_id             :bigint
 #  partner_id                     :integer
 #
-require "rails_helper"
 
 RSpec.describe Partners::Profile, type: :model do
   describe "associations" do
@@ -95,12 +94,21 @@ RSpec.describe Partners::Profile, type: :model do
   end
 
   describe "request settings validation for profile" do
-    subject { FactoryBot.build(:partner_profile, enable_child_based_requests: false, enable_individual_requests: false, enable_quantity_based_requests: false) }
+    subject { build(:partner_profile, enable_child_based_requests: false, enable_individual_requests: false, enable_quantity_based_requests: false) }
 
     context "no settings are set to true" do
-      it "should not be valid" do
+      it "sets error at base when feature flag disabled for partner step form" do
+        allow(Flipper).to receive(:enabled?).with("partner_step_form").and_return(false)
+
         expect(subject).to_not be_valid
         expect(subject.errors[:base]).to include("At least one request type must be set")
+      end
+
+      it "sets error at field level when feature flag enabled for partner step form" do
+        allow(Flipper).to receive(:enabled?).with("partner_step_form").and_return(true)
+
+        expect(subject).to_not be_valid
+        expect(subject.errors[:enable_child_based_requests]).to include("At least one request type must be set")
       end
     end
 
@@ -117,7 +125,7 @@ RSpec.describe Partners::Profile, type: :model do
 
   describe "social media info validation for profile" do
     context "no social media presence and the checkbox isn't checked" do
-      let(:profile) { FactoryBot.build(:partner_profile, website: "", twitter: "", facebook: "", instagram: "", no_social_media_presence: false) }
+      let(:profile) { build(:partner_profile, website: "", twitter: "", facebook: "", instagram: "", no_social_media_presence: false) }
 
       it "should not be valid" do
         expect(profile.valid?(:edit)).to eq(false)
@@ -131,7 +139,7 @@ RSpec.describe Partners::Profile, type: :model do
     end
 
     context "no social media presence and the checkbox is checked" do
-      let(:profile) { FactoryBot.build(:partner_profile, website: "", twitter: "", facebook: "", instagram: "", no_social_media_presence: true) }
+      let(:profile) { build(:partner_profile, website: "", twitter: "", facebook: "", instagram: "", no_social_media_presence: true) }
 
       it "should be valid" do
         expect(profile.valid?(:edit)).to eq(true)
@@ -139,7 +147,7 @@ RSpec.describe Partners::Profile, type: :model do
     end
 
     context "has social media presence and the checkbox is unchecked" do
-      let(:profile) { FactoryBot.build(:partner_profile, no_social_media_presence: false) }
+      let(:profile) { build(:partner_profile, no_social_media_presence: false) }
 
       it "with just a website it should be valid" do
         profile.update(website: "some website URL", twitter: "", facebook: "", instagram: "")
@@ -168,9 +176,88 @@ RSpec.describe Partners::Profile, type: :model do
     end
   end
 
+  describe "split pick up email" do
+    let(:profile) { build(:partner_profile, pick_up_email: "pick_up@org.com, pick_up2@org.com") }
+    it "should disregard commas at the beginning or end of the string" do
+      profile.update(pick_up_email: ", pick_up@org.com, pick_up2@org.com,")
+      expect(profile.split_pick_up_emails).to match_array(["pick_up@org.com", "pick_up2@org.com"])
+    end
+
+    it "should allow optional whitespace between email addresses" do
+      profile.update(pick_up_email: "pick_up@org.com, pick_up2@org.com")
+      expect(profile.split_pick_up_emails).to match_array(["pick_up@org.com", "pick_up2@org.com"])
+      profile.update(pick_up_email: "pick_up@org.com,pick_up2@org.com")
+      expect(profile.split_pick_up_emails).to match_array(["pick_up@org.com", "pick_up2@org.com"])
+    end
+
+    it "should handle nil value" do
+      profile.update(pick_up_email: nil)
+      expect(profile.split_pick_up_emails).to be_nil
+    end
+
+    it "should return empty array if for when pick_up_email is an empty string" do
+      profile.update(pick_up_email: "")
+      expect(profile.split_pick_up_emails).to match_array([])
+    end
+
+    it "should correctly split strings" do
+      profile.update(pick_up_email: "test me, pick_up@org.com, pick_up2@org.com, test me")
+      expect(profile.split_pick_up_emails).to match_array(["test", "me", "pick_up@org.com", "pick_up2@org.com", "test", "me"])
+      profile.update(pick_up_email: "test me. pick_up@org.com, pick_up2@org.com. test me")
+      expect(profile.split_pick_up_emails).to match_array(["test", "me.", "pick_up@org.com", "pick_up2@org.com.", "test", "me"])
+    end
+  end
+
+  describe "pick up email address validation" do
+    context "number of email addresses" do
+      let(:profile) { build(:partner_profile, pick_up_email: "pick_up@org.com, pick_up2@org.com, pick_up3@org.com, pick_up4@org.com") }
+      it "should not allow more than three email addresses" do
+        expect(profile).to_not be_valid
+        profile.update(pick_up_email: "pick_up@org.com, pick_up2@org.com, pick_up3@org.com")
+        expect(profile).to be_valid
+      end
+
+      it "should not allow repeated email addresses" do
+        profile.update(pick_up_email: "pick_up@org.com, pick_up2@org.com, pick_up@org.com")
+        expect(profile).to_not be_valid
+      end
+    end
+
+    context "invalid emails" do
+      let(:profile) { build(:partner_profile, pick_up_email: "pick_up@org.com, pick_up2@org.com, asdf") }
+      it "should not allow invalid email addresses" do
+        expect(profile).to_not be_valid
+        profile.update(pick_up_email: "test me, pick_up@org.com, pick_up2@org.com, test me")
+        expect(profile).to_not be_valid
+        profile.update(pick_up_email: "pick_up@org.com, pick_up2@org.com")
+        expect(profile).to be_valid
+      end
+
+      it "should not allow input having emails separated by non-word characters" do
+        profile.update(pick_up_email: "test me. pick_up@org.com, pick_up2@org.com. test me")
+        expect(profile).to_not be_valid
+        profile.update(pick_up_email: "pick_up@org.com. pick_up2@org.com")
+        expect(profile).to_not be_valid
+        profile.update(pick_up_email: "pick_up@org.com.pick_up2@org.com")
+        expect(profile).to_not be_valid
+        profile.update(pick_up_email: "pick_up@org.com/ pick_up2@org.com/ pick_up3@org.com")
+        expect(profile).to_not be_valid
+        profile.update(pick_up_email: "pick_up@org.com- pick_up2@org.com- pick_up3@org.com")
+        expect(profile).to_not be_valid
+        profile.update(pick_up_email: "pick_up@org.com' pick_up2@org.com' pick_up3@org.com")
+        expect(profile).to_not be_valid
+      end
+
+      it "should handle nil value" do
+        profile.update(pick_up_email: nil)
+        expect(profile).to be_valid
+      end
+    end
+  end
+
   describe "client share behaviour" do
     context "no served areas" do
-      let(:profile) { FactoryBot.build(:partner_profile) }
+      let(:profile) { build(:partner_profile) }
       it "has 0 client share" do
         expect(profile.client_share_total).to eq(0)
         expect(profile.valid?).to eq(true)
@@ -178,7 +265,9 @@ RSpec.describe Partners::Profile, type: :model do
     end
 
     context "multiple" do
-      it "sums the client shares " do
+      it "sums the client shares and sets error at base when feature flag disabled for partner step form" do
+        allow(Flipper).to receive(:enabled?).with("partner_step_form").and_return(false)
+
         profile = create(:partner_profile)
         county1 = create(:county, name: "county1", region: "region1")
         county2 = create(:county, name: "county2", region: "region2")
@@ -187,6 +276,22 @@ RSpec.describe Partners::Profile, type: :model do
         profile.reload
         expect(profile.client_share_total).to eq(99)
         expect(profile.valid?).to eq(false)
+        expect(profile.errors[:base]).to include("Total client share must be 0 or 100")
+      end
+
+      it "sets error at field level when feature flag enabled for partner step form" do
+        allow(Flipper).to receive(:enabled?).with("partner_step_form").and_return(true)
+
+        profile = create(:partner_profile)
+        county1 = create(:county, name: "county1", region: "region1")
+        county2 = create(:county, name: "county2", region: "region2")
+        create(:partners_served_area, partner_profile: profile, county: county1, client_share: 50)
+        create(:partners_served_area, partner_profile: profile, county: county2, client_share: 49)
+        profile.reload
+
+        expect(profile.client_share_total).to eq(99)
+        expect(profile.valid?).to eq(false)
+        expect(profile.errors[:client_share]).to include("Total client share must be 0 or 100")
       end
 
       it "is valid if client share sum is 100" do

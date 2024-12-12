@@ -22,7 +22,7 @@ FactoryBot.define do
     sequence(:email) { |n| "leslie#{n}@gmail.com" }
     notes { "Lorem ipsum" }
     send_reminders { true }
-    organization_id { Organization.try(:first).try(:id) || create(:organization, skip_items: true).id }
+    organization_id { Organization.try(:first).try(:id) || create(:organization).id }
 
     trait :approved do
       status { :approved }
@@ -40,12 +40,16 @@ FactoryBot.define do
       status { :awaiting_review }
     end
 
+    trait :deactivated do
+      status { :deactivated }
+    end
+
     after(:create) do |partner, evaluator|
       next if evaluator.try(:without_profile)
 
       # Create associated records
       create(:partner_profile, partner_id: partner.id)
-      create(:partners_user, email: partner.email, name: partner.name, partner: partner)
+      create(:partner_user, email: partner.email, name: partner.name, partner: partner)
     end
   end
 end

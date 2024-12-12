@@ -46,13 +46,14 @@ class Admin::OrganizationsController < AdminController
 
   def create
     @organization = Organization.new(organization_params)
+    @user = User.new(user_params)
 
     if @organization.save
       Organization.seed_items(@organization)
-      @user = UserInviteService.invite(name: user_params[:name],
-                                       email: user_params[:email],
-                                       roles: [Role::ORG_USER, Role::ORG_ADMIN],
-                                       resource: @organization)
+      UserInviteService.invite(name: user_params[:name],
+                               email: user_params[:email],
+                               roles: [Role::ORG_USER, Role::ORG_ADMIN],
+                               resource: @organization)
       SnapshotEvent.publish(@organization) # need one to start with
       redirect_to admin_organizations_path, notice: "Organization added!"
     else

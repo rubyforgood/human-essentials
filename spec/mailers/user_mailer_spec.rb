@@ -1,4 +1,4 @@
-RSpec.describe User, type: :mailer, seed_items: false do
+RSpec.describe User, type: :mailer do
   describe "#role_added" do
     let(:user) { create(:user, email: "me@me.com") }
     let(:partner) { create(:partner, name: "Partner 1") }
@@ -22,7 +22,7 @@ RSpec.describe User, type: :mailer, seed_items: false do
       let(:mail) { ActionMailer::Base.deliveries.last }
 
       it "sends an email with instructions" do
-        expect(mail.body.encoded).to include("For security reasons these invitations expire. This invitation will expire in 8 hours or if a new password reset is triggered.")
+        expect(mail.body.encoded).to include("For security reasons these invitations expire. This invitation will expire in 6 hours or if a new password reset is triggered.")
       end
     end
   end

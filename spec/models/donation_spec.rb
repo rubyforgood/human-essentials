@@ -23,9 +23,9 @@ RSpec.describe Donation, type: :model do
   # it_behaves_like "pagination"
 
   context "Validations >" do
-    it "must belong to an organization" do
-      expect(build(:donation, organization_id: nil)).not_to be_valid
-    end
+    it { should belong_to(:organization) }
+    it { should belong_to(:storage_location) }
+
     it "requires a donation_site if the source is 'Donation Site'" do
       expect(build_stubbed(:donation_site_donation, source: "Donation Site", donation_site: nil)).not_to be_valid
       expect(build(:donation, source: "Misc. Donation", donation_site: nil)).to be_valid
@@ -45,9 +45,6 @@ RSpec.describe Donation, type: :model do
       expect(build(:donation, source: nil)).not_to be_valid
       expect(build(:donation, source: "Something new")).not_to be_valid
     end
-    it "requires an inventory (storage location)" do
-      expect(build(:donation, storage_location_id: nil)).not_to be_valid
-    end
     it "is invalid when the line items are invalid" do
       d = build(:donation)
       d.line_items << build(:line_item, quantity: nil)
@@ -55,6 +52,10 @@ RSpec.describe Donation, type: :model do
     end
     it "ensures that the issued at is no earlier than 2000" do
       d = build(:donation, issued_at: '1999-12-31')
+      expect(d).not_to be_valid
+    end
+    it "ensures that the issued at is no later than 1 year" do
+      d = build(:donation, issued_at: DateTime.now.next_year(2).to_s)
       expect(d).not_to be_valid
     end
   end
