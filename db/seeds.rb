@@ -89,10 +89,17 @@ Organization.all.find_each do |org|
   org.items.order(created_at: :desc).last.update(active: false)
 end
 
+def seed_random_item_with_name(organization, name)
+  base_items = BaseItem.all.map(&:to_h)
+  base_item = Array.wrap(base_items).sample
+  base_item[:name] = name
+  organization.seed_items(base_item)
+end
+
 # Add a couple unique items based on random base items named after the sc_bank
 # so it will be clear if they are showing up where they aren't supposed to be
-4.times.each do |index|
-  sc_org.seed_random_item_with_name("Second City Item ##{index + 1}")
+4.times do |index|
+  seed_random_item_with_name(sc_org, "Second City Item ##{index + 1}")
 end
 
 # Keep a list of these unique items so its easy to use them for later records
