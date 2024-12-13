@@ -104,6 +104,24 @@ RSpec.describe "Distributions", type: :request do
         end
       end
 
+      context "with filters" do
+        it "shows all active partners in dropdown filter unrestricted by current filter" do
+          inactive_partner_name = create(:partner, :deactivated, organization:).name
+          active_partner_name = distribution.partner.name
+
+          # Filter by date with no distributions
+          params = { filters: { date_range: "January 1,9999 - January 1,9999"} }
+
+          get distributions_path, params: params
+          page = Nokogiri::HTML(response.body)
+          partner_select = page.at_css("select[name='filters[by_partner]']")
+
+          expect(partner_select).to be_present
+          expect(partner_select.text).to include(active_partner_name)
+          expect(partner_select.text).not_to include(inactive_partner_name)
+        end
+      end
+
       context "when filtering by item id" do
         let!(:item_2) { create(:item, value_in_cents: 100, organization: organization) }
         let(:params) { { filters: { by_item_id: item.id } } }
@@ -215,6 +233,20 @@ RSpec.describe "Distributions", type: :request do
         expect(response).to have_error
       end
 
+      it "renders #new on failure with only active items in dropdown" do
+        create(:item, organization: organization, name: 'Active Item')
+        create(:item, :inactive, organization: organization, name: 'Inactive Item')
+
+        post distributions_path(distribution: { comment: nil, partner_id: nil, storage_location_id: nil }, format: :turbo_stream)
+        expect(response).to have_http_status(400)
+
+        page = Nokogiri::HTML(response.body)
+        selectable_items = page.at_css("select.line_item_name").text.split("\n")
+
+        expect(selectable_items).to include("Active Item")
+        expect(selectable_items).not_to include("Inactive Item")
+      end
+
       context "Deactivated partners should not be displayed in partner dropdown" do
         before do
           create(:partner, name: 'Active Partner', organization: organization, status: "approved")
@@ -255,6 +287,18 @@ RSpec.describe "Distributions", type: :request do
         # default should be nothing selected
         page = Nokogiri::HTML(response.body)
         expect(page.css('#distribution_storage_location_id option[selected]')).to be_empty
+      end
+
+      it "should only show active items in item dropdown" do
+        create(:item, :inactive, organization: organization, name: 'Inactive Item')
+
+        get new_distribution_path(default_params)
+
+        page = Nokogiri::HTML(response.body)
+        selectable_items = page.at_css("select#barcode_item_barcodeable_id").text.split("\n")
+
+        expect(selectable_items).to include("Item 1", "Item 2")
+        expect(selectable_items).not_to include("Inactive Item")
       end
 
       context "with org default but no partner default" do
@@ -552,6 +596,19 @@ RSpec.describe "Distributions", type: :request do
         get edit_distribution_path(id: distribution.id)
         expect(response.body).to include("Deactivated Partner")
         expect(response.body).to include("Active Partner")
+      end
+
+      it "should only show active items in item dropdown" do
+        create(:item, organization: organization, name: 'Active Item')
+        create(:item, :inactive, organization: organization, name: 'Inactive Item')
+
+        get edit_distribution_path(id: distribution.id)
+
+        page = Nokogiri::HTML(response.body)
+        selectable_items = page.at_css("select#barcode_item_barcodeable_id").text.split("\n")
+
+        expect(selectable_items).to include("Active Item")
+        expect(selectable_items).not_to include("Inactive Item")
       end
 
       context 'with units' do

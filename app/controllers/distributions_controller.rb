@@ -50,7 +50,7 @@ class DistributionsController < ApplicationController
     @items = current_organization.items.alphabetized.select(:id, :name)
     @item_categories = current_organization.item_categories.select(:id, :name)
     @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select(:id, :name)
-    @partners = Partner.joins(:distributions).where(distributions: @distributions).distinct.order(:name).select(:id, :name)
+    @partners = current_organization.partners.active.alphabetized.select(:id, :name)
     @selected_item = filter_params[:by_item_id].presence
     @distribution_totals = DistributionTotalsService.new(current_organization.distributions, scope_filters)
     @total_value_all_distributions = @distribution_totals.total_value
@@ -117,7 +117,7 @@ class DistributionsController < ApplicationController
       elsif request_id
         @distribution.initialize_request_items
       end
-      @items = current_organization.items.alphabetized
+      @items = current_organization.items.active.alphabetized
       @partner_list = current_organization.partners.where.not(status: 'deactivated').alphabetized
 
       inventory = View::Inventory.new(@distribution.organization_id)
@@ -147,7 +147,7 @@ class DistributionsController < ApplicationController
       @distribution.line_items.build
       @distribution.copy_from_donation(params[:donation_id], params[:storage_location_id])
     end
-    @items = current_organization.items.alphabetized
+    @items = current_organization.items.active.alphabetized
     @partner_list = current_organization.partners.where.not(status: 'deactivated').alphabetized
 
     inventory = View::Inventory.new(current_organization.id)
@@ -173,7 +173,7 @@ class DistributionsController < ApplicationController
     if (!@distribution.complete? && @distribution.future?) ||
         current_user.has_role?(Role::ORG_ADMIN, current_organization)
       @distribution.line_items.build if @distribution.line_items.size.zero?
-      @items = current_organization.items.alphabetized
+      @items = current_organization.items.active.alphabetized
       @partner_list = current_organization.partners.alphabetized
       @audit_warning = current_organization.audits
         .where(storage_location_id: @distribution.storage_location_id)
@@ -204,7 +204,7 @@ class DistributionsController < ApplicationController
       flash[:error] = insufficient_error_message(result.error.message)
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @distribution.initialize_request_items
-      @items = current_organization.items.alphabetized
+      @items = current_organization.items.active.alphabetized
       @storage_locations = current_organization.storage_locations.active_locations.alphabetized
       render :edit
     end
