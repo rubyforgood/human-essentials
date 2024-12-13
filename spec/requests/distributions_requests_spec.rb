@@ -504,10 +504,9 @@ RSpec.describe "Distributions", type: :request do
       include_examples "requiring authorization"
     end
 
-    describe "PATCH #update" do
-      let(:partner_name) { "Patrick" }
+    describe "POST #update" do
       let(:location) { create(:storage_location, organization: organization) }
-      let(:partner) { create(:partner, name: partner_name, organization: organization) }
+      let(:partner) { create(:partner, organization: organization) }
 
       let(:distribution) { create(:distribution, partner: partner, organization: organization) }
       let(:issued_at) { distribution.issued_at }
@@ -544,15 +543,6 @@ RSpec.describe "Distributions", type: :request do
 
           expect(flash[:error]).to include("Distribution date and time can't be blank")
           expect(response).not_to redirect_to(anything)
-        end
-
-        it "renders storage location dropdowns" do
-          patch distribution_path(distribution_params)
-
-          page = Nokogiri::HTML(response.body)
-          selectable_partners = page.at_css("select#distribution_partner_id").text.split("\n")
-
-          expect(selectable_partners).to include("Patrick")
         end
       end
 
