@@ -186,6 +186,7 @@ class Partner < ApplicationRecord
       "Contact Phone",
       "Contact Email",
       "Notes",
+      "Counties Served",
       "Providing Diapers",
       "Providing Period Supplies"
     ]
@@ -205,6 +206,7 @@ class Partner < ApplicationRecord
       contact_person[:phone],
       contact_person[:email],
       notes,
+      profile.county_list_by_region,
       providing_diapers,
       providing_period_supplies
     ]
