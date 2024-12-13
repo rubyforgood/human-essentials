@@ -21,7 +21,7 @@ class PurchasesController < ApplicationController
     @paginated_purchases_value = @paginated_purchases.collect(&:amount_spent_in_cents).sum
     # Fair Market Values
     @total_fair_market_values = @purchases.sum(&:value_per_itemizable)
-    @paginated_fair_market_values = @purchases.collect(&:value_per_itemizable).sum
+    @paginated_fair_market_values = @paginated_purchases.collect(&:value_per_itemizable).sum
     # Storage and Vendor
     @storage_locations = current_organization.storage_locations.active_locations
     @selected_storage_location = filter_params[:at_storage_location]
