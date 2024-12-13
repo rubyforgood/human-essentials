@@ -40,6 +40,10 @@ FactoryBot.define do
       status { :awaiting_review }
     end
 
+    trait :deactivated do
+      status { :deactivated }
+    end
+
     after(:create) do |partner, evaluator|
       next if evaluator.try(:without_profile)
 
