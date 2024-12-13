@@ -221,7 +221,7 @@ Before submitting a pull request, run all tests and lints. Fix any broken tests 
 - Once your first PR has been merged, all commits pushed to an open PR will also run these workflows.
 
 #### Local testing
-- Run all lints with `bin/lint`.
+- Run all lints with `bin/lint`. (You can lint a single file/folder with `bin/lint {path_to_folder_or_file}`.)
 - Run all tests with `bundle exec rspec`
 - You can run a single test with `bundle exec rspec {path_to_test_name}_spec.rb` or on a specific line by appending `:LineNumber`
 - If you need to skip a failing test, place `pending("Reason you are skipping the test")` into the `it` block rather than skipping with `xit`. This will allow rspec to deliver the error message without causing the test suite to fail.
