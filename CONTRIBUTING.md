@@ -54,6 +54,8 @@ Make sure to install **Ubuntu** as your Linux distribution. (This should be defa
   <summary> Bank Users 🏦 </summary>
 
   Pawnee Diaper Bank
+  A fully set up bank with items, storage locations, donations, distributions, requests, etc.
+  The bank has multiple partners associated with it.
   ```
     Organization Admin
     Email: org_admin1@example.com
@@ -64,18 +66,9 @@ Make sure to install **Ubuntu** as your Linux distribution. (This should be defa
     Password: password!
   ```
 
-  SF Diaper Bank
-  ```
-    Organization Admin
-    Email: org_admin2@example.com
-    Password: password!
-
-    User
-    Email: user_2@example.com
-    Password: password!
-  ```
-
   Second City Essentials Bank
+  A fully set up bank with items, storage locations, donations, distributions, requests, etc.
+  The bank has four items unique to it (named Second City Item #).
   ```
     Organization Admin
     Email: second_city_admin@example.com
@@ -83,6 +76,18 @@ Make sure to install **Ubuntu** as your Linux distribution. (This should be defa
 
     User
     Email: second_city_user@example.com
+    Password: password!
+  ```
+
+  SF Diaper Bank
+  A bank which has just been accepted and so is not fully set up. It lacks many of the records the other banks have.
+  ```
+    Organization Admin
+    Email: org_admin2@example.com
+    Password: password!
+
+    User
+    Email: user_2@example.com
     Password: password!
   ```
 </details>
