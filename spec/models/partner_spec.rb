@@ -319,7 +319,16 @@ RSpec.describe Partner, type: :model do
       partner.update(notes: notes)
     end
 
-    it "should has the info in the columns order" do
+    it "should have the expected info in the columns order" do
+      county_1 = create(:county, name: "High County, Maine", region: "Maine")
+      county_2 = create(:county, name: "laRue County, Louisiana", region: "Louisiana")
+      county_3 = create(:county, name: "Ste. Anne County, Louisiana", region: "Louisiana")
+      create(:partners_served_area, partner_profile: partner.profile, county: county_1, client_share: 50)
+      create(:partners_served_area, partner_profile: partner.profile, county: county_2, client_share: 40)
+      create(:partners_served_area, partner_profile: partner.profile, county: county_3, client_share: 10)
+      partner.profile.reload # not sure if this is needed
+      # county ordering is a bit esoteric -- it is human alphabetical by county within region (region is state)
+      correctly_ordered_counties = "laRue County, Louisiana; Ste. Anne County, Louisiana; High County, Maine"
       expect(partner.csv_export_attributes).to eq([
         partner.name,
         partner.email,
@@ -333,6 +342,7 @@ RSpec.describe Partner, type: :model do
         contact_phone,
         contact_email,
         notes,
+        correctly_ordered_counties,
         providing_diapers,
         providing_period_supplies
       ])
