@@ -111,6 +111,8 @@ GEM
     bindex (0.8.1)
     binding_of_caller (1.0.1)
       debug_inspector (>= 1.2.0)
+    bootsnap (1.18.4)
+      msgpack (~> 1.2)
     bootstrap (5.2.3)
       autoprefixer-rails (>= 9.1.0)
       popper_js (>= 2.11.6, < 3)
@@ -120,7 +122,7 @@ GEM
     bugsnag (6.27.1)
       concurrent-ruby (~> 1.0)
     builder (3.3.0)
-    bullet (7.2.0)
+    bullet (8.0.0)
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.11)
     capybara (3.40.0)
@@ -143,7 +145,7 @@ GEM
     coderay (1.1.3)
     concurrent-ruby (1.3.4)
     connection_pool (2.4.1)
-    coverband (6.1.2)
+    coverband (6.1.4)
       redis (>= 3.0)
     crack (1.0.0)
       bigdecimal
@@ -162,9 +164,9 @@ GEM
       irb (~> 1.10)
       reline (>= 0.3.8)
     debug_inspector (1.2.0)
-    delayed_job (4.1.11)
+    delayed_job (4.1.12)
       activesupport (>= 3.0, < 8.0)
-    delayed_job_active_record (4.1.8)
+    delayed_job_active_record (4.1.10)
       activerecord (>= 3.0, < 8.0)
       delayed_job (>= 3.0, < 5)
     delayed_job_web (1.4.4)
@@ -209,7 +211,7 @@ GEM
       dry-inflector (~> 1.0)
       dry-logic (~> 1.4)
       zeitwerk (~> 2.6)
-    erb_lint (0.6.0)
+    erb_lint (0.7.0)
       activesupport
       better_html (>= 2.0.1)
       parser (>= 2.7.1.4)
@@ -217,7 +219,7 @@ GEM
       rubocop (>= 1)
       smart_properties
     erubi (1.13.0)
-    execjs (2.9.1)
+    execjs (2.10.0)
     factory_bot (6.4.5)
       activesupport (>= 5.0.0)
     factory_bot_rails (6.4.3)
@@ -259,14 +261,14 @@ GEM
     ffi (1.17.0-x86_64-darwin)
     ffi (1.17.0-x86_64-linux-gnu)
     filterrific (5.2.5)
-    flipper (1.3.0)
+    flipper (1.3.2)
       concurrent-ruby (< 2)
-    flipper-active_record (1.3.0)
-      activerecord (>= 4.2, < 8)
-      flipper (~> 1.3.0)
-    flipper-ui (1.3.0)
+    flipper-active_record (1.3.2)
+      activerecord (>= 4.2, < 9)
+      flipper (~> 1.3.2)
+    flipper-ui (1.3.1)
       erubi (>= 1.0.0, < 2.0.0)
-      flipper (~> 1.3.0)
+      flipper (~> 1.3.1)
       rack (>= 1.4, < 4)
       rack-protection (>= 1.5.3, < 5.0.0)
       rack-session (>= 1.0.2, < 3.0.0)
@@ -321,7 +323,7 @@ GEM
     jbuilder (2.13.0)
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
-    json (2.7.2)
+    json (2.7.5)
     jwt (2.9.1)
       base64
     kaminari (1.2.2)
@@ -373,7 +375,7 @@ GEM
     method_source (1.1.0)
     mini_magick (4.13.2)
     mini_mime (1.1.5)
-    minitest (5.25.1)
+    minitest (5.25.2)
     monetize (1.12.0)
       money (~> 6.12)
     money (6.16.0)
@@ -383,12 +385,13 @@ GEM
       monetize (~> 1.9)
       money (~> 6.13)
       railties (>= 3.0)
+    msgpack (1.7.5)
     multi_xml (0.7.1)
       bigdecimal (~> 3.1)
     multipart-post (2.4.1)
     mustermann (3.0.0)
       ruby2_keywords (~> 0.0.1)
-    mutex_m (0.2.0)
+    mutex_m (0.3.0)
     nenv (0.3.0)
     net-http-persistent (4.0.2)
       connection_pool (~> 2.2)
@@ -401,7 +404,7 @@ GEM
       timeout
     net-smtp (0.5.0)
       net-protocol
-    newrelic_rpm (9.13.0)
+    newrelic_rpm (9.16.0)
     nio4r (2.7.3)
     nokogiri (1.16.7-arm64-darwin)
       racc (~> 1.4)
@@ -442,7 +445,7 @@ GEM
       activerecord (>= 6.1)
       request_store (~> 1.4)
     parallel (1.26.3)
-    parser (3.3.4.2)
+    parser (3.3.5.1)
       ast (~> 2.4.1)
       racc
     pdf-core (0.10.0)
@@ -487,7 +490,7 @@ GEM
     puma (6.4.3)
       nio4r (~> 2.0)
     racc (1.8.1)
-    rack (2.2.9)
+    rack (2.2.10)
     rack-protection (3.1.0)
       rack (~> 2.2, >= 2.2.4)
     rack-session (1.0.2)
@@ -555,7 +558,7 @@ GEM
     responders (3.1.1)
       actionpack (>= 5.2)
       railties (>= 5.2)
-    rexml (3.3.8)
+    rexml (3.3.9)
     rolify (6.0.1)
     rouge (4.1.2)
     rspec (3.13.0)
@@ -590,9 +593,9 @@ GEM
       rubocop-ast (>= 1.31.1, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 2.4.0, < 3.0)
-    rubocop-ast (1.32.1)
+    rubocop-ast (1.33.0)
       parser (>= 3.3.1.0)
-    rubocop-performance (1.21.1)
+    rubocop-performance (1.22.1)
       rubocop (>= 1.48.1, < 2.0)
       rubocop-ast (>= 1.31.1, < 2.0)
     rubocop-rails (2.25.1)
@@ -608,7 +611,7 @@ GEM
       ffi (~> 1.12)
       logger
     ruby2_keywords (0.0.5)
-    sanitize (6.1.0)
+    sanitize (6.1.3)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
     sass-rails (6.0.0)
@@ -659,19 +662,19 @@ GEM
     standard-custom (1.0.2)
       lint_roller (~> 1.0)
       rubocop (~> 1.50)
-    standard-performance (1.4.0)
+    standard-performance (1.5.0)
       lint_roller (~> 1.1)
-      rubocop-performance (~> 1.21.0)
+      rubocop-performance (~> 1.22.0)
     stimulus-rails (1.3.4)
       railties (>= 6.0.0)
     stringio (3.1.1)
     strong_migrations (1.8.0)
       activerecord (>= 5.2)
-    terser (1.2.3)
+    terser (1.2.4)
       execjs (>= 0.3.0, < 3)
     thor (1.3.2)
     tilt (2.2.0)
-    timeout (0.4.1)
+    timeout (0.4.2)
     ttfunk (1.8.0)
       bigdecimal (~> 3.1)
     turbo-rails (2.0.10)
@@ -679,7 +682,7 @@ GEM
       railties (>= 6.0.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
-    unicode-display_width (2.5.0)
+    unicode-display_width (2.6.0)
     uniform_notifier (1.16.0)
     version_gem (1.1.4)
     warden (1.2.9)
@@ -707,6 +710,7 @@ PLATFORMS
   arm64-darwin-21
   arm64-darwin-22
   arm64-darwin-23
+  arm64-darwin-24
   x86_64-darwin-20
   x86_64-darwin-21
   x86_64-darwin-22
@@ -719,6 +723,7 @@ DEPENDENCIES
   azure-storage-blob
   better_errors
   binding_of_caller
+  bootsnap
   bootstrap (~> 5.2)
   brakeman
   bugsnag
@@ -801,4 +806,4 @@ DEPENDENCIES
   webmock (~> 3.24)
 
 BUNDLED WITH
-   2.5.22
+   2.5.23

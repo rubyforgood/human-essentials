@@ -1,65 +1,57 @@
-DRAFT USER GUIDE
+READY FOR REVIEW
 # Product Drives
-Many banks hold seasonal or one-off events where they are seeking donations.  In Human Essentials, Product drives help manage those events by providing a way to link specific donations to the events.
+Many banks hold seasonal or one-off events where they are seeking Donations.  In Human Essentials, Product Drives help manage those events by providing a way to link specific Donations to the events.
 
-[TODO:  For consistency, I would remove 'New Product Drive' from the lhs, and change "All Product Drives" to "Product Drives]
+## Product Drives list
+To see all your Product Drives, click on "Community", then "All Product Drives" in the left-hand menu.
 
-## Product drives list
-To see all your product drives, click on "Community", then "All Product Drives" in the left-hand menu.
+![Product Drive navigation](images/community/product_drives/community_product_drives_navigation.png)
 
-This presents a filterable list of all your product drives, including the following fields:
+
+This presents a filterable list of all your Product Drives, including the following fields:
 - Product Drive Name
 - Start Date
 - End Date (this is optional)
 - Held Virtually?
 - Quantity of Items
 - Variety of Items
-- In-Kind Value (TODO:  Fix spelling in header)
+- In-Kind Value 
 - Actions (only view at the moment)
 
-The list initially shows all the product drives starting in the current year. 
+The list initially shows all the Product Drives that are at least partly in our default period of 60 days past to 30 days in the future.
 
-[TODO:  NAvigation screenshot]
-
-
-
-[TODO:  Is that right,  or is it all product drives that are at least partly in the current year?   It probably should be the latter]
-
-### Filtering you product drives list
-The product drives list is filterable by any of the following. 
-- Product drive name
-- Item category
+### Filtering your Product Drives list
+The Product Drives list is filterable by any of the following. 
+- Product Drive name
+- Item Category
 - Date range (by starting date)
-
-[TODO:  confirm how the date range works.]
 
 Provide the information you want to filter by, then click "Filter".  Clicking "Clear Filters"  will return the list to its defaults.
 
-## Adding a product drive
-To add a product drive, either:
+## Adding a Product Drive
+To add a Product Drive, either:
 a) click "Community", then "New Product Drive" in the left hand menu, or
 b) click "+New Product Drive" in the Product Drives list
-[TODO:  Navigation screenshot]
+![Navigation to New Product Drive](images/community/product_drives/community_product_drives_add_navigation.png)
 
-Either will bring up this screen, which contains all the fields you can specify for a new product drive:
+Either will bring up this screen, which contains all the fields you can specify for a new Product Drive:
 - Name
 - Start Date
 - End Date (this is optional)
 - Product Drive is Virtual? (check this if it's a virtual drive)
 
-[TODO: Screenshot]
-[TODO:  Styling of "Create product drive" -- button should be white on green] 
+![+New Product Drives page](images/community/product_drives/community_product_drives_add.png)
 
-## Viewing your product drive
-To view a specific product drive, click the "View" button beside it in the product drives list.
-[TODO: Navigational Screenshot]
-[TODO: Screenshot]
-This will bring up the product drive view, which includes informtation about both the donations for the product drive, and the participants in the drive, in addition to the basic information about the product drive itself.
+## Viewing a Product Drive
+To view a specific Product Drive, click the "View" button beside it in the Product Drives list.
+![Navigation to view a Product Drive](images/community/product_drives/community_product_drives_view_navigation.png)
+
+This will bring up the Product Drive view, which includes information about both the Donations for the Product Drive, and the participants in the drive, in addition to the basic information about the drive itself.
+![Product Drive view page](images/community/product_drives/community_product_drives_view.png)
 Basic info:
 - Name
 - Start Date
 - End Date
-[TODO:  Move the "Make a correction" button up to below the basic information, not below the donations]
 Information about each donation:
 - Donation ID -- this is a number the system applies to each donation
 - Product Drive Participant
@@ -72,25 +64,27 @@ For each product drive participant associated with this product drive:
 - Phone
 - Email
 - Address
-- Items for this Drive (number of items for this drive)
+- Items for this drive (number of Items for this drive)
 - Total Items (for all drives)
 - Comment
 
-You can also make a correction to your product drive or delete it from this page.
+You can also make a correction to your Product Drive or delete it from this page.
 
-#### NB -- DO NOT DELETE your product drive if it has donations in it.  It will not go well.
+[!CAUTION] DO NOT DELETE your Product Drive if it has Donations in it.  It will not go well.  We have an outstanding issue to block you doing that.
 
-##  Modifying your product drive
-If you want to edit the base information in a product drive, you can do that by clicking "Community", then "All Product Drives" in the left-hand menu,  then clicking "View" beside the product drive you wish to modify, and then clicking "Make a correction".
-This will bring up the basic information for your product drive,  You can rename it, change the dates, or change whether it is a virtual drive.
-Then click "Update Product drive" to save your changes.
+##  Modifying your Product Drive
+If you want to edit the base information in a Product Drive, you can do that by clicking "Community", then "All Product Drives" in the left-hand menu,  then clicking "View" beside the product drive you wish to modify, and then clicking "Make a correction".
+![Navigation to update Product Drive](images/community/product_drives/community_product_drives_modify_navigation.png)
 
-[TODO: Screenshot]
+This will bring up the basic information for your Product Drive,  You can rename it, change the dates, or change whether it is a virtual drive.
+Then click "Update Product Drive" to save your changes.
 
-## Exporting product drives
-To export your currently filtered product drives,  click "Export product drives" on the Product Drives List
+![Modify Product Drive page](images/community/product_drives/community_product_drives_modify.png)
 
-[TODO:  Navigation Screenshot]
+## Exporting Product Drives
+To export your currently filtered Product Drives,  click "Export Product Drives" on the Product Drives List
+![Navigation to Product Drive export](images/community/product_drives/community_product_drives_export_navigation.png)
+
 
 [Prior: Transfers](inventory_transfers.md)
 [Next: Product Drive Participants](community_product_drive_participants.md)

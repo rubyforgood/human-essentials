@@ -69,21 +69,6 @@ RSpec.describe Transfer, type: :model do
     end
   end
 
-  context "Methods >" do
-    it "`self.storage_locations_transferred_to` and `..._from` constrains appropriately" do
-      storage_location1 = create(:storage_location, name: "loc1", organization: organization)
-      storage_location2 = create(:storage_location, name: "loc2", organization: organization)
-      storage_location3 = create(:storage_location, name: "loc3", organization: organization)
-      storage_location4 = create(:storage_location, name: "loc4", organization: create(:organization))
-      storage_location5 = create(:storage_location, name: "loc5", organization: storage_location4.organization)
-      create(:transfer, from: storage_location3, to: storage_location1, organization: organization)
-      create(:transfer, from: storage_location3, to: storage_location2, organization: organization)
-      create(:transfer, from: storage_location5, to: storage_location4, organization: storage_location4.organization)
-      expect(Transfer.storage_locations_transferred_to_in(organization).to_a).to match_array([storage_location1, storage_location2])
-      expect(Transfer.storage_locations_transferred_from_in(organization).to_a).to match_array([storage_location3])
-    end
-  end
-
   describe "versioning" do
     it { is_expected.to be_versioned }
   end

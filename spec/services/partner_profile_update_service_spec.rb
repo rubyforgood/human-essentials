@@ -88,7 +88,7 @@ RSpec.describe PartnerProfileUpdateService do
           expect(profile.served_areas.size).to eq(2)
           result = PartnerProfileUpdateService.new(profile.partner, partner_params, incorrect_attributes_missing_client_share).call
           expect(result.success?).to eq(false)
-          expect(result.error.to_s).to include("Validation failed: Served areas client share is not a number, Served areas client share is not included in the list")
+          expect(result.error.to_s).to include("Validation failed: Served areas client share is not a number, Served areas client share Client share must be between 1 and 100 inclusive")
           profile.reload
           expect(profile.served_areas.size).to eq(2)
         end
