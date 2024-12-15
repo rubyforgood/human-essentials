@@ -43,30 +43,33 @@ class DistributionsController < ApplicationController
 
     @distributions = current_organization
                      .distributions
-                     .includes(:partner, :storage_location, line_items: [:item])
-                     .order('issued_at DESC')
-                     .apply_filters(filter_params, helpers.selected_range)
+                     .order(issued_at: :desc)
+                     .includes(:partner, :storage_location)
+                     .class_filter(scope_filters)
     @paginated_distributions = @distributions.page(params[:page])
-    @items = current_organization.items.alphabetized
-    @item_categories = current_organization.item_categories
-    @storage_locations = current_organization.storage_locations.active_locations.alphabetized
-    @partners = @distributions.collect(&:partner).uniq.sort_by(&:name)
+    @items = current_organization.items.alphabetized.select(:id, :name)
+    @item_categories = current_organization.item_categories.select(:id, :name)
+    @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select(:id, :name)
+    @partners = current_organization.partners.active.alphabetized.select(:id, :name)
     @selected_item = filter_params[:by_item_id].presence
-    @total_value_all_distributions = total_value(@distributions)
-    @total_items_all_distributions = total_items(@distributions, @selected_item)
-    @total_value_paginated_distributions = total_value(@paginated_distributions)
-    @total_items_paginated_distributions = total_items(@paginated_distributions, @selected_item)
+    @distribution_totals = DistributionTotalsService.new(current_organization.distributions, scope_filters)
+    @total_value_all_distributions = @distribution_totals.total_value
+    @total_items_all_distributions = @distribution_totals.total_quantity
+    paginated_ids = @paginated_distributions.ids
+    @total_value_paginated_distributions = @distribution_totals.total_value(paginated_ids)
+    @total_items_paginated_distributions = @distribution_totals.total_quantity(paginated_ids)
     @selected_item_category = filter_params[:by_item_category_id]
     @selected_partner = filter_params[:by_partner]
     @selected_status = filter_params[:by_state]
     @selected_location = filter_params[:by_location]
     # FIXME: one of these needs to be removed but it's unclear which at this point
     @statuses = Distribution.states.transform_keys(&:humanize)
+    @distributions_with_inactive_items = @distributions.joins(:inactive_items).pluck(:id)
 
     respond_to do |format|
       format.html
       format.csv do
-        send_data Exports::ExportDistributionsCSVService.new(distributions: @distributions, organization: current_organization, filters: filter_params).generate_csv, filename: "Distributions-#{Time.zone.today}.csv"
+        send_data Exports::ExportDistributionsCSVService.new(distributions: @distributions, organization: current_organization, filters: scope_filters).generate_csv, filename: "Distributions-#{Time.zone.today}.csv"
       end
     end
   end
@@ -114,16 +117,12 @@ class DistributionsController < ApplicationController
       elsif request_id
         @distribution.initialize_request_items
       end
-      @items = current_organization.items.alphabetized
+      @items = current_organization.items.active.alphabetized
       @partner_list = current_organization.partners.where.not(status: 'deactivated').alphabetized
 
-      if Event.read_events?(current_organization)
-        inventory = View::Inventory.new(@distribution.organization_id)
-        @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
-          inventory.quantity_for(storage_location: storage_loc.id).positive?
-        end
-      else
-        @storage_locations = current_organization.storage_locations.active_locations.has_inventory_items.alphabetized
+      inventory = View::Inventory.new(@distribution.organization_id)
+      @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
+        inventory.quantity_for(storage_location: storage_loc.id).positive?
       end
 
       flash_error = insufficient_error_message(result.error.message)
@@ -148,16 +147,12 @@ class DistributionsController < ApplicationController
       @distribution.line_items.build
       @distribution.copy_from_donation(params[:donation_id], params[:storage_location_id])
     end
-    @items = current_organization.items.alphabetized
+    @items = current_organization.items.active.alphabetized
     @partner_list = current_organization.partners.where.not(status: 'deactivated').alphabetized
 
-    if Event.read_events?(current_organization)
-      inventory = View::Inventory.new(current_organization.id)
-      @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
-        inventory.quantity_for(storage_location: storage_loc.id).positive?
-      end
-    else
-      @storage_locations = current_organization.storage_locations.active_locations.has_inventory_items.alphabetized
+    inventory = View::Inventory.new(current_organization.id)
+    @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
+      inventory.quantity_for(storage_location: storage_loc.id).positive?
     end
   end
 
@@ -178,18 +173,14 @@ class DistributionsController < ApplicationController
     if (!@distribution.complete? && @distribution.future?) ||
         current_user.has_role?(Role::ORG_ADMIN, current_organization)
       @distribution.line_items.build if @distribution.line_items.size.zero?
-      @items = current_organization.items.alphabetized
+      @items = current_organization.items.active.alphabetized
       @partner_list = current_organization.partners.alphabetized
       @audit_warning = current_organization.audits
         .where(storage_location_id: @distribution.storage_location_id)
         .where("updated_at > ?", @distribution.created_at).any?
-      if Event.read_events?(current_organization)
-        inventory = View::Inventory.new(@distribution.organization_id)
-        @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
-          !inventory.quantity_for(storage_location: storage_loc.id).negative?
-        end
-      else
-        @storage_locations = current_organization.storage_locations.active_locations.has_inventory_items.alphabetized
+      inventory = View::Inventory.new(@distribution.organization_id)
+      @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
+        !inventory.quantity_for(storage_location: storage_loc.id).negative?
       end
     else
       redirect_to distributions_path, error: 'To edit a distribution,
@@ -213,7 +204,7 @@ class DistributionsController < ApplicationController
       flash[:error] = insufficient_error_message(result.error.message)
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @distribution.initialize_request_items
-      @items = current_organization.items.alphabetized
+      @items = current_organization.items.active.alphabetized
       @storage_locations = current_organization.storage_locations.active_locations.alphabetized
       render :edit
     end
@@ -297,16 +288,6 @@ class DistributionsController < ApplicationController
     params.dig(:distribution, :request_attributes, :id)
   end
 
-  def total_items(distributions, item)
-    query = LineItem.where(itemizable_type: "Distribution", itemizable_id: distributions.pluck(:id))
-    query = query.where(item_id: item.to_i) if item
-    query.sum('quantity')
-  end
-
-  def total_value(distributions)
-    distributions.sum(&:value_per_itemizable)
-  end
-
   def daily_items(pick_ups)
     item_groups = LineItem.where(itemizable_type: "Distribution", itemizable_id: pick_ups.pluck(:id)).group_by(&:item_id)
     item_groups.map do |_id, items|
@@ -318,21 +299,26 @@ class DistributionsController < ApplicationController
     end
   end
 
+  def scope_filters
+    filter_params
+      .except(:date_range)
+      .merge(during: helpers.selected_range)
+  end
+
   helper_method \
     def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).permit(:by_item_id, :by_item_category_id, :by_partner, :by_state, :by_location)
+    params
+      .require(:filters)
+      .permit(:by_item_id, :by_item_category_id, :by_partner, :by_state, :by_location, :date_range)
   end
 
   def perform_inventory_check
     inventory_check_result = InventoryCheckService.new(@distribution).call
 
-    if inventory_check_result.error.present?
-      flash[:error] = inventory_check_result.error
-    end
-    if inventory_check_result.alert.present?
-      flash[:alert] = inventory_check_result.alert
-    end
+    alerts = [inventory_check_result.minimum_alert, inventory_check_result.recommended_alert]
+    merged_alert = alerts.compact.join("\n")
+    flash[:alert] = merged_alert if merged_alert.present?
   end
 end

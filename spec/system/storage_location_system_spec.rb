@@ -134,8 +134,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       location1 = create(:storage_location, :with_items)
       visit subject
 
-      expect(accept_confirm { click_on "Deactivate", match: :first }).to include "Are you sure you want to deactivate #{location1.name}"
-      expect(page.find(".alert")).to have_content "Cannot deactivate storage location containing inventory items with non-zero quantities"
+      expect(page).to have_link('Deactivate', class: "disabled", href: "/storage_locations/#{location1.id}/deactivate")
     end
 
     it "Allows user to deactivate and reactivate storage locations" do
