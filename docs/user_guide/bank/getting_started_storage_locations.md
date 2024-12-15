@@ -1,4 +1,4 @@
-DRAFT USER GUIDE
+READY FOR REVIEW
 # Getting Started -- Storage Locations
 
 A bank can have multiple storage locations -- these range from warehouses down to space in people's houses.  You need at least one storage location in the system.

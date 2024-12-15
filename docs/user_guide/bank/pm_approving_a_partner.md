@@ -1,39 +1,38 @@
-DRAFT USER GUIDE
+READY FOR REVIEW
+
+# Approving Partners
+
+There are three paths in to reviewing a Partner's information before approving them to make Requests: 
+
+1/  There is a list of Partners awaiting approvals on the dashboard.   To start the approval process, click "Review Application";
 
 
-[TODO: Upcoming change review -- terminology.   I feel like these are going to be done before the first pass is through so I'm leaving the screenshots out for the nonce.]
+![Navigation to review application_from dashboard](images/partners/partners_review_application_from_dashboard.png)
 
-# Approving partners
+or
 
-There are three paths in to reviewing a partner's information before approving them to make requests -- 
+2/  Click "Partner Agencies" and "All Partners" in the left-hand menu, then "Review Applicant's Profile" beside the Partner.
 
-1/  There is a list of partners awaiting approvals on the dashboard.   To start the approval process, click "Review Application";
 
-[TODO: Screenshot]
+![Navigation to review application_from Partner_list](images/partners/partners_review_application_navigation.png)
 
-2/  Click "Partner Agencies" and "All Partners" in the left-hand menu, then "Review Application" beside the partner.
+or
 
-[TODO:  Screenshot]
+3/  Click "Partner Agencies" and "All Partners" in the left-hand menu, then click the Partner's name.  Scroll down to view the Partner Profile information, and click "Approve Partner" if it has what is needed.
 
-or 
-3/ Click "Partner Agencies" and "All Partners" in the left-hand menu, then click the partner name.  Scroll down to see the partner profile information, which starts just below the "Approve Partner" button
-
-[TODO: Screenshot]
 
 ----------------------------------
 
-In any of these cases, you can view all the answers in the profile.  If something needs changing, you can do it yourself by clicking the "Edit Information" button,  or the partner can make the change.   
+In any of these cases, you can view all the answers in the profile.  If something needs changing, you can do it yourself by clicking the "Edit Information" button,  or the Partner can make the change.   
 
-See [Partner profiles](partner_profiles.md) for details on the partner profile.
+See [Partner profiles](pm_partner_profiles.md#viewing-a-partner-profile) for details on the Partner Profile.
 
-[TODO:  Link should go to the part of partner profiles that lists all the fields]
+Once you have reviewed the Partner's info, and want to approve them to make requests,  click the "Approve Partner " button.   
 
-Once you have reviewed the partner's info, and want to approve them to make requests,  click the "Approve Partner " button.   
+![](images/partners/partners_approving_1.png)
 
-[TODO: Screenshot]
+You should see a "Partner Approved!" message,  and the status of the Partner will show as "Approved"
 
-You should see a "Partner Approved!" message,  and the status of the partner will show as "Approved"
-
-[TODO: Screenshot]
+![](images/partners/partners_approving_2.png)
 
 [Prior - Partner Profiles](pm_partner_profiles.md) [Next - Requesting Recertification](pm_requesting_recertification.md)

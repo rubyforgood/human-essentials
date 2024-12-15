@@ -193,11 +193,7 @@ class Organization < ApplicationRecord
   end
 
   def total_inventory
-    if Event.read_events?(self)
-      View::Inventory.total_inventory(id)
-    else
-      inventory_items.sum(:quantity) || 0
-    end
+    View::Inventory.total_inventory(id)
   end
 
   def self.seed_items(organization = Organization.all)
