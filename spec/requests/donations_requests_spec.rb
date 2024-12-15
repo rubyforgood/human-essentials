@@ -268,7 +268,7 @@ RSpec.describe "Donations", type: :request do
         expect(response.body).to include("<li class=\"breadcrumb-item\">\n            <a href=\"#\">Editing #{original_source}")
         expect(response.body).to include("<option selected=\"selected\" value=\"#{edited_source}\">#{edited_source}</option>")
         expect(response.body).to include("<option selected=\"selected\" value=\"#{edited_source_drive.id}\">#{edited_source_drive_name}</option>")
-        expect(response.body).to include("<option value=\"#{edited_source_drive_participant.id}\">#{edited_source_drive_participant_business_name}</option>")
+        expect(response.body).to include("<option selected=\"selected\" value=\"#{edited_source_drive_participant.id}\">#{edited_source_drive_participant_business_name}</option>")
         expect(response.body).to include("<option selected=\"selected\" value=\"#{edited_storage_location.id}\">#{edited_storage_location_name}</option>")
         expect(response.body).to include(edited_comment)
         expect(response.body).to include("value=\"#{edited_money}\" type=\"text\" name=\"donation[money_raised_in_dollars]")
