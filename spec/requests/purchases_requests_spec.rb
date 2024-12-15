@@ -78,6 +78,8 @@ RSpec.describe "Purchases", type: :request do
 
           it 'displays correct total fair market values' do
             expect(response.body).to include("$30.00")
+          end
+        end
 
         describe "pagination" do
           around do |ex|
