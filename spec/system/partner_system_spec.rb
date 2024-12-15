@@ -317,6 +317,21 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           end
         end
       end
+
+      context "when viewing prior distributions" do
+        let(:partner) do
+          partner = create(:partner, :approved)
+          partner.distributions << create(:distribution, :with_items, :past, item_quantity: 1231)
+          partner
+        end
+        it "displays distribution scheduled date" do
+          visit partner_path(partner.id)
+          partner.distributions.each do |distribution|
+            expect(page).to have_content(distribution.issued_at.strftime("%m/%d/%Y"))
+            expect(page).to_not have_content(distribution.created_at.strftime("%m/%d/%Y"))
+          end
+        end
+      end
     end
 
     describe "#new" do
