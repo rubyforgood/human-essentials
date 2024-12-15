@@ -453,6 +453,9 @@ RSpec.describe "Donations", type: :system, js: true do
           qty = page.find(:xpath, '//input[@id="donation_line_items_attributes_0_quantity"]').value
 
           expect(qty).to eq(@existing_barcode.quantity.to_s)
+
+          # the form should add another empty line
+          expect(page).to have_field("_barcode-lookup-1", focused: true)
         end
 
         it "Updates the line item when the same barcode is scanned twice", :js do

@@ -1,5 +1,6 @@
 RSpec.describe "Purchases", type: :request do
   let(:organization) { create(:organization) }
+  let(:storage_location) { create(:storage_location, name: "Pawane Location", organization: organization) }
   let(:user) { create(:user, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 
@@ -36,6 +37,27 @@ RSpec.describe "Purchases", type: :request do
           expect(subject.body).to include("Comments")
           expect(subject.body).to include("Purchase Comment")
         end
+
+        describe "pagination" do
+          around do |ex|
+            Kaminari.config.default_per_page = 2
+            ex.run
+            Kaminari.config.default_per_page = 50
+          end
+          before do
+            item = create(:item, organization: organization)
+            purchase_1 = create(:purchase, organization: organization, comment: "Singleton", issued_at: 1.day.ago)
+            create(:line_item, item: item, itemizable: purchase_1, quantity: 2)
+            purchase_2 = create(:purchase, organization: organization, comment: "Twins", issued_at: 2.days.ago)
+            create(:line_item, item: item, itemizable: purchase_2, quantity: 2)
+            purchase_3 = create(:purchase, organization: organization, comment: "Fates", issued_at: 3.days.ago)
+            create(:line_item, item: item, itemizable: purchase_3, quantity: 2)
+          end
+
+          it "puts the right number of purchases on the page" do
+            expect(subject.body).to include(" View").twice
+          end
+        end
       end
 
       context "csv" do
@@ -48,11 +70,15 @@ RSpec.describe "Purchases", type: :request do
 
     describe "GET #new" do
       subject do
+        organization.update!(default_storage_location: storage_location)
         get new_purchase_path
         response
       end
 
       it { is_expected.to be_successful }
+      it "should include the storage location name" do
+        expect(subject.body).to include("Pawane Location")
+      end
     end
 
     describe "POST#create" do
@@ -120,11 +146,10 @@ RSpec.describe "Purchases", type: :request do
         purchase_params = { source: "Purchase Site", line_items_attributes: line_item_params }
         expect do
           put purchase_path(id: purchase.id, purchase: purchase_params)
-        end.to change { purchase.storage_location.inventory_items.first.quantity }.by(5)
-          .and change {
-            View::Inventory.new(organization.id)
-              .quantity_for(storage_location: purchase.storage_location_id, item_id: line_item.item_id)
-          }.by(5)
+        end.to change {
+                 View::Inventory.new(organization.id)
+                   .quantity_for(storage_location: purchase.storage_location_id, item_id: line_item.item_id)
+               }.by(5)
       end
 
       describe "when removing a line item" do
@@ -141,8 +166,7 @@ RSpec.describe "Purchases", type: :request do
           purchase_params = { source: "Purchase Site", line_items_attributes: line_item_params }
           expect do
             put purchase_path(id: purchase.id, purchase: purchase_params)
-          end.to change { purchase.storage_location.inventory_items.first.quantity }.by(-10)
-            .and change {
+          end.to change {
                    View::Inventory.new(organization.id)
                      .quantity_for(storage_location: purchase.storage_location_id, item_id: line_item.item_id)
                  }.by(-10)
@@ -168,36 +192,6 @@ RSpec.describe "Purchases", type: :request do
             put purchase_path(id: purchase.id, purchase: purchase_params)
           end.to change { original_storage_location.size }.by(-10) # removes the whole purchase of 10
           expect(new_storage_location.size).to eq 8
-        end
-
-        # TODO this test is invalid in event-world since it's handled by the aggregate
-        it "rollsback updates if quantity would go below 0" do
-          next if Event.read_events?(organization)
-
-          purchase = create(:purchase, :with_items, item_quantity: 10)
-          original_storage_location = purchase.storage_location
-
-          # adjust inventory so that updating will set quantity below 0
-          inventory_item = original_storage_location.inventory_items.last
-          inventory_item.quantity = 5
-          inventory_item.save!
-
-          new_storage_location = create(:storage_location)
-          line_item = purchase.line_items.first
-          line_item_params = {
-            "0" => {
-              "_destroy" => "false",
-              item_id: line_item.item_id,
-              quantity: "1",
-              id: line_item.id
-            }
-          }
-          purchase_params = { storage_location: new_storage_location, line_items_attributes: line_item_params }
-          put purchase_path(id: purchase.id, purchase: purchase_params)
-          expect(response).not_to redirect_to(anything)
-          expect(original_storage_location.size).to eq 5
-          expect(new_storage_location.size).to eq 0
-          expect(purchase.reload.line_items.first.quantity).to eq 10
         end
       end
     end

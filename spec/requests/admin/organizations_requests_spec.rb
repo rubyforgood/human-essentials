@@ -85,6 +85,14 @@ RSpec.describe "Admin::Organizations", type: :request do
           expect(subject).to render_template("new")
           expect(flash[:error]).to be_present
         end
+
+        it "preserves user attributes" do
+          post admin_organizations_path({ organization: invalid_params })
+
+          expect(subject).to render_template("new")
+          expect(response.body).to include(invalid_params[:user][:name])
+          expect(response.body).to include(invalid_params[:user][:email])
+        end
       end
     end
 

@@ -97,9 +97,18 @@ RSpec.describe Partners::Profile, type: :model do
     subject { build(:partner_profile, enable_child_based_requests: false, enable_individual_requests: false, enable_quantity_based_requests: false) }
 
     context "no settings are set to true" do
-      it "should not be valid" do
+      it "sets error at base when feature flag disabled for partner step form" do
+        allow(Flipper).to receive(:enabled?).with("partner_step_form").and_return(false)
+
         expect(subject).to_not be_valid
         expect(subject.errors[:base]).to include("At least one request type must be set")
+      end
+
+      it "sets error at field level when feature flag enabled for partner step form" do
+        allow(Flipper).to receive(:enabled?).with("partner_step_form").and_return(true)
+
+        expect(subject).to_not be_valid
+        expect(subject.errors[:enable_child_based_requests]).to include("At least one request type must be set")
       end
     end
 
@@ -256,7 +265,9 @@ RSpec.describe Partners::Profile, type: :model do
     end
 
     context "multiple" do
-      it "sums the client shares " do
+      it "sums the client shares and sets error at base when feature flag disabled for partner step form" do
+        allow(Flipper).to receive(:enabled?).with("partner_step_form").and_return(false)
+
         profile = create(:partner_profile)
         county1 = create(:county, name: "county1", region: "region1")
         county2 = create(:county, name: "county2", region: "region2")
@@ -265,6 +276,22 @@ RSpec.describe Partners::Profile, type: :model do
         profile.reload
         expect(profile.client_share_total).to eq(99)
         expect(profile.valid?).to eq(false)
+        expect(profile.errors[:base]).to include("Total client share must be 0 or 100")
+      end
+
+      it "sets error at field level when feature flag enabled for partner step form" do
+        allow(Flipper).to receive(:enabled?).with("partner_step_form").and_return(true)
+
+        profile = create(:partner_profile)
+        county1 = create(:county, name: "county1", region: "region1")
+        county2 = create(:county, name: "county2", region: "region2")
+        create(:partners_served_area, partner_profile: profile, county: county1, client_share: 50)
+        create(:partners_served_area, partner_profile: profile, county: county2, client_share: 49)
+        profile.reload
+
+        expect(profile.client_share_total).to eq(99)
+        expect(profile.valid?).to eq(false)
+        expect(profile.errors[:client_share]).to include("Total client share must be 0 or 100")
       end
 
       it "is valid if client share sum is 100" do
@@ -277,6 +304,25 @@ RSpec.describe Partners::Profile, type: :model do
         expect(profile.client_share_total).to eq(100)
         expect(profile.valid?).to eq(true)
       end
+    end
+  end
+
+  describe "county_list" do
+    it "provides a county list in human-alpha by county within region order" do
+      county_1 = create(:county, name: "High County, Maine", region: "Maine")
+      county_2 = create(:county, name: "laRue County, Louisiana", region: "Louisiana")
+      county_3 = create(:county, name: "Ste. Anne County, Louisiana", region: "Louisiana")
+      county_4 = create(:county, name: "Other County, Louisiana", region: "Louisiana")
+      profile = create(:partner_profile)
+      profile_2 = create(:partner_profile)
+      create(:partners_served_area, partner_profile: profile, county: county_1, client_share: 50)
+      create(:partners_served_area, partner_profile: profile, county: county_2, client_share: 40)
+      create(:partners_served_area, partner_profile: profile, county: county_3, client_share: 10)
+      create(:partners_served_area, partner_profile: profile_2, county: county_4)
+      profile.reload
+      profile_2.reload
+      ## This is human-alpha by county within region (i.e. state)
+      expect(profile.county_list_by_region).to eq("laRue County, Louisiana; Ste. Anne County, Louisiana; High County, Maine")
     end
   end
 
