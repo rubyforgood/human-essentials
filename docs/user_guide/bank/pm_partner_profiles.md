@@ -140,7 +140,8 @@ You start out with space for 1 county, but can add more with the "Add Another Co
 
 This section has three broad questions plus two subsections of of demographic questions:
 
-[!NOTE] We have an issue in our queue to rework this, so the order may change.
+> [!NOTE]
+> We have an issue in our queue to rework this, so the order may change.
 
 - Clients Have An Income Requirement to Work With You?
 - Do You Verify The Income Of Your Clients?
