@@ -100,6 +100,8 @@ gem "jwt"
 gem "newrelic_rpm"
 # Used to manage periodic cron-like jobs
 gem "clockwork"
+# Speed up app boot time by caching expensive operations
+gem 'bootsnap', require: false
 
 ##### DEPENDENCY PINS ######
 # These are gems that aren't used directly, only as dependencies for other gems.
