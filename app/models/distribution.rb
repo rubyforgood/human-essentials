@@ -44,8 +44,8 @@ class Distribution < ApplicationRecord
 
   before_save :combine_distribution, :reset_shipping_cost
 
-  enum state: { scheduled: 5, complete: 10 }
-  enum delivery_method: { pick_up: 0, delivery: 1, shipped: 2 }
+  enum :state, { scheduled: 5, complete: 10 }
+  enum :delivery_method, { pick_up: 0, delivery: 1, shipped: 2 }
   scope :active, -> { joins(:line_items).joins(:items).where(items: { active: true }) }
   scope :with_diapers, -> { joins(line_items: :item).merge(Item.disposable.or(Item.cloth_diapers)) }
   scope :with_period_supplies, -> { joins(line_items: :item).merge(Item.period_supplies) }
