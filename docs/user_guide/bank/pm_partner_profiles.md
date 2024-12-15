@@ -54,7 +54,8 @@ The high level sections of the partner profile are:
 
 Unless marked otherwise, above,  you can choose whether you and the partners will see these sections,  in your "My Organization" section (see ["Getting started - customization](getting_started_customization.md))
 
-[!NOTE] The section screenshot images below have sample data in them.  Your initial screens may look a bit different as a result.
+> [!NOTE]
+> The section screenshot images below have sample data in them.  Your initial screens may look a bit different as a result.
 ### Agency Information (not configurable)
 ![screenshot of expanded agency information section](images/partners/partners_profile_edit_agency_information.png)
 This section contains basic agency information that most, if not all, partners will need to provide:
