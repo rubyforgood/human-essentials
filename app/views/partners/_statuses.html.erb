@@ -7,7 +7,7 @@
   current_filtered_status = params.dig(:filters, :by_status) %>
 
 <ul id="partner-status">
-  <% partners.statuses.except("error").each do |status, _|
+  <% partners.statuses.each do |status, _|
     selector = (status + "?").to_sym
     partner_count = partners.select(&selector).size %>
   <li>
