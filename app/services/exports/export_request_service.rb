@@ -3,7 +3,7 @@ module Exports
     DELETED_ITEMS_COLUMN_HEADER = '<DELETED_ITEMS>'.freeze
 
     def initialize(requests)
-      @requests = requests.includes(:partner)
+      @requests = requests.includes(:partner, {item_requests: :item})
     end
 
     def generate_csv
@@ -46,6 +46,9 @@ module Exports
         "Requestor" => ->(request) {
           request.partner.name
         },
+        "Type" => ->(request) {
+          request.request_type&.humanize
+        },
         "Status" => ->(request) {
           request.status.humanize
         }
@@ -61,7 +64,25 @@ module Exports
     end
 
     def compute_item_headers
-      item_names = items.pluck(:name)
+      # This reaches into the item, handling invalid deleted items
+      item_names = Set.new
+      all_item_requests.each do |item_request|
+        if item_request.item
+          item = item_request.item
+          item_names << item.name
+          if Flipper.enabled?(:enable_packs)
+            item.request_units.each do |unit|
+              item_names << "#{item.name} - #{unit.name.pluralize}"
+            end
+
+            # It's possible that the unit is no longer valid, so we'd
+            # add that individually
+            if item_request.request_unit.present?
+              item_names << "#{item.name} - #{item_request.request_unit.pluralize}"
+            end
+          end
+        end
+      end
 
       # Adding this to handle cases in which a requested item
       # has been deleted. Normally this wouldn't be neccessary,
@@ -75,38 +96,20 @@ module Exports
 
       row += Array.new(item_headers.size, 0)
 
-      request.request_items.each do |request_item|
-        item_name = fetch_item_name(request_item['item_id']) || DELETED_ITEMS_COLUMN_HEADER
+      request.item_requests.each do |item_request|
+        item_name = item_request.name_with_unit(0) || DELETED_ITEMS_COLUMN_HEADER
         item_column_idx = headers_with_indexes[item_name]
-
-        if item_name == DELETED_ITEMS_COLUMN_HEADER
-          # Add to the deleted column for every item that
-          # does not match any existing Item.
-          row[item_column_idx] ||= 0
-        end
-        row[item_column_idx] += request_item['quantity']
+        row[item_column_idx] ||= 0
+        row[item_column_idx] += item_request.quantity.to_i
       end
 
       row
     end
 
-    def fetch_item_name(item_id)
-      @item_name_to_id_map ||= items.inject({}) do |acc, item|
-        acc[item.id] = item.name
-        acc
-      end
-
-      @item_name_to_id_map[item_id]
-    end
-
-    def items
-      return @items if @items
-
-      item_ids = requests.flat_map do |request|
-        request.request_items.map { |item| item['item_id'] }
-      end
-
-      @items ||= Item.where(id: item_ids)
+    def all_item_requests
+      return @all_item_requests if @all_item_requests
+      @all_item_requests ||= Partners::ItemRequest.where(request: requests).includes(item: :request_units)
+      @all_item_requests
     end
   end
 end

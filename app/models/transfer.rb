@@ -20,7 +20,8 @@ class Transfer < ApplicationRecord
   include Itemizable
   include Filterable
   include Exportable
-  alias_attribute :storage_location, :from # to make it play nice with Itemizable
+  # to make it play nice with Itemizable - alias of `from`
+  belongs_to :storage_location, class_name: "StorageLocation", inverse_of: :transfers_from, foreign_key: :from_id
   scope :from_location, ->(location_id) { where(from_id: location_id) }
   scope :to_location, ->(location_id) { where(to_id: location_id) }
   scope :for_csv_export, ->(organization, *) {
@@ -28,14 +29,6 @@ class Transfer < ApplicationRecord
       .includes(:line_items, :from, :to)
   }
   scope :during, ->(range) { where(created_at: range) }
-
-  def self.storage_locations_transferred_to_in(organization)
-    includes(:to).where(organization_id: organization.id).distinct(:to_id).collect(&:to).uniq.sort_by(&:name)
-  end
-
-  def self.storage_locations_transferred_from_in(organization)
-    includes(:from).where(organization_id: organization.id).distinct(:from_id).collect(&:from).uniq.sort_by(&:name)
-  end
 
   validates :from, :to, :organization, presence: true
   validate :storage_locations_belong_to_organization

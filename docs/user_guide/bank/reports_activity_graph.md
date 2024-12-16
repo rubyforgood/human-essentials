@@ -9,5 +9,5 @@ If you want to see a time period other than the default period of 60 days prior 
 ![activity_graph_with_date_range_gizmo](images/reports/reports_activity_graph_2.png)
 
 [Back to Manufacturers Donations](reports_manufacturers_donations.md)
-[Next: User Management](user_management.md)
+[Next: History](reports_history.md)
 

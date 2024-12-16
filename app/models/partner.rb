@@ -186,7 +186,10 @@ class Partner < ApplicationRecord
       "Contact Name",
       "Contact Phone",
       "Contact Email",
-      "Notes"
+      "Notes",
+      "Counties Served",
+      "Providing Diapers",
+      "Providing Period Supplies"
     ]
   end
 
@@ -203,8 +206,19 @@ class Partner < ApplicationRecord
       contact_person[:name],
       contact_person[:phone],
       contact_person[:email],
-      notes
+      notes,
+      profile.county_list_by_region,
+      providing_diapers,
+      providing_period_supplies
     ]
+  end
+
+  def providing_diapers
+    distributions.in_last_12_months.with_diapers.any? ? "Y" : "N"
+  end
+
+  def providing_period_supplies
+    distributions.in_last_12_months.with_period_supplies.any? ? "Y" : "N"
   end
 
   def contact_person
