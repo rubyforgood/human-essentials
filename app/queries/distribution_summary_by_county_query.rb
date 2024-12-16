@@ -56,7 +56,7 @@ class DistributionSummaryByCountyQuery
   SQL
 
   class << self
-    def call(organization_id:, start_date:, end_date:)
+    def call(organization_id:, start_date: nil, end_date: nil)
       params = {
         organization_id: organization_id,
         start_date: start_date || "1000-01-01",
