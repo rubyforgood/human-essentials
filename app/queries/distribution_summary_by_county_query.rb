@@ -31,8 +31,9 @@ class DistributionSummaryByCountyQuery
                COALESCE(c.name, 'Unspecified') county_name,
                COALESCE(c.region, 'ZZZ') county_region
         FROM distribution_totals dt
-        LEFT JOIN partner_profiles pp ON pp.id = dt.partner_id
-        LEFT JOIN partner_served_areas psa ON psa.partner_profile_id = pp.partner_id
+        LEFT JOIN partners p ON p.id = dt.partner_id
+        LEFT JOIN partner_profiles pp ON pp.partner_id = p.id
+        LEFT JOIN partner_served_areas psa ON psa.partner_profile_id = pp.id
         LEFT JOIN counties c ON c.id = psa.county_id
         UNION
         /* Previous behavior was to add a row for unspecified counties
