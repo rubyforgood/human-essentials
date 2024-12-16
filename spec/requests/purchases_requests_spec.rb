@@ -37,6 +37,27 @@ RSpec.describe "Purchases", type: :request do
           expect(subject.body).to include("Comments")
           expect(subject.body).to include("Purchase Comment")
         end
+
+        describe "pagination" do
+          around do |ex|
+            Kaminari.config.default_per_page = 2
+            ex.run
+            Kaminari.config.default_per_page = 50
+          end
+          before do
+            item = create(:item, organization: organization)
+            purchase_1 = create(:purchase, organization: organization, comment: "Singleton", issued_at: 1.day.ago)
+            create(:line_item, item: item, itemizable: purchase_1, quantity: 2)
+            purchase_2 = create(:purchase, organization: organization, comment: "Twins", issued_at: 2.days.ago)
+            create(:line_item, item: item, itemizable: purchase_2, quantity: 2)
+            purchase_3 = create(:purchase, organization: organization, comment: "Fates", issued_at: 3.days.ago)
+            create(:line_item, item: item, itemizable: purchase_3, quantity: 2)
+          end
+
+          it "puts the right number of purchases on the page" do
+            expect(subject.body).to include(" View").twice
+          end
+        end
       end
 
       context "csv" do
