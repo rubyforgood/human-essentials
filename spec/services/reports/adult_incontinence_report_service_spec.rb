@@ -52,7 +52,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
 
         kit_1 = create(:kit, :with_item, organization: organization, line_items: [adult_line_item_1])
         kit_2 = create(:kit, :with_item, organization: organization, line_items: [adult_line_item_2])
-        
+
         #kit distributions
         kit_distribution_1 = create(:distribution, organization: organization, issued_at: within_time)
         kit_distribution_2 = create(:distribution, organization: organization, issued_at: within_time)
@@ -170,7 +170,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
                             "Adult Cloth Diapers (Large/XL/XXL)",
                             "Adult Cloth Diapers (Small/Medium)",
                             "Liners (Incontinence)",
-                            "Adult Briefs (Large)", 
+                            "Adult Briefs (Large)",
                             "Adult Briefs (Medium)")
       end
     end
