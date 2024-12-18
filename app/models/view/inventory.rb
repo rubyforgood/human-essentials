@@ -155,13 +155,5 @@ module View
         end
       end
     end
-
-    # @return [Array<Option>]
-    def items_for_select
-      all_items
-        .uniq(&:item_id)
-        .sort_by(&:name)
-        .map { |i| Option.new(name: i.name, id: i.item_id) }
-    end
   end
 end
