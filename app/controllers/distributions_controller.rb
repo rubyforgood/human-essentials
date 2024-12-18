@@ -99,6 +99,7 @@ class DistributionsController < ApplicationController
       @distribution = result.distribution
 
       perform_inventory_check
+      schedule_reminder_email(result.distribution)
 
       respond_to do |format|
         format.turbo_stream do
