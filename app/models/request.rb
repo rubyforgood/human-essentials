@@ -7,6 +7,7 @@
 #  discard_reason  :text
 #  discarded_at    :datetime
 #  request_items   :jsonb
+#  request_type    :string
 #  status          :integer          default("pending")
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
@@ -30,7 +31,8 @@ class Request < ApplicationRecord
   accepts_nested_attributes_for :item_requests, allow_destroy: true, reject_if: proc { |attributes| attributes["quantity"].blank? }
   has_many :child_item_requests, through: :item_requests
 
-  enum status: { pending: 0, started: 1, fulfilled: 2, discarded: 3 }, _prefix: true
+  enum :status, { pending: 0, started: 1, fulfilled: 2, discarded: 3 }, prefix: true
+  enum :request_type, %w[quantity individual child].map { |v| [v, v] }.to_h
 
   validates :distribution_id, uniqueness: true, allow_nil: true
   validate :item_requests_uniqueness_by_item_id
@@ -45,6 +47,7 @@ class Request < ApplicationRecord
   scope :by_partner, ->(partner_id) { where(partner_id: partner_id) }
   # status scope to allow filtering by status
   scope :by_status, ->(status) { where(status: status) }
+  scope :by_request_type, ->(request_type) { where(request_type: request_type) }
   scope :during, ->(range) { where(created_at: range) }
   scope :for_csv_export, ->(organization, *) {
     where(organization: organization)
@@ -58,6 +61,10 @@ class Request < ApplicationRecord
 
   def user_email
     partner_user_id ? User.find_by(id: partner_user_id).email : Partner.find_by(id: partner_id).email
+  end
+
+  def request_type_label
+    request_type&.first&.capitalize
   end
 
   private

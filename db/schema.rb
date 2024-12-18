@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_12_184800) do
+ActiveRecord::Schema[7.1].define(version: 2024_12_04_133715) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -202,7 +202,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_12_184800) do
     t.datetime "updated_at", null: false
     t.enum "category", default: "US_County", null: false, enum_type: "category"
     t.index ["name", "region"], name: "index_counties_on_name_and_region", unique: true
-    t.index ["name"], name: "index_counties_on_name"
     t.index ["region"], name: "index_counties_on_region"
   end
 
@@ -298,7 +297,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_12_184800) do
     t.bigint "user_id"
     t.string "group_id"
     t.index ["organization_id", "event_time"], name: "index_events_on_organization_id_and_event_time"
-    t.index ["organization_id"], name: "index_events_on_organization_id"
     t.index ["user_id"], name: "index_events_on_user_id"
   end
 
@@ -712,6 +710,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_12_184800) do
     t.datetime "discarded_at", precision: nil
     t.text "discard_reason"
     t.integer "partner_user_id"
+    t.string "request_type"
     t.index ["discarded_at"], name: "index_requests_on_discarded_at"
     t.index ["distribution_id"], name: "index_requests_on_distribution_id", unique: true
     t.index ["organization_id"], name: "index_requests_on_organization_id"
@@ -812,7 +811,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_12_184800) do
     t.bigint "role_id"
     t.index ["role_id"], name: "index_users_roles_on_role_id"
     t.index ["user_id", "role_id"], name: "index_users_roles_on_user_id_and_role_id"
-    t.index ["user_id"], name: "index_users_roles_on_user_id"
   end
 
   create_table "vendors", force: :cascade do |t|

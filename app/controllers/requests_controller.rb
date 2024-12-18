@@ -15,6 +15,8 @@ class RequestsController < ApplicationController
     @partners = current_organization.partners.order(:name)
     @statuses = Request.statuses.transform_keys(&:humanize)
     @partner_users = User.where(id: @paginated_requests.pluck(:partner_user_id))
+    @request_types = Request.request_types.transform_keys(&:humanize)
+    @selected_request_type = filter_params[:by_request_type]
     @selected_request_item = filter_params[:by_request_item_id]
     @selected_partner = filter_params[:by_partner]
     @selected_status = filter_params[:by_status]
@@ -71,6 +73,6 @@ class RequestsController < ApplicationController
     def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).permit(:by_request_item_id, :by_partner, :by_status)
+    params.require(:filters).permit(:by_request_item_id, :by_partner, :by_status, :by_request_type)
   end
 end

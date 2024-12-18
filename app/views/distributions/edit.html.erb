@@ -24,7 +24,7 @@
 
 <section class="content">
 
-  <% unless @distribution.future? %>
+  <% if @distribution.issued_at && !@distribution.future? %>
     <div class="alert alert-warning" role="alert">
       The current date is past the date this distribution was scheduled for.
       Please be very careful when editing this record;

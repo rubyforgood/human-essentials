@@ -8,6 +8,16 @@ RSpec.describe DistributionUpdateService, type: :service do
         DistributionUpdateService.new(distribution, new_attributes).call
       end.to change { distribution.storage_location.size }.by(8)
     end
+
+    context "when missing issued_at attribute" do
+      it "preserves validation error and is unsuccessful" do
+        result = DistributionUpdateService.new(distribution, {issued_at: ""}).call
+
+        expect(result).not_to be_success
+        expect(result.error).to be_instance_of(ActiveRecord::RecordInvalid)
+        expect(result.error.message).to include("Distribution date and time can't be blank")
+      end
+    end
   end
 
   describe "resend_notification?" do

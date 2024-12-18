@@ -12,7 +12,8 @@ module Partners
       create_service = Partners::FamilyRequestCreateService.new(
         partner_user_id: current_user.id,
         comments: individuals_request_params[:comments],
-        family_requests_attributes: individuals_request_params[:items_attributes]&.values
+        family_requests_attributes: individuals_request_params[:items_attributes]&.values,
+        request_type: "individual"
       )
 
       create_service.call
@@ -36,7 +37,8 @@ module Partners
       @partner_request = Partners::FamilyRequestCreateService.new(
         partner_user_id: current_user.id,
         comments: individuals_request_params[:comments],
-        family_requests_attributes: individuals_request_params[:items_attributes]&.values
+        family_requests_attributes: individuals_request_params[:items_attributes]&.values,
+        request_type: "individual"
       ).initialize_only
       if @partner_request.valid?
         @total_items = @partner_request.total_items

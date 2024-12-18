@@ -30,3 +30,11 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
+  activerecord:
+    attributes:
+      donation:
+        issued_at: "Issue date"
+      purchase:
+        issued_at: "Purchase date"
+      distribution:
+        issued_at: "Distribution date and time"

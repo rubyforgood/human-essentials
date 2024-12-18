@@ -1,5 +1,6 @@
 RSpec.describe "Purchases", type: :request do
   let(:organization) { create(:organization) }
+  let(:storage_location) { create(:storage_location, name: "Pawane Location", organization: organization) }
   let(:user) { create(:user, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 
@@ -36,6 +37,27 @@ RSpec.describe "Purchases", type: :request do
           expect(subject.body).to include("Comments")
           expect(subject.body).to include("Purchase Comment")
         end
+
+        describe "pagination" do
+          around do |ex|
+            Kaminari.config.default_per_page = 2
+            ex.run
+            Kaminari.config.default_per_page = 50
+          end
+          before do
+            item = create(:item, organization: organization)
+            purchase_1 = create(:purchase, organization: organization, comment: "Singleton", issued_at: 1.day.ago)
+            create(:line_item, item: item, itemizable: purchase_1, quantity: 2)
+            purchase_2 = create(:purchase, organization: organization, comment: "Twins", issued_at: 2.days.ago)
+            create(:line_item, item: item, itemizable: purchase_2, quantity: 2)
+            purchase_3 = create(:purchase, organization: organization, comment: "Fates", issued_at: 3.days.ago)
+            create(:line_item, item: item, itemizable: purchase_3, quantity: 2)
+          end
+
+          it "puts the right number of purchases on the page" do
+            expect(subject.body).to include(" View").twice
+          end
+        end
       end
 
       context "csv" do
@@ -48,27 +70,31 @@ RSpec.describe "Purchases", type: :request do
 
     describe "GET #new" do
       subject do
+        organization.update!(default_storage_location: storage_location)
         get new_purchase_path
         response
       end
 
       it { is_expected.to be_successful }
+      it "should include the storage location name" do
+        expect(subject.body).to include("Pawane Location")
+      end
     end
 
     describe "POST#create" do
       let!(:storage_location) { create(:storage_location, organization: organization) }
       let(:line_items) { [attributes_for(:line_item)] }
       let(:vendor) { create(:vendor, organization: organization) }
+      let(:purchase) do
+        { storage_location_id: storage_location.id,
+          purchased_from: "Google",
+          vendor_id: vendor.id,
+          amount_spent: 10,
+          issued_at: Time.current,
+          line_items: line_items }
+      end
 
       context "on success" do
-        let(:purchase) do
-          { storage_location_id: storage_location.id,
-            purchased_from: "Google",
-            vendor_id: vendor.id,
-            amount_spent: 10,
-            line_items: line_items }
-        end
-
         it "redirects to GET#edit" do
           expect { post purchases_path(purchase: purchase) }
             .to change { Purchase.count }.by(1)
@@ -95,6 +121,15 @@ RSpec.describe "Purchases", type: :request do
           post purchases_path(purchase: { storage_location_id: nil, amount_spent: nil })
           expect(response).to be_successful # Will render :new
           expect(response.body).to include('Failed to create purchase due to')
+        end
+
+        context "with invalid issued_at param" do
+          it "flashes the correct validation error" do
+            issued_at = ""
+            post purchases_path(purchase: purchase.merge(issued_at:))
+
+            expect(flash[:error]).to include("Purchase date can't be blank")
+          end
         end
       end
     end
@@ -124,6 +159,15 @@ RSpec.describe "Purchases", type: :request do
                  View::Inventory.new(organization.id)
                    .quantity_for(storage_location: purchase.storage_location_id, item_id: line_item.item_id)
                }.by(5)
+      end
+
+      context "with invalid issued_at" do
+        it "redirects to index after update" do
+          purchase = create(:purchase, purchased_from: "Google")
+          put purchase_path(id: purchase.id, purchase: { issued_at: "" })
+
+          expect(flash[:alert]).to include("Purchase date can't be blank")
+        end
       end
 
       describe "when removing a line item" do

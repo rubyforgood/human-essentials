@@ -25,7 +25,7 @@ class BroadcastAnnouncement < ApplicationRecord
 
   def self.filter_announcements(parent_org)
     BroadcastAnnouncement.where(organization_id: parent_org)
-      .where("expiry IS ? or expiry >= ?", nil, Time.zone.today)
+      .where("expiry IS NULL or expiry >= ?", Time.zone.today)
       .order(created_at: :desc)
   end
 end

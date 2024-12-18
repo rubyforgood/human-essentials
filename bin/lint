@@ -1,4 +1,16 @@
 #!/bin/bash
 
-bundle exec rubocop -A
-bundle exec erblint --lint-all -a
+# Note: Any arguments passed in will be passed along to rubocop or erb_lint
+#
+# Example to only lint Rails models:
+# $ bin/lint app/models
+#
+echo "Running rubocop"
+bundle exec rubocop -A $@
+
+echo "Running erb_lint"
+if [ $# -eq 0 ]; then # If no arguments are supplied check all files
+  bundle exec erb_lint --lint-all -a
+else # otherwise pass those arguments along (likely a specific file or folder)
+  bundle exec erb_lint $@ -a
+fi

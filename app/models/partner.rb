@@ -27,7 +27,7 @@ class Partner < ApplicationRecord
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
   ].freeze
 
-  enum status: { uninvited: 0, invited: 1, awaiting_review: 2, approved: 3, error: 4, recertification_required: 5, deactivated: 6 }
+  enum :status, { uninvited: 0, invited: 1, awaiting_review: 2, approved: 3, error: 4, recertification_required: 5, deactivated: 6 }
 
   belongs_to :organization
   belongs_to :partner_group, optional: true
@@ -74,6 +74,7 @@ class Partner < ApplicationRecord
   AGENCY_TYPES = {
     "CAREER" => "Career technical training",
     "ABUSE" => "Child abuse resource center",
+    "BNB" => "Basic Needs Bank",
     "CHURCH" => "Church outreach ministry",
     "COLLEGE" => "College and Universities",
     "CDC" => "Community development corporation",
@@ -82,6 +83,7 @@ class Partner < ApplicationRecord
     "LEGAL" => "Correctional Facilities / Jail / Prison / Legal System",
     "CRISIS" => "Crisis/Disaster services",
     "DISAB" => "Developmental disabilities program",
+    "DISTRICT" => "School District",
     "DOMV" => "Domestic violence shelter",
     "ECE" => "Early Childhood Education/Childcare",
     "CHILD" => "Early childhood services",
@@ -96,6 +98,7 @@ class Partner < ApplicationRecord
     "HOSP" => "Hospital",
     "INFPAN" => "Infant/Child Pantry/Closet",
     "LIB" => "Library",
+    "MHEALTH" => "Mental Health",
     "MILITARY" => "Military Bases/Veteran Services",
     "POLICE" => "Police Station",
     "PREG" => "Pregnancy resource center",
@@ -185,7 +188,10 @@ class Partner < ApplicationRecord
       "Contact Name",
       "Contact Phone",
       "Contact Email",
-      "Notes"
+      "Notes",
+      "Counties Served",
+      "Providing Diapers",
+      "Providing Period Supplies"
     ]
   end
 
@@ -202,8 +208,19 @@ class Partner < ApplicationRecord
       contact_person[:name],
       contact_person[:phone],
       contact_person[:email],
-      notes
+      notes,
+      profile.county_list_by_region,
+      providing_diapers,
+      providing_period_supplies
     ]
+  end
+
+  def providing_diapers
+    distributions.in_last_12_months.with_diapers.any? ? "Y" : "N"
+  end
+
+  def providing_period_supplies
+    distributions.in_last_12_months.with_period_supplies.any? ? "Y" : "N"
   end
 
   def contact_person

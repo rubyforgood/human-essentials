@@ -19,21 +19,6 @@ module DistributionHelper
     calendar_distributions_url(hash: crypt.encrypt_and_sign(current_organization.id))
   end
 
-  def quantity_by_item_id(distribution, item_id)
-    item_id = Integer(item_id)
-    quantities = distribution.line_items.quantities_by_name
-
-    single_item = quantities.values.find { |li| item_id == li[:item_id] } || {}
-    single_item[:quantity]
-  end
-
-  def quantity_by_item_category_id(distribution, item_category_id)
-    item_category_id = Integer(item_category_id)
-    quantities = distribution.line_items.quantities_by_category
-
-    quantities[item_category_id]
-  end
-
   def distribution_shipping_cost(shipping_cost)
     (shipping_cost && shipping_cost != 0) ? number_to_currency(shipping_cost) : ""
   end

@@ -50,9 +50,10 @@ class Item < ApplicationRecord
 
   scope :active, -> { where(active: true) }
 
-  # Add spec for these
-  scope :kits, -> { where.not(kit_id: nil) }
+  # :housing_a_kit are items which house a kit, NOT items is_in_kit
+  scope :housing_a_kit, -> { where.not(kit_id: nil) }
   scope :loose, -> { where(kit_id: nil) }
+  scope :inactive, -> { where.not(active: true) }
 
   scope :visible, -> { where(visible_to_partners: true) }
   scope :alphabetized, -> { order(:name) }
@@ -142,7 +143,7 @@ class Item < ApplicationRecord
   end
 
   def can_delete?(inventory = nil, kits = nil)
-    can_deactivate_or_delete?(inventory, kits) && line_items.none? && !barcode_count&.positive? && !in_request?
+    can_deactivate_or_delete?(inventory, kits) && line_items.none? && !barcode_count&.positive? && !in_request? && kit.blank?
   end
 
   # @return [Boolean]

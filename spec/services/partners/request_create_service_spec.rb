@@ -4,11 +4,13 @@ RSpec.describe Partners::RequestCreateService do
     let(:args) do
       {
         partner_user_id: partner_user.id,
+        request_type: request_type,
         comments: comments,
         item_requests_attributes: item_requests_attributes
       }
     end
     let(:partner_user) { partner.primary_user }
+    let(:request_type) { nil }
     let(:partner) { create(:partner) }
     let(:comments) { Faker::Lorem.paragraph }
     let(:item_requests_attributes) do
@@ -89,6 +91,36 @@ RSpec.describe Partners::RequestCreateService do
         expect(Partners::ItemRequest.count).to eq(item_requests_attributes.count)
       end
 
+      context "when request_type is child" do
+        let(:request_type) { "child" }
+
+        it "creates a request with of that type" do
+          expect { subject }.to change { Request.count }.by(1)
+
+          expect(Request.last.request_type).to eq("child")
+        end
+      end
+
+      context "when request_type is individual" do
+        let(:request_type) { "individual" }
+
+        it "creates a request with of that type" do
+          expect { subject }.to change { Request.count }.by(1)
+
+          expect(Request.last.request_type).to eq("individual")
+        end
+      end
+
+      context "when request_type is quantity" do
+        let(:request_type) { "quantity" }
+
+        it "creates a request with of that type" do
+          expect { subject }.to change { Request.count }.by(1)
+
+          expect(Request.last.request_type).to eq("quantity")
+        end
+      end
+
       context 'when we have duplicate item as part of request' do
         let(:duplicate_item) { FactoryBot.create(:item) }
         let(:unique_item) { FactoryBot.create(:item) }
@@ -149,12 +181,14 @@ RSpec.describe Partners::RequestCreateService do
     let(:args) do
       {
         partner_user_id: partner_user.id,
+        request_type: request_type,
         comments: comments,
         item_requests_attributes: item_requests_attributes
       }
     end
     let(:partner_user) { partner.primary_user }
     let(:partner) { create(:partner) }
+    let(:request_type) { "child" }
     let(:comments) { Faker::Lorem.paragraph }
     let(:item) { FactoryBot.create(:item) }
     let(:item_requests_attributes) do

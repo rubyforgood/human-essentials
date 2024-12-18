@@ -1,5 +1,5 @@
 # Creates a veritable powerhouse.
-# This module provides Duck Typed behaviors for anything that shuttle Items
+# This module provides Duck Typed behaviors for anything that shuttles LINE ITEMS (not items)
 # throughout the system. e.g. things that `has_many :line_items` -- this provides
 # all the logic about how those kinds of things behave.
 module Itemizable
@@ -18,7 +18,7 @@ module Itemizable
       inactive_items.any?
     end
 
-    # @return [Array<Item>]
+    # @return [Array<Item>] or [Item::ActiveRecord_Relation]
     def inactive_items
       line_items.map(&:item).select { |i| !i.active? }
     end
@@ -94,6 +94,8 @@ module Itemizable
     end
 
     has_many :items, through: :line_items
+    has_many :inactive_items, -> { inactive }, through: :line_items, source: :item
+
     accepts_nested_attributes_for :line_items,
                                   allow_destroy: true,
                                   reject_if: proc { |l| l[:item_id].blank? || l[:quantity].blank? }

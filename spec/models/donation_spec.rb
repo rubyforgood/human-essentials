@@ -61,17 +61,6 @@ RSpec.describe Donation, type: :model do
   end
 
   context "Callbacks >" do
-    it "inititalizes the issued_at field to default to midnight if it wasn't explicitly set" do
-      yesterday = 1.day.ago
-      today = Time.zone.today
-
-      donation = create(:donation, created_at: yesterday, issued_at: today)
-      expect(donation.issued_at.to_date).to eq(today)
-
-      donation = create(:donation, created_at: yesterday)
-      expect(donation.issued_at).to eq(donation.created_at.end_of_day)
-    end
-
     it "automatically combines duplicate line_item records when they're created" do
       donation = build(:donation)
       item = create(:item)
