@@ -100,6 +100,74 @@ RSpec.describe "Donations", type: :request do
       end
     end
 
+    describe "POST #create" do
+      let(:product_drive) { create(:product_drive, organization:) }
+      let(:storage_location) { create(:storage_location, organization:) }
+      let(:manufacturer) { create(:manufacturer, organization:) }
+      let(:source) { Donation::SOURCES[:manufacturer] }
+      let(:issued_at) { Date.yesterday }
+
+      let(:params) do
+        {
+          donation: {
+            source: Donation::SOURCES[:manufacturer],
+            manufacturer_id: manufacturer.id,
+            product_drive_id: product_drive.id,
+            storage_location_id: storage_location.id,
+            money_raised_in_dollars: 5,
+            product_drive_participant_id: nil,
+            comment: "",
+            issued_at: issued_at,
+            line_items_attributes: {}
+          }
+        }
+      end
+
+      it "flashes a success message" do
+        post donations_path(params)
+
+        expect(flash[:notice]).to eq("Donation created and logged!")
+      end
+
+      it "redirects to the index page" do
+        post donations_path(params)
+
+        expect(response).to redirect_to(donations_path)
+      end
+
+      context "with invalid issued_at param" do
+        let(:issued_at) { "" }
+
+        it "flashes the correct validation error" do
+          post donations_path(params)
+
+          expect(flash[:error]).to include("Issue date can't be blank")
+        end
+      end
+    end
+
+    describe "PATCH #update" do
+      let(:donation) { create(:donation, organization:) }
+      let(:item) { create(:item, organization:) }
+      let(:params) { { id: donation.id, donation: donation_params } }
+      let(:donation_params) do
+        {
+          line_items_attributes: {
+            "0": { item_id: item.id, quantity: 5 }
+          }
+        }
+      end
+
+      context "with invalid issued_at param" do
+        it "flashes the correct validation error" do
+          donation_params[:issued_at] = ""
+          put donation_path(params)
+
+          expect(flash[:alert]).to include("Issue date can't be blank")
+        end
+      end
+    end
+
     describe "GET #print" do
       let(:item) { create(:item) }
       let!(:donation) { create(:donation, :with_items, item: item) }

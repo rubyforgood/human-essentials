@@ -211,8 +211,9 @@ RSpec.describe "Distributions", type: :request do
     describe "POST #create" do
       let!(:storage_location) { create(:storage_location, organization: organization) }
       let!(:partner) { create(:partner, organization: organization) }
+      let(:issued_at) { Time.current }
       let(:distribution) do
-        { storage_location_id: storage_location.id, partner_id: partner.id, delivery_method: :delivery }
+        { storage_location_id: storage_location.id, partner_id: partner.id, issued_at:, delivery_method: :delivery }
       end
 
       it "redirects to #show on success" do
@@ -259,6 +260,17 @@ RSpec.describe "Distributions", type: :request do
           expect(response).to have_error
           expect(response.body).not_to include("Deactivated Partner")
           expect(response.body).to include("Active Partner")
+        end
+      end
+
+      context "with missing issued_at field" do
+        let(:issued_at) { "" }
+
+        it "fails and returns validation error message" do
+          post distributions_path(distribution:, format: :turbo_stream)
+
+          expect(response).to have_http_status(400)
+          expect(flash[:error]).to include("Distribution date and time can't be blank")
         end
       end
     end
@@ -512,6 +524,26 @@ RSpec.describe "Distributions", type: :request do
       it "returns a 200" do
         patch distribution_path(distribution_params)
         expect(response.status).to redirect_to(distribution_path(distribution.to_param))
+      end
+
+      context "with invalid issued_at field" do
+        let(:distribution_params) do
+          { id: distribution.id,
+            distribution: {
+              partner_id: partner.id,
+              storage_location_id: location.id,
+              'issued_at(1i)' => issued_at.to_date.year,
+              'issued_at(2i)' => issued_at.to_date.month,
+              'issued_at(3i)' => nil # day part of date missing
+            }}
+        end
+
+        it "fails and returns validation error message" do
+          patch distribution_path(distribution_params)
+
+          expect(flash[:error]).to include("Distribution date and time can't be blank")
+          expect(response).not_to redirect_to(anything)
+        end
       end
 
       describe "when changing storage location" do
