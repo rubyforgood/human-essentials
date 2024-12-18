@@ -13,9 +13,9 @@ class TransferDestroyService
       transfer.destroy!
     end
 
-    OpenStruct.new(success?: true)
+    Result.new(success: true)
   rescue StandardError => e
-    OpenStruct.new(success?: false, error: e)
+    Result.new(error: e, success: false)
   end
 
   private

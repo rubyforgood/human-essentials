@@ -62,11 +62,11 @@ RSpec.describe KitCreateService do
       end
 
       context 'but the ItemCreationService is unsuccesful' do
-        let(:fake_error_struct) { OpenStruct.new(success?: false, error: error) }
+        let(:failing_result) { Result.new(success: false, error: error) }
         let(:error) { Faker::Name.name }
 
         before do
-          allow_any_instance_of(ItemCreateService).to receive(:call).and_return(fake_error_struct)
+          allow_any_instance_of(ItemCreateService).to receive(:call).and_return(failing_result)
         end
 
         it 'should not create the Kit' do
