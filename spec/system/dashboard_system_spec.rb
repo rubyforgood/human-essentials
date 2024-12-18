@@ -1,5 +1,3 @@
-require 'ostruct'
-
 RSpec.describe "Dashboard", type: :system, js: true do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
