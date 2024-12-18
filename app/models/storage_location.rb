@@ -62,6 +62,18 @@ class StorageLocation < ApplicationRecord
     joins(:transfers_from).where(organization_id: organization.id).distinct.order(:name)
   }
 
+  # @param organization [Organization]
+  # @param inventory [View::Inventory]
+  # @return [Array<Option>]
+  def self.items_inventoried(organization, inventory = nil)
+    inventory ||= View::Inventory.new(organization.id)
+    inventory
+      .all_items
+      .uniq(&:item_id)
+      .sort_by(&:name)
+      .map { |i| Option.new(name: i.name, id: i.item_id) }
+  end
+
   # @return [Array<Item>]
   def items
     View::Inventory.items_for_location(self).map(&:db_item)
