@@ -18,6 +18,7 @@ RSpec.describe DistributionsController, type: :controller do
             organization_name: organization.id,
             distribution: {
               partner_id: partner.id,
+              issued_at: Date.yesterday,
               storage_location_id: first_storage_location.id,
               line_items_attributes:
               {
@@ -42,6 +43,7 @@ RSpec.describe DistributionsController, type: :controller do
               distribution: {
                 partner_id: partner.id,
                 storage_location_id: second_storage_location.id,
+                issued_at: Date.yesterday,
                 line_items_attributes:
                   {
                     "0": { item_id: second_storage_location.items.first.id, quantity: 18 }
@@ -66,6 +68,7 @@ RSpec.describe DistributionsController, type: :controller do
             distribution: {
               partner_id: partner.id,
               storage_location_id: storage_location.id,
+              issued_at: Date.yesterday,
               line_items_attributes:
                 {
                   "0": { item_id: storage_location.items.first.id, quantity: 18 }
@@ -91,6 +94,7 @@ RSpec.describe DistributionsController, type: :controller do
               distribution: {
                 partner_id: partner.id,
                 storage_location_id: storage_location.id,
+                issued_at: Date.yesterday,
                 line_items_attributes:
                   {
                     "0": { item_id: storage_location.items.first.id, quantity: 18 },
@@ -134,6 +138,7 @@ RSpec.describe DistributionsController, type: :controller do
             distribution: {
               partner_id: partner.id,
               storage_location_id: storage_location.id,
+              issued_at: Date.yesterday,
               line_items_attributes:
                 {
                   "0": { item_id: item1.id, quantity: 18 },
@@ -172,6 +177,7 @@ RSpec.describe DistributionsController, type: :controller do
             distribution: {
               partner_id: partner.id,
               storage_location_id: storage_location.id,
+              issued_at: Date.yesterday,
               line_items_attributes:
                 {
                   "0": { item_id: item1.id, quantity: 18 },
@@ -199,6 +205,7 @@ RSpec.describe DistributionsController, type: :controller do
             distribution: {
               partner_id: partner.id,
               storage_location_id: storage_location.id,
+              issued_at: Date.yesterday,
               line_items_attributes:
                 {
                   "0": { item_id: storage_location.items.first.id, quantity: 0 }
@@ -235,6 +242,7 @@ RSpec.describe DistributionsController, type: :controller do
             id: distribution.id,
             distribution: {
               storage_location_id: distribution.storage_location.id,
+              issued_at: Date.yesterday,
               line_items_attributes:
                 {
                   "0": { item_id: item1.id, quantity: 18 },
@@ -309,6 +317,7 @@ RSpec.describe DistributionsController, type: :controller do
             id: distribution.id,
             distribution: {
               storage_location_id: distribution.storage_location.id,
+              issued_at: Date.yesterday,
               line_items_attributes:
                 {
                   "0": { item_id: item1.id, quantity: 4 },
