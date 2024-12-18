@@ -312,20 +312,6 @@ RSpec.describe "Donations", type: :system, js: true do
           end.to change { Donation.count }.by(1)
         end
 
-        it "Allows User to create a donation for Purchased Supplies" do
-          select Donation::SOURCES[:misc], from: "donation_source"
-          expect(page).not_to have_xpath("//select[@id='donation_donation_site_id']")
-          expect(page).not_to have_xpath("//select[@id='donation_product_drive_participant_id']")
-          expect(page).not_to have_xpath("//select[@id='donation_manufacturer_id']")
-          select StorageLocation.first.name, from: "donation_storage_location_id"
-          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
-          fill_in "donation_line_items_attributes_0_quantity", with: "5"
-
-          expect do
-            click_button "Save"
-          end.to change { Donation.count }.by(1)
-        end
-
         it "Allows User to create a donation with a Miscellaneous source" do
           select Donation::SOURCES[:misc], from: "donation_source"
           expect(page).not_to have_xpath("//select[@id='donation_donation_site_id']")
