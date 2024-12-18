@@ -19,6 +19,11 @@ RSpec.describe RequestsConfirmationMailer, type: :mailer do
       expect(mail.body.encoded).to match('This is an email confirmation')
       expect(mail.body.encoded).to match('For more info, please e-mail me@org.com')
     end
+
+    it 'CCs the organization if they opt in' do
+      request.organization.update!(receive_email_on_requests: true)
+      expect(mail.cc).to eq([request.partner.email, request.organization.email])
+    end
   end
 
   it 'pairs the right quantities with the right item names' do
