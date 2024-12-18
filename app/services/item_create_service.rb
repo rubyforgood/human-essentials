@@ -1,12 +1,4 @@
 class ItemCreateService
-  Success = Class.new(::Success) do
-    attr_reader :item
-
-    def initialize(item:)
-      @item = item
-    end
-  end
-
   def initialize(organization_id:, item_params:, request_unit_ids: [])
     @organization_id = organization_id
     @request_unit_ids = request_unit_ids
@@ -20,9 +12,9 @@ class ItemCreateService
       new_item.sync_request_units!(@request_unit_ids)
     end
 
-    Success.new(item: new_item)
+    Result.new(value: new_item, success: true)
   rescue StandardError => e
-    Failure.new(error: e)
+    Result.new(error: e, success: false)
   end
 
   private

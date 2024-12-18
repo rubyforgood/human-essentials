@@ -33,9 +33,9 @@ RSpec.describe TransferDestroyService, type: :service do
     end
 
     context 'when there are no issues' do
-      it 'should return a success monad with success? returning true' do
+      it 'should return a result object with success? returning true' do
         expect { subject }.to change { TransferDestroyEvent.count }.by(1)
-        expect(subject).to be_a_kind_of(Success)
+        expect(subject).to be_a_kind_of(Result)
         expect(subject.success?).to eq(true)
       end
 
@@ -54,8 +54,8 @@ RSpec.describe TransferDestroyService, type: :service do
           allow(Transfer).to receive(:find).with(transfer_id).and_raise(ActiveRecord::RecordNotFound)
         end
 
-        it 'should return a failure monad with an ActiveRecord::RecordNotFound error' do
-          expect(subject).to be_a_kind_of(Failure)
+        it 'should return a result object with an ActiveRecord::RecordNotFound error' do
+          expect(subject).to be_a_kind_of(Result)
           expect(subject.success?).to eq(false)
           expect(subject.error).to be_a_kind_of(ActiveRecord::RecordNotFound)
         end
@@ -66,8 +66,8 @@ RSpec.describe TransferDestroyService, type: :service do
           allow(TransferDestroyEvent).to receive(:publish).and_raise('OH NOES')
         end
 
-        it 'should return a failure monad with the raised error' do
-          expect(subject).to be_a_kind_of(Failure)
+        it 'should return a result object with the raised error' do
+          expect(subject).to be_a_kind_of(Result)
           expect(subject.success?).to eq(false)
           expect(subject.error.message).to eq('OH NOES')
         end
@@ -79,8 +79,8 @@ RSpec.describe TransferDestroyService, type: :service do
           allow(transfer).to receive(:destroy!).and_raise(fake_error)
         end
 
-        it 'should return a failure monad with the raised error' do
-          expect(subject).to be_a_kind_of(Failure)
+        it 'should return a result object with the raised error' do
+          expect(subject).to be_a_kind_of(Result)
           expect(subject.success?).to eq(false)
           expect(subject.error).to eq(fake_error)
         end
@@ -92,8 +92,8 @@ RSpec.describe TransferDestroyService, type: :service do
         allow(Audit).to receive(:finalized_since?).and_return(true)
       end
 
-      it 'should return an failure monad with the raised error' do
-        expect(subject).to be_a_kind_of(Failure)
+      it 'should return an result object with the raised error' do
+        expect(subject).to be_a_kind_of(Result)
         expect(subject.success?).to eq(false)
         expect(subject.error).to be_a_kind_of(StandardError)
       end

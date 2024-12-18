@@ -27,11 +27,10 @@ RSpec.describe ItemCreateService, type: :service do
     end
 
     context 'when there are no issues' do
-      it 'should return a success monad with success? returning true and the item' do
-        expect(subject).to be_a_kind_of(ItemCreateService::Success)
-        expect(subject).to be_a_kind_of(Success)
+      it 'should return a result object with success? returning true and the item' do
+        expect(subject).to be_a_kind_of(Result)
         expect(subject.success?).to eq(true)
-        expect(subject.item).to eq(fake_organization_item)
+        expect(subject.value).to eq(fake_organization_item)
       end
 
       it 'should execute the expected methods' do
@@ -49,8 +48,8 @@ RSpec.describe ItemCreateService, type: :service do
           allow(Organization).to receive(:find).with(organization_id).and_raise(ActiveRecord::RecordNotFound)
         end
 
-        it 'should return a failure monad with an ActiveRecord::RecordNotFound error' do
-          expect(subject).to be_a_kind_of(Failure)
+        it 'should return a result object with an ActiveRecord::RecordNotFound error' do
+          expect(subject).to be_a_kind_of(Result)
           expect(subject.success?).to eq(false)
           expect(subject.error).to be_a_kind_of(ActiveRecord::RecordNotFound)
         end
@@ -63,8 +62,8 @@ RSpec.describe ItemCreateService, type: :service do
           allow(fake_organization_item).to receive(:save!).and_raise(fake_error)
         end
 
-        it 'should return a failure monad with the raised error' do
-          expect(subject).to be_a_kind_of(Failure)
+        it 'should return a result object with the raised error' do
+          expect(subject).to be_a_kind_of(Result)
           expect(subject.success?).to eq(false)
           expect(subject.error).to eq(fake_error)
         end
