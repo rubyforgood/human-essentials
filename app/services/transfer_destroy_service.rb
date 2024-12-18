@@ -13,9 +13,9 @@ class TransferDestroyService
       transfer.destroy!
     end
 
-    Success.new
+    Result.new(success: true)
   rescue StandardError => e
-    Failure.new(error: e)
+    Result.new(error: e, success: false)
   end
 
   private
