@@ -205,6 +205,7 @@ class DistributionsController < ApplicationController
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @distribution.initialize_request_items
       @items = current_organization.items.active.alphabetized
+      @partner_list = current_organization.partners.alphabetized
       @storage_locations = current_organization.storage_locations.active_locations.alphabetized
       render :edit
     end
