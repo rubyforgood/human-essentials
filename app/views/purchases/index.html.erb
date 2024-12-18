@@ -102,7 +102,20 @@
                   <%= @paginated_purchases_quantity %> (This page)
                 </td>
                 <td></td>
-                <td class="numeric"><strong><%= dollar_value(@total_value_all_purchases) %></strong></td>
+                <td class="numeric">
+                  <strong>
+                    <%= dollar_value(@total_value_all_purchases) %> (Total)
+                  </strong>
+                  <br>
+                  <%= dollar_value(@paginated_purchases_value) %> (This page)
+                  </td>
+                  <td class="numeric">
+                  <strong>
+                    <%= dollar_value(@total_fair_market_values) %> (Total)
+                  </strong>
+                  <br>
+                  <%= dollar_value(@paginated_fair_market_values) %> (This page)
+                  </td>
                 <td></td>
               </tr>
               </tfoot>
