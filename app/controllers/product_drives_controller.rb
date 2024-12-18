@@ -6,7 +6,6 @@ class ProductDrivesController < ApplicationController
     setup_date_range_picker
     @product_drives = current_organization
                      .product_drives
-                     .includes(donations: {line_items: :item})
                      .class_filter(filter_params)
                      .within_date_range(@selected_date_range)
                      .order(start_date: :desc)
@@ -15,6 +14,11 @@ class ProductDrivesController < ApplicationController
     @item_categories = current_organization.item_categories
     @selected_name_filter = filter_params[:by_name]
     @selected_item_category = filter_params[:by_item_category_id]
+    @summary = ProductDriveSummaryService.new(
+      product_drives: @product_drives,
+      within_date_range: @selected_date_range,
+      item_category_id: @selected_item_category
+    ).call
 
     respond_to do |format|
       format.html
