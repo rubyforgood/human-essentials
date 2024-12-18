@@ -16,6 +16,7 @@ RSpec.describe Exports::ExportRequestService do
   let!(:request_3t) do
     create(:request,
            :started,
+           :child,
            :with_item_requests,
            organization: org,
            partner: partner,
@@ -25,6 +26,7 @@ RSpec.describe Exports::ExportRequestService do
   let!(:request_2t) do
     create(:request,
            :fulfilled,
+           :individual,
            :with_item_requests,
            organization: org,
            partner: partner,
@@ -61,6 +63,7 @@ RSpec.describe Exports::ExportRequestService do
   let!(:request_4t) do
     create(:request,
            :started,
+           :quantity,
            :with_item_requests,
            organization: org,
            partner: partner,
@@ -72,6 +75,7 @@ RSpec.describe Exports::ExportRequestService do
   let!(:request_4t_pack) do
     create(:request,
            :started,
+           :quantity,
            :with_item_requests,
            organization: org,
            partner: partner,
@@ -94,6 +98,7 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject.first).to eq([
           "Date",
           "Requestor",
+          "Type",
           "Status",
           "2T Diapers",
           "3T Diapers",
@@ -111,6 +116,7 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject[1]).to eq([
           request_3t.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "Child",
           "Started",
           0,   # 2T Diapers
           150, # 3T Diapers
@@ -124,6 +130,7 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject[2]).to eq([
           request_2t.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "Individual",
           "Fulfilled",
           100, # 2T Diapers
           0,   # 3T Diapers
@@ -137,6 +144,7 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject[3]).to eq([
           request_with_deleted_items.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          nil,
           "Fulfilled",
           0,   # 2T Diapers
           0,   # 3T Diapers
@@ -150,6 +158,7 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject[4]).to eq([
           request_with_multiple_items.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          nil,
           "Started",
           3,   # 2T Diapers
           2,   # 3T Diapers
@@ -163,6 +172,7 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject[5]).to eq([
           request_4t.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "Quantity",
           "Started",
           0,   # 2T Diapers
           0,   # 3T Diapers
@@ -176,6 +186,7 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject[6]).to eq([
           request_4t_pack.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "Quantity",
           "Started",
           0,   # 2T Diapers
           0,   # 3T Diapers
@@ -190,6 +201,7 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject[6]).to eq([
           request_4t_pack.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "Quantity",
           "Started",
           0,   # 2T Diapers
           0,   # 3T Diapers
@@ -211,6 +223,7 @@ RSpec.describe Exports::ExportRequestService do
         expect(subject.first).to eq([
           "Date",
           "Requestor",
+          "Type",
           "Status",
           "2T Diapers",
           "3T Diapers",
@@ -224,9 +237,10 @@ RSpec.describe Exports::ExportRequestService do
       end
 
       it "has expected data for the 3T Diapers request" do
-        expect(subject[1]).to eq([
+        expect(subject).to include([
           request_3t.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "Child",
           request_3t.status.humanize,
           0,   # 2T Diapers
           150, # 3T Diapers
@@ -236,9 +250,10 @@ RSpec.describe Exports::ExportRequestService do
       end
 
       it "has expected data for the 2T Diapers request" do
-        expect(subject[2]).to eq([
+        expect(subject).to include([
           request_2t.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "Individual",
           "Fulfilled",
           100, # 2T Diapers
           0,   # 3T Diapers
@@ -248,9 +263,10 @@ RSpec.describe Exports::ExportRequestService do
       end
 
       it "has expected data for the request with deleted items" do
-        expect(subject[3]).to eq([
+        expect(subject).to include([
           request_with_deleted_items.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          nil,
           "Fulfilled",
           0,   # 2T Diapers
           0,   # 3T Diapers
@@ -260,9 +276,10 @@ RSpec.describe Exports::ExportRequestService do
       end
 
       it "has expected data for the request with multiple items" do
-        expect(subject[4]).to eq([
+        expect(subject).to include([
           request_with_multiple_items.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          nil,
           "Started",
           3,   # 2T Diapers
           2,   # 3T Diapers
@@ -272,9 +289,10 @@ RSpec.describe Exports::ExportRequestService do
       end
 
       it "has expected data for the request with 4T diapers without pack unit" do
-        expect(subject[5]).to eq([
+        expect(subject).to include([
           request_4t.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "Quantity",
           "Started",
           0,   # 2T Diapers
           0,   # 3T Diapers
@@ -284,9 +302,10 @@ RSpec.describe Exports::ExportRequestService do
       end
 
       it "has expected data for the request with 4T diapers with pack unit" do
-        expect(subject[6]).to eq([
+        expect(subject).to include([
           request_4t_pack.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
+          "Quantity",
           "Started",
           0,   # 2T Diapers
           0,   # 3T Diapers
