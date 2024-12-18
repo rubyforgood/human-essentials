@@ -34,7 +34,7 @@
             <h2 class="card-title">Partner Actions</h2>
           </div>
           <div class="card-body p-3">
-            <% if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
+            <% if current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
               <%= link_to partner_users_path(@partner) do %>
                 <div class="btn btn-app bg-success">
                   <i class="fas fa-users"></i> Manage Users
