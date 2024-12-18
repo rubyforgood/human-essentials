@@ -4,7 +4,16 @@ class RequestsConfirmationMailer < ApplicationMailer
     @partner = request.partner
     @request_items = fetch_items(request)
     requestee_email = request.user_email
-    mail(to: requestee_email, cc: @partner.email, subject: "#{@organization.name} - Requests Confirmation")
+    # If the requestee organization has opted in to receiving an email when a
+    # request is made, CC them
+    cc = [@partner.email]
+    if @organization.receive_email_on_requests
+      cc.push(@organization.email)
+    end
+    cc.flatten!
+    cc.compact!
+    cc.uniq!
+    mail(to: requestee_email, cc: cc, subject: "#{@organization.name} - Requests Confirmation")
   end
 
   private
