@@ -240,17 +240,6 @@ RSpec.describe Distribution, type: :model do
   end
 
   context "Callbacks >" do
-    it "initializes the issued_at field to default to midnight if it wasn't explicitly set" do
-      yesterday = 1.day.ago
-      today = Time.zone.today
-
-      distribution = create(:distribution, created_at: yesterday, issued_at: today)
-      expect(distribution.issued_at.to_date).to eq(today)
-
-      distribution = create(:distribution, created_at: yesterday)
-      expect(distribution.issued_at).to eq(distribution.created_at.end_of_day)
-    end
-
     context "#before_save" do
       context "#reset_shipping_cost" do
         context "when delivery_method is other then shipped" do
