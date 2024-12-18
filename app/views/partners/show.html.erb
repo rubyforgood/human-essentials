@@ -238,7 +238,7 @@
                 <tbody>
                 <% @partner_distributions.each do |dist| %>
                   <tr>
-                    <td><%= dist.created_at.strftime("%m/%d/%Y") %></td>
+                    <td><%= dist.issued_at.strftime("%m/%d/%Y") %></td>
                     <td><%= dist.storage_location.name %></td>
                     <td><%= dist.line_items.total %></td>
                     <td class="text-right">
