@@ -22,7 +22,7 @@ FactoryBot.define do
     storage_location
     partner
     organization { Organization.try(:first) || create(:organization) }
-    issued_at { nil }
+    issued_at { Time.current }
     delivery_method { :pick_up }
     state { :scheduled }
 

@@ -34,6 +34,7 @@ RSpec.describe DonationsController, type: :controller do
           donation: { storage_location_id: storage_location.id,
                       donation_site_id: donation_site.id,
                       source: "Donation Site",
+                      issued_at: Date.yesterday,
                       line_items: line_items }
         }
         expect(response).to redirect_to(donations_path)
