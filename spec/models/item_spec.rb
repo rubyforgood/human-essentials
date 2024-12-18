@@ -249,9 +249,10 @@ RSpec.describe Item, type: :model do
       end
 
       context "in a kit" do
-        let(:kit) { create(:kit, organization: organization) }
         before do
-          create(:line_item, itemizable: kit, item: item)
+          create_kit(organization: organization, line_items_attributes: [
+            {item_id: item.id, quantity: 1}
+          ])
         end
 
         it "should return false" do
@@ -284,10 +285,10 @@ RSpec.describe Item, type: :model do
       end
 
       context "in a kit" do
-        let(:kit) { create(:kit, organization: organization) }
-
         before do
-          create(:line_item, itemizable: kit, item: item)
+          create_kit(organization: organization, line_items_attributes: [
+            {item_id: item.id, quantity: 1}
+          ])
         end
 
         it "should return false" do
@@ -460,8 +461,9 @@ RSpec.describe Item, type: :model do
       let(:kit) { create(:kit, name: "my kit") }
 
       it "updates kit name" do
-        item.update(name: "my new name")
-        expect(item.name).to eq kit.name
+        name = "my new name"
+        item.update(name: name)
+        expect(kit.name).to eq name
       end
     end
 
