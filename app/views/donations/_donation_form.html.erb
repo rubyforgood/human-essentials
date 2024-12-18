@@ -67,7 +67,7 @@
                           collection: @storage_locations,
                           label: "Storage Location",
                           error: "Where is it being stored?",
-                          selected: donation_form.storage_location&.id || current_organization.intake_location,
+                          selected: donation_form.storage_location&.id || default_location(@donation),
                           include_blank: true,
                           wrapper: :input_group %>
       </div>

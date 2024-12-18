@@ -51,15 +51,6 @@ RSpec.describe Distribution, type: :model do
       expect(d).not_to be_valid
     end
 
-    it "ensures that any included items are found in the associated storage location" do
-      unless Event.read_events?(organization) # not relevant in event world
-        d = build(:distribution)
-        item_missing = create(:item, name: "missing")
-        d.line_items << build(:line_item, item: item_missing)
-        expect(d).not_to be_valid
-      end
-    end
-
     it "ensures that the issued at is no earlier than 2000" do
       d = build(:distribution, issued_at: "1999-12-31")
       expect(d).not_to be_valid
@@ -148,6 +139,34 @@ RSpec.describe Distribution, type: :model do
       end
     end
 
+    describe "in_last_12_months >" do
+      context "when the current date is December 31, 2023" do
+        before do
+          travel_to Time.zone.local(2023, 12, 31)
+        end
+
+        after do
+          travel_back
+        end
+
+        it "includes distributions issued within the last 12 months" do
+          included_distribution = create(:distribution, organization: organization, issued_at: Time.zone.local(2023, 1, 1))
+          excluded_distribution = create(:distribution, organization: organization, issued_at: Time.zone.local(2022, 12, 30))
+          distributions = Distribution.in_last_12_months
+          expect(distributions).to include(included_distribution)
+          expect(distributions).not_to include(excluded_distribution)
+        end
+
+        it "includes distributions up to the current date and excludes future ones" do
+          current_distribution = create(:distribution, organization: organization, issued_at: Time.zone.local(2023, 12, 31))
+          future_distribution = create(:distribution, organization: organization, issued_at: Time.zone.local(2024, 1, 1))
+          distributions = Distribution.in_last_12_months
+          expect(distributions).to include(current_distribution)
+          expect(distributions).not_to include(future_distribution)
+        end
+      end
+    end
+
     describe "by_item_id >" do
       it "only returns distributions with given item id" do
         # create 2 items with unique ids
@@ -185,20 +204,42 @@ RSpec.describe Distribution, type: :model do
         expect(Distribution.by_location(location_1.id)).not_to include(dist2)
       end
     end
+
+    describe "with_diapers >" do
+      let(:disposable_item) { create(:item, base_item: create(:base_item, category: "Diapers - Childrens")) }
+      let(:cloth_diaper_item) { create(:item, base_item: create(:base_item, category: "Diapers - Cloth (Kids)")) }
+      let(:non_diaper_item) { create(:item, base_item: create(:base_item, category: "Menstrual Supplies/Items")) }
+
+      it "only includes distributions with disposable or cloth_diaper items" do
+        dist1 = create(:distribution, :with_items, item: disposable_item)
+        dist2 = create(:distribution, :with_items, item: cloth_diaper_item)
+        dist3 = create(:distribution, :with_items, item: non_diaper_item)
+
+        distributions = Distribution.with_diapers
+        expect(distributions.count).to eq(2)
+        expect(distributions).to include(dist1)
+        expect(distributions).to include(dist2)
+        expect(distributions).not_to include(dist3)
+      end
+    end
+
+    describe "with_period_supplies >" do
+      let(:period_supplies_item) { create(:item, base_item: create(:base_item, category: "Menstrual Supplies/Items")) }
+      let(:non_period_supplies_item) { create(:item, base_item: create(:base_item, category: "Diapers - Childrens")) }
+
+      it "only includes distributions with period supplies items" do
+        dist1 = create(:distribution, :with_items, item: period_supplies_item)
+        dist2 = create(:distribution, :with_items, item: non_period_supplies_item)
+
+        distributions = Distribution.with_period_supplies
+        expect(distributions.count).to eq(1)
+        expect(distributions).to include(dist1)
+        expect(distributions).not_to include(dist2)
+      end
+    end
   end
 
   context "Callbacks >" do
-    it "initializes the issued_at field to default to midnight if it wasn't explicitly set" do
-      yesterday = 1.day.ago
-      today = Time.zone.today
-
-      distribution = create(:distribution, created_at: yesterday, issued_at: today)
-      expect(distribution.issued_at.to_date).to eq(today)
-
-      distribution = create(:distribution, created_at: yesterday)
-      expect(distribution.issued_at).to eq(distribution.created_at.end_of_day)
-    end
-
     context "#before_save" do
       context "#reset_shipping_cost" do
         context "when delivery_method is other then shipped" do

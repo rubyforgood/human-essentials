@@ -68,7 +68,6 @@ class PurchasesController < ApplicationController
     @purchase = current_organization.purchases.find(params[:id])
     ItemizableUpdateService.call(itemizable: @purchase,
       params: purchase_params,
-      type: :increase,
       event_class: PurchaseEvent)
     redirect_to purchases_path
   rescue => e
@@ -112,7 +111,7 @@ class PurchasesController < ApplicationController
 
   # If line_items have submitted with empty rows, clear those out first.
   def compact_line_items
-    return params unless params[:purchase].key?(:line_item_attributes)
+    return params unless params[:purchase].key?(:line_items_attributes)
 
     params[:purchase][:line_items_attributes].delete_if { |_row, data| data["quantity"].blank? && data["item_id"].blank? }
     params

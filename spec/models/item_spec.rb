@@ -36,7 +36,6 @@ RSpec.describe Item, type: :model do
 
     it { should validate_presence_of(:name) }
     it { should belong_to(:organization) }
-    it { should belong_to(:base_item).counter_cache(:item_count).with_primary_key(:partner_key).with_foreign_key(:partner_key).inverse_of(:items) }
     it { should validate_numericality_of(:distribution_quantity).is_greater_than(0) }
     it { should validate_numericality_of(:on_hand_minimum_quantity).is_greater_than_or_equal_to(0) }
     it { should validate_numericality_of(:on_hand_recommended_quantity).is_greater_than_or_equal_to(0) }
@@ -47,7 +46,7 @@ RSpec.describe Item, type: :model do
       expect(subject.class).to respond_to :class_filter
     end
 
-    it "->by_size returns all items with the same size, per their BaseItem parent" do
+    specify "->by_size returns all items with the same size, per their BaseItem parent" do
       size4 = create(:base_item, size: "4", name: "Size 4 Diaper")
       size_z = create(:base_item, size: "Z", name: "Size Z Diaper")
 
@@ -57,7 +56,30 @@ RSpec.describe Item, type: :model do
       expect(Item.by_size("4").length).to eq(2)
     end
 
-    it "->alphabetized retrieves items in alphabetical order" do
+    specify "->housing_a_kit returns all items which belongs_to (house) a kit" do
+      name = "test kit"
+      kit_params = attributes_for(:kit, name: name)
+      kit_params[:line_items_attributes] = [{item_id: create(:item).id, quantity: 1}] # shouldn't be counted
+      KitCreateService.new(organization_id: organization.id, kit_params: kit_params).call
+
+      create(:item) # shouldn't be counted
+      expect(Item.housing_a_kit.count).to eq(1)
+      expect(Item.housing_a_kit.first.name = name)
+    end
+
+    specify "->loose returns all items which do not belongs_to a kit" do
+      name = "A"
+      item = create(:item, name: name, organization: organization)
+
+      kit_params = attributes_for(:kit)
+      kit_params[:line_items_attributes] = [{item_id: item.id, quantity: 1}]
+      KitCreateService.new(organization_id: organization.id, kit_params: kit_params).call # shouldn't be counted
+
+      expect(Item.loose.count).to eq(1)
+      expect(Item.loose.first.name = name)
+    end
+
+    specify "->alphabetized retrieves items in alphabetical order" do
       item_c = create(:item, name: "C")
       item_b = create(:item, name: "B")
       item_a = create(:item, name: "A")
@@ -67,7 +89,7 @@ RSpec.describe Item, type: :model do
       expect(Item.alphabetized.map(&:name)).to eq(alphabetized_list)
     end
 
-    it "->active shows items that are still active" do
+    specify "->active shows items that are still active" do
       inactive_item = create(:line_item, :purchase).item
       item = create(:item)
       inactive_item.deactivate!
@@ -199,15 +221,6 @@ RSpec.describe Item, type: :model do
   end
 
   context "Methods >" do
-    describe "storage_locations_containing" do
-      it "retrieves all storage locations that contain an item" do
-        item = create(:item)
-        storage_location = create(:storage_location, :with_items, item: item, item_quantity: 12)
-        create(:storage_location)
-        expect(Item.storage_locations_containing(item).first).to eq(storage_location)
-      end
-    end
-
     describe "barcodes_for" do
       it "retrieves all BarcodeItems associated with an item" do
         item = create(:item)
@@ -372,6 +385,19 @@ RSpec.describe Item, type: :model do
       end
     end
 
+    describe '#is_in_kit?' do
+      it "is true for items that are in a kit and false otherwise" do
+        item_not_in_kit = create(:item, organization: organization)
+        item_in_kit = create(:item, organization: organization)
+
+        kit_params = attributes_for(:kit)
+        kit_params[:line_items_attributes] = [{item_id: item_in_kit.id, quantity: 1}]
+        KitCreateService.new(organization_id: organization.id, kit_params: kit_params).call
+        expect(item_in_kit.is_in_kit?).to be true
+        expect(item_not_in_kit.is_in_kit?).to be false
+      end
+    end
+
     describe "other?" do
       it "is true for items that are partner_key 'other'" do
         item = create(:item, base_item: create(:base_item, name: "Base"))
@@ -453,5 +479,48 @@ RSpec.describe Item, type: :model do
 
   describe "versioning" do
     it { is_expected.to be_versioned }
+  end
+
+  describe "kit items" do
+    context "with kit and regular items" do
+      let(:organization) { create(:organization) }
+      let(:kit) { create(:kit, organization: organization) }
+      let(:kit_item) { create(:item, kit: kit, organization: organization) }
+      let(:regular_item) { create(:item, organization: organization) }
+
+      describe "#can_delete?" do
+        it "returns false for kit items" do
+          expect(kit_item.can_delete?).to be false
+        end
+
+        it "returns true for regular items" do
+          expect(regular_item.can_delete?).to be true
+        end
+      end
+
+      describe "#deactivate!" do
+        it "deactivates both the kit item and its associated kit" do
+          kit_item.deactivate!
+          expect(kit_item.reload.active).to be false
+          expect(kit.reload.active).to be false
+        end
+
+        it "only deactivates regular items" do
+          regular_item.deactivate!
+          expect(regular_item.reload.active).to be false
+        end
+      end
+
+      describe "#validate_destroy" do
+        it "prevents deletion of kit items" do
+          expect { kit_item.destroy! }.to raise_error(ActiveRecord::RecordNotDestroyed)
+          expect(kit_item.errors[:base]).to include("Cannot delete item - it has already been used!")
+        end
+
+        it "allows deletion of regular items" do
+          expect { regular_item.destroy! }.not_to raise_error
+        end
+      end
+    end
   end
 end

@@ -20,7 +20,8 @@ class Transfer < ApplicationRecord
   include Itemizable
   include Filterable
   include Exportable
-  alias_attribute :storage_location, :from # to make it play nice with Itemizable
+  # to make it play nice with Itemizable - alias of `from`
+  belongs_to :storage_location, class_name: "StorageLocation", inverse_of: :transfers_from, foreign_key: :from_id
   scope :from_location, ->(location_id) { where(from_id: location_id) }
   scope :to_location, ->(location_id) { where(to_id: location_id) }
   scope :for_csv_export, ->(organization, *) {
@@ -29,16 +30,7 @@ class Transfer < ApplicationRecord
   }
   scope :during, ->(range) { where(created_at: range) }
 
-  def self.storage_locations_transferred_to_in(organization)
-    includes(:to).where(organization_id: organization.id).distinct(:to_id).collect(&:to).uniq.sort_by(&:name)
-  end
-
-  def self.storage_locations_transferred_from_in(organization)
-    includes(:from).where(organization_id: organization.id).distinct(:from_id).collect(&:from).uniq.sort_by(&:name)
-  end
-
   validates :from, :to, :organization, presence: true
-  validate :line_items_exist_in_inventory
   validate :storage_locations_belong_to_organization
   validate :storage_locations_must_be_different
   validate :from_storage_quantities
@@ -89,11 +81,7 @@ class Transfer < ApplicationRecord
   end
 
   def insufficient_items
-    if Event.read_events?(organization)
-      inventory = View::Inventory.new(organization_id)
-      line_items.select { |i| i.quantity > inventory.quantity_for(item_id: i.item_id) }
-    else
-      line_items.select { |i| i.quantity > from.item_total(i.item_id) }
-    end
+    inventory = View::Inventory.new(organization_id)
+    line_items.select { |i| i.quantity > inventory.quantity_for(item_id: i.item_id) }
   end
 end
