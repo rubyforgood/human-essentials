@@ -4,7 +4,12 @@ class DistributionsByCountyController < ApplicationController
 
   def report
     setup_date_range_picker
-    distributions = current_organization.distributions.includes(:partner).during(helpers.selected_range)
-    @breakdown = DistributionByCountyReportService.new.get_breakdown(distributions)
+    start_date = helpers.selected_range.first.iso8601
+    end_date = helpers.selected_range.last.iso8601
+    @breakdown = DistributionSummaryByCountyQuery.call(
+      organization_id: current_organization.id,
+      start_date: start_date,
+      end_date: end_date
+    )
   end
 end
