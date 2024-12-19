@@ -13,7 +13,7 @@ RSpec.describe PartnerFetchRequestableItemsService do
       ]
     }
 
-    it 'raises an error indiciating the partner does not exist with invalid id' do
+    it 'raises an error indicating the partner does not exist with invalid id' do
       invalid_partner_id = 0
       expect do
         PartnerFetchRequestableItemsService.new(partner_id: invalid_partner_id).call

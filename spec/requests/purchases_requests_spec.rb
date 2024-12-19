@@ -171,7 +171,7 @@ RSpec.describe "Purchases", type: :request do
       end
 
       describe "when removing a line item" do
-        it "updates storage invetory item quantity correctly" do
+        it "updates storage inventory item quantity correctly" do
           purchase = create(:purchase, :with_items, item_quantity: 10)
           line_item = purchase.line_items.first
           line_item_params = {

@@ -8,14 +8,14 @@ export default class extends Controller {
   static targets = [ "nestedElement", "checkbox" ]
 
   connect() {
-    this.toggleNestedElementVisiblity()
+    this.toggleNestedElementVisibility()
   }
 
   /**
    * Toggles the visibility of the nested element depending
    * on wither the checkbox is checked or not.
    */
-  toggleNestedElementVisiblity() {
+  toggleNestedElementVisibility() {
     this.nestedElementTarget.classList.toggle("d-none", !this.checkboxTarget.checked)
   }
 

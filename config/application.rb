@@ -29,7 +29,7 @@ module Diaper
 
     # Set the async mailer jobs to go through the default queue
     # that sidekiq comes with. This way `.deliver_later` will
-    # generate a job that will be processed by the exisiting
+    # generate a job that will be processed by the existing
     # sidekiq worker that is only taking work from the `default`
     # queue.
     config.action_mailer.deliver_later_queue_name = 'default'

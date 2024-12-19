@@ -24,7 +24,7 @@ RSpec.describe TransfersController, type: :controller do
         let!(:new_transfer) { create(:transfer, created_at: 1.day.ago) }
 
         context 'when date parameters are supplied' do
-          it 'only returns the correct obejects' do
+          it 'only returns the correct objects' do
             start_date = 3.days.ago.to_formatted_s(:date_picker)
             end_date = Time.zone.today.to_formatted_s(:date_picker)
             get :index, params: { filters: { date_range: "#{start_date} - #{end_date}" } }
