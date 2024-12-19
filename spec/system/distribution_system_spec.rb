@@ -558,9 +558,9 @@ RSpec.feature "Distributions", type: :system do
 
     context "when editing that distribution" do
       before do
-        click_on "Distributions", match: :first
-        click_on "Edit", match: :first
         @distribution = Distribution.last
+        expect(page).to have_current_path(distribution_path(@distribution.id))
+        click_on "Make a Correction"
       end
 
       it "User creates a distribution from a donation then edits it" do
