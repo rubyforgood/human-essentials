@@ -2,9 +2,9 @@ READY FOR REVIEW
 
 # Organization information and customization
 
-Every Essentials Bank has its own way of doing things. 
-With that in mind, there are a number of things you can tweak. 
-This is done through "My Organization". 
+Every Essentials Bank has its own way of doing things.
+With that in mind, there are a number of things you can tweak.
+This is done through "My Organization".
 Only organization admins have access to this area.
 
 ## Getting to the organization edit
@@ -74,7 +74,7 @@ At this point, we send those emails once a month on the day of the month you ind
 If you do not pick a day, no reminder emails are sent.
 
 #### Deadline day (Final day of the month to submit Requests)
-This day will be included in the reminder email message, 
+This day will be included in the reminder email message,
 
 ----------
 
@@ -104,7 +104,7 @@ The bank-wide default Storage Location for Donations and Purchases.
 You can also specify a different default Storage Location on any Partner, which will override this default.
 If you specify a default Storage Location, it will be pre-populated as the Storage Location when you are adding new Distributions.
 
-#### Custom Partner Invitation Message 
+#### Custom Partner Invitation Message
 [!NOTE] The Custom Partner Invitation Message is currenty not working as advertised (as of November 13, 2024.).  The current behavior is as if you did not enter anything here.  We have fixing it on our "to do" list.
 
 When you invite a Partner, they get an email.  This field lets you specify the message you are sending to them.  Just text -- we don't have any personalization capability for this email at this time.
@@ -151,7 +151,7 @@ This is a special topic that has its own guide page [here](special_custom_units.
 There are three different ways a Partner can request essentials -- a "Child based" Request, a Request by number of individuals, and a quantity-based Request.  Some banks want to limit which Requests the partners can make, in order to minimize partner confusion.
 These three fields allow you to control which Requests the Partners can use.
 If you allow more than one kind, the Partner can also limit their own.
-Note that if any Partner limits themselves to a single type,  you won't be able to remove that type.  So, if you think you only want to allow quantity-based Requests, doing that up front is a fine idea. 
+Note that if any Partner limits themselves to a single type,  you won't be able to remove that type.  So, if you think you only want to allow quantity-based Requests, doing that up front is a fine idea.
 
 #### Enable partners to make child-based Requests
 #### Enable partners to make Requests for individuals?
@@ -160,31 +160,34 @@ Note that if any Partner limits themselves to a single type,  you won't be able 
 ----------
 
 ## Customizing the Distribution printout
-There are four fields that allow you to tweak the appearance of the Distribution printout 
+There are four fields that allow you to tweak the appearance of the Distribution printout
 
-### Show Year-to-date values on the Distribution printout? 
+### Show Year-to-date values on the Distribution printout?
 Some banks don't want to show year-to-date values on the receipt (1, below) because their fiscal year is not the calendar year.  
 ### Include Signature Lines on Distribution printout
 If "yes", this will include a space for someone from the bank and from the Partner to sign the Distribution printout (2, below) - which can be useful as a receipt acknowledgement.
-### Hide both value columns 
+### Hide both value columns
 The default is to show the in-kind value of the Items on the receipt (3, below).  Many banks don't need to show this information on the Distribution printout.
-Note:  Hiding this also hides the corresponding values on the single Donation printout. 
+Note:  Hiding this also hides the corresponding values on the single Donation printout.
 ### Hide the package column on Distribution receipts?
 This hides the packages column on the Distribution printout (4, below).  Because different brands of essentials use different size packages,  this
 column is useful mainly for banks that repackage their essentials into uniform package sizes.  If you have a uniform package size, you can specify that on the Item (see [Inventory Items](inventory_items.md))
 
 ![Distribution printout marked up with customizable sections](images/getting_started/customization/gs_customization_distribution_printout_customizable_sections.png)
 
+### Receive email when partner makes a request?
+If "yes", your organization's email address will be CCed on the request confirmation email partners receive when submitting a request to your organization.  This will be "no" by default, so you must opt into to receiving these emails.
+
 --------
 
 #### Use One Step Invite and Approve partner process?
 Partners can't submit Requests until they are approved by the bank.
-The full partner approval process requires the partner to fill in their profile and submit it for approval.  Some banks handle that for their partners,  gather the information through other means (such as a phone conversation). 
+The full partner approval process requires the partner to fill in their profile and submit it for approval.  Some banks handle that for their partners,  gather the information through other means (such as a phone conversation).
 Checking this will change the process so that the partners are automatically approved when they are invited. Note that any invited partners that are not yet approved will still need to be approved by the bank.
 
 #### Distribution Email Content
 Note that there is a checkbox on the partner for them to receive Distribution emails.  We recommend you do customize this content, as the default text is abrupt.
-You can customize this quite a bit! 
+You can customize this quite a bit!
 
 Specifically, you can use the variables %{partner_name}, %{delivery_method}, %{distribution_date}, and %{comment} to include the partner's name, delivery method, distribution date, and comments sent in the email.  You can also format the text, and attach files by using the buttons above the field.
 
