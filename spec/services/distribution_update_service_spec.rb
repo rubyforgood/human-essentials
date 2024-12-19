@@ -36,13 +36,13 @@ RSpec.describe DistributionUpdateService, type: :service do
     end
 
     it "changes any distribution content, resulting in resend_notification? = true" do
-      new_distibution_params = {
+      new_distribution_params = {
         issued_at: distribution.issued_at,
         line_items_attributes: { "0": { item_id: distribution.line_items.first.item_id, quantity: 4 } },
         delivery_method: distribution.delivery_method
       }
 
-      service = DistributionUpdateService.new(distribution, new_distibution_params)
+      service = DistributionUpdateService.new(distribution, new_distribution_params)
       service.call
       assert service.resend_notification?
     end

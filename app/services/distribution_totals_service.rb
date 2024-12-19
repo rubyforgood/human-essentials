@@ -45,7 +45,7 @@ class DistributionTotalsService
       .to_h
   end
 
-  # Returns hash of total value of items per distribution WIHOUT item id/category filter
+  # Returns hash of total value of items per distribution WITHOUT item id/category filter
   # Value of entire distribution (not reduced by filtered items)
   #
   # @return [Hash<Integer, Integer>]

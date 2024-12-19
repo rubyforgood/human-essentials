@@ -14,7 +14,7 @@ RSpec.describe PartnerCreateService do
     end
 
     context 'when the arguments are incorrect' do
-      context 'beacuse the partner_attrs are invalid' do
+      context 'because the partner_attrs are invalid' do
         let(:partner_attrs) { {} }
         let(:expected_partner_errors) do
           partner = Partner.new(partner_attrs)
