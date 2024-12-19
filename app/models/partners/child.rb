@@ -33,8 +33,8 @@ module Partners
     scope :from_family, ->(family_id) {
       where(family_id: family_id)
     }
-    scope :from_children, ->(chidren_id) {
-      where(id: chidren_id)
+    scope :from_children, ->(children_id) {
+      where(id: children_id)
     }
     scope :active, -> { where(active: true) }
 

@@ -151,7 +151,7 @@ RSpec.describe Partners::RequestCreateService do
         end
       end
 
-      context 'but a unexpected error occured during the save' do
+      context 'but a unexpected error occurred during the save' do
         let(:error_message) { 'boom' }
 
         context 'for the Request record' do

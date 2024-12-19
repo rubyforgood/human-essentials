@@ -10,7 +10,7 @@ You can add multiple Announcements, with links to additional information, and ei
 
 Click on "Partner Agencies" in the left hand menu, then "Partner Announcement".   This will bring up a list of all your partner Announcements.
 
-![all announcments screen](images/partners/partners_announcements_1.png)
+![all announcements screen](images/partners/partners_announcements_1.png)
 
 Click the "New Announcements" button to bring up a form for a new Announcement
 
