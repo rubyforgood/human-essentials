@@ -32,5 +32,17 @@ RSpec.describe "Organization management", type: :system, js: true do
       expect(page).to have_content("User has been removed!")
       expect(user.has_role?(Role::ORG_USER)).to be false
     end
+
+    it "can modify organization wide toggles" do
+      visit organization_path
+      expect(page).to have_content("Receive email when partner makes a request:\nNo")
+      click_on "Edit"
+      within_fieldset("Receive email when partner makes a request?") do
+        expect(find_field("No")).to be_checked
+        choose("Yes")
+      end
+      click_on "Save"
+      expect(page).to have_content("Receive email when partner makes a request:\nYes")
+    end
   end
 end
