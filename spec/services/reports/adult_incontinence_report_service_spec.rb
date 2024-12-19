@@ -47,12 +47,11 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
         adult_incontinence_kit_item_1 = create(:item, name: "Adult Briefs (Medium)", partner_key: "adult_briefs_medium")
         adult_incontinence_kit_item_2 = create(:item, name: "Adult Briefs (Large)", partner_key: "adult_briefs_large")
 
-        adult_line_item_1 = create(:line_item, item: adult_incontinence_kit_item_1, quantity: 5)
-        adult_line_item_2 = create(:line_item, item: adult_incontinence_kit_item_2, quantity: 10)
+        kit_1 = create(:kit, :with_item, organization: organization)
+        kit_2 = create(:kit, :with_item, organization: organization)
 
-        kit_1 = create(:kit, :with_item, organization: organization, line_items: [adult_line_item_1])
-        kit_2 = create(:kit, :with_item, organization: organization, line_items: [adult_line_item_2])
-
+        kit_1.line_items.first.update!(item_id: adult_incontinence_kit_item_1.id, quantity: 5)
+        kit_2.line_items.first.update!(item_id: adult_incontinence_kit_item_2.id, quantity: 5)
         # kit distributions
         kit_distribution_1 = create(:distribution, organization: organization, issued_at: within_time)
         kit_distribution_2 = create(:distribution, organization: organization, issued_at: within_time)
@@ -122,7 +121,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
                                           "% adult incontinence bought" => "60%",
                                           "% adult incontinence supplies donated" => "40%",
                                           "Adults Assisted Per Month" => 10,
-                                          "Adult incontinence supplies distributed" => "2,170",
+                                          "Adult incontinence supplies distributed" => "2,120",
                                           "Adult incontinence supplies per adult per month" => 18,
                                           "Money spent purchasing adult incontinence supplies" => "$30.00"
                                         }))
@@ -136,13 +135,12 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
                              "Adult Briefs (XXS)",
                              "Adult Incontinence Pads",
                              "Underpads (Pack)",
-                             "1T Diapers",
-                             "2T Diapers",
                              "Adult Cloth Diapers (Large/XL/XXL)",
                              "Adult Cloth Diapers (Small/Medium)",
                              "Liners (Incontinence)",
                              "Adult Briefs (Large)",
-                             "Adult Briefs (Medium)")
+                             "Adult Briefs (Medium)",
+                             "1T Diapers", "2T Diapers", "3T Diapers", "4T Diapers")
       end
 
       it 'should handle null distribution quantity' do
@@ -150,9 +148,9 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
         expect(report.report[:entries]).to match(hash_including({
                                           "% adult incontinence bought" => "60%",
                                           "% adult incontinence supplies donated" => "40%",
-                                          "Adult incontinence supplies distributed" => "2,170",
+                                          "Adult incontinence supplies distributed" => "2,120",
                                           "Adults Assisted Per Month" => 5,
-                                          "Adult incontinence supplies per adult per month" => 36,
+                                          "Adult incontinence supplies per adult per month" => 35,
                                           "Money spent purchasing adult incontinence supplies" => "$30.00"
                                       }))
         expect(report.report[:entries]['Adult incontinence supplies'].split(', '))
@@ -165,13 +163,12 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
                              "Adult Briefs (XXS)",
                              "Adult Incontinence Pads",
                              "Underpads (Pack)",
-                            "3T Diapers",
-                            "4T Diapers",
                             "Adult Cloth Diapers (Large/XL/XXL)",
                             "Adult Cloth Diapers (Small/Medium)",
                             "Liners (Incontinence)",
                             "Adult Briefs (Large)",
-                            "Adult Briefs (Medium)")
+                            "Adult Briefs (Medium)",
+                            "5T Diapers", "6T Diapers", "7T Diapers", "8T Diapers")
       end
     end
   end

@@ -109,7 +109,7 @@ module Reports
         WHERE distributions.organization_id = ?
           AND EXTRACT(year FROM issued_at) = ?
           AND LOWER(base_items.category) LIKE '%adult%'
-          AND NOT (LOWER(base_items.category) LIKE '%cloth%' OR LOWER(base_items.name) LIKE '%cloth%')
+          AND NOT (LOWER(base_items.category) LIKE '%wipes%' OR LOWER(base_items.name) LIKE '%wipes%')
           AND kit_line_items.itemizable_type = 'Kit';
       SQL
 
