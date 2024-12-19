@@ -30,8 +30,7 @@ class Manufacturer < ApplicationRecord
     # selects manufacturers that have donation qty > 0 in the provided date range
     # and sorts them by the date of the most recent donation
     joins(donations: :line_items).where(donations: { issued_at: date_range })
-      .select('manufacturers.*, sum(line_items.quantity) as donation_count')
-      .select('manufacturers.*, max(donations.issued_at) as donation_date')
+      .select('manufacturers.*, sum(line_items.quantity) as donation_count, max(donations.issued_at) as donation_date')
       .group('manufacturers.id')
       .having('sum(line_items.quantity) > 0')
       .order('donation_date DESC')
