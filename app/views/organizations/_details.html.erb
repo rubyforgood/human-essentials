@@ -194,6 +194,12 @@
                   <%= humanize_boolean(@organization.hide_package_column_on_receipt) %>
                 </p>
               </div>
+              <div class="mb-4">
+                <h3 class='font-bold'>Receive email when partner makes a request:</h3>
+                <p>
+                  <%= humanize_boolean(@organization.receive_email_on_requests) %>
+                </p>
+              </div>
               <% if @organization.logo.attached? %>
                     <div class="mb-4">
                     <h3 class='font-bold'>Logo</h3>
