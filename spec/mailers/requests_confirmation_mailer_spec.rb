@@ -23,6 +23,8 @@ RSpec.describe RequestsConfirmationMailer, type: :mailer do
     it 'CCs the organization if they opt in' do
       request.organization.update!(receive_email_on_requests: true)
       expect(mail.cc).to eq([request.partner.email, request.organization.email])
+      request.organization.update!(receive_email_on_requests: false)
+      expect(RequestsConfirmationMailer.confirmation_email(request).cc).to eq([request.partner.email])
     end
   end
 
