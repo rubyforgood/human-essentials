@@ -150,6 +150,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
       expect(page).to have_content("Contact Info")
       expect(page).to have_content("Default email text")
       expect(page).to have_content("Users")
+      expect(page).to have_content("Receive email when partner makes a request")
     end
   end
 end
