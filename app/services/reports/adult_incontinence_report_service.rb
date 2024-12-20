@@ -22,7 +22,6 @@ module Reports
                       '% adult incontinence bought' => "#{percent_bought.round}%",
                       'Money spent purchasing adult incontinence supplies' => number_to_currency(money_spent_on_supplies)
                     } }
-                  
     end
 
     # @return [Integer]
@@ -38,7 +37,6 @@ module Reports
     # @return [Integer]
     def total_supplies_distributed
       distributed_loose_supplies + distributed_adult_incontinence_items_from_kits
-
     end
 
     def monthly_supplies
@@ -125,7 +123,7 @@ module Reports
     def adults_served_per_month
       total_people_served_with_loose_supplies_per_month + total_people_served_with_supplies_from_kits_per_month
     end
-#16.3
+
     def total_people_served_with_loose_supplies_per_month
       total_quantity = organization
                         .distributions
@@ -163,17 +161,5 @@ module Reports
 
       (result.first['adults_assisted'].to_i / 12.0).round
     end
-
-
-    # def total_people_served_with_supplies_from_kits_per_month
-    #   total_quantity = organization
-    #                      .distributions
-    #                      .for_year(year)
-    #                      .joins(line_items: {item: :kit})
-    #                      .where.not(items: {kit_id: nil})
-    #                      .merge(Item.adult_incontinence)
-    #                      .sum('line_items.quantity / COALESCE(items.distribution_quantity, 1)')
-    #   total_quantity / 12.0
-    # end
   end
 end
