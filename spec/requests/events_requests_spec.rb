@@ -47,6 +47,44 @@ RSpec.describe "Events", type: :request do
         expect(response.body).not_to include("99<br>")
       end
 
+      it "should show deleted items without crashing" do
+        deleted_item = create(:item, organization: organization)
+        travel(-1.day) do
+          SnapshotEvent.create!(
+            eventable: organization,
+            organization_id: organization.id,
+            event_time: Time.zone.now,
+            data: EventTypes::Inventory.new(
+              organization_id: organization.id,
+              storage_locations: {
+                storage_location.id => EventTypes::EventStorageLocation.new(
+                  id: storage_location.id,
+                  items: {
+                    item.id => EventTypes::EventItem.new(item_id: item.id, quantity: 0),
+                    item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 0),
+                    deleted_item.id => EventTypes::EventItem.new(item_id: deleted_item.id, quantity: 0)
+                  }
+                ),
+                storage_location2.id => EventTypes::EventStorageLocation.new(
+                  id: storage_location2.id,
+                  items: {
+                    item.id => EventTypes::EventItem.new(item_id: item.id, quantity: 0),
+                    item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 0),
+                    deleted_item.id => EventTypes::EventItem.new(item_id: deleted_item.id, quantity: 0)
+                  }
+                )
+              }
+            )
+          )
+        end
+        deleted_id = deleted_item.id
+        deleted_item.destroy
+        subject
+        expect(response.body).to include("Item1</a>")
+        expect(response.body).to include("Item2</a>")
+        expect(response.body).to include("Item #{deleted_id} (deleted)")
+      end
+
       context "with type filter" do
         let(:params) { {format: "html", filters: {by_type: "DonationEvent"}} }
 

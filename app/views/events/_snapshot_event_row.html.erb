@@ -11,7 +11,7 @@
       <%= link_to storage_locs.find { |i| i.id == loc.id}.name, storage_location_path(loc.id) %>
     <td>
       <% loc.items.values.each do |entry| %>
-        <%= link_to items.find { |i| i.id == entry.item_id}.name, item_path(entry.item_id) %>:
+        <%= link_to items.find { |i| i.id == entry.item_id}&.name || "Item #{entry.item_id} (deleted)", item_path(entry.item_id) %>:
         <%= entry.quantity %><br>
       <% end %>
     </td>
