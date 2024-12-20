@@ -12,9 +12,9 @@ class ItemCreateService
       new_item.sync_request_units!(@request_unit_ids)
     end
 
-    Result.new(value: new_item, success: true)
+    Result.new(value: new_item)
   rescue StandardError => e
-    Result.new(error: e, success: false)
+    Result.new(error: e)
   end
 
   private

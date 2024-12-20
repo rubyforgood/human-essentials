@@ -62,7 +62,7 @@ RSpec.describe KitCreateService do
       end
 
       context 'but the ItemCreationService is unsuccesful' do
-        let(:failing_result) { Result.new(success: false, error: error) }
+        let(:failing_result) { Result.new(error: error) }
         let(:error) { Faker::Name.name }
 
         before do

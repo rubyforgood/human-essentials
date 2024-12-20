@@ -101,7 +101,7 @@ RSpec.describe "Transfers", type: :request do
       end
 
       context 'when the transfer destroy service was successful' do
-        let(:successful_result) { Result.new(success: true) }
+        let(:successful_result) { Result.new }
 
         before do
           allow(fake_destroy_service).to receive(:call).and_return(successful_result)
@@ -115,7 +115,7 @@ RSpec.describe "Transfers", type: :request do
       end
 
       context 'when the transfer destroy service was not successful' do
-        let(:failing_result) { Result.new(success: false, error: fake_error) }
+        let(:failing_result) { Result.new(error: fake_error) }
         let(:fake_error) { StandardError.new('fake-error-msg') }
 
         before do
