@@ -100,7 +100,7 @@ RSpec.describe "Partners", type: :request do
         families_served: 3,
         children_served: 4,
         family_zipcodes: 2,
-        family_zipcodes_list: %w(45612-123 45612-126)
+        family_zipcodes_list: contain_exactly("45612-126", "45612-123") # order of zipcodes not guaranteed
       }
     end
 
@@ -127,7 +127,7 @@ RSpec.describe "Partners", type: :request do
       context "when the partner is invited" do
         it "includes impact metrics" do
           subject
-          expect(assigns[:impact_metrics]).to eq(expected_impact_metrics)
+          expect(assigns[:impact_metrics]).to match(expected_impact_metrics)
         end
       end
 
