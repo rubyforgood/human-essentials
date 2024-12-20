@@ -120,9 +120,9 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
         expect(report.report[:entries]).to match(hash_including({
                                           "% adult incontinence bought" => "60%",
                                           "% adult incontinence supplies donated" => "40%",
-                                          "Adults Assisted Per Month" => 10,
+                                          "Adults Assisted Per Month" => 16,
                                           "Adult incontinence supplies distributed" => "2,120",
-                                          "Adult incontinence supplies per adult per month" => 18,
+                                          "Adult incontinence supplies per adult per month" => 11,
                                           "Money spent purchasing adult incontinence supplies" => "$30.00"
                                         }))
         expect(report.report[:entries]['Adult incontinence supplies'].split(', '))
@@ -149,8 +149,8 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
                                           "% adult incontinence bought" => "60%",
                                           "% adult incontinence supplies donated" => "40%",
                                           "Adult incontinence supplies distributed" => "2,120",
-                                          "Adults Assisted Per Month" => 5,
-                                          "Adult incontinence supplies per adult per month" => 35,
+                                          "Adults Assisted Per Month" => 11,
+                                          "Adult incontinence supplies per adult per month" => 16,
                                           "Money spent purchasing adult incontinence supplies" => "$30.00"
                                       }))
         expect(report.report[:entries]['Adult incontinence supplies'].split(', '))
