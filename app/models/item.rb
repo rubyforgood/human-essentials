@@ -36,7 +36,6 @@ class Item < ApplicationRecord
 
   validates :name, uniqueness: { scope: :organization, case_sensitive: false, message: "- An item with that name already exists (could be an inactive item)" }
   validates :name, presence: true
-  validates :organization, presence: true
   validates :distribution_quantity, numericality: { greater_than: 0 }, allow_blank: true
   validates :on_hand_recommended_quantity, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
   validates :on_hand_minimum_quantity, numericality: { greater_than_or_equal_to: 0 }
@@ -115,7 +114,7 @@ class Item < ApplicationRecord
   end
 
   def self.barcodes_for(item)
-    BarcodeItem.where("barcodeable_id = ?", item.id)
+    BarcodeItem.where(barcodeable_id: item.id)
   end
 
   def self.reactivate(item_ids)

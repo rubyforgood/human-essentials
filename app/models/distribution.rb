@@ -38,7 +38,7 @@ class Distribution < ApplicationRecord
   has_one :request, dependent: :nullify
   accepts_nested_attributes_for :request
 
-  validates :storage_location, :partner, :organization, :delivery_method, presence: true
+  validates :delivery_method, presence: true
   validate :line_items_quantity_is_positive
   validates :shipping_cost, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true, if: :shipped?
 
@@ -59,7 +59,7 @@ class Distribution < ApplicationRecord
   # state scope to allow filtering by state
   scope :by_state, ->(state) { where(state: state) }
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
-  scope :future, -> { where("issued_at >= :tomorrow", tomorrow: Time.zone.tomorrow) }
+  scope :future, -> { where(issued_at: Time.zone.tomorrow..) }
   scope :during, ->(range) { where(distributions: { issued_at: range }) }
   scope :for_csv_export, ->(organization, filters = {}, date_range = nil) {
     where(organization: organization)

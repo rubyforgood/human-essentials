@@ -5,7 +5,7 @@ module IssuedAt
   extend ActiveSupport::Concern
 
   included do
-    scope :by_issued_at, ->(issued_at) { where(issued_at: issued_at.beginning_of_month..issued_at.end_of_month) }
+    scope :by_issued_at, ->(issued_at) { where(issued_at: issued_at.all_month) }
     scope :for_year, ->(year) { where("extract(year from issued_at) = ?", year) }
     validates :issued_at, presence: true
     validate :issued_at_cannot_be_before_2000

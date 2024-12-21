@@ -28,7 +28,6 @@ class Adjustment < ApplicationRecord
   }
   scope :during, ->(range) { where(adjustments: { created_at: range }) }
 
-  validates :storage_location, :organization, presence: true
   validate :storage_locations_belong_to_organization
 
   def self.storage_locations_adjusted_for(organization)

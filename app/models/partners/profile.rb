@@ -101,7 +101,7 @@ module Partners
     validate :has_at_least_one_request_setting
     validate :pick_up_email_addresses
 
-    self.ignored_columns = %w[
+    self.ignored_columns += %w[
       evidence_based_description
       program_client_improvement
       incorporate_plan

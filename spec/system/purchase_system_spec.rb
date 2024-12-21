@@ -19,10 +19,6 @@ RSpec.describe "Purchases", type: :system, js: true do
           visit subject
         end
 
-        after do
-          travel_back
-        end
-
         it "User can click to the new purchase form" do
           find(".fa-plus").click
 

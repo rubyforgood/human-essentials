@@ -109,7 +109,7 @@ RSpec.describe Purchase, type: :model do
         # and one outside the range
         create(:purchase, issued_at: 1.year.ago)
 
-        expect(Purchase.during(1.month.ago..Time.zone.now + 2.days).size).to eq(2)
+        expect(Purchase.during(1.month.ago..2.days.from_now).size).to eq(2)
       end
     end
   end
