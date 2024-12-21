@@ -227,7 +227,7 @@ RSpec.describe DistributionsController, type: :controller do
         end
       end
 
-      context 'when distribution reminder email is enabled' do
+      context "when distribution reminder email is enabled" do
         let(:params) do
           {
             organization_name: organization.id,
@@ -245,16 +245,16 @@ RSpec.describe DistributionsController, type: :controller do
         end
         subject { post :create, params: params.merge(format: :turbo_stream) }
 
-        context 'when partner has enabled send_reminders' do
+        context "when partner has enabled send_reminders" do
           before(:each) do
             partner.send_reminders = true
           end
-          it 'should schedule the reminder email' do
+          it "should schedule the reminder email" do
             subject
             expect(enqueued_jobs[2]["arguments"][1]).to eq("reminder_email")
           end
 
-          it 'should not schedule a reminder for a date in the past' do
+          it "should not schedule a reminder for a date in the past" do
             params[:distribution][:issued_at] = Date.yesterday
             subject
             expect(enqueued_jobs.size).to eq(2)
@@ -264,7 +264,7 @@ RSpec.describe DistributionsController, type: :controller do
         context "when partner has disabled send_reminders" do
           let(:partner) { create(:partner, organization: organization, send_reminders: false) }
 
-          it 'should not schedule an email reminder for a partner that disabled reminders' do
+          it "should not schedule an email reminder for a partner that disabled reminders" do
             subject
             expect(enqueued_jobs.size).to eq(1)
           end
@@ -404,7 +404,7 @@ RSpec.describe DistributionsController, type: :controller do
         end
       end
 
-      context 'when distribution reminder email is enabled' do
+      context "when distribution reminder email is enabled" do
         let(:item1) { create(:item, name: "Item 1", organization: organization, on_hand_minimum_quantity: 0) }
         let(:storage_location) { create(:storage_location, organization: organization) }
         let(:distribution) { create(:distribution, :with_items, item: item1, storage_location: storage_location, organization: organization, reminder_email_enabled: false, partner: partner) }
@@ -417,7 +417,7 @@ RSpec.describe DistributionsController, type: :controller do
               issued_at: Date.tomorrow,
               line_items_attributes:
                 {
-                  "0": { item_id: item1.id, quantity: 1 },
+                  "0": { item_id: item1.id, quantity: 1 }
                 },
               reminder_email_enabled: true
             }
@@ -425,16 +425,16 @@ RSpec.describe DistributionsController, type: :controller do
         end
         subject { put :update, params: params }
 
-        context 'when partner has enabled send_reminders' do
+        context "when partner has enabled send_reminders" do
           before(:each) do
             partner.send_reminders = true
           end
-          it 'should schedule the reminder email' do
+          it "should schedule the reminder email" do
             subject
             expect(enqueued_jobs[1]["arguments"][1]).to eq("reminder_email")
           end
 
-          it 'should not schedule a reminder for a date in the past' do
+          it "should not schedule a reminder for a date in the past" do
             params[:distribution][:issued_at] = Date.yesterday
             subject
             expect(enqueued_jobs.size).to eq(1)
@@ -444,7 +444,7 @@ RSpec.describe DistributionsController, type: :controller do
         context "when partner has disabled send_reminders" do
           let(:partner) { create(:partner, organization: organization, send_reminders: false) }
 
-          it 'should not schedule an email reminder for a partner that disabled reminders' do
+          it "should not schedule an email reminder for a partner that disabled reminders" do
             subject
             expect(enqueued_jobs.size).to eq(1)
           end
