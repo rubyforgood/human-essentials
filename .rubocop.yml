@@ -29,7 +29,6 @@ AllCops:
     - "Rakefile"
     - "tmp/*"
     - "node_modules/**/*"
-  UseCache: false
 
 Rails:
   Enabled: true
