@@ -6,13 +6,13 @@ module Partners
   class FamilyRequestCreateService
     include ServiceObjectErrorsMixin
 
-    attr_reader :partner_user_id, :comments, :family_requests_attributes, :partner_request
+    attr_reader :partner_user_id, :comments, :family_requests_attributes, :partner_request, :request_type
 
-    def initialize(partner_user_id:, family_requests_attributes:, comments: nil, for_families: false)
+    def initialize(partner_user_id:, family_requests_attributes:, request_type:, comments: nil)
       @partner_user_id = partner_user_id
       @comments = comments
       @family_requests_attributes = family_requests_attributes.presence || []
-      @for_families = for_families
+      @request_type = request_type
     end
 
     def call
@@ -80,10 +80,6 @@ module Partners
 
     def included_items_by_id
       @included_items_by_id ||= Item.where(id: family_requests_attributes.pluck(:item_id)).index_by(&:id)
-    end
-
-    def request_type
-      @for_families ? "child" : "individual"
     end
   end
 end
