@@ -211,8 +211,9 @@ RSpec.describe "Distributions", type: :request do
     describe "POST #create" do
       let!(:storage_location) { create(:storage_location, organization: organization) }
       let!(:partner) { create(:partner, organization: organization) }
+      let(:issued_at) { Time.current }
       let(:distribution) do
-        { storage_location_id: storage_location.id, partner_id: partner.id, delivery_method: :delivery }
+        { storage_location_id: storage_location.id, partner_id: partner.id, issued_at:, delivery_method: :delivery }
       end
 
       it "redirects to #show on success" do
@@ -233,6 +234,20 @@ RSpec.describe "Distributions", type: :request do
         expect(response).to have_error
       end
 
+      it "renders #new on failure with only active items in dropdown" do
+        create(:item, organization: organization, name: 'Active Item')
+        create(:item, :inactive, organization: organization, name: 'Inactive Item')
+
+        post distributions_path(distribution: { comment: nil, partner_id: nil, storage_location_id: nil }, format: :turbo_stream)
+        expect(response).to have_http_status(400)
+
+        page = Nokogiri::HTML(response.body)
+        selectable_items = page.at_css("select.line_item_name").text.split("\n")
+
+        expect(selectable_items).to include("Active Item")
+        expect(selectable_items).not_to include("Inactive Item")
+      end
+
       context "Deactivated partners should not be displayed in partner dropdown" do
         before do
           create(:partner, name: 'Active Partner', organization: organization, status: "approved")
@@ -245,6 +260,17 @@ RSpec.describe "Distributions", type: :request do
           expect(response).to have_error
           expect(response.body).not_to include("Deactivated Partner")
           expect(response.body).to include("Active Partner")
+        end
+      end
+
+      context "with missing issued_at field" do
+        let(:issued_at) { "" }
+
+        it "fails and returns validation error message" do
+          post distributions_path(distribution:, format: :turbo_stream)
+
+          expect(response).to have_http_status(400)
+          expect(flash[:error]).to include("Distribution date and time can't be blank")
         end
       end
     end
@@ -273,6 +299,18 @@ RSpec.describe "Distributions", type: :request do
         # default should be nothing selected
         page = Nokogiri::HTML(response.body)
         expect(page.css('#distribution_storage_location_id option[selected]')).to be_empty
+      end
+
+      it "should only show active items in item dropdown" do
+        create(:item, :inactive, organization: organization, name: 'Inactive Item')
+
+        get new_distribution_path(default_params)
+
+        page = Nokogiri::HTML(response.body)
+        selectable_items = page.at_css("select#barcode_item_barcodeable_id").text.split("\n")
+
+        expect(selectable_items).to include("Item 1", "Item 2")
+        expect(selectable_items).not_to include("Inactive Item")
       end
 
       context "with org default but no partner default" do
@@ -466,9 +504,10 @@ RSpec.describe "Distributions", type: :request do
       include_examples "requiring authorization"
     end
 
-    describe "POST #update" do
+    describe "PATCH #update" do
+      let(:partner_name) { "Patrick" }
       let(:location) { create(:storage_location, organization: organization) }
-      let(:partner) { create(:partner, organization: organization) }
+      let(:partner) { create(:partner, name: partner_name, organization: organization) }
 
       let(:distribution) { create(:distribution, partner: partner, organization: organization) }
       let(:issued_at) { distribution.issued_at }
@@ -486,6 +525,35 @@ RSpec.describe "Distributions", type: :request do
       it "returns a 200" do
         patch distribution_path(distribution_params)
         expect(response.status).to redirect_to(distribution_path(distribution.to_param))
+      end
+
+      context "with invalid issued_at field" do
+        let(:distribution_params) do
+          { id: distribution.id,
+            distribution: {
+              partner_id: partner.id,
+              storage_location_id: location.id,
+              'issued_at(1i)' => issued_at.to_date.year,
+              'issued_at(2i)' => issued_at.to_date.month,
+              'issued_at(3i)' => nil # day part of date missing
+            }}
+        end
+
+        it "fails and returns validation error message" do
+          patch distribution_path(distribution_params)
+
+          expect(flash[:error]).to include("Distribution date and time can't be blank")
+          expect(response).not_to redirect_to(anything)
+        end
+
+        it "renders storage location dropdowns" do
+          patch distribution_path(distribution_params)
+
+          page = Nokogiri::HTML(response.body)
+          selectable_partners = page.at_css("select#distribution_partner_id").text.split("\n")
+
+          expect(selectable_partners).to include("Patrick")
+        end
       end
 
       describe "when changing storage location" do
@@ -570,6 +638,19 @@ RSpec.describe "Distributions", type: :request do
         get edit_distribution_path(id: distribution.id)
         expect(response.body).to include("Deactivated Partner")
         expect(response.body).to include("Active Partner")
+      end
+
+      it "should only show active items in item dropdown" do
+        create(:item, organization: organization, name: 'Active Item')
+        create(:item, :inactive, organization: organization, name: 'Inactive Item')
+
+        get edit_distribution_path(id: distribution.id)
+
+        page = Nokogiri::HTML(response.body)
+        selectable_items = page.at_css("select#barcode_item_barcodeable_id").text.split("\n")
+
+        expect(selectable_items).to include("Active Item")
+        expect(selectable_items).not_to include("Inactive Item")
       end
 
       context 'with units' do
