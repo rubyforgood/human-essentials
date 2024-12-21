@@ -12,9 +12,9 @@ class ItemCreateService
       new_item.sync_request_units!(@request_unit_ids)
     end
 
-    OpenStruct.new(success?: true, item: new_item)
+    Result.new(value: new_item)
   rescue StandardError => e
-    OpenStruct.new(success?: false, error: e)
+    Result.new(error: e)
   end
 
   private
