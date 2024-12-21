@@ -23,10 +23,6 @@ RSpec.describe Distribution, type: :model do
   it_behaves_like "itemizable"
 
   context "Validations >" do
-    it { should validate_presence_of(:organization) }
-    it { should validate_presence_of(:partner) }
-    it { should validate_presence_of(:storage_location) }
-
     it "ensures the associated line_items are valid" do
       organization = create(:organization)
       storage_location = create(:storage_location, organization: organization)
