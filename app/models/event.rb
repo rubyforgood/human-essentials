@@ -40,11 +40,11 @@ class Event < ApplicationRecord
   end
   after_create :validate_inventory
 
-  # @return [Array<OpenStruct>]
+  # @return [Array<Option>]
   def self.types_for_select
-    descendants.map { |klass|
-      OpenStruct.new(name: klass.name.sub("Event", "").titleize, value: klass.name)
-    }.sort_by(&:name)
+    descendants.map do |klass|
+      Option.new(name: klass.name.sub("Event", "").titleize, id: klass.name)
+    end.sort_by(&:name)
   end
 
   # Returns the most recent "usable" snapshot. A snapshot is unusable if there is another event
