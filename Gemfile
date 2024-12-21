@@ -14,7 +14,7 @@ gem "pg", "~> 1.5.7"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "7.1.3.4"
+gem "rails", "7.2.2"
 
 ###### MODELS / DATABASE #######
 
@@ -100,6 +100,8 @@ gem "jwt"
 gem "newrelic_rpm"
 # Used to manage periodic cron-like jobs
 gem "clockwork"
+# Speed up app boot time by caching expensive operations
+gem 'bootsnap', require: false
 
 ##### DEPENDENCY PINS ######
 # These are gems that aren't used directly, only as dependencies for other gems.
@@ -155,7 +157,7 @@ group :development, :test do
   gem "rubocop"
   # Rails add-on for static analysis.
   gem 'rubocop-performance'
-  gem "rubocop-rails", "~> 2.25.1"
+  gem "rubocop-rails", "~> 2.27.0"
   # Default rules for Rubocop.
   gem "standard", "~> 1.40"
   # Erb linter.

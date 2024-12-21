@@ -49,8 +49,11 @@ class BarcodeItem < ApplicationRecord
 
   scope :global, -> { where(barcodeable_type: "BaseItem") }
 
-  alias_attribute :item, :barcodeable
-  alias_attribute :base_item, :barcodeable
+  # aliases of barcodeable
+  belongs_to :item, polymorphic: true, dependent: :destroy,
+    counter_cache: :barcode_count, foreign_key: :barcodeable_id, foreign_type: :barcodeable_type
+  belongs_to :base_item, polymorphic: true, dependent: :destroy,
+    counter_cache: :barcode_count, foreign_key: :barcodeable_id, foreign_type: :barcodeable_type
 
   def to_h
     {
