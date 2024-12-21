@@ -17,6 +17,25 @@
 RSpec.describe Event, type: :model do
   let(:organization) { create(:organization) }
 
+  describe "::types_for_select" do
+    let(:a_event) { Class.new { def self.name = "AEvent" } }
+    let(:z_event) { Class.new { def self.name = "ZEvent" } }
+
+    before do
+      allow(described_class).to receive(:descendants).and_return([z_event, a_event])
+    end
+
+    it "returns an array of ids and names" do
+      results = described_class.types_for_select
+      ids = results.map(&:id)
+      names = results.map(&:name)
+
+      expect(results.size).to eq(2)
+      expect(ids).to eq(["AEvent", "ZEvent"])
+      expect(names).to eq(["A", "Z"])
+    end
+  end
+
   describe "#most_recent_snapshot" do
     let(:eventable) { FactoryBot.create(:distribution, organization_id: organization.id) }
     let(:data) { EventTypes::Inventory.new(storage_locations: {}, organization_id: organization.id) }

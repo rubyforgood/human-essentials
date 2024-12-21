@@ -64,13 +64,14 @@ class StorageLocation < ApplicationRecord
 
   # @param organization [Organization]
   # @param inventory [View::Inventory]
+  # @return [Array<Option>]
   def self.items_inventoried(organization, inventory = nil)
     inventory ||= View::Inventory.new(organization.id)
     inventory
       .all_items
       .uniq(&:item_id)
       .sort_by(&:name)
-      .map { |i| OpenStruct.new(name: i.name, id: i.item_id) }
+      .map { |i| Option.new(name: i.name, id: i.item_id) }
   end
 
   # @return [Array<Item>]
