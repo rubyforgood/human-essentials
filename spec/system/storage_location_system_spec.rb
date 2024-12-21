@@ -161,8 +161,8 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       create(:storage_location, :with_items, item: item3, item_quantity: 10, name: "Baz")
       visit subject
 
-      expect(page.all('select[name="filters[containing]"] option').map(&:text).select(&:present?)).to eq(expected_order)
-      expect(page.all('select[name="filters[containing]"] option').map(&:text).select(&:present?)).not_to eq(expected_order.reverse)
+      expect(page.all('select[name="filters[containing]"] option').map(&:text).compact_blank).to eq(expected_order)
+      expect(page.all('select[name="filters[containing]"] option').map(&:text).compact_blank).not_to eq(expected_order.reverse)
     end
   end
 

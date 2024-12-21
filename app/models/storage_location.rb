@@ -42,7 +42,7 @@ class StorageLocation < ApplicationRecord
                           dependent: :destroy
   has_many :kit_allocations, dependent: :destroy
 
-  validates :name, :address, :organization, presence: true
+  validates :name, :address, presence: true
   validates :warehouse_type, inclusion: { in: WAREHOUSE_TYPES },
                              allow_blank: true
   before_destroy :validate_empty_inventory, prepend: true
