@@ -20,7 +20,6 @@ RSpec.describe "Purchases", type: :system, js: true do
         end
 
         after do
-          travel_back
         end
 
         it "User can click to the new purchase form" do

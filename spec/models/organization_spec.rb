@@ -68,7 +68,7 @@ RSpec.describe Organization, type: :model do
     end
 
     it "validates that attachment file size is not higher than 1 MB" do
-      fixture_path = File.join(Rails.root, 'spec', 'fixtures', 'files', 'logo.jpg')
+      fixture_path = Rails.root.join('spec', 'fixtures', 'files', 'logo.jpg')
       fixture_file = File.open(fixture_path)
       organization = build(:organization)
 
@@ -132,7 +132,6 @@ RSpec.describe Organization, type: :model do
         end
 
         after do
-          travel_back
         end
 
         it "retrieves the distributions scheduled for this week that have not yet happened" do

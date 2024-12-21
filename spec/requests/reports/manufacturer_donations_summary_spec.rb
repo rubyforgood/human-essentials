@@ -28,7 +28,7 @@ RSpec.describe "Reports::ManufacturerDonationsSummary", type: :request do
       end
 
       context "with manufacturer donations in the last year" do
-        let(:formatted_date_range) { date_range.map { _1.to_formatted_s(:date_picker) }.join(" - ") }
+        let(:formatted_date_range) { date_range.map { _1.to_fs(:date_picker) }.join(" - ") }
         let(:date_range) { [1.year.ago, 0.days.ago] }
         let!(:donations) do
           [

@@ -39,7 +39,7 @@ class Organization < ApplicationRecord
   has_paper_trail
   resourcify
 
-  DIAPER_APP_LOGO = Rails.root.join("public", "img", "humanessentials_logo.png")
+  DIAPER_APP_LOGO = Rails.public_path.join("img", "humanessentials_logo.png")
 
   include Deadlinable
 
@@ -106,7 +106,7 @@ class Organization < ApplicationRecord
   end
   has_many :distributions, dependent: :destroy do
     def upcoming
-      this_week.scheduled.where('issued_at >= ?', Time.zone.today)
+      this_week.scheduled.where(issued_at: Time.zone.today..)
     end
   end
 

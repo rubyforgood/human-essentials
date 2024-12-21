@@ -175,7 +175,6 @@ RSpec.configure do |config|
   end
 
   config.after(:each) do
-    travel_back
   end
 
   # RSpec Rails can automatically mix in different behaviours to your tests

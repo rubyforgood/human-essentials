@@ -122,9 +122,9 @@ RSpec.describe User, type: :model do
     end
 
     it "#reinvitable?" do
-      expect(build(:user, invitation_sent_at: Time.current - 7.days).reinvitable?).to be true
-      expect(build(:user, invitation_sent_at: Time.current - 6.days).reinvitable?).to be false
-      expect(build(:user, invitation_sent_at: Time.current - 7.days, invitation_accepted_at: Time.current - 7.days).reinvitable?).to be false
+      expect(build(:user, invitation_sent_at: 7.days.ago).reinvitable?).to be true
+      expect(build(:user, invitation_sent_at: 6.days.ago).reinvitable?).to be false
+      expect(build(:user, invitation_sent_at: 7.days.ago, invitation_accepted_at: 7.days.ago).reinvitable?).to be false
     end
 
     it "discarded?" do
