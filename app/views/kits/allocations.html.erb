@@ -163,7 +163,7 @@
 
         let baseQuantity = rowElement.attr('data-base-quantity');
         // Utilize the -1 to properly make the base kit item
-        // go negative when the content goes postive
+        // go negative when the content goes positive
         let newText = -1 * changeBy * baseQuantity
         rowElement.text(newText);
 

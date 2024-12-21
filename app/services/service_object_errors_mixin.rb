@@ -1,7 +1,7 @@
 module ServiceObjectErrorsMixin
   #
   # This module is can be included into service object like
-  # classes so that they get the similiar interface commonly used
+  # classes so that they get the similar interface commonly used
   # by active records. Here is an example of a how you could interact
   # with a service object with this included.
   #

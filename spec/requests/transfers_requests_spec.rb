@@ -29,7 +29,7 @@ RSpec.describe "Transfers", type: :request do
           let!(:new_transfer) { create(:transfer, created_at: 1.day.ago, organization: organization) }
 
           context 'when date parameters are supplied' do
-            it 'only returns the correct obejects' do
+            it 'only returns the correct objects' do
               start_date = 3.days.ago.to_formatted_s(:date_picker)
               end_date = Time.zone.today.to_formatted_s(:date_picker)
               get transfers_path(filters: { date_range: "#{start_date} - #{end_date}" })
@@ -109,7 +109,7 @@ RSpec.describe "Transfers", type: :request do
         end
 
         it 'should set a notice flash with the success message and redirect to index' do
-          expect(flash[:notice]).to eq("Succesfully deleted Transfer ##{transfer_id}!")
+          expect(flash[:notice]).to eq("Successfully deleted Transfer ##{transfer_id}!")
           expect(response).to redirect_to(transfers_path)
         end
       end

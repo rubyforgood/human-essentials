@@ -19,7 +19,7 @@
 
 RSpec.describe Donation, type: :model do
   it_behaves_like "itemizable"
-  # This mixes feature specs with model specs... idealy we do not want to do this
+  # This mixes feature specs with model specs... ideally we do not want to do this
   # it_behaves_like "pagination"
 
   context "Validations >" do

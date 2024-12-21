@@ -85,7 +85,7 @@ module Exports
       end
 
       # Adding this to handle cases in which a requested item
-      # has been deleted. Normally this wouldn't be neccessary,
+      # has been deleted. Normally this wouldn't be necessary,
       # but previous versions of the application would cause
       # this orphaned data
       item_names.sort.uniq << DELETED_ITEMS_COLUMN_HEADER

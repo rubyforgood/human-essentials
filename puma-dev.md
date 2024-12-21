@@ -15,7 +15,7 @@ puma-dev -install
 
 Link the application.
 ```
-puma-dev link -n essentials {essentails_dir}
+puma-dev link -n essentials {essentials_dir}
 ```
 
  For example, if your diaper repo clone is in `~/ruby/human-essentials`. You would run this:
