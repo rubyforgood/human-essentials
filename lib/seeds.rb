@@ -1,7 +1,7 @@
 module Seeds
   def self.seed_base_items
     # Initial starting qty for our test organizations
-    base_items = File.read(Rails.root.join("db", "base_items.json"))
+    base_items = Rails.root.join("db", "base_items.json").read
     items_by_category = JSON.parse(base_items)
 
     items_by_category.each do |category, entries|
