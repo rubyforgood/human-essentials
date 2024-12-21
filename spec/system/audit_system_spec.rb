@@ -68,6 +68,36 @@ RSpec.describe "Audit management", type: :system, js: true do
           end
         end
 
+        it "allows auditing items that are not in a storage location", :js do
+          item = create(:item, name: "TestItemNotInStorageLocation", organization: organization)
+          audit_quantity = 1234
+          visit new_audit_path
+
+          await_select2("#audit_line_items_attributes_0_item_id") do
+            select storage_location.name, from: "Storage location"
+          end
+          select item.name, from: "audit_line_items_attributes_0_item_id"
+          fill_in "audit_line_items_attributes_0_quantity", with: audit_quantity
+
+          accept_confirm do
+            click_button "Confirm Audit"
+          end
+          expect(page.find(".alert-info")).to have_content "Audit is confirmed"
+          expect(page).to have_content(item.name)
+          expect(page).to have_content(audit_quantity)
+
+          accept_confirm do
+            click_link "Finalize Audit"
+          end
+          expect(page.find(".alert-info")).to have_content "Audit is Finalized"
+
+          event = Event.last
+          expect(event.type).to eq "AuditEvent"
+          event_line_item = Event.last.data.items.first
+          expect(event_line_item.item_id).to eq item.id
+          expect(event_line_item.quantity).to eq audit_quantity
+        end
+
         it "allows user to add items that do not yet have a barcode", :js do
           item_without_barcode = create(:item)
           new_barcode = "00000000"
