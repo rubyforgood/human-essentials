@@ -16,7 +16,6 @@ module Reports
                     entries: {
                       'Average children served monthly' => number_with_delimiter(average_children_monthly.round),
                       'Total children served' => number_with_delimiter(total_children_served),
-                      'Diapers per child monthly' => number_with_delimiter(per_child_monthly.round),
                       'Repackages diapers?' => organization.repackage_essentials? ? 'Y' : 'N',
                       'Monthly diaper distributions?' => organization.distribute_monthly? ? 'Y' : 'N'
                     } }
@@ -24,12 +23,7 @@ module Reports
 
     # @return [Integer]
     def total_children_served
-      @total_children_served ||= organization
-                                 .distributions
-                                 .for_year(year)
-                                 .joins(line_items: :item)
-                                 .merge(Item.disposable)
-                                 .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50)') || 0
+      @total_children_served ||= total_children_served_with_loose_disposables + children_served_with_kits_containing_disposables
     end
 
     # @return [Float]
@@ -37,14 +31,26 @@ module Reports
       total_children_served / 12.0
     end
 
-    # @return [Float]
-    def per_child_monthly
+    private
+
+    def total_children_served_with_loose_disposables
       organization
-        .distributions
-        .for_year(year)
-        .joins(line_items: :item)
-        .merge(Item.disposable)
-        .average('COALESCE(items.distribution_quantity, 50)') || 0.0
+      .distributions
+      .for_year(year)
+      .joins(line_items: :item)
+      .merge(Item.disposable)
+      .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50)')
+    end
+
+    def children_served_with_kits_containing_disposables
+      organization
+      .distributions
+      .for_year(year)
+      .joins(line_items: {item: :kit})
+      .merge(Item.disposable)
+      .where.not(items: {kit_id: nil})
+      .distinct
+      .count("kits.id")
     end
   end
 end

@@ -5,7 +5,7 @@ class PurchasesController < ApplicationController
   def index
     setup_date_range_picker
     @purchases = current_organization.purchases
-                                     .includes(:line_items, :storage_location)
+                                     .includes(:storage_location, :vendor, line_items: [:item])
                                      .order(created_at: :desc)
                                      .class_filter(filter_params)
                                      .during(helpers.selected_range)
@@ -32,14 +32,15 @@ class PurchasesController < ApplicationController
 
   def create
     @purchase = current_organization.purchases.new(purchase_params)
-    if PurchaseCreateService.call(@purchase)
+    begin
+      PurchaseCreateService.call(@purchase)
       flash[:notice] = "New Purchase logged!"
       redirect_to purchases_path
-    else
+    rescue => e
       load_form_collections
       @purchase.line_items.build if @purchase.line_items.count.zero?
-      flash[:error] = "Failed to create purchase due to: #{@purchase.errors.full_messages}"
-      Rails.logger.error "[!] PurchasesController#create ERROR: #{@purchase.errors.full_messages}"
+      flash[:error] = "Failed to create purchase due to:\n#{e.message}"
+      Rails.logger.error "[!] PurchasesController#create ERROR: #{e.message}"
       render action: :new
     end
   end
@@ -67,7 +68,6 @@ class PurchasesController < ApplicationController
     @purchase = current_organization.purchases.find(params[:id])
     ItemizableUpdateService.call(itemizable: @purchase,
       params: purchase_params,
-      type: :increase,
       event_class: PurchaseEvent)
     redirect_to purchases_path
   rescue => e
@@ -111,7 +111,7 @@ class PurchasesController < ApplicationController
 
   # If line_items have submitted with empty rows, clear those out first.
   def compact_line_items
-    return params unless params[:purchase].key?(:line_item_attributes)
+    return params unless params[:purchase].key?(:line_items_attributes)
 
     params[:purchase][:line_items_attributes].delete_if { |_row, data| data["quantity"].blank? && data["item_id"].blank? }
     params

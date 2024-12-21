@@ -13,25 +13,27 @@
               <div class="box-header with-border">
               </div>
               <div class="box-body">
-                <%= simple_form_for @audit, html: {class: "storage-location-required"} do |f| %>
-                  <%= render partial: "storage_locations/source", object: f, locals: { label: "Storage location", error: "What storage location are you auditing?", include_inactive_items: true} %>
+                <%= simple_form_for @audit, data: { controller: "form-input" }, html: {class: "storage-location-required"} do |f| %>
+                  <%= render partial: "storage_locations/source", object: f, locals: { label: "Storage location", error: "What storage location are you auditing?", include_omitted_items: true } %>
                   <fieldset style="margin-bottom: 2rem;">
                     <legend>Items in this audit</legend>
                     <div id="audit_line_items" class="line-item-fields" data-capture-barcode="true">
-                      <%= f.simple_fields_for :line_items do |item| %>
-                        <%= render 'line_items/line_item_fields', f: item %>
-                      <% end %>
+                      <%= render 'line_items/line_item_fields', form: f %>
                     </div>
                     <div class="row links">
                       <div class="col-xs-12 p-3">
-                        <%= add_line_item_button f, "#audit_line_items" %>
+                        <%= add_element_button "Add Another Item", container_selector: "#audit_line_items", id: "__add_line_item" do %>
+                          <%= render 'line_items/line_item_fields', form: f, object: LineItem.new %>
+                        <% end %>
                       </div>
                     </div>
 
                   </fieldset>
 
                   <div class="card-footer">
-                    <%= submit_button({ text: 'Confirm Audit', name: 'confirm_audit', icon: 'check-circle', align: 'left', size: 'md'}, {confirm: 'Are you sure?'}) %>
+                    <%= submit_button({ text: 'Confirm Audit', name: 'confirm_audit', icon: 'check-circle', align: 'left', size: 'md'}, {
+                        confirm: "Are you sure?\n\nPlease note that this audit must also be finalized by someone with organization admin rights before changes to inventory will take place.\n\nWe strongly recommend completing that step before doing any further actions that affect inventory.",
+                    }) %>
                     <%= submit_button({text: 'Save Progress', name: 'save_progress', size: 'md'}) %>
                   </div>
                 <% end %>

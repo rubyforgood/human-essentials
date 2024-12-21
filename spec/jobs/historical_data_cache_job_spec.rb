@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe HistoricalDataCacheJob, type: :job do
   include ActiveJob::TestHelper
 
@@ -10,7 +8,7 @@ RSpec.describe HistoricalDataCacheJob, type: :job do
   it "queues the job" do
     expect { job }.to have_enqueued_job(described_class)
       .with(org_id: organization.id, type: type)
-      .on_queue("default")
+      .on_queue("low_priority")
   end
 
   it "caches the historical data" do

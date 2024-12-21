@@ -1,13 +1,15 @@
-require 'rails_helper'
-
 RSpec.describe "Annual Reports", type: :request do
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+
   let(:default_params) do
-    { organization_id: @organization.to_param, year: 2018 }
+    { year: 2018 }
   end
 
   context "While signed in" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     describe "GET /index" do
@@ -24,13 +26,13 @@ RSpec.describe "Annual Reports", type: :request do
         expect(response).to have_http_status(:success)
         expect(AnnualReport.count).to eq(1)
         expect(AnnualReport.last.year).to eq(2018)
-        expect(AnnualReport.last.organization_id).to eq(@organization.id)
+        expect(AnnualReport.last.organization_id).to eq(organization.id)
       end
 
       it "retrieves and uses the existing report if it exists" do
         old_time = 1.year.ago
         report = AnnualReport.create!(year: 2018,
-                                      organization_id: @organization.id,
+                                      organization_id: organization.id,
                                       updated_at: old_time,
                                       all_reports: [{ name: 'dummy', entries: [{ dummy: 'text' }] }])
         get reports_annual_report_path(default_params)
@@ -40,7 +42,7 @@ RSpec.describe "Annual Reports", type: :request do
       end
 
       it "retrieves and updated the existing report if it exists" do
-        report = AnnualReport.create!(year: 2018, organization_id: @organization.id)
+        report = AnnualReport.create!(year: 2018, organization_id: organization.id)
         expect(report.all_reports).to be_nil
         get reports_annual_report_path(default_params)
         expect(response).to have_http_status(:success)
@@ -49,7 +51,7 @@ RSpec.describe "Annual Reports", type: :request do
       end
 
       it "returns not found if the year params is not number" do
-        get reports_annual_report_path({ organization_id: @organization.to_param, year: 'invalid' })
+        get reports_annual_report_path({ year: 'invalid' })
         expect(response).to have_http_status(:not_found)
       end
     end
@@ -61,13 +63,13 @@ RSpec.describe "Annual Reports", type: :request do
         expect(response).to have_http_status(:found)
         expect(AnnualReport.count).to eq(1)
         expect(AnnualReport.last.year).to eq(2018)
-        expect(AnnualReport.last.organization_id).to eq(@organization.id)
+        expect(AnnualReport.last.organization_id).to eq(organization.id)
       end
 
       it 'recalculates an existing report' do
         old_time = 1.year.ago
         report = AnnualReport.create!(year: 2018,
-                                      organization_id: @organization.id,
+                                      organization_id: organization.id,
                                       updated_at: old_time,
                                       all_reports: [{ name: 'dummy', entries: [{ dummy: 'text' }] }])
         post recalculate_reports_annual_report_path(default_params)

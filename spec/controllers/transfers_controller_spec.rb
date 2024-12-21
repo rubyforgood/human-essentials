@@ -1,7 +1,10 @@
 RSpec.describe TransfersController, type: :controller do
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
+
   context "While signed in" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     describe "GET #index" do
@@ -11,7 +14,7 @@ RSpec.describe TransfersController, type: :controller do
         travel_back
       end
 
-      subject { get :index, params: { organization_id: @organization.short_name } }
+      subject { get :index }
       it "returns http success" do
         expect(subject).to be_successful
       end
@@ -24,14 +27,14 @@ RSpec.describe TransfersController, type: :controller do
           it 'only returns the correct obejects' do
             start_date = 3.days.ago.to_formatted_s(:date_picker)
             end_date = Time.zone.today.to_formatted_s(:date_picker)
-            get :index, params: { organization_id: @organization.short_name, filters: { date_range: "#{start_date} - #{end_date}" } }
+            get :index, params: { filters: { date_range: "#{start_date} - #{end_date}" } }
             expect(assigns(:transfers)).to eq([new_transfer])
           end
         end
 
         context 'when date parameters are not supplied' do
           it 'returns all objects' do
-            get :index, params: { organization_id: @organization.short_name }
+            get :index
             expect(assigns(:transfers)).to eq([old_transfer, new_transfer])
           end
         end
@@ -42,17 +45,17 @@ RSpec.describe TransfersController, type: :controller do
       it "redirects to #show when successful" do
         attributes = attributes_for(
           :transfer,
-          organization_id: @organization.id,
-          to_id: create(:storage_location, organization: @organization).id,
-          from_id: create(:storage_location, organization: @organization).id
+          organization_id: organization.id,
+          to_id: create(:storage_location, organization: organization).id,
+          from_id: create(:storage_location, organization: organization).id
         )
 
-        post :create, params: { organization_id: @organization.short_name, transfer: attributes }
+        post :create, params: { transfer: attributes }
         expect(response).to redirect_to(transfers_path)
       end
 
       it "renders to #new when failing" do
-        post :create, params: { organization_id: @organization.short_name, transfer: { from_id: nil, to_id: nil } }
+        post :create, params: { transfer: { from_id: nil, to_id: nil } }
         expect(response).to be_successful # Will render :new
         expect(response).to render_template("new")
         expect(flash.keys).to match_array(['error'])
@@ -60,14 +63,14 @@ RSpec.describe TransfersController, type: :controller do
     end
 
     describe "GET #new" do
-      subject { get :new, params: { organization_id: @organization.short_name } }
+      subject { get :new }
       it "returns http success" do
         expect(subject).to be_successful
       end
     end
 
     describe "GET #show" do
-      subject { get :show, params: { organization_id: @organization.short_name, id: create(:transfer, organization: @organization) } }
+      subject { get :show, params: { id: create(:transfer, organization: organization) } }
       it "returns http success" do
         expect(subject).to be_successful
       end

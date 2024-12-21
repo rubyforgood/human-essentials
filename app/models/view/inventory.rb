@@ -13,6 +13,31 @@ module View
     attr_accessor :inventory, :organization_id
     delegate :storage_locations, to: :inventory
 
+    # @param event_time [ActiveSupport::TimeWithZone]
+    # @return [Boolean]
+    def self.within_snapshot?(organization_id, event_time)
+      return true if event_time.blank?
+
+      event = SnapshotEvent.where(organization_id: organization_id).first
+      event && event.created_at < event_time
+    end
+
+    # @param organization_id [Integer]
+    # @param storage_location_id [Integer]
+    # @param event_time [ActiveSupport::TimeWithZone]
+    # @return [Array<ViewInventoryItem>]
+    def self.legacy_inventory_for_storage_location(organization_id, storage_location_id, event_time)
+      items = Organization.find(organization_id).inventory_items.where(storage_location_id: storage_location_id)
+      items.map do |item|
+        ViewInventoryItem.new(
+          item_id: item.item_id,
+          quantity: item.paper_trail.version_at(event_time)&.quantity || 0,
+          storage_location_id: storage_location_id,
+          db_item: item.item
+        )
+      end
+    end
+
     # @param organization_id [Integer]
     # @param event_time [DateTime]
     def initialize(organization_id, event_time: nil)
@@ -23,7 +48,7 @@ module View
     # @param event_time [DateTime]
     def reload(event_time = nil)
       @inventory = InventoryAggregate.inventory_for(organization_id, event_time: event_time)
-      @items = Item.where(organization_id: organization_id)
+      @items = Item.where(organization_id: organization_id).active
       @db_storage_locations = StorageLocation.where(organization_id: organization_id).active_locations
       load_item_details
     end
@@ -38,9 +63,12 @@ module View
     # @param include_omitted [Boolean]
     # @return [Array<EventTypes::EventItem>]
     def items_for_location(storage_location_id, include_omitted: false)
-      items = @inventory.storage_locations[storage_location_id]&.items&.values || []
+      items = @inventory.storage_locations[storage_location_id]
+        &.items
+        &.values
+        &.select { |i| i.quantity.positive? } || []
       if include_omitted
-        db_items = Item.where(organization_id: @inventory.organization_id).where.not(id: items.map(&:item_id))
+        db_items = Item.active.where(organization_id: @inventory.organization_id).where.not(id: items.map(&:item_id))
         zero_items = db_items.map do |item|
           ViewInventoryItem.new(
             item_id: item.id,
@@ -82,7 +110,7 @@ module View
 
       if storage_location
         if item_id
-          @inventory.storage_locations[storage_location.to_i].items[item_id.to_i]&.quantity || 0
+          @inventory.storage_locations[storage_location.to_i]&.items&.dig(item_id.to_i)&.quantity || 0
         else
           @inventory.storage_locations[storage_location.to_i]&.items&.values&.map(&:quantity)&.sum || 0
         end
@@ -100,6 +128,7 @@ module View
     # @param storage_location [Integer]
     # @return [Float]
     def total_value_in_dollars(storage_location: nil)
+      return 0.0 if @inventory.storage_locations[storage_location].nil?
       total = @inventory.storage_locations[storage_location].items.values
         .map { |i| i.value_in_cents ? i.quantity * i.value_in_cents : 0 }.sum
       total.to_f / 100
@@ -112,14 +141,17 @@ module View
 
     def load_item_details
       @inventory.storage_locations.values.each do |loc|
-        loc.items.values.each do |item|
+        loc.items.delete_if do |_, item|
           db_item = @items.find { |i| i.id == item.item_id }
+          next true if db_item.nil?
+
           loc.items[item.item_id] = ViewInventoryItem.new(
             item_id: item.item_id,
             storage_location_id: loc.id,
             quantity: item.quantity,
             db_item: db_item
           )
+          false
         end
       end
     end

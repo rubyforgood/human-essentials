@@ -24,7 +24,7 @@ FactoryBot.define do
     purchased_from { "Google" }
     storage_location
     organization { Organization.try(:first) || create(:organization) }
-    issued_at { nil }
+    issued_at { Time.current }
     amount_spent_in_cents { 10_00 }
     vendor { Vendor.try(:first) || create(:vendor) }
 
@@ -51,7 +51,6 @@ FactoryBot.define do
       end
 
       after(:create) do |instance, evaluator|
-        evaluator.storage_location.increase_inventory(instance.line_item_values)
         PurchaseEvent.publish(instance)
       end
     end

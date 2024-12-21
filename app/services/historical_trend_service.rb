@@ -4,33 +4,36 @@ class HistoricalTrendService
     @type = type
   end
 
+  # Returns: [{:name=>"Adult Briefs (XXL)", :data=>[0, 0, 0, 0, 0, 0, 0, 0, 0, 416, 0, 0], :visible=>false}]
+  # :data contains quantity from 11 months ago to current month
   def series
-    items = []
+    type_symbol = @type.tableize.to_sym # :distributions, :donations, :purchases
+    records_for_type = @organization.send(type_symbol)
+      .includes(items: :line_items)
+      .where(issued_at: 1.year.ago.beginning_of_month..Time.current)
 
-    @organization.items.active.sort.each do |item|
-      next if item.line_items.where(itemizable_type: @type, item: item).blank?
+    array_of_items = []
 
-      month_offset = [*1..12].rotate(Time.zone.today.month)
+    records_for_type.each do |record|
+      index = record.issued_at.month - Date.current.month - 1
 
-      dates = (1..12).index_with { |i| 0 }
+      record.line_items.each do |line_item|
+        name = line_item.item.name
+        quantity = line_item.quantity
+        next if quantity.zero?
 
-      total_items(item.line_items, @type).each do |line_item|
-        month = line_item.dig(0).to_date.month
-        dates[(month_offset.index(month) + 1)] = line_item.dig(1)
+        existing_item = array_of_items.find { |item| item[:name] == name }
+        if existing_item
+          quantity_per_month = existing_item[:data]
+          quantity_per_month[index] += quantity
+        else
+          quantity_per_month = Array.new(12, 0)
+          quantity_per_month[index] += quantity
+          array_of_items << {name:, data: quantity_per_month, visible: false}
+        end
       end
-
-      items << {name: item.name, data: dates.values, visible: false}
     end
 
-    items.sort_by { |hsh| hsh[:name] }
-  end
-
-  private
-
-  def total_items(line_items, type)
-    line_items.where(created_at: 1.year.ago.beginning_of_month..Time.current)
-      .where(itemizable_type: type)
-      .group_by_month(:created_at)
-      .sum(:quantity)
+    array_of_items.sort_by { |item| item[:name] }
   end
 end

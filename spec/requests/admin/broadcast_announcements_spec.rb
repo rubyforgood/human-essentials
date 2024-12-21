@@ -1,15 +1,19 @@
-require "rails_helper"
-
 RSpec.describe "BroadcastAnnouncements", type: :request do
+  let(:organization) { create(:organization) }
+  let(:user) { create(:super_admin, organization: organization) }
+  let(:super_admin) { create(:super_admin, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+
   before do
-    sign_in(@super_admin)
+    sign_in(super_admin)
   end
+
   let(:valid_attributes) {
     {
       expiry: Time.zone.today,
       link: "http://google.com",
       message: "test",
-      user_id: 1,
+      user_id: user.id,
       organization_id: nil
     }
   }
@@ -74,8 +78,8 @@ RSpec.describe "BroadcastAnnouncements", type: :request do
           expiry: Time.zone.yesterday,
           link: "http://google.com",
           message: "new_test",
-          user_id: 1,
-          organization_id: 1
+          user_id: user.id,
+          organization_id: organization.id
         }
       }
 
@@ -109,7 +113,7 @@ RSpec.describe "BroadcastAnnouncements", type: :request do
 
   context "When logged in as an organization_admin" do
     before do
-      sign_in @organization_admin
+      sign_in organization_admin
     end
 
     describe "GET /new" do
@@ -121,7 +125,7 @@ RSpec.describe "BroadcastAnnouncements", type: :request do
 
     describe "POST /create" do
       it "redirects" do
-        post admin_broadcast_announcements_url, params: {user: 1, message: "test"}
+        post admin_broadcast_announcements_url, params: {user: user.id, message: "test"}
         expect(response).to redirect_to(dashboard_path)
       end
     end

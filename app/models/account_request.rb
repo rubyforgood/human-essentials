@@ -21,6 +21,7 @@ class AccountRequest < ApplicationRecord
   validates :email, presence: true, uniqueness: true
   validates :request_details, presence: true, length: { minimum: 50 }
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :organization_website, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "should look like 'https://www.example.com'" }, allow_blank: true
 
   validate :email_not_already_used_by_organization
   validate :email_not_already_used_by_user
@@ -29,10 +30,10 @@ class AccountRequest < ApplicationRecord
 
   has_one :organization, dependent: :nullify
 
-  enum status: %w[started user_confirmed admin_approved rejected].map { |v| [v, v] }.to_h
+  enum :status, %w[started user_confirmed admin_approved rejected admin_closed].map { |v| [v, v] }.to_h
 
   scope :requested, -> { where(status: %w[started user_confirmed]) }
-  scope :closed, -> { where(status: %w[admin_approved rejected]) }
+  scope :closed, -> { where(status: %w[admin_approved rejected admin_closed]) }
 
   def self.get_by_identity_token(identity_token)
     decrypted_token = JWT.decode(identity_token, Rails.application.secret_key_base, true, { algorithm: 'HS256' })
@@ -61,6 +62,11 @@ class AccountRequest < ApplicationRecord
     organization.present?
   end
 
+  # @return [Boolean]
+  def can_be_closed?
+    started? || user_confirmed?
+  end
+
   def confirm!
     update!(confirmed_at: Time.current, status: 'user_confirmed')
     AccountRequestMailer.approval_request(account_request_id: id).deliver_later
@@ -70,6 +76,12 @@ class AccountRequest < ApplicationRecord
   def reject!(reason)
     update!(status: 'rejected', rejection_reason: reason)
     AccountRequestMailer.rejection(account_request_id: id).deliver_later
+  end
+
+  # @param reason [String]
+  def close!(reason)
+    raise 'Cannot be closed from this state' unless can_be_closed?
+    update!(status: 'admin_closed', rejection_reason: reason)
   end
 
   private

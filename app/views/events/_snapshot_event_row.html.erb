@@ -1,0 +1,19 @@
+<% num_locations = event.data.storage_locations.length %>
+<% event.data.storage_locations.values.each_with_index do |loc, loc_index| %>
+  <tr style="background-color: #e9e4f3;">
+    <% if loc_index == 0 %>
+      <td rowspan="<%= num_locations %>"><%= event.id %></td>
+      <td rowspan="<%= num_locations %>">Snapshot</td>
+      <td rowspan="<%= num_locations %>"></td>
+      <td rowspan="<%= num_locations %>"><%= event.event_time.to_s %></td>
+    <% end %>
+    <td colspan="2">
+      <%= link_to storage_locs.find { |i| i.id == loc.id}.name, storage_location_path(loc.id) %>
+    <td>
+      <% loc.items.values.each do |entry| %>
+        <%= link_to items.find { |i| i.id == entry.item_id}.name, item_path(entry.item_id) %>:
+        <%= entry.quantity %><br>
+      <% end %>
+    </td>
+  </tr>
+<% end %>

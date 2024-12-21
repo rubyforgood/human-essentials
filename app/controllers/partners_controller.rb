@@ -129,17 +129,6 @@ class PartnersController < ApplicationController
     end
   end
 
-  def invite_partner_user
-    partner = current_organization.partners.find(params[:partner])
-    UserInviteService.invite(email: params[:email],
-      roles: [Role::PARTNER],
-      resource: partner)
-
-    redirect_to partner_path(partner), notice: "We have invited #{params[:email]} to #{partner.name}!"
-  rescue StandardError => e
-    redirect_to partner_path(partner), error: "Failed to invite #{params[:email]} to #{partner.name} due to: #{e.message}"
-  end
-
   def recertify_partner
     @partner = current_organization.partners.find(params[:id])
 

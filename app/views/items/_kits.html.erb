@@ -1,6 +1,6 @@
 <div class="tab-pane fade" id="custom-tabs-three-kits" role="tabpanel" aria-labelledby="custom-tabs-three-kits-tab">
   <div class='flex justify-end mb-4'>
-    <%= new_button_to new_kit_path(organization_id: current_organization), {text: "New Kit"} %>
+    <%= new_button_to new_kit_path, {text: "New Kit"} %>
   </div>
 
   <%= render partial: 'kits/table' %>

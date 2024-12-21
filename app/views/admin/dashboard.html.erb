@@ -61,7 +61,7 @@
     <!-- /.col -->
     <div class="col-md-3 col-sm-6 col-xs-12">
       <div class="info-box">
-        <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
+        <span class="info-box-icon bg-yellow"><i class="fa fa-institution text-white"></i></span>
         <div class="info-box-content">
           <span class="info-box-text">Total Organizations</span>
           <span class="info-box-number"><%= @organization_count %></span>
@@ -220,7 +220,7 @@
           <tbody>
             <% @active_users.each do |user| %>
               <tr>
-                <td><%= user.name %></td>
+                <td><%= user.display_name %></td>
                 <td><%= user.email %></td>
                 <td><%= user.organization&.name %></td>
                 <td><%= time_ago_in_words user.last_request_at %></td>

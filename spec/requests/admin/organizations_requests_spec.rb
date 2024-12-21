@@ -1,11 +1,12 @@
 RSpec.describe "Admin::Organizations", type: :request do
+  let(:organization) { create(:organization) }
   let(:default_params) do
-    { organization_id: @organization.id }
+    { organization_name: organization.id }
   end
 
   context "When logged in as a super admin" do
     before do
-      sign_in(@super_admin)
+      sign_in(create(:super_admin, organization: organization))
     end
 
     describe "GET #new" do
@@ -15,10 +16,10 @@ RSpec.describe "Admin::Organizations", type: :request do
       end
 
       context 'when given a valid account request token in the query parameters' do
-        let!(:account_request) { FactoryBot.create(:account_request) }
+        let!(:account_request) { create(:account_request) }
 
         it 'should render new with pre populate input fields from the account_request' do
-          ndbn_member = FactoryBot.create(:ndbn_member)
+          ndbn_member = create(:ndbn_member)
           account_request.ndbn_member = ndbn_member
           account_request.save
 
@@ -69,7 +70,7 @@ RSpec.describe "Admin::Organizations", type: :request do
             post admin_organizations_path({ organization: valid_organization_params })
           }.to change(Organization, :count).by(1)
             .and change(SnapshotEvent, :count).by(1)
-          expect(response).to redirect_to(admin_organizations_path(organization_id: 'admin'))
+          expect(response).to redirect_to(admin_organizations_path)
         end
       end
 
@@ -83,6 +84,14 @@ RSpec.describe "Admin::Organizations", type: :request do
 
           expect(subject).to render_template("new")
           expect(flash[:error]).to be_present
+        end
+
+        it "preserves user attributes" do
+          post admin_organizations_path({ organization: invalid_params })
+
+          expect(subject).to render_template("new")
+          expect(response.body).to include(invalid_params[:user][:name])
+          expect(response.body).to include(invalid_params[:user][:email])
         end
       end
     end
@@ -106,7 +115,7 @@ RSpec.describe "Admin::Organizations", type: :request do
 
         it "redirects to #index" do
           expect(subject).to be(redirect_status)
-          expect(subject).to redirect_to(admin_organizations_path({ organization_id: 'admin' }))
+          expect(subject).to redirect_to(admin_organizations_path)
         end
       end
 
@@ -135,7 +144,7 @@ RSpec.describe "Admin::Organizations", type: :request do
       context "with a valid organization id" do
         it "redirects to #index" do
           delete admin_organization_path({ id: organization.id })
-          expect(response).to redirect_to(admin_organizations_path({ organization_id: 'admin' }))
+          expect(response).to redirect_to(admin_organizations_path)
         end
       end
     end
@@ -156,26 +165,37 @@ RSpec.describe "Admin::Organizations", type: :request do
         get admin_organization_path({ id: organization.id })
         expect(response).to be_successful
       end
+
+      context "with an organization user" do
+        let!(:user) { create(:user, organization: organization) }
+
+        it "provides links to edit the user" do
+          get admin_organization_path({ id: organization.id })
+
+          expect(response.body).to include("Edit User")
+          expect(response.body).to include(edit_admin_user_path(user.id))
+        end
+      end
     end
 
     describe "PUT #update" do
       it "redirect" do
-        put admin_organization_path({ id: @organization.id, organization: { name: "Foo" } })
+        put admin_organization_path({ id: organization.id, organization: { name: "Foo" } })
         expect(response).to be_redirect
       end
     end
 
     describe "DELETE #destroy" do
       it "redirects" do
-        delete admin_organization_path({ id: @organization.id })
-        expect(response).to redirect_to(admin_organizations_path({ organization_id: 'admin' }))
+        delete admin_organization_path({ id: organization.id })
+        expect(response).to redirect_to(admin_organizations_path)
       end
     end
   end
 
   context "When logged in as a non-admin user" do
     before do
-      sign_in(@user)
+      sign_in(create(:user, organization: organization))
     end
 
     describe "GET #new" do
@@ -201,14 +221,14 @@ RSpec.describe "Admin::Organizations", type: :request do
 
     describe "GET #edit" do
       it "redirects" do
-        get edit_admin_organization_path({ id: @organization.id })
+        get edit_admin_organization_path({ id: organization.id })
         expect(response).to be_redirect
       end
     end
 
     describe "PUT #update" do
       it "redirects" do
-        put admin_organization_path({ id: @organization.id, organization: { name: "Foo" } })
+        put admin_organization_path({ id: organization.id, organization: { name: "Foo" } })
         expect(response).to be_redirect
       end
     end

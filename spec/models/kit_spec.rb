@@ -11,32 +11,24 @@
 #  updated_at          :datetime         not null
 #  organization_id     :integer          not null
 #
-require 'rails_helper'
 
 RSpec.describe Kit, type: :model do
+  let(:organization) { create(:organization) }
+
   let(:kit) { build(:kit, name: "Test Kit") }
 
   context "Validations >" do
+    subject { build(:kit, organization: organization) }
+
+    it { should validate_presence_of(:name) }
+    it { should belong_to(:organization) }
+    it { should validate_numericality_of(:value_in_cents).is_greater_than_or_equal_to(0) }
+
     it "requires a unique name" do
-      organization = create :organization
-      kit = create(:kit, organization: organization)
+      subject.save
       expect(
-        build(:kit, name: kit.name, organization: organization)
+        build(:kit, name: subject.name, organization: organization)
       ).not_to be_valid
-    end
-
-    it "is valid as built" do
-      expect(kit).to be_valid
-    end
-
-    it "must belong to an organization" do
-      kit.organization = nil
-      expect(kit).not_to be_valid
-    end
-
-    it "requires a name" do
-      kit.name = nil
-      expect(kit).not_to be_valid
     end
 
     it "requires at least one item" do
@@ -44,11 +36,19 @@ RSpec.describe Kit, type: :model do
       expect(kit).not_to be_valid
     end
 
-    it "can't have negative value" do
-      kit.value_in_cents = 5
-      expect(kit).to be_valid
-      kit.value_in_cents = -5
+    it "ensures the associated line_items are invalid with a nil quantity" do
+      kit.line_items << build(:line_item, quantity: nil)
       expect(kit).not_to be_valid
+    end
+
+    it "ensures the associated line_items are invalid with a zero quantity" do
+      kit.line_items << build(:line_item, quantity: 0)
+      expect(kit).not_to be_valid
+    end
+
+    it "ensures the associated line_items are valid with a one quantity" do
+      kit.line_items << build(:line_item, quantity: 1)
+      expect(kit).to be_valid
     end
   end
 
@@ -58,21 +58,26 @@ RSpec.describe Kit, type: :model do
     end
 
     it "->alphabetized retrieves items in alphabetical order" do
-      kit_c = create(:kit, name: "C")
-      kit_b = create(:kit, name: "B")
-      kit_a = create(:kit, name: "A")
+      kit_c = create(:kit, name: "KitC")
+      kit_b = create(:kit, name: "KitB")
+      kit_a = create(:kit, name: "KitA")
       alphabetized_list = [kit_a.name, kit_b.name, kit_c.name]
+
       expect(Kit.alphabetized.count).to eq(3)
       expect(Kit.alphabetized.map(&:name)).to eq(alphabetized_list)
     end
 
     describe "->by_partner_key" do
       it "shows the kits for a particular item" do
-        organization = create :organization
-        c1 = create(:item, base_item: create(:base_item))
-        c2 = create(:item, base_item: create(:base_item))
+        base1 = create(:base_item)
+        base2 = create(:base_item)
+
+        c1 = create(:item, base_item: base1, organization: organization)
+        c2 = create(:item, base_item: base2, organization: organization)
+
         create(:kit, organization: organization, line_items: [create(:line_item, item: c1)])
         create(:kit, organization: organization, line_items: [create(:line_item, item: c2)])
+
         expect(Kit.by_partner_key(c1.partner_key).size).to eq(1)
         expect(Kit.active.size).to be > 1
       end
@@ -102,22 +107,26 @@ RSpec.describe Kit, type: :model do
   end
 
   describe '#can_deactivate?' do
-    context 'with inventory items' do
+    let(:kit) { create(:kit, :with_item, organization: organization) }
+
+    context 'with inventory' do
       it 'should return false' do
-        kit = create(:kit, :with_item)
-        TestInventory.create_inventory(@organization, {
-          @organization.storage_locations.first.id => {
+        item = create(:item, :active, organization: organization, kit: kit)
+        storage_location = create(:storage_location, :with_items, organization: organization, item: item)
+        kit.reload
+
+        TestInventory.create_inventory(organization, {
+          storage_location.id => {
             kit.item.id => 10
           }
         })
-        expect(kit.reload.can_deactivate?(nil)).to eq(false)
+        expect(kit.reload.can_deactivate?).to eq(false)
       end
     end
 
     context 'without inventory items' do
       it 'should return true' do
-        kit = create(:kit, :with_item)
-        expect(kit.reload.can_deactivate?(nil)).to eq(true)
+        expect(kit.reload.can_deactivate?).to eq(true)
       end
     end
   end

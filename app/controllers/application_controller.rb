@@ -20,7 +20,7 @@ class ApplicationController < ActionController::Base
 
     return current_role.resource if current_role&.resource&.is_a?(Organization)
 
-    Organization.find_by(short_name: params[:organization_id])
+    Organization.find_by(short_name: params[:organization_name])
   end
   helper_method :current_organization
 
@@ -37,32 +37,8 @@ class ApplicationController < ActionController::Base
     return nil unless current_user
 
     @role = Role.find_by(id: session[:current_role]) || UsersRole.current_role_for(current_user)
-    session[:current_role] = @role&.id
 
     @role
-  end
-
-  def organization_url_options(options = {})
-    options.merge(organization_id: current_organization.to_param)
-  end
-  helper_method :organization_url_options
-
-  # override Rails' default_url_options to ensure organization_id is added to
-  # each URL generated
-  def default_url_options(options = {})
-    # Early return if the request is not authenticated and no
-    # current_user is defined
-    return options if current_user.blank? || current_role.blank?
-
-    if current_organization.present? && !options.key?(:organization_id)
-      options[:organization_id] = current_organization.to_param
-    elsif current_role.name == Role::ORG_ADMIN.to_s
-      options[:organization_id] = current_user.organization.to_param
-    elsif current_role.name == Role::SUPER_ADMIN.to_s
-      # FIXME: This *might* not be the best way to approach this...
-      options[:organization_id] = "admin"
-    end
-    options
   end
 
   def dashboard_path_from_current_role
@@ -73,11 +49,12 @@ class ApplicationController < ActionController::Base
     elsif current_role.name == Role::PARTNER.to_s
       partners_dashboard_path
     elsif current_user.organization
-      dashboard_path(current_user.organization)
+      dashboard_path
     else
       "/403"
     end
   end
+  helper_method :dashboard_path_from_current_role
 
   def authorize_user
     return unless params[:controller] # part of omniauth controller flow
@@ -122,7 +99,7 @@ class ApplicationController < ActionController::Base
 
   def verboten!
     respond_to do |format|
-      format.html { redirect_to dashboard_path, flash: { error: "Access Denied." } }
+      format.html { redirect_to dashboard_path_from_current_role, flash: { error: "Access Denied." } }
       format.json { render body: nil, status: :forbidden }
     end
   end

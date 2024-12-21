@@ -63,13 +63,13 @@ module Exports
     def base_table
       {
         "Source" => ->(donation) {
-          donation.source_view
+          donation.source
         },
         "Date" => ->(donation) {
           donation.issued_at.strftime("%F")
         },
-        "Donation Site" => ->(donation) {
-          donation.donation_site.try(:name)
+        "Details" => ->(donation) {
+          donation.details
         },
         "Storage Location" => ->(donation) {
           donation.storage_view
@@ -79,6 +79,9 @@ module Exports
         },
         "Variety of Items" => ->(donation) {
           donation.line_items.map(&:name).uniq.size
+        },
+        "In-Kind Value" => ->(donation) {
+          donation.in_kind_value_money
         },
         "Comments" => ->(donation) {
           donation.comment

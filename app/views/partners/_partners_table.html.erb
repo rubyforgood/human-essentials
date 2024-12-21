@@ -12,7 +12,7 @@
           <div class="pull-right">
             <%= modal_button_to("#csvImportModal", {text: "Import Partners", icon: "upload", size: "md"}) %>
             <%= download_button_to(partners_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Partner Agencies", size: "md"}) if @partners.any? %>
-            <%= new_button_to new_partner_path(organization_id: current_organization), {text: "New Partner Agency"} %>
+            <%= new_button_to new_partner_path, {text: "New Partner Agency"} %>
           </div>
         </div>
       </div>

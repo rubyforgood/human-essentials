@@ -2,10 +2,10 @@ module DonationCreateService
   class << self
     def call(donation)
       Donation.transaction do
-        if donation.save
-          donation.storage_location.increase_inventory(donation.line_item_values)
-          DonationEvent.publish(donation)
+        unless donation.save
+          raise donation.errors.full_messages.join("\n")
         end
+        DonationEvent.publish(donation)
       end
     end
   end

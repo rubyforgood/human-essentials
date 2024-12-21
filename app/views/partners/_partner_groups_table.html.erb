@@ -5,7 +5,7 @@
       <div class="col-12">
         <!-- Default box -->
         <div class='flex justify-end mb-2'>
-          <%= new_button_to new_partner_group_path(organization_id: current_organization), {text: "New Partner Group"} %>
+          <%= new_button_to new_partner_group_path, {text: "New Partner Group"} %>
         </div>
 
         <div class="card">
@@ -52,8 +52,9 @@
                         <span class='text-gray-600 text-bold font-italic'>No</span>
                       <% end %>
                     </td>
-                    <td class="text-right">
+                    <td class="text-left">
                       <%= edit_button_to edit_partner_group_path(pg) %>
+                      <%= delete_button_to(partner_group_path(pg),{confirm: confirm_delete_msg(pg.name)}) if pg.partners.none? %>
                     </td>
                   </tr>
                 <% end %>

@@ -1,0 +1,29 @@
+<%= render(
+  "shared/filtered_card",
+  id: "purchases",
+  gradient: "secondary",
+  title: "Purchases",
+  subtitle: @selected_date_range,
+  footer_options: { class: "text-center" },
+  footer: link_to("See more...", purchases_path),
+  filter_url: reports_purchases_summary_path
+) do %>
+  <%= new_button_to new_purchase_path, {text: "New Purchase"} %>
+  <h3 class="text-center"><%= dollar_presentation(@summary_struct.amount_spent) %>
+    spent
+    <%= @selected_date_range_label %>
+  </h3>
+  <div class="box-body" style="margin: 40px">
+    <h4> Total spent on diapers: <%= dollar_presentation @summary_struct.diapers %></h4>
+    <h4> Total spent on period supplies: <%= dollar_presentation @summary_struct.period_supplies %> </h4>
+    <h4> Total spent on adult incontinence: <%= dollar_presentation @summary_struct.adult_incontinence %> </h4>
+    <h4> Total spent on other: <%= dollar_presentation @summary_struct.other %> </h4>
+  </div>
+  <div style="margin: 40px">
+    <h4> Total items: <%= @summary_struct.total_items %> </h4>
+  </div>
+  <div class="box-body">
+    <h4>Recent purchases</h4>
+    <%= render partial: "purchase", collection: @summary_struct.recent_purchases, as: :purchase %>
+  </div>
+<% end %>

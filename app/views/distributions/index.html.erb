@@ -38,17 +38,17 @@
               <div class="row">
                 <% if @items.present? %>
                   <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-12">
-                    <%= filter_select(label: "Filter by item", scope: :by_item_id, collection: @items, selected: @selected_item) %>
+                    <%= filter_select(label: "Filter by Item", scope: :by_item_id, collection: @items, selected: @selected_item) %>
                   </div>
                 <% end %>
                 <% if @item_categories.present? %>
                   <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-12">
-                    <%= filter_select(label: "Filter by item category", scope: :by_item_category_id, collection: @item_categories, selected: @selected_item_category) %>
+                    <%= filter_select(label: "Filter by Item Category", scope: :by_item_category_id, collection: @item_categories, selected: @selected_item_category) %>
                   </div>
                 <% end %>
                 <% if @partners.present? %>
                   <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-12">
-                    <%= filter_select(scope: :by_partner, collection: @partners, selected: @selected_partner) %>
+                    <%= filter_select(label: "Filter by Partner", scope: :by_partner, collection: @partners, selected: @selected_partner) %>
                   </div>
                 <% end %>
                 <% if @storage_locations.present? %>
@@ -60,7 +60,7 @@
                   <%= filter_select(label: "Filter by Status", scope: :by_state, collection: @statuses, key: :last, value: :first, selected: @selected_status) %>
                 </div>
                 <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                  <%= label_tag "Date Range" %>
+                  <%= label_tag "Date Range", "Date Range" %>
                   <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %>
                 </div>
               </div><!-- /.row -->
@@ -69,14 +69,14 @@
                 <%= clear_filter_button %>
                 <span class="float-right">
                   <%=
-                    if @distributions.length > 0
+                    if @distributions.any?
                       download_button_to(
                         distributions_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)),
                         text: "Export Distributions"
                       )
                     end
                   %>
-                  <%= new_button_to new_distribution_path(organization_id: current_organization), {text: "New Distribution"} %>
+                  <%= new_button_to new_distribution_path, {text: "New Distribution"} %>
                 </span>
               </div>
             <% end # form %>
@@ -99,6 +99,7 @@
               <tr>
                 <th>ID</th>
                 <th>Partner</th>
+                <th class="date">Initial Allocation</th>
                 <th class="date">Date of Distribution</th>
                 <th>Source Inventory</th>
 
@@ -108,15 +109,16 @@
                 <% elsif filter_params[:by_item_category_id].present? %>
                   <th class="numeric">Total in <%= @item_categories.find { |ic| ic.id == filter_params[:by_item_category_id].to_i }&.name %></th>
                 <% else %>
-                  <th class="numeric">Total items</th>
+                  <th class="numeric">Total Items</th>
                 <% end %>
                 <!-- End Quantity -->
 
-                <th class="numeric">Total value</th>
-                <th>Delivery method</th>
+                <th class="numeric">Total Value</th>
+
+                <th>Delivery Method</th>
                 <th>Shipping Cost</th>
                 <th>Comments</th>
-                <th>State</th>
+                <th>Status</th>
                 <th class="text-right" style="width: 400px">Actions</th>
               </tr>
               </thead>

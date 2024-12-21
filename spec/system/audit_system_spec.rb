@@ -1,57 +1,45 @@
 RSpec.describe "Audit management", type: :system, js: true do
-  let!(:url_prefix) { "/#{@organization.to_param}" }
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
+  let(:organization_admin) { create(:organization_admin, organization: organization) }
+
   let(:quantity) { 7 }
-  let(:item) { create(:item) }
-  let!(:storage_location) { create(:storage_location, :with_items, item: item, item_quantity: 10, organization: @organization) }
+  let(:item) { create(:item, organization: organization) }
+  let!(:storage_location) { create(:storage_location, :with_items, item: item, item_quantity: 10, organization: organization) }
 
   context "while signed in as a normal user" do
     before do
-      sign_in(@user)
+      sign_in(user)
     end
 
     it "should not be able to visit the audits #index page" do
-      visit url_prefix + "/audits"
+      visit audits_path
       expect(page).to have_content("Access Denied")
     end
 
     it "should not be able to visit the audits #new page" do
-      visit url_prefix + "/audits/new"
+      visit new_audit_path
       expect(page).to have_content("Access Denied")
     end
 
     it "should not be able to visit the audits #edit page" do
-      visit url_prefix + "/audits/1/edit"
+      visit edit_audit_path(1)
       expect(page).to have_content("Access Denied")
     end
 
     it "should not be able to visit the audits #show page" do
-      visit url_prefix + "/audits/1"
+      visit audit_path(1)
       expect(page).to have_content("Access Denied")
     end
   end
 
   context "while signed in as an organization admin" do
     before do
-      sign_in(@organization_admin)
+      sign_in(organization_admin)
     end
 
     context "when starting a new audit" do
-      subject { url_prefix + "/audits/new" }
-      let(:item) { Item.alphabetized.first }
-
-      it "*Does* include inactive items in the line item fields" do
-        visit subject
-
-        select storage_location.name, from: "Storage location"
-        expect(page).to have_content(item.name)
-        select item.name, from: "audit_line_items_attributes_0_item_id"
-
-        item.update(active: false)
-
-        page.refresh
-        select storage_location.name, from: "Storage location"
-        expect(page).to have_content(item.name)
-      end
+      subject { new_audit_path }
 
       it "does not display quantities in line-item drop down selector" do
         create(:storage_location, :with_items, item: item, item_quantity: 10)
@@ -60,15 +48,97 @@ RSpec.describe "Audit management", type: :system, js: true do
 
         find('option', text: item.name.to_s)
       end
+
+      context "when adding new items" do
+        let!(:existing_barcode) { create(:barcode_item) }
+        let(:item_with_barcode) { existing_barcode.item }
+
+        it "allows user to add items by barcode" do
+          visit new_audit_path
+
+          within "#audit_line_items" do
+            # Scan existing barcode
+            expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
+            Barcode.boop(existing_barcode.value)
+
+            # Ensure item quantity and name have been filled in
+            expect(page).to have_field "_barcode-lookup-0", with: existing_barcode.value
+            expect(page).to have_field "audit_line_items_attributes_0_quantity", with: existing_barcode.quantity.to_s
+            expect(page).to have_field "audit_line_items_attributes_0_item_id", with: existing_barcode.item.id.to_s
+          end
+        end
+
+        it "allows auditing items that are not in a storage location", :js do
+          item = create(:item, name: "TestItemNotInStorageLocation", organization: organization)
+          audit_quantity = 1234
+          visit new_audit_path
+
+          await_select2("#audit_line_items_attributes_0_item_id") do
+            select storage_location.name, from: "Storage location"
+          end
+          select item.name, from: "audit_line_items_attributes_0_item_id"
+          fill_in "audit_line_items_attributes_0_quantity", with: audit_quantity
+
+          accept_confirm do
+            click_button "Confirm Audit"
+          end
+          expect(page.find(".alert-info")).to have_content "Audit is confirmed"
+          expect(page).to have_content(item.name)
+          expect(page).to have_content(audit_quantity)
+
+          accept_confirm do
+            click_link "Finalize Audit"
+          end
+          expect(page.find(".alert-info")).to have_content "Audit is Finalized"
+
+          event = Event.last
+          expect(event.type).to eq "AuditEvent"
+          event_line_item = Event.last.data.items.first
+          expect(event_line_item.item_id).to eq item.id
+          expect(event_line_item.quantity).to eq audit_quantity
+        end
+
+        it "allows user to add items that do not yet have a barcode", :js do
+          item_without_barcode = create(:item)
+          new_barcode = "00000000"
+          new_item_name = item_without_barcode.name
+
+          visit new_audit_path
+
+          # Scan new barcode
+          within "#audit_line_items" do
+            expect(page).to have_xpath("//input[@id='_barcode-lookup-0']")
+            Barcode.boop(new_barcode)
+          end
+
+          # Item lookup finds no barcode and responds by prompting user to choose an item and quantity
+          within "#newBarcode" do
+            fill_in "Quantity", with: 10
+            select new_item_name, from: "Item"
+            expect(page).to have_field("barcode_item_quantity", with: '10')
+            expect(page).to have_field("barcode_item_value", with: new_barcode)
+            click_on "Save"
+          end
+
+          within "#audit_line_items" do
+            # Ensure item fields have been filled in
+            expect(page).to have_field "audit_line_items_attributes_0_quantity", with: '10'
+            expect(page).to have_field "audit_line_items_attributes_0_item_id", with: item_without_barcode.id.to_s
+
+            # Ensure new line item was added and has focus
+            expect(page).to have_field("_barcode-lookup-1", focused: true)
+          end
+        end
+      end
     end
 
     context "when viewing the audits index" do
-      subject { url_prefix + "/audits" }
+      subject { audits_path }
 
       it "should be able to filter the #index by storage location" do
-        storage_location2 = create(:storage_location, name: "there", organization: @organization)
-        create(:audit, organization: @organization, storage_location: storage_location)
-        create(:audit, organization: @organization, storage_location: storage_location2)
+        storage_location2 = create(:storage_location, name: "there", organization: organization)
+        create(:audit, organization: organization, storage_location: storage_location)
+        create(:audit, organization: organization, storage_location: storage_location2)
 
         visit subject
         select storage_location.name, from: "filters[at_location]"
@@ -80,8 +150,12 @@ RSpec.describe "Audit management", type: :system, js: true do
       it "should be able to save progress of an audit" do
         visit subject
         click_link "New Audit"
-        select storage_location.name, from: "Storage location"
-        select Item.last.name, from: "audit_line_items_attributes_0_item_id"
+
+        await_select2("#audit_line_items_attributes_0_item_id") do
+          select storage_location.name, from: "Storage location"
+        end
+
+        select item.name, from: "audit_line_items_attributes_0_item_id"
         fill_in "audit_line_items_attributes_0_quantity", with: quantity.to_s
 
         expect do
@@ -102,7 +176,11 @@ RSpec.describe "Audit management", type: :system, js: true do
       it "should be able to confirm the audit from the #new page", js: true do
         visit subject
         click_link "New Audit"
-        select storage_location.name, from: "Storage location"
+
+        await_select2("#audit_line_items_attributes_0_item_id") do
+          select storage_location.name, from: "Storage location"
+        end
+
         select Item.last.name, from: "audit_line_items_attributes_0_item_id"
         fill_in "audit_line_items_attributes_0_quantity", with: quantity.to_s
 
@@ -120,7 +198,7 @@ RSpec.describe "Audit management", type: :system, js: true do
     end
 
     context "with an existing audit" do
-      subject { url_prefix + "/audits/" + audit.to_param }
+      subject { audit_path(audit) }
 
       let(:audit) { create(:audit, :with_items, storage_location: storage_location, item: item, item_quantity: quantity) }
 
@@ -149,7 +227,7 @@ RSpec.describe "Audit management", type: :system, js: true do
       end
 
       it "should be able to confirm the audit from the #edit page" do
-        visit url_prefix + "/audits/" + audit.to_param + "/edit"
+        visit edit_audit_path(audit)
         expect(page).to have_content("Confirm Audit")
         accept_confirm do
           click_button "Confirm Audit"
@@ -164,7 +242,7 @@ RSpec.describe "Audit management", type: :system, js: true do
     end
 
     context "with a confirmed audit" do
-      subject { url_prefix + "/audits/" + audit.to_param }
+      subject { audit_path(audit) }
       let(:audit) { create(:audit, :with_items, storage_location: storage_location, item: item, item_quantity: quantity, status: :confirmed) }
 
       it "should be able to edit the audit that is confirmed" do
@@ -222,9 +300,9 @@ RSpec.describe "Audit management", type: :system, js: true do
           expect(page).not_to have_content("Resume Audit")
           expect(page).not_to have_content("Delete Audit")
           expect(page).not_to have_content("Finalize Audit")
-          visit url_prefix + "/audits/" + audit.to_param + "/edit"
-          expect(page).not_to have_current_path(edit_audit_path(@organization.to_param, audit.to_param))
-          expect(page).to have_current_path(audits_path(@organization.to_param))
+          visit edit_audit_path(audit)
+          expect(page).not_to have_current_path(edit_audit_path(audit))
+          expect(page).to have_current_path(audits_path)
         end
 
         it "should not be able to delete the audit that is finalized" do

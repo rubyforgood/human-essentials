@@ -1,15 +1,27 @@
 <%= form.fields_for :item_requests, defined?(object) ? object : nil  do |field| %>
-  <tr>
+  <tr data-controller="item-units" data-item-units-item-units-value="<%= item_units.to_json %>">
     <td>
       <%= field.label :item_id, "Item Requested", {class: 'sr-only'} %>
-      <%= field.select :item_id, @formatted_requestable_items, {include_blank: 'Select an item'}, {class: 'form-control'} %>
+      <%= field.select :item_id, @requestable_items, {include_blank: 'Select an item'},
+                       data: { :'item-units-target' => 'itemSelect',
+                               action: 'change->item-units#itemSelected'},
+                               class: 'form-control' %>
     </td>
     <td>
       <%= field.label :quantity, "Quantity", {class: 'sr-only'} %>
       <%= field.number_field :quantity, label: false, step: 1, min: 1, class: 'form-control' %>
     </td>
+
+    <% if Flipper.enabled?(:enable_packs) && current_partner.organization.request_units.any? %>
+      <td>
+        <%= field.label :request_unit, "Unit", {class: 'sr-only'} %>
+        <%= field.select :request_unit, [], {include_blank: 'Units'},
+                         { :'data-item-units-target' => 'requestSelect', class: 'form-control'} %>
+
+      </td>
+    <% end %>
     <td>
-      <%= remove_item_button "Remove" %>
+      <%= remove_element_button "Remove", container_selector: "tr" %>
     </td>
   </tr>
 <% end %>

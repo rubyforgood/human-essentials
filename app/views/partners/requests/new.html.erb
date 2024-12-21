@@ -2,10 +2,10 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <% content_for :title, "New Request - #{current_user.name}" %>
+        <% content_for :title, "New Request - #{current_user.display_name}" %>
         <h1><i class="fa fa-users"></i>&nbsp;&nbsp;
           New Request
-          <small>for <%= current_user.name %></small>
+          <small>for <%= current_user.display_name %></small>
         </h1>
       </div>
       <div class="col-sm-6">
@@ -23,15 +23,17 @@
     <div class="row">
       <div class="col-md-12">
         <!-- Default box -->
-        <div class="card">
+        <div class="card"
+          data-controller="confirmation"
+          data-confirmation-pre-check-path-value="<%= validate_partners_requests_path(format: :json) %>">
           <div class="card-body">
 
             <% if @errors.present? %>
               <%= render partial: 'partners/requests/error' %>
             <% end %>
 
-            <%= simple_form_for @partner_request, url: partners_requests_path(@partner_request, :organization_id => current_partner.organization.id),
-              html: {role: 'form', class: 'form-horizontal'}, method: :post, data: { controller: 'request-item' } do |form| %>
+            <%= simple_form_for @partner_request, url: partners_requests_path(@partner_request),
+              html: {role: 'form', class: 'form-horizontal'}, method: :post, data: { controller: 'form-input', confirmation_target: "form" } do |form| %>
               <%= form.input :comments, label: "Comments:", as: :text, class: "form-control", wrapper: :input_group %>
 
               <table class='table'>
@@ -39,15 +41,18 @@
                 <tr>
                   <th>Item Requested</th>
                   <th>Quantity</th>
+                  <% if Flipper.enabled?(:enable_packs) && current_partner.organization.request_units.any? %>
+                    <th>Units (if applicable)</th>
+                  <% end %>
                 </tr>
                 </thead>
-                <tbody class='fields' data-request-item-target="addDest">
-                  <%= render 'item_request', form: form %>
+                <tbody class='fields'>
+                  <%= render partial: 'item_request', locals: { form: form, item_units: @item_units } %>
                 </tbody>
               </table>
               <div>
-                <%= add_item_button('Add Another Item') do %>
-                  <%= render 'item_request', form: form, object: @partner_request.item_requests.build %>
+                <%= add_element_button('Add Another Item', container_selector: '.fields') do %>
+                  <%= render partial: 'item_request', locals: { form: form, item_units: @item_units }, object: @partner_request.item_requests.build %>
                 <% end %>
               </div>
 
@@ -56,9 +61,20 @@
           </div>
               <div class="card-footer">
                 <!-- TODO(chaserx): we should add some js to prevent submission if the items selected are the blank option or any item has an empty quantity -->
-                <%= form.submit("Submit Essentials Request", class: "btn btn-primary") %> <%= link_to "Cancel Request", partners_requests_path, class: "btn btn-danger" %>
+                <%= form.submit("Submit Essentials Request", class: "btn btn-success", data: { action: "click->confirmation#openModal" }) %> <%= link_to "Cancel Request", partners_requests_path, class: "btn btn-danger" %>
               </div>
             <% end %>
+
+          <%# Confirmation modal: See confirmation_controller.js for how this gets displayed %>
+          <%# and app/controllers/partners/requests_controller.rb#validate for how it gets populated. %>
+          <div id="partnerRequestConfirmationModal"
+            class="modal confirm"
+            aria-labelledby="partnerRequestConfirmationModal"
+            aria-hidden="true"
+            tabindex="-1"
+            data-bs-backdrop="static"
+            data-confirmation-target="modal">
+          </div>
         </div>
       </div>
     </div>

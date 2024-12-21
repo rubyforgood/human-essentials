@@ -1,19 +1,19 @@
 RSpec.describe "Partners profile served area behaviour when accessed as bank", type: :system, js: true do
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, organization: organization) }
+
   before do
-    sign_in(@user)
+    sign_in(user)
   end
-  let!(:partner1) { create(:partner, organization: @organization) }
+  let!(:partner1) { create(:partner, organization: organization) }
   let!(:served_areas) {
     partner1.profile.served_areas << create_list(:partners_served_area, 4,
       partner_profile: partner1.profile, client_share: 25)
   }
-  let!(:default_params) do
-    {organization_id: @organization.to_param, id: partner1.id, partner_id: partner1.id}
-  end
 
   context "changing the client share" do
     before do
-      visit edit_profile_path(default_params)
+      visit edit_profile_path(id: partner1.id, partner_id: partner1.id)
     end
 
     it "handles an invalid total client share properly" do
@@ -35,14 +35,16 @@ RSpec.describe "Partners profile served area behaviour when accessed as bank", t
       expect(page).to have_content("100 %")
       expect(page).not_to have_content("The total client share must be either 0 or 100 %")
       click_on "Update Information"
-      expect(page).to have_content("Application & Information")
+      expect(page).to have_content("Partner Profile")
       expect(page).to have_content("26 %")
     end
 
     it "handles addition properly" do
-      click_on("Add another county")
+      click_on("Add Another County")
       matching = page.all(".remove_served_area") # The fields have unpredicatable numbers, so I have to count how many *soemthing* there is
       expect(matching.size).to eq(5)
+      select = page.all("select.percentage-selector").last
+      expect(select.value).to eq("")
     end
 
     it "handles deletion properly" do

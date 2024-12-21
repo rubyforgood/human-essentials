@@ -43,8 +43,10 @@
                 <%= f.input_field :package_size, class: "form-control" %>
               <% end %>
 
-              <%= f.input :active, label: "Item is Active?", wrapper: :input_group do %>
-                <%= f.check_box :active, {class: "input-group-text", id: "active"}, "true", "false" %>
+              <% if Flipper.enabled?(:enable_packs) %>
+                <%= f.input :request_units, label: "Additional Custom Request Units" do %>
+                  <%= f.association :request_units, as: :check_boxes, collection: current_organization.request_units, checked: selected_item_request_units(@item), label_method: :name, value_method: :id, class: "form-check-input" %>
+                <% end %>
               <% end %>
 
               <%= f.input :visible, label: "Item is Visible to Partners?", wrapper: :input_group do %>

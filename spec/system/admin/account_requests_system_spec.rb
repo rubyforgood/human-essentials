@@ -1,4 +1,6 @@
 RSpec.describe "Account Requests Admin", type: :system do
+  let(:super_admin) { create(:super_admin) }
+
   context "while signed in as a super admin" do
     let!(:request1) { create(:account_request, confirmed_at: Time.zone.today, status: 'admin_approved') }
     let!(:request2) {
@@ -11,7 +13,7 @@ RSpec.describe "Account Requests Admin", type: :system do
     let!(:request6) { create(:account_request, created_at: Time.zone.today - 2.days, status: 'started') }
 
     before do
-      sign_in(@super_admin)
+      sign_in(super_admin)
     end
 
     around do |ex|
@@ -27,10 +29,23 @@ RSpec.describe "Account Requests Admin", type: :system do
       end
 
       it 'should reject the account', js: true do
-        find(%(a[data-request-id="#{request4.id}"])).click
+        find(%(a[data-modal="reject"][data-request-id="#{request4.id}"])).click
         fill_in 'account_request_rejection_reason', with: 'Because I said so'
         click_on 'Save'
         expect(request4.reload).to be_rejected
+        within "#closed-account-requests" do
+          expect(page).to have_content(request4.name)
+        end
+        within '#open-account-requests' do
+          expect(page).not_to have_content(request4.name)
+        end
+      end
+
+      it 'should close the account', js: true do
+        find(%(a[data-modal="close"][data-request-id="#{request4.id}"])).click
+        fill_in 'account_request_rejection_reason', with: 'Because I said so'
+        click_on 'Save'
+        expect(request4.reload).to be_admin_closed
         within "#closed-account-requests" do
           expect(page).to have_content(request4.name)
         end
@@ -87,7 +102,7 @@ RSpec.describe "Account Requests Admin", type: :system do
       end
 
       it 'should reject the account', js: true do
-        find(%(a[data-request-id="#{request4.id}"])).click
+        find(%(a[data-modal="reject"][data-request-id="#{request4.id}"])).click
         fill_in 'account_request_rejection_reason', with: 'Because I said so'
         click_on 'Save'
         expect(request4.reload).to be_rejected
@@ -97,6 +112,33 @@ RSpec.describe "Account Requests Admin", type: :system do
         within '#open-account-requests' do
           expect(page).not_to have_content(request4.name)
         end
+      end
+
+      it 'should close the account', js: true do
+        find(%(a[data-modal="close"][data-request-id="#{request4.id}"])).click
+        fill_in 'account_request_rejection_reason', with: 'Because I said so'
+        click_on 'Save'
+        expect(request4.reload).to be_admin_closed
+        within "#closed-account-requests" do
+          expect(page).to have_content(request4.name)
+        end
+        within '#open-account-requests' do
+          expect(page).not_to have_content(request4.name)
+        end
+      end
+
+      it "should validate the rejection reason on reject modal" do
+        find(%(a[data-modal="reject"][data-request-id="#{request4.id}"])).click
+        fill_in 'account_request_rejection_reason', with: ''
+        click_on 'Save'
+        expect(page).to have_content('Reason must be provided')
+      end
+
+      it "should validate the rejection reason on close modal" do
+        find(%(a[data-modal="close"][data-request-id="#{request4.id}"])).click
+        fill_in 'account_request_rejection_reason', with: ' '
+        click_on 'Save'
+        expect(page).to have_content('Reason must be provided')
       end
     end
   end

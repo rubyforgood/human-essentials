@@ -22,9 +22,14 @@ FactoryBot.define do
     storage_location
     partner
     organization { Organization.try(:first) || create(:organization) }
-    issued_at { nil }
+    issued_at { Time.current }
     delivery_method { :pick_up }
     state { :scheduled }
+
+    trait :past do
+      issued_at { 1.week.ago }
+      created_at { 10.days.ago }
+    end
 
     trait :with_items do
       transient do
@@ -35,12 +40,13 @@ FactoryBot.define do
       storage_location { create :storage_location, :with_items, item: item, organization: organization }
 
       after(:build) do |instance, evaluator|
+        # Don't remove this. Shortcutting does not work
         event_item = View::Inventory.new(instance.organization_id)
           .items_for_location(instance.storage_location_id)
           .first
           &.db_item
         item = evaluator.item || event_item
-        instance.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item)
+        instance.line_items << build(:line_item, quantity: evaluator.item_quantity, item: item, itemizable: instance)
       end
     end
   end

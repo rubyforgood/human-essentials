@@ -104,6 +104,19 @@ class Donation < ApplicationRecord
                       .sum("line_items.quantity")
   end
 
+  def details
+    case source
+    when SOURCES[:product_drive]
+      product_drive.name
+    when SOURCES[:manufacturer]
+      manufacturer.name
+    when SOURCES[:donation_site]
+      donation_site.name
+    when SOURCES[:misc]
+      comment&.truncate(25, separator: /\s/)
+    end
+  end
+
   def remove(item)
     # doing this will handle either an id or an object
     item_id = item.to_i
@@ -121,6 +134,10 @@ class Donation < ApplicationRecord
 
   def storage_view
     storage_location.nil? ? "N/A" : storage_location.name
+  end
+
+  def in_kind_value_money
+    Money.new(value_per_itemizable)
   end
 
   private

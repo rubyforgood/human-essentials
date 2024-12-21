@@ -1,35 +1,20 @@
-<div class="navbar-custom-menu">
-  <ul class="nav navbar-nav">
-    <!-- User Account: style can be found in dropdown.less -->
-    <li class="dropdown user user-menu">
-      <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
-        <span class="hidden-xs"><%= current_user.name %></span>
-      </a>
-      <ul class="dropdown-menu">
-        <!-- User image -->
-        <li class="user-body">
-          <p class="text-center">
-            <b><%= current_user.name %></b>
-          </p>
-        </li>
-        <!-- Menu Body -->
-        <li class="user-body">
-          <ul class="list-group">
-            <li class="list-group-item">
-              <%= fa_icon "cog" %> <%= navigation_link_to "Account Settings", edit_user_registration_path(organization_id: nil) %>
-            </li>
-          </ul>
-        </li>
-        <!-- Menu Footer-->
-        <li class="user-footer">
-          <div class="pull-left">
-            <!-- <a href="#" class="btn btn-default btn-flat">Profile</a> -->
-          </div>
-          <div class="pull-right">
-            <%= delete_button_to destroy_user_session_path(organization_id: nil), {text: "Log out", icon: "sign-out", no_confirm: true, size: "md"} %>
-          </div>
-        </li>
-      </ul>
-    </li>
-  </ul>
-</div>
+<li class="nav-item dropdown">
+  <a class="nav-link" data-bs-toggle="dropdown" href="#">
+    <%= current_user.display_name %>
+  </a>
+
+  <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+    <% current_user.switchable_roles.each do |role| %>
+      <% next if role == current_role %>
+      <%= link_to switch_to_role_users_path(role_id: role.id), class:"dropdown-item" do %>
+        <i class="fa fa-repeat text-aqua"></i><%= "Switch to: #{role.resource&.name || "Super Admin"}" %>
+      <% end %>
+    <% end %>
+
+    <div class="dropdown-divider"></div>
+
+    <%= link_to destroy_user_session_path, class:"dropdown-item dropdown-footer", method: :delete do %>
+      <i class="fa fa-sign-out mr-2"></i> Log Out
+    <% end %>
+  </div>
+</li>

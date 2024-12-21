@@ -20,8 +20,13 @@ FactoryBot.define do
   factory :partner do
     sequence(:name) { |n| "Leslie Sue, the #{n}" }
     sequence(:email) { |n| "leslie#{n}@gmail.com" }
+    notes { "Lorem ipsum" }
     send_reminders { true }
     organization_id { Organization.try(:first).try(:id) || create(:organization).id }
+
+    transient do
+      without_profile { false }
+    end
 
     trait :approved do
       status { :approved }
@@ -29,14 +34,14 @@ FactoryBot.define do
 
     trait :uninvited do
       status { :uninvited }
-
-      transient do
-        without_profile { false }
-      end
     end
 
     trait :awaiting_review do
       status { :awaiting_review }
+    end
+
+    trait :deactivated do
+      status { :deactivated }
     end
 
     after(:create) do |partner, evaluator|
@@ -44,7 +49,7 @@ FactoryBot.define do
 
       # Create associated records
       create(:partner_profile, partner_id: partner.id)
-      create(:partners_user, email: partner.email, name: partner.name, partner: partner)
+      create(:partner_user, email: partner.email, name: partner.name, partner: partner)
     end
   end
 end

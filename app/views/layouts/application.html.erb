@@ -45,17 +45,17 @@
     </a>
 
     <ul class="navbar-nav ml-auto">
-      <% if user_signed_in? && current_organization.present? %>
-        <% if admin_namespace? %>
-          <%= render partial: "layouts/lte_admin_navbar" %>
-        <% else %>
+      <% if user_signed_in? %>
+        <% if current_organization.present? %>
           <%= render partial: "layouts/lte_navbar" %>
+        <% elsif admin_namespace? %>
+          <%= render partial: "layouts/lte_admin_navbar" %>
         <% end %>
       <% else %>
         <div class="navbar-custom-menu">
           <ul class="nav navbar-nav">
             <li class="user user-menu">
-              <%= delete_button_to destroy_user_session_path(organization_id: nil), {text: "Log out", icon: "sign-out", no_confirm: true, size: "md"} %>
+              <%= delete_button_to destroy_user_session_path, {text: "Log out", icon: "sign-out", no_confirm: true, size: "md"} %>
             </li>
           </ul>
         </div>
@@ -67,7 +67,7 @@
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <% if current_user %>
       <!-- Brand Logo -->
-      <%= link_to dashboard_path, class: "brand-link" do %>
+      <%= link_to dashboard_path_from_current_role, class: "brand-link" do %>
         <img src="/img/essentials.svg" alt="Essentials Logo (icon)" title="HumanEssentials" class="main_logo">
       <% end %>
     <% end %>
