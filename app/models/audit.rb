@@ -25,7 +25,7 @@ class Audit < ApplicationRecord
 
   accepts_nested_attributes_for :adjustment
 
-  enum status: { in_progress: 0, confirmed: 1, finalized: 2 }
+  enum :status, { in_progress: 0, confirmed: 1, finalized: 2 }
 
   validate :line_items_quantity_is_not_negative
   validate :line_items_unique_by_item_id
