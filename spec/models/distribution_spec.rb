@@ -105,9 +105,6 @@ RSpec.describe Distribution, type: :model do
           travel_to Time.zone.local(2019, 6, 30)
         end
 
-        after do
-        end
-
         it "doesn't include distributions past Sunday" do
           sunday_distribution = create(:distribution, organization: organization, issued_at: Time.zone.local(2019, 6, 30))
           create(:distribution, organization: organization, issued_at: Time.zone.local(2019, 7, 1))
@@ -120,9 +117,6 @@ RSpec.describe Distribution, type: :model do
       context "When it's Tuesday (mid-week)" do
         before do
           travel_to Time.zone.local(2019, 7, 2)
-        end
-
-        after do
         end
 
         it "includes distributions as early as Monday and as late as upcoming Sunday" do
@@ -141,9 +135,6 @@ RSpec.describe Distribution, type: :model do
       context "when the current date is December 31, 2023" do
         before do
           travel_to Time.zone.local(2023, 12, 31)
-        end
-
-        after do
         end
 
         it "includes distributions issued within the last 12 months" do

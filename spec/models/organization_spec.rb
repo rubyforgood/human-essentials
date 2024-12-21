@@ -131,9 +131,6 @@ RSpec.describe Organization, type: :model do
           travel_to Time.zone.local(2019, 7, 3) # Wednesday
         end
 
-        after do
-        end
-
         it "retrieves the distributions scheduled for this week that have not yet happened" do
           wednesday_distribution_scheduled = create(:distribution, organization: organization, state: :scheduled, issued_at: Time.zone.local(2019, 7, 3))
           create(:distribution, organization: organization, state: :complete, issued_at: Time.zone.local(2019, 7, 3))

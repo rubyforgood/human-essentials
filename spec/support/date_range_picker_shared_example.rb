@@ -34,9 +34,6 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
       sign_in user
     end
 
-    after do
-    end
-
     it "shows only 4 records" do
       visit subject
       expect(page).to have_css("table tbody tr", count: 4)
@@ -48,9 +45,6 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
       sign_out user
       travel_to Time.zone.local(2019, 7, 31)
       sign_in user
-    end
-
-    after do
     end
 
     it "shows all the records" do
@@ -67,9 +61,6 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
       sign_out user
       travel_to Time.zone.local(2019, 8, 1)
       sign_in user
-    end
-
-    after do
     end
 
     # NOTE: This spec MIGHT be flaky depending on the day of the month.
