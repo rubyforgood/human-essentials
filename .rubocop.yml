@@ -21,7 +21,6 @@ AllCops:
   Exclude:
     - "vendor/**/*"
     - "db/schema.rb"
-    - "db/partners_schema.rb"
     - "db/seeds.rb"
     - "db/migrate/*"
     - "db/partners_migrate/*"
@@ -29,10 +28,8 @@ AllCops:
     - "lib/files/cucumber.rake"
     - "lib/tasks/*"
     - "config/initializers/*"
-    - "Vagrantfile"
     - "Rakefile"
     - "tmp/*"
-    - "node_modules/**/*"
 
 Rails:
   Enabled: true
