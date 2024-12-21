@@ -799,6 +799,7 @@ DEPENDENCIES
   simplecov
   sprockets (~> 4.2.1)
   standard (~> 1.40)
+  standard-performance
   standard-rails
   stimulus-rails
   strong_migrations (= 1.8.0)
