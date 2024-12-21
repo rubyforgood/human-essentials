@@ -49,7 +49,7 @@ class TransfersController < ApplicationController
     results = transfer_destroy_service.call
 
     if results.success?
-      flash[:notice] = "Succesfully deleted Transfer ##{params[:id]}!"
+      flash[:notice] = "Successfully deleted Transfer ##{params[:id]}!"
     else
       flash[:error] = results.error.message
     end

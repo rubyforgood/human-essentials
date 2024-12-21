@@ -22,7 +22,7 @@ RSpec.describe TransferDestroyService, type: :service do
 
     before do
       # Stub the outputs of these method calls to avoid testing
-      # beyond this service objects responsiblity. That is we,
+      # beyond this service objects responsibility. That is we,
       # aren't interested in testing the implementation details
       # such as the database.
       allow(Transfer).to receive(:find).with(transfer_id).and_return(transfer)

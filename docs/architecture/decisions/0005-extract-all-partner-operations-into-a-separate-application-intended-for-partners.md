@@ -8,7 +8,7 @@ Accepted
 
 ## Context
 
-Partner organizations work directly with the families in need. Sometimes they will need to collect PII such as address, names and ages of family members, and other contact information. This data is not necessary for Diaperbase to operate, and there are security concerns about that PII being disclosed should there be a breach. There is also a separation of concerns between the two applications; Diaperbase is inventory management and Partnerbase is effectively a CRM. At this time, we belive that they are different enough in their purposes that they should be separate.
+Partner organizations work directly with the families in need. Sometimes they will need to collect PII such as address, names and ages of family members, and other contact information. This data is not necessary for Diaperbase to operate, and there are security concerns about that PII being disclosed should there be a breach. There is also a separation of concerns between the two applications; Diaperbase is inventory management and Partnerbase is effectively a CRM. At this time, we believe that they are different enough in their purposes that they should be separate.
 
 ## Decision
 

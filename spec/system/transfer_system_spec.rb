@@ -49,7 +49,7 @@ RSpec.describe "Transfer management", type: :system do
       click_link 'Delete'
     end
 
-    expect(page).to have_content(/Succesfully deleted Transfer/)
+    expect(page).to have_content(/Successfully deleted Transfer/)
 
     inventory.reload
 

@@ -291,7 +291,7 @@ RSpec.describe Distribution, type: :model do
     end
 
     describe "#copy_from_request" do
-      it "copy over relevant request information into the distrubution" do
+      it "copy over relevant request information into the distribution" do
         item1 = create(:item, name: "Item1", organization: organization)
         item2 = create(:item, name: "Item2", organization: organization)
         request = create(:request,
