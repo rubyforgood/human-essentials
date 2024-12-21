@@ -107,7 +107,7 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
 
   # Location for fixtures (logo, etc)
-  config.fixture_path = "#{::Rails.root}/spec/fixtures"
+  config.fixture_paths = ["#{::Rails.root}/spec/fixtures"]
 
   # Persistence for failures
   config.example_status_persistence_file_path = "spec/example_failures.txt"
