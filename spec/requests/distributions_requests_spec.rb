@@ -244,7 +244,7 @@ RSpec.describe "Distributions", type: :request do
 
         expect(response.body).to include("Item 1 (0)")
       end
-      
+
       it "renders #new on failure with only active items in dropdown" do
         create(:item, organization: organization, name: 'Active Item')
         create(:item, :inactive, organization: organization, name: 'Inactive Item')
