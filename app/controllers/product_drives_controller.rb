@@ -13,8 +13,10 @@ class ProductDrivesController < ApplicationController
     # to be used in the name filter to sort product drives in alpha order
     @product_drives_alphabetical = @product_drives.sort_by { |pd| pd.name.downcase }
     @item_categories = current_organization.item_categories
+    @tags = current_organization.product_drive_tags
     @selected_name_filter = filter_params[:by_name]
     @selected_item_category = filter_params[:by_item_category_id]
+    @selected_tags = filter_params[:by_tags]
 
     respond_to do |format|
       format.html
@@ -105,6 +107,6 @@ class ProductDrivesController < ApplicationController
     def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).permit(:by_name, :by_item_category_id)
+    params.require(:filters).permit(:by_name, :by_item_category_id, :by_tags)
   end
 end
