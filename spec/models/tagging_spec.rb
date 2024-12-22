@@ -10,8 +10,26 @@
 #  tag_id          :bigint           not null
 #  taggable_id     :bigint           not null
 #
-require 'rails_helper'
-
 RSpec.describe Tagging, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  describe "assocations" do
+    it { should belong_to(:tag) }
+    it { should belong_to(:taggable) }
+    it { should belong_to(:organization) }
+  end
+
+  describe "scopes" do
+    describe "by_type" do
+      let!(:tag) { create(:tag) }
+      let!(:organization) { create(:organization) }
+      let!(:product_drive) { create(:product_drive, organization:) }
+      let!(:purchase) { create(:purchase, organization:) }
+      let!(:product_drive_tagging) { create(:tagging, taggable: product_drive, organization:, tag:) }
+      let!(:purchase_tagging) { create(:tagging, taggable: purchase, organization:, tag:) }
+
+      it "only displays taggings of that type" do
+        type = "ProductDrive"
+        expect(described_class.by_type(type)).to eq([product_drive_tagging])
+      end
+    end
+  end
 end

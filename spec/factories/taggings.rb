@@ -12,8 +12,8 @@
 #
 FactoryBot.define do
   factory :tagging do
-    organization { nil }
-    tag { nil }
-    taggable { nil }
+    organization { create(:organization) }
+    tag { create(:tag) }
+    taggable { create(:product_drive) }
   end
 end

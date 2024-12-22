@@ -9,6 +9,6 @@
 #
 FactoryBot.define do
   factory :tag do
-    name { "MyString" }
+    name { "Holidays" }
   end
 end
