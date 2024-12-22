@@ -16,6 +16,7 @@ class ProductDrive < ApplicationRecord
   has_paper_trail
   belongs_to :organization, optional: true
   include Filterable
+  include Taggable
 
   scope :by_name, ->(name_filter) { where(name: name_filter) }
   scope :by_item_category_id, ->(item_category_id) {
