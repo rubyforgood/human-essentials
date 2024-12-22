@@ -15,5 +15,7 @@ class Tagging < ApplicationRecord
   belongs_to :tag
   belongs_to :taggable, polymorphic: true
 
+  scope :by_type, ->(type) { where(taggable_type: type) }
+
   validates :tag_id, uniqueness: {scope: :taggable, message: "has already been applied"}
 end

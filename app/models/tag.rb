@@ -10,13 +10,7 @@
 class Tag < ApplicationRecord
   has_many :taggings, dependent: :destroy
 
-  validates :name, presence: true
-  validates_length_of :name, maximum: 255
+  scope :alphabetized, -> { order(:name) }
 
-  scope :for_taggable, ->(taggable) {
-    joins(:taggings)
-      .where(taggings: taggable)
-      .where(taggings: { organization_id: taggable.organization_id })
-      .select("DISTINCT tags.*")
-  }
+  validates :name, presence: true, length: {maximum: 256}
 end
