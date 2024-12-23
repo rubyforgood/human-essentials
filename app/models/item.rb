@@ -74,7 +74,7 @@ class Item < ApplicationRecord
   # 4/  Period supplies.  All things with 'menstrual in the category'
   # 5/  Other -- Miscellaneous, and wipes
   # Known holes and ambiguities as of 20240527.  Working on these with the business
-  # 1/  Liners.   We are adding a new item for AI liners,  and renaming the current liners to be specficially for periods,
+  # 1/  Liners.   We are adding a new item for AI liners,  and renaming the current liners to be specifically for periods,
   # having confirmed with the business that the majority of liners are for menstrual use.
   # However, there is a product which can be used for either, so we are still sussing out what to do about that.
 

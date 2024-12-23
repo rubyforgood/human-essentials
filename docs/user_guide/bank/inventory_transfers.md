@@ -19,7 +19,7 @@ Specify where the Items being moved are coming from, in "From Storage Location,"
 
 The Comment field is a good place to note the reason for the Transfer, but you can leave it blank.
 
-Then select the Item and quantity for each Item that is being Transferred.  If you have [barcodes](inventory_barcodes.md) set up,  you can use your barcode reader to "boop" in the materials being Transfered.
+Then select the Item and quantity for each Item that is being Transferred.  If you have [barcodes](inventory_barcodes.md) set up,  you can use your barcode reader to "boop" in the materials being Transferred.
 
 When you are done, click "Save".  The system will check that you have enough inventory in "From" to cover the Transfer.  If so, the inventory changes will take place immediately.
 
