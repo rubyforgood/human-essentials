@@ -47,7 +47,68 @@ RSpec.describe "Events", type: :request do
         expect(response.body).not_to include("99<br>")
       end
 
-      it "should show deleted items without crashing" do
+      it "should show deleted items on regular event without crashing" do
+        deleted_item = create(:item, organization: organization)
+        travel(-1.day) do
+          SnapshotEvent.create!(
+            eventable: organization,
+            organization_id: organization.id,
+            event_time: Time.zone.now,
+            data: EventTypes::Inventory.new(
+              organization_id: organization.id,
+              storage_locations: {
+                storage_location.id => EventTypes::EventStorageLocation.new(
+                  id: storage_location.id,
+                  items: {
+                    item.id => EventTypes::EventItem.new(item_id: item.id, quantity: 0),
+                    item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 0)
+                  }
+                ),
+                storage_location2.id => EventTypes::EventStorageLocation.new(
+                  id: storage_location2.id,
+                  items: {
+                    item.id => EventTypes::EventItem.new(item_id: item.id, quantity: 0),
+                    item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 0)
+                  }
+                )
+              }
+            )
+          )
+          donation = create(:donation, organization: organization)
+          DonationEvent.create!(
+            eventable: donation,
+            organization_id: organization.id,
+            event_time: Time.zone.now,
+            data: EventTypes::InventoryPayload.new(
+              items: [
+                EventTypes::EventLineItem.new(item_id: item.id,
+                  quantity: 0,
+                  item_value_in_cents: 5,
+                  from_storage_location: nil,
+                  to_storage_location: storage_location.id),
+                EventTypes::EventLineItem.new(item_id: item2.id,
+                  quantity: 0,
+                  item_value_in_cents: 5,
+                  from_storage_location: nil,
+                  to_storage_location: storage_location.id),
+                EventTypes::EventLineItem.new(item_id: deleted_item.id,
+                  quantity: 0,
+                  item_value_in_cents: 5,
+                  from_storage_location: nil,
+                  to_storage_location: storage_location.id)
+                     ]
+            )
+          )
+        end
+        deleted_id = deleted_item.id
+        deleted_item.destroy
+        subject
+        expect(response.body).to include("Item1</a>")
+        expect(response.body).to include("Item2</a>")
+        expect(response.body).to include("Item #{deleted_id} (deleted)")
+      end
+
+      it "should show deleted items on snapshot without crashing" do
         deleted_item = create(:item, organization: organization)
         travel(-1.day) do
           SnapshotEvent.create!(
