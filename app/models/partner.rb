@@ -46,7 +46,6 @@ class Partner < ApplicationRecord
 
   has_many_attached :documents
 
-  validates :organization, presence: true
   validates :name, presence: true, uniqueness: { scope: :organization }
 
   validates :email, presence: true, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
@@ -259,7 +258,7 @@ class Partner < ApplicationRecord
   def quantity_year_to_date
     distributions
       .includes(:line_items)
-      .where('distributions.issued_at >= ?', Time.zone.today.beginning_of_year)
+      .where(distributions: { issued_at: Time.zone.today.beginning_of_year.. })
       .references(:line_items).map(&:line_items).flatten.sum(&:quantity)
   end
 
