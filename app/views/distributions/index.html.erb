@@ -97,29 +97,29 @@
             <table class="table table-hover">
               <thead>
               <tr>
-                <th>ID</th>
-                <th>Partner</th>
-                <th class="date">Initial Allocation</th>
-                <th class="date">Date of Distribution</th>
-                <th>Source Inventory</th>
+                <th class="text-left">ID</th>
+                <th class="text-left">Partner</th>
+                <th class="date text-left">Initial Allocation</th>
+                <th class="date text-left">Date of Distribution</th>
+                <th class="text-left">Source Inventory</th>
 
                 <!-- Quantity -->
                 <% if filter_params[:by_item_id].present? %>
-                  <th class="numeric">Total <%= @items.find { |i| i.id == filter_params[:by_item_id].to_i }&.name %></th>
+                  <th class="numeric text-left">Total <%= @items.find { |i| i.id == filter_params[:by_item_id].to_i }&.name %></th>
                 <% elsif filter_params[:by_item_category_id].present? %>
-                  <th class="numeric">Total in <%= @item_categories.find { |ic| ic.id == filter_params[:by_item_category_id].to_i }&.name %></th>
+                  <th class="numeric text-left">Total in <%= @item_categories.find { |ic| ic.id == filter_params[:by_item_category_id].to_i }&.name %></th>
                 <% else %>
-                  <th class="numeric">Total Items</th>
+                  <th class="numeric text-left">Total Items</th>
                 <% end %>
                 <!-- End Quantity -->
 
-                <th class="numeric">Total Value</th>
+                <th class="numeric text-left">Total Value</th>
 
-                <th>Delivery Method</th>
-                <th>Shipping Cost</th>
-                <th>Comments</th>
-                <th>Status</th>
-                <th class="text-right" style="width: 400px">Actions</th>
+                <th class="text-left">Delivery Method</th>
+                <th class="text-left">Shipping Cost</th>
+                <th class="text-left">Comments</th>
+                <th class="text-left">Status</th>
+                <th class="text-center" style="width: 400px">Actions</th>
               </tr>
               </thead>
               <tbody>
