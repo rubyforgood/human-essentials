@@ -238,6 +238,14 @@ RSpec.describe Organization, type: :model do
 
         expect(organization.items.count).to eq(1)
       end
+
+      it "should exclude kit" do
+        create(:base_item, name: "Kit", partner_key: "foo")
+
+        Organization.seed_items(organization)
+
+        expect(organization.items.count).to eq(0)
+      end
     end
 
     context "when no organization is provided" do
