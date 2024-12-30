@@ -131,6 +131,7 @@
                 <%= f.input :one_step_partner_invite, label: 'Use One Step Invite and Approve partner process?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
                 <%= f.input :hide_value_columns_on_receipt, label: 'Hide both value columns on distribution receipts?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
                 <%= f.input :hide_package_column_on_receipt, label: 'Hide the package column on distribution receipts?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
+                <%= f.input :include_in_kind_values_in_exported_files, label: 'Include in-kind value in donation and distribution exports?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
 
                 <% default_email_text_hint = "You can use the variables <code>%{partner_name}</code>, <code>%{delivery_method}</code>, <code>%{distribution_date}</code>, and <code>%{comment}</code> to include the partner's name, delivery method, distribution date, and comments sent in the request." %>
                 <%= f.input :default_email_text, label: "Distribution Email Content", hint: default_email_text_hint.html_safe do %>
