@@ -129,6 +129,9 @@ For each of the distributions in the filtered list:
 
 [!NOTE] This includes inactive Items as well as active ones. 
 
+### Add In-Kind Value for each item
+Click "My Organization" in the left hand manu. Click "Edit" button. Set the "Include in-kind value in donation and distribution exports?" to "yes".
+
 ## Donations
 
 ### Navigating to export Donations
@@ -156,6 +159,9 @@ For each of the Donations in the filtered list:
 - In-Kind Value,
 - Comments, 
 - and the quantity of each of your organization's Items in the Donations.
+
+### Add In-Kind Value for each item
+Click "My Organization" in the left hand manu. Click "Edit" button. Set the "Include in-kind value in donation and distribution exports?" to "yes".
 
 ## Donation Sites
 ### Navigating to export Donation Sites

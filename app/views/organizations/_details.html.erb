@@ -194,6 +194,12 @@
                   <%= humanize_boolean(@organization.hide_package_column_on_receipt) %>
                 </p>
               </div>
+              <div class="mb-4">
+                <h3 class='font-bold'>Include in-kind value in donation and distribution exports:</h3>
+                <p>
+                  <%= humanize_boolean(@organization.include_in_kind_values_in_exported_files) %>
+                </p>
+              </div>
               <% if @organization.logo.attached? %>
                     <div class="mb-4">
                     <h3 class='font-bold'>Logo</h3>
