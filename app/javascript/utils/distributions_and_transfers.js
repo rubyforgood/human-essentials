@@ -23,6 +23,13 @@ function new_option(item, selected) {
   return content;
 };
 
+// Workaround to refresh item dropdown results for select2.
+function rerenderDropdown(element) {
+  const oldScrollTop = element.data('select2').$results.scrollTop();
+  element.select2('close').select2('open');
+  element.data('select2').$results.scrollTop(oldScrollTop);
+}
+
 function populate_dropdowns(objects, inventory) {
   objects.each(function(_, element) {
     const selected = Number(
@@ -40,6 +47,11 @@ function populate_dropdowns(objects, inventory) {
       .remove()
       .end()
       .append(options);
+    // If this select element is currently open, the option list is
+    // now stale and needs to be refreshed.
+    if ($(element).data('select2')?.isOpen()) {
+      rerenderDropdown($(element))
+    }
   });
 }
 
