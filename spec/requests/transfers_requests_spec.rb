@@ -101,10 +101,10 @@ RSpec.describe "Transfers", type: :request do
       end
 
       context 'when the transfer destroy service was successful' do
-        let(:fake_success_struct) { OpenStruct.new(success?: true) }
+        let(:successful_result) { Result.new }
 
         before do
-          allow(fake_destroy_service).to receive(:call).and_return(fake_success_struct)
+          allow(fake_destroy_service).to receive(:call).and_return(successful_result)
           subject
         end
 
@@ -115,11 +115,11 @@ RSpec.describe "Transfers", type: :request do
       end
 
       context 'when the transfer destroy service was not successful' do
-        let(:fake_error_struct) { OpenStruct.new(success?: false, error: fake_error) }
+        let(:failing_result) { Result.new(error: fake_error) }
         let(:fake_error) { StandardError.new('fake-error-msg') }
 
         before do
-          allow(fake_destroy_service).to receive(:call).and_return(fake_error_struct)
+          allow(fake_destroy_service).to receive(:call).and_return(failing_result)
           subject
         end
 
