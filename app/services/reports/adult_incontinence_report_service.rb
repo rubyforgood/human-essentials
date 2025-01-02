@@ -121,7 +121,7 @@ module Reports
     end
 
     def adults_served_per_month
-      total_people_served_with_loose_supplies_per_month + total_people_served_with_supplies_from_kits_per_month
+      total_people_served_with_loose_supplies_per_month + (total_kits_with_adult_incontinence_items_distributed / 12)
     end
 
     def total_people_served_with_loose_supplies_per_month
@@ -134,32 +134,38 @@ module Reports
       total_quantity / 12.0
     end
 
-    def total_people_served_with_supplies_from_kits_per_month
+    def total_kits_with_adult_incontinence_items_distributed
       organization_id = @organization.id
       year = @year
 
       sql_query = <<-SQL
-        SELECT SUM(line_items.quantity * kit_line_items.quantity / 
-                  COALESCE(NULLIF(kit_items.distribution_quantity, 0), 1)) AS adults_assisted
-        FROM distributions
-        INNER JOIN line_items ON line_items.itemizable_type = 'Distribution' AND line_items.itemizable_id = distributions.id
-        INNER JOIN items ON items.id = line_items.item_id
-        INNER JOIN kits ON kits.id = items.kit_id
-        INNER JOIN line_items AS kit_line_items ON kits.id = kit_line_items.itemizable_id
-        INNER JOIN items AS kit_items ON kit_items.id = kit_line_items.item_id
-        INNER JOIN base_items ON base_items.partner_key = kit_items.partner_key
-        WHERE distributions.organization_id = ?
-          AND EXTRACT(year FROM issued_at) = ?
-          AND LOWER(base_items.category) LIKE '%adult%'
-          AND NOT (LOWER(base_items.category) LIKE '%wipes%' OR LOWER(base_items.name) LIKE '%wipes%')
-          AND kit_line_items.itemizable_type = 'Kit';
+      SELECT COUNT(DISTINCT line_items.itemizable_id) AS kit_count
+      FROM line_items
+      INNER JOIN items ON items.id = line_items.item_id
+      INNER JOIN kits ON kits.id = items.kit_id
+      INNER JOIN base_items ON base_items.partner_key = items.partner_key
+      WHERE line_items.itemizable_type = 'Distribution'
+        AND items.kit_id IS NOT NULL
+        AND LOWER(base_items.category) LIKE '%adult%'
+        AND line_items.itemizable_id NOT IN (
+          SELECT DISTINCT line_items.itemizable_id
+          FROM line_items
+          INNER JOIN items ON items.id = line_items.item_id
+          INNER JOIN base_items ON base_items.partner_key = items.partner_key
+          WHERE LOWER(base_items.category) LIKE '%wipes%'
+        )
+        AND line_items.itemizable_id IN (
+          SELECT DISTINCT distributions.id
+          FROM distributions
+          WHERE distributions.organization_id = ?
+            AND EXTRACT(YEAR FROM distributions.issued_at) = ?
+        );
       SQL
 
       sanitized_sql = ActiveRecord::Base.send(:sanitize_sql_array, [sql_query, organization_id, year])
-
       result = ActiveRecord::Base.connection.execute(sanitized_sql)
 
-      (result.first['adults_assisted'].to_i / 12.0).round
+      result.first['kit_count'].to_i
     end
   end
 end

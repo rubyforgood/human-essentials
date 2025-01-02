@@ -43,21 +43,28 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
         # kits
         create(:base_item, name: "Adult Briefs (Medium)", partner_key: "adult_briefs_medium", category: "adult incontinence")
         create(:base_item, name: "Adult Briefs (Large)", partner_key: "adult_briefs_large", category: "adult incontinence")
+        create(:base_item, name: "Wipes", partner_key: "baby wipes", category: "wipes")
 
         adult_incontinence_kit_item_1 = create(:item, name: "Adult Briefs (Medium)", partner_key: "adult_briefs_medium")
         adult_incontinence_kit_item_2 = create(:item, name: "Adult Briefs (Large)", partner_key: "adult_briefs_large")
+        non_adult_incontinence_kit_item = create(:item, name: "Baby Wipes", partner_key: "baby wipes")
 
         kit_1 = create(:kit, :with_item, organization: organization)
         kit_2 = create(:kit, :with_item, organization: organization)
+        kit_3 = create(:kit, :with_item, organization: organization)
 
         kit_1.line_items.first.update!(item_id: adult_incontinence_kit_item_1.id, quantity: 5)
         kit_2.line_items.first.update!(item_id: adult_incontinence_kit_item_2.id, quantity: 5)
+        kit_3.line_items.first.update!(item_id: non_adult_incontinence_kit_item.id, quantity: 5)
         # kit distributions
         kit_distribution_1 = create(:distribution, organization: organization, issued_at: within_time)
         kit_distribution_2 = create(:distribution, organization: organization, issued_at: within_time)
+        # wipes distribution
+        kit_distribution_3 = create(:distribution, organization: organization, issued_at: within_time)
 
         create(:line_item, :distribution, quantity: 10, item: kit_1.item, itemizable: kit_distribution_1)
         create(:line_item, :distribution, quantity: 10, item: kit_2.item, itemizable: kit_distribution_2)
+        create(:line_item, :distribution, quantity: 10, item: kit_3.item, itemizable: kit_distribution_3)
         # We will create data both within and outside our date range, and both adult_incontinence and non adult_incontinence.
         # Spec will ensure that only the required data is included.
 
@@ -113,9 +120,18 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
         end
       end
 
+      it "should return the numberof distributed adult incontinence items from kits" do 
+        expect(report.distributed_adult_incontinence_items_from_kits).to eq(100)
+      end
+
+      it "should return the number of distributed kits only containing adult incontinence items" do
+        result = report.total_kits_with_adult_incontinence_items_distributed
+        puts result
+        expect(result).to eq(2)
+      end
+
       it 'should report normal values' do
         organization.items.adult_incontinence.first.update!(distribution_quantity: 20)
-
         expect(report.report[:name]).to eq("Adult Incontinence")
         expect(report.report[:entries]).to match(hash_including({
                                           "% adult incontinence bought" => "60%",
