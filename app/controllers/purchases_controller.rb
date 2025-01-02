@@ -78,9 +78,14 @@ class PurchasesController < ApplicationController
 
   def destroy
     purchase = current_organization.purchases.find(params[:id])
-    PurchaseDestroyService.call(purchase)
+    begin
+      PurchaseDestroyService.call(purchase)
+    rescue => e
+      flash[:error] = e.message
+    else
+      flash[:notice] = "Purchase #{params[:id]} has been removed!"
+    end
 
-    flash[:notice] = "Purchase #{params[:id]} has been removed!"
     redirect_to purchases_path
   end
 
