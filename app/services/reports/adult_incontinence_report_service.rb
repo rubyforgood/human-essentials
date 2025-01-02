@@ -121,7 +121,7 @@ module Reports
     end
 
     def adults_served_per_month
-      total_people_served_with_loose_supplies_per_month + (total_kits_with_adult_incontinence_items_distributed / 12)
+      total_people_served_with_loose_supplies_per_month + total_kits_with_adult_incontinence_items_distributed_per_month
     end
 
     def total_people_served_with_loose_supplies_per_month
@@ -134,41 +134,7 @@ module Reports
       total_quantity / 12.0
     end
 
-    # def total_kits_with_adult_incontinence_items_distributed
-    #   organization_id = @organization.id
-    #   year = @year
-
-    #   sql_query = <<-SQL
-    #   SELECT COUNT(DISTINCT line_items.itemizable_id) AS kit_count
-    #   FROM line_items
-    #   INNER JOIN items ON items.id = line_items.item_id
-    #   INNER JOIN kits ON kits.id = items.kit_id
-    #   INNER JOIN base_items ON base_items.partner_key = items.partner_key
-    #   WHERE line_items.itemizable_type = 'Distribution'
-    #     AND items.kit_id IS NOT NULL
-    #     AND LOWER(base_items.category) LIKE '%adult%'
-    #     AND line_items.itemizable_id NOT IN (
-    #       SELECT DISTINCT line_items.itemizable_id
-    #       FROM line_items
-    #       INNER JOIN items ON items.id = line_items.item_id
-    #       INNER JOIN base_items ON base_items.partner_key = items.partner_key
-    #       WHERE LOWER(base_items.category) LIKE '%wipes%'
-    #     )
-    #     AND line_items.itemizable_id IN (
-    #       SELECT DISTINCT distributions.id
-    #       FROM distributions
-    #       WHERE distributions.organization_id = ?
-    #         AND EXTRACT(YEAR FROM distributions.issued_at) = ?
-    #     );
-    #   SQL
-
-    #   sanitized_sql = ActiveRecord::Base.send(:sanitize_sql_array, [sql_query, organization_id, year])
-    #   result = ActiveRecord::Base.connection.execute(sanitized_sql)
-
-    #   result.first['kit_count'].to_i
-    # end
-
-    def total_kits_with_adult_incontinence_items_distributed
+    def total_kits_with_adult_incontinence_items_distributed_per_month
       organization_id = @organization.id
       year = @year
 
@@ -204,7 +170,7 @@ module Reports
       sanitized_sql = ActiveRecord::Base.send(:sanitize_sql_array, [sql_query, organization_id, year])
       result = ActiveRecord::Base.connection.execute(sanitized_sql)
 
-      result.first['kit_count'].to_i
+      result.first['kit_count'].to_i / 12.0
     end
   end
 end
