@@ -41,7 +41,7 @@ This section contains basic agency information that most, if not all, partners w
 - Agency Name
 - Agency Type
 - Other Agency Type (i.e, details if "other" is chosen in Agency Type)
-- 501(c)(3) IRS Determination Letter  -- this is a file to upload said letter.
+- 501(c)(3) IRS Determination Letter or other Proof of Agency Status  -- this is a file to upload said letter.
 - Agency Mission
 - Address
 - City
