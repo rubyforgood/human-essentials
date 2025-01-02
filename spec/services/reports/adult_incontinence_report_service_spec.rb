@@ -50,7 +50,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
         # non_adult_incontinence_kit_item = create(:item, name: "Baby Wipes", partner_key: "baby wipes")
 
         kit_1 = create(:kit, organization: organization, item: adult_incontinence_kit_item_1 = create(:item, name: "Adult Briefs (Medium)", partner_key: "adult_briefs_medium"))
-        kit_2 = create(:kit, organization: organization, item: adult_incontinence_kit_item_2 =create(:item, name: "Adult Briefs (Large)", partner_key: "adult_briefs_large"))
+        kit_2 = create(:kit, organization: organization, item: adult_incontinence_kit_item_2 = create(:item, name: "Adult Briefs (Large)", partner_key: "adult_briefs_large"))
         kit_3 = create(:kit, organization: organization, item: non_adult_incontinence_kit_item = create(:item, name: "Baby Wipes", partner_key: "baby wipes"))
 
         kit_1.line_items.first.update!(item_id: adult_incontinence_kit_item_1.id, quantity: 5)
@@ -121,7 +121,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
         end
       end
 
-      it "should return the numberof distributed adult incontinence items from kits" do 
+      it "should return the number of distributed adult incontinence items from kits" do
         expect(report.distributed_adult_incontinence_items_from_kits).to eq(100)
       end
 
