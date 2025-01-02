@@ -98,7 +98,7 @@ class OrganizationsController < ApplicationController
       :enable_individual_requests, :enable_quantity_based_requests,
       :ytd_on_distribution_printout, :one_step_partner_invite,
       :hide_value_columns_on_receipt, :hide_package_column_on_receipt,
-      :signature_for_distribution_pdf,
+      :signature_for_distribution_pdf, :include_in_kind_values_in_exported_files,
       partner_form_fields: [],
       request_unit_names: []
     )
