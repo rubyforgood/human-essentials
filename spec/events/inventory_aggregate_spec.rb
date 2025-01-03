@@ -716,18 +716,33 @@ RSpec.describe InventoryAggregate do
   end
 
   describe "validation" do
+    let(:donation) { FactoryBot.create(:donation, organization: organization, storage_location: storage_location1) }
+    let(:distribution) { FactoryBot.create(:distribution, organization: organization, storage_location: storage_location1) }
     context "current event is incorrect" do
       it "should raise a bare error" do
-        donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
         donation.line_items << build(:line_item, quantity: 50, item: item1)
         DonationEvent.publish(donation)
 
-        distribution = FactoryBot.create(:distribution, organization: organization, storage_location: storage_location1)
         distribution.line_items << build(:line_item, quantity: 100, item: item1, itemizable: distribution)
         expect { DistributionEvent.publish(distribution) }.to raise_error do |e|
           expect(e).to be_a(InventoryError)
           expect(e.event).to be_a(DistributionEvent)
           expect(e.message).to eq("Could not reduce quantity by 100 - current quantity is 50 for #{item1.name} in #{storage_location1.name}")
+        end
+      end
+
+      context "while there are multiple errors" do
+        it "should show all the errors" do
+          donation.line_items << build(:line_item, quantity: 50, item: item1) << build(:line_item, quantity: 50, item: item2)
+          DonationEvent.publish(donation)
+
+          distribution.line_items << build(:line_item, quantity: 100, item: item1) << build(:line_item, quantity: 100, item: item2)
+          expect { DistributionEvent.publish(distribution) }.to raise_error do |e|
+            expect(e).to be_a(InventoryError)
+            expect(e.event).to be_a(DistributionEvent)
+            expect(e.message).to eq("Could not reduce quantity by 100 - current quantity is 50 for #{item1.name} in #{storage_location1.name}\n" \
+            "Could not reduce quantity by 100 - current quantity is 50 for #{item2.name} in #{storage_location1.name}")
+          end
         end
       end
     end
