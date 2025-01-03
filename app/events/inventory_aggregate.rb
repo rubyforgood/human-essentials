@@ -66,29 +66,36 @@ module InventoryAggregate
     # @param validate [Boolean]
     # @param previous_event [Event]
     def handle_inventory_event(payload, inventory, validate: true, previous_event: nil)
+      errors = []
       payload.items.each do |line_item|
         quantity = line_item.quantity
         if previous_event
           previous_item = previous_event.data.items.find { |i| i.same_item?(line_item) }
           quantity -= previous_item.quantity if previous_item
         end
-        inventory.move_item(item_id: line_item.item_id,
+        move_item(inventory: inventory,
+          item_id: line_item.item_id,
           quantity: quantity,
           from_location: line_item.from_storage_location,
           to_location: line_item.to_storage_location,
-          validate: validate)
+          validate: validate,
+          errors: errors)
       end
       # remove the quantity from any items that are now missing
       previous_event&.data&.items&.each do |previous_item|
         new_item = payload.items.find { |i| i.same_item?(previous_item) }
         if new_item.nil?
-          inventory.move_item(item_id: previous_item.item_id,
+          move_item(inventory: inventory,
+            item_id: previous_item.item_id,
             quantity: previous_item.quantity,
             from_location: previous_item.to_storage_location,
             to_location: previous_item.from_storage_location,
-            validate: validate)
+            validate: validate,
+            errors: errors)
         end
       end
+
+      raise InventoryError.new(errors.map(&:message).join("\n")) unless errors.empty?
     end
 
     # @param payload [EventTypes::InventoryPayload]
@@ -99,6 +106,19 @@ module InventoryAggregate
           quantity: line_item.quantity,
           location: line_item.to_storage_location)
       end
+    end
+
+    def move_item(inventory:, item_id:, quantity:, from_location:, to_location:, validate:, errors:)
+      inventory.move_item(item_id: item_id,
+        quantity: quantity,
+        from_location: from_location,
+        to_location: to_location,
+        validate: validate)
+    rescue InventoryActionError => e
+      item = Item.find_by(id: e.item_id)&.name || "Item ID #{e.item_id}"
+      loc = StorageLocation.find_by(id: e.storage_location_id)&.name || "Storage Location ID #{e.storage_location_id}"
+      e.message << " for #{item} in #{loc}"
+      errors.push(e)
     end
   end
 
