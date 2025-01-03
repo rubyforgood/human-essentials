@@ -71,11 +71,8 @@ class ProductDrive < ApplicationRecord
     @search_date_range = { start_date: dates[0], end_date: dates[1] }
   end
 
-  def validate_destroy
-    return if donations.empty?
-
-    errors.add(:base, "Cannot delete product drive with donations.")
-    throw(:abort)
+  def destroy_product_drive
+    ProductDriveDestroyService.new(self).call
   end
 
   # quantities are FILTERED by date then SORTED by name
