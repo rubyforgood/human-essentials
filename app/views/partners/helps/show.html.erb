@@ -1,59 +1,7 @@
-<style>
-    .trix-content, ol {
-        list-style: auto;
-    }
-    .trix-content, ul {
-        list-style: inside;
-    }
-</style>
-<section class="content">
-  <div class="row">
-    <div class="col-12">
-      <!-- Default box -->
-      <div class="card card-primary mt-2">
-        <div class="card-header">
-          <h2 class="card-title">Frequently Asked Questions</h2>
-        </div>
-        <div class="card-body p-4">
-          <ul class="list-inside my-2 list-decimal space-y-5">
-            <%= form_for_filterrific @filterrific, remote: true do |f| %>
-              <div class="row flex-row justify-content-between align-items-center">
-                <div class='col-3'>
-                  <%= f.label :search_title, "Search By Question" %>
-                  <%= f.text_field(:search_title, class: 'filterrific-periodically-observed form-control') %>
-                </div>
-                <div class="col-3">
-                  <%= render_filterrific_spinner %>
-                </div>
-              </div>
-            <% end %>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="content">
-  <div class="row">
-    <div class="col-12" id="accordion">
-      <div id="filterrific_results">
-        <%= render(partial: 'partner_questions', locals: { partner_questions: @partner_questions }) %>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="content">
-  <div class="row">
-    <div class="col-12">
-      <div class="card card-primary mt-2">
-        <div class="col-12 mt-3 text-center">
-          <p class="lead">
-            Still need help? Reach out to your sponsoring bank with any unanswered questions.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+<div class="text-center p-3">
+  <h1>Need Help?</h1>
+  <p>
+    Please contact your essentials bank, <%= @bank.name %>, if you need further assistance.<br>
+    Our email on record for them is: <%= mail_to @bank.email %>
+  </p>
+</div>
