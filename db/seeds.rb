@@ -903,22 +903,10 @@ answers = [
 
 5.times do
   Question.create(
-    title: "Question for banks. #{titles.sample}",
+    title: titles.sample,
     for_banks: true,
     for_partners: false,
-    answer: "Answer for banks. #{answers.sample}"
-  )
-  Question.create(
-    title: "Question for both. #{titles.sample}",
-    for_banks: true,
-    for_partners: true,
-    answer: "Answer for both. #{answers.sample}"
-  )
-  Question.create(
-    title: "Question for partners. #{titles.sample}",
-    for_banks: false,
-    for_partners: true,
-    answer: "Answer for partners. #{answers.sample}"
+    answer: answers.sample
   )
 end
 
