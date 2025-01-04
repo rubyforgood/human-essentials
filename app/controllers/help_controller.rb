@@ -1,7 +1,7 @@
 class HelpController < ApplicationController
   def show
     @filterrific = initialize_filterrific(
-      Question.for_banks,
+      Question.all,
       params[:filterrific]
     ) || return
 

@@ -904,8 +904,6 @@ answers = [
 5.times do
   Question.create(
     title: titles.sample,
-    for_banks: true,
-    for_partners: false,
     answer: answers.sample
   )
 end

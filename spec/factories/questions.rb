@@ -12,8 +12,6 @@
 FactoryBot.define do
   factory :question do
     title { "question" }
-    for_banks { true }
-    for_partners { false }
     answer { "content" }
   end
 end
