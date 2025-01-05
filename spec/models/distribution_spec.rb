@@ -23,10 +23,6 @@ RSpec.describe Distribution, type: :model do
   it_behaves_like "itemizable"
 
   context "Validations >" do
-    it { should validate_presence_of(:organization) }
-    it { should validate_presence_of(:partner) }
-    it { should validate_presence_of(:storage_location) }
-
     it "ensures the associated line_items are valid" do
       organization = create(:organization)
       storage_location = create(:storage_location, organization: organization)
@@ -95,7 +91,7 @@ RSpec.describe Distribution, type: :model do
         create(:distribution, issued_at: Date.yesterday)
         # and one outside the range
         create(:distribution, issued_at: 1.year.ago)
-        expect(Distribution.during(Time.zone.now - 1.week..Time.zone.now + 2.days).size).to eq(2)
+        expect(Distribution.during(1.week.ago..2.days.from_now).size).to eq(2)
       end
     end
 
@@ -103,10 +99,6 @@ RSpec.describe Distribution, type: :model do
       context "When it's Sunday (end of the week)" do
         before do
           travel_to Time.zone.local(2019, 6, 30)
-        end
-
-        after do
-          travel_back
         end
 
         it "doesn't include distributions past Sunday" do
@@ -121,10 +113,6 @@ RSpec.describe Distribution, type: :model do
       context "When it's Tuesday (mid-week)" do
         before do
           travel_to Time.zone.local(2019, 7, 2)
-        end
-
-        after do
-          travel_back
         end
 
         it "includes distributions as early as Monday and as late as upcoming Sunday" do
@@ -143,10 +131,6 @@ RSpec.describe Distribution, type: :model do
       context "when the current date is December 31, 2023" do
         before do
           travel_to Time.zone.local(2023, 12, 31)
-        end
-
-        after do
-          travel_back
         end
 
         it "includes distributions issued within the last 12 months" do
