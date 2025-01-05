@@ -201,9 +201,10 @@ RSpec.describe Partners::RequestCreateService do
     end
 
     it "creates a partner request in memory only" do
-      expect(subject.id).to be_nil
-      expect(subject.item_requests.first.item.name).to eq(item.name)
-      expect(subject.item_requests.first.quantity).to eq("25")
+      expect { subject }.not_to change { Request.count }
+      expect(subject.partner_request.id).to be_nil
+      expect(subject.partner_request.item_requests.first.item.name).to eq(item.name)
+      expect(subject.partner_request.item_requests.first.quantity).to eq("25")
     end
   end
 end
