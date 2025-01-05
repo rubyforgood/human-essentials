@@ -13,22 +13,7 @@ module Partners
     end
 
     def call
-      @partner_request = ::Request.new(
-        partner_id: partner.id,
-        organization_id: organization_id,
-        comments: comments,
-        request_type: request_type,
-        partner_user_id: partner_user_id
-      )
-      @partner_request = populate_item_request(@partner_request)
-      @partner_request.assign_attributes(additional_attrs)
-
-      unless @partner_request.valid?
-        @partner_request.errors.each do |error|
-          errors.add(error.attribute, error.message)
-        end
-      end
-
+      initialize_only
       return self if errors.present?
 
       Request.transaction do
@@ -44,14 +29,22 @@ module Partners
     end
 
     def initialize_only
-      partner_request = ::Request.new(partner_id: partner.id,
+      @partner_request = ::Request.new(
+        partner_id: partner.id,
         organization_id: organization_id,
         comments: comments,
         request_type: request_type,
         partner_user_id: partner_user_id)
-      partner_request = populate_item_request(partner_request)
-      partner_request.assign_attributes(additional_attrs)
-      partner_request
+      @partner_request = populate_item_request(partner_request)
+      @partner_request.assign_attributes(additional_attrs)
+
+      unless @partner_request.valid?
+        @partner_request.errors.each do |error|
+          errors.add(error.attribute, error.message)
+        end
+      end
+
+      self
     end
 
     private
