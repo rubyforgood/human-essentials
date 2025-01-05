@@ -34,12 +34,13 @@ module Partners
     def validate
       family_requests_attributes = build_family_requests_attributes(params)
 
-      @partner_request = Partners::FamilyRequestCreateService.new(
+      create_service = Partners::FamilyRequestCreateService.new(
         partner_user_id: current_user.id,
         family_requests_attributes: family_requests_attributes,
         request_type: "child"
       ).initialize_only
-      if @partner_request.valid?
+      if create_service.errors.none?
+        @partner_request = create_service.partner_request
         @total_items = @partner_request.total_items
         @quota_exceeded = current_partner.quota_exceeded?(@total_items)
         body = render_to_string(template: 'partners/requests/validate', formats: [:html], layout: false)
