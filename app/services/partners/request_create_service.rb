@@ -34,7 +34,8 @@ module Partners
         organization_id: organization_id,
         comments: comments,
         request_type: request_type,
-        partner_user_id: partner_user_id)
+        partner_user_id: partner_user_id
+      )
       @partner_request = populate_item_request(partner_request)
       @partner_request.assign_attributes(additional_attrs)
 
@@ -99,7 +100,7 @@ module Partners
         {
           item_id: ir.item_id,
           quantity: ir.quantity,
-          request_unit: ir.request_unit,
+          request_unit: ir.request_unit
         }
       end
 
