@@ -5,7 +5,7 @@ class HelpController < ApplicationController
       params[:filterrific]
     ) || return
 
-    @bank_questions = @filterrific.find.page(params[:page])
+    @bank_questions = @filterrific.find
 
     respond_to do |format|
       format.html
