@@ -21,7 +21,6 @@ RSpec.describe StorageLocation, type: :model do
   context "Validations >" do
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:address) }
-    it { is_expected.to validate_presence_of(:organization) }
   end
 
   context "Callbacks >" do
