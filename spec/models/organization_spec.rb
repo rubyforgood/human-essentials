@@ -69,7 +69,7 @@ RSpec.describe Organization, type: :model do
     end
 
     it "validates that attachment file size is not higher than 1 MB" do
-      fixture_path = File.join(Rails.root, 'spec', 'fixtures', 'files', 'logo.jpg')
+      fixture_path = Rails.root.join('spec', 'fixtures', 'files', 'logo.jpg')
       fixture_file = File.open(fixture_path)
       organization = build(:organization)
 
@@ -130,10 +130,6 @@ RSpec.describe Organization, type: :model do
       describe "upcoming" do
         before do
           travel_to Time.zone.local(2019, 7, 3) # Wednesday
-        end
-
-        after do
-          travel_back
         end
 
         it "retrieves the distributions scheduled for this week that have not yet happened" do
@@ -242,6 +238,14 @@ RSpec.describe Organization, type: :model do
         Organization.seed_items(organization)
 
         expect(organization.items.count).to eq(1)
+      end
+
+      it "should exclude kit" do
+        create(:base_item, name: "Kit", partner_key: "foo")
+
+        Organization.seed_items(organization)
+
+        expect(organization.items.count).to eq(0)
       end
     end
 

@@ -40,7 +40,7 @@ class Organization < ApplicationRecord
   has_paper_trail
   resourcify
 
-  DIAPER_APP_LOGO = Rails.root.join("public", "img", "humanessentials_logo.png")
+  DIAPER_APP_LOGO = Rails.public_path.join("img", "humanessentials_logo.png")
 
   include Deadlinable
 
@@ -107,7 +107,7 @@ class Organization < ApplicationRecord
   end
   has_many :distributions, dependent: :destroy do
     def upcoming
-      this_week.scheduled.where('issued_at >= ?', Time.zone.today)
+      this_week.scheduled.where(issued_at: Time.zone.today..)
     end
   end
 
@@ -198,7 +198,7 @@ class Organization < ApplicationRecord
   end
 
   def self.seed_items(organization = Organization.all)
-    base_items = BaseItem.all.map(&:to_h)
+    base_items = BaseItem.without_kit.map(&:to_h)
 
     Array.wrap(organization).each do |org|
       Rails.logger.info "\n\nSeeding #{org.name}'s items...\n"

@@ -150,7 +150,7 @@ RSpec.describe "Organizations", type: :request do
       end
 
       it "can re-invite a user to an organization after 7 days" do
-        create(:user, name: "Ye Olde Invited User", invitation_sent_at: Time.current - 7.days)
+        create(:user, name: "Ye Olde Invited User", invitation_sent_at: 7.days.ago)
         get organization_path
         expect(response.body).to include("Re-send invitation")
       end
