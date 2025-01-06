@@ -93,6 +93,7 @@
                 <th>Product Drive Name</th>
                 <th>Start Date</th>
                 <th>End Date</th>
+                <th>Tags</th>
                 <th>Held Virtually?</th>
                 <th class="numeric">Quantity of Items</th>
                 <th class="numeric">Variety of Items</th>
@@ -106,6 +107,7 @@
                   <td><%= product_drive.name %></td>
                   <td><%= product_drive.start_date.strftime("%m-%d-%Y") %></td>
                   <td><%= product_drive.end_date&.strftime("%m-%d-%Y") %></td>
+                  <td><%= product_drive.tags.map(&:name).sort.join(", ") %></td>
                   <td><%= is_virtual(product_drive: product_drive) %></td>
                   <td class="text-right"><%= product_drive.donation_quantity_by_date(selected_range, @selected_item_category) %></td>
                   <td class="text-right"><%= product_drive.distinct_items_count_by_date(selected_range, @selected_item_category) %></td>

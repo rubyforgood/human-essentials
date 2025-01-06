@@ -10,6 +10,6 @@
 FactoryBot.define do
   factory :tag do
     name { "Holidays" }
-    initialize_with { Tag.find_or_create_by(name:)}
+    initialize_with { Tag.find_or_create_by(name:) }
   end
 end

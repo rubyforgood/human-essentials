@@ -6,7 +6,7 @@ class ProductDrivesController < ApplicationController
     setup_date_range_picker
     @product_drives = current_organization
                      .product_drives
-                     .includes(donations: {line_items: :item})
+                     .includes(:tags, donations: {line_items: :item})
                      .class_filter(filter_params)
                      .within_date_range(@selected_date_range)
                      .order(start_date: :desc)
@@ -93,8 +93,15 @@ class ProductDrivesController < ApplicationController
   end
 
   def product_drive_params
-    params.require(:product_drive)
-          .permit(:name, :start_date, :end_date, :virtual)
+    product_drive_params = params.require(:product_drive)
+          .permit(:name, :start_date, :end_date, :virtual, tags: [])
+
+    product_drive_params[:tags] = product_drive_params[:tags]
+      .compact_blank
+      .uniq
+      .map { |name| Tag.find_or_initialize_by(name:) }
+
+    product_drive_params
   end
 
   def date_range_filter
