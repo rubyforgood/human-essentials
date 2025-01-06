@@ -101,7 +101,7 @@ module Partners
           item_id: ir.item_id,
           quantity: ir.quantity,
           request_unit: ir.request_unit
-        }
+        }.compact
       end
 
       partner_request
