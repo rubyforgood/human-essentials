@@ -44,6 +44,7 @@ RSpec.describe "Organizations", type: :request do
         expect(html.text).to include("Show Year-to-date values on distribution printout?")
         expect(html.text).to include("Logo")
         expect(html.text).to include("Use One step Partner invite and approve process?")
+        expect(html.text).to include("Receive email when partner makes a request:")
       end
 
       context "when enable_packs flipper is on" do
@@ -110,6 +111,7 @@ RSpec.describe "Organizations", type: :request do
         expect(html.text).to include("Show Year-to-date values on distribution printout?")
         expect(html.text).to include("Logo")
         expect(html.text).to include("Use One step Partner invite and approve process?")
+        expect(html.text).to include("Receive email when partner makes a request:")
       end
 
       context "when enable_packs flipper is on" do
@@ -303,6 +305,20 @@ RSpec.describe "Organizations", type: :request do
           expect(response).to redirect_to(organization_path)
           follow_redirect!
           expect(response.body).to include("No")
+        end
+      end
+
+      context "can enable if the org does NOT receive emails when a partner makes a request" do
+        let(:update_param) { { organization: { receive_email_on_requests: true } } }
+        it "works" do
+          subject
+          expect(response).to redirect_to(organization_path)
+          follow_redirect!
+          expect(response.body).to include("<h3 class='font-bold'>Receive email when partner makes a request:</h3>
+                <p>
+                  Yes
+                </p>"
+          )
         end
       end
 
