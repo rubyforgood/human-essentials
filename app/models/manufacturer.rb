@@ -37,17 +37,6 @@ class Manufacturer < ApplicationRecord
       .limit(count)
   end
 
-  def self.by_donation_count(count = 10, date_range = nil)
-    # selects manufacturers that have donation qty > 0 in the provided date range
-    # and sorts them by highest volume of donation
-    joins(donations: :line_items).where(donations: { issued_at: date_range })
-      .select('manufacturers.*, sum(line_items.quantity) as donation_count')
-      .group('manufacturers.id')
-      .having('sum(line_items.quantity) > 0')
-      .order('donation_count DESC')
-      .limit(count)
-  end
-
   private
 
   def exists_in_org?
