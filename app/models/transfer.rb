@@ -30,7 +30,6 @@ class Transfer < ApplicationRecord
   }
   scope :during, ->(range) { where(created_at: range) }
 
-  validates :from, :to, :organization, presence: true
   validate :storage_locations_belong_to_organization
   validate :storage_locations_must_be_different
   validate :from_storage_quantities
