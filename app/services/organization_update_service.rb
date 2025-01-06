@@ -15,12 +15,12 @@ class OrganizationUpdateService
       org_params = params.dup
 
       if org_params.has_key?("partner_form_fields")
-        org_params["partner_form_fields"] = org_params["partner_form_fields"].reject(&:blank?)
+        org_params["partner_form_fields"] = org_params["partner_form_fields"].compact_blank
       end
 
       if Flipper.enabled?(:enable_packs) && org_params[:request_unit_names]
         # Find or create units for the organization
-        request_unit_ids = org_params[:request_unit_names].reject(&:blank?).map do |request_unit_name|
+        request_unit_ids = org_params[:request_unit_names].compact_blank.map do |request_unit_name|
           Unit.find_or_create_by(organization: organization, name: request_unit_name).id
         end
         org_params.delete(:request_unit_names)

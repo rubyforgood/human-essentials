@@ -20,8 +20,6 @@ class InventoryItem < ApplicationRecord
   belongs_to :item
 
   validates :quantity, presence: true
-  validates :storage_location_id, presence: true
-  validates :item_id, presence: true
 
   scope :by_partner_key, ->(partner_key) { joins(:item).merge(Item.by_partner_key(partner_key)) }
   scope :active, -> { joins(:item).where(items: {active: true}) }
