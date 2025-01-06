@@ -317,8 +317,7 @@ RSpec.describe "Organizations", type: :request do
           expect(response.body).to include("<h3 class='font-bold'>Receive email when partner makes a request:</h3>
                 <p>
                   Yes
-                </p>"
-          )
+                </p>")
         end
       end
 
