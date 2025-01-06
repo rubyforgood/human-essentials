@@ -12,7 +12,7 @@
 #
 FactoryBot.define do
   factory :tagging do
-    organization { create(:organization) }
+    organization { Organization.try(:first) || create(:organization) }
     tag { create(:tag) }
     taggable { create(:product_drive) }
   end

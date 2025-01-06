@@ -19,7 +19,7 @@ class Tagging < ApplicationRecord
 
   validates :tag_id, uniqueness: {scope: :taggable, message: "has already been applied"}
 
-  after_initialize :set_organization_id
+  before_create :set_organization_id
 
   def set_organization_id
     self.organization_id ||= taggable.organization_id
