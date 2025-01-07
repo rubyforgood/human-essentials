@@ -18,10 +18,4 @@ class Tagging < ApplicationRecord
   scope :by_type, ->(type) { where(taggable_type: type) }
 
   validates :tag_id, uniqueness: {scope: :taggable, message: "has already been applied"}
-
-  before_create :set_organization_id
-
-  def set_organization_id
-    self.organization_id ||= taggable.organization_id
-  end
 end

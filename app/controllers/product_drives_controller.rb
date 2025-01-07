@@ -34,7 +34,8 @@ class ProductDrivesController < ApplicationController
   # GET /product_drives/1.json
 
   def create
-    @product_drive = current_organization.product_drives.new(product_drive_params.merge(organization: current_organization))
+    @product_drive = current_organization.product_drives.new(product_drive_params)
+    @product_drive.tags = tags_from_params
     respond_to do |format|
       if @product_drive.save
         format.html { redirect_to product_drives_path, notice: "New product drive added!" }
@@ -68,9 +69,9 @@ class ProductDrivesController < ApplicationController
 
   def update
     @product_drive = current_organization.product_drives.find(params[:id])
-    if @product_drive.update(product_drive_params)
+    @product_drive.attributes = product_drive_params.merge(tags: tags_from_params)
+    if @product_drive.save
       redirect_to product_drives_path, notice: "#{@product_drive.name} updated!"
-
     else
       flash[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
@@ -93,15 +94,19 @@ class ProductDrivesController < ApplicationController
   end
 
   def product_drive_params
-    product_drive_params = params.require(:product_drive)
-          .permit(:name, :start_date, :end_date, :virtual, tags: [])
+    params.require(:product_drive)
+      .permit(:name, :start_date, :end_date, :virtual, tags: [])
+      .except(:tags)
+  end
 
-    product_drive_params[:tags] = product_drive_params[:tags]
+  def tags_from_params
+    tag_names = params[:product_drive][:tags]
+    return [] if tag_names.blank?
+
+    tag_names
       .compact_blank
       .uniq
       .map { |name| Tag.find_or_initialize_by(name:) }
-
-    product_drive_params
   end
 
   def date_range_filter
