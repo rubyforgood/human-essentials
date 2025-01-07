@@ -86,6 +86,7 @@ RSpec.describe Organization, type: :model do
 
   context "Associations >" do
     it { should have_many(:item_categories) }
+    it { should have_many(:product_drive_tags) }
     it { should belong_to(:ndbn_member).class_name("NDBNMember").optional }
 
     describe 'users' do

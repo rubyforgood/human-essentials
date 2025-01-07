@@ -76,6 +76,7 @@ RSpec.describe ProductDrive, type: :model do
     let!(:donation) { create(:product_drive_donation, product_drive_participant: product_drive_participant) }
     let!(:product_drive2) { create(:product_drive) }
     let!(:donation2) { create(:donation, :with_items, item_quantity: 7, product_drive: product_drive2, product_drive_participant: product_drive_participant) }
+    let(:tag) { create(:tag, name: "Foo tag") }
 
     subject { create(:product_drive) }
 
@@ -88,6 +89,12 @@ RSpec.describe ProductDrive, type: :model do
       subject.donations << donation
       is_expected.to have_many(:product_drive_participants).through(:donations)
       expect(subject.product_drive_participants).to include(donation.product_drive_participant)
+    end
+
+    it "has_many tags" do
+      subject.tags << tag
+
+      expect(subject.tags).to include(tag)
     end
   end
 

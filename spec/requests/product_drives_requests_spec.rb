@@ -47,6 +47,23 @@ RSpec.describe "ProductDrives", type: :request do
         expect(response.body).not_to include(product_drive_path(product_drive_five.id))
       end
 
+      it "allows filtering by tag" do
+        filter_params = { by_tags: "Holidays" }
+        tag = create(:tag, name: "Holidays")
+        product_drive = create(:product_drive, organization: organization, name: "AAAA", tags: [tag])
+        product_drive_two = create(:product_drive, organization: organization, name: "BBBB", tags: [])
+        product_drive_three = create(:product_drive, organization: organization, name: "CCCC", tags: [create(:tag, name: "Foo")])
+
+        get product_drives_path(filters: filter_params)
+
+        expect(response).to be_successful
+
+        expect(response.body).to include(product_drive_path(product_drive.id))
+
+        expect(response.body).not_to include(product_drive_path(product_drive_two.id))
+        expect(response.body).not_to include(product_drive_path(product_drive_three.id))
+      end
+
       context "csv" do
         it 'is successful' do
           get product_drives_path(format: :csv)
@@ -165,18 +182,35 @@ RSpec.describe "ProductDrives", type: :request do
     end
 
     describe "POST#create" do
+      let(:tag) { create(:tag, name: "Foo") }
+
       it "returns redirect http status" do
         post product_drives_path(product_drive: attributes_for(:product_drive))
         expect(response).to have_http_status(:redirect)
       end
+
+      it "creates drives with tags" do
+        existing_tag_name = tag.name
+        new_tag_name = "Bar"
+
+        post product_drives_path(product_drive: attributes_for(:product_drive, tags: [existing_tag_name, new_tag_name]))
+
+        expect(ProductDrive.last.tags.map(&:name)).to include(existing_tag_name, new_tag_name)
+      end
     end
 
     describe "PUT#update" do
-      it "returns redirect http status" do
-        product_drive = create(:product_drive, organization: organization)
+      let(:product_drive) { create(:product_drive, organization: organization) }
 
+      it "returns redirect http status" do
         put product_drive_path(id: product_drive.id, product_drive: attributes_for(:product_drive))
         expect(response).to have_http_status(:redirect)
+      end
+
+      it "updates drive tags" do
+        expect {
+          put product_drive_path(id: product_drive.id, product_drive: attributes_for(:product_drive, tags: ["Foo"]))
+        }.to change { product_drive.reload.tags.map(&:name) }.from([]).to(["Foo"])
       end
     end
 
