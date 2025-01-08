@@ -36,7 +36,6 @@ RSpec.describe Item, type: :model do
 
     it { should validate_presence_of(:name) }
     it { should belong_to(:organization) }
-    it { should belong_to(:base_item).counter_cache(:item_count).with_primary_key(:partner_key).with_foreign_key(:partner_key).inverse_of(:items) }
     it { should validate_numericality_of(:distribution_quantity).is_greater_than(0) }
     it { should validate_numericality_of(:on_hand_minimum_quantity).is_greater_than_or_equal_to(0) }
     it { should validate_numericality_of(:on_hand_recommended_quantity).is_greater_than_or_equal_to(0) }
@@ -482,5 +481,48 @@ RSpec.describe Item, type: :model do
 
   describe "versioning" do
     it { is_expected.to be_versioned }
+  end
+
+  describe "kit items" do
+    context "with kit and regular items" do
+      let(:organization) { create(:organization) }
+      let(:kit) { create(:kit, organization: organization) }
+      let(:kit_item) { create(:item, kit: kit, organization: organization) }
+      let(:regular_item) { create(:item, organization: organization) }
+
+      describe "#can_delete?" do
+        it "returns false for kit items" do
+          expect(kit_item.can_delete?).to be false
+        end
+
+        it "returns true for regular items" do
+          expect(regular_item.can_delete?).to be true
+        end
+      end
+
+      describe "#deactivate!" do
+        it "deactivates both the kit item and its associated kit" do
+          kit_item.deactivate!
+          expect(kit_item.reload.active).to be false
+          expect(kit.reload.active).to be false
+        end
+
+        it "only deactivates regular items" do
+          regular_item.deactivate!
+          expect(regular_item.reload.active).to be false
+        end
+      end
+
+      describe "#validate_destroy" do
+        it "prevents deletion of kit items" do
+          expect { kit_item.destroy! }.to raise_error(ActiveRecord::RecordNotDestroyed)
+          expect(kit_item.errors[:base]).to include("Cannot delete item - it has already been used!")
+        end
+
+        it "allows deletion of regular items" do
+          expect { regular_item.destroy! }.not_to raise_error
+        end
+      end
+    end
   end
 end

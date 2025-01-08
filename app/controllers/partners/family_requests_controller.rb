@@ -19,7 +19,7 @@ module Partners
       create_service = Partners::FamilyRequestCreateService.new(
         partner_user_id: current_user.id,
         family_requests_attributes: family_requests_attributes,
-        for_families: true
+        request_type: "child"
       )
 
       create_service.call
@@ -37,7 +37,7 @@ module Partners
       @partner_request = Partners::FamilyRequestCreateService.new(
         partner_user_id: current_user.id,
         family_requests_attributes: family_requests_attributes,
-        for_families: true
+        request_type: "child"
       ).initialize_only
       if @partner_request.valid?
         @total_items = @partner_request.total_items
