@@ -35,9 +35,15 @@ Rails.application.routes.draw do
   namespace :partners do
     resource :dashboard, only: [:show]
     resource :help, only: [:show]
-    resources :requests, only: [:show, :new, :index, :create]
-    resources :individuals_requests, only: [:new, :create]
-    resources :family_requests, only: [:new, :create]
+    resources :requests, only: [:show, :new, :index, :create] do
+      post :validate, on: :collection
+    end
+    resources :individuals_requests, only: [:new, :create] do
+      post :validate, on: :collection
+    end
+    resources :family_requests, only: [:new, :create] do
+      post :validate, on: :collection
+    end
     resources :users, only: [:index, :new, :create, :edit, :update]
     resource :profile, only: [:show, :edit, :update]
     resource :approval_request, only: [:create]
@@ -48,6 +54,9 @@ Rails.application.routes.draw do
     resources :families
     resources :authorized_family_members
     resources :distributions, only: [:index] do
+      get :print, on: :member
+    end
+    resources :donations, only: [:index] do
       get :print, on: :member
     end
   end
@@ -67,6 +76,7 @@ Rails.application.routes.draw do
     resources :barcode_items
     resources :account_requests, only: [:index] do
       post :reject, on: :collection
+      post :close, on: :collection
       get :for_rejection, on: :collection
     end
     resources :questions
@@ -75,9 +85,6 @@ Rails.application.routes.draw do
       post :upload_csv, on: :collection
     end
   end
-
-  match "/404", to: "errors#not_found", via: :all
-  match "/500", to: "errors#internal_server_error", via: :all
 
   resources :users do
     get :switch_to_role, on: :collection
@@ -197,6 +204,7 @@ Rails.application.routes.draw do
     resources :users, only: [:index, :create, :destroy], controller: 'partner_users' do
       member do
         post :resend_invitation
+        post :reset_password
       end
     end
 
@@ -215,11 +223,12 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :partner_groups, only: [:new, :create, :edit, :update]
+  resources :partner_groups, only: %i(new create edit update destroy)
 
   resources :product_drives
 
   resources :donations do
+    get :print, on: :member
     patch :add_item, on: :member
     patch :remove_item, on: :member
   end
@@ -230,6 +239,7 @@ Rails.application.routes.draw do
     member do
       post :start
     end
+    get :print_unfulfilled, on: :collection
   end
   resources :requests, except: %i(destroy) do
     resource :cancelation, only: [:new, :create], controller: 'requests/cancelation'

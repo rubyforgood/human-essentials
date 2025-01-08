@@ -2,9 +2,9 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Distribution Confirmation</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button id="modalClose" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
         <p class="lead">You are about to create a distribution for
           <span class="fw-bolder fst-italic"
             data-testid="distribution-confirmation-partner"><%= @dist.partner_name %></span>
@@ -35,8 +35,8 @@
           </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="No I need to make changes">No, I need to make changes</button>
-        <button type="button" class="btn btn-primary" data-action="confirmation#submitForm">Yes, it's correct</button>
+        <button id="modalNo" type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="No I need to make changes">No, I need to make changes</button>
+        <button id="modalYes" type="button" class="btn btn-success" data-action="confirmation#submitForm">Yes, it's correct</button>
       </div>
     </div>
   </div>

@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe "/partners/requests", type: :request do
   let(:organization) { create(:organization) }
   let(:partner) { create(:partner, organization: organization) }
@@ -89,6 +87,38 @@ RSpec.describe "/partners/requests", type: :request do
       get partners_request_path(other_request)
       expect(response.code).to eq("404")
     end
+
+    it 'should show the units if they are provided and enabled' do
+      item1 = create(:item, name: "First item")
+      item2 = create(:item, name: "Second item")
+      item3 = create(:item, name: "Third item")
+      create(:item_unit, item: item1, name: "flat")
+      create(:item_unit, item: item2, name: "flat")
+      create(:item_unit, item: item3, name: "flat")
+      request = create(
+        :request,
+        :with_item_requests,
+        partner_id: partner.id,
+        partner_user_id: partner_user.id,
+        request_items: [
+          {item_id: item1.id, quantity: '125'},
+          {item_id: item2.id, quantity: '559', request_unit: 'flat'},
+          {item_id: item3.id, quantity: '1', request_unit: 'flat'}
+        ]
+      )
+
+      Flipper.enable(:enable_packs)
+      get partners_request_path(request)
+      expect(response.body).to match(/125\s+of\s+First item/m)
+      expect(response.body).to match(/559\s+flats\s+of\s+Second item/m)
+      expect(response.body).to match(/1\s+flat\s+of\s+Third item/m)
+
+      Flipper.disable(:enable_packs)
+      get partners_request_path(request)
+      expect(response.body).to match(/125\s+of\s+First item/m)
+      expect(response.body).to match(/559\s+of\s+Second item/m)
+      expect(response.body).to match(/1\s+of\s+Third item/m)
+    end
   end
 
   describe "POST #create" do
@@ -102,6 +132,7 @@ RSpec.describe "/partners/requests", type: :request do
           item_requests_attributes: {
             "0" => {
               item_id: item1.id,
+              request_unit: 'pack',
               quantity: Faker::Number.within(range: 4..13)
             }
           }
@@ -111,6 +142,8 @@ RSpec.describe "/partners/requests", type: :request do
 
     before do
       sign_in(partner_user)
+      FactoryBot.create(:unit, organization: organization, name: 'pack')
+      FactoryBot.create(:item_unit, item: item1, name: 'pack')
     end
 
     context 'when given valid parameters' do

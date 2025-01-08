@@ -13,7 +13,6 @@
 #  old_partner_request_id :integer
 #  partner_request_id     :bigint
 #
-require "rails_helper"
 
 RSpec.describe Partners::ItemRequest, type: :model do
   let(:organization) { create(:organization) }

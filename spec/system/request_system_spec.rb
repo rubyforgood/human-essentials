@@ -19,17 +19,15 @@ RSpec.describe "Requests", type: :system, js: true do
     })
   end
 
-  after { travel_back }
-
   context "#index" do
     subject { requests_path }
 
     before do
-      create(:request, :started, partner: partner1, request_items: [{ "item_id": item1.id, "quantity": '12' }])
-      create(:request, :started, partner: partner1, request_items: [{ "item_id": item2.id, "quantity": '13' }])
-      create(:request, :started, partner: partner2, request_items: [{ "item_id": item1.id, "quantity": '14' }])
-      create(:request, :fulfilled, partner: partner1, request_items: [{ "item_id": item1.id, "quantity": '15' }])
-      create(:request, :pending, partner: partner1, request_items: [{ "item_id": item1.id, "quantity": '16' }])
+      create(:request, :with_item_requests, :started, partner: partner1, request_items: [{ "item_id": item1.id, "quantity": '12' }])
+      create(:request, :with_item_requests, :started, partner: partner1, request_items: [{ "item_id": item2.id, "quantity": '13' }])
+      create(:request, :with_item_requests, :started, partner: partner2, request_items: [{ "item_id": item1.id, "quantity": '14' }])
+      create(:request, :with_item_requests, :fulfilled, partner: partner1, request_items: [{ "item_id": item1.id, "quantity": '15' }])
+      create(:request, :with_item_requests, :pending, partner: partner1, request_items: [{ "item_id": item1.id, "quantity": '16' }])
     end
 
     it "lists requests" do

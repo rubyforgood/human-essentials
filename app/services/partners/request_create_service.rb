@@ -4,19 +4,22 @@ module Partners
 
     attr_reader :partner_request
 
-    def initialize(partner_user_id:, comments: nil, for_families: false, item_requests_attributes: [], additional_attrs: {})
+    def initialize(request_type:, partner_user_id:, comments: nil, item_requests_attributes: [], additional_attrs: {})
       @partner_user_id = partner_user_id
       @comments = comments
-      @for_families = for_families
+      @request_type = request_type
       @item_requests_attributes = item_requests_attributes
       @additional_attrs = additional_attrs
     end
 
     def call
-      @partner_request = ::Request.new(partner_id: partner.id,
+      @partner_request = ::Request.new(
+        partner_id: partner.id,
         organization_id: organization_id,
         comments: comments,
-        partner_user_id: partner_user_id)
+        request_type: request_type,
+        partner_user_id: partner_user_id
+      )
       @partner_request = populate_item_request(@partner_request)
       @partner_request.assign_attributes(additional_attrs)
 
@@ -24,10 +27,6 @@ module Partners
         @partner_request.errors.each do |error|
           errors.add(error.attribute, error.message)
         end
-      end
-
-      if @partner_request.comments.blank? && @partner_request.item_requests.blank?
-        errors.add(:base, 'completely empty request')
       end
 
       return self if errors.present?
@@ -44,9 +43,20 @@ module Partners
       self
     end
 
+    def initialize_only
+      partner_request = ::Request.new(partner_id: partner.id,
+        organization_id: organization_id,
+        comments: comments,
+        request_type: request_type,
+        partner_user_id: partner_user_id)
+      partner_request = populate_item_request(partner_request)
+      partner_request.assign_attributes(additional_attrs)
+      partner_request
+    end
+
     private
 
-    attr_reader :partner_user_id, :comments, :item_requests_attributes, :additional_attrs
+    attr_reader :partner_user_id, :comments, :item_requests_attributes, :additional_attrs, :request_type
 
     def populate_item_request(partner_request)
       # Exclude any line item that is completely empty
@@ -69,8 +79,13 @@ module Partners
           # object (either this one or the FamilyRequestCreateService).
           pre_existing_entry.children = (pre_existing_entry.children + (input_item['children'] || [])).uniq
         else
+          if input_item['request_unit'].to_s == '-1' # nothing selected
+            errors.add(:base, "Please select a unit for #{Item.find(input_item["item_id"]).name}")
+            next
+          end
           items[input_item['item_id']] = Partners::ItemRequest.new(
             item_id: input_item['item_id'],
+            request_unit: input_item['request_unit'],
             quantity: input_item['quantity'],
             children: input_item['children'] || [], # will create ChildItemRequests if there are any
             name: fetch_organization_item_name(input_item['item_id']),

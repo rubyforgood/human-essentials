@@ -27,7 +27,8 @@ class Partner < ApplicationRecord
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
   ].freeze
 
-  enum status: { uninvited: 0, invited: 1, awaiting_review: 2, approved: 3, error: 4, recertification_required: 5, deactivated: 6 }
+  # Status `4` (error) was removed for being obsolete but is intentionally skipped to preserve existing enum values.
+  enum status: { uninvited: 0, invited: 1, awaiting_review: 2, approved: 3, recertification_required: 5, deactivated: 6 }
 
   belongs_to :organization
   belongs_to :partner_group, optional: true
@@ -45,13 +46,11 @@ class Partner < ApplicationRecord
 
   has_many_attached :documents
 
-  validates :organization, presence: true
   validates :name, presence: true, uniqueness: { scope: :organization }
 
-  validates :email, presence: true, uniqueness: { case_sensitive: false },
-    format: { with: URI::MailTo::EMAIL_REGEXP, on: :create }
+  validates :email, presence: true, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
 
-  validates :quota, numericality: true, allow_blank: true
+  validates :quota, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
 
   validate :correct_document_mime_type
 
@@ -75,6 +74,7 @@ class Partner < ApplicationRecord
   AGENCY_TYPES = {
     "CAREER" => "Career technical training",
     "ABUSE" => "Child abuse resource center",
+    "BNB" => "Basic Needs Bank",
     "CHURCH" => "Church outreach ministry",
     "COLLEGE" => "College and Universities",
     "CDC" => "Community development corporation",
@@ -83,6 +83,7 @@ class Partner < ApplicationRecord
     "LEGAL" => "Correctional Facilities / Jail / Prison / Legal System",
     "CRISIS" => "Crisis/Disaster services",
     "DISAB" => "Developmental disabilities program",
+    "DISTRICT" => "School District",
     "DOMV" => "Domestic violence shelter",
     "ECE" => "Early Childhood Education/Childcare",
     "CHILD" => "Early childhood services",
@@ -97,6 +98,7 @@ class Partner < ApplicationRecord
     "HOSP" => "Hospital",
     "INFPAN" => "Infant/Child Pantry/Closet",
     "LIB" => "Library",
+    "MHEALTH" => "Mental Health",
     "MILITARY" => "Military Bases/Veteran Services",
     "POLICE" => "Police Station",
     "PREG" => "Pregnancy resource center",
@@ -158,6 +160,7 @@ class Partner < ApplicationRecord
 
   # better to extract this outside of the model
   def self.import_csv(csv, organization_id)
+    errors = []
     organization = Organization.find(organization_id)
 
     csv.each do |row|
@@ -165,7 +168,11 @@ class Partner < ApplicationRecord
 
       svc = PartnerCreateService.new(organization: organization, partner_attrs: hash_rows)
       svc.call
+      if svc.errors.present?
+        errors << "#{svc.partner.name}: #{svc.partner.errors.full_messages.to_sentence}"
+      end
     end
+    errors
   end
 
   def self.csv_export_headers
@@ -181,7 +188,10 @@ class Partner < ApplicationRecord
       "Contact Name",
       "Contact Phone",
       "Contact Email",
-      "Notes"
+      "Notes",
+      "Counties Served",
+      "Providing Diapers",
+      "Providing Period Supplies"
     ]
   end
 
@@ -198,8 +208,19 @@ class Partner < ApplicationRecord
       contact_person[:name],
       contact_person[:phone],
       contact_person[:email],
-      notes
+      notes,
+      profile.county_list_by_region,
+      providing_diapers,
+      providing_period_supplies
     ]
+  end
+
+  def providing_diapers
+    distributions.in_last_12_months.with_diapers.any? ? "Y" : "N"
+  end
+
+  def providing_period_supplies
+    distributions.in_last_12_months.with_period_supplies.any? ? "Y" : "N"
   end
 
   def contact_person
@@ -237,7 +258,7 @@ class Partner < ApplicationRecord
   def quantity_year_to_date
     distributions
       .includes(:line_items)
-      .where('distributions.issued_at >= ?', Time.zone.today.beginning_of_year)
+      .where(distributions: { issued_at: Time.zone.today.beginning_of_year.. })
       .references(:line_items).map(&:line_items).flatten.sum(&:quantity)
   end
 
@@ -248,6 +269,10 @@ class Partner < ApplicationRecord
       family_zipcodes: family_zipcodes_count,
       family_zipcodes_list: family_zipcodes_list
     }
+  end
+
+  def quota_exceeded?(total)
+    quota.present? && total > quota
   end
 
   private

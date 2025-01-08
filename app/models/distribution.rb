@@ -38,27 +38,28 @@ class Distribution < ApplicationRecord
   has_one :request, dependent: :nullify
   accepts_nested_attributes_for :request
 
-  validates :storage_location, :partner, :organization, :delivery_method, presence: true
-  validate :line_items_exist_in_inventory
+  validates :delivery_method, presence: true
   validate :line_items_quantity_is_positive
   validates :shipping_cost, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true, if: :shipped?
 
   before_save :combine_distribution, :reset_shipping_cost
 
-  enum state: { scheduled: 5, complete: 10 }
-  enum delivery_method: { pick_up: 0, delivery: 1, shipped: 2 }
+  enum :state, { scheduled: 5, complete: 10 }
+  enum :delivery_method, { pick_up: 0, delivery: 1, shipped: 2 }
   scope :active, -> { joins(:line_items).joins(:items).where(items: { active: true }) }
+  scope :with_diapers, -> { joins(line_items: :item).merge(Item.disposable.or(Item.cloth_diapers)) }
+  scope :with_period_supplies, -> { joins(line_items: :item).merge(Item.period_supplies) }
   # add item_id scope to allow filtering distributions by item
-  scope :by_item_id, ->(item_id) { joins(:items).where(items: { id: item_id }) }
+  scope :by_item_id, ->(item_id) { includes(:items).where(items: { id: item_id }) }
   # partner scope to allow filtering by partner
-  scope :by_item_category_id, ->(item_category_id) { joins(:items).where(items: { item_category_id: item_category_id }) }
+  scope :by_item_category_id, ->(item_category_id) { includes(:items).where(items: { item_category_id: item_category_id }) }
   scope :by_partner, ->(partner_id) { where(partner_id: partner_id) }
   # location scope to allow filtering distributions by location
   scope :by_location, ->(storage_location_id) { where(storage_location_id: storage_location_id) }
   # state scope to allow filtering by state
   scope :by_state, ->(state) { where(state: state) }
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
-  scope :future, -> { where("issued_at >= :tomorrow", tomorrow: Time.zone.tomorrow) }
+  scope :future, -> { where(issued_at: Time.zone.tomorrow..) }
   scope :during, ->(range) { where(distributions: { issued_at: range }) }
   scope :for_csv_export, ->(organization, filters = {}, date_range = nil) {
     where(organization: organization)
@@ -66,13 +67,15 @@ class Distribution < ApplicationRecord
       .apply_filters(filters, date_range)
   }
   scope :apply_filters, ->(filters, date_range) {
-    includes(:partner, :storage_location, :line_items, :items)
-      .order(issued_at: :desc)
-      .class_filter(filters.merge(during: date_range))
+    class_filter(filters.merge(during: date_range))
   }
   scope :this_week, -> do
     where("issued_at > :start_date AND issued_at <= :end_date",
           start_date: Time.zone.today.beginning_of_week.beginning_of_day, end_date: Time.zone.today.end_of_week.end_of_day)
+  end
+  scope :in_last_12_months, -> do
+    where("issued_at > :start_date AND issued_at <= :end_date",
+          start_date: 12.months.ago.beginning_of_day, end_date: Time.zone.today.end_of_day)
   end
 
   delegate :name, to: :partner, prefix: true
@@ -102,6 +105,31 @@ class Distribution < ApplicationRecord
     self.storage_location = StorageLocation.find(storage_location_id) if storage_location_id
   end
 
+  # This is meant for the Edit page - we will be adding any request items that aren't in the
+  # distribution for whatever reason, with zero quantity.
+  def initialize_request_items
+    return if request.nil?
+
+    item_ids = Set.new
+    line_items.each do |line_item|
+      item_request = request.item_requests.find { |r| r.item_id == line_item.item_id }
+      if item_request
+        item_ids.add(item_request)
+        line_item.requested_item = item_request
+      end
+    end
+
+    request.item_requests.each do |item_request|
+      next if item_ids.include?(item_request)
+
+      line_items.new(
+        requested_item: item_request,
+        quantity: 0,
+        item_id: item_request.item_id
+      )
+    end
+  end
+
   def copy_from_request(request_id)
     request = Request.find(request_id)
     self.request = request
@@ -110,12 +138,12 @@ class Distribution < ApplicationRecord
     self.agency_rep = request.partner_user&.formatted_email
     self.comment = request.comments
     self.issued_at = Time.zone.today + 1.day
-    request.request_items.each do |item|
+    request.item_requests.each do |item_request|
       line_items.new(
-        quantity: item["quantity"],
-        item: Item.eager_load(:base_item).find_by(organization: request.organization, id: item["item_id"]),
-        itemizable_id: request.id,
-        itemizable_type: "Distribution"
+        requested_item: item_request,
+        # if there is a custom unit, don't prefill with the quantity - they have to enter it
+        quantity: item_request.request_unit.present? ? nil : item_request.quantity,
+        item_id: item_request.item_id
       )
     end
   end

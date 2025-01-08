@@ -87,7 +87,11 @@ RSpec.describe "Partners", type: :request do
       response
     end
 
-    let(:partner) { create(:partner, organization: organization, status: :approved) }
+    let(:partner) do
+      partner = create(:partner, organization: organization, status: :approved)
+      partner.distributions << create(:distribution, :with_items, :past, item_quantity: 1231)
+      partner
+    end
     let!(:family1) { FactoryBot.create(:partners_family, guardian_zip_code: '45612-123', partner: partner) }
     let!(:family2) { FactoryBot.create(:partners_family, guardian_zip_code: '45612-126', partner: partner) }
     let!(:family3) { FactoryBot.create(:partners_family, guardian_zip_code: '45612-123', partner: partner) }
@@ -100,12 +104,20 @@ RSpec.describe "Partners", type: :request do
         families_served: 3,
         children_served: 4,
         family_zipcodes: 2,
-        family_zipcodes_list: %w(45612-123 45612-126)
+        family_zipcodes_list: contain_exactly("45612-126", "45612-123") # order of zipcodes not guaranteed
       }
     end
 
     context "html" do
       let(:response_format) { 'html' }
+
+      it "displays distribution scheduled date" do
+        subject
+        partner.distributions.each do |distribution|
+          expect(subject.body).to include(distribution.issued_at.strftime("%m/%d/%Y"))
+          expect(subject.body).to_not include(distribution.created_at.strftime("%m/%d/%Y"))
+        end
+      end
 
       context "without org admin" do
         it 'should not show the manage users button' do
@@ -114,7 +126,7 @@ RSpec.describe "Partners", type: :request do
         end
       end
 
-      context "without org admin" do
+      context "with org admin" do
         before(:each) do
           user.add_role(Role::ORG_ADMIN, organization)
         end
@@ -127,7 +139,7 @@ RSpec.describe "Partners", type: :request do
       context "when the partner is invited" do
         it "includes impact metrics" do
           subject
-          expect(assigns[:impact_metrics]).to eq(expected_impact_metrics)
+          expect(assigns[:impact_metrics]).to match(expected_impact_metrics)
         end
       end
 
@@ -220,6 +232,26 @@ RSpec.describe "Partners", type: :request do
       it "presents a flash error message" do
         subject
         expect(response).to have_error "Check headers in file!"
+      end
+    end
+
+    context "csv file with invalid email address" do
+      let(:file) { fixture_file_upload("partners_with_invalid_email.csv", "text/csv") }
+      subject { post import_csv_partners_path, params: { file: file } }
+
+      it "invokes .import_csv" do
+        expect(model_class).to respond_to(:import_csv).with(2).arguments
+      end
+
+      it "redirects to :index" do
+        subject
+        expect(response).to be_redirect
+      end
+
+      it "presents a flash notice message displaying the import errors" do
+        subject
+        expect(response).to have_error(/The following #{model_class.name.underscore.humanize.pluralize} did not import successfully:/)
+        expect(response).to have_error(/Partner 2: Email is invalid/)
       end
     end
   end

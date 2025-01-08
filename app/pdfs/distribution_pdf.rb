@@ -122,7 +122,6 @@ class DistributionPdf
         # Quantity column
         column(1..-1).row(1..-3).borders = [:left]
         column(1..-1).row(1..-3).border_left_color = "aaaaaa"
-        column(1).style align: :right
         column(-1).row(-1).borders = [:left, :bottom]
       end
 
@@ -163,11 +162,7 @@ class DistributionPdf
       "Value/item",
       "In-Kind Value Received",
       "Packages"]]
-
-    inventory = nil
-    if Event.read_events?(@distribution.organization)
-      inventory = View::Inventory.new(@distribution.organization_id)
-    end
+    inventory = View::Inventory.new(@distribution.organization_id)
     request_items = @distribution.request.request_items.map do |request_item|
       RequestItem.from_json(request_item, @distribution.request, inventory)
     end
@@ -178,20 +173,20 @@ class DistributionPdf
     end
 
     data += line_items.map do |c|
-      request_item = request_items.find { |i| i.item.id == c.item_id }
+      request_item = request_items.find { |i| i.item&.id == c.item_id }
       [c.item.name,
-        request_item&.quantity || "",
+        request_display_qty(request_item),
         c.quantity,
         dollar_value(c.item.value_in_cents),
         dollar_value(c.value_per_line_item),
         c.package_count]
     end
 
-    data += requested_not_received.sort_by(&:name).map do |c|
-      [c.item.name,
-        c.quantity,
+    data += requested_not_received.sort_by(&:name).map do |request_item|
+      [request_item.item.name,
+        request_display_qty(request_item),
         "",
-        dollar_value(c.item.value_in_cents),
+        dollar_value(request_item.item.value_in_cents),
         nil,
         nil]
     end
@@ -275,5 +270,13 @@ class DistributionPdf
     move_down 10
     draw_text "(Print Name)", at: [0, cursor]
     draw_text "(Signature and Date)", at: [right_start, cursor]
+  end
+
+  def request_display_qty(request_item)
+    if Flipper.enabled?(:enable_packs) && request_item&.unit
+      "#{request_item.quantity} #{request_item.unit.pluralize(request_item.quantity)}"
+    else
+      request_item&.quantity || ""
+    end
   end
 end

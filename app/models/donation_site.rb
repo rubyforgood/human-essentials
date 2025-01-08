@@ -22,7 +22,7 @@ class DonationSite < ApplicationRecord
 
   belongs_to :organization
 
-  validates :name, :address, :organization, presence: true
+  validates :name, :address, presence: true
   validates :contact_name, length: {minimum: 3}, allow_blank: true
   validates :email, format: {with: URI::MailTo::EMAIL_REGEXP, message: "is not a valid email format"}, allow_blank: true
 
@@ -46,6 +46,7 @@ class DonationSite < ApplicationRecord
       loc.organization_id = organization
       loc.save!
     end
+    []
   end
 
   def self.csv_export_headers

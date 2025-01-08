@@ -11,7 +11,6 @@
 #  updated_at          :datetime         not null
 #  organization_id     :integer          not null
 #
-require 'rails_helper'
 
 RSpec.describe Kit, type: :model do
   let(:organization) { create(:organization) }
@@ -114,19 +113,20 @@ RSpec.describe Kit, type: :model do
       it 'should return false' do
         item = create(:item, :active, organization: organization, kit: kit)
         storage_location = create(:storage_location, :with_items, organization: organization, item: item)
+        kit.reload
 
         TestInventory.create_inventory(organization, {
           storage_location.id => {
             kit.item.id => 10
           }
         })
-        expect(kit.reload.can_deactivate?(nil)).to eq(false)
+        expect(kit.reload.can_deactivate?).to eq(false)
       end
     end
 
     context 'without inventory items' do
       it 'should return true' do
-        expect(kit.reload.can_deactivate?(nil)).to eq(true)
+        expect(kit.reload.can_deactivate?).to eq(true)
       end
     end
   end

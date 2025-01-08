@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe ApplicationHelper, type: :helper do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
@@ -134,6 +132,53 @@ RSpec.describe ApplicationHelper, type: :helper do
       it "returns empty string" do
         expect(helper.step_container_helper(index, active_index)).to eq("")
       end
+    end
+  end
+
+  describe "#set_default_location for purchase" do
+    helper do
+      def current_organization; end
+    end
+
+    before(:each) do
+      allow(helper).to receive(:current_organization).and_return(organization)
+    end
+
+    context "returns storage_location_id if present" do
+      let(:purchase) { build(:purchase, storage_location_id: 2) }
+      subject { helper.default_location(purchase) }
+
+      it { is_expected.to eq(2) }
+    end
+
+    context "returns current_organization intake_location if storage_location_id is not present" do
+      let(:organization) { build(:organization, intake_location: 1) }
+      let(:purchase) { build(:purchase, storage_location_id: nil) }
+
+      before do
+        allow(helper).to receive(:current_organization).and_return(organization)
+      end
+
+      subject { helper.default_location(purchase) }
+
+      it { is_expected.to eq(1) }
+    end
+  end
+
+  describe "#default_location for source_object" do
+    helper do
+      def current_organization; end
+    end
+
+    before(:each) do
+      allow(helper).to receive(:current_organization).and_return(organization)
+    end
+
+    context "returns storage_location_id if present" do
+      let(:donation) { build(:donation, storage_location_id: 2) }
+      subject { helper.default_location(donation) }
+
+      it { is_expected.to eq(2) }
     end
   end
 end

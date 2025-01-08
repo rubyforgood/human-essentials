@@ -23,10 +23,6 @@ RSpec.describe Distribution, type: :model do
   it_behaves_like "itemizable"
 
   context "Validations >" do
-    it { should validate_presence_of(:organization) }
-    it { should validate_presence_of(:partner) }
-    it { should validate_presence_of(:storage_location) }
-
     it "ensures the associated line_items are valid" do
       organization = create(:organization)
       storage_location = create(:storage_location, organization: organization)
@@ -51,17 +47,13 @@ RSpec.describe Distribution, type: :model do
       expect(d).not_to be_valid
     end
 
-    it "ensures that any included items are found in the associated storage location" do
-      unless Event.read_events?(organization) # not relevant in event world
-        d = build(:distribution)
-        item_missing = create(:item, name: "missing")
-        d.line_items << build(:line_item, item: item_missing)
-        expect(d).not_to be_valid
-      end
-    end
-
     it "ensures that the issued at is no earlier than 2000" do
       d = build(:distribution, issued_at: "1999-12-31")
+      expect(d).not_to be_valid
+    end
+
+    it "ensures that the issued at is no later than 1 year" do
+      d = build(:distribution, issued_at: DateTime.now.next_year(2).to_s)
       expect(d).not_to be_valid
     end
 
@@ -99,7 +91,7 @@ RSpec.describe Distribution, type: :model do
         create(:distribution, issued_at: Date.yesterday)
         # and one outside the range
         create(:distribution, issued_at: 1.year.ago)
-        expect(Distribution.during(Time.zone.now - 1.week..Time.zone.now + 2.days).size).to eq(2)
+        expect(Distribution.during(1.week.ago..2.days.from_now).size).to eq(2)
       end
     end
 
@@ -107,10 +99,6 @@ RSpec.describe Distribution, type: :model do
       context "When it's Sunday (end of the week)" do
         before do
           travel_to Time.zone.local(2019, 6, 30)
-        end
-
-        after do
-          travel_back
         end
 
         it "doesn't include distributions past Sunday" do
@@ -127,10 +115,6 @@ RSpec.describe Distribution, type: :model do
           travel_to Time.zone.local(2019, 7, 2)
         end
 
-        after do
-          travel_back
-        end
-
         it "includes distributions as early as Monday and as late as upcoming Sunday" do
           create(:distribution, organization: organization, issued_at: Time.zone.local(2019, 6, 30))
           tuesday_distribution = create(:distribution, organization: organization, issued_at: Time.zone.local(2019, 7, 2))
@@ -139,6 +123,30 @@ RSpec.describe Distribution, type: :model do
           expect(distributions.count).to eq(2)
           expect(distributions.first).to eq(tuesday_distribution)
           expect(distributions.last).to eq(sunday_distribution)
+        end
+      end
+    end
+
+    describe "in_last_12_months >" do
+      context "when the current date is December 31, 2023" do
+        before do
+          travel_to Time.zone.local(2023, 12, 31)
+        end
+
+        it "includes distributions issued within the last 12 months" do
+          included_distribution = create(:distribution, organization: organization, issued_at: Time.zone.local(2023, 1, 1))
+          excluded_distribution = create(:distribution, organization: organization, issued_at: Time.zone.local(2022, 12, 30))
+          distributions = Distribution.in_last_12_months
+          expect(distributions).to include(included_distribution)
+          expect(distributions).not_to include(excluded_distribution)
+        end
+
+        it "includes distributions up to the current date and excludes future ones" do
+          current_distribution = create(:distribution, organization: organization, issued_at: Time.zone.local(2023, 12, 31))
+          future_distribution = create(:distribution, organization: organization, issued_at: Time.zone.local(2024, 1, 1))
+          distributions = Distribution.in_last_12_months
+          expect(distributions).to include(current_distribution)
+          expect(distributions).not_to include(future_distribution)
         end
       end
     end
@@ -180,20 +188,42 @@ RSpec.describe Distribution, type: :model do
         expect(Distribution.by_location(location_1.id)).not_to include(dist2)
       end
     end
+
+    describe "with_diapers >" do
+      let(:disposable_item) { create(:item, base_item: create(:base_item, category: "Diapers - Childrens")) }
+      let(:cloth_diaper_item) { create(:item, base_item: create(:base_item, category: "Diapers - Cloth (Kids)")) }
+      let(:non_diaper_item) { create(:item, base_item: create(:base_item, category: "Menstrual Supplies/Items")) }
+
+      it "only includes distributions with disposable or cloth_diaper items" do
+        dist1 = create(:distribution, :with_items, item: disposable_item)
+        dist2 = create(:distribution, :with_items, item: cloth_diaper_item)
+        dist3 = create(:distribution, :with_items, item: non_diaper_item)
+
+        distributions = Distribution.with_diapers
+        expect(distributions.count).to eq(2)
+        expect(distributions).to include(dist1)
+        expect(distributions).to include(dist2)
+        expect(distributions).not_to include(dist3)
+      end
+    end
+
+    describe "with_period_supplies >" do
+      let(:period_supplies_item) { create(:item, base_item: create(:base_item, category: "Menstrual Supplies/Items")) }
+      let(:non_period_supplies_item) { create(:item, base_item: create(:base_item, category: "Diapers - Childrens")) }
+
+      it "only includes distributions with period supplies items" do
+        dist1 = create(:distribution, :with_items, item: period_supplies_item)
+        dist2 = create(:distribution, :with_items, item: non_period_supplies_item)
+
+        distributions = Distribution.with_period_supplies
+        expect(distributions.count).to eq(1)
+        expect(distributions).to include(dist1)
+        expect(distributions).not_to include(dist2)
+      end
+    end
   end
 
   context "Callbacks >" do
-    it "initializes the issued_at field to default to midnight if it wasn't explicitly set" do
-      yesterday = 1.day.ago
-      today = Time.zone.today
-
-      distribution = create(:distribution, created_at: yesterday, issued_at: today)
-      expect(distribution.issued_at.to_date).to eq(today)
-
-      distribution = create(:distribution, created_at: yesterday)
-      expect(distribution.issued_at).to eq(distribution.created_at.end_of_day)
-    end
-
     context "#before_save" do
       context "#reset_shipping_cost" do
         context "when delivery_method is other then shipped" do
@@ -250,11 +280,9 @@ RSpec.describe Distribution, type: :model do
         item2 = create(:item, name: "Item2", organization: organization)
         request = create(:request,
           organization: organization,
-          partner_user: create(:partner_user),
-          request_items: [
-            { item_id: item1.id, quantity: 15 },
-            { item_id: item2.id, quantity: 18 }
-          ])
+          partner_user: create(:partner_user))
+        create(:item_request, request: request, item_id: item1.id, quantity: 15)
+        create(:item_request, request: request, item_id: item2.id, quantity: 18)
         distribution = Distribution.new
         distribution.copy_from_request(request.id)
         expect(distribution.line_items.size).to eq 2

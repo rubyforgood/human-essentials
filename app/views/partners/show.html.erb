@@ -189,7 +189,7 @@
         <section class="card card-info card-outline" id='partner-information'>
           <div class="card-header">
             <div class="clearfix">
-              <h2 class="card-title">Application & Information</h2>
+              <h2 class="card-title">Partner Profile</h2>
             </div>
             <div class='pull-right'>
               <% unless @partner.approved? %>
@@ -238,7 +238,7 @@
                 <tbody>
                 <% @partner_distributions.each do |dist| %>
                   <tr>
-                    <td><%= dist.created_at.strftime("%m/%d/%Y") %></td>
+                    <td><%= dist.issued_at.strftime("%m/%d/%Y") %></td>
                     <td><%= dist.storage_location.name %></td>
                     <td><%= dist.line_items.total %></td>
                     <td class="text-right">

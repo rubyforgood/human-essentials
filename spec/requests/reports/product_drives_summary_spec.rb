@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.describe "Reports::ProductDrivesSummary", type: :request do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
@@ -37,7 +35,7 @@ RSpec.describe "Reports::ProductDrivesSummary", type: :request do
         create :product_drive_donation, :with_items, item_quantity: 117, money_raised: 1700, issued_at: 30.days.ago, organization: organization
       end
 
-      let(:formatted_date_range) { date_range.map { _1.to_formatted_s(:date_picker) }.join(" - ") }
+      let(:formatted_date_range) { date_range.map { _1.to_fs(:date_picker) }.join(" - ") }
 
       before do
         get reports_product_drives_summary_path(user.organization), params: {filters: {date_range: formatted_date_range}}
