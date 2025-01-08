@@ -4,10 +4,6 @@ RSpec.describe "Admin::UsersController", type: :request do
   let(:organization_admin) { create(:organization_admin, organization: organization) }
   let(:super_admin) { create(:super_admin, organization: organization) }
 
-  let(:default_params) do
-    { organization_name: organization.id }
-  end
-
   let(:org) { create(:organization, name: 'Org ABC') }
   let(:partner) { create(:partner, name: 'Partner XYZ', organization: org) }
   let(:user) { create(:user, organization: org, name: 'User 123') }
@@ -31,24 +27,17 @@ RSpec.describe "Admin::UsersController", type: :request do
     describe "PATCH #update" do
       context 'with no errors' do
         it "renders index template with a successful update flash message" do
-          patch admin_user_path(user), params: { user: default_params.merge(organization_id: user.organization.id,
-            name: 'New User 123', email: 'random@gmail.com') }
+          patch admin_user_path(user), params: { user: { name: 'New User 123', email: 'random@gmail.com' } }
           expect(response).to redirect_to admin_users_path
           expect(flash[:notice]).to eq("New User 123 updated!")
         end
       end
 
       context 'with errors' do
-        it "redirects back with no organization_id flash message" do
-          patch admin_user_path(user), params: { user: { name: 'New User 123' } }
+        it "redirects back with flash message" do
+          patch admin_user_path(user), params: { user: { name: 'New User 123', email: "invalid_email" } }
           expect(response).to redirect_to(edit_admin_user_path)
-          expect(flash[:error]).to eq('Please select an organization for the user.')
-        end
-
-        it "redirects back with no role found flash message" do
-          patch admin_user_path(user), params: { user: { name: 'New User 123', organization_id: -1 } }
-          expect(response).to redirect_to(edit_admin_user_path)
-          expect(flash[:error]).to eq('Error finding a role within the provided organization')
+          expect(flash[:error]).to eq("Something didn't work quite right -- try again?")
         end
       end
     end
@@ -134,6 +123,15 @@ RSpec.describe "Admin::UsersController", type: :request do
       it "preloads organizations" do
         post admin_users_path, params: { user: { organization_id: organization.id } }
         expect(assigns(:organizations)).to eq(Organization.all.alphabetized)
+      end
+
+      context "with missing organization id" do
+        it "redirects back with flash message" do
+          post admin_users_path, params: { user: { name: "ABC", email: organization.email } }
+
+          expect(response).to render_template("admin/users/new")
+          expect(flash[:error]).to eq("Failed to create user: Please select an organization for the user.")
+        end
       end
     end
   end

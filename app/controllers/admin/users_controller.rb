@@ -38,14 +38,16 @@ class Admin::UsersController < AdminController
   end
 
   def create
+    @user = User.new(name: user_params[:name], email: user_params[:email])
     UserInviteService.invite(name: user_params[:name],
       email: user_params[:email],
-      roles: [Role::ORG_USER])
+      roles: [Role::ORG_USER],
+      resource: Organization.find(organization_id_param))
     flash[:notice] = "Created a new user!"
     redirect_to admin_users_path
   rescue => e
     flash[:error] = "Failed to create user: #{e}"
-    render "admin/users/new"
+    render :new
   end
 
   def resource_ids
@@ -91,8 +93,14 @@ class Admin::UsersController < AdminController
 
   def user_params
     params.require(:user).permit(:name, :email, :password, :password_confirmation)
-  rescue => e
-    redirect_back(fallback_location: edit_admin_user_path, error: e.message)
+  end
+
+  def organization_id_param
+    organization_id = params[:user][:organization_id]
+
+    raise "Please select an organization for the user." if organization_id.blank?
+
+    organization_id
   end
 
   def load_organizations
