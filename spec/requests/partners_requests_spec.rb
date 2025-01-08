@@ -87,7 +87,11 @@ RSpec.describe "Partners", type: :request do
       response
     end
 
-    let(:partner) { create(:partner, organization: organization, status: :approved) }
+    let(:partner) do
+      partner = create(:partner, organization: organization, status: :approved)
+      partner.distributions << create(:distribution, :with_items, :past, item_quantity: 1231)
+      partner
+    end
     let!(:family1) { FactoryBot.create(:partners_family, guardian_zip_code: '45612-123', partner: partner) }
     let!(:family2) { FactoryBot.create(:partners_family, guardian_zip_code: '45612-126', partner: partner) }
     let!(:family3) { FactoryBot.create(:partners_family, guardian_zip_code: '45612-123', partner: partner) }
@@ -107,6 +111,14 @@ RSpec.describe "Partners", type: :request do
     context "html" do
       let(:response_format) { 'html' }
 
+      it "displays distribution scheduled date" do
+        subject
+        partner.distributions.each do |distribution|
+          expect(subject.body).to include(distribution.issued_at.strftime("%m/%d/%Y"))
+          expect(subject.body).to_not include(distribution.created_at.strftime("%m/%d/%Y"))
+        end
+      end
+
       context "without org admin" do
         it 'should not show the manage users button' do
           expect(subject).to be_successful
@@ -114,7 +126,7 @@ RSpec.describe "Partners", type: :request do
         end
       end
 
-      context "without org admin" do
+      context "with org admin" do
         before(:each) do
           user.add_role(Role::ORG_ADMIN, organization)
         end

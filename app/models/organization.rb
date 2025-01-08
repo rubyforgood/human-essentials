@@ -197,7 +197,7 @@ class Organization < ApplicationRecord
   end
 
   def self.seed_items(organization = Organization.all)
-    base_items = BaseItem.all.map(&:to_h)
+    base_items = BaseItem.without_kit.map(&:to_h)
 
     Array.wrap(organization).each do |org|
       Rails.logger.info "\n\nSeeding #{org.name}'s items...\n"
