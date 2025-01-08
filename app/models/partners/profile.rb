@@ -91,6 +91,7 @@ module Partners
 
     has_many :served_areas, foreign_key: "partner_profile_id", class_name: "Partners::ServedArea", dependent: :destroy, inverse_of: :partner_profile
 
+    has_many :counties, through: :served_areas
     accepts_nested_attributes_for :served_areas, allow_destroy: true
 
     has_many_attached :documents
@@ -98,8 +99,9 @@ module Partners
 
     validate :client_share_is_0_or_100
     validate :has_at_least_one_request_setting
+    validate :pick_up_email_addresses
 
-    self.ignored_columns = %w[
+    self.ignored_columns += %w[
       evidence_based_description
       program_client_improvement
       incorporate_plan
@@ -116,6 +118,17 @@ module Partners
     def client_share_total
       # client_share could be nil
       served_areas.map(&:client_share).compact.sum
+    end
+
+    def split_pick_up_emails
+      return nil if pick_up_email.nil?
+
+      pick_up_email.split(/,|\s+/).compact_blank
+    end
+
+    def county_list_by_region
+      # provides a county list in case insensitive alpha order, by region, then county name
+      counties.order(%w(lower(region) lower(name))).pluck(:name).join("; ")
     end
 
     private
@@ -135,13 +148,40 @@ module Partners
       # their allocation actually is
       total = client_share_total
       if total != 0 && total != 100
-        errors.add(:base, "Total client share must be 0 or 100")
+        if Flipper.enabled?("partner_step_form")
+          # need to set errors on specific fields within the form so that it can be mapped to a section
+          errors.add(:client_share, "Total client share must be 0 or 100")
+        else
+          errors.add(:base, "Total client share must be 0 or 100")
+        end
       end
     end
 
     def has_at_least_one_request_setting
       if !(enable_child_based_requests || enable_individual_requests || enable_quantity_based_requests)
-        errors.add(:base, "At least one request type must be set")
+        if Flipper.enabled?("partner_step_form")
+          # need to set errors on specific fields within the form so that it can be mapped to a section
+          errors.add(:enable_child_based_requests, "At least one request type must be set")
+        else
+          errors.add(:base, "At least one request type must be set")
+        end
+      end
+    end
+
+    def pick_up_email_addresses
+      # pick_up_email is a string of comma-separated emails, check specs for details
+      return if pick_up_email.nil?
+
+      emails = split_pick_up_emails
+      if emails.size > 3
+        errors.add(:pick_up_email, "can't have more than three email addresses")
+        nil
+      end
+      if emails.uniq.size != emails.size
+        errors.add(:pick_up_email, "should not have repeated email addresses")
+      end
+      emails.each do |e|
+        errors.add(:pick_up_email, "is invalid") unless e.match? URI::MailTo::EMAIL_REGEXP
       end
     end
   end

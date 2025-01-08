@@ -8,13 +8,15 @@ class RequestsController < ApplicationController
                 .undiscarded
                 .during(helpers.selected_range)
                 .class_filter(filter_params)
-
+    @unfulfilled_requests_count = current_organization.requests.where(status: [:pending, :started]).count
     @paginated_requests = @requests.page(params[:page])
     @calculate_product_totals = RequestsTotalItemsService.new(requests: @requests).calculate
     @items = current_organization.items.alphabetized
     @partners = current_organization.partners.order(:name)
     @statuses = Request.statuses.transform_keys(&:humanize)
     @partner_users = User.where(id: @paginated_requests.pluck(:partner_user_id))
+    @request_types = Request.request_types.transform_keys(&:humanize)
+    @selected_request_type = filter_params[:by_request_type]
     @selected_request_item = filter_params[:by_request_item_id]
     @selected_partner = filter_params[:by_partner]
     @selected_status = filter_params[:by_status]
@@ -40,16 +42,30 @@ class RequestsController < ApplicationController
     redirect_to new_distribution_path(request_id: request.id)
   end
 
+  def print_unfulfilled
+    requests = current_organization
+      .requests
+      .includes(:item_requests, partner: [:profile])
+      .where(status: [:pending, :started])
+      .order(created_at: :desc)
+
+    respond_to do |format|
+      format.any do
+        pdf = PicklistsPdf.new(current_organization, requests)
+        send_data pdf.compute_and_render,
+          filename: format("Picklists_%s.pdf", Time.current.to_fs(:long)),
+          type: "application/pdf",
+          disposition: "inline"
+      end
+    end
+  end
+
   private
 
   def load_items
     return unless @request.request_items
 
-    inventory = nil
-    if Event.read_events?(@request.organization)
-      inventory = View::Inventory.new(@request.organization_id)
-    end
-
+    inventory = View::Inventory.new(@request.organization_id)
     @request.request_items.map { |json| RequestItem.from_json(json, @request, inventory) }
   end
 
@@ -57,6 +73,6 @@ class RequestsController < ApplicationController
     def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).permit(:by_request_item_id, :by_partner, :by_status)
+    params.require(:filters).permit(:by_request_item_id, :by_partner, :by_status, :by_request_type)
   end
 end

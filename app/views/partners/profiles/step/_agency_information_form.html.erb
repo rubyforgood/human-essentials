@@ -1,0 +1,51 @@
+<div class="form-group">
+  <%= f.input :name, label: "Agency Name", required: true, class: "form-control" %>
+</div>
+
+<%= f.fields_for :profile, profile do |pf| %>
+  <div class="form-group">
+    <%= pf.input :agency_type, collection: Partner::AGENCY_TYPES.values, label: "Agency Type",  class: "form-control", wrapper: :input_group %>
+  </div>
+
+  <div class="form-group">
+    <%= pf.input :other_agency_type, label: "Other Agency Type", class: "form-control" %>
+  </div>
+
+  <div class="form-group row">
+    <label class="control-label col-md-3">501(c)(3) IRS Determination Letter or other Proof of Agency Status</label>
+    <% if profile.proof_of_partner_status.attached? %>
+      <div class="col-md-8">
+        Attached file: <%= link_to profile.proof_of_partner_status.blob['filename'], rails_blob_path(profile.proof_of_partner_status), class: "font-weight-bold" %>
+        <%= pf.file_field :proof_of_partner_status, class: "form-control-file" %>
+      </div>
+    <% else %>
+      <div class="col-md-8">
+        <%= pf.file_field :proof_of_partner_status, class: "form-control-file" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="form-group">
+    <%= pf.input :agency_mission, as: :text, label: "Agency Mission", class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= pf.input :address1, label: "Address (line 1)", class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= pf.input :address2, label: "Address (line 2)", class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= pf.input :city, label: "City", class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= pf.input :state, label: "State", class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= pf.input :zip_code, label: "Zip Code", class: "form-control" %>
+  </div>
+<% end %>

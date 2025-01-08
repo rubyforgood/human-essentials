@@ -36,7 +36,6 @@ class Item < ApplicationRecord
 
   validates :name, uniqueness: { scope: :organization, case_sensitive: false, message: "- An item with that name already exists (could be an inactive item)" }
   validates :name, presence: true
-  validates :organization, presence: true
   validates :distribution_quantity, numericality: { greater_than: 0 }, allow_blank: true
   validates :on_hand_recommended_quantity, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
   validates :on_hand_minimum_quantity, numericality: { greater_than_or_equal_to: 0 }
@@ -44,16 +43,16 @@ class Item < ApplicationRecord
   has_many :line_items, dependent: :destroy
   has_many :inventory_items, dependent: :destroy
   has_many :barcode_items, as: :barcodeable, dependent: :destroy
-  has_many :storage_locations, through: :inventory_items
   has_many :donations, through: :line_items, source: :itemizable, source_type: "::Donation"
   has_many :distributions, through: :line_items, source: :itemizable, source_type: "::Distribution"
   has_many :request_units, class_name: "ItemUnit", dependent: :destroy
 
   scope :active, -> { where(active: true) }
 
-  # Add spec for these
-  scope :kits, -> { where.not(kit_id: nil) }
+  # :housing_a_kit are items which house a kit, NOT items is_in_kit
+  scope :housing_a_kit, -> { where.not(kit_id: nil) }
   scope :loose, -> { where(kit_id: nil) }
+  scope :inactive, -> { where.not(active: true) }
 
   scope :visible, -> { where(visible_to_partners: true) }
   scope :alphabetized, -> { order(:name) }
@@ -114,12 +113,8 @@ class Item < ApplicationRecord
     joins(:barcode_items).order(:name).group(:id)
   end
 
-  def self.storage_locations_containing(item)
-    StorageLocation.joins(:inventory_items).where("inventory_items.item_id = ?", item.id)
-  end
-
   def self.barcodes_for(item)
-    BarcodeItem.where("barcodeable_id = ?", item.id)
+    BarcodeItem.where(barcodeable_id: item.id)
   end
 
   def self.reactivate(item_ids)
@@ -128,35 +123,37 @@ class Item < ApplicationRecord
   end
 
   def has_inventory?(inventory = nil)
-    if inventory
-      inventory.quantity_for(item_id: id).positive?
+    inventory&.quantity_for(item_id: id)&.positive?
+  end
+
+  def in_request?
+    Request.by_request_item_id(id).exists?
+  end
+
+  def is_in_kit?(kits = nil)
+    if kits
+      kits.any? { |k| k.line_items.map(&:item_id).include?(id) }
     else
-      inventory_items.where("quantity > 0").any?
+      organization.kits
+        .active
+        .joins(:line_items)
+        .where(line_items: { item_id: id}).any?
     end
   end
 
-  def is_in_kit?
-    organization.kits
-      .active
-      .joins(:line_items)
-      .where(line_items: { item_id: id}).any?
-  end
-
-  def can_delete?(inventory = nil)
-    can_deactivate_or_delete?(inventory) && line_items.none? && !barcode_count&.positive?
+  def can_delete?(inventory = nil, kits = nil)
+    can_deactivate_or_delete?(inventory, kits) && line_items.none? && !barcode_count&.positive? && !in_request? && kit.blank?
   end
 
   # @return [Boolean]
-  def can_deactivate_or_delete?(inventory = nil)
-    if inventory.nil? && Event.read_events?(organization)
-      inventory = View::Inventory.new(organization_id)
-    end
+  def can_deactivate_or_delete?(inventory = nil, kits = nil)
+    inventory ||= View::Inventory.new(organization_id)
     # Cannot deactivate if it's currently in inventory in a storage location. It doesn't make sense
     # to have physical inventory of something we're now saying isn't valid.
     # If an active kit includes this item, then changing kit allocations would change inventory
     # for an inactive item - which we said above we don't want to allow.
 
-    !has_inventory?(inventory) && !is_in_kit?
+    !has_inventory?(inventory) && !is_in_kit?(kits)
   end
 
   def validate_destroy
@@ -203,16 +200,6 @@ class Item < ApplicationRecord
     ["Name", "Barcodes", "Base Item", "Quantity"]
   end
 
-  # TODO remove this method once read_events? is true everywhere
-  def csv_export_attributes
-    [
-      name,
-      barcode_count,
-      base_item.name,
-      inventory_items.sum(&:quantity)
-    ]
-  end
-
   # @param items [Array<Item>]
   # @param inventory [View::Inventory]
   # @return [String]
@@ -229,10 +216,6 @@ class Item < ApplicationRecord
 
   def default_quantity
     distribution_quantity || 50
-  end
-
-  def inventory_item_at(storage_location_id)
-    inventory_items.find_by(storage_location_id: storage_location_id)
   end
 
   def sync_request_units!(unit_ids)

@@ -17,7 +17,6 @@
         <td><%= user.email %></td>
         <td class="text-right">
           <%= edit_button_to edit_admin_user_path(user) %>
-          <%= delete_button_to(admin_user_path(user), {confirm: "Are you sure you want to permanently remove this user?"}) unless user == current_user %>
         </td>
       </tr>
     <% end %>

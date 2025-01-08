@@ -12,6 +12,7 @@ RSpec.describe DistributionCreateService, type: :service do
         partner_id: partner.id,
         storage_location_id: storage_location.id,
         delivery_method: :delivery,
+        issued_at: Time.current,
         line_items_attributes: {
           "0": { item_id: storage_location.items.first.id, quantity: 5 }
         })
@@ -95,15 +96,36 @@ RSpec.describe DistributionCreateService, type: :service do
           partner_id: partner.id,
           storage_location_id: storage_location.id,
           delivery_method: :delivery,
+          issued_at: Date.yesterday,
           line_items_attributes: { "0": { item_id: storage_location.items.first.id, quantity: 500 } }
         )
       }
 
       it "preserves the Insufficiency error and is unsuccessful" do
         result = subject.new(too_much_dist).call
-        error_class = Event.read_events?(organization) ? InventoryError : Errors::InsufficientAllotment
-        expect(result.error).to be_instance_of(error_class)
+        expect(result.error).to be_instance_of(InventoryError)
         expect(result).not_to be_success
+      end
+    end
+
+    context "when missing issued_at attribute" do
+      let(:distribution) {
+        Distribution.new(
+          organization_id: organization.id,
+          partner_id: partner.id,
+          storage_location_id: storage_location.id,
+          delivery_method: :delivery,
+          issued_at: "",
+          line_items_attributes: { "0": { item_id: storage_location.items.first.id, quantity: 5 } }
+        )
+      }
+
+      it "preserves validation error and is unsuccessful" do
+        result = subject.new(distribution).call
+
+        expect(result).not_to be_success
+        expect(result.error).to be_instance_of(ActiveRecord::RecordInvalid)
+        expect(result.error.message).to include("Distribution date and time can't be blank")
       end
     end
 
@@ -114,6 +136,7 @@ RSpec.describe DistributionCreateService, type: :service do
           partner_id: partner.id,
           storage_location_id: storage_location.id,
           delivery_method: :delivery,
+          issued_at: Date.yesterday,
           line_items_attributes:
             {
               "0": { item_id: storage_location.items.first.id, quantity: 2 },
@@ -124,8 +147,7 @@ RSpec.describe DistributionCreateService, type: :service do
 
       it "preserves the Insufficiency error and is unsuccessful" do
         result = subject.new(too_much_dist).call
-        error_class = Event.read_events?(organization) ? InventoryError : Errors::InsufficientAllotment
-        expect(result.error).to be_instance_of(error_class)
+        expect(result.error).to be_instance_of(InventoryError)
         expect(result).not_to be_success
       end
     end

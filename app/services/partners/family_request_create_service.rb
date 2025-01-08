@@ -6,13 +6,13 @@ module Partners
   class FamilyRequestCreateService
     include ServiceObjectErrorsMixin
 
-    attr_reader :partner_user_id, :comments, :family_requests_attributes, :partner_request
+    attr_reader :partner_user_id, :comments, :family_requests_attributes, :partner_request, :request_type
 
-    def initialize(partner_user_id:, family_requests_attributes:, comments: nil, for_families: false)
+    def initialize(partner_user_id:, family_requests_attributes:, request_type:, comments: nil)
       @partner_user_id = partner_user_id
       @comments = comments
       @family_requests_attributes = family_requests_attributes.presence || []
-      @for_families = for_families
+      @request_type = request_type
     end
 
     def call
@@ -21,7 +21,7 @@ module Partners
       request_create_svc = Partners::RequestCreateService.new(
         partner_user_id: partner_user_id,
         comments: comments,
-        for_families: @for_families,
+        request_type: request_type,
         item_requests_attributes: item_requests_attributes
       )
 
@@ -37,6 +37,15 @@ module Partners
       end
 
       self
+    end
+
+    def initialize_only
+      Partners::RequestCreateService.new(
+        partner_user_id: partner_user_id,
+        comments: comments,
+        request_type: request_type,
+        item_requests_attributes: item_requests_attributes
+      ).initialize_only
     end
 
     private

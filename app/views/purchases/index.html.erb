@@ -80,16 +80,16 @@
                 <th>Purchases from</th>
                 <th>Storage Location</th>
                 <th>Comments</th>
-                <th>Quantity of Items</th>
-                <th>Variety of Items</th>
-                <th>Amount spent</th>
-                <th>FMV</th>
-                <th>Purchased Date</th>
+                <th class="text-right">Quantity of Items</th>
+                <th class="text-right">Variety of Items</th>
+                <th class="text-right">Amount spent</th>
+                <th class="text-right">FMV</th>
+                <th class="text-right">Purchased Date</th>
                 <th class="text-right">Actions</th>
               </tr>
               </thead>
               <tbody>
-              <%= render partial: "purchase_row", collection: @purchases %>
+              <%= render partial: "purchase_row", collection: @paginated_purchases %>
               </tbody>
               <tfoot>
               <tr>

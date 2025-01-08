@@ -29,4 +29,3 @@ class BaseItem < ApplicationRecord
     { partner_key: partner_key, name: name }
   end
 end
-

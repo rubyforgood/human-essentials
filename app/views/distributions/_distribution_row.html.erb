@@ -5,33 +5,25 @@
   <td class="date"><%= (distribution_row.issued_at.presence || distribution_row.created_at).strftime("%m/%d/%Y") %></td>
   <td><%= distribution_row.storage_location.name %></td>
 
-  <!-- Quantity -->
-  <% if filter_params[:by_item_id].present? %>
-    <td class="numeric"><%= quantity_by_item_id(distribution_row, filter_params[:by_item_id]) %></td>
-  <% elsif filter_params[:by_item_category_id].present? %>
-    <td class="numeric"><%= quantity_by_item_category_id(distribution_row, filter_params[:by_item_category_id]) %></td>
-  <% else %>
-    <td class="numeric"><%= distribution_row.line_items.total %></td>
-  <% end %>
-  <!-- End Quantity -->
-
-  <td class="numeric"><%= dollar_value(distribution_row.value_per_itemizable) %></td>
+  <td class="numeric"><%= @distribution_totals.fetch_quantity(distribution_row.id) %></td>
+  <td class="numeric"><%= dollar_value(@distribution_totals.fetch_value(distribution_row.id)) %></td>
   <td><%= distribution_row.delivery_method.humanize %></td>
   <td><%= distribution_shipping_cost(distribution_row.shipping_cost) %></td>
   <td><%= distribution_row.comment %></td>
   <td><%= distribution_row.state&.humanize %></td>
 
+  <% distribution_has_inactive_item = @distributions_with_inactive_items.include?(distribution_row.id) %>
   <td class="text-right">
     <%= view_button_to distribution_path(distribution_row) %>
-    <% if (!distribution_row.complete? && !distribution_row.future?) || current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
-      <%= edit_button_to edit_distribution_path(distribution_row), enabled: !distribution_row.has_inactive_item? %>
+    <% if (!distribution_row.complete? && !distribution_row.future?) || current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
+      <%= edit_button_to edit_distribution_path(distribution_row), enabled: !distribution_has_inactive_item %>
     <% end %>
     <%= print_button_to print_distribution_path(distribution_row, format: :pdf) %>
     <%= delete_button_to distribution_path(distribution_row),
           { confirm: "Are you sure you want to reclaim this distribution to #{distribution_row.partner.name}?",
             text: "Reclaim",
-            icon: "undo", enabled: !distribution_row.has_inactive_item? } %>
-    <% if distribution_row.has_inactive_item? %>
-      <div class="warning">Has Inactive Items</div>
+            icon: "undo", enabled: !distribution_has_inactive_item } %>
+    <% if distribution_has_inactive_item %>
+      <div class="low_priority_warning">Has Inactive Items</div>
     <% end %>
   </td>

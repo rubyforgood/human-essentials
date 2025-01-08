@@ -87,7 +87,11 @@ RSpec.describe "Partners", type: :request do
       response
     end
 
-    let(:partner) { create(:partner, organization: organization, status: :approved) }
+    let(:partner) do
+      partner = create(:partner, organization: organization, status: :approved)
+      partner.distributions << create(:distribution, :with_items, :past, item_quantity: 1231)
+      partner
+    end
     let!(:family1) { FactoryBot.create(:partners_family, guardian_zip_code: '45612-123', partner: partner) }
     let!(:family2) { FactoryBot.create(:partners_family, guardian_zip_code: '45612-126', partner: partner) }
     let!(:family3) { FactoryBot.create(:partners_family, guardian_zip_code: '45612-123', partner: partner) }
@@ -100,19 +104,42 @@ RSpec.describe "Partners", type: :request do
         families_served: 3,
         children_served: 4,
         family_zipcodes: 2,
-        family_zipcodes_list: %w(45612-123 45612-126)
+        family_zipcodes_list: contain_exactly("45612-126", "45612-123") # order of zipcodes not guaranteed
       }
     end
 
     context "html" do
       let(:response_format) { 'html' }
 
-      it { is_expected.to be_successful }
+      it "displays distribution scheduled date" do
+        subject
+        partner.distributions.each do |distribution|
+          expect(subject.body).to include(distribution.issued_at.strftime("%m/%d/%Y"))
+          expect(subject.body).to_not include(distribution.created_at.strftime("%m/%d/%Y"))
+        end
+      end
+
+      context "without org admin" do
+        it 'should not show the manage users button' do
+          expect(subject).to be_successful
+          expect(subject.body).not_to include("Manage Users")
+        end
+      end
+
+      context "with org admin" do
+        before(:each) do
+          user.add_role(Role::ORG_ADMIN, organization)
+        end
+        it 'should show the manage users button' do
+          expect(subject).to be_successful
+          expect(subject.body).to include("Manage Users")
+        end
+      end
 
       context "when the partner is invited" do
         it "includes impact metrics" do
           subject
-          expect(assigns[:impact_metrics]).to eq(expected_impact_metrics)
+          expect(assigns[:impact_metrics]).to match(expected_impact_metrics)
         end
       end
 
@@ -207,6 +234,26 @@ RSpec.describe "Partners", type: :request do
         expect(response).to have_error "Check headers in file!"
       end
     end
+
+    context "csv file with invalid email address" do
+      let(:file) { fixture_file_upload("partners_with_invalid_email.csv", "text/csv") }
+      subject { post import_csv_partners_path, params: { file: file } }
+
+      it "invokes .import_csv" do
+        expect(model_class).to respond_to(:import_csv).with(2).arguments
+      end
+
+      it "redirects to :index" do
+        subject
+        expect(response).to be_redirect
+      end
+
+      it "presents a flash notice message displaying the import errors" do
+        subject
+        expect(response).to have_error(/The following #{model_class.name.underscore.humanize.pluralize} did not import successfully:/)
+        expect(response).to have_error(/Partner 2: Email is invalid/)
+      end
+    end
   end
 
   describe "POST #create" do
@@ -280,43 +327,6 @@ RSpec.describe "Partners", type: :request do
       post invite_partner_path(id: partner.id)
       expect(PartnerInviteService).to have_received(:new).with(partner: partner, force: true)
       expect(response).to have_http_status(:found)
-    end
-  end
-
-  describe "POST #invite_partner_user" do
-    subject { -> { post invite_partner_user_partner_path(id: partner.id, partner: partner.id, email: email, name: name) } }
-    let(:partner) { create(:partner, organization: organization) }
-    let(:email) { Faker::Internet.email }
-    let(:name) { Faker::Name.unique.name }
-
-    context 'when the invite successfully' do
-      before do
-        allow(UserInviteService).to receive(:invite)
-      end
-      it "send the invite" do
-        subject.call
-        expect(UserInviteService).to have_received(:invite).with(
-          email: email,
-          name: name,
-          roles: [Role::PARTNER],
-          resource: partner
-        )
-        expect(response).to redirect_to(partner_path(partner))
-        expect(flash[:notice]).to eq("We have invited #{email} to #{partner.name}!")
-      end
-    end
-
-    context 'when there is an error in invite' do
-      let(:error_message) { 'Error message' }
-      before do
-        allow(UserInviteService).to receive(:invite).and_raise(StandardError.new(error_message))
-      end
-
-      it 'redirect to partner url with error message' do
-        subject.call
-        expect(response).to redirect_to(partner_path(partner))
-        expect(flash[:error]).to eq("Failed to invite #{email} to #{partner.name} due to: #{error_message}")
-      end
     end
   end
 

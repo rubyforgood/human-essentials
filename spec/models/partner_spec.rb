@@ -70,6 +70,12 @@ RSpec.describe Partner, type: :model do
     end
 
     it { should validate_numericality_of(:quota).allow_nil }
+
+    it "validates that the quota is greater than or equal to 0" do
+      expect(build(:partner, quota: -1)).not_to be_valid
+      expect(build(:partner, quota: 0)).to be_valid
+      expect(build(:partner, quota: 1)).to be_valid
+    end
   end
 
   context "callbacks" do
@@ -125,7 +131,6 @@ RSpec.describe Partner, type: :model do
         expect(build(:partner, status: :invited)).not_to be_deletable
         expect(build(:partner, status: :awaiting_review)).not_to be_deletable
         expect(build(:partner, status: :approved)).not_to be_deletable
-        expect(build(:partner, status: :error)).not_to be_deletable
         expect(build(:partner, status: :recertification_required)).not_to be_deletable
         expect(build(:partner, status: :deactivated)).not_to be_deletable
       end
@@ -161,7 +166,7 @@ RSpec.describe Partner, type: :model do
       context 'when it has a profile and users' do
         it 'should return false' do
           create(:partner_profile, partner_id: partner.id)
-          create(:partners_user, email: partner.email, name: partner.name, partner: partner)
+          create(:partner_user, email: partner.email, name: partner.name, partner: partner)
           expect(partner.reload).not_to be_deletable
         end
       end
@@ -185,7 +190,6 @@ RSpec.describe Partner, type: :model do
       it 'should return false', :aggregate_failures do
         expect(build(:partner, status: :uninvited)).not_to be_approvable
         expect(build(:partner, status: :approved)).not_to be_approvable
-        expect(build(:partner, status: :error)).not_to be_approvable
         expect(build(:partner, status: :recertification_required)).not_to be_approvable
         expect(build(:partner, status: :deactivated)).not_to be_approvable
       end
@@ -293,6 +297,8 @@ RSpec.describe Partner, type: :model do
     let(:agency_type) { Partner::AGENCY_TYPES["OTHER"] }
     let(:other_agency_type) { "Another Agency Name" }
     let(:notes) { "Some notes" }
+    let(:providing_diapers) { {value: "N", index: 13} }
+    let(:providing_period_supplies) { {value: "N", index: 14} }
 
     before do
       partner.profile.update({
@@ -311,7 +317,16 @@ RSpec.describe Partner, type: :model do
       partner.update(notes: notes)
     end
 
-    it "should has the info in the columns order" do
+    it "should have the expected info in the columns order" do
+      county_1 = create(:county, name: "High County, Maine", region: "Maine")
+      county_2 = create(:county, name: "laRue County, Louisiana", region: "Louisiana")
+      county_3 = create(:county, name: "Ste. Anne County, Louisiana", region: "Louisiana")
+      create(:partners_served_area, partner_profile: partner.profile, county: county_1, client_share: 50)
+      create(:partners_served_area, partner_profile: partner.profile, county: county_2, client_share: 40)
+      create(:partners_served_area, partner_profile: partner.profile, county: county_3, client_share: 10)
+      partner.profile.reload # not sure if this is needed
+      # county ordering is a bit esoteric -- it is human alphabetical by county within region (region is state)
+      correctly_ordered_counties = "laRue County, Louisiana; Ste. Anne County, Louisiana; High County, Maine"
       expect(partner.csv_export_attributes).to eq([
         partner.name,
         partner.email,
@@ -324,8 +339,76 @@ RSpec.describe Partner, type: :model do
         contact_name,
         contact_phone,
         contact_email,
-        notes
+        notes,
+        correctly_ordered_counties,
+        providing_diapers[:value],
+        providing_period_supplies[:value]
       ])
+    end
+
+    context "when partner has a distribution in the last 12 months" do
+      let(:distribution) { create(:distribution, partner: partner) }
+
+      shared_examples "providing_diapers check" do |scope|
+        before do
+          providing_diapers[:value] = "Y"
+
+          case scope
+          when :disposable
+            item = create(:item, base_item: create(:base_item, category: "Diapers - Childrens"))
+          when :cloth_diapers
+            item = create(:item, base_item: create(:base_item, category: "Diapers - Cloth (Kids)"))
+          end
+
+          create(:line_item, item: item, itemizable: distribution)
+        end
+
+        it "should have Y as providing_diapers" do
+          expect(partner.csv_export_attributes[providing_diapers[:index]]).to eq(providing_diapers[:value])
+        end
+      end
+
+      context "with a disposable item" do
+        include_examples "providing_diapers check", :disposable
+      end
+
+      context "with a cloth diaper item" do
+        include_examples "providing_diapers check", :cloth_diapers
+      end
+
+      context "with a period supplies item" do
+        before do
+          providing_period_supplies[:value] = "Y"
+
+          item = create(:item, base_item: create(:base_item, category: "Menstrual Supplies/Items"))
+          create(:line_item, item: item, itemizable: distribution)
+        end
+
+        it "should have Y as providing_period_supplies" do
+          expect(partner.csv_export_attributes[providing_period_supplies[:index]]).to eq(providing_period_supplies[:value])
+        end
+      end
+    end
+
+    context "when partner only has distribution older than a 12 months" do
+      let(:distribution) { create(:distribution, issued_at: (12.months.ago.beginning_of_day - 1.day), partner: partner) }
+      let(:disposable_diapers_item) { create(:item, base_item: create(:base_item, category: "Diapers - Childrens")) }
+      let(:cloth_diapers_item) { create(:item, base_item: create(:base_item, category: "Diapers - Cloth (Kids)")) }
+      let(:period_supplies_item) { create(:item, base_item: create(:base_item, category: "Menstrual Supplies/Items")) }
+
+      before do
+        create(:line_item, item: disposable_diapers_item, itemizable: distribution)
+        create(:line_item, item: cloth_diapers_item, itemizable: distribution)
+        create(:line_item, item: period_supplies_item, itemizable: distribution)
+      end
+
+      it "should have N as providing_diapers" do
+        expect(partner.csv_export_attributes[providing_diapers[:index]]).to eq(providing_diapers[:value])
+      end
+
+      it "should have N as providing_period_supplies" do
+        expect(partner.csv_export_attributes[providing_period_supplies[:index]]).to eq(providing_period_supplies[:value])
+      end
     end
   end
 
@@ -376,6 +459,28 @@ RSpec.describe Partner, type: :model do
 
     context "when partner don't have any related information" do
       it { is_expected.to eq({families_served: 0, children_served: 0, family_zipcodes: 0, family_zipcodes_list: []}) }
+    end
+  end
+
+  describe "#quota_exceeded?" do
+    it "returns true if partner has a quota and the total given is greater than quota" do
+      partner = build_stubbed(:partner, quota: 100)
+      expect(partner.quota_exceeded?(200)).to eq(true)
+    end
+
+    it "returns false if partner has a quota and the total given is equal to quota" do
+      partner = build_stubbed(:partner, quota: 100)
+      expect(partner.quota_exceeded?(100)).to eq(false)
+    end
+
+    it "returns false if partner has a quota and the total given is less than quota" do
+      partner = build_stubbed(:partner, quota: 100)
+      expect(partner.quota_exceeded?(50)).to eq(false)
+    end
+
+    it "returns false if partner has no quota" do
+      partner = build_stubbed(:partner, quota: nil)
+      expect(partner.quota_exceeded?(50)).to eq(false)
     end
   end
 

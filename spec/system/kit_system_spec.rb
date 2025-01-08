@@ -52,6 +52,32 @@ RSpec.describe "Kit management", type: :system do
     expect(page).to have_content("#{quantity_per_kit} #{item.name}")
   end
 
+  it "can add items correctly" do
+    visit new_kit_path
+    new_barcode = "1234567890"
+    quantity = "1"
+
+    find(:id, "_barcode-lookup-0").set(new_barcode).send_keys(:enter)
+
+    within "#newBarcode" do
+      expect(page).to have_field("Quantity", with: "")
+      fill_in "Quantity", with: quantity
+
+      expect(page).to have_field("Item", with: "")
+      select(Item.last.name, from: "barcode_item[barcodeable_id]")
+    end
+
+    within ".modal-footer" do
+      click_button "Save"
+    end
+
+    expect(page).to have_content("Barcode Added to Inventory")
+    # Check that item details have been filled in via javascript
+    expect(page).to have_field("kit_line_items_attributes_0_quantity", with: quantity)
+    # Check that new field has been added via javascript
+    expect(page).to have_css(".line_item_section", count: 2)
+  end
+
   it 'can allocate and deallocate quantity per storage location from kit index' do
     visit kits_path
 
@@ -62,16 +88,9 @@ RSpec.describe "Kit management", type: :system do
     original_item_1_count = inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)
     original_item_2_count = inventory.quantity_for(item_id: existing_kit_item_2.id, storage_location: storage_location.id)
 
-    original_ii_kit_count = existing_kit.inventory_items.find_by(storage_location_id: storage_location.id)&.quantity || 0
-    original_ii_item_1_count = storage_location.inventory_items.find_by(item_id: existing_kit_item_1.id).quantity
-    original_ii_item_2_count = storage_location.inventory_items.find_by(item_id: existing_kit_item_2.id).quantity
-
     expect(original_kit_count).to eq(0)
-    expect(original_kit_count).to eq(original_ii_kit_count)
     expect(original_item_1_count).to eq(50)
-    expect(original_item_1_count).to eq(original_ii_item_1_count)
     expect(original_item_2_count).to eq(50)
-    expect(original_item_2_count).to eq(original_ii_item_2_count)
 
     select storage_location.name, from: 'kit_adjustment_storage_location_id'
 
@@ -83,12 +102,9 @@ RSpec.describe "Kit management", type: :system do
     inventory.reload
 
     # Check that the kit quantity increased by the expected amount
-    expect(existing_kit.reload.inventory_items.find_by(storage_location_id: storage_location.id).quantity).to eq(2)
     expect(inventory.quantity_for(item_id: existing_kit.item.id, storage_location: storage_location.id)).to eq(2)
 
     # Ensure each of the contained items decrease the correct amount
-    expect(storage_location.inventory_items.find_by(item_id: existing_kit_item_1.id).quantity).to eq(40)
-    expect(storage_location.inventory_items.find_by(item_id: existing_kit_item_2.id).quantity).to eq(44)
     expect(inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)).to eq(40)
     expect(inventory.quantity_for(item_id: existing_kit_item_2.id, storage_location: storage_location.id)).to eq(44)
 
@@ -99,11 +115,6 @@ RSpec.describe "Kit management", type: :system do
 
     click_on 'Save'
     inventory.reload
-
-    # Ensure each of the contained items decrease the correct amount
-    expect(existing_kit.reload.inventory_items.find_by(storage_location_id: storage_location.id).quantity).to eq(0)
-    expect(storage_location.inventory_items.find_by(item_id: existing_kit_item_1.id).quantity).to eq(50)
-    expect(storage_location.inventory_items.find_by(item_id: existing_kit_item_2.id).quantity).to eq(50)
 
     expect(inventory.quantity_for(item_id: existing_kit.item.id, storage_location: storage_location.id)).to eq(0)
     expect(inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)).to eq(50)
@@ -138,16 +149,9 @@ RSpec.describe "Kit management", type: :system do
       original_item_1_count = inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)
       original_item_2_count = inventory.quantity_for(item_id: existing_kit_item_2.id, storage_location: storage_location.id)
 
-      original_ii_kit_count = existing_kit.inventory_items.find_by(storage_location_id: storage_location.id)&.quantity || 0
-      original_ii_item_1_count = storage_location.inventory_items.find_by(item_id: existing_kit_item_1.id)&.quantity || 0
-      original_ii_item_2_count = storage_location.inventory_items.find_by(item_id: existing_kit_item_2.id)&.quantity || 0
-
       expect(original_kit_count).to eq(0)
-      expect(original_kit_count).to eq(original_ii_kit_count)
       expect(original_item_1_count).to eq(0)
-      expect(original_item_1_count).to eq(original_ii_item_1_count)
       expect(original_item_2_count).to eq(0)
-      expect(original_item_2_count).to eq(original_ii_item_2_count)
 
       select storage_location.name, from: 'kit_adjustment_storage_location_id'
 
@@ -156,10 +160,6 @@ RSpec.describe "Kit management", type: :system do
 
       click_on 'Save'
       inventory.reload
-
-      expect(existing_kit.reload.inventory_items.find_by(storage_location_id: storage_location.id)&.quantity || 0).to eq(0)
-      expect(storage_location.inventory_items.find_by(item_id: existing_kit_item_1.id)&.quantity || 0).to eq(0)
-      expect(storage_location.inventory_items.find_by(item_id: existing_kit_item_2.id)&.quantity || 0).to eq(0)
 
       expect(inventory.quantity_for(item_id: existing_kit.item.id, storage_location: storage_location.id)).to eq(0)
       expect(inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)).to eq(0)
@@ -189,16 +189,9 @@ RSpec.describe "Kit management", type: :system do
       original_item_1_count = inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)
       original_item_2_count = inventory.quantity_for(item_id: existing_kit_item_2.id, storage_location: storage_location.id)
 
-      original_ii_kit_count = existing_kit.inventory_items.find_by(storage_location_id: storage_location.id)&.quantity || 0
-      original_ii_item_1_count = storage_location.inventory_items.find_by(item_id: existing_kit_item_1.id).quantity
-      original_ii_item_2_count = storage_location.inventory_items.find_by(item_id: existing_kit_item_2.id).quantity
-
       expect(original_kit_count).to eq(0)
-      expect(original_kit_count).to eq(original_ii_kit_count)
       expect(original_item_1_count).to eq(50)
-      expect(original_item_1_count).to eq(original_ii_item_1_count)
       expect(original_item_2_count).to eq(50)
-      expect(original_item_2_count).to eq(original_ii_item_2_count)
 
       select storage_location.name, from: 'kit_adjustment_storage_location_id'
 
@@ -208,13 +201,29 @@ RSpec.describe "Kit management", type: :system do
       click_on 'Save'
       inventory.reload
 
-      expect(existing_kit.reload.inventory_items.find_by(storage_location_id: storage_location.id)&.quantity || 0).to eq(0)
-      expect(storage_location.inventory_items.find_by(item_id: existing_kit_item_1.id).quantity).to eq(50)
-      expect(storage_location.inventory_items.find_by(item_id: existing_kit_item_2.id).quantity).to eq(50)
-
       expect(inventory.quantity_for(item_id: existing_kit.item.id, storage_location: storage_location.id)).to eq(0)
       expect(inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)).to eq(50)
       expect(inventory.quantity_for(item_id: existing_kit_item_2.id, storage_location: storage_location.id)).to eq(50)
+    end
+  end
+
+  describe "when missing required fields" do
+    it "displays error indicating missing field and preserves filled out fields" do
+      visit new_kit_path
+      kit_traits = attributes_for(:kit)
+
+      find(:css, '#kit_value_in_dollars').set('10.10')
+
+      item = Item.last
+      quantity_per_kit = 5
+      select item.name, from: "kit_line_items_attributes_0_item_id"
+      find(:css, '#kit_line_items_attributes_0_quantity').set(quantity_per_kit)
+
+      click_button "Save"
+
+      expect(page.find(".alert")).to have_content "Name can't be blank"
+      expect(page).to have_content(kit_traits[:quantity])
+      expect(page).to have_content(item.name)
     end
   end
 end

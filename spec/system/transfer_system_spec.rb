@@ -34,8 +34,6 @@ RSpec.describe "Transfer management", type: :system do
 
     inventory = View::Inventory.new(organization.id)
     original_from_storage_item_count = inventory.quantity_for(storage_location: from_storage_location.id, item_id: item.id)
-    original_from_ii_storage_item_count = from_storage_location.inventory_items.find_by(item_id: item.id).quantity
-    expect(original_from_storage_item_count).to eq(original_from_ii_storage_item_count)
     original_to_storage_item_count = 0
     transfer_amount = 10
 
@@ -44,8 +42,6 @@ RSpec.describe "Transfer management", type: :system do
     inventory.reload
 
     # Ensure the that the transfer has changed the inventory quantities
-    expect(from_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).not_to eq(original_from_storage_item_count)
-    expect(to_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(transfer_amount)
     expect(inventory.quantity_for(storage_location: from_storage_location.id, item_id: item.id)).not_to eq(original_from_storage_item_count)
     expect(inventory.quantity_for(storage_location: to_storage_location.id, item_id: item.id)).to eq(transfer_amount)
 
@@ -58,8 +54,6 @@ RSpec.describe "Transfer management", type: :system do
     inventory.reload
 
     # Assert that the original inventory counts have been restored.
-    expect(from_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(original_from_storage_item_count)
-    expect(to_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(original_to_storage_item_count)
     expect(inventory.quantity_for(storage_location: from_storage_location.id, item_id: item.id)).to eq(original_from_storage_item_count)
     expect(inventory.quantity_for(storage_location: to_storage_location.id, item_id: item.id)).to eq(original_to_storage_item_count)
   end
@@ -70,33 +64,25 @@ RSpec.describe "Transfer management", type: :system do
 
     inventory = View::Inventory.new(organization.id)
     original_from_storage_item_count = inventory.quantity_for(storage_location: from_storage_location.id, item_id: item.id)
-    original_from_ii_storage_item_count = from_storage_location.inventory_items.find_by(item_id: item.id).quantity
-    expect(original_from_storage_item_count).to eq(original_from_ii_storage_item_count)
     transfer_amount = 10
 
     create_transfer(transfer_amount.to_s, from_storage_location.name, to_storage_location.name)
     inventory.reload
 
-    expect(from_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(original_from_storage_item_count - transfer_amount)
-    expect(to_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(transfer_amount)
     expect(inventory.quantity_for(storage_location: from_storage_location.id, item_id: item.id)).to eq(original_from_storage_item_count - transfer_amount)
     expect(inventory.quantity_for(storage_location: to_storage_location.id, item_id: item.id)).to eq(transfer_amount)
 
-    allow_any_instance_of(StorageLocation).to receive(:decrease_inventory).and_raise(
-      Errors::InsufficientAllotment.new('error-msg', [])
-    )
+    allow(TransferDestroyEvent).to receive(:publish).and_raise('OH NOES')
 
     accept_confirm do
       click_link 'Delete'
     end
 
-    expect(page).to have_content(/error-msg/)
+    expect(page).to have_content(/OH NOES/)
     inventory.reload
 
     # Assert that the inventory did not change in response
     # to the raised error.
-    expect(from_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(original_from_storage_item_count - transfer_amount)
-    expect(to_storage_location.reload.inventory_items.find_by(item_id: item.id).quantity).to eq(transfer_amount)
     expect(inventory.quantity_for(storage_location: from_storage_location.id, item_id: item.id)).to eq(original_from_storage_item_count - transfer_amount)
     expect(inventory.quantity_for(storage_location: to_storage_location.id, item_id: item.id)).to eq(transfer_amount)
   end
@@ -105,6 +91,14 @@ RSpec.describe "Transfer management", type: :system do
     create(:storage_location, name: "Inactive R Us", discarded_at: Time.zone.now)
     visit new_transfer_path
     expect(page).to have_no_text 'Inactive R Us'
+  end
+
+  # 4438 - Bug Fix
+  it "add item button should be activated when from storage location is selected after rendering again on failure" do
+    from_storage_location = create(:storage_location, :with_items, item: item, name: "From me", organization: organization)
+    create_transfer('', '', '')
+    select from_storage_location.name, from: "From storage location"
+    expect(page).not_to have_css("#__add_line_item.disabled")
   end
 
   context "when there's insufficient inventory at the origin to cover the move" do

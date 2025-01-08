@@ -47,25 +47,10 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       expect(page).to have_content('User 123')
       select "Partner", from: "resource_type"
       find("div.input-group:has(.select2-container)").click
-      find('.select2-search__field', wait: 5).set("Partner ABC")
-      find(:xpath,
-        "//li[contains(@class, 'select2-results__option') and contains(., 'Partner ABC')]",
-        wait: 5).click
+      find("li.select2-results__option", text: "Partner ABC").click
       click_on 'Add Role'
 
       expect(page.find('.alert')).to have_content('Role added')
-    end
-
-    it "deletes an existing user" do
-      create(:user, organization: organization, name: "AAlphabetically First User")
-
-      visit admin_users_path
-
-      page.accept_confirm do
-        click_link "Delete", match: :first
-      end
-
-      expect(page.find(".alert")).to have_content "Deleted that user"
     end
 
     it "filters users by name" do

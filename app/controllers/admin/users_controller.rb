@@ -48,16 +48,6 @@ class Admin::UsersController < AdminController
     render "admin/users/new"
   end
 
-  def destroy
-    @user = User.find_by(id: params[:id])
-    if @user.present?
-      @user.destroy
-      redirect_to admin_users_path, notice: "Deleted that user"
-    else
-      redirect_to admin_users_path, flash: { error: "Couldn't find that user, sorry" }
-    end
-  end
-
   def resource_ids
     klass = case params[:resource_type]
     when "org_admin", "org_user"

@@ -1,11 +1,8 @@
-require "rails_helper"
-
 RSpec.describe Partners::FetchPartnersToRemindNowService do
   describe ".fetch" do
     subject { described_class.new.fetch }
     let(:current_day) { 14 }
     before { travel_to(Time.zone.local(2022, 6, current_day, 1, 1, 1)) }
-    after { travel_back }
 
     context "when there is a partner" do
       let!(:partner) { create(:partner) }

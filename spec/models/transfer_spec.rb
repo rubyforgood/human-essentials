@@ -54,6 +54,12 @@ RSpec.describe Transfer, type: :model do
       })
       expect(transfer).not_to be_valid
     end
+
+    it "requires that the quantity must be positive" do
+      item = create(:item)
+      transfer = build(:transfer, :with_items, item: item, item_quantity: -1)
+      expect(transfer).not_to be_valid
+    end
   end
 
   context "Scopes >" do
@@ -66,21 +72,6 @@ RSpec.describe Transfer, type: :model do
       xfer1 = create(:transfer, organization: organization)
       create(:transfer, organization: organization)
       expect(Transfer.to_location(xfer1.to_id).size).to eq(1)
-    end
-  end
-
-  context "Methods >" do
-    it "`self.storage_locations_transferred_to` and `..._from` constrains appropriately" do
-      storage_location1 = create(:storage_location, name: "loc1", organization: organization)
-      storage_location2 = create(:storage_location, name: "loc2", organization: organization)
-      storage_location3 = create(:storage_location, name: "loc3", organization: organization)
-      storage_location4 = create(:storage_location, name: "loc4", organization: create(:organization))
-      storage_location5 = create(:storage_location, name: "loc5", organization: storage_location4.organization)
-      create(:transfer, from: storage_location3, to: storage_location1, organization: organization)
-      create(:transfer, from: storage_location3, to: storage_location2, organization: organization)
-      create(:transfer, from: storage_location5, to: storage_location4, organization: storage_location4.organization)
-      expect(Transfer.storage_locations_transferred_to_in(organization).to_a).to match_array([storage_location1, storage_location2])
-      expect(Transfer.storage_locations_transferred_from_in(organization).to_a).to match_array([storage_location3])
     end
   end
 

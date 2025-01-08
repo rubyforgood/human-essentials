@@ -103,14 +103,3 @@
     </div>
   </div>
 </section>
-
-<script type="module">
-  $(() => {
-    $('.reject-button').click((event) => {
-      event.preventDefault();
-      $('#account_request_rejection_reason').val('');
-      $('#reject_account_request_id').val($(event.target).data('requestId'));
-      $('#rejection-modal').modal('show');
-    })
-  })
-</script>

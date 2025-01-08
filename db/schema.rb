@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_19_201258) do
+ActiveRecord::Schema[7.2].define(version: 2024_12_20_020009) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -188,6 +188,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_19_201258) do
     t.index ["family_id"], name: "index_children_on_family_id"
   end
 
+  create_table "children_items", id: false, force: :cascade do |t|
+    t.bigint "child_id", null: false
+    t.bigint "item_id", null: false
+    t.index ["child_id", "item_id"], name: "index_children_items_on_child_id_and_item_id", unique: true
+    t.index ["item_id", "child_id"], name: "index_children_items_on_item_id_and_child_id", unique: true
+  end
+
   create_table "counties", force: :cascade do |t|
     t.string "name"
     t.string "region"
@@ -195,7 +202,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_19_201258) do
     t.datetime "updated_at", null: false
     t.enum "category", default: "US_County", null: false, enum_type: "category"
     t.index ["name", "region"], name: "index_counties_on_name_and_region", unique: true
-    t.index ["name"], name: "index_counties_on_name"
     t.index ["region"], name: "index_counties_on_region"
   end
 
@@ -237,6 +243,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_19_201258) do
     t.boolean "reminder_email_enabled", default: false, null: false
     t.integer "delivery_method", default: 0, null: false
     t.decimal "shipping_cost", precision: 8, scale: 2
+    t.index ["issued_at"], name: "index_distributions_on_issued_at"
     t.index ["organization_id"], name: "index_distributions_on_organization_id"
     t.index ["partner_id"], name: "index_distributions_on_partner_id"
     t.index ["storage_location_id"], name: "index_distributions_on_storage_location_id"
@@ -290,7 +297,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_19_201258) do
     t.bigint "user_id"
     t.string "group_id"
     t.index ["organization_id", "event_time"], name: "index_events_on_organization_id_and_event_time"
-    t.index ["organization_id"], name: "index_events_on_organization_id"
     t.index ["user_id"], name: "index_events_on_user_id"
   end
 
@@ -623,38 +629,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_19_201258) do
     t.index ["partner_profile_id"], name: "index_partner_served_areas_on_partner_profile_id"
   end
 
-  create_table "partner_users", force: :cascade do |t|
-    t.string "email", default: "", null: false
-    t.string "encrypted_password", default: "", null: false
-    t.string "reset_password_token"
-    t.datetime "reset_password_sent_at", precision: nil
-    t.datetime "remember_created_at", precision: nil
-    t.integer "sign_in_count", default: 0, null: false
-    t.datetime "current_sign_in_at", precision: nil
-    t.datetime "last_sign_in_at", precision: nil
-    t.inet "current_sign_in_ip"
-    t.inet "last_sign_in_ip"
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
-    t.string "invitation_token"
-    t.datetime "invitation_created_at", precision: nil
-    t.datetime "invitation_sent_at", precision: nil
-    t.datetime "invitation_accepted_at", precision: nil
-    t.integer "invitation_limit"
-    t.string "invited_by_type"
-    t.bigint "invited_by_id"
-    t.integer "invitations_count", default: 0
-    t.bigint "partner_id"
-    t.string "name"
-    t.index ["email"], name: "index_partner_users_on_email", unique: true
-    t.index ["invitation_token"], name: "index_partner_users_on_invitation_token", unique: true
-    t.index ["invitations_count"], name: "index_partner_users_on_invitations_count"
-    t.index ["invited_by_id"], name: "index_partner_users_on_invited_by_id"
-    t.index ["invited_by_type", "invited_by_id"], name: "index_partner_users_on_invited_by"
-    t.index ["partner_id"], name: "index_partner_users_on_partner_id"
-    t.index ["reset_password_token"], name: "index_partner_users_on_reset_password_token", unique: true
-  end
-
   create_table "partners", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "email"
@@ -736,6 +710,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_19_201258) do
     t.datetime "discarded_at", precision: nil
     t.text "discard_reason"
     t.integer "partner_user_id"
+    t.string "request_type"
     t.index ["discarded_at"], name: "index_requests_on_discarded_at"
     t.index ["distribution_id"], name: "index_requests_on_distribution_id", unique: true
     t.index ["organization_id"], name: "index_requests_on_organization_id"
@@ -836,7 +811,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_19_201258) do
     t.bigint "role_id"
     t.index ["role_id"], name: "index_users_roles_on_role_id"
     t.index ["user_id", "role_id"], name: "index_users_roles_on_user_id_and_role_id"
-    t.index ["user_id"], name: "index_users_roles_on_user_id"
   end
 
   create_table "vendors", force: :cascade do |t|
