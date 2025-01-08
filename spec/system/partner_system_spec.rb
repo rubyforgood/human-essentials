@@ -6,7 +6,6 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
     let(:partner) { create(:partner, organization: organization) }
 
     before do
-      user.add_role(:org_admin)
       sign_in(user)
     end
     let!(:page_content_wait) { 10 } # allow up to 10 seconds for content to load in the test
@@ -496,10 +495,16 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
       context "when viewing a partner's users" do
         subject { partner_users_path(partner) }
+
         let(:partner) { create(:partner, name: "Partner") }
         let(:partner_user) { partner.users.first }
         let(:invitation_sent_at) { partner_user.invitation_sent_at.to_fs(:date_picker) }
         let(:last_sign_in_at) { partner_user.last_sign_in_at.to_fs(:date_picker) }
+
+        before do
+          sign_out(user)
+          sign_in(organization_admin)
+        end
 
         it 'can show users of a partner' do
           visit subject
