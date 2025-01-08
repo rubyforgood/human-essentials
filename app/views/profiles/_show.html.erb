@@ -10,7 +10,7 @@
       (<%= partner_profile.other_agency_type %>)
     <% end %>
     </p>
-    <p>Proof of Agency Status
+    <p>501(c)(3) IRS Determination Letter or other Proof of Agency Status:
     <% if partner_profile.proof_of_partner_status.attached? %>
       <!-- NOTE: The actual download link may not work in local storage mode due to file locations being separate locally. -->
       (Link): <%= link_to partner_profile.proof_of_partner_status.filename, rails_blob_path(partner_profile.proof_of_partner_status, disposition: 'inline') %>

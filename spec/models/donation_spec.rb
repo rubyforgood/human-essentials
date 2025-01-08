@@ -82,7 +82,7 @@ RSpec.describe Donation, type: :model do
         create(:donation, issued_at: Date.yesterday)
         # and one outside the range
         create(:donation, issued_at: 1.year.ago)
-        expect(Donation.during(1.month.ago..Time.zone.now + 2.days).size).to eq(2)
+        expect(Donation.during(1.month.ago..2.days.from_now).size).to eq(2)
       end
     end
 

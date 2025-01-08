@@ -28,7 +28,7 @@ RSpec.describe "Reports::ManufacturerDonationsSummary", type: :request do
       end
 
       context "with manufacturer donations in the last year" do
-        let(:formatted_date_range) { date_range.map { _1.to_formatted_s(:date_picker) }.join(" - ") }
+        let(:formatted_date_range) { date_range.map { _1.to_fs(:date_picker) }.join(" - ") }
         let(:date_range) { [1.year.ago, 0.days.ago] }
         let!(:donations) do
           [
@@ -55,10 +55,10 @@ RSpec.describe "Reports::ManufacturerDonationsSummary", type: :request do
           expect(response.body).to match(%r{Manufacturer 3 \(13\)})
         end
 
-        it "shows top manufacturers in desc. order" do
+        it "shows recent manufacturers in desc. order of most recent donation" do
           get reports_manufacturer_donations_summary_path(user.organization), params: {filters: {date_range: formatted_date_range}}
 
-          expect(response.body).to match(%r{Manufacturer 3 .* Manufacturer 1 .*Manufacturer 2}m)
+          expect(response.body).to match(%r{Manufacturer 2 .* Manufacturer 1 .*Manufacturer 3}m)
         end
       end
     end
