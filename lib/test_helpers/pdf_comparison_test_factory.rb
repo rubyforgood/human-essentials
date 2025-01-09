@@ -2,7 +2,7 @@ module PDFComparisonTestFactory
   StorageCreation = Data.define(:organization, :storage_location, :items)
   FilePaths = Data.define(:expected_pickup_file_path, :expected_same_address_file_path, :expected_different_address_file_path, :expected_incomplete_address_file_path, :expected_no_contact_file_path)
 
-  def create_organization_storage_items
+  def self.create_organization_storage_items
     org = Organization.create!(
       name: "Essentials Bank 1",
       short_name: "db",
@@ -30,11 +30,11 @@ module PDFComparisonTestFactory
     StorageCreation.new(org, storage_location, [item1, item2, item3, item4])
   end
 
-  def create_partner(organization)
+  def self.create_partner(organization)
     Partner.create!(name: "Leslie Sue", organization: organization, email: "leslie1@gmail.com")
   end
 
-  def get_file_paths
+  def self.get_file_paths
     expected_pickup_file_path = Rails.root.join("spec", "fixtures", "files", "distribution_pickup.pdf")
     expected_same_address_file_path = Rails.root.join("spec", "fixtures", "files", "distribution_same_address.pdf")
     expected_different_address_file_path = Rails.root.join("spec", "fixtures", "files", "distribution_program_address.pdf")
@@ -43,9 +43,8 @@ module PDFComparisonTestFactory
     FilePaths.new(expected_pickup_file_path, expected_same_address_file_path, expected_different_address_file_path, expected_incomplete_address_file_path, expected_no_contact_file_path)
   end
 
-  private def create_profile(partner:, program_address1:, program_address2:, program_city:, program_state:, program_zip:,
+  private_class_method def self.create_profile(partner:, program_address1:, program_address2:, program_city:, program_state:, program_zip:,
     address1: "Example Address 1", city: "Example City", state: "Example State", zip: "12345", primary_contact_name: "Jaqueline Kihn DDS", primary_contact_email: "van@durgan.example")
-
     Partners::Profile.create!(
       partner_id: partner.id,
       essentials_bank_id: partner.organization.id,
@@ -64,27 +63,27 @@ module PDFComparisonTestFactory
     )
   end
 
-  def create_profile_no_address(partner)
+  def self.create_profile_no_address(partner)
     create_profile(partner: partner, program_address1: "", program_address2: "", program_city: "", program_state: "", program_zip: "", address1: "", city: "", state: "", zip: "")
   end
 
-  def create_profile_without_program_address(partner)
+  def self.create_profile_without_program_address(partner)
     create_profile(partner: partner, program_address1: "", program_address2: "", program_city: "", program_state: "", program_zip: "")
   end
 
-  def create_profile_with_program_address(partner)
+  def self.create_profile_with_program_address(partner)
     create_profile(partner: partner, program_address1: "Example Program Address 1", program_address2: "", program_city: "Example Program City", program_state: "Example Program State", program_zip: 54321)
   end
 
-  def create_profile_with_incomplete_address(partner)
+  def self.create_profile_with_incomplete_address(partner)
     create_profile(partner: partner, program_address1: "Example Program Address 1", program_address2: "", program_city: "", program_state: "", program_zip: "")
   end
 
-  def create_profile_no_contact_with_program_address(partner)
+  def self.create_profile_no_contact_with_program_address(partner)
     create_profile(partner: partner, program_address1: "Example Program Address 1", program_address2: "", program_city: "Example Program City", program_state: "Example Program State", program_zip: 54321, primary_contact_name: "", primary_contact_email: "")
   end
 
-  def create_line_items_request(distribution, partner, storage_creation)
+  def self.create_line_items_request(distribution, partner, storage_creation)
     LineItem.create!(itemizable: distribution, item: storage_creation.items[0], quantity: 50)
     LineItem.create!(itemizable: distribution, item: storage_creation.items[1], quantity: 100)
     storage_creation.organization.request_units.find_or_create_by!(name: "pack")
@@ -105,7 +104,7 @@ module PDFComparisonTestFactory
     )
   end
 
-  def create_dist(partner, storage_creation, delivery_method)
+  def self.create_dist(partner, storage_creation, delivery_method)
     Time.zone = "America/Los_Angeles"
     dist = Distribution.create!(partner: partner, delivery_method: delivery_method, issued_at: DateTime.new(2024, 7, 4, 0, 0, 0, "-07:00"), organization: storage_creation.organization, storage_location: storage_creation.storage_location)
     create_line_items_request(dist, partner, storage_creation)
@@ -125,7 +124,7 @@ module PDFComparisonTestFactory
   end
 
   # helper function that can be called from Rails console to generate comparison PDFs
-  def create_comparison_pdfs
+  def self.create_comparison_pdfs
     storage_creation = create_organization_storage_items
     file_paths = get_file_paths
 

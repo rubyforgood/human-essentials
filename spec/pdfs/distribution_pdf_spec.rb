@@ -1,13 +1,7 @@
-require_relative("../support/distribution_pdf_helper")
 require_relative("../../lib/test_helpers/pdf_comparison_test_factory")
 
-RSpec.configure do |c|
-  c.include DistributionPDFHelper
-  c.include PDFComparisonTestFactory
-end
-
 describe DistributionPdf do
-  let(:storage_creation) { create_organization_storage_items }
+  let(:storage_creation) { PDFComparisonTestFactory.create_organization_storage_items }
   let(:organization) { storage_creation.organization }
   let(:storage_location) { storage_creation.storage_location }
 
@@ -23,7 +17,7 @@ describe DistributionPdf do
     let(:partner) { create(:partner) }
 
     before(:each) do
-      create_line_items_request(distribution, partner, storage_creation)
+      PDFComparisonTestFactory.create_line_items_request(distribution, partner, storage_creation)
     end
 
     specify "#request_data with custom units feature" do
@@ -137,8 +131,24 @@ describe DistributionPdf do
   end
 
   describe "address pdf output" do
-    let(:partner) { create_partner(organization) }
-    let(:file_paths) { get_file_paths }
+    def compare_pdf(distribution, expected_file_path)
+      pdf = DistributionPdf.new(organization, distribution)
+      begin
+        pdf_file = pdf.compute_and_render
+
+        # Run the following from Rails sandbox console (bin/rails/console --sandbox) to regenerate these comparison PDFs:
+        # => load "lib/test_helpers/pdf_comparison_test_factory.rb"
+        # => Rails::ConsoleMethods.send(:prepend, PDFComparisonTestFactory)
+        # => create_comparison_pdfs
+        expect(pdf_file).to eq(IO.binread(expected_file_path))
+      rescue RSpec::Expectations::ExpectationNotMetError => e
+        File.binwrite(Rails.root.join("tmp", "failed_match_distribution_" + distribution.delivery_method.to_s + "_" + Time.current.to_s + ".pdf"), pdf_file)
+        raise e.class, "PDF does not match, written to tmp/", cause: nil
+      end
+    end
+
+    let(:partner) { PDFComparisonTestFactory.create_partner(organization) }
+    let(:file_paths) { PDFComparisonTestFactory.get_file_paths }
     let(:expected_different_address_file_path) { file_paths.expected_different_address_file_path }
     let(:expected_pickup_file_path) { file_paths.expected_pickup_file_path }
     let(:expected_same_address_file_path) { file_paths.expected_same_address_file_path }
@@ -147,53 +157,53 @@ describe DistributionPdf do
 
     context "when the partner has no addresses" do
       before(:each) do
-        create_profile_no_address(partner)
+        PDFComparisonTestFactory.create_profile_no_address(partner)
       end
       it "doesn't print any address if the delivery type is pickup" do
-        compare_pdf(organization, create_dist(partner, storage_creation, :pick_up), expected_pickup_file_path)
+        compare_pdf(PDFComparisonTestFactory.create_dist(partner, storage_creation, :pick_up), expected_pickup_file_path)
       end
       it "doesn't print any address if the delivery type is delivery" do
-        compare_pdf(organization, create_dist(partner, storage_creation, :delivery), expected_pickup_file_path)
+        compare_pdf(PDFComparisonTestFactory.create_dist(partner, storage_creation, :delivery), expected_pickup_file_path)
       end
       it "doesn't print any address if the delivery type is shipped" do
-        compare_pdf(organization, create_dist(partner, storage_creation, :shipped), expected_pickup_file_path)
+        compare_pdf(PDFComparisonTestFactory.create_dist(partner, storage_creation, :shipped), expected_pickup_file_path)
       end
     end
     context "when the partner doesn't have a different program address" do
       before(:each) do
-        create_profile_without_program_address(partner)
+        PDFComparisonTestFactory.create_profile_without_program_address(partner)
       end
       it "prints the address if the delivery type is delivery" do
-        compare_pdf(organization, create_dist(partner, storage_creation, :delivery), expected_same_address_file_path)
+        compare_pdf(PDFComparisonTestFactory.create_dist(partner, storage_creation, :delivery), expected_same_address_file_path)
       end
       it "prints the address if the delivery type is shipped" do
-        compare_pdf(organization, create_dist(partner, storage_creation, :shipped), expected_same_address_file_path)
+        compare_pdf(PDFComparisonTestFactory.create_dist(partner, storage_creation, :shipped), expected_same_address_file_path)
       end
       it "doesn't print the address if the delivery type is pickup" do
-        compare_pdf(organization, create_dist(partner, storage_creation, :pick_up), expected_pickup_file_path)
+        compare_pdf(PDFComparisonTestFactory.create_dist(partner, storage_creation, :pick_up), expected_pickup_file_path)
       end
     end
     context "when the partner has a different program/delivery address" do
       before(:each) do
-        create_profile_with_program_address(partner)
+        PDFComparisonTestFactory.create_profile_with_program_address(partner)
       end
       it "prints the delivery address if the delivery type is delivery" do
-        compare_pdf(organization, create_dist(partner, storage_creation, :delivery), expected_different_address_file_path)
+        compare_pdf(PDFComparisonTestFactory.create_dist(partner, storage_creation, :delivery), expected_different_address_file_path)
       end
       it "prints the delivery address if the delivery type is shipped" do
-        compare_pdf(organization, create_dist(partner, storage_creation, :shipped), expected_different_address_file_path)
+        compare_pdf(PDFComparisonTestFactory.create_dist(partner, storage_creation, :shipped), expected_different_address_file_path)
       end
       it "doesn't print any address if the delivery type is pickup" do
-        compare_pdf(organization, create_dist(partner, storage_creation, :pick_up), expected_pickup_file_path)
+        compare_pdf(PDFComparisonTestFactory.create_dist(partner, storage_creation, :pick_up), expected_pickup_file_path)
       end
     end
     it "formats output correctly when the partner delivery address is incomplete" do
-      create_profile_with_incomplete_address(partner)
-      compare_pdf(organization, create_dist(partner, storage_creation, :delivery), expected_incomplete_address_file_path)
+      PDFComparisonTestFactory.create_profile_with_incomplete_address(partner)
+      compare_pdf(PDFComparisonTestFactory.create_dist(partner, storage_creation, :delivery), expected_incomplete_address_file_path)
     end
     it "formats output correctly when the partner profile contact info does not exist" do
-      create_profile_no_contact_with_program_address(partner)
-      compare_pdf(organization, create_dist(partner, storage_creation, :delivery), expected_no_contact_file_path)
+      PDFComparisonTestFactory.create_profile_no_contact_with_program_address(partner)
+      compare_pdf(PDFComparisonTestFactory.create_dist(partner, storage_creation, :delivery), expected_no_contact_file_path)
     end
   end
 end
