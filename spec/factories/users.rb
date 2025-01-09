@@ -56,7 +56,7 @@ FactoryBot.define do
       sequence(:email) { |n| "partner_user_#{n}@example.com" }
       password { "password!" }
       password_confirmation { "password!" }
-      invitation_sent_at { Time.current - 1.day }
+      invitation_sent_at { 1.day.ago }
       last_sign_in_at { Time.current }
       organization { nil }
       transient do

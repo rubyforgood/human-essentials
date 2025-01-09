@@ -36,7 +36,6 @@ class Item < ApplicationRecord
 
   validates :name, uniqueness: { scope: :organization, case_sensitive: false, message: "- An item with that name already exists (could be an inactive item)" }
   validates :name, presence: true
-  validates :organization, presence: true
   validates :distribution_quantity, numericality: { greater_than: 0 }, allow_blank: true
   validates :on_hand_recommended_quantity, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
   validates :on_hand_minimum_quantity, numericality: { greater_than_or_equal_to: 0 }
@@ -50,9 +49,10 @@ class Item < ApplicationRecord
 
   scope :active, -> { where(active: true) }
 
-  # Add spec for these
-  scope :kits, -> { where.not(kit_id: nil) }
+  # :housing_a_kit are items which house a kit, NOT items is_in_kit
+  scope :housing_a_kit, -> { where.not(kit_id: nil) }
   scope :loose, -> { where(kit_id: nil) }
+  scope :inactive, -> { where.not(active: true) }
 
   scope :visible, -> { where(visible_to_partners: true) }
   scope :alphabetized, -> { order(:name) }
@@ -114,7 +114,7 @@ class Item < ApplicationRecord
   end
 
   def self.barcodes_for(item)
-    BarcodeItem.where("barcodeable_id = ?", item.id)
+    BarcodeItem.where(barcodeable_id: item.id)
   end
 
   def self.reactivate(item_ids)
@@ -142,7 +142,7 @@ class Item < ApplicationRecord
   end
 
   def can_delete?(inventory = nil, kits = nil)
-    can_deactivate_or_delete?(inventory, kits) && line_items.none? && !barcode_count&.positive? && !in_request?
+    can_deactivate_or_delete?(inventory, kits) && line_items.none? && !barcode_count&.positive? && !in_request? && kit.blank?
   end
 
   # @return [Boolean]

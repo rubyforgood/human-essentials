@@ -78,9 +78,14 @@ class PurchasesController < ApplicationController
 
   def destroy
     purchase = current_organization.purchases.find(params[:id])
-    PurchaseDestroyService.call(purchase)
+    begin
+      PurchaseDestroyService.call(purchase)
+    rescue => e
+      flash[:error] = e.message
+    else
+      flash[:notice] = "Purchase #{params[:id]} has been removed!"
+    end
 
-    flash[:notice] = "Purchase #{params[:id]} has been removed!"
     redirect_to purchases_path
   end
 
@@ -111,7 +116,7 @@ class PurchasesController < ApplicationController
 
   # If line_items have submitted with empty rows, clear those out first.
   def compact_line_items
-    return params unless params[:purchase].key?(:line_item_attributes)
+    return params unless params[:purchase].key?(:line_items_attributes)
 
     params[:purchase][:line_items_attributes].delete_if { |_row, data| data["quantity"].blank? && data["item_id"].blank? }
     params

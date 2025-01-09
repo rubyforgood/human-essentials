@@ -173,8 +173,6 @@ class DistributionPdf
       "Value/item",
       "In-Kind Value Received",
       "Packages"]]
-
-    inventory = nil
     inventory = View::Inventory.new(@distribution.organization_id)
     request_items = @distribution.request.request_items.map do |request_item|
       RequestItem.from_json(request_item, @distribution.request, inventory)

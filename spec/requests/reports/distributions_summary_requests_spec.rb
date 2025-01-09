@@ -37,7 +37,7 @@ RSpec.describe "Distributions", type: :request do
           create :distribution, :with_items, item_quantity: 17, issued_at: 30.days.ago, organization: organization
         end
 
-        let(:formatted_date_range) { date_range.map { _1.to_formatted_s(:date_picker) }.join(" - ") }
+        let(:formatted_date_range) { date_range.map { _1.to_fs(:date_picker) }.join(" - ") }
 
         before do
           get reports_distributions_summary_path, params: {filters: {date_range: formatted_date_range}}

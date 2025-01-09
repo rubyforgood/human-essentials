@@ -23,7 +23,7 @@ FactoryBot.define do
     comment { "It's a fine day for diapers." }
     storage_location
     organization { Organization.try(:first) || create(:organization) }
-    issued_at { nil }
+    issued_at { Time.current }
 
     factory :manufacturer_donation do
       manufacturer
