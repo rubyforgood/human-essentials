@@ -38,7 +38,7 @@ class Admin::UsersController < AdminController
   end
 
   def create
-    @user = User.new(name: user_params[:name], email: user_params[:email])
+    @user = User.new(user_params)
     UserInviteService.invite(name: user_params[:name],
       email: user_params[:email],
       roles: [Role::ORG_USER],
@@ -92,7 +92,7 @@ class Admin::UsersController < AdminController
   private
 
   def user_params
-    params.require(:user).permit(:name, :email, :password, :password_confirmation)
+    params.require(:user).permit(:name, :email)
   end
 
   def organization_id_param

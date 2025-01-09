@@ -35,8 +35,8 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       expect(page).to have_css(".alert", text: "TestUser updated")
 
       # Check if user name has changed to TestUser
-      tbody = find('#filterrific_results table tbody')
-      expect(page).to have_text("TestUser")
+      users_table = find('#filterrific_results table tbody')
+      expect(users_table).to have_text("TestUser")
     end
 
     it 'adds a role' do
