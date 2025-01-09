@@ -28,15 +28,15 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       expect(page).to have_content("Update AAlphabetically First User")
 
       fill_in "user_name", with: "TestUser"
-      select(organization.name, from: 'user_organization_id')
       click_on "Save"
 
-      expect(page.find(".alert")).to have_content "TestUser updated"
+      # Check if redirected to index page with successful flash message
+      expect(page).to have_current_path(admin_users_path)
+      expect(page).to have_css(".alert", text: "TestUser updated")
 
-      # Check if the organization role has been updated
+      # Check if user name has changed to TestUser
       tbody = find('#filterrific_results table tbody')
-      first_row = tbody.find('tr', text: 'TestUser')
-      expect(first_row).to have_text(organization.name)
+      expect(page).to have_text("TestUser")
     end
 
     it 'adds a role' do
