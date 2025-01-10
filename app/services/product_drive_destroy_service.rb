@@ -13,7 +13,7 @@ class ProductDriveDestroyService
 
   def call
     return unauthorized_error unless verify_role
-    return donation_error unless can_destroy?
+    return donation_error unless self.class.can_destroy?(product_drive, user)
 
     product_drive = organization.product_drives.find(product_drive.id)
     product_drive.destroy
@@ -38,11 +38,13 @@ class ProductDriveDestroyService
     false
   end
 
-  def can_destroy?
+  def self.can_destroy?(product_drive, user)
+    return false unless user.has_role?(Role::ORG_ADMIN, product_drive.organization)
+
     if product_drive.donations.empty?
       true
     else
-      @product_drive.errors.add(:base, "Cannot delete product drive with donations.")
+      product_drive.errors.add(:base, "Cannot delete product drive with donations.")
       false
     end
   end
