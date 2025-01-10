@@ -71,10 +71,6 @@ class ProductDrive < ApplicationRecord
     @search_date_range = { start_date: dates[0], end_date: dates[1] }
   end
 
-  def destroy_product_drive
-    ProductDriveDestroyService.new(self).call
-  end
-
   # quantities are FILTERED by date then SORTED by name
   #
   # @param date_range [Range]
