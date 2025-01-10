@@ -139,10 +139,10 @@ describe DistributionPdf do
         # Run the following from Rails sandbox console (bin/rails/console --sandbox) to regenerate these comparison PDFs:
         # => load "lib/test_helpers/pdf_comparison_test_factory.rb"
         # => Rails::ConsoleMethods.send(:prepend, PDFComparisonTestFactory)
-        # => create_comparison_pdfs
+        # => PDFComparisonTestFactory.create_comparison_pdfs
         expect(pdf_file).to eq(IO.binread(expected_file_path))
       rescue RSpec::Expectations::ExpectationNotMetError => e
-        File.binwrite(Rails.root.join("tmp", "failed_match_distribution_" + distribution.delivery_method.to_s + "_" + Time.current.to_s + ".pdf"), pdf_file)
+        File.binwrite(Rails.root.join("tmp", "failed_match_distribution_" + distribution.delivery_method.to_s + "_" + expected_file_path.to_s.split("/").last + ".pdf"), pdf_file)
         raise e.class, "PDF does not match, written to tmp/", cause: nil
       end
     end

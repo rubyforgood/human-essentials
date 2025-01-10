@@ -1,4 +1,8 @@
+require "active_support/testing/time_helpers"
+
 module PDFComparisonTestFactory
+  extend ActiveSupport::Testing::TimeHelpers
+
   StorageCreation = Data.define(:organization, :storage_location, :items)
   FilePaths = Data.define(:expected_pickup_file_path, :expected_same_address_file_path, :expected_different_address_file_path, :expected_incomplete_address_file_path, :expected_no_contact_file_path)
 
@@ -106,14 +110,15 @@ module PDFComparisonTestFactory
 
   def self.create_dist(partner, storage_creation, delivery_method)
     Time.zone = "America/Los_Angeles"
+    travel_to(Time.zone.local(2024, 12, 30, 0o0, 0o0, 0o0))
     dist = Distribution.create!(partner: partner, delivery_method: delivery_method, issued_at: DateTime.new(2024, 7, 4, 0, 0, 0, "-07:00"), organization: storage_creation.organization, storage_location: storage_creation.storage_location)
     create_line_items_request(dist, partner, storage_creation)
     dist
   end
 
-  private def create_comparison_pdf(storage_creation, profile_create_method, expected_file_path, delivery_method)
+  private_class_method def self.create_comparison_pdf(storage_creation, profile_create_method, expected_file_path, delivery_method)
     partner = create_partner(storage_creation.organization)
-    profile = PDFComparisonTestFactory.instance_method(profile_create_method).bind_call(Class.new.extend(PDFComparisonTestFactory), partner)
+    profile = PDFComparisonTestFactory.public_send(profile_create_method, partner)
     dist = create_dist(partner, storage_creation, delivery_method)
     pdf_file = DistributionPdf.new(storage_creation.organization, dist).compute_and_render
     File.binwrite(expected_file_path, pdf_file)
