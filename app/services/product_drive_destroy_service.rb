@@ -35,8 +35,7 @@ class ProductDriveDestroyService
 
   def verify_role
     return true if user.has_role?(Role::ORG_ADMIN, @organization)
-    flash[:error] = "You are not allowed to perform this action."
-    redirect_to product_drives_url
+    false
   end
 
   def can_destroy?
