@@ -26,7 +26,7 @@ class ProductDriveDestroyService
     else
       {
         success: true,
-        message: 'Product drive was successfully destroyed.'
+        message: "Product drive was successfully destroyed."
       }
     end
   end
@@ -35,7 +35,7 @@ class ProductDriveDestroyService
 
   def verify_role
     return true if user.has_role?(Role::ORG_ADMIN, @organization)
-    flash[:error] = 'You are not allowed to perform this action.'
+    flash[:error] = "You are not allowed to perform this action."
     redirect_to product_drives_url
   end
 
@@ -49,11 +49,11 @@ class ProductDriveDestroyService
   end
 
   def unauthorized_error
-    { success: false, message: "You are not allowed to perform this action." }
+    {success: false, message: "You are not allowed to perform this action."}
   end
 
   def donation_error
     product_drive.errors.add(:base, "Cannot delete product drive with donations.")
-    { success: false, message: "Cannot delete product drive with donations." }
+    {success: false, message: "Cannot delete product drive with donations."}
   end
 end
