@@ -1,10 +1,9 @@
 RSpec.describe Partners::HelpsController, type: :request do
-  let(:partner) { FactoryBot.create(:partner) }
+  let(:bank) { create(:organization, name: "Essentials Bank", email: "bank@test.com") }
+  let(:partner) { create(:partner, :approved, organization_id: bank.id) }
   let(:partner_user) { partner.primary_user }
-  let(:bank) { partner.organization }
 
   before do
-    partner.update(status: :approved)
     login_as(partner_user)
   end
 
