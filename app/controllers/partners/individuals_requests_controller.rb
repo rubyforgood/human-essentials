@@ -40,6 +40,7 @@ module Partners
         family_requests_attributes: individuals_request_params[:items_attributes]&.values,
         request_type: "individual"
       ).initialize_only
+
       if create_service.errors.none?
         @partner_request = create_service.partner_request
         @total_items = @partner_request.total_items

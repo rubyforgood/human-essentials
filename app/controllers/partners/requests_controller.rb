@@ -48,9 +48,8 @@ module Partners
         partner_user_id: current_user.id,
         comments: partner_request_params[:comments],
         item_requests_attributes: partner_request_params[:item_requests_attributes]&.values || []
-      )
+      ).initialize_only
 
-      create_service.initialize_only
       if create_service.errors.none?
         @partner_request = create_service.partner_request
         @total_items = @partner_request.total_items

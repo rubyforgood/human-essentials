@@ -39,6 +39,7 @@ module Partners
         family_requests_attributes: family_requests_attributes,
         request_type: "child"
       ).initialize_only
+
       if create_service.errors.none?
         @partner_request = create_service.partner_request
         @total_items = @partner_request.total_items
