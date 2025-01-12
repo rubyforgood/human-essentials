@@ -42,7 +42,5 @@ Also :
 ## Specific words and phrases
 - Ruby for Good
 
-
-
 ## If we have a question that is not covered here
 For general style questions that are not covered here, refer to the Chicago Manual of Style. 
