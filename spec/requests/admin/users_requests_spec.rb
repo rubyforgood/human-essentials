@@ -1,17 +1,28 @@
 RSpec.describe "Admin::UsersController", type: :request do
-  let(:organization) { create(:organization) }
-  let(:user) { create(:user, organization: organization) }
+  let(:organization) { create(:organization, name: "Org ABC") }
+  let(:user) { create(:user, organization: organization, name: "User 123") }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
   let(:super_admin) { create(:super_admin, organization: organization) }
-
-  let(:org) { create(:organization, name: 'Org ABC') }
-  let(:partner) { create(:partner, name: 'Partner XYZ', organization: org) }
-  let(:user) { create(:user, organization: org, name: 'User 123') }
+  let(:partner) { create(:partner, name: 'Partner XYZ', organization: organization) }
 
   context "When logged in as a super admin" do
     before do
       sign_in(super_admin)
       AddRoleService.call(user_id: user.id, resource_type: Role::PARTNER, resource_id: partner.id)
+    end
+
+
+    describe "GET #index" do
+      it "renders index template and shows banks and partners correctly" do
+        AddRoleService.call(user_id: user.id, resource_type: Role::ORG_ADMIN, resource_id: organization.id)
+        get admin_users_path
+
+        expect(response).to render_template(:index)
+
+        page = Nokogiri::HTML(response.body)
+        banks_and_partners = page.at_xpath("//*[contains(text(), \"#{user.email}\")]/../td[1]").text.strip
+        expect(banks_and_partners).to eq("Org ABC, Partner XYZ")
+      end
     end
 
     describe "GET #edit" do
@@ -48,11 +59,11 @@ RSpec.describe "Admin::UsersController", type: :request do
           allow(AddRoleService).to receive(:call)
           post admin_user_add_role_path(user_id: user.id,
             resource_type: Role::ORG_ADMIN,
-            resource_id: org.id),
+            resource_id: organization.id),
             headers: { 'HTTP_REFERER' => '/back/url'}
           expect(AddRoleService).to have_received(:call).with(user_id: user.id.to_s,
             resource_type: Role::ORG_ADMIN.to_s,
-            resource_id: org.id.to_s)
+            resource_id: organization.id.to_s)
           expect(flash[:notice]).to eq('Role added!')
           expect(response).to redirect_to('/back/url')
         end
@@ -63,11 +74,11 @@ RSpec.describe "Admin::UsersController", type: :request do
           allow(AddRoleService).to receive(:call).and_raise('OH NOES')
           post admin_user_add_role_path(user_id: user.id,
             resource_type: Role::ORG_ADMIN,
-            resource_id: org.id),
+            resource_id: organization.id),
             headers: { 'HTTP_REFERER' => '/back/url'}
           expect(AddRoleService).to have_received(:call).with(user_id: user.id.to_s,
             resource_type: Role::ORG_ADMIN.to_s,
-            resource_id: org.id.to_s)
+            resource_id: organization.id.to_s)
           expect(flash[:alert]).to eq('OH NOES')
           expect(response).to redirect_to('/back/url')
         end
