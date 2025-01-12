@@ -5,14 +5,12 @@ end
 module View
   # A wrapper around event-driven InventoryAggregate for use in views.
   class Inventory
-    ItemDropdownOption = Struct.new(:id, :name)
-
     class ViewInventoryItem < EventTypes::EventItem
       attribute :db_item, Types::Nominal::Any
       delegate(*Item.column_names.map(&:to_sym), to: :db_item)
 
       def to_dropdown_option
-        ItemDropdownOption.new(id: id, name: "#{name} (#{quantity})")
+        Option.new(id: id, name: "#{name} (#{quantity})")
       end
     end
 
