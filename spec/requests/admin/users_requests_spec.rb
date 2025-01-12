@@ -11,7 +11,6 @@ RSpec.describe "Admin::UsersController", type: :request do
       AddRoleService.call(user_id: user.id, resource_type: Role::PARTNER, resource_id: partner.id)
     end
 
-
     describe "GET #index" do
       it "renders index template and shows banks and partners correctly" do
         AddRoleService.call(user_id: user.id, resource_type: Role::ORG_ADMIN, resource_id: organization.id)
