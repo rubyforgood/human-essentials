@@ -13,22 +13,7 @@ module Partners
     end
 
     def call
-      @partner_request = ::Request.new(
-        partner_id: partner.id,
-        organization_id: organization_id,
-        comments: comments,
-        request_type: request_type,
-        partner_user_id: partner_user_id
-      )
-      @partner_request = populate_item_request(@partner_request)
-      @partner_request.assign_attributes(additional_attrs)
-
-      unless @partner_request.valid?
-        @partner_request.errors.each do |error|
-          errors.add(error.attribute, error.message)
-        end
-      end
-
+      initialize_only
       return self if errors.present?
 
       Request.transaction do
@@ -44,14 +29,23 @@ module Partners
     end
 
     def initialize_only
-      partner_request = ::Request.new(partner_id: partner.id,
+      @partner_request = ::Request.new(
+        partner_id: partner.id,
         organization_id: organization_id,
         comments: comments,
         request_type: request_type,
-        partner_user_id: partner_user_id)
-      partner_request = populate_item_request(partner_request)
-      partner_request.assign_attributes(additional_attrs)
-      partner_request
+        partner_user_id: partner_user_id
+      )
+      @partner_request = populate_item_request(partner_request)
+      @partner_request.assign_attributes(additional_attrs)
+
+      unless @partner_request.valid?
+        @partner_request.errors.each do |error|
+          errors.add(error.attribute, error.message)
+        end
+      end
+
+      self
     end
 
     private
@@ -68,42 +62,48 @@ module Partners
 
       formatted_line_items.each do |input_item|
         pre_existing_entry = items[input_item['item_id']]
+
         if pre_existing_entry
-          pre_existing_entry.quantity = (pre_existing_entry.quantity.to_i + input_item['quantity'].to_i).to_s
-          # NOTE: When this code was written (and maybe it's still the
-          # case as you read it!), the FamilyRequestsController does a
-          # ton of calculation to translate children to item quantities.
-          # If that logic is incorrect, there's not much we can do here
-          # to fix things. Could make sense to move more of that logic
-          # into one of the service objects that instantiate the Request
-          # object (either this one or the FamilyRequestCreateService).
-          pre_existing_entry.children = (pre_existing_entry.children + (input_item['children'] || [])).uniq
-        else
-          if input_item['request_unit'].to_s == '-1' # nothing selected
-            errors.add(:base, "Please select a unit for #{Item.find(input_item["item_id"]).name}")
+          if pre_existing_entry.request_unit != input_item['request_unit']
+            errors.add(:base, "Please use the same unit for every #{Item.find(input_item["item_id"]).name}")
+          else
+            pre_existing_entry.quantity = (pre_existing_entry.quantity.to_i + input_item['quantity'].to_i).to_s
+            # NOTE: When this code was written (and maybe it's still the
+            # case as you read it!), the FamilyRequestsController does a
+            # ton of calculation to translate children to item quantities.
+            # If that logic is incorrect, there's not much we can do here
+            # to fix things. Could make sense to move more of that logic
+            # into one of the service objects that instantiate the Request
+            # object (either this one or the FamilyRequestCreateService).
+            pre_existing_entry.children = (pre_existing_entry.children + (input_item['children'] || [])).uniq
             next
           end
-          items[input_item['item_id']] = Partners::ItemRequest.new(
-            item_id: input_item['item_id'],
-            request_unit: input_item['request_unit'],
-            quantity: input_item['quantity'],
-            children: input_item['children'] || [], # will create ChildItemRequests if there are any
-            name: fetch_organization_item_name(input_item['item_id']),
-            partner_key: fetch_organization_partner_key(input_item['item_id'])
-          )
         end
+
+        if input_item['request_unit'].to_s == '-1' # nothing selected
+          errors.add(:base, "Please select a unit for #{Item.find(input_item["item_id"]).name}")
+        end
+
+        item_request = Partners::ItemRequest.new(
+          item_id: input_item['item_id'],
+          request_unit: input_item['request_unit'],
+          quantity: input_item['quantity'],
+          children: input_item['children'] || [], # will create ChildItemRequests if there are any
+          name: fetch_organization_item_name(input_item['item_id']),
+          partner_key: fetch_organization_partner_key(input_item['item_id'])
+        )
+        partner_request.item_requests << item_request
+        items[input_item['item_id']] = item_request
       end
-
-      item_requests = items.values
-
-      partner_request.item_requests << item_requests
 
       partner_request.request_items = partner_request.item_requests.map do |ir|
         {
           item_id: ir.item_id,
-          quantity: ir.quantity
-        }
+          quantity: ir.quantity,
+          request_unit: ir.request_unit
+        }.compact
       end
+
       partner_request
     end
 
