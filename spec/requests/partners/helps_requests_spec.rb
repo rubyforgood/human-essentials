@@ -10,8 +10,8 @@ RSpec.describe Partners::HelpsController, type: :request do
   describe "for partner users" do
     it "displays the bank's information" do
       get partners_help_path
-      expect(response.body).to include("your essentials bank, #{bank.name}")
-      expect(response.body).to include(bank.email)
+      expect(response.body).to include("your essentials bank, Essentials Bank")
+      expect(response.body).to include("bank@test.com")
     end
   end
 end
