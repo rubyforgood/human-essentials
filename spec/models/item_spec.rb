@@ -24,7 +24,7 @@
 RSpec.describe Item, type: :model do
   let(:organization) { create(:organization) }
 
-  describe 'Assocations >' do
+  describe 'Associations >' do
     it { should belong_to(:item_category).optional }
   end
   context "Validations >" do

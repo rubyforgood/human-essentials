@@ -39,7 +39,7 @@ class ItemsController < ApplicationController
     result = create.call
 
     if result.success?
-      redirect_to items_path, notice: "#{result.item.name} added!"
+      redirect_to items_path, notice: "#{result.value.name} added!"
     else
       @base_items = BaseItem.without_kit.alphabetized
       # Define a @item to be used in the `new` action to be rendered with
