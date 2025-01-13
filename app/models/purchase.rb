@@ -61,6 +61,16 @@ class Purchase < ApplicationRecord
   validates :amount_spent_in_cents, numericality: { greater_than: 0 }
   validate :total_equal_to_all_categories
 
+  SummaryByDates = Data.define(
+    :amount_spent,
+    :recent_purchases,
+    :period_supplies,
+    :diapers,
+    :adult_incontinence,
+    :other,
+    :total_items
+  )
+
   def storage_view
     storage_location.nil? ? "N/A" : storage_location.name
   end
@@ -84,7 +94,7 @@ class Purchase < ApplicationRecord
   def self.organization_summary_by_dates(organization, date_range)
     purchases = where(organization: organization).during(date_range)
 
-    OpenStruct.new(
+    SummaryByDates.new(
       amount_spent: purchases.sum(:amount_spent_in_cents),
       recent_purchases: purchases.recent.includes(:vendor),
       period_supplies: purchases.sum(:amount_spent_on_period_supplies_cents),

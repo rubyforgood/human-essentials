@@ -29,9 +29,10 @@ RSpec.describe "Transfers", type: :request do
           let!(:new_transfer) { create(:transfer, created_at: 1.day.ago, organization: organization) }
 
           context 'when date parameters are supplied' do
-            it 'only returns the correct obejects' do
+            it 'only returns the correct objects' do
               start_date = 3.days.ago.to_fs(:date_picker)
               end_date = Time.zone.today.to_fs(:date_picker)
+
               get transfers_path(filters: { date_range: "#{start_date} - #{end_date}" })
               expect(assigns(:transfers)).to eq([new_transfer])
             end
@@ -101,25 +102,25 @@ RSpec.describe "Transfers", type: :request do
       end
 
       context 'when the transfer destroy service was successful' do
-        let(:fake_success_struct) { OpenStruct.new(success?: true) }
+        let(:successful_result) { Result.new }
 
         before do
-          allow(fake_destroy_service).to receive(:call).and_return(fake_success_struct)
+          allow(fake_destroy_service).to receive(:call).and_return(successful_result)
           subject
         end
 
         it 'should set a notice flash with the success message and redirect to index' do
-          expect(flash[:notice]).to eq("Succesfully deleted Transfer ##{transfer_id}!")
+          expect(flash[:notice]).to eq("Successfully deleted Transfer ##{transfer_id}!")
           expect(response).to redirect_to(transfers_path)
         end
       end
 
       context 'when the transfer destroy service was not successful' do
-        let(:fake_error_struct) { OpenStruct.new(success?: false, error: fake_error) }
+        let(:failing_result) { Result.new(error: fake_error) }
         let(:fake_error) { StandardError.new('fake-error-msg') }
 
         before do
-          allow(fake_destroy_service).to receive(:call).and_return(fake_error_struct)
+          allow(fake_destroy_service).to receive(:call).and_return(failing_result)
           subject
         end
 
