@@ -11,9 +11,14 @@ class ProductDriveDestroyService
     new(product_drive, user, organization).call
   end
 
+  def self.can_destroy?(product_drive, user)
+    return false unless user.has_role?(Role::ORG_ADMIN, product_drive.organization)
+    product_drive.donations.empty?
+  end
+
   def call
     return unauthorized_error unless verify_role
-    return donation_error unless self.class.can_destroy?(product_drive)
+    return donation_error unless self.class.can_destroy?(product_drive, user)
 
     product_drive = organization.product_drives.find(product_drive.id)
     product_drive.destroy
@@ -38,16 +43,16 @@ class ProductDriveDestroyService
     false
   end
 
-  def can_destroy?(product_drive, user)
-    return false unless user.has_role?(Role::ORG_ADMIN, product_drive.organization)
+  # def can_destroy?(product_drive, user)
+  #   return false unless user.has_role?(Role::ORG_ADMIN, product_drive.organization)
 
-    if product_drive.donations.empty?
-      true
-    else
-      product_drive.errors.add(:base, "Cannot delete product drive with donations.")
-      false
-    end
-  end
+  #   if product_drive.donations.empty?
+  #     true
+  #   else
+  #     product_drive.errors.add(:base, "Cannot delete product drive with donations.")
+  #     false
+  #   end
+  # end
 
   def unauthorized_error
     {success: false, message: "You are not allowed to perform this action."}
