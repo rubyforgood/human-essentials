@@ -16,7 +16,7 @@ class ProductDrivesController < ApplicationController
     @selected_item_category = filter_params[:by_item_category_id]
     @summary = ProductDriveSummaryService.new(
       product_drives: @product_drives,
-      within_date_range: @selected_date_range,
+      within_date_range: helpers.selected_interval,
       item_category_id: @selected_item_category
     ).call
 

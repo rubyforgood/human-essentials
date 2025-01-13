@@ -33,7 +33,7 @@ class ProductDriveSummaryService
       query = ProductDrive
         .left_joins(donations: {line_items: [:item]})
         .where(id: @product_drives.ids)
-        .within_date_range(@within_date_range)
+        .where(donations: {issued_at: @within_date_range[0]..@within_date_range[1]})
         .group("product_drives.id")
         .distinct
 
