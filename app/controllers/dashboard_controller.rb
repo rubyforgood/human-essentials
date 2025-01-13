@@ -4,9 +4,13 @@ class DashboardController < ApplicationController
 
   def index
     @org_stats = OrganizationStats.new(current_organization)
-    @total_inventory = current_organization.total_inventory
     @partners_awaiting_review = current_organization.partners.awaiting_review
-    @outstanding_requests = current_organization.ordered_requests.where(status: %i[pending started]).order(:created_at)
+    @outstanding_requests = current_organization
+      .ordered_requests
+      .includes(:partner_user, :partner)
+      .where(status: %i[pending started])
+      .order(:created_at)
+      .limit(25)
 
     @low_inventory_report = LowInventoryQuery.call(current_organization)
 

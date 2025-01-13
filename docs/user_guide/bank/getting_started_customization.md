@@ -105,7 +105,7 @@ You can also specify a different default Storage Location on any Partner, which 
 If you specify a default Storage Location, it will be pre-populated as the Storage Location when you are adding new Distributions.
 
 #### Custom Partner Invitation Message 
-[!NOTE] The Custom Partner Invitation Message is currenty not working as advertised (as of November 13, 2024.).  The current behavior is as if you did not enter anything here.  We have fixing it on our "to do" list.
+[!NOTE] The Custom Partner Invitation Message is currently not working as advertised (as of November 13, 2024.).  The current behavior is as if you did not enter anything here.  We have fixing it on our "to do" list.
 
 When you invite a Partner, they get an email.  This field lets you specify the message you are sending to them.  Just text -- we don't have any personalization capability for this email at this time.
 
@@ -114,6 +114,8 @@ If you do not specify a message, the invitation will contain:
 Hello [Partner's email]
 
 You've been invited to become a partner with Pawnee Diaper Bank!
+
+[Customer Partner Invitation Message If Present]
 
 Please click the link below to accept your invitation and create an account and you'll be able to begin requesting Distributions.
 

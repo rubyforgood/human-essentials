@@ -41,7 +41,7 @@ This section contains basic agency information that most, if not all, partners w
 - Agency Name
 - Agency Type
 - Other Agency Type (i.e, details if "other" is chosen in Agency Type)
-- 501(c)(3) IRS Determination Letter  -- this is a file to upload said letter.
+- 501(c)(3) IRS Determination Letter or other Proof of Agency Status  -- this is a file to upload said letter.
 - Agency Mission
 - Address
 - City
@@ -98,7 +98,7 @@ How does the agency get its funding?
 ### Area Served (County/Client Share %)
 This asks what county/county equivalents the agency serves and what proportion of their client share is in which area.
 
-At this time, this only covers U.S. counties and equivalents.   We believe the list covers *all* of the U.S, including some areas that are not tecnically counties.    
+At this time, this only covers U.S. counties and equivalents.   We believe the list covers *all* of the U.S, including some areas that are not technically counties.    
 Let us know if you need more!
 
 The sum of the client share has to be either 0 or 100, and the numbers have to be positive whole numbers.

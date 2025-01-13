@@ -51,10 +51,5 @@ FactoryBot.define do
       itemizable_type { "Transfer" }
       itemizable_id { create(:transfer).id }
     end
-
-    trait :kit do
-      itemizable_type { "Kit" }
-      itemizable_id { create(:kit).id }
-    end
   end
 end

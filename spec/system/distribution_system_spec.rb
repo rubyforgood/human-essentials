@@ -233,7 +233,7 @@ RSpec.feature "Distributions", type: :system do
         end
 
         expect(page).not_to have_content('New Distribution')
-        expect(page).to have_content("The following items have fallen below the minimum on hand quantity: #{item.name}")
+        expect(page).to have_content("The following items have fallen below the minimum on hand quantity, bank-wide: #{item.name}")
       end
     end
 
@@ -268,7 +268,7 @@ RSpec.feature "Distributions", type: :system do
           click_button "Yes, it's correct"
         end
 
-        expect(page).to have_content("The following items have fallen below the recommended on hand quantity: #{item.name}")
+        expect(page).to have_content("The following items have fallen below the recommended on hand quantity, bank-wide: #{item.name}")
       end
     end
 
@@ -338,7 +338,7 @@ RSpec.feature "Distributions", type: :system do
   end
 
   context "With an existing distribution" do
-    let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", delivery_method: delivery_method, organization: user.organization) }
+    let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", delivery_method: delivery_method, organization: user.organization, reminder_email_enabled: true) }
     let(:delivery_method) { "pick_up" }
 
     before do
@@ -558,9 +558,9 @@ RSpec.feature "Distributions", type: :system do
 
     context "when editing that distribution" do
       before do
-        click_on "Distributions", match: :first
-        click_on "Edit", match: :first
         @distribution = Distribution.last
+        expect(page).to have_current_path(distribution_path(@distribution.id))
+        click_on "Make a Correction"
       end
 
       it "User creates a distribution from a donation then edits it" do

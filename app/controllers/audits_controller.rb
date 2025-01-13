@@ -10,7 +10,7 @@ class AuditsController < ApplicationController
   end
 
   def show
-    @items = View::Inventory.items_for_location(@audit.storage_location)
+    @items = View::Inventory.items_for_location(@audit.storage_location, include_omitted: true)
   end
 
   def edit
@@ -93,7 +93,7 @@ class AuditsController < ApplicationController
   end
 
   def set_items
-    @items = current_organization.items.alphabetized
+    @items = current_organization.items.where(active: true).alphabetized
   end
 
   def save_audit_status_and_redirect(params)

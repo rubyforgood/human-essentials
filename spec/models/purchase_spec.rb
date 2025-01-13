@@ -87,17 +87,6 @@ RSpec.describe Purchase, type: :model do
   end
 
   context "Callbacks >" do
-    it "inititalizes the issued_at field to default to midnight if it wasn't explicitly set" do
-      yesterday = 1.day.ago
-      today = Time.zone.today
-
-      purchase = create(:purchase, created_at: yesterday, issued_at: today)
-      expect(purchase.issued_at.to_date).to eq(today)
-
-      purchase = create(:purchase, created_at: yesterday)
-      expect(purchase.issued_at).to eq(purchase.created_at.end_of_day)
-    end
-
     it "automatically combines duplicate line_item records when they're created" do
       purchase = build(:purchase)
       item = create(:item)
@@ -120,7 +109,7 @@ RSpec.describe Purchase, type: :model do
         # and one outside the range
         create(:purchase, issued_at: 1.year.ago)
 
-        expect(Purchase.during(1.month.ago..Time.zone.now + 2.days).size).to eq(2)
+        expect(Purchase.during(1.month.ago..2.days.from_now).size).to eq(2)
       end
     end
   end

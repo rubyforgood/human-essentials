@@ -22,6 +22,8 @@
   </div><!-- /.container-fluid -->
 </section>
 
+<%= render 'actions', partner: current_partner %>
+
 <div class="row">
   <div class="col-md-12">
       <div class="container-fluid">
@@ -42,37 +44,4 @@
     </div>
 </div>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <!-- left column -->
-      <div class="col-md-12">
-        <!-- jquery validation -->
-        <div class="card card-primary">
-          <div class="card-footer">
-            <% if current_partner.approved? %>
-              <%= link_to '', class: 'btn btn-info disabled' do %>
-                <i class="fa fa-check"></i> Approved
-              <% end %>
-            <% elsif current_partner.awaiting_review? %>
-              <%= link_to '', class: "btn btn-warning disabled" do %>
-                <i class="fa fa-clock"></i> Pending Approval
-              <% end %>
-            <% else %>
-              <%= link_to partners_approval_request_path, method: :post, class: "btn btn-success" do %>
-                <i class="fa fa-paper-plane"></i> Submit for Approval
-              <% end %>
-            <% end %>
-
-            <%= link_to edit_partners_profile_path, class: 'btn btn-primary' do %>
-              <i class="fa fa-pencil"></i> Update Information
-            <% end %>
-          </div>
-        </div>
-        <!-- /.card -->
-      </div>
-      <!--/.col (left) -->
-    </div>
-    <!-- /.row -->
-  </div><!-- /.container-fluid -->
-</section>
+<%= render 'actions', partner: current_partner %>

@@ -34,15 +34,15 @@ class StorageLocation < ApplicationRecord
   has_many :distributions, dependent: :destroy
   has_many :transfers_from, class_name: "Transfer",
                             inverse_of: :from,
-                            foreign_key: :id,
+                            foreign_key: :from_id,
                             dependent: :destroy
   has_many :transfers_to, class_name: "Transfer",
                           inverse_of: :to,
-                          foreign_key: :id,
+                          foreign_key: :to_id,
                           dependent: :destroy
   has_many :kit_allocations, dependent: :destroy
 
-  validates :name, :address, :organization, presence: true
+  validates :name, :address, presence: true
   validates :warehouse_type, inclusion: { in: WAREHOUSE_TYPES },
                              allow_blank: true
   before_destroy :validate_empty_inventory, prepend: true
@@ -55,16 +55,23 @@ class StorageLocation < ApplicationRecord
   scope :alphabetized, -> { order(:name) }
   scope :for_csv_export, ->(organization, *) { where(organization: organization) }
   scope :active_locations, -> { where(discarded_at: nil) }
+  scope :with_transfers_to, ->(organization) {
+    joins(:transfers_to).where(organization_id: organization.id).distinct.order(:name)
+  }
+  scope :with_transfers_from, ->(organization) {
+    joins(:transfers_from).where(organization_id: organization.id).distinct.order(:name)
+  }
 
   # @param organization [Organization]
   # @param inventory [View::Inventory]
+  # @return [Array<Option>]
   def self.items_inventoried(organization, inventory = nil)
     inventory ||= View::Inventory.new(organization.id)
     inventory
       .all_items
       .uniq(&:item_id)
       .sort_by(&:name)
-      .map { |i| OpenStruct.new(name: i.name, id: i.item_id) }
+      .map { |i| Option.new(name: i.name, id: i.item_id) }
   end
 
   # @return [Array<Item>]

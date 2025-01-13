@@ -1,40 +1,40 @@
 class InventoryCheckService
-  attr_reader :error, :alert
+  attr_reader :minimum_alert, :recommended_alert
 
   def initialize(distribution)
     @distribution = distribution
-    @alert = nil
-    @error = nil
+    @minimum_alert = nil
+    @recommended_alert = nil
   end
 
   def call
     @inventory = View::Inventory.new(@distribution.organization_id)
     unless items_below_minimum_quantity.empty?
-      set_error
+      set_minimum_alert
     end
 
     unless deduplicate_items_below_recommended_quantity.empty?
-      set_alert
+      set_recommended_alert
     end
 
     self
   end
 
-  def set_error
-    @error = "The following items have fallen below the minimum " \
-      "on hand quantity: #{items_below_minimum_quantity.map(&:name).sort.join(", ")}"
+  def set_minimum_alert
+    @minimum_alert = "The following items have fallen below the minimum " \
+      "on hand quantity, bank-wide: #{items_below_minimum_quantity.map(&:name).sort.join(", ")}"
   end
 
-  def set_alert
-    @alert = "The following items have fallen below the recommended " \
-      "on hand quantity: #{deduplicate_items_below_recommended_quantity.map(&:name).sort.join(", ")}"
+  def set_recommended_alert
+    @recommended_alert = "The following items have fallen below the recommended " \
+      "on hand quantity, bank-wide: #{deduplicate_items_below_recommended_quantity.map(&:name).sort.join(", ")}"
   end
 
   def items_below_minimum_quantity
     # Done this way to prevent N+1 query on items
     unless @items_below_minimum_quantity
       item_ids = @distribution.line_items.select do |line_item|
-        quantity = @inventory.quantity_for(storage_location: @distribution.storage_location_id, item_id: line_item.item_id)
+        quantity = @inventory.quantity_for(item_id: line_item.item_id)
         quantity < (line_item.item.on_hand_minimum_quantity || 0)
       end.map(&:item_id)
 
@@ -48,7 +48,7 @@ class InventoryCheckService
     # Done this way to prevent N+1 query on items
     unless @items_below_recommended_quantity
       item_ids = @distribution.line_items.select do |line_item|
-        quantity = @inventory.quantity_for(storage_location: @distribution.storage_location_id, item_id: line_item.item_id)
+        quantity = @inventory.quantity_for(item_id: line_item.item_id)
         quantity < (line_item.item.on_hand_recommended_quantity || 0)
       end.map(&:item_id)
 

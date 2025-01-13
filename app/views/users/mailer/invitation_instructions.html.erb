@@ -346,6 +346,7 @@
                     <p>Hello <%= @resource.email %></p>
                     <% if @resource.partner.present? && is_primary_partner %>
                       <p>You've been invited to become a partner with <strong><%= organization.name %>!</strong></p>
+                      <p><%= organization.invitation_text %></p>
                       <p>Please click the link below to accept your invitation and create an account and you'll be able to begin requesting distributions.</p>
                       <p><strong> Please contact <%= organization.email %> if you are encountering any issues. </strong></p>
                     <% elsif @resource.partner.present? && !is_primary_partner %>
@@ -373,7 +374,6 @@
                     <% if @resource.invitation_due_at %>
                       <p><%= t("devise.mailer.invitation_instructions.accept_until", due_date: l(@resource.invitation_due_at, format: :'devise.mailer.invitation_instructions.accept_until_format')) %></p>
                     <% end %>
-                    <p>For security reasons these invitations expire. This invitation will expire in 8 hours or if a new password reset is triggered.</p>
                     <p>If your invitation has an expired message, go <%= link_to "here", new_user_password_url %> and enter your email address to reset your password.</p>
                     <p>Feel free to ignore this email if you are not interested or if you feel it was sent by mistake.</p>
                   </td>

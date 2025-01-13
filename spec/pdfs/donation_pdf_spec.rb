@@ -5,6 +5,17 @@ describe DonationPdf do
     create(:donation, organization: organization, donation_site: donation_site, source: Donation::SOURCES[:donation_site],
       comment: "A donation comment")
   end
+  let(:product_drive) { create(:product_drive, name: "Second Best Product Drive") }
+  let(:product_drive_participant) {
+    create(:product_drive_participant, business_name: "A Good Place to Collect Diapers", address: "1500 Remount Road, Front Royal, VA 22630", email: "good@place.is")
+  }
+  let(:product_drive_donation) do
+    create(:donation, organization: organization, product_drive: product_drive, source: Donation::SOURCES[:product_drive],
+      product_drive_participant: product_drive_participant, comment: "A product drive donation")
+  end
+  let(:product_drive_donation_without_participant) do
+    create(:donation, organization: organization, product_drive: product_drive, source: Donation::SOURCES[:product_drive], comment: "A product drive donation without participant")
+  end
   let(:item1) { FactoryBot.create(:item, name: "Item 1", package_size: 50, value_in_cents: 100) }
   let(:item2) { FactoryBot.create(:item, name: "Item 2", value_in_cents: 200) }
   let(:item3) { FactoryBot.create(:item, name: "Item 3", value_in_cents: 300) }
@@ -63,6 +74,24 @@ describe DonationPdf do
       expect(pdf_test.page(1).text).to match(/Item 1\s+\$1\.00\s+\$50\.00\s+50/)
       expect(pdf_test.page(1).text).to match(/Item 2\s+\$2\.00\s+\$200\.00\s+100/)
       expect(pdf_test.page(1).text).to include("Total Items Received")
+    end
+  end
+
+  context "product drive donation" do
+    it "renders correctly" do
+      pdf = described_class.new(organization, product_drive_donation)
+      pdf_test = PDF::Reader.new(StringIO.new(pdf.compute_and_render))
+      expect(pdf_test.page(1).text).to include("A Good Place to Collect Diapers")
+      expect(pdf_test.page(1).text).to include("good@place.is")
+      expect(pdf_test.page(1).text).to include("1500 Remount Road, Front Royal, VA 22630")
+      expect(pdf_test.page(1).text).to include("A product drive donation")
+    end
+
+    it "renders correctly without a product drive participant" do
+      pdf = described_class.new(organization, product_drive_donation_without_participant)
+      pdf_test = PDF::Reader.new(StringIO.new(pdf.compute_and_render))
+      expect(pdf_test.page(1).text).to include("Product Drive -- Second Best Product Drive")
+      expect(pdf_test.page(1).text).to include("A product drive donation")
     end
   end
 end

@@ -6,7 +6,7 @@ shared_examples_for "distribution_by_county" do
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 
   let(:item_1) { create(:item, value_in_cents: 1050, organization: organization) }
-  let(:issued_at_present) { Time.current.utc.to_datetime }
+  let(:issued_at_present) { Time.current.to_datetime }
   let(:partner_1) {
     p1 = create(:partner, organization: organization)
     p1.profile.served_areas << create_list(:partners_served_area, 4, partner_profile: p1.profile, client_share: 25)
