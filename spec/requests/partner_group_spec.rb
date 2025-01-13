@@ -32,7 +32,7 @@ RSpec.describe "PartnerGroups", type: :request do
       end
       it "does not destroy the partner group" do
         within "#nav-partner-groups" do
-          expect(reponse.body).not_to have_link("Delete")
+          expect(response.body).not_to have_link("Delete")
         end
         expect {
           delete partner_group_path(partner_group)

@@ -58,7 +58,7 @@ RSpec.describe DonationDestroyService do
       end
     end
 
-    context 'when the donation succesfully gets destroyed' do
+    context 'when the donation successfully gets destroyed' do
       let(:donation) { FactoryBot.create(:donation) }
       subject {
         described_class.new(organization_id: donation.organization_id,

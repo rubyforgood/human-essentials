@@ -429,7 +429,7 @@ RSpec.describe "Organizations", type: :request do
         end
       end
 
-      it "can see 'Demote User' button for organizaiton admins" do
+      it "can see 'Demote User' button for organization admins" do
         within(".content") do
           expect(response.body).to have_link("Demote to User")
         end
