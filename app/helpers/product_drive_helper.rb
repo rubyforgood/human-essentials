@@ -4,4 +4,8 @@ module ProductDriveHelper
 
     product_drive.virtual? ? 'Yes' : 'No'
   end
+
+  def can_delete_product_drive?(user, product_drive)
+    user.has_role?(Role::ORG_ADMIN, product_drive.organization) && product_drive.donations.empty?
+  end
 end
