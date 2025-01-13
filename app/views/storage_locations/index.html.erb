@@ -89,7 +89,7 @@
                 <td class="text-right">
                   <%= @storage_locations.sum { |sl| @inventory.quantity_for(storage_location: sl.id) } %>
                 </td>
-                <td class="text-right"><%= number_to_currency(@storage_locations.sum(&:inventory_total_value_in_dollars)) %></td>
+                <td class="text-right"><%= number_to_currency(@storage_locations.sum { |sl| sl.inventory_total_value_in_dollars(@inventory) }) %></td>
                 <td></td>
               </tr>
               </tbody>

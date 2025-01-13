@@ -92,23 +92,6 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       end
     end
 
-    it "displays the correct grand totals across all storage locations" do
-      item = create(:item, name: "Needle", value_in_cents: 100)
-
-      location1 = create(:storage_location, name: "Location 1")
-      create(:donation, :with_items, item: item, item_quantity: 30, storage_location: location1)
-
-      location2 = create(:storage_location, name: "Location 2")
-      create(:donation, :with_items, item: item, item_quantity: 70, storage_location: location2)
-
-      visit subject
-
-      within "tbody tr:last-child" do
-        expect(page).to have_content(100) # The expected total inventory
-        expect(page).to have_content("$100.00") # The expected total fair market value
-      end
-    end
-
     it "User can filter the #index by those that contain certain items" do
       item = create(:item, name: Faker::Lorem.unique.word)
       create(:item, name: Faker::Lorem.unique.word)

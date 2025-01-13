@@ -157,6 +157,7 @@ RSpec.describe "StorageLocations", type: :request do
             Storage Location with Items,123 Donation Site Way,100,Residential space used,3,1,1,1,0
             Storage Location with Unique Items,Smithsonian Conservation Center new,100,Residential space used,5,0,0,0,5
             Test Storage Location,123 Donation Site Way,100,Residential space used,0,0,0,0,0
+            Test Storage Location 1,123 Donation Site Way,100,Residential space used,0,0,0,0,0
           CSV
           expect(response.body).to eq(csv)
         end
