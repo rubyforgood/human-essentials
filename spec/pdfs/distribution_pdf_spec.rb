@@ -130,7 +130,7 @@ describe DistributionPdf do
       ])
     end
   end
-  context "regardles of request data" do
+  context "regardless of request data" do
     describe "#hide_columns" do
       it "hides package column when true on organization" do
         pdf = described_class.new(org_hiding_packages, distribution)
