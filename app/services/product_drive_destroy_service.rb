@@ -20,7 +20,6 @@ class ProductDriveDestroyService
     return unauthorized_error unless verify_role
     return donation_error unless self.class.can_destroy?(product_drive, user)
 
-    product_drive = organization.product_drives.find(product_drive.id)
     product_drive.destroy
 
     if product_drive.errors.any?
