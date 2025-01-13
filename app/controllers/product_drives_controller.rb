@@ -14,11 +14,11 @@ class ProductDrivesController < ApplicationController
     @item_categories = current_organization.item_categories
     @selected_name_filter = filter_params[:by_name]
     @selected_item_category = filter_params[:by_item_category_id]
-    @summary = ProductDriveSummaryService.new(
+    @summary = ProductDriveSummaryService.call(
       product_drives: @product_drives,
       within_date_range: helpers.selected_interval,
       item_category_id: @selected_item_category
-    ).call
+    )
 
     respond_to do |format|
       format.html
