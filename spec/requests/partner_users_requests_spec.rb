@@ -9,13 +9,6 @@ RSpec.describe PartnerUsersController, type: :request do
     {organization_id: @organization.to_param}
   end
 
-  shared_examples "denies access" do
-    it "denies access" do
-      expect(response).to redirect_to(dashboard_path)
-      expect(flash[:error]).to match(/access denied/i)
-    end
-  end
-
   describe "GET #index" do
     context "while signed in as org admin" do
       before do
@@ -32,10 +25,14 @@ RSpec.describe PartnerUsersController, type: :request do
     context "while signed in as org user" do
       before do
         sign_in(user)
-        get partner_users_path(default_params.merge(partner_id: partner))
       end
 
-      include_examples "denies access"
+      it "denies access" do
+        get partner_users_path(default_params.merge(partner_id: partner))
+
+        expect(response).to redirect_to(dashboard_path)
+        expect(flash[:error]).to match(/access denied/i)
+      end
     end
   end
 
@@ -78,10 +75,14 @@ RSpec.describe PartnerUsersController, type: :request do
     context "while signed in as org user" do
       before do
         sign_in(user)
-        post partner_users_path(default_params.merge(partner_id: partner)), params: {user: valid_user_params}
       end
 
-      include_examples "denies access"
+      it "denies access" do
+        post partner_users_path(default_params.merge(partner_id: partner)), params: {user: valid_user_params}
+
+        expect(response).to redirect_to(dashboard_path)
+        expect(flash[:error]).to match(/access denied/i)
+      end
     end
   end
 
@@ -122,10 +123,14 @@ RSpec.describe PartnerUsersController, type: :request do
     context "while signed in as org user" do
       before do
         sign_in(user)
-        delete partner_user_path(default_params.merge(partner_id: partner, id: partner_user))
       end
 
-      include_examples "denies access"
+      it "denies access" do
+        delete partner_user_path(default_params.merge(partner_id: partner, id: partner_user))
+
+        expect(response).to redirect_to(dashboard_path)
+        expect(flash[:error]).to match(/access denied/i)
+      end
     end
   end
 
@@ -170,10 +175,14 @@ RSpec.describe PartnerUsersController, type: :request do
     context "while signed in as org user" do
       before do
         sign_in(user)
-        post resend_invitation_partner_user_path(default_params.merge(partner_id: partner, id: partner_user))
       end
 
-      include_examples "denies access"
+      it "denies access" do
+        post resend_invitation_partner_user_path(default_params.merge(partner_id: partner, id: partner_user))
+
+        expect(response).to redirect_to(dashboard_path)
+        expect(flash[:error]).to match(/access denied/i)
+      end
     end
   end
 
@@ -194,7 +203,9 @@ RSpec.describe PartnerUsersController, type: :request do
 
       context "when a bank needs to reset a partner user's password" do
         it "resends the reset password email and redirects back to root_path" do
-          expect { post reset_password_partner_user_path(default_params.merge(partner_id: partner, id: partner_user)) }.to change { ActionMailer::Base.deliveries.count }.by(1)
+          expect {
+            post reset_password_partner_user_path(default_params.merge(partner_id: partner, id: partner_user))
+          }.to change { ActionMailer::Base.deliveries.count }.by(1)
           expect(response).to redirect_to(root_path)
           expect(flash[:notice]).to eq("Password e-mail sent!")
         end
@@ -204,10 +215,14 @@ RSpec.describe PartnerUsersController, type: :request do
     context "while signed in as org user" do
       before do
         sign_in(user)
-        post reset_password_partner_user_path(default_params.merge(partner_id: partner, id: partner_user))
       end
 
-      include_examples "denies access"
+      it "denies access" do
+        post reset_password_partner_user_path(default_params.merge(partner_id: partner, id: partner_user))
+
+        expect(response).to redirect_to(dashboard_path)
+        expect(flash[:error]).to match(/access denied/i)
+      end
     end
   end
 end
