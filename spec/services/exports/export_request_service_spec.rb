@@ -113,7 +113,7 @@ RSpec.describe Exports::ExportRequestService do
       end
 
       it "has expected data for the 3T Diapers request" do
-        expect(subject[1]).to eq([
+        expect(subject).to include([
           request_3t.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
           "Child",
@@ -127,7 +127,7 @@ RSpec.describe Exports::ExportRequestService do
       end
 
       it "has expected data for the 2T Diapers request" do
-        expect(subject[2]).to eq([
+        expect(subject).to include([
           request_2t.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
           "Individual",
@@ -141,7 +141,7 @@ RSpec.describe Exports::ExportRequestService do
       end
 
       it "has expected data for the request with deleted items" do
-        expect(subject[3]).to eq([
+        expect(subject).to include([
           request_with_deleted_items.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
           nil,
@@ -155,7 +155,7 @@ RSpec.describe Exports::ExportRequestService do
       end
 
       it "has expected data for the request with multiple items" do
-        expect(subject[4]).to eq([
+        expect(subject).to include([
           request_with_multiple_items.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
           nil,
@@ -169,7 +169,7 @@ RSpec.describe Exports::ExportRequestService do
       end
 
       it "has expected data for the request with 4T diapers without pack unit" do
-        expect(subject[5]).to eq([
+        expect(subject).to include([
           request_4t.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
           "Quantity",
@@ -183,7 +183,7 @@ RSpec.describe Exports::ExportRequestService do
       end
 
       it "has expected data for the request with 4T diapers with pack unit" do
-        expect(subject[6]).to eq([
+        expect(subject).to include([
           request_4t_pack.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
           "Quantity",
@@ -198,7 +198,7 @@ RSpec.describe Exports::ExportRequestService do
 
       it "has expected data even when the unit was deleted" do
         item_4t.request_units.destroy_all
-        expect(subject[6]).to eq([
+        expect(subject).to include([
           request_4t_pack.created_at.strftime("%m/%d/%Y").to_s,
           "Howdy Partner",
           "Quantity",

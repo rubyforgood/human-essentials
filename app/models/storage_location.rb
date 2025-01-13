@@ -42,7 +42,7 @@ class StorageLocation < ApplicationRecord
                           dependent: :destroy
   has_many :kit_allocations, dependent: :destroy
 
-  validates :name, :address, :organization, presence: true
+  validates :name, :address, presence: true
   validates :warehouse_type, inclusion: { in: WAREHOUSE_TYPES },
                              allow_blank: true
   before_destroy :validate_empty_inventory, prepend: true
@@ -64,13 +64,14 @@ class StorageLocation < ApplicationRecord
 
   # @param organization [Organization]
   # @param inventory [View::Inventory]
+  # @return [Array<Option>]
   def self.items_inventoried(organization, inventory = nil)
     inventory ||= View::Inventory.new(organization.id)
     inventory
       .all_items
       .uniq(&:item_id)
       .sort_by(&:name)
-      .map { |i| OpenStruct.new(name: i.name, id: i.item_id) }
+      .map { |i| Option.new(name: i.name, id: i.item_id) }
   end
 
   # @return [Array<Item>]

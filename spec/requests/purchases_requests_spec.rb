@@ -38,6 +38,49 @@ RSpec.describe "Purchases", type: :request do
           expect(subject.body).to include("Purchase Comment")
         end
 
+        context "with multiple purchases" do
+          let!(:storage_location) { create(:storage_location, organization: organization) }
+          let(:vendor) { create(:vendor, organization: organization) }
+          let!(:purchase1) do
+            create(:purchase,
+              organization: organization,
+              storage_location: storage_location,
+              vendor: vendor,
+              amount_spent_in_cents: 1000,
+              line_items: [
+                build(:line_item, quantity: 10, item: create(:item, organization: organization))
+              ])
+          end
+
+          let!(:purchase2) do
+            create(:purchase,
+              organization: organization,
+              storage_location: storage_location,
+              vendor: vendor,
+              amount_spent_in_cents: 1000,
+              line_items: [
+                build(:line_item, quantity: 20, item: create(:item, organization: organization))
+              ])
+          end
+
+          before do
+            allow_any_instance_of(Purchase).to receive(:value_per_itemizable).and_return(1500)
+            get purchases_path(format: 'html')
+          end
+
+          it 'displays correct total purchase quantities' do
+            expect(response.body).to include("30")
+          end
+
+          it 'displays correct total purchase values' do
+            expect(response.body).to include("$20.00")
+          end
+
+          it 'displays correct total fair market values' do
+            expect(response.body).to include("$30.00")
+          end
+        end
+
         describe "pagination" do
           around do |ex|
             Kaminari.config.default_per_page = 2
