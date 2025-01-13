@@ -6,7 +6,11 @@ module PDFComparisonTestFactory
   StorageCreation = Data.define(:organization, :storage_location, :items)
   FilePaths = Data.define(:expected_pickup_file_path, :expected_same_address_file_path, :expected_different_address_file_path, :expected_incomplete_address_file_path, :expected_no_contact_file_path)
 
-  def self.create_organization_storage_items
+  def self.get_logo_file
+    Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/logo.jpg"), "image/jpeg")
+  end
+
+  def self.create_organization_storage_items(logo = get_logo_file)
     org = Organization.create!(
       name: "Essentials Bank 1",
       short_name: "db",
@@ -15,7 +19,7 @@ module PDFComparisonTestFactory
       state: "VA",
       zipcode: "22630",
       email: "email1@example.com",
-      logo: Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/logo.jpg"), "image/jpeg")
+      logo: logo
     )
 
     storage_location = StorageLocation.create!(
@@ -122,34 +126,39 @@ module PDFComparisonTestFactory
   end
 
   private_class_method def self.create_comparison_pdf(storage_creation, profile_create_method, expected_file_path, delivery_method)
-    partner = create_partner(storage_creation.organization)
-    profile = PDFComparisonTestFactory.public_send(profile_create_method, partner)
-    dist = create_dist(partner, storage_creation, delivery_method)
-    pdf_file = render_pdf_at_year_end(storage_creation.organization, dist)
-    File.binwrite(expected_file_path, pdf_file)
-    profile.destroy!
-    dist.request.destroy!
-    dist.destroy!
-    partner.destroy!
+    # Partner creation must be rolled back otherwise Items requested YTD will accumulate
+    ActiveRecord::Base.transaction(requires_new: true) do
+      partner = create_partner(storage_creation.organization)
+      PDFComparisonTestFactory.public_send(profile_create_method, partner)
+      dist = create_dist(partner, storage_creation, delivery_method)
+      pdf_file = render_pdf_at_year_end(storage_creation.organization, dist)
+      File.binwrite(expected_file_path, pdf_file)
+      raise ActiveRecord::Rollback
+    end
   end
 
   # helper function that can be called from Rails console to generate comparison PDFs
   def self.create_comparison_pdfs
-    storage_creation = create_organization_storage_items
     file_paths = get_file_paths
 
-    create_comparison_pdf(storage_creation, :create_profile_no_address, file_paths.expected_pickup_file_path, :pick_up)
-    create_comparison_pdf(storage_creation, :create_profile_without_program_address, file_paths.expected_same_address_file_path, :shipped)
-    create_comparison_pdf(storage_creation, :create_profile_with_program_address, file_paths.expected_different_address_file_path, :delivery)
-    create_comparison_pdf(storage_creation, :create_profile_with_incomplete_address, file_paths.expected_incomplete_address_file_path, :delivery)
-    create_comparison_pdf(storage_creation, :create_profile_no_contact_with_program_address, file_paths.expected_no_contact_file_path, :delivery)
+    # ActiveStorage throws FileNotFoundError in a transaction
+    # unless logo is uploaded before transaction
+    logo = ActiveStorage::Blob.create_and_upload!(
+      io: get_logo_file,
+      filename: "logo.jpg",
+      content_type: "image/jpeg"
+    )
 
-    storage_creation.storage_location.destroy!
-    storage_creation.items[0].destroy!
-    storage_creation.items[1].destroy!
-    storage_creation.items[2].destroy!
-    storage_creation.items[3].request_units.destroy_all
-    storage_creation.items[3].destroy!
-    storage_creation.organization.destroy!
+    ActiveRecord::Base.transaction do
+      storage_creation = create_organization_storage_items(logo)
+
+      create_comparison_pdf(storage_creation, :create_profile_no_address, file_paths.expected_pickup_file_path, :pick_up)
+      create_comparison_pdf(storage_creation, :create_profile_without_program_address, file_paths.expected_same_address_file_path, :shipped)
+      create_comparison_pdf(storage_creation, :create_profile_with_program_address, file_paths.expected_different_address_file_path, :delivery)
+      create_comparison_pdf(storage_creation, :create_profile_with_incomplete_address, file_paths.expected_incomplete_address_file_path, :delivery)
+      create_comparison_pdf(storage_creation, :create_profile_no_contact_with_program_address, file_paths.expected_no_contact_file_path, :delivery)
+
+      raise ActiveRecord::Rollback
+    end
   end
 end
