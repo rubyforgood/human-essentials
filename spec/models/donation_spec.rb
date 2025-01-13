@@ -58,6 +58,11 @@ RSpec.describe Donation, type: :model do
       d = build(:donation, issued_at: DateTime.now.next_year(2).to_s)
       expect(d).not_to be_valid
     end
+    it "ensures that the quantity of line items is greater than 0" do
+      d = build(:donation)
+      d.line_items << build(:line_item, quantity: -1)
+      expect(d).not_to be_valid
+    end
   end
 
   context "Callbacks >" do

@@ -66,6 +66,7 @@ class Donation < ApplicationRecord
   validates :manufacturer, presence:
     { message: "must be specified since you chose '#{SOURCES[:manufacturer]}'" }, if: :from_manufacturer?
   validates :source, presence: true, inclusion: { in: SOURCES.values, message: "Must be a valid source." }
+  validate :line_items_quantity_is_positive
 
   # TODO: move this to Organization.donations as an extension
   scope :during, ->(range) { where(donations: { issued_at: range }) }
@@ -144,5 +145,9 @@ class Donation < ApplicationRecord
 
   def combine_duplicates
     line_items.combine!
+  end
+
+  def line_items_quantity_is_positive
+    line_items_quantity_is_at_least(1)
   end
 end
