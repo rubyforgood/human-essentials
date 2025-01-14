@@ -527,7 +527,7 @@ StorageLocation.active_locations.each do |sl|
 end
 Organization.all.find_each { |org| SnapshotEvent.publish(org) }
 
-# Set minimum and recomended inventory levels for the complete organizations
+# Set minimum and recommended inventory levels for the complete organizations
 # Only set inventory levels for the half of each org's items with the lowest stock
 complete_orgs.each do |org|
   half_items_count = (org.items.count / 2).to_i
@@ -540,7 +540,7 @@ complete_orgs.each do |org|
   min_qty = low_items.first.total_quantity
   max_qty = low_items.last.total_quantity
 
-  # Ensure at least one of the items unqiue to the Second City Bank has minimum
+  # Ensure at least one of the items unique to the Second City Bank has minimum
   # and recommended quantities set
   if (org == sc_org) && !(low_items & sc_org_unique_items).any?
     low_items << sc_org_unique_items.last
@@ -548,8 +548,8 @@ complete_orgs.each do |org|
 
   low_items.each do |item|
     min_value = rand((min_qty / 10).floor..(max_qty / 10).ceil) * 10
-    recomended_value = rand((min_value / 10).ceil..1000) * 10
-    item.update(on_hand_minimum_quantity: min_value, on_hand_recommended_quantity: recomended_value)
+    recommended_value = rand((min_value / 10).ceil..1000) * 10
+    item.update(on_hand_minimum_quantity: min_value, on_hand_recommended_quantity: recommended_value)
   end
 end
 
