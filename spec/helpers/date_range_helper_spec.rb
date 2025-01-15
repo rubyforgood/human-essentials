@@ -12,7 +12,7 @@ RSpec.describe DateRangeHelper, type: :helper do
 
     it "should throw a Date::Error when input is invalid" do
       allow_any_instance_of(DateRangeHelper).to receive(:default_date).and_return("nov 08 to feb 08")
-      expect{selected_interval}.to raise_error(Date::Error, "invalid date")
+      expect { selected_interval }.to raise_error(Date::Error, "invalid date")
     end
   end
 end

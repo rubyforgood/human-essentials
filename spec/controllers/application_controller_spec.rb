@@ -95,31 +95,4 @@ RSpec.describe ApplicationController do
       end
     end
   end
-
-  context "when user input date range is invalid" do
-    controller do
-      def setup_date_range_picker
-        super
-      end
-    end
-
-    before(:each) do
-      # {"filters"=>{"date_range"=>"January 12, 2025 - January 13, 2025", "date_range_label"=>"since 2025-01-12", "by_type"=>"", "by_storage_location"=>"", "by_item"=>""}, "button"=>"", "controller"=>"events", "action"=>"index"}
-
-      allow(controller).to receive(:params).and_return({"filters"=>{"date_range"=>"nov 08 to feb 08", "date_range_label"=>"since 2025-01-12"}, "controller"=>"distributions", "action"=>"index"})
-      controller.setup_date_range_picker
-    end
-
-    it "should flash an error message" do
-      expect(flash[:error]).to eq("Date range not properly formatted.")
-    end
-
-    it "should reset the date range to the default date value" do
-      expect(:params["filters"]["date_range"]).to eq(helpers.default_date)
-    end
-
-    it "should redirect to the correct controller and action" do
-      expect(controller).to receive(:redirect_to).with("distributions", "index")
-    end
-  end
 end

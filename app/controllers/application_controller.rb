@@ -112,7 +112,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-
   def swaddled
     response.headers["swaddled-by"] = "rubyforgood"
   end
@@ -120,7 +119,7 @@ class ApplicationController < ActionController::Base
   def invalid_date
     flash[:error] = "Date range not properly formatted."
     params["filters"]["date_range"] = helpers.default_date
-    redirect_to controller: params["controller"], action: 'index'
+    redirect_to controller: params["controller"], action: "index"
   end
 
   protected
