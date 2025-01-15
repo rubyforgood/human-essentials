@@ -140,8 +140,7 @@ RSpec.describe "Distributions", type: :request do
           expect(distribution.total_quantity).to eq(20)
           expect(distribution.value_per_itemizable).to eq(2000)
 
-          # displays quantity of filtered item in distribution
-          # displays total value of distribution
+          # displays quantity and value of filtered item in distribution
           expect(item_quantity.text).to eq("10")
           expect(item_value.text).to eq("$10.00")
         end
@@ -178,8 +177,7 @@ RSpec.describe "Distributions", type: :request do
           expect(distribution.total_quantity).to eq(20)
           expect(distribution.value_per_itemizable).to eq(2000)
 
-          # displays quantity of filtered item in distribution
-          # displays total value of distribution
+          # displays quantity and value of filtered item in distribution
           expect(item_quantity.text).to eq("10")
           expect(item_value.text).to eq("$10.00")
         end
