@@ -52,7 +52,7 @@ class DistributionsController < ApplicationController
     @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select(:id, :name)
     @partners = current_organization.partners.active.alphabetized.select(:id, :name)
     @selected_item = filter_params[:by_item_id].presence
-    @distribution_totals = DistributionTotalsService.call(@distributions.unscope(:order, :includes))
+    @distribution_totals = DistributionTotalsService.call(current_organization.distributions.class_filter(scope_filters))
     @total_value_all_distributions = @distribution_totals.values.sum(&:value)
     @total_items_all_distributions = @distribution_totals.values.sum(&:quantity)
     paginated_ids = @paginated_distributions.ids
