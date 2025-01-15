@@ -1,6 +1,8 @@
 module Exports
   class ExportDistributionsCSVService
     include DistributionHelper
+    include ItemsHelper
+
     def initialize(distributions:, organization:, filters: [])
       # Currently, the @distributions are already loaded by the controllers that are delegating exporting
       # to this service object; this is happening within the same request/response cycle, so it's already
@@ -82,7 +84,18 @@ module Exports
           end
         },
         "Total Value" => ->(distribution) {
-          distribution.cents_to_dollar(distribution.line_items.total_value)
+          # filter the items by item category id (for selected item category filter) to
+          # get the number of items
+          value_in_cents = if @filters[:by_item_category_id].present?
+            distribution
+              .line_items
+              .left_joins(:item)
+              .where(item: {item_category_id: @filters[:by_item_category_id].to_i})
+              .total_value
+          else
+            distribution.line_items.total_value
+          end
+          cents_to_dollar(value_in_cents)
         },
         "Delivery Method" => ->(distribution) {
           distribution.delivery_method
