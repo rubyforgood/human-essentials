@@ -27,7 +27,7 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       non_disposable_item = organization.items.where.not(id: organization.items.disposable).first
 
       # Kits
-      kit = create(:kit, :with_item, organization: organization)
+      kit = create(:kit, organization: organization)
 
       create(:base_item, name: "Toddler Disposable Diaper", partner_key: "toddler diapers", category: "disposable diaper")
       create(:base_item, name: "Infant Disposable Diaper", partner_key: "infant diapers", category: "infant disposable diaper")
@@ -71,7 +71,7 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       non_disposable_item = organization.items.where.not(id: organization.items.disposable).first
 
       # Kits
-      kit = create(:kit, :with_item, organization: organization)
+      kit = create(:kit, organization: organization)
 
       create(:base_item, name: "Toddler Disposable Diaper", partner_key: "toddler diapers", category: "disposable diaper")
       create(:base_item, name: "Infant Disposable Diaper", partner_key: "infant diapers", category: "infant disposable diaper")
