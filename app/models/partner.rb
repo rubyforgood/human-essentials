@@ -241,13 +241,14 @@ class Partner < ApplicationRecord
 
     return {} if profile.blank?
 
+    symbolic_agency_type = profile.agency_type.nil? ? nil : profile.agency_type.to_sym()
     @agency_info = {
       address: [profile.address1, profile.address2].select(&:present?).join(', '),
       city: profile.city,
       state: profile.state,
       zip_code: profile.zip_code,
       website: profile.website,
-      agency_type: (profile.agency_type == AGENCY_TYPES["OTHER"]) ? "#{AGENCY_TYPES["OTHER"]}: #{profile.other_agency_type}" : profile.agency_type
+      agency_type: (symbolic_agency_type == :other) ? "#{Partners::Profile.agency_types[:other]}: #{profile.other_agency_type}" : profile.agency_type
     }
   end
 
