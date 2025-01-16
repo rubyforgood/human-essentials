@@ -1,7 +1,6 @@
 class Admin::QuestionsController < AdminController
   def index
-    @bank_questions = Question.for_banks
-    @partner_questions = Question.for_partners
+    @bank_questions = Question.all
   end
 
   def new
@@ -45,6 +44,6 @@ class Admin::QuestionsController < AdminController
   end
 
   def question_params
-    params.require(:question).permit(:title, :for_partners, :for_banks, :answer)
+    params.require(:question).permit(:title, :answer)
   end
 end
