@@ -1,7 +1,6 @@
 class ProductDrivesController < ApplicationController
   include Importable
   before_action :set_product_drive, only: [:show, :edit, :update, :destroy]
-  before_action only: :destroy
 
   def index
     setup_date_range_picker
@@ -79,10 +78,10 @@ class ProductDrivesController < ApplicationController
   def destroy
     result = ProductDriveDestroyService.call(@product_drive, current_user, current_organization)
 
-    if result[:success]
-      redirect_to product_drives_url, notice: result[:message]
+    if result.success?
+      redirect_to product_drives_url, notice: result.value
     else
-      flash[:error] = result[:message]
+      flash[:error] = result.error
       redirect_back(fallback_location: product_drives_url)
     end
   end

@@ -40,8 +40,6 @@ class ProductDrive < ApplicationRecord
 
   validate :end_date_is_bigger_of_end_date
 
-  before_destroy :validate_destroy, prepend: true
-
   def end_date_is_bigger_of_end_date
     return if start_date.nil? || end_date.nil?
 
