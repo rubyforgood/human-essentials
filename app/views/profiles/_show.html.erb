@@ -5,7 +5,7 @@
     <%# The field for inputting the name registers it as partner.name,  %>
     <%# not partner_profile.name, so this pulls from partner.name %>
     <p>Name: <%= @partner.name %></p>
-    <p>Agency Type: <%= t partner_profile.agency_type, scope: [:partners_profile] %>
+    <p>Agency Type: <%= t partner_profile.agency_type, scope: :partners_profile %>
     <% if partner_profile.agency_type == "Other" && partner_profile.other_agency_type %>
       (<%= partner_profile.other_agency_type %>)
     <% end %>

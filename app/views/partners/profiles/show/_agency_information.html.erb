@@ -6,7 +6,7 @@
       <dd><%= profile.partner.name %></dd>
 
       <dt>Agency Type</dt>
-      <dd><%= t profile.agency_type, scope: [:partners_profile] %></dd>
+      <dd><%= t profile.agency_type, scope: :partners_profile %></dd>
 
       <% if profile.agency_type == "Other" %>
         <dt>Other Agency Type</dt>
