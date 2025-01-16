@@ -2,12 +2,16 @@ class ProductDriveDestroyService
   class << self
     def call(product_drive, user, organization)
       return Result.new(error: "You are not allowed to perform this action.") unless verify_role(user, organization)
-      return Result.new(error: "Cannot delete product drive with donations.") unless can_destroy?(product_drive, user)
+
+      unless can_destroy?(product_drive, user)
+        product_drive.errors.add(:base, "Cannot delete product drive with donations.")
+        raise ActiveRecord::RecordInvalid.new(product_drive)
+      end
 
       if product_drive.destroy
         Result.new(value: "Product drive was successfully destroyed.")
       else
-        Result.new(error: product_drive.errors.full_messages.join("\n"))
+        raise ActiveRecord::RecordNotDestroyed.new("Failed to destroy product drive", product_drive)
       end
     end
 
