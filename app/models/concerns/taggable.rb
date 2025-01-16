@@ -9,6 +9,10 @@ module Taggable
 
     accepts_nested_attributes_for :taggings, :tags
 
+    def tags_for_display
+      tags.map(&:name).sort.join(", ")
+    end
+
     private
 
     def set_organization_id(tagging)
