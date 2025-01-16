@@ -296,7 +296,7 @@ RSpec.describe Partner, type: :model do
     let(:agency_state) { "ND" }
     let(:agency_zipcode) { "09980-7010" }
     let(:agency_website) { "bosco.example" }
-    let(:agency_type) { Partner::AGENCY_TYPES["OTHER"] }
+    let(:agency_type) { Partners::Profile.agency_types[:other] }
     let(:other_agency_type) { "Another Agency Name" }
     let(:notes) { "Some notes" }
     let(:providing_diapers) { {value: "N", index: 13} }
@@ -337,7 +337,7 @@ RSpec.describe Partner, type: :model do
         agency_state,
         agency_zipcode,
         agency_website,
-        "#{Partner::AGENCY_TYPES["OTHER"]}: #{other_agency_type}",
+        "#{Partners::Profile.agency_types[:other]}: #{other_agency_type}",
         contact_name,
         contact_phone,
         contact_email,
