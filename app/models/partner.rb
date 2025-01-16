@@ -71,6 +71,11 @@ class Partner < ApplicationRecord
     where(status: status.to_sym)
   }
 
+  # This constant mapping is preserved as it is a dependency of
+  # 20241122201255_cleanup_partner_agency_types.rb. In all other cases, one should
+  # refer to Partners::Profile.agency_types for a list of profile agency_types,
+  # and use I18n.t scope: :partners_profile to convert from an agency_type code
+  # to a descriptive string.
   AGENCY_TYPES = {
     "CAREER" => "Career technical training",
     "ABUSE" => "Child abuse resource center",
