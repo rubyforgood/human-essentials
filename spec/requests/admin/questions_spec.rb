@@ -41,17 +41,13 @@ RSpec.describe "Admin::Questions", type: :request do
           {
             id: question.id,
             question: {
-              title: "updated question",
-              for_banks: false,
-              for_partners: true
+              title: "updated question"
             }
           }
         )
         expect(response).to be_redirect
         question.reload
         expect(question.title).to eq "updated question"
-        expect(question.for_banks).to eq false
-        expect(question.for_partners).to eq true
       end
     end
 
