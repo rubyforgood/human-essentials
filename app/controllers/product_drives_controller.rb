@@ -69,8 +69,7 @@ class ProductDrivesController < ApplicationController
 
   def update
     @product_drive = current_organization.product_drives.find(params[:id])
-    @product_drive.attributes = product_drive_params.merge(tags: tags_from_params)
-    if @product_drive.save
+    if @product_drive.update(product_drive_params.merge(tags: tags_from_params))
       redirect_to product_drives_path, notice: "#{@product_drive.name} updated!"
     else
       flash[:error] = "Something didn't work quite right -- try again?"
