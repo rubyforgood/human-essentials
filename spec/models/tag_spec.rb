@@ -31,5 +31,19 @@ RSpec.describe Tag, type: :model do
         expect(alphabetized_list.last).to eq(z_tag)
       end
     end
+
+    describe "by_type" do
+      let!(:tag) { create(:tag) }
+      let!(:organization) { create(:organization) }
+      let!(:product_drive) { create(:product_drive, organization:) }
+      let!(:purchase) { create(:purchase, organization:) }
+      let!(:product_drive_tagging) { create(:tagging, taggable: product_drive, organization:, tag:) }
+      let!(:purchase_tagging) { create(:tagging, taggable: purchase, organization:, tag:) }
+
+      it "only displays taggings of that type" do
+        type = "ProductDrive"
+        expect(described_class.by_type(type)).to eq([tag])
+      end
+    end
   end
 end
