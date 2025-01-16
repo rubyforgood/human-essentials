@@ -5,7 +5,7 @@ class Admin::UsersController < AdminController
 
   def index
     @filterrific = initialize_filterrific(
-      User.includes(:organization).alphabetized,
+      User.includes(roles: :resource).alphabetized,
       params[:filterrific],
       available_filters: [:search_name, :search_email]
     ) || return
@@ -38,15 +38,16 @@ class Admin::UsersController < AdminController
   end
 
   def create
+    @user = User.new(user_params)
     UserInviteService.invite(name: user_params[:name],
       email: user_params[:email],
       roles: [Role::ORG_USER],
-      resource: Organization.find(user_params[:organization_id]))
+      resource: Organization.find(organization_id_param))
     flash[:notice] = "Created a new user!"
     redirect_to admin_users_path
   rescue => e
     flash[:error] = "Failed to create user: #{e}"
-    render "admin/users/new"
+    render :new
   end
 
   def resource_ids
@@ -91,25 +92,15 @@ class Admin::UsersController < AdminController
   private
 
   def user_params
+    params.require(:user).permit(:name, :email)
+  end
+
+  def organization_id_param
     organization_id = params[:user][:organization_id]
 
     raise "Please select an organization for the user." if organization_id.blank?
 
-    user_params = params.require(:user).permit(:name, :organization_id, :email, :password, :password_confirmation)
-    user_params[:organization_role_join_attributes] = { role_id: updated_role_id(organization_id) }
-
-    user_params
-  rescue => e
-    redirect_back(fallback_location: edit_admin_user_path, error: e.message)
-  end
-
-  def updated_role_id(organization_id)
-    user_role_title = Role::TITLES[Role::ORG_USER]
-    user_role_type = Role::ORG_USER
-
-    role = Role.find_by(resource_type: user_role_title, resource_id: organization_id, name: user_role_type)
-
-    role&.id || raise("Error finding a role within the provided organization")
+    organization_id
   end
 
   def load_organizations
