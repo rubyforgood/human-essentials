@@ -26,7 +26,7 @@
               </div>
               <div class="form-group">
                 <%= f.input :tags,
-                  collection: current_organization.product_drive_tags.select(:id, :name),
+                  collection: @tags,
                   value_method: :name,
                   multiple: true,
                   selected: @product_drive.tags.map(&:name),

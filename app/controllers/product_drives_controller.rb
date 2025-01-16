@@ -1,6 +1,7 @@
 class ProductDrivesController < ApplicationController
   include Importable
   before_action :set_product_drive, only: [:show, :edit, :update, :destroy]
+  before_action :set_tags, only: [:index, :new, :edit]
 
   def index
     setup_date_range_picker
@@ -13,7 +14,6 @@ class ProductDrivesController < ApplicationController
     # to be used in the name filter to sort product drives in alpha order
     @product_drives_alphabetical = @product_drives.sort_by { |pd| pd.name.downcase }
     @item_categories = current_organization.item_categories
-    @tags = current_organization.product_drive_tags
     @selected_name_filter = filter_params[:by_name]
     @selected_item_category = filter_params[:by_item_category_id]
     @selected_tags = filter_params[:by_tags]
@@ -90,6 +90,10 @@ class ProductDrivesController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_product_drive
     @product_drive_info = ProductDrive.find(params[:id])
+  end
+
+  def set_tags
+    @tags = current_organization.product_drive_tags.alphabetized.select(:id, :name)
   end
 
   def product_drive_params
