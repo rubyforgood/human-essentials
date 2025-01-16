@@ -9,7 +9,6 @@
 #
 FactoryBot.define do
   factory :tag do
-    name { "Holidays" }
-    initialize_with { Tag.find_or_create_by(name:) }
+    sequence(:name) { |n| "Tag #{n}" }
   end
 end
