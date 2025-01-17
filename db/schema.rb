@@ -491,7 +491,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_30_044251) do
     t.boolean "hide_value_columns_on_receipt", default: false
     t.boolean "hide_package_column_on_receipt", default: false
     t.boolean "signature_for_distribution_pdf", default: false
-    t.boolean "include_in_kind_values_in_exported_files", default: false
+    t.boolean "include_in_kind_values_in_exported_files", default: false, null: false
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
