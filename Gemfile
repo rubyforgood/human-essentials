@@ -113,11 +113,6 @@ gem "nokogiri", ">= 1.10.4"
 gem "image_processing"
 gem "sprockets", "~> 4.2.1"
 
-group :production do
-  # Tool to detect unused code through knowing which methods are used in which files.
-  gem 'coverband'
-end
-
 group :production, :staging do
   # Reduce the noise of logs and include custom fields to it for easier access
   gem 'lograge'
