@@ -802,7 +802,6 @@ DEPENDENCIES
   rails-controller-testing
   rails-erd
   recaptcha
-  redis (~> 5.3)
   rolify (~> 6.0)
   rspec-rails (~> 7.1.0)
   rubocop

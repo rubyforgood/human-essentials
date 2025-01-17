@@ -220,7 +220,4 @@ if %w(mingw mswin x64_mingw jruby).include?(RUBY_PLATFORM)
   gem "tzinfo-data", "~> 1.2", platforms: %i(mingw mswin x64_mingw jruby)
 end
 
-# Use Redis for Action Cable
-gem "redis", "~> 5.3"
-
 gem "importmap-rails", "~> 2.1"
