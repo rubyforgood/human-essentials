@@ -1,8 +1,6 @@
 class RemoveForBanksAndForPartnersFromQuestions < ActiveRecord::Migration[7.2]
   def up
-    puts "Removing partner only FAQs..."
     Question.where(for_partners: true, for_banks: false).delete_all
-    puts "Partner only FAQs removed"
     safety_assured do
       remove_column :questions, :for_banks
       remove_column :questions, :for_partners
