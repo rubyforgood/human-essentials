@@ -76,10 +76,13 @@ class ProductDrivesController < ApplicationController
   end
 
   def destroy
-    current_organization.product_drives.find(params[:id]).destroy
-    respond_to do |format|
-      format.html { redirect_to product_drives_url, notice: 'Product drive was successfully destroyed.' }
-      format.json { head :no_content }
+    result = ProductDriveDestroyService.call(@product_drive, current_user, current_organization)
+
+    if result.success?
+      redirect_to product_drives_url, notice: result.value
+    else
+      flash[:error] = result.error
+      redirect_back(fallback_location: product_drives_url)
     end
   end
 
