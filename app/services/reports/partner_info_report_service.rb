@@ -16,7 +16,7 @@ module Reports
 
       entries = { 'Number of Partner Agencies' => partner_agencies }
       partner_agency_counts.each do |agency, count|
-        entries["Agency Type: #{ (I18n.t agency, scope: [:partners_profile]) || 'Unknown'}"] = count
+        entries["Agency Type: #{(I18n.t agency, scope: [:partners_profile]) || 'Unknown'}"] = count
       end
       entries['Zip Codes Served'] = partner_zipcodes_serviced
       @report = { name: 'Partner Agencies and Service Area', entries: entries }
