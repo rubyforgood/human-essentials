@@ -34,6 +34,8 @@ The list contains:
 You can filter the Request list by:
 - Item
 - Partner
+- Request Type
+- Default Storage Location
 - Status
 - Date range
 
