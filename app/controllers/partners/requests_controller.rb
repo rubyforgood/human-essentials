@@ -43,14 +43,15 @@ module Partners
     end
 
     def validate
-      @partner_request = Partners::RequestCreateService.new(
+      create_service = Partners::RequestCreateService.new(
         request_type: "quantity",
         partner_user_id: current_user.id,
         comments: partner_request_params[:comments],
         item_requests_attributes: partner_request_params[:item_requests_attributes]&.values || []
       ).initialize_only
 
-      if @partner_request.valid?
+      if create_service.errors.none?
+        @partner_request = create_service.partner_request
         @total_items = @partner_request.total_items
         @quota_exceeded = current_partner.quota_exceeded?(@total_items)
         body = render_to_string(template: 'partners/requests/validate', formats: [:html], layout: false)

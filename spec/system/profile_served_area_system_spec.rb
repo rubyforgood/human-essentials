@@ -41,7 +41,7 @@ RSpec.describe "Partners profile served area behaviour when accessed as bank", t
 
     it "handles addition properly" do
       click_on("Add Another County")
-      matching = page.all(".remove_served_area") # The fields have unpredicatable numbers, so I have to count how many *soemthing* there is
+      matching = page.all(".remove_served_area") # The fields have unpredictable numbers, so I have to count how many *something* there is
       expect(matching.size).to eq(5)
       select = page.all("select.percentage-selector").last
       expect(select.value).to eq("")

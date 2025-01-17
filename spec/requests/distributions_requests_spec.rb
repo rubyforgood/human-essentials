@@ -234,6 +234,17 @@ RSpec.describe "Distributions", type: :request do
         expect(response).to have_error
       end
 
+      it "renders #new with item quantities in dropdowns listed" do
+        create(:item, :with_unit, organization: organization, name: 'Item 1', unit: 'pack')
+
+        post distributions_path(distribution: distribution.except(:partner_id), format: :turbo_stream)
+
+        expect(response).to have_http_status(400)
+        expect(flash[:error]).to include("Sorry, we weren't able to save the distribution.")
+
+        expect(response.body).to include("Item 1 (0)")
+      end
+
       it "renders #new on failure with only active items in dropdown" do
         create(:item, organization: organization, name: 'Active Item')
         create(:item, :inactive, organization: organization, name: 'Inactive Item')
@@ -504,9 +515,10 @@ RSpec.describe "Distributions", type: :request do
       include_examples "requiring authorization"
     end
 
-    describe "POST #update" do
+    describe "PATCH #update" do
+      let(:partner_name) { "Patrick" }
       let(:location) { create(:storage_location, organization: organization) }
-      let(:partner) { create(:partner, organization: organization) }
+      let(:partner) { create(:partner, name: partner_name, organization: organization) }
 
       let(:distribution) { create(:distribution, partner: partner, organization: organization) }
       let(:issued_at) { distribution.issued_at }
@@ -543,6 +555,15 @@ RSpec.describe "Distributions", type: :request do
 
           expect(flash[:error]).to include("Distribution date and time can't be blank")
           expect(response).not_to redirect_to(anything)
+        end
+
+        it "renders storage location dropdowns" do
+          patch distribution_path(distribution_params)
+
+          page = Nokogiri::HTML(response.body)
+          selectable_partners = page.at_css("select#distribution_partner_id").text.split("\n")
+
+          expect(selectable_partners).to include("Patrick")
         end
       end
 

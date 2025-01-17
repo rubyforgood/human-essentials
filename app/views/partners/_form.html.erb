@@ -31,7 +31,7 @@
 
               <div data-controller='checkbox-with-nested-element'>
                 <%= f.input :send_reminders, label: "Do you want this partner to receive emails for distributions and reminders from the system?", wrapper: :input_group do %>
-                  <%= f.check_box :send_reminders, { class: "input-group-text", id: "send_reminders", data: { action: 'click->checkbox-with-nested-element#toggleNestedElementVisiblity', 'checkbox-with-nested-element-target': 'checkbox' } }, "true", "false" %>
+                  <%= f.check_box :send_reminders, { class: "input-group-text", id: "send_reminders", data: { action: 'click->checkbox-with-nested-element#toggleNestedElementVisibility', 'checkbox-with-nested-element-target': 'checkbox' } }, "true", "false" %>
                  <% end %>
                  <div class="callout callout-info d-none" data-checkbox-with-nested-element-target='nestedElement'>
                    <h5 class='text-uppercase font-weight-bold'>Reminder</h5>

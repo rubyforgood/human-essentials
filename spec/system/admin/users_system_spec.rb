@@ -28,15 +28,15 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       expect(page).to have_content("Update AAlphabetically First User")
 
       fill_in "user_name", with: "TestUser"
-      select(organization.name, from: 'user_organization_id')
       click_on "Save"
 
-      expect(page.find(".alert")).to have_content "TestUser updated"
+      # Check if redirected to index page with successful flash message
+      expect(page).to have_current_path(admin_users_path)
+      expect(page).to have_css(".alert", text: "TestUser updated")
 
-      # Check if the organization role has been updated
-      tbody = find('#filterrific_results table tbody')
-      first_row = tbody.find('tr', text: 'TestUser')
-      expect(first_row).to have_text(organization.name)
+      # Check if user name has changed to TestUser
+      users_table = find('#filterrific_results table tbody')
+      expect(users_table).to have_text("TestUser")
     end
 
     it 'adds a role' do
@@ -47,10 +47,7 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       expect(page).to have_content('User 123')
       select "Partner", from: "resource_type"
       find("div.input-group:has(.select2-container)").click
-      find('.select2-search__field', wait: 5).set("Partner ABC")
-      find(:xpath,
-        "//li[contains(@class, 'select2-results__option') and contains(., 'Partner ABC')]",
-        wait: 5).click
+      find("li.select2-results__option", text: "Partner ABC").click
       click_on 'Add Role'
 
       expect(page.find('.alert')).to have_content('Role added')

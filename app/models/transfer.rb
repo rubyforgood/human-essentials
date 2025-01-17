@@ -30,10 +30,10 @@ class Transfer < ApplicationRecord
   }
   scope :during, ->(range) { where(created_at: range) }
 
-  validates :from, :to, :organization, presence: true
   validate :storage_locations_belong_to_organization
   validate :storage_locations_must_be_different
   validate :from_storage_quantities
+  validate :line_items_quantity_is_positive
 
   def self.csv_export_headers
     ["From", "To", "Comment", "Total Moved"]
@@ -83,5 +83,9 @@ class Transfer < ApplicationRecord
   def insufficient_items
     inventory = View::Inventory.new(organization_id)
     line_items.select { |i| i.quantity > inventory.quantity_for(item_id: i.item_id) }
+  end
+
+  def line_items_quantity_is_positive
+    line_items_quantity_is_at_least(1)
   end
 end

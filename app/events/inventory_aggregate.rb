@@ -24,7 +24,7 @@ module InventoryAggregate
       end
 
       if event_time && (!last_snapshot || event_time > last_snapshot.event_time)
-        events = events.where("event_time <= ?", event_time)
+        events = events.where(event_time: ..event_time)
       end
 
       events = events.to_a

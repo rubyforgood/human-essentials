@@ -20,7 +20,6 @@ class LineItem < ApplicationRecord
   belongs_to :itemizable, polymorphic: true, inverse_of: :line_items, optional: false
   belongs_to :item
 
-  validates :item_id, presence: true
   validates :quantity, numericality: { only_integer: true, message: "is not a number. Note: commas are not allowed" }
   validate :quantity_must_be_a_number_within_range
 

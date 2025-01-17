@@ -99,6 +99,7 @@ class DistributionsController < ApplicationController
       @distribution = result.distribution
 
       perform_inventory_check
+      schedule_reminder_email(result.distribution) if @distribution.reminder_email_enabled
 
       respond_to do |format|
         format.turbo_stream do
@@ -123,6 +124,11 @@ class DistributionsController < ApplicationController
       inventory = View::Inventory.new(@distribution.organization_id)
       @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
         inventory.quantity_for(storage_location: storage_loc.id).positive?
+      end
+      if @distribution.storage_location.present?
+        @item_labels_with_quantities = inventory
+          .items_for_location(@distribution.storage_location.id, include_omitted: true)
+          .map(&:to_dropdown_option)
       end
 
       flash_error = insufficient_error_message(result.error.message)
@@ -196,7 +202,7 @@ class DistributionsController < ApplicationController
       if result.resend_notification? && @distribution.partner&.send_reminders
         send_notification(current_organization.id, @distribution.id, subject: "Your Distribution Has Changed", distribution_changes: result.distribution_content.changes)
       end
-      schedule_reminder_email(@distribution)
+      schedule_reminder_email(@distribution) if @distribution.reminder_email_enabled
 
       perform_inventory_check
       redirect_to @distribution, notice: "Distribution updated!"
@@ -205,6 +211,7 @@ class DistributionsController < ApplicationController
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @distribution.initialize_request_items
       @items = current_organization.items.active.alphabetized
+      @partner_list = current_organization.partners.alphabetized
       @storage_locations = current_organization.storage_locations.active_locations.alphabetized
       render :edit
     end

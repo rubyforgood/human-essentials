@@ -13,9 +13,16 @@ class PurchasesController < ApplicationController
     @paginated_purchases = @purchases.page(params[:page])
     # Are these going to be inefficient with large datasets?
     # Using the @purchases allows drilling down instead of always starting with the total dataset
+    # Purchase quantity
     @purchases_quantity = @purchases.collect(&:total_quantity).sum
     @paginated_purchases_quantity = @paginated_purchases.collect(&:total_quantity).sum
+    # Purchase value
     @total_value_all_purchases = @purchases.sum(&:amount_spent_in_cents)
+    @paginated_purchases_value = @paginated_purchases.collect(&:amount_spent_in_cents).sum
+    # Fair Market Values
+    @total_fair_market_values = @purchases.sum(&:value_per_itemizable)
+    @paginated_fair_market_values = @paginated_purchases.collect(&:value_per_itemizable).sum
+    # Storage and Vendor
     @storage_locations = current_organization.storage_locations.active_locations
     @selected_storage_location = filter_params[:at_storage_location]
     @vendors = current_organization.vendors.sort_by { |vendor| vendor.business_name.downcase }
@@ -78,9 +85,14 @@ class PurchasesController < ApplicationController
 
   def destroy
     purchase = current_organization.purchases.find(params[:id])
-    PurchaseDestroyService.call(purchase)
+    begin
+      PurchaseDestroyService.call(purchase)
+    rescue => e
+      flash[:error] = e.message
+    else
+      flash[:notice] = "Purchase #{params[:id]} has been removed!"
+    end
 
-    flash[:notice] = "Purchase #{params[:id]} has been removed!"
     redirect_to purchases_path
   end
 

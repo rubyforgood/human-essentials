@@ -19,7 +19,6 @@ class PartnerGroup < ApplicationRecord
   has_many :partners, dependent: :nullify
   has_and_belongs_to_many :item_categories
 
-  validates :organization, presence: true
   validates :name, presence: true, uniqueness: { scope: :organization }
   validates :deadline_day, :reminder_day, presence: true, if: :send_reminders?
 end
