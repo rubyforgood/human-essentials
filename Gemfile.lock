@@ -652,6 +652,10 @@ GEM
     snaky_hash (2.0.1)
       hashie
       version_gem (~> 1.1, >= 1.1.1)
+    solid_cache (1.0.6)
+      activejob (>= 7.2)
+      activerecord (>= 7.2)
+      railties (>= 7.2)
     sprockets (4.2.1)
       concurrent-ruby (~> 1.0)
       rack (>= 2.2.4, < 4)
@@ -808,6 +812,7 @@ DEPENDENCIES
   shoulda-matchers (~> 6.2)
   simple_form
   simplecov
+  solid_cache (~> 1.0)
   sprockets (~> 4.2.1)
   standard (~> 1.40)
   standard-performance

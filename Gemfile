@@ -37,6 +37,8 @@ gem "rolify", "~> 6.0"
 gem "strong_migrations", "1.8.0"
 # used in events
 gem 'dry-struct'
+# Use solid_cache as a cache store
+gem "solid_cache", "~> 1.0"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
