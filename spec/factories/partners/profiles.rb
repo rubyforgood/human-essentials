@@ -7,7 +7,7 @@
 #  address1                       :string
 #  address2                       :string
 #  agency_mission                 :text
-#  agency_type                    :enum
+#  agency_type                    :string
 #  application_data               :text
 #  at_fpl_or_below                :integer
 #  case_management                :boolean
