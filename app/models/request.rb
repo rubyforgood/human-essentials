@@ -48,6 +48,7 @@ class Request < ApplicationRecord
   # status scope to allow filtering by status
   scope :by_status, ->(status) { where(status: status) }
   scope :by_request_type, ->(request_type) { where(request_type: request_type) }
+  scope :by_default_storage_location, ->(default_storage_location) { includes(:partner).where(partners: {default_storage_location_id: default_storage_location}) }
   scope :during, ->(range) { where(created_at: range) }
   scope :for_csv_export, ->(organization, *) {
     where(organization: organization)
