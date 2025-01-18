@@ -46,7 +46,7 @@ class ItemsController < ApplicationController
       # the provided parameters. This is required to render the page again
       # with the error + the invalid parameters
       @item = current_organization.items.new(item_params)
-      flash[:error] = result.error.record.errors.full_messages.to_sentence
+      flash.now[:error] = result.error.record.errors.full_messages.to_sentence
       render action: :new
     end
   end
@@ -77,7 +77,7 @@ class ItemsController < ApplicationController
     deactivated = @item.active_changed? && !@item.active
     if deactivated && !@item.can_deactivate?
       @base_items = BaseItem.without_kit.alphabetized
-      flash[:error] = "Can't deactivate this item - it is currently assigned to either an active kit or a storage location!"
+      flash.now[:error] = "Can't deactivate this item - it is currently assigned to either an active kit or a storage location!"
       render action: :edit
       return
     end
@@ -86,7 +86,7 @@ class ItemsController < ApplicationController
       redirect_to items_path, notice: "#{@item.name} updated!"
     else
       @base_items = BaseItem.without_kit.alphabetized
-      flash[:error] = "Something didn't work quite right -- try again? #{@item.errors.map { |error| "#{error.attribute}: #{error.message}" }}"
+      flash.now[:error] = "Something didn't work quite right -- try again? #{@item.errors.map { |error| "#{error.attribute}: #{error.message}" }}"
       render action: :edit
     end
   end

@@ -207,7 +207,7 @@ class DistributionsController < ApplicationController
       perform_inventory_check
       redirect_to @distribution, notice: "Distribution updated!"
     else
-      flash[:error] = insufficient_error_message(result.error.message)
+      flash.now[:error] = insufficient_error_message(result.error.message)
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @distribution.initialize_request_items
       @items = current_organization.items.active.alphabetized

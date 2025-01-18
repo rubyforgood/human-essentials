@@ -23,7 +23,7 @@ class KitsController < ApplicationController
       flash[:notice] = "Kit created successfully"
       redirect_to kits_path
     else
-      flash[:error] = kit_creation.errors
+      flash.now[:error] = kit_creation.errors
         .map { |error| formatted_error_message(error) }
         .join(", ")
 
