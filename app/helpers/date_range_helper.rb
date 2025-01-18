@@ -36,6 +36,8 @@ module DateRangeHelper
   def selected_interval
     date_range_params.split(" - ").map do |d|
       Date.strptime(d, "%B %d, %Y")
+    rescue
+      raise Errors::InvalidDateRange.new(date_range_params)
     end
   end
 

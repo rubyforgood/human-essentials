@@ -10,9 +10,9 @@ RSpec.describe DateRangeHelper, type: :helper do
       expect(selected_interval).to eq([2.months.ago.to_date, 1.month.from_now.to_date])
     end
 
-    it "should throw a Date::Error when input is invalid" do
+    it "should raise Errors:InvalidDateRange when input is invalid" do
       allow_any_instance_of(DateRangeHelper).to receive(:default_date).and_return("nov 08 to feb 08")
-      expect { selected_interval }.to raise_error(Date::Error, "invalid date")
+      expect { selected_interval }.to raise_error(Errors::InvalidDateRange, "nov 08 to feb 08")
     end
   end
 end

@@ -60,4 +60,13 @@ module Errors
       "Could not complete action: inventory already has items stored"
     end
   end
+
+  class InvalidDateRange < StandardError
+    attr_reader :invalid_date
+
+    def initialize(invalid_date)
+      super
+      @invalid_date = invalid_date
+    end
+  end
 end

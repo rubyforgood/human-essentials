@@ -13,7 +13,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_role
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found!
-  rescue_from Date::Error, with: :invalid_date
+  rescue_from Errors::InvalidDateRange, with: :invalid_date
 
   def current_organization
     return @current_organization if @current_organization
@@ -116,8 +116,8 @@ class ApplicationController < ActionController::Base
     response.headers["swaddled-by"] = "rubyforgood"
   end
 
-  def invalid_date
-    flash[:error] = "Date range '#{params.dig(:filters, :date_range).presence}' not properly formatted. Filters reset."
+  def invalid_date(date_value)
+    flash[:error] = "Date range '#{date_value}' not properly formatted. Filters reset."
     params["filters"]["date_range"] = helpers.default_date
     redirect_to controller: params["controller"], action: params["action"]
   end
