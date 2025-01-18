@@ -1,5 +1,5 @@
 <%= form.fields_for :item_requests, defined?(object) ? object : nil  do |field| %>
-  <tr data-controller="item-units" data-item-units-item-units-value="<%= item_units.to_json %>">
+  <tr data-controller="item-units" data-item-units-item-units-value="<%= item_units.to_json %>" data-item-units-selected-item-units-value="<%= field.object.request_unit || -1 %>">
     <td>
       <%= field.label :item_id, "Item Requested", {class: 'sr-only'} %>
       <%= field.select :item_id, @requestable_items, {include_blank: 'Select an item'},

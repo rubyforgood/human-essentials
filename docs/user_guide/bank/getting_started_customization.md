@@ -104,8 +104,9 @@ The bank-wide default Storage Location for Donations and Purchases.
 You can also specify a different default Storage Location on any Partner, which will override this default.
 If you specify a default Storage Location, it will be pre-populated as the Storage Location when you are adding new Distributions.
 
-#### Custom Partner Invitation Message
-[!NOTE] The Custom Partner Invitation Message is currenty not working as advertised (as of November 13, 2024.).  The current behavior is as if you did not enter anything here.  We have fixing it on our "to do" list.
+#### Custom Partner Invitation Message 
+[!NOTE] The Custom Partner Invitation Message is currently not working as advertised (as of November 13, 2024.).  The current behavior is as if you did not enter anything here.  We have fixing it on our "to do" list.
+
 
 When you invite a Partner, they get an email.  This field lets you specify the message you are sending to them.  Just text -- we don't have any personalization capability for this email at this time.
 
