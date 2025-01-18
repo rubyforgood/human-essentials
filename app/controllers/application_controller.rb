@@ -117,7 +117,7 @@ class ApplicationController < ActionController::Base
   end
 
   def invalid_date
-    flash[:error] = "Date range not properly formatted."
+    flash[:error] = "Date range '#{params.dig(:filters, :date_range).presence}' not properly formatted. Filters reset."
     params["filters"]["date_range"] = helpers.default_date
     redirect_to controller: params["controller"], action: params["action"]
   end
