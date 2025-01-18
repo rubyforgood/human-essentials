@@ -1,5 +1,4 @@
 class ConvertPartnerAgencyTypesToEnum < ActiveRecord::Migration[7.2]
-
   def up
     # A mapping from the lowercase full descriptive strings previously stored in
     # agency_type to the newly enumerated values
@@ -48,22 +47,19 @@ class ConvertPartnerAgencyTypesToEnum < ActiveRecord::Migration[7.2]
     }
 
     # Some agency types have trailing spaces -- need to get rid of them first
-    update 'UPDATE partner_profiles SET agency_type = TRIM(agency_type);'
+    update "UPDATE partner_profiles SET agency_type = TRIM(agency_type);"
 
-    profiles = Partners::Profile.all()
-    profiles.each do |profile|
+    Partners::Profile.all.find_each do |profile|
       # Read the agency_type without casting so values not part of the enum aren't
       # read as nil
       current_agency_type = profile.read_attribute_before_type_cast(:agency_type)
-      puts profile.id
-      puts current_agency_type
-      if !current_agency_type.nil?
+      if current_agency_type.present?
         # If a profile has a descriptive string (ignoring case) as an agency type
         # update it to the associated value code.
-        if( string_to_value_mapping.key?( current_agency_type.downcase ) )
-          profile.agency_type = string_to_value_mapping[ current_agency_type.downcase ]
+        if string_to_value_mapping.key?(current_agency_type.downcase)
+          profile.agency_type = string_to_value_mapping[current_agency_type.downcase]
         # If a profile has a value code (ignoring case) as an agency type, uppercase it.
-        elsif( string_to_value_mapping.value?( current_agency_type.upcase ) )
+        elsif string_to_value_mapping.value?(current_agency_type.upcase)
           profile.agency_type = current_agency_type.upcase
         end
         profile.save!
