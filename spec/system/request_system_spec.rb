@@ -115,6 +115,21 @@ RSpec.describe "Requests", type: :system, js: true do
       end
     end
     it_behaves_like "Date Range Picker", Request, :created_at
+
+    it "doesn't display New Quantity Request link" do
+      visit subject
+      expect(page).to_not have_link "New Quantity Request"
+    end
+
+    context "when logged in as an org admin" do
+      let(:org_admin) { create(:organization_admin) }
+
+      it "displays New Quantity Request link" do
+        sign_in(org_admin)
+        visit subject
+        expect(page).to have_link "New Quantity Request"
+      end
+    end
   end
 
   context "#show" do
