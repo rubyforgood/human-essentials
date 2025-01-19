@@ -2,14 +2,17 @@
 #
 # Table name: tags
 #
-#  id         :bigint           not null, primary key
-#  name       :string(256)      not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id              :bigint           not null, primary key
+#  name            :string(256)      not null
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  organization_id :bigint           not null
 #
 RSpec.describe Tag, type: :model do
+  let(:organization) { build(:organization) }
+
   describe "validations" do
-    subject { build(:tag) }
+    subject { build(:tag, organization:) }
 
     it { should validate_presence_of(:name) }
     it { should validate_length_of(:name).is_at_most(256) }
@@ -21,8 +24,8 @@ RSpec.describe Tag, type: :model do
 
   describe "scopes" do
     describe "alphabetized" do
-      let!(:z_tag) { create(:tag, name: "Z") }
-      let!(:a_tag) { create(:tag, name: "A") }
+      let!(:z_tag) { create(:tag, name: "Z", organization:) }
+      let!(:a_tag) { create(:tag, name: "A", organization:) }
 
       it "retrieves tags in the correct order" do
         alphabetized_list = described_class.alphabetized
@@ -34,11 +37,10 @@ RSpec.describe Tag, type: :model do
 
     describe "by_type" do
       let!(:tag) { create(:tag) }
-      let!(:organization) { create(:organization) }
       let!(:product_drive) { create(:product_drive, organization:) }
       let!(:purchase) { create(:purchase, organization:) }
-      let!(:product_drive_tagging) { create(:tagging, taggable: product_drive, organization:, tag:) }
-      let!(:purchase_tagging) { create(:tagging, taggable: purchase, organization:, tag:) }
+      let!(:product_drive_tagging) { create(:tagging, taggable: product_drive, tag:) }
+      let!(:purchase_tagging) { create(:tagging, taggable: purchase, tag:) }
 
       it "only displays taggings of that type" do
         type = "ProductDrive"

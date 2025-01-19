@@ -2,13 +2,16 @@
 #
 # Table name: tags
 #
-#  id         :bigint           not null, primary key
-#  name       :string(256)      not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id              :bigint           not null, primary key
+#  name            :string(256)      not null
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  organization_id :bigint           not null
 #
 class Tag < ApplicationRecord
   has_many :taggings, dependent: :destroy
+  belongs_to :organization
+  has_many :organizations, through: :taggings, source: :taggable, source_type: "Organization"
 
   scope :alphabetized, -> { order(:name) }
   scope :by_type, ->(type) { joins(:taggings).where(taggings: {taggable_type: type}) }

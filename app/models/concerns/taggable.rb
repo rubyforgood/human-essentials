@@ -2,7 +2,7 @@ module Taggable
   extend ActiveSupport::Concern
 
   included do
-    has_many :taggings, as: :taggable, dependent: :destroy, before_add: :set_organization_id
+    has_many :taggings, as: :taggable, dependent: :destroy
     has_many :tags, through: :taggings, source: :tag
 
     scope :by_tags, ->(tags) { left_joins(:tags).where(tags: {name: tags}) }
@@ -11,12 +11,6 @@ module Taggable
 
     def tags_for_display
       tags.map(&:name).sort.join(", ")
-    end
-
-    private
-
-    def set_organization_id(tagging)
-      tagging.organization_id ||= organization_id
     end
   end
 end

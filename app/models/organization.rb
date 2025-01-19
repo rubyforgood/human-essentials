@@ -68,10 +68,9 @@ class Organization < ApplicationRecord
     has_many :purchases
     has_many :requests
     has_many :storage_locations
-    has_many :taggings
-    has_many :tags, through: :taggings
-    has_many :product_drive_tags, -> { by_type("ProductDrive").distinct },
-      through: :taggings, source: :tag
+    has_many :tags
+    has_many :product_drive_tags, -> { joins(:taggings).where(taggings: {taggable_type: "ProductDrive"}).distinct },
+      class_name: "Tag"
     has_many :inventory_items, through: :storage_locations
     has_many :kits
     has_many :transfers

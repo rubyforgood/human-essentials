@@ -76,7 +76,7 @@ RSpec.describe ProductDrive, type: :model do
     let!(:donation) { create(:product_drive_donation, product_drive_participant: product_drive_participant) }
     let!(:product_drive2) { create(:product_drive) }
     let!(:donation2) { create(:donation, :with_items, item_quantity: 7, product_drive: product_drive2, product_drive_participant: product_drive_participant) }
-    let(:tag) { create(:tag, name: "Foo tag") }
+    let(:tag) { create(:tag, name: "Foo tag", organization:) }
 
     subject { create(:product_drive) }
 

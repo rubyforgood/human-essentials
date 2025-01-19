@@ -747,22 +747,22 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_21_181633) do
   end
 
   create_table "taggings", force: :cascade do |t|
-    t.bigint "organization_id", null: false
     t.bigint "tag_id", null: false
     t.string "taggable_type", null: false
     t.bigint "taggable_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["organization_id"], name: "index_taggings_on_organization_id"
     t.index ["tag_id"], name: "index_taggings_on_tag_id"
     t.index ["taggable_type", "taggable_id", "tag_id"], name: "index_taggings_on_taggable_type_and_taggable_id_and_tag_id", unique: true
   end
 
   create_table "tags", force: :cascade do |t|
     t.string "name", limit: 256, null: false
+    t.bigint "organization_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_tags_on_name", unique: true
+    t.index ["organization_id"], name: "index_tags_on_organization_id"
   end
 
   create_table "transfers", id: :serial, force: :cascade do |t|
@@ -897,8 +897,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_21_181633) do
   add_foreign_key "requests", "distributions"
   add_foreign_key "requests", "organizations"
   add_foreign_key "requests", "partners"
-  add_foreign_key "taggings", "organizations"
   add_foreign_key "taggings", "tags"
+  add_foreign_key "tags", "organizations"
   add_foreign_key "units", "organizations"
   add_foreign_key "users", "users_roles", column: "last_role_id", on_delete: :nullify
 end
