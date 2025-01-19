@@ -2,7 +2,7 @@ RSpec.describe 'Requests', type: :request do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 
-  context 'When signed' do
+  context 'When signed as a or user' do
     before { sign_in(user) }
 
     describe "GET #index" do
@@ -151,6 +151,38 @@ RSpec.describe 'Requests', type: :request do
           post start_request_path(1)
 
           expect(response).to have_http_status(:not_found)
+        end
+      end
+    end
+
+    describe "POST #create" do
+      it "redirects to dashboard" do
+        post requests_path
+        expect(flash[:error]).to eq("Access Denied.")
+        expect(response).to redirect_to(dashboard_path)
+      end
+    end
+  end
+
+  context "when signed in as an org admin" do
+    let(:org_admin) { create(:organization_admin) }
+    before { sign_in(org_admin) }
+
+    describe "POST #create" do
+      let(:partner) { create(:partner, organization:) }
+
+      context "when param partner_id is present" do
+        it "redirects to new partner request path" do
+          post requests_path(partner_id: partner.id)
+          expect(response).to redirect_to(new_partners_request_path)
+        end
+      end
+
+      context "when param partner_id is missing" do
+        it "redirects to requests path and flashes an error" do
+          post requests_path(partner_id: "")
+          expect(flash[:error]).to eq("A partner must be selected in order to create a quantity request")
+          expect(response).to redirect_to(requests_path)
         end
       end
     end

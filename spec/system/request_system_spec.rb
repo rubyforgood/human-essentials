@@ -124,10 +124,22 @@ RSpec.describe "Requests", type: :system, js: true do
     context "when logged in as an org admin" do
       let(:org_admin) { create(:organization_admin) }
 
-      it "displays New Quantity Request link" do
+      before do
         sign_in(org_admin)
         visit subject
+      end
+
+      it "displays New Quantity Request link" do
         expect(page).to have_link "New Quantity Request"
+      end
+
+      context "clicking on the link" do
+        before { click_on "New Quantity Request" }
+
+        it "displays a list of all partners" do
+          partner_names = organization.partners.pluck(:name)
+          expect(page).to have_select("partner_id", with_options: partner_names)
+        end
       end
     end
   end

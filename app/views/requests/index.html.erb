@@ -74,7 +74,7 @@
                         size: "md") %>
                     <% end %>
                     <%= download_button_to(requests_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Requests", size: "md"}) if @requests.any? %>
-                    <%= new_button_to("/requests", text: "New Quantity Request") if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
+                    <%= modal_button_to("#newRequest", text: "New Quantity Request", icon: "plus", type: "success") if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
                   </div>
                 </div>
               </div>
@@ -127,4 +127,5 @@
     </div>
   </div>
   <%= render partial: "calculate_product_totals" %>
+  <%= render partial: "new" %>
 </section>

@@ -1,5 +1,7 @@
 # Provides Read-only access to Requests, which are created via an API. Requests are transformed into Distributions.
 class RequestsController < ApplicationController
+  before_action :authorize_admin, only: [:create]
+
   def index
     setup_date_range_picker
 
@@ -30,6 +32,18 @@ class RequestsController < ApplicationController
   def show
     @request = Request.find(params[:id])
     @request_items = load_items
+  end
+
+  def create
+    partner_id = params.permit(:partner_id)[:partner_id]
+
+    if partner_id.present?
+      flash[:notice] = "You will be creating a new request for Partner ID #{partner_id} soon" # TODO: remove once redirect implemented
+      redirect_to new_partners_request_path
+    else
+      flash[:error] = "A partner must be selected in order to create a quantity request"
+      redirect_to requests_path
+    end
   end
 
   # Clicking the "New Distribution" button will set the the request to started

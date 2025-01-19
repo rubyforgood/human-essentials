@@ -229,7 +229,7 @@ Rails.application.routes.draw do
 
   resources :purchases
 
-  resources :requests, only: %i(index new show) do
+  resources :requests, only: %i(index show create) do
     member do
       post :start
     end
