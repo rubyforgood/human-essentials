@@ -38,8 +38,7 @@ class RequestsController < ApplicationController
     partner_id = params.permit(:partner_id)[:partner_id]
 
     if partner_id.present?
-      flash[:notice] = "You will be creating a new request for Partner ID #{partner_id} soon" # TODO: remove once redirect implemented
-      redirect_to new_partners_request_path
+      redirect_to new_partners_request_path(partner_id:)
     else
       flash[:error] = "A partner must be selected in order to create a quantity request"
       redirect_to requests_path

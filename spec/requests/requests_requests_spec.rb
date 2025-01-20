@@ -2,7 +2,7 @@ RSpec.describe 'Requests', type: :request do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 
-  context 'When signed as a or user' do
+  context 'When signed as a org user' do
     before { sign_in(user) }
 
     describe "GET #index" do
@@ -174,7 +174,7 @@ RSpec.describe 'Requests', type: :request do
       context "when param partner_id is present" do
         it "redirects to new partner request path" do
           post requests_path(partner_id: partner.id)
-          expect(response).to redirect_to(new_partners_request_path)
+          expect(response).to redirect_to(new_partners_request_path(partner_id: partner.id))
         end
       end
 

@@ -1,5 +1,9 @@
 module Partners
   class RequestsController < BaseController
+    skip_before_action :require_partner, only: [:new, :create]
+    before_action :require_partner_or_org_admin, only: [:new, :create]
+    layout :layout
+
     protect_from_forgery with: :exception
 
     def index
@@ -68,13 +72,43 @@ module Partners
     end
 
     def fetch_items
-      @requestable_items = PartnerFetchRequestableItemsService.new(partner_id: current_partner.id).call
+      @requestable_items = PartnerFetchRequestableItemsService.new(partner_id: partner.id).call
       if Flipper.enabled?(:enable_packs)
         # hash of (item ID => hash of (request unit name => request unit plural name))
         @item_units = Item.where(id: @requestable_items.to_h.values).to_h do |i|
           [i.id, i.request_units.to_h { |u| [u.name, u.name.pluralize] }]
         end
       end
+    end
+
+    def require_partner_or_org_admin
+      return if current_partner
+
+      partner_id = params.permit(:partner_id)[:partner_id]
+      return redirect_invalid_user if partner_id.blank?
+
+      partner = Partner.find(partner_id)
+      if current_user.has_role?(Role::ORG_ADMIN, current_organization) && current_organization == partner&.organization
+        @partner = partner
+        @layout = "application"
+      else
+        redirect_invalid_user
+      end
+    end
+
+    def redirect_invalid_user
+      respond_to do |format|
+        format.html { redirect_to dashboard_path, flash: {error: "Logged in user is not set up as a 'partner'."} }
+        format.json { render body: nil, status: :forbidden }
+      end
+    end
+
+    def partner
+      @partner ||= current_partner
+    end
+
+    def layout
+      @layout ||= "partners/application"
     end
   end
 end
