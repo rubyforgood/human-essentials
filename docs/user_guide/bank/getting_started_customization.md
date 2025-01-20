@@ -182,6 +182,16 @@ Partners can't submit Requests until they are approved by the bank.
 The full partner approval process requires the partner to fill in their profile and submit it for approval.  Some banks handle that for their partners,  gather the information through other means (such as a phone conversation). 
 Checking this will change the process so that the partners are automatically approved when they are invited. Note that any invited partners that are not yet approved will still need to be approved by the bank.
 
+## Configuring exports
+
+### Include in-kind value in donation and distribution exports?
+
+You can configure whether the exports for donations and distributions include the "In-Kind Value" column for each item. By default, these values are excluded. To include them, set the "Include in-kind value in donation and distribution exports?" option to "Yes".
+
+Click "My Organization" in the left hand menu. Click "Edit" button. Set the "Include in-kind value in donation and distribution exports?" to "yes", then click "Save".
+
+[!NOTE] Setting this affects both the donation and distribution exports.
+
 #### Distribution Email Content
 Note that there is a checkbox on the partner for them to receive Distribution emails.  We recommend you do customize this content, as the default text is abrupt.
 You can customize this quite a bit! 
