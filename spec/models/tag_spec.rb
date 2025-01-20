@@ -20,6 +20,7 @@ RSpec.describe Tag, type: :model do
 
   describe "assocations" do
     it { should have_many(:taggings) }
+    it { should belong_to(:organization) }
   end
 
   describe "scopes" do

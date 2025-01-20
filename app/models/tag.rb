@@ -11,7 +11,6 @@
 class Tag < ApplicationRecord
   has_many :taggings, dependent: :destroy
   belongs_to :organization
-  has_many :organizations, through: :taggings, source: :taggable, source_type: "Organization"
 
   scope :alphabetized, -> { order(:name) }
   scope :by_type, ->(type) { joins(:taggings).where(taggings: {taggable_type: type}) }
