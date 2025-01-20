@@ -47,21 +47,8 @@ RSpec.describe "ProductDrives", type: :request do
         expect(response.body).not_to include(product_drive_path(product_drive_five.id))
       end
 
-      it "allows filtering by tag" do
-        filter_params = { by_tags: "Holidays" }
-        tag = create(:tag, name: "Holidays")
-        product_drive = create(:product_drive, organization: organization, name: "AAAA", tags: [tag])
-        product_drive_two = create(:product_drive, organization: organization, name: "BBBB", tags: [])
-        product_drive_three = create(:product_drive, organization: organization, name: "CCCC", tags: [create(:tag, name: "Foo")])
-
-        get product_drives_path(filters: filter_params)
-
-        expect(response).to be_successful
-
-        expect(response.body).to include(product_drive_path(product_drive.id))
-
-        expect(response.body).not_to include(product_drive_path(product_drive_two.id))
-        expect(response.body).not_to include(product_drive_path(product_drive_three.id))
+      it_behaves_like "allows filtering by tag", ProductDrive do
+        let(:index_path) { product_drives_path(params) }
       end
 
       context "csv" do
