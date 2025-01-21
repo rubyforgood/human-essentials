@@ -328,7 +328,9 @@ Devise.setup do |config|
 end
 
 Warden::Manager.after_set_user do |user, auth, opts|
-  if user.roles.empty?
+  # Use blank instead of #empty? to load roles in memory for future
+  # current_user.has_cached_role? checks
+  if user.roles.blank?
     auth.logout
     throw(:warden)
   end

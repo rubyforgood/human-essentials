@@ -38,7 +38,7 @@ class ProductDrivesController < ApplicationController
         format.html { redirect_to product_drives_path, notice: "New product drive added!" }
         format.js
       else
-        flash[:error] = "Something didn't work quite right -- try again?"
+        flash.now[:error] = "Something didn't work quite right -- try again?"
         format.html { render action: :new }
         format.js { render template: "product_drives/new_modal" }
       end
@@ -70,7 +70,7 @@ class ProductDrivesController < ApplicationController
       redirect_to product_drives_path, notice: "#{@product_drive.name} updated!"
 
     else
-      flash[:error] = "Something didn't work quite right -- try again?"
+      flash.now[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
     end
   end

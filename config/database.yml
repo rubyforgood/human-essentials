@@ -37,7 +37,7 @@ production:
     adapter: postgresql
     encoding: unicode
     host: <%= ENV["DIAPER_DB_HOST"] %>
-    pool: 5
+    pool: 20
     username: <%= ENV["DIAPER_DB_USERNAME"] %>
     password: <%= ENV["DIAPER_DB_PASSWORD"] %>
     database: <%= ENV["DIAPER_DB_DATABASE"] %>
@@ -45,3 +45,4 @@ production:
   cache:
     <<: *primary_production
     migrations_paths: db/cache_migrate
+
