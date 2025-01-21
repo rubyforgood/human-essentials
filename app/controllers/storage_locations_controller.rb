@@ -40,7 +40,7 @@ class StorageLocationsController < ApplicationController
     if @storage_location.save
       redirect_to storage_locations_path, notice: "New storage location added!"
     else
-      flash[:error] = "Something didn't work quite right -- try again?"
+      flash.now[:error] = "Something didn't work quite right -- try again?"
       render action: :new
     end
   end
@@ -98,7 +98,7 @@ class StorageLocationsController < ApplicationController
     if @storage_location.update(storage_location_params)
       redirect_to storage_locations_path, notice: "#{@storage_location.name} updated!"
     else
-      flash[:error] = "Something didn't work quite right -- try again?"
+      flash.now[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
     end
   end
