@@ -71,55 +71,6 @@ class Partner < ApplicationRecord
     where(status: status.to_sym)
   }
 
-  # This constant mapping is preserved as it is a dependency of
-  # 20241122201255_cleanup_partner_agency_types.rb. In all other cases, one should
-  # refer to Partners::Profile.agency_types for a list of profile agency_types,
-  # and use I18n.t scope: :partners_profile to convert from an agency_type code
-  # to a descriptive string.
-  AGENCY_TYPES = {
-    "CAREER" => "Career technical training",
-    "ABUSE" => "Child abuse resource center",
-    "BNB" => "Basic Needs Bank",
-    "CHURCH" => "Church outreach ministry",
-    "COLLEGE" => "College and Universities",
-    "CDC" => "Community development corporation",
-    "HEALTH" => "Community health program or clinic",
-    "OUTREACH" => "Community outreach services",
-    "LEGAL" => "Correctional Facilities / Jail / Prison / Legal System",
-    "CRISIS" => "Crisis/Disaster services",
-    "DISAB" => "Developmental disabilities program",
-    "DISTRICT" => "School District",
-    "DOMV" => "Domestic violence shelter",
-    "ECE" => "Early Childhood Education/Childcare",
-    "CHILD" => "Early childhood services",
-    "EDU" => "Education program",
-    "FAMILY" => "Family resource center",
-    "FOOD" => "Food bank/pantry",
-    "FOSTER" => "Foster Program",
-    "GOVT" => "Government Agency/Affiliate",
-    "HEADSTART" => "Head Start/Early Head Start",
-    "HOMEVISIT" => "Home visits",
-    "HOMELESS" => "Homeless resource center",
-    "HOSP" => "Hospital",
-    "INFPAN" => "Infant/Child Pantry/Closet",
-    "LIB" => "Library",
-    "MHEALTH" => "Mental Health",
-    "MILITARY" => "Military Bases/Veteran Services",
-    "POLICE" => "Police Station",
-    "PREG" => "Pregnancy resource center",
-    "PRESCH" => "Preschool",
-    "REF" => "Refugee resource center",
-    "ES" => "School - Elementary School",
-    "HS" => "School - High School",
-    "MS" => "School - Middle School",
-    "SENIOR" => "Senior Center",
-    "TRIBAL" => "Tribal/Native-Based Organization",
-    "TREAT" => "Treatment clinic",
-    "2YCOLLEGE" => "Two-Year College",
-    "WIC" => "Women, Infants and Children",
-    "OTHER" => "Other"
-  }.freeze
-
   ALL_PARTIALS = %w[
     media_information
     agency_stability
