@@ -167,10 +167,6 @@ class Organization < ApplicationRecord
     street_changed? || city_changed? || state_changed? || zipcode_changed?
   end
 
-  def total_inventory
-    View::Inventory.total_inventory(id)
-  end
-
   def self.seed_items(organization = Organization.all)
     base_items = BaseItem.without_kit.map(&:to_h)
 

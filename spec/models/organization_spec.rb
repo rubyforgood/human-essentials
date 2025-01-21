@@ -283,18 +283,6 @@ RSpec.describe Organization, type: :model do
     end
   end
 
-  describe "total_inventory" do
-    it "returns a sum total of all inventory at all storage locations" do
-      item = create(:item, organization: organization)
-      create(:storage_location, :with_items, item: item, item_quantity: 100, organization: organization)
-      create(:storage_location, :with_items, item: item, item_quantity: 150, organization: organization)
-      expect(organization.total_inventory).to eq(250)
-    end
-    it "returns 0 if there is nothing" do
-      expect(organization.total_inventory).to eq(0)
-    end
-  end
-
   describe "geocode" do
     it "adds coordinates to the database" do
       expect(organization.latitude).to be_a(Float)
