@@ -21,8 +21,6 @@ class DashboardController < ApplicationController
   private
 
   def inventory
-    return @inventory if defined? @inventory
-
-    @inventory = current_organization.nil? ? nil : View::Inventory.new(current_organization.id)
+    @inventory ||= View::Inventory.new(current_organization.id)
   end
 end
