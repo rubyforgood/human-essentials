@@ -109,7 +109,7 @@ class ProductDrivesController < ApplicationController
     tag_names
       .compact_blank
       .uniq
-      .map { |name| Tag.find_or_initialize_by(name:, organization: current_organization) }
+      .map { |name| Tag.find_or_initialize_by(name:, type: "ProductDrive", organization: current_organization) }
   end
 
   def date_range_filter

@@ -756,11 +756,12 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_04_193318) do
 
   create_table "tags", force: :cascade do |t|
     t.string "name", limit: 256, null: false
+    t.string "type", null: false
     t.bigint "organization_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_tags_on_name", unique: true
     t.index ["organization_id"], name: "index_tags_on_organization_id"
+    t.index ["type", "organization_id", "name"], name: "index_tags_on_type_and_organization_id_and_name", unique: true
   end
 
   create_table "transfers", id: :serial, force: :cascade do |t|

@@ -4,8 +4,8 @@ RSpec.shared_examples_for "allows filtering by tag" do |taggable_class, tag_filt
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization:) }
 
-  let(:tag) { create(:tag, name: "New Years", organization:) }
-  let(:other_tag) { create(:tag, name: "Christmas", organization:) }
+  let(:tag) { create(:tag, name: "New Years", type: taggable_class.to_s, organization:) }
+  let(:other_tag) { create(:tag, name: "Christmas", type: taggable_class.to_s, organization:) }
 
   let!(:with_tag) { create(described_class, name: "AAAA", tags: [tag, other_tag], organization:) }
   let!(:with_other_tag) { create(described_class, name: "BBBB", tags: [other_tag], organization:) }
