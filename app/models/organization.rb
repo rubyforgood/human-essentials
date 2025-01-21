@@ -149,10 +149,6 @@ class Organization < ApplicationRecord
     short_name
   end
 
-  def display_users
-    users.map(&:email).join(", ")
-  end
-
   def ordered_requests
     requests.order(status: :asc, updated_at: :desc)
   end
