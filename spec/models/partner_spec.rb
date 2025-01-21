@@ -335,7 +335,7 @@ RSpec.describe Partner, type: :model do
         agency_state,
         agency_zipcode,
         agency_website,
-        "#{I18n.t :other, scope: :partners_profile}: #{other_agency_type}",
+        "#{I18n.t "partners_profile.other"}: #{other_agency_type}",
         contact_name,
         contact_phone,
         contact_email,
