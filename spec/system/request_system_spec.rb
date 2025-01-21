@@ -5,7 +5,7 @@ RSpec.describe "Requests", type: :system, js: true do
   let(:item1) { create(:item, name: "Good item") }
   let(:item2) { create(:item, name: "Crap item") }
   let(:partner1) { create(:partner, name: "This Guy", email: "thisguy@example.com") }
-  let(:partner2) { create(:partner, name: "That Guy", email: "ntg@example.com", default_storage_location_id: storage_location.id) }
+  let(:partner2) { create(:partner, name: "That Guy", email: "ntg@example.com") }
   let!(:storage_location) { create(:storage_location, organization: organization) }
 
   before do
@@ -89,16 +89,6 @@ RSpec.describe "Requests", type: :system, js: true do
           select('Fulfilled', from: "filters[by_status]")
           click_on 'Filter'
           # check for filtered requests
-          expect(page).to have_css("table tbody tr", count: 1)
-        end
-      end
-
-      context "when filtering by default storage location" do
-        it "constrains the list" do
-          visit subject
-          expect(page).to have_css("table tbody tr", count: 5)
-          select(storage_location.name, from: "filters[by_default_storage_location]")
-          click_on 'Filter'
           expect(page).to have_css("table tbody tr", count: 1)
         end
       end

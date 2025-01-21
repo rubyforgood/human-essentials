@@ -10,7 +10,7 @@ class Admin::OrganizationsController < AdminController
     if OrganizationUpdateService.update(@organization, organization_params)
       redirect_to admin_organizations_path, notice: "Updated organization!"
     else
-      flash[:error] = @organization.errors.full_messages.join("\n")
+      flash.now[:error] = @organization.errors.full_messages.join("\n")
       render :edit
     end
   end
@@ -57,11 +57,11 @@ class Admin::OrganizationsController < AdminController
       SnapshotEvent.publish(@organization) # need one to start with
       redirect_to admin_organizations_path, notice: "Organization added!"
     else
-      flash[:error] = "Failed to create Organization."
+      flash.now[:error] = "Failed to create Organization."
       render :new
     end
   rescue => e
-    flash[:error] = e
+    flash.now[:error] = e
     render :new
   end
 

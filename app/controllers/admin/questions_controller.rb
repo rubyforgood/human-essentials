@@ -12,7 +12,7 @@ class Admin::QuestionsController < AdminController
     if @question.save
       redirect_to admin_questions_path
     else
-      flash[:error] = "Failed to create question. #{@question.punctuate(@question.errors.to_a)}"
+      flash.now[:error] = "Failed to create question. #{@question.punctuate(@question.errors.to_a)}"
       render :new
     end
   end
@@ -26,7 +26,7 @@ class Admin::QuestionsController < AdminController
     if @question.update(question_params)
       redirect_to admin_questions_path
     else
-      flash[:error] = "Failed to update question. #{@question.punctuate(@question.errors.to_a)}"
+      flash.now[:error] = "Failed to update question. #{@question.punctuate(@question.errors.to_a)}"
       render :edit
     end
   end
