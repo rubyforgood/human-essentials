@@ -1,7 +1,5 @@
 class CreateProductionCacheTable < ActiveRecord::Migration[7.2]
   def change
-    return unless Rails.env.production?
-
     safety_assured do
       create_table "solid_cache_entries", force: :cascade do |t|
         t.binary "key", limit: 1024, null: false
