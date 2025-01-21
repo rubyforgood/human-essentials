@@ -62,6 +62,8 @@ class Organization < ApplicationRecord
     has_many :product_drives
     has_many :donation_sites
     has_many :donations
+    has_many :items
+    has_many :item_categories
     has_many :manufacturers
     has_many :partners
     has_many :partner_groups
@@ -76,29 +78,6 @@ class Organization < ApplicationRecord
     has_many :request_units, class_name: 'Unit'
   end
 
-  has_many :items, dependent: :destroy do
-    def other
-      where(partner_key: "other")
-    end
-
-    def during(date_start, date_end = Time.zone.now.strftime("%Y-%m-%d"))
-      select("COUNT(line_items.id) as amount, name")
-        .joins(:line_items)
-        .where("line_items.created_at BETWEEN ? and ?", date_start, date_end)
-        .group(:name)
-    end
-
-    def top(limit = 5)
-      order('count(line_items.id) DESC')
-        .limit(limit)
-    end
-
-    def bottom(limit = 5)
-      order('count(line_items.id) ASC')
-        .limit(limit)
-    end
-  end
-  has_many :item_categories, dependent: :destroy
   has_many :barcode_items, dependent: :destroy do
     def all
       unscope(where: :organization_id).where("barcode_items.organization_id = ? OR barcode_items.barcodeable_type = ?", proxy_association.owner.id, "BaseItem")
@@ -188,10 +167,6 @@ class Organization < ApplicationRecord
     street_changed? || city_changed? || state_changed? || zipcode_changed?
   end
 
-  def address_inline
-    address.split("\n").map(&:strip).join(", ")
-  end
-
   def total_inventory
     View::Inventory.total_inventory(id)
   end
@@ -237,10 +212,6 @@ class Organization < ApplicationRecord
     valid_items.each_with_object({}) do |item, hash|
       hash[item[:id].to_i] = item[:name]
     end
-  end
-
-  def valid_items_for_select
-    valid_items.map { |item| [item[:name], item[:id]] }.sort
   end
 
   def from_email
