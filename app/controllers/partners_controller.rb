@@ -31,7 +31,7 @@ class PartnersController < ApplicationController
     if svc.errors.none?
       redirect_to partners_path, notice: "Partner #{@partner.name} added!"
     else
-      flash[:error] = "Failed to add partner due to: #{svc.errors.full_messages}"
+      flash.now[:error] = "Failed to add partner due to: #{svc.errors.full_messages}"
       render action: :new
     end
   end
@@ -101,7 +101,7 @@ class PartnersController < ApplicationController
     if @partner.update(partner_params)
       redirect_to partner_path(@partner), notice: "#{@partner.name} updated!"
     else
-      flash[:error] = "Something didn't work quite right -- try again?"
+      flash.now[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
     end
   end

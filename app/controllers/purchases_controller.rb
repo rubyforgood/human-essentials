@@ -46,7 +46,7 @@ class PurchasesController < ApplicationController
     rescue => e
       load_form_collections
       @purchase.line_items.build if @purchase.line_items.count.zero?
-      flash[:error] = "Failed to create purchase due to:\n#{e.message}"
+      flash.now[:error] = "Failed to create purchase due to:\n#{e.message}"
       Rails.logger.error "[!] PurchasesController#create ERROR: #{e.message}"
       render action: :new
     end
@@ -79,7 +79,7 @@ class PurchasesController < ApplicationController
     redirect_to purchases_path
   rescue => e
     load_form_collections
-    flash[:alert] = "Error updating purchase: #{e.message}"
+    flash.now[:alert] = "Error updating purchase: #{e.message}"
     render "edit"
   end
 

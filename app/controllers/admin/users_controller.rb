@@ -46,7 +46,7 @@ class Admin::UsersController < AdminController
     flash[:notice] = "Created a new user!"
     redirect_to admin_users_path
   rescue => e
-    flash[:error] = "Failed to create user: #{e}"
+    flash.now[:error] = "Failed to create user: #{e}"
     render :new
   end
 
