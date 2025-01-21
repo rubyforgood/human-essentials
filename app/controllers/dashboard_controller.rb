@@ -3,7 +3,6 @@ class DashboardController < ApplicationController
   respond_to :html, :js
 
   def index
-    inventory = View::Inventory.new(current_organization.id)
     @org_stats = OrganizationStats.new(current_organization, inventory)
     @partners_awaiting_review = current_organization.partners.awaiting_review
     @outstanding_requests = current_organization
@@ -17,5 +16,13 @@ class DashboardController < ApplicationController
 
     # passing nil here filters the announcements that didn't come from an organization
     @broadcast_announcements = BroadcastAnnouncement.filter_announcements(nil)
+  end
+
+  private
+
+  def inventory
+    return @inventory if defined? @inventory
+
+    @inventory = current_organization.nil? ? nil : View::Inventory.new(current_organization.id)
   end
 end

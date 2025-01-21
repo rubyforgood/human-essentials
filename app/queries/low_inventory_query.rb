@@ -1,7 +1,9 @@
 class LowInventoryQuery
   LowInventoryItem = Data.define(:id, :name, :on_hand_minimum_quantity, :on_hand_recommended_quantity, :total_quantity)
 
-  def self.call(organization, inventory)
+  def self.call(organization, inventory = View::Inventory.new(organization.id))
+    return [] if organization.blank?
+
     items = inventory.all_items.uniq(&:item_id)
 
     low_inventory_items = []

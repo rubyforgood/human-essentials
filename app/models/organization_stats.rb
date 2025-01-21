@@ -24,10 +24,10 @@ class OrganizationStats
     donation_sites&.length || 0
   end
 
-  def locations_with_inventory
-    return [] unless storage_locations
+  def num_locations_with_inventory
+    return 0 unless storage_locations
 
-    storage_locations.select { |loc| inventory.quantity_for(storage_location: loc.id).positive? }
+    storage_locations.count { |loc| inventory.quantity_for(storage_location: loc.id).positive? }
   end
 
   private
