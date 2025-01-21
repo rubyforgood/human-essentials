@@ -8,6 +8,10 @@ module View
     class ViewInventoryItem < EventTypes::EventItem
       attribute :db_item, Types::Nominal::Any
       delegate(*Item.column_names.map(&:to_sym), to: :db_item)
+
+      def to_dropdown_option
+        Option.new(id: id, name: "#{name} (#{quantity})")
+      end
     end
 
     attr_accessor :inventory, :organization_id

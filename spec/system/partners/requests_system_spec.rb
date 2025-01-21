@@ -43,7 +43,7 @@ RSpec.describe "Partners profile served area behaviour", type: :system, js: true
         fill_in "request_item_requests_attributes_0_quantity", with: 50
         click_on "Submit Essentials Request"
 
-        expect(page).to have_text "Please ensure a unit is selected for each item that supports it."
+        expect(page).to have_text "Please ensure a single unit is selected for each item that supports it."
         expect(Request.count).to eq(0)
       end
 

@@ -1,72 +1,85 @@
-# avoid Rubocop failing with an infinite loop when it checks this cop
-# rubocop:disable Layout/ArrayAlignment
+require_relative("../../lib/test_helpers/pdf_comparison_test_factory")
+
 describe DistributionPdf do
-  let(:organization) { create(:organization) }
-  let(:distribution) { create(:distribution, organization: organization) }
-  let(:item1) { FactoryBot.create(:item, name: "Item 1", package_size: 50, value_in_cents: 100) }
-  let(:item2) { FactoryBot.create(:item, name: "Item 2", value_in_cents: 200) }
-  let(:item3) { FactoryBot.create(:item, name: "Item 3", value_in_cents: 300) }
-  let(:item4) { FactoryBot.create(:item, name: "Item 4", package_size: 25, value_in_cents: 400) }
+  let(:storage_creation) { PDFComparisonTestFactory.create_organization_storage_items }
+  let(:organization) { storage_creation.organization }
+  let(:storage_location) { storage_creation.storage_location }
 
-  let(:org_hiding_packages_and_values) do
-    FactoryBot.create(:organization, name: DEFAULT_TEST_ORGANIZATION_NAME,
-      hide_value_columns_on_receipt: true, hide_package_column_on_receipt: true)
-  end
-  let(:org_hiding_packages) { FactoryBot.create(:organization, name: DEFAULT_TEST_ORGANIZATION_NAME, hide_package_column_on_receipt: true) }
-  let(:org_hiding_values) { FactoryBot.create(:organization, name: DEFAULT_TEST_ORGANIZATION_NAME, hide_value_columns_on_receipt: true) }
+  describe "pdf item and column displays" do
+    let(:org_hiding_packages_and_values) {
+      create(:organization, name: DEFAULT_TEST_ORGANIZATION_NAME,
+        hide_value_columns_on_receipt: true, hide_package_column_on_receipt: true)
+    }
+    let(:org_hiding_packages) { create(:organization, name: DEFAULT_TEST_ORGANIZATION_NAME, hide_package_column_on_receipt: true) }
+    let(:org_hiding_values) { create(:organization, name: DEFAULT_TEST_ORGANIZATION_NAME, hide_value_columns_on_receipt: true) }
 
-  before(:each) do
-    create(:line_item, itemizable: distribution, item: item1, quantity: 50)
-    create(:line_item, itemizable: distribution, item: item2, quantity: 100)
-    create(:item_unit, item: item4, name: "pack")
-    create(:request, :with_item_requests, distribution: distribution,
-      request_items: [
-        {"item_id" => item2.id, "quantity" => 30},
-        {"item_id" => item3.id, "quantity" => 50},
-        {"item_id" => item4.id, "quantity" => 120, "request_unit" => "pack"}
-])
-  end
+    let(:distribution) { create(:distribution, organization: organization, storage_location: storage_location) }
+    let(:partner) { create(:partner) }
 
-  specify "#request_data" do
-    results = described_class.new(organization, distribution).request_data
-    expect(results).to eq([
-      ["Items Received", "Requested", "Received", "Value/item", "In-Kind Value Received", "Packages"],
-      ["Item 1", "", 50, "$1.00", "$50.00", "1"],
-      ["Item 2", 30, 100, "$2.00", "$200.00", nil],
-      ["Item 3", 50, "", "$3.00", nil, nil],
-      ["Item 4", 120, "", "$4.00", nil, nil],
-      ["", "", "", "", ""],
-      ["Total Items Received", 200, 150, "", "$250.00", ""]
-    ])
-  end
+    before(:each) do
+      PDFComparisonTestFactory.create_line_items_request(distribution, partner, storage_creation)
+    end
 
-  specify "#request_data with custom units feature" do
-    Flipper.enable(:enable_packs)
-    results = described_class.new(organization, distribution).request_data
-    expect(results).to eq([
-      ["Items Received", "Requested", "Received", "Value/item", "In-Kind Value Received", "Packages"],
-      ["Item 1", "", 50, "$1.00", "$50.00", "1"],
-      ["Item 2", 30, 100, "$2.00", "$200.00", nil],
-      ["Item 3", 50, "", "$3.00", nil, nil],
-      ["Item 4", "120 packs", "", "$4.00", nil, nil],
-      ["", "", "", "", ""],
-      ["Total Items Received", 200, 150, "", "$250.00", ""]
-    ])
-  end
+    specify "#request_data with custom units feature" do
+      Flipper.enable(:enable_packs)
+      results = described_class.new(organization, distribution).request_data
+      expect(results).to eq([
+        ["Items Received", "Requested", "Received", "Value/item", "In-Kind Value Received", "Packages"],
+        ["Item 1", "", 50, "$1.00", "$50.00", "1"],
+        ["Item 2", 30, 100, "$2.00", "$200.00", nil],
+        ["Item 3", 50, "", "$3.00", nil, nil],
+        ["Item 4", "120 packs", "", "$4.00", nil, nil],
+        ["", "", "", "", ""],
+        ["Total Items Received", 200, 150, "", "$250.00", ""]
+      ])
+    end
 
-  specify "#non_request_data" do
-    results = described_class.new(organization, distribution).non_request_data
-    expect(results).to eq([
-      ["Items Received", "Value/item", "In-Kind Value", "Quantity", "Packages"],
-      ["Item 1", "$1.00", "$50.00", 50, "1"],
-      ["Item 2", "$2.00", "$200.00", 100, nil],
-      ["", "", "", "", ""],
-      ["Total Items Received", "", "$250.00", 150, ""]
-    ])
-  end
+    specify "#non_request_data" do
+      results = described_class.new(organization, distribution).non_request_data
+      expect(results).to eq([
+        ["Items Received", "Value/item", "In-Kind Value", "Quantity", "Packages"],
+        ["Item 1", "$1.00", "$50.00", 50, "1"],
+        ["Item 2", "$2.00", "$200.00", 100, nil],
+        ["", "", "", "", ""],
+        ["Total Items Received", "", "$250.00", 150, ""]
+      ])
+    end
 
-  context "with request data" do
-    describe "#hide_columns" do
+    context "with request data" do
+      describe "#hide_columns" do
+        it "hides value and package columns when true on organization" do
+          pdf = described_class.new(org_hiding_packages_and_values, distribution)
+          data = pdf.request_data
+          pdf.hide_columns(data)
+          expect(data).to eq([
+            ["Items Received", "Requested", "Received"],
+            ["Item 1", "", 50],
+            ["Item 2", 30, 100],
+            ["Item 3", 50, ""],
+            ["Item 4", 120, ""],
+            ["", "", ""],
+            ["Total Items Received", 200, 150]
+          ])
+        end
+
+        it "hides value columns when true on organization" do
+          pdf = described_class.new(org_hiding_values, distribution)
+          data = pdf.request_data
+          pdf.hide_columns(data)
+          expect(data).to eq([
+            ["Items Received", "Requested", "Received", "Packages"],
+            ["Item 1", "", 50, "1"],
+            ["Item 2", 30, 100, nil],
+            ["Item 3", 50, "", nil],
+            ["Item 4", 120, "", nil],
+            ["", "", ""],
+            ["Total Items Received", 200, 150, ""]
+          ])
+        end
+      end
+    end
+
+    context "with non request data" do
       it "hides value and package columns when true on organization" do
         pdf = described_class.new(org_hiding_packages_and_values, distribution)
         data = pdf.request_data
@@ -97,56 +110,99 @@ describe DistributionPdf do
         ])
       end
     end
-  end
 
-  context "with non request data" do
-    it "hides value and package columns when true on organization" do
-      pdf = described_class.new(org_hiding_packages_and_values, distribution)
-      data = pdf.request_data
-      pdf.hide_columns(data)
-      expect(data).to eq([
-        ["Items Received", "Requested", "Received"],
-        ["Item 1", "", 50],
-        ["Item 2", 30, 100],
-        ["Item 3", 50, ""],
-        ["Item 4", 120, ""],
-        ["", "", ""],
-        ["Total Items Received", 200, 150]
-      ])
-    end
-
-    it "hides value columns when true on organization" do
-      pdf = described_class.new(org_hiding_values, distribution)
-      data = pdf.request_data
-      pdf.hide_columns(data)
-      expect(data).to eq([
-        ["Items Received", "Requested", "Received", "Packages"],
-        ["Item 1", "", 50, "1"],
-        ["Item 2", 30, 100, nil],
-        ["Item 3", 50, "", nil],
-        ["Item 4", 120, "", nil],
-        ["", "", ""],
-        ["Total Items Received", 200, 150, ""]
-      ])
-    end
-  end
-  context "regardles of request data" do
-    describe "#hide_columns" do
-      it "hides package column when true on organization" do
-        pdf = described_class.new(org_hiding_packages, distribution)
-        data = pdf.request_data
-        pdf.hide_columns(data)
-        expect(data).to eq([
-          ["Items Received", "Requested", "Received", "Value/item", "In-Kind Value Received"],
-          ["Item 1", "", 50, "$1.00", "$50.00"],
-          ["Item 2", 30, 100, "$2.00", "$200.00"],
-          ["Item 3", 50, "", "$3.00", nil],
-          ["Item 4", 120, "", "$4.00", nil],
-          ["", "", "", "", ""],
-          ["Total Items Received", 200, 150, "", "$250.00"]
-        ])
+    context "regardless of request data" do
+      describe "#hide_columns" do
+        it "hides package column when true on organization" do
+          pdf = described_class.new(org_hiding_packages, distribution)
+          data = pdf.request_data
+          pdf.hide_columns(data)
+          expect(data).to eq([
+            ["Items Received", "Requested", "Received", "Value/item", "In-Kind Value Received"],
+            ["Item 1", "", 50, "$1.00", "$50.00"],
+            ["Item 2", 30, 100, "$2.00", "$200.00"],
+            ["Item 3", 50, "", "$3.00", nil],
+            ["Item 4", 120, "", "$4.00", nil],
+            ["", "", "", "", ""],
+            ["Total Items Received", 200, 150, "", "$250.00"]
+          ])
+        end
       end
     end
   end
+
+  describe "address pdf output" do
+    def compare_pdf(distribution, expected_file_path)
+      pdf_file = PDFComparisonTestFactory.render_pdf_at_year_end(organization, distribution)
+      begin
+        # Run the following from Rails sandbox console (bin/rails/console --sandbox) to regenerate these comparison PDFs:
+        # => load "lib/test_helpers/pdf_comparison_test_factory.rb"
+        # => Rails::ConsoleMethods.send(:prepend, PDFComparisonTestFactory)
+        # => PDFComparisonTestFactory.create_comparison_pdfs
+        expect(pdf_file).to eq(IO.binread(expected_file_path))
+      rescue RSpec::Expectations::ExpectationNotMetError => e
+        Rails.root.join("tmp", "failed_match_distribution_" + distribution.delivery_method.to_s + "_" + expected_file_path.to_s.split("/").last + ".pdf").binwrite(pdf_file)
+        raise e.class, "PDF does not match, written to tmp/", cause: nil
+      end
+    end
+
+    let(:partner) { PDFComparisonTestFactory.create_partner(organization) }
+    let(:file_paths) { PDFComparisonTestFactory.get_file_paths }
+    let(:expected_different_address_file_path) { file_paths.expected_different_address_file_path }
+    let(:expected_pickup_file_path) { file_paths.expected_pickup_file_path }
+    let(:expected_same_address_file_path) { file_paths.expected_same_address_file_path }
+    let(:expected_incomplete_address_file_path) { file_paths.expected_incomplete_address_file_path }
+    let(:expected_no_contact_file_path) { file_paths.expected_no_contact_file_path }
+
+    context "when the partner has no addresses" do
+      before(:each) do
+        PDFComparisonTestFactory.create_profile_no_address(partner)
+      end
+      it "doesn't print any address if the delivery type is pickup" do
+        compare_pdf(PDFComparisonTestFactory.create_dist(partner, storage_creation, :pick_up), expected_pickup_file_path)
+      end
+      it "doesn't print any address if the delivery type is delivery" do
+        compare_pdf(PDFComparisonTestFactory.create_dist(partner, storage_creation, :delivery), expected_pickup_file_path)
+      end
+      it "doesn't print any address if the delivery type is shipped" do
+        compare_pdf(PDFComparisonTestFactory.create_dist(partner, storage_creation, :shipped), expected_pickup_file_path)
+      end
+    end
+    context "when the partner doesn't have a different program address" do
+      before(:each) do
+        PDFComparisonTestFactory.create_profile_without_program_address(partner)
+      end
+      it "prints the address if the delivery type is delivery" do
+        compare_pdf(PDFComparisonTestFactory.create_dist(partner, storage_creation, :delivery), expected_same_address_file_path)
+      end
+      it "prints the address if the delivery type is shipped" do
+        compare_pdf(PDFComparisonTestFactory.create_dist(partner, storage_creation, :shipped), expected_same_address_file_path)
+      end
+      it "doesn't print the address if the delivery type is pickup" do
+        compare_pdf(PDFComparisonTestFactory.create_dist(partner, storage_creation, :pick_up), expected_pickup_file_path)
+      end
+    end
+    context "when the partner has a different program/delivery address" do
+      before(:each) do
+        PDFComparisonTestFactory.create_profile_with_program_address(partner)
+      end
+      it "prints the delivery address if the delivery type is delivery" do
+        compare_pdf(PDFComparisonTestFactory.create_dist(partner, storage_creation, :delivery), expected_different_address_file_path)
+      end
+      it "prints the delivery address if the delivery type is shipped" do
+        compare_pdf(PDFComparisonTestFactory.create_dist(partner, storage_creation, :shipped), expected_different_address_file_path)
+      end
+      it "doesn't print any address if the delivery type is pickup" do
+        compare_pdf(PDFComparisonTestFactory.create_dist(partner, storage_creation, :pick_up), expected_pickup_file_path)
+      end
+    end
+    it "formats output correctly when the partner delivery address is incomplete" do
+      PDFComparisonTestFactory.create_profile_with_incomplete_address(partner)
+      compare_pdf(PDFComparisonTestFactory.create_dist(partner, storage_creation, :delivery), expected_incomplete_address_file_path)
+    end
+    it "formats output correctly when the partner profile contact info does not exist" do
+      PDFComparisonTestFactory.create_profile_no_contact_with_program_address(partner)
+      compare_pdf(PDFComparisonTestFactory.create_dist(partner, storage_creation, :delivery), expected_no_contact_file_path)
+    end
+  end
 end
-# rubocop:enable Layout/ArrayAlignment

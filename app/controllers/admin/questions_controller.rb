@@ -1,7 +1,6 @@
 class Admin::QuestionsController < AdminController
   def index
-    @bank_questions = Question.for_banks
-    @partner_questions = Question.for_partners
+    @bank_questions = Question.all
   end
 
   def new
@@ -13,7 +12,7 @@ class Admin::QuestionsController < AdminController
     if @question.save
       redirect_to admin_questions_path
     else
-      flash[:error] = "Failed to create question. #{@question.punctuate(@question.errors.to_a)}"
+      flash.now[:error] = "Failed to create question. #{@question.punctuate(@question.errors.to_a)}"
       render :new
     end
   end
@@ -27,7 +26,7 @@ class Admin::QuestionsController < AdminController
     if @question.update(question_params)
       redirect_to admin_questions_path
     else
-      flash[:error] = "Failed to update question. #{@question.punctuate(@question.errors.to_a)}"
+      flash.now[:error] = "Failed to update question. #{@question.punctuate(@question.errors.to_a)}"
       render :edit
     end
   end
@@ -45,6 +44,6 @@ class Admin::QuestionsController < AdminController
   end
 
   def question_params
-    params.require(:question).permit(:title, :for_partners, :for_banks, :answer)
+    params.require(:question).permit(:title, :answer)
   end
 end

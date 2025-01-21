@@ -125,6 +125,11 @@ class DistributionsController < ApplicationController
       @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
         inventory.quantity_for(storage_location: storage_loc.id).positive?
       end
+      if @distribution.storage_location.present?
+        @item_labels_with_quantities = inventory
+          .items_for_location(@distribution.storage_location.id, include_omitted: true)
+          .map(&:to_dropdown_option)
+      end
 
       flash_error = insufficient_error_message(result.error.message)
 
@@ -172,7 +177,7 @@ class DistributionsController < ApplicationController
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
     @distribution.initialize_request_items
     if (!@distribution.complete? && @distribution.future?) ||
-        current_user.has_role?(Role::ORG_ADMIN, current_organization)
+        current_user.has_cached_role?(Role::ORG_ADMIN, current_organization)
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.active.alphabetized
       @partner_list = current_organization.partners.alphabetized
@@ -202,7 +207,7 @@ class DistributionsController < ApplicationController
       perform_inventory_check
       redirect_to @distribution, notice: "Distribution updated!"
     else
-      flash[:error] = insufficient_error_message(result.error.message)
+      flash.now[:error] = insufficient_error_message(result.error.message)
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @distribution.initialize_request_items
       @items = current_organization.items.active.alphabetized

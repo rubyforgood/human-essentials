@@ -23,7 +23,7 @@ module ApplicationHelper
   end
 
   def can_administrate?
-    current_user.has_role?(Role::ORG_ADMIN, current_organization)
+    current_user.has_cached_role?(Role::ORG_ADMIN, current_organization)
   end
 
   def navigation_link_to(*args)

@@ -56,6 +56,8 @@ class DistributionSummaryByCountyQuery
   SQL
 
   class << self
+    # Timestamps are stored in Postgres without timezones so
+    # start_date and end_date must be strings in UTC.
     def call(organization_id:, start_date: nil, end_date: nil)
       params = {
         organization_id: organization_id,

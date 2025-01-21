@@ -32,7 +32,7 @@ module EventTypes
       if validate
         current_quantity = items[item_id]&.quantity || 0
         if current_quantity < quantity
-          raise InventoryError.new("Could not reduce quantity by #{quantity} - current quantity is #{current_quantity}",
+          raise InventoryActionError.new("Could not reduce quantity by #{quantity} - current quantity is #{current_quantity}",
             item_id,
             id)
         end

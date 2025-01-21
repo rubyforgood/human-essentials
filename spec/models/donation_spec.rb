@@ -19,7 +19,7 @@
 
 RSpec.describe Donation, type: :model do
   it_behaves_like "itemizable"
-  # This mixes feature specs with model specs... idealy we do not want to do this
+  # This mixes feature specs with model specs... ideally we do not want to do this
   # it_behaves_like "pagination"
 
   context "Validations >" do
@@ -56,6 +56,11 @@ RSpec.describe Donation, type: :model do
     end
     it "ensures that the issued at is no later than 1 year" do
       d = build(:donation, issued_at: DateTime.now.next_year(2).to_s)
+      expect(d).not_to be_valid
+    end
+    it "ensures that the quantity of line items is greater than 0" do
+      d = build(:donation)
+      d.line_items << build(:line_item, quantity: -1)
       expect(d).not_to be_valid
     end
   end
