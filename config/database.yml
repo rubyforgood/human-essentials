@@ -28,6 +28,9 @@ test:
 # These env vars live in Cloud66 application settings. Don't change
 # the names of the vars we're looking for without ensuring you've
 # updated/duplicated the vars there!
+#
+# Solid Cache is only configured for production, where it uses
+# the primary database.
 production:
   primary: &primary_production
     <<: *default
@@ -41,5 +44,4 @@ production:
     timeout: 5000
   cache:
     <<: *primary_production
-    database: app_production_cache
     migrations_paths: db/cache_migrate
