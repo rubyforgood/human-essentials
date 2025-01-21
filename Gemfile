@@ -37,6 +37,8 @@ gem "rolify", "~> 6.0"
 gem "strong_migrations", "1.8.0"
 # used in events
 gem 'dry-struct'
+# Use solid_cache as a cache store
+gem "solid_cache", "~> 1.0"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
@@ -110,11 +112,6 @@ gem 'bootsnap', require: false
 gem "nokogiri", ">= 1.10.4"
 gem "image_processing"
 gem "sprockets", "~> 4.2.1"
-
-group :production do
-  # Tool to detect unused code through knowing which methods are used in which files.
-  gem 'coverband'
-end
 
 group :production, :staging do
   # Reduce the noise of logs and include custom fields to it for easier access
@@ -217,8 +214,5 @@ end
 if %w(mingw mswin x64_mingw jruby).include?(RUBY_PLATFORM)
   gem "tzinfo-data", "~> 1.2", platforms: %i(mingw mswin x64_mingw jruby)
 end
-
-# Use Redis for Action Cable
-gem "redis", "~> 5.3"
 
 gem "importmap-rails", "~> 2.1"
