@@ -70,7 +70,8 @@ class ProductDrivesController < ApplicationController
 
   def update
     @product_drive = current_organization.product_drives.find(params[:id])
-    if @product_drive.update(product_drive_params.merge(tags: tags_from_params))
+    @product_drive.tags = tags_from_params
+    if @product_drive.update(product_drive_params)
       redirect_to product_drives_path, notice: "#{@product_drive.name} updated!"
     else
       set_tags
