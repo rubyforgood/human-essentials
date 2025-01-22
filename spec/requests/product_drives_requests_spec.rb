@@ -169,35 +169,64 @@ RSpec.describe "ProductDrives", type: :request do
     end
 
     describe "POST#create" do
-      let(:tag) { create(:tag, name: "Foo") }
+      let!(:tag) { create(:tag, name: "Foo", organization:) }
+      let(:valid_params) { attributes_for(:product_drive).merge(tags: ["Foo", "Bar"]) }
 
       it "returns redirect http status" do
-        post product_drives_path(product_drive: attributes_for(:product_drive))
+        post product_drives_path(product_drive: valid_params)
         expect(response).to have_http_status(:redirect)
       end
 
       it "creates drives with tags" do
-        existing_tag_name = tag.name
-        new_tag_name = "Bar"
+        post product_drives_path(product_drive: valid_params)
 
-        post product_drives_path(product_drive: attributes_for(:product_drive, tags: [existing_tag_name, new_tag_name]))
+        expect(ProductDrive.last.tags.map(&:name)).to include("Foo", "Bar")
+      end
 
-        expect(ProductDrive.last.tags.map(&:name)).to include(existing_tag_name, new_tag_name)
+      context "with invalid params" do
+        # start_date is required so this will fail validation
+        let(:invalid_params) do
+          valid_params.merge(start_date: "")
+        end
+
+        it "preserves tags entered" do
+          post product_drives_path(product_drive: invalid_params)
+
+          expect(flash[:error]).to eq("Something didn't work quite right -- try again?")
+          expect(response.body).to include("Foo")
+        end
       end
     end
 
     describe "PUT#update" do
+      let!(:foo_tag) { create(:tag, name: "Foo", organization:) }
+      let!(:bar_tag) { create(:tag, name: "Bar", organization:) }
       let(:product_drive) { create(:product_drive, organization: organization) }
+      let(:valid_params) { product_drive.attributes.symbolize_keys.merge(tags: ["Foo", "Bar"]) }
 
       it "returns redirect http status" do
-        put product_drive_path(id: product_drive.id, product_drive: attributes_for(:product_drive))
+        put product_drive_path(id: product_drive.id, product_drive: valid_params)
         expect(response).to have_http_status(:redirect)
       end
 
       it "updates drive tags" do
         expect {
-          put product_drive_path(id: product_drive.id, product_drive: attributes_for(:product_drive, tags: ["Foo"]))
-        }.to change { product_drive.reload.tags.map(&:name) }.from([]).to(["Foo"])
+          put product_drive_path(id: product_drive.id, product_drive: valid_params)
+        }.to change { product_drive.reload.tags.map(&:name).sort }.from([]).to(["Bar", "Foo"])
+      end
+
+      context "with invalid params" do
+        # start_date is required so this will fail validation
+        let(:invalid_params) do
+          valid_params.merge(start_date: "")
+        end
+
+        it "preserves tags entered" do
+          put product_drive_path(id: product_drive.id, product_drive: invalid_params)
+
+          expect(flash[:error]).to eq("Something didn't work quite right -- try again?")
+          expect(response.body).to include("Foo", "Bar")
+        end
       end
     end
 
