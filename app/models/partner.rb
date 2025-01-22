@@ -204,7 +204,7 @@ class Partner < ApplicationRecord
       state: profile.state,
       zip_code: profile.zip_code,
       website: profile.website,
-      agency_type: (symbolic_agency_type == :other) ? "#{Partners::Profile.agency_types[:other]}: #{profile.other_agency_type}" : profile.agency_type
+      agency_type: (symbolic_agency_type == :other) ? "#{I18n.t symbolic_agency_type, scope: :partners_profile}: #{profile.other_agency_type}" : (I18n.t symbolic_agency_type, scope: :partners_profile)
     }
   end
 
