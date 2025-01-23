@@ -6,7 +6,7 @@
       </div>
 
       <div class="form-check">
-        <%= radio_button_tag(:account, :bank, false, class: 'form-check-input account_type') %>
+        <%= radio_button_tag(:account, :bank, @bank_selected, class: 'form-check-input account_type') %>
         <%= label_tag(:account, "I am an Essentials Bank. I do NOT distribute diapers/period supplies directly to the public, I distribute them to partner agencies who distribute them to the public.", class: 'form-check-label') %>
       </div>
       <div class="form-check">
@@ -14,36 +14,16 @@
         <%= label_tag(:account, "I am a Partner Agency to an Essentials Bank. I distribute the diapers/period supplies that I receive from essentials banks directly to the public.", class: 'form-check-label') %>
       </div>
 
-      <% if @bank_selected %>
-        <script type="module">
-            $(document).ready(function() {
-                const bankRadioButtons = $('.account_type[value="bank"]:not(:checked)');
-
-                if (bankRadioButtons.length > 0) {
-                    bankRadioButtons.eq(0).click();
-                }
-            });
-        </script>
-      <% else %>
-        <script type="module">
-            $(document).ready(function() {
-                $('#create_bank').hide()
-                $('#partner_info').hide()
-            });
-        </script>
-      <% end %>
-
-      <script type="module">
-          $('.account_type').change(function() {
-              if (this.value === 'bank') {
-                  $('#create_bank').show()
-                  $('#partner_info').hide()
-              } else {
-                  $('#create_bank').hide()
-                  $('#partner_info').show()
-              }
-          })
-      </script>
+      <%# Hide #partner_info and #create_bank selections unless radio button selected %>
+      <style>
+        #partner_info, #create_bank {
+          display: none;
+        }
+        .form-check:has(#account_partner:checked)~#partner_info,
+          .form-check:has(#account_bank:checked)~#create_bank {
+          display: block;
+        }
+      </style>
 
       <div class='card-text' id='partner_info'>
         <p class='p-2'>Are you a current partner to diaper and/or period supply banks? If so please go <a href='https://humanessentials.app/users/sign_in'>here</a> to login.</p>
