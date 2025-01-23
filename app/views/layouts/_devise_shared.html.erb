@@ -32,9 +32,9 @@
       padding-left: 0px;
     }
   </style>
-  <script type="module">
-    $(document).ready(function() {
-      <% if Rails.env.staging? %>
+  <% if Rails.env.staging? %>
+    <script type="module">
+      $(document).ready(function() {
         // Prevents users from closing the modal by clicking outside of it or pressing the esc key
         new bootstrap.Modal('#warningModal', {
           backdrop: 'static',
@@ -49,9 +49,9 @@
             $('.continue-btn').attr("disabled", true);
           }
         });
-      <% end %>
-    });
-  </script>
+      });
+    </script>
+  <% end %>
 </head>
 
 <body id="devise" class="hold-transition login-page <%= body_class %> <%= Rails.env.staging? ? 'login-page-test' : '' %>">
@@ -73,31 +73,33 @@
   <!-- /.login-box -->
 
   <!-- Modal -->
-  <div class="modal fade" id="warningModal" tabindex="-1" role="dialog" aria-labelledby="warningModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3 class="modal-title" id="warningModalLabel"><b>This site is for TEST purposes only!</b></h3>
-        </div>
-        <div class="modal-body">
-          You're visiting staging.humanessentials.app, a demo/test site for the full site at <a href="https://humanessentials.app">humanessentials.app</a>.<br>
-          It is not safe to upload, enter or save any sensitive data here.<br>
-          <div class="modal-body-warning-text">
-            If you meant to login to your live account, go to <a href="https://humanessentials.app/users/sign_in">humanessentials.app</a>
+  <% if Rails.env.staging? %>
+    <div class="modal fade" id="warningModal" tabindex="-1" role="dialog" aria-labelledby="warningModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title" id="warningModalLabel"><b>This site is for TEST purposes only!</b></h3>
           </div>
-          <br>
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-            <label class="form-check-label" for="defaultCheck1">
-              I Understand
-            </label>
+          <div class="modal-body">
+            You're visiting staging.humanessentials.app, a demo/test site for the full site at <a href="https://humanessentials.app">humanessentials.app</a>.<br>
+            It is not safe to upload, enter or save any sensitive data here.<br>
+            <div class="modal-body-warning-text">
+              If you meant to login to your live account, go to <a href="https://humanessentials.app/users/sign_in">humanessentials.app</a>
+            </div>
+            <br>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+              <label class="form-check-label" for="defaultCheck1">
+                I Understand
+              </label>
+            </div>
           </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-warning continue-btn" data-bs-dismiss="modal" disabled>Continue To The Test Site</button>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-warning continue-btn" data-bs-dismiss="modal" disabled>Continue To The Test Site</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  <% end %>
 </body>
 </html>
