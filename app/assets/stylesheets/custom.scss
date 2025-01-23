@@ -1,5 +1,4 @@
 @import 'base/_variables';
-@import 'AdminLTE';
 
 @mixin for-desktop {
     @media (min-width: 992px) and (min-height: 769px) {
@@ -50,15 +49,6 @@
     height: 'auto';
     @include for-desktop {
         height: 90%;
-    }
-}
-
-.wrapper-form-feedback {
-    @extend .dropdown-item;
-
-    &:active {
-        color: inherit;
-        background-color: #f8f9fa;
     }
 }
 
