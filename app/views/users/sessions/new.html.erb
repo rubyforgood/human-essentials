@@ -27,7 +27,7 @@
         </div>
         <div class="form-inputs" data-controller="password-visibility">
           <div class="password-input-wrapper">
-            <%= f.input :password, autofocus: true, input_html: { data: { password_visibility_target: 'password' } } %>
+            <%= f.input :password, autofocus: true, required: true, input_html: { data: { password_visibility_target: 'password' } } %>
             <span class="toggle-password">
               <i class="fas fa-eye-slash" data-action="click->password-visibility#toggle" data-password-visibility-target="icon"></i>
             </span>
