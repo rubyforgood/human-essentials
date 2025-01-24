@@ -140,6 +140,14 @@ RSpec.describe "Requests", type: :system, js: true do
           partner_names = organization.partners.pluck(:name)
           expect(page).to have_select("partner_id", with_options: partner_names)
         end
+
+        context "selecting a partner" do
+          it "redirects to new partner request page" do
+            select(partner1.name, from: "partner_id")
+            click_on "Next"
+            expect(page).to have_current_path(new_partners_request_path(partner_id: partner1.id))
+          end
+        end
       end
     end
   end
