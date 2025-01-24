@@ -140,13 +140,13 @@ class ItemsController < ApplicationController
   private
 
   def clean_item_value_in_cents
-    return nil unless params[:item][:value_in_cents]
+    return unless params[:item][:value_in_cents]
 
     params[:item][:value_in_cents] = params[:item][:value_in_cents].gsub(/[$,.]/, "")
   end
 
   def clean_item_value_in_dollars
-    return nil unless params[:item][:value_in_dollars]
+    return unless params[:item][:value_in_dollars]
 
     params[:item][:value_in_cents] = params[:item][:value_in_dollars].gsub(/[$,]/, "").to_d * 100
     params[:item].delete(:value_in_dollars)

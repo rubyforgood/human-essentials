@@ -26,7 +26,9 @@ class DistributionService
   private
 
   def distribution_organization
-    @distribution_organization ||= distribution&.organization
+    return @distribution_organization if defined? @distribution_organization
+
+    @distribution_organization = distribution&.organization
   end
 
   def set_error(error)
@@ -35,21 +37,17 @@ class DistributionService
 
   def distribution
     # Return distribution if it has already been defined
-    return @distribution if @distribution
+    return @distribution if defined? @distribution
 
     # Otherwise try to get this value with possibly
     # provided distribution_id from initialize
-    if @distribution_id.present?
-      @distribution = Distribution.find(@distribution_id)
-    end
+    @distribution = @distribution_id.present? ? Distribution.find(@distribution_id) : nil
   end
 
   def distribution_id
-    return @distribution_id if @distribution_id
+    return @distribution_id if defined? @distribution_id
 
-    if distribution.present?
-      @distribution_id = distribution.id
-    end
+    @distribution_id = distribution&.id
   end
 end
 

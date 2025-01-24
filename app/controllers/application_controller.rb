@@ -15,30 +15,31 @@ class ApplicationController < ActionController::Base
   rescue_from ActiveRecord::RecordNotFound, with: :not_found!
 
   def current_organization
-    return @current_organization if @current_organization
-    return nil unless current_role
+    return @current_organization if defined? @current_organization
 
-    return current_role.resource if current_role&.resource&.is_a?(Organization)
+    return @current_organization = nil unless current_role
+    return @current_organization = current_role.resource if current_role&.resource&.is_a?(Organization)
 
-    Organization.find_by(short_name: params[:organization_name])
+    @current_organization = Organization.find_by(short_name: params[:organization_name])
   end
   helper_method :current_organization
 
   def current_partner
-    return nil unless current_role
-    return nil if current_role.name.to_sym != Role::PARTNER
+    return @current_partner if defined? @current_partner
 
-    current_role.resource
+    return @current_partner = nil unless current_role
+    return @current_partner = nil if current_role.name.to_sym != Role::PARTNER
+
+    @current_partner = current_role.resource
   end
   helper_method :current_partner
 
   def current_role
-    return @role if @role
-    return nil unless current_user
+    return @role if defined? @role
+
+    return @role = nil unless current_user
 
     @role = Role.find_by(id: session[:current_role]) || UsersRole.current_role_for(current_user)
-
-    @role
   end
 
   def dashboard_path_from_current_role
