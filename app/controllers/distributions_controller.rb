@@ -52,13 +52,13 @@ class DistributionsController < ApplicationController
     @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select(:id, :name)
     @partners = current_organization.partners.active.alphabetized.select(:id, :name)
     @selected_item = filter_params[:by_item_id].presence
-    @distribution_totals = DistributionTotalsService.new(current_organization.distributions, scope_filters)
-    @total_value_all_distributions = @distribution_totals.total_value
-    @total_items_all_distributions = @distribution_totals.total_quantity
+    @distribution_totals = DistributionTotalsService.call(current_organization.distributions.class_filter(scope_filters))
+    @total_value_all_distributions = @distribution_totals.values.sum(&:value)
+    @total_items_all_distributions = @distribution_totals.values.sum(&:quantity)
     paginated_ids = @paginated_distributions.ids
-    @total_value_paginated_distributions = @distribution_totals.total_value(paginated_ids)
-    @total_items_paginated_distributions = @distribution_totals.total_quantity(paginated_ids)
-    @selected_item_category = filter_params[:by_item_category_id]
+    @total_value_paginated_distributions = @distribution_totals.slice(*paginated_ids).values.sum(&:value)
+    @total_items_paginated_distributions = @distribution_totals.slice(*paginated_ids).values.sum(&:quantity)
+    @selected_item_category = filter_params[:by_item_category_id].presence
     @selected_partner = filter_params[:by_partner]
     @selected_status = filter_params[:by_state]
     @selected_location = filter_params[:by_location]
@@ -69,7 +69,11 @@ class DistributionsController < ApplicationController
     respond_to do |format|
       format.html
       format.csv do
-        send_data Exports::ExportDistributionsCSVService.new(distributions: @distributions, organization: current_organization, filters: scope_filters).generate_csv, filename: "Distributions-#{Time.zone.today}.csv"
+        send_data Exports::ExportDistributionsCSVService.new(
+          distributions: @distributions,
+          organization: current_organization,
+          filters: scope_filters
+        ).generate_csv, filename: "Distributions-#{Time.zone.today}.csv"
       end
     end
   end
