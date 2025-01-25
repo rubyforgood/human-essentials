@@ -1,7 +1,7 @@
 module Partners
   class RequestsController < BaseController
-    skip_before_action :require_partner, only: [:new, :create]
-    before_action :require_partner_or_org_admin, only: [:new, :create]
+    skip_before_action :require_partner, only: [:new, :create, :validate]
+    before_action :require_partner_or_org_admin, only: [:new, :create, :validate]
     layout :layout
 
     protect_from_forgery with: :exception
@@ -25,7 +25,8 @@ module Partners
     def create
       create_service = Partners::RequestCreateService.new(
         request_type: "quantity",
-        partner_user_id: current_user.id,
+        partner_id: partner.id,
+        user_id: current_user.id,
         comments: partner_request_params[:comments],
         item_requests_attributes: partner_request_params[:item_requests_attributes]&.values || []
       )
@@ -33,7 +34,11 @@ module Partners
       create_service.call
       if create_service.errors.none?
         flash[:success] = 'Request was successfully created.'
-        redirect_to partners_request_path(create_service.partner_request.id)
+        if current_partner
+          redirect_to partners_request_path(create_service.partner_request.id)
+        else
+          redirect_to request_path(create_service.partner_request.id)
+        end
       else
         @partner_request = create_service.partner_request
         @errors = create_service.errors
@@ -49,7 +54,8 @@ module Partners
     def validate
       create_service = Partners::RequestCreateService.new(
         request_type: "quantity",
-        partner_user_id: current_user.id,
+        partner_id: partner.id,
+        user_id: current_user.id,
         comments: partner_request_params[:comments],
         item_requests_attributes: partner_request_params[:item_requests_attributes]&.values || []
       ).initialize_only

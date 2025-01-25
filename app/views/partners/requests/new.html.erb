@@ -35,6 +35,7 @@
             <%= simple_form_for @partner_request, url: partners_requests_path(@partner_request),
               html: {role: 'form', class: 'form-horizontal'}, method: :post, data: { controller: 'form-input', confirmation_target: "form" } do |form| %>
               <%= form.input :comments, label: "Comments:", as: :text, class: "form-control", wrapper: :input_group %>
+              <%= hidden_field_tag :partner_id, params[:partner_id] %>
 
               <table class='table'>
                 <thead>
