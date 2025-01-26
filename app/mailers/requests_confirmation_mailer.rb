@@ -3,6 +3,7 @@ class RequestsConfirmationMailer < ApplicationMailer
     @organization = request.organization
     @partner = request.partner
     @request_items = fetch_items(request)
+    @requester = request.partner_user
     requestee_email = request.user_email
     # If the requestee organization has opted in to receiving an email when a
     # request is made, CC them

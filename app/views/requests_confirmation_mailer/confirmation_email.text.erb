@@ -1,6 +1,6 @@
 Hello <%= @partner.name %>,
 
-This is an email confirmation that the <%= @organization.name %> has received your request of:
+This email confirms that <%= @organization.name %> has received a request<%= " submitted by #{@requester.name}" if @requester.present? %> for:
 <% @request_items.each do |item| %>
   <%= item['name'] %> - <%= item['quantity'] || item['person_count'] %>
 <% end %>

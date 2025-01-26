@@ -1,6 +1,7 @@
 RSpec.describe RequestsConfirmationMailer, type: :mailer do
   let(:organization) { create(:organization, :with_items) }
-  let(:request) { create(:request, organization: organization) }
+  let(:partner_user) { create(:partner_user, name: "Jane Smith") }
+  let(:request) { create(:request, organization:, partner_user:) }
   let(:mail) { RequestsConfirmationMailer.confirmation_email(request) }
 
   let(:request_w_varied_quantities) { create(:request, :with_varied_quantities, organization: organization) }
@@ -16,7 +17,7 @@ RSpec.describe RequestsConfirmationMailer, type: :mailer do
 
     it 'renders the body' do
       organization.update!(email: "me@org.com")
-      expect(mail.body.encoded).to match('This is an email confirmation')
+      expect(mail.body.encoded).to match('This email confirms')
       expect(mail.body.encoded).to match('For more info, please e-mail me@org.com')
     end
 
@@ -26,16 +27,31 @@ RSpec.describe RequestsConfirmationMailer, type: :mailer do
       request.organization.update!(receive_email_on_requests: false)
       expect(RequestsConfirmationMailer.confirmation_email(request).cc).to eq([request.partner.email])
     end
+
+    context "when partner_user is present for the request" do
+      it "displays the name of the user" do
+        expect(mail.body.encoded).to match("has received a request submitted by Jane Smith for")
+      end
+    end
+
+    context "when no partner_user is specified for the request" do
+      before { request.update(partner_user: nil) }
+
+      it "doesn't mention who submitted the request" do
+        expect(mail.body.encoded).to match("has received a request for")
+      end
+    end
   end
 
   it 'pairs the right quantities with the right item names' do
     organization.update!(email: "me@org.com")
-    expect(mail_w_varied_quantities.body.encoded).to match('This is an email confirmation')
+    expect(mail_w_varied_quantities.body.encoded).to match('This email confirms')
     request_w_varied_quantities.request_items.each { |ri|
       expected_string = "#{Item.find(ri["item_id"]).name} - #{ri["quantity"]}"
       expect(mail_w_varied_quantities.body.encoded).to include(expected_string)
     }
   end
+
   it "shows units" do
     Flipper.enable(:enable_packs)
     item1 = create(:item, organization:)
