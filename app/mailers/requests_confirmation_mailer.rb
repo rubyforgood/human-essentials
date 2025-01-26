@@ -3,10 +3,9 @@ class RequestsConfirmationMailer < ApplicationMailer
     @organization = request.organization
     @partner = request.partner
     @request_items = fetch_items(request)
-    @requester = request.partner_user
-    requestee_email = request.user_email
-    # If the requestee organization has opted in to receiving an email when a
-    # request is made, CC them
+    requester = request.requester
+    @requester_name = requester.is_a?(User) ? requester.name : nil # Requester can be the partner, if no user is specified
+    # If the organization has opted in to receiving an email when a request is made, CC them
     cc = [@partner.email]
     if @organization.receive_email_on_requests
       cc.push(@organization.email)
@@ -14,7 +13,7 @@ class RequestsConfirmationMailer < ApplicationMailer
     cc.flatten!
     cc.compact!
     cc.uniq!
-    mail(to: requestee_email, cc: cc, subject: "#{@organization.name} - Requests Confirmation")
+    mail(to: requester.email, cc: cc, subject: "#{@organization.name} - Requests Confirmation")
   end
 
   private

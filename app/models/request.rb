@@ -63,6 +63,11 @@ class Request < ApplicationRecord
     partner_user_id ? User.find_by(id: partner_user_id).email : Partner.find_by(id: partner_id).email
   end
 
+  def requester
+    # Despite the field being called "partner_user_id", it can refer to both a partner user or an organization admin
+    partner_user_id ? partner_user : partner
+  end
+
   def request_type_label
     request_type&.first&.capitalize
   end

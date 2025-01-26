@@ -10,7 +10,6 @@ RSpec.describe RequestsConfirmationMailer, type: :mailer do
   describe "#confirmation_email" do
     it 'renders the headers' do
       expect(mail.subject).to eq("#{request.organization.name} - Requests Confirmation")
-      expect(mail.to).to eq([request.user_email])
       expect(mail.cc).to eq([request.partner.email])
       expect(mail.from).to include("no-reply@humanessentials.app")
     end
@@ -32,6 +31,10 @@ RSpec.describe RequestsConfirmationMailer, type: :mailer do
       it "displays the name of the user" do
         expect(mail.body.encoded).to match("has received a request submitted by Jane Smith for")
       end
+
+      it "sends to the partner_user's email" do
+        expect(mail.to).to eq([request.partner_user.email])
+      end
     end
 
     context "when no partner_user is specified for the request" do
@@ -39,6 +42,10 @@ RSpec.describe RequestsConfirmationMailer, type: :mailer do
 
       it "doesn't mention who submitted the request" do
         expect(mail.body.encoded).to match("has received a request for")
+      end
+
+      it "sends to the partner's email" do
+        expect(mail.to).to eq([request.partner.email])
       end
     end
   end

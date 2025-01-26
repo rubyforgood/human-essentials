@@ -1,6 +1,6 @@
 <p>Hello <%= @partner.name %>,</p>
 
-<p>This email confirms that <%= @organization.name %> has received a request<%= " submitted by #{@requester.name}" if @requester.present? %> for:</p>
+<p>This email confirms that <%= @organization.name %> has received a request<%= " submitted by #{@requester_name}" if @requester_name.present? %> for:</p>
 <ul>
   <% @request_items.each do |item| %>
     <li><%= item['name'] %> -
