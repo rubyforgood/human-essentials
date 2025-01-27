@@ -89,7 +89,7 @@ class AuditsController < ApplicationController
   end
 
   def set_storage_locations
-    @storage_locations = current_organization.storage_locations.active_locations
+    @storage_locations = current_organization.storage_locations.active
   end
 
   def set_items
