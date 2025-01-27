@@ -1,7 +1,7 @@
 READY FOR REVIEW
 # Getting Started -- Partner Management
 
-## Things You need to know about Partners before deciding how you are handling them
+## Things you need to know about Partners before deciding how you are handling them
 
 1/  You need to have your Partners in the system to be able to record distributions to them.
 
@@ -11,9 +11,9 @@ READY FOR REVIEW
 
 4/  The usual way to handle bringing on Partners to be able to make Requests is to invite them,  then have them fill in their profile before approving them, so that you get the information from them that your bank needs for grants, etc.   However, if that's not how you want to work,  it is also possible to invite and approve them in one step.
 
-5/  A lot of Banks set up a Partner as a proxy for their direct distribution to people in need.  This is allowed, and you can switch back and forth between being a Bank and a Partner with the same login
+5/  Many Banks set up a Partner as a proxy for their direct distribution to people in need.  This is allowed, and you can switch back and forth between being a Bank and a Partner with the same login.
 
-6/  You can group Partners, and allow those Partber Groups to request different sets of items (One thing some banks use this for is handling grants that are geographically constrained.)
+6/  You can group Partners, and allow those Partner Groups to request different sets of items (One thing some banks use this for is handling grants that are geographically constrained.)
 
 
 ## Importing Partners
@@ -28,7 +28,7 @@ For your first partner, you can Click on the "Add a Partner" button in your "Get
 
 For any subsequent Partners, please click on "Partner Agencies", then "All Partners", then "Add a Partner")
 
-![add a partner navigation](images/partners/partners_add_1.png)
+![add a partner navigation](images/partners/partners_add_navigation.png)
 Further details on adding a partner can be found [here](pm_adding_a_partner.md)
 
-[Prior: Storage Locations](getting_started_storage_locations.md)[Next: Donation sites](getting_started_donation_sites.md)
+[Prior: Storage Locations](getting_started_storage_locations.md)[Next: Donation Sites](getting_started_donation_sites.md)
