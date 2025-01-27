@@ -38,6 +38,19 @@ RSpec.describe ProductDriveParticipant, type: :model do
     end
   end
 
+  context "Scopes" do
+    describe "with_volumes" do
+      subject { described_class.with_volumes }
+      it "retrieves the amount of product that has been donated by participant" do
+        dd = create(:product_drive)
+        ddp = create(:product_drive_participant)
+        create(:donation, :with_items, item_quantity: 10, source: Donation::SOURCES[:product_drive], product_drive: dd, product_drive_participant: ddp)
+
+        expect(subject.first.volume).to eq(10)
+      end
+    end
+  end
+
   context "Methods" do
     describe "volume" do
       it "retrieves the amount of product that has been donated by participant" do
