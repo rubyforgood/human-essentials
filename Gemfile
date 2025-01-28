@@ -182,6 +182,12 @@ group :development do
   gem "rails-erd"
   # Allows to create a console in the browser.
   gem "web-console"
+  # Middleware that displays speed badge for every HTML page
+  gem "rack-mini-profiler"
+  # Adds memory profiling to rack-mini-profiler
+  gem "memory_profiler"
+  # Adds call-stack profiling flamegraphs to rack-mini-profiler
+  gem "stackprof"
 end
 
 group :test do
