@@ -53,6 +53,21 @@ class VendorsController < ApplicationController
     end
   end
 
+  def deactivate
+    vendor = current_organization.vendors.find(params[:id])
+
+    begin
+      vendor.deactivate!
+    rescue => e
+      flash[:error] = e.message
+      redirect_back(fallback_location: vendors_path)
+      return
+    end
+
+    flash[:notice] = "#{vendor.business_name} has been deactivated."
+    redirect_to vendors_path
+  end
+
   private
 
   def vendor_params

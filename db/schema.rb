@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_01_04_193318) do
+ActiveRecord::Schema[7.2].define(version: 2025_01_29_154820) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -230,6 +230,31 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_04_193318) do
     t.index ["user_id"], name: "index_deprecated_feedback_messages_on_user_id"
   end
 
+  create_table "diaper_drive_participants", id: :serial, force: :cascade do |t|
+    t.string "contact_name"
+    t.string "email"
+    t.string "phone"
+    t.string "comment"
+    t.integer "organization_id"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.string "address"
+    t.string "business_name"
+    t.float "latitude"
+    t.float "longitude"
+    t.index ["latitude", "longitude"], name: "index_diaper_drive_participants_on_latitude_and_longitude"
+  end
+
+  create_table "diaper_drives", force: :cascade do |t|
+    t.string "name"
+    t.date "start_date"
+    t.date "end_date"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.bigint "organization_id"
+    t.index ["organization_id"], name: "index_diaper_drives_on_organization_id"
+  end
+
   create_table "distributions", id: :serial, force: :cascade do |t|
     t.text "comment"
     t.datetime "created_at", precision: nil, null: false
@@ -323,6 +348,16 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_04_193318) do
     t.bigint "old_partner_id"
     t.boolean "archived", default: false
     t.index ["partner_id"], name: "index_families_on_partner_id"
+  end
+
+  create_table "feedback_messages", force: :cascade do |t|
+    t.bigint "user_id"
+    t.text "message"
+    t.string "path"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.boolean "resolved"
+    t.index ["user_id"], name: "index_feedback_messages_on_user_id"
   end
 
   create_table "flipper_features", force: :cascade do |t|
@@ -824,6 +859,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_04_193318) do
     t.float "longitude"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
+    t.boolean "active", default: true
     t.index ["latitude", "longitude"], name: "index_vendors_on_latitude_and_longitude"
   end
 
