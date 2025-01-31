@@ -34,7 +34,7 @@
             <h2 class="card-title">Partner Actions</h2>
           </div>
           <div class="card-body p-3">
-            <% if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
+            <% if current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
               <%= link_to partner_users_path(@partner) do %>
                 <div class="btn btn-app bg-success">
                   <i class="fas fa-users"></i> Manage Users
@@ -238,7 +238,7 @@
                 <tbody>
                 <% @partner_distributions.each do |dist| %>
                   <tr>
-                    <td><%= dist.created_at.strftime("%m/%d/%Y") %></td>
+                    <td><%= dist.issued_at.strftime("%m/%d/%Y") %></td>
                     <td><%= dist.storage_location.name %></td>
                     <td><%= dist.line_items.total %></td>
                     <td class="text-right">

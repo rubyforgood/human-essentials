@@ -37,6 +37,8 @@ gem "rolify", "~> 6.0"
 gem "strong_migrations", "1.8.0"
 # used in events
 gem 'dry-struct'
+# Use solid_cache as a cache store
+gem "solid_cache", "~> 1.0"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
@@ -111,11 +113,6 @@ gem "nokogiri", ">= 1.10.4"
 gem "image_processing"
 gem "sprockets", "~> 4.2.1"
 
-group :production do
-  # Tool to detect unused code through knowing which methods are used in which files.
-  gem 'coverband'
-end
-
 group :production, :staging do
   # Reduce the noise of logs and include custom fields to it for easier access
   gem 'lograge'
@@ -152,7 +149,7 @@ group :development, :test do
   # Debugger which supports rdbg and Shopify Ruby LSP VSCode extension
   gem "debug", ">= 1.0.0"
   # RSpec behavioral testing framework for Rails.
-  gem "rspec-rails", "~> 7.0.1"
+  gem "rspec-rails", "~> 7.1.0"
   # Static analysis / linter.
   gem "rubocop"
   # Rails add-on for static analysis.
@@ -160,6 +157,8 @@ group :development, :test do
   gem "rubocop-rails", "~> 2.25.1"
   # Default rules for Rubocop.
   gem "standard", "~> 1.40"
+  gem "standard-rails"
+  gem "standard-performance"
   # Erb linter.
   gem "erb_lint"
 end
@@ -216,7 +215,4 @@ if %w(mingw mswin x64_mingw jruby).include?(RUBY_PLATFORM)
   gem "tzinfo-data", "~> 1.2", platforms: %i(mingw mswin x64_mingw jruby)
 end
 
-# Use Redis for Action Cable
-gem "redis", "~> 5.3"
-
-gem "importmap-rails", "~> 2.0"
+gem "importmap-rails", "~> 2.1"

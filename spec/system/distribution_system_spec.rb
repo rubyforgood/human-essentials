@@ -338,7 +338,7 @@ RSpec.feature "Distributions", type: :system do
   end
 
   context "With an existing distribution" do
-    let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", delivery_method: delivery_method, organization: user.organization) }
+    let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", delivery_method: delivery_method, organization: user.organization, reminder_email_enabled: true) }
     let(:delivery_method) { "pick_up" }
 
     before do

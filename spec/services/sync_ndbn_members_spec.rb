@@ -1,8 +1,8 @@
 RSpec.describe SyncNDBNMembers do
-  let(:small_input) { File.open(Rails.root.join("spec", "fixtures", "ndbn-small-import.csv")) }
-  let(:invalid_input) { File.open(Rails.root.join("spec", "fixtures", "ndbn-invalid-import.csv")) }
-  let(:invalid_headers) { File.open(Rails.root.join("spec", "fixtures", "ndbn-invalid-header-import.csv")) }
-  let(:non_csv) { File.open(Rails.root.join("spec", "fixtures", "files", "logo.jpg")) }
+  let(:small_input) { Rails.root.join("spec", "fixtures", "ndbn-small-import.csv").open }
+  let(:invalid_input) { Rails.root.join("spec", "fixtures", "ndbn-invalid-import.csv").open }
+  let(:invalid_headers) { Rails.root.join("spec", "fixtures", "ndbn-invalid-header-import.csv").open }
+  let(:non_csv) { Rails.root.join("spec", "fixtures", "files", "logo.jpg").open }
 
   describe "#upload" do
     # NDBN Member Number,Member Name

@@ -1,7 +1,13 @@
 RSpec.describe DistributionsController, type: :controller do
+  include ActiveJob::TestHelper
+
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
   let(:partner) { create(:partner, organization: organization) }
+
+  after(:each) do
+    clear_enqueued_jobs
+  end
 
   context "While signed in" do
     before do
@@ -220,6 +226,50 @@ RSpec.describe DistributionsController, type: :controller do
           expect(flash[:error]).to include("Sorry, we weren't able to save the distribution. \n Validation failed: Inventory Item 1's quantity needs to be at least 1")
         end
       end
+
+      context "when distribution reminder email is enabled" do
+        let(:params) do
+          {
+            organization_name: organization.id,
+            distribution: {
+              partner_id: partner.id,
+              issued_at: Date.tomorrow,
+              storage_location_id: first_storage_location.id,
+              line_items_attributes:
+                {
+                  "0": { item_id: first_storage_location.items.first.id, quantity: 10 }
+                },
+              reminder_email_enabled: true
+            }
+          }
+        end
+        subject { post :create, params: params.merge(format: :turbo_stream) }
+
+        context "when partner has enabled send_reminders" do
+          before(:each) do
+            partner.send_reminders = true
+          end
+          it "should schedule the reminder email" do
+            subject
+            expect(enqueued_jobs[2]["arguments"][1]).to eq("reminder_email")
+          end
+
+          it "should not schedule a reminder for a date in the past" do
+            params[:distribution][:issued_at] = Date.yesterday
+            subject
+            expect(enqueued_jobs.size).to eq(2)
+          end
+        end
+
+        context "when partner has disabled send_reminders" do
+          let(:partner) { create(:partner, organization: organization, send_reminders: false) }
+
+          it "should not schedule an email reminder for a partner that disabled reminders" do
+            subject
+            expect(enqueued_jobs.size).to eq(1)
+          end
+        end
+      end
     end
 
     describe "PUT #update" do
@@ -351,6 +401,53 @@ RSpec.describe DistributionsController, type: :controller do
           expect(flash[:notice]).to eq("Distribution updated!")
           expect(flash[:error]).to be_nil
           expect(flash[:alert]).to be_nil
+        end
+      end
+
+      context "when distribution reminder email is enabled" do
+        let(:item1) { create(:item, name: "Item 1", organization: organization, on_hand_minimum_quantity: 0) }
+        let(:storage_location) { create(:storage_location, organization: organization) }
+        let(:distribution) { create(:distribution, :with_items, item: item1, storage_location: storage_location, organization: organization, reminder_email_enabled: false, partner: partner) }
+        let(:params) do
+          {
+            organization_name: organization.id,
+            id: distribution.id,
+            distribution: {
+              storage_location_id: distribution.storage_location.id,
+              issued_at: Date.tomorrow,
+              line_items_attributes:
+                {
+                  "0": { item_id: item1.id, quantity: 1 }
+                },
+              reminder_email_enabled: true
+            }
+          }
+        end
+        subject { put :update, params: params }
+
+        context "when partner has enabled send_reminders" do
+          before(:each) do
+            partner.send_reminders = true
+          end
+          it "should schedule the reminder email" do
+            subject
+            expect(enqueued_jobs[1]["arguments"][1]).to eq("reminder_email")
+          end
+
+          it "should not schedule a reminder for a date in the past" do
+            params[:distribution][:issued_at] = Date.yesterday
+            subject
+            expect(enqueued_jobs.size).to eq(1)
+          end
+        end
+
+        context "when partner has disabled send_reminders" do
+          let(:partner) { create(:partner, organization: organization, send_reminders: false) }
+
+          it "should not schedule an email reminder for a partner that disabled reminders" do
+            subject
+            expect(enqueued_jobs.size).to eq(1)
+          end
         end
       end
     end

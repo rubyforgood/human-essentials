@@ -36,7 +36,6 @@ class Item < ApplicationRecord
 
   validates :name, uniqueness: { scope: :organization, case_sensitive: false, message: "- An item with that name already exists (could be an inactive item)" }
   validates :name, presence: true
-  validates :organization, presence: true
   validates :distribution_quantity, numericality: { greater_than: 0 }, allow_blank: true
   validates :on_hand_recommended_quantity, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
   validates :on_hand_minimum_quantity, numericality: { greater_than_or_equal_to: 0 }
@@ -74,7 +73,7 @@ class Item < ApplicationRecord
   # 4/  Period supplies.  All things with 'menstrual in the category'
   # 5/  Other -- Miscellaneous, and wipes
   # Known holes and ambiguities as of 20240527.  Working on these with the business
-  # 1/  Liners.   We are adding a new item for AI liners,  and renaming the current liners to be specficially for periods,
+  # 1/  Liners.   We are adding a new item for AI liners,  and renaming the current liners to be specifically for periods,
   # having confirmed with the business that the majority of liners are for menstrual use.
   # However, there is a product which can be used for either, so we are still sussing out what to do about that.
 
@@ -115,7 +114,7 @@ class Item < ApplicationRecord
   end
 
   def self.barcodes_for(item)
-    BarcodeItem.where("barcodeable_id = ?", item.id)
+    BarcodeItem.where(barcodeable_id: item.id)
   end
 
   def self.reactivate(item_ids)

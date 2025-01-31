@@ -5,7 +5,7 @@ default: &default
   database: diaper_dev
   username: <%= ENV.fetch("PG_USERNAME", 'postgres') %>
   password: <%= ENV.fetch("PG_PASSWORD", nil) %>
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  pool: 20
   timeout: 5000
 
 development: &development
@@ -28,12 +28,21 @@ test:
 # These env vars live in Cloud66 application settings. Don't change
 # the names of the vars we're looking for without ensuring you've
 # updated/duplicated the vars there!
+#
+# Solid Cache is only configured for production, where it uses
+# the primary database.
 production:
-  adapter: postgresql
-  encoding: unicode
-  host: <%= ENV["DIAPER_DB_HOST"] %>
-  pool: 5
-  username: <%= ENV["DIAPER_DB_USERNAME"] %>
-  password: <%= ENV["DIAPER_DB_PASSWORD"] %>
-  database: <%= ENV["DIAPER_DB_DATABASE"] %>
-  timeout: 5000
+  primary: &primary_production
+    <<: *default
+    adapter: postgresql
+    encoding: unicode
+    host: <%= ENV["DIAPER_DB_HOST"] %>
+    pool: 20
+    username: <%= ENV["DIAPER_DB_USERNAME"] %>
+    password: <%= ENV["DIAPER_DB_PASSWORD"] %>
+    database: <%= ENV["DIAPER_DB_DATABASE"] %>
+    timeout: 5000
+  cache:
+    <<: *primary_production
+    migrations_paths: db/cache_migrate
+

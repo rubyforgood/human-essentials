@@ -73,5 +73,21 @@ RSpec.describe RequestsTotalItemsService, type: :service do
 
       it { is_expected.to be_blank }
     end
+
+    context 'when request item belongs to deleted item' do
+      let(:item) { create(:item, :with_unit, name: "Diaper", organization:, unit: "pack") }
+      let!(:requests) do
+        request = create(:request, :with_item_requests, request_items: [{"item_id" => item.id, "quantity" => 10, "request_unit" => "pack"}])
+        Request.where(id: request.id)
+      end
+
+      before do
+        item.destroy
+      end
+
+      it 'returns item with correct quantity calculated' do
+        expect(subject).to eq({"Diaper" => 10})
+      end
+    end
   end
 end

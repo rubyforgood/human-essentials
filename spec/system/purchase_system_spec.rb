@@ -19,10 +19,6 @@ RSpec.describe "Purchases", type: :system, js: true do
           visit subject
         end
 
-        after do
-          travel_back
-        end
-
         it "User can click to the new purchase form" do
           find(".fa-plus").click
 
@@ -305,14 +301,30 @@ RSpec.describe "Purchases", type: :system, js: true do
       sign_in organization_admin
     end
 
-    it "allows deletion of a purchase" do
-      visit "#{subject}/#{purchase.id}"
-      expect(page).to have_link("Delete")
-      accept_confirm do
-        click_on "Delete"
+    context "When the purchase remains in storage location" do
+      it "allows deletion of a purchase" do
+        visit "#{subject}/#{purchase.id}"
+        expect(page).to have_link("Delete")
+        accept_confirm do
+          click_on "Delete"
+        end
+        expect(page).to have_content "Purchase #{purchase.id} has been removed!"
+        expect(page).to have_content "0 (Total)"
       end
-      expect(page).to have_content "Purchase #{purchase.id} has been removed!"
-      expect(page).to have_content "0 (Total)"
+    end
+
+    context "When the purchase has been distributed" do
+      it "delete a purchase should get an error" do
+        allow(PurchaseDestroyService).to receive(:call).with(purchase).and_raise(InventoryError)
+
+        visit "#{subject}/#{purchase.id}"
+        expect(page).to have_link("Delete")
+        accept_confirm do
+          click_on "Delete"
+        end
+
+        expect(page).to have_css(".alert.error.alert-danger")
+      end
     end
   end
 end

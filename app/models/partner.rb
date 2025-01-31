@@ -27,7 +27,8 @@ class Partner < ApplicationRecord
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
   ].freeze
 
-  enum :status, { uninvited: 0, invited: 1, awaiting_review: 2, approved: 3, error: 4, recertification_required: 5, deactivated: 6 }
+  # Status `4` (error) was removed for being obsolete but is intentionally skipped to preserve existing enum values.
+  enum status: { uninvited: 0, invited: 1, awaiting_review: 2, approved: 3, recertification_required: 5, deactivated: 6 }
 
   belongs_to :organization
   belongs_to :partner_group, optional: true
@@ -45,7 +46,6 @@ class Partner < ApplicationRecord
 
   has_many_attached :documents
 
-  validates :organization, presence: true
   validates :name, presence: true, uniqueness: { scope: :organization }
 
   validates :email, presence: true, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
@@ -258,7 +258,7 @@ class Partner < ApplicationRecord
   def quantity_year_to_date
     distributions
       .includes(:line_items)
-      .where('distributions.issued_at >= ?', Time.zone.today.beginning_of_year)
+      .where(distributions: { issued_at: Time.zone.today.beginning_of_year.. })
       .references(:line_items).map(&:line_items).flatten.sum(&:quantity)
   end
 

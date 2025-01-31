@@ -2,8 +2,8 @@ RSpec.describe DistributionReminder do
   describe "conditionally sending the emails" do
     let(:organization) { create :organization }
 
-    let(:past_distribution) { create(:distribution, issued_at: Time.zone.now - 1.week) }
-    let(:future_distribution) { create(:distribution, issued_at: Time.zone.now + 1.week) }
+    let(:past_distribution) { create(:distribution, issued_at: 1.week.ago) }
+    let(:future_distribution) { create(:distribution, issued_at: 1.week.from_now) }
 
     let(:partner_with_no_reminders) { create :partner, send_reminders: false }
     let(:partner_with_reminders) { create :partner, send_reminders: true }

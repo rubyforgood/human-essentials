@@ -131,7 +131,6 @@ RSpec.describe Partner, type: :model do
         expect(build(:partner, status: :invited)).not_to be_deletable
         expect(build(:partner, status: :awaiting_review)).not_to be_deletable
         expect(build(:partner, status: :approved)).not_to be_deletable
-        expect(build(:partner, status: :error)).not_to be_deletable
         expect(build(:partner, status: :recertification_required)).not_to be_deletable
         expect(build(:partner, status: :deactivated)).not_to be_deletable
       end
@@ -191,7 +190,6 @@ RSpec.describe Partner, type: :model do
       it 'should return false', :aggregate_failures do
         expect(build(:partner, status: :uninvited)).not_to be_approvable
         expect(build(:partner, status: :approved)).not_to be_approvable
-        expect(build(:partner, status: :error)).not_to be_approvable
         expect(build(:partner, status: :recertification_required)).not_to be_approvable
         expect(build(:partner, status: :deactivated)).not_to be_approvable
       end

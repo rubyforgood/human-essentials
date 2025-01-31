@@ -19,8 +19,6 @@ RSpec.describe "Requests", type: :system, js: true do
     })
   end
 
-  after { travel_back }
-
   context "#index" do
     subject { requests_path }
 

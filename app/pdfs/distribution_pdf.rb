@@ -1,3 +1,5 @@
+require "prawn/table"
+
 # Configures a Prawn PDF template for generating Distribution manifests
 class DistributionPdf
   include Prawn::View
@@ -31,41 +33,52 @@ class DistributionPdf
         text @organization.email, align: :right
       end
 
+      profile = @distribution.partner.profile
+
+      font_size 12
+      text "Partner Primary Contact:", style: :bold, align: :right
+      text (profile.primary_contact_name.presence || " "), align: :right
+      font_size 10
+      text (profile.primary_contact_email.presence || " "), align: :right
+      text (profile.primary_contact_phone.presence || " "), align: :right
+      move_up 40
+
       text "Issued to:", style: :bold
       font_size 12
       text @distribution.partner.name
-      move_up 24
-
-      text "Partner Primary Contact:", style: :bold, align: :right
-      font_size 12
-      text @distribution.partner.profile.primary_contact_name, align: :right
       font_size 10
-      text @distribution.partner.profile.primary_contact_email, align: :right
-      text @distribution.partner.profile.primary_contact_phone, align: :right
       move_down 10
 
-      if %w(shipped delivered).include?(@distribution.delivery_method)
-        move_up 10
+      if (profile.address1.present? || profile.program_address1.present?) &&
+          (@distribution.delivery? || @distribution.shipped?)
+        if profile.program_address1.blank?
+          address1 = profile.address1
+          address2 = profile.address2
+          city = profile.city
+          state = profile.state
+          zip_code = profile.zip_code
+        else
+          address1 = profile.program_address1
+          address2 = profile.program_address2
+          city = profile.program_city
+          state = profile.program_state
+          zip_code = profile.program_zip_code.to_s
+        end
+
         text "Delivery address:", style: :bold
         font_size 10
-        text @distribution.partner.profile.address1
-        text @distribution.partner.profile.address2
-        text @distribution.partner.profile.city
-        text @distribution.partner.profile.state
-        text @distribution.partner.profile.zip_code
-        move_up 40
-
-        text "Issued on:", style: :bold, align: :right
-        font_size 12
-        text @distribution.distributed_at, align: :right
-        font_size 10
-        move_down 30
-      else
-        text "Issued on:", style: :bold
-        font_size 12
-        text @distribution.distributed_at
-        font_size 10
+        text address1
+        text address2
+        text city
+        text state
+        text zip_code
       end
+
+      move_down 10
+      text "Issued on:", style: :bold
+      font_size 12
+      text @distribution.distributed_at
+      font_size 10
 
       if @organization.ytd_on_distribution_printout
         move_up 22

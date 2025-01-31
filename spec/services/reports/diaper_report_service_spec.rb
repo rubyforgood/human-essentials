@@ -15,17 +15,20 @@ RSpec.describe Reports::DiaperReportService, type: :service, persisted_data: tru
       disposable_kit_item = create(:item, name: "Adult Disposable Diapers", partner_key: "adult diapers")
       another_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", partner_key: "infant diapers")
 
-      disposable_line_item = create(:line_item, item: disposable_kit_item, quantity: 5)
-      another_disposable_line_item = create(:line_item, item: another_disposable_kit_item, quantity: 5)
+      disposable_kit = create_kit(organization: organization, line_items_attributes: [
+        {item_id: disposable_kit_item.id, quantity: 5}
+      ])
 
-      disposable_kit = create(:kit, :with_item, organization: organization, line_items: [disposable_line_item])
-      another_disposable_kit = create(:kit, :with_item, organization: organization, line_items: [another_disposable_line_item])
+      another_disposable_kit = create_kit(organization: organization, line_items_attributes: [
+        {item_id: another_disposable_kit_item.id, quantity: 5}
+      ])
 
       disposable_kit_item_distribution = create(:distribution, organization: organization, issued_at: within_time)
       another_disposable_kit_item_distribution = create(:distribution, organization: organization, issued_at: within_time)
 
       create(:line_item, :distribution, quantity: 10, item: disposable_kit.item, itemizable: disposable_kit_item_distribution)
       create(:line_item, :distribution, quantity: 10, item: another_disposable_kit.item, itemizable: another_disposable_kit_item_distribution)
+      # Total disposable items distributed so far: 5*10 + 5*10 = 100
 
       # create disposable and non disposable items
       create(:base_item, name: "3T Diaper", partner_key: "toddler diapers", category: "disposable diaper")
@@ -42,6 +45,7 @@ RSpec.describe Reports::DiaperReportService, type: :service, persisted_data: tru
         create_list(:line_item, 5, :distribution, quantity: 20, item: disposable_item, itemizable: dist)
         create_list(:line_item, 5, :distribution, quantity: 30, item: non_disposable_item, itemizable: dist)
       end
+      # Total disposable items distributed: (100) + 2*5*20 = 300
 
       # Donations outside drives
       non_drive_donations = create_list(:donation, 2,
@@ -155,9 +159,9 @@ RSpec.describe Reports::DiaperReportService, type: :service, persisted_data: tru
 
     it "should return the proper results on #report" do
       expect(subject.report).to eq({
-        entries: {"Disposable diapers distributed" => "320",
+        entries: {"Disposable diapers distributed" => "300",
                   "Cloth diapers distributed" => "300",
-                  "Average monthly disposable diapers distributed" => "27",
+                  "Average monthly disposable diapers distributed" => "25",
                   "Total product drives" => 2,
                   "Disposable diapers collected from drives" => "600",
                   "Cloth diapers collected from drives" => "900",
