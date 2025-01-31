@@ -5,8 +5,8 @@ RSpec.describe Admin::PartnersController, type: :controller do
   let(:super_admin) { create(:super_admin) }
 
   # Ensure partners are created before the test
-  let!(:partner2) { create(:partner, name: "Bravo", organization: organization) }
-  let!(:partner1) { create(:partner, name: "alpha", organization: organization) }
+  let!(:partner1) { create(:partner, name: "Bravo", organization: organization) }
+  let!(:partner2) { create(:partner, name: "alpha", organization: organization) }
   let!(:partner3) { create(:partner, name: "Zeus", organization: organization) }
 
   let(:default_params) do
@@ -26,7 +26,7 @@ RSpec.describe Admin::PartnersController, type: :controller do
 
       it "assigns partners ordered by name (case-insensitive)" do
         get :index
-        expect(assigns(:partners)).to eq([partner1, partner2, partner3].sort_by { |p| p.name.downcase })
+        expect(assigns(:partners)).to eq([partner2, partner1, partner3])
       end
     end
   end

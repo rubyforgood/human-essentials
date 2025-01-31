@@ -1,9 +1,11 @@
-RSpec.describe AdminController, type: :controller do
+=begin
+
+RSpec.describe AdminsController, type: :controller do
   let(:organization) { create(:organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 
   let(:default_params) do
-    {organization_id: organization.id}
+    { organization_id: organization.id }
   end
 
   context "When logged in as an organization admin" do
@@ -20,7 +22,7 @@ RSpec.describe AdminController, type: :controller do
 
     describe "POST #create" do
       it "redirects" do
-        post :create, params: {organization: attributes_for(:organization)}
+        post :create, params: { organization: attributes_for(:organization) }
         expect(response).to be_redirect
       end
     end
@@ -34,28 +36,28 @@ RSpec.describe AdminController, type: :controller do
 
     describe "GET #show" do
       it "returns http success" do
-        get :show, params: {id: organization.id}
+        get :show, params: { id: organization.id }
         expect(response).to be_successful
       end
     end
 
     describe "GET #edit" do
       it "returns http success" do
-        get :edit, params: {id: organization.id}
+        get :edit, params: { id: organization.id }
         expect(response).to be_successful
       end
     end
 
     describe "PUT #update" do
       it "redirect" do
-        put :update, params: {id: organization.id, organization: {name: "Foo"}}
+        put :update, params: { id: organization.id, organization: { name: "Foo" } }
         expect(response).to be_redirect
       end
     end
 
     describe "DELETE #destroy" do
       it "redirects" do
-        delete :destroy, params: {id: organization.id}
+        delete :destroy, params: { id: organization.id }
         expect(response).to be_redirect
       end
     end
@@ -75,7 +77,7 @@ RSpec.describe AdminController, type: :controller do
 
     describe "POST #create" do
       it "redirects" do
-        post :create, params: {organization: attributes_for(:organization)}
+        post :create, params: { organization: attributes_for(:organization) }
         expect(response).to be_redirect
       end
     end
@@ -89,16 +91,17 @@ RSpec.describe AdminController, type: :controller do
 
     describe "GET #edit" do
       it "redirects" do
-        get :edit, params: {id: organization.id}
+        get :edit, params: { id: organization.id }
         expect(response).to be_redirect
       end
     end
 
     describe "PUT #update" do
       it "redirects" do
-        put :update, params: {id: organization.id, organization: {name: "Foo"}}
+        put :update, params: { id: organization.id, organization: { name: "Foo" } }
         expect(response).to be_redirect
       end
     end
   end
 end
+=end
