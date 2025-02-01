@@ -96,7 +96,6 @@ module Partners
       partner = Partner.find(partner_id)
       if current_user.has_role?(Role::ORG_ADMIN, current_organization) && current_organization == partner&.organization
         @partner = partner
-        @layout = "application"
       else
         redirect_invalid_user
       end
@@ -114,7 +113,7 @@ module Partners
     end
 
     def layout
-      @layout ||= "partners/application"
+      @layout ||= current_partner ? "partners/application" : "application"
     end
   end
 end
