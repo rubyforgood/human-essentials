@@ -277,8 +277,8 @@ GEM
       csv (>= 3.0.0)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    groupdate (6.4.0)
-      activesupport (>= 6.1)
+    groupdate (6.5.1)
+      activesupport (>= 7)
     guard (2.18.0)
       formatador (>= 0.2.4)
       listen (>= 2.7, < 4.0)
@@ -764,7 +764,7 @@ DEPENDENCIES
   flipper-ui
   foreman
   geocoder
-  groupdate (~> 6.4)
+  groupdate (~> 6.5)
   guard-rspec
   httparty
   icalendar
