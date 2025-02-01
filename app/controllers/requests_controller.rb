@@ -12,7 +12,7 @@ class RequestsController < ApplicationController
     @paginated_requests = @requests.includes(:partner).page(params[:page])
     @calculate_product_totals = RequestsTotalItemsService.new(requests: @requests).calculate
     @items = current_organization.items.alphabetized.select(:id, :name)
-    @partners = current_organization.partners.alphabetized.select(:id, :name)
+    @partners = current_organization.partners.alphabetized.select(:id, :name, :status)
     @statuses = Request.statuses.transform_keys(&:humanize)
     @partner_users = User.where(id: @paginated_requests.map(&:partner_user_id)).select(:id, :name, :email)
     @request_types = Request.request_types.transform_keys(&:humanize)

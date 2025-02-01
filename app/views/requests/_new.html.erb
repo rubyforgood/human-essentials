@@ -9,7 +9,7 @@
       </div>
       <div class="modal-body p-4">
         <%= form_with(url: new_partners_request_path, method: :get) do |form| %>
-          <%= form.collection_select(:partner_id, @partners, :id, :name, {include_blank: "Select a partner", required: true}, {class: "form-control mb-2"} ) %>
+          <%= form.collection_select(:partner_id, @partners.active, :id, :name, {include_blank: "Select a partner", required: true}, {class: "form-control mb-2"} ) %>
           <%= submit_button({text: "Next", icon: nil, name: ""}) %>
         <% end %>
       </div>

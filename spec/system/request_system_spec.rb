@@ -136,8 +136,9 @@ RSpec.describe "Requests", type: :system, js: true do
       context "clicking on the link" do
         before { click_on "New Quantity Request" }
 
-        it "displays a list of all partners" do
-          partner_names = organization.partners.pluck(:name)
+        it "displays a list of active partners" do
+          create(:partner, :deactivated, organization:, name: "Inactive Partner", email: "inactive_partner@example.com")
+          partner_names = organization.partners.active.pluck(:name)
           expect(page).to have_select("partner_id", with_options: partner_names)
         end
 
