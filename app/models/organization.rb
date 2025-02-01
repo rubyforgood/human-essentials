@@ -71,6 +71,9 @@ class Organization < ApplicationRecord
     has_many :purchases
     has_many :requests
     has_many :storage_locations
+    has_many :tags
+    has_many :product_drive_tags, -> { by_type("ProductDrive") },
+      class_name: "Tag", inverse_of: false
     has_many :inventory_items, through: :storage_locations
     has_many :kits
     has_many :transfers

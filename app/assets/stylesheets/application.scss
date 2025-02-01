@@ -188,6 +188,12 @@ select.selectpicker + .dropdown-toggle::after {
   background-color: #8282df
 }
 
+// Fix select2 tagging search box to be inline with tags.
+// This is the default for select2 but adminLTE overwrites it.
+.select2-search.select2-search--inline {
+  display: inline-block;
+}
+
 div.low_priority_warning {
   margin: 5px;
   text-align: center;

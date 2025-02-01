@@ -34,7 +34,7 @@ class TransfersController < ApplicationController
   def new
     @transfer = current_organization.transfers.new
     @transfer.line_items.build
-    @storage_locations = current_organization.storage_locations.active_locations.alphabetized
+    @storage_locations = current_organization.storage_locations.active.alphabetized
     @items = current_organization.items.active.alphabetized
   end
 
@@ -60,7 +60,7 @@ class TransfersController < ApplicationController
   private
 
   def load_form_collections
-    @storage_locations = current_organization.storage_locations.active_locations.alphabetized
+    @storage_locations = current_organization.storage_locations.active.alphabetized
     @items = current_organization.items.alphabetized
   end
 

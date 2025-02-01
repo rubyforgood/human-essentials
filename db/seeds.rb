@@ -516,7 +516,7 @@ inactive_storage.discard
 #
 # Define all the InventoryItem for each of the StorageLocation
 #
-StorageLocation.active_locations.each do |sl|
+StorageLocation.active.each do |sl|
   sl.organization.items.active.each do |item|
     InventoryItem.create!(
       storage_location: sl,
@@ -664,7 +664,7 @@ complete_orgs.each do |org|
     # Depending on which source it uses, additional data may need to be provided.
     donation = Donation.new(
       source: source,
-      storage_location: org.storage_locations.active_locations.sample,
+      storage_location: org.storage_locations.active.sample,
       organization: org,
       issued_at: dates_generator.next
     )
@@ -699,7 +699,7 @@ complete_orgs.each do |org|
   20.times.each do |index|
     issued_at = dates_generator.next
 
-    storage_location = org.storage_locations.active_locations.sample
+    storage_location = org.storage_locations.active.sample
     stored_inventory_items_sample = inventory.storage_locations[storage_location.id].items.values.sample(20)
     delivery_method = Distribution.delivery_methods.keys.sample
     shipping_cost = (delivery_method == "shipped") ? rand(20.0..100.0).round(2).to_s : nil
@@ -811,7 +811,7 @@ dates_generator = DispersedPastDatesGenerator.new
 complete_orgs.each do |org|
   25.times do |index|
     purchase_date = dates_generator.next
-    storage_location = org.storage_locations.active_locations.sample
+    storage_location = org.storage_locations.active.sample
     vendor = random_record_for_org(org, Vendor)
     purchase = Purchase.new(
       purchased_from: suppliers.sample,
@@ -952,7 +952,7 @@ end
 # ----------------------------------------------------------------------------
 # Transfers
 # ----------------------------------------------------------------------------
-from_id, to_id = pdx_org.storage_locations.active_locations.limit(2).pluck(:id)
+from_id, to_id = pdx_org.storage_locations.active.limit(2).pluck(:id)
 quantity = 5
 inventory = View::Inventory.new(pdx_org.id)
 # Ensure storage location has enough of item for transfer to succeed

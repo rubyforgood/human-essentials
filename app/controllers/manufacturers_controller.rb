@@ -1,6 +1,6 @@
 class ManufacturersController < ApplicationController
   def index
-    @manufacturers = current_organization.manufacturers.includes(:donations).all.alphabetized
+    @manufacturers = current_organization.manufacturers.with_volumes.alphabetized
   end
 
   def create

@@ -6,7 +6,7 @@ class ProductDriveParticipantsController < ApplicationController
   # TODO: Should there be a :destroy action for this?
 
   def index
-    @product_drive_participants = current_organization.product_drive_participants.includes(:donations).all.order(:business_name)
+    @product_drive_participants = current_organization.product_drive_participants.with_volumes.order(:business_name)
 
     respond_to do |format|
       format.html

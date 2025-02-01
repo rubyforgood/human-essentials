@@ -155,6 +155,8 @@ group :development, :test do
   # Rails add-on for static analysis.
   gem 'rubocop-performance'
   gem "rubocop-rails", "~> 2.25.1"
+  # More concise test ("should") matchers
+  gem "shoulda-matchers", "~> 6.2"
   # Default rules for Rubocop.
   gem "standard", "~> 1.40"
   gem "standard-rails"
@@ -182,6 +184,12 @@ group :development do
   gem "rails-erd"
   # Allows to create a console in the browser.
   gem "web-console"
+  # Middleware that displays speed badge for every HTML page
+  gem "rack-mini-profiler"
+  # Adds memory profiling to rack-mini-profiler
+  gem "memory_profiler"
+  # Adds call-stack profiling flamegraphs to rack-mini-profiler
+  gem "stackprof"
 end
 
 group :test do
@@ -197,8 +205,6 @@ group :test do
   gem "rails-controller-testing"
   # Show code coverage.
   gem 'simplecov'
-  # More concise test ("should") matchers
-  gem 'shoulda-matchers', '~> 6.2'
   # Mock HTTP requests and ensure they are not called during tests.
   gem "webmock", "~> 3.24"
   # Interface capybara to chrome headless
