@@ -147,7 +147,7 @@ GEM
       bigdecimal
       rexml
     crass (1.0.6)
-    csv (3.3.0)
+    csv (3.3.2)
     cuprite (0.15.1)
       capybara (~> 3.0)
       ferrum (~> 0.15.0)
@@ -272,7 +272,7 @@ GEM
       sanitize (< 7)
     foreman (0.88.1)
     formatador (1.1.0)
-    geocoder (1.8.3)
+    geocoder (1.8.5)
       base64 (>= 0.1.0)
       csv (>= 3.0.0)
     globalid (1.2.1)
