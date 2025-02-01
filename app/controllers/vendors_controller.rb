@@ -68,6 +68,21 @@ class VendorsController < ApplicationController
     redirect_to vendors_path
   end
 
+  def reactivate
+    vendor = current_organization.vendors.find(params[:id])
+
+    begin
+      vendor.reactivate!
+    rescue => e
+      flash[:error] = e.message
+      redirect_back(fallback_location: vendors_path)
+      return
+    end
+
+    flash[:notice] = "#{vendor.business_name} has been reactivated."
+    redirect_to vendors_path
+  end
+
   private
 
   def vendor_params

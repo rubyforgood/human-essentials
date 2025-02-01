@@ -181,6 +181,12 @@ RSpec.describe "Purchases", type: :system, js: true do
           expect(Purchase.last.line_items.first.quantity).to eq(16)
         end
 
+        it 'does not show inactive vendors in the vendor dropdown' do
+          deactivated_vendor = create(:vendor, business_name: 'Deactivated Vendor', organization: organization, active: false)
+          visit new_purchase_path
+          expect(page).to have_no_select('purchase_vendor_id', with_options: [deactivated_vendor.business_name])
+        end
+
         context 'when creating a purchase incorrectly' do
           # Bug fix -- Issue #71
           # When a user creates a purchase without it passing validation, the items

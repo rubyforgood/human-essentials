@@ -27,6 +27,11 @@ RSpec.describe "Vendor", type: :system, js: true do
     it "should deactivate a vendor when the deactivate button is clicked" do
       expect { click_link "Deactivate", match: :first }.to change { @first.reload.active }.to(false)
     end
+
+    it "should reactivate a vendor when the reactivate button is clicked" do
+      expect { click_link "Deactivate", match: :first }.to change { @first.reload.active }.to(false)
+      expect { click_link "Reactivate", match: :first }.to change { @first.reload.active }.to(true)
+    end
   end
 
   context "when creating a new vendor" do

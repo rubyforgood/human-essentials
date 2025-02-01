@@ -174,7 +174,7 @@ Rails.application.routes.draw do
       post :import_csv
     end
     member do
-      delete :deactivate
+      put :deactivate
       put :reactivate
     end
   end
