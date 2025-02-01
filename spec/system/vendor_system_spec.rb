@@ -30,7 +30,32 @@ RSpec.describe "Vendor", type: :system, js: true do
 
     it "should reactivate a vendor when the reactivate button is clicked" do
       expect { click_link "Deactivate", match: :first }.to change { @first.reload.active }.to(false)
+
+      check "include_inactive_vendors"
+      click_button "Filter"
+
       expect { click_link "Reactivate", match: :first }.to change { @first.reload.active }.to(true)
+    end
+
+    context "When using the include_inactive_vendors filter" do
+      before(:each) do
+        @active_vendor = create(:vendor, business_name: "Active Vendor", active: true)
+        @inactive_vendor = create(:vendor, business_name: "Inactive Vendor", active: false)
+        visit vendors_path
+      end
+
+      it "does not show inactive vendors by default" do
+        expect(page).to have_content(@active_vendor.business_name)
+        expect(page).not_to have_content(@inactive_vendor.business_name)
+      end
+
+      it "shows inactive vendors when the filter is applied" do
+        check "include_inactive_vendors"
+        click_button "Filter"
+
+        expect(page).to have_content(@active_vendor.business_name)
+        expect(page).to have_content(@inactive_vendor.business_name)
+      end
     end
   end
 

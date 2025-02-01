@@ -3,7 +3,14 @@ class VendorsController < ApplicationController
   include Importable
 
   def index
-    @vendors = current_organization.vendors.with_volumes.alphabetized
+    @vendors = current_organization
+      .vendors
+      .with_volumes
+      .alphabetized
+      .class_filter(filter_params)
+
+    @vendors = @vendors.active unless params[:include_inactive_vendors]
+    @include_inactive_vendors = params[:include_inactive_vendors]
 
     respond_to do |format|
       format.html
@@ -91,7 +98,9 @@ class VendorsController < ApplicationController
   end
 
   helper_method \
-    def filter_params
-    {}
+    def filter_params(_parameters = nil)
+    return {} unless params.key?(:filters)
+
+    params.require(:filters).permit(:include_inactive_vendors)
   end
 end

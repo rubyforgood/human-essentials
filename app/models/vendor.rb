@@ -21,6 +21,7 @@ class Vendor < ApplicationRecord
   has_paper_trail
   include Provideable
   include Geocodable
+  include Filterable
 
   has_many :purchases, inverse_of: :vendor, dependent: :destroy
 
