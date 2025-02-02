@@ -69,24 +69,24 @@
             <table class="table">
               <thead>
               <tr>
-                <th>Created</th>
-                <th>Organization</th>
-                <th>Storage location</th>
-                <th>Summary</th>
-                <th>Status</th>
+                <th class="text-left">Created</th>
+                <th class="text-left">Organization</th>
+                <th class="text-left">Storage location</th>
+                <th class="text-left">Summary</th>
+                <th class="text-left">Status</th>
                 <th class="text-center">Actions</th>
               </tr>
               </thead>
               <tbody>
               <% @audits.each do |audit| %>
                 <tr class="<%= (audit.finalized?) ? 'positive' : (audit.in_progress?) ? 'negative' : 'highlight' %>">
-                  <td>
+                  <td class="text-left">
                     <time datetime="<%= audit.created_at %>"><%= audit.created_at.strftime("%B %e, %Y") %></time>
                   </td>
-                  <td><%= audit.organization.name %></td>
-                  <td><%= audit.storage_location.name %></td>
-                  <td><%= pluralize(audit.line_items.count, 'item') %></td>
-                  <td><%= audit.status.titleize %></td>
+                  <td class="text-left"><%= audit.organization.name %></td>
+                  <td class="text-left"><%= audit.storage_location.name %></td>
+                  <td class="text-left"><%= pluralize(audit.line_items.count, 'item') %></td>
+                  <td class="text-left"><%= audit.status.titleize %></td>
                   <td class="text-center"><%= view_button_to audit %></td>
                 </tr>
               <% end %>
