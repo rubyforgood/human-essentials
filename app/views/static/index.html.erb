@@ -5,38 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Human Essentials</title>
 
-    <%# <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script> %>
-    <%# <script src="https://cdn.tailwindcss.com"></script> %>
     <%= stylesheet_link_tag 'landing_page', media: 'all' %>
   </head>
   <body>
   <%= render partial: "shared/flash_tailwind" %>
-  <div class='hero pt-2'>
-      
-<!--
-      <div class="container max-w-7xl mx-auto pt-5 px-5">
-        <nav>
-          <div class="flex justify-between items-center">
-            <div>
-              <a class="text-lg lg:text-3xl lg:text-4xl" href="#"><h2 class="text-white font-bold">HumanEssentials.app</h2></a>
-            </div>
-
-            <div class="flex" id="myNavbar">
-              <div class="flex text-white space-x-4 md:space-x-10 text-md lg:text-2xl items-center">
-                <a class="hidden md:block" href="#about">About</a>
-                <a class="hidden md:block" href="#testimonials">Testimonials</a>
-                <a class="hidden md:block" href="#contact">Contact</a>
-                <a href="<%= new_user_session_path %>">
-                  <button class="flex flex-row items-center w-full px-4 py-2 bg-green-500 hover:bg-green-600 rounded-2xl text-md">
-                  <span class='text-lg'>Login</span>
-                  </button>
-                </a>
-              </div>
-            </div>
-          </div>
-        </nav>
-      </div>
--->
+  <div class="hero pt-2">
 
     <div class="container-fluid px-4 pt-3">
       <nav>
@@ -63,37 +36,18 @@
       </nav>
     </div>
 
-<!--
-      <div class="container max-w-7xl mx-auto text-white font-bold flex px-5" style='height:60vh; min-height: 500px'>
-        <div class="flex flex-col justify-center items-center mx-auto lg:mx-0 text-center lg:text-left">
-          <div class="text-4xl">
-            <div>
-              <h2 class="">The easiest and most love-filled <br> way to manage your <br> Human Essentials bank.</h2>
-              <p class='text-lg font-normal mb-3 mt-2'>Ready to make yourself more efficient?</p>
-              <a href="<%= new_account_request_path %>"><button type="button" class="text-2xl bg-green-600 text-white px-3 py-2 rounded-2xl hover:bg-green-700">
-                Register your bank here for free!
-              </button></a>
-            </div>
-          </div>
-          <div class="hidden lg:block absolute right-52 w-1/4">
-            <%= image_tag("hero-image.svg") %>
-          </div>
-        </div>
-      </div>
-    </div>
--->
-    <div class="container px-4 text-white" style='max-width:1280px; height:60vh; min-height: 500px'>
+    <div class="container-fluid px-4 text-white" id="get-in-touch">
       <div class="row h-100 align-items-center">
         <div class="col-12 col-lg-7">
           <div class="d-flex flex-column align-items-center align-items-lg-start text-center">
             <h2 class="fs-2 fw-bold text-lg-start">The easiest and most love-filled <br> way to manage your <br> Human Essentials bank.</h2>
-            <p class='fs-5 mb-3 mt-2 text-lg-start'>Ready to make yourself more efficient?</p>
+            <p class="fs-5 mb-3 mt-2 text-lg-start">Ready to make yourself more efficient?</p>
             <a href="<%= new_account_request_path %>"><button type="button" class="btn btn-success fs-4 fw-bold text-white rounded-4">
               Register your bank here for free!
             </button></a>
           </div>
         </div>
-          
+
         <div class="col-0 d-none d-lg-block position-absolute w-25 p-0" style="right:13rem">
           <%= image_tag("hero-image.svg", class: "w-100") %>
         </div>
@@ -213,7 +167,7 @@
         <h2 class="fs-1">Want to use the Human Essentials App?</h2>
         <a href="<%= new_account_request_path %>"><button type="button" class="btn btn-success fs-5 text-white px-3 py-2 my-3 rounded-4">Request An Account</button></a>
 
-        <p class="text-muted">Have questions? Email us at <a class='text-decoration-none' href="mailto:info@humanessentials.app?Subject=Essentials%20Interest" target="_top">info@humanessentials.app</a></p>
+        <p class="text-muted">Have questions? Email us at <a href="mailto:info@humanessentials.app?Subject=Essentials%20Interest" target="_top">info@humanessentials.app</a></p>
       </div>
     </div>
 
@@ -226,7 +180,7 @@
           <div class="col-12 col-md-6">
             <strong>The Human Essentials App was lovingly built by:</strong>
             <div class="mt-2">
-              <a class="link-info" href="http://www.pdxdiaperbank.org/">PDX Diaper Bank</a> | 
+              <a class="link-info" href="http://www.pdxdiaperbank.org/">PDX Diaper Bank</a> |
               <a class="link-info" href="http://rubyforgood.org/">Ruby for Good</a>
             </div>
 

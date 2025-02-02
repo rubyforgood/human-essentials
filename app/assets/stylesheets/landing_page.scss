@@ -24,28 +24,6 @@
   max-width: 1280px;
 }
 
-
-// .navbar-brand {
-//     margin-right: none !important;
-// }
-
-// .navbar-light .navbar-toggler {
-//     border: none;
-//     margin-top: 13px;
-// }
-
-// button:focus {
-//     outline: none !important;
-//     outline: none !important;
-// }
-
-// button:hover,
-// button:focus,
-// .button:hover,
-// .button:focus {
-//     background-color: rgba(255, 255, 255, 0) !important;
-// }
-
 .btn-success {
   background-color: #55af59 !important;
   border-color: #55af59 !important;
@@ -72,69 +50,7 @@
   }
 }
 
-// .text {
-
-//     &-header {
-//         color: #454F5B;
-//     }
-
-//     &-body-color {
-//         color: #919EAB !important;
-//         line-height: 2em;
-//     }
-
-//     &-testimonials {
-//         color: white;
-//         line-height: 1.5em;
-//         font-size: 14px;
-
-//     }
-// }
-
-// .description-container {
-//     margin-top: 120px;
-
-//     @media (max-width: 576px) {
-//         margin-top: 80px;
-//     }
-// }
-
-// .bottom-cta {
-//     margin-top: 80px;
-//     margin-bottom: 80px;
-
-//     @media (max-width: 576px) {
-//         margin-top: 50px;
-//         margin-bottom: 50px;
-//     }
-// }
-
-// .app-images {
-//     width: 400px;
-//     height: 400px;
-
-//     &-block {
-//         flex-basis: 340px;
-//     }
-// }
-
-// .green-bkg {
-//     background: linear-gradient(45deg, #1AD1BD, #02A98C);
-//     height: auto;
-// }
-
-// .quote {
-//     &-block {
-//         flex-basis: 400px;
-//     }
-
-//     &-image {
-//         flex-basis: 600px;
-//     }
-// }
-
-// .footer-content {
-//     background-color: #C4CDD5;
-//     padding-top: 150px;
-//     padding-bottom: 150px;
-// }
+#get-in-touch {
+  height:60vh; 
+  min-height: 500px
+}
