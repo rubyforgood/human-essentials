@@ -5,8 +5,9 @@ A bank can have multiple storage locations -- these range from warehouses down t
 
 Each storage location has its own inventory of a common list of items (e.g. different sizes of diapers)
 
-When you are inputting donations, or purchases, you will specify the storage location, and the donated/purchased items will be added to that storage location's inventory.  
-When you make distributions, you choose a storage location, and can see the inventory levels for each item before committing to the distribution. When you save the distribution, the distributed items are subtracted from that storage location's inventory.
+When you are inputting donations or purchases, you will specify the storage location, and the donated/purchased items will be added to that storage location's inventory.
+
+When you make distributions, you choose a storage location and can see the inventory levels for each item before committing to the distribution. When you save the distribution, the distributed items are subtracted from that storage location's inventory.
 
 How do you enter a storage location?   If you haven't any storage locations yet, you can click on "Add a Storage Location" in the "Just Starting?" sequence at the top of your dashboard.  
 
