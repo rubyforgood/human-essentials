@@ -26,12 +26,15 @@ RSpec.describe Vendor, type: :model do
     end
   end
 
-  context "Methods" do
-    describe "volume" do
+  context "Scopes" do
+    describe "with_volumes" do
+      subject { described_class.with_volumes }
+
       it "retrieves the amount of product that has been bought from this vendor" do
         vendor = create(:vendor)
         create(:purchase, :with_items, item_quantity: 10, amount_spent_in_cents: 1, vendor: vendor)
-        expect(vendor.volume).to eq(10)
+
+        expect(subject.first.volume).to eq(10)
       end
     end
   end

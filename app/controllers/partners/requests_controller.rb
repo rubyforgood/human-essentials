@@ -4,7 +4,7 @@ module Partners
 
     def index
       @partner = current_partner
-      @partner_requests = @partner.requests.order(created_at: :desc).limit(10)
+      @partner_requests = @partner.requests.includes(:item_requests).order(created_at: :desc).limit(10)
     end
 
     def new

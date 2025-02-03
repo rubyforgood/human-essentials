@@ -11,7 +11,9 @@ module Partners
       @partner_requests = @partner.requests.order(created_at: :desc).limit(10)
       @upcoming_distributions = @partner.distributions.order(issued_at: :desc)
                                         .where(issued_at: Time.zone.today..)
-      @distributions = @partner.distributions.order(issued_at: :desc)
+      @distributions = @partner.distributions
+                               .includes(line_items: :item)
+                               .order(issued_at: :desc)
                                .where(issued_at: ...Time.zone.today)
                                .limit(5)
 
@@ -19,6 +21,7 @@ module Partners
 
       @requests_in_progress = @parent_org
                               .ordered_requests
+                              .includes(item_requests: :item)
                               .where(partner: @partner.id)
                               .where(status: 0)
 

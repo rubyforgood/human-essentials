@@ -2,7 +2,7 @@
 <% partner_criteria_met = org_stats.partners_added > 0 %>
 <% location_criteria_met = org_stats.storage_locations_added > 0 %>
 <% donation_criteria_met = org_stats.donation_sites_added > 0 %>
-<% inventory_criteria_met = org_stats.locations_with_inventory.length > 0 %>
+<% inventory_criteria_met = org_stats.num_locations_with_inventory > 0 %>
 <% criterias = [ location_criteria_met, partner_criteria_met, donation_criteria_met, inventory_criteria_met ] %>
 <% current_step = criterias.find_index(false) %>
 
@@ -116,7 +116,7 @@
                     <% else %>
                       <i class="fa fa-pie-chart fa-2x" aria-hidden="true"></i>
                     <% end %>
-                    <h4><%= pluralize(org_stats.locations_with_inventory.length, 'Storage Location') %> with Inventory</h4>
+                    <h4><%= pluralize(org_stats.num_locations_with_inventory, 'Storage Location') %> with Inventory</h4>
                   </div>
 
                   <div class="org-stats-desc">
