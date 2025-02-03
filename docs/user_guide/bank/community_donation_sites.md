@@ -1,10 +1,10 @@
 READY FOR REVIEW
 # Donation Sites
 
-Donation Sites are places where people drop off Donations. 
+Donation Sites are places where people drop off Donations.
 
 ## The Donation Site list
-You can manage the sites' information on the "Donation Sites" page under the "Community" section. 
+You can manage the sites' information on the "Donation Sites" page under the "Community" section.
 
 ![Donation Sites](images/community/donation_sites/donation_sites.jpg)
 
@@ -12,16 +12,11 @@ Previously recorded information about Donation Sites appears on this page includ
 
 ### Adding a Donation Site
 
-Create a new site by populating the Donation Site, address, contact name, e-mail and phone fields and clicking the "Create" button. 
-
-![Create Donation_Site](images/community/donation_sites/create_donation_site.jpg)
-
-Note that the Donation Site and address fields are mandatory while the contact name, email and phone are optional.
-
-You can also use the "+ New Donation Site" button which renders a form for you to fill in details of a new Donation Site.
-
+Create a new site by clicking the "+ New Donation Site" button. This renders a form or you to fill the site's name, address, contact name, e-mail, and phone number. After entering the required details, click the "Save" button to create the new Donation Site.
 
 ![Add Donation_Site](images/community/donation_sites/add_new_donation_site.jpg)
+
+Note that the Donation Site and address fields are mandatory while the contact name, email and phone are optional.
 
 After saving the site's details there will be a new row on the Donation Sites page.
 
