@@ -17,29 +17,35 @@ class ApplicationController < ActionController::Base
   def current_organization
     return @current_organization if instance_variable_defined? :@current_organization
 
-    return @current_organization = nil unless current_role
-    return @current_organization = current_role.resource if current_role&.resource&.is_a?(Organization)
-
-    @current_organization = Organization.find_by(short_name: params[:organization_name])
+    @current_organization = if !current_role
+      nil
+    elsif current_role&.resource&.is_a?(Organization)
+      current_role.resource
+    else
+      Organization.find_by(short_name: params[:organization_name])
+    end
   end
   helper_method :current_organization
 
   def current_partner
     return @current_partner if instance_variable_defined? :@current_partner
 
-    return @current_partner = nil unless current_role
-    return @current_partner = nil if current_role.name.to_sym != Role::PARTNER
-
-    @current_partner = current_role.resource
+    @current_partner = if !current_role || current_role.name.to_sym != Role::PARTNER
+      nil
+    else
+      current_role.resource
+    end
   end
   helper_method :current_partner
 
   def current_role
     return @role if instance_variable_defined? :@role
 
-    return @role = nil unless current_user
-
-    @role = Role.find_by(id: session[:current_role]) || UsersRole.current_role_for(current_user)
+    @role = if !current_user
+      nil
+    else
+      Role.find_by(id: session[:current_role]) || UsersRole.current_role_for(current_user)
+    end
   end
 
   def dashboard_path_from_current_role
