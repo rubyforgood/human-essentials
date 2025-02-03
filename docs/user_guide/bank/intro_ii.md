@@ -20,7 +20,7 @@ You can email info@humanessentials.app.   We generally look at these about once 
 
 ### Stakeholder circle
 We hold a stakeholder circle the first Wednesday of every month at 6:00pm Eastern Time.  There will be other banks there, plus a couple members of the Human Essentials team.
-We publish the zoom link in slack, and in the Announcements in Human Essentials.
+We publish the Zoom link in Slack and in the Announcements in Human Essentials.
 
 ### Keeping up-to-date with changes
 We release changes to the system most weeks on Sundays between 10am and noon Eastern time (the system will be down for a short period when we do).   When we do, we put up an announcement in the system, which you will see on your [dashboard](essentials_dashboard.md).   We also record them in a newsletter at: https://ruby-for-good.gitbook.io/human-essentials-news 
