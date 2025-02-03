@@ -26,7 +26,7 @@ class DistributionService
   private
 
   def distribution_organization
-    return @distribution_organization if defined? @distribution_organization
+    return @distribution_organization if instance_variable_defined? :@distribution_organization
 
     @distribution_organization = distribution&.organization
   end
@@ -37,7 +37,7 @@ class DistributionService
 
   def distribution
     # Return distribution if it has already been defined
-    return @distribution if defined? @distribution
+    return @distribution if instance_variable_defined? :@distribution
 
     # Otherwise try to get this value with possibly
     # provided distribution_id from initialize
@@ -45,7 +45,7 @@ class DistributionService
   end
 
   def distribution_id
-    return @distribution_id if defined? @distribution_id
+    return @distribution_id if instance_variable_defined? :@distribution_id
 
     @distribution_id = distribution&.id
   end

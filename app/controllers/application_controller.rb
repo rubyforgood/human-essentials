@@ -15,7 +15,7 @@ class ApplicationController < ActionController::Base
   rescue_from ActiveRecord::RecordNotFound, with: :not_found!
 
   def current_organization
-    return @current_organization if defined? @current_organization
+    return @current_organization if instance_variable_defined? :@current_organization
 
     return @current_organization = nil unless current_role
     return @current_organization = current_role.resource if current_role&.resource&.is_a?(Organization)
@@ -25,7 +25,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_organization
 
   def current_partner
-    return @current_partner if defined? @current_partner
+    return @current_partner if instance_variable_defined? :@current_partner
 
     return @current_partner = nil unless current_role
     return @current_partner = nil if current_role.name.to_sym != Role::PARTNER
@@ -35,7 +35,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_partner
 
   def current_role
-    return @role if defined? @role
+    return @role if instance_variable_defined? :@role
 
     return @role = nil unless current_user
 
