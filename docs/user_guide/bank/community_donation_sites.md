@@ -6,7 +6,7 @@ Donation Sites are places where people drop off Donations.
 ## The Donation Site list
 You can manage the sites' information on the "Donation Sites" page under the "Community" section.
 
-![Donation Sites](images/community/donation_sites/donation_sites.jpg)
+![Donation Sites](images/community/donation_sites/donation_sites.png)
 
 Previously recorded information about Donation Sites appears on this page including the name of the Donation Site name, address, contact name, e-mail and phone number.
 
