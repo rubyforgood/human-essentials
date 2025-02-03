@@ -49,7 +49,7 @@ class DistributionsController < ApplicationController
     @paginated_distributions = @distributions.page(params[:page])
     @items = current_organization.items.alphabetized.select(:id, :name)
     @item_categories = current_organization.item_categories.select(:id, :name)
-    @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select(:id, :name)
+    @storage_locations = current_organization.storage_locations.active.alphabetized.select(:id, :name)
     @partners = current_organization.partners.active.alphabetized.select(:id, :name)
     @selected_item = filter_params[:by_item_id].presence
     @distribution_totals = DistributionTotalsService.new(current_organization.distributions, scope_filters)
@@ -69,7 +69,7 @@ class DistributionsController < ApplicationController
     respond_to do |format|
       format.html
       format.csv do
-        send_data Exports::ExportDistributionsCSVService.new(distributions: @distributions, organization: current_organization, filters: scope_filters).generate_csv, filename: "Distributions-#{Time.zone.today}.csv"
+        send_data Exports::ExportDistributionsCSVService.new(distributions: @distributions.includes(line_items: :item), organization: current_organization, filters: scope_filters).generate_csv, filename: "Distributions-#{Time.zone.today}.csv"
       end
     end
   end
@@ -122,7 +122,7 @@ class DistributionsController < ApplicationController
       @partner_list = current_organization.partners.where.not(status: 'deactivated').alphabetized
 
       inventory = View::Inventory.new(@distribution.organization_id)
-      @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
+      @storage_locations = current_organization.storage_locations.active.alphabetized.select do |storage_loc|
         inventory.quantity_for(storage_location: storage_loc.id).positive?
       end
       if @distribution.storage_location.present?
@@ -157,7 +157,7 @@ class DistributionsController < ApplicationController
     @partner_list = current_organization.partners.where.not(status: 'deactivated').alphabetized
 
     inventory = View::Inventory.new(current_organization.id)
-    @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
+    @storage_locations = current_organization.storage_locations.active.alphabetized.select do |storage_loc|
       inventory.quantity_for(storage_location: storage_loc.id).positive?
     end
   end
@@ -185,7 +185,7 @@ class DistributionsController < ApplicationController
         .where(storage_location_id: @distribution.storage_location_id)
         .where("updated_at > ?", @distribution.created_at).any?
       inventory = View::Inventory.new(@distribution.organization_id)
-      @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
+      @storage_locations = current_organization.storage_locations.active.alphabetized.select do |storage_loc|
         !inventory.quantity_for(storage_location: storage_loc.id).negative?
       end
     else
@@ -212,7 +212,7 @@ class DistributionsController < ApplicationController
       @distribution.initialize_request_items
       @items = current_organization.items.active.alphabetized
       @partner_list = current_organization.partners.alphabetized
-      @storage_locations = current_organization.storage_locations.active_locations.alphabetized
+      @storage_locations = current_organization.storage_locations.active.alphabetized
       render :edit
     end
   end

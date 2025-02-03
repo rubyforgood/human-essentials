@@ -53,7 +53,7 @@ module View
     def reload(event_time = nil)
       @inventory = InventoryAggregate.inventory_for(organization_id, event_time: event_time)
       @items = Item.where(organization_id: organization_id).active
-      @db_storage_locations = StorageLocation.where(organization_id: organization_id).active_locations
+      @db_storage_locations = StorageLocation.where(organization_id: organization_id).active
       load_item_details
     end
 

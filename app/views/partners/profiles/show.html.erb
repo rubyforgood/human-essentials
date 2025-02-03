@@ -29,15 +29,15 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-6">
-            <%= render partial: "partners/profiles/show/agency_information", locals: { profile: current_partner.profile } %>
+            <%= render partial: "partners/profiles/show/agency_information", locals: { profile: @profile } %>
           </div>
           <% current_partner.partials_to_show.each do |partial| %>
             <div class="col-6">
-              <%= render partial: "partners/profiles/show/#{partial}", locals: { profile: current_partner.profile } %>
+              <%= render partial: "partners/profiles/show/#{partial}", locals: { profile: @profile } %>
             </div>
           <% end %>
           <div class="col-6">
-            <%= render partial: "partners/profiles/show/partner_settings", locals: { profile: current_partner.profile } %>
+            <%= render partial: "partners/profiles/show/partner_settings", locals: { profile: @profile } %>
           </div>
         </div>
       </div>

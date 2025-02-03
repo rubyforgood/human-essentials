@@ -33,7 +33,7 @@ class AdjustmentsController < ApplicationController
   def new
     @adjustment = current_organization.adjustments.new
     @adjustment.line_items.build
-    @storage_locations = current_organization.storage_locations.active_locations
+    @storage_locations = current_organization.storage_locations.active
     @items = current_organization.items.loose.active.alphabetized
   end
 
@@ -54,7 +54,7 @@ class AdjustmentsController < ApplicationController
   private
 
   def load_form_collections
-    @storage_locations = current_organization.storage_locations.active_locations
+    @storage_locations = current_organization.storage_locations.active
     @items = current_organization.items.loose.alphabetized
   end
 
