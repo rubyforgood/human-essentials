@@ -13,7 +13,7 @@ READY FOR REVIEW
 
 5/  Many Banks set up a Partner as a proxy for their direct distribution to people in need.  This is allowed, and you can switch back and forth between being a Bank and a Partner with the same login.
 
-6/  You can group Partners, and allow those Partner Groups to request different sets of items (One thing some banks use this for is handling grants that are geographically constrained.)
+6/  You can group Partners and then allow those Partner Groups to request different sets of items. (Some Banks use this for handling grants that are geographically constrained.)
 
 
 ## Importing Partners
