@@ -16,7 +16,8 @@ You can also manage the Users in your Partners, see [Administering Partner Users
 
 ## Inviting new Users
 Clicking "Invite User to this Organization" will open a popup where you will enter the name and email of the user.  Once you click "Invite User", they will receive an email with a link to follow to set up their password. 
-Please note that this link expires. If they don't click on the link in time, the workaround is for them to go to the login screen and click on "Reset Password". 
+> [!TIP]
+> This link expires! If they don't click on the link in time, the workaround is for them to go to the login screen and click on "Reset Password" to generate a new email with link.
 
 ![invite user pop_up](images/getting_started/user_admin/gs_user_admin_invite_user.png)
 
