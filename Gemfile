@@ -10,7 +10,7 @@ end
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.5.7"
+gem "pg", "~> 1.5.9"
 # Web server.
 gem "puma"
 # Rails web framework.
@@ -24,7 +24,7 @@ gem 'azure-storage-blob'
 # Adds soft delete functionality for models.
 gem 'discard', '~> 1.3'
 # Adds grouping by date/month/etc to queries.
-gem "groupdate", "~> 6.4"
+gem "groupdate", "~> 6.5"
 # Treats attributes like money, which knows about dollars and cents.
 gem "money-rails"
 # Tracks history / audits models.
@@ -184,6 +184,12 @@ group :development do
   gem "rails-erd"
   # Allows to create a console in the browser.
   gem "web-console"
+  # Middleware that displays speed badge for every HTML page
+  gem "rack-mini-profiler"
+  # Adds memory profiling to rack-mini-profiler
+  gem "memory_profiler"
+  # Adds call-stack profiling flamegraphs to rack-mini-profiler
+  gem "stackprof"
 end
 
 group :test do

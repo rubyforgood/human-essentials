@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-md-6">
     <!-- /.box-header -->
-    <h2 class='text-2xl underline'>Agency Information</h2>
+    <h4 class='text-2xl underline'>Agency Information</h4>
     <%# The field for inputting the name registers it as partner.name,  %>
     <%# not partner_profile.name, so this pulls from partner.name %>
     <p>Name: <%= @partner.name %></p>
@@ -25,7 +25,7 @@
     <br>
     <br>
     <% if partner_profile.program_address1.present? || partner_profile.program_address2.present? || partner_profile.program_city.present? || partner_profile.program_state.present? || partner_profile.program_zip_code.present? %>
-      <h3>Program / Delivery Address (if different)</h3>
+      <h4>Program / Delivery Address (if different)</h4>
       <p>Program Address: <%= partner_profile.program_address1 %></p>
       <p>Program Address: <%= partner_profile.program_address2 %></p>
       <p>Program City: <%= partner_profile.program_city %></p>
@@ -35,7 +35,7 @@
     <% end %>
 
     <% if partner_profile_fields.include?('media_information') || partner_profile_fields.empty? %>
-      <h2 class='text-2xl underline'>Media Information</h2>
+      <h4 class='text-2xl underline'>Media Information</h4>
       <p>Website: <%= partner_profile.website %></p>
       <p>Facebook: <%= partner_profile.facebook %></p>
       <p>Twitter: <%= partner_profile.twitter %></p>
@@ -44,7 +44,7 @@
       <br>
     <% end %>
     <% if partner_profile_fields.include?('agency_stability') || partner_profile_fields.empty? %>
-      <h2 class='text-2xl underline'>Agency Stability</h2>
+      <h4 class='text-2xl underline'>Agency Stability</h4>
       <p>Founded <%= partner_profile.founded %></p>
       <p>Form 990: <%= humanize_boolean(partner_profile.proof_of_form_990.attached?) %></p>
       <p>Form 990
@@ -63,7 +63,7 @@
       <p>Currently Providing Diapers: <%= humanize_boolean_3state(partner_profile.currently_provide_diapers) %></p>
     <% end %>
     <% if partner_profile_fields.include?('organizational_capacity') || partner_profile_fields.empty? %>
-      <h2 class='text-2xl underline'>Organizational Capacity</h2>
+      <h4 class='text-2xl underline'>Organizational Capacity</h4>
       <p>Client Capacity: <%= partner_profile.client_capacity %></p>
       <p>Storage Space: <%= humanize_boolean_3state(partner_profile.storage_space) %></p>
       <p>Storage Space Description: <%= partner_profile.describe_storage_space %></p>
@@ -71,7 +71,7 @@
     <% end %>
 
     <% if partner_profile_fields.include?('area_served') || partner_profile_fields.empty? %>
-      <h2 class='text-2xl underline'>Area Served</h2>
+      <h4 class='text-2xl underline'>Area Served</h4>
       <table>
         <th class="county-heading">County</th><th class="county-heading">% of Clients in county</th>
 
@@ -86,7 +86,7 @@
     <% end %>
 
     <% if partner_profile_fields.include?('population_served') || partner_profile_fields.empty? %>
-      <h2 class='text-2xl underline'>Population Served</h2>
+      <h4 class='text-2xl underline'>Population Served</h4>
       <p>Income Requirement: <%= humanize_boolean_3state(partner_profile.income_requirement_desc) %></p>
       <p>Income Verification: <%= humanize_boolean_3state(partner_profile.income_verification) %></p>
       <br>
@@ -94,7 +94,7 @@
   </div>
   <div class="col-md-6">
     <% if partner_profile_fields.include?('population_served') || partner_profile_fields.empty? %>
-      <h2 class='text-2xl underline'>Race/Ethnicity of Client Base</h2>
+      <h4 class='text-2xl underline'>Race/Ethnicity of Client Base</h4>
       <p>African American: <%= partner_profile.population_black %></p>
       <p>Caucasian: <%= partner_profile.population_white %></p>
       <p>Hispanic: <%= partner_profile.population_hispanic %></p>
@@ -104,10 +104,10 @@
       <p>Multi-Racial: <%= partner_profile.population_multi_racial %></p>
       <p>Other: <%= partner_profile.population_other %></p>
       <br>
-      <h3>Zip Codes Served</h3>
+      <h4>Zip Codes Served</h4>
       <p>Zips: <%= partner_profile.zips_served %></p>
       <br>
-      <h3>Poverty Information of Those Served</h3>
+      <h4>Poverty Information of Those Served</h4>
       <p>At FPL or Below: <%= partner_profile.at_fpl_or_below %></p>
       <p>Above 1-2 times
       FPL: <%= partner_profile.above_1_2_times_fpl %></p>
@@ -117,12 +117,12 @@
       <br>
     <% end %>
     <% if partner_profile_fields.include?('executive_director') || partner_profile_fields.empty? %>
-      <h2 class='text-2xl underline'>Executive Director</h2>
+      <h4 class='text-2xl underline'>Executive Director</h4>
       <p>Executive Director Name: <%= partner_profile.executive_director_name %></p>
       <p>Executive Director Phone: <%= partner_profile.executive_director_phone %></p>
       <p>Executive Director Email: <%= partner_profile.executive_director_email %></p>
       <br>
-      <h2 class='text-2xl underline'>Primary Contact Person</h2>
+      <h4 class='text-2xl underline'>Primary Contact Person</h4>
       <p>Primary Contact Name: <%= partner_profile.primary_contact_name %></p>
       <p>Primary Contact Phone: <%= partner_profile.primary_contact_phone %></p>
       <p>Primary Contact Mobile: <%= partner_profile.primary_contact_mobile %></p>
@@ -130,21 +130,21 @@
       <br>
     <% end %>
     <% if partner_profile_fields.include?('pick_up_person') || partner_profile_fields.empty? %>
-      <h2 class='text-2xl underline'>Pick Up Person</h2>
+      <h4 class='text-2xl underline'>Pick Up Person</h4>
       <p>Pick Up Name: <%= partner_profile.pick_up_name %></p>
       <p>Pick Up Phone: <%= partner_profile.pick_up_phone %></p>
       <p>Pick Up Email: <%= partner_profile.pick_up_email %></p>
       <br>
     <% end %>
     <% if partner_profile_fields.include?('agency_distribution_information') || partner_profile_fields.empty? %>
-      <h2 class='text-2xl underline'>Agency Distribution Information</h2>
+      <h4 class='text-2xl underline'>Agency Distribution Information</h4>
       <p>Distribution Times: <%= partner_profile.distribution_times %> </p>
       <p>New Client Times: <%= partner_profile.new_client_times %></p>
       <p>More Docs Required: <%= partner_profile.more_docs_required %></p>
       <br>
     <% end %>
     <% if partner_profile_fields.include?('sources_of_funding') || partner_profile_fields.empty? %>
-      <h2 class='text-2xl underline'>Sources of Funding</h2>
+      <h4 class='text-2xl underline'>Sources of Funding</h4>
       <p>Sources of Funding: <%= partner_profile.sources_of_funding %></p>
       <p>Sources of Diapers: <%= partner_profile.sources_of_diapers %> </p>
       <p>Essentials Budget:<%= partner_profile.essentials_budget %></p>
@@ -152,12 +152,12 @@
       <br>
     <% end %>
     <% if partner_profile_fields.include?('attached_documents') || partner_profile_fields.empty? %>
-      <h2 class='text-2xl underline'>Other Documents</h2>
+      <h4 class='text-2xl underline'>Other Documents</h4>
         <% partner_profile.documents.each do |document| %>
           <p><%= link_to document.filename, rails_blob_path(document, disposition: 'inline') %></p>
         <% end %>
         <br>
-    <h2 class='text-2xl underline'>Settings</h2>
+    <h4 class='text-2xl underline'>Settings</h4>
         <% if partner_profile.organization.enable_child_based_requests? %>
           <p>Uses Child Based Requests: <%= humanize_boolean(partner_profile.enable_child_based_requests) %></p>
         <% end %>

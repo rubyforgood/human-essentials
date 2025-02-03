@@ -11,7 +11,7 @@
 # It's strongly recommended that you check this file into your version control system.
 
 
-ActiveRecord::Schema[7.2].define(version: 2025_01_16_180121) do
+ActiveRecord::Schema[7.2].define(version: 2025_01_29_015253) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -514,8 +514,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_16_180121) do
     t.integer "deadline_day"
     t.index ["name", "organization_id"], name: "index_partner_groups_on_name_and_organization_id", unique: true
     t.index ["organization_id"], name: "index_partner_groups_on_organization_id"
-    t.check_constraint "deadline_day <= 28", name: "deadline_day_of_month_check"
-    t.check_constraint "reminder_day <= 28", name: "reminder_day_of_month_check"
+    t.check_constraint "deadline_day <= 28", name: "deadline_day_of_month_check", validate: false
+    t.check_constraint "reminder_day <= 28", name: "reminder_day_of_month_check", validate: false
   end
 
   create_table "partner_profiles", force: :cascade do |t|
@@ -729,6 +729,17 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_16_180121) do
     t.index ["resource_type", "resource_id"], name: "index_roles_on_resource"
   end
 
+  create_table "solid_cache_entries", force: :cascade do |t|
+    t.binary "key", null: false
+    t.binary "value", null: false
+    t.datetime "created_at", null: false
+    t.bigint "key_hash", null: false
+    t.integer "byte_size", null: false
+    t.index ["byte_size"], name: "index_solid_cache_entries_on_byte_size"
+    t.index ["key_hash", "byte_size"], name: "index_solid_cache_entries_on_key_hash_and_byte_size"
+    t.index ["key_hash"], name: "index_solid_cache_entries_on_key_hash", unique: true
+  end
+
   create_table "storage_locations", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "address"
@@ -859,7 +870,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_16_180121) do
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
-  add_foreign_key "account_requests", "ndbn_members", primary_key: "ndbn_member_id"
+  add_foreign_key "account_requests", "ndbn_members", primary_key: "ndbn_member_id", validate: false
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "adjustments", "organizations"
   add_foreign_key "adjustments", "storage_locations"
@@ -893,7 +904,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_16_180121) do
   add_foreign_key "partner_requests", "users", column: "partner_user_id"
   add_foreign_key "partner_served_areas", "counties"
   add_foreign_key "partner_served_areas", "partner_profiles"
-  add_foreign_key "partners", "storage_locations", column: "default_storage_location_id"
+  add_foreign_key "partners", "storage_locations", column: "default_storage_location_id", validate: false
   add_foreign_key "product_drives", "organizations"
   add_foreign_key "requests", "distributions"
   add_foreign_key "requests", "organizations"

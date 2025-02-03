@@ -11,132 +11,17 @@
   <link href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/v4-shims.css" rel="stylesheet">
-
   <link rel="stylesheet" href="/assets/application.css" media="all" />
-  <script type="importmap" data-turbo-track="reload">{
-  "imports": {
-    "jquery": "https://ga.jspm.io/npm:jquery@3.6.1/dist/jquery.js",
-    "admin-lte": "/assets/adminlte.js",
-    "application": "/assets/application.js",
-    "startup": "/assets/startup.js",
-    "@hotwired/turbo-rails": "/assets/turbo.min.js",
-    "@hotwired/stimulus": "/assets/stimulus.min.js",
-    "@hotwired/stimulus-loading": "/assets/stimulusloading.js",
-    "bootstrap": "/assets/bootstrap.min.js",
-    "popper": "/assets/popper.js",
-    "highcharts": "https://ga.jspm.io/npm:highcharts@10.3.2/highcharts.js",
-    "select2": "https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js",
-    "trix": "https://ga.jspm.io/npm:trix@2.0.4/dist/trix.esm.min.js",
-    "@rails/actiontext": "https://ga.jspm.io/npm:@rails/actiontext@7.0.4/app/assets/javascripts/actiontext.js",
-    "luxon": "https://ga.jspm.io/npm:luxon@1.28.0/build/cjs-browser/luxon.js",
-    "litepicker": "https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js",
-    "litepicker/ranges": "https://cdn.jsdelivr.net/npm/litepicker/dist/plugins/ranges.js",
-    "toastr": "https://ga.jspm.io/npm:toastr@2.1.4/toastr.js",
-    "@fullcalendar/core": "https://ga.jspm.io/npm:@fullcalendar/core@6.0.1/index.js",
-    "preact": "https://ga.jspm.io/npm:preact@10.11.3/dist/preact.module.js",
-    "preact/compat": "https://ga.jspm.io/npm:preact@10.11.3/compat/dist/compat.module.js",
-    "preact/hooks": "https://ga.jspm.io/npm:preact@10.11.3/hooks/dist/hooks.module.js",
-    "@fullcalendar/luxon": "https://ga.jspm.io/npm:@fullcalendar/luxon@6.0.1/index.js",
-    "@fullcalendar/core/": "https://ga.jspm.io/npm:@fullcalendar/core@6.0.1/",
-    "@fullcalendar/daygrid": "https://ga.jspm.io/npm:@fullcalendar/daygrid@6.0.1/index.js",
-    "@fullcalendar/list": "https://ga.jspm.io/npm:@fullcalendar/list@6.0.1/index.js",
-    "quagga": "https://ga.jspm.io/npm:quagga@0.12.1/dist/quagga.min.js",
-    "@rails/ujs": "https://ga.jspm.io/npm:@rails/ujs@7.0.4/lib/assets/compiled/rails-ujs.js",
-    "filterrific": "/assets/filterrific.js",
-    "bootstrap-select": "https://ga.jspm.io/npm:bootstrap-select@1.13.18/dist/js/bootstrap-select.js",
-    "jquery-ui": "https://ga.jspm.io/npm:jquery-ui@1.13.2/ui/widget.js",
-    "controllers/application": "/assets/controllers/application.js",
-    "controllers/area_served_controller": "/assets/controllers/area_served_controller.js",
-    "controllers/checkbox_with_nested_element_controller": "/assets/controllers/checkbox_with_nested_element_controller.js",
-    "controllers/confirmation_controller": "/assets/controllers/confirmation_controller.js",
-    "controllers/distribution_delivery_controller": "/assets/controllers/distribution_delivery_controller.js",
-    "controllers/double_select_controller": "/assets/controllers/double_select_controller.js",
-    "controllers/form_input_controller": "/assets/controllers/form_input_controller.js",
-    "controllers/highchart_controller": "/assets/controllers/highchart_controller.js",
-    "controllers": "/assets/controllers/index.js",
-    "controllers/item_units_controller": "/assets/controllers/item_units_controller.js",
-    "controllers/password_visibility_controller": "/assets/controllers/password_visibility_controller.js",
-    "controllers/select2_controller": "/assets/controllers/select2_controller.js",
-    "controllers/served_area_controller": "/assets/controllers/served_area_controller.js",
-    "controllers/turbo_controller": "/assets/controllers/turbo_controller.js",
-    "utils/barcode_items": "/assets/utils/barcode_items.js",
-    "utils/barcode_scan": "/assets/utils/barcode_scan.js",
-    "utils/deadline_day_pickers": "/assets/utils/deadline_day_pickers.js",
-    "utils/distributions_and_transfers": "/assets/utils/distributions_and_transfers.js",
-    "utils/donations": "/assets/utils/donations.js",
-    "utils/purchases": "/assets/utils/purchases.js"
-  }
-}</script>
-<link rel="modulepreload" href="https://ga.jspm.io/npm:jquery@3.6.1/dist/jquery.js">
-<link rel="modulepreload" href="/assets/adminlte.js">
-<link rel="modulepreload" href="/assets/application.js">
-<link rel="modulepreload" href="/assets/startup.js">
-<link rel="modulepreload" href="/assets/turbo.min.js">
-<link rel="modulepreload" href="/assets/stimulus.min.js">
-<link rel="modulepreload" href="/assets/stimulusloading.js">
-<link rel="modulepreload" href="/assets/bootstrap.min.js">
-<link rel="modulepreload" href="/assets/popper.js">
-<link rel="modulepreload" href="https://ga.jspm.io/npm:highcharts@10.3.2/highcharts.js">
-<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js">
-<link rel="modulepreload" href="https://ga.jspm.io/npm:trix@2.0.4/dist/trix.esm.min.js">
-<link rel="modulepreload" href="https://ga.jspm.io/npm:@rails/actiontext@7.0.4/app/assets/javascripts/actiontext.js">
-<link rel="modulepreload" href="https://ga.jspm.io/npm:luxon@1.28.0/build/cjs-browser/luxon.js">
-<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js">
-<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/litepicker/dist/plugins/ranges.js">
-<link rel="modulepreload" href="https://ga.jspm.io/npm:toastr@2.1.4/toastr.js">
-<link rel="modulepreload" href="https://ga.jspm.io/npm:@fullcalendar/core@6.0.1/index.js">
-<link rel="modulepreload" href="https://ga.jspm.io/npm:preact@10.11.3/dist/preact.module.js">
-<link rel="modulepreload" href="https://ga.jspm.io/npm:preact@10.11.3/compat/dist/compat.module.js">
-<link rel="modulepreload" href="https://ga.jspm.io/npm:preact@10.11.3/hooks/dist/hooks.module.js">
-<link rel="modulepreload" href="https://ga.jspm.io/npm:@fullcalendar/luxon@6.0.1/index.js">
-<link rel="modulepreload" href="https://ga.jspm.io/npm:@fullcalendar/core@6.0.1/">
-<link rel="modulepreload" href="https://ga.jspm.io/npm:@fullcalendar/daygrid@6.0.1/index.js">
-<link rel="modulepreload" href="https://ga.jspm.io/npm:@fullcalendar/list@6.0.1/index.js">
-<link rel="modulepreload" href="https://ga.jspm.io/npm:quagga@0.12.1/dist/quagga.min.js">
-<link rel="modulepreload" href="https://ga.jspm.io/npm:@rails/ujs@7.0.4/lib/assets/compiled/rails-ujs.js">
-<link rel="modulepreload" href="/assets/filterrific.js">
-<link rel="modulepreload" href="https://ga.jspm.io/npm:bootstrap-select@1.13.18/dist/js/bootstrap-select.js">
-<link rel="modulepreload" href="https://ga.jspm.io/npm:jquery-ui@1.13.2/ui/widget.js">
-<link rel="modulepreload" href="/assets/controllers/application.js">
-<link rel="modulepreload" href="/assets/controllers/area_served_controller.js">
-<link rel="modulepreload" href="/assets/controllers/checkbox_with_nested_element_controller.js">
-<link rel="modulepreload" href="/assets/controllers/confirmation_controller.js">
-<link rel="modulepreload" href="/assets/controllers/distribution_delivery_controller.js">
-<link rel="modulepreload" href="/assets/controllers/double_select_controller.js">
-<link rel="modulepreload" href="/assets/controllers/form_input_controller.js">
-<link rel="modulepreload" href="/assets/controllers/highchart_controller.js">
-<link rel="modulepreload" href="/assets/controllers/index.js">
-<link rel="modulepreload" href="/assets/controllers/item_units_controller.js">
-<link rel="modulepreload" href="/assets/controllers/password_visibility_controller.js">
-<link rel="modulepreload" href="/assets/controllers/select2_controller.js">
-<link rel="modulepreload" href="/assets/controllers/served_area_controller.js">
-<link rel="modulepreload" href="/assets/controllers/turbo_controller.js">
-<link rel="modulepreload" href="/assets/utils/barcode_items.js">
-<link rel="modulepreload" href="/assets/utils/barcode_scan.js">
-<link rel="modulepreload" href="/assets/utils/deadline_day_pickers.js">
-<link rel="modulepreload" href="/assets/utils/distributions_and_transfers.js">
-<link rel="modulepreload" href="/assets/utils/donations.js">
-<link rel="modulepreload" href="/assets/utils/purchases.js">
-<script type="module">import "application"</script>
-
-  <script type="esms-options">
-  {
-    "noLoadEventRetriggers": true
-  }
-  </script>
-
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="manifest" href="/site.webmanifest">
   <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-
-    <meta name="turbo-visit-control" content="reload">
-    <meta name="turbo-cache-control" content="no-cache">
+  <meta name="turbo-visit-control" content="reload">
+  <meta name="turbo-cache-control" content="no-cache">
 </head>
-<body data-turbo="" data-controller='turbo'
-  id="errors" class="internal_server_error hold-transition sidebar-mini layout-fixed">
+<body id="errors" class="internal_server_error hold-transition sidebar-mini layout-fixed">
 <!-- Site wrapper -->
 <div class="wrapper">
   <nav class="main-header navbar navbar-expand navbar-white navbar-light">
