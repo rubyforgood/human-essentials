@@ -187,7 +187,8 @@ Partners can't submit Requests until they are approved by the Bank.
 The full Partner approval process requires the partner to fill in their profile and submit it for approval.  Some banks handle that for their partners, gathering the information through other means (such as a phone conversation).
 Checking this box will change the process so that the partners are automatically approved when they are invited. 
 
-[! NOTE] Any already-invited partners that are not yet approved will still need to be approved by the bank.
+> [!NOTE]
+> Any already-invited partners that are not yet approved will still need to be approved by the bank.
 
 #### Distribution Email Content
 There is a checkbox on each partner that indicates if they are to receive Distribution emails.  We recommend you do customize this content, as the default text is abrupt.
