@@ -35,7 +35,8 @@ Within that scope, they can:
 - View their Distributions
 - Administer Families and Children (only if they are allowed to make Child Requests (this can be limited by the Org Admin,  see [Customization](getting_started_customization.md) )) 
 
-- [! Note] the Banks cannot see this information
+> [!NOTE]
+> The Banks cannot see this information
 
 ## Super Admin
 This bit is for information only -- A limited number of Human Essentials staff have a superadmin role that allows us to perform the following duties:
