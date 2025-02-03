@@ -174,6 +174,11 @@ module Partners
       counties.order(%w(lower(region) lower(name))).pluck(:name).join("; ")
     end
 
+    def self.agency_types_for_selection
+      # alphabetize based on the translated version, as that is the text users will actually read
+      agency_types.keys.map(&:to_sym).sort_by { |sym| I18n.t(sym, scope: :partners_profile) }.partition { |v| v != :other }.flatten
+    end
+
     private
 
     def check_social_media
