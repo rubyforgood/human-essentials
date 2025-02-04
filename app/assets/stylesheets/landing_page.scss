@@ -18,6 +18,11 @@
       }
     }
   }
+
+  .hero-subcontainer {
+    height:60vh; 
+    min-height: 500px
+  }
 }
 
 .container-fluid {
@@ -48,9 +53,4 @@
   .quote-image {
     width: 300px;
   }
-}
-
-#get-in-touch {
-  height:60vh; 
-  min-height: 500px
 }
