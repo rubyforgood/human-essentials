@@ -36,8 +36,8 @@ RSpec.describe "Authorization", type: :system, js: true do
 
     context "When logged in and creating a distribution" do
       before do
-        create(:storage_location, organization: organization, name: "Test Storage Location")
-        storage_location = create(:partner, organization: organization, name: "Test Partner")
+        create(:partner, organization: organization, name: "Test Partner")
+        storage_location = create(:storage_location, organization: organization, name: "Test Storage Location")
         setup_storage_location(storage_location)
       end
       it "should redirect back and show a helpful message" do
