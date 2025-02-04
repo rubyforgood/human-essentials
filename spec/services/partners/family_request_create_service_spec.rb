@@ -142,7 +142,7 @@ RSpec.describe Partners::FamilyRequestCreateService do
         let(:fake_request_create_service) { instance_double(Partners::RequestCreateService, call: -> {}, errors: [], partner_request: -> {}) }
 
         before do
-          allow(Partners::RequestCreateService).to receive(:new).with(partner_user_id: partner_user.id, request_type: "individual", comments: comments, item_requests_attributes: contain_exactly(*expected_item_request_attributes)).and_return(fake_request_create_service)
+          allow(Partners::RequestCreateService).to receive(:new).with(partner_id: partner.id, user_id: partner_user.id, request_type: "individual", comments: comments, item_requests_attributes: contain_exactly(*expected_item_request_attributes)).and_return(fake_request_create_service)
         end
 
         it 'should send the correct request payload to the Partners::RequestCreateService and call it' do
