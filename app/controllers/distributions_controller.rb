@@ -7,7 +7,7 @@ class DistributionsController < ApplicationController
   include DateRangeHelper
   include DistributionHelper
 
-  before_action :enable_turbo!, only: %i[show]
+  # before_action :enable_turbo!, only: %i[show]
   skip_before_action :authenticate_user!, only: %i(calendar)
   skip_before_action :authorize_user, only: %i(calendar)
 
@@ -129,7 +129,7 @@ class DistributionsController < ApplicationController
 
       flash_error = insufficient_error_message(result.error.message)
       flash.now[:error] = flash_error
-      render :new
+      render :new, status: :bad_request
     end
   end
 
