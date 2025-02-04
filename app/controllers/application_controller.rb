@@ -15,7 +15,7 @@ class ApplicationController < ActionController::Base
   rescue_from ActiveRecord::RecordNotFound, with: :not_found!
 
   rescue_from ActionController::InvalidAuthenticityToken do
-    flash[:error] = 'Your session expired. This could be due to leaving a page open for a long time, or having multiple tabs open. Try resubmitting.'
+    flash[:error] = "Your session expired. This could be due to leaving a page open for a long time, or having multiple tabs open. Try resubmitting."
     redirect_back fallback_location: root_path
   end
 
