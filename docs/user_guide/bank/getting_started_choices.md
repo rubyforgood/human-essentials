@@ -6,7 +6,7 @@ Human Essentials is designed to help you manage your inventory and your relation
 
 Here are some questions that will help you when you are setting up Human Essentials. 
 
-- Do you (your bank) want to start out immediately with your partners making requests, or do you want to just track your distributions for awhile first?
+- Do you (your bank) want to start out immediately with your partners making requests, or do you want to just track your distributions initially?
 - Do you run on a monthly cycle, or on more of an adhoc basis?
 - What information do you need from our partners (see [Partner Profile](pm_partner_profiles.md) for what you *can* collect in the system - this is somewhat configurable)?
   - Do you need to get all that information from your partners before they can enter requests? 
