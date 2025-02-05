@@ -7,7 +7,7 @@ class DistributionsController < ApplicationController
   include DateRangeHelper
   include DistributionHelper
 
-  before_action :enable_turbo!, only: %i[show]
+  before_action :enable_turbo!, only: %i[new show]
   skip_before_action :authenticate_user!, only: %i(calendar)
   skip_before_action :authorize_user, only: %i(calendar)
 
@@ -101,7 +101,11 @@ class DistributionsController < ApplicationController
       perform_inventory_check
       schedule_reminder_email(result.distribution) if @distribution.reminder_email_enabled
 
-      redirect_to distribution_path(result.distribution), notice: "Distribution created!"
+      respond_to do |format|
+        format.turbo_stream do
+          redirect_to distribution_path(result.distribution), notice: "Distribution created!"
+        end
+      end
     else
       @distribution = result.distribution
       if request_id
@@ -128,8 +132,16 @@ class DistributionsController < ApplicationController
       end
 
       flash_error = insufficient_error_message(result.error.message)
-      flash.now[:error] = flash_error
-      render :new
+
+      respond_to do |format|
+        format.turbo_stream do
+          flash.now[:error] = flash_error
+          render turbo_stream: [
+            turbo_stream.replace(@distribution, partial: "form", locals: {distribution: @distribution, date_place_holder: @distribution.issued_at}),
+            turbo_stream.replace("flash", partial: "shared/flash")
+          ], status: :bad_request
+        end
+      end
     end
   end
 
