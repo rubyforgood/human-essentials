@@ -12,7 +12,7 @@ Previously recorded information about Donation Sites appears on this page includ
 
 ### Adding a Donation Site
 
-Create a new site by clicking the "+ New Donation Site" button. This renders a form or you to fill the site's name, address, contact name, e-mail, and phone number. After entering the required details, click the "Save" button to create the new Donation Site.
+Create a new site by clicking the "+ New Donation Site" button. This renders a form for you to fill the site's name, address, contact name, e-mail, and phone number. After entering the required details, click the "Save" button to create the new Donation Site.
 
 ![Add Donation_Site](images/community/donation_sites/add_new_donation_site.jpg)
 
