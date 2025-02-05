@@ -219,7 +219,7 @@ RSpec.describe DistributionsController, type: :controller do
             }
           }
         end
-        subject { post :create, params: params.merge(format: :turbo_stream) }
+        subject { post :create, params: params }
 
         it "flashes an error" do
           expect(subject).to have_http_status(:bad_request)
