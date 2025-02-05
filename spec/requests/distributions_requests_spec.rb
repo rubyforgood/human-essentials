@@ -221,7 +221,7 @@ RSpec.describe "Distributions", type: :request do
         expect(partner).to be_valid
 
         expect(PartnerMailerJob).to receive(:perform_later).once
-        post distributions_path(distribution:)
+        post distributions_path(distribution:, format: :turbo_stream)
 
         expect(response).to have_http_status(:redirect)
         last_distribution = Distribution.last
@@ -229,7 +229,7 @@ RSpec.describe "Distributions", type: :request do
       end
 
       it "renders #new again on failure, with notice" do
-        post distributions_path(distribution: { comment: nil, partner_id: nil, storage_location_id: nil })
+        post distributions_path(distribution: { comment: nil, partner_id: nil, storage_location_id: nil }, format: :turbo_stream)
         expect(response).to have_http_status(400)
         expect(response).to have_error
       end
@@ -237,7 +237,7 @@ RSpec.describe "Distributions", type: :request do
       it "renders #new with item quantities in dropdowns listed" do
         create(:item, :with_unit, organization: organization, name: 'Item 1', unit: 'pack')
 
-        post distributions_path(distribution: distribution.except(:partner_id))
+        post distributions_path(distribution: distribution.except(:partner_id), format: :turbo_stream)
 
         expect(response).to have_http_status(400)
         expect(flash[:error]).to include("Sorry, we weren't able to save the distribution.")
@@ -249,7 +249,7 @@ RSpec.describe "Distributions", type: :request do
         create(:item, organization: organization, name: 'Active Item')
         create(:item, :inactive, organization: organization, name: 'Inactive Item')
 
-        post distributions_path(distribution: { comment: nil, partner_id: nil, storage_location_id: nil })
+        post distributions_path(distribution: { comment: nil, partner_id: nil, storage_location_id: nil }, format: :turbo_stream)
         expect(response).to have_http_status(400)
 
         page = Nokogiri::HTML(response.body)
@@ -266,7 +266,7 @@ RSpec.describe "Distributions", type: :request do
         end
 
         it "should not display deactivated partners after error and re-render of form" do
-          post distributions_path(distribution: { comment: nil, partner_id: nil, storage_location_id: nil })
+          post distributions_path(distribution: { comment: nil, partner_id: nil, storage_location_id: nil }, format: :turbo_stream)
           expect(response).to have_http_status(400)
           expect(response).to have_error
           expect(response.body).not_to include("Deactivated Partner")
@@ -278,7 +278,7 @@ RSpec.describe "Distributions", type: :request do
         let(:issued_at) { "" }
 
         it "fails and returns validation error message" do
-          post distributions_path(distribution:)
+          post distributions_path(distribution:, format: :turbo_stream)
 
           expect(response).to have_http_status(400)
           expect(flash[:error]).to include("Distribution date and time can't be blank")
