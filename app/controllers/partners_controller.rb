@@ -6,19 +6,15 @@ class PartnersController < ApplicationController
   before_action :validate_user_role, only: :show
 
   def index
-    @unfiltered_partners_for_statuses = Partner.where(organization: current_organization)
-    @partners = Partner.includes(:partner_group).where(organization: current_organization)
-    @partners = if filter_params.empty?
-      @partners.active
-    else
-      @partners.class_filter(filter_params)
-    end
-    @partners = @partners.alphabetized
-    @partner_groups = PartnerGroup.includes(:partners, :item_categories).where(organization: current_organization)
+    @partners = current_organization.partners.includes(:partner_group).alphabetized
+    @partners = filter_params.empty? ? @partners.active : @partners.class_filter(filter_params)
+    @partner_groups = current_organization.partner_groups.includes(:partners, :item_categories)
+    @partner_status_counts = current_organization.partners.group(:status).count
+    @active_partner_count = @partner_status_counts.except("deactivated").values.sum
 
     respond_to do |format|
       format.html
-      format.csv { send_data Partner.generate_csv(@partners), filename: "Partners-#{Time.zone.today}.csv" }
+      format.csv { send_data Partner.generate_csv(@partners.includes(:profile)), filename: "Partners-#{Time.zone.today}.csv" }
     end
   end
 
