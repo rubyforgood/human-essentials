@@ -12,9 +12,13 @@ Previously recorded information about Donation Sites appears on this page includ
 
 ### Adding a Donation Site
 
-Create a new site by clicking the "+ New Donation Site" button. This renders a form for you to fill the site's name, address, contact name, e-mail, and phone number. After entering the required details, click the "Save" button to create the new Donation Site.
+Create a new site by clicking the "+ New Donation Site" button.
 
-![Add Donation_Site](images/community/donation_sites/add_new_donation_site.jpg)
+![Create Donation Site](images/community/donation_sites/create_donation_site.png)
+
+This renders a form for you to fill the site's name, address, contact name, e-mail, and phone number. After entering the required details, click the "Save" button to create the new Donation Site.
+
+![Add Donation Site](images/community/donation_sites/add_new_donation_site.jpg)
 
 Note that the Donation Site and address fields are mandatory while the contact name, email and phone are optional.
 
@@ -38,12 +42,12 @@ Use the "Deactivate" button to hide a Donation Site that is no longer active.
 
 ##### (NB) at time of writing there is no way for you to undo this.
 
-![Deactivate Donation Sites](images/community/donation_sites/deactivate_donation_site.jpg)
+![Deactivate Donation Sites](images/community/donation_sites/deactivate_donation_site.png)
 
 ## Exporting Donation Sites
 
 You can export the active Donation Sites by clicking on the "Export Donation Sites" button. This will provide a .csv file containing the name, address, and contact information for each active Donation Site.
 
-![Export Donation Sites](images/community/donation_sites/export_donation_sites.jpg)
+![Export Donation Sites](images/community/donation_sites/export_donation_sites.png)
 
 [Prior: Product Drive Participants](community_product_drive_participants.md)[Next: Vendors](community_vendors.md)
