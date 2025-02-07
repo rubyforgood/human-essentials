@@ -48,11 +48,6 @@ class Purchase < ApplicationRecord
   scope :purchased_from, ->(purchased_from) { where(purchased_from: purchased_from) }
   scope :during, ->(range) { where(purchases: { issued_at: range }) }
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
-  scope :for_csv_export, ->(organization, *) {
-    where(organization: organization)
-      .includes(:line_items, :storage_location)
-      .order(created_at: :desc)
-  }
 
   scope :active, -> { joins(:line_items).joins(:items).where(items: { active: true }) }
 

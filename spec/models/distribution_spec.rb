@@ -315,27 +315,6 @@ RSpec.describe Distribution, type: :model do
   end
 
   context "CSV export >" do
-    let(:organization_2) { create(:organization) }
-    let(:item1) { create(:item, organization: organization) }
-    let(:item2) { create(:item, organization: organization) }
-    let!(:distribution_1) { create(:distribution, :with_items, item: item1, organization: organization, issued_at: 3.days.ago) }
-    let!(:distribution_2) { create(:distribution, :with_items, item: item2, organization: organization, issued_at: 1.day.ago) }
-    let!(:distribution_3) { create(:distribution, organization: organization_2, issued_at: Time.zone.today) }
-
-    describe "for_csv_export >" do
-      it "filters only to the given organization" do
-        expect(Distribution.for_csv_export(organization)).to match_array [distribution_1, distribution_2]
-      end
-
-      it "filters only to the given filter" do
-        expect(Distribution.for_csv_export(organization, { by_item_id: item1.id })).to match_array [distribution_1]
-      end
-
-      it "filters only to the given issue time range" do
-        expect(Distribution.for_csv_export(organization, {}, 4.days.ago..2.days.ago)).to match_array [distribution_1]
-      end
-    end
-
     describe "csv_export_attributes" do
       let(:item) { create(:item, organization: organization) }
       let!(:distribution) { create(:distribution, :with_items, item: item, organization: organization, issued_at: 3.days.ago) }

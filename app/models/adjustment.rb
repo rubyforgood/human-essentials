@@ -22,10 +22,6 @@ class Adjustment < ApplicationRecord
   include Filterable
   scope :at_location, ->(location_id) { where(storage_location_id: location_id) }
   scope :by_user, ->(user_id) { where(user_id: user_id) }
-  scope :for_csv_export, ->(organization, *) {
-    where(organization: organization)
-      .includes(:storage_location, :line_items)
-  }
   scope :during, ->(range) { where(adjustments: { created_at: range }) }
 
   validate :storage_locations_belong_to_organization
