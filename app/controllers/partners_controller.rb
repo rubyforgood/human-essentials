@@ -14,7 +14,7 @@ class PartnersController < ApplicationController
 
     respond_to do |format|
       format.html
-      format.csv { send_data Partner.generate_csv(@partners.includes(:profile)), filename: "Partners-#{Time.zone.today}.csv" }
+      format.csv { send_data Exports::ExportPartnersCSVService.new(@partners.unscope(:includes).includes(:profile)).generate_csv, filename: "Partners-#{Time.zone.today}.csv" }
     end
   end
 

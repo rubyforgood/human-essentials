@@ -131,54 +131,6 @@ class Partner < ApplicationRecord
     errors
   end
 
-  def self.csv_export_headers
-    [
-      "Agency Name",
-      "Agency Email",
-      "Agency Address",
-      "Agency City",
-      "Agency State",
-      "Agency Zip Code",
-      "Agency Website",
-      "Agency Type",
-      "Contact Name",
-      "Contact Phone",
-      "Contact Email",
-      "Notes",
-      "Counties Served",
-      "Providing Diapers",
-      "Providing Period Supplies"
-    ]
-  end
-
-  def csv_export_attributes
-    [
-      name,
-      email,
-      agency_info[:address],
-      agency_info[:city],
-      agency_info[:state],
-      agency_info[:zip_code],
-      agency_info[:website],
-      agency_info[:agency_type],
-      contact_person[:name],
-      contact_person[:phone],
-      contact_person[:email],
-      notes,
-      profile.county_list_by_region,
-      providing_diapers,
-      providing_period_supplies
-    ]
-  end
-
-  def providing_diapers
-    distributions.in_last_12_months.with_diapers.any? ? "Y" : "N"
-  end
-
-  def providing_period_supplies
-    distributions.in_last_12_months.with_period_supplies.any? ? "Y" : "N"
-  end
-
   def contact_person
     return @contact_person if @contact_person
 
