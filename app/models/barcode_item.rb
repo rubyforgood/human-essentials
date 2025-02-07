@@ -42,11 +42,6 @@ class BarcodeItem < ApplicationRecord
 
   scope :by_value, ->(value) { where(value: value) }
 
-  scope :for_csv_export, ->(organization, *) {
-    where(organization: organization)
-      .includes(:barcodeable)
-  }
-
   scope :global, -> { where(barcodeable_type: "BaseItem") }
 
   # aliases of barcodeable
