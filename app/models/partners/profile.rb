@@ -169,7 +169,7 @@ module Partners
       pick_up_email.split(/,|\s+/).compact_blank
     end
 
-   def self.agency_types_for_selection
+    def self.agency_types_for_selection
       # alphabetize based on the translated version, as that is the text users will actually read
       agency_types.keys.map(&:to_sym).sort_by { |sym| I18n.t(sym, scope: :partners_profile) }.partition { |v| v != :other }.flatten
     end
