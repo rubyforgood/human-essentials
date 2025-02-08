@@ -16,10 +16,6 @@ module Exports
       end
     end
 
-    private
-
-    attr_reader :partners
-
     def generate_csv_data
       csv_data = []
 
@@ -30,6 +26,10 @@ module Exports
 
       csv_data
     end
+
+    private
+
+    attr_reader :partners
 
     def headers
       base_table.keys
@@ -60,7 +60,7 @@ module Exports
     end
 
     def fetch_county_list_by_region
-      ->(partner) { partner_county_list_by_regions[partner.id] }
+      ->(partner) { partner_county_list_by_regions[partner.id] || "" }
     end
 
     def fetch_diaper_status
@@ -84,7 +84,7 @@ module Exports
 
       @partner_county_list_by_regions =
         partners
-          .left_joins(profile: :counties)
+          .joins(profile: :counties)
           .group(:id)
           .pluck(Arel.sql("partners.id, STRING_AGG(#{county_name}, '; ' ORDER BY #{county_region}, #{county_name}) AS county_list"))
           .to_h
