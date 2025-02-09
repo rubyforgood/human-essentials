@@ -59,6 +59,57 @@ RSpec.describe "/partners/requests", type: :request do
         end
       end
     end
+
+    context "when signed in as an organization admin" do
+      before { sign_in(org_admin) }
+      subject { get new_partners_request_path(partner_id:) }
+
+      context "when corresponding partner belongs to the organization" do
+        let(:org_admin) { create(:organization_admin, organization:) }
+
+        context "when param partner_id is present" do
+          let(:partner_id) { partner.id }
+
+          it "should render without any issues" do
+            subject
+            expect(response).to render_template(:new)
+          end
+        end
+
+        context "when param partner_id is missing" do
+          let(:partner_id) { "" }
+
+          it "redirects to dashboard path and flashes an error" do
+            subject
+            expect(flash[:error]).to eq("Logged in user is not set up as a 'partner'.")
+            expect(response).to redirect_to(dashboard_path)
+          end
+        end
+      end
+
+      context "when corresponding partner doesn't belong to the organization" do
+        let(:new_organization) { create(:organization) }
+        let(:org_admin) { create(:organization_admin, organization: new_organization) }
+        let(:partner_id) { partner.id }
+
+        it "redirects to dashboard path and flashes an error" do
+          subject
+          expect(flash[:error]).to eq("Logged in user is not set up as a 'partner'.")
+          expect(response).to redirect_to(dashboard_path)
+        end
+      end
+    end
+
+    context "when signed in as an organization user" do
+      let(:org_user) { create(:user) }
+      before { sign_in(org_user) }
+
+      it "redirects to dashboard path and flashes an error" do
+        subject
+        expect(flash[:error]).to eq("Logged in user is not set up as a 'partner'.")
+        expect(response).to redirect_to(dashboard_path)
+      end
+    end
   end
 
   describe "GET #show" do
@@ -299,6 +350,60 @@ RSpec.describe "/partners/requests", type: :request do
         expect { post partners_requests_path, params: request_attributes }.to change { Request.count }.by(1)
         expect(response).to redirect_to(partners_request_path(Request.last.id))
         expect(response.request.flash[:success]).to eql "Request was successfully created."
+      end
+    end
+
+    context "when signed in as an organization admin" do
+      context "when given valid parameters" do
+        before { sign_in(org_admin) }
+        subject { post partners_requests_path, params: request_attributes.merge(partner_id:) }
+
+        context "when corresponding partner belongs to the organization" do
+          let(:org_admin) { create(:organization_admin, organization:) }
+
+          context "when param partner_id is present" do
+            let(:partner_id) { partner.id }
+
+            it "should redirect to the show page" do
+              expect { subject }.to change { Request.count }.by(1)
+              expect(response).to redirect_to(request_path(Request.last.id))
+              expect(response.request.flash[:success]).to eql "Request was successfully created."
+            end
+          end
+
+          context "when param partner_id is missing" do
+            let(:partner_id) { "" }
+
+            it "redirects to dashboard path and flashes an error" do
+              subject
+              expect(flash[:error]).to eq("Logged in user is not set up as a 'partner'.")
+              expect(response).to redirect_to(dashboard_path)
+            end
+          end
+        end
+
+        context "when corresponding partner doesn't belong to the organization" do
+          let(:new_organization) { create(:organization) }
+          let(:org_admin) { create(:organization_admin, organization: new_organization) }
+          let(:partner_id) { partner.id }
+
+          it "redirects to dashboard path and flashes an error" do
+            subject
+            expect(flash[:error]).to eq("Logged in user is not set up as a 'partner'.")
+            expect(response).to redirect_to(dashboard_path)
+          end
+        end
+      end
+    end
+
+    context "when signed in as an organization user" do
+      let(:org_user) { create(:user) }
+      before { sign_in(org_user) }
+
+      it "redirects to dashboard path and flashes an error" do
+        subject
+        expect(flash[:error]).to eq("Logged in user is not set up as a 'partner'.")
+        expect(response).to redirect_to(dashboard_path)
       end
     end
   end

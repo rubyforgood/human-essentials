@@ -4,8 +4,9 @@ module Partners
 
     attr_reader :partner_request
 
-    def initialize(request_type:, partner_user_id:, comments: nil, item_requests_attributes: [], additional_attrs: {})
-      @partner_user_id = partner_user_id
+    def initialize(request_type:, partner_id:, user_id:, comments: nil, item_requests_attributes: [], additional_attrs: {})
+      @partner_id = partner_id
+      @user_id = user_id
       @comments = comments
       @request_type = request_type
       @item_requests_attributes = item_requests_attributes
@@ -34,7 +35,7 @@ module Partners
         organization_id: organization_id,
         comments: comments,
         request_type: request_type,
-        partner_user_id: partner_user_id
+        partner_user_id: user_id
       )
       @partner_request = populate_item_request(partner_request)
       @partner_request.assign_attributes(additional_attrs)
@@ -50,7 +51,7 @@ module Partners
 
     private
 
-    attr_reader :partner_user_id, :comments, :item_requests_attributes, :additional_attrs, :request_type
+    attr_reader :user_id, :partner_id, :comments, :item_requests_attributes, :additional_attrs, :request_type
 
     def populate_item_request(partner_request)
       # Exclude any line item that is completely empty
@@ -130,7 +131,7 @@ module Partners
     end
 
     def partner
-      @partner ||= ::User.find(partner_user_id).partner
+      @partner ||= Partner.find(partner_id)
     end
   end
 end

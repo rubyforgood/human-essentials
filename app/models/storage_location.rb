@@ -53,7 +53,6 @@ class StorageLocation < ApplicationRecord
   include Exportable
 
   scope :alphabetized, -> { order(:name) }
-  scope :for_csv_export, ->(organization, *) { where(organization: organization) }
   scope :active, -> { where(discarded_at: nil) }
   scope :with_transfers_to, ->(organization) {
     joins(:transfers_to).where(organization_id: organization.id).distinct.order(:name)
