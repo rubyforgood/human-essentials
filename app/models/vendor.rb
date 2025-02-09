@@ -36,7 +36,9 @@ class Vendor < ApplicationRecord
   }
 
   def volume
-    purchases.map { |d| d.line_items.total }.reduce(:+)
+    LineItem.joins(:itemizable)
+      .where(itemizable_type: "Purchase", itemizable_id: purchase_ids)
+      .sum(:quantity)
   end
 
   def deactivate!

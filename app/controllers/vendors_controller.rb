@@ -71,8 +71,7 @@ class VendorsController < ApplicationController
       return
     end
 
-    flash[:notice] = "#{vendor.business_name} has been deactivated."
-    redirect_to vendors_path
+    redirect_to vendors_path, notice: "#{vendor.business_name} has been deactivated."
   end
 
   def reactivate
@@ -86,8 +85,7 @@ class VendorsController < ApplicationController
       return
     end
 
-    flash[:notice] = "#{vendor.business_name} has been reactivated."
-    redirect_to vendors_path
+    redirect_to vendors_path, notice: "#{vendor.business_name} has been reactivated."
   end
 
   private
