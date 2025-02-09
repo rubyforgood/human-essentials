@@ -28,6 +28,7 @@ RSpec.describe "Authorization", type: :system, js: true do
         fill_in "user_email", with: user.email
         fill_in "user_password", with: DEFAULT_USER_PASSWORD
         first('input[name="authenticity_token"]', visible: false).set("NOTAVALIDCSRFTOKEN")
+        page.execute_script("$(\"meta[name='csrf-token']\").attr('content', 'NOTAVALIDCSRFTOKEN');")
         click_button "Log in"
         expect(current_path).to eql "/users/sign_in"
         expect(page).to have_content "Your session expired. This could be due to leaving a page open for a long time, or having multiple tabs open. Try resubmitting."
@@ -46,8 +47,8 @@ RSpec.describe "Authorization", type: :system, js: true do
         select "Test Partner", from: "Partner"
         select "Test Storage Location", from: "From storage location"
         first('input[name="authenticity_token"]', visible: false).set("NOTAVALIDCSRFTOKEN")
+        page.execute_script("$(\"meta[name='csrf-token']\").attr('content', 'NOTAVALIDCSRFTOKEN');")
         click_button "Save"
-        click_button "Yes, it's correct"
         expect(current_path).to eql new_distribution_path
         expect(page).to have_content "Your session expired. This could be due to leaving a page open for a long time, or having multiple tabs open. Try resubmitting."
       end
