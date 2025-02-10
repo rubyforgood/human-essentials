@@ -9,22 +9,10 @@ module Exports
     end
 
     def generate_csv
-      csv_data = generate_csv_data
-
       CSV.generate(headers: true) do |csv|
-        csv_data.each { |row| csv << row }
+        csv << headers
+        partners.each { |partner| csv << build_row_data(partner) }
       end
-    end
-
-    def generate_csv_data
-      csv_data = []
-
-      csv_data << headers
-      @partners.each do |partner|
-        csv_data << build_row_data(partner)
-      end
-
-      csv_data
     end
 
     private
@@ -49,9 +37,9 @@ module Exports
         "Contact Phone" => ->(partner) { partner.contact_person[:phone] },
         "Contact Email" => ->(partner) { partner.contact_person[:email] },
         "Notes" => ->(partner) { partner.notes },
-        "Counties Served" => ->(partner) { partner_county_list_by_regions[partner.id] || "" },
-        "Providing Diapers" => ->(partner) { partner_diaper_statuses[partner.id] },
-        "Providing Period Supplies" => ->(partner) { partner_period_supplies_statuses[partner.id] }
+        "Counties Served" => ->(partner) { county_list_by_regions[partner.id] || "" },
+        "Providing Diapers" => ->(partner) { diaper_statuses[partner.id] },
+        "Providing Period Supplies" => ->(partner) { period_supplies_statuses[partner.id] }
       }
     end
 
@@ -63,10 +51,10 @@ module Exports
     # joined by semi-colons as values.
     #
     # @return [Hash<Integer, String>]
-    def partner_county_list_by_regions
-      return @partner_county_list_by_regions if @partner_county_list_by_regions
+    def county_list_by_regions
+      return @county_list_by_regions if @county_list_by_regions
 
-      @partner_county_list_by_regions =
+      @county_list_by_regions =
         partners
           .joins(profile: :counties)
           .group(:id)
@@ -78,28 +66,28 @@ module Exports
     # The hash has a default value of "N" so partner ids not in hash will return "N"
     #
     # @return [Hash<Integer, String>]
-    def partner_diaper_statuses
-      return @partner_diaper_statuses if @partner_diaper_statuses
+    def diaper_statuses
+      return @diaper_statuses if @diaper_statuses
 
-      @partner_diaper_statuses = Hash.new("N")
+      @diaper_statuses = Hash.new("N")
       partners.unscope(:order).joins(:distributions).merge(Distribution.in_last_12_months.with_diapers).distinct.ids.each do |id|
-        @partner_diaper_statuses[id] = "Y"
+        @diaper_statuses[id] = "Y"
       end
-      @partner_diaper_statuses
+      @diaper_statuses
     end
 
     # Returns a hash with partner ids as keys with "Y" 's as values
     # The hash has a default value of "N" so partner ids not in hash will return "N"
     #
     # @return [Hash<Integer, String>]
-    def partner_period_supplies_statuses
-      return @partner_period_supplies_statuses if @partner_period_supplies_statuses
+    def period_supplies_statuses
+      return @period_supplies_statuses if @period_supplies_statuses
 
-      @partner_period_supplies_statuses = Hash.new("N")
+      @period_supplies_statuses = Hash.new("N")
       partners.unscope(:order).joins(:distributions).merge(Distribution.in_last_12_months.with_period_supplies).distinct.ids.each do |id|
-        @partner_period_supplies_statuses[id] = "Y"
+        @period_supplies_statuses[id] = "Y"
       end
-      @partner_period_supplies_statuses
+      @period_supplies_statuses
     end
   end
 end

@@ -1,6 +1,6 @@
 RSpec.describe Exports::ExportPartnersCSVService do
-  describe "#generate_csv_data" do
-    subject { described_class.new(partners).generate_csv_data }
+  describe "#generate_csv" do
+    subject { CSV.parse(described_class.new(partners).generate_csv) }
 
     let(:organization) { create(:organization) }
 
