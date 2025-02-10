@@ -1,3 +1,4 @@
+# == Schema Information
 #
 # Table name: partner_profiles
 #
