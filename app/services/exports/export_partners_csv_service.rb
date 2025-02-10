@@ -49,26 +49,14 @@ module Exports
         "Contact Phone" => ->(partner) { partner.contact_person[:phone] },
         "Contact Email" => ->(partner) { partner.contact_person[:email] },
         "Notes" => ->(partner) { partner.notes },
-        "Counties Served" => fetch_county_list_by_region,
-        "Providing Diapers" => fetch_diaper_status,
-        "Providing Period Supplies" => fetch_period_supplies_status
+        "Counties Served" => ->(partner) { partner_county_list_by_regions[partner.id] || "" },
+        "Providing Diapers" => ->(partner) { partner_diaper_statuses[partner.id] },
+        "Providing Period Supplies" => ->(partner) { partner_period_supplies_statuses[partner.id] }
       }
     end
 
     def build_row_data(partner)
       base_table.values.map { |closure| closure.call(partner) }
-    end
-
-    def fetch_county_list_by_region
-      ->(partner) { partner_county_list_by_regions[partner.id] || "" }
-    end
-
-    def fetch_diaper_status
-      ->(partner) { partner_diaper_statuses[partner.id] }
-    end
-
-    def fetch_period_supplies_status
-      ->(partner) { partner_period_supplies_statuses[partner.id] }
     end
 
     # Returns a hash with partner ids as keys and served county names
@@ -78,15 +66,11 @@ module Exports
     def partner_county_list_by_regions
       return @partner_county_list_by_regions if @partner_county_list_by_regions
 
-      # To prevent SQL injection in case users gain the ability to update county name/regions
-      county_name = ActiveRecord::Base.connection.quote_string("counties.name")
-      county_region = ActiveRecord::Base.connection.quote_string("counties.region")
-
       @partner_county_list_by_regions =
         partners
           .joins(profile: :counties)
           .group(:id)
-          .pluck(Arel.sql("partners.id, STRING_AGG(#{county_name}, '; ' ORDER BY #{county_region}, #{county_name}) AS county_list"))
+          .pluck(Arel.sql("partners.id, STRING_AGG(counties.name, '; ' ORDER BY counties.region, counties.name) AS county_list"))
           .to_h
     end
 
