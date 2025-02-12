@@ -230,31 +230,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_01_151720) do
     t.index ["user_id"], name: "index_deprecated_feedback_messages_on_user_id"
   end
 
-  create_table "diaper_drive_participants", id: :serial, force: :cascade do |t|
-    t.string "contact_name"
-    t.string "email"
-    t.string "phone"
-    t.string "comment"
-    t.integer "organization_id"
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
-    t.string "address"
-    t.string "business_name"
-    t.float "latitude"
-    t.float "longitude"
-    t.index ["latitude", "longitude"], name: "index_diaper_drive_participants_on_latitude_and_longitude"
-  end
-
-  create_table "diaper_drives", force: :cascade do |t|
-    t.string "name"
-    t.date "start_date"
-    t.date "end_date"
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
-    t.bigint "organization_id"
-    t.index ["organization_id"], name: "index_diaper_drives_on_organization_id"
-  end
-
   create_table "distributions", id: :serial, force: :cascade do |t|
     t.text "comment"
     t.datetime "created_at", precision: nil, null: false
@@ -348,16 +323,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_01_151720) do
     t.bigint "old_partner_id"
     t.boolean "archived", default: false
     t.index ["partner_id"], name: "index_families_on_partner_id"
-  end
-
-  create_table "feedback_messages", force: :cascade do |t|
-    t.bigint "user_id"
-    t.text "message"
-    t.string "path"
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
-    t.boolean "resolved"
-    t.index ["user_id"], name: "index_feedback_messages_on_user_id"
   end
 
   create_table "flipper_features", force: :cascade do |t|
@@ -548,8 +513,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_01_151720) do
     t.integer "deadline_day"
     t.index ["name", "organization_id"], name: "index_partner_groups_on_name_and_organization_id", unique: true
     t.index ["organization_id"], name: "index_partner_groups_on_organization_id"
-    t.check_constraint "deadline_day <= 28", name: "deadline_day_of_month_check"
-    t.check_constraint "reminder_day <= 28", name: "reminder_day_of_month_check"
+    t.check_constraint "deadline_day <= 28", name: "deadline_day_of_month_check", validate: false
+    t.check_constraint "reminder_day <= 28", name: "reminder_day_of_month_check", validate: false
   end
 
   create_table "partner_profiles", force: :cascade do |t|
@@ -894,7 +859,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_01_151720) do
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
-  add_foreign_key "account_requests", "ndbn_members", primary_key: "ndbn_member_id"
+  add_foreign_key "account_requests", "ndbn_members", primary_key: "ndbn_member_id", validate: false
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "adjustments", "organizations"
   add_foreign_key "adjustments", "storage_locations"
@@ -928,7 +893,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_01_151720) do
   add_foreign_key "partner_requests", "users", column: "partner_user_id"
   add_foreign_key "partner_served_areas", "counties"
   add_foreign_key "partner_served_areas", "partner_profiles"
-  add_foreign_key "partners", "storage_locations", column: "default_storage_location_id"
+  add_foreign_key "partners", "storage_locations", column: "default_storage_location_id", validate: false
   add_foreign_key "product_drives", "organizations"
   add_foreign_key "requests", "distributions"
   add_foreign_key "requests", "organizations"
