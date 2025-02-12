@@ -13,7 +13,7 @@ Rails.application.configure do
   config.eager_load = true
 
   routes.default_url_options[:host] = 'humanessentials.app'
-  config.action_mailer.default_url_options = { host: "www.humanessentials.app" }
+  config.action_mailer.default_url_options = { host: "humanessentials.app" }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
     address: 'smtp.sendgrid.net',
