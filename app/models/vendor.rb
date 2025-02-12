@@ -36,9 +36,10 @@ class Vendor < ApplicationRecord
   }
 
   def volume
-    LineItem.joins(:itemizable)
-      .where(itemizable_type: "Purchase", itemizable_id: purchase_ids)
-      .sum(:quantity)
+    LineItem.where(
+      itemizable_type: "Purchase",
+      itemizable_id: purchase_ids
+    ).sum(:quantity)
   end
 
   def deactivate!
