@@ -27,7 +27,7 @@ class ProductDrivesController < ApplicationController
       format.html
       format.csv do
         send_data Exports::ExportProductDrivesCSVService.new(
-          @product_drives,
+          @product_drives.unscope(:includes).includes(donations: {line_items: :item}),
           current_organization,
           helpers.selected_range
         ).generate_csv, filename: "Product-Drives-#{Time.zone.today}.csv"
