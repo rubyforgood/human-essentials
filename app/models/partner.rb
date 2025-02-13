@@ -134,8 +134,6 @@ class Partner < ApplicationRecord
   def contact_person
     return @contact_person if @contact_person
 
-    return {} if profile.blank?
-
     @contact_person = {
       name: profile.primary_contact_name,
       email: profile.primary_contact_email,
@@ -146,8 +144,6 @@ class Partner < ApplicationRecord
 
   def agency_info
     return @agency_info if @agency_info
-
-    return {} if profile.blank?
 
     symbolic_agency_type = profile.agency_type&.to_sym
     @agency_info = {
