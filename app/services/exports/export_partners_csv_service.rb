@@ -44,7 +44,11 @@ module Exports
     end
 
     def build_row_data(partner)
-      base_table.values.map { |closure| closure.call(partner) }
+      base_table.values.map { |closure| closure.call(partner) }.map(&normalize_csv_attribute)
+    end
+
+    def normalize_csv_attribute
+      ->(attr) { attr.is_a?(Array) ? attr.join(",") : attr.to_s }
     end
 
     # Returns a hash with partner ids as keys and served county names

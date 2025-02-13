@@ -80,13 +80,39 @@ RSpec.describe "Partners", type: :request do
       end
 
       it { is_expected.to be_successful }
-
       it "returns the expected headers" do
         get partners_path(partner, format: response_format)
 
         csv = CSV.parse(response.body)
 
         expect(csv[0]).to eq(expected_headers)
+      end
+
+      context "with missing partner info" do
+        let(:name) { "Leslie" }
+        let(:email) { "leslie@humanessentials.com" }
+        let(:contact_name) { nil }
+        let(:contact_email) { nil }
+        let(:contact_phone) { nil }
+        let(:agency_address1) { nil }
+        let(:agency_address2) { nil }
+        let(:agency_city) { nil }
+        let(:agency_state) { nil }
+        let(:agency_zipcode) { nil }
+        let(:agency_website) { nil }
+        let(:agency_type) { nil }
+        let(:notes) { nil }
+        let(:other_agency_type) { nil }
+
+        it "returns a CSV with correct data" do
+          get partners_path(partner, format: response_format)
+
+          csv = CSV.parse(response.body)
+
+          expect(csv[1]).to eq(
+            ["Leslie", "leslie@humanessentials.com", "", "", "", "", "", "", "", "", "", "", "", "N", "N"]
+          )
+        end
       end
 
       it "returns a CSV with correct data" do
