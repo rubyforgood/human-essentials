@@ -49,7 +49,7 @@ class DistributionsController < ApplicationController
     @paginated_distributions = @distributions.page(params[:page])
     @items = current_organization.items.alphabetized.select(:id, :name)
     @item_categories = current_organization.item_categories.select(:id, :name)
-    @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select(:id, :name)
+    @storage_locations = current_organization.storage_locations.active.alphabetized.select(:id, :name)
     @partners = current_organization.partners.active.alphabetized.select(:id, :name)
     @selected_item = filter_params[:by_item_id].presence
     @distribution_totals = DistributionTotalsService.new(current_organization.distributions, scope_filters)
@@ -69,7 +69,7 @@ class DistributionsController < ApplicationController
     respond_to do |format|
       format.html
       format.csv do
-        send_data Exports::ExportDistributionsCSVService.new(distributions: @distributions, organization: current_organization, filters: scope_filters).generate_csv, filename: "Distributions-#{Time.zone.today}.csv"
+        send_data Exports::ExportDistributionsCSVService.new(distributions: @distributions.includes(line_items: :item), organization: current_organization, filters: scope_filters).generate_csv, filename: "Distributions-#{Time.zone.today}.csv"
       end
     end
   end
@@ -122,8 +122,13 @@ class DistributionsController < ApplicationController
       @partner_list = current_organization.partners.where.not(status: 'deactivated').alphabetized
 
       inventory = View::Inventory.new(@distribution.organization_id)
-      @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
+      @storage_locations = current_organization.storage_locations.active.alphabetized.select do |storage_loc|
         inventory.quantity_for(storage_location: storage_loc.id).positive?
+      end
+      if @distribution.storage_location.present?
+        @item_labels_with_quantities = inventory
+          .items_for_location(@distribution.storage_location.id, include_omitted: true)
+          .map(&:to_dropdown_option)
       end
 
       flash_error = insufficient_error_message(result.error.message)
@@ -152,7 +157,7 @@ class DistributionsController < ApplicationController
     @partner_list = current_organization.partners.where.not(status: 'deactivated').alphabetized
 
     inventory = View::Inventory.new(current_organization.id)
-    @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
+    @storage_locations = current_organization.storage_locations.active.alphabetized.select do |storage_loc|
       inventory.quantity_for(storage_location: storage_loc.id).positive?
     end
   end
@@ -172,7 +177,7 @@ class DistributionsController < ApplicationController
     @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
     @distribution.initialize_request_items
     if (!@distribution.complete? && @distribution.future?) ||
-        current_user.has_role?(Role::ORG_ADMIN, current_organization)
+        current_user.has_cached_role?(Role::ORG_ADMIN, current_organization)
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @items = current_organization.items.active.alphabetized
       @partner_list = current_organization.partners.alphabetized
@@ -180,7 +185,7 @@ class DistributionsController < ApplicationController
         .where(storage_location_id: @distribution.storage_location_id)
         .where("updated_at > ?", @distribution.created_at).any?
       inventory = View::Inventory.new(@distribution.organization_id)
-      @storage_locations = current_organization.storage_locations.active_locations.alphabetized.select do |storage_loc|
+      @storage_locations = current_organization.storage_locations.active.alphabetized.select do |storage_loc|
         !inventory.quantity_for(storage_location: storage_loc.id).negative?
       end
     else
@@ -202,12 +207,12 @@ class DistributionsController < ApplicationController
       perform_inventory_check
       redirect_to @distribution, notice: "Distribution updated!"
     else
-      flash[:error] = insufficient_error_message(result.error.message)
+      flash.now[:error] = insufficient_error_message(result.error.message)
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @distribution.initialize_request_items
       @items = current_organization.items.active.alphabetized
       @partner_list = current_organization.partners.alphabetized
-      @storage_locations = current_organization.storage_locations.active_locations.alphabetized
+      @storage_locations = current_organization.storage_locations.active.alphabetized
       render :edit
     end
   end

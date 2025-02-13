@@ -20,6 +20,7 @@
 #  name                           :string
 #  one_step_partner_invite        :boolean          default(FALSE), not null
 #  partner_form_fields            :text             default([]), is an Array
+#  receive_email_on_requests      :boolean          default(FALSE), not null
 #  reminder_day                   :integer
 #  repackage_essentials           :boolean          default(FALSE), not null
 #  short_name                     :string
@@ -86,6 +87,7 @@ RSpec.describe Organization, type: :model do
 
   context "Associations >" do
     it { should have_many(:item_categories) }
+    it { should have_many(:product_drive_tags) }
     it { should belong_to(:ndbn_member).class_name("NDBNMember").optional }
 
     describe 'users' do
@@ -137,68 +139,6 @@ RSpec.describe Organization, type: :model do
           sunday_distribution = create(:distribution, organization: organization, state: :scheduled, issued_at: Time.zone.local(2019, 7, 7))
           upcoming_distributions = organization.distributions.upcoming
           expect(upcoming_distributions).to match_array([wednesday_distribution_scheduled, sunday_distribution])
-        end
-      end
-    end
-
-    describe "items" do
-      let(:organization) { create(:organization, :with_items) }
-
-      before do
-        organization.items.each_with_index do |item, index|
-          (index + 1).times { LineItem.create!(quantity: rand(250..500), item: item, itemizable: Distribution.new) }
-        end
-      end
-
-      describe ".other" do
-        it "returns all items for this organization designated 'other'" do
-          create(:item, name: "SOMETHING", partner_key: "other", organization: organization)
-          expect(organization.items.other.size).to eq(2)
-        end
-      end
-
-      describe ".during" do
-        it "return ranking of all items" do
-          ranking_items = organization.items.during('1950-01-01', '3000-01-01')
-          expect(ranking_items.length).to eq(organization.items.length)
-        end
-      end
-
-      describe ".during.top" do
-        it "return just 3 elements" do
-          ranking_items = organization.items.during('1950-01-01', '3000-01-01').top(3)
-          expect(ranking_items.length).to eq(3)
-        end
-        it "return 3 most used items" do
-          ranking_items = organization.items.during('1950-01-01', '3000-01-01').top(3)
-
-          expect(ranking_items[0].amount).to eq(organization.items.length)
-          expect(ranking_items[0].name).to eq(organization.items[organization.items.length - 1].name)
-
-          expect(ranking_items[1].amount).to eq(organization.items.length - 1)
-          expect(ranking_items[1].name).to eq(organization.items[organization.items.length - 2].name)
-
-          expect(ranking_items[2].amount).to eq(organization.items.length - 2)
-          expect(ranking_items[2].name).to eq(organization.items[organization.items.length - 3].name)
-        end
-      end
-
-      describe ".during.bottom" do
-        it "return just 3 elements" do
-          ranking_items = organization.items.during('1950-01-01', '3000-01-01').bottom(3)
-          expect(ranking_items.length).to eq(3)
-        end
-        it "return 3 least used items" do
-          ranking_items = organization.items.during('1950-01-01', '3000-01-01').bottom(3)
-
-          expect(ranking_items[0].amount).to eq(1)
-          expect(ranking_items[0].name).to eq(organization.items[0].name)
-
-          expect(ranking_items[1].amount).to eq(2)
-          expect(ranking_items[1].name).to eq(organization.items[1].name)
-
-          expect(ranking_items[2].amount).to eq(3)
-          expect(ranking_items[2].name).to eq(organization.items[2].name)
         end
       end
     end
@@ -342,18 +282,6 @@ RSpec.describe Organization, type: :model do
 
     it 'returns active organizations' do
       expect(Organization.is_active).to contain_exactly(active_organization)
-    end
-  end
-
-  describe "total_inventory" do
-    it "returns a sum total of all inventory at all storage locations" do
-      item = create(:item, organization: organization)
-      create(:storage_location, :with_items, item: item, item_quantity: 100, organization: organization)
-      create(:storage_location, :with_items, item: item, item_quantity: 150, organization: organization)
-      expect(organization.total_inventory).to eq(250)
-    end
-    it "returns 0 if there is nothing" do
-      expect(organization.total_inventory).to eq(0)
     end
   end
 

@@ -19,7 +19,8 @@ module Partners
       return self unless valid?
 
       request_create_svc = Partners::RequestCreateService.new(
-        partner_user_id: partner_user_id,
+        partner_id: partner.id,
+        user_id: partner_user_id,
         comments: comments,
         request_type: request_type,
         item_requests_attributes: item_requests_attributes
@@ -41,7 +42,8 @@ module Partners
 
     def initialize_only
       Partners::RequestCreateService.new(
-        partner_user_id: partner_user_id,
+        partner_id: partner.id,
+        user_id: partner_user_id,
         comments: comments,
         request_type: request_type,
         item_requests_attributes: item_requests_attributes
@@ -80,6 +82,10 @@ module Partners
 
     def included_items_by_id
       @included_items_by_id ||= Item.where(id: family_requests_attributes.pluck(:item_id)).index_by(&:id)
+    end
+
+    def partner
+      @partner ||= ::User.find(partner_user_id).partner
     end
   end
 end

@@ -5,7 +5,7 @@ There are several exports available to allow you to use the information from the
 These all export files in .csv format, which is importable by all common spreadsheet programs.
 Many of these can be filtered down to the information you might need for a specific communication need.
 
-The exports available include (in alphabetical order): 
+The exports available include (in alphabetical order):
 - Adjustments
 - Annual Survey
 - Barcode Items
@@ -25,14 +25,14 @@ The exports available include (in alphabetical order):
 ## Adjustments
 
 ### Navigating to export adjustments
-Click "Inventory", then "Inventory Adjustments" in the left-hand menu.  Then click "Export Adjustments", 
+Click "Inventory", then "Inventory Adjustments" in the left-hand menu.  Then click "Export Adjustments",
 
 ### Contents of adjustment export
 Creation date, Organization, Storage Area, Comment, # of changes.
 
 [! NOTE]  We have improving the adjustments export to include the changes made in each adjustment on our todo list. We'll also remove the organization as redundant information. Please reach out if this is a priority for you.
 
-## Annual Survey 
+## Annual Survey
 ### Navigating to export annual survey
 Click "Reports", then "Annual Survey" in the left-hand menu.  Then click the year of the report you want to export.  Then click "Export Report."
 ### Contents of annual report export
@@ -40,54 +40,54 @@ Click "Reports", then "Annual Survey" in the left-hand menu.  Then click the yea
 For more information on these, please see the [Annual Survey Report](reports_annual_survey.md)
 
 - Disposable diapers distributed,
-- Cloth diapers distributed,  
-- Average monthly disposable diapers distributed,  
-- Total Product Drives,  
-- Disposable diapers collected from drives,  
-- Cloth diapers collected from drives,  
-- Money raised from Product Drives,  
-- Total Product Drives (virtual),  
-- Money raised from Product Drives (virtual),  
-- Disposable diapers collected from drives (virtual),  
-- Cloth diapers collected from drives (virtual), 
-- Disposable diapers donated, 
-- % disposable diapers donated, 
-- % cloth diapers donated, 
-- Disposable diapers Purchased,  
-- % disposable diapers Purchased, 
-- % cloth diapers Purchased, 
-- Money spent purchasing diapers, 
-- Purchased from, 
-- Vendors diapers Purchased through, 
-- Total Storage Locations, 
-- Total square footage, 
-- Largest storage site type, 
-- Adult incontinence supplies distributed, 
-- Adult incontinence supplies per adult per month, 
-- Adult incontinence supplies, 
-- % adult incontinence supplies donated, 
-- % adult incontinence bought, 
-- Money spent purchasing adult incontinence supplies, 
-- Period supplies distributed,  
-- Period supplies per adult per month,  
-- Period supplies, 
-- % period supplies donated, 
-- % period supplies bought, 
-- Money spent purchasing period supplies,  
-- Other products distributed, 
-- % other products donated, 
-- % other products bought, 
-- Money spent on other products, 
-- List of other products, 
-- Number of Partner Agencies, 
-- Agency Type 
-- Zip Codes Served,  
-- Average children served monthly,  
-- Total children served,  
-- Repackages diapers?,  
-- Monthly diaper distributions?,  
-- % difference in yearly Donations,  
-- % difference in total money donated,  
+- Cloth diapers distributed,
+- Average monthly disposable diapers distributed,
+- Total Product Drives,
+- Disposable diapers collected from drives,
+- Cloth diapers collected from drives,
+- Money raised from Product Drives,
+- Total Product Drives (virtual),
+- Money raised from Product Drives (virtual),
+- Disposable diapers collected from drives (virtual),
+- Cloth diapers collected from drives (virtual),
+- Disposable diapers donated,
+- % disposable diapers donated,
+- % cloth diapers donated,
+- Disposable diapers Purchased,
+- % disposable diapers Purchased,
+- % cloth diapers Purchased,
+- Money spent purchasing diapers,
+- Purchased from,
+- Vendors diapers Purchased through,
+- Total Storage Locations,
+- Total square footage,
+- Largest storage site type,
+- Adult incontinence supplies distributed,
+- Adult incontinence supplies per adult per month,
+- Adult incontinence supplies,
+- % adult incontinence supplies donated,
+- % adult incontinence bought,
+- Money spent purchasing adult incontinence supplies,
+- Period supplies distributed,
+- Period supplies per adult per month,
+- Period supplies,
+- % period supplies donated,
+- % period supplies bought,
+- Money spent purchasing period supplies,
+- Other products distributed,
+- % other products donated,
+- % other products bought,
+- Money spent on other products,
+- List of other products,
+- Number of Partner Agencies,
+- Agency Type
+- Zip Codes Served,
+- Average children served monthly,
+- Total children served,
+- Repackages diapers?,
+- Monthly diaper distributions?,
+- % difference in yearly Donations,
+- % difference in total money donated,
 - % difference in disposable diaper Donations
 ## Barcode Items
 ### Navigating to export barcode Items
@@ -95,7 +95,7 @@ Click "Inventory" then "Barcode Items" in the left-hand menu.   Then click "Expo
 ### Contents of barcode Items export
 For each Barcode Item:
 - Item Type,
-- Quantity in the Box, 
+- Quantity in the Box,
 - Barcode
 ## Distributions
 ### Navigating to export distributions
@@ -110,7 +110,7 @@ Before clicking the export button, you can filter by any of:
 - source inventory (i.e. Storage Location)
 - status (i.e. scheduled or complete)
 
-Specify the filtration you want, then click "filter".   
+Specify the filtration you want, then click "filter".
 
 ### Contents of distributions export
 For each of the distributions in the filtered list:
@@ -124,10 +124,10 @@ For each of the distributions in the filtered list:
 - Shipping Cost,
 - State,
 - Agency Representative,
-- Comments, 
+- Comments,
 - and the quantity in the distribution for each of your bank's Items.
 
-[!NOTE] This includes inactive Items as well as active ones. 
+[!NOTE] This includes inactive Items as well as active ones.
 
 ## Donations
 
@@ -154,7 +154,7 @@ For each of the Donations in the filtered list:
 - Quantity of Items (the total quantity of Items)
 - Variety of Items (the number of different Items)
 - In-Kind Value,
-- Comments, 
+- Comments,
 - and the quantity of each of your organization's Items in the Donations.
 
 ## Donation Sites
@@ -202,7 +202,7 @@ You can export different groups of partners by clicking the partner filters whic
 - Invited
 - Awaiting review
 - Approved
-- Error 
+- Error
 - Recertification required
 - Decactivated
 - Active
@@ -224,12 +224,12 @@ For each partner in the filtered list:
 
 ## Product Drives
 ### Navigating to export Product Drives
-Click 'Community', then 'All Product Drives' in the left hand menu,  then click "Export Product Drives"
+Click 'Community', then 'Product Drives' in the left hand menu,  then click "Export Product Drives"
 ### Filtering the Product Drives
-The Product Drives can be filtered by 
-- name, 
-- Item category, and 
-- date range.  
+The Product Drives can be filtered by
+- name,
+- Item category, and
+- date range.
 
 It is defaulted to all drives that overlap the default time period of 60 days back, 30 days forward.
 To filter the export, make your selections, then click "Filter" before clicking "Export Product Drives".
@@ -242,9 +242,9 @@ For each filtered Product Drive, the export will contain:
 - Held Virtually?,
 - Quantity of Items,
 - Variety of Items,
-- In Kind Value, and 
+- In Kind Value, and
 - the quantity donated for each Item in alphabetical order.
-- 
+-
 ## Product Drive Participants
 ### Navigating to export Product Drive participants
 Click 'Community', then 'Product Drive Participants' in the left hand menu,  then click "Export Product Drive Participants"
@@ -269,7 +269,7 @@ The default is all Storage Locations and vendors, and the default period of 60 d
 Make your selection and click "Filter"  before clicking "Export Purchases"
 ### Content of Purchases Export
 For each Purchase in the filtered list:
-- Purchases from (the Vendor name) 
+- Purchases from (the Vendor name)
 - Storage Location,
 - Purchased Date,
 - Quantity of Items,
@@ -300,7 +300,7 @@ For each filtered Request,
 - Date,
 - Requestor (i.e. partner)
 - Status, and
-- the quantity of each Item requested.  
+- the quantity of each Item requested.
   - Note: If you have packs enabled (upcoming feature), there will be a column for each unit that you have enabled for each Item.  Otherwise, one column per Item.
 
 ## Storage Locations
@@ -319,7 +319,7 @@ For each Storage Location in the filtered list:
 - Address,
 - Square Footage,
 - Warehouse Type,
-- Total Inventory, and 
+- Total Inventory, and
 - Quantity for each of the organization's Items.
 
 ## Transfers
@@ -329,7 +329,7 @@ Click "Inventory", then "Transfers" in the left-hand menu. Then click "Export St
 You can filter the Transfers by:
 - From location
 - To location
-- date range.  
+- date range.
   - Note that this is the date the Transfer was entered in the system, which may or may not be when it happened.
 
 The default is all the Transfers for the period of 60 days prior, 30 days forward from today.
@@ -355,4 +355,3 @@ Click "Community", then "Vendors" in the left-hand menu.  Then click "Export Ven
 - address
 
 [Prior: Manufacturers](community_manufacturers.md) [Next: Summary reports](reports_summary_reports.md)
-

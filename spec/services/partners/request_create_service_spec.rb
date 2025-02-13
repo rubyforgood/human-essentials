@@ -3,7 +3,8 @@ RSpec.describe Partners::RequestCreateService do
     subject { described_class.new(**args).call }
     let(:args) do
       {
-        partner_user_id: partner_user.id,
+        partner_id: partner.id,
+        user_id: partner_user.id,
         request_type: request_type,
         comments: comments,
         item_requests_attributes: item_requests_attributes
@@ -151,7 +152,7 @@ RSpec.describe Partners::RequestCreateService do
         end
       end
 
-      context 'but a unexpected error occured during the save' do
+      context 'but a unexpected error occurred during the save' do
         let(:error_message) { 'boom' }
 
         context 'for the Request record' do
@@ -181,7 +182,8 @@ RSpec.describe Partners::RequestCreateService do
 
     let(:args) do
       {
-        partner_user_id: partner_user.id,
+        partner_id: partner.id,
+        user_id: partner_user.id,
         request_type: request_type,
         comments: comments,
         item_requests_attributes: item_requests_attributes

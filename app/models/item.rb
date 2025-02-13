@@ -60,11 +60,6 @@ class Item < ApplicationRecord
   scope :by_partner_key, ->(partner_key) { where(partner_key: partner_key) }
 
   scope :by_size, ->(size) { joins(:base_item).where(base_items: { size: size }) }
-  scope :for_csv_export, ->(organization, *) {
-    where(organization: organization)
-      .includes(:base_item)
-      .alphabetized
-  }
 
   # Scopes - explanation of business rules for filtering scopes as of 20240527.  This was a mess, but is much better now.
   # 1/  Disposable.   Disposables are only the disposable diapers for children.  So we deliberately exclude adult and cloth
@@ -73,7 +68,7 @@ class Item < ApplicationRecord
   # 4/  Period supplies.  All things with 'menstrual in the category'
   # 5/  Other -- Miscellaneous, and wipes
   # Known holes and ambiguities as of 20240527.  Working on these with the business
-  # 1/  Liners.   We are adding a new item for AI liners,  and renaming the current liners to be specficially for periods,
+  # 1/  Liners.   We are adding a new item for AI liners,  and renaming the current liners to be specifically for periods,
   # having confirmed with the business that the majority of liners are for menstrual use.
   # However, there is a product which can be used for either, so we are still sussing out what to do about that.
 

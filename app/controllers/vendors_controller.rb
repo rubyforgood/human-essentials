@@ -3,7 +3,7 @@ class VendorsController < ApplicationController
   include Importable
 
   def index
-    @vendors = current_organization.vendors.includes(:purchases).all.alphabetized
+    @vendors = current_organization.vendors.with_volumes.alphabetized
 
     respond_to do |format|
       format.html
@@ -18,7 +18,7 @@ class VendorsController < ApplicationController
         format.html { redirect_to vendors_path, notice: "New vendor added!" }
         format.js
       else
-        flash[:error] = "Something didn't work quite right -- try again?"
+        flash.now[:error] = "Something didn't work quite right -- try again?"
         format.html { render action: :new }
         format.js { render template: "vendors/new_modal" }
       end
@@ -48,7 +48,7 @@ class VendorsController < ApplicationController
       redirect_to vendors_path, notice: "#{@vendor.contact_name} updated!"
 
     else
-      flash[:error] = "Something didn't work quite right -- try again?"
+      flash.now[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
     end
   end

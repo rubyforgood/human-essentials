@@ -36,7 +36,7 @@ class AuditsController < ApplicationController
     if @audit.update(audit_params)
       save_audit_status_and_redirect(params)
     else
-      flash[:error] = @audit.errors.full_messages.join("\n")
+      flash.now[:error] = @audit.errors.full_messages.join("\n")
       @storage_locations = [@audit.storage_location]
       set_items
       @audit.line_items.build if @audit.line_items.empty?
@@ -64,7 +64,7 @@ class AuditsController < ApplicationController
       render :new
     end
   rescue Errors::InsufficientAllotment, InventoryError => e
-    flash[:error] = e.message
+    flash.now[:error] = e.message
     render :new
   end
 
@@ -81,7 +81,7 @@ class AuditsController < ApplicationController
       attr = (error.attribute.to_s == 'base') ? '' : error.attribute.capitalize
       "#{attr} ".tr("_", " ") + error.message
     end
-    flash[:error] = error_message.join(", ")
+    flash.now[:error] = error_message.join(", ")
   end
 
   def set_audit
@@ -89,7 +89,7 @@ class AuditsController < ApplicationController
   end
 
   def set_storage_locations
-    @storage_locations = current_organization.storage_locations.active_locations
+    @storage_locations = current_organization.storage_locations.active
   end
 
   def set_items

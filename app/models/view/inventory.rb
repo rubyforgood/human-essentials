@@ -8,6 +8,10 @@ module View
     class ViewInventoryItem < EventTypes::EventItem
       attribute :db_item, Types::Nominal::Any
       delegate(*Item.column_names.map(&:to_sym), to: :db_item)
+
+      def to_dropdown_option
+        Option.new(id: id, name: "#{name} (#{quantity})")
+      end
     end
 
     attr_accessor :inventory, :organization_id
@@ -49,7 +53,7 @@ module View
     def reload(event_time = nil)
       @inventory = InventoryAggregate.inventory_for(organization_id, event_time: event_time)
       @items = Item.where(organization_id: organization_id).active
-      @db_storage_locations = StorageLocation.where(organization_id: organization_id).active_locations
+      @db_storage_locations = StorageLocation.where(organization_id: organization_id).active
       load_item_details
     end
 

@@ -10,7 +10,7 @@ end
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.5.7"
+gem "pg", "~> 1.5.9"
 # Web server.
 gem "puma"
 # Rails web framework.
@@ -24,7 +24,7 @@ gem 'azure-storage-blob'
 # Adds soft delete functionality for models.
 gem 'discard', '~> 1.3'
 # Adds grouping by date/month/etc to queries.
-gem "groupdate", "~> 6.4"
+gem "groupdate", "~> 6.5"
 # Treats attributes like money, which knows about dollars and cents.
 gem "money-rails"
 # Tracks history / audits models.
@@ -37,6 +37,8 @@ gem "rolify", "~> 6.0"
 gem "strong_migrations", "1.8.0"
 # used in events
 gem 'dry-struct'
+# Use solid_cache as a cache store
+gem "solid_cache", "~> 1.0"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
@@ -111,11 +113,6 @@ gem "nokogiri", ">= 1.10.4"
 gem "image_processing"
 gem "sprockets", "~> 4.2.1"
 
-group :production do
-  # Tool to detect unused code through knowing which methods are used in which files.
-  gem 'coverband'
-end
-
 group :production, :staging do
   # Reduce the noise of logs and include custom fields to it for easier access
   gem 'lograge'
@@ -158,6 +155,8 @@ group :development, :test do
   # Rails add-on for static analysis.
   gem 'rubocop-performance'
   gem "rubocop-rails", "~> 2.25.1"
+  # More concise test ("should") matchers
+  gem "shoulda-matchers", "~> 6.2"
   # Default rules for Rubocop.
   gem "standard", "~> 1.40"
   gem "standard-rails"
@@ -185,6 +184,12 @@ group :development do
   gem "rails-erd"
   # Allows to create a console in the browser.
   gem "web-console"
+  # Middleware that displays speed badge for every HTML page
+  gem "rack-mini-profiler"
+  # Adds memory profiling to rack-mini-profiler
+  gem "memory_profiler"
+  # Adds call-stack profiling flamegraphs to rack-mini-profiler
+  gem "stackprof"
 end
 
 group :test do
@@ -200,8 +205,6 @@ group :test do
   gem "rails-controller-testing"
   # Show code coverage.
   gem 'simplecov'
-  # More concise test ("should") matchers
-  gem 'shoulda-matchers', '~> 6.2'
   # Mock HTTP requests and ensure they are not called during tests.
   gem "webmock", "~> 3.24"
   # Interface capybara to chrome headless
@@ -217,8 +220,5 @@ end
 if %w(mingw mswin x64_mingw jruby).include?(RUBY_PLATFORM)
   gem "tzinfo-data", "~> 1.2", platforms: %i(mingw mswin x64_mingw jruby)
 end
-
-# Use Redis for Action Cable
-gem "redis", "~> 5.3"
 
 gem "importmap-rails", "~> 2.1"

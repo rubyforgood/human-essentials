@@ -44,10 +44,10 @@ RSpec.describe StorageLocation, type: :model do
   end
 
   context "Filtering >" do
-    it "->active_locations yields only storage locations that haven't been discarded" do
+    it "->active yields only storage locations that haven't been discarded" do
       create(:storage_location, name: "Active Location")
       create(:storage_location, name: "Inactive Location", discarded_at: Time.zone.now)
-      results = StorageLocation.active_locations
+      results = StorageLocation.active
       expect(results.length).to eq(1)
       expect(results.first.discarded_at).to be_nil
     end

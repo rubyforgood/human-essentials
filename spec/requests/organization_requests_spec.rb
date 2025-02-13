@@ -44,6 +44,7 @@ RSpec.describe "Organizations", type: :request do
         expect(html.text).to include("Show Year-to-date values on distribution printout?")
         expect(html.text).to include("Logo")
         expect(html.text).to include("Use One step Partner invite and approve process?")
+        expect(html.text).to include("Receive email when partner makes a request:")
       end
 
       context "when enable_packs flipper is on" do
@@ -110,6 +111,7 @@ RSpec.describe "Organizations", type: :request do
         expect(html.text).to include("Show Year-to-date values on distribution printout?")
         expect(html.text).to include("Logo")
         expect(html.text).to include("Use One step Partner invite and approve process?")
+        expect(html.text).to include("Receive email when partner makes a request:")
       end
 
       context "when enable_packs flipper is on" do
@@ -306,6 +308,19 @@ RSpec.describe "Organizations", type: :request do
         end
       end
 
+      context "can enable if the org does NOT receive emails when a partner makes a request" do
+        let(:update_param) { { organization: { receive_email_on_requests: true } } }
+        it "works" do
+          subject
+          expect(response).to redirect_to(organization_path)
+          follow_redirect!
+          expect(response.body).to include("<h3 class='font-bold'>Receive email when partner makes a request:</h3>
+                <p>
+                  Yes
+                </p>")
+        end
+      end
+
       context "can enable if the org uses single step invite and approve partner process" do
         let(:update_param) { { organization: { one_step_partner_invite: true } } }
         it "works" do
@@ -429,7 +444,7 @@ RSpec.describe "Organizations", type: :request do
         end
       end
 
-      it "can see 'Demote User' button for organizaiton admins" do
+      it "can see 'Demote User' button for organization admins" do
         within(".content") do
           expect(response.body).to have_link("Demote to User")
         end

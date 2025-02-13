@@ -25,7 +25,7 @@ class TransfersController < ApplicationController
     TransferCreateService.call(@transfer)
     redirect_to transfers_path, notice: "#{@transfer.line_items.total} items have been transferred from #{@transfer.from.name} to #{@transfer.to.name}!"
   rescue StandardError => e
-    flash[:error] = e.message
+    flash.now[:error] = e.message
     load_form_collections
     @transfer.line_items.build if @transfer.line_items.empty?
     render :new
@@ -34,7 +34,7 @@ class TransfersController < ApplicationController
   def new
     @transfer = current_organization.transfers.new
     @transfer.line_items.build
-    @storage_locations = current_organization.storage_locations.active_locations.alphabetized
+    @storage_locations = current_organization.storage_locations.active.alphabetized
     @items = current_organization.items.active.alphabetized
   end
 
@@ -49,7 +49,7 @@ class TransfersController < ApplicationController
     results = transfer_destroy_service.call
 
     if results.success?
-      flash[:notice] = "Succesfully deleted Transfer ##{params[:id]}!"
+      flash[:notice] = "Successfully deleted Transfer ##{params[:id]}!"
     else
       flash[:error] = results.error.message
     end
@@ -60,7 +60,7 @@ class TransfersController < ApplicationController
   private
 
   def load_form_collections
-    @storage_locations = current_organization.storage_locations.active_locations.alphabetized
+    @storage_locations = current_organization.storage_locations.active.alphabetized
     @items = current_organization.items.alphabetized
   end
 

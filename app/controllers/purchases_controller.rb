@@ -23,7 +23,7 @@ class PurchasesController < ApplicationController
     @total_fair_market_values = @purchases.sum(&:value_per_itemizable)
     @paginated_fair_market_values = @paginated_purchases.collect(&:value_per_itemizable).sum
     # Storage and Vendor
-    @storage_locations = current_organization.storage_locations.active_locations
+    @storage_locations = current_organization.storage_locations.active
     @selected_storage_location = filter_params[:at_storage_location]
     @vendors = current_organization.vendors.sort_by { |vendor| vendor.business_name.downcase }
     @selected_vendor = filter_params[:from_vendor]
@@ -46,7 +46,7 @@ class PurchasesController < ApplicationController
     rescue => e
       load_form_collections
       @purchase.line_items.build if @purchase.line_items.count.zero?
-      flash[:error] = "Failed to create purchase due to:\n#{e.message}"
+      flash.now[:error] = "Failed to create purchase due to:\n#{e.message}"
       Rails.logger.error "[!] PurchasesController#create ERROR: #{e.message}"
       render action: :new
     end
@@ -79,7 +79,7 @@ class PurchasesController < ApplicationController
     redirect_to purchases_path
   rescue => e
     load_form_collections
-    flash[:alert] = "Error updating purchase: #{e.message}"
+    flash.now[:alert] = "Error updating purchase: #{e.message}"
     render "edit"
   end
 
@@ -99,7 +99,7 @@ class PurchasesController < ApplicationController
   private
 
   def load_form_collections
-    @storage_locations = current_organization.storage_locations.active_locations.alphabetized
+    @storage_locations = current_organization.storage_locations.active.alphabetized
     @items = current_organization.items.active.alphabetized
     @vendors = current_organization.vendors.alphabetized
   end

@@ -22,11 +22,10 @@ class DonationSitesController < ApplicationController
         end
       else
         format.html do
-          flash[:error] = "Something didn't work quite right -- try again?"
+          flash.now[:error] = "Something didn't work quite right -- try again?"
           render action: :new
         end
       end
-      format.js { render partial: "shared/table_row_prepend", object: @donation_site }
     end
   end
 
@@ -47,7 +46,7 @@ class DonationSitesController < ApplicationController
     if @donation_site.update(donation_site_params)
       redirect_to donation_sites_path, notice: "#{@donation_site.name} updated!"
     else
-      flash[:error] = "Something didn't work quite right -- try again?"
+      flash.now[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
     end
   end
