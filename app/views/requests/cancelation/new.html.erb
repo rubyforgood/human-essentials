@@ -4,7 +4,7 @@
       <div class="col-sm-6">
         <% content_for :title, "Do you want to cancel request #{@request.partner.name}?" %>
         <span class='text-red-600 text-4xl'>
-          Do you want to cancel request <%= @request.partner.name %> by <%= @request.requester.email %> on <%= l(@request.created_at, format: :short) %>, with comment: <%= @request.comments %>?
+          Do you want to cancel request <%= @request.partner.name %> by <%= @request.requester.email %> on <%= l(@request.created_at, format: :custom_long) %>, with comment: <%= @request.comments %>?
         </span>
       </div>
       <div class="col-sm-6">
