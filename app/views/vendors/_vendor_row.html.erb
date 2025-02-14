@@ -7,5 +7,14 @@
   <td class="text-center">
     <%= view_button_to vendor_row %>
     <%= edit_button_to edit_vendor_path(vendor_row) %>
+    <% if vendor_row.active? %>
+      <%= deactivate_button_to deactivate_vendor_path(vendor_row),
+                             text: 'Deactivate',
+                             confirm: confirm_deactivate_msg(vendor_row.business_name) %>
+    <% else %>
+      <%= reactivate_button_to reactivate_vendor_path(vendor_row),
+                             text: 'Reactivate',
+                             confirm: confirm_reactivate_msg(vendor_row.business_name) %>
+    <% end %>
   </td>
 </tr>
