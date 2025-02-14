@@ -268,7 +268,7 @@ RSpec.describe "Requests", type: :system, js: true do
 
         expect(page).to have_content request.partner.name
         expect(page).to have_content request.partner.email
-        expect(page).to have_content("01 Jan 00:00")
+        expect(page).to have_content("January 1 2020")
         expect(page).to have_content request.comments
       end
     end
