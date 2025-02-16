@@ -15,7 +15,7 @@ task :fetch_latest_db do
   system("bin/rails db:environment:set RAILS_ENV=development")
   system("bin/rails db:drop db:create")
 
-  puts "Restoring the database with #{backup.name}"
+  puts "Restoring the database with #{backup.key}"
   backup_filepath = fetch_file_path(backup)
   db_username = ENV["PG_USERNAME"].presence || ENV["USER"].presence || "postgres"
   db_host = ENV["PG_HOST"].presence || "localhost"
@@ -58,7 +58,7 @@ def fetch_latest_backups
   #
   # Retrieve the most up to date version of the DB dump
   #
-  backup = backups.select { |b| b.name.match?(".rds.dump") }.sort do |a,b|
+  backup = backups.contents.select { |b| b.key.match?(".rds.dump") }.sort do |a,b|
     Time.parse(a.last_modified) <=> Time.parse(b.last_modified)
   end.reverse.first
 
@@ -66,8 +66,8 @@ def fetch_latest_backups
   # Download each of the backups onto the local disk in tmp
   #
   filepath = fetch_file_path(backup)
-  puts "\nDownloading blob #{backup.name} to #{filepath}"
-  blob_client.get_object(bucket: BUCKET_NAME, key: backup.name, response_target: filepath)
+  puts "\nDownloading blob #{backup.key} to #{filepath}"
+  blob_client.get_object(bucket: BUCKET_NAME, key: backup.key, response_target: filepath)
 
   #
   # At this point, the dumps should be stored on the local
@@ -77,11 +77,11 @@ def fetch_latest_backups
 end
 
 def blob_client
-  Aws::S3::Client.new
+  Aws::S3::Client.new(region: 'us-east-2')
 end
 
 def fetch_file_path(backup)
-  File.join(Rails.root, 'tmp', backup.name)
+  File.join(Rails.root, 'tmp', File.basename(backup.key))
 end
 
 def replace_user_passwords
