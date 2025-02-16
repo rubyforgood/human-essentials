@@ -262,6 +262,15 @@ RSpec.describe "Requests", type: :system, js: true do
         expect(request.reload.discarded_at).not_to eq(nil)
         expect(request.reload.discard_reason).to eq(reason)
       end
+
+      it 'should show the partners name, requesters email, request date, comments' do
+        click_on 'Cancel'
+
+        expect(page).to have_content request.partner.name
+        expect(page).to have_content request.partner.email
+        expect(page).to have_content("January 1 2020")
+        expect(page).to have_content request.comments
+      end
     end
   end
 end
