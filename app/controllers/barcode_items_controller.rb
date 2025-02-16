@@ -88,7 +88,7 @@ class BarcodeItemsController < ApplicationController
       barcode = current_organization.barcode_items.find(params[:id])
       raise if barcode.nil? || barcode.global?
 
-      barcode.destroy
+      barcode.destroy!
     rescue StandardError
       flash[:error] = "Sorry, you don't have permission to delete this barcode."
     end
