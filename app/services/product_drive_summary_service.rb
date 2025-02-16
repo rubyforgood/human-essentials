@@ -6,6 +6,13 @@ class ProductDriveSummaryService
     ProductDriveSummary = Data.define(:quantity, :unique_item_count, :value)
     NULL_PRODUCT_DRIVE_TOTALS = ProductDriveSummary.new(quantity: 0, unique_item_count: 0, value: 0)
 
+    # Returns a hash with product_drive id's for keys and ProductDriveSummary
+    # objects (defined above) for values.
+    #
+    # @param product_drives [Array<ProductDrive>]
+    # @param within_date_range [Array<Date>]
+    # @param item_category_id [String]
+    # @return [Hash<Integer, ProductDriveSummary>]
     def call(product_drives:, within_date_range:, item_category_id: nil)
       calculate_totals(product_drives, within_date_range, item_category_id)
     end
