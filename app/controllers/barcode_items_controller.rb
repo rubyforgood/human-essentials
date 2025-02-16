@@ -92,6 +92,7 @@ class BarcodeItemsController < ApplicationController
     rescue StandardError
       flash[:error] = "Sorry, you don't have permission to delete this barcode."
     end
+    flash[:notice] = "Barcode deleted!"
     redirect_to barcode_items_path
   end
 
