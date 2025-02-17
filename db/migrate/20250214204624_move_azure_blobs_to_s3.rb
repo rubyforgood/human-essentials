@@ -1,6 +1,8 @@
 class MoveAzureBlobsToS3 < ActiveRecord::Migration[7.2]
   # https://stackoverflow.com/questions/71699789/activestorage-transfer-all-assets-from-one-bucket-to-another-bucket
   def up
+    return unless Rails.env.staging?
+
     source_service = ActiveStorage::Blob.services.fetch(:azure)
     destination_service = ActiveStorage::Blob.services.fetch(:amazon)
 
