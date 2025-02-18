@@ -111,6 +111,7 @@ RSpec.describe "Items", type: :request do
 
     describe "CREATE #create" do
       let!(:existing_item) { create(:item, organization: organization, name: "Really Good Item") }
+      let!(:item_category) { create(:item_category, organization: organization, name: "Test Category") }
 
       describe "with an already existing item name" do
         let(:item_params) do
@@ -130,6 +131,42 @@ RSpec.describe "Items", type: :request do
 
           expect(flash[:error]).to eq("Name - An item with that name already exists (could be an inactive item)")
           expect(response).to render_template(:new)
+        end
+      end
+    end
+
+    describe "with invalid parameters" do
+      let(:invalid_item_params) do
+        {
+          item: {
+            name: "",  # Invalid name
+            partner_key: create(:base_item).partner_key,
+            value_in_cents: -100,  # Invalid value
+            package_size: nil,
+            distribution_quantity: nil
+          }
+        }
+      end
+
+      let!(:category1) { FactoryBot.create(:item_category, name: 'Bananas', organization: organization) }
+      let!(:category2) { FactoryBot.create(:item_category, name: 'Apples', organization: organization) }
+      let!(:category3) { FactoryBot.create(:item_category, name: 'Umbrella', organization: organization) }
+
+      let(:item_categories) { [category1, category2, category3] }
+
+      it "loads and displays the item categories when rendering new" do
+        # Attempt to create an item with invalid parameters
+        post items_path, params: invalid_item_params
+
+        # Expect to render the new template
+        expect(response).to render_template(:new)
+
+        # Ensure the item categories are assigned in the controller
+        expect(assigns(:item_categories)).to eq([category2, category1, category3])
+
+        # Verify the categories are included in the response body
+        item_categories.each do |category|
+          expect(response.body).to include("<option value=\"#{category.id}\">#{category.name}</option>")
         end
       end
     end
@@ -204,8 +241,8 @@ RSpec.describe "Items", type: :request do
         expect(response.body).to include('Category')
         expect(response.body).to include('CURRENTCATEGORY')
         expect(response.body).to include('Value Per Item')
-        expect(response.body).to include('20000')
-        expect(response.body).to include('Quantity Per Indivudual')
+        expect(response.body).to include('$200.0')
+        expect(response.body).to include('Quantity per Individual')
         expect(response.body).to include('2000')
         expect(response.body).to include('On hand minimum quantity')
         expect(response.body).to include('1200')
@@ -222,7 +259,7 @@ RSpec.describe "Items", type: :request do
       it 'shows custom request units when flipper enabled' do
         Flipper.enable(:enable_packs)
         get item_path(id: item.id)
-        print(response.body)
+
         expect(response.body).to include('Custom Units')
         expect(response.body).to include("ITEM1; ITEM2")
       end

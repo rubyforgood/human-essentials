@@ -3,7 +3,9 @@ RSpec.describe "/kits", type: :request do
   let(:user) { create(:user, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 
-  let!(:kit) { create(:kit, :with_item, organization: organization) }
+  let!(:kit) {
+    create_kit(organization: organization)
+  }
 
   describe "while signed in" do
     before do
@@ -13,7 +15,7 @@ RSpec.describe "/kits", type: :request do
     describe "GET #index" do
       before do
         # this shouldn't be shown
-        create(:kit, :with_item, active: false, name: "DOOBIE KIT", organization: organization)
+        create_kit(organization: organization, active: false, name: "DOOBIE KIT")
       end
 
       it "should include deactivate" do

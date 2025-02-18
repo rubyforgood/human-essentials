@@ -35,6 +35,11 @@ import 'utils/purchases'
 
 import Rails from "@rails/ujs"
 Rails.start()
+
+// Initialize Active Storage
+import * as ActiveStorage from "@rails/activestorage";
+ActiveStorage.start();
+
 // Disable turbo by default to avoid issues with turbolinks
 Turbo.session.drive = false
 
@@ -90,7 +95,8 @@ $(document).ready(function(){
       format: "MMMM D, YYYY",
       ranges: {
         customRanges: {
-          'All Time': [today.minus({ 'years': 100}).toJSDate(), today.toJSDate()],
+          'Default': [today.minus({'months': 2}).toJSDate(), today.plus({'months': 1}).toJSDate()],
+          'All Time': [today.minus({ 'years': 100 }).toJSDate(), today.plus({ 'years': 1 }).toJSDate()],
           'Today': [today.toJSDate(), today.toJSDate()],
           'Yesterday': [today.minus({'days': 1}).toJSDate(), today.minus({'days': 1}).toJSDate()],
           'Last 7 Days': [today.minus({'days': 6}).toJSDate(), today.toJSDate()],
@@ -98,10 +104,11 @@ $(document).ready(function(){
           'This Month': [today.startOf('month').toJSDate(), today.endOf('month').toJSDate()],
           'Last Month': [today.minus({'months': 1}).startOf('month').toJSDate(),
             today.minus({'month': 1}).endOf('month').toJSDate()],
-          'This Year': [today.startOf('year').toJSDate(), today.endOf('year').toJSDate()]
+          'Last 12 Months': [today.minus({'months': 12}).plus({'days': 1}).toJSDate(), today.toJSDate()],
+          'Prior Year': [today.startOf('year').minus({'years': 1}).toJSDate(), today.minus({'year': 1}).endOf('year').toJSDate()],
+          'This Year': [today.startOf('year').toJSDate(), today.endOf('year').toJSDate()],
         }
       }
     });
     picker.setDateRange(startDate, endDate);
 });
-

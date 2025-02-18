@@ -15,7 +15,7 @@ RSpec.describe CalendarService do
           partner: partner1, storage_location: storage_location)
         create(:distribution, issued_at: time_zone.local(2019, 1, 1),
           partner: partner2, storage_location: storage_location)
-        create(:distribution, issued_at: time_zone.local(2023, 3, 17),
+        create(:distribution, issued_at: time_zone.local(2022, 3, 17),
           partner: partner2, storage_location: storage_location)
         result = described_class.calendar(organization.id)
         expected = <<~ICAL
@@ -58,8 +58,8 @@ RSpec.describe CalendarService do
            e
           END:VEVENT
           BEGIN:VEVENT
-          DTSTART;TZID=America/New_York:20230316T210000
-          DTEND;TZID=America/New_York:20230316T211500
+          DTSTART;TZID=America/New_York:20220316T210000
+          DTEND;TZID=America/New_York:20220316T211500
           LOCATION:1500 Remount Road\\, Front Royal\\, VA 22630
           SUMMARY:Pickup from Partner 2
           URL;VALUE=URI:https://humanessentials.app/diaper_bank/distributions/schedul

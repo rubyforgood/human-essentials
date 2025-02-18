@@ -1,5 +1,3 @@
-require 'ostruct'
-
 RSpec.describe "Dashboard", type: :system, js: true do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
@@ -28,7 +26,7 @@ RSpec.describe "Dashboard", type: :system, js: true do
       org_dashboard_page.visit
 
       expect(org_dashboard_page).to     have_getting_started_guide
-      expect(org_dashboard_page).to     have_add_partner_call_to_action
+      expect(org_dashboard_page).to     have_add_partner_call_to_action_with_two_links
       expect(org_dashboard_page).not_to have_add_storage_location_call_to_action
       expect(org_dashboard_page).not_to have_add_donation_site_call_to_action
       expect(org_dashboard_page).not_to have_add_inventory_call_to_action

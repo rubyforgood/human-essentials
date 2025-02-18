@@ -47,7 +47,6 @@ RSpec.describe ItemizableUpdateService do
     subject do
       described_class.call(itemizable: itemizable,
         params: attributes,
-        type: :increase,
         event_class: DonationEvent)
     end
 
@@ -61,6 +60,15 @@ RSpec.describe ItemizableUpdateService do
       expect(new_storage_location.size).to eq(20)
       expect(itemizable.issued_at).to eq(2.days.ago)
       expect(UpdateExistingEvent.count).to eq(1)
+    end
+
+    it "fails with a validation message for donation events with invalid issued_at" do
+      attributes[:issued_at] = ""
+
+      expect { subject }.to raise_error do |e|
+        expect(e).to be_a(ActiveRecord::RecordInvalid)
+        expect(e.message).to eq("Validation failed: Issue date can't be blank")
+      end
     end
 
     context "when storage location changes" do
@@ -114,7 +122,7 @@ RSpec.describe ItemizableUpdateService do
     end
 
     subject do
-      described_class.call(itemizable: itemizable, params: attributes, type: :decrease)
+      described_class.call(itemizable: itemizable, params: attributes, event_class: DistributionEvent)
     end
 
     it "should update quantity in same storage location" do
@@ -126,6 +134,15 @@ RSpec.describe ItemizableUpdateService do
       expect(storage_location.size).to eq(26)
       expect(new_storage_location.size).to eq(20)
       expect(itemizable.issued_at).to eq(2.days.ago)
+    end
+
+    it "fails with a validation message for distribution events with invalid issued_at" do
+      attributes[:issued_at] = ""
+
+      expect { subject }.to raise_error do |e|
+        expect(e).to be_a(ActiveRecord::RecordInvalid)
+        expect(e.message).to eq("Validation failed: Distribution date and time can't be blank")
+      end
     end
 
     context "when storage location changes" do
@@ -159,9 +176,6 @@ RSpec.describe ItemizableUpdateService do
   end
 
   describe "events" do
-    before(:each) do
-      allow(Event).to receive(:read_events?).and_return(true)
-    end
     describe "with donations" do
       let(:itemizable) do
         line_items = [
@@ -174,9 +188,6 @@ RSpec.describe ItemizableUpdateService do
           line_items: line_items,
           issued_at: 1.day.ago)
       end
-      before(:each) do
-        allow(Event).to receive(:read_events?).and_return(true)
-      end
       let(:attributes) do
         {
           issued_at: 2.days.ago,
@@ -188,7 +199,7 @@ RSpec.describe ItemizableUpdateService do
         expect(DonationEvent.count).to eq(1)
         expect(View::Inventory.total_inventory(organization.id)).to eq(60)
 
-        described_class.call(itemizable: itemizable, params: attributes, type: :increase, event_class: DonationEvent)
+        described_class.call(itemizable: itemizable, params: attributes, event_class: DonationEvent)
 
         expect(DonationEvent.count).to eq(2)
         expect(View::Inventory.total_inventory(organization.id)).to eq(95)
@@ -198,7 +209,7 @@ RSpec.describe ItemizableUpdateService do
         expect(DonationEvent.count).to eq(0)
         expect(View::Inventory.total_inventory(organization.id)).to eq(40)
 
-        described_class.call(itemizable: itemizable, params: attributes, type: :increase, event_class: DonationEvent)
+        described_class.call(itemizable: itemizable, params: attributes, event_class: DonationEvent)
 
         expect(DonationEvent.count).to eq(0)
         expect(UpdateExistingEvent.count).to eq(1)
@@ -235,7 +246,7 @@ RSpec.describe ItemizableUpdateService do
         expect(DistributionEvent.count).to eq(1)
         expect(View::Inventory.total_inventory(organization.id)).to eq(40)
 
-        described_class.call(itemizable: itemizable, params: attributes, type: :decrease, event_class: DistributionEvent)
+        described_class.call(itemizable: itemizable, params: attributes, event_class: DistributionEvent)
 
         expect(DistributionEvent.count).to eq(2)
         expect(View::Inventory.total_inventory(organization.id)).to eq(42)
@@ -245,7 +256,7 @@ RSpec.describe ItemizableUpdateService do
         expect(DistributionEvent.count).to eq(0)
         expect(View::Inventory.total_inventory(organization.id)).to eq(50)
 
-        described_class.call(itemizable: itemizable, params: attributes, type: :decrease, event_class: DistributionEvent)
+        described_class.call(itemizable: itemizable, params: attributes, event_class: DistributionEvent)
 
         expect(DistributionEvent.count).to eq(0)
         expect(UpdateExistingEvent.count).to eq(1)

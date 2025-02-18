@@ -77,13 +77,21 @@
                 <th>Address</th>
                 <th>Square Footage</th>
                 <th>Warehouse Type</th>
-                <th>Total Inventory</th>
-                <th>Fair Market Value</th>
+                <th class="text-right">Total Inventory</th>
+                <th class="text-right">Fair Market Value</th>
                 <th class="text-center">Actions</th>
               </tr>
               </thead>
               <tbody>
               <%= render partial: "storage_location_row", collection: @storage_locations, as: :storage_location %>
+              <tr>
+                <td colspan="4"><strong>Total</strong></td>
+                <td class="text-right">
+                  <%= @storage_locations.sum { |sl| @inventory.quantity_for(storage_location: sl.id) } %>
+                </td>
+                <td class="text-right"><%= number_to_currency(@storage_locations.sum { |sl| sl.inventory_total_value_in_dollars(@inventory) }) %></td>
+                <td></td>
+              </tr>
               </tbody>
             </table>
           </div>

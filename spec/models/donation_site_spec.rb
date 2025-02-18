@@ -76,4 +76,73 @@ RSpec.describe DonationSite, type: :model do
       expect(donation_site.errors.full_messages).to eq(["Cannot delete record because dependent donations exist"])
     end
   end
+
+  describe "CSV headers" do
+    it "returns the correct headers for the CSV export" do
+      expected_headers = ["Name", "Address", "Contact Name", "Email", "Phone"]
+      expect(DonationSite.csv_export_headers).to eq(expected_headers)
+    end
+  end
+
+  describe "CSV export attributes" do
+    let(:organization) { create(:organization) }
+    let!(:active_donation_site) { create(:donation_site, name: "Active Site", address: "1500 Remount Road, Front Royal, VA 22630", active: true, organization: organization) }
+    let!(:inactive_donation_site) { create(:donation_site, name: "Inactive Site", address: "1500 Remount Road, Front Royal, VA 22630", active: false, organization: organization) }
+
+    context "when there are active and inactive donation sites" do
+      it "includes only active donation sites in the CSV export" do
+        csv_data = DonationSite.active.map(&:csv_export_attributes)
+
+        expect(csv_data.count).to eq(1)
+
+        expect(csv_data.first).to eq([
+          active_donation_site.name,
+          active_donation_site.address,
+          active_donation_site.contact_name,
+          active_donation_site.email,
+          active_donation_site.phone
+        ])
+      end
+    end
+
+    context "when all donation sites are inactive" do
+      it "returns no donation sites in the CSV export" do
+        csv_data = DonationSite.active.map(&:csv_export_attributes)
+        expect(csv_data).to be_empty
+      end
+      # Deactivate both :active_donation_site and :inactive_donation_site
+      before do
+        active_donation_site.update(active: false)
+      end
+    end
+
+    context "when both donation sites are active" do
+      it "includes both active donation sites in the CSV export" do
+        csv_data = DonationSite.active.map(&:csv_export_attributes)
+
+        expect(csv_data.count).to eq(2)
+
+        expect(csv_data.first).to eq([
+          active_donation_site.name,
+          active_donation_site.address,
+          active_donation_site.contact_name,
+          active_donation_site.email,
+          active_donation_site.phone
+        ])
+
+        expect(csv_data.second).to eq([
+          inactive_donation_site.name,
+          inactive_donation_site.address,
+          inactive_donation_site.contact_name,
+          inactive_donation_site.email,
+          inactive_donation_site.phone
+        ])
+      end
+      # Activate both :active_donation_site and :inactive_donation_site
+      before do
+        active_donation_site.update(active: true)
+        inactive_donation_site.update(active: true)
+      end
+    end
+  end
 end

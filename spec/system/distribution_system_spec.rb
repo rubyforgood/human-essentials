@@ -130,6 +130,34 @@ RSpec.feature "Distributions", type: :system do
       expect(page.find(".alert-info")).to have_content "created"
     end
 
+    # Issue #4644
+    it "Disables confirmation and modal close buttons after clicking confirm" do
+      item = View::Inventory.new(organization.id).items_for_location(storage_location.id).first.db_item
+      item.update!(on_hand_minimum_quantity: 5)
+      TestInventory.create_inventory(organization,
+        {
+          storage_location.id => { item.id => 20 }
+        })
+
+      visit new_distribution_path
+      select "Test Partner", from: "Partner"
+      select "Test Storage Location", from: "From storage location"
+      select2(page, 'distribution_line_items_item_id', item.name, position: 1)
+      select "Test Storage Location", from: "distribution_storage_location_id"
+      fill_in "distribution_line_items_attributes_0_quantity", with: 15
+
+      click_button "Save"
+
+      # Disable form submission so form doesn't immediately submit and we can check button state
+      page.execute_script("$('form#new_distribution').attr('action', 'javascript: void(0);');")
+
+      click_button(id: "modalYes")
+
+      expect(page).to have_button(id: "modalYes", visible: false, disabled: true)
+      expect(page).to have_button(id: "modalNo", visible: false, disabled: true)
+      expect(page).to have_button(id: "modalClose", visible: false, disabled: true)
+    end
+
     it "Displays a complete form after validation errors" do
       visit new_distribution_path
 
@@ -205,7 +233,7 @@ RSpec.feature "Distributions", type: :system do
         end
 
         expect(page).not_to have_content('New Distribution')
-        expect(page).to have_content("The following items have fallen below the minimum on hand quantity: #{item.name}")
+        expect(page).to have_content("The following items have fallen below the minimum on hand quantity, bank-wide: #{item.name}")
       end
     end
 
@@ -240,7 +268,7 @@ RSpec.feature "Distributions", type: :system do
           click_button "Yes, it's correct"
         end
 
-        expect(page).to have_content("The following items have fallen below the recommended on hand quantity: #{item.name}")
+        expect(page).to have_content("The following items have fallen below the recommended on hand quantity, bank-wide: #{item.name}")
       end
     end
 
@@ -276,8 +304,7 @@ RSpec.feature "Distributions", type: :system do
         end.not_to change { Distribution.count }
 
         expect(page).to have_content("New Distribution")
-        message = Event.read_events?(organization) ? 'Could not reduce quantity' : 'items exceed the available inventory'
-        expect(page.find(".alert")).to have_content message
+        expect(page.find(".alert")).to have_content('Could not reduce quantity')
       end
     end
     context "when there is a default storage location" do
@@ -311,7 +338,7 @@ RSpec.feature "Distributions", type: :system do
   end
 
   context "With an existing distribution" do
-    let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", delivery_method: delivery_method, organization: user.organization) }
+    let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", delivery_method: delivery_method, organization: user.organization, reminder_email_enabled: true) }
     let(:delivery_method) { "pick_up" }
 
     before do
@@ -358,8 +385,7 @@ RSpec.feature "Distributions", type: :system do
         click_on "Save", match: :first
       end.not_to change { distribution.line_items.first.quantity }
       within ".alert" do
-        message = Event.read_events?(organization) ? 'Could not reduce quantity' : 'items exceed the available inventory'
-        expect(page).to have_content message
+        expect(page).to have_content('Could not reduce quantity')
       end
     end
 
@@ -532,9 +558,9 @@ RSpec.feature "Distributions", type: :system do
 
     context "when editing that distribution" do
       before do
-        click_on "Distributions", match: :first
-        click_on "Edit", match: :first
         @distribution = Distribution.last
+        expect(page).to have_current_path(distribution_path(@distribution.id))
+        click_on "Make a Correction"
       end
 
       it "User creates a distribution from a donation then edits it" do
@@ -553,16 +579,10 @@ RSpec.feature "Distributions", type: :system do
         click_on "Save"
 
         expect(page).to have_no_content "Distribution updated!"
-        message = 'items exceed the available inventory'
-        number = 999_999
-        if Event.read_events?(organization)
-          message = 'Could not reduce quantity'
-          number = 999_899
-        end
-        expect(page).to have_content(/#{message}/i)
-        expect(page).to have_content number, count: 1
+        expect(page).to have_content(/Could not reduce quantity/i)
+        expect(page).to have_content 999_899, count: 1
         within ".alert" do
-          expect(page).to have_content number
+          expect(page).to have_content 999_899
         end
         expect(Distribution.first.line_items.count).to eq 1
       end
@@ -857,7 +877,6 @@ RSpec.feature "Distributions", type: :system do
     expect(page).to have_content("Distribution Complete")
     expect(page).to have_link("Distribution Complete")
 
-    expect(storage_location.inventory_items.first.quantity).to eq(0)
     expect(View::Inventory.new(organization.id)
       .quantity_for(item_id: item.id, storage_location: storage_location.id)).to eq(0)
 

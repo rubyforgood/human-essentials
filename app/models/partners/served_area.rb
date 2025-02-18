@@ -16,6 +16,6 @@ module Partners
     belongs_to :partner_profile, class_name: "Partners::Profile"
     belongs_to :county
     validates :client_share, numericality: {only_integer: true}
-    validates :client_share, inclusion: {in: 1..100}
+    validates :client_share, inclusion: {in: 1..100, message: "Client share must be between 1 and 100 inclusive"}
   end
 end

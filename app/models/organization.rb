@@ -20,6 +20,7 @@
 #  name                           :string
 #  one_step_partner_invite        :boolean          default(FALSE), not null
 #  partner_form_fields            :text             default([]), is an Array
+#  receive_email_on_requests      :boolean          default(FALSE), not null
 #  reminder_day                   :integer
 #  repackage_essentials           :boolean          default(FALSE), not null
 #  short_name                     :string
@@ -39,7 +40,7 @@ class Organization < ApplicationRecord
   has_paper_trail
   resourcify
 
-  DIAPER_APP_LOGO = Rails.root.join("public", "img", "humanessentials_logo.png")
+  DIAPER_APP_LOGO = Rails.public_path.join("img", "humanessentials_logo.png")
 
   include Deadlinable
 
@@ -62,12 +63,17 @@ class Organization < ApplicationRecord
     has_many :product_drives
     has_many :donation_sites
     has_many :donations
+    has_many :items
+    has_many :item_categories
     has_many :manufacturers
     has_many :partners
     has_many :partner_groups
     has_many :purchases
     has_many :requests
     has_many :storage_locations
+    has_many :tags
+    has_many :product_drive_tags, -> { by_type("ProductDrive") },
+      class_name: "Tag", inverse_of: false
     has_many :inventory_items, through: :storage_locations
     has_many :kits
     has_many :transfers
@@ -76,29 +82,6 @@ class Organization < ApplicationRecord
     has_many :request_units, class_name: 'Unit'
   end
 
-  has_many :items, dependent: :destroy do
-    def other
-      where(partner_key: "other")
-    end
-
-    def during(date_start, date_end = Time.zone.now.strftime("%Y-%m-%d"))
-      select("COUNT(line_items.id) as amount, name")
-        .joins(:line_items)
-        .where("line_items.created_at BETWEEN ? and ?", date_start, date_end)
-        .group(:name)
-    end
-
-    def top(limit = 5)
-      order('count(line_items.id) DESC')
-        .limit(limit)
-    end
-
-    def bottom(limit = 5)
-      order('count(line_items.id) ASC')
-        .limit(limit)
-    end
-  end
-  has_many :item_categories, dependent: :destroy
   has_many :barcode_items, dependent: :destroy do
     def all
       unscope(where: :organization_id).where("barcode_items.organization_id = ? OR barcode_items.barcodeable_type = ?", proxy_association.owner.id, "BaseItem")
@@ -106,7 +89,7 @@ class Organization < ApplicationRecord
   end
   has_many :distributions, dependent: :destroy do
     def upcoming
-      this_week.scheduled.where('issued_at >= ?', Time.zone.today)
+      this_week.scheduled.where(issued_at: Time.zone.today..)
     end
   end
 
@@ -170,10 +153,6 @@ class Organization < ApplicationRecord
     short_name
   end
 
-  def display_users
-    users.map(&:email).join(", ")
-  end
-
   def ordered_requests
     requests.order(status: :asc, updated_at: :desc)
   end
@@ -188,20 +167,8 @@ class Organization < ApplicationRecord
     street_changed? || city_changed? || state_changed? || zipcode_changed?
   end
 
-  def address_inline
-    address.split("\n").map(&:strip).join(", ")
-  end
-
-  def total_inventory
-    if Event.read_events?(self)
-      View::Inventory.total_inventory(id)
-    else
-      inventory_items.sum(:quantity) || 0
-    end
-  end
-
   def self.seed_items(organization = Organization.all)
-    base_items = BaseItem.all.map(&:to_h)
+    base_items = BaseItem.without_kit.map(&:to_h)
 
     Array.wrap(organization).each do |org|
       Rails.logger.info "\n\nSeeding #{org.name}'s items...\n"
@@ -241,10 +208,6 @@ class Organization < ApplicationRecord
     valid_items.each_with_object({}) do |item, hash|
       hash[item[:id].to_i] = item[:name]
     end
-  end
-
-  def valid_items_for_select
-    valid_items.map { |item| [item[:name], item[:id]] }.sort
   end
 
   def from_email

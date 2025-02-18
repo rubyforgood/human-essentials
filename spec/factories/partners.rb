@@ -24,20 +24,24 @@ FactoryBot.define do
     send_reminders { true }
     organization_id { Organization.try(:first).try(:id) || create(:organization).id }
 
+    transient do
+      without_profile { false }
+    end
+
     trait :approved do
       status { :approved }
     end
 
     trait :uninvited do
       status { :uninvited }
-
-      transient do
-        without_profile { false }
-      end
     end
 
     trait :awaiting_review do
       status { :awaiting_review }
+    end
+
+    trait :deactivated do
+      status { :deactivated }
     end
 
     after(:create) do |partner, evaluator|

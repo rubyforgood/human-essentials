@@ -85,6 +85,14 @@ RSpec.describe "Admin::Organizations", type: :request do
           expect(subject).to render_template("new")
           expect(flash[:error]).to be_present
         end
+
+        it "preserves user attributes" do
+          post admin_organizations_path({ organization: invalid_params })
+
+          expect(subject).to render_template("new")
+          expect(response.body).to include(invalid_params[:user][:name])
+          expect(response.body).to include(invalid_params[:user][:email])
+        end
       end
     end
 
@@ -156,6 +164,17 @@ RSpec.describe "Admin::Organizations", type: :request do
       it "returns http success" do
         get admin_organization_path({ id: organization.id })
         expect(response).to be_successful
+      end
+
+      context "with an organization user" do
+        let!(:user) { create(:user, organization: organization) }
+
+        it "provides links to edit the user" do
+          get admin_organization_path({ id: organization.id })
+
+          expect(response.body).to include("Edit User")
+          expect(response.body).to include(edit_admin_user_path(user.id))
+        end
       end
     end
 

@@ -25,9 +25,29 @@ RSpec.describe ProductDriveParticipant, type: :model do
       expect(build(:product_drive_participant, phone: nil)).to be_valid
       expect(build(:product_drive_participant, email: nil)).to be_valid
     end
+
+    it "is invalid unless it has either a contact name or a business name" do
+      expect(build(:product_drive_participant, contact_name: nil, business_name: nil)).not_to be_valid
+      expect(build(:product_drive_participant, contact_name: nil, business_name: "George Company").valid?).to eq(true)
+      expect(build(:product_drive_participant, contact_name: "George Henry", business_name: nil).valid?).to eq(true)
+    end
+
     it "is invalid if the comment field has more than 500 characters" do
       long_comment = "a" * 501
       expect(build(:product_drive_participant, comment: long_comment)).not_to be_valid
+    end
+  end
+
+  context "Scopes" do
+    describe "with_volumes" do
+      subject { described_class.with_volumes }
+      it "retrieves the amount of product that has been donated by participant" do
+        dd = create(:product_drive)
+        ddp = create(:product_drive_participant)
+        create(:donation, :with_items, item_quantity: 10, source: Donation::SOURCES[:product_drive], product_drive: dd, product_drive_participant: ddp)
+
+        expect(subject.first.volume).to eq(10)
+      end
     end
   end
 

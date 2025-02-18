@@ -1,0 +1,22 @@
+<%= f.fields_for :profile, profile do |pf| %>
+  <% if pf.object.organization.enable_quantity_based_requests? %>
+    <div class="form-group">
+      <%= pf.check_box :enable_quantity_based_requests, as: :boolean %>&nbsp;
+      <%= pf.label :enable_quantity_based_requests, "Enable Quantity-based Requests" %>
+    </div>
+  <% end %>
+
+  <% if pf.object.organization.enable_child_based_requests? %>
+    <div class="form-group">
+      <%= pf.check_box :enable_child_based_requests, as: :boolean %>&nbsp;
+      <%= pf.label :enable_child_based_requests, "Enable Child-based Requests (unclick if you only do bulk requests)" %>
+    </div>
+  <% end %>
+
+  <% if pf.object.organization.enable_individual_requests? %>
+    <div class="form-group">
+      <%= pf.check_box :enable_individual_requests, as: :boolean %>&nbsp;
+      <%= pf.label :enable_individual_requests, "Enable Requests for Individuals" %>
+    </div>
+  <% end %>
+<% end %>

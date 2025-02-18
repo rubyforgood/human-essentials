@@ -1,66 +1,102 @@
-<!DOCTYPE html>
+<!-- BEGIN app/views/layouts/application.html.erb --><!DOCTYPE html>
 <html>
 <head>
-  <title>We're sorry, but something went wrong (500)</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <style>
-  body {
-    background-color: #EFEFEF;
-    color: #2E2F30;
-    text-align: center;
-    font-family: arial, sans-serif;
-    margin: 0;
-  }
-
-  div.dialog {
-    width: 95%;
-    max-width: 33em;
-    margin: 4em auto 0;
-  }
-
-  div.dialog > div {
-    border: 1px solid #CCC;
-    border-right-color: #999;
-    border-left-color: #999;
-    border-bottom-color: #BBB;
-    border-top: #B00100 solid 4px;
-    border-top-left-radius: 9px;
-    border-top-right-radius: 9px;
-    background-color: white;
-    padding: 7px 12% 0;
-    box-shadow: 0 3px 8px rgba(50, 50, 50, 0.17);
-  }
-
-  h1 {
-    font-size: 100%;
-    color: #730E15;
-    line-height: 1.5em;
-  }
-
-  div.dialog > p {
-    margin: 0 0 1em;
-    padding: 1em;
-    background-color: #F7F7F7;
-    border: 1px solid #CCC;
-    border-right-color: #999;
-    border-left-color: #999;
-    border-bottom-color: #999;
-    border-bottom-left-radius: 4px;
-    border-bottom-right-radius: 4px;
-    border-top-color: #DADADA;
-    color: #666;
-    box-shadow: 0 3px 8px rgba(50, 50, 50, 0.17);
-  }
-  </style>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Humanessentials</title>
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="AWdfekQjBUeugBnWeozOpmcVPy5X-DMN5kCYTXtKMZynNMnUbrfBvoG8IzfZUijsJxT4n7zcnpOKOjUwZmbB3A" />
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/v4-shims.css" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/application.css" media="all" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  <meta name="turbo-visit-control" content="reload">
+  <meta name="turbo-cache-control" content="no-cache">
 </head>
+<body id="errors" class="internal_server_error hold-transition sidebar-mini layout-fixed">
+<!-- Site wrapper -->
+<div class="wrapper">
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <a id="collapse" href="#" data-widget="pushmenu" data-auto-collapse-size="992">
+      <i class="fa fa-bars"></i>
+    </a>
 
-<body>
-  <!-- This file lives in public/500.html -->
-  <div class="dialog">
-    <div>
-      <h1>We're sorry, but something went wrong.</h1>
+    <ul class="navbar-nav ml-auto">
+        <div class="navbar-custom-menu">
+          <ul class="nav navbar-nav">
+            <li class="user user-menu">
+              <a rel="nofollow" class=" btn btn-danger btn-md  " data-method="delete" href="/users/sign_out"><i class="fa fa-sign-out"></i> Log out</a>
+            </li>
+          </ul>
+        </div>
+    </ul>
+  </nav>
+
+  <!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <nav class="mt-2">
+      </nav>
     </div>
-    <p>If you are the application owner check the logs for more information.</p>
+  </aside>
+
+  <div class="content-wrapper">
+    <!-- BEGIN app/views/shared/_flash.html.erb --><turbo-frame id="flash"></turbo-frame><!-- END app/views/shared/_flash.html.erb -->
+
+    <div>
+      <!-- BEGIN app/views/errors/internal_server_error.html.erb --><section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1>500 Error Page</h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
+          <li class="breadcrumb-item active">500 Error Page</li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+  <div class="error-page">
+    <h2 class="headline text-danger">500</h2>
+    <br>
+    <div class="error-content">
+      <h3><i class="fas fa-exclamation-triangle text-danger"></i> Oops! Something went wrong.</h3>
+      <p>
+        We will work on fixing that right away.
+      </p>
+    </div>
   </div>
+</section>
+<!-- END app/views/errors/internal_server_error.html.erb -->
+    </div>
+  </div>
+
+  <footer class="main-footer">
+    <div class="pull-right hidden-xs">
+    </div>
+    <strong>Human Essentials was built with <i class="fa fa-heart fa-beat" style="color:red;"></i> by <a href="http://rubyforgood.org">Ruby for Good</a>.</strong>
+  </footer>
+
+  </aside>
+  <div class="control-sidebar-bg"></div>
+</div>
+
 </body>
+<div class="modal fade" id="modal_new" role="dialog"></div>
 </html>
+<!-- END app/views/layouts/application.html.erb -->

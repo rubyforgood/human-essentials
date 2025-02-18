@@ -21,17 +21,17 @@ RSpec.describe Reports::PartnerInfoReportService, type: :service do
     context "with partners available" do
       let!(:p1) do
         create(:partner, :uninvited, organization: organization, name: 'Partner 1') do |p|
-          p.profile.update!(zips_served: '90210-1234', agency_type: Partner::AGENCY_TYPES['CAREER'])
+          p.profile.update!(zips_served: '90210-1234', agency_type: Partners::Profile.agency_types[:career])
         end
       end
       let!(:p2) do
         create(:partner, :uninvited, organization: organization, name: 'Partner 2') do |p|
-          p.profile.update!(zips_served: '12345', agency_type: Partner::AGENCY_TYPES['CAREER'])
+          p.profile.update!(zips_served: '12345', agency_type: Partners::Profile.agency_types[:career])
         end
       end
       let!(:p3) do
         create(:partner, :uninvited, organization: organization, name: 'Partner 3') do |p|
-          p.profile.update!(zips_served: '09876-3564', agency_type: Partner::AGENCY_TYPES['EDU'])
+          p.profile.update!(zips_served: '09876-3564', agency_type: Partners::Profile.agency_types[:edu])
         end
       end
 

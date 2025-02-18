@@ -1,0 +1,15 @@
+<%= f.fields_for :profile, profile do |pf| %>
+  <div class="form-group">
+    <% if profile.documents.attached? %>
+      <strong>Attached files:</strong>
+      <ul>
+        <% profile.documents.each do |doc| %>
+          <li><%= link_to doc.blob['filename'], rails_blob_path(doc), class: "font-weight-bold" %></li>
+        <% end %>
+      </ul>
+      <%= pf.file_field :documents, multiple: true, class: "form-control-file" %>
+    <% else %>
+      <%= pf.file_field :documents, multiple: true, class: "form-control-file" %>
+    <% end %>
+  </div>
+<% end %>

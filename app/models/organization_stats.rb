@@ -7,8 +7,9 @@ class OrganizationStats
            :donation_sites,
            to: :current_organization, allow_nil: true
 
-  def initialize(organization)
+  def initialize(organization, inventory)
     @current_organization = organization
+    @inventory = inventory
   end
 
   def partners_added
@@ -23,14 +24,13 @@ class OrganizationStats
     donation_sites&.length || 0
   end
 
-  def locations_with_inventory
-    return [] unless storage_locations
+  def num_locations_with_inventory
+    return 0 unless storage_locations
 
-    inventoried_storage_location_ids = InventoryItem.where(storage_location: storage_locations).pluck(:storage_location_id)
-    storage_locations.select { |location| inventoried_storage_location_ids.include? location.id }
+    storage_locations.count { |loc| inventory.quantity_for(storage_location: loc.id).positive? }
   end
 
   private
 
-  attr_reader :current_organization
+  attr_reader :current_organization, :inventory
 end

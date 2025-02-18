@@ -47,7 +47,7 @@ Rails.application.configure do
 
   config.action_mailer.perform_caching = false
 
-  config.action_mailer.preview_path = "#{Rails.root}/lib/previews"
+  config.action_mailer.preview_paths << "#{Rails.root}/lib/previews"
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
@@ -83,6 +83,10 @@ Rails.application.configure do
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+
+  # Adds comments to rendered views so you know which partials are being rendered
+  # more easily.
+  config.action_view.annotate_rendered_view_with_filenames = true
 
   require "socket"
   require "ipaddr"

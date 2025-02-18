@@ -40,7 +40,7 @@
                 <th>Delivery method:</th>
                 <th>Shipping cost:</th>
                 <th>Comments:</th>
-                <th>State:</th>
+                <th>Status:</th>
               </tr>
               </thead>
               <tbody>
@@ -83,7 +83,7 @@
           </div>
           <div class="card-footer">
             <%= update_button_to picked_up_distribution_path(@distribution), {text: "Distribution Complete", size: "md"} if @distribution.scheduled? %>
-            <% if @distribution.future? || current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
+            <% if @distribution.future? || current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
               <%= edit_button_to edit_distribution_path(@distribution), {
                 text: "Make a Correction",
                 enabled: !@distribution.has_inactive_item?,
@@ -92,7 +92,7 @@
             <%= print_button_to print_distribution_path(@distribution, format: :pdf), {size: "md"} %>
           </div>
           <% if @distribution.has_inactive_item? %>
-            <div class="low_prioirty_warning">
+            <div class="low_priority_warning">
               You can only correct distributions where all the items are active.
               If you need to make a correction, please make the following items active: <%= @distribution.inactive_items.map(&:name).join(", ") %>
             </div>

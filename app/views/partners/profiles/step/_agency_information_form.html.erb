@@ -1,0 +1,50 @@
+<div class="form-group">
+  <%= f.input :name, label: "Agency Name", required: true, class: "form-control" %>
+</div>
+
+<%= f.fields_for :profile, profile do |pf| %>
+  <div class="form-group">
+    <%= pf.input :agency_type,
+    # Symbolize keys, because simple_form will only do a I18n lookup for
+    # symbols
+      collection: Partners::Profile.agency_types_for_selection,
+      label: "Agency Type",
+      class: "form-control",
+      wrapper: :input_group %>
+  </div>
+
+  <div class="form-group">
+    <%= pf.input :other_agency_type, label: "Other Agency Type", class: "form-control" %>
+  </div>
+
+  <%= render "shared/custom_file_input",
+           form_builder: pf,
+           attachment: profile.proof_of_partner_status,
+           attachment_name: :proof_of_partner_status,
+           label_for: "partner_profile_proof_of_partner_status",
+           label_text: "501(c)(3) IRS Determination Letter or other Proof of Agency Status" %>
+
+  <div class="form-group">
+    <%= pf.input :agency_mission, as: :text, label: "Agency Mission", class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= pf.input :address1, label: "Address (line 1)", class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= pf.input :address2, label: "Address (line 2)", class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= pf.input :city, label: "City", class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= pf.input :state, label: "State", class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= pf.input :zip_code, label: "Zip Code", class: "form-control" %>
+  </div>
+<% end %>

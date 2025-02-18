@@ -88,6 +88,52 @@ RSpec.describe OrganizationUpdateService do
           end
         end
       end
+
+      context "when partner is invalid" do
+        let(:params) { {name: "New organization"} }
+
+        before do
+          organization.update!(enable_individual_requests: false)
+          # Want to have an invalid email on purpose
+          # rubocop:disable Rails::SkipsModelValidations
+          partner_one.update_columns(email: "not/an_email")
+          # rubocop:enable Rails::SkipsModelValidations
+        end
+
+        it "updates the organization and returns true" do
+          expect(described_class.update(organization, params)).to eq(true)
+          expect(organization.name).to eq("New organization")
+        end
+      end
+
+      context "when partner profile is invalid" do
+        let(:profile) { partner_one.profile }
+        let(:params) { {name: "New organization"} }
+
+        before do
+          organization.update!(enable_individual_requests: false)
+          # Want to have an invalid email on purpose
+          # rubocop:disable Rails::SkipsModelValidations
+          profile.update_columns(pick_up_email: "not/an/email")
+          # rubocop:enable Rails::SkipsModelValidations
+        end
+
+        it "returns false" do
+          expect(described_class.update(organization, params)).to eq(false)
+        end
+
+        it "adds an error message to the organization" do
+          described_class.update(organization, params)
+          expect(organization.errors.full_messages).to include(
+            "Profile for partner '#{partner_one.name}' had error(s) preventing the organization from being saved. Validation failed: Pick up email is invalid"
+          )
+        end
+
+        it "updates the organization regardless" do # because updating the organization takes place before updating partner profiles
+          described_class.update(organization, params)
+          expect(organization.name).to eq("New organization")
+        end
+      end
     end
   end
 

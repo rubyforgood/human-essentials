@@ -11,25 +11,25 @@ class PartnerCreateService
   def call
     @partner = organization.partners.build(partner_attrs)
 
-    unless @partner.valid?
+    if @partner.valid?
+      ActiveRecord::Base.transaction do
+        @partner.save!
+
+        Partners::Profile.create!({
+                                    partner_id: @partner.id,
+                                    name: @partner.name,
+                                    enable_child_based_requests: organization.enable_child_based_requests,
+                                    enable_individual_requests: organization.enable_individual_requests,
+                                    enable_quantity_based_requests: organization.enable_quantity_based_requests
+                                  })
+      rescue StandardError => e
+        errors.add(:base, e.message)
+        raise ActiveRecord::Rollback
+      end
+    else
       @partner.errors.each do |error|
         errors.add(error.attribute, error.message)
       end
-    end
-
-    ActiveRecord::Base.transaction do
-      @partner.save!
-
-      Partners::Profile.create!({
-                                  partner_id: @partner.id,
-                                  name: @partner.name,
-                                  enable_child_based_requests: organization.enable_child_based_requests,
-                                  enable_individual_requests: organization.enable_individual_requests,
-                                  enable_quantity_based_requests: organization.enable_quantity_based_requests
-                                })
-    rescue StandardError => e
-      errors.add(:base, e.message)
-      raise ActiveRecord::Rollback
     end
 
     self

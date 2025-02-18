@@ -16,7 +16,6 @@ module TestInventory
           }
         )
       )
-      storage_location.inventory_items.delete_all
     end
 
     # Pass in a hash of storage location ID -> { item ID -> quantity}. Blows away any current
@@ -35,22 +34,6 @@ module TestInventory
             storage_location_id: sl,
             items: EventTypes::EventLineItem.from_line_items(line_items, to: sl)
           )
-        )
-      end
-      create_inventory_items_from_events(organization.id)
-    end
-
-    # @param organization_id [Integer]
-    def create_inventory_items_from_events(organization_id)
-      inventory = View::Inventory.new(organization_id)
-      InventoryItem.joins(:storage_location)
-        .where(storage_locations: {organization_id: organization_id})
-        .delete_all
-      inventory.all_items.each do |item|
-        InventoryItem.create!(
-          item_id: item.item_id,
-          storage_location_id: item.storage_location_id,
-          quantity: item.quantity
         )
       end
     end

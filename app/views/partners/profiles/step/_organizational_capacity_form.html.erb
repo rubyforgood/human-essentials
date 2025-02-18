@@ -1,0 +1,13 @@
+<%= f.fields_for :profile, profile do |pf| %>
+  <div class="form-group">
+    <%= pf.input :client_capacity, label: "Client Capacity", class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= pf.input :storage_space, label: "Storage Space", as: :radio_buttons, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= pf.input :describe_storage_space, label: "Storage Space Description", class: "form-control" %>
+  </div>
+<% end %>

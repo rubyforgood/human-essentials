@@ -14,12 +14,6 @@ Rails.application.routes.draw do
     omniauth_callbacks: 'users/omniauth_callbacks'
   }
 
-  if Rails.env.production?
-    authenticate :user, lambda { |u| u.has_role?(Role::SUPER_ADMIN) } do
-      mount Coverband::Reporters::Web.new, at: '/coverage'
-    end
-  end
-
   #
   # Mount web interface to see delayed job status and queue length.
   # Visible only to logged in users with the `super_admin` role
@@ -85,9 +79,6 @@ Rails.application.routes.draw do
       post :upload_csv, on: :collection
     end
   end
-
-  match "/404", to: "errors#not_found", via: :all
-  match "/500", to: "errors#internal_server_error", via: :all
 
   resources :users do
     get :switch_to_role, on: :collection
@@ -182,6 +173,10 @@ Rails.application.routes.draw do
     collection do
       post :import_csv
     end
+    member do
+      put :deactivate
+      put :reactivate
+    end
   end
 
   resources :kits do
@@ -242,6 +237,7 @@ Rails.application.routes.draw do
     member do
       post :start
     end
+    get :print_unfulfilled, on: :collection
   end
   resources :requests, except: %i(destroy) do
     resource :cancelation, only: [:new, :create], controller: 'requests/cancelation'

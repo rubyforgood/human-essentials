@@ -55,5 +55,15 @@ RSpec.describe Partners::FamilyRequestsController, type: :request do
 
       expect(response.request.flash[:notice]).to eql "Requested items successfully!"
     end
+
+    it "creates the correct child item requests" do
+      partner.update!(status: :approved)
+
+      subject
+
+      expect(Partners::ChildItemRequest.find_by(child_id: children[0].id)).to be_present
+      expect(Partners::ChildItemRequest.find_by(child_id: children[1].id)).to be_nil
+      expect(Partners::ChildItemRequest.find_by(child_id: children[2].id)).to be_present
+    end
   end
 end

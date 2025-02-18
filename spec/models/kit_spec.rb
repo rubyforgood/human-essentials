@@ -58,10 +58,13 @@ RSpec.describe Kit, type: :model do
     end
 
     it "->alphabetized retrieves items in alphabetical order" do
-      kit_c = create(:kit, name: "KitC")
-      kit_b = create(:kit, name: "KitB")
-      kit_a = create(:kit, name: "KitA")
-      alphabetized_list = [kit_a.name, kit_b.name, kit_c.name]
+      a_name = "KitA"
+      b_name = "KitB"
+      c_name = "KitC"
+      create(:kit, name: c_name)
+      create(:kit, name: b_name)
+      create(:kit, name: a_name)
+      alphabetized_list = [a_name, b_name, c_name]
 
       expect(Kit.alphabetized.count).to eq(3)
       expect(Kit.alphabetized.map(&:name)).to eq(alphabetized_list)
@@ -107,31 +110,32 @@ RSpec.describe Kit, type: :model do
   end
 
   describe '#can_deactivate?' do
-    let(:kit) { create(:kit, :with_item, organization: organization) }
+    let(:kit) { create_kit(organization: organization) }
 
     context 'with inventory' do
       it 'should return false' do
         item = create(:item, :active, organization: organization, kit: kit)
         storage_location = create(:storage_location, :with_items, organization: organization, item: item)
+        kit.reload
 
         TestInventory.create_inventory(organization, {
           storage_location.id => {
             kit.item.id => 10
           }
         })
-        expect(kit.reload.can_deactivate?(nil)).to eq(false)
+        expect(kit.reload.can_deactivate?).to eq(false)
       end
     end
 
     context 'without inventory items' do
       it 'should return true' do
-        expect(kit.reload.can_deactivate?(nil)).to eq(true)
+        expect(kit.reload.can_deactivate?).to eq(true)
       end
     end
   end
 
   specify 'deactivate and reactivate' do
-    kit = create(:kit, :with_item)
+    kit = create_kit(organization: organization)
     expect(kit.active).to eq(true)
     expect(kit.item.active).to eq(true)
     kit.deactivate

@@ -1,0 +1,48 @@
+<%= f.fields_for :profile, profile do |pf| %>
+  <div class="form-group">
+    <%= pf.input :founded, label: "Year Founded", class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= pf.input :form_990, label: "Form 990 Filed", as: :radio_buttons, class: "form-control" %>
+  </div>
+
+  <%= render "shared/custom_file_input",
+           form_builder: pf,
+           attachment: profile.proof_of_form_990,
+           attachment_name: :proof_of_form_990,
+           label_for: "partner_profile_proof_of_form_990",
+           label_text: "Form 990" %>
+
+  <div class="form-group">
+    <%= pf.input :program_name, label: "Program Name(s)", class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= pf.input :program_description, label: "Program Description(s)", class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= pf.input :program_age, label: "Agency Age", class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= pf.input :evidence_based, label: "Evidence Based?", as: :radio_buttons, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= pf.input :case_management, label: "Case Management", as: :radio_buttons, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= pf.input :essentials_use, label: "How Are Essentials (e.g. diapers, period supplies) Used In Your Program?", as: :text, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= pf.input :receives_essentials_from_other, label: "Do You Receive Essentials From Other Sources?", class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= pf.input :currently_provide_diapers, label: "Currently Providing Diapers?", as: :radio_buttons, class: "form-control" %>
+  </div>
+<% end %>

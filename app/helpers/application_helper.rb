@@ -23,7 +23,7 @@ module ApplicationHelper
   end
 
   def can_administrate?
-    current_user.has_role?(Role::ORG_ADMIN, current_organization)
+    current_user.has_cached_role?(Role::ORG_ADMIN, current_organization)
   end
 
   def navigation_link_to(*args)
@@ -123,5 +123,9 @@ module ApplicationHelper
       return source_object.partner.default_storage_location_id
     end
     current_organization.default_storage_location
+  end
+
+  def default_location(source_object)
+    current_organization.default_storage_location || source_object.storage_location_id.presence || current_organization.intake_location
   end
 end

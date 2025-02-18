@@ -5,7 +5,7 @@ module Reports
     # @return [Array<Reports::Report>]
     def all_reports(year:, organization:)
       [
-        Reports::AcquisitionReportService.new(year: year, organization: organization).report,
+        Reports::DiaperReportService.new(year: year, organization: organization).report,
         Reports::WarehouseReportService.new(year: year, organization: organization).report,
         Reports::AdultIncontinenceReportService.new(year: year, organization: organization).report,
         Reports::PeriodSupplyReportService.new(year: year, organization: organization).report,

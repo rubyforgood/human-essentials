@@ -110,9 +110,6 @@
                       </tr>
                     <% end %>
                   <% else %>
-                    <%= render partial: "inventory_item_row",
-                               collection: @storage_location.inventory_items.joins(:item).where(items: { active: true }),
-                               locals: { version_date: params[:version_date] } %>
                   <% end %>
                   </tbody>
                   <tfoot>

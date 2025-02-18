@@ -20,7 +20,7 @@ class BarcodeItem < ApplicationRecord
   validates :organization, presence: true, unless: proc { |b| b.barcodeable_type == "BaseItem" }
   validates :value, presence: true
   validate  :unique_barcode_value
-  validates :quantity, :barcodeable, presence: true
+  validates :quantity, presence: true
   validates :quantity, numericality: { only_integer: true, greater_than: 0 }
 
   include Filterable
@@ -42,15 +42,13 @@ class BarcodeItem < ApplicationRecord
 
   scope :by_value, ->(value) { where(value: value) }
 
-  scope :for_csv_export, ->(organization, *) {
-    where(organization: organization)
-      .includes(:barcodeable)
-  }
-
   scope :global, -> { where(barcodeable_type: "BaseItem") }
 
-  alias_attribute :item, :barcodeable
-  alias_attribute :base_item, :barcodeable
+  # aliases of barcodeable
+  belongs_to :item, polymorphic: true, dependent: :destroy,
+    counter_cache: :barcode_count, foreign_key: :barcodeable_id, foreign_type: :barcodeable_type
+  belongs_to :base_item, polymorphic: true, dependent: :destroy,
+    counter_cache: :barcode_count, foreign_key: :barcodeable_id, foreign_type: :barcodeable_type
 
   def to_h
     {

@@ -20,6 +20,7 @@
 #  name                           :string
 #  one_step_partner_invite        :boolean          default(FALSE), not null
 #  partner_form_fields            :text             default([]), is an Array
+#  receive_email_on_requests      :boolean          default(FALSE), not null
 #  reminder_day                   :integer
 #  repackage_essentials           :boolean          default(FALSE), not null
 #  short_name                     :string
@@ -34,6 +35,7 @@
 #  account_request_id             :integer
 #  ndbn_member_id                 :bigint
 #
+require 'seeds'
 
 FactoryBot.define do
   factory :organization do
@@ -61,7 +63,7 @@ FactoryBot.define do
 
     trait :with_items do
       after(:create) do |instance, evaluator|
-        seed_base_items if BaseItem.count.zero? # seeds 45 base items if none exist
+        Seeds.seed_base_items if BaseItem.count.zero? # seeds 45 base items if none exist
         Organization.seed_items(instance) # creates 1 item for each base item
       end
     end

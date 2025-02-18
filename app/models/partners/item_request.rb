@@ -35,5 +35,13 @@ module Partners
         errors.add(:request_unit, "is not supported")
       end
     end
+
+    def name_with_unit(quantity_override = nil)
+      if Flipper.enabled?(:enable_packs) && request_unit.present?
+        "#{name} - #{request_unit.pluralize(quantity_override || quantity.to_i)}"
+      else
+        name
+      end
+    end
   end
 end

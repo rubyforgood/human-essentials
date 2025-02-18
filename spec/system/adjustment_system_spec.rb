@@ -75,7 +75,7 @@ RSpec.describe "Adjustment management", type: :system, js: true do
         expect do
           click_button "Save"
         end.not_to change { storage_location.size }
-        expect(page).to have_content("items exceed the available inventory")
+        expect(page).to have_content("Could not reduce quantity")
       end
 
       it "politely informs the user if they try to adjust down below zero, even if they use multiple adjustments to do so" do
@@ -101,7 +101,7 @@ RSpec.describe "Adjustment management", type: :system, js: true do
         expect do
           click_button "Save"
         end.not_to change { storage_location.size }
-        expect(page).to have_content("items exceed the available inventory")
+        expect(page).to have_content("Could not reduce quantity")
         expect(page).to have_field("adjustment_line_items_attributes_0_quantity", with: "-18")
       end
     end

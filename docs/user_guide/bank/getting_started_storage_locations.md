@@ -1,4 +1,4 @@
-DRAFT USER GUIDE
+READY FOR REVIEW
 # Getting Started -- Storage Locations
 
 A bank can have multiple storage locations -- these range from warehouses down to space in people's houses.  You need at least one storage location in the system.
@@ -22,9 +22,7 @@ Either of these will bring up the new storage location screen
 Fill in the information:
 - Name and Address are mandatory
 - Square Footage and Warehouse Type are used for the Annual Survey (our collection of information corresponding to the NDBN Annual Survey)
-- Set Time Zone to the local time zone for the storage location.  This impacts the Pickup & Deliveries calendar but not much else.  
-
-[TODO:  Understand *How* timezone affects the P&D calendar]
+- Set Time Zone to the local time zone for the storage location.
 
 Click "Save"
 
@@ -32,4 +30,4 @@ You'll see a list of your storage locations.  Click "New Storage Location" if yo
 
 ![storage location index](images/getting_started/storage_locations/storage_location_index.png)
 
-Next step:  [Entering or uploading your initial partner list](getting_started_partners.md) 
+[Prior: Choices to think about](getting_started_choices.md) [Next: Entering or uploading your initial partner list](getting_started_partners.md) 

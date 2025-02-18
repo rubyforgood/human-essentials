@@ -29,13 +29,13 @@ RSpec.describe "Family requests", type: :system, js: true do
       within("table tbody tr", text: "Main Items1") do |row|
         expect(row).to have_css("td", text: "Main Family")
         expect(row).to have_css("td", text: "Main Items1")
-        expect(row).to have_css("td", text: "Item 1, Item 2")
+        expect(row).to have_css("td", text: /Item 1, Item 2|Item 2, Item 1/) # order of items requested not guaranteed
       end
 
       within("table tbody tr", text: "Main Items2") do |row|
         expect(row).to have_css("td", text: "Main Family")
         expect(row).to have_css("td", text: "Main Items2")
-        expect(row).to have_css("td", text: "Item 2, Item 3")
+        expect(row).to have_css("td", text: /Item 2, Item 3|Item 3, Item 2/) # order of items requested not guaranteed
       end
 
       within("table tbody tr", text: "Main No Items") do |row|
@@ -47,7 +47,7 @@ RSpec.describe "Family requests", type: :system, js: true do
       within("table tbody tr", text: "Other Items") do |row|
         expect(row).to have_css("td", text: "Other Family")
         expect(row).to have_css("td", text: "Other Items")
-        expect(row).to have_css("td", text: "Item 1, Item 2")
+        expect(row).to have_css("td", text: /Item 1, Item 2|Item 2, Item 1/) # order of items requested not guaranteed
       end
 
       within("table tbody tr", text: "Other No Items") do |row|
@@ -65,6 +65,22 @@ RSpec.describe "Family requests", type: :system, js: true do
       expect(page).to have_text("Request Details")
       click_link "Your Previous Requests"
       expect(page).to have_text("Request History")
+    end
+
+    # Issue #4644
+    it "disables confirmation and modal close buttons after clicking confirm" do
+      visit partners_requests_path
+      find('a[aria-label="Create a request for a child or family"]').click
+      click_button("Submit Essentials Request")
+
+      # Disable form submission so form doesn't immediately submit and we can check button state
+      page.execute_script("$(\"form[action='/partners/family_requests']\").attr('action', 'javascript: void(0);');")
+
+      click_button(id: "modalYes")
+
+      expect(page).to have_button(id: "modalYes", visible: false, disabled: true)
+      expect(page).to have_button(id: "modalNo", visible: false, disabled: true)
+      expect(page).to have_button(id: "modalClose", visible: false, disabled: true)
     end
   end
 

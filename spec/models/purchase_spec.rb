@@ -80,20 +80,13 @@ RSpec.describe Purchase, type: :model do
       p = build(:purchase, issued_at: "1999-12-31")
       expect(p).not_to be_valid
     end
+    it "ensures that the issued at is no later than 1 year" do
+      p = build(:purchase, issued_at: DateTime.now.next_year(2).to_s)
+      expect(p).not_to be_valid
+    end
   end
 
   context "Callbacks >" do
-    it "inititalizes the issued_at field to default to midnight if it wasn't explicitly set" do
-      yesterday = 1.day.ago
-      today = Time.zone.today
-
-      purchase = create(:purchase, created_at: yesterday, issued_at: today)
-      expect(purchase.issued_at.to_date).to eq(today)
-
-      purchase = create(:purchase, created_at: yesterday)
-      expect(purchase.issued_at).to eq(purchase.created_at.end_of_day)
-    end
-
     it "automatically combines duplicate line_item records when they're created" do
       purchase = build(:purchase)
       item = create(:item)
@@ -116,7 +109,7 @@ RSpec.describe Purchase, type: :model do
         # and one outside the range
         create(:purchase, issued_at: 1.year.ago)
 
-        expect(Purchase.during(1.month.ago..Time.zone.now + 2.days).size).to eq(2)
+        expect(Purchase.during(1.month.ago..2.days.from_now).size).to eq(2)
       end
     end
   end

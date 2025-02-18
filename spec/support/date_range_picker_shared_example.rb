@@ -1,5 +1,5 @@
 def date_range_picker_params(start_date, end_date)
-  "#{start_date.to_formatted_s(:date_picker)} - #{end_date.to_formatted_s(:date_picker)}"
+  "#{start_date.to_fs(:date_picker)} - #{end_date.to_fs(:date_picker)}"
 end
 
 def date_range_picker_select_range(range_name)
@@ -20,8 +20,25 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
   let(:user) { create(:user, organization: organization) }
 
   let!(:very_old) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(2000, 7, 31), :organization => organization) }
+  let!(:two_months_ago) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(2019, 5, 31), :organization => organization) }
   let!(:recent) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(2019, 7, 24), :organization => organization) }
   let!(:today) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(2019, 7, 31), :organization => organization) }
+  let!(:one_month_ahead) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(2019, 8, 31), :organization => organization) }
+  let!(:one_year_ahead) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(2020, 7, 31), :organization => organization) }
+  let!(:two_years_ahead) { create(described_class.to_s.underscore.to_sym, date_field.to_sym => Time.zone.local(2021, 7, 31), :organization => organization) }
+
+  context "when choosing 'Default'" do
+    before do
+      sign_out user
+      travel_to Time.zone.local(2019, 7, 31)
+      sign_in user
+    end
+
+    it "shows only 4 records" do
+      visit subject
+      expect(page).to have_css("table tbody tr", count: 4)
+    end
+  end
 
   context "when choosing 'All Time'" do
     before do
@@ -30,16 +47,12 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
       sign_in user
     end
 
-    after do
-      travel_back
-    end
-
     it "shows all the records" do
       visit subject
-      date_range = "#{Time.zone.local(1919, 7, 1).to_formatted_s(:date_picker)} - #{Time.zone.local(2019, 7, 31).to_formatted_s(:date_picker)}"
+      date_range = "#{Time.zone.local(1919, 7, 1).to_fs(:date_picker)} - #{Time.zone.local(2020, 7, 31).to_fs(:date_picker)}"
       fill_in "filters_date_range", with: date_range
       find(:id, 'filters_date_range').native.send_keys(:enter)
-      expect(page).to have_css("table tbody tr", count: 3)
+      expect(page).to have_css("table tbody tr", count: 6)
     end
   end
 
@@ -50,15 +63,11 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
       sign_in user
     end
 
-    after do
-      travel_back
-    end
-
     # NOTE: This spec MIGHT be flaky depending on the day of the month.
     # The dates being set may or may not respect the time travelling.
     it "shows only 2 of the records" do
       visit subject
-      date_range = "#{Time.zone.local(2019, 7, 1).to_formatted_s(:date_picker)} - #{Time.zone.local(2019, 7, 31).to_formatted_s(:date_picker)}"
+      date_range = "#{Time.zone.local(2019, 7, 1).to_fs(:date_picker)} - #{Time.zone.local(2019, 7, 31).to_fs(:date_picker)}"
       fill_in "filters_date_range", with: date_range
       find(:id, 'filters_date_range').native.send_keys(:enter)
       expect(page).to have_css("table tbody tr", count: 2)
@@ -68,7 +77,7 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
   context "when choosing a date range that only includes the previous week" do
     it "shows only 1 record" do
       visit subject
-      date_range = "#{Time.zone.local(2019, 7, 22).to_formatted_s(:date_picker)} - #{Time.zone.local(2019, 7, 28).to_formatted_s(:date_picker)}"
+      date_range = "#{Time.zone.local(2019, 7, 22).to_fs(:date_picker)} - #{Time.zone.local(2019, 7, 28).to_fs(:date_picker)}"
       fill_in "filters_date_range", with: date_range
       find(:id, 'filters_date_range').native.send_keys(:enter)
       expect(page).to have_css("table tbody tr", count: 1)

@@ -1,0 +1,6 @@
+<%# locals: (f:, partner:) %>
+
+<div class="form-group mt-4 d-flex justify-content-start mx-5">
+  <%= f.submit "Save Progress", class: 'btn btn-primary mr-2', data: { action: "click->accordion#disableOpenClose" } %>
+  <%= f.submit "Save and Review", name: "save_review", class: 'btn btn-success' %>
+</div>

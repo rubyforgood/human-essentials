@@ -1,0 +1,46 @@
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <% content_for :title, "Step Editing - #{current_partner.name}" %>
+        <h1><i class="fa fa-edit"></i>&nbsp;&nbsp;Edit My Organization&nbsp;&nbsp;&nbsp;
+          <%= partner_status_badge(current_partner) %>
+          <small>for <%= current_partner.name %></small>
+        </h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="<%= partner_user_root_path %>"><i class="fa fa-home fa-lg"></i></a></li>
+          <li class="breadcrumb-item">
+            <a href="<%= edit_partners_profile_path %>"><%= "#{current_partner.name}" %></a></li>
+          <li class="breadcrumb-item"><a href="#">Edit</a></li>
+        </ol>
+      </div>
+    </div>
+  </div><!-- /.container-fluid -->
+</section>
+
+<div class="alert alert-info mx-5 mt-3" role="alert">
+  Instructions: Please fill out the following form sections carefully. Ensure that all required fields are completed.
+</div>
+
+<div data-controller="accordion">
+  <%= simple_form_for current_partner,
+                      data: { controller: "form-input", accordion_target: "form" },
+                      url: partners_profile_path,
+                      html: { multipart: true } do |f| %>
+
+    <%= render 'partners/profiles/step/form_actions', f: f, partner: current_partner %>
+
+    <div class="accordion mx-5 mt-3" id="accordionExample">
+      <%= render 'partners/profiles/step/accordion_section', f: f, partner: current_partner, section_id: 'agency_information', section_title: 'Agency Information', icon_class: 'fa-edit', partial_name: 'agency_information', sections_with_errors: @sections_with_errors %>
+      <%= render 'partners/profiles/step/accordion_section', f: f, partner: current_partner, section_id: 'program_delivery_address', section_title: 'Program / Delivery Address', icon_class: 'fa-map', partial_name: 'program_delivery_address', sections_with_errors: @sections_with_errors %>
+      <% current_partner.partials_to_show.each do |partial| %>
+        <%= render 'partners/profiles/step/accordion_section', f: f, partner: current_partner, section_id: partial, section_title: partial_display_name(partial), icon_class: 'fa-cogs', partial_name: partial, sections_with_errors: @sections_with_errors %>
+      <% end %>
+      <%= render 'partners/profiles/step/accordion_section', f: f, partner: current_partner, section_id: 'partner_settings', section_title: 'Settings', icon_class: 'fa-cog', partial_name: 'partner_settings', sections_with_errors: @sections_with_errors %>
+    </div>
+
+    <%= render 'partners/profiles/step/form_actions', f: f, partner: current_partner %>
+  <% end %>
+</div>

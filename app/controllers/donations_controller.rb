@@ -63,7 +63,7 @@ class DonationsController < ApplicationController
     rescue => e
       load_form_collections
       @donation.line_items.build if @donation.line_items.count.zero?
-      flash[:error] = "There was an error starting this donation: #{e.message}"
+      flash.now[:error] = "There was an error starting this donation: #{e.message}"
       Rails.logger.error "[!] DonationsController#create Error: #{e.message}"
       render action: :new
     end
@@ -93,13 +93,12 @@ class DonationsController < ApplicationController
     @original_source = @donation.source
     ItemizableUpdateService.call(itemizable: @donation,
       params: donation_params,
-      type: :increase,
       event_class: DonationEvent)
     flash.clear
     flash[:notice] = "Donation updated!"
     redirect_to donations_path
   rescue => e
-    flash[:alert] = "Error updating donation: #{e.message}"
+    flash.now[:alert] = "Error updating donation: #{e.message}"
     load_form_collections
     # calling new(donation_params) triggers a validation error if line_item quantity is invalid
     @previous_input = Donation.new(donation_params.except(:line_items_attributes))
@@ -124,7 +123,7 @@ class DonationsController < ApplicationController
   private
 
   def load_form_collections
-    @storage_locations = current_organization.storage_locations.active_locations.alphabetized
+    @storage_locations = current_organization.storage_locations.active.alphabetized
     @donation_sites = current_organization.donation_sites.active.alphabetized
     @product_drives = current_organization.product_drives.alphabetized
     @product_drive_participants = current_organization.product_drive_participants.alphabetized
@@ -169,7 +168,7 @@ class DonationsController < ApplicationController
 
   # If line_items have submitted with empty rows, clear those out first.
   def compact_line_items
-    return params unless params[:donation].key?(:line_item_attributes)
+    return params unless params[:donation].key?(:line_items_attributes)
 
     params[:donation][:line_items_attributes].delete_if { |_row, data| data["quantity"].blank? && data["item_id"].blank? }
     params
