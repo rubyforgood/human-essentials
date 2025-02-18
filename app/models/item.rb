@@ -60,11 +60,6 @@ class Item < ApplicationRecord
   scope :by_partner_key, ->(partner_key) { where(partner_key: partner_key) }
 
   scope :by_size, ->(size) { joins(:base_item).where(base_items: { size: size }) }
-  scope :for_csv_export, ->(organization, *) {
-    where(organization: organization)
-      .includes(:base_item)
-      .alphabetized
-  }
 
   # Scopes - explanation of business rules for filtering scopes as of 20240527.  This was a mess, but is much better now.
   # 1/  Disposable.   Disposables are only the disposable diapers for children.  So we deliberately exclude adult and cloth

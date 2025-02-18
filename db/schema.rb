@@ -856,6 +856,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_18_193017) do
     t.float "longitude"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
+    t.boolean "active", default: true
     t.index ["latitude", "longitude"], name: "index_vendors_on_latitude_and_longitude"
   end
 

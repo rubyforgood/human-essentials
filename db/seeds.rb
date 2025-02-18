@@ -125,7 +125,7 @@ end
 # ----------------------------------------------------------------------------
 
 Organization.all.find_each do |org|
-  ["Diapers", "Period Supplies", "Adult Incontinence"].each do |letter|
+  ["One", "Two", "Three"].each do |letter|
     FactoryBot.create(:item_category, organization: org, name: "Category #{letter}")
   end
 end

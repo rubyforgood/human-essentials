@@ -26,7 +26,6 @@ class DonationSitesController < ApplicationController
           render action: :new
         end
       end
-      format.js { render partial: "shared/table_row_prepend", object: @donation_site }
     end
   end
 
