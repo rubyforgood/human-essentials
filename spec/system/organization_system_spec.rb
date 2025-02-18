@@ -32,5 +32,29 @@ RSpec.describe "Organization management", type: :system, js: true do
       expect(page).to have_content("User has been removed!")
       expect(user.has_role?(Role::ORG_USER)).to be false
     end
+
+    it "can promote a user from the organization" do
+      user = create(:user, name: "User to be promoted", organization: organization)
+      visit organization_path
+      accept_confirm do
+        click_button dom_id(user, "dropdownMenu")
+        click_link "Promote to Admin"
+      end
+
+      expect(page).to have_content("User has been promoted!")
+      expect(user.has_role?(Role::ORG_ADMIN, organization)).to be true
+    end
+
+    it "can demote a user from the organization" do
+      user = create(:organization_admin, name: "User to be demoted", organization: organization)
+      visit organization_path
+      accept_confirm do
+        click_link "Demote to User"
+      end
+
+      expect(page).to have_content("User has been demoted!")
+      expect(user.has_role?(Role::ORG_ADMIN, organization)).to be false
+    end
+
   end
 end
