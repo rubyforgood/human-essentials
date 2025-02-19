@@ -88,6 +88,27 @@ RSpec.describe Exports::ExportRequestService do
     described_class.new(Request.all).generate_csv_data
   end
 
+  context "with item name updated" do
+    before do
+      item_3t.update!(name: "3T Diapers -- UPDATED")
+    end
+
+    describe ".generate_csv_data" do
+      it "shows the updated item name in the headers" do
+        expect(subject.first).to eq([
+          "Date",
+          "Requestor",
+          "Type",
+          "Status",
+          "2T Diapers",
+          "3T Diapers -- UPDATED",
+          "4T Diapers",
+          "<DELETED_ITEMS>"
+        ])
+      end
+    end
+  end
+
   context "with custom units feature enabled" do
     before do
       Flipper.enable(:enable_packs)
