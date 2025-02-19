@@ -1,8 +1,8 @@
 <tr>
-  <td><%= barcode_item_row.barcodeable.name %></td>
-  <td><%= barcode_item_row.quantity %></td>
-  <td><%= barcode_item_row.value %></td>
-  <td class="text-right">
+  <td class="text-left"><%= barcode_item_row.barcodeable.name %></td>
+  <td class="text-left"><%= barcode_item_row.quantity %></td>
+  <td class="text-left"><%= barcode_item_row.value %></td>
+  <td class="text-center">
       <%= view_button_to barcode_item_path(barcode_item_row) %>
       <%= edit_button_to edit_barcode_item_path(barcode_item_row) %>
       <%= delete_button_to barcode_item_path(barcode_item_row), { confirm: confirm_delete_msg(barcode_item_row.item.name) } %>

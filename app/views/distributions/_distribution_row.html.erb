@@ -1,19 +1,19 @@
 <tr <%= 'class="highlight"' if distribution_row.id == @highlight_id %>>
-  <td><%= distribution_row.id %></td>
-  <td><%= distribution_row.partner.name %></td>
-  <td class="date"><%= distribution_row.created_at.strftime("%m/%d/%Y") %></td>
-  <td class="date"><%= (distribution_row.issued_at.presence || distribution_row.created_at).strftime("%m/%d/%Y") %></td>
-  <td><%= distribution_row.storage_location.name %></td>
+  <td class="text-left"><%= distribution_row.id %></td>
+  <td class="text-left"><%= distribution_row.partner.name %></td>
+  <td class="date text-left"><%= distribution_row.created_at.strftime("%m/%d/%Y") %></td>
+  <td class="date text-left"><%= (distribution_row.issued_at.presence || distribution_row.created_at).strftime("%m/%d/%Y") %></td>
+  <td class="text-left"><%= distribution_row.storage_location.name %></td>
 
-  <td class="numeric"><%= @distribution_totals.fetch_quantity(distribution_row.id) %></td>
-  <td class="numeric"><%= dollar_value(@distribution_totals.fetch_value(distribution_row.id)) %></td>
-  <td><%= distribution_row.delivery_method.humanize %></td>
-  <td><%= distribution_shipping_cost(distribution_row.shipping_cost) %></td>
-  <td><%= distribution_row.comment %></td>
-  <td><%= distribution_row.state&.humanize %></td>
+  <td class="numeric text-left"><%= @distribution_totals.fetch_quantity(distribution_row.id) %></td>
+  <td class="numeric text-left"><%= dollar_value(@distribution_totals.fetch_value(distribution_row.id)) %></td>
+  <td class="text-left"><%= distribution_row.delivery_method.humanize %></td>
+  <td class="text-left"><%= distribution_shipping_cost(distribution_row.shipping_cost) %></td>
+  <td class="text-left"><%= distribution_row.comment %></td>
+  <td class="text-left"><%= distribution_row.state&.humanize %></td>
 
   <% distribution_has_inactive_item = @distributions_with_inactive_items.include?(distribution_row.id) %>
-  <td class="text-right">
+  <td class="text-center">
     <%= view_button_to distribution_path(distribution_row) %>
     <% if (!distribution_row.complete? && !distribution_row.future?) || current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
       <%= edit_button_to edit_distribution_path(distribution_row), enabled: !distribution_has_inactive_item %>
