@@ -53,9 +53,8 @@
                 <%= f.check_box :visible_to_partners, {class: "input-group-text", id: "visible_to_partners"}, "true", "false" %>
               <% end %>
 
-              <%= f.input :additional_info, label: "Additional Information (Bank Use Only)", wrapper: :input_group do %>
-                <%= f.text_field :additional_info, class: "form-control" %>
-              <% end %>
+              <%= f.label :message, "Additional Information (Bank Use Only) " %> <i>(500 character max)</i>
+              <%= f.input :additional_info, label: false, maxlength: 500, wrapper: :input_group %>
             </div>
             <!-- /.card-body -->
             <div class="card-footer">

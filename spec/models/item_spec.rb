@@ -40,6 +40,7 @@ RSpec.describe Item, type: :model do
     it { should validate_numericality_of(:distribution_quantity).is_greater_than(0) }
     it { should validate_numericality_of(:on_hand_minimum_quantity).is_greater_than_or_equal_to(0) }
     it { should validate_numericality_of(:on_hand_recommended_quantity).is_greater_than_or_equal_to(0) }
+    it { should validate_length_of(:additional_info).is_at_most(500) }
   end
 
   context "Filtering >" do
