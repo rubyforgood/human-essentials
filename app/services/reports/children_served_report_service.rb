@@ -42,15 +42,17 @@ module Reports
       .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50)')
     end
 
+    # These joins look circular but are needed due to polymorphic relationships.
+    # A distribution has many line_items, items, and base_items but kits also
+    # have the same relationships and we want to perform calculations on the
+    # items in the kits not the kit items themselves.
     def children_served_with_kits_containing_disposables
       organization
-      .distributions
-      .for_year(year)
-      .joins(line_items: {item: :kit})
-      .merge(Item.disposable)
-      .where.not(items: {kit_id: nil})
-      .distinct
-      .count("kits.id")
+        .distributions
+        .for_year(year)
+        .joins(line_items: { item: {kit: {line_items: {item: :base_item}}}})
+        .merge(Item.disposable)
+        .sum("line_items.quantity * line_items_kits.quantity / COALESCE(items_line_items.distribution_quantity, 50)")
     end
   end
 end
