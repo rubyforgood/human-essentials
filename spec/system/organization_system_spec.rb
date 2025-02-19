@@ -21,39 +21,50 @@ RSpec.describe "Organization management", type: :system, js: true do
       expect(page).to have_content("invited to organization")
     end
 
-    it "can remove a user from the organization" do
-      user = create(:user, name: "User to be deactivated", organization: organization)
-      visit organization_path
-      accept_confirm do
-        click_button dom_id(user, "dropdownMenu")
-        click_link "Remove User"
+    shared_examples "organization role management checks" do |user_factory|
+
+      let!(:managed_user) { create(user_factory, name: "User to be managed", organization: organization) }
+
+      it 'can remove that user from the organization' do
+        visit organization_path
+        accept_confirm do
+          click_button dom_id(managed_user, "dropdownMenu")
+          click_link "Remove User"
+        end
+
+        expect(page).to have_content("User has been removed!")
+        expect(managed_user.has_role?(Role::ORG_USER)).to be false
       end
 
-      expect(page).to have_content("User has been removed!")
-      expect(user.has_role?(Role::ORG_USER)).to be false
+      it "can promote that user from the organization" do
+        visit organization_path
+        accept_confirm do
+          click_button dom_id(managed_user, "dropdownMenu")
+          click_link "Promote to Admin"
+        end
+
+        expect(page).to have_content("User has been promoted!")
+        expect(managed_user.has_role?(Role::ORG_ADMIN, organization)).to be true
+      end
+
+      it "can demote that user from the organization" do
+        managed_user.add_role(Role::ORG_ADMIN, organization)
+        visit organization_path
+        accept_confirm do
+          click_link "Demote to User"
+        end
+
+        expect(page).to have_content("User has been demoted!")
+        expect(managed_user.has_role?(Role::ORG_ADMIN, organization)).to be false
+      end
     end
 
-    it "can promote a user from the organization" do
-      user = create(:user, name: "User to be promoted", organization: organization)
-      visit organization_path
-      accept_confirm do
-        click_button dom_id(user, "dropdownMenu")
-        click_link "Promote to Admin"
-      end
-
-      expect(page).to have_content("User has been promoted!")
-      expect(user.has_role?(Role::ORG_ADMIN, organization)).to be true
+    context "managing a user from the organization" do
+      include_examples "organization role management checks", :user
     end
 
-    it "can demote a user from the organization" do
-      user = create(:organization_admin, name: "User to be demoted", organization: organization)
-      visit organization_path
-      accept_confirm do
-        click_link "Demote to User"
-      end
-
-      expect(page).to have_content("User has been demoted!")
-      expect(user.has_role?(Role::ORG_ADMIN, organization)).to be false
+    context "managing a super admin user from the organization" do
+      include_examples "organization role management checks", :super_admin
     end
 
   end
