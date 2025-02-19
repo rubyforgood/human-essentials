@@ -38,7 +38,7 @@ module Reports
       .distributions
       .for_year(year)
       .joins(line_items: :item)
-      .merge(Item.disposable)
+      .merge(Item.loose.disposable)
       .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50)')
     end
 
@@ -50,9 +50,9 @@ module Reports
       organization
         .distributions
         .for_year(year)
-        .joins(line_items: { item: {kit: {line_items: {item: :base_item}}}})
+        .joins(line_items: { item: :kit })
         .merge(Item.disposable)
-        .sum("line_items.quantity * line_items_kits.quantity / COALESCE(items_line_items.distribution_quantity, 50)")
+        .count("kits.id")
     end
   end
 end

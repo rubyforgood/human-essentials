@@ -48,13 +48,14 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
 
       create(:line_item, :distribution, quantity: 10, item: toddler_disposable_kit_item, itemizable: infant_distribution)
       create(:line_item, :distribution, quantity: 10, item: infant_disposable_kit_item, itemizable: toddler_distribution)
+      create(:line_item, :distribution, quantity: 10, item: toddler_disposable_kit_item, itemizable: toddler_distribution)
 
       report = described_class.new(organization: organization, year: within_time.year).report
       expect(report).to eq({
                                     name: 'Children Served',
                                     entries: {
-                                      'Average children served monthly' => "10",
-                                      'Total children served' => "115", # 100 normal and 15 from kits
+                                      'Average children served monthly' => "9",
+                                      'Total children served' => "103", # 100 normal and 3 from kits
                                       'Repackages diapers?' => 'Y',
                                       'Monthly diaper distributions?' => 'Y'
                                     }
@@ -91,6 +92,7 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       toddler_distribution = create(:distribution, organization: organization, issued_at: within_time)
 
       create(:line_item, :distribution, quantity: 100, item: toddler_disposable_kit_item, itemizable: infant_distribution)
+      create(:line_item, :distribution, quantity: 200, item: toddler_disposable_kit_item, itemizable: toddler_distribution)
       create(:line_item, :distribution, quantity: 200, item: infant_disposable_kit_item, itemizable: toddler_distribution)
 
       report = described_class.new(organization: organization, year: within_time.year).report
@@ -98,7 +100,7 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
                                     name: 'Children Served',
                                     entries: {
                                       'Average children served monthly' => "4",
-                                      'Total children served' => "46", # 40 normal and 6 from kits
+                                      'Total children served' => "43", # 40 normal and 3 from kits
                                       'Repackages diapers?' => 'Y',
                                       'Monthly diaper distributions?' => 'Y'
                                     }
