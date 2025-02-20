@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
 
     @current_organization = if !current_role
       nil
-    elsif current_role&.resource&.is_a?(Organization)
+    elsif current_role.resource.is_a?(Organization)
       current_role.resource
     else
       Organization.find_by(short_name: params[:organization_name])
