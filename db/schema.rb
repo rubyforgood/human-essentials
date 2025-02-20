@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_02_01_151720) do
+ActiveRecord::Schema[7.2].define(version: 2025_02_18_193017) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -142,6 +142,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_01_151720) do
     t.string "size"
     t.integer "item_count"
     t.string "partner_key"
+    t.string "reporting_category"
   end
 
   create_table "broadcast_announcements", force: :cascade do |t|
