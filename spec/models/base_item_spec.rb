@@ -2,15 +2,16 @@
 #
 # Table name: base_items
 #
-#  id            :bigint           not null, primary key
-#  barcode_count :integer
-#  category      :string
-#  item_count    :integer
-#  name          :string
-#  partner_key   :string
-#  size          :string
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
+#  id                 :bigint           not null, primary key
+#  barcode_count      :integer
+#  category           :string
+#  item_count         :integer
+#  name               :string
+#  partner_key        :string
+#  reporting_category :string
+#  size               :string
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
 #
 
 RSpec.describe BaseItem, type: :model do
@@ -27,6 +28,28 @@ RSpec.describe BaseItem, type: :model do
     it "keeps count of its associated items" do
       c = create(:base_item, name: "Base", item_count: 0)
       expect { create_list(:item, 2, base_item: c) }.to change { c.item_count }.by(2)
+    end
+  end
+
+  describe "Callbacks" do
+    describe "set_reporting_category" do
+      it "updates the reporting_category field" do
+        base_item = create(:base_item, name: "Kids S/M (38-65 lbs)")
+        expect(base_item.reporting_category).to eq("Disposable diapers")
+
+        base_item.update(name: "Liners (Incontinence)")
+        expect(base_item.reporting_category).to eq("Adult Incontinence")
+      end
+
+      it "sets no reporting_category for Kits" do
+        base_item = create(:base_item, name: "Kit")
+        expect(base_item.reporting_category).to eq(nil)
+      end
+
+      it "sets reporting_category for item names without mapping to other" do
+        base_item = create(:base_item, name: "Foobar")
+        expect(base_item.reporting_category).to eq("Other")
+      end
     end
   end
 

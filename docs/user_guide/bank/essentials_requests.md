@@ -93,6 +93,13 @@ If you have set the [Partner](getting_started_partners.md) to receive emails for
 the partner will be sent an email letting them know that their Request has been fulfilled.  This will contain the text you have [customized](getting_started_customization.md), with an attachment showing the details of the distribution.
 ![Example distribution printout](images/essentials/distributions/essentials_distributions_printout.png)
 
+## Submitting a Request on Behalf of a Partner
+Bank admins can submit a Request on behalf of a Partner by clicking the "New Quantity Request" button.
+![New Request button](images/essentials/requests/essentials_requests_new_request_button.png)
+
+This will bring up a list of Partners to choose from. After selecting a Partner, the details for the Request can be entered.
+![New Request details](images/essentials/requests/essentials_requests_new_request_details.png)
+
 ## Cancelling a Request
 To cancel a Request from the Requests list,  click the "cancel" button beside it.  
 ![navigation to cancel Request](images/essentials/requests/essentials_requests_cancel_navigation.png)

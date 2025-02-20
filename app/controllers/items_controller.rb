@@ -12,7 +12,7 @@ class ItemsController < ApplicationController
 
     @item_categories = current_organization.item_categories.includes(:items).order('name ASC')
     @kits = current_organization.kits.includes(line_items: :item)
-    @storages = current_organization.storage_locations.active_locations.order(id: :asc)
+    @storages = current_organization.storage_locations.active.order(id: :asc)
 
     @include_inactive_items = params[:include_inactive_items]
     @selected_base_item = filter_params[:by_base_item]
@@ -44,9 +44,10 @@ class ItemsController < ApplicationController
       @base_items = BaseItem.without_kit.alphabetized
       # Define a @item to be used in the `new` action to be rendered with
       # the provided parameters. This is required to render the page again
-      # with the error + the invalid parameters
+      # with the error + the invalid parameters.
+      @item_categories = current_organization.item_categories.order('name ASC') # Load categories here
       @item = current_organization.items.new(item_params)
-      flash[:error] = result.error.record.errors.full_messages.to_sentence
+      flash.now[:error] = result.error.record.errors.full_messages.to_sentence
       render action: :new
     end
   end
@@ -77,7 +78,7 @@ class ItemsController < ApplicationController
     deactivated = @item.active_changed? && !@item.active
     if deactivated && !@item.can_deactivate?
       @base_items = BaseItem.without_kit.alphabetized
-      flash[:error] = "Can't deactivate this item - it is currently assigned to either an active kit or a storage location!"
+      flash.now[:error] = "Can't deactivate this item - it is currently assigned to either an active kit or a storage location!"
       render action: :edit
       return
     end
@@ -86,7 +87,7 @@ class ItemsController < ApplicationController
       redirect_to items_path, notice: "#{@item.name} updated!"
     else
       @base_items = BaseItem.without_kit.alphabetized
-      flash[:error] = "Something didn't work quite right -- try again? #{@item.errors.map { |error| "#{error.attribute}: #{error.message}" }}"
+      flash.now[:error] = "Something didn't work quite right -- try again? #{@item.errors.map { |error| "#{error.attribute}: #{error.message}" }}"
       render action: :edit
     end
   end

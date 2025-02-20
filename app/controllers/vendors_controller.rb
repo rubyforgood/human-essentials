@@ -3,7 +3,14 @@ class VendorsController < ApplicationController
   include Importable
 
   def index
-    @vendors = current_organization.vendors.includes(:purchases).all.alphabetized
+    @vendors = current_organization
+      .vendors
+      .with_volumes
+      .alphabetized
+      .class_filter(filter_params)
+
+    @vendors = @vendors.active unless params[:include_inactive_vendors]
+    @include_inactive_vendors = params[:include_inactive_vendors]
 
     respond_to do |format|
       format.html
@@ -18,7 +25,7 @@ class VendorsController < ApplicationController
         format.html { redirect_to vendors_path, notice: "New vendor added!" }
         format.js
       else
-        flash[:error] = "Something didn't work quite right -- try again?"
+        flash.now[:error] = "Something didn't work quite right -- try again?"
         format.html { render action: :new }
         format.js { render template: "vendors/new_modal" }
       end
@@ -48,9 +55,37 @@ class VendorsController < ApplicationController
       redirect_to vendors_path, notice: "#{@vendor.contact_name} updated!"
 
     else
-      flash[:error] = "Something didn't work quite right -- try again?"
+      flash.now[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
     end
+  end
+
+  def deactivate
+    vendor = current_organization.vendors.find(params[:id])
+
+    begin
+      vendor.deactivate!
+    rescue => e
+      flash[:error] = e.message
+      redirect_back(fallback_location: vendors_path)
+      return
+    end
+
+    redirect_to vendors_path, notice: "#{vendor.business_name} has been deactivated."
+  end
+
+  def reactivate
+    vendor = current_organization.vendors.find(params[:id])
+
+    begin
+      vendor.reactivate!
+    rescue => e
+      flash[:error] = e.message
+      redirect_back(fallback_location: vendors_path)
+      return
+    end
+
+    redirect_to vendors_path, notice: "#{vendor.business_name} has been reactivated."
   end
 
   private
@@ -61,7 +96,9 @@ class VendorsController < ApplicationController
   end
 
   helper_method \
-    def filter_params
-    {}
+    def filter_params(_parameters = nil)
+    return {} unless params.key?(:filters)
+
+    params.require(:filters).permit(:include_inactive_vendors)
   end
 end

@@ -1,6 +1,7 @@
 # frozen_String_literal: true
 
 class PartnerUsersController < ApplicationController
+  before_action :authorize_admin
   before_action :set_partner, only: %i[index create destroy resend_invitation]
 
   def index
@@ -19,7 +20,7 @@ class PartnerUsersController < ApplicationController
       redirect_back(fallback_location: "/",
         notice: "#{@user.name} has been invited. Invitation email sent to #{@user.email}")
     else
-      flash[:alert] = "Invitation failed. Check the form for errors."
+      flash.now[:alert] = "Invitation failed. Check the form for errors."
       @users = @partner.users
       render :index
     end

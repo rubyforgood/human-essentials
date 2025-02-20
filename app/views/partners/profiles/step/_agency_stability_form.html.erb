@@ -7,16 +7,12 @@
     <%= pf.input :form_990, label: "Form 990 Filed", as: :radio_buttons, class: "form-control" %>
   </div>
 
-  <% if profile.proof_of_form_990.attached? %>
-    <div class="form-group">
-      <label>Attached file: </label>
-      <%= link_to profile.proof_of_form_990.blob['filename'], rails_blob_path(profile.proof_of_form_990), class: "font-weight-bold" %>
-    </div>
-  <% end %>
-
-  <div class="form-group">
-    <%= pf.file_field :proof_of_form_990, class: "form-control-file" %>
-  </div>
+  <%= render "shared/custom_file_input",
+           form_builder: pf,
+           attachment: profile.proof_of_form_990,
+           attachment_name: :proof_of_form_990,
+           label_for: "partner_profile_proof_of_form_990",
+           label_text: "Form 990" %>
 
   <div class="form-group">
     <%= pf.input :program_name, label: "Program Name(s)", class: "form-control" %>

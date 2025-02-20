@@ -27,7 +27,7 @@ class BarcodeItemsController < ApplicationController
         format.html { redirect_to barcode_items_path, notice: msg }
       end
     else
-      flash[:error] = "Something didn't work quite right -- try again?"
+      flash.now[:error] = "Something didn't work quite right -- try again?"
       render action: :new
     end
   end
@@ -78,7 +78,7 @@ class BarcodeItemsController < ApplicationController
     if @barcode_item.update(barcode_item_params)
       redirect_to barcode_items_path, notice: "Barcode updated!"
     else
-      flash[:error] = "Something didn't work quite right -- try again?"
+      flash.now[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
     end
   end
@@ -88,10 +88,11 @@ class BarcodeItemsController < ApplicationController
       barcode = current_organization.barcode_items.find(params[:id])
       raise if barcode.nil? || barcode.global?
 
-      barcode.destroy
+      barcode.destroy!
     rescue StandardError
       flash[:error] = "Sorry, you don't have permission to delete this barcode."
     end
+    flash[:notice] = "Barcode deleted!"
     redirect_to barcode_items_path
   end
 

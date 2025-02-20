@@ -1,0 +1,52 @@
+agency_type_map: &agency_type_map
+  other: "Other"
+  career: "Career technical training"
+  abuse: "Child abuse resource center"
+  bnb: "Basic Needs Bank"
+  church: "Church outreach ministry"
+  college: "College and Universities"
+  cdc: "Community development corporation"
+  health: "Community health program or clinic"
+  outreach: "Community outreach services"
+  legal: "Correctional Facilities / Jail / Prison / Legal System"
+  crisis: "Crisis/Disaster services"
+  disab: "Developmental disabilities program"
+  district: "School District"
+  domv: "Domestic violence shelter"
+  ece: "Early Childhood Education/Childcare"
+  child: "Early childhood services"
+  edu: "Education program"
+  family: "Family resource center"
+  food: "Food bank/pantry"
+  foster: "Foster Program"
+  govt: "Government Agency/Affiliate"
+  headstart: "Head Start/Early Head Start"
+  homevisit: "Home visits"
+  homeless: "Homeless resource center"
+  hosp: "Hospital"
+  infpan: "Infant/Child Pantry/Closet"
+  lib: "Library"
+  mhealth: "Mental Health"
+  military: "Military Bases/Veteran Services"
+  police: "Police Station"
+  preg: "Pregnancy resource center"
+  presch: "Preschool"
+  ref: "Refugee resource center"
+  es: "School - Elementary School"
+  hs: "School - High School"
+  ms: "School - Middle School"
+  senior: "Senior Center"
+  tribal: "Tribal/Native-Based Organization"
+  treat: "Treatment clinic"
+  twoycollege: "Two-Year College"
+  wic: "Women, Infants and Children"
+
+en:
+  partners_profile:
+    *agency_type_map
+
+  simple_form:
+    options:
+      profile:
+        agency_type:
+          *agency_type_map

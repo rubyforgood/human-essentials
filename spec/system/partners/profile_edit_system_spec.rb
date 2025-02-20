@@ -98,5 +98,53 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       expect(page).to have_css("#pick_up_person.accordion-collapse.collapse.show", visible: true)
       expect(page).to have_css("#partner_settings.accordion-collapse.collapse.show", visible: true)
     end
+
+    it "persists file upload when there are validation errors" do
+      # Open up Agency Information section and upload proof-of-status letter
+      find("button[data-bs-target='#agency_information']").click
+      within "#agency_information" do
+        expect(find("label[for='partner_profile_proof_of_partner_status']")).to have_content("Choose file...")
+        attach_file("partner_profile_proof_of_partner_status", Rails.root.join("spec/fixtures/files/irs_determination_letter.md"), make_visible: true)
+        expect(find("label[for='partner_profile_proof_of_partner_status']")).to have_content("irs_determination_letter.md")
+      end
+
+      # Open Pick up person section and fill in 4 email addresses which will generate a validation error
+      find("button[data-bs-target='#pick_up_person']").click
+      within "#pick_up_person" do
+        fill_in "Pick Up Person's Email", with: "email1@example.com, email2@example.com, email3@example.com, email4@example.com"
+      end
+
+      # Save Progress
+      all("input[type='submit'][value='Save Progress']").last.click
+
+      # Expect an alert-danger message containing validation errors
+      expect(page).to have_css(".alert-danger", text: /There is a problem/)
+
+      # Open up Agency Information section and expect the file field to remember users selection
+      # but NOT be persisted because there hasn't yet been a successful form submission.
+      find("button[data-bs-target='#agency_information']").click
+      within "#agency_information" do
+        expect(find("label[for='partner_profile_proof_of_partner_status']")).to have_content("irs_determination_letter.md")
+        expect(page).not_to have_content("Attached file:")
+        expect(page).not_to have_link("irs_determination_letter.md")
+      end
+
+      # Fix validation error in Pick up person section: It's already open due to having a validation error
+      within "#pick_up_person" do
+        fill_in "Pick Up Person's Email", with: "email1@example.com, email2@example.com, email3@example.com"
+      end
+
+      # Save Progress
+      all("input[type='submit'][value='Save Progress']").last.click
+      expect(page).to have_css(".alert-success", text: "Details were successfully updated.")
+
+      # Open up Agency Information section and expect file is persisted
+      find("button[data-bs-target='#agency_information']").click
+      within "#agency_information" do
+        expect(page).to have_content("Attached file:")
+        expect(page).to have_link("irs_determination_letter.md", href: /\/rails\/active_storage\/blobs\/redirect\/.+\/irs_determination_letter\.md/)
+        expect(find("label[for='partner_profile_proof_of_partner_status']")).to have_content("irs_determination_letter.md")
+      end
+    end
   end
 end

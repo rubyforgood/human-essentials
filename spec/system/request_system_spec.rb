@@ -115,6 +115,42 @@ RSpec.describe "Requests", type: :system, js: true do
       end
     end
     it_behaves_like "Date Range Picker", Request, :created_at
+
+    it "doesn't display New Quantity Request link" do
+      visit subject
+      expect(page).to_not have_link "New Quantity Request"
+    end
+
+    context "when logged in as an org admin" do
+      let(:org_admin) { create(:organization_admin) }
+
+      before do
+        sign_in(org_admin)
+        visit subject
+      end
+
+      it "displays New Quantity Request link" do
+        expect(page).to have_link "New Quantity Request"
+      end
+
+      context "clicking on the link" do
+        before { click_on "New Quantity Request" }
+
+        it "displays a list of active partners" do
+          create(:partner, :deactivated, organization:, name: "Inactive Partner", email: "inactive_partner@example.com")
+          partner_names = organization.partners.active.pluck(:name)
+          expect(page).to have_select("partner_id", with_options: partner_names)
+        end
+
+        context "selecting a partner" do
+          it "redirects to new partner request page" do
+            select(partner1.name, from: "partner_id")
+            click_on "Next"
+            expect(page).to have_current_path(new_partners_request_path(partner_id: partner1.id))
+          end
+        end
+      end
+    end
   end
 
   context "#show" do
@@ -225,6 +261,15 @@ RSpec.describe "Requests", type: :system, js: true do
         expect(page).to have_content("Request #{request.id} has been removed")
         expect(request.reload.discarded_at).not_to eq(nil)
         expect(request.reload.discard_reason).to eq(reason)
+      end
+
+      it 'should show the partners name, requesters email, request date, comments' do
+        click_on 'Cancel'
+
+        expect(page).to have_content request.partner.name
+        expect(page).to have_content request.partner.email
+        expect(page).to have_content("January 1 2020")
+        expect(page).to have_content request.comments
       end
     end
   end

@@ -33,7 +33,7 @@ class AdjustmentsController < ApplicationController
   def new
     @adjustment = current_organization.adjustments.new
     @adjustment.line_items.build
-    @storage_locations = current_organization.storage_locations.active_locations
+    @storage_locations = current_organization.storage_locations.active
     @items = current_organization.items.loose.active.alphabetized
   end
 
@@ -45,7 +45,7 @@ class AdjustmentsController < ApplicationController
       flash[:notice] = "Adjustment was successful."
       redirect_to adjustment_path(@adjustment)
     else
-      flash[:error] = @adjustment.errors.collect { |error| "#{error.attribute}: " + error.message }.join("<br />".html_safe)
+      flash.now[:error] = @adjustment.errors.collect { |error| "#{error.attribute}: " + error.message }.join("<br />".html_safe)
       load_form_collections
       render :new
     end
@@ -54,7 +54,7 @@ class AdjustmentsController < ApplicationController
   private
 
   def load_form_collections
-    @storage_locations = current_organization.storage_locations.active_locations
+    @storage_locations = current_organization.storage_locations.active
     @items = current_organization.items.loose.alphabetized
   end
 

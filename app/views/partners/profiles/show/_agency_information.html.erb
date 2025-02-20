@@ -6,9 +6,8 @@
       <dd><%= profile.partner.name %></dd>
 
       <dt>Agency Type</dt>
-      <dd><%= profile.agency_type %></dd>
-
-      <% if profile.agency_type == "Other" %>
+      <dd><%= t profile.agency_type, scope: :partners_profile %></dd>
+      <% if profile.agency_type&.to_sym == :other %>
         <dt>Other Agency Type</dt>
         <dd><%= profile.other_agency_type %></dd>
       <% end %>
