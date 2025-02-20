@@ -2,6 +2,8 @@ class DistributionTotalsService
   DistributionTotal = Data.define(:quantity, :value)
 
   class << self
+    # @param distributions [Distribution::ActiveRecord_Relation]
+    # @return [Hash<Integer, DistributionTotal>]
     def call(distributions)
       calculate_totals(distributions)
     end
@@ -9,7 +11,7 @@ class DistributionTotalsService
     private
 
     # Returns hash with quantity/value totals for each distribution.
-    # Quantity and value of items are reduced if item filtering present (id/category)
+    # NOTE: Quantity and value of items are reduced if item filtering present (id/category)
     #
     # @return [Hash<Integer, DistributionTotal>]
     def calculate_totals(distributions)
