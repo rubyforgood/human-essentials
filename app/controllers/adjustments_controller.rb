@@ -12,7 +12,7 @@ class AdjustmentsController < ApplicationController
                                        .order(created_at: :desc)
                                        .class_filter(filter_params)
                                        .during(helpers.selected_range)
-    @paginated_adjustments = @adjustments.page(params[:page])
+    @paginated_adjustments = @adjustments.includes(:line_items, :storage_location).page(params[:page])
 
     @storage_locations = Adjustment.storage_locations_adjusted_for(current_organization).uniq
     @users = current_organization.users

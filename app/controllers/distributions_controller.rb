@@ -163,7 +163,7 @@ class DistributionsController < ApplicationController
   end
 
   def show
-    @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
+    @distribution = Distribution.includes(:storage_location, line_items: :item).find(params[:id])
     @line_items = @distribution.line_items
 
     @total_quantity = @distribution.total_quantity
