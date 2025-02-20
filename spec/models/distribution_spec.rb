@@ -284,7 +284,7 @@ RSpec.describe Distribution, type: :model do
         create(:item_request, request: request, item_id: item1.id, quantity: 15)
         create(:item_request, request: request, item_id: item2.id, quantity: 18)
         distribution = Distribution.new
-        distribution.copy_from_request(request.id)
+        distribution.copy_from_request(request)
         expect(distribution.line_items.size).to eq 2
         expect(distribution.line_items.first.quantity).to eq 15
         expect(distribution.line_items.second.quantity).to eq 18

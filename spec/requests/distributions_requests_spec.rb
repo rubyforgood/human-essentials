@@ -324,6 +324,13 @@ RSpec.describe "Distributions", type: :request do
         expect(selectable_items).not_to include("Inactive Item")
       end
 
+      it "disables the partner field when distribution is created from a request" do
+        get new_distribution_path(default_params)
+        page = Nokogiri::HTML(response.body)
+
+        expect(page.at_css("select#distribution_partner_id").classes).to include("readonly")
+      end
+
       context "with org default but no partner default" do
         it "selects org default" do
           organization.update!(default_storage_location: storage_location.id)
@@ -393,6 +400,13 @@ RSpec.describe "Distributions", type: :request do
             expect(page.css('#distribution_line_items_attributes_0_quantity').attr('value')).to eq(nil)
             # in the template
             expect(page.css('select[name="distribution[line_items_attributes][1][item_id]"]')).not_to be_empty
+          end
+
+          it "should have partner select field enabled" do
+            get new_distribution_path({})
+            page = Nokogiri::HTML(response.body)
+
+            expect(page.at_css("select#distribution_partner_id").classes).not_to include("readonly")
           end
         end
       end

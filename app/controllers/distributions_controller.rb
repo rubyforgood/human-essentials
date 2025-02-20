@@ -109,9 +109,9 @@ class DistributionsController < ApplicationController
     else
       @distribution = result.distribution
       if request_id
-        # Using .find here instead of .find_by so we can raise a error if request_id
-        # does not match any known Request
-        @distribution.request = Request.find(request_id)
+        @request = Request.find(request_id)
+        @distribution.request = @request
+        @distribution.partner = @request.partner
       end
       if @distribution.line_items.size.zero?
         @distribution.line_items.build
@@ -148,7 +148,8 @@ class DistributionsController < ApplicationController
   def new
     @distribution = Distribution.new
     if params[:request_id]
-      @distribution.copy_from_request(params[:request_id])
+      @request = Request.find(request_id)
+      @distribution.copy_from_request(@request)
     else
       @distribution.line_items.build
       @distribution.copy_from_donation(params[:donation_id], params[:storage_location_id])
@@ -292,7 +293,7 @@ class DistributionsController < ApplicationController
   end
 
   def request_id
-    params.dig(:distribution, :request_attributes, :id)
+    params[:request_id] || params.dig(:distribution, :request_attributes, :id)
   end
 
   def daily_items(pick_ups)

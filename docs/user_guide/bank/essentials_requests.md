@@ -67,8 +67,9 @@ At the bottom of the screen are buttons letting you start to fulfill the Request
 ## Fulfilling a Request
 To fulfill a Request, bring up the Request list by clicking on "Requests" in the left-hand menu,  then click on "view" beside the request,  then scroll to the bottom of that screen and click "Fulfill request".
 That will bring you into a screen that allows you to specify the details for the distribution based on that Request -- you'll see a notice "request started".
-Fill in the remaining needed information.  The fields include:
-- Partner (It would be rare indeed to change this)
+Fill in the remaining needed information. The fields include:
+
+- Partner (determined by partner who created the request, not possible to change)
 - Distribution date and time (the scheduled pickup delivery or shipment date)
 - Send email reminder the day before?
 - Agency representative (defaulted to the user who sent the Request)
