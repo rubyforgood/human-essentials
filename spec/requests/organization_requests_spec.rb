@@ -333,39 +333,71 @@ RSpec.describe "Organizations", type: :request do
     end
 
     describe "POST #promote_to_org_admin" do
-      subject { post promote_to_org_admin_organization_path(user_id: user.id) }
+      shared_examples "promote to admin checks" do |user_factory|
+        let!(:user_to_promote) { create(user_factory, name: "User to promote") }
+        subject { post promote_to_org_admin_organization_path(user_id: user_to_promote.id) }
 
-      it "runs successfully" do
-        subject
-        expect(user.has_role?(Role::ORG_ADMIN, organization)).to eq(true)
-        expect(response).to redirect_to(organization_path)
-        expect(flash[:notice]).to eq("User has been promoted!")
+        it "runs correctly" do
+          subject
+          expect(user_to_promote.reload.has_role?(Role::ORG_ADMIN, organization)).to be_truthy
+          expect(response).to redirect_to(organization_path)
+          expect(flash[:notice]).to eq("User has been promoted!")
+        end
+      end
+
+      context "promoting a user" do
+        include_examples "promote to admin checks", :user
+      end
+
+      context "promoting a super admin user" do
+        include_examples "promote to admin checks", :super_admin
       end
     end
 
     describe "POST #demote_to_user" do
-      subject { post demote_to_user_organization_path(user_id: admin_user.id) }
+      shared_examples "demote to user checks" do |user_factory|
+        let!(:user_to_demote) { create(user_factory, name: "User to demote", organization: organization) }
+        subject { post demote_to_user_organization_path(user_id: user_to_demote.id) }
 
-      it "runs correctly" do
-        subject
-        expect(admin_user.reload.has_role?(Role::ORG_ADMIN, admin_user.organization)).to be_falsey
-        expect(response).to redirect_to(organization_path)
-        expect(flash[:notice]).to eq("User has been demoted!")
+        it "runs correctly" do
+          user_to_demote.add_role(Role::ORG_ADMIN, organization)
+          subject
+          expect(user_to_demote.reload.has_role?(Role::ORG_ADMIN, organization)).to be_falsey
+          expect(response).to redirect_to(organization_path)
+          expect(flash[:notice]).to eq("User has been demoted!")
+        end
+      end
+
+      context "demoting a user" do
+        include_examples "demote to user checks", :organization_admin
+      end
+
+      context "demoting a super admin user" do
+        include_examples "demote to user checks", :super_admin
       end
     end
 
     describe "POST #remove_user" do
       subject { post remove_user_organization_path(user_id: user.id) }
 
-      context "when user is org user" do
-        it "redirects after update" do
-          subject
-          expect(response).to redirect_to(organization_path)
-        end
+      shared_examples "remove user checks" do |user_factory|
+        let!(:user) { create(user_factory, name: "User to remove", organization: organization) }
+        subject { post remove_user_organization_path(user_id: user.id) }
 
-        it "removes the org user role" do
-          expect { subject }.to change { user.has_role?(Role::ORG_USER, organization) }.from(true).to(false)
+        it "runs correctly" do
+          subject
+          expect(user.reload.has_role?(Role::ORG_USER, organization)).to be_falsey
+          expect(response).to redirect_to(organization_path)
+          expect(flash[:notice]).to eq("User has been removed!")
         end
+      end
+
+      context "removing a user" do
+        include_examples "remove user checks", :user
+      end
+
+      context "removing a super admin user" do
+        include_examples "remove user checks", :super_admin
       end
 
       context "when user is not an org user" do
