@@ -26,10 +26,6 @@ class Adjustment < ApplicationRecord
 
   validate :storage_locations_belong_to_organization
 
-  def self.storage_locations_adjusted_for(organization)
-    includes(:storage_location).joins(:storage_location).where(organization_id: organization.id, storage_location: {discarded_at: nil}).collect(&:storage_location).sort
-  end
-
   def split_difference
     pre_adjustment = line_items.partition { |line_item| line_item.quantity.positive? }
     increasing_adjustment, decreasing_adjustment = pre_adjustment.map { |adjustment| Adjustment.new(line_items: adjustment) }
