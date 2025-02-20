@@ -22,8 +22,6 @@ RSpec.describe ItemizableUpdateService do
     freeze_time do
       ex.run
     end
-  rescue => e
-    binding.b
   end
 
   describe "increases" do
@@ -205,8 +203,6 @@ RSpec.describe ItemizableUpdateService do
 
         expect(DonationEvent.count).to eq(2)
         expect(View::Inventory.total_inventory(organization.id)).to eq(95)
-      rescue => e
-        binding.b
       end
 
       it "should send an update event if it does not exist" do
