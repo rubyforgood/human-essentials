@@ -1,5 +1,7 @@
 class BackfillReportingCategoryForBaseItems < ActiveRecord::Migration[7.2]
   def up
+    # To be safe
+    BaseItem.reset_column_information
     # A before_save validation has been added. so saving each record fills
     # in the reporting_category field.
     BaseItem.find_each do |base_item|
