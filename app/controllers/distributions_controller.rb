@@ -180,6 +180,7 @@ class DistributionsController < ApplicationController
     if (!@distribution.complete? && @distribution.future?) ||
         current_user.has_cached_role?(Role::ORG_ADMIN, current_organization)
       @distribution.line_items.build if @distribution.line_items.size.zero?
+      @request = @distribution.request
       @items = current_organization.items.active.alphabetized
       @partner_list = current_organization.partners.alphabetized
       @audit_warning = current_organization.audits
@@ -211,6 +212,7 @@ class DistributionsController < ApplicationController
       flash.now[:error] = insufficient_error_message(result.error.message)
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @distribution.initialize_request_items
+      @request = @distribution.request
       @items = current_organization.items.active.alphabetized
       @partner_list = current_organization.partners.alphabetized
       @storage_locations = current_organization.storage_locations.active.alphabetized
