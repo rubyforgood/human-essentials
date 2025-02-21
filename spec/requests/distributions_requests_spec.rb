@@ -140,20 +140,19 @@ RSpec.describe "Distributions", type: :request do
           expect(distribution.total_quantity).to eq(20)
           expect(distribution.value_per_itemizable).to eq(2000)
 
-          # displays quantity of filtered item in distribution
-          # displays total value of distribution
+          # displays quantity and value of filtered item in distribution
           expect(item_quantity.text).to eq("10")
-          expect(item_value.text).to eq("$20.00")
+          expect(item_value.text).to eq("$10.00")
         end
 
-        it "changes the total quantity header" do
+        it "changes the total quantity and value headers" do
           get distributions_path, params: params
 
           page = Nokogiri::HTML(response.body)
           item_total_header, item_value_header = page.css("table thead tr th.numeric")
 
           expect(item_total_header.text).to eq("Total #{item.name}")
-          expect(item_value_header.text).to eq("Total Value")
+          expect(item_value_header.text).to eq("Value of #{item.name}")
         end
       end
 
@@ -178,20 +177,19 @@ RSpec.describe "Distributions", type: :request do
           expect(distribution.total_quantity).to eq(20)
           expect(distribution.value_per_itemizable).to eq(2000)
 
-          # displays quantity of filtered item in distribution
-          # displays total value of distribution
+          # displays quantity and value of filtered item in distribution
           expect(item_quantity.text).to eq("10")
-          expect(item_value.text).to eq("$20.00")
+          expect(item_value.text).to eq("$10.00")
         end
 
-        it "changes the total quantity header" do
+        it "changes the total quantity and value headers" do
           get distributions_path, params: params
 
           page = Nokogiri::HTML(response.body)
           item_total_header, item_value_header = page.css("table thead tr th.numeric")
 
           expect(item_total_header.text).to eq("Total in #{item_category.name}")
-          expect(item_value_header.text).to eq("Total Value")
+          expect(item_value_header.text).to eq("Value of #{item_category.name}")
         end
 
         it "doesn't show duplicate distributions" do
