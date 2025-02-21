@@ -92,14 +92,6 @@ class Donation < ApplicationRecord
     product_drive_participant&.donation_source_view || product_drive.donation_source_view
   end
 
-  def self.daily_quantities_by_source(start, stop)
-    joins(:line_items).includes(:line_items)
-                      .between(start, stop)
-                      .group(:source)
-                      .group_by_day("donations.created_at")
-                      .sum("line_items.quantity")
-  end
-
   def details
     case source
     when SOURCES[:product_drive]
