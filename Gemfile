@@ -23,8 +23,6 @@ gem "rails", "7.2.2"
 gem 'azure-storage-blob'
 # Adds soft delete functionality for models.
 gem 'discard', '~> 1.3'
-# Adds grouping by date/month/etc to queries.
-gem "groupdate", "~> 6.5"
 # Treats attributes like money, which knows about dollars and cents.
 gem "money-rails"
 # Tracks history / audits models.
@@ -52,6 +50,8 @@ gem "recaptcha"
 gem "turbo-rails"
 # Sprinkle a little JS to add interactivity
 gem "stimulus-rails"
+# Use JS import maps to manage JS without transpiling or bundling.
+gem "importmap-rails", "~> 2.1"
 
 ##### VIEWS/CONTROLLERS #####
 
@@ -67,8 +67,6 @@ gem "omniauth"
 gem "omniauth-rails_csrf_protection"
 # Allow login via Google.
 gem "omniauth-google-oauth2"
-
-gem "matrix"
 # Generate PDFs as views.
 gem "prawn-rails"
 # Reduces boilerplate HTML code when writing forms.
@@ -92,8 +90,6 @@ gem "flipper-active_record"
 gem "flipper-ui"
 # Calculates latitude and longitude from an address.
 gem "geocoder"
-# Enable making HTTP requests
-gem 'httparty'
 # Generate .ics calendars for use with Google Calendar
 gem 'icalendar', require: false
 # JSON Web Token encoding / decoding (e.g. for links in e-mails)
@@ -110,7 +106,6 @@ gem 'bootsnap', require: false
 # Technically they don't need to be in this Gemfile at all, but we are pinning them to
 # specific versions for compatibility reasons.
 gem "nokogiri", ">= 1.10.4"
-gem "image_processing"
 gem "sprockets", "~> 4.2.1"
 
 group :production, :staging do
@@ -220,5 +215,3 @@ end
 if %w(mingw mswin x64_mingw jruby).include?(RUBY_PLATFORM)
   gem "tzinfo-data", "~> 1.2", platforms: %i(mingw mswin x64_mingw jruby)
 end
-
-gem "importmap-rails", "~> 2.1"
