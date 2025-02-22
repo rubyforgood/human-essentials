@@ -40,11 +40,11 @@ module Reports
     end
 
     def monthly_supplies
-      total_supplies_distributed / 12.0
+      total_supplies_distributed.to_f / 12.0
     end
 
     def supplies_per_adult_per_month
-      monthly_supplies / (adults_served_per_month.nonzero? || 1)
+      monthly_supplies.to_f / (adults_served_per_month.nonzero? || 1)
     end
 
     def types_of_supplies
@@ -55,14 +55,14 @@ module Reports
     def percent_donated
       return 0.0 if total_supplies.zero?
 
-      (donated_supplies / total_supplies.to_f) * 100
+      (donated_supplies.to_f / total_supplies.to_f) * 100.0
     end
 
     # @return [Float]
     def percent_bought
       return 0.0 if total_supplies.zero?
 
-      (purchased_supplies / total_supplies.to_f) * 100
+      (purchased_supplies.to_f / total_supplies.to_f) * 100.0
     end
 
     # @return [String]
@@ -82,7 +82,7 @@ module Reports
 
     # @return [Integer]
     def total_supplies
-      @total_supplies ||= purchased_supplies + donated_supplies
+      @total_supplies ||= purchased_supplies.to_f + donated_supplies.to_f
     end
 
     # @return [Integer]
@@ -117,7 +117,7 @@ module Reports
 
       result = ActiveRecord::Base.connection.execute(sanitized_sql)
 
-      result.first['sum'].to_i
+      result.first['sum'].to_f
     end
 
     def adults_served_per_month
@@ -130,7 +130,7 @@ module Reports
                         .for_year(year)
                         .joins(line_items: :item)
                         .merge(Item.adult_incontinence)
-                        .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50)')
+                        .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50.0)')
       total_quantity.to_f / 12.0
     end
 

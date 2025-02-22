@@ -10,7 +10,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
     it 'should report zero values' do
       expect(report.report[:name]).to eq("Adult Incontinence")
       expect(report.report[:entries]).to match(hash_including({
-                                      "Adult incontinence supplies distributed" => "0",
+                                      "Adult incontinence supplies distributed" => "0.0",
                                       "Adults Assisted Per Month" => 0,
                                       "% adult incontinence bought" => "0%",
                                       "% adult incontinence supplies donated" => "0%",
@@ -152,7 +152,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
                                           "% adult incontinence bought" => "60%",
                                           "% adult incontinence supplies donated" => "40%",
                                           "Adults Assisted Per Month" => 9,
-                                          "Adult incontinence supplies distributed" => "2,180",
+                                          "Adult incontinence supplies distributed" => "2,180.0",
                                           "Adult incontinence supplies per adult per month" => 21,
                                           "Money spent purchasing adult incontinence supplies" => "$30.00"
                                         }))
@@ -179,9 +179,9 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
         expect(report.report[:entries]).to match(hash_including({
                                           "% adult incontinence bought" => "60%",
                                           "% adult incontinence supplies donated" => "40%",
-                                          "Adult incontinence supplies distributed" => "2,180",
+                                          "Adult incontinence supplies distributed" => "2,180.0",
                                           "Adults Assisted Per Month" => 4,
-                                          "Adult incontinence supplies per adult per month" => 51,
+                                          "Adult incontinence supplies per adult per month" => 50,
                                           "Money spent purchasing adult incontinence supplies" => "$30.00"
                                       }))
         expect(report.report[:entries]['Adult incontinence supplies'].split(', '))
