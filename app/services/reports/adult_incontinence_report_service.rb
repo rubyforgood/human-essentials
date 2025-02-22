@@ -14,7 +14,7 @@ module Reports
     def report
       @report ||= { name: 'Adult Incontinence',
                     entries: {
-                      'Adult incontinence supplies distributed' => number_with_delimiter(distributed_loose_supplies + distributed_adult_incontinence_items_from_kits),
+                      'Adult incontinence supplies distributed' => number_with_delimiter(total_supplies_distributed),
                       'Adults Assisted Per Month' => adults_served_per_month.round,
                       'Adult incontinence supplies per adult per month' => supplies_per_adult_per_month.round,
                       'Adult incontinence supplies' => types_of_supplies,
@@ -121,7 +121,7 @@ module Reports
     end
 
     def adults_served_per_month
-      total_people_served_with_loose_supplies_per_month + total_kits_with_adult_incontinence_items_distributed_per_month
+      total_people_served_with_loose_supplies_per_month + total_distributed_kits_containing_adult_incontinence_items_per_month
     end
 
     def total_people_served_with_loose_supplies_per_month
@@ -131,46 +131,24 @@ module Reports
                         .joins(line_items: :item)
                         .merge(Item.adult_incontinence)
                         .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50)')
-      total_quantity / 12.0
+      total_quantity.to_f / 12.0
     end
 
-    def total_kits_with_adult_incontinence_items_distributed_per_month
-      organization_id = @organization.id
-      year = @year
+    def distributed_kits_for_year
+      organization
+        .distributions
+        .for_year(year)
+        .joins(line_items: { item: :kit })
+        .distinct
+        .pluck('kits.id')
+    end
 
-      sql_query = <<-SQL
-        SELECT COUNT(DISTINCT distributions.id) AS kit_count
-        FROM distributions
-        INNER JOIN line_items ON line_items.itemizable_id = distributions.id AND line_items.itemizable_type = 'Distribution'
-        INNER JOIN items ON items.id = line_items.item_id
-        INNER JOIN kits ON kits.id = items.kit_id
-        INNER JOIN base_items ON base_items.partner_key = items.partner_key
-        WHERE distributions.organization_id = ?
-          AND EXTRACT(YEAR FROM distributions.issued_at) = ?
-          AND NOT EXISTS (
-            SELECT 1
-            FROM line_items kit_line_items
-            INNER JOIN items kit_items ON kit_items.id = kit_line_items.item_id
-            INNER JOIN base_items kit_base_items ON kit_base_items.partner_key = kit_items.partner_key
-            WHERE kit_line_items.itemizable_id = distributions.id
-              AND kit_line_items.itemizable_type = 'Distribution'
-              AND (LOWER(kit_base_items.category) LIKE '%wipes%' OR LOWER(kit_base_items.name) LIKE '%wipes%')
-          )
-          AND EXISTS (
-            SELECT 1
-            FROM line_items kit_line_items
-            INNER JOIN items kit_items ON kit_items.id = kit_line_items.item_id
-            INNER JOIN base_items kit_base_items ON kit_base_items.partner_key = kit_items.partner_key
-            WHERE kit_line_items.itemizable_id = distributions.id
-              AND kit_line_items.itemizable_type = 'Distribution'
-              AND LOWER(kit_base_items.category) LIKE '%adult%'
-          );
-      SQL
-
-      sanitized_sql = ActiveRecord::Base.send(:sanitize_sql_array, [sql_query, organization_id, year])
-      result = ActiveRecord::Base.connection.execute(sanitized_sql)
-
-      result.first['kit_count'].to_i / 12.0
+    def total_distributed_kits_containing_adult_incontinence_items_per_month
+      kits = Kit.where(id: distributed_kits_for_year)
+      adult_incontinence_kits = kits.select do |kit|
+        kit.items.adult_incontinence.any?
+      end
+      adult_incontinence_kits.count.to_f / 12.0
     end
   end
 end
