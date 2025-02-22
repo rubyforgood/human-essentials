@@ -48,11 +48,6 @@ class Purchase < ApplicationRecord
   scope :purchased_from, ->(purchased_from) { where(purchased_from: purchased_from) }
   scope :during, ->(range) { where(purchases: { issued_at: range }) }
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
-  scope :for_csv_export, ->(organization, *) {
-    where(organization: organization)
-      .includes(:line_items, :storage_location)
-      .order(created_at: :desc)
-  }
 
   scope :active, -> { joins(:line_items).joins(:items).where(items: { active: true }) }
 
@@ -60,6 +55,16 @@ class Purchase < ApplicationRecord
 
   validates :amount_spent_in_cents, numericality: { greater_than: 0 }
   validate :total_equal_to_all_categories
+
+  SummaryByDates = Data.define(
+    :amount_spent,
+    :recent_purchases,
+    :period_supplies,
+    :diapers,
+    :adult_incontinence,
+    :other,
+    :total_items
+  )
 
   def storage_view
     storage_location.nil? ? "N/A" : storage_location.name
@@ -84,7 +89,7 @@ class Purchase < ApplicationRecord
   def self.organization_summary_by_dates(organization, date_range)
     purchases = where(organization: organization).during(date_range)
 
-    OpenStruct.new(
+    SummaryByDates.new(
       amount_spent: purchases.sum(:amount_spent_in_cents),
       recent_purchases: purchases.recent.includes(:vendor),
       period_supplies: purchases.sum(:amount_spent_on_period_supplies_cents),

@@ -131,7 +131,6 @@ RSpec.describe Partner, type: :model do
         expect(build(:partner, status: :invited)).not_to be_deletable
         expect(build(:partner, status: :awaiting_review)).not_to be_deletable
         expect(build(:partner, status: :approved)).not_to be_deletable
-        expect(build(:partner, status: :error)).not_to be_deletable
         expect(build(:partner, status: :recertification_required)).not_to be_deletable
         expect(build(:partner, status: :deactivated)).not_to be_deletable
       end
@@ -191,7 +190,6 @@ RSpec.describe Partner, type: :model do
       it 'should return false', :aggregate_failures do
         expect(build(:partner, status: :uninvited)).not_to be_approvable
         expect(build(:partner, status: :approved)).not_to be_approvable
-        expect(build(:partner, status: :error)).not_to be_approvable
         expect(build(:partner, status: :recertification_required)).not_to be_approvable
         expect(build(:partner, status: :deactivated)).not_to be_approvable
       end
@@ -281,57 +279,6 @@ RSpec.describe Partner, type: :model do
       expect do
         Partner.import_csv(csv, organization.id)
       end.to change { Partner.count }.by(20)
-    end
-  end
-
-  describe "#csv_export_attributes" do
-    let!(:partner) { create(:partner) }
-
-    let(:contact_name) { "Jon Ralfeo" }
-    let(:contact_email) { "jon@entertainment720.com" }
-    let(:contact_phone) { "1231231234" }
-    let(:agency_address1) { "4744 McDermott Mountain" }
-    let(:agency_address2) { "333 Never land street" }
-    let(:agency_city) { "Lake Shoshana" }
-    let(:agency_state) { "ND" }
-    let(:agency_zipcode) { "09980-7010" }
-    let(:agency_website) { "bosco.example" }
-    let(:agency_type) { Partner::AGENCY_TYPES["OTHER"] }
-    let(:other_agency_type) { "Another Agency Name" }
-    let(:notes) { "Some notes" }
-
-    before do
-      partner.profile.update({
-                               primary_contact_name: contact_name,
-                               primary_contact_email: contact_email,
-                               primary_contact_phone: contact_phone,
-                               address1: agency_address1,
-                               address2: agency_address2,
-                               city: agency_city,
-                               state: agency_state,
-                               zip_code: agency_zipcode,
-                               website: agency_website,
-                               agency_type: agency_type,
-                               other_agency_type: other_agency_type
-                             })
-      partner.update(notes: notes)
-    end
-
-    it "should has the info in the columns order" do
-      expect(partner.csv_export_attributes).to eq([
-        partner.name,
-        partner.email,
-        "#{agency_address1}, #{agency_address2}",
-        agency_city,
-        agency_state,
-        agency_zipcode,
-        agency_website,
-        "#{Partner::AGENCY_TYPES["OTHER"]}: #{other_agency_type}",
-        contact_name,
-        contact_phone,
-        contact_email,
-        notes
-      ])
     end
   end
 

@@ -103,17 +103,28 @@
                 <th class="date">Date of Distribution</th>
                 <th>Source Inventory</th>
 
+                <% filtered_item_name = @selected_item ? @items.find { |i| i.id == filter_params[:by_item_id].to_i }&.name : nil %>
+                <% filtered_category_name = @selected_item_category ? @item_categories.find { |ic| ic.id == filter_params[:by_item_category_id].to_i }&.name : nil %>
+
                 <!-- Quantity -->
-                <% if filter_params[:by_item_id].present? %>
-                  <th class="numeric">Total <%= @items.find { |i| i.id == filter_params[:by_item_id].to_i }&.name %></th>
-                <% elsif filter_params[:by_item_category_id].present? %>
-                  <th class="numeric">Total in <%= @item_categories.find { |ic| ic.id == filter_params[:by_item_category_id].to_i }&.name %></th>
+                <% if filtered_item_name %>
+                  <th class="numeric">Total <%= filtered_item_name %></th>
+                <% elsif filtered_category_name %>
+                  <th class="numeric">Total in <%= filtered_category_name %></th>
                 <% else %>
                   <th class="numeric">Total Items</th>
                 <% end %>
                 <!-- End Quantity -->
 
-                <th class="numeric">Total Value</th>
+                <!-- Value -->
+                <% if filtered_item_name %>
+                  <th class="numeric">Value of <%= filtered_item_name %></th>
+                <% elsif filtered_category_name %>
+                  <th class="numeric">Value of <%= filtered_category_name %></th>
+                <% else %>
+                  <th class="numeric">Total Value</th>
+                <% end %>
+                <!-- End Value -->
 
                 <th>Delivery Method</th>
                 <th>Shipping Cost</th>

@@ -5,183 +5,188 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Human Essentials</title>
 
-    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <style>
-      .app-images {
-        height: 400px;
-      }
-    </style>
+    <%= stylesheet_link_tag 'landing_page', media: 'all' %>
   </head>
   <body>
-  <%= render partial: "shared/flash_tailwind" %>
-  <div class='pt-2' style="background: linear-gradient(135deg, #3023AE, #C86DD7)">
-      <div class="container max-w-7xl mx-auto pt-5 px-5">
-        <nav>
-          <div class="flex justify-between items-center">
-            <div>
-              <a class="text-lg lg:text-3xl lg:text-4xl" href="#"><h2 class="text-white font-bold">HumanEssentials.app</h2></a>
-            </div>
+  <div class="hero pt-2">
+    <%= render partial: "shared/flash" %>
 
-            <div class="flex" id="myNavbar">
-              <div class="flex text-white space-x-4 md:space-x-10 text-md lg:text-2xl items-center">
-                <a class="hidden md:block" href="#about">About</a>
-                <a class="hidden md:block" href="#testimonials">Testimonials</a>
-                <a class="hidden md:block" href="#contact">Contact</a>
-                <a href="<%= new_user_session_path %>">
-                  <button class="flex flex-row items-center w-full px-4 py-2 bg-green-500 hover:bg-green-600 rounded-2xl text-md">
-                  <span class='text-lg'>Login</span>
-                  </button>
-                </a>
-              </div>
-            </div>
+    <div class="container-fluid px-4 pt-3">
+      <nav>
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <a href="#" class="text-decoration-none">
+              <h2 class="text-white fw-bold mb-0">HumanEssentials.app</h2>
+            </a>
           </div>
-        </nav>
-      </div>
 
-      <div class="container max-w-7xl mx-auto text-white font-bold flex px-5" style='height:60vh; min-height: 500px'>
-        <div class="flex flex-col justify-center items-center mx-auto lg:mx-0 text-center lg:text-left">
-          <div class="text-4xl">
-            <div>
-              <h2 class="">The easiest and most love-filled <br> way to manage your <br> Human Essentials bank.</h2>
-              <p class='text-lg font-normal mb-3 mt-2'>Ready to make yourself more efficient?</p>
-              <a href="<%= new_account_request_path %>"><button type="button" class="text-2xl bg-green-600 text-white px-3 py-2 rounded-2xl hover:bg-green-700">
-                Register your bank here for free!
-              </button></a>
+          <div class="d-flex">
+            <div class="d-flex text-white gap-4 gap-lg-5 align-items-center">
+              <a class="d-none d-md-block text-white text-decoration-none fs-5" href="#about">About</a>
+              <a class="d-none d-md-block text-white text-decoration-none fs-5" href="#testimonials">Testimonials</a>
+              <a class="d-none d-md-block text-white text-decoration-none fs-5" href="#contact">Contact</a>
+              <a class="text-decoration-none" href="<%= new_user_session_path %>">
+                <button class="btn btn-success d-flex align-items-center rounded-4">
+                  <span>Login</span>
+                </button>
+              </a>
             </div>
           </div>
-          <div class="hidden lg:block absolute right-52 w-1/4">
-            <%= image_tag("hero-image.svg") %>
+        </div>
+      </nav>
+    </div>
+
+    <div class="hero-subcontainer container-fluid px-4 text-white">
+      <div class="row h-100 align-items-center">
+        <div class="col-12 col-lg-7">
+          <div class="d-flex flex-column align-items-center align-items-lg-start text-center">
+            <h2 class="fs-2 fw-bold text-lg-start">The easiest and most love-filled <br> way to manage your <br> Human Essentials bank.</h2>
+            <p class="fs-5 mb-3 mt-2 text-lg-start">Ready to make yourself more efficient?</p>
+            <a href="<%= new_account_request_path %>"><button type="button" class="btn btn-success fs-4 fw-bold text-white rounded-4">
+              Register your bank here for free!
+            </button></a>
           </div>
+        </div>
+
+        <div class="col-0 d-none d-lg-block position-absolute w-25 p-0" style="right:13rem">
+          <%= image_tag("hero-image.svg", class: "w-100") %>
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="container max-w-7xl mx-auto pt-5" id="about">
-      <div class="text-center mt-10">
-        <h2 class="text-4xl text-gray-600">The Human Essentials app removes the <br> complexity from your day</h2>
-        <p class="mt-1 text-gray-400">and lets you spend time helping those who need it.</p>
-        <a href="mailto:info@humanessentials.app?Subject=Essentials%20Interest"><button type="button" class="text-lg bg-green-500 text-white px-3 py-2 rounded-2xl mt-5">Get In Touch</button></a>
+    <div class="container-fluid mx-auto pt-5" id="about">
+      <div class="text-center mt-3">
+        <h2 class="fs-2 text-black text-opacity-75">The Human Essentials app removes the <br> complexity from your day</h2>
+        <p class="mt-1 mb-4 text-muted">and lets you spend time helping those who need it.</p>
+        <a href="mailto:info@humanessentials.app?Subject=Essentials%20Interest"><button type="button" class="fs-5 btn btn-success text-white px-3 py-2 rounded-4">Get In Touch</button></a>
       </div>
     </div>
 
-    <div class="w-3/4 mx-auto py-24">
-
-      <div class="flex flex-col md:flex-row justify-center">
-        <div class="flex flex-col justify-center items-center w-full sm:w-1/2">
+    <div class="w-75 mx-auto py-5 my-5">
+      <div class="row">
+        <div class="col-12 col-md-6 d-flex flex-column justify-content-center align-items-center">
           <div class="pb-2">
             <%= image_tag("partner-management.svg", class: "app-images") %>
           </div>
           <div class="text-center">
-            <h3 class="text-3xl">Partner Management</h3>
-            <p class="text-gray-400 mt-2">Invite, review applications, certify and recertify partner agencies. Review, approve, and view history of partner orders. </p>
+            <h3 class="text-lg">Partner Management</h3>
+            <p class="text-muted mt-2">Invite, review applications, certify and recertify partner agencies. Review, approve, and view history of partner orders. </p>
           </div>
         </div>
-        <div class="flex flex-col justify-center items-center w-full sm:w-1/2">
+        <div class="col-12 col-md-6 d-flex flex-column justify-content-center align-items-center">
           <div class="pb-2">
             <%= image_tag("forecasting.svg", class: "app-images") %>
           </div>
           <div class="text-center">
-            <h3 class="text-3xl">Forecasting</h3>
-            <p class="text-gray-400 mt-2">View charts with month over month data for your distributions, purchases, and donations so you can accurately forecast need.</p>
+            <h3 class="text-lg">Forecasting</h3>
+            <p class="text-muted mt-2">View charts with month over month data for your distributions, purchases, and donations so you can accurately forecast need.</p>
           </div>
         </div>
       </div>
 
-      <div class="flex flex-col md:flex-row justify-center">
-        <div class="flex flex-col justify-center items-center w-full sm:w-1/2">
+      <div class="row">
+        <div class="col-12 col-md-6 d-flex flex-column justify-content-center align-items-center">
           <div class="pb-2">
             <%= image_tag("report-image.svg", class: "app-images") %>
           </div>
           <div class="text-center">
-            <h3 class="text-3xl">Report Generation</h3>
-            <p class="text-gray-400 mt-2">Generate PDFs of partner distribution invoices for easy printing and sending.</p>
+            <h3 class="text-lg">Report Generation</h3>
+            <p class="text-muted mt-2">Generate PDFs of partner distribution invoices for easy printing and sending.</p>
           </div>
         </div>
 
-        <div class="flex flex-col justify-center items-center w-full sm:w-1/2">
+        <div class="col-12 col-md-6 d-flex flex-column justify-content-center align-items-center">
           <div class="pb-2">
             <%= image_tag("barcode.svg", class: "app-images") %>
           </div>
           <div class="text-center">
-            <h3 class="text-3xl">Barcode Scanning</h3>
-            <p class="text-gray-400 mt-2">Quickly add or remove inventory with the scan of a barcode. Creating your own barcodes is also supported.</p>
+            <h3 class="text-lg">Barcode Scanning</h3>
+            <p class="text-muted mt-2">Quickly add or remove inventory with the scan of a barcode. Creating your own barcodes is also supported.</p>
           </div>
         </div>
       </div>
 
-      <div class="flex flex-col md:flex-row justify-center">
-        <div class="flex flex-col justify-center items-center w-full sm:w-1/2">
+      <div class="row">
+        <div class="col-12 col-md-6 d-flex flex-column justify-content-center align-items-center">
           <div class="pb-2">
             <%= image_tag("inventory-image.svg", class: "app-images") %>
           </div>
           <div class="text-center">
-            <h3 class="text-3xl">Inventory Management</h3>
-            <p class="text-gray-400 mt-2">Easily keep track of the items in your inventory regardless of their storage location. Adjust and transfer your inventory between locations as needed.</p>
+            <h3 class="text-lg">Inventory Management</h3>
+            <p class="text-muted mt-2">Easily keep track of the items in your inventory regardless of their storage location. Adjust and transfer your inventory between locations as needed.</p>
           </div>
         </div>
 
-        <div class="flex flex-col justify-center items-center w-full sm:w-1/2">
+        <div class="col-12 col-md-6 d-flex flex-column justify-content-center align-items-center">
           <div class="pb-2">
             <%= image_tag("dashboard-image.svg", class: "app-images") %>
           </div>
           <div class="text-center">
-            <h3 class="text-3xl">Dashboard Visualization</h3>
-            <p class="text-gray-400 mt-2">Quickly view your inventory, donations, purchases, and distributions on a single page.</p>
+            <h3 class="text-lg">Dashboard Visualization</h3>
+            <p class="text-muted mt-2">Quickly view your inventory, donations, purchases, and distributions on a single page.</p>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="py-5 px-0 bg-green-600 text-white" id="testimonials">
-      <div class="container max-w-7xl mx-auto flex flex-col md:flex-row py-5 justify-center items-center">
-        <div class="w-1/2 flex justify-center">
-          <%= image_tag("quote.svg", class: "quote-image", style: 'width: 300px') %>
+    <div class="py-5 text-white" id="testimonials">
+      <div class="container-fluid">
+        <div class="row">
+
+          <div class="col-12 col-md-6 d-flex justify-content-center">
+            <%= image_tag("quote.svg", class: "quote-image") %>
+          </div>
+
+          <div class="col-12 col-md-6 pt-5 px-4">
+            <h2 class="fs-1">Testimonials</h2>
+            <figure>
+              <blockquote class="blockquote">
+                <p class="fs-6">Human Essentials has taken our diaper distribution to the next level. We no longer have to worry about how to track our incoming and outgoing inventory, and having all our products and data tracked in different ways in different documents and systems. Human Essentials has saved us time, money, energy and many, many headaches. The system is extremely intuitive and user-friendly and we are so grateful to have it.</p>
+              </blockquote>
+              <figcaption class="blockquote-footer text-white fw-bold">
+                Megan, Sweet Cheeks Diaper Bank
+              </figcaption>
+            </figure>
+            <figure>
+              <blockquote class="blockquote">
+                <p class="fs-6">Finally, an inventory management system designed specifically for the unique needs of diaper banks!</p>
+              </blockquote>
+              <figcaption class="blockquote-footer text-white fw-bold">
+                Rachel Alston, PDX Diaper Bank
+              </figcaption>
+            </figure>
+          </div>
+
         </div>
-        <div class="pt-5 px-4 w-full sm:w-1/2">
-          <h3 class="text-4xl">Testimonials</h3>
-          <div class='mt-5'>
-            <div class='space-y-12'>
-              <div>
-                <p>Human Essentials has taken our diaper distribution to the next level. We no longer have to worry about how to track our incoming and outgoing inventory, and having all our products and data tracked in different ways in different documents and systems. Human Essentials has saved us time, money, energy and many, many headaches. The system is extremely intuitive and user-friendly and we are so grateful to have it.</p>
-                <strong class='mt-2'> - Megan, Sweet Cheeks Diaper Bank</strong>
-              </div>
-              <div>
-                <p class="text-testimonials">Finally, an inventory management system designed specifically for the unique needs of diaper banks!</p>
-                <strong> - Rachel Alston, PDX Diaper Bank </strong>
-              </div>
+      </div>
+    </div>
+
+    <div class="container-fluid py-5" id="contact">
+      <div class="text-center py-5">
+        <h2 class="fs-1">Want to use the Human Essentials App?</h2>
+        <a href="<%= new_account_request_path %>"><button type="button" class="btn btn-success fs-5 text-white px-3 py-2 my-3 rounded-4">Request An Account</button></a>
+
+        <p class="text-muted">Have questions? Email us at <a href="mailto:info@humanessentials.app?Subject=Essentials%20Interest" target="_top">info@humanessentials.app</a></p>
+      </div>
+    </div>
+
+    <div class="bg-secondary py-5">
+      <div class="container-fluid py-5 my-0 my-md-5 text-white">
+        <div class="row text-center text-md-start">
+          <div class="col-12 col-md-6 mb-4">
+            <h2 class="ps-0 ps-md-5">HumanEssentials.app</h2>
+          </div>
+          <div class="col-12 col-md-6">
+            <strong>The Human Essentials App was lovingly built by:</strong>
+            <div class="mt-2">
+              <a class="link-info" href="http://www.pdxdiaperbank.org/">PDX Diaper Bank</a> |
+              <a class="link-info" href="http://rubyforgood.org/">Ruby for Good</a>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="container max-w-7xl mx-auto py-32" id="contact">
-      <div class="text-center">
-        <h2 class="text-4xl">Want to use the Human Essentials App?</h2>
-        <a href="<%= new_account_request_path %>"><button type="button" class="text-lg bg-green-500 text-white px-3 py-2 mt-5 rounded-2xl">Request An Account</button></a>
 
-        <br><br>
-        <p class="text-gray-500">Have questions? Email us at <a class='text-blue-500' href="mailto:info@humanessentials.app?Subject=Essentials%20Interest" target="_top">info@humanessentials.app</a></p>
-      </div>
-    </div>
-
-    <div class="bg-gray-500">
-      <div class="container max-w-7xl mx-auto py-32 text-white">
-        <div class="flex flex-col mx-auto text-center sm:text-left sm:flex-row space-y-10 sm:space-y-0">
-          <div class="w-full sm:w-1/2">
-            <h2 class="text-3xl">HumanEssentials.app</h2>
-          </div>
-          <div class="w-full sm:w-1/2">
-            <strong class="text-white">The Human Essentials App was lovingly built by:</strong>
-            <div class="sm:mt-1 mt-2">
-              <a class='text-blue-400' href="http://www.pdxdiaperbank.org/">PDX Diaper Bank</a> <span class="text-white"> | </span>
-              <a class='text-blue-400' href="http://rubyforgood.org/">Ruby for Good</a>
-            </div>
-
-            <div class="sm:mt-1 mt-4">
-              <a class='text-blue-400 block' href="https://stories.freepik.com/business">Illustration by Freepik Stories</a>
-              <%= link_to "Privacy Policy", privacypolicy_path, class: 'text-blue-400 block' %>
+            <div class="mt-1">
+              <a class="link-info" href="https://stories.freepik.com/business">Illustration by Freepik Stories</a>
+              <%= link_to "Privacy Policy", privacypolicy_path, class: "link-info d-block" %>
             </div>
           </div>
         </div>

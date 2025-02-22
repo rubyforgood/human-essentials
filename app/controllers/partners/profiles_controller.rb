@@ -1,6 +1,8 @@
 module Partners
   class ProfilesController < BaseController
-    def show; end
+    def show
+      @profile = Partners::Profile.includes(:counties).find_by(partner_id: current_partner.id)
+    end
 
     def edit
       @counties = County.in_category_name_order

@@ -40,11 +40,11 @@ class Event < ApplicationRecord
   end
   after_create :validate_inventory
 
-  # @return [Array<OpenStruct>]
+  # @return [Array<Option>]
   def self.types_for_select
-    descendants.map { |klass|
-      OpenStruct.new(name: klass.name.sub("Event", "").titleize, value: klass.name)
-    }.sort_by(&:name)
+    descendants.map do |klass|
+      Option.new(name: klass.name.sub("Event", "").titleize, id: klass.name)
+    end.sort_by(&:name)
   end
 
   # Returns the most recent "usable" snapshot. A snapshot is unusable if there is another event
@@ -77,9 +77,6 @@ class Event < ApplicationRecord
   def validate_inventory
     InventoryAggregate.inventory_for(organization_id, validate: true)
   rescue InventoryError => e
-    item = Item.find_by(id: e.item_id)&.name || "Item ID #{e.item_id}"
-    loc = StorageLocation.find_by(id: e.storage_location_id)&.name || "Storage Location ID #{e.storage_location_id}"
-    e.message << " for #{item} in #{loc}"
     if e.event != self
       e.message.prepend("Error occurred when re-running events: #{e.event.type} on #{e.event.created_at.to_date}: ")
       e.message << " Please contact the Human Essentials admin staff for assistance."

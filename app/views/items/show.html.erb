@@ -45,7 +45,7 @@
               </tr>
               <tr>
                 <th>Value Per Item</th>
-                <td><%= @item.value_in_cents || 0 %></td>
+                <td>$<%= @item.value_in_dollars || 0 %></td>
               </tr>
               <tr>
                 <th>Quantity per Individual</th>
@@ -73,6 +73,10 @@
               <tr>
                 <th>Item is visible to partners</th>
                 <td><%= @item.visible_to_partners ? 'Yes' : 'No' %></td>
+              </tr>
+              <tr>
+                <th>Additional Information (Bank Use Only)</th>
+                <td><%= @item.additional_info %></td>
               </tr>
             </tbody>
             </table>

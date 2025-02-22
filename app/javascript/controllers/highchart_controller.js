@@ -18,14 +18,20 @@ export default class extends Controller {
 
   deselectAll() {
     this.chart.series.forEach((s) => {
-      s.hide();
+      // Change series visibility to hidden (first param) without redrawing (second param)
+      s.setVisible(false, false);
     })
+    // Redraw chart only once at the end for performance reasons.
+    this.chart.redraw();
   }
 
   selectAll() {
     this.chart.series.forEach((s) => {
-      s.show();
+      // Change series visibility to visible (first param) without redrawing (second param)
+      s.setVisible(true, false);
     })
+    // Redraw chart only once at the end for performance reasons.
+    this.chart.redraw();
   }
 
 }

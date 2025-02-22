@@ -11,6 +11,7 @@
     <%= f.association :partner,
       collection: @partner_list,
       label: "Partner",
+      readonly: !!@request,
       error: "Which partner is this distribution going to?" %>
 
     <div class='w-72'>

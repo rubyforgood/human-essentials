@@ -61,6 +61,5 @@ module CalendarService
     end
 
     @zones = zones.map { |z| ["#{z.name} #{z.formatted_offset}", z.tzinfo.name] }
-    @zones
   end
 end

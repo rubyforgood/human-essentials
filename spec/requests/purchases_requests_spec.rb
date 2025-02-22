@@ -37,6 +37,70 @@ RSpec.describe "Purchases", type: :request do
           expect(subject.body).to include("Comments")
           expect(subject.body).to include("Purchase Comment")
         end
+
+        context "with multiple purchases" do
+          let!(:storage_location) { create(:storage_location, organization: organization) }
+          let(:vendor) { create(:vendor, organization: organization) }
+          let!(:purchase1) do
+            create(:purchase,
+              organization: organization,
+              storage_location: storage_location,
+              vendor: vendor,
+              amount_spent_in_cents: 1000,
+              line_items: [
+                build(:line_item, quantity: 10, item: create(:item, organization: organization))
+              ])
+          end
+
+          let!(:purchase2) do
+            create(:purchase,
+              organization: organization,
+              storage_location: storage_location,
+              vendor: vendor,
+              amount_spent_in_cents: 1000,
+              line_items: [
+                build(:line_item, quantity: 20, item: create(:item, organization: organization))
+              ])
+          end
+
+          before do
+            allow_any_instance_of(Purchase).to receive(:value_per_itemizable).and_return(1500)
+            get purchases_path(format: 'html')
+          end
+
+          it 'displays correct total purchase quantities' do
+            expect(response.body).to include("30")
+          end
+
+          it 'displays correct total purchase values' do
+            expect(response.body).to include("$20.00")
+          end
+
+          it 'displays correct total fair market values' do
+            expect(response.body).to include("$30.00")
+          end
+        end
+
+        describe "pagination" do
+          around do |ex|
+            Kaminari.config.default_per_page = 2
+            ex.run
+            Kaminari.config.default_per_page = 50
+          end
+          before do
+            item = create(:item, organization: organization)
+            purchase_1 = create(:purchase, organization: organization, comment: "Singleton", issued_at: 1.day.ago)
+            create(:line_item, item: item, itemizable: purchase_1, quantity: 2)
+            purchase_2 = create(:purchase, organization: organization, comment: "Twins", issued_at: 2.days.ago)
+            create(:line_item, item: item, itemizable: purchase_2, quantity: 2)
+            purchase_3 = create(:purchase, organization: organization, comment: "Fates", issued_at: 3.days.ago)
+            create(:line_item, item: item, itemizable: purchase_3, quantity: 2)
+          end
+
+          it "puts the right number of purchases on the page" do
+            expect(subject.body).to include(" View").twice
+          end
+        end
       end
 
       context "csv" do
@@ -58,22 +122,27 @@ RSpec.describe "Purchases", type: :request do
       it "should include the storage location name" do
         expect(subject.body).to include("Pawane Location")
       end
+
+      it 'does not show inactive vendors in the vendor dropdown' do
+        deactivated_vendor = create(:vendor, business_name: 'Deactivated Vendor', organization: organization, active: false)
+        expect(subject.body).not_to include(deactivated_vendor.business_name)
+      end
     end
 
     describe "POST#create" do
       let!(:storage_location) { create(:storage_location, organization: organization) }
       let(:line_items) { [attributes_for(:line_item)] }
       let(:vendor) { create(:vendor, organization: organization) }
+      let(:purchase) do
+        { storage_location_id: storage_location.id,
+          purchased_from: "Google",
+          vendor_id: vendor.id,
+          amount_spent: 10,
+          issued_at: Time.current,
+          line_items: line_items }
+      end
 
       context "on success" do
-        let(:purchase) do
-          { storage_location_id: storage_location.id,
-            purchased_from: "Google",
-            vendor_id: vendor.id,
-            amount_spent: 10,
-            line_items: line_items }
-        end
-
         it "redirects to GET#edit" do
           expect { post purchases_path(purchase: purchase) }
             .to change { Purchase.count }.by(1)
@@ -100,6 +169,15 @@ RSpec.describe "Purchases", type: :request do
           post purchases_path(purchase: { storage_location_id: nil, amount_spent: nil })
           expect(response).to be_successful # Will render :new
           expect(response.body).to include('Failed to create purchase due to')
+        end
+
+        context "with invalid issued_at param" do
+          it "flashes the correct validation error" do
+            issued_at = ""
+            post purchases_path(purchase: purchase.merge(issued_at:))
+
+            expect(flash[:error]).to include("Purchase date can't be blank")
+          end
         end
       end
     end
@@ -131,8 +209,17 @@ RSpec.describe "Purchases", type: :request do
                }.by(5)
       end
 
+      context "with invalid issued_at" do
+        it "redirects to index after update" do
+          purchase = create(:purchase, purchased_from: "Google")
+          put purchase_path(id: purchase.id, purchase: { issued_at: "" })
+
+          expect(flash[:alert]).to include("Purchase date can't be blank")
+        end
+      end
+
       describe "when removing a line item" do
-        it "updates storage invetory item quantity correctly" do
+        it "updates storage inventory item quantity correctly" do
           purchase = create(:purchase, :with_items, item_quantity: 10)
           line_item = purchase.line_items.first
           line_item_params = {

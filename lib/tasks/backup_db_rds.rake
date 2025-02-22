@@ -19,4 +19,5 @@ task :backup_db_rds => :environment do
 
   logger.info("Uploading #{backup_filename}")
   blob_client.create_block_blob("backups", backup_filename, File.read(backup_filename))
+  File.delete(backup_filename)
 end

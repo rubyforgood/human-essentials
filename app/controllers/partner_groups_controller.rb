@@ -12,7 +12,7 @@ class PartnerGroupsController < ApplicationController
       # Redirect to groups tab in Partner page.
       redirect_to partners_path + "#nav-partner-groups", notice: "Partner group added!"
     else
-      flash[:error] = "Something didn't work quite right -- try again?"
+      flash.now[:error] = "Something didn't work quite right -- try again?"
       set_items_categories
       render action: :new
     end
@@ -28,7 +28,7 @@ class PartnerGroupsController < ApplicationController
     if @partner_group.update(partner_group_params)
       redirect_to partners_path + "#nav-partner-groups", notice: "Partner group edited!"
     else
-      flash[:error] = "Something didn't work quite right -- try again?"
+      flash.now[:error] = "Something didn't work quite right -- try again?"
       set_items_categories
       render action: :edit
     end

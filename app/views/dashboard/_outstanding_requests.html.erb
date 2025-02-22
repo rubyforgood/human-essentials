@@ -8,7 +8,7 @@
     footer_options: { class: "text-center" },
   ) do
 %>
-  <% if @outstanding_requests.empty? %>
+  <% if @outstanding_requests.length.zero? %>
     No outstanding requests!
   <% else %>
     <table class="table table-hover striped">
@@ -21,12 +21,12 @@
         </tr>
       </thead>
       <tbody>
-        <% @outstanding_requests.take(25).each do |item| %>
+        <% @outstanding_requests.each do |request| %>
           <tr>
-            <td class="date"><%= link_to item.created_at.strftime("%m/%d/%Y"), item %></td>
-            <td><%= item.partner.name %></td>
-            <td><%= item.partner_user&.formatted_email %></td>
-            <td><%= item.comments %></td>
+            <td class="date"><%= link_to request.created_at.strftime("%m/%d/%Y"), request %></td>
+            <td><%= request.partner.name %></td>
+            <td><%= request.partner_user&.formatted_email %></td>
+            <td><%= request.comments %></td>
           </tr>
         <% end %>
       </tbody>

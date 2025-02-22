@@ -25,7 +25,7 @@ class AccountRequestsController < ApplicationController
     @bank_selected = true
 
     if !verify_recaptcha(model: @account_request)
-      flash[:alert] = "Invalid captcha submission"
+      flash.now[:alert] = "Invalid captcha submission"
       render :new
     elsif @account_request.save
       AccountRequestMailer.confirmation(account_request_id: @account_request.id).deliver_later

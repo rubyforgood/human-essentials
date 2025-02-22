@@ -82,7 +82,6 @@ RSpec.describe BarcodeItem, type: :model do
       describe "by_item_partner_key" # TODO: Write test
       describe "by_base_item_partner_key" # TODO: Write test
       describe "by_value" # TODO: Write test
-      describe "for_csv_export" # TODO: Write test
       describe "global" do
         it "includes all barcodes, for both base items and regular items" do
           create(:global_barcode_item)
@@ -112,6 +111,18 @@ RSpec.describe BarcodeItem, type: :model do
 
       include_examples "common barcode tests", :global_barcode_item
     end
+
+    describe "#destroy" do
+      before { global_barcode_item } # Ensure barcode and its item are created
+
+      it "deletes the barcode item" do
+        expect { global_barcode_item.destroy }.to change(BarcodeItem, :count).by(-1)
+      end
+
+      it "keeps the associated item" do
+        expect { global_barcode_item.destroy }.to_not change(Item, :count)
+      end
+    end
   end
 
   context "Organization barcodes" do
@@ -133,13 +144,6 @@ RSpec.describe BarcodeItem, type: :model do
     end
 
     context "scopes >" do
-      it "->for_csv_export will accept an organization and provide all barcodes for that org" do
-        barcode_item
-        create(:barcode_item, organization: create(:organization))
-        results = BarcodeItem.for_csv_export(barcode_item.organization)
-        expect(results).to eq([barcode_item])
-      end
-
       it "#by_item_partner_key returns barcodes that match the partner key" do
         bases = create_list(:base_item, 2)
         i1 = create(:item, name: "Item 1", base_item: bases.first)
@@ -201,6 +205,18 @@ RSpec.describe BarcodeItem, type: :model do
     describe "to_h >" do
       it "emits a hash for a line_item" do
         expect(barcode_item.to_h).to eq(barcodeable_id: barcode_item.barcodeable_id, barcodeable_type: barcode_item.barcodeable_type, quantity: barcode_item.quantity)
+      end
+    end
+
+    describe "#destroy" do
+      before { barcode_item } # Ensure barcode and its item are created
+
+      it "deletes the barcode item" do
+        expect { barcode_item.destroy }.to change(BarcodeItem, :count).by(-1)
+      end
+
+      it "keeps the associated item" do
+        expect { barcode_item.destroy }.to_not change(Item, :count)
       end
     end
   end

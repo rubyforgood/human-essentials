@@ -21,7 +21,6 @@ RSpec.describe StorageLocation, type: :model do
   context "Validations >" do
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:address) }
-    it { is_expected.to validate_presence_of(:organization) }
   end
 
   context "Callbacks >" do
@@ -45,10 +44,10 @@ RSpec.describe StorageLocation, type: :model do
   end
 
   context "Filtering >" do
-    it "->active_locations yields only storage locations that haven't been discarded" do
+    it "->active yields only storage locations that haven't been discarded" do
       create(:storage_location, name: "Active Location")
       create(:storage_location, name: "Inactive Location", discarded_at: Time.zone.now)
-      results = StorageLocation.active_locations
+      results = StorageLocation.active
       expect(results.length).to eq(1)
       expect(results.first.discarded_at).to be_nil
     end
@@ -77,6 +76,34 @@ RSpec.describe StorageLocation, type: :model do
       create(:transfer, from: storage_location5, to: storage_location4, organization: storage_location4.organization)
 
       expect(StorageLocation.with_transfers_from(organization).to_a).to match_array([storage_location3])
+    end
+  end
+
+  context "Scopes >" do
+    describe "with_audits_for" do
+      it "returns only storage locations that are used for one org" do
+        storage_location1 = create(:storage_location, organization: organization)
+        storage_location2 = create(:storage_location, organization: organization)
+        create(:storage_location, organization: organization)
+        storage_location4 = create(:storage_location, organization: create(:organization))
+        create(:audit, storage_location: storage_location1, organization: organization)
+        create(:audit, storage_location: storage_location2, organization: organization)
+        create(:audit, storage_location: storage_location4, organization: storage_location4.organization)
+        expect(StorageLocation.with_audits_for(organization).to_a).to match_array([storage_location1, storage_location2])
+      end
+    end
+
+    describe "with_adjustments_for" do
+      it "returns only storage locations that are used in adjustments for one org" do
+        storage_location1 = create(:storage_location, organization: organization)
+        storage_location2 = create(:storage_location, organization: organization)
+        create(:storage_location, organization: organization)
+        storage_location4 = create(:storage_location, organization: create(:organization))
+        create(:adjustment, storage_location: storage_location1, organization: organization)
+        create(:adjustment, storage_location: storage_location2, organization: organization)
+        create(:adjustment, storage_location: storage_location4, organization: storage_location4.organization)
+        expect(StorageLocation.with_adjustments_for(organization).to_a).to match_array([storage_location1, storage_location2])
+      end
     end
   end
 

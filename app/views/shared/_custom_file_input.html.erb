@@ -1,0 +1,41 @@
+<%# locals: (form_builder:, label_for:, label_text:, attachment:, attachment_name:) %>
+
+<%# Creates a custom file input field with the following features: %>
+<%# - Displays the name of a previously selected file (even after validation errors). %>
+<%# - Integrates with Active Storage direct uploads to persist the file on the server, %>
+<%#   even if form submission fails. %>
+<%# - Uses a Stimulus controller (`file_input_label`) to dynamically update the label %>
+<%#   text when a new file is selected. %>
+<%# - Styled with Bootstrap's custom file input classes. %>
+<%# %>
+<%# Arguments: %>
+<%# - form_builder: The form builder object. %>
+<%# - label_for: The ID of the file input (used for the label `for` attribute). %>
+<%# - label_text: The text to display for the file input's label. %>
+<%# - attachment: The Active Storage attachment object (used to check for existing files). %>
+<%# - attachment_name: The name of the attachment field (e.g., `:proof_of_form_990`). %>
+
+<div class="form-group">
+  <label class="control-label"><%= label_text %></label>
+
+  <% if attachment.persisted? %>
+    Attached file: <%= link_to attachment.blob.filename, rails_blob_path(attachment), class: "font-weight-bold" %>
+  <% elsif attachment.attached? %>
+    <%= form_builder.hidden_field attachment_name, value: attachment.signed_id %>
+  <% end %>
+
+  <div class="col-md-12"
+       data-controller="file-input-label"
+       data-file-input-label-default-text-value="<%= attachment.attached? ? attachment.blob.filename : 'Choose file...' %>">
+    <%= form_builder.file_field attachment_name,
+                        direct_upload: true,
+                        class: "custom-file-input",
+                        data: {
+                          action: "change->file-input-label#fileSelected",
+                          file_input_label_target: "input"
+                        } %>
+    <label class="custom-file-label"
+      for="<%= label_for %>"
+      data-file-input-label-target="label">Choose file...</label>
+  </div>
+</div>

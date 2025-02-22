@@ -51,11 +51,6 @@ class Donation < ApplicationRecord
   scope :from_manufacturer, ->(manufacturer_id) {
     where(manufacturer_id: manufacturer_id)
   }
-  scope :for_csv_export, ->(organization, *) {
-    where(organization: organization)
-      .includes(:line_items, :storage_location, :donation_site)
-      .order(created_at: :desc)
-  }
 
   before_create :combine_duplicates
 
@@ -66,6 +61,7 @@ class Donation < ApplicationRecord
   validates :manufacturer, presence:
     { message: "must be specified since you chose '#{SOURCES[:manufacturer]}'" }, if: :from_manufacturer?
   validates :source, presence: true, inclusion: { in: SOURCES.values, message: "Must be a valid source." }
+  validate :line_items_quantity_is_positive
 
   # TODO: move this to Organization.donations as an extension
   scope :during, ->(range) { where(donations: { issued_at: range }) }
@@ -94,14 +90,6 @@ class Donation < ApplicationRecord
     return source unless from_product_drive?
 
     product_drive_participant&.donation_source_view || product_drive.donation_source_view
-  end
-
-  def self.daily_quantities_by_source(start, stop)
-    joins(:line_items).includes(:line_items)
-                      .between(start, stop)
-                      .group(:source)
-                      .group_by_day("donations.created_at")
-                      .sum("line_items.quantity")
   end
 
   def details
@@ -144,5 +132,9 @@ class Donation < ApplicationRecord
 
   def combine_duplicates
     line_items.combine!
+  end
+
+  def line_items_quantity_is_positive
+    line_items_quantity_is_at_least(1)
   end
 end

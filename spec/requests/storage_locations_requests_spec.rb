@@ -15,6 +15,12 @@ RSpec.describe "StorageLocations", type: :request do
           address: "123 Donation Site Way",
           warehouse_type: StorageLocation::WAREHOUSE_TYPES.first)
       end
+      let!(:storage_location2) do
+        create(:storage_location,
+          name: "Test Storage Location 1",
+          address: "123 Donation Site Way",
+          warehouse_type: StorageLocation::WAREHOUSE_TYPES.first)
+      end
 
       context "html" do
         let(:response_format) { 'html' }
@@ -22,6 +28,25 @@ RSpec.describe "StorageLocations", type: :request do
         it "succeeds" do
           get storage_locations_path(format: response_format)
           expect(response).to be_successful
+        end
+
+        it "displays grand total across storage locations" do
+          item1 = create(:item, name: "Item A", value_in_cents: 100)
+          item2 = create(:item, name: "Item B", value_in_cents: 200)
+
+          TestInventory.create_inventory(storage_location.organization,
+            { storage_location.id => { item1.id => 2, item2.id => 1 } })
+          TestInventory.create_inventory(storage_location2.organization,
+            { storage_location2.id => { item1.id => 3 } })
+          get storage_locations_path(format: response_format)
+          page = Nokogiri::HTML(response.body)
+
+          total_row = page.at("table tbody tr:last-child")
+          total_inventory = total_row.css("td.text-right")[0].text.strip
+          total_value = total_row.css("td.text-right")[1].text.strip
+
+          expect(total_inventory).to eq("6")
+          expect(total_value).to eq("$7.00")
         end
 
         context "with inactive locations" do
@@ -132,8 +157,49 @@ RSpec.describe "StorageLocations", type: :request do
             Storage Location with Items,123 Donation Site Way,100,Residential space used,3,1,1,1,0
             Storage Location with Unique Items,Smithsonian Conservation Center new,100,Residential space used,5,0,0,0,5
             Test Storage Location,123 Donation Site Way,100,Residential space used,0,0,0,0,0
+            Test Storage Location 1,123 Donation Site Way,100,Residential space used,0,0,0,0,0
           CSV
           expect(response.body).to eq(csv)
+        end
+
+        context "when include inactive storage locations checkbox is checked" do
+          let(:inactive_storage_location) {
+            create(
+              :storage_location,
+              name: "Inactive Storage Location",
+              address: "123 Donation Site Way",
+              warehouse_type: StorageLocation::WAREHOUSE_TYPES.first,
+              discarded_at: 5.months.ago
+            )
+          }
+
+          before do
+            TestInventory.create_inventory(
+              inactive_storage_location.organization, {
+                inactive_storage_location.id => {
+                  item1.id => 1,
+                  item2.id => 1,
+                  item3.id => 1
+                }
+              }
+            )
+          end
+
+          it "generates csv with Storage Locations that are inactive" do
+            get storage_locations_path(include_inactive_storage_locations: "1", format: response_format)
+
+            csv = <<~CSV
+              Name,Address,Square Footage,Warehouse Type,Total Inventory,A,B,C,D
+              Inactive Storage Location,123 Donation Site Way,100,Residential space used,3,1,1,1,0
+              Storage Location with Duplicate Items,"1500 Remount Road, Front Royal, VA 22630",100,Residential space used,1,0,0,1,0
+              Storage Location with Items,123 Donation Site Way,100,Residential space used,3,1,1,1,0
+              Storage Location with Unique Items,Smithsonian Conservation Center new,100,Residential space used,5,0,0,0,5
+              Test Storage Location,123 Donation Site Way,100,Residential space used,0,0,0,0,0
+              Test Storage Location 1,123 Donation Site Way,100,Residential space used,0,0,0,0,0
+            CSV
+
+            expect(response.body).to eq(csv)
+          end
         end
       end
     end
@@ -229,6 +295,7 @@ RSpec.describe "StorageLocations", type: :request do
         end
       end
     end
+
     describe "GET #show" do
       let(:item) { create(:item, name: "Test Item") }
       let(:item2) { create(:item, name: "Test Item2") }

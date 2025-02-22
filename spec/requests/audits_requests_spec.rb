@@ -50,6 +50,21 @@ RSpec.describe "Audits", type: :request do
         get new_audit_path
         expect(response).to be_successful
       end
+
+      it 'only includes active items in the line item select dropdown' do
+        create(:item, name: "TestActiveItem", organization: organization)
+        create(:item, name: "TestInactiveItem", organization: organization, active: false)
+
+        get new_audit_path
+        expect(response).to have_http_status(:ok)
+
+        html = Nokogiri::HTML(response.body)
+        options = html.css('select[name="audit[line_items_attributes][0][item_id]"] option')
+        option_values = options.map { |option| option.text.strip }
+
+        expect(option_values).to include('TestActiveItem')
+        expect(option_values).not_to include('TestInactiveItem')
+      end
     end
 
     describe "GET #edit" do

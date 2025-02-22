@@ -4,6 +4,7 @@
 #
 #  id                           :integer          not null, primary key
 #  active                       :boolean          default(TRUE)
+#  additional_info              :text
 #  barcode_count                :integer
 #  category                     :string
 #  distribution_quantity        :integer
@@ -24,7 +25,7 @@
 RSpec.describe Item, type: :model do
   let(:organization) { create(:organization) }
 
-  describe 'Assocations >' do
+  describe 'Associations >' do
     it { should belong_to(:item_category).optional }
   end
   context "Validations >" do
@@ -36,10 +37,10 @@ RSpec.describe Item, type: :model do
 
     it { should validate_presence_of(:name) }
     it { should belong_to(:organization) }
-    it { should belong_to(:base_item).counter_cache(:item_count).with_primary_key(:partner_key).with_foreign_key(:partner_key).inverse_of(:items) }
     it { should validate_numericality_of(:distribution_quantity).is_greater_than(0) }
     it { should validate_numericality_of(:on_hand_minimum_quantity).is_greater_than_or_equal_to(0) }
     it { should validate_numericality_of(:on_hand_recommended_quantity).is_greater_than_or_equal_to(0) }
+    it { should validate_length_of(:additional_info).is_at_most(500) }
   end
 
   context "Filtering >" do
@@ -250,9 +251,10 @@ RSpec.describe Item, type: :model do
       end
 
       context "in a kit" do
-        let(:kit) { create(:kit, organization: organization) }
         before do
-          create(:line_item, itemizable: kit, item: item)
+          create_kit(organization: organization, line_items_attributes: [
+            {item_id: item.id, quantity: 1}
+          ])
         end
 
         it "should return false" do
@@ -285,10 +287,10 @@ RSpec.describe Item, type: :model do
       end
 
       context "in a kit" do
-        let(:kit) { create(:kit, organization: organization) }
-
         before do
-          create(:line_item, itemizable: kit, item: item)
+          create_kit(organization: organization, line_items_attributes: [
+            {item_id: item.id, quantity: 1}
+          ])
         end
 
         it "should return false" do
@@ -461,8 +463,9 @@ RSpec.describe Item, type: :model do
       let(:kit) { create(:kit, name: "my kit") }
 
       it "updates kit name" do
-        item.update(name: "my new name")
-        expect(item.name).to eq kit.name
+        name = "my new name"
+        item.update(name: name)
+        expect(kit.name).to eq name
       end
     end
 

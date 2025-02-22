@@ -1,6 +1,6 @@
 class Admin::PartnersController < AdminController
   def index
-    @partners = Partner.all.includes(:organization)
+    @partners = Partner.all.includes(:organization).order("LOWER(name)")
   end
 
   def show
@@ -16,7 +16,7 @@ class Admin::PartnersController < AdminController
     if @partner.update(partner_attributes)
       redirect_to admin_partners_path, notice: "#{@partner.name} updated!"
     else
-      flash[:error] = "Something didn't work quite right -- try again?"
+      flash.now[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
     end
   end

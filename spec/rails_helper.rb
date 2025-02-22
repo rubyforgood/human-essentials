@@ -107,7 +107,7 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
 
   # Location for fixtures (logo, etc)
-  config.fixture_path = "#{::Rails.root}/spec/fixtures"
+  config.fixture_paths = ["#{::Rails.root}/spec/fixtures"]
 
   # Persistence for failures
   config.example_status_persistence_file_path = "spec/example_failures.txt"
@@ -174,9 +174,11 @@ RSpec.configure do |config|
     Faker::UniqueGenerator.clear # Clears used values to avoid retry limit exceeded error
   end
 
+  # rubocop:disable Rails/RedundantTravelBack
   config.after(:each) do
     travel_back
   end
+  # rubocop:enable Rails/RedundantTravelBack
 
   # RSpec Rails can automatically mix in different behaviours to your tests
   # based on their file location, for example enabling you to call `get` and

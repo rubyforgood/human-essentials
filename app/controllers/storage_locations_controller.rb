@@ -12,8 +12,9 @@ class StorageLocationsController < ApplicationController
     @inventory = View::Inventory.new(current_organization.id)
     @selected_item_category = filter_params[:containing]
     @items = StorageLocation.items_inventoried(current_organization, @inventory)
-    @include_inactive_storage_locations = params[:include_inactive_storage_locations].present?
+    @include_inactive_storage_locations = params[:include_inactive_storage_locations]
     @storage_locations = current_organization.storage_locations.alphabetized
+
     if filter_params[:containing].present?
       containing_ids = @inventory.storage_locations.keys.select do |sl|
         @inventory.quantity_for(item_id: filter_params[:containing], storage_location: sl).positive?
@@ -40,7 +41,7 @@ class StorageLocationsController < ApplicationController
     if @storage_location.save
       redirect_to storage_locations_path, notice: "New storage location added!"
     else
-      flash[:error] = "Something didn't work quite right -- try again?"
+      flash.now[:error] = "Something didn't work quite right -- try again?"
       render action: :new
     end
   end
@@ -98,7 +99,7 @@ class StorageLocationsController < ApplicationController
     if @storage_location.update(storage_location_params)
       redirect_to storage_locations_path, notice: "#{@storage_location.name} updated!"
     else
-      flash[:error] = "Something didn't work quite right -- try again?"
+      flash.now[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
     end
   end

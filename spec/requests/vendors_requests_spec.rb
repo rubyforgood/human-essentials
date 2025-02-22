@@ -16,9 +16,22 @@ RSpec.describe "Vendors", type: :request do
       before { create(:vendor) }
 
       context "html" do
+        let!(:first_vendor) { create(:vendor, business_name: "Abc", organization: organization) }
+        let!(:deactivated_vendor) { create(:vendor, business_name: "Deactivated", organization: organization, active: false) }
+
         let(:response_format) { 'html' }
 
         it { is_expected.to be_successful }
+
+        it "should have only activated vendor names" do
+          subject
+          expect(response.body).to include(first_vendor.business_name)
+          expect(response.body).not_to include(deactivated_vendor.business_name)
+        end
+
+        it "should have a deactivate button for each active vendor" do
+          expect(subject.body.scan("Deactivate").count).to eq(2)
+        end
       end
 
       context "csv" do
@@ -104,7 +117,8 @@ RSpec.describe "Vendors", type: :request do
     describe "DELETE #destroy" do
       subject { delete vendor_path(id: create(:vendor)) }
       it "does not have a route for this" do
-        expect { subject }.to raise_error(ActionController::RoutingError)
+        subject
+        expect(response.code).to eq('404')
       end
     end
 

@@ -23,7 +23,7 @@ RSpec.describe "Barcode Items Admin", type: :system do
 
       it "deletes a global barcode" do
         expect(accept_confirm { click_on "Delete" }).to include "Are you sure you want to delete"
-        expect(page).to have_no_content "\n#{barcode_item.base_item.name}"
+        expect(page).to have_content("Barcode Item deleted!")
       end
 
       it 'creates a new global barcode item' do

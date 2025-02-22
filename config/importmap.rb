@@ -33,3 +33,4 @@ pin "@rails/ujs", to: "https://ga.jspm.io/npm:@rails/ujs@7.0.4/lib/assets/compil
 pin "filterrific", to: "filterrific.js"
 pin "bootstrap-select", to: "https://ga.jspm.io/npm:bootstrap-select@1.13.18/dist/js/bootstrap-select.js"
 pin "jquery-ui", to: "https://ga.jspm.io/npm:jquery-ui@1.13.2/ui/widget.js"
+pin "@rails/activestorage", to: "@rails--activestorage.js" # @8.0.100

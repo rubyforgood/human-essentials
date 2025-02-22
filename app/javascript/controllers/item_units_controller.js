@@ -5,13 +5,17 @@ export default class extends Controller {
   static targets = ["itemSelect", "requestSelect"]
   static values = {
     // hash of (item ID => hash of (request unit name => request unit plural name))
-    "itemUnits": Object
+    "itemUnits": Object,
+    "selectedItemUnits": String
   }
 
   addOption(val, text) {
     let option = document.createElement("option");
     option.value = val;
     option.text = text;
+    if (this.selectedItemUnitsValue === val) {
+      option.selected = true;
+    }
     this.requestSelectTarget.appendChild(option);
   }
 

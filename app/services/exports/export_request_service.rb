@@ -85,7 +85,7 @@ module Exports
       end
 
       # Adding this to handle cases in which a requested item
-      # has been deleted. Normally this wouldn't be neccessary,
+      # has been deleted. Normally this wouldn't be necessary,
       # but previous versions of the application would cause
       # this orphaned data
       item_names.sort.uniq << DELETED_ITEMS_COLUMN_HEADER
@@ -97,7 +97,7 @@ module Exports
       row += Array.new(item_headers.size, 0)
 
       request.item_requests.each do |item_request|
-        item_name = item_request.name_with_unit(0) || DELETED_ITEMS_COLUMN_HEADER
+        item_name = item_request.item.present? ? item_request.name_with_unit(0) : DELETED_ITEMS_COLUMN_HEADER
         item_column_idx = headers_with_indexes[item_name]
         row[item_column_idx] ||= 0
         row[item_column_idx] += item_request.quantity.to_i
@@ -107,9 +107,7 @@ module Exports
     end
 
     def all_item_requests
-      return @all_item_requests if @all_item_requests
       @all_item_requests ||= Partners::ItemRequest.where(request: requests).includes(item: :request_units)
-      @all_item_requests
     end
   end
 end

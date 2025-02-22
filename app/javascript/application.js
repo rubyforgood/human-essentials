@@ -35,6 +35,11 @@ import 'utils/purchases'
 
 import Rails from "@rails/ujs"
 Rails.start()
+
+// Initialize Active Storage
+import * as ActiveStorage from "@rails/activestorage";
+ActiveStorage.start();
+
 // Disable turbo by default to avoid issues with turbolinks
 Turbo.session.drive = false
 
@@ -107,4 +112,3 @@ $(document).ready(function(){
     });
     picker.setDateRange(startDate, endDate);
 });
-

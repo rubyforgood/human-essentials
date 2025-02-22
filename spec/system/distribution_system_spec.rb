@@ -338,7 +338,7 @@ RSpec.feature "Distributions", type: :system do
   end
 
   context "With an existing distribution" do
-    let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", delivery_method: delivery_method, organization: user.organization) }
+    let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", delivery_method: delivery_method, organization: user.organization, reminder_email_enabled: true) }
     let(:delivery_method) { "pick_up" }
 
     before do
@@ -558,9 +558,9 @@ RSpec.feature "Distributions", type: :system do
 
     context "when editing that distribution" do
       before do
-        click_on "Distributions", match: :first
-        click_on "Edit", match: :first
         @distribution = Distribution.last
+        expect(page).to have_current_path(distribution_path(@distribution.id))
+        click_on "Make a Correction"
       end
 
       it "User creates a distribution from a donation then edits it" do
@@ -615,7 +615,7 @@ RSpec.feature "Distributions", type: :system do
     it "sets the distribution id and fulfilled status on the request" do
       items = storage_location.items.pluck(:id).sample(2)
       request_items = [{ "item_id" => items[0], "quantity" => 10 }, { "item_id" => items[1], "quantity" => 10 }]
-      @request = create :request, organization: organization, request_items: request_items
+      @request = create(:request, organization:, request_items:, partner:)
       create(:item_request, request: @request, item_id: items[0], quantity: 10)
       create(:item_request, request: @request, item_id: items[1], quantity: 10)
 
@@ -650,7 +650,7 @@ RSpec.feature "Distributions", type: :system do
     it "maintains the connection with the request even when there are initial errors" do
       items = storage_location.items.pluck(:id).sample(2)
       request_items = [{ "item_id" => items[0], "quantity" => 1000000 }, { "item_id" => items[1], "quantity" => 10 }]
-      @request = create :request, organization: organization, request_items: request_items
+      @request = create(:request, organization:, request_items:, partner:)
       create(:item_request, request: @request, item_id: items[0], quantity: 1000000)
       create(:item_request, request: @request, item_id: items[1], quantity: 10)
 

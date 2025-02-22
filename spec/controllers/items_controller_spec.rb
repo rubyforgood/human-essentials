@@ -36,6 +36,11 @@ RSpec.describe ItemsController, type: :controller do
           expect(subject).to redirect_to(items_path)
           expect(item.reload.visible_to_partners).to be true
         end
+
+        it "updates an item with new additional_info" do
+          put :update, params: { id: item.id, item: { additional_info: "Updated bank information" } }
+          expect(item.reload.additional_info).to eq "Updated bank information"
+        end
       end
 
       context "invisible" do
@@ -135,7 +140,8 @@ RSpec.describe ItemsController, type: :controller do
             partner_key: create(:base_item).partner_key,
             value_in_cents: 1001,
             package_size: 5,
-            distribution_quantity: 30
+            distribution_quantity: 30,
+            additional_info: "Sensitive bank information"
           }
         }
       end
@@ -152,6 +158,13 @@ RSpec.describe ItemsController, type: :controller do
           post :create, params: item_params
 
           expect(response).not_to have_error
+        end
+
+        it "creates an item with additional_info" do
+          expect do
+            post :create, params: item_params
+          end.to change { Item.count }.by(1)
+          expect(Item.last.additional_info).to eq "Sensitive bank information"
         end
 
         it "should accept request_unit ids and create request_units" do

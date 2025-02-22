@@ -6,71 +6,73 @@
         list-style: inside;
     }
 </style>
-<section class="content">
-  <div class="row">
-    <div class="col-12">
-      <div class="card card-primary mt-2">
-        <div class="card-header">
-          <h2 class="card-title">Frequently Asked Questions</h2>
-        </div>
-        <div class="card-body p-4">
-          <ul class="list-inside my-2 list-decimal space-y-5">
-            <%= form_for_filterrific @filterrific, remote: true do |f| %>
-              <div class="row flex-row justify-content-between align-items-center">
-                <div class='col-3'>
-                  <%= f.label :search_title, "Search By Question" %>
-                  <%= f.text_field(:search_title, class: 'filterrific-periodically-observed form-control') %>
+<div class="container-fluid">
+  <section class="content">
+    <div class="row">
+      <div class="col-12">
+        <div class="card card-primary mt-2">
+          <div class="card-header">
+            <h2 class="card-title">Frequently Asked Questions</h2>
+          </div>
+          <div class="card-body p-4">
+            <ul class="list-inside my-2 list-decimal space-y-5">
+              <%= form_for_filterrific @filterrific, remote: true do |f| %>
+                <div class="row flex-row justify-content-between align-items-center">
+                  <div class='col-3'>
+                    <%= f.label :search_title, "Search By Question" %>
+                    <%= f.text_field(:search_title, class: 'filterrific-periodically-observed form-control') %>
+                  </div>
+                  <div class="col-3">
+                    <%= render_filterrific_spinner %>
+                  </div>
                 </div>
-                <div class="col-3">
-                  <%= render_filterrific_spinner %>
-                </div>
-              </div>
-            <% end %>
-          </ul>
+              <% end %>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="content">
-  <div class="row">
-    <div class="col-12" id="accordion">
-      <div id="filterrific_results">
-        <%= render(partial: 'bank_questions', locals: { bank_questions: @bank_questions }) %>
+  <section class="content">
+    <div class="row">
+      <div class="col-12" id="accordion">
+        <div id="filterrific_results">
+          <%= render(partial: 'bank_questions', locals: { bank_questions: @bank_questions }) %>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="content">
-  <div class="row">
-    <div class="col-12">
-      <div class="card card-primary mt-2">
-        <div class="col-12 mt-3 text-center">
-          <p class="lead">
-            Have suggestions to help improve the app or other questions about the app? Please
-            <a href="https://human-essential.slack.com/archives/CG1NL2MRC"><u>reach out on Slack.</u></a>
-          </p>
-        </div>
-        <div class="col-12 mt-3 text-center">
-          <p class="lead">
-            Not a member of the Human Essentials Slack group?
-            <a href="https://join.slack.com/t/human-essential/shared_invite/zt-bfa8tymd-d8Ks3Mq000COcRe~nfs~zg"><u>Request
-              a
-              login.</u></a>
-          </p>
-        </div>
-        <div class="col-12 mt-3 text-center">
-          <p class="lead">
-            Still need help? Submit a support ticket
-            <u><%= link_to 'here', support_ticket_form_url, target: '_blank' %></u>
-            and we will do our best to follow up with you via email. Please note that our team meets and triages email
-            on
-            Sundays.
-          </p>
+  <section class="content">
+    <div class="row">
+      <div class="col-12">
+        <div class="card card-primary mt-2">
+          <div class="col-12 mt-3 text-center">
+            <p class="lead">
+              Have suggestions to help improve the app or other questions about the app? Please
+              <a href="https://human-essential.slack.com/archives/CG1NL2MRC"><u>reach out on Slack.</u></a>
+            </p>
+          </div>
+          <div class="col-12 mt-3 text-center">
+            <p class="lead">
+              Not a member of the Human Essentials Slack group?
+              <a href="https://join.slack.com/t/human-essential/shared_invite/zt-bfa8tymd-d8Ks3Mq000COcRe~nfs~zg"><u>Request
+                a
+                login.</u></a>
+            </p>
+          </div>
+          <div class="col-12 mt-3 text-center">
+            <p class="lead">
+              Still need help? Submit a support ticket
+              <u><%= link_to 'here', support_ticket_form_url, target: '_blank' %></u>
+              and we will do our best to follow up with you via email. Please note that our team meets and triages email
+              on
+              Sundays.
+            </p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+</div>

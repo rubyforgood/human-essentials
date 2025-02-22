@@ -18,7 +18,7 @@ module Partners
         flash[:success] = "User information was successfully updated!"
         redirect_to edit_partners_user_path(@user)
       else
-        flash[:error] = "Failed to update this user."
+        flash.now[:error] = "Failed to update this user."
         render :edit
       end
     end

@@ -10,7 +10,7 @@ class Admin::BarcodeItemsController < AdminController
     if @barcode_item.update(barcode_item_params)
       redirect_to admin_barcode_items_path, notice: "Updated Barcode Item!"
     else
-      flash[:error] = "Failed to update this Barcode Item."
+      flash.now[:error] = "Failed to update this Barcode Item."
       render :edit
     end
   end
@@ -33,7 +33,7 @@ class Admin::BarcodeItemsController < AdminController
       end
     else
       load_base_items
-      flash[:error] = "Failed to create Barcode Item."
+      flash.now[:error] = "Failed to create Barcode Item."
       render :new
     end
   end

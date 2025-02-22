@@ -20,8 +20,8 @@
  @import 'resources/*';
 
  // import other stylesheets after variables
-@import 'AdminLTE';
 @import 'bootstrap';
+@import 'AdminLTE';
 @import 'simple_form-bootstrap/simple_form-bootstrap';
 @import 'progress_stepper';
 @import 'audits';
@@ -186,6 +186,12 @@ select.selectpicker + .dropdown-toggle::after {
 
 .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
   background-color: #8282df
+}
+
+// Fix select2 tagging search box to be inline with tags.
+// This is the default for select2 but adminLTE overwrites it.
+.select2-search.select2-search--inline {
+  display: inline-block;
 }
 
 div.low_priority_warning {

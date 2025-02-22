@@ -4,6 +4,7 @@
 #
 #  id                           :integer          not null, primary key
 #  active                       :boolean          default(TRUE)
+#  additional_info              :text
 #  barcode_count                :integer
 #  category                     :string
 #  distribution_quantity        :integer
@@ -34,9 +35,9 @@ class Item < ApplicationRecord
   belongs_to :kit, optional: true
   belongs_to :item_category, optional: true
 
+  validates :additional_info, length: { maximum: 500 }
   validates :name, uniqueness: { scope: :organization, case_sensitive: false, message: "- An item with that name already exists (could be an inactive item)" }
   validates :name, presence: true
-  validates :organization, presence: true
   validates :distribution_quantity, numericality: { greater_than: 0 }, allow_blank: true
   validates :on_hand_recommended_quantity, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
   validates :on_hand_minimum_quantity, numericality: { greater_than_or_equal_to: 0 }
@@ -61,11 +62,6 @@ class Item < ApplicationRecord
   scope :by_partner_key, ->(partner_key) { where(partner_key: partner_key) }
 
   scope :by_size, ->(size) { joins(:base_item).where(base_items: { size: size }) }
-  scope :for_csv_export, ->(organization, *) {
-    where(organization: organization)
-      .includes(:base_item)
-      .alphabetized
-  }
 
   # Scopes - explanation of business rules for filtering scopes as of 20240527.  This was a mess, but is much better now.
   # 1/  Disposable.   Disposables are only the disposable diapers for children.  So we deliberately exclude adult and cloth
@@ -74,7 +70,7 @@ class Item < ApplicationRecord
   # 4/  Period supplies.  All things with 'menstrual in the category'
   # 5/  Other -- Miscellaneous, and wipes
   # Known holes and ambiguities as of 20240527.  Working on these with the business
-  # 1/  Liners.   We are adding a new item for AI liners,  and renaming the current liners to be specficially for periods,
+  # 1/  Liners.   We are adding a new item for AI liners,  and renaming the current liners to be specifically for periods,
   # having confirmed with the business that the majority of liners are for menstrual use.
   # However, there is a product which can be used for either, so we are still sussing out what to do about that.
 
@@ -115,7 +111,7 @@ class Item < ApplicationRecord
   end
 
   def self.barcodes_for(item)
-    BarcodeItem.where("barcodeable_id = ?", item.id)
+    BarcodeItem.where(barcodeable_id: item.id)
   end
 
   def self.reactivate(item_ids)

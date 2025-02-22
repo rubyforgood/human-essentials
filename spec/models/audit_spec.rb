@@ -103,17 +103,6 @@ RSpec.describe Audit, type: :model do
   end
 
   context "Methods >" do
-    it "`self.storage_locations_audited_for` returns only storage_locations that are used for one org" do
-      storage_location1 = create(:storage_location, organization: organization)
-      storage_location2 = create(:storage_location, organization: organization)
-      create(:storage_location, organization: organization)
-      storage_location4 = create(:storage_location, organization: create(:organization))
-      create(:audit, storage_location: storage_location1, organization: organization)
-      create(:audit, storage_location: storage_location2, organization: organization)
-      create(:audit, storage_location: storage_location4, organization: storage_location4.organization)
-      expect(Audit.storage_locations_audited_for(organization).to_a).to match_array([storage_location1, storage_location2])
-    end
-
     it "`self.finalized_since?` returns true iff some finalized audit occurred after itemizable created_at that shares item for location(s)" do
       storage_location1 = create(:storage_location, :with_items, item_quantity: 10, organization: organization)
       storage_location2 = create(:storage_location, :with_items, item_quantity: 10, organization: organization)

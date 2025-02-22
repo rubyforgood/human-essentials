@@ -12,6 +12,7 @@ RSpec.describe DistributionCreateService, type: :service do
         partner_id: partner.id,
         storage_location_id: storage_location.id,
         delivery_method: :delivery,
+        issued_at: Time.current,
         line_items_attributes: {
           "0": { item_id: storage_location.items.first.id, quantity: 5 }
         })
@@ -95,6 +96,7 @@ RSpec.describe DistributionCreateService, type: :service do
           partner_id: partner.id,
           storage_location_id: storage_location.id,
           delivery_method: :delivery,
+          issued_at: Date.yesterday,
           line_items_attributes: { "0": { item_id: storage_location.items.first.id, quantity: 500 } }
         )
       }
@@ -106,6 +108,27 @@ RSpec.describe DistributionCreateService, type: :service do
       end
     end
 
+    context "when missing issued_at attribute" do
+      let(:distribution) {
+        Distribution.new(
+          organization_id: organization.id,
+          partner_id: partner.id,
+          storage_location_id: storage_location.id,
+          delivery_method: :delivery,
+          issued_at: "",
+          line_items_attributes: { "0": { item_id: storage_location.items.first.id, quantity: 5 } }
+        )
+      }
+
+      it "preserves validation error and is unsuccessful" do
+        result = subject.new(distribution).call
+
+        expect(result).not_to be_success
+        expect(result.error).to be_instance_of(ActiveRecord::RecordInvalid)
+        expect(result.error.message).to include("Distribution date and time can't be blank")
+      end
+    end
+
     context "when there's multiple line items and one has insufficient inventory" do
       let(:too_much_dist) do
         Distribution.new(
@@ -113,6 +136,7 @@ RSpec.describe DistributionCreateService, type: :service do
           partner_id: partner.id,
           storage_location_id: storage_location.id,
           delivery_method: :delivery,
+          issued_at: Date.yesterday,
           line_items_attributes:
             {
               "0": { item_id: storage_location.items.first.id, quantity: 2 },

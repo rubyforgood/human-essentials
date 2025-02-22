@@ -1,6 +1,6 @@
 class ManufacturersController < ApplicationController
   def index
-    @manufacturers = current_organization.manufacturers.includes(:donations).all.alphabetized
+    @manufacturers = current_organization.manufacturers.with_volumes.alphabetized
   end
 
   def create
@@ -10,7 +10,7 @@ class ManufacturersController < ApplicationController
         format.html { redirect_to manufacturers_path, notice: "New Manufacturer added!" }
         format.js
       else
-        flash[:error] = "Something didn't work quite right -- try again?"
+        flash.now[:error] = "Something didn't work quite right -- try again?"
         format.html { render action: :new }
         format.js { render template: "manufacturers/new_modal" }
       end
@@ -40,7 +40,7 @@ class ManufacturersController < ApplicationController
       redirect_to manufacturers_path, notice: "#{@manufacturer.name} updated!"
 
     else
-      flash[:error] = "Something didn't work quite right -- try again?"
+      flash.now[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
     end
   end

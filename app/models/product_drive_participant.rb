@@ -30,6 +30,11 @@ class ProductDriveParticipant < ApplicationRecord
   validates :comment, length: { maximum: 500 }
 
   scope :alphabetized, -> { order(:contact_name) }
+  scope :with_volumes, -> {
+    left_joins(donations: :line_items)
+      .select("product_drive_participants.*, SUM(COALESCE(line_items.quantity, 0)) AS volume")
+      .group(:id)
+  }
 
   def volume
     donations.map { |d| d.line_items.total }.reduce(:+)

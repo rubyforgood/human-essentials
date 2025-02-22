@@ -8,13 +8,15 @@
     <h3 class='text-4xl font-extrabold'>Oops! Something went wrong with your Request</h3>
     <p class='text-lg font-bold'>
       Ensure each line item has a item selected AND a quantity greater than 0.
-      <% if Flipper.enabled?(:enable_packs) && current_partner.organization.request_units.any? %>
-        Please ensure a unit is selected for each item that supports it.
+      <% if Flipper.enabled?(:enable_packs) && (current_partner&.organization || current_organization).request_units.any? %>
+        Please ensure a single unit is selected for each item that supports it.
       <% end %>
     </p>
-    <p class='text-md'>
-    Still need help? Please contact your essentials bank, <%= current_partner.organization.name %>, if you need further assistance.<br>
-    Our email on record for them is: <%= mail_to current_partner.organization.email %>
+    <% if current_partner %>
+      <p class='text-md'>
+      Still need help? Please contact your essentials bank, <%= current_partner.organization.name %>, if you need further assistance.<br>
+      Our email on record for them is: <%= mail_to current_partner.organization.email %>
+    <% end %>
     </p>
   </div>
 </div>

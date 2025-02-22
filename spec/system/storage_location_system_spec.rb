@@ -103,7 +103,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       select item.name, from: "filters[containing]"
       click_button "Filter"
 
-      expect(page).to have_css("table tr", count: 2)
+      expect(page).to have_css("table tr", count: 3)
       expect(page).to have_xpath("//table/tbody/tr/td", text: location1.name)
       expect(page).not_to have_xpath("//table/tbody/tr/td", text: location2.name)
       expect(page).not_to have_xpath("//table/tbody/tr/td", text: location3.name)
@@ -111,7 +111,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       check "include_inactive_storage_locations"
       click_button "Filter"
 
-      expect(page).to have_css("table tr", count: 3)
+      expect(page).to have_css("table tr", count: 4)
       expect(page).to have_xpath("//table/tbody/tr/td", text: location3.name)
     end
 

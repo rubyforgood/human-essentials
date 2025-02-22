@@ -87,14 +87,14 @@
 
                 <%= render 'shared/deadline_day_fields', f: f %>
 
-                <%= f.input :intake_location, :collection => current_organization.storage_locations.active_locations.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Intake Location", :include_blank => true, wrapper: :input_group %>
+                <%= f.input :intake_location, :collection => current_organization.storage_locations.active.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Intake Location", :include_blank => true, wrapper: :input_group %>
 
                 <%= f.label :partner_form_fields, 'Partner Profile Sections' %>
 
                 <%= f.select(:partner_form_fields, Organization::ALL_PARTIALS, { include_hidden: true }, { multiple: true, class: 'form-control custom-select', 'data-controller': 'select2', 'data-select2-config-value': '{}'}) %>
 
                 <br>
-                <%= f.input :default_storage_location, :collection => current_organization.storage_locations.active_locations.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Storage Location", :include_blank => true, wrapper: :input_group %>
+                <%= f.input :default_storage_location, :collection => current_organization.storage_locations.active.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Storage Location", :include_blank => true, wrapper: :input_group %>
 
                 <%= f.input :invitation_text, label: "Custom Partner Invitation Message", wrapper: :input_group do %>
                   <%= f.text_area :invitation_text, class: "form-control" %>
@@ -131,6 +131,7 @@
                 <%= f.input :one_step_partner_invite, label: 'Use One Step Invite and Approve partner process?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
                 <%= f.input :hide_value_columns_on_receipt, label: 'Hide both value columns on distribution receipts?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
                 <%= f.input :hide_package_column_on_receipt, label: 'Hide the package column on distribution receipts?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
+                <%= f.input :receive_email_on_requests, label: 'Receive email when partner makes a request?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
 
                 <% default_email_text_hint = "You can use the variables <code>%{partner_name}</code>, <code>%{delivery_method}</code>, <code>%{distribution_date}</code>, and <code>%{comment}</code> to include the partner's name, delivery method, distribution date, and comments sent in the request." %>
                 <%= f.input :default_email_text, label: "Distribution Email Content", hint: default_email_text_hint.html_safe do %>
