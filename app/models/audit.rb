@@ -31,10 +31,6 @@ class Audit < ApplicationRecord
   validate :line_items_unique_by_item_id
   validate :user_is_organization_admin_of_the_organization
 
-  def self.storage_locations_audited_for(organization)
-    includes(:storage_location).joins(:storage_location).where(organization_id: organization.id, storage_location: {discarded_at: nil}).collect(&:storage_location).sort
-  end
-
   def self.finalized_since?(itemizable, *location_ids)
     item_ids = itemizable.line_items.pluck(:item_id)
     where(status: "finalized")
