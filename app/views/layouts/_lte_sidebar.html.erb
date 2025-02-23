@@ -141,12 +141,7 @@
       </li>
       <li class="nav-item <%= 'active' if current_page?(product_drives_path) %>">
         <%= link_to(product_drives_path, class: "nav-link #{"active" if current_page?(product_drives_path)}") do %>
-          <i class="nav-icon far fa-circle"></i> All Product Drives
-        <% end %>
-      </li>
-      <li class="nav-item <%= 'active' if current_page?(new_product_drive_path) %>">
-        <%= link_to(new_product_drive_path, class: "nav-link #{"active" if current_page?(new_product_drive_path)}") do %>
-          <i class="nav-icon far fa-circle"></i> New Product Drive
+          <i class="nav-icon far fa-circle"></i> Product Drives
         <% end %>
       </li>
       <li class="nav-item <%= active_class(['product_drive_participants']) %>">

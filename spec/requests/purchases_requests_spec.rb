@@ -122,6 +122,11 @@ RSpec.describe "Purchases", type: :request do
       it "should include the storage location name" do
         expect(subject.body).to include("Pawane Location")
       end
+
+      it 'does not show inactive vendors in the vendor dropdown' do
+        deactivated_vendor = create(:vendor, business_name: 'Deactivated Vendor', organization: organization, active: false)
+        expect(subject.body).not_to include(deactivated_vendor.business_name)
+      end
     end
 
     describe "POST#create" do

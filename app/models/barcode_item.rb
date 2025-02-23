@@ -15,7 +15,7 @@
 class BarcodeItem < ApplicationRecord
   has_paper_trail
   belongs_to :organization, optional: true
-  belongs_to :barcodeable, polymorphic: true, dependent: :destroy, counter_cache: :barcode_count
+  belongs_to :barcodeable, polymorphic: true, counter_cache: :barcode_count
 
   validates :organization, presence: true, unless: proc { |b| b.barcodeable_type == "BaseItem" }
   validates :value, presence: true
@@ -42,18 +42,11 @@ class BarcodeItem < ApplicationRecord
 
   scope :by_value, ->(value) { where(value: value) }
 
-  scope :for_csv_export, ->(organization, *) {
-    where(organization: organization)
-      .includes(:barcodeable)
-  }
-
   scope :global, -> { where(barcodeable_type: "BaseItem") }
 
   # aliases of barcodeable
-  belongs_to :item, polymorphic: true, dependent: :destroy,
-    counter_cache: :barcode_count, foreign_key: :barcodeable_id, foreign_type: :barcodeable_type
-  belongs_to :base_item, polymorphic: true, dependent: :destroy,
-    counter_cache: :barcode_count, foreign_key: :barcodeable_id, foreign_type: :barcodeable_type
+  belongs_to :item, polymorphic: true, counter_cache: :barcode_count, foreign_key: :barcodeable_id, foreign_type: :barcodeable_type
+  belongs_to :base_item, polymorphic: true, counter_cache: :barcode_count, foreign_key: :barcodeable_id, foreign_type: :barcodeable_type
 
   def to_h
     {

@@ -13,10 +13,6 @@ RSpec.describe "Items", type: :request do
         response
       end
 
-      before do
-        create(:item)
-      end
-
       context "html" do
         let(:response_format) { 'html' }
 
@@ -27,6 +23,38 @@ RSpec.describe "Items", type: :request do
         let(:response_format) { 'csv' }
 
         it { is_expected.to be_successful }
+
+        context "when exporting the csv items" do
+          let!(:active_item) { create(:item, organization: organization, name: "Briefs(M/L)") }
+          let!(:inactive_item) { create(:item, active: false, organization: organization, name: "Briefs(S/M)") }
+
+          context "when include inactive items checkbox is checked" do
+            it "generates csv with items that are also inactive" do
+              get items_path(include_inactive_items: "1", format: response_format)
+
+              csv = <<~CSV
+                Name,Barcodes,Base Item,Quantity
+                Briefs(M/L),"",#{active_item.base_item.name},0
+                Briefs(S/M),"",#{inactive_item.base_item.name},0
+              CSV
+
+              expect(response.body).to eq(csv)
+            end
+          end
+
+          context "when include inactive items checkbox is unchecked" do
+            it "generates csv with only active items" do
+              get items_path(format: response_format)
+
+              csv = <<~CSV
+                Name,Barcodes,Base Item,Quantity
+                Briefs(M/L),"",#{active_item.base_item.name},0
+              CSV
+
+              expect(response.body).to eq(csv)
+            end
+          end
+        end
       end
     end
 
@@ -111,6 +139,7 @@ RSpec.describe "Items", type: :request do
 
     describe "CREATE #create" do
       let!(:existing_item) { create(:item, organization: organization, name: "Really Good Item") }
+      let!(:item_category) { create(:item_category, organization: organization, name: "Test Category") }
 
       describe "with an already existing item name" do
         let(:item_params) do
@@ -130,6 +159,42 @@ RSpec.describe "Items", type: :request do
 
           expect(flash[:error]).to eq("Name - An item with that name already exists (could be an inactive item)")
           expect(response).to render_template(:new)
+        end
+      end
+    end
+
+    describe "with invalid parameters" do
+      let(:invalid_item_params) do
+        {
+          item: {
+            name: "",  # Invalid name
+            partner_key: create(:base_item).partner_key,
+            value_in_cents: -100,  # Invalid value
+            package_size: nil,
+            distribution_quantity: nil
+          }
+        }
+      end
+
+      let!(:category1) { FactoryBot.create(:item_category, name: 'Bananas', organization: organization) }
+      let!(:category2) { FactoryBot.create(:item_category, name: 'Apples', organization: organization) }
+      let!(:category3) { FactoryBot.create(:item_category, name: 'Umbrella', organization: organization) }
+
+      let(:item_categories) { [category1, category2, category3] }
+
+      it "loads and displays the item categories when rendering new" do
+        # Attempt to create an item with invalid parameters
+        post items_path, params: invalid_item_params
+
+        # Expect to render the new template
+        expect(response).to render_template(:new)
+
+        # Ensure the item categories are assigned in the controller
+        expect(assigns(:item_categories)).to eq([category2, category1, category3])
+
+        # Verify the categories are included in the response body
+        item_categories.each do |category|
+          expect(response.body).to include("<option value=\"#{category.id}\">#{category.name}</option>")
         end
       end
     end

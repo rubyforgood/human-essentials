@@ -4,6 +4,7 @@
 #
 #  id                           :integer          not null, primary key
 #  active                       :boolean          default(TRUE)
+#  additional_info              :text
 #  barcode_count                :integer
 #  category                     :string
 #  distribution_quantity        :integer
@@ -34,6 +35,7 @@ class Item < ApplicationRecord
   belongs_to :kit, optional: true
   belongs_to :item_category, optional: true
 
+  validates :additional_info, length: { maximum: 500 }
   validates :name, uniqueness: { scope: :organization, case_sensitive: false, message: "- An item with that name already exists (could be an inactive item)" }
   validates :name, presence: true
   validates :distribution_quantity, numericality: { greater_than: 0 }, allow_blank: true
@@ -60,11 +62,6 @@ class Item < ApplicationRecord
   scope :by_partner_key, ->(partner_key) { where(partner_key: partner_key) }
 
   scope :by_size, ->(size) { joins(:base_item).where(base_items: { size: size }) }
-  scope :for_csv_export, ->(organization, *) {
-    where(organization: organization)
-      .includes(:base_item)
-      .alphabetized
-  }
 
   # Scopes - explanation of business rules for filtering scopes as of 20240527.  This was a mess, but is much better now.
   # 1/  Disposable.   Disposables are only the disposable diapers for children.  So we deliberately exclude adult and cloth

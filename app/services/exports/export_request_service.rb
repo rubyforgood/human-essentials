@@ -107,9 +107,7 @@ module Exports
     end
 
     def all_item_requests
-      return @all_item_requests if @all_item_requests
       @all_item_requests ||= Partners::ItemRequest.where(request: requests).includes(item: :request_units)
-      @all_item_requests
     end
   end
 end

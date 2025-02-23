@@ -8,10 +8,6 @@ module Provideable
   included do
     belongs_to :organization # Automatically validates presence as of Rails 5
 
-    scope :for_csv_export, ->(organization, *) {
-      where(organization: organization).order(:business_name)
-    }
-
     def self.import_csv(csv, organization)
       csv.each do |row|
         loc = new(row.to_hash)
