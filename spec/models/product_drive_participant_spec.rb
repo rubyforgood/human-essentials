@@ -49,6 +49,15 @@ RSpec.describe ProductDriveParticipant, type: :model do
         expect(subject.first.volume).to eq(10)
       end
     end
+
+    describe "alphabetized" do
+      it "returns the participants alphabetized by business name or contact name" do
+        participant1 = create(:product_drive_participant, business_name: "Business 1", contact_name: "Contact 1")
+        participant2 = create(:product_drive_participant, business_name: "Business 2", contact_name: "Contact 2")
+        participant3 = create(:product_drive_participant, business_name: "", contact_name: "Contact 3")
+        expect(described_class.alphabetized).to eq([participant1, participant2, participant3])
+      end
+    end
   end
 
   context "Methods" do
@@ -97,5 +106,17 @@ RSpec.describe ProductDriveParticipant, type: :model do
 
   describe "versioning" do
     it { is_expected.to be_versioned }
+  end
+
+  describe "display_name" do
+    it "returns the business name if it exists, otherwise the contact name" do
+      participant = create(:product_drive_participant, business_name: "Business Name", contact_name: "Contact Name")
+      expect(participant.display_name).to eq("Business Name")
+    end
+
+    it "returns the contact name if the business name is empty" do
+      participant = create(:product_drive_participant, business_name: "", contact_name: "Contact Name")
+      expect(participant.display_name).to eq("Contact Name")
+    end
   end
 end
