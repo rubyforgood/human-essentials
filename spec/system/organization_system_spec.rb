@@ -5,6 +5,44 @@ RSpec.describe "Organization management", type: :system, js: true do
 
   include ActionView::RecordIdentifier
 
+  shared_examples "organization role management checks" do |user_factory|
+
+    let!(:managed_user) { create(user_factory, name: "User to be managed", organization: organization) }
+
+    it 'can remove that user from the organization' do
+      visit organization_path
+      accept_confirm do
+        click_button dom_id(managed_user, "dropdownMenu")
+        click_link "Remove User"
+      end
+
+      expect(page).to have_content("User has been removed!")
+      expect(managed_user.has_role?(Role::ORG_USER)).to be false
+    end
+
+    it "can promote that user from the organization" do
+      visit organization_path
+      accept_confirm do
+        click_button dom_id(managed_user, "dropdownMenu")
+        click_link "Promote to Admin"
+      end
+
+      expect(page).to have_content("User has been promoted!")
+      expect(managed_user.has_role?(Role::ORG_ADMIN, organization)).to be true
+    end
+
+    it "can demote that user from the organization" do
+      managed_user.add_role(Role::ORG_ADMIN, organization)
+      visit organization_path
+      accept_confirm do
+        click_link "Demote to User"
+      end
+
+      expect(page).to have_content("User has been demoted!")
+      expect(managed_user.has_role?(Role::ORG_ADMIN, organization)).to be false
+    end
+  end
+
   context "while signed in as an organization admin" do
     before do
       sign_in(organization_admin)
@@ -21,42 +59,19 @@ RSpec.describe "Organization management", type: :system, js: true do
       expect(page).to have_content("invited to organization")
     end
 
-    shared_examples "organization role management checks" do |user_factory|
+    context "managing a user from the organization" do
+      include_examples "organization role management checks", :user
+    end
 
-      let!(:managed_user) { create(user_factory, name: "User to be managed", organization: organization) }
+    context "managing a super admin user from the organization" do
+      include_examples "organization role management checks", :super_admin
+    end
 
-      it 'can remove that user from the organization' do
-        visit organization_path
-        accept_confirm do
-          click_button dom_id(managed_user, "dropdownMenu")
-          click_link "Remove User"
-        end
+  end
 
-        expect(page).to have_content("User has been removed!")
-        expect(managed_user.has_role?(Role::ORG_USER)).to be false
-      end
-
-      it "can promote that user from the organization" do
-        visit organization_path
-        accept_confirm do
-          click_button dom_id(managed_user, "dropdownMenu")
-          click_link "Promote to Admin"
-        end
-
-        expect(page).to have_content("User has been promoted!")
-        expect(managed_user.has_role?(Role::ORG_ADMIN, organization)).to be true
-      end
-
-      it "can demote that user from the organization" do
-        managed_user.add_role(Role::ORG_ADMIN, organization)
-        visit organization_path
-        accept_confirm do
-          click_link "Demote to User"
-        end
-
-        expect(page).to have_content("User has been demoted!")
-        expect(managed_user.has_role?(Role::ORG_ADMIN, organization)).to be false
-      end
+  context "while signed in as a super admin" do
+    before do
+      sign_in(organization_admin)
     end
 
     context "managing a user from the organization" do
@@ -66,6 +81,5 @@ RSpec.describe "Organization management", type: :system, js: true do
     context "managing a super admin user from the organization" do
       include_examples "organization role management checks", :super_admin
     end
-
   end
 end
