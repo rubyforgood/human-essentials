@@ -125,8 +125,7 @@ class Distribution < ApplicationRecord
     end
   end
 
-  def copy_from_request(request_id)
-    request = Request.find(request_id)
+  def copy_from_request(request)
     self.request = request
     self.organization_id = request.organization_id
     self.partner_id = request.partner_id

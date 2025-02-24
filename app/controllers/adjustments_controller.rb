@@ -14,7 +14,7 @@ class AdjustmentsController < ApplicationController
                                        .during(helpers.selected_range)
     @paginated_adjustments = @adjustments.page(params[:page])
 
-    @storage_locations = Adjustment.storage_locations_adjusted_for(current_organization).uniq
+    @storage_locations = StorageLocation.with_adjustments_for(current_organization).select(:id, :name)
     @users = current_organization.users
 
     respond_to do |format|
