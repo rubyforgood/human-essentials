@@ -407,6 +407,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_18_193017) do
     t.boolean "visible_to_partners", default: true, null: false
     t.integer "kit_id"
     t.integer "item_category_id"
+    t.text "additional_info"
     t.index ["kit_id"], name: "index_items_on_kit_id"
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"
@@ -514,8 +515,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_18_193017) do
     t.integer "deadline_day"
     t.index ["name", "organization_id"], name: "index_partner_groups_on_name_and_organization_id", unique: true
     t.index ["organization_id"], name: "index_partner_groups_on_organization_id"
-    t.check_constraint "deadline_day <= 28", name: "deadline_day_of_month_check", validate: false
-    t.check_constraint "reminder_day <= 28", name: "reminder_day_of_month_check", validate: false
+    t.check_constraint "deadline_day <= 28", name: "deadline_day_of_month_check"
+    t.check_constraint "reminder_day <= 28", name: "reminder_day_of_month_check"
   end
 
   create_table "partner_profiles", force: :cascade do |t|
