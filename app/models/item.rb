@@ -30,6 +30,8 @@ class Item < ApplicationRecord
   include Valuable
 
   after_update :update_associated_kit_name, if: -> { kit.present? }
+  before_create :set_reporting_category
+  before_destroy :validate_destroy, prepend: true
 
   belongs_to :organization # If these are universal this isn't necessary
   belongs_to :base_item, counter_cache: :item_count, primary_key: :partner_key, foreign_key: :partner_key, inverse_of: :items
@@ -104,9 +106,6 @@ class Item < ApplicationRecord
       .where("lower(base_items.category) LIKE '%wipes%'")
       .or(where("base_items.category = 'Miscellaneous'"))
   }
-
-  before_create :set_reporting_category
-  before_destroy :validate_destroy, prepend: true
 
   # TODO: The enum names below have _enum appended in order to not clash with
   # the scopes above. Remove _enum when the scopes above can be safely removed.
