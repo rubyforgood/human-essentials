@@ -35,10 +35,10 @@ RSpec.describe BaseItem, type: :model do
     describe "set_reporting_category" do
       it "updates the reporting_category field" do
         base_item = create(:base_item, name: "Kids S/M (38-65 lbs)")
-        expect(base_item.reporting_category).to eq("Disposable diapers")
+        expect(base_item.reporting_category).to eq("disposable_diapers")
 
         base_item.update(name: "Liners (Incontinence)")
-        expect(base_item.reporting_category).to eq("Adult Incontinence")
+        expect(base_item.reporting_category).to eq("adult_incontinence")
       end
 
       it "sets no reporting_category for Kits" do
@@ -48,7 +48,7 @@ RSpec.describe BaseItem, type: :model do
 
       it "sets reporting_category for item names without mapping to other" do
         base_item = create(:base_item, name: "Foobar")
-        expect(base_item.reporting_category).to eq("Other")
+        expect(base_item.reporting_category).to eq("other")
       end
     end
   end

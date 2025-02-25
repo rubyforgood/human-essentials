@@ -105,18 +105,20 @@ class Item < ApplicationRecord
       .or(where("base_items.category = 'Miscellaneous'"))
   }
 
-  before_destroy :validate_destroy, prepend: true
   before_create :set_reporting_category
+  before_destroy :validate_destroy, prepend: true
 
-  enum :reporting_category, [
-    :adult_incontinence,
-    :cloth_diapers,
-    :disposable_diapers,
-    :menstrual,
-    :other,
-    :pads,
-    :tampons
-  ]
+  # TODO: The enum names below have _enum appended in order to not clash with
+  # the scopes above. Remove _enum when the scopes above can be safely removed.
+  enum :reporting_category, {
+    adult_incontinence_enum: 0,
+    cloth_diapers_enum: 1,
+    disposable_diapers_enum: 2,
+    menstrual_enum: 3,
+    other_enum: 4,
+    pads_enum: 5,
+    tampons_enum: 6
+  }
 
   def self.barcoded_items
     joins(:barcode_items).order(:name).group(:id)
@@ -236,8 +238,13 @@ class Item < ApplicationRecord
 
   private
 
+  # TODO: Remove once items can be created with a reporting category.
+  # Set reporting_category according to reporting_category of base item.
+  # _enum is appended to avoid generated enum method clashing re: above.
   def set_reporting_category
-    self.reporting_category = base_item.reporting_category if reporting_category.blank?
+    return unless reporting_category.blank?
+
+    self.reporting_category = :"#{base_item.reporting_category}_enum" if base_item.reporting_category
   end
 
   def update_associated_kit_name
