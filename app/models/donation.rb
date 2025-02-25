@@ -105,13 +105,6 @@ class Donation < ApplicationRecord
     end
   end
 
-  def remove(item)
-    # doing this will handle either an id or an object
-    item_id = item.to_i
-    line_item = line_items.find_by(item_id: item_id)
-    line_item&.destroy
-  end
-
   def money_raised_in_dollars
     money_raised.to_d / 100
   end

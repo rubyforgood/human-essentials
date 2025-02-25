@@ -223,23 +223,6 @@ RSpec.describe Item, type: :model do
   end
 
   context "Methods >" do
-    describe "barcodes_for" do
-      it "retrieves all BarcodeItems associated with an item" do
-        item = create(:item)
-        barcode_item = create(:barcode_item, barcodeable: item)
-        create(:barcode_item)
-        expect(Item.barcodes_for(item).first).to eq(barcode_item)
-      end
-    end
-    describe "barcoded_items >" do
-      it "returns a collection of items that have barcodes associated with them" do
-        create_list(:item, 3)
-        create(:barcode_item, item: Item.first)
-        create(:barcode_item, item: Item.last)
-        expect(Item.barcoded_items.length).to eq(2)
-      end
-    end
-
     describe '#can_deactivate_or_delete?' do
       let(:item) { create(:item, organization: organization) }
       let(:storage_location) { create(:storage_location, organization: organization) }
