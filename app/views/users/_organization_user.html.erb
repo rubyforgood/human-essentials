@@ -9,10 +9,10 @@
   <td nowrap><%= reinvite_user_link(user) %></td>
   <td>
     <% unless user.has_role?(Role::ORG_ADMIN, current_organization) %>
-      <div class="dropdown">
-        <% if current_user.has_cached_role?(Role::SUPER_ADMIN) %>
-          <%= edit_button_to(edit_admin_user_path(user), { text: 'Edit User' }) %>
-        <% else %>
+      <% if current_user.has_cached_role?(Role::SUPER_ADMIN) %>
+        <%= edit_button_to(edit_admin_user_path(user), { text: 'Edit User' }) %>
+      <% else %>
+        <div class="dropdown">
           <button class="btn btn-default dropdown-toggle" type="button" id="<%= dom_id(user, "dropdownMenu") %>" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
             Actions
             <span class="caret"></span>
@@ -30,8 +30,9 @@
                 {id: dom_id(user), method: :post, class: 'deactivate', text: "Remove User", rel: "nofollow", data: {confirm: 'This will revoke the user\'s organization permissions. Are you sure that you want to submit this?', size: 'xs'}} %>
             </li>
           </ul>
-        <% end %>
-      </div>
+        </div>
+      <% end %>
+
     <% end %>
     <% if current_user.is_admin?(current_organization) && user.has_role?(Role::ORG_ADMIN, current_organization) %>
       <% if current_user.has_cached_role?(Role::SUPER_ADMIN) %>
