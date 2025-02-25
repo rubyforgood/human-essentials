@@ -13,7 +13,7 @@
 #  on_hand_recommended_quantity :integer
 #  package_size                 :integer
 #  partner_key                  :string
-#  reporting_category           :string
+#  reporting_category           :integer
 #  value_in_cents               :integer          default(0)
 #  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null
@@ -109,14 +109,14 @@ class Item < ApplicationRecord
   before_create :set_reporting_category
 
   enum :reporting_category, [
-    "Adult Incontinence",
-    "Cloth Diapers",
-    "Disposable diapers",
-    "Menstrual",
-    "Other",
-    "Pads",
-    "Tampons"
-  ].to_h { |v| [v, v] }
+    :adult_incontinence,
+    :cloth_diapers,
+    :disposable_diapers,
+    :menstrual,
+    :other,
+    :pads,
+    :tampons
+  ]
 
   def self.barcoded_items
     joins(:barcode_items).order(:name).group(:id)

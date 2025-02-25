@@ -408,6 +408,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_21_143640) do
     t.integer "kit_id"
     t.integer "item_category_id"
     t.text "additional_info"
+    t.integer "reporting_category"
     t.index ["kit_id"], name: "index_items_on_kit_id"
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"

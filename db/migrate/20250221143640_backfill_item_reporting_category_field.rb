@@ -2,10 +2,6 @@ class BackfillItemReportingCategoryField < ActiveRecord::Migration[7.2]
   disable_ddl_transaction!
 
   def up
-    # To be safe
-    Item.reset_column_information
-    BaseItem.reset_column_information
-
     # Get the pairing of partner_keys (foreign key to pair base items with items)
     # to reporting category from BaseItem table.
     mappings = BaseItem
