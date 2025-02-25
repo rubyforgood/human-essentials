@@ -41,6 +41,7 @@ class Item < ApplicationRecord
   validates :distribution_quantity, numericality: { greater_than: 0 }, allow_blank: true
   validates :on_hand_recommended_quantity, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
   validates :on_hand_minimum_quantity, numericality: { greater_than_or_equal_to: 0 }
+  validates :package_size, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
 
   has_many :line_items, dependent: :destroy
   has_many :inventory_items, dependent: :destroy
