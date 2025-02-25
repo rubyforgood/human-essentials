@@ -32,8 +32,8 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       create(:base_item, name: "Toddler Disposable Diaper", partner_key: "toddler diapers", category: "disposable diaper")
       create(:base_item, name: "Infant Disposable Diaper", partner_key: "infant diapers", category: "infant disposable diaper")
 
-      toddler_disposable_kit_item = create(:item, name: "Toddler Disposable Diapers", partner_key: "toddler diapers", kit: kit, distribution_quantity: 2)
-      infant_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", partner_key: "infant diapers", kit: kit, distribution_quantity: 1)
+      toddler_disposable_kit_item = create(:item, name: "Toddler Disposable Diapers", partner_key: "toddler diapers", kit:, distribution_quantity: 2, organization:)
+      infant_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", partner_key: "infant diapers", kit:, organization:)
 
       # Distributions
       distributions = create_list(:distribution, 2, issued_at: within_time, organization: organization)
@@ -46,16 +46,16 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       infant_distribution = create(:distribution, organization: organization, issued_at: within_time)
       toddler_distribution = create(:distribution, organization: organization, issued_at: within_time)
 
-      create(:line_item, :distribution, quantity: 10, item: toddler_disposable_kit_item, itemizable: infant_distribution)
-      create(:line_item, :distribution, quantity: 10, item: infant_disposable_kit_item, itemizable: toddler_distribution)
-      create(:line_item, :distribution, quantity: 10, item: toddler_disposable_kit_item, itemizable: toddler_distribution)
+      create(:line_item, quantity: 10, item: toddler_disposable_kit_item, itemizable: infant_distribution)
+      create(:line_item, quantity: 10, item: infant_disposable_kit_item, itemizable: toddler_distribution)
+      create(:line_item, quantity: 10, item: toddler_disposable_kit_item, itemizable: toddler_distribution)
 
       report = described_class.new(organization: organization, year: within_time.year).report
       expect(report).to eq({
                                     name: 'Children Served',
                                     entries: {
-                                      'Average children served monthly' => "9",
-                                      'Total children served' => "103", # 100 normal and 3 from kits
+                                      'Average children served monthly' => "10",
+                                      'Total children served' => "120", # 100 normal and 20 from kits (10 infant, 10 toddler)
                                       'Repackages diapers?' => 'Y',
                                       'Monthly diaper distributions?' => 'Y'
                                     }
@@ -91,16 +91,16 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       infant_distribution = create(:distribution, organization: organization, issued_at: within_time)
       toddler_distribution = create(:distribution, organization: organization, issued_at: within_time)
 
-      create(:line_item, :distribution, quantity: 100, item: toddler_disposable_kit_item, itemizable: infant_distribution)
-      create(:line_item, :distribution, quantity: 200, item: toddler_disposable_kit_item, itemizable: toddler_distribution)
-      create(:line_item, :distribution, quantity: 200, item: infant_disposable_kit_item, itemizable: toddler_distribution)
+      create(:line_item, :distribution, quantity: 10, item: toddler_disposable_kit_item, itemizable: infant_distribution)
+      create(:line_item, :distribution, quantity: 20, item: toddler_disposable_kit_item, itemizable: toddler_distribution)
+      create(:line_item, :distribution, quantity: 30, item: infant_disposable_kit_item, itemizable: toddler_distribution)
 
       report = described_class.new(organization: organization, year: within_time.year).report
       expect(report).to eq({
                                     name: 'Children Served',
                                     entries: {
-                                      'Average children served monthly' => "4",
-                                      'Total children served' => "43", # 40 normal and 3 from kits
+                                      'Average children served monthly' => "8",
+                                      'Total children served' => "100", # 40 normal and 60 from kits
                                       'Repackages diapers?' => 'Y',
                                       'Monthly diaper distributions?' => 'Y'
                                     }

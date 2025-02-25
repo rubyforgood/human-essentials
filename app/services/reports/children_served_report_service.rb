@@ -50,9 +50,11 @@ module Reports
       organization
         .distributions
         .for_year(year)
-        .joins(line_items: { item: :kit })
-        .merge(Item.disposable)
-        .count("kits.id")
+        .joins(line_items: { item: { kit: { line_items: {item: :base_item} }}})
+        .where("base_items.category ILIKE '%diaper%' AND
+          NOT base_items.category ILIKE '%cloth%' OR base_items.name ILIKE '%cloth%' AND
+          NOT base_items.category ILIKE '%adult%'")
+        .sum("line_items.quantity / COALESCE(items.distribution_quantity, 1)")
     end
   end
 end
