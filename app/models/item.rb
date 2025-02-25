@@ -238,9 +238,9 @@ class Item < ApplicationRecord
 
   private
 
+  # Sets reporting_category according to reporting_category of base item.
+  # _enum is appended to avoid generated enum method clashing (see above).
   # TODO: Remove once items can be created with a reporting category.
-  # Set reporting_category according to reporting_category of base item.
-  # _enum is appended to avoid generated enum method clashing re: above.
   def set_reporting_category
     return unless reporting_category.blank?
 
