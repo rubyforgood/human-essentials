@@ -42,7 +42,6 @@ class StorageLocation < ApplicationRecord
                           inverse_of: :to,
                           foreign_key: :to_id,
                           dependent: :destroy
-  has_many :kit_allocations, dependent: :destroy
 
   validates :name, :address, presence: true
   validates :warehouse_type, inclusion: { in: WAREHOUSE_TYPES },
