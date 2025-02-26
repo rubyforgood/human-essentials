@@ -20,7 +20,7 @@ RSpec.describe "Admin::UsersController", type: :request do
 
         page = Nokogiri::HTML(response.body)
         roles_and_resources = page.at_xpath("//*[contains(text(), \"#{user.email}\")]/../td[1]").text.strip
-        expect(roles_and_resources).to eq("org_admin (Organization), org_user (Organization), partner (Partner)")
+        expect(roles_and_resources).to eq("org_admin (Org ABC), org_user (Org ABC), partner (Partner XYZ)")
       end
     end
 

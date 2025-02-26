@@ -11,7 +11,7 @@
     <% @users.each do |user| %>
       <tr>
         <td>
-          <%= user.roles.map { |role| "#{role.name} (#{role.resource_type.presence || "N/A"})" }.compact.uniq.sort.join(', ') %>
+          <%= user.roles.map { |role| "#{role.name} (#{role.resource&.name.presence || "N/A"})" }.compact.uniq.sort.join(", ") %>
         </td>
         <td><%= user.display_name %></td>
         <td><%= user.email %></td>
