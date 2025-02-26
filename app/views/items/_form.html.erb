@@ -40,7 +40,7 @@
               <% end %>
 
               <%= f.input :name, label: "Package size", wrapper: :input_group do %>
-                <%= f.input_field :package_size, class: "form-control" %>
+                <%= f.input_field :package_size, class: "form-control", min: 0 %>
               <% end %>
 
               <% if Flipper.enabled?(:enable_packs) %>
