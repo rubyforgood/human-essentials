@@ -4,7 +4,10 @@
       <strong>Attached files:</strong>
       <ul>
         <% profile.documents.each do |doc| %>
-          <li><%= link_to doc.blob['filename'], rails_blob_path(doc), class: "font-weight-bold" %></li>
+          <% if doc.persisted? %>
+            <li><%= link_to doc.blob['filename'], rails_blob_path(doc), class: "font-weight-bold" %></li>
+            <%= pf.hidden_field :documents, multiple: true, value: doc.signed_id %>
+          <% end %>
         <% end %>
       </ul>
       <%= pf.file_field :documents, multiple: true, class: "form-control-file" %>
