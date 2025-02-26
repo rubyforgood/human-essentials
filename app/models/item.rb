@@ -13,6 +13,7 @@
 #  on_hand_recommended_quantity :integer
 #  package_size                 :integer
 #  partner_key                  :string
+#  reporting_category           :string
 #  value_in_cents               :integer          default(0)
 #  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null
@@ -29,6 +30,8 @@ class Item < ApplicationRecord
   include Valuable
 
   after_update :update_associated_kit_name, if: -> { kit.present? }
+  before_create :set_reporting_category
+  before_destroy :validate_destroy, prepend: true
 
   belongs_to :organization # If these are universal this isn't necessary
   belongs_to :base_item, counter_cache: :item_count, primary_key: :partner_key, foreign_key: :partner_key, inverse_of: :items
@@ -105,7 +108,15 @@ class Item < ApplicationRecord
       .or(where("base_items.category = 'Miscellaneous'"))
   }
 
-  before_destroy :validate_destroy, prepend: true
+  enum :reporting_category, {
+    adult_incontinence: "adult_incontinence",
+    cloth_diapers: "cloth_diapers",
+    disposable_diapers: "disposable_diapers",
+    menstrual: "menstrual",
+    other: "other",
+    pads: "pads",
+    tampons: "tampons"
+  }, scopes: false, instance_methods: false
 
   def self.reactivate(item_ids)
     item_ids = Array.wrap(item_ids)
@@ -208,6 +219,14 @@ class Item < ApplicationRecord
   end
 
   private
+
+  # Sets reporting_category according to reporting_category of base item.
+  # TODO: Remove once items can be created with a reporting category.
+  def set_reporting_category
+    return unless reporting_category.blank?
+
+    self.reporting_category = base_item.reporting_category if base_item.reporting_category
+  end
 
   def update_associated_kit_name
     kit.update(name: name)
