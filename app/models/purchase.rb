@@ -79,13 +79,6 @@ class Purchase < ApplicationRecord
     amount_spent.dollars.to_f
   end
 
-  def remove(item)
-    # doing this will handle either an id or an object
-    item_id = item.to_i
-    line_item = line_items.find_by(item_id: item_id)
-    line_item&.destroy
-  end
-
   def self.organization_summary_by_dates(organization, date_range)
     purchases = where(organization: organization).during(date_range)
 

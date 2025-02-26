@@ -69,7 +69,7 @@ class ItemsController < ApplicationController
     @inventory = View::Inventory.new(current_organization.id)
     storage_location_ids = @inventory.storage_locations_for_item(@item.id)
     @storage_locations_containing = StorageLocation.find(storage_location_ids)
-    @barcodes_for = current_organization.items.barcodes_for(@item)
+    @barcodes_for = BarcodeItem.where(barcodeable_id: @item.id)
   end
 
   def update
