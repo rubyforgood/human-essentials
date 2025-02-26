@@ -17,7 +17,7 @@ class BackfillItemReportingCategoryField < ActiveRecord::Migration[7.2]
     Item.unscoped.in_batches do |relation|
       mappings.each do |reporting_category, partner_keys|
         relation.where(partner_key: partner_keys)
-          .update_all(reporting_category: :"#{reporting_category}_enum")
+          .update_all(reporting_category: reporting_category)
 
         sleep(0.1) # Throttle
       end

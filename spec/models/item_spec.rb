@@ -13,7 +13,7 @@
 #  on_hand_recommended_quantity :integer
 #  package_size                 :integer
 #  partner_key                  :string
-#  reporting_category           :integer
+#  reporting_category           :string
 #  value_in_cents               :integer          default(0)
 #  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null
@@ -487,7 +487,7 @@ RSpec.describe Item, type: :model do
     let(:item) { create(:item, name: "Period product", base_item:) }
 
     it "sets the reporting category" do
-      expect(item.reporting_category).to eq("tampons_enum")
+      expect(item.reporting_category).to eq("tampons")
     end
   end
 

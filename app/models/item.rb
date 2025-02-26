@@ -13,7 +13,7 @@
 #  on_hand_recommended_quantity :integer
 #  package_size                 :integer
 #  partner_key                  :string
-#  reporting_category           :integer
+#  reporting_category           :string
 #  value_in_cents               :integer          default(0)
 #  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null
@@ -107,17 +107,15 @@ class Item < ApplicationRecord
       .or(where("base_items.category = 'Miscellaneous'"))
   }
 
-  # TODO: The enum names below have _enum appended in order to not clash with
-  # the scopes above. Remove _enum when the scopes above can be safely removed.
   enum :reporting_category, {
-    adult_incontinence_enum: 0,
-    cloth_diapers_enum: 1,
-    disposable_diapers_enum: 2,
-    menstrual_enum: 3,
-    other_enum: 4,
-    pads_enum: 5,
-    tampons_enum: 6
-  }
+    adult_incontinence: "adult_incontinence",
+    cloth_diapers: "cloth_diapers",
+    disposable_diapers: "disposable_diapers",
+    menstrual: "menstrual",
+    other: "other",
+    pads: "pads",
+    tampons: "tampons"
+  }, scopes: false, instance_methods: false
 
   def self.barcoded_items
     joins(:barcode_items).order(:name).group(:id)
@@ -238,12 +236,11 @@ class Item < ApplicationRecord
   private
 
   # Sets reporting_category according to reporting_category of base item.
-  # _enum is appended to avoid generated enum method clashing (see above).
   # TODO: Remove once items can be created with a reporting category.
   def set_reporting_category
     return unless reporting_category.blank?
 
-    self.reporting_category = :"#{base_item.reporting_category}_enum" if base_item.reporting_category
+    self.reporting_category = base_item.reporting_category if base_item.reporting_category
   end
 
   def update_associated_kit_name
