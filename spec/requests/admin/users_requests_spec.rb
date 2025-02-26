@@ -98,7 +98,7 @@ RSpec.describe "Admin::UsersController", type: :request do
         let!(:user_to_modify) { create(user_factory, name: "User to modify", organization: organization) }
 
         it "should call the service and redirect back", :aggregate_failures do
-          role_to_remove_id = user_to_modify.roles.find_by( name: Role::ORG_ADMIN, resource_id: organization.id ).id
+          role_to_remove_id = user_to_modify.roles.find_by(name: Role::ORG_ADMIN, resource_id: organization.id).id
           allow(RemoveRoleService).to receive(:call)
           delete admin_user_remove_role_path(user_id: user_to_modify.id,
             role_id: role_to_remove_id),

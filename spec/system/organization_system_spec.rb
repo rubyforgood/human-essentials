@@ -6,7 +6,6 @@ RSpec.describe "Organization management", type: :system, js: true do
   include ActionView::RecordIdentifier
 
   shared_examples "organization role management checks" do |user_factory|
-
     let!(:managed_user) { create(user_factory, name: "User to be managed", organization: organization) }
 
     it 'can remove that user from the organization' do
@@ -66,7 +65,6 @@ RSpec.describe "Organization management", type: :system, js: true do
     context "managing a super admin user from the organization" do
       include_examples "organization role management checks", :super_admin
     end
-
   end
 
   context "while signed in as a super admin" do

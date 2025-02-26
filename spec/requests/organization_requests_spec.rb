@@ -21,7 +21,7 @@ RSpec.describe "Organizations", type: :request do
       expect(user_to_promote.reload.has_role?(Role::ORG_ADMIN, organization)).to be_truthy
       # The user_update_redirect_path will vary based on whether the logged in
       # user is a super admin or not
-      expect(response).to redirect_to( @current_user.has_cached_role?(Role::SUPER_ADMIN) ? admin_organization_path(organization.id) : organization_path )
+      expect(response).to redirect_to(@current_user.has_cached_role?(Role::SUPER_ADMIN) ? admin_organization_path(organization.id) : organization_path)
       expect(flash[:notice]).to eq("User has been promoted!")
     end
   end
@@ -39,7 +39,7 @@ RSpec.describe "Organizations", type: :request do
       expect(user_to_demote.reload.has_role?(Role::ORG_ADMIN, organization)).to be_falsey
       # The user_update_redirect_path will vary based on whether the logged in
       # user is a super admin or not
-      expect(response).to redirect_to( @current_user.has_cached_role?(Role::SUPER_ADMIN) ? admin_organization_path(organization.id) : organization_path )
+      expect(response).to redirect_to(@current_user.has_cached_role?(Role::SUPER_ADMIN) ? admin_organization_path(organization.id) : organization_path)
       expect(flash[:notice]).to eq("User has been demoted!")
     end
   end
@@ -57,7 +57,7 @@ RSpec.describe "Organizations", type: :request do
       expect(user_to_remove.reload.has_role?(Role::ORG_USER, organization)).to be_falsey
       # The user_update_redirect_path will vary based on whether the logged in
       # user is a super admin or not
-      expect(response).to redirect_to( @current_user.has_cached_role?(Role::SUPER_ADMIN) ? admin_organization_path(organization.id) : organization_path )
+      expect(response).to redirect_to(@current_user.has_cached_role?(Role::SUPER_ADMIN) ? admin_organization_path(organization.id) : organization_path)
       expect(flash[:notice]).to eq("User has been removed!")
     end
   end
