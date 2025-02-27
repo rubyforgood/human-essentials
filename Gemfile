@@ -14,7 +14,7 @@ gem "pg", "~> 1.5.9"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "7.2.2"
+gem "rails", "~> 8.0.1"
 
 ###### MODELS / DATABASE #######
 
@@ -56,7 +56,9 @@ gem "importmap-rails", "~> 2.1"
 ##### VIEWS/CONTROLLERS #####
 
 # Adds filter support to models and views.
-gem "filterrific"
+# TODO: Change filterrific from git back to a version once there is a release the following commit:
+# https://github.com/jhund/filterrific/commit/bb1ab756575674a19e1632c9eeb5eda859a8cb8a
+gem "filterrific", git: "https://github.com/jhund/filterrific", branch: "master"
 # Generates JSON structures via a builder interface.
 gem "jbuilder"
 # Pagination of models for use in views.
