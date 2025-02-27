@@ -55,8 +55,9 @@ module Reports
         .where("base_items.category ILIKE '%diaper%' AND
           NOT base_items.category ILIKE '%cloth%' OR base_items.name ILIKE '%cloth%' AND
           NOT base_items.category ILIKE '%adult%'")
+        .group("line_items_kits.id")
         .pick(Arel.sql("CEILING(SUM(line_items.quantity::numeric / COALESCE(items.distribution_quantity, 1)))"))
-      .to_i
+        .to_i
     end
   end
 end
