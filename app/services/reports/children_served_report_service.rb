@@ -14,7 +14,7 @@ module Reports
     def report
       @report ||= { name: 'Children Served',
                     entries: {
-                      'Average children served monthly' => number_with_delimiter(average_children_monthly.round),
+                      'Average children served monthly' => number_with_delimiter(average_children_monthly.round(2)),
                       'Total children served' => number_with_delimiter(total_children_served),
                       'Repackages diapers?' => organization.repackage_essentials? ? 'Y' : 'N',
                       'Monthly diaper distributions?' => organization.distribute_monthly? ? 'Y' : 'N'
@@ -39,7 +39,8 @@ module Reports
       .for_year(year)
       .joins(line_items: :item)
       .merge(Item.loose.disposable)
-      .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50)')
+      .pick(Arel.sql("CEILING(SUM(line_items.quantity::numeric / COALESCE(items.distribution_quantity, 50)))"))
+      .to_i
     end
 
     # These joins look circular but are needed due to polymorphic relationships.
@@ -54,7 +55,8 @@ module Reports
         .where("base_items.category ILIKE '%diaper%' AND
           NOT base_items.category ILIKE '%cloth%' OR base_items.name ILIKE '%cloth%' AND
           NOT base_items.category ILIKE '%adult%'")
-        .sum("line_items.quantity / COALESCE(items.distribution_quantity, 1)")
+        .pick(Arel.sql("CEILING(SUM(line_items.quantity::numeric / COALESCE(items.distribution_quantity, 1)))"))
+      .to_i
     end
   end
 end
