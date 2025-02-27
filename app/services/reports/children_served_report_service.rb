@@ -14,7 +14,7 @@ module Reports
     def report
       @report ||= { name: 'Children Served',
                     entries: {
-                      'Average children served monthly' => number_with_delimiter(average_children_monthly.round(2)),
+                      'Average children served monthly' => number_with_delimiter(average_children_monthly),
                       'Total children served' => number_with_delimiter(total_children_served),
                       'Repackages diapers?' => organization.repackage_essentials? ? 'Y' : 'N',
                       'Monthly diaper distributions?' => organization.distribute_monthly? ? 'Y' : 'N'
@@ -28,7 +28,7 @@ module Reports
 
     # @return [Float]
     def average_children_monthly
-      total_children_served / 12.0
+      (total_children_served / 12.0).round(2)
     end
 
     private

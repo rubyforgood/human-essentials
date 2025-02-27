@@ -128,14 +128,14 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
 
       report = described_class.new(organization: organization, year: within_time.year).report
       expect(report).to eq({
-          name: "Children Served",
-          entries: {
-            "Average children served monthly" => "0.25",
-            "Total children served" => "3", # 1 / 10 = 0.1 rounds to 1 child from kits + 6 / 20 * 4 = 1.25 rounds to 2 children from nonkits
-            "Repackages diapers?" => "N",
-            "Monthly diaper distributions?" => "N"
-          }
-        })
+        name: "Children Served",
+        entries: {
+          "Average children served monthly" => "0.25",
+          "Total children served" => "3", # 1 / 10 = 0.1 rounds to 1 child from kits + 6 / 20 * 4 = 1.25 rounds to 2 children from nonkits
+          "Repackages diapers?" => "N",
+          "Monthly diaper distributions?" => "N"
+        }
+      })
     end
   end
 end
