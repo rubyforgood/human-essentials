@@ -13,6 +13,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_role
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found!
+  rescue_from Errors::InvalidDateRange, with: :invalid_date
 
   rescue_from ActionController::InvalidAuthenticityToken do
     flash[:error] = "Your session expired. This could be due to leaving a page open for a long time, or having multiple tabs open. Try resubmitting."
@@ -124,6 +125,11 @@ class ApplicationController < ActionController::Base
 
   def swaddled
     response.headers["swaddled-by"] = "rubyforgood"
+  end
+
+  def invalid_date(date_value)
+    flash[:error] = "Date range '#{date_value}' not properly formatted. Filters reset."
+    redirect_to controller: params["controller"], action: params["action"]
   end
 
   protected
