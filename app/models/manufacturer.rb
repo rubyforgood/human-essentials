@@ -37,10 +37,4 @@ class Manufacturer < ApplicationRecord
       .order('donation_date DESC')
       .limit(count)
   end
-
-  private
-
-  def exists_in_org?
-    organization.manufacturers.where(name: name).exists?
-  end
 end

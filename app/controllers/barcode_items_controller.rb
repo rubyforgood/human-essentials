@@ -2,12 +2,12 @@
 # anomaly here is the :find action, which has some special logic built-in to it, see the comments below.
 class BarcodeItemsController < ApplicationController
   def index
-    @items = Item.gather_items(current_organization, @global)
+    @items = current_organization.items.joins(:barcode_items)
     @base_items = BaseItem.alphabetized
     @selected_barcodeable_id = filter_params[:barcodeable_id]
     @selected_partner_key = filter_params[:by_item_partner_key]
     @selected_barcode_id = filter_params[:by_value]
-    @barcode_items = current_organization.barcode_items.class_filter(filter_params)
+    @barcode_items = current_organization.barcode_items.includes(:item, :barcodeable).class_filter(filter_params)
     @selected_item = filter_params[:barcodeable_id]
     @selected_partner_key = filter_params[:by_item_partner_key]
 
@@ -88,10 +88,11 @@ class BarcodeItemsController < ApplicationController
       barcode = current_organization.barcode_items.find(params[:id])
       raise if barcode.nil? || barcode.global?
 
-      barcode.destroy
+      barcode.destroy!
     rescue StandardError
       flash[:error] = "Sorry, you don't have permission to delete this barcode."
     end
+    flash[:notice] = "Barcode deleted!"
     redirect_to barcode_items_path
   end
 

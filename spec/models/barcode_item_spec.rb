@@ -111,6 +111,18 @@ RSpec.describe BarcodeItem, type: :model do
 
       include_examples "common barcode tests", :global_barcode_item
     end
+
+    describe "#destroy" do
+      before { global_barcode_item } # Ensure barcode and its item are created
+
+      it "deletes the barcode item" do
+        expect { global_barcode_item.destroy }.to change(BarcodeItem, :count).by(-1)
+      end
+
+      it "keeps the associated item" do
+        expect { global_barcode_item.destroy }.to_not change(Item, :count)
+      end
+    end
   end
 
   context "Organization barcodes" do
@@ -193,6 +205,18 @@ RSpec.describe BarcodeItem, type: :model do
     describe "to_h >" do
       it "emits a hash for a line_item" do
         expect(barcode_item.to_h).to eq(barcodeable_id: barcode_item.barcodeable_id, barcodeable_type: barcode_item.barcodeable_type, quantity: barcode_item.quantity)
+      end
+    end
+
+    describe "#destroy" do
+      before { barcode_item } # Ensure barcode and its item are created
+
+      it "deletes the barcode item" do
+        expect { barcode_item.destroy }.to change(BarcodeItem, :count).by(-1)
+      end
+
+      it "keeps the associated item" do
+        expect { barcode_item.destroy }.to_not change(Item, :count)
       end
     end
   end

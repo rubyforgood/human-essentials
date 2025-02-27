@@ -4,8 +4,8 @@ RSpec.describe "Requests", type: :system, js: true do
 
   let(:item1) { create(:item, name: "Good item") }
   let(:item2) { create(:item, name: "Crap item") }
-  let(:partner1) { create(:partner, name: "This Guy", email: "thisguy@example.com") }
-  let(:partner2) { create(:partner, name: "That Guy", email: "ntg@example.com") }
+  let(:partner1) { create(:partner, organization:, name: "This Guy", email: "thisguy@example.com") }
+  let(:partner2) { create(:partner, organization:, name: "That Guy", email: "ntg@example.com") }
   let!(:storage_location) { create(:storage_location, organization: organization) }
 
   before do

@@ -28,7 +28,7 @@ class Partner < ApplicationRecord
   ].freeze
 
   # Status `4` (error) was removed for being obsolete but is intentionally skipped to preserve existing enum values.
-  enum status: { uninvited: 0, invited: 1, awaiting_review: 2, approved: 3, recertification_required: 5, deactivated: 6 }
+  enum :status, { uninvited: 0, invited: 1, awaiting_review: 2, approved: 3, recertification_required: 5, deactivated: 6 }
 
   belongs_to :organization
   belongs_to :partner_group, optional: true

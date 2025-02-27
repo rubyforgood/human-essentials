@@ -67,7 +67,7 @@ class PurchasesController < ApplicationController
   end
 
   def show
-    @purchase = current_organization.purchases.includes(:line_items).find(params[:id])
+    @purchase = current_organization.purchases.includes(line_items: :item).find(params[:id])
     @line_items = @purchase.line_items
   end
 

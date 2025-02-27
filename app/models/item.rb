@@ -4,6 +4,7 @@
 #
 #  id                           :integer          not null, primary key
 #  active                       :boolean          default(TRUE)
+#  additional_info              :text
 #  barcode_count                :integer
 #  category                     :string
 #  distribution_quantity        :integer
@@ -34,11 +35,13 @@ class Item < ApplicationRecord
   belongs_to :kit, optional: true
   belongs_to :item_category, optional: true
 
+  validates :additional_info, length: { maximum: 500 }
   validates :name, uniqueness: { scope: :organization, case_sensitive: false, message: "- An item with that name already exists (could be an inactive item)" }
   validates :name, presence: true
   validates :distribution_quantity, numericality: { greater_than: 0 }, allow_blank: true
   validates :on_hand_recommended_quantity, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
   validates :on_hand_minimum_quantity, numericality: { greater_than_or_equal_to: 0 }
+  validates :package_size, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
 
   has_many :line_items, dependent: :destroy
   has_many :inventory_items, dependent: :destroy
@@ -104,14 +107,6 @@ class Item < ApplicationRecord
 
   before_destroy :validate_destroy, prepend: true
 
-  def self.barcoded_items
-    joins(:barcode_items).order(:name).group(:id)
-  end
-
-  def self.barcodes_for(item)
-    BarcodeItem.where(barcodeable_id: item.id)
-  end
-
   def self.reactivate(item_ids)
     item_ids = Array.wrap(item_ids)
     Item.where(id: item_ids).find_each { |item| item.update(active: true) }
@@ -173,16 +168,8 @@ class Item < ApplicationRecord
     partner_key == "other"
   end
 
-  def self.gather_items(current_organization, global = false)
-    if global
-      where(id: current_organization.barcode_items.all.pluck(:barcodeable_id))
-    else
-      where(id: current_organization.barcode_items.pluck(:barcodeable_id))
-    end
-  end
   # Convenience method so that other methods can be simplified to
   # expect an id or an Item object
-
   def to_i
     id
   end
