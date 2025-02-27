@@ -79,6 +79,34 @@ RSpec.describe StorageLocation, type: :model do
     end
   end
 
+  context "Scopes >" do
+    describe "with_audits_for" do
+      it "returns only storage locations that are used for one org" do
+        storage_location1 = create(:storage_location, organization: organization)
+        storage_location2 = create(:storage_location, organization: organization)
+        create(:storage_location, organization: organization)
+        storage_location4 = create(:storage_location, organization: create(:organization))
+        create(:audit, storage_location: storage_location1, organization: organization)
+        create(:audit, storage_location: storage_location2, organization: organization)
+        create(:audit, storage_location: storage_location4, organization: storage_location4.organization)
+        expect(StorageLocation.with_audits_for(organization).to_a).to match_array([storage_location1, storage_location2])
+      end
+    end
+
+    describe "with_adjustments_for" do
+      it "returns only storage locations that are used in adjustments for one org" do
+        storage_location1 = create(:storage_location, organization: organization)
+        storage_location2 = create(:storage_location, organization: organization)
+        create(:storage_location, organization: organization)
+        storage_location4 = create(:storage_location, organization: create(:organization))
+        create(:adjustment, storage_location: storage_location1, organization: organization)
+        create(:adjustment, storage_location: storage_location2, organization: organization)
+        create(:adjustment, storage_location: storage_location4, organization: storage_location4.organization)
+        expect(StorageLocation.with_adjustments_for(organization).to_a).to match_array([storage_location1, storage_location2])
+      end
+    end
+  end
+
   context "Methods >" do
     let(:item) { create(:item) }
     subject { create(:storage_location, :with_items, item_quantity: 10, item: item, organization: organization) }

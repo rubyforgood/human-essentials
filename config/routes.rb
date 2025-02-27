@@ -173,6 +173,10 @@ Rails.application.routes.draw do
     collection do
       post :import_csv
     end
+    member do
+      put :deactivate
+      put :reactivate
+    end
   end
 
   resources :kits do

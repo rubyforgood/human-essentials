@@ -148,27 +148,6 @@ RSpec.describe Donation, type: :model do
   end
 
   context "Methods >" do
-    describe "remove" do
-      let!(:donation) { create(:donation, :with_items) }
-
-      it "removes the item from the donation" do
-        item_id = donation.line_items.last.item_id
-        expect do
-          donation.remove(item_id)
-        end.to change { donation.line_items.count }.by(-1)
-      end
-
-      it "works with either an id or an object" do
-      end
-
-      it "fails gracefully if the item doesn't exist" do
-        item_id = create(:item).id
-        expect do
-          donation.remove(item_id)
-        end.not_to change { donation.line_items.count }
-      end
-    end
-
     describe "money_raised" do
       it "tracks the money raised in a donation" do
         donation = create(:donation, :with_items, money_raised: 100)

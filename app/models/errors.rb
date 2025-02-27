@@ -43,18 +43,6 @@ module Errors
     end
   end
 
-  class StorageLocationDoesNotMatch < StandardError
-    def message
-      "Storage location kit doesn't match"
-    end
-  end
-
-  class KitAllocationNotExists < StandardError
-    def message
-      "KitAllocation not found for given kit"
-    end
-  end
-
   class InventoryAlreadyHasItems < StandardError
     def message
       "Could not complete action: inventory already has items stored"

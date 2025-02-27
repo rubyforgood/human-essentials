@@ -95,6 +95,49 @@ module Partners
     accepts_nested_attributes_for :served_areas, allow_destroy: true
 
     has_many_attached :documents
+    enum :agency_type,
+      other: "OTHER",
+      career: "CAREER",
+      abuse: "ABUSE",
+      bnb: "BNB",
+      church: "CHURCH",
+      college: "COLLEGE",
+      cdc: "CDC",
+      health: "HEALTH",
+      outreach: "OUTREACH",
+      legal: "LEGAL",
+      crisis: "CRISIS",
+      disab: "DISAB",
+      district: "DISTRICT",
+      domv: "DOMV",
+      ece: "ECE",
+      child: "CHILD",
+      edu: "EDU",
+      family: "FAMILY",
+      food: "FOOD",
+      foster: "FOSTER",
+      govt: "GOVT",
+      headstart: "HEADSTART",
+      homevisit: "HOMEVISIT",
+      homeless: "HOMELESS",
+      hosp: "HOSP",
+      infpan: "INFPAN",
+      lib: "LIB",
+      mhealth: "MHEALTH",
+      military: "MILITARY",
+      police: "POLICE",
+      preg: "PREG",
+      presch: "PRESCH",
+      ref: "REF",
+      es: "ES",
+      hs: "HS",
+      ms: "MS",
+      senior: "SENIOR",
+      tribal: "TRIBAL",
+      treat: "TREAT",
+      twoycollege: "2YCOLLEGE",
+      wic: "WIC"
+
     validate :check_social_media, on: :edit
 
     validate :client_share_is_0_or_100
@@ -126,9 +169,9 @@ module Partners
       pick_up_email.split(/,|\s+/).compact_blank
     end
 
-    def county_list_by_region
-      # provides a county list in case insensitive alpha order, by region, then county name
-      counties.order(%w(lower(region) lower(name))).pluck(:name).join("; ")
+    def self.agency_types_for_selection
+      # alphabetize based on the translated version, as that is the text users will actually read
+      agency_types.keys.map(&:to_sym).sort_by { |sym| I18n.t(sym, scope: :partners_profile) }.partition { |v| v != :other }.flatten
     end
 
     private
