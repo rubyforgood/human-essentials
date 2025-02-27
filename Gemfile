@@ -56,7 +56,7 @@ gem "importmap-rails", "~> 2.1"
 ##### VIEWS/CONTROLLERS #####
 
 # Adds filter support to models and views.
-# TODO: Change filterrific from git back to a version once there is a release the following commit:
+# TODO: Stop pinning filterrific to git once there is a release with the following commit:
 # https://github.com/jhund/filterrific/commit/bb1ab756575674a19e1632c9eeb5eda859a8cb8a
 gem "filterrific", git: "https://github.com/jhund/filterrific", branch: "master"
 # Generates JSON structures via a builder interface.
