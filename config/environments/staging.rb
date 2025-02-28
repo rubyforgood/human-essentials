@@ -94,8 +94,8 @@ Rails.application.configure do
     }
   end
 
-  # Store files on Amazon S3.
-  config.active_storage.service = :amazon
+  # Store files locally.
+  config.active_storage.service = :azure
 
   # Use a different logger for distributed setups.
   # require 'syslog/logger'
