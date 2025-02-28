@@ -39,18 +39,43 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       expect(users_table).to have_text("TestUser")
     end
 
-    it 'adds a role' do
-      user = create(:user, name: 'User 123', organization: organization)
-      create(:partner, name: 'Partner ABC', organization: organization)
+    shared_examples "add role check" do |user_factory|
+      let!(:user_to_modify) { create(user_factory, name: "User to modify", organization: organization) }
 
-      visit edit_admin_user_path(user)
-      expect(page).to have_content('User 123')
-      select "Partner", from: "resource_type"
-      find("div.input-group:has(.select2-container)").click
-      find("li.select2-results__option", text: "Partner ABC").click
-      click_on 'Add Role'
+      it "adds a role", :aggregate_failures do
+        create(:partner, name: 'Partner ABC', organization: organization)
+        visit edit_admin_user_path(user_to_modify)
+        expect(page).to have_content('User to modify')
+        select "Partner", from: "resource_type"
+        find("div.input-group:has(.select2-container)").click
+        find("li.select2-results__option", text: "Partner ABC").click
+        click_on 'Add Role'
 
-      expect(page.find('.alert')).to have_content('Role added')
+        expect(page.find('.alert')).to have_content('Role added')
+      end
+    end
+
+    include_examples "add role check", :user
+    context 'modifying another super admin' do
+      include_examples "add role check", :super_admin
+    end
+
+    shared_examples "remove role check" do |user_factory|
+      let!(:user_to_modify) { create(user_factory, name: "User to modify", organization: organization) }
+
+      it "removes a role", :aggregate_failures do
+        visit edit_admin_user_path(user_to_modify)
+        expect(page).to have_content('User to modify')
+        accept_confirm do
+          click_on 'Delete', match: :first # For users that have multiple roles
+        end
+        expect(page.find('.alert')).to have_content('Role removed!')
+      end
+    end
+
+    include_examples "remove role check", :user
+    context 'modifying another super admin' do
+      include_examples "remove role check", :super_admin
     end
 
     it "filters users by name" do
