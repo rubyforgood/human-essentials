@@ -1,7 +1,5 @@
-require 'aws-sdk-s3'
-
 desc "Update the development db to what is being used in prod"
-BUCKET_NAME = "human-essentials-backups"
+BACKUP_CONTAINER_NAME = 'backups'
 PASSWORD_REPLACEMENT = 'password'
 
 task :fetch_latest_db do
@@ -15,7 +13,7 @@ task :fetch_latest_db do
   system("bin/rails db:environment:set RAILS_ENV=development")
   system("bin/rails db:drop db:create")
 
-  puts "Restoring the database with #{backup.key}"
+  puts "Restoring the database with #{backup.name}"
   backup_filepath = fetch_file_path(backup)
   db_username = ENV["PG_USERNAME"].presence || ENV["USER"].presence || "postgres"
   db_host = ENV["PG_HOST"].presence || "localhost"
@@ -53,35 +51,48 @@ end
 private
 
 def fetch_latest_backups
-  backups = blob_client.list_objects_v2(bucket: BUCKET_NAME)
+  backups = blob_client.list_blobs(BACKUP_CONTAINER_NAME)
 
   #
   # Retrieve the most up to date version of the DB dump
   #
-  backup = backups.contents.select { |b| b.key.match?(".rds.dump") }.sort do |a,b|
-    Time.parse(a.last_modified) <=> Time.parse(b.last_modified)
+  backup = backups.select { |b| b.name.match?(".rds.dump") }.sort do |a,b|
+    Time.parse(a.properties[:last_modified]) <=> Time.parse(b.properties[:last_modified])
   end.reverse.first
 
   #
   # Download each of the backups onto the local disk in tmp
   #
   filepath = fetch_file_path(backup)
-  puts "\nDownloading blob #{backup.key} to #{filepath}"
-  blob_client.get_object(bucket: BUCKET_NAME, key: backup.key, response_target: filepath)
+  puts "\nDownloading blob #{backup.name} to #{filepath}"
+  blob, content = blob_client.get_blob(BACKUP_CONTAINER_NAME, backup.name)
+  File.open(filepath, "wb") { |f| f.write(content)  }
 
   #
   # At this point, the dumps should be stored on the local
   # machine of the user under tmp.
   #
-  backup
+  return backup
 end
 
 def blob_client
-  Aws::S3::Client.new(region: 'us-east-2')
+  return @blob_client if @blob_client
+
+  account_name = ENV["AZURE_STORAGE_ACCOUNT_NAME"]
+  account_key = ENV["AZURE_STORAGE_ACCESS_KEY"]
+
+  if account_name.blank? || account_key.blank?
+    raise "You must have the correct azure credentials in your ENV"
+  end
+
+  @blob_client = Azure::Storage::Blob::BlobService.create(
+    storage_account_name: account_name,
+    storage_access_key: account_key
+  )
 end
 
 def fetch_file_path(backup)
-  File.join(Rails.root, 'tmp', File.basename(backup.key))
+  File.join(Rails.root, 'tmp', backup.name)
 end
 
 def replace_user_passwords
