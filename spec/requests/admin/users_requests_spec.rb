@@ -12,15 +12,15 @@ RSpec.describe "Admin::UsersController", type: :request do
     end
 
     describe "GET #index" do
-      it "renders index template and shows banks and partners correctly" do
+      it "renders index template and shows roles and resources correctly" do
         AddRoleService.call(user_id: user.id, resource_type: Role::ORG_ADMIN, resource_id: organization.id)
         get admin_users_path
 
         expect(response).to render_template(:index)
 
         page = Nokogiri::HTML(response.body)
-        banks_and_partners = page.at_xpath("//*[contains(text(), \"#{user.email}\")]/../td[1]").text.strip
-        expect(banks_and_partners).to eq("Org ABC, Partner XYZ")
+        roles_and_resources = page.at_xpath("//*[contains(text(), \"#{user.email}\")]/../td[1]").text.strip
+        expect(roles_and_resources).to eq("org_admin (Org ABC), org_user (Org ABC), partner (Partner XYZ)")
       end
     end
 
