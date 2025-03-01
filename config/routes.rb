@@ -169,7 +169,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :vendors, except: [:destroy] do
+  resources :vendors do
     collection do
       post :import_csv
     end
