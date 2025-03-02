@@ -9,7 +9,10 @@ class MoveProdAzureBlobsToS3 < ActiveRecord::Migration[7.2]
     ActiveStorage::Blob.where(service_name: source_service.name).find_each do |blob|
       key = blob.key
 
-      raise "I can't find blob #{blob.id} (#{key})" unless source_service.exist?(key)
+      unless source_service.exist?(key)
+        Rails.logger.error("I can't find blob #{blob.id} (#{key})")
+        next
+      end
 
       unless destination_service.exist?(key)
         source_service.open(blob.key, checksum: blob.checksum) do |file|
