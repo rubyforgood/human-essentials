@@ -1,4 +1,4 @@
-require 'aws-sdk-s3'
+require "aws-sdk-s3"
 
 # to be called from Clock
 module BackupDbRds
@@ -12,11 +12,11 @@ module BackupDbRds
     backup_filename = "#{current_time}.rds.dump"
     system("PGPASSWORD='#{ENV["DIAPER_DB_PASSWORD"]}' pg_dump -Fc -v --host=#{ENV["DIAPER_DB_HOST"]} --username=#{ENV["DIAPER_DB_USERNAME"]} --dbname=#{ENV["DIAPER_DB_DATABASE"]} -f #{backup_filename}")
 
-    client = Aws::S3::Client.new(region: 'us-east-2')
+    client = Aws::S3::Client.new(region: "us-east-2")
 
     logger.info("Uploading #{backup_filename}")
     client.put_object(key: "backups/#{backup_filename}",
-                      body: File.read(backup_filename),
-                      bucket: 'human-essentials-backups')
+      body: File.read(backup_filename),
+      bucket: "human-essentials-backups")
   end
 end
