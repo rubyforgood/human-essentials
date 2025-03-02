@@ -48,9 +48,4 @@ class Role < ApplicationRecord
   def title
     TITLES[name.to_sym]
   end
-
-  # @return [Hash<Symbol, String>]
-  def self.resources_for_select
-    TITLES.without(:super_admin).invert
-  end
 end
