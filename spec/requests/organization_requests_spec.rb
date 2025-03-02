@@ -55,9 +55,8 @@ RSpec.describe "Organizations", type: :request do
 
         get organization_path
 
-        html = Nokogiri::HTML(response.body)
-        expect(html.text).to include("Intake Center")
-        expect(html.text).to include("Default Center")
+        expect(response.body).to include("Intake Center")
+        expect(response.body).to include("Default Center")
       end
 
       context "when enable_packs flipper is on" do
