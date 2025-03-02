@@ -51,13 +51,13 @@
                                 'role-resource-target': 'source',
                                 'action': 'role-resource#sourceChanged double-select#sourceChanged'
                             } %>
-                          <!-- Ordering them like this 'action': 'role-resource#sourceChanged double-select#sourceChanged'
-                          works but I really don't like the behavior being order based. -->
-                          <label  data-role-resource-target="destination">Resource</label>
-                          <div  data-role-resource-target="destination" class="input-group">
-                            <%= select_tag :resource_id, [], class: 'form-control', data: {
-                              'double-select-target': 'destination'
-                            } %>
+                          <div data-role-resource-target="destination">
+                            <label>Resource</label>
+                            <div class="input-group">
+                              <%= select_tag :resource_id, [], class: 'form-control', data: {
+                                'double-select-target': 'destination'
+                              } %>
+                            </div>
                           </div>
                         </div>
                       </div>
