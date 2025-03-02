@@ -1,6 +1,7 @@
 # [Super Admin] This is for administrating users at a global level. We can create, view, modify, etc.
 class Admin::UsersController < AdminController
-  before_action :load_organizations, only: %i[new create edit update]
+  before_action :load_organizations, only: %i[create edit update]
+  before_action :load_resources, only: %i[new create edit]
   before_action :user_params, only: %i[create update]
 
   def index
@@ -34,7 +35,6 @@ class Admin::UsersController < AdminController
 
   def edit
     @user = User.find_by(id: params[:id])
-    @resources = Role.resources_for_select
   end
 
   def create
@@ -105,5 +105,9 @@ class Admin::UsersController < AdminController
 
   def load_organizations
     @organizations = Organization.all.alphabetized
+  end
+
+  def load_resources
+    @resources = Role::TITLES.invert
   end
 end
