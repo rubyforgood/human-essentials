@@ -47,6 +47,19 @@ RSpec.describe "Organizations", type: :request do
         expect(html.text).to include("Receive email when partner makes a request:")
       end
 
+      it "displays the correct organization details" do
+        intake_storage_location = create(:storage_location, organization:, name: "Intake Center")
+        default_storage_location = create(:storage_location, organization:, name: "Default Center")
+
+        organization.update!(intake_location: intake_storage_location.id, default_storage_location: default_storage_location.id)
+
+        get organization_path
+
+        html = Nokogiri::HTML(response.body)
+        expect(html.text).to include("Intake Center")
+        expect(html.text).to include("Default Center")
+      end
+
       context "when enable_packs flipper is on" do
         it "displays organization's custom units" do
           Flipper.enable(:enable_packs)

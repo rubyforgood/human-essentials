@@ -69,6 +69,7 @@ class Admin::OrganizationsController < AdminController
     @organization = Organization.find(params[:id])
     @header_link = admin_dashboard_path
     @default_storage_location = StorageLocation.find_by(id: @organization.default_storage_location) if @organization.default_storage_location
+    @intake_storage_location = StorageLocation.find_by(id: @organization.storage_locations) if @organization.intake_location
     @users = @organization.users.with_discarded.includes(:roles, :organization).alphabetized
   end
 
