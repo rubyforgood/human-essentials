@@ -166,6 +166,18 @@ RSpec.describe "Admin::Organizations", type: :request do
         expect(response).to be_successful
       end
 
+      it "displays the correct organization details" do
+        intake_storage_location = create(:storage_location, organization:, name: "Intake Center")
+        default_storage_location = create(:storage_location, organization:, name: "Default Center")
+
+        organization.update!(intake_location: intake_storage_location.id, default_storage_location: default_storage_location.id)
+
+        get admin_organization_path({ id: organization.id })
+
+        expect(response.body).to include("Intake Center")
+        expect(response.body).to include("Default Center")
+      end
+
       context "with an organization user" do
         let!(:user) { create(:user, organization: organization) }
 
