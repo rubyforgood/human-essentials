@@ -100,6 +100,10 @@ RSpec.describe "Admin::Organizations", type: :request do
       it "returns http success" do
         get admin_organizations_path
         expect(response).to be_successful
+        expect(response.body).to include(organization.name)
+        expect(response.body).to include(organization.email)
+        expect(response.body).to include(organization.created_at.strftime("%Y-%m-%d"))
+        expect(response.body).to include(organization.display_last_distribution_date)
       end
     end
 
