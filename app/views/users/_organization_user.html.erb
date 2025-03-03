@@ -3,7 +3,7 @@
     <%= user.display_name %>
   </td>
   <td><%= user.email %></td>
-  <td><%= user.kind %> </td>
+  <td><%= user.org_role %> </td>
   <td><%= user.current_sign_in_at&.strftime('%Y/%m/%d') %></td>
   <td><%= user.invitation_status %></td>
   <td nowrap><%= reinvite_user_link(user) %></td>
