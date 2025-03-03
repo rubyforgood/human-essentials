@@ -11,8 +11,14 @@
     <%= f.association :partner,
       collection: @partner_list,
       label: "Partner",
-      readonly: !!@request,
+      disabled: !!@request,
       error: "Which partner is this distribution going to?" %>
+
+    <%# If the distribution is from a request, the partner has been set already. %>
+    <%# We send it via hidden_field because params aren't sent for disabled fields.  %>
+    <% if @request %>
+      <%= f.hidden_field :partner_id, value: distribution.partner_id %>
+    <% end %>
 
     <div class='w-72'>
       <%= f.input :issued_at, as: :datetime, ampm: true, minute_step: 15, label: "Distribution date and time", html5: true, :input_html => { :value => date_place_holder&.strftime("%Y-%m-%dT%0k:%M")} %>
