@@ -13,6 +13,7 @@
 #  on_hand_recommended_quantity :integer
 #  package_size                 :integer
 #  partner_key                  :string
+#  reporting_category           :string
 #  value_in_cents               :integer          default(0)
 #  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null
@@ -465,6 +466,15 @@ RSpec.describe Item, type: :model do
     end
   end
 
+  describe "after create" do
+    let(:base_item) { create(:base_item, size: "4", name: "Tampons") }
+    let(:item) { create(:item, name: "Period product", base_item:) }
+
+    it "sets the reporting category" do
+      expect(item.reporting_category).to eq("tampons")
+    end
+  end
+
   describe "versioning" do
     it { is_expected.to be_versioned }
   end
@@ -472,9 +482,14 @@ RSpec.describe Item, type: :model do
   describe "kit items" do
     context "with kit and regular items" do
       let(:organization) { create(:organization) }
+      let(:base_item) { create(:base_item, name: "Kit") }
       let(:kit) { create(:kit, organization: organization) }
-      let(:kit_item) { create(:item, kit: kit, organization: organization) }
+      let(:kit_item) { create(:item, kit: kit, organization: organization, base_item: base_item) }
       let(:regular_item) { create(:item, organization: organization) }
+
+      it "has no reporting category" do
+        expect(kit_item.reporting_category).to be(nil)
+      end
 
       describe "#can_delete?" do
         it "returns false for kit items" do
