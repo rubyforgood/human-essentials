@@ -48,15 +48,19 @@ module Reports
     # have the same relationships and we want to perform calculations on the
     # items in the kits not the kit items themselves.
     def children_served_with_kits_containing_disposables
-      organization
+      kits_subquery = organization
         .distributions
         .for_year(year)
         .joins(line_items: { item: { kit: { line_items: {item: :base_item} }}})
         .where("base_items.category ILIKE '%diaper%' AND
           NOT base_items.category ILIKE '%cloth%' OR base_items.name ILIKE '%cloth%' AND
           NOT base_items.category ILIKE '%adult%'")
-        .group("line_items_kits.id")
-        .pick(Arel.sql("CEILING(SUM(line_items.quantity::numeric / COALESCE(items.distribution_quantity, 1)))"))
+        .select("DISTINCT ON (distributions.id, line_items.id, kits.id) line_items.quantity, items.distribution_quantity")
+        .to_sql
+
+      Distribution
+        .from("(#{kits_subquery}) AS q")
+        .pick(Arel.sql("CEILING(SUM(q.quantity::numeric / COALESCE(q.distribution_quantity, 1)))"))
         .to_i
     end
   end

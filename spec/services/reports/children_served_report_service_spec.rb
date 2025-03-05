@@ -32,12 +32,18 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       toddler_disposable_kit_item = create(:item, name: "Toddler Disposable Diapers", partner_key: "toddler diapers")
       infant_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", partner_key: "infant diapers")
 
-      kit = create(:kit, organization: organization, line_items: [
+      kit_1 = create(:kit, organization: organization, line_items: [
         create(:line_item, item: toddler_disposable_kit_item),
         create(:line_item, item: infant_disposable_kit_item)
       ])
 
-      create(:item, name: "Kit 1", kit:, organization:)
+      kit_2 = create(:kit, organization: organization, line_items: [
+        create(:line_item, item: toddler_disposable_kit_item),
+        create(:line_item, item: infant_disposable_kit_item)
+      ])
+
+      create(:item, name: "Kit 1", kit: kit_1, organization:)
+      create(:item, name: "Kit 2", kit: kit_2, organization:)
 
       # Distributions
       distributions = create_list(:distribution, 2, issued_at: within_time, organization: organization)
@@ -50,8 +56,10 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       infant_distribution = create(:distribution, organization: organization, issued_at: within_time)
       toddler_distribution = create(:distribution, organization: organization, issued_at: within_time)
 
-      create(:line_item, quantity: 10, item: kit.item, itemizable: infant_distribution)
-      create(:line_item, quantity: 10, item: kit.item, itemizable: toddler_distribution)
+      create(:line_item, quantity: 5, item: kit_1.item, itemizable: infant_distribution)
+      create(:line_item, quantity: 5, item: kit_1.item, itemizable: toddler_distribution)
+      create(:line_item, quantity: 5, item: kit_2.item, itemizable: infant_distribution)
+      create(:line_item, quantity: 5, item: kit_2.item, itemizable: toddler_distribution)
 
       report = described_class.new(organization: organization, year: within_time.year).report
       expect(report).to eq({
