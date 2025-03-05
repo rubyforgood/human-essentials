@@ -6,7 +6,12 @@ module UserInviteService
   # @param force [Boolean]
   # @return [User]
   def self.invite(email:, resource:, name: nil, roles: [], force: false)
-    raise "Resource not found!" if resource.nil?
+    # Because only one resource can be passed, currently the only case where
+    # multiple roles being based makes sense is ORG_USER and ORG_ADMIN.
+
+    # Resource can be nil when the only role being added is the SUPER_ADMIN role.
+    # binding.pry
+    raise "Resource not found!" if (resource.nil? && roles.first.to_s != Role::SUPER_ADMIN.to_s)
 
     user = User.find_by(email: email)
 
