@@ -1,10 +1,3 @@
-GIT
-  remote: https://github.com/jhund/filterrific
-  revision: bb1ab756575674a19e1632c9eeb5eda859a8cb8a
-  branch: master
-  specs:
-    filterrific (5.2.5)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -281,6 +274,7 @@ GEM
     ffi (1.17.0-arm64-darwin)
     ffi (1.17.0-x86_64-darwin)
     ffi (1.17.0-x86_64-linux-gnu)
+    filterrific (5.2.7)
     flipper (1.3.2)
       concurrent-ruby (< 2)
     flipper-active_record (1.3.2)
@@ -777,7 +771,7 @@ DEPENDENCIES
   erb_lint
   factory_bot_rails
   faker
-  filterrific!
+  filterrific
   flipper
   flipper-active_record
   flipper-ui
