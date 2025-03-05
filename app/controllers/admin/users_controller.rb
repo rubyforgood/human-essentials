@@ -39,10 +39,14 @@ class Admin::UsersController < AdminController
 
   def create
     @user = User.new(user_params)
-    UserInviteService.invite(name: user_params[:name],
+    klass = Role::TITLE_TO_RESOURCE[params[:resource_type].to_sym]
+    resource = klass&.find(params[:resource_id])
+    UserInviteService.invite(
+      name: user_params[:name],
       email: user_params[:email],
-      roles: [Role::ORG_USER],
-      resource: Organization.find(organization_id_param))
+      roles:  [params[:resource_type]],
+      resource: resource
+    )
     flash[:notice] = "Created a new user!"
     redirect_to admin_users_path
   rescue => e
@@ -93,14 +97,6 @@ class Admin::UsersController < AdminController
 
   def user_params
     params.require(:user).permit(:name, :email)
-  end
-
-  def organization_id_param
-    organization_id = params[:user][:organization_id]
-
-    raise "Please select an organization for the user." if organization_id.blank?
-
-    organization_id
   end
 
   def load_organizations
