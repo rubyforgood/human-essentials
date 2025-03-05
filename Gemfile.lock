@@ -76,9 +76,7 @@ GEM
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
     afm (0.2.2)
-    annotate (2.6.5)
-      activerecord (>= 2.3.0)
-      rake (>= 0.8.7)
+    annotaterb (4.14.0)
     ast (2.4.2)
     autoprefixer-rails (10.4.13.0)
       execjs (~> 2)
@@ -744,7 +742,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  annotate
+  annotaterb
   awesome_print
   aws-sdk-s3
   azure-storage-blob

@@ -164,7 +164,7 @@ end
 
 group :development do
   # Show database columns and indexes inside files.
-  gem "annotate"
+  gem "annotaterb"
   # Used as a dependency for better_errors.
   gem "binding_of_caller"
   # Show a better error page on development, including a REPL.
