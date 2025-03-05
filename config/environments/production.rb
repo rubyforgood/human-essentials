@@ -80,7 +80,7 @@ Rails.application.configure do
   config.active_support.deprecation = :notify
 
   # Store files locally.
-  config.active_storage.service = :azure
+  config.active_storage.service = :amazon
 
   # Use a different logger for distributed setups.
   # require 'syslog/logger'

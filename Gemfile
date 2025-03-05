@@ -20,6 +20,8 @@ gem "rails", "~> 8.0.1"
 
 # These two gems are used to hook into ActiveStorage to store blobs in Azure Storage Service.
 # gem 'azure-storage', '~> 0.15.0.preview', require: false
+# For ActiveStorage on AWS
+gem 'aws-sdk-s3', require: false
 gem 'azure-storage-blob'
 # Adds soft delete functionality for models.
 gem 'discard', '~> 1.3'
@@ -153,7 +155,7 @@ group :development, :test do
   gem 'rubocop-performance'
   gem "rubocop-rails", "~> 2.25.1"
   # More concise test ("should") matchers
-  gem "shoulda-matchers", "~> 6.2"
+  gem "shoulda-matchers", "~> 6.4"
   # Default rules for Rubocop.
   gem "standard", "~> 1.40"
   gem "standard-rails"
