@@ -6,6 +6,9 @@ class OrganizationsController < ApplicationController
   def show
     @organization = current_organization
     @header_link = dashboard_path
+    @default_storage_location = StorageLocation.find_by(id: @organization.default_storage_location) if @organization.default_storage_location
+    @intake_storage_location = StorageLocation.find_by(id: @organization.intake_location) if @organization.intake_location
+    @users = @organization.users.with_discarded.includes(:roles, :organization).alphabetized
   end
 
   def edit

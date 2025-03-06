@@ -326,7 +326,7 @@ RSpec.describe "Distributions", type: :request do
         get new_distribution_path(default_params)
         page = Nokogiri::HTML(response.body)
 
-        expect(page.at_css("select#distribution_partner_id").classes).to include("readonly")
+        expect(page.at_css("select#distribution_partner_id").classes).to include("disabled")
       end
 
       context "with org default but no partner default" do
@@ -404,7 +404,7 @@ RSpec.describe "Distributions", type: :request do
             get new_distribution_path({})
             page = Nokogiri::HTML(response.body)
 
-            expect(page.at_css("select#distribution_partner_id").classes).not_to include("readonly")
+            expect(page.at_css("select#distribution_partner_id").classes).not_to include("disabled")
           end
         end
       end
@@ -680,7 +680,7 @@ RSpec.describe "Distributions", type: :request do
         get edit_distribution_path(id: distribution.id)
         page = Nokogiri::HTML(response.body)
 
-        expect(page.at_css("select#distribution_partner_id").classes).not_to include("readonly")
+        expect(page.at_css("select#distribution_partner_id").classes).not_to include("disabled")
       end
 
       context 'with units' do
@@ -740,7 +740,7 @@ RSpec.describe "Distributions", type: :request do
           get edit_distribution_path(id: distribution.id)
           page = Nokogiri::HTML(response.body)
 
-          expect(page.at_css("select#distribution_partner_id").classes).to include("readonly")
+          expect(page.at_css("select#distribution_partner_id").classes).to include("disabled")
         end
 
         context 'with no request' do

@@ -112,16 +112,16 @@ class User < ApplicationRecord
   end
 
   def kind
-    return "super" if has_role?(Role::SUPER_ADMIN)
-    return "admin" if has_role?(Role::ORG_ADMIN, organization)
-    return "normal" if has_role?(Role::ORG_USER, organization)
-    return "partner" if has_role?(Role::PARTNER, partner)
+    return "super" if has_cached_role?(Role::SUPER_ADMIN)
+    return "admin" if has_cached_role?(Role::ORG_ADMIN, organization)
+    return "normal" if has_cached_role?(Role::ORG_USER, organization)
+    return "partner" if has_cached_role?(Role::PARTNER, partner)
 
     "normal"
   end
 
   def is_admin?(org)
-    has_role?(Role::ORG_ADMIN, org) || has_role?(Role::SUPER_ADMIN)
+    has_cached_role?(Role::ORG_ADMIN, org) || has_cached_role?(Role::SUPER_ADMIN)
   end
 
   def switchable_roles

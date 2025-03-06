@@ -80,7 +80,7 @@
                 <h3 class='font-bold'>Default Intake Location</h3>
                 <p>
                   <%= fa_icon "building" %>
-                  <%= StorageLocation.find_by(id: @organization.intake_location)&.name || "Not defined" %>
+                  <%= @intake_storage_location&.name || "Not defined" %>
                 </p>
               </div>
               <div class="mb-4">
@@ -102,7 +102,7 @@
                 <h3 class='font-bold'>Default Storage Location</h3>
                 <p>
                   <%= fa_icon "building-o" %>
-                  <%= StorageLocation.find_by(id: @organization.default_storage_location)&.name || "Not defined" %>
+                  <%= @default_storage_location&.name || "Not defined" %>
                 </p>
               </div>
               <div class="mb-4">

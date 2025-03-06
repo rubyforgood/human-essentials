@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_02_18_193017) do
+ActiveRecord::Schema[7.2].define(version: 2025_03_02_154355) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -408,6 +408,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_18_193017) do
     t.integer "kit_id"
     t.integer "item_category_id"
     t.text "additional_info"
+    t.string "reporting_category"
     t.index ["kit_id"], name: "index_items_on_kit_id"
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"
