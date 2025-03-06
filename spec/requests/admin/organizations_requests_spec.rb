@@ -176,8 +176,11 @@ RSpec.describe "Admin::Organizations", type: :request do
         it "provides links to edit the user" do
           get admin_organization_path({ id: organization.id })
 
-          expect(response.body).to include("Edit User")
-          expect(response.body).to include(edit_admin_user_path(user.id))
+          expect(response.body).to include("Actions")
+          expect(response.body).to include('Promote to Admin')
+          expect(response.body).to include(promote_to_org_admin_organization_path(user_id: user.id))
+          expect(response.body).to include('Remove User')
+          expect(response.body).to include(remove_user_organization_path(user_id: user.id))
         end
       end
     end

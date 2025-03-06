@@ -472,9 +472,24 @@ RSpec.describe "Organizations", type: :request do
     end
 
     describe "GET #show" do
-      it "can see 'Edit User' button for users" do
+      before { get organization_path }
+      it "can see 'Demote to User' button for admins" do
+        create(:organization_admin, organization: organization, name: "ADMIN USER")
         get organization_path
-        expect(response.body).to include("Edit User")
+        expect(response.body).to include "Demote to User"
+      end
+
+      it "can see 'Promote to User' button for users" do
+        get organization_path
+
+        within(".content") do
+          expect(response.body).to have_link("Actions")
+        end
+
+        within "#dropdown-toggle" do
+          expect(response.body).to have_link("Promote User")
+          expect(response.body).to have_link("Remove User")
+        end
       end
     end
 
