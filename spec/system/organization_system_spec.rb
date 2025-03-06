@@ -2,6 +2,7 @@ RSpec.describe "Organization management", type: :system, js: true do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
+  let(:super_admin_org_admin) { create(:super_admin_org_admin, organization: organization) }
 
   include ActionView::RecordIdentifier
 
@@ -69,7 +70,15 @@ RSpec.describe "Organization management", type: :system, js: true do
 
   context "while signed in as a super admin" do
     before do
-      sign_in(organization_admin)
+      sign_in(super_admin_org_admin)
+    end
+
+    before(:each) do
+      visit admin_dashboard_path
+      within ".main-header" do
+        click_on super_admin_org_admin.name.to_s
+      end
+      click_link "Switch to: #{organization.name}"
     end
 
     context "managing a user from the organization" do
