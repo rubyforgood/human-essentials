@@ -119,7 +119,7 @@ class User < ApplicationRecord
   end
 
   def is_admin?(org)
-    has_role?(Role::ORG_ADMIN, org) || has_role?(Role::SUPER_ADMIN)
+    has_cached_role?(Role::ORG_ADMIN, org) || has_cached_role?(Role::SUPER_ADMIN)
   end
 
   def switchable_roles

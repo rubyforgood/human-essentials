@@ -30,7 +30,7 @@
       </div>
 
     <% end %>
-    <% if current_user.is_admin?(current_organization) && user.has_role?(Role::ORG_ADMIN, current_organization) %>
+    <% if current_user.is_admin?(current_organization) && user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
       <%= edit_button_to demote_to_user_organization_path(user_id: user.id, organization_name: current_organization.short_name),
                  {text: 'Demote to User'},
                  {method: :post, rel: "nofollow", data: {confirm: 'This will demote the admin to user status. Are you sure that you want to submit this?', size: 'xs'}} unless user.id == current_user.id %>
