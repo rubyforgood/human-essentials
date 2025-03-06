@@ -69,7 +69,7 @@
                   <div class="d-flex flex-wrap gap-2">
                     <% if @unfulfilled_requests_count > 0 %>
                       <%= print_button_to(
-                        print_unfulfilled_requests_path(format: :pdf),
+                        print_unfulfilled_requests_path(format: :pdf, filters: filter_params.merge(date_range: date_range_params)),
                         text: "Print Unfulfilled Picklists (#{@unfulfilled_requests_count})",
                         size: "md") %>
                     <% end %>
