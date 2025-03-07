@@ -27,7 +27,7 @@
               <% end %>
 
               <%= f.input :name, label: "Quantity Per Individual", wrapper: :input_group do %>
-                <%= f.input_field :distribution_quantity, class: "form-control" %>
+                <%= f.input_field :distribution_quantity, class: "form-control", value: f.object.distribution_quantity || (f.object.kit_id.present? ? 1 : 50) %>
               <% end %>
 
               <% if current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
