@@ -615,7 +615,7 @@ RSpec.feature "Distributions", type: :system do
     it "sets the distribution id and fulfilled status on the request" do
       items = storage_location.items.pluck(:id).sample(2)
       request_items = [{ "item_id" => items[0], "quantity" => 10 }, { "item_id" => items[1], "quantity" => 10 }]
-      @request = create :request, organization: organization, request_items: request_items
+      @request = create(:request, organization:, request_items:, partner:)
       create(:item_request, request: @request, item_id: items[0], quantity: 10)
       create(:item_request, request: @request, item_id: items[1], quantity: 10)
 
@@ -650,7 +650,7 @@ RSpec.feature "Distributions", type: :system do
     it "maintains the connection with the request even when there are initial errors" do
       items = storage_location.items.pluck(:id).sample(2)
       request_items = [{ "item_id" => items[0], "quantity" => 1000000 }, { "item_id" => items[1], "quantity" => 10 }]
-      @request = create :request, organization: organization, request_items: request_items
+      @request = create(:request, organization:, request_items:, partner:)
       create(:item_request, request: @request, item_id: items[0], quantity: 1000000)
       create(:item_request, request: @request, item_id: items[1], quantity: 10)
 

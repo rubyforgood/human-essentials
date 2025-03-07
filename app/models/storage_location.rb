@@ -27,6 +27,8 @@ class StorageLocation < ApplicationRecord
   ].freeze
 
   belongs_to :organization
+  has_many :adjustments, dependent: :destroy
+  has_many :audits, dependent: :destroy
   has_many :inventory_items, -> { includes(:item).order("items.name") },
            inverse_of: :storage_location,
            dependent: :destroy
@@ -40,7 +42,6 @@ class StorageLocation < ApplicationRecord
                           inverse_of: :to,
                           foreign_key: :to_id,
                           dependent: :destroy
-  has_many :kit_allocations, dependent: :destroy
 
   validates :name, :address, presence: true
   validates :warehouse_type, inclusion: { in: WAREHOUSE_TYPES },
@@ -54,6 +55,12 @@ class StorageLocation < ApplicationRecord
 
   scope :alphabetized, -> { order(:name) }
   scope :active, -> { where(discarded_at: nil) }
+  scope :with_adjustments_for, ->(organization) {
+    joins(:adjustments).where(organization_id: organization.id).distinct.active.alphabetized
+  }
+  scope :with_audits_for, ->(organization) {
+    joins(:audits).where(organization_id: organization.id).distinct.active.alphabetized
+  }
   scope :with_transfers_to, ->(organization) {
     joins(:transfers_to).where(organization_id: organization.id).distinct.order(:name)
   }

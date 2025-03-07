@@ -28,7 +28,8 @@ RSpec.describe Exports::ExportDistributionsCSVService do
       items_lists.each_with_index.map do |items, i|
         distribution = create(
           :distribution,
-          issued_at: start_time - i.days, delivery_method: "shipped", shipping_cost: "12.09"
+          issued_at: start_time - i.days, delivery_method: "shipped", shipping_cost: "12.09",
+          organization: organization
         )
 
         items.each do |(item, quantity)|
@@ -65,7 +66,7 @@ RSpec.describe Exports::ExportDistributionsCSVService do
         "Scheduled for",
         "Source Inventory",
         "Total Number of #{item_name}",
-        "Total Value",
+        "Total Value of #{item_name}",
         "Delivery Method",
         "Shipping Cost",
         "Status",

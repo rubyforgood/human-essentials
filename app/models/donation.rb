@@ -92,14 +92,6 @@ class Donation < ApplicationRecord
     product_drive_participant&.donation_source_view || product_drive.donation_source_view
   end
 
-  def self.daily_quantities_by_source(start, stop)
-    joins(:line_items).includes(:line_items)
-                      .between(start, stop)
-                      .group(:source)
-                      .group_by_day("donations.created_at")
-                      .sum("line_items.quantity")
-  end
-
   def details
     case source
     when SOURCES[:product_drive]
@@ -111,13 +103,6 @@ class Donation < ApplicationRecord
     when SOURCES[:misc]
       comment&.truncate(25, separator: /\s/)
     end
-  end
-
-  def remove(item)
-    # doing this will handle either an id or an object
-    item_id = item.to_i
-    line_item = line_items.find_by(item_id: item_id)
-    line_item&.destroy
   end
 
   def money_raised_in_dollars

@@ -28,7 +28,7 @@ class Partner < ApplicationRecord
   ].freeze
 
   # Status `4` (error) was removed for being obsolete but is intentionally skipped to preserve existing enum values.
-  enum status: { uninvited: 0, invited: 1, awaiting_review: 2, approved: 3, recertification_required: 5, deactivated: 6 }
+  enum :status, { uninvited: 0, invited: 1, awaiting_review: 2, approved: 3, recertification_required: 5, deactivated: 6 }
 
   belongs_to :organization
   belongs_to :partner_group, optional: true
@@ -126,58 +126,8 @@ class Partner < ApplicationRecord
     errors
   end
 
-  def self.csv_export_headers
-    [
-      "Agency Name",
-      "Agency Email",
-      "Agency Address",
-      "Agency City",
-      "Agency State",
-      "Agency Zip Code",
-      "Agency Website",
-      "Agency Type",
-      "Contact Name",
-      "Contact Phone",
-      "Contact Email",
-      "Notes",
-      "Counties Served",
-      "Providing Diapers",
-      "Providing Period Supplies"
-    ]
-  end
-
-  def csv_export_attributes
-    [
-      name,
-      email,
-      agency_info[:address],
-      agency_info[:city],
-      agency_info[:state],
-      agency_info[:zip_code],
-      agency_info[:website],
-      agency_info[:agency_type],
-      contact_person[:name],
-      contact_person[:phone],
-      contact_person[:email],
-      notes,
-      profile.county_list_by_region,
-      providing_diapers,
-      providing_period_supplies
-    ]
-  end
-
-  def providing_diapers
-    distributions.in_last_12_months.with_diapers.any? ? "Y" : "N"
-  end
-
-  def providing_period_supplies
-    distributions.in_last_12_months.with_period_supplies.any? ? "Y" : "N"
-  end
-
   def contact_person
     return @contact_person if @contact_person
-
-    return {} if profile.blank?
 
     @contact_person = {
       name: profile.primary_contact_name,
@@ -189,8 +139,6 @@ class Partner < ApplicationRecord
 
   def agency_info
     return @agency_info if @agency_info
-
-    return {} if profile.blank?
 
     symbolic_agency_type = profile.agency_type&.to_sym
     @agency_info = {

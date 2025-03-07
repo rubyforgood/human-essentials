@@ -4,6 +4,7 @@
 #
 #  id                           :integer          not null, primary key
 #  active                       :boolean          default(TRUE)
+#  additional_info              :text
 #  barcode_count                :integer
 #  category                     :string
 #  distribution_quantity        :integer
@@ -12,6 +13,7 @@
 #  on_hand_recommended_quantity :integer
 #  package_size                 :integer
 #  partner_key                  :string
+#  reporting_category           :string
 #  value_in_cents               :integer          default(0)
 #  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null

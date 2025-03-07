@@ -93,7 +93,7 @@
                   <td><%= adjustment.organization.name %></td>
                   <td><%= adjustment.storage_location.name %></td>
                   <td><%= adjustment.comment %></td>
-                  <td><%= pluralize(adjustment.line_items.count, 'change') %></td>
+                  <td><%= pluralize(adjustment.line_items.size, 'change') %></td>
                   <td class="text-right"><%= view_button_to adjustment %></td>
                 </tr>
               <% end %>
