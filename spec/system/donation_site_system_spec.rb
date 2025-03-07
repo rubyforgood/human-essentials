@@ -30,7 +30,13 @@ RSpec.describe "Donation Site", type: :system, js: true do
       donation_site_traits = attributes_for(:donation_site)
       fill_in "Name", with: donation_site_traits[:name], match: :prefer_exact
       fill_in "Address", with: donation_site_traits[:address]
+      fill_in "Phone", with: donation_site_traits[:phone]
+      fill_in "Email", with: donation_site_traits[:email]
       click_button "Save"
+
+      if page.has_css?(".alert")
+        puts page.find(".alert").text
+      end
 
       expect(page.find(".alert")).to have_content "added"
     end
