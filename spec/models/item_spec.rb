@@ -437,7 +437,6 @@ RSpec.describe Item, type: :model do
   describe "when distribution_quantity is set by default" do
     it "should set distribution_quantity to 50 for regular items" do
       item = Item.new
-      item.valid?
       expect(item.distribution_quantity).to eq(50)
     end
 
@@ -445,7 +444,6 @@ RSpec.describe Item, type: :model do
       organization = create(:organization)
       kit = create(:kit, organization: organization)
       item = Item.new(kit: kit)
-      item.valid?
       expect(item.distribution_quantity).to eq(1)
     end
   end
