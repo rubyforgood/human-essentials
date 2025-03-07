@@ -8,8 +8,16 @@ RSpec.describe "Organizations", type: :request do
   let!(:ndbn_member) { create(:ndbn_member, ndbn_member_id: "50000", account_name: "Best Place") }
   let!(:super_admin_org_admin) { create(:super_admin_org_admin, organization: organization) }
 
-  shared_examples "promote to admin check" do |user_factory|
+  shared_examples "promote to admin check" do |user_factory, current_user|
     let!(:user_to_promote) { create(user_factory, name: "User to promote") }
+    let(:response_path){
+      case current_user
+      when :super_admin
+        admin_organization_path(organization.id)
+      when :non_super_admin
+        organization_path
+      end
+    }
 
     it "runs correctly", :aggregate_failures do
       # Explicitly specify the organization_name, as current_organization will not
@@ -21,13 +29,21 @@ RSpec.describe "Organizations", type: :request do
       expect(user_to_promote.reload.has_role?(Role::ORG_ADMIN, organization)).to be_truthy
       # The user_update_redirect_path will vary based on whether the logged in
       # user is a super admin or not
-      expect(response).to redirect_to(@current_user.has_cached_role?(Role::SUPER_ADMIN) ? admin_organization_path(organization.id) : organization_path)
+      expect(response).to redirect_to(response_path)
       expect(flash[:notice]).to eq("User has been promoted!")
     end
   end
 
-  shared_examples "demote to user check" do |user_factory|
+  shared_examples "demote to user check" do |user_factory, current_user|
     let!(:user_to_demote) { create(user_factory, name: "User to demote", organization: organization) }
+    let(:response_path){
+      case current_user
+      when :super_admin
+        admin_organization_path(organization.id)
+      when :non_super_admin
+        organization_path
+      end
+    }
 
     it "runs correctly", :aggregate_failures do
       # Explicitly specify the organization_name, as current_organization will not
@@ -39,13 +55,21 @@ RSpec.describe "Organizations", type: :request do
       expect(user_to_demote.reload.has_role?(Role::ORG_ADMIN, organization)).to be_falsey
       # The user_update_redirect_path will vary based on whether the logged in
       # user is a super admin or not
-      expect(response).to redirect_to(@current_user.has_cached_role?(Role::SUPER_ADMIN) ? admin_organization_path(organization.id) : organization_path)
+      expect(response).to redirect_to(response_path)
       expect(flash[:notice]).to eq("User has been demoted!")
     end
   end
 
-  shared_examples "remove user check" do |user_factory|
+  shared_examples "remove user check" do |user_factory, current_user|
     let!(:user_to_remove) { create(user_factory, name: "User to remove", organization: organization) }
+    let(:response_path){
+      case current_user
+      when :super_admin
+        admin_organization_path(organization.id)
+      when :non_super_admin
+        organization_path
+      end
+    }
 
     it "runs correctly", :aggregate_failures do
       # Explicitly specify the organization_name, as current_organization will not
@@ -57,7 +81,7 @@ RSpec.describe "Organizations", type: :request do
       expect(user_to_remove.reload.has_role?(Role::ORG_USER, organization)).to be_falsey
       # The user_update_redirect_path will vary based on whether the logged in
       # user is a super admin or not
-      expect(response).to redirect_to(@current_user.has_cached_role?(Role::SUPER_ADMIN) ? admin_organization_path(organization.id) : organization_path)
+      expect(response).to redirect_to(response_path)
       expect(flash[:notice]).to eq("User has been removed!")
     end
   end
@@ -154,7 +178,6 @@ RSpec.describe "Organizations", type: :request do
   context "While signed in as an organization admin" do
     before do
       sign_in(organization_admin)
-      @current_user = organization_admin
     end
 
     describe "GET #show" do
@@ -402,31 +425,31 @@ RSpec.describe "Organizations", type: :request do
 
     describe "POST #promote_to_org_admin" do
       context "promoting a user" do
-        include_examples "promote to admin check", :user
+        include_examples "promote to admin check", :user, :non_super_admin
       end
 
       context "promoting a super admin user" do
-        include_examples "promote to admin check", :super_admin
+        include_examples "promote to admin check", :super_admin, :non_super_admin
       end
     end
 
     describe "POST #demote_to_user" do
       context "demoting a user" do
-        include_examples "demote to user check", :organization_admin
+        include_examples "demote to user check", :organization_admin, :non_super_admin
       end
 
       context "demoting a super admin user" do
-        include_examples "demote to user check", :super_admin_org_admin
+        include_examples "demote to user check", :super_admin_org_admin, :non_super_admin
       end
     end
 
     describe "POST #remove_user" do
       context "removing a user" do
-        include_examples "remove user check", :user
+        include_examples "remove user check", :user, :non_super_admin
       end
 
       context "removing a super admin user" do
-        include_examples "remove user check", :super_admin
+        include_examples "remove user check", :super_admin, :non_super_admin
       end
 
       context "when user is not an org user" do
@@ -480,36 +503,35 @@ RSpec.describe "Organizations", type: :request do
   context 'When signed in as a super admin' do
     before do
       sign_in(super_admin_org_admin)
-      @current_user = super_admin_org_admin
     end
 
     describe "POST #promote_to_org_admin" do
       context "promoting a user" do
-        include_examples "promote to admin check", :user
+        include_examples "promote to admin check", :user, :super_admin
       end
 
       context "promoting a super admin user" do
-        include_examples "promote to admin check", :super_admin
+        include_examples "promote to admin check", :super_admin, :super_admin
       end
     end
 
     describe "POST #demote_to_user" do
       context "demoting a user" do
-        include_examples "demote to user check", :organization_admin
+        include_examples "demote to user check", :organization_admin, :super_admin
       end
 
       context "demoting a super admin user" do
-        include_examples "demote to user check", :super_admin_org_admin
+        include_examples "demote to user check", :super_admin_org_admin, :super_admin
       end
     end
 
     describe "POST #remove_user" do
       context "removing a user" do
-        include_examples "remove user check", :user
+        include_examples "remove user check", :user, :super_admin
       end
 
       context "removing a super admin user" do
-        include_examples "remove user check", :super_admin
+        include_examples "remove user check", :super_admin, :super_admin
       end
 
       context "when user is not an org user" do
