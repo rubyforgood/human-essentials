@@ -10,7 +10,7 @@ RSpec.describe "Organizations", type: :request do
 
   shared_examples "promote to admin check" do |user_factory, current_user|
     let!(:user_to_promote) { create(user_factory, name: "User to promote") }
-    let(:response_path){
+    let(:response_path) {
       case current_user
       when :super_admin
         admin_organization_path(organization.id)
@@ -36,7 +36,7 @@ RSpec.describe "Organizations", type: :request do
 
   shared_examples "demote to user check" do |user_factory, current_user|
     let!(:user_to_demote) { create(user_factory, name: "User to demote", organization: organization) }
-    let(:response_path){
+    let(:response_path) {
       case current_user
       when :super_admin
         admin_organization_path(organization.id)
@@ -62,7 +62,7 @@ RSpec.describe "Organizations", type: :request do
 
   shared_examples "remove user check" do |user_factory, current_user|
     let!(:user_to_remove) { create(user_factory, name: "User to remove", organization: organization) }
-    let(:response_path){
+    let(:response_path) {
       case current_user
       when :super_admin
         admin_organization_path(organization.id)
