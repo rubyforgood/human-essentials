@@ -14,9 +14,6 @@ class Question < ApplicationRecord
   validates :title, presence: true
   scope :search_title, ->(query) { where("title ilike ?", "%#{query}%").includes([:rich_text_answer]) }
 
-  # TODO: remove this line once migration `20250104193318_remove_for_banks_and_for_partners_from_questions` has been run in production
-  self.ignored_columns += ["for_banks", "for_partners"]
-
   filterrific(
     available_filters: [
       :search_title

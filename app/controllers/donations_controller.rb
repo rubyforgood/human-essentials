@@ -84,7 +84,7 @@ class DonationsController < ApplicationController
   end
 
   def show
-    @donation = Donation.includes(:line_items).find(params[:id])
+    @donation = Donation.includes(line_items: :item).find(params[:id])
     @line_items = @donation.line_items
   end
 

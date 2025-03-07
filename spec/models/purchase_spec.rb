@@ -125,24 +125,6 @@ RSpec.describe Purchase, type: :model do
   end
 
   context "Methods >" do
-    describe "remove" do
-      let!(:purchase) { create(:purchase, :with_items) }
-
-      it "removes the item from the purchase" do
-        item_id = purchase.line_items.last.item_id
-        expect do
-          purchase.remove(item_id)
-        end.to change { purchase.line_items.count }.by(-1)
-      end
-
-      it "fails gracefully if the item doesn't exist" do
-        item_id = create(:item).id
-        expect do
-          purchase.remove(item_id)
-        end.not_to change { purchase.line_items.count }
-      end
-    end
-
     describe "storage_view" do
       let!(:purchase) { create(:purchase, :with_items) }
       it "returns name of storage location" do

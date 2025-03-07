@@ -13,10 +13,6 @@ RSpec.describe "Items", type: :request do
         response
       end
 
-      before do
-        create(:item)
-      end
-
       context "html" do
         let(:response_format) { 'html' }
 
@@ -27,6 +23,38 @@ RSpec.describe "Items", type: :request do
         let(:response_format) { 'csv' }
 
         it { is_expected.to be_successful }
+
+        context "when exporting the csv items" do
+          let!(:active_item) { create(:item, organization: organization, name: "Briefs(M/L)") }
+          let!(:inactive_item) { create(:item, active: false, organization: organization, name: "Briefs(S/M)") }
+
+          context "when include inactive items checkbox is checked" do
+            it "generates csv with items that are also inactive" do
+              get items_path(include_inactive_items: "1", format: response_format)
+
+              csv = <<~CSV
+                Name,Barcodes,Base Item,Quantity
+                Briefs(M/L),"",#{active_item.base_item.name},0
+                Briefs(S/M),"",#{inactive_item.base_item.name},0
+              CSV
+
+              expect(response.body).to eq(csv)
+            end
+          end
+
+          context "when include inactive items checkbox is unchecked" do
+            it "generates csv with only active items" do
+              get items_path(format: response_format)
+
+              csv = <<~CSV
+                Name,Barcodes,Base Item,Quantity
+                Briefs(M/L),"",#{active_item.base_item.name},0
+              CSV
+
+              expect(response.body).to eq(csv)
+            end
+          end
+        end
       end
     end
 

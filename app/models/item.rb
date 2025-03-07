@@ -4,6 +4,7 @@
 #
 #  id                           :integer          not null, primary key
 #  active                       :boolean          default(TRUE)
+#  additional_info              :text
 #  barcode_count                :integer
 #  category                     :string
 #  distribution_quantity        :integer
@@ -12,6 +13,7 @@
 #  on_hand_recommended_quantity :integer
 #  package_size                 :integer
 #  partner_key                  :string
+#  reporting_category           :string
 #  value_in_cents               :integer          default(0)
 #  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null
@@ -28,17 +30,21 @@ class Item < ApplicationRecord
   include Valuable
 
   after_update :update_associated_kit_name, if: -> { kit.present? }
+  before_create :set_reporting_category
+  before_destroy :validate_destroy, prepend: true
 
   belongs_to :organization # If these are universal this isn't necessary
   belongs_to :base_item, counter_cache: :item_count, primary_key: :partner_key, foreign_key: :partner_key, inverse_of: :items
   belongs_to :kit, optional: true
   belongs_to :item_category, optional: true
 
+  validates :additional_info, length: { maximum: 500 }
   validates :name, uniqueness: { scope: :organization, case_sensitive: false, message: "- An item with that name already exists (could be an inactive item)" }
   validates :name, presence: true
   validates :distribution_quantity, numericality: { greater_than: 0 }, allow_blank: true
   validates :on_hand_recommended_quantity, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
   validates :on_hand_minimum_quantity, numericality: { greater_than_or_equal_to: 0 }
+  validates :package_size, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
 
   has_many :line_items, dependent: :destroy
   has_many :inventory_items, dependent: :destroy
@@ -102,15 +108,15 @@ class Item < ApplicationRecord
       .or(where("base_items.category = 'Miscellaneous'"))
   }
 
-  before_destroy :validate_destroy, prepend: true
-
-  def self.barcoded_items
-    joins(:barcode_items).order(:name).group(:id)
-  end
-
-  def self.barcodes_for(item)
-    BarcodeItem.where(barcodeable_id: item.id)
-  end
+  enum :reporting_category, {
+    adult_incontinence: "adult_incontinence",
+    cloth_diapers: "cloth_diapers",
+    disposable_diapers: "disposable_diapers",
+    menstrual: "menstrual",
+    other: "other",
+    pads: "pads",
+    tampons: "tampons"
+  }, scopes: false, instance_methods: false
 
   def self.reactivate(item_ids)
     item_ids = Array.wrap(item_ids)
@@ -173,16 +179,8 @@ class Item < ApplicationRecord
     partner_key == "other"
   end
 
-  def self.gather_items(current_organization, global = false)
-    if global
-      where(id: current_organization.barcode_items.all.pluck(:barcodeable_id))
-    else
-      where(id: current_organization.barcode_items.pluck(:barcodeable_id))
-    end
-  end
   # Convenience method so that other methods can be simplified to
   # expect an id or an Item object
-
   def to_i
     id
   end
@@ -221,6 +219,14 @@ class Item < ApplicationRecord
   end
 
   private
+
+  # Sets reporting_category according to reporting_category of base item.
+  # TODO: Remove once items can be created with a reporting category.
+  def set_reporting_category
+    return unless reporting_category.blank?
+
+    self.reporting_category = base_item.reporting_category if base_item.reporting_category
+  end
 
   def update_associated_kit_name
     kit.update(name: name)
