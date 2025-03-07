@@ -42,11 +42,6 @@
     </div>
   </div>
   <!-- /.card-body -->
-  <div class="card-footer">
-    <span class="float-right">
-      <%= download_button_to(partner_path(partner, format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Partner Distributions", size: "md"}) if partner_distributions.any? %>
-    </span>
-  </div>
 </div>
 <div id="seeZipcodes" class="modal fade">
   <div class="modal-dialog">
