@@ -1,4 +1,4 @@
-<tr>
+<tr data-vendor-id="<%= vendor_row.id %>">
   <td><%= vendor_row&.business_name %></td>
   <td><%= vendor_row&.contact_name %></td>
   <td><%= vendor_row&.phone %></td>
@@ -8,7 +8,7 @@
     <%= view_button_to vendor_row %>
     <%= edit_button_to edit_vendor_path(vendor_row) %>
     <% if vendor_row.active? %>
-      <% if vendor_row&.purchases&.count.to_i.zero? %>
+      <% if vendor_row&.purchases&.none? %>
         <%= delete_button_to vendor_path(vendor_row),
                           text: 'Delete',
                           confirm: confirm_delete_msg(vendor_row.business_name) %>

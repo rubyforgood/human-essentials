@@ -16,17 +16,29 @@ RSpec.describe "Vendors", type: :request do
       before { create(:vendor) }
 
       context "html" do
-        let!(:first_vendor) { create(:vendor, business_name: "Abc", organization: organization) }
+        let!(:no_purchases_vendor) { create(:vendor, business_name: "Abc", organization: organization) }
+        let(:purchase_vendor) { create(:vendor, business_name: "Xyz", organization: organization) }
         let!(:deactivated_vendor) { create(:vendor, business_name: "Deactivated", organization: organization, active: false) }
 
         let(:response_format) { 'html' }
 
         it { is_expected.to be_successful }
 
+        before do
+          create(:purchase, :with_items, vendor: purchase_vendor)
+        end
+
         it "should have only activated vendor names" do
           subject
-          expect(response.body).to include(first_vendor.business_name)
+          expect(response.body).to include(no_purchases_vendor.business_name)
           expect(response.body).not_to include(deactivated_vendor.business_name)
+        end
+
+        it "should have a delete button for no_purchases_vendor and a deactivate button for purchase_vendor" do
+          subject
+          parsed_body = Capybara::Node::Simple.new(response.body)
+          expect(parsed_body).to have_css("tr[data-vendor-id='#{no_purchases_vendor.id}'] a", text: "Delete")
+          expect(parsed_body).to have_css("tr[data-vendor-id='#{purchase_vendor.id}'] a", text: "Deactivate")
         end
       end
 
