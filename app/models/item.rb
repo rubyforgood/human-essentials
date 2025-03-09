@@ -29,6 +29,7 @@ class Item < ApplicationRecord
   include Exportable
   include Valuable
 
+  after_initialize :set_default_distribution_quantity, if: :new_record?
   after_update :update_associated_kit_name, if: -> { kit.present? }
   before_create :set_reporting_category
   before_destroy :validate_destroy, prepend: true
@@ -226,6 +227,10 @@ class Item < ApplicationRecord
     return unless reporting_category.blank?
 
     self.reporting_category = base_item.reporting_category if base_item.reporting_category
+  end
+
+  def set_default_distribution_quantity
+    self.distribution_quantity ||= kit_id.present? ? 1 : 50
   end
 
   def update_associated_kit_name
