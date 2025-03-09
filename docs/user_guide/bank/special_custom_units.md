@@ -1,11 +1,5 @@
 # Custom Units (opt-in feature)
 
-Partners place requests with Banks, listing out the items and quantities that they are requesting. By default the quantity unit is unspecified. A Bank may treat the quantity as individual units, or a count of manufacturer-provided packs, or a count of re-packaged containers, and so on.
-
-Banks may use the **Custom Units** feature to be specific about which items should be requested with particular packaging and counted as as a whole.
-
-## Why You Might Want Custom Units
-
 Custom Units addresses a long-standing problem that diaper banks, in particular, experience:
 
 - On the one hand, when you are tracking raw inventory, writing grant proposals, or working with the NDBN, you need to know how many individual diapers you distribute.
