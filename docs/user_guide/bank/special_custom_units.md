@@ -15,7 +15,7 @@ Unfortunately,  there isn't a standard number of diapers in a "pack", even in th
 
 Custom Units is our solution so that the partners can order in terms of "packs", "boxes", "flats", etc, but you as the Bank still work in terms of individual diapers.
 
-You can specify different units (e.g. packs, boxes, flats) that the partners can use to order items, and the partner can still request them by the number of individual items.
+You can specify different units (e.g. packs, boxes, flats) that the partners can use to order items, or the partner can still request them by the number of individual items ("units").
 
 You'll see the number of "packs" that the partner requested, but when creating the distribution you'll enter the number of individual items you actually distribute.
 
