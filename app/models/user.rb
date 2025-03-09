@@ -111,13 +111,11 @@ class User < ApplicationRecord
     "invited" if invitation_sent_at.present?
   end
 
-  def kind
-    return "super" if has_cached_role?(Role::SUPER_ADMIN)
-    return "admin" if has_cached_role?(Role::ORG_ADMIN, organization)
-    return "normal" if has_cached_role?(Role::ORG_USER, organization)
-    return "partner" if has_cached_role?(Role::PARTNER, partner)
+  def org_role
+    return "admin" if has_role?(Role::ORG_ADMIN, organization)
+    return "normal" if has_role?(Role::ORG_USER, organization)
 
-    "normal"
+    "not a member"
   end
 
   def is_admin?(org)
