@@ -4,6 +4,25 @@ Partners place requests with Banks, listing out the items and quantities that th
 
 Banks may use the **Custom Units** feature to be specific about which items should be requested with particular packaging and counted as as a whole.
 
+## Why You Might Want Custom Units
+
+Custom Units addresses a long-standing problem that diaper banks, in particular, experience:
+
+- On the one hand, when you are writing grant proposals, or dealing with the NDBN, you need to know how many individual diapers you distribute.
+- On the other hand, partners often want to work in terms of "packs" of diapers.
+
+Unfortunately,  there isn't a standard number of diapers in a "pack", even in the same size (sometimes not even with the same manufacturer!), so we can't just convert one to the other.
+
+Custom Units is our solution so that the partners can order in terms of "packs", "boxes", "flats", etc, but you as the Bank still work in terms of individual diapers.
+
+You can specify different units (e.g. packs, boxes, flats) that the partners can use to order items, and the partner can still request them by the number of individual items.
+
+You'll see the number of "packs" that the partner requested, but when creating the distribution you'll enter the number of individual items you actually distribute.
+
+(It's not a perfect solution!)
+
+We call this approach "Custom Unit" Requests.
+
 ## Setting up Custom Units
 
 For a Bank to allow **Custom Units** to be used for Partner Requests, they must first configure which units are allowed and which items use custom units.
