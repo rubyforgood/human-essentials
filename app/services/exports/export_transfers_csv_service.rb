@@ -27,7 +27,7 @@ module Exports
     private
 
     def headers
-      base_headers
+      base_headers + item_headers
     end
 
     def base_table
@@ -51,8 +51,28 @@ module Exports
       base_table.keys
     end
 
+    def item_headers
+      @item_headers ||= @organization.items.select("DISTINCT ON (LOWER(name)) items.name").order("LOWER(name) ASC").map(&:name)
+    end
+
+    def headers_with_indexes
+      @headers_with_indexes ||= headers.each_with_index.to_h
+    end
+
     def build_row_data(transfer)
-      base_table.values.map { |closure| closure.call(transfer) }
+      row = base_table.values.map { |closure| closure.call(transfer) }
+
+      row += Array.new(item_headers.size, 0)
+
+      transfer.line_items.each do |line_item|
+        item_name = line_item.item.name
+        item_column_idx = headers_with_indexes[item_name]
+        next unless item_column_idx
+
+        row[item_column_idx] += line_item.quantity
+      end
+
+      row
     end
   end
 end
