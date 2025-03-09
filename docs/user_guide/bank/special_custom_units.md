@@ -8,7 +8,7 @@ Banks may use the **Custom Units** feature to be specific about which items shou
 
 Custom Units addresses a long-standing problem that diaper banks, in particular, experience:
 
-- On the one hand, when you are writing grant proposals, or dealing with the NDBN, you need to know how many individual diapers you distribute.
+- On the one hand, when you are tracking raw inventory, writing grant proposals, or working with the NDBN, you need to know how many individual diapers you distribute.
 - On the other hand, partners often want to work in terms of "packs" of diapers.
 
 Unfortunately,  there isn't a standard number of diapers in a "pack", even in the same size (sometimes not even with the same manufacturer!), so we can't just convert one to the other.
