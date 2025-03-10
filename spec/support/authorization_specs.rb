@@ -1,3 +1,12 @@
+RSpec.shared_context "signed in as partner" do
+  let(:partner) { create(:partner) }
+  let(:partner_user) { partner.primary_user }
+
+  before do
+    sign_in(partner_user)
+  end
+end
+
 RSpec.shared_examples "requiring authorization" do |constraints|
   it "redirects the user to the sign-in page for CRUD actions" do
     member_params = { organization_id: object.organization.to_param, id: object.id }

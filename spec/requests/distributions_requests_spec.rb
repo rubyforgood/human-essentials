@@ -52,6 +52,16 @@ RSpec.describe "Distributions", type: :request do
           expect(response).to be_successful
         end
       end
+
+      context "when signed in as partner" do
+        include_context "signed in as partner"
+
+        it "blocks access from partners" do
+          get print_distribution_path(id: create(:distribution).id)
+
+          expect(response).to block_partner_access
+        end
+      end
     end
 
     describe "GET #reclaim" do
@@ -204,6 +214,16 @@ RSpec.describe "Distributions", type: :request do
           expect(distribution_rows.count).to eq(1)
         end
       end
+
+      context "when signed in as partner" do
+        include_context "signed in as partner"
+
+        it "blocks access from partners" do
+          get distributions_path
+
+          expect(response).to block_partner_access
+        end
+      end
     end
 
     describe "POST #create" do
@@ -280,6 +300,16 @@ RSpec.describe "Distributions", type: :request do
 
           expect(response).to have_http_status(400)
           expect(flash[:error]).to include("Distribution date and time can't be blank")
+        end
+      end
+
+      context "when signed in as partner" do
+        include_context "signed in as partner"
+
+        it "blocks access from partners" do
+          post distributions_path(distribution:)
+
+          expect(response).to block_partner_access
         end
       end
     end
@@ -408,6 +438,16 @@ RSpec.describe "Distributions", type: :request do
           end
         end
       end
+
+      context "when signed in as partner" do
+        include_context "signed in as partner"
+
+        it "blocks access from partners" do
+          get new_distribution_path({})
+
+          expect(response).to block_partner_access
+        end
+      end
     end
 
     describe "GET #show" do
@@ -456,6 +496,16 @@ RSpec.describe "Distributions", type: :request do
           expect(response.body).to match(/please make the following items active: #{item.name}/)
         end
       end
+
+      context "when signed in as partner" do
+        include_context "signed in as partner"
+
+        it "blocks access from partners" do
+          get distribution_path(id: distribution.id)
+
+          expect(response).to block_partner_access
+        end
+      end
     end
 
     describe "GET #schedule" do
@@ -466,6 +516,17 @@ RSpec.describe "Distributions", type: :request do
         url = page.at_css('#copy-calendar-button').attributes['data-url'].value
         hash = url.match(/\?hash=(.*)/)[1]
         expect(crypt.decrypt_and_verify(CGI.unescape(hash))).to eq(organization.id)
+      end
+
+      context "when signed in as partner" do
+        include_context "signed in as partner"
+
+        it "blocks access from partners" do
+          get schedule_distributions_path
+
+          expect(response).to redirect_to(partners_dashboard_path)
+          expect(flash[:error]).to eq("That screen is not available. Please switch to the correct role and try again.")
+        end
       end
     end
 
@@ -482,6 +543,16 @@ RSpec.describe "Distributions", type: :request do
 
         it 'redirects the user back to the distributions page' do
           expect(subject).to redirect_to distribution_path
+        end
+
+        context "when signed in as partner" do
+          include_context "signed in as partner"
+
+          it "blocks access from partners" do
+            patch picked_up_distribution_path(id: distribution.id)
+
+            expect(response).to block_partner_access
+          end
         end
       end
     end
@@ -519,6 +590,16 @@ RSpec.describe "Distributions", type: :request do
         expect(assigns(:daily_items).detect { |item| item[:name] == first_item.name }[:package_count]).to eq(5)
         expect(assigns(:daily_items).detect { |item| item[:name] == second_item.name }[:package_count]).to eq(2)
         expect(assigns(:daily_items).sum { |item| item[:package_count] }).to eq(7)
+      end
+
+      context "when signed in as partner" do
+        include_context "signed in as partner"
+
+        it "blocks access from partners" do
+          get pickup_day_distributions_path
+
+          expect(response).to block_partner_access
+        end
       end
     end
 
@@ -625,6 +706,16 @@ RSpec.describe "Distributions", type: :request do
           it "does not send the e-mail" do
             expect { subject }.not_to change { ActionMailer::Base.deliveries.count }
           end
+        end
+      end
+
+      context "when signed in as partner" do
+        include_context "signed in as partner"
+
+        it "blocks access from partners" do
+          patch distribution_path(distribution_params)
+
+          expect(response).to block_partner_access
         end
       end
     end
@@ -778,6 +869,16 @@ RSpec.describe "Distributions", type: :request do
         it "allows you to select the original storage location for the distribution" do
           get edit_distribution_path(id: @distribution_all.id)
           expect(response.body).to include("<option selected=\"selected\" value=\"#{storage_location.id}\">#{test_storage_name}</option>")
+        end
+      end
+
+      context "when signed in as partner" do
+        include_context "signed in as partner"
+
+        it "blocks access from partners" do
+          get edit_distribution_path(id: distribution.id)
+
+          expect(response).to block_partner_access
         end
       end
     end
