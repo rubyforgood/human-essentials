@@ -31,6 +31,8 @@ RSpec.describe "Distributions", type: :request do
     end
 
     describe "GET #print" do
+      subject { get print_distribution_path(id: create(:distribution).id) }
+
       it "returns http success" do
         get print_distribution_path(id: create(:distribution).id)
         expect(response).to be_successful
@@ -53,15 +55,7 @@ RSpec.describe "Distributions", type: :request do
         end
       end
 
-      context "when signed in as partner" do
-        include_context "signed in as partner"
-
-        it "blocks access from partners" do
-          get print_distribution_path(id: create(:distribution).id)
-
-          expect(response).to block_partner_access
-        end
-      end
+      include_examples "restricts partner access"
     end
 
     describe "GET #reclaim" do
@@ -72,6 +66,7 @@ RSpec.describe "Distributions", type: :request do
     end
 
     describe "GET #index" do
+      subject { get distributions_path }
       let(:item) { create(:item, value_in_cents: 100, organization: organization) }
       let!(:distribution) { create(:distribution, :with_items, :past, item: item, item_quantity: 10, organization: organization) }
 
@@ -215,18 +210,12 @@ RSpec.describe "Distributions", type: :request do
         end
       end
 
-      context "when signed in as partner" do
-        include_context "signed in as partner"
-
-        it "blocks access from partners" do
-          get distributions_path
-
-          expect(response).to block_partner_access
-        end
-      end
+      include_examples "restricts partner access"
     end
 
     describe "POST #create" do
+      subject { post distributions_path(distribution:) }
+
       let!(:storage_location) { create(:storage_location, organization: organization) }
       let!(:partner) { create(:partner, organization: organization) }
       let(:issued_at) { Time.current }
@@ -303,18 +292,11 @@ RSpec.describe "Distributions", type: :request do
         end
       end
 
-      context "when signed in as partner" do
-        include_context "signed in as partner"
-
-        it "blocks access from partners" do
-          post distributions_path(distribution:)
-
-          expect(response).to block_partner_access
-        end
-      end
+      include_examples "restricts partner access"
     end
 
     describe "GET #new" do
+      subject { get new_distribution_path(default_params) }
       let!(:partner) { create(:partner, organization: organization) }
       let(:request) { create(:request, partner: partner, organization: organization, item_requests: item_requests) }
       let(:items) {
@@ -439,18 +421,12 @@ RSpec.describe "Distributions", type: :request do
         end
       end
 
-      context "when signed in as partner" do
-        include_context "signed in as partner"
-
-        it "blocks access from partners" do
-          get new_distribution_path({})
-
-          expect(response).to block_partner_access
-        end
-      end
+      include_examples "restricts partner access"
     end
 
     describe "GET #show" do
+      subject { get distribution_path(id: distribution.id) }
+
       let(:item) { create(:item, organization: organization) }
       let!(:distribution) { create(:distribution, :with_items, item: item, item_quantity: 1, organization: organization) }
 
@@ -497,18 +473,12 @@ RSpec.describe "Distributions", type: :request do
         end
       end
 
-      context "when signed in as partner" do
-        include_context "signed in as partner"
-
-        it "blocks access from partners" do
-          get distribution_path(id: distribution.id)
-
-          expect(response).to block_partner_access
-        end
-      end
+      include_examples "restricts partner access"
     end
 
     describe "GET #schedule" do
+      subject { get schedule_distributions_path }
+
       it "returns http success" do
         get schedule_distributions_path
         expect(response).to be_successful
@@ -518,16 +488,7 @@ RSpec.describe "Distributions", type: :request do
         expect(crypt.decrypt_and_verify(CGI.unescape(hash))).to eq(organization.id)
       end
 
-      context "when signed in as partner" do
-        include_context "signed in as partner"
-
-        it "blocks access from partners" do
-          get schedule_distributions_path
-
-          expect(response).to redirect_to(partners_dashboard_path)
-          expect(flash[:error]).to eq("That screen is not available. Please switch to the correct role and try again.")
-        end
-      end
+      include_examples "restricts partner access"
     end
 
     describe 'PATCH #picked_up' do
@@ -545,19 +506,13 @@ RSpec.describe "Distributions", type: :request do
           expect(subject).to redirect_to distribution_path
         end
 
-        context "when signed in as partner" do
-          include_context "signed in as partner"
-
-          it "blocks access from partners" do
-            patch picked_up_distribution_path(id: distribution.id)
-
-            expect(response).to block_partner_access
-          end
-        end
+        include_examples "restricts partner access"
       end
     end
 
     describe "GET #pickup_day" do
+      subject { get pickup_day_distributions_path }
+
       it "returns http success" do
         get pickup_day_distributions_path
         expect(response).to be_successful
@@ -592,15 +547,7 @@ RSpec.describe "Distributions", type: :request do
         expect(assigns(:daily_items).sum { |item| item[:package_count] }).to eq(7)
       end
 
-      context "when signed in as partner" do
-        include_context "signed in as partner"
-
-        it "blocks access from partners" do
-          get pickup_day_distributions_path
-
-          expect(response).to block_partner_access
-        end
-      end
+      include_examples "restricts partner access"
     end
 
     context "Looking at a different organization" do
@@ -609,6 +556,7 @@ RSpec.describe "Distributions", type: :request do
     end
 
     describe "PATCH #update" do
+      subject { patch distribution_path(distribution_params) }
       let(:partner_name) { "Patrick" }
       let(:location) { create(:storage_location, organization: organization) }
       let(:partner) { create(:partner, name: partner_name, organization: organization) }
@@ -709,18 +657,12 @@ RSpec.describe "Distributions", type: :request do
         end
       end
 
-      context "when signed in as partner" do
-        include_context "signed in as partner"
-
-        it "blocks access from partners" do
-          patch distribution_path(distribution_params)
-
-          expect(response).to block_partner_access
-        end
-      end
+      include_examples "restricts partner access"
     end
 
     describe "GET #edit" do
+      subject { get edit_distribution_path(id: distribution.id) }
+
       let(:location) { create(:storage_location, organization: organization) }
       let(:partner) { create(:partner, organization: organization) }
 
@@ -872,15 +814,7 @@ RSpec.describe "Distributions", type: :request do
         end
       end
 
-      context "when signed in as partner" do
-        include_context "signed in as partner"
-
-        it "blocks access from partners" do
-          get edit_distribution_path(id: distribution.id)
-
-          expect(response).to block_partner_access
-        end
-      end
+      include_examples "restricts partner access"
     end
   end
 
