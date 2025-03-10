@@ -19,7 +19,6 @@ class Transfer < ApplicationRecord
 
   include Itemizable
   include Filterable
-  include Exportable
   # to make it play nice with Itemizable - alias of `from`
   belongs_to :storage_location, class_name: "StorageLocation", inverse_of: :transfers_from, foreign_key: :from_id
   scope :from_location, ->(location_id) { where(from_id: location_id) }
@@ -30,19 +29,6 @@ class Transfer < ApplicationRecord
   validate :storage_locations_must_be_different
   validate :from_storage_quantities
   validate :line_items_quantity_is_positive
-
-  def self.csv_export_headers
-    ["From", "To", "Comment", "Total Moved"]
-  end
-
-  def csv_export_attributes
-    [
-      from.name,
-      to.name,
-      comment || "none",
-      line_items.total
-    ]
-  end
 
   private
 
