@@ -2,13 +2,15 @@
   <div class="form-group">
     <% if profile.documents.attached? %>
       <strong>Attached files:</strong>
-      <ul>
+      <ul class="list-unstyled">
         <% profile.documents.each do |doc| %>
           <% if doc.persisted? %>
-            <li class="attached-document" data-document-id="<%= doc.signed_id %>">
-              <%= link_to doc.blob.filename.to_s, rails_blob_path(doc), class: "font-weight-bold" %>
-              <%= pf.hidden_field :documents, multiple: true, value: doc.signed_id %>
-              <%= remove_element_button "Remove", container_selector: "li", soft: false %>
+            <li class="attached-document d-flex justify-content-between align-items-center p-2 border rounded mb-2" data-document-id="<%= doc.signed_id %>">
+              <div class="text-truncate" style="max-width: 75%;">
+                <%= link_to doc.blob.filename.to_s, rails_blob_path(doc), class: "font-weight-bold" %>
+                <%= pf.hidden_field :documents, multiple: true, value: doc.signed_id %>
+              </div>
+              <%= remove_element_button "Remove", container_selector: "li", class: "btn btn-sm btn-danger" %>
             </li>
           <% end %>
         <% end %>
