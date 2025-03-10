@@ -1,7 +1,5 @@
 # This exists so that we can override some of the devise resource
 class Users::UnlocksController < Devise::UnlocksController
-  skip_before_action :require_organization
-
   # GET /resource/unlock/new
   # def new
   #   super

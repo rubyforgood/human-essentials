@@ -1,7 +1,6 @@
 # This exists so that we can override some of the devise resource
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   skip_before_action :authorize_user
-  skip_before_action :require_organization
 
   def google_oauth2
     user = User.from_omniauth(request.env["omniauth.auth"])

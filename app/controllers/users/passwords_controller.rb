@@ -1,7 +1,5 @@
 # This exists so that we can override some of the devise resource
 class Users::PasswordsController < Devise::PasswordsController
-  skip_before_action :require_organization
-
   layout "devise"
   # GET /resource/password/new
   def new

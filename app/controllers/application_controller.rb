@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :authenticate_user!
   before_action :authorize_user
-  before_action :require_organization
+  before_action :require_organization, unless: :devise_controller?
   before_action :log_active_user
   before_action :swaddled
   before_action :configure_permitted_parameters, if: :devise_controller?
