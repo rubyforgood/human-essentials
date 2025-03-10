@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :authenticate_user!
   before_action :authorize_user
+  before_action :require_organization
   before_action :log_active_user
   before_action :swaddled
   before_action :configure_permitted_parameters, if: :devise_controller?
@@ -80,6 +81,15 @@ class ApplicationController < ActionController::Base
   def authorize_admin
     verboten! unless current_user.has_cached_role?(Role::SUPER_ADMIN) ||
       current_user.has_cached_role?(Role::ORG_ADMIN, current_organization)
+  end
+
+  def require_organization
+    unless current_organization
+      respond_to do |format|
+        format.html { redirect_to partners_dashboard_path, flash: {error: "That screen is not available. Please switch to the correct role and try again."} }
+        format.json { render body: nil, status: :forbidden }
+      end
+    end
   end
 
   def log_active_user

@@ -6,6 +6,7 @@ class Users::SessionsController < Devise::SessionsController
   before_action :sign_out_if_signed_in, only: [:create]
   skip_before_action :authorize_user
   skip_before_action :authenticate_user!
+  skip_before_action :require_organization
   # This one causes a redirect require_no_authentication
   skip_before_action :require_no_authentication
 

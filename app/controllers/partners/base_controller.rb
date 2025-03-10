@@ -3,6 +3,7 @@ module Partners
     layout 'partners/application'
 
     before_action :require_partner
+    skip_before_action :require_organization
 
     private
 

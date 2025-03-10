@@ -1,5 +1,7 @@
 # This exists so that we can override some of the devise resource
 class Users::ConfirmationsController < Devise::ConfirmationsController
+  skip_before_action :require_organization
+
   # GET /resource/confirmation/new
   # def new
   #   super
