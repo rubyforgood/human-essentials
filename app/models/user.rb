@@ -112,8 +112,8 @@ class User < ApplicationRecord
   end
 
   def org_role
-    return "admin" if has_role?(Role::ORG_ADMIN, organization)
-    return "normal" if has_role?(Role::ORG_USER, organization)
+    return "admin" if has_cached_role?(Role::ORG_ADMIN, organization)
+    return "normal" if has_cached_role?(Role::ORG_USER, organization)
 
     "not a member"
   end
