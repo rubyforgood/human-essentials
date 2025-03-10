@@ -20,16 +20,26 @@ RSpec.describe DonationSite, type: :model do
   context "Validations >" do
     it { should belong_to(:organization) }
     it { should validate_presence_of(:name) }
+    it { should validate_uniqueness_of(:name).scoped_to(:organization_id).with_message("must be unique within the organization") }
     it { should validate_presence_of(:address) }
+    it { should validate_length_of(:contact_name).is_at_least(3) }
+    it { should validate_presence_of(:phone) }
   end
   describe "import_csv" do
-    it "imports storage locations from a csv file" do
+    it "imports donation sites from a csv file" do
       organization = create(:organization)
       import_file_path = Rails.root.join("spec", "fixtures", "files", "donation_sites.csv")
       data = File.read(import_file_path, encoding: "BOM|UTF-8")
       csv = CSV.parse(data, headers: true)
       DonationSite.import_csv(csv, organization.id)
+
+      donation_site = DonationSite.first
       expect(DonationSite.count).to eq 1
+      expect(donation_site.name).to eq "Donation Site 1"
+      expect(donation_site.address).to eq "123 Donation Site Way"
+      expect(donation_site.contact_name).to eq "John Doe"
+      expect(donation_site.email).to eq "john@example.com"
+      expect(donation_site.phone).to eq "123-456-7890"
     end
   end
 
