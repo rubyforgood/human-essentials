@@ -48,7 +48,7 @@ RSpec.describe Exports::ExportTransfersCSVService do
       end
     end
 
-    let(:non_item_headers) { ["From", "To", "Comment", "Total Moved"] }
+    let(:non_item_headers) { ["From", "To", "Date", "Comment", "Total Moved"] }
     let(:expected_headers) { non_item_headers + all_org_items.pluck(:name) }
 
     it "should match the expected content for the csv" do
@@ -58,6 +58,7 @@ RSpec.describe Exports::ExportTransfersCSVService do
         row = [
           transfer.from.name,
           transfer.to.name,
+          transfer.created_at.strftime("%F"),
           transfer.comment,
           transfer.line_items.total
         ]
@@ -79,6 +80,7 @@ RSpec.describe Exports::ExportTransfersCSVService do
           row = [
             transfer.from.name,
             transfer.to.name,
+            transfer.created_at.strftime("%F"),
             transfer.comment,
             transfer.line_items.total
           ]

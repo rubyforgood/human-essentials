@@ -38,6 +38,9 @@ module Exports
         "To" => ->(transfer) {
           transfer.to.name
         },
+        "Date" => ->(transfer) {
+          transfer.created_at.strftime("%F")
+        },
         "Comment" => ->(transfer) {
           transfer.comment || "none"
         },
