@@ -22,7 +22,7 @@ class DonationSite < ApplicationRecord
 
   belongs_to :organization
 
-  validates :name, :address, :phone, presence: true
+  validates :name, :address, presence: true
   validates :name, uniqueness: {scope: :organization_id, message: "must be unique within the organization"}
   validates :contact_name, length: {minimum: 3}, allow_blank: true
   validates :email, format: {with: URI::MailTo::EMAIL_REGEXP, message: "is not a valid email format"}, allow_blank: true
@@ -43,8 +43,8 @@ class DonationSite < ApplicationRecord
       loc.organization_id = organization
       begin
         loc.save!
-      rescue ActiveRecord::RecordInvalid => e
-        errors << e.message.to_s
+      rescue ActiveRecord::RecordInvalid
+        errors << "Row #{row.to_hash["name"]} - #{loc.errors.full_messages.join(", ")}"
       end
     end
     errors
