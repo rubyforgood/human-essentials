@@ -55,7 +55,7 @@ RSpec.describe "Distributions", type: :request do
         end
       end
 
-      include_examples "restricts partner access"
+      include_examples "restricts access to organization users/admins"
     end
 
     describe "GET #reclaim" do
@@ -210,7 +210,7 @@ RSpec.describe "Distributions", type: :request do
         end
       end
 
-      include_examples "restricts partner access"
+      include_examples "restricts access to organization users/admins"
     end
 
     describe "POST #create" do
@@ -292,7 +292,7 @@ RSpec.describe "Distributions", type: :request do
         end
       end
 
-      include_examples "restricts partner access"
+      include_examples "restricts access to organization users/admins"
     end
 
     describe "GET #new" do
@@ -421,7 +421,7 @@ RSpec.describe "Distributions", type: :request do
         end
       end
 
-      include_examples "restricts partner access"
+      include_examples "restricts access to organization users/admins"
     end
 
     describe "GET #show" do
@@ -473,7 +473,7 @@ RSpec.describe "Distributions", type: :request do
         end
       end
 
-      include_examples "restricts partner access"
+      include_examples "restricts access to organization users/admins"
     end
 
     describe "GET #schedule" do
@@ -488,7 +488,7 @@ RSpec.describe "Distributions", type: :request do
         expect(crypt.decrypt_and_verify(CGI.unescape(hash))).to eq(organization.id)
       end
 
-      include_examples "restricts partner access"
+      include_examples "restricts access to organization users/admins"
     end
 
     describe 'PATCH #picked_up' do
@@ -506,7 +506,7 @@ RSpec.describe "Distributions", type: :request do
           expect(subject).to redirect_to distribution_path
         end
 
-        include_examples "restricts partner access"
+        include_examples "restricts access to organization users/admins"
       end
     end
 
@@ -547,7 +547,7 @@ RSpec.describe "Distributions", type: :request do
         expect(assigns(:daily_items).sum { |item| item[:package_count] }).to eq(7)
       end
 
-      include_examples "restricts partner access"
+      include_examples "restricts access to organization users/admins"
     end
 
     context "Looking at a different organization" do
@@ -657,7 +657,7 @@ RSpec.describe "Distributions", type: :request do
         end
       end
 
-      include_examples "restricts partner access"
+      include_examples "restricts access to organization users/admins"
     end
 
     describe "GET #edit" do
@@ -814,7 +814,7 @@ RSpec.describe "Distributions", type: :request do
         end
       end
 
-      include_examples "restricts partner access"
+      include_examples "restricts access to organization users/admins"
     end
   end
 
