@@ -1,4 +1,5 @@
 <p>Hello <%= @partner.name %>,</p>
+    <p><%= @organization.reminder_email_text %></p>
     <p>
     This is a friendly reminder that <%= @organization.name %> requires your human essentials requests to be submitted by <%= @deadline.strftime('%a, %d %b %Y') %>
 if you would like to receive a distribution next month.</p>

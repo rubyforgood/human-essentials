@@ -138,6 +138,10 @@
                   <%= f.rich_text_area :default_email_text, placeholder: 'Enter distribution email content...' %>
                 <% end %>
 
+                <%= f.input :reminder_email_text, label: "Reminder Email Content" do %>
+                  <%= f.rich_text_area :reminder_email_text, placeholder: 'Enter reminder email content...' %>
+                <% end %>
+
                 <%= f.input :logo, wrapper: :input_group do %>
 
                   <% if current_organization.logo.attached? %>
