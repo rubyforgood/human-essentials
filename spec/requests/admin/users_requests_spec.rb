@@ -125,9 +125,53 @@ RSpec.describe "Admin::UsersController", type: :request do
     end
 
     describe "POST #create" do
-      it "returns http success" do
-        post admin_users_path, params: { user: { email: organization.email, organization_id: organization.id } }
+      it "creates an org user" do
+        post admin_users_path, params: {
+          user: { name: "New Org User", email: organization.email },
+          resource_type: Role::ORG_USER,
+          resource_id: organization.id
+        }
         expect(response).to redirect_to(admin_users_path)
+        new_user = User.find_by(name: "New Org User")
+        expect( new_user ).not_to eq(nil)
+        expect( new_user.has_role?(Role::ORG_USER, organization) ).to be_truthy
+        expect( new_user.has_role?(Role::ORG_ADMIN, organization) ).to be_falsey
+      end
+
+      it "creates an org admin" do
+        post admin_users_path, params: {
+          user: { name: "New Org Admin", email: organization.email },
+          resource_type: Role::ORG_ADMIN,
+          resource_id: organization.id
+        }
+        expect(response).to redirect_to(admin_users_path)
+        new_user = User.find_by(name: "New Org Admin")
+        expect( new_user ).not_to eq(nil)
+        expect( new_user.has_role?(Role::ORG_USER, organization) ).to be_truthy
+        expect( new_user.has_role?(Role::ORG_ADMIN, organization) ).to be_truthy
+      end
+
+      it "creates a partner user" do
+        post admin_users_path, params: {
+          user: { name: "New Partner User", email: organization.email },
+          resource_type: Role::PARTNER,
+          resource_id: partner.id
+        }
+        expect(response).to redirect_to(admin_users_path)
+        new_user = User.find_by(name: "New Partner User")
+        expect( new_user ).not_to eq(nil)
+        expect( new_user.has_role?(Role::PARTNER, partner) ).to be_truthy
+      end
+
+      it "creates a super admin" do
+        post admin_users_path, params: {
+          user: { name: "New Super Admin", email: organization.email },
+          resource_type: Role::SUPER_ADMIN,
+        }
+        expect(response).to redirect_to(admin_users_path)
+        new_user = User.find_by(name: "New Super Admin")
+        expect( new_user ).not_to eq(nil)
+        expect( new_user.has_role?(Role::SUPER_ADMIN) ).to be_truthy
       end
 
       it "preloads organizations" do
