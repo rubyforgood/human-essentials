@@ -179,12 +179,19 @@ RSpec.describe "Admin::UsersController", type: :request do
         expect(assigns(:organizations)).to eq(Organization.all.alphabetized)
       end
 
-      context "with missing organization id" do
+      context "with missing role type" do
         it "redirects back with flash message" do
           post admin_users_path, params: { user: { name: "ABC", email: organization.email } }
-
           expect(response).to render_template("admin/users/new")
-          expect(flash[:error]).to eq("Failed to create user: Please select an organization for the user.")
+          expect(flash[:error]).to eq("Failed to create user: Please select a role for the user.")
+        end
+      end
+
+      context "with missing resource id" do
+        it "redirects back with flash message" do
+          post admin_users_path, params: { user: { name: "ABC", email: organization.email }, resource_type: Role::ORG_ADMIN }
+          expect(response).to render_template("admin/users/new")
+          expect(flash[:error]).to eq("Failed to create user: Please select an associated resource for the role.")
         end
       end
     end
