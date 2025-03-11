@@ -23,6 +23,8 @@ RSpec.describe "Donations", type: :request do
 
         it { is_expected.to be_successful }
 
+        include_examples "restricts access to organization users/admins"
+
         it "should have the columns source and details" do
           expect(subject.body).to include("<th>Source</th>")
           expect(subject.body).to include("<th>Details</th>")
