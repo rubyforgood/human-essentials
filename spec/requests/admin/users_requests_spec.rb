@@ -118,9 +118,9 @@ RSpec.describe "Admin::UsersController", type: :request do
         expect(response).to render_template(:new)
       end
 
-      it "preloads organizations" do
+      it "preloads roles" do
         get new_admin_user_path
-        expect(assigns(:organizations)).to eq(Organization.all.alphabetized)
+        expect(assigns(:resources)).to eq(Role::TITLES.invert)
       end
     end
 
@@ -166,7 +166,7 @@ RSpec.describe "Admin::UsersController", type: :request do
       it "creates a super admin" do
         post admin_users_path, params: {
           user: { name: "New Super Admin", email: organization.email },
-          resource_type: Role::SUPER_ADMIN,
+          resource_type: Role::SUPER_ADMIN
         }
         expect(response).to redirect_to(admin_users_path)
         new_user = User.find_by(name: "New Super Admin")
@@ -177,6 +177,11 @@ RSpec.describe "Admin::UsersController", type: :request do
       it "preloads organizations" do
         post admin_users_path, params: { user: { organization_id: organization.id } }
         expect(assigns(:organizations)).to eq(Organization.all.alphabetized)
+      end
+
+      it "preloads roles" do
+        post admin_users_path, params: { user: { organization_id: organization.id } }
+        expect(assigns(:resources)).to eq(Role::TITLES.invert)
       end
 
       context "with missing role type" do
