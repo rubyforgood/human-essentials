@@ -103,7 +103,7 @@ class Admin::UsersController < AdminController
   def validate_role_resource_params
     raise "Please select a role for the user." if params[:resource_type].blank?
 
-    raise "Please select an associated resource for the role." if params[:resource_type].to_s != Role::SUPER_ADMIN && params[:resource_id].blank?
+    raise "Please select an associated resource for the role." if params[:resource_type].to_s != Role::SUPER_ADMIN.to_s && params[:resource_id].blank?
   end
 
   def load_organizations
