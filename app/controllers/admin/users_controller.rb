@@ -39,6 +39,7 @@ class Admin::UsersController < AdminController
 
   def create
     @user = User.new(user_params)
+    validate_role_resource_params
     klass = Role::TITLE_TO_RESOURCE[params[:resource_type].to_sym]
     resource = klass&.find(params[:resource_id])
     UserInviteService.invite(
@@ -97,6 +98,12 @@ class Admin::UsersController < AdminController
 
   def user_params
     params.require(:user).permit(:name, :email)
+  end
+
+  def validate_role_resource_params
+    raise "Please select a role for the user." if params[:resource_type].blank?
+
+    raise "Please select an associated resource for the role." if params[:resource_type].to_s != Role::SUPER_ADMIN && params[:resource_id].blank?
   end
 
   def load_organizations
