@@ -47,7 +47,17 @@
                 <%= f.input_field :notes, class: "form-control" %>
               <% end %>
               <%= f.input :documents, label: "Documents", wrapper: :input_group do %>
-                <%= f.input_field :documents, as: :file, multiple: true, accept: Partner::ALLOWED_MIME_TYPES.join(","), class: "form-control h-auto" %>
+                <% if @partner.documents.present? %>
+                  <ul class="list-unstyled">
+                    <% @partner.documents.each do |document| %>
+                      <li>
+                        <%= link_to document.blob['filename'], rails_blob_path(document), disposition: "attachment", class: "p1-1" %>
+                        <%= delete_button_to attachment_path(document), { text: "", confirm: "Are you sure you want to permanently remove this document?" } %>
+                      </li>
+                    <% end %>
+                  </ul>
+                <% end %>
+                <%= f.input_field :documents, as: :file, multiple: true, accept: Partner::ALLOWED_MIME_TYPES.join(","), class: "form-control-file h-auto" %>
               <% end %>
             </div>
             <!-- /.card-body -->
