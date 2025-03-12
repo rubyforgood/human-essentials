@@ -1,5 +1,5 @@
 <%= f.fields_for :profile, profile do |pf| %>
-  <div class="form-group">
+  <div class="form-group" data-controller="file-input">
     <% if profile.documents.attached? %>
       <strong>Attached files:</strong>
       <ul class="list-unstyled">
@@ -16,6 +16,9 @@
         <% end %>
       </ul>
     <% end %>
-    <%= pf.file_field :documents, multiple: true, class: "form-control-file" %>
+
+    <%# Native file input and placeholder for selected file names %>
+    <%= pf.file_field :documents, multiple: true, class: "form-control-file", data: { file_input_target: "input" } %>
+    <div data-file-input-target="list" class="mt-2"></div>
   </div>
 <% end %>
