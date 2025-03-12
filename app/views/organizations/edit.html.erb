@@ -138,7 +138,8 @@
                   <%= f.rich_text_area :default_email_text, placeholder: 'Enter distribution email content...' %>
                 <% end %>
 
-                <%= f.input :reminder_email_text, label: "Reminder Email Content" do %>
+                <% default_reminder_email_text_hint = "You can use the variable <code>%{partner_name}</code> to include the partner's name in the message." %>
+                <%= f.input :reminder_email_text, label: "Reminder Email Content", hint: default_reminder_email_text_hint.html_safe do %>
                   <%= f.rich_text_area :reminder_email_text, placeholder: 'Enter reminder email content...' %>
                 <% end %>
 
