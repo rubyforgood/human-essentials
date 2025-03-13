@@ -24,6 +24,17 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       expect(page.find(".alert")).to have_content "Created a new user!"
     end
 
+    it "hides the resource dropdown if super admin role is selected" do
+      visit admin_users_path
+      click_link "Invite a new user"
+
+      expect(page).to have_content("Resource")
+      expect(page).to have_css(".select2")
+      find('select#resource_type option', text: "Super admin").select_option
+      expect(page).to_not have_content("Resource")
+      expect(page).to_not have_css(".select2")
+    end
+
     it "edits an existing user" do
       create(:user, organization: organization, name: "AAlphabetically First User")
 
