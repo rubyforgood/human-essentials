@@ -12,7 +12,11 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
     it "creates an user" do
       visit admin_users_path
       click_link "Invite a new user"
-      find('#user_organization_id option:last-of-type').select_option
+      find('select#resource_type option:first-of-type').select_option
+      # The resource_id select input has its options generated dynamically by
+      # the double_select_controller using select2 so we need to open the dropdown
+      find("label", text: "Resource").sibling(".input-group").click
+      find('li[role="option"]', text: organization.name).click
       fill_in "user_name", with: "TestUser"
       fill_in "user_email", with: "testuser@example.com"
       click_on "Save"
