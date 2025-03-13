@@ -90,6 +90,6 @@ class DonationSitesController < ApplicationController
 
   helper_method \
     def filter_params
-    params.permit(:include_inactive_donation_sites)
+    {}
   end
 end
