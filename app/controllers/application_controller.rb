@@ -84,11 +84,11 @@ class ApplicationController < ActionController::Base
   end
 
   def require_organization
-    unless current_organization
-      respond_to do |format|
-        format.html { redirect_to dashboard_path_from_current_role, flash: {error: "That screen is not available. Please switch to the correct role and try again."} }
-        format.json { render body: nil, status: :forbidden }
-      end
+    return if current_organization
+
+    respond_to do |format|
+      format.html { redirect_to dashboard_path_from_current_role, flash: {error: "That screen is not available. Please try again as a bank."} }
+      format.json { render body: nil, status: :forbidden }
     end
   end
 

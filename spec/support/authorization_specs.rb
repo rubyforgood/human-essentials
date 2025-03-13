@@ -9,7 +9,7 @@ RSpec.shared_examples "restricts access to organization users/admins" do
 
     it "redirects partners to their dashboard with a flash message" do
       expect(subject).to redirect_to(partners_dashboard_path)
-      expect(flash[:error]).to eq("That screen is not available. Please switch to the correct role and try again.")
+      expect(flash[:error]).to eq("That screen is not available. Please try again as a bank.")
     end
   end
 
@@ -22,7 +22,7 @@ RSpec.shared_examples "restricts access to organization users/admins" do
 
     it "redirects admins to their dashboard with a flash message" do
       expect(subject).to redirect_to(admin_dashboard_path)
-      expect(flash[:error]).to eq("That screen is not available. Please switch to the correct role and try again.")
+      expect(flash[:error]).to eq("That screen is not available. Please try again as a bank.")
     end
   end
 end

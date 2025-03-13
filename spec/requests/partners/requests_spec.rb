@@ -81,7 +81,7 @@ RSpec.describe "/partners/requests", type: :request do
 
           it "redirects to dashboard path and flashes an error" do
             subject
-            expect(flash[:error]).to eq("Logged in user is not set up as a 'partner'.")
+            expect(flash[:error]).to eq("That screen is not available. Please try again as a partner.")
             expect(response).to redirect_to(dashboard_path)
           end
         end
@@ -94,7 +94,7 @@ RSpec.describe "/partners/requests", type: :request do
 
         it "redirects to dashboard path and flashes an error" do
           subject
-          expect(flash[:error]).to eq("Logged in user is not set up as a 'partner'.")
+          expect(flash[:error]).to eq("That screen is not available. Please try again as a partner.")
           expect(response).to redirect_to(dashboard_path)
         end
       end
@@ -106,7 +106,7 @@ RSpec.describe "/partners/requests", type: :request do
 
       it "redirects to dashboard path and flashes an error" do
         subject
-        expect(flash[:error]).to eq("Logged in user is not set up as a 'partner'.")
+        expect(flash[:error]).to eq("That screen is not available. Please try again as a partner.")
         expect(response).to redirect_to(dashboard_path)
       end
     end
@@ -376,7 +376,7 @@ RSpec.describe "/partners/requests", type: :request do
 
             it "redirects to dashboard path and flashes an error" do
               subject
-              expect(flash[:error]).to eq("Logged in user is not set up as a 'partner'.")
+              expect(flash[:error]).to eq("That screen is not available. Please try again as a partner.")
               expect(response).to redirect_to(dashboard_path)
             end
           end
@@ -389,7 +389,7 @@ RSpec.describe "/partners/requests", type: :request do
 
           it "redirects to dashboard path and flashes an error" do
             subject
-            expect(flash[:error]).to eq("Logged in user is not set up as a 'partner'.")
+            expect(flash[:error]).to eq("That screen is not available. Please try again as a partner.")
             expect(response).to redirect_to(dashboard_path)
           end
         end
@@ -402,7 +402,7 @@ RSpec.describe "/partners/requests", type: :request do
 
       it "redirects to dashboard path and flashes an error" do
         subject
-        expect(flash[:error]).to eq("Logged in user is not set up as a 'partner'.")
+        expect(flash[:error]).to eq("That screen is not available. Please try again as a partner.")
         expect(response).to redirect_to(dashboard_path)
       end
     end
