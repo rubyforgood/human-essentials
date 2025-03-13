@@ -33,7 +33,7 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
 
       expect(page.find(".alert")).to have_content "Created a new user!"
     end
-    
+
     it "complains if resource wasn't specified but was needed for the chosen role" do
       visit new_admin_user_path
       find('select#resource_type option', exact_text: "Organization").select_option

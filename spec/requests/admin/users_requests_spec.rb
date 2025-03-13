@@ -133,9 +133,9 @@ RSpec.describe "Admin::UsersController", type: :request do
         }
         expect(response).to redirect_to(admin_users_path)
         new_user = User.find_by(name: "New Org User")
-        expect( new_user ).not_to eq(nil)
-        expect( new_user.has_role?(Role::ORG_USER, organization) ).to be_truthy
-        expect( new_user.has_role?(Role::ORG_ADMIN, organization) ).to be_falsey
+        expect(new_user).not_to eq(nil)
+        expect(new_user.has_role?(Role::ORG_USER, organization)).to be_truthy
+        expect(new_user.has_role?(Role::ORG_ADMIN, organization)).to be_falsey
       end
 
       it "creates an org admin" do
@@ -146,9 +146,9 @@ RSpec.describe "Admin::UsersController", type: :request do
         }
         expect(response).to redirect_to(admin_users_path)
         new_user = User.find_by(name: "New Org Admin")
-        expect( new_user ).not_to eq(nil)
-        expect( new_user.has_role?(Role::ORG_USER, organization) ).to be_truthy
-        expect( new_user.has_role?(Role::ORG_ADMIN, organization) ).to be_truthy
+        expect(new_user).not_to eq(nil)
+        expect(new_user.has_role?(Role::ORG_USER, organization)).to be_truthy
+        expect(new_user.has_role?(Role::ORG_ADMIN, organization)).to be_truthy
       end
 
       it "creates a partner user" do
@@ -159,8 +159,8 @@ RSpec.describe "Admin::UsersController", type: :request do
         }
         expect(response).to redirect_to(admin_users_path)
         new_user = User.find_by(name: "New Partner User")
-        expect( new_user ).not_to eq(nil)
-        expect( new_user.has_role?(Role::PARTNER, partner) ).to be_truthy
+        expect(new_user).not_to eq(nil)
+        expect(new_user.has_role?(Role::PARTNER, partner)).to be_truthy
       end
 
       it "creates a super admin" do
@@ -170,8 +170,8 @@ RSpec.describe "Admin::UsersController", type: :request do
         }
         expect(response).to redirect_to(admin_users_path)
         new_user = User.find_by(name: "New Super Admin")
-        expect( new_user ).not_to eq(nil)
-        expect( new_user.has_role?(Role::SUPER_ADMIN) ).to be_truthy
+        expect(new_user).not_to eq(nil)
+        expect(new_user.has_role?(Role::SUPER_ADMIN)).to be_truthy
       end
 
       it "preloads organizations" do

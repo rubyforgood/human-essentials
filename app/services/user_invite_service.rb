@@ -11,14 +11,14 @@ module UserInviteService
 
     # Resource can be nil when the only role being added is the SUPER_ADMIN role.
     # binding.pry
-    raise "Resource not found!" if (resource.nil? && roles.first.to_s != Role::SUPER_ADMIN.to_s)
+    raise "Resource not found!" if resource.nil? && roles.first.to_s != Role::SUPER_ADMIN.to_s
 
     # A user with the ORG_ADMIN role should also always have the ORG_USER role.
     # The logic is placed here instead of relying on the AddRoleService, as that
     # currently only accepts users by id, and newly invited users will not have
     # an id at this point.
     if roles.all? { |role| role.to_s == Role::ORG_ADMIN.to_s }
-      roles.append( Role::ORG_USER.to_s )
+      roles.append(Role::ORG_USER.to_s)
     end
 
     user = User.find_by(email: email)
