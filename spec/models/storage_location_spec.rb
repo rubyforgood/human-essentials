@@ -22,7 +22,7 @@ RSpec.describe StorageLocation, type: :model do
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:address) }
     it "ensures that square_footage cannot be negative" do
-      expect(build(:storage_location, square_footage: -100)).not_to be_valid
+      expect(build(:storage_location, square_footage: -1)).not_to be_valid
       expect(build(:storage_location, square_footage: 0)).to be_valid
       expect(build(:storage_location, square_footage: 100)).to be_valid
       expect(build(:storage_location, square_footage: nil)).to be_valid
