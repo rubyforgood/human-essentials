@@ -45,7 +45,7 @@ RSpec.describe "DonationSites", type: :request do
 
           # Inactive donation site should have reactivate button
           button2 = page.css(".btn[href='/donation_sites/#{inactive_donation_site.id}/reactivate']")
-          expect(button2.text.strip).to eq("Reactivate")
+          expect(button2.text.strip).to eq("Restore")
           expect(button2.attr('class')).not_to match(/disabled/)
         end
       end

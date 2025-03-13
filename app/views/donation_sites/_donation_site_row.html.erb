@@ -9,11 +9,11 @@
     <%= edit_button_to edit_donation_site_path(donation_site_row) %>
     <% if donation_site_row.active? %>
       <%= deactivate_button_to deactivate_donation_site_path(donation_site_row),
-            text: 'Deactivate',
+            text: "Deactivate",
             confirm: confirm_deactivate_msg(donation_site_row.name) %>
     <% else %>
       <%= reactivate_button_to reactivate_donation_site_path(donation_site_row),
-            text: 'Reactivate',
+            text: "Restore",
             confirm: confirm_reactivate_msg(donation_site_row.name) %>
     <% end %>
   </td>
