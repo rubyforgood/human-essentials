@@ -46,6 +46,7 @@ class StorageLocation < ApplicationRecord
   validates :name, :address, presence: true
   validates :warehouse_type, inclusion: { in: WAREHOUSE_TYPES },
                              allow_blank: true
+  validates :square_footage, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   before_destroy :validate_empty_inventory, prepend: true
 
   include Discard::Model
