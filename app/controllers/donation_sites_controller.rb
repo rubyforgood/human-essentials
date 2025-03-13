@@ -4,8 +4,11 @@ class DonationSitesController < ApplicationController
   include Importable
 
   def index
-    @donation_sites = current_organization.donation_sites.active.alphabetized
-    @donation_site = current_organization.donation_sites.new
+    @donation_sites = current_organization.donation_sites.alphabetized
+    @donation_sites = @donation_sites.active if params[:include_inactive_donation_sites].blank?
+
+    @include_inactive_donation_sites = params[:include_inactive_donation_sites]
+
     respond_to do |format|
       format.html
       format.csv { send_data DonationSite.generate_csv(@donation_sites), filename: "DonationSites-#{Time.zone.today}.csv" }
@@ -57,11 +60,25 @@ class DonationSitesController < ApplicationController
       donation_site.deactivate!
     rescue => e
       flash[:error] = e.message
-      redirect_back(fallback_location: items_path)
+      redirect_back(fallback_location: donation_sites_path)
       return
     end
 
     flash[:notice] = "#{donation_site.name} has been deactivated."
+    redirect_to donation_sites_path
+  end
+
+  def reactivate
+    donation_site = current_organization.donation_sites.find(params[:id])
+    begin
+      donation_site.reactivate!
+    rescue => e
+      flash[:error] = e.message
+      redirect_back(fallback_location: donation_sites_path)
+      return
+    end
+
+    flash[:notice] = "#{donation_site.name} has been reactivated."
     redirect_to donation_sites_path
   end
 
@@ -73,6 +90,6 @@ class DonationSitesController < ApplicationController
 
   helper_method \
     def filter_params
-    {}
+    params.permit(:include_inactive_donation_sites)
   end
 end
