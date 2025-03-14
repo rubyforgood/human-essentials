@@ -140,7 +140,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
         expect(report.adults_served_per_month).to eq(167.41666666666666)
       end
 
-      it "should return the number of loose adult incontinence supplies distributed" do 
+      it "should return the number of loose adult incontinence supplies distributed" do
         expect(report.distributed_adult_incontinence_items_from_kits).to eq(1500.0)
       end
       it "should return the number of distributed adult incontinence items from kits" do
