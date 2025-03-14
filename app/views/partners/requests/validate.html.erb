@@ -22,7 +22,7 @@
                 <td><%= line_item.name %></td>
                 <td><%= line_item.quantity %></td>
                 <% if Flipper.enabled?(:enable_packs) && @partner_request.item_requests.any?( &:request_unit ) %>
-                  <td><%= line_item.request_unit %></td>
+                  <td><%= line_item.request_unit&.capitalize&.pluralize(line_item.quantity.to_i) %></td>
                 <% end %>
               </tr>
             <% end %>
