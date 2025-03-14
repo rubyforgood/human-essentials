@@ -47,6 +47,10 @@ RSpec.describe "ProductDrives", type: :request do
         expect(response.body).not_to include(product_drive_path(product_drive_five.id))
       end
 
+      it_behaves_like "allows filtering by tag", ProductDrive do
+        let(:index_path) { product_drives_path(params) }
+      end
+
       context "csv" do
         it 'is successful' do
           get product_drives_path(format: :csv)
@@ -155,6 +159,40 @@ RSpec.describe "ProductDrives", type: :request do
           end
         end
       end
+
+      describe "pagination" do
+        around do |ex|
+          Kaminari.config.default_per_page = 2
+          ex.run
+          Kaminari.config.default_per_page = 5
+        end
+
+        before do
+          # Create a list of Product Drives to exceed pagination limit
+          create_list(:product_drive, 10, organization: organization)
+
+          # Fetch Product Drives before assertions
+          get product_drives_path
+        end
+
+        it "displays pagination controls when there are more product drives than default per page" do
+          expect(response).to be_successful
+
+          parsed_html = Nokogiri::HTML(response.body)
+
+          # Select the Product Drives table, which is the only table in the view
+          # and count the rows
+          product_drives_table = parsed_html.at_css("table.table")
+          row_count = product_drives_table.css("tbody tr").size
+
+          # There should be 2 rows on the first page--the default per page configured above
+          expect(row_count).to eq(2)
+
+          # Check that pagination controls (e.g., "Next" button) appear
+          next_button = parsed_html.at_css('a, button') { |el| el.text.strip == 'Next' }
+          expect(next_button).not_to be_nil
+        end
+      end
     end
 
     describe "GET #new" do
@@ -165,18 +203,64 @@ RSpec.describe "ProductDrives", type: :request do
     end
 
     describe "POST#create" do
+      let!(:tag) { create(:tag, name: "Foo", organization:) }
+      let(:valid_params) { attributes_for(:product_drive).merge(tags: ["Foo", "Bar"]) }
+
       it "returns redirect http status" do
-        post product_drives_path(product_drive: attributes_for(:product_drive))
+        post product_drives_path(product_drive: valid_params)
         expect(response).to have_http_status(:redirect)
+      end
+
+      it "creates drives with tags" do
+        post product_drives_path(product_drive: valid_params)
+
+        expect(ProductDrive.last.tags.map(&:name)).to include("Foo", "Bar")
+      end
+
+      context "with invalid params" do
+        # start_date is required so this will fail validation
+        let(:invalid_params) do
+          valid_params.merge(start_date: "")
+        end
+
+        it "preserves tags entered" do
+          post product_drives_path(product_drive: invalid_params)
+
+          expect(flash[:error]).to eq("Something didn't work quite right -- try again?")
+          expect(response.body).to include("Foo")
+        end
       end
     end
 
     describe "PUT#update" do
-      it "returns redirect http status" do
-        product_drive = create(:product_drive, organization: organization)
+      let!(:foo_tag) { create(:tag, name: "Foo", organization:) }
+      let!(:bar_tag) { create(:tag, name: "Bar", organization:) }
+      let(:product_drive) { create(:product_drive, organization: organization) }
+      let(:valid_params) { product_drive.attributes.symbolize_keys.merge(tags: ["Foo", "Bar"]) }
 
-        put product_drive_path(id: product_drive.id, product_drive: attributes_for(:product_drive))
+      it "returns redirect http status" do
+        put product_drive_path(id: product_drive.id, product_drive: valid_params)
         expect(response).to have_http_status(:redirect)
+      end
+
+      it "updates drive tags" do
+        expect {
+          put product_drive_path(id: product_drive.id, product_drive: valid_params)
+        }.to change { product_drive.reload.tags.map(&:name).sort }.from([]).to(["Bar", "Foo"])
+      end
+
+      context "with invalid params" do
+        # start_date is required so this will fail validation
+        let(:invalid_params) do
+          valid_params.merge(start_date: "")
+        end
+
+        it "preserves tags entered" do
+          put product_drive_path(id: product_drive.id, product_drive: invalid_params)
+
+          expect(flash[:error]).to eq("Something didn't work quite right -- try again?")
+          expect(response.body).to include("Foo", "Bar")
+        end
       end
     end
 

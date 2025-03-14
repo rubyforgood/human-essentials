@@ -54,6 +54,12 @@ RSpec.describe Transfer, type: :model do
       })
       expect(transfer).not_to be_valid
     end
+
+    it "requires that the quantity must be positive" do
+      item = create(:item)
+      transfer = build(:transfer, :with_items, item: item, item_quantity: -1)
+      expect(transfer).not_to be_valid
+    end
   end
 
   context "Scopes >" do

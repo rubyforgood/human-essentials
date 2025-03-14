@@ -4,6 +4,8 @@ inherit_mode:
 
 inherit_gem:
   standard: config/base.yml
+  standard-rails: config/base.yml
+  standard-performance: config/base.yml
 
 inherit_from:
   .rubocop_todo.yml
@@ -12,15 +14,17 @@ require:
   - rubocop-rails
   - rubocop-performance
   - standard
+  - standard-rails
+  - standard-performance
 
 AllCops:
-  TargetRubyVersion: 3.1.2
   Exclude:
     - "vendor/**/*"
     - "db/schema.rb"
     - "db/partners_schema.rb"
     - "db/seeds.rb"
     - "db/migrate/*"
+    - "db/partners_migrate/*"
     - "bin/*"
     - "lib/files/cucumber.rake"
     - "lib/tasks/*"
@@ -29,25 +33,12 @@ AllCops:
     - "Rakefile"
     - "tmp/*"
     - "node_modules/**/*"
-  UseCache: false
 
 Rails:
   Enabled: true
-Rails/Output:
-  Enabled: true
-Rails/Date:
-  Enabled: true
 Rails/FilePath:
   Enabled: false
-Rails/FindBy:
-  Enabled: true
-Rails/FindEach:
-  Enabled: true
 Rails/PluralizationGrammar:
-  Enabled: true
-Rails/ScopeArgs:
-  Enabled: true
-Rails/TimeZone:
   Enabled: true
 Rails/UnknownEnv:
   Environments:
@@ -62,19 +53,13 @@ Rails/AfterCommitOverride:
   Enabled: false
 Rails/FindById:
   Enabled: false
-Rails/Inquiry:
-  Enabled: false
 Rails/MailerName:
   Enabled: false
 Rails/MatchRoute:
   Enabled: false
-Rails/NegateInclude:
-  Enabled: false
 Rails/Pluck:
   Enabled: false
 Rails/PluckInWhere:
-  Enabled: false
-Rails/RenderInline:
   Enabled: false
 Rails/RenderPlainText:
   Enabled: false
@@ -82,12 +67,13 @@ Rails/ShortI18n:
   Enabled: false
 Rails/SquishedSQLHeredocs:
   Enabled: false
-Rails/WhereExists:
-  Enabled: false
-Rails/WhereNot:
-  Enabled: false
 Rails/HasAndBelongsToMany:
   Enabled: false
+Rails/ThreeStateBooleanColumn:
+  Enabled: true
+# FIXME: Fix our ENV variable access and remove the following config.
+Rails/EnvironmentVariableAccess:
+  AllowReads: true
 
 Rails/BulkChangeTable:
   Exclude:

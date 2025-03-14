@@ -19,33 +19,16 @@ class Transfer < ApplicationRecord
 
   include Itemizable
   include Filterable
-  include Exportable
-  alias_attribute :storage_location, :from # to make it play nice with Itemizable
+  # to make it play nice with Itemizable - alias of `from`
+  belongs_to :storage_location, class_name: "StorageLocation", inverse_of: :transfers_from, foreign_key: :from_id
   scope :from_location, ->(location_id) { where(from_id: location_id) }
   scope :to_location, ->(location_id) { where(to_id: location_id) }
-  scope :for_csv_export, ->(organization, *) {
-    where(organization: organization)
-      .includes(:line_items, :from, :to)
-  }
   scope :during, ->(range) { where(created_at: range) }
 
-  validates :from, :to, :organization, presence: true
   validate :storage_locations_belong_to_organization
   validate :storage_locations_must_be_different
   validate :from_storage_quantities
-
-  def self.csv_export_headers
-    ["From", "To", "Comment", "Total Moved"]
-  end
-
-  def csv_export_attributes
-    [
-      from.name,
-      to.name,
-      comment || "none",
-      line_items.total
-    ]
-  end
+  validate :line_items_quantity_is_positive
 
   private
 
@@ -82,5 +65,9 @@ class Transfer < ApplicationRecord
   def insufficient_items
     inventory = View::Inventory.new(organization_id)
     line_items.select { |i| i.quantity > inventory.quantity_for(item_id: i.item_id) }
+  end
+
+  def line_items_quantity_is_positive
+    line_items_quantity_is_at_least(1)
   end
 end

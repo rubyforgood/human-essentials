@@ -10,21 +10,21 @@ end
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.5.7"
+gem "pg", "~> 1.5.9"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "7.1.3.4"
+gem "rails", "7.2.2"
 
 ###### MODELS / DATABASE #######
 
 # These two gems are used to hook into ActiveStorage to store blobs in Azure Storage Service.
 # gem 'azure-storage', '~> 0.15.0.preview', require: false
+# For ActiveStorage on AWS
+gem 'aws-sdk-s3', require: false
 gem 'azure-storage-blob'
 # Adds soft delete functionality for models.
 gem 'discard', '~> 1.3'
-# Adds grouping by date/month/etc to queries.
-gem "groupdate", "~> 6.4"
 # Treats attributes like money, which knows about dollars and cents.
 gem "money-rails"
 # Tracks history / audits models.
@@ -32,11 +32,11 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-# Pinned to 1.8.0 because 2.0.0 no longer support postgres v10
-# And as of now we are using postgres v10 in production
-gem "strong_migrations", "1.8.0"
+gem "strong_migrations"
 # used in events
 gem 'dry-struct'
+# Use solid_cache as a cache store
+gem "solid_cache", "~> 1.0"
 
 ##### JAVSCRIPT/CSS/ASSETS #######
 
@@ -50,6 +50,8 @@ gem "recaptcha"
 gem "turbo-rails"
 # Sprinkle a little JS to add interactivity
 gem "stimulus-rails"
+# Use JS import maps to manage JS without transpiling or bundling.
+gem "importmap-rails", "~> 2.1"
 
 ##### VIEWS/CONTROLLERS #####
 
@@ -65,8 +67,6 @@ gem "omniauth"
 gem "omniauth-rails_csrf_protection"
 # Allow login via Google.
 gem "omniauth-google-oauth2"
-
-gem "matrix"
 # Generate PDFs as views.
 gem "prawn-rails"
 # Reduces boilerplate HTML code when writing forms.
@@ -90,8 +90,6 @@ gem "flipper-active_record"
 gem "flipper-ui"
 # Calculates latitude and longitude from an address.
 gem "geocoder"
-# Enable making HTTP requests
-gem 'httparty'
 # Generate .ics calendars for use with Google Calendar
 gem 'icalendar', require: false
 # JSON Web Token encoding / decoding (e.g. for links in e-mails)
@@ -100,19 +98,15 @@ gem "jwt"
 gem "newrelic_rpm"
 # Used to manage periodic cron-like jobs
 gem "clockwork"
+# Speed up app boot time by caching expensive operations
+gem 'bootsnap', require: false
 
 ##### DEPENDENCY PINS ######
 # These are gems that aren't used directly, only as dependencies for other gems.
 # Technically they don't need to be in this Gemfile at all, but we are pinning them to
 # specific versions for compatibility reasons.
 gem "nokogiri", ">= 1.10.4"
-gem "image_processing"
 gem "sprockets", "~> 4.2.1"
-
-group :production do
-  # Tool to detect unused code through knowing which methods are used in which files.
-  gem 'coverband'
-end
 
 group :production, :staging do
   # Reduce the noise of logs and include custom fields to it for easier access
@@ -150,14 +144,18 @@ group :development, :test do
   # Debugger which supports rdbg and Shopify Ruby LSP VSCode extension
   gem "debug", ">= 1.0.0"
   # RSpec behavioral testing framework for Rails.
-  gem "rspec-rails", "~> 7.0.1"
+  gem "rspec-rails", "~> 7.1.0"
   # Static analysis / linter.
   gem "rubocop"
   # Rails add-on for static analysis.
   gem 'rubocop-performance'
   gem "rubocop-rails", "~> 2.25.1"
+  # More concise test ("should") matchers
+  gem "shoulda-matchers", "~> 6.4"
   # Default rules for Rubocop.
   gem "standard", "~> 1.40"
+  gem "standard-rails"
+  gem "standard-performance"
   # Erb linter.
   gem "erb_lint"
 end
@@ -181,6 +179,12 @@ group :development do
   gem "rails-erd"
   # Allows to create a console in the browser.
   gem "web-console"
+  # Middleware that displays speed badge for every HTML page
+  gem "rack-mini-profiler"
+  # Adds memory profiling to rack-mini-profiler
+  gem "memory_profiler"
+  # Adds call-stack profiling flamegraphs to rack-mini-profiler
+  gem "stackprof"
 end
 
 group :test do
@@ -196,8 +200,6 @@ group :test do
   gem "rails-controller-testing"
   # Show code coverage.
   gem 'simplecov'
-  # More concise test ("should") matchers
-  gem 'shoulda-matchers', '~> 6.2'
   # Mock HTTP requests and ensure they are not called during tests.
   gem "webmock", "~> 3.24"
   # Interface capybara to chrome headless
@@ -213,8 +215,3 @@ end
 if %w(mingw mswin x64_mingw jruby).include?(RUBY_PLATFORM)
   gem "tzinfo-data", "~> 1.2", platforms: %i(mingw mswin x64_mingw jruby)
 end
-
-# Use Redis for Action Cable
-gem "redis", "~> 5.3"
-
-gem "importmap-rails", "~> 2.0"

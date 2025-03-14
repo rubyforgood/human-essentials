@@ -63,7 +63,7 @@ class DonationsController < ApplicationController
     rescue => e
       load_form_collections
       @donation.line_items.build if @donation.line_items.count.zero?
-      flash[:error] = "There was an error starting this donation: #{e.message}"
+      flash.now[:error] = "There was an error starting this donation: #{e.message}"
       Rails.logger.error "[!] DonationsController#create Error: #{e.message}"
       render action: :new
     end
@@ -84,7 +84,7 @@ class DonationsController < ApplicationController
   end
 
   def show
-    @donation = Donation.includes(:line_items).find(params[:id])
+    @donation = Donation.includes(line_items: :item).find(params[:id])
     @line_items = @donation.line_items
   end
 
@@ -98,7 +98,7 @@ class DonationsController < ApplicationController
     flash[:notice] = "Donation updated!"
     redirect_to donations_path
   rescue => e
-    flash[:alert] = "Error updating donation: #{e.message}"
+    flash.now[:alert] = "Error updating donation: #{e.message}"
     load_form_collections
     # calling new(donation_params) triggers a validation error if line_item quantity is invalid
     @previous_input = Donation.new(donation_params.except(:line_items_attributes))
@@ -123,7 +123,7 @@ class DonationsController < ApplicationController
   private
 
   def load_form_collections
-    @storage_locations = current_organization.storage_locations.active_locations.alphabetized
+    @storage_locations = current_organization.storage_locations.active.alphabetized
     @donation_sites = current_organization.donation_sites.active.alphabetized
     @product_drives = current_organization.product_drives.alphabetized
     @product_drive_participants = current_organization.product_drive_participants.alphabetized

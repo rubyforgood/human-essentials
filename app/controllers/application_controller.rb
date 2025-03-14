@@ -14,31 +14,43 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found!
 
+  rescue_from ActionController::InvalidAuthenticityToken do
+    flash[:error] = "Your session expired. This could be due to leaving a page open for a long time, or having multiple tabs open. Try resubmitting."
+    redirect_back fallback_location: root_path
+  end
+
   def current_organization
-    return @current_organization if @current_organization
-    return nil unless current_role
+    return @current_organization if instance_variable_defined? :@current_organization
 
-    return current_role.resource if current_role&.resource&.is_a?(Organization)
-
-    Organization.find_by(short_name: params[:organization_name])
+    @current_organization = if !current_role
+      nil
+    elsif current_role.resource.is_a?(Organization)
+      current_role.resource
+    else
+      Organization.find_by(short_name: params[:organization_name])
+    end
   end
   helper_method :current_organization
 
   def current_partner
-    return nil unless current_role
-    return nil if current_role.name.to_sym != Role::PARTNER
+    return @current_partner if instance_variable_defined? :@current_partner
 
-    current_role.resource
+    @current_partner = if !current_role || current_role.name.to_sym != Role::PARTNER
+      nil
+    else
+      current_role.resource
+    end
   end
   helper_method :current_partner
 
   def current_role
-    return @role if @role
-    return nil unless current_user
+    return @role if instance_variable_defined? :@role
 
-    @role = Role.find_by(id: session[:current_role]) || UsersRole.current_role_for(current_user)
-
-    @role
+    @role = if !current_user
+      nil
+    else
+      Role.find_by(id: session[:current_role]) || UsersRole.current_role_for(current_user)
+    end
   end
 
   def dashboard_path_from_current_role
@@ -59,22 +71,21 @@ class ApplicationController < ActionController::Base
   def authorize_user
     return unless params[:controller] # part of omniauth controller flow
     verboten! unless params[:controller].include?("devise") ||
-      current_user.has_role?(Role::SUPER_ADMIN) ||
-      current_user.has_role?(Role::ORG_USER, current_organization) ||
-      current_user.has_role?(Role::ORG_ADMIN, current_organization) ||
-      current_user.has_role?(Role::PARTNER, current_partner)
+      current_user.has_cached_role?(Role::SUPER_ADMIN) ||
+      current_user.has_cached_role?(Role::ORG_USER, current_organization) ||
+      current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) ||
+      current_user.has_cached_role?(Role::PARTNER, current_partner)
   end
 
   def authorize_admin
-    verboten! unless current_user.has_role?(Role::SUPER_ADMIN) ||
-      current_user.has_role?(Role::ORG_ADMIN, current_organization)
+    verboten! unless current_user.has_cached_role?(Role::SUPER_ADMIN) ||
+      current_user.has_cached_role?(Role::ORG_ADMIN, current_organization)
   end
 
   def log_active_user
     if current_user && should_update_last_request_at?
       # we don't want the user record to validate or run callbacks when we're tracking activity
       current_user.update_columns(last_request_at: Time.now.utc)
-
     end
   end
 

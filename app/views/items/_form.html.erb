@@ -30,7 +30,7 @@
                 <%= f.input_field :distribution_quantity, class: "form-control" %>
               <% end %>
 
-              <% if current_user.has_role?(Role::ORG_ADMIN, current_organization) %>
+              <% if current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
                 <%= f.input :name, label: "On hand minimum quantity", wrapper: :input_group do %>
                   <%= f.input_field :on_hand_minimum_quantity, input_html: {value: 0}, class: "form-control" %>
                 <% end %>
@@ -40,7 +40,7 @@
               <% end %>
 
               <%= f.input :name, label: "Package size", wrapper: :input_group do %>
-                <%= f.input_field :package_size, class: "form-control" %>
+                <%= f.input_field :package_size, class: "form-control", min: 0 %>
               <% end %>
 
               <% if Flipper.enabled?(:enable_packs) %>
@@ -52,6 +52,9 @@
               <%= f.input :visible, label: "Item is Visible to Partners?", wrapper: :input_group do %>
                 <%= f.check_box :visible_to_partners, {class: "input-group-text", id: "visible_to_partners"}, "true", "false" %>
               <% end %>
+
+              <%= f.label :additional_info, "Additional Information (Bank Use Only) " %> <i>(500 character max)</i>
+              <%= f.input :additional_info, label: false, maxlength: 500, wrapper: :input_group %>
             </div>
             <!-- /.card-body -->
             <div class="card-footer">

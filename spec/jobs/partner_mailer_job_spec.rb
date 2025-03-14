@@ -4,8 +4,8 @@ RSpec.describe PartnerMailerJob, type: :job do
     let(:mailer_subject) { 'PartnerMailerJob subject' }
     let(:distribution) { create :distribution }
 
-    let(:past_distribution) { create(:distribution, issued_at: Time.zone.now - 1.week) }
-    let(:future_distribution) { create(:distribution, issued_at: Time.zone.now + 1.week) }
+    let(:past_distribution) { create(:distribution, issued_at: 1.week.ago) }
+    let(:future_distribution) { create(:distribution, issued_at: 1.week.from_now) }
     let(:distribution_changes) { {} }
 
     it "does not send mail for past distributions" do

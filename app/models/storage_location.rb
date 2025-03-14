@@ -27,6 +27,8 @@ class StorageLocation < ApplicationRecord
   ].freeze
 
   belongs_to :organization
+  has_many :adjustments, dependent: :destroy
+  has_many :audits, dependent: :destroy
   has_many :inventory_items, -> { includes(:item).order("items.name") },
            inverse_of: :storage_location,
            dependent: :destroy
@@ -40,9 +42,8 @@ class StorageLocation < ApplicationRecord
                           inverse_of: :to,
                           foreign_key: :to_id,
                           dependent: :destroy
-  has_many :kit_allocations, dependent: :destroy
 
-  validates :name, :address, :organization, presence: true
+  validates :name, :address, presence: true
   validates :warehouse_type, inclusion: { in: WAREHOUSE_TYPES },
                              allow_blank: true
   before_destroy :validate_empty_inventory, prepend: true
@@ -53,8 +54,13 @@ class StorageLocation < ApplicationRecord
   include Exportable
 
   scope :alphabetized, -> { order(:name) }
-  scope :for_csv_export, ->(organization, *) { where(organization: organization) }
-  scope :active_locations, -> { where(discarded_at: nil) }
+  scope :active, -> { where(discarded_at: nil) }
+  scope :with_adjustments_for, ->(organization) {
+    joins(:adjustments).where(organization_id: organization.id).distinct.active.alphabetized
+  }
+  scope :with_audits_for, ->(organization) {
+    joins(:audits).where(organization_id: organization.id).distinct.active.alphabetized
+  }
   scope :with_transfers_to, ->(organization) {
     joins(:transfers_to).where(organization_id: organization.id).distinct.order(:name)
   }
@@ -64,13 +70,14 @@ class StorageLocation < ApplicationRecord
 
   # @param organization [Organization]
   # @param inventory [View::Inventory]
+  # @return [Array<Option>]
   def self.items_inventoried(organization, inventory = nil)
     inventory ||= View::Inventory.new(organization.id)
     inventory
       .all_items
       .uniq(&:item_id)
       .sort_by(&:name)
-      .map { |i| OpenStruct.new(name: i.name, id: i.item_id) }
+      .map { |i| Option.new(name: i.name, id: i.item_id) }
   end
 
   # @return [Array<Item>]

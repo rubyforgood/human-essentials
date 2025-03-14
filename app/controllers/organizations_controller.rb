@@ -6,6 +6,9 @@ class OrganizationsController < ApplicationController
   def show
     @organization = current_organization
     @header_link = dashboard_path
+    @default_storage_location = StorageLocation.find_by(id: @organization.default_storage_location) if @organization.default_storage_location
+    @intake_storage_location = StorageLocation.find_by(id: @organization.intake_location) if @organization.intake_location
+    @users = @organization.users.with_discarded.includes(:roles, :organization).alphabetized
   end
 
   def edit
@@ -18,7 +21,7 @@ class OrganizationsController < ApplicationController
     if OrganizationUpdateService.update(@organization, organization_params)
       redirect_to organization_path, notice: "Updated your organization!"
     else
-      flash[:error] = @organization.errors.full_messages.join("\n")
+      flash.now[:error] = @organization.errors.full_messages.join("\n")
       render :edit
     end
   end
@@ -81,8 +84,8 @@ class OrganizationsController < ApplicationController
   private
 
   def authorize_user
-    verboten! unless current_user.has_role?(Role::SUPER_ADMIN) ||
-      current_user.has_role?(Role::ORG_USER, current_organization)
+    verboten! unless current_user.has_cached_role?(Role::SUPER_ADMIN) ||
+      current_user.has_cached_role?(Role::ORG_USER, current_organization)
   end
 
   def organization_params
@@ -98,7 +101,7 @@ class OrganizationsController < ApplicationController
       :enable_individual_requests, :enable_quantity_based_requests,
       :ytd_on_distribution_printout, :one_step_partner_invite,
       :hide_value_columns_on_receipt, :hide_package_column_on_receipt,
-      :signature_for_distribution_pdf,
+      :signature_for_distribution_pdf, :receive_email_on_requests,
       partner_form_fields: [],
       request_unit_names: []
     )
@@ -121,7 +124,7 @@ class OrganizationsController < ApplicationController
   end
 
   def user_update_redirect_path
-    if current_user.has_role?(Role::SUPER_ADMIN)
+    if current_user.has_cached_role?(Role::SUPER_ADMIN)
       admin_organization_path(current_organization.id)
     else
       organization_path

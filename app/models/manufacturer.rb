@@ -21,25 +21,20 @@ class Manufacturer < ApplicationRecord
 
   scope :alphabetized, -> { order(:name) }
 
-  def volume
-    # returns 0 instead of nil when Manufacturer exists without any donations
-    donations.joins(:line_items).sum(:quantity)
-  end
+  scope :with_volumes, -> {
+    left_joins(donations: :line_items)
+      .select("manufacturers.*, SUM(COALESCE(line_items.quantity, 0)) AS volume")
+      .group(:id)
+  }
 
-  def self.by_donation_count(count = 10, date_range = nil)
+  def self.by_donation_date(count = 10, date_range = nil)
     # selects manufacturers that have donation qty > 0 in the provided date range
-    # and sorts them by highest volume of donation
+    # and sorts them by the date of the most recent donation
     joins(donations: :line_items).where(donations: { issued_at: date_range })
-      .select('manufacturers.*, sum(line_items.quantity) as donation_count')
+      .select('manufacturers.*, sum(line_items.quantity) as donation_count, max(donations.issued_at) as donation_date')
       .group('manufacturers.id')
       .having('sum(line_items.quantity) > 0')
-      .order('donation_count DESC')
+      .order('donation_date DESC')
       .limit(count)
-  end
-
-  private
-
-  def exists_in_org?
-    organization.manufacturers.where(name: name).exists?
   end
 end

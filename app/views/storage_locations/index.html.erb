@@ -50,7 +50,7 @@
                 <%= clear_filter_button %>
                 <span class="float-right">
                   <%= modal_button_to("#csvImportModal", {icon: "upload", text: "Import Storage Locations"}) if @storage_locations.empty? %>
-                  <%= download_button_to(storage_locations_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Storage Locations", size: "md"}) if @storage_locations.any? %>
+                  <%= download_button_to(storage_locations_path(format: :csv, include_inactive_storage_locations: @include_inactive_storage_locations, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Storage Locations", size: "md"}) if @storage_locations.any? %>
                   <%= new_button_to new_storage_location_path, {text: "New Storage Location"} %>
                   </span>
               </div>
@@ -77,13 +77,21 @@
                 <th>Address</th>
                 <th>Square Footage</th>
                 <th>Warehouse Type</th>
-                <th>Total Inventory</th>
-                <th>Fair Market Value</th>
+                <th class="text-right">Total Inventory</th>
+                <th class="text-right">Fair Market Value</th>
                 <th class="text-center">Actions</th>
               </tr>
               </thead>
               <tbody>
               <%= render partial: "storage_location_row", collection: @storage_locations, as: :storage_location %>
+              <tr>
+                <td colspan="4"><strong>Total</strong></td>
+                <td class="text-right">
+                  <%= @storage_locations.sum { |sl| @inventory.quantity_for(storage_location: sl.id) } %>
+                </td>
+                <td class="text-right"><%= number_to_currency(@storage_locations.sum { |sl| sl.inventory_total_value_in_dollars(@inventory) }) %></td>
+                <td></td>
+              </tr>
               </tbody>
             </table>
           </div>

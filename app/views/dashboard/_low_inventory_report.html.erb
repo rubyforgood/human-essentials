@@ -19,16 +19,16 @@
       <tbody>
         <% @low_inventory_report.each do |inventory_item| %>
           <tr>
-            <td><%= inventory_item["name"] %></td>
+            <td><%= inventory_item.name %></td>
             <td>
-              <% if inventory_item["total_quantity"] < inventory_item["on_hand_minimum_quantity"] %>
-                <strong class="text-red" title="Below minimum quantity"><%= inventory_item["total_quantity"] %></strong>
+              <% if inventory_item.total_quantity < inventory_item.on_hand_minimum_quantity %>
+                <strong class="text-red" title="Below minimum quantity"><%= inventory_item.total_quantity %></strong>
               <% else %>
-                <%= inventory_item["total_quantity"] %>
+                <%= inventory_item.total_quantity %>
               <% end %>
             </td>
-            <td><%= inventory_item["on_hand_minimum_quantity"] %></td>
-            <td><%= inventory_item["on_hand_recommended_quantity"] %></td>
+            <td><%= inventory_item.on_hand_minimum_quantity %></td>
+            <td><%= inventory_item.on_hand_recommended_quantity %></td>
           </tr>
         <% end %>
       </tbody>

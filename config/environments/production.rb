@@ -13,7 +13,7 @@ Rails.application.configure do
   config.eager_load = true
 
   routes.default_url_options[:host] = 'humanessentials.app'
-  config.action_mailer.default_url_options = { host: "www.humanessentials.app" }
+  config.action_mailer.default_url_options = { host: "humanessentials.app" }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
     address: 'smtp.sendgrid.net',
@@ -61,7 +61,7 @@ Rails.application.configure do
   config.log_level = :info
 
   # Use a different cache store in production.
-  config.cache_store = :redis_cache_store, { url: ENV['REDIS_URL'] }
+  config.cache_store = :solid_cache_store
 
   # Use a real queuing backend for Active Job (and separate queues per environment)
   # config.active_job.queue_adapter     = :resque
@@ -80,7 +80,7 @@ Rails.application.configure do
   config.active_support.deprecation = :notify
 
   # Store files locally.
-  config.active_storage.service = :azure
+  config.active_storage.service = :amazon
 
   # Use a different logger for distributed setups.
   # require 'syslog/logger'

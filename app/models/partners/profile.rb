@@ -91,16 +91,60 @@ module Partners
 
     has_many :served_areas, foreign_key: "partner_profile_id", class_name: "Partners::ServedArea", dependent: :destroy, inverse_of: :partner_profile
 
+    has_many :counties, through: :served_areas
     accepts_nested_attributes_for :served_areas, allow_destroy: true
 
     has_many_attached :documents
+    enum :agency_type,
+      other: "OTHER",
+      career: "CAREER",
+      abuse: "ABUSE",
+      bnb: "BNB",
+      church: "CHURCH",
+      college: "COLLEGE",
+      cdc: "CDC",
+      health: "HEALTH",
+      outreach: "OUTREACH",
+      legal: "LEGAL",
+      crisis: "CRISIS",
+      disab: "DISAB",
+      district: "DISTRICT",
+      domv: "DOMV",
+      ece: "ECE",
+      child: "CHILD",
+      edu: "EDU",
+      family: "FAMILY",
+      food: "FOOD",
+      foster: "FOSTER",
+      govt: "GOVT",
+      headstart: "HEADSTART",
+      homevisit: "HOMEVISIT",
+      homeless: "HOMELESS",
+      hosp: "HOSP",
+      infpan: "INFPAN",
+      lib: "LIB",
+      mhealth: "MHEALTH",
+      military: "MILITARY",
+      police: "POLICE",
+      preg: "PREG",
+      presch: "PRESCH",
+      ref: "REF",
+      es: "ES",
+      hs: "HS",
+      ms: "MS",
+      senior: "SENIOR",
+      tribal: "TRIBAL",
+      treat: "TREAT",
+      twoycollege: "2YCOLLEGE",
+      wic: "WIC"
+
     validate :check_social_media, on: :edit
 
     validate :client_share_is_0_or_100
     validate :has_at_least_one_request_setting
     validate :pick_up_email_addresses
 
-    self.ignored_columns = %w[
+    self.ignored_columns += %w[
       evidence_based_description
       program_client_improvement
       incorporate_plan
@@ -123,6 +167,11 @@ module Partners
       return nil if pick_up_email.nil?
 
       pick_up_email.split(/,|\s+/).compact_blank
+    end
+
+    def self.agency_types_for_selection
+      # alphabetize based on the translated version, as that is the text users will actually read
+      agency_types.keys.map(&:to_sym).sort_by { |sym| I18n.t(sym, scope: :partners_profile) }.partition { |v| v != :other }.flatten
     end
 
     private

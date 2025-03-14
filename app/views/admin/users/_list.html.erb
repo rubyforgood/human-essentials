@@ -1,7 +1,7 @@
 <table class="table">
   <thead>
     <tr>
-      <th>Organization</th>
+      <th>Roles</th>
       <th>Name</th>
       <th>Email</th>
       <th class="text-right">Actions</th>
@@ -10,7 +10,9 @@
   <tbody>
     <% @users.each do |user| %>
       <tr>
-        <td><%= user.organization&.name %></td>
+        <td>
+          <%= user.roles.map { |role| "#{role.name} (#{role.resource&.name.presence || "N/A"})" }.compact.uniq.sort.join(", ") %>
+        </td>
         <td><%= user.display_name %></td>
         <td><%= user.email %></td>
         <td class="text-right">

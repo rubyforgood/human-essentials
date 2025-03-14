@@ -62,6 +62,15 @@ RSpec.describe ItemizableUpdateService do
       expect(UpdateExistingEvent.count).to eq(1)
     end
 
+    it "fails with a validation message for donation events with invalid issued_at" do
+      attributes[:issued_at] = ""
+
+      expect { subject }.to raise_error do |e|
+        expect(e).to be_a(ActiveRecord::RecordInvalid)
+        expect(e.message).to eq("Validation failed: Issue date can't be blank")
+      end
+    end
+
     context "when storage location changes" do
       context "when there is no intervening audit" do
         it "should update quantity in different locations" do
@@ -125,6 +134,15 @@ RSpec.describe ItemizableUpdateService do
       expect(storage_location.size).to eq(26)
       expect(new_storage_location.size).to eq(20)
       expect(itemizable.issued_at).to eq(2.days.ago)
+    end
+
+    it "fails with a validation message for distribution events with invalid issued_at" do
+      attributes[:issued_at] = ""
+
+      expect { subject }.to raise_error do |e|
+        expect(e).to be_a(ActiveRecord::RecordInvalid)
+        expect(e.message).to eq("Validation failed: Distribution date and time can't be blank")
+      end
     end
 
     context "when storage location changes" do

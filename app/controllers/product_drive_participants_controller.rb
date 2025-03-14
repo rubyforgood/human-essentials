@@ -6,7 +6,7 @@ class ProductDriveParticipantsController < ApplicationController
   # TODO: Should there be a :destroy action for this?
 
   def index
-    @product_drive_participants = current_organization.product_drive_participants.includes(:donations).all.order(:business_name)
+    @product_drive_participants = current_organization.product_drive_participants.includes(:donations).with_volumes.order(:business_name)
 
     respond_to do |format|
       format.html
@@ -21,7 +21,7 @@ class ProductDriveParticipantsController < ApplicationController
         format.html { redirect_to product_drive_participants_path, notice: "New product drive participant added!" }
         format.js
       else
-        flash[:error] = "Something didn't work quite right -- try again?"
+        flash.now[:error] = "Something didn't work quite right -- try again?"
         format.html { render action: :new }
         format.js { render template: "product_drive_participants/new_modal" }
       end
@@ -51,7 +51,7 @@ class ProductDriveParticipantsController < ApplicationController
       redirect_to product_drive_participants_path, notice: "#{@product_drive_participant.contact_name} updated!"
 
     else
-      flash[:error] = "Something didn't work quite right -- try again?"
+      flash.now[:error] = "Something didn't work quite right -- try again?"
       render action: :edit
     end
   end

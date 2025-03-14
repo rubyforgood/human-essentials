@@ -53,13 +53,41 @@ Make sure to install **Ubuntu** as your Linux distribution. (This should be defa
 <details>
   <summary> Bank Users 🏦 </summary>
 
+  Pawnee Diaper Bank
+  A fully set up bank with items, storage locations, donations, distributions, requests, etc.
+  The bank has multiple partners associated with it.
   ```
     Organization Admin
-       Email: org_admin1@example.com
+    Email: org_admin1@example.com
     Password: password!
 
     User
     Email: user_1@example.com
+    Password: password!
+  ```
+
+  Second City Essentials Bank
+  A fully set up bank with items, storage locations, donations, distributions, requests, etc.
+  The bank has four items unique to it (named Second City Item #).
+  ```
+    Organization Admin
+    Email: second_city_admin@example.com
+    Password: password!
+
+    User
+    Email: second_city_user@example.com
+    Password: password!
+  ```
+
+  SF Diaper Bank
+  A bank which has just been accepted and so is not fully set up. It lacks many of the records the other banks have.
+  ```
+    Organization Admin
+    Email: org_admin2@example.com
+    Password: password!
+
+    User
+    Email: user_2@example.com
     Password: password!
   ```
 </details>
@@ -67,6 +95,7 @@ Make sure to install **Ubuntu** as your Linux distribution. (This should be defa
 <details>
   <summary> Partner Users 👥 </summary>
 
+  Partners in Pawnee Diaper Bank partner groups
   ```
     Verified Partner
     Email: verified@example.com
@@ -87,10 +116,17 @@ Make sure to install **Ubuntu** as your Linux distribution. (This should be defa
     Waiting Approval Partner
     Email: waiting@example.com
     Password: password!
-    
-    Another approved partner (with all groups):
+
+    Another verified partner (in second partner group):
     Email: approved_2@example.com
-    Pasword: password!
+    Password: password!
+  ```
+
+  Partners in Second City Essentials Bank partner group
+  ```
+    Verified partner
+    Email: second_city_senior_center@example.com
+    Password: password!
   ```
 </details>
 
@@ -221,7 +257,7 @@ Before submitting a pull request, run all tests and lints. Fix any broken tests 
 - Once your first PR has been merged, all commits pushed to an open PR will also run these workflows.
 
 #### Local testing
-- Run all lints with `bin/lint`.
+- Run all lints with `bin/lint`. (You can lint a single file/folder with `bin/lint {path_to_folder_or_file}`.)
 - Run all tests with `bundle exec rspec`
 - You can run a single test with `bundle exec rspec {path_to_test_name}_spec.rb` or on a specific line by appending `:LineNumber`
 - If you need to skip a failing test, place `pending("Reason you are skipping the test")` into the `it` block rather than skipping with `xit`. This will allow rspec to deliver the error message without causing the test suite to fail.

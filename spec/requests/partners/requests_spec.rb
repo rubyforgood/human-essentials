@@ -59,6 +59,57 @@ RSpec.describe "/partners/requests", type: :request do
         end
       end
     end
+
+    context "when signed in as an organization admin" do
+      before { sign_in(org_admin) }
+      subject { get new_partners_request_path(partner_id:) }
+
+      context "when corresponding partner belongs to the organization" do
+        let(:org_admin) { create(:organization_admin, organization:) }
+
+        context "when param partner_id is present" do
+          let(:partner_id) { partner.id }
+
+          it "should render without any issues" do
+            subject
+            expect(response).to render_template(:new)
+          end
+        end
+
+        context "when param partner_id is missing" do
+          let(:partner_id) { "" }
+
+          it "redirects to dashboard path and flashes an error" do
+            subject
+            expect(flash[:error]).to eq("Logged in user is not set up as a 'partner'.")
+            expect(response).to redirect_to(dashboard_path)
+          end
+        end
+      end
+
+      context "when corresponding partner doesn't belong to the organization" do
+        let(:new_organization) { create(:organization) }
+        let(:org_admin) { create(:organization_admin, organization: new_organization) }
+        let(:partner_id) { partner.id }
+
+        it "redirects to dashboard path and flashes an error" do
+          subject
+          expect(flash[:error]).to eq("Logged in user is not set up as a 'partner'.")
+          expect(response).to redirect_to(dashboard_path)
+        end
+      end
+    end
+
+    context "when signed in as an organization user" do
+      let(:org_user) { create(:user) }
+      before { sign_in(org_user) }
+
+      it "redirects to dashboard path and flashes an error" do
+        subject
+        expect(flash[:error]).to eq("Logged in user is not set up as a 'partner'.")
+        expect(response).to redirect_to(dashboard_path)
+      end
+    end
   end
 
   describe "GET #show" do
@@ -124,6 +175,7 @@ RSpec.describe "/partners/requests", type: :request do
   describe "POST #create" do
     subject { post partners_requests_path, params: request_attributes }
     let(:item1) { create(:item, name: "First item", organization: organization) }
+    let(:item2) { create(:item, name: "Second item", organization: organization) }
 
     let(:request_attributes) do
       {
@@ -142,8 +194,15 @@ RSpec.describe "/partners/requests", type: :request do
 
     before do
       sign_in(partner_user)
+
+      # Set up a variety of units that these two items are allowed to have
       FactoryBot.create(:unit, organization: organization, name: 'pack')
+      FactoryBot.create(:unit, organization: organization, name: 'box')
+      FactoryBot.create(:unit, organization: organization, name: 'notallowed')
       FactoryBot.create(:item_unit, item: item1, name: 'pack')
+      FactoryBot.create(:item_unit, item: item1, name: 'box')
+      FactoryBot.create(:item_unit, item: item2, name: 'pack')
+      FactoryBot.create(:item_unit, item: item2, name: 'box')
     end
 
     context 'when given valid parameters' do
@@ -181,6 +240,66 @@ RSpec.describe "/partners/requests", type: :request do
         expect(response.body).to include('<option value="">Select an item</option>')
         requestable_items.each do |item, index|
           expect(response.body).to include("<option value=\"#{index}\">#{item}</option>")
+        end
+      end
+    end
+
+    context "when there are mixed units" do
+      context "on different items" do
+        let(:request_attributes) do
+          {
+            request: {
+              comments: Faker::Lorem.paragraph,
+              item_requests_attributes: {
+                "0" => {
+                  item_id: item1.id,
+                  request_unit: 'pack',
+                  quantity: 12
+                },
+                "1" => {
+                  item_id: item2.id,
+                  request_unit: 'box',
+                  quantity: 17
+                }
+              }
+            }
+          }
+        end
+
+        it "creates without error" do
+          Flipper.enable(:enable_packs)
+          expect { subject }.to change { Request.count }.by(1)
+          expect(response).to redirect_to(partners_request_path(Request.last.id))
+          expect(response.request.flash[:success]).to eql "Request was successfully created."
+        end
+      end
+
+      context "on the same item" do
+        let(:request_attributes) do
+          {
+            request: {
+              comments: Faker::Lorem.paragraph,
+              item_requests_attributes: {
+                "0" => {
+                  item_id: item1.id,
+                  request_unit: 'pack',
+                  quantity: 12
+                },
+                "1" => {
+                  item_id: item1.id,
+                  request_unit: 'box',
+                  quantity: 17
+                }
+              }
+            }
+          }
+        end
+
+        it "results in an error" do
+          Flipper.enable(:enable_packs)
+          expect { post partners_requests_path, params: request_attributes }.to_not change { Request.count }
+          expect(response).to be_unprocessable
+          expect(response.body).to include("Please ensure a single unit is selected for each item")
         end
       end
     end
@@ -231,6 +350,60 @@ RSpec.describe "/partners/requests", type: :request do
         expect { post partners_requests_path, params: request_attributes }.to change { Request.count }.by(1)
         expect(response).to redirect_to(partners_request_path(Request.last.id))
         expect(response.request.flash[:success]).to eql "Request was successfully created."
+      end
+    end
+
+    context "when signed in as an organization admin" do
+      context "when given valid parameters" do
+        before { sign_in(org_admin) }
+        subject { post partners_requests_path, params: request_attributes.merge(partner_id:) }
+
+        context "when corresponding partner belongs to the organization" do
+          let(:org_admin) { create(:organization_admin, organization:) }
+
+          context "when param partner_id is present" do
+            let(:partner_id) { partner.id }
+
+            it "should redirect to the show page" do
+              expect { subject }.to change { Request.count }.by(1)
+              expect(response).to redirect_to(request_path(Request.last.id))
+              expect(response.request.flash[:success]).to eql "Request was successfully created."
+            end
+          end
+
+          context "when param partner_id is missing" do
+            let(:partner_id) { "" }
+
+            it "redirects to dashboard path and flashes an error" do
+              subject
+              expect(flash[:error]).to eq("Logged in user is not set up as a 'partner'.")
+              expect(response).to redirect_to(dashboard_path)
+            end
+          end
+        end
+
+        context "when corresponding partner doesn't belong to the organization" do
+          let(:new_organization) { create(:organization) }
+          let(:org_admin) { create(:organization_admin, organization: new_organization) }
+          let(:partner_id) { partner.id }
+
+          it "redirects to dashboard path and flashes an error" do
+            subject
+            expect(flash[:error]).to eq("Logged in user is not set up as a 'partner'.")
+            expect(response).to redirect_to(dashboard_path)
+          end
+        end
+      end
+    end
+
+    context "when signed in as an organization user" do
+      let(:org_user) { create(:user) }
+      before { sign_in(org_user) }
+
+      it "redirects to dashboard path and flashes an error" do
+        subject
+        expect(flash[:error]).to eq("Logged in user is not set up as a 'partner'.")
+        expect(response).to redirect_to(dashboard_path)
       end
     end
   end

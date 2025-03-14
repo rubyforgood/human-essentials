@@ -23,7 +23,7 @@ RSpec.describe DistributionMailer, type: :mailer do
     it "renders the body with organization's email text" do
       expect(mail.body.encoded).to match("Default email text example")
       expect(mail.html_part.body).to match(%(From: <a href="mailto:me@org.com">me@org.com</a>))
-      expect(mail.to).to eq([distribution.request.user_email])
+      expect(mail.to).to eq([distribution.request.requester.email])
       expect(mail.cc).to eq([distribution.partner.email, pick_up_emails.first, pick_up_emails.second])
       expect(mail.from).to eq(["no-reply@humanessentials.app"])
       expect(mail.subject).to eq("test subject from TEST ORG")
@@ -110,7 +110,7 @@ RSpec.describe DistributionMailer, type: :mailer do
         html = html_body(mail)
         expect(html).to match("This is a friendly reminder")
         expect(html).to match(%(For more information: <a href="mailto:me@org.com">me@org.com</a>))
-        expect(mail.to).to eq([distribution.request.user_email])
+        expect(mail.to).to eq([distribution.request.requester.email])
         expect(mail.cc).to eq([distribution.partner.email])
         expect(mail.from).to eq(["no-reply@humanessentials.app"])
         expect(mail.subject).to eq("PARTNER Distribution Reminder")

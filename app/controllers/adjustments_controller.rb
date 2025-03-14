@@ -12,9 +12,9 @@ class AdjustmentsController < ApplicationController
                                        .order(created_at: :desc)
                                        .class_filter(filter_params)
                                        .during(helpers.selected_range)
-    @paginated_adjustments = @adjustments.page(params[:page])
+    @paginated_adjustments = @adjustments.includes(:line_items, :storage_location).page(params[:page])
 
-    @storage_locations = Adjustment.storage_locations_adjusted_for(current_organization).uniq
+    @storage_locations = StorageLocation.with_adjustments_for(current_organization).select(:id, :name)
     @users = current_organization.users
 
     respond_to do |format|
@@ -33,7 +33,7 @@ class AdjustmentsController < ApplicationController
   def new
     @adjustment = current_organization.adjustments.new
     @adjustment.line_items.build
-    @storage_locations = current_organization.storage_locations.active_locations
+    @storage_locations = current_organization.storage_locations.active
     @items = current_organization.items.loose.active.alphabetized
   end
 
@@ -45,7 +45,7 @@ class AdjustmentsController < ApplicationController
       flash[:notice] = "Adjustment was successful."
       redirect_to adjustment_path(@adjustment)
     else
-      flash[:error] = @adjustment.errors.collect { |error| "#{error.attribute}: " + error.message }.join("<br />".html_safe)
+      flash.now[:error] = @adjustment.errors.collect { |error| "#{error.attribute}: " + error.message }.join("<br />".html_safe)
       load_form_collections
       render :new
     end
@@ -54,7 +54,7 @@ class AdjustmentsController < ApplicationController
   private
 
   def load_form_collections
-    @storage_locations = current_organization.storage_locations.active_locations
+    @storage_locations = current_organization.storage_locations.active
     @items = current_organization.items.loose.alphabetized
   end
 

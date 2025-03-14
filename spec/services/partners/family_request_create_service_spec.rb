@@ -5,7 +5,7 @@ RSpec.describe Partners::FamilyRequestCreateService do
       {
         partner_user_id: partner_user.id,
         comments: comments,
-        for_families: for_families,
+        request_type: request_type,
         family_requests_attributes: family_requests_attributes
       }
     end
@@ -13,7 +13,7 @@ RSpec.describe Partners::FamilyRequestCreateService do
     let(:partner) { create(:partner, organization: organization) }
     let(:partner_user) { partner.primary_user }
     let(:comments) { Faker::Lorem.paragraph }
-    let(:for_families) { false }
+    let(:request_type) { "individual" }
 
     context 'when the arguments are incorrect' do
       context 'because no family_requests_attributes or comments were defined' do
@@ -97,8 +97,8 @@ RSpec.describe Partners::FamilyRequestCreateService do
           expect(second_item_request.quantity.to_i).to eq(second_item_request.item.default_quantity * 4)
         end
 
-        context "with for_families false" do
-          let(:for_families) { false }
+        context "with request_type as individual" do
+          let(:request_type) { "individual" }
 
           it "creates a request of type individual" do
             expect { subject }.to change { Request.count }.by(1)
@@ -108,8 +108,8 @@ RSpec.describe Partners::FamilyRequestCreateService do
           end
         end
 
-        context "with for_families true" do
-          let(:for_families) { true }
+        context "with request_type as child" do
+          let(:request_type) { "child" }
 
           it "creates a request of type child" do
             expect { subject }.to change { Request.count }.by(1)
@@ -142,7 +142,7 @@ RSpec.describe Partners::FamilyRequestCreateService do
         let(:fake_request_create_service) { instance_double(Partners::RequestCreateService, call: -> {}, errors: [], partner_request: -> {}) }
 
         before do
-          allow(Partners::RequestCreateService).to receive(:new).with(partner_user_id: partner_user.id, request_type: "individual", comments: comments, item_requests_attributes: contain_exactly(*expected_item_request_attributes)).and_return(fake_request_create_service)
+          allow(Partners::RequestCreateService).to receive(:new).with(partner_id: partner.id, user_id: partner_user.id, request_type: "individual", comments: comments, item_requests_attributes: contain_exactly(*expected_item_request_attributes)).and_return(fake_request_create_service)
         end
 
         it 'should send the correct request payload to the Partners::RequestCreateService and call it' do
