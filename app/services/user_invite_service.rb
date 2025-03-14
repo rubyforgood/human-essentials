@@ -15,8 +15,8 @@ module UserInviteService
 
     # A user with the ORG_ADMIN role should also always have the ORG_USER role.
     # The logic is placed here instead of relying on the AddRoleService, as that
-    # currently only accepts users by id, and newly invited users will not have
-    # an id at this point.
+    # currently only accepts users by id, and new user will not have an id
+    # until after they are invited.
     if roles.all? { |role| role.to_s == Role::ORG_ADMIN.to_s }
       roles.append(Role::ORG_USER.to_s)
     end
