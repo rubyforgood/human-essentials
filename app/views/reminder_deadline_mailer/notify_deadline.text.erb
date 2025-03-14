@@ -1,7 +1,5 @@
 Hello <%= @partner.name %>,
 
-<%= @reminder_email_text_interpolated %>
-
 This is a friendly reminder that <%= @organization.name %> requires your human essentials requests to be submitted by <%= @deadline.strftime('%a, %d %b %Y') %>
 if you would like to receive a distribution next month.
 
@@ -9,3 +7,5 @@ Please log into Human Essentials at https://humanessentials.app before this date
 
 Please contact <%= @organization.name %> at <%= @organization.email %>
 if you have any questions about this!
+
+<%= @reminder_email_text_interpolated %>

@@ -77,6 +77,12 @@
                 </p>
               </div>
               <div class="mb-4">
+                <h3 class='font-bold'>Additional text for reminder email</h3>
+                <p>
+                  <%= @organization.reminder_email_text.presence || 'Not defined' %>
+                </p>
+              </div>
+              <div class="mb-4">
                 <h3 class='font-bold'>Default Intake Location</h3>
                 <p>
                   <%= fa_icon "building" %>
@@ -224,12 +230,6 @@
               <h3 class='font-bold'>Default email text:</h3>
               <p>
                 <%= @organization.default_email_text.presence || 'Not defined' %>
-              </p>
-            </div>
-            <div class="col-lg-8">
-              <h3 class='font-bold'>Reminder email text:</h3>
-              <p>
-                <%= @organization.reminder_email_text.presence || 'Not defined' %>
               </p>
             </div>
           </div>

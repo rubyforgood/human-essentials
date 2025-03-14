@@ -86,6 +86,11 @@
                 <% end %>
 
                 <%= render 'shared/deadline_day_fields', f: f %>
+                
+                <% default_reminder_email_text_hint = "You can use the variable <code>%{partner_name}</code> to include the partner's name in the message." %>
+                <%= f.input :reminder_email_text, label: "Additional text for reminder email", hint: default_reminder_email_text_hint.html_safe do %>
+                  <%= f.rich_text_area :reminder_email_text, placeholder: 'Enter reminder email content...' %>
+                <% end %>
 
                 <%= f.input :intake_location, :collection => current_organization.storage_locations.active.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Intake Location", :include_blank => true, wrapper: :input_group %>
 
@@ -136,11 +141,6 @@
                 <% default_email_text_hint = "You can use the variables <code>%{partner_name}</code>, <code>%{delivery_method}</code>, <code>%{distribution_date}</code>, and <code>%{comment}</code> to include the partner's name, delivery method, distribution date, and comments sent in the request." %>
                 <%= f.input :default_email_text, label: "Distribution Email Content", hint: default_email_text_hint.html_safe do %>
                   <%= f.rich_text_area :default_email_text, placeholder: 'Enter distribution email content...' %>
-                <% end %>
-
-                <% default_reminder_email_text_hint = "You can use the variable <code>%{partner_name}</code> to include the partner's name in the message." %>
-                <%= f.input :reminder_email_text, label: "Reminder Email Content", hint: default_reminder_email_text_hint.html_safe do %>
-                  <%= f.rich_text_area :reminder_email_text, placeholder: 'Enter reminder email content...' %>
                 <% end %>
 
                 <%= f.input :logo, wrapper: :input_group do %>
