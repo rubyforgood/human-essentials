@@ -108,6 +108,7 @@ RSpec.describe "Donations", type: :request do
       let(:manufacturer) { create(:manufacturer, organization:) }
       let(:source) { Donation::SOURCES[:manufacturer] }
       let(:issued_at) { Date.yesterday }
+      let(:money_raised) { 5 }
 
       let(:params) do
         {
@@ -116,7 +117,7 @@ RSpec.describe "Donations", type: :request do
             manufacturer_id: manufacturer.id,
             product_drive_id: product_drive.id,
             storage_location_id: storage_location.id,
-            money_raised_in_dollars: 5,
+            money_raised_in_dollars: money_raised,
             product_drive_participant_id: nil,
             comment: "",
             issued_at: issued_at,
@@ -146,6 +147,15 @@ RSpec.describe "Donations", type: :request do
           expect(flash[:error]).to include("Issue date can't be blank")
         end
       end
+
+      context "with negative money raised" do
+        let(:money_raised) { -5 }
+
+        it "flashes the correct validation error" do
+          post donations_path(params)
+          expect(flash[:error]).to include("Money raised must be greater than or equal to 0")
+        end
+      end
     end
 
     describe "PATCH #update" do
@@ -166,6 +176,15 @@ RSpec.describe "Donations", type: :request do
           put donation_path(params)
 
           expect(flash[:alert]).to include("Issue date can't be blank")
+        end
+      end
+
+      context "with negative money raised" do
+        it "flashes the correct validation error" do
+          donation_params[:money_raised_in_dollars] = -5
+          put donation_path(params)
+
+          expect(flash[:alert]).to include("Money raised must be greater than or equal to 0")
         end
       end
     end
