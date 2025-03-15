@@ -55,12 +55,10 @@
               <ul class='text-lg'>
                 <% @partner_request.item_requests.each do |item| %>
                   <li>
-                    <%= item.quantity %>
+                    <%= item.name %> - <%= item.quantity %>
                     <% if Flipper.enabled?(:enable_packs) && item.request_unit %>
-                      <%= item.request_unit.pluralize(item.quantity.to_i) %>
+                      <%= item.request_unit.pluralize(item.quantity.to_i).capitalize %>
                     <% end %>
-                    of
-                    <%= item.name %>
                   </li>
                 <% end %>
               </ul>

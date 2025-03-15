@@ -176,15 +176,15 @@ RSpec.describe "/partners/requests", type: :request do
 
       Flipper.enable(:enable_packs)
       get partners_request_path(request)
-      expect(response.body).to match(/125\s+of\s+First item/m)
-      expect(response.body).to match(/559\s+flats\s+of\s+Second item/m)
-      expect(response.body).to match(/1\s+flat\s+of\s+Third item/m)
+      expect(response.body).to match(/First item - 125/m)
+      expect(response.body).to match(/Second item - 559\s+Flats/m)
+      expect(response.body).to match(/Third item - 1\s+Flat/m)
 
       Flipper.disable(:enable_packs)
       get partners_request_path(request)
-      expect(response.body).to match(/125\s+of\s+First item/m)
-      expect(response.body).to match(/559\s+of\s+Second item/m)
-      expect(response.body).to match(/1\s+of\s+Third item/m)
+      expect(response.body).to match(/First item - 125/m)
+      expect(response.body).to match(/Second item - 559/m)
+      expect(response.body).to match(/Third item - 1/m)
     end
   end
 
