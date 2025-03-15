@@ -15,7 +15,7 @@ module FilterHelper
 
   def filter_checkbox(label: nil, scope:, selected: nil)
     label_tag do
-      check_box_tag(scope, 1, selected) + label
+      check_box_tag(scope, 1, selected) + " " + label
     end
   end
 end
