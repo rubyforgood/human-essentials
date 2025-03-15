@@ -44,6 +44,22 @@ RSpec.describe "/partners/requests", type: :request do
       expect(response).to render_template(:new)
     end
 
+    context "when packs are enabled but there are no requestable items" do
+      before do
+        allow_any_instance_of(PartnerFetchRequestableItemsService).to receive(:call).and_return({})
+        Flipper.enable(:enable_packs)
+      end
+
+      after do
+        Flipper.disable(:enable_packs)
+      end
+
+      it 'should render without any issues' do
+        subject
+        expect(response).to render_template(:new)
+      end
+    end
+
     context "when first reaching the new page" do
       let(:requestable_items) { [["Item 1", 1], ["Item 2", 2], ["Item 3", 3]] }
       before do

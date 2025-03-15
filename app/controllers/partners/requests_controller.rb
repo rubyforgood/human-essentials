@@ -81,9 +81,10 @@ module Partners
       @requestable_items = PartnerFetchRequestableItemsService.new(partner_id: partner.id).call
       if Flipper.enabled?(:enable_packs)
         # hash of (item ID => hash of (request unit name => request unit plural name))
-        @item_units = Item.where(id: @requestable_items.to_h.values).to_h do |i|
+        item_ids = @requestable_items.to_h.values
+        @item_units = Item.where(id: item_ids).to_h do |i|
           [i.id, i.request_units.to_h { |u| [u.name, u.name.pluralize] }]
-        end
+        end if item_ids.present?
       end
     end
 
