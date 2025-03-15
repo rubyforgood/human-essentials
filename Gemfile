@@ -14,7 +14,7 @@ gem "pg", "~> 1.5.9"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "7.2.2"
+gem "rails", "~> 8.0.1"
 
 ###### MODELS / DATABASE #######
 
@@ -162,7 +162,7 @@ end
 
 group :development do
   # Show database columns and indexes inside files.
-  gem "annotate"
+  gem "annotaterb"
   # Used as a dependency for better_errors.
   gem "binding_of_caller"
   # Show a better error page on development, including a REPL.
