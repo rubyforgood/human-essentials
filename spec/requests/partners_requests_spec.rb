@@ -12,24 +12,228 @@ RSpec.describe "Partners", type: :request do
       response
     end
 
-    let!(:partner) { create(:partner, organization: organization) }
-
     context "html" do
       let(:response_format) { 'html' }
 
+      let!(:partner) { create(:partner, organization: organization) }
+
       it { is_expected.to be_successful }
+
+      include_examples "restricts access to organization users/admins"
     end
 
     context "csv" do
       let(:response_format) { 'csv' }
 
-      let(:fake_get_return) do
-        { "agency" => {
-          "contact_person" => { name: "A Name" }
-        } }.to_json
+      let!(:partner) do
+        create(:partner, name:, email:, status: :approved, organization:, notes:, without_profile: true)
+      end
+      let!(:profile) do
+        create(:partner_profile,
+          partner: partner,
+          primary_contact_name: contact_name,
+          primary_contact_email: contact_email,
+          primary_contact_phone: contact_phone,
+          address1: agency_address1,
+          address2: agency_address2,
+          city: agency_city,
+          state: agency_state,
+          zip_code: agency_zipcode,
+          website: agency_website,
+          agency_type: agency_type,
+          other_agency_type: other_agency_type)
+      end
+      let(:name) { "Leslie Sue" }
+      let(:email) { "leslie@sue.com" }
+      let(:contact_name) { "Jon Ralfeo" }
+      let(:contact_email) { "jon@entertainment720.com" }
+      let(:contact_phone) { "1231231234" }
+      let(:agency_address1) { "4744 McDermott Mountain" }
+      let(:agency_address2) { "333 Never land street" }
+      let(:agency_city) { "Lake Shoshana" }
+      let(:agency_state) { "ND" }
+      let(:agency_zipcode) { "09980-7010" }
+      let(:agency_website) { "bosco.example" }
+      let(:agency_type) { :other }
+      let(:notes) { "Some notes" }
+      let(:other_agency_type) { "Another Agency Name" }
+      let(:providing_diapers) { {value: "N", index: 13} }
+      let(:providing_period_supplies) { {value: "N", index: 14} }
+
+      let(:response_format) { 'csv' }
+      let(:expected_headers) do
+        [
+          "Agency Name",
+          "Agency Email",
+          "Agency Address",
+          "Agency City",
+          "Agency State",
+          "Agency Zip Code",
+          "Agency Website",
+          "Agency Type",
+          "Contact Name",
+          "Contact Phone",
+          "Contact Email",
+          "Notes",
+          "Counties Served",
+          "Providing Diapers",
+          "Providing Period Supplies"
+      ]
       end
 
       it { is_expected.to be_successful }
+      it "returns the expected headers" do
+        get partners_path(partner, format: response_format)
+
+        csv = CSV.parse(response.body)
+
+        expect(csv[0]).to eq(expected_headers)
+      end
+
+      context "with missing partner info" do
+        let(:name) { "Leslie" }
+        let(:email) { "leslie@humanessentials.com" }
+        let(:contact_name) { nil }
+        let(:contact_email) { nil }
+        let(:contact_phone) { nil }
+        let(:agency_address1) { nil }
+        let(:agency_address2) { nil }
+        let(:agency_city) { nil }
+        let(:agency_state) { nil }
+        let(:agency_zipcode) { nil }
+        let(:agency_website) { nil }
+        let(:agency_type) { nil }
+        let(:notes) { nil }
+        let(:other_agency_type) { nil }
+
+        it "returns a CSV with correct data" do
+          get partners_path(partner, format: response_format)
+
+          csv = CSV.parse(response.body)
+
+          expect(csv[1]).to eq(
+            ["Leslie", "leslie@humanessentials.com", "", "", "", "", "", "", "", "", "", "", "", "N", "N"]
+          )
+        end
+      end
+
+      it "returns a CSV with correct data" do
+        get partners_path(partner, format: response_format)
+
+        csv = CSV.parse(response.body)
+
+        expect(csv[1]).to eq(
+          [
+            "Leslie Sue",
+            "leslie@sue.com",
+            "4744 McDermott Mountain, 333 Never land street",
+            "Lake Shoshana",
+            "ND",
+            "09980-7010",
+            "bosco.example",
+            "Other: Another Agency Name",
+            "Jon Ralfeo",
+            "1231231234",
+            "jon@entertainment720.com",
+            "Some notes",
+            "",
+            "N",
+            "N"
+          ]
+        )
+      end
+
+      it "returns only active partners by default" do
+        partner.update(status: :deactivated)
+
+        get partners_path(partner, format: response_format)
+
+        csv = CSV.parse(response.body)
+
+        # Expect no parner rows in csv
+        expect(csv[1]).to eq(nil)
+      end
+
+      context "with served counties" do
+        it "returns them in correct order" do
+          county_1 = create(:county, name: "High County, Maine", region: "Maine")
+          county_2 = create(:county, name: "laRue County, Louisiana", region: "Louisiana")
+          county_3 = create(:county, name: "Ste. Anne County, Louisiana", region: "Louisiana")
+          create(:partners_served_area, partner_profile: profile, county: county_1, client_share: 50)
+          create(:partners_served_area, partner_profile: profile, county: county_2, client_share: 40)
+          create(:partners_served_area, partner_profile: profile, county: county_3, client_share: 10)
+
+          get partners_path(partner, format: response_format)
+
+          csv = CSV.parse(response.body, headers: true)
+
+          expect(csv[0]["Counties Served"]).to eq("laRue County, Louisiana; Ste. Anne County, Louisiana; High County, Maine")
+        end
+      end
+
+      context "with multiple partners do" do
+        let!(:partner_2) do
+          create(:partner, name: name_2, email: email_2, status: :invited, organization:, notes: notes_2, without_profile: true)
+        end
+        let!(:profile_2) do
+          create(:partner_profile,
+            partner: partner_2,
+            primary_contact_name: contact_name_2,
+            primary_contact_email: contact_email_2,
+            primary_contact_phone: contact_phone_2,
+            address1: agency_address1_2,
+            address2: agency_address2_2,
+            city: agency_city_2,
+            state: agency_state_2,
+            zip_code: agency_zipcode_2,
+            website: agency_website_2,
+            agency_type: agency_type_2,
+            other_agency_type: other_agency_type_2)
+        end
+
+        let(:name_2) { "Jane Doe" }
+        let(:email_2) { "jane@doe.com" }
+        let(:contact_name_2) { "Fakey McFakePerson" }
+        let(:contact_email_2) { "fakey@gmail.com" }
+        let(:contact_phone_2) { "1234567890" }
+        let(:agency_address1_2) { "123 Main St" }
+        let(:agency_address2_2) { "C.O. box 678" }
+        let(:agency_city_2) { "Paris" }
+        let(:agency_state_2) { "TX" }
+        let(:agency_zipcode_2) { "30234-0000" }
+        let(:agency_website_2) { "human.example" }
+        let(:agency_type_2) { :other }
+        let(:notes_2) { "Some notes 2" }
+        let(:other_agency_type_2) { "Fake Agency Name" }
+        let(:providing_diapers_2) { {value: "N", index: 13} }
+        let(:providing_period_supplies_2) { {value: "N", index: 14} }
+
+        it "orders partners alphaetically" do
+          get partners_path(partner, format: response_format)
+
+          csv = CSV.parse(response.body)
+
+          expect(csv[1]).to eq(
+            [
+              "Jane Doe",
+              "jane@doe.com",
+              "123 Main St, C.O. box 678",
+              "Paris",
+              "TX",
+              "30234-0000",
+              "human.example",
+              "Other: Fake Agency Name",
+              "Fakey McFakePerson",
+              "1234567890",
+              "fakey@gmail.com",
+              "Some notes 2",
+              "",
+              "N",
+              "N"
+            ]
+          )
+        end
+      end
     end
   end
 

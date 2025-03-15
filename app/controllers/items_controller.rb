@@ -44,7 +44,8 @@ class ItemsController < ApplicationController
       @base_items = BaseItem.without_kit.alphabetized
       # Define a @item to be used in the `new` action to be rendered with
       # the provided parameters. This is required to render the page again
-      # with the error + the invalid parameters
+      # with the error + the invalid parameters.
+      @item_categories = current_organization.item_categories.order('name ASC') # Load categories here
       @item = current_organization.items.new(item_params)
       flash.now[:error] = result.error.record.errors.full_messages.to_sentence
       render action: :new
@@ -68,7 +69,7 @@ class ItemsController < ApplicationController
     @inventory = View::Inventory.new(current_organization.id)
     storage_location_ids = @inventory.storage_locations_for_item(@item.id)
     @storage_locations_containing = StorageLocation.find(storage_location_ids)
-    @barcodes_for = current_organization.items.barcodes_for(@item)
+    @barcodes_for = BarcodeItem.where(barcodeable_id: @item.id)
   end
 
   def update
@@ -140,13 +141,13 @@ class ItemsController < ApplicationController
   private
 
   def clean_item_value_in_cents
-    return nil unless params[:item][:value_in_cents]
+    return unless params[:item][:value_in_cents]
 
     params[:item][:value_in_cents] = params[:item][:value_in_cents].gsub(/[$,.]/, "")
   end
 
   def clean_item_value_in_dollars
-    return nil unless params[:item][:value_in_dollars]
+    return unless params[:item][:value_in_dollars]
 
     params[:item][:value_in_cents] = params[:item][:value_in_dollars].gsub(/[$,]/, "").to_d * 100
     params[:item].delete(:value_in_dollars)
@@ -170,7 +171,8 @@ class ItemsController < ApplicationController
       :on_hand_recommended_quantity,
       :distribution_quantity,
       :visible_to_partners,
-      :active
+      :active,
+      :additional_info
     )
   end
 

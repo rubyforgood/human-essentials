@@ -84,6 +84,12 @@ RSpec.describe Exports::ExportRequestService do
            ])
   end
 
+  # Update item name after the request has been created to ensure export shows
+  # current item name.
+  before do
+    item_2t.update!(name: "2T Diapers -- UPDATED")
+  end
+
   subject do
     described_class.new(Request.all).generate_csv_data
   end
@@ -100,7 +106,7 @@ RSpec.describe Exports::ExportRequestService do
           "Requestor",
           "Type",
           "Status",
-          "2T Diapers",
+          "2T Diapers -- UPDATED",
           "3T Diapers",
           "4T Diapers",
           "4T Diapers - packs",
@@ -225,7 +231,7 @@ RSpec.describe Exports::ExportRequestService do
           "Requestor",
           "Type",
           "Status",
-          "2T Diapers",
+          "2T Diapers -- UPDATED",
           "3T Diapers",
           "4T Diapers",
           "<DELETED_ITEMS>"

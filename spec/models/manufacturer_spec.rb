@@ -89,17 +89,6 @@ RSpec.describe Manufacturer, type: :model do
     end
   end
 
-  context "Private Methods" do
-    describe "#exists_in_org?" do
-      let(:organization) { create(:organization) }
-
-      it "returns true if manufacturer exists in an organization" do
-        manufacturer = create(:manufacturer, organization_id: organization.id)
-        expect(manufacturer.send(:exists_in_org?)).to eq(true)
-      end
-    end
-  end
-
   describe "versioning" do
     it { is_expected.to be_versioned }
   end

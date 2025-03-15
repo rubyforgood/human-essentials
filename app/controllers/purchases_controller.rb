@@ -67,7 +67,7 @@ class PurchasesController < ApplicationController
   end
 
   def show
-    @purchase = current_organization.purchases.includes(:line_items).find(params[:id])
+    @purchase = current_organization.purchases.includes(line_items: :item).find(params[:id])
     @line_items = @purchase.line_items
   end
 
@@ -101,7 +101,7 @@ class PurchasesController < ApplicationController
   def load_form_collections
     @storage_locations = current_organization.storage_locations.active.alphabetized
     @items = current_organization.items.active.alphabetized
-    @vendors = current_organization.vendors.alphabetized
+    @vendors = current_organization.vendors.active.alphabetized
   end
 
   def purchase_params

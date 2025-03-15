@@ -10,6 +10,7 @@ class DistributionsController < ApplicationController
   before_action :enable_turbo!, only: %i[new show]
   skip_before_action :authenticate_user!, only: %i(calendar)
   skip_before_action :authorize_user, only: %i(calendar)
+  skip_before_action :require_organization, only: %i(calendar)
 
   def print
     @distribution = Distribution.find(params[:id])
@@ -52,13 +53,13 @@ class DistributionsController < ApplicationController
     @storage_locations = current_organization.storage_locations.active.alphabetized.select(:id, :name)
     @partners = current_organization.partners.active.alphabetized.select(:id, :name)
     @selected_item = filter_params[:by_item_id].presence
-    @distribution_totals = DistributionTotalsService.new(current_organization.distributions, scope_filters)
-    @total_value_all_distributions = @distribution_totals.total_value
-    @total_items_all_distributions = @distribution_totals.total_quantity
+    @distribution_totals = DistributionTotalsService.call(current_organization.distributions.class_filter(scope_filters))
+    @total_value_all_distributions = @distribution_totals.values.sum(&:value)
+    @total_items_all_distributions = @distribution_totals.values.sum(&:quantity)
     paginated_ids = @paginated_distributions.ids
-    @total_value_paginated_distributions = @distribution_totals.total_value(paginated_ids)
-    @total_items_paginated_distributions = @distribution_totals.total_quantity(paginated_ids)
-    @selected_item_category = filter_params[:by_item_category_id]
+    @total_value_paginated_distributions = @distribution_totals.slice(*paginated_ids).values.sum(&:value)
+    @total_items_paginated_distributions = @distribution_totals.slice(*paginated_ids).values.sum(&:quantity)
+    @selected_item_category = filter_params[:by_item_category_id].presence
     @selected_partner = filter_params[:by_partner]
     @selected_status = filter_params[:by_state]
     @selected_location = filter_params[:by_location]
@@ -109,9 +110,9 @@ class DistributionsController < ApplicationController
     else
       @distribution = result.distribution
       if request_id
-        # Using .find here instead of .find_by so we can raise a error if request_id
-        # does not match any known Request
-        @distribution.request = Request.find(request_id)
+        @request = Request.find(request_id)
+        @distribution.request = @request
+        @distribution.partner = @request.partner
       end
       if @distribution.line_items.size.zero?
         @distribution.line_items.build
@@ -148,7 +149,8 @@ class DistributionsController < ApplicationController
   def new
     @distribution = Distribution.new
     if params[:request_id]
-      @distribution.copy_from_request(params[:request_id])
+      @request = Request.find(request_id)
+      @distribution.copy_from_request(@request)
     else
       @distribution.line_items.build
       @distribution.copy_from_donation(params[:donation_id], params[:storage_location_id])
@@ -163,7 +165,7 @@ class DistributionsController < ApplicationController
   end
 
   def show
-    @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
+    @distribution = Distribution.includes(:storage_location, line_items: :item).find(params[:id])
     @line_items = @distribution.line_items
 
     @total_quantity = @distribution.total_quantity
@@ -179,6 +181,7 @@ class DistributionsController < ApplicationController
     if (!@distribution.complete? && @distribution.future?) ||
         current_user.has_cached_role?(Role::ORG_ADMIN, current_organization)
       @distribution.line_items.build if @distribution.line_items.size.zero?
+      @request = @distribution.request
       @items = current_organization.items.active.alphabetized
       @partner_list = current_organization.partners.alphabetized
       @audit_warning = current_organization.audits
@@ -210,6 +213,7 @@ class DistributionsController < ApplicationController
       flash.now[:error] = insufficient_error_message(result.error.message)
       @distribution.line_items.build if @distribution.line_items.size.zero?
       @distribution.initialize_request_items
+      @request = @distribution.request
       @items = current_organization.items.active.alphabetized
       @partner_list = current_organization.partners.alphabetized
       @storage_locations = current_organization.storage_locations.active.alphabetized
@@ -292,7 +296,7 @@ class DistributionsController < ApplicationController
   end
 
   def request_id
-    params.dig(:distribution, :request_attributes, :id)
+    params[:request_id] || params.dig(:distribution, :request_attributes, :id)
   end
 
   def daily_items(pick_ups)

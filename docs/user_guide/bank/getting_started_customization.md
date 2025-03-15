@@ -177,17 +177,21 @@ column is useful mainly for banks that repackage their essentials into uniform p
 ![Distribution printout marked up with customizable sections](images/getting_started/customization/gs_customization_distribution_printout_customizable_sections.png)
 
 ### Receive email when partner makes a request?
-If "yes", your organization's email address will be CCed on the request confirmation email partners receive when submitting a request to your organization.  This will be "no" by default, so you must opt into to receiving these emails.
+If "yes", your organization's email address will be CCed on the request confirmation email partners receive when submitting a request to your organization.  This will be "no" by default, so you must opt into receiving these emails.
 
---------
+-------
 
 #### Use One Step Invite and Approve partner process?
-Partners can't submit Requests until they are approved by the bank.
-The full partner approval process requires the partner to fill in their profile and submit it for approval.  Some banks handle that for their partners,  gather the information through other means (such as a phone conversation).
-Checking this will change the process so that the partners are automatically approved when they are invited. Note that any invited partners that are not yet approved will still need to be approved by the bank.
+Partners can't submit Requests until they are approved by the Bank.
+
+The full Partner approval process requires the partner to fill in their profile and submit it for approval.  Some banks handle that for their partners, gathering the information through other means (such as a phone conversation).
+Checking this box will change the process so that the partners are automatically approved when they are invited. 
+
+> [!NOTE]
+> Any already-invited partners that are not yet approved will still need to be approved by the bank.
 
 #### Distribution Email Content
-Note that there is a checkbox on the partner for them to receive Distribution emails.  We recommend you do customize this content, as the default text is abrupt.
+There is a checkbox on each partner that indicates if they are to receive Distribution emails.  We recommend you do customize this content, as the default text is abrupt.
 You can customize this quite a bit!
 
 Specifically, you can use the variables %{partner_name}, %{delivery_method}, %{distribution_date}, and %{comment} to include the partner's name, delivery method, distribution date, and comments sent in the email.  You can also format the text, and attach files by using the buttons above the field.

@@ -3,7 +3,14 @@ class VendorsController < ApplicationController
   include Importable
 
   def index
-    @vendors = current_organization.vendors.with_volumes.alphabetized
+    @vendors = current_organization
+      .vendors
+      .with_volumes
+      .alphabetized
+      .class_filter(filter_params)
+
+    @vendors = @vendors.active unless params[:include_inactive_vendors]
+    @include_inactive_vendors = params[:include_inactive_vendors]
 
     respond_to do |format|
       format.html
@@ -53,6 +60,34 @@ class VendorsController < ApplicationController
     end
   end
 
+  def deactivate
+    vendor = current_organization.vendors.find(params[:id])
+
+    begin
+      vendor.deactivate!
+    rescue => e
+      flash[:error] = e.message
+      redirect_back(fallback_location: vendors_path)
+      return
+    end
+
+    redirect_to vendors_path, notice: "#{vendor.business_name} has been deactivated."
+  end
+
+  def reactivate
+    vendor = current_organization.vendors.find(params[:id])
+
+    begin
+      vendor.reactivate!
+    rescue => e
+      flash[:error] = e.message
+      redirect_back(fallback_location: vendors_path)
+      return
+    end
+
+    redirect_to vendors_path, notice: "#{vendor.business_name} has been reactivated."
+  end
+
   private
 
   def vendor_params
@@ -61,7 +96,9 @@ class VendorsController < ApplicationController
   end
 
   helper_method \
-    def filter_params
-    {}
+    def filter_params(_parameters = nil)
+    return {} unless params.key?(:filters)
+
+    params.require(:filters).permit(:include_inactive_vendors)
   end
 end

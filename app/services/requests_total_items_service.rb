@@ -15,6 +15,6 @@ class RequestsTotalItemsService
   private
 
   def item_requests
-    @item_requests ||= Partners::ItemRequest.where(request: @requests)
+    @item_requests ||= Partners::ItemRequest.includes(:item).where(request: @requests)
   end
 end

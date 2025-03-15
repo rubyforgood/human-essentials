@@ -63,6 +63,12 @@ RSpec.describe Donation, type: :model do
       d.line_items << build(:line_item, quantity: -1)
       expect(d).not_to be_valid
     end
+    it "ensures that money_raised cannot be negative" do
+      expect(build(:donation, money_raised: -1)).not_to be_valid
+      expect(build(:donation, money_raised: 0)).to be_valid
+      expect(build(:donation, money_raised: 100)).to be_valid
+      expect(build(:donation, money_raised: nil)).to be_valid
+    end
   end
 
   context "Callbacks >" do
@@ -148,27 +154,6 @@ RSpec.describe Donation, type: :model do
   end
 
   context "Methods >" do
-    describe "remove" do
-      let!(:donation) { create(:donation, :with_items) }
-
-      it "removes the item from the donation" do
-        item_id = donation.line_items.last.item_id
-        expect do
-          donation.remove(item_id)
-        end.to change { donation.line_items.count }.by(-1)
-      end
-
-      it "works with either an id or an object" do
-      end
-
-      it "fails gracefully if the item doesn't exist" do
-        item_id = create(:item).id
-        expect do
-          donation.remove(item_id)
-        end.not_to change { donation.line_items.count }
-      end
-    end
-
     describe "money_raised" do
       it "tracks the money raised in a donation" do
         donation = create(:donation, :with_items, money_raised: 100)

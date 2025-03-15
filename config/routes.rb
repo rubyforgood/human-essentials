@@ -154,7 +154,10 @@ Rails.application.routes.draw do
     collection do
       post :import_csv
     end
-    delete :deactivate, on: :member
+    member do
+      put :deactivate
+      put :reactivate
+    end
   end
 
   resources :product_drive_participants, except: [:destroy] do
@@ -172,6 +175,10 @@ Rails.application.routes.draw do
   resources :vendors, except: [:destroy] do
     collection do
       post :import_csv
+    end
+    member do
+      put :deactivate
+      put :reactivate
     end
   end
 

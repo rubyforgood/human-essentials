@@ -1,139 +1,56 @@
-html, body {
-    background-color: white;
-    height: calc(100vw - 3em);
-    position: relative;
-}
+@import 'bootstrap';
 
 .hero {
-    &-background {
-    background: linear-gradient(135deg, #3023AE , #C86DD7);
-    width: 100%;
-    color: white;
-    height: 660px;
-        @media (max-width: 1200px) {
-            height: 590px;
-        }
-        @media (max-width: 992px) {
-            height: auto;
-        }
-        @media (max-width: 768px) {
-            height: auto;
-        }
-        @media (max-width: 576px) {
-            height: auto;
-        }
-    }
-    &-image {
-        flex-basis: 1400px;
-        @media (max-width: 576px) {
-            margin-bottom: 20px;
-        }
-        @media (max-width: 768px) {
-            margin-bottom: 20px;
-        }
-    }
-    &-copy {
-        z-index: 1;
-        @media (max-width: 768px) {
-            text-align: center;
-        }
-        @media (max-width: 576px) {
-            text-align: center;
-        }
-    }
-}
+  background: linear-gradient(135deg, #3023AE, #C86DD7);
 
-.navbar-brand {
-  margin-right: none !important;
-
-  @media (max-width: 568px) {
+  nav {
     h2 {
-      font-size: 0.8em;
+      @media (max-width: 567px) {
+        font-size: 1.125rem;
+      }
     }
+
+    button span {
+      font-size: 1.25rem;
+
+      @media (max-width: 567px) {
+        font-size: 1rem;
+      }
+    }
+  }
+
+  .hero-subcontainer {
+    height:60vh; 
+    min-height: 500px
   }
 }
 
-.navbar-light .navbar-toggler {
-    border: none;
-    margin-top: 13px;
+.container-fluid {
+  max-width: 1280px;
 }
 
-button:focus {
-    outline: none !important;
-    outline: none !important;
+.btn-success {
+  background-color: #55af59 !important;
+  border-color: #55af59 !important;
 }
 
-button:hover, button:focus, .button:hover, .button:focus {
-    background-color: rgba(255, 255, 255, 0) !important;
-}
-
-.btn-primary {
-    background-color: #55af59 !important;
-    border-color: #55af59 !important;
-}
-
-.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active {
-    background-color: #55af59 !important;
-    border-color: #55af59 !important;
-}
-
-.text {
-
-    &-header {
-        color: #454F5B;
-    }
-    &-body-color {
-        color: #919EAB !important;
-        line-height: 2em;
-    }
-    &-testimonials {
-        color: white;
-        line-height: 1.5em;
-        font-size: 14px;
-
-    }
-}
-
-.description-container {
-    margin-top: 120px;
-    @media (max-width: 576px) {
-        margin-top: 80px;
-    }
-}
-
-.bottom-cta {
-    margin-top: 80px;
-    margin-bottom: 80px;
-    @media (max-width: 576px) {
-        margin-top: 50px;
-        margin-bottom: 50px;
-    }
+.btn-success:hover,
+.btn-success:focus,
+.btn-success:active,
+.btn-success.active {
+  background-color: #408e44 !important;
+  border-color: #408e44 !important;
 }
 
 .app-images {
-    width: 400px;
-    height: 400px;
-    &-block {
-        flex-basis: 340px;
-    }
+  height: 400px;
+  width: 100%;
 }
 
-.green-bkg {
-    background: linear-gradient(45deg, #1AD1BD , #02A98C);
-    height: auto;
-}
+#testimonials {
+  background-color: rgb(22, 163, 74);
 
-.quote {
-    &-block {
-    flex-basis: 400px;
-    }
-    &-image {
-        flex-basis: 600px;
-        }
-}
-
-.footer-content {
-    background-color: #C4CDD5;
-    padding-top: 150px;
-    padding-bottom: 150px;
+  .quote-image {
+    width: 300px;
+  }
 }

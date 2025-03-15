@@ -4,6 +4,7 @@
 #
 #  id                           :integer          not null, primary key
 #  active                       :boolean          default(TRUE)
+#  additional_info              :text
 #  barcode_count                :integer
 #  category                     :string
 #  distribution_quantity        :integer
@@ -12,6 +13,7 @@
 #  on_hand_recommended_quantity :integer
 #  package_size                 :integer
 #  partner_key                  :string
+#  reporting_category           :string
 #  value_in_cents               :integer          default(0)
 #  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null
@@ -39,6 +41,8 @@ RSpec.describe Item, type: :model do
     it { should validate_numericality_of(:distribution_quantity).is_greater_than(0) }
     it { should validate_numericality_of(:on_hand_minimum_quantity).is_greater_than_or_equal_to(0) }
     it { should validate_numericality_of(:on_hand_recommended_quantity).is_greater_than_or_equal_to(0) }
+    it { should validate_length_of(:additional_info).is_at_most(500) }
+    it { should validate_numericality_of(:package_size).is_greater_than_or_equal_to(0) }
   end
 
   context "Filtering >" do
@@ -221,23 +225,6 @@ RSpec.describe Item, type: :model do
   end
 
   context "Methods >" do
-    describe "barcodes_for" do
-      it "retrieves all BarcodeItems associated with an item" do
-        item = create(:item)
-        barcode_item = create(:barcode_item, barcodeable: item)
-        create(:barcode_item)
-        expect(Item.barcodes_for(item).first).to eq(barcode_item)
-      end
-    end
-    describe "barcoded_items >" do
-      it "returns a collection of items that have barcodes associated with them" do
-        create_list(:item, 3)
-        create(:barcode_item, item: Item.first)
-        create(:barcode_item, item: Item.last)
-        expect(Item.barcoded_items.length).to eq(2)
-      end
-    end
-
     describe '#can_deactivate_or_delete?' do
       let(:item) { create(:item, organization: organization) }
       let(:storage_location) { create(:storage_location, organization: organization) }
@@ -479,6 +466,15 @@ RSpec.describe Item, type: :model do
     end
   end
 
+  describe "after create" do
+    let(:base_item) { create(:base_item, size: "4", name: "Tampons") }
+    let(:item) { create(:item, name: "Period product", base_item:) }
+
+    it "sets the reporting category" do
+      expect(item.reporting_category).to eq("tampons")
+    end
+  end
+
   describe "versioning" do
     it { is_expected.to be_versioned }
   end
@@ -486,9 +482,14 @@ RSpec.describe Item, type: :model do
   describe "kit items" do
     context "with kit and regular items" do
       let(:organization) { create(:organization) }
+      let(:base_item) { create(:base_item, name: "Kit") }
       let(:kit) { create(:kit, organization: organization) }
-      let(:kit_item) { create(:item, kit: kit, organization: organization) }
+      let(:kit_item) { create(:item, kit: kit, organization: organization, base_item: base_item) }
       let(:regular_item) { create(:item, organization: organization) }
+
+      it "has no reporting category" do
+        expect(kit_item.reporting_category).to be(nil)
+      end
 
       describe "#can_delete?" do
         it "returns false for kit items" do

@@ -31,11 +31,6 @@ class DonationSite < ApplicationRecord
   include Geocodable
   include Exportable
 
-  scope :for_csv_export, ->(organization, *) {
-    where(organization: organization)
-      .order(:name)
-  }
-
   scope :active, -> { where(active: true) }
 
   scope :alphabetized, -> { order(:name) }
@@ -59,5 +54,9 @@ class DonationSite < ApplicationRecord
 
   def deactivate!
     update!(active: false)
+  end
+
+  def reactivate!
+    update!(active: true)
   end
 end
