@@ -1,6 +1,7 @@
 # [Super Admin] This is for administrating users at a global level. We can create, view, modify, etc.
 class Admin::UsersController < AdminController
-  before_action :load_organizations, only: %i[new create edit update]
+  before_action :load_organizations, only: %i[create edit update]
+  before_action :load_resources, only: %i[new create edit]
   before_action :user_params, only: %i[create update]
 
   def index
@@ -34,15 +35,19 @@ class Admin::UsersController < AdminController
 
   def edit
     @user = User.find_by(id: params[:id])
-    @resources = Role.resources_for_select
   end
 
   def create
     @user = User.new(user_params)
-    UserInviteService.invite(name: user_params[:name],
+    validate_role_resource_params
+    klass = Role::TITLE_TO_RESOURCE[params[:resource_type].to_sym]
+    resource = klass&.find(params[:resource_id])
+    UserInviteService.invite(
+      name: user_params[:name],
       email: user_params[:email],
-      roles: [Role::ORG_USER],
-      resource: Organization.find(organization_id_param))
+      roles: [params[:resource_type]],
+      resource: resource
+    )
     flash[:notice] = "Created a new user!"
     redirect_to admin_users_path
   rescue => e
@@ -95,15 +100,17 @@ class Admin::UsersController < AdminController
     params.require(:user).permit(:name, :email)
   end
 
-  def organization_id_param
-    organization_id = params[:user][:organization_id]
+  def validate_role_resource_params
+    raise "Please select a role for the user." if params[:resource_type].blank?
 
-    raise "Please select an organization for the user." if organization_id.blank?
-
-    organization_id
+    raise "Please select an associated resource for the role." if params[:resource_type].to_s != Role::SUPER_ADMIN.to_s && params[:resource_id].blank?
   end
 
   def load_organizations
     @organizations = Organization.all.alphabetized
+  end
+
+  def load_resources
+    @resources = Role::TITLES.invert
   end
 end
