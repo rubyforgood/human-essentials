@@ -38,3 +38,9 @@
     }
   }
 }
+
+// Hide the "Attach Files" button in the Trix toolbar that appears when adding a new FAQ 
+// question.
+.trix-button--icon-attach {
+  display: none;
+}
