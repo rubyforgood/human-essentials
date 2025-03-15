@@ -5,9 +5,8 @@ class DonationSitesController < ApplicationController
 
   def index
     @donation_sites = current_organization.donation_sites.alphabetized
-    @donation_sites = @donation_sites.active if params[:include_inactive_donation_sites].blank?
-
     @include_inactive_donation_sites = params[:include_inactive_donation_sites]
+    @donation_sites = @donation_sites.active if @include_inactive_donation_sites.blank?
 
     respond_to do |format|
       format.html
