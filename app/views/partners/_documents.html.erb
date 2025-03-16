@@ -2,25 +2,17 @@
   <div class="card-header">
     <h2 class="card-title fs-3">Documents</h2>
   </div>
-  <div class="card-body p-0">
-    <div class="tab-content" id="custom-tabs-three-tabContent">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Filename</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <% partner.documents.each do |document| %>
-            <tr>
-              <td><%= link_to document.filename, rails_blob_path(document, disposition: "attachment") %></td>
-              <td><%= delete_button_to attachment_path(document), { size: "md", confirm: "Are you sure you want to permanently remove this document?" } %>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </div><!-- /.box-body.table-responsive -->
+  <div class="card-body p-3">
+    <ul class="list-unstyled">
+      <% partner.documents.each do |doc| %>
+        <% if doc.persisted? %>
+          <li class="attached-document d-flex justify-content-between align-items-center p-2 border rounded mb-2" data-document-id="<%= doc.signed_id %>">
+            <%= link_to doc.blob.filename.to_s, rails_blob_path(doc), class: "font-weight-bold w-75 text-truncate" %>
+            <%= delete_button_to attachment_path(doc), { text: "Remove", size: "md", confirm: "Are you sure you want to permanently remove this document?" } %>
+          </li>
+        <% end %>
+      <% end %>
+    </ul>
   </div>
   <!-- /.card-body -->
   <div class="card-footer">

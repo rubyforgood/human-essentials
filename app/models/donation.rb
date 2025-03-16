@@ -61,6 +61,7 @@ class Donation < ApplicationRecord
   validates :manufacturer, presence:
     { message: "must be specified since you chose '#{SOURCES[:manufacturer]}'" }, if: :from_manufacturer?
   validates :source, presence: true, inclusion: { in: SOURCES.values, message: "Must be a valid source." }
+  validates :money_raised, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validate :line_items_quantity_is_positive
 
   # TODO: move this to Organization.donations as an extension

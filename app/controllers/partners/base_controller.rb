@@ -3,6 +3,7 @@ module Partners
     layout 'partners/application'
 
     before_action :require_partner
+    skip_before_action :require_organization
 
     private
 
@@ -11,11 +12,11 @@ module Partners
     end
 
     def require_partner
-      unless current_partner
-        respond_to do |format|
-          format.html { redirect_to dashboard_path, flash: {error: "Logged in user is not set up as a 'partner'."} }
-          format.json { render body: nil, status: :forbidden }
-        end
+      return if current_partner
+
+      respond_to do |format|
+        format.html { redirect_to dashboard_path, flash: {error: "That screen is not available. Please try again as a partner."} }
+        format.json { render body: nil, status: :forbidden }
       end
     end
 

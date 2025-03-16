@@ -488,6 +488,41 @@ RSpec.describe "StorageLocations", type: :request do
       end
     end
 
+    describe "POST #create" do
+      let(:params) do
+        {
+          storage_location: {
+            name: "New Storage Location",
+            address: "123 New Street",
+            square_footage: -100
+          }
+        }
+      end
+
+      it "shows an error when square footage is negative" do
+        post storage_locations_path, params: params
+        expect(response.body).to include("Square footage must be greater than or equal to 0")
+      end
+    end
+
+    describe "PATCH #update" do
+      let(:storage_location) { create(:storage_location, organization: organization) }
+      let(:params) do
+        {
+          storage_location: {
+            name: "Updated Name",
+            address: "123 Updated Street",
+            square_footage: -100
+          }
+        }
+      end
+
+      it "shows an error when square footage is negative" do
+        patch storage_location_path(storage_location), params: params
+        expect(response.body).to include("Square footage must be greater than or equal to 0")
+      end
+    end
+
     context "Looking at a different organization" do
       let(:object) { create(:storage_location, organization: create(:organization)) }
       include_examples "requiring authorization"
