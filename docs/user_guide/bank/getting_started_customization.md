@@ -65,11 +65,11 @@ if you would like to receive a Distribution next month.
 Please log into Human Essentials at https://humanessentials.app before this date and submit your request if you are intending to submit an essentials request.
 <br/>
 <br/>
-Please contact [Your bank's name] at <%= @organization.email %>
+Please contact [Your bank's name] at [Your bank's email]
 if you have any questions about this!
 <br/>
 <br/>
-<%= @organization.reminder_email_text %>
+[Additional text for reminder email (see below)]
 </blockquote>
 
 
@@ -82,7 +82,7 @@ If you do not pick a day, no reminder emails are sent.
 This day will be included in the reminder email message,
 
 #### Additional text for reminder email
-If present, this text will be included in the reminder email placed at the end of the email. In the above email template, this additional message is placed in the position of `<%= @organization.reminder_email_text %>`.
+If present, this text will be included in the reminder email after the default text. In the above email template, this additional message will replace `[Additional text for reminder email (see below)]`.
 
 ----------
 
