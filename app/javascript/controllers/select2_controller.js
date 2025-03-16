@@ -29,5 +29,18 @@ export default class extends Controller {
         }
       }
     });
+
+    /**
+     * This is a workaround to prevent select2 from filling in an existing
+     * value even when you try to remove everything
+     */
+    if ($(this.element).prop('multiple')) {
+      select2.on("select2:unselecting", function (e) {
+          $(this).on("select2:opening", function (ev) {
+              ev.preventDefault();
+              $(this).off("select2:opening");
+          });
+      });
+    }
   }
 }
