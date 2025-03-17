@@ -15,7 +15,7 @@ class TransfersController < ApplicationController
     @to_storage_locations = StorageLocation.with_transfers_to(current_organization)
     respond_to do |format|
       format.html
-      format.csv { send_data Transfer.generate_csv(@transfers), filename: "Transfers-#{Time.zone.today}.csv" }
+      format.csv { send_data Exports::ExportTransfersCSVService.new(transfers: @transfers.includes(line_items: :item), organization: current_organization).generate_csv, filename: "Transfers-#{Time.zone.today}.csv" }
     end
   end
 
