@@ -1,4 +1,4 @@
-# Custom Units (opt-in feature)
+# Custom Units (opt-in feature)(in beta testing)
 
 Custom Units addresses a long-standing problem that diaper banks, in particular, experience:
 
