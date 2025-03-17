@@ -37,24 +37,9 @@ class DonationSite < ApplicationRecord
 
   scope :alphabetized, -> { order(:name) }
 
-  # def self.import_csv(csv, organization)
-  #  errors = []
-  #  csv.each do |row|
-  #   loc = DonationSite.new(row.to_hash)
-  #    loc.organization_id = organization
-  #    begin
-  #      loc.save!
-  #    rescue ActiveRecord::RecordInvalid => e
-  #      errors << "Row #{row.to_hash["name"]} - #{loc.errors.full_messages.join(', ')}"
-  #   end
-  # end
-  # errors
-  # end
   def self.import_csv(csv, organization)
     errors = []
     csv.each_with_index do |row, index|
-      puts row.to_hash
-
       loc = DonationSite.new(row.to_hash)
       loc.organization_id = organization
       if loc.save
