@@ -378,6 +378,31 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         partner.reload
         expect(partner.send_reminders).to be false
       end
+
+      it "allows documents to be uploaded" do
+        document_1 = Rails.root.join("spec/fixtures/files/distribution_program_address.pdf")
+        document_2 = Rails.root.join("spec/fixtures/files/distribution_same_address.pdf")
+        documents = [document_1, document_2]
+
+        # Upload the documents
+        visit subject
+        attach_file(documents, make_visible: true) do
+          page.find('input#partner_documents').click
+        end
+
+        # Save Progress
+        click_button "Update Partner"
+
+        # Expect documents to exist on show partner page
+        expect(page).to have_current_path(partner_path(partner.id))
+        expect(page).to have_link("distribution_program_address.pdf")
+        expect(page).to have_link("distribution_same_address.pdf")
+
+        # Expect documents to exist on edit partner page
+        visit subject
+        expect(page).to have_link("distribution_program_address.pdf")
+        expect(page).to have_link("distribution_same_address.pdf")
+      end
     end
 
     describe "#edit_profile" do

@@ -18,6 +18,8 @@ RSpec.describe "Partners", type: :request do
       let!(:partner) { create(:partner, organization: organization) }
 
       it { is_expected.to be_successful }
+
+      include_examples "restricts access to organization users/admins"
     end
 
     context "csv" do

@@ -62,4 +62,8 @@ class DonationSite < ApplicationRecord
   def deactivate!
     update!(active: false)
   end
+
+  def reactivate!
+    update!(active: true)
+  end
 end

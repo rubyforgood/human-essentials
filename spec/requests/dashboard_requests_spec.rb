@@ -8,11 +8,15 @@ RSpec.describe "Dashboard", type: :request do
     end
 
     describe "GET #show" do
+      subject { get dashboard_path }
+
       it "returns http success" do
         get dashboard_path
         expect(response).to be_successful
         expect(response.body).not_to include('switch_to_partner_role')
       end
+
+      include_examples "restricts access to organization users/admins"
 
       context 'with both roles' do
         it 'should include the switch link' do
