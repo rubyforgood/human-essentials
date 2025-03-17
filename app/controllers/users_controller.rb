@@ -1,5 +1,7 @@
 # Provides scope-limited access to viewing the data of other users
 class UsersController < ApplicationController
+  skip_before_action :require_organization, only: [:switch_to_role]
+
   def index
     @users = current_organization.users
   end

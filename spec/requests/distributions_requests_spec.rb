@@ -31,6 +31,8 @@ RSpec.describe "Distributions", type: :request do
     end
 
     describe "GET #print" do
+      subject { get print_distribution_path(id: create(:distribution).id) }
+
       it "returns http success" do
         get print_distribution_path(id: create(:distribution).id)
         expect(response).to be_successful
@@ -52,6 +54,8 @@ RSpec.describe "Distributions", type: :request do
           expect(response).to be_successful
         end
       end
+
+      include_examples "restricts access to organization users/admins"
     end
 
     describe "GET #reclaim" do
@@ -62,6 +66,7 @@ RSpec.describe "Distributions", type: :request do
     end
 
     describe "GET #index" do
+      subject { get distributions_path }
       let(:item) { create(:item, value_in_cents: 100, organization: organization) }
       let!(:distribution) { create(:distribution, :with_items, :past, item: item, item_quantity: 10, organization: organization) }
 
@@ -204,9 +209,13 @@ RSpec.describe "Distributions", type: :request do
           expect(distribution_rows.count).to eq(1)
         end
       end
+
+      include_examples "restricts access to organization users/admins"
     end
 
     describe "POST #create" do
+      subject { post distributions_path(distribution:) }
+
       let!(:storage_location) { create(:storage_location, organization: organization) }
       let!(:partner) { create(:partner, organization: organization) }
       let(:issued_at) { Time.current }
@@ -282,9 +291,12 @@ RSpec.describe "Distributions", type: :request do
           expect(flash[:error]).to include("Distribution date and time can't be blank")
         end
       end
+
+      include_examples "restricts access to organization users/admins"
     end
 
     describe "GET #new" do
+      subject { get new_distribution_path(default_params) }
       let!(:partner) { create(:partner, organization: organization) }
       let(:request) { create(:request, partner: partner, organization: organization, item_requests: item_requests) }
       let(:items) {
@@ -408,9 +420,13 @@ RSpec.describe "Distributions", type: :request do
           end
         end
       end
+
+      include_examples "restricts access to organization users/admins"
     end
 
     describe "GET #show" do
+      subject { get distribution_path(id: distribution.id) }
+
       let(:item) { create(:item, organization: organization) }
       let!(:distribution) { create(:distribution, :with_items, item: item, item_quantity: 1, organization: organization) }
 
@@ -456,9 +472,13 @@ RSpec.describe "Distributions", type: :request do
           expect(response.body).to match(/please make the following items active: #{item.name}/)
         end
       end
+
+      include_examples "restricts access to organization users/admins"
     end
 
     describe "GET #schedule" do
+      subject { get schedule_distributions_path }
+
       it "returns http success" do
         get schedule_distributions_path
         expect(response).to be_successful
@@ -467,6 +487,8 @@ RSpec.describe "Distributions", type: :request do
         hash = url.match(/\?hash=(.*)/)[1]
         expect(crypt.decrypt_and_verify(CGI.unescape(hash))).to eq(organization.id)
       end
+
+      include_examples "restricts access to organization users/admins"
     end
 
     describe 'PATCH #picked_up' do
@@ -483,10 +505,14 @@ RSpec.describe "Distributions", type: :request do
         it 'redirects the user back to the distributions page' do
           expect(subject).to redirect_to distribution_path
         end
+
+        include_examples "restricts access to organization users/admins"
       end
     end
 
     describe "GET #pickup_day" do
+      subject { get pickup_day_distributions_path }
+
       it "returns http success" do
         get pickup_day_distributions_path
         expect(response).to be_successful
@@ -520,6 +546,8 @@ RSpec.describe "Distributions", type: :request do
         expect(assigns(:daily_items).detect { |item| item[:name] == second_item.name }[:package_count]).to eq(2)
         expect(assigns(:daily_items).sum { |item| item[:package_count] }).to eq(7)
       end
+
+      include_examples "restricts access to organization users/admins"
     end
 
     context "Looking at a different organization" do
@@ -528,6 +556,7 @@ RSpec.describe "Distributions", type: :request do
     end
 
     describe "PATCH #update" do
+      subject { patch distribution_path(distribution_params) }
       let(:partner_name) { "Patrick" }
       let(:location) { create(:storage_location, organization: organization) }
       let(:partner) { create(:partner, name: partner_name, organization: organization) }
@@ -627,9 +656,13 @@ RSpec.describe "Distributions", type: :request do
           end
         end
       end
+
+      include_examples "restricts access to organization users/admins"
     end
 
     describe "GET #edit" do
+      subject { get edit_distribution_path(id: distribution.id) }
+
       let(:location) { create(:storage_location, organization: organization) }
       let(:partner) { create(:partner, organization: organization) }
 
@@ -780,6 +813,8 @@ RSpec.describe "Distributions", type: :request do
           expect(response.body).to include("<option selected=\"selected\" value=\"#{storage_location.id}\">#{test_storage_name}</option>")
         end
       end
+
+      include_examples "restricts access to organization users/admins"
     end
   end
 

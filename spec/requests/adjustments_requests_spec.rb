@@ -48,6 +48,8 @@ RSpec.describe "Adjustments", type: :request do
           expect(subject).to be_successful
         end
 
+        include_examples "restricts access to organization users/admins"
+
         context 'when filtering by date' do
           let!(:old_adjustment) { create(:adjustment, created_at: 7.days.ago) }
           let!(:new_adjustment) { create(:adjustment, created_at: 1.day.ago) }
