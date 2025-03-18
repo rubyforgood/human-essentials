@@ -100,6 +100,10 @@ RSpec.describe "Admin::Organizations", type: :request do
       it "returns http success" do
         get admin_organizations_path
         expect(response).to be_successful
+        expect(response.body).to include(organization.name)
+        expect(response.body).to include(organization.email)
+        expect(response.body).to include(organization.created_at.strftime("%Y-%m-%d"))
+        expect(response.body).to include(organization.display_last_distribution_date)
       end
     end
 
@@ -184,8 +188,11 @@ RSpec.describe "Admin::Organizations", type: :request do
         it "provides links to edit the user" do
           get admin_organization_path({ id: organization.id })
 
-          expect(response.body).to include("Edit User")
-          expect(response.body).to include(edit_admin_user_path(user.id))
+          expect(response.body).to include("Actions")
+          expect(response.body).to include('Promote to Admin')
+          expect(response.body).to include(promote_to_org_admin_organization_path(user_id: user.id))
+          expect(response.body).to include('Remove User')
+          expect(response.body).to include(remove_user_organization_path(user_id: user.id))
         end
       end
     end
