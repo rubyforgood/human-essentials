@@ -142,7 +142,7 @@ module Reports
         .distinct
         .pluck('kits.id')
     end
-
+    
     def total_distributed_kits_containing_adult_incontinence_items_per_month
       kits = Kit.where(id: distributed_kits_for_year)
 
