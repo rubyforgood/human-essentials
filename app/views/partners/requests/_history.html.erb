@@ -19,10 +19,7 @@
           <td class="p-4 d-flex flex-wrap">
             <% partner_request.item_requests.map do |item| %>
               <span class="p-1 mr-1 mb-2 lg:mb-0 border border-dark rounded-1">
-                <%= item.name %> - <%= item.quantity %>
-                <% if Flipper.enabled?(:enable_packs) && item.request_unit %>
-                  <%= item.request_unit.pluralize(item.quantity.to_i).capitalize %>
-                <% end %>
+                <%= item.quantity %> <%= item.name_with_unit %>
               </span>
             <% end %>
           </td>
