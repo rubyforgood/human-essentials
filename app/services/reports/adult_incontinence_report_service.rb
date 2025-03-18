@@ -145,10 +145,21 @@ module Reports
 
     def total_distributed_kits_containing_adult_incontinence_items_per_month
       kits = Kit.where(id: distributed_kits_for_year)
-      adult_incontinence_kits = kits.select do |kit|
-        kit.items.adult_incontinence.any?
+
+      total_assisted_adults = kits.sum do |kit|
+        adult_items = kit.items.adult_incontinence
+
+        next 0 if adult_items.empty?  
+
+        adult_items.sum do |item|
+          line_item = kit.line_items.find_by(item: item)
+          next 0 unless line_item
+
+          line_item.quantity.to_f / (item.distribution_quantity.presence || 1)
+        end
       end
-      adult_incontinence_kits.count.to_f / 12.0
+
+      total_assisted_adults / 12.0
     end
   end
 end

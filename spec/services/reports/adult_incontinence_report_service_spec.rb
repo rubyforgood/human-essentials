@@ -137,7 +137,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
         kit_distribution_addition = create(:distribution, organization: organization, issued_at: within_time)
         create(:line_item, :distribution, quantity: 50000, item: @kit_1.line_items.first.item, itemizable: kit_distribution_addition)
 
-        expect(report.adults_served_per_month).to eq(167.41666666666666)
+        expect(report.adults_served_per_month.round).to eq(168)
       end
 
       it "should return the number of loose adult incontinence supplies distributed" do
@@ -148,7 +148,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
       end
 
       it "should return the number of distributed kits only containing adult incontinence items per month" do
-        expect(report.total_distributed_kits_containing_adult_incontinence_items_per_month).to eq(0.25)
+        expect(report.total_distributed_kits_containing_adult_incontinence_items_per_month).to eq(1.25)
       end
 
       it "should return the kits distributed within a specific year" do
@@ -162,7 +162,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
         expect(report.report[:entries]).to match(hash_including({
                                           "% adult incontinence bought" => "60%",
                                           "% adult incontinence supplies donated" => "40%",
-                                          "Adults Assisted Per Month" => 209,
+                                          "Adults Assisted Per Month" => 210,
                                           "Adult incontinence supplies distributed" => "51,800.0",
                                           "Adult incontinence supplies per adult per month" => 21,
                                           "Money spent purchasing adult incontinence supplies" => "$30.00"
@@ -191,7 +191,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
                                           "% adult incontinence bought" => "60%",
                                           "% adult incontinence supplies donated" => "40%",
                                           "Adult incontinence supplies distributed" => "51,800.0",
-                                          "Adults Assisted Per Month" => 84,
+                                          "Adults Assisted Per Month" => 85,
                                           "Adult incontinence supplies per adult per month" => 51,
                                           "Money spent purchasing adult incontinence supplies" => "$30.00"
                                       }))
