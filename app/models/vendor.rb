@@ -35,6 +35,8 @@ class Vendor < ApplicationRecord
       .group(:id)
   }
 
+  before_destroy :check_for_purchases, prepend: true
+
   def volume
     LineItem.where(
       itemizable_type: "Purchase",
@@ -48,5 +50,14 @@ class Vendor < ApplicationRecord
 
   def reactivate!
     update!(active: true)
+  end
+
+  private
+
+  def check_for_purchases
+    return if purchases.empty?
+
+    errors.add(:base, "Vendor has purchase items")
+    throw(:abort)
   end
 end
