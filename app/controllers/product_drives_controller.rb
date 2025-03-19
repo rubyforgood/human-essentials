@@ -7,7 +7,7 @@ class ProductDrivesController < ApplicationController
     setup_date_range_picker
     @product_drives = current_organization
                      .product_drives
-                     .includes(:tags, donations: {line_items: :item})
+                     .includes(:tags)
                      .class_filter(filter_params)
                      .within_date_range(@selected_date_range)
                      .order(start_date: :desc)
@@ -19,12 +19,17 @@ class ProductDrivesController < ApplicationController
     @selected_name_filter = filter_params[:by_name]
     @selected_item_category = filter_params[:by_item_category_id]
     @selected_tags = filter_params[:by_tags]
+    @summary = ProductDriveSummaryService.call(
+      product_drives: @product_drives,
+      within_date_range: helpers.selected_interval,
+      item_category_id: @selected_item_category
+    )
 
     respond_to do |format|
       format.html
       format.csv do
         send_data Exports::ExportProductDrivesCSVService.new(
-          @product_drives,
+          @product_drives.unscope(:includes).includes(donations: {line_items: :item}),
           current_organization,
           helpers.selected_range
         ).generate_csv, filename: "Product-Drives-#{Time.zone.today}.csv"

@@ -53,18 +53,27 @@ RSpec.describe "Admin::UsersController", type: :request do
     end
 
     describe '#add_role' do
-      context 'with no errors' do
-        it 'should call the service and redirect back' do
+      shared_examples "add role check" do |user_factory|
+        let!(:user_to_modify) { create(user_factory, name: "User to modify", organization: organization) }
+
+        it "should call the service and redirect back", :aggregate_failures do
           allow(AddRoleService).to receive(:call)
-          post admin_user_add_role_path(user_id: user.id,
+          post admin_user_add_role_path(user_id: user_to_modify.id,
             resource_type: Role::ORG_ADMIN,
             resource_id: organization.id),
             headers: { 'HTTP_REFERER' => '/back/url'}
-          expect(AddRoleService).to have_received(:call).with(user_id: user.id.to_s,
+          expect(AddRoleService).to have_received(:call).with(user_id: user_to_modify.id.to_s,
             resource_type: Role::ORG_ADMIN.to_s,
             resource_id: organization.id.to_s)
           expect(flash[:notice]).to eq('Role added!')
           expect(response).to redirect_to('/back/url')
+        end
+      end
+
+      context 'with no errors' do
+        include_examples "add role check", :user
+        context "modifying another super admin" do
+          include_examples "add role check", :super_admin
         end
       end
 
@@ -85,16 +94,26 @@ RSpec.describe "Admin::UsersController", type: :request do
     end
 
     describe '#remove_role' do
-      context 'with no errors' do
-        it 'should call the service and redirect back' do
+      shared_examples "remove role check" do |user_factory|
+        let!(:user_to_modify) { create(user_factory, name: "User to modify", organization: organization) }
+
+        it "should call the service and redirect back", :aggregate_failures do
+          role_to_remove_id = user_to_modify.roles.find_by(name: Role::ORG_ADMIN, resource_id: organization.id).id
           allow(RemoveRoleService).to receive(:call)
-          delete admin_user_remove_role_path(user_id: user.id,
-            role_id: 123),
+          delete admin_user_remove_role_path(user_id: user_to_modify.id,
+            role_id: role_to_remove_id),
             headers: { 'HTTP_REFERER' => '/back/url'}
-          expect(RemoveRoleService).to have_received(:call).with(user_id: user.id.to_s,
-            role_id: '123')
+          expect(RemoveRoleService).to have_received(:call).with(user_id: user_to_modify.id.to_s,
+            role_id: role_to_remove_id.to_s)
           expect(flash[:notice]).to eq('Role removed!')
           expect(response).to redirect_to('/back/url')
+        end
+      end
+
+      context 'with no errors' do
+        include_examples "remove role check", :organization_admin
+        context 'modifying another super admin' do
+          include_examples "remove role check", :super_admin_org_admin
         end
       end
 
