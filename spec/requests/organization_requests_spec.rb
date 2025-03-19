@@ -538,7 +538,9 @@ RSpec.describe "Organizations", type: :request do
         let(:user) { create(:user, organization: create(:organization)) }
 
         it 'raises an error' do
-          post remove_user_organization_path(user_id: user.id)
+          # Explicitly specify the organization_name, as current_organization will not
+          # be set for super admins
+          post remove_user_organization_path(user_id: user.id, organization_name: organization.short_name)
 
           expect(response).to be_not_found
         end
