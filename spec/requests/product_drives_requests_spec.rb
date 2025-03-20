@@ -162,9 +162,10 @@ RSpec.describe "ProductDrives", type: :request do
 
       describe "pagination" do
         around do |ex|
+          old_default = Kaminari.config.default_per_page
           Kaminari.config.default_per_page = 2
           ex.run
-          Kaminari.config.default_per_page = 5
+          Kaminari.config.default_per_page = old_default
         end
 
         before do
