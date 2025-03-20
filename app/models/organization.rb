@@ -115,6 +115,7 @@ class Organization < ApplicationRecord
   ].freeze
 
   has_rich_text :default_email_text
+  has_rich_text :reminder_email_text
 
   has_one_attached :logo
 
