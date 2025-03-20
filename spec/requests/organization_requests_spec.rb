@@ -537,10 +537,13 @@ RSpec.describe "Organizations", type: :request do
       context "when user is not an org user" do
         let(:user) { create(:user, organization: create(:organization)) }
 
-        it 'raises an error' do
-          post remove_user_organization_path(user_id: user.id)
+        it "raises an error" do
+          post remove_user_organization_path(
+            user_id: user.id,
+            organization_name: organization.short_name
+          )
 
-          expect(response).to be_not_found
+          expect(response).to have_http_status(:not_found)
         end
       end
     end
