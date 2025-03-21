@@ -83,9 +83,10 @@ RSpec.describe "Purchases", type: :request do
 
         describe "pagination" do
           around do |ex|
+            old_default = Kaminari.config.default_per_page
             Kaminari.config.default_per_page = 2
             ex.run
-            Kaminari.config.default_per_page = 50
+            Kaminari.config.default_per_page = old_default
           end
           before do
             item = create(:item, organization: organization)

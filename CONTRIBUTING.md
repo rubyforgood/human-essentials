@@ -23,6 +23,10 @@ Follow [documentation](https://docs.microsoft.com/en-us/windows/wsl/install-win1
 
 Make sure to install **Ubuntu** as your Linux distribution. (This should be default.)
 
+As noted [here](https://learn.microsoft.com/en-us/windows/wsl/compare-versions#comparing-features), WSL2 performs poorly when Linux processes try to access Windows files. For that reason, it's recommended that you clone the project to a directory in the Linux file system so the app and tests don't run slowly.
+
+You might also want to try VSCode with [this WSL extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-wsl) as an IDE that can run on Windows but still access the Linux file system.
+
 **Note:** If you run into any issues with a command not running, restart your machine.
 
 

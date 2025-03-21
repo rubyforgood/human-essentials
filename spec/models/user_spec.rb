@@ -115,10 +115,12 @@ RSpec.describe User, type: :model do
       expect(build(:user, invitation_sent_at: Time.zone.parse("2018-10-10 00:00:00"), invitation_accepted_at: Time.zone.parse("2018-10-11 00:00:00"), current_sign_in_at: Time.zone.parse("2018-10-23 00:00:00")).invitation_status).to eq("joined")
     end
 
-    it "#kind" do
-      expect(create(:super_admin).kind).to eq("super")
-      expect(create(:organization_admin).kind).to eq("admin")
-      expect(create(:user).kind).to eq("normal")
+    it "#org_role" do
+      expect(create(:super_admin).org_role).to eq("normal")
+      expect(create(:super_admin_org_admin).org_role).to eq("admin")
+      expect(create(:organization_admin).org_role).to eq("admin")
+      expect(create(:user).org_role).to eq("normal")
+      expect(create(:partner_user).org_role).to eq("not a member")
     end
 
     it "#reinvitable?" do
