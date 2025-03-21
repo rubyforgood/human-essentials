@@ -816,6 +816,17 @@ RSpec.describe "Distributions", type: :request do
 
       include_examples "restricts access to organization users/admins"
     end
+
+    describe 'POST #validate' do
+      it 'should handle missing CSRF gracefully' do
+        ActionController::Base.allow_forgery_protection = true
+        post validate_partners_individuals_requests_path
+        ActionController::Base.allow_forgery_protection = false
+
+        expect(JSON.parse(response.body)).to eq({'valid' => false})
+        expect(response.status).to eq(200)
+      end
+    end
   end
 
   context "While not signed in" do
