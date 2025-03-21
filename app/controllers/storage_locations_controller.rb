@@ -57,18 +57,19 @@ class StorageLocationsController < ApplicationController
   # TODO: Move these queries to Query Object
   def show
     @storage_location = current_organization.storage_locations.find(params[:id])
+    version_date = params[:version_date].presence&.to_date
     # TODO: Find a way to do these with less hard SQL. These queries have to be manually updated because they're not in-sync with the Model
     @items_out = ItemsOutQuery.new(organization: current_organization, storage_location: @storage_location).call
     @items_out_total = ItemsOutTotalQuery.new(organization: current_organization, storage_location: @storage_location).call
     @items_in = ItemsInQuery.new(organization: current_organization, storage_location: @storage_location).call
     @items_in_total = ItemsInTotalQuery.new(organization: current_organization, storage_location: @storage_location).call
-    if View::Inventory.within_snapshot?(current_organization.id, params[:version_date])
-      @inventory = View::Inventory.new(current_organization.id, event_time: params[:version_date])
+    if View::Inventory.within_snapshot?(current_organization.id, version_date)
+      @inventory = View::Inventory.new(current_organization.id, event_time: version_date)
     else
       @legacy_inventory = View::Inventory.legacy_inventory_for_storage_location(
         current_organization.id,
         @storage_location.id,
-        params[:version_date]
+        version_date
       )
     end
 
