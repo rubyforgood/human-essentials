@@ -67,9 +67,10 @@
                   <%= f.input_field :short_name, disabled: true, class: "form-control" %>
                 <% end %>
                 <%= f.input :ndbn_member, label: "NDBN membership ID", wrapper: :input_group do %>
-                  <%= f.association :ndbn_member, label_method: :full_name, value_method: :id, label: false %>
+                  <div class="mb-n3"> <%# Removes "margin-bottom: 1rem" added by "form-group" class below %>
+                    <%= f.association :ndbn_member, label_method: :full_name, value_method: :id, label: false %>
+                  </div>
                 <% end %>
-                <%# TODO: remove extra margin below NDBN membership ID input %>
                 <%= f.input :url, label: "URL", wrapper: :input_group do %>
                   <span class="input-group-text"><i class="fa fa-link"></i></span>
                   <%= f.input_field :url, class: "form-control", placeholder: "http://www.example.com" %>
@@ -85,7 +86,7 @@
                   <%= f.input_field :state, collection: us_states, class: "form-control", placeholder: "state" %>
                   <%= f.input_field :zipcode, class: "form-control", placeholder: "zipcode" %>
                 <% end %>
-                <%= f.input :logo, wrapper: :input_group do %>
+                <%= f.input :logo do %>
                   <% if current_organization.logo.attached? %>
                     <div>
                       <p>
@@ -97,14 +98,13 @@
                         </a>
                       </p>
                       <div id="showTheLogo" class="modal fade">
-                        <div class="modal-dialog">
+                        <div class="modal-dialog gap-2">
                           <%= image_tag current_organization.logo, class: "thumbnail" %>
                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         </div>
                       </div>
                     </div>
-                    <label class="control-label">Update Logo</label>
-                    <%# TODO Put Update Logo on new line %>
+                    <label class="control-label mr-2">Update Logo</label>
                   <% end %>
                   <%= f.input_field :logo, as: :file %>
                   <p class="help-block">
