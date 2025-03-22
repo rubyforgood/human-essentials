@@ -1,6 +1,6 @@
 module Exports
   class ExportDonationsCSVService
-    def initialize(donation_ids:)
+    def initialize(donation_ids:, organization:)
       # Use a where lookup so that I can eager load all the resources
       # needed rather than depending on external code to do it for me.
       # This makes this code more self contained and efficient!
@@ -13,6 +13,11 @@ module Exports
       ).where(
         id: donation_ids,
       ).order(created_at: :asc)
+
+      @organization = organization
+
+      @export_line_item_adder = Exports::ExportLineItemColumnsAdder.new
+      @export_line_item_adder.register(Exports::ExportInKindTotalValue) if @organization.include_in_kind_values_in_exported_files
     end
 
     def generate_csv
@@ -80,7 +85,7 @@ module Exports
         "Variety of Items" => ->(donation) {
           donation.line_items.map(&:name).uniq.size
         },
-        "In-Kind Value" => ->(donation) {
+        "In-Kind Total" => ->(donation) {
           donation.in_kind_value_money
         },
         "Comments" => ->(donation) {
@@ -105,18 +110,14 @@ module Exports
       end
 
       @item_headers = item_names.sort
+
+      @item_headers = @export_line_item_adder.headers(@item_headers)
     end
 
     def build_row_data(donation)
       row = base_table.values.map { |closure| closure.call(donation) }
 
-      row += Array.new(item_headers.size, 0)
-
-      donation.line_items.each do |line_item|
-        item_name = line_item.item.name
-        item_column_idx = headers_with_indexes[item_name]
-        row[item_column_idx] += line_item.quantity
-      end
+      row += @export_line_item_adder.get_row(donation.line_items)
 
       row
     end
