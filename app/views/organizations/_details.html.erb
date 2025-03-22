@@ -17,20 +17,20 @@
             <div>
               <h6 class="font-weight-bold">Short name</h6>
               <p>
-                <%= @organization.short_name || "Not Provided" %>
+                <%= @organization.short_name || "Not defined" %>
               </p>
             </div>
             <div>
               <h6 class="font-weight-bold">NDBN membership ID</h6>
               <p>
-                <%= @organization.ndbn_member&.full_name || "Not Provided" %>
+                <%= @organization.ndbn_member&.full_name || "Not defined" %>
               </p>
             </div>
             <div>
             <h6 class="font-weight-bold">URL</h6>
               <p>
                 <% if @organization.url.blank? %>
-                  Not Provided
+                  Not defined
                 <% else %>
                   <a href="<%= @organization.url %>">
                     <%= fa_icon "external-link" %>
@@ -43,7 +43,7 @@
               <p>
                 <%= fa_icon "envelope" %>
                 <% if @organization.email.blank? %>
-                  Not Provided
+                  Not defined
                 <% else %>
                   <%= link_to @organization.email, "mailto:#{@organization.email}",
                               aria: { label: "Email organization - opens in new tab" } %>
@@ -54,7 +54,7 @@
               <h6 class="font-weight-bold">Address</h6>
               <address class="mb-0"><%= fa_icon "map-marker" %>
                 <% if @organization.address.blank? %>
-                    Not provided
+                    Not defined
                 <% else %>
                     <%= @organization.address %>
                 </address>
@@ -81,7 +81,7 @@
                   </div>
                 </div>
               <% else %>
-                <p>Not Provided</p>
+                <p>Not defined</p>
               <% end %>
             </div>
             <hr>
@@ -119,7 +119,7 @@
             <div>
               <h6 class="font-weight-bold">Partner Profile sections</h6>
                 <% if @organization.partner_form_fields.blank? %>
-                  <p>Not Provided</p>
+                  <p>Not defined</p>
                 <% else %>
                   <ul>
                     <% for partner_form_field in @organization.partner_form_fields %>
