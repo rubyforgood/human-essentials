@@ -9,25 +9,25 @@
           </div>
 
           <div class="card-body md:flex sm:block">
-            <h2>Basic Information</h2>
+            <h4>Basic information</h4>
             <div>
-              <h5>Name</h5>
+              <h6 class="font-weight-bold">Name</h6>
               <p><%= current_organization&.name %></p>
             </div>
             <div>
-              <h5>Short Name</h5>
+              <h6 class="font-weight-bold">Short name</h6>
               <p>
                 <%= @organization.short_name || "Not Provided" %>
               </p>
             </div>
             <div>
-              <h5>NDBN Membership ID</h5>
+              <h6 class="font-weight-bold">NDBN membership ID</h6>
               <p>
                 <%= @organization.ndbn_member&.full_name || "Not Provided" %>
               </p>
             </div>
             <div>
-            <h5>URL</h5>
+            <h6 class="font-weight-bold">URL</h6>
               <p>
                 <% if @organization.url.blank? %>
                   Not Provided
@@ -39,7 +39,7 @@
               </p>
             </div>
             <div>
-              <h5>Email</h5>
+              <h6 class="font-weight-bold">Email</h6>
               <p>
                 <%= fa_icon "envelope" %>
                 <% if @organization.email.blank? %>
@@ -51,7 +51,7 @@
               </p>
             </div>
             <div>
-              <h5>Address</h5>
+              <h6 class="font-weight-bold">Address</h6>
               <address class="mb-0"><%= fa_icon "map-marker" %>
                 <% if @organization.address.blank? %>
                     Not provided
@@ -62,7 +62,7 @@
               </p>
             </div>
             <div>
-              <h5>Logo</h5>
+              <h6 class="font-weight-bold">Logo</h6>
               <% if @organization.logo.attached? %>
                 <div>
                   <p>
@@ -86,16 +86,16 @@
             </div>
             <hr>
 
-            <h2>Storage</h2>
+            <h4>Storage</h4>
             <div>
-              <h5>Default Intake Storage Location (for donations and purchases)</h5>
+              <h6 class="font-weight-bold">Default intake Storage Location (for Donations and Purchases)</h6>
               <p>
                 <%= fa_icon "building" %>
                 <%= @intake_storage_location&.name || "Not defined" %>
               </p>
             </div>
             <div>
-              <h5>Default Storage Location</h5>
+              <h6 class="font-weight-bold">Default Storage Location</h6>
               <p>
                 <%= fa_icon "building-o" %>
                 <%= @default_storage_location&.name || "Not defined" %>
@@ -103,21 +103,21 @@
             </div>
             <hr>
 
-            <h2>Partner Approval Process</h2>
+            <h4>Partner approval process</h4>
             <div>
-              <h5>Use One step Partner invite and approve process?</h5>
+              <h6 class="font-weight-bold">Use one-step Partner invite and approve process?</h6>
               <p>
                 <%= humanize_boolean(@organization.one_step_partner_invite) %>
               </p>
             </div>
             <div>
-              <h5>Custom Partner Invitation message</h5>
+              <h6 class="font-weight-bold">Custom Partner invitation message</h6>
               <p>
                 <%= @organization.invitation_text.blank? ? "Not defined" : @organization.invitation_text %>
               </p>
             </div>
             <div>
-              <h5>Partner Profile Sections</h5>
+              <h6 class="font-weight-bold">Partner Profile sections</h6>
                 <% if @organization.partner_form_fields.blank? %>
                   <p>Not Provided</p>
                 <% else %>
@@ -133,23 +133,23 @@
             </div>
             <hr>
 
-            <h2>What kind of requests can approved partners make?</h2>
+            <h4>What kind of Requests can approved Partners make?</h4>
             <div>
-              <h5>Enable partners to make child-based requests?</h5>
+              <h6 class="font-weight-bold">Enable Partners to make child-based Requests?</h6>
               <p>
                 <%= fa_icon "child" %>
                 <%= humanize_boolean(@organization.enable_child_based_requests) %>
               </p>
             </div>
             <div>
-              <h5>Enable partners to make requests by indicating number of individuals needing each item?</h5>
+              <h6 class="font-weight-bold">Enable Partners to make Requests by indicating number of individuals needing each item?</h6>
               <p>
                 <%= fa_icon "female" %>
                 <%= humanize_boolean(@organization.enable_individual_requests) %>
               </p>
             </div>
             <div>
-              <h5>Enable partners to make quantity-based requests?</h5>
+              <h6 class="font-weight-bold">Enable Partners to make quantity-based Requests?</h6>
               <p>
                 <%= fa_icon "group" %>
                 <%= humanize_boolean(@organization.enable_quantity_based_requests) %>
@@ -157,7 +157,7 @@
             </div>
             <% if Flipper.enabled?(:enable_packs) %>
               <div>
-                <h5>Custom request units used (please use singular form -- e.g. pack, not packs)</h5>
+                <h6 class="font-weight-bold">Custom Request units used (please use singular form -- e.g. pack, not packs)</h6>
                 <p>
                   <% if @organization.request_units.length > 0 %>
                     <% @organization.request_units.map do |unit| %>
@@ -174,73 +174,73 @@
               </div>
             <% end %>
             <div class="mb-4">
-              <h5>Receive email when partner makes a request?</h5>
+              <h6 class="font-weight-bold">Receive email when Partner makes a Request?</h6>
               <p>
                 <%= humanize_boolean(@organization.receive_email_on_requests) %>
               </p>
             </div>
             <hr>
 
-            <h2>Other Emails</h2>
+            <h4>Other emails</h4>
             <div>
-              <h5>Default Reminder day (Day of month an email reminder to submit requests is sent to partners)</h5>
+              <h6 class="font-weight-bold">Default reminder day (day of month an email reminder to submit Requests is sent to Partners)</h6>
               <p>
                 <%= fa_icon "calendar" %>
                 <%= @organization.reminder_day.blank? ? 'Not defined' : "The #{@organization.reminder_day.ordinalize} of each month" %>
               </p>
             </div>
             <div>
-              <h5>Default Deadline day (Final day of month to submit requests)</h5>
+              <h6 class="font-weight-bold">Default deadline day (final day of month to submit Requests)</h6>
               <p>
                 <%= fa_icon "calendar" %>
                 <%= @organization.deadline_day.blank? ? 'Not defined' : "The #{@organization.deadline_day.ordinalize} of each month" %>
               </p>
             </div>
             <div>
-              <h5>Default Email Content</h5>
+              <h6 class="font-weight-bold">Default email content</h6>
               <p>
                 <%= @organization.default_email_text.presence || 'Not defined' %>
               </p>
             </div>
             <hr>
 
-            <h2>Printing</h2>
+            <h4>Printing</h4>
             <div>
-              <h5>Show year-to-date values on distribution printout</h5>
+              <h6 class="font-weight-bold">Show year-to-date values on Distribution printout?</h6>
               <p>
                 <%= humanize_boolean(@organization.ytd_on_distribution_printout) %>
               </p>
             </div>
             <div>
-              <h5>Include signature lines on distribution printout</h5>
+              <h6 class="font-weight-bold">Include signature lines on Distribution printout?</h6>
               <p>
                 <%= humanize_boolean(@organization.signature_for_distribution_pdf) %>
               </p>
             </div>
             <div>
-              <h5>Hide value columns on distribution and donation printout</h5>
+              <h6 class="font-weight-bold">Hide value columns on Distribution and Donation printout?</h6>
               <p>
                 <%= humanize_boolean(@organization.hide_value_columns_on_receipt) %>
               </p>
             </div>
             <div>
-              <h5>Hide package column on distribution printout</h5>
+              <h6 class="font-weight-bold">Hide package column on Distribution printout?</h6>
               <p>
                 <%= humanize_boolean(@organization.hide_package_column_on_receipt) %>
               </p>
             </div>
             <hr>
 
-            <h2>For Annual Survey</h2>
+            <h4>Annual Survey</h4>
             <div>
-              <h5>Does your bank repackage essentials?</h5>
+              <h6 class="font-weight-bold">Does your Bank repackage essentials?</h6>
               <p>
                 <%= fa_icon "inbox" %>
                 <%= humanize_boolean(@organization.repackage_essentials) %>
               </p>
             </div>
             <div>
-              <h5>Does your bank distribute monthly?</h5>
+              <h6 class="font-weight-bold">Does your Bank distribute monthly?</h6>
               <p>
                 <%= fa_icon "paper-plane" %>
                 <%= humanize_boolean(@organization.distribute_monthly) %>
