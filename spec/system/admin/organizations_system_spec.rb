@@ -149,7 +149,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
 
       expect(page).to have_content("Organization Info")
       expect(page).to have_content("Address")
-      expect(page).to have_content("Default email content")
+      expect(page).to have_content("Distribution email content")
       expect(page).to have_content("Users")
       expect(page).to have_content("Receive email when Partner makes a Request?")
     end
