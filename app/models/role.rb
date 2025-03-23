@@ -44,6 +44,10 @@ class Role < ApplicationRecord
     partner: ::Partner
   }.freeze
 
+  ROLES_WITHOUT_RESOURCE = [
+    SUPER_ADMIN
+  ].freeze
+
   # @return [String]
   def title
     TITLES[name.to_sym]

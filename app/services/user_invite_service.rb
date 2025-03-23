@@ -9,9 +9,9 @@ module UserInviteService
     # Because only one resource can be passed, currently the only case where
     # multiple roles being based makes sense is ORG_USER and ORG_ADMIN.
 
-    # Resource can be nil when the only role being added is the SUPER_ADMIN role.
-    # binding.pry
-    raise "Resource not found!" if resource.nil? && roles.first.to_s != Role::SUPER_ADMIN.to_s
+    # Resource can be nil when the only role being added is one which doesn't
+    # require a resource
+    raise "Resource not found!" if resource.nil? && Role::ROLES_WITHOUT_RESOURCE.all? { |role| role.to_s != roles.first.to_s }
 
     # A user with the ORG_ADMIN role should also always have the ORG_USER role.
     # The logic is placed here instead of relying on the AddRoleService, as that
