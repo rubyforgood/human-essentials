@@ -36,9 +36,12 @@ RSpec.describe "Vendors", type: :request do
 
         it "should have a delete button for no_purchases_vendor and a deactivate button for purchase_vendor" do
           subject
-          parsed_body = Capybara::Node::Simple.new(response.body)
-          expect(parsed_body).to have_css("tr[data-vendor-id='#{no_purchases_vendor.id}'] a", text: "Delete")
-          expect(parsed_body).to have_css("tr[data-vendor-id='#{purchase_vendor.id}'] a", text: "Deactivate")
+          parsed_body = Nokogiri::HTML(response.body)
+          no_purchases_vendor_row = parsed_body.css("tr").find { |row| row.text.include?(no_purchases_vendor.business_name) }
+          purchase_vendor_row = parsed_body.css("tr").find { |row| row.text.include?(purchase_vendor.business_name) }
+
+          expect(no_purchases_vendor_row.at_css("a", text: "Delete")).not_to be_nil
+          expect(purchase_vendor_row.at_css("a", text: "Deactivate")).not_to be_nil
         end
       end
 
