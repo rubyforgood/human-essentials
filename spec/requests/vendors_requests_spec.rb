@@ -40,8 +40,8 @@ RSpec.describe "Vendors", type: :request do
           no_purchases_vendor_row = parsed_body.css("tr").find { |row| row.text.include?(no_purchases_vendor.business_name) }
           purchase_vendor_row = parsed_body.css("tr").find { |row| row.text.include?(purchase_vendor.business_name) }
 
-          expect(no_purchases_vendor_row.at_css("a", text: "Delete")).not_to be_nil
-          expect(purchase_vendor_row.at_css("a", text: "Deactivate")).not_to be_nil
+          expect(no_purchases_vendor_row.at_css("a", text: "Delete")).to be_present
+          expect(purchase_vendor_row.at_css("a", text: "Deactivate")).to be_present
         end
       end
 
