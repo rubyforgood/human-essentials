@@ -45,7 +45,7 @@
 
                         <div data-controller="role-resource">
                           <label>Role Type</label>
-                            <%= select_tag :resource_type, options_for_select(@resources),
+                            <%= select_tag :resource_type, options_for_select(Role::TITLES.invert),
                               class: 'select form-control', data: {
                                 'double-select-target': 'source',
                                 'role-resource-target': 'source',
