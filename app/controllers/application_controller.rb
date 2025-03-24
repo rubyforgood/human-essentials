@@ -24,12 +24,12 @@ class ApplicationController < ActionController::Base
     return @current_organization if instance_variable_defined? :@current_organization
 
     @current_organization = if !current_role
-      nil
-    elsif current_role.resource.is_a?(Organization)
-      current_role.resource
-    else
-      Organization.find_by(short_name: params[:organization_name])
-    end
+                              nil
+                            elsif current_role.resource.is_a?(Organization)
+                              current_role.resource
+                            else
+                              Organization.find_by(short_name: params[:organization_name])
+                            end
   end
   helper_method :current_organization
 
@@ -37,10 +37,10 @@ class ApplicationController < ActionController::Base
     return @current_partner if instance_variable_defined? :@current_partner
 
     @current_partner = if !current_role || current_role.name.to_sym != Role::PARTNER
-      nil
-    else
-      current_role.resource
-    end
+                         nil
+                       else
+                         current_role.resource
+                       end
   end
   helper_method :current_partner
 
@@ -48,10 +48,10 @@ class ApplicationController < ActionController::Base
     return @role if instance_variable_defined? :@role
 
     @role = if !current_user
-      nil
-    else
-      Role.find_by(id: session[:current_role]) || UsersRole.current_role_for(current_user)
-    end
+              nil
+            else
+              Role.find_by(id: session[:current_role]) || UsersRole.current_role_for(current_user)
+            end
   end
 
   def dashboard_path_from_current_role
@@ -142,6 +142,10 @@ class ApplicationController < ActionController::Base
     @selected_date_interval = helpers.selected_interval
     @selected_date_range = helpers.selected_interval.map { |d| d.to_fs(:long) }.join(" - ")
     @selected_date_range_label = helpers.date_range_label
+
+    if helpers.date_range_params_invalid?
+      flash.now[:error] = "The date range you supplied was invalid, so we used a default range instead."
+    end
   end
 
   def configure_permitted_parameters
