@@ -10,13 +10,13 @@ module UserInviteService
     # multiple roles being based makes sense is ORG_USER and ORG_ADMIN.
 
     # Resource can be nil when the only role(s) being added don't require a resource
-    raise "Resource not found!" if resource.nil? && roles.map(&:to_s).any? { |role| !Role::ROLES_WITHOUT_RESOURCE.map(&:to_s).include?( role ) }
+    raise "Resource not found!" if resource.nil? && roles.map(&:to_s).any? { |role| !Role::ROLES_WITHOUT_RESOURCE.map(&:to_s).include?(role) }
 
     # A user with the ORG_ADMIN role should also always have the ORG_USER role.
     # The logic is placed here instead of relying on the AddRoleService, as that
     # currently only accepts users by id, and new user will not have an id
     # until after they are invited.
-    if roles.map(&:to_s).include?( Role::ORG_ADMIN.to_s )
+    if roles.map(&:to_s).include?(Role::ORG_ADMIN.to_s)
       roles.append(Role::ORG_USER.to_s)
     end
 

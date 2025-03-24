@@ -24,7 +24,7 @@ RSpec.describe UserInviteService, type: :service do
         resource: nil
       )
     }.to raise_error("Resource not found!")
-  end 
+  end
 
   context "with existing user" do
     let!(:user) do
