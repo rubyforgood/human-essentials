@@ -51,6 +51,15 @@ RSpec.describe "ProductDrives", type: :request do
         let(:index_path) { product_drives_path(params) }
       end
 
+      it "falls back to default date range and renders without error when given an invalid date_range param" do
+        get product_drives_path(format: :html, params: {
+          filters: { date_range: "Foo 10, 2025 - Bar 20, 2025" }
+        })
+
+        expect(response).to be_successful
+        expect(response.body).to include("The date range you supplied was invalid")
+      end
+
       context "csv" do
         it 'is successful' do
           get product_drives_path(format: :csv)

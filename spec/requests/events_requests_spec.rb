@@ -211,6 +211,16 @@ RSpec.describe "Events", type: :request do
           expect(response.body).to include("88<br>")
           expect(response.body).not_to include("99<br>")
         end
+
+        it "falls back to default date range and renders without error when given an invalid date_range param" do
+          get events_path(format: :html, params: {
+            filters: { date_range: "Foo 10, 2025 - Bar 20, 2025" }
+          })
+
+          expect(response).to be_successful
+          expect(response.body).to include("The date range you supplied was invalid")
+        end
+
       end
 
       context "with eventable_id" do
