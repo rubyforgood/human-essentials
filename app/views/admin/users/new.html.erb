@@ -43,15 +43,15 @@
 
                       <div data-controller="double-select" data-double-select-url-value="<%= resource_ids_admin_users_url %>">
 
-                        <div data-controller="role-resource" data-role-resource-valuestohide-value="<%= Role::ROLES_WITHOUT_RESOURCE.to_json %>">
+                        <div data-controller="hide-by-source-val" data-hide-by-source-val-valuestohide-value="<%= Role::ROLES_WITHOUT_RESOURCE.to_json %>">
                           <label>Role Type</label>
                             <%= select_tag :resource_type, options_for_select(Role::TITLES.invert),
                               class: 'select form-control', data: {
                                 'double-select-target': 'source',
-                                'role-resource-target': 'source',
-                                'action': 'role-resource#sourceChanged double-select#sourceChanged'
+                                'hide-by-source-val-target': 'source',
+                                'action': 'hide-by-source-val#sourceChanged double-select#sourceChanged'
                             } %>
-                          <div data-role-resource-target="destination">
+                          <div data-hide-by-source-val-target="destination">
                             <label>Resource</label>
                             <div class="input-group">
                               <%= select_tag :resource_id, [], class: 'form-control', data: {
