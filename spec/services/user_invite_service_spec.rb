@@ -16,6 +16,16 @@ RSpec.describe UserInviteService, type: :service do
     }.to raise_error("Resource not found!")
   end
 
+  it "should raise an error if required resource is not provided for any submitted role" do
+    expect {
+      described_class.invite(
+        email: "email@email.com",
+        roles: [Role::SUPER_ADMIN, Role::ORG_ADMIN],
+        resource: nil
+      )
+    }.to raise_error("Resource not found!")
+  end 
+
   context "with existing user" do
     let!(:user) do
       create(:user, email: "email@email.com", organization: organization)
