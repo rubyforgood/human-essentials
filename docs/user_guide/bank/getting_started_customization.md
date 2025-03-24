@@ -124,7 +124,7 @@ Note that if any Partner limits themselves to a single type,  you won't be able 
 
 #### Enable Partners to make child-based Requests?
 
-#### Enable Partners to make Requests by indicating number of individuals needing each item?
+#### Enable Partners to make Requests by indicating number of individuals needing each Item?
 
 #### Enable Partners to make quantity-based Requests?
 
@@ -133,9 +133,6 @@ Note that if any Partner limits themselves to a single type,  you won't be able 
 NOTE:  This is not yet implemented as of Oct 12, 2024. We expect it to be implemented before this guide is launched.
 
 This is a special topic that has its own guide page [here](special_custom_units.md).
-
-#### Receive email when Partner makes a Request?
-If "yes", your organization's email address will be CCed on the request confirmation email partners receive when submitting a request to your organization.  This will be "no" by default, so you must opt into receiving these emails.
 
 
 ## Other emails
@@ -169,6 +166,10 @@ See you soon!
 %{comment}
 
 -----
+
+#### Receive email when Partner makes a Request?
+If "yes", your organization's email address will be CCed on the request confirmation email partners receive when submitting a request to your organization.  This will be "no" by default, so you must opt into receiving these emails.
+
 
 ## Printing
 There are four fields that allow you to tweak the appearance of the Distribution printout

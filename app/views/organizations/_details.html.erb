@@ -142,7 +142,7 @@
               </p>
             </div>
             <div>
-              <h6 class="font-weight-bold">Enable Partners to make Requests by indicating number of individuals needing each item?</h6>
+              <h6 class="font-weight-bold">Enable Partners to make Requests by indicating number of individuals needing each Item?</h6>
               <p>
                 <%= fa_icon "female" %>
                 <%= humanize_boolean(@organization.enable_individual_requests) %>
@@ -173,12 +173,6 @@
                 </p>
               </div>
             <% end %>
-            <div class="mb-4">
-              <h6 class="font-weight-bold">Receive email when Partner makes a Request?</h6>
-              <p>
-                <%= humanize_boolean(@organization.receive_email_on_requests) %>
-              </p>
-            </div>
             <hr>
 
             <h4>Other emails</h4>
@@ -198,9 +192,15 @@
             </div>
             <div>
               <h6 class="font-weight-bold">Distribution email content</h6>
-              <div class="border rounded p-2">
+              <div class="border rounded p-2 mb-3">
                 <%= @organization.default_email_text.presence || 'Not defined' %>
               </div>
+            </div>
+            <div class="mb-4">
+              <h6 class="font-weight-bold">Receive email when Partner makes a Request?</h6>
+              <p>
+                <%= humanize_boolean(@organization.receive_email_on_requests) %>
+              </p>
             </div>
             <hr>
 
