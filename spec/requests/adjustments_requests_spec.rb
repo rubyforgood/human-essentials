@@ -77,7 +77,6 @@ RSpec.describe "Adjustments", type: :request do
           expect(response).to be_successful
           expect(response.body).to include("The date range you supplied was invalid")
         end
-
       end
 
       context "csv" do
