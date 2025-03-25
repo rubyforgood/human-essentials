@@ -57,7 +57,7 @@
                   <li>
                     <%= item.name %> - <%= item.quantity %>
                     <% if Flipper.enabled?(:enable_packs) && item.request_unit %>
-                      <%= item.request_unit.pluralize(item.quantity.to_i).capitalize %>
+                      <%= item.request_unit.pluralize(item.quantity.to_i) %>
                     <% end %>
                   </li>
                 <% end %>
