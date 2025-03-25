@@ -177,8 +177,8 @@ RSpec.describe "/partners/requests", type: :request do
       Flipper.enable(:enable_packs)
       get partners_request_path(request)
       expect(response.body).to match(/First item - 125/m)
-      expect(response.body).to match(/Second item - 559\s+Flats/m)
-      expect(response.body).to match(/Third item - 1\s+Flat/m)
+      expect(response.body).to match(/Second item - 559\s+flats/m)
+      expect(response.body).to match(/Third item - 1\s+flat/m)
 
       Flipper.disable(:enable_packs)
       get partners_request_path(request)
