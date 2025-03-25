@@ -11,7 +11,7 @@ RSpec.describe Partners::FamilyRequestsController, type: :request do
 
   before { sign_in(partner_user) }
 
-  describe 'GET #new' do
+  describe "GET #new" do
     subject { get new_partners_family_request_path }
 
     it "does not allow deactivated partners" do
@@ -27,7 +27,7 @@ RSpec.describe Partners::FamilyRequestsController, type: :request do
     end
   end
 
-  describe 'POST #create' do
+  describe "POST #create" do
     before do
       # Set one child as deactivated and the other as active but
       # without a item_needed_diaperid
@@ -64,6 +64,17 @@ RSpec.describe Partners::FamilyRequestsController, type: :request do
       expect(Partners::ChildItemRequest.find_by(child_id: children[0].id)).to be_present
       expect(Partners::ChildItemRequest.find_by(child_id: children[1].id)).to be_nil
       expect(Partners::ChildItemRequest.find_by(child_id: children[2].id)).to be_present
+    end
+  end
+
+  describe "POST #validate" do
+    it "should handle missing CSRF gracefully" do
+      ActionController::Base.allow_forgery_protection = true
+      post validate_partners_family_requests_path
+      ActionController::Base.allow_forgery_protection = false
+
+      expect(JSON.parse(response.body)).to eq({"valid" => false})
+      expect(response.status).to eq(200)
     end
   end
 end
