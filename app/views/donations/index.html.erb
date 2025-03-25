@@ -111,7 +111,7 @@
                   <th>Money Raised</th>
                   <th>In Kind Value</th>
                   <th>Comments</th>
-                  <th>Actions</th>
+                  <th class="text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -125,14 +125,25 @@
                 <td></td>
                 <td class="text-left numeric">
                   <strong id="donation_quantity">
-                    <%= @donations_quantity %> (Total)
+                    <%= @donations_quantity %> 
+                    <br>
+                    (Total)
                   </strong>
                   <br>
-                  <%= @paginated_donations_quantity %> (This page)
+                  <%= @paginated_donations_quantity %>
+                  <br> 
+                  (This page)
                 </td>
                 <td class="text-left numeric"><strong><%= dollar_value(@total_money_raised) %></strong></td>
-                <td class="text-left numeric"><strong><%= dollar_value(@total_value_all_donations) %></strong></td>
-                <td></td>
+                <td class="text-left numeric">
+                  <strong id="in_kind_value">
+                    <%= dollar_value(@total_value_all_donations) %> (Total)
+                  </strong>
+                  <br>
+                  <%= dollar_value(@paginated_in_kind_value) %>
+                  <br>
+                   (This page)
+                </td>
               </tr>
               </tfoot>
             </table>
