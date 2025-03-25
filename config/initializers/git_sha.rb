@@ -1,1 +1,1 @@
-ENV['GIT_SHA'] = `cat #{Rails.root}/REVISION`
+ENV['GIT_SHA'] = File.read(File.join(Rails.root, "REVISION")).strip if File.exist?(File.join(Rails.root, "REVISION"))

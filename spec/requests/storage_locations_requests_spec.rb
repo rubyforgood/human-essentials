@@ -324,6 +324,17 @@ RSpec.describe "StorageLocations", type: :request do
           expect(response.body).to include("200")
         end
 
+        it "should return a correct response with empty version date param" do
+          get storage_location_path(storage_location, format: response_format,
+            version_date: '')
+          expect(response).to be_successful
+          expect(response.body).to include("Smithsonian")
+          expect(response.body).to include("Test Item")
+          expect(response.body).to include("Test Item2")
+          expect(response.body).not_to include("Test Item3")
+          expect(response.body).to include("200")
+        end
+
         context "with version date set" do
           let!(:inventory_item) {
             InventoryItem.create!(storage_location_id: storage_location.id,

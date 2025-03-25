@@ -542,7 +542,7 @@ RSpec.describe "Organizations", type: :request do
           # be set for super admins
           post remove_user_organization_path(user_id: user.id, organization_name: organization.short_name)
 
-          expect(response).to be_not_found
+          expect(response).to have_http_status(:not_found)
         end
       end
     end
