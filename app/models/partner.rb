@@ -126,17 +126,6 @@ class Partner < ApplicationRecord
     errors
   end
 
-  def contact_person
-    return @contact_person if @contact_person
-
-    @contact_person = {
-      name: profile.primary_contact_name,
-      email: profile.primary_contact_email,
-      phone: profile.primary_contact_phone ||
-             profile.primary_contact_mobile
-    }
-  end
-
   def agency_info
     return @agency_info if @agency_info
 

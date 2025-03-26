@@ -26,7 +26,7 @@ module Exports
     def headers
       base_table.keys
     end
-
+    
     def base_table
       table = {
         "Agency Name" => ->(partner) { partner.name },
@@ -37,9 +37,10 @@ module Exports
         "Agency Zip Code" => ->(partner) { partner.agency_info[:zip_code] },
         "Agency Website" => ->(partner) { partner.agency_info[:website] },
         "Agency Type" => ->(partner) { partner.agency_info[:agency_type] },
-        "Contact Name" => ->(partner) { partner.contact_person[:name] },
-        "Contact Phone" => ->(partner) { partner.contact_person[:phone] },
-        "Contact Email" => ->(partner) { partner.contact_person[:email] },
+        "Contact Name" => ->(partner) { partner.profile.primary_contact_name },
+        "Contact Phone" => ->(partner) { partner.profile.primary_contact_phone },
+        "Contact Cell" => ->(partner) { partner.profile.primary_contact_mobile },
+        "Contact Email" => ->(partner) { partner.profile.primary_contact_email },
         "Agency Mission" => ->(partner) { partner.profile.agency_mission }, # The agency_information and partner_settings partials are always shown
         "Child-based Requests" => ->(partner) { partner.profile.enable_child_based_requests },
         "Individual Requests" => ->(partner) { partner.profile.enable_individual_requests },
@@ -109,10 +110,6 @@ module Exports
         table["Executive Director Name"] = ->(partner) { partner.profile.executive_director_name }
         table["Executive Director Phone"] = ->(partner) { partner.profile.executive_director_phone }
         table["Executive Director Email"] = ->(partner) { partner.profile.executive_director_email }
-        table["Primary Contact Name"] = ->(partner) { partner.profile.primary_contact_name }
-        table["Primary Contact Phone"] = ->(partner) { partner.profile.primary_contact_phone }
-        table["Primary Contact Cell"] = ->(partner) { partner.profile.primary_contact_mobile }
-        table["Primary Contact Email"] = ->(partner) { partner.profile.primary_contact_email }
       end
 
       if @partials_to_show.include? "pick_up_person"
