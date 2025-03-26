@@ -39,7 +39,7 @@ RSpec.describe "Partners profile served area behaviour", type: :system, js: true
         expect(page).to have_selector("#request_item_requests_attributes_0_request_unit", visible: true)
         expect(page).to have_select("request_item_requests_attributes_0_request_unit",
           selected: "Please select a unit",
-          options: ["Please select a unit", "Units", "packs"])
+          options: ["Please select a unit", "units", "packs"])
         fill_in "request_item_requests_attributes_0_quantity", with: 50
         click_on "Submit Essentials Request"
 
@@ -55,7 +55,7 @@ RSpec.describe "Partners profile served area behaviour", type: :system, js: true
         expect(page).to have_selector("#request_item_requests_attributes_0_request_unit", visible: true)
         expect(page).to have_select("request_item_requests_attributes_0_request_unit",
           selected: "Please select a unit",
-          options: ["Please select a unit", "Units", "packs"])
+          options: ["Please select a unit", "units", "packs"])
         select "packs", from: "request_item_requests_attributes_0_request_unit"
         click_on "Add Another Item"
 
