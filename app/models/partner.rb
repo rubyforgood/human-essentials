@@ -126,20 +126,6 @@ class Partner < ApplicationRecord
     errors
   end
 
-  def agency_info
-    return @agency_info if @agency_info
-
-    symbolic_agency_type = profile.agency_type&.to_sym
-    @agency_info = {
-      address: [profile.address1, profile.address2].select(&:present?).join(', '),
-      city: profile.city,
-      state: profile.state,
-      zip_code: profile.zip_code,
-      website: profile.website,
-      agency_type: (symbolic_agency_type == :other) ? "#{I18n.t symbolic_agency_type, scope: :partners_profile}: #{profile.other_agency_type}" : (I18n.t symbolic_agency_type, scope: :partners_profile)
-    }
-  end
-
   def partials_to_show
     organization.partner_form_fields.presence || ALL_PARTIALS
   end

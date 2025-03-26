@@ -26,17 +26,20 @@ module Exports
     def headers
       base_table.keys
     end
-    
+
     def base_table
       table = {
         "Agency Name" => ->(partner) { partner.name },
         "Agency Email" => ->(partner) { partner.email },
-        "Agency Address" => ->(partner) { partner.agency_info[:address] },
-        "Agency City" => ->(partner) { partner.agency_info[:city] },
-        "Agency State" => ->(partner) { partner.agency_info[:state] },
-        "Agency Zip Code" => ->(partner) { partner.agency_info[:zip_code] },
-        "Agency Website" => ->(partner) { partner.agency_info[:website] },
-        "Agency Type" => ->(partner) { partner.agency_info[:agency_type] },
+        "Agency Address" => ->(partner) { "#{partner.profile.address1}, #{partner.profile.address2}" },
+        "Agency City" => ->(partner) { partner.profile.city },
+        "Agency State" => ->(partner) { partner.profile.state },
+        "Agency Zip Code" => ->(partner) { partner.profile.zip_code },
+        "Agency Website" => ->(partner) { partner.profile.website },
+        "Agency Type" => ->(partner) {
+          symbolic_agency_type = partner.profile.agency_type&.to_sym
+          (symbolic_agency_type == :other) ? "#{I18n.t symbolic_agency_type, scope: :partners_profile}: #{partner.profile.other_agency_type}" : (I18n.t symbolic_agency_type, scope: :partners_profile)
+        },
         "Contact Name" => ->(partner) { partner.profile.primary_contact_name },
         "Contact Phone" => ->(partner) { partner.profile.primary_contact_phone },
         "Contact Cell" => ->(partner) { partner.profile.primary_contact_mobile },
