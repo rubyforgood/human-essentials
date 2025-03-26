@@ -324,6 +324,17 @@ RSpec.describe "StorageLocations", type: :request do
           expect(response.body).to include("200")
         end
 
+        it "should return a correct response with empty version date param" do
+          get storage_location_path(storage_location, format: response_format,
+            version_date: '')
+          expect(response).to be_successful
+          expect(response.body).to include("Smithsonian")
+          expect(response.body).to include("Test Item")
+          expect(response.body).to include("Test Item2")
+          expect(response.body).not_to include("Test Item3")
+          expect(response.body).to include("200")
+        end
+
         context "with version date set" do
           let!(:inventory_item) {
             InventoryItem.create!(storage_location_id: storage_location.id,
@@ -485,6 +496,41 @@ RSpec.describe "StorageLocations", type: :request do
           expect(collection.first.keys).to match_array(%w[item_id item_name quantity])
           expect(collection.last.keys).to match_array(%w[item_id item_name quantity])
         end
+      end
+    end
+
+    describe "POST #create" do
+      let(:params) do
+        {
+          storage_location: {
+            name: "New Storage Location",
+            address: "123 New Street",
+            square_footage: -100
+          }
+        }
+      end
+
+      it "shows an error when square footage is negative" do
+        post storage_locations_path, params: params
+        expect(response.body).to include("Square footage must be greater than or equal to 0")
+      end
+    end
+
+    describe "PATCH #update" do
+      let(:storage_location) { create(:storage_location, organization: organization) }
+      let(:params) do
+        {
+          storage_location: {
+            name: "Updated Name",
+            address: "123 Updated Street",
+            square_footage: -100
+          }
+        }
+      end
+
+      it "shows an error when square footage is negative" do
+        patch storage_location_path(storage_location), params: params
+        expect(response.body).to include("Square footage must be greater than or equal to 0")
       end
     end
 

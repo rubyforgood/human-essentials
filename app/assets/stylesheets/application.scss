@@ -28,6 +28,7 @@
 @import 'modal-dialog';
 @import 'expandable_table';
 @import 'custom';
+@import '../../javascript/stylesheets/actiontext';
 
 .modal-dialog {
   display: flex;
@@ -224,4 +225,8 @@ div.distribution-request-unit {
   text-align: right;
   margin-right: 20px;
   white-space: nowrap;
+}
+
+.git-version {
+  color: gray;
 }

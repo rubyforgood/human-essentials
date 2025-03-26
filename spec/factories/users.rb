@@ -76,6 +76,13 @@ FactoryBot.define do
             resource_type: Role::ORG_ADMIN)
         end
       end
+
+      factory :super_admin_org_admin do
+        name { "Administrative User And Org Admin" }
+        after(:create) do |user|
+          user.add_role(Role::SUPER_ADMIN)
+        end
+      end
     end
 
     factory :super_admin do

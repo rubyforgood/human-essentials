@@ -159,6 +159,41 @@ RSpec.describe "ProductDrives", type: :request do
           end
         end
       end
+
+      describe "pagination" do
+        around do |ex|
+          old_default = Kaminari.config.default_per_page
+          Kaminari.config.default_per_page = 2
+          ex.run
+          Kaminari.config.default_per_page = old_default
+        end
+
+        before do
+          # Create a list of Product Drives to exceed pagination limit
+          create_list(:product_drive, 10, organization: organization)
+
+          # Fetch Product Drives before assertions
+          get product_drives_path
+        end
+
+        it "displays pagination controls when there are more product drives than default per page" do
+          expect(response).to be_successful
+
+          parsed_html = Nokogiri::HTML(response.body)
+
+          # Select the Product Drives table, which is the only table in the view
+          # and count the rows
+          product_drives_table = parsed_html.at_css("table.table")
+          row_count = product_drives_table.css("tbody tr").size
+
+          # There should be 2 rows on the first page--the default per page configured above
+          expect(row_count).to eq(2)
+
+          # Check that pagination controls (e.g., "Next" button) appear
+          next_button = parsed_html.at_css('a, button') { |el| el.text.strip == 'Next' }
+          expect(next_button).not_to be_nil
+        end
+      end
     end
 
     describe "GET #new" do

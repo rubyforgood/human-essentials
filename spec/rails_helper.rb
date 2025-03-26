@@ -240,3 +240,10 @@ def await_select2(select2, container = nil, &block)
 
   find("#{container} select option[data-select2-id=\"#{current_id.to_i + 1}\"]", wait: 10)
 end
+
+# TODO: Remove the following workaround once the following commit is in
+# in a new release of Devise:
+# https://github.com/heartcombo/devise/commit/591b03a6c010f47976f7033370a8165c5324a82c
+ActiveSupport.on_load(:action_mailer) do
+  Rails.application.reload_routes_unless_loaded
+end

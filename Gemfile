@@ -14,7 +14,7 @@ gem "pg", "~> 1.5.9"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "7.2.2"
+gem "rails", "~> 8.0.1"
 
 ###### MODELS / DATABASE #######
 
@@ -32,9 +32,7 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-# Pinned to 1.8.0 because 2.0.0 no longer support postgres v10
-# And as of now we are using postgres v10 in production
-gem "strong_migrations", "1.8.0"
+gem "strong_migrations"
 # used in events
 gem 'dry-struct'
 # Use solid_cache as a cache store
@@ -164,7 +162,7 @@ end
 
 group :development do
   # Show database columns and indexes inside files.
-  gem "annotate"
+  gem "annotaterb"
   # Used as a dependency for better_errors.
   gem "binding_of_caller"
   # Show a better error page on development, including a REPL.
