@@ -286,6 +286,7 @@ note = [
 
   # Base profile information all partners should have
   # Includes fields in the agency_information, executive_director, and pick_up_person partial
+  # The counties and areas served by the partner are handled elsewere
   profile = Partners::Profile.create!({
     essentials_bank_id: p.organization_id,
     partner_id: p.id,
@@ -308,9 +309,6 @@ note = [
     zips_served: Faker::Address.zip,
   })
 
-  # TODO: Move that chunk of code?
-  # Counties and areas served are handled elsewere
-  
   # Optional information that only established partners (ready for approval, approved or require_recertification)
   # would have
   # Also only add information that corresponds to the partner_form_fields the org has chosen
@@ -375,26 +373,22 @@ note = [
     end
 
     if p.partials_to_show.include? "population_served"
-      # TODO: Make this DRY?
-      pop_percentages = []
-      remaining_percentage = 100
-      share_ceiling = 100 / 8  # 8 population fields
-      7.times do
-        percentage = Faker::Number.within(range: 1..share_ceiling)
-        remaining_percentage -= percentage
-        pop_percentages.append( percentage )
+
+      def calculate_array_of_percentages( num_entries )
+        percentages = []
+        remaining_percentage = 100
+        share_ceiling = 100 / num_entries
+        (num_entries - 1).times do
+          percentage = Faker::Number.within(range: 1..share_ceiling)
+          remaining_percentage -= percentage
+          percentages.append( percentage )
+        end
+        percentages.append( remaining_percentage )
+        return percentages
       end
-      pop_percentages.append( remaining_percentage )
-      
-      poverty_percentages = []
-      remaining_percentage = 100
-      share_ceiling = 100 / 4  # 4 poverty fields
-      3.times do
-        percentage = Faker::Number.within(range: 1..share_ceiling)
-        remaining_percentage -= percentage
-        poverty_percentages.append( percentage )
-      end
-      poverty_percentages.append( remaining_percentage )
+
+      pop_percentages = calculate_array_of_percentages(8) # 8 population fields
+      poverty_percentages = calculate_array_of_percentages(4) # 4 poverty fields
 
       profile.update(
         above_1_2_times_fpl: poverty_percentages[0],
