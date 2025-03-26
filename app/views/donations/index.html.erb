@@ -125,18 +125,18 @@
                 <td></td>
                 <td class="text-left numeric">
                   <strong id="donation_quantity">
-                    <%= @donations_quantity %> 
+                    <%= @donations_quantity %>
                     <br>
                     (Total)
                   </strong>
                   <br>
                   <%= @paginated_donations_quantity %>
-                  <br> 
+                  <br>
                   (This page)
                 </td>
                 <td class="text-left numeric"><strong><%= dollar_value(@total_money_raised) %></strong></td>
-                <td class="text-left numeric">
-                  <strong id="in_kind_value">
+                <td class="text-left numeric in-kind">
+                  <strong>
                     <%= dollar_value(@total_value_all_donations) %> (Total)
                   </strong>
                   <br>
