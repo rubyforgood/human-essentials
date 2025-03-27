@@ -1,6 +1,10 @@
 <%= f.fields_for :profile, profile do |pf| %>
-  <div class="form-group" data-controller="file-input">
-    <% if profile.documents.attached? %>
+  <div class="form-group"
+      data-controller="file-input"
+      data-file-input-filenames-value="<%= attached_but_not_persisted_file_names(profile) %>">
+
+    <%# Allow user to download and/or remove existing attachments %>
+    <% if has_persisted_documents?(profile) %>
       <strong>Attached files:</strong>
       <ul class="list-unstyled">
         <% profile.documents.each do |doc| %>
@@ -17,8 +21,27 @@
       </ul>
     <% end %>
 
-    <%# Native file input and placeholder for selected file names %>
-    <%= pf.file_field :documents, multiple: true, class: "form-control-file", data: { file_input_target: "input" } %>
+    <%# Submit hidden fields for attachments that are not persisted to preserve them through form validation errors %>
+    <% profile.documents.attachments.each do |att| %>
+      <% if !att.persisted? %>
+        <%= pf.hidden_field :documents, multiple: true, value: att.blob.signed_id %>
+      <% end %>
+    <% end %>
+
+    <%# Hide native file input to support custom behaviour to display %>
+    <%# previously selected files when validation error occurs  %>
+    <%= pf.file_field :documents,
+      multiple: true,
+      direct_upload: true,
+      class: "form-control-file d-none",
+      data: { file_input_target: "input" } %>
+
+    <%# Custom button to trigger file selection %>
+    <button type="button" class="btn btn-outline-primary" data-action="click->file-input#triggerFileSelection">
+      Choose Files
+    </button>
+
+    <%# Placeholder to display selected file(s) populated by app/javascript/controllers/file_input_controller.js %>
     <div data-file-input-target="list" class="mt-2"></div>
   </div>
 <% end %>
