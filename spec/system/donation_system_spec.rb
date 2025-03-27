@@ -13,7 +13,8 @@ RSpec.describe "Donations", type: :system, js: true do
 
       before do
         create(:donation)
-        create(:donation)
+        donation = create(:donation)
+        create(:line_item, itemizable: donation, item: create(:item, value_in_cents: 300))
         visit subject
       end
 
@@ -26,6 +27,11 @@ RSpec.describe "Donations", type: :system, js: true do
 
       it "Displays Total quantity on the index page" do
         expect(page.find(:css, "table", visible: true)).to have_content("20")
+      end
+
+      it "displays total in kind value on the index page" do
+        expect(page).to have_css("table td.in-kind", text: "$3.00")
+        expect(page).to have_css("table td.in-kind", text: "(This page)")
       end
 
       it "doesn't die when an inactive item is in a donation" do
@@ -570,7 +576,7 @@ RSpec.describe "Donations", type: :system, js: true do
 
       it "Allows the user to edit a donation" do
         total_quantity = find("#donation_quantity").text
-        expect(total_quantity).to eq "100 (Total)"
+        expect(total_quantity).to eq "100\n(Total)"
         click_on "View"
         expect(page).to have_content "Rare Candy"
 
@@ -585,7 +591,7 @@ RSpec.describe "Donations", type: :system, js: true do
         click_on "Save"
 
         total_quantity = find("#donation_quantity").text
-        expect(total_quantity).to eq "200 (Total)"
+        expect(total_quantity).to eq "200\n(Total)"
 
         expect(Donation.count).to eq(1)
         donation = Donation.last
@@ -621,7 +627,7 @@ RSpec.describe "Donations", type: :system, js: true do
         # removing the line item is a lot more benign than randomly
         # switching the item on it to a different item
         total_quantity = find("#donation_quantity").text
-        expect(total_quantity).to eq "0 (Total)"
+        expect(total_quantity).to eq "0\n(Total)"
       end
     end
 
@@ -679,7 +685,7 @@ RSpec.describe "Donations", type: :system, js: true do
 
         expect(page).to have_content "Donation #{@donation.id} has been removed!"
         # deleted the only donation, ensure total now reads 0
-        expect(page).to have_content "0 (Total)"
+        expect(page).to have_content "0\n(Total)"
       end
     end
   end

@@ -130,6 +130,33 @@ RSpec.describe "BarcodeItems", type: :request do
     end
   end
 
+  context 'while signed in as organization admin' do
+    let!(:barcode_items) { create_list(:barcode_item, 6, organization: organization) }
+    let(:items) { barcode_items.map(&:barcodeable) }
+    let(:barcode_item) { barcode_items.first }
+    before do
+      sign_in(organization_admin)
+    end
+
+    describe "GET #new" do
+      it "The new barcode item form should contain the Items even after a failed save" do
+        post barcode_items_path, params: { barcode_item: {value: 10, quantity: 20 } }
+        items.each do |item|
+          expect(response.body).to include(item.name)
+        end
+      end
+    end
+
+    describe "GET #edit" do
+      it "The Edit Barcode Item form should contain the Items even after a failed update" do
+        put barcode_item_path(barcode_item.id), params: { barcode_item: { value: 10, quantity: '', barcodeable_id: items.first.id} }
+        items.each do |item|
+          expect(response.body).to include(item.name)
+        end
+      end
+    end
+  end
+
   # For the time being, users cannot access these routes, but this may change in
   # the near future.
   # context "While not signed in" do
