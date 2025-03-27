@@ -43,7 +43,7 @@
 
                       <div data-controller="double-select hide-by-source-val"
                         data-double-select-url-value="<%= resource_ids_admin_users_url %>"
-                        data-hide-by-source-val-valuestohide-value="<%= Role::ROLES_WITHOUT_RESOURCE.to_json %>"
+                        data-hide-by-source-val-values-to-hide-value="<%= Role::ROLES_WITHOUT_RESOURCE.to_json %>"
                       >
                         <label>Role Type</label>
                           <%= select_tag :resource_type, options_for_select(Role::TITLES.invert),
