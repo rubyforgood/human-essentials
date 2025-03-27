@@ -44,7 +44,7 @@ class Admin::UsersController < AdminController
     UserInviteService.invite(
       name: user_params[:name],
       email: user_params[:email],
-      roles: [params[:resource_type]],
+      roles: [params[:resource_type].to_sym],
       resource: resource
     )
     flash[:notice] = "Created a new user!"
