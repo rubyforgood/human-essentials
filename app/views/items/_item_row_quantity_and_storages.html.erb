@@ -1,5 +1,3 @@
-<% quantity_below_minimum = row_item[:quantity] < row_item[:item_on_hand_minimum_quantity] %>
-
 <tr id="item_row_quantity_<%= row_item[:item_id] %>">
 <td><%= link_to(row_item[:item_name], item_url(row_item[:item_id])) %></td>
 <% @storages.each do |storage| %>
@@ -9,5 +7,5 @@
 <% end %>
 <td class="numeric"><%= row_item[:item_on_hand_minimum_quantity] %></td>
 <td class="numeric"><%= row_item[:item_on_hand_recommended_quantity] %></td>
-<td class="numeric <%= "text-danger font-weight-bold" if quantity_below_minimum %>" data-column="total"><%= row_item[:quantity] %></td>
+<td class="numeric <%= "text-danger font-weight-bold" if quantity_below_minimum?(row_item) %>" data-column="total"><%= row_item[:quantity] %></td>
 </tr>

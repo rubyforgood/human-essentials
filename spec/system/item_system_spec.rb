@@ -112,7 +112,7 @@ RSpec.describe "Item management", type: :system do
   end
 
   describe "Item Table Tabs >" do
-    let(:item_pullups) { create(:item, name: "the most wonderful magical pullups that truly potty train", category: "Magic Toddlers") }
+    let(:item_pullups) { create(:item, name: "the most wonderful magical pullups that truly potty train", category: "Magic Toddlers", on_hand_minimum_quantity: 100) }
     let(:item_tampons) { create(:item, name: "blackbeard's rugged tampons", category: "Menstrual Products", on_hand_minimum_quantity: 100) }
     let(:storage_name) { "the poop catcher warehouse" }
     let(:storage) { create(:storage_location, :with_items, item: item_pullups, item_quantity: num_pullups_in_donation, name: storage_name) }
@@ -170,12 +170,20 @@ RSpec.describe "Item management", type: :system do
 
     it "should highlight total quantity if it is below minimum quantity" do
       click_link "Items, Quantity, and Location"
-      row = find("#item_row_quantity_#{item_tampons.id}")
-      expect(row).to have_css("td[data-column='total'].text-danger", text: 59)
+      first_row = find("#item_row_quantity_#{item_tampons.id}")
+      expect(first_row).to have_css("td[data-column='total'].text-danger", text: 59)
+
+      second_row = find("#item_row_quantity_#{item_pullups.id}")
+      expect(second_row).to have_css("td[data-column='total']", text: "681")
+      expect(second_row).to_not have_css("td[data-column='total'].text-danger")
 
       click_link "Item Inventory"
-      row = find("#item_row_inventory_#{item_tampons.id}")
-      expect(row).to have_css("td[data-column='total'].text-danger", text: 59)
+      first_row = find("#item_row_inventory_#{item_tampons.id}")
+      expect(first_row).to have_css("td[data-column='total'].text-danger", text: 59)
+
+      second_row = find("#item_row_inventory_#{item_pullups.id}")
+      expect(second_row).to have_css("td[data-column='total']", text: "681")
+      expect(second_row).to_not have_css("td[data-column='total'].text-danger")
     end
   end
 
