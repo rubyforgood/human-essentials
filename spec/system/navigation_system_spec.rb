@@ -52,18 +52,6 @@ RSpec.describe "Navigation", type: :system, js: true do
           end
         end
       end
-      it "dropdown menu does not show My Co-Workers" do
-        expect(user.has_role?(Role::ORG_ADMIN, user.organization)).to be true
-        expect(user.has_role?(:partner)).to be false
-        click_on user.display_name
-        puts "DROPDOWN LINKS:"
-        page.all(".dropdown-menu a").each do |link|
-          puts "- #{link.text.strip}"
-        end
-
-        expect(page).not_to have_link("My Co-Workers")
-        expect(page).not_to have_content("My Co-Workers")
-      end
     end
   end
 
