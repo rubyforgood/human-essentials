@@ -1,8 +1,10 @@
 <% row_item = row.last %>
+<% quantity_below_minimum = row_item[:quantity] < row_item[:item_on_hand_minimum_quantity] %>
+
 <tr data-widget="expandable-table" aria-expanded="false">
   <td><i class="fa" /></td>
   <td><%= link_to(row_item[:item_name], item_url(row_item[:item_id])) %></td>
-  <td class="numeric"><%= row_item[:quantity] %></td>
+  <td class="numeric <%= "text-danger font-weight-bold" if quantity_below_minimum %>"><%= row_item[:quantity] %></td>
   <td class="numeric"><%= row_item[:item_on_hand_minimum_quantity] %></td>
   <td class="numeric"><%= row_item[:item_on_hand_recommended_quantity] %></td>
 </tr>
