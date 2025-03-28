@@ -19,4 +19,8 @@ module ItemsHelper
     item_request_unit_names = item.persisted? ? item.request_units.pluck(:name) : []
     current_organization.request_units.select { |unit| item_request_unit_names.include?(unit.name) }.pluck(:id)
   end
+
+  def quantity_below_minimum?(row_item)
+    row_item[:quantity] < row_item[:item_on_hand_minimum_quantity]
+  end
 end
