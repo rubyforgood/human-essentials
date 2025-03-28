@@ -27,6 +27,7 @@ module Importable
       data = File.read(params[:file].path, encoding: "BOM|UTF-8")
       csv = CSV.parse(data, headers: true)
       if csv.count.positive? && csv.first.headers.all? { |header| !header.nil? }
+
         errors = resource_model.import_csv(csv, current_organization.id)
         if errors.empty?
           flash[:notice] = "#{resource_model_humanized} were imported successfully!"
