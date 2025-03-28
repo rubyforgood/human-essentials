@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Manufacturers
 
 The Manufacturers page under the "Community" section lets you manage your Manufacturers and track donations from them.

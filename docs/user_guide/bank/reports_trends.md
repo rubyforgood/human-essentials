@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Trends Reports
 The trends reports (one each for Distributions, Donations, and Purchases) give you a picture of the activity on any Item over the last 12 months. 
 
