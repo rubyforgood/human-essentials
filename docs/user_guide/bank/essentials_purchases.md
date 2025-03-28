@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Purchases
 The other major way we add to inventory in human essentials is through Purchases.
 

@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Partner Announcements
 
 Partner Announcements are a great way to let your partners know about temporary situations -- like when you need to put some limits on what you can give out of a particular size.  Some banks also use them to point to other resources.

@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Essentials Bank User Administration
 
 If you're not the sole worker at your Essentials Bank, you'll likely want other staff to have some access to Human Essentials. 

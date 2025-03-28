@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # The Request/Distribution Cycle
 
 You can distribute materials to your Partners as soon as you have them entered into the system.  However, many banks find it useful to allow their Partners to request products through the system. 

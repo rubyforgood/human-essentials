@@ -1,6 +1,3 @@
-
-READY FOR REVIEW
-
 # Distributions
 Distributions are where you record what you allocate to your partner agencies.
 
