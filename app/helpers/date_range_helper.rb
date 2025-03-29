@@ -33,12 +33,18 @@ module DateRangeHelper
     "#{start_date.strftime("%B %d, %Y")} - #{end_date.strftime("%B %d, %Y")}"
   end
 
+  def parse_date_range(date_range_string)
+    parts = date_range_string.to_s.split(" - ")
+    return nil unless parts.size == 2
+
+    parts.map { |d| Date.strptime(d.strip, "%B %d, %Y") }
+  rescue ArgumentError => e
+    Rails.logger.warn("Invalid date range '#{date_range_string}': #{e.message}")
+    nil
+  end
+
   def selected_interval
-    date_range_params.split(" - ").map do |d|
-      Date.strptime(d, "%B %d, %Y")
-    rescue
-      raise "Invalid date: #{d} in #{date_range_params}"
-    end
+    parse_date_range(date_range_params) || parse_date_range(default_date)
   end
 
   def selected_range
@@ -55,5 +61,9 @@ module DateRangeHelper
     else
       "during the period #{start_date.to_fs(:short)} to #{end_date.to_fs(:short)}"
     end
+  end
+
+  def date_range_params_invalid?
+    parse_date_range(date_range_params).nil?
   end
 end

@@ -142,6 +142,10 @@ class ApplicationController < ActionController::Base
     @selected_date_interval = helpers.selected_interval
     @selected_date_range = helpers.selected_interval.map { |d| d.to_fs(:long) }.join(" - ")
     @selected_date_range_label = helpers.date_range_label
+
+    if helpers.date_range_params_invalid?
+      flash.now[:error] = "The date range you supplied was invalid, so we used a default range instead."
+    end
   end
 
   def configure_permitted_parameters
