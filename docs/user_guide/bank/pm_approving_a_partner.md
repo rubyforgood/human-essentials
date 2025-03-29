@@ -1,5 +1,3 @@
-READY FOR REVIEW
-
 # Approving Partners
 
 There are three paths in to reviewing a Partner's information before approving them to make Requests: 

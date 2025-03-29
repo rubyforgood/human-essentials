@@ -33,6 +33,7 @@ class DonationsController < ApplicationController
     @donations_quantity = @donations.collect(&:total_quantity).sum
     @paginated_donations_quantity = @paginated_donations.collect(&:total_quantity).sum
     @total_value_all_donations = total_value(@donations)
+    @paginated_in_kind_value = total_value(@paginated_donations)
     @total_money_raised = total_money_raised(@donations)
     @storage_locations = @donations.filter_map { |donation| donation.storage_location if !donation.storage_location.discarded_at }.compact.uniq.sort
     @selected_storage_location = filter_params[:at_storage_location]

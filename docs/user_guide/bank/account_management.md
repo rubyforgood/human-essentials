@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Account Management
 
 ## Logging out

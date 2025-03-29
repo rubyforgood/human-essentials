@@ -191,6 +191,12 @@
               </p>
             </div>
             <div>
+              <h6 class="font-weight-bold">Additional text for reminder email</h6>
+              <div class="border rounded p-2 mb-3">
+                <%= @organization.reminder_email_text.presence || 'Not defined' %>
+              </div>
+            </div>
+            <div>
               <h6 class="font-weight-bold">Distribution email content</h6>
               <div class="border rounded p-2 mb-3">
                 <%= @organization.default_email_text.presence || 'Not defined' %>

@@ -1,5 +1,3 @@
-READY FOR REVIEW
-
 # History Report
 This is mainly used for troubleshooting by the Human Essentials team.  You are unlikely to need it in your day-to-day work.  
 

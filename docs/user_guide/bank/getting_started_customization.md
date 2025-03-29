@@ -1,5 +1,3 @@
-READY FOR REVIEW
-
 # Organization information and customization
 
 Every Essentials Bank has its own way of doing things.
@@ -140,8 +138,31 @@ This is a special topic that has its own guide page [here](special_custom_units.
 At this point, we send those emails once a month on the day of the month you indicate here.
 If you do not pick a day, no reminder emails are sent.
 
+The text of this email will be:  
+
+<blockquote>
+Hello [Partner's name],
+<br/>
+<br/>
+This is a friendly reminder that [Your bank's name] requires your human essentials requests to be submitted by [the deadline date, including month and year]
+if you would like to receive a Distribution next month.
+<br/>
+<br/>
+Please log into Human Essentials at https://humanessentials.app before this date and submit your request if you are intending to submit an essentials request.
+<br/>
+<br/>
+Please contact [Your bank's name] at [Your bank's email]
+if you have any questions about this!
+<br/>
+<br/>
+[Additional text for reminder email (see below)]
+</blockquote>
+
 #### Default deadline day (final day of month to submit Requests)
 This day will be included in the reminder email message.
+
+#### Additional text for reminder email
+If present, this text will be included in the reminder email after the default text. In the above email template, this additional message will replace `[Additional text for reminder email (see below)]`.
 
 #### Distribution email content
 There is a checkbox on each partner that indicates if they are to receive Distribution emails.  We recommend you do customize this content, as the default text is abrupt.
