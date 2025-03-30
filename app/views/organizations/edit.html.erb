@@ -66,7 +66,7 @@
                   <%= f.input_field :short_name, disabled: true, class: "form-control" %>
                 <% end %>
                 <%= f.input :ndbn_member, label: 'NDBN Membership', wrapper: :input_group do %>
-                  <%= f.association :ndbn_member, label_method: :full_name, value_method: :id, label: false, input_html: { class: "form-select"}%>
+                  <%= f.association :ndbn_member, label_method: :full_name, value_method: :id, label: false %>
                 <% end %>
                 <%= f.input :url, as: :url, placeholder: "http://www.example.com", wrapper: :input_group do %>
                   <span class="input-group-text"><i class="fa fa-link"></i></span>
@@ -92,14 +92,14 @@
                   <%= f.rich_text_area :reminder_email_text, placeholder: 'Enter reminder email content...' %>
                 <% end %>
 
-                <%= f.input :intake_location, :collection => current_organization.storage_locations.active.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Intake Location", :include_blank => true, wrapper: :input_group, input_html: { class: 'form-select' } %>
+                <%= f.input :intake_location, :collection => current_organization.storage_locations.active.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Intake Location", :include_blank => true, wrapper: :input_group %>
 
                 <%= f.label :partner_form_fields, 'Partner Profile Sections' %>
 
                 <%= f.select(:partner_form_fields, Organization::ALL_PARTIALS, { include_hidden: true }, { multiple: true, class: 'form-control custom-select', 'data-controller': 'select2', 'data-select2-config-value': '{}'}) %>
 
                 <br>
-                <%= f.input :default_storage_location, :collection => current_organization.storage_locations.active.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Storage Location", :include_blank => true, wrapper: :input_group, input_html: { class: 'form-select' } %>
+                <%= f.input :default_storage_location, :collection => current_organization.storage_locations.active.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Storage Location", :include_blank => true, wrapper: :input_group %>
 
                 <%= f.input :invitation_text, label: "Custom Partner Invitation Message", wrapper: :input_group do %>
                   <%= f.text_area :invitation_text, class: "form-control" %>
