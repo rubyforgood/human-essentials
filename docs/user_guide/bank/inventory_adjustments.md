@@ -1,5 +1,3 @@
-READY FOR REVIEW
-
 # Inventory Adjustments
 
 Inventory adjustments are an alternative way to record known differences in the inventory without going through the Audit process.  

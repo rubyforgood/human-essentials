@@ -44,6 +44,22 @@ RSpec.describe "/partners/requests", type: :request do
       expect(response).to render_template(:new)
     end
 
+    context "when packs are enabled but there are no requestable items" do
+      before do
+        allow_any_instance_of(PartnerFetchRequestableItemsService).to receive(:call).and_return({})
+        Flipper.enable(:enable_packs)
+      end
+
+      after do
+        Flipper.disable(:enable_packs)
+      end
+
+      it 'should render without any issues' do
+        subject
+        expect(response).to render_template(:new)
+      end
+    end
+
     context "when first reaching the new page" do
       let(:requestable_items) { [["Item 1", 1], ["Item 2", 2], ["Item 3", 3]] }
       before do
@@ -160,15 +176,15 @@ RSpec.describe "/partners/requests", type: :request do
 
       Flipper.enable(:enable_packs)
       get partners_request_path(request)
-      expect(response.body).to match(/125\s+of\s+First item/m)
-      expect(response.body).to match(/559\s+flats\s+of\s+Second item/m)
-      expect(response.body).to match(/1\s+flat\s+of\s+Third item/m)
+      expect(response.body).to match(/First item - 125/m)
+      expect(response.body).to match(/Second item - 559\s+flats/m)
+      expect(response.body).to match(/Third item - 1\s+flat/m)
 
       Flipper.disable(:enable_packs)
       get partners_request_path(request)
-      expect(response.body).to match(/125\s+of\s+First item/m)
-      expect(response.body).to match(/559\s+of\s+Second item/m)
-      expect(response.body).to match(/1\s+of\s+Third item/m)
+      expect(response.body).to match(/First item - 125/m)
+      expect(response.body).to match(/Second item - 559/m)
+      expect(response.body).to match(/Third item - 1/m)
     end
   end
 

@@ -109,7 +109,7 @@
                 <%= f.input :distribute_monthly, label: 'Does your bank distribute monthly?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
 
                 <% if Flipper.enabled?(:enable_packs) %>
-                  <%= label_tag "organization[request_unit_names]", 'Custom request units used (please use singular form -- e.g. pack, not packs)' %>
+                  <%= label_tag "organization[request_unit_names]", 'Custom request units used. Please use singular form -- e.g. pack, not packs. There will be a default "unit" entry provided.' %>
                   <%= select_tag(
                     "organization[request_unit_names]",
                     options_from_collection_for_select(
