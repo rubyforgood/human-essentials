@@ -10,6 +10,7 @@ export default class extends Controller {
 
   connect() {
     const select2 = $(this.element).select2(this.configValue);
+    if (select2.data('select2')) select2.data('select2').$selection.addClass('form-select p-0')
 
     if (this.hideDropdownValue) {
       select2.on('select2:open', function (e) {
