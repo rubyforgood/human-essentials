@@ -23,3 +23,8 @@
     @extend .form-select;
   }
 }
+
+.select2-selection {
+  @extend .form-select;
+  padding: 0;
+}
