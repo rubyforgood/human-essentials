@@ -73,8 +73,7 @@ RSpec.describe Exports::ExportPartnersCSVService do
         pick_up_email: pick_up_email,
         distribution_times: distribution_times, # Columns from the agency_distribution_information partial
         new_client_times: new_client_times,
-        more_docs_required: more_docs_required
-      )
+        more_docs_required: more_docs_required)
     end
     let(:county_1) { create(:county, name: "High County, Maine", region: "Maine") }
     let(:county_2) { create(:county, name: "laRue County, Louisiana", region: "Louisiana") }
@@ -155,186 +154,194 @@ RSpec.describe Exports::ExportPartnersCSVService do
 
     let(:partners) { Partner.all }
 
-    let(:headers_base) {[
-      "Agency Name",
-      "Agency Email",
-      "Agency Address",
-      "Agency City",
-      "Agency State",
-      "Agency Zip Code",
-      "Agency Website",
-      "Agency Type",
-      "Contact Name",
-      "Contact Phone",
-      "Contact Cell",
-      "Contact Email",
-      "Agency Mission",
-      "Child-based Requests",
-      "Individual Requests",
-      "Quantity-based Requests",
-      "Program/Delivery Address",
-      "Program City",
-      "Program State",
-      "Program Zip Code",
-      "Notes",
-      "Counties Served",
-      "Providing Diapers",
-      "Providing Period Supplies"
-    ]}
-    let(:partial_to_headers) {{
-      media_information: [
-        "Facebook",
-        "Twitter",
-        "Instagram",
-        "No Social Media Presence"
-      ],
-      agency_stability: [
-        "Year Founded",
-        "Form 990 Filed",
-        "Program Name",
-        "Program Description",
-        "Program Age",
-        "Evidence Based",
-        "Case Management",
-        "How Are Essentials Used",
-        "Receive Essentials From Other Sources",
-        "Currently Providing Diapers"
-      ],
-      organizational_capacity: [
-        "Client Capacity",
-        "Storage Space",
-        "Storage Space Description"
-      ],
-      sources_of_funding: [
-        "Sources Of Funding",
-        "Sources Of Diapers",
-        "Essentials Budget",
-        "Essentials Funding Source"
-      ],
-      population_served: [
-        "Income Requirement",
-        "Verify Income",
-        "% African American",
-        "% Caucasian",
-        "% Hispanic",
-        "% Asian",
-        "% American Indian",
-        "% Pacific Island",
-        "% Multi-racial",
-        "% Other",
-        "Zip Codes Served",
-        "% At FPL or Below",
-        "% Above 1-2 times FPL",
-        "% Greater than 2 times FPL",
-        "% Poverty Unknown"
-      ],
-      executive_director: [
-        "Executive Director Name",
-        "Executive Director Phone",
-        "Executive Director Email"
-      ],
-      pick_up_person: [
-        "Pick Up Person Name",
-        "Pick Up Person Phone",
-        "Pick Up Person Email"
-      ],
-      agency_distribution_information: [
-        "Distribution Times",
-        "New Client Times",
-        "More Docs Required"
-      ]
-    }}
+    let(:headers_base) {
+      [
+        "Agency Name",
+        "Agency Email",
+        "Agency Address",
+        "Agency City",
+        "Agency State",
+        "Agency Zip Code",
+        "Agency Website",
+        "Agency Type",
+        "Contact Name",
+        "Contact Phone",
+        "Contact Cell",
+        "Contact Email",
+        "Agency Mission",
+        "Child-based Requests",
+        "Individual Requests",
+        "Quantity-based Requests",
+        "Program/Delivery Address",
+        "Program City",
+        "Program State",
+        "Program Zip Code",
+        "Notes",
+        "Counties Served",
+        "Providing Diapers",
+        "Providing Period Supplies"
+        ]
+    }
+    let(:partial_to_headers) {
+      {
+        media_information: [
+          "Facebook",
+          "Twitter",
+          "Instagram",
+          "No Social Media Presence"
+        ],
+        agency_stability: [
+          "Year Founded",
+          "Form 990 Filed",
+          "Program Name",
+          "Program Description",
+          "Program Age",
+          "Evidence Based",
+          "Case Management",
+          "How Are Essentials Used",
+          "Receive Essentials From Other Sources",
+          "Currently Providing Diapers"
+     ],
+        organizational_capacity: [
+          "Client Capacity",
+          "Storage Space",
+          "Storage Space Description"
+     ],
+        sources_of_funding: [
+          "Sources Of Funding",
+          "Sources Of Diapers",
+          "Essentials Budget",
+          "Essentials Funding Source"
+     ],
+        population_served: [
+          "Income Requirement",
+          "Verify Income",
+          "% African American",
+          "% Caucasian",
+          "% Hispanic",
+          "% Asian",
+          "% American Indian",
+          "% Pacific Island",
+          "% Multi-racial",
+          "% Other",
+          "Zip Codes Served",
+          "% At FPL or Below",
+          "% Above 1-2 times FPL",
+          "% Greater than 2 times FPL",
+          "% Poverty Unknown"
+     ],
+        executive_director: [
+          "Executive Director Name",
+          "Executive Director Phone",
+          "Executive Director Email"
+     ],
+        pick_up_person: [
+          "Pick Up Person Name",
+          "Pick Up Person Phone",
+          "Pick Up Person Email"
+     ],
+        agency_distribution_information: [
+          "Distribution Times",
+          "New Client Times",
+          "More Docs Required"
+     ]
+      }
+    }
 
-    let(:values_base) {[
-      partner.name,
-      partner.email,
-      "#{agency_address1}, #{agency_address2}",
-      agency_city,
-      agency_state,
-      agency_zipcode,
-      agency_website,
-      "#{I18n.t "partners_profile.other"}: #{other_agency_type}",
-      contact_name,
-      contact_phone,
-      contact_mobile,
-      contact_email,
-      agency_mission,
-      enable_child_based_requests.to_s,
-      enable_individual_requests.to_s,
-      enable_quantity_based_requests.to_s,
-      "#{program_address1}, #{program_address2}",
-      program_city,
-      program_state,
-      program_zip_code.to_s,
-      notes,
-      # county ordering is a bit esoteric -- it is human alphabetical by county within region (region is state)
-      "laRue County, Louisiana; Ste. Anne County, Louisiana; High County, Maine", 
-      providing_diapers[:value],
-      providing_period_supplies[:value]
-    ]}
-    let(:partial_to_values) {{
-      media_information: [
-        facebook,
-        twitter,
-        instagram,
-        no_social_media_presence.to_s
-      ],
-      agency_stability: [
-        founded.to_s,
-        form_990.to_s,
-        program_name,
-        program_description,
-        program_age.to_s,
-        evidence_based.to_s,
-        case_management.to_s,
-        essentials_use,
-        receives_essentials_from_other,
-        currently_provide_diapers.to_s
-      ],
-      organizational_capacity: [
-        client_capacity,
-        storage_space.to_s,
-        describe_storage_space,
-      ],
-      sources_of_funding: [
-        sources_of_funding,
-        sources_of_diapers,
-        essentials_budget,
-        essentials_funding_source
-      ],
-      population_served: [
-        income_requirement_desc.to_s,
-        income_verification.to_s,
-        population_black.to_s,
-        population_white.to_s,
-        population_hispanic.to_s,
-        population_asian.to_s,
-        population_american_indian.to_s,
-        population_island.to_s,
-        population_multi_racial.to_s,
-        population_other.to_s,
-        zips_served,
-        at_fpl_or_below.to_s,
-        above_1_2_times_fpl.to_s,
-        greater_2_times_fpl.to_s,
-        poverty_unknown.to_s
-      ],
-      executive_director: [
-        executive_director_name,
-        executive_director_phone,
-        executive_director_email
-      ],
-      pick_up_person: [
-        pick_up_name,
-        pick_up_phone,
-        pick_up_email
-      ],
-      agency_distribution_information: [
-        distribution_times,
-        new_client_times,
-        more_docs_required
-      ]
-    }}
+    let(:values_base) {
+      [
+        partner.name,
+        partner.email,
+        "#{agency_address1}, #{agency_address2}",
+        agency_city,
+        agency_state,
+        agency_zipcode,
+        agency_website,
+        "#{I18n.t "partners_profile.other"}: #{other_agency_type}",
+        contact_name,
+        contact_phone,
+        contact_mobile,
+        contact_email,
+        agency_mission,
+        enable_child_based_requests.to_s,
+        enable_individual_requests.to_s,
+        enable_quantity_based_requests.to_s,
+        "#{program_address1}, #{program_address2}",
+        program_city,
+        program_state,
+        program_zip_code.to_s,
+        notes,
+        # county ordering is a bit esoteric -- it is human alphabetical by county within region (region is state)
+        "laRue County, Louisiana; Ste. Anne County, Louisiana; High County, Maine",
+        providing_diapers[:value],
+        providing_period_supplies[:value]
+        ]
+    }
+    let(:partial_to_values) {
+      {
+        media_information: [
+          facebook,
+          twitter,
+          instagram,
+          no_social_media_presence.to_s
+        ],
+        agency_stability: [
+          founded.to_s,
+          form_990.to_s,
+          program_name,
+          program_description,
+          program_age.to_s,
+          evidence_based.to_s,
+          case_management.to_s,
+          essentials_use,
+          receives_essentials_from_other,
+          currently_provide_diapers.to_s
+     ],
+        organizational_capacity: [
+          client_capacity,
+          storage_space.to_s,
+          describe_storage_space
+     ],
+        sources_of_funding: [
+          sources_of_funding,
+          sources_of_diapers,
+          essentials_budget,
+          essentials_funding_source
+     ],
+        population_served: [
+          income_requirement_desc.to_s,
+          income_verification.to_s,
+          population_black.to_s,
+          population_white.to_s,
+          population_hispanic.to_s,
+          population_asian.to_s,
+          population_american_indian.to_s,
+          population_island.to_s,
+          population_multi_racial.to_s,
+          population_other.to_s,
+          zips_served,
+          at_fpl_or_below.to_s,
+          above_1_2_times_fpl.to_s,
+          greater_2_times_fpl.to_s,
+          poverty_unknown.to_s
+     ],
+        executive_director: [
+          executive_director_name,
+          executive_director_phone,
+          executive_director_email
+     ],
+        pick_up_person: [
+          pick_up_name,
+          pick_up_phone,
+          pick_up_email
+     ],
+        agency_distribution_information: [
+          distribution_times,
+          new_client_times,
+          more_docs_required
+     ]
+      }
+    }
 
     it "should have the correct headers" do
       expected_headers = headers_base + partial_to_headers.values.flatten
@@ -348,11 +355,11 @@ RSpec.describe Exports::ExportPartnersCSVService do
 
     it "should only export columns in profile sections the org has enabled" do
       partial_to_headers.keys.each do |partial|
-        organization.update( partner_form_fields: [partial] )
+        organization.update(partner_form_fields: [partial])
         partners.reload
         limited_export = CSV.parse(described_class.new(partners).generate_csv)
-        expect( limited_export[0] ).to eq( headers_base + partial_to_headers[partial] )
-        expect( limited_export[1] ).to eq( values_base + partial_to_values[partial] )
+        expect(limited_export[0]).to eq(headers_base + partial_to_headers[partial])
+        expect(limited_export[1]).to eq(values_base + partial_to_values[partial])
       end
     end
 

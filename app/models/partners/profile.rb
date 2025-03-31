@@ -149,7 +149,7 @@ module Partners
     #   agency_type, other_agency_type, agency_mission, address1, address2, city, state, zip_code,
     #   program_address1, program_address2, program_city, program_state, program_zip_code
     # agency_stability
-    #   case_management, currently_provide_diapers, essentials_use, evidence_based, form_990, 
+    #   case_management, currently_provide_diapers, essentials_use, evidence_based, form_990,
     #   founded, program_age, program_description, program_name, receives_essentials_from_other
     # area_served
     #   has no associated Partners::Profile fields

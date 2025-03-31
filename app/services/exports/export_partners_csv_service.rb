@@ -64,7 +64,7 @@ module Exports
         table["Instagram"] = ->(partner) { partner.profile.instagram }
         table["No Social Media Presence"] = ->(partner) { partner.profile.no_social_media_presence }
       end
-      
+
       if @partials_to_show.include? "agency_stability"
         table["Year Founded"] = ->(partner) { partner.profile.founded }
         table["Form 990 Filed"] = ->(partner) { partner.profile.form_990 }
@@ -83,7 +83,7 @@ module Exports
         table["Storage Space"] = ->(partner) { partner.profile.storage_space }
         table["Storage Space Description"] = ->(partner) { partner.profile.describe_storage_space }
       end
-      
+
       if @partials_to_show.include? "sources_of_funding"
         table["Sources Of Funding"] = ->(partner) { partner.profile.sources_of_funding }
         table["Sources Of Diapers"] = ->(partner) { partner.profile.sources_of_diapers }
@@ -120,14 +120,14 @@ module Exports
         table["Pick Up Person Phone"] = ->(partner) { partner.profile.pick_up_phone }
         table["Pick Up Person Email"] = ->(partner) { partner.profile.pick_up_email }
       end
-      
+
       if @partials_to_show.include? "agency_distribution_information"
         table["Distribution Times"] = ->(partner) { partner.profile.distribution_times }
         table["New Client Times"] = ->(partner) { partner.profile.new_client_times }
         table["More Docs Required"] = ->(partner) { partner.profile.more_docs_required }
       end
 
-      return table
+      table
     end
 
     def build_row_data(partner)
