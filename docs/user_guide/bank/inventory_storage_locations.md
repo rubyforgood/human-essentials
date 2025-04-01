@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Storage Locations
 
 You need at least one Storage Location.   Each Donation and Purchase increases the inventory in a Storage Location,  and each distribution is made from the inventory in a Storage Location.  

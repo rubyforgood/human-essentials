@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Transfers
 If you have multiple Storage Locations, sometimes you have to move inventory between them.  
 ## Working with Transfers

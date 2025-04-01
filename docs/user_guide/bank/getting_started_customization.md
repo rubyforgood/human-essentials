@@ -1,5 +1,3 @@
-READY FOR REVIEW
-
 # Organization information and customization
 
 Every Essentials Bank has its own way of doing things.

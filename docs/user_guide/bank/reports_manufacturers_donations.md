@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Manufacturers Donations Report
 
 To access this report,  click 'Reports", then "Donations - Manufacturers"

@@ -1,4 +1,3 @@
-DRAFT USER GUIDE
 # Barcodes
 
 ## Introduction to Barcodes
