@@ -18,7 +18,7 @@
   }
 }
 
-.input-group {
+.input-group, .form-group {
   select {
     @extend .form-select;
   }
