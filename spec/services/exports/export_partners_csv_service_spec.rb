@@ -344,13 +344,48 @@ RSpec.describe Exports::ExportPartnersCSVService do
     }
 
     it "should have the correct headers" do
-      expected_headers = headers_base + partial_to_headers.values.flatten
-      expect(subject[0]).to eq(expected_headers)
+      expect(subject[0]).to eq(headers_base + partial_to_headers.values.flatten)
     end
 
     it "should have the expected info in the columns order" do
-      expected_values = values_base + partial_to_values.values.flatten
-      expect(subject[1]).to eq(expected_values)
+      expect(subject[1]).to eq(values_base + partial_to_values.values.flatten)
+    end
+
+    it "should handle a partner with missing profile info" do
+      # The partner_profile factory defaults to populating the website, primary_contact_name, and primary_contact_email fields
+      partners.first.update(profile: create(
+        :partner_profile,
+        website: nil,
+        primary_contact_name: nil,
+        primary_contact_email: nil
+      ))
+      expected_value_base = [
+        partner.name,
+        partner.email,
+        ", ",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        enable_child_based_requests.to_s,
+        enable_individual_requests.to_s,
+        enable_quantity_based_requests.to_s,
+        ", ",
+        "",
+        "",
+        "",
+        notes,
+        "",
+        providing_diapers[:value],
+        providing_period_supplies[:value]
+      ]
+      expect(subject[1]).to eq(expected_value_base + Array.new(partial_to_values.values.flatten.count) { "" })
     end
 
     it "should only export columns in profile sections the org has enabled" do
