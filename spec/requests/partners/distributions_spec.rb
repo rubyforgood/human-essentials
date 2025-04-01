@@ -13,6 +13,16 @@ RSpec.describe "/partners/distributions", type: :request do
       subject.call
       expect(response).to render_template(:index)
     end
+
+    it "should display the distribution's ID" do
+      subject.call
+
+      page = Nokogiri::HTML(response.body)
+      header = page.css("table thead tr th")
+      id_field_order = 1
+
+      expect(header[id_field_order].text).to eq("ID")
+    end
   end
 
   describe "GET #print" do
