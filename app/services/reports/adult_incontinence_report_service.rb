@@ -148,7 +148,7 @@ module Reports
         kit.items.adult_incontinence.exists?
       end
 
-     total_assisted_adults = kits.sum do |kit|
+      total_assisted_adults = kits.sum do |kit|
         kit_item = Item.where(kit_id: kit.id).first
 
         next 0 unless kit_item
@@ -157,7 +157,7 @@ module Reports
           .distributions
           .for_year(year)
           .joins(line_items: :item)
-          .where("line_items.item_id = ?", kit_item.id)
+          .where(line_items: { item_id: kit_item.id })
           .sum('line_items.quantity / COALESCE(items.distribution_quantity, 1.0)')
       end
       total_assisted_adults.to_i / 12.0
