@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Kits
 
 Many banks distribute Kits -- the classic example is a package that contains different types of menstrual supplies (e.g. pads, tampons, wipes).

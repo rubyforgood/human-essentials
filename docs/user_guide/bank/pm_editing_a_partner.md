@@ -1,5 +1,3 @@
-READY FOR REVIEW
-
 # Editing a Partner
 
 Note - this is editing a Partner's basic information,  not their [Partner Profile](pm_partner_profiles.md).  What's the difference?  The basic Partner information is what you enter when you are initially creating the Partner, whereas the Partner Profile contains a high level of detail that can be entered by the Partners themselves.

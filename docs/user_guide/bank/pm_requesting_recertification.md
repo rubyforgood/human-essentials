@@ -1,5 +1,3 @@
-READY FOR REVIEW
-
 # Requesting Recertification
 
 From time to time, perhaps annually, you may want to confirm that the information your Partner has provided is still correct.   That is what "request recertification" is for.

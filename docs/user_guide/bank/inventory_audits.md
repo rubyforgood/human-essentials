@@ -1,5 +1,3 @@
-READY FOR REVIEW
-
 # Audits
 
 When you do an inventory count,  you'll want to set the inventory in each Storage Location to the physical count.  That's what the Audits function is for.

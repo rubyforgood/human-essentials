@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Getting Started -- Partner Management
 
 ## Things you need to know about Partners before deciding how you are handling them
