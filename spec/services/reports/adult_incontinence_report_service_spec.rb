@@ -76,6 +76,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
         create(:line_item, :distribution, quantity: 100, item: @kit_1.line_items.first.item, itemizable: kit_distribution_1)
         create(:line_item, :distribution, quantity: 100, item: @kit_2.line_items.first.item, itemizable: kit_distribution_2)
         create(:line_item, :distribution, quantity: 100, item: @kit_4.line_items.first.item, itemizable: kit_distribution_4)
+        # wipes kit no ai items
         create(:line_item, :distribution, quantity: 100, item: @kit_3.line_items.first.item, itemizable: kit_distribution_3)
         # We will create data both within and outside our date range, and both adult_incontinence and non adult_incontinence.
         # Spec will ensure that only the required data is included.
@@ -131,13 +132,9 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
           create_list(:line_item, 3, :purchase, quantity: 40, item: non_adult_incontinence_item, itemizable: purchase)
         end
       end
+
       it "returns an accurate number of adult served per month" do
-        within_time = Time.zone.parse("2020-05-31 14:00:00")
-
-        kit_distribution_addition = create(:distribution, organization: organization, issued_at: within_time)
-        create(:line_item, :distribution, quantity: 50000, item: @kit_1.line_items.first.item, itemizable: kit_distribution_addition)
-
-        expect(report.adults_served_per_month.round).to eq(168)
+        expect(report.adults_served_per_month.round).to eq(109)
       end
 
       it "should return the number of loose adult incontinence supplies distributed" do
@@ -148,7 +145,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
       end
 
       it "should return the number of distributed kits only containing adult incontinence items per month" do
-        expect(report.total_distributed_kits_containing_adult_incontinence_items_per_month).to eq(1.25)
+        expect(report.total_distributed_kits_containing_adult_incontinence_items_per_month).to eq(25.0)
       end
 
       it "should return the kits distributed within a specific year" do
@@ -162,9 +159,9 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
         expect(report.report[:entries]).to match(hash_including({
                                           "% adult incontinence bought" => "60%",
                                           "% adult incontinence supplies donated" => "40%",
-                                          "Adults Assisted Per Month" => 210,
+                                          "Adults Assisted Per Month" => 234,
                                           "Adult incontinence supplies distributed" => "51,800.0",
-                                          "Adult incontinence supplies per adult per month" => 21,
+                                          "Adult incontinence supplies per adult per month" => 18,
                                           "Money spent purchasing adult incontinence supplies" => "$30.00"
                                         }))
         expect(report.report[:entries]['Adult incontinence supplies'].split(', '))
@@ -191,8 +188,8 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
                                           "% adult incontinence bought" => "60%",
                                           "% adult incontinence supplies donated" => "40%",
                                           "Adult incontinence supplies distributed" => "51,800.0",
-                                          "Adults Assisted Per Month" => 85,
-                                          "Adult incontinence supplies per adult per month" => 51,
+                                          "Adults Assisted Per Month" => 109,
+                                          "Adult incontinence supplies per adult per month" => 40,
                                           "Money spent purchasing adult incontinence supplies" => "$30.00"
                                       }))
         expect(report.report[:entries]['Adult incontinence supplies'].split(', '))
