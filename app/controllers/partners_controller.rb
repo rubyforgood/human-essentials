@@ -4,6 +4,7 @@
 class PartnersController < ApplicationController
   include Importable
   before_action :validate_user_role, only: :show
+  skip_before_action :require_organization, only: :show
 
   def index
     @partners = current_organization.partners.includes(:partner_group).alphabetized

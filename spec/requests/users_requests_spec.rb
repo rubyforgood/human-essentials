@@ -10,10 +10,14 @@ RSpec.describe "Users", type: :request do
   end
 
   describe "GET #index" do
+    subject { get users_path }
+
     it "returns http success" do
       get users_path
       expect(response).to be_successful
     end
+
+    include_examples "restricts access to organization users/admins"
   end
 
   describe "GET #new" do

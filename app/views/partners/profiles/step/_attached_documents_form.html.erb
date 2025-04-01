@@ -1,18 +1,24 @@
 <%= f.fields_for :profile, profile do |pf| %>
-  <div class="form-group">
+  <div class="form-group" data-controller="file-input">
     <% if profile.documents.attached? %>
       <strong>Attached files:</strong>
-      <ul>
+      <ul class="list-unstyled">
         <% profile.documents.each do |doc| %>
           <% if doc.persisted? %>
-            <li><%= link_to doc.blob['filename'], rails_blob_path(doc), class: "font-weight-bold" %></li>
-            <%= pf.hidden_field :documents, multiple: true, value: doc.signed_id %>
+            <li class="attached-document d-flex justify-content-between align-items-center p-2 border rounded mb-2" data-document-id="<%= doc.signed_id %>">
+              <div class="text-truncate" style="max-width: 75%;">
+                <%= link_to doc.blob.filename.to_s, rails_blob_path(doc), class: "font-weight-bold" %>
+                <%= pf.hidden_field :documents, multiple: true, value: doc.signed_id %>
+              </div>
+              <%= remove_element_button "Remove", container_selector: "li", class: "btn btn-sm btn-danger" %>
+            </li>
           <% end %>
         <% end %>
       </ul>
-      <%= pf.file_field :documents, multiple: true, class: "form-control-file" %>
-    <% else %>
-      <%= pf.file_field :documents, multiple: true, class: "form-control-file" %>
     <% end %>
+
+    <%# Native file input and placeholder for selected file names %>
+    <%= pf.file_field :documents, multiple: true, class: "form-control-file", data: { file_input_target: "input" } %>
+    <div data-file-input-target="list" class="mt-2"></div>
   </div>
 <% end %>
