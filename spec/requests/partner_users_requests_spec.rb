@@ -72,7 +72,7 @@ RSpec.describe PartnerUsersController, type: :request do
       end
 
       context "with existing user params" do
-        it "renders the index template with alert" do
+        it "renders the index template with error" do
           existing_user = User.first
           expect {
             post partner_users_path(default_params.merge(partner_id: partner)), params: {user: {email: existing_user.email}}
