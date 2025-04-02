@@ -1,6 +1,6 @@
 RSpec.describe Exports::ExportPartnersCSVService do
   describe "#generate_csv" do
-    subject { CSV.parse(described_class.new(partners).generate_csv) }
+    subject { CSV.parse(described_class.new(partners, organization).generate_csv) }
 
     let(:organization) { create(:organization) }
 
@@ -392,7 +392,7 @@ RSpec.describe Exports::ExportPartnersCSVService do
       partial_to_headers.keys.each do |partial|
         organization.update(partner_form_fields: [partial])
         partners.reload
-        limited_export = CSV.parse(described_class.new(partners).generate_csv)
+        limited_export = CSV.parse(described_class.new(partners, organization).generate_csv)
         expect(limited_export[0]).to eq(headers_base + partial_to_headers[partial])
         expect(limited_export[1]).to eq(values_base + partial_to_values[partial])
       end

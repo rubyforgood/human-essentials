@@ -4,12 +4,12 @@ module Exports
     # to this service object; this is happening within the same request/response cycle, so it's already
     # in memory, so we can pass that collection in directly. Should this be moved to a background / async
     # job, we will need to pass in a collection of IDs instead.
-    def initialize(partners)
+    def initialize(partners, organization)
       @partners = partners.includes(:profile)
       # Assumes that all of the partners belong to the same organization. This is true for the time being
       # and, were that to change, base_table would need to be reworked anyway to account for partners from
       # different orgs having different partials enabled, and thus different columns in the CSV.
-      @partials_to_show = partners.first.partials_to_show
+      @partials_to_show = organization.partials_to_show
     end
 
     def generate_csv
