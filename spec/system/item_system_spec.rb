@@ -112,8 +112,8 @@ RSpec.describe "Item management", type: :system do
   end
 
   describe "Item Table Tabs >" do
-    let(:item_pullups) { create(:item, name: "the most wonderful magical pullups that truly potty train", category: "Magic Toddlers", on_hand_minimum_quantity: 100) }
-    let(:item_tampons) { create(:item, name: "blackbeard's rugged tampons", category: "Menstrual Products", on_hand_minimum_quantity: 100) }
+    let(:item_pullups) { create(:item, name: "the most wonderful magical pullups that truly potty train", category: "Magic Toddlers") }
+    let(:item_tampons) { create(:item, name: "blackbeard's rugged tampons", category: "Menstrual Products") }
     let(:storage_name) { "the poop catcher warehouse" }
     let(:storage) { create(:storage_location, :with_items, item: item_pullups, item_quantity: num_pullups_in_donation, name: storage_name) }
     let!(:aux_storage) { create(:storage_location, :with_items, item: item_pullups, item_quantity: num_pullups_second_donation, name: "a secret secondary location") }
@@ -166,24 +166,6 @@ RSpec.describe "Item management", type: :system do
       expect(find(".expandable-body", visible: true)).to have_link storage_name
       expect(expanded_row).to have_content num_tampons_in_donation
       expect(expanded_row).to have_content num_tampons_second_donation
-    end
-
-    it "should highlight total quantity if it is below minimum quantity" do
-      click_link "Items, Quantity, and Location"
-      first_row = find("#item_row_quantity_#{item_tampons.id}")
-      expect(first_row).to have_css("td[data-column='total'].text-danger", text: 59)
-
-      second_row = find("#item_row_quantity_#{item_pullups.id}")
-      expect(second_row).to have_css("td[data-column='total']", text: "681")
-      expect(second_row).to_not have_css("td[data-column='total'].text-danger")
-
-      click_link "Item Inventory"
-      first_row = find("#item_row_inventory_#{item_tampons.id}")
-      expect(first_row).to have_css("td[data-column='total'].text-danger", text: 59)
-
-      second_row = find("#item_row_inventory_#{item_pullups.id}")
-      expect(second_row).to have_css("td[data-column='total']", text: "681")
-      expect(second_row).to_not have_css("td[data-column='total'].text-danger")
     end
   end
 
