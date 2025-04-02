@@ -66,7 +66,7 @@ class Partner < ApplicationRecord
     where(status: status.to_sym)
   }
 
-  ALL_PARTIALS = Organization::ALL_PARTIALS.map{|partial| partial[1]}.freeze
+  ALL_PARTIALS = Organization::ALL_PARTIALS.map { |partial| partial[1] }.freeze
 
   # @return [String]
   def display_status

@@ -399,7 +399,7 @@ RSpec.describe Exports::ExportPartnersCSVService do
     end
 
     context "when there are no partners" do
-      let(:partners) { Partner.none } 
+      let(:partners) { Partner.none }
       it "should have the correct headers and no other rows" do
         expect(subject[0]).to eq(headers_base + partial_to_headers.values.flatten)
         expect(subject[1]).to eq(nil)
