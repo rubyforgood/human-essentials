@@ -398,6 +398,24 @@ RSpec.describe Exports::ExportPartnersCSVService do
       end
     end
 
+    context "when there are no partners" do
+      let(:partners) { Partner.none } 
+      it "should have the correct headers and no other rows" do
+        expect(subject[0]).to eq(headers_base + partial_to_headers.values.flatten)
+        expect(subject[1]).to eq(nil)
+      end
+
+      it "should only export columns in profile sections the org has enabled" do
+        partial_to_headers.keys.each do |partial|
+          organization.update(partner_form_fields: [partial])
+          partners.reload
+          limited_export = CSV.parse(described_class.new(partners, organization).generate_csv)
+          expect(limited_export[0]).to eq(headers_base + partial_to_headers[partial])
+          expect(limited_export[1]).to eq(nil)
+        end
+      end
+    end
+
     context "when partner has a distribution in the last 12 months" do
       let(:distribution) { create(:distribution, partner: partner) }
 
