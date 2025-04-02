@@ -860,6 +860,8 @@ Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "read_events")
 Flipper.enable(:read_events)
 Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "partner_step_form")
 Flipper.enable(:partner_step_form)
+Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "enable_packs")
+Flipper.enable(:enable_packs)
 # ----------------------------------------------------------------------------
 # Account Requests
 # ----------------------------------------------------------------------------
