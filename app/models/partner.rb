@@ -66,18 +66,7 @@ class Partner < ApplicationRecord
     where(status: status.to_sym)
   }
 
-  ALL_PARTIALS = %w[
-    media_information
-    agency_stability
-    organizational_capacity
-    sources_of_funding
-    area_served
-    population_served
-    executive_director
-    pick_up_person
-    agency_distribution_information
-    attached_documents
-  ].freeze
+  ALL_PARTIALS = Organization::ALL_PARTIALS.map{|partial| partial[1]}.freeze
 
   # @return [String]
   def display_status
@@ -127,7 +116,7 @@ class Partner < ApplicationRecord
   end
 
   def partials_to_show
-    organization.partner_form_fields.presence || ALL_PARTIALS
+    organization.partials_to_show
   end
 
   def quantity_year_to_date
