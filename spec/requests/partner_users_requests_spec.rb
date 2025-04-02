@@ -73,9 +73,8 @@ RSpec.describe PartnerUsersController, type: :request do
 
       context "with existing user params" do
         it "renders the index template with error" do
-          existing_user = User.first
           expect {
-            post partner_users_path(default_params.merge(partner_id: partner)), params: {user: {email: existing_user.email}}
+            post partner_users_path(default_params.merge(partner_id: partner)), params: {user: {email: partner.email}}
           }.not_to change(User, :count)
 
           expect(response).to redirect_to(partner_users_path)
