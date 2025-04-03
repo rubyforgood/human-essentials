@@ -87,6 +87,11 @@
 
                 <%= render 'shared/deadline_day_fields', f: f %>
 
+                <% default_reminder_email_text_hint = "You can use the variable <code>%{partner_name}</code> to include the partner's name in the message." %>
+                <%= f.input :reminder_email_text, label: "Additional text for reminder email", hint: default_reminder_email_text_hint.html_safe do %>
+                  <%= f.rich_text_area :reminder_email_text, placeholder: 'Enter reminder email content...' %>
+                <% end %>
+
                 <%= f.input :intake_location, :collection => current_organization.storage_locations.active.alphabetized, :label_method => :name, :value_method => :id, :label => "Default Intake Location", :include_blank => true, wrapper: :input_group %>
 
                 <%= f.label :partner_form_fields, 'Partner Profile Sections' %>
@@ -104,7 +109,7 @@
                 <%= f.input :distribute_monthly, label: 'Does your bank distribute monthly?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
 
                 <% if Flipper.enabled?(:enable_packs) %>
-                  <%= label_tag "organization[request_unit_names]", 'Custom request units used (please use singular form -- e.g. pack, not packs)' %>
+                  <%= label_tag "organization[request_unit_names]", 'Custom request units used. Please use singular form -- e.g. pack, not packs. There will be a default "unit" entry provided.' %>
                   <%= select_tag(
                     "organization[request_unit_names]",
                     options_from_collection_for_select(

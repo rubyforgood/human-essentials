@@ -6,6 +6,7 @@ RSpec.describe ReminderDeadlineMailer, type: :job do
     let(:partner) { create(:partner, organization: organization) }
 
     before(:each) do
+      organization.reminder_email_text = "Custom reminder message"
       organization.update!(reminder_day: today.day, deadline_day: 1)
     end
 
@@ -25,13 +26,14 @@ RSpec.describe ReminderDeadlineMailer, type: :job do
 
     it 'renders the body' do
       travel_to today do
-        expect(html_body(subject))
-          .to include("This is a friendly reminder that #{organization.name} requires your human essentials requests to " \
-                       "be submitted by Tue, 01 Feb 2022")
-        expect(text_body(subject))
+        expect(subject.body.encoded)
           .to include("This is a friendly reminder that #{organization.name} requires your human essentials requests to " \
                        "be submitted by Tue, 01 Feb 2022")
       end
+    end
+
+    it 'renders the body with the reminder email text' do
+      expect(subject.body.encoded).to include("Custom reminder message")
     end
   end
 end

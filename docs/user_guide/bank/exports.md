@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Exports
 
 There are several exports available to allow you to use the information from the application in other apps.

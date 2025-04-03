@@ -1,6 +1,3 @@
-
-READY FOR REVIEW
-
 # Donations
 Donations are obviously one of the most important elements of an Essential Bank's operations, being the primary way most banks get the goods to distribute to their partners to help folk.
 

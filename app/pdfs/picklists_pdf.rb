@@ -145,7 +145,7 @@ class PicklistsPdf
     data + line_items.map do |line_item|
       [line_item.name,
         line_item.quantity,
-        line_item.request_unit&.capitalize&.pluralize(line_item.quantity),
+        line_item.request_unit&.pluralize(line_item.quantity),
         "[  ]",
         ""]
     end
