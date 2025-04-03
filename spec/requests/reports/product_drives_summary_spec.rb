@@ -46,6 +46,7 @@ RSpec.describe "Reports::ProductDrivesSummary", type: :request do
         it "shows the correct total and links" do
           expect(response.body).to match(%r{<span class="total_received_donations">\s*14\s*</span>})
           expect(response.body).to match(%r{<span class="total_money_raised">\s*\$24.00\s*</span>})
+          expect(response.body).to match(%r{<span class="total_drives">\s*2\s*</span>})
         end
       end
 
@@ -54,6 +55,7 @@ RSpec.describe "Reports::ProductDrivesSummary", type: :request do
         it "shows the correct total and links" do
           expect(response.body).to match(%r{<span class="total_received_donations">\s*16\s*</span>})
           expect(response.body).to match(%r{<span class="total_money_raised">\s*\$24.00\s*</span>})
+          expect(response.body).to match(%r{<span class="total_drives">\s*2\s*</span>})
         end
       end
 
@@ -62,6 +64,7 @@ RSpec.describe "Reports::ProductDrivesSummary", type: :request do
         it "shows the correct total and links" do
           expect(response.body).to match(%r{<span class="total_received_donations">\s*122\s*</span>})
           expect(response.body).to match(%r{<span class="total_money_raised">\s*\$24.00\s*</span>})
+          expect(response.body).to match(%r{<span class="total_drives">\s*2\s*</span>})
         end
       end
 
@@ -70,6 +73,7 @@ RSpec.describe "Reports::ProductDrivesSummary", type: :request do
         it "shows the correct total and links" do
           expect(response.body).to match(%r{<span class="total_received_donations">\s*248\s*</span>})
           expect(response.body).to match(%r{<span class="total_money_raised">\s*\$48.00\s*</span>})
+          expect(response.body).to match(%r{<span class="total_drives">\s*4\s*</span>})
         end
       end
 
@@ -78,6 +82,7 @@ RSpec.describe "Reports::ProductDrivesSummary", type: :request do
         it "shows the correct total and links" do
           expect(response.body).to match(%r{<span class="total_received_donations">\s*422\s*</span>})
           expect(response.body).to match(%r{<span class="total_money_raised">\s*\$120.00\s*</span>})
+          expect(response.body).to match(%r{<span class="total_drives">\s*10\s*</span>})
         end
       end
     end
