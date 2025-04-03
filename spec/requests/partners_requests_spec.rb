@@ -1,4 +1,5 @@
 RSpec.describe "Partners", type: :request do
+  # Specify partner_form_fields for the sake of brevity in the csv output of GET #index.
   let(:organization) { create(:organization, partner_form_fields: ["media_information"]) }
   let(:user) { create(:user, organization: organization) }
 
