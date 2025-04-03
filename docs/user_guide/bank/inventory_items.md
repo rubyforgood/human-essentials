@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Items
 ## Introduction
 Your bank is initialized with  a basic set of Items that contains many common product types that essentials banks distribute.   These Items represent the stock you have for distribution.  Here is the current default list:  

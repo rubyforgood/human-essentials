@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Importing partners
 
 **N.B.** We've set up importing partners as a process you only run once to prevent accidental imports and writing over existing partners.

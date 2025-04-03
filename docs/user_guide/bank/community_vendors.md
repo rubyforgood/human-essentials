@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Vendors
 
 The Vendors list lets you manage Vendor contact information and view your Purchases from each Vendor. To access it, click on "Vendors" under the "Community" section.

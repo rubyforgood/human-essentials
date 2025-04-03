@@ -1,5 +1,4 @@
-READY FOR REVIEW
-
+# Other Partner Information
 There are a few other things with Partners that didn't fit into any of the sections above:
 
 1/  You can see the Families served, Children served and zipcodes served, when you view a partner

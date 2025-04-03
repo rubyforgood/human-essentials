@@ -17,6 +17,13 @@ RSpec.describe Unit, type: :model do
     it "validates uniqueness of name in context of organization" do
       expect { described_class.create!(name: "WolfPack", organization: organization) }.to raise_exception(ActiveRecord::RecordInvalid).with_message("Validation failed: Name has already been taken")
     end
+
+    it "doesn't allow unit, units, Unit, or Units" do
+      expect { described_class.create!(name: "unit", organization: organization) }.to raise_exception(ActiveRecord::RecordInvalid).with_message("Validation failed: Name 'unit' is reserved.")
+      expect { described_class.create!(name: "units", organization: organization) }.to raise_exception(ActiveRecord::RecordInvalid).with_message("Validation failed: Name 'unit' is reserved.")
+      expect { described_class.create!(name: "Unit", organization: organization) }.to raise_exception(ActiveRecord::RecordInvalid).with_message("Validation failed: Name 'unit' is reserved.")
+      expect { described_class.create!(name: "Units", organization: organization) }.to raise_exception(ActiveRecord::RecordInvalid).with_message("Validation failed: Name 'unit' is reserved.")
+    end
   end
 
   describe "Associations" do

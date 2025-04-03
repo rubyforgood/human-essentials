@@ -1,5 +1,3 @@
-READY FOR REVIEW
-
 # Organization information and customization
 
 Every Essentials Bank has its own way of doing things.
@@ -54,18 +52,23 @@ There is also a check-box on the Partner that must be checked for the Partner to
 
 The text of this email will be:  
 
+<blockquote>
 Hello [Partner's name],
-
+<br/>
+<br/>
 This is a friendly reminder that [Your bank's name] requires your human essentials requests to be submitted by [the deadline date, including month and year]
 if you would like to receive a Distribution next month.
-
+<br/>
+<br/>
 Please log into Human Essentials at https://humanessentials.app before this date and submit your request if you are intending to submit an essentials request.
-
-Please contact [Your bank's name] at <%= @organization.email %>
+<br/>
+<br/>
+Please contact [Your bank's name] at [Your bank's email]
 if you have any questions about this!
-
-
-
+<br/>
+<br/>
+[Additional text for reminder email (see below)]
+</blockquote>
 
 
 
@@ -75,6 +78,9 @@ If you do not pick a day, no reminder emails are sent.
 
 #### Deadline day (Final day of the month to submit Requests)
 This day will be included in the reminder email message,
+
+#### Additional text for reminder email
+If present, this text will be included in the reminder email after the default text. In the above email template, this additional message will replace `[Additional text for reminder email (see below)]`.
 
 ----------
 

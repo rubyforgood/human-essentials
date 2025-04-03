@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Adding a single Partner
 To add a single Partner,  you can either Click on the "Add a Partner" button in the "Getting Started" section of your dashboard (if you are, indeed, just getting started), or click "Partner Agencies" in the left-hand menu, then "All Partners", then "New Partner Agency".  Then, fill in the following information, and click "Add Partner Agency".  
 ![Navigation to add a Partner](images/partners/partners_add_navigation.png)

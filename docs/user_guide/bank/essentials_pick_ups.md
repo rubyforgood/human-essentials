@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Pick Ups & Deliveries Calendar
 
 Pick Ups & Deliveries shows scheduled and completed distributions in a calendar format on a monthly basis.

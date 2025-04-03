@@ -88,6 +88,18 @@ class VendorsController < ApplicationController
     redirect_to vendors_path, notice: "#{vendor.business_name} has been reactivated."
   end
 
+  def destroy
+    vendor = current_organization.vendors.find(params[:id])
+    vendor.destroy
+    if vendor.errors.any?
+      errors = vendor.errors.full_messages.join("\n")
+      redirect_to vendors_path, error: "#{vendor.business_name} could not be removed. \n#{errors}"
+      return
+    end
+
+    redirect_to vendors_path, notice: "#{vendor.business_name} has been removed."
+  end
+
   private
 
   def vendor_params

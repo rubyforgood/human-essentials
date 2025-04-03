@@ -1,5 +1,4 @@
-READY FOR REVIEW
-
+# Human Essentials User Guide
 This user guide is meant for users of Human Essentials at essentials banks.  As of November 2, 2024, it is a work in progress.  If you are interested in helping out, please reach out to @cielf.
 
 1. Introduction
