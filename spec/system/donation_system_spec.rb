@@ -89,6 +89,22 @@ RSpec.describe "Donations", type: :system, js: true do
         expect(page).to have_css("table tbody tr", count: 1)
       end
 
+      it "Filters by Item id" do
+        category_1 = create(:item_category, name: "Category 1", organization: organization)
+        category_2 = create(:item_category, name: "Category 2", organization: organization)
+        item_1 = create(:item, item_category: category_1, name: "Item 1", value_in_cents: 100)
+        item_2 = create(:item, item_category: category_2, name: "Item 2", value_in_cents: 200)
+        create(:donation, :with_items, item_quantity: 25, item: item_1)
+        create(:donation, :with_items, item_quantity: 30, item: item_2)
+        visit subject
+        expect(page).to have_css("table tbody tr", count: 2)
+        select item_1.name, from: "filters[by_item_id]"
+        click_button "Filter"
+        expect(page).to have_css("table tbody tr", count: 1)
+        expect(page).to have_css("table thead tr th", text: "Quantity of #{item_1.name}")
+        expect(page).to have_css("table td.in-kind", text: "25")
+      end
+
       it "Filter by product drive participant sticks around" do
         x = create(:product_drive, name: 'x')
         a = create(:product_drive_participant, business_name: "A")
