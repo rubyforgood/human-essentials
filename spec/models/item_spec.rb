@@ -168,7 +168,7 @@ RSpec.describe Item, type: :model do
         child_disposable_item = create(:item, :active, name: "Item 1", reporting_category: :disposable_diapers, organization:)
         adult_cloth_item = create(:item, :active, name: "Item 2", reporting_category: :adult_incontinence, organization:)
         child_cloth_item = create(:item, :active, name: "Item 3", reporting_category: :cloth_diapers, organization:)
-        liner_item = create(:item, :active, name: "Item 4", reporting_category: :other, organization:)
+        liner_item = create(:item, :active, name: "Item 4", reporting_category: :period_liners, organization:)
 
         ai_items = Item.adult_incontinence
 

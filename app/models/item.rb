@@ -76,7 +76,7 @@ class Item < ApplicationRecord
     cloth_diapers: "cloth_diapers",
     disposable_diapers: "disposable_diapers",
     menstrual: "menstrual",
-    other: "other",
+    other_categories: "other",
     pads: "pads",
     period_liners: "period_liners",
     period_other: "period_other",
