@@ -6,6 +6,26 @@ RSpec.describe UserInviteService, type: :service do
     allow(UserMailer).to receive(:role_added).and_return(double(:mail, deliver_later: nil))
   end
 
+  it "should raise an error if resource is not provided for a role that requires it" do
+    expect {
+      described_class.invite(
+        email: "email@email.com",
+        roles: [Role::ORG_USER, Role::ORG_ADMIN],
+        resource: nil
+      )
+    }.to raise_error("Resource not found!")
+  end
+
+  it "should raise an error if required resource is not provided for any submitted role" do
+    expect {
+      described_class.invite(
+        email: "email@email.com",
+        roles: [Role::SUPER_ADMIN, Role::ORG_ADMIN],
+        resource: nil
+      )
+    }.to raise_error("Resource not found!")
+  end
+
   context "with existing user" do
     let!(:user) do
       create(:user, email: "email@email.com", organization: organization)
@@ -51,6 +71,41 @@ RSpec.describe UserInviteService, type: :service do
       expect(result.email).to eq("email2@email.com")
       expect(result).to have_role(Role::ORG_USER, organization)
       expect(result).to have_role(Role::ORG_ADMIN, organization)
+      expect(result).not_to have_role(Role::PARTNER, :any)
+    end
+
+    it "should create a user with the org admin role with the org user role as well" do
+      result = nil
+      expect {
+        result = described_class.invite(
+          name: "Org Admin",
+          email: "email@email.com",
+          roles: [Role::ORG_ADMIN],
+          resource: organization
+        )
+      }.to change { ActionMailer::Base.deliveries.count }.by(1)
+      expect(result.name).to eq("Org Admin")
+      expect(result.email).to eq("email@email.com")
+      expect(result).to have_role(Role::ORG_USER, organization)
+      expect(result).to have_role(Role::ORG_ADMIN, organization)
+      expect(result).not_to have_role(Role::PARTNER, :any)
+    end
+
+    it "should create a super admin user without resource" do
+      result = nil
+      expect {
+        result = described_class.invite(
+          name: "Super Admin",
+          email: "email@email.com",
+          roles: [Role::SUPER_ADMIN],
+          resource: nil
+        )
+      }.to change { ActionMailer::Base.deliveries.count }.by(1)
+      expect(result.name).to eq("Super Admin")
+      expect(result.email).to eq("email@email.com")
+      expect(result).to have_role(Role::SUPER_ADMIN)
+      expect(result).not_to have_role(Role::ORG_USER, :any)
+      expect(result).not_to have_role(Role::ORG_ADMIN, :any)
       expect(result).not_to have_role(Role::PARTNER, :any)
     end
 
