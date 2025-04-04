@@ -135,17 +135,13 @@ RSpec.describe Item, type: :model do
       end
     end
 
-    describe "->disposable" do
+    describe "->disposable_diapers" do
       it "returns records associated with disposable diapers" do
-        base_1 = create(:base_item, category: "Diapers - Childrens")
-        adult_base = create(:base_item, category: "Diapers - Adult")
-        cloth_base = create(:base_item, category: "Diapers - Cloth (Adult)")
+        disposable_1 = create(:item, :active, name: "Disposable Diaper 1", reporting_category: :disposable_diapers, organization:)
+        adult_1 = create(:item, :active, name: "Adult Diaper 1", reporting_category: :adult_incontinence, organization:)
+        cloth_1 = create(:item, :active, name: "Cloth Diaper", reporting_category: :cloth_diapers, organization:)
 
-        disposable_1 = create(:item, :active, name: "Disposable Diaper 1", base_item: base_1, organization: organization)
-        adult_1 = create(:item, :active, name: "Adult Diaper 1", base_item: adult_base, organization: organization)
-        cloth_1 = create(:item, :active, name: "Cloth Diaper", base_item: cloth_base, organization: organization)
-
-        disposables = Item.disposable
+        disposables = Item.disposable_diapers
 
         expect(disposables.count).to eq(1)
         expect(disposables).to include(disposable_1)
@@ -155,13 +151,9 @@ RSpec.describe Item, type: :model do
 
     describe "->cloth_diapers" do
       it "returns records associated with cloth diapers" do
-        disposable_base = create(:base_item, category: "Diapers - Childrens")
-        adult_cloth_base = create(:base_item, category: "Diapers - Cloth (Adult)")
-        cloth_base = create(:base_item, category: "Diapers - Cloth (Kids)")
-
-        cloth_item = create(:item, :active, name: "Cloth Diaper", base_item: cloth_base, organization: organization)
-        adult_cloth_item = create(:item, :active, name: "Adult_Cloth Diaper 1", base_item: adult_cloth_base, organization: organization)
-        disposable_item = create(:item, :active, name: "Disposable Diaper 1", base_item: disposable_base, organization: organization)
+        cloth_item = create(:item, :active, name: "Cloth Diaper", reporting_category: :cloth_diapers, organization:)
+        adult_cloth_item = create(:item, :active, name: "Adult_Cloth Diaper 1", reporting_category: :adult_incontinence, organization:)
+        disposable_item = create(:item, :active, name: "Disposable Diaper 1", reporting_category: :disposable_diapers, organization:)
 
         cloth_diapers = Item.cloth_diapers
 
@@ -173,54 +165,37 @@ RSpec.describe Item, type: :model do
 
     describe "->adult_incontinence" do
       it "returns records associated with adult incontinence" do
-        child_base = create(:base_item, category: "Diapers - Childrens")
-        adult_cloth_base = create(:base_item, category: "Diapers - Cloth (Adult)")
-        child_cloth_base = create(:base_item, category: "Diapers - Cloth (Kids)")
-        adult_brief_base = create(:base_item, category: "Diapers - Adult")
-        pad_base = create(:base_item, category: "Incontinence Pads - Adult", partner_key: "underpads")
-        adult_incontinence_base = create(:base_item, category: "Incontinence Pads - Adult", partner_key: "adult_incontinence")
-        liner_base_1 = create(:base_item, category: "Menstrual Supplies/Items", partner_key: "liners")
-        liner_base_2 = create(:base_item, category: "Incontinence Pads - Adult", partner_key: "ai_liners")
-        wipes_base = create(:base_item, category: "Wipes - Adults", partner_key: "adult_wipes")
-
-        child_disposable_item = create(:item, :active, name: "Item 1", base_item: child_base, organization: organization)
-        adult_cloth_item = create(:item, :active, name: "Item 2", base_item: adult_cloth_base, organization: organization)
-        child_cloth_item = create(:item, :active, name: "Item 3", base_item: child_cloth_base, organization: organization)
-        adult_brief_item = create(:item, :active, name: "Item 4", base_item: adult_brief_base, organization: organization)
-        adult_incontinence_item = create(:item, :active, name: "Item 5", base_item: adult_incontinence_base, organization: organization)
-        pad_item = create(:item, :active, name: "Item 6", base_item: pad_base, organization: organization)
-        liner_item_1 = create(:item, :active, name: "Item 7", base_item: liner_base_1, organization: organization)
-        liner_item_2 = create(:item, :active, name: "Item 8", base_item: liner_base_2, organization: organization)
-        wipes_item = create(:item, :active, name: "Item 9", base_item: wipes_base, organization: organization)
+        child_disposable_item = create(:item, :active, name: "Item 1", reporting_category: :disposable_diapers, organization:)
+        adult_cloth_item = create(:item, :active, name: "Item 2", reporting_category: :adult_incontinence, organization:)
+        child_cloth_item = create(:item, :active, name: "Item 3", reporting_category: :cloth_diapers, organization:)
+        liner_item = create(:item, :active, name: "Item 4", reporting_category: :other, organization:)
 
         ai_items = Item.adult_incontinence
 
-        expect(ai_items.count).to eq(5)
-        expect(ai_items).to include(adult_cloth_item, adult_brief_item, adult_incontinence_item, pad_item, liner_item_2)
-        expect(ai_items).to_not include(child_disposable_item, child_cloth_item, wipes_item, liner_item_1)
+        expect(ai_items.count).to eq(1)
+        expect(ai_items).to include(adult_cloth_item)
+        expect(ai_items).to_not include(child_disposable_item, child_cloth_item, liner_item)
       end
     end
   end
 
   describe "->period_supplies" do
     it "returns records associated with period supplies" do
-      liner_base_1 = create(:base_item, category: "Menstrual Supplies/Items", partner_key: "liners")
-      liner_base_2 = create(:base_item, category: "Incontinence Pads - Adult", partner_key: "ai_liners")
-      ai_pad_base = create(:base_item, category: "Incontinence Pads - Adult", partner_key: "underpads")
-      period_pad_base = create(:base_item, category: "Menstrual Supplies/Items", partner_key: "pads")
-      tampon_base = create(:base_item, category: "Menstrual Supplies/Items", partner_key: "tampons")
+      liner_item = create(:item, :active, name: "Item 1", reporting_category: :period_liners, organization:)
+      period_other_item = create(:item, :active, name: "Item 2", reporting_category: :period_other, organization:)
+      underwear_item = create(:item, :active, name: "Item 3", reporting_category: :period_underwear, organization:)
+      tampon_item = create(:item, :active, name: "Item 4", reporting_category: :period_underwear, organization:)
+      pad_item = create(:item, :active, name: "Item 5", reporting_category: :period_underwear, organization:)
 
-      liner_item_1 = create(:item, :active, name: "Item 1", base_item: liner_base_1, organization: organization)
-      liner_item_2 = create(:item, :active, name: "Item 2", base_item: liner_base_2, organization: organization)
-      ai_pad_item = create(:item, :active, name: "Item 3", base_item: ai_pad_base, organization: organization)
-      period_pad_item = create(:item, :active, name: "Item 4", base_item: period_pad_base, organization: organization)
-      tampon_item = create(:item, :active, name: "Item 5", base_item: tampon_base, organization: organization)
+      cloth_item = create(:item, :active, name: "Cloth Diaper", reporting_category: :cloth_diapers, organization:)
+      adult_cloth_item = create(:item, :active, name: "Adult_Cloth Diaper 1", reporting_category: :adult_incontinence, organization:)
+      disposable_item = create(:item, :active, name: "Disposable Diaper 1", reporting_category: :disposable_diapers, organization:)
 
       period_items = Item.period_supplies
 
-      expect(period_items.count).to eq(3)
-      expect(period_items).to include(liner_item_1, period_pad_item, tampon_item)
-      expect(period_items).to_not include(liner_item_2, ai_pad_item)
+      expect(period_items.count).to eq(5)
+      expect(period_items).to include(liner_item, period_other_item, underwear_item, tampon_item, pad_item)
+      expect(period_items).to_not include(cloth_item, adult_cloth_item, disposable_item)
     end
   end
 

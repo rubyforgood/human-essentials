@@ -38,7 +38,7 @@ module Reports
       .distributions
       .for_year(year)
       .joins(line_items: :item)
-      .merge(Item.loose.disposable)
+      .merge(Item.loose.disposable_diapers)
       .pick(Arel.sql("CEILING(SUM(line_items.quantity::numeric / COALESCE(items.distribution_quantity, 50)))"))
       .to_i
     end

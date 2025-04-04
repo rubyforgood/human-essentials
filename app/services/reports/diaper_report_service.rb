@@ -43,7 +43,7 @@ module Reports
         .distributions
         .for_year(year)
         .joins(line_items: :item)
-        .merge(Item.disposable)
+        .merge(Item.disposable_diapers)
         .sum("line_items.quantity")
     end
 
@@ -100,7 +100,7 @@ module Reports
     # @return [Integer]
     def disposable_diapers_from_drives
       @disposable_diapers_from_drives ||=
-        annual_drives.joins(donations: {line_items: :item}).merge(Item.disposable).sum(:quantity)
+        annual_drives.joins(donations: {line_items: :item}).merge(Item.disposable_diapers).sum(:quantity)
     end
 
     def cloth_diapers_from_drives
@@ -127,7 +127,7 @@ module Reports
     def disposable_diapers_from_virtual_drives
       @disposable_diapers_from_virtual_drives ||= virtual_product_drives
         .joins(donations: {line_items: :item})
-        .merge(Item.disposable)
+        .merge(Item.disposable_diapers)
         .sum(:quantity)
     end
 
@@ -202,7 +202,7 @@ module Reports
     # @return [Integer]
     def purchased_loose_disposable_diapers
       @purchased_disposable_diapers ||= LineItem.joins(:item)
-        .merge(Item.disposable)
+        .merge(Item.disposable_diapers)
         .where(itemizable: organization.purchases.for_year(year))
         .sum(:quantity)
     end
@@ -228,7 +228,7 @@ module Reports
     # @return [Integer]
     def donated_disposable_diapers
       @donated_diapers ||= LineItem.joins(:item)
-        .merge(Item.disposable)
+        .merge(Item.disposable_diapers)
         .where(itemizable: organization.donations.for_year(year))
         .sum(:quantity)
     end
