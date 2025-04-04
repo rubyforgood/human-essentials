@@ -39,7 +39,7 @@ class BaseItem < ApplicationRecord
     "Adult Briefs (XXXL)" => "adult_incontinence",
     "Adult Cloth Diapers (Large/XL/XXL)" => "adult_incontinence",
     "Adult Cloth Diapers (Small/Medium)" => "adult_incontinence",
-    "adult_incontinence Pads" => "adult_incontinence",
+    "Adult Incontinence Pads" => "adult_incontinence",
     "Bed Pads (Cloth)" => "other",
     "Bed Pads (Disposable)" => "other",
     "Bibs (Adult & Child)" => "other",
