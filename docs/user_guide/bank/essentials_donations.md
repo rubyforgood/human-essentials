@@ -16,7 +16,7 @@ This screen includes a filter so you can narrow down your search for a Donation,
 - Storage location -- where the goods from this Donation are stored.
 - Quantity of items -- total quantity of the Items in the Donation.
 - Money raised - in dollars.
-- In-Kind value -- this is calculated by multiplying the quantity of each Item by the current fair market value of that Item (entered in [Inventory | Items](inventory_items.md) )
+- In-Kind value -- this is calculated by multiplying the quantity of each Item by the current fair market value of that Item (entered in [Inventory -- Items](inventory_items.md) )
 - Comments
 - Actions - you can view or print donations from this screen.  Other actions are available on the view screen.
 
@@ -53,7 +53,7 @@ Here you can enter all the information for your Donation:
 - Issued On 
   - This is the date that the Donation was made.  Note that inventory changes happen as of when you enter  the information.  They are not back-dated.
 - Items in this Donation
-  - If you have set up [barcodes ](inventory_barcodes.md) for theIitems you are receiving,  you can use your barcode reader to enter your Items.  Otherwise, pick the Item from "Choose an item", and enter the number of that Item in "Quantity".
+  - If you have set up [barcodes ](inventory_barcodes.md) for the Items you are receiving,  you can use your barcode reader to enter your Items.  Otherwise, pick the Item from "Choose an item", and enter the number of that Item in "Quantity".
   - Click "Add Another Item" as needed to get room for more Items.
 
 When you are finished entering your information, click 'Save'.  
@@ -64,17 +64,17 @@ Here you specify what kind of source the Donation originated from.
 
 For Product Drive, Manufacturer, or Donation Site, you will further specify the specific source.
 ##### *Product Drive
-If  you specify Product drive,  you'll also need to specify the particular drive and participant for the Donation -- but you can enter them "on the fly", here. You can view summaries for the Product Drives in [Product Drives](product_drives.md), and manage the contact info for a Product Drive Participant under [Community | Product Drive Participants](community_product_drive_participants.md).
+If  you specify Product drive,  you'll also need to specify the particular drive and participant for the Donation -- but you can enter them "on the fly", here. You can view summaries for the Product Drives in [Product Drives](product_drives.md), and manage the contact info for a Product Drive Participant under [Community -- Product Drive Participants](community_product_drive_participants.md).
 ##### *Donation Site
 Donation Site is meant to capture the concept of any place you have a more-or-less permanent place people can drop off donations at, such as your main office, or community locations such as fire halls, etc.
-You can see the Donations for each Donation Site and manage their contact information under [Community|Donation Sites](community_donation_sites.md).  Unlike Product Drives, you can't create a new Donation Site 'on the fly' through the fields here
+You can see the Donations for each Donation Site and manage their contact information under [Community -- Donation Sites](community_donation_sites.md).  Unlike Product Drives, you can't create a new Donation Site 'on the fly' through the fields here
 ##### *Manufacturer
-This is for the donations that come straight from a Manufacturer.  You can view a breakdown of the Donations for each Manufacturer under [Community | Manufacturers](community_manufacturers.md)
+This is for the donations that come straight from a Manufacturer.  You can view a breakdown of the Donations for each Manufacturer under [Community --  Manufacturers](community_manufacturers.md)
 ##### *Misc. Donation
 Misc. Donation is a catch-all for any Donation without an identified source.
 
 #### Storage Location
-Pick the Storage Location the Donation is going to.  If it will be split among multiple locations, you can either enter separate Donations,  or enter the Donation using one location,  then use the [Inventory | Transfers] function to move the appropriate inventory to other locations.
+Pick the Storage Location the Donation is going to.  If it will be split among multiple locations, you can either enter separate Donations,  or enter the Donation using one location,  then use the [Inventory -- Transfers] function to move the appropriate inventory to other locations.
 
 #### Money raised in dollars
 This number is used in the Annual Survey, and the Donations - Summary report as well as being shown in the main Donations page.
@@ -85,7 +85,7 @@ This is the date we use for any and all date filtering that you might do on Dona
 #### Items in this donation
 
 There are a couple of ways to get Items into the donation quickly:
-(1) You can "bloop" a barcode -- that requires some initial setup, as detailed in [Inventory | Barcodes], or
+(1) You can "bloop" a barcode -- that requires some initial setup, as detailed in [Inventory -- Barcodes], or
 (2) You can pick the item from the drop-down of all *active* items in your system, and enter the quantity of that item.
 
 In either case,  you can click "Add Another Item" (3)  to open up another item for entry, or "Remove" (4) if you've added too many!
