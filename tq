@@ -1,0 +1,55 @@
+[1mdiff --git i/db/migrate/20250404102321_fix_liners_reporting_category.rb w/db/migrate/20250404102321_fix_liners_reporting_category.rb[m
+[1mdeleted file mode 100644[m
+[1mindex 670e3a635..000000000[m
+[1m--- i/db/migrate/20250404102321_fix_liners_reporting_category.rb[m
+[1m+++ /dev/null[m
+[36m@@ -1,23 +0,0 @@[m
+[31m-class FixLinersReportingCategory < ActiveRecord::Migration[8.0][m
+[31m-  def up[m
+[31m-    BaseItem[m
+[31m-      .where(name: "Liners (Menstrual)")[m
+[31m-      .update_all(reporting_category: :period_liners)[m
+[1;35m-[m
+[31m-    Item[m
+[31m-      .joins(:base_item)[m
+[31m-      .where(base_item: { name: "Liners (Menstrual)" })[m
+[31m-      .update_all(reporting_category: :period_liners)[m
+[1;35m-  end[m
+[1;35m-[m
+[31m-  def down[m
+[31m-    BaseItem[m
+[31m-      .where(name: "Liners (Menstrual)")[m
+[31m-      .update_all(reporting_category: :menstrual)[m
+[1;35m-[m
+[31m-    Item[m
+[31m-      .joins(:base_item)[m
+[31m-      .where(base_item: { name: "Liners (Menstrual)"})[m
+[31m-      .update_all(reporting_category: :menstrual)[m
+[1;35m-  end[m
+[31m-end[m
+[1mdiff --git i/db/schema.rb w/db/schema.rb[m
+[1mindex b4603b577..10250c3dd 100644[m
+[1m--- i/db/schema.rb[m
+[1m+++ w/db/schema.rb[m
+[36m@@ -10,7 +10,7 @@[m
+ #[m
+ # It's strongly recommended that you check this file into your version control system.[m
+ [m
+[31m-ActiveRecord::Schema[8.0].define(version: 2025_03_05_153423) do[m
+[32m+[m[32mActiveRecord::Schema[8.0].define(version: 2025_04_04_102321) do[m
+   # These are extensions that must be enabled in order to support this database[m
+   enable_extension "pg_catalog.plpgsql"[m
+ [m
+[36m@@ -301,6 +301,12 @@[m [mActiveRecord::Schema[8.0].define(version: 2025_03_05_153423) do[m
+     t.index ["user_id"], name: "index_events_on_user_id"[m
+   end[m
+ [m
+[32m+[m[32m  create_table "fakes", force: :cascade do |t|[m
+[32m+[m[32m    t.string "name", limit: 256, null: false[m
+[32m+[m[32m    t.datetime "created_at", null: false[m
+[32m+[m[32m    t.datetime "updated_at", null: false[m
+[1;36m+[m[1;36m  end[m
+[1;36m+[m
+   create_table "families", force: :cascade do |t|[m
+     t.string "guardian_first_name"[m
+     t.string "guardian_last_name"[m
