@@ -69,7 +69,7 @@ class BaseItem < ApplicationRecord
     "Kids S/M (38-65 lbs)" => "disposable_diapers",
     "Kit" => nil,
     "Liners (Incontinence)" => "adult_incontinence",
-    "Liners (Menstrual)" => "menstrual",
+    "Liners (Menstrual)" => "period_liners",
     "Other" => "other",
     "Pads" => "pads",
     "Swimmers" => "disposable_diapers",
