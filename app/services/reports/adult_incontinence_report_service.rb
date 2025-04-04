@@ -15,8 +15,8 @@ module Reports
       @report ||= { name: 'Adult Incontinence',
                     entries: {
                       'Adult incontinence supplies distributed' => number_with_delimiter(total_supplies_distributed),
-                      'Adults Assisted Per Month' => adults_served_per_month.round,
-                      'Adult incontinence supplies per adult per month' => supplies_per_adult_per_month.round,
+                      'Adults Assisted Per Month' => adults_served_per_month.round(2),
+                      'Adult incontinence supplies per adult per month' => supplies_per_adult_per_month.round(2),
                       'Adult incontinence supplies' => types_of_supplies,
                       '% adult incontinence supplies donated' => "#{percent_donated.round}%",
                       '% adult incontinence bought' => "#{percent_bought.round}%",
@@ -36,7 +36,7 @@ module Reports
 
     # @return [Integer]
     def total_supplies_distributed
-      distributed_loose_supplies + distributed_adult_incontinence_items_from_kits
+     (distributed_loose_supplies + distributed_adult_incontinence_items_from_kits).to_i
     end
 
     def monthly_supplies
