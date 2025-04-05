@@ -116,11 +116,9 @@ module Reports
         INNER JOIN kits ON kits.id = items.kit_id 
         INNER JOIN line_items AS kit_line_items ON kits.id = kit_line_items.itemizable_id
         INNER JOIN items AS kit_items ON kit_items.id = kit_line_items.item_id
-        INNER JOIN base_items ON base_items.partner_key = kit_items.partner_key 
         WHERE #{itemizable_type}.organization_id = ?
           AND EXTRACT(year FROM issued_at) = ?
-          AND LOWER(base_items.category) LIKE '%menstrual supplies%'
-          AND NOT (LOWER(base_items.category) LIKE '%diaper%' OR LOWER(base_items.name) LIKE '%cloth%')
+          AND kit_items.reporting_category IN ('pads', 'tampons', 'period_liners', 'period_underwear', 'period_other')
           AND kit_line_items.itemizable_type = 'Kit';
       SQL
 
