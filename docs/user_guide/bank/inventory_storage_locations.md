@@ -51,7 +51,7 @@ You can only deactivate a Storage Location if the inventory for all its items is
 To deactivate the Storage Location, click "Deactivate" beside it on the Storage Location summary screen, then click "OK" to confirm.
 
 ## Reactivating a Storage Location
-If you need to reactivate a Storage Location that was deactivated,  go to the Storage Locations summary screen (Inventory | Storage Locations),  then click "include inactive Storage Locations", then Filter.
+If you need to reactivate a Storage Location that was deactivated,  go to the Storage Locations summary screen (Inventory -- Storage Locations),  then click "include inactive Storage Locations", then Filter.
 This will include inactive Storage Locations in the list.   Find the Storage Location you want to use again and clic "Reactivate" beside it.
 ![Storage Location reactivation](images/inventory/inventory_storage_location_reactivation.png)
 
