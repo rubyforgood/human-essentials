@@ -17,3 +17,9 @@
     margin-right: 0 !important;
   }
 }
+
+.input-group, .form-group {
+  select {
+    @extend .form-select;
+  }
+}
