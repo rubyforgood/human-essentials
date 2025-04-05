@@ -4,18 +4,18 @@ RSpec.describe Exports::ExportDistributionsCSVService do
   describe '#generate_csv_data' do
     subject { described_class.new(distributions: distributions, organization: organization, filters: filters).generate_csv_data }
 
-    let(:duplicate_item) { create(:item, name: "Dupe Item", organization: organization) }
+    let(:duplicate_item) { create(:item, name: "Dupe Item", value_in_cents: 300, organization: organization) }
 
     let(:items_lists) do
       [
         [
           [duplicate_item, 5],
-          [create(:item, organization: organization), 7],
+          [create(:item, name: "A item", value_in_cents: 100, organization: organization), 7],
           [duplicate_item, 3]
         ],
 
         *(Array.new(3) do |i|
-          [[create(:item, organization: organization), i + 1]]
+          [[create(:item, name: "B item #{i}", value_in_cents: (i + 1) * 1000, organization: organization), i + 1]]
         end)
       ]
     end
@@ -77,27 +77,91 @@ RSpec.describe Exports::ExportDistributionsCSVService do
 
     let(:expected_headers) { non_item_headers + all_org_items.pluck(:name) }
 
-    it 'should match the expected content for the csv' do
-      expect(subject[0]).to eq(expected_headers)
+    context 'while "Include in-kind value in donation and distribution exports?" is set to no' do
+      it 'should match the expected content without in-kind value of each item for the csv' do
+        expect(subject[0]).to eq(expected_headers)
 
-      distributions.zip(total_item_quantities).each_with_index do |(distribution, total_item_quantity), idx|
-        row = [
-          distribution.partner.name,
-          distribution.created_at.strftime("%m/%d/%Y"),
-          distribution.issued_at.strftime("%m/%d/%Y"),
-          distribution.storage_location.name,
-          distribution.line_items.where(item_id: item_id).total,
-          distribution.cents_to_dollar(distribution.line_items.total_value),
-          distribution.delivery_method,
-          "$#{distribution.shipping_cost.to_f}",
-          distribution.state,
-          distribution.agency_rep,
-          distribution.comment
+        distributions.zip(total_item_quantities).each_with_index do |(distribution, total_item_quantity), idx|
+          row = [
+            distribution.partner.name,
+            distribution.created_at.strftime("%m/%d/%Y"),
+            distribution.issued_at.strftime("%m/%d/%Y"),
+            distribution.storage_location.name,
+            distribution.line_items.where(item_id: item_id).total,
+            distribution.cents_to_dollar(distribution.line_items.where(item_id: item_id).total_value),
+            distribution.delivery_method,
+            "$#{distribution.shipping_cost.to_f}",
+            distribution.state,
+            distribution.agency_rep,
+            distribution.comment
+          ]
+
+          row += total_item_quantity
+
+          expect(subject[idx + 1]).to eq(row)
+        end
+      end
+    end
+
+    context 'while "Include in-kind value in donation and distribution exports?" is set to yes' do
+      let(:expected_headers) { non_item_headers + all_org_items.pluck(:name).flat_map { |h| [h, "#{h} In-Kind Value"] } }
+
+      let(:expected_items) do
+        # A item|A item In-Kind Value|B item 1|...In-Kind Value|B item 2|... In-Kind Value|B item 3|... In-Kind Value|Dupe Item|...In-Kind Value
+        [
+          [
+            {quantity: 7, value: Money.new(700), item_id: 2},
+            {quantity: 0, value: Money.new(0), item_id: nil},
+            {quantity: 0, value: Money.new(0), item_id: nil},
+            {quantity: 0, value: Money.new(0), item_id: nil},
+            {quantity: 8, value: Money.new(2400), item_id: 1}
+          ],
+          [
+            {quantity: 0, value: Money.new(0), item_id: nil},
+            {quantity: 1, value: Money.new(1000), item_id: 3},
+            {quantity: 0, value: Money.new(0), item_id: nil},
+            {quantity: 0, value: Money.new(0), item_id: nil},
+            {quantity: 0, value: Money.new(0), item_id: nil}
+          ],
+          [
+            {quantity: 0, value: Money.new(0), item_id: nil},
+            {quantity: 0, value: Money.new(0), item_id: nil},
+            {quantity: 2, value: Money.new(4000), item_id: 4},
+            {quantity: 0, value: Money.new(0), item_id: nil},
+            {quantity: 0, value: Money.new(0), item_id: nil}
+          ],
+          [
+            {quantity: 0, value: Money.new(0), item_id: nil},
+            {quantity: 0, value: Money.new(0), item_id: nil},
+            {quantity: 0, value: Money.new(0), item_id: nil},
+            {quantity: 3, value: Money.new(9000), item_id: 5},
+            {quantity: 0, value: Money.new(0), item_id: nil}
+          ]
         ]
+      end
 
-        row += total_item_quantity
+      it 'should match the expected content with in-kind value of each item for the csv' do
+        allow(organization).to receive(:include_in_kind_values_in_exported_files).and_return(true)
+        expect(subject[0]).to eq(expected_headers)
 
-        expect(subject[idx + 1]).to eq(row)
+        distributions.zip(expected_items).each_with_index do |(distribution, expected_item), idx|
+          row = [
+            distribution.partner.name,
+            distribution.created_at.strftime("%m/%d/%Y"),
+            distribution.issued_at.strftime("%m/%d/%Y"),
+            distribution.storage_location.name,
+            distribution.line_items.where(item_id: item_id).total,
+            Money.new(distribution.line_items.where(item_id: item_id).total_value).to_f,
+            distribution.delivery_method,
+            "$#{distribution.shipping_cost.to_f}",
+            distribution.state,
+            distribution.agency_rep,
+            distribution.comment,
+            *expected_item.flat_map { |item| [item[:quantity], item[:value]] }
+          ]
+
+          expect(subject[idx + 1]).to eq(row)
+        end
       end
     end
 
@@ -125,7 +189,7 @@ RSpec.describe Exports::ExportDistributionsCSVService do
             distribution.issued_at.strftime("%m/%d/%Y"),
             distribution.storage_location.name,
             distribution.line_items.where(item_id: item_id).total,
-            distribution.cents_to_dollar(distribution.line_items.total_value),
+            distribution.cents_to_dollar(distribution.line_items.where(item_id: item_id).total_value),
             distribution.delivery_method,
             "$#{distribution.shipping_cost.to_f}",
             distribution.state,

@@ -14,6 +14,9 @@ module Exports
       @filters = filters
       @organization = organization
       @distribution_totals = DistributionTotalsService.call(Distribution.where(organization:).class_filter(filters))
+
+      @export_line_item_adder = Exports::ExportLineItemColumnsAdder.new
+      @export_line_item_adder.register(Exports::ExportInKindTotalValue) if @organization.include_in_kind_values_in_exported_files
     end
 
     def generate_csv
@@ -136,20 +139,15 @@ module Exports
       return @item_headers if @item_headers
 
       @item_headers = @organization.items.select("DISTINCT ON (LOWER(name)) items.name").order("LOWER(name) ASC").map(&:name)
+      @item_headers = @export_line_item_adder.headers(@item_headers)
+
+      @item_headers
     end
 
     def build_row_data(distribution)
       row = base_table.values.map { |closure| closure.call(distribution) }
 
-      row += Array.new(item_headers.size, 0)
-
-      distribution.line_items.each do |line_item|
-        item_name = line_item.item.name
-        item_column_idx = headers_with_indexes[item_name]
-        next unless item_column_idx
-
-        row[item_column_idx] += line_item.quantity
-      end
+      row += @export_line_item_adder.get_row(distribution.line_items)
 
       row
     end
