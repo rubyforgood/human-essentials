@@ -7,5 +7,5 @@
 <% end %>
 <td class="numeric"><%= row_item[:item_on_hand_minimum_quantity] %></td>
 <td class="numeric"><%= row_item[:item_on_hand_recommended_quantity] %></td>
-<td class="numeric"><%= row_item[:quantity] %></td>
+<td class="numeric <%= "text-danger font-weight-bold" if quantity_below_minimum?(row_item) %>" data-column="total"><%= row_item[:quantity] %></td>
 </tr>
