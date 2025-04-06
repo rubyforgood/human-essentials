@@ -211,7 +211,7 @@ column is useful mainly for banks that repackage their essentials into uniform p
 
 ![Distribution printout marked up with customizable sections](images/getting_started/customization/gs_customization_distribution_printout_customizable_sections.png)
 
-## Configuring exports
+## Exports
 
 ### Include in-kind value in donation and distribution exports?
 
