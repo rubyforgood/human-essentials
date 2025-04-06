@@ -6,6 +6,7 @@
 class DistributionsController < ApplicationController
   include DateRangeHelper
   include DistributionHelper
+  include Validatable
 
   before_action :enable_turbo!, only: %i[new show]
   skip_before_action :authenticate_user!, only: %i(calendar)
