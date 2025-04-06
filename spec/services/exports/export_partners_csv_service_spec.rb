@@ -8,28 +8,21 @@ RSpec.describe Exports::ExportPartnersCSVService do
     let!(:profile) do
       create(:partner_profile,
         partner: partner,
+        agency_type: agency_type, # Columns from the agency_information partial
+        other_agency_type: other_agency_type,
+        agency_mission: agency_mission,
         address1: agency_address1,
         address2: agency_address2,
         city: agency_city,
         state: agency_state,
         zip_code: agency_zipcode,
-        website: agency_website,
-        agency_type: agency_type,
-        other_agency_type: other_agency_type,
-        primary_contact_name: contact_name,
-        primary_contact_phone: contact_phone,
-        primary_contact_mobile: contact_mobile,
-        primary_contact_email: contact_email,
-        agency_mission: agency_mission,
-        enable_child_based_requests: enable_child_based_requests,
-        enable_individual_requests: enable_individual_requests,
-        enable_quantity_based_requests: enable_quantity_based_requests,
         program_address1: program_address1,
         program_address2: program_address2,
         program_city: program_city,
         program_state: program_state,
         program_zip_code: program_zip_code,
-        facebook: facebook, #  Columns from the media_information partial
+        website: agency_website, # Columns from the media_information partial
+        facebook: facebook,
         twitter: twitter,
         instagram: instagram,
         no_social_media_presence: no_social_media_presence,
@@ -68,45 +61,46 @@ RSpec.describe Exports::ExportPartnersCSVService do
         executive_director_name: executive_director_name, # Columns from the executive_director partial
         executive_director_phone: executive_director_phone,
         executive_director_email: executive_director_email,
+        primary_contact_name: contact_name,
+        primary_contact_phone: contact_phone,
+        primary_contact_mobile: contact_mobile,
+        primary_contact_email: contact_email,
         pick_up_name: pick_up_name, # Columns from the pick_up_personpartial
         pick_up_phone: pick_up_phone,
         pick_up_email: pick_up_email,
         distribution_times: distribution_times, # Columns from the agency_distribution_information partial
         new_client_times: new_client_times,
-        more_docs_required: more_docs_required)
+        more_docs_required: more_docs_required,
+        enable_child_based_requests: enable_child_based_requests, # Columns from the partner_settings partial
+        enable_individual_requests: enable_individual_requests,
+        enable_quantity_based_requests: enable_quantity_based_requests)
     end
+
     let(:county_1) { create(:county, name: "High County, Maine", region: "Maine") }
     let(:county_2) { create(:county, name: "laRue County, Louisiana", region: "Louisiana") }
     let(:county_3) { create(:county, name: "Ste. Anne County, Louisiana", region: "Louisiana") }
     let!(:served_area_1) { create(:partners_served_area, partner_profile: profile, county: county_1, client_share: 50) }
     let!(:served_area_2) { create(:partners_served_area, partner_profile: profile, county: county_2, client_share: 40) }
     let!(:served_area_3) { create(:partners_served_area, partner_profile: profile, county: county_3, client_share: 10) }
+    let(:notes) { "Some notes" }
+    let(:providing_diapers) { {value: "N", index: 14} }
+    let(:providing_period_supplies) { {value: "N", index: 15} }
 
+    let(:agency_type) { :other } # Columns from the agency_information partial
+    let(:other_agency_type) { "Another Agency Name" }
+    let(:agency_mission) { "agency_mission" }
     let(:agency_address1) { "4744 McDermott Mountain" }
     let(:agency_address2) { "333 Never land street" }
     let(:agency_city) { "Lake Shoshana" }
     let(:agency_state) { "ND" }
     let(:agency_zipcode) { "09980-7010" }
-    let(:agency_website) { "bosco.example" }
-    let(:agency_type) { :other }
-    let(:other_agency_type) { "Another Agency Name" }
-    let(:contact_name) { "Jon Ralfeo" }
-    let(:contact_phone) { "1231231234" }
-    let(:contact_mobile) { "4564564567" }
-    let(:contact_email) { "jon@entertainment720.com" }
-    let(:notes) { "Some notes" }
-    let(:providing_diapers) { {value: "N", index: 22} }
-    let(:providing_period_supplies) { {value: "N", index: 23} }
-    let(:agency_mission) { "agency_mission" }
-    let(:enable_child_based_requests) { true }
-    let(:enable_individual_requests) { true }
-    let(:enable_quantity_based_requests) { true }
     let(:program_address1) { "program_address1" }
     let(:program_address2) { "program_address2" }
     let(:program_city) { "program_city" }
     let(:program_state) { "program_state" }
     let(:program_zip_code) { 12345 }
-    let(:facebook) { "facebook" } # Columns from the media_information partial
+    let(:agency_website) { "bosco.example" } # Columns from the media_information partial
+    let(:facebook) { "facebook" }
     let(:twitter) { "twitter" }
     let(:instagram) { "instagram" }
     let(:no_social_media_presence) { false }
@@ -145,46 +139,55 @@ RSpec.describe Exports::ExportPartnersCSVService do
     let(:executive_director_name) { "executive_director_name" } # Columns from the executive_director partial
     let(:executive_director_phone) { "executive_director_phone" }
     let(:executive_director_email) { "executive_director_email" }
+    let(:contact_name) { "Jon Ralfeo" }
+    let(:contact_phone) { "1231231234" }
+    let(:contact_mobile) { "4564564567" }
+    let(:contact_email) { "jon@entertainment720.com" }
     let(:pick_up_name) { "pick_up_name" } # Columns from the pick_up_person partial
     let(:pick_up_phone) { "pick_up_phone" }
     let(:pick_up_email) { "pick_up_email@email.com" }
     let(:distribution_times) { "distribution_times" } # Columns from the agency_distribution_information partial
     let(:new_client_times) { "new_client_times" }
     let(:more_docs_required) { "more_docs_required" }
+    let(:enable_quantity_based_requests) { true } # Columns from the partner_settings partial
+    let(:enable_child_based_requests) { true }
+    let(:enable_individual_requests) { true }
 
     let(:partners) { Partner.all }
 
+    # Fields from the partner and profile that are always shown
     let(:headers_base) {
-      [
-        "Agency Name",
-        "Agency Email",
-        "Agency Address",
-        "Agency City",
-        "Agency State",
-        "Agency Zip Code",
-        "Agency Website",
-        "Agency Type",
-        "Contact Name",
-        "Contact Phone",
-        "Contact Cell",
-        "Contact Email",
-        "Agency Mission",
-        "Child-based Requests",
-        "Individual Requests",
-        "Quantity-based Requests",
-        "Program/Delivery Address",
-        "Program City",
-        "Program State",
-        "Program Zip Code",
-        "Notes",
-        "Counties Served",
-        "Providing Diapers",
-        "Providing Period Supplies"
+      {
+        leading: [
+          "Agency Name",
+          "Agency Email",
+          "Agency Type",
+          "Agency Mission",
+          "Agency Address",
+          "Agency City",
+          "Agency State",
+          "Agency Zip Code",
+          "Program/Delivery Address",
+          "Program City",
+          "Program State",
+          "Program Zip Code",
+          "Notes",
+          "Counties Served",
+          "Providing Diapers",
+          "Providing Period Supplies"
+        ],
+        tailing: [
+          "Quantity-based Requests",
+          "Child-based Requests",
+          "Individual Requests"
         ]
+      }
     }
+
     let(:partial_to_headers) {
       {
         media_information: [
+          "Agency Website",
           "Facebook",
           "Twitter",
           "Instagram",
@@ -201,18 +204,18 @@ RSpec.describe Exports::ExportPartnersCSVService do
           "How Are Essentials Used",
           "Receive Essentials From Other Sources",
           "Currently Providing Diapers"
-     ],
+        ],
         organizational_capacity: [
           "Client Capacity",
           "Storage Space",
           "Storage Space Description"
-     ],
+        ],
         sources_of_funding: [
           "Sources Of Funding",
           "Sources Of Diapers",
           "Essentials Budget",
           "Essentials Funding Source"
-     ],
+        ],
         population_served: [
           "Income Requirement",
           "Verify Income",
@@ -229,57 +232,61 @@ RSpec.describe Exports::ExportPartnersCSVService do
           "% Above 1-2 times FPL",
           "% Greater than 2 times FPL",
           "% Poverty Unknown"
-     ],
+        ],
         executive_director: [
           "Executive Director Name",
           "Executive Director Phone",
-          "Executive Director Email"
-     ],
+          "Executive Director Email",
+          "Contact Name",
+          "Contact Phone",
+          "Contact Cell",
+          "Contact Email"
+        ],
         pick_up_person: [
           "Pick Up Person Name",
           "Pick Up Person Phone",
           "Pick Up Person Email"
-     ],
+        ],
         agency_distribution_information: [
           "Distribution Times",
           "New Client Times",
           "More Docs Required"
-     ]
+        ]
       }
     }
 
     let(:values_base) {
-      [
-        partner.name,
-        partner.email,
-        "#{agency_address1}, #{agency_address2}",
-        agency_city,
-        agency_state,
-        agency_zipcode,
-        agency_website,
-        "#{I18n.t "partners_profile.other"}: #{other_agency_type}",
-        contact_name,
-        contact_phone,
-        contact_mobile,
-        contact_email,
-        agency_mission,
-        enable_child_based_requests.to_s,
-        enable_individual_requests.to_s,
-        enable_quantity_based_requests.to_s,
-        "#{program_address1}, #{program_address2}",
-        program_city,
-        program_state,
-        program_zip_code.to_s,
-        notes,
-        # county ordering is a bit esoteric -- it is human alphabetical by county within region (region is state)
-        "laRue County, Louisiana; Ste. Anne County, Louisiana; High County, Maine",
-        providing_diapers[:value],
-        providing_period_supplies[:value]
+      {
+        leading: [
+          partner.name,
+          partner.email,
+          "#{I18n.t "partners_profile.other"}: #{other_agency_type}",
+          agency_mission,
+          "#{agency_address1}, #{agency_address2}",
+          agency_city,
+          agency_state,
+          agency_zipcode,
+          "#{program_address1}, #{program_address2}",
+          program_city,
+          program_state,
+          program_zip_code.to_s,
+          notes,
+          # county ordering is a bit esoteric -- it is human alphabetical by county within region (region is state)
+          "laRue County, Louisiana; Ste. Anne County, Louisiana; High County, Maine",
+          providing_diapers[:value],
+          providing_period_supplies[:value]
+        ],
+        tailing: [
+          enable_quantity_based_requests.to_s,
+          enable_child_based_requests.to_s,
+          enable_individual_requests.to_s
         ]
+      }
     }
     let(:partial_to_values) {
       {
         media_information: [
+          agency_website,
           facebook,
           twitter,
           instagram,
@@ -296,18 +303,18 @@ RSpec.describe Exports::ExportPartnersCSVService do
           essentials_use,
           receives_essentials_from_other,
           currently_provide_diapers.to_s
-     ],
+        ],
         organizational_capacity: [
           client_capacity,
           storage_space.to_s,
           describe_storage_space
-     ],
+        ],
         sources_of_funding: [
           sources_of_funding,
           sources_of_diapers,
           essentials_budget,
           essentials_funding_source
-     ],
+        ],
         population_served: [
           income_requirement_desc.to_s,
           income_verification.to_s,
@@ -324,31 +331,35 @@ RSpec.describe Exports::ExportPartnersCSVService do
           above_1_2_times_fpl.to_s,
           greater_2_times_fpl.to_s,
           poverty_unknown.to_s
-     ],
+        ],
         executive_director: [
           executive_director_name,
           executive_director_phone,
-          executive_director_email
-     ],
+          executive_director_email,
+          contact_name,
+          contact_phone,
+          contact_mobile,
+          contact_email
+        ],
         pick_up_person: [
           pick_up_name,
           pick_up_phone,
           pick_up_email
-     ],
+        ],
         agency_distribution_information: [
           distribution_times,
           new_client_times,
           more_docs_required
-     ]
+        ]
       }
     }
 
     it "should have the correct headers" do
-      expect(subject[0]).to eq(headers_base + partial_to_headers.values.flatten)
+      expect(subject[0]).to eq(headers_base[:leading] + partial_to_headers.values.flatten + headers_base[:tailing])
     end
 
     it "should have the expected info in the columns order" do
-      expect(subject[1]).to eq(values_base + partial_to_values.values.flatten)
+      expect(subject[1]).to eq(values_base[:leading] + partial_to_values.values.flatten + values_base[:tailing])
     end
 
     it "should handle a partner with missing profile info" do
@@ -359,23 +370,15 @@ RSpec.describe Exports::ExportPartnersCSVService do
         primary_contact_name: nil,
         primary_contact_email: nil
       ))
-      expected_value_base = [
+      expected_value_leading = [
         partner.name,
         partner.email,
+        "",
+        "",
         ", ",
         "",
         "",
         "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        enable_child_based_requests.to_s,
-        enable_individual_requests.to_s,
-        enable_quantity_based_requests.to_s,
         ", ",
         "",
         "",
@@ -384,8 +387,14 @@ RSpec.describe Exports::ExportPartnersCSVService do
         "",
         providing_diapers[:value],
         providing_period_supplies[:value]
+        ]
+      expected_value_tailing = [
+        enable_quantity_based_requests.to_s,
+        enable_child_based_requests.to_s,
+        enable_individual_requests.to_s
       ]
-      expect(subject[1]).to eq(expected_value_base + Array.new(partial_to_values.values.flatten.count) { "" })
+
+      expect(subject[1]).to eq(expected_value_leading + Array.new(partial_to_values.values.flatten.count) { "" } + expected_value_tailing)
     end
 
     it "should only export columns in profile sections the org has enabled" do
@@ -393,15 +402,15 @@ RSpec.describe Exports::ExportPartnersCSVService do
         organization.update(partner_form_fields: [partial])
         partners.reload
         limited_export = CSV.parse(described_class.new(partners, organization).generate_csv)
-        expect(limited_export[0]).to eq(headers_base + partial_to_headers[partial])
-        expect(limited_export[1]).to eq(values_base + partial_to_values[partial])
+        expect(limited_export[0]).to eq(headers_base[:leading] + partial_to_headers[partial] + headers_base[:tailing])
+        expect(limited_export[1]).to eq(values_base[:leading] + partial_to_values[partial] + values_base[:tailing])
       end
     end
 
     context "when there are no partners" do
       let(:partners) { Partner.none }
       it "should have the correct headers and no other rows" do
-        expect(subject[0]).to eq(headers_base + partial_to_headers.values.flatten)
+        expect(subject[0]).to eq(headers_base[:leading] + partial_to_headers.values.flatten + headers_base[:tailing])
         expect(subject[1]).to eq(nil)
       end
 
@@ -410,7 +419,7 @@ RSpec.describe Exports::ExportPartnersCSVService do
           organization.update(partner_form_fields: [partial])
           partners.reload
           limited_export = CSV.parse(described_class.new(partners, organization).generate_csv)
-          expect(limited_export[0]).to eq(headers_base + partial_to_headers[partial])
+          expect(limited_export[0]).to eq(headers_base[:leading] + partial_to_headers[partial] + headers_base[:tailing])
           expect(limited_export[1]).to eq(nil)
         end
       end

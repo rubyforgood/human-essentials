@@ -142,37 +142,38 @@ module Partners
     validate :has_at_least_one_request_setting
     validate :pick_up_email_addresses
 
-    # For the sake of documentation, here are the partials each field belongs to.
-    # agency_distribution_information
-    #   distribution_times, more_docs_required, new_client_times
-    # agency_information -- this partial is always shown
+    # For the sake of documentation, here are the partials each field belongs to. In the order those
+    # partials appear in the actual form.
+    # agency_information -- this partial is always shown, contains the agency information AND the Program / Delivery Address sections of the form
     #   agency_type, other_agency_type, agency_mission, address1, address2, city, state, zip_code,
     #   program_address1, program_address2, program_city, program_state, program_zip_code
+    # media_information
+    #   website, facebook, twitter, instagram, no_social_media_presence
     # agency_stability
-    #   case_management, currently_provide_diapers, essentials_use, evidence_based, form_990,
-    #   founded, program_age, program_description, program_name, receives_essentials_from_other
+    #   founded, form_990, program_name, program_description, program_age, evidence_based, case_management,
+    #   essentials_use, receives_essentials_from_other, currently_provide_diapers
+    # organizational_capacity
+    #   client_capacity, storage_space, describe_storage_space
+    # sources_of_funding
+    #   sources_of_funding, sources_of_diapers, essentials_budget, essentials_funding_source
     # area_served
     #   has no associated Partners::Profile fields
-    # attached_documents
-    #   has no associated Partners::Profile fields
+    # population_served
+    #   income_requirement_desc, income_verification, population_black, population_white,
+    #   population_hispanic, population_asian, population_american_indian, population_island,
+    #   population_multi_racial, population_other, zips_served, at_fpl_or_below, above_1_2_times_fpl
+    #   greater_2_times_fpl, poverty_unknown
     # executive_director
     #   executive_director_name, executive_director_phone, executive_director_email, primary_contact_name,
     #   primary_contact_phone, primary_contact_mobile, primary_contact_email
-    # media_information
-    #   facebook, instagram, no_social_media_presence, twitter
-    # organizational_capacity
-    #   client_capacity, describe_storage_space, storage_space
-    # partner_settings -- this partial is always shown
-    #   enable_quantity_based_requests, enable_child_based_requests, enable_individual_requests
     # pick_up_person
     #   pick_up_name, pick_up_phone, pick_up_email
-    # population_served
-    #   above_1_2_times_fpl, at_fpl_or_below, greater_2_times_fpl, income_requirement_desc,
-    #   income_verification, population_american_indian, population_asian, population_black,
-    #   population_hispanic, population_island, population_multi_racial, population_other,
-    #   population_white, poverty_unknown, zips_served
-    # sources_of_funding
-    #   essentials_budget, essentials_funding_source, sources_of_diapers, sources_of_funding
+    # agency_distribution_information
+    #   distribution_times, new_client_times, more_docs_required
+    # attached_documents
+    #   has no associated Partners::Profile fields
+    # partner_settings -- this partial is always shown
+    #   enable_quantity_based_requests, enable_child_based_requests, enable_individual_requests
 
     # These are columns which currently do not appear in any partial of the profile form.
     # It is possible these will be removed in the future.

@@ -31,23 +31,15 @@ module Exports
       table = {
         "Agency Name" => ->(partner) { partner.name },
         "Agency Email" => ->(partner) { partner.email },
-        "Agency Address" => ->(partner) { "#{partner.profile.address1}, #{partner.profile.address2}" },
-        "Agency City" => ->(partner) { partner.profile.city },
-        "Agency State" => ->(partner) { partner.profile.state },
-        "Agency Zip Code" => ->(partner) { partner.profile.zip_code },
-        "Agency Website" => ->(partner) { partner.profile.website },
         "Agency Type" => ->(partner) {
           symbolic_agency_type = partner.profile.agency_type&.to_sym
           (symbolic_agency_type == :other) ? "#{I18n.t symbolic_agency_type, scope: :partners_profile}: #{partner.profile.other_agency_type}" : (I18n.t symbolic_agency_type, scope: :partners_profile)
         },
-        "Contact Name" => ->(partner) { partner.profile.primary_contact_name },
-        "Contact Phone" => ->(partner) { partner.profile.primary_contact_phone },
-        "Contact Cell" => ->(partner) { partner.profile.primary_contact_mobile },
-        "Contact Email" => ->(partner) { partner.profile.primary_contact_email },
-        "Agency Mission" => ->(partner) { partner.profile.agency_mission }, # The agency_information and partner_settings partials are always shown
-        "Child-based Requests" => ->(partner) { partner.profile.enable_child_based_requests },
-        "Individual Requests" => ->(partner) { partner.profile.enable_individual_requests },
-        "Quantity-based Requests" => ->(partner) { partner.profile.enable_quantity_based_requests },
+        "Agency Mission" => ->(partner) { partner.profile.agency_mission },
+        "Agency Address" => ->(partner) { "#{partner.profile.address1}, #{partner.profile.address2}" },
+        "Agency City" => ->(partner) { partner.profile.city },
+        "Agency State" => ->(partner) { partner.profile.state },
+        "Agency Zip Code" => ->(partner) { partner.profile.zip_code },
         "Program/Delivery Address" => ->(partner) { "#{partner.profile.program_address1}, #{partner.profile.program_address2}" },
         "Program City" => ->(partner) { partner.profile.program_city },
         "Program State" => ->(partner) { partner.profile.program_state },
@@ -59,6 +51,7 @@ module Exports
       }
 
       if @partials_to_show.include? "media_information"
+        table["Agency Website"] = ->(partner) { partner.profile.website }
         table["Facebook"] = ->(partner) { partner.profile.facebook }
         table["Twitter"] = ->(partner) { partner.profile.twitter }
         table["Instagram"] = ->(partner) { partner.profile.instagram }
@@ -113,6 +106,10 @@ module Exports
         table["Executive Director Name"] = ->(partner) { partner.profile.executive_director_name }
         table["Executive Director Phone"] = ->(partner) { partner.profile.executive_director_phone }
         table["Executive Director Email"] = ->(partner) { partner.profile.executive_director_email }
+        table["Contact Name"] = ->(partner) { partner.profile.primary_contact_name }
+        table["Contact Phone"] = ->(partner) { partner.profile.primary_contact_phone }
+        table["Contact Cell"] = ->(partner) { partner.profile.primary_contact_mobile }
+        table["Contact Email"] = ->(partner) { partner.profile.primary_contact_email }
       end
 
       if @partials_to_show.include? "pick_up_person"
@@ -126,6 +123,10 @@ module Exports
         table["New Client Times"] = ->(partner) { partner.profile.new_client_times }
         table["More Docs Required"] = ->(partner) { partner.profile.more_docs_required }
       end
+
+      table["Quantity-based Requests"] = ->(partner) { partner.profile.enable_quantity_based_requests }
+      table["Child-based Requests"] = ->(partner) { partner.profile.enable_child_based_requests }
+      table["Individual Requests"] = ->(partner) { partner.profile.enable_individual_requests }
 
       table
     end
