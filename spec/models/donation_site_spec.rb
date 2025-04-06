@@ -16,8 +16,6 @@
 #  organization_id :integer
 #
 
-require "rails_helper"
-
 RSpec.describe DonationSite, type: :model do
   context "Validations >" do
     it { should belong_to(:organization) }
@@ -25,15 +23,21 @@ RSpec.describe DonationSite, type: :model do
     it { should validate_presence_of(:address) }
   end
 
+  before(:each) do
+    Geocoder.configure(lookup: :test)
+
+    Geocoder::Lookup::Test.add_stub(
+      "456 Donation Site Blvd", [
+        {"latitude" => 38.8977, "longitude" => -77.0365, "address" => "456 Donation Site Blvd"}
+      ]
+    )
+  end
+
   describe "import_csv" do
     let(:organization) { create(:organization) }
     let(:valid_csv_path) { Rails.root.join("spec", "fixtures", "files", "valid_donation_sites.csv") }
     let(:invalid_csv_path) { Rails.root.join("spec", "fixtures", "files", "invalid_donation_sites.csv") }
     let(:duplicated_name_csv_path) { Rails.root.join("spec", "fixtures", "files", "duplicated_name_donation_sites.csv") }
-
-    before do
-      allow_any_instance_of(DonationSite).to receive(:geocode).and_return([40.7128, -74.0060])
-    end
 
     it "captures the error if the name is not unique in the invalid donation sites csv" do
       data = File.read(duplicated_name_csv_path, encoding: "BOM|UTF-8")
