@@ -1,5 +1,3 @@
-READY FOR REVIEW
-
 # Requests
 
 Requests are how you get the information on what items the partners need. (You may think of them as orders.)

@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Items
 ## Introduction
 Your bank is initialized with  a basic set of Items that contains many common product types that essentials banks distribute.   These Items represent the stock you have for distribution.  Here is the current default list:  
@@ -153,11 +152,19 @@ This tab shows all the Item inventory across all the storage locations, along wi
 
 ![Navigation to Items, Quantity, and Location](images/inventory/inventory_item_location_navigation.png)
 
+If the total quantity of an item is below the minimum quantity expected, it will be highlighted as shown below:
+
+![Highlighting inventory shortage](images/inventory/item_quantity_location_inventory_shortage.png)
+
 ### Item Inventory tab
 
 This tab shows the bank-wide inventory for each Item.   Clicking the + beside the Item name will show the breakdown of that inventory by storage area.
 
 ![Navigation to Item Inventory tab](images/inventory/inventory_items_inventory_navigation.png)
+
+If the total quantity of an item is below the minimum quantity expected, it will be highlighted as shown below:
+
+![Highlighting inventory shortage](images/inventory/item_inventory_shortage.png)
 
 ### Kits tab
 This shows the same information as the main [Kits](inventory_kits.md) list. 
