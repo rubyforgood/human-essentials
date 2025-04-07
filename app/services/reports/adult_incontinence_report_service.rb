@@ -36,7 +36,7 @@ module Reports
 
     # @return [Integer]
     def total_supplies_distributed
-     (distributed_loose_supplies + distributed_adult_incontinence_items_from_kits).to_i
+      (distributed_loose_supplies + distributed_adult_incontinence_items_from_kits).to_i
     end
 
     def monthly_supplies
