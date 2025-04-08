@@ -23,7 +23,6 @@ class PartnerGroup < ApplicationRecord
     self.reminder_schedule = create_schedule
   end
 
-  validates :organization, presence: true
   validates :name, presence: true, uniqueness: { scope: :organization }
   validates :deadline_day, presence: true, if: :send_reminders?
 end
