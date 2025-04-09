@@ -36,6 +36,15 @@ RSpec.describe "Transfers", type: :request do
               get transfers_path(filters: { date_range: "#{start_date} - #{end_date}" })
               expect(assigns(:transfers)).to eq([new_transfer])
             end
+
+            it "falls back to default date range and renders without error when given an invalid date_range param" do
+              get transfers_path(format: :html, params: {
+                filters: { date_range: "Foo 10, 2025 - Bar 20, 2025" }
+              })
+
+              expect(response).to be_successful
+              expect(response.body).to include("The date range you supplied was invalid")
+            end
           end
 
           context 'when date parameters are not supplied' do

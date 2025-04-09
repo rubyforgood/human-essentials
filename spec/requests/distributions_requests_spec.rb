@@ -75,6 +75,15 @@ RSpec.describe "Distributions", type: :request do
         expect(response).to be_successful
       end
 
+      it "falls back to default date range and renders without error when given an invalid date_range param" do
+        get distributions_path(format: :html, params: {
+          filters: { date_range: "Foo 10, 2025 - Bar 20, 2025" }
+        })
+
+        expect(response).to be_successful
+        expect(response.body).to include("The date range you supplied was invalid")
+      end
+
       it "sums distribution totals accurately" do
         create(:distribution, :with_items, item_quantity: 5, organization: organization)
         create(:line_item, :distribution, itemizable_id: distribution.id, quantity: 7)
