@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_02_154355) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_09_014424) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -645,6 +645,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_02_154355) do
     t.integer "quota"
     t.bigint "partner_group_id"
     t.bigint "default_storage_location_id"
+    t.text "info_for_partner"
     t.index ["default_storage_location_id"], name: "index_partners_on_default_storage_location_id"
     t.index ["organization_id"], name: "index_partners_on_organization_id"
     t.index ["partner_group_id"], name: "index_partners_on_partner_group_id"
