@@ -47,8 +47,6 @@ class Admin::OrganizationsController < AdminController
 
   def create
     @user = User.new(user_params)
-
-    @reminder_schedule = ReminderSchedule.new(reminder_schedule_params)
     @organization = Organization.new(organization_params)
     if @organization.save
       Organization.seed_items(@organization)
