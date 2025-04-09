@@ -8,7 +8,6 @@
 #  address2                       :string
 #  agency_mission                 :text
 #  agency_type                    :string
-#  application_data               :text
 #  at_fpl_or_below                :integer
 #  case_management                :boolean
 #  city                           :string
@@ -16,7 +15,6 @@
 #  currently_provide_diapers      :boolean
 #  describe_storage_space         :text
 #  distribution_times             :string
-#  distributor_type               :string
 #  enable_child_based_requests    :boolean          default(TRUE), not null
 #  enable_individual_requests     :boolean          default(TRUE), not null
 #  enable_quantity_based_requests :boolean          default(TRUE), not null

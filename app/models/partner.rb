@@ -66,18 +66,7 @@ class Partner < ApplicationRecord
     where(status: status.to_sym)
   }
 
-  ALL_PARTIALS = %w[
-    media_information
-    agency_stability
-    organizational_capacity
-    sources_of_funding
-    area_served
-    population_served
-    executive_director
-    pick_up_person
-    agency_distribution_information
-    attached_documents
-  ].freeze
+  ALL_PARTIALS = Organization::ALL_PARTIALS.map { |partial| partial[1] }.freeze
 
   # @return [String]
   def display_status
@@ -126,33 +115,8 @@ class Partner < ApplicationRecord
     errors
   end
 
-  def contact_person
-    return @contact_person if @contact_person
-
-    @contact_person = {
-      name: profile.primary_contact_name,
-      email: profile.primary_contact_email,
-      phone: profile.primary_contact_phone ||
-             profile.primary_contact_mobile
-    }
-  end
-
-  def agency_info
-    return @agency_info if @agency_info
-
-    symbolic_agency_type = profile.agency_type&.to_sym
-    @agency_info = {
-      address: [profile.address1, profile.address2].select(&:present?).join(', '),
-      city: profile.city,
-      state: profile.state,
-      zip_code: profile.zip_code,
-      website: profile.website,
-      agency_type: (symbolic_agency_type == :other) ? "#{I18n.t symbolic_agency_type, scope: :partners_profile}: #{profile.other_agency_type}" : (I18n.t symbolic_agency_type, scope: :partners_profile)
-    }
-  end
-
   def partials_to_show
-    organization.partner_form_fields.presence || ALL_PARTIALS
+    organization.partials_to_show
   end
 
   def quantity_year_to_date
