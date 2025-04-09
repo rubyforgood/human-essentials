@@ -6,6 +6,10 @@
 </header>
 
 <main>
+  <% if @partner.info_for_partner %>
+    <%= render partial: 'info_for_partner', locals: { info_for_partner: @partner.info_for_partner}  %>
+  <% end %>
+
   <%= render partial: '/partners/requests/request_options_card' if @partner.approved? %>
 
   <section class="container mx-auto my-5">
