@@ -41,6 +41,23 @@ RSpec.describe 'Requests', type: :request do
           expect(response.body).to include('Print Unfulfilled Picklists (2)')
         end
       end
+
+      context "when there is a filter applied" do
+        let(:request) {
+          create(:request, partner_user: ::User.partner_users.first)
+          create(:request, partner_user: ::User.partner_users.last)
+        }
+
+        it "shows print unfulfilled picklists button with correct quantity when filtered" do
+          Request.delete_all
+
+          params = { filters: { by_partner: ::User.partner_users.first} }
+
+          get requests_path(request), params: params
+
+          expect(response.body).to include('Print Unfulfilled Picklists (1)')
+        end
+      end
     end
 
     describe 'GET #show' do
