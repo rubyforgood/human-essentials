@@ -1,7 +1,7 @@
 RSpec.describe Exports::ExportDonationsCSVService do
   describe '#generate_csv_data' do
     let(:organization) { create(:organization) }
-    let(:storage_location) { create(:storage_location, organization: organization)}
+    let(:storage_location) { create(:storage_location, organization: organization) }
 
     subject { described_class.new(donation_ids: donation_ids, organization: organization).generate_csv_data }
     let(:donation_ids) { donations.map(&:id) }
@@ -18,21 +18,21 @@ RSpec.describe Exports::ExportDonationsCSVService do
             issued_at: "2025-01-01",
             source: Donation::SOURCES[:product_drive],
             product_drive: product_drive,
-            comment: "comment 1",
+            comment: "comment 1"
           },
           details: product_drive.name,
           line_items: [
             {
               item: duplicate_item,
-              quantity: 5,
+              quantity: 5
             },
             {
               item: create(:item, name: "A Item", value_in_cents: 1000, organization: organization),
-              quantity: 7,
+              quantity: 7
             },
             {
               item: duplicate_item,
-              quantity: 3,
+              quantity: 3
             }
           ],
           variety: 2,
@@ -44,13 +44,13 @@ RSpec.describe Exports::ExportDonationsCSVService do
             issued_at: "2025-02-02",
             source: Donation::SOURCES[:manufacturer],
             manufacturer: manufacturer,
-            comment: "comment 2",
+            comment: "comment 2"
           },
           details: manufacturer.name,
           line_items: [
             {
               item: create(:item, name: "B Item", value_in_cents: 2000, organization: organization),
-              quantity: 1,
+              quantity: 1
             }
           ],
           variety: 1,
@@ -62,13 +62,13 @@ RSpec.describe Exports::ExportDonationsCSVService do
             issued_at: "2025-03-03",
             source: Donation::SOURCES[:donation_site],
             donation_site: donation_site,
-            comment: "comment 3",
+            comment: "comment 3"
           },
           details: donation_site.name,
           line_items: [
             {
               item: create(:item, name: "C Item", value_in_cents: 3000, organization: organization),
-              quantity: 2,
+              quantity: 2
             }
           ],
           variety: 1,
@@ -79,13 +79,13 @@ RSpec.describe Exports::ExportDonationsCSVService do
           parameters: {
             issued_at: "2025-04-04",
             source: Donation::SOURCES[:misc],
-            comment: "comment 4",
+            comment: "comment 4"
           },
           details: "comment 4",
           line_items: [
             {
               item: create(:item, name: "E Item", value_in_cents: 4000, organization: organization),
-              quantity: 3,
+              quantity: 3
             }
           ],
           variety: 1,
@@ -98,11 +98,11 @@ RSpec.describe Exports::ExportDonationsCSVService do
     let(:donations) do
       expected_donations.each_with_index.map do |expected_don, i|
         donation = create(
-            :donation,
-            storage_location: storage_location,
-            organization: organization,
-            **expected_don[:parameters]
-          )
+          :donation,
+          storage_location: storage_location,
+          organization: organization,
+          **expected_don[:parameters]
+        )
 
         expected_don[:line_items].each do |line_item|
           donation.line_items << create(:line_item, quantity: line_item[:quantity], item: line_item[:item])

@@ -1,7 +1,7 @@
 RSpec.describe Exports::ExportDistributionsCSVService do
   let(:organization) { create(:organization) }
-  let(:storage_location) { create(:storage_location, organization: organization)}
-  let(:partner) { create(:partner, name: "first partner", email: "firstpartner@gmail.com", notes: "just a note.", organization_id: organization.id)}
+  let(:storage_location) { create(:storage_location, organization: organization) }
+  let(:partner) { create(:partner, name: "first partner", email: "firstpartner@gmail.com", notes: "just a note.", organization_id: organization.id) }
 
   describe '#generate_csv_data' do
     subject { described_class.new(distributions: distributions, organization: organization, filters: filters).generate_csv_data }
@@ -21,15 +21,15 @@ RSpec.describe Exports::ExportDistributionsCSVService do
           line_items: [
             {
               item: duplicate_item,
-              quantity: 5,
+              quantity: 5
             },
             {
               item: create(:item, name: "A Item", value_in_cents: 1000, organization: organization),
-              quantity: 7,
+              quantity: 7
             },
             {
               item: duplicate_item,
-              quantity: 3,
+              quantity: 3
             }
           ],
           filtered_quantity: 8,
@@ -46,7 +46,7 @@ RSpec.describe Exports::ExportDistributionsCSVService do
           line_items: [
             {
               item: create(:item, name: "B Item", value_in_cents: 2000, organization: organization),
-              quantity: 1,
+              quantity: 1
             }
           ],
           filtered_quantity: 0,
@@ -63,7 +63,7 @@ RSpec.describe Exports::ExportDistributionsCSVService do
           line_items: [
             {
               item: create(:item, name: "C Item", value_in_cents: 3000, organization: organization),
-              quantity: 2,
+              quantity: 2
             }
           ],
           filtered_quantity: 0,
@@ -80,7 +80,7 @@ RSpec.describe Exports::ExportDistributionsCSVService do
           line_items: [
             {
               item: create(:item, name: "E Item", value_in_cents: 4000, organization: organization),
-              quantity: 3,
+              quantity: 3
             }
           ],
           filtered_quantity: 0,
@@ -102,7 +102,7 @@ RSpec.describe Exports::ExportDistributionsCSVService do
           shipping_cost: dist[:shipping_cost],
           state: dist[:state],
           agency_rep: dist[:agency_rep],
-          comment: dist[:comment],
+          comment: dist[:comment]
         )
 
         dist[:line_items].each do |line_item|
@@ -112,7 +112,6 @@ RSpec.describe Exports::ExportDistributionsCSVService do
         distribution
       end
     end
-
 
     let(:expected_items) do
       # A Item|A Item In-Kind Value|B Item|...In-Kind Value|C Item 2|... In-Kind Value|Dupe Item|... In-Kind Value|E Item|...In-Kind Value
@@ -208,7 +207,6 @@ RSpec.describe Exports::ExportDistributionsCSVService do
       }
       let(:expected_headers) { non_item_headers + item_headers }
 
-
       it 'should match the expected content with in-kind value of each item for the csv' do
         allow(organization).to receive(:include_in_kind_values_in_exported_files).and_return(true)
         expect(subject[0]).to eq(expected_headers)
@@ -266,7 +264,7 @@ RSpec.describe Exports::ExportDistributionsCSVService do
             expected_dist[:state],
             expected_dist[:agency_rep],
             expected_dist[:comment],
-            *expected_item.map { |item| item[:quantity]},
+            *expected_item.map { |item| item[:quantity] },
             0
           ]
 
