@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_02_154355) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_23_075801) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -495,6 +495,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_02_154355) do
     t.boolean "hide_package_column_on_receipt", default: false
     t.boolean "signature_for_distribution_pdf", default: false
     t.boolean "receive_email_on_requests", default: false, null: false
+    t.boolean "include_in_kind_values_in_exported_files", default: false, null: false
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
     t.index ["short_name"], name: "index_organizations_on_short_name"
   end
