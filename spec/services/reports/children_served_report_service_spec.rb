@@ -42,8 +42,8 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
         create(:line_item, item: infant_disposable_kit_item)
       ])
 
-      create(:item, name: "Kit 1", kit: kit_1, organization:)
-      create(:item, name: "Kit 2", kit: kit_2, organization:)
+      create(:item, name: "Kit 1", kit: kit_1, organization:, distribution_quantity: 1)
+      create(:item, name: "Kit 2", kit: kit_2, organization:, distribution_quantity: 1)
 
       # Distributions
       distributions = create_list(:distribution, 2, issued_at: within_time, organization: organization)
@@ -65,8 +65,8 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       expect(report).to eq({
         name: 'Children Served',
         entries: {
-          'Average children served monthly' => "8.42",
-          'Total children served' => "101",
+          'Average children served monthly' => "10.0",
+          'Total children served' => "120", # 100 normal and 20 from kits
           'Repackages diapers?' => 'Y',
           'Monthly diaper distributions?' => 'Y'
         }
@@ -94,7 +94,7 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
         create(:line_item, item: infant_disposable_kit_item)
       ])
 
-      create(:item, name: "Kit 1", kit:, organization:)
+      create(:item, name: "Kit 1", kit:, organization:, distribution_quantity: 1)
 
       # Distributions
       distributions = create_list(:distribution, 2, issued_at: within_time, organization: organization)
@@ -114,8 +114,8 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       expect(report).to eq({
         name: 'Children Served',
         entries: {
-          'Average children served monthly' => "3.42",
-          'Total children served' => "41",
+          'Average children served monthly' => "5.0",
+          'Total children served' => "60", # 40 normal and 20 from kits
           'Repackages diapers?' => 'Y',
           'Monthly diaper distributions?' => 'Y'
         }
