@@ -3,6 +3,8 @@ RSpec.describe "Organization management", type: :system, js: true do
   let(:user) { create(:user, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
   let(:super_admin_org_admin) { create(:super_admin_org_admin, organization: organization) }
+  let!(:storage_location) { create(:storage_location, :with_items, organization: organization) }
+  let!(:ndbn_member) { create(:ndbn_member) }
 
   include ActionView::RecordIdentifier
 
@@ -57,20 +59,13 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page.find("h1")).to have_text(organization.name)
         expect(page).to have_link("Home", href: dashboard_path)
 
-        expect(page).to have_content("Organization Info")
-        expect(page).to have_content("Contact Info")
-        expect(page).to have_content("Default email text")
-        expect(page).to have_content("Users")
-        expect(page).to have_content("Short Name")
-        expect(page).to have_content("URL")
-        expect(page).to have_content("Partner Profile Sections")
-        expect(page).to have_content("Custom Partner Invitation Message")
-        expect(page).to have_content("Child Based Requests?")
-        expect(page).to have_content("Individual Requests?")
-        expect(page).to have_content("Quantity Based Requests?")
-        expect(page).to have_content("Show Year-to-date values on distribution printout?")
-        expect(page).to have_content("Logo")
-        expect(page).to have_content("Use One step Partner invite and approve process?")
+        expect(page).to have_content("Basic information")
+        expect(page).to have_content("Storage")
+        expect(page).to have_content("Partner approval process")
+        expect(page).to have_content("What kind of Requests can approved Partners make?")
+        expect(page).to have_content("Other emails")
+        expect(page).to have_content("Printing")
+        expect(page).to have_content("Annual Survey")
       end
     end
 
@@ -80,25 +75,37 @@ RSpec.describe "Organization management", type: :system, js: true do
       end
 
       it "is prompted with placeholder text and a more helpful error message to ensure correct URL format as a user" do
-        fill_in "Url", with: "www.diaperbase.com"
+        fill_in "URL", with: "notavalidemail"
         click_on "Save"
+        expect(page.find(".alert")).to have_content "Url it should look like 'http://www.example.com'"
 
-        fill_in "Url", with: "http://www.diaperbase.com"
-        click_on "Save"
-        expect(page.find(".alert")).to have_content "pdated"
-      end
-
-      it "can set a reminder and a deadline day" do
-        # TODO: change here
-        fill_in "organization_every_n_months", with: 1
-        choose 'toggle-to-week-day'
-        select "First", from: "organization_every_nth_day"
-        select "Friday", from: "organization_day_of_week"
-
-        fill_in "organization_deadline_day", with: 16
+        fill_in "URL", with: "http://www.diaperbase.com"
         click_on "Save"
         expect(page.find(".alert")).to have_content "Updated"
-        expect(page).to have_content("Monthly on the 1st Friday")
+      end
+
+      it "can set a reminder on a day of the month" do
+        choose "toggle-to-date"
+        fill_in "organization_day_of_month", with: 1
+        click_on "Save"
+        expect(page.find(".alert")).to have_content "Updated your organization!"
+        expect(page).to have_content("Monthly on the 1st day of the month")
+      end
+
+      it "can set a reminder on a day of the week" do
+        choose "toggle-to-week-day"
+        select("First", from: "organization_every_nth_day" )
+        select("Sunday", from: "organization_day_of_week" )
+        click_on "Save"
+        expect(page.find(".alert")).to have_content "Updated your organization!"
+        expect(page).to have_content("Monthly on the 1st Sunday")
+      end
+
+      it "can set a default deadline day" do
+        fill_in "Default deadline day (final day of month to submit Requests)", with: 20
+        click_on "Save"
+        expect(page.find(".alert")).to have_content "Updated your organization!"
+        expect(page).to have_content("The 20th of each month")
       end
 
       it 'can select if the org repackages essentials' do
@@ -123,13 +130,14 @@ RSpec.describe "Organization management", type: :system, js: true do
       end
 
       it 'can set a default storage location on the organization' do
-        select(store.name, from: 'Default Storage Location')
+        select(storage_location.name, from: 'Default Storage Location')
 
         click_on "Save"
-        expect(page).to have_content(store.name)
+        expect(page).to have_content(storage_location.name)
       end
 
       it 'can set the NDBN Member ID' do
+        expect(page).to have_content('NDBN membership ID')
         select(ndbn_member.full_name)
 
         click_on "Save"
