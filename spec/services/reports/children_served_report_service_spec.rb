@@ -115,7 +115,7 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
         name: 'Children Served',
         entries: {
           'Average children served monthly' => "3.42",
-          'Total children served' => "41", # 40 normal and 20 from kits
+          'Total children served' => "41",
           'Repackages diapers?' => 'Y',
           'Monthly diaper distributions?' => 'Y'
         }
