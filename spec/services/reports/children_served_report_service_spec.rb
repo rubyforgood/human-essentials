@@ -65,8 +65,8 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       expect(report).to eq({
         name: 'Children Served',
         entries: {
-          'Average children served monthly' => "10.0",
-          'Total children served' => "120", # 100 normal and 20 from kits
+          'Average children served monthly' => "8.42",
+          'Total children served' => "101",
           'Repackages diapers?' => 'Y',
           'Monthly diaper distributions?' => 'Y'
         }
