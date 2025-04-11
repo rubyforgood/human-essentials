@@ -9,11 +9,8 @@ RSpec.describe Reports::DiaperReportService, type: :service, persisted_data: tru
 
     before do
       # Kits
-      create(:base_item, name: "Adult Disposable Diaper", partner_key: "adult diapers", category: "disposable diaper")
-      create(:base_item, name: "Infant Disposable Diaper", partner_key: "infant diapers", category: "disposable diaper")
-
-      disposable_kit_item = create(:item, name: "Adult Disposable Diapers", partner_key: "adult diapers")
-      another_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", partner_key: "infant diapers")
+      disposable_kit_item = create(:item, name: "Adult Disposable Diapers", reporting_category: :disposable_diapers)
+      another_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", reporting_category: :disposable_diapers)
 
       disposable_kit = create_kit(organization: organization, line_items_attributes: [
         {item_id: disposable_kit_item.id, quantity: 5}
@@ -31,11 +28,8 @@ RSpec.describe Reports::DiaperReportService, type: :service, persisted_data: tru
       # Total disposable items distributed so far: 5*10 + 5*10 = 100
 
       # create disposable and non disposable items
-      create(:base_item, name: "3T Diaper", partner_key: "toddler diapers", category: "disposable diaper")
-      create(:base_item, name: "Cloth Diapers", partner_key: "infant cloth diapers", category: "cloth diaper")
-
-      disposable_item = create(:item, name: "Disposable Diapers", partner_key: "toddler diapers")
-      non_disposable_item = create(:item, name: "Infant Cloth Diapers", partner_key: "infant cloth diapers")
+      disposable_item = create(:item, name: "Disposable Diapers", reporting_category: :disposable_diapers)
+      non_disposable_item = create(:item, name: "Infant Cloth Diapers", reporting_category: :cloth_diapers)
 
       # Distributions
       distributions = create_list(:distribution, 2, issued_at: within_time, organization: organization)

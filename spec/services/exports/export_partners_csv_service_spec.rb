@@ -96,10 +96,10 @@ RSpec.describe Exports::ExportPartnersCSVService do
           providing_diapers[:value] = "Y"
 
           case scope
-          when :disposable
-            item = create(:item, base_item: create(:base_item, category: "Diapers - Childrens"))
+          when :disposable_diapers
+            item = create(:item, reporting_category: :disposable_diapers)
           when :cloth_diapers
-            item = create(:item, base_item: create(:base_item, category: "Diapers - Cloth (Kids)"))
+            item = create(:item, reporting_category: :cloth_diapers)
           end
 
           create(:line_item, item: item, itemizable: distribution)
@@ -111,7 +111,7 @@ RSpec.describe Exports::ExportPartnersCSVService do
       end
 
       context "with a disposable item" do
-        include_examples "providing_diapers check", :disposable
+        include_examples "providing_diapers check", :disposable_diapers
       end
 
       context "with a cloth diaper item" do
@@ -122,7 +122,7 @@ RSpec.describe Exports::ExportPartnersCSVService do
         before do
           providing_period_supplies[:value] = "Y"
 
-          item = create(:item, base_item: create(:base_item, category: "Menstrual Supplies/Items"))
+          item = create(:item, organization:, reporting_category: :tampons)
           create(:line_item, item: item, itemizable: distribution)
         end
 
@@ -134,9 +134,9 @@ RSpec.describe Exports::ExportPartnersCSVService do
 
     context "when partner only has distribution older than a 12 months" do
       let(:distribution) { create(:distribution, issued_at: (12.months.ago.beginning_of_day - 1.day), partner: partner) }
-      let(:disposable_diapers_item) { create(:item, base_item: create(:base_item, category: "Diapers - Childrens")) }
-      let(:cloth_diapers_item) { create(:item, base_item: create(:base_item, category: "Diapers - Cloth (Kids)")) }
-      let(:period_supplies_item) { create(:item, base_item: create(:base_item, category: "Menstrual Supplies/Items")) }
+      let(:disposable_diapers_item) { create(:item, reporting_category: :disposable_diapers) }
+      let(:cloth_diapers_item) { create(:item, reporting_category: :cloth_diapers) }
+      let(:period_supplies_item) { create(:item, reporting_category: :tampons) }
 
       before do
         create(:line_item, item: disposable_diapers_item, itemizable: distribution)

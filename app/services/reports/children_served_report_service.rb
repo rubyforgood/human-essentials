@@ -38,23 +38,21 @@ module Reports
       .distributions
       .for_year(year)
       .joins(line_items: :item)
-      .merge(Item.loose.disposable)
+      .merge(Item.loose.disposable_diapers)
       .pick(Arel.sql("CEILING(SUM(line_items.quantity::numeric / COALESCE(items.distribution_quantity, 50)))"))
       .to_i
     end
 
     # These joins look circular but are needed due to polymorphic relationships.
-    # A distribution has many line_items, items, and base_items but kits also
+    # A distribution has many line_items and  items, but kits also
     # have the same relationships and we want to perform calculations on the
     # items in the kits not the kit items themselves.
     def children_served_with_kits_containing_disposables
       kits_subquery = organization
         .distributions
         .for_year(year)
-        .joins(line_items: { item: { kit: { line_items: {item: :base_item} }}})
-        .where("base_items.category ILIKE '%diaper%' AND
-          NOT base_items.category ILIKE '%cloth%' OR base_items.name ILIKE '%cloth%' AND
-          NOT base_items.category ILIKE '%adult%'")
+        .joins(line_items: { item: { kit: { line_items: :item} }})
+        .where("items_line_items.reporting_category = 'disposable_diapers'")
         .select("DISTINCT ON (distributions.id, line_items.id, kits.id) line_items.quantity, items.distribution_quantity")
         .to_sql
 
