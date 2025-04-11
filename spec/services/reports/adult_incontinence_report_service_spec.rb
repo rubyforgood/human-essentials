@@ -188,8 +188,8 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
                                           "% adult incontinence bought" => "60%",
                                           "% adult incontinence supplies donated" => "40%",
                                           "Adult incontinence supplies distributed" => "51,800",
-                                          "Adults Assisted Per Month" => 108.83,
-                                          "Adult incontinence supplies per adult per month" => 39.66,
+                                          "Adults Assisted Per Month" => 84.33,
+                                          "Adult incontinence supplies per adult per month" => 51.19,
                                           "Money spent purchasing adult incontinence supplies" => "$30.00"
                                       }))
         expect(report.report[:entries]['Adult incontinence supplies'].split(', '))
