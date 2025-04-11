@@ -89,5 +89,3 @@ out/
 
 .vscode/
 .aider*
-
-.Gemfile.lock
