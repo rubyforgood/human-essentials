@@ -103,6 +103,7 @@ class OrganizationsController < ApplicationController
       :hide_value_columns_on_receipt, :hide_package_column_on_receipt,
       :signature_for_distribution_pdf, :receive_email_on_requests,
       :by_month_or_week, :day_of_month, :day_of_week, :every_nth_day,
+      :every_nth_month,
       partner_form_fields: [],
       request_unit_names: []
     )
