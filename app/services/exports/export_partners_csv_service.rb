@@ -42,7 +42,6 @@ module Exports
         "Agency City" => ->(partner) { partner.profile.city },
         "Agency State" => ->(partner) { partner.profile.state },
         "Agency Zip Code" => ->(partner) { partner.profile.zip_code },
-        "Program/Delivery Address" => ->(partner) { "#{partner.profile.program_address1}, #{partner.profile.program_address2}" },
         "Program/Delivery Address" => ->(partner) {
           (partner.profile.program_address1.blank? || partner.profile.program_address2.blank?) ?
           "" : "#{partner.profile.program_address1}, #{partner.profile.program_address2}"
