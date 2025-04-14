@@ -31,23 +31,25 @@ module Exports
       table = {
         "Agency Name" => ->(partner) { partner.name },
         "Agency Email" => ->(partner) { partner.email },
-        "Agency Type" => ->(partner) {
-          symbolic_agency_type = partner.profile.agency_type&.to_sym
-          (symbolic_agency_type == :other) ? "#{I18n.t symbolic_agency_type, scope: :partners_profile}: #{partner.profile.other_agency_type}" : (I18n.t symbolic_agency_type, scope: :partners_profile)
-        },
+        "Notes" => ->(partner) { partner.notes },
+        "Agency Type" => ->(partner) { I18n.t(partner.profile.agency_type, scope: :partners_profile) }, # Columns from the agency_information partial
+        "Other Agency Type" => ->(partner) { partner.profile.other_agency_type },
         "Agency Mission" => ->(partner) { partner.profile.agency_mission },
-        "Agency Address" => ->(partner) { "#{partner.profile.address1}, #{partner.profile.address2}" },
+        "Agency Address" => ->(partner) {
+          (partner.profile.address1.blank? || partner.profile.address2.blank?) ?
+          "" : "#{partner.profile.address1}, #{partner.profile.address2}"
+        },
         "Agency City" => ->(partner) { partner.profile.city },
         "Agency State" => ->(partner) { partner.profile.state },
         "Agency Zip Code" => ->(partner) { partner.profile.zip_code },
         "Program/Delivery Address" => ->(partner) { "#{partner.profile.program_address1}, #{partner.profile.program_address2}" },
+        "Program/Delivery Address" => ->(partner) {
+          (partner.profile.program_address1.blank? || partner.profile.program_address2.blank?) ?
+          "" : "#{partner.profile.program_address1}, #{partner.profile.program_address2}"
+        },
         "Program City" => ->(partner) { partner.profile.program_city },
         "Program State" => ->(partner) { partner.profile.program_state },
-        "Program Zip Code" => ->(partner) { partner.profile.program_zip_code },
-        "Notes" => ->(partner) { partner.notes },
-        "Counties Served" => ->(partner) { county_list_by_regions[partner.id] || "" },
-        "Providing Diapers" => ->(partner) { diaper_statuses[partner.id] },
-        "Providing Period Supplies" => ->(partner) { period_supplies_statuses[partner.id] }
+        "Program Zip Code" => ->(partner) { partner.profile.program_zip_code }
       }
 
       if @partials_to_show.include? "media_information"
@@ -63,7 +65,7 @@ module Exports
         table["Form 990 Filed"] = ->(partner) { partner.profile.form_990 }
         table["Program Name"] = ->(partner) { partner.profile.program_name }
         table["Program Description"] = ->(partner) { partner.profile.program_description }
-        table["Program Age"] = ->(partner) { partner.profile.program_age }
+        table["Agency Age"] = ->(partner) { partner.profile.program_age }
         table["Evidence Based"] = ->(partner) { partner.profile.evidence_based }
         table["Case Management"] = ->(partner) { partner.profile.case_management }
         table["How Are Essentials Used"] = ->(partner) { partner.profile.essentials_use }
@@ -79,9 +81,13 @@ module Exports
 
       if @partials_to_show.include? "sources_of_funding"
         table["Sources Of Funding"] = ->(partner) { partner.profile.sources_of_funding }
-        table["Sources Of Diapers"] = ->(partner) { partner.profile.sources_of_diapers }
+        table["How do you currently obtain diapers?"] = ->(partner) { partner.profile.sources_of_diapers }
         table["Essentials Budget"] = ->(partner) { partner.profile.essentials_budget }
         table["Essentials Funding Source"] = ->(partner) { partner.profile.essentials_funding_source }
+      end
+
+      if @partials_to_show.include? "area_served"
+        table["Area Served"] = ->(partner) { county_list_by_regions[partner.id] || "" }
       end
 
       if @partials_to_show.include? "population_served"
@@ -106,10 +112,10 @@ module Exports
         table["Executive Director Name"] = ->(partner) { partner.profile.executive_director_name }
         table["Executive Director Phone"] = ->(partner) { partner.profile.executive_director_phone }
         table["Executive Director Email"] = ->(partner) { partner.profile.executive_director_email }
-        table["Contact Name"] = ->(partner) { partner.profile.primary_contact_name }
-        table["Contact Phone"] = ->(partner) { partner.profile.primary_contact_phone }
-        table["Contact Cell"] = ->(partner) { partner.profile.primary_contact_mobile }
-        table["Contact Email"] = ->(partner) { partner.profile.primary_contact_email }
+        table["Primary Contact Name"] = ->(partner) { partner.profile.primary_contact_name }
+        table["Primary Contact Phone"] = ->(partner) { partner.profile.primary_contact_phone }
+        table["Primary Contact Cell"] = ->(partner) { partner.profile.primary_contact_mobile }
+        table["Primary Contact Email"] = ->(partner) { partner.profile.primary_contact_email }
       end
 
       if @partials_to_show.include? "pick_up_person"
@@ -124,9 +130,12 @@ module Exports
         table["More Docs Required"] = ->(partner) { partner.profile.more_docs_required }
       end
 
-      table["Quantity-based Requests"] = ->(partner) { partner.profile.enable_quantity_based_requests }
+      table["Quantity-based Requests"] = ->(partner) { partner.profile.enable_quantity_based_requests } # Columns from the partner_settings partial
       table["Child-based Requests"] = ->(partner) { partner.profile.enable_child_based_requests }
       table["Individual Requests"] = ->(partner) { partner.profile.enable_individual_requests }
+
+      table["Providing Diapers"] = ->(partner) { diaper_statuses[partner.id] }
+      table["Providing Period Supplies"] = ->(partner) { period_supplies_statuses[partner.id] }
 
       table
     end

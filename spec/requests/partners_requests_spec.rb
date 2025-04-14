@@ -57,9 +57,6 @@ RSpec.describe "Partners", type: :request do
       let(:name) { "Leslie Sue" }
       let(:email) { "leslie@sue.com" }
       let(:notes) { "Some notes" }
-      let(:providing_diapers) { {value: "N", index: 22} }
-      let(:providing_period_supplies) { {value: "N", index: 23} }
-
       let(:agency_type) { :other } # Columns from the agency_information partial
       let(:other_agency_type) { "Another Agency Name" }
       let(:agency_mission) { "agency_mission" }
@@ -81,12 +78,16 @@ RSpec.describe "Partners", type: :request do
       let(:enable_quantity_based_requests) { true } # Columns from the partner_settings partial
       let(:enable_child_based_requests) { true }
       let(:enable_individual_requests) { true }
+      let(:providing_diapers) { {value: "N", index: -2} }
+      let(:providing_period_supplies) { {value: "N", index: -1} }
 
       let(:expected_headers) {
         [
-          "Agency Name",
+          "Agency Name", # Technically not part of the agency_information partial, but comes at the start of the export
           "Agency Email",
+          "Notes",
           "Agency Type", # Columns from the agency_information partial
+          "Other Agency Type",
           "Agency Mission",
           "Agency Address",
           "Agency City",
@@ -96,26 +97,26 @@ RSpec.describe "Partners", type: :request do
           "Program City",
           "Program State",
           "Program Zip Code",
-          "Notes",
-          "Counties Served",
-          "Providing Diapers",
-          "Providing Period Supplies",
           "Agency Website", # Columns from the media_information partial
           "Facebook",
           "Twitter",
           "Instagram",
           "No Social Media Presence",
-          "Quantity-based Requests", # Columns from the partner_settings partial
+          "Quantity-based Requests", # Columns from the agency_information partial
           "Child-based Requests",
-          "Individual Requests"
+          "Individual Requests",
+          "Providing Diapers", # Technically not part of the partner_settings partial, but comes at the end of the export
+          "Providing Period Supplies"
         ]
       }
 
       let(:expected_values) {
         [
-          partner.name,
+          partner.name, # Technically not part of the agency_information partial, but comes at the start of the export
           partner.email,
-          "#{I18n.t "partners_profile.other"}: #{other_agency_type}", # Columns from the agency_information partial
+          notes,
+          I18n.t("partners_profile.other").to_s, # Columns from the agency_information partial
+          other_agency_type.to_s,
           agency_mission,
           "#{agency_address1}, #{agency_address2}",
           agency_city,
@@ -125,10 +126,6 @@ RSpec.describe "Partners", type: :request do
           program_city,
           program_state,
           program_zip_code.to_s,
-          notes,
-          "",
-          providing_diapers[:value],
-          providing_period_supplies[:value],
           agency_website, # Columns from the media_information partial
           facebook,
           twitter,
@@ -136,7 +133,9 @@ RSpec.describe "Partners", type: :request do
           no_social_media_presence.to_s,
           enable_quantity_based_requests.to_s, # Columns from the partner_settings partial
           enable_child_based_requests.to_s,
-          enable_individual_requests.to_s
+          enable_individual_requests.to_s,
+          providing_diapers[:value], # Technically not part of the partner_settings partial, but comes at the end of the export
+          providing_period_supplies[:value]
         ]
       }
 
@@ -158,31 +157,33 @@ RSpec.describe "Partners", type: :request do
             primary_contact_email: nil
           ))
 
+          # The agency_information and settings sections contain information stored on the partner and not the
+          # profile, so they won't be completely empty
           expected_values = [
             partner.name,
             partner.email,
+            notes,
             "", # Columns from the agency_information partial
             "",
-            ", ",
             "",
             "",
             "",
-            ", ",
             "",
             "",
             "",
-            notes,
             "",
-            providing_diapers[:value],
-            providing_period_supplies[:value],
+            "",
+            "",
             "", # Columns from the media_information partial
             "",
             "",
             "",
-            "".to_s,
+            "",
             enable_quantity_based_requests.to_s, # Columns from the partner_settings partial
             enable_child_based_requests.to_s,
-            enable_individual_requests.to_s
+            enable_individual_requests.to_s,
+            providing_diapers[:value],
+            providing_period_supplies[:value]
           ]
 
           get partners_path(partner, format: response_format)
@@ -210,6 +211,10 @@ RSpec.describe "Partners", type: :request do
       end
 
       context "with served counties" do
+        before do
+          organization.update(partner_form_fields: organization.partner_form_fields += ["area_served"])
+        end
+
         it "returns them in correct order" do
           county_1 = create(:county, name: "High County, Maine", region: "Maine")
           county_2 = create(:county, name: "laRue County, Louisiana", region: "Louisiana")
@@ -222,7 +227,7 @@ RSpec.describe "Partners", type: :request do
 
           csv = CSV.parse(response.body, headers: true)
 
-          expect(csv[0]["Counties Served"]).to eq("laRue County, Louisiana; Ste. Anne County, Louisiana; High County, Maine")
+          expect(csv[0]["Area Served"]).to eq("laRue County, Louisiana; Ste. Anne County, Louisiana; High County, Maine")
         end
       end
 
@@ -259,9 +264,6 @@ RSpec.describe "Partners", type: :request do
         let(:name_2) { "Jane Doe" }
         let(:email_2) { "jane@doe.com" }
         let(:notes_2) { "Some notes" }
-        let(:providing_diapers_2) { {value: "N", index: 22} }
-        let(:providing_period_supplies_2) { {value: "N", index: 23} }
-
         let(:agency_type_2) { :other } # Columns from the agency_information partial
         let(:other_agency_type_2) { "Another Agency Name" }
         let(:agency_mission_2) { "agency_mission" }
@@ -283,6 +285,8 @@ RSpec.describe "Partners", type: :request do
         let(:enable_quantity_based_requests_2) { true } # Columns from the partner_settings partial
         let(:enable_child_based_requests_2) { true }
         let(:enable_individual_requests_2) { true }
+        let(:providing_diapers_2) { {value: "N", index: 22} }
+        let(:providing_period_supplies_2) { {value: "N", index: 23} }
 
         it "orders partners alphaetically" do
           get partners_path(partner, format: response_format)
@@ -293,7 +297,9 @@ RSpec.describe "Partners", type: :request do
             [
               partner_2.name,
               partner_2.email,
-              "#{I18n.t "partners_profile.other"}: #{other_agency_type_2}", # Columns from the agency_information partial
+              notes_2,
+              I18n.t("partners_profile.other").to_s, # Columns from the agency_information partial
+              other_agency_type_2.to_s,
               agency_mission_2,
               "#{agency_address1_2}, #{agency_address2_2}",
               agency_city_2,
@@ -303,10 +309,6 @@ RSpec.describe "Partners", type: :request do
               program_city_2,
               program_state_2,
               program_zip_code_2.to_s,
-              notes_2,
-              "", # no counties
-              providing_diapers_2[:value],
-              providing_period_supplies_2[:value],
               agency_website_2, # Columns from the media_information partial
               facebook_2,
               twitter_2,
@@ -314,7 +316,9 @@ RSpec.describe "Partners", type: :request do
               no_social_media_presence_2.to_s,
               enable_quantity_based_requests_2.to_s, # Columns from the partner_settings partial
               enable_child_based_requests_2.to_s,
-              enable_individual_requests_2.to_s
+              enable_individual_requests_2.to_s,
+              providing_diapers_2[:value],
+              providing_period_supplies_2[:value]
             ]
           )
         end

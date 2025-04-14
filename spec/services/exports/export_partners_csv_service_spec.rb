@@ -76,16 +76,7 @@ RSpec.describe Exports::ExportPartnersCSVService do
         enable_quantity_based_requests: enable_quantity_based_requests)
     end
 
-    let(:county_1) { create(:county, name: "High County, Maine", region: "Maine") }
-    let(:county_2) { create(:county, name: "laRue County, Louisiana", region: "Louisiana") }
-    let(:county_3) { create(:county, name: "Ste. Anne County, Louisiana", region: "Louisiana") }
-    let!(:served_area_1) { create(:partners_served_area, partner_profile: profile, county: county_1, client_share: 50) }
-    let!(:served_area_2) { create(:partners_served_area, partner_profile: profile, county: county_2, client_share: 40) }
-    let!(:served_area_3) { create(:partners_served_area, partner_profile: profile, county: county_3, client_share: 10) }
     let(:notes) { "Some notes" }
-    let(:providing_diapers) { {value: "N", index: 14} }
-    let(:providing_period_supplies) { {value: "N", index: 15} }
-
     let(:agency_type) { :other } # Columns from the agency_information partial
     let(:other_agency_type) { "Another Agency Name" }
     let(:agency_mission) { "agency_mission" }
@@ -121,6 +112,12 @@ RSpec.describe Exports::ExportPartnersCSVService do
     let(:sources_of_diapers) { "sources_of_diapers" }
     let(:essentials_budget) { "essentials_budget" }
     let(:essentials_funding_source) { "essentials_funding_source" }
+    let(:county_1) { create(:county, name: "High County, Maine", region: "Maine") } # Information for the area_served parital
+    let(:county_2) { create(:county, name: "laRue County, Louisiana", region: "Louisiana") }
+    let(:county_3) { create(:county, name: "Ste. Anne County, Louisiana", region: "Louisiana") }
+    let!(:served_area_1) { create(:partners_served_area, partner_profile: profile, county: county_1, client_share: 50) }
+    let!(:served_area_2) { create(:partners_served_area, partner_profile: profile, county: county_2, client_share: 40) }
+    let!(:served_area_3) { create(:partners_served_area, partner_profile: profile, county: county_3, client_share: 10) }
     let(:income_requirement_desc) { true } # Columns from the population_served partial
     let(:income_verification) { true }
     let(:population_black) { 10 }
@@ -152,16 +149,33 @@ RSpec.describe Exports::ExportPartnersCSVService do
     let(:enable_quantity_based_requests) { true } # Columns from the partner_settings partial
     let(:enable_child_based_requests) { true }
     let(:enable_individual_requests) { true }
+    let(:providing_diapers) { {value: "N", index: -2} }
+    let(:providing_period_supplies) { {value: "N", index: -1} }
 
     let(:partners) { Partner.all }
 
-    # Fields from the partner and profile that are always shown
-    let(:headers_base) {
+    let(:optional_partials) {
+      [
+        :media_information,
+        :agency_stability,
+        :organizational_capacity,
+        :sources_of_funding,
+        :area_served,
+        :population_served,
+        :executive_director,
+        :pick_up_person,
+        :agency_distribution_information
+        ]
+    }
+
+    let(:partial_to_headers) {
       {
-        leading: [
-          "Agency Name",
+        agency_information: [
+          "Agency Name", # Technically not part of the agency_information partial, but comes at the start of the export
           "Agency Email",
-          "Agency Type",
+          "Notes",
+          "Agency Type", # Columns from the agency_information partial
+          "Other Agency Type",
           "Agency Mission",
           "Agency Address",
           "Agency City",
@@ -170,22 +184,8 @@ RSpec.describe Exports::ExportPartnersCSVService do
           "Program/Delivery Address",
           "Program City",
           "Program State",
-          "Program Zip Code",
-          "Notes",
-          "Counties Served",
-          "Providing Diapers",
-          "Providing Period Supplies"
+          "Program Zip Code"
         ],
-        tailing: [
-          "Quantity-based Requests",
-          "Child-based Requests",
-          "Individual Requests"
-        ]
-      }
-    }
-
-    let(:partial_to_headers) {
-      {
         media_information: [
           "Agency Website",
           "Facebook",
@@ -198,7 +198,7 @@ RSpec.describe Exports::ExportPartnersCSVService do
           "Form 990 Filed",
           "Program Name",
           "Program Description",
-          "Program Age",
+          "Agency Age",
           "Evidence Based",
           "Case Management",
           "How Are Essentials Used",
@@ -212,9 +212,12 @@ RSpec.describe Exports::ExportPartnersCSVService do
         ],
         sources_of_funding: [
           "Sources Of Funding",
-          "Sources Of Diapers",
+          "How do you currently obtain diapers?",
           "Essentials Budget",
           "Essentials Funding Source"
+        ],
+        area_served: [
+          "Area Served"
         ],
         population_served: [
           "Income Requirement",
@@ -237,10 +240,10 @@ RSpec.describe Exports::ExportPartnersCSVService do
           "Executive Director Name",
           "Executive Director Phone",
           "Executive Director Email",
-          "Contact Name",
-          "Contact Phone",
-          "Contact Cell",
-          "Contact Email"
+          "Primary Contact Name",
+          "Primary Contact Phone",
+          "Primary Contact Cell",
+          "Primary Contact Email"
         ],
         pick_up_person: [
           "Pick Up Person Name",
@@ -251,16 +254,25 @@ RSpec.describe Exports::ExportPartnersCSVService do
           "Distribution Times",
           "New Client Times",
           "More Docs Required"
+        ],
+        partner_settings: [
+          "Quantity-based Requests", # Columns from the agency_information partial
+          "Child-based Requests",
+          "Individual Requests",
+          "Providing Diapers", # Technically not part of the partner_settings partial, but comes at the end of the export
+          "Providing Period Supplies"
         ]
       }
     }
 
-    let(:values_base) {
+    let(:partial_to_values) {
       {
-        leading: [
-          partner.name,
+        agency_information: [
+          partner.name, # Technically not part of the agency_information partial, but come at the start of the export
           partner.email,
-          "#{I18n.t "partners_profile.other"}: #{other_agency_type}",
+          notes,
+          I18n.t("partners_profile.other").to_s, # Columns from the agency_information partial
+          other_agency_type.to_s,
           agency_mission,
           "#{agency_address1}, #{agency_address2}",
           agency_city,
@@ -269,22 +281,8 @@ RSpec.describe Exports::ExportPartnersCSVService do
           "#{program_address1}, #{program_address2}",
           program_city,
           program_state,
-          program_zip_code.to_s,
-          notes,
-          # county ordering is a bit esoteric -- it is human alphabetical by county within region (region is state)
-          "laRue County, Louisiana; Ste. Anne County, Louisiana; High County, Maine",
-          providing_diapers[:value],
-          providing_period_supplies[:value]
+          program_zip_code.to_s
         ],
-        tailing: [
-          enable_quantity_based_requests.to_s,
-          enable_child_based_requests.to_s,
-          enable_individual_requests.to_s
-        ]
-      }
-    }
-    let(:partial_to_values) {
-      {
         media_information: [
           agency_website,
           facebook,
@@ -314,6 +312,10 @@ RSpec.describe Exports::ExportPartnersCSVService do
           sources_of_diapers,
           essentials_budget,
           essentials_funding_source
+        ],
+        area_served: [
+          # county ordering is a bit esoteric -- it is human alphabetical by county within region (region is state)
+          "laRue County, Louisiana; Ste. Anne County, Louisiana; High County, Maine"
         ],
         population_served: [
           income_requirement_desc.to_s,
@@ -350,16 +352,23 @@ RSpec.describe Exports::ExportPartnersCSVService do
           distribution_times,
           new_client_times,
           more_docs_required
+        ],
+        partner_settings: [
+          enable_quantity_based_requests.to_s, # Columns from the agency_information partial
+          enable_child_based_requests.to_s,
+          enable_individual_requests.to_s,
+          providing_diapers[:value], # Technically not part of the partner_settings partial, but comes at the end of the export
+          providing_period_supplies[:value]
         ]
       }
     }
 
     it "should have the correct headers" do
-      expect(subject[0]).to eq(headers_base[:leading] + partial_to_headers.values.flatten + headers_base[:tailing])
+      expect(subject[0]).to eq(partial_to_headers.values.flatten)
     end
 
     it "should have the expected info in the columns order" do
-      expect(subject[1]).to eq(values_base[:leading] + partial_to_values.values.flatten + values_base[:tailing])
+      expect(subject[1]).to eq(partial_to_values.values.flatten)
     end
 
     it "should handle a partner with missing profile info" do
@@ -370,56 +379,51 @@ RSpec.describe Exports::ExportPartnersCSVService do
         primary_contact_name: nil,
         primary_contact_email: nil
       ))
-      expected_value_leading = [
-        partner.name,
-        partner.email,
-        "",
-        "",
-        ", ",
-        "",
-        "",
-        "",
-        ", ",
-        "",
-        "",
-        "",
-        notes,
-        "",
-        providing_diapers[:value],
-        providing_period_supplies[:value]
-        ]
-      expected_value_tailing = [
-        enable_quantity_based_requests.to_s,
-        enable_child_based_requests.to_s,
-        enable_individual_requests.to_s
-      ]
-
-      expect(subject[1]).to eq(expected_value_leading + Array.new(partial_to_values.values.flatten.count) { "" } + expected_value_tailing)
+      expected_values = []
+      partial_to_values.keys.each do |partial|
+        # The agency_information and settings sections contain information stored on the partner and not the
+        # profile, so they won't be completely empty
+        expected_values += case partial
+        when :agency_information
+          [partner.name, partner.email, notes, "", "", "", "", "", "", "", "", "", "", ""]
+        when :partner_settings
+          [
+            enable_quantity_based_requests.to_s,
+            enable_child_based_requests.to_s,
+            enable_individual_requests.to_s,
+            providing_diapers[:value],
+            providing_period_supplies[:value]
+          ]
+        else
+          Array.new(partial_to_values[partial].count) { "" }
+        end
+      end
+      expect(subject[1]).to eq(expected_values)
     end
 
     it "should only export columns in profile sections the org has enabled" do
-      partial_to_headers.keys.each do |partial|
+      optional_partials.each do |partial|
         organization.update(partner_form_fields: [partial])
         partners.reload
         limited_export = CSV.parse(described_class.new(partners, organization).generate_csv)
-        expect(limited_export[0]).to eq(headers_base[:leading] + partial_to_headers[partial] + headers_base[:tailing])
-        expect(limited_export[1]).to eq(values_base[:leading] + partial_to_values[partial] + values_base[:tailing])
+        expect(limited_export[0]).to eq(partial_to_headers[:agency_information] + partial_to_headers[partial] + partial_to_headers[:partner_settings])
+        expect(limited_export[1]).to eq(partial_to_values[:agency_information] + partial_to_values[partial] + partial_to_values[:partner_settings])
       end
     end
 
     context "when there are no partners" do
       let(:partners) { Partner.none }
       it "should have the correct headers and no other rows" do
-        expect(subject[0]).to eq(headers_base[:leading] + partial_to_headers.values.flatten + headers_base[:tailing])
+        expect(subject[0]).to eq(partial_to_headers.values.flatten)
         expect(subject[1]).to eq(nil)
       end
 
       it "should only export columns in profile sections the org has enabled" do
-        partial_to_headers.keys.each do |partial|
+        optional_partials.each do |partial|
           organization.update(partner_form_fields: [partial])
           partners.reload
           limited_export = CSV.parse(described_class.new(partners, organization).generate_csv)
-          expect(limited_export[0]).to eq(headers_base[:leading] + partial_to_headers[partial] + headers_base[:tailing])
+          expect(limited_export[0]).to eq(partial_to_headers[:agency_information] + partial_to_headers[partial] + partial_to_headers[:partner_settings])
           expect(limited_export[1]).to eq(nil)
         end
       end
