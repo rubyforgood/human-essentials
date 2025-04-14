@@ -209,35 +209,33 @@ You can export different groups of partners by clicking the partner filters whic
 - Active
 
 ### Partner Export contents
-For each partner in the filtered list:
+For each partner in the filtered list the following fields will be exported:
 - Agency Name,
 - Agency Email,
+- Notes
+- Agency Type,
+- Other Agency Type,
+- Agency Mission,
 - Agency Address,
 - Agency City,
 - Agency State,
 - Agency Zip Code,
-- Agency Website,
-- Agency Type,
-- Contact Name,
-- Contact Phone,
-- Contact Cell,
-- Contact Email,
-- Agency Mission,
-- Child-based Requests,
-- Individual Requests,
-- Quantity-based Requests,
 - Program/Delivery Address,
 - Program City,
 - Program State,
 - Program Zip Code,
-- Notes
-- Counties Served
-- Providing Diapers
+
+The following fields will also be exported, at the end of the table
+- Quantity-based Requests,
+- Child-based Requests,
+- Individual Requests,
+- Providing Diapers,
 - Providing Period Supplies
 
 Optionally, the export will also include the following fields from the Partner Profile if the associated section of the form is enabled.
 
 Media Information
+- Agency Website,
 - Facebook,
 - Twitter,
 - Instagram,
@@ -248,7 +246,7 @@ Agency Stability
 - Form 990 Filed,
 - Program Name,
 - Program Description,
-- Program Age,
+- Agency Age,
 - Evidence Based,
 - Case Management,
 - How Are Essentials Used,
@@ -262,9 +260,12 @@ Organization Capacity
 
 Sources of Funding
 - Sources Of Funding,
-- Sources Of Diapers,
+- How do you currently obtain diapers?,
 - Essentials Budget,
 - Essentials Funding Source
+
+Area Served
+- Sorted list of served counties
 
 Population Served
 - Income Requirement,
@@ -286,7 +287,11 @@ Population Served
 Executive Director
 - Executive Director Name,
 - Executive Director Phone,
-- Executive Director Email
+- Executive Director Email,
+- Primary Contact Name,
+- Primary Contact Phone,
+- Primary Contact Cell,
+- Primary Contact Email
 
 Pick Up Person
 - Pick Up Person Name,
