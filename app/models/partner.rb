@@ -4,6 +4,7 @@
 #
 #  id                          :integer          not null, primary key
 #  email                       :string
+#  info_for_partner            :text
 #  name                        :string
 #  notes                       :text
 #  quota                       :integer
