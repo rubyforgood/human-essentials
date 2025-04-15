@@ -71,6 +71,11 @@
                     <%= filter_select(label: "Filter by Donation Site", scope: :from_donation_site, collection: @donation_sites, key: :id, value: :name, selected: @selected_donation_site) %>
                   </div>
                 <% end %>
+                <% if @items.present? %>
+                  <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                    <%= filter_select(label: "Filter by Item", scope: :by_item_id, collection: @items, selected: @selected_item) %>
+                  </div>
+                <% end %>
                 <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
                   <%= label_tag "Date Range" %>
                   <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %>
@@ -107,7 +112,9 @@
                   <th>Date</th>
                   <th>Details</th>
                   <th>Storage Location</th>
-                  <th>Quantity of Items</th>
+
+                  <% filtered_item_name = @selected_item ? @items.find { |i| i.id == filter_params[:by_item_id].to_i }&.name : "Items" %>
+                  <th>Quantity of <%= filtered_item_name %></th>
                   <th>Money Raised</th>
                   <th>In Kind Value</th>
                   <th>Comments</th>
