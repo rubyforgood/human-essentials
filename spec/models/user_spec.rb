@@ -64,6 +64,35 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe '#preferred_name' do
+      let(:user) { create(:user, name: name, email: email) }
+      let(:email) { 'john.smith@example.com' }
+
+    context 'when name is present' do
+      let(:name) { 'John Smith' }
+
+      it 'returns the name' do
+        expect(user.preferred_name).to eq('John Smith')
+      end
+    end
+
+    context 'when name is nil' do
+      let(:name) { nil }
+
+      it 'returns the email' do
+        expect(user.preferred_name).to eq('john.smith@example.com')
+      end
+    end
+
+    context 'when name is an empty string' do
+      let(:name) { '' }
+
+      it 'returns the email' do
+        expect(user.preferred_name).to eq('john.smith@example.com')
+      end
+    end
+  end
+
   describe "Scopes >" do
     describe "->alphabetized" do
       let!(:z_name_user) { create(:user, name: 'Zachary') }
