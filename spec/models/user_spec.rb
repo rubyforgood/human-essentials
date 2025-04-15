@@ -65,8 +65,8 @@ RSpec.describe User, type: :model do
   end
 
   describe '#preferred_name' do
-      let(:user) { create(:user, name: name, email: email) }
-      let(:email) { 'john.smith@example.com' }
+    let(:user) { create(:user, name: name, email: email) }
+    let(:email) { 'john.smith@example.com' }
 
     context 'when name is present' do
       let(:name) { 'John Smith' }
