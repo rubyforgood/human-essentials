@@ -4,153 +4,84 @@ RSpec.describe Exports::ExportPartnersCSVService do
 
     let(:organization) { create(:organization) }
 
-    let!(:partner) { create(:partner, status: :approved, organization:, notes:, without_profile: true) }
+    let!(:partner) { create(:partner, name: "Jane Doe", email: "jane@doe.com", status: :approved, organization:, notes: "Some notes", without_profile: true) }
     let!(:profile) do
       create(:partner_profile,
         partner: partner,
-        agency_type: agency_type, # Columns from the agency_information partial
-        other_agency_type: other_agency_type,
-        agency_mission: agency_mission,
-        address1: agency_address1,
-        address2: agency_address2,
-        city: agency_city,
-        state: agency_state,
-        zip_code: agency_zipcode,
-        program_address1: program_address1,
-        program_address2: program_address2,
-        program_city: program_city,
-        program_state: program_state,
-        program_zip_code: program_zip_code,
-        website: agency_website, # Columns from the media_information partial
-        facebook: facebook,
-        twitter: twitter,
-        instagram: instagram,
-        no_social_media_presence: no_social_media_presence,
-        founded: founded, # Columns from the agency_stability partial
-        form_990: form_990,
-        program_name: program_name,
-        program_description: program_description,
-        program_age: program_age,
-        evidence_based: evidence_based,
-        case_management: case_management,
-        essentials_use: essentials_use,
-        receives_essentials_from_other: receives_essentials_from_other,
-        currently_provide_diapers: currently_provide_diapers,
-        client_capacity: client_capacity, # Columns from the organizational_capacitypartial
-        storage_space: storage_space,
-        describe_storage_space: describe_storage_space,
-        sources_of_funding: sources_of_funding, # Columns from the sources_of_funding partial
-        sources_of_diapers: sources_of_diapers,
-        essentials_budget: essentials_budget,
-        essentials_funding_source: essentials_funding_source,
-        income_requirement_desc: income_requirement_desc, # Columns from the population_served partial
-        income_verification: income_verification,
-        population_black: population_black,
-        population_white: population_white,
-        population_hispanic: population_hispanic,
-        population_asian: population_asian,
-        population_american_indian: population_american_indian,
-        population_island: population_island,
-        population_multi_racial: population_multi_racial,
-        population_other: population_other,
-        zips_served: zips_served,
-        at_fpl_or_below: at_fpl_or_below,
-        above_1_2_times_fpl: above_1_2_times_fpl,
-        greater_2_times_fpl: greater_2_times_fpl,
-        poverty_unknown: poverty_unknown,
-        executive_director_name: executive_director_name, # Columns from the executive_director partial
-        executive_director_phone: executive_director_phone,
-        executive_director_email: executive_director_email,
-        primary_contact_name: contact_name,
-        primary_contact_phone: contact_phone,
-        primary_contact_mobile: contact_mobile,
-        primary_contact_email: contact_email,
-        pick_up_name: pick_up_name, # Columns from the pick_up_personpartial
-        pick_up_phone: pick_up_phone,
-        pick_up_email: pick_up_email,
-        distribution_times: distribution_times, # Columns from the agency_distribution_information partial
-        new_client_times: new_client_times,
-        more_docs_required: more_docs_required,
-        enable_child_based_requests: enable_child_based_requests, # Columns from the partner_settings partial
-        enable_individual_requests: enable_individual_requests,
-        enable_quantity_based_requests: enable_quantity_based_requests)
+        agency_type: :other, # Columns from the agency_information partial
+        other_agency_type: "Another Agency Name",
+        agency_mission: "agency_mission",
+        address1: "4744 McDermott Mountain",
+        address2: "333 Never land street",
+        city: "Lake Shoshana",
+        state: "ND",
+        zip_code: "09980-7010",
+        program_address1: "program_address1",
+        program_address2: "program_address2",
+        program_city: "program_city",
+        program_state: "program_state",
+        program_zip_code: 12345,
+        website: "bosco.example", # Columns from the media_information partial
+        facebook: "facebook",
+        twitter: "twitter",
+        instagram: "instagram",
+        no_social_media_presence: false,
+        founded: 2020, # Columns from the agency_stability partial
+        form_990: true,
+        program_name: "program_name",
+        program_description: "program_description",
+        program_age: 5,
+        evidence_based: true,
+        case_management: true,
+        essentials_use: "essentials_use",
+        receives_essentials_from_other: "receives_essentials_from_other",
+        currently_provide_diapers: true,
+        client_capacity: "client_capacity", # Columns from the organizational_capacitypartial
+        storage_space: true,
+        describe_storage_space: "describe_storage_space",
+        sources_of_funding: "sources_of_funding", # Columns from the sources_of_funding partial
+        sources_of_diapers: "sources_of_diapers",
+        essentials_budget: "essentials_budget",
+        essentials_funding_source: "essentials_funding_source",
+        income_requirement_desc: true, # Columns from the population_served partial
+        income_verification: true,
+        population_black: 10,
+        population_white: 10,
+        population_hispanic: 10,
+        population_asian: 10,
+        population_american_indian: 10,
+        population_island: 10,
+        population_multi_racial: 10,
+        population_other: 30,
+        zips_served: "zips_served",
+        at_fpl_or_below: 25,
+        above_1_2_times_fpl: 25,
+        greater_2_times_fpl: 25,
+        poverty_unknown: 25,
+        executive_director_name: "executive_director_name", # Columns from the executive_director partial
+        executive_director_phone: "executive_director_phone",
+        executive_director_email: "executive_director_email",
+        primary_contact_name: "Jon Ralfeo",
+        primary_contact_phone: "1231231234",
+        primary_contact_mobile: "4564564567",
+        primary_contact_email: "jon@entertainment720.com",
+        pick_up_name: "pick_up_name", # Columns from the pick_up_personpartial
+        pick_up_phone: "pick_up_phone",
+        pick_up_email: "pick_up_email@email.com",
+        distribution_times: "distribution_times", # Columns from the agency_distribution_information partial
+        new_client_times: "new_client_times",
+        more_docs_required: "more_docs_required",
+        enable_child_based_requests: true, # Columns from the partner_settings partial
+        enable_individual_requests: true,
+        enable_quantity_based_requests: true)
     end
 
-    let(:notes) { "Some notes" }
-    let(:agency_type) { :other } # Columns from the agency_information partial
-    let(:other_agency_type) { "Another Agency Name" }
-    let(:agency_mission) { "agency_mission" }
-    let(:agency_address1) { "4744 McDermott Mountain" }
-    let(:agency_address2) { "333 Never land street" }
-    let(:agency_city) { "Lake Shoshana" }
-    let(:agency_state) { "ND" }
-    let(:agency_zipcode) { "09980-7010" }
-    let(:program_address1) { "program_address1" }
-    let(:program_address2) { "program_address2" }
-    let(:program_city) { "program_city" }
-    let(:program_state) { "program_state" }
-    let(:program_zip_code) { 12345 }
-    let(:agency_website) { "bosco.example" } # Columns from the media_information partial
-    let(:facebook) { "facebook" }
-    let(:twitter) { "twitter" }
-    let(:instagram) { "instagram" }
-    let(:no_social_media_presence) { false }
-    let(:founded) { 2020 } # Columns from the agency_stability partial
-    let(:form_990) { true }
-    let(:program_name) { "program_name" }
-    let(:program_description) { "program_description" }
-    let(:program_age) { 5 }
-    let(:evidence_based) { true }
-    let(:case_management) { true }
-    let(:essentials_use) { "essentials_use" }
-    let(:receives_essentials_from_other) { "receives_essentials_from_other" }
-    let(:currently_provide_diapers) { true }
-    let(:client_capacity) { "client_capacity" } # Columns from the organizational_capacity partial
-    let(:storage_space) { true }
-    let(:describe_storage_space) { "describe_storage_space" }
-    let(:sources_of_funding) { "sources_of_funding" } # Columns from the sources_of_funding partial
-    let(:sources_of_diapers) { "sources_of_diapers" }
-    let(:essentials_budget) { "essentials_budget" }
-    let(:essentials_funding_source) { "essentials_funding_source" }
     let(:county_1) { create(:county, name: "High County, Maine", region: "Maine") } # Information for the area_served parital
     let(:county_2) { create(:county, name: "laRue County, Louisiana", region: "Louisiana") }
     let(:county_3) { create(:county, name: "Ste. Anne County, Louisiana", region: "Louisiana") }
     let!(:served_area_1) { create(:partners_served_area, partner_profile: profile, county: county_1, client_share: 50) }
     let!(:served_area_2) { create(:partners_served_area, partner_profile: profile, county: county_2, client_share: 40) }
     let!(:served_area_3) { create(:partners_served_area, partner_profile: profile, county: county_3, client_share: 10) }
-    let(:income_requirement_desc) { true } # Columns from the population_served partial
-    let(:income_verification) { true }
-    let(:population_black) { 10 }
-    let(:population_white) { 10 }
-    let(:population_hispanic) { 10 }
-    let(:population_asian) { 10 }
-    let(:population_american_indian) { 10 }
-    let(:population_island) { 10 }
-    let(:population_multi_racial) { 10 }
-    let(:population_other) { 30 }
-    let(:zips_served) { "zips_served" }
-    let(:at_fpl_or_below) { 25 }
-    let(:above_1_2_times_fpl) { 25 }
-    let(:greater_2_times_fpl) { 25 }
-    let(:poverty_unknown) { 25 }
-    let(:executive_director_name) { "executive_director_name" } # Columns from the executive_director partial
-    let(:executive_director_phone) { "executive_director_phone" }
-    let(:executive_director_email) { "executive_director_email" }
-    let(:contact_name) { "Jon Ralfeo" }
-    let(:contact_phone) { "1231231234" }
-    let(:contact_mobile) { "4564564567" }
-    let(:contact_email) { "jon@entertainment720.com" }
-    let(:pick_up_name) { "pick_up_name" } # Columns from the pick_up_person partial
-    let(:pick_up_phone) { "pick_up_phone" }
-    let(:pick_up_email) { "pick_up_email@email.com" }
-    let(:distribution_times) { "distribution_times" } # Columns from the agency_distribution_information partial
-    let(:new_client_times) { "new_client_times" }
-    let(:more_docs_required) { "more_docs_required" }
-    let(:enable_quantity_based_requests) { true } # Columns from the partner_settings partial
-    let(:enable_child_based_requests) { true }
-    let(:enable_individual_requests) { true }
-    let(:providing_diapers) { {value: "N", index: -2} }
-    let(:providing_period_supplies) { {value: "N", index: -1} }
 
     let(:partners) { Partner.all }
 
@@ -268,97 +199,97 @@ RSpec.describe Exports::ExportPartnersCSVService do
     let(:partial_to_values) {
       {
         agency_information: [
-          partner.name, # Technically not part of the agency_information partial, but come at the start of the export
-          partner.email,
-          notes,
-          I18n.t("partners_profile.other").to_s, # Columns from the agency_information partial
-          other_agency_type.to_s,
-          agency_mission,
-          "#{agency_address1}, #{agency_address2}",
-          agency_city,
-          agency_state,
-          agency_zipcode,
-          "#{program_address1}, #{program_address2}",
-          program_city,
-          program_state,
-          program_zip_code.to_s
+          "Jane Doe", # Technically not part of the agency_information partial, but come at the start of the export
+          "jane@doe.com",
+          "Some notes",
+          I18n.t("partners_profile.other"), # Columns from the agency_information partial
+          "Another Agency Name",
+          "agency_mission",
+          "4744 McDermott Mountain, 333 Never land street",
+          "Lake Shoshana",
+          "ND",
+          "09980-7010",
+          "program_address1, program_address2",
+          "program_city",
+          "program_state",
+          "12345"
         ],
         media_information: [
-          agency_website,
-          facebook,
-          twitter,
-          instagram,
-          no_social_media_presence.to_s
+          "bosco.example",
+          "facebook",
+          "twitter",
+          "instagram",
+          "false"
         ],
         agency_stability: [
-          founded.to_s,
-          form_990.to_s,
-          program_name,
-          program_description,
-          program_age.to_s,
-          evidence_based.to_s,
-          case_management.to_s,
-          essentials_use,
-          receives_essentials_from_other,
-          currently_provide_diapers.to_s
+          "2020",
+          "true",
+          "program_name",
+          "program_description",
+          "5",
+          "true",
+          "true",
+          "essentials_use",
+          "receives_essentials_from_other",
+          "true"
         ],
         organizational_capacity: [
-          client_capacity,
-          storage_space.to_s,
-          describe_storage_space
+          "client_capacity",
+          "true",
+          "describe_storage_space"
         ],
         sources_of_funding: [
-          sources_of_funding,
-          sources_of_diapers,
-          essentials_budget,
-          essentials_funding_source
+          "sources_of_funding",
+          "sources_of_diapers",
+          "essentials_budget",
+          "essentials_funding_source"
         ],
         area_served: [
           # county ordering is a bit esoteric -- it is human alphabetical by county within region (region is state)
           "laRue County, Louisiana; Ste. Anne County, Louisiana; High County, Maine"
         ],
         population_served: [
-          income_requirement_desc.to_s,
-          income_verification.to_s,
-          population_black.to_s,
-          population_white.to_s,
-          population_hispanic.to_s,
-          population_asian.to_s,
-          population_american_indian.to_s,
-          population_island.to_s,
-          population_multi_racial.to_s,
-          population_other.to_s,
-          zips_served,
-          at_fpl_or_below.to_s,
-          above_1_2_times_fpl.to_s,
-          greater_2_times_fpl.to_s,
-          poverty_unknown.to_s
+          "true",
+          "true",
+          "10",
+          "10",
+          "10",
+          "10",
+          "10",
+          "10",
+          "10",
+          "30",
+          "zips_served",
+          "25",
+          "25",
+          "25",
+          "25"
         ],
         executive_director: [
-          executive_director_name,
-          executive_director_phone,
-          executive_director_email,
-          contact_name,
-          contact_phone,
-          contact_mobile,
-          contact_email
+          "executive_director_name",
+          "executive_director_phone",
+          "executive_director_email",
+          "Jon Ralfeo",
+          "1231231234",
+          "4564564567",
+          "jon@entertainment720.com"
         ],
         pick_up_person: [
-          pick_up_name,
-          pick_up_phone,
-          pick_up_email
+          "pick_up_name",
+          "pick_up_phone",
+          "pick_up_email@email.com"
         ],
         agency_distribution_information: [
-          distribution_times,
-          new_client_times,
-          more_docs_required
+          "distribution_times",
+          "new_client_times",
+          "more_docs_required"
         ],
         partner_settings: [
-          enable_quantity_based_requests.to_s, # Columns from the agency_information partial
-          enable_child_based_requests.to_s,
-          enable_individual_requests.to_s,
-          providing_diapers[:value], # Technically not part of the partner_settings partial, but comes at the end of the export
-          providing_period_supplies[:value]
+          "true", # Columns from the agency_information partial
+          "true",
+          "true",
+          "N", # Technically not part of the partner_settings partial, but comes at the end of the export
+          "N"
         ]
       }
     }
@@ -385,14 +316,14 @@ RSpec.describe Exports::ExportPartnersCSVService do
         # profile, so they won't be completely empty
         expected_values += case partial
         when :agency_information
-          [partner.name, partner.email, notes, "", "", "", "", "", "", "", "", "", "", ""]
+          ["Jane Doe", "jane@doe.com", "Some notes", "", "", "", "", "", "", "", "", "", "", ""]
         when :partner_settings
           [
-            enable_quantity_based_requests.to_s,
-            enable_child_based_requests.to_s,
-            enable_individual_requests.to_s,
-            providing_diapers[:value],
-            providing_period_supplies[:value]
+            "true",
+            "true",
+            "true",
+            "N",
+            "N"
           ]
         else
           Array.new(partial_to_values[partial].count) { "" }
@@ -434,8 +365,6 @@ RSpec.describe Exports::ExportPartnersCSVService do
 
       shared_examples "providing_diapers check" do |scope|
         before do
-          providing_diapers[:value] = "Y"
-
           case scope
           when :disposable
             item = create(:item, base_item: create(:base_item, category: "Diapers - Childrens"))
@@ -447,7 +376,7 @@ RSpec.describe Exports::ExportPartnersCSVService do
         end
 
         it "should have Y as providing_diapers" do
-          expect(subject[1][providing_diapers[:index]]).to eq(providing_diapers[:value])
+          expect(subject[1][-2]).to eq("Y")
         end
       end
 
@@ -461,14 +390,12 @@ RSpec.describe Exports::ExportPartnersCSVService do
 
       context "with a period supplies item" do
         before do
-          providing_period_supplies[:value] = "Y"
-
           item = create(:item, base_item: create(:base_item, category: "Menstrual Supplies/Items"))
           create(:line_item, item: item, itemizable: distribution)
         end
 
         it "should have Y as providing_period_supplies" do
-          expect(subject[1][providing_period_supplies[:index]]).to eq(providing_period_supplies[:value])
+          expect(subject[1][-1]).to eq("Y")
         end
       end
     end
@@ -486,11 +413,11 @@ RSpec.describe Exports::ExportPartnersCSVService do
       end
 
       it "should have N as providing_diapers" do
-        expect(subject[1][providing_diapers[:index]]).to eq(providing_diapers[:value])
+        expect(subject[1][-2]).to eq("N")
       end
 
       it "should have N as providing_period_supplies" do
-        expect(subject[1][providing_period_supplies[:index]]).to eq(providing_period_supplies[:value])
+        expect(subject[1][-1]).to eq("N")
       end
     end
   end
