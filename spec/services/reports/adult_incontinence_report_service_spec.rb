@@ -41,15 +41,10 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
         non_adult_incontinence_item = organization.items.where.not(id: organization.items.adult_incontinence).first
 
         # kits
-        create(:base_item, name: "Adult Briefs (Medium)", partner_key: "adult_briefs_medium", category: "adult incontinence")
-        create(:base_item, name: "Adult Briefs (Large)", partner_key: "adult_briefs_large", category: "adult incontinence")
-        create(:base_item, name: "Adult Briefs (small)", partner_key: "adult_briefs_small", category: "adult incontinence")
-        create(:base_item, name: "Wipes", partner_key: "baby wipes", category: "wipes")
-
-        adult_incontinence_kit_item_1 = create(:item, name: "Adult Briefs (Medium)", partner_key: "adult_briefs_medium")
-        adult_incontinence_kit_item_2 = create(:item, name: "Adult Briefs (Large)", partner_key: "adult_briefs_large")
-        adult_incontinence_kit_item_3 = create(:item, name: "Adult Briefs (Small)", partner_key: "adult_briefs_small")
-        non_adult_incontinence_kit_item = create(:item, name: "Baby Wipes", partner_key: "baby wipes")
+        adult_incontinence_kit_item_1 = create(:item, name: "Adult Briefs (Medium)", reporting_category: "adult_incontinence")
+        adult_incontinence_kit_item_2 = create(:item, name: "Adult Briefs (Large)", reporting_category: "adult_incontinence")
+        adult_incontinence_kit_item_3 = create(:item, name: "Adult Briefs (Small)", reporting_category: "adult_incontinence")
+        non_adult_incontinence_kit_item = create(:item, name: "Baby Wipes", reporting_category: "other")
 
         donation_1 = create(:donation)
         donation_2 = create(:donation)
