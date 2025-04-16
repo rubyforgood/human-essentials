@@ -40,12 +40,9 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
         purchased_period_supply_kit = create_kit(organization: organization)
         pad_and_tampon_kit = create_kit(organization: organization)
 
-        create(:base_item, name: "Adult Pads", partner_key: "adult pads", category: "Menstrual Supplies")
-        create(:base_item, name: "Adult Tampons", partner_key: "adult tampons", category: "Menstrual Supplies")
-
-        period_supplies_kit_item = create(:item, name: "Adult Pads", partner_key: "adult pads")
-        another_period_supplies_kit_item = create(:item, name: "Adult Tampons", partner_key: "adult tampons")
-        purchased_period_supplies_kit_item = create(:item, name: "Liners", partner_key: "adult tampons")
+        period_supplies_kit_item = create(:item, name: "Adult Pads", reporting_category: :pads, organization:)
+        another_period_supplies_kit_item = create(:item, name: "Adult Tampons", reporting_category: :tampons, organization:)
+        purchased_period_supplies_kit_item = create(:item, name: "Liners", reporting_category: :period_liners, organization:)
 
         period_supplies_kit.line_items.first.update!(item_id: period_supplies_kit_item.id, quantity: 5)
         another_period_supply_kit.line_items.first.update!(item_id: another_period_supplies_kit_item.id, quantity: 5)

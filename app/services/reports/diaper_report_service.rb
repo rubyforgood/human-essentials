@@ -43,7 +43,7 @@ module Reports
         .distributions
         .for_year(year)
         .joins(line_items: :item)
-        .merge(Item.disposable)
+        .merge(Item.disposable_diapers)
         .sum("line_items.quantity")
     end
 
@@ -59,11 +59,9 @@ module Reports
         INNER JOIN kits ON kits.id = items.kit_id 
         INNER JOIN line_items AS kit_line_items ON kits.id = kit_line_items.itemizable_id
         INNER JOIN items AS kit_items ON kit_items.id = kit_line_items.item_id
-        INNER JOIN base_items ON base_items.partner_key = kit_items.partner_key 
         WHERE distributions.organization_id = ?
           AND EXTRACT(year FROM issued_at) = ?
-          AND LOWER(base_items.category) LIKE '%diaper%'
-          AND NOT (LOWER(base_items.category) LIKE '%cloth%' OR LOWER(base_items.name) LIKE '%cloth%')
+          AND kit_items.reporting_category = 'disposable_diapers'
           AND kit_line_items.itemizable_type = 'Kit';
       SQL
 
@@ -100,7 +98,7 @@ module Reports
     # @return [Integer]
     def disposable_diapers_from_drives
       @disposable_diapers_from_drives ||=
-        annual_drives.joins(donations: {line_items: :item}).merge(Item.disposable).sum(:quantity)
+        annual_drives.joins(donations: {line_items: :item}).merge(Item.disposable_diapers).sum(:quantity)
     end
 
     def cloth_diapers_from_drives
@@ -127,7 +125,7 @@ module Reports
     def disposable_diapers_from_virtual_drives
       @disposable_diapers_from_virtual_drives ||= virtual_product_drives
         .joins(donations: {line_items: :item})
-        .merge(Item.disposable)
+        .merge(Item.disposable_diapers)
         .sum(:quantity)
     end
 
@@ -202,7 +200,7 @@ module Reports
     # @return [Integer]
     def purchased_loose_disposable_diapers
       @purchased_disposable_diapers ||= LineItem.joins(:item)
-        .merge(Item.disposable)
+        .merge(Item.disposable_diapers)
         .where(itemizable: organization.purchases.for_year(year))
         .sum(:quantity)
     end
@@ -228,7 +226,7 @@ module Reports
     # @return [Integer]
     def donated_disposable_diapers
       @donated_diapers ||= LineItem.joins(:item)
-        .merge(Item.disposable)
+        .merge(Item.disposable_diapers)
         .where(itemizable: organization.donations.for_year(year))
         .sum(:quantity)
     end
