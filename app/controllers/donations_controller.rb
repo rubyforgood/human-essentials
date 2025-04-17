@@ -49,7 +49,7 @@ class DonationsController < ApplicationController
     respond_to do |format|
       format.html
       format.csv do
-        send_data Exports::ExportDonationsCSVService.new(donation_ids: @donations.map(&:id)).generate_csv, filename: "Donations-#{Time.zone.today}.csv"
+        send_data Exports::ExportDonationsCSVService.new(donation_ids: @donations.map(&:id), organization: current_organization).generate_csv, filename: "Donations-#{Time.zone.today}.csv"
       end
     end
   end
