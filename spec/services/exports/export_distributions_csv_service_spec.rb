@@ -172,10 +172,9 @@ RSpec.describe Exports::ExportDistributionsCSVService do
       let(:expected_headers) { non_item_headers + item_headers }
 
       it 'should match the expected content without in-kind value of each item for the csv' do
-        expect(subject[0]).to eq(expected_headers)
-
+        csv = [expected_headers]
         expected_distributions.zip(expected_items).each_with_index do |(expected_dist, expected_item), idx|
-          row = [
+          csv.append([
             partner.name,
             expected_dist[:created_at],
             expected_dist[:issued_at],
@@ -188,10 +187,10 @@ RSpec.describe Exports::ExportDistributionsCSVService do
             expected_dist[:agency_rep],
             expected_dist[:comment],
             *expected_item.map { |item| item[:quantity] }
-          ]
-
-          expect(subject[idx + 1]).to eq(row)
+          ])
         end
+
+        expect(subject).to eq(csv)
       end
     end
 
@@ -209,10 +208,9 @@ RSpec.describe Exports::ExportDistributionsCSVService do
 
       it 'should match the expected content with in-kind value of each item for the csv' do
         allow(organization).to receive(:include_in_kind_values_in_exported_files).and_return(true)
-        expect(subject[0]).to eq(expected_headers)
-
+        csv = [expected_headers]
         expected_distributions.zip(expected_items).each_with_index do |(expected_dist, expected_item), idx|
-          row = [
+          csv.append([
             partner.name,
             expected_dist[:created_at],
             expected_dist[:issued_at],
@@ -225,10 +223,10 @@ RSpec.describe Exports::ExportDistributionsCSVService do
             expected_dist[:agency_rep],
             expected_dist[:comment],
             *expected_item.flat_map { |item| [item[:quantity], item[:value]] }
-          ]
-
-          expect(subject[idx + 1]).to eq(row)
+          ])
         end
+
+        expect(subject).to eq(csv)
       end
     end
 
@@ -251,8 +249,9 @@ RSpec.describe Exports::ExportDistributionsCSVService do
       end
 
       it 'should show up with a 0 quantity if there are none of this item in any distribution' do
+        csv = [expected_headers]
         expected_distributions.zip(expected_items).each_with_index do |(expected_dist, expected_item), idx|
-          row = [
+          csv.append([
             partner.name,
             expected_dist[:created_at],
             expected_dist[:issued_at],
@@ -266,12 +265,10 @@ RSpec.describe Exports::ExportDistributionsCSVService do
             expected_dist[:comment],
             *expected_item.map { |item| item[:quantity] },
             0
-          ]
-
-          expect(subject[idx + 1]).to eq(row)
-            .and end_with(0)
-            .and have_attributes(size: 17)
+          ])
         end
+
+        expect(subject).to eq(csv)
       end
     end
 

@@ -163,10 +163,9 @@ RSpec.describe Exports::ExportDonationsCSVService do
 
     context 'while "Include in-kind value in donation and distribution exports?" is set to no' do
       it 'should match the expected content without in-kind value of each item for the csv' do
-        expect(subject[0]).to eq(expected_headers)
-
+        csv = [expected_headers]
         expected_donations.zip(expected_items).each_with_index do |(expected_don, expected_item), idx|
-          row = [
+          csv.append([
             expected_don[:parameters][:source],
             expected_don[:parameters][:issued_at],
             expected_don[:details],
@@ -176,10 +175,10 @@ RSpec.describe Exports::ExportDonationsCSVService do
             expected_don[:total_value],
             expected_don[:parameters][:comment],
             *expected_item.map { |item| item[:quantity] }
-          ]
-
-          expect(subject[idx + 1]).to eq(row)
+          ])
         end
+
+        expect(subject).to eq(csv)
       end
     end
 
@@ -195,10 +194,9 @@ RSpec.describe Exports::ExportDonationsCSVService do
       end
       it 'should match the expected content with in-kind value of each item for the csv' do
         allow(organization).to receive(:include_in_kind_values_in_exported_files).and_return(true)
-        expect(subject[0]).to eq(expected_headers)
-
+        csv = [expected_headers]
         expected_donations.zip(expected_items).each_with_index do |(expected_don, expected_item), idx|
-          row = [
+          csv.append([
             expected_don[:parameters][:source],
             expected_don[:parameters][:issued_at],
             expected_don[:details],
@@ -208,10 +206,10 @@ RSpec.describe Exports::ExportDonationsCSVService do
             expected_don[:total_value],
             expected_don[:parameters][:comment],
             *expected_item.flat_map { |item| [item[:quantity], item[:value]] }
-          ]
-
-          expect(subject[idx + 1]).to eq(row)
+          ])
         end
+
+        expect(subject).to eq(csv)
       end
     end
   end
