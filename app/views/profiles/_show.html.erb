@@ -55,7 +55,7 @@
       </p>
       <p>Program Name(s): <%= partner_profile.program_name %></p>
       <p>Program Description(s): <%= partner_profile.program_description %></p>
-      <p>Program Age: <%= partner_profile.program_age %></p>
+      <p>Agency Age: <%= partner_profile.program_age %></p>
       <p>Case Management: <%= humanize_boolean_3state(partner_profile.case_management) %></p>
       <p>Evidence Based: <%= humanize_boolean_3state(partner_profile.evidence_based) %></p>
       <p>How Are Essentials (e.g. diapers, period supplies) Used In Your Program? <%= partner_profile.essentials_use %></p>
@@ -146,7 +146,7 @@
     <% if partner_profile_fields.include?('sources_of_funding') || partner_profile_fields.empty? %>
       <h4 class='text-2xl underline'>Sources of Funding</h4>
       <p>Sources of Funding: <%= partner_profile.sources_of_funding %></p>
-      <p>Sources of Diapers: <%= partner_profile.sources_of_diapers %> </p>
+      <p>How do you currently obtain diapers? <%= partner_profile.sources_of_diapers %> </p>
       <p>Essentials Budget:<%= partner_profile.essentials_budget %></p>
       <p>Essentials Funding Source: <%= partner_profile.essentials_funding_source %></p>
       <br>
