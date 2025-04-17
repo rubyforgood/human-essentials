@@ -129,7 +129,7 @@ module Reports
                         .distributions
                         .for_year(year)
                         .joins(line_items: :item)
-                        .merge(Item.adult_incontinence)
+                        .merge(Item.adult_incontinence.where(kit_id: nil)) # exclude kits
                         .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50.0)')
       total_quantity.to_f / 12.0
     end
