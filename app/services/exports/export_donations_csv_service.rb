@@ -15,9 +15,6 @@ module Exports
       ).order(created_at: :asc)
 
       @organization = organization
-
-      @export_line_item_adder = Exports::ExportLineItemColumnsAdder.new
-      @export_line_item_adder.register(Exports::ExportInKindTotalValue) if @organization.include_in_kind_values_in_exported_files
     end
 
     def generate_csv
@@ -111,15 +108,29 @@ module Exports
 
       @item_headers = item_names.sort
 
-      @item_headers = @export_line_item_adder.headers(@item_headers)
+      @item_headers = @item_headers.flat_map { |header| [header, "#{header} In-Kind Value"] } if @organization.include_in_kind_values_in_exported_files
+
+      @item_headers
     end
 
     def build_row_data(donation)
       row = base_table.values.map { |closure| closure.call(donation) }
+      row += make_item_quantity_and_value_slots
 
-      row += @export_line_item_adder.get_row(donation.line_items)
+      donation.line_items.each do |line_item|
+        item_name = line_item.item.name
+        item_column_idx = headers_with_indexes[item_name]
+        row[item_column_idx] += line_item.quantity
+        row[item_column_idx + 1] += Money.new(line_item.value_per_line_item) if @organization.include_in_kind_values_in_exported_files
+      end
 
       row
+    end
+
+    def make_item_quantity_and_value_slots
+      slots = Array.new(item_headers.size, 0)
+      slots = slots.map.with_index { |value, index| index.odd? ? Money.new(0) : value } if @organization.include_in_kind_values_in_exported_files
+      slots
     end
   end
 end
