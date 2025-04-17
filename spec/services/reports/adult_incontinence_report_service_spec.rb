@@ -49,7 +49,7 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
         adult_incontinence_kit_item_1 = create(:item, name: "Adult Briefs (Medium)", partner_key: "adult_briefs_medium", distribution_quantity: 1)
         adult_incontinence_kit_item_2 = create(:item, name: "Adult Briefs (Large)", partner_key: "adult_briefs_large", distribution_quantity: 1)
         adult_incontinence_kit_item_3 = create(:item, name: "Adult Briefs (Small)", partner_key: "adult_briefs_small", distribution_quantity: 1)
-        non_adult_incontinence_kit_item = create(:item, name: "Baby Wipes", partner_key: "baby wipes", distribution_quantity: 1)
+        non_adult_incontinence_kit_item = create(:item, name: "Baby Wipes", partner_key: "baby wipes", reporting_category: "other", distribution_quantity: 1)
 
         donation_1 = create(:donation)
         donation_2 = create(:donation)

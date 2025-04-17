@@ -21,16 +21,13 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
     it 'should report normal values' do
       organization = create(:organization, :with_items, distribute_monthly: true, repackage_essentials: true)
 
-      disposable_item = organization.items.disposable.first
+      disposable_item = organization.items.disposable_diapers.first
       disposable_item.update!(distribution_quantity: 20)
-      non_disposable_item = organization.items.where.not(id: organization.items.disposable).first
+      non_disposable_item = organization.items.where.not(id: organization.items.disposable_diapers).first
 
       # Kits
-      create(:base_item, name: "Toddler Disposable Diaper", partner_key: "toddler diapers", category: "disposable diaper")
-      create(:base_item, name: "Infant Disposable Diaper", partner_key: "infant diapers", category: "infant disposable diaper")
-
-      toddler_disposable_kit_item = create(:item, name: "Toddler Disposable Diapers", partner_key: "toddler diapers")
-      infant_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", partner_key: "infant diapers")
+      toddler_disposable_kit_item = create(:item, name: "Toddler Disposable Diapers", reporting_category: :disposable_diapers)
+      infant_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", reporting_category: :disposable_diapers)
 
       kit_1 = create(:kit, organization: organization, line_items: [
         create(:line_item, item: toddler_disposable_kit_item),
@@ -79,15 +76,12 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       within_time = Time.zone.parse("2020-05-31 14:00:00")
       outside_time = Time.zone.parse("2019-05-31 14:00:00")
 
-      disposable_item = organization.items.disposable.first
-      non_disposable_item = organization.items.where.not(id: organization.items.disposable).first
+      disposable_item = organization.items.disposable_diapers.first
+      non_disposable_item = organization.items.where.not(id: organization.items.disposable_diapers).first
 
       # Kits
-      create(:base_item, name: "Toddler Disposable Diaper", partner_key: "toddler diapers", category: "disposable diaper")
-      create(:base_item, name: "Infant Disposable Diaper", partner_key: "infant diapers", category: "infant disposable diaper")
-
-      toddler_disposable_kit_item = create(:item, name: "Toddler Disposable Diapers", partner_key: "toddler diapers")
-      infant_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", partner_key: "infant diapers")
+      toddler_disposable_kit_item = create(:item, name: "Toddler Disposable Diapers", reporting_category: :disposable_diapers)
+      infant_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", reporting_category: :disposable_diapers)
 
       kit = create(:kit, organization: organization, line_items: [
         create(:line_item, item: toddler_disposable_kit_item),
@@ -125,13 +119,9 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
     it "rounds children served to integer ceiling" do
       organization = create(:organization, :with_items)
 
-      create(:base_item, name: "Toddler Disposable Diaper", partner_key: "toddler diapers", category: "disposable diaper")
-      create(:base_item, name: "Infant Disposable Diaper", partner_key: "infant diapers", category: "infant disposable diaper")
-      create(:base_item, name: "Adult Diaper", partner_key: "adult diapers", category: "adult diaper")
-
-      toddler_disposable_kit_item = create(:item, name: "Toddler Disposable Diapers", partner_key: "toddler diapers")
-      infant_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", partner_key: "infant diapers")
-      not_disposable_kit_item = create(:item, name: "Adult Diapers", partner_key: "adult diapers")
+      toddler_disposable_kit_item = create(:item, name: "Toddler Disposable Diapers", reporting_category: :disposable_diapers)
+      infant_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", reporting_category: :disposable_diapers)
+      not_disposable_kit_item = create(:item, name: "Adult Diapers", reporting_category: :adult_incontinence)
 
       # this quantity shouldn't matter so I'm setting it to a high number to ensure it isn't used
       kit = create(:kit, organization: organization, line_items: [
