@@ -23,13 +23,13 @@ end
 # Base Items
 # ----------------------------------------------------------------------------
 
-require 'seeds'
+require "seeds"
 Seeds.seed_base_items
 
 # ----------------------------------------------------------------------------
 # NDBN Members
 # ----------------------------------------------------------------------------
-seed_file = File.open(Rails.root.join("spec", "fixtures", "ndbn-small-import.csv"))
+seed_file = Rails.root.join("spec", "fixtures", "ndbn-small-import.csv").open
 SyncNDBNMembers.upload(seed_file)
 
 # ----------------------------------------------------------------------------
@@ -40,7 +40,7 @@ pdx_org = Organization.find_or_create_by!(short_name: "diaper_bank") do |organiz
   organization.name = "Pawnee Diaper Bank"
   organization.street = "P.O. Box 22613"
   organization.city = "Pawnee"
-  organization.state = "Indiana"
+  organization.state = "IN"
   organization.zipcode = "12345"
   organization.email = "info@pawneediaper.org"
 end
@@ -131,7 +131,7 @@ Organization.all.find_each do |org|
 end
 
 # ----------------------------------------------------------------------------
-# Item < - > ItemCategory
+# Item <-> ItemCategory
 # ----------------------------------------------------------------------------
 
 Organization.all.find_each do |org|
@@ -154,10 +154,8 @@ Organization.all.find_each do |org|
   org.item_categories.sample(total_item_categories_to_add).each do |item_category|
     partner_group_one.item_categories << item_category
   end
-
-  next unless org.name == pdx_org.name
-
-  partner_group_two = FactoryBot.create(:partner_group, organization: org)
+  next unless org.name== pdx_org.name
+  partner_group_two=FactoryBot.create(:partner_group, organization: org)
   org.item_categories.each do |item_category|
     partner_group_two.item_categories << item_category
   end
@@ -731,7 +729,7 @@ def seed_quantity(item_name, organization, storage_location, quantity)
   AdjustmentCreateService.new(adjustment).call
 end
 
-JSON.parse(File.read(Rails.root.join("db", "base_items.json"))).each do |_category, entries|
+JSON.parse(Rails.root.join("db", "base_items.json").read).each do |_category, entries|
   entries.each do |entry|
     seed_quantity(entry["name"], pdx_org, inv_arbor, entry["qty"]["arbor"])
     seed_quantity(entry["name"], pdx_org, inv_pdxdb, entry["qty"]["pdxdb"])
@@ -940,7 +938,7 @@ complete_orgs.each do |org|
       amount_spent_on_other_cents: rand(0..5_000)
     )
 
-    purchase.amount_spent_in_cents = amount_items.map { |i| purchase.send("amount_spent_on_#{i}_cents") }.sum
+    purchase.amount_spent_in_cents = amount_items.map { |i| purchase.send(:"amount_spent_on_#{i}_cents") }.sum
 
     rand(1..5).times do
       purchase.line_items.push(
@@ -972,6 +970,8 @@ Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "read_events")
 Flipper.enable(:read_events)
 Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "partner_step_form")
 Flipper.enable(:partner_step_form)
+Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "enable_packs")
+Flipper.enable(:enable_packs)
 # ----------------------------------------------------------------------------
 # Account Requests
 # ----------------------------------------------------------------------------
@@ -1075,7 +1075,7 @@ transfer = Transfer.new(
   organization_id: pdx_org.id,
   from_id: from_id,
   to_id: to_id,
-  line_items: [ LineItem.new(quantity: quantity, item: item) ]
+  line_items: [LineItem.new(quantity: quantity, item: item)]
 )
 TransferCreateService.call(transfer)
 
