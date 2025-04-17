@@ -390,7 +390,7 @@ RSpec.describe Exports::ExportPartnersCSVService do
 
       context "with a period supplies item" do
         before do
-          item = create(:item, base_item: create(:base_item, category: "Menstrual Supplies/Items"))
+          item = create(:item, reporting_category: :tampons)
           create(:line_item, item: item, itemizable: distribution)
         end
 
