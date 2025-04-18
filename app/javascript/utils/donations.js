@@ -5,6 +5,7 @@ $(function() {
   const product_drive_participant_id = "#donation_product_drive_participant_id";
   const product_drive_id = "#donation_product_drive_id"
   const manufacturer_id = "#donation_manufacturer_id";
+  const donation_site_id="#donation_donation_site_id"
 
   const donation_site_container_id = "div.donation_donation_site";
   const product_drive_container_id = "div.donation_product_drive";
@@ -17,8 +18,8 @@ $(function() {
 
   const create_new_product_drive_text = "---Create new Product Drive---";
   const create_new_product_drive_participant_text = "---Create new Participant---";
-
   const create_new_manufacturer_text = "---Create new Manufacturer---";
+  const create_new_donation_site_text = "---Add New Donation Site---";
 
   $(product_drive_id).append(
 
@@ -31,6 +32,10 @@ $(function() {
   $(manufacturer_id).append(
     `<option value="">${create_new_manufacturer_text}</option>`
   );
+
+  $(donation_site_id).append(
+    `<option value="">${create_new_donation_site_text}</option>`
+  )
 
   $(document).on("change", product_drive_id, function(evt) {
     const selection = $(product_drive_id + " option")
@@ -60,6 +65,17 @@ $(function() {
       document.getElementById("new_manufacturer").click()
     }
   });
+
+  $(document).on("change", donation_site_id, function(evt) {
+    const selection = $(donation_site_id + " option")
+      .filter(":selected")
+      .text();
+
+    if (selection === create_new_donation_site_text) {
+      document.getElementById("new_donation_site").click()
+    }
+  });
+
 
   function handleSourceSelection() {
     const selection = $(control_id + " option")

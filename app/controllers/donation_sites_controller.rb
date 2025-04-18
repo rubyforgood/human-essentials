@@ -22,17 +22,24 @@ class DonationSitesController < ApplicationController
           redirect_to donation_sites_path,
                       notice: "Donation site #{@donation_site.name} added!"
         end
+        format.js
       else
         format.html do
           flash.now[:error] = "Something didn't work quite right -- try again?"
           render action: :new
         end
+        format.js { render template: "donation_sites/new_modal" }
       end
     end
   end
 
   def new
     @donation_site = current_organization.donation_sites.new
+    if request.xhr?
+      respond_to do |format|
+        format.js { render template: "donation_sites/new_modal" }
+      end
+    end
   end
 
   def edit
