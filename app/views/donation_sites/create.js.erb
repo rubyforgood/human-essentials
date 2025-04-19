@@ -2,5 +2,5 @@
 $("#modal_new").modal("hide");
 $("#donation_donation_site_id").empty();
 $("#donation_donation_site_id").html('<%= j options_from_collection_for_select(current_organization.donation_sites, :id, :name) %>');
-$("#donation_donation_site_id").append('<option value="">---Add New Donation Site---</option>');
+$("#donation_donation_site_id").append('<option value="">---Create New Donation Site---</option>');
 $("#donation_donation_site_id").val('<%= @donation_site[:id] %>');

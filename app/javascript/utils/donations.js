@@ -19,7 +19,7 @@ $(function() {
   const create_new_product_drive_text = "---Create new Product Drive---";
   const create_new_product_drive_participant_text = "---Create new Participant---";
   const create_new_manufacturer_text = "---Create new Manufacturer---";
-  const create_new_donation_site_text = "---Add New Donation Site---";
+  const create_new_donation_site_text = "---Create New Donation Site---";
 
   $(product_drive_id).append(
 

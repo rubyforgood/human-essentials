@@ -261,6 +261,19 @@ RSpec.describe "Donations", type: :system, js: true do
           select "drivenametest", from: "donation_product_drive_id"
         end
 
+        it "Allows User to create a Donation Site from donation" do
+          select Donation::SOURCES[:donation_site], from: "donation_source"
+          select "---Create New Donation Site---", from: "donation_donation_site_id"
+
+          find(".modal-content")
+          expect(page).to have_content("New Donation Site")
+
+          fill_in "donation_site_name", with: "donationsitetest"
+          fill_in "donation_site_address", with: "1500 Remount Road, Front Royal, VA 22630"
+          click_on "donation-site-submit"
+          select "donationsitetest", from: "donation_donation_site_id"
+        end
+
         it "Allows User to create a Product Drive Participant from donation" do
           select Donation::SOURCES[:product_drive], from: "donation_source"
           select "---Create new Participant---", from: "donation_product_drive_participant_id"
