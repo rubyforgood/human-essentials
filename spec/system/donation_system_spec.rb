@@ -389,6 +389,20 @@ RSpec.describe "Donations", type: :system, js: true do
           end.to change { Donation.count }.by(1)
         end
 
+        it "Remaining on the page when the user cancels a large donation", js: true do
+          select Donation::SOURCES[:misc], from: "donation_source"
+          select StorageLocation.first.name, from: "donation_storage_location_id"
+          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+          fill_in "donation_line_items_attributes_0_quantity", with: "1000000"
+
+          dismiss_confirm do
+            click_button "Save"
+          end
+
+          expect(page).to have_current_path(new_donation_path)
+          expect(page).to have_button("Save")
+        end
+
         it "Requires quantity to be numeric" do
           select Donation::SOURCES[:misc], from: "donation_source"
           select StorageLocation.first.name, from: "donation_storage_location_id"
