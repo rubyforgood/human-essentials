@@ -16,6 +16,11 @@ module DonationsHelper
     number_with_delimiter total_received_from_product_drives_unformatted(range)
   end
 
+  def total_number_of_drives(range = selected_range)
+    formatted_range = format_date_range_to_iso(range)
+    current_organization.product_drives.within_date_range(formatted_range).count
+  end
+
   private
 
   def total_received_donations_unformatted(range = selected_range)
@@ -24,5 +29,9 @@ module DonationsHelper
 
   def total_received_from_product_drives_unformatted(range = selected_range)
     LineItem.active.where(itemizable: current_organization.donations.by_source(:product_drive).during(range)).sum(:quantity)
+  end
+
+  def format_date_range_to_iso(range)
+    "#{range.begin.to_date.iso8601} - #{range.end.to_date.iso8601}"
   end
 end
