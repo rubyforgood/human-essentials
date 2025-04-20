@@ -152,7 +152,6 @@ class Partner < ApplicationRecord
   end
 
   def partials_to_show
-    # Must migrate to change the partner_form_fields to say "contacts" instead of "executive_director"
     organization.partner_form_fields.presence || ALL_PARTIALS
   end
 
