@@ -34,6 +34,11 @@ module PartnersHelper
       'attached_documents' => 'Additional Documents'
     }
 
+    # TODO: temporary change of name for the contacts partial before migration
+    if partial == 'executive_director'
+      return 'Contacts'
+    end
+
     custom_names[partial] || partial.humanize
   end
 

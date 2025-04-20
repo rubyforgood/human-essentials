@@ -26,7 +26,9 @@
       <%= render 'partners/profiles/step/accordion_section', f: f, partner: @partner, section_id: 'agency_information', section_title: 'Agency Information', icon_class: 'fa-edit', partial_name: 'agency_information', sections_with_errors: @sections_with_errors %>
       <%= render 'partners/profiles/step/accordion_section', f: f, partner: @partner, section_id: 'program_delivery_address', section_title: 'Program / Delivery Address', icon_class: 'fa-map', partial_name: 'program_delivery_address', sections_with_errors: @sections_with_errors %>
       <% @partner.partials_to_show.each do |partial| %>
-        <%= render 'partners/profiles/step/accordion_section', f: f, partner: @partner, section_id: partial, section_title: partial_display_name(partial), icon_class: 'fa-cogs', partial_name: partial, sections_with_errors: @sections_with_errors %>
+        <%= render 'partners/profiles/step/accordion_section', f: f, partner: @partner, section_id: partial, section_title: partial_display_name(partial), icon_class: 'fa-cogs', 
+          partial_name: partial, 
+          sections_with_errors: @sections_with_errors %>
       <% end %>
       <%= render 'partners/profiles/step/accordion_section', f: f, partner: @partner, section_id: 'partner_settings', section_title: 'Settings', icon_class: 'fa-cog', partial_name: 'partner_settings', sections_with_errors: @sections_with_errors %>
     </div>
