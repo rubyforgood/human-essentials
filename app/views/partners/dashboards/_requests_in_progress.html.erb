@@ -35,7 +35,12 @@
             <% end %>
           </td>
           <td class="p-4">
-            <div class="mb-2"><%= request.comments %></div>
+            <% comment = request.comments %>
+            <% if comment.present? %>
+              <div class="mb-2" data-bs-toggle="tooltip" data-bs-title="<%= comment %>">
+                <%= truncate(comment, length: 20) %>
+              </div>
+            <% end %>
             <a href="mailto:<%= request.requester.email %>"><%= request.requester.email %></a>
           </td>
         </tr>
@@ -43,3 +48,10 @@
     </tbody>
   </table>
 </section>
+
+<script type="module">
+  $(document).ready(function() {
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+  })
+</script>
