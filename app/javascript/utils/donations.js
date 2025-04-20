@@ -108,13 +108,14 @@ $(function() {
   )
 
   const large_donation_boundary = 100000;
-  $(document).on("submit", "form#new_donation", (e, _) =>
+  $(document).on("click", "form#new_donation", (e, _) =>
     $(".quantity").each(function(_, q) {
       const quantity = parseInt(q.value, 10);
       if (quantity > large_donation_boundary) {
-        confirm(
+        const answer_confirm = confirm(
           `${quantity} items is a large donation! Are you sure you want to submit?`
-        );
+        )
+        answer_confirm === false && e.preventDefault();
       }
     })
   );
