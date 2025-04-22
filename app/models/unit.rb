@@ -10,5 +10,7 @@
 #
 class Unit < ApplicationRecord
   belongs_to :organization
-  validates :name, uniqueness: {scope: :organization}
+  validates :name,
+    uniqueness: {scope: :organization},
+    format: {without: /\Aunits?\z/i, message: "'unit' is reserved."}
 end

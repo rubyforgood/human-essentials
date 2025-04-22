@@ -1,6 +1,3 @@
-
-READY FOR REVIEW
-
 # Distributions
 Distributions are where you record what you allocate to your partner agencies.
 
@@ -24,7 +21,7 @@ If you pick several things,  you will get only the Distributions that match all 
 
 Except for date range,  all the filters are specified by picking from a drop-down list as follows:
 - Item: all of your bank's Items.  This will filter to only the distributions that contain that Item.
-- Item Category:  Item Categories (as specified in [Items & Inventory | Item Categories](inventory_items.md)).  This will filter the list to the distributions that contain items that are in the chosen item category.
+- Item Category:  Item Categories (as specified in [Items & Inventory -- Item Categories](inventory_items.md)).  This will filter the list to the distributions that contain items that are in the chosen item category.
 - Partner:  This will filter the lists to just the distributions to the chosen partner.
 - Source Inventory:  This will limit the list to the distributions from the chosen storage location.
 - Status:  Distributions can be Scheduled or Complete. This will limit the list to those with the given status.

@@ -143,22 +143,32 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       find("button[data-bs-target='#attached_documents']").click
       expect(page).to have_css("#attached_documents.accordion-collapse.collapse.show", visible: true)
 
-      # Upload two documents - needs to be done individually because Capybara doesn't have attach_files multiple support
-      # https://github.com/teamcapybara/capybara/issues/37
+      # Upload multiple documents at once
       within "#attached_documents" do
-        attach_file("partner_profile_documents", Rails.root.join("spec/fixtures/files/document1.md"), make_visible: true)
+        attach_file("partner_profile_documents", [
+          Rails.root.join("spec/fixtures/files/document1.md"),
+          Rails.root.join("spec/fixtures/files/document2.md")
+        ], make_visible: true)
+
+        # Verify both documents are displayed in custom selection list
+        expect(page).to have_text("Selected files:")
+        expect(page).to have_css("[data-file-input-target='list'] li", text: "document1.md")
+        expect(page).to have_css("[data-file-input-target='list'] li", text: "document2.md")
       end
+
+      # Save Progress
       all("input[type='submit'][value='Save Progress']").last.click
+      expect(page).to have_css(".alert-success", text: "Details were successfully updated.")
+
+      # Verify both documents persist after page reload
       visit edit_partners_profile_path
       find("button[data-bs-target='#attached_documents']").click
       within "#attached_documents" do
-        attach_file("partner_profile_documents", Rails.root.join("spec/fixtures/files/document2.md"), make_visible: true)
+        expect(page).to have_link("document1.md")
+        expect(page).to have_link("document2.md")
       end
-      all("input[type='submit'][value='Save Progress']").last.click
 
       # Remove the first document
-      visit edit_partners_profile_path
-      find("button[data-bs-target='#attached_documents']").click
       within "#attached_documents" do
         document_name = "document1.md"
         document_li = find("li.attached-document", text: document_name)
@@ -170,11 +180,12 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       all("input[type='submit'][value='Save Progress']").last.click
       expect(page).to have_css(".alert-success", text: "Details were successfully updated.")
 
-      # Verify only one document is listed
+      # Verify only one document remains
       visit edit_partners_profile_path
       find("button[data-bs-target='#attached_documents']").click
       within "#attached_documents" do
         expect(page).to have_link("document2.md")
+        expect(page).not_to have_link("document1.md")
       end
     end
 
@@ -223,6 +234,72 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
         expect(page).to have_content("Attached file:")
         expect(page).to have_link("irs_determination_letter.md", href: /\/rails\/active_storage\/blobs\/redirect\/.+\/irs_determination_letter\.md/)
         expect(find("label[for='partner_profile_proof_of_partner_status']")).to have_content("irs_determination_letter.md")
+      end
+    end
+
+    it "persists multiple file uploads when there are validation errors" do
+      # Open Pick up person section and fill in 4 email addresses which will generate a validation error
+      find("button[data-bs-target='#pick_up_person']").click
+      within "#pick_up_person" do
+        fill_in "Pick Up Person's Email", with: "email1@example.com, email2@example.com, email3@example.com, email4@example.com"
+      end
+
+      # Open attached documents section
+      find("button[data-bs-target='#attached_documents']").click
+      expect(page).to have_css("#attached_documents.accordion-collapse.collapse.show", visible: true)
+
+      # Upload multiple documents
+      within "#attached_documents" do
+        attach_file("partner_profile_documents", [
+          Rails.root.join("spec/fixtures/files/document1.md"),
+          Rails.root.join("spec/fixtures/files/document2.md")
+        ], make_visible: true)
+
+        # Verify both documents are displayed in custom selection list
+        expect(page).to have_css("[data-file-input-target='list'] li", text: "document1.md")
+        expect(page).to have_css("[data-file-input-target='list'] li", text: "document2.md")
+      end
+
+      # Save Progress
+      all("input[type='submit'][value='Save Progress']").last.click
+
+      # Expect an alert-danger message containing validation errors
+      expect(page).to have_css(".alert-danger", text: /There is a problem/)
+
+      # Open attached documents section
+      find("button[data-bs-target='#attached_documents']").click
+      expect(page).to have_css("#attached_documents.accordion-collapse.collapse.show", visible: true)
+
+      # Expect both documents are still displayed in custom list as selected, but nothing is actually attached
+      within "#attached_documents" do
+        expect(page).to have_text("Selected files:")
+        expect(page).to have_css("[data-file-input-target='list'] li", text: "document1.md")
+        expect(page).to have_css("[data-file-input-target='list'] li", text: "document2.md")
+
+        expect(page).not_to have_text("Attached files:")
+        expect(page).not_to have_link("document1.md")
+        expect(page).not_to have_link("document2.md")
+      end
+
+      # Fix validation error in Pick up person section: It's already open due to having a validation error
+      within "#pick_up_person" do
+        fill_in "Pick Up Person's Email", with: "email1@example.com, email2@example.com, email3@example.com"
+      end
+
+      # Save Progress
+      all("input[type='submit'][value='Save Progress']").last.click
+      expect(page).to have_css(".alert-success", text: "Details were successfully updated.")
+
+      # Open attached documents section
+      find("button[data-bs-target='#attached_documents']").click
+      expect(page).to have_css("#attached_documents.accordion-collapse.collapse.show", visible: true)
+
+      # Expect both documents are now rendered as downloadable links
+      # i.e. they've been saved, without user having had to select them again
+      within "#attached_documents" do
+        expect(page).to have_text("Attached files:")
+        expect(page).to have_link("document1.md")
+        expect(page).to have_link("document2.md")
       end
     end
   end

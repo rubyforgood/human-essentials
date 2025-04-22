@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Summary Reports
 
 There are 3 Summary reports - one each for Distributions, Donations, and Purchases

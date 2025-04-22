@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # User Management
 
 The bank organization admin Users can manage both the staff who have access to humanessentials.app at the bank, and at each of the bank's Partners.

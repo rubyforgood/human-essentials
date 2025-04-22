@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Your Dashboard
 When you log in, your initial screen will be a dashboard with information that is useful on a daily basis for most banks.
 

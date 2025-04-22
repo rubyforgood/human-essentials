@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Product Drives
 Many banks hold seasonal or one-off events where they are seeking Donations.  In Human Essentials, Product Drives help manage those events by providing a way to link specific Donations to the events.
 
