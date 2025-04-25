@@ -161,6 +161,7 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:donation_site, organization: organization)
         create(:product_drive, organization: organization)
         create(:product_drive_participant, organization: organization)
+        create(:product_drive_participant, organization: organization, contact_name: "contact without business name", business_name: "")
         create(:manufacturer, organization: organization)
         organization.reload
       end
@@ -246,6 +247,12 @@ RSpec.describe "Donations", type: :system, js: true do
           expect do
             click_button "Save"
           end.to change { Donation.count }.by(1)
+        end
+
+        it "Displays ProductDrive Participants sources by business name then contact name" do
+          select Donation::SOURCES[:product_drive], from: "donation_source"
+          select ProductDrive.first.name, from: "donation_product_drive_id"
+          expect(page).to have_select('donation_product_drive_participant_id', with_options: ['contact without business name'])
         end
 
         it "Allows User to create a Product Drive from donation" do
