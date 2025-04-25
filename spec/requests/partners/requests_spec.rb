@@ -30,6 +30,13 @@ RSpec.describe "/partners/requests", type: :request do
       subject.call
       expect(response.body).to include("684")
     end
+
+    it "displays comment and sender" do
+      request = create(:request, partner_id: partner.id, request_items: [{item_id: item1.id, quantity: '125'}])
+      subject.call
+      expect(response.body).to include(request.comments)
+      expect(response.body).to include(request.requester.email)
+    end
   end
 
   describe "GET #new" do
