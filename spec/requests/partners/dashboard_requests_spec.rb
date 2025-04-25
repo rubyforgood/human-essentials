@@ -59,6 +59,16 @@ RSpec.describe "/partners/dashboard", type: :request do
 
       expect(response.body).to match(/7\s+#{item1.name}/m)
     end
+
+    it "displays comment and sender" do
+      request = create(:request, :pending, partner:, request_items: [])
+      create(:item_request, request:, quantity: 16, item: item1)
+
+      get partners_dashboard_path
+
+      expect(response.body).to include(request.comments)
+      expect(response.body).to include(request.requester.email)
+    end
   end
 
   it "displays upcoming distributions" do
