@@ -280,7 +280,28 @@ RSpec.describe "Donations", type: :system, js: true do
           fill_in "product_drive_participant_email", with: "123@mail.ru"
           fill_in "product_drive_participant_comment", with: "test comment"
           click_on "product-drive-participant-submit"
+          expect(page).to have_select('donation_product_drive_participant_id', with_options: ['businesstest'])
+
           select "businesstest", from: "donation_product_drive_participant_id"
+        end
+
+        #seems like a duplicate check but this update happens via JS, so we have to test that code works too
+        it "Renders ProductDrive Participants sources by business name then contact name after creating a participant" do
+          select Donation::SOURCES[:product_drive], from: "donation_source"
+          select "---Create new Participant---", from: "donation_product_drive_participant_id"
+
+          find(".modal-content")
+          expect(page).to have_content("New Product Drive Participant")
+
+          fill_in "product_drive_participant_business_name", with: ""
+          fill_in "product_drive_participant_contact_name", with: "2nd contact without business name"
+          fill_in "product_drive_participant_email", with: "1233@mail.ru"
+          fill_in "product_drive_participant_comment", with: "test comment"
+          click_on "product-drive-participant-submit"
+
+          select ProductDrive.first.name, from: "donation_product_drive_id"
+          #note that I'm not explicitly testing the business name here, this is handled in the previous test
+          expect(page).to have_select('donation_product_drive_participant_id', with_options: ['2nd contact without business name'])
         end
 
         it "Allows User to create a donation for a Manufacturer source" do
