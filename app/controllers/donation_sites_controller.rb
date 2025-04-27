@@ -35,10 +35,9 @@ class DonationSitesController < ApplicationController
 
   def new
     @donation_site = current_organization.donation_sites.new
-    if request.xhr?
-      respond_to do |format|
-        format.js { render template: "donation_sites/new_modal" }
-      end
+    respond_to do |format|
+      format.html
+      format.js { render template: "donation_sites/new_modal" }
     end
   end
 
