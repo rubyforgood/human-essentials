@@ -168,6 +168,10 @@ class Organization < ApplicationRecord
     street_changed? || city_changed? || state_changed? || zipcode_changed?
   end
 
+  def partials_to_show
+    partner_form_fields.presence || ALL_PARTIALS.map { |partial| partial[1] }
+  end
+
   def self.seed_items(organization = Organization.all)
     base_items = BaseItem.without_kit.map(&:to_h)
 

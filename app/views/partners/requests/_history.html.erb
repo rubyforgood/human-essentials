@@ -5,7 +5,9 @@
     <thead>
       <tr class="border-bottom border-dark">
         <th scope="col" class="p-4 w-40">Request Date</th>
+        <th scope="col" class="p-4">Number of Items Requested</th>
         <th scope="col" class="p-4">Items Requested</th>
+        <th scope="col" class="p-4">Comment and Sender</th>
       </tr>
     </thead>
     <tbody>
@@ -23,8 +25,24 @@
               </span>
             <% end %>
           </td>
+          <td class="p-4">
+            <% comment = partner_request.comments %>
+            <% if comment.present? %>
+              <div class="mb-2" data-bs-toggle="tooltip" data-bs-title="<%= comment %>">
+                <%= truncate(comment, length: 20) %>
+              </div>
+            <% end %>
+            <a href="mailto:<%= partner_request.requester.email %>"><%= partner_request.requester.email %></a>
+          </td>
         </tr>
       <% end %>
     </tbody>
   </table>
 </section>
+
+<script type="module">
+  $(document).ready(function() {
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    [...tooltipTriggerList].forEach(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+  })
+</script>
