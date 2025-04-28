@@ -1,21 +1,21 @@
-﻿name,email
-Beaverton Police Department,krodriguez@beavertonoregon.gov
-Catholic Charities,lcrombie@catholiccharitiesoregon.org
-Clackamas Service Center,debramason@cscoregon.org
-Healthy Familes of Clackamas County,bkersens@healthyfamiliescc.org
-Dollar for Portland,jared@dollorfor.org
-Emmanuel Housing Center,shauntemeyers@emmanuelpdx.org
-Helensview School,hgandee@mesd.k12.or.us
-JOIN,ccarroll@joinpdx.org
-Job Corps (PIVOT),zutz.kayla@jobcorps.org
-NARA,christman@naranw.org
-NW Housing Alternatives,doty@nwhousing.org
-Pregnancy Resource Center,debbie@portlandprc.org
-Portland Homeless Family Solutions,emma@pdxhfs.org
-Raphael House,lvold@raphaelhouse.com
-The Rebecca Foundation's Cloth Diaper Closet,portland@clothforall.org
-Rose Haven,adeol@rosehaven.org
-Self Enhancement Inc.,stephaniep@selfenhancement.org
-Teen Parent Services (PPS),lgovan@pps.net
-Volunteers of America,cross@voaor.org
-Central City Concern,lindsey.ramsey@ccconcern.org
+﻿name,email,default_storage_location,send_reminders,quota,notes
+Beaverton Police Department,krodriguez@beavertonoregon.gov,"Smithsonian Conservation Center",true,50,"great partner"
+Catholic Charities,lcrombie@catholiccharitiesoregon.org,"Smithsonian Conservation Center",true,50,"great partner"
+Clackamas Service Center,debramason@cscoregon.org,"Smithsonian Conservation Center",true,50,"great partner"
+Healthy Familes of Clackamas County,bkersens@healthyfamiliescc.org,"Smithsonian Conservation Center",true,50,"great partner"
+Dollar for Portland,jared@dollorfor.org,"Smithsonian Conservation Center",true,50,"great partner"
+Emmanuel Housing Center,shauntemeyers@emmanuelpdx.org,"Smithsonian Conservation Center",true,50,"great partner"
+Helensview School,hgandee@mesd.k12.or.us,"Smithsonian Conservation Center",true,50,"great partner"
+JOIN,ccarroll@joinpdx.org,"Smithsonian Conservation Center",true,50,"great partner"
+Job Corps (PIVOT),zutz.kayla@jobcorps.org,"Smithsonian Conservation Center",true,50,"great partner"
+NARA,christman@naranw.org,"Smithsonian Conservation Center",true,50,"great partner"
+NW Housing Alternatives,doty@nwhousing.org,"Smithsonian Conservation Center",true,50,"great partner"
+Pregnancy Resource Center,debbie@portlandprc.org,"Smithsonian Conservation Center",true,50,"great partner"
+Portland Homeless Family Solutions,emma@pdxhfs.org,"Smithsonian Conservation Center",true,50,"great partner"
+Raphael House,lvold@raphaelhouse.com,"Smithsonian Conservation Center",true,50,"great partner"
+The Rebecca Foundation's Cloth Diaper Closet,portland@clothforall.org,"Smithsonian Conservation Center",true,50,"great partner"
+Rose Haven,adeol@rosehaven.org,"Smithsonian Conservation Center",true,50,"great partner"
+Self Enhancement Inc.,stephaniep@selfenhancement.org,"Smithsonian Conservation Center",true,50,"great partner"
+Teen Parent Services (PPS),lgovan@pps.net,"Smithsonian Conservation Center",true,50,"great partner"
+Volunteers of America,cross@voaor.org,"Smithsonian Conservation Center",true,50,"great partner"
+Central City Concern,lindsey.ramsey@ccconcern.org,"Smithsonian Conservation Center",true,50,"great partner"
