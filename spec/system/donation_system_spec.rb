@@ -4,6 +4,9 @@ RSpec.describe "Donations", type: :system, js: true do
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 
   context "When signed in as a normal user" do
+    let!(:item) { create(:item, organization: organization) }
+    let!(:storage_location) { create(:storage_location, organization: organization) }
+
     before do
       sign_in user
     end
@@ -660,6 +663,22 @@ RSpec.describe "Donations", type: :system, js: true do
             expect(page).to have_content("None provided")
           end
         end
+      end
+    end
+
+    context "When viewing the summary report" do
+      before do
+        @donation_yesterday = create(:donation, :with_items, item:, storage_location:, issued_at: Time.zone.yesterday, organization:)
+
+        sign_in user
+        visit reports_donations_summary_path
+      end
+
+      it "shows the relative time based on issued_at" do
+        dist_yesterday_div = find("#donation-#{@donation_yesterday.id}")
+        time_div_yesterday = dist_yesterday_div.sibling('.pull-right')
+        expect(dist_yesterday_div).to have_content("items from #{@donation_yesterday.source}")
+        expect(time_div_yesterday).to have_content(/1 day ago$/)
       end
     end
   end
