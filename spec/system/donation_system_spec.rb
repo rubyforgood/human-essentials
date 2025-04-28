@@ -285,7 +285,7 @@ RSpec.describe "Donations", type: :system, js: true do
           select "businesstest", from: "donation_product_drive_participant_id"
         end
 
-        #seems like a duplicate check but this update happens via JS, so we have to test that code works too
+        # seems like a duplicate check but this update happens via JS, so we have to test that code works too
         it "Renders ProductDrive Participants sources by business name then contact name after creating a participant" do
           select Donation::SOURCES[:product_drive], from: "donation_source"
           select "---Create new Participant---", from: "donation_product_drive_participant_id"
@@ -300,7 +300,7 @@ RSpec.describe "Donations", type: :system, js: true do
           click_on "product-drive-participant-submit"
 
           select ProductDrive.first.name, from: "donation_product_drive_id"
-          #note that I'm not explicitly testing the business name here, this is handled in the previous test
+          # note that I'm not explicitly testing the business name here, this is handled in the previous test
           expect(page).to have_select('donation_product_drive_participant_id', with_options: ['2nd contact without business name'])
         end
 
