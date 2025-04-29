@@ -19,8 +19,8 @@ module Exports
 
     def headers
       [
-        "Created", "Storage Location",
-        "Comment", "User", "Changes"
+        "Created date", "Storage Area",
+        "Comment", "# of changes"
       ] + item_names
     end
 
@@ -33,7 +33,6 @@ module Exports
         adjustment.created_at.strftime("%F"),
         adjustment.storage_location.name,
         adjustment.comment,
-        adjustment.user&.name || "Unknown",
         adjustment.line_items.count { |item| !item.quantity.eql?(0) }
       ]
 

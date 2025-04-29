@@ -42,11 +42,10 @@ RSpec.describe AdjustmentsController, type: :controller do
 
       it "includes appropriate headers for adjustments" do
         get :index, format: :csv
-        expect(response.body).to include("Created")
-        expect(response.body).to include("Storage Location")
+        expect(response.body).to include("Created date")
+        expect(response.body).to include("Storage Area")
         expect(response.body).to include("Comment")
-        expect(response.body).to include("User")
-        expect(response.body).to include("Changes")
+        expect(response.body).to include("# of changes")
         expect(response.body).to include(item1.name)
         expect(response.body).to include(item2.name)
       end
@@ -62,10 +61,10 @@ RSpec.describe AdjustmentsController, type: :controller do
 
         expect(parsed_csv[0][item1.name]).to eq("10")
         expect(parsed_csv[0][item2.name]).to eq("5")
-        expect(parsed_csv[0]["Changes"]).to eq("2")
+        expect(parsed_csv[0]["# of changes"]).to eq("2")
 
         expect(parsed_csv[1][item1.name]).to eq("-5")
-        expect(parsed_csv[1]["Changes"]).to eq("1")
+        expect(parsed_csv[1]["# of changes"]).to eq("1")
       end
 
       context "when filtering by date" do

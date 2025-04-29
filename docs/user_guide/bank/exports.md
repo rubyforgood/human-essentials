@@ -27,9 +27,10 @@ The exports available include (in alphabetical order):
 Click "Inventory", then "Inventory Adjustments" in the left-hand menu.  Then click "Export Adjustments",
 
 ### Contents of adjustment export
-Creation date, Organization, Storage Area, Comment, # of changes.
-
-[! NOTE]  We have improving the adjustments export to include the changes made in each adjustment on our todo list. We'll also remove the organization as redundant information. Please reach out if this is a priority for you.
+- Creation date
+- Storage Area, Comment
+- # of changes
+- the quantity of each of your organization's Items in the adjustments
 
 ## Annual Survey
 ### Navigating to export annual survey

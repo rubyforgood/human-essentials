@@ -1,4 +1,4 @@
-RSpec.describe Exports::ExportAdjustmentsCSVService do
+RSpec.describe Exports::ExportAdjustmentsCSVService, :wip do
   # Create organization after items to ensure proper associations
   let!(:item1) { create(:item, name: 'item1') }
   let!(:item2) { create(:item, name: 'item2') }
@@ -21,8 +21,8 @@ RSpec.describe Exports::ExportAdjustmentsCSVService do
 
   let(:expected_headers) do
     [
-      "Created", "Storage Location",
-      "Comment", "User", "Changes"
+      "Created date", "Storage Area",
+      "Comment", "# of changes"
     ] + sorted_item_names
   end
 
@@ -77,7 +77,6 @@ RSpec.describe Exports::ExportAdjustmentsCSVService do
           adjustments[0].created_at.strftime("%F"),
           storage_location.name,
           "adjustment 1",
-          user.name,
           2  # Number of items changed
         )
 
@@ -86,7 +85,6 @@ RSpec.describe Exports::ExportAdjustmentsCSVService do
           adjustments[1].created_at.strftime("%F"),
           storage_location.name,
           "adjustment 2",
-          user.name,
           1  # Number of items changed
         )
 
@@ -95,7 +93,6 @@ RSpec.describe Exports::ExportAdjustmentsCSVService do
           adjustments[2].created_at.strftime("%F"),
           storage_location.name,
           "adjustment 3",
-          user.name,
           1  # Number of items changed
         )
       end
@@ -131,7 +128,7 @@ RSpec.describe Exports::ExportAdjustmentsCSVService do
       end
 
       it "should correctly sum up the number of changes" do
-        idx = expected_headers.index("Changes")
+        idx = expected_headers.index("# of changes")
         expect(subject[1][idx]).to eq(2)
         expect(subject[2][idx]).to eq(1)
         expect(subject[3][idx]).to eq(1)
@@ -166,16 +163,16 @@ RSpec.describe Exports::ExportAdjustmentsCSVService do
     it "generates valid CSV data" do
       expect(subject).to be_a(String)
       parsed_csv = CSV.parse(subject, headers: true)
-      expect(parsed_csv.headers).to include("Created",
-        "Storage Location",
+      expect(parsed_csv.headers).to include("Created date",
+        "Storage Area",
         "Comment",
-        "Changes",
+        "# of changes",
         item1.name,
         item2.name,
         item3.name,
         item4.name)
 
-      expect(parsed_csv.first["Changes"]).to eq("2")
+      expect(parsed_csv.first["# of changes"]).to eq("2")
       expect(parsed_csv.first[item1.name]).to eq("111")
       expect(parsed_csv.first[item2.name]).to eq("-7")
     end
