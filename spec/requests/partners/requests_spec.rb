@@ -479,4 +479,54 @@ RSpec.describe "/partners/requests", type: :request do
       expect(response.body).to eq("fake pdf content")
     end
   end
+
+  describe "GET #print_picklist" do
+    let(:organization) { create(:organization) }
+    let(:partner) { create(:partner, organization: organization) }
+    let(:partner_user) { partner.primary_user }
+    let(:org_admin) { create(:organization_admin, organization: organization) }
+    let(:request) { create(:request, :with_item_requests, organization: organization, partner: partner, partner_user: org_admin) }
+
+    before do
+      sign_in(org_admin)
+    end
+
+    it "generates a PDF for a single request" do
+      # Create a double for the PDF instance
+      pdf_double = double("PicklistsPdf")
+
+      # Expect PicklistsPdf.new to be called with correct args and return our double
+      expect(PicklistsPdf).to receive(:new)
+        .with(organization, [request])
+        .and_return(pdf_double)
+
+      # Expect compute_and_render to be called on our double and return some PDF data
+      expect(pdf_double).to receive(:compute_and_render)
+        .and_return("fake pdf content")
+
+      # Make the request
+      get print_picklist_request_path(request, format: :pdf)
+
+      # Verify the response
+      expect(response).to be_successful
+      expect(response.content_type).to eq("application/pdf")
+      expect(response.headers["Content-Disposition"]).to include("inline")
+      expect(response.headers["Content-Disposition"]).to include("Picklists_")
+      expect(response.body).to eq("fake pdf content")
+    end
+
+    it "includes correct associations in the query" do
+      pdf_double = double("PicklistsPdf", compute_and_render: "pdf content")
+
+      expect(PicklistsPdf).to receive(:new) do |org, requests|
+        # Verify the request includes the necessary associations
+        expect(requests.first.association(:item_requests)).to be_loaded
+        expect(requests.first.association(:partner)).to be_loaded
+        expect(requests.first.partner.association(:profile)).to be_loaded
+        pdf_double
+      end
+
+      get print_picklist_request_path(request, format: :pdf)
+    end
+  end
 end
