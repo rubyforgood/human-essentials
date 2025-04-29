@@ -10,8 +10,7 @@ RSpec.describe AdjustmentsController, type: :controller do
       organization: organization,
       storage_location: storage_location,
       comment: "First adjustment",
-      created_at: 1.day.ago
-    )
+      created_at: 1.day.ago)
     adj.line_items << build(:line_item, quantity: 10, item: item1, itemizable: adj)
     adj.line_items << build(:line_item, quantity: 5, item: item2, itemizable: adj)
     adj
@@ -22,8 +21,7 @@ RSpec.describe AdjustmentsController, type: :controller do
       organization: organization,
       storage_location: storage_location,
       comment: "Second adjustment",
-      created_at: 5.days.ago
-    )
+      created_at: 5.days.ago)
     adj.line_items << build(:line_item, quantity: -5, item: item1, itemizable: adj)
     adj
   end
@@ -37,7 +35,7 @@ RSpec.describe AdjustmentsController, type: :controller do
       it "returns a CSV file" do
         get :index, format: :csv
         expect(response).to be_successful
-        expect(response.header['Content-Type']).to include 'text/csv'
+        expect(response.header["Content-Type"]).to include "text/csv"
       end
 
       it "includes appropriate headers for adjustments" do
@@ -72,7 +70,7 @@ RSpec.describe AdjustmentsController, type: :controller do
           start_date = 3.days.ago.to_fs(:date_picker)
           end_date = Time.zone.today.to_fs(:date_picker)
 
-          get :index, params: { filters: { date_range: "#{start_date} - #{end_date}" } }, format: :csv
+          get :index, params: {filters: {date_range: "#{start_date} - #{end_date}"}}, format: :csv
 
           parsed_csv = CSV.parse(response.body, headers: true)
           expect(parsed_csv.count).to eq(1)

@@ -1,10 +1,10 @@
 RSpec.describe Exports::ExportAdjustmentsCSVService, :wip do
   # Create organization after items to ensure proper associations
-  let!(:item1) { create(:item, name: 'item1') }
-  let!(:item2) { create(:item, name: 'item2') }
-  let!(:item3) { create(:item, name: 'item3') }
-  let!(:item4) { create(:item, name: 'item4') }
-  let!(:item5) { create(:item, :inactive, name: 'item5') }
+  let!(:item1) { create(:item, name: "item1") }
+  let!(:item2) { create(:item, name: "item2") }
+  let!(:item3) { create(:item, name: "item3") }
+  let!(:item4) { create(:item, name: "item4") }
+  let!(:item5) { create(:item, :inactive, name: "item5") }
 
   # Now create organization and associate items with it
   let(:organization) do
