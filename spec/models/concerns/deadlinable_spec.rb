@@ -20,36 +20,86 @@ RSpec.describe Deadlinable, type: :model do
   let(:current_day) { Time.current }
   let(:schedule) { IceCube::Schedule.new(current_day) }
 
-  before do
-    dummy.deadline_day = 7
+  shared_examples "doesn't validate absent field" do |field_name|
+    it "doesn't validate the #{field_name} field when it isn't present" do
+      dummy.public_send("#{field_name}=","")
+      expect(dummy).to be_valid
+      dummy.public_send("#{field_name}=",nil)
+      expect(dummy).to be_valid
+    end
   end
 
   describe "validations" do
-    it do
-      is_expected.to validate_numericality_of(:deadline_day)
-        .only_integer
-        .is_greater_than_or_equal_to(1)
-        .is_less_than_or_equal_to(28)
-        .allow_nil
-    end
-
-    it "validates the by_month_or_week field inclusion" do
-      is_expected.to validate_inclusion_of(:by_month_or_week).in_array(%w[day_of_month day_of_week])
-    end
-
-    it "validates the day of week field inclusion" do
-      dummy.day_of_week = "0"
+    it "validates the deadline_day field" do
+      dummy.deadline_day = nil
       expect(dummy).to be_valid
-      dummy.day_of_week = "A"
+      dummy.deadline_day = 1
+      expect(dummy).to be_valid
+      dummy.deadline_day = 28
+      expect(dummy).to be_valid
+      dummy.deadline_day = 0.1
+      expect(dummy).not_to be_valid
+      dummy.deadline_day = -1
+      expect(dummy).not_to be_valid
+      dummy.deadline_day = 50
       expect(dummy).not_to be_valid
     end
 
-    it "validates the by_month_or_week field inclusion" do
-      dummy.every_nth_day = "1"
+    it "validates the by_month_or_week field" do
+      dummy.by_month_or_week = "day_of_month"
       expect(dummy).to be_valid
-      dummy.every_nth_day = "B"
+      dummy.by_month_or_week = "day_of_week"
+      expect(dummy).to be_valid
+      dummy.by_month_or_week = "other_string"
       expect(dummy).not_to be_valid
     end
+
+    include_examples "doesn't validate absent field", "by_month_or_week"
+
+    it "validates the day_of_week field" do
+      (0..6).step(1) do |day|
+        dummy.day_of_week = day.to_s
+        expect(dummy).to be_valid
+      end
+      dummy.day_of_week = "-1"
+      expect(dummy).not_to be_valid
+      dummy.day_of_week = "7"
+      expect(dummy).not_to be_valid
+      dummy.day_of_week = "other_string"
+      expect(dummy).not_to be_valid
+    end
+
+    include_examples "doesn't validate absent field", "day_of_week"
+
+    it "validates the every_nth_day field" do
+      (1..4).step(1) do |n|
+        dummy.every_nth_day = n.to_s
+        expect(dummy).to be_valid
+      end
+      dummy.every_nth_day = "-1"
+      expect(dummy).to be_valid
+      dummy.every_nth_day = "6"
+      expect(dummy).not_to be_valid
+      dummy.every_nth_day = "other_string"
+      expect(dummy).not_to be_valid
+    end
+
+    include_examples "doesn't validate absent field", "every_nth_day"
+
+    it "validates the every_nth_month field" do
+      (1..12).step(1) do |n|
+        dummy.every_nth_month = n.to_s
+        expect(dummy).to be_valid
+      end
+      dummy.every_nth_month = "-1"
+      expect(dummy).not_to be_valid
+      dummy.every_nth_month = "24"
+      expect(dummy).not_to be_valid
+      dummy.every_nth_month = "other_string"
+      expect(dummy).not_to be_valid
+    end
+
+    include_examples "doesn't validate absent field", "every_nth_month"
 
     it "validates that the reminder schedule's date fall within the range" do
       dummy.by_month_or_week = "day_of_month"
@@ -64,6 +114,7 @@ RSpec.describe Deadlinable, type: :model do
 
     it "validates that reminder day is not the same as deadline day" do
       dummy.by_month_or_week = "day_of_month"
+      dummy.deadline_day = 14
       dummy.day_of_month = dummy.deadline_day
 
       expect(dummy).not_to be_valid
