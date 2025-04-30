@@ -1,5 +1,17 @@
 import { Controller } from "@hotwired/stimulus"
 import $ from 'jquery';
+import { RRule } from 'rrule'
+import 'tslib'
+
+const WEEKDAY_NUM_TO_OBJ = {
+  0: RRule.SU,
+  1: RRule.MO,
+  2: RRule.TU,
+  3: RRule.WE,
+  4: RRule.TH,
+  5: RRule.FR,
+  6: RRule.SA
+}
 
 export default class extends Controller {
   static targets = [
@@ -8,27 +20,43 @@ export default class extends Controller {
   ]
 
   sourceChange() {
-    let reminder_day = null;
-    let deadline_day = null;
-    // TODO: Actually calculate teh reminder and deadline days
+    let reminder_date = null;
+    let deadline_date = null;
     if (this.byDayOfMonthTarget.checked && this.dayOfMonthTarget.value) {
-      reminder_day = this.dayOfMonthTarget.value;
+      const rule = new RRule({
+        freq: RRule.MONTHLY,
+        interval: parseInt(this.everyNthMonthTarget.value),
+        bymonthday: parseInt(this.dayOfMonthTarget.value),
+        count: 1,
+      })
+      reminder_date = rule.all()[0]
     }
-    if (this.byDayOfWeekTarget.checked && this.everyNthDayTarget.value && (this.dayOfWeekTarget.value || this.dayOfWeekTarget === 0)) {
-      reminder_day = "by week day";
+    if (this.byDayOfWeekTarget.checked && this.everyNthDayTarget.value && (this.dayOfWeekTarget.value)) {
+      const rule = new RRule({
+        freq: RRule.MONTHLY,
+        interval: parseInt(this.everyNthMonthTarget.value),
+        byweekday: WEEKDAY_NUM_TO_OBJ[ parseInt(this.dayOfWeekTarget.value) ].nth( parseInt(this.everyNthDayTarget.value) ),
+        wkst: RRule.SU,
+        count: 1
+      })
+      reminder_date = rule.all()[0]
     }
-    if (reminder_day && this.deadlineDayTarget.value) {
-      deadline_day = this.deadlineDayTarget.value;
+    if (reminder_date && this.deadlineDayTarget.value) {
+      deadline_date = new Date(reminder_date.getTime());
+      if( deadline_date.getDate() >= parseInt(this.deadlineDayTarget.value)){
+        deadline_date.setMonth( deadline_date.getMonth() + 1 )
+      }
+      deadline_date.setDate(parseInt(this.deadlineDayTarget.value))
     }
 
-    if (reminder_day && deadline_day && reminder_day == deadline_day) {
+    if (reminder_date && deadline_date && reminder_date.getTime() === deadline_date.getTime()) {
       $(this.reminderTextTarget).removeClass('text-muted').addClass('text-danger');
       $(this.reminderTextTarget).text('Reminder day cannot be the same as deadline day.');
       $(this.deadlineTextTarget).text("");
     } else {
       $(this.reminderTextTarget).removeClass('text-danger').addClass('text-muted');
-      $(this.reminderTextTarget).text(reminder_day ? `Your next reminder will be sent on ${reminder_day} ${"month"}.` : "");
-      $(this.deadlineTextTarget).text(deadline_day ? `Your next deadline will be on ${deadline_day} ${"month"}.` : "");
+      $(this.reminderTextTarget).text(reminder_date ? `Your next reminder will be sent on ${reminder_date.toDateString()}.` : "");
+      $(this.deadlineTextTarget).text(deadline_date ? `Your next deadline will be on ${deadline_date.toDateString()}.` : "");
     }
   }
 
