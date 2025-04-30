@@ -34,6 +34,17 @@ RSpec.describe DistributionMailer, type: :mailer do
       expect(mail.subject).to eq("test subject from TEST ORG")
     end
 
+    context "when organization does not have custom default_email_text" do
+      before do
+        organization.default_email_text = nil
+        organization.save
+      end
+
+      it "renders non-custom text" do
+        expect(mail.body.encoded).to match("You have a new distribution from #{organization.name}.")
+      end
+    end
+
     context "with deliver_method: :pick_up" do
       let(:mail) do
         distribution = create(:distribution, organization: user.organization, comment: "Distribution comment", partner: partner, delivery_method: :pick_up)
