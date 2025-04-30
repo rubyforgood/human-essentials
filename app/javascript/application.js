@@ -28,7 +28,6 @@ import 'controllers'
 
 import 'utils/barcode_items'
 import 'utils/barcode_scan'
-import 'utils/deadline_day_pickers'
 import 'utils/distributions_and_transfers'
 import 'utils/donations'
 import 'utils/purchases'

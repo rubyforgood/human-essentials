@@ -1,68 +1,69 @@
-<%= tag.div(class: 'deadline-day-pickers',
-            data: {
-              current_day: Date.current.mday,
-              current_month: Date::MONTHNAMES[Date.current.month],
-              next_month: Date::MONTHNAMES[Date.current.next_month.month]
-            }) do %>
+<div data-controller="deadline-day">
 
-      <%= f.label :every_nth_month, 'How frequently should reminders be sent (e.g. "monthly", "every 3 months", etc.)?' %>
-      
-      <%= f.input :every_nth_month,
-        collection: Deadlinable::EVERY_NTH_MONTH_COLLECTION,
-        class: "deadline-day-pickers__reminder-day form-control",
+  <%= f.label :every_nth_month, 'How frequently should reminders be sent (e.g. "monthly", "every 3 months", etc.)?' %>
+  <%= f.input :every_nth_month,
+    collection: Deadlinable::EVERY_NTH_MONTH_COLLECTION,
+    class: "form-control",
+    label: false,
+    show_blank: true,
+    default: 1,
+    input_html: {style: 'width: 200px', "data-deadline-day-target" => "everyNthMonth", "data-action" => "deadline-day#sourceChange"} %>
+
+  <%= f.label :by_month_or_week, 'Send reminders on a specific day of the month (e.g. "the 5th") or a day of the week (eg "the first Tuesday")?' %>
+  <br>
+  <%= f.radio_button :by_month_or_week,
+    'day_of_month',
+    label: 'Day of Month',
+    data: { 'deadline-day-target': 'byDayOfMonth', 'action': 'deadline-day#monthOrWeekChanged deadline-day#sourceChange' } %>
+  <%= f.label :by_month_or_week, 'Day of Month' %>
+  <br>
+  <%= f.radio_button :by_month_or_week,
+    'day_of_week',
+    label: 'Day of the Week',
+    data: { 'deadline-day-target': 'byDayOfWeek', 'action': 'deadline-day#monthOrWeekChanged deadline-day#sourceChange' } %>
+  <%= f.label :by_month_or_week, 'Day of the Week' %>
+
+  <div data-deadline-day-target="dayOfMonthFields">
+    <%= f.input :day_of_month, as: :integer, wrapper: :input_group, label: 'Reminder date' do %>
+      <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+      <%= f.number_field :day_of_month,
+        min: Deadlinable::MIN_DAY_OF_MONTH,
+        max: Deadlinable::MAX_DAY_OF_MONTH,
+        class: "form-control",
+        placeholder: "Reminder day",
+        data: { 'deadline-day-target': 'dayOfMonth', 'action': 'deadline-day#sourceChange' } %>
+    <% end %>
+  </div>
+
+  <div data-deadline-day-target="dayOfWeekFields">
+    <%= f.label :every_nth_day, 'Reminder day of the week' %>
+    <div class="input-group">
+      <%= f.input :every_nth_day,
+      collection: Deadlinable::EVERY_NTH_COLLECTION,
+      class: "form-control",
+      label: false,
+      input_html: {"data-deadline-day-target" => "everyNthDay", "data-action" => "deadline-day#sourceChange"} %>
+
+      <%= f.input :day_of_week,
+        collection: Deadlinable::DAY_OF_WEEK_COLLECTION,
+        class: "form-control",
         label: false,
         show_blank: true,
         default: 1,
-        :input_html => {:style=> 'width: 200px'}
-      %>
+        input_html: {style: 'width: 200px', "data-deadline-day-target" => "dayOfWeek", "data-action" => "deadline-day#sourceChange"} %>
+    </div>
+  </div>
+  <small class="mb-3 d-block text-muted" data-deadline-day-target="reminderText"></small>
 
-      <%= f.label :by_month_or_week, 'Send reminders on a specific day of the month (e.g. "the 5th") or a day of the week (eg "the first Tuesday")?' %>
-      <br>
-      <%= f.radio_button :by_month_or_week, 'day_of_month', label: 'Day of Month', id: 'toggle-to-date' %>
-      <%= f.label :by_month_or_week, 'Day of Month' %>
-      <br>
-      <%= f.radio_button :by_month_or_week, 'day_of_week', label: 'Day of the Week', id: 'toggle-to-week-day' %>
-      <%= f.label :by_month_or_week, 'Day of the Week' %>
 
-      <div id="date-fields">
-      <%= f.input :day_of_month, as: :integer, wrapper: :input_group,
-      label: 'Reminder date' do %>
-      <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-      <%= f.number_field :day_of_month,
+  <%= f.input :deadline_day, wrapper: :input_group, wrapper_html: { min: 0, max: 28 }, label: 'Default deadline day (final day of month to submit Requests)' do %>
+    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+    <%= f.number_field :deadline_day,
       min: Deadlinable::MIN_DAY_OF_MONTH,
       max: Deadlinable::MAX_DAY_OF_MONTH,
-      class: "deadline-day-pickers__reminder-day form-control",
-      placeholder: "Reminder day" %>
-      <% end %>
-      </div>
-      <small class="mb-3 d-block form-text text-muted deadline-day-pickers__reminder-day-text"></small>
-
-      <div id="week-day-fields">
-      <%= f.input :every_nth_day, wrapper: :input_group, wrapper_html: { class: 'mb-3'},
-      label: 'Reminder day of the week' do %>
-      <%= f.input :every_nth_day, collection: Deadlinable::EVERY_NTH_COLLECTION,
-      class: "deadline-day-pickers__reminder-day form-control",
-      label: false %>
-
-      <%= f.input :day_of_week, collection: Deadlinable::DAY_OF_WEEK_COLLECTION,
-      class: "deadline-day-pickers__reminder-day form-control",
-      label: false,
-      show_blank: true,
-      default: 1,
-      :input_html => {:style=> 'width: 200px'} %>
-      </div>
-      <% end %>
-
-  <div class="deadline-day-pickers__deadline-container">
-    <%= f.input :deadline_day, wrapper: :input_group, wrapper_html: { class: 'mb-0', min: 0, max: 28 },
-                label: 'Default deadline day (final day of month to submit Requests)' do %>
-      <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-      <%= f.number_field :deadline_day,
-                         min: Deadlinable::MIN_DAY_OF_MONTH,
-                         max: Deadlinable::MAX_DAY_OF_MONTH,
-                         class: "deadline-day-pickers__deadline-day form-control",
-                         placeholder: "Deadline day" %>
-    <% end %>
-    <small class="mb-3 d-block form-text text-muted deadline-day-pickers__deadline-day-text"></small>
-  </div>
-<% end %>
+      class: "form-control",
+      placeholder: "Deadline day",
+      data: {"deadline-day-target": "deadlineDay", "action": "deadline-day#sourceChange"} %>
+  <% end %>
+  <small class="mb-3 d-block text-muted" data-deadline-day-target="deadlineText"></small>
+</div>
