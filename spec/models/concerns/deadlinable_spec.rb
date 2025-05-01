@@ -103,12 +103,12 @@ RSpec.describe Deadlinable, type: :model do
 
     it "validates that day_of_month field falls within the range" do
       dummy.by_month_or_week = "day_of_month"
-      dummy.day_of_month = 29
+      dummy.day_of_month = "29"
 
       expect(dummy).not_to be_valid
       expect(dummy.errors.added?(:day_of_month, "Reminder day must be between 1 and 28")).to be_truthy
 
-      dummy.day_of_month = -1
+      dummy.day_of_month = "-1"
       expect(dummy).not_to be_valid
       expect(dummy.errors.added?(:day_of_month, "Reminder day must be between 1 and 28")).to be_truthy
     end
@@ -116,10 +116,121 @@ RSpec.describe Deadlinable, type: :model do
     it "validates that day_of_month field is not the same as deadline_day" do
       dummy.by_month_or_week = "day_of_month"
       dummy.deadline_day = 14
-      dummy.day_of_month = dummy.deadline_day
+      dummy.day_of_month = "14"
 
       expect(dummy).not_to be_valid
       expect(dummy.errors.added?(:day_of_month, "Reminder must not be the same as deadline date")).to be_truthy
     end
   end
+
+  it "convert_to_reminder_schedule returns by month day schedule in ICAL format" do
+    travel_to Time.zone.local(2020, 10, 10)
+    expect(dummy.convert_to_reminder_schedule(10)).to eq "DTSTART;TZID=#{Time.zone.now.zone}:20201010T000000\nRRULE:FREQ=MONTHLY;BYMONTHDAY=10"
+  end
+
+  it "show_description returns textual description of rule in ICAL format" do
+    ical_schedule = "DTSTART;TZID=#{Time.zone.now.zone}:20201010T000000\nRRULE:FREQ=MONTHLY;BYMONTHDAY=10"
+    expect(dummy.show_description(ical_schedule)).to eq "Monthly on the 10th day of the month"
+  end
+
+  it "from_ical returns hash of fields from schedule in ICAL format" do
+    ical_schedule = "DTSTART;TZID=#{Time.zone.now.zone}:20201010T000000\nRRULE:FREQ=MONTHLY;BYMONTHDAY=10"
+    expect(dummy.from_ical(ical_schedule)).to eq(
+      by_month_or_week: "day_of_month",
+      day_of_month: 10,
+      day_of_week: nil,
+      every_nth_day: nil,
+      every_nth_month: 1
+    )
+  end
+
+  it "when reminder_schedule is blank should_update_reminder_schedule returns true if day_of_month is present, false otherwise" do
+    expect(dummy.should_update_reminder_schedule).to be_falsey 
+    dummy.by_month_or_week = "day_of_month"
+    expect(dummy.should_update_reminder_schedule).to be_truthy
+  end
+
+  context "with an existing schedule" do
+    before do
+      dummy.reminder_schedule = "DTSTART;TZID=#{Time.zone.now.zone}:20201010T000000\nRRULE:FREQ=MONTHLY;BYMONTHDAY=10"
+    end
+
+    it "should_update_reminder_schedule returns false if no fields differ" do
+      dummy.by_month_or_week = "day_of_month"
+      dummy.day_of_month = "10"
+      dummy.every_nth_month = "1"
+      expect(dummy.should_update_reminder_schedule).to be_falsey 
+    end
+
+    it "should_update_reminder_schedule returns true if fields differ" do
+      dummy.by_month_or_week = "day_of_month"
+      dummy.day_of_month = "15"
+      dummy.every_nth_month = "3"
+      expect(dummy.should_update_reminder_schedule).to be_truthy 
+    end
+
+    it "should_update_reminder_schedule return true if the by_month_or_week field differs" do
+      dummy.by_month_or_week = "day_of_week"
+      dummy.day_of_month = "10"
+      dummy.day_of_week = "0"
+      dummy.every_nth_day = "1"
+      dummy.every_nth_month = "1"
+      expect(dummy.should_update_reminder_schedule).to be_truthy 
+    end
+  end
+
+  context "by day of month" do
+    before do
+      travel_to Time.zone.local(2020, 10, 10)
+      dummy.by_month_or_week = "day_of_month"
+    end
+
+    it "create_schedule returns schedule in ICAL format" do
+      dummy.day_of_month = "10"
+      dummy.every_nth_month = "1"
+      expect(dummy.create_schedule).to eq "DTSTART;TZID=#{Time.zone.now.zone}:20201010T000000\nRRULE:FREQ=MONTHLY;BYMONTHDAY=10"
+      dummy.day_of_month = "15"
+      dummy.every_nth_month = "3"
+      expect(dummy.create_schedule).to eq "DTSTART;TZID=#{Time.zone.now.zone}:20201010T000000\nRRULE:FREQ=MONTHLY;INTERVAL=3;BYMONTHDAY=15"
+    end
+
+    it "create_schedule returns nil if needed fields are missing" do
+      dummy.day_of_month = "10"
+      expect(dummy.create_schedule).to eq nil
+      dummy.day_of_month = nil
+      dummy.every_nth_month = "1"
+      expect(dummy.create_schedule).to eq nil
+    end
+  end
+
+  context "by day of week" do
+    before do
+      travel_to Time.zone.local(2020, 10, 10)
+      dummy.by_month_or_week = "day_of_week"
+    end
+
+    it "create_schedule returns schedule in ICAL format" do
+      dummy.day_of_week = "0"
+      dummy.every_nth_day = "1"
+      dummy.every_nth_month = "1"
+      expect(dummy.create_schedule).to eq "DTSTART;TZID=#{Time.zone.now.zone}:20201010T000000\nRRULE:FREQ=MONTHLY;BYDAY=1SU"
+      dummy.day_of_week = "3"
+      dummy.every_nth_day = "3"
+      dummy.every_nth_month = "1"
+      expect(dummy.create_schedule).to eq "DTSTART;TZID=#{Time.zone.now.zone}:20201010T000000\nRRULE:FREQ=MONTHLY;BYDAY=3WE"
+    end
+
+    it "create_schedule returns nil if needed fields are missing" do
+      dummy.day_of_week = "0"
+      dummy.every_nth_day = "1"
+      expect(dummy.create_schedule).to eq nil
+      dummy.every_nth_day = nil
+      dummy.every_nth_month = "1" 
+      expect(dummy.create_schedule).to eq nil
+      dummy.day_of_week = nil
+      dummy.every_nth_day = "1"
+      expect(dummy.create_schedule).to eq nil
+    end
+  end
+
 end
