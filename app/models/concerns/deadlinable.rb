@@ -59,32 +59,24 @@ module Deadlinable
     self.every_nth_month = results[:every_nth_month]
   end
 
-  private
-
-  def day_of_month_on_deadline_day?
-    if by_month_or_week == "day_of_month" && day_of_month.to_i == deadline_day
-      errors.add(:day_of_month, "Reminder must not be the same as deadline date")
-    end
-  end
-
-  def day_of_month_is_within_range?
-    # IceCube converts negative or zero days to valid days (e.g. -1 becomes the last day of the month, 0 becomes 1)
-    # The minimum check should no longer be necessary, but keeping it in case IceCube changes
-    if by_month_or_week == "day_of_month" && day_of_month.to_i < MIN_DAY_OF_MONTH || day_of_month.to_i > MAX_DAY_OF_MONTH
-      errors.add(:day_of_month, "Reminder day must be between #{MIN_DAY_OF_MONTH} and #{MAX_DAY_OF_MONTH}")
-    end
-  end
-
   def should_update_reminder_schedule
     if reminder_schedule.blank?
       return by_month_or_week.present?
     end
     sched = from_ical(reminder_schedule)
-    by_month_or_week != sched[:by_month_or_week].presence.to_s ||
-      day_of_month != sched[:day_of_month].presence.to_s ||
-      day_of_week != sched[:day_of_week].presence.to_s ||
+    if by_month_or_week != sched[:by_month_or_week].presence.to_s
+      return true
+    end
+    if by_month_or_week == "day_of_month"
+      return day_of_month != sched[:day_of_month].presence.to_s ||
+      every_nth_month != sched[:every_nth_month].presence.to_s
+    end
+    if by_month_or_week == "day_of_week"
+      return day_of_week != sched[:day_of_week].presence.to_s ||
       every_nth_day != sched[:every_nth_day].presence.to_s ||
       every_nth_month != sched[:every_nth_month].presence.to_s
+    end
+    return false
   end
 
   def create_schedule
@@ -100,5 +92,21 @@ module Deadlinable
     schedule.to_ical
   rescue
     nil
+  end
+
+  private
+
+  def day_of_month_on_deadline_day?
+    if by_month_or_week == "day_of_month" && day_of_month.to_i == deadline_day
+      errors.add(:day_of_month, "Reminder must not be the same as deadline date")
+    end
+  end
+
+  def day_of_month_is_within_range?
+    # IceCube converts negative or zero days to valid days (e.g. -1 becomes the last day of the month, 0 becomes 1)
+    # The minimum check should no longer be necessary, but keeping it in case IceCube changes
+    if by_month_or_week == "day_of_month" && day_of_month.to_i < MIN_DAY_OF_MONTH || day_of_month.to_i > MAX_DAY_OF_MONTH
+      errors.add(:day_of_month, "Reminder day must be between #{MIN_DAY_OF_MONTH} and #{MAX_DAY_OF_MONTH}")
+    end
   end
 end
