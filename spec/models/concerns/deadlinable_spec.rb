@@ -101,7 +101,7 @@ RSpec.describe Deadlinable, type: :model do
 
     include_examples "doesn't validate absent field", "every_nth_month"
 
-    it "validates that the reminder schedule's date fall within the range" do
+    it "validates that day_of_month field falls within the range" do
       dummy.by_month_or_week = "day_of_month"
       dummy.day_of_month = 29
 
@@ -110,9 +110,10 @@ RSpec.describe Deadlinable, type: :model do
 
       dummy.day_of_month = -1
       expect(dummy).not_to be_valid
+      expect(dummy.errors.added?(:day_of_month, "Reminder day must be between 1 and 28")).to be_truthy
     end
 
-    it "validates that reminder day is not the same as deadline day" do
+    it "validates that day_of_month field is not the same as deadline_day" do
       dummy.by_month_or_week = "day_of_month"
       dummy.deadline_day = 14
       dummy.day_of_month = dummy.deadline_day

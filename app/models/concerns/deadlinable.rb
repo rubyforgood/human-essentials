@@ -12,8 +12,8 @@ module Deadlinable
     attr_accessor :by_month_or_week, :day_of_month, :day_of_week, :every_nth_day, :every_nth_month
     validates :deadline_day, numericality: {only_integer: true, less_than_or_equal_to: MAX_DAY_OF_MONTH,
                                             greater_than_or_equal_to: MIN_DAY_OF_MONTH, allow_nil: true}
-    validate :reminder_on_deadline_day?, if: -> { day_of_month.present? }
-    validate :reminder_is_within_range?, if: -> { day_of_month.present? }
+    validate :day_of_month_on_deadline_day?, if: -> { day_of_month.present? }
+    validate :day_of_month_is_within_range?, if: -> { day_of_month.present? }
     validates :by_month_or_week, inclusion: {in: %w[day_of_month day_of_week]}, if: -> { by_month_or_week.present? }
     validates :day_of_week, if: -> { day_of_week.present? }, inclusion: {in: %w[0 1 2 3 4 5 6]}
     validates :every_nth_day, if: -> { every_nth_day.present? }, inclusion: {in: %w[1 2 3 4 -1]}
@@ -61,13 +61,13 @@ module Deadlinable
 
   private
 
-  def reminder_on_deadline_day?
+  def day_of_month_on_deadline_day?
     if by_month_or_week == "day_of_month" && day_of_month.to_i == deadline_day
       errors.add(:day_of_month, "Reminder must not be the same as deadline date")
     end
   end
 
-  def reminder_is_within_range?
+  def day_of_month_is_within_range?
     # IceCube converts negative or zero days to valid days (e.g. -1 becomes the last day of the month, 0 becomes 1)
     # The minimum check should no longer be necessary, but keeping it in case IceCube changes
     if by_month_or_week == "day_of_month" && day_of_month.to_i < MIN_DAY_OF_MONTH || day_of_month.to_i > MAX_DAY_OF_MONTH
