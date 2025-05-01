@@ -49,7 +49,7 @@ export default class extends Controller {
       deadline_date.setDate(parseInt(this.deadlineDayTarget.value))
     }
 
-    if (reminder_date && deadline_date && reminder_date.getTime() === deadline_date.getTime()) {
+    if (this.byDayOfMonthTarget.checked && this.dayOfMonthTarget.value && this.deadlineDayTarget.value && this.dayOfMonthTarget.value === this.deadlineDayTarget.value) {
       $(this.reminderTextTarget).removeClass('text-muted').addClass('text-danger');
       $(this.reminderTextTarget).text('Reminder day cannot be the same as deadline day.');
       $(this.deadlineTextTarget).text("");
