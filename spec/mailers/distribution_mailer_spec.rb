@@ -34,17 +34,6 @@ RSpec.describe DistributionMailer, type: :mailer do
       expect(mail.subject).to eq("test subject from TEST ORG")
     end
 
-    context "when organization does not have custom default_email_text" do
-      before do
-        organization.default_email_text = nil
-        organization.save
-      end
-
-      it "renders non-custom text" do
-        expect(mail.body.encoded).to match("You have a new distribution from #{organization.name}.")
-      end
-    end
-
     context "with deliver_method: :pick_up" do
       let(:mail) do
         distribution = create(:distribution, organization: user.organization, comment: "Distribution comment", partner: partner, delivery_method: :pick_up)
@@ -109,6 +98,40 @@ RSpec.describe DistributionMailer, type: :mailer do
         mail = DistributionMailer.partner_mailer(organization, distribution, 'test subject', distribution_changes)
         expect(mail.body.encoded).to match(distribution_changes[:removed][0][:name])
         expect(mail.body.encoded).to match(distribution_changes[:updates][0][:name])
+      end
+    end
+
+    context "when organization does not have custom default_email_text" do
+      before do
+        organization.default_email_text = nil
+        organization.save
+      end
+
+      context "without distribution changes" do
+        it "renders non-custom text" do
+          expect(mail.body.encoded).to match("You have a new distribution from #{organization.name}.")
+        end
+      end
+
+      context "with distribution changes" do
+        let(:distribution_changes) do
+          {
+            removed: [
+              { name: "Adult Diapers" }
+            ],
+            updates: [
+              {
+                name: "Kid Diapers",
+                new_quantity: 4,
+                old_quantity: 100
+              }
+            ]
+          }
+        end
+
+        it "does not render non-custom text" do
+          expect(mail.body.encoded).to_not match("You have a new distribution from #{organization.name}.")
+        end
       end
     end
   end
