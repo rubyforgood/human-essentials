@@ -48,5 +48,13 @@ RSpec.describe DeadlineService, type: :service do
 
       include_examples "calculates the next deadline"
     end
+
+    context "the partner group is prioritized over the organization" do
+      before { organization[:deadline_day] = 20 }
+
+      let(:expected_receiver) { partner_group }
+      
+      include_examples "calculates the next deadline"
+    end
   end
 end
