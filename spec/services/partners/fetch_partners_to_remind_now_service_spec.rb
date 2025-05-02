@@ -2,14 +2,19 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
   describe ".fetch" do
     subject { described_class.new.fetch }
     let(:current_day) { 14 }
-    before { travel_to(Time.zone.local(2022, 6, current_day, 1, 1, 1)) }
+    before { travel_to(Time.zone.local(2022, 6, current_day)) }
 
     context "when there is a partner" do
       let!(:partner) { create(:partner) }
       context "that has an organization with a global reminder & deadline" do
         context "that is for today" do
           before do
-            partner.organization.update(by_month_or_week: "day_of_month", day_of_month: current_day, deadline_day: current_day + 2)
+            partner.organization.update(
+              by_month_or_week: "day_of_month",
+              day_of_month: current_day.to_s,
+              every_nth_month: "1",
+              deadline_day: (current_day + 2).to_s
+            )
           end
 
           it "should include that partner" do
@@ -20,8 +25,13 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
 
           context "as matched by day of the week" do
             before do
-              partner.organization.update(by_month_or_week: "day_of_week",
-                day_of_week: 2, every_nth_day: 2, deadline_day: current_day + 2)
+              partner.organization.update(
+                by_month_or_week: "day_of_week",
+                day_of_week: "2",
+                every_nth_day: "2",
+                every_nth_month: "1",
+                deadline_day: (current_day + 2).to_s
+              )
             end
             it "should include that partner" do
               schedule = IceCube::Schedule.from_ical partner.organization.reminder_schedule
@@ -64,12 +74,21 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
 
         context "AND a partner group that does have them defined" do
           before do
-            partner_group = create(:partner_group, by_month_or_week: "day_of_month",
-              day_of_month: current_day, deadline_day: current_day + 2)
+            partner_group = create(
+              :partner_group,
+              by_month_or_week: "day_of_month",
+              day_of_month: (current_day).to_s,
+              every_nth_month: "1",
+              deadline_day: (current_day + 2).to_s
+            )
             partner_group.partners << partner
 
-            partner.organization.update(by_month_or_week: "day_of_month",
-              day_of_month: current_day - 1, deadline_day: current_day + 2)
+            partner.organization.update(
+              by_month_or_week: "day_of_month",
+              day_of_month: (current_day - 1).to_s,
+              every_nth_month: "1",
+              deadline_day: (current_day + 2).to_s
+            )
           end
 
           it "should remind based on the partner group instead of the organization level reminder" do
@@ -96,8 +115,13 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
         context "and is a part of a partner group that does have them defined" do
           context "that is for today" do
             before do
-              partner_group = create(:partner_group, by_month_or_week: "day_of_month",
-                day_of_month: current_day, deadline_day: current_day + 2)
+              partner_group = create(
+                :partner_group,
+                by_month_or_week: "day_of_month",
+                day_of_month: (current_day).to_s,
+                every_nth_month: "1",
+                deadline_day: (current_day + 2).to_s
+              )
               partner_group.partners << partner
             end
 
@@ -118,8 +142,13 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
 
           context "that is not for today" do
             before do
-              partner_group = create(:partner_group, by_month_or_week: "day_of_month",
-                day_of_month: current_day - 1, deadline_day: current_day + 2)
+              partner_group = create(
+                :partner_group,
+                by_month_or_week: "day_of_month",
+                day_of_month: (current_day - 1).to_s,
+                every_nth_month: "1",
+                deadline_day: (current_day + 2).to_s
+              )
               partner_group.partners << partner
             end
 
