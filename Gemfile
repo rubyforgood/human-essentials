@@ -106,7 +106,7 @@ gem 'bootsnap', require: false
 # Technically they don't need to be in this Gemfile at all, but we are pinning them to
 # specific versions for compatibility reasons.
 gem "nokogiri", ">= 1.10.4"
-gem "sprockets", "~> 4.2.1"
+gem "sprockets", "~> 4.2.2"
 
 group :production, :staging do
   # Reduce the noise of logs and include custom fields to it for easier access
