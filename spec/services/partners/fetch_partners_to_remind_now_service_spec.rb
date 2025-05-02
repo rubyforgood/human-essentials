@@ -138,6 +138,16 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
                 expect(subject).not_to include(partner)
               end
             end
+
+            context "and has send_reminder=false" do
+              before do
+                partner.update(send_reminders: false)
+              end
+  
+              it "should include that partner" do
+                expect(subject).to include(partner)
+              end
+            end
           end
 
           context "that is not for today" do
