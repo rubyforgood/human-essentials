@@ -37,10 +37,8 @@ class Adjustment < ApplicationRecord
   def self.generate_csv(adjustments)
     return nil if adjustments.empty?
 
-    Exports::ExportAdjustmentsCSVService.new(
-      adjustments: adjustments,
-      organization: adjustments.first.organization
-    ).generate_csv
+    Exports::ExportAdjustmentsCSVService
+      .generate_csv(adjustments, adjustments.first.organization)
   end
 
   private

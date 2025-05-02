@@ -1,4 +1,4 @@
-RSpec.describe "Adjustments", :wip, type: :request do
+RSpec.describe "Adjustments", type: :request do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 
@@ -104,29 +104,14 @@ RSpec.describe "Adjustments", :wip, type: :request do
           expect(response.header['Content-Type']).to include 'text/csv'
         end
 
-        it "includes appropriate headers for adjustments" do
-          expect(response.body).to include("Created date")
-          expect(response.body).to include("Storage Area")
-          expect(response.body).to include("Comment")
-          expect(response.body).to include("# of changes")
-          expect(response.body).to include(item1.name)
-          expect(response.body).to include(item2.name)
-        end
+        it "includes appropriate headers and data" do
+          csv = <<~CSV
+            Created date,Storage Area,Comment,# of changes,#{item1.name},#{item2.name}
+            2019-06-30,Smithsonian Conservation Center,First adjustment,2,10,5
+            2019-06-26,Smithsonian Conservation Center,Second adjustment,1,-5,0
+          CSV
 
-        it "includes data from the adjustments" do
-          parsed_csv = CSV.parse(response.body, headers: true)
-
-          expect(parsed_csv.count).to eq(2)
-
-          expect(parsed_csv[0]["Comment"]).to eq(adjustment1.comment)
-          expect(parsed_csv[1]["Comment"]).to eq(adjustment2.comment)
-
-          expect(parsed_csv[0][item1.name]).to eq("10")
-          expect(parsed_csv[0][item2.name]).to eq("5")
-          expect(parsed_csv[0]["# of changes"]).to eq("2")
-
-          expect(parsed_csv[1][item1.name]).to eq("-5")
-          expect(parsed_csv[1]["# of changes"]).to eq("1")
+          expect(response.body).to eq(csv)
         end
 
         context "when filtering by date" do
@@ -136,9 +121,12 @@ RSpec.describe "Adjustments", :wip, type: :request do
 
             get adjustments_path, params: { filters: { date_range: "#{start_date} - #{end_date}" }, format: 'csv' }
 
-            parsed_csv = CSV.parse(response.body, headers: true)
-            expect(parsed_csv.count).to eq(1)
-            expect(parsed_csv[0]["Comment"]).to eq(adjustment1.comment)
+            csv = <<~CSV
+              Created date,Storage Area,Comment,# of changes,#{item1.name},#{item2.name}
+              2019-06-30,Smithsonian Conservation Center,First adjustment,2,10,5
+            CSV
+
+            expect(response.body).to eq(csv)
           end
         end
       end
