@@ -100,9 +100,9 @@ RSpec.describe PartnerProfileUpdateService do
 
       before do
         # Want to have an invalid email on purpose
-        # rubocop:disable Rails::SkipsModelValidations
+        # rubocop:disable Rails/SkipsModelValidations
         partner.update_columns(email: "not/an_email")
-        # rubocop:enable Rails::SkipsModelValidations
+        # rubocop:enable Rails/SkipsModelValidations
       end
 
       it "returns failure" do
