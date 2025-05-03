@@ -1,3 +1,5 @@
+require "csv"
+
 RSpec.describe Exports::ExportDonationsCSVService do
   describe '#generate_csv' do
     let(:organization) { create(:organization) }
@@ -76,13 +78,13 @@ RSpec.describe Exports::ExportDonationsCSVService do
 
     context 'while "Include in-kind value in donation and distribution exports?" is set to no' do
       it 'should match the expected content without in-kind value of each item for the csv' do
-        csv = <<~CSV
-          #{expected_headers.join(",")}
-          Product Drive,2025-01-01,#{source_name(donations[0])},#{storage_location.name},15,2,94.0,It's a fine day for diapers.,7,0,0,8,0
-          Manufacturer,2025-01-01,#{source_name(donations[1])},#{storage_location.name},1,1,20.0,It's a fine day for diapers.,0,1,0,0,0
-          Donation Site,2025-01-01,#{source_name(donations[2])},#{storage_location.name},2,1,60.0,It's a fine day for diapers.,0,0,2,0,0
-          Misc. Donation,2025-01-01,It's a fine day for...,#{storage_location.name},3,1,120.0,It's a fine day for diapers.,0,0,0,0,3
-        CSV
+        csv = CSV.generate do |csv|
+          csv << expected_headers
+          csv << ["Product Drive", "2025-01-01", source_name(donations[0]), storage_location.name, 15, 2, 94.0, "It's a fine day for diapers.", 7, 0, 0, 8, 0]
+          csv << ["Manufacturer", "2025-01-01", source_name(donations[1]), storage_location.name, 1, 1, 20.0, "It's a fine day for diapers.", 0, 1, 0, 0, 0]
+          csv << ["Donation Site", "2025-01-01", source_name(donations[2]), storage_location.name, 2, 1, 60.0, "It's a fine day for diapers.", 0, 0, 2, 0, 0]
+          csv << ["Misc. Donation", "2025-01-01", "It's a fine day for...", storage_location.name, 3, 1, 120.0, "It's a fine day for diapers.", 0, 0, 0, 0, 3]
+        end
         expect(subject).to eq(csv)
       end
     end
@@ -101,14 +103,13 @@ RSpec.describe Exports::ExportDonationsCSVService do
       it 'should match the expected content with in-kind value of each item for the csv' do
         allow(organization).to receive(:include_in_kind_values_in_exported_files).and_return(true)
 
-        csv = <<~CSV
-          #{expected_headers.join(",")}
-          Product Drive,2025-01-01,#{source_name(donations[0])},#{storage_location.name},15,2,94.0,It's a fine day for diapers.,7,70.00,0,0.00,0,0.00,8,24.00,0,0.00
-          Manufacturer,2025-01-01,#{source_name(donations[1])},#{storage_location.name},1,1,20.0,It's a fine day for diapers.,0,0.00,1,20.00,0,0.00,0,0.00,0,0.00
-          Donation Site,2025-01-01,#{source_name(donations[2])},#{storage_location.name},2,1,60.0,It's a fine day for diapers.,0,0.00,0,0.00,2,60.00,0,0.00,0,0.00
-          Misc. Donation,2025-01-01,It's a fine day for...,#{storage_location.name},3,1,120.0,It's a fine day for diapers.,0,0.00,0,0.00,0,0.00,0,0.00,3,120.00
-        CSV
-
+        csv = CSV.generate do |csv|
+          csv << expected_headers
+          csv << ["Product Drive", "2025-01-01", source_name(donations[0]), storage_location.name, 15, 2, 94.0, "It's a fine day for diapers.", 7, "70.00", 0, "0.00", 0, "0.00", 8, "24.00", 0, "0.00"]
+          csv << ["Manufacturer", "2025-01-01", source_name(donations[1]), storage_location.name, 1, 1, 20.0, "It's a fine day for diapers.", 0, "0.00", 1, "20.00", 0, "0.00", 0, "0.00", 0, "0.00"]
+          csv << ["Donation Site", "2025-01-01", source_name(donations[2]), storage_location.name, 2, 1, 60.0, "It's a fine day for diapers.", 0, "0.00", 0, "0.00", 2, "60.00", 0, "0.00", 0, "0.00"]
+          csv << ["Misc. Donation", "2025-01-01", "It's a fine day for...", storage_location.name, 3, 1, 120.0, "It's a fine day for diapers.", 0, "0.00", 0, "0.00", 0, "0.00", 0, "0.00", 3, "120.00"]
+        end
         expect(subject).to eq(csv)
       end
     end
