@@ -176,37 +176,35 @@ class DistributionPdf
       "In-Kind Value Received",
       "Packages"]]
     inventory = View::Inventory.new(@distribution.organization_id)
-    request_items = @distribution.request.request_items.map do |request_item|
-      RequestItem.from_json(request_item, @distribution.request, inventory)
-    end
+    item_requests = @distribution.request.item_requests.includes(:item)
     line_items = @distribution.line_items.sorted
 
-    requested_not_received = request_items.select do |request_item|
-      line_items.none? { |i| i.item_id == request_item.item.id }
+    requested_not_received = item_requests.select do |item_request|
+      line_items.none? { |i| i.item_id == item_request.item_id }
     end
 
     data += line_items.map do |c|
-      request_item = request_items.find { |i| i.item&.id == c.item_id }
+      item_request = item_requests.find { |i| i.item_id == c.item_id }
       [c.item.name,
-        request_display_qty(request_item),
+        request_display_qty(item_request),
         c.quantity,
         dollar_value(c.item.value_in_cents),
         dollar_value(c.value_per_line_item),
         c.package_count]
     end
 
-    data += requested_not_received.sort_by(&:name).map do |request_item|
-      [request_item.item.name,
-        request_display_qty(request_item),
+    data += requested_not_received.sort_by(&:name).map do |item_request|
+      [item_request.item.name,
+        request_display_qty(item_request),
         "",
-        dollar_value(request_item.item.value_in_cents),
+        dollar_value(item_request.item.value_in_cents),
         nil,
         nil]
     end
 
     data + [["", "", "", "", ""],
       ["Total Items Received",
-        request_items.map(&:quantity).sum,
+        item_requests.sum { |ir| ir.quantity.to_i },
         @distribution.line_items.total,
         "",
         dollar_value(@distribution.value_per_itemizable),
@@ -285,11 +283,11 @@ class DistributionPdf
     draw_text "(Signature and Date)", at: [right_start, cursor]
   end
 
-  def request_display_qty(request_item)
-    if Flipper.enabled?(:enable_packs) && request_item&.unit
-      "#{request_item.quantity} #{request_item.unit.pluralize(request_item.quantity)}"
+  def request_display_qty(item_request)
+    if Flipper.enabled?(:enable_packs) && item_request&.request_unit
+      "#{item_request.quantity} #{item_request.request_unit.pluralize(item_request.quantity.to_i)}"
     else
-      request_item&.quantity || ""
+      item_request&.quantity || ""
     end
   end
 end
