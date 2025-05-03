@@ -31,9 +31,14 @@ FactoryBot.define do
     end
 
     factory :product_drive_donation do
-      product_drive
+      product_drive { build(:product_drive) }
       product_drive_participant
       source { Donation::SOURCES[:product_drive] }
+
+      after(:build) do |donation|
+        donation.product_drive.start_date = donation.issued_at
+        donation.product_drive.end_date = donation.issued_at
+      end
     end
 
     factory :donation_site_donation do
