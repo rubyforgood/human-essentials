@@ -42,8 +42,7 @@ The high level sections of the partner profile are:
 - Sources of Funding
 - Area Served (County/Client Share %)
 - Population Served
-- Executive Director
-- Primary Contact
+- Contacts
 - Pick up Person
 - Race/Ethnicity of Client Base
 - Agency Distribution Information
@@ -165,7 +164,7 @@ There is no check on whether the numbers add up to 100 -- because there may be o
 - % Greater than 2 times FPL
 - % Poverty Unknown
 
-### Executive Director
+### Contacts  
 ![screenshot of expanded executive director section](images/partners/partners_profile_edit_executive.png)
 ![NOTE] This section currently contains both Executive Director and Primary Contact for the partner.  We have splitting them up in our queue.
 Contact information for the head of the agency:
