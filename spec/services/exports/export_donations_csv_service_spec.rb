@@ -1,111 +1,48 @@
 RSpec.describe Exports::ExportDonationsCSVService do
-  describe '#generate_csv_data' do
+  describe '#generate_csv' do
     let(:organization) { create(:organization) }
     let(:storage_location) { create(:storage_location, organization: organization) }
 
-    subject { described_class.new(donation_ids: donation_ids, organization: organization).generate_csv_data }
+    subject { described_class.new(donation_ids: donation_ids, organization: organization).generate_csv }
     let(:donation_ids) { donations.map(&:id) }
     let(:duplicate_item) { create(:item, name: "Dupe Item", value_in_cents: 300, organization: organization) }
 
-    let(:product_drive) { create(:product_drive, name: "product drive 1", organization: organization) }
-    let(:manufacturer) { create(:manufacturer, name: "manufacturer 2", organization: organization) }
-    let(:donation_site) { create(:donation_site, name: "site 3") }
-
-    let(:expected_donations) {
+    let(:donation_items_and_quantities) {
       [
         {
-          parameters: {
-            issued_at: "2025-01-01",
-            source: Donation::SOURCES[:product_drive],
-            product_drive: product_drive,
-            comment: "comment 1"
-          },
-          details: product_drive.name,
-          line_items: [
-            {
-              item: duplicate_item,
-              quantity: 5
-            },
-            {
-              item: create(:item, name: "A Item", value_in_cents: 1000, organization: organization),
-              quantity: 7
-            },
-            {
-              item: duplicate_item,
-              quantity: 3
-            }
-          ],
-          variety: 2,
-          quantity: 15,
-          total_value: Money.new(9400).to_f
+          source: :product_drive_donation,
+          items: [
+            [duplicate_item, 5],
+            [create(:item, name: "A Item", value_in_cents: 1000, organization: organization), 7],
+            [duplicate_item, 3]
+          ]
         },
         {
-          parameters: {
-            issued_at: "2025-02-02",
-            source: Donation::SOURCES[:manufacturer],
-            manufacturer: manufacturer,
-            comment: "comment 2"
-          },
-          details: manufacturer.name,
-          line_items: [
-            {
-              item: create(:item, name: "B Item", value_in_cents: 2000, organization: organization),
-              quantity: 1
-            }
-          ],
-          variety: 1,
-          quantity: 1,
-          total_value: Money.new(2000).to_f
+          source: :manufacturer_donation,
+          items: [[create(:item, name: "B Item", value_in_cents: 2000, organization: organization), 1]]
         },
         {
-          parameters: {
-            issued_at: "2025-03-03",
-            source: Donation::SOURCES[:donation_site],
-            donation_site: donation_site,
-            comment: "comment 3"
-          },
-          details: donation_site.name,
-          line_items: [
-            {
-              item: create(:item, name: "C Item", value_in_cents: 3000, organization: organization),
-              quantity: 2
-            }
-          ],
-          variety: 1,
-          quantity: 2,
-          total_value: Money.new(6000).to_f
+          source: :donation_site_donation,
+          items: [[create(:item, name: "C Item", value_in_cents: 3000, organization: organization), 2]]
         },
         {
-          parameters: {
-            issued_at: "2025-04-04",
-            source: Donation::SOURCES[:misc],
-            comment: "comment 4"
-          },
-          details: "comment 4",
-          line_items: [
-            {
-              item: create(:item, name: "E Item", value_in_cents: 4000, organization: organization),
-              quantity: 3
-            }
-          ],
-          variety: 1,
-          quantity: 3,
-          total_value: Money.new(12000).to_f
+          source: :donation,
+          items: [[create(:item, name: "E Item", value_in_cents: 4000, organization: organization), 3]]
         }
       ]
     }
 
     let(:donations) do
-      expected_donations.each_with_index.map do |expected_don, i|
+      donation_items_and_quantities.each_with_index.map do |items_quantities, i|
         donation = create(
-          :donation,
+          items_quantities[:source],
           storage_location: storage_location,
           organization: organization,
-          **expected_don[:parameters]
+          issued_at: "2025-01-01"
         )
 
-        expected_don[:line_items].each do |line_item|
-          donation.line_items << create(:line_item, quantity: line_item[:quantity], item: line_item[:item])
+        items_quantities[:items].each do |line_item|
+          donation.line_items << create(:line_item, item: line_item[0], quantity: line_item[1])
         end
 
         donation
@@ -125,59 +62,27 @@ RSpec.describe Exports::ExportDonationsCSVService do
       ] + expected_item_headers
     end
 
-    let(:expected_items) do
-      # A Item|A Item In-Kind Value|B Item|...In-Kind Value|C Item 2|... In-Kind Value|Dupe Item|... In-Kind Value|E Item|...In-Kind Value
-      [
-        [
-          {quantity: 7, value: Money.new(7000), item_id: 2},
-          {quantity: 0, value: Money.new(0), item_id: nil},
-          {quantity: 0, value: Money.new(0), item_id: nil},
-          {quantity: 8, value: Money.new(2400), item_id: 1},
-          {quantity: 0, value: Money.new(0), item_id: nil}
-        ],
-        [
-          {quantity: 0, value: Money.new(0), item_id: nil},
-          {quantity: 1, value: Money.new(2000), item_id: 3},
-          {quantity: 0, value: Money.new(0), item_id: nil},
-          {quantity: 0, value: Money.new(0), item_id: nil},
-          {quantity: 0, value: Money.new(0), item_id: nil}
-        ],
-        [
-          {quantity: 0, value: Money.new(0), item_id: nil},
-          {quantity: 0, value: Money.new(0), item_id: nil},
-          {quantity: 2, value: Money.new(6000), item_id: 4},
-          {quantity: 0, value: Money.new(0), item_id: nil},
-          {quantity: 0, value: Money.new(0), item_id: nil}
-        ],
-        [
-          {quantity: 0, value: Money.new(0), item_id: nil},
-          {quantity: 0, value: Money.new(0), item_id: nil},
-          {quantity: 0, value: Money.new(0), item_id: nil},
-          {quantity: 0, value: Money.new(0), item_id: nil},
-          {quantity: 3, value: Money.new(12000), item_id: 5}
-        ]
-      ]
-    end
-
     let(:expected_item_headers) { ["A Item", "B Item", "C Item", "Dupe Item", "E Item"] }
+
+    def source_name(donation)
+      if !donation.product_drive.nil?
+        donation.product_drive.name
+      elsif !donation.manufacturer.nil?
+        donation.manufacturer.name
+      elsif !donation.donation_site.nil?
+        donation.donation_site.name
+      end
+    end
 
     context 'while "Include in-kind value in donation and distribution exports?" is set to no' do
       it 'should match the expected content without in-kind value of each item for the csv' do
-        csv = [expected_headers]
-        expected_donations.zip(expected_items).each_with_index do |(expected_don, expected_item), idx|
-          csv.append([
-            expected_don[:parameters][:source],
-            expected_don[:parameters][:issued_at],
-            expected_don[:details],
-            storage_location.name,
-            expected_don[:quantity],
-            expected_don[:variety],
-            expected_don[:total_value],
-            expected_don[:parameters][:comment],
-            *expected_item.map { |item| item[:quantity] }
-          ])
-        end
-
+        csv = <<~CSV
+          #{expected_headers.join(",")}
+          Product Drive,2025-01-01,#{source_name(donations[0])},#{storage_location.name},15,2,94.0,It's a fine day for diapers.,7,0,0,8,0
+          Manufacturer,2025-01-01,#{source_name(donations[1])},#{storage_location.name},1,1,20.0,It's a fine day for diapers.,0,1,0,0,0
+          Donation Site,2025-01-01,#{source_name(donations[2])},#{storage_location.name},2,1,60.0,It's a fine day for diapers.,0,0,2,0,0
+          Misc. Donation,2025-01-01,It's a fine day for...,#{storage_location.name},3,1,120.0,It's a fine day for diapers.,0,0,0,0,3
+        CSV
         expect(subject).to eq(csv)
       end
     end
@@ -192,22 +97,17 @@ RSpec.describe Exports::ExportDonationsCSVService do
           "E Item", "E Item In-Kind Value"
         ]
       end
+
       it 'should match the expected content with in-kind value of each item for the csv' do
         allow(organization).to receive(:include_in_kind_values_in_exported_files).and_return(true)
-        csv = [expected_headers]
-        expected_donations.zip(expected_items).each_with_index do |(expected_don, expected_item), idx|
-          csv.append([
-            expected_don[:parameters][:source],
-            expected_don[:parameters][:issued_at],
-            expected_don[:details],
-            storage_location.name,
-            expected_don[:quantity],
-            expected_don[:variety],
-            expected_don[:total_value],
-            expected_don[:parameters][:comment],
-            *expected_item.flat_map { |item| [item[:quantity], item[:value]] }
-          ])
-        end
+
+        csv = <<~CSV
+          #{expected_headers.join(",")}
+          Product Drive,2025-01-01,#{source_name(donations[0])},#{storage_location.name},15,2,94.0,It's a fine day for diapers.,7,70.00,0,0.00,0,0.00,8,24.00,0,0.00
+          Manufacturer,2025-01-01,#{source_name(donations[1])},#{storage_location.name},1,1,20.0,It's a fine day for diapers.,0,0.00,1,20.00,0,0.00,0,0.00,0,0.00
+          Donation Site,2025-01-01,#{source_name(donations[2])},#{storage_location.name},2,1,60.0,It's a fine day for diapers.,0,0.00,0,0.00,2,60.00,0,0.00,0,0.00
+          Misc. Donation,2025-01-01,It's a fine day for...,#{storage_location.name},3,1,120.0,It's a fine day for diapers.,0,0.00,0,0.00,0,0.00,0,0.00,3,120.00
+        CSV
 
         expect(subject).to eq(csv)
       end
