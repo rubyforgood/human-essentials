@@ -44,6 +44,9 @@ class Organization < ApplicationRecord
 
   include Deadlinable
 
+  # TODO: remove once migration "20250504183911_remove_short_name_from_organizations" has run in production
+  self.ignored_columns += ["short_name"]
+
   validates :name, presence: true
   validates :url, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "it should look like 'http://www.example.com'" }, allow_blank: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
