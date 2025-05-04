@@ -30,7 +30,7 @@ class ApplicationController < ActionController::Base
     elsif current_role.resource.is_a?(Organization)
       current_role.resource
     else
-      Organization.find_by(short_name: params[:organization_name])
+      Organization.find_by(id: params[:organization_id])
     end
   end
   helper_method :current_organization

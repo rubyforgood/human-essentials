@@ -148,11 +148,6 @@ class Organization < ApplicationRecord
     self
   end
 
-  # NOTE: when finding Organizations, use Organization.find_by(short_name: params[:organization_name])
-  def to_param
-    short_name
-  end
-
   def ordered_requests
     requests.order(status: :asc, updated_at: :desc)
   end
