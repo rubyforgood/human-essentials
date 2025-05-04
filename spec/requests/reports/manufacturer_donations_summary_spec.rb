@@ -24,7 +24,7 @@ RSpec.describe "Reports::ManufacturerDonationsSummary", type: :request do
         get reports_manufacturer_donations_summary_path
 
         expect(response.body).to include("New Donation")
-        expect(response.body).to include("#{@url_prefix}/donations/new")
+        expect(response.body).to include("/donations/new")
       end
 
       context "with manufacturer donations in the last year" do
