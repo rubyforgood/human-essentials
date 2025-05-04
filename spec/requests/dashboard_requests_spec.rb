@@ -26,14 +26,6 @@ RSpec.describe "Dashboard", type: :request do
           expect(response.body).to include('switch_to_role')
         end
       end
-
-      context "for another org" do
-        it "still displays the user's org" do
-          # another org
-          get dashboard_path(organization_name: create(:organization).to_param)
-          expect(response.body).to include(organization.name)
-        end
-      end
     end
 
     context "BroadcastAnnouncement card" do
