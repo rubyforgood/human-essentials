@@ -1,7 +1,6 @@
 RSpec.describe "Layout", type: :system do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
-  let!(:url_prefix) { "/#{organization.to_param}" }
 
   describe "Body CSS Data" do
     it "sets the ID to the controller and the class to the action" do

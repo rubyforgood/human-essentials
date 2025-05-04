@@ -24,7 +24,7 @@ RSpec.describe "Reports::DonationsSummary", type: :request do
 
       it "has a link to create a new donation" do
         expect(response.body).to include("New Donation")
-        expect(response.body).to include("#{@url_prefix}/donations/new")
+        expect(response.body).to include("/donations/new")
       end
 
       context "with filters" do
