@@ -23,6 +23,7 @@ class DonationsController < ApplicationController
                                      .order(created_at: :desc)
                                      .class_filter(filter_params)
                                      .during(helpers.selected_range)
+    @item_categories = current_organization.item_categories.pluck(:name).uniq
     @paginated_donations = @donations.page(params[:page])
 
     @product_drives = current_organization.product_drives.alphabetized
@@ -39,6 +40,7 @@ class DonationsController < ApplicationController
     @selected_storage_location = filter_params[:at_storage_location]
     @sources = @donations.collect(&:source).uniq.sort
     @selected_source = filter_params[:by_source]
+    @selected_item_category = filter_params[:by_category]
     @donation_sites = @donations.collect(&:donation_site).compact.uniq.sort_by { |site| site.name.downcase }
     @selected_donation_site = filter_params[:from_donation_site]
     @selected_product_drive = filter_params[:by_product_drive]
@@ -155,7 +157,7 @@ class DonationsController < ApplicationController
     def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).permit(:at_storage_location, :by_source, :from_donation_site, :by_product_drive, :by_product_drive_participant, :from_manufacturer)
+    params.require(:filters).permit(:at_storage_location, :by_source, :from_donation_site, :by_product_drive, :by_product_drive_participant, :from_manufacturer, :by_category)
   end
 
   # Omits donation_site_id or product_drive_participant_id if those aren't selected as source
