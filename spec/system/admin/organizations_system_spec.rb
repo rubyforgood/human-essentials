@@ -122,7 +122,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
 
       expect(page).to have_content("All Human Essentials Organizations")
 
-      within("tr.#{org_params[:short_name]}") do
+      within(find("td", text: org_params[:name]).sibling(".text-right")) do
         first(:link, "View").click
       end
 
@@ -140,7 +140,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
     it "can view organization details", :aggregate_failures do
       visit admin_organizations_path
 
-      within("tr.#{bar_org.short_name}") do
+      within(find("td", text: bar_org.name).sibling(".text-right")) do
         first(:link, "View").click
       end
 
