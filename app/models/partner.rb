@@ -54,6 +54,8 @@ class Partner < ApplicationRecord
 
   validate :correct_document_mime_type
 
+  validate :default_storage_location_belongs_to_organization
+
   before_save { email&.downcase! }
   before_update :invite_new_partner, if: :should_invite_because_email_changed?
 
@@ -155,6 +157,13 @@ class Partner < ApplicationRecord
 
   def family_zipcodes_list
     families.pluck(:guardian_zip_code).uniq
+  end
+
+  def default_storage_location_belongs_to_organization
+    location_ids = organization&.storage_locations&.pluck(:id)
+    unless location_ids&.include?(default_storage_location_id) || default_storage_location_id.nil?
+      errors.add(:default_storage_location_id, "The default storage location is not a storage location for this partner's organization")
+    end
   end
 
   def correct_document_mime_type

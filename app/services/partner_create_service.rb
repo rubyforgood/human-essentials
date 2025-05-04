@@ -9,6 +9,12 @@ class PartnerCreateService
   end
 
   def call
+    if partner_attrs["default_storage_location"]
+      default_storage_location_name = partner_attrs["default_storage_location"].titlecase
+      default_storage_location_id = StorageLocation.find_by(name: default_storage_location_name)&.id
+      partner_attrs.delete("default_storage_location")
+      partner_attrs["default_storage_location_id"] = default_storage_location_id
+    end
     @partner = organization.partners.build(partner_attrs)
 
     if @partner.valid?
