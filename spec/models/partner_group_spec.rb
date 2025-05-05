@@ -28,16 +28,11 @@ RSpec.describe PartnerGroup, type: :model do
       end
     end
 
+    # While the deadlinable concern does it's own validation of the deadline_day field and there is the
+    # deadlinable_spec.rb for that, this constraint is defined in the db schema. 
     describe 'deadline_day > 28' do
       it 'raises error if unmet' do
         expect { partner_group.update_column(:deadline_day, 29) }.to raise_error(ActiveRecord::StatementInvalid)
-      end
-    end
-
-    describe 'reminder_schedule day > 28 and <=0' do
-      it 'raises error if unmet' do
-        expect { partner_group.update!(by_month_or_week: 'day_of_month', day_of_month: 29) }.to raise_error(ActiveRecord::RecordInvalid)
-        expect { partner_group.update!(by_month_or_week: 'day_of_month', day_of_month: -5) }.to raise_error(ActiveRecord::RecordInvalid)
       end
     end
   end

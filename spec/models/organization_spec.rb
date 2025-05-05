@@ -379,23 +379,6 @@ RSpec.describe Organization, type: :model do
     end
   end
 
-  describe 'reminder_schedule' do
-    it "cannot exceed 28 if by_month_or_week is day_of_month" do
-      expect(build(:organization, by_month_or_week: 'day_of_month', day_of_month: 28)).to be_valid
-      expect(build(:organization, by_month_or_week: 'day_of_month', day_of_month: 29)).to_not be_valid
-      expect(build(:organization, by_month_or_week: 'day_of_month', day_of_month: 0)).to_not be_valid
-      expect(build(:organization, by_month_or_week: 'day_of_month', day_of_month: -5)).to_not be_valid
-    end
-  end
-  describe 'deadline_day' do
-    it "can only contain numbers 1-28" do
-      expect(build(:organization, deadline_day: 28)).to be_valid
-      expect(build(:organization, deadline_day: 0)).to_not be_valid
-      expect(build(:organization, deadline_day: -5)).to_not be_valid
-      expect(build(:organization, deadline_day: 29)).to_not be_valid
-    end
-  end
-
   describe 'earliest reporting year' do
     # re 2813 update annual report -- allowing an earliest reporting year will let us do system testing and staging for annual reports
     it 'is the organization created year if no associated data' do
