@@ -409,6 +409,20 @@ RSpec.describe Item, type: :model do
     end
   end
 
+  describe "when distribution_quantity is set by default" do
+    it "should set distribution_quantity to 50 for regular items" do
+      item = Item.new
+      expect(item.distribution_quantity).to eq(50)
+    end
+
+    it "should set distribution_quantity to 1 for kits" do
+      organization = create(:organization)
+      kit = create(:kit, organization: organization)
+      item = Item.new(kit: kit)
+      expect(item.distribution_quantity).to eq(1)
+    end
+  end
+
   describe "distribution_quantity and package size" do
     it "have nil values if an empty string is passed" do
       expect(create(:item, distribution_quantity: '').distribution_quantity).to be_nil
