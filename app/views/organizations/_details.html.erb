@@ -187,7 +187,7 @@
               <h6 class="font-weight-bold">Default deadline day (final day of month to submit Requests)</h6>
               <p>
                 <%= fa_icon "calendar" %>
-                <%= @organization.deadline_day.blank? ? 'Not defined' : "The #{@organization.deadline_day.ordinalize} of each month" %>
+                <%= @organization.deadline_day.blank? ? 'Not defined' : "The #{@organization.deadline_day.ordinalize} after the reminder." %>
               </p>
             </div>
             <div>
