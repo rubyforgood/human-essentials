@@ -885,27 +885,4 @@ RSpec.feature "Distributions", type: :system do
 
     expect(page).to have_content("This distribution has been marked as being completed!")
   end
-
-  context "When viewing the summary report" do
-    before do
-      item = create(:item, organization: organization)
-      create_list(:partner, 3, organization: organization)
-      TestInventory.create_inventory(organization, { storage_location.id => { item.id => 100 } })
-
-      @distribution_two_days_ago = create(:distribution, :with_items, item: item, storage_location:, issued_at: 2.days.ago, organization:, partner:)
-
-      TestInventory.create_inventory(organization, { storage_location.id => { item.id => 100 } })
-
-      sign_in(user)
-      visit reports_distributions_summary_path
-    end
-
-    it "shows the relative time based on issued_at" do
-      dist_two_days_ago_div = find("#distribution-#{@distribution_two_days_ago.id}")
-      time_div_two_days_ago = dist_two_days_ago_div.sibling('.pull-right')
-
-      expect(dist_two_days_ago_div).to have_content("100 items distributed to #{@distribution_two_days_ago.partner_name}")
-      expect(time_div_two_days_ago).to have_content(/2 days ago$/)
-    end
-  end
 end

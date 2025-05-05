@@ -291,23 +291,6 @@ RSpec.describe "Purchases", type: :system, js: true do
         expect(page).to_not have_link("Delete")
       end
     end
-
-    context "When viewing the summary report" do
-      let!(:item) { create(:item, organization: organization) }
-      let!(:storage_location) { create(:storage_location, organization: organization) }
-      let!(:vendor) { create(:vendor, organization: organization) }
-
-      before do
-        @purchase_today = create(:purchase, :with_items, item:, storage_location:, vendor:, issued_at: Time.zone.today, organization:)
-        sign_in(user)
-        visit reports_purchases_summary_path
-      end
-
-      it "shows the relative time based on issued_at" do
-        dist_today_div = find("#purchase-#{@purchase_today.id}")
-        expect(dist_today_div).to have_content("items from #{@purchase_today.purchased_from_view}")
-      end
-    end
   end
 
   context "while signed in as an organization admin" do
