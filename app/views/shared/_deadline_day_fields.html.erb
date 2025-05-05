@@ -15,13 +15,13 @@
     'day_of_month',
     label: 'Day of Month',
     data: { 'deadline-day-target': 'byDayOfMonth', 'action': 'deadline-day#monthOrWeekChanged deadline-day#sourceChange' } %>
-  <%= f.label :by_month_or_week, 'Day of Month' %>
+  <%= f.label :by_month_or_week_day_of_month, 'Day of Month' %>
   <br>
   <%= f.radio_button :by_month_or_week,
     'day_of_week',
     label: 'Day of the Week',
     data: { 'deadline-day-target': 'byDayOfWeek', 'action': 'deadline-day#monthOrWeekChanged deadline-day#sourceChange' } %>
-  <%= f.label :by_month_or_week, 'Day of the Week' %>
+  <%= f.label :by_month_or_week_day_of_week, 'Day of the Week' %>
 
   <div data-deadline-day-target="dayOfMonthFields">
     <%= f.input :day_of_month, as: :integer, wrapper: :input_group, label: 'Reminder date' do %>
