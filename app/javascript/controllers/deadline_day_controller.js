@@ -49,14 +49,28 @@ export default class extends Controller {
       deadline_date.setDate(parseInt(this.deadlineDayTarget.value))
     }
 
-    if (this.byDayOfMonthTarget.checked && this.dayOfMonthTarget.value && this.deadlineDayTarget.value && this.dayOfMonthTarget.value === this.deadlineDayTarget.value) {
+    if (this.byDayOfMonthTarget.checked && this.dayOfMonthTarget.value
+        && this.deadlineDayTarget.value && this.dayOfMonthTarget.value === this.deadlineDayTarget.value) {
       $(this.reminderTextTarget).removeClass('text-muted').addClass('text-danger');
       $(this.reminderTextTarget).text('Reminder day cannot be the same as deadline day.');
       $(this.deadlineTextTarget).text("");
     } else {
-      $(this.reminderTextTarget).removeClass('text-danger').addClass('text-muted');
-      $(this.reminderTextTarget).text(reminder_date ? `Your next reminder will be sent on ${reminder_date.toDateString()}.` : "");
-      $(this.deadlineTextTarget).text(deadline_date ? `Your next deadline will be on ${deadline_date.toDateString()}.` : "");
+      let dayOfMonth = parseInt(this.dayOfMonthTarget.value);
+      let deadlineDay = parseInt(this.deadlineDayTarget.value);
+      if (dayOfMonth < 1 || dayOfMonth > 28){
+        $(this.reminderTextTarget).removeClass('text-muted').addClass('text-danger');
+        $(this.reminderTextTarget).text("Reminder day must be between 1 and 28");
+      } else {
+        $(this.reminderTextTarget).removeClass('text-danger').addClass('text-muted');
+        $(this.reminderTextTarget).text(reminder_date ? `Your next reminder will be sent on ${reminder_date.toDateString()}.` : "");
+      }
+      if (deadlineDay < 1 || deadlineDay > 28){
+        $(this.deadlineTextTarget).removeClass('text-muted').addClass('text-danger');
+        $(this.deadlineTextTarget).text("Deadline day must be between 1 and 28");
+      } else {
+        $(this.deadlineTextTarget).removeClass('text-danger').addClass('text-muted');
+        $(this.deadlineTextTarget).text(deadline_date ? `Your next deadline will be on ${deadline_date.toDateString()}.` : "");
+      }
     }
   }
 
