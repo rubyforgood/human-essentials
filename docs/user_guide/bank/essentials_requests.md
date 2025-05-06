@@ -139,7 +139,14 @@ This will create a .csv file with the following information for each filtered Re
     Note: If you use custom units, there will be a column for each item/unit that is available to be requested.
 
 ## Printing Request picklists
-Coming soon
+You can print out a "picklist" for any Request you can see. This function produces a pdf showing all items requested for the selected Request. 
+
+This is visible on the Request detail page:
+![Print Picklist](images/essentials/requests/essentials_requests_print_picklist_navigation.png)
+
+
+And also visible on the Request list page:
+![Print Picklist](images/essentials/requests/essentials_requests_print_picklist_navigation2.png)
 
 ## Printing unfulfilled Request picklists
 
