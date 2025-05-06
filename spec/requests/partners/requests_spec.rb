@@ -431,6 +431,112 @@ RSpec.describe "/partners/requests", type: :request do
     end
   end
 
+  describe "GET #print_unfulfilled" do
+    let(:item1) { create(:item, name: "Good item") }
+    let(:item2) { create(:item, name: "Crap item") }
+    let(:partner1) { create(:partner, organization: organization) }
+    let(:partner_user) { partner1.primary_user }
+    let!(:pending_request) { create(:request, :with_item_requests, :pending, partner: partner1, request_items: [{ item_id: item1.id, quantity: '100' }]) }
+    let!(:started_request) { create(:request, :with_item_requests, :started, partner: partner1, request_items: [{ item_id: item2.id, quantity: '50' }]) }
+    let!(:discarded_request) { create(:request, :with_item_requests, :discarded, partner: partner1, request_items: [{ item_id: item2.id, quantity: '30' }]) }
+    let!(:fulfilled_request) { create(:request, :with_item_requests, :fulfilled, partner: partner1, request_items: [{ item_id: item2.id, quantity: '20' }]) }
+
+    before do
+      partner_user.add_role(Role::ORG_ADMIN, organization)
+      sign_in(partner_user)
+      get print_unfulfilled_requests_path(format: :pdf)
+    end
+
+    it "returns a PDF file" do
+      PDF::Reader.new(StringIO.new(response.body))
+      expect(response.content_type).to eq('application/pdf')
+      expect(response.headers['Content-Disposition']).to include('inline')
+      expect(response.body.bytes[0..3]).to eq('%PDF'.bytes)
+    end
+
+    it "includes only 'pending' and 'started' requests" do
+      pdf_content = PDF::Reader.new(StringIO.new(response.body))
+      # this is a semi-lazy check, since we're ensuring 1 page for each request. In real world,
+      # it's possible that there could be more than 1 page per request if the request is long.
+
+      expect(pdf_content.page_count).to eq(2)
+    end
+
+    it "calls compute_and_render with the 2 matching requests" do
+      # Create a double for the PDF instance
+      pdf_double = double("PicklistsPdf")
+
+      # Expect PicklistsPdf.new to be called with correct args and return our double
+      expect(PicklistsPdf).to receive(:new)
+        .with(organization, kind_of(ActiveRecord::Relation))
+        .and_return(pdf_double)
+
+      # Expect compute_and_render to be called on our double and return some PDF data
+      # We don't really care about the content, the PDF model is tested elsewhere
+      expect(pdf_double).to receive(:compute_and_render)
+        .and_return("fake pdf content")
+
+      # Make the request
+      get print_unfulfilled_requests_path(format: :pdf)
+
+      # Verify the response
+      expect(response).to be_successful
+      expect(response.content_type).to eq("application/pdf")
+      expect(response.headers["Content-Disposition"]).to include("inline")
+      expect(response.body).to eq("fake pdf content")
+    end
+  end
+
+  describe "GET #print_picklist" do
+    let(:organization) { create(:organization) }
+    let(:partner) { create(:partner, organization: organization) }
+    let(:partner_user) { partner.primary_user }
+    let(:org_admin) { create(:organization_admin, organization: organization) }
+    let(:request) { create(:request, :with_item_requests, organization: organization, partner: partner, partner_user: org_admin) }
+
+    before do
+      sign_in(org_admin)
+    end
+
+    it "generates a PDF for a single request" do
+      # Create a double for the PDF instance
+      pdf_double = double("PicklistsPdf")
+
+      # Expect PicklistsPdf.new to be called with correct args and return our double
+      expect(PicklistsPdf).to receive(:new)
+        .with(organization, [request])
+        .and_return(pdf_double)
+
+      # Expect compute_and_render to be called on our double and return some PDF data
+      expect(pdf_double).to receive(:compute_and_render)
+        .and_return("fake pdf content")
+
+      # Make the request
+      get print_picklist_request_path(request, format: :pdf)
+
+      # Verify the response
+      expect(response).to be_successful
+      expect(response.content_type).to eq("application/pdf")
+      expect(response.headers["Content-Disposition"]).to include("inline")
+      expect(response.headers["Content-Disposition"]).to include("Picklists_")
+      expect(response.body).to eq("fake pdf content")
+    end
+
+    it "includes correct associations in the query" do
+      pdf_double = double("PicklistsPdf", compute_and_render: "pdf content")
+
+      expect(PicklistsPdf).to receive(:new) do |org, requests|
+        # Verify the request includes the necessary associations
+        expect(requests.first.association(:item_requests)).to be_loaded
+        expect(requests.first.association(:partner)).to be_loaded
+        expect(requests.first.partner.association(:profile)).to be_loaded
+        pdf_double
+      end
+
+      get print_picklist_request_path(request, format: :pdf)
+    end
+  end
+
   describe 'POST #validate' do
     it 'should handle missing CSRF gracefully' do
       sign_in(partner_user)
