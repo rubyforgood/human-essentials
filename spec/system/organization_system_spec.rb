@@ -70,6 +70,8 @@ RSpec.describe "Organization management", type: :system, js: true do
     end
 
     describe "Editing the organization" do
+      let(:partner) { create(:partner, organization: organization) }
+
       before do
         visit edit_organization_path
       end
@@ -84,11 +86,15 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page.find(".alert")).to have_content "Updated"
       end
 
+      def reload_record()
+        organization.reload
+      end
+
       def post_form_submit()
          expect(page.find(".alert")).to have_content "Updated your organization!"
       end
 
-      it_behaves_like "deadline and reminder form", "organization", "Save", :post_form_submit
+      it_behaves_like "deadline and reminder form", "organization", "Save", :reload_record, :post_form_submit
 
       it 'can select if the org repackages essentials' do
         choose('organization[repackage_essentials]', option: true)

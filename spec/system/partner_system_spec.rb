@@ -671,6 +671,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
         describe "editing a custom reminder schedule" do
           before do
+            partner.update!(partner_group: existing_partner_group)
             visit partners_path
 
             click_on 'Groups'
@@ -681,8 +682,11 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
             check 'Yes'
           end
 
-          it_behaves_like "deadline and reminder form", "partner_group", "Update Partner Group"
-          
+          def reload_record()
+            existing_partner_group.reload
+          end
+
+          it_behaves_like "deadline and reminder form", "partner_group", "Update Partner Group", :reload_record
         end
       end
     end

@@ -1,4 +1,4 @@
-RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_button, post_form_submit|
+RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_button, reload_record, post_form_submit|
 
   it "can set a reminder on a day of the month" do
     choose "Day of Month"
@@ -143,4 +143,32 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
       end
     end
   end
+
+  it "the deadline day form's reminder and deadline dates are consistent with the dates calculated by the FetchPartnersToRemindNowService and DeadlineService" do
+    choose "Day of Month" 
+    select("Every 2 month", from: "How frequently should reminders be sent (e.g. \"monthly\", \"every 3 months\", etc.)?")
+    fill_in "#{form_prefix}_day_of_month", with: 14
+    fill_in "Default deadline day (final day of month to submit Requests)", with: 21
+
+    reminder_text = find('small[data-deadline-day-target="reminderText"]').text
+    reminder_text.slice!("Your next reminder will be sent on ")
+    reminder_text.slice!(".")
+    shown_recurrence_date = Time.zone.strptime(reminder_text, "%a %b %d %Y")
+
+    deadline_text = find('small[data-deadline-day-target="deadlineText"]').text
+    deadline_text.slice!("Your next deadline will be on ")
+    deadline_text.slice!(".")
+    shown_deadline_date = Time.zone.strptime(deadline_text, "%a %b %d %Y")
+
+    click_on save_button
+    send(reload_record)
+
+    expect(Partners::FetchPartnersToRemindNowService.new.fetch()).to_not include(partner)
+
+    travel_to shown_recurrence_date
+
+    expect(Partners::FetchPartnersToRemindNowService.new.fetch()).to include(partner)
+    expect(DeadlineService.new(partner: partner).next_deadline.in_time_zone(Time.zone)).to be_within(1.second).of shown_deadline_date
+  end
+
 end
