@@ -84,29 +84,11 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page.find(".alert")).to have_content "Updated"
       end
 
-      it "can set a reminder on a day of the month" do
-        choose "toggle-to-date"
-        fill_in "organization_day_of_month", with: 1
-        click_on "Save"
-        expect(page.find(".alert")).to have_content "Updated your organization!"
-        expect(page).to have_content("Monthly on the 1st day of the month")
+      def post_form_submit()
+         expect(page.find(".alert")).to have_content "Updated your organization!"
       end
 
-      it "can set a reminder on a day of the week" do
-        choose "toggle-to-week-day"
-        select("First", from: "organization_every_nth_day" )
-        select("Sunday", from: "organization_day_of_week" )
-        click_on "Save"
-        expect(page.find(".alert")).to have_content "Updated your organization!"
-        expect(page).to have_content("Monthly on the 1st Sunday")
-      end
-
-      it "can set a default deadline day" do
-        fill_in "Default deadline day (final day of month to submit Requests)", with: 20
-        click_on "Save"
-        expect(page.find(".alert")).to have_content "Updated your organization!"
-        expect(page).to have_content("The 20th of each month")
-      end
+      it_behaves_like "deadline and reminder form", "organization", "Save", :post_form_submit
 
       it 'can select if the org repackages essentials' do
         choose('organization[repackage_essentials]', option: true)

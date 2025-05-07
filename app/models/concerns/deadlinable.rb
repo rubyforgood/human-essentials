@@ -7,6 +7,13 @@ module Deadlinable
   EVERY_NTH_MONTH_COLLECTION = [["Monthly", 1], ["Every 2 months", 2], ["Every 3 months", 3], ["Every 4 months", 4], ["Every 5 months", 5],
     ["Every 6 months", 6], ["Every 7 months", 7], ["Every 8 months", 8], ["Every 9 months", 9], ["Every 10 months", 10], ["Every 11 months", 11],
     ["Every 12 months", 12],].freeze
+  NTH_TO_WORD_MAP = {
+    1 => "First",
+    2 => "Second",
+    3 => "Third",
+    4 => "Fourth",
+    -1 => "Last"
+  }.freeze
 
   included do
     attr_accessor :by_month_or_week, :day_of_month, :day_of_week, :every_nth_day, :every_nth_month
