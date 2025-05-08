@@ -12,12 +12,45 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
     it "creates an user" do
       visit admin_users_path
       click_link "Invite a new user"
-      find('#user_organization_id option:last-of-type').select_option
+      find('select#resource_type option:first-of-type').select_option
+      # The resource_id select input has its options generated dynamically by
+      # the double_select_controller using select2 so we need to open the dropdown
+      find("label", text: "Resource").sibling(".input-group").click
+      find('li[role="option"]', text: organization.name).click
       fill_in "user_name", with: "TestUser"
       fill_in "user_email", with: "testuser@example.com"
       click_on "Save"
 
       expect(page.find(".alert")).to have_content "Created a new user!"
+    end
+
+    it "creates a super admin user without specifying a resource" do
+      visit new_admin_user_path
+      find('select#resource_type option', text: "Super admin").select_option
+      fill_in "user_name", with: "TestUser"
+      fill_in "user_email", with: "testuser@example.com"
+      click_on "Save"
+
+      expect(page.find(".alert")).to have_content "Created a new user!"
+    end
+
+    it "complains if resource wasn't specified but was needed for the chosen role" do
+      visit new_admin_user_path
+      find('select#resource_type option', exact_text: "Organization").select_option
+      fill_in "user_name", with: "TestUser"
+      fill_in "user_email", with: "testuser@example.com"
+      click_on "Save"
+
+      expect(page.find(".error")).to have_content "Failed to create user: Please select an associated resource for the role."
+    end
+
+    it "hides the resource dropdown if super admin role is selected" do
+      visit new_admin_user_path
+      expect(page).to have_content("Resource")
+      expect(page).to have_css(".select2")
+      find('select#resource_type option', text: "Super admin").select_option
+      expect(page).to_not have_content("Resource")
+      expect(page).to_not have_css(".select2")
     end
 
     it "edits an existing user" do
