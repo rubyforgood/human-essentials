@@ -94,6 +94,8 @@ class Organization < ApplicationRecord
   end
 
   before_save do
+    # To avoid constantly changing the start date of the reminder_schedule, only update the schedule if something has actually
+    # changed.
     if should_update_reminder_schedule
       self.reminder_schedule = create_schedule
     end
