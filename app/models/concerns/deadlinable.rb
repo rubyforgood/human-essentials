@@ -6,7 +6,7 @@ module Deadlinable
   DAY_OF_WEEK_COLLECTION = [["Sunday", 0], ["Monday", 1], ["Tuesday", 2], ["Wednesday", 3], ["Thursday", 4], ["Friday", 5], ["Saturday", 6]].freeze
   EVERY_NTH_MONTH_COLLECTION = [["Monthly", 1], ["Every 2 months", 2], ["Every 3 months", 3], ["Every 4 months", 4], ["Every 5 months", 5],
     ["Every 6 months", 6], ["Every 7 months", 7], ["Every 8 months", 8], ["Every 9 months", 9], ["Every 10 months", 10], ["Every 11 months", 11],
-    ["Every 12 months", 12],].freeze
+    ["Every 12 months", 12]].freeze
   NTH_TO_WORD_MAP = {
     1 => "First",
     2 => "Second",
@@ -24,7 +24,7 @@ module Deadlinable
     validates :by_month_or_week, inclusion: {in: %w[day_of_month day_of_week]}, if: -> { by_month_or_week.present? }
     validates :day_of_week, if: -> { day_of_week.present? }, inclusion: {in: %w[0 1 2 3 4 5 6]}
     validates :every_nth_day, if: -> { every_nth_day.present? }, inclusion: {in: %w[1 2 3 4 -1]}
-    validates :every_nth_month, if: -> { every_nth_month.present? }, inclusion: {in: EVERY_NTH_MONTH_COLLECTION.map{|ar| ar[1].to_s} }
+    validates :every_nth_month, if: -> { every_nth_month.present? }, inclusion: {in: EVERY_NTH_MONTH_COLLECTION.map { |ar| ar[1].to_s }}
   end
 
   def convert_to_reminder_schedule(day)
@@ -76,14 +76,14 @@ module Deadlinable
     end
     if by_month_or_week == "day_of_month"
       return day_of_month != sched[:day_of_month].presence.to_s ||
-      every_nth_month != sched[:every_nth_month].presence.to_s
+          every_nth_month != sched[:every_nth_month].presence.to_s
     end
     if by_month_or_week == "day_of_week"
       return day_of_week != sched[:day_of_week].presence.to_s ||
-      every_nth_day != sched[:every_nth_day].presence.to_s ||
-      every_nth_month != sched[:every_nth_month].presence.to_s
+          every_nth_day != sched[:every_nth_day].presence.to_s ||
+          every_nth_month != sched[:every_nth_month].presence.to_s
     end
-    return false
+    false
   end
 
   def create_schedule

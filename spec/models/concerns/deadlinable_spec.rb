@@ -22,9 +22,9 @@ RSpec.describe Deadlinable, type: :model do
 
   shared_examples "doesn't validate absent field" do |field_name|
     it "doesn't validate the #{field_name} field when it isn't present" do
-      dummy.public_send("#{field_name}=","")
+      dummy.public_send(:"#{field_name}=", "")
       expect(dummy).to be_valid
-      dummy.public_send("#{field_name}=",nil)
+      dummy.public_send(:"#{field_name}=", nil)
       expect(dummy).to be_valid
     end
   end
@@ -145,7 +145,7 @@ RSpec.describe Deadlinable, type: :model do
   end
 
   it "when reminder_schedule is blank should_update_reminder_schedule returns true if day_of_month is present, false otherwise" do
-    expect(dummy.should_update_reminder_schedule).to be_falsey 
+    expect(dummy.should_update_reminder_schedule).to be_falsey
     dummy.by_month_or_week = "day_of_month"
     expect(dummy.should_update_reminder_schedule).to be_truthy
   end
@@ -159,14 +159,14 @@ RSpec.describe Deadlinable, type: :model do
       dummy.by_month_or_week = "day_of_month"
       dummy.day_of_month = "10"
       dummy.every_nth_month = "1"
-      expect(dummy.should_update_reminder_schedule).to be_falsey 
+      expect(dummy.should_update_reminder_schedule).to be_falsey
     end
 
     it "should_update_reminder_schedule returns true if fields differ" do
       dummy.by_month_or_week = "day_of_month"
       dummy.day_of_month = "15"
       dummy.every_nth_month = "3"
-      expect(dummy.should_update_reminder_schedule).to be_truthy 
+      expect(dummy.should_update_reminder_schedule).to be_truthy
     end
 
     it "should_update_reminder_schedule return true if the by_month_or_week field differs" do
@@ -175,7 +175,7 @@ RSpec.describe Deadlinable, type: :model do
       dummy.day_of_week = "0"
       dummy.every_nth_day = "1"
       dummy.every_nth_month = "1"
-      expect(dummy.should_update_reminder_schedule).to be_truthy 
+      expect(dummy.should_update_reminder_schedule).to be_truthy
     end
   end
 
@@ -225,12 +225,11 @@ RSpec.describe Deadlinable, type: :model do
       dummy.every_nth_day = "1"
       expect(dummy.create_schedule).to eq nil
       dummy.every_nth_day = nil
-      dummy.every_nth_month = "1" 
+      dummy.every_nth_month = "1"
       expect(dummy.create_schedule).to eq nil
       dummy.day_of_week = nil
       dummy.every_nth_day = "1"
       expect(dummy.create_schedule).to eq nil
     end
   end
-
 end

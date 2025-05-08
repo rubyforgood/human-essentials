@@ -86,12 +86,12 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page.find(".alert")).to have_content "Updated"
       end
 
-      def reload_record()
+      def reload_record
         organization.reload
       end
 
-      def post_form_submit()
-         expect(page.find(".alert")).to have_content "Updated your organization!"
+      def post_form_submit
+        expect(page.find(".alert")).to have_content "Updated your organization!"
       end
 
       it_behaves_like "deadline and reminder form", "organization", "Save", :reload_record, :post_form_submit

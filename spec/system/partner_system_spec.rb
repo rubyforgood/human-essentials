@@ -682,7 +682,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
             check 'Yes'
           end
 
-          def reload_record()
+          def reload_record
             existing_partner_group.reload
           end
 

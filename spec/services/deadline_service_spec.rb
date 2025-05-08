@@ -53,7 +53,7 @@ RSpec.describe DeadlineService, type: :service do
       before { organization[:deadline_day] = 20 }
 
       let(:expected_receiver) { partner_group }
-      
+
       include_examples "calculates the next deadline"
     end
   end

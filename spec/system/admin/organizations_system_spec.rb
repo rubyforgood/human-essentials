@@ -44,21 +44,21 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
       let(:partner) { create(:partner, organization: first_org) }
 
       before do
-        visit edit_admin_organization_path({ id: first_org.id })
+        visit edit_admin_organization_path({id: first_org.id})
       end
 
-      def reload_record()
+      def reload_record
         first_org.reload
       end
 
-      def post_form_submit()
+      def post_form_submit
         expect(page.find(".alert")).to have_content "Updated organization!"
         within("tr.#{first_org.short_name}") do
           first(:link, "View").click
         end
       end
 
-      it_behaves_like "deadline and reminder form", "organization", "Save", :reload_record, :post_form_submit    
+      it_behaves_like "deadline and reminder form", "organization", "Save", :reload_record, :post_form_submit
     end
   end
 

@@ -77,7 +77,7 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
             partner_group = create(
               :partner_group,
               by_month_or_week: "day_of_month",
-              day_of_month: (current_day).to_s,
+              day_of_month: current_day.to_s,
               every_nth_month: "1",
               deadline_day: (current_day + 2).to_s
             )
@@ -118,7 +118,7 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
               partner_group = create(
                 :partner_group,
                 by_month_or_week: "day_of_month",
-                day_of_month: (current_day).to_s,
+                day_of_month: current_day.to_s,
                 every_nth_month: "1",
                 deadline_day: (current_day + 2).to_s
               )
@@ -143,7 +143,7 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
               before do
                 partner.update(send_reminders: false)
               end
-  
+
               it "should include that partner" do
                 expect(subject).to include(partner)
               end
