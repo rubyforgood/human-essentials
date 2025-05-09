@@ -15,7 +15,7 @@ Rails.application.routes.draw do
   }
 
   devise_scope :user do
-    get 'users/sign_out', to: 'users/sessions#sign_out', as: :user_sign_out
+    get 'users/sign_out', to: 'users/sessions#sign_out_error_page', as: :user_sign_out
   end
 
   #

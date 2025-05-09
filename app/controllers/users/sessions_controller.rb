@@ -22,7 +22,7 @@ class Users::SessionsController < Devise::SessionsController
   end
 
   # GET /resource/sign_out
-  def sign_out
+  def sign_out_error_page
     sign_out(current_user) if user_signed_in?
     redirect_to root_path, notice: "Signed out successfully"
   end
