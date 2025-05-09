@@ -268,7 +268,6 @@ GEM
       concurrent-ruby (~> 1.1)
       webrick (~> 1.7)
       websocket-driver (~> 0.7)
-    ffi (1.17.2)
     ffi (1.17.2-arm64-darwin)
     ffi (1.17.2-x86_64-darwin)
     ffi (1.17.2-x86_64-linux-gnu)
@@ -381,7 +380,6 @@ GEM
     memory_profiler (1.1.0)
     method_source (1.1.0)
     mini_mime (1.1.5)
-    mini_portile2 (2.8.8)
     minitest (5.25.5)
     monetize (1.12.0)
       money (~> 6.12)
@@ -412,9 +410,6 @@ GEM
       net-protocol
     newrelic_rpm (9.16.0)
     nio4r (2.7.4)
-    nokogiri (1.18.8)
-      mini_portile2 (~> 2.8.2)
-      racc (~> 1.4)
     nokogiri (1.18.8-arm64-darwin)
       racc (~> 1.4)
     nokogiri (1.18.8-x86_64-darwin)
@@ -564,12 +559,6 @@ GEM
     rdoc (6.13.1)
       psych (>= 4.0.0)
     recaptcha (5.19.0)
-    recurring_select (3.0.1)
-      coffee-rails (>= 3.1)
-      ice_cube (>= 0.11)
-      jquery-rails (>= 3.0)
-      rails (>= 5.2)
-      sass-rails (>= 4.0)
     regexp_parser (2.10.0)
     reline (0.6.0)
       io-console (~> 0.5)
@@ -742,7 +731,6 @@ GEM
 
 PLATFORMS
   arm64-darwin
-  ruby
   x86_64-darwin
   x86_64-linux
   x86_64-linux-gnu
@@ -783,8 +771,8 @@ DEPENDENCIES
   geocoder
   guard-rspec
   icalendar
-  importmap-rails (~> 2.1)
   ice_cube
+  importmap-rails (~> 2.1)
   jbuilder
   jwt
   kaminari
@@ -815,7 +803,6 @@ DEPENDENCIES
   rails-controller-testing
   rails-erd
   recaptcha
-  recurring_select
   rolify (~> 6.0)
   rspec-rails (~> 7.1.0)
   rubocop
@@ -839,4 +826,4 @@ DEPENDENCIES
   webmock (~> 3.24)
 
 BUNDLED WITH
-   2.6.6
+   2.6.8
