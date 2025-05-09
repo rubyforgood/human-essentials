@@ -39,6 +39,27 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
       expect(page).not_to have_content("Next ›")
       expect(page).not_to have_content("Last »")
     end
+
+    describe "can edit organization details" do
+      let(:partner) { create(:partner, organization: first_org) }
+
+      before do
+        visit edit_admin_organization_path({id: first_org.id})
+      end
+
+      def reload_record
+        first_org.reload
+      end
+
+      def post_form_submit
+        expect(page.find(".alert")).to have_content "Updated organization!"
+        within("tr.#{first_org.short_name}") do
+          first(:link, "View").click
+        end
+      end
+
+      it_behaves_like "deadline and reminder form", "organization", "Save", :reload_record, :post_form_submit
+    end
   end
 
   context "while logged in as a super admin and there are enough organizations to trigger pagination" do
@@ -117,6 +138,9 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
         fill_in "organization_user_name", with: admin_user_params[:name]
         fill_in "organization_user_email", with: admin_user_params[:email]
 
+        choose 'Day of Month'
+        fill_in "organization_day_of_month", with: 1
+
         click_on "Save"
       end
 
@@ -125,7 +149,6 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
       within("tr.#{org_params[:short_name]}") do
         first(:link, "View").click
       end
-
       expect(page).to have_content(org_params[:name])
       expect(page).to have_content("Remount")
       expect(page).to have_content("Front Royal")

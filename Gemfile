@@ -92,6 +92,8 @@ gem "flipper-ui"
 gem "geocoder"
 # Generate .ics calendars for use with Google Calendar
 gem 'icalendar', require: false
+# Offers functionality for date reocccurances
+gem "ice_cube"
 # JSON Web Token encoding / decoding (e.g. for links in e-mails)
 gem "jwt"
 # Use Newrelic for logs and APM
