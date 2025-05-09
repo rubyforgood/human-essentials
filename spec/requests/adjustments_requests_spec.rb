@@ -122,7 +122,7 @@ RSpec.describe "Adjustments", type: :request do
             get adjustments_path, params: { filters: { date_range: "#{start_date} - #{end_date}" }, format: 'csv' }
 
             csv = <<~CSV
-              Created date,Storage Area,Comment,# of changes,#{item1.name},#{item2.name}
+              Created date,Storage Area,Comment,# of changes,Item One,Item Two
               2019-06-30,Smithsonian Conservation Center,First adjustment,2,10,5
             CSV
 
