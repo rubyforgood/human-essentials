@@ -14,6 +14,10 @@ Rails.application.routes.draw do
     omniauth_callbacks: 'users/omniauth_callbacks'
   }
 
+  devise_scope :user do
+    get 'users/sign_out', to: 'users/sessions#sign_out', as: :user_sign_out
+  end
+
   #
   # Mount web interface to see delayed job status and queue length.
   # Visible only to logged in users with the `super_admin` role
