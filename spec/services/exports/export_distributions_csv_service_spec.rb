@@ -49,29 +49,10 @@ RSpec.describe Exports::ExportDistributionsCSVService do
     let(:item_name) { duplicate_item.name }
     let(:filters) { {by_item_id: item_id} }
 
-    let(:non_item_headers) do
-      [
-        "Partner",
-        "Initial Allocation",
-        "Scheduled for",
-        "Source Inventory",
-        "Total Number of #{item_name}",
-        "Total Value of #{item_name}",
-        "Delivery Method",
-        "Shipping Cost",
-        "Status",
-        "Agency Representative",
-        "Comments"
-      ]
-    end
-
     context 'while "Include in-kind value in donation and distribution exports?" is set to no' do
-      let(:item_headers) { ["A Item", "B Item", "C Item", "Dupe Item", "E Item"] }
-      let(:expected_headers) { non_item_headers + item_headers }
-
       it 'should match the expected content without in-kind value of each item for the csv' do
         csv = <<~CSV
-          #{expected_headers.join(",")}
+          Partner,Initial Allocation,Scheduled for,Source Inventory,Total Number of #{item_name},Total Value of #{item_name},Delivery Method,Shipping Cost,Status,Agency Representative,Comments,A Item,B Item,C Item,Dupe Item,E Item
           #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},8,24.0,shipped,$15.01,scheduled,"",comment 0,7,0,0,8,0
           #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},0,0.0,shipped,$15.01,scheduled,"",comment 1,0,1,0,0,0
           #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},0,0.0,shipped,$15.01,scheduled,"",comment 2,0,0,2,0,0
@@ -82,22 +63,11 @@ RSpec.describe Exports::ExportDistributionsCSVService do
     end
 
     context 'while "Include in-kind value in donation and distribution exports?" is set to yes' do
-      let(:item_headers) {
-        [
-          "A Item", "A Item In-Kind Value",
-          "B Item", "B Item In-Kind Value",
-          "C Item", "C Item In-Kind Value",
-          "Dupe Item", "Dupe Item In-Kind Value",
-          "E Item", "E Item In-Kind Value"
-        ]
-      }
-      let(:expected_headers) { non_item_headers + item_headers }
-
       it 'should match the expected content with in-kind value of each item for the csv' do
         allow(organization).to receive(:include_in_kind_values_in_exported_files).and_return(true)
 
         csv = <<~CSV
-          #{expected_headers.join(",")}
+          Partner,Initial Allocation,Scheduled for,Source Inventory,Total Number of #{item_name},Total Value of #{item_name},Delivery Method,Shipping Cost,Status,Agency Representative,Comments,A Item,A Item In-Kind Value,B Item,B Item In-Kind Value,C Item,C Item In-Kind Value,Dupe Item,Dupe Item In-Kind Value,E Item,E Item In-Kind Value
           #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},8,24.0,shipped,$15.01,scheduled,"",comment 0,7,70.00,0,0.00,0,0.00,8,24.00,0,0.00
           #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},0,0.0,shipped,$15.01,scheduled,"",comment 1,0,0.00,1,20.00,0,0.00,0,0.00,0,0.00
           #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},0,0.0,shipped,$15.01,scheduled,"",comment 2,0,0.00,0,0.00,2,60.00,0,0.00,0,0.00
@@ -108,8 +78,6 @@ RSpec.describe Exports::ExportDistributionsCSVService do
     end
 
     context 'when a new item is added' do
-      let(:item_headers) { ["A Item", "B Item", "C Item", "Dupe Item", "E Item", "New Item"] }
-      let(:expected_headers) { non_item_headers + item_headers }
       let(:new_item_name) { "New Item" }
       let(:original_columns_count) { 15 }
       before do
@@ -121,7 +89,7 @@ RSpec.describe Exports::ExportDistributionsCSVService do
 
       it 'should add it to the end of the row and show up with a 0 quantity if there are none of this item in any distribution' do
         csv = <<~CSV
-          #{expected_headers.join(",")}
+          Partner,Initial Allocation,Scheduled for,Source Inventory,Total Number of #{item_name},Total Value of #{item_name},Delivery Method,Shipping Cost,Status,Agency Representative,Comments,A Item,B Item,C Item,Dupe Item,E Item,New Item
           #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},8,24.0,shipped,$15.01,scheduled,"",comment 0,7,0,0,8,0,0
           #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},0,0.0,shipped,$15.01,scheduled,"",comment 1,0,1,0,0,0,0
           #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},0,0.0,shipped,$15.01,scheduled,"",comment 2,0,0,2,0,0,0
@@ -132,12 +100,10 @@ RSpec.describe Exports::ExportDistributionsCSVService do
     end
 
     context 'when there are no distributions but the report is requested' do
-      let(:item_headers) { ["Dupe Item"] }
-      let(:expected_headers) { non_item_headers + item_headers }
       subject { described_class.new(distributions: [], organization: organization, filters: filters).generate_csv }
       it 'returns a csv with only headers and no rows' do
         csv = <<~CSV
-          #{expected_headers.join(",")}
+          Partner,Initial Allocation,Scheduled for,Source Inventory,Total Number of #{item_name},Total Value of #{item_name},Delivery Method,Shipping Cost,Status,Agency Representative,Comments,Dupe Item
         CSV
         expect(subject).to eq(csv)
       end
