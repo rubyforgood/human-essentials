@@ -208,6 +208,15 @@ column is useful mainly for banks that repackage their essentials into uniform p
 
 ![Distribution printout marked up with customizable sections](images/getting_started/customization/gs_customization_distribution_printout_customizable_sections.png)
 
+## Exports
+
+### Include in-kind value in donation and distribution exports?
+
+You can configure whether the exports for donations and distributions include the "In-Kind Value" column for each item. By default, these values are excluded. To include them, set the "Include in-kind value in donation and distribution exports?" option to "Yes".
+
+Click "My Organization" in the left hand menu. Click "Edit" button. Set the "Include in-kind value in donation and distribution exports?" to "yes", then click "Save".
+
+[!NOTE] Setting this affects both the donation and distribution exports.
 
 ## Annual Survey
 These two fields are only here to be reported on the Annual Survey.
