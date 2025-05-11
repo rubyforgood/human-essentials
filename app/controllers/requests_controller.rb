@@ -30,11 +30,11 @@ class RequestsController < ApplicationController
   def show
     @request = Request.find(params[:id])
     @item_requests = @request.item_requests.includes(:item)
-    
+
     @inventory = View::Inventory.new(@request.organization_id)
     @default_storage_location = @request.partner.default_storage_location_id || @request.organization.default_storage_location
     @location = StorageLocation.find_by(id: @default_storage_location)
-    
+
     @custom_units = Flipper.enabled?(:enable_packs) && @request.item_requests.any? { |item| item.request_unit }
   end
 

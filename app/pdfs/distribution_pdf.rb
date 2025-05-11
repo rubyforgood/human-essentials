@@ -175,7 +175,6 @@ class DistributionPdf
       "Value/item",
       "In-Kind Value Received",
       "Packages"]]
-    inventory = View::Inventory.new(@distribution.organization_id)
     item_requests = @distribution.request.item_requests.includes(:item)
     line_items = @distribution.line_items.sorted
 

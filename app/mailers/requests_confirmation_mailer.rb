@@ -15,5 +15,4 @@ class RequestsConfirmationMailer < ApplicationMailer
     cc.uniq!
     mail(to: requester.email, cc: cc, subject: "#{@organization.name} - Requests Confirmation")
   end
-
 end
