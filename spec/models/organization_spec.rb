@@ -63,11 +63,6 @@ RSpec.describe Organization, type: :model do
       )).to_not be_valid
     end
 
-    it "validates that short names are unique" do
-      expect(create(:organization, short_name: "foo_bar")).to be_valid
-      expect(build(:organization, short_name: "foo_bar")).to_not be_valid
-    end
-
     it "validates that attachment file size is not higher than 1 MB" do
       fixture_path = Rails.root.join('spec', 'fixtures', 'files', 'logo.jpg')
       fixture_file = File.open(fixture_path)
@@ -243,13 +238,6 @@ RSpec.describe Organization, type: :model do
         end.to change { organization.items.size }.by(0)
           .and change { item.partner_key }.to("foo")
       end
-    end
-  end
-
-  describe "#short_name" do
-    it "can only contain valid characters" do
-      expect(build(:organization, short_name: "asdf")).to be_valid
-      expect(build(:organization, short_name: "Not Legal!")).to_not be_valid
     end
   end
 

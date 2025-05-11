@@ -28,9 +28,6 @@ Here's all the fields, with a bit about the implications of each one:
 #### Name
 The name of your Essentials Bank.   This appears in the headings on most screens, and will appear on printouts (such as the distribution printout many banks use as a packing slip), and most reports.
 
-#### Short name
-You don't change this -- we assigned it when we set it up -- it's here for reference for support calls if we need it.
-
 #### NDBN membership ID
 This should be filled in already from your Account Request,but if it isn't, you can select it from the list.   That list is updated on an irregular basis,  so if you are an NDBN member, and you aren't on the list,  let us know and we'll get a fresh list uploaded.
 This is included on the Annual Survey report.  That's the only effect.

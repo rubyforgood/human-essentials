@@ -92,7 +92,7 @@ class OrganizationsController < ApplicationController
     request_type_formatter(params)
 
     params.require(:organization).permit(
-      :name, :short_name, :street, :city, :state,
+      :name, :street, :city, :state,
       :zipcode, :email, :url, :logo, :intake_location,
       :default_storage_location, :default_email_text, :reminder_email_text,
       :invitation_text, :reminder_schedule, :deadline_day,

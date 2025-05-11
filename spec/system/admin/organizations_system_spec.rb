@@ -127,7 +127,6 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
       org_params = attributes_for(:organization)
       within "form#new_organization" do
         fill_in "organization_name", with: org_params[:name]
-        fill_in "organization_short_name", with: org_params[:short_name]
         fill_in "organization_url", with: org_params[:url]
         fill_in "organization_email", with: org_params[:email]
         fill_in "organization_street", with: "1500 Remount Road"
@@ -146,7 +145,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
 
       expect(page).to have_content("All Human Essentials Organizations")
 
-      within("tr.#{org_params[:short_name]}") do
+      within(find("td", text: org_params[:name]).sibling(".text-right")) do
         first(:link, "View").click
       end
       expect(page).to have_content(org_params[:name])
@@ -163,7 +162,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
     it "can view organization details", :aggregate_failures do
       visit admin_organizations_path
 
-      within("tr.#{bar_org.short_name}") do
+      within(find("td", text: bar_org.name).sibling(".text-right")) do
         first(:link, "View").click
       end
 
