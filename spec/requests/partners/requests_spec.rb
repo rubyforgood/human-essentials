@@ -430,4 +430,17 @@ RSpec.describe "/partners/requests", type: :request do
       end
     end
   end
+
+  describe 'POST #validate' do
+    it 'should handle missing CSRF gracefully' do
+      sign_in(partner_user)
+
+      ActionController::Base.allow_forgery_protection = true
+      post validate_partners_requests_path
+      ActionController::Base.allow_forgery_protection = false
+
+      expect(JSON.parse(response.body)).to eq({'valid' => false})
+      expect(response.status).to eq(200)
+    end
+  end
 end
