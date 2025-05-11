@@ -53,7 +53,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
 
       def post_form_submit
         expect(page.find(".alert")).to have_content "Updated organization!"
-        within("tr.#{first_org.short_name}") do
+        within(find("tr", text:"#{first_org.name}")) do
           first(:link, "View").click
         end
       end
