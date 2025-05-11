@@ -103,7 +103,8 @@ RSpec.describe DistributionMailer, type: :mailer do
 
     context "when organization does not have custom default_email_text" do
       before do
-        organization.default_email_text = nil
+        # When default_email_text is cleared through UI, it still contains whitespace/empty divs/HTML comments
+        organization.default_email_text = "<!-- comment --><div class='empty'>\n  </div>"
         organization.save
       end
 

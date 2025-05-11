@@ -328,7 +328,7 @@
                   </tr>
                   <tr>
                     <td>
-                      <% if @default_email_text_interpolated.present? %>
+                      <% if @default_email_text.present? %>
                         <%= @default_email_text_interpolated.html_safe %>
                       <% elsif !@distribution_changes.present? %>
                         You have a new distribution from <%= @partner.organization.name %>.
