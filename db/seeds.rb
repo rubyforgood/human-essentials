@@ -36,8 +36,7 @@ SyncNDBNMembers.upload(seed_file)
 # Organizations
 # ----------------------------------------------------------------------------
 
-pdx_org = Organization.find_or_create_by!(short_name: "diaper_bank") do |organization|
-  organization.name = "Pawnee Diaper Bank"
+pdx_org = Organization.find_or_create_by!(name: "Pawnee Diaper Bank") do |organization|
   organization.street = "P.O. Box 22613"
   organization.city = "Pawnee"
   organization.state = "IN"
@@ -46,8 +45,7 @@ pdx_org = Organization.find_or_create_by!(short_name: "diaper_bank") do |organiz
 end
 Organization.seed_items(pdx_org)
 
-sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization|
-  organization.name = "SF Diaper Bank"
+sf_org = Organization.find_or_create_by!(name: "SF Diaper Bank") do |organization|
   organization.street = "P.O. Box 12345"
   organization.city = "San Francisco"
   organization.state = "CA"
@@ -56,8 +54,7 @@ sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization
 end
 Organization.seed_items(sf_org)
 
-sc_org = Organization.find_or_create_by!(short_name: "sc_bank") do |organization|
-  organization.name = "Second City Essentials Bank"
+sc_org = Organization.find_or_create_by!(name: "Second City Essentials Bank") do |organization|
   organization.street = Faker::Address.street_address
   organization.city = Faker::Address.city
   organization.state = Faker::Address.state_abbr

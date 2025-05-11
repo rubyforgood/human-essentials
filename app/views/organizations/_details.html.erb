@@ -15,12 +15,6 @@
               <p><%= current_organization&.name %></p>
             </div>
             <div>
-              <h6 class="font-weight-bold">Short name</h6>
-              <p>
-                <%= @organization.short_name || "Not defined" %>
-              </p>
-            </div>
-            <div>
               <h6 class="font-weight-bold">NDBN membership ID</h6>
               <p>
                 <%= @organization.ndbn_member&.full_name || "Not defined" %>

@@ -11,7 +11,7 @@
     partner_count = status_counts[status] || 0 %>
   <li>
     <%= fa_icon icon_mapping[status] || '', class: "bg-partner-#{status}  " %>
-    <%= link_to_unless partner_count.zero?, "#{partner_count} #{status.humanize}", partners_path(organization_name:nil, filters: { by_status: status }), class: ("filtering" if status == current_filtered_status) %>
+    <%= link_to_unless partner_count.zero?, "#{partner_count} #{status.humanize}", partners_path(filters: { by_status: status }), class: ("filtering" if status == current_filtered_status) %>
   </li>
   <% end %>
   <li>

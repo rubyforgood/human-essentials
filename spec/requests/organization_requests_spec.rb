@@ -20,11 +20,11 @@ RSpec.describe "Organizations", type: :request do
     }
 
     it "runs correctly", :aggregate_failures do
-      # Explicitly specify the organization_name, as current_organization will not
+      # Explicitly specify the organization_id, as current_organization will not
       # be set for super admins
       post promote_to_org_admin_organization_path(
         user_id: user_to_promote.id,
-        organization_name: organization.short_name
+        organization_id: organization.id
       )
       expect(user_to_promote.reload.has_role?(Role::ORG_ADMIN, organization)).to be_truthy
       # The user_update_redirect_path will vary based on whether the logged in
@@ -46,11 +46,11 @@ RSpec.describe "Organizations", type: :request do
     }
 
     it "runs correctly", :aggregate_failures do
-      # Explicitly specify the organization_name, as current_organization will not
+      # Explicitly specify the organization_id, as current_organization will not
       # be set for super admins
       post demote_to_user_organization_path(
         user_id: user_to_demote.id,
-        organization_name: organization.short_name
+        organization_id: organization.id
       )
       expect(user_to_demote.reload.has_role?(Role::ORG_ADMIN, organization)).to be_falsey
       # The user_update_redirect_path will vary based on whether the logged in
@@ -72,11 +72,11 @@ RSpec.describe "Organizations", type: :request do
     }
 
     it "runs correctly", :aggregate_failures do
-      # Explicitly specify the organization_name, as current_organization will not
+      # Explicitly specify the organization_id, as current_organization will not
       # be set for super admins
       post remove_user_organization_path(
         user_id: user_to_remove.id,
-        organization_name: organization.short_name
+        organization_id: organization.id
       )
       expect(user_to_remove.reload.has_role?(Role::ORG_USER, organization)).to be_falsey
       # The user_update_redirect_path will vary based on whether the logged in
@@ -113,7 +113,6 @@ RSpec.describe "Organizations", type: :request do
         expect(html.text).to include("Address")
         expect(html.text).to include("Distribution email content")
         expect(html.text).to include("Users")
-        expect(html.text).to include("Short name")
         expect(html.text).to include("URL")
         expect(html.text).to include("Partner Profile sections")
         expect(html.text).to include("Custom Partner invitation message")
@@ -192,7 +191,6 @@ RSpec.describe "Organizations", type: :request do
         expect(html.text).to include("Address")
         expect(html.text).to include("Distribution email content")
         expect(html.text).to include("Users")
-        expect(html.text).to include("Short name")
         expect(html.text).to include("URL")
         expect(html.text).to include("Partner Profile sections")
         expect(html.text).to include("Custom Partner invitation message")
@@ -466,7 +464,7 @@ RSpec.describe "Organizations", type: :request do
     context "when attempting to access a different organization" do
       let(:other_organization) { create(:organization) }
       let(:other_organization_params) do
-        { organization_name: other_organization.to_param }
+        { organization_id: other_organization.id }
       end
 
       describe "GET #show" do
@@ -538,9 +536,9 @@ RSpec.describe "Organizations", type: :request do
         let(:user) { create(:user, organization: create(:organization)) }
 
         it 'raises an error' do
-          # Explicitly specify the organization_name, as current_organization will not
+          # Explicitly specify the organization_id, as current_organization will not
           # be set for super admins
-          post remove_user_organization_path(user_id: user.id, organization_name: organization.short_name)
+          post remove_user_organization_path(user_id: user.id, organization_id: organization.id)
 
           expect(response).to have_http_status(:not_found)
         end
