@@ -1,5 +1,5 @@
 RSpec.describe "Items", type: :request do
-  let(:organization) { create(:organization, short_name: "my_org") }
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 
   describe "while signed in" do
@@ -17,6 +17,26 @@ RSpec.describe "Items", type: :request do
         let(:response_format) { 'html' }
 
         it { is_expected.to be_successful }
+
+        it "highlights total quantity if it is below minimum quantity" do
+          item_pullups = create(:item, name: "the most wonderful magical pullups that truly potty train", category: "Magic Toddlers", on_hand_minimum_quantity: 100)
+          item_tampons = create(:item, name: "blackbeard's rugged tampons", category: "Menstrual Products", on_hand_minimum_quantity: 100)
+          storage_name = "the poop catcher warehouse"
+          num_pullups_in_donation = 666
+          num_pullups_second_donation = 15
+          storage = create(:storage_location, :with_items, item: item_pullups, item_quantity: num_pullups_in_donation, name: storage_name)
+          aux_storage = create(:storage_location, :with_items, item: item_pullups, item_quantity: num_pullups_second_donation, name: "a secret secondary location")
+          num_tampons_in_donation = 42
+          num_tampons_second_donation = 17
+          create(:donation, :with_items, storage_location: storage, item_quantity: num_tampons_in_donation, item: item_tampons)
+          create(:donation, :with_items, storage_location: aux_storage, item_quantity: num_tampons_second_donation, item: item_tampons)
+
+          get items_path(format: response_format)
+          # Inside Item Inventory Tab
+          expect(response.body).to match(/<div[^>]*id="custom-tabs-three-inventory"[^>]*>.*<td class="numeric text-danger font-weight-bold" data-column="total">59<\/td>.*<\/div>/m)
+          # Inside Items, Quantity and Location Tab
+          expect(response.body).to match(/<div[^>]*id="custom-tabs-three-profile"[^>]*>.*<td class="numeric text-danger font-weight-bold" data-column="total">59<\/td>.*<\/div>/m)
+        end
       end
 
       context "csv" do

@@ -5,7 +5,7 @@
       <%= field.select :item_id, @requestable_items, {include_blank: 'Select an item'},
                        data: { :'item-units-target' => 'itemSelect',
                                action: 'change->item-units#itemSelected'},
-                               class: 'form-control' %>
+                               class: 'form-control form-select' %>
     </td>
     <td>
       <%= field.label :quantity, "Quantity", {class: 'sr-only'} %>
@@ -16,7 +16,7 @@
       <td>
         <%= field.label :request_unit, "Unit", {class: 'sr-only'} %>
         <%= field.select :request_unit, [], {include_blank: 'units'},
-                         { :'data-item-units-target' => 'requestSelect', class: 'form-control'} %>
+                         { :'data-item-units-target' => 'requestSelect', class: 'form-control form-select'} %>
 
       </td>
     <% end %>

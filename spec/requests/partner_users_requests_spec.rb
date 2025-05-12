@@ -70,6 +70,17 @@ RSpec.describe PartnerUsersController, type: :request do
           expect(flash[:alert]).to eq("Invitation failed. Check the form for errors.")
         end
       end
+
+      context "with existing user params" do
+        it "renders the index template with error" do
+          expect {
+            post partner_users_path(default_params.merge(partner_id: partner)), params: {user: {email: partner.email}}
+          }.not_to change(User, :count)
+
+          expect(response).to redirect_to(partner_users_path)
+          expect(flash[:error]).to eq("User already has the requested role!")
+        end
+      end
     end
 
     context "while signed in as org user" do

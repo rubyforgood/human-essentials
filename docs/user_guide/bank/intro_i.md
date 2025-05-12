@@ -1,5 +1,3 @@
-READY FOR REVIEW
-
 # Is Human Essentials Right for You? (What We Help with and What We Don't)
 ## Human Essentials is a free system for Essentials Banks 
 Human Essentials is for Essentials Banks -- by which we mean organizations that distribute essentials (diapers, period products, etc) to other organizations that work directly with people in need.

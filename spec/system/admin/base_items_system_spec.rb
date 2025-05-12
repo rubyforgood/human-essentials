@@ -10,7 +10,6 @@ RSpec.describe "Base Item Admin", type: :system, js: true do
       sign_in(super_admin)
     end
 
-    let!(:url_prefix) {}
     context "when creating a new base item" do
       before do
         visit new_admin_base_item_path
@@ -71,7 +70,6 @@ RSpec.describe "Base Item Admin", type: :system, js: true do
       sign_in(super_admin_no_org)
     end
 
-    let!(:url_prefix) {}
     context "when creating a new base item" do
       before do
         visit new_admin_base_item_path

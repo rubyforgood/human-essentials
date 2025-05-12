@@ -42,7 +42,7 @@
                 <div class="form-group">
                   <label>Type</label>
                   <div class="input-group">
-                    <%= select_tag :resource_type, options_for_select(@resources),
+                    <%= select_tag :resource_type, options_for_select(Role::TITLES.invert),
                                      class: 'select form-control',
                                      data: { 'double-select-target': 'source',
                                              'action': 'double-select#sourceChanged'

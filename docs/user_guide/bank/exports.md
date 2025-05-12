@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Exports
 
 There are several exports available to allow you to use the information from the application in other apps.
@@ -191,7 +190,9 @@ For each filtered Item, the export includes:
 - Quantity (across your entire bank)
 
 ## Partners
-The partners export contains high level information about the partner.  It does not contain the information in the partner profile.
+The partners export contains high level information about the partner and information from the partner's profile that matches the sections of the partner profile form you have enabled.
+
+A full, detailed list of the fields in the partner profile can be found ["here"](pm_partner_profiles.md)
 
 ### Navigating to export partners
 Click "Partner Agencies", then "All Partners" in the left-hand menu.  Then click "Export Partner Agencies"
@@ -208,19 +209,99 @@ You can export different groups of partners by clicking the partner filters whic
 - Active
 
 ### Partner Export contents
-For each partner in the filtered list:
+For each partner in the filtered list the following fields will be exported:
 - Agency Name,
 - Agency Email,
+- Notes
+- Agency Type,
+- Other Agency Type,
+- Agency Mission,
 - Agency Address,
 - Agency City,
 - Agency State,
 - Agency Zip Code,
+- Program/Delivery Address,
+- Program City,
+- Program State,
+- Program Zip Code,
+
+The following fields will also be exported, at the end of the table
+- Quantity-based Requests,
+- Child-based Requests,
+- Individual Requests,
+- Providing Diapers,
+- Providing Period Supplies
+
+Optionally, the export will also include the following fields from the Partner Profile if the associated section of the form is enabled.
+
+Media Information
 - Agency Website,
-- Agency Type,
-- Contact Name,
-- Contact Phone,
-- Contact Email,
-- Notes
+- Facebook,
+- Twitter,
+- Instagram,
+- No Social Media Presence
+
+Agency Stability
+- Year Founded,
+- Form 990 Filed,
+- Program Name,
+- Program Description,
+- Agency Age,
+- Evidence Based,
+- Case Management,
+- How Are Essentials Used,
+- Receive Essentials From Other Sources,
+- Currently Providing Diapers
+
+Organization Capacity
+- Client Capacity,
+- Storage Space,
+- Storage Space Description
+
+Sources of Funding
+- Sources Of Funding,
+- How do you currently obtain diapers?,
+- Essentials Budget,
+- Essentials Funding Source
+
+Area Served
+- Sorted list of served counties
+
+Population Served
+- Income Requirement,
+- Verify Income,
+- % African American,
+- % Caucasian,
+- % Hispanic,
+- % Asian,
+- % American Indian,
+- % Pacific Island,
+- % Multi-racial,
+- % Other,
+- Zip Codes Served,
+- % At FPL or Below,
+- % Above 1-2 times FPL,
+- % Greater than 2 times FPL,
+- % Poverty Unknown
+
+Executive Director
+- Executive Director Name,
+- Executive Director Phone,
+- Executive Director Email,
+- Primary Contact Name,
+- Primary Contact Phone,
+- Primary Contact Cell,
+- Primary Contact Email
+
+Pick Up Person
+- Pick Up Person Name,
+- Pick Up Person Phone,
+- Pick Up Person Email
+
+Agency Distribution Information
+- Distribution Times,
+- New Client Times,
+- More Docs Required
 
 ## Product Drives
 ### Navigating to export Product Drives

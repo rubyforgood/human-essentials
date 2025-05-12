@@ -1,5 +1,3 @@
-READY FOR REVIEW
-
 # Making a Partner inactive
 
 Unfortunately, sometimes a Partner will cease operations.  Should that occur, you can make them inactive.   This does not remove their historical information,  but they won't appear in your selections, or in the all partners list (unless you specifically choose "Deactivated")
