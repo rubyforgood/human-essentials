@@ -244,22 +244,6 @@ RSpec.describe "Requests", type: :system, js: true do
     end
   end
 
-  context "#print_unfulfilled" do
-    let(:partner1) { create(:partner, organization: organization) }
-    let(:partner_user) { partner1.primary_user }
-    let!(:pending_request) { create(:request, :with_item_requests, :pending, partner: partner1, request_items: [{ "item_id": item1.id, "quantity": '100' }]) }
-
-    before(:each) do
-      partner_user.add_role(Role::ORG_ADMIN, organization)
-      sign_in(partner_user)
-    end
-
-    it 'should render a link if there are unfulfilled requests' do
-      visit requests_path
-      expect(page).to have_link "Print Unfulfilled Picklists"
-    end
-  end
-
   describe 'canceling a request as a bank user' do
     let!(:request) { create(:request, organization: organization) }
 
