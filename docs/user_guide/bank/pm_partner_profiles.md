@@ -1,5 +1,3 @@
-READY FOR REVIEW
-
 # Partner Profiles
 Partner Profiles allow you to gather and hold a lot of information about your Partners that may be useful for meeting your regulatory requirements, managing their experience, and for grant-writing.  
 

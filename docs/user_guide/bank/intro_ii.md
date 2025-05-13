@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Support
 
 There are a few ways to get support -- some are better than others.

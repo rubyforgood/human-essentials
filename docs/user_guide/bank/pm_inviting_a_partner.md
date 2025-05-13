@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Inviting a Partner
 
 Before a Partner can make Requests,  they have to be invited and approved.

@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Donation Sites
 A Donation Site represents a drop-off location for donations.
 The information regarding a Donation Site is mainly for your reference.  There are no automated emails that go to the donation sites' contacts.

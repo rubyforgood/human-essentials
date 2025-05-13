@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Donation Sites
 
 Donation Sites are places where people drop off Donations.

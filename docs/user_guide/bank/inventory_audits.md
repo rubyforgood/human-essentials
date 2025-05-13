@@ -1,5 +1,3 @@
-READY FOR REVIEW
-
 # Audits
 
 When you do an inventory count,  you'll want to set the inventory in each Storage Location to the physical count.  That's what the Audits function is for.
@@ -28,14 +26,14 @@ When you save progress, you'll see this page, which shows the progress of the Au
 
 ![Audit post save progress](images/inventory/inventory_audits_progress.png)
 
-You will be able to return to this page from the list of Audits (Inventory | Inventory Audit).
+You will be able to return to this page from the list of Audits (Inventory -- Inventory Audit).
 
 The Audit Quantity is the amount that you entered, and the Quantity in Records is the amount that is currently recorded as being in your inventory.
 
 You have two options from this page:  Resume Audit and Delete Audit, which we treat below.
 
 ## Resuming an Audit
-When you want to continue entering your counts,  you can resume your Audit by going to the Audits page (Inventory | Inventory Audit).  You'll see the Audit you are working on listed with a status of "In Progress".   Click "View" to bring up the details on that Audit.
+When you want to continue entering your counts,  you can resume your Audit by going to the Audits page (Inventory -- Inventory Audit).  You'll see the Audit you are working on listed with a status of "In Progress".   Click "View" to bring up the details on that Audit.
 
 ![Audit view navigation](images/inventory/inventory_audits_view_navigation.png)
 Scroll to the bottom of the page, and click "Resume Audit"
@@ -71,7 +69,7 @@ Now, when you view the Audit, the quantity in records will match the Audit quant
 
 ## Deleting an Audit
 If the Audit has not been finalized, you can delete it.  
-From the Audits page (Inventory | Inventory Audit), click "View" beside the Audit you wish to delete, then scroll to the bottom,  click "Delete Audit", and "OK" to confirm.  
+From the Audits page (Inventory -- Inventory Audit), click "View" beside the Audit you wish to delete, then scroll to the bottom,  click "Delete Audit", and "OK" to confirm.  
 [!WARN] This cannot be undone
 
 

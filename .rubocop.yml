@@ -10,12 +10,14 @@ inherit_gem:
 inherit_from:
   .rubocop_todo.yml
 
-require:
-  - rubocop-rails
+plugins:
   - rubocop-performance
-  - standard
   - standard-rails
   - standard-performance
+
+require:
+  - rubocop-rails
+  - standard
 
 AllCops:
   Exclude:

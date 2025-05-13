@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Partner Groups
 
 You may have reasons that some partners are treated differently than others.  Reasons we've seen for this include:
