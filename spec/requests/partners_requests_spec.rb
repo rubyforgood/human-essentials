@@ -235,7 +235,7 @@ RSpec.describe "Partners", type: :request do
             enable_quantity_based_requests: true)
         end
 
-        it "orders partners alphaetically" do
+        it "orders partners alphabetically" do
           get partners_path(partner, format: response_format)
 
           csv = CSV.parse(response.body)
@@ -428,9 +428,12 @@ RSpec.describe "Partners", type: :request do
 
   describe "POST #import_csv" do
     let(:model_class) { Partner }
+    let!(:outside_organization) { create(:organization) }
+    let!(:invalid_storage_location) { create(:storage_location, name: 'invalid', organization: outside_organization) }
+    let!(:valid_storage_location) { create(:storage_location, organization: organization) }
 
     context "with a csv file" do
-      let(:file) { fixture_file_upload("#{model_class.name.underscore.pluralize}.csv", "text/csv") }
+      let(:file) { fixture_file_upload("partners_with_six_fields.csv", "text/csv") }
       subject { post import_csv_partners_path, params: { file: file } }
 
       it "invokes .import_csv" do
@@ -492,6 +495,61 @@ RSpec.describe "Partners", type: :request do
         subject
         expect(response).to have_error(/The following #{model_class.name.underscore.humanize.pluralize} did not import successfully:/)
         expect(response).to have_error(/Partner 2: Email is invalid/)
+      end
+    end
+
+    context "csv file with default storage location, email preferences, quota, and notes" do
+      let(:file) { fixture_file_upload("partners_with_six_fields.csv", "text/csv") }
+      subject { post import_csv_partners_path, params: { file: file } }
+
+      it "invokes .import_csv" do
+        expect(model_class).to respond_to(:import_csv).with(2).arguments
+      end
+
+      it "redirects to :index" do
+        subject
+        expect(response).to be_redirect
+      end
+
+      it "presents a flash notice message" do
+        subject
+        expect(response).to have_notice "#{model_class.name.underscore.humanize.pluralize} were imported successfully!"
+      end
+    end
+
+    context "csv file with an invalid storage location" do
+      let!(:current_organization) { create(:organization) }
+      let!(:outside_organization) { create(:organization) }
+      let!(:outside_storage_location) { create(:storage_location, name: "Invalid", organization: outside_organization) }
+      let(:file) { fixture_file_upload("partners_with_six_fields_invalid_location.csv", "text/csv") }
+      before do
+        allow(controller).to receive(:current_organization).and_return(current_organization)
+      end
+
+      subject { post import_csv_partners_path, params: { file: file } }
+
+      it "presents a flash error message" do
+        subject
+        expect(response).to have_error "The following Partners did not import successfully:\nPartner 4: Default storage location The default storage location is not a storage location for this partner's organization"
+      end
+    end
+
+    context "csv file with a valid all-caps storage location" do
+      let(:file) { fixture_file_upload("partners_with_six_fields.csv", "text/csv") }
+      subject { post import_csv_partners_path, params: { file: file } }
+
+      it "invokes .import_csv" do
+        expect(model_class).to respond_to(:import_csv).with(2).arguments
+      end
+
+      it "redirects to :index" do
+        subject
+        expect(response).to be_redirect
+      end
+
+      it "presents a flash notice message" do
+        subject
+        expect(response).to have_notice "#{model_class.name.underscore.humanize.pluralize} were imported successfully!"
       end
     end
   end
