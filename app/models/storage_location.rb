@@ -163,18 +163,31 @@ class StorageLocation < ApplicationRecord
 
   # @param storage_locations [Array<StorageLocation>]
   # @param inventory [View::Inventory]
+  # @param current_organization [Organization]
   # @return [String]
-  def self.generate_csv_from_inventory(storage_locations, inventory)
-    all_items = inventory.all_items.uniq(&:item_id).sort_by(&:name)
-    additional_headers = all_items.map(&:name).uniq
+  def self.generate_csv_from_inventory(storage_locations, inventory, current_organization)
+    # Get all inventoried and organization items
+    all_inventoried_items = inventory.all_items
+
+    # Not all items are inventoried, so we need to add the organization items to the headers.
+    # Yes it's another full table scan, but it's a small dataset and product wants the exports to consistently include all items (active, inactive, etc).
+    # This means we have to look for inactive items or items without inventory.
+    # note the remapping of item.id to item_id is to enable the uniq call to happen once across the two arrays.
+    all_organization_items = current_organization.items.select("DISTINCT ON (LOWER(name)) items.name, items.id as item_id").order("LOWER(name) ASC")
+
+    all_items = (all_inventoried_items + all_organization_items).uniq(&:item_id).sort_by { |item| item&.name&.downcase }
+
+    # Build headers from unique inventoried and organization items, using name as the key.
+    item_headers = all_items.map(&:name)
+
     CSV.generate(headers: true) do |csv|
       csv_data = storage_locations.map do |sl|
         total_quantity = inventory.quantity_for(storage_location: sl.id)
         attributes = [sl.name, sl.address, sl.square_footage, sl.warehouse_type, total_quantity] +
-          all_items.map { |i| inventory.quantity_for(storage_location: sl.id, item_id: i.item_id) }
+          all_items.map { |item| inventory.quantity_for(storage_location: sl.id, item_id: item.item_id) }
         attributes.map { |attr| normalize_csv_attribute(attr) }
       end
-      ([csv_export_headers + additional_headers] + csv_data).each do |row|
+      ([csv_export_headers + item_headers] + csv_data).each do |row|
         csv << row
       end
     end
