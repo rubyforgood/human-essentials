@@ -2,8 +2,11 @@ module Exports
   class ExportRequestService
     DELETED_ITEMS_COLUMN_HEADER = '<DELETED_ITEMS>'.freeze
 
-    def initialize(requests)
+    # @param requests [Array<Request>]
+    # @param organization [Organization]
+    def initialize(requests, organization)
       @requests = requests.includes(:partner, {item_requests: :item})
+      @organization = organization
     end
 
     def generate_csv

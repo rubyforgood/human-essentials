@@ -23,7 +23,7 @@ class RequestsController < ApplicationController
 
     respond_to do |format|
       format.html
-      format.csv { send_data Exports::ExportRequestService.new(@requests).generate_csv, filename: "Requests-#{Time.zone.today}.csv" }
+      format.csv { send_data Exports::ExportRequestService.new(@requests, current_organization).generate_csv, filename: "Requests-#{Time.zone.today}.csv" }
     end
   end
 
