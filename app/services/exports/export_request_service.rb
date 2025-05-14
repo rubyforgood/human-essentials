@@ -4,9 +4,10 @@ module Exports
 
     # @param requests [Array<Request>]
     # @param organization [Organization]
-    def initialize(requests, organization)
+    def initialize(requests, organization:)
       @requests = requests.includes(:partner, {item_requests: :item})
       @organization = organization
+      @organization_items = @organization.items.select("DISTINCT ON (LOWER(name)) items.name").order("LOWER(name) ASC")
     end
 
     def generate_csv
@@ -84,6 +85,13 @@ module Exports
               item_names << "#{item.name} - #{item_request.request_unit.pluralize}"
             end
           end
+        end
+      end
+
+      # Include inactive items or items that are otherwise not in any item_requests
+      @organization_items.each do |item|
+        if item_names.exclude?(item.name)
+          item_names << item.name
         end
       end
 
