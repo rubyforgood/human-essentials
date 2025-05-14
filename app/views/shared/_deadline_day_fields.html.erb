@@ -1,5 +1,13 @@
 <div data-controller="deadline-day">
 
+  <%= f.label :start_date, 'When should the reminders start being sent?' %>
+  <%= f.input :start_date,
+    as: :date,
+    label: false,
+    html5: true,
+    wrapper: :input_group,
+    input_html: {"data-deadline-day-target" => "startDate", "data-action" => "deadline-day#sourceChange"} %>
+
   <%= f.label :every_nth_month, 'How frequently should reminders be sent (e.g. "monthly", "every 3 months", etc.)?' %>
   <%= f.input :every_nth_month,
     collection: Deadlinable::EVERY_NTH_MONTH_COLLECTION,

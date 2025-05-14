@@ -16,7 +16,7 @@ module Deadlinable
   }.freeze
 
   included do
-    attr_accessor :by_month_or_week, :day_of_month, :day_of_week, :every_nth_day, :every_nth_month
+    attr_accessor :by_month_or_week, :day_of_month, :day_of_week, :every_nth_day, :every_nth_month, :start_date
     validates :deadline_day, numericality: {only_integer: true, less_than_or_equal_to: MAX_DAY_OF_MONTH,
                                             greater_than_or_equal_to: MIN_DAY_OF_MONTH, allow_nil: true}
     validate :day_of_month_on_deadline_day?, if: -> { day_of_month.present? }
@@ -45,6 +45,7 @@ module Deadlinable
     day_of_month = rule["validations"][:day_of_month]&.first&.value
 
     results = {}
+    results[:start_date] = schedule.start_time
     results[:by_month_or_week] = day_of_month ? "day_of_month" : "day_of_week"
     results[:day_of_month] = day_of_month
     results[:day_of_week] = rule["validations"][:day_of_week]&.first&.day
@@ -56,9 +57,16 @@ module Deadlinable
   end
 
   def get_values_from_reminder_schedule
-    return if reminder_schedule.blank?
+    if reminder_schedule.blank?
+      self.start_date = Time.zone.today
+      return
+    end
     results = from_ical(reminder_schedule)
-    return if results.nil?
+    if results.nil?
+      self.start_date = Time.zone.today
+      return
+    end
+    self.start_date = results[:start_date]
     self.by_month_or_week = results[:by_month_or_week]
     self.day_of_month = results[:day_of_month]
     self.day_of_week = results[:day_of_week]
@@ -87,7 +95,7 @@ module Deadlinable
   end
 
   def create_schedule
-    schedule = IceCube::Schedule.new(Time.zone.now.to_date)
+    schedule = IceCube::Schedule.new(Time.zone.parse(start_date))
     return nil if by_month_or_week.blank? || every_nth_month.blank?
     if by_month_or_week == "day_of_month"
       return nil if day_of_month.blank?

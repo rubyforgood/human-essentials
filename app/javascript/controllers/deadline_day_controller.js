@@ -15,24 +15,36 @@ const WEEKDAY_NUM_TO_OBJ = {
 
 export default class extends Controller {
   static targets = [
-    'everyNthMonth', 'byDayOfMonth', 'byDayOfWeek', 'dayOfMonthFields', 'dayOfMonth',
+    'startDate', 'everyNthMonth', 'byDayOfMonth', 'byDayOfWeek', 'dayOfMonthFields', 'dayOfMonth',
     'dayOfWeekFields', 'everyNthDay', 'dayOfWeek', 'deadlineDay', 'reminderText', 'deadlineText'
   ]
 
+  static dateParser = /(\d{4})-(\d{2})-(\d{2})/;
+  
   sourceChange() {
     let reminder_date = null;
     let deadline_date = null;
+
+    let match = this.startDateTarget.value.match(this.constructor.dateParser);
+    let startDate = new Date(
+      match[1],
+      match[2]-1, // Subtracting 1 because the Date constructor uses month indices, but year and day numbers
+      match[3]
+    );
+
     if (this.byDayOfMonthTarget.checked && this.dayOfMonthTarget.value) {
       const rule = new RRule({
+        dtstart: startDate,
         freq: RRule.MONTHLY,
         interval: parseInt(this.everyNthMonthTarget.value),
         bymonthday: parseInt(this.dayOfMonthTarget.value),
-        count: 1,
+        count: 1
       })
       reminder_date = rule.all()[0]
     }
     if (this.byDayOfWeekTarget.checked && this.everyNthDayTarget.value && (this.dayOfWeekTarget.value)) {
       const rule = new RRule({
+        dtstart: startDate,
         freq: RRule.MONTHLY,
         interval: parseInt(this.everyNthMonthTarget.value),
         byweekday: WEEKDAY_NUM_TO_OBJ[ parseInt(this.dayOfWeekTarget.value) ].nth( parseInt(this.everyNthDayTarget.value) ),
