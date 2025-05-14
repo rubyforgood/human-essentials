@@ -216,17 +216,37 @@ RSpec.describe Deadlinable, type: :model do
 
   context "by day of month" do
     before do
-      dummy.start_date = "2020/10/10"
       dummy.by_month_or_week = "day_of_month"
     end
 
-    it "create_schedule returns schedule in ICAL format" do
-      dummy.day_of_month = "10"
-      dummy.every_nth_month = "1"
-      expect(dummy.create_schedule).to eq "DTSTART;TZID=#{Time.zone.now.zone}:20201010T000000\nRRULE:FREQ=MONTHLY;BYMONTHDAY=10"
-      dummy.day_of_month = "15"
-      dummy.every_nth_month = "3"
-      expect(dummy.create_schedule).to eq "DTSTART;TZID=#{Time.zone.now.zone}:20201010T000000\nRRULE:FREQ=MONTHLY;INTERVAL=3;BYMONTHDAY=15"
+    context "with a specified start date" do
+      before do
+        dummy.start_date = "2020/10/10"
+      end
+
+      it "create_schedule returns schedule in ICAL format" do
+        dummy.day_of_month = "10"
+        dummy.every_nth_month = "1"
+        expect(dummy.create_schedule).to eq "DTSTART;TZID=#{Time.zone.now.zone}:20201010T000000\nRRULE:FREQ=MONTHLY;BYMONTHDAY=10"
+        dummy.day_of_month = "15"
+        dummy.every_nth_month = "3"
+        expect(dummy.create_schedule).to eq "DTSTART;TZID=#{Time.zone.now.zone}:20201010T000000\nRRULE:FREQ=MONTHLY;INTERVAL=3;BYMONTHDAY=15"
+      end
+    end
+
+    context "without a specified start date" do
+      before do
+        travel_to Time.zone.local(2020, 11, 11)
+      end
+
+      it "create_schedule returns schedule in ICAL format" do
+        dummy.day_of_month = "10"
+        dummy.every_nth_month = "1"
+        expect(dummy.create_schedule).to eq "DTSTART;TZID=#{Time.zone.now.zone}:20201111T000000\nRRULE:FREQ=MONTHLY;BYMONTHDAY=10"
+        dummy.day_of_month = "15"
+        dummy.every_nth_month = "3"
+        expect(dummy.create_schedule).to eq "DTSTART;TZID=#{Time.zone.now.zone}:20201111T000000\nRRULE:FREQ=MONTHLY;INTERVAL=3;BYMONTHDAY=15"
+      end
     end
 
     it "create_schedule returns nil if needed fields are missing" do
@@ -240,19 +260,41 @@ RSpec.describe Deadlinable, type: :model do
 
   context "by day of week" do
     before do
-      dummy.start_date = "2020/10/10"
       dummy.by_month_or_week = "day_of_week"
     end
 
-    it "create_schedule returns schedule in ICAL format" do
-      dummy.day_of_week = "0"
-      dummy.every_nth_day = "1"
-      dummy.every_nth_month = "1"
-      expect(dummy.create_schedule).to eq "DTSTART;TZID=#{Time.zone.now.zone}:20201010T000000\nRRULE:FREQ=MONTHLY;BYDAY=1SU"
-      dummy.day_of_week = "3"
-      dummy.every_nth_day = "3"
-      dummy.every_nth_month = "1"
-      expect(dummy.create_schedule).to eq "DTSTART;TZID=#{Time.zone.now.zone}:20201010T000000\nRRULE:FREQ=MONTHLY;BYDAY=3WE"
+    context "with a specified start date" do
+      before do
+        dummy.start_date = "2020/10/10"
+      end
+
+      it "create_schedule returns schedule in ICAL format" do
+        dummy.day_of_week = "0"
+        dummy.every_nth_day = "1"
+        dummy.every_nth_month = "1"
+        expect(dummy.create_schedule).to eq "DTSTART;TZID=#{Time.zone.now.zone}:20201010T000000\nRRULE:FREQ=MONTHLY;BYDAY=1SU"
+        dummy.day_of_week = "3"
+        dummy.every_nth_day = "3"
+        dummy.every_nth_month = "1"
+        expect(dummy.create_schedule).to eq "DTSTART;TZID=#{Time.zone.now.zone}:20201010T000000\nRRULE:FREQ=MONTHLY;BYDAY=3WE"
+      end
+    end
+
+    context "without a specified start date" do
+      before do
+        travel_to Time.zone.local(2020, 11, 11)
+      end
+
+      it "create_schedule returns schedule in ICAL format" do
+        dummy.day_of_week = "0"
+        dummy.every_nth_day = "1"
+        dummy.every_nth_month = "1"
+        expect(dummy.create_schedule).to eq "DTSTART;TZID=#{Time.zone.now.zone}:20201111T000000\nRRULE:FREQ=MONTHLY;BYDAY=1SU"
+        dummy.day_of_week = "3"
+        dummy.every_nth_day = "3"
+        dummy.every_nth_month = "1"
+        expect(dummy.create_schedule).to eq "DTSTART;TZID=#{Time.zone.now.zone}:20201111T000000\nRRULE:FREQ=MONTHLY;BYDAY=3WE"
+      end
     end
 
     it "create_schedule returns nil if needed fields are missing" do

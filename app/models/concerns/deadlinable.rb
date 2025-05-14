@@ -95,7 +95,7 @@ module Deadlinable
   end
 
   def create_schedule
-    schedule = IceCube::Schedule.new(Time.zone.parse(start_date))
+    schedule = IceCube::Schedule.new(start_date ? Time.zone.parse(start_date) : Time.zone.now.to_date)
     return nil if by_month_or_week.blank? || every_nth_month.blank?
     if by_month_or_week == "day_of_month"
       return nil if day_of_month.blank?
