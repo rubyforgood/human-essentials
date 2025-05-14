@@ -145,15 +145,33 @@ RSpec.describe Deadlinable, type: :model do
     )
   end
 
+  it "get_values_from_reminder_schedule sets deadlineable's start_date to today if there is no schedule" do
+    dummy.get_values_from_reminder_schedule()
+    expect(dummy.start_date).to eq(Time.zone.today)
+    dummy.reminder_schedule = "notavalidschedule"
+    dummy.get_values_from_reminder_schedule()
+    expect(dummy.start_date).to eq(Time.zone.today)
+  end
+
   it "when reminder_schedule is blank should_update_reminder_schedule returns true if day_of_month is present, false otherwise" do
     expect(dummy.should_update_reminder_schedule).to be_falsey
     dummy.by_month_or_week = "day_of_month"
     expect(dummy.should_update_reminder_schedule).to be_truthy
   end
 
-  context "with an existing schedule" do
+  context "with an existing day_of_month schedule" do
     before do
       dummy.reminder_schedule = "DTSTART;TZID=#{Time.zone.now.zone}:20201010T000000\nRRULE:FREQ=MONTHLY;BYMONTHDAY=10"
+    end
+
+    it "get_values_from_reminder_schedule sets deadlineable's fields with values stored in ICAL schedule" do
+      dummy.get_values_from_reminder_schedule()
+      expect(dummy.start_date).to eq(Time.zone.local(2020, 10, 10))
+      expect(dummy.by_month_or_week).to eq("day_of_month")
+      expect(dummy.day_of_month).to eq(10)
+      expect(dummy.day_of_week).to eq(nil)
+      expect(dummy.every_nth_day).to eq(nil)
+      expect(dummy.every_nth_month).to eq(1)
     end
 
     it "should_update_reminder_schedule returns false if no fields differ" do
@@ -177,6 +195,22 @@ RSpec.describe Deadlinable, type: :model do
       dummy.every_nth_day = "1"
       dummy.every_nth_month = "1"
       expect(dummy.should_update_reminder_schedule).to be_truthy
+    end
+  end
+
+  context "with an existing day_of_week schedule" do
+    before do
+      dummy.reminder_schedule = "DTSTART;TZID=#{Time.zone.now.zone}:20201010T000000\nRRULE:FREQ=MONTHLY;BYDAY=3WE"
+    end
+
+    it "get_values_from_reminder_schedule sets deadlineable's fields with values stored in ICAL schedule" do
+      dummy.get_values_from_reminder_schedule()
+      expect(dummy.start_date).to eq(Time.zone.local(2020, 10, 10))
+      expect(dummy.by_month_or_week).to eq("day_of_week")
+      expect(dummy.day_of_month).to eq(nil)
+      expect(dummy.day_of_week).to eq(3)
+      expect(dummy.every_nth_day).to eq(3)
+      expect(dummy.every_nth_month).to eq(1)
     end
   end
 
