@@ -136,7 +136,7 @@ RSpec.describe Deadlinable, type: :model do
   it "from_ical returns hash of fields from schedule in ICAL format" do
     ical_schedule = "DTSTART;TZID=#{Time.zone.now.zone}:20201010T000000\nRRULE:FREQ=MONTHLY;BYMONTHDAY=10"
     expect(dummy.from_ical(ical_schedule)).to eq(
-      start_date: Time.zone.local( 2020, 10, 10 ),
+      start_date: Time.zone.local(2020, 10, 10),
       by_month_or_week: "day_of_month",
       day_of_month: 10,
       day_of_week: nil,
@@ -146,10 +146,10 @@ RSpec.describe Deadlinable, type: :model do
   end
 
   it "get_values_from_reminder_schedule sets deadlineable's start_date to today if there is no schedule" do
-    dummy.get_values_from_reminder_schedule()
+    dummy.get_values_from_reminder_schedule
     expect(dummy.start_date).to eq(Time.zone.today)
     dummy.reminder_schedule = "notavalidschedule"
-    dummy.get_values_from_reminder_schedule()
+    dummy.get_values_from_reminder_schedule
     expect(dummy.start_date).to eq(Time.zone.today)
   end
 
@@ -165,7 +165,7 @@ RSpec.describe Deadlinable, type: :model do
     end
 
     it "get_values_from_reminder_schedule sets deadlineable's fields with values stored in ICAL schedule" do
-      dummy.get_values_from_reminder_schedule()
+      dummy.get_values_from_reminder_schedule
       expect(dummy.start_date).to eq(Time.zone.local(2020, 10, 10))
       expect(dummy.by_month_or_week).to eq("day_of_month")
       expect(dummy.day_of_month).to eq(10)
@@ -204,7 +204,7 @@ RSpec.describe Deadlinable, type: :model do
     end
 
     it "get_values_from_reminder_schedule sets deadlineable's fields with values stored in ICAL schedule" do
-      dummy.get_values_from_reminder_schedule()
+      dummy.get_values_from_reminder_schedule
       expect(dummy.start_date).to eq(Time.zone.local(2020, 10, 10))
       expect(dummy.by_month_or_week).to eq("day_of_week")
       expect(dummy.day_of_month).to eq(nil)
