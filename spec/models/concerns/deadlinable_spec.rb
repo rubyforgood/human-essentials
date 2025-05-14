@@ -136,6 +136,7 @@ RSpec.describe Deadlinable, type: :model do
   it "from_ical returns hash of fields from schedule in ICAL format" do
     ical_schedule = "DTSTART;TZID=#{Time.zone.now.zone}:20201010T000000\nRRULE:FREQ=MONTHLY;BYMONTHDAY=10"
     expect(dummy.from_ical(ical_schedule)).to eq(
+      start_date: Time.zone.local( 2020, 10, 10 ),
       by_month_or_week: "day_of_month",
       day_of_month: 10,
       day_of_week: nil,
@@ -181,7 +182,7 @@ RSpec.describe Deadlinable, type: :model do
 
   context "by day of month" do
     before do
-      travel_to Time.zone.local(2020, 10, 10)
+      dummy.start_date = "2020/10/10"
       dummy.by_month_or_week = "day_of_month"
     end
 
@@ -205,7 +206,7 @@ RSpec.describe Deadlinable, type: :model do
 
   context "by day of week" do
     before do
-      travel_to Time.zone.local(2020, 10, 10)
+      dummy.start_date = "2020/10/10"
       dummy.by_month_or_week = "day_of_week"
     end
 

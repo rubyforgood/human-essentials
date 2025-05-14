@@ -91,11 +91,27 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
         expect(page).to have_content((prior + 1.month).strftime("%b %d %Y"))
       end
 
+      it "after the entered start date date" do
+        prior = @now - 1.day
+        fill_in "#{form_prefix}_start_date", with: (prior - 1.day).strftime("%Y-%m-%d")
+        fill_in "#{form_prefix}_day_of_month", with: prior.day
+        expect(page).to have_content("Your next reminder will be sent on")
+        expect(page).to have_content(prior.strftime("%b %d %Y"))
+      end
+
       it "after the current date" do
         after = @now + 1.day
         fill_in "#{form_prefix}_day_of_month", with: after.day
         expect(page).to have_content("Your next reminder will be sent on")
         expect(page).to have_content(after.strftime("%b %d %Y"))
+      end
+
+      it "prior to the entered start date date" do
+        after = @now + 1.day
+        fill_in "#{form_prefix}_start_date", with: (after + 1.day).strftime("%Y-%m-%d")
+        fill_in "#{form_prefix}_day_of_month", with: after.day
+        expect(page).to have_content("Your next reminder will be sent on")
+        expect(page).to have_content((after + 1.month).strftime("%b %d %Y"))
       end
 
       it "and the reminder and deadline dates are different" do
