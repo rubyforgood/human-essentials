@@ -14,6 +14,11 @@ RSpec.describe Exports::ExportRequestService do
   let!(:unrequested_item) { create :item, name: "Unrequested Item", organization: org }
   let!(:inactive_item) { create :item, name: "Inactive Item", active: false, organization: org }
 
+  # Added to ensure sorting is working correctly, otherwise is duplicate behavior
+  let!(:apple_item) { create :item, name: "apple", organization: org }
+  let!(:banana_item) { create :item, name: "Banana", organization: org }
+  let!(:zebra_item) { create :item, name: "Zebra", organization: org }
+
   let!(:partner) { create :partner, organization: org, name: "Howdy Partner" }
 
   let!(:inactive_item_request) do
@@ -123,8 +128,11 @@ RSpec.describe Exports::ExportRequestService do
           "3T Diapers",
           "4T Diapers",
           "4T Diapers - packs",
+          "apple",
+          "Banana",
           "Inactive Item",
           "Unrequested Item",
+          "Zebra",
           "<DELETED_ITEMS>"
         ])
       end
@@ -142,9 +150,12 @@ RSpec.describe Exports::ExportRequestService do
           0,   # 2T Diapers
           150, # 3T Diapers
           0,   # 4T Diapers
-          0,   # 4T Diapers - packs 
-          0, # Inactive Item
-          0, # Unrequested Item
+          0,   # 4T Diapers - packs
+          0,   # apple
+          0,   # Banana
+          0,   # Inactive Item
+          0,   # Unrequested Item
+          0,   # Zebra
           0    # <DELETED_ITEMS>
         ])
       end
@@ -159,8 +170,11 @@ RSpec.describe Exports::ExportRequestService do
           0,   # 3T Diapers
           0,   # 4T Diapers
           0,   # 4T Diapers - packs
-          0, # Inactive Item
-          0, # Unrequested Item
+          0,   # apple
+          0,   # Banana
+          0,   # Inactive Item
+          0,   # Unrequested Item
+          0,   # Zebra
           0    # <DELETED_ITEMS>
         ])
       end
@@ -175,8 +189,11 @@ RSpec.describe Exports::ExportRequestService do
           0,   # 3T Diapers
           0,   # 4T Diapers
           0,   # 4T Diapers - packs
-          0, # Inactive Item
-          0, # Unrequested Item
+          0,   # apple
+          0,   # Banana
+          0,   # Inactive Item
+          0,   # Unrequested Item
+          0,   # Zebra
           400  # <DELETED_ITEMS>
         ])
       end
@@ -191,8 +208,11 @@ RSpec.describe Exports::ExportRequestService do
           2,   # 3T Diapers
           0,   # 4T Diapers
           4,   # 4T Diapers - packs
-          0, # Inactive Item
-          0, # Unrequested Item
+          0,   # apple
+          0,   # Banana
+          0,   # Inactive Item
+          0,   # Unrequested Item
+          0,   # Zebra
           0    # <DELETED_ITEMS>
         ])
       end
@@ -207,8 +227,11 @@ RSpec.describe Exports::ExportRequestService do
           0,   # 3T Diapers
           77,  # 4T Diapers
           0,   # 4T Diapers - packs
-          0, # Inactive Item
-          0, # Unrequested Item
+          0,   # apple
+          0,   # Banana
+          0,   # Inactive Item
+          0,   # Unrequested Item
+          0,   # Zebra
           0    # <DELETED_ITEMS>
         ])
       end
@@ -223,8 +246,11 @@ RSpec.describe Exports::ExportRequestService do
           0,   # 3T Diapers
           0,   # 4T Diapers
           1,   # 4T Diapers - packs
-          0, # Inactive Item
-          0, # Unrequested Item
+          0,   # apple
+          0,   # Banana
+          0,   # Inactive Item
+          0,   # Unrequested Item
+          0,   # Zebra
           0    # <DELETED_ITEMS>
         ])
       end
@@ -240,8 +266,11 @@ RSpec.describe Exports::ExportRequestService do
           0,   # 3T Diapers
           0,   # 4T Diapers
           1, # 4T Diapers - packs
+          0, # apple
+          0, # Banana
           0, # Inactive Item
           0, # Unrequested Item
+          0, # Zebra
           0    # <DELETED_ITEMS>
         ])
       end
@@ -263,8 +292,11 @@ RSpec.describe Exports::ExportRequestService do
           "2T Diapers -- UPDATED",
           "3T Diapers",
           "4T Diapers",
+          "apple",
+          "Banana",
           "Inactive Item",
           "Unrequested Item",
+          "Zebra",
           "<DELETED_ITEMS>"
         ])
       end
@@ -282,8 +314,11 @@ RSpec.describe Exports::ExportRequestService do
           0,   # 2T Diapers
           150, # 3T Diapers
           0,   # 4T Diapers
-          0, # Inactive Item
-          0, # Unrequested Item
+          0,   # apple
+          0,   # Banana
+          0,   # Inactive Item
+          0,   # Unrequested Item
+          0,   # Zebra
           0    # <DELETED_ITEMS>
         ])
       end
@@ -297,8 +332,11 @@ RSpec.describe Exports::ExportRequestService do
           100, # 2T Diapers
           0,   # 3T Diapers
           0,   # 4T Diapers
-          0, # Inactive Item
-          0, # Unrequested Item
+          0,   # apple
+          0,   # Banana
+          0,   # Inactive Item
+          0,   # Unrequested Item
+          0,   # Zebra
           0    # <DELETED_ITEMS>
         ])
       end
@@ -312,8 +350,11 @@ RSpec.describe Exports::ExportRequestService do
           0,   # 2T Diapers
           0,   # 3T Diapers
           0,   # 4T Diapers
-          0, # Inactive Item
-          0, # Unrequested Item
+          0,   # apple
+          0,   # Banana
+          0,   # Inactive Item
+          0,   # Unrequested Item
+          0,   # Zebra
           400  # <DELETED_ITEMS>
         ])
       end
@@ -327,8 +368,11 @@ RSpec.describe Exports::ExportRequestService do
           3,   # 2T Diapers
           2,   # 3T Diapers
           4,   # 4T Diapers
-          0, # Inactive Item
-          0, # Unrequested Item
+          0,   # apple
+          0,   # Banana
+          0,   # Inactive Item
+          0,   # Unrequested Item
+          0,   # Zebra
           0    # <DELETED_ITEMS>
         ])
       end
@@ -342,8 +386,11 @@ RSpec.describe Exports::ExportRequestService do
           0,   # 2T Diapers
           0,   # 3T Diapers
           77,  # 4T Diapers
-          0, # Inactive Item
-          0, # Unrequested Item
+          0,   # apple
+          0,   # Banana
+          0,   # Inactive Item
+          0,   # Unrequested Item
+          0,   # Zebra
           0    # <DELETED_ITEMS>
         ])
       end
@@ -357,8 +404,11 @@ RSpec.describe Exports::ExportRequestService do
           0,   # 2T Diapers
           0,   # 3T Diapers
           1,   # 4T Diapers
-          0, # Inactive Item
-          0, # Unrequested Item
+          0,   # apple
+          0,   # Banana
+          0,   # Inactive Item
+          0,   # Unrequested Item
+          0,   # Zebra
           0    # <DELETED_ITEMS>
         ])
       end

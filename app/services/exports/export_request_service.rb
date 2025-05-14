@@ -99,7 +99,7 @@ module Exports
       # has been deleted. Normally this wouldn't be necessary,
       # but previous versions of the application would cause
       # this orphaned data
-      item_names.sort.uniq << DELETED_ITEMS_COLUMN_HEADER
+      item_names.to_a.sort_by(&:downcase) << DELETED_ITEMS_COLUMN_HEADER
     end
 
     def build_row_data(request)
