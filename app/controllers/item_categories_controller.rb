@@ -33,6 +33,19 @@ class ItemCategoriesController < ApplicationController
     end
   end
 
+  def destroy
+    @item_category = current_organization.item_categories.find_by(id: params[:id])
+    @item_category.destroy
+    if @item_category.errors.any?
+      flash[:error] = @item_category.errors.full_messages.join("\n")
+      redirect_back(fallback_location: items_path)
+      return
+    end
+
+    flash[:notice] = "#{@item_category.name} has been removed."
+    redirect_to items_path
+  end
+
   private
 
   def item_category_params
