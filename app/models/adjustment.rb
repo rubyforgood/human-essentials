@@ -34,18 +34,11 @@ class Adjustment < ApplicationRecord
     [increasing_adjustment, decreasing_adjustment]
   end
 
-  def self.csv_export_headers
-    ["Created", "Organization", "Storage Location", "Comment", "Changes"]
-  end
+  def self.generate_csv(adjustments)
+    return nil if adjustments.empty?
 
-  def csv_export_attributes
-    [
-      created_at.strftime("%F"),
-      organization.name,
-      storage_location.name,
-      comment,
-      line_items.count
-    ]
+    Exports::ExportAdjustmentsCSVService
+      .generate_csv(adjustments, adjustments.first.organization)
   end
 
   private
