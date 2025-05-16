@@ -38,9 +38,6 @@ require 'seeds'
 
 FactoryBot.define do
   factory :organization do
-    transient do
-      skip_items { false }
-    end
 
     sequence(:name) { |n| "Dont test this name #{n}" } # 037000863427
     
