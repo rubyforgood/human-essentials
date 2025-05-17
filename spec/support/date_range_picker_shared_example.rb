@@ -84,61 +84,61 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
     end
   end
 
-  # context "when entering an invalid date range" do
-  #   before do
-  #     sign_out user
-  #     travel_to Time.zone.local(2019, 7, 31)
-  #     sign_in user
-  #   end
+  context "when entering an invalid date range" do
+    before do
+      sign_out user
+      travel_to Time.zone.local(2019, 7, 31)
+      sign_in user
+    end
 
-  # This test is designed to simulate the case where a user tabs into the date range input field, types in an invalid value,
-  # and then presses Enter to submit the form. In the real application:
-  # - When the user tabs into the field, the Litepicker.js events (which manage the date range input) don't get triggered.
-  # - As a result, invalid data can be sent to the server without the client-side validation taking place.
-  #
-  # In contrast, if the user clicks on the input field, Litepicker.js would register, validate the input, and reset the
-  # value to a default range, preventing invalid data from being submitted.
-  #
-  # The goal of this test is to ensure that server-side validation works when invalid data is submitted, as it would happen
-  # when the user tabs into the input, enters invalid data, and submits the form.
-  #
-  # However, Capybara's standard methods like `fill_in` or `native.send_keys` trigger the Litepicker.js events, which
-  # prevent us from testing this edge case. These methods would cause Litepicker.js to validate the input, reset the
-  # value, and prevent invalid data from being submitted to the server.
-  #
-  # To properly test this case, we use `execute_script` to simulate typing the invalid date directly into the input
-  # field, bypassing the Litepicker.js events entirely. This allows us to submit the invalid data and test the
-  # server-side validation without interference from the JavaScript events.
-  # it "shows a flash notice and filters results as default" do
-  #   visit subject
+    # This test is designed to simulate the case where a user tabs into the date range input field, types in an invalid value,
+    # and then presses Enter to submit the form. In the real application:
+    # - When the user tabs into the field, the Litepicker.js events (which manage the date range input) don't get triggered.
+    # - As a result, invalid data can be sent to the server without the client-side validation taking place.
+    #
+    # In contrast, if the user clicks on the input field, Litepicker.js would register, validate the input, and reset the
+    # value to a default range, preventing invalid data from being submitted.
+    #
+    # The goal of this test is to ensure that server-side validation works when invalid data is submitted, as it would happen
+    # when the user tabs into the input, enters invalid data, and submits the form.
+    #
+    # However, Capybara's standard methods like `fill_in` or `native.send_keys` trigger the Litepicker.js events, which
+    # prevent us from testing this edge case. These methods would cause Litepicker.js to validate the input, reset the
+    # value, and prevent invalid data from being submitted to the server.
+    #
+    # To properly test this case, we use `execute_script` to simulate typing the invalid date directly into the input
+    # field, bypassing the Litepicker.js events entirely. This allows us to submit the invalid data and test the
+    # server-side validation without interference from the JavaScript events.
+    it "shows a flash notice and filters results as default" do
+      visit subject
 
-  #   date_range = "nov 08 - feb 08"
-  #   page.execute_script("document.getElementById('filters_date_range').focus();")
-  #   page.execute_script("document.getElementById('filters_date_range').value = '#{date_range}';")
-  #   page.execute_script("document.querySelector('[data-test-id=\"filter-button\"]').click();")
+      date_range = "nov 08 - feb 08"
+      page.execute_script("document.getElementById('filters_date_range').focus();")
+      page.execute_script("document.getElementById('filters_date_range').value = '#{date_range}';")
+      page.execute_script("document.querySelector('[data-test-id=\"filter-button\"]').click();")
 
-  #   expect(page).to have_css(".alert.notice", text: "Invalid Date range provided. Reset to default date range")
-  #   expect(page).to have_css("table tbody tr", count: 4)
-  # end
+      expect(page).to have_css(".alert.notice", text: "Invalid Date range provided. Reset to default date range")
+      expect(page).to have_css("table tbody tr", count: 4)
+    end
 
-  # This test is similar to the above but simulates user clicking away from the date range field
-  # after having tabbed into it to type something invalid. In this case client side validation
-  # via a JavaScript alert should be triggered.
-  # it "shows a JavaScript alert when user blurs" do
-  #   visit subject
+    # This test is similar to the above but simulates user clicking away from the date range field
+    # after having tabbed into it to type something invalid. In this case client side validation
+    # via a JavaScript alert should be triggered.
+    it "shows a JavaScript alert when user blurs" do
+      visit subject
 
-  #   date_range = "nov 08 - feb 08"
-  #   page.execute_script("document.getElementById('filters_date_range').focus();")
-  #   page.execute_script("document.getElementById('filters_date_range').value = '#{date_range}';")
+      date_range = "nov 08 - feb 08"
+      page.execute_script("document.getElementById('filters_date_range').focus();")
+      page.execute_script("document.getElementById('filters_date_range').value = '#{date_range}';")
 
-  #   accept_alert("Please enter a valid date range (e.g., January 1, 2024 - March 15, 2024).") do
-  #     find('body').click
-  #   end
+      accept_alert("Please enter a valid date range (e.g., January 1, 2024 - March 15, 2024).") do
+        find('body').click
+      end
 
-  #   valid_date_range = "#{Time.zone.local(2019, 7, 22).to_fs(:date_picker)} - #{Time.zone.local(2019, 7, 28).to_fs(:date_picker)}"
-  #   fill_in "filters_date_range", with: valid_date_range
-  #   find(:id, 'filters_date_range').native.send_keys(:enter)
-  #   expect(page).to have_css("table tbody tr", count: 1)
-  # end
-  # end
+      valid_date_range = "#{Time.zone.local(2019, 7, 22).to_fs(:date_picker)} - #{Time.zone.local(2019, 7, 28).to_fs(:date_picker)}"
+      fill_in "filters_date_range", with: valid_date_range
+      find(:id, 'filters_date_range').native.send_keys(:enter)
+      expect(page).to have_css("table tbody tr", count: 1)
+    end
+  end
 end
