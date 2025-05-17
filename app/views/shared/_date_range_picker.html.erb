@@ -5,6 +5,9 @@ placeholder: "January 1, 2011 - December 31, 2011",
 class: "#{css_class}",
 autocomplete: "on",
 data: {
+  controller: "date-range",
+  date_range_target: "input",
+  action: "blur->date-range#validate",
   initial_start_date: @selected_date_interval.first.strftime("%B %d, %Y"),
   initial_end_date: @selected_date_interval.last.strftime("%B %d, %Y"),
 } %>
