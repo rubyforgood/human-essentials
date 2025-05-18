@@ -107,17 +107,17 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
     # value, and prevent invalid data from being submitted to the server.
     #
     # To properly test this case, we use `execute_script` to simulate typing the invalid date directly into the input
-    # field, bypassing the Litepicker.js events entirely. This allows us to submit the invalid data and test the
-    # server-side validation without interference from the JavaScript events.
+    # field, and submitting the form, bypassing the Litepicker.js events entirely.
     it "shows a flash notice and filters results as default" do
       visit subject
 
       date_range = "nov 08 - feb 08"
-      page.execute_script("document.getElementById('filters_date_range').dataset.skipValidation = 'true';")
-      page.execute_script("document.getElementById('filters_date_range').focus();")
-      page.execute_script("document.getElementById('filters_date_range').value = '#{date_range}';")
       page.execute_script(<<~JS)
-        var form = document.getElementById('filters_date_range').closest('form');
+        var input = document.getElementById('filters_date_range');
+        input.dataset.skipValidation = 'true';
+        input.focus();
+        input.value = '#{date_range}';
+        var form = input.closest('form');
         form.requestSubmit();
       JS
 
