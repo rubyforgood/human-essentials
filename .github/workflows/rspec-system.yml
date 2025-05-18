@@ -79,9 +79,9 @@ jobs:
           KNAPSACK_PRO_CI_NODE_INDEX: ${{ matrix.ci_node_index }}
           KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
           KNAPSACK_PRO_LOG_LEVEL: info
-          # KNAPSACK_PRO_TEST_FILE_PATTERN: "{spec/system/**{,/*/**}/*_spec.rb,spec/requests/**{,/*/**}/*_spec.rb}"
+          KNAPSACK_PRO_TEST_FILE_PATTERN: "{spec/system/**{,/*/**}/*_spec.rb,spec/requests/**{,/*/**}/*_spec.rb}"
           # KNAPSACK_PRO_TEST_FILE_PATTERN: "spec/system/distribution_system_spec.rb"
-          KNAPSACK_PRO_TEST_FILE_PATTERN: "spec/system/investigation_system_spec.rb"
+          # KNAPSACK_PRO_TEST_FILE_PATTERN: "spec/system/investigation_system_spec.rb"
 
         run: |
           RUBYOPT='-W:no-deprecated -W:no-experimental' bin/knapsack_pro_rspec
