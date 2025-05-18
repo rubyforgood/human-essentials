@@ -19,6 +19,11 @@ export default class extends Controller {
   validate(event) {
     event.preventDefault();
 
+    // experiment
+    if (this.inputTarget.dataset.skipValidation === "true") {
+      return;
+    }
+
     if (window.isLitepickerActive) {
       return;
     }
