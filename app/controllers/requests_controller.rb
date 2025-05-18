@@ -48,6 +48,23 @@ class RequestsController < ApplicationController
     redirect_to new_distribution_path(request_id: request.id)
   end
 
+  def print_picklist
+    request = current_organization
+      .requests
+      .includes(:item_requests, partner: [:profile])
+      .find(params[:id])
+
+    respond_to do |format|
+      format.any do
+        pdf = PicklistsPdf.new(current_organization, [request])
+        send_data pdf.compute_and_render,
+          filename: format("Picklists_%s.pdf", Time.current.to_fs(:long)),
+          type: "application/pdf",
+          disposition: "inline"
+      end
+    end
+  end
+
   def print_unfulfilled
     requests = current_organization
       .requests
