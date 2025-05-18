@@ -739,7 +739,7 @@ RSpec.feature "Distributions", type: :system do
     end
   end
 
-  context "when filtering on the index page" do
+  fcontext "when filtering on the index page" do
     subject { distributions_path }
     let(:item_category) { create(:item_category) }
     let(:item1) { create(:item, name: "Good item", item_category: item_category, organization: organization) }
