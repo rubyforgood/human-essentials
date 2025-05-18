@@ -3,6 +3,13 @@
 // However, if a user tabs into the field and enters invalid data without triggering Litepicker events,
 // Litepicker won't validate the input, leaving invalid data in the field.
 // This controller ensures that in such cases, custom validation is performed to alert the user about invalid input.
+//
+// Note: The `data-skip-validation` attribute is used only in automated system tests to disable client-side validation.
+// In real user interactions, if a user enters an invalid date and immediately hits Enter, the form submits before
+// JS blur-based validation runs, so server-side validation is exercised as expected.
+// However, in system tests (especially on CI), the JS blur validation always runs before form submission,
+// making it impossible to test server-side validation for this scenario unless client-side validation is disabled.
+// This attribute should only be set in test code.
 
 import { Controller } from "@hotwired/stimulus";
 import { DateTime } from "luxon";
@@ -19,11 +26,7 @@ export default class extends Controller {
   validate(event) {
     event.preventDefault();
 
-    if (this.inputTarget.dataset.skipValidation === "true") {
-      return;
-    }
-
-    if (window.isLitepickerActive) {
+    if (this.inputTarget.dataset.skipValidation === "true" || window.isLitepickerActive) {
       return;
     }
 
