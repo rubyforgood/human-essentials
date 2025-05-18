@@ -115,15 +115,29 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
       date_range = "nov 08 - feb 08"
       page.execute_script("document.getElementById('filters_date_range').focus();")
       page.execute_script("document.getElementById('filters_date_range').value = '#{date_range}';")
-      page.execute_script("document.querySelector('[data-test-id=\"filter-button\"]').click();")
+      # What we really want here is to simulate user hitting Enter to submit the form but only this click worked
+      # But on CI, this ends up triggering a JS alert instead of submitting the form
+      # FIXME: Can we use something like requestSubmit() to submit the form?
+      # https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/requestSubmit
+      # page.execute_script("document.querySelector('[data-test-id=\"filter-button\"]').click();")
+      page.execute_script(<<~JS)
+        var form = document.getElementById('filters_date_range').closest('form');
+        form.requestSubmit();
+      JS
 
-      # Temp: investigating timing failure on CI
+      # Temp: investigating timing failure on CI and URL has not transitioned yet, it remains on:
+      # URL: http://127.0.0.1:35713/distributions
+      # Whereas locally it's transitioned to reflect the filters:
+      # http://127.0.0.1:53534/distributions?filters%5Bby_item_id%5D=&filters%5Bby_partner%5D=&filters%5Bby_location%5D=&filters%5Bby_state%5D=&filters%5Bdate_range%5D=nov+08+-+feb+08&filters%5Bdate_range_label%5D=during+the+period+31+May+to+31+Aug&button=
+      # So on CI, clicking the filter button after "tabbing" into the date range field does not submit the form, or not yet, and JS alert is running first
       puts "🔍 URL: #{page.current_url}"
-      # puts "📄 Page body preview:\n#{page.body[0..1000]}"
+
+      # === ON CI: JS ALERT SHOWS UP HERE ===
+
       puts "📄 Page text: #{page.text}"
-      # expect(page).to have_css(".alert.notice", text: "Invalid Date range provided. Reset to default date range")
-      # expect(page).to have_css("table tbody tr", count: 4)
-      expect(page).to have_selector(".alert.notice", text: "Invalid Date range provided. Reset to default date range", wait: 30)
+      expect(page).to have_css(".alert.notice", text: "Invalid Date range provided. Reset to default date range")
+      expect(page).to have_css("table tbody tr", count: 4)
+      # expect(page).to have_selector(".alert.notice", text: "Invalid Date range provided. Reset to default date range", wait: 30)
       # expect(page).to have_css("table tbody tr", count: 4, wait: 10)
     end
 
