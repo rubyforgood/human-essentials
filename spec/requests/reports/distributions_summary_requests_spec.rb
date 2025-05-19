@@ -11,6 +11,18 @@ RSpec.describe "Distributions", type: :request do
       sign_in(user)
     end
 
+    describe "time display" do
+      let!(:distribution) { create(:distribution, :with_items, issued_at: 2.days.ago) }
+
+      before do
+        get reports_distributions_summary_path
+      end
+
+      it "uses issued_at for the relative time display, not created_at" do
+        expect(response.body).to include("2 days ago")
+      end
+    end
+
     context "the index page" do
       context "without filters" do
         before do
