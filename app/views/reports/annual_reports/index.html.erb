@@ -28,6 +28,14 @@
         <span class="text-muted"> <%= "#{@actual_year} (available in #{pluralize(@month_remaining_to_report, 'month')})" %> </span>
       </div>
       <div class="col-md-12">
+        <%=
+            download_button_to(
+              reports_annual_reports_path(format: :csv),
+              text: "Export Yearly Reports"
+            )
+        %>
+      </div>
+      <div class="col-md-12">
         <div class="card card-primary">
           <div class="card-header">
             <h3 class="card-title">NDBN Annual Reports</h3>
