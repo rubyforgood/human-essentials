@@ -108,7 +108,7 @@ $(function() {
   )
 
   const large_donation_boundary = 100000;
-  $(document).on("click", "form#new_donation", (e, _) =>
+  $(document).on("click", "form#new_donation button[type='submit']", (e, _) =>
     $(".quantity").each(function(_, q) {
       const quantity = parseInt(q.value, 10);
       if (quantity > large_donation_boundary) {
