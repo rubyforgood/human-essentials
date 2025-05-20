@@ -119,7 +119,7 @@ class Donation < ApplicationRecord
   end
 
   def in_kind_value_money
-    Money.new(value_per_itemizable)
+    Money.new(value_per_itemizable).to_f
   end
 
   private
