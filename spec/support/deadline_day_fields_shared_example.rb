@@ -53,8 +53,8 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
     fill_in "#{form_prefix}_day_of_month", with: 15
     fill_in "Default deadline day (final day of month to submit Requests)", with: 15
     expect(page).to have_content("Reminder day cannot be the same as deadline day.")
-    expect(page).to_not have_content("Your next reminder will be sent on")
-    expect(page).to_not have_content("Your next deadline will be on")
+    expect(page).to_not have_content("Your next reminder date is")
+    expect(page).to_not have_content("Your next deadline date is")
   end
 
   it "warns the user if the reminder day is outside the range of 1 to 28" do
@@ -87,7 +87,7 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
       it "prior to the current date" do
         prior = @now - 1.day
         fill_in "#{form_prefix}_day_of_month", with: prior.day
-        expect(page).to have_content("Your next reminder will be sent on")
+        expect(page).to have_content("Your next reminder date is")
         expect(page).to have_content((prior + 1.month).strftime("%b %d %Y"))
       end
 
@@ -95,14 +95,14 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
         prior = @now - 1.day
         fill_in "#{form_prefix}_start_date", with: (prior - 1.day).strftime("%Y-%m-%d")
         fill_in "#{form_prefix}_day_of_month", with: prior.day
-        expect(page).to have_content("Your next reminder will be sent on")
+        expect(page).to have_content("Your next reminder date is")
         expect(page).to have_content(prior.strftime("%b %d %Y"))
       end
 
       it "after the current date" do
         after = @now + 1.day
         fill_in "#{form_prefix}_day_of_month", with: after.day
-        expect(page).to have_content("Your next reminder will be sent on")
+        expect(page).to have_content("Your next reminder date is")
         expect(page).to have_content(after.strftime("%b %d %Y"))
       end
 
@@ -110,14 +110,14 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
         after = @now + 1.day
         fill_in "#{form_prefix}_start_date", with: (after + 1.day).strftime("%Y-%m-%d")
         fill_in "#{form_prefix}_day_of_month", with: after.day
-        expect(page).to have_content("Your next reminder will be sent on")
+        expect(page).to have_content("Your next reminder date is")
         expect(page).to have_content((after + 1.month).strftime("%b %d %Y"))
       end
 
       it "and the reminder and deadline dates are different" do
         fill_in "#{form_prefix}_day_of_month", with: @now.day + 1
         fill_in "Default deadline day (final day of month to submit Requests)", with: @now.day + 2
-        expect(page).to have_content("Your next deadline will be on")
+        expect(page).to have_content("Your next deadline date is")
         expect(page).to have_content((@now + 2.days).strftime("%b %d %Y"))
       end
     end
@@ -138,7 +138,7 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
         select(Deadlinable::DAY_OF_WEEK_COLLECTION[prior.wday][0], from: "#{form_prefix}_day_of_week")
         schedule = IceCube::Schedule.new
         schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_week(prior.wday => [every_nth_day]))
-        expect(page).to have_content("Your next reminder will be sent on")
+        expect(page).to have_content("Your next reminder date is")
         expect(page).to have_content(schedule.next_occurrence.strftime("%b %d %Y"))
       end
 
@@ -152,7 +152,7 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
         select(Deadlinable::DAY_OF_WEEK_COLLECTION[after.wday][0], from: "#{form_prefix}_day_of_week")
         schedule = IceCube::Schedule.new
         schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_week(after.wday => [every_nth_day]))
-        expect(page).to have_content("Your next reminder will be sent on")
+        expect(page).to have_content("Your next reminder date is")
         expect(page).to have_content(schedule.next_occurrence.strftime("%b %d %Y"))
       end
     end
@@ -165,12 +165,12 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
     fill_in "Default deadline day (final day of month to submit Requests)", with: 21
 
     reminder_text = find('small[data-deadline-day-target="reminderText"]').text
-    reminder_text.slice!("Your next reminder will be sent on ")
+    reminder_text.slice!("Your next reminder date is ")
     reminder_text.slice!(".")
     shown_recurrence_date = Time.zone.strptime(reminder_text, "%a %b %d %Y")
 
     deadline_text = find('small[data-deadline-day-target="deadlineText"]').text
-    deadline_text.slice!("Your next deadline will be on ")
+    deadline_text.slice!("Your next deadline date is ")
     deadline_text.slice!(".")
     shown_deadline_date = Time.zone.strptime(deadline_text, "%a %b %d %Y")
 

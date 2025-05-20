@@ -21,6 +21,20 @@ export default class extends Controller {
 
   static dateParser = /(\d{4})-(\d{2})-(\d{2})/;
   
+  getFirstOccurrenceAfterToday( occurrences, today ) {
+    let index = occurrences.length - 1
+    let firstOccurrence = null
+    while (index >= 0){
+      if (occurrences[index].getTime() > today.getTime()) {
+        firstOccurrence = occurrences[index]
+        index--
+      } else {
+        break
+      }
+    }
+    return firstOccurrence
+  }
+
   sourceChange() {
     let reminder_date = null;
     let deadline_date = null;
@@ -31,27 +45,33 @@ export default class extends Controller {
       match[2]-1, // Subtracting 1 because the Date constructor uses month indices, but year and day numbers
       match[3]
     );
+    let monthlyInterval = parseInt(this.everyNthMonthTarget.value);
+    // Calculate the next reminder date after the start date, or the current date, whichever is greater.
+    // Do it this way to avoid the next reminder/deadline date being a date in the past.
+    let today = new Date()
+    let untilDate = new Date( Math.max(...[ startDate, today ]) )
+    untilDate.setMonth( untilDate.getMonth() + monthlyInterval )
 
     if (this.byDayOfMonthTarget.checked && this.dayOfMonthTarget.value) {
       const rule = new RRule({
         dtstart: startDate,
         freq: RRule.MONTHLY,
-        interval: parseInt(this.everyNthMonthTarget.value),
+        interval: monthlyInterval,
         bymonthday: parseInt(this.dayOfMonthTarget.value),
-        count: 1
+        until: untilDate
       })
-      reminder_date = rule.all()[0]
+      reminder_date = this.getFirstOccurrenceAfterToday( rule.all(), today )
     }
     if (this.byDayOfWeekTarget.checked && this.everyNthDayTarget.value && (this.dayOfWeekTarget.value)) {
       const rule = new RRule({
         dtstart: startDate,
         freq: RRule.MONTHLY,
-        interval: parseInt(this.everyNthMonthTarget.value),
+        interval: monthlyInterval,
         byweekday: WEEKDAY_NUM_TO_OBJ[ parseInt(this.dayOfWeekTarget.value) ].nth( parseInt(this.everyNthDayTarget.value) ),
         wkst: RRule.SU,
-        count: 1
+        until: untilDate
       })
-      reminder_date = rule.all()[0]
+      reminder_date = this.getFirstOccurrenceAfterToday( rule.all(), today )
     }
     if (reminder_date && this.deadlineDayTarget.value) {
       deadline_date = new Date(reminder_date.getTime());
@@ -74,14 +94,14 @@ export default class extends Controller {
         $(this.reminderTextTarget).text("Reminder day must be between 1 and 28");
       } else {
         $(this.reminderTextTarget).removeClass('text-danger').addClass('text-muted');
-        $(this.reminderTextTarget).text(reminder_date ? `Your next reminder will be sent on ${reminder_date.toDateString()}.` : "");
+        $(this.reminderTextTarget).text(reminder_date ? `Your next reminder date is ${reminder_date.toDateString()}.` : "");
       }
       if (deadlineDay < 1 || deadlineDay > 28){
         $(this.deadlineTextTarget).removeClass('text-muted').addClass('text-danger');
         $(this.deadlineTextTarget).text("Deadline day must be between 1 and 28");
       } else {
         $(this.deadlineTextTarget).removeClass('text-danger').addClass('text-muted');
-        $(this.deadlineTextTarget).text(deadline_date ? `Your next deadline will be on ${deadline_date.toDateString()}.` : "");
+        $(this.deadlineTextTarget).text(deadline_date ? `Your next deadline date is ${deadline_date.toDateString()}.` : "");
       }
     }
   }
