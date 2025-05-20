@@ -38,7 +38,6 @@ class ItemCategoriesController < ApplicationController
     if @item_category.items.exists?
       flash[:error] = "Cannot delete item category because it has associated items."
       render :show, status: :unprocessable_entity
-      nil
     else
       @item_category.destroy
       flash[:notice] = "#{@item_category.name} has been deleted."
