@@ -23,7 +23,6 @@
 #  receive_email_on_requests      :boolean          default(FALSE), not null
 #  reminder_day                   :integer
 #  repackage_essentials           :boolean          default(FALSE), not null
-#  short_name                     :string
 #  signature_for_distribution_pdf :boolean          default(FALSE)
 #  state                          :string
 #  street                         :string

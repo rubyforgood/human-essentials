@@ -35,15 +35,15 @@ class ItemCategoriesController < ApplicationController
 
   def destroy
     @item_category = current_organization.item_categories.find_by(id: params[:id])
-    @item_category.destroy
-    if @item_category.errors.any?
-      flash[:error] = @item_category.errors.full_messages.join("\n")
-      redirect_back(fallback_location: items_path)
-      return
+    if @item_category.items.exists?
+      flash[:error] = "Cannot delete item category because it has associated items."
+      render :show, status: :unprocessable_entity
+      nil
+    else
+      @item_category.destroy
+      flash[:notice] = "#{@item_category.name} has been deleted."
+      redirect_to items_path
     end
-
-    flash[:notice] = "#{@item_category.name} has been removed."
-    redirect_to items_path
   end
 
   private
