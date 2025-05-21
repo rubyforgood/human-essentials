@@ -38,60 +38,26 @@ module Deadlinable
     schedule.recurrence_rules.first.to_s
   end
 
-  def from_ical(ical)
-    return if ical.blank?
-    schedule = IceCube::Schedule.from_ical(ical)
-    rule = schedule.recurrence_rules.first.instance_values
-    day_of_month = rule["validations"][:day_of_month]&.first&.value
-
-    results = {}
-    results[:start_date] = schedule.start_time
-    results[:by_month_or_week] = day_of_month ? "day_of_month" : "day_of_week"
-    results[:day_of_month] = day_of_month
-    results[:day_of_week] = rule["validations"][:day_of_week]&.first&.day
-    results[:every_nth_day] = rule["validations"][:day_of_week]&.first&.occ
-    results[:every_nth_month] = rule["validations"][:interval]&.first&.interval
-    results
-  rescue
-    nil
-  end
-
   def get_values_from_reminder_schedule
     if reminder_schedule.blank?
       self.start_date = Time.zone.today
       return
     end
-    results = from_ical(reminder_schedule)
-    if results.nil?
+
+    schedule = IceCube::Schedule.from_ical(reminder_schedule)
+    rule = schedule.recurrence_rules.first.instance_values
+    if rule.blank?
       self.start_date = Time.zone.today
       return
     end
-    self.start_date = results[:start_date]
-    self.by_month_or_week = results[:by_month_or_week]
-    self.day_of_month = results[:day_of_month]
-    self.day_of_week = results[:day_of_week]
-    self.every_nth_day = results[:every_nth_day]
-    self.every_nth_month = results[:every_nth_month]
-  end
+    day_of_month = rule["validations"][:day_of_month]&.first&.value
 
-  def should_update_reminder_schedule
-    if reminder_schedule.blank?
-      return by_month_or_week.present?
-    end
-    sched = from_ical(reminder_schedule)
-    if by_month_or_week != sched[:by_month_or_week].presence.to_s
-      return true
-    end
-    if by_month_or_week == "day_of_month"
-      return day_of_month != sched[:day_of_month].presence.to_s ||
-          every_nth_month != sched[:every_nth_month].presence.to_s
-    end
-    if by_month_or_week == "day_of_week"
-      return day_of_week != sched[:day_of_week].presence.to_s ||
-          every_nth_day != sched[:every_nth_day].presence.to_s ||
-          every_nth_month != sched[:every_nth_month].presence.to_s
-    end
-    false
+    self.start_date = schedule.start_time
+    self.by_month_or_week = day_of_month ? "day_of_month" : "day_of_week"
+    self.day_of_month = day_of_month
+    self.day_of_week = rule["validations"][:day_of_week]&.first&.day
+    self.every_nth_day = rule["validations"][:day_of_week]&.first&.occ
+    self.every_nth_month = rule["validations"][:interval]&.first&.interval
   end
 
   def create_schedule

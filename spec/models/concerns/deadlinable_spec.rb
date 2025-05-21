@@ -133,30 +133,12 @@ RSpec.describe Deadlinable, type: :model do
     expect(dummy.show_description(ical_schedule)).to eq "Monthly on the 10th day of the month"
   end
 
-  it "from_ical returns hash of fields from schedule in ICAL format" do
-    ical_schedule = "DTSTART;TZID=#{Time.zone.now.zone}:20201010T000000\nRRULE:FREQ=MONTHLY;BYMONTHDAY=10"
-    expect(dummy.from_ical(ical_schedule)).to eq(
-      start_date: Time.zone.local(2020, 10, 10),
-      by_month_or_week: "day_of_month",
-      day_of_month: 10,
-      day_of_week: nil,
-      every_nth_day: nil,
-      every_nth_month: 1
-    )
-  end
-
   it "get_values_from_reminder_schedule sets deadlineable's start_date to today if there is no schedule" do
     dummy.get_values_from_reminder_schedule
     expect(dummy.start_date).to eq(Time.zone.today)
     dummy.reminder_schedule = "notavalidschedule"
     dummy.get_values_from_reminder_schedule
     expect(dummy.start_date).to eq(Time.zone.today)
-  end
-
-  it "when reminder_schedule is blank should_update_reminder_schedule returns true if day_of_month is present, false otherwise" do
-    expect(dummy.should_update_reminder_schedule).to be_falsey
-    dummy.by_month_or_week = "day_of_month"
-    expect(dummy.should_update_reminder_schedule).to be_truthy
   end
 
   context "with an existing day_of_month schedule" do
@@ -172,29 +154,6 @@ RSpec.describe Deadlinable, type: :model do
       expect(dummy.day_of_week).to eq(nil)
       expect(dummy.every_nth_day).to eq(nil)
       expect(dummy.every_nth_month).to eq(1)
-    end
-
-    it "should_update_reminder_schedule returns false if no fields differ" do
-      dummy.by_month_or_week = "day_of_month"
-      dummy.day_of_month = "10"
-      dummy.every_nth_month = "1"
-      expect(dummy.should_update_reminder_schedule).to be_falsey
-    end
-
-    it "should_update_reminder_schedule returns true if fields differ" do
-      dummy.by_month_or_week = "day_of_month"
-      dummy.day_of_month = "15"
-      dummy.every_nth_month = "3"
-      expect(dummy.should_update_reminder_schedule).to be_truthy
-    end
-
-    it "should_update_reminder_schedule return true if the by_month_or_week field differs" do
-      dummy.by_month_or_week = "day_of_week"
-      dummy.day_of_month = "10"
-      dummy.day_of_week = "0"
-      dummy.every_nth_day = "1"
-      dummy.every_nth_month = "1"
-      expect(dummy.should_update_reminder_schedule).to be_truthy
     end
   end
 
