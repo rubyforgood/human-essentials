@@ -2,6 +2,7 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
   it "can set a reminder on a day of the month" do
     choose "Day of Month"
     fill_in "#{form_prefix}_day_of_month", with: 1
+    fill_in "Default deadline day (final day of month to submit Requests)", with: 10
     click_on save_button
 
     if post_form_submit
@@ -15,6 +16,7 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
     choose "Day of the Week"
     select("First", from: "#{form_prefix}_every_nth_day")
     select("Sunday", from: "#{form_prefix}_day_of_week")
+    fill_in "Default deadline day (final day of month to submit Requests)", with: 10
     click_on save_button
 
     if post_form_submit
@@ -28,6 +30,7 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
     select("Every 3 month", from: "How frequently should reminders be sent (e.g. \"monthly\", \"every 3 months\", etc.)?")
     choose "Day of Month"
     fill_in "#{form_prefix}_day_of_month", with: 1
+    fill_in "Default deadline day (final day of month to submit Requests)", with: 10
     click_on save_button
 
     if post_form_submit
