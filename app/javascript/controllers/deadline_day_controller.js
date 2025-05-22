@@ -50,7 +50,7 @@ export default class extends Controller {
     // Do it this way to avoid the next reminder/deadline date being a date in the past.
     let today = new Date()
     let untilDate = new Date( Math.max(...[ startDate, today ]) )
-    untilDate.setMonth( untilDate.getMonth() + monthlyInterval )
+    untilDate.setMonth( untilDate.getMonth() + monthlyInterval + 1 )
 
     if (this.byDayOfMonthTarget.checked && this.dayOfMonthTarget.value) {
       const rule = new RRule({
