@@ -88,76 +88,76 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
       end
 
       it "prior to the current date and start date" do
-        fill_in "#{form_prefix}_day_of_month", with: (@now - 2.day).day
+        fill_in "#{form_prefix}_day_of_month", with: (@now - 2.days).day
         fill_in "#{form_prefix}_start_date", with: (@now - 1.day).strftime("%Y-%m-%d")
         expect(page).to have_content("Your next reminder date is")
         schedule = IceCube::Schedule.new(@now - 1.day)
-        schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_month((@now - 2.day).day))
+        schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_month((@now - 2.days).day))
         expect(page).to have_content(schedule.next_occurrence.strftime("%b %d %Y"))
 
         fill_in "#{form_prefix}_start_date", with: (@now + 1.day).strftime("%Y-%m-%d")
         schedule = IceCube::Schedule.new(@now + 1.day)
-        schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_month((@now - 2.day).day))
+        schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_month((@now - 2.days).day))
         expect(page).to have_content(schedule.next_occurrence.strftime("%b %d %Y"))
 
-        fill_in "#{form_prefix}_start_date", with: (@now).strftime("%Y-%m-%d")
+        fill_in "#{form_prefix}_start_date", with: @now.strftime("%Y-%m-%d")
         schedule = IceCube::Schedule.new(@now)
-        schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_month((@now - 2.day).day))
+        schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_month((@now - 2.days).day))
         expect(page).to have_content(schedule.next_occurrence.strftime("%b %d %Y"))
       end
 
       it "after the current date and start date" do
-        fill_in "#{form_prefix}_day_of_month", with: (@now + 2.day).day
+        fill_in "#{form_prefix}_day_of_month", with: (@now + 2.days).day
         fill_in "#{form_prefix}_start_date", with: (@now - 1.day).strftime("%Y-%m-%d")
         expect(page).to have_content("Your next reminder date is")
         schedule = IceCube::Schedule.new(@now - 1.day)
-        schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_month((@now + 2.day).day))
+        schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_month((@now + 2.days).day))
         expect(page).to have_content(schedule.next_occurrence.strftime("%b %d %Y"))
 
         fill_in "#{form_prefix}_start_date", with: (@now + 1.day).strftime("%Y-%m-%d")
         schedule = IceCube::Schedule.new(@now + 1.day)
-        schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_month((@now + 2.day).day))
+        schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_month((@now + 2.days).day))
         expect(page).to have_content(schedule.next_occurrence.strftime("%b %d %Y"))
 
-        fill_in "#{form_prefix}_start_date", with: (@now).strftime("%Y-%m-%d")
+        fill_in "#{form_prefix}_start_date", with: @now.strftime("%Y-%m-%d")
         schedule = IceCube::Schedule.new(@now)
-        schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_month((@now + 2.day).day))
+        schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_month((@now + 2.days).day))
         expect(page).to have_content(schedule.next_occurrence.strftime("%b %d %Y"))
       end
 
       it "after the start date and prior to the current date" do
-        fill_in "#{form_prefix}_start_date", with: (@now - 2.day).strftime("%Y-%m-%d")
+        fill_in "#{form_prefix}_start_date", with: (@now - 2.days).strftime("%Y-%m-%d")
         fill_in "#{form_prefix}_day_of_month", with: (@now - 1.day).day
         expect(page).to have_content("Your next reminder date is")
-        schedule = IceCube::Schedule.new(@now - 2.day)
+        schedule = IceCube::Schedule.new(@now - 2.days)
         schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_month((@now - 1.day).day))
         expect(page).to have_content(schedule.next_occurrence.strftime("%b %d %Y"))
       end
 
       it "after the current date and prior to the start date" do
-        fill_in "#{form_prefix}_start_date", with: (@now + 2.day).strftime("%Y-%m-%d")
+        fill_in "#{form_prefix}_start_date", with: (@now + 2.days).strftime("%Y-%m-%d")
         fill_in "#{form_prefix}_day_of_month", with: (@now + 1.day).day
         expect(page).to have_content("Your next reminder date is")
-        schedule = IceCube::Schedule.new(@now + 2.day)
+        schedule = IceCube::Schedule.new(@now + 2.days)
         schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_month((@now + 1.day).day))
         expect(page).to have_content(schedule.next_occurrence.strftime("%b %d %Y"))
       end
 
       it "same as the current date and prior to the start date" do
         fill_in "#{form_prefix}_start_date", with: (@now + 1.day).strftime("%Y-%m-%d")
-        fill_in "#{form_prefix}_day_of_month", with: (@now).day
+        fill_in "#{form_prefix}_day_of_month", with: @now.day
         expect(page).to have_content("Your next reminder date is")
         schedule = IceCube::Schedule.new(@now + 1.day)
-        schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_month((@now).day))
+        schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_month(@now.day))
         expect(page).to have_content(schedule.next_occurrence.strftime("%b %d %Y"))
       end
 
       it "same as the current date and after the start date" do
         fill_in "#{form_prefix}_start_date", with: (@now - 1.day).strftime("%Y-%m-%d")
-        fill_in "#{form_prefix}_day_of_month", with: (@now).day
+        fill_in "#{form_prefix}_day_of_month", with: @now.day
         expect(page).to have_content("Your next reminder date is")
         schedule = IceCube::Schedule.new(@now - 1.day)
-        schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_month((@now).day))
+        schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_month(@now.day))
         expect(page).to have_content(schedule.next_occurrence.strftime("%b %d %Y"))
       end
 
@@ -180,13 +180,13 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
       end
 
       it "same as the start and current date" do
-        fill_in "#{form_prefix}_start_date", with: (@now).strftime("%Y-%m-%d")
-        fill_in "#{form_prefix}_day_of_month", with: (@now).day
+        fill_in "#{form_prefix}_start_date", with: @now.strftime("%Y-%m-%d")
+        fill_in "#{form_prefix}_day_of_month", with: @now.day
         expect(page).to have_content("Your next reminder date is")
         schedule = IceCube::Schedule.new(@now)
-        schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_month((@now).day))
+        schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_month(@now.day))
         expect(page).to have_content(schedule.next_occurrence.strftime("%b %d %Y"))
-      end 
+      end
     end
 
     context "when the reminder is a day of the week" do
@@ -195,7 +195,7 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
         @now = Time.zone.now
       end
 
-      def calc_every_nth_day( target_date )
+      def calc_every_nth_day(target_date)
         every_nth_day = ((target_date.day - 1) / 7) + 1
         if every_nth_day > 4
           every_nth_day = -1
@@ -204,8 +204,8 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
       end
 
       it "prior to the current date and start date" do
-        target_date = @now - 2.day
-        every_nth_day = calc_every_nth_day( target_date )
+        target_date = @now - 2.days
+        every_nth_day = calc_every_nth_day(target_date)
         select(Deadlinable::NTH_TO_WORD_MAP[every_nth_day], from: "#{form_prefix}_every_nth_day")
         select(Deadlinable::DAY_OF_WEEK_COLLECTION[target_date.wday][0], from: "#{form_prefix}_day_of_week")
 
@@ -220,18 +220,18 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
         schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_week(target_date.wday => [every_nth_day]))
         expect(page).to have_content(schedule.next_occurrence.strftime("%b %d %Y"))
 
-        fill_in "#{form_prefix}_start_date", with: (@now).strftime("%Y-%m-%d")
+        fill_in "#{form_prefix}_start_date", with: @now.strftime("%Y-%m-%d")
         schedule = IceCube::Schedule.new(@now)
         schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_week(target_date.wday => [every_nth_day]))
         expect(page).to have_content(schedule.next_occurrence.strftime("%b %d %Y"))
       end
 
       it "after the current date and start date" do
-        target_date = @now + 2.day
-        every_nth_day = calc_every_nth_day( target_date )
+        target_date = @now + 2.days
+        every_nth_day = calc_every_nth_day(target_date)
         select(Deadlinable::NTH_TO_WORD_MAP[every_nth_day], from: "#{form_prefix}_every_nth_day")
         select(Deadlinable::DAY_OF_WEEK_COLLECTION[target_date.wday][0], from: "#{form_prefix}_day_of_week")
-        
+
         fill_in "#{form_prefix}_start_date", with: (@now - 1.day).strftime("%Y-%m-%d")
         expect(page).to have_content("Your next reminder date is")
         schedule = IceCube::Schedule.new(@now - 1.day)
@@ -243,7 +243,7 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
         schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_week(target_date.wday => [every_nth_day]))
         expect(page).to have_content(schedule.next_occurrence.strftime("%b %d %Y"))
 
-        fill_in "#{form_prefix}_start_date", with: (@now).strftime("%Y-%m-%d")
+        fill_in "#{form_prefix}_start_date", with: @now.strftime("%Y-%m-%d")
         schedule = IceCube::Schedule.new(@now)
         schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_week(target_date.wday => [every_nth_day]))
         expect(page).to have_content(schedule.next_occurrence.strftime("%b %d %Y"))
@@ -251,33 +251,33 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
 
       it "after the start date and prior to the current date" do
         target_date = @now - 1.day
-        every_nth_day = calc_every_nth_day( target_date )
+        every_nth_day = calc_every_nth_day(target_date)
         select(Deadlinable::NTH_TO_WORD_MAP[every_nth_day], from: "#{form_prefix}_every_nth_day")
         select(Deadlinable::DAY_OF_WEEK_COLLECTION[target_date.wday][0], from: "#{form_prefix}_day_of_week")
-        
-        fill_in "#{form_prefix}_start_date", with: (@now - 2.day).strftime("%Y-%m-%d")
+
+        fill_in "#{form_prefix}_start_date", with: (@now - 2.days).strftime("%Y-%m-%d")
         expect(page).to have_content("Your next reminder date is")
-        schedule = IceCube::Schedule.new(@now - 2.day)
+        schedule = IceCube::Schedule.new(@now - 2.days)
         schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_week(target_date.wday => [every_nth_day]))
         expect(page).to have_content(schedule.next_occurrence.strftime("%b %d %Y"))
       end
 
       it "after the current date and prior to the start date" do
         target_date = @now + 1.day
-        every_nth_day = calc_every_nth_day( target_date )
+        every_nth_day = calc_every_nth_day(target_date)
         select(Deadlinable::NTH_TO_WORD_MAP[every_nth_day], from: "#{form_prefix}_every_nth_day")
         select(Deadlinable::DAY_OF_WEEK_COLLECTION[target_date.wday][0], from: "#{form_prefix}_day_of_week")
-        
-        fill_in "#{form_prefix}_start_date", with: (@now + 2.day).strftime("%Y-%m-%d")
+
+        fill_in "#{form_prefix}_start_date", with: (@now + 2.days).strftime("%Y-%m-%d")
         expect(page).to have_content("Your next reminder date is")
-        schedule = IceCube::Schedule.new(@now + 2.day)
+        schedule = IceCube::Schedule.new(@now + 2.days)
         schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_week(target_date.wday => [every_nth_day]))
         expect(page).to have_content(schedule.next_occurrence.strftime("%b %d %Y"))
       end
 
       it "same as the current date and prior to the start date" do
         target_date = @now
-        every_nth_day = calc_every_nth_day( target_date )
+        every_nth_day = calc_every_nth_day(target_date)
         select(Deadlinable::NTH_TO_WORD_MAP[every_nth_day], from: "#{form_prefix}_every_nth_day")
         select(Deadlinable::DAY_OF_WEEK_COLLECTION[target_date.wday][0], from: "#{form_prefix}_day_of_week")
 
@@ -290,7 +290,7 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
 
       it "same as the current date and after the start date" do
         target_date = @now
-        every_nth_day = calc_every_nth_day( target_date )
+        every_nth_day = calc_every_nth_day(target_date)
         select(Deadlinable::NTH_TO_WORD_MAP[every_nth_day], from: "#{form_prefix}_every_nth_day")
         select(Deadlinable::DAY_OF_WEEK_COLLECTION[target_date.wday][0], from: "#{form_prefix}_day_of_week")
 
@@ -303,11 +303,11 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
 
       it "same as the start date and prior to the current date" do
         target_date = @now - 1.day
-        every_nth_day = calc_every_nth_day( target_date )
+        every_nth_day = calc_every_nth_day(target_date)
         select(Deadlinable::NTH_TO_WORD_MAP[every_nth_day], from: "#{form_prefix}_every_nth_day")
         select(Deadlinable::DAY_OF_WEEK_COLLECTION[target_date.wday][0], from: "#{form_prefix}_day_of_week")
 
-        fill_in "#{form_prefix}_start_date", with: (target_date).strftime("%Y-%m-%d")
+        fill_in "#{form_prefix}_start_date", with: target_date.strftime("%Y-%m-%d")
         expect(page).to have_content("Your next reminder date is")
         schedule = IceCube::Schedule.new(target_date)
         schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_week(target_date.wday => [every_nth_day]))
@@ -316,11 +316,11 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
 
       it "same as the start date and after the current date" do
         target_date = @now + 1.day
-        every_nth_day = calc_every_nth_day( target_date )
+        every_nth_day = calc_every_nth_day(target_date)
         select(Deadlinable::NTH_TO_WORD_MAP[every_nth_day], from: "#{form_prefix}_every_nth_day")
         select(Deadlinable::DAY_OF_WEEK_COLLECTION[target_date.wday][0], from: "#{form_prefix}_day_of_week")
 
-        fill_in "#{form_prefix}_start_date", with: (target_date).strftime("%Y-%m-%d")
+        fill_in "#{form_prefix}_start_date", with: target_date.strftime("%Y-%m-%d")
         expect(page).to have_content("Your next reminder date is")
         schedule = IceCube::Schedule.new(target_date)
         schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_week(target_date.wday => [every_nth_day]))
@@ -329,11 +329,11 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
 
       it "same as the start and current date" do
         target_date = @now
-        every_nth_day = calc_every_nth_day( target_date )
+        every_nth_day = calc_every_nth_day(target_date)
         select(Deadlinable::NTH_TO_WORD_MAP[every_nth_day], from: "#{form_prefix}_every_nth_day")
         select(Deadlinable::DAY_OF_WEEK_COLLECTION[target_date.wday][0], from: "#{form_prefix}_day_of_week")
 
-        fill_in "#{form_prefix}_start_date", with: (target_date).strftime("%Y-%m-%d")
+        fill_in "#{form_prefix}_start_date", with: target_date.strftime("%Y-%m-%d")
         expect(page).to have_content("Your next reminder date is")
         schedule = IceCube::Schedule.new(target_date)
         schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_week(target_date.wday => [every_nth_day]))
