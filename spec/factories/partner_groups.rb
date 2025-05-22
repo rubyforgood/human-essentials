@@ -21,7 +21,6 @@ FactoryBot.define do
     sequence(:name) { |n| "Group #{n}" }
     organization { Organization.try(:first) || create(:organization) }
     reminder_schedule { recurrence_schedule_ical }
-    deadline_day { 28 }
 
     trait :without_deadlines do
       reminder_schedule { nil }

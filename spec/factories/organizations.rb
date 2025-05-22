@@ -54,7 +54,6 @@ FactoryBot.define do
     state { 'VA' }
     zipcode { '22630' }
     reminder_schedule { recurrence_schedule_ical }
-    deadline_day { 20 }
 
     logo { Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/logo.jpg"), "image/jpeg") }
 
