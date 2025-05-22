@@ -104,6 +104,7 @@ class OrganizationsController < ApplicationController
       :signature_for_distribution_pdf, :receive_email_on_requests,
       :start_date, :by_month_or_week, :day_of_month, :day_of_week, :every_nth_day,
       :every_nth_month,
+      :include_in_kind_values_in_exported_files,
       partner_form_fields: [],
       request_unit_names: []
     )
