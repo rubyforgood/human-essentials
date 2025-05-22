@@ -15,6 +15,13 @@ module Exports
       ).order(created_at: :asc)
 
       @organization = organization
+      @item_header_names = @organization.items.select("DISTINCT ON (LOWER(name)) items.name").order("LOWER(name) ASC").map(&:name)
+
+      @item_headers = if @organization.include_in_kind_values_in_exported_files
+        @item_header_names.flat_map { |header| [header, "#{header} In-Kind Value"] }
+      else
+        @item_header_names
+      end
     end
 
     def generate_csv
@@ -39,6 +46,7 @@ module Exports
     private
 
     attr_reader :donations
+    attr_reader :item_headers
 
     def headers
       # Build the headers in the correct order
@@ -93,24 +101,6 @@ module Exports
 
     def base_headers
       base_table.keys
-    end
-
-    def item_headers
-      return @item_headers if @item_headers
-
-      item_names = Set.new
-
-      donations.each do |donation|
-        donation.line_items.each do |line_item|
-          item_names.add(line_item.item.name)
-        end
-      end
-
-      @item_headers = item_names.sort
-
-      @item_headers = @item_headers.flat_map { |header| [header, "#{header} In-Kind Value"] } if @organization.include_in_kind_values_in_exported_files
-
-      @item_headers
     end
 
     def build_row_data(donation)
