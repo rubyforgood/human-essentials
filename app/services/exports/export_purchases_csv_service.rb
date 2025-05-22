@@ -1,16 +1,18 @@
 module Exports
   class ExportPurchasesCSVService
-    def initialize(purchase_ids:)
+    def initialize(purchase_ids:, organization:)
       # Use a where lookup so that I can eager load all the resources
       # needed rather than depending on external code to do it for me.
       # This makes this code more self contained and efficient!
-      @purchases = Purchase.includes(
+      @organization = organization
+      @purchases = organization.purchases.includes(
         :storage_location,
         :vendor,
         line_items: [:item]
       ).where(
         id: purchase_ids
       ).order(created_at: :asc)
+      @item_headers = @organization.items.select("DISTINCT ON (LOWER(name)) items.name").order("LOWER(name) ASC").map(&:name)
     end
 
     def generate_csv
@@ -34,7 +36,7 @@ module Exports
 
     private
 
-    attr_reader :purchases
+    attr_reader :purchases, :item_headers
 
     def headers
       # Build the headers in the correct order
@@ -60,7 +62,6 @@ module Exports
     # (or on the order of the literal).
     def base_table
       {
-
         "Purchases from" => ->(purchase) {
           purchase.vendor.try(:business_name)
         },
@@ -99,20 +100,6 @@ module Exports
 
     def base_headers
       base_table.keys
-    end
-
-    def item_headers
-      return @item_headers if @item_headers
-
-      item_names = Set.new
-
-      purchases.each do |purchase|
-        purchase.line_items.each do |line_item|
-          item_names.add(line_item.item.name)
-        end
-      end
-
-      @item_headers = item_names.sort
     end
 
     def build_row_data(purchase)
