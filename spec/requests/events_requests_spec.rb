@@ -220,7 +220,7 @@ RSpec.describe "Events", type: :request do
         let(:params) { {format: "html", eventable_id: donation.id, eventable_type: "Donation"} }
         before do
           # should not be affected by the date range
-          travel -1.year do
+          travel(-1.year) do
             DonationEvent.publish(donation)
             donation.line_items.first.quantity = 33
             DonationEvent.publish(donation) # an update

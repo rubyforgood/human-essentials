@@ -10,7 +10,7 @@ class EventsController < ApplicationController
     else
       @events.class_filter(filter_params)
     end
-    if params.dig(:filters, :date_range).present?
+    if params.dig(:filters, :date_range).present? || params[:eventable_id].blank?
       @events = @events.during(helpers.selected_range)
     end
     @items = current_organization.items.sort_by(&:name)
