@@ -195,9 +195,9 @@ RSpec.describe "Events", type: :request do
         let(:params) {
           {
             format: "html",
-            filters: {filters: {
+            filters: {
               date_range: date_range_picker_params(3.days.ago, Time.zone.tomorrow)
-            }}
+            }
           }
         }
 
@@ -219,9 +219,12 @@ RSpec.describe "Events", type: :request do
         end
         let(:params) { {format: "html", eventable_id: donation.id, eventable_type: "Donation"} }
         before do
-          DonationEvent.publish(donation)
-          donation.line_items.first.quantity = 33
-          DonationEvent.publish(donation) # an update
+          # should not be affected by the date range
+          travel(-1.year) do
+            DonationEvent.publish(donation)
+            donation.line_items.first.quantity = 33
+            DonationEvent.publish(donation) # an update
+          end
         end
 
         it "should only show events from that eventable" do
