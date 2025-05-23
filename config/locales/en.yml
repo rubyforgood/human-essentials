@@ -38,3 +38,5 @@ en:
         issued_at: "Purchase date"
       distribution:
         issued_at: "Distribution date and time"
+    models:
+      product_drive: "Product Drive"

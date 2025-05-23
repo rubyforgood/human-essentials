@@ -95,9 +95,9 @@ RSpec.describe OrganizationUpdateService do
         before do
           organization.update!(enable_individual_requests: false)
           # Want to have an invalid email on purpose
-          # rubocop:disable Rails::SkipsModelValidations
+          # rubocop:disable Rails/SkipsModelValidations
           partner_one.update_columns(email: "not/an_email")
-          # rubocop:enable Rails::SkipsModelValidations
+          # rubocop:enable Rails/SkipsModelValidations
         end
 
         it "updates the organization and returns true" do
@@ -113,9 +113,9 @@ RSpec.describe OrganizationUpdateService do
         before do
           organization.update!(enable_individual_requests: false)
           # Want to have an invalid email on purpose
-          # rubocop:disable Rails::SkipsModelValidations
+          # rubocop:disable Rails/SkipsModelValidations
           profile.update_columns(pick_up_email: "not/an/email")
-          # rubocop:enable Rails::SkipsModelValidations
+          # rubocop:enable Rails/SkipsModelValidations
         end
 
         it "returns false" do

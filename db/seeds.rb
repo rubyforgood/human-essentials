@@ -36,8 +36,7 @@ SyncNDBNMembers.upload(seed_file)
 # Organizations
 # ----------------------------------------------------------------------------
 
-pdx_org = Organization.find_or_create_by!(short_name: "diaper_bank") do |organization|
-  organization.name = "Pawnee Diaper Bank"
+pdx_org = Organization.find_or_create_by!(name: "Pawnee Diaper Bank") do |organization|
   organization.street = "P.O. Box 22613"
   organization.city = "Pawnee"
   organization.state = "IN"
@@ -46,8 +45,7 @@ pdx_org = Organization.find_or_create_by!(short_name: "diaper_bank") do |organiz
 end
 Organization.seed_items(pdx_org)
 
-sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization|
-  organization.name = "SF Diaper Bank"
+sf_org = Organization.find_or_create_by!(name: "SF Diaper Bank") do |organization|
   organization.street = "P.O. Box 12345"
   organization.city = "San Francisco"
   organization.state = "CA"
@@ -56,8 +54,7 @@ sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization
 end
 Organization.seed_items(sf_org)
 
-sc_org = Organization.find_or_create_by!(short_name: "sc_bank") do |organization|
-  organization.name = "Second City Essentials Bank"
+sc_org = Organization.find_or_create_by!(name: "Second City Essentials Bank") do |organization|
   organization.street = Faker::Address.street_address
   organization.city = Faker::Address.city
   organization.state = Faker::Address.state_abbr
@@ -282,27 +279,139 @@ note = [
     end
   end
 
-  Partners::Profile.create!({
+  # Base profile information all partners should have
+  # Includes fields in the agency_information, executive_director, and pick_up_person partial
+  # The counties and areas served by the partner are handled elsewere
+  profile = Partners::Profile.create!({
     essentials_bank_id: p.organization_id,
     partner_id: p.id,
     address1: Faker::Address.street_address,
-    address2: "",
+    address2: Faker::Address.street_address,
     city: Faker::Address.city,
-    state: Faker::Address.state_abbr,
-    zip_code: Faker::Address.zip,
-    website: Faker::Internet.domain_name,
-    zips_served: Faker::Address.zip,
-    executive_director_name: Faker::Name.name,
     executive_director_email: p.email,
+    executive_director_name: Faker::Name.name,
     executive_director_phone: Faker::PhoneNumber.phone_number,
-    primary_contact_name: Faker::Name.name,
-    primary_contact_email: Faker::Internet.email,
-    primary_contact_phone: Faker::PhoneNumber.phone_number,
-    primary_contact_mobile: Faker::PhoneNumber.phone_number,
-    pick_up_name: Faker::Name.name,
     pick_up_email: Faker::Internet.email,
-    pick_up_phone: Faker::PhoneNumber.phone_number
+    pick_up_name: Faker::Name.name,
+    pick_up_phone: Faker::PhoneNumber.phone_number,
+    primary_contact_email: Faker::Internet.email,
+    primary_contact_mobile: Faker::PhoneNumber.phone_number,
+    primary_contact_name: Faker::Name.name,
+    primary_contact_phone: Faker::PhoneNumber.phone_number,
+    state: Faker::Address.state_abbr,
+    website: Faker::Internet.domain_name,
+    zip_code: Faker::Address.zip,
+    zips_served: Faker::Address.zip,
   })
+
+  # Optional information that only established partners (ready for approval, approved or require_recertification)
+  # would have
+  # Also only add information that corresponds to the partner_form_fields the org has chosen
+  if [ "awaiting_review", "approved", "recertification_required" ].include? p.status
+    agency_type = Partners::Profile::agency_types.values.sample
+    # The agency_information and partner_settings partials are always shown
+    profile.update(
+      agency_mission: Faker::Lorem.paragraph(sentence_count: 2),
+      agency_type: agency_type,
+      enable_child_based_requests: true,
+      enable_individual_requests: true,
+      enable_quantity_based_requests: true,
+      name: p.name,
+      other_agency_type: (agency_type == "OTHER") ? Faker::Lorem.word : nil,
+      program_address1: Faker::Address.street_address,
+      program_address2: Faker::Address.street_address,
+      program_city: Faker::Address.city,
+      program_state: Faker::Address.state_abbr,
+      program_zip_code: Faker::Address.zip,
+    )
+
+    if p.partials_to_show.include? "media_information"
+      profile.update(
+        facebook: Faker::Internet.url(host: 'facebook.com'),
+        instagram: Faker::Internet.url(host: 'instagram.com'),
+        no_social_media_presence: false,
+        twitter: Faker::Internet.url(host: 'twitter.com'),
+      )
+    end
+
+    if p.partials_to_show.include? "agency_stability"
+      founded_year = Faker::Date.between(from: 50.years.ago, to: Date.today).year
+      profile.update(
+        case_management: true,
+        currently_provide_diapers: true,
+        essentials_use: Faker::Lorem.paragraph(sentence_count: 2),
+        evidence_based: true,
+        form_990: true,
+        founded: founded_year,
+        program_age: Date.today.year - founded_year,
+        program_description: Faker::Lorem.paragraph(sentence_count: 2),
+        program_name: Faker::Company.name,
+        receives_essentials_from_other: Faker::Lorem.sentence,
+      )
+    end
+  
+    if p.partials_to_show.include? "organizational_capacity"
+      profile.update(
+        client_capacity: Faker::Lorem.sentence,
+        describe_storage_space: Faker::Lorem.paragraph(sentence_count: 2),
+        storage_space: true,
+      )
+    end
+
+    if p.partials_to_show.include? "sources_of_funding"
+      profile.update(
+        essentials_budget: Faker::Lorem.sentence,
+        essentials_funding_source: Faker::Lorem.sentence,
+        sources_of_diapers: Faker::Lorem.sentence,
+        sources_of_funding: Faker::Lorem.sentence,
+      )
+    end
+
+    if p.partials_to_show.include? "population_served"
+
+      def calculate_array_of_percentages( num_entries )
+        percentages = []
+        remaining_percentage = 100
+        share_ceiling = 100 / num_entries
+        (num_entries - 1).times do
+          percentage = Faker::Number.within(range: 1..share_ceiling)
+          remaining_percentage -= percentage
+          percentages.append( percentage )
+        end
+        percentages.append( remaining_percentage )
+        return percentages
+      end
+
+      pop_percentages = calculate_array_of_percentages(8) # 8 population fields
+      poverty_percentages = calculate_array_of_percentages(4) # 4 poverty fields
+
+      profile.update(
+        above_1_2_times_fpl: poverty_percentages[0],
+        at_fpl_or_below: poverty_percentages[1],
+        greater_2_times_fpl: poverty_percentages[2],
+        income_requirement_desc: true,
+        income_verification: true,
+        population_american_indian: pop_percentages[0],
+        population_asian: pop_percentages[1],
+        population_black: pop_percentages[2],
+        population_hispanic: pop_percentages[3],
+        population_island: pop_percentages[4],
+        population_multi_racial: pop_percentages[5],
+        population_other: pop_percentages[6],
+        population_white: pop_percentages[7],
+        poverty_unknown: poverty_percentages[3],
+        zips_served: Faker::Address.zip_code,
+      )
+    end
+
+    if p.partials_to_show.include? "agency_distribution_information"
+      profile.update(
+        distribution_times: Faker::Lorem.sentence,
+        more_docs_required: Faker::Lorem.sentence,
+        new_client_times: Faker::Lorem.sentence,
+      )
+    end
+  end
 
   user = ::User.create!(
     name: Faker::Name.name,
