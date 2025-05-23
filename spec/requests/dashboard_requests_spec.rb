@@ -42,7 +42,6 @@ RSpec.describe "Dashboard", type: :request do
         expect(response.body).to include('https://rubyforgood.github.io/human-essentials/user_guide/bank/')
         expect(response.body).not_to include('Need Help?')
       end
-
     end
 
     context "BroadcastAnnouncement card" do
