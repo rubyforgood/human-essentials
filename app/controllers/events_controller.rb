@@ -3,7 +3,6 @@ class EventsController < ApplicationController
     setup_date_range_picker
 
     @events = Event.for_organization(current_organization)
-      .during(helpers.selected_range)
       .includes(:eventable, :user)
     @events = if params[:eventable_id]
       @events.where(eventable_id: params[:eventable_id],
