@@ -2,14 +2,14 @@
 #
 # Table name: partner_groups
 #
-#  id              :bigint           not null, primary key
-#  deadline_day    :integer
-#  name            :string
-#  reminder_day    :integer
-#  send_reminders  :boolean          default(FALSE), not null
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  organization_id :bigint
+#  id                :bigint           not null, primary key
+#  deadline_day      :integer
+#  name              :string
+#  reminder_schedule :string
+#  send_reminders    :boolean          default(FALSE), not null
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#  organization_id   :bigint
 #
 class PartnerGroup < ApplicationRecord
   has_paper_trail
@@ -19,6 +19,10 @@ class PartnerGroup < ApplicationRecord
   has_many :partners, dependent: :nullify
   has_and_belongs_to_many :item_categories
 
+  before_save do
+    self.reminder_schedule = create_schedule
+  end
+
   validates :name, presence: true, uniqueness: { scope: :organization }
-  validates :deadline_day, :reminder_day, presence: true, if: :send_reminders?
+  validates :deadline_day, presence: true, if: :send_reminders?
 end
