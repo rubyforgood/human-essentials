@@ -3,7 +3,7 @@
 module Partners
   module UpdateFamily
     extend ServiceObjectErrorsMixin
-    # rubocop:disable Rails::SkipsModelValidations
+    # rubocop:disable Rails/SkipsModelValidations
     def self.archive(family)
       if family.children.exists?
         ActiveRecord::Base.transaction do
@@ -16,6 +16,6 @@ module Partners
       end
       self
     end
-    # rubocop:enable Rails::SkipsModelValidations
+    # rubocop:enable Rails/SkipsModelValidations
   end
 end

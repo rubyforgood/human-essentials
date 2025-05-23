@@ -10,10 +10,10 @@ class DistributionService
     set_error(e)
   rescue Errors::InsufficientAllotment => e
     distribution.line_items.assign_insufficiency_errors(e.insufficient_items)
-    Rails.logger.error "[!] #{self.class.name} failed because of Insufficient Allotment #{distribution_organization.short_name}: #{distribution.errors.full_messages} [#{e.message}]"
+    Rails.logger.error "[!] #{self.class.name} failed because of Insufficient Allotment #{distribution_organization.name}: #{distribution.errors.full_messages} [#{e.message}]"
     set_error(e)
   rescue StandardError => e
-    Rails.logger.error "[!] #{self.class.name} failed for #{distribution_organization.short_name}: #{distribution.errors.full_messages} [#{e.inspect}]"
+    Rails.logger.error "[!] #{self.class.name} failed for #{distribution_organization.name}: #{distribution.errors.full_messages} [#{e.inspect}]"
     set_error(e)
   ensure
     return self

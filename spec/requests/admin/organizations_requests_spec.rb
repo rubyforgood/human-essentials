@@ -1,8 +1,5 @@
 RSpec.describe "Admin::Organizations", type: :request do
   let(:organization) { create(:organization) }
-  let(:default_params) do
-    { organization_name: organization.id }
-  end
 
   context "When logged in as a super admin" do
     before do
@@ -110,7 +107,7 @@ RSpec.describe "Admin::Organizations", type: :request do
     describe "PATCH #update" do
       let(:organization) { create(:organization, name: "Original Name") }
       subject do
-        patch admin_organization_path(default_params.merge(id: organization.id, organization: { name: updated_name }))
+        patch admin_organization_path(id: organization.id, organization: { name: updated_name })
       end
 
       context "with a valid update" do
@@ -128,7 +125,7 @@ RSpec.describe "Admin::Organizations", type: :request do
         let(:successful) { 200 }
 
         subject do
-          patch admin_organization_path(default_params.merge(id: organization.id, organization: { name: updated_name }))
+          patch admin_organization_path(id: organization.id, organization: { name: updated_name })
         end
 
         it "returns http success" do
