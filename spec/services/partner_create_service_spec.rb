@@ -43,6 +43,32 @@ RSpec.describe PartnerCreateService do
         expect(query.first.enable_quantity_based_requests).to eq(true)
       end
 
+      context 'when send_reminders is nil' do
+        before do
+          partner_attrs.merge!(send_reminders: nil)
+        end
+
+        it 'defaults send_reminders to false' do
+          subject
+
+          partner = Partner.find_by(name: partner_attrs[:name])
+          expect(partner.send_reminders).to be(false)
+        end
+      end
+
+      context 'when send_reminders is missing' do
+        before do
+          partner_attrs.delete(:send_reminders)
+        end
+
+        it 'defaults send_reminders to false' do
+          subject
+
+          partner = Partner.find_by(name: partner_attrs[:name])
+          expect(partner.send_reminders).to be(false)
+        end
+      end
+
       context 'but there was an unexpected issue with saving the' do
         let(:error_message) { Faker::Games::ElderScrolls.dragon }
 
