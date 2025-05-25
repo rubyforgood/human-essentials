@@ -72,10 +72,63 @@ RSpec.describe "Adjustments", type: :request do
 
       context "csv" do
         let(:response_format) { 'csv' }
+        let(:storage_location) { create(:storage_location, organization: organization) }
+        let(:item1) { create(:item, name: "Item One", organization: organization) }
+        let(:item2) { create(:item, name: "Item Two", organization: organization) }
 
-        before { adjustment }
+        let!(:adjustment1) do
+          adj = create(:adjustment,
+            organization: organization,
+            storage_location: storage_location,
+            comment: "First adjustment",
+            created_at: 1.day.ago)
+          adj.line_items << build(:line_item, quantity: 10, item: item1, itemizable: adj)
+          adj.line_items << build(:line_item, quantity: 5, item: item2, itemizable: adj)
+          adj
+        end
 
-        it { is_expected.to be_successful }
+        let!(:adjustment2) do
+          adj = create(:adjustment,
+            organization: organization,
+            storage_location: storage_location,
+            comment: "Second adjustment",
+            created_at: 5.days.ago)
+          adj.line_items << build(:line_item, quantity: -5, item: item1, itemizable: adj)
+          adj
+        end
+
+        before { get adjustments_path(format: 'csv') }
+
+        it "returns a CSV file" do
+          expect(response).to be_successful
+          expect(response.header['Content-Type']).to include 'text/csv'
+        end
+
+        it "includes appropriate headers and data" do
+          csv = <<~CSV
+            Created date,Storage Area,Comment,# of changes,#{item1.name},#{item2.name}
+            2019-06-30,Smithsonian Conservation Center,First adjustment,2,10,5
+            2019-06-26,Smithsonian Conservation Center,Second adjustment,1,-5,0
+          CSV
+
+          expect(response.body).to eq(csv)
+        end
+
+        context "when filtering by date" do
+          it "returns adjustments filtered by date range" do
+            start_date = 3.days.ago.to_fs(:date_picker)
+            end_date = Time.zone.today.to_fs(:date_picker)
+
+            get adjustments_path, params: { filters: { date_range: "#{start_date} - #{end_date}" }, format: 'csv' }
+
+            csv = <<~CSV
+              Created date,Storage Area,Comment,# of changes,Item One,Item Two
+              2019-06-30,Smithsonian Conservation Center,First adjustment,2,10,5
+            CSV
+
+            expect(response.body).to eq(csv)
+          end
+        end
       end
     end
 
