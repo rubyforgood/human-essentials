@@ -54,7 +54,10 @@ class Partner < ApplicationRecord
 
   validate :correct_document_mime_type
 
+  validate :default_storage_location_belongs_to_organization
+
   before_save { email&.downcase! }
+  before_create :default_send_reminders_to_false, if: :send_reminders_nil?
   before_update :invite_new_partner, if: :should_invite_because_email_changed?
 
   scope :alphabetized, -> { order(:name) }
@@ -108,7 +111,9 @@ class Partner < ApplicationRecord
 
       svc = PartnerCreateService.new(organization: organization, partner_attrs: hash_rows)
       svc.call
-      if svc.errors.present?
+      if svc.errors.present? && svc.partner.errors.blank?
+        errors << "#{svc.partner.name}: #{svc.errors.full_messages.to_sentence}"
+      elsif svc.errors.present?
         errors << "#{svc.partner.name}: #{svc.partner.errors.full_messages.to_sentence}"
       end
     end
@@ -157,10 +162,25 @@ class Partner < ApplicationRecord
     families.pluck(:guardian_zip_code).uniq
   end
 
+  def default_storage_location_belongs_to_organization
+    location_ids = organization&.storage_locations&.pluck(:id)
+    unless location_ids&.include?(default_storage_location_id) || default_storage_location_id.nil?
+      errors.add(:default_storage_location_id, "The default storage location is not a storage location for this partner's organization")
+    end
+  end
+
   def correct_document_mime_type
     if documents.attached? && documents.any? { |doc| !doc.content_type.in?(ALLOWED_MIME_TYPES) }
       errors.add(:documents, "Must be a PDF or DOC file")
     end
+  end
+
+  def default_send_reminders_to_false
+    self.send_reminders = false
+  end
+
+  def send_reminders_nil?
+    send_reminders.nil?
   end
 
   def invite_new_partner
