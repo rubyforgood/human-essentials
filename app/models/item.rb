@@ -6,7 +6,6 @@
 #  active                       :boolean          default(TRUE)
 #  additional_info              :text
 #  barcode_count                :integer
-#  category                     :string
 #  distribution_quantity        :integer
 #  name                         :string
 #  on_hand_minimum_quantity     :integer          default(0), not null
