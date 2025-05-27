@@ -152,6 +152,34 @@ RSpec.describe "Admin::UsersController", type: :request do
         expect(new_user.has_role?(Role::ORG_ADMIN, organization)).to be_falsey
       end
 
+      context "flash notice behavior" do
+        context "when creating a new user" do
+          it "shows 'Created a new user!' message" do
+            post admin_users_path, params: {
+              user: { name: "New User", email: "new@example.com" },
+              resource_type: Role::ORG_USER,
+              resource_id: organization.id
+            }
+            expect(response).to redirect_to(admin_users_path)
+            expect(flash[:notice]).to eq("Created a new user!")
+          end
+        end
+
+        context "when adding a role to an existing user" do
+          let!(:existing_user) { create(:user, email: "existing@example.com", organization: organization) }
+
+          it "shows 'Created a new role!' message" do
+            post admin_users_path, params: {
+              user: { name: existing_user.name, email: existing_user.email },
+              resource_type: Role::PARTNER,
+              resource_id: partner.id
+            }
+            expect(response).to redirect_to(admin_users_path)
+            expect(flash[:notice]).to eq("Created a new role!")
+          end
+        end
+      end
+
       it "creates an org admin" do
         post admin_users_path, params: {
           user: { name: "New Org Admin", email: organization.email },
