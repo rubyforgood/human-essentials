@@ -44,6 +44,10 @@
                 <td><%= @item&.item_category&.name %></td>
               </tr>
               <tr>
+                <th>Reporting Category</th>
+                <td><%= @item.reporting_category_humanized %></td>
+              </tr>
+              <tr>
                 <th>Value Per Item</th>
                 <td>$<%= @item.value_in_dollars || 0 %></td>
               </tr>

@@ -64,6 +64,7 @@ class Item < ApplicationRecord
   scope :visible, -> { where(visible_to_partners: true) }
   scope :alphabetized, -> { order(:name) }
   scope :by_base_item, ->(base_item) { where(base_item: base_item) }
+  scope :by_reporting_category, ->(reporting_category) { where(reporting_category: reporting_category) }
   scope :by_partner_key, ->(partner_key) { where(partner_key: partner_key) }
 
   scope :by_size, ->(size) { joins(:base_item).where(base_items: { size: size }) }
@@ -83,7 +84,13 @@ class Item < ApplicationRecord
     period_other: "period_other",
     period_underwear: "period_underwear",
     tampons: "tampons"
-  }, instance_methods: false
+  }, instance_methods: false, validate: { allow_nil: true }
+
+  def self.reporting_categories_for_select
+    reporting_categories.map do |key, value|
+      Option.new(id: key, name: value.titleize)
+    end
+  end
 
   def self.reactivate(item_ids)
     item_ids = Array.wrap(item_ids)
@@ -140,6 +147,10 @@ class Item < ApplicationRecord
     else
       update!(active: false)
     end
+  end
+
+  def reporting_category_humanized
+    Item.reporting_categories[reporting_category].titleize
   end
 
   def other?
