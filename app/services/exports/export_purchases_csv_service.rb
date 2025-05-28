@@ -4,7 +4,6 @@ module Exports
       # Use a where lookup so that I can eager load all the resources
       # needed rather than depending on external code to do it for me.
       # This makes this code more self contained and efficient!
-      @organization = organization
       @purchases = organization.purchases.includes(
         :storage_location,
         :vendor,
@@ -12,7 +11,7 @@ module Exports
       ).where(
         id: purchase_ids
       ).order(created_at: :asc)
-      @item_headers = @organization.items.select("DISTINCT ON (LOWER(name)) items.name").order("LOWER(name) ASC").map(&:name)
+      @item_headers = organization.items.select("DISTINCT ON (LOWER(name)) items.name").order("LOWER(name) ASC").map(&:name)
     end
 
     def generate_csv
@@ -36,11 +35,11 @@ module Exports
 
     private
 
-    attr_reader :purchases, :item_headers
+    attr_reader :purchases
 
     def headers
       # Build the headers in the correct order
-      base_headers + item_headers
+      base_headers + @item_headers
     end
 
     # Returns a Hash of keys to indexes so that obtaining the index
@@ -105,7 +104,7 @@ module Exports
     def build_row_data(purchase)
       row = base_table.values.map { |closure| closure.call(purchase) }
 
-      row += Array.new(item_headers.size, 0)
+      row += Array.new(@item_headers.size, 0)
 
       purchase.line_items.each do |line_item|
         item_name = line_item.item.name
