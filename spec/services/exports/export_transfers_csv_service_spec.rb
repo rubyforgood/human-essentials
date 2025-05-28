@@ -102,10 +102,9 @@ RSpec.describe Exports::ExportTransfersCSVService do
     end
 
     context "when an organization's item exists but isn't in any transfer" do
-      let(:unused_item) { create(:item, name: "Unused Item", organization: organization) }
+      let!(:unused_item) { create(:item, name: "Unused Item", organization: organization) }
       let(:generated_csv_data) do
         # Force unused_item to be created first
-        unused_item
         described_class.new(transfers: transfers, organization: organization).generate_csv_data
       end
 
@@ -121,10 +120,8 @@ RSpec.describe Exports::ExportTransfersCSVService do
     end
 
     context "when an organization's item is inactive" do
-      let(:inactive_item) { create(:item, name: "Inactive Item", active: false, organization: organization) }
+      let!(:inactive_item) { create(:item, name: "Inactive Item", active: false, organization: organization) }
       let(:generated_csv_data) do
-        # Force inactive_item to be created first
-        inactive_item
         described_class.new(transfers: transfers, organization: organization).generate_csv_data
       end
 
