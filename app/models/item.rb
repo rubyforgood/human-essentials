@@ -78,12 +78,12 @@ class Item < ApplicationRecord
     cloth_diapers: "cloth_diapers",
     disposable_diapers: "disposable_diapers",
     menstrual: "menstrual",
-    other_categories: "other",
     pads: "pads",
     period_liners: "period_liners",
     period_other: "period_other",
     period_underwear: "period_underwear",
-    tampons: "tampons"
+    tampons: "tampons",
+    other_categories: "other"
   }, instance_methods: false, validate: { allow_nil: true }
 
   def self.reporting_categories_for_select
