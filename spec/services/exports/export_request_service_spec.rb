@@ -25,7 +25,7 @@ RSpec.describe Exports::ExportRequestService do
     create(:request,
            :started,
            :child,
-           :with_item_requests, 
+           :with_item_requests,
            organization: org,
            partner: partner,
            request_items: [{ item_id: inactive_item.id, quantity: 777 }])
