@@ -6,8 +6,7 @@ module Exports
     # @param organization [Organization]
     def initialize(requests, organization:)
       @requests = requests.includes(:partner, {item_requests: :item})
-      @organization = organization
-      @organization_items = @organization.items.select("DISTINCT ON (LOWER(name)) items.name").order("LOWER(name) ASC")
+      @organization_items = organization.items.select("DISTINCT ON (LOWER(name)) items.name").order("LOWER(name) ASC")
     end
 
     def generate_csv
