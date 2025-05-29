@@ -93,14 +93,13 @@ RSpec.describe Exports::ExportDonationsCSVService do
         csv_data = described_class.new(donation_ids: donation_ids, organization: organization).generate_csv_data
 
         # Verify the inactive item appears in headers
-        expect(csv_data[0]).to include(inactive_item.name)
-        expect(csv_data[0]).to include("#{inactive_item.name} In-Kind Value")
+        expect(csv_data[0][18]).to eq(inactive_item.name)
+        expect(csv_data[0][19]).to eq("#{inactive_item.name} In-Kind Value")
 
         # Verify all rows have 0 quantity for the inactive item
-        inactive_item_index = csv_data[0].index(inactive_item.name)
         csv_data[1..].each do |row|
-          expect(row[inactive_item_index]).to eq(0)
-          expect(row[inactive_item_index + 1]).to eq(0)
+          expect(row[18]).to eq(0)
+          expect(row[19]).to eq(0)
         end
       end
 
@@ -109,14 +108,13 @@ RSpec.describe Exports::ExportDonationsCSVService do
         csv_data = described_class.new(donation_ids: donation_ids, organization: organization).generate_csv_data
 
         # Verify the unused item appears in headers
-        expect(csv_data[0]).to include(unused_item.name)
-        expect(csv_data[0]).to include("#{unused_item.name} In-Kind Value")
+        expect(csv_data[0][18]).to include(unused_item.name)
+        expect(csv_data[0][19]).to include("#{unused_item.name} In-Kind Value")
 
         # Verify all rows have 0 quantity for the unused item
-        unused_item_index = csv_data[0].index(unused_item.name)
         csv_data[1..].each do |row|
-          expect(row[unused_item_index]).to eq(0)
-          expect(row[unused_item_index + 1]).to eq(0)
+          expect(row[18]).to eq(0)
+          expect(row[19]).to eq(0)
         end
       end
     end
@@ -225,39 +223,33 @@ RSpec.describe Exports::ExportDonationsCSVService do
     end
 
     context 'when an organization\'s item exists but isn\'t in any donation' do
-      let(:unused_item) { create(:item, name: "Unused Item", organization: organization) }
-      let(:generated_csv_data) do
-        # Force unused_item to be created first
-        unused_item
+      let!(:unused_item) { create(:item, name: "Unused Item", organization: organization) }
+      let!(:generated_csv_data) do
         described_class.new(donation_ids: donations.map(&:id), organization: organization).generate_csv_data
       end
 
       it 'should include the unused item as a column with 0 quantities' do
-        expect(generated_csv_data[0]).to include(unused_item.name)
+        expect(generated_csv_data[0][13]).to eq(unused_item.name)
 
         donations.each_with_index do |_, idx|
           row = generated_csv_data[idx + 1]
-          item_column_index = generated_csv_data[0].index(unused_item.name)
-          expect(row[item_column_index]).to eq(0)
+          expect(row[13]).to eq(0)
         end
       end
     end
 
     context 'when an organization\'s item is inactive' do
-      let(:inactive_item) { create(:item, name: "Inactive Item", organization: organization, active: false) }
-      let(:generated_csv_data) do
-        # Force inactive_item to be created first
-        inactive_item
+      let!(:inactive_item) { create(:item, name: "Inactive Item", organization: organization, active: false) }
+      let!(:generated_csv_data) do
         described_class.new(donation_ids: donations.map(&:id), organization: organization).generate_csv_data
       end
 
       it 'should include the inactive item as a column with 0 quantities' do
-        expect(generated_csv_data[0]).to include(inactive_item.name)
+        expect(generated_csv_data[0][10]).to include(inactive_item.name)
 
         donations.each_with_index do |_, idx|
           row = generated_csv_data[idx + 1]
-          item_column_index = generated_csv_data[0].index(inactive_item.name)
-          expect(row[item_column_index]).to eq(0)
+          expect(row[10]).to eq(0)
         end
       end
     end
