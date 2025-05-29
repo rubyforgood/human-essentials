@@ -2,8 +2,6 @@ RSpec.describe "Annual Reports", type: :system, js: true do
   let(:organization) { create(:organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 
-  let(:url_prefix) { "/#{organization.short_name}" }
-
   context "while signed in as an organization admin" do
     subject { reports_annual_reports_path }
     let!(:purchase) { create(:purchase, :with_items, item_quantity: 10, issued_at: 1.year.ago, organization: organization) }

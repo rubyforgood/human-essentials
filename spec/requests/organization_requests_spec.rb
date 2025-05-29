@@ -20,11 +20,11 @@ RSpec.describe "Organizations", type: :request do
     }
 
     it "runs correctly", :aggregate_failures do
-      # Explicitly specify the organization_name, as current_organization will not
+      # Explicitly specify the organization_id, as current_organization will not
       # be set for super admins
       post promote_to_org_admin_organization_path(
         user_id: user_to_promote.id,
-        organization_name: organization.short_name
+        organization_id: organization.id
       )
       expect(user_to_promote.reload.has_role?(Role::ORG_ADMIN, organization)).to be_truthy
       # The user_update_redirect_path will vary based on whether the logged in
@@ -46,11 +46,11 @@ RSpec.describe "Organizations", type: :request do
     }
 
     it "runs correctly", :aggregate_failures do
-      # Explicitly specify the organization_name, as current_organization will not
+      # Explicitly specify the organization_id, as current_organization will not
       # be set for super admins
       post demote_to_user_organization_path(
         user_id: user_to_demote.id,
-        organization_name: organization.short_name
+        organization_id: organization.id
       )
       expect(user_to_demote.reload.has_role?(Role::ORG_ADMIN, organization)).to be_falsey
       # The user_update_redirect_path will vary based on whether the logged in
@@ -72,11 +72,11 @@ RSpec.describe "Organizations", type: :request do
     }
 
     it "runs correctly", :aggregate_failures do
-      # Explicitly specify the organization_name, as current_organization will not
+      # Explicitly specify the organization_id, as current_organization will not
       # be set for super admins
       post remove_user_organization_path(
         user_id: user_to_remove.id,
-        organization_name: organization.short_name
+        organization_id: organization.id
       )
       expect(user_to_remove.reload.has_role?(Role::ORG_USER, organization)).to be_falsey
       # The user_update_redirect_path will vary based on whether the logged in
@@ -110,20 +110,19 @@ RSpec.describe "Organizations", type: :request do
         expect(html.css("a").text).to include("Home")
         expect(html.css("a").to_s).to include(dashboard_path)
         expect(html.text).to include("Organization Info")
-        expect(html.text).to include("Contact Info")
-        expect(html.text).to include("Default email text")
+        expect(html.text).to include("Address")
+        expect(html.text).to include("Distribution email content")
         expect(html.text).to include("Users")
-        expect(html.text).to include("Short Name")
         expect(html.text).to include("URL")
-        expect(html.text).to include("Partner Profile Sections")
-        expect(html.text).to include("Custom Partner Invitation Message")
-        expect(html.text).to include("Child Based Requests?")
-        expect(html.text).to include("Individual Requests?")
-        expect(html.text).to include("Quantity Based Requests?")
-        expect(html.text).to include("Show Year-to-date values on distribution printout?")
+        expect(html.text).to include("Partner Profile sections")
+        expect(html.text).to include("Custom Partner invitation message")
+        expect(html.text).to include("Enable Partners to make child-based Requests?")
+        expect(html.text).to include("Enable Partners to make Requests by indicating number of individuals needing each Item?")
+        expect(html.text).to include("Enable Partners to make quantity-based Requests?")
+        expect(html.text).to include("Show year-to-date values on Distribution printout?")
         expect(html.text).to include("Logo")
-        expect(html.text).to include("Use One step Partner invite and approve process?")
-        expect(html.text).to include("Receive email when partner makes a request:")
+        expect(html.text).to include("Use one-step Partner invite and approve process?")
+        expect(html.text).to include("Receive email when Partner makes a Request?")
       end
 
       it "displays the correct organization details" do
@@ -189,20 +188,19 @@ RSpec.describe "Organizations", type: :request do
         expect(html.css("a").text).to include("Home")
         expect(html.css("a").to_s).to include(dashboard_path)
         expect(html.text).to include("Organization Info")
-        expect(html.text).to include("Contact Info")
-        expect(html.text).to include("Default email text")
+        expect(html.text).to include("Address")
+        expect(html.text).to include("Distribution email content")
         expect(html.text).to include("Users")
-        expect(html.text).to include("Short Name")
         expect(html.text).to include("URL")
-        expect(html.text).to include("Partner Profile Sections")
-        expect(html.text).to include("Custom Partner Invitation Message")
-        expect(html.text).to include("Child Based Requests?")
-        expect(html.text).to include("Individual Requests?")
-        expect(html.text).to include("Quantity Based Requests?")
-        expect(html.text).to include("Show Year-to-date values on distribution printout?")
+        expect(html.text).to include("Partner Profile sections")
+        expect(html.text).to include("Custom Partner invitation message")
+        expect(html.text).to include("Enable Partners to make child-based Requests?")
+        expect(html.text).to include("Enable Partners to make Requests by indicating number of individuals needing each Item?")
+        expect(html.text).to include("Enable Partners to make quantity-based Requests?")
+        expect(html.text).to include("Show year-to-date values on Distribution printout?")
         expect(html.text).to include("Logo")
-        expect(html.text).to include("Use One step Partner invite and approve process?")
-        expect(html.text).to include("Receive email when partner makes a request:")
+        expect(html.text).to include("Use one-step Partner invite and approve process?")
+        expect(html.text).to include("Receive email when Partner makes a Request?")
       end
 
       context "when enable_packs flipper is on" do
@@ -405,10 +403,10 @@ RSpec.describe "Organizations", type: :request do
           subject
           expect(response).to redirect_to(organization_path)
           follow_redirect!
-          expect(response.body).to include("<h3 class='font-bold'>Receive email when partner makes a request:</h3>
-                <p>
-                  Yes
-                </p>")
+          expect(response.body).to include("Receive email when Partner makes a Request?</h6>
+              <p>
+                Yes
+              </p>")
         end
       end
 
@@ -466,7 +464,7 @@ RSpec.describe "Organizations", type: :request do
     context "when attempting to access a different organization" do
       let(:other_organization) { create(:organization) }
       let(:other_organization_params) do
-        { organization_name: other_organization.to_param }
+        { organization_id: other_organization.id }
       end
 
       describe "GET #show" do
@@ -537,11 +535,10 @@ RSpec.describe "Organizations", type: :request do
       context "when user is not an org user" do
         let(:user) { create(:user, organization: create(:organization)) }
 
-        it "raises an error" do
-          post remove_user_organization_path(
-            user_id: user.id,
-            organization_name: organization.short_name
-          )
+        it 'raises an error' do
+          # Explicitly specify the organization_id, as current_organization will not
+          # be set for super admins
+          post remove_user_organization_path(user_id: user.id, organization_id: organization.id)
 
           expect(response).to have_http_status(:not_found)
         end

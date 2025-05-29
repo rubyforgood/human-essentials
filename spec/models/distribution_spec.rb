@@ -190,9 +190,9 @@ RSpec.describe Distribution, type: :model do
     end
 
     describe "with_diapers >" do
-      let(:disposable_item) { create(:item, base_item: create(:base_item, category: "Diapers - Childrens")) }
-      let(:cloth_diaper_item) { create(:item, base_item: create(:base_item, category: "Diapers - Cloth (Kids)")) }
-      let(:non_diaper_item) { create(:item, base_item: create(:base_item, category: "Menstrual Supplies/Items")) }
+      let(:disposable_item) { create(:item, reporting_category: :disposable_diapers) }
+      let(:cloth_diaper_item) { create(:item, reporting_category: :cloth_diapers) }
+      let(:non_diaper_item) { create(:item, reporting_category: :tampons) }
 
       it "only includes distributions with disposable or cloth_diaper items" do
         dist1 = create(:distribution, :with_items, item: disposable_item)
@@ -208,8 +208,8 @@ RSpec.describe Distribution, type: :model do
     end
 
     describe "with_period_supplies >" do
-      let(:period_supplies_item) { create(:item, base_item: create(:base_item, category: "Menstrual Supplies/Items")) }
-      let(:non_period_supplies_item) { create(:item, base_item: create(:base_item, category: "Diapers - Childrens")) }
+      let(:period_supplies_item) { create(:item, reporting_category: :tampons) }
+      let(:non_period_supplies_item) { create(:item, reporting_category: :adult_incontinence) }
 
       it "only includes distributions with period supplies items" do
         dist1 = create(:distribution, :with_items, item: period_supplies_item)
