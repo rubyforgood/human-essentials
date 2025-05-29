@@ -28,9 +28,6 @@ Here's all the fields, with a bit about the implications of each one:
 #### Name
 The name of your Essentials Bank.   This appears in the headings on most screens, and will appear on printouts (such as the distribution printout many banks use as a packing slip), and most reports.
 
-#### Short name
-You don't change this -- we assigned it when we set it up -- it's here for reference for support calls if we need it.
-
 #### NDBN membership ID
 This should be filled in already from your Account Request,but if it isn't, you can select it from the list.   That list is updated on an irregular basis,  so if you are an NDBN member, and you aren't on the list,  let us know and we'll get a fresh list uploaded.
 This is included on the Annual Survey report.  That's the only effect.
@@ -211,6 +208,15 @@ column is useful mainly for banks that repackage their essentials into uniform p
 
 ![Distribution printout marked up with customizable sections](images/getting_started/customization/gs_customization_distribution_printout_customizable_sections.png)
 
+## Exports
+
+### Include in-kind value in donation and distribution exports?
+
+You can configure whether the exports for donations and distributions include the "In-Kind Value" column for each item. By default, these values are excluded. To include them, set the "Include in-kind value in donation and distribution exports?" option to "Yes".
+
+Click "My Organization" in the left hand menu. Click "Edit" button. Set the "Include in-kind value in donation and distribution exports?" to "yes", then click "Save".
+
+[!NOTE] Setting this affects both the donation and distribution exports.
 
 ## Annual Survey
 These two fields are only here to be reported on the Annual Survey.

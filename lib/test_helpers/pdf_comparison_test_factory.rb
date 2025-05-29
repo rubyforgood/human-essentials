@@ -13,7 +13,6 @@ module PDFComparisonTestFactory
   def self.create_organization_storage_items(logo = get_logo_file)
     org = Organization.create!(
       name: "Essentials Bank 1",
-      short_name: "db",
       street: "1500 Remount Road",
       city: "Front Royal",
       state: "VA",
