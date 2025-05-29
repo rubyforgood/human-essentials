@@ -4,7 +4,7 @@ module Exports
 
     # @param requests [Array<Request>]
     # @param organization [Organization]
-    def initialize(requests, organization:)
+    def initialize(requests, organization)
       @requests = requests.includes(:partner, {item_requests: :item})
       @organization_items = organization.items.select("DISTINCT ON (LOWER(name)) items.name").order("LOWER(name) ASC")
     end
