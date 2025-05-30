@@ -27,7 +27,7 @@ This screen includes a filter so you can narrow down your search for a Donation,
 
 When you have been using Human Essentials for a few months, your Donation list may grow to the point that you want to narrow things down to find a particular donation quickly.
 
-To help with that,  you can filter the Donation list by several aspects: Storage Location, source, Product Drive, Product Drive Participant, Manufacturer, Donation Site, and date range.
+To help with that,  you can filter the Donation list by several aspects: Storage Location, source, Product Drive, Product Drive Participant, Manufacturer, Donation Site, Item Category and date range.
 Except for date range,  all the filters are specified by picking from a drop-down list.
 
 Date range is selected using a little calendar gizmo with several presets.   We recommend using the calendar gizmo instead of typing in the field, as the text field is very particular as to the format - we have a few people experiencing mismatches there every month.
