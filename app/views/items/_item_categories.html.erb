@@ -27,9 +27,10 @@
               <% end %>
             </ul>
           </td>
-          <td>
+          <td class="text-right">
             <%= view_button_to item_category_path(item_category) %>
             <%= edit_button_to edit_item_category_path(item_category.id) %>
+            <%= delete_button_to(item_category_path(item_category.id), { confirm: confirm_delete_msg(item_category.name) }) if (item_category.items.count <= 0) %>
           </td>
         </tr>
       <% end %>
