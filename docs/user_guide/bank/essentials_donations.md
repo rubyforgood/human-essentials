@@ -67,7 +67,7 @@ For Product Drive, Manufacturer, or Donation Site, you will further specify the 
 If  you specify Product drive,  you'll also need to specify the particular drive and participant for the Donation -- but you can enter them "on the fly", here. You can view summaries for the Product Drives in [Product Drives](product_drives.md), and manage the contact info for a Product Drive Participant under [Community -- Product Drive Participants](community_product_drive_participants.md).
 ##### *Donation Site
 Donation Site is meant to capture the concept of any place you have a more-or-less permanent place people can drop off donations at, such as your main office, or community locations such as fire halls, etc.
-You can see the Donations for each Donation Site and manage their contact information under [Community -- Donation Sites](community_donation_sites.md).  Unlike Product Drives, you can't create a new Donation Site 'on the fly' through the fields here
+You can see the Donations for each Donation Site and manage their contact information under [Community -- Donation Sites](community_donation_sites.md).  Like Product Drives, you can create a new Donation Site 'on the fly' through the fields here too.
 ##### *Manufacturer
 This is for the donations that come straight from a Manufacturer.  You can view a breakdown of the Donations for each Manufacturer under [Community --  Manufacturers](community_manufacturers.md)
 ##### *Misc. Donation
