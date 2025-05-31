@@ -22,7 +22,7 @@
 #  one_step_partner_invite                  :boolean          default(FALSE), not null
 #  partner_form_fields                      :text             default([]), is an Array
 #  receive_email_on_requests                :boolean          default(FALSE), not null
-#  reminder_day                             :integer
+#  reminder_schedule                        :string
 #  repackage_essentials                     :boolean          default(FALSE), not null
 #  signature_for_distribution_pdf           :boolean          default(FALSE)
 #  state                                    :string
@@ -43,6 +43,9 @@ FactoryBot.define do
       skip_items { false }
     end
 
+    recurrence_schedule = IceCube::Schedule.new
+    recurrence_schedule.add_recurrence_rule IceCube::Rule.monthly(1).day_of_month(10)
+    recurrence_schedule_ical = recurrence_schedule.to_ical
     sequence(:name) { |n| "Essentials Bank #{n}" } # 037000863427
     sequence(:email) { |n| "email#{n}@example.com" } # 037000863427
     sequence(:url) { |n| "https://organization#{n}.org" } # 037000863427
@@ -50,13 +53,12 @@ FactoryBot.define do
     city { 'Front Royal' }
     state { 'VA' }
     zipcode { '22630' }
-    reminder_day { 10 }
-    deadline_day { 20 }
+    reminder_schedule { recurrence_schedule_ical }
 
     logo { Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/logo.jpg"), "image/jpeg") }
 
     trait :without_deadlines do
-      reminder_day { nil }
+      reminder_schedule { nil }
       deadline_day { nil }
     end
 

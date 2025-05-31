@@ -4,6 +4,7 @@ class PartnerGroupsController < ApplicationController
   def new
     @partner_group = current_organization.partner_groups.new
     set_items_categories
+    @item_categories = current_organization.item_categories
   end
 
   def create
@@ -21,6 +22,8 @@ class PartnerGroupsController < ApplicationController
   def edit
     @partner_group = current_organization.partner_groups.find(params[:id])
     set_items_categories
+    @partner_group.get_values_from_reminder_schedule
+    @item_categories = current_organization.item_categories
   end
 
   def update
@@ -52,7 +55,8 @@ class PartnerGroupsController < ApplicationController
   end
 
   def partner_group_params
-    params.require(:partner_group).permit(:name, :send_reminders, :deadline_day, :reminder_day, item_category_ids: [])
+    params.require(:partner_group).permit(:name, :send_reminders, :reminder_schedule,
+      :deadline_day, :start_date, :by_month_or_week, :day_of_month, :day_of_week, :every_nth_day, :every_nth_month, item_category_ids: [])
   end
 
   def set_items_categories
