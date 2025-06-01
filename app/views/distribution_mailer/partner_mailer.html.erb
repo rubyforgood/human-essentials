@@ -330,7 +330,7 @@
                     <td>
                       <% if @default_email_text.present? %>
                         <%= @default_email_text_interpolated.html_safe %>
-                      <% elsif !@distribution_changes.present? %>
+                      <% elsif @distribution_changes.blank? %>
                         You have a new distribution from <%= @partner.organization.name %>.
                         Please refer to the attachment for details.
                       <% end %>
