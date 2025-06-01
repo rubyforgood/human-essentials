@@ -26,6 +26,22 @@ RSpec.describe "Dashboard", type: :request do
           expect(response.body).to include('switch_to_role')
         end
       end
+
+      context "for another org" do
+        it "still displays the user's org" do
+          # another org
+          get dashboard_path(organization_name: create(:organization).to_param)
+          expect(response.body).to include(organization.name)
+        end
+      end
+
+      it "displays User Guide link" do
+        get dashboard_path
+
+        expect(response.body).to include('User Guide')
+        expect(response.body).to include('https://rubyforgood.github.io/human-essentials/user_guide/bank/')
+        expect(response.body).not_to include('Need Help?')
+      end
     end
 
     context "BroadcastAnnouncement card" do
