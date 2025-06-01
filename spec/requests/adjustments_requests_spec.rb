@@ -78,9 +78,6 @@ RSpec.describe "Adjustments", type: :request do
           it "displays the preferred name of users in the dropdown" do
             expect(response.body).to include("<option value=\"#{another_user.id}\">#{another_user.preferred_name}</option>")
             expect(response.body).to include("<option value=\"#{user_without_name.id}\">#{user_without_name.preferred_name}</option>")
-          end
-
-          it "includes the current signed-in user's preferred name in the dropdown" do
             expect(response.body).to include("<option value=\"#{user.id}\">#{user.preferred_name}</option>")
           end
         end
