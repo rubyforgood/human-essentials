@@ -613,7 +613,8 @@ RSpec.describe "Partners", type: :request do
 
       it "presents a flash error message" do
         subject
-        expect(response).to have_error "The following Partners did not import successfully:\nPartner 4: default_storage_location The default storage location is not a storage location for this partner's organization"
+        expect(flash[:alert]).to be_present
+        expect(flash[:alert]).to match(/The following Partners imported with warnings/)
       end
     end
 
