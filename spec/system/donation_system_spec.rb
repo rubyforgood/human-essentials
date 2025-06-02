@@ -4,7 +4,6 @@ RSpec.describe "Donations", type: :system, js: true do
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 
   context "When signed in as a normal user" do
-
     before do
       sign_in user
     end

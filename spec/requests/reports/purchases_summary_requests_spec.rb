@@ -9,11 +9,11 @@ RSpec.describe "Purchases", type: :request do
 
     describe "time display" do
       let!(:purchase) { create(:purchase, :with_items, issued_at: 3.days.ago) }
-      
+
       before do
         get reports_purchases_summary_path
       end
-      
+
       it "uses issued_at for the relative time display, not created_at" do
         expect(response.body).to include("3 days ago")
       end

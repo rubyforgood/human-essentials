@@ -13,7 +13,7 @@ RSpec.describe "Reports::DonationsSummary", type: :request do
       before do
         get reports_donations_summary_path
       end
-      
+
       it "uses issued_at for the relative time display, not created_at" do
         expect(response.body).to include("1 day ago")
       end
