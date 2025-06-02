@@ -5,8 +5,8 @@ describe PicklistsPdf do
 
   describe "#compute_and_render" do
     it "renders multiple requests correctly" do
-      request1 = create(:request, :pending, organization: organization)
-      request2 = create(:request, :pending, organization: organization)
+      request1 = create(:request, :pending, organization: organization, comments: "Request 1 comments")
+      request2 = create(:request, :pending, organization: organization, comments: "Request 2 comments")
       create(:item_request, request: request1, item: item1, name: "Item 1")
       create(:item_request, request: request2, item: item2, name: "Item 2")
 
@@ -19,6 +19,7 @@ describe PicklistsPdf do
       expect(pdf_test.page(1).text).to include("Requested on:")
       expect(pdf_test.page(1).text).to include("Items Received Year-to-Date:")
       expect(pdf_test.page(1).text).to include("Comments")
+      expect(pdf_test.page(1).text).to include(request1.comments)
       expect(pdf_test.page(1).text).to include("Items Requested")
       expect(pdf_test.page(1).text).to include("Item 1")
 
@@ -28,8 +29,27 @@ describe PicklistsPdf do
       expect(pdf_test.page(2).text).to include("Requested on:")
       expect(pdf_test.page(2).text).to include("Items Received Year-to-Date:")
       expect(pdf_test.page(2).text).to include("Comments")
+      expect(pdf_test.page(2).text).to include(request2.comments)
       expect(pdf_test.page(2).text).to include("Items Requested")
       expect(pdf_test.page(2).text).to include("Item 2")
+    end
+
+    context "when ytd_on_distribution_printout is enabled for the organization" do
+      before { organization.update(ytd_on_distribution_printout: true) }
+
+      it "renders the YTD quantity" do
+        partner = create(:partner)
+        request = create(:request, :pending, organization: organization, partner: partner)
+        create(:item_request, request: request, item: item1, name: "Item 1", quantity: 17)
+
+        # stub out the quantity_year_to_date method, it's not the PDF's job to make sure the calculation is correct
+        allow(partner).to receive(:quantity_year_to_date).and_return(17827)
+        pdf = described_class.new(organization, [request])
+        pdf_test = PDF::Reader.new(StringIO.new(pdf.compute_and_render))
+
+        expect(pdf_test.page(1).text).to include("Items Received Year-to-Date:")
+        expect(pdf_test.page(1).text).to include("17827")
+      end
     end
 
     context "When partner pickup person is set" do

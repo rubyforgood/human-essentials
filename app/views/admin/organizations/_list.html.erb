@@ -12,7 +12,7 @@
 
     <tbody>
       <% @organizations.each do |organization| %>
-        <tr class="<%= organization.short_name %>">
+        <tr>
           <td><%= organization.name %></td>
           <td><%= link_to organization.email, "mailto:#{organization.email}" %></td>
           <td class="date"><%= organization.created_at.strftime("%F") %></td>

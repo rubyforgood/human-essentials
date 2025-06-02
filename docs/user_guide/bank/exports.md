@@ -27,9 +27,10 @@ The exports available include (in alphabetical order):
 Click "Inventory", then "Inventory Adjustments" in the left-hand menu.  Then click "Export Adjustments",
 
 ### Contents of adjustment export
-Creation date, Organization, Storage Area, Comment, # of changes.
-
-[! NOTE]  We have improving the adjustments export to include the changes made in each adjustment on our todo list. We'll also remove the organization as redundant information. Please reach out if this is a priority for you.
+- Creation date
+- Storage Area, Comment
+- # of changes
+- the quantity of each of your organization's Items in the adjustments
 
 ## Annual Survey
 ### Navigating to export annual survey
@@ -128,6 +129,12 @@ For each of the distributions in the filtered list:
 
 [!NOTE] This includes inactive Items as well as active ones.
 
+### Add In-Kind Value for each item
+The default export includes the number of items exported, but not the values. If you want to also have the export include the in-kind value for each item in the distributions, you can set that option.
+Click "My Organization" in the left hand menu. Click "Edit" button. Set the "Include in-kind value in donation and distribution exports?" to "yes", then click "Save".
+
+[!NOTE] Setting this affects both the donation and distribution exports.
+
 ## Donations
 
 ### Navigating to export Donations
@@ -155,6 +162,12 @@ For each of the Donations in the filtered list:
 - In-Kind Value,
 - Comments,
 - and the quantity of each of your organization's Items in the Donations.
+
+### Add In-Kind Value for each item
+The default export includes the number of items exported, but not the values. If you want to also have the export include the in-kind value for each item in the distributions, you can set that option.
+Click "My Organization" in the left hand menu. Click "Edit" button. Set the "Include in-kind value in donation and distribution exports?" to "yes", then click "Save".
+
+[!NOTE] Setting this affects both the donation and distribution exports.
 
 ## Donation Sites
 ### Navigating to export Donation Sites

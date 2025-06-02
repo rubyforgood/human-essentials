@@ -62,10 +62,6 @@
                   <span class="input-group-text"><i class="fa fa-user"></i></span>
                   <%= f.input_field :name, class: "form-control" %>
                 <% end %>
-                <%= f.input :short_name, required: true, autofocus: true, wrapper: :input_group do %>
-                  <span class="input-group-text"><i class="fa fa-desktop"></i></span>
-                  <%= f.input_field :short_name, disabled: true, class: "form-control" %>
-                <% end %>
                 <%= f.input :ndbn_member, label: "NDBN membership ID", wrapper: :input_group do %>
                   <div class="mb-n3"> <%# Removes "margin-bottom: 1rem" added by "form-group" class below %>
                     <%= f.association :ndbn_member, label_method: :full_name, value_method: :id, label: false %>
@@ -172,6 +168,9 @@
                 <%= f.input :signature_for_distribution_pdf, label: "Include signature lines on Distribution printout?", as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
                 <%= f.input :hide_value_columns_on_receipt, label: 'Hide value columns on Distribution and Donation printout?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
                 <%= f.input :hide_package_column_on_receipt, label: 'Hide package column on Distribution printout?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
+
+                <h4>Exports</h4>
+                <%= f.input :include_in_kind_values_in_exported_files, label: 'Include in-kind value in donation and distribution exports?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
 
                 <h4>Annual Survey</h4>
                 <%= f.input :repackage_essentials, label: 'Does your Bank repackage essentials?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>

@@ -2,6 +2,6 @@
 $("#modal_new").modal("hide");
 $("#donation_product_drive_participant_id").empty();
 $("#donation_product_drive_participant_id").
-html('<%= j options_from_collection_for_select(current_organization.product_drive_participants, :id, :business_name) %>');
+html('<%= j options_from_collection_for_select(current_organization.product_drive_participants, :id, lambda { |p| p.business_name.present? ? p.business_name : p.contact_name }) %>');
 $("#donation_product_drive_participant_id").append('<option value="">---Create new Participant---</option>');
 $("#donation_product_drive_participant_id").val('<%= @product_drive_participant[:id] %>');

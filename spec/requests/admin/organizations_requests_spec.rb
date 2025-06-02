@@ -1,8 +1,5 @@
 RSpec.describe "Admin::Organizations", type: :request do
   let(:organization) { create(:organization) }
-  let(:default_params) do
-    { organization_name: organization.id }
-  end
 
   context "When logged in as a super admin" do
     before do

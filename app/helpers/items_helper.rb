@@ -12,7 +12,7 @@ module ItemsHelper
   end
 
   def cents_to_dollar(value_in_cents)
-    value_in_cents.to_f / 100
+    Money.new(value_in_cents).to_f
   end
 
   def selected_item_request_units(item)
