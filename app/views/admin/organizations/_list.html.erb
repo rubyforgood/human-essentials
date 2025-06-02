@@ -19,7 +19,6 @@
         <td class="date"><%= organization.display_last_distribution_date %></td>
           <td class="text-right">
             <%= view_button_to admin_organization_path(organization.id) %>
-            <%= edit_button_to edit_admin_organization_path(organization.id) %>
             <%= delete_button_to(admin_organization_path(organization.id), { confirm: confirm_delete_msg(organization.name) }) unless (Organization.count <= 1) %>
           </td>
         </tr>

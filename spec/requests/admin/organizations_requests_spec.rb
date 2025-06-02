@@ -107,41 +107,6 @@ RSpec.describe "Admin::Organizations", type: :request do
       end
     end
 
-    describe "PATCH #update" do
-      let(:organization) { create(:organization, name: "Original Name") }
-      subject do
-        patch admin_organization_path(default_params.merge(id: organization.id, organization: { name: updated_name }))
-      end
-
-      context "with a valid update" do
-        let(:updated_name) { "Updated Name" }
-        let(:redirect_status) { 302 }
-
-        it "redirects to #index" do
-          expect(subject).to be(redirect_status)
-          expect(subject).to redirect_to(admin_organizations_path)
-        end
-      end
-
-      context "with an invalid update" do
-        let(:updated_name) { nil }
-        let(:successful) { 200 }
-
-        subject do
-          patch admin_organization_path(default_params.merge(id: organization.id, organization: { name: updated_name }))
-        end
-
-        it "returns http success" do
-          expect(subject).to be(successful)
-        end
-
-        it "redirects to #edit with an error message" do
-          expect(subject).to render_template("edit")
-          expect(flash[:error]).to be_present
-        end
-      end
-    end
-
     describe "DELETE #destroy" do
       let(:organization) { create(:organization) }
 
@@ -150,15 +115,6 @@ RSpec.describe "Admin::Organizations", type: :request do
           delete admin_organization_path({ id: organization.id })
           expect(response).to redirect_to(admin_organizations_path)
         end
-      end
-    end
-
-    describe "GET #edit" do
-      let!(:organization) { create(:organization) }
-
-      it "returns http success" do
-        get edit_admin_organization_path({ id: organization.id })
-        expect(response).to be_successful
       end
     end
 
@@ -197,13 +153,6 @@ RSpec.describe "Admin::Organizations", type: :request do
       end
     end
 
-    describe "PUT #update" do
-      it "redirect" do
-        put admin_organization_path({ id: organization.id, organization: { name: "Foo" } })
-        expect(response).to be_redirect
-      end
-    end
-
     describe "DELETE #destroy" do
       it "redirects" do
         delete admin_organization_path({ id: organization.id })
@@ -234,20 +183,6 @@ RSpec.describe "Admin::Organizations", type: :request do
     describe "GET #index" do
       it "redirects" do
         get admin_organizations_path
-        expect(response).to be_redirect
-      end
-    end
-
-    describe "GET #edit" do
-      it "redirects" do
-        get edit_admin_organization_path({ id: organization.id })
-        expect(response).to be_redirect
-      end
-    end
-
-    describe "PUT #update" do
-      it "redirects" do
-        put admin_organization_path({ id: organization.id, organization: { name: "Foo" } })
         expect(response).to be_redirect
       end
     end
