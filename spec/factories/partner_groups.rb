@@ -2,28 +2,31 @@
 #
 # Table name: partner_groups
 #
-#  id                :bigint           not null, primary key
-#  deadline_day      :integer
-#  name              :string
-#  reminder_schedule :string
-#  send_reminders    :boolean          default(FALSE), not null
-#  created_at        :datetime         not null
-#  updated_at        :datetime         not null
-#  organization_id   :bigint
+#  id                           :bigint           not null, primary key
+#  deadline_day                 :integer
+#  name                         :string
+#  reminder_day                 :integer
+#  reminder_schedule_definition :string
+#  send_reminders               :boolean          default(FALSE), not null
+#  created_at                   :datetime         not null
+#  updated_at                   :datetime         not null
+#  organization_id              :bigint
 #
 
 FactoryBot.define do
-  recurrence_schedule = IceCube::Schedule.new
-  recurrence_schedule.add_recurrence_rule IceCube::Rule.monthly(1).day_of_month(10)
-  recurrence_schedule_ical = recurrence_schedule.to_ical
+  reminder_schedule_definition = ReminderScheduleService.new({
+    every_nth_month: "1",
+    by_month_or_week: "day_of_month",
+    day_of_month: 10
+  })
 
   factory :partner_group do
     sequence(:name) { |n| "Group #{n}" }
     organization { Organization.try(:first) || create(:organization) }
-    reminder_schedule { recurrence_schedule_ical }
+    reminder_schedule_definition { reminder_schedule_definition.to_ical }
 
     trait :without_deadlines do
-      reminder_schedule { nil }
+      reminder_schedule_definition { nil }
       deadline_day { nil }
     end
   end

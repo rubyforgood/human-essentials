@@ -22,7 +22,8 @@
 #  one_step_partner_invite                  :boolean          default(FALSE), not null
 #  partner_form_fields                      :text             default([]), is an Array
 #  receive_email_on_requests                :boolean          default(FALSE), not null
-#  reminder_schedule                        :string
+#  reminder_day                             :integer
+#  reminder_schedule_definition             :string
 #  repackage_essentials                     :boolean          default(FALSE), not null
 #  signature_for_distribution_pdf           :boolean          default(FALSE)
 #  state                                    :string

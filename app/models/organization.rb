@@ -22,7 +22,8 @@
 #  one_step_partner_invite                  :boolean          default(FALSE), not null
 #  partner_form_fields                      :text             default([]), is an Array
 #  receive_email_on_requests                :boolean          default(FALSE), not null
-#  reminder_schedule                        :string
+#  reminder_day                             :integer
+#  reminder_schedule_definition             :string
 #  repackage_essentials                     :boolean          default(FALSE), not null
 #  signature_for_distribution_pdf           :boolean          default(FALSE)
 #  state                                    :string
@@ -42,7 +43,7 @@ class Organization < ApplicationRecord
 
   DIAPER_APP_LOGO = Rails.public_path.join("img", "humanessentials_logo.png")
 
-  include Deadlinable
+  include ReminderScheduleable
 
   # TODO: remove once migration "20250504183911_remove_short_name_from_organizations" has run in production
   self.ignored_columns += ["short_name"]
@@ -93,10 +94,6 @@ class Organization < ApplicationRecord
     def upcoming
       this_week.scheduled.where(issued_at: Time.zone.today..)
     end
-  end
-
-  before_save do
-    self.reminder_schedule = create_schedule
   end
 
   after_create do

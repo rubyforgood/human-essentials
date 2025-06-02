@@ -13,7 +13,6 @@ class OrganizationsController < ApplicationController
 
   def edit
     @organization = current_organization
-    @organization.get_values_from_reminder_schedule
   end
 
   def update
@@ -95,15 +94,13 @@ class OrganizationsController < ApplicationController
       :name, :street, :city, :state,
       :zipcode, :email, :url, :logo, :intake_location,
       :default_storage_location, :default_email_text, :reminder_email_text,
-      :invitation_text, :reminder_schedule, :deadline_day,
+      :invitation_text, :reminder_schedule_definition, :deadline_day, *ReminderScheduleService::REMINDER_SCHEDULE_FIELDS,
       :repackage_essentials, :distribute_monthly,
       :ndbn_member_id, :enable_child_based_requests,
       :enable_individual_requests, :enable_quantity_based_requests,
       :ytd_on_distribution_printout, :one_step_partner_invite,
       :hide_value_columns_on_receipt, :hide_package_column_on_receipt,
       :signature_for_distribution_pdf, :receive_email_on_requests,
-      :start_date, :by_month_or_week, :day_of_month, :day_of_week, :every_nth_day,
-      :every_nth_month,
       :include_in_kind_values_in_exported_files,
       partner_form_fields: [],
       request_unit_names: []

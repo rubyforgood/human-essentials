@@ -2,14 +2,15 @@
 #
 # Table name: partner_groups
 #
-#  id                :bigint           not null, primary key
-#  deadline_day      :integer
-#  name              :string
-#  reminder_schedule :string
-#  send_reminders    :boolean          default(FALSE), not null
-#  created_at        :datetime         not null
-#  updated_at        :datetime         not null
-#  organization_id   :bigint
+#  id                           :bigint           not null, primary key
+#  deadline_day                 :integer
+#  name                         :string
+#  reminder_day                 :integer
+#  reminder_schedule_definition :string
+#  send_reminders               :boolean          default(FALSE), not null
+#  created_at                   :datetime         not null
+#  updated_at                   :datetime         not null
+#  organization_id              :bigint
 #
 RSpec.describe PartnerGroup, type: :model do
   describe 'associations' do

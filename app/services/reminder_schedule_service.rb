@@ -1,0 +1,135 @@
+class ReminderScheduleService
+  MIN_DAY_OF_MONTH = 1
+  MAX_DAY_OF_MONTH = 28
+  EVERY_NTH_COLLECTION = [["First", 1], ["Second", 2], ["Third", 3], ["Fourth", 4], ["Last", -1]].freeze
+  DAY_OF_WEEK_COLLECTION = [["Sunday", 0], ["Monday", 1], ["Tuesday", 2], ["Wednesday", 3], ["Thursday", 4], ["Friday", 5], ["Saturday", 6]].freeze
+  EVERY_NTH_MONTH_COLLECTION = [["Monthly", 1], ["Every 2 months", 2], ["Every 3 months", 3], ["Every 4 months", 4], ["Every 5 months", 5],
+    ["Every 6 months", 6], ["Every 7 months", 7], ["Every 8 months", 8], ["Every 9 months", 9], ["Every 10 months", 10], ["Every 11 months", 11],
+    ["Every 12 months", 12]].freeze
+  NTH_TO_WORD_MAP = {
+    1 => "First",
+    2 => "Second",
+    3 => "Third",
+    4 => "Fourth",
+    -1 => "Last"
+  }.freeze
+
+  # The list of fields which are part of the _deadline_day_fields.html.erb form
+  REMINDER_SCHEDULE_FIELDS = [
+    :every_nth_month,
+    :start_date,
+    :by_month_or_week,
+    :day_of_month,
+    :day_of_week,
+    :every_nth_day,
+  ].freeze
+
+  attr_accessor *ReminderScheduleService::REMINDER_SCHEDULE_FIELDS
+  attr_accessor :parent_object
+
+  include ActiveModel::Validations
+  
+  validate :parent_object_has_deadline_day_field?
+  validate :every_nth_month_within_range?
+  validates :start_date, presence: true
+  validate :start_date_is_valid_date_string?
+  validates :by_month_or_week, inclusion: {in: %w[day_of_month day_of_week]}
+  validates :day_of_month, if: -> { @by_month_or_week == "day_of_month" }, presence: true
+  validate :day_of_month_is_within_range?, if: -> { @by_month_or_week == "day_of_month" }
+  validate :deadline_not_on_reminder_date?, if: -> { @by_month_or_week == "day_of_month" && @deadline_day.present? }
+  validates :day_of_week, if: -> { @by_month_or_week == "day_of_week" }, inclusion: {in: %w[0 1 2 3 4 5 6]}
+  validates :every_nth_day, if: -> { @by_month_or_week == "day_of_week" }, inclusion: {in: %w[1 2 3 4 -1]}
+                                            
+  def initialize(parameter_hash)
+    @parent_object = parameter_hash[:parent_object]
+    @every_nth_month = parameter_hash[:every_nth_month]
+    @start_date = parameter_hash[:start_date]
+    if !@start_date
+      @start_date = Time.zone.now.to_date.to_s
+    end
+    @by_month_or_week = parameter_hash[:by_month_or_week]
+    @day_of_month = parameter_hash[:day_of_month]
+    @day_of_week = parameter_hash[:day_of_week]
+    @every_nth_day = parameter_hash[:every_nth_day]
+  end
+
+  def self.from_ical(ical, parent_object)
+    if ical.blank?
+      return
+    end
+    schedule = IceCube::Schedule.from_ical(ical)
+    rule = schedule.recurrence_rules.first.instance_values
+    if rule.blank?
+      return
+    end
+    day_of_month = rule["validations"][:day_of_month]&.first&.value
+
+    ReminderScheduleService.new({
+      parent_object: parent_object,
+      every_nth_month: rule["validations"][:interval]&.first&.interval,
+      start_date: schedule.start_time,
+      by_month_or_week: day_of_month ? "day_of_month" : "day_of_week",
+      day_of_month: day_of_month,
+      day_of_week: rule["validations"][:day_of_week]&.first&.day,
+      every_nth_day: rule["validations"][:day_of_week]&.first&.occ,
+    })
+  end
+
+  def to_icecube_schedule
+    unless valid?
+      return nil
+    end
+    schedule = IceCube::Schedule.new(start_date.respond_to?(:strftime) ? start_date : Time.zone.parse(start_date))
+    if by_month_or_week == "day_of_month"
+      schedule.add_recurrence_rule(IceCube::Rule.monthly(every_nth_month).day_of_month(day_of_month.to_i))
+    else
+      schedule.add_recurrence_rule(IceCube::Rule.monthly(every_nth_month).day_of_week(day_of_week.to_i => [every_nth_day.to_i]))
+    end
+    schedule
+  end
+
+  def to_ical
+    to_icecube_schedule&.to_ical
+  end
+
+  def show_description
+    to_icecube_schedule&.recurrence_rules&.first.to_s
+  end
+
+  private
+
+  def parent_object_has_deadline_day_field?
+    unless parent_object.respond_to?(:deadline_day)
+      errors.add(:parent_object, "ReminderScheduleService expects to be associated with an object that has the deadline_day field")
+    end
+  end
+
+  def every_nth_month_within_range?
+    if every_nth_month.to_i < EVERY_NTH_MONTH_COLLECTION.first.last || every_nth_month.to_i > EVERY_NTH_MONTH_COLLECTION.last.last
+      errors.add(:every_nth_month, "Monthly frequence must be between #{EVERY_NTH_MONTH_COLLECTION.first.first} and #{EVERY_NTH_MONTH_COLLECTION.first.first}")
+    end
+  end
+
+  def start_date_is_valid_date_string?
+    unless start_date.respond_to?(:strftime) || Time.zone.parse(start_date)
+      errors.add(:start_date, "Start date must be a valid date string")
+    end
+  end
+
+  def day_of_month_is_within_range?
+    # IceCube converts negative or zero days to valid days (e.g. -1 becomes the last day of the month, 0 becomes 1)
+    # The minimum check should no longer be necessary, but keeping it in case IceCube changes
+    if day_of_month.to_i < MIN_DAY_OF_MONTH || day_of_month.to_i > MAX_DAY_OF_MONTH
+      errors.add(:day_of_month, "Reminder day must be between #{MIN_DAY_OF_MONTH} and #{MAX_DAY_OF_MONTH}")
+    end
+  end
+
+  # TODO: Consider reworking this to validate the IceCube schedule that gets generated, so it checks both day_of_month and day_of_week
+  # schedules
+  def deadline_not_on_reminder_date?
+    if day_of_month.to_i == parent_object.deadline_day.to_i
+      errors.add(:day_of_month, "Reminder day must not be the same as deadline day")
+    end
+  end
+
+end
