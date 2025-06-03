@@ -82,9 +82,11 @@ The fields are:
 - On hand recommended quantity -- This is the amount you want to have on hand -- if you don't have this, it will appear in the low inventory list on your dashboard, just not in red.
 - Package size -- If you use this, the calculated number of packages for the Item will appear on the distribution printout, unless you hide it when [customizing your bank](getting_started_customization.md).
 - Item visible to partners -- This is useful if you have Items that you do not want the partners directly requesting.   Uses include: Items you don't get very often,  or Items you only have because they are going into kits you haven't assembled yet. You can uncheck this to hide those Items from all your partners.
+
 #### Filtering your item list
 The most common thing you'll when filtering your item list is to include inactive items.  If you have deactivated an item, but are going to offer it again,  you'll need to check the "Also include inactive Items" box in the filter, and then click "Filter" to show it, so that you can reactivate it.
 
+You can also filter your item list by NDBN reporting category (a field used for annual reporting purposed based on NDBN rules). Select a category from the drop-down menu and click "Filter".
 
 #### Editing an Item
 Clicking "Edit" beside an Item on the Item list lets you edit the Item definition, with the fields as described above.
