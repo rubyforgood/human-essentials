@@ -72,6 +72,8 @@ Clicking "View" will bring up details on the Item, including all the things you 
 The fields are:
 - Base Item -- this is the "Base Item" for this Item -- which determines what section it is in for the Annual Survey.  You can also search by Base Item (at this time)
 - Category -- this is a category you define (see [Item Categories](inventory_items.md#item-categories), below
+- NDBN Reporting Category -- this is used for accounting purposes in annual reports based on NDNB's rules. The value is set based on a Base Item's reporting category, or selected manually.
+!NOTE New NDBN reporting categories can only be created by a Super Admin.
 - Value per Item -- this is currently shown in cents (there is a request to change it to dollars in our list).  It is used for any "Fair Market Value" calculations -- including on donation and distribution printouts.  
 [!NOTE] We only have one 'Value per Item' per Item -- so it's always the current fair market value not the historical.  If provided, this is used for the value column on the distribution and donation printouts (unless you hide those columns when [customizing your bank](getting_started_customization.md))
 - Quantity per individual -- This is used for two things:  
