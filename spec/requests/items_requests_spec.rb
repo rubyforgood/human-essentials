@@ -110,6 +110,19 @@ RSpec.describe "Items", type: :request do
           end
         end
       end
+
+      context "when item is housing a kit" do
+        let(:kit) { create(:kit, organization:) }
+        let(:item) { create(:item, organization: organization, kit:) }
+
+        it "shows the NDBN reporting category field disabled" do
+          get edit_item_path(item)
+          page = Nokogiri::HTML(response.body)
+
+          select_field = page.at_css(".item_reporting_category")
+          expect(select_field.attr("class")).to match(/disabled/)
+        end
+      end
     end
 
     describe 'DELETE #deactivate' do
