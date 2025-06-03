@@ -149,8 +149,9 @@ class Item < ApplicationRecord
     end
   end
 
+  # @return [String]
   def reporting_category_humanized
-    Item.reporting_categories[reporting_category].titleize
+    Item.reporting_categories[reporting_category].to_s.titleize
   end
 
   def other?

@@ -418,6 +418,24 @@ RSpec.describe Item, type: :model do
     end
   end
 
+  describe "reporting_category_humanized" do
+    it "returns reporting_category to title case" do
+      base_item = create(:base_item, name: "Adult Briefs (Large/X-Large)")
+      item = create(:item, name: "InControl BeDry", base_item:)
+
+      expect(item.reporting_category).to eq("adult_incontinence")
+      expect(item.reporting_category_humanized).to eq("Adult Incontinence")
+    end
+
+    it "returns empty string when no reporting_category exists" do
+      kit = create(:kit, organization: organization)
+      item = Item.new(kit: kit)
+
+      expect(item.reporting_category).to eq(nil)
+      expect(item.reporting_category_humanized).to eq("")
+    end
+  end
+
   describe "when distribution_quantity is set by default" do
     it "should set distribution_quantity to 50 for regular items" do
       item = Item.new
