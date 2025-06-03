@@ -317,7 +317,7 @@ RSpec.describe "Items", type: :request do
         expect(response.body).to include("ACTIVEITEM")
         expect(response.body).to include('Category')
         expect(response.body).to include('CURRENTCATEGORY')
-        expect(response.body).to include('Reporting Category')
+        expect(response.body).to include('NDBN Reporting Category')
         expect(response.body).to include('Adult Incontinence')
         expect(response.body).to include('Value Per Item')
         expect(response.body).to include('$200.0')
