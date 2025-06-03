@@ -7,7 +7,7 @@ In Human Essentials you enter Purchases by specifying the Vendor, where they are
 
 To view a list of all your Purchases, click on 'Purchases', then "All Purchases" in the left-hand menu,
 
-![Navigaton to view all Purchases](images/essentials/purchases/essentials_purchases_1.png)
+![Navigation to view all Purchases](images/essentials/purchases/essentials_purchases_1.png)
 
 This screen includes filters so you can narrow down your search to a particular Purchase, and some basic information on each Purchase:
 - Purchases from - the Vendor you purchased the goods from
@@ -23,7 +23,7 @@ This screen includes filters so you can narrow down your search to a particular 
 You can filter your Purchases by single Storage Location , by Single vendor, or by date range.
 
 ![filter section](images/essentials/purchases/essentials_purchases_2.png)
-The Vendors and Storage Locations are selected using drop-down lists of all your bank's Storage Locations / Vendors.
+The Vendors, Storage Locations, and Item Categories are selected using drop-down lists from your bank's information.
 Date range is selected using a little calendar gizmo with several presets.   We highly recommend using the calendar gizmo instead of typing in the field, as the text field is very particular as to the format - we have a few people experiencing problems there every month.
 Once you have selected your values,  click Filter to make the list conform to your selection.  To reset the selection, just click "Clear Filters".  This will set the list to all the Purchases from the current calendar year.
 
