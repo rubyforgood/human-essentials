@@ -20,17 +20,13 @@ require_relative "../inventory"
 
 FactoryBot.define do
   factory :storage_location do
-    name { "Smithsonian Conservation Center" }
-    address { "1500 Remount Road, Front Royal, VA 22630" }
+    name { "Don't test this name" }
+    address { "Don't test this address" }
     organization { Organization.try(:first) || create(:organization) }
-    square_footage { 100 }
-    warehouse_type { StorageLocation::WAREHOUSE_TYPES.sample }
-    transient do
-      item_count { 1 }
-    end
 
     trait :with_items do
       transient do
+        item_count { 1 }
         item_quantity { 100 }
         item { nil }
       end
