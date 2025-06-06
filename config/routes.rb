@@ -60,7 +60,7 @@ Rails.application.routes.draw do
   namespace :admin do
     get :dashboard
     resources :base_items
-    resources :organizations
+    resources :organizations, except: %i[edit update]
     resources :partners, except: %i[new create]
     resources :users do
       delete :remove_role
