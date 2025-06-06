@@ -91,6 +91,10 @@ class User < ApplicationRecord
     self.name = nil if name.blank?
   end
 
+  def preferred_name
+    name.presence || email
+  end
+
   def display_name
     name.presence || "Name Not Provided"
   end
