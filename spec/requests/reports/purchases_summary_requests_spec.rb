@@ -7,6 +7,18 @@ RSpec.describe "Purchases", type: :request do
       sign_in(user)
     end
 
+    describe "time display" do
+      let!(:purchase) { create(:purchase, :with_items, issued_at: 3.days.ago) }
+
+      before do
+        get reports_purchases_summary_path
+      end
+
+      it "uses issued_at for the relative time display, not created_at" do
+        expect(response.body).to include("3 days ago")
+      end
+    end
+
     describe "GET #index" do
       it "shows a list of recent purchases" do
         get reports_purchases_summary_path

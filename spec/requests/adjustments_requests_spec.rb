@@ -68,6 +68,19 @@ RSpec.describe "Adjustments", type: :request do
             end
           end
         end
+
+        context 'dropdown for user filter' do
+          let!(:another_user) { create(:user, organization: organization, name: "Alice Smith", email: "alice@example.com") }
+          let!(:user_without_name) { create(:user, organization: organization, name: nil, email: "bob@example.com") }
+
+          before { get adjustments_path } # Make the request once for this context
+
+          it "displays the preferred name of users in the dropdown" do
+            expect(response.body).to include("<option value=\"#{another_user.id}\">#{another_user.preferred_name}</option>")
+            expect(response.body).to include("<option value=\"#{user_without_name.id}\">#{user_without_name.preferred_name}</option>")
+            expect(response.body).to include("<option value=\"#{user.id}\">#{user.preferred_name}</option>")
+          end
+        end
       end
 
       context "csv" do
