@@ -91,7 +91,7 @@ class User < ApplicationRecord
     self.name = nil if name.blank?
   end
 
-  def preferred_name
+  def pref_name
     name.presence || email
   end
 
