@@ -2,8 +2,11 @@ module Exports
   class ExportRequestService
     DELETED_ITEMS_COLUMN_HEADER = '<DELETED_ITEMS>'.freeze
 
-    def initialize(requests)
+    # @param requests [Array<Request>]
+    # @param organization [Organization]
+    def initialize(requests, organization)
       @requests = requests.includes(:partner, {item_requests: :item})
+      @organization_items = organization.items.select("DISTINCT ON (LOWER(name)) items.name").order("LOWER(name) ASC")
     end
 
     def generate_csv
@@ -84,11 +87,18 @@ module Exports
         end
       end
 
+      # Include inactive items or items that are otherwise not in any item_requests
+      @organization_items.each do |item|
+        if item_names.exclude?(item.name)
+          item_names << item.name
+        end
+      end
+
       # Adding this to handle cases in which a requested item
       # has been deleted. Normally this wouldn't be necessary,
       # but previous versions of the application would cause
       # this orphaned data
-      item_names.sort.uniq << DELETED_ITEMS_COLUMN_HEADER
+      item_names.to_a.sort_by(&:downcase) << DELETED_ITEMS_COLUMN_HEADER
     end
 
     def build_row_data(request)
