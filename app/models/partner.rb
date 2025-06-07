@@ -114,7 +114,7 @@ class Partner < ApplicationRecord
       if svc.errors.present? && svc.partner.errors.blank?
         warnings << "#{svc.partner.name}: #{svc.errors.full_messages.to_sentence}"
       elsif svc.errors.present?
-        errors << "#{svc.partner.name}: #{svc.partner.errors.full_messages.to_sentence}"
+        errors << "#{svc.partner.name}: #{svc.errors.full_messages.to_sentence}"
       end
     end
     [errors, warnings]
