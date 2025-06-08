@@ -2,17 +2,13 @@ RSpec.describe HelpController, type: :controller do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 
-  let(:default_params) do
-    { organization_name: organization.to_param }
-  end
-
   context "While signed in as a normal user >" do
     before do
       sign_in(user)
     end
 
     describe "GET #show" do
-      subject { get :show, params: default_params }
+      subject { get :show }
       it "returns http success" do
         expect(subject).to be_successful
       end

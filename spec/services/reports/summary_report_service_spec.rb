@@ -21,8 +21,8 @@ RSpec.describe Reports::SummaryReportService, type: :service do
       let(:organization) { create(:organization, :with_items) }
 
       it 'should report positive values' do
-        disposable_item = organization.items.disposable.first
-        non_disposable_item = organization.items.where.not(id: organization.items.disposable).first
+        disposable_item = organization.items.disposable_diapers.first
+        non_disposable_item = organization.items.where.not(id: organization.items.disposable_diapers).first
 
         last_year = year - 1
         this_year_time = Time.zone.parse("#{year}-05-31 14:00:00")
@@ -53,8 +53,8 @@ RSpec.describe Reports::SummaryReportService, type: :service do
       end
 
       it 'should report negative values' do
-        disposable_item = organization.items.disposable.first
-        non_disposable_item = organization.items.where.not(id: organization.items.disposable).first
+        disposable_item = organization.items.disposable_diapers.first
+        non_disposable_item = organization.items.where.not(id: organization.items.disposable_diapers).first
 
         last_year = year - 1
         this_year_time = Time.zone.parse("#{year}-05-31 14:00:00")

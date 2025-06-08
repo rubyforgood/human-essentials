@@ -24,7 +24,6 @@
 #  receive_email_on_requests      :boolean          default(FALSE), not null
 #  reminder_day                   :integer
 #  repackage_essentials           :boolean          default(FALSE), not null
-#  short_name                     :string
 #  signature_for_distribution_pdf :boolean          default(FALSE)
 #  state                          :string
 #  street                         :string
@@ -62,11 +61,6 @@ RSpec.describe Organization, type: :model do
         enable_individual_requests: false,
         enable_quantity_based_requests: false
       )).to_not be_valid
-    end
-
-    it "validates that short names are unique" do
-      expect(create(:organization, short_name: "foo_bar")).to be_valid
-      expect(build(:organization, short_name: "foo_bar")).to_not be_valid
     end
 
     it "validates that attachment file size is not higher than 1 MB" do
@@ -244,13 +238,6 @@ RSpec.describe Organization, type: :model do
         end.to change { organization.items.size }.by(0)
           .and change { item.partner_key }.to("foo")
       end
-    end
-  end
-
-  describe "#short_name" do
-    it "can only contain valid characters" do
-      expect(build(:organization, short_name: "asdf")).to be_valid
-      expect(build(:organization, short_name: "Not Legal!")).to_not be_valid
     end
   end
 

@@ -59,8 +59,6 @@ RSpec.describe 'Account request flow', type: :system, js: true do
       sign_in(super_admin)
       visit new_admin_organization_path(token: created_account_request.identity_token)
 
-      fill_in 'Short name', with: 'fakeshortname'
-
       click_button 'Save'
 
       # Expect to see the a new organization with the name provided
