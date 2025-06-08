@@ -15,6 +15,6 @@ FactoryBot.define do
   factory :broadcast_announcement do
     user
     organization
-    message { "test" }
+    message { "Don't test this" }
   end
 end

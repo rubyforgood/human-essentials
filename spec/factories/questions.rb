@@ -9,7 +9,7 @@
 #
 FactoryBot.define do
   factory :question do
-    title { "question" }
-    answer { "content" }
+    title { "Don't test this" }
+    answer { "Don't test this" }
   end
 end
