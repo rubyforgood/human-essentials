@@ -72,8 +72,8 @@ describe PicklistsPdf do
   context "When packs are not enabled" do
     specify "#data_no_units" do
       request = create(:request, :pending, organization: organization)
-      create(:item_request, request: request, item: item1, name: "Item 1", quantity: 5 )
-      create(:item_request, request: request, item: item2, name: "Item 2", quantity: 10 )
+      create(:item_request, request: request, item: item1, name: "Item 1", quantity: 5)
+      create(:item_request, request: request, item: item2, name: "Item 2", quantity: 10)
       pdf = described_class.new(organization, [request])
       data = pdf.data_no_units(request.item_requests)
 

@@ -14,16 +14,14 @@ RSpec.describe "StorageLocations", type: :request do
           name: "Test Storage Location",
           address: "123 Donation Site Way",
           warehouse_type: StorageLocation::WAREHOUSE_TYPES.first,
-          square_footage: 100
-        )
+          square_footage: 100)
       end
       let!(:storage_location2) do
         create(:storage_location,
           name: "Test Storage Location 1",
           address: "123 Donation Site Way",
           warehouse_type: StorageLocation::WAREHOUSE_TYPES.first,
-          square_footage: 100  
-        )
+          square_footage: 100)
       end
 
       context "html" do
@@ -99,24 +97,27 @@ RSpec.describe "StorageLocations", type: :request do
         # TODO: Remove this comment in the same commit that adds the default geocoder stub
         # Addresses used for storage locations must have associated geocoder stubs.
         # See calls to Geocoder::Lookup::Test.add_stub in spec/rails_helper.rb
-        let(:storage_location_with_duplicate_item) { create(:storage_location,
-          name: "Storage Location with Duplicate Items",
-          address: "1500 Remount Road, Front Royal, VA 22630",
-          warehouse_type: StorageLocation::WAREHOUSE_TYPES.first,
-          square_footage: 100
-        ) }
-        let(:storage_location_with_items) { create(:storage_location,
-          name: "Storage Location with Items",
-          address: "123 Donation Site Way",
-          warehouse_type: StorageLocation::WAREHOUSE_TYPES.first,
-          square_footage: 100
-        ) }
-        let(:storage_location_with_unique_item) { create(:storage_location,
-          name: "Storage Location with Unique Items",
-          address: "Smithsonian Conservation Center new",
-          warehouse_type: StorageLocation::WAREHOUSE_TYPES.first,
-          square_footage: 100
-        ) }
+        let(:storage_location_with_duplicate_item) {
+          create(:storage_location,
+            name: "Storage Location with Duplicate Items",
+            address: "1500 Remount Road, Front Royal, VA 22630",
+            warehouse_type: StorageLocation::WAREHOUSE_TYPES.first,
+            square_footage: 100)
+        }
+        let(:storage_location_with_items) {
+          create(:storage_location,
+            name: "Storage Location with Items",
+            address: "123 Donation Site Way",
+            warehouse_type: StorageLocation::WAREHOUSE_TYPES.first,
+            square_footage: 100)
+        }
+        let(:storage_location_with_unique_item) {
+          create(:storage_location,
+            name: "Storage Location with Unique Items",
+            address: "Smithsonian Conservation Center new",
+            warehouse_type: StorageLocation::WAREHOUSE_TYPES.first,
+            square_footage: 100)
+        }
         let(:item1) { create(:item, name: 'A') }
         let(:item2) { create(:item, name: 'B') }
         let(:item3) { create(:item, name: 'C') }

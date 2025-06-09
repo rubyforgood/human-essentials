@@ -1,6 +1,6 @@
 RSpec.describe PartnerMailerJob, type: :job do
   describe "conditionally sending the emails" do
-    let(:organization) { create( :organization, email: "email@testthis.com" ) }
+    let(:organization) { create(:organization, email: "email@testthis.com") }
     let(:mailer_subject) { 'PartnerMailerJob subject' }
     let(:distribution) { create :distribution }
 

@@ -279,7 +279,7 @@ RSpec.describe Organization, type: :model do
         street: "1500 Remount Road",
         city: "Front Royal",
         state: "VA",
-        zipcode: "22630",
+        zipcode: "22630"
       )
     end
 

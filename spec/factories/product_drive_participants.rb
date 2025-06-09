@@ -21,7 +21,7 @@ FactoryBot.define do
     organization { Organization.try(:first) || create(:organization) }
     contact_name { "Don't test this" }
     sequence(:email) { |n| "dont#{n}@testthis.com" }
-  
+
     trait :no_contact_name_or_email do
       contact_name { nil }
       email { nil }
