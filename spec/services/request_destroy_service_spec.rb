@@ -50,8 +50,13 @@ RSpec.describe RequestDestroyService, type: :service do
       let!(:partner) { create(:partner, status: 'deactivated') }
       let(:request) { create(:request, partner: partner) }
 
-      it 'should have errors' do
-        expect(subject.errors.full_messages).to eq(['partner is deactivated'])
+      it 'should update the status column on the request' do
+        expect { subject }.to change { request.reload.status_discarded? }.from(false).to(true)
+      end
+
+      it 'should not send a email notification to the partner' do
+        expect(RequestMailer).not_to receive(:request_cancel_partner_notification)
+        subject
       end
     end
   end
