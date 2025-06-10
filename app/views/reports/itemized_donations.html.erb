@@ -27,7 +27,7 @@
         <tr>
           <td><%= item[:name] %></td>
           <td class="text-right"><%= item[:donated] %></td>
-          <td class="text-right"><%= item[:current_onhand] || "Unknown" %></td>
+          <td class="text-right"><%= item[:current_onhand] || "0" %></td>
         </tr>
       <% end %>
     </tbody>
