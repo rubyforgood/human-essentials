@@ -16,7 +16,7 @@
 
 FactoryBot.define do
   factory :base_item do
-    sequence(:name) { |size| "#{size}Don't test this" }
+    sequence(:name) { |size| "#{size}Dont test this" }
     size { nil }
     sequence(:partner_key) { |n| "#{n}dont_test_this" }
   end

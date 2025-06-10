@@ -19,7 +19,7 @@
 FactoryBot.define do
   factory :product_drive_participant do
     organization { Organization.try(:first) || create(:organization) }
-    contact_name { "Don't test this" }
+    contact_name { "Dont test this" }
     sequence(:email) { |n| "dont#{n}@testthis.com" }
 
     trait :no_contact_name_or_email do

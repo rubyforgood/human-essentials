@@ -22,7 +22,7 @@
 
 FactoryBot.define do
   factory :kit do
-    sequence(:name) { |n| "#{n} - Don't test this" }
+    sequence(:name) { |n| "#{n} - Dont test this" }
     organization
 
     after(:build) do |instance, _|

@@ -40,7 +40,7 @@ require 'seeds'
 
 FactoryBot.define do
   factory :organization do
-    sequence(:name) { |n| "Don't test this name #{n}" } # 037000863427
+    sequence(:name) { |n| "Dont test this name #{n}" } # 037000863427
 
     trait :with_items do
       after(:create) do |instance, evaluator|

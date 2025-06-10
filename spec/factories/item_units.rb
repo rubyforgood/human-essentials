@@ -10,7 +10,7 @@
 #
 FactoryBot.define do
   factory :item_unit do
-    sequence(:name) { |n| "Don't test this #{n}" }
+    sequence(:name) { |n| "Dont test this #{n}" }
     item
 
     before(:create) do |unit, _|

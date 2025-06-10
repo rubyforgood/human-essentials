@@ -18,7 +18,7 @@ FactoryBot.define do
     item
     request { build(:request, organization: item.organization) }
     quantity { 999 } # Don't test this number
-    sequence(:name) { |n| "Don't test this#{n}" }
+    sequence(:name) { |n| "Dont test this#{n}" }
     sequence(:partner_key) { |n| "dont_test_this#{n}" }
   end
 end

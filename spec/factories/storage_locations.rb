@@ -20,8 +20,8 @@ require_relative "../inventory"
 
 FactoryBot.define do
   factory :storage_location do
-    name { "Don't test this name" }
-    address { "Don't test this address" }
+    name { "Dont test this name" }
+    address { "Dont test this address" }
     organization { Organization.try(:first) || create(:organization) }
 
     trait :with_items do
