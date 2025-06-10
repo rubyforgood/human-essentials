@@ -145,23 +145,19 @@ RSpec.configure do |config|
     # Stub out the Geocoder since we don't want to hit the API
     Geocoder.configure(lookup: :test)
 
-    ["1500 Remount Road, Front Royal, VA 22630",
-      "123 Donation Site Way",
-      "Smithsonian Conservation Center new"].each do |address|
-      Geocoder::Lookup::Test.add_stub(
-        address, [
-          {
-            "latitude" => 40.7143528,
-            "longitude" => -74.0059731,
-            "address" => "1500 Remount Road, Front Royal, VA 22630",
-            "state" => "Virginia",
-            "state_code" => "VA",
-            "country" => "United States",
-            "country_code" => "US"
-          }
-        ]
-      )
-    end
+    Geocoder::Lookup::Test.set_default_stub(
+      [
+        {
+          "latitude" => 40.7143528,
+          "longitude" => -74.0059731,
+          "address" => "1500 Remount Road, Front Royal, VA 22630",
+          "state" => "Virginia",
+          "state_code" => "VA",
+          "country" => "United States",
+          "country_code" => "US"
+        }
+      ]
+    )
   end
 
   config.before(:each, type: :system) do
