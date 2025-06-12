@@ -94,9 +94,6 @@ RSpec.describe "StorageLocations", type: :request do
       context "csv" do
         let(:response_format) { 'csv' }
 
-        # TODO: Remove this comment in the same commit that adds the default geocoder stub
-        # Addresses used for storage locations must have associated geocoder stubs.
-        # See calls to Geocoder::Lookup::Test.add_stub in spec/rails_helper.rb
         let(:storage_location_with_duplicate_item) {
           create(:storage_location,
             name: "Storage Location with Duplicate Items",
