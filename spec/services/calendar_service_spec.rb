@@ -3,7 +3,7 @@ RSpec.describe CalendarService do
 
   describe ".calendar" do
     it "should print the calendar correctly" do
-      storage_location = create(:storage_location,
+      storage_location = create(:storage_location, address: "1500 Remount Road, Front Royal, VA 22630",
         time_zone: "America/New_York", organization: organization)
       time_zone = ActiveSupport::TimeZone["America/New_York"]
       travel_to time_zone.local(2021, 3, 18, 0, 0, 0) do

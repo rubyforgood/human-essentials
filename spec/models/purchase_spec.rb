@@ -126,9 +126,10 @@ RSpec.describe Purchase, type: :model do
 
   context "Methods >" do
     describe "storage_view" do
-      let!(:purchase) { create(:purchase, :with_items) }
+      let(:storage_location) { create(:storage_location, name: "Test Storage Location") }
+      let!(:purchase) { create(:purchase, :with_items, storage_location: storage_location) }
       it "returns name of storage location" do
-        expect(purchase.storage_view).to eq("Smithsonian Conservation Center")
+        expect(purchase.storage_view).to eq("Test Storage Location")
       end
     end
   end

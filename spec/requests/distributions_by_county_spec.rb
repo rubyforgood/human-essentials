@@ -31,12 +31,18 @@ RSpec.describe "DistributionsByCounties", type: :request do
           expect(response.body).to include("$472.50")
           expect(response.body).to include("20")
           expect(response.body).to include("$210.00")
-          partner_1.profile.served_areas.each do |served_area|
-            expect(response.body).to include(served_area.county.name)
-          end
-          partner_2.profile.served_areas.each do |served_area|
-            expect(response.body).to include(served_area.county.name)
-          end
+
+          # The distribution_by_county shared examples give each partner a unique set of counties,
+          # except the second partner shares the first partner's first county.
+          expect(response.body).to include("Partner 1 Test County 1")
+          expect(response.body).to include("Partner 1 Test County 2")
+          expect(response.body).to include("Partner 1 Test County 3")
+          expect(response.body).to include("Partner 1 Test County 4")
+
+          expect(response.body).to include("Partner 2 Test County 2")
+          expect(response.body).to include("Partner 2 Test County 3")
+          expect(response.body).to include("Partner 2 Test County 4")
+          expect(response.body).to include("Partner 2 Test County 5")
         end
       end
     end
