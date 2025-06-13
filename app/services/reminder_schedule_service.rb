@@ -25,23 +25,19 @@ class ReminderScheduleService
   ].freeze
 
   attr_accessor *ReminderScheduleService::REMINDER_SCHEDULE_FIELDS
-  attr_accessor :parent_object
 
   include ActiveModel::Validations
   
-  validate :parent_object_has_deadline_day_field?
   validate :every_nth_month_within_range?
   validates :start_date, presence: true
   validate :start_date_is_valid_date_string?
   validates :by_month_or_week, inclusion: {in: %w[day_of_month day_of_week]}
   validates :day_of_month, if: -> { @by_month_or_week == "day_of_month" }, presence: true
   validate :day_of_month_is_within_range?, if: -> { @by_month_or_week == "day_of_month" }
-  validate :deadline_not_on_reminder_date?, if: -> { @by_month_or_week == "day_of_month" && @deadline_day.present? }
   validates :day_of_week, if: -> { @by_month_or_week == "day_of_week" }, inclusion: {in: %w[0 1 2 3 4 5 6]}
   validates :every_nth_day, if: -> { @by_month_or_week == "day_of_week" }, inclusion: {in: %w[1 2 3 4 -1]}
                                             
   def initialize(parameter_hash)
-    @parent_object = parameter_hash[:parent_object]
     @every_nth_month = parameter_hash[:every_nth_month]
     @start_date = parameter_hash[:start_date]
     if !@start_date
@@ -53,7 +49,7 @@ class ReminderScheduleService
     @every_nth_day = parameter_hash[:every_nth_day]
   end
 
-  def self.from_ical(ical, parent_object)
+  def self.from_ical(ical)
     if ical.blank?
       return
     end
@@ -65,7 +61,6 @@ class ReminderScheduleService
     day_of_month = rule["validations"][:day_of_month]&.first&.value
 
     ReminderScheduleService.new({
-      parent_object: parent_object,
       every_nth_month: rule["validations"][:interval]&.first&.interval,
       start_date: schedule.start_time,
       by_month_or_week: day_of_month ? "day_of_month" : "day_of_week",
@@ -98,12 +93,6 @@ class ReminderScheduleService
 
   private
 
-  def parent_object_has_deadline_day_field?
-    unless parent_object.respond_to?(:deadline_day)
-      errors.add(:parent_object, "ReminderScheduleService expects to be associated with an object that has the deadline_day field")
-    end
-  end
-
   def every_nth_month_within_range?
     if every_nth_month.to_i < EVERY_NTH_MONTH_COLLECTION.first.last || every_nth_month.to_i > EVERY_NTH_MONTH_COLLECTION.last.last
       errors.add(:every_nth_month, "Monthly frequence must be between #{EVERY_NTH_MONTH_COLLECTION.first.first} and #{EVERY_NTH_MONTH_COLLECTION.first.first}")
@@ -121,14 +110,6 @@ class ReminderScheduleService
     # The minimum check should no longer be necessary, but keeping it in case IceCube changes
     if day_of_month.to_i < MIN_DAY_OF_MONTH || day_of_month.to_i > MAX_DAY_OF_MONTH
       errors.add(:day_of_month, "Reminder day must be between #{MIN_DAY_OF_MONTH} and #{MAX_DAY_OF_MONTH}")
-    end
-  end
-
-  # TODO: Consider reworking this to validate the IceCube schedule that gets generated, so it checks both day_of_month and day_of_week
-  # schedules
-  def deadline_not_on_reminder_date?
-    if day_of_month.to_i == parent_object.deadline_day.to_i
-      errors.add(:day_of_month, "Reminder day must not be the same as deadline day")
     end
   end
 
