@@ -765,19 +765,19 @@ end
 
 complete_orgs.each do |org|
   # Create comprehensive kits representing each NDBN category
-  
+
   # Diaper Care Kit - covering multiple diaper categories
   diaper_kit_params = {
     name: "Diaper Care Kit",
     line_items_attributes: [
-      { item_id: org.items.find_by(name: "Kids (Size 1)")&.id, quantity: 50 },
-      { item_id: org.items.find_by(name: "Kids (Size 2)")&.id, quantity: 50 },
-      { item_id: org.items.find_by(name: "Kids (Size 3)")&.id, quantity: 50 },
-      { item_id: org.items.find_by(name: "Wipes (Baby)")&.id, quantity: 10 },
-      { item_id: org.items.find_by(name: "Diaper Rash Cream/Powder")&.id, quantity: 2 }
+      {item_id: org.items.find_by(name: "Kids (Size 1)").id, quantity: 50},
+      {item_id: org.items.find_by(name: "Kids (Size 2)").id, quantity: 50},
+      {item_id: org.items.find_by(name: "Kids (Size 3)").id, quantity: 50},
+      {item_id: org.items.find_by(name: "Wipes (Baby)").id, quantity: 10},
+      {item_id: org.items.find_by(name: "Diaper Rash Cream/Powder").id, quantity: 2}
     ].compact_blank
   }
-  
+
   if diaper_kit_params[:line_items_attributes].any?
     diaper_kit_service = KitCreateService.new(organization_id: org.id, kit_params: diaper_kit_params)
     diaper_kit_service.call
@@ -787,12 +787,12 @@ complete_orgs.each do |org|
   menstrual_kit_params = {
     name: "Menstrual Care Kit",
     line_items_attributes: [
-      { item_id: org.items.find_by(name: "Pads")&.id, quantity: 20 },
-      { item_id: org.items.find_by(name: "Tampons")&.id, quantity: 20 },
-      { item_id: org.items.find_by(name: "Liners (Menstrual)")&.id, quantity: 15 }
+      {item_id: org.items.find_by(name: "Pads").id, quantity: 20},
+      {item_id: org.items.find_by(name: "Tampons").id, quantity: 20},
+      {item_id: org.items.find_by(name: "Liners (Menstrual)").id, quantity: 15}
     ].compact_blank
   }
-  
+
   if menstrual_kit_params[:line_items_attributes].any?
     menstrual_kit_service = KitCreateService.new(organization_id: org.id, kit_params: menstrual_kit_params)
     menstrual_kit_service.call
@@ -802,13 +802,13 @@ complete_orgs.each do |org|
   adult_kit_params = {
     name: "Adult Incontinence Kit",
     line_items_attributes: [
-      { item_id: org.items.find_by(name: "Adult Briefs (Large/X-Large)")&.id, quantity: 30 },
-      { item_id: org.items.find_by(name: "Adult Incontinence Pads")&.id, quantity: 25 },
-      { item_id: org.items.find_by(name: "Wipes (Adult)")&.id, quantity: 5 },
-      { item_id: org.items.find_by(name: "Underpads (Pack)")&.id, quantity: 5 }
+      {item_id: org.items.find_by(name: "Adult Briefs (Large/X-Large)").id, quantity: 30},
+      {item_id: org.items.find_by(name: "Adult Incontinence Pads").id, quantity: 25},
+      {item_id: org.items.find_by(name: "Wipes (Adult)").id, quantity: 5},
+      {item_id: org.items.find_by(name: "Underpads (Pack)").id, quantity: 5}
     ].compact_blank
   }
-  
+
   if adult_kit_params[:line_items_attributes].any?
     adult_kit_service = KitCreateService.new(organization_id: org.id, kit_params: adult_kit_params)
     adult_kit_service.call
@@ -818,13 +818,13 @@ complete_orgs.each do |org|
   baby_care_kit_params = {
     name: "Baby Care Essentials Kit",
     line_items_attributes: [
-      { item_id: org.items.find_by(name: "Bibs (Adult & Child)")&.id, quantity: 5 },
-      { item_id: org.items.find_by(name: "Wipes (Baby)")&.id, quantity: 8 },
-      { item_id: org.items.find_by(name: "Diaper Rash Cream/Powder")&.id, quantity: 1 },
-      { item_id: org.items.find_by(name: "Cloth Diapers (Prefolds & Fitted)")&.id, quantity: 10 }
+      {item_id: org.items.find_by(name: "Bibs (Adult & Child)").id, quantity: 5},
+      {item_id: org.items.find_by(name: "Wipes (Baby)").id, quantity: 8},
+      {item_id: org.items.find_by(name: "Diaper Rash Cream/Powder").id, quantity: 1},
+      {item_id: org.items.find_by(name: "Cloth Diapers (Prefolds & Fitted)").id, quantity: 10}
     ].compact_blank
   }
-  
+
   if baby_care_kit_params[:line_items_attributes].any?
     baby_care_service = KitCreateService.new(organization_id: org.id, kit_params: baby_care_kit_params)
     baby_care_service.call
@@ -834,13 +834,13 @@ complete_orgs.each do |org|
   training_kit_params = {
     name: "Potty Training Kit",
     line_items_attributes: [
-      { item_id: org.items.find_by(name: "Cloth Potty Training Pants/Underwear")&.id, quantity: 8 },
-      { item_id: org.items.find_by(name: "Kids Pull-Ups (2T-3T)")&.id, quantity: 20 },
-      { item_id: org.items.find_by(name: "Kids Pull-Ups (3T-4T)")&.id, quantity: 20 },
-      { item_id: org.items.find_by(name: "Wipes (Baby)")&.id, quantity: 5 }
+      {item_id: org.items.find_by(name: "Cloth Potty Training Pants/Underwear").id, quantity: 8},
+      {item_id: org.items.find_by(name: "Kids Pull-Ups (2T-3T)").id, quantity: 20},
+      {item_id: org.items.find_by(name: "Kids Pull-Ups (3T-4T)").id, quantity: 20},
+      {item_id: org.items.find_by(name: "Wipes (Baby)").id, quantity: 5}
     ].compact_blank
   }
-  
+
   if training_kit_params[:line_items_attributes].any?
     training_kit_service = KitCreateService.new(organization_id: org.id, kit_params: training_kit_params)
     training_kit_service.call
@@ -852,7 +852,7 @@ complete_orgs.each do |org|
   org.storage_locations.active.each do |storage_location|
     org.kits.active.each do |kit|
       next unless kit.item # Ensure kit has an associated item
-      
+
       # Create inventory for each kit
       InventoryItem.create!(
         storage_location: storage_location,
@@ -949,20 +949,20 @@ complete_orgs.each do |org|
   end
 
   # Create some distributions that use kits instead of individual items
-  kit_items = org.items.joins(:kit).where(kits: { active: true })
+  kit_items = org.items.joins(:kit).where(kits: {active: true})
   if kit_items.any?
     5.times do |index|
       issued_at = dates_generator.next
       storage_location = org.storage_locations.active.sample
       kit_item = kit_items.sample
-      
+
       # Check if there's inventory for this kit
       kit_inventory_qty = storage_location.item_total(kit_item.id)
       next if kit_inventory_qty.zero?
-      
+
       delivery_method = Distribution.delivery_methods.keys.sample
       shipping_cost = (delivery_method == "shipped") ? rand(20.0..100.0).round(2).to_s : nil
-      
+
       kit_distribution = Distribution.new(
         storage_location: storage_location,
         partner: random_record_for_org(org, Partner),
@@ -973,7 +973,7 @@ complete_orgs.each do |org|
         shipping_cost: shipping_cost,
         comment: "Kit distribution"
       )
-      
+
       distribution_qty = [rand(1..3), kit_inventory_qty / 2].min
       if distribution_qty >= 1
         kit_distribution.line_items.push(
@@ -982,7 +982,7 @@ complete_orgs.each do |org|
             item_id: kit_item.id
           )
         )
-        
+
         DistributionCreateService.new(kit_distribution).call
       end
     end
