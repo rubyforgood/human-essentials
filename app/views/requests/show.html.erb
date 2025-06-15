@@ -79,7 +79,7 @@
               <tbody>
               <% @item_requests.each do |item_request| %>
                 <tr>
-                  <td><%= item_request.item&.name || item_request.name %></td>
+                  <td><%= item_request.item_name %></td>
                   <td><%= item_request.quantity %></td>
                   <% if @custom_units %>
                     <td><%= item_request.request_unit&.pluralize(item_request.quantity.to_i) %></td>

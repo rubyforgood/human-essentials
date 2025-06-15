@@ -2,7 +2,7 @@ Hello <%= @partner.name %>,
 
 This email confirms that <%= @organization.name %> has received a request<%= " submitted by #{@requester_user_name}" if @requester_user_name.present? %> for:
 <% @item_requests.each do |item_request| %>
-  <%= item_request.item&.name || item_request.name %> - <%= item_request.quantity %>
+  <%= item_request.item_name %> - <%= item_request.quantity_with_units %>
 <% end %>
 
 You will receive a notification when a distribution has been created of the pick-up time and date.
