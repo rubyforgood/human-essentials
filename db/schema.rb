@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_04_102321) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_04_183911) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -465,7 +465,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_04_102321) do
 
   create_table "organizations", id: :serial, force: :cascade do |t|
     t.string "name"
-    t.string "short_name"
     t.string "email"
     t.string "url"
     t.datetime "created_at", precision: nil, null: false
@@ -498,7 +497,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_04_102321) do
     t.integer "reminder_day"
     t.string "reminder_schedule_definition"
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
-    t.index ["short_name"], name: "index_organizations_on_short_name"
   end
 
   create_table "partner_forms", force: :cascade do |t|

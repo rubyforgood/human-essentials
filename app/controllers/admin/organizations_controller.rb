@@ -1,20 +1,5 @@
 # [Super Admin] This is for administrating organizations at a global level. We can create, view, modify, etc.
 class Admin::OrganizationsController < AdminController
-  def edit
-    @organization = Organization.find(params[:id])
-    @organization.get_values_from_reminder_schedule
-  end
-
-  def update
-    @organization = Organization.find(params[:id])
-    if OrganizationUpdateService.update(@organization, organization_params)
-      redirect_to admin_organizations_path, notice: "Updated organization!"
-    else
-      flash.now[:error] = @organization.errors.full_messages.join("\n")
-      render :edit
-    end
-  end
-
   def index
     @filterrific = initialize_filterrific(
       Organization.alphabetized,
