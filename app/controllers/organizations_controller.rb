@@ -17,6 +17,7 @@ class OrganizationsController < ApplicationController
 
   def update
     @organization = current_organization
+    @organization.reminder_schedule.assign_attributes(reminder_schedule_params)
     if OrganizationUpdateService.update(@organization, organization_params)
       redirect_to organization_path, notice: "Updated your organization!"
     else
@@ -94,7 +95,7 @@ class OrganizationsController < ApplicationController
       :name, :street, :city, :state,
       :zipcode, :email, :url, :logo, :intake_location,
       :default_storage_location, :default_email_text, :reminder_email_text,
-      :invitation_text, :reminder_schedule_definition, :deadline_day, *ReminderScheduleService::REMINDER_SCHEDULE_FIELDS,
+      :invitation_text, :reminder_schedule_definition, :deadline_day,
       :repackage_essentials, :distribute_monthly,
       :ndbn_member_id, :enable_child_based_requests,
       :enable_individual_requests, :enable_quantity_based_requests,
@@ -105,6 +106,12 @@ class OrganizationsController < ApplicationController
       partner_form_fields: [],
       request_unit_names: []
     )
+  end
+
+  def reminder_schedule_params
+    request_type_formatter(params)
+
+    params.require(:organization).require(:reminder_schedule_service).permit([*ReminderScheduleService::REMINDER_SCHEDULE_FIELDS])
   end
 
   def request_type_formatter(params)

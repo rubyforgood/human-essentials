@@ -14,7 +14,6 @@
 #
 class PartnerGroup < ApplicationRecord
   has_paper_trail
-  include ReminderScheduleable
 
   belongs_to :organization
   has_many :partners, dependent: :nullify

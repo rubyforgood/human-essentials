@@ -70,6 +70,12 @@ class ReminderScheduleService
     })
   end
 
+  def assign_attributes(attrs)
+    attrs.each_pair do |attr, value|
+      instance_variable_set("@#{attr}", value)
+    end
+  end
+
   def to_icecube_schedule
     unless valid?
       return nil
@@ -91,11 +97,15 @@ class ReminderScheduleService
     to_icecube_schedule&.recurrence_rules&.first.to_s
   end
 
+  def no_fields_filled_out?
+    every_nth_month.nil? && by_month_or_week.nil? && day_of_month.nil? && day_of_week.nil? && every_nth_day.nil?
+  end
+
   private
 
   def every_nth_month_within_range?
     if every_nth_month.to_i < EVERY_NTH_MONTH_COLLECTION.first.last || every_nth_month.to_i > EVERY_NTH_MONTH_COLLECTION.last.last
-      errors.add(:every_nth_month, "Monthly frequence must be between #{EVERY_NTH_MONTH_COLLECTION.first.first} and #{EVERY_NTH_MONTH_COLLECTION.first.first}")
+      errors.add(:every_nth_month, "Monthly frequence must be between #{EVERY_NTH_MONTH_COLLECTION.first.first} and #{EVERY_NTH_MONTH_COLLECTION.last.first}")
     end
   end
 
