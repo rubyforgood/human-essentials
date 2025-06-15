@@ -52,6 +52,10 @@ class Donation < ApplicationRecord
     where(manufacturer_id: manufacturer_id)
   }
 
+  scope :by_category, ->(item_category) {
+    joins(line_items: {item: :item_category}).where("item_categories.name ILIKE ?", item_category)
+  }
+
   before_create :combine_duplicates
 
   validates :donation_site, presence:
