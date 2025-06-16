@@ -107,6 +107,8 @@ gem 'bootsnap', require: false
 # specific versions for compatibility reasons.
 gem "nokogiri", ">= 1.10.4"
 gem "sprockets", "~> 4.2.2"
+gem "prawn", "~> 2.4.0"
+gem "ttfunk", "~>1.7.0"
 
 group :production, :staging do
   # Reduce the noise of logs and include custom fields to it for easier access
