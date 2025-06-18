@@ -89,6 +89,9 @@ RSpec.describe "Reports Distributions", type: :system, js: true do
         end
 
         visit reports_itemized_donations_path
+        fill_in "filters_date_range", with: "April 15, 2025 - July 15, 2025"
+        click_button "Filter"
+
         expect(page).to have_selector(:table_row, "Total On Hand" => "0")
       end
     end
