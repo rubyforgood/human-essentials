@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_04_102321) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_23_203808) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -392,7 +392,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_04_102321) do
 
   create_table "items", id: :serial, force: :cascade do |t|
     t.string "name"
-    t.string "category"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.integer "barcode_count"
@@ -465,7 +464,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_04_102321) do
 
   create_table "organizations", id: :serial, force: :cascade do |t|
     t.string "name"
-    t.string "short_name"
     t.string "email"
     t.string "url"
     t.datetime "created_at", precision: nil, null: false
@@ -495,8 +493,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_04_102321) do
     t.boolean "hide_package_column_on_receipt", default: false
     t.boolean "signature_for_distribution_pdf", default: false
     t.boolean "receive_email_on_requests", default: false, null: false
+    t.boolean "include_in_kind_values_in_exported_files", default: false, null: false
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
-    t.index ["short_name"], name: "index_organizations_on_short_name"
   end
 
   create_table "partner_forms", force: :cascade do |t|
@@ -516,9 +514,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_04_102321) do
     t.integer "deadline_day"
     t.index ["name", "organization_id"], name: "index_partner_groups_on_name_and_organization_id", unique: true
     t.index ["organization_id"], name: "index_partner_groups_on_organization_id"
-    t.check_constraint "deadline_day <= 28", name: "deadline_day_of_month_check"
-    t.check_constraint "reminder_day <= 28", name: "reminder_day_of_month_check"
   end
+
+  add_check_constraint "partner_groups", "deadline_day <= 28", name: "deadline_day_of_month_check", validate: false
+  add_check_constraint "partner_groups", "reminder_day <= 28", name: "reminder_day_of_month_check", validate: false
 
   create_table "partner_profiles", force: :cascade do |t|
     t.bigint "essentials_bank_id"
@@ -875,45 +874,28 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_04_102321) do
 
   add_foreign_key "account_requests", "ndbn_members", primary_key: "ndbn_member_id", validate: false
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "adjustments", "organizations"
-  add_foreign_key "adjustments", "storage_locations"
   add_foreign_key "adjustments", "users"
-  add_foreign_key "annual_reports", "organizations"
   add_foreign_key "authorized_family_members", "families"
   add_foreign_key "broadcast_announcements", "users"
   add_foreign_key "child_item_requests", "children"
   add_foreign_key "child_item_requests", "item_requests"
   add_foreign_key "children", "families"
-  add_foreign_key "distributions", "partners"
-  add_foreign_key "distributions", "storage_locations"
   add_foreign_key "donations", "manufacturers"
-  add_foreign_key "donations", "product_drives"
-  add_foreign_key "donations", "storage_locations"
-  add_foreign_key "families", "partners"
-  add_foreign_key "item_categories", "organizations"
   add_foreign_key "item_categories_partner_groups", "item_categories"
   add_foreign_key "item_categories_partner_groups", "partner_groups"
   add_foreign_key "item_units", "items"
   add_foreign_key "items", "item_categories"
   add_foreign_key "items", "kits"
   add_foreign_key "kit_allocations", "kits"
-  add_foreign_key "kit_allocations", "organizations"
-  add_foreign_key "kit_allocations", "storage_locations"
-  add_foreign_key "kits", "organizations"
-  add_foreign_key "manufacturers", "organizations"
   add_foreign_key "organizations", "account_requests"
   add_foreign_key "organizations", "ndbn_members", primary_key: "ndbn_member_id"
-  add_foreign_key "partner_groups", "organizations"
   add_foreign_key "partner_requests", "users", column: "partner_user_id"
   add_foreign_key "partner_served_areas", "counties"
   add_foreign_key "partner_served_areas", "partner_profiles"
   add_foreign_key "partners", "storage_locations", column: "default_storage_location_id", validate: false
   add_foreign_key "product_drives", "organizations"
+  add_foreign_key "product_drives", "organizations"
   add_foreign_key "requests", "distributions"
-  add_foreign_key "requests", "organizations"
-  add_foreign_key "requests", "partners"
   add_foreign_key "taggings", "tags"
-  add_foreign_key "tags", "organizations"
-  add_foreign_key "units", "organizations"
   add_foreign_key "users", "users_roles", column: "last_role_id", on_delete: :nullify
 end
