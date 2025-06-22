@@ -792,6 +792,7 @@ DEPENDENCIES
   listen (~> 3.9.0)
   lograge
   magic_test
+  matrix
   memory_profiler
   money-rails
   newrelic_rpm
