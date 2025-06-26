@@ -135,7 +135,7 @@ module UiHelper
   # Generic Submit button for a form
   def submit_button(options = {}, data = {})
     disable_text = options[:disable_text] || "Saving"
-    _button_to({ text: "Save", icon: "floppy-o", type: "success", align: "pull-right" }.merge(options), data: { disable_with: disable_text }.merge(data), name: options[:name] || 'button')
+    _button_to({ text: "Save", icon: "floppy-o", type: "success", align: "pull-right" }.merge(options), data: { turbo_submits_with: disable_text }.merge(data), name: options[:name] || 'button')
   end
 
   # Like above, but POSTs to a URL instead of to a form
@@ -162,8 +162,11 @@ module UiHelper
     text = options[:text]
     size = options[:size]
     type = options[:type]
+    
+    properties[:data] ||= {}
+    properties[:data][:disable_with] ||= "Please wait..."
+
     if options[:data].present?
-      properties[:data] ||= {}
       properties[:data].merge!(options[:data])
     end
     properties[:title] = options[:title] if options[:title].present?
@@ -180,7 +183,7 @@ module UiHelper
     end
   end
 
-  def _button_to(options = {}, other_properties = {})
+  def _button_to(options = {}, properties = {})
     submit_type = options[:submit_type] || "submit"
     id = options[:id]
     type = options[:type]
@@ -189,7 +192,10 @@ module UiHelper
     text = options[:text]
     align = options[:align]
 
-    button_tag({ type: submit_type, id: id, class: "btn btn-#{type} btn-#{size} #{align}" }.merge(other_properties)) do
+    properties[:data] ||= {}
+    properties[:data][:turbo_submits_with] ||= "Please wait..."
+
+    button_tag({ type: submit_type, id: id, class: "btn btn-#{type} btn-#{size} #{align}" }.merge(properties)) do
       fa_icon icon, text: text
     end
   end
