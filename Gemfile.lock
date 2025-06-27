@@ -463,7 +463,7 @@ GEM
     parser (3.3.8.0)
       ast (~> 2.4.1)
       racc
-    pdf-core (0.10.0)
+    pdf-core (0.9.0)
     pdf-reader (2.14.1)
       Ascii85 (>= 1.0, < 3.0, != 2.0.0)
       afm (~> 0.2.1)
@@ -474,10 +474,9 @@ GEM
     popper_js (2.11.8)
     pp (0.6.2)
       prettyprint
-    prawn (2.5.0)
-      matrix (~> 0.4)
-      pdf-core (~> 0.10.0)
-      ttfunk (~> 1.8)
+    prawn (2.4.0)
+      pdf-core (~> 0.9.0)
+      ttfunk (~> 1.7)
     prawn-rails (1.6.0)
       actionview (>= 3.1.0)
       activesupport (>= 3.1.0)
@@ -707,8 +706,7 @@ GEM
     thor (1.3.2)
     tilt (2.2.0)
     timeout (0.4.3)
-    ttfunk (1.8.0)
-      bigdecimal (~> 3.1)
+    ttfunk (1.7.0)
     turbo-rails (2.0.13)
       actionpack (>= 7.1.0)
       railties (>= 7.1.0)
@@ -794,6 +792,7 @@ DEPENDENCIES
   listen (~> 3.9.0)
   lograge
   magic_test
+  matrix
   memory_profiler
   money-rails
   newrelic_rpm
@@ -805,6 +804,7 @@ DEPENDENCIES
   paper_trail
   pdf-reader
   pg (~> 1.5.9)
+  prawn (~> 2.4.0)
   prawn-rails
   pry-doc
   pry-nav
@@ -834,9 +834,10 @@ DEPENDENCIES
   stimulus-rails
   strong_migrations
   terser
+  ttfunk (~> 1.7.0)
   turbo-rails
   web-console
   webmock (~> 3.25)
 
 BUNDLED WITH
-   2.6.7
+   2.6.9
