@@ -46,7 +46,7 @@
                     <td>
                       <% if pg.send_reminders %>
                         <% if pg.reminder_schedule.present? %>
-                          <span>Reminder emails are sent <strong class='text-bold text-red-600'><%= pg.show_description(pg.reminder_schedule) %></strong>. </span>
+                          <span>Reminder emails are sent <strong class='text-bold text-red-600'><%= pg.reminder_schedule&.show_description %></strong>. </span>
                           <br>
                         <% end %>
                         <span>Deadlines are the <strong class='text-bold text-red-600'><%= pg.deadline_day.ordinalize %></strong> after the reminder. </span>

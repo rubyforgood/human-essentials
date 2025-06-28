@@ -9,6 +9,7 @@ class PartnerGroupsController < ApplicationController
 
   def create
     @partner_group = current_organization.partner_groups.new(partner_group_params)
+    @partner_group.reminder_schedule.assign_attributes(reminder_schedule_params)
     if @partner_group.save
       # Redirect to groups tab in Partner page.
       redirect_to partners_path + "#nav-partner-groups", notice: "Partner group added!"
@@ -22,12 +23,12 @@ class PartnerGroupsController < ApplicationController
   def edit
     @partner_group = current_organization.partner_groups.find(params[:id])
     set_items_categories
-    @partner_group.get_values_from_reminder_schedule
     @item_categories = current_organization.item_categories
   end
 
   def update
     @partner_group = current_organization.partner_groups.find(params[:id])
+    @partner_group.reminder_schedule.assign_attributes(reminder_schedule_params)
     if @partner_group.update(partner_group_params)
       redirect_to partners_path + "#nav-partner-groups", notice: "Partner group edited!"
     else
@@ -55,8 +56,11 @@ class PartnerGroupsController < ApplicationController
   end
 
   def partner_group_params
-    params.require(:partner_group).permit(:name, :send_reminders, :reminder_schedule,
-      :deadline_day, :start_date, :by_month_or_week, :day_of_month, :day_of_week, :every_nth_day, :every_nth_month, item_category_ids: [])
+    params.require(:partner_group).permit(:name, :send_reminders, :reminder_schedule_definition, :deadline_day, item_category_ids: [])
+  end
+
+  def reminder_schedule_params
+    params.require(:partner_group).require(:reminder_schedule_service).permit([*ReminderScheduleService::REMINDER_SCHEDULE_FIELDS])
   end
 
   def set_items_categories

@@ -16,7 +16,6 @@ class Admin::OrganizationsController < AdminController
 
   def new
     @organization = Organization.new
-    @organization.get_values_from_reminder_schedule
     account_request = params[:token] && AccountRequest.get_by_identity_token(params[:token])
 
     @user = User.new
@@ -33,6 +32,7 @@ class Admin::OrganizationsController < AdminController
   def create
     @user = User.new(user_params)
     @organization = Organization.new(organization_params)
+    @organization.reminder_schedule.assign_attributes(reminder_schedule_params)
     if @organization.save
       Organization.seed_items(@organization)
       UserInviteService.invite(name: user_params[:name],
@@ -72,8 +72,12 @@ class Admin::OrganizationsController < AdminController
   def organization_params
     params.require(:organization)
           .permit(:name, :street, :city, :state, :zipcode, :email, :url, :logo, :intake_location, :default_email_text, :account_request_id,
-                  :start_date, :by_month_or_week, :day_of_month, :day_of_week, :every_nth_day, :every_nth_month, :deadline_day,
+                  :reminder_schedule_definition, :deadline_day,
                   users_attributes: %i(name email organization_admin), account_request_attributes: %i(ndbn_member_id id))
+  end
+
+  def reminder_schedule_params
+    params.require(:organization).require(:reminder_schedule_service).permit([*ReminderScheduleService::REMINDER_SCHEDULE_FIELDS])
   end
 
   def user_params
