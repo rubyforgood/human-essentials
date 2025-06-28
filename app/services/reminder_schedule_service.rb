@@ -70,10 +70,12 @@ class ReminderScheduleService
     })
   end
 
+  def []=(key, val)
+    self.send("#{key}=", val)
+  end
+
   def assign_attributes(attrs)
-    attrs.each_pair do |attr, value|
-      instance_variable_set("@#{attr}", value)
-    end
+    attrs.each { |key, val| self[key] = val }
   end
 
   def to_icecube_schedule
