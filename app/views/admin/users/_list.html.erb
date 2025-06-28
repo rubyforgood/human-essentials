@@ -16,7 +16,10 @@
         <td><%= user.display_name %></td>
         <td><%= user.email %></td>
         <td class="text-right">
-          <%= edit_button_to edit_admin_user_path(user) %>
+          <%if user.invitation_sent_at.present? %>
+            <%= invite_button_to(admin_user_resend_invitation_path(user), confirm: "Re-send an invitation to #{user.name}?", text: 'Re-send Invite') %>
+          <% end %>
+          <%= edit_button_to edit_admin_user_path(user), class: 'ml-2' %>
         </td>
       </tr>
     <% end %>
