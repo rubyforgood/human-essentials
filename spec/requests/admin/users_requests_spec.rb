@@ -1,5 +1,5 @@
 RSpec.describe "Admin::UsersController", type: :request do
-  let(:organization) { create(:organization, name: "Org ABC") }
+  let(:organization) { create(:organization, name: "Org ABC", email: "email@testthis.com") }
   let(:user) { create(:user, organization: organization, name: "User 123") }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
   let(:super_admin) { create(:super_admin, organization: organization) }

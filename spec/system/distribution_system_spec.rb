@@ -700,7 +700,7 @@ RSpec.feature "Distributions", type: :system do
   end
 
   context "via barcode entry" do
-    let(:existing_barcode) { create(:barcode_item) }
+    let(:existing_barcode) { create(:barcode_item, quantity: 50) }
     let(:item_with_barcode) { existing_barcode.item }
     let(:item_no_barcode) { create(:item) }
 

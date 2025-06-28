@@ -11,8 +11,6 @@
 #
 FactoryBot.define do
   factory :county do
-    sequence(:name) { |n| "County #{n}" }
     region { Faker::Address.state }
-    category { "US_County" }
   end
 end
