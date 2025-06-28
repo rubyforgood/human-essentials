@@ -627,6 +627,12 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           # Click on the second item category
           find("input#partner_group_item_category_ids_#{item_category_2.id}").click
 
+          # Opt in to sending deadline reminders
+          check 'Yes'
+
+          choose 'Day of Month'
+          fill_in "partner_group_day_of_month", with: 1
+          fill_in "partner_group_deadline_day", with: 25
           find_button('Add Partner Group').click
 
           assert page.has_content? 'Group Name', wait: page_content_wait
@@ -661,6 +667,26 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           assert page.has_content? 'New Group Name', wait: page_content_wait
           refute page.has_content? item_category_1.name
           assert page.has_content? item_category_2.name
+        end
+
+        describe "editing a custom reminder schedule" do
+          before do
+            partner.update!(partner_group: existing_partner_group)
+            visit partners_path
+
+            click_on 'Groups'
+            assert page.has_content? existing_partner_group.name, wait: page_content_wait
+
+            click_on 'Edit'
+            # Opt in to sending deadline reminders
+            check 'Yes'
+          end
+
+          def reload_record
+            existing_partner_group.reload
+          end
+
+          it_behaves_like "deadline and reminder form", "partner_group", "Update Partner Group", :reload_record
         end
       end
     end

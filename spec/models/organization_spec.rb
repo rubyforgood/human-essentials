@@ -23,6 +23,7 @@
 #  partner_form_fields                      :text             default([]), is an Array
 #  receive_email_on_requests                :boolean          default(FALSE), not null
 #  reminder_day                             :integer
+#  reminder_schedule_definition             :string
 #  repackage_essentials                     :boolean          default(FALSE), not null
 #  signature_for_distribution_pdf           :boolean          default(FALSE)
 #  state                                    :string
@@ -364,24 +365,6 @@ RSpec.describe Organization, type: :model do
       org = create(:organization, email: " ")
       admin = create(:organization_admin, organization: org)
       expect(org.from_email).to eq(admin.email)
-    end
-  end
-
-  describe 'reminder_day' do
-    it "can only contain numbers 1-28" do
-      expect(build(:organization, reminder_day: 28)).to be_valid
-      expect(build(:organization, reminder_day: 1)).to be_valid
-      expect(build(:organization, reminder_day: 0)).to_not be_valid
-      expect(build(:organization, reminder_day: -5)).to_not be_valid
-      expect(build(:organization, reminder_day: 29)).to_not be_valid
-    end
-  end
-  describe 'deadline_day' do
-    it "can only contain numbers 1-28" do
-      expect(build(:organization, deadline_day: 28)).to be_valid
-      expect(build(:organization, deadline_day: 0)).to_not be_valid
-      expect(build(:organization, deadline_day: -5)).to_not be_valid
-      expect(build(:organization, deadline_day: 29)).to_not be_valid
     end
   end
 
