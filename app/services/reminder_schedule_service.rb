@@ -103,6 +103,10 @@ class ReminderScheduleService
     every_nth_month.nil? && by_month_or_week.nil? && day_of_month.nil? && day_of_week.nil? && every_nth_day.nil?
   end
 
+  def occurs_on?(date)
+    to_icecube_schedule&.occurs_on?(date)
+  end
+
   private
 
   def every_nth_month_within_range?
