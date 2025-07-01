@@ -39,27 +39,6 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
       expect(page).not_to have_content("Next ›")
       expect(page).not_to have_content("Last »")
     end
-
-    describe "can edit organization details" do
-      let(:partner) { create(:partner, organization: first_org) }
-
-      before do
-        visit edit_admin_organization_path({id: first_org.id})
-      end
-
-      def reload_record
-        first_org.reload
-      end
-
-      def post_form_submit
-        expect(page.find(".alert")).to have_content "Updated organization!"
-        within(find("tr", text: first_org.name.to_s)) do
-          first(:link, "View").click
-        end
-      end
-
-      it_behaves_like "deadline and reminder form", "organization", "Save", :reload_record, :post_form_submit
-    end
   end
 
   context "while logged in as a super admin and there are enough organizations to trigger pagination" do
@@ -138,7 +117,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
         fill_in "organization_user_email", with: admin_user_params[:email]
 
         choose 'Day of Month'
-        fill_in "organization_day_of_month", with: 1
+        fill_in "organization_reminder_schedule_service_day_of_month", with: 1
 
         click_on "Save"
       end
@@ -174,6 +153,24 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
       expect(page).to have_content("Distribution email content")
       expect(page).to have_content("Users")
       expect(page).to have_content("Receive email when Partner makes a Request?")
+    end
+
+    describe "can create an organization with deadline and reminder" do
+      before do
+        visit new_admin_organization_path
+        within "form#new_organization" do
+          fill_in "organization_name", with: "aaa" # So the new org will be on the first page
+        end
+      end
+
+      def post_form_submit
+        expect(page.find(".alert")).to have_content "Organization added!"
+        within(find("td", text: "aaa").sibling(".text-right")) do
+          first(:link, "View").click
+        end
+      end
+
+      it_behaves_like "deadline and reminder form", "organization", "Save", :post_form_submit
     end
   end
 end
