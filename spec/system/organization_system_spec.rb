@@ -86,15 +86,38 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page.find(".alert")).to have_content "Updated"
       end
 
-      def reload_record
-        organization.reload
-      end
-
       def post_form_submit
         expect(page.find(".alert")).to have_content "Updated your organization!"
       end
 
-      it_behaves_like "deadline and reminder form", "organization", "Save", :reload_record, :post_form_submit
+      it_behaves_like "deadline and reminder form", "organization", "Save", :post_form_submit
+
+      it "the deadline day form's reminder and deadline dates are consistent with the dates calculated by the FetchPartnersToRemindNowService and DeadlineService" do
+        choose "Day of Month"
+        select("Every 2 month", from: "How frequently should reminders be sent (e.g. \"monthly\", \"every 3 months\", etc.)?")
+        fill_in "organization_reminder_schedule_service_day_of_month", with: 14
+        fill_in "Default deadline day (final day of month to submit Requests)", with: 21
+
+        reminder_text = find('small[data-deadline-day-target="reminderText"]').text
+        reminder_text.slice!("Your next reminder date is ")
+        reminder_text.slice!(".")
+        shown_recurrence_date = Time.zone.strptime(reminder_text, "%a %b %d %Y")
+
+        deadline_text = find('small[data-deadline-day-target="deadlineText"]').text
+        deadline_text.slice!("Your next deadline date is ")
+        deadline_text.slice!(".")
+        shown_deadline_date = Time.zone.strptime(deadline_text, "%a %b %d %Y")
+
+        click_on "Save"
+        organization.reload
+
+        expect(Partners::FetchPartnersToRemindNowService.new.fetch).to_not include(partner)
+
+        travel_to shown_recurrence_date
+
+        expect(Partners::FetchPartnersToRemindNowService.new.fetch).to include(partner)
+        expect(DeadlineService.new(partner: partner).next_deadline.in_time_zone(Time.zone)).to be_within(1.second).of shown_deadline_date
+      end
 
       it 'can select if the org repackages essentials' do
         choose('organization[repackage_essentials]', option: true)
