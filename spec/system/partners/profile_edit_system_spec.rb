@@ -54,6 +54,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       find("button[data-bs-target='#media_information']").click
       within "#media_information" do
         fill_in "Website", with: ""
+        uncheck "No Social Media Presence"
       end
 
       # Open Pick up person section and fill in 4 email addresses

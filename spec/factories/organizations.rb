@@ -39,26 +39,7 @@ require 'seeds'
 
 FactoryBot.define do
   factory :organization do
-    transient do
-      skip_items { false }
-    end
-
-    sequence(:name) { |n| "Essentials Bank #{n}" } # 037000863427
-    sequence(:email) { |n| "email#{n}@example.com" } # 037000863427
-    sequence(:url) { |n| "https://organization#{n}.org" } # 037000863427
-    street { "1500 Remount Road" }
-    city { 'Front Royal' }
-    state { 'VA' }
-    zipcode { '22630' }
-    reminder_day { 10 }
-    deadline_day { 20 }
-
-    logo { Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/logo.jpg"), "image/jpeg") }
-
-    trait :without_deadlines do
-      reminder_day { nil }
-      deadline_day { nil }
-    end
+    sequence(:name) { |n| "Dont test this name #{n}" } # 037000863427
 
     trait :with_items do
       after(:create) do |instance, evaluator|

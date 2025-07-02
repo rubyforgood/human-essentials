@@ -14,7 +14,7 @@ RSpec.describe "Donations", type: :system, js: true do
       before do
         create(:donation)
         donation = create(:donation)
-        create(:line_item, itemizable: donation, item: create(:item, value_in_cents: 300))
+        create(:line_item, quantity: 1, itemizable: donation, item: create(:item, value_in_cents: 300))
         visit subject
       end
 
@@ -174,8 +174,8 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:storage_location, organization: organization)
         create(:donation_site, organization: organization)
         create(:product_drive, organization: organization)
-        create(:product_drive_participant, organization: organization)
-        create(:product_drive_participant, organization: organization, contact_name: "contact without business name", business_name: "")
+        create(:product_drive_participant, :no_contact_name_or_email, organization: organization, business_name: "Business without contact name", email: "first@participant.com")
+        create(:product_drive_participant, organization: organization, contact_name: "Contact without business name", email: "second@participant.com")
         create(:manufacturer, organization: organization)
         organization.reload
       end
@@ -266,7 +266,7 @@ RSpec.describe "Donations", type: :system, js: true do
         it "Displays ProductDrive Participants sources by business name then contact name" do
           select Donation::SOURCES[:product_drive], from: "donation_source"
           select ProductDrive.first.name, from: "donation_product_drive_id"
-          expect(page).to have_select('donation_product_drive_participant_id', with_options: ['contact without business name'])
+          expect(page).to have_select('donation_product_drive_participant_id', with_options: ['Contact without business name'])
         end
 
         it "Allows User to create a Product Drive from donation" do
@@ -689,7 +689,7 @@ RSpec.describe "Donations", type: :system, js: true do
 
     context "When viewing an existing donation" do
       before do
-        @donation = create(:donation, :with_items)
+        @donation = create(:donation, :with_items, comment: "It's a fine day for diapers.")
 
         visit donation_path(@donation.id)
       end
