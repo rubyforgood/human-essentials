@@ -76,6 +76,14 @@ class PicklistsPdf
           font_size 10
         end
 
+        # Add quota information
+        move_down 5
+        text "Quota:", style: :bold, align: :right
+        font_size 12
+        quota = request.partner.quota || 0
+        text quota.to_s, align: :right
+        font_size 10
+
         move_down 10
         text "Comments:", style: :bold
         font_size 12
