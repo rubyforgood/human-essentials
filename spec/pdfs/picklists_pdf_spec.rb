@@ -67,6 +67,33 @@ describe PicklistsPdf do
         expect(pdf_test.page(1).text).to include(request.partner.profile.pick_up_phone)
       end
     end
+
+    context "when partner has a quota" do
+      it "renders the quota information" do
+        partner = create(:partner)
+        partner.update(quota: 100)
+        request = create(:request, :pending, organization: organization, partner: partner)
+        create(:item_request, request: request, item: item1, name: "Item 1")
+
+        pdf = described_class.new(organization, [request])
+        pdf_test = PDF::Reader.new(StringIO.new(pdf.compute_and_render))
+
+        expect(pdf_test.page(1).text).to include("Quota:")
+        expect(pdf_test.page(1).text).to include("100")
+      end
+
+      it "renders zero quota when partner has no quota set" do
+        partner = create(:partner)
+        request = create(:request, :pending, organization: organization, partner: partner)
+        create(:item_request, request: request, item: item1, name: "Item 1")
+
+        pdf = described_class.new(organization, [request])
+        pdf_test = PDF::Reader.new(StringIO.new(pdf.compute_and_render))
+
+        expect(pdf_test.page(1).text).to include("Quota:")
+        expect(pdf_test.page(1).text).to include("0")
+      end
+    end
   end
 
   context "When packs are not enabled" do
