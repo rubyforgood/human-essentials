@@ -109,7 +109,7 @@ class OrganizationsController < ApplicationController
   end
 
   def reminder_schedule_params
-    params.require(:organization).require(:reminder_schedule_service).permit([*ReminderScheduleService::REMINDER_SCHEDULE_FIELDS])
+    params.require(:organization).fetch(:reminder_schedule_service, {}).permit([*ReminderScheduleService::REMINDER_SCHEDULE_FIELDS])
   end
 
   def request_type_formatter(params)

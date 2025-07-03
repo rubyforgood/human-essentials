@@ -60,7 +60,7 @@ class PartnerGroupsController < ApplicationController
   end
 
   def reminder_schedule_params
-    params.require(:partner_group).require(:reminder_schedule_service).permit([*ReminderScheduleService::REMINDER_SCHEDULE_FIELDS])
+    params.require(:partner_group).fetch(:reminder_schedule_service, {}).permit([*ReminderScheduleService::REMINDER_SCHEDULE_FIELDS])
   end
 
   def set_items_categories
