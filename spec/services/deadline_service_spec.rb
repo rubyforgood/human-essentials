@@ -1,6 +1,6 @@
 RSpec.describe DeadlineService, type: :service do
-  let(:organization) { build_stubbed(:organization, :without_deadlines) }
-  let(:partner_group) { build_stubbed(:partner_group, :without_deadlines, organization: organization) }
+  let(:organization) { build_stubbed(:organization) }
+  let(:partner_group) { build_stubbed(:partner_group, organization: organization) }
   let(:partner) { build_stubbed(:partner, organization: organization, partner_group: partner_group) }
   let(:today) { Date.new(2022, 1, 10) }
 

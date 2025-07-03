@@ -14,20 +14,8 @@
 #
 
 FactoryBot.define do
-  reminder_schedule_definition = ReminderScheduleService.new({
-    every_nth_month: "1",
-    by_month_or_week: "day_of_month",
-    day_of_month: 10
-  })
-
   factory :partner_group do
     sequence(:name) { |n| "Group #{n}" }
     organization { Organization.try(:first) || create(:organization) }
-    reminder_schedule_definition { reminder_schedule_definition.to_ical }
-
-    trait :without_deadlines do
-      reminder_schedule_definition { nil }
-      deadline_day { nil }
-    end
   end
 end
