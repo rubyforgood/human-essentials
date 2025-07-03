@@ -38,17 +38,7 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
     end
 
     expect(page).to have_content("Every 3 months on the 1st day of the month")
-  end
-
-  it "can set a default deadline day" do
-    fill_in "Default deadline day (final day of month to submit Requests)", with: 20
-    click_on save_button
-
-    if post_form_submit
-      send(post_form_submit)
-    end
-
-    expect(page).to have_content("20th after the reminder")
+    expect(page).to have_content("10th after the reminder")
   end
 
   it "warns the user if they enter the same reminder and deadline day" do

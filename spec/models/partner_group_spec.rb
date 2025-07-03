@@ -52,10 +52,22 @@ RSpec.describe PartnerGroup, type: :model do
     end
 
     describe "deadline_day && reminder_schedule must be defined if send_reminders=true" do
-      let(:partner_group) { build(:partner_group, send_reminders: true, deadline_day: nil, reminder_schedule: nil) }
+      let(:valid_reminder_schedule) {
+        ReminderScheduleService.new({
+          by_month_or_week: "day_of_month",
+          every_nth_month: 1,
+          day_of_month: 9
+        }).to_ical
+      }
 
       it "should not be valid" do
-        expect(partner_group).not_to be_valid
+        expect(build(:partner_group, send_reminders: true)).not_to be_valid
+        expect(build(:partner_group, send_reminders: true, deadline_day: 10)).not_to be_valid
+        expect(build(:partner_group, send_reminders: true, reminder_schedule_definition: valid_reminder_schedule)).not_to be_valid
+      end
+
+      it "should be valid" do
+        expect(build(:partner_group, send_reminders: true, deadline_day: 10, reminder_schedule_definition: valid_reminder_schedule)).to be_valid
       end
     end
   end
