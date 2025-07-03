@@ -43,7 +43,7 @@ RSpec.describe DonationSite, type: :model do
       data = File.read(duplicated_name_csv_path, encoding: "BOM|UTF-8")
       csv = CSV.parse(data, headers: true)
 
-      errors = DonationSite.import_csv(csv, organization.id)
+      errors, _ = DonationSite.import_csv(csv, organization.id)
       expect(errors).not_to be_empty
       expect(errors.first).to match(/Row/)
       expect(errors.first).to include("Name must be unique within the organization")
@@ -55,7 +55,7 @@ RSpec.describe DonationSite, type: :model do
       data = File.read(valid_csv_path, encoding: "BOM|UTF-8")
       csv = CSV.parse(data, headers: true)
 
-      errors = DonationSite.import_csv(csv, organization.id)
+      errors, _ = DonationSite.import_csv(csv, organization.id)
       expect(errors).to be_empty
       expect(DonationSite.count).to eq 1
 
@@ -67,7 +67,7 @@ RSpec.describe DonationSite, type: :model do
       data = File.read(invalid_csv_path, encoding: "BOM|UTF-8")
       csv = CSV.parse(data, headers: true)
 
-      errors = DonationSite.import_csv(csv, organization.id)
+      errors, _ = DonationSite.import_csv(csv, organization.id)
       expect(errors).not_to be_empty
       expect(errors.first).to match(/Row/)
       expect(errors.first).to include("can't be blank")
