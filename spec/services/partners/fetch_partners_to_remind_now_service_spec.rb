@@ -9,33 +9,33 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
       context "that has an organization with a global reminder & deadline" do
         context "that is for today" do
           before do
-            partner.organization.update(
+            partner.organization.update(deadline_day:current_day + 2)
+            partner.organization.reminder_schedule.assign_attributes({
               by_month_or_week: "day_of_month",
-              day_of_month: current_day.to_s,
-              every_nth_month: "1",
-              deadline_day: (current_day + 2).to_s
-            )
+              day_of_month: current_day,
+              every_nth_month: 1
+            })
+            partner.organization.save
           end
 
           it "should include that partner" do
-            schedule = IceCube::Schedule.from_ical partner.organization.reminder_schedule
-            expect(schedule.occurs_on?(Time.current)).to be_truthy
+            expect(partner.organization.reminder_schedule.occurs_on?(Time.current)).to be_truthy
             expect(subject).to include(partner)
           end
 
           context "as matched by day of the week" do
             before do
-              partner.organization.update(
+              partner.organization.update(deadline_day:current_day + 2)
+              partner.organization.reminder_schedule.assign_attributes({
                 by_month_or_week: "day_of_week",
-                day_of_week: "2",
-                every_nth_day: "2",
-                every_nth_month: "1",
-                deadline_day: (current_day + 2).to_s
-              )
+                day_of_week: 2,
+                every_nth_day: 2,
+                every_nth_month: 1
+              })
+              partner.organization.save
             end
             it "should include that partner" do
-              schedule = IceCube::Schedule.from_ical partner.organization.reminder_schedule
-              expect(schedule.occurs_on?(Time.current)).to be_truthy
+              expect(partner.organization.reminder_schedule.occurs_on?(Time.current)).to be_truthy
               expect(subject).to include(partner)
             end
           end
@@ -63,8 +63,12 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
 
         context "that is not for today" do
           before do
-            partner.organization.update(by_month_or_week: "day_of_month",
-              day_of_month: current_day - 1, deadline_day: current_day + 2)
+            partner.organization.update(deadline_day: current_day + 2)
+            partner.organization.reminder_schedule.assign_attributes({
+              by_month_or_week: "day_of_month",
+              day_of_month: current_day - 1
+            })
+            partner.organization.save
           end
 
           it "should NOT include that partner" do
@@ -76,19 +80,23 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
           before do
             partner_group = create(
               :partner_group,
-              by_month_or_week: "day_of_month",
-              day_of_month: current_day.to_s,
-              every_nth_month: "1",
-              deadline_day: (current_day + 2).to_s
+              deadline_day: current_day + 2
             )
+            partner_group.reminder_schedule.assign_attributes({
+              by_month_or_week: "day_of_month",
+              day_of_month: current_day,
+              every_nth_month: 1
+            })
+            partner_group.save
             partner_group.partners << partner
 
-            partner.organization.update(
+            partner.organization.update(deadline_day:current_day + 2)
+            partner.organization.reminder_schedule.assign_attributes({
               by_month_or_week: "day_of_month",
-              day_of_month: (current_day - 1).to_s,
-              every_nth_month: "1",
-              deadline_day: (current_day + 2).to_s
-            )
+              day_of_month: current_day - 1,
+              every_nth_month: 1
+            })
+            partner.organization.save
           end
 
           it "should remind based on the partner group instead of the organization level reminder" do
@@ -109,7 +117,7 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
 
       context "that does NOT have a organization with a global reminder & deadline" do
         before do
-          partner.organization.update(reminder_schedule: nil, deadline_day: nil)
+          partner.organization.update(reminder_schedule_definition: nil, deadline_day: nil)
         end
 
         context "and is a part of a partner group that does have them defined" do
@@ -117,11 +125,14 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
             before do
               partner_group = create(
                 :partner_group,
-                by_month_or_week: "day_of_month",
-                day_of_month: current_day.to_s,
-                every_nth_month: "1",
-                deadline_day: (current_day + 2).to_s
+                deadline_day: current_day + 2
               )
+              partner_group.reminder_schedule.assign_attributes({
+                by_month_or_week: "day_of_month",
+                day_of_month: current_day,
+                every_nth_month: 1,
+              })
+              partner_group.save
               partner_group.partners << partner
             end
 
@@ -154,11 +165,14 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
             before do
               partner_group = create(
                 :partner_group,
-                by_month_or_week: "day_of_month",
-                day_of_month: (current_day - 1).to_s,
-                every_nth_month: "1",
-                deadline_day: (current_day + 2).to_s
+                deadline_day: current_day + 2
               )
+              partner_group.reminder_schedule.assign_attributes({
+                by_month_or_week: "day_of_month",
+                day_of_month: current_day - 1,
+                every_nth_month: 1,
+              })
+              partner_group.save
               partner_group.partners << partner
             end
 
