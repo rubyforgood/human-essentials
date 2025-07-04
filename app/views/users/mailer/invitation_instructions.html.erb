@@ -344,7 +344,11 @@
                     <% organization = @resource.partner&.organization %>
                     <% is_primary_partner = @resource.id == @resource.partner&.primary_user&.id %>
                     <p>Hello <%= @resource.email %></p>
-                    <% if @resource.partner.present? && is_primary_partner %>
+                    <% if @resource.invitation_sent_at.present? %>
+                      <% highlighted_role = @resource.roles.order(:name).distinct.map(&:itself).first %>
+                      <p>You've been re-invited to become a <strong><%= highlighted_role.name %></strong> in your Human Essentials App Account</p>
+                      <p><strong> Please contact <%= highlighted_role.resource.email %> if you are encountering any issues. </strong></p>
+                    <% elsif @resource.partner.present? && is_primary_partner %>
                       <p>You've been invited to become a partner with <strong><%= organization.name %>!</strong></p>
                       <p><%= organization.invitation_text %></p>
                       <p>Please click the link below to accept your invitation and create an account and you'll be able to begin requesting distributions.</p>
@@ -371,7 +375,7 @@
                       </tr>
                       </tbody>
                     </table>
-                    <% if @resource.invitation_due_at %>
+                    <% if @resource.invitation_sent_at.present? && @resource.invitation_due_at %>
                       <p><%= t("devise.mailer.invitation_instructions.accept_until", due_date: l(@resource.invitation_due_at, format: :'devise.mailer.invitation_instructions.accept_until_format')) %></p>
                     <% end %>
                     <p>If your invitation has an expired message, go <%= link_to "here", new_user_password_url %> and enter your email address to reset your password.</p>
