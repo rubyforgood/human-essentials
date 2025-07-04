@@ -38,7 +38,7 @@ module Reports
 
     # Helper method to combine purchased_from and vendors_purchased_from
     def combined_purchased_from
-      [purchased_from, vendors_purchased_from].reject(&:blank?).join(", ")
+      [purchased_from, vendors_purchased_from].compact_blank.join(", ")
     end
 
     # @return [Integer]
