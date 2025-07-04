@@ -69,7 +69,7 @@ describe PicklistsPdf do
     end
 
     context "when partner has a quota" do
-      it "renders the quota information" do
+      it "renders the quota information when quota is set" do
         partner = create(:partner)
         partner.update(quota: 100)
         request = create(:request, :pending, organization: organization, partner: partner)
@@ -82,16 +82,26 @@ describe PicklistsPdf do
         expect(pdf_test.page(1).text).to include("100")
       end
 
-      it "renders zero quota when partner has no quota set" do
-        partner = create(:partner)
+      it "does not render quota information when quota is not set" do
+        partner = create(:partner, quota: nil)
         request = create(:request, :pending, organization: organization, partner: partner)
         create(:item_request, request: request, item: item1, name: "Item 1")
 
         pdf = described_class.new(organization, [request])
         pdf_test = PDF::Reader.new(StringIO.new(pdf.compute_and_render))
 
-        expect(pdf_test.page(1).text).to include("Quota:")
-        expect(pdf_test.page(1).text).to include("0")
+        expect(pdf_test.page(1).text).not_to include("Quota:")
+      end
+
+      it "does not render quota information when quota is zero" do
+        partner = create(:partner, quota: 0)
+        request = create(:request, :pending, organization: organization, partner: partner)
+        create(:item_request, request: request, item: item1, name: "Item 1")
+
+        pdf = described_class.new(organization, [request])
+        pdf_test = PDF::Reader.new(StringIO.new(pdf.compute_and_render))
+
+        expect(pdf_test.page(1).text).not_to include("Quota:")
       end
     end
   end
