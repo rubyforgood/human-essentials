@@ -346,8 +346,9 @@
                     <p>Hello <%= @resource.email %></p>
                     <% if @resource.invitation_sent_at.present? %>
                       <% highlighted_role = @resource.roles.order(:name).distinct.map(&:itself).first %>
+                      <% email = highlighted_role&.resource&.email.nil? ? @resource.email : highlighted_role.resource.email %>
                       <p>You've been re-invited to become a <strong><%= highlighted_role.name %></strong> in your Human Essentials App Account</p>
-                      <p><strong> Please contact <%= highlighted_role.resource.email %> if you are encountering any issues. </strong></p>
+                      <p><strong> Please contact <%= email %> if you are encountering any issues. </strong></p>
                     <% elsif @resource.partner.present? && is_primary_partner %>
                       <p>You've been invited to become a partner with <strong><%= organization.name %>!</strong></p>
                       <p><%= organization.invitation_text %></p>
