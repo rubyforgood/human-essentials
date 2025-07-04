@@ -192,6 +192,7 @@ class DistributionsController < ApplicationController
       @storage_locations = current_organization.storage_locations.active.alphabetized.select do |storage_loc|
         !inventory.quantity_for(storage_location: storage_loc.id).negative?
       end
+      @changes_disallowed = SnapshotEvent.intervening?(@distribution)
     else
       redirect_to distributions_path, error: 'To edit a distribution,
       you must be an organization admin or the current date must be later than today.'

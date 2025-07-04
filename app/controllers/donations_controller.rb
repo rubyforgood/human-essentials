@@ -82,6 +82,7 @@ class DonationsController < ApplicationController
     @donation = Donation.find(params[:id])
     @donation.line_items.build
     @audit_performed_and_finalized = Audit.finalized_since?(@donation, @donation.storage_location_id)
+    @changes_disallowed = SnapshotEvent.intervening?(@donation)
 
     load_form_collections
   end

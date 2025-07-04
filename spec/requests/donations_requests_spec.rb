@@ -260,6 +260,27 @@ RSpec.describe "Donations", type: :request do
     end
 
     describe "GET #edit" do
+      it 'should not allow edits if there is an intervening snapshot' do
+        donation = FactoryBot.create(:donation,
+          :with_items,
+          organization: organization,
+          created_at: 1.week.ago)
+        SnapshotEvent.create!(organization_id: organization.id,
+          created_at: 1.day.ago,
+          event_time: 1.day.ago,
+          eventable: organization,
+          data: EventTypes::Inventory.new(
+            organization_id: organization.id, storage_locations: {}
+          ))
+        get edit_donation_path(id: donation.id)
+        expect(response.body)
+          .to include('This donation is too old to edit inventory. You can only change non-inventory fields.')
+        expect(response.body).not_to include('Add Another Item')
+        expect(response.body).not_to include('Remove Item')
+        parsed_body = Nokogiri::HTML(response.body)
+        expect(parsed_body.css('select.line_item_name[disabled]')).not_to be_empty
+      end
+
       context "when an finalized audit has been performed on the donated items" do
         it "shows a warning" do
           item = create(:item, organization: organization, name: "Brightbloom Seed")

@@ -39,6 +39,17 @@ class Event < ApplicationRecord
     self.user_id = PaperTrail.request&.whodunnit
   end
   after_create :validate_inventory
+  validate :no_intervening_snapshot, on: :create
+
+  def no_intervening_snapshot
+    return if is_a?(SnapshotEvent)
+    return unless eventable.respond_to?(:organization)
+
+    if SnapshotEvent.intervening?(eventable)
+      errors.add(:base,
+        "Cannot change inventory for an old action that has an intervening snapshot.")
+    end
+  end
 
   # @return [Array<Option>]
   def self.types_for_select
