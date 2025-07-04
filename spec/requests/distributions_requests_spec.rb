@@ -666,7 +666,28 @@ RSpec.describe "Distributions", type: :request do
       let(:location) { create(:storage_location, organization: organization) }
       let(:partner) { create(:partner, organization: organization) }
 
-      let(:distribution) { create(:distribution, partner: partner) }
+      let(:distribution) { create(:distribution, partner: partner, created_at: 1.week.ago) }
+
+      it 'should not allow edits if there is an intervening snapshot' do
+        distribution.line_items << build(:line_item,
+          quantity: 5,
+          item: organization.items.last,
+          itemizable: distribution)
+        SnapshotEvent.create!(organization_id: organization.id,
+          created_at: 1.day.ago,
+          event_time: 1.day.ago,
+          eventable: organization,
+          data: EventTypes::Inventory.new(
+            organization_id: organization.id, storage_locations: {}
+          ))
+        get edit_distribution_path(id: distribution.id)
+        expect(response.body)
+          .to include('This distribution is too old to edit inventory. You can only change non-inventory fields.')
+        expect(response.body).not_to include('Add Another Item')
+        expect(response.body).not_to include('Remove Item')
+        parsed_body = Nokogiri::HTML(response.body)
+        expect(parsed_body.css('select.line_item_name[disabled]')).not_to be_empty
+      end
 
       it "should show the distribution" do
         get edit_distribution_path(id: distribution.id)
