@@ -135,6 +135,20 @@ RSpec.describe "Donations", type: :system, js: true do
         expect(page).to have_css("table tbody tr", count: 1)
       end
 
+      it "Filters by category" do
+        category_1 = create(:item_category, name: "Category 1", organization: organization)
+        category_2 = create(:item_category, name: "Category 2", organization: organization)
+        item_1 = create(:item, item_category: category_1, name: "Item 1", value_in_cents: 100)
+        item_2 = create(:item, item_category: category_2, name: "Item 2", value_in_cents: 200)
+        create(:donation, :with_items, item_quantity: 25, item: item_1)
+        create(:donation, :with_items, item_quantity: 30, item: item_2)
+        visit subject
+        expect(page).to have_css("table tbody tr", count: 2)
+        select organization.item_categories.first.name, from: "filters[by_category]"
+        click_button "Filter"
+        expect(page).to have_css("table tbody tr", count: 1)
+      end
+
       it_behaves_like "Date Range Picker", Donation, "issued_at"
 
       it "Filters by multiple attributes" do
@@ -161,6 +175,7 @@ RSpec.describe "Donations", type: :system, js: true do
         create(:donation_site, organization: organization)
         create(:product_drive, organization: organization)
         create(:product_drive_participant, organization: organization)
+        create(:product_drive_participant, organization: organization, contact_name: "contact without business name", business_name: "")
         create(:manufacturer, organization: organization)
         organization.reload
       end
@@ -248,6 +263,12 @@ RSpec.describe "Donations", type: :system, js: true do
           end.to change { Donation.count }.by(1)
         end
 
+        it "Displays ProductDrive Participants sources by business name then contact name" do
+          select Donation::SOURCES[:product_drive], from: "donation_source"
+          select ProductDrive.first.name, from: "donation_product_drive_id"
+          expect(page).to have_select('donation_product_drive_participant_id', with_options: ['contact without business name'])
+        end
+
         it "Allows User to create a Product Drive from donation" do
           select Donation::SOURCES[:product_drive], from: "donation_source"
           select "---Create new Product Drive---", from: "donation_product_drive_id"
@@ -273,7 +294,28 @@ RSpec.describe "Donations", type: :system, js: true do
           fill_in "product_drive_participant_email", with: "123@mail.ru"
           fill_in "product_drive_participant_comment", with: "test comment"
           click_on "product-drive-participant-submit"
+          expect(page).to have_select('donation_product_drive_participant_id', with_options: ['businesstest'])
+
           select "businesstest", from: "donation_product_drive_participant_id"
+        end
+
+        # seems like a duplicate check but this update happens via JS, so we have to test that code works too
+        it "Renders ProductDrive Participants sources by business name then contact name after creating a participant" do
+          select Donation::SOURCES[:product_drive], from: "donation_source"
+          select "---Create new Participant---", from: "donation_product_drive_participant_id"
+
+          find(".modal-content")
+          expect(page).to have_content("New Product Drive Participant")
+
+          fill_in "product_drive_participant_business_name", with: ""
+          fill_in "product_drive_participant_contact_name", with: "2nd contact without business name"
+          fill_in "product_drive_participant_email", with: "1233@mail.ru"
+          fill_in "product_drive_participant_comment", with: "test comment"
+          click_on "product-drive-participant-submit"
+
+          select ProductDrive.first.name, from: "donation_product_drive_id"
+          # note that I'm not explicitly testing the business name here, this is handled in the previous test
+          expect(page).to have_select('donation_product_drive_participant_id', with_options: ['2nd contact without business name'])
         end
 
         it "Allows User to create a donation for a Manufacturer source" do
@@ -387,6 +429,20 @@ RSpec.describe "Donations", type: :system, js: true do
             # wait for the next page to load
             expect(page).not_to have_xpath("//select[@id='donation_line_items_attributes_0_item_id']")
           end.to change { Donation.count }.by(1)
+        end
+
+        it "Remains on the page when the user cancels a large donation", js: true do
+          select Donation::SOURCES[:misc], from: "donation_source"
+          select StorageLocation.first.name, from: "donation_storage_location_id"
+          select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
+          fill_in "donation_line_items_attributes_0_quantity", with: "1000000"
+
+          dismiss_confirm do
+            click_button "Save"
+          end
+
+          expect(page).to have_current_path(new_donation_path)
+          expect(page).to have_button("Save")
         end
 
         it "Requires quantity to be numeric" do

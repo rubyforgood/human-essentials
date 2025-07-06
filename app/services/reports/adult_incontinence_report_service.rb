@@ -105,11 +105,9 @@ module Reports
         INNER JOIN kits ON kits.id = items.kit_id 
         INNER JOIN line_items AS kit_line_items ON kits.id = kit_line_items.itemizable_id
         INNER JOIN items AS kit_items ON kit_items.id = kit_line_items.item_id
-        INNER JOIN base_items ON base_items.partner_key = kit_items.partner_key 
         WHERE distributions.organization_id = ?
           AND EXTRACT(year FROM issued_at) = ?
-          AND LOWER(base_items.category) LIKE '%adult%'
-          AND NOT (LOWER(base_items.category) LIKE '%wipes%' OR LOWER(base_items.name) LIKE '%wipes%')
+          AND kit_items.reporting_category = 'adult_incontinence'
           AND kit_line_items.itemizable_type = 'Kit';
       SQL
 
@@ -129,7 +127,7 @@ module Reports
                         .distributions
                         .for_year(year)
                         .joins(line_items: :item)
-                        .merge(Item.adult_incontinence)
+                        .merge(Item.adult_incontinence.where(kit_id: nil)) # exclude kits
                         .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50.0)')
       total_quantity.to_f / 12.0
     end

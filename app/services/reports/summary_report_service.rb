@@ -71,7 +71,7 @@ module Reports
     # @return [Integer]
     def diapers(year)
       LineItem.joins(:item)
-              .merge(Item.disposable)
+              .merge(Item.disposable_diapers)
               .where(itemizable: organization.donations.for_year(year))
               .sum(:quantity)
     end

@@ -59,6 +59,27 @@ RSpec.describe "/partners/dashboard", type: :request do
 
       expect(response.body).to match(/7\s+#{item1.name}/m)
     end
+
+    it "displays comment and sender" do
+      request = create(:request, :pending, partner:, request_items: [])
+      create(:item_request, request:, quantity: 16, item: item1)
+
+      get partners_dashboard_path
+
+      expect(response.body).to include(request.comments)
+      expect(response.body).to include(request.requester.email)
+    end
+
+    it "displays Need Help instead of User Guide link for partner users" do
+      partner = create(:partner, organization: organization)
+      partner_user = partner.primary_user
+      sign_in(partner_user)
+
+      get partners_dashboard_path
+
+      expect(response.body).not_to include("User Guide")
+      expect(response.body).to include("Need Help?")
+    end
   end
 
   it "displays upcoming distributions" do

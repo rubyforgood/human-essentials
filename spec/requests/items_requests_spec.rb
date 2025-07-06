@@ -1,5 +1,5 @@
 RSpec.describe "Items", type: :request do
-  let(:organization) { create(:organization, short_name: "my_org") }
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 
   describe "while signed in" do
@@ -19,8 +19,8 @@ RSpec.describe "Items", type: :request do
         it { is_expected.to be_successful }
 
         it "highlights total quantity if it is below minimum quantity" do
-          item_pullups = create(:item, name: "the most wonderful magical pullups that truly potty train", category: "Magic Toddlers", on_hand_minimum_quantity: 100)
-          item_tampons = create(:item, name: "blackbeard's rugged tampons", category: "Menstrual Products", on_hand_minimum_quantity: 100)
+          item_pullups = create(:item, name: "the most wonderful magical pullups that truly potty train", on_hand_minimum_quantity: 100)
+          item_tampons = create(:item, name: "blackbeard's rugged tampons", on_hand_minimum_quantity: 100)
           storage_name = "the poop catcher warehouse"
           num_pullups_in_donation = 666
           num_pullups_second_donation = 15

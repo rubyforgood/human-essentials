@@ -30,7 +30,7 @@ RSpec.describe "Partners profile served area behaviour", type: :system, js: true
       expect(page).to have_content("100 %")
       expect(page).not_to have_content("The total client share must be either 0 or 100 %")
       click_on "Update Information"
-      expect(page).to have_content("Organization Details")
+      expect(page).to have_content("Profile")
       expect(page).to have_content("26 %")
     end
 
