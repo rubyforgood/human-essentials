@@ -29,8 +29,7 @@ class ReminderScheduleService
   include ActiveModel::Validations
   
   validate :every_nth_month_within_range?
-  validates :start_date, presence: true
-  validate :start_date_is_valid_date_string?
+  validate :start_date_is_valid_date_or_date_string?
   validates :by_month_or_week, inclusion: {in: %w[day_of_month day_of_week]}
   validates :day_of_month, if: -> { @by_month_or_week == "day_of_month" }, presence: true
   validate :day_of_month_is_within_range?, if: -> { @by_month_or_week == "day_of_month" }
@@ -41,7 +40,7 @@ class ReminderScheduleService
     @every_nth_month = parameter_hash[:every_nth_month]
     @start_date = parameter_hash[:start_date]
     if !@start_date
-      @start_date = Time.zone.now.to_date.to_s
+      @start_date = Time.zone.now
     end
     @by_month_or_week = parameter_hash[:by_month_or_week]
     @day_of_month = parameter_hash[:day_of_month]
@@ -115,8 +114,8 @@ class ReminderScheduleService
     end
   end
 
-  def start_date_is_valid_date_string?
-    unless start_date.respond_to?(:strftime) || Time.zone.parse(start_date)
+  def start_date_is_valid_date_or_date_string?
+    unless start_date.present? && (start_date.respond_to?(:strftime) || Time.zone.parse(start_date))
       errors.add(:start_date, "Start date must be a valid date string")
     end
   end
@@ -124,19 +123,19 @@ class ReminderScheduleService
   def day_of_month_is_within_range?
     # IceCube converts negative or zero days to valid days (e.g. -1 becomes the last day of the month, 0 becomes 1)
     # The minimum check should no longer be necessary, but keeping it in case IceCube changes
-    if day_of_month.to_i < MIN_DAY_OF_MONTH || day_of_month.to_i > MAX_DAY_OF_MONTH
+    if start_date.present? && (day_of_month.to_i < MIN_DAY_OF_MONTH || day_of_month.to_i > MAX_DAY_OF_MONTH)
       errors.add(:day_of_month, "Reminder day must be between #{MIN_DAY_OF_MONTH} and #{MAX_DAY_OF_MONTH}")
     end
   end
 
   def day_of_week_is_within_range?
-    unless [0, 1, 2, 3, 4, 5, 6,].include? day_of_week.to_i
+    unless day_of_week.present? && ([0, 1, 2, 3, 4, 5, 6,].include? day_of_week.to_i)
       errors.add(:day_of_week, "Day of week must be one of #{DAY_OF_WEEK_COLLECTION}")
     end
   end
 
   def every_nth_day_is_within_range?
-    unless [1, 2, 3, 4, -1,].include? every_nth_day.to_i
+    unless every_nth_day.present? && ([1, 2, 3, 4, -1,].include? every_nth_day.to_i)
       errors.add(:every_nth_day, "Every Nth day must be one of #{EVERY_NTH_COLLECTION}")
     end
   end
