@@ -7,9 +7,12 @@
 
 <main>
   <% if @partner.info_for_partner %>
-    <section class="container mx-auto">
-      <h2 class="font-weight-bold">Info</h2>
-      <p><%= @partner.info_for_partner %></p>
+    <section class="container mx-auto my-5">
+      <h2 class="font-weight-bold">Information from your bank</h2>
+
+      <div class="rounded-3 w-100 shadow-lg p-2 bg-white">
+        <%= @partner.info_for_partner %>
+      </div>
     </section>
   <% end %>
 
