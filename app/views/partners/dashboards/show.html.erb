@@ -7,7 +7,10 @@
 
 <main>
   <% if @partner.info_for_partner %>
-    <%= render partial: 'info_for_partner', locals: { info_for_partner: @partner.info_for_partner} %>
+    <section class="container mx-auto">
+      <h2 class="font-weight-bold">Info</h2>
+      <p><%= @partner.info_for_partner %></p>
+    </section>
   <% end %>
 
   <%= render partial: '/partners/requests/request_options_card' if @partner.approved? %>
