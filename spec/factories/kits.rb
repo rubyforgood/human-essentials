@@ -10,7 +10,7 @@
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #  organization_id     :integer          not null
-
+#
 FactoryBot.define do
   factory :kit do
     sequence(:name) { |n| "Default Kit Name #{n} - Don't Match" }

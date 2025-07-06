@@ -324,7 +324,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_203808) do
     t.bigint "old_partner_id"
     t.boolean "archived", default: false
     t.index ["partner_id"], name: "index_families_on_partner_id"
-  end 
+  end
 
   create_table "flipper_features", force: :cascade do |t|
     t.string "key", null: false
