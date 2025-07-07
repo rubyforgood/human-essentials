@@ -1,98 +1,86 @@
-RSpec.describe "Reports Distributions", type: :system, js: true do
+RSpec.describe "Reports Distributions", type: :request do
   let(:organization) { create(:organization) }
+  let(:storage_location) { create(:storage_location, name: "Pawane Location", organization: organization) }
   let(:user) { create(:user, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
-  let!(:partner) { create(:partner, organization: organization, name: "Test Partner") }
-  let!(:storage_location) { create(:storage_location, organization: organization, name: "Test Storage Location") }
 
-  context "while logged in" do
+  describe "while signed in" do
     before do
       sign_in(user)
     end
 
-    context "Distributions - Itemized" do
-      before do
-        create(:item, organization: organization)
-        create(:storage_location, organization: organization)
-        create(:donation_site, organization: organization)
-        create(:product_drive, organization: organization)
-        create(:product_drive_participant, organization: organization)
-        create(:product_drive_participant, organization: organization, contact_name: "contact without business name", business_name: "")
-        create(:manufacturer, organization: organization)
-        organization.reload
+    describe "Distributions - Itemized" do
+      let(:product_drive) { create(:product_drive, organization:) }
+      let(:storage_location) { create(:storage_location, organization:) }
+      let(:manufacturer) { create(:manufacturer, organization:) }
+      let(:source) { Donation::SOURCES[:manufacturer] }
+      let(:issued_at) { Date.yesterday }
+      let(:money_raised) { 5 }
+      let(:item) { create(:item, organization:) }
 
-        visit new_donation_path
+      let(:params) do
+        {
+          donation: {
+            source: Donation::SOURCES[:manufacturer],
+            manufacturer_id: manufacturer.id,
+            product_drive_id: product_drive.id,
+            storage_location_id: storage_location.id,
+            money_raised_in_dollars: money_raised,
+            product_drive_participant_id: nil,
+            comment: "",
+            issued_at: issued_at,
+            line_items_attributes: {
+              "0": {item_id: item.id, quantity: 10}
+            }
+          }
+        }
+      end
 
-        select Donation::SOURCES[:misc], from: "donation_source"
-        select StorageLocation.first.name, from: "donation_storage_location_id"
-        select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
-        fill_in "donation_line_items_attributes_0_quantity", with: "5"
-        fill_in "donation_issued_at", with: "2001-01-01"
-
-        click_button "Save"
-
-        visit new_distribution_path
+      let!(:partner) { create(:partner, organization: organization) }
+      let(:distribution) do
+        {
+          storage_location_id: storage_location.id,
+          partner_id: partner.id,
+          issued_at:,
+          delivery_method: :delivery,
+          line_items_attributes: {
+            "0": {item_id: item.id, quantity: 10}
+          }
+        }
       end
 
       it "Ensuring that the result of the distribution index is zero instead of Unknow" do
-        select "Test Partner", from: "Partner"
-        select "Test Storage Location", from: "From storage location"
-        fill_in "distribution_line_items_attributes_0_quantity", with: "5"
-        choose "Pick up"
+        post donations_path(params)
+        expect(response).to redirect_to(donations_path)
 
-        click_button "Save", match: :first
-        within "#distributionConfirmationModal" do
-          click_button "Yes, it's correct"
+        post distributions_path(distribution:, format: :turbo_stream)
+        expect(response).to have_http_status(:redirect)
+
+        get reports_itemized_distributions_path
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include("Total On Hand")
+        page = Nokogiri::HTML(response.body)
+        page.css("table tbody tr td:last-child").each do |item|
+          expect(item.content.strip).to eq("0")
         end
-
-        visit reports_itemized_distributions_path
-
-        expect(page).to have_selector(:table_row, "Total On Hand" => "0")
-      end
-    end
-
-    context "Donations - Itemized" do
-      let(:donation) { create :donation, :with_items }
-
-      before do
-        create(:item, organization: organization)
-        create(:storage_location, organization: organization)
-        create(:donation_site, organization: organization)
-        create(:product_drive, organization: organization)
-        create(:product_drive_participant, organization: organization)
-        create(:product_drive_participant, organization: organization, contact_name: "contact without business name", business_name: "")
-        create(:manufacturer, organization: organization)
-        organization.reload
       end
 
       it "Ensuring that the result of the donation index is zero instead of Unknow" do
-        visit new_donation_path
-        select Donation::SOURCES[:misc], from: "donation_source"
-        select StorageLocation.first.name, from: "donation_storage_location_id"
-        select Item.alphabetized.first.name, from: "donation_line_items_attributes_0_item_id"
-        fill_in "donation_line_items_attributes_0_quantity", with: "20"
-        fill_in "donation_issued_at", with: "2025-04-15"
+        post donations_path(params)
+        expect(response).to redirect_to(donations_path)
 
-        click_button "Save"
+        post distributions_path(distribution:, format: :turbo_stream)
+        expect(response).to have_http_status(:redirect)
 
-        visit new_distribution_path
+        get reports_itemized_donations_path
 
-        select "Test Partner", from: "Partner"
-        select "Test Storage Location", from: "From storage location"
-        fill_in "distribution_line_items_attributes_0_quantity", with: "20"
-        choose "Pick up"
-
-        click_button "Save", match: :first
-
-        within "#distributionConfirmationModal" do
-          click_button "Yes, it's correct"
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include("Total On Hand")
+        page = Nokogiri::HTML(response.body)
+        page.css("table tbody tr td:last-child").each do |item|
+          expect(item.content.strip).to eq("0")
         end
-
-        visit reports_itemized_donations_path
-        fill_in "filters_date_range", with: "April 15, 2025 - July 15, 2025"
-        click_button "Filter"
-
-        expect(page).to have_selector(:table_row, "Total On Hand" => "0")
       end
     end
   end
