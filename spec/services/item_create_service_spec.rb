@@ -1,11 +1,12 @@
 RSpec.describe ItemCreateService, type: :service do
   describe '#call' do
-    subject { described_class.new(organization_id: organization_id, item_params: item_params).call }
+    subject { described_class.new(organization_id: organization_id, item_params: item_params, request_unit_ids: request_unit_ids).call }
     let(:organization_id) { organization.id }
     let(:item_params) { { fake: 'param' } }
+    let(:request_unit_ids) { [] }
     let(:organization) { create(:organization) }
     let(:fake_organization_items) { instance_double('organization.items') }
-    let(:fake_organization_item) { instance_double(Item, id: 99_999, save!: -> {}) }
+    let(:fake_organization_item) { instance_double(Item, id: 99_999, save!: -> {}, sync_request_units!: true) }
     let(:fake_organization_storage_locations) do
       [
         instance_double(StorageLocation, id: 'fake-id-1'),
