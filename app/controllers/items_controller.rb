@@ -31,11 +31,11 @@ class ItemsController < ApplicationController
   end
 
   def create
-    create = if Flipper.enabled?(:enable_packs)
-      ItemCreateService.new(organization_id: current_organization.id, item_params: item_params, request_unit_ids:)
-    else
-      ItemCreateService.new(organization_id: current_organization.id, item_params: item_params)
-    end
+    create = ItemCreateService.new(
+      organization_id: current_organization.id,
+      item_params: item_params,
+      request_unit_ids: request_unit_ids
+    )
     result = create.call
 
     if result.success?
@@ -182,11 +182,7 @@ class ItemsController < ApplicationController
 
   # We need to update both the item and the request_units together and fail together
   def update_item
-    if Flipper.enabled?(:enable_packs)
-      update_item_and_request_units
-    else
-      @item.save
-    end
+    update_item_and_request_units
   end
 
   def update_item_and_request_units
