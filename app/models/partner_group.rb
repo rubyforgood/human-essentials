@@ -48,8 +48,10 @@ class PartnerGroup < ApplicationRecord
     # The schedule shouldn't be validated if the user hasn't touched that form,
     # so if by_month_or_week is still the default (nil) assume the user didn't
     # intend to fill out that form and don't validate.
-    unless reminder_schedule.no_fields_filled_out? || reminder_schedule.by_month_or_week.nil? || (reminder_schedule.valid? && deadline_not_on_reminder_date?)
-      errors.merge!(reminder_schedule.errors)
+    unless reminder_schedule.no_fields_filled_out? || reminder_schedule.by_month_or_week.nil?
+      unless reminder_schedule.valid? && deadline_not_on_reminder_date?
+        errors.merge!(reminder_schedule.errors)
+      end
     end
   end
 

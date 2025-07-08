@@ -115,7 +115,7 @@ class ReminderScheduleService
   end
 
   def start_date_is_valid_date_or_date_string?
-    unless start_date.present? && (start_date.respond_to?(:strftime) || Time.zone.parse(start_date))
+    if !(start_date.present? && (start_date.respond_to?(:strftime) || Time.zone.parse(start_date)))
       errors.add(:start_date, "Start date must be a valid date string")
     end
   end
