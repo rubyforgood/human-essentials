@@ -4,7 +4,7 @@ class ItemsController < ApplicationController
   def index
     @items = current_organization
       .items
-      .includes(:base_item, :kit, :line_items, :request_units, :item_category)
+      .includes(:kit, :line_items, :request_units, :item_category)
       .alphabetized
       .class_filter(filter_params)
       .group('items.id')
@@ -15,7 +15,7 @@ class ItemsController < ApplicationController
     @storages = current_organization.storage_locations.active.order(id: :asc)
 
     @include_inactive_items = params[:include_inactive_items]
-    @selected_base_item = filter_params[:by_base_item]
+    @selected_reporting_category = filter_params[:by_reporting_category]
 
     @paginated_items = @items.page(params[:page])
 
@@ -164,6 +164,7 @@ class ItemsController < ApplicationController
     @item_params = params.require(:item).permit(
       :name,
       :item_category_id,
+      :reporting_category,
       :partner_key,
       :value_in_cents,
       :package_size,
@@ -205,6 +206,6 @@ class ItemsController < ApplicationController
     def filter_params(_parameters = nil)
     return {} unless params.key?(:filters)
 
-    params.require(:filters).permit(:by_base_item, :include_inactive_items)
+    params.require(:filters).permit(:by_reporting_category, :include_inactive_items)
   end
 end

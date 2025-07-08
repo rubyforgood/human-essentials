@@ -134,6 +134,15 @@ RSpec.describe Item, type: :model do
       end
     end
 
+    describe "->by_reporting_category" do
+      it "shows the items for a particular reporting category" do
+        diaper = create(:item, reporting_category: :cloth_diapers, organization: organization)
+        create(:item, reporting_category: :adult_incontinence, organization: organization)
+
+        expect(Item.by_reporting_category(:cloth_diapers)).to eq([diaper])
+      end
+    end
+
     describe "->disposable_diapers" do
       it "returns records associated with disposable diapers" do
         disposable_1 = create(:item, :active, name: "Disposable Diaper 1", reporting_category: :disposable_diapers, organization:)
@@ -405,6 +414,24 @@ RSpec.describe Item, type: :model do
 
     it "should return the value of on_hand_minimum_quantity if it is set" do
       expect(create(:item, on_hand_minimum_quantity: 42).on_hand_minimum_quantity).to eq(42)
+    end
+  end
+
+  describe "reporting_category_humanized" do
+    it "returns reporting_category to title case" do
+      base_item = create(:base_item, name: "Adult Briefs (Large/X-Large)")
+      item = create(:item, name: "InControl BeDry", base_item:)
+
+      expect(item.reporting_category).to eq("adult_incontinence")
+      expect(item.reporting_category_humanized).to eq("Adult Incontinence")
+    end
+
+    it "returns empty string when no reporting_category exists" do
+      kit = create(:kit, organization: organization)
+      item = Item.new(kit: kit)
+
+      expect(item.reporting_category).to eq(nil)
+      expect(item.reporting_category_humanized).to eq("")
     end
   end
 

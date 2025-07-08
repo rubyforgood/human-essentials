@@ -72,21 +72,6 @@ RSpec.describe "Item management", type: :system do
     expect(item.reload.visible_to_partners).to be false
   end
 
-  it "can filter the #index by base item as a user" do
-    Item.delete_all
-    base_item1 = create(:base_item, name: "First Base Item")
-    base_item2 = create(:base_item)
-    create(:item, base_item: base_item1)
-    create(:item, base_item: base_item2)
-
-    visit items_path
-    select "First Base Item", from: "filters[by_base_item]"
-    click_button "Filter"
-    within "#items-table" do
-      expect(page).to have_css("tbody tr", count: 1)
-    end
-  end
-
   describe "restoring items" do
     let!(:item) { create(:item, :inactive, name: "AAA DELETED") }
 
