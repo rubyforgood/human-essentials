@@ -34,7 +34,7 @@ class PartnerGroup < ApplicationRecord
 
   def reminder_schedule
     if reminder_schedule_definition.present?
-      @reminder_schedule_service ||= ReminderScheduleService.from_ical(reminder_schedule_definition)      
+      @reminder_schedule_service ||= ReminderScheduleService.from_ical(reminder_schedule_definition)
     end
     @reminder_schedule_service ||= ReminderScheduleService.new(start_date: Time.zone.today)
   end

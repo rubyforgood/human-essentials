@@ -71,23 +71,22 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
   end
 
   describe "calculates the reminder and deadline dates" do
-
     # The reminder day (the #{form_prefix}_reminder_schedule_service_day_of_month field ) has to be less than or equal to 28.
     # These functions are implemented to calculate dates prior or after @now that do not fall on a
     # date with a day greater than 28.
-    def safe_add_days( date, num )
-      result = date += num.days
+    def safe_add_days(date, num)
+      result = date + num.days
       if result.day > 28
-        result = result.change({day: 1+num})
+        result = result.change({day: 1 + num})
         result += 1.month
       end
       result
     end
 
-    def safe_subtract_days( date, num )
-      result = date -= num.days
+    def safe_subtract_days(date, num)
+      result = date - num.days
       if result.day > 28
-        result = result.change({day: 28-num})
+        result = result.change({day: 28 - num})
         result -= 1.month
       end
       result
@@ -133,7 +132,7 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
         expect(page).to have_content(schedule.next_occurrence.strftime("%b %d %Y"))
 
         start_date = safe_add_days(@now, 1)
-        fill_in "#{form_prefix}_reminder_schedule_service_start_date", with: (start_date).strftime("%Y-%m-%d")
+        fill_in "#{form_prefix}_reminder_schedule_service_start_date", with: start_date.strftime("%Y-%m-%d")
         schedule = IceCube::Schedule.new(start_date)
         schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_month(reminder_date.day))
         expect(page).to have_content(schedule.next_occurrence.strftime("%b %d %Y"))

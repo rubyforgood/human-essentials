@@ -9,7 +9,7 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
       context "that has an organization with a global reminder & deadline" do
         context "that is for today" do
           before do
-            partner.organization.update(deadline_day:current_day + 2)
+            partner.organization.update(deadline_day: current_day + 2)
             partner.organization.reminder_schedule.assign_attributes({
               by_month_or_week: "day_of_month",
               day_of_month: current_day,
@@ -25,7 +25,7 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
 
           context "as matched by day of the week" do
             before do
-              partner.organization.update(deadline_day:current_day + 2)
+              partner.organization.update(deadline_day: current_day + 2)
               partner.organization.reminder_schedule.assign_attributes({
                 by_month_or_week: "day_of_week",
                 day_of_week: 2,
@@ -90,7 +90,7 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
             partner_group.save
             partner_group.partners << partner
 
-            partner.organization.update(deadline_day:current_day + 2)
+            partner.organization.update(deadline_day: current_day + 2)
             partner.organization.reminder_schedule.assign_attributes({
               by_month_or_week: "day_of_month",
               day_of_month: current_day - 1,
@@ -130,7 +130,7 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
               partner_group.reminder_schedule.assign_attributes({
                 by_month_or_week: "day_of_month",
                 day_of_month: current_day,
-                every_nth_month: 1,
+                every_nth_month: 1
               })
               partner_group.save
               partner_group.partners << partner
@@ -170,7 +170,7 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
               partner_group.reminder_schedule.assign_attributes({
                 by_month_or_week: "day_of_month",
                 day_of_month: current_day - 1,
-                every_nth_month: 1,
+                every_nth_month: 1
               })
               partner_group.save
               partner_group.partners << partner

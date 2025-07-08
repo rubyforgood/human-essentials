@@ -21,13 +21,13 @@ class ReminderScheduleService
     :by_month_or_week,
     :day_of_month,
     :day_of_week,
-    :every_nth_day,
+    :every_nth_day
   ].freeze
 
-  attr_accessor *ReminderScheduleService::REMINDER_SCHEDULE_FIELDS
+  attr_accessor(*ReminderScheduleService::REMINDER_SCHEDULE_FIELDS)
 
   include ActiveModel::Validations
-  
+
   validate :every_nth_month_within_range?
   validate :start_date_is_valid_date_or_date_string?
   validates :by_month_or_week, inclusion: {in: %w[day_of_month day_of_week]}
@@ -35,7 +35,7 @@ class ReminderScheduleService
   validate :day_of_month_is_within_range?, if: -> { @by_month_or_week == "day_of_month" }
   validate :day_of_week_is_within_range?, if: -> { @by_month_or_week == "day_of_week" }
   validate :every_nth_day_is_within_range?, if: -> { @by_month_or_week == "day_of_week" }
-  
+
   def initialize(parameter_hash)
     @every_nth_month = parameter_hash[:every_nth_month]
     @start_date = parameter_hash[:start_date]
@@ -65,12 +65,12 @@ class ReminderScheduleService
       by_month_or_week: day_of_month ? "day_of_month" : "day_of_week",
       day_of_month: day_of_month,
       day_of_week: rule["validations"][:day_of_week]&.first&.day,
-      every_nth_day: rule["validations"][:day_of_week]&.first&.occ,
+      every_nth_day: rule["validations"][:day_of_week]&.first&.occ
     })
   end
 
   def []=(key, val)
-    self.send("#{key}=", val)
+    send("#{key}=", val)
   end
 
   def assign_attributes(attrs)
@@ -129,15 +129,14 @@ class ReminderScheduleService
   end
 
   def day_of_week_is_within_range?
-    unless day_of_week.present? && ([0, 1, 2, 3, 4, 5, 6,].include? day_of_week.to_i)
+    unless day_of_week.present? && ([0, 1, 2, 3, 4, 5, 6].include? day_of_week.to_i)
       errors.add(:day_of_week, "Day of week must be one of #{DAY_OF_WEEK_COLLECTION}")
     end
   end
 
   def every_nth_day_is_within_range?
-    unless every_nth_day.present? && ([1, 2, 3, 4, -1,].include? every_nth_day.to_i)
+    unless every_nth_day.present? && ([1, 2, 3, 4, -1].include? every_nth_day.to_i)
       errors.add(:every_nth_day, "Every Nth day must be one of #{EVERY_NTH_COLLECTION}")
     end
   end
-
 end

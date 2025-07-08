@@ -1,24 +1,29 @@
 RSpec.describe ReminderScheduleService, type: :service do
-
-  let(:day_of_month_schedule) { ReminderScheduleService.new({
-    every_nth_month: 1,
-    by_month_or_week: "day_of_month",
-    day_of_month: 10
-  }) }
-  let(:day_of_week_schedule) { ReminderScheduleService.new({
-    every_nth_month: 1,
-    by_month_or_week: "day_of_week",
-    day_of_week: 0,
-    every_nth_day: 1
-  }) }
-  let(:empty_schedule) { ReminderScheduleService.new({}) }
-  
-  describe "initialize" do
-    let(:subject) { ReminderScheduleService.new({
+  let(:day_of_month_schedule) {
+    ReminderScheduleService.new({
       every_nth_month: 1,
       by_month_or_week: "day_of_month",
       day_of_month: 10
-    }) }
+    })
+  }
+  let(:day_of_week_schedule) {
+    ReminderScheduleService.new({
+      every_nth_month: 1,
+      by_month_or_week: "day_of_week",
+      day_of_week: 0,
+      every_nth_day: 1
+    })
+  }
+  let(:empty_schedule) { ReminderScheduleService.new({}) }
+
+  describe "initialize" do
+    let(:subject) {
+      ReminderScheduleService.new({
+        every_nth_month: 1,
+        by_month_or_week: "day_of_month",
+        day_of_month: 10
+      })
+    }
 
     it "returns a ReminderScheduleService instance" do
       expect(subject).to be_a_kind_of(ReminderScheduleService)
@@ -33,15 +38,17 @@ RSpec.describe ReminderScheduleService, type: :service do
   end
 
   describe "from_ical" do
-    let(:subject) { ReminderScheduleService.from_ical(
-      "DTSTART;TZID=#{Time.zone.now.zone}:20201010T000000\nRRULE:FREQ=MONTHLY;BYMONTHDAY=10"
-    ) }
+    let(:subject) {
+      ReminderScheduleService.from_ical(
+        "DTSTART;TZID=#{Time.zone.now.zone}:20201010T000000\nRRULE:FREQ=MONTHLY;BYMONTHDAY=10"
+      )
+    }
 
     it "returns a ReminderScheduleService instance" do
       expect(subject).to be_a_kind_of(ReminderScheduleService)
       expect(subject.every_nth_month).to eq 1
       expect(subject.day_of_month).to eq 10
-      expect(subject.start_date).to be_within(1.second).of Time.zone.local(2020,10,10)
+      expect(subject.start_date).to be_within(1.second).of Time.zone.local(2020, 10, 10)
     end
 
     it "returns nil if a blank or invalid ical string is provided", :aggregate_failures do
@@ -76,7 +83,7 @@ RSpec.describe ReminderScheduleService, type: :service do
       result = day_of_month_schedule.to_icecube_schedule
       expect(result).to be_a_kind_of(IceCube::Schedule)
     end
-    
+
     it "returns nil if the ReminderScheduleService isn't valid" do
       expect(ReminderScheduleService.new({}).to_icecube_schedule).to eq nil
     end
@@ -116,7 +123,7 @@ RSpec.describe ReminderScheduleService, type: :service do
     it "returns true if all fields, except start_date, are nil" do
       expect(empty_schedule.no_fields_filled_out?).to be true
     end
-    
+
     it "returns false otherwise", :aggregate_failures do
       empty_schedule.every_nth_month = 1
       expect(empty_schedule.no_fields_filled_out?).to be false
@@ -131,7 +138,7 @@ RSpec.describe ReminderScheduleService, type: :service do
     end
 
     context "with a day_of_month schedule" do
-      let(:subject) {day_of_month_schedule}
+      let(:subject) { day_of_month_schedule }
 
       it "returns true if the schedule occurs on the provided date", :aggregate_failures do
         expect(subject.occurs_on?(Time.zone.local(2020, 10, 10))).to be true
@@ -147,7 +154,7 @@ RSpec.describe ReminderScheduleService, type: :service do
     end
 
     context "with a day_of_week schedule" do
-      let(:subject) {day_of_week_schedule}
+      let(:subject) { day_of_week_schedule }
 
       it "returns true if the schedule occurs on the provided date", :aggregate_failures do
         expect(subject.occurs_on?(Time.zone.local(2020, 2, 2))).to be true
@@ -207,9 +214,9 @@ RSpec.describe ReminderScheduleService, type: :service do
       day_of_week_schedule.by_month_or_week = nil
       expect(day_of_week_schedule).not_to be_valid
     end
-    
+
     context "on a day_of_month schedule" do
-      let(:subject) {day_of_month_schedule}
+      let(:subject) { day_of_month_schedule }
 
       it "validates that day_of_month falls within range" do
         (1..28).step(1) do |n|
@@ -244,7 +251,7 @@ RSpec.describe ReminderScheduleService, type: :service do
     end
 
     context "on a day_of_week schedule" do
-      let(:subject) {day_of_week_schedule}
+      let(:subject) { day_of_week_schedule }
 
       it "validates day_of_week falls within range" do
         (0..6).step(1) do |n|
