@@ -45,9 +45,11 @@
                     </td>
                     <td>
                       <% if pg.send_reminders %>
-                        <span>Reminder emails are sent on the <strong class='text-bold text-red-600'><%= pg.reminder_day.ordinalize %></strong> of every month. </span>
-                        <br>
-                        <span>Deadlines are the <strong class='text-bold text-red-600'><%= pg.deadline_day.ordinalize %></strong> of every month. </span>
+                        <% if pg.reminder_schedule.present? %>
+                          <span>Reminder emails are sent <strong class='text-bold text-red-600'><%= pg.reminder_schedule&.show_description %></strong>. </span>
+                          <br>
+                        <% end %>
+                        <span>Deadlines are the <strong class='text-bold text-red-600'><%= pg.deadline_day.ordinalize %></strong> after the reminder. </span>
                       <% else %>
                         <span class='text-gray-600 text-bold font-italic'>No</span>
                       <% end %>

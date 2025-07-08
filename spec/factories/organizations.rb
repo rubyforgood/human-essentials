@@ -23,6 +23,7 @@
 #  partner_form_fields                      :text             default([]), is an Array
 #  receive_email_on_requests                :boolean          default(FALSE), not null
 #  reminder_day                             :integer
+#  reminder_schedule_definition             :string
 #  repackage_essentials                     :boolean          default(FALSE), not null
 #  signature_for_distribution_pdf           :boolean          default(FALSE)
 #  state                                    :string
@@ -50,15 +51,8 @@ FactoryBot.define do
     city { 'Front Royal' }
     state { 'VA' }
     zipcode { '22630' }
-    reminder_day { 10 }
-    deadline_day { 20 }
 
     logo { Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/logo.jpg"), "image/jpeg") }
-
-    trait :without_deadlines do
-      reminder_day { nil }
-      deadline_day { nil }
-    end
 
     trait :with_items do
       after(:create) do |instance, evaluator|
