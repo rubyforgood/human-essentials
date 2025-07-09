@@ -7,10 +7,8 @@ class CustomDeviseMailer < Devise::Mailer
     # Replace the invitation instruction subject for partner users
     # that were invited by other partner users.
 
-    if resource.has_role?(Role::PARTNER, :any) && resource.id == resource.partner.primary_user&.id && resource.roles.size == 1
+    if resource.partner.present? && resource.roles.size == 1
       "You've been invited to be a partner with #{resource.partner.organization.name}"
-    elsif resource.has_role?(Role::PARTNER, :any) && resource.id != resource.partner.primary_user&.id
-      "You've been invited to #{resource.partner.name}'s Human Essentials account"
     else
       super
     end

@@ -342,16 +342,12 @@
                 <tr>
                   <td>
                     <% organization = @resource.partner&.organization %>
-                    <% is_primary_partner = @resource.id == @resource.partner&.primary_user&.id %>
                     <p>Hello <%= @resource.email %></p>
-                    <% if @resource.partner.present? && is_primary_partner && @resource.roles.size == 1 %>
+                    <% if @resource.partner.present? && @resource.roles.size == 1 %>
                       <p>You've been invited to become a partner with <strong><%= organization.name %>!</strong></p>
                       <p><%= organization.invitation_text %></p>
                       <p>Please click the link below to accept your invitation and create an account and you'll be able to begin requesting distributions.</p>
                       <p><strong> Please contact <%= organization.email %> if you are encountering any issues. </strong></p>
-                    <% elsif @resource.partner.present? && !is_primary_partner %>
-                      <p>You've been invited to <strong><%= @resource.partner.name %>'s</strong> account for requesting items from <strong><%= organization.name %>!</strong></p>
-                      <p>Please click the link below to accept your invitation and create an account and you'll be able to begin requesting distributions.</p>
                     <% else %>
                       <p>Your request has been approved and you're invited to become an user of the Human Essentials inventory management system!</p>
                       <p>Please, click the button below to accept this invitation and create a password to access your account.</p>
