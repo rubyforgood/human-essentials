@@ -56,7 +56,7 @@ describe DistributionPdf do
             ["Item 1", "", 50],
             ["Item 2", 30, 100],
             ["Item 3", 50, ""],
-            ["Item 4", 120, ""],
+            ["Item 4", "120 packs", ""],
             ["", "", ""],
             ["Total Items Received", 200, 150]
           ])
@@ -71,7 +71,7 @@ describe DistributionPdf do
             ["Item 1", "", 50, "1"],
             ["Item 2", 30, 100, nil],
             ["Item 3", 50, "", nil],
-            ["Item 4", 120, "", nil],
+            ["Item 4", "120 packs", "", nil],
             ["", "", ""],
             ["Total Items Received", 200, 150, ""]
           ])
@@ -89,7 +89,7 @@ describe DistributionPdf do
           ["Item 1", "", 50],
           ["Item 2", 30, 100],
           ["Item 3", 50, ""],
-          ["Item 4", 120, ""],
+          ["Item 4", "120 packs", ""],
           ["", "", ""],
           ["Total Items Received", 200, 150]
         ])
@@ -104,7 +104,7 @@ describe DistributionPdf do
           ["Item 1", "", 50, "1"],
           ["Item 2", 30, 100, nil],
           ["Item 3", 50, "", nil],
-          ["Item 4", 120, "", nil],
+          ["Item 4", "120 packs", "", nil],
           ["", "", ""],
           ["Total Items Received", 200, 150, ""]
         ])
@@ -122,7 +122,7 @@ describe DistributionPdf do
             ["Item 1", "", 50, "$1.00", "$50.00"],
             ["Item 2", 30, 100, "$2.00", "$200.00"],
             ["Item 3", 50, "", "$3.00", nil],
-            ["Item 4", 120, "", "$4.00", nil],
+            ["Item 4", "120 packs", "", "$4.00", nil],
             ["", "", "", "", ""],
             ["Total Items Received", 200, 150, "", "$250.00"]
           ])
