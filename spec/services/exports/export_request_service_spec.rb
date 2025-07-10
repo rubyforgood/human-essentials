@@ -234,6 +234,7 @@ RSpec.describe Exports::ExportRequestService do
           "2T Diapers -- UPDATED",
           "3T Diapers",
           "4T Diapers",
+          "4T Diapers - packs",
           "<DELETED_ITEMS>"
         ])
       end
@@ -251,6 +252,7 @@ RSpec.describe Exports::ExportRequestService do
           0,   # 2T Diapers
           150, # 3T Diapers
           0,   # 4T Diapers
+          0,   # 4T Diapers - packs
           0    # <DELETED_ITEMS>
         ])
       end
@@ -264,6 +266,7 @@ RSpec.describe Exports::ExportRequestService do
           100, # 2T Diapers
           0,   # 3T Diapers
           0,   # 4T Diapers
+          0,   # 4T Diapers - packs
           0    # <DELETED_ITEMS>
         ])
       end
@@ -277,6 +280,7 @@ RSpec.describe Exports::ExportRequestService do
           0,   # 2T Diapers
           0,   # 3T Diapers
           0,   # 4T Diapers
+          0,   # 4T Diapers - packs
           400  # <DELETED_ITEMS>
         ])
       end
@@ -289,7 +293,8 @@ RSpec.describe Exports::ExportRequestService do
           "Started",
           3,   # 2T Diapers
           2,   # 3T Diapers
-          4,   # 4T Diapers
+          0,   # 4T Diapers
+          4,   # 4T Diapers - packs
           0    # <DELETED_ITEMS>
         ])
       end
@@ -303,6 +308,7 @@ RSpec.describe Exports::ExportRequestService do
           0,   # 2T Diapers
           0,   # 3T Diapers
           77,  # 4T Diapers
+          0,   # 4T Diapers - packs
           0    # <DELETED_ITEMS>
         ])
       end
@@ -315,7 +321,8 @@ RSpec.describe Exports::ExportRequestService do
           "Started",
           0,   # 2T Diapers
           0,   # 3T Diapers
-          1,   # 4T Diapers
+          0,   # 4T Diapers
+          1,   # 4T Diapers - packs
           0    # <DELETED_ITEMS>
         ])
       end
