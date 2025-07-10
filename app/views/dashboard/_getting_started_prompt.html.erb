@@ -17,7 +17,7 @@
             </h5>
           </div>
 
-          <hr />
+          <hr>
 
           <div>
             <ul>
@@ -42,9 +42,9 @@
                     <%= link_to "Add other users at your bank", new_user_path, target: :_blank %>
                 </li>
                 <li>
-                    <%= link_to "Import Partners", partners_path, target: :_blank%>
+                    <%= link_to "Import Partners", partners_path, target: :_blank %>
                     or
-                    <%= link_to "Add a single partner", new_partner_path, target: :_blank%>
+                    <%= link_to "Add a single partner", new_partner_path, target: :_blank %>
                 </li>
             </ul>
           </div>
@@ -55,6 +55,5 @@
       <%= button_to "Dismiss", "/manage", method: :patch, params: {organization: { bank_is_set_up: true }}, class: "btn btn-primary" %>
     </div>
 
-   
   <% end %>
 <% end %>
