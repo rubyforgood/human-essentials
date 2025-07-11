@@ -303,10 +303,10 @@ RSpec.describe Exports::ExportPartnersCSVService do
     end
 
     it "should handle a partner with missing profile info" do
-      # The partner_profile factory defaults to populating the website, primary_contact_name, and primary_contact_email fields
+      # The partner_profile factory defaults to populating the no_social_media_presence, primary_contact_name, and primary_contact_email fields
       partners.first.update(profile: create(
         :partner_profile,
-        website: nil,
+        no_social_media_presence: nil,
         primary_contact_name: nil,
         primary_contact_email: nil
       ))

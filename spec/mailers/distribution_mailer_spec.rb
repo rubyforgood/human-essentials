@@ -100,6 +100,41 @@ RSpec.describe DistributionMailer, type: :mailer do
         expect(mail.body.encoded).to match(distribution_changes[:updates][0][:name])
       end
     end
+
+    context "when organization does not have custom default_email_text" do
+      before do
+        # When default_email_text is cleared through UI, it still contains whitespace/empty divs/HTML comments
+        organization.default_email_text = "<!-- comment --><div class='empty'>\n  </div>"
+        organization.save
+      end
+
+      context "without distribution changes" do
+        it "renders non-custom text" do
+          expect(mail.body.encoded).to match("You have a new distribution from #{organization.name}.")
+        end
+      end
+
+      context "with distribution changes" do
+        let(:distribution_changes) do
+          {
+            removed: [
+              { name: "Adult Diapers" }
+            ],
+            updates: [
+              {
+                name: "Kid Diapers",
+                new_quantity: 4,
+                old_quantity: 100
+              }
+            ]
+          }
+        end
+
+        it "does not render non-custom text" do
+          expect(mail.body.encoded).to_not match("You have a new distribution from #{organization.name}.")
+        end
+      end
+    end
   end
 
   describe "#reminder_email" do

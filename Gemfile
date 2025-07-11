@@ -14,7 +14,7 @@ gem "pg", "~> 1.5.9"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "~> 8.0.1"
+gem "rails", "~> 8.0.2"
 
 ###### MODELS / DATABASE #######
 
@@ -107,6 +107,9 @@ gem 'bootsnap', require: false
 # specific versions for compatibility reasons.
 gem "nokogiri", ">= 1.10.4"
 gem "sprockets", "~> 4.2.2"
+gem "prawn", "~> 2.4.0"
+gem "matrix" # Used by prawn
+gem "ttfunk", "~>1.7.0"
 
 group :production, :staging do
   # Reduce the noise of logs and include custom fields to it for easier access
@@ -144,14 +147,14 @@ group :development, :test do
   # Debugger which supports rdbg and Shopify Ruby LSP VSCode extension
   gem "debug", ">= 1.0.0"
   # RSpec behavioral testing framework for Rails.
-  gem "rspec-rails", "~> 7.1.0"
+  gem "rspec-rails", "~> 8.0.0"
   # Static analysis / linter.
   gem "rubocop"
   # Rails add-on for static analysis.
   gem 'rubocop-performance'
   gem "rubocop-rails", "~> 2.25.1"
   # More concise test ("should") matchers
-  gem "shoulda-matchers", "~> 6.4"
+  gem "shoulda-matchers", "~> 6.5"
   # Default rules for Rubocop.
   gem "standard", "~> 1.40"
   gem "standard-rails"
@@ -201,7 +204,7 @@ group :test do
   # Show code coverage.
   gem 'simplecov'
   # Mock HTTP requests and ensure they are not called during tests.
-  gem "webmock", "~> 3.24"
+  gem "webmock", "~> 3.25"
   # Interface capybara to chrome headless
   gem "cuprite"
   # Read PDF files for tests

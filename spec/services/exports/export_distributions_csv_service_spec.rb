@@ -1,41 +1,44 @@
 RSpec.describe Exports::ExportDistributionsCSVService do
   let(:organization) { create(:organization) }
+  let(:storage_location) { create(:storage_location, organization: organization) }
+  let(:partner) { create(:partner, name: "first partner", email: "firstpartner@gmail.com", notes: "just a note.", organization_id: organization.id) }
 
-  describe '#generate_csv_data' do
-    subject { described_class.new(distributions: distributions, organization: organization, filters: filters).generate_csv_data }
+  describe '#generate_csv' do
+    subject { described_class.new(distributions: distributions, organization: organization, filters: filters).generate_csv }
 
-    let(:duplicate_item) { create(:item, name: "Dupe Item", organization: organization) }
+    let(:duplicate_item) { create(:item, name: "Dupe Item", value_in_cents: 300, organization: organization) }
 
-    let(:items_lists) do
+    let(:distribution_items_and_quantities) {
       [
         [
           [duplicate_item, 5],
-          [create(:item, organization: organization), 7],
+          [create(:item, name: "A Item", value_in_cents: 1000, organization: organization), 7],
           [duplicate_item, 3]
         ],
-
-        *(Array.new(3) do |i|
-          [[create(:item, organization: organization), i + 1]]
-        end)
+        [[create(:item, name: "B Item", value_in_cents: 2000, organization: organization), 1]],
+        [[create(:item, name: "C Item", value_in_cents: 3000, organization: organization), 2]],
+        [[create(:item, name: "E Item", value_in_cents: 4000, organization: organization), 3]]
       ]
-    end
-
-    let(:item_names) { items_lists.flatten(1).map(&:first).map(&:name).sort.uniq }
+    }
 
     let(:distributions) do
-      start_time = Time.current
-
-      items_lists.each_with_index.map do |items, i|
+      distribution_items_and_quantities.each_with_index.map do |dist, i|
         distribution = create(
           :distribution,
-          issued_at: start_time - i.days, delivery_method: "shipped", shipping_cost: "12.09",
-          organization: organization
+          partner: partner,
+          organization: organization,
+          storage_location: storage_location,
+          created_at: "04/04/2025",
+          issued_at: "04/04/2025",
+          delivery_method: "shipped",
+          shipping_cost: "15.01",
+          state: "scheduled",
+          agency_rep: "",
+          comment: "comment #{i}"
         )
 
-        items.each do |(item, quantity)|
-          distribution.line_items << create(
-            :line_item, quantity: quantity, item: item
-          )
+        dist.each do |line_item|
+          distribution.line_items << create(:line_item, item: line_item[0], quantity: line_item[1])
         end
 
         distribution
@@ -45,64 +48,37 @@ RSpec.describe Exports::ExportDistributionsCSVService do
     let(:item_id) { duplicate_item.id }
     let(:item_name) { duplicate_item.name }
     let(:filters) { {by_item_id: item_id} }
-    let(:all_org_items) { Item.where(organization:).uniq.sort_by { |item| item.name.downcase } }
 
-    let(:total_item_quantities) do
-      template = all_org_items.pluck(:name).index_with(0)
-
-      items_lists.map do |items_list|
-        row = template.dup
-        items_list.each do |(item, quantity)|
-          row[item.name] += quantity
-        end
-        row.values
+    context 'while "Include in-kind value in donation and distribution exports?" is set to no' do
+      it 'should match the expected content without in-kind value of each item for the csv' do
+        csv = <<~CSV
+          Partner,Initial Allocation,Scheduled for,Source Inventory,Total Number of #{item_name},Total Value of #{item_name},Delivery Method,Shipping Cost,Status,Agency Representative,Comments,A Item,B Item,C Item,Dupe Item,E Item
+          #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},8,24.0,shipped,$15.01,scheduled,"",comment 0,7,0,0,8,0
+          #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},0,0.0,shipped,$15.01,scheduled,"",comment 1,0,1,0,0,0
+          #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},0,0.0,shipped,$15.01,scheduled,"",comment 2,0,0,2,0,0
+          #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},0,0.0,shipped,$15.01,scheduled,"",comment 3,0,0,0,0,3
+        CSV
+        expect(subject).to eq(csv)
       end
     end
 
-    let(:non_item_headers) do
-      [
-        "Partner",
-        "Initial Allocation",
-        "Scheduled for",
-        "Source Inventory",
-        "Total Number of #{item_name}",
-        "Total Value of #{item_name}",
-        "Delivery Method",
-        "Shipping Cost",
-        "Status",
-        "Agency Representative",
-        "Comments"
-      ]
-    end
+    context 'while "Include in-kind value in donation and distribution exports?" is set to yes' do
+      it 'should match the expected content with in-kind value of each item for the csv' do
+        allow(organization).to receive(:include_in_kind_values_in_exported_files).and_return(true)
 
-    let(:expected_headers) { non_item_headers + all_org_items.pluck(:name) }
-
-    it 'should match the expected content for the csv' do
-      expect(subject[0]).to eq(expected_headers)
-
-      distributions.zip(total_item_quantities).each_with_index do |(distribution, total_item_quantity), idx|
-        row = [
-          distribution.partner.name,
-          distribution.created_at.strftime("%m/%d/%Y"),
-          distribution.issued_at.strftime("%m/%d/%Y"),
-          distribution.storage_location.name,
-          distribution.line_items.where(item_id: item_id).total,
-          distribution.cents_to_dollar(distribution.line_items.total_value),
-          distribution.delivery_method,
-          "$#{distribution.shipping_cost.to_f}",
-          distribution.state,
-          distribution.agency_rep,
-          distribution.comment
-        ]
-
-        row += total_item_quantity
-
-        expect(subject[idx + 1]).to eq(row)
+        csv = <<~CSV
+          Partner,Initial Allocation,Scheduled for,Source Inventory,Total Number of #{item_name},Total Value of #{item_name},Delivery Method,Shipping Cost,Status,Agency Representative,Comments,A Item,A Item In-Kind Value,B Item,B Item In-Kind Value,C Item,C Item In-Kind Value,Dupe Item,Dupe Item In-Kind Value,E Item,E Item In-Kind Value
+          #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},8,24.0,shipped,$15.01,scheduled,"",comment 0,7,70.00,0,0.00,0,0.00,8,24.00,0,0.00
+          #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},0,0.0,shipped,$15.01,scheduled,"",comment 1,0,0.00,1,20.00,0,0.00,0,0.00,0,0.00
+          #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},0,0.0,shipped,$15.01,scheduled,"",comment 2,0,0.00,0,0.00,2,60.00,0,0.00,0,0.00
+          #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},0,0.0,shipped,$15.01,scheduled,"",comment 3,0,0.00,0,0.00,0,0.00,0,0.00,3,120.00
+        CSV
+        expect(subject).to eq(csv)
       end
     end
 
     context 'when a new item is added' do
-      let(:new_item_name) { "new item" }
+      let(:new_item_name) { "New Item" }
       let(:original_columns_count) { 15 }
       before do
         # if distributions are not created before new item
@@ -111,44 +87,25 @@ RSpec.describe Exports::ExportDistributionsCSVService do
         create(:item, name: new_item_name, organization: organization)
       end
 
-      it 'should add it to the end of the row' do
-        expect(subject[0]).to eq(expected_headers)
-          .and end_with(new_item_name)
-          .and have_attributes(size: 17)
-      end
-
-      it 'should show up with a 0 quantity if there are none of this item in any distribution' do
-        distributions.zip(total_item_quantities).each_with_index do |(distribution, total_item_quantity), idx|
-          row = [
-            distribution.partner.name,
-            distribution.created_at.strftime("%m/%d/%Y"),
-            distribution.issued_at.strftime("%m/%d/%Y"),
-            distribution.storage_location.name,
-            distribution.line_items.where(item_id: item_id).total,
-            distribution.cents_to_dollar(distribution.line_items.total_value),
-            distribution.delivery_method,
-            "$#{distribution.shipping_cost.to_f}",
-            distribution.state,
-            distribution.agency_rep,
-            distribution.comment
-          ]
-
-          row += total_item_quantity
-
-          expect(subject[idx + 1]).to eq(row)
-            .and end_with(0)
-            .and have_attributes(size: 17)
-        end
+      it 'should add it to the end of the row and show up with a 0 quantity if there are none of this item in any distribution' do
+        csv = <<~CSV
+          Partner,Initial Allocation,Scheduled for,Source Inventory,Total Number of #{item_name},Total Value of #{item_name},Delivery Method,Shipping Cost,Status,Agency Representative,Comments,A Item,B Item,C Item,Dupe Item,E Item,New Item
+          #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},8,24.0,shipped,$15.01,scheduled,"",comment 0,7,0,0,8,0,0
+          #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},0,0.0,shipped,$15.01,scheduled,"",comment 1,0,1,0,0,0,0
+          #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},0,0.0,shipped,$15.01,scheduled,"",comment 2,0,0,2,0,0,0
+          #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},0,0.0,shipped,$15.01,scheduled,"",comment 3,0,0,0,0,3,0
+        CSV
+        expect(subject).to eq(csv)
       end
     end
 
     context 'when there are no distributions but the report is requested' do
-      subject { described_class.new(distributions: [], organization: organization, filters: filters).generate_csv_data }
+      subject { described_class.new(distributions: [], organization: organization, filters: filters).generate_csv }
       it 'returns a csv with only headers and no rows' do
-        header_row = subject[0]
-        expect(header_row).to eq(expected_headers)
-        expect(header_row.last).to eq(all_org_items.last.name)
-        expect(subject.size).to eq(1)
+        csv = <<~CSV
+          Partner,Initial Allocation,Scheduled for,Source Inventory,Total Number of #{item_name},Total Value of #{item_name},Delivery Method,Shipping Cost,Status,Agency Representative,Comments,Dupe Item
+        CSV
+        expect(subject).to eq(csv)
       end
     end
   end

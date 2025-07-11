@@ -60,7 +60,7 @@ class StorageLocation < ApplicationRecord
     joins(:adjustments).where(organization_id: organization.id).distinct.active.alphabetized
   }
   scope :with_audits_for, ->(organization) {
-    joins(:audits).where(organization_id: organization.id).distinct.active.alphabetized
+    joins(:audits).where(organization_id: organization.id).distinct.alphabetized
   }
   scope :with_transfers_to, ->(organization) {
     joins(:transfers_to).where(organization_id: organization.id).distinct.order(:name)
