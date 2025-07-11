@@ -12,7 +12,6 @@
 
 FactoryBot.define do
   factory :inventory_item do
-    quantity { 300 }
     item
     storage_location
   end
