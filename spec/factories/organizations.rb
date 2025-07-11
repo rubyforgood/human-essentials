@@ -45,7 +45,6 @@ FactoryBot.define do
     end
 
     sequence(:name) { |n| "Essentials Bank #{n}" } # 037000863427
-    sequence(:short_name) { |n| "db_#{n}" } # 037000863427
     sequence(:email) { |n| "email#{n}@example.com" } # 037000863427
     sequence(:url) { |n| "https://organization#{n}.org" } # 037000863427
     street { "1500 Remount Road" }

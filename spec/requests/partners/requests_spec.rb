@@ -30,6 +30,13 @@ RSpec.describe "/partners/requests", type: :request do
       subject.call
       expect(response.body).to include("684")
     end
+
+    it "displays comment and sender" do
+      request = create(:request, partner_id: partner.id, request_items: [{item_id: item1.id, quantity: '125'}])
+      subject.call
+      expect(response.body).to include(request.comments)
+      expect(response.body).to include(request.requester.email)
+    end
   end
 
   describe "GET #new" do
@@ -421,6 +428,19 @@ RSpec.describe "/partners/requests", type: :request do
         expect(flash[:error]).to eq("That screen is not available. Please try again as a partner.")
         expect(response).to redirect_to(dashboard_path)
       end
+    end
+  end
+
+  describe 'POST #validate' do
+    it 'should handle missing CSRF gracefully' do
+      sign_in(partner_user)
+
+      ActionController::Base.allow_forgery_protection = true
+      post validate_partners_requests_path
+      ActionController::Base.allow_forgery_protection = false
+
+      expect(JSON.parse(response.body)).to eq({'valid' => false})
+      expect(response.status).to eq(200)
     end
   end
 end
