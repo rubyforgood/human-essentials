@@ -1,5 +1,5 @@
 RSpec.describe "Admin::Organizations", type: :request do
-  let(:organization) { create(:organization) }
+  let(:organization) { create(:organization, email: "email@testthis.com") }
 
   context "When logged in as a super admin" do
     before do
