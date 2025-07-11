@@ -28,7 +28,7 @@
       <% end %>
     </td>
     <td>
-      <% sorted_entries = event.data.items.sort_by do |entry| 
+      <% sorted_entries = event.data.items.sort_by do |entry|
           item = items.find { |i| i.id == entry.item_id }
           item&.name&.downcase || ''
         end %>
