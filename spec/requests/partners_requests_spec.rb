@@ -152,7 +152,7 @@ RSpec.describe "Partners", type: :request do
             "",
             "",
             "",
-            "",
+            "true",
             "true", # Columns from the partner_settings partial
             "true",
             "true",

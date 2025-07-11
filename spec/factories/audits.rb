@@ -18,7 +18,6 @@ FactoryBot.define do
     user { nil }
     storage_location { nil }
     adjustment { nil }
-    status { :in_progress }
 
     after(:build) do |instance, evaluator|
       instance.storage_location = evaluator.storage_location || create(:storage_location, organization: instance.organization)

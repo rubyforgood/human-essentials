@@ -1,196 +1,668 @@
-<!doctype html>
-<html class="no-js" lang="en">
-  <head>
-    <meta charset="utf-8">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Human Essentials</title>
+    <title>HumanEssentials.app - Modern Inventory Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    <%= stylesheet_link_tag 'landing_page', media: 'all' %>
-  </head>
-  <body>
-  <div class="hero pt-2">
-    <%= render partial: "shared/flash" %>
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            overflow-x: hidden;
+        }
 
-    <div class="container-fluid px-4 pt-3">
-      <nav>
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <a href="#" class="text-decoration-none">
-              <h2 class="text-white fw-bold mb-0">HumanEssentials.app</h2>
-            </a>
-          </div>
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-          <div class="d-flex">
-            <div class="d-flex text-white gap-4 gap-lg-5 align-items-center">
-              <a class="d-none d-md-block text-white text-decoration-none fs-5" href="#about">About</a>
-              <a class="d-none d-md-block text-white text-decoration-none fs-5" href="#testimonials">Testimonials</a>
-              <a class="d-none d-md-block text-white text-decoration-none fs-5" href="#contact">Contact</a>
-              <a class="text-decoration-none" href="<%= new_user_session_path %>">
-                <button class="btn btn-success d-flex align-items-center rounded-4">
-                  <span>Login</span>
-                </button>
-              </a>
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 8rem 0 6rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="grad1" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:rgba(255,255,255,0.1);stop-opacity:1" /><stop offset="100%" style="stop-color:rgba(255,255,255,0);stop-opacity:1" /></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23grad1)"/><circle cx="800" cy="300" r="150" fill="url(%23grad1)"/><circle cx="400" cy="700" r="120" fill="url(%23grad1)"/></svg>') no-repeat center center;
+            background-size: cover;
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-text h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .hero-text p {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
+        }
+
+        .hero-cta {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .primary-btn {
+            background: rgba(255, 255, 255, 0.95);
+            color: #667eea;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: inline-block;
+            text-align: center;
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            background: white;
+        }
+
+        .member-note {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+            font-style: italic;
+            text-align: center;
+        }
+
+        .hero-visual {
+            position: relative;
+            perspective: 1000px;
+        }
+
+        .hero-visual::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; }
+            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.3; }
+        }
+
+        .floating-cards {
+            position: relative;
+            width: 100%;
+            height: 400px;
+        }
+
+        .card {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 1.5rem;
+            color: white;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .card:nth-child(1) {
+            top: 50px;
+            left: 50px;
+            animation-delay: 0s;
+        }
+
+        .card:nth-child(2) {
+            top: 150px;
+            right: 30px;
+            animation-delay: 2s;
+        }
+
+        .card:nth-child(3) {
+            bottom: 250px;
+            left: 270px;
+            animation-delay: 4s;
+        }
+
+        .card:nth-child(4) {
+            bottom: 140px;
+            left: 10px;
+            animation-delay: 5s;
+        }
+
+        .card:nth-child(5) {
+            bottom: 50px;
+            left: 200px;
+            animation-delay: 8s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 6rem 0;
+            background: #f8fafc;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            font-size: 1.2rem;
+            color: #718096;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            margin-bottom: 6rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 24px;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: #718096;
+            line-height: 1.6;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            padding: 6rem 0;
+            color: white;
+        }
+
+        .testimonial-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 3rem;
+            margin: 2rem 0;
+        }
+
+        .testimonial-text {
+            font-size: 1.25rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: #f8fafc;
+            padding: 6rem 0;
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 3rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1a202c;
+            color: white;
+            padding: 4rem 0 2rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+        }
+
+        .footer-section h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: #a0aec0;
+            text-decoration: none;
+            line-height: 1.6;
+        }
+
+        .footer-section a:hover {
+            color: #667eea;
+        }
+
+        .privacy-link {
+            color: #667eea !important;
+            text-decoration: underline;
+            transition: all 0.3s ease;
+        }
+
+        .privacy-link:hover {
+            color: #764ba2 !important;
+            text-decoration: none;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid #2d3748;
+            color: #718096;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 0 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 2rem;
+            }
+
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .feature-card {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">HumanEssentials.app</div>
+            <ul class="nav-links">
+                <li><a href="#about">About</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#testimonials">Testimonials</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <a href="<%= new_user_session_path %>" class="login-btn">Login</a>
+        </nav>
+    </header>
+
+    <section class="hero" id="about">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>The easiest and most love-filled way to manage your Human Essentials bank</h1>
+                <p>Ready to make yourself more efficient? Transform your inventory management with our intuitive, powerful platform designed specifically for community organizations.</p>
+                <div class="hero-cta">
+                    <a href="<%= new_account_request_path %>" class="primary-btn">Register</a>
+                    <p class="member-note">Provided free for all in association with the National Diaper Bank Network and Alliance for Period Supplies</p>
+                </div>
             </div>
-          </div>
+            <div class="hero-visual">
+                <div class="floating-cards">
+                    <div class="card">
+                        <h4>📊 Analytics</h4>
+                        <p>Real-time insights</p>
+                    </div>
+                      <div class="card">
+                        <h4>📱 Reminders</h4>
+                        <p>Automatically notify users</p>
+                    </div>
+                    <div class="card">
+                        <h4>🔒 Secure</h4>
+                        <p>Anywhere access</p>
+                    </div>
+                    <div class="card">
+                        <h4>🤝 Partner Management</h4>
+                        <p>Manage and track partners</p>
+                    </div>
+                    <div class="card">
+                        <h4>📔 Reports</h4>
+                        <p>Generate Reports</p>
+                    </div>
+                </div>
+            </div>
         </div>
-      </nav>
-    </div>
+    </section>
 
-    <div class="hero-subcontainer container-fluid px-4 text-white">
-      <div class="row h-100 align-items-center">
-        <div class="col-12 col-lg-7">
-          <div class="d-flex flex-column align-items-center align-items-lg-start text-center">
-            <h2 class="fs-2 fw-bold text-lg-start">The easiest and most love-filled <br> way to manage your <br> Human Essentials bank.</h2>
-            <p class="fs-5 mb-3 mt-2 text-lg-start">Ready to make yourself more efficient?</p>
-            <a href="<%= new_account_request_path %>"><button type="button" class="btn btn-success fs-4 fw-bold text-white rounded-4">
-              Register your bank here for free!
-            </button></a>
-          </div>
-        </div>
-
-        <div class="col-0 d-none d-lg-block position-absolute w-25 p-0" style="right:13rem">
-          <%= image_tag("hero-image.svg", class: "w-100") %>
-        </div>
-      </div>
-    </div>
-  </div>
-
-    <div class="container-fluid mx-auto pt-5" id="about">
-      <div class="text-center mt-3">
-        <h2 class="fs-2 text-black text-opacity-75">The Human Essentials app removes the <br> complexity from your day</h2>
-        <p class="mt-1 mb-4 text-muted">and lets you spend time helping those who need it.</p>
-        <a href="mailto:info@humanessentials.app?Subject=Essentials%20Interest"><button type="button" class="fs-5 btn btn-success text-white px-3 py-2 rounded-4">Get In Touch</button></a>
-      </div>
-    </div>
-
-    <div class="w-75 mx-auto py-5 my-5">
-      <div class="row">
-        <div class="col-12 col-md-6 d-flex flex-column justify-content-center align-items-center">
-          <div class="pb-2">
-            <%= image_tag("partner-management.svg", class: "app-images") %>
-          </div>
-          <div class="text-center">
-            <h3 class="text-lg">Partner Management</h3>
-            <p class="text-muted mt-2">Invite, review applications, certify and recertify partner agencies. Review, approve, and view history of partner orders. </p>
-          </div>
-        </div>
-        <div class="col-12 col-md-6 d-flex flex-column justify-content-center align-items-center">
-          <div class="pb-2">
-            <%= image_tag("forecasting.svg", class: "app-images") %>
-          </div>
-          <div class="text-center">
-            <h3 class="text-lg">Forecasting</h3>
-            <p class="text-muted mt-2">View charts with month over month data for your distributions, purchases, and donations so you can accurately forecast need.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-12 col-md-6 d-flex flex-column justify-content-center align-items-center">
-          <div class="pb-2">
-            <%= image_tag("report-image.svg", class: "app-images") %>
-          </div>
-          <div class="text-center">
-            <h3 class="text-lg">Report Generation</h3>
-            <p class="text-muted mt-2">Generate PDFs of partner distribution invoices for easy printing and sending.</p>
-          </div>
-        </div>
-
-        <div class="col-12 col-md-6 d-flex flex-column justify-content-center align-items-center">
-          <div class="pb-2">
-            <%= image_tag("barcode.svg", class: "app-images") %>
-          </div>
-          <div class="text-center">
-            <h3 class="text-lg">Barcode Scanning</h3>
-            <p class="text-muted mt-2">Quickly add or remove inventory with the scan of a barcode. Creating your own barcodes is also supported.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-12 col-md-6 d-flex flex-column justify-content-center align-items-center">
-          <div class="pb-2">
-            <%= image_tag("inventory-image.svg", class: "app-images") %>
-          </div>
-          <div class="text-center">
-            <h3 class="text-lg">Inventory Management</h3>
-            <p class="text-muted mt-2">Easily keep track of the items in your inventory regardless of their storage location. Adjust and transfer your inventory between locations as needed.</p>
-          </div>
-        </div>
-
-        <div class="col-12 col-md-6 d-flex flex-column justify-content-center align-items-center">
-          <div class="pb-2">
-            <%= image_tag("dashboard-image.svg", class: "app-images") %>
-          </div>
-          <div class="text-center">
-            <h3 class="text-lg">Dashboard Visualization</h3>
-            <p class="text-muted mt-2">Quickly view your inventory, donations, purchases, and distributions on a single page.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="py-5 text-white" id="testimonials">
-      <div class="container-fluid">
-        <div class="row">
-
-          <div class="col-12 col-md-6 d-flex justify-content-center">
-            <%= image_tag("quote.svg", class: "quote-image") %>
-          </div>
-
-          <div class="col-12 col-md-6 pt-5 px-4">
-            <h2 class="fs-1">Testimonials</h2>
-            <figure>
-              <blockquote class="blockquote">
-                <p class="fs-6">Human Essentials has taken our diaper distribution to the next level. We no longer have to worry about how to track our incoming and outgoing inventory, and having all our products and data tracked in different ways in different documents and systems. Human Essentials has saved us time, money, energy and many, many headaches. The system is extremely intuitive and user-friendly and we are so grateful to have it.</p>
-              </blockquote>
-              <figcaption class="blockquote-footer text-white fw-bold">
-                Megan, Sweet Cheeks Diaper Bank
-              </figcaption>
-            </figure>
-            <figure>
-              <blockquote class="blockquote">
-                <p class="fs-6">Finally, an inventory management system designed specifically for the unique needs of diaper banks!</p>
-              </blockquote>
-              <figcaption class="blockquote-footer text-white fw-bold">
-                Rachel Alston, PDX Diaper Bank
-              </figcaption>
-            </figure>
-          </div>
-
-        </div>
-      </div>
-    </div>
-
-    <div class="container-fluid py-5" id="contact">
-      <div class="text-center py-5">
-        <h2 class="fs-1">Want to use the Human Essentials App?</h2>
-        <a href="<%= new_account_request_path %>"><button type="button" class="btn btn-success fs-5 text-white px-3 py-2 my-3 rounded-4">Request An Account</button></a>
-
-        <p class="text-muted">Have questions? Email us at <a href="mailto:info@humanessentials.app?Subject=Essentials%20Interest" target="_top">info@humanessentials.app</a></p>
-      </div>
-    </div>
-
-    <div class="bg-secondary py-5">
-      <div class="container-fluid py-5 my-0 my-md-5 text-white">
-        <div class="row text-center text-md-start">
-          <div class="col-12 col-md-6 mb-4">
-            <h2 class="ps-0 ps-md-5">HumanEssentials.app</h2>
-          </div>
-          <div class="col-12 col-md-6">
-            <strong>The Human Essentials App was lovingly built by:</strong>
-            <div class="mt-2">
-              <a class="link-info" href="http://www.pdxdiaperbank.org/">PDX Diaper Bank</a> |
-              <a class="link-info" href="http://rubyforgood.org/">Ruby for Good</a>
+    <!-- Main Content -->
+    <main class="main-content" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>The Human Essentials app removes the complexity from your day</h2>
+                <p>Streamline your operations with powerful tools designed for efficiency and ease of use</p>
             </div>
 
-            <div class="mt-1">
-              <a class="link-info" href="https://stories.freepik.com/business">Illustration by Freepik Stories</a>
-              <%= link_to "Privacy Policy", privacypolicy_path, class: "link-info d-block" %>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🤝</div>
+                    <h3>Partner Management</h3>
+                    <p>Invite, review applications, certify and recertify partner agencies. Review, approve, and view history of partner orders.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>Forecasting</h3>
+                    <p>View charts with month over month data for your distributions, purchases, and donations so you can accurately forecast need.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📋</div>
+                    <h3>Report Generation</h3>
+                    <p>Generate PDFs of partner distribution reports for easy printing and sharing with stakeholders and funding sources.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Barcode Scanning</h3>
+                    <p>Quickly add or remove inventory with the scan of a barcode. Creating your own barcodes is also supported.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📦</div>
+                    <h3>Inventory Management</h3>
+                    <p>Easily keep track of the items in your inventory regardless of their storage location. Adjust and transfer your inventory between locations as needed.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Dashboard Visualization</h3>
+                    <p>Quickly view your inventory, donations, purchases, and distributions on a single page with intuitive charts and metrics.</p>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-  </body>
+    </main>
+
+    <!-- Testimonials -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2 style="color: white;">What Our Users Say</h2>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-text">
+                    "Human Essentials has taken our diaper distribution to the next level. We no longer have to worry about how to track our incoming and outgoing inventory, and having all our products and data tracked in different ways in different documents and systems. Human Essentials has saved us time, money, energy and many, many headaches. The system is extremely intuitive and user-friendly and we are so grateful to have it."
+                </div>
+                <div class="testimonial-author">— Megan, Sweet Cheeks Diaper Bank</div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-text">
+                    "Finally, an inventory management system designed specifically for the unique needs of diaper banks!"
+                </div>
+                <div class="testimonial-author">— Rachel Alston, PDX Diaper Bank</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section" id="contact">
+        <div class="container">
+            <h2>Want to use the Human Essentials App?</h2>
+            <a href="<%= new_account_request_path %>" class="primary-btn" style="color: white; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">Request An Account</a>
+            <p style="margin-top: 1rem; color: #718096;">Have questions? Email us at <a href="mailto:info@humanessentials.app" style="color: #667eea;">info@humanessentials.app</a></p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>HumanEssentials.app</h3>
+                <p>The Human Essentials App was lovingly built by:</p>
+                <p>Ruby for Good | PDX Diaper Bank</p>
+                <p>Powered by Love and Community</p>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p>Email: info@humanessentials.app</p>
+                <p>For technical support and inquiries</p>
+                <p><a href="<%= privacypolicy_path %>" class="privacy-link">Privacy Policy</a></p>
+            </div>
+            <div class="footer-section">
+                <h3>About</h3>
+                <p>Built with love for community organizations to streamline their essential goods distribution and inventory management.</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 HumanEssentials.app. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add scroll effect to header
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(255, 255, 255, 0.98)';
+                header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+            } else {
+                header.style.background = 'rgba(255, 255, 255, 0.95)';
+                header.style.boxShadow = 'none';
+            }
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all feature cards
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'all 0.6s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
 </html>
