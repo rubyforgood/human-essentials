@@ -272,6 +272,27 @@ RSpec.describe "Purchases", type: :request do
         expect(response).to be_successful
       end
 
+      it 'should not allow edits if there is an intervening snapshot' do
+        purchase = FactoryBot.create(:purchase,
+          :with_items,
+          organization: organization,
+          created_at: 1.week.ago)
+        SnapshotEvent.create!(organization_id: organization.id,
+          created_at: 1.day.ago,
+          event_time: 1.day.ago,
+          eventable: organization,
+          data: EventTypes::Inventory.new(
+            organization_id: organization.id, storage_locations: {}
+          ))
+        get edit_purchase_path(id: purchase.id)
+        expect(response.body)
+          .to include('This purchase is too old to edit inventory. You can only change non-inventory fields.')
+        expect(response.body).not_to include('Add Another Item')
+        expect(response.body).not_to include('Remove Item')
+        parsed_body = Nokogiri::HTML(response.body)
+        expect(parsed_body.css('select.line_item_name[disabled]')).not_to be_empty
+      end
+
       it "storage location is correct" do
         storage2 = create(:storage_location, name: "storage2")
         purchase2 = create(:purchase, storage_location: storage2)
