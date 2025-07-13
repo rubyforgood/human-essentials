@@ -1,5 +1,5 @@
 RSpec.describe "Annual Reports", type: :request do
-  let(:organization) { create(:organization) }
+  let(:organization) { create(:organization, :created_at_2006) }
   let(:user) { create(:user, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 
@@ -76,6 +76,18 @@ RSpec.describe "Annual Reports", type: :request do
         expect(response).to have_http_status(:found)
         expect(AnnualReport.count).to eq(1)
         expect(report.reload.updated_at).not_to be_within(1.second).of(old_time)
+      end
+    end
+
+    describe "GET /range" do
+      it "returns AnnualReport within the specified range" do
+        get range_reports_annual_reports_path(year_start: 2004, year_end: 2008, format: :csv)
+        expect(response.body).not_to include("2004")
+        expect(response.body).not_to include("2005")
+        # the organization was created in 2006, so reports should start from there
+        expect(response.body).to include("2006")
+        expect(response.body).to include("2007")
+        expect(response.body).to include("2008")
       end
     end
   end
