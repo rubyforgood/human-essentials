@@ -28,15 +28,19 @@
                     Set up your inventory
                     <ul>
                         <li>
-                            <%= link_to "Add Custom Items", items_path, target: :_blank %>
+                            <%= link_to "Add any custom items", items_path, target: :_blank %>
                         </li>
                         <li>
                             <%= link_to "Do an audit to set up your current inventory levels", audits_path, target: :_blank %>
+                            -
+                            <%= link_to "(User guide)", "https://rubyforgood.github.io/human-essentials/user_guide/bank/getting_started_inventory.html", target: :_blank %>
                         </li>
                     </ul>
                 </li>
                 <li>
                     <%= link_to "Customize your organization", edit_organization_path, target: :_blank %>
+                    -
+                    <%= link_to "(User guide)", "https://rubyforgood.github.io/human-essentials/user_guide/bank/getting_started_customization.html", target: :_blank %>
                 </li>
                 <li>
                     <%= link_to "Add other users at your bank", new_user_path, target: :_blank %>

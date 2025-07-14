@@ -19,7 +19,7 @@ class OrganizationsController < ApplicationController
     @organization = current_organization
 
     if OrganizationUpdateService.update(@organization, organization_params)
-      redirect_to organization_path, notice: "Updated your organization!"
+      redirect_back(fallback_location: organization_path, notice: "Updated your organization!")
     else
       flash.now[:error] = @organization.errors.full_messages.join("\n")
       render :edit
