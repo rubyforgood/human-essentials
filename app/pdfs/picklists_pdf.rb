@@ -76,6 +76,16 @@ class PicklistsPdf
           font_size 10
         end
 
+        # Add quota information only if quota is set and greater than 0
+        quota = request.partner.quota
+        if quota && quota > 0
+          move_down 5
+          text "Quota:", style: :bold, align: :right
+          font_size 12
+          text quota.to_s, align: :right
+          font_size 10
+        end
+
         move_down 10
         text "Comments:", style: :bold
         font_size 12

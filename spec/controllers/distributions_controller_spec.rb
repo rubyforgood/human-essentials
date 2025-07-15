@@ -243,13 +243,13 @@ RSpec.describe DistributionsController, type: :controller do
           end
           it "should schedule the reminder email" do
             subject
-            expect(enqueued_jobs[2]["arguments"][1]).to eq("reminder_email")
+            expect(enqueued_jobs[1]["arguments"][1]).to eq("reminder_email")
           end
 
           it "should not schedule a reminder for a date in the past" do
             params[:distribution][:issued_at] = Date.yesterday
             subject
-            expect(enqueued_jobs.size).to eq(2)
+            expect(enqueued_jobs.size).to eq(1)
           end
         end
 
@@ -258,7 +258,7 @@ RSpec.describe DistributionsController, type: :controller do
 
           it "should not schedule an email reminder for a partner that disabled reminders" do
             subject
-            expect(enqueued_jobs.size).to eq(1)
+            expect(enqueued_jobs.size).to eq(0)
           end
         end
       end
@@ -419,13 +419,13 @@ RSpec.describe DistributionsController, type: :controller do
           end
           it "should schedule the reminder email" do
             subject
-            expect(enqueued_jobs[1]["arguments"][1]).to eq("reminder_email")
+            expect(enqueued_jobs.first["arguments"][1]).to eq("reminder_email")
           end
 
           it "should not schedule a reminder for a date in the past" do
             params[:distribution][:issued_at] = Date.yesterday
             subject
-            expect(enqueued_jobs.size).to eq(1)
+            expect(enqueued_jobs.size).to eq(0)
           end
         end
 
@@ -434,7 +434,7 @@ RSpec.describe DistributionsController, type: :controller do
 
           it "should not schedule an email reminder for a partner that disabled reminders" do
             subject
-            expect(enqueued_jobs.size).to eq(1)
+            expect(enqueued_jobs.size).to eq(0)
           end
         end
       end

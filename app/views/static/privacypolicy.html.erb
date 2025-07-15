@@ -1,134 +1,482 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Human Essentials</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - HumanEssentials.app</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <%= stylesheet_link_tag 'application', media: 'all' %>
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.7;
+            color: #1a1a1a;
+            background: #f8fafc;
+        }
 
-  <style>
-    h3 {
-      padding-top: 0.5rem;
-      padding-bottom: 1rem;
-      text-align: center;
-    }
-    h4, h5 {
-      text-align: center;
-    }
-    .text-blue {
-      color: #60A5FA;
-    }
-    .py-8 {
-      padding-top: 8rem;
-      padding-bottom: 8rem;
-    }
-    .bg-gray {
-      background-color: #6b7280;
-    }
-    .max-w-7xl {
-      max-width: 80rem;
-    }
-  </style>
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 8rem 0 4rem;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="grad1" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:rgba(255,255,255,0.1);stop-opacity:1" /><stop offset="100%" style="stop-color:rgba(255,255,255,0);stop-opacity:1" /></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23grad1)"/><circle cx="800" cy="300" r="150" fill="url(%23grad1)"/><circle cx="400" cy="700" r="120" fill="url(%23grad1)"/></svg>') no-repeat center center;
+            background-size: cover;
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .hero .subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 1rem;
+        }
+
+        .last-updated {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            padding: 0.75rem 1.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+            display: inline-block;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 24px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .intro-text {
+            font-size: 1.1rem;
+            color: #4a5568;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 16px;
+            border-left: 4px solid #667eea;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .section h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        .section p {
+            color: #4a5568;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .section p:last-child {
+            margin-bottom: 0;
+        }
+
+        .highlight-box {
+            background: rgba(102, 126, 234, 0.05);
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .contact-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .contact-info h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .contact-info p {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 1rem;
+        }
+
+        .contact-info a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            display: inline-block;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .contact-info a:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        .footer {
+            background: #1a202c;
+            color: white;
+            padding: 4rem 0 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+        }
+
+        .footer-section h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: #a0aec0;
+            text-decoration: none;
+            line-height: 1.6;
+        }
+
+        .footer-section a:hover {
+            color: #667eea;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid #2d3748;
+            color: #718096;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 0 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .main-content {
+                padding: 2rem 1rem;
+            }
+
+            .content-card {
+                padding: 2rem;
+            }
+        }
+
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Animation for content cards */
+        .content-card {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .content-card:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .content-card:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
-
 <body>
-<!--  Start Hero Section  -->
-  <section>
-    <header>
-      <div class="d-flex justify-content-center pt-2 bg-gray">
-        <nav class="top-bar" data-topbar role="navigation">
-          <img src="/img/essentials.svg" alt="Essentials Logo (icon)" title="HumanEssentials">
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <a href="/" class="logo">HumanEssentials.app</a>
+            <a href="/" class="back-btn">← Back to Home</a>
         </nav>
-      </div>
     </header>
-    <div class="px-3 pb-5">
 
-      <h5 class="pt-3 pb-2">Last updated: March 7th, 2022</h5>
-
-      <p>
-      Ruby for Good operates http://humanessentials.app (the "Site"). This page informs you of our policies regarding the collection, use and disclosure of Personal Information we receive from users of the Site.
-      </p>
-
-      <p>
-      We use your Personal Information only for providing and improving the Site. By using the Site, you agree to the collection and use of information in accordance with this policy.
-      </p>
-
-      <h3>Information Collection And Use</h3>
-
-      <p>
-      While using our Site, we may ask you to provide us with certain personally identifiable information that can be used to contact or identify you. Personally identifiable information may include, but is not limited to your name, and email ("Personal Information").
-      </p>
-
-      <h3>Log Data</h3>
-
-      <p>
-      Like many site operators, we collect information that your browser sends whenever you visit our Site ("Log Data").
-      </p>
-
-      <p>
-      This Log Data may include information such as your computer's Internet Protocol ("IP") address, browser type, browser version, the pages of our Site that you visit, the time and date of your visit, the time spent on those pages and other statistics.
-      </p>
-
-      <h3>Communications</h3>
-
-      <p>
-      We may use your Personal Information to contact you with newsletters, website updates, and notifications of website maintenance.
-      </p>
-
-      <h3>Cookies</h3>
-
-      <p>
-      Cookies are files with small amount of data, which may include an anonymous unique identifier. Cookies are sent to your browser from a web site and stored on your computer's hard drive.
-      </p>
-
-      <p>
-      Like many sites, we use "cookies" to collect information. You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do not accept cookies, you may not be able to use some portions of our Site.
-      </p>
-
-      <h3>Security</h3>
-
-      <p>
-      The security of your Personal Information is important to us, but remember that no method of transmission over the Internet, or method of electronic storage, is 100% secure. While we strive to use commercially acceptable means to protect your Personal Information, we cannot guarantee its absolute security.
-      </p>
-
-      <h3>Changes To This Privacy Policy</h3>
-
-      <p>
-      This Privacy Policy is effective as of March 7th, 2022 and will remain in effect except with respect to any changes in its provisions in the future, which will be in effect immediately after being posted on this page.
-      </p>
-
-      <p>
-      We reserve the right to update or change our Privacy Policy at any time and you should check this Privacy Policy periodically. Your continued use of the Service after we post any modifications to the Privacy Policy on this page will constitute your acknowledgment of the modifications and your consent to abide and be bound by the modified Privacy Policy.
-      </p>
-
-      <p>
-      If we make any material changes to this Privacy Policy, we will notify you either through the email address you have provided us, or by placing a prominent notice on our website.
-      </p>
-
-      <h3>Contact Us</h3>
-
-      <p>
-      If you have any questions about this Privacy Policy, please contact us at <a href="mailto:info@humanessentials.app?Subject=Questions%20about%20Privacy%20Policy" target="_top">info@humanessentials.app</a>.
-      </p>
-    </div>
-  </section>
-
-  <div class="bg-gray">
-    <div class="container max-w-7xl mx-auto py-8 text-white">
-      <div class="d-flex flex-column mx-auto text-sm-start flex-sm-row">
-        <div class="w-100 col-sm-6">
-          <h2 class="fw-light">HumanEssentials.app</h2>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Privacy Policy</h1>
+            <p class="subtitle">Your privacy and data security are our top priorities</p>
+            <div class="last-updated">Last updated: March 7th, 2022</div>
         </div>
-        <div class="w-100 col-sm-6">
-          <strong class="text-white">Human Essentials was lovingly swaddled by:</strong>
-          <div class="mt-sm-0 mt-1">
-            <a class="text-blue" href="http://www.pdxdiaperbank.org/">PDX Diaper Bank</a> <span class="text-white"> | </span>
-            <a class="text-blue" href="http://rubyforgood.org/">Ruby for Good</a>
-          </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-card">
+            <div class="intro-text">
+                Ruby for Good operates
+ http://humanessentials.app (the "Site"). This page informs you of our policies regarding the collection, use and disclosure of Personal Information we receive from users of the Site.
+                <br><br>
+                We use your Personal Information only for providing and improving the Site. By using the Site, you agree to the collection and use of information in accordance with this policy.
+            </div>
+
+            <div class="section">
+                <h2>Information Collection And Use</h2>
+                <p>While using our Site, we may ask you to provide us with certain personally identifiable information that can be used to contact or identify you. Personally identifiable information may include, but is not limited to your name, and email ("Personal Information").</p>
+            </div>
+
+            <div class="section">
+                <h2>Log Data</h2>
+                <p>Like many site operators, we collect information that your browser sends whenever you visit our Site ("Log Data").</p>
+                <div class="highlight-box">
+                    <p>This Log Data may include information such as your computer's Internet Protocol ("IP") address, browser type, browser version, the pages of our Site that you visit, the time and date of your visit, the time spent on those pages and other statistics.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Communications</h2>
+                <p>We may use your Personal Information to contact you with newsletters, website updates, and notifications of website maintenance.</p>
+            </div>
+
+            <div class="section">
+                <h2>Cookies</h2>
+                <p>Cookies are files with small amount of data, which may include an anonymous unique identifier. Cookies are sent to your browser from a web site and stored on your computer's hard drive.</p>
+                <div class="highlight-box">
+                    <p>Like many sites, we use "cookies" to collect information. You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do not accept cookies, you may not be able to use some portions of our Site.</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Security</h2>
+                <p>The security of your Personal Information is important to us, but remember that no method of transmission over the Internet, or method of electronic storage, is 100% secure. While we strive to use commercially acceptable means to protect your Personal Information, we cannot guarantee its absolute security.</p>
+            </div>
+
+            <div class="section">
+                <h2>Changes To This Privacy Policy</h2>
+                <p>This Privacy Policy is effective as of March 7th, 2022 and will remain in effect except with respect to any changes in its provisions in the future, which will be in effect immediately after being posted on this page.</p>
+                <p>We reserve the right to update or change our Privacy Policy at any time and you should check this Privacy Policy periodically. Your continued use of the Service after we post any modifications to the Privacy Policy on this page will constitute your acknowledgment of the modifications and your consent to abide and be bound by the modified Privacy Policy.</p>
+                <div class="highlight-box">
+                    <p>If we make any material changes to this Privacy Policy, we will notify you either through the email address you have provided us, or by placing a prominent notice on our website.</p>
+                </div>
+            </div>
+
+            <div class="contact-info">
+                <h3>Contact Us</h3>
+                <p>If you have any questions about this Privacy Policy, please contact us at:</p>
+                <a href="mailto:info@humanessentials.app">info@humanessentials.app</a>
+            </div>
         </div>
-      </div>
-    </div>
-  </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>HumanEssentials.app</h3>
+                <p>The Human Essentials App was lovingly built by:</p>
+                <p>Ruby for Good | PDX Diaper Bank</p>
+                <p>Powered by Love and Community</p>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <p><a href="/privacypolicy">Privacy Policy</a></p>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <p>Email: info@humanessentials.app</p>
+                <p>For technical support and privacy inquiries</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 HumanEssentials.app. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add scroll effect to header
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(255, 255, 255, 0.98)';
+                header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+            } else {
+                header.style.background = 'rgba(255, 255, 255, 0.95)';
+                header.style.boxShadow = 'none';
+            }
+        });
+    </script>
 </body>
 </html>

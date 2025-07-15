@@ -67,20 +67,57 @@ describe PicklistsPdf do
         expect(pdf_test.page(1).text).to include(request.partner.profile.pick_up_phone)
       end
     end
+
+    context "when partner has a quota" do
+      it "renders the quota information when quota is set" do
+        partner = create(:partner)
+        partner.update(quota: 100)
+        request = create(:request, :pending, organization: organization, partner: partner)
+        create(:item_request, request: request, item: item1, name: "Item 1")
+
+        pdf = described_class.new(organization, [request])
+        pdf_test = PDF::Reader.new(StringIO.new(pdf.compute_and_render))
+
+        expect(pdf_test.page(1).text).to include("Quota:")
+        expect(pdf_test.page(1).text).to include("100")
+      end
+
+      it "does not render quota information when quota is not set" do
+        partner = create(:partner, quota: nil)
+        request = create(:request, :pending, organization: organization, partner: partner)
+        create(:item_request, request: request, item: item1, name: "Item 1")
+
+        pdf = described_class.new(organization, [request])
+        pdf_test = PDF::Reader.new(StringIO.new(pdf.compute_and_render))
+
+        expect(pdf_test.page(1).text).not_to include("Quota:")
+      end
+
+      it "does not render quota information when quota is zero" do
+        partner = create(:partner, quota: 0)
+        request = create(:request, :pending, organization: organization, partner: partner)
+        create(:item_request, request: request, item: item1, name: "Item 1")
+
+        pdf = described_class.new(organization, [request])
+        pdf_test = PDF::Reader.new(StringIO.new(pdf.compute_and_render))
+
+        expect(pdf_test.page(1).text).not_to include("Quota:")
+      end
+    end
   end
 
   context "When packs are not enabled" do
     specify "#data_no_units" do
       request = create(:request, :pending, organization: organization)
-      create(:item_request, request: request, item: item1, name: "Item 1")
-      create(:item_request, request: request, item: item2, name: "Item 2")
+      create(:item_request, request: request, item: item1, name: "Item 1", quantity: 5)
+      create(:item_request, request: request, item: item2, name: "Item 2", quantity: 10)
       pdf = described_class.new(organization, [request])
       data = pdf.data_no_units(request.item_requests)
 
       expect(data).to eq([
         ["Items Requested", "Quantity", "[X]", "Differences / Comments"],
         ["Item 1", "5", "[  ]", ""],
-        ["Item 2", "5", "[  ]", ""]
+        ["Item 2", "10", "[  ]", ""]
       ])
     end
   end
@@ -92,15 +129,15 @@ describe PicklistsPdf do
       item_with_units = create(:item, name: "Item with units", organization: organization)
       create(:item_unit, item: item_with_units, name: "Pack")
       request = create(:request, :pending, organization: organization)
-      create(:item_request, request: request, item: item_with_units, name: "Item with units", request_unit: "Pack")
-      create(:item_request, request: request, item: item2, name: "Item 2")
+      create(:item_request, request: request, item: item_with_units, name: "Item with units", request_unit: "Pack", quantity: 5)
+      create(:item_request, request: request, item: item2, name: "Item 2", quantity: 10)
       pdf = described_class.new(organization, [request])
       data = pdf.data_with_units(request.item_requests)
 
       expect(data).to eq([
         ["Items Requested", "Quantity", "Unit (if applicable)", "[X]", "Differences / Comments"],
         ["Item with units", "5", "Packs", "[  ]", ""],
-        ["Item 2", "5", nil, "[  ]", ""]
+        ["Item 2", "10", nil, "[  ]", ""]
       ])
     end
   end

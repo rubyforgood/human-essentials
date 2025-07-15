@@ -1,7 +1,7 @@
 RSpec.describe ItemizableUpdateService do
   let(:organization) { create(:organization) }
-  let(:storage_location) { create(:storage_location, organization: organization, item_count: 0) }
-  let(:new_storage_location) { create(:storage_location, organization: organization, item_count: 0) }
+  let(:storage_location) { create(:storage_location, organization: organization) }
+  let(:new_storage_location) { create(:storage_location, organization: organization) }
   let(:item1) { create(:item, organization: organization, name: "My Item 1") }
   let(:item2) { create(:item, organization: organization, name: "My Item 2") }
   let(:item3) { create(:item, organization: organization, name: "My Item 3") }
