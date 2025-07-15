@@ -8,10 +8,7 @@ class ItemCreateService
   def call
     new_item = organization.items.new(item_params)
     new_item.save!
-    if Flipper.enabled?(:enable_packs)
-      new_item.sync_request_units!(@request_unit_ids)
-    end
-
+    new_item.sync_request_units!(@request_unit_ids)
     Result.new(value: new_item)
   rescue StandardError => e
     Result.new(error: e)
