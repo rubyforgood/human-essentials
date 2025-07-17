@@ -106,6 +106,10 @@ class ReminderScheduleService
     to_icecube_schedule&.occurs_on?(date)
   end
 
+  def next_occurrence
+    to_icecube_schedule&.next_occurrence
+  end
+
   private
 
   def every_nth_month_within_range?

@@ -175,6 +175,11 @@
               <p>
                 <%= fa_icon "calendar" %>
                 <%= @organization.reminder_schedule&.show_description.blank? ? 'Not defined' : @organization.reminder_schedule&.show_description %>
+                <% if @organization.reminder_schedule.valid? %>
+                  <small class="mb-3 d-block text-muted">
+                    <%= "Your next reminder date is #{@organization.reminder_schedule.next_occurrence&.strftime('%a %b %d %Y')}." %>
+                  </small>
+                <% end %>
               </p>
             </div>
             <div>
@@ -182,6 +187,14 @@
               <p>
                 <%= fa_icon "calendar" %>
                 <%= @organization.deadline_day.blank? ? 'Not defined' : "The #{@organization.deadline_day.ordinalize} after the reminder." %>
+                <small class="mb-3 d-block text-muted">
+                  <% if @organization.deadline_day && @organization.reminder_schedule.valid? %>
+                    <%= "Your next deadline date is #{DeadlineService.new(
+                      deadline_day: @organization.deadline_day,
+                      today: @organization.reminder_schedule.next_occurrence).next_deadline&.strftime('%a %b %d %Y')}."
+                    %>
+                  <% end %>
+                </small>
               </p>
             </div>
             <div>

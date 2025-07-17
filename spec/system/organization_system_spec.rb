@@ -116,7 +116,7 @@ RSpec.describe "Organization management", type: :system, js: true do
         travel_to shown_recurrence_date
 
         expect(Partners::FetchPartnersToRemindNowService.new.fetch).to include(partner)
-        expect(DeadlineService.new(partner: partner).next_deadline.in_time_zone(Time.zone)).to be_within(1.second).of shown_deadline_date
+        expect(DeadlineService.new(deadline_day: DeadlineService.get_deadline_for_partner(partner)).next_deadline.in_time_zone(Time.zone)).to be_within(1.second).of shown_deadline_date
       end
 
       it 'can select if the org repackages essentials' do
