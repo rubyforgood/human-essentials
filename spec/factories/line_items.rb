@@ -13,7 +13,7 @@
 
 FactoryBot.define do
   factory :line_item do
-    quantity { 1 }
+    quantity { 999 } # Don't test this number
     item { create(:item) }
     for_donation
 

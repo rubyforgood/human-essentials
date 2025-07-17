@@ -19,7 +19,7 @@ RSpec.describe Exports::ExportAdjustmentsCSVService do
     [item1, item2, item3, item4, item5].map(&:name).sort
   end
 
-  let(:storage_location) { create(:storage_location, organization: organization) }
+  let(:storage_location) { create(:storage_location, organization: organization, name: "Test Storage Location") }
   let(:user) { create(:user, organization: organization) }
 
   around do |example|
@@ -69,9 +69,9 @@ RSpec.describe Exports::ExportAdjustmentsCSVService do
       it "should include the correct adjustment data" do
         csv = <<~CSV
           Created date,Storage Area,Comment,# of changes,item1,item2,item3,item4,item5
-          2024-12-25,Smithsonian Conservation Center,adjustment 1,2,10,-5,0,0,0
-          2024-12-25,Smithsonian Conservation Center,adjustment 2,1,0,0,3,0,0
-          2024-12-25,Smithsonian Conservation Center,adjustment 3,1,7,0,0,0,0
+          2024-12-25,Test Storage Location,adjustment 1,2,10,-5,0,0,0
+          2024-12-25,Test Storage Location,adjustment 2,1,0,0,3,0,0
+          2024-12-25,Test Storage Location,adjustment 3,1,7,0,0,0,0
         CSV
 
         expect(subject).to eq(csv)
