@@ -19,7 +19,7 @@ class OrganizationsController < ApplicationController
     @organization = current_organization
 
     if OrganizationUpdateService.update(@organization, organization_params)
-      redirect_to organization_path, notice: "Updated your organization!"
+      redirect_back(fallback_location: organization_path, notice: "Updated your organization!")
     else
       flash.now[:error] = @organization.errors.full_messages.join("\n")
       render :edit
@@ -102,6 +102,7 @@ class OrganizationsController < ApplicationController
       :ytd_on_distribution_printout, :one_step_partner_invite,
       :hide_value_columns_on_receipt, :hide_package_column_on_receipt,
       :signature_for_distribution_pdf, :receive_email_on_requests,
+      :bank_is_set_up,
       :include_in_kind_values_in_exported_files,
       partner_form_fields: [],
       request_unit_names: []
