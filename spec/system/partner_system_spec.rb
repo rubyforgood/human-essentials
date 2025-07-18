@@ -611,13 +611,57 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         sign_in(user)
       end
 
-      let!(:item_category_1) { create(:item_category, organization: organization) }
-      let!(:item_category_2) { create(:item_category, organization: organization) }
+      let!(:item_category_1) { create(:item_category, name: "Category One", organization: organization) }
+      let!(:item_category_2) { create(:item_category, name: "Category Two", organization: organization) }
       let!(:items_in_category_1) { create_list(:item, 3, item_category_id: item_category_1.id) }
       let!(:items_in_category_2) { create_list(:item, 3, item_category_id: item_category_2.id) }
 
+      describe 'viewing the partner groups' do
+        let!(:partner_group_1) { create(:partner_group, name: "Group One", organization: organization) }
+        let!(:partner_1) { create(:partner, name: "Partner One", partner_group: partner_group_1) }
+        before do
+          partner_group_1.item_categories << item_category_1
+        end
+
+        it "shows the name, member partners, and item categories" do
+          visit partners_path
+          click_on 'Groups'
+          expect(page).to have_content("Group One")
+          expect(page).to have_content("Partner One")
+          expect(page).to have_content("Category One")
+
+          expect(page).not_to have_content("Your next reminder date is Tue Oct 20 2020.")
+          expect(page).not_to have_content("Your next deadline date is Sun Oct 25 2020.")
+        end
+
+        context "with a reminder schedule" do
+          before do
+            travel_to Time.zone.local(2020, 10, 10)
+            valid_reminder_schedule = ReminderScheduleService.new({
+              by_month_or_week: "day_of_month",
+              every_nth_month: 1,
+              day_of_month: 20
+            }).to_ical
+            partner_group_1.update(
+              send_reminders: true,
+              deadline_day: 25,
+              reminder_schedule_definition: valid_reminder_schedule
+            )
+          end
+          
+          it "reports the next date a reminder email will be sent the deadline date that will be included in the next reminder email" do
+            visit partners_path
+            click_on 'Groups'
+            expect(page).to have_content("Your next reminder date is Tue Oct 20 2020.")
+            expect(page).to have_content("Your next deadline date is Sun Oct 25 2020.")
+          end
+        end
+
+      end
+
       describe 'creating a new partner group' do
         it 'should allow creating a new partner group with item categories' do
+          travel_to Time.zone.local(2020, 10, 10)
           visit partners_path
 
           click_on 'Groups'
@@ -638,6 +682,8 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           assert page.has_content? 'Group Name', wait: page_content_wait
           assert page.has_content? 'Test Group'
           assert page.has_content? item_category_2.name
+          expect(page).to have_content("Your next reminder date is Sun Nov 01 2020.")
+          expect(page).to have_content("Your next deadline date is Wed Nov 25 2020.")
         end
       end
 
@@ -709,6 +755,9 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
             expect(Partners::FetchPartnersToRemindNowService.new.fetch).to include(partner)
             expect(DeadlineService.new(deadline_day: DeadlineService.get_deadline_for_partner(partner)).next_deadline.in_time_zone(Time.zone)).to be_within(1.second).of shown_deadline_date
+          
+            expect(page).to have_content("Your next reminder date is #{reminder_text}.")
+            expect(page).to have_content("Your next deadline date is #{deadline_text}.")
           end
         end
       end

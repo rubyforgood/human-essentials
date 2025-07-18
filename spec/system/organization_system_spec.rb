@@ -66,6 +66,34 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page).to have_content("Other emails")
         expect(page).to have_content("Printing")
         expect(page).to have_content("Annual Survey")
+
+        expect(page).not_to have_content("Your next reminder date is ")
+        expect(page).not_to have_content("Your next deadline date is ") 
+      end
+
+      context "with a reminder schedule" do
+        before do
+          travel_to Time.zone.local(2020, 10, 10)
+          valid_reminder_schedule = ReminderScheduleService.new({
+            by_month_or_week: "day_of_month",
+            every_nth_month: 1,
+            day_of_month: 20
+          }).to_ical
+          organization.update(reminder_schedule_definition: valid_reminder_schedule)
+        end
+        
+        it "reports the next date a reminder email will be sent" do
+          visit organization_path
+          expect(page).to have_content("Your next reminder date is Tue Oct 20 2020.")
+          expect(page).not_to have_content("Your next deadline date is Sun Oct 25 2020.")            
+        end
+
+        it "reports the deadline date that will be included in the next reminder email" do
+          organization.update(deadline_day: 25)
+          visit organization_path
+          expect(page).to have_content("Your next reminder date is Tue Oct 20 2020.")
+          expect(page).to have_content("Your next deadline date is Sun Oct 25 2020.")
+        end
       end
     end
 
@@ -117,6 +145,9 @@ RSpec.describe "Organization management", type: :system, js: true do
 
         expect(Partners::FetchPartnersToRemindNowService.new.fetch).to include(partner)
         expect(DeadlineService.new(deadline_day: DeadlineService.get_deadline_for_partner(partner)).next_deadline.in_time_zone(Time.zone)).to be_within(1.second).of shown_deadline_date
+      
+        expect(page).to have_content("Your next reminder date is #{reminder_text}.")
+        expect(page).to have_content("Your next deadline date is #{deadline_text}.")
       end
 
       it 'can select if the org repackages essentials' do
