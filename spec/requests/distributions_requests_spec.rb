@@ -608,6 +608,24 @@ RSpec.describe "Distributions", type: :request do
         end
       end
 
+      context 'without line items - with intervening snapshot' do
+        it 'should save the other parameters' do
+          distribution = FactoryBot.create(:distribution,
+            :with_items,
+            organization: organization,
+            created_at: 1.week.ago)
+          SnapshotEvent.create!(organization_id: organization.id,
+            created_at: 1.day.ago,
+            event_time: 1.day.ago,
+            eventable: organization,
+            data: EventTypes::Inventory.new(
+              organization_id: organization.id, storage_locations: {}
+            ))
+          put distribution_path({ id: distribution.id, distribution: {comment: "A new comment"}})
+          expect(distribution.reload.comment).to eq("A new comment")
+        end
+      end
+
       describe "when changing storage location" do
         let(:item) { create(:item, organization: organization) }
         it "updates storage quantity correctly" do
@@ -693,6 +711,48 @@ RSpec.describe "Distributions", type: :request do
         get edit_distribution_path(id: distribution.id)
         expect(response).to be_successful
         expect(response.body).not_to include("You’ve had an audit since this distribution was started.")
+      end
+
+      describe 'audit warnings' do
+        let!(:item) { create(:item, organization: organization, name: "Brightbloom Seed") }
+        let!(:storage_location) { create(:storage_location, :with_items, item: item, organization: organization) }
+        let!(:distribution) { create(:distribution, :with_items, item: item, storage_location: storage_location, created_at: 1.week.ago) }
+
+        context "when an audit has been performed on the purchased items" do
+          before(:each) do
+            create(:audit, :with_items, item: item, storage_location: storage_location, status: "finalized")
+          end
+
+          it "shows a warning" do
+            get edit_distribution_path(distribution)
+
+            expect(response.body).to include("You’ve had an audit since this distribution was started.")
+          end
+
+          context 'with an intervening snapshot' do
+            it 'does not show a warning' do
+              SnapshotEvent.create!(organization_id: organization.id,
+                created_at: 1.day.ago,
+                event_time: 1.day.ago,
+                eventable: organization,
+                data: EventTypes::Inventory.new(
+                  organization_id: organization.id, storage_locations: {}
+                ))
+
+              get edit_distribution_path(distribution)
+
+              expect(response.body).not_to include("You’ve had an audit since this distribution was started.")
+            end
+          end
+        end
+
+        context "when no audit has been performed" do
+          it "does not show a warning" do
+            get edit_distribution_path(distribution)
+
+            expect(response.body).to_not include("You’ve had an audit since this distribution was started.")
+          end
+        end
       end
 
       it "should show a warning if there is an inteverning audit" do

@@ -185,14 +185,14 @@ class DistributionsController < ApplicationController
       @request = @distribution.request
       @items = current_organization.items.active.alphabetized
       @partner_list = current_organization.partners.alphabetized
+      @changes_disallowed = SnapshotEvent.intervening?(@distribution)
       @audit_warning = current_organization.audits
         .where(storage_location_id: @distribution.storage_location_id)
-        .where("updated_at > ?", @distribution.created_at).any?
+        .where("updated_at > ?", @distribution.created_at).any? && !@changes_disallowed
       inventory = View::Inventory.new(@distribution.organization_id)
       @storage_locations = current_organization.storage_locations.active.alphabetized.select do |storage_loc|
         !inventory.quantity_for(storage_location: storage_loc.id).negative?
       end
-      @changes_disallowed = SnapshotEvent.intervening?(@distribution)
     else
       redirect_to distributions_path, error: 'To edit a distribution,
       you must be an organization admin or the current date must be later than today.'

@@ -196,6 +196,24 @@ RSpec.describe "Donations", type: :request do
           expect(flash[:alert]).to include("Money raised must be greater than or equal to 0")
         end
       end
+
+      context 'without line items - with intervening snapshot' do
+        it 'should save the other parameters' do
+          donation = FactoryBot.create(:donation,
+            :with_items,
+            organization: organization,
+            created_at: 1.week.ago)
+          SnapshotEvent.create!(organization_id: organization.id,
+            created_at: 1.day.ago,
+            event_time: 1.day.ago,
+            eventable: organization,
+            data: EventTypes::Inventory.new(
+              organization_id: organization.id, storage_locations: {}
+            ))
+          put donation_path({ id: donation.id, donation: {comment: "A new comment"}})
+          expect(donation.reload.comment).to eq("A new comment")
+        end
+      end
     end
 
     describe "GET #print" do
@@ -280,18 +298,23 @@ RSpec.describe "Donations", type: :request do
         parsed_body = Nokogiri::HTML(response.body)
         expect(parsed_body.css('select.line_item_name[disabled]')).not_to be_empty
       end
+    end
 
-      context "when an finalized audit has been performed on the donated items" do
-        it "shows a warning" do
-          item = create(:item, organization: organization, name: "Brightbloom Seed")
-          storage_location = create(:storage_location, :with_items, item: item, organization: organization)
-          donation = create(:donation, :with_items, item: item, organization: organization, storage_location: storage_location)
+    describe 'audit warnings' do
+      let!(:item) { create(:item, organization: organization, name: "Brightbloom Seed") }
+      let!(:storage_location) { create(:storage_location, :with_items, item: item, organization: organization) }
+      let!(:donation) { create(:donation, :with_items, item: item, storage_location: storage_location, created_at: 1.week.ago) }
+
+      context "when an finalized audit has been performed on the purchased items" do
+        before(:each) do
           create(:audit, :with_items, item: item, storage_location: storage_location, status: "finalized")
+        end
 
+        it "shows a warning" do
           get edit_donation_path(donation)
 
           expect(response.body).to include("You’ve had an audit since this donation was started.")
-          expect(response.body).to include("In the case that you are correcting a typo, rather than recording that the physical amounts being donated have changed,\n")
+          expect(response.body).to include("In the case that you are correcting a typo, rather than recording that the physical amounts being donated have changed,")
           expect(response.body).to include("you’ll need to make an adjustment to the inventory as well.")
         end
       end
@@ -317,35 +340,45 @@ RSpec.describe "Donations", type: :request do
           expect(sorted_names[0]).to eq(active_donation_site.name)
           expect(sorted_names[1]).to eq(inactive_donation_site.name)
         end
+
+        context 'with an intervening snapshot' do
+          it 'does not show a warning' do
+            SnapshotEvent.create!(organization_id: organization.id,
+              created_at: 1.day.ago,
+              event_time: 1.day.ago,
+              eventable: organization,
+              data: EventTypes::Inventory.new(
+                organization_id: organization.id, storage_locations: {}
+              ))
+
+            get edit_donation_path(donation)
+
+            expect(response.body).not_to include("You’ve had an audit since this donation was started.")
+          end
+        end
       end
-    end
 
-    context "when an non-finalized audit has been performed on the donated items" do
-      it "does not shows a warning" do
-        item = create(:item, organization: organization, name: "Brightbloom Seed")
-        storage_location = create(:storage_location, :with_items, item: item, organization: organization)
-        donation = create(:donation, :with_items, item: item, organization: organization, storage_location: storage_location)
-        create(:audit, :with_items, item: item, storage_location: storage_location, status: "confirmed")
+      context "when non-finalized audit has been performed on the purchased items" do
+        before(:each) do
+          create(:audit, :with_items, item: item, storage_location: storage_location, status: "confirmed")
+        end
+        it "does not show a warning" do
+          get edit_donation_path(donation)
 
-        get edit_donation_path(donation)
-
-        expect(response.body).to_not include("You’ve had an audit since this donation was started.")
-        expect(response.body).to_not include("In the case that you are correcting a typo, rather than recording that the physical amounts being donated have changed,\n")
-        expect(response.body).to_not include("you’ll need to make an adjustment to the inventory as well.")
+          expect(response.body).to_not include("You’ve had an audit since this donation was started.")
+          expect(response.body).to_not include("In the case that you are correcting a typo, rather than recording that the physical amounts being purchased have changed,")
+          expect(response.body).to_not include("you’ll need to make an adjustment to the inventory as well.")
+        end
       end
-    end
 
-    context "when no audit has been performed" do
-      it "doesn't show a warning" do
-        item = create(:item, organization: organization, name: "Brightbloom Seed")
-        storage_location = create(:storage_location, :with_items, item: item, organization: organization)
-        donation = create(:donation, :with_items, item: item, organization: organization, storage_location: storage_location)
+      context "when no audit has been performed" do
+        it "does not show a warning" do
+          get edit_donation_path(donation)
 
-        get edit_donation_path(donation)
-
-        expect(response.body).to_not include("You’ve had an audit since this donation was started.")
-        expect(response.body).to_not include("In the case that you are correcting a typo, rather than recording that the physical amounts being donated have changed,\n")
-        expect(response.body).to_not include("you’ll need to make an adjustment to the inventory as well.")
+          expect(response.body).to_not include("You’ve had an audit since this donation was started.")
+          expect(response.body).to_not include("In the case that you are correcting a typo, rather than recording that the physical amounts being purchased have changed,")
+          expect(response.body).to_not include("you’ll need to make an adjustment to the inventory as well.")
+        end
       end
     end
 

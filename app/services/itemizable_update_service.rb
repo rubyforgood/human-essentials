@@ -4,6 +4,12 @@ module ItemizableUpdateService
     # @param params [Hash] Parameters passed from the controller. Should include `line_item_attributes`.
     # @param event_class [Class<Event>] the event class to publish the itemizable to.
     def call(itemizable:, params: {}, event_class: nil)
+      if params[:line_items_attributes].blank?
+        itemizable.update!(params)
+        itemizable.reload
+        return
+      end
+
       original_storage_location = itemizable.storage_location
       StorageLocation.transaction do
         item_ids = params[:line_items_attributes]&.values&.map { |i| i[:item_id].to_i } || []
