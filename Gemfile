@@ -61,6 +61,8 @@ gem "filterrific"
 gem "jbuilder"
 # Pagination of models for use in views.
 gem "kaminari"
+# Prevents cookie overflow errors when storing large flash messages.
+gem 'memflash'
 # Web-based authorization framework.
 gem "omniauth"
 # Required to avoid authentication issues with Rails.
