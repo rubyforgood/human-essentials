@@ -91,8 +91,8 @@ RSpec.describe Kit, type: :model do
     describe ".value_per_itemizable" do
       it "calculates values from associated items" do
         kit.line_items = [
-          create(:line_item, item: create(:item, value_in_cents: 100)),
-          create(:line_item, item: create(:item, value_in_cents: 90))
+          create(:line_item, quantity: 1, item: create(:item, value_in_cents: 100)),
+          create(:line_item, quantity: 1, item: create(:item, value_in_cents: 90))
         ]
         expect(kit.value_per_itemizable).to eq(190)
       end

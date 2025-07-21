@@ -15,7 +15,7 @@
 
 FactoryBot.define do
   factory :partner_group do
-    sequence(:name) { |n| "Group #{n}" }
+    sequence(:name) { |n| "Dont test this #{n}" }
     organization { Organization.try(:first) || create(:organization) }
   end
 end
