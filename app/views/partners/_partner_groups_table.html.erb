@@ -57,8 +57,7 @@
                           <small class="mb-3 d-block text-muted">
                             <%= "Your next deadline date is #{DeadlineService.new(
                               deadline_day: pg.deadline_day,
-                              today: pg.reminder_schedule.next_occurrence).next_deadline&.strftime('%a %b %d %Y')}."
-                            %>
+                              today: pg.reminder_schedule.next_occurrence).next_deadline&.strftime('%a %b %d %Y')}." %>
                           </small>
                         <% end %>
                       <% else %>

@@ -68,7 +68,7 @@ RSpec.describe "Organization management", type: :system, js: true do
         expect(page).to have_content("Annual Survey")
 
         expect(page).not_to have_content("Your next reminder date is ")
-        expect(page).not_to have_content("Your next deadline date is ") 
+        expect(page).not_to have_content("Your next deadline date is ")
       end
 
       context "with a reminder schedule" do
@@ -81,11 +81,11 @@ RSpec.describe "Organization management", type: :system, js: true do
           }).to_ical
           organization.update(reminder_schedule_definition: valid_reminder_schedule)
         end
-        
+
         it "reports the next date a reminder email will be sent" do
           visit organization_path
           expect(page).to have_content("Your next reminder date is Tue Oct 20 2020.")
-          expect(page).not_to have_content("Your next deadline date is Sun Oct 25 2020.")            
+          expect(page).not_to have_content("Your next deadline date is Sun Oct 25 2020.")
         end
 
         it "reports the deadline date that will be included in the next reminder email" do
@@ -145,7 +145,7 @@ RSpec.describe "Organization management", type: :system, js: true do
 
         expect(Partners::FetchPartnersToRemindNowService.new.fetch).to include(partner)
         expect(DeadlineService.new(deadline_day: DeadlineService.get_deadline_for_partner(partner)).next_deadline.in_time_zone(Time.zone)).to be_within(1.second).of shown_deadline_date
-      
+
         expect(page).to have_content("Your next reminder date is #{reminder_text}.")
         expect(page).to have_content("Your next deadline date is #{deadline_text}.")
       end

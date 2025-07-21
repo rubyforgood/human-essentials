@@ -191,8 +191,7 @@
                   <% if @organization.deadline_day && @organization.reminder_schedule.valid? %>
                     <%= "Your next deadline date is #{DeadlineService.new(
                       deadline_day: @organization.deadline_day,
-                      today: @organization.reminder_schedule.next_occurrence).next_deadline&.strftime('%a %b %d %Y')}."
-                    %>
+                      today: @organization.reminder_schedule.next_occurrence).next_deadline&.strftime('%a %b %d %Y')}." %>
                   <% end %>
                 </small>
               </p>
