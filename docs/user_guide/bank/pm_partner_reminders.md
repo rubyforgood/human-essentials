@@ -1,9 +1,13 @@
 # Partner Reminder Emails 
 You may configure a reminder schedule on an organization and/or Partner Group level. Partners who are covered by these categories, and who individually have reminders enabled, will receive an email based on the schedule, reminding them of the deadline for submitting requests. 
 
-You may configure the monthly frequency of reminders and the date of the month or weekday of the month they are sent. You may also configure the deadline date included in the email.
+You may configure the monthly frequency of reminders, the date on or after which reminders will first be sent (refered to as the start date), the date of the month or weekday of the month they are sent, and the deadline date included in the email.
 
 As you fill out the form, it should show you a preview of the next time the reminder will be sent, and the deadline date that will be included in the email.
+
+When configuring a non-monthly reminder schedule (every 2 months, every 3 months, etc.) it is recommended you set the start date to correspond to the the first date you would like reminders to be sent. For example, if the reminder is set to be every 3 months on the 14th, and it is currently January 21st, it is recommended to set the start date to one of Febuary 14th, March 14th, April 14th, etc.
+
+Be aware that due to how these schedules are checked, it is unlikely that a newly created or updated schedule set to send a reminder the day it is created or update will actually send that reminder.
 
 ## Default deadline day (final day of month to submit Requests)
 This is the day which will be included in the reminder email message.
