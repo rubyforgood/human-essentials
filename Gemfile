@@ -108,6 +108,7 @@ gem 'bootsnap', require: false
 gem "nokogiri", ">= 1.10.4"
 gem "sprockets", "~> 4.2.2"
 gem "prawn", "~> 2.4.0"
+gem "matrix" # Used by prawn
 gem "ttfunk", "~>1.7.0"
 
 group :production, :staging do
@@ -155,7 +156,7 @@ group :development, :test do
   # More concise test ("should") matchers
   gem "shoulda-matchers", "~> 6.5"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.40"
+  gem "standard", "~> 1.50"
   gem "standard-rails"
   gem "standard-performance"
   # Erb linter.

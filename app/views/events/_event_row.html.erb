@@ -28,10 +28,14 @@
       <% end %>
     </td>
     <td>
-      <% event.data.items.each do |entry| %>
-        <% item = items.find { |i| i.id == entry.item_id} %>
+      <% sorted_entries = event.data.items.sort_by do |entry|
+          item = items.find { |i| i.id == entry.item_id }
+          item&.name&.downcase || ''
+        end %>
+      <% sorted_entries.each do |entry| %>
+        <% item = items.find { |i| i.id == entry.item_id } %>
         <% if item %>
-          <%= link_to items.find { |i| i.id == entry.item_id}.name, item_path(entry.item_id) %>:
+          <%= link_to item.name, item_path(item.id) %>:
         <% else %>
           Item <%= entry.item_id %> (deleted)
         <% end %>
