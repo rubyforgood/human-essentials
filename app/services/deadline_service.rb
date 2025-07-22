@@ -1,18 +1,19 @@
 class DeadlineService
   include ServiceObjectErrorsMixin
 
-  def initialize(partner:)
-    @partner = partner
-    @today = Time.zone.today
+  def initialize(deadline_day:, today: nil)
+    @deadline_day = deadline_day
+    @today = today || Time.zone.today
   end
 
   def next_deadline
-    day = @partner.partner_group&.deadline_day ||
-      @partner.organization.deadline_day
+    return if @deadline_day.blank?
 
-    return if day.blank?
+    next_date(@deadline_day)
+  end
 
-    next_date(day)
+  def self.get_deadline_for_partner(partner)
+    partner.partner_group&.deadline_day || partner.organization.deadline_day
   end
 
   private
