@@ -41,6 +41,19 @@ RSpec.describe 'Requests', type: :request do
           expect(response.body).to include('Print Unfulfilled Picklists (2)')
         end
       end
+
+      context "when there is a filter applied" do
+        it "shows print unfulfilled picklists button with correct quantity when filtered" do
+          Request.delete_all
+
+          create(:request, :pending)
+          create(:request, :started)
+
+          get requests_path({ filters: { by_status: :started} })
+
+          expect(response.body).to include('Print Unfulfilled Picklists (1)')
+        end
+      end
     end
 
     describe 'GET #show' do
