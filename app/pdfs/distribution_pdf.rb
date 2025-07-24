@@ -89,6 +89,11 @@ class DistributionPdf
       end
 
       move_down 10
+      text "Distribution ID:", style: :bold
+      font_size 12
+      text @distribution.id.to_s
+
+      move_down 10
       text "Comments:", style: :bold
       font_size 12
       text @distribution.comment
