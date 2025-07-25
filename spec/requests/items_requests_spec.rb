@@ -54,8 +54,8 @@ RSpec.describe "Items", type: :request do
 
               csv = <<~CSV
                 Name,Barcodes,Base Item,Quantity
-                Briefs(M/L),"",#{active_item.base_item.name},0
-                Briefs(S/M),"",#{inactive_item.base_item.name},0
+                Briefs(M/L),"","",0
+                Briefs(S/M),"","",0
               CSV
 
               expect(response.body).to eq(csv)
@@ -68,7 +68,7 @@ RSpec.describe "Items", type: :request do
 
               csv = <<~CSV
                 Name,Barcodes,Base Item,Quantity
-                Briefs(M/L),"",#{active_item.base_item.name},0
+                Briefs(M/L),"","",0
               CSV
 
               expect(response.body).to eq(csv)
