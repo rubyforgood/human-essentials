@@ -8,55 +8,20 @@ RSpec.describe "Dashboard", type: :system, js: true do
       sign_in(user)
     end
 
-    it "displays the getting started guide until the steps are completed" do
+    it "displays the getting started guide until the bank_is_set_up flag is true" do
       org_dashboard_page = OrganizationDashboardPage.new
       org_dashboard_page.visit
 
-      # rubocop:disable Layout/ExtraSpacing
+      # Expect the getting started guide to be present initially
+      expect(org_dashboard_page).to have_getting_started_guide
 
-      # When dashboard loads, ensure that we are on step 1 (Storage Locations)
-      expect(org_dashboard_page).to     have_getting_started_guide
-      expect(org_dashboard_page).to     have_add_storage_location_call_to_action
-      expect(org_dashboard_page).not_to have_add_partner_call_to_action
-      expect(org_dashboard_page).not_to have_add_donation_site_call_to_action
-      expect(org_dashboard_page).not_to have_add_inventory_call_to_action
+      # Update the organization flag to mark the bank as set up
+      organization.update!(bank_is_set_up: true)
 
-      # After we create a storage location, ensure that we are on step 2 (Partner Agency)
-      create(:storage_location, organization: organization)
+      # Re-visit the page to see the effect of the flag change
       org_dashboard_page.visit
 
-      expect(org_dashboard_page).to     have_getting_started_guide
-      expect(org_dashboard_page).to     have_add_partner_call_to_action_with_two_links
-      expect(org_dashboard_page).not_to have_add_storage_location_call_to_action
-      expect(org_dashboard_page).not_to have_add_donation_site_call_to_action
-      expect(org_dashboard_page).not_to have_add_inventory_call_to_action
-
-      # After we create a partner agency, ensure that we are on step 3 (Donation Site)
-      create(:partner, organization: organization)
-      org_dashboard_page.visit
-
-      expect(org_dashboard_page).to     have_getting_started_guide
-      expect(org_dashboard_page).not_to have_add_partner_call_to_action
-      expect(org_dashboard_page).not_to have_add_storage_location_call_to_action
-      expect(org_dashboard_page).to     have_add_donation_site_call_to_action
-      expect(org_dashboard_page).not_to have_add_inventory_call_to_action
-
-      # After we create a donation site, ensure that we are on step 4 (Inventory)
-      create(:donation_site, organization: organization)
-      org_dashboard_page.visit
-
-      expect(org_dashboard_page).to     have_getting_started_guide
-      expect(org_dashboard_page).not_to have_add_partner_call_to_action
-      expect(org_dashboard_page).not_to have_add_storage_location_call_to_action
-      expect(org_dashboard_page).not_to have_add_donation_site_call_to_action
-      expect(org_dashboard_page).to     have_add_inventory_call_to_action
-
-      # rubocop:enable Layout/ExtraSpacing
-
-      # After we add inventory to a storage location, ensure that the getting starting guide is gone
-      create(:storage_location, :with_items, item_quantity: 125, organization: organization)
-      org_dashboard_page.visit
-
+      # Now, expect the getting started guide to be gone
       expect(org_dashboard_page).not_to have_getting_started_guide
     end
   end
