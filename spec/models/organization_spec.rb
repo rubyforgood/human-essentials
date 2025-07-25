@@ -227,7 +227,7 @@ RSpec.describe Organization, type: :model do
     context "when given an item name that already exists, but with an 'other' partner key" do
       it "updates the old item to use the new base item as its base" do
         create(:base_item, name: "Other", partner_key: "other")
-        item = create(:item, name: "Foo", organization:)
+        item = create(:item, name: "Foo", organization:, partner_key: "other")
         organization.items << item
 
         base_item = create(:base_item, name: "Foo", partner_key: "foo")
