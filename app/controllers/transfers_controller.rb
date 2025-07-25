@@ -57,6 +57,17 @@ class TransfersController < ApplicationController
     redirect_to transfers_path
   end
 
+  def validate
+    @transfer = current_organization.transfers.new(transfer_params)
+
+    if @transfer.valid?
+      body = render_to_string(partial: "transfers/validate_modal", formats: [:html], layout: false)
+      render json: {valid: true, body: body}
+    else
+      render json: { valid: false }, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def load_form_collections
