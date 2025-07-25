@@ -97,7 +97,7 @@ RSpec.describe "Events", type: :request do
               }
             )
           )
-          donation = create(:donation, organization: organization)
+          donation = create(:donation, organization: organization, created_at: 1.day.from_now)
           DonationEvent.create!(
             eventable: donation,
             organization_id: organization.id,

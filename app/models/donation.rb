@@ -67,6 +67,7 @@ class Donation < ApplicationRecord
   validates :source, presence: true, inclusion: { in: SOURCES.values, message: "Must be a valid source." }
   validates :money_raised, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validate :line_items_quantity_is_positive
+  before_destroy :check_no_intervening_snapshot
 
   # TODO: move this to Organization.donations as an extension
   scope :during, ->(range) { where(donations: { issued_at: range }) }
@@ -134,5 +135,11 @@ class Donation < ApplicationRecord
 
   def line_items_quantity_is_positive
     line_items_quantity_is_at_least(1)
+  end
+
+  def check_no_intervening_snapshot
+    if SnapshotEvent.intervening?(self)
+      raise "Cannot delete this donation because it has an intervening snapshot."
+    end
   end
 end
