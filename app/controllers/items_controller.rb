@@ -41,7 +41,6 @@ class ItemsController < ApplicationController
     if result.success?
       redirect_to items_path, notice: "#{result.value.name} added!"
     else
-      @base_items = BaseItem.without_kit.alphabetized
       # Define a @item to be used in the `new` action to be rendered with
       # the provided parameters. This is required to render the page again
       # with the error + the invalid parameters.
@@ -53,13 +52,11 @@ class ItemsController < ApplicationController
   end
 
   def new
-    @base_items = BaseItem.without_kit.alphabetized
     @item_categories = current_organization.item_categories
     @item = current_organization.items.new
   end
 
   def edit
-    @base_items = BaseItem.without_kit.alphabetized
     @item_categories = current_organization.item_categories
     @item = current_organization.items.find(params[:id])
   end
@@ -77,7 +74,6 @@ class ItemsController < ApplicationController
     @item.attributes = item_params
     deactivated = @item.active_changed? && !@item.active
     if deactivated && !@item.can_deactivate?
-      @base_items = BaseItem.without_kit.alphabetized
       flash.now[:error] = "Can't deactivate this item - it is currently assigned to either an active kit or a storage location!"
       render action: :edit
       return
@@ -86,7 +82,6 @@ class ItemsController < ApplicationController
     if update_item
       redirect_to items_path, notice: "#{@item.name} updated!"
     else
-      @base_items = BaseItem.without_kit.alphabetized
       flash.now[:error] = "Something didn't work quite right -- try again? #{@item.errors.map { |error| "#{error.attribute}: #{error.message}" }}"
       render action: :edit
     end

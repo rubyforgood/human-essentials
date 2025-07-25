@@ -7,33 +7,31 @@ RSpec.describe "Item management", type: :system do
   end
 
   it "can create a new item as a user" do
-    create(:base_item, name: "BaseItem")
     item_traits = attributes_for(:item)
 
     visit new_item_path
     fill_in "Name", with: item_traits[:name]
-    select "BaseItem", from: "Base Item"
+    select "Other", from: "Reporting Category"
     click_button "Save"
 
     expect(page.find(".alert")).to have_content "added"
   end
 
-  it "can create a new item with empty attributes as a user" do
+  it "can't create a new item with empty attributes as a user" do
     visit new_item_path
     click_button "Save"
 
-    expect(page.find(".alert")).to have_content "Base item must exist and Name can't be blank"
+    expect(page.find(".alert")).to have_content "Name can't be blank and Reporting category can't be blank"
   end
 
   it "can create a new item with dollars decimal amount for value field" do
-    create(:base_item, name: "BaseItem")
     item_traits = attributes_for(:item)
 
     visit new_item_path
 
     fill_in "Name", with: item_traits[:name]
     fill_in "item_value_in_dollars", with: '1,234.56'
-    select "BaseItem", from: "Base Item"
+    select "Other", from: "Reporting Category"
     click_button "Save"
 
     expect(page.find(".alert")).to have_content "added"
@@ -155,7 +153,6 @@ RSpec.describe "Item management", type: :system do
   end
 
   describe 'Item Category Management' do
-    let!(:base_item) { create(:base_item, name: "BaseItem") }
     let!(:item) { create(:item, name: "SomeRandomItem", organization: organization) }
 
     before do
@@ -192,7 +189,7 @@ RSpec.describe "Item management", type: :system do
 
         before do
           click_on 'New Item'
-          select "BaseItem", from: 'Base Item'
+          select "Other", from: "Reporting Category"
           fill_in 'Name *', with: new_item_name
           select new_item_category, from: 'Category'
 

@@ -180,6 +180,7 @@ RSpec.describe "Items", type: :request do
             item: {
               name: "really good item",
               partner_key: create(:base_item).partner_key,
+              reporting_category: "other",
               value_in_cents: 1001,
               package_size: 5,
               distribution_quantity: 30
@@ -324,8 +325,6 @@ RSpec.describe "Items", type: :request do
       let!(:item_unit_2) { create(:item_unit, item: item, name: 'ITEM2') }
       it 'shows complete item details except custom request' do
         get item_path(id: item.id)
-        expect(response.body).to include('Base Item')
-        expect(response.body).to include('BASEITEM')
         expect(response.body).to include('Name')
         expect(response.body).to include("ACTIVEITEM")
         expect(response.body).to include('Category')

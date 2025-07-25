@@ -6,7 +6,7 @@
   <td class="text-right"> <%= item_row.distribution_quantity %></td>
   <td class="numeric"><%= dollar_value(item_row.value_in_cents) %></td>
   <% if Flipper.enabled?(:enable_packs) %>
-    <% unless current_organization.request_units.empty? %>
+    <% unless current_organization.request_units.blank? %>
      <td><%= item_row.request_units.pluck(:name).join(', ') %></td>
     <% end %>
   <% end %>

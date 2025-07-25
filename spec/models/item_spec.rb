@@ -50,16 +50,6 @@ RSpec.describe Item, type: :model do
       expect(subject.class).to respond_to :class_filter
     end
 
-    specify "->by_size returns all items with the same size, per their BaseItem parent" do
-      size4 = create(:base_item, size: "4", name: "Size 4 Diaper")
-      size_z = create(:base_item, size: "Z", name: "Size Z Diaper")
-
-      create(:item, base_item: size4, organization: organization)
-      create(:item, base_item: size4, organization: organization)
-      create(:item, base_item: size_z, organization: organization)
-      expect(Item.by_size("4").length).to eq(2)
-    end
-
     specify "->housing_a_kit returns all items which belongs_to (house) a kit" do
       name = "test kit"
       kit_params = attributes_for(:kit, name: name)
@@ -420,8 +410,7 @@ RSpec.describe Item, type: :model do
 
   describe "reporting_category_humanized" do
     it "returns reporting_category to title case" do
-      base_item = create(:base_item, name: "Adult Briefs (Large/X-Large)")
-      item = create(:item, name: "InControl BeDry", base_item:)
+      item = create(:item, name: "InControl BeDry", reporting_category: "adult_incontinence")
 
       expect(item.reporting_category).to eq("adult_incontinence")
       expect(item.reporting_category_humanized).to eq("Adult Incontinence")
@@ -479,15 +468,6 @@ RSpec.describe Item, type: :model do
           item.update(name: "my new name")
         }.not_to raise_error
       end
-    end
-  end
-
-  describe "after create" do
-    let(:base_item) { create(:base_item, size: "4", name: "Tampons") }
-    let(:item) { create(:item, name: "Period product", base_item:) }
-
-    it "sets the reporting category" do
-      expect(item.reporting_category).to eq("tampons")
     end
   end
 
