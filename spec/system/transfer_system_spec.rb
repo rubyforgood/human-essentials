@@ -27,7 +27,7 @@ RSpec.describe "Transfer management", type: :system do
       from_storage_location = create(:storage_location, :with_items, item: item, name: "From me", organization: organization)
       to_storage_location = create(:storage_location, :with_items, name: "To me", organization: organization)
       create_transfer("10", from_storage_location.name, to_storage_location.name, click_confirm: false)
-      
+
       expect(page).to have_content("Transfer Confirmation")
       expect(page).to have_content("Please confirm that the above list is what you meant to transfer and that the comment is correct.")
       expect(page).to have_content("No, I need to make changes")
@@ -42,7 +42,7 @@ RSpec.describe "Transfer management", type: :system do
       # grabs the dynamically generated new item
       click_on "Add Another Item"
       new_select = all("select[id$='_item_id']").last
-      select_id = new_select[:id]  
+      select_id = new_select[:id]
       select item.name, from: select_id
       index = select_id[/attributes_(\d+)_item_id$/, 1]
       quantity_field_id = "transfer_line_items_attributes_#{index}_quantity"
@@ -58,7 +58,7 @@ RSpec.describe "Transfer management", type: :system do
     from_storage_location = create(:storage_location, :with_items, item: item, name: "From me", organization: organization)
     to_storage_location = create(:storage_location, :with_items, name: "To me", organization: organization)
     create_transfer("10", from_storage_location.name, to_storage_location.name)
-    
+
     expect(page).to have_content("10 items have been transferred")
   end
 

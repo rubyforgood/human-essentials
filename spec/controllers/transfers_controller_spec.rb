@@ -45,7 +45,8 @@ RSpec.describe TransfersController, type: :controller do
     describe "POST #create" do
       context 'when duplicate line_items with different quantities submitted' do
         let!(:item1) { create(:item) }
-        let(:params) { attributes_for(
+        let(:params) {
+          attributes_for(
             :transfer,
             organization_id: organization.id,
             to_id: create(:storage_location, organization: organization).id,
@@ -56,7 +57,7 @@ RSpec.describe TransfersController, type: :controller do
             }
           )
         }
-        
+
         it "merges same line_items id items into one quantity" do
           post :create, params: { transfer: params }
 
@@ -104,7 +105,8 @@ RSpec.describe TransfersController, type: :controller do
     describe "POST #validate" do
       context 'when duplicate line_items with different quantities submitted' do
         let!(:item1) { create(:item) }
-        let(:params) { attributes_for(
+        let(:params) {
+          attributes_for(
             :transfer,
             organization_id: organization.id,
             to_id: create(:storage_location, organization: organization).id,
@@ -115,7 +117,7 @@ RSpec.describe TransfersController, type: :controller do
             }
           )
         }
-        
+
         it "merges same line_items id items into one quantity" do
           post :validate, params: { transfer: params }
 
