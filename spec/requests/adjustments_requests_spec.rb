@@ -68,11 +68,24 @@ RSpec.describe "Adjustments", type: :request do
             end
           end
         end
+
+        context 'dropdown for user filter' do
+          let!(:another_user) { create(:user, organization: organization, name: "Alice Smith", email: "alice@example.com") }
+          let!(:user_without_name) { create(:user, organization: organization, name: nil, email: "bob@example.com") }
+
+          before { get adjustments_path } # Make the request once for this context
+
+          it "displays the preferred name of users in the dropdown" do
+            expect(response.body).to include("<option value=\"#{another_user.id}\">#{another_user.preferred_name}</option>")
+            expect(response.body).to include("<option value=\"#{user_without_name.id}\">#{user_without_name.preferred_name}</option>")
+            expect(response.body).to include("<option value=\"#{user.id}\">#{user.preferred_name}</option>")
+          end
+        end
       end
 
       context "csv" do
         let(:response_format) { 'csv' }
-        let(:storage_location) { create(:storage_location, organization: organization) }
+        let(:storage_location) { create(:storage_location, organization: organization, name: "Test Storage Location") }
         let(:item1) { create(:item, name: "Item One", organization: organization) }
         let(:item2) { create(:item, name: "Item Two", organization: organization) }
 
@@ -107,8 +120,8 @@ RSpec.describe "Adjustments", type: :request do
         it "includes appropriate headers and data" do
           csv = <<~CSV
             Created date,Storage Area,Comment,# of changes,#{item1.name},#{item2.name}
-            2019-06-30,Smithsonian Conservation Center,First adjustment,2,10,5
-            2019-06-26,Smithsonian Conservation Center,Second adjustment,1,-5,0
+            2019-06-30,Test Storage Location,First adjustment,2,10,5
+            2019-06-26,Test Storage Location,Second adjustment,1,-5,0
           CSV
 
           expect(response.body).to eq(csv)
@@ -123,7 +136,7 @@ RSpec.describe "Adjustments", type: :request do
 
             csv = <<~CSV
               Created date,Storage Area,Comment,# of changes,Item One,Item Two
-              2019-06-30,Smithsonian Conservation Center,First adjustment,2,10,5
+              2019-06-30,Test Storage Location,First adjustment,2,10,5
             CSV
 
             expect(response.body).to eq(csv)

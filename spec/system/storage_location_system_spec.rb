@@ -46,7 +46,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
     it "User updates an existing storage location" do
       visit subject
       fill_in "Address", with: storage_location.name + " new"
-      fill_in "Square Footage", with: storage_location.square_footage + 50
+      fill_in "Square Footage", with: 50
       select (StorageLocation::WAREHOUSE_TYPES - [storage_location.warehouse_type]).sample, from: 'Warehouse Type'
 
       click_on "Save"
