@@ -41,6 +41,7 @@ class Distribution < ApplicationRecord
   validates :delivery_method, presence: true
   validate :line_items_quantity_is_positive
   validates :shipping_cost, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true, if: :shipped?
+  before_destroy :check_no_intervening_snapshot
 
   before_save :combine_distribution, :reset_shipping_cost
 
@@ -171,6 +172,12 @@ class Distribution < ApplicationRecord
 
   def line_items_quantity_is_positive
     line_items_quantity_is_at_least(1)
+  end
+
+  def check_no_intervening_snapshot
+    if SnapshotEvent.intervening?(self)
+      raise "Cannot delete this distribution because it has an intervening snapshot."
+    end
   end
 
   def reset_shipping_cost
