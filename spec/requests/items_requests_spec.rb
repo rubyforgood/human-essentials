@@ -53,7 +53,7 @@ RSpec.describe "Items", type: :request do
               get items_path(include_inactive_items: "1", format: response_format)
 
               csv = <<~CSV
-                Name,Barcodes,Base Item,Quantity
+                Name,Barcodes,Quantity
                 Briefs(M/L),"","",0
                 Briefs(S/M),"","",0
               CSV
@@ -67,8 +67,8 @@ RSpec.describe "Items", type: :request do
               get items_path(format: response_format)
 
               csv = <<~CSV
-                Name,Barcodes,Base Item,Quantity
-                Briefs(M/L),"","",0
+                Name,Barcodes,Quantity
+                Briefs(M/L),"",0
               CSV
 
               expect(response.body).to eq(csv)

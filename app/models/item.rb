@@ -166,7 +166,7 @@ class Item < ApplicationRecord
   end
 
   def self.csv_export_headers
-    ["Name", "Barcodes", "Base Item", "Quantity"]
+    ["Name", "Barcodes", "Quantity"]
   end
 
   # @param items [Array<Item>]
@@ -176,7 +176,7 @@ class Item < ApplicationRecord
     item_quantities = items.to_h { |i| [i.id, inventory.quantity_for(item_id: i.id)] }
     CSV.generate(headers: true) do |csv|
       csv_data = items.map do |item|
-        attributes = [item.name, item.barcode_count, item.base_item&.name, item_quantities[item.id]]
+        attributes = [item.name, item.barcode_count, item_quantities[item.id]]
         attributes.map { |attr| normalize_csv_attribute(attr) }
       end
       ([csv_export_headers] + csv_data).each { |row| csv << row }
