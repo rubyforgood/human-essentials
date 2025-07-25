@@ -54,8 +54,8 @@ RSpec.describe "Items", type: :request do
 
               csv = <<~CSV
                 Name,Barcodes,Quantity
-                Briefs(M/L),"","",0
-                Briefs(S/M),"","",0
+                Briefs(M/L),"",0
+                Briefs(S/M),"",0
               CSV
 
               expect(response.body).to eq(csv)
