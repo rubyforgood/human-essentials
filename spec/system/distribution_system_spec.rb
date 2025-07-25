@@ -350,7 +350,7 @@ RSpec.feature "Distributions", type: :system do
       click_on "Edit", match: :first
       fill_in "Agency representative", with: "SOMETHING DIFFERENT"
       click_on "Save", match: :first
-      # Make Capybara wait for events to finish before checking Db. 
+      # Make Capybara wait for events to finish before checking Db.
       expect(page).to have_content("SOMETHING DIFFERENT")
 
       distribution.reload
