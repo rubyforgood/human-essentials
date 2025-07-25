@@ -21,6 +21,7 @@ class TransfersController < ApplicationController
 
   def create
     @transfer = current_organization.transfers.new(transfer_params)
+    @transfer.line_items.combine!
 
     TransferCreateService.call(@transfer)
     redirect_to transfers_path, notice: "#{@transfer.line_items.total} items have been transferred from #{@transfer.from.name} to #{@transfer.to.name}!"
@@ -59,6 +60,7 @@ class TransfersController < ApplicationController
 
   def validate
     @transfer = current_organization.transfers.new(transfer_params)
+    @transfer.line_items.combine!
 
     if @transfer.valid?
       body = render_to_string(partial: "transfers/validate_modal", formats: [:html], layout: false)
