@@ -37,7 +37,7 @@
             <%= form_tag(items_path, method: :get) do |f| %>
               <div class="row">
                 <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                  <%= filter_select(scope: :by_base_item, collection: BaseItem.alphabetized, key: :partner_key, selected: @selected_base_item) %>
+                  <%= filter_select(scope: :by_reporting_category, label: "Filter by NDBN Reporting Category", collection: Item.reporting_categories_for_select, selected: @selected_reporting_category) %>
                 </div>
               </div>
               <div class="row">

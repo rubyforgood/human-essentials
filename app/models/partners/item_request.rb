@@ -24,7 +24,6 @@ module Partners
     validates :quantity, presence: true
     validates :quantity, numericality: { only_integer: true, greater_than_or_equal_to: 1 }
     validates :name, presence: true
-    validates :partner_key, presence: true
     validate :request_unit_is_supported
 
     def request_unit_is_supported
