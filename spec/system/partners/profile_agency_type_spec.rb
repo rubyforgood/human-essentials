@@ -35,6 +35,16 @@ RSpec.describe "Partner Profile Agency Type Field Visibility", type: :system, js
   end
 
   context "on page load" do
+    it "hides Other Agency Type field when partner has no agency type" do
+      partner.profile.update!(agency_type: nil)
+      
+      visit edit_partners_profile_path
+      
+      find("button[data-bs-target='#agency_information']").click
+      
+      expect(page).to have_css('[data-hide-by-source-val-target="destination"].d-none', visible: false, wait: 5)
+    end
+
     it "hides Other Agency Type field when partner has non-other agency type" do
       partner.profile.update!(agency_type: "food")
       
