@@ -4,7 +4,8 @@ module ItemizableUpdateService
     # @param params [Hash] Parameters passed from the controller. Should include `line_item_attributes`.
     # @param event_class [Class<Event>] the event class to publish the itemizable to.
     def call(itemizable:, params: {}, event_class: nil)
-      if params[:line_items_attributes].blank?
+      # we're updating just attributes on the itemizable, not line items
+      if params[:line_items_attributes].blank? && SnapshotEvent.intervening?(itemizable)
         itemizable.update!(params)
         itemizable.reload
         return
