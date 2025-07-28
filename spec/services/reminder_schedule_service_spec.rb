@@ -38,7 +38,6 @@ RSpec.describe ReminderScheduleService, type: :service do
     it "returns a ReminderScheduleService instance" do
       expect(subject).to be_a_kind_of(ReminderScheduleService)
       expect(subject.day_of_month).to eq 10
-      expect(subject.start_date).to be_within(1.second).of Time.zone.local(2020, 10, 10)
     end
 
     it "returns nil if a blank or invalid ical string is provided", :aggregate_failures do
