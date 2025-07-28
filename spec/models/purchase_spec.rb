@@ -54,9 +54,6 @@ RSpec.describe Purchase, type: :model do
       expect(d).to be_valid
     end
 
-    # re 5059-non-negative-purchase_value, adding in amount_spent_on_period_supplies_cents to test.
-    # also adding in amount_spend_on_incontinence_cents because it was missing.
-
     it "is not valid if any category negative" do
       d = build(:purchase, amount_spent_on_diapers_cents: -1)
       expect(d).not_to be_valid
@@ -68,7 +65,7 @@ RSpec.describe Purchase, type: :model do
       expect(d).not_to be_valid
     end
 
-    it "is valid if all categories are positive" do
+    it "is valid if all categories are positive and add up to the total" do
       d = build(:purchase, amount_spent_in_cents: 1150,
         amount_spent_on_diapers_cents: 200,
         amount_spent_on_adult_incontinence_cents: 300,
