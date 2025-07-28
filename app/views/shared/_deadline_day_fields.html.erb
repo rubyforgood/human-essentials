@@ -16,7 +16,7 @@
     <%= f.label :by_month_or_week_day_of_week, 'Day of the Week' %>
 
     <div data-deadline-day-target="dayOfMonthFields">
-      <%= f.input :day_of_month, as: :integer, wrapper: :input_group, label: 'Reminder date' do %>
+      <%= f.input :day_of_month, as: :integer, wrapper: :input_group, label: 'Reminder day of month' do %>
         <span class="input-group-text"><i class="fa fa-calendar"></i></span>
         <%= f.number_field :day_of_month,
           min: ReminderScheduleService::MIN_DAY_OF_MONTH,
