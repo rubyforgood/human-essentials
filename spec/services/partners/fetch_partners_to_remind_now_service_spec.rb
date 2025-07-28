@@ -12,8 +12,7 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
             partner.organization.update(deadline_day: current_day + 2)
             partner.organization.reminder_schedule.assign_attributes({
               by_month_or_week: "day_of_month",
-              day_of_month: current_day,
-              every_nth_month: 1
+              day_of_month: current_day
             })
             partner.organization.save
           end
@@ -29,8 +28,7 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
               partner.organization.reminder_schedule.assign_attributes({
                 by_month_or_week: "day_of_week",
                 day_of_week: 2,
-                every_nth_day: 2,
-                every_nth_month: 1
+                every_nth_day: 2
               })
               partner.organization.save
             end
@@ -84,8 +82,7 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
             )
             partner_group.reminder_schedule.assign_attributes({
               by_month_or_week: "day_of_month",
-              day_of_month: current_day,
-              every_nth_month: 1
+              day_of_month: current_day
             })
             partner_group.save
             partner_group.partners << partner
@@ -93,8 +90,7 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
             partner.organization.update(deadline_day: current_day + 2)
             partner.organization.reminder_schedule.assign_attributes({
               by_month_or_week: "day_of_month",
-              day_of_month: current_day - 1,
-              every_nth_month: 1
+              day_of_month: current_day - 1
             })
             partner.organization.save
           end
@@ -129,8 +125,7 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
               )
               partner_group.reminder_schedule.assign_attributes({
                 by_month_or_week: "day_of_month",
-                day_of_month: current_day,
-                every_nth_month: 1
+                day_of_month: current_day
               })
               partner_group.save
               partner_group.partners << partner
@@ -169,8 +164,7 @@ RSpec.describe Partners::FetchPartnersToRemindNowService do
               )
               partner_group.reminder_schedule.assign_attributes({
                 by_month_or_week: "day_of_month",
-                day_of_month: current_day - 1,
-                every_nth_month: 1
+                day_of_month: current_day - 1
               })
               partner_group.save
               partner_group.partners << partner

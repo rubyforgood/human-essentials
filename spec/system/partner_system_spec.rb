@@ -732,7 +732,6 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
           it "the deadline day form's reminder and deadline dates are consistent with the dates calculated by the FetchPartnersToRemindNowService and DeadlineService" do
             choose "Day of Month"
-            select("Every 2 month", from: "How frequently should reminders be sent (e.g. \"monthly\", \"every 3 months\", etc.)?")
             fill_in "partner_group_reminder_schedule_service_day_of_month", with: 14
             fill_in "Default deadline day (final day of month to submit Requests)", with: 21
 

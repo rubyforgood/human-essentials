@@ -1,14 +1,12 @@
 RSpec.describe ReminderScheduleService, type: :service do
   let(:day_of_month_schedule) {
     ReminderScheduleService.new({
-      every_nth_month: 1,
       by_month_or_week: "day_of_month",
       day_of_month: 10
     })
   }
   let(:day_of_week_schedule) {
     ReminderScheduleService.new({
-      every_nth_month: 1,
       by_month_or_week: "day_of_week",
       day_of_week: 0,
       every_nth_day: 1
@@ -19,7 +17,6 @@ RSpec.describe ReminderScheduleService, type: :service do
   describe "initialize" do
     let(:subject) {
       ReminderScheduleService.new({
-        every_nth_month: 1,
         by_month_or_week: "day_of_month",
         day_of_month: 10
       })
@@ -27,13 +24,7 @@ RSpec.describe ReminderScheduleService, type: :service do
 
     it "returns a ReminderScheduleService instance" do
       expect(subject).to be_a_kind_of(ReminderScheduleService)
-      expect(subject.every_nth_month).to eq 1
       expect(subject.day_of_month).to eq 10
-    end
-
-    it "assigns a default start_date if none is provided" do
-      expect(subject.start_date).not_to be_nil
-      expect(subject.start_date).to be_within(1.second).of Time.zone.now
     end
   end
 
@@ -46,7 +37,6 @@ RSpec.describe ReminderScheduleService, type: :service do
 
     it "returns a ReminderScheduleService instance" do
       expect(subject).to be_a_kind_of(ReminderScheduleService)
-      expect(subject.every_nth_month).to eq 1
       expect(subject.day_of_month).to eq 10
       expect(subject.start_date).to be_within(1.second).of Time.zone.local(2020, 10, 10)
     end
@@ -65,13 +55,11 @@ RSpec.describe ReminderScheduleService, type: :service do
   describe "assign_attributes" do
     it "updates the ReminderScheduleService's attributes", :aggregate_failures do
       empty_schedule.assign_attributes({
-        every_nth_month: 1,
         by_month_or_week: "day_of_week",
         day_of_week: 0,
         every_nth_day: 1
       })
 
-      expect(empty_schedule.every_nth_month).to eq 1
       expect(empty_schedule.by_month_or_week).to eq "day_of_week"
       expect(empty_schedule.day_of_week).to eq 0
       expect(empty_schedule.every_nth_day).to eq 1
@@ -120,12 +108,12 @@ RSpec.describe ReminderScheduleService, type: :service do
   end
 
   describe "no_fields_filled_out?" do
-    it "returns true if all fields, except start_date, are nil" do
+    it "returns true if all fields are nil" do
       expect(empty_schedule.no_fields_filled_out?).to be true
     end
 
     it "returns false otherwise", :aggregate_failures do
-      empty_schedule.every_nth_month = 1
+      empty_schedule.by_month_or_week = "day_of_month"
       expect(empty_schedule.no_fields_filled_out?).to be false
       expect(day_of_month_schedule.no_fields_filled_out?).to be false
       expect(day_of_week_schedule.no_fields_filled_out?).to be false
@@ -175,30 +163,6 @@ RSpec.describe ReminderScheduleService, type: :service do
   end
 
   describe "validations" do
-    it "validates every_nth_month falls within range", :aggregate_failures do
-      (1..12).step(1) do |n|
-        day_of_month_schedule.every_nth_month = n
-        expect(day_of_month_schedule).to be_valid
-      end
-      day_of_month_schedule.every_nth_month = "1"
-      expect(day_of_month_schedule).to be_valid
-      day_of_month_schedule.every_nth_month = -1
-      expect(day_of_month_schedule).not_to be_valid
-      day_of_month_schedule.every_nth_month = "other_string"
-      expect(day_of_month_schedule).not_to be_valid
-      day_of_month_schedule.every_nth_month = nil
-      expect(day_of_month_schedule).not_to be_valid
-    end
-
-    it "validates start_date is a valid date or date string", :aggregate_failures do
-      day_of_month_schedule.start_date = Time.zone.now
-      expect(day_of_month_schedule).to be_valid
-      day_of_month_schedule.start_date = "2020/10/10"
-      expect(day_of_month_schedule).to be_valid
-      day_of_month_schedule.start_date = nil
-      expect(day_of_month_schedule).not_to be_valid
-    end
-
     it "validates by_month_or_week is one of the accepted strings", :aggregate_failures do
       day_of_month_schedule.by_month_or_week = "other_string"
       expect(day_of_month_schedule).not_to be_valid

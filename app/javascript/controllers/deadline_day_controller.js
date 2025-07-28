@@ -15,7 +15,7 @@ const WEEKDAY_NUM_TO_OBJ = {
 
 export default class extends Controller {
   static targets = [
-    'startDate', 'everyNthMonth', 'byDayOfMonth', 'byDayOfWeek', 'dayOfMonthFields', 'dayOfMonth',
+    'byDayOfMonth', 'byDayOfWeek', 'dayOfMonthFields', 'dayOfMonth',
     'dayOfWeekFields', 'everyNthDay', 'dayOfWeek', 'deadlineDay', 'reminderText', 'deadlineText'
   ]
 
@@ -39,22 +39,15 @@ export default class extends Controller {
     let reminder_date = null;
     let deadline_date = null;
 
-    let match = this.startDateTarget.value.match(this.constructor.dateParser);
-    let startDate = new Date(
-      match[1],
-      match[2]-1, // Subtracting 1 because the Date constructor uses month indices, but year and day numbers
-      match[3]
-    );
-    let monthlyInterval = parseInt(this.everyNthMonthTarget.value);
-    // Calculate the next reminder date after the start date, or the current date, whichever is greater.
-    // Do it this way to avoid the next reminder/deadline date being a date in the past.
-    let today = new Date()
-    let untilDate = new Date( Math.max(...[ startDate, today ]) )
+    // TODO: Add comment explaining assumptions about monthylInterval and today?
+    let monthlyInterval = 1;
+    let today = new Date();
+    let untilDate = new Date( today );
     untilDate.setMonth( untilDate.getMonth() + monthlyInterval + 1 )
 
     if (this.byDayOfMonthTarget.checked && this.dayOfMonthTarget.value) {
       const rule = new RRule({
-        dtstart: startDate,
+        dtstart: today,
         freq: RRule.MONTHLY,
         interval: monthlyInterval,
         bymonthday: parseInt(this.dayOfMonthTarget.value),
@@ -64,7 +57,7 @@ export default class extends Controller {
     }
     if (this.byDayOfWeekTarget.checked && this.everyNthDayTarget.value && (this.dayOfWeekTarget.value)) {
       const rule = new RRule({
-        dtstart: startDate,
+        dtstart: today,
         freq: RRule.MONTHLY,
         interval: monthlyInterval,
         byweekday: WEEKDAY_NUM_TO_OBJ[ parseInt(this.dayOfWeekTarget.value) ].nth( parseInt(this.everyNthDayTarget.value) ),

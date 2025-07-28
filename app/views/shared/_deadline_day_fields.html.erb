@@ -1,29 +1,6 @@
 <div data-controller="deadline-day">
 
   <%= parent_form.simple_fields_for parent_object.reminder_schedule do |f| %>
-    <%= f.label :every_nth_month, 'How frequently should reminders be sent (e.g. "monthly", "every 3 months", etc.)?' %>
-    <%= f.input :every_nth_month,
-      collection: ReminderScheduleService::EVERY_NTH_MONTH_COLLECTION,
-      class: "form-control",
-      label: false,
-      show_blank: true,
-      default: 1,
-      input_html: {style: 'width: 200px', "data-deadline-day-target" => "everyNthMonth", "data-action" => "deadline-day#sourceChange"} %>
-
-    <%= f.label :start_date, 'Reminders start on or after:' %>
-    <%= f.input :start_date,
-      as: :date,
-      label: false,
-      html5: true,
-      wrapper: :input_group,
-      input_html: {"data-deadline-day-target" => "startDate", "data-action" => "deadline-day#sourceChange"} %>
-    <small class="mb-3 d-block text-muted">
-      For non-monthly schedules, it is recommended you set this to to the first date you would like reminders to be sent.
-    </small>
-    <small class="mb-3 d-block text-muted">
-      Newly created/updated schedules likely won't sent a reminder the day they are created/updated.
-    </small>
-
     <%= f.label :by_month_or_week, 'Send reminders on a specific day of the month (e.g. "the 5th") or a day of the week (eg "the first Tuesday")?' %>
     <br>
     <%= f.radio_button :by_month_or_week,

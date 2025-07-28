@@ -3,9 +3,6 @@ class ReminderScheduleService
   MAX_DAY_OF_MONTH = 28
   EVERY_NTH_COLLECTION = [["First", 1], ["Second", 2], ["Third", 3], ["Fourth", 4], ["Last", -1]].freeze
   DAY_OF_WEEK_COLLECTION = [["Sunday", 0], ["Monday", 1], ["Tuesday", 2], ["Wednesday", 3], ["Thursday", 4], ["Friday", 5], ["Saturday", 6]].freeze
-  EVERY_NTH_MONTH_COLLECTION = [["Monthly", 1], ["Every 2 months", 2], ["Every 3 months", 3], ["Every 4 months", 4], ["Every 5 months", 5],
-    ["Every 6 months", 6], ["Every 7 months", 7], ["Every 8 months", 8], ["Every 9 months", 9], ["Every 10 months", 10], ["Every 11 months", 11],
-    ["Every 12 months", 12]].freeze
   NTH_TO_WORD_MAP = {
     1 => "First",
     2 => "Second",
@@ -16,8 +13,6 @@ class ReminderScheduleService
 
   # The list of fields which are part of the _deadline_day_fields.html.erb form
   REMINDER_SCHEDULE_FIELDS = [
-    :every_nth_month,
-    :start_date,
     :by_month_or_week,
     :day_of_month,
     :day_of_week,
@@ -28,8 +23,6 @@ class ReminderScheduleService
 
   include ActiveModel::Validations
 
-  validate :every_nth_month_within_range?
-  validate :start_date_is_valid_date_or_date_string?
   validates :by_month_or_week, inclusion: {in: %w[day_of_month day_of_week]}
   validates :day_of_month, if: -> { @by_month_or_week == "day_of_month" }, presence: true
   validate :day_of_month_is_within_range?, if: -> { @by_month_or_week == "day_of_month" }
@@ -37,11 +30,6 @@ class ReminderScheduleService
   validate :every_nth_day_is_within_range?, if: -> { @by_month_or_week == "day_of_week" }
 
   def initialize(parameter_hash)
-    @every_nth_month = parameter_hash[:every_nth_month]
-    @start_date = parameter_hash[:start_date]
-    if !@start_date
-      @start_date = Time.zone.now
-    end
     @by_month_or_week = parameter_hash[:by_month_or_week]
     @day_of_month = parameter_hash[:day_of_month]
     @day_of_week = parameter_hash[:day_of_week]
@@ -60,8 +48,6 @@ class ReminderScheduleService
     day_of_month = rule["validations"][:day_of_month]&.first&.value
 
     ReminderScheduleService.new({
-      every_nth_month: rule["validations"][:interval]&.first&.interval,
-      start_date: schedule.start_time,
       by_month_or_week: day_of_month ? "day_of_month" : "day_of_week",
       day_of_month: day_of_month,
       day_of_week: rule["validations"][:day_of_week]&.first&.day,
@@ -81,11 +67,11 @@ class ReminderScheduleService
     unless valid?
       return nil
     end
-    schedule = IceCube::Schedule.new(start_date.respond_to?(:strftime) ? start_date : Time.zone.parse(start_date))
+    schedule = IceCube::Schedule.new
     if by_month_or_week == "day_of_month"
-      schedule.add_recurrence_rule(IceCube::Rule.monthly(every_nth_month).day_of_month(day_of_month.to_i))
+      schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_month(day_of_month.to_i))
     else
-      schedule.add_recurrence_rule(IceCube::Rule.monthly(every_nth_month).day_of_week(day_of_week.to_i => [every_nth_day.to_i]))
+      schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_week(day_of_week.to_i => [every_nth_day.to_i]))
     end
     schedule
   end
@@ -99,7 +85,7 @@ class ReminderScheduleService
   end
 
   def no_fields_filled_out?
-    every_nth_month.nil? && by_month_or_week.nil? && day_of_month.nil? && day_of_week.nil? && every_nth_day.nil?
+    by_month_or_week.nil? && day_of_month.nil? && day_of_week.nil? && every_nth_day.nil?
   end
 
   def occurs_on?(date)
@@ -112,22 +98,10 @@ class ReminderScheduleService
 
   private
 
-  def every_nth_month_within_range?
-    if every_nth_month.to_i < EVERY_NTH_MONTH_COLLECTION.first.last || every_nth_month.to_i > EVERY_NTH_MONTH_COLLECTION.last.last
-      errors.add(:every_nth_month, "Monthly frequence must be between #{EVERY_NTH_MONTH_COLLECTION.first.first} and #{EVERY_NTH_MONTH_COLLECTION.last.first}")
-    end
-  end
-
-  def start_date_is_valid_date_or_date_string?
-    if !(start_date.present? && (start_date.respond_to?(:strftime) || Time.zone.parse(start_date)))
-      errors.add(:start_date, "Start date must be a valid date string")
-    end
-  end
-
   def day_of_month_is_within_range?
     # IceCube converts negative or zero days to valid days (e.g. -1 becomes the last day of the month, 0 becomes 1)
     # The minimum check should no longer be necessary, but keeping it in case IceCube changes
-    if start_date.present? && (day_of_month.to_i < MIN_DAY_OF_MONTH || day_of_month.to_i > MAX_DAY_OF_MONTH)
+    if day_of_month.to_i < MIN_DAY_OF_MONTH || day_of_month.to_i > MAX_DAY_OF_MONTH
       errors.add(:day_of_month, "Reminder day must be between #{MIN_DAY_OF_MONTH} and #{MAX_DAY_OF_MONTH}")
     end
   end
