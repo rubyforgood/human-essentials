@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Activity Graph Report
 This report is merely a visual representation of the number of Items processed over a time period.
 

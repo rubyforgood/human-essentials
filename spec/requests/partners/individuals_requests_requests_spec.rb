@@ -1,5 +1,5 @@
 RSpec.describe Partners::IndividualsRequestsController, type: :request do
-  let(:organization) { create(:organization, :with_items) }
+  let(:organization) { create(:organization, :with_items, email: "email@testthis.com") }
   let(:partner) { create(:partner, status: :approved, organization: organization) }
   let(:partner_user) { partner.primary_user }
 
@@ -154,6 +154,17 @@ RSpec.describe Partners::IndividualsRequestsController, type: :request do
         expect(response).to redirect_to(partners_request_path(Request.last.id))
         expect(response.request.flash[:success]).to eql "Request was successfully created."
       end
+    end
+  end
+
+  describe "POST #validate" do
+    it "should handle missing CSRF gracefully" do
+      ActionController::Base.allow_forgery_protection = true
+      post validate_partners_individuals_requests_path
+      ActionController::Base.allow_forgery_protection = false
+
+      expect(JSON.parse(response.body)).to eq({"valid" => false})
+      expect(response.status).to eq(200)
     end
   end
 end

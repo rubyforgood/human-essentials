@@ -10,9 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_03_02_154355) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_23_203808) do
   # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
+  enable_extension "pg_catalog.plpgsql"
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
@@ -324,7 +324,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_02_154355) do
     t.bigint "old_partner_id"
     t.boolean "archived", default: false
     t.index ["partner_id"], name: "index_families_on_partner_id"
-  end
+  end 
 
   create_table "flipper_features", force: :cascade do |t|
     t.string "key", null: false
@@ -392,7 +392,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_02_154355) do
 
   create_table "items", id: :serial, force: :cascade do |t|
     t.string "name"
-    t.string "category"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.integer "barcode_count"
@@ -465,7 +464,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_02_154355) do
 
   create_table "organizations", id: :serial, force: :cascade do |t|
     t.string "name"
-    t.string "short_name"
     t.string "email"
     t.string "url"
     t.datetime "created_at", precision: nil, null: false
@@ -495,8 +493,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_02_154355) do
     t.boolean "hide_package_column_on_receipt", default: false
     t.boolean "signature_for_distribution_pdf", default: false
     t.boolean "receive_email_on_requests", default: false, null: false
+    t.boolean "include_in_kind_values_in_exported_files", default: false, null: false
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
-    t.index ["short_name"], name: "index_organizations_on_short_name"
   end
 
   create_table "partner_forms", force: :cascade do |t|

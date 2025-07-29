@@ -1,5 +1,3 @@
-READY FOR REVIEW
-
 # Itemized Reports
 
 The itemized reports break down the inventory by Item over a given time period.   There are itemized reports for Donations and for Distributions.  

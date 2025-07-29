@@ -1,8 +1,9 @@
 RSpec.describe "Admin Organization Management", type: :system, js: true, seed_items: false do
   around do |ex|
+    old_default = Kaminari.config.default_per_page
     Kaminari.config.default_per_page = 3
     ex.run
-    Kaminari.config.default_per_page = 50
+    Kaminari.config.default_per_page = old_default
   end
   before do
     Organization.delete_all # should not be needed once seed_data works
@@ -105,7 +106,6 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
       org_params = attributes_for(:organization)
       within "form#new_organization" do
         fill_in "organization_name", with: org_params[:name]
-        fill_in "organization_short_name", with: org_params[:short_name]
         fill_in "organization_url", with: org_params[:url]
         fill_in "organization_email", with: org_params[:email]
         fill_in "organization_street", with: "1500 Remount Road"
@@ -121,7 +121,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
 
       expect(page).to have_content("All Human Essentials Organizations")
 
-      within("tr.#{org_params[:short_name]}") do
+      within(find("td", text: org_params[:name]).sibling(".text-right")) do
         first(:link, "View").click
       end
 
@@ -139,7 +139,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
     it "can view organization details", :aggregate_failures do
       visit admin_organizations_path
 
-      within("tr.#{bar_org.short_name}") do
+      within(find("td", text: bar_org.name).sibling(".text-right")) do
         first(:link, "View").click
       end
 
@@ -147,10 +147,10 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
       expect(page).to have_link("Home", href: admin_dashboard_path)
 
       expect(page).to have_content("Organization Info")
-      expect(page).to have_content("Contact Info")
-      expect(page).to have_content("Default email text")
+      expect(page).to have_content("Address")
+      expect(page).to have_content("Distribution email content")
       expect(page).to have_content("Users")
-      expect(page).to have_content("Receive email when partner makes a request")
+      expect(page).to have_content("Receive email when Partner makes a Request?")
     end
   end
 end

@@ -1,5 +1,3 @@
-
-READY FOR REVIEW
 # Partner statuses (what can Partners do when)
 
 As an Essentials Bank, you distribute materials (diapers, period products, etc.) to your Partners who interface with the people in need of the items.

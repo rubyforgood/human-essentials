@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Asking for changes
 
 We welcome ideas for how Human Essentials can support your work better.
@@ -9,4 +8,4 @@ The Stakeholder Circle has the advantage of being able to talk live to other ban
 
 (The Slack channel, on the other hand, is open every day.)
 
-[Prior: Signing out](top_right_menu.md)
+[Prior: Account Management](account_management.md)

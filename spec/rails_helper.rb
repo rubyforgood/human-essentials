@@ -145,23 +145,19 @@ RSpec.configure do |config|
     # Stub out the Geocoder since we don't want to hit the API
     Geocoder.configure(lookup: :test)
 
-    ["1500 Remount Road, Front Royal, VA 22630",
-      "123 Donation Site Way",
-      "Smithsonian Conservation Center new"].each do |address|
-      Geocoder::Lookup::Test.add_stub(
-        address, [
-          {
-            "latitude" => 40.7143528,
-            "longitude" => -74.0059731,
-            "address" => "1500 Remount Road, Front Royal, VA 22630",
-            "state" => "Virginia",
-            "state_code" => "VA",
-            "country" => "United States",
-            "country_code" => "US"
-          }
-        ]
-      )
-    end
+    Geocoder::Lookup::Test.set_default_stub(
+      [
+        {
+          "latitude" => 40.7143528,
+          "longitude" => -74.0059731,
+          "address" => "1500 Remount Road, Front Royal, VA 22630",
+          "state" => "Virginia",
+          "state_code" => "VA",
+          "country" => "United States",
+          "country_code" => "US"
+        }
+      ]
+    )
   end
 
   config.before(:each, type: :system) do
@@ -239,4 +235,11 @@ def await_select2(select2, container = nil, &block)
   yield
 
   find("#{container} select option[data-select2-id=\"#{current_id.to_i + 1}\"]", wait: 10)
+end
+
+# TODO: Remove the following workaround once the following commit is in
+# in a new release of Devise:
+# https://github.com/heartcombo/devise/commit/591b03a6c010f47976f7033370a8165c5324a82c
+ActiveSupport.on_load(:action_mailer) do
+  Rails.application.reload_routes_unless_loaded
 end

@@ -2,38 +2,38 @@
 #
 # Table name: organizations
 #
-#  id                             :integer          not null, primary key
-#  city                           :string
-#  deadline_day                   :integer
-#  default_storage_location       :integer
-#  distribute_monthly             :boolean          default(FALSE), not null
-#  email                          :string
-#  enable_child_based_requests    :boolean          default(TRUE), not null
-#  enable_individual_requests     :boolean          default(TRUE), not null
-#  enable_quantity_based_requests :boolean          default(TRUE), not null
-#  hide_package_column_on_receipt :boolean          default(FALSE)
-#  hide_value_columns_on_receipt  :boolean          default(FALSE)
-#  intake_location                :integer
-#  invitation_text                :text
-#  latitude                       :float
-#  longitude                      :float
-#  name                           :string
-#  one_step_partner_invite        :boolean          default(FALSE), not null
-#  partner_form_fields            :text             default([]), is an Array
-#  receive_email_on_requests      :boolean          default(FALSE), not null
-#  reminder_day                   :integer
-#  repackage_essentials           :boolean          default(FALSE), not null
-#  short_name                     :string
-#  signature_for_distribution_pdf :boolean          default(FALSE)
-#  state                          :string
-#  street                         :string
-#  url                            :string
-#  ytd_on_distribution_printout   :boolean          default(TRUE), not null
-#  zipcode                        :string
-#  created_at                     :datetime         not null
-#  updated_at                     :datetime         not null
-#  account_request_id             :integer
-#  ndbn_member_id                 :bigint
+#  id                                       :integer          not null, primary key
+#  city                                     :string
+#  deadline_day                             :integer
+#  default_storage_location                 :integer
+#  distribute_monthly                       :boolean          default(FALSE), not null
+#  email                                    :string
+#  enable_child_based_requests              :boolean          default(TRUE), not null
+#  enable_individual_requests               :boolean          default(TRUE), not null
+#  enable_quantity_based_requests           :boolean          default(TRUE), not null
+#  hide_package_column_on_receipt           :boolean          default(FALSE)
+#  hide_value_columns_on_receipt            :boolean          default(FALSE)
+#  include_in_kind_values_in_exported_files :boolean          default(FALSE), not null
+#  intake_location                          :integer
+#  invitation_text                          :text
+#  latitude                                 :float
+#  longitude                                :float
+#  name                                     :string
+#  one_step_partner_invite                  :boolean          default(FALSE), not null
+#  partner_form_fields                      :text             default([]), is an Array
+#  receive_email_on_requests                :boolean          default(FALSE), not null
+#  reminder_day                             :integer
+#  repackage_essentials                     :boolean          default(FALSE), not null
+#  signature_for_distribution_pdf           :boolean          default(FALSE)
+#  state                                    :string
+#  street                                   :string
+#  url                                      :string
+#  ytd_on_distribution_printout             :boolean          default(TRUE), not null
+#  zipcode                                  :string
+#  created_at                               :datetime         not null
+#  updated_at                               :datetime         not null
+#  account_request_id                       :integer
+#  ndbn_member_id                           :bigint
 #
 
 class Organization < ApplicationRecord
@@ -44,8 +44,10 @@ class Organization < ApplicationRecord
 
   include Deadlinable
 
+  # TODO: remove once migration "20250504183911_remove_short_name_from_organizations" has run in production
+  self.ignored_columns += ["short_name"]
+
   validates :name, presence: true
-  validates :short_name, presence: true, format: /\A[a-z0-9_]+\z/i, uniqueness: true
   validates :url, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "it should look like 'http://www.example.com'" }, allow_blank: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
   validate :correct_logo_mime_type
@@ -115,6 +117,7 @@ class Organization < ApplicationRecord
   ].freeze
 
   has_rich_text :default_email_text
+  has_rich_text :reminder_email_text
 
   has_one_attached :logo
 
@@ -148,11 +151,6 @@ class Organization < ApplicationRecord
     self
   end
 
-  # NOTE: when finding Organizations, use Organization.find_by(short_name: params[:organization_name])
-  def to_param
-    short_name
-  end
-
   def ordered_requests
     requests.order(status: :asc, updated_at: :desc)
   end
@@ -165,6 +163,10 @@ class Organization < ApplicationRecord
 
   def address_changed?
     street_changed? || city_changed? || state_changed? || zipcode_changed?
+  end
+
+  def partials_to_show
+    partner_form_fields.presence || ALL_PARTIALS.map { |partial| partial[1] }
   end
 
   def self.seed_items(organization = Organization.all)

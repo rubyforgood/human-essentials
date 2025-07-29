@@ -14,7 +14,7 @@ gem "pg", "~> 1.5.9"
 # Web server.
 gem "puma"
 # Rails web framework.
-gem "rails", "7.2.2"
+gem "rails", "~> 8.0.2"
 
 ###### MODELS / DATABASE #######
 
@@ -32,9 +32,7 @@ gem "paper_trail"
 # Associates users with roles.
 gem "rolify", "~> 6.0"
 # Enforces "safe" migrations.
-# Pinned to 1.8.0 because 2.0.0 no longer support postgres v10
-# And as of now we are using postgres v10 in production
-gem "strong_migrations", "1.8.0"
+gem "strong_migrations"
 # used in events
 gem 'dry-struct'
 # Use solid_cache as a cache store
@@ -63,6 +61,8 @@ gem "filterrific"
 gem "jbuilder"
 # Pagination of models for use in views.
 gem "kaminari"
+# Prevents cookie overflow errors when storing large flash messages.
+gem 'memflash'
 # Web-based authorization framework.
 gem "omniauth"
 # Required to avoid authentication issues with Rails.
@@ -108,7 +108,10 @@ gem 'bootsnap', require: false
 # Technically they don't need to be in this Gemfile at all, but we are pinning them to
 # specific versions for compatibility reasons.
 gem "nokogiri", ">= 1.10.4"
-gem "sprockets", "~> 4.2.1"
+gem "sprockets", "~> 4.2.2"
+gem "prawn", "~> 2.4.0"
+gem "matrix" # Used by prawn
+gem "ttfunk", "~>1.7.0"
 
 group :production, :staging do
   # Reduce the noise of logs and include custom fields to it for easier access
@@ -146,16 +149,16 @@ group :development, :test do
   # Debugger which supports rdbg and Shopify Ruby LSP VSCode extension
   gem "debug", ">= 1.0.0"
   # RSpec behavioral testing framework for Rails.
-  gem "rspec-rails", "~> 7.1.0"
+  gem "rspec-rails", "~> 8.0.0"
   # Static analysis / linter.
   gem "rubocop"
   # Rails add-on for static analysis.
   gem 'rubocop-performance'
   gem "rubocop-rails", "~> 2.25.1"
   # More concise test ("should") matchers
-  gem "shoulda-matchers", "~> 6.4"
+  gem "shoulda-matchers", "~> 6.5"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.40"
+  gem "standard", "~> 1.50"
   gem "standard-rails"
   gem "standard-performance"
   # Erb linter.
@@ -164,7 +167,7 @@ end
 
 group :development do
   # Show database columns and indexes inside files.
-  gem "annotate"
+  gem "annotaterb"
   # Used as a dependency for better_errors.
   gem "binding_of_caller"
   # Show a better error page on development, including a REPL.
@@ -203,7 +206,7 @@ group :test do
   # Show code coverage.
   gem 'simplecov'
   # Mock HTTP requests and ensure they are not called during tests.
-  gem "webmock", "~> 3.24"
+  gem "webmock", "~> 3.25"
   # Interface capybara to chrome headless
   gem "cuprite"
   # Read PDF files for tests

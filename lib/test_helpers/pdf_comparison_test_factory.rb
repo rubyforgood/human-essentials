@@ -13,7 +13,6 @@ module PDFComparisonTestFactory
   def self.create_organization_storage_items(logo = get_logo_file)
     org = Organization.create!(
       name: "Essentials Bank 1",
-      short_name: "db",
       street: "1500 Remount Road",
       city: "Front Royal",
       state: "VA",
@@ -114,7 +113,7 @@ module PDFComparisonTestFactory
 
   def self.create_dist(partner, storage_creation, delivery_method)
     Time.zone = "America/Los_Angeles"
-    dist = Distribution.create!(partner: partner, delivery_method: delivery_method, issued_at: DateTime.new(2024, 7, 4, 0, 0, 0, "-07:00"), organization: storage_creation.organization, storage_location: storage_creation.storage_location)
+    dist = Distribution.create!(id: 123, partner: partner, delivery_method: delivery_method, issued_at: DateTime.new(2024, 7, 4, 0, 0, 0, "-07:00"), organization: storage_creation.organization, storage_location: storage_creation.storage_location)
     create_line_items_request(dist, partner, storage_creation)
     dist
   end

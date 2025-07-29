@@ -46,6 +46,15 @@
                     <%= filter_select(label: "Filter by vendor", scope: :from_vendor, collection: @vendors, value: :business_name, selected: @selected_vendor) %>
                   </div>
                 <% end %>
+                <% if @item_categories.present? %>
+                  <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                    <% id = "filter_#{SecureRandom.uuid}" %>
+                    <%= label_tag id, "Filter by Category" %>
+                    <%= select_tag "filters[by_category]",
+                    options_for_select(@item_categories, @selected_item_category),
+                    { include_blank: true, class: "form-control", id: id } %>
+                  </div>
+                <% end %>
                 <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
                   <%= label_tag "Purchase Date Range" %>
                   <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %>
@@ -95,26 +104,26 @@
               <tr>
                 <td colspan="2" style="text-align: left"><strong>Total</strong></td>
                 <td class="numeric">
+                  <%= @paginated_purchases_quantity %> (This page)
+                  <br>
                   <strong id="purchase_quantity">
                     <%= @purchases_quantity %> (Total)
                   </strong>
-                  <br>
-                  <%= @paginated_purchases_quantity %> (This page)
                 </td>
                 <td></td>
                 <td class="numeric">
+                  <%= dollar_value(@paginated_purchases_value) %> (This page)
+                  <br>
                   <strong>
                     <%= dollar_value(@total_value_all_purchases) %> (Total)
                   </strong>
-                  <br>
-                  <%= dollar_value(@paginated_purchases_value) %> (This page)
                   </td>
                   <td class="numeric">
+                    <%= dollar_value(@paginated_fair_market_values) %> (This page)
+                  <br>
                   <strong>
                     <%= dollar_value(@total_fair_market_values) %> (Total)
                   </strong>
-                  <br>
-                  <%= dollar_value(@paginated_fair_market_values) %> (This page)
                   </td>
                 <td></td>
               </tr>

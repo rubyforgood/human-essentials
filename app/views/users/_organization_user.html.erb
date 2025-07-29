@@ -3,12 +3,12 @@
     <%= user.display_name %>
   </td>
   <td><%= user.email %></td>
-  <td><%= user.kind %> </td>
+  <td><%= user.org_role %> </td>
   <td><%= user.current_sign_in_at&.strftime('%Y/%m/%d') %></td>
   <td><%= user.invitation_status %></td>
   <td nowrap><%= reinvite_user_link(user) %></td>
   <td>
-    <% unless user.has_cached_role?(Role::SUPER_ADMIN) || user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
+    <% unless user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
       <div class="dropdown">
         <button class="btn btn-default dropdown-toggle" type="button" id="<%= dom_id(user, "dropdownMenu") %>" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
           Actions
@@ -16,15 +16,11 @@
         </button>
         <ul class="dropdown-menu">
           <li>
-            <% if current_user.has_cached_role?(Role::SUPER_ADMIN) %>
-              <%= edit_button_to(edit_admin_user_path(user), { text: 'Edit User' }) %>
-            <% else %>
-              <%= edit_button_to(
-                promote_to_org_admin_organization_path(user_id: user.id),
-                {text: 'Promote to Admin'},
-                {method: :post, rel: "nofollow", data: {confirm: 'This will promote the user to admin status. Are you sure that you want to submit this?', size: 'xs'}}
-              ) %>
-            <% end %>
+            <%= edit_button_to(
+              promote_to_org_admin_organization_path(user_id: user.id),
+              {text: 'Promote to Admin'},
+              {method: :post, rel: "nofollow", data: {confirm: 'This will promote the user to admin status. Are you sure that you want to submit this?', size: 'xs'}}
+            ) %>
           </li>
           <li>
             <%= delete_button_to remove_user_organization_path(user_id: user.id),
@@ -32,12 +28,12 @@
           </li>
         </ul>
       </div>
+
     <% end %>
     <% if current_user.is_admin?(current_organization) && user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
-      <%= edit_button_to demote_to_user_organization_path(user_id: user.id, organization_name: current_organization.short_name),
+      <%= edit_button_to demote_to_user_organization_path(user_id: user.id, organization_id: current_organization.id),
                  {text: 'Demote to User'},
                  {method: :post, rel: "nofollow", data: {confirm: 'This will demote the admin to user status. Are you sure that you want to submit this?', size: 'xs'}} unless user.id == current_user.id %>
     <% end %>
   </td>
-</td>
 </tr>

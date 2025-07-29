@@ -1,5 +1,5 @@
 RSpec.describe "Admin::UsersController", type: :request do
-  let(:organization) { create(:organization, name: "Org ABC") }
+  let(:organization) { create(:organization, name: "Org ABC", email: "email@testthis.com") }
   let(:user) { create(:user, organization: organization, name: "User 123") }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
   let(:super_admin) { create(:super_admin, organization: organization) }
@@ -53,18 +53,27 @@ RSpec.describe "Admin::UsersController", type: :request do
     end
 
     describe '#add_role' do
-      context 'with no errors' do
-        it 'should call the service and redirect back' do
+      shared_examples "add role check" do |user_factory|
+        let!(:user_to_modify) { create(user_factory, name: "User to modify", organization: organization) }
+
+        it "should call the service and redirect back", :aggregate_failures do
           allow(AddRoleService).to receive(:call)
-          post admin_user_add_role_path(user_id: user.id,
+          post admin_user_add_role_path(user_id: user_to_modify.id,
             resource_type: Role::ORG_ADMIN,
             resource_id: organization.id),
             headers: { 'HTTP_REFERER' => '/back/url'}
-          expect(AddRoleService).to have_received(:call).with(user_id: user.id.to_s,
+          expect(AddRoleService).to have_received(:call).with(user_id: user_to_modify.id.to_s,
             resource_type: Role::ORG_ADMIN.to_s,
             resource_id: organization.id.to_s)
           expect(flash[:notice]).to eq('Role added!')
           expect(response).to redirect_to('/back/url')
+        end
+      end
+
+      context 'with no errors' do
+        include_examples "add role check", :user
+        context "modifying another super admin" do
+          include_examples "add role check", :super_admin
         end
       end
 
@@ -85,16 +94,26 @@ RSpec.describe "Admin::UsersController", type: :request do
     end
 
     describe '#remove_role' do
-      context 'with no errors' do
-        it 'should call the service and redirect back' do
+      shared_examples "remove role check" do |user_factory|
+        let!(:user_to_modify) { create(user_factory, name: "User to modify", organization: organization) }
+
+        it "should call the service and redirect back", :aggregate_failures do
+          role_to_remove_id = user_to_modify.roles.find_by(name: Role::ORG_ADMIN, resource_id: organization.id).id
           allow(RemoveRoleService).to receive(:call)
-          delete admin_user_remove_role_path(user_id: user.id,
-            role_id: 123),
+          delete admin_user_remove_role_path(user_id: user_to_modify.id,
+            role_id: role_to_remove_id),
             headers: { 'HTTP_REFERER' => '/back/url'}
-          expect(RemoveRoleService).to have_received(:call).with(user_id: user.id.to_s,
-            role_id: '123')
+          expect(RemoveRoleService).to have_received(:call).with(user_id: user_to_modify.id.to_s,
+            role_id: role_to_remove_id.to_s)
           expect(flash[:notice]).to eq('Role removed!')
           expect(response).to redirect_to('/back/url')
+        end
+      end
+
+      context 'with no errors' do
+        include_examples "remove role check", :organization_admin
+        context 'modifying another super admin' do
+          include_examples "remove role check", :super_admin_org_admin
         end
       end
 
@@ -117,17 +136,84 @@ RSpec.describe "Admin::UsersController", type: :request do
         get new_admin_user_path
         expect(response).to render_template(:new)
       end
-
-      it "preloads organizations" do
-        get new_admin_user_path
-        expect(assigns(:organizations)).to eq(Organization.all.alphabetized)
-      end
     end
 
     describe "POST #create" do
-      it "returns http success" do
-        post admin_users_path, params: { user: { email: organization.email, organization_id: organization.id } }
+      it "creates an org user" do
+        post admin_users_path, params: {
+          user: { name: "New Org User", email: organization.email },
+          resource_type: Role::ORG_USER,
+          resource_id: organization.id
+        }
         expect(response).to redirect_to(admin_users_path)
+        new_user = User.find_by(name: "New Org User")
+        expect(new_user).not_to eq(nil)
+        expect(new_user.has_role?(Role::ORG_USER, organization)).to be_truthy
+        expect(new_user.has_role?(Role::ORG_ADMIN, organization)).to be_falsey
+      end
+
+      context "flash notice behavior" do
+        context "when creating a new user" do
+          it "shows 'Created a new user!' message" do
+            post admin_users_path, params: {
+              user: { name: "New User", email: "new@example.com" },
+              resource_type: Role::ORG_USER,
+              resource_id: organization.id
+            }
+            expect(response).to redirect_to(admin_users_path)
+            expect(flash[:notice]).to eq("Created a new user!")
+          end
+        end
+
+        context "when adding a role to an existing user" do
+          let!(:existing_user) { create(:user, email: "existing@example.com", organization: organization) }
+
+          it "shows 'Added new role to existing user' message" do
+            post admin_users_path, params: {
+              user: { name: existing_user.name, email: existing_user.email },
+              resource_type: Role::PARTNER,
+              resource_id: partner.id
+            }
+            expect(response).to redirect_to(admin_users_path)
+            expect(flash[:notice]).to eq("Added new role to existing user")
+          end
+        end
+      end
+
+      it "creates an org admin" do
+        post admin_users_path, params: {
+          user: { name: "New Org Admin", email: organization.email },
+          resource_type: Role::ORG_ADMIN,
+          resource_id: organization.id
+        }
+        expect(response).to redirect_to(admin_users_path)
+        new_user = User.find_by(name: "New Org Admin")
+        expect(new_user).not_to eq(nil)
+        expect(new_user.has_role?(Role::ORG_USER, organization)).to be_truthy
+        expect(new_user.has_role?(Role::ORG_ADMIN, organization)).to be_truthy
+      end
+
+      it "creates a partner user" do
+        post admin_users_path, params: {
+          user: { name: "New Partner User", email: organization.email },
+          resource_type: Role::PARTNER,
+          resource_id: partner.id
+        }
+        expect(response).to redirect_to(admin_users_path)
+        new_user = User.find_by(name: "New Partner User")
+        expect(new_user).not_to eq(nil)
+        expect(new_user.has_role?(Role::PARTNER, partner)).to be_truthy
+      end
+
+      it "creates a super admin" do
+        post admin_users_path, params: {
+          user: { name: "New Super Admin", email: organization.email },
+          resource_type: Role::SUPER_ADMIN
+        }
+        expect(response).to redirect_to(admin_users_path)
+        new_user = User.find_by(name: "New Super Admin")
+        expect(new_user).not_to eq(nil)
+        expect(new_user.has_role?(Role::SUPER_ADMIN)).to be_truthy
       end
 
       it "preloads organizations" do
@@ -135,12 +221,19 @@ RSpec.describe "Admin::UsersController", type: :request do
         expect(assigns(:organizations)).to eq(Organization.all.alphabetized)
       end
 
-      context "with missing organization id" do
+      context "with missing role type" do
         it "redirects back with flash message" do
           post admin_users_path, params: { user: { name: "ABC", email: organization.email } }
-
           expect(response).to render_template("admin/users/new")
-          expect(flash[:error]).to eq("Failed to create user: Please select an organization for the user.")
+          expect(flash[:error]).to eq("Failed to create user: Please select a role for the user.")
+        end
+      end
+
+      context "with missing resource id" do
+        it "redirects back with flash message" do
+          post admin_users_path, params: { user: { name: "ABC", email: organization.email }, resource_type: Role::ORG_ADMIN }
+          expect(response).to render_template("admin/users/new")
+          expect(flash[:error]).to eq("Failed to create user: Please select an associated resource for the role.")
         end
       end
     end

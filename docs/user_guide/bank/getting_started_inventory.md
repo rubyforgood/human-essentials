@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Getting started -- Inventory
 When we set up your organization, we provide a default set of Items ranging from adult briefs to kids (newborn) 
 to tampons. You can modify this list at any time, through the [Inventory Items](inventory_items.md) feature.  

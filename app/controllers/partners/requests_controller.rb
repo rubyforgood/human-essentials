@@ -1,5 +1,6 @@
 module Partners
   class RequestsController < BaseController
+    include Validatable
     skip_before_action :require_partner, only: [:new, :create, :validate]
     before_action :require_partner_or_org_admin, only: [:new, :create, :validate]
     layout :layout
@@ -81,8 +82,11 @@ module Partners
       @requestable_items = PartnerFetchRequestableItemsService.new(partner_id: partner.id).call
       if Flipper.enabled?(:enable_packs)
         # hash of (item ID => hash of (request unit name => request unit plural name))
-        @item_units = Item.where(id: @requestable_items.to_h.values).to_h do |i|
-          [i.id, i.request_units.to_h { |u| [u.name, u.name.pluralize] }]
+        item_ids = @requestable_items.to_h.values
+        if item_ids.present?
+          @item_units = Item.where(id: item_ids).to_h do |i|
+            [i.id, i.request_units.to_h { |u| [u.name, u.name.pluralize] }]
+          end
         end
       end
     end
@@ -103,7 +107,7 @@ module Partners
 
     def redirect_invalid_user
       respond_to do |format|
-        format.html { redirect_to dashboard_path, flash: {error: "Logged in user is not set up as a 'partner'."} }
+        format.html { redirect_to dashboard_path, flash: {error: "That screen is not available. Please try again as a partner."} }
         format.json { render body: nil, status: :forbidden }
       end
     end

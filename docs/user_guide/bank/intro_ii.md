@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Support
 
 There are a few ways to get support -- some are better than others.
@@ -12,7 +11,7 @@ It's a good place to ask about how other banks *actually* use the system
 
 It's often the quickest way to get support from the human essentials team as well, and the easiest way to interact with the development team.
 ### Support tickets
-There is a link to submit a support ticket is at the bottom of the "Need Help?"  screen.   This will get to us, 
+Submit a support ticket [here](https://humanessentials.app/help).  This will get to us,
     but it will take longer.  We generally look at these about once a week, on Sundays.
 ### Email
 

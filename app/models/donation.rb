@@ -52,6 +52,10 @@ class Donation < ApplicationRecord
     where(manufacturer_id: manufacturer_id)
   }
 
+  scope :by_category, ->(item_category) {
+    joins(line_items: {item: :item_category}).where("item_categories.name ILIKE ?", item_category)
+  }
+
   before_create :combine_duplicates
 
   validates :donation_site, presence:
@@ -61,6 +65,7 @@ class Donation < ApplicationRecord
   validates :manufacturer, presence:
     { message: "must be specified since you chose '#{SOURCES[:manufacturer]}'" }, if: :from_manufacturer?
   validates :source, presence: true, inclusion: { in: SOURCES.values, message: "Must be a valid source." }
+  validates :money_raised, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validate :line_items_quantity_is_positive
 
   # TODO: move this to Organization.donations as an extension
@@ -118,7 +123,7 @@ class Donation < ApplicationRecord
   end
 
   def in_kind_value_money
-    Money.new(value_per_itemizable)
+    Money.new(value_per_itemizable).to_f
   end
 
   private

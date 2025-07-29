@@ -63,6 +63,12 @@ RSpec.describe Donation, type: :model do
       d.line_items << build(:line_item, quantity: -1)
       expect(d).not_to be_valid
     end
+    it "ensures that money_raised cannot be negative" do
+      expect(build(:donation, money_raised: -1)).not_to be_valid
+      expect(build(:donation, money_raised: 0)).to be_valid
+      expect(build(:donation, money_raised: 100)).to be_valid
+      expect(build(:donation, money_raised: nil)).to be_valid
+    end
   end
 
   context "Callbacks >" do
@@ -162,7 +168,7 @@ RSpec.describe Donation, type: :model do
         let(:product_drive) { create(:product_drive, name: "Test Drive") }
 
         context "participant known" do
-          let(:product_drive_participant) { create(:product_drive_participant, contact_name: contact_name) }
+          let(:product_drive_participant) { create(:product_drive_participant, business_name: "Business Name", contact_name: contact_name) }
 
           context "contact name present" do
             let(:contact_name) { "Contact Name" }

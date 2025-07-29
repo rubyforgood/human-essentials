@@ -2,38 +2,38 @@
 #
 # Table name: organizations
 #
-#  id                             :integer          not null, primary key
-#  city                           :string
-#  deadline_day                   :integer
-#  default_storage_location       :integer
-#  distribute_monthly             :boolean          default(FALSE), not null
-#  email                          :string
-#  enable_child_based_requests    :boolean          default(TRUE), not null
-#  enable_individual_requests     :boolean          default(TRUE), not null
-#  enable_quantity_based_requests :boolean          default(TRUE), not null
-#  hide_package_column_on_receipt :boolean          default(FALSE)
-#  hide_value_columns_on_receipt  :boolean          default(FALSE)
-#  intake_location                :integer
-#  invitation_text                :text
-#  latitude                       :float
-#  longitude                      :float
-#  name                           :string
-#  one_step_partner_invite        :boolean          default(FALSE), not null
-#  partner_form_fields            :text             default([]), is an Array
-#  receive_email_on_requests      :boolean          default(FALSE), not null
-#  reminder_day                   :integer
-#  repackage_essentials           :boolean          default(FALSE), not null
-#  short_name                     :string
-#  signature_for_distribution_pdf :boolean          default(FALSE)
-#  state                          :string
-#  street                         :string
-#  url                            :string
-#  ytd_on_distribution_printout   :boolean          default(TRUE), not null
-#  zipcode                        :string
-#  created_at                     :datetime         not null
-#  updated_at                     :datetime         not null
-#  account_request_id             :integer
-#  ndbn_member_id                 :bigint
+#  id                                       :integer          not null, primary key
+#  city                                     :string
+#  deadline_day                             :integer
+#  default_storage_location                 :integer
+#  distribute_monthly                       :boolean          default(FALSE), not null
+#  email                                    :string
+#  enable_child_based_requests              :boolean          default(TRUE), not null
+#  enable_individual_requests               :boolean          default(TRUE), not null
+#  enable_quantity_based_requests           :boolean          default(TRUE), not null
+#  hide_package_column_on_receipt           :boolean          default(FALSE)
+#  hide_value_columns_on_receipt            :boolean          default(FALSE)
+#  include_in_kind_values_in_exported_files :boolean          default(FALSE), not null
+#  intake_location                          :integer
+#  invitation_text                          :text
+#  latitude                                 :float
+#  longitude                                :float
+#  name                                     :string
+#  one_step_partner_invite                  :boolean          default(FALSE), not null
+#  partner_form_fields                      :text             default([]), is an Array
+#  receive_email_on_requests                :boolean          default(FALSE), not null
+#  reminder_day                             :integer
+#  repackage_essentials                     :boolean          default(FALSE), not null
+#  signature_for_distribution_pdf           :boolean          default(FALSE)
+#  state                                    :string
+#  street                                   :string
+#  url                                      :string
+#  ytd_on_distribution_printout             :boolean          default(TRUE), not null
+#  zipcode                                  :string
+#  created_at                               :datetime         not null
+#  updated_at                               :datetime         not null
+#  account_request_id                       :integer
+#  ndbn_member_id                           :bigint
 #
 
 RSpec.describe Organization, type: :model do
@@ -61,11 +61,6 @@ RSpec.describe Organization, type: :model do
         enable_individual_requests: false,
         enable_quantity_based_requests: false
       )).to_not be_valid
-    end
-
-    it "validates that short names are unique" do
-      expect(create(:organization, short_name: "foo_bar")).to be_valid
-      expect(build(:organization, short_name: "foo_bar")).to_not be_valid
     end
 
     it "validates that attachment file size is not higher than 1 MB" do
@@ -246,13 +241,6 @@ RSpec.describe Organization, type: :model do
     end
   end
 
-  describe "#short_name" do
-    it "can only contain valid characters" do
-      expect(build(:organization, short_name: "asdf")).to be_valid
-      expect(build(:organization, short_name: "Not Legal!")).to_not be_valid
-    end
-  end
-
   describe "#ordered_requests" do
     let!(:new_active_request)  { create(:request, comments: "first active") }
     let!(:old_active_request) { create(:request, comments: "second active") }
@@ -286,6 +274,15 @@ RSpec.describe Organization, type: :model do
   end
 
   describe "geocode" do
+    before do
+      organization.update(
+        street: "1500 Remount Road",
+        city: "Front Royal",
+        state: "VA",
+        zipcode: "22630"
+      )
+    end
+
     it "adds coordinates to the database" do
       expect(organization.latitude).to be_a(Float)
       expect(organization.longitude).to be_a(Float)
@@ -357,6 +354,7 @@ RSpec.describe Organization, type: :model do
 
   describe 'from_email' do
     it 'returns email when present' do
+      organization.update(email: "email@testthis.com")
       expect(organization.from_email).to eq(organization.email)
     end
 
@@ -390,10 +388,10 @@ RSpec.describe Organization, type: :model do
   end
   describe 'deadline_day' do
     it "can only contain numbers 1-28" do
-      expect(build(:organization, deadline_day: 28)).to be_valid
-      expect(build(:organization, deadline_day: 0)).to_not be_valid
-      expect(build(:organization, deadline_day: -5)).to_not be_valid
-      expect(build(:organization, deadline_day: 29)).to_not be_valid
+      expect(build(:organization, reminder_day: 1, deadline_day: 28)).to be_valid
+      expect(build(:organization, reminder_day: 1, deadline_day: 0)).to_not be_valid
+      expect(build(:organization, reminder_day: 1, deadline_day: -5)).to_not be_valid
+      expect(build(:organization, reminder_day: 1, deadline_day: 29)).to_not be_valid
     end
   end
 

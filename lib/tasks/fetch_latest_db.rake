@@ -59,7 +59,7 @@ def fetch_latest_backups
   # Retrieve the most up to date version of the DB dump
   #
   backup = backups.contents.select { |b| b.key.match?(".rds.dump") }.sort do |a,b|
-    Time.parse(a.last_modified) <=> Time.parse(b.last_modified)
+    a.last_modified <=> b.last_modified
   end.reverse.first
 
   #

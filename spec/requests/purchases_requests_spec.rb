@@ -83,9 +83,10 @@ RSpec.describe "Purchases", type: :request do
 
         describe "pagination" do
           around do |ex|
+            old_default = Kaminari.config.default_per_page
             Kaminari.config.default_per_page = 2
             ex.run
-            Kaminari.config.default_per_page = 50
+            Kaminari.config.default_per_page = old_default
           end
           before do
             item = create(:item, organization: organization)
@@ -158,9 +159,10 @@ RSpec.describe "Purchases", type: :request do
         end
 
         it "storage location defaults to organizations storage location" do
-          purchase = create(:purchase)
+          storage_location = create(:storage_location, name: "Test Storage Location")
+          purchase = create(:purchase, storage_location: storage_location)
           get edit_purchase_path(purchase)
-          expect(response.body).to match(/(<option selected="selected" value=")[0-9]*(">Smithsonian Conservation Center<\/option>)/)
+          expect(response.body).to match(/(<option selected="selected" value=")[0-9]*(">Test Storage Location<\/option>)/)
         end
       end
 

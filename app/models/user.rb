@@ -95,6 +95,10 @@ class User < ApplicationRecord
     name.presence || "Name Not Provided"
   end
 
+  def preferred_name
+    name.presence || email
+  end
+
   def formatted_email
     email.present? ? "#{name} <#{email}>" : ""
   end
@@ -111,13 +115,11 @@ class User < ApplicationRecord
     "invited" if invitation_sent_at.present?
   end
 
-  def kind
-    return "super" if has_cached_role?(Role::SUPER_ADMIN)
+  def org_role
     return "admin" if has_cached_role?(Role::ORG_ADMIN, organization)
     return "normal" if has_cached_role?(Role::ORG_USER, organization)
-    return "partner" if has_cached_role?(Role::PARTNER, partner)
 
-    "normal"
+    "not a member"
   end
 
   def is_admin?(org)

@@ -60,7 +60,7 @@ Rails.application.routes.draw do
   namespace :admin do
     get :dashboard
     resources :base_items
-    resources :organizations
+    resources :organizations, except: %i[edit update]
     resources :partners, except: %i[new create]
     resources :users do
       delete :remove_role
@@ -154,7 +154,10 @@ Rails.application.routes.draw do
     collection do
       post :import_csv
     end
-    delete :deactivate, on: :member
+    member do
+      put :deactivate
+      put :reactivate
+    end
   end
 
   resources :product_drive_participants, except: [:destroy] do
@@ -169,7 +172,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :vendors, except: [:destroy] do
+  resources :vendors do
     collection do
       post :import_csv
     end
@@ -238,6 +241,7 @@ Rails.application.routes.draw do
       post :start
     end
     get :print_unfulfilled, on: :collection
+    get :print_picklist, on: :member
   end
   resources :requests, except: %i(destroy) do
     resource :cancelation, only: [:new, :create], controller: 'requests/cancelation'

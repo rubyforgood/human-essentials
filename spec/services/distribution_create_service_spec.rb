@@ -1,5 +1,5 @@
 RSpec.describe DistributionCreateService, type: :service do
-  let(:organization) { create(:organization) }
+  let(:organization) { create(:organization, email: "email@testthis.com") }
   let(:partner) { create(:partner, organization: organization) }
 
   include ActiveJob::TestHelper
