@@ -148,6 +148,26 @@ module UiHelper
     _link_to link, { icon: "search", type: "info", text: "View", size: "xs" }.merge(options)
   end
 
+  def status_label(status, options = {})
+    status_options = {
+      "uninvited" => { icon: "exclamation-circle" },
+      "invited" => { icon: "check", type: "info" },
+      "awaiting_review" => { icon: "check", type: "warning" },
+      "approved" => { icon: "check", type: "success" },
+      "recertification_required" => { icon: "minus", type: "danger" },
+      "deactivated" => { icon: "minus", type: "secondary" }
+    }
+    return content_tag :span, "Errored", class: "label label-teal" unless status_options[status]
+
+    text = status.humanize.to_s
+    type = status_options[status][:type]
+    klass = "cursor-default btn btn-xs btn-#{type} #{options[:class]}"
+
+    content_tag :span, class: klass do
+      fa_icon status_options[status][:icon], text: text
+    end
+  end
+
   def invite_button_to(link, options = {}, properties = {})
     properties = { method: options[:method]&.to_sym || :post, rel: "nofollow", data: { confirm: options[:confirm] || "Are you sure?" } }.merge(properties)
     _link_to link, { icon: "envelope", type: "warning", text: "Invite", size: "xs" }.merge(options), properties
