@@ -7,22 +7,7 @@
   <td><%= partner_row.partner_group&.name %></td>
   <td><%= partner_row.quota %></td>
   <td>
-    <% case status %>
-    <% when "uninvited" %>
-      <%= view_button_to "#", { text: "Uninvited", icon: "exclamation-circle" } %>
-    <% when "invited" %>
-      <%= view_button_to "#", { text: "#{status.humanize}", icon: "check" } %>
-    <% when "awaiting_review" %>
-      <%= view_button_to "#", { text: "#{status.humanize}", icon: "check", type: "warning" } %>
-    <% when "approved" %>
-      <%= view_button_to "#", { text: "#{status.humanize}", icon: "check", type: "success" } %>
-    <% when "recertification_required" %>
-      <%= view_button_to "#", { text: "#{status.humanize}", icon: "minus", type: "danger" } %>
-    <% when "deactivated" %>
-      <%= view_button_to "#", { text: "#{status.humanize}", icon: "minus", type: "secondary" } %>
-    <% else %>
-      <span class="label label-teal">Errored</span>
-    <% end %>
+   <%= status_label(status) %>
   </td>
   <td>
     <% case status %>
