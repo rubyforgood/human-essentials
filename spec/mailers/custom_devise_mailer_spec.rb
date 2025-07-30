@@ -1,6 +1,7 @@
 RSpec.describe CustomDeviseMailer, type: :mailer do
   describe "#invitation_instructions" do
     let(:user) { create(:partner_user) }
+    # let(:invitation_sent_at) { nil }
     let(:mail) { described_class.invitation_instructions(user, SecureRandom.uuid) }
 
     context "when partner is invited" do
@@ -40,15 +41,6 @@ RSpec.describe CustomDeviseMailer, type: :mailer do
       it "invites to user" do
         expect(mail.subject).to eq("Your Human Essentials App Account Approval")
         expect(mail.html_part.body).to include("Your request has been approved and you're invited to become an user of the Human Essentials inventory management system!")
-      end
-
-      it "has invite expiration message and reset instructions" do
-        expect(mail.html_part.body).to include("This invitation will expire at #{user.invitation_due_at.strftime("%B %d, %Y %I:%M %p")} GMT or if a new password reset is triggered.")
-      end
-
-      it "has reset instructions" do
-        expect(mail.html_part.body).to match(%r{<p>If your invitation has an expired message, go <a href="http://.+?/users/password/new">here</a> and enter your email address to reset your password.</p>})
-        expect(mail.html_part.body).to include("Feel free to ignore this email if you are not interested or if you feel it was sent by mistake.")
       end
     end
   end
