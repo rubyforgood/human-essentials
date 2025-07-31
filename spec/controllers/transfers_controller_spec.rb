@@ -43,6 +43,31 @@ RSpec.describe TransfersController, type: :controller do
     end
 
     describe "POST #create" do
+      context 'when duplicate line_items with different quantities submitted' do
+        let!(:item1) { create(:item) }
+        let(:params) {
+          attributes_for(
+            :transfer,
+            organization_id: organization.id,
+            to_id: create(:storage_location, organization: organization).id,
+            from_id: create(:storage_location, organization: organization).id,
+            line_items_attributes: {
+              "0" => { item_id: item1.id, quantity: 2 },
+              "1" => { item_id: item1.id, quantity: 3 }
+            }
+          )
+        }
+
+        it "merges same line_items id items into one quantity" do
+          post :create, params: { transfer: params }
+
+          transfer = assigns(:transfer)
+
+          expect(transfer.line_items.size).to eq 1
+          expect(transfer.line_items.first.quantity).to eq 5
+        end
+      end
+
       it "redirects to #show when successful" do
         attributes = attributes_for(
           :transfer,
@@ -76,6 +101,34 @@ RSpec.describe TransfersController, type: :controller do
         expect(subject).to be_successful
       end
     end
+
+    describe "POST #validate" do
+      context 'when duplicate line_items with different quantities submitted' do
+        let!(:item1) { create(:item) }
+        let(:params) {
+          attributes_for(
+            :transfer,
+            organization_id: organization.id,
+            to_id: create(:storage_location, organization: organization).id,
+            from_id: create(:storage_location, organization: organization).id,
+            line_items_attributes: {
+              "0" => { item_id: item1.id, quantity: 2 },
+              "1" => { item_id: item1.id, quantity: 3 }
+            }
+          )
+        }
+
+        it "merges same line_items id items into one quantity" do
+          post :validate, params: { transfer: params }
+
+          transfer = assigns(:transfer)
+
+          expect(transfer.line_items.size).to eq 1
+          expect(transfer.line_items.first.quantity).to eq 5
+        end
+      end
+    end
+
     context "Looking at a different organization" do
       let(:object) do
         org = create(:organization)
