@@ -3,7 +3,7 @@
 </div>
 
 <%= f.fields_for :profile, profile do |pf| %>
-  <div data-controller="hide-by-source-val" 
+  <div data-controller="hide-by-source-val"
        data-hide-by-source-val-values-to-hide-value='["career","abuse","bnb","church","college","cdc","health","outreach","legal","crisis","disab","district","domv","ece","child","edu","family","food","foster","govt","headstart","homevisit","homeless","hosp","infpan","lib","mhealth","military","police","preg","presch","ref","es","hs","ms","senior","tribal","treat","twoycollege","wic"]'>
     <div class="form-group">
       <%= pf.input :agency_type,
