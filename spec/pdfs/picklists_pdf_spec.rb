@@ -123,7 +123,6 @@ describe PicklistsPdf do
   end
 
   context "When packs are enabled" do
-
     specify "#data_with_units" do
       item_with_units = create(:item, name: "Item with units", organization: organization)
       create(:item_unit, item: item_with_units, name: "Pack")
