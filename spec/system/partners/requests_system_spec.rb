@@ -16,7 +16,6 @@ RSpec.describe "Partners profile served area behaviour", type: :system, js: true
 
     context "with packs off" do
       before(:each) do
-        Flipper.disable(:enable_packs)
       end
 
       it "should not show packs on selection" do
@@ -28,7 +27,6 @@ RSpec.describe "Partners profile served area behaviour", type: :system, js: true
 
     context "with packs on" do
       before(:each) do
-        Flipper.enable(:enable_packs)
       end
 
       it "should require a unit selection" do

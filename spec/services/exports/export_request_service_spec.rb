@@ -96,7 +96,6 @@ RSpec.describe Exports::ExportRequestService do
 
   context "with custom units feature enabled" do
     before do
-      Flipper.enable(:enable_packs)
     end
 
     describe ".generate_csv_data" do
@@ -221,7 +220,6 @@ RSpec.describe Exports::ExportRequestService do
 
   context "with custom units feature disabled" do
     before do
-      Flipper.disable(:enable_packs)
     end
 
     describe ".generate_csv_data" do

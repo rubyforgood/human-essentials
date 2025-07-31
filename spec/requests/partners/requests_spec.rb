@@ -54,11 +54,9 @@ RSpec.describe "/partners/requests", type: :request do
     context "when packs are enabled but there are no requestable items" do
       before do
         allow_any_instance_of(PartnerFetchRequestableItemsService).to receive(:call).and_return({})
-        Flipper.enable(:enable_packs)
       end
 
       after do
-        Flipper.disable(:enable_packs)
       end
 
       it 'should render without any issues' do
@@ -181,13 +179,11 @@ RSpec.describe "/partners/requests", type: :request do
         ]
       )
 
-      Flipper.enable(:enable_packs)
       get partners_request_path(request)
       expect(response.body).to match(/First item - 125/m)
       expect(response.body).to match(/Second item - 559\s+flats/m)
       expect(response.body).to match(/Third item - 1\s+flat/m)
 
-      Flipper.disable(:enable_packs)
       get partners_request_path(request)
       expect(response.body).to match(/First item - 125/m)
       expect(response.body).to match(/Second item - 559/m)
@@ -290,7 +286,6 @@ RSpec.describe "/partners/requests", type: :request do
         end
 
         it "creates without error" do
-          Flipper.enable(:enable_packs)
           expect { subject }.to change { Request.count }.by(1)
           expect(response).to redirect_to(partners_request_path(Request.last.id))
           expect(response.request.flash[:success]).to eql "Request was successfully created."
@@ -319,7 +314,6 @@ RSpec.describe "/partners/requests", type: :request do
         end
 
         it "results in an error" do
-          Flipper.enable(:enable_packs)
           expect { post partners_requests_path, params: request_attributes }.to_not change { Request.count }
           expect(response).to be_unprocessable
           expect(response.body).to include("Please ensure a single unit is selected for each item")

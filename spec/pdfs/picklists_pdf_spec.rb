@@ -123,7 +123,6 @@ describe PicklistsPdf do
   end
 
   context "When packs are enabled" do
-    before { Flipper.enable(:enable_packs) }
 
     specify "#data_with_units" do
       item_with_units = create(:item, name: "Item with units", organization: organization)

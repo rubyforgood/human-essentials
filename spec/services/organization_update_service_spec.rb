@@ -11,7 +11,6 @@ RSpec.describe OrganizationUpdateService do
       end
 
       it "Should set request_units on the organization" do
-        Flipper.enable(:enable_packs)
         params = {request_unit_names: ["newpack"]}
         described_class.update(organization, params)
         expect(organization.errors.none?).to eq(true)
