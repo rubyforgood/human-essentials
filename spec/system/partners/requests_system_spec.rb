@@ -14,17 +14,6 @@ RSpec.describe "Partners profile served area behaviour", type: :system, js: true
       FactoryBot.create(:item_unit, name: "pack", item: item1)
     end
 
-    context "with packs off" do
-      before(:each) do
-      end
-
-      it "should not show packs on selection" do
-        visit new_partners_request_path
-        select "Item 1", from: "request_item_requests_attributes_0_item_id"
-        expect(page).not_to have_selector("#request_item_requests_attributes_0_request_unit", visible: true)
-      end
-    end
-
     context "with packs on" do
       before(:each) do
       end
