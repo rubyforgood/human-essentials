@@ -159,6 +159,18 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
         schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_week(target_date.wday => [every_nth_day]))
         expect(page).to have_content(schedule.next_occurrence.strftime("%b %d %Y"))
       end
+
+      it "at the very end of the month" do
+        target_date = @now.end_of_month
+        every_nth_day = calc_every_nth_day(target_date)
+        select(ReminderScheduleService::NTH_TO_WORD_MAP[every_nth_day], from: "#{form_prefix}_reminder_schedule_service_every_nth_day")
+        select(ReminderScheduleService::DAY_OF_WEEK_COLLECTION[target_date.wday][0], from: "#{form_prefix}_reminder_schedule_service_day_of_week")
+
+        expect(page).to have_content("Your next reminder date is")
+        schedule = IceCube::Schedule.new(@now)
+        schedule.add_recurrence_rule(IceCube::Rule.monthly.day_of_week(target_date.wday => [every_nth_day]))
+        expect(page).to have_content(schedule.next_occurrence.strftime("%b %d %Y"))
+      end
     end
   end
 end

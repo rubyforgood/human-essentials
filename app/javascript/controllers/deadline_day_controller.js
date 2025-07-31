@@ -68,10 +68,10 @@ export default class extends Controller {
     }
     if (reminder_date && this.deadlineDayTarget.value) {
       deadline_date = new Date(reminder_date.getTime());
-      if( deadline_date.getDate() >= parseInt(this.deadlineDayTarget.value)){
+      deadline_date.setDate(parseInt(this.deadlineDayTarget.value))
+      if( reminder_date.getDate() >= parseInt(this.deadlineDayTarget.value)){
         deadline_date.setMonth( deadline_date.getMonth() + 1 )
       }
-      deadline_date.setDate(parseInt(this.deadlineDayTarget.value))
     }
 
     if (this.byDayOfMonthTarget.checked && this.dayOfMonthTarget.value
