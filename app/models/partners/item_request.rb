@@ -37,7 +37,8 @@ module Partners
     end
 
     def name_with_unit(quantity_override = nil)
-      "#{item&.name || name} - #{request_unit.pluralize(quantity_override || quantity.to_i)}"
+      unit_text = request_unit.present? ? request_unit.pluralize(quantity_override || quantity.to_i) : "items"
+      "#{item&.name || name} - #{unit_text}"
     end
   end
 end

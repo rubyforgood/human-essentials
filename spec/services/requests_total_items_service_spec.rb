@@ -74,7 +74,10 @@ RSpec.describe RequestsTotalItemsService, type: :service do
     context 'when quantity is zero' do
       let(:item) { create(:item, :with_unit, name: "Zero Item", organization: organization, unit: "piece") }
       let(:requests) do
-        request = create(:request, :with_item_requests, request_items: [{"item_id" => item.id, "quantity" => 0, "request_unit" => "piece"}])
+        # Create a valid request first, then manually update to bypass validation
+        request = create(:request, :with_item_requests, request_items: [{"item_id" => item.id, "quantity" => 1, "request_unit" => "piece"}])
+        # Update the quantity to 0 to bypass validation
+        request.item_requests.first.update_column(:quantity, 0)
         Request.where(id: request.id)
       end
 
