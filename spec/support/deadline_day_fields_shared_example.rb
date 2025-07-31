@@ -2,7 +2,7 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
   it "can set a reminder on a day of the month" do
     choose "Day of Month"
     fill_in "#{form_prefix}_reminder_schedule_service_day_of_month", with: 1
-    fill_in "Default deadline day (final day of month to submit Requests)", with: 10
+    fill_in "Deadline day in reminder email", with: 10
     click_on save_button
 
     if post_form_submit
@@ -16,7 +16,7 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
     choose "Day of the Week"
     select("First", from: "#{form_prefix}_reminder_schedule_service_every_nth_day")
     select("Sunday", from: "#{form_prefix}_reminder_schedule_service_day_of_week")
-    fill_in "Default deadline day (final day of month to submit Requests)", with: 10
+    fill_in "Deadline day in reminder email", with: 10
     click_on save_button
 
     if post_form_submit
@@ -29,10 +29,10 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
   it "warns the user if they enter the same reminder and deadline day" do
     choose "Day of Month"
     fill_in "#{form_prefix}_reminder_schedule_service_day_of_month", with: 15
-    fill_in "Default deadline day (final day of month to submit Requests)", with: 15
+    fill_in "Deadline day in reminder email", with: 15
     expect(page).to have_content("Reminder day cannot be the same as deadline day.")
     expect(page).to_not have_content("Your next reminder date is")
-    expect(page).to_not have_content("Your next deadline date is")
+    expect(page).to_not have_content("The deadline on your next reminder email will be")
   end
 
   it "warns the user if the reminder day is outside the range of 1 to 28" do
@@ -47,11 +47,11 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
 
   it "warns the user if the deadline day is outside the range of 1 to 28" do
     choose "Day of Month"
-    fill_in "Default deadline day (final day of month to submit Requests)", with: "-1"
+    fill_in "Deadline day in reminder email", with: "-1"
     expect(page).to have_content("Deadline day must be between 1 and 28")
-    fill_in "Default deadline day (final day of month to submit Requests)", with: "20"
+    fill_in "Deadline day in reminder email", with: "20"
     expect(page).to_not have_content("Deadline day must be between 1 and 28")
-    fill_in "Default deadline day (final day of month to submit Requests)", with: "100"
+    fill_in "Deadline day in reminder email", with: "100"
     expect(page).to have_content("Deadline day must be between 1 and 28")
   end
 

@@ -94,7 +94,7 @@ export default class extends Controller {
         $(this.deadlineTextTarget).text("Deadline day must be between 1 and 28");
       } else {
         $(this.deadlineTextTarget).removeClass('text-danger').addClass('text-muted');
-        $(this.deadlineTextTarget).text(deadline_date ? `Your next deadline date is ${deadline_date.toDateString()}.` : "");
+        $(this.deadlineTextTarget).text(deadline_date ? `The deadline on your next reminder email will be ${deadline_date.toDateString()}.` : "");
       }
     }
   }

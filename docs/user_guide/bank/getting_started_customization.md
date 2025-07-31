@@ -158,7 +158,7 @@ if you have any questions about this!
 [Additional text for reminder email (see below)]
 </blockquote>
 
-#### Default deadline day (final day of month to submit Requests)
+#### Deadline day in reminder email
 This is the day which will be included in the reminder email message.
 
 It is assumed that the deadline day always occurs after the day the reminder is sent, and in cases where the deadline date specified is in the past, the deadline will be set to the next month.

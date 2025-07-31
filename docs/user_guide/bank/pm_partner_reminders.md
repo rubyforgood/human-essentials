@@ -9,7 +9,7 @@ When configuring a non-monthly reminder schedule (every 2 months, every 3 months
 
 Be aware that due to how these schedules are checked, it is unlikely that a newly created or updated schedule set to send a reminder the day it is created or update will actually send that reminder.
 
-## Default deadline day (final day of month to submit Requests)
+## Deadline day in reminder email
 This is the day which will be included in the reminder email message.
 
 It is assumed that the deadline day always occurs after the day the reminder is sent, and in cases where the deadline date specified is in the past, the deadline will be set to the next month.

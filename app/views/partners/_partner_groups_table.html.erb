@@ -55,7 +55,7 @@
                         <span>Deadlines are the <strong class='text-bold text-red-600'><%= pg.deadline_day.ordinalize %></strong> after the reminder. </span>
                         <% if pg.deadline_day && pg.reminder_schedule.valid? %>
                           <small class="mb-3 d-block text-muted">
-                            <%= "Your next deadline date is #{DeadlineService.new(
+                            <%= "The deadline on your next reminder email will be #{DeadlineService.new(
                               deadline_day: pg.deadline_day,
                               today: pg.reminder_schedule.next_occurrence).next_deadline&.strftime('%a %b %d %Y')}." %>
                           </small>

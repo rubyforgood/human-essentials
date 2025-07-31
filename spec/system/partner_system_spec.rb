@@ -632,7 +632,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           expect(page).to have_content("Category One")
 
           expect(page).not_to have_content("Your next reminder date is Tue Oct 20 2020.")
-          expect(page).not_to have_content("Your next deadline date is Sun Oct 25 2020.")
+          expect(page).not_to have_content("The deadline on your next reminder email will be Sun Oct 25 2020.")
         end
 
         context "with a reminder schedule" do
@@ -654,7 +654,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
             visit partners_path
             click_on 'Groups'
             expect(page).to have_content("Your next reminder date is Tue Oct 20 2020.")
-            expect(page).to have_content("Your next deadline date is Sun Oct 25 2020.")
+            expect(page).to have_content("The deadline on your next reminder email will be Sun Oct 25 2020.")
           end
         end
       end
@@ -683,7 +683,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           assert page.has_content? 'Test Group'
           assert page.has_content? item_category_2.name
           expect(page).to have_content("Your next reminder date is Sun Nov 01 2020.")
-          expect(page).to have_content("Your next deadline date is Wed Nov 25 2020.")
+          expect(page).to have_content("The deadline on your next reminder email will be Wed Nov 25 2020.")
         end
       end
 
@@ -733,7 +733,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           it "the deadline day form's reminder and deadline dates are consistent with the dates calculated by the FetchPartnersToRemindNowService and DeadlineService" do
             choose "Day of Month"
             fill_in "partner_group_reminder_schedule_service_day_of_month", with: 14
-            fill_in "Default deadline day (final day of month to submit Requests)", with: 21
+            fill_in "Deadline day in reminder email", with: 21
 
             reminder_text = find('small[data-deadline-day-target="reminderText"]').text
             reminder_text.slice!("Your next reminder date is ")
@@ -741,7 +741,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
             shown_recurrence_date = Time.zone.strptime(reminder_text, "%a %b %d %Y")
 
             deadline_text = find('small[data-deadline-day-target="deadlineText"]').text
-            deadline_text.slice!("Your next deadline date is ")
+            deadline_text.slice!("The deadline on your next reminder email will be ")
             deadline_text.slice!(".")
             shown_deadline_date = Time.zone.strptime(deadline_text, "%a %b %d %Y")
 
@@ -756,7 +756,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
             expect(DeadlineService.new(deadline_day: DeadlineService.get_deadline_for_partner(partner)).next_deadline.in_time_zone(Time.zone)).to be_within(1.second).of shown_deadline_date
 
             expect(page).to have_content("Your next reminder date is #{reminder_text}.")
-            expect(page).to have_content("Your next deadline date is #{deadline_text}.")
+            expect(page).to have_content("The deadline on your next reminder email will be #{deadline_text}.")
           end
         end
       end
