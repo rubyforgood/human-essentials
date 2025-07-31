@@ -336,7 +336,7 @@ GEM
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
     jmespath (1.6.2)
-    json (2.11.3)
+    json (2.12.2)
     jwt (3.1.2)
       base64
     kaminari (1.2.2)
@@ -353,7 +353,7 @@ GEM
     kaminari-core (1.2.2)
     knapsack_pro (8.3.0)
       rake
-    language_server-protocol (3.17.0.4)
+    language_server-protocol (3.17.0.5)
     launchy (3.0.0)
       addressable (~> 2.8)
       childprocess (~> 5.0)
@@ -385,10 +385,11 @@ GEM
       net-smtp
     marcel (1.0.4)
     matrix (0.4.2)
+    memflash (2.6.0)
+      actionpack (>= 7.0)
     memory_profiler (1.1.0)
     method_source (1.1.0)
     mini_mime (1.1.5)
-    mini_portile2 (2.8.9)
     minitest (5.25.5)
     monetize (1.12.0)
       money (~> 6.12)
@@ -419,9 +420,6 @@ GEM
       net-protocol
     newrelic_rpm (9.16.0)
     nio4r (2.7.4)
-    nokogiri (1.18.8)
-      mini_portile2 (~> 2.8.2)
-      racc (~> 1.4)
     nokogiri (1.18.8-arm64-darwin)
       racc (~> 1.4)
     nokogiri (1.18.8-x86_64-darwin)
@@ -605,7 +603,7 @@ GEM
       rspec-mocks (~> 3.13)
       rspec-support (~> 3.13)
     rspec-support (3.13.4)
-    rubocop (1.75.4)
+    rubocop (1.75.8)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.1.0)
@@ -616,7 +614,7 @@ GEM
       rubocop-ast (>= 1.44.0, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 2.4.0, < 4.0)
-    rubocop-ast (1.44.1)
+    rubocop-ast (1.45.1)
       parser (>= 3.3.7.2)
       prism (~> 1.4)
     rubocop-performance (1.25.0)
@@ -684,10 +682,10 @@ GEM
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
     stackprof (0.2.27)
-    standard (1.49.0)
+    standard (1.50.0)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.0)
-      rubocop (~> 1.75.2)
+      rubocop (~> 1.75.5)
       standard-custom (~> 1.0.0)
       standard-performance (~> 1.8)
     standard-custom (1.0.2)
@@ -745,7 +743,6 @@ GEM
 
 PLATFORMS
   arm64-darwin
-  ruby
   x86_64-darwin
   x86_64-linux
   x86_64-linux-gnu
@@ -796,6 +793,7 @@ DEPENDENCIES
   lograge
   magic_test
   matrix
+  memflash
   memory_profiler
   money-rails
   newrelic_rpm
@@ -831,7 +829,7 @@ DEPENDENCIES
   solid_cache (~> 1.0)
   sprockets (~> 4.2.2)
   stackprof
-  standard (~> 1.40)
+  standard (~> 1.50)
   standard-performance
   standard-rails
   stimulus-rails
@@ -843,4 +841,4 @@ DEPENDENCIES
   webmock (~> 3.25)
 
 BUNDLED WITH
-   2.6.9
+   2.7.0
