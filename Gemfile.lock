@@ -385,10 +385,11 @@ GEM
       net-smtp
     marcel (1.0.4)
     matrix (0.4.2)
+    memflash (2.6.0)
+      actionpack (>= 7.0)
     memory_profiler (1.1.0)
     method_source (1.1.0)
     mini_mime (1.1.5)
-    mini_portile2 (2.8.9)
     minitest (5.25.5)
     monetize (1.12.0)
       money (~> 6.12)
@@ -419,9 +420,6 @@ GEM
       net-protocol
     newrelic_rpm (9.16.0)
     nio4r (2.7.4)
-    nokogiri (1.18.8)
-      mini_portile2 (~> 2.8.2)
-      racc (~> 1.4)
     nokogiri (1.18.8-arm64-darwin)
       racc (~> 1.4)
     nokogiri (1.18.8-x86_64-darwin)
@@ -745,7 +743,6 @@ GEM
 
 PLATFORMS
   arm64-darwin
-  ruby
   x86_64-darwin
   x86_64-linux
   x86_64-linux-gnu
@@ -796,6 +793,7 @@ DEPENDENCIES
   lograge
   magic_test
   matrix
+  memflash
   memory_profiler
   money-rails
   newrelic_rpm
@@ -843,4 +841,4 @@ DEPENDENCIES
   webmock (~> 3.25)
 
 BUNDLED WITH
-   2.6.9
+   2.7.0
