@@ -137,20 +137,9 @@ RSpec.describe "Organizations", type: :request do
         expect(response.body).to include("Default Center")
       end
 
-      context "when enable_packs flipper is on" do
-        it "displays organization's custom units" do
-          Flipper.enable(:enable_packs)
-          get organization_path
-          expect(response.body).to include "Wolf Pack"
-        end
-      end
-
-      context "when enable_packs flipper is off" do
-        it "does not display organization's custom units" do
-          Flipper.disable(:enable_packs)
-          get organization_path
-          expect(response.body).to_not include "Wolf Pack"
-        end
+      it "displays organization's custom units" do
+        get organization_path
+        expect(response.body).to include "Wolf Pack"
       end
 
       it "cannot see 'Demote to User' button for admins" do
@@ -203,20 +192,9 @@ RSpec.describe "Organizations", type: :request do
         expect(html.text).to include("Receive email when Partner makes a Request?")
       end
 
-      context "when enable_packs flipper is on" do
-        it "displays organization's custom units" do
-          Flipper.enable(:enable_packs)
-          get organization_path
-          expect(response.body).to include "Wolf Pack"
-        end
-      end
-
-      context "when enable_packs flipper is off" do
-        it "does not display organization's custom units" do
-          Flipper.disable(:enable_packs)
-          get organization_path
-          expect(response.body).to_not include "Wolf Pack"
-        end
+      it "displays organization's custom units" do
+        get organization_path
+        expect(response.body).to include "Wolf Pack"
       end
 
       it "can see 'Demote to User' button for admins" do
@@ -259,22 +237,10 @@ RSpec.describe "Organizations", type: :request do
                                           )
       end
 
-      context "when enable_packs flipper is on" do
-        it "should display custom units and units form" do
-          Flipper.enable(:enable_packs)
-          get edit_organization_path
-          expect(response.body).to include("Custom request units used")
-          expect(response.body).to include "WolfPack"
-        end
-      end
-
-      context "when enable_packs flipper is off" do
-        it "should not display custom units and units form" do
-          Flipper.disable(:enable_packs)
-          get edit_organization_path
-          expect(response.body).to_not include("Custom request units used")
-          expect(response.body).to_not include "WolfPack"
-        end
+      it "should display custom units and units form" do
+        get edit_organization_path
+        expect(response.body).to include("Custom request units used")
+        expect(response.body).to include "WolfPack"
       end
     end
 
