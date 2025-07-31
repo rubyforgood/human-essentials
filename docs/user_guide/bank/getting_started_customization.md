@@ -132,7 +132,7 @@ This is a special topic that has its own guide page [here](special_custom_units.
 
 ## Other emails
 #### Send reminders on a specific day of the month (e.g. "the 5th") or a day of the week (eg "the first Tuesday")?
-You may configure how frequently you would like reminders to be sent to your Partners.
+You may configure when you would like reminder emails to be sent to your Partners.
 
 This works in conjunction with the reminder configuration set on a partner group level (see [Partner Groups](pm_partner_groups.md)) and the partner specific configuration (see [Adding a single Partner](pm_adding_a_partner.md)).
 
