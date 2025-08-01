@@ -117,6 +117,7 @@ Rails.application.routes.draw do
     get :itemized_distributions
     get :distributions_summary
     get :activity_graph
+    get :itemized_requests
   end
 
   resources :transfers, only: %i(index create new show destroy)
