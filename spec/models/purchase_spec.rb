@@ -117,7 +117,7 @@ RSpec.describe Purchase, type: :model do
       end
 
       expect { purchase.destroy }
-        .to raise_error("Cannot delete this purchase because it has an intervening snapshot.")
+        .to raise_error("We can't delete purchases entered before #{1.day.ago.to_date}.")
     end
   end
 

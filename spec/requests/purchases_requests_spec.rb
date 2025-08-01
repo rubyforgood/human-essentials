@@ -478,6 +478,19 @@ RSpec.describe "Purchases", type: :request do
         delete purchase_path(id: purchase_id)
         expect(response).to have_notice "Purchase #{purchase_id} has been removed!"
       end
+
+      it "does not delete the donation if there is an intervening snapshot" do
+        purchase = create(:purchase, organization: organization, created_at: 1.week.ago)
+        data = EventTypes::Inventory.new(storage_locations: {}, organization_id: organization.id)
+        travel(-1.day) do
+          SnapshotEvent.create!(organization_id: organization.id,
+            eventable: organization,
+            data: data,
+            event_time: Time.zone.now)
+        end
+        expect { delete purchase_path(id: purchase.id) }.not_to change(Purchase, :count)
+        expect(response).to have_error("We can't delete purchases entered before #{1.day.ago.to_date}.")
+      end
     end
   end
 end

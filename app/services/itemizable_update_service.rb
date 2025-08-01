@@ -5,7 +5,7 @@ module ItemizableUpdateService
     # @param event_class [Class<Event>] the event class to publish the itemizable to.
     def call(itemizable:, params: {}, event_class: nil)
       # we're updating just attributes on the itemizable, not line items
-      if params[:line_items_attributes].blank? && SnapshotEvent.intervening?(itemizable)
+      if params[:line_items_attributes].blank? && SnapshotEvent.intervening(itemizable).present?
         itemizable.update!(params)
         itemizable.reload
         return
@@ -25,7 +25,7 @@ module ItemizableUpdateService
         verify_intervening_audit_on_storage_location_items(itemizable: itemizable, from_location_id: from_location.id, to_location_id: to_location.id)
 
         previous = itemizable.line_items.map(&:dup)
-        if inventory_changes?(previous, params[:line_items_attributes]) && SnapshotEvent.intervening?(itemizable)
+        if inventory_changes?(previous, params[:line_items_attributes]) && SnapshotEvent.intervening(itemizable).present?
           raise "Cannot update #{itemizable.class.name.downcase} because there has been an intervening snapshot of the inventory."
         end
 

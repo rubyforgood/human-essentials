@@ -908,6 +908,32 @@ RSpec.describe "Distributions", type: :request do
         expect(response.status).to eq(200)
       end
     end
+
+    describe 'DELETE #destroy' do
+      subject { delete distribution_path(id: distribution.id) }
+
+      let!(:distribution) { create(:distribution, organization: organization, created_at: 1.week.ago) }
+
+      it "deletes the distribution" do
+        expect { subject }.to change { Distribution.count }.by(-1)
+        expect(response).to redirect_to(distributions_path)
+        expect(flash[:notice]).to include("Distribution #{distribution.id} has been reclaimed!")
+      end
+
+      it "does not delete the distribution if there is an intervening snapshot" do
+        data = EventTypes::Inventory.new(storage_locations: {}, organization_id: organization.id)
+        travel(-1.day) do
+          SnapshotEvent.create!(organization_id: organization.id,
+            eventable: organization,
+            data: data,
+            event_time: Time.zone.now)
+        end
+        expect { subject }.not_to change { Distribution.count }
+        expect(flash[:error]).to eq("We can't delete distributions entered before #{1.day.ago.to_date}.")
+      end
+
+      include_examples "restricts access to organization users/admins"
+    end
   end
 
   context "While not signed in" do

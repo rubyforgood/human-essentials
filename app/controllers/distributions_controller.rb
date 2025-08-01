@@ -27,12 +27,13 @@ class DistributionsController < ApplicationController
   end
 
   def destroy
-    result = DistributionDestroyService.new(params[:id]).call
+    service = DistributionDestroyService.new(params[:id])
+    result = service.call
 
     if result.success?
       flash[:notice] = "Distribution #{params[:id]} has been reclaimed!"
     else
-      flash[:error] = "Could not destroy distribution #{params[:id]}. Please contact technical support."
+      flash[:error] = result.error.message
     end
 
     redirect_to distributions_path
@@ -185,7 +186,7 @@ class DistributionsController < ApplicationController
       @request = @distribution.request
       @items = current_organization.items.active.alphabetized
       @partner_list = current_organization.partners.alphabetized
-      @changes_disallowed = SnapshotEvent.intervening?(@distribution)
+      @changes_disallowed = SnapshotEvent.intervening(@distribution).present?
       @audit_warning = current_organization.audits
         .where(storage_location_id: @distribution.storage_location_id)
         .where("updated_at > ?", @distribution.created_at).any? && !@changes_disallowed

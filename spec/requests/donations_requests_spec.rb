@@ -300,6 +300,36 @@ RSpec.describe "Donations", type: :request do
       end
     end
 
+    describe 'DELETE #destroy' do
+      subject { delete donation_path(id: donation.id) }
+
+      let!(:donation) { create(:donation, organization: organization, created_at: 1.week.ago) }
+
+      before(:each) do
+        sign_in(organization_admin)
+      end
+
+      it "deletes the donation" do
+        expect { subject }.to change { Donation.count }.by(-1)
+        expect(response).to redirect_to(donations_path)
+        expect(flash[:notice]).to include("Donation #{donation.id} has been removed!")
+      end
+
+      it "does not delete the donation if there is an intervening snapshot" do
+        data = EventTypes::Inventory.new(storage_locations: {}, organization_id: organization.id)
+        travel(-1.day) do
+          SnapshotEvent.create!(organization_id: organization.id,
+            eventable: organization,
+            data: data,
+            event_time: Time.zone.now)
+        end
+        expect { subject }.not_to change { Donation.count }
+        expect(flash[:error]).to eq("We can't delete donations entered before #{1.day.ago.to_date}.")
+      end
+
+      include_examples "restricts access to organization users/admins"
+    end
+
     describe 'audit warnings' do
       let!(:item) { create(:item, organization: organization, name: "Brightbloom Seed") }
       let!(:storage_location) { create(:storage_location, :with_items, item: item, organization: organization) }

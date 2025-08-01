@@ -63,7 +63,7 @@ class PurchasesController < ApplicationController
   def edit
     @purchase = current_organization.purchases.find(params[:id])
     @purchase.line_items.build
-    @changes_disallowed = SnapshotEvent.intervening?(@purchase)
+    @changes_disallowed = SnapshotEvent.intervening(@purchase).present?
     @audit_performed_and_finalized = Audit.finalized_since?(@purchase, @purchase.storage_location_id) &&
       !@changes_disallowed
 

@@ -2,9 +2,9 @@ class SnapshotEvent < Event
   serialize :data, coder: EventTypes::StructCoder.new(EventTypes::Inventory)
 
   # @param record [#organization_id, #created_at]
-  # @return [Boolean] true if there is an intervening snapshot event
-  def self.intervening?(record)
-    where(organization_id: record.organization_id, event_time: record.created_at..).any?
+  # @return [SnapshotEvent, nil] the intervening snapshot event or null if there aren't any
+  def self.intervening(record)
+    where(organization_id: record.organization_id, event_time: record.created_at..).first
   end
 
   # @param organization [Organization]
