@@ -48,13 +48,15 @@
         <% end %>
       </div>
       <div id="distribution_line_items" data-capture-barcode="true" class="line-item-fields">
-          <%= render 'line_items/line_item_fields', form: f, locals: { show_request_items: true } %>
+          <%= render 'line_items/line_item_fields', form: f, changes_disallowed: @changes_disallowed %>
       </div>
-      <div class="row links justify-content-end">
-        <%= add_element_button "Add Another Item", container_selector: "#distribution_line_items" , id: "__add_line_item" do %>
-          <%= render 'line_items/line_item_fields', form: f, object: LineItem.new, locals: { show_request_items: true } %>
-        <% end %>
-      </div>
+      <% unless @changes_disallowed %>
+        <div class="row links justify-content-end">
+          <%= add_element_button "Add Another Item", container_selector: "#distribution_line_items" , id: "__add_line_item" do %>
+            <%= render 'line_items/line_item_fields', form: f, object: LineItem.new %>
+          <% end %>
+        </div>
+      <% end %>
 
     </fieldset>
   </div>
