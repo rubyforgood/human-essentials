@@ -68,7 +68,7 @@ RSpec.describe Distribution, type: :model do
       end
 
       expect { distribution.destroy }
-        .to raise_error("Cannot delete this distribution because it has an intervening snapshot.")
+        .to raise_error("We can't delete distributions entered before #{1.day.ago.to_date}.")
     end
 
     context "when delivery method is shipped" do

@@ -82,7 +82,7 @@ RSpec.describe Donation, type: :model do
       end
 
       expect { donation.destroy }
-        .to raise_error("Cannot delete this donation because it has an intervening snapshot.")
+        .to raise_error("We can't delete donations entered before #{1.day.ago.to_date}.")
     end
   end
 

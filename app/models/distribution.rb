@@ -175,8 +175,9 @@ class Distribution < ApplicationRecord
   end
 
   def check_no_intervening_snapshot
-    if SnapshotEvent.intervening?(self)
-      raise "Cannot delete this distribution because it has an intervening snapshot."
+    intervening = SnapshotEvent.intervening(self)
+    if intervening
+      raise "We can't delete distributions entered before #{intervening.event_time.to_date}."
     end
   end
 

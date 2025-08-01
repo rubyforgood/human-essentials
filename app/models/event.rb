@@ -45,9 +45,10 @@ class Event < ApplicationRecord
     return if is_a?(SnapshotEvent)
     return unless eventable.respond_to?(:organization)
 
-    if SnapshotEvent.intervening?(eventable)
+    intervening = SnapshotEvent.intervening(eventable)
+    if intervening.present?
       errors.add(:base,
-        "Cannot change inventory for an old action that has an intervening snapshot.")
+        "Cannot change inventory for an #{eventable.class.name.downcase} created before #{intervening.event_time.to_date}.")
     end
   end
 

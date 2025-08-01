@@ -81,7 +81,7 @@ class DonationsController < ApplicationController
   def edit
     @donation = Donation.find(params[:id])
     @donation.line_items.build
-    @changes_disallowed = SnapshotEvent.intervening?(@donation)
+    @changes_disallowed = SnapshotEvent.intervening(@donation).present?
     @audit_performed_and_finalized = Audit.finalized_since?(@donation, @donation.storage_location_id) &&
       !@changes_disallowed
 
@@ -119,7 +119,7 @@ class DonationsController < ApplicationController
     if service.success?
       flash[:notice] = "Donation #{params[:id]} has been removed!"
     else
-      flash[:error] = "Donation #{params[:id]} failed to be removed because #{service.error}"
+      flash[:error] = service.error.message
     end
 
     redirect_to donations_path
