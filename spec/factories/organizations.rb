@@ -47,5 +47,11 @@ FactoryBot.define do
         Organization.seed_items(instance) # creates 1 item for each base item
       end
     end
+
+    trait :created_at_2006 do
+      after(:create) do |instance|
+        instance.update(created_at: Time.zone.local(2006, 1, 1))
+      end
+    end
   end
 end
