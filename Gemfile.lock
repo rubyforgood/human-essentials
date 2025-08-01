@@ -324,7 +324,7 @@ GEM
       ostruct
     ice_cube (0.17.0)
     ice_nine (0.11.2)
-    importmap-rails (2.1.0)
+    importmap-rails (2.2.2)
       actionpack (>= 6.0.0)
       activesupport (>= 6.0.0)
       railties (>= 6.0.0)
@@ -784,7 +784,7 @@ DEPENDENCIES
   geocoder
   guard-rspec
   icalendar
-  importmap-rails (~> 2.1)
+  importmap-rails (~> 2.2)
   jbuilder
   jwt
   kaminari
