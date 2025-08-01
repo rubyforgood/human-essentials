@@ -99,7 +99,7 @@ RSpec.describe Event, type: :model do
 
       expect {
         DistributionEvent.create!(eventable: eventable, organization_id: organization.id, data: payload)
-      }.to raise_error(ActiveRecord::RecordInvalid, /Cannot change inventory for an distribution that has an intervening snapshot/)
+      }.to raise_error(ActiveRecord::RecordInvalid, /Cannot change inventory for an distribution created before #{1.day.ago.to_date}/)
     end
   end
 end
