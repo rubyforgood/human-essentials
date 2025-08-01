@@ -324,7 +324,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_203808) do
     t.bigint "old_partner_id"
     t.boolean "archived", default: false
     t.index ["partner_id"], name: "index_families_on_partner_id"
-  end 
+  end
 
   create_table "flipper_features", force: :cascade do |t|
     t.string "key", null: false
@@ -643,6 +643,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_203808) do
     t.integer "quota"
     t.bigint "partner_group_id"
     t.bigint "default_storage_location_id"
+    t.text "info_for_partner"
     t.index ["default_storage_location_id"], name: "index_partners_on_default_storage_location_id"
     t.index ["organization_id"], name: "index_partners_on_organization_id"
     t.index ["partner_group_id"], name: "index_partners_on_partner_group_id"
