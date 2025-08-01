@@ -174,9 +174,9 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
     end
 
     it "Should sort display resource in human alphabetical order" do
-      FactoryBot.create(:organization, name: "Pawnee")
-      FactoryBot.create(:organization, name: "SF Diaper")
-      FactoryBot.create(:organization, name: "Second City")
+      FactoryBot.create(:organization, id: 2, name: "Pawnee")
+      FactoryBot.create(:organization, id: 3, name: "SF Diaper")
+      FactoryBot.create(:organization, id: 4, name: "Second City")
 
       # params
       # - resource_type - Organization, Resource
