@@ -11,7 +11,7 @@
             <tr>
               <th>Item Name</th>
               <th>Total Items</th>
-              <% if Flipper.enabled?(:enable_packs) && @partner_request.item_requests.any?( &:request_unit ) %>
+              <% if @partner_request.item_requests.any?( &:request_unit ) %>
                 <th>Units</th>
               <% end %>
             </tr>
@@ -21,7 +21,7 @@
               <tr>
                 <td><%= line_item.name %></td>
                 <td><%= line_item.quantity %></td>
-                <% if Flipper.enabled?(:enable_packs) && @partner_request.item_requests.any?( &:request_unit ) %>
+                <% if @partner_request.item_requests.any?( &:request_unit ) %>
                   <td><%= line_item.request_unit&.pluralize(line_item.quantity.to_i) %></td>
                 <% end %>
               </tr>

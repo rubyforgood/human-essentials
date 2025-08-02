@@ -149,24 +149,22 @@
                 <%= humanize_boolean(@organization.enable_quantity_based_requests) %>
               </p>
             </div>
-            <% if Flipper.enabled?(:enable_packs) %>
-              <div>
-                <h6 class="font-weight-bold">Custom Request units used (please use singular form -- e.g. pack, not packs)</h6>
-                <p>
-                  <% if @organization.request_units.length > 0 %>
-                    <% @organization.request_units.map do |unit| %>
-                      <%= fa_icon "angle-right" %>
-                      <span>
-                          <%= unit.name.titlecase %>
-                      </span> <br>
-                    <% end %>
-                  <% else %>
+            <div>
+              <h6 class="font-weight-bold">Custom Request units used (please use singular form -- e.g. pack, not packs)</h6>
+              <p>
+                <% if @organization.request_units.length > 0 %>
+                  <% @organization.request_units.map do |unit| %>
                     <%= fa_icon "angle-right" %>
-                    <span> None </span>
+                    <span>
+                        <%= unit.name.titlecase %>
+                    </span> <br>
                   <% end %>
-                </p>
-              </div>
-            <% end %>
+                <% else %>
+                  <%= fa_icon "angle-right" %>
+                  <span> None </span>
+                <% end %>
+              </p>
+            </div>
             <hr>
 
             <h4>Other emails</h4>
