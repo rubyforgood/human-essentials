@@ -51,7 +51,7 @@ gem "turbo-rails"
 # Sprinkle a little JS to add interactivity
 gem "stimulus-rails"
 # Use JS import maps to manage JS without transpiling or bundling.
-gem "importmap-rails", "~> 2.1"
+gem "importmap-rails", "~> 2.2"
 
 ##### VIEWS/CONTROLLERS #####
 
