@@ -31,7 +31,7 @@
               <% end %>
             </td>
             <td class="text-right"><%= item[:quantity] %></td>
-            <td class="text-right <%= 'table-danger' if item[:below_requested] %>">
+            <td class="text-right <%= 'table-danger' if item[:below_onhand_minimum] %>">
               <%= item[:on_hand].nil? ? "Unknown" : item[:on_hand] %>
             </td>
           </tr>
