@@ -32,7 +32,7 @@
             </td>
             <td class="text-right"><%= item[:quantity] %></td>
             <td class="text-right <%= 'table-danger' if item[:below_onhand_minimum] %>">
-              <%= item[:on_hand] %>
+              <%= item[:on_hand] || 0 %>
             </td>
           </tr>
         <% end %>

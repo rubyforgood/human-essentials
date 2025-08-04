@@ -25,8 +25,8 @@ class RequestItemizedBreakdownService
     items_requested.map! do |item|
       item_id = item[:item_id]
 
-      on_hand = current_onhand[item_id] || 0
-      minimum = current_min_onhand[item_id] || 0
+      on_hand = current_onhand[item_id]
+      minimum = current_min_onhand[item_id]
 
       below_onhand_minimum = on_hand && minimum && on_hand < minimum
 
