@@ -16,11 +16,11 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { host: "humanessentials.app" }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    address: 'smtp.sendgrid.net',
+    address: ENV['SMTP_SERVER'],
     port: '587',
     authentication: :plain,
-    user_name: ENV['SENDGRID_USERNAME'],
-    password: ENV['SENDGRID_PASSWORD'],
+    user_name: ENV['SMTP_USERNAME'],
+    password: ENV['SMTP_PASSWORD'],
     domain: 'humanessentials.app',
     enable_starttls_auto: true
   }
