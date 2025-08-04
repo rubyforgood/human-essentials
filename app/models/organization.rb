@@ -271,7 +271,7 @@ class Organization < ApplicationRecord
   end
 
   def deadline_not_on_reminder_date?
-    if reminder_schedule.day_of_month.to_i == deadline_day.to_i
+    if reminder_schedule.by_month_or_week == "day_of_month" && reminder_schedule.day_of_month.to_i == deadline_day.to_i
       errors.add(:day_of_month, "Reminder day must not be the same as deadline day")
       false
     end

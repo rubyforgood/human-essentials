@@ -70,6 +70,22 @@ RSpec.describe PartnerGroup, type: :model do
         expect(build(:partner_group, send_reminders: true, deadline_day: 10, reminder_schedule_definition: valid_reminder_schedule)).to be_valid
       end
     end
+
+    it "validates deadline_day and reminder date are different for day of month reminders" do
+      partner_group = create(:partner_group, name: "Foo")
+      partner_group.update(deadline_day: 10)
+      partner_group.reminder_schedule.assign_attributes(by_month_or_week: "day_of_month", day_of_month: 10)
+      expect(partner_group).to_not be_valid
+      partner_group.reminder_schedule.assign_attributes(day_of_month: 11)
+      expect(partner_group).to be_valid
+    end
+
+    it "does not validate deadline_day and reminder date are different for day of week reminders" do
+      partner_group = create(:partner_group, name: "Foo")
+      partner_group.update(deadline_day: 10)
+      partner_group.reminder_schedule.assign_attributes(by_month_or_week: "day_of_week", day_of_week: 0, every_nth_day: 1, day_of_month: 10)
+      expect(partner_group).to be_valid
+    end
   end
 
   describe "versioning" do

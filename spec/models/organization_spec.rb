@@ -79,6 +79,23 @@ RSpec.describe Organization, type: :model do
 
       expect(organization).to be_valid
     end
+
+    it "validates deadline_day and reminder date are different for day of month reminders" do
+      organization.update(deadline_day: 10)
+      organization.reminder_schedule.assign_attributes(by_month_or_week: "day_of_month", day_of_month: 10)
+      expect(organization).to_not be_valid
+      organization.reminder_schedule.assign_attributes(day_of_month: 11)
+      expect(organization).to be_valid
+    end
+
+    it "does not validate deadline_day and reminder date are different for day of week reminders" do
+      # Deadline_day and day_of_month both aren't set and so are the same
+      organization.reminder_schedule.assign_attributes(by_month_or_week: "day_of_week", day_of_week: 0, every_nth_day: 1)
+      expect(organization).to be_valid
+      organization.update(deadline_day: 10)
+      organization.reminder_schedule.assign_attributes(day_of_month: 10)
+      expect(organization).to be_valid
+    end
   end
 
   context "Associations >" do
