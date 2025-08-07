@@ -99,13 +99,6 @@ RSpec.describe "Storage Locations", type: :system, js: true do
 
       click_on "View", match: :first
 
-      find("#custom-tabs-inventory-in-tab").click
-
-      within "#custom-tabs-inventory-in" do
-        expect(page).to have_content("Needle")
-        expect(page).to have_content(100)
-      end
-
       find("#custom-tabs-inventory-tab").click
 
       within "#custom-tabs-inventory" do
@@ -189,24 +182,63 @@ RSpec.describe "Storage Locations", type: :system, js: true do
   end
 
   context "when viewing an existing storage location" do
-    let(:item) { create(:item, name: "AAA Diapers") }
-    let!(:storage_location) { create(:storage_location, :with_items, item: item, name: "here") }
-    let!(:adjustment) { create(:adjustment, :with_items, storage_location: storage_location) }
+    let(:items) { create_list(:item, 2) }
+    let!(:storage_location) { create(:storage_location, name: "here") }
     subject { storage_location_path(storage_location.id) }
 
-    it "Items in (adjustments)" do
-      visit subject
-      find("#custom-tabs-inventory-in-tab").click
+    context "Inventory Flow Tab" do
+      before do
+        create(:donation, :with_items, item: items[0], item_quantity: 10, storage_location: storage_location)
+        create(:distribution, :with_items, item: items[0], item_quantity: 5, storage_location: storage_location)
+        create(:donation, :with_items, item: items[1], item_quantity: 3, storage_location: storage_location)
+        create(:adjustment, :with_items, item: items[1], item_quantity: 3, storage_location: storage_location)
+        create(:transfer, :with_items, item: items[1], item_quantity: 2, from: storage_location, to: create(:storage_location))
 
-      expect(page.find("#custom-tabs-inventory-in", visible: true)).to have_content "100"
-    end
+        visit subject
+        find("#custom-tabs-inventory-flow-tab").click
+      end
 
-    it "Items out (distributions)" do
-      create(:distribution, :with_items, storage_location: storage_location)
-      visit subject
-      find("#custom-tabs-inventory-out-tab").click
+      it "shows the inventory flow for the storage location" do
+        within("#custom-tabs-inventory-flow table tbody") do
+          items.each do |item|
+            row = find(:css, "tr[id='#{item.id}']")
+            change_column_css = item.quantity_change(storage_location).negative? ? "td.modal-body-warning-text" : "td"
+            expect(row).to have_link(item.name, href: item_path(item.id))
+            expect(row).to have_css("td", text: item.quantity_in_storage(storage_location.id))
+            expect(row).to have_css("td", text: item.quantity_out_storage(storage_location.id))
+            expect(row).to have_css(change_column_css, text: item.quantity_change(storage_location.id))
+          end
+        end
+        within("#custom-tabs-inventory-flow table tfoot") do
+          expect(page).to have_css("td", text: "Total")
+          expect(page).to have_css("td", text: items.sum { |item| item.quantity_in_storage(storage_location.id) })
+          expect(page).to have_css("td", text: items.sum { |item| item.quantity_out_storage(storage_location.id) })
+          expect(page).to have_css("td", text: items.sum { |item| item.quantity_change(storage_location.id) })
+        end
+      end
 
-      expect(page.find("#custom-tabs-inventory-out", visible: true)).to have_content "100"
+      context "date range filter" do
+        let!(:start_date) { 2.days.ago }
+        let!(:end_date) { 1.day.ago }
+        let!(:item) { create(:item, name: "Filtered Item", created_at: start_date) }
+        before do
+          create(:donation, :with_items, item: item, item_quantity: 10, storage_location: storage_location)
+          fill_in "filters[date_range]", with: "#{start_date} - #{end_date}"
+          click_button "Filter"
+          find("#custom-tabs-inventory-flow-tab").click
+        end
+
+        it "filters the inventory flow by date range" do
+          within("#custom-tabs-inventory-flow table tbody") do
+            expect(page).to have_css("tr", count: 1)
+            row = find(:css, "tr[id='#{item.id}']")
+            expect(row).to have_link(item.name, href: item_path(item.id))
+            expect(row).to have_css("td", text: item.quantity_in_storage(storage_location.id))
+            expect(row).to have_css("td", text: item.quantity_out_storage(storage_location.id))
+            expect(row).to have_css("td", text: item.quantity_change(storage_location.id))
+          end
+        end
+      end
     end
   end
 end
