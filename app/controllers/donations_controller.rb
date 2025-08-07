@@ -127,11 +127,16 @@ class DonationsController < ApplicationController
 
   def load_form_collections
     @storage_locations = current_organization.storage_locations.active.alphabetized
-    @donation_sites = current_organization.donation_sites.active.alphabetized
     @product_drives = current_organization.product_drives.alphabetized
     @product_drive_participants = current_organization.product_drive_participants.alphabetized
     @manufacturers = current_organization.manufacturers.alphabetized
     @items = current_organization.items.active.alphabetized
+    @donation_sites = current_organization.donation_sites.active.alphabetized.to_a
+
+    # If the donation site has already been selected prior to it being deactivated, add it back to the donation site list
+    if @donation&.donation_site && !@donation.donation_site.active?
+      @donation_sites << @donation.donation_site
+    end
   end
 
   def clean_donation_money_raised

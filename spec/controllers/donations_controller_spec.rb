@@ -22,6 +22,15 @@ RSpec.describe DonationsController, type: :controller do
       it "returns http success" do
         expect(subject).to be_successful
       end
+
+      context "when creating a new donation" do
+        let!(:inactive_donation_site) { create(:donation_site, organization: organization, active: false) }
+
+        it "does not include inactive donation sites" do
+          get :new
+          expect(assigns(:donation_sites)).not_to include(inactive_donation_site)
+        end
+      end
     end
 
     describe "POST#create" do
@@ -115,6 +124,17 @@ RSpec.describe DonationsController, type: :controller do
       subject { get :edit, params: { id: donation.id } }
       it "returns http success" do
         expect(subject).to be_successful
+      end
+
+      context "when editing a donation with an inactive donation site" do
+        let!(:active_donation_site) { create(:donation_site, organization: organization) }
+        let!(:inactive_donation_site) { create(:donation_site, organization: organization, active: false) }
+        let!(:donation_with_inactive_site) { create(:donation, organization: organization, donation_site: inactive_donation_site) }
+
+        it "includes the inactive donation site in the dropdown" do
+          get :edit, params: { id: donation_with_inactive_site.id }
+          expect(assigns(:donation_sites)).to include(inactive_donation_site)
+        end
       end
     end
 
