@@ -136,6 +136,7 @@ class DonationsController < ApplicationController
     # If the donation site has already been selected prior to it being deactivated, add it back to the donation site list
     if @donation&.donation_site && !@donation.donation_site.active?
       @donation_sites << @donation.donation_site
+      @donation_sites.sort_by!(&:name)
     end
   end
 
