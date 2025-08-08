@@ -96,7 +96,7 @@ class ProductDrivesController < ApplicationController
         format.html { redirect_to product_drives_url, notice: 'Product drive was successfully destroyed.' }
         format.json { head :no_content }
       else
-        error_message = "Cannot delete product drive with donations."
+        error_message = product_drive.errors.full_messages.to_sentence
         format.html { redirect_to product_drive_path(product_drive), error: error_message }
         format.json { render json: {error: error_message}, status: :unprocessable_entity }
       end

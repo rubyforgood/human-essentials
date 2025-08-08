@@ -307,7 +307,7 @@ RSpec.describe "ProductDrives", type: :request do
 
           delete product_drive_path(id: product_drive.id)
           expect(response).to redirect_to(product_drive_path(product_drive))
-          expect(flash[:error]).to eq("Cannot delete product drive with donations.")
+          expect(flash[:error]).to eq("Cannot delete record because dependent donations exist")
         end
       end
     end
