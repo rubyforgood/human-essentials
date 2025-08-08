@@ -131,13 +131,8 @@ class DonationsController < ApplicationController
     @product_drive_participants = current_organization.product_drive_participants.alphabetized
     @manufacturers = current_organization.manufacturers.alphabetized
     @items = current_organization.items.active.alphabetized
-    @donation_sites = current_organization.donation_sites.active.alphabetized.to_a
-
-    # If the donation site has already been selected prior to it being deactivated, add it back to the donation site list
-    if @donation&.donation_site && !@donation.donation_site.active?
-      @donation_sites << @donation.donation_site
-      @donation_sites.sort_by!(&:name)
-    end
+    # Return all active donation sites, or the donation site that was selected for the donation if it's inactive
+    @donation_sites = current_organization.donation_sites.active.or(DonationSite.where(id: @donation.donation_site_id)).alphabetized
   end
 
   def clean_donation_money_raised

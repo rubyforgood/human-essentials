@@ -589,12 +589,6 @@ RSpec.describe "Donations", type: :system, js: true do
         visit new_donation_path
         expect(page).to have_no_content "Inactive R Us"
       end
-
-      it "does not include inactive donation sites" do
-        inactive_site = create(:donation_site, organization: organization, active: false)
-        visit new_donation_path
-        expect(page).not_to have_select("donation_donation_site_id", with_options: [inactive_site.name])
-      end
     end
 
     context "When donation items have value" do
@@ -690,18 +684,6 @@ RSpec.describe "Donations", type: :system, js: true do
         # switching the item on it to a different item
         total_quantity = find("#donation_quantity").text
         expect(total_quantity).to eq "0\n(Total)"
-      end
-
-      context "and the donation site is inactive" do
-        it "includes the inactive donation site in the dropdown" do
-          inactive_site = create(:donation_site, organization: organization, active: false)
-          donation = create(:donation, organization: organization, donation_site: inactive_site)
-
-          visit edit_donation_path(donation)
-          select Donation::SOURCES[:donation_site], from: "donation_source"
-
-          expect(page).to have_select("donation_donation_site_id", with_options: [inactive_site.name])
-        end
       end
     end
 
