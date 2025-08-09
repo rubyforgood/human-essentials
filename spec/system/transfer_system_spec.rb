@@ -168,6 +168,4 @@ RSpec.describe "Transfer management", type: :system do
 
     it_behaves_like "Date Range Picker", Transfer
   end
-
-  context "when submitting "
 end
