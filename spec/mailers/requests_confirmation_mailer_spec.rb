@@ -1,5 +1,5 @@
 RSpec.describe RequestsConfirmationMailer, type: :mailer do
-  let(:organization) { create(:organization, :with_items) }
+  let(:organization) { create(:organization, :with_items, email: "email@testthis.com") }
   let(:partner_user) { create(:partner_user, name: "Jane Smith") }
   let(:request) { create(:request, organization:, partner_user:) }
   let(:mail) { RequestsConfirmationMailer.confirmation_email(request) }

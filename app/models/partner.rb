@@ -146,7 +146,7 @@ class Partner < ApplicationRecord
   end
 
   def children_served_count
-    children.count
+    children.count { |child| !child.archived? }
   end
 
   def family_zipcodes_count

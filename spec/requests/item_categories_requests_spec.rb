@@ -93,4 +93,29 @@ RSpec.describe "ItemCategories", type: :request do
       end
     end
   end
+
+  describe "DELETE #destroy" do
+    let!(:item_category) { create(:item_category, organization: organization) }
+
+    context "when the item category has no associated items" do
+      it "destroys the requested item category" do
+        expect {
+          delete item_category_url(id: item_category.id)
+        }.to change(ItemCategory, :count).by(-1)
+        expect(response).to redirect_to(items_path)
+      end
+    end
+
+    context "when the item category has associated items" do
+      let!(:item) { create(:item, item_category: item_category) }
+
+      it "does not destroy the item category and shows an error" do
+        expect {
+          delete item_category_url(id: item_category.id)
+        }.not_to change(ItemCategory, :count)
+        expect(response).to redirect_to(items_path)
+        expect(flash[:alert]).to eq("Cannot delete item category because it has associated items.")
+      end
+    end
+  end
 end

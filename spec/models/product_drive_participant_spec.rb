@@ -21,15 +21,15 @@ RSpec.describe ProductDriveParticipant, type: :model do
 
   context "Validations" do
     it "is invalid unless it has either a phone number or an email" do
-      expect(build(:product_drive_participant, phone: nil, email: nil)).not_to be_valid
-      expect(build(:product_drive_participant, phone: nil)).to be_valid
-      expect(build(:product_drive_participant, email: nil)).to be_valid
+      expect(build(:product_drive_participant, :no_contact_name_or_email, contact_name: "George Henry")).not_to be_valid
+      expect(build(:product_drive_participant, :no_contact_name_or_email, contact_name: "George Henry", email: "test@email.com")).to be_valid
+      expect(build(:product_drive_participant, :no_contact_name_or_email, contact_name: "George Henry", phone: "123-456-1234")).to be_valid
     end
 
     it "is invalid unless it has either a contact name or a business name" do
-      expect(build(:product_drive_participant, contact_name: nil, business_name: nil)).not_to be_valid
-      expect(build(:product_drive_participant, contact_name: nil, business_name: "George Company").valid?).to eq(true)
-      expect(build(:product_drive_participant, contact_name: "George Henry", business_name: nil).valid?).to eq(true)
+      expect(build(:product_drive_participant, :no_contact_name_or_email, phone: "123-456-1337")).not_to be_valid
+      expect(build(:product_drive_participant, :no_contact_name_or_email, phone: "123-456-1337", business_name: "George Company")).to be_valid
+      expect(build(:product_drive_participant, :no_contact_name_or_email, phone: "123-456-1337", contact_name: "George Henry")).to be_valid
     end
 
     it "is invalid if the comment field has more than 500 characters" do
@@ -75,7 +75,7 @@ RSpec.describe ProductDriveParticipant, type: :model do
     end
 
     describe "donation_source_view" do
-      let!(:participant) { create(:product_drive_participant, contact_name: contact_name) }
+      let!(:participant) { create(:product_drive_participant, business_name: "George Company", contact_name: contact_name) }
 
       context "contact name present" do
         let(:contact_name) { "Contact Name" }

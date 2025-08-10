@@ -57,6 +57,10 @@ RSpec.describe AccountRequestMailer, type: :mailer do
         expect(text).to match('Password: password!')
       end
 
+      it 'should include the user guide link' do
+        expect(text_body(mail)).to include('https://rubyforgood.github.io/human-essentials/user_guide/bank/')
+      end
+
       it 'should include the instruction video link' do
         expect(text_body(mail)).to include('https://youtu.be/w53iaJtlQUo')
       end

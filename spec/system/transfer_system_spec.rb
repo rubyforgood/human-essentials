@@ -8,7 +8,7 @@ RSpec.describe "Transfer management", type: :system do
   end
   let(:item) { create(:item) }
 
-  def create_transfer(amount, from_name, to_name)
+  def create_transfer(amount, from_name, to_name, click_save: true, click_confirm: true)
     visit transfers_path
     click_link "New Transfer"
     within "form#new_transfer" do
@@ -18,13 +18,47 @@ RSpec.describe "Transfer management", type: :system do
       select item.name, from: "transfer_line_items_attributes_0_item_id"
       fill_in "transfer_line_items_attributes_0_quantity", with: amount
     end
-    click_on "Save"
+    click_on "Save" if click_save
+    click_on "Yes, it's correct" if click_save && click_confirm
+  end
+
+  context "when transfer submitted" do
+    it "shows the confirmation page" do
+      from_storage_location = create(:storage_location, :with_items, item: item, name: "From me", organization: organization)
+      to_storage_location = create(:storage_location, :with_items, name: "To me", organization: organization)
+      create_transfer("10", from_storage_location.name, to_storage_location.name, click_confirm: false)
+
+      expect(page).to have_content("Transfer Confirmation")
+      expect(page).to have_content("Please confirm that the above list is what you meant to transfer and that the comment is correct.")
+      expect(page).to have_content("No, I need to make changes")
+      expect(page).to have_content("Yes, it's correct")
+    end
+
+    it "merges same items into one quantity" do
+      from_storage_location = create(:storage_location, :with_items, item: item, name: "From me", organization: organization)
+      to_storage_location = create(:storage_location, :with_items, name: "To me", organization: organization)
+
+      create_transfer("10", from_storage_location.name, to_storage_location.name, click_save: false, click_confirm: false)
+      # grabs the dynamically generated new item
+      click_on "Add Another Item"
+      new_select = all("select[id$='_item_id']").last
+      select_id = new_select[:id]
+      select item.name, from: select_id
+      index = select_id[/attributes_(\d+)_item_id$/, 1]
+      quantity_field_id = "transfer_line_items_attributes_#{index}_quantity"
+      fill_in quantity_field_id, with: "30"
+
+      click_on "Save"
+
+      expect(page).to have_content("40")
+    end
   end
 
   it "can transfer an inventory from a storage location to another as a user" do
     from_storage_location = create(:storage_location, :with_items, item: item, name: "From me", organization: organization)
     to_storage_location = create(:storage_location, :with_items, name: "To me", organization: organization)
     create_transfer("10", from_storage_location.name, to_storage_location.name)
+
     expect(page).to have_content("10 items have been transferred")
   end
 
@@ -96,7 +130,7 @@ RSpec.describe "Transfer management", type: :system do
   # 4438 - Bug Fix
   it "add item button should be activated when from storage location is selected after rendering again on failure" do
     from_storage_location = create(:storage_location, :with_items, item: item, name: "From me", organization: organization)
-    create_transfer('', '', '')
+    create_transfer('', '', '', click_confirm: false)
     select from_storage_location.name, from: "From storage location"
     expect(page).not_to have_css("#__add_line_item.disabled")
   end
@@ -106,7 +140,7 @@ RSpec.describe "Transfer management", type: :system do
     let!(:to_storage_location) { create(:storage_location, :with_items, name: "To me", organization: organization) }
 
     scenario "User can transfer an inventory from a storage location to another" do
-      create_transfer("100", from_storage_location.name, to_storage_location.name)
+      create_transfer("100", from_storage_location.name, to_storage_location.name, click_confirm: false)
       expect(page).to have_content("insufficient inventory")
     end
   end
