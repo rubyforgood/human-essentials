@@ -405,6 +405,34 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         expect(page).to have_link("distribution_program_address.pdf")
         expect(page).to have_link("distribution_same_address.pdf")
       end
+
+      it "allows documents to be uploaded and persists documents across multiple refreshes", :aggregate_failures do
+        document_1 = Rails.root.join("spec/fixtures/files/distribution_program_address.pdf")
+        document_2 = Rails.root.join("spec/fixtures/files/distribution_same_address.pdf")
+        documents = [document_1, document_2]
+
+        # Upload the documents
+        visit subject
+        attach_file(documents, make_visible: true) do
+          page.find('input#partner_documents').click
+        end
+
+        # Test document persistence across multiple refresh cycles
+        3.times do |iteration|
+          # Save progress
+          click_button "Update Partner"
+
+          # Verify documents on show page
+          expect(page).to have_current_path(partner_path(partner.id))
+          expect(page).to have_link("distribution_program_address.pdf")
+          expect(page).to have_link("distribution_same_address.pdf")
+
+          # Visit edit page and verify documents persist
+          visit subject
+          expect(page).to have_link("distribution_program_address.pdf")
+          expect(page).to have_link("distribution_same_address.pdf")
+        end
+      end
     end
 
     describe "#edit_profile" do
@@ -460,6 +488,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           find("button[data-bs-target='#media_information']").click
           within "#media_information" do
             fill_in "Website", with: ""
+            uncheck "No Social Media Presence"
           end
 
           # Open Pick up person section and fill in 4 email addresses

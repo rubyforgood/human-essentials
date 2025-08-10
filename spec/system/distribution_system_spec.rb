@@ -348,11 +348,13 @@ RSpec.feature "Distributions", type: :system do
 
     it "the user can make changes" do
       click_on "Edit", match: :first
-      expect do
-        fill_in "Agency representative", with: "SOMETHING DIFFERENT"
-        click_on "Save", match: :first
-        distribution.reload
-      end.to change { distribution.agency_rep }.to("SOMETHING DIFFERENT")
+      fill_in "Agency representative", with: "SOMETHING DIFFERENT"
+      click_on "Save", match: :first
+      # Make Capybara wait for events to finish before checking Db.
+      expect(page).to have_content("SOMETHING DIFFERENT")
+
+      distribution.reload
+      expect(distribution.agency_rep).to eq("SOMETHING DIFFERENT")
     end
 
     it "sends an email if reminders are enabled" do
@@ -700,7 +702,7 @@ RSpec.feature "Distributions", type: :system do
   end
 
   context "via barcode entry" do
-    let(:existing_barcode) { create(:barcode_item) }
+    let(:existing_barcode) { create(:barcode_item, quantity: 50) }
     let(:item_with_barcode) { existing_barcode.item }
     let(:item_no_barcode) { create(:item) }
 

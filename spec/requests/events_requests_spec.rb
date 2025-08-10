@@ -47,6 +47,29 @@ RSpec.describe "Events", type: :request do
         expect(response.body).not_to include("99<br>")
       end
 
+      it "should show items in alphabetical order" do
+        item_1 = create(:item, organization: organization, name: "Zebra")
+        item_2 = create(:item, organization: organization, name: "apple")
+        item_3 = create(:item, organization: organization, name: "Monkey")
+
+        donation = create(:donation, :with_items, organization: organization,
+          storage_location: storage_location, item: item_1, item_quantity: 1)
+        create(:line_item, item: item_2, quantity: 1, itemizable: donation)
+        create(:line_item, item: item_3, quantity: 1, itemizable: donation)
+
+        DonationEvent.publish(donation)
+
+        get events_path(filters: {by_type: "DonationEvent", date_range: date_range_picker_params(3.days.ago, Time.zone.tomorrow)})
+
+        td_with_items = Nokogiri::HTML(response.body).css("td").find do |td|
+          td.inner_html.include?("/items/")
+        end
+
+        expect(td_with_items).not_to be_nil
+
+        links = td_with_items.css("a").map(&:text)
+        expect(links).to eq(links.sort_by(&:downcase))
+      end
       it "should show deleted items on regular event without crashing" do
         deleted_item = create(:item, organization: organization)
         travel(-1.day) do
