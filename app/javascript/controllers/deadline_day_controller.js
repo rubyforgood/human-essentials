@@ -39,7 +39,7 @@ export default class extends Controller {
     let reminder_date = null;
     let deadline_date = null;
 
-    // TODO: Add comment explaining assumptions about monthylInterval and today?
+    // For now, we are assuming that all schedules are monthly and start on the current date
     let monthlyInterval = 1;
     let today = new Date();
     let untilDate = new Date( today );
