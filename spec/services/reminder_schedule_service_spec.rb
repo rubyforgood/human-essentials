@@ -106,16 +106,16 @@ RSpec.describe ReminderScheduleService, type: :service do
     end
   end
 
-  describe "no_fields_filled_out?" do
-    it "returns true if all fields are nil" do
-      expect(empty_schedule.no_fields_filled_out?).to be true
+  describe "fields_filled_out?" do
+    it "returns false if all fields are nil" do
+      expect(empty_schedule.fields_filled_out?).to be false
     end
 
-    it "returns false otherwise", :aggregate_failures do
+    it "returns true otherwise", :aggregate_failures do
       empty_schedule.by_month_or_week = "day_of_month"
-      expect(empty_schedule.no_fields_filled_out?).to be false
-      expect(day_of_month_schedule.no_fields_filled_out?).to be false
-      expect(day_of_week_schedule.no_fields_filled_out?).to be false
+      expect(empty_schedule.fields_filled_out?).to be true
+      expect(day_of_month_schedule.fields_filled_out?).to be true
+      expect(day_of_week_schedule.fields_filled_out?).to be true
     end
   end
 

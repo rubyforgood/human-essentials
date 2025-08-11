@@ -84,8 +84,8 @@ class ReminderScheduleService
     to_icecube_schedule&.recurrence_rules&.first.to_s
   end
 
-  def no_fields_filled_out?
-    by_month_or_week.nil? && day_of_month.nil? && day_of_week.nil? && every_nth_day.nil?
+  def fields_filled_out?
+    by_month_or_week.present? || day_of_month.present? || day_of_week.present? || every_nth_day.present?
   end
 
   def occurs_on?(date)

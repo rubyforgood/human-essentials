@@ -48,24 +48,26 @@ class PartnerGroup < ApplicationRecord
     # The schedule shouldn't be validated if the user hasn't touched that form,
     # so if by_month_or_week is still the default (nil) assume the user didn't
     # intend to fill out that form and don't validate.
-    unless reminder_schedule.no_fields_filled_out? || reminder_schedule.by_month_or_week.nil?
-      unless reminder_schedule.valid? && deadline_not_on_reminder_date?
+    if reminder_schedule.fields_filled_out? && reminder_schedule.by_month_or_week.present?
+      if !reminder_schedule.valid?
         errors.merge!(reminder_schedule.errors)
       end
+      if deadline_on_reminder_date?
+        errors.add(:day_of_month, "Reminder day must not be the same as deadline day")
+      end 
     end
   end
 
   def reminder_schedule_present?
-    unless reminder_schedule.valid? && deadline_not_on_reminder_date?
+    unless reminder_schedule.valid? && !deadline_on_reminder_date?
       errors.add(:send_reminders, "Valid reminder schedule must be present if send_reminders is true")
     end
+    if deadline_on_reminder_date?
+      errors.add(:day_of_month, "Reminder day must not be the same as deadline day")
+    end 
   end
 
-  def deadline_not_on_reminder_date?
-    if reminder_schedule.by_month_or_week == "day_of_month" && reminder_schedule.day_of_month.to_i == deadline_day.to_i
-      errors.add(:day_of_month, "Reminder day must not be the same as deadline day")
-      false
-    end
-    true
+  def deadline_on_reminder_date?
+    reminder_schedule.by_month_or_week == "day_of_month" && reminder_schedule.day_of_month.to_i == deadline_day.to_i
   end
 end
