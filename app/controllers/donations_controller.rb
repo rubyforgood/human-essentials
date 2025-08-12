@@ -127,11 +127,12 @@ class DonationsController < ApplicationController
 
   def load_form_collections
     @storage_locations = current_organization.storage_locations.active.alphabetized
-    @donation_sites = current_organization.donation_sites.active.alphabetized
     @product_drives = current_organization.product_drives.alphabetized
     @product_drive_participants = current_organization.product_drive_participants.alphabetized
     @manufacturers = current_organization.manufacturers.alphabetized
     @items = current_organization.items.active.alphabetized
+    # Return all active donation sites, or the donation site that was selected for the donation if it's inactive
+    @donation_sites = current_organization.donation_sites.active.or(DonationSite.where(id: @donation.donation_site_id)).alphabetized
   end
 
   def clean_donation_money_raised
