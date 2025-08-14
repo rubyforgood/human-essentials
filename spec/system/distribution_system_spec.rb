@@ -913,17 +913,15 @@ RSpec.feature "Distributions", type: :system do
 
     # Double click on the Distribution complete button
     ferrum_double_click('a.btn.btn-success.btn-md[href*="/picked_up"]')
-    
+
     # Capybara will be quick to determine that a screen doesn't have content.
     # Make some positive assertions that only appears on the new screen to make
     # sure it's loaded before asserting something isn't there.
     expect(page).not_to have_content("Distribution Complete")
     expect(page).to have_content("Complete")
-    
+
     # If it tries to mark the distribution as completed twice, the second time
     # will fail (the distribution is already complete) and show this error
     expect(page).not_to have_content("Sorry, we encountered an error when trying to mark this distribution as being completed")
   end
 end
-
-

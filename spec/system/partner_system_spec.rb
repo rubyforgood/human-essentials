@@ -40,7 +40,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           # Make sure the button is there before trying to double click it
           expect(page.find('a.btn.btn-success.btn-md[href*="/approve_application"]')).to have_content("Approve Partner")
 
-          # Double click on the Distribution complete button    
+          # Double click on the Distribution complete button
           ferrum_double_click('a.btn.btn-success.btn-md[href*="/approve_application"]')
 
           # Capybara will be quick to determine that a screen doesn't have content.

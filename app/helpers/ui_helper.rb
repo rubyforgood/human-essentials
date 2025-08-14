@@ -162,7 +162,7 @@ module UiHelper
     text = options[:text]
     size = options[:size]
     type = options[:type]
-    
+
     properties[:data] ||= {}
     properties[:data][:disable_with] ||= "Please wait..."
 
