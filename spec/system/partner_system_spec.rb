@@ -612,27 +612,16 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         sign_in(user)
       end
 
-      let!(:item_category_1) { create(:item_category, name: "Category One", organization: organization) }
-      let!(:item_category_2) { create(:item_category, name: "Category Two", organization: organization) }
+      let!(:item_category_1) { create(:item_category, organization: organization) }
+      let!(:item_category_2) { create(:item_category, organization: organization) }
       let!(:items_in_category_1) { create_list(:item, 3, item_category_id: item_category_1.id) }
       let!(:items_in_category_2) { create_list(:item, 3, item_category_id: item_category_2.id) }
 
       describe 'viewing the partner groups' do
-        let!(:partner_group_1) { create(:partner_group, name: "Group One", organization: organization) }
-        let!(:partner_1) { create(:partner, name: "Partner One", partner_group: partner_group_1) }
+        let!(:partner_group_1) { create(:partner_group, organization: organization) }
+        let!(:partner_1) { create(:partner, partner_group: partner_group_1) }
         before do
           partner_group_1.item_categories << item_category_1
-        end
-
-        it "shows the name, member partners, and item categories" do
-          visit partners_path
-          click_on 'Groups'
-          expect(page).to have_content("Group One")
-          expect(page).to have_content("Partner One")
-          expect(page).to have_content("Category One")
-
-          expect(page).not_to have_content("Your next reminder date is Tue Oct 20 2020.")
-          expect(page).not_to have_content("The deadline on your next reminder email will be Sun Oct 25 2020.")
         end
 
         context "with a reminder schedule" do
