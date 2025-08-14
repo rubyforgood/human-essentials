@@ -1,3 +1,27 @@
+# The reminder day (the #{form_prefix}_reminder_schedule_service_day_of_month field ) has to be less than or equal to 28.
+# These functions are implemented to calculate dates prior or after a given date that do not fall on a
+# date with a day greater than 28.
+# It is recommended to use these functions to calculate, from now, inputs for the reminder day and deadline day fields if
+# your test cares about the text created by the deadline_day_controller.js controller as there isn't an easy way to spoof
+# the current time in the test browser and different behavior could occur if the test is run on different days.
+def safe_add_days(date, num)
+  result = date + num.days
+  if result.day > 28
+    result = result.change({day: 1 + num})
+    result += 1.month
+  end
+  result
+end
+
+def safe_subtract_days(date, num)
+  result = date - num.days
+  if result.day > 28
+    result = result.change({day: 28 - num})
+    result -= 1.month
+  end
+  result
+end
+
 RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_button, post_form_submit|
   it "can set a reminder on a day of the month" do
     choose "Day of Month"
@@ -34,7 +58,6 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
     expect(page).to_not have_content("Your next reminder date is")
     expect(page).to_not have_content("The deadline on your next reminder email will be")
 
-
     fill_in "#{form_prefix}_reminder_schedule_service_day_of_month", with: "-1"
     expect(page).to have_content("Reminder day must be between 1 and 28")
     fill_in "#{form_prefix}_reminder_schedule_service_day_of_month", with: "20"
@@ -52,27 +75,6 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
   end
 
   describe "reported reminder and deadline dates" do
-    # The reminder day (the #{form_prefix}_reminder_schedule_service_day_of_month field ) has to be less than or equal to 28.
-    # These functions are implemented to calculate dates prior or after @now that do not fall on a
-    # date with a day greater than 28.
-    def safe_add_days(date, num)
-      result = date + num.days
-      if result.day > 28
-        result = result.change({day: 1 + num})
-        result += 1.month
-      end
-      result
-    end
-
-    def safe_subtract_days(date, num)
-      result = date - num.days
-      if result.day > 28
-        result = result.change({day: 28 - num})
-        result -= 1.month
-      end
-      result
-    end
-
     context "when the reminder is a day of the month" do
       before do
         choose "Day of Month"

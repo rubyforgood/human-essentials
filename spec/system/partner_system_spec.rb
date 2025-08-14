@@ -721,8 +721,8 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
           it "the deadline day form's reminder and deadline dates are consistent with the dates calculated by the FetchPartnersToRemindNowService and DeadlineService" do
             choose "Day of Month"
-            fill_in "partner_group_reminder_schedule_service_day_of_month", with: 14
-            fill_in "Deadline day in reminder email", with: 21
+            fill_in "partner_group_reminder_schedule_service_day_of_month", with: safe_add_days(Time.zone.now, 1).day
+            fill_in "Deadline day in reminder email", with: safe_add_days(Time.zone.now, 2).day
 
             reminder_text = find('small[data-deadline-day-target="reminderText"]').text
             reminder_text.slice!("Your next reminder date is ")

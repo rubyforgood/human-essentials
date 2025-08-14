@@ -54,7 +54,7 @@ class PartnerGroup < ApplicationRecord
       end
       if deadline_on_reminder_date?
         errors.add(:day_of_month, "Reminder day must not be the same as deadline day")
-      end 
+      end
     end
   end
 
@@ -64,7 +64,7 @@ class PartnerGroup < ApplicationRecord
     end
     if deadline_on_reminder_date?
       errors.add(:day_of_month, "Reminder day must not be the same as deadline day")
-    end 
+    end
   end
 
   def deadline_on_reminder_date?
