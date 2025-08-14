@@ -16,9 +16,14 @@ RSpec.describe "Partners", type: :request do
     context "html" do
       let(:response_format) { 'html' }
 
-      let!(:partner) { create(:partner, organization: organization) }
+      let!(:partner) { create(:partner, organization: organization, name: "Partner One") }
 
-      it { is_expected.to be_successful }
+      it {
+        is_expected.to be_successful
+        expect(response.body).to include "Partner One"
+        expect(response.body).not_to include "Your next reminder date is Tue Oct 20 2020."
+        expect(response.body).not_to include "The deadline on your next reminder email will be Sun Oct 25 2020."
+      }
 
       include_examples "restricts access to organization users/admins"
     end
