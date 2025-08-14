@@ -30,6 +30,29 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
           expect(partner_awaiting_approval.reload.approved?).to eq(true)
         end
+
+        it 'Double clicking approval button does not result in the partner attemping to be approved twice' do
+          visit partners_path
+
+          assert page.has_content? partner_awaiting_approval.name
+          click_on "Review Applicant's Profile"
+
+          # Make sure the button is there before trying to double click it
+          expect(page.find('a.btn.btn-success.btn-md[href*="/approve_application"]')).to have_content("Approve Partner")
+
+          # Double click on the Distribution complete button    
+          ferrum_double_click('a.btn.btn-success.btn-md[href*="/approve_application"]')
+
+          # Capybara will be quick to determine that a screen doesn't have content.
+          # Make some positive assertions that only appears on the new screen to make
+          # sure it's loaded before asserting something isn't there.
+          expect(page).to have_content("Partner Agencies for")
+
+          # If it tries to mark the partner as approved twice, the second time
+          # will fail (the partner is already approved) and show this error
+          expect(page).not_to have_content('Failed to approve partner because: ["partner is not waiting for approval"]')
+          # TODO: Verify multiple emails aren't sent?
+        end
       end
 
       context 'when the approval does not succeed' do
