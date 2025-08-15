@@ -37,7 +37,7 @@ module Partners
     end
 
     def name_with_unit(quantity_override = nil)
-      if Flipper.enabled?(:enable_packs) && request_unit.present?
+      if request_unit.present?
         "#{item&.name || name} - #{request_unit.pluralize(quantity_override || quantity.to_i)}"
       else
         item&.name || name

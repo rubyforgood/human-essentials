@@ -21,7 +21,6 @@ describe DistributionPdf do
     end
 
     specify "#request_data with custom units feature" do
-      Flipper.enable(:enable_packs)
       results = described_class.new(organization, distribution).request_data
       expect(results).to eq([
         ["Items Received", "Requested", "Received", "Value/item", "In-Kind Value Received", "Packages"],
@@ -56,7 +55,7 @@ describe DistributionPdf do
             ["Item 1", "", 50],
             ["Item 2", 30, 100],
             ["Item 3", 50, ""],
-            ["Item 4", 120, ""],
+            ["Item 4", "120 packs", ""],
             ["", "", ""],
             ["Total Items Received", 200, 150]
           ])
@@ -71,7 +70,7 @@ describe DistributionPdf do
             ["Item 1", "", 50, "1"],
             ["Item 2", 30, 100, nil],
             ["Item 3", 50, "", nil],
-            ["Item 4", 120, "", nil],
+            ["Item 4", "120 packs", "", nil],
             ["", "", ""],
             ["Total Items Received", 200, 150, ""]
           ])
@@ -89,7 +88,7 @@ describe DistributionPdf do
           ["Item 1", "", 50],
           ["Item 2", 30, 100],
           ["Item 3", 50, ""],
-          ["Item 4", 120, ""],
+          ["Item 4", "120 packs", ""],
           ["", "", ""],
           ["Total Items Received", 200, 150]
         ])
@@ -104,7 +103,7 @@ describe DistributionPdf do
           ["Item 1", "", 50, "1"],
           ["Item 2", 30, 100, nil],
           ["Item 3", 50, "", nil],
-          ["Item 4", 120, "", nil],
+          ["Item 4", "120 packs", "", nil],
           ["", "", ""],
           ["Total Items Received", 200, 150, ""]
         ])
@@ -122,7 +121,7 @@ describe DistributionPdf do
             ["Item 1", "", 50, "$1.00", "$50.00"],
             ["Item 2", 30, 100, "$2.00", "$200.00"],
             ["Item 3", 50, "", "$3.00", nil],
-            ["Item 4", 120, "", "$4.00", nil],
+            ["Item 4", "120 packs", "", "$4.00", nil],
             ["", "", "", "", ""],
             ["Total Items Received", 200, 150, "", "$250.00"]
           ])
@@ -137,7 +136,6 @@ describe DistributionPdf do
       begin
         # Run the following from Rails sandbox console (bin/rails/console --sandbox) to regenerate these comparison PDFs:
         # => load "lib/test_helpers/pdf_comparison_test_factory.rb"
-        # => Flipper.enable(:enable_packs)
         # => PDFComparisonTestFactory.create_comparison_pdfs
         expect(pdf_file).to eq(IO.binread(expected_file_path))
       rescue RSpec::Expectations::ExpectationNotMetError => e
@@ -148,7 +146,6 @@ describe DistributionPdf do
 
     # The generated PDFs (PDFs to use for comparison) are expecting the packs feature to be enabled.
     before(:each) do
-      Flipper.enable(:enable_packs)
     end
 
     let(:partner) { PDFComparisonTestFactory.create_partner(organization) }

@@ -38,7 +38,6 @@ RSpec.describe "/partners/dashboard", type: :request do
     end
 
     it "shows units" do
-      Flipper.enable(:enable_packs)
       create(:item_unit, item: item1, name: "Pack")
       create(:item_unit, item: item2, name: "Pack")
       request = create(:request, :pending, partner: partner, request_items: [])
@@ -51,7 +50,6 @@ RSpec.describe "/partners/dashboard", type: :request do
     end
 
     it "skips units when are not provided" do
-      Flipper.enable(:enable_packs)
       create(:item_unit, item: item1, name: "Pack")
       request = create(:request, :pending, partner: partner, request_items: [])
       create(:item_request, request: request, quantity: 7, item: item1)

@@ -264,9 +264,7 @@ class DistributionPdf
     else
       move_down 20
     end
-
     signature_lines_for "Received By:"
-
     move_down 20
     signature_lines_for "Delivered By:"
   end
@@ -291,7 +289,7 @@ class DistributionPdf
   end
 
   def request_display_qty(request_item)
-    if Flipper.enabled?(:enable_packs) && request_item&.unit
+    if request_item&.unit
       "#{request_item.quantity} #{request_item.unit.pluralize(request_item.quantity)}"
     else
       request_item&.quantity || ""

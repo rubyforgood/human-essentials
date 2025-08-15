@@ -144,7 +144,7 @@ class PicklistsPdf
   end
 
   def has_custom_units?(line_items)
-    Flipper.enabled?(:enable_packs) && line_items.any? { |line_item| line_item.request_unit }
+    line_items.any? { |line_item| line_item.request_unit }
   end
 
   def data_with_units(line_items)
