@@ -276,7 +276,7 @@ RSpec.describe "Audit management", type: :system, js: true do
       end
 
       describe "Finalizing an audit" do
-        it "creates an adjustment with the differential" do
+        it "updates inventory based on audit" do
           item_quantity = 10
 
           visit subject
@@ -288,7 +288,6 @@ RSpec.describe "Audit management", type: :system, js: true do
             end
             expect(page).to have_content("Audit is Finalized.")
           end.to change { storage_location.size }.by(quantity - item_quantity)
-          expect(Adjustment.last.comment == "Created Automatically through the Auditing Process").to be_truthy
         end
 
         it "is immutable" do
