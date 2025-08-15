@@ -79,4 +79,27 @@ RSpec.describe Event, type: :model do
       end
     end
   end
+
+  describe "#no_intervening_snapshot" do
+    let(:eventable) {
+      FactoryBot.create(:distribution,
+        organization_id: organization.id,
+        created_at: 1.week.ago)
+    }
+    let(:data) { EventTypes::Inventory.new(storage_locations: {}, organization_id: organization.id) }
+    let(:payload) { EventTypes::InventoryPayload.new(items: []) }
+
+    it "prevents creation if an intervening snapshot exists" do
+      travel(-1.day) do
+        SnapshotEvent.create!(organization_id: organization.id,
+          eventable: organization,
+          data: data,
+          event_time: Time.zone.now)
+      end
+
+      expect {
+        DistributionEvent.create!(eventable: eventable, organization_id: organization.id, data: payload)
+      }.to raise_error(ActiveRecord::RecordInvalid, /Cannot change inventory for an distribution created before #{1.day.ago.to_date}/)
+    end
+  end
 end
