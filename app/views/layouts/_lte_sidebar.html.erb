@@ -239,6 +239,11 @@
           <i class="nav-icon fa fa-circle-o"></i> Purchases - Trends
         <% end %>
       </li>
+      <li class="nav-item <%= active_class(['reports/itemized_requests']) %>">
+        <%= link_to(reports_itemized_requests_path, class: "nav-link #{active_class(['reports/itemized_requests'])}") do %>
+          <i class="nav-icon fa fa-circle-o"></i> Requests - Itemized
+        <% end %>
+      </li>
     </ul>
   </li>
   <% if current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
