@@ -631,6 +631,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_11_094943) do
     t.integer "quota"
     t.bigint "partner_group_id"
     t.bigint "default_storage_location_id"
+    t.text "info_for_partner"
     t.index ["default_storage_location_id"], name: "index_partners_on_default_storage_location_id"
     t.index ["organization_id"], name: "index_partners_on_organization_id"
     t.index ["partner_group_id"], name: "index_partners_on_partner_group_id"
