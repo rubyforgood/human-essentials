@@ -22,15 +22,14 @@ class RequestItemizedBreakdownService
     current_min_onhand = current_onhand_minimums(inventory)
     items_requested = fetch_items_requested
 
-    items_requested.map! do |item|
-      item_id = item[:item_id]
+    items_requested.each do |item|
+      name = item[:name]
 
-      on_hand = current_onhand[item_id]
-      minimum = current_min_onhand[item_id]
-
+      on_hand = current_onhand[name]
+      minimum = current_min_onhand[name]
       below_onhand_minimum = on_hand && minimum && on_hand < minimum
 
-      item.merge(
+      item.merge!(
         on_hand: on_hand,
         onhand_minimum: minimum,
         below_onhand_minimum: below_onhand_minimum
@@ -54,27 +53,18 @@ class RequestItemizedBreakdownService
   attr_reader :organization, :request_ids
 
   def current_onhand_quantities(inventory)
-    inventory.all_items.group_by(&:id).to_h do |id, items|
-      [id, items.sum(&:quantity)]
-    end
+    inventory.all_items.group_by(&:name).to_h { |k, v| [k, v.sum { |r| r.quantity.to_i }] }
   end
 
   def current_onhand_minimums(inventory)
-    inventory.all_items.group_by(&:id).to_h do |id, items|
-      [id, items.map(&:on_hand_minimum_quantity).compact.max]
-    end
+    inventory.all_items.group_by(&:name).to_h { |k, v| [k, v.map(&:on_hand_minimum_quantity).compact.max] }
   end
 
   def fetch_items_requested
-    Request
-      .includes(:partner, :organization, :item_requests)
-      .where(id: @request_ids)
-      .flat_map do |request|
-        request.request_items.map do |json_item|
-          RequestItem.from_json(json_item, request)
-        end
-      end
-      .group_by { |ri| [ri.item.id, ri.unit] }
+    Partners::ItemRequest
+      .includes(:item)
+      .where(partner_request_id: @request_ids)
+      .group_by { |ir| [ir.item_id, ir.request_unit] }
       .map do |(item_id, unit), grouped|
         item = grouped.first.item
         {

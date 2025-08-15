@@ -1,47 +1,39 @@
 RSpec.describe RequestItemizedBreakdownService, type: :service do
   let(:organization) { create(:organization) }
 
-  let(:item_a) do
-    create(:item, organization: organization, on_hand_minimum_quantity: 4, name: "A Diapers")
-  end
-  let(:item_b) do
-    create(:item, organization: organization, on_hand_minimum_quantity: 8, name: "B Diapers")
-  end
+  let(:item_a) { create(:item, organization: organization, name: "A Diapers", on_hand_minimum_quantity: 4) }
+  let(:item_b) { create(:item, organization: organization, name: "B Diapers", on_hand_minimum_quantity: 8) }
 
-  let(:request_1) do
-    create(:request, organization: organization, request_items: [
-      {"item_id" => item_a.id, "quantity" => 5}
-    ])
-  end
+  let(:request_1) { create(:request, organization: organization) }
+  let(:request_2) { create(:request, organization: organization) }
 
-  let(:request_2) do
-    create(:request, organization: organization, request_items: [
-      {"item_id" => item_b.id, "quantity" => 10}
-    ])
-  end
-
-  let(:expected_output) do
-    [
-      {name: item_a.name, item_id: item_a.id, unit: nil, quantity: 5, on_hand: 3, onhand_minimum: 4, below_onhand_minimum: true},
-      {name: item_b.name, item_id: item_b.id, unit: nil, quantity: 10, on_hand: 20, onhand_minimum: 8, below_onhand_minimum: false}
-    ]
-  end
+  let(:storage_location) { create(:storage_location, organization: organization) }
 
   before do
-    allow_any_instance_of(View::Inventory).to receive(:quantity_for).with(item_id: item_a.id).and_return(3)
-    allow_any_instance_of(View::Inventory).to receive(:quantity_for).with(item_id: item_b.id).and_return(20)
-    allow_any_instance_of(View::Inventory).to receive(:all_items).and_return([
-      OpenStruct.new(id: item_a.id, quantity: 3, on_hand_minimum_quantity: 4),
-      OpenStruct.new(id: item_b.id, quantity: 20, on_hand_minimum_quantity: 8)
-    ])
+    create(:inventory_item, storage_location: storage_location, item: item_a, quantity: 3)
+    create(:inventory_item, storage_location: storage_location, item: item_b, quantity: 20)
+
+    create(:item_request, request: request_1, partner_request_id: request_1.id, item: item_a, quantity: 5, request_unit: nil)
+    create(:item_request, request: request_2, partner_request_id: request_2.id, item: item_b, quantity: 10, request_unit: nil)
+
+    allow_any_instance_of(RequestItemizedBreakdownService)
+      .to receive(:current_onhand_quantities)
+      .and_return({item_a.name => 3, item_b.name => 20, item_a.id => 3, item_b.id => 20})
+    allow_any_instance_of(RequestItemizedBreakdownService)
+      .to receive(:current_onhand_minimums)
+      .and_return({item_a.name => 4, item_b.name => 8, item_a.id => 4, item_b.id => 8})
   end
 
   describe "#fetch" do
-    subject { service.fetch }
+    subject(:result) { service.fetch }
     let(:service) { described_class.new(organization: organization, request_ids: [request_1.id, request_2.id]) }
 
     it "should include the break down of requested items" do
-      expect(subject).to eq(expected_output)
+      expected_output = [
+        {name: "A Diapers", item_id: item_a.id, unit: nil, quantity: 5, on_hand: 3, onhand_minimum: 4, below_onhand_minimum: true},
+        {name: "B Diapers", item_id: item_b.id, unit: nil, quantity: 10, on_hand: 20, onhand_minimum: 8, below_onhand_minimum: false}
+      ]
+      expect(result).to eq(expected_output)
     end
   end
 
