@@ -20,9 +20,9 @@
 For details on how to do a bulk import of your partners, please click [here](pm_importing_partners.md)
 
 ## Adding a single Partner
-For your first partner, you can Click on the "Add a Partner" button in your "Getting Started" portion of you dashboard.  
+For your first partner, you can Click on the "Add a single partner" link in your "Getting Started" portion of you dashboard.  
 
-![navigation](images/getting_started/partners/gs_just_starting_step_2.png)
+![navigation](images/getting_started/partners/gs_add_partner_1.png)
 
 
 For any subsequent Partners, please click on "Partner Agencies", then "All Partners", then "Add a Partner")
