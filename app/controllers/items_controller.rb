@@ -4,7 +4,7 @@ class ItemsController < ApplicationController
   def index
     @items = current_organization
       .items
-      .includes(:base_item, :kit, :line_items, :request_units, :item_category)
+      .includes(:kit, :line_items, :request_units, :item_category)
       .alphabetized
       .class_filter(filter_params)
       .group('items.id')
@@ -15,7 +15,7 @@ class ItemsController < ApplicationController
     @storages = current_organization.storage_locations.active.order(id: :asc)
 
     @include_inactive_items = params[:include_inactive_items]
-    @selected_base_item = filter_params[:by_base_item]
+    @selected_reporting_category = filter_params[:by_reporting_category]
 
     @paginated_items = @items.page(params[:page])
 
@@ -41,7 +41,6 @@ class ItemsController < ApplicationController
     if result.success?
       redirect_to items_path, notice: "#{result.value.name} added!"
     else
-      @base_items = BaseItem.without_kit.alphabetized
       # Define a @item to be used in the `new` action to be rendered with
       # the provided parameters. This is required to render the page again
       # with the error + the invalid parameters.
@@ -53,13 +52,11 @@ class ItemsController < ApplicationController
   end
 
   def new
-    @base_items = BaseItem.without_kit.alphabetized
     @item_categories = current_organization.item_categories
     @item = current_organization.items.new
   end
 
   def edit
-    @base_items = BaseItem.without_kit.alphabetized
     @item_categories = current_organization.item_categories
     @item = current_organization.items.find(params[:id])
   end
@@ -77,7 +74,6 @@ class ItemsController < ApplicationController
     @item.attributes = item_params
     deactivated = @item.active_changed? && !@item.active
     if deactivated && !@item.can_deactivate?
-      @base_items = BaseItem.without_kit.alphabetized
       flash.now[:error] = "Can't deactivate this item - it is currently assigned to either an active kit or a storage location!"
       render action: :edit
       return
@@ -86,7 +82,6 @@ class ItemsController < ApplicationController
     if update_item
       redirect_to items_path, notice: "#{@item.name} updated!"
     else
-      @base_items = BaseItem.without_kit.alphabetized
       flash.now[:error] = "Something didn't work quite right -- try again? #{@item.errors.map { |error| "#{error.attribute}: #{error.message}" }}"
       render action: :edit
     end
@@ -164,6 +159,7 @@ class ItemsController < ApplicationController
     @item_params = params.require(:item).permit(
       :name,
       :item_category_id,
+      :reporting_category,
       :partner_key,
       :value_in_cents,
       :package_size,
@@ -205,6 +201,6 @@ class ItemsController < ApplicationController
     def filter_params(_parameters = nil)
     return {} unless params.key?(:filters)
 
-    params.require(:filters).permit(:by_base_item, :include_inactive_items)
+    params.require(:filters).permit(:by_reporting_category, :include_inactive_items)
   end
 end
