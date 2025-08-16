@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_23_203808) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_11_094943) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -324,7 +324,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_203808) do
     t.bigint "old_partner_id"
     t.boolean "archived", default: false
     t.index ["partner_id"], name: "index_families_on_partner_id"
-  end 
+  end
 
   create_table "flipper_features", force: :cascade do |t|
     t.string "key", null: false
@@ -493,6 +493,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_203808) do
     t.boolean "hide_package_column_on_receipt", default: false
     t.boolean "signature_for_distribution_pdf", default: false
     t.boolean "receive_email_on_requests", default: false, null: false
+    t.boolean "bank_is_set_up", default: false, null: false
     t.boolean "include_in_kind_values_in_exported_files", default: false, null: false
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
   end
@@ -608,19 +609,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_203808) do
     t.index ["essentials_bank_id"], name: "index_partners_on_essentials_bank_id"
   end
 
-  create_table "partner_requests", force: :cascade do |t|
-    t.text "comments"
-    t.bigint "partner_id"
-    t.bigint "organization_id"
-    t.boolean "sent", default: false, null: false
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
-    t.boolean "for_families"
-    t.integer "partner_user_id"
-    t.index ["organization_id"], name: "index_partner_requests_on_organization_id"
-    t.index ["partner_id"], name: "index_partner_requests_on_partner_id"
-  end
-
   create_table "partner_served_areas", force: :cascade do |t|
     t.bigint "partner_profile_id", null: false
     t.bigint "county_id", null: false
@@ -643,6 +631,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_203808) do
     t.integer "quota"
     t.bigint "partner_group_id"
     t.bigint "default_storage_location_id"
+    t.text "info_for_partner"
     t.index ["default_storage_location_id"], name: "index_partners_on_default_storage_location_id"
     t.index ["organization_id"], name: "index_partners_on_organization_id"
     t.index ["partner_group_id"], name: "index_partners_on_partner_group_id"
@@ -902,7 +891,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_203808) do
   add_foreign_key "organizations", "account_requests"
   add_foreign_key "organizations", "ndbn_members", primary_key: "ndbn_member_id"
   add_foreign_key "partner_groups", "organizations"
-  add_foreign_key "partner_requests", "users", column: "partner_user_id"
   add_foreign_key "partner_served_areas", "counties"
   add_foreign_key "partner_served_areas", "partner_profiles"
   add_foreign_key "partners", "storage_locations", column: "default_storage_location_id", validate: false
