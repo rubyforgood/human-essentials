@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = ["source", "destination"]
-  static values = { valuesToHide: Array }
+  static values = { valuesToShow: Array }
 
   connect() {
     this.toggleVisibility()
@@ -14,14 +14,12 @@ export default class extends Controller {
 
   toggleVisibility() {
     const sourceValue = this.sourceTarget.value
-    const shouldHide = !sourceValue || this.valuesToHideValue.includes(sourceValue)
+    const shouldShow = this.valuesToShowValue.includes(sourceValue)
     
-    this.destinationTargets.forEach(target => {
-      if (shouldHide) {
-        target.classList.add("d-none")
-      } else {
-        target.classList.remove("d-none")
-      }
-    })
+    if (shouldShow) {
+      this.destinationTarget.classList.remove("d-none")
+    } else {
+      this.destinationTarget.classList.add("d-none")
+    }
   }
 }
