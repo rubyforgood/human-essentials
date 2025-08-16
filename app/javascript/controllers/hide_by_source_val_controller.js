@@ -2,13 +2,24 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = ["source", "destination"]
-  static values = {
-    valuesToHide: Array
+  static values = { valuesToShow: Array }
+
+  connect() {
+    this.toggleVisibility()
   }
+
   sourceChanged() {
-    const val = $(this.sourceTarget).val()
-    this.destinationTargets.forEach(
-      destination_target => { $(destination_target).toggleClass("d-none", this.valuesToHideValue.includes(val)); }
-    )
+    this.toggleVisibility()
+  }
+
+  toggleVisibility() {
+    const sourceValue = this.sourceTarget.value
+    const shouldShow = this.valuesToShowValue.includes(sourceValue)
+    
+    if (shouldShow) {
+      this.destinationTarget.classList.remove("d-none")
+    } else {
+      this.destinationTarget.classList.add("d-none")
+    }
   }
 }

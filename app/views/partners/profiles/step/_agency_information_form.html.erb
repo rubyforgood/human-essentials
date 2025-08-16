@@ -3,18 +3,20 @@
 </div>
 
 <%= f.fields_for :profile, profile do |pf| %>
-  <div class="form-group">
-    <%= pf.input :agency_type,
-    # Symbolize keys, because simple_form will only do a I18n lookup for
-    # symbols
-      collection: Partners::Profile.agency_types_for_selection,
-      label: "Agency Type",
-      class: "form-control",
-      wrapper: :input_group %>
-  </div>
+  <div data-controller="hide-by-source-val"
+       data-hide-by-source-val-values-to-show-value='["other"]'>
+    <div class="form-group">
+      <%= pf.input :agency_type,
+        collection: Partners::Profile.agency_types_for_selection,
+        label: "Agency Type",
+        class: "form-control",
+        wrapper: :input_group,
+        input_html: { data: { "hide-by-source-val-target": "source", action: "change->hide-by-source-val#sourceChanged" } } %>
+    </div>
 
-  <div class="form-group">
-    <%= pf.input :other_agency_type, label: "Other Agency Type", class: "form-control" %>
+    <div class="form-group" data-hide-by-source-val-target="destination">
+      <%= pf.input :other_agency_type, label: "Other Agency Type", class: "form-control" %>
+    </div>
   </div>
 
   <%= render "shared/custom_file_input",
