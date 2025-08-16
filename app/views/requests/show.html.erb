@@ -110,7 +110,7 @@
             <%= view_button_to(distribution_path(@request.distribution), {text: "View Associated Distribution", size: "md"}) if @request.distribution %>
             <%= print_button_to print_picklist_request_path(@request), { format: :pdf, text: "Print", size: "md" } %>
             <%= button_to 'Cancel', new_request_cancelation_path(request_id: @request.id),
-                          method: :get, form_class: 'd-inline', class: 'btn btn-danger btn-md' %>
+                          method: :get, data: { disable_with: "Please wait..." }, form_class: 'd-inline', class: 'btn btn-danger btn-md' %>
           </div>
         </div>
       </div>
