@@ -51,7 +51,7 @@ gem "turbo-rails"
 # Sprinkle a little JS to add interactivity
 gem "stimulus-rails"
 # Use JS import maps to manage JS without transpiling or bundling.
-gem "importmap-rails", "~> 2.1"
+gem "importmap-rails", "~> 2.2"
 
 ##### VIEWS/CONTROLLERS #####
 
@@ -61,6 +61,8 @@ gem "filterrific"
 gem "jbuilder"
 # Pagination of models for use in views.
 gem "kaminari"
+# Prevents cookie overflow errors when storing large flash messages.
+gem 'memflash'
 # Web-based authorization framework.
 gem "omniauth"
 # Required to avoid authentication issues with Rails.
@@ -156,7 +158,7 @@ group :development, :test do
   # More concise test ("should") matchers
   gem "shoulda-matchers", "~> 6.5"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.40"
+  gem "standard", "~> 1.50"
   gem "standard-rails"
   gem "standard-performance"
   # Erb linter.

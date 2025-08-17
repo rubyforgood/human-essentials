@@ -69,15 +69,15 @@
           <div class="card-body p-0">
             <table class="table">
               <thead>
-              <tr>
-                <th>Item Type</th>
-                <th>Quantity in the Box</th>
-                <th>Barcode</th>
-                <th class="text-center">Actions</th>
-              </tr>
+                <tr>
+                  <th>Item Type</th>
+                  <th class="text-right">Quantity in the Box</th>
+                  <th class="text-left">Barcode</th>
+                  <th class="text-right">Actions</th>
+                </tr>
               </thead>
               <tbody>
-              <%= render partial: "barcode_item_row", collection: @barcode_items %>
+                <%= render partial: "barcode_item_row", collection: @barcode_items %>
               </tbody>
             </table>
           </div>
