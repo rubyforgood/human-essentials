@@ -186,6 +186,23 @@
           </div>
         </section>
 
+        <section class="card card-info card-outline">
+          <div class="card-header">
+            <h2 class="card-title fs-3">Partner Specific Information</h2>
+          </div>
+          <div class="card-body p-2">
+            <div class="row">
+              <div class="col-xs-12 col-sm-12" id="info-for-partner">
+                <% if @partner.info_for_partner %>
+                  <p><%= simple_format(@partner.info_for_partner) %></p>
+                <% else %>
+                  <p> None provided </p>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section class="card card-info card-outline" id='partner-information'>
           <div class="card-header">
             <div class="clearfix">

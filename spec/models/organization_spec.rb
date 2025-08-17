@@ -3,6 +3,7 @@
 # Table name: organizations
 #
 #  id                                       :integer          not null, primary key
+#  bank_is_set_up                           :boolean          default(FALSE), not null
 #  city                                     :string
 #  deadline_day                             :integer
 #  default_storage_location                 :integer
@@ -274,6 +275,15 @@ RSpec.describe Organization, type: :model do
   end
 
   describe "geocode" do
+    before do
+      organization.update(
+        street: "1500 Remount Road",
+        city: "Front Royal",
+        state: "VA",
+        zipcode: "22630"
+      )
+    end
+
     it "adds coordinates to the database" do
       expect(organization.latitude).to be_a(Float)
       expect(organization.longitude).to be_a(Float)
@@ -345,6 +355,7 @@ RSpec.describe Organization, type: :model do
 
   describe 'from_email' do
     it 'returns email when present' do
+      organization.update(email: "email@testthis.com")
       expect(organization.from_email).to eq(organization.email)
     end
 
@@ -378,10 +389,10 @@ RSpec.describe Organization, type: :model do
   end
   describe 'deadline_day' do
     it "can only contain numbers 1-28" do
-      expect(build(:organization, deadline_day: 28)).to be_valid
-      expect(build(:organization, deadline_day: 0)).to_not be_valid
-      expect(build(:organization, deadline_day: -5)).to_not be_valid
-      expect(build(:organization, deadline_day: 29)).to_not be_valid
+      expect(build(:organization, reminder_day: 1, deadline_day: 28)).to be_valid
+      expect(build(:organization, reminder_day: 1, deadline_day: 0)).to_not be_valid
+      expect(build(:organization, reminder_day: 1, deadline_day: -5)).to_not be_valid
+      expect(build(:organization, reminder_day: 1, deadline_day: 29)).to_not be_valid
     end
   end
 

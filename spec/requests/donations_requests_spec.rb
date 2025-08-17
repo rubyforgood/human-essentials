@@ -100,6 +100,15 @@ RSpec.describe "Donations", type: :request do
       it "should include the storage location name" do
         expect(subject.body).to include("Pawane Location")
       end
+
+      context "when creating a new donation" do
+        let!(:inactive_donation_site) { create(:donation_site, organization: organization, active: false) }
+
+        it "does not include inactive donation sites" do
+          subject
+          expect(response.body).not_to include(inactive_donation_site.name)
+        end
+      end
     end
 
     describe "POST #create" do
@@ -263,6 +272,29 @@ RSpec.describe "Donations", type: :request do
           expect(response.body).to include("You’ve had an audit since this donation was started.")
           expect(response.body).to include("In the case that you are correcting a typo, rather than recording that the physical amounts being donated have changed,\n")
           expect(response.body).to include("you’ll need to make an adjustment to the inventory as well.")
+        end
+      end
+
+      context "when editing a donation with an inactive donation site" do
+        let!(:active_donation_site) { create(:donation_site, organization: organization, name: "Active Donation Site") }
+        let!(:inactive_donation_site) { create(:donation_site, organization: organization, active: false, name: "Inactive Donation Site") }
+        let!(:donation_with_inactive_site) { create(:donation, organization: organization, donation_site: inactive_donation_site) }
+
+        it "includes the inactive donation site in the dropdown" do
+          get edit_donation_path(donation_with_inactive_site)
+          expect(response.body).to include(inactive_donation_site.name)
+        end
+
+        it "displays the donation site names alphabetically" do
+          get edit_donation_path(donation_with_inactive_site)
+
+          # Get all donation site names that should be in the dropdown and sort them
+          donation_sites = [active_donation_site, inactive_donation_site]
+          sorted_names = donation_sites.map(&:name).sort
+
+          # Verify that the donation sites are alphabetized
+          expect(sorted_names[0]).to eq(active_donation_site.name)
+          expect(sorted_names[1]).to eq(inactive_donation_site.name)
         end
       end
     end

@@ -64,7 +64,7 @@ Rails.application.routes.draw do
   namespace :admin do
     get :dashboard
     resources :base_items
-    resources :organizations
+    resources :organizations, except: %i[edit update]
     resources :partners, except: %i[new create]
     resources :users do
       delete :remove_role
@@ -123,7 +123,9 @@ Rails.application.routes.draw do
     get :activity_graph
   end
 
-  resources :transfers, only: %i(index create new show destroy)
+  resources :transfers, only: %i(index create new show destroy) do
+    post :validate, on: :collection
+  end
 
   resources :storage_locations do
     put :deactivate

@@ -112,8 +112,8 @@ RSpec.describe "Item management", type: :system do
   end
 
   describe "Item Table Tabs >" do
-    let(:item_pullups) { create(:item, name: "the most wonderful magical pullups that truly potty train", category: "Magic Toddlers") }
-    let(:item_tampons) { create(:item, name: "blackbeard's rugged tampons", category: "Menstrual Products") }
+    let(:item_pullups) { create(:item, name: "the most wonderful magical pullups that truly potty train") }
+    let(:item_tampons) { create(:item, name: "blackbeard's rugged tampons") }
     let(:storage_name) { "the poop catcher warehouse" }
     let(:storage) { create(:storage_location, :with_items, item: item_pullups, item_quantity: num_pullups_in_donation, name: storage_name) }
     let!(:aux_storage) { create(:storage_location, :with_items, item: item_pullups, item_quantity: num_pullups_second_donation, name: "a secret secondary location") }
