@@ -41,7 +41,7 @@ class ReportsController < ApplicationController
 
   def itemized_requests
     requests = current_organization.requests.during(helpers.selected_range)
-    @itemized_request_data = RequestItemizedBreakdownService.new(organization: current_organization, request_ids: requests.pluck(:id)).fetch
+    @itemized_request_data = RequestItemizedBreakdownService.call(organization: current_organization, request_ids: requests.pluck(:id))
   end
 
   private

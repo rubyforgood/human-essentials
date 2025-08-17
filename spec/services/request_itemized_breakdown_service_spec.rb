@@ -22,8 +22,9 @@ RSpec.describe RequestItemizedBreakdownService, type: :service do
   end
 
   describe "#fetch" do
-    subject(:result) { service.fetch }
-    let(:service) { described_class.new(organization: organization, request_ids: [request_1.id, request_2.id]) }
+    subject(:result) do
+      described_class.call(organization: organization, request_ids: [request_1.id, request_2.id])
+    end
 
     it "should include the break down of requested items" do
       expected_output = [
@@ -35,8 +36,9 @@ RSpec.describe RequestItemizedBreakdownService, type: :service do
   end
 
   describe "#fetch_csv" do
-    subject(:subject) { service.fetch_csv }
-    let(:service) { described_class.new(organization: organization, request_ids: [request_1.id, request_2.id]) }
+    subject(:subject) do
+      described_class.call(organization: organization, request_ids: [request_1.id, request_2.id], format: :csv)
+    end
 
     it "should output the expected output but in CSV format" do
       expected_csv = <<~CSV
