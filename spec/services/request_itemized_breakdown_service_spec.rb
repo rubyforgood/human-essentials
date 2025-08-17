@@ -10,18 +10,15 @@ RSpec.describe RequestItemizedBreakdownService, type: :service do
   let(:storage_location) { create(:storage_location, organization: organization) }
 
   before do
-    create(:inventory_item, storage_location: storage_location, item: item_a, quantity: 3)
-    create(:inventory_item, storage_location: storage_location, item: item_b, quantity: 20)
+    TestInventory.create_inventory(organization, {
+      storage_location.id => {
+        item_a.id => 3,
+        item_b.id => 20
+      }
+    })
 
     create(:item_request, request: request_1, partner_request_id: request_1.id, item: item_a, quantity: 5, request_unit: nil)
     create(:item_request, request: request_2, partner_request_id: request_2.id, item: item_b, quantity: 10, request_unit: nil)
-
-    allow_any_instance_of(RequestItemizedBreakdownService)
-      .to receive(:current_onhand_quantities)
-      .and_return({item_a.name => 3, item_b.name => 20, item_a.id => 3, item_b.id => 20})
-    allow_any_instance_of(RequestItemizedBreakdownService)
-      .to receive(:current_onhand_minimums)
-      .and_return({item_a.name => 4, item_b.name => 8, item_a.id => 4, item_b.id => 8})
   end
 
   describe "#fetch" do
@@ -38,7 +35,7 @@ RSpec.describe RequestItemizedBreakdownService, type: :service do
   end
 
   describe "#fetch_csv" do
-    subject { service.fetch_csv }
+    subject(:subject) { service.fetch_csv }
     let(:service) { described_class.new(organization: organization, request_ids: [request_1.id, request_2.id]) }
 
     it "should output the expected output but in CSV format" do
