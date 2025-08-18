@@ -12,10 +12,10 @@ class RequestItemizedBreakdownService
       items_requested = fetch_items_requested(organization: organization, request_ids: request_ids)
 
       items_requested.each do |item|
-        name = item[:name]
+        id = item[:item_id]
 
-        on_hand = current_onhand[name]
-        minimum = current_min_onhand[name]
+        on_hand = current_onhand[id]
+        minimum = current_min_onhand[id]
         below_onhand_minimum = on_hand && minimum && on_hand < minimum
 
         item.merge!(
@@ -35,11 +35,11 @@ class RequestItemizedBreakdownService
     private
 
     def current_onhand_quantities(inventory)
-      inventory.all_items.group_by(&:name).to_h { |k, v| [k, v.sum { |r| r.quantity.to_i }] }
+      inventory.all_items.group_by(&:item_id).to_h { |item_id, rows| [item_id, rows.sum { |r| r.quantity.to_i }] }
     end
 
     def current_onhand_minimums(inventory)
-      inventory.all_items.group_by(&:name).to_h { |k, v| [k, v.map(&:on_hand_minimum_quantity).compact.max] }
+      inventory.all_items.group_by(&:item_id).to_h { |item_id, rows| [item_id, rows.map(&:on_hand_minimum_quantity).compact.max] }
     end
 
     def fetch_items_requested(organization:, request_ids:)
