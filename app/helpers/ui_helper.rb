@@ -80,20 +80,6 @@ module UiHelper
     _link_to link, { icon: "check", type: "success", text: "Restore", size: "xs" }.merge(options), properties
   end
 
-  def dropdown_button(id, options = {})
-    options[:type] = (options[:type] || "primary").prepend("btn-dropdown btn-")
-    options[:id] = id
-    additional_properties = {
-      data: {
-        "bs-toggle": "dropdown"
-      },
-      "aria-haspopup": true,
-      "aria-expanded": true
-    }
-
-    _button_to({ submit_type: "button", text: "Set the 'text' property", size: "md", icon: "caret-down" }.merge(options), additional_properties)
-  end
-
   def cancel_button_to(link, options = {})
     _link_to link, { icon: "ban", type: "outline-primary", text: "Cancel", size: "md" }.merge(options)
   end
