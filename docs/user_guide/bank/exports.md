@@ -7,6 +7,7 @@ Many of these can be filtered down to the information you might need for a speci
 The exports available include (in alphabetical order):
 - Adjustments
 - Annual Survey
+- Audits
 - Barcode Items
 - Distributions
 - Donations
@@ -89,6 +90,22 @@ For more information on these, please see the [Annual Survey Report](reports_ann
 - % difference in yearly Donations,
 - % difference in total money donated,
 - % difference in disposable diaper Donations
+
+## Audits
+### Navigating to export Audit
+Click "Inventory", then "Inventory" in the left-hand menu. Then click "Export Report."
+
+### Contents of Audit exports
+For each Audit of Storage Location in the list:
+- Audit Date
+- Audit Status
+- Name,
+- Address,
+- Square Footage,
+- Warehouse Type,
+- Total Inventory, and
+- Quantity for each of the organization's Items.
+
 ## Barcode Items
 ### Navigating to export barcode Items
 Click "Inventory" then "Barcode Items" in the left-hand menu.   Then click "Export Barcode Items."

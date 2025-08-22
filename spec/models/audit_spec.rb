@@ -135,7 +135,7 @@ RSpec.describe Audit, type: :model do
 
       it "generates a CSV" do
         csv_data = described_class.generate_csv_from_inventory([audit], inventory)
-        
+
         expect(csv_data).to be_a(String)
 
         table = CSV.parse(csv_data)
