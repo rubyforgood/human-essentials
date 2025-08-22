@@ -19,6 +19,7 @@ class Audit < ApplicationRecord
   belongs_to :storage_location
   belongs_to :adjustment, optional: true
 
+  include Exportable
   include Itemizable
   include Filterable
   scope :at_location, ->(location_id) { where(storage_location_id: location_id) }
@@ -47,6 +48,28 @@ class Audit < ApplicationRecord
     unless user.has_role?(Role::ORG_ADMIN, organization)
       errors.add :user, "user must be an organization admin of the organization"
     end
+  end
+
+  def self.generate_csv_from_inventory(audits, inventory)
+    all_items = inventory.all_items.uniq(&:item_id).sort_by(&:name)
+    additional_headers = all_items.map(&:name).uniq
+    headers = csv_export_headers + additional_headers
+
+    CSV.generate(write_headers: true, headers: headers) do |csv|
+      audits.map do |audit|
+        sl = audit.storage_location # preloaded earlier with includes to avoid n+1
+        total_quantity = inventory.quantity_for(storage_location: sl.id)
+
+        row = [audit.updated_at.strftime("%B %d %Y"), audit.status, sl.name, sl.address, sl.square_footage, sl.warehouse_type, total_quantity] +
+          all_items.map { |i| inventory.quantity_for(storage_location: sl.id, item_id: i.item_id) }
+
+        csv << row.map { |attr| normalize_csv_attribute(attr) }
+      end
+    end
+  end
+
+  def self.csv_export_headers
+    ["Audit Date", "Audit Status", "Name", "Address", "Square Footage", "Warehouse Type", "Total Inventory"]
   end
 
   private
