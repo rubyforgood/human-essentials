@@ -1,6 +1,7 @@
 <%= simple_form_for @donation, data: { controller: "form-input" } do |f| %>
 
-  <div class="box-body">
+  <div class="box-body" data-controller="donations-modal">
+    <%= turbo_frame_tag "modal-new", class: "modal fade", role: 'dialog' %>
 
     <div class="row">
       <div class="col-xs-8 col-md-6 col-lg-3">
@@ -16,14 +17,14 @@
 
     <div class="row">
       <div class="col-xs-8 col-md-6 col-lg-3">
-        <%= f.input :donation_site_id,
-            as: :select,
+        <%= f.association :donation_site,
             collection: options_with_new(@donation_sites),
             selected: donation_form.donation_site_id,
             include_blank: true,
             label: "Donation Site",
             error: "Where was this donation dropped off?",
-            wrapper: :input_group %>
+            wrapper: :input_group,
+            input_html: { data: { action: "change->donations-modal#handleNewSelect", url: new_donation_site_path } } %>
       </div>
     </div>
     <div class="row">
