@@ -127,6 +127,32 @@ RSpec.describe Audit, type: :model do
       expect(Audit.finalized_since?(xfer3, storage_location4)).to be false # no audits at location
       expect(Audit.finalized_since?(xfer3, storage_location5)).to be false # since status isn't finalized
     end
+
+    describe ".generate_csv_from_inventory" do
+      let!(:audit) { create(:audit, :with_items, organization: organization) }
+      let(:sl) { audit.storage_location }
+      let(:inventory) { View::Inventory.new(organization.id) }
+
+      it "generates a CSV" do
+        csv_data = described_class.generate_csv_from_inventory([audit], inventory)
+        
+        expect(csv_data).to be_a(String)
+
+        table = CSV.parse(csv_data)
+        header = table.first
+        row = table.second
+
+        expect(header).to eq(described_class.csv_export_headers)
+
+        expect(row[0]).to eq(audit.updated_at.strftime("%B %d %Y"))
+        expect(row[1]).to eq(audit.status)
+        expect(row[2]).to eq(sl.name)
+        expect(row[3]).to eq(sl.address)
+        expect(row[4]).to eq(sl.square_footage.to_s)
+        expect(row[5]).to eq(sl.warehouse_type.to_s)
+        expect(row[6]).to eq("0")
+      end
+    end
   end
 
   describe "versioning" do

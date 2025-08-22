@@ -1,11 +1,11 @@
 RSpec.describe "Audits", type: :request do
   let(:organization) { create(:organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
-
+  let(:storage_location) { create(:storage_location, organization: organization) }
   let(:valid_attributes) do
     {
       organization_id: organization.id,
-      storage_location_id: create(:storage_location, organization: organization).id,
+      storage_location_id: storage_location.id,
       user_id: create(:organization_admin, organization: organization).id
     }
   end
@@ -30,10 +30,70 @@ RSpec.describe "Audits", type: :request do
     end
 
     describe "GET #index" do
-      it "is successful" do
-        Audit.create! valid_attributes
-        get audits_path
-        expect(response).to be_successful
+      context "html" do
+        it "is successful" do
+          Audit.create! valid_attributes
+          get audits_path
+          expect(response).to be_successful
+        end
+      end
+
+      context "csv" do
+        let(:response_format) { 'csv' }
+        let!(:audits) do
+          [
+            create(:audit, organization: organization, storage_location: storage_location_with_duplicate_item),
+            create(:audit, organization: organization, storage_location: storage_location_with_items)
+          ]
+        end
+        let(:storage_location_with_duplicate_item) {
+          create(:storage_location,
+            name: "Storage Location with Duplicate Items",
+            address: "1500 Remount Road, Front Royal, VA 22630",
+            warehouse_type: StorageLocation::WAREHOUSE_TYPES.first,
+            square_footage: 100)
+        }
+        let(:storage_location_with_items) {
+          create(:storage_location,
+            name: "Storage Location with Items",
+            address: "123 Donation Site Way",
+            warehouse_type: StorageLocation::WAREHOUSE_TYPES.first,
+            square_footage: 100)
+        }
+        let(:item1) { create(:item, name: 'A') }
+        let(:item2) { create(:item, name: 'B') }
+        let(:item3) { create(:item, name: 'C') }
+
+        before do
+          TestInventory.create_inventory(storage_location_with_items.organization, {
+            storage_location_with_items.id => {
+              item1.id => 1,
+              item2.id => 1,
+              item3.id => 1
+            },
+            storage_location_with_duplicate_item.id => { item3.id => 1 }
+          })
+        end
+
+        it "succeeds" do
+          get audits_path(format: response_format)
+          expect(response).to be_successful
+        end
+
+        it "includes headers followed by alphabetized item names" do
+          get audits_path(format: response_format)
+          expect(response.body.split("\n")[0]).to eq([Audit.csv_export_headers, item1.name, item2.name, item3.name].join(','))
+        end
+
+        it "Generates csv with Storage Location fields, alphabetized item names, item quantities lined up in their columns, and zeroes for no inventory" do
+          get audits_path(format: response_format)
+          csv = <<~CSV
+            Audit Date,Audit Status,Name,Address,Square Footage,Warehouse Type,Total Inventory,A,B,C
+            August 21 2025,in_progress,Storage Location with Duplicate Items,"1500 Remount Road, Front Royal, VA 22630",100,Residential space used,1,0,0,1
+            August 21 2025,in_progress,Storage Location with Items,123 Donation Site Way,100,Residential space used,3,1,1,1
+          CSV
+          expect(response.body).to eq(csv)
+        end
       end
     end
 

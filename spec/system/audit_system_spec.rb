@@ -135,6 +135,11 @@ RSpec.describe "Audit management", type: :system, js: true do
     context "when viewing the audits index" do
       subject { audits_path }
 
+      it "should have the 'Export Audit' button" do
+        visit subject
+        expect(page).to have_content(" Export Audit")
+      end
+
       it "should be able to filter the #index by storage location" do
         storage_location2 = create(:storage_location, name: "there", organization: organization)
         create(:audit, organization: organization, storage_location: storage_location)
