@@ -8,9 +8,9 @@ When you are inputting donations or purchases, you will specify the storage loca
 
 When you make distributions, you choose a storage location and can see the inventory levels for each item before committing to the distribution. When you save the distribution, the distributed items are subtracted from that storage location's inventory.
 
-How do you enter a storage location?   If you haven't any storage locations yet, you can click on "Add a Storage Location" in the "Just Starting?" sequence at the top of your dashboard.  
+How do you enter a storage location?   If you haven't any storage locations yet, you can click on "Set up storage locations" in the "Getting Started" sequence at the top of your dashboard.  
 
-![navigation](images/getting_started/storage_locations/gs_just_starting_step_1.png)
+![navigation](images/getting_started/storage_locations/gs_storage_locations_1.png)
 
 You can also click on "Inventory", then "Storage Locations" in the left-hand menu, then "New Storage Locations"
 
