@@ -3,7 +3,7 @@ RSpec.describe DonationsHelper, type: :helper do
     it "returns the options array including 'new' option for DonationSite" do
       donation_sites_relation = DonationSite.all
       options = helper.options_with_new(donation_sites_relation)
-      expect(options.last).to eq(["---Create New Donation site---", "new"])
+      expect(options.last).to eq(["---Create New Donation Site---", "new"])
     end
 
     it "returns the options array including 'new' option for ProductDrive" do
