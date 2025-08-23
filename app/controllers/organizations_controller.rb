@@ -102,6 +102,7 @@ class OrganizationsController < ApplicationController
       :ytd_on_distribution_printout, :one_step_partner_invite,
       :hide_value_columns_on_receipt, :hide_package_column_on_receipt,
       :signature_for_distribution_pdf, :receive_email_on_requests,
+      :bank_is_set_up,
       :include_in_kind_values_in_exported_files,
       partner_form_fields: [],
       request_unit_names: []

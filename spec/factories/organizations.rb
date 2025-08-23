@@ -3,6 +3,7 @@
 # Table name: organizations
 #
 #  id                                       :integer          not null, primary key
+#  bank_is_set_up                           :boolean          default(FALSE), not null
 #  city                                     :string
 #  deadline_day                             :integer
 #  default_storage_location                 :integer

@@ -88,10 +88,18 @@ class ProductDrivesController < ApplicationController
   end
 
   def destroy
-    current_organization.product_drives.find(params[:id]).destroy
+    product_drive = current_organization.product_drives.find(params[:id])
+    success = product_drive.destroy
+
     respond_to do |format|
-      format.html { redirect_to product_drives_url, notice: 'Product drive was successfully destroyed.' }
-      format.json { head :no_content }
+      if success
+        format.html { redirect_to product_drives_url, notice: 'Product drive was successfully destroyed.' }
+        format.json { head :no_content }
+      else
+        error_message = product_drive.errors.full_messages.to_sentence
+        format.html { redirect_to product_drive_path(product_drive), error: error_message }
+        format.json { render json: {error: error_message}, status: :unprocessable_entity }
+      end
     end
   end
 
