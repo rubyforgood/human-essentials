@@ -362,7 +362,7 @@ RSpec.describe "Donations", type: :system, js: true do
 
         it "Allows User to create a Donataion Site from donation" do
           select Donation::SOURCES[:donation_site], from: "donation_source"
-          select "---Create New Donation site---", from: "donation_donation_site_id"
+          select "---Create New Donation Site---", from: "donation_donation_site_id"
 
           find(".modal-content")
           expect(page).to have_content("New Donation Site")
