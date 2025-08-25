@@ -89,8 +89,8 @@ RSpec.describe "Audits", type: :request do
           get audits_path(format: response_format)
           csv = <<~CSV
             Audit Date,Audit Status,Name,Address,Square Footage,Warehouse Type,Total Inventory,A,B,C
-            August 21 2025,in_progress,Storage Location with Duplicate Items,"1500 Remount Road, Front Royal, VA 22630",100,Residential space used,1,0,0,1
-            August 21 2025,in_progress,Storage Location with Items,123 Donation Site Way,100,Residential space used,3,1,1,1
+            #{audits[0].updated_at.strftime("%B %d %Y")},in_progress,Storage Location with Duplicate Items,"1500 Remount Road, Front Royal, VA 22630",100,Residential space used,1,0,0,1
+            #{audits[1].updated_at.strftime("%B %d %Y")},in_progress,Storage Location with Items,123 Donation Site Way,100,Residential space used,3,1,1,1
           CSV
           expect(response.body).to eq(csv)
         end
