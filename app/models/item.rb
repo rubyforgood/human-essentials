@@ -74,7 +74,6 @@ class Item < ApplicationRecord
     adult_incontinence: "adult_incontinence",
     cloth_diapers: "cloth_diapers",
     disposable_diapers: "disposable_diapers",
-    menstrual: "menstrual",
     pads: "pads",
     period_liners: "period_liners",
     period_other: "period_other",
