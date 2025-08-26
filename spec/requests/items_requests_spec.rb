@@ -380,7 +380,6 @@ RSpec.describe "Items", type: :request do
         get item_path(id: item_containing_kit.id)
         expect(response.body).to include("Kits are reported based on their contents.")
       end
-
     end
   end
 end

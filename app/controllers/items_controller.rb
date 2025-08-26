@@ -139,12 +139,10 @@ class ItemsController < ApplicationController
 
   def reporting_category_hint
     item = current_organization.items.find(params[:id])
-    if(item.kit_id)
-      return "Kits are reported based on their contents."
+    if item.kit_id
+      "Kits are reported based on their contents."
     end
-    return ""
   end
-
 
   def clean_item_value_in_cents
     return unless params[:item][:value_in_cents]
