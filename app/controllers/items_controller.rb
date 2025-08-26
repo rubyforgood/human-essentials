@@ -59,6 +59,7 @@ class ItemsController < ApplicationController
   def edit
     @item_categories = current_organization.item_categories
     @item = current_organization.items.find(params[:id])
+    @reporting_category_hint = reporting_category_hint
   end
 
   def show
@@ -67,6 +68,7 @@ class ItemsController < ApplicationController
     storage_location_ids = @inventory.storage_locations_for_item(@item.id)
     @storage_locations_containing = StorageLocation.find(storage_location_ids)
     @barcodes_for = BarcodeItem.where(barcodeable_id: @item.id)
+    @reporting_category_hint = reporting_category_hint
   end
 
   def update
@@ -134,6 +136,15 @@ class ItemsController < ApplicationController
   end
 
   private
+
+  def reporting_category_hint
+    item = current_organization.items.find(params[:id])
+    if(item.kit_id)
+      return "Kits are reported based on their contents."
+    end
+    return ""
+  end
+
 
   def clean_item_value_in_cents
     return unless params[:item][:value_in_cents]

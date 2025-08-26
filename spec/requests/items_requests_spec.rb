@@ -122,6 +122,19 @@ RSpec.describe "Items", type: :request do
           select_field = page.at_css(".item_reporting_category")
           expect(select_field.attr("class")).to match(/disabled/)
         end
+
+        it "shows hint explaining why it's disabled " do
+          get edit_item_path(item)
+          expect(response.body).to include("Kits are reported based on their contents.")
+        end
+      end
+
+      context "when item is not housing a kit" do
+        let(:item) { create(:item, organization: organization, active: true) }
+        it "does not show a hint explaining why it's disabled " do
+          get edit_item_path(item)
+          expect(response.body).to_not include("Kits are reported based on their contents.")
+        end
       end
     end
 
@@ -323,6 +336,9 @@ RSpec.describe "Items", type: :request do
       let!(:item) { create(:item, organization: organization, name: "ACTIVEITEM", reporting_category: :adult_incontinence, item_category_id: item_category.id, distribution_quantity: 2000, on_hand_recommended_quantity: 2348, package_size: 100, value_in_cents: 20000, on_hand_minimum_quantity: 1200, visible_to_partners: true) }
       let!(:item_unit_1) { create(:item_unit, item: item, name: 'ITEM1') }
       let!(:item_unit_2) { create(:item_unit, item: item, name: 'ITEM2') }
+      let!(:kit) { create(:kit, organization:) }
+      let!(:item_containing_kit) { create(:item, organization: organization, kit:) }
+
       it 'shows complete item details except custom request' do
         get item_path(id: item.id)
         expect(response.body).to include('Name')
@@ -354,6 +370,17 @@ RSpec.describe "Items", type: :request do
         expect(response.body).to include('Custom Units')
         expect(response.body).to include("ITEM1; ITEM2")
       end
+
+      it 'does not show the kit hint on reporting category (if not a kit item)' do
+        get item_path(id: item.id)
+        expect(response.body).to_not include("Kits are reported based on their contents.")
+      end
+
+      it 'does show the kit hint on reporting category (if a kit item)' do
+        get item_path(id: item_containing_kit.id)
+        expect(response.body).to include("Kits are reported based on their contents.")
+      end
+
     end
   end
 end
