@@ -66,7 +66,7 @@ class TransfersController < ApplicationController
       body = render_to_string(partial: "transfers/validate_modal", formats: [:html], layout: false)
       render json: {valid: true, body: body}
     else
-      render json: {valid: false}, status: :unprocessable_entity
+      render json: {valid: false}, status: :unprocessable_content
     end
   end
 
