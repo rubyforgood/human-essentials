@@ -4,7 +4,7 @@
 <ul>
   <% @request_items.each do |item| %>
     <li><%= item['name'] %> -
-    <% if Flipper.enabled?(:enable_packs) && item['unit'] %>
+    <% if item['unit'] %>
     <%= pluralize(item['quantity'] || item['person_count'], item['unit']) %>
     <% else %>
     <%= item['quantity'] || item['person_count'] %>

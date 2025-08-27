@@ -349,7 +349,7 @@ note = [
         receives_essentials_from_other: Faker::Lorem.sentence,
       )
     end
-  
+
     if p.partials_to_show.include? "organizational_capacity"
       profile.update(
         client_capacity: Faker::Lorem.sentence,
@@ -1111,8 +1111,6 @@ Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "read_events")
 Flipper.enable(:read_events)
 Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "partner_step_form")
 Flipper.enable(:partner_step_form)
-Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "enable_packs")
-Flipper.enable(:enable_packs)
 # ----------------------------------------------------------------------------
 # Account Requests
 # ----------------------------------------------------------------------------

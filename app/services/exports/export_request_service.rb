@@ -70,16 +70,14 @@ module Exports
         if item_request.item
           item = item_request.item
           item_names << item.name
-          if Flipper.enabled?(:enable_packs)
-            item.request_units.each do |unit|
-              item_names << "#{item.name} - #{unit.name.pluralize}"
-            end
+          item.request_units.each do |unit|
+            item_names << "#{item.name} - #{unit.name.pluralize}"
+          end
 
-            # It's possible that the unit is no longer valid, so we'd
-            # add that individually
-            if item_request.request_unit.present?
-              item_names << "#{item.name} - #{item_request.request_unit.pluralize}"
-            end
+          # It's possible that the unit is no longer valid, so we'd
+          # add that individually
+          if item_request.request_unit.present?
+            item_names << "#{item.name} - #{item_request.request_unit.pluralize}"
           end
         end
       end
@@ -97,7 +95,15 @@ module Exports
       row += Array.new(item_headers.size, 0)
 
       request.item_requests.each do |item_request|
-        item_name = item_request.item.present? ? item_request.name_with_unit(0) : DELETED_ITEMS_COLUMN_HEADER
+        item_name = if item_request.item.present?
+          if item_request.request_unit.present?
+            item_request.name_with_unit(0)
+          else
+            item_request.item.name
+          end
+        else
+          DELETED_ITEMS_COLUMN_HEADER
+        end
         item_column_idx = headers_with_indexes[item_name]
         row[item_column_idx] ||= 0
         row[item_column_idx] += item_request.quantity.to_i

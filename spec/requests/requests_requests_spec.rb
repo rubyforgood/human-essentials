@@ -91,7 +91,6 @@ RSpec.describe 'Requests', type: :request do
       end
 
       context 'When packs are enabled' do
-        before { Flipper.enable(:enable_packs) }
         let(:item) { create(:item, name: "Item", organization: organization) }
         let(:request) { create(:request, organization: organization) }
 
