@@ -31,7 +31,7 @@ class StorageLocationsController < ApplicationController
     respond_to do |format|
       format.html
       format.csv do
-        send_data StorageLocation.generate_csv_from_inventory(@storage_locations, @inventory), filename: "StorageLocations-#{Time.zone.today}.csv"
+        send_data StorageLocation.generate_csv_from_inventory(@storage_locations, @inventory, current_organization), filename: "StorageLocations-#{Time.zone.today}.csv"
       end
     end
   end
