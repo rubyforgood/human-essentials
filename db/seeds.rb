@@ -42,6 +42,7 @@ pdx_org = Organization.find_or_create_by!(name: "Pawnee Diaper Bank") do |organi
   organization.state = "IN"
   organization.zipcode = "12345"
   organization.email = "info@pawneediaper.org"
+  organization.bank_is_set_up = true
 end
 Organization.seed_items(pdx_org)
 
@@ -51,6 +52,7 @@ sf_org = Organization.find_or_create_by!(name: "SF Diaper Bank") do |organizatio
   organization.state = "CA"
   organization.zipcode = "90210"
   organization.email = "info@sfdiaperbank.org"
+  organization.bank_is_set_up = false  #sf_org represents a brand new bank
 end
 Organization.seed_items(sf_org)
 
@@ -60,6 +62,7 @@ sc_org = Organization.find_or_create_by!(name: "Second City Essentials Bank") do
   organization.state = Faker::Address.state_abbr
   organization.zipcode = Faker::Address.zip_code
   organization.email = "info@scdiaperbank.org"
+  organization.bank_is_set_up = true
 end
 Organization.seed_items(sc_org)
 
