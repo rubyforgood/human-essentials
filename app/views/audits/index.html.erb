@@ -46,12 +46,13 @@
                 <%= filter_button %>
                 <%= clear_filter_button %>
 
-                <div class="btn-group pull-right">
+                <span class="float-right">
+                  <%= download_button_to(audits_path(format: :csv), {text: "Export Audit", size: "md"}) %>
                   <%= new_button_to new_audit_path, {text: "New Audit"} %>
-                </div>
+                </span>
             <% end # form %>
             </div>
-            </div>
+          </div>
         <!-- /.card -->
       </div>
       <!--/.col (left) -->
