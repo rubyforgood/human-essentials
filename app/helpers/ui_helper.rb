@@ -164,9 +164,17 @@ module UiHelper
 
     klass = "#{options[:class] || ""} btn btn-#{type} btn-#{size} #{center} #{disabled}"
 
-    link_to link, properties.merge(class: klass) do
-      fa_icon icon, text: text
-    end
+    form_klass = "#{options[:form_class] || ""} d-inline-block"
+
+    if properties[:method].blank? || properties[:method] == "get"
+      link_to link, properties.merge(class: klass) do
+        fa_icon icon, text: text
+      end
+    else
+      button_to link, properties.merge(class: klass, form_class: form_klass) do
+        fa_icon icon, text: text
+      end
+    end    
   end
 
   def _button_to(options = {}, properties = {})
