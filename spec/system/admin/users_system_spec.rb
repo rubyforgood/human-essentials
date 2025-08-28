@@ -167,24 +167,4 @@ RSpec.describe "Admin Users Management", type: :system, js: true do
       end
     end
   end
-
-  describe "Resourse Dropdown List: Validate Order" do
-    before do
-      sign_in(super_admin)
-    end
-
-    it "Should sort display resource in human alphabetical order" do
-      FactoryBot.create(:organization, id: 2, name: "Pawnee")
-      FactoryBot.create(:organization, id: 3, name: "SF Diaper")
-      FactoryBot.create(:organization, id: 4, name: "Second City")
-
-      # params
-      # - resource_type - Organization, Resource
-      # - q - query string
-      # visit admin_users_resource_ids_path # (name: "Organization", q: "")
-
-      visit "/admin/users/resource_ids?resource_type=org_admin"
-      expect(page).to have_content("{\"id\":2,\"text\":\"Pawnee\"},{\"id\":4,\"text\":\"Second City\"},{\"id\":3,\"text\":\"SF Diaper\"}")
-    end
-  end
 end

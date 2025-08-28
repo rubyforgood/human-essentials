@@ -237,6 +237,17 @@ RSpec.describe "Admin::UsersController", type: :request do
         end
       end
     end
+    describe "Validate Order of returned organization list" do
+      let!(:pawnee_organization) { create(:organization, id: 2, name: "Pawnee") }
+      let!(:sf_diaper_organization) { create(:organization, id: 3, name: "SF Diaper") }
+      let!(:second_city_organization) { create(:organization, id: 4, name: "Second City") }
+
+      it "Should sort display resource in human alphabetical order" do
+        get "/admin/users/resource_ids?resource_type=org_admin"
+        puts response.body
+        expect(response.body).to match(/{\"results\":\[{\"id\":\d+,\"text\":\"Org ABC\"},{\"id\":\d+,\"text\":\"Pawnee\"},{\"id\":\d+,\"text\":\"Second City\"},{\"id\":\d+,\"text\":\"SF Diaper\"}]}/)
+      end
+    end
   end
 
   context "When logged in as an organization_admin" do
