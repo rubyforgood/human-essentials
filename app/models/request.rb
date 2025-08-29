@@ -49,11 +49,6 @@ class Request < ApplicationRecord
   scope :by_status, ->(status) { where(status: status) }
   scope :by_request_type, ->(request_type) { where(request_type: request_type) }
   scope :during, ->(range) { where(created_at: range) }
-  scope :for_csv_export, ->(organization, *) {
-    where(organization: organization)
-      .includes(:partner)
-      .order(created_at: :desc)
-  }
 
   def total_items
     request_items.sum { |item| item["quantity"] }

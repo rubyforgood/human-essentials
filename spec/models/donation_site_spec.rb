@@ -22,7 +22,58 @@ RSpec.describe DonationSite, type: :model do
     it { should validate_presence_of(:name) }
     it { should validate_presence_of(:address) }
   end
+
+  before(:each) do
+    Geocoder.configure(lookup: :test)
+
+    Geocoder::Lookup::Test.add_stub(
+      "456 Donation Site Blvd", [
+        {"latitude" => 38.8977, "longitude" => -77.0365, "address" => "456 Donation Site Blvd"}
+      ]
+    )
+  end
+
   describe "import_csv" do
+    let(:organization) { create(:organization) }
+    let(:valid_csv_path) { Rails.root.join("spec", "fixtures", "files", "valid_donation_sites.csv") }
+    let(:invalid_csv_path) { Rails.root.join("spec", "fixtures", "files", "invalid_donation_sites.csv") }
+    let(:duplicated_name_csv_path) { Rails.root.join("spec", "fixtures", "files", "duplicated_name_donation_sites.csv") }
+
+    it "captures the error if the name is not unique in the invalid donation sites csv" do
+      data = File.read(duplicated_name_csv_path, encoding: "BOM|UTF-8")
+      csv = CSV.parse(data, headers: true)
+
+      errors = DonationSite.import_csv(csv, organization.id)
+      expect(errors).not_to be_empty
+      expect(errors.first).to match(/Row/)
+      expect(errors.first).to include("Name must be unique within the organization")
+
+      expect(DonationSite.count).to eq 1
+    end
+
+    it "imports donation sites from a valid csv file" do
+      data = File.read(valid_csv_path, encoding: "BOM|UTF-8")
+      csv = CSV.parse(data, headers: true)
+
+      errors = DonationSite.import_csv(csv, organization.id)
+      expect(errors).to be_empty
+      expect(DonationSite.count).to eq 1
+
+      donation_site = DonationSite.first
+      expect(donation_site.name).to eq "Donation Site 1"
+    end
+
+    it "captures errors when importing donation sites from an invalid csv file" do
+      data = File.read(invalid_csv_path, encoding: "BOM|UTF-8")
+      csv = CSV.parse(data, headers: true)
+
+      errors = DonationSite.import_csv(csv, organization.id)
+      expect(errors).not_to be_empty
+      expect(errors.first).to match(/Row/)
+      expect(errors.first).to include("can't be blank")
+      expect(DonationSite.count).to eq 0
+    end
+
     it "imports storage locations from a csv file" do
       organization = create(:organization)
       import_file_path = Rails.root.join("spec", "fixtures", "files", "donation_sites.csv")

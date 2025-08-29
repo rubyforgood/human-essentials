@@ -4,14 +4,15 @@
 #
 #  id                           :integer          not null, primary key
 #  active                       :boolean          default(TRUE)
+#  additional_info              :text
 #  barcode_count                :integer
-#  category                     :string
 #  distribution_quantity        :integer
 #  name                         :string
 #  on_hand_minimum_quantity     :integer          default(0), not null
 #  on_hand_recommended_quantity :integer
 #  package_size                 :integer
 #  partner_key                  :string
+#  reporting_category           :string
 #  value_in_cents               :integer          default(0)
 #  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null
@@ -23,7 +24,7 @@
 
 FactoryBot.define do
   factory :item do
-    sequence(:name) { |n| "#{n}T Diapers" }
+    sequence(:name) { |n| "#{n}Dont test this" }
     organization { Organization.try(:first) || create(:organization) }
     partner_key { BaseItem.first&.partner_key || create(:base_item).partner_key }
     kit { nil }

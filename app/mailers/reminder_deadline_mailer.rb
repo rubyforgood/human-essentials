@@ -4,6 +4,10 @@ class ReminderDeadlineMailer < ApplicationMailer
     @partner = partner
     @organization = partner.organization
     @deadline = deadline_date(partner)
+    reminder_email_text = @organization.reminder_email_text
+    @reminder_email_text_interpolated = TextInterpolatorService.new(reminder_email_text.body.to_s, {
+      partner_name: @partner.name
+    }).call
 
     mail(to: @partner.email, subject: "#{@organization.name} Deadline Reminder")
   end
@@ -11,7 +15,7 @@ class ReminderDeadlineMailer < ApplicationMailer
   private
 
   def deadline_date(partner)
-    date = DeadlineService.new(partner: partner).next_deadline
+    date = DeadlineService.new(deadline_day: DeadlineService.get_deadline_for_partner(partner)).next_deadline
 
     return date if date
 

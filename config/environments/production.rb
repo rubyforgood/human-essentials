@@ -13,14 +13,14 @@ Rails.application.configure do
   config.eager_load = true
 
   routes.default_url_options[:host] = 'humanessentials.app'
-  config.action_mailer.default_url_options = { host: "www.humanessentials.app" }
+  config.action_mailer.default_url_options = { host: "humanessentials.app" }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    address: 'smtp.sendgrid.net',
+    address: ENV['SMTP_SERVER'],
     port: '587',
     authentication: :plain,
-    user_name: ENV['SENDGRID_USERNAME'],
-    password: ENV['SENDGRID_PASSWORD'],
+    user_name: ENV['SMTP_USERNAME'],
+    password: ENV['SMTP_PASSWORD'],
     domain: 'humanessentials.app',
     enable_starttls_auto: true
   }
@@ -63,9 +63,6 @@ Rails.application.configure do
   # Use a different cache store in production.
   config.cache_store = :solid_cache_store
 
-  # Use a real queuing backend for Active Job (and separate queues per environment)
-  # config.active_job.queue_adapter     = :resque
-  # config.active_job.queue_name_prefix = "diaper_#{Rails.env}"
   config.action_mailer.perform_caching = false
 
   # Ignore bad email addresses and do not raise email delivery errors.
@@ -80,7 +77,7 @@ Rails.application.configure do
   config.active_support.deprecation = :notify
 
   # Store files locally.
-  config.active_storage.service = :azure
+  config.active_storage.service = :amazon
 
   # Use a different logger for distributed setups.
   # require 'syslog/logger'

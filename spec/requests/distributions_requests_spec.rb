@@ -31,6 +31,8 @@ RSpec.describe "Distributions", type: :request do
     end
 
     describe "GET #print" do
+      subject { get print_distribution_path(id: create(:distribution).id) }
+
       it "returns http success" do
         get print_distribution_path(id: create(:distribution).id)
         expect(response).to be_successful
@@ -52,6 +54,8 @@ RSpec.describe "Distributions", type: :request do
           expect(response).to be_successful
         end
       end
+
+      include_examples "restricts access to organization users/admins"
     end
 
     describe "GET #reclaim" do
@@ -62,6 +66,7 @@ RSpec.describe "Distributions", type: :request do
     end
 
     describe "GET #index" do
+      subject { get distributions_path }
       let(:item) { create(:item, value_in_cents: 100, organization: organization) }
       let!(:distribution) { create(:distribution, :with_items, :past, item: item, item_quantity: 10, organization: organization) }
 
@@ -140,20 +145,19 @@ RSpec.describe "Distributions", type: :request do
           expect(distribution.total_quantity).to eq(20)
           expect(distribution.value_per_itemizable).to eq(2000)
 
-          # displays quantity of filtered item in distribution
-          # displays total value of distribution
+          # displays quantity and value of filtered item in distribution
           expect(item_quantity.text).to eq("10")
-          expect(item_value.text).to eq("$20.00")
+          expect(item_value.text).to eq("$10.00")
         end
 
-        it "changes the total quantity header" do
+        it "changes the total quantity and value headers" do
           get distributions_path, params: params
 
           page = Nokogiri::HTML(response.body)
           item_total_header, item_value_header = page.css("table thead tr th.numeric")
 
           expect(item_total_header.text).to eq("Total #{item.name}")
-          expect(item_value_header.text).to eq("Total Value")
+          expect(item_value_header.text).to eq("Value of #{item.name}")
         end
       end
 
@@ -178,20 +182,19 @@ RSpec.describe "Distributions", type: :request do
           expect(distribution.total_quantity).to eq(20)
           expect(distribution.value_per_itemizable).to eq(2000)
 
-          # displays quantity of filtered item in distribution
-          # displays total value of distribution
+          # displays quantity and value of filtered item in distribution
           expect(item_quantity.text).to eq("10")
-          expect(item_value.text).to eq("$20.00")
+          expect(item_value.text).to eq("$10.00")
         end
 
-        it "changes the total quantity header" do
+        it "changes the total quantity and value headers" do
           get distributions_path, params: params
 
           page = Nokogiri::HTML(response.body)
           item_total_header, item_value_header = page.css("table thead tr th.numeric")
 
           expect(item_total_header.text).to eq("Total in #{item_category.name}")
-          expect(item_value_header.text).to eq("Total Value")
+          expect(item_value_header.text).to eq("Value of #{item_category.name}")
         end
 
         it "doesn't show duplicate distributions" do
@@ -206,9 +209,13 @@ RSpec.describe "Distributions", type: :request do
           expect(distribution_rows.count).to eq(1)
         end
       end
+
+      include_examples "restricts access to organization users/admins"
     end
 
     describe "POST #create" do
+      subject { post distributions_path(distribution:) }
+
       let!(:storage_location) { create(:storage_location, organization: organization) }
       let!(:partner) { create(:partner, organization: organization) }
       let(:issued_at) { Time.current }
@@ -284,9 +291,12 @@ RSpec.describe "Distributions", type: :request do
           expect(flash[:error]).to include("Distribution date and time can't be blank")
         end
       end
+
+      include_examples "restricts access to organization users/admins"
     end
 
     describe "GET #new" do
+      subject { get new_distribution_path(default_params) }
       let!(:partner) { create(:partner, organization: organization) }
       let(:request) { create(:request, partner: partner, organization: organization, item_requests: item_requests) }
       let(:items) {
@@ -322,6 +332,13 @@ RSpec.describe "Distributions", type: :request do
 
         expect(selectable_items).to include("Item 1", "Item 2")
         expect(selectable_items).not_to include("Inactive Item")
+      end
+
+      it "disables the partner field when distribution is created from a request" do
+        get new_distribution_path(default_params)
+        page = Nokogiri::HTML(response.body)
+
+        expect(page.at_css("select#distribution_partner_id").classes).to include("disabled")
       end
 
       context "with org default but no partner default" do
@@ -394,11 +411,22 @@ RSpec.describe "Distributions", type: :request do
             # in the template
             expect(page.css('select[name="distribution[line_items_attributes][1][item_id]"]')).not_to be_empty
           end
+
+          it "should have partner select field enabled" do
+            get new_distribution_path({})
+            page = Nokogiri::HTML(response.body)
+
+            expect(page.at_css("select#distribution_partner_id").classes).not_to include("disabled")
+          end
         end
       end
+
+      include_examples "restricts access to organization users/admins"
     end
 
     describe "GET #show" do
+      subject { get distribution_path(id: distribution.id) }
+
       let(:item) { create(:item, organization: organization) }
       let!(:distribution) { create(:distribution, :with_items, item: item, item_quantity: 1, organization: organization) }
 
@@ -444,9 +472,13 @@ RSpec.describe "Distributions", type: :request do
           expect(response.body).to match(/please make the following items active: #{item.name}/)
         end
       end
+
+      include_examples "restricts access to organization users/admins"
     end
 
     describe "GET #schedule" do
+      subject { get schedule_distributions_path }
+
       it "returns http success" do
         get schedule_distributions_path
         expect(response).to be_successful
@@ -455,6 +487,8 @@ RSpec.describe "Distributions", type: :request do
         hash = url.match(/\?hash=(.*)/)[1]
         expect(crypt.decrypt_and_verify(CGI.unescape(hash))).to eq(organization.id)
       end
+
+      include_examples "restricts access to organization users/admins"
     end
 
     describe 'PATCH #picked_up' do
@@ -471,10 +505,14 @@ RSpec.describe "Distributions", type: :request do
         it 'redirects the user back to the distributions page' do
           expect(subject).to redirect_to distribution_path
         end
+
+        include_examples "restricts access to organization users/admins"
       end
     end
 
     describe "GET #pickup_day" do
+      subject { get pickup_day_distributions_path }
+
       it "returns http success" do
         get pickup_day_distributions_path
         expect(response).to be_successful
@@ -508,6 +546,8 @@ RSpec.describe "Distributions", type: :request do
         expect(assigns(:daily_items).detect { |item| item[:name] == second_item.name }[:package_count]).to eq(2)
         expect(assigns(:daily_items).sum { |item| item[:package_count] }).to eq(7)
       end
+
+      include_examples "restricts access to organization users/admins"
     end
 
     context "Looking at a different organization" do
@@ -516,6 +556,7 @@ RSpec.describe "Distributions", type: :request do
     end
 
     describe "PATCH #update" do
+      subject { patch distribution_path(distribution_params) }
       let(:partner_name) { "Patrick" }
       let(:location) { create(:storage_location, organization: organization) }
       let(:partner) { create(:partner, name: partner_name, organization: organization) }
@@ -615,9 +656,13 @@ RSpec.describe "Distributions", type: :request do
           end
         end
       end
+
+      include_examples "restricts access to organization users/admins"
     end
 
     describe "GET #edit" do
+      subject { get edit_distribution_path(id: distribution.id) }
+
       let(:location) { create(:storage_location, organization: organization) }
       let(:partner) { create(:partner, organization: organization) }
 
@@ -662,6 +707,13 @@ RSpec.describe "Distributions", type: :request do
 
         expect(selectable_items).to include("Active Item")
         expect(selectable_items).not_to include("Inactive Item")
+      end
+
+      it "should have partner select field enabled" do
+        get edit_distribution_path(id: distribution.id)
+        page = Nokogiri::HTML(response.body)
+
+        expect(page.at_css("select#distribution_partner_id").classes).not_to include("disabled")
       end
 
       context 'with units' do
@@ -717,6 +769,13 @@ RSpec.describe "Distributions", type: :request do
           expect(page.css('#distribution_line_items_attributes_2_quantity').attr('value').value).to eq('0')
         end
 
+        it "disables the partner field when distribution is created from a request" do
+          get edit_distribution_path(id: distribution.id)
+          page = Nokogiri::HTML(response.body)
+
+          expect(page.at_css("select#distribution_partner_id").classes).to include("disabled")
+        end
+
         context 'with no request' do
           it 'should have everything enabled' do
             request.destroy
@@ -753,6 +812,19 @@ RSpec.describe "Distributions", type: :request do
           get edit_distribution_path(id: @distribution_all.id)
           expect(response.body).to include("<option selected=\"selected\" value=\"#{storage_location.id}\">#{test_storage_name}</option>")
         end
+      end
+
+      include_examples "restricts access to organization users/admins"
+    end
+
+    describe 'POST #validate' do
+      it 'should handle missing CSRF gracefully' do
+        ActionController::Base.allow_forgery_protection = true
+        post validate_partners_individuals_requests_path
+        ActionController::Base.allow_forgery_protection = false
+
+        expect(JSON.parse(response.body)).to eq({'valid' => false})
+        expect(response.status).to eq(200)
       end
     end
   end

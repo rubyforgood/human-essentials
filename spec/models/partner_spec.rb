@@ -4,6 +4,7 @@
 #
 #  id                          :integer          not null, primary key
 #  email                       :string
+#  info_for_partner            :text
 #  name                        :string
 #  notes                       :text
 #  quota                       :integer
@@ -282,136 +283,6 @@ RSpec.describe Partner, type: :model do
     end
   end
 
-  describe "#csv_export_attributes" do
-    let!(:partner) { create(:partner) }
-
-    let(:contact_name) { "Jon Ralfeo" }
-    let(:contact_email) { "jon@entertainment720.com" }
-    let(:contact_phone) { "1231231234" }
-    let(:agency_address1) { "4744 McDermott Mountain" }
-    let(:agency_address2) { "333 Never land street" }
-    let(:agency_city) { "Lake Shoshana" }
-    let(:agency_state) { "ND" }
-    let(:agency_zipcode) { "09980-7010" }
-    let(:agency_website) { "bosco.example" }
-    let(:agency_type) { :other }
-    let(:other_agency_type) { "Another Agency Name" }
-    let(:notes) { "Some notes" }
-    let(:providing_diapers) { {value: "N", index: 13} }
-    let(:providing_period_supplies) { {value: "N", index: 14} }
-
-    before do
-      partner.profile.update({
-                               primary_contact_name: contact_name,
-                               primary_contact_email: contact_email,
-                               primary_contact_phone: contact_phone,
-                               address1: agency_address1,
-                               address2: agency_address2,
-                               city: agency_city,
-                               state: agency_state,
-                               zip_code: agency_zipcode,
-                               website: agency_website,
-                               agency_type: agency_type,
-                               other_agency_type: other_agency_type
-                             })
-      partner.update(notes: notes)
-    end
-
-    it "should have the expected info in the columns order" do
-      county_1 = create(:county, name: "High County, Maine", region: "Maine")
-      county_2 = create(:county, name: "laRue County, Louisiana", region: "Louisiana")
-      county_3 = create(:county, name: "Ste. Anne County, Louisiana", region: "Louisiana")
-      create(:partners_served_area, partner_profile: partner.profile, county: county_1, client_share: 50)
-      create(:partners_served_area, partner_profile: partner.profile, county: county_2, client_share: 40)
-      create(:partners_served_area, partner_profile: partner.profile, county: county_3, client_share: 10)
-      partner.profile.reload # not sure if this is needed
-      # county ordering is a bit esoteric -- it is human alphabetical by county within region (region is state)
-      correctly_ordered_counties = "laRue County, Louisiana; Ste. Anne County, Louisiana; High County, Maine"
-      expect(partner.csv_export_attributes).to eq([
-        partner.name,
-        partner.email,
-        "#{agency_address1}, #{agency_address2}",
-        agency_city,
-        agency_state,
-        agency_zipcode,
-        agency_website,
-        "#{I18n.t "partners_profile.other"}: #{other_agency_type}",
-        contact_name,
-        contact_phone,
-        contact_email,
-        notes,
-        correctly_ordered_counties,
-        providing_diapers[:value],
-        providing_period_supplies[:value]
-      ])
-    end
-
-    context "when partner has a distribution in the last 12 months" do
-      let(:distribution) { create(:distribution, partner: partner) }
-
-      shared_examples "providing_diapers check" do |scope|
-        before do
-          providing_diapers[:value] = "Y"
-
-          case scope
-          when :disposable
-            item = create(:item, base_item: create(:base_item, category: "Diapers - Childrens"))
-          when :cloth_diapers
-            item = create(:item, base_item: create(:base_item, category: "Diapers - Cloth (Kids)"))
-          end
-
-          create(:line_item, item: item, itemizable: distribution)
-        end
-
-        it "should have Y as providing_diapers" do
-          expect(partner.csv_export_attributes[providing_diapers[:index]]).to eq(providing_diapers[:value])
-        end
-      end
-
-      context "with a disposable item" do
-        include_examples "providing_diapers check", :disposable
-      end
-
-      context "with a cloth diaper item" do
-        include_examples "providing_diapers check", :cloth_diapers
-      end
-
-      context "with a period supplies item" do
-        before do
-          providing_period_supplies[:value] = "Y"
-
-          item = create(:item, base_item: create(:base_item, category: "Menstrual Supplies/Items"))
-          create(:line_item, item: item, itemizable: distribution)
-        end
-
-        it "should have Y as providing_period_supplies" do
-          expect(partner.csv_export_attributes[providing_period_supplies[:index]]).to eq(providing_period_supplies[:value])
-        end
-      end
-    end
-
-    context "when partner only has distribution older than a 12 months" do
-      let(:distribution) { create(:distribution, issued_at: (12.months.ago.beginning_of_day - 1.day), partner: partner) }
-      let(:disposable_diapers_item) { create(:item, base_item: create(:base_item, category: "Diapers - Childrens")) }
-      let(:cloth_diapers_item) { create(:item, base_item: create(:base_item, category: "Diapers - Cloth (Kids)")) }
-      let(:period_supplies_item) { create(:item, base_item: create(:base_item, category: "Menstrual Supplies/Items")) }
-
-      before do
-        create(:line_item, item: disposable_diapers_item, itemizable: distribution)
-        create(:line_item, item: cloth_diapers_item, itemizable: distribution)
-        create(:line_item, item: period_supplies_item, itemizable: distribution)
-      end
-
-      it "should have N as providing_diapers" do
-        expect(partner.csv_export_attributes[providing_diapers[:index]]).to eq(providing_diapers[:value])
-      end
-
-      it "should have N as providing_period_supplies" do
-        expect(partner.csv_export_attributes[providing_period_supplies[:index]]).to eq(providing_period_supplies[:value])
-      end
-    end
-  end
-
   describe '#quantity_year_to_date' do
     let(:partner) { create(:partner) }
     before do
@@ -455,6 +326,14 @@ RSpec.describe Partner, type: :model do
       let!(:child2) { create_list(:partners_child, 2, family: family3) }
 
       it { is_expected.to eq({families_served: 3, children_served: 4, family_zipcodes: 2, family_zipcodes_list: %w[45612-123 45612-126]}) }
+
+      context "when children are archived" do
+        let!(:child2) { create_list(:partners_child, 2, archived: true, family: family2) }
+
+        it "does not include the children in children_served_count" do
+          expect(subject).to eq({families_served: 3, children_served: 2, family_zipcodes: 2, family_zipcodes_list: %w[45612-123 45612-126]})
+        end
+      end
     end
 
     context "when partner don't have any related information" do

@@ -1,6 +1,8 @@
 module Exports
   class ExportDistributionsCSVService
     include DistributionHelper
+    include ItemsHelper
+
     def initialize(distributions:, organization:, filters: [])
       # Currently, the @distributions are already loaded by the controllers that are delegating exporting
       # to this service object; this is happening within the same request/response cycle, so it's already
@@ -11,6 +13,7 @@ module Exports
       @distributions = distributions
       @filters = filters
       @organization = organization
+      @distribution_totals = DistributionTotalsService.call(Distribution.where(organization:).class_filter(filters))
     end
 
     def generate_csv
@@ -72,17 +75,11 @@ module Exports
         "Source Inventory" => ->(distribution) {
           distribution.storage_location.name
         },
-        base_item_header_col_name => ->(distribution) {
-          # filter the line items by item id (for selected item filter) to
-          # get the number of items
-          if @filters[:by_item_id].present?
-            distribution.line_items.where(item_id: @filters[:by_item_id].to_i).total
-          else
-            distribution.line_items.total
-          end
+        item_quantity_header_col_name => ->(distribution) {
+          @distribution_totals[distribution.id]&.quantity || 0
         },
-        "Total Value" => ->(distribution) {
-          distribution.cents_to_dollar(distribution.line_items.total_value)
+        item_value_header_col_name => ->(distribution) {
+          cents_to_dollar(@distribution_totals[distribution.id]&.value || 0)
         },
         "Delivery Method" => ->(distribution) {
           distribution.delivery_method
@@ -103,12 +100,32 @@ module Exports
     end
 
     # if filtered based on an item, change the column accordingly
-    def base_item_header_col_name
-      @filters[:by_item_id].present? ? "Total Number of #{filtered_item.name}" : "Total Items"
+    def item_quantity_header_col_name
+      if @filters[:by_item_id].present?
+        "Total Number of #{filtered_item_name}"
+      elsif @filters[:by_item_category_id].present?
+        "Total Number of #{filtered_item_category_name}"
+      else
+        "Total Items"
+      end
     end
 
-    def filtered_item
-      @filtered_item ||= Item.find(@filters[:by_item_id].to_i)
+    def item_value_header_col_name
+      if @filters[:by_item_id].present?
+        "Total Value of #{filtered_item_name}"
+      elsif @filters[:by_item_category_id].present?
+        "Total Value of #{filtered_item_category_name}"
+      else
+        "Total Value"
+      end
+    end
+
+    def filtered_item_name
+      @filtered_item ||= Item.find(@filters[:by_item_id].to_i).name
+    end
+
+    def filtered_item_category_name
+      @filtered_item_category ||= ItemCategory.find(@filters[:by_item_category_id].to_i).name
     end
 
     def base_headers
@@ -119,12 +136,14 @@ module Exports
       return @item_headers if @item_headers
 
       @item_headers = @organization.items.select("DISTINCT ON (LOWER(name)) items.name").order("LOWER(name) ASC").map(&:name)
+      @item_headers = @item_headers.flat_map { |header| [header, "#{header} In-Kind Value"] } if @organization.include_in_kind_values_in_exported_files
+
+      @item_headers
     end
 
     def build_row_data(distribution)
       row = base_table.values.map { |closure| closure.call(distribution) }
-
-      row += Array.new(item_headers.size, 0)
+      row += make_item_quantity_and_value_slots
 
       distribution.line_items.each do |line_item|
         item_name = line_item.item.name
@@ -132,9 +151,16 @@ module Exports
         next unless item_column_idx
 
         row[item_column_idx] += line_item.quantity
+        row[item_column_idx + 1] += Money.new(line_item.value_per_line_item) if @organization.include_in_kind_values_in_exported_files
       end
 
       row
+    end
+
+    def make_item_quantity_and_value_slots
+      slots = Array.new(item_headers.size, 0)
+      slots = slots.map.with_index { |value, index| index.odd? ? Money.new(0) : value } if @organization.include_in_kind_values_in_exported_files
+      slots
     end
   end
 end

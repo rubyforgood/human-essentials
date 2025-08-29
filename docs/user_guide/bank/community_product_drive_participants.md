@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Product Drive Participants
 
 If you conduct Product Drives, the Product Drive Participants list lets you manage the participant's contact information and see their Donation history.

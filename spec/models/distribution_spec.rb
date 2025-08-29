@@ -190,9 +190,9 @@ RSpec.describe Distribution, type: :model do
     end
 
     describe "with_diapers >" do
-      let(:disposable_item) { create(:item, base_item: create(:base_item, category: "Diapers - Childrens")) }
-      let(:cloth_diaper_item) { create(:item, base_item: create(:base_item, category: "Diapers - Cloth (Kids)")) }
-      let(:non_diaper_item) { create(:item, base_item: create(:base_item, category: "Menstrual Supplies/Items")) }
+      let(:disposable_item) { create(:item, reporting_category: :disposable_diapers) }
+      let(:cloth_diaper_item) { create(:item, reporting_category: :cloth_diapers) }
+      let(:non_diaper_item) { create(:item, reporting_category: :tampons) }
 
       it "only includes distributions with disposable or cloth_diaper items" do
         dist1 = create(:distribution, :with_items, item: disposable_item)
@@ -208,8 +208,8 @@ RSpec.describe Distribution, type: :model do
     end
 
     describe "with_period_supplies >" do
-      let(:period_supplies_item) { create(:item, base_item: create(:base_item, category: "Menstrual Supplies/Items")) }
-      let(:non_period_supplies_item) { create(:item, base_item: create(:base_item, category: "Diapers - Childrens")) }
+      let(:period_supplies_item) { create(:item, reporting_category: :tampons) }
+      let(:non_period_supplies_item) { create(:item, reporting_category: :adult_incontinence) }
 
       it "only includes distributions with period supplies items" do
         dist1 = create(:distribution, :with_items, item: period_supplies_item)
@@ -284,7 +284,7 @@ RSpec.describe Distribution, type: :model do
         create(:item_request, request: request, item_id: item1.id, quantity: 15)
         create(:item_request, request: request, item_id: item2.id, quantity: 18)
         distribution = Distribution.new
-        distribution.copy_from_request(request.id)
+        distribution.copy_from_request(request)
         expect(distribution.line_items.size).to eq 2
         expect(distribution.line_items.first.quantity).to eq 15
         expect(distribution.line_items.second.quantity).to eq 18
@@ -315,27 +315,6 @@ RSpec.describe Distribution, type: :model do
   end
 
   context "CSV export >" do
-    let(:organization_2) { create(:organization) }
-    let(:item1) { create(:item, organization: organization) }
-    let(:item2) { create(:item, organization: organization) }
-    let!(:distribution_1) { create(:distribution, :with_items, item: item1, organization: organization, issued_at: 3.days.ago) }
-    let!(:distribution_2) { create(:distribution, :with_items, item: item2, organization: organization, issued_at: 1.day.ago) }
-    let!(:distribution_3) { create(:distribution, organization: organization_2, issued_at: Time.zone.today) }
-
-    describe "for_csv_export >" do
-      it "filters only to the given organization" do
-        expect(Distribution.for_csv_export(organization)).to match_array [distribution_1, distribution_2]
-      end
-
-      it "filters only to the given filter" do
-        expect(Distribution.for_csv_export(organization, { by_item_id: item1.id })).to match_array [distribution_1]
-      end
-
-      it "filters only to the given issue time range" do
-        expect(Distribution.for_csv_export(organization, {}, 4.days.ago..2.days.ago)).to match_array [distribution_1]
-      end
-    end
-
     describe "csv_export_attributes" do
       let(:item) { create(:item, organization: organization) }
       let!(:distribution) { create(:distribution, :with_items, item: item, organization: organization, issued_at: 3.days.ago) }

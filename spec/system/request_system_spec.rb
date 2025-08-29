@@ -4,8 +4,8 @@ RSpec.describe "Requests", type: :system, js: true do
 
   let(:item1) { create(:item, name: "Good item") }
   let(:item2) { create(:item, name: "Crap item") }
-  let(:partner1) { create(:partner, name: "This Guy", email: "thisguy@example.com") }
-  let(:partner2) { create(:partner, name: "That Guy", email: "ntg@example.com") }
+  let(:partner1) { create(:partner, organization:, name: "This Guy", email: "thisguy@example.com") }
+  let(:partner2) { create(:partner, organization:, name: "That Guy", email: "ntg@example.com") }
   let!(:storage_location) { create(:storage_location, organization: organization) }
 
   before do
@@ -255,12 +255,21 @@ RSpec.describe "Requests", type: :system, js: true do
 
       it 'should set the request as canceled/discarded and contain the reason' do
         click_on 'Cancel'
-        fill_in 'Cancelation reason *', with: reason
+        fill_in 'Cancellation reason *', with: reason
         click_on 'Yes. Cancel Request'
 
         expect(page).to have_content("Request #{request.id} has been removed")
         expect(request.reload.discarded_at).not_to eq(nil)
         expect(request.reload.discard_reason).to eq(reason)
+      end
+
+      it 'should show the partners name, requesters email, request date, comments' do
+        click_on 'Cancel'
+
+        expect(page).to have_content request.partner.name
+        expect(page).to have_content request.partner.email
+        expect(page).to have_content("January 1 2020")
+        expect(page).to have_content request.comments
       end
     end
   end

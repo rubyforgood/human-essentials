@@ -1,8 +1,5 @@
 RSpec.describe "Admin::Organizations", type: :request do
-  let(:organization) { create(:organization) }
-  let(:default_params) do
-    { organization_name: organization.id }
-  end
+  let(:organization) { create(:organization, email: "email@testthis.com") }
 
   context "When logged in as a super admin" do
     before do
@@ -100,41 +97,10 @@ RSpec.describe "Admin::Organizations", type: :request do
       it "returns http success" do
         get admin_organizations_path
         expect(response).to be_successful
-      end
-    end
-
-    describe "PATCH #update" do
-      let(:organization) { create(:organization, name: "Original Name") }
-      subject do
-        patch admin_organization_path(default_params.merge(id: organization.id, organization: { name: updated_name }))
-      end
-
-      context "with a valid update" do
-        let(:updated_name) { "Updated Name" }
-        let(:redirect_status) { 302 }
-
-        it "redirects to #index" do
-          expect(subject).to be(redirect_status)
-          expect(subject).to redirect_to(admin_organizations_path)
-        end
-      end
-
-      context "with an invalid update" do
-        let(:updated_name) { nil }
-        let(:successful) { 200 }
-
-        subject do
-          patch admin_organization_path(default_params.merge(id: organization.id, organization: { name: updated_name }))
-        end
-
-        it "returns http success" do
-          expect(subject).to be(successful)
-        end
-
-        it "redirects to #edit with an error message" do
-          expect(subject).to render_template("edit")
-          expect(flash[:error]).to be_present
-        end
+        expect(response.body).to include(organization.name)
+        expect(response.body).to include(organization.email)
+        expect(response.body).to include(organization.created_at.strftime("%Y-%m-%d"))
+        expect(response.body).to include(organization.display_last_distribution_date)
       end
     end
 
@@ -149,15 +115,6 @@ RSpec.describe "Admin::Organizations", type: :request do
       end
     end
 
-    describe "GET #edit" do
-      let!(:organization) { create(:organization) }
-
-      it "returns http success" do
-        get edit_admin_organization_path({ id: organization.id })
-        expect(response).to be_successful
-      end
-    end
-
     describe "GET #show" do
       let!(:organization) { create(:organization) }
 
@@ -166,22 +123,30 @@ RSpec.describe "Admin::Organizations", type: :request do
         expect(response).to be_successful
       end
 
+      it "displays the correct organization details" do
+        intake_storage_location = create(:storage_location, organization:, name: "Intake Center")
+        default_storage_location = create(:storage_location, organization:, name: "Default Center")
+
+        organization.update!(intake_location: intake_storage_location.id, default_storage_location: default_storage_location.id)
+
+        get admin_organization_path({ id: organization.id })
+
+        expect(response.body).to include("Intake Center")
+        expect(response.body).to include("Default Center")
+      end
+
       context "with an organization user" do
         let!(:user) { create(:user, organization: organization) }
 
         it "provides links to edit the user" do
           get admin_organization_path({ id: organization.id })
 
-          expect(response.body).to include("Edit User")
-          expect(response.body).to include(edit_admin_user_path(user.id))
+          expect(response.body).to include("Actions")
+          expect(response.body).to include('Promote to Admin')
+          expect(response.body).to include(promote_to_org_admin_organization_path(user_id: user.id))
+          expect(response.body).to include('Remove User')
+          expect(response.body).to include(remove_user_organization_path(user_id: user.id))
         end
-      end
-    end
-
-    describe "PUT #update" do
-      it "redirect" do
-        put admin_organization_path({ id: organization.id, organization: { name: "Foo" } })
-        expect(response).to be_redirect
       end
     end
 
@@ -215,20 +180,6 @@ RSpec.describe "Admin::Organizations", type: :request do
     describe "GET #index" do
       it "redirects" do
         get admin_organizations_path
-        expect(response).to be_redirect
-      end
-    end
-
-    describe "GET #edit" do
-      it "redirects" do
-        get edit_admin_organization_path({ id: organization.id })
-        expect(response).to be_redirect
-      end
-    end
-
-    describe "PUT #update" do
-      it "redirects" do
-        put admin_organization_path({ id: organization.id, organization: { name: "Foo" } })
         expect(response).to be_redirect
       end
     end

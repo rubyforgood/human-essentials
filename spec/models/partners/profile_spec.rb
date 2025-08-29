@@ -8,7 +8,6 @@
 #  address2                       :string
 #  agency_mission                 :text
 #  agency_type                    :string
-#  application_data               :text
 #  at_fpl_or_below                :integer
 #  case_management                :boolean
 #  city                           :string
@@ -16,7 +15,6 @@
 #  currently_provide_diapers      :boolean
 #  describe_storage_space         :text
 #  distribution_times             :string
-#  distributor_type               :string
 #  enable_child_based_requests    :boolean          default(TRUE), not null
 #  enable_individual_requests     :boolean          default(TRUE), not null
 #  enable_quantity_based_requests :boolean          default(TRUE), not null
@@ -304,25 +302,6 @@ RSpec.describe Partners::Profile, type: :model do
         expect(profile.client_share_total).to eq(100)
         expect(profile.valid?).to eq(true)
       end
-    end
-  end
-
-  describe "county_list" do
-    it "provides a county list in human-alpha by county within region order" do
-      county_1 = create(:county, name: "High County, Maine", region: "Maine")
-      county_2 = create(:county, name: "laRue County, Louisiana", region: "Louisiana")
-      county_3 = create(:county, name: "Ste. Anne County, Louisiana", region: "Louisiana")
-      county_4 = create(:county, name: "Other County, Louisiana", region: "Louisiana")
-      profile = create(:partner_profile)
-      profile_2 = create(:partner_profile)
-      create(:partners_served_area, partner_profile: profile, county: county_1, client_share: 50)
-      create(:partners_served_area, partner_profile: profile, county: county_2, client_share: 40)
-      create(:partners_served_area, partner_profile: profile, county: county_3, client_share: 10)
-      create(:partners_served_area, partner_profile: profile_2, county: county_4)
-      profile.reload
-      profile_2.reload
-      ## This is human-alpha by county within region (i.e. state)
-      expect(profile.county_list_by_region).to eq("laRue County, Louisiana; Ste. Anne County, Louisiana; High County, Maine")
     end
   end
 

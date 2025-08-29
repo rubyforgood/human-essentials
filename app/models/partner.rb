@@ -4,6 +4,7 @@
 #
 #  id                          :integer          not null, primary key
 #  email                       :string
+#  info_for_partner            :text
 #  name                        :string
 #  notes                       :text
 #  quota                       :integer
@@ -28,7 +29,7 @@ class Partner < ApplicationRecord
   ].freeze
 
   # Status `4` (error) was removed for being obsolete but is intentionally skipped to preserve existing enum values.
-  enum status: { uninvited: 0, invited: 1, awaiting_review: 2, approved: 3, recertification_required: 5, deactivated: 6 }
+  enum :status, { uninvited: 0, invited: 1, awaiting_review: 2, approved: 3, recertification_required: 5, deactivated: 6 }
 
   belongs_to :organization
   belongs_to :partner_group, optional: true
@@ -57,11 +58,6 @@ class Partner < ApplicationRecord
   before_save { email&.downcase! }
   before_update :invite_new_partner, if: :should_invite_because_email_changed?
 
-  scope :for_csv_export, ->(organization, *) {
-    where(organization: organization)
-      .order(:name)
-  }
-
   scope :alphabetized, -> { order(:name) }
   scope :active, -> { where.not(status: :deactivated) }
 
@@ -71,18 +67,7 @@ class Partner < ApplicationRecord
     where(status: status.to_sym)
   }
 
-  ALL_PARTIALS = %w[
-    media_information
-    agency_stability
-    organizational_capacity
-    sources_of_funding
-    area_served
-    population_served
-    executive_director
-    pick_up_person
-    agency_distribution_information
-    attached_documents
-  ].freeze
+  ALL_PARTIALS = Organization::ALL_PARTIALS.map { |partial| partial[1] }.freeze
 
   # @return [String]
   def display_status
@@ -131,85 +116,8 @@ class Partner < ApplicationRecord
     errors
   end
 
-  def self.csv_export_headers
-    [
-      "Agency Name",
-      "Agency Email",
-      "Agency Address",
-      "Agency City",
-      "Agency State",
-      "Agency Zip Code",
-      "Agency Website",
-      "Agency Type",
-      "Contact Name",
-      "Contact Phone",
-      "Contact Email",
-      "Notes",
-      "Counties Served",
-      "Providing Diapers",
-      "Providing Period Supplies"
-    ]
-  end
-
-  def csv_export_attributes
-    [
-      name,
-      email,
-      agency_info[:address],
-      agency_info[:city],
-      agency_info[:state],
-      agency_info[:zip_code],
-      agency_info[:website],
-      agency_info[:agency_type],
-      contact_person[:name],
-      contact_person[:phone],
-      contact_person[:email],
-      notes,
-      profile.county_list_by_region,
-      providing_diapers,
-      providing_period_supplies
-    ]
-  end
-
-  def providing_diapers
-    distributions.in_last_12_months.with_diapers.any? ? "Y" : "N"
-  end
-
-  def providing_period_supplies
-    distributions.in_last_12_months.with_period_supplies.any? ? "Y" : "N"
-  end
-
-  def contact_person
-    return @contact_person if @contact_person
-
-    return {} if profile.blank?
-
-    @contact_person = {
-      name: profile.primary_contact_name,
-      email: profile.primary_contact_email,
-      phone: profile.primary_contact_phone ||
-             profile.primary_contact_mobile
-    }
-  end
-
-  def agency_info
-    return @agency_info if @agency_info
-
-    return {} if profile.blank?
-
-    symbolic_agency_type = profile.agency_type&.to_sym
-    @agency_info = {
-      address: [profile.address1, profile.address2].select(&:present?).join(', '),
-      city: profile.city,
-      state: profile.state,
-      zip_code: profile.zip_code,
-      website: profile.website,
-      agency_type: (symbolic_agency_type == :other) ? "#{I18n.t symbolic_agency_type, scope: :partners_profile}: #{profile.other_agency_type}" : (I18n.t symbolic_agency_type, scope: :partners_profile)
-    }
-  end
-
   def partials_to_show
-    organization.partner_form_fields.presence || ALL_PARTIALS
+    organization.partials_to_show
   end
 
   def quantity_year_to_date
@@ -239,7 +147,7 @@ class Partner < ApplicationRecord
   end
 
   def children_served_count
-    children.count
+    children.count { |child| !child.archived? }
   end
 
   def family_zipcodes_count

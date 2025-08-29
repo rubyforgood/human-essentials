@@ -6,6 +6,85 @@ RSpec.describe "Organizations", type: :request do
   let!(:unit) { create(:unit, name: "WolfPack", organization: organization) }
   let!(:store) { create(:storage_location, organization: organization) }
   let!(:ndbn_member) { create(:ndbn_member, ndbn_member_id: "50000", account_name: "Best Place") }
+  let!(:super_admin_org_admin) { create(:super_admin_org_admin, organization: organization) }
+
+  shared_examples "promote to admin check" do |user_factory, current_user|
+    let!(:user_to_promote) { create(user_factory, name: "User to promote") }
+    let(:response_path) {
+      case current_user
+      when :super_admin
+        admin_organization_path(organization.id)
+      when :non_super_admin
+        organization_path
+      end
+    }
+
+    it "runs correctly", :aggregate_failures do
+      # Explicitly specify the organization_id, as current_organization will not
+      # be set for super admins
+      post promote_to_org_admin_organization_path(
+        user_id: user_to_promote.id,
+        organization_id: organization.id
+      )
+      expect(user_to_promote.reload.has_role?(Role::ORG_ADMIN, organization)).to be_truthy
+      # The user_update_redirect_path will vary based on whether the logged in
+      # user is a super admin or not
+      expect(response).to redirect_to(response_path)
+      expect(flash[:notice]).to eq("User has been promoted!")
+    end
+  end
+
+  shared_examples "demote to user check" do |user_factory, current_user|
+    let!(:user_to_demote) { create(user_factory, name: "User to demote", organization: organization) }
+    let(:response_path) {
+      case current_user
+      when :super_admin
+        admin_organization_path(organization.id)
+      when :non_super_admin
+        organization_path
+      end
+    }
+
+    it "runs correctly", :aggregate_failures do
+      # Explicitly specify the organization_id, as current_organization will not
+      # be set for super admins
+      post demote_to_user_organization_path(
+        user_id: user_to_demote.id,
+        organization_id: organization.id
+      )
+      expect(user_to_demote.reload.has_role?(Role::ORG_ADMIN, organization)).to be_falsey
+      # The user_update_redirect_path will vary based on whether the logged in
+      # user is a super admin or not
+      expect(response).to redirect_to(response_path)
+      expect(flash[:notice]).to eq("User has been demoted!")
+    end
+  end
+
+  shared_examples "remove user check" do |user_factory, current_user|
+    let!(:user_to_remove) { create(user_factory, name: "User to remove", organization: organization) }
+    let(:response_path) {
+      case current_user
+      when :super_admin
+        admin_organization_path(organization.id)
+      when :non_super_admin
+        organization_path
+      end
+    }
+
+    it "runs correctly", :aggregate_failures do
+      # Explicitly specify the organization_id, as current_organization will not
+      # be set for super admins
+      post remove_user_organization_path(
+        user_id: user_to_remove.id,
+        organization_id: organization.id
+      )
+      expect(user_to_remove.reload.has_role?(Role::ORG_USER, organization)).to be_falsey
+      # The user_update_redirect_path will vary based on whether the logged in
+      # user is a super admin or not
+      expect(response).to redirect_to(response_path)
+      expect(flash[:notice]).to eq("User has been removed!")
+    end
+  end
 
   context "While signed in as a normal user" do
     before do
@@ -31,20 +110,33 @@ RSpec.describe "Organizations", type: :request do
         expect(html.css("a").text).to include("Home")
         expect(html.css("a").to_s).to include(dashboard_path)
         expect(html.text).to include("Organization Info")
-        expect(html.text).to include("Contact Info")
-        expect(html.text).to include("Default email text")
+        expect(html.text).to include("Address")
+        expect(html.text).to include("Distribution email content")
         expect(html.text).to include("Users")
-        expect(html.text).to include("Short Name")
         expect(html.text).to include("URL")
-        expect(html.text).to include("Partner Profile Sections")
-        expect(html.text).to include("Custom Partner Invitation Message")
-        expect(html.text).to include("Child Based Requests?")
-        expect(html.text).to include("Individual Requests?")
-        expect(html.text).to include("Quantity Based Requests?")
-        expect(html.text).to include("Show Year-to-date values on distribution printout?")
+        expect(html.text).to include("Partner Profile sections")
+        expect(html.text).to include("Custom Partner invitation message")
+        expect(html.text).to include("Enable Partners to make child-based Requests?")
+        expect(html.text).to include("Enable Partners to make Requests by indicating number of individuals needing each Item?")
+        expect(html.text).to include("Enable Partners to make quantity-based Requests?")
+        expect(html.text).to include("Show year-to-date values on Distribution printout?")
         expect(html.text).to include("Logo")
-        expect(html.text).to include("Use One step Partner invite and approve process?")
-        expect(html.text).to include("Receive email when partner makes a request:")
+        expect(html.text).to include("Use one-step Partner invite and approve process?")
+        expect(html.text).to include("Receive email when Partner makes a Request?")
+        expect(html.text).not_to include("Your next reminder date is ")
+        expect(html.text).not_to include("The deadline on your next reminder email will be ")
+      end
+
+      it "displays the correct organization details" do
+        intake_storage_location = create(:storage_location, organization:, name: "Intake Center")
+        default_storage_location = create(:storage_location, organization:, name: "Default Center")
+
+        organization.update!(intake_location: intake_storage_location.id, default_storage_location: default_storage_location.id)
+
+        get organization_path
+
+        expect(response.body).to include("Intake Center")
+        expect(response.body).to include("Default Center")
       end
 
       context "when enable_packs flipper is on" do
@@ -60,6 +152,31 @@ RSpec.describe "Organizations", type: :request do
           Flipper.disable(:enable_packs)
           get organization_path
           expect(response.body).to_not include "Wolf Pack"
+        end
+      end
+
+      context "with a reminder schedule" do
+        before do
+          travel_to Time.zone.local(2020, 10, 10)
+          valid_reminder_schedule = ReminderScheduleService.new({
+            by_month_or_week: "day_of_month",
+            every_nth_month: 1,
+            day_of_month: 20
+          }).to_ical
+          organization.update(reminder_schedule_definition: valid_reminder_schedule)
+        end
+
+        it "reports the next date a reminder email will be sent" do
+          get organization_path
+          expect(response.body).to include "Your next reminder date is Tue Oct 20 2020."
+          expect(response.body).not_to include "The deadline on your next reminder email will be Sun Oct 25 2020."
+        end
+
+        it "reports the deadline date that will be included in the next reminder email" do
+          organization.update(deadline_day: 25)
+          get organization_path
+          expect(response.body).to include "Your next reminder date is Tue Oct 20 2020."
+          expect(response.body).to include "The deadline on your next reminder email will be Sun Oct 25 2020."
         end
       end
 
@@ -98,20 +215,19 @@ RSpec.describe "Organizations", type: :request do
         expect(html.css("a").text).to include("Home")
         expect(html.css("a").to_s).to include(dashboard_path)
         expect(html.text).to include("Organization Info")
-        expect(html.text).to include("Contact Info")
-        expect(html.text).to include("Default email text")
+        expect(html.text).to include("Address")
+        expect(html.text).to include("Distribution email content")
         expect(html.text).to include("Users")
-        expect(html.text).to include("Short Name")
         expect(html.text).to include("URL")
-        expect(html.text).to include("Partner Profile Sections")
-        expect(html.text).to include("Custom Partner Invitation Message")
-        expect(html.text).to include("Child Based Requests?")
-        expect(html.text).to include("Individual Requests?")
-        expect(html.text).to include("Quantity Based Requests?")
-        expect(html.text).to include("Show Year-to-date values on distribution printout?")
+        expect(html.text).to include("Partner Profile sections")
+        expect(html.text).to include("Custom Partner invitation message")
+        expect(html.text).to include("Enable Partners to make child-based Requests?")
+        expect(html.text).to include("Enable Partners to make Requests by indicating number of individuals needing each Item?")
+        expect(html.text).to include("Enable Partners to make quantity-based Requests?")
+        expect(html.text).to include("Show year-to-date values on Distribution printout?")
         expect(html.text).to include("Logo")
-        expect(html.text).to include("Use One step Partner invite and approve process?")
-        expect(html.text).to include("Receive email when partner makes a request:")
+        expect(html.text).to include("Use one-step Partner invite and approve process?")
+        expect(html.text).to include("Receive email when Partner makes a Request?")
       end
 
       context "when enable_packs flipper is on" do
@@ -174,7 +290,7 @@ RSpec.describe "Organizations", type: :request do
         it "should display custom units and units form" do
           Flipper.enable(:enable_packs)
           get edit_organization_path
-          expect(response.body).to include("Custom request units used (please use singular form -- e.g. pack, not packs)")
+          expect(response.body).to include("Custom request units used")
           expect(response.body).to include "WolfPack"
         end
       end
@@ -183,7 +299,7 @@ RSpec.describe "Organizations", type: :request do
         it "should not display custom units and units form" do
           Flipper.disable(:enable_packs)
           get edit_organization_path
-          expect(response.body).to_not include("Custom request units used (please use singular form -- e.g. pack, not packs)")
+          expect(response.body).to_not include("Custom request units used")
           expect(response.body).to_not include "WolfPack"
         end
       end
@@ -314,10 +430,10 @@ RSpec.describe "Organizations", type: :request do
           subject
           expect(response).to redirect_to(organization_path)
           follow_redirect!
-          expect(response.body).to include("<h3 class='font-bold'>Receive email when partner makes a request:</h3>
-                <p>
-                  Yes
-                </p>")
+          expect(response.body).to include("Receive email when Partner makes a Request?</h6>
+              <p>
+                Yes
+              </p>")
         end
       end
 
@@ -333,46 +449,39 @@ RSpec.describe "Organizations", type: :request do
     end
 
     describe "POST #promote_to_org_admin" do
-      subject { post promote_to_org_admin_organization_path(user_id: user.id) }
+      context "promoting a user" do
+        include_examples "promote to admin check", :user, :non_super_admin
+      end
 
-      it "runs successfully" do
-        subject
-        expect(user.has_role?(Role::ORG_ADMIN, organization)).to eq(true)
-        expect(response).to redirect_to(organization_path)
-        expect(flash[:notice]).to eq("User has been promoted!")
+      context "promoting a super admin user" do
+        include_examples "promote to admin check", :super_admin, :non_super_admin
       end
     end
 
     describe "POST #demote_to_user" do
-      subject { post demote_to_user_organization_path(user_id: admin_user.id) }
+      context "demoting a user" do
+        include_examples "demote to user check", :organization_admin, :non_super_admin
+      end
 
-      it "runs correctly" do
-        subject
-        expect(admin_user.reload.has_role?(Role::ORG_ADMIN, admin_user.organization)).to be_falsey
-        expect(response).to redirect_to(organization_path)
-        expect(flash[:notice]).to eq("User has been demoted!")
+      context "demoting a super admin user" do
+        include_examples "demote to user check", :super_admin_org_admin, :non_super_admin
       end
     end
 
     describe "POST #remove_user" do
-      subject { post remove_user_organization_path(user_id: user.id) }
+      context "removing a user" do
+        include_examples "remove user check", :user, :non_super_admin
+      end
 
-      context "when user is org user" do
-        it "redirects after update" do
-          subject
-          expect(response).to redirect_to(organization_path)
-        end
-
-        it "removes the org user role" do
-          expect { subject }.to change { user.has_role?(Role::ORG_USER, organization) }.from(true).to(false)
-        end
+      context "removing a super admin user" do
+        include_examples "remove user check", :super_admin, :non_super_admin
       end
 
       context "when user is not an org user" do
         let(:user) { create(:user, organization: create(:organization)) }
 
         it 'raises an error' do
-          subject
+          post remove_user_organization_path(user_id: user.id)
 
           expect(response).to be_not_found
         end
@@ -382,7 +491,7 @@ RSpec.describe "Organizations", type: :request do
     context "when attempting to access a different organization" do
       let(:other_organization) { create(:organization) }
       let(:other_organization_params) do
-        { organization_name: other_organization.to_param }
+        { organization_id: other_organization.id }
       end
 
       describe "GET #show" do
@@ -418,56 +527,48 @@ RSpec.describe "Organizations", type: :request do
 
   context 'When signed in as a super admin' do
     before do
-      sign_in(create(:super_admin, organization: organization))
-    end
-
-    describe "GET #show" do
-      before { get admin_organizations_path(id: organization.id) }
-
-      it { expect(response).to be_successful }
-
-      it 'organization details' do
-        expect(response.body).to include(organization.name)
-        expect(response.body).to include(organization.email)
-        expect(response.body).to include(organization.created_at.strftime("%Y-%m-%d"))
-        expect(response.body).to include(organization.display_last_distribution_date)
-      end
-
-      it "can see 'Edit User' button for users" do
-        within(".content") do
-          expect(response.body).to have_link("Actions")
-        end
-
-        within "#dropdown-toggle" do
-          expect(response.body).to have_link("Edit User")
-          expect(response.body).to have_link("Remove User")
-        end
-      end
-
-      it "can see 'Demote User' button for organization admins" do
-        within(".content") do
-          expect(response.body).to have_link("Demote to User")
-        end
-      end
+      sign_in(super_admin_org_admin)
     end
 
     describe "POST #promote_to_org_admin" do
-      before { post promote_to_org_admin_organization_path(user_id: user.id, organization_name: organization.short_name) }
+      context "promoting a user" do
+        include_examples "promote to admin check", :user, :super_admin
+      end
 
-      it "promotes the user to org_admin" do
-        expect(user.has_role?(Role::ORG_ADMIN, organization)).to eq(true)
-        expect(response).to redirect_to(admin_organization_path({ id: organization.id }))
-        expect(flash[:notice]).to eq("User has been promoted!")
+      context "promoting a super admin user" do
+        include_examples "promote to admin check", :super_admin, :super_admin
       end
     end
 
     describe "POST #demote_to_user" do
-      before { post demote_to_user_organization_path(user_id: admin_user.id, organization_name: organization.short_name) }
+      context "demoting a user" do
+        include_examples "demote to user check", :organization_admin, :super_admin
+      end
 
-      it "demotes the org_admin to user" do
-        expect(admin_user.reload.has_role?(Role::ORG_ADMIN, admin_user.organization)).to be_falsey
-        expect(response).to redirect_to(admin_organization_path({ id: organization.id }))
-        expect(flash[:notice]).to eq("User has been demoted!")
+      context "demoting a super admin user" do
+        include_examples "demote to user check", :super_admin_org_admin, :super_admin
+      end
+    end
+
+    describe "POST #remove_user" do
+      context "removing a user" do
+        include_examples "remove user check", :user, :super_admin
+      end
+
+      context "removing a super admin user" do
+        include_examples "remove user check", :super_admin, :super_admin
+      end
+
+      context "when user is not an org user" do
+        let(:user) { create(:user, organization: create(:organization)) }
+
+        it 'raises an error' do
+          # Explicitly specify the organization_id, as current_organization will not
+          # be set for super admins
+          post remove_user_organization_path(user_id: user.id, organization_id: organization.id)
+
+          expect(response).to have_http_status(:not_found)
+        end
       end
     end
   end

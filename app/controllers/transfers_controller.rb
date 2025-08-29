@@ -15,12 +15,13 @@ class TransfersController < ApplicationController
     @to_storage_locations = StorageLocation.with_transfers_to(current_organization)
     respond_to do |format|
       format.html
-      format.csv { send_data Transfer.generate_csv(@transfers), filename: "Transfers-#{Time.zone.today}.csv" }
+      format.csv { send_data Exports::ExportTransfersCSVService.new(transfers: @transfers.includes(line_items: :item), organization: current_organization).generate_csv, filename: "Transfers-#{Time.zone.today}.csv" }
     end
   end
 
   def create
     @transfer = current_organization.transfers.new(transfer_params)
+    @transfer.line_items.combine!
 
     TransferCreateService.call(@transfer)
     redirect_to transfers_path, notice: "#{@transfer.line_items.total} items have been transferred from #{@transfer.from.name} to #{@transfer.to.name}!"
@@ -55,6 +56,18 @@ class TransfersController < ApplicationController
     end
 
     redirect_to transfers_path
+  end
+
+  def validate
+    @transfer = current_organization.transfers.new(transfer_params)
+    @transfer.line_items.combine!
+
+    if @transfer.valid?
+      body = render_to_string(partial: "transfers/validate_modal", formats: [:html], layout: false)
+      render json: {valid: true, body: body}
+    else
+      render json: {valid: false}, status: :unprocessable_entity
+    end
   end
 
   private

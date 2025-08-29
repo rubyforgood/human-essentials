@@ -64,6 +64,35 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe '#preferred_name' do
+    let(:user) { create(:user, name: name, email: email) }
+    let(:email) { 'john.smith@example.com' }
+
+    context 'when name is present' do
+      let(:name) { 'John Smith' }
+
+      it 'returns the name' do
+        expect(user.preferred_name).to eq('John Smith')
+      end
+    end
+
+    context 'when name is nil' do
+      let(:name) { nil }
+
+      it 'returns the email' do
+        expect(user.preferred_name).to eq('john.smith@example.com')
+      end
+    end
+
+    context 'when name is an empty string' do
+      let(:name) { '' }
+
+      it 'returns the email' do
+        expect(user.preferred_name).to eq('john.smith@example.com')
+      end
+    end
+  end
+
   describe "Scopes >" do
     describe "->alphabetized" do
       let!(:z_name_user) { create(:user, name: 'Zachary') }
@@ -115,10 +144,12 @@ RSpec.describe User, type: :model do
       expect(build(:user, invitation_sent_at: Time.zone.parse("2018-10-10 00:00:00"), invitation_accepted_at: Time.zone.parse("2018-10-11 00:00:00"), current_sign_in_at: Time.zone.parse("2018-10-23 00:00:00")).invitation_status).to eq("joined")
     end
 
-    it "#kind" do
-      expect(create(:super_admin).kind).to eq("super")
-      expect(create(:organization_admin).kind).to eq("admin")
-      expect(create(:user).kind).to eq("normal")
+    it "#org_role" do
+      expect(create(:super_admin).org_role).to eq("normal")
+      expect(create(:super_admin_org_admin).org_role).to eq("admin")
+      expect(create(:organization_admin).org_role).to eq("admin")
+      expect(create(:user).org_role).to eq("normal")
+      expect(create(:partner_user).org_role).to eq("not a member")
     end
 
     it "#reinvitable?" do

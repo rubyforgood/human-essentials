@@ -13,13 +13,15 @@ RSpec.describe "StorageLocations", type: :request do
         create(:storage_location,
           name: "Test Storage Location",
           address: "123 Donation Site Way",
-          warehouse_type: StorageLocation::WAREHOUSE_TYPES.first)
+          warehouse_type: StorageLocation::WAREHOUSE_TYPES.first,
+          square_footage: 100)
       end
       let!(:storage_location2) do
         create(:storage_location,
           name: "Test Storage Location 1",
           address: "123 Donation Site Way",
-          warehouse_type: StorageLocation::WAREHOUSE_TYPES.first)
+          warehouse_type: StorageLocation::WAREHOUSE_TYPES.first,
+          square_footage: 100)
       end
 
       context "html" do
@@ -92,11 +94,27 @@ RSpec.describe "StorageLocations", type: :request do
       context "csv" do
         let(:response_format) { 'csv' }
 
-        # Addresses used for storage locations must have associated geocoder stubs.
-        # See calls to Geocoder::Lookup::Test.add_stub in spec/rails_helper.rb
-        let(:storage_location_with_duplicate_item) { create(:storage_location, name: "Storage Location with Duplicate Items", address: "1500 Remount Road, Front Royal, VA 22630", warehouse_type: StorageLocation::WAREHOUSE_TYPES.first) }
-        let(:storage_location_with_items) { create(:storage_location, name: "Storage Location with Items", address: "123 Donation Site Way", warehouse_type: StorageLocation::WAREHOUSE_TYPES.first) }
-        let(:storage_location_with_unique_item) { create(:storage_location, name: "Storage Location with Unique Items", address: "Smithsonian Conservation Center new", warehouse_type: StorageLocation::WAREHOUSE_TYPES.first) }
+        let(:storage_location_with_duplicate_item) {
+          create(:storage_location,
+            name: "Storage Location with Duplicate Items",
+            address: "1500 Remount Road, Front Royal, VA 22630",
+            warehouse_type: StorageLocation::WAREHOUSE_TYPES.first,
+            square_footage: 100)
+        }
+        let(:storage_location_with_items) {
+          create(:storage_location,
+            name: "Storage Location with Items",
+            address: "123 Donation Site Way",
+            warehouse_type: StorageLocation::WAREHOUSE_TYPES.first,
+            square_footage: 100)
+        }
+        let(:storage_location_with_unique_item) {
+          create(:storage_location,
+            name: "Storage Location with Unique Items",
+            address: "Smithsonian Conservation Center new",
+            warehouse_type: StorageLocation::WAREHOUSE_TYPES.first,
+            square_footage: 100)
+        }
         let(:item1) { create(:item, name: 'A') }
         let(:item2) { create(:item, name: 'B') }
         let(:item3) { create(:item, name: 'C') }
@@ -160,6 +178,47 @@ RSpec.describe "StorageLocations", type: :request do
             Test Storage Location 1,123 Donation Site Way,100,Residential space used,0,0,0,0,0
           CSV
           expect(response.body).to eq(csv)
+        end
+
+        context "when include inactive storage locations checkbox is checked" do
+          let(:inactive_storage_location) {
+            create(
+              :storage_location,
+              name: "Inactive Storage Location",
+              address: "123 Donation Site Way",
+              warehouse_type: StorageLocation::WAREHOUSE_TYPES.first,
+              discarded_at: 5.months.ago,
+              square_footage: 100
+            )
+          }
+
+          before do
+            TestInventory.create_inventory(
+              inactive_storage_location.organization, {
+                inactive_storage_location.id => {
+                  item1.id => 1,
+                  item2.id => 1,
+                  item3.id => 1
+                }
+              }
+            )
+          end
+
+          it "generates csv with Storage Locations that are inactive" do
+            get storage_locations_path(include_inactive_storage_locations: "1", format: response_format)
+
+            csv = <<~CSV
+              Name,Address,Square Footage,Warehouse Type,Total Inventory,A,B,C,D
+              Inactive Storage Location,123 Donation Site Way,100,Residential space used,3,1,1,1,0
+              Storage Location with Duplicate Items,"1500 Remount Road, Front Royal, VA 22630",100,Residential space used,1,0,0,1,0
+              Storage Location with Items,123 Donation Site Way,100,Residential space used,3,1,1,1,0
+              Storage Location with Unique Items,Smithsonian Conservation Center new,100,Residential space used,5,0,0,0,5
+              Test Storage Location,123 Donation Site Way,100,Residential space used,0,0,0,0,0
+              Test Storage Location 1,123 Donation Site Way,100,Residential space used,0,0,0,0,0
+            CSV
+
+            expect(response.body).to eq(csv)
+          end
         end
       end
     end
@@ -248,19 +307,20 @@ RSpec.describe "StorageLocations", type: :request do
           file = fixture_file_upload("inventory.csv", "text/csv")
 
           params = { file: file, storage_location: storage_location_with_items.id }
-          post import_inventory_storage_locations_path(organization_name: organization.to_param), params: params
+          post import_inventory_storage_locations_path, params: params
 
           expect(response).to be_redirect
           expect(response).to have_error "Could not complete action: inventory already has items stored"
         end
       end
     end
+
     describe "GET #show" do
       let(:item) { create(:item, name: "Test Item") }
       let(:item2) { create(:item, name: "Test Item2") }
       let(:item3) { create(:item, name: "Test Item3", active: false) }
 
-      let(:storage_location) { create(:storage_location, organization: organization) }
+      let(:storage_location) { create(:storage_location, name: "Test Storage Location", organization: organization) }
       before(:each) do
         TestInventory.create_inventory(storage_location.organization, {
           storage_location.id => {
@@ -276,7 +336,18 @@ RSpec.describe "StorageLocations", type: :request do
         it "should return a correct response" do
           get storage_location_path(storage_location, format: response_format)
           expect(response).to be_successful
-          expect(response.body).to include("Smithsonian")
+          expect(response.body).to include("Test Storage Location")
+          expect(response.body).to include("Test Item")
+          expect(response.body).to include("Test Item2")
+          expect(response.body).not_to include("Test Item3")
+          expect(response.body).to include("200")
+        end
+
+        it "should return a correct response with empty version date param" do
+          get storage_location_path(storage_location, format: response_format,
+            version_date: '')
+          expect(response).to be_successful
+          expect(response.body).to include("Test Storage Location")
           expect(response.body).to include("Test Item")
           expect(response.body).to include("Test Item2")
           expect(response.body).not_to include("Test Item3")
@@ -306,7 +377,7 @@ RSpec.describe "StorageLocations", type: :request do
                 get storage_location_path(storage_location, format: response_format,
                   version_date: 9.days.ago.to_date.to_fs(:db))
                 expect(response).to be_successful
-                expect(response.body).to include("Smithsonian")
+                expect(response.body).to include("Test Storage Location")
                 expect(response.body).to include("Test Item")
                 expect(response.body).to include("100")
               end
@@ -336,7 +407,7 @@ RSpec.describe "StorageLocations", type: :request do
                 get storage_location_path(storage_location, format: response_format,
                   version_date: 9.days.ago.to_date.to_fs(:db))
                 expect(response).to be_successful
-                expect(response.body).to include("Smithsonian")
+                expect(response.body).to include("Test Storage Location")
                 expect(response.body).to include("Test Item")
                 expect(response.body).to include("100")
               end
@@ -444,6 +515,41 @@ RSpec.describe "StorageLocations", type: :request do
           expect(collection.first.keys).to match_array(%w[item_id item_name quantity])
           expect(collection.last.keys).to match_array(%w[item_id item_name quantity])
         end
+      end
+    end
+
+    describe "POST #create" do
+      let(:params) do
+        {
+          storage_location: {
+            name: "New Storage Location",
+            address: "123 New Street",
+            square_footage: -100
+          }
+        }
+      end
+
+      it "shows an error when square footage is negative" do
+        post storage_locations_path, params: params
+        expect(response.body).to include("Square footage must be greater than or equal to 0")
+      end
+    end
+
+    describe "PATCH #update" do
+      let(:storage_location) { create(:storage_location, organization: organization) }
+      let(:params) do
+        {
+          storage_location: {
+            name: "Updated Name",
+            address: "123 Updated Street",
+            square_footage: -100
+          }
+        }
+      end
+
+      it "shows an error when square footage is negative" do
+        patch storage_location_path(storage_location), params: params
+        expect(response.body).to include("Square footage must be greater than or equal to 0")
       end
     end
 

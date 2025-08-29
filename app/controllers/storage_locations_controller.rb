@@ -12,8 +12,9 @@ class StorageLocationsController < ApplicationController
     @inventory = View::Inventory.new(current_organization.id)
     @selected_item_category = filter_params[:containing]
     @items = StorageLocation.items_inventoried(current_organization, @inventory)
-    @include_inactive_storage_locations = params[:include_inactive_storage_locations].present?
+    @include_inactive_storage_locations = params[:include_inactive_storage_locations]
     @storage_locations = current_organization.storage_locations.alphabetized
+
     if filter_params[:containing].present?
       containing_ids = @inventory.storage_locations.keys.select do |sl|
         @inventory.quantity_for(item_id: filter_params[:containing], storage_location: sl).positive?
@@ -56,18 +57,19 @@ class StorageLocationsController < ApplicationController
   # TODO: Move these queries to Query Object
   def show
     @storage_location = current_organization.storage_locations.find(params[:id])
+    version_date = params[:version_date].presence&.to_date
     # TODO: Find a way to do these with less hard SQL. These queries have to be manually updated because they're not in-sync with the Model
     @items_out = ItemsOutQuery.new(organization: current_organization, storage_location: @storage_location).call
     @items_out_total = ItemsOutTotalQuery.new(organization: current_organization, storage_location: @storage_location).call
     @items_in = ItemsInQuery.new(organization: current_organization, storage_location: @storage_location).call
     @items_in_total = ItemsInTotalQuery.new(organization: current_organization, storage_location: @storage_location).call
-    if View::Inventory.within_snapshot?(current_organization.id, params[:version_date])
-      @inventory = View::Inventory.new(current_organization.id, event_time: params[:version_date])
+    if View::Inventory.within_snapshot?(current_organization.id, version_date)
+      @inventory = View::Inventory.new(current_organization.id, event_time: version_date)
     else
       @legacy_inventory = View::Inventory.legacy_inventory_for_storage_location(
         current_organization.id,
         @storage_location.id,
-        params[:version_date]
+        version_date
       )
     end
 

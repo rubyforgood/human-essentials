@@ -1,5 +1,3 @@
-READY FOR REVIEW
-
 # Partner reactivation
 
 To reactivate a partner: 

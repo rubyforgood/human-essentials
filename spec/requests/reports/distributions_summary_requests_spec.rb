@@ -11,6 +11,18 @@ RSpec.describe "Distributions", type: :request do
       sign_in(user)
     end
 
+    describe "time display" do
+      let!(:distribution) { create(:distribution, :with_items, issued_at: 2.days.ago) }
+
+      before do
+        get reports_distributions_summary_path
+      end
+
+      it "uses issued_at for the relative time display, not created_at" do
+        expect(response.body).to include("2 days ago")
+      end
+    end
+
     context "the index page" do
       context "without filters" do
         before do
@@ -37,7 +49,7 @@ RSpec.describe "Distributions", type: :request do
           create :distribution, :with_items, item_quantity: 17, issued_at: 30.days.ago, organization: organization
         end
 
-        let(:formatted_date_range) { date_range.map { _1.to_fs(:date_picker) }.join(" - ") }
+        let(:formatted_date_range) { date_range.map { it.to_fs(:date_picker) }.join(" - ") }
 
         before do
           get reports_distributions_summary_path, params: {filters: {date_range: formatted_date_range}}

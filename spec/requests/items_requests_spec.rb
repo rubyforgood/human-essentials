@@ -1,5 +1,5 @@
 RSpec.describe "Items", type: :request do
-  let(:organization) { create(:organization, short_name: "my_org") }
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, organization: organization) }
 
   describe "while signed in" do
@@ -13,20 +13,68 @@ RSpec.describe "Items", type: :request do
         response
       end
 
-      before do
-        create(:item)
-      end
-
       context "html" do
         let(:response_format) { 'html' }
 
         it { is_expected.to be_successful }
+
+        it "highlights total quantity if it is below minimum quantity" do
+          item_pullups = create(:item, name: "the most wonderful magical pullups that truly potty train", on_hand_minimum_quantity: 100)
+          item_tampons = create(:item, name: "blackbeard's rugged tampons", on_hand_minimum_quantity: 100)
+          storage_name = "the poop catcher warehouse"
+          num_pullups_in_donation = 666
+          num_pullups_second_donation = 15
+          storage = create(:storage_location, :with_items, item: item_pullups, item_quantity: num_pullups_in_donation, name: storage_name)
+          aux_storage = create(:storage_location, :with_items, item: item_pullups, item_quantity: num_pullups_second_donation, name: "a secret secondary location")
+          num_tampons_in_donation = 42
+          num_tampons_second_donation = 17
+          create(:donation, :with_items, storage_location: storage, item_quantity: num_tampons_in_donation, item: item_tampons)
+          create(:donation, :with_items, storage_location: aux_storage, item_quantity: num_tampons_second_donation, item: item_tampons)
+
+          get items_path(format: response_format)
+          # Inside Item Inventory Tab
+          expect(response.body).to match(/<div[^>]*id="custom-tabs-three-inventory"[^>]*>.*<td class="numeric text-danger font-weight-bold" data-column="total">59<\/td>.*<\/div>/m)
+          # Inside Items, Quantity and Location Tab
+          expect(response.body).to match(/<div[^>]*id="custom-tabs-three-profile"[^>]*>.*<td class="numeric text-danger font-weight-bold" data-column="total">59<\/td>.*<\/div>/m)
+        end
       end
 
       context "csv" do
         let(:response_format) { 'csv' }
 
         it { is_expected.to be_successful }
+
+        context "when exporting the csv items" do
+          let!(:active_item) { create(:item, organization: organization, name: "Briefs(M/L)") }
+          let!(:inactive_item) { create(:item, active: false, organization: organization, name: "Briefs(S/M)") }
+
+          context "when include inactive items checkbox is checked" do
+            it "generates csv with items that are also inactive" do
+              get items_path(include_inactive_items: "1", format: response_format)
+
+              csv = <<~CSV
+                Name,Barcodes,Base Item,Quantity
+                Briefs(M/L),"",#{active_item.base_item.name},0
+                Briefs(S/M),"",#{inactive_item.base_item.name},0
+              CSV
+
+              expect(response.body).to eq(csv)
+            end
+          end
+
+          context "when include inactive items checkbox is unchecked" do
+            it "generates csv with only active items" do
+              get items_path(format: response_format)
+
+              csv = <<~CSV
+                Name,Barcodes,Base Item,Quantity
+                Briefs(M/L),"",#{active_item.base_item.name},0
+              CSV
+
+              expect(response.body).to eq(csv)
+            end
+          end
+        end
       end
     end
 

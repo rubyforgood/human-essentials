@@ -1,6 +1,7 @@
 class AccountRequestsController < ApplicationController
   skip_before_action :authorize_user
   skip_before_action :authenticate_user!
+  skip_before_action :require_organization
 
   before_action :set_account_request_from_token, only: [:received, :confirmation, :confirm]
 

@@ -1,13 +1,14 @@
 # Provides full CRUD+ for Barcode Items. These barcode items are all associated with regular Items. The one
 # anomaly here is the :find action, which has some special logic built-in to it, see the comments below.
 class BarcodeItemsController < ApplicationController
+  before_action :load_items, only: %i[edit new]
   def index
-    @items = Item.gather_items(current_organization, @global)
+    @items = current_organization.items.joins(:barcode_items)
     @base_items = BaseItem.alphabetized
     @selected_barcodeable_id = filter_params[:barcodeable_id]
     @selected_partner_key = filter_params[:by_item_partner_key]
     @selected_barcode_id = filter_params[:by_value]
-    @barcode_items = current_organization.barcode_items.class_filter(filter_params)
+    @barcode_items = current_organization.barcode_items.includes(:item, :barcodeable).class_filter(filter_params)
     @selected_item = filter_params[:barcodeable_id]
     @selected_partner_key = filter_params[:by_item_partner_key]
 
@@ -28,18 +29,17 @@ class BarcodeItemsController < ApplicationController
       end
     else
       flash.now[:error] = "Something didn't work quite right -- try again?"
+      load_items
       render action: :new
     end
   end
 
   def new
     @barcode_item = current_organization.barcode_items.new
-    @items = current_organization.items.alphabetized
   end
 
   def edit
     @barcode_item = current_organization.barcode_items.includes(:barcodeable).find(params[:id])
-    @items = current_organization.items.alphabetized
   end
 
   def show
@@ -79,6 +79,7 @@ class BarcodeItemsController < ApplicationController
       redirect_to barcode_items_path, notice: "Barcode updated!"
     else
       flash.now[:error] = "Something didn't work quite right -- try again?"
+      load_items
       render action: :edit
     end
   end
@@ -88,10 +89,11 @@ class BarcodeItemsController < ApplicationController
       barcode = current_organization.barcode_items.find(params[:id])
       raise if barcode.nil? || barcode.global?
 
-      barcode.destroy
+      barcode.destroy!
     rescue StandardError
       flash[:error] = "Sorry, you don't have permission to delete this barcode."
     end
+    flash[:notice] = "Barcode deleted!"
     redirect_to barcode_items_path
   end
 
@@ -99,6 +101,10 @@ class BarcodeItemsController < ApplicationController
 
   def barcode_item_params
     params.require(:barcode_item).permit(:value, :barcodeable_id, :quantity).merge(organization_id: current_organization.id)
+  end
+
+  def load_items
+    @items = current_organization.items.alphabetized
   end
 
   helper_method \

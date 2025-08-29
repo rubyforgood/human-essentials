@@ -21,7 +21,7 @@ RSpec.describe 'Account request flow', type: :system, js: true do
       ndbn_member = FactoryBot.create(:ndbn_member)
       visit root_path
 
-      click_button('Request An Account', match: :first)
+      click_link('Register', match: :first)
       choose('account_bank')
 
       account_request_attrs = FactoryBot.attributes_for(:account_request)
@@ -58,8 +58,6 @@ RSpec.describe 'Account request flow', type: :system, js: true do
       # Access link within email sent to admin user to process the request.
       sign_in(super_admin)
       visit new_admin_organization_path(token: created_account_request.identity_token)
-
-      fill_in 'Short name', with: 'fakeshortname'
 
       click_button 'Save'
 

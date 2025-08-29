@@ -29,20 +29,38 @@
       <div class="col-md-12">
         <!-- jquery validation -->
         <div class="card card-primary">
-          <div class="card-footer">
-            <div class="pull-right">
-              <%= modal_button_to("#csvImportModal", { icon: "upload", text: "Import Vendors", size: "md"}) if @vendors.empty? %>
-              <%= download_button_to(vendors_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Vendors", size: "md"}) if @vendors.any? %>
-              <%= new_button_to new_vendor_path, text: "New Vendor" %>            </div>
+          <div class="card-header">
+            <h3 class="card-title">Vendor Filter</h3>
           </div>
-        </div>
+          <!-- /.card-header -->
+          <!-- form start -->
+          <div class="card-body">
+            <%= form_tag(vendors_path, method: :get) do |f| %>
+              <div class="row">
+                <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                  <%= filter_checkbox(label: "Also include inactive vendors", scope: "include_inactive_vendors", selected: @include_inactive_vendors) %>
+                </div>
+              </div>
+              </div>
+              <div class="card-footer">
+                <%= filter_button %>
+                <%= clear_filter_button %>
+                <span class="float-right">
+                  <%= download_button_to(vendors_path(format: :csv, filters: filter_params.merge(date_range: date_range_params, include_inactive_vendors: @include_inactive_vendors)), {text: "Export Vendors", size: "md"}) if @vendors.any? %>
+                  <%= modal_button_to("#csvImportModal", { icon: "upload", text: "Import Vendors", size: "md"}) if @vendors.empty? %>
+                  <%= new_button_to new_vendor_path, text: "New Vendor" %>
+                </span>
+              </div>
+            <% end # form %>
+            </div>
         <!-- /.card -->
       </div>
-      <!--/.col (left) -->
     </div>
     <!-- /.row -->
   </div><!-- /.container-fluid -->
+</section>
 
+<section class="content">
   <div class="container-fluid">
     <div class="row">
       <div class="col-12">

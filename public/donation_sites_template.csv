@@ -1,4 +1,4 @@
-name,address
-Donation Site 1,123 Donation Site Way
-Donation Site 2,456 Donation Site Way
-Donation Site 3,789 Donation Site Way
+name,address,contact_name,email,phone
+Donation Site 1,123 Donation Site Way,John Doe,john@example.com,123-456-7890
+Donation Site 2,456 Donation Site Way,Jane Smith,jane@example.com,234-567-8901
+Donation Site 3,789 Donation Site Way,Bob Johnson,bob@example.com,345-678-9012

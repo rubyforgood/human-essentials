@@ -8,7 +8,6 @@
 #  address2                       :string
 #  agency_mission                 :text
 #  agency_type                    :string
-#  application_data               :text
 #  at_fpl_or_below                :integer
 #  case_management                :boolean
 #  city                           :string
@@ -16,7 +15,6 @@
 #  currently_provide_diapers      :boolean
 #  describe_storage_space         :text
 #  distribution_times             :string
-#  distributor_type               :string
 #  enable_child_based_requests    :boolean          default(TRUE), not null
 #  enable_individual_requests     :boolean          default(TRUE), not null
 #  enable_quantity_based_requests :boolean          default(TRUE), not null
@@ -144,7 +142,44 @@ module Partners
     validate :has_at_least_one_request_setting
     validate :pick_up_email_addresses
 
+    # For the sake of documentation, here are the partials each field belongs to. In the order those
+    # partials appear in the actual form.
+    # agency_information -- this partial is always shown, contains the agency information AND the Program / Delivery Address sections of the form
+    #   agency_type, other_agency_type, agency_mission, address1, address2, city, state, zip_code,
+    #   program_address1, program_address2, program_city, program_state, program_zip_code
+    # media_information
+    #   website, facebook, twitter, instagram, no_social_media_presence
+    # agency_stability
+    #   founded, form_990, program_name, program_description, program_age, evidence_based, case_management,
+    #   essentials_use, receives_essentials_from_other, currently_provide_diapers
+    # organizational_capacity
+    #   client_capacity, storage_space, describe_storage_space
+    # sources_of_funding
+    #   sources_of_funding, sources_of_diapers, essentials_budget, essentials_funding_source
+    # area_served
+    #   has no associated Partners::Profile fields
+    # population_served
+    #   income_requirement_desc, income_verification, population_black, population_white,
+    #   population_hispanic, population_asian, population_american_indian, population_island,
+    #   population_multi_racial, population_other, zips_served, at_fpl_or_below, above_1_2_times_fpl
+    #   greater_2_times_fpl, poverty_unknown
+    # executive_director
+    #   executive_director_name, executive_director_phone, executive_director_email, primary_contact_name,
+    #   primary_contact_phone, primary_contact_mobile, primary_contact_email
+    # pick_up_person
+    #   pick_up_name, pick_up_phone, pick_up_email
+    # agency_distribution_information
+    #   distribution_times, new_client_times, more_docs_required
+    # attached_documents
+    #   has no associated Partners::Profile fields
+    # partner_settings -- this partial is always shown
+    #   enable_quantity_based_requests, enable_child_based_requests, enable_individual_requests
+
+    # These are columns which currently do not appear in any partial of the profile form.
+    # It is possible these will be removed in the future.
     self.ignored_columns += %w[
+      application_data
+      distributor_type
       evidence_based_description
       program_client_improvement
       incorporate_plan
@@ -167,11 +202,6 @@ module Partners
       return nil if pick_up_email.nil?
 
       pick_up_email.split(/,|\s+/).compact_blank
-    end
-
-    def county_list_by_region
-      # provides a county list in case insensitive alpha order, by region, then county name
-      counties.order(%w(lower(region) lower(name))).pluck(:name).join("; ")
     end
 
     def self.agency_types_for_selection

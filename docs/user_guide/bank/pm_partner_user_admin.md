@@ -1,5 +1,3 @@
-READY FOR REVIEW
-
 # Administering Partner Users
 
 Partners can add Users themselves,  but occasionally a bank may need to step in and administer Partner Users (for instance, if the only person who uses the system leaves the Partner.)

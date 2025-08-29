@@ -7,6 +7,18 @@ RSpec.describe "Reports::DonationsSummary", type: :request do
       sign_in user
     end
 
+    describe "time display" do
+      let!(:donation) { create(:donation, :with_items, issued_at: 1.day.ago) }
+
+      before do
+        get reports_donations_summary_path
+      end
+
+      it "uses issued_at for the relative time display, not created_at" do
+        expect(response.body).to include("1 day ago")
+      end
+    end
+
     describe "GET #index" do
       subject do
         get reports_donations_summary_path(format: response_format)
@@ -24,7 +36,7 @@ RSpec.describe "Reports::DonationsSummary", type: :request do
 
       it "has a link to create a new donation" do
         expect(response.body).to include("New Donation")
-        expect(response.body).to include("#{@url_prefix}/donations/new")
+        expect(response.body).to include("/donations/new")
       end
 
       context "with filters" do
@@ -38,7 +50,7 @@ RSpec.describe "Reports::DonationsSummary", type: :request do
           create :donation, :with_items, item_quantity: 17, issued_at: 30.days.ago, organization: organization
         end
 
-        let(:formatted_date_range) { date_range.map { _1.to_fs(:date_picker) }.join(" - ") }
+        let(:formatted_date_range) { date_range.map { it.to_fs(:date_picker) }.join(" - ") }
 
         before do
           get reports_donations_summary_path(user.organization), params: {filters: {date_range: formatted_date_range}}

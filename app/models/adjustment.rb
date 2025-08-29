@@ -22,17 +22,9 @@ class Adjustment < ApplicationRecord
   include Filterable
   scope :at_location, ->(location_id) { where(storage_location_id: location_id) }
   scope :by_user, ->(user_id) { where(user_id: user_id) }
-  scope :for_csv_export, ->(organization, *) {
-    where(organization: organization)
-      .includes(:storage_location, :line_items)
-  }
   scope :during, ->(range) { where(adjustments: { created_at: range }) }
 
   validate :storage_locations_belong_to_organization
-
-  def self.storage_locations_adjusted_for(organization)
-    includes(:storage_location).joins(:storage_location).where(organization_id: organization.id, storage_location: {discarded_at: nil}).collect(&:storage_location).sort
-  end
 
   def split_difference
     pre_adjustment = line_items.partition { |line_item| line_item.quantity.positive? }
@@ -42,18 +34,11 @@ class Adjustment < ApplicationRecord
     [increasing_adjustment, decreasing_adjustment]
   end
 
-  def self.csv_export_headers
-    ["Created", "Organization", "Storage Location", "Comment", "Changes"]
-  end
+  def self.generate_csv(adjustments)
+    return nil if adjustments.empty?
 
-  def csv_export_attributes
-    [
-      created_at.strftime("%F"),
-      organization.name,
-      storage_location.name,
-      comment,
-      line_items.count
-    ]
+    Exports::ExportAdjustmentsCSVService
+      .generate_csv(adjustments, adjustments.first.organization)
   end
 
   private

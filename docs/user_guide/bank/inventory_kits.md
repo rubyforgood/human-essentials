@@ -1,4 +1,3 @@
-READY FOR REVIEW
 # Kits
 
 Many banks distribute Kits -- the classic example is a package that contains different types of menstrual supplies (e.g. pads, tampons, wipes).
@@ -48,7 +47,7 @@ Once you are satisfied with the definition of your Kit,  click "Save".  This wil
 
 Once you have created your Kit,  you can allocate it.   This represents assembling Kits from their components, and will reduce the inventory of those Items appropriately.
 
-From the Kits page (Inventory | Kits),  click "Modify Allocation" on your Kit
+From the Kits page (Inventory -- Kits),  click "Modify Allocation" on your Kit
 
 ![Navigation to Kit alloocation](images/inventory/inventory_kits_modify_allocation_navigation.png)
 This takes you to the Kit Allocation page
@@ -75,7 +74,7 @@ You can only deactivate a Kit if it has no allocations.  To deactivate a Kit, cl
 
 ## Reactivating a Kit
 
-To reactivate a Kit, go to the Kits page (Inventory | Kits).
+To reactivate a Kit, go to the Kits page (Inventory -- Kits).
 Then click "Show Inactive" and "Filter".   This will show the Inactive Kits.
 Then click "Reactivate" beside the Kit you wish to reactivate and click "OK" to confirm.  
 ![Kit reactivation](images/inventory/inventory_kits_reactivate.png)

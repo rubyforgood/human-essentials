@@ -20,7 +20,7 @@ class ProductDrive < ApplicationRecord
 
   scope :by_name, ->(name_filter) { where(name: name_filter) }
   scope :by_item_category_id, ->(item_category_id) {
-    joins(donations: {line_items: :item})
+    includes(donations: {line_items: :item})
       .where(item: { item_category_id: item_category_id })
   }
 
@@ -31,7 +31,7 @@ class ProductDrive < ApplicationRecord
           search_dates[:end_date])
   }
 
-  has_many :donations, dependent: :nullify
+  has_many :donations, dependent: :restrict_with_error
   has_many :product_drive_participants, -> { distinct }, through: :donations
   validates :name, presence:
     { message: "A name must be chosen." }

@@ -47,7 +47,7 @@ class Distribution < ApplicationRecord
   enum :state, { scheduled: 5, complete: 10 }
   enum :delivery_method, { pick_up: 0, delivery: 1, shipped: 2 }
   scope :active, -> { joins(:line_items).joins(:items).where(items: { active: true }) }
-  scope :with_diapers, -> { joins(line_items: :item).merge(Item.disposable.or(Item.cloth_diapers)) }
+  scope :with_diapers, -> { joins(line_items: :item).merge(Item.disposable_diapers.or(Item.cloth_diapers)) }
   scope :with_period_supplies, -> { joins(line_items: :item).merge(Item.period_supplies) }
   # add item_id scope to allow filtering distributions by item
   scope :by_item_id, ->(item_id) { includes(:items).where(items: { id: item_id }) }
@@ -61,11 +61,6 @@ class Distribution < ApplicationRecord
   scope :recent, ->(count = 3) { order(issued_at: :desc).limit(count) }
   scope :future, -> { where(issued_at: Time.zone.tomorrow..) }
   scope :during, ->(range) { where(distributions: { issued_at: range }) }
-  scope :for_csv_export, ->(organization, filters = {}, date_range = nil) {
-    where(organization: organization)
-      .includes(:partner, :storage_location, :line_items)
-      .apply_filters(filters, date_range)
-  }
   scope :apply_filters, ->(filters, date_range) {
     class_filter(filters.merge(during: date_range))
   }
@@ -130,8 +125,7 @@ class Distribution < ApplicationRecord
     end
   end
 
-  def copy_from_request(request_id)
-    request = Request.find(request_id)
+  def copy_from_request(request)
     self.request = request
     self.organization_id = request.organization_id
     self.partner_id = request.partner_id

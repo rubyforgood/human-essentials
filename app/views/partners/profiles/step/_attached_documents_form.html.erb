@@ -1,15 +1,47 @@
 <%= f.fields_for :profile, profile do |pf| %>
-  <div class="form-group">
-    <% if profile.documents.attached? %>
+  <div class="form-group"
+      data-controller="file-input"
+      data-file-input-filenames-value="<%= attached_but_not_persisted_file_names(profile) %>">
+
+    <%# Allow user to download and/or remove existing attachments %>
+    <% if has_persisted_documents?(profile) %>
       <strong>Attached files:</strong>
-      <ul>
+      <ul class="list-unstyled">
         <% profile.documents.each do |doc| %>
-          <li><%= link_to doc.blob['filename'], rails_blob_path(doc), class: "font-weight-bold" %></li>
+          <% if doc.persisted? %>
+            <li class="attached-document d-flex justify-content-between align-items-center p-2 border rounded mb-2" data-document-id="<%= doc.signed_id %>">
+              <div class="text-truncate" style="max-width: 75%;">
+                <%= link_to doc.blob.filename.to_s, rails_blob_path(doc), class: "font-weight-bold" %>
+                <%= pf.hidden_field :documents, multiple: true, value: doc.signed_id %>
+              </div>
+              <%= remove_element_button "Remove", container_selector: "li", class: "btn btn-sm btn-danger" %>
+            </li>
+          <% end %>
         <% end %>
       </ul>
-      <%= pf.file_field :documents, multiple: true, class: "form-control-file" %>
-    <% else %>
-      <%= pf.file_field :documents, multiple: true, class: "form-control-file" %>
     <% end %>
+
+    <%# Submit hidden fields for attachments that are not persisted to preserve them through form validation errors %>
+    <% profile.documents.attachments.each do |att| %>
+      <% if !att.persisted? %>
+        <%= pf.hidden_field :documents, multiple: true, value: att.blob.signed_id %>
+      <% end %>
+    <% end %>
+
+    <%# Hide native file input to support custom behaviour to display %>
+    <%# previously selected files when validation error occurs  %>
+    <%= pf.file_field :documents,
+      multiple: true,
+      direct_upload: true,
+      class: "form-control-file d-none",
+      data: { file_input_target: "input" } %>
+
+    <%# Custom button to trigger file selection %>
+    <button type="button" class="btn btn-outline-primary" data-action="click->file-input#triggerFileSelection">
+      Choose Files
+    </button>
+
+    <%# Placeholder to display selected file(s) populated by app/javascript/controllers/file_input_controller.js %>
+    <div data-file-input-target="list" class="mt-2"></div>
   </div>
 <% end %>

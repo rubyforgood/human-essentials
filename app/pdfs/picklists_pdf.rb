@@ -1,3 +1,5 @@
+require "prawn/table"
+
 # Configures a Prawn PDF template for generating Distribution manifests
 class PicklistsPdf
   include Prawn::View
@@ -74,6 +76,16 @@ class PicklistsPdf
           font_size 10
         end
 
+        # Add quota information only if quota is set and greater than 0
+        quota = request.partner.quota
+        if quota && quota > 0
+          move_down 5
+          text "Quota:", style: :bold, align: :right
+          font_size 12
+          text quota.to_s, align: :right
+          font_size 10
+        end
+
         move_down 10
         text "Comments:", style: :bold
         font_size 12
@@ -145,7 +157,7 @@ class PicklistsPdf
     data + line_items.map do |line_item|
       [line_item.name,
         line_item.quantity,
-        line_item.request_unit&.capitalize&.pluralize(line_item.quantity),
+        line_item.request_unit&.pluralize(line_item.quantity),
         "[  ]",
         ""]
     end

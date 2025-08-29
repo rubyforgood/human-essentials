@@ -24,7 +24,9 @@
                 <% user.roles.each do |role| %>
                   <tr>
                     <td><%= role.title %></td>
-                    <td><%= role.resource.name %> (id: <%= role.resource.id %>)</td>
+                    <td>
+                      <%= role.resource&.name || "Super Admin" %> <%= role.resource&.id ? "(id: #{role.resource&.id})" : "" %>
+                    </td>
                     <td class="text-right">
                       <%= delete_button_to admin_user_remove_role_path(user, role_id: role.id),
                                            confirm: "Are you sure you want to remove this role?" %>
@@ -40,7 +42,7 @@
                 <div class="form-group">
                   <label>Type</label>
                   <div class="input-group">
-                    <%= select_tag :resource_type, options_for_select(@resources),
+                    <%= select_tag :resource_type, options_for_select(Role::TITLES.invert),
                                      class: 'select form-control',
                                      data: { 'double-select-target': 'source',
                                              'action': 'double-select#sourceChanged'

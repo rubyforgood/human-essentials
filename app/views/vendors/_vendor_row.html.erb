@@ -7,5 +7,20 @@
   <td class="text-center">
     <%= view_button_to vendor_row %>
     <%= edit_button_to edit_vendor_path(vendor_row) %>
+    <% if vendor_row.active? %>
+      <% if vendor_row&.purchases&.none? %>
+        <%= delete_button_to vendor_path(vendor_row),
+                          text: 'Delete',
+                          confirm: confirm_delete_msg(vendor_row.business_name) %>
+      <% else %>
+        <%= deactivate_button_to deactivate_vendor_path(vendor_row),
+                              text: 'Deactivate',
+                              confirm: confirm_deactivate_msg(vendor_row.business_name) %>
+      <% end %>
+    <% else %>
+      <%= reactivate_button_to reactivate_vendor_path(vendor_row),
+                             text: 'Reactivate',
+                             confirm: confirm_reactivate_msg(vendor_row.business_name) %>
+    <% end %>
   </td>
 </tr>
