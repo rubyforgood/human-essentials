@@ -17,9 +17,9 @@ class OrganizationsController < ApplicationController
 
   def update
     @organization = current_organization
-
+    @organization.reminder_schedule.assign_attributes(reminder_schedule_params)
     if OrganizationUpdateService.update(@organization, organization_params)
-      redirect_back(fallback_location: organization_path, notice: "Updated your organization!")
+      redirect_to organization_path, notice: "Updated your organization!"
     else
       flash.now[:error] = @organization.errors.full_messages.join("\n")
       render :edit
@@ -95,7 +95,7 @@ class OrganizationsController < ApplicationController
       :name, :street, :city, :state,
       :zipcode, :email, :url, :logo, :intake_location,
       :default_storage_location, :default_email_text, :reminder_email_text,
-      :invitation_text, :reminder_day, :deadline_day,
+      :invitation_text, :reminder_schedule_definition, :deadline_day,
       :repackage_essentials, :distribute_monthly,
       :ndbn_member_id, :enable_child_based_requests,
       :enable_individual_requests, :enable_quantity_based_requests,
@@ -107,6 +107,10 @@ class OrganizationsController < ApplicationController
       partner_form_fields: [],
       request_unit_names: []
     )
+  end
+
+  def reminder_schedule_params
+    params.require(:organization).fetch(:reminder_schedule_service, {}).permit([*ReminderScheduleService::REMINDER_SCHEDULE_FIELDS])
   end
 
   def request_type_formatter(params)

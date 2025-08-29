@@ -30,9 +30,9 @@ class Admin::OrganizationsController < AdminController
   end
 
   def create
-    @organization = Organization.new(organization_params)
     @user = User.new(user_params)
-
+    @organization = Organization.new(organization_params)
+    @organization.reminder_schedule.assign_attributes(reminder_schedule_params)
     if @organization.save
       Organization.seed_items(@organization)
       UserInviteService.invite(name: user_params[:name],
@@ -71,8 +71,13 @@ class Admin::OrganizationsController < AdminController
 
   def organization_params
     params.require(:organization)
-          .permit(:name, :street, :city, :state, :zipcode, :email, :url, :logo, :intake_location, :default_email_text, :account_request_id, :reminder_day, :deadline_day, :bank_is_set_up,
+          .permit(:name, :street, :city, :state, :zipcode, :email, :url, :logo, :intake_location, :default_email_text, :account_request_id, :bank_is_set_up,
+                  :reminder_schedule_definition, :deadline_day,
                   users_attributes: %i(name email organization_admin), account_request_attributes: %i(ndbn_member_id id))
+  end
+
+  def reminder_schedule_params
+    params.require(:organization).fetch(:reminder_schedule_service, {}).permit([*ReminderScheduleService::REMINDER_SCHEDULE_FIELDS])
   end
 
   def user_params
