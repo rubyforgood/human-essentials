@@ -245,7 +245,7 @@ RSpec.describe "Admin::UsersController", type: :request do
       it "Should sort display resource in human alphabetical order" do
         get "/admin/users/resource_ids?resource_type=org_admin"
         puts response.body
-        expect(response.body).to match(/{\"results\":\[{\"id\":\d+,\"text\":\"Org ABC\"},{\"id\":\d+,\"text\":\"Pawnee\"},{\"id\":\d+,\"text\":\"Second City\"},{\"id\":\d+,\"text\":\"SF Diaper\"}]}/)
+        expect(response.body).to match(/{"results":\[{"id":\d+,"text":"Org ABC"},{"id":\d+,"text":"Pawnee"},{"id":\d+,"text":"Second City"},{"id":\d+,"text":"SF Diaper"}]}/)
       end
     end
   end
