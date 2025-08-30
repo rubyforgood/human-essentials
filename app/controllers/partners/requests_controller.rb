@@ -1,5 +1,6 @@
 module Partners
   class RequestsController < BaseController
+    include Validatable
     skip_before_action :require_partner, only: [:new, :create, :validate]
     before_action :require_partner_or_org_admin, only: [:new, :create, :validate]
     layout :layout
@@ -47,7 +48,7 @@ module Partners
 
         Rails.logger.info("[Request Creation Failure] partner_user_id=#{current_user.id} reason=#{@errors.full_messages}")
 
-        render :new, status: :unprocessable_entity
+        render :new, status: :unprocessable_content
       end
     end
 

@@ -106,7 +106,6 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
       org_params = attributes_for(:organization)
       within "form#new_organization" do
         fill_in "organization_name", with: org_params[:name]
-        fill_in "organization_short_name", with: org_params[:short_name]
         fill_in "organization_url", with: org_params[:url]
         fill_in "organization_email", with: org_params[:email]
         fill_in "organization_street", with: "1500 Remount Road"
@@ -117,15 +116,17 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
         fill_in "organization_user_name", with: admin_user_params[:name]
         fill_in "organization_user_email", with: admin_user_params[:email]
 
+        choose 'Day of Month'
+        fill_in "organization_reminder_schedule_service_day_of_month", with: 1
+
         click_on "Save"
       end
 
       expect(page).to have_content("All Human Essentials Organizations")
 
-      within("tr.#{org_params[:short_name]}") do
+      within(find("td", text: org_params[:name]).sibling(".text-right")) do
         first(:link, "View").click
       end
-
       expect(page).to have_content(org_params[:name])
       expect(page).to have_content("Remount")
       expect(page).to have_content("Front Royal")
@@ -140,7 +141,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
     it "can view organization details", :aggregate_failures do
       visit admin_organizations_path
 
-      within("tr.#{bar_org.short_name}") do
+      within(find("td", text: bar_org.name).sibling(".text-right")) do
         first(:link, "View").click
       end
 
@@ -148,10 +149,28 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
       expect(page).to have_link("Home", href: admin_dashboard_path)
 
       expect(page).to have_content("Organization Info")
-      expect(page).to have_content("Contact Info")
-      expect(page).to have_content("Default email text")
+      expect(page).to have_content("Address")
+      expect(page).to have_content("Distribution email content")
       expect(page).to have_content("Users")
-      expect(page).to have_content("Receive email when partner makes a request")
+      expect(page).to have_content("Receive email when Partner makes a Request?")
+    end
+
+    describe "can create an organization with deadline and reminder" do
+      before do
+        visit new_admin_organization_path
+        within "form#new_organization" do
+          fill_in "organization_name", with: "aaa" # So the new org will be on the first page
+        end
+      end
+
+      def post_form_submit
+        expect(page.find(".alert")).to have_content "Organization added!"
+        within(find("td", text: "aaa").sibling(".text-right")) do
+          first(:link, "View").click
+        end
+      end
+
+      it_behaves_like "deadline and reminder form", "organization", "Save", :post_form_submit
     end
   end
 end

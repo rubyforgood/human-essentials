@@ -9,227 +9,261 @@
           </div>
 
           <div class="card-body md:flex sm:block">
-            <div class="col-lg-4">
-              <div class="mb-4">
-                <h3 class="font-bold">Name</h3>
-                <p><%= current_organization&.name %></p>
-              </div>
-              <div class="mb-4">
-                <h3 class='font-bold'>Short Name</h3>
-                <p>
-                  <%= @organization.short_name || "Not Provided" %>
-                </p>
-              </div>
-              <div class="mb-4">
-                <h3 class='font-bold'>NDBN Membership ID</h3>
-                <p>
-                  <%= @organization.ndbn_member&.full_name || "Not Provided" %>
-                </p>
-              </div>
-              <div class="mb-4">
-                <h3 class='font-bold'>URL</h3>
-                <p>
-                  <% if @organization.url.blank? %>
-                    Not Provided
-                  <% else %>
-                    <a href="<%= @organization.url %>">
-                      <%= fa_icon "external-link" %>
-                      <%= @organization.url %></a>
-                  <% end %>
-                </p>
-              </div>
-              <div class="mb-4">
-                <h3 class='font-bold'>Email</h3>
-                <p>
-                  <%= fa_icon "envelope" %>
-                  <% if @organization.email.blank? %>
-                    Not Provided
-                  <% else %>
-                    <%= link_to @organization.email, "mailto:#{@organization.email}",
-                                aria: { label: "Email organization - opens in new tab" } %>
-                  <% end %>
-                </p>
-              </div>
-              <div class="mb-4">
-                <p>
-                <h3 class='font-bold'>Contact Info</h3>
-                <address class="mb-0"><%= fa_icon "map-marker" %>
+            <h4>Basic information</h4>
+            <div>
+              <h6 class="font-weight-bold">Name</h6>
+              <p><%= current_organization&.name %></p>
+            </div>
+            <div>
+              <h6 class="font-weight-bold">NDBN membership ID</h6>
+              <p>
+                <%= @organization.ndbn_member&.full_name || "Not defined" %>
+              </p>
+            </div>
+            <div>
+            <h6 class="font-weight-bold">URL</h6>
+              <p>
+                <% if @organization.url.blank? %>
+                  Not defined
+                <% else %>
+                  <a href="<%= @organization.url %>">
+                    <%= fa_icon "external-link" %>
+                    <%= @organization.url %></a>
+                <% end %>
+              </p>
+            </div>
+            <div>
+              <h6 class="font-weight-bold">Email</h6>
+              <p>
+                <%= fa_icon "envelope" %>
+                <% if @organization.email.blank? %>
+                  Not defined
+                <% else %>
+                  <%= link_to @organization.email, "mailto:#{@organization.email}",
+                              aria: { label: "Email organization - opens in new tab" } %>
+                <% end %>
+              </p>
+            </div>
+            <div>
+              <h6 class="font-weight-bold">Address</h6>
+              <address class="mb-0"><%= fa_icon "map-marker" %>
                 <% if @organization.address.blank? %>
-                    Not provided
+                    Not defined
                 <% else %>
                     <%= @organization.address %>
-                  </address>
-                <% end %>
-                </p>
-              </div>
-              <div class="mb-4">
-                <h3 class='font-bold'>Reminder day</h3>
-                <p>
-                  <%= fa_icon "calendar" %>
-                  <%= @organization.reminder_day.blank? ? 'Not defined' : "The #{@organization.reminder_day.ordinalize} of each month" %>
-                </p>
-              </div>
-              <div class="mb-4">
-                <h3 class='font-bold'>Deadline day</h3>
-                <p>
-                  <%= fa_icon "calendar" %>
-                  <%= @organization.deadline_day.blank? ? 'Not defined' : "The #{@organization.deadline_day.ordinalize} of each month" %>
-                </p>
-              </div>
-              <div class="mb-4">
-                <h3 class='font-bold'>Additional text for reminder email</h3>
-                <p>
-                  <%= @organization.reminder_email_text.presence || 'Not defined' %>
-                </p>
-              </div>
-              <div class="mb-4">
-                <h3 class='font-bold'>Default Intake Location</h3>
-                <p>
-                  <%= fa_icon "building" %>
-                  <%= @intake_storage_location&.name || "Not defined" %>
-                </p>
-              </div>
-              <div class="mb-4">
-                <h3 class='font-bold'>Partner Profile Sections</h3>
-                  <% if @organization.partner_form_fields.blank? %>
-                    <p>Not Provided</p>
-                  <% else %>
-                    <ul>
-                      <% for partner_form_field in @organization.partner_form_fields %>
-                        <li>
-                          <%= display_partner_fields_value(partner_form_field) %>
-                        </li>
-                      <% end %>
-                    </ul>
-                  <% end %>
-                </p>
-              </div>
-              <div class="mb-4">
-                <h3 class='font-bold'>Default Storage Location</h3>
-                <p>
-                  <%= fa_icon "building-o" %>
-                  <%= @default_storage_location&.name || "Not defined" %>
-                </p>
-              </div>
-              <div class="mb-4">
-                <h3 class='font-bold'>Custom Partner Invitation Message</h3>
-                <p>
-                  <%= @organization.invitation_text.blank? ? "Not defined" : @organization.invitation_text %>
-                </p>
-              </div>
-              <div class="mb-4">
-                <h3 class='font-bold'>Repackage Essentials?</h3>
-                <p>
-                  <%= fa_icon "inbox" %>
-                  <%= humanize_boolean(@organization.repackage_essentials) %>
-                </p>
-              </div>
-              <div class="mb-4">
-                <h3 class='font-bold'>Distribute Monthly?</h3>
-                <p>
-                  <%= fa_icon "paper-plane" %>
-                  <%= humanize_boolean(@organization.distribute_monthly) %>
-                </p>
-              </div>
-              <% if Flipper.enabled?(:enable_packs) %>
-                <div class="mb-4">
-                  <h3 class='font-bold'>Custom Request Units</h3>
-                  <p>
-                    <% if @organization.request_units.length > 0 %>
-                      <% @organization.request_units.map do |unit| %>
-                        <%= fa_icon "angle-right" %>
-                        <span>
-                            <%= unit.name.titlecase %>
-                        </span> <br>
-                      <% end %>
-                    <% else %>
-                      <%= fa_icon "angle-right" %>
-                      <span> None </span>
-                    <% end %>
-                  </p>
-                </div>
+                </address>
               <% end %>
-              <div class="mb-4">
-                <h3 class='font-bold'>Child Based Requests?</h3>
-                <p>
-                  <%= fa_icon "child" %>
-                  <%= humanize_boolean(@organization.enable_child_based_requests) %>
-                </p>
-              </div>
-              <div class="mb-4">
-                <h3 class='font-bold'>Individual Requests?</h3>
-                <p>
-                  <%= fa_icon "female" %>
-                  <%= humanize_boolean(@organization.enable_individual_requests) %>
-                </p>
-              </div>
-              <div class="mb-4">
-                <h3 class='font-bold'>Quantity Based Requests?</h3>
-                <p>
-                  <%= fa_icon "group" %>
-                  <%= humanize_boolean(@organization.enable_quantity_based_requests) %>
-                </p>
-              </div>
-              <div class="mb-4">
-                <h3 class='font-bold'>Show Year-to-date values on distribution printout?</h3>
-                <p>
-                  <%= humanize_boolean(@organization.ytd_on_distribution_printout) %>
-                </p>
-              </div>
-              <div class="mb-4">
-                <h3 class="font-bold">Include Signature Lines on Distribution Printout?</h3>
-                <p>
-                  <%= humanize_boolean(@organization.signature_for_distribution_pdf) %>
-                </p>
-              </div>
-              <div class="mb-4">
-                <h3 class='font-bold'>Use One step Partner invite and approve process?</h3>
-                <p>
-                  <%= humanize_boolean(@organization.one_step_partner_invite) %>
-                </p>
-              </div>
-              <div class="mb-4">
-                <h3 class='font-bold'>Hide value columns on receipt:</h3>
-                <p>
-                  <%= humanize_boolean(@organization.hide_value_columns_on_receipt) %>
-                </p>
-              </div>
-              <div class="mb-4">
-                <h3 class='font-bold'>Hide package column on receipt:</h3>
-                <p>
-                  <%= humanize_boolean(@organization.hide_package_column_on_receipt) %>
-                </p>
-              </div>
-              <div class="mb-4">
-                <h3 class='font-bold'>Receive email when partner makes a request:</h3>
-                <p>
-                  <%= humanize_boolean(@organization.receive_email_on_requests) %>
-                </p>
-              </div>
-              <% if @organization.logo.attached? %>
-                    <div class="mb-4">
-                    <h3 class='font-bold'>Logo</h3>
-                      <p>
-                        <%= image_tag @organization.logo, class: "main_logo" %>
-                      </p>
-                      <p>
-                        <a href="#showTheLogo" class="btn btn-xs btn-info" data-bs-toggle="modal">
-                          View Original
-                        </a>
-                      </p>
-                      <div id="showTheLogo" class="modal fade">
-                        <div class="modal-dialog">
-                          <%= image_tag @organization.logo, class: "thumbnail" %>
-                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        </div>
-                      </div>
-                    </div>
-                  <% end %>
+              </p>
             </div>
-            <div class="col-lg-8">
-              <h3 class='font-bold'>Default email text:</h3>
+            <div>
+              <h6 class="font-weight-bold">Logo</h6>
+              <% if @organization.logo.attached? %>
+                <div>
+                  <p>
+                    <%= image_tag @organization.logo, class: "main_logo" %>
+                  </p>
+                  <p>
+                    <a href="#showTheLogo" class="btn btn-xs btn-info" data-bs-toggle="modal">
+                      View Original
+                    </a>
+                  </p>
+                  <div id="showTheLogo" class="modal fade">
+                    <div class="modal-dialog gap-2">
+                      <%= image_tag @organization.logo, class: "thumbnail" %>
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              <% else %>
+                <p>Not defined</p>
+              <% end %>
+            </div>
+            <hr>
+
+            <h4>Storage</h4>
+            <div>
+              <h6 class="font-weight-bold">Default intake Storage Location (for Donations and Purchases)</h6>
               <p>
+                <%= fa_icon "building" %>
+                <%= @intake_storage_location&.name || "Not defined" %>
+              </p>
+            </div>
+            <div>
+              <h6 class="font-weight-bold">Default Storage Location</h6>
+              <p>
+                <%= fa_icon "building-o" %>
+                <%= @default_storage_location&.name || "Not defined" %>
+              </p>
+            </div>
+            <hr>
+
+            <h4>Partner approval process</h4>
+            <div>
+              <h6 class="font-weight-bold">Use one-step Partner invite and approve process?</h6>
+              <p>
+                <%= humanize_boolean(@organization.one_step_partner_invite) %>
+              </p>
+            </div>
+            <div>
+              <h6 class="font-weight-bold">Custom Partner invitation message</h6>
+              <p>
+                <%= @organization.invitation_text.blank? ? "Not defined" : @organization.invitation_text %>
+              </p>
+            </div>
+            <div>
+              <h6 class="font-weight-bold">Partner Profile sections</h6>
+                <% if @organization.partner_form_fields.blank? %>
+                  <p>Not defined</p>
+                <% else %>
+                  <ul>
+                    <% for partner_form_field in @organization.partner_form_fields %>
+                      <li>
+                        <%= display_partner_fields_value(partner_form_field) %>
+                      </li>
+                    <% end %>
+                  </ul>
+                <% end %>
+              </p>
+            </div>
+            <hr>
+
+            <h4>What kind of Requests can approved Partners make?</h4>
+            <div>
+              <h6 class="font-weight-bold">Enable Partners to make child-based Requests?</h6>
+              <p>
+                <%= fa_icon "child" %>
+                <%= humanize_boolean(@organization.enable_child_based_requests) %>
+              </p>
+            </div>
+            <div>
+              <h6 class="font-weight-bold">Enable Partners to make Requests by indicating number of individuals needing each Item?</h6>
+              <p>
+                <%= fa_icon "female" %>
+                <%= humanize_boolean(@organization.enable_individual_requests) %>
+              </p>
+            </div>
+            <div>
+              <h6 class="font-weight-bold">Enable Partners to make quantity-based Requests?</h6>
+              <p>
+                <%= fa_icon "group" %>
+                <%= humanize_boolean(@organization.enable_quantity_based_requests) %>
+              </p>
+            </div>
+            <% if Flipper.enabled?(:enable_packs) %>
+              <div>
+                <h6 class="font-weight-bold">Custom Request units used (please use singular form -- e.g. pack, not packs)</h6>
+                <p>
+                  <% if @organization.request_units.length > 0 %>
+                    <% @organization.request_units.map do |unit| %>
+                      <%= fa_icon "angle-right" %>
+                      <span>
+                          <%= unit.name.titlecase %>
+                      </span> <br>
+                    <% end %>
+                  <% else %>
+                    <%= fa_icon "angle-right" %>
+                    <span> None </span>
+                  <% end %>
+                </p>
+              </div>
+            <% end %>
+            <hr>
+
+            <h4>Other emails</h4>
+            <div>
+              <h6 class="font-weight-bold">Reminder emails are sent</h6>
+              <p>
+                <%= fa_icon "calendar" %>
+                <%= @organization.reminder_schedule&.show_description.blank? ? 'Not defined' : @organization.reminder_schedule&.show_description %>
+                <% if @organization.reminder_schedule.valid? %>
+                  <small class="mb-3 d-block text-muted">
+                    <%= "Your next reminder date is #{@organization.reminder_schedule.next_occurrence&.strftime('%a %b %d %Y')}." %>
+                  </small>
+                <% end %>
+              </p>
+            </div>
+            <div>
+              <h6 class="font-weight-bold">Deadline day in reminder email</h6>
+              <p>
+                <%= fa_icon "calendar" %>
+                <%= @organization.deadline_day.blank? ? 'Not defined' : "The #{@organization.deadline_day.ordinalize} after the reminder." %>
+                <small class="mb-3 d-block text-muted">
+                  <% if @organization.deadline_day && @organization.reminder_schedule.valid? %>
+                    <%= "The deadline on your next reminder email will be #{DeadlineService.new(
+                      deadline_day: @organization.deadline_day,
+                      today: @organization.reminder_schedule.next_occurrence).next_deadline&.strftime('%a %b %d %Y')}." %>
+                  <% end %>
+                </small>
+              </p>
+            </div>
+            <div>
+              <h6 class="font-weight-bold">Additional text for reminder email</h6>
+              <div class="border rounded p-2 mb-3">
+                <%= @organization.reminder_email_text.presence || 'Not defined' %>
+              </div>
+            </div>
+            <div>
+              <h6 class="font-weight-bold">Distribution email content</h6>
+              <div class="border rounded p-2 mb-3">
                 <%= @organization.default_email_text.presence || 'Not defined' %>
+              </div>
+            </div>
+            <div class="mb-4">
+              <h6 class="font-weight-bold">Receive email when Partner makes a Request?</h6>
+              <p>
+                <%= humanize_boolean(@organization.receive_email_on_requests) %>
+              </p>
+            </div>
+            <hr>
+
+            <h4>Printing</h4>
+            <div>
+              <h6 class="font-weight-bold">Show year-to-date values on Distribution printout?</h6>
+              <p>
+                <%= humanize_boolean(@organization.ytd_on_distribution_printout) %>
+              </p>
+            </div>
+            <div>
+              <h6 class="font-weight-bold">Include signature lines on Distribution printout?</h6>
+              <p>
+                <%= humanize_boolean(@organization.signature_for_distribution_pdf) %>
+              </p>
+            </div>
+            <div>
+              <h6 class="font-weight-bold">Hide value columns on Distribution and Donation printout?</h6>
+              <p>
+                <%= humanize_boolean(@organization.hide_value_columns_on_receipt) %>
+              </p>
+            </div>
+            <div>
+              <h6 class="font-weight-bold">Hide package column on Distribution printout?</h6>
+              <p>
+                <%= humanize_boolean(@organization.hide_package_column_on_receipt) %>
+              </p>
+            </div>
+            <hr>
+
+            <h4>Exports</h4>
+            <div>
+              <h6 class='font-weight-bold'>Include in-kind value in donation and distribution exports:</h6>
+              <p>
+                <%= humanize_boolean(@organization.include_in_kind_values_in_exported_files) %>
+              </p>
+            </div>
+
+            <h4>Annual Survey</h4>
+            <div>
+              <h6 class="font-weight-bold">Does your Bank repackage essentials?</h6>
+              <p>
+                <%= fa_icon "inbox" %>
+                <%= humanize_boolean(@organization.repackage_essentials) %>
+              </p>
+            </div>
+            <div>
+              <h6 class="font-weight-bold">Does your Bank distribute monthly?</h6>
+              <p>
+                <%= fa_icon "paper-plane" %>
+                <%= humanize_boolean(@organization.distribute_monthly) %>
               </p>
             </div>
           </div>

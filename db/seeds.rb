@@ -23,31 +23,29 @@ end
 # Base Items
 # ----------------------------------------------------------------------------
 
-require 'seeds'
+require "seeds"
 Seeds.seed_base_items
 
 # ----------------------------------------------------------------------------
 # NDBN Members
 # ----------------------------------------------------------------------------
-seed_file = File.open(Rails.root.join("spec", "fixtures", "ndbn-small-import.csv"))
+seed_file = Rails.root.join("spec", "fixtures", "ndbn-small-import.csv").open
 SyncNDBNMembers.upload(seed_file)
 
 # ----------------------------------------------------------------------------
 # Organizations
 # ----------------------------------------------------------------------------
 
-pdx_org = Organization.find_or_create_by!(short_name: "diaper_bank") do |organization|
-  organization.name = "Pawnee Diaper Bank"
+pdx_org = Organization.find_or_create_by!(name: "Pawnee Diaper Bank") do |organization|
   organization.street = "P.O. Box 22613"
   organization.city = "Pawnee"
-  organization.state = "Indiana"
+  organization.state = "IN"
   organization.zipcode = "12345"
   organization.email = "info@pawneediaper.org"
 end
 Organization.seed_items(pdx_org)
 
-sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization|
-  organization.name = "SF Diaper Bank"
+sf_org = Organization.find_or_create_by!(name: "SF Diaper Bank") do |organization|
   organization.street = "P.O. Box 12345"
   organization.city = "San Francisco"
   organization.state = "CA"
@@ -56,8 +54,7 @@ sf_org = Organization.find_or_create_by!(short_name: "sf_bank") do |organization
 end
 Organization.seed_items(sf_org)
 
-sc_org = Organization.find_or_create_by!(short_name: "sc_bank") do |organization|
-  organization.name = "Second City Essentials Bank"
+sc_org = Organization.find_or_create_by!(name: "Second City Essentials Bank") do |organization|
   organization.street = Faker::Address.street_address
   organization.city = Faker::Address.city
   organization.state = Faker::Address.state_abbr
@@ -131,7 +128,7 @@ Organization.all.find_each do |org|
 end
 
 # ----------------------------------------------------------------------------
-# Item < - > ItemCategory
+# Item <-> ItemCategory
 # ----------------------------------------------------------------------------
 
 Organization.all.find_each do |org|
@@ -154,10 +151,8 @@ Organization.all.find_each do |org|
   org.item_categories.sample(total_item_categories_to_add).each do |item_category|
     partner_group_one.item_categories << item_category
   end
-
-  next unless org.name == pdx_org.name
-
-  partner_group_two = FactoryBot.create(:partner_group, organization: org)
+  next unless org.name== pdx_org.name
+  partner_group_two=FactoryBot.create(:partner_group, organization: org)
   org.item_categories.each do |item_category|
     partner_group_two.item_categories << item_category
   end
@@ -284,27 +279,139 @@ note = [
     end
   end
 
-  Partners::Profile.create!({
+  # Base profile information all partners should have
+  # Includes fields in the agency_information, executive_director, and pick_up_person partial
+  # The counties and areas served by the partner are handled elsewere
+  profile = Partners::Profile.create!({
     essentials_bank_id: p.organization_id,
     partner_id: p.id,
     address1: Faker::Address.street_address,
-    address2: "",
+    address2: Faker::Address.street_address,
     city: Faker::Address.city,
-    state: Faker::Address.state_abbr,
-    zip_code: Faker::Address.zip,
-    website: Faker::Internet.domain_name,
-    zips_served: Faker::Address.zip,
-    executive_director_name: Faker::Name.name,
     executive_director_email: p.email,
+    executive_director_name: Faker::Name.name,
     executive_director_phone: Faker::PhoneNumber.phone_number,
-    primary_contact_name: Faker::Name.name,
-    primary_contact_email: Faker::Internet.email,
-    primary_contact_phone: Faker::PhoneNumber.phone_number,
-    primary_contact_mobile: Faker::PhoneNumber.phone_number,
-    pick_up_name: Faker::Name.name,
     pick_up_email: Faker::Internet.email,
-    pick_up_phone: Faker::PhoneNumber.phone_number
+    pick_up_name: Faker::Name.name,
+    pick_up_phone: Faker::PhoneNumber.phone_number,
+    primary_contact_email: Faker::Internet.email,
+    primary_contact_mobile: Faker::PhoneNumber.phone_number,
+    primary_contact_name: Faker::Name.name,
+    primary_contact_phone: Faker::PhoneNumber.phone_number,
+    state: Faker::Address.state_abbr,
+    website: Faker::Internet.domain_name,
+    zip_code: Faker::Address.zip,
+    zips_served: Faker::Address.zip,
   })
+
+  # Optional information that only established partners (ready for approval, approved or require_recertification)
+  # would have
+  # Also only add information that corresponds to the partner_form_fields the org has chosen
+  if [ "awaiting_review", "approved", "recertification_required" ].include? p.status
+    agency_type = Partners::Profile::agency_types.values.sample
+    # The agency_information and partner_settings partials are always shown
+    profile.update(
+      agency_mission: Faker::Lorem.paragraph(sentence_count: 2),
+      agency_type: agency_type,
+      enable_child_based_requests: true,
+      enable_individual_requests: true,
+      enable_quantity_based_requests: true,
+      name: p.name,
+      other_agency_type: (agency_type == "OTHER") ? Faker::Lorem.word : nil,
+      program_address1: Faker::Address.street_address,
+      program_address2: Faker::Address.street_address,
+      program_city: Faker::Address.city,
+      program_state: Faker::Address.state_abbr,
+      program_zip_code: Faker::Address.zip,
+    )
+
+    if p.partials_to_show.include? "media_information"
+      profile.update(
+        facebook: Faker::Internet.url(host: 'facebook.com'),
+        instagram: Faker::Internet.url(host: 'instagram.com'),
+        no_social_media_presence: false,
+        twitter: Faker::Internet.url(host: 'twitter.com'),
+      )
+    end
+
+    if p.partials_to_show.include? "agency_stability"
+      founded_year = Faker::Date.between(from: 50.years.ago, to: Date.today).year
+      profile.update(
+        case_management: true,
+        currently_provide_diapers: true,
+        essentials_use: Faker::Lorem.paragraph(sentence_count: 2),
+        evidence_based: true,
+        form_990: true,
+        founded: founded_year,
+        program_age: Date.today.year - founded_year,
+        program_description: Faker::Lorem.paragraph(sentence_count: 2),
+        program_name: Faker::Company.name,
+        receives_essentials_from_other: Faker::Lorem.sentence,
+      )
+    end
+  
+    if p.partials_to_show.include? "organizational_capacity"
+      profile.update(
+        client_capacity: Faker::Lorem.sentence,
+        describe_storage_space: Faker::Lorem.paragraph(sentence_count: 2),
+        storage_space: true,
+      )
+    end
+
+    if p.partials_to_show.include? "sources_of_funding"
+      profile.update(
+        essentials_budget: Faker::Lorem.sentence,
+        essentials_funding_source: Faker::Lorem.sentence,
+        sources_of_diapers: Faker::Lorem.sentence,
+        sources_of_funding: Faker::Lorem.sentence,
+      )
+    end
+
+    if p.partials_to_show.include? "population_served"
+
+      def calculate_array_of_percentages( num_entries )
+        percentages = []
+        remaining_percentage = 100
+        share_ceiling = 100 / num_entries
+        (num_entries - 1).times do
+          percentage = Faker::Number.within(range: 1..share_ceiling)
+          remaining_percentage -= percentage
+          percentages.append( percentage )
+        end
+        percentages.append( remaining_percentage )
+        return percentages
+      end
+
+      pop_percentages = calculate_array_of_percentages(8) # 8 population fields
+      poverty_percentages = calculate_array_of_percentages(4) # 4 poverty fields
+
+      profile.update(
+        above_1_2_times_fpl: poverty_percentages[0],
+        at_fpl_or_below: poverty_percentages[1],
+        greater_2_times_fpl: poverty_percentages[2],
+        income_requirement_desc: true,
+        income_verification: true,
+        population_american_indian: pop_percentages[0],
+        population_asian: pop_percentages[1],
+        population_black: pop_percentages[2],
+        population_hispanic: pop_percentages[3],
+        population_island: pop_percentages[4],
+        population_multi_racial: pop_percentages[5],
+        population_other: pop_percentages[6],
+        population_white: pop_percentages[7],
+        poverty_unknown: poverty_percentages[3],
+        zips_served: Faker::Address.zip_code,
+      )
+    end
+
+    if p.partials_to_show.include? "agency_distribution_information"
+      profile.update(
+        distribution_times: Faker::Lorem.sentence,
+        more_docs_required: Faker::Lorem.sentence,
+        new_client_times: Faker::Lorem.sentence,
+      )
+    end
+  end
 
   user = ::User.create!(
     name: Faker::Name.name,
@@ -619,7 +726,7 @@ def seed_quantity(item_name, organization, storage_location, quantity)
   AdjustmentCreateService.new(adjustment).call
 end
 
-JSON.parse(File.read(Rails.root.join("db", "base_items.json"))).each do |_category, entries|
+JSON.parse(Rails.root.join("db", "base_items.json").read).each do |_category, entries|
   entries.each do |entry|
     seed_quantity(entry["name"], pdx_org, inv_arbor, entry["qty"]["arbor"])
     seed_quantity(entry["name"], pdx_org, inv_pdxdb, entry["qty"]["pdxdb"])
@@ -649,6 +756,110 @@ end
     barcode.item = pdx_org.items.find_by(name: item[:name])
     barcode.quantity = item[:quantity]
     barcode.organization = pdx_org
+  end
+end
+
+# ----------------------------------------------------------------------------
+# Kits
+# ----------------------------------------------------------------------------
+
+complete_orgs.each do |org|
+  # Create comprehensive kits representing each NDBN category
+
+  # Diaper Care Kit - covering multiple diaper categories
+  diaper_kit_params = {
+    name: "Diaper Care Kit",
+    line_items_attributes: [
+      {item_id: org.items.find_by(name: "Kids (Size 1)").id, quantity: 50},
+      {item_id: org.items.find_by(name: "Kids (Size 2)").id, quantity: 50},
+      {item_id: org.items.find_by(name: "Kids (Size 3)").id, quantity: 50},
+      {item_id: org.items.find_by(name: "Wipes (Baby)").id, quantity: 10},
+      {item_id: org.items.find_by(name: "Diaper Rash Cream/Powder").id, quantity: 2}
+    ].compact_blank
+  }
+
+  if diaper_kit_params[:line_items_attributes].any?
+    diaper_kit_service = KitCreateService.new(organization_id: org.id, kit_params: diaper_kit_params)
+    diaper_kit_service.call
+  end
+
+  # Menstrual Care Kit
+  menstrual_kit_params = {
+    name: "Menstrual Care Kit",
+    line_items_attributes: [
+      {item_id: org.items.find_by(name: "Pads").id, quantity: 20},
+      {item_id: org.items.find_by(name: "Tampons").id, quantity: 20},
+      {item_id: org.items.find_by(name: "Liners (Menstrual)").id, quantity: 15}
+    ].compact_blank
+  }
+
+  if menstrual_kit_params[:line_items_attributes].any?
+    menstrual_kit_service = KitCreateService.new(organization_id: org.id, kit_params: menstrual_kit_params)
+    menstrual_kit_service.call
+  end
+
+  # Adult Incontinence Kit
+  adult_kit_params = {
+    name: "Adult Incontinence Kit",
+    line_items_attributes: [
+      {item_id: org.items.find_by(name: "Adult Briefs (Large/X-Large)").id, quantity: 30},
+      {item_id: org.items.find_by(name: "Adult Incontinence Pads").id, quantity: 25},
+      {item_id: org.items.find_by(name: "Wipes (Adult)").id, quantity: 5},
+      {item_id: org.items.find_by(name: "Underpads (Pack)").id, quantity: 5}
+    ].compact_blank
+  }
+
+  if adult_kit_params[:line_items_attributes].any?
+    adult_kit_service = KitCreateService.new(organization_id: org.id, kit_params: adult_kit_params)
+    adult_kit_service.call
+  end
+
+  # Baby Care Essentials Kit - covering miscellaneous category
+  baby_care_kit_params = {
+    name: "Baby Care Essentials Kit",
+    line_items_attributes: [
+      {item_id: org.items.find_by(name: "Bibs (Adult & Child)").id, quantity: 5},
+      {item_id: org.items.find_by(name: "Wipes (Baby)").id, quantity: 8},
+      {item_id: org.items.find_by(name: "Diaper Rash Cream/Powder").id, quantity: 1},
+      {item_id: org.items.find_by(name: "Cloth Diapers (Prefolds & Fitted)").id, quantity: 10}
+    ].compact_blank
+  }
+
+  if baby_care_kit_params[:line_items_attributes].any?
+    baby_care_service = KitCreateService.new(organization_id: org.id, kit_params: baby_care_kit_params)
+    baby_care_service.call
+  end
+
+  # Training Kit - covering training pants category
+  training_kit_params = {
+    name: "Potty Training Kit",
+    line_items_attributes: [
+      {item_id: org.items.find_by(name: "Cloth Potty Training Pants/Underwear").id, quantity: 8},
+      {item_id: org.items.find_by(name: "Kids Pull-Ups (2T-3T)").id, quantity: 20},
+      {item_id: org.items.find_by(name: "Kids Pull-Ups (3T-4T)").id, quantity: 20},
+      {item_id: org.items.find_by(name: "Wipes (Baby)").id, quantity: 5}
+    ].compact_blank
+  }
+
+  if training_kit_params[:line_items_attributes].any?
+    training_kit_service = KitCreateService.new(organization_id: org.id, kit_params: training_kit_params)
+    training_kit_service.call
+  end
+end
+
+# Create kit inventory for storage locations
+complete_orgs.each do |org|
+  org.storage_locations.active.each do |storage_location|
+    org.kits.active.each do |kit|
+      next unless kit.item # Ensure kit has an associated item
+
+      # Create inventory for each kit
+      InventoryItem.create!(
+        storage_location: storage_location,
+        item: kit.item,
+        quantity: Faker::Number.within(range: 10..50)
+      )
+    end
   end
 end
 
@@ -735,6 +946,46 @@ complete_orgs.each do |org|
     end
 
     DistributionCreateService.new(distribution).call
+  end
+
+  # Create some distributions that use kits instead of individual items
+  kit_items = org.items.joins(:kit).where(kits: {active: true})
+  if kit_items.any?
+    5.times do |index|
+      issued_at = dates_generator.next
+      storage_location = org.storage_locations.active.sample
+      kit_item = kit_items.sample
+
+      # Check if there's inventory for this kit
+      kit_inventory_qty = storage_location.item_total(kit_item.id)
+      next if kit_inventory_qty.zero?
+
+      delivery_method = Distribution.delivery_methods.keys.sample
+      shipping_cost = (delivery_method == "shipped") ? rand(20.0..100.0).round(2).to_s : nil
+
+      kit_distribution = Distribution.new(
+        storage_location: storage_location,
+        partner: random_record_for_org(org, Partner),
+        organization: org,
+        issued_at: issued_at,
+        created_at: 3.days.ago(issued_at),
+        delivery_method: delivery_method,
+        shipping_cost: shipping_cost,
+        comment: "Kit distribution"
+      )
+
+      distribution_qty = [rand(1..3), kit_inventory_qty / 2].min
+      if distribution_qty >= 1
+        kit_distribution.line_items.push(
+          LineItem.new(
+            quantity: distribution_qty,
+            item_id: kit_item.id
+          )
+        )
+
+        DistributionCreateService.new(kit_distribution).call
+      end
+    end
   end
 end
 
@@ -828,7 +1079,7 @@ complete_orgs.each do |org|
       amount_spent_on_other_cents: rand(0..5_000)
     )
 
-    purchase.amount_spent_in_cents = amount_items.map { |i| purchase.send("amount_spent_on_#{i}_cents") }.sum
+    purchase.amount_spent_in_cents = amount_items.map { |i| purchase.send(:"amount_spent_on_#{i}_cents") }.sum
 
     rand(1..5).times do
       purchase.line_items.push(
@@ -860,6 +1111,8 @@ Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "read_events")
 Flipper.enable(:read_events)
 Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "partner_step_form")
 Flipper.enable(:partner_step_form)
+Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "enable_packs")
+Flipper.enable(:enable_packs)
 # ----------------------------------------------------------------------------
 # Account Requests
 # ----------------------------------------------------------------------------
@@ -963,7 +1216,7 @@ transfer = Transfer.new(
   organization_id: pdx_org.id,
   from_id: from_id,
   to_id: to_id,
-  line_items: [ LineItem.new(quantity: quantity, item: item) ]
+  line_items: [LineItem.new(quantity: quantity, item: item)]
 )
 TransferCreateService.call(transfer)
 

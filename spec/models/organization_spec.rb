@@ -2,38 +2,40 @@
 #
 # Table name: organizations
 #
-#  id                             :integer          not null, primary key
-#  city                           :string
-#  deadline_day                   :integer
-#  default_storage_location       :integer
-#  distribute_monthly             :boolean          default(FALSE), not null
-#  email                          :string
-#  enable_child_based_requests    :boolean          default(TRUE), not null
-#  enable_individual_requests     :boolean          default(TRUE), not null
-#  enable_quantity_based_requests :boolean          default(TRUE), not null
-#  hide_package_column_on_receipt :boolean          default(FALSE)
-#  hide_value_columns_on_receipt  :boolean          default(FALSE)
-#  intake_location                :integer
-#  invitation_text                :text
-#  latitude                       :float
-#  longitude                      :float
-#  name                           :string
-#  one_step_partner_invite        :boolean          default(FALSE), not null
-#  partner_form_fields            :text             default([]), is an Array
-#  receive_email_on_requests      :boolean          default(FALSE), not null
-#  reminder_day                   :integer
-#  repackage_essentials           :boolean          default(FALSE), not null
-#  short_name                     :string
-#  signature_for_distribution_pdf :boolean          default(FALSE)
-#  state                          :string
-#  street                         :string
-#  url                            :string
-#  ytd_on_distribution_printout   :boolean          default(TRUE), not null
-#  zipcode                        :string
-#  created_at                     :datetime         not null
-#  updated_at                     :datetime         not null
-#  account_request_id             :integer
-#  ndbn_member_id                 :bigint
+#  id                                       :integer          not null, primary key
+#  bank_is_set_up                           :boolean          default(FALSE), not null
+#  city                                     :string
+#  deadline_day                             :integer
+#  default_storage_location                 :integer
+#  distribute_monthly                       :boolean          default(FALSE), not null
+#  email                                    :string
+#  enable_child_based_requests              :boolean          default(TRUE), not null
+#  enable_individual_requests               :boolean          default(TRUE), not null
+#  enable_quantity_based_requests           :boolean          default(TRUE), not null
+#  hide_package_column_on_receipt           :boolean          default(FALSE)
+#  hide_value_columns_on_receipt            :boolean          default(FALSE)
+#  include_in_kind_values_in_exported_files :boolean          default(FALSE), not null
+#  intake_location                          :integer
+#  invitation_text                          :text
+#  latitude                                 :float
+#  longitude                                :float
+#  name                                     :string
+#  one_step_partner_invite                  :boolean          default(FALSE), not null
+#  partner_form_fields                      :text             default([]), is an Array
+#  receive_email_on_requests                :boolean          default(FALSE), not null
+#  reminder_day                             :integer
+#  reminder_schedule_definition             :string
+#  repackage_essentials                     :boolean          default(FALSE), not null
+#  signature_for_distribution_pdf           :boolean          default(FALSE)
+#  state                                    :string
+#  street                                   :string
+#  url                                      :string
+#  ytd_on_distribution_printout             :boolean          default(TRUE), not null
+#  zipcode                                  :string
+#  created_at                               :datetime         not null
+#  updated_at                               :datetime         not null
+#  account_request_id                       :integer
+#  ndbn_member_id                           :bigint
 #
 
 RSpec.describe Organization, type: :model do
@@ -63,11 +65,6 @@ RSpec.describe Organization, type: :model do
       )).to_not be_valid
     end
 
-    it "validates that short names are unique" do
-      expect(create(:organization, short_name: "foo_bar")).to be_valid
-      expect(build(:organization, short_name: "foo_bar")).to_not be_valid
-    end
-
     it "validates that attachment file size is not higher than 1 MB" do
       fixture_path = Rails.root.join('spec', 'fixtures', 'files', 'logo.jpg')
       fixture_file = File.open(fixture_path)
@@ -81,6 +78,23 @@ RSpec.describe Organization, type: :model do
       allow(fixture_file).to receive(:size) { 10.kilobytes }
       organization.logo.attach(io: fixture_file, filename: 'logo.jpg')
 
+      expect(organization).to be_valid
+    end
+
+    it "validates deadline_day and reminder date are different for day of month reminders" do
+      organization.update(deadline_day: 10)
+      organization.reminder_schedule.assign_attributes(by_month_or_week: "day_of_month", day_of_month: 10)
+      expect(organization).to_not be_valid
+      organization.reminder_schedule.assign_attributes(day_of_month: 11)
+      expect(organization).to be_valid
+    end
+
+    it "does not validate deadline_day and reminder date are different for day of week reminders" do
+      # Deadline_day and day_of_month both aren't set and so are the same
+      organization.reminder_schedule.assign_attributes(by_month_or_week: "day_of_week", day_of_week: 0, every_nth_day: 1)
+      expect(organization).to be_valid
+      organization.update(deadline_day: 10)
+      organization.reminder_schedule.assign_attributes(day_of_month: 10)
       expect(organization).to be_valid
     end
   end
@@ -232,7 +246,8 @@ RSpec.describe Organization, type: :model do
     context "when given an item name that already exists, but with an 'other' partner key" do
       it "updates the old item to use the new base item as its base" do
         create(:base_item, name: "Other", partner_key: "other")
-        item = organization.items.create(name: "Foo", partner_key: "other", organization: organization)
+        item = create(:item, name: "Foo", organization:, partner_key: "other")
+        organization.items << item
 
         base_item = create(:base_item, name: "Foo", partner_key: "foo")
         base_items = [base_item.to_h]
@@ -243,13 +258,6 @@ RSpec.describe Organization, type: :model do
         end.to change { organization.items.size }.by(0)
           .and change { item.partner_key }.to("foo")
       end
-    end
-  end
-
-  describe "#short_name" do
-    it "can only contain valid characters" do
-      expect(build(:organization, short_name: "asdf")).to be_valid
-      expect(build(:organization, short_name: "Not Legal!")).to_not be_valid
     end
   end
 
@@ -286,6 +294,15 @@ RSpec.describe Organization, type: :model do
   end
 
   describe "geocode" do
+    before do
+      organization.update(
+        street: "1500 Remount Road",
+        city: "Front Royal",
+        state: "VA",
+        zipcode: "22630"
+      )
+    end
+
     it "adds coordinates to the database" do
       expect(organization.latitude).to be_a(Float)
       expect(organization.longitude).to be_a(Float)
@@ -357,6 +374,7 @@ RSpec.describe Organization, type: :model do
 
   describe 'from_email' do
     it 'returns email when present' do
+      organization.update(email: "email@testthis.com")
       expect(organization.from_email).to eq(organization.email)
     end
 
@@ -376,24 +394,6 @@ RSpec.describe Organization, type: :model do
       org = create(:organization, email: " ")
       admin = create(:organization_admin, organization: org)
       expect(org.from_email).to eq(admin.email)
-    end
-  end
-
-  describe 'reminder_day' do
-    it "can only contain numbers 1-28" do
-      expect(build(:organization, reminder_day: 28)).to be_valid
-      expect(build(:organization, reminder_day: 1)).to be_valid
-      expect(build(:organization, reminder_day: 0)).to_not be_valid
-      expect(build(:organization, reminder_day: -5)).to_not be_valid
-      expect(build(:organization, reminder_day: 29)).to_not be_valid
-    end
-  end
-  describe 'deadline_day' do
-    it "can only contain numbers 1-28" do
-      expect(build(:organization, deadline_day: 28)).to be_valid
-      expect(build(:organization, deadline_day: 0)).to_not be_valid
-      expect(build(:organization, deadline_day: -5)).to_not be_valid
-      expect(build(:organization, deadline_day: 29)).to_not be_valid
     end
   end
 

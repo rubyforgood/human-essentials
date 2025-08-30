@@ -2,38 +2,40 @@
 #
 # Table name: organizations
 #
-#  id                             :integer          not null, primary key
-#  city                           :string
-#  deadline_day                   :integer
-#  default_storage_location       :integer
-#  distribute_monthly             :boolean          default(FALSE), not null
-#  email                          :string
-#  enable_child_based_requests    :boolean          default(TRUE), not null
-#  enable_individual_requests     :boolean          default(TRUE), not null
-#  enable_quantity_based_requests :boolean          default(TRUE), not null
-#  hide_package_column_on_receipt :boolean          default(FALSE)
-#  hide_value_columns_on_receipt  :boolean          default(FALSE)
-#  intake_location                :integer
-#  invitation_text                :text
-#  latitude                       :float
-#  longitude                      :float
-#  name                           :string
-#  one_step_partner_invite        :boolean          default(FALSE), not null
-#  partner_form_fields            :text             default([]), is an Array
-#  receive_email_on_requests      :boolean          default(FALSE), not null
-#  reminder_day                   :integer
-#  repackage_essentials           :boolean          default(FALSE), not null
-#  short_name                     :string
-#  signature_for_distribution_pdf :boolean          default(FALSE)
-#  state                          :string
-#  street                         :string
-#  url                            :string
-#  ytd_on_distribution_printout   :boolean          default(TRUE), not null
-#  zipcode                        :string
-#  created_at                     :datetime         not null
-#  updated_at                     :datetime         not null
-#  account_request_id             :integer
-#  ndbn_member_id                 :bigint
+#  id                                       :integer          not null, primary key
+#  bank_is_set_up                           :boolean          default(FALSE), not null
+#  city                                     :string
+#  deadline_day                             :integer
+#  default_storage_location                 :integer
+#  distribute_monthly                       :boolean          default(FALSE), not null
+#  email                                    :string
+#  enable_child_based_requests              :boolean          default(TRUE), not null
+#  enable_individual_requests               :boolean          default(TRUE), not null
+#  enable_quantity_based_requests           :boolean          default(TRUE), not null
+#  hide_package_column_on_receipt           :boolean          default(FALSE)
+#  hide_value_columns_on_receipt            :boolean          default(FALSE)
+#  include_in_kind_values_in_exported_files :boolean          default(FALSE), not null
+#  intake_location                          :integer
+#  invitation_text                          :text
+#  latitude                                 :float
+#  longitude                                :float
+#  name                                     :string
+#  one_step_partner_invite                  :boolean          default(FALSE), not null
+#  partner_form_fields                      :text             default([]), is an Array
+#  receive_email_on_requests                :boolean          default(FALSE), not null
+#  reminder_day                             :integer
+#  reminder_schedule_definition             :string
+#  repackage_essentials                     :boolean          default(FALSE), not null
+#  signature_for_distribution_pdf           :boolean          default(FALSE)
+#  state                                    :string
+#  street                                   :string
+#  url                                      :string
+#  ytd_on_distribution_printout             :boolean          default(TRUE), not null
+#  zipcode                                  :string
+#  created_at                               :datetime         not null
+#  updated_at                               :datetime         not null
+#  account_request_id                       :integer
+#  ndbn_member_id                           :bigint
 #
 
 class Organization < ApplicationRecord
@@ -42,15 +44,22 @@ class Organization < ApplicationRecord
 
   DIAPER_APP_LOGO = Rails.public_path.join("img", "humanessentials_logo.png")
 
-  include Deadlinable
+  # TODO: remove once migration "20250504183911_remove_short_name_from_organizations" has run in production
+  self.ignored_columns += ["short_name"]
 
   validates :name, presence: true
-  validates :short_name, presence: true, format: /\A[a-z0-9_]+\z/i, uniqueness: true
   validates :url, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "it should look like 'http://www.example.com'" }, allow_blank: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
   validate :correct_logo_mime_type
   validate :some_request_type_enabled
   validate :logo_size_check, if: proc { |org| org.logo.attached? }
+  validates :deadline_day, numericality: {
+    only_integer: true,
+    less_than_or_equal_to: ReminderScheduleService::MAX_DAY_OF_MONTH,
+    greater_than_or_equal_to: ReminderScheduleService::MIN_DAY_OF_MONTH,
+    allow_nil: true
+  }
+  validate :reminder_schedule_is_empty_or_valid?
 
   belongs_to :account_request, optional: true
   belongs_to :ndbn_member, class_name: 'NDBNMember', optional: true
@@ -92,6 +101,8 @@ class Organization < ApplicationRecord
       this_week.scheduled.where(issued_at: Time.zone.today..)
     end
   end
+
+  before_save :save_reminder_schedule_definition
 
   after_create do
     account_request&.update!(status: "admin_approved")
@@ -149,11 +160,6 @@ class Organization < ApplicationRecord
     self
   end
 
-  # NOTE: when finding Organizations, use Organization.find_by(short_name: params[:organization_name])
-  def to_param
-    short_name
-  end
-
   def ordered_requests
     requests.order(status: :asc, updated_at: :desc)
   end
@@ -166,6 +172,10 @@ class Organization < ApplicationRecord
 
   def address_changed?
     street_changed? || city_changed? || state_changed? || zipcode_changed?
+  end
+
+  def partials_to_show
+    partner_form_fields.presence || ALL_PARTIALS.map { |partial| partial[1] }
   end
 
   def self.seed_items(organization = Organization.all)
@@ -236,6 +246,32 @@ class Organization < ApplicationRecord
   def display_last_distribution_date
     distribution = distributions.order(issued_at: :desc).first
     distribution.nil? ? "No distributions" : distribution[:issued_at].strftime("%F")
+  end
+
+  def reminder_schedule
+    if reminder_schedule_definition.present?
+      @reminder_schedule_service ||= ReminderScheduleService.from_ical(reminder_schedule_definition)
+    end
+    @reminder_schedule_service ||= ReminderScheduleService.new(start_date: Time.zone.today)
+  end
+
+  def save_reminder_schedule_definition
+    self.reminder_schedule_definition = reminder_schedule.to_ical
+    @reminder_schedule_service = nil
+  end
+
+  def reminder_schedule_is_empty_or_valid?
+    # The schedule shouldn't be validated if the user hasn't touched that form,
+    # so if by_month_or_week is still the default (nil) assume the user didn't
+    # intend to fill out that form and don't validate.
+    if reminder_schedule.fields_filled_out? && reminder_schedule.by_month_or_week.present?
+      if !reminder_schedule.valid?
+        errors.merge!(reminder_schedule.errors)
+      end
+      if reminder_schedule.by_month_or_week == "day_of_month" && reminder_schedule.day_of_month.to_i == deadline_day.to_i
+        errors.add(:day_of_month, "Reminder day must not be the same as deadline day")
+      end
+    end
   end
 
   private

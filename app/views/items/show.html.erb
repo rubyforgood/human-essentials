@@ -32,16 +32,16 @@
             <table class="table">
             <tbody>
               <tr>
-                <th>Base Item</th>
-                <td><%= @item.base_item.name %></td>
-              </tr>
-              <tr>
                 <th>Name</th>
                 <td><%= @item.name %></td>
               </tr>
               <tr>
                 <th>Category</th>
                 <td><%= @item&.item_category&.name %></td>
+              </tr>
+              <tr>
+                <th>NDBN Reporting Category</th>
+                <td><%= @item.reporting_category_humanized %><%= @reporting_category_hint %></td>
               </tr>
               <tr>
                 <th>Value Per Item</th>

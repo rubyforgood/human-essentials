@@ -53,6 +53,10 @@ class Donation < ApplicationRecord
   }
   scope :by_item_id, ->(item_id) { includes(:items).where(items: { id: item_id }) }
 
+  scope :by_category, ->(item_category) {
+    joins(line_items: {item: :item_category}).where("item_categories.name ILIKE ?", item_category)
+  }
+
   before_create :combine_duplicates
 
   validates :donation_site, presence:
@@ -120,7 +124,7 @@ class Donation < ApplicationRecord
   end
 
   def in_kind_value_money
-    Money.new(value_per_itemizable)
+    Money.new(value_per_itemizable).to_f
   end
 
   private

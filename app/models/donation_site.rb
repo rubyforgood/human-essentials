@@ -23,6 +23,7 @@ class DonationSite < ApplicationRecord
   belongs_to :organization
 
   validates :name, :address, presence: true
+  validates :name, uniqueness: {scope: :organization_id, message: "must be unique within the organization"}
   validates :contact_name, length: {minimum: 3}, allow_blank: true
   validates :email, format: {with: URI::MailTo::EMAIL_REGEXP, message: "is not a valid email format"}, allow_blank: true
 
@@ -36,12 +37,17 @@ class DonationSite < ApplicationRecord
   scope :alphabetized, -> { order(:name) }
 
   def self.import_csv(csv, organization)
-    csv.each do |row|
+    errors = []
+    csv.each_with_index do |row, index|
       loc = DonationSite.new(row.to_hash)
       loc.organization_id = organization
-      loc.save!
+      if loc.save
+        Rails.logger.info "Successfully imported: #{loc.name}"
+      else
+        errors << "Row #{index + 2}, #{row.to_hash["name"]} - #{loc.errors.full_messages.join(", ")}"
+      end
     end
-    []
+    errors
   end
 
   def self.csv_export_headers

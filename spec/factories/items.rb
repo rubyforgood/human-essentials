@@ -6,7 +6,6 @@
 #  active                       :boolean          default(TRUE)
 #  additional_info              :text
 #  barcode_count                :integer
-#  category                     :string
 #  distribution_quantity        :integer
 #  name                         :string
 #  on_hand_minimum_quantity     :integer          default(0), not null
@@ -25,9 +24,10 @@
 
 FactoryBot.define do
   factory :item do
-    sequence(:name) { |n| "#{n}T Diapers" }
+    sequence(:name) { |n| "#{n}Dont test this" }
     organization { Organization.try(:first) || create(:organization) }
-    partner_key { BaseItem.first&.partner_key || create(:base_item).partner_key }
+    partner_key { nil }
+    reporting_category { kit ? nil : "disposable_diapers" }
     kit { nil }
 
     trait :active do

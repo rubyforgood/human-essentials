@@ -6,7 +6,6 @@
 #  active                       :boolean          default(TRUE)
 #  additional_info              :text
 #  barcode_count                :integer
-#  category                     :string
 #  distribution_quantity        :integer
 #  name                         :string
 #  on_hand_minimum_quantity     :integer          default(0), not null
@@ -29,12 +28,12 @@ class Item < ApplicationRecord
   include Exportable
   include Valuable
 
+  after_initialize :set_default_distribution_quantity, if: :new_record?
   after_update :update_associated_kit_name, if: -> { kit.present? }
-  before_create :set_reporting_category
   before_destroy :validate_destroy, prepend: true
 
   belongs_to :organization # If these are universal this isn't necessary
-  belongs_to :base_item, counter_cache: :item_count, primary_key: :partner_key, foreign_key: :partner_key, inverse_of: :items
+  belongs_to :base_item, counter_cache: :item_count, primary_key: :partner_key, foreign_key: :partner_key, inverse_of: :items, optional: true
   belongs_to :kit, optional: true
   belongs_to :item_category, optional: true
 
@@ -45,6 +44,7 @@ class Item < ApplicationRecord
   validates :on_hand_recommended_quantity, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
   validates :on_hand_minimum_quantity, numericality: { greater_than_or_equal_to: 0 }
   validates :package_size, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
+  validates :reporting_category, presence: true, unless: proc { |i| i.kit }
 
   has_many :line_items, dependent: :destroy
   has_many :inventory_items, dependent: :destroy
@@ -63,60 +63,30 @@ class Item < ApplicationRecord
   scope :visible, -> { where(visible_to_partners: true) }
   scope :alphabetized, -> { order(:name) }
   scope :by_base_item, ->(base_item) { where(base_item: base_item) }
+  scope :by_reporting_category, ->(reporting_category) { where(reporting_category: reporting_category) }
   scope :by_partner_key, ->(partner_key) { where(partner_key: partner_key) }
 
-  scope :by_size, ->(size) { joins(:base_item).where(base_items: { size: size }) }
-
-  # Scopes - explanation of business rules for filtering scopes as of 20240527.  This was a mess, but is much better now.
-  # 1/  Disposable.   Disposables are only the disposable diapers for children.  So we deliberately exclude adult and cloth
-  # 2/  Cloth.  Cloth diapers for children.  Exclude adult cloth. Cloth training pants also go here.
-  # 3/  Adult incontinence.  Items for adult incontinence -- diapers, ai pads, but not adult wipes.
-  # 4/  Period supplies.  All things with 'menstrual in the category'
-  # 5/  Other -- Miscellaneous, and wipes
-  # Known holes and ambiguities as of 20240527.  Working on these with the business
-  # 1/  Liners.   We are adding a new item for AI liners,  and renaming the current liners to be specifically for periods,
-  # having confirmed with the business that the majority of liners are for menstrual use.
-  # However, there is a product which can be used for either, so we are still sussing out what to do about that.
-
-  scope :disposable, -> {
-    joins(:base_item)
-      .where("lower(base_items.category) LIKE '%diaper%'")
-      .where.not("lower(base_items.category) LIKE '%cloth%' OR lower(base_items.name) LIKE '%cloth%'")
-      .where.not("lower(base_items.category) LIKE '%adult%'")
-  }
-
-  scope :cloth_diapers, -> {
-    joins(:base_item)
-      .where("lower(base_items.category) LIKE '%cloth%'")
-      .or(where("base_items.category = 'Training Pants'"))
-      .where.not("lower(base_items.category) LIKE '%adult%'")
-  }
-
-  scope :adult_incontinence, -> {
-    joins(:base_item)
-      .where("lower(base_items.category) LIKE '%adult%' AND lower(base_items.category) NOT LIKE '%wipes%'")
-  }
-
   scope :period_supplies, -> {
-    joins(:base_item)
-      .where("lower(base_items.category) LIKE '%menstrual%'")
-  }
-
-  scope :other_categories, -> {
-    joins(:base_item)
-      .where("lower(base_items.category) LIKE '%wipes%'")
-      .or(where("base_items.category = 'Miscellaneous'"))
+    where(reporting_category: [:pads, :tampons, :period_liners, :period_underwear, :period_other])
   }
 
   enum :reporting_category, {
     adult_incontinence: "adult_incontinence",
     cloth_diapers: "cloth_diapers",
     disposable_diapers: "disposable_diapers",
-    menstrual: "menstrual",
-    other: "other",
     pads: "pads",
-    tampons: "tampons"
-  }, scopes: false, instance_methods: false
+    period_liners: "period_liners",
+    period_other: "period_other",
+    period_underwear: "period_underwear",
+    tampons: "tampons",
+    other_categories: "other"
+  }, instance_methods: false, validate: { allow_nil: true }
+
+  def self.reporting_categories_for_select
+    reporting_categories.map do |key, value|
+      Option.new(id: key, name: value.titleize)
+    end
+  end
 
   def self.reactivate(item_ids)
     item_ids = Array.wrap(item_ids)
@@ -175,6 +145,11 @@ class Item < ApplicationRecord
     end
   end
 
+  # @return [String]
+  def reporting_category_humanized
+    Item.reporting_categories[reporting_category].to_s.titleize
+  end
+
   def other?
     partner_key == "other"
   end
@@ -190,7 +165,7 @@ class Item < ApplicationRecord
   end
 
   def self.csv_export_headers
-    ["Name", "Barcodes", "Base Item", "Quantity"]
+    ["Name", "Barcodes", "Quantity"]
   end
 
   # @param items [Array<Item>]
@@ -200,7 +175,7 @@ class Item < ApplicationRecord
     item_quantities = items.to_h { |i| [i.id, inventory.quantity_for(item_id: i.id)] }
     CSV.generate(headers: true) do |csv|
       csv_data = items.map do |item|
-        attributes = [item.name, item.barcode_count, item.base_item.name, item_quantities[item.id]]
+        attributes = [item.name, item.barcode_count, item_quantities[item.id]]
         attributes.map { |attr| normalize_csv_attribute(attr) }
       end
       ([csv_export_headers] + csv_data).each { |row| csv << row }
@@ -220,12 +195,8 @@ class Item < ApplicationRecord
 
   private
 
-  # Sets reporting_category according to reporting_category of base item.
-  # TODO: Remove once items can be created with a reporting category.
-  def set_reporting_category
-    return unless reporting_category.blank?
-
-    self.reporting_category = base_item.reporting_category if base_item.reporting_category
+  def set_default_distribution_quantity
+    self.distribution_quantity ||= kit_id.present? ? 1 : 50
   end
 
   def update_associated_kit_name

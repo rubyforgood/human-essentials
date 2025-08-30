@@ -17,7 +17,7 @@ RSpec.describe HistoricalDataCacheJob, type: :job do
 
     perform_enqueued_jobs { job }
 
-    cached_data = Rails.cache.read("#{organization.short_name}-historical-#{type}-data")
+    cached_data = Rails.cache.read("#{organization.id}-historical-#{type}-data")
     expect(cached_data).to eq(expected_data)
   end
 end

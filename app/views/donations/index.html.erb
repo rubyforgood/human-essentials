@@ -74,6 +74,15 @@
                 <% if @items.present? %>
                   <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
                     <%= filter_select(label: "Filter by Item", scope: :by_item_id, collection: @items, selected: @selected_item) %>
+                    </div>
+                <% end %>
+                <% if @item_categories.present? %>
+                  <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                    <% id = "filter_#{SecureRandom.uuid}" %>
+                    <%= label_tag id, "Filter by Category" %>
+                    <%= select_tag "filters[by_category]",
+                    options_for_select(@item_categories, @selected_item_category),
+                    { include_blank: true, class: "form-control", id: id } %>
                   </div>
                 <% end %>
                 <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
@@ -112,11 +121,11 @@
                   <th>Date</th>
                   <th>Details</th>
                   <th>Storage Location</th>
-
                   <% filtered_item_name = @selected_item ? @items.find { |i| i.id == filter_params[:by_item_id].to_i }&.name : "Items" %>
                   <th>Quantity of <%= filtered_item_name %></th>
                   <th>Money Raised</th>
                   <th>In Kind Value</th>
+
                   <th>Comments</th>
                   <th class="text-right">Actions</th>
                 </tr>
@@ -130,26 +139,26 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td class="text-left numeric">
+                <td class="numeric">
+                  <%= @paginated_donations_quantity %>
+                  <br>
+                  (This page)
+                  <br>
                   <strong id="donation_quantity">
                     <%= @donations_quantity %>
                     <br>
                     (Total)
                   </strong>
-                  <br>
-                  <%= @paginated_donations_quantity %>
-                  <br>
-                  (This page)
                 </td>
-                <td class="text-left numeric"><strong><%= dollar_value(@total_money_raised) %></strong></td>
-                <td class="text-left numeric in-kind">
-                  <strong>
-                    <%= dollar_value(@total_value_all_donations) %> (Total)
-                  </strong>
-                  <br>
+                <td class="numeric"><strong><%= dollar_value(@total_money_raised) %></strong></td>
+                <td class="numeric in-kind">
                   <%= dollar_value(@paginated_in_kind_value) %>
                   <br>
                    (This page)
+                  <br>
+                  <strong>
+                    <%= dollar_value(@total_value_all_donations) %> (Total)
+                  </strong>
                 </td>
               </tr>
               </tfoot>

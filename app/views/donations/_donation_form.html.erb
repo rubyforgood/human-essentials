@@ -41,7 +41,7 @@
                           collection: @product_drive_participants,
                           selected: donation_form.product_drive_participant_id,
                           include_blank: true,
-                          label_method: lambda { |x| "#{x.try(:business_name) }" },
+                          label_method: lambda { |x| "#{x.try(:business_name).presence || x.try(:contact_name)}" },
                           label: "Product Drive Participant",
                           error: "Which product drive participant was this from?",
                           wrapper: :input_group %>

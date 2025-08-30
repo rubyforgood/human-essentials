@@ -13,7 +13,7 @@
 #
 FactoryBot.define do
   factory :kit do
-    sequence(:name) { |n| "Default Kit Name #{n} - Don't Match" }
+    sequence(:name) { |n| "#{n} - Dont test this" }
     organization
 
     after(:build) do |instance, _|

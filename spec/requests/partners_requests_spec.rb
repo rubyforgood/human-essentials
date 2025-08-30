@@ -1,5 +1,6 @@
 RSpec.describe "Partners", type: :request do
-  let(:organization) { create(:organization) }
+  # Specify partner_form_fields for the sake of brevity in the csv output of GET #index.
+  let(:organization) { create(:organization, partner_form_fields: ["media_information"]) }
   let(:user) { create(:user, organization: organization) }
 
   before do
@@ -15,9 +16,14 @@ RSpec.describe "Partners", type: :request do
     context "html" do
       let(:response_format) { 'html' }
 
-      let!(:partner) { create(:partner, organization: organization) }
+      let!(:partner) { create(:partner, organization: organization, name: "Partner One") }
 
-      it { is_expected.to be_successful }
+      it {
+        is_expected.to be_successful
+        expect(response.body).to include "Partner One"
+        expect(response.body).not_to include "Your next reminder date is Tue Oct 20 2020."
+        expect(response.body).not_to include "The deadline on your next reminder email will be Sun Oct 25 2020."
+      }
 
       include_examples "restricts access to organization users/admins"
     end
@@ -26,60 +32,91 @@ RSpec.describe "Partners", type: :request do
       let(:response_format) { 'csv' }
 
       let!(:partner) do
-        create(:partner, name:, email:, status: :approved, organization:, notes:, without_profile: true)
+        create(:partner, name: "Leslie Sue", email: "leslie@sue.com", status: :approved, organization:, notes: "Some notes", without_profile: true)
       end
       let!(:profile) do
         create(:partner_profile,
           partner: partner,
-          primary_contact_name: contact_name,
-          primary_contact_email: contact_email,
-          primary_contact_phone: contact_phone,
-          address1: agency_address1,
-          address2: agency_address2,
-          city: agency_city,
-          state: agency_state,
-          zip_code: agency_zipcode,
-          website: agency_website,
-          agency_type: agency_type,
-          other_agency_type: other_agency_type)
+          agency_type: :other, # Columns from the agency_information partial
+          other_agency_type: "Another Agency Name",
+          agency_mission: "agency_mission",
+          address1: "4744 McDermott Mountain",
+          address2: "333 Never land street",
+          city: "Lake Shoshana",
+          state: "ND",
+          zip_code: "09980-7010",
+          program_address1: "program_address1",
+          program_address2: "program_address2",
+          program_city: "program_city",
+          program_state: "program_state",
+          program_zip_code: 12345,
+          website: "bosco.example", # Columns from the media_information partial
+          facebook: "facebook",
+          twitter: "twitter",
+          instagram: "instagram",
+          no_social_media_presence: false,
+          enable_child_based_requests: true, # Columns from the partner_settings partial
+          enable_individual_requests: true,
+          enable_quantity_based_requests: true)
       end
-      let(:name) { "Leslie Sue" }
-      let(:email) { "leslie@sue.com" }
-      let(:contact_name) { "Jon Ralfeo" }
-      let(:contact_email) { "jon@entertainment720.com" }
-      let(:contact_phone) { "1231231234" }
-      let(:agency_address1) { "4744 McDermott Mountain" }
-      let(:agency_address2) { "333 Never land street" }
-      let(:agency_city) { "Lake Shoshana" }
-      let(:agency_state) { "ND" }
-      let(:agency_zipcode) { "09980-7010" }
-      let(:agency_website) { "bosco.example" }
-      let(:agency_type) { :other }
-      let(:notes) { "Some notes" }
-      let(:other_agency_type) { "Another Agency Name" }
-      let(:providing_diapers) { {value: "N", index: 13} }
-      let(:providing_period_supplies) { {value: "N", index: 14} }
 
-      let(:response_format) { 'csv' }
-      let(:expected_headers) do
+      let(:expected_headers) {
         [
-          "Agency Name",
+          "Agency Name", # Technically not part of the agency_information partial, but comes at the start of the export
           "Agency Email",
+          "Notes",
+          "Agency Type", # Columns from the agency_information partial
+          "Other Agency Type",
+          "Agency Mission",
           "Agency Address",
           "Agency City",
           "Agency State",
           "Agency Zip Code",
-          "Agency Website",
-          "Agency Type",
-          "Contact Name",
-          "Contact Phone",
-          "Contact Email",
-          "Notes",
-          "Counties Served",
-          "Providing Diapers",
+          "Program/Delivery Address",
+          "Program City",
+          "Program State",
+          "Program Zip Code",
+          "Agency Website", # Columns from the media_information partial
+          "Facebook",
+          "Twitter",
+          "Instagram",
+          "No Social Media Presence",
+          "Quantity-based Requests", # Columns from the agency_information partial
+          "Child-based Requests",
+          "Individual Requests",
+          "Providing Diapers", # Technically not part of the partner_settings partial, but comes at the end of the export
           "Providing Period Supplies"
-      ]
-      end
+        ]
+      }
+
+      let(:expected_values) {
+        [
+          "Leslie Sue", # Technically not part of the agency_information partial, but comes at the start of the export
+          "leslie@sue.com",
+          "Some notes",
+          I18n.t("partners_profile.other"), # Columns from the agency_information partial
+          "Another Agency Name",
+          "agency_mission",
+          "4744 McDermott Mountain, 333 Never land street",
+          "Lake Shoshana",
+          "ND",
+          "09980-7010",
+          "program_address1, program_address2",
+          "program_city",
+          "program_state",
+          "12345",
+          "bosco.example", # Columns from the media_information partial
+          "facebook",
+          "twitter",
+          "instagram",
+          "false",
+          "true", # Columns from the partner_settings partial
+          "true",
+          "true",
+          "N", # Technically not part of the partner_settings partial, but comes at the end of the export
+          "N"
+        ]
+      }
 
       it { is_expected.to be_successful }
       it "returns the expected headers" do
@@ -91,29 +128,46 @@ RSpec.describe "Partners", type: :request do
       end
 
       context "with missing partner info" do
-        let(:name) { "Leslie" }
-        let(:email) { "leslie@humanessentials.com" }
-        let(:contact_name) { nil }
-        let(:contact_email) { nil }
-        let(:contact_phone) { nil }
-        let(:agency_address1) { nil }
-        let(:agency_address2) { nil }
-        let(:agency_city) { nil }
-        let(:agency_state) { nil }
-        let(:agency_zipcode) { nil }
-        let(:agency_website) { nil }
-        let(:agency_type) { nil }
-        let(:notes) { nil }
-        let(:other_agency_type) { nil }
-
         it "returns a CSV with correct data" do
+          partner.update(profile: create(
+            :partner_profile,
+            website: nil,
+            primary_contact_name: nil,
+            primary_contact_email: nil
+          ))
+
+          # The agency_information and settings sections contain information stored on the partner and not the
+          # profile, so they won't be completely empty
+          expected_values = [
+            "Leslie Sue",
+            "leslie@sue.com",
+            "Some notes",
+            "", # Columns from the agency_information partial
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "", # Columns from the media_information partial
+            "",
+            "",
+            "",
+            "true",
+            "true", # Columns from the partner_settings partial
+            "true",
+            "true",
+            "N",
+            "N"
+          ]
+
           get partners_path(partner, format: response_format)
-
           csv = CSV.parse(response.body)
-
-          expect(csv[1]).to eq(
-            ["Leslie", "leslie@humanessentials.com", "", "", "", "", "", "", "", "", "", "", "", "N", "N"]
-          )
+          expect(csv[1]).to eq(expected_values)
         end
       end
 
@@ -122,39 +176,24 @@ RSpec.describe "Partners", type: :request do
 
         csv = CSV.parse(response.body)
 
-        expect(csv[1]).to eq(
-          [
-            "Leslie Sue",
-            "leslie@sue.com",
-            "4744 McDermott Mountain, 333 Never land street",
-            "Lake Shoshana",
-            "ND",
-            "09980-7010",
-            "bosco.example",
-            "Other: Another Agency Name",
-            "Jon Ralfeo",
-            "1231231234",
-            "jon@entertainment720.com",
-            "Some notes",
-            "",
-            "N",
-            "N"
-          ]
-        )
+        expect(csv[1]).to eq(expected_values)
       end
 
       it "returns only active partners by default" do
         partner.update(status: :deactivated)
 
         get partners_path(partner, format: response_format)
-
         csv = CSV.parse(response.body)
-
         # Expect no parner rows in csv
+        expect(csv[0]).to eq(expected_headers)
         expect(csv[1]).to eq(nil)
       end
 
       context "with served counties" do
+        before do
+          organization.update(partner_form_fields: organization.partner_form_fields += ["area_served"])
+        end
+
         it "returns them in correct order" do
           county_1 = create(:county, name: "High County, Maine", region: "Maine")
           county_2 = create(:county, name: "laRue County, Louisiana", region: "Louisiana")
@@ -167,46 +206,39 @@ RSpec.describe "Partners", type: :request do
 
           csv = CSV.parse(response.body, headers: true)
 
-          expect(csv[0]["Counties Served"]).to eq("laRue County, Louisiana; Ste. Anne County, Louisiana; High County, Maine")
+          expect(csv[0]["Area Served"]).to eq("laRue County, Louisiana; Ste. Anne County, Louisiana; High County, Maine")
         end
       end
 
       context "with multiple partners do" do
         let!(:partner_2) do
-          create(:partner, name: name_2, email: email_2, status: :invited, organization:, notes: notes_2, without_profile: true)
+          create(:partner, name: "Jane Doe", email: "jane@doe.com", status: :invited, organization:, notes: "Some notes", without_profile: true)
         end
         let!(:profile_2) do
           create(:partner_profile,
             partner: partner_2,
-            primary_contact_name: contact_name_2,
-            primary_contact_email: contact_email_2,
-            primary_contact_phone: contact_phone_2,
-            address1: agency_address1_2,
-            address2: agency_address2_2,
-            city: agency_city_2,
-            state: agency_state_2,
-            zip_code: agency_zipcode_2,
-            website: agency_website_2,
-            agency_type: agency_type_2,
-            other_agency_type: other_agency_type_2)
+            agency_type: :other, # Columns from the agency_information partial
+            other_agency_type: "Another Agency Name",
+            agency_mission: "agency_mission_2",
+            address1: "4744 McDermott Mountain",
+            address2: "333 Never land street",
+            city: "Lake Shoshana",
+            state: "ND",
+            zip_code: "09980-7010",
+            program_address1: "program_address1_2",
+            program_address2: "program_address2_2",
+            program_city: "program_city_2",
+            program_state: "program_state_2",
+            program_zip_code: 12345,
+            website: "bosco.example", # Columns from the media_information partial
+            facebook: "facebook_2",
+            twitter: "twitter_2",
+            instagram: "instagram_2",
+            no_social_media_presence: false,
+            enable_child_based_requests: true, # Columns from the partner_settings partial
+            enable_individual_requests: true,
+            enable_quantity_based_requests: true)
         end
-
-        let(:name_2) { "Jane Doe" }
-        let(:email_2) { "jane@doe.com" }
-        let(:contact_name_2) { "Fakey McFakePerson" }
-        let(:contact_email_2) { "fakey@gmail.com" }
-        let(:contact_phone_2) { "1234567890" }
-        let(:agency_address1_2) { "123 Main St" }
-        let(:agency_address2_2) { "C.O. box 678" }
-        let(:agency_city_2) { "Paris" }
-        let(:agency_state_2) { "TX" }
-        let(:agency_zipcode_2) { "30234-0000" }
-        let(:agency_website_2) { "human.example" }
-        let(:agency_type_2) { :other }
-        let(:notes_2) { "Some notes 2" }
-        let(:other_agency_type_2) { "Fake Agency Name" }
-        let(:providing_diapers_2) { {value: "N", index: 13} }
-        let(:providing_period_supplies_2) { {value: "N", index: 14} }
 
         it "orders partners alphaetically" do
           get partners_path(partner, format: response_format)
@@ -217,17 +249,26 @@ RSpec.describe "Partners", type: :request do
             [
               "Jane Doe",
               "jane@doe.com",
-              "123 Main St, C.O. box 678",
-              "Paris",
-              "TX",
-              "30234-0000",
-              "human.example",
-              "Other: Fake Agency Name",
-              "Fakey McFakePerson",
-              "1234567890",
-              "fakey@gmail.com",
-              "Some notes 2",
-              "",
+              "Some notes",
+              I18n.t("partners_profile.other"), # Columns from the agency_information partial
+              "Another Agency Name",
+              "agency_mission_2",
+              "4744 McDermott Mountain, 333 Never land street",
+              "Lake Shoshana",
+              "ND",
+              "09980-7010",
+              "program_address1_2, program_address2_2",
+              "program_city_2",
+              "program_state_2",
+              "12345",
+              "bosco.example", # Columns from the media_information partial
+              "facebook_2",
+              "twitter_2",
+              "instagram_2",
+              "false",
+              "true", # Columns from the partner_settings partial
+              "true",
+              "true",
               "N",
               "N"
             ]

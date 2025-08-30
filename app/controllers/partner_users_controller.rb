@@ -24,6 +24,9 @@ class PartnerUsersController < ApplicationController
       @users = @partner.users
       render :index
     end
+  rescue => e
+    flash[:error] = e.message
+    redirect_to partner_users_path(@partner)
   end
 
   def destroy

@@ -31,7 +31,7 @@ class ProductDrive < ApplicationRecord
           search_dates[:end_date])
   }
 
-  has_many :donations, dependent: :nullify
+  has_many :donations, dependent: :restrict_with_error
   has_many :product_drive_participants, -> { distinct }, through: :donations
   validates :name, presence:
     { message: "A name must be chosen." }

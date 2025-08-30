@@ -21,7 +21,6 @@ RSpec.describe DistributionsController, type: :controller do
       context "when distribution causes inventory to remain above minimum quantity for an organization" do
         let(:params) do
           {
-            organization_name: organization.id,
             distribution: {
               partner_id: partner.id,
               issued_at: Date.yesterday,
@@ -45,7 +44,6 @@ RSpec.describe DistributionsController, type: :controller do
         context "when distribution causes inventory to fall below minimum quantity for a storage location" do
           let(:params) do
             {
-              organization_name: organization.id,
               distribution: {
                 partner_id: partner.id,
                 storage_location_id: second_storage_location.id,
@@ -70,7 +68,6 @@ RSpec.describe DistributionsController, type: :controller do
         let(:storage_location) { create(:storage_location, :with_items, item: first_item, item_quantity: 20, organization: organization) }
         let(:params) do
           {
-            organization_name: organization.id,
             distribution: {
               partner_id: partner.id,
               storage_location_id: storage_location.id,
@@ -96,7 +93,6 @@ RSpec.describe DistributionsController, type: :controller do
           let(:storage_location) { create(:storage_location, organization: organization) }
           let(:params) do
             {
-              organization_name: organization.id,
               distribution: {
                 partner_id: partner.id,
                 storage_location_id: storage_location.id,
@@ -140,7 +136,6 @@ RSpec.describe DistributionsController, type: :controller do
         end
         let(:params) do
           {
-            organization_name: organization.id,
             distribution: {
               partner_id: partner.id,
               storage_location_id: storage_location.id,
@@ -179,7 +174,6 @@ RSpec.describe DistributionsController, type: :controller do
         end
         let(:params) do
           {
-            organization_name: organization.id,
             distribution: {
               partner_id: partner.id,
               storage_location_id: storage_location.id,
@@ -207,7 +201,6 @@ RSpec.describe DistributionsController, type: :controller do
         let(:storage_location) { create(:storage_location, :with_items, item: item, item_quantity: 2, organization: organization) }
         let(:params) do
           {
-            organization_name: organization.id,
             distribution: {
               partner_id: partner.id,
               storage_location_id: storage_location.id,
@@ -230,7 +223,6 @@ RSpec.describe DistributionsController, type: :controller do
       context "when distribution reminder email is enabled" do
         let(:params) do
           {
-            organization_name: organization.id,
             distribution: {
               partner_id: partner.id,
               issued_at: Date.tomorrow,
@@ -251,13 +243,13 @@ RSpec.describe DistributionsController, type: :controller do
           end
           it "should schedule the reminder email" do
             subject
-            expect(enqueued_jobs[2]["arguments"][1]).to eq("reminder_email")
+            expect(enqueued_jobs[1]["arguments"][1]).to eq("reminder_email")
           end
 
           it "should not schedule a reminder for a date in the past" do
             params[:distribution][:issued_at] = Date.yesterday
             subject
-            expect(enqueued_jobs.size).to eq(2)
+            expect(enqueued_jobs.size).to eq(1)
           end
         end
 
@@ -266,7 +258,7 @@ RSpec.describe DistributionsController, type: :controller do
 
           it "should not schedule an email reminder for a partner that disabled reminders" do
             subject
-            expect(enqueued_jobs.size).to eq(1)
+            expect(enqueued_jobs.size).to eq(0)
           end
         end
       end
@@ -288,7 +280,6 @@ RSpec.describe DistributionsController, type: :controller do
         let(:distribution) { create(:distribution, storage_location: storage_location) }
         let(:params) do
           {
-            organization_name: organization.id,
             id: distribution.id,
             distribution: {
               storage_location_id: distribution.storage_location.id,
@@ -326,7 +317,6 @@ RSpec.describe DistributionsController, type: :controller do
         let(:distribution) { create(:distribution, storage_location: storage_location, organization: organization) }
         let(:params) do
           {
-            organization_name: organization.id,
             id: distribution.id,
             distribution: {
               storage_location_id: distribution.storage_location.id,
@@ -363,7 +353,6 @@ RSpec.describe DistributionsController, type: :controller do
         let(:distribution) { create(:distribution, :with_items, item: item1, storage_location: storage_location, organization: organization) }
         let(:params) do
           {
-            organization_name: organization.id,
             id: distribution.id,
             distribution: {
               storage_location_id: distribution.storage_location.id,
@@ -410,7 +399,6 @@ RSpec.describe DistributionsController, type: :controller do
         let(:distribution) { create(:distribution, :with_items, item: item1, storage_location: storage_location, organization: organization, reminder_email_enabled: false, partner: partner) }
         let(:params) do
           {
-            organization_name: organization.id,
             id: distribution.id,
             distribution: {
               storage_location_id: distribution.storage_location.id,
@@ -431,13 +419,13 @@ RSpec.describe DistributionsController, type: :controller do
           end
           it "should schedule the reminder email" do
             subject
-            expect(enqueued_jobs[1]["arguments"][1]).to eq("reminder_email")
+            expect(enqueued_jobs.first["arguments"][1]).to eq("reminder_email")
           end
 
           it "should not schedule a reminder for a date in the past" do
             params[:distribution][:issued_at] = Date.yesterday
             subject
-            expect(enqueued_jobs.size).to eq(1)
+            expect(enqueued_jobs.size).to eq(0)
           end
         end
 
@@ -446,7 +434,7 @@ RSpec.describe DistributionsController, type: :controller do
 
           it "should not schedule an email reminder for a partner that disabled reminders" do
             subject
-            expect(enqueued_jobs.size).to eq(1)
+            expect(enqueued_jobs.size).to eq(0)
           end
         end
       end

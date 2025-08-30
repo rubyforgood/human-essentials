@@ -51,10 +51,19 @@ class Purchase < ApplicationRecord
 
   scope :active, -> { joins(:line_items).joins(:items).where(items: { active: true }) }
 
+  scope :by_category, ->(item_category) {
+    joins(line_items: {item: :item_category}).where("item_categories.name ILIKE ?", item_category)
+  }
+
   before_create :combine_duplicates
 
   validates :amount_spent_in_cents, numericality: { greater_than: 0 }
   validate :total_equal_to_all_categories
+
+  validates :amount_spent_on_diapers_cents, numericality: { greater_than_or_equal_to: 0 }
+  validates :amount_spent_on_adult_incontinence_cents, numericality: { greater_than_or_equal_to: 0 }
+  validates :amount_spent_on_period_supplies_cents, numericality: { greater_than_or_equal_to: 0 }
+  validates :amount_spent_on_other_cents, numericality: { greater_than_or_equal_to: 0 }
 
   SummaryByDates = Data.define(
     :amount_spent,

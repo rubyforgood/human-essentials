@@ -25,7 +25,7 @@ module Importable
   def import_csv
     if params[:file].present?
       data = File.read(params[:file].path, encoding: "BOM|UTF-8")
-      csv = CSV.parse(data, headers: true).reject { |row| row.to_hash.values.any?(&:nil?) }
+      csv = CSV.parse(data, headers: true)
       if csv.count.positive? && csv.first.headers.all? { |header| !header.nil? }
         errors = resource_model.import_csv(csv, current_organization.id)
         if errors.empty?

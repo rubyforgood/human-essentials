@@ -54,6 +54,26 @@ RSpec.describe Purchase, type: :model do
       expect(d).to be_valid
     end
 
+    it "is not valid if any category negative" do
+      d = build(:purchase, amount_spent_on_diapers_cents: -1)
+      expect(d).not_to be_valid
+      d = build(:purchase, amount_spent_on_adult_incontinence_cents: -2)
+      expect(d).not_to be_valid
+      d = build(:purchase, amount_spent_on_period_supplies_cents: -3)
+      expect(d).not_to be_valid
+      d = build(:purchase, amount_spent_on_other_cents: -4)
+      expect(d).not_to be_valid
+    end
+
+    it "is valid if all categories are positive and add up to the total" do
+      d = build(:purchase, amount_spent_in_cents: 1150,
+        amount_spent_on_diapers_cents: 200,
+        amount_spent_on_adult_incontinence_cents: 300,
+        amount_spent_on_period_supplies_cents: 400,
+        amount_spent_on_other_cents: 250)
+      expect(d).to be_valid
+    end
+
     # 2813 update annual reports -- this covers off making sure it's checking the case of period supplies only (which it won't be before we make it so)
 
     it "is not valid if period supplies is non-zero but no other category is " do
@@ -126,9 +146,10 @@ RSpec.describe Purchase, type: :model do
 
   context "Methods >" do
     describe "storage_view" do
-      let!(:purchase) { create(:purchase, :with_items) }
+      let(:storage_location) { create(:storage_location, name: "Test Storage Location") }
+      let!(:purchase) { create(:purchase, :with_items, storage_location: storage_location) }
       it "returns name of storage location" do
-        expect(purchase.storage_view).to eq("Smithsonian Conservation Center")
+        expect(purchase.storage_view).to eq("Test Storage Location")
       end
     end
   end

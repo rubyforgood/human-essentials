@@ -1,5 +1,6 @@
 module Partners
   class IndividualsRequestsController < BaseController
+    include Validatable
     before_action :verify_partner_is_active
     before_action :authorize_verified_partners
 
@@ -29,7 +30,7 @@ module Partners
 
         Rails.logger.info("[Request Creation Failure] partner_user_id=#{current_user.id} reason=#{@errors.full_messages}")
 
-        render :new, status: :unprocessable_entity
+        render :new, status: :unprocessable_content
       end
     end
 
