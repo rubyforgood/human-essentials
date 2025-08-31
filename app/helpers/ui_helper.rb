@@ -174,7 +174,7 @@ module UiHelper
       button_to link, properties.merge(class: klass, form_class: form_klass) do
         fa_icon icon, text: text
       end
-    end    
+    end
   end
 
   def _button_to(options = {}, properties = {})
