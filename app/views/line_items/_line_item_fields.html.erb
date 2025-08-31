@@ -8,7 +8,7 @@
       <div class='d-flex flex-column justify-content-center'>
         <% if requested.blank? %>
           <% unless local_assigns[:changes_disallowed] %>
-          <div class='d-flex flex-row align-iteline_item_fieldsms-center'>
+          <div class='d-flex flex-row align-items-center'>
             <%= render partial: "barcode_items/barcode_item_lookup",
               locals: { index: field&.options[:child_index] || "new_item"  } %>
               <div id="barcode-scanner-btn" class="fa fa-barcode barcode-scanner mx-2"> </div>
