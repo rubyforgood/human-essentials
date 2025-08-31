@@ -76,7 +76,7 @@ RSpec.describe "Barcode management", type: :system, js: true do
 
       visit subject
       expect(page).to have_content("barcode_to_delete")
-      click_link "Delete"
+      click_button "Delete"
       expect(page).to have_content("Barcode deleted!")
       expect(page).not_to have_content("barcode_to_delete")
     end
@@ -87,7 +87,7 @@ RSpec.describe "Barcode management", type: :system, js: true do
 
       visit subject
       expect(page).to have_content(b_item.value)
-      ferrum_double_click('a.btn.btn-danger.btn-xs[href*="/barcode_items/"]')
+      ferrum_double_click('form[action*="/barcode_items/"] .btn.btn-danger.btn-xs')
       expect(page).to have_content("Barcode deleted!")
       expect(page).not_to have_content("barcode_to_delete")
       expect(page).not_to have_content("Sorry, you don't have permission to delete this barcode.")

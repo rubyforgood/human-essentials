@@ -71,7 +71,7 @@ RSpec.describe "StorageLocations", type: :request do
           it "shows a deactivate button" do
             get storage_locations_path(format: response_format)
             page = Nokogiri::HTML(response.body)
-            deactivate_link = page.at_css("a[href='#{storage_location_deactivate_path(storage_location)}']")
+            deactivate_link = page.at_css("form[action='#{storage_location_deactivate_path(storage_location)}'] button")
             expect(deactivate_link.attr("class")).not_to match(/disabled/)
           end
         end
@@ -85,7 +85,7 @@ RSpec.describe "StorageLocations", type: :request do
           it "shows a disabled deactivate button" do
             get storage_locations_path(format: response_format)
             page = Nokogiri::HTML(response.body)
-            deactivate_link = page.at_css("a[href='#{storage_location_deactivate_path(storage_location)}']")
+            deactivate_link = page.at_css("form[action='#{storage_location_deactivate_path(storage_location)}'] button")
             expect(deactivate_link.attr("class")).to match(/disabled/)
           end
         end

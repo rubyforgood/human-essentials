@@ -251,7 +251,7 @@ RSpec.describe "Donations", type: :request do
           get donation_path(donation.id)
           page = Nokogiri::HTML(response.body)
           edit = page.at_css("a[href='#{edit_donation_path(donation.id)}']")
-          delete = page.at_css("a.btn-danger[href='#{donation_path(donation.id)}']")
+          delete = page.at_css("form[action='#{donation_path(donation.id)}'] .btn-danger")
           expect(edit.attr("class")).to match(/disabled/)
           expect(delete.attr("class")).to match(/disabled/)
           expect(response.body).to match(/please make the following items active: #{item.name}/)
