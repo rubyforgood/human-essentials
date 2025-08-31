@@ -52,6 +52,7 @@ class Item < ApplicationRecord
   has_many :donations, through: :line_items, source: :itemizable, source_type: "::Donation"
   has_many :distributions, through: :line_items, source: :itemizable, source_type: "::Distribution"
   has_many :request_units, class_name: "ItemUnit", dependent: :destroy
+  has_and_belongs_to_many :children, class_name: 'Partners::Child'
 
   scope :active, -> { where(active: true) }
 
