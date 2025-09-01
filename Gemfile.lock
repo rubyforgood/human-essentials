@@ -707,7 +707,8 @@ GEM
     thor (1.4.0)
     tilt (2.2.0)
     timeout (0.4.3)
-    ttfunk (1.7.0)
+    ttfunk (1.8.0)
+      bigdecimal (~> 3.1)
     turbo-rails (2.0.16)
       actionpack (>= 7.1.0)
       railties (>= 7.1.0)
@@ -836,7 +837,7 @@ DEPENDENCIES
   stimulus-rails
   strong_migrations
   terser
-  ttfunk (~> 1.7.0)
+  ttfunk (~> 1.8.0)
   turbo-rails
   web-console
   webmock (~> 3.25)
