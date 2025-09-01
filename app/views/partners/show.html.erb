@@ -4,7 +4,7 @@
       <div class="col-sm-6">
         <% content_for :title, "Partners - #{@partner.name} - Agencies - #{current_organization.name}" %>
         <h1>
-          Partner info
+          Partner Administration
           <small>for <%= @partner.name %></small>
         </h1>
       </div>
@@ -30,32 +30,27 @@
         <% unless @partner.uninvited? %>
 
       <section class="card card-info card-outline">
-          <div class="card-header">
-            <h2 class="card-title fs-3">Partner Actions</h2>
-          </div>
           <div class="card-body p-3">
-            <% if current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
-              <%= link_to partner_users_path(@partner) do %>
-                <div class="btn btn-app bg-success">
-                  <i class="fas fa-users"></i> Manage Users
-                </div>
-              <% end %>
-            <% end %>
-            <hr>
             <div class="row px-2">
               <div class="col-lg-4 col-sm-12">
                 <div>
                   <h4 class='text-2xl underline'> Partner Details </h4>
                 </div>
-                <%= edit_button_to edit_partner_path(@partner), { text: "Edit Partner Information", icon: "pencil-square-o", type: "primary", size: "m" } %>
+                <%= render "partner_details", partner: @partner %>
                 <br>
                 <br>
-                <%= view_button_to '#partner-information', { text: "View Partner Information", type: "secondary", size: "m" } %>
+                <% if current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
+                 <%= edit_button_to partner_users_path(@partner), { text: "Manage Users", icon: "pencil-square-o", type: "primary", size: "m" } %>
+                <% end %>
               </div>
               <div class="col-lg-4 col-sm-12">
                 <div>
                   <h4 class='text-2xl underline'> Partner Status </h4>
                 </div>
+                <div>
+                  <label>Status:</label> <%= @partner.display_status %>
+                </div>
+
                 <% if @partner.deactivated? %>
                   <%= reactivate_button_to reactivate_partner_path(@partner), { confirm: confirm_reactivate_msg(@partner.name), size: 'm' } %>
                 <% else %>
@@ -130,57 +125,6 @@
                     <label>Phone:</label> <%= optional_data_text(@partner.profile.pick_up_phone) %>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </section>
-        <section class="card card-info card-outline">
-          <div class="card-header">
-            <h2 class="card-title fs-3">Settings</h2>
-          </div>
-          <div class="card-body p-2">
-            <div class="row">
-              <div class="col-xs-12 col-sm-12" id="partner-notes">
-                <div>
-                  <h4 class='text-2xl underline'> Partner Group: </h4>
-                  <div>
-                    <label><%= @partner.partner_group&.name || "None" %></label>
-                  </div>
-                </div>
-
-                <h4 class='text-2xl underline'> Requestable Item Categories: </h4>
-                <p class='text-sm font-light mb-1'> You can change this through their partner group.</p>
-
-                <% if @partner.item_categories.present? %>
-                  <ul class='list-disc ml-3'>
-                    <% @partner.item_categories.each do |ic| %>
-                      <li>
-                        <span class='text-lg'><%= ic.name %></span>
-                      </li>
-                    <% end %>
-                  </ul>
-                <% elsif @partner.partner_group.present? %>
-                  <span class='text-red-600 text-bold font-italic'>No Items Requestable</span>
-                <% else %>
-                  <span class='text-blue-600 text-bold font-italic'>All Items Requestable</span>
-                <% end %>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="card card-info card-outline">
-          <div class="card-header">
-            <h2 class="card-title fs-3">Notes</h2>
-          </div>
-          <div class="card-body p-2">
-            <div class="row">
-              <div class="col-xs-12 col-sm-12" id="partner-notes">
-                <% if @partner.notes %>
-                  <p><%= simple_format(@partner.notes) %></p>
-                <% else %>
-                  <p> None provided </p>
-                <% end %>
               </div>
             </div>
           </div>
