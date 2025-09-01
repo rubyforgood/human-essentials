@@ -702,7 +702,7 @@ GEM
     stringio (3.1.7)
     strong_migrations (2.3.0)
       activerecord (>= 7)
-    terser (1.2.5)
+    terser (1.2.6)
       execjs (>= 0.3.0, < 3)
     thor (1.4.0)
     tilt (2.2.0)
