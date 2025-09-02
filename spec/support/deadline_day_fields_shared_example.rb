@@ -74,6 +74,11 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
     expect(page).to have_content("Deadline day must be between 1 and 28")
   end
 
+  # These tests make assertions about the dates calculated by the javascript in deadline_day_controller.js
+  # Because we currently don't have a great way of spoofing the date the headless browser sees during tests, they
+  # cannot effectively set the date for the tests (like with travel_to) and have to make due with the actual datetime
+  # of whenever the test is run. To the best of my knowledge, the tests are sound but be aware that they could
+  # pass or fail based on when they are run!
   describe "reported reminder and deadline dates" do
     context "when the reminder is a day of the month" do
       before do

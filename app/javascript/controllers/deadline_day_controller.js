@@ -47,7 +47,7 @@ export default class extends Controller {
 
     if (this.byDayOfMonthTarget.checked && this.dayOfMonthTarget.value) {
       const rule = new RRule({
-        dtstart: today,
+        dtstart: new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate(), 12)),
         freq: RRule.MONTHLY,
         interval: monthlyInterval,
         bymonthday: parseInt(this.dayOfMonthTarget.value),
@@ -57,7 +57,7 @@ export default class extends Controller {
     }
     if (this.byDayOfWeekTarget.checked && this.everyNthDayTarget.value && (this.dayOfWeekTarget.value)) {
       const rule = new RRule({
-        dtstart: today,
+        dtstart: new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate(), 12)),
         freq: RRule.MONTHLY,
         interval: monthlyInterval,
         byweekday: WEEKDAY_NUM_TO_OBJ[ parseInt(this.dayOfWeekTarget.value) ].nth( parseInt(this.everyNthDayTarget.value) ),
