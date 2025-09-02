@@ -319,8 +319,10 @@ GEM
     hashie (5.0.0)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
-    icalendar (2.10.3)
+    icalendar (2.11.2)
+      base64
       ice_cube (~> 0.16)
+      logger
       ostruct
     ice_cube (0.17.0)
     ice_nine (0.11.2)
@@ -457,7 +459,7 @@ GEM
       capybara (>= 1.1)
       rspec (>= 2.14)
     orm_adapter (0.5.0)
-    ostruct (0.6.1)
+    ostruct (0.6.3)
     paper_trail (16.0.0)
       activerecord (>= 6.1)
       request_store (~> 1.4)
