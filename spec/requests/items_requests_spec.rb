@@ -53,9 +53,9 @@ RSpec.describe "Items", type: :request do
               get items_path(include_inactive_items: "1", format: response_format)
 
               csv = <<~CSV
-                Name,Barcodes,Base Item,Quantity
-                Briefs(M/L),"",#{active_item.base_item.name},0
-                Briefs(S/M),"",#{inactive_item.base_item.name},0
+                Name,Barcodes,Quantity
+                Briefs(M/L),"",0
+                Briefs(S/M),"",0
               CSV
 
               expect(response.body).to eq(csv)
@@ -67,8 +67,8 @@ RSpec.describe "Items", type: :request do
               get items_path(format: response_format)
 
               csv = <<~CSV
-                Name,Barcodes,Base Item,Quantity
-                Briefs(M/L),"",#{active_item.base_item.name},0
+                Name,Barcodes,Quantity
+                Briefs(M/L),"",0
               CSV
 
               expect(response.body).to eq(csv)
@@ -108,6 +108,32 @@ RSpec.describe "Items", type: :request do
           else
             expect(checkbox['checked']).to be_nil
           end
+        end
+      end
+
+      context "when item is housing a kit" do
+        let(:kit) { create(:kit, organization:) }
+        let(:item) { create(:item, organization: organization, kit:) }
+
+        it "shows the NDBN reporting category field disabled" do
+          get edit_item_path(item)
+          page = Nokogiri::HTML(response.body)
+
+          select_field = page.at_css(".item_reporting_category")
+          expect(select_field.attr("class")).to match(/disabled/)
+        end
+
+        it "shows hint explaining why it's disabled " do
+          get edit_item_path(item)
+          expect(response.body).to include("Kits are reported based on their contents.")
+        end
+      end
+
+      context "when item is not housing a kit" do
+        let(:item) { create(:item, organization: organization, active: true) }
+        it "does not show a hint explaining why it's disabled " do
+          get edit_item_path(item)
+          expect(response.body).to_not include("Kits are reported based on their contents.")
         end
       end
     end
@@ -167,6 +193,7 @@ RSpec.describe "Items", type: :request do
             item: {
               name: "really good item",
               partner_key: create(:base_item).partner_key,
+              reporting_category: "other",
               value_in_cents: 1001,
               package_size: 5,
               distribution_quantity: 30
@@ -191,7 +218,8 @@ RSpec.describe "Items", type: :request do
             partner_key: create(:base_item).partner_key,
             value_in_cents: -100,  # Invalid value
             package_size: nil,
-            distribution_quantity: nil
+            distribution_quantity: nil,
+            reporting_category: "ZZZ" # Invalid
           }
         }
       end
@@ -216,6 +244,19 @@ RSpec.describe "Items", type: :request do
         item_categories.each do |category|
           expect(response.body).to include("<option value=\"#{category.id}\">#{category.name}</option>")
         end
+      end
+
+      it "displays invalid parameter names in the flash message" do
+        # Attempt to create an item with invalid parameters
+        post items_path, params: invalid_item_params
+
+        # Expect to render the new template
+        expect(response).to render_template(:new)
+
+        # Verify flash message includes invalid param messages
+        expect(flash[:error]).to include("Value in cents must be greater than or equal to 0")
+        expect(flash[:error]).to include("Name can't be blank")
+        expect(flash[:error]).to include("Reporting category is not included in the list")
       end
     end
 
@@ -253,6 +294,21 @@ RSpec.describe "Items", type: :request do
         expect(button3.attr('class')).to match(/disabled/)
       end
 
+      context "when filtering by reporting category" do
+        it "only shows items with given reporting category" do
+          create(:item, organization:, name: "Adult Diapers", reporting_category: :adult_incontinence)
+
+          get items_path(filters: { by_reporting_category: :adult_incontinence})
+
+          expect(response.body).to include("Adult Diapers")
+
+          expect(response.body).not_to include("ACTIVEITEM")
+          expect(response.body).not_to include("NODEACTIVATE")
+          expect(response.body).not_to include("NODELETE")
+          expect(response.body).not_to include("NOSIR")
+        end
+      end
+
       context "custom request items" do
         before(:each) { Flipper.enable(:enable_packs) }
 
@@ -277,17 +333,20 @@ RSpec.describe "Items", type: :request do
     describe 'GET #show' do
       let!(:base_item) { create(:base_item, name: 'BASEITEM') }
       let!(:item_category) { create(:item_category, name: 'CURRENTCATEGORY') }
-      let!(:item) { create(:item, organization: organization, name: "ACTIVEITEM", item_category_id: item_category.id, distribution_quantity: 2000, on_hand_recommended_quantity: 2348, package_size: 100, value_in_cents: 20000, on_hand_minimum_quantity: 1200, visible_to_partners: true) }
+      let!(:item) { create(:item, organization: organization, name: "ACTIVEITEM", reporting_category: :adult_incontinence, item_category_id: item_category.id, distribution_quantity: 2000, on_hand_recommended_quantity: 2348, package_size: 100, value_in_cents: 20000, on_hand_minimum_quantity: 1200, visible_to_partners: true) }
       let!(:item_unit_1) { create(:item_unit, item: item, name: 'ITEM1') }
       let!(:item_unit_2) { create(:item_unit, item: item, name: 'ITEM2') }
+      let!(:kit) { create(:kit, organization:) }
+      let!(:item_containing_kit) { create(:item, organization: organization, kit:) }
+
       it 'shows complete item details except custom request' do
         get item_path(id: item.id)
-        expect(response.body).to include('Base Item')
-        expect(response.body).to include('BASEITEM')
         expect(response.body).to include('Name')
         expect(response.body).to include("ACTIVEITEM")
         expect(response.body).to include('Category')
         expect(response.body).to include('CURRENTCATEGORY')
+        expect(response.body).to include('NDBN Reporting Category')
+        expect(response.body).to include('Adult Incontinence')
         expect(response.body).to include('Value Per Item')
         expect(response.body).to include('$200.0')
         expect(response.body).to include('Quantity per Individual')
@@ -310,6 +369,16 @@ RSpec.describe "Items", type: :request do
 
         expect(response.body).to include('Custom Units')
         expect(response.body).to include("ITEM1; ITEM2")
+      end
+
+      it 'does not show the kit hint on reporting category (if not a kit item)' do
+        get item_path(id: item.id)
+        expect(response.body).to_not include("Kits are reported based on their contents.")
+      end
+
+      it 'does show the kit hint on reporting category (if a kit item)' do
+        get item_path(id: item_containing_kit.id)
+        expect(response.body).to include("Kits are reported based on their contents.")
       end
     end
   end

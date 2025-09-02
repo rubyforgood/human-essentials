@@ -475,7 +475,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_11_094943) do
     t.string "zipcode"
     t.float "latitude"
     t.float "longitude"
-    t.integer "reminder_day"
     t.integer "deadline_day"
     t.text "invitation_text"
     t.integer "default_storage_location"
@@ -495,6 +494,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_11_094943) do
     t.boolean "receive_email_on_requests", default: false, null: false
     t.boolean "bank_is_set_up", default: false, null: false
     t.boolean "include_in_kind_values_in_exported_files", default: false, null: false
+    t.integer "reminder_day"
+    t.string "reminder_schedule_definition"
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
   end
 
@@ -511,12 +512,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_11_094943) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "send_reminders", default: false, null: false
-    t.integer "reminder_day"
     t.integer "deadline_day"
+    t.integer "reminder_day"
+    t.string "reminder_schedule_definition"
     t.index ["name", "organization_id"], name: "index_partner_groups_on_name_and_organization_id", unique: true
     t.index ["organization_id"], name: "index_partner_groups_on_organization_id"
     t.check_constraint "deadline_day <= 28", name: "deadline_day_of_month_check"
-    t.check_constraint "reminder_day <= 28", name: "reminder_day_of_month_check"
   end
 
   create_table "partner_profiles", force: :cascade do |t|
