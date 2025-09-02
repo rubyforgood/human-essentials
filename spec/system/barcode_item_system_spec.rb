@@ -72,7 +72,7 @@ RSpec.describe "Barcode management", type: :system, js: true do
 
     it "can delete a barcode item" do
       item = create(:item, name: "Red 1T Diapers", base_item: base_item)
-      b_item = create(:barcode_item, organization: organization, barcodeable: item, value: "barcode_to_delete")
+      create(:barcode_item, organization: organization, barcodeable: item, value: "barcode_to_delete")
 
       visit subject
       expect(page).to have_content("barcode_to_delete")
