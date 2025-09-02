@@ -59,7 +59,7 @@
                 <br>
                 <br>
                 <% unless @partner.approved? %>
-                  <%= print_button_to approve_application_partner_path(@partner), { text: "Activate Partner Now", icon: "thumbs-o-up", type: "success", size: "m" } if can_administrate? %>
+                  <%= print_button_to approve_application_partner_path(@partner), { text: "Approve Partner", icon: "thumbs-o-up", type: "success", size: "m", enabled: @partner.approvable? } if can_administrate? %>
                 <% end %>
               </div>
             </div>

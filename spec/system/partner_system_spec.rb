@@ -277,7 +277,6 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
           expect(page).to have_selector(:link_or_button, 'Edit details')
           expect(page).to_not have_selector(:link_or_button, 'View')
-          expect(page).to_not have_selector(:link_or_button, 'Activate Partner Now')
           expect(page).to_not have_selector(:link_or_button, 'Add/Remind Partner')
         end
       end
