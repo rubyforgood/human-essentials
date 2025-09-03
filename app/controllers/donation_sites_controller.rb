@@ -18,13 +18,18 @@ class DonationSitesController < ApplicationController
     @donation_site = current_organization.donation_sites.new(donation_site_params)
     respond_to do |format|
       if @donation_site.save
+        format.turbo_stream
         format.html do
           redirect_to donation_sites_path,
                       notice: "Donation site #{@donation_site.name} added!"
         end
       else
+        flash.now[:error] = "Something didn't work quite right -- try again?"
+        if request.format.turbo_stream?
+          format.html { render partial: "donation_sites/new_modal", status: :unprocessable_entity }
+        end
+
         format.html do
-          flash.now[:error] = "Something didn't work quite right -- try again?"
           render action: :new
         end
       end
@@ -33,6 +38,11 @@ class DonationSitesController < ApplicationController
 
   def new
     @donation_site = current_organization.donation_sites.new
+    if turbo_frame_request?
+      render partial: "donation_sites/new_modal", layout: false
+    else
+      render :new
+    end
   end
 
   def edit
