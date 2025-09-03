@@ -37,9 +37,14 @@ class RequestsController < ApplicationController
   # pre-filled distribution containing all the requested items.
   def start
     request = Request.find(params[:id])
-    request.status_started!
-    flash[:notice] = "Request started"
-    redirect_to new_distribution_path(request_id: request.id)
+    begin
+      request.status_started!
+      flash[:notice] = "Request started"
+      redirect_to new_distribution_path(request_id: request.id)
+    rescue ActiveRecord::RecordInvalid
+      flash[:alert] = "Request has already been fulfilled"
+      redirect_to request_path(request)
+    end
   end
 
   def print_picklist
