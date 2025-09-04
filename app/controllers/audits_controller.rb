@@ -7,6 +7,14 @@ class AuditsController < ApplicationController
     @selected_location = filter_params[:at_location]
     @audits = current_organization.audits.includes(:line_items, :storage_location).class_filter(filter_params)
     @storage_locations = StorageLocation.with_audits_for(current_organization).select(:id, :name)
+
+    respond_to do |format|
+      format.html
+      format.csv do
+        inventory = View::Inventory.new(current_organization.id)
+        send_data Audit.generate_csv_from_inventory(@audits, inventory), filename: "Audits-#{Time.zone.today}.csv"
+      end
+    end
   end
 
   def show
