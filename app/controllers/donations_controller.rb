@@ -33,6 +33,7 @@ class DonationsController < ApplicationController
     # Using the @donations allows drilling down instead of always starting with the total dataset
     @donations_quantity = @donations.collect(&:total_quantity).sum
     @paginated_donations_quantity = @paginated_donations.collect(&:total_quantity).sum
+    @items = current_organization.items.alphabetized.select(:id, :name)
     @total_value_all_donations = total_value(@donations)
     @paginated_in_kind_value = total_value(@paginated_donations)
     @total_money_raised = total_money_raised(@donations)
@@ -40,6 +41,8 @@ class DonationsController < ApplicationController
     @selected_storage_location = filter_params[:at_storage_location]
     @sources = @donations.collect(&:source).uniq.sort
     @selected_source = filter_params[:by_source]
+    @selected_item = filter_params[:by_item_id]
+    @donation_totals = DonationTotalsService.call(current_organization.donations.class_filter(scope_filters))
     @selected_item_category = filter_params[:by_category]
     @donation_sites = @donations.collect(&:donation_site).compact.uniq.sort_by { |site| site.name.downcase }
     @selected_donation_site = filter_params[:from_donation_site]
@@ -157,8 +160,7 @@ class DonationsController < ApplicationController
   helper_method \
     def filter_params
     return {} unless params.key?(:filters)
-
-    params.require(:filters).permit(:at_storage_location, :by_source, :from_donation_site, :by_product_drive, :by_product_drive_participant, :from_manufacturer, :by_category)
+    params.require(:filters).permit(:at_storage_location, :by_source, :from_donation_site, :by_product_drive, :by_product_drive_participant, :from_manufacturer, :by_category, :by_item_id)
   end
 
   # Omits donation_site_id or product_drive_participant_id if those aren't selected as source
@@ -168,6 +170,12 @@ class DonationsController < ApplicationController
     params[:donation].delete(:product_drive_id) unless params[:donation][:source] == Donation::SOURCES[:product_drive]
     params[:donation].delete(:product_drive_participant_id) unless params[:donation][:source] == Donation::SOURCES[:product_drive]
     params
+  end
+
+  def scope_filters
+    filter_params
+      .except(:date_range)
+      .merge(during: helpers.selected_range)
   end
 
   # If line_items have submitted with empty rows, clear those out first.
