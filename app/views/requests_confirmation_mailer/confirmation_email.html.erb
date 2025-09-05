@@ -2,15 +2,8 @@
 
 <p>This email confirms that <%= @organization.name %> has received a request<%= " submitted by #{@requester_user_name}" if @requester_user_name.present? %> for:</p>
 <ul>
-  <% @request_items.each do |item| %>
-    <li><%= item['name'] %> -
-    <% if Flipper.enabled?(:enable_packs) && item['unit'] %>
-    <%= pluralize(item['quantity'] || item['person_count'], item['unit']) %>
-    <% else %>
-    <%= item['quantity'] || item['person_count'] %>
-    <% end %>
-    </li>
-
+  <% @item_requests.each do |item_request| %>
+    <li><%= item_request.item_name %> - <%= item_request.quantity_with_units %></li>
   <% end %>
 </ul>
 
