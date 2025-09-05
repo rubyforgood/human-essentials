@@ -302,7 +302,7 @@ RSpec.describe "Purchases", type: :system, js: true do
       it "does not allow deletion of a purchase" do
         purchase = create(:purchase, organization: organization)
         visit "#{subject}/#{purchase.id}"
-        expect(page).to_not have_link("Delete")
+        expect(page).to_not have_button("Delete")
       end
     end
   end
@@ -318,7 +318,7 @@ RSpec.describe "Purchases", type: :system, js: true do
     context "When the purchase remains in storage location" do
       it "allows deletion of a purchase" do
         visit "#{subject}/#{purchase.id}"
-        expect(page).to have_link("Delete")
+        expect(page).to have_button("Delete")
         accept_confirm do
           click_on "Delete"
         end
@@ -332,7 +332,7 @@ RSpec.describe "Purchases", type: :system, js: true do
         allow(PurchaseDestroyService).to receive(:call).with(purchase).and_raise(InventoryError)
 
         visit "#{subject}/#{purchase.id}"
-        expect(page).to have_link("Delete")
+        expect(page).to have_button("Delete")
         accept_confirm do
           click_on "Delete"
         end
