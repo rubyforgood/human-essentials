@@ -31,4 +31,4 @@ You'll see a list of your storage locations.  Click "New Storage Location" if yo
 
 ![storage location index](images/getting_started/storage_locations/storage_location_index.png)
 
-[Prior: Choices to think about](getting_started_choices.md) [Next: Entering or uploading your initial partner list](getting_started_partners.md) 
+[Prior: Choices to think about](getting_started_choices.md) [Next: Inventory](getting_started_inventory.md)

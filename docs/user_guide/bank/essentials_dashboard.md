@@ -24,4 +24,4 @@ This lists Items whose *bank-wide* inventory has fallen below the recommended or
 
 For help on setting those levels, see [Inventory Items](inventory_items.md).  If you haven't set those levels, the Items will not appear on this list, even if you have no inventory.
 
-[Prior: User management](getting_started_user_management.md) [Next: Donations](essentials_donations.md)
+[Next: Entering or uploading your initial partner list](getting_started_partners.md) [Next: Donations](essentials_donations.md)
