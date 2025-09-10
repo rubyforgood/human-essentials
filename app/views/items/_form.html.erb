@@ -9,9 +9,6 @@
             <!-- /.card-header -->
             <!-- form start -->
             <div class="card-body">
-              <% if @item.kit.blank? %>
-                <%= render partial: "base_items/dropdown", object: f %>
-              <% end %>
               <%= f.input :name, label: "Name", wrapper: :input_group do %>
                 <span class="input-group-text"><i class="fa fa-tag"></i></span>
                 <%= f.input_field :name, class: "form-control" %>
@@ -19,6 +16,10 @@
 
               <div class='w-1/4'>
                 <%= f.input :item_category_id, label: 'Category', collection: @item_categories, hint: 'Categories can help organize and identify items' %>
+              </div>
+              <div class='w-1/4'>
+
+                <%= f.input :reporting_category, label: 'NDBN Reporting Category', collection: Item.reporting_categories_for_select, disabled: !!@item.kit_id, required: !@item.kit_id, hint: @reporting_category_hint %>
               </div>
 
               <%= f.input :name, label: "Value per item", wrapper: :input_group do %>

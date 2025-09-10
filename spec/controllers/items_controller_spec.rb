@@ -137,7 +137,7 @@ RSpec.describe ItemsController, type: :controller do
         {
           item: {
             name: "Really Good Item",
-            partner_key: create(:base_item).partner_key,
+            reporting_category: "other",
             value_in_cents: 1001,
             package_size: 5,
             distribution_quantity: 30,

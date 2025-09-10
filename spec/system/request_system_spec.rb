@@ -255,7 +255,7 @@ RSpec.describe "Requests", type: :system, js: true do
 
       it 'should set the request as canceled/discarded and contain the reason' do
         click_on 'Cancel'
-        fill_in 'Cancelation reason *', with: reason
+        fill_in 'Cancellation reason *', with: reason
         click_on 'Yes. Cancel Request'
 
         expect(page).to have_content("Request #{request.id} has been removed")

@@ -46,6 +46,10 @@
               <%= f.input :notes, label: "Notes", wrapper: :input_group do %>
                 <%= f.input_field :notes, class: "form-control" %>
               <% end %>
+              <%= f.input :info_for_partner, label: "Partner specific information (500 characters)", wrapper: :input_group do %>
+                <%= f.input_field :info_for_partner, class: "form-control", "aria-describedby": "info-for-partner-note", maxlength: 500 %>
+              <% end %>
+                <p class="form-text" id="info-for-partner-note">Note: The partner can see, but cannot change this information.</p>
               <%= f.input :documents, label: "Documents", wrapper: :input_group do %>
                 <% if @partner.documents.present? %>
                   <ul class="list-unstyled w-100">
