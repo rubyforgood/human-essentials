@@ -171,17 +171,29 @@
 
             <h4>Other emails</h4>
             <div>
-              <h6 class="font-weight-bold">Default reminder day (day of month an email reminder to submit Requests is sent to Partners)</h6>
+              <h6 class="font-weight-bold">Reminder emails are sent</h6>
               <p>
                 <%= fa_icon "calendar" %>
-                <%= @organization.reminder_day.blank? ? 'Not defined' : "The #{@organization.reminder_day.ordinalize} of each month" %>
+                <%= @organization.reminder_schedule&.show_description.blank? ? 'Not defined' : @organization.reminder_schedule&.show_description %>
+                <% if @organization.reminder_schedule.valid? %>
+                  <small class="mb-3 d-block text-muted">
+                    <%= "Your next reminder date is #{@organization.reminder_schedule.next_occurrence&.strftime('%a %b %d %Y')}." %>
+                  </small>
+                <% end %>
               </p>
             </div>
             <div>
-              <h6 class="font-weight-bold">Default deadline day (final day of month to submit Requests)</h6>
+              <h6 class="font-weight-bold">Deadline day in reminder email</h6>
               <p>
                 <%= fa_icon "calendar" %>
-                <%= @organization.deadline_day.blank? ? 'Not defined' : "The #{@organization.deadline_day.ordinalize} of each month" %>
+                <%= @organization.deadline_day.blank? ? 'Not defined' : "The #{@organization.deadline_day.ordinalize} after the reminder." %>
+                <small class="mb-3 d-block text-muted">
+                  <% if @organization.deadline_day && @organization.reminder_schedule.valid? %>
+                    <%= "The deadline on your next reminder email will be #{DeadlineService.new(
+                      deadline_day: @organization.deadline_day,
+                      today: @organization.reminder_schedule.next_occurrence).next_deadline&.strftime('%a %b %d %Y')}." %>
+                  <% end %>
+                </small>
               </p>
             </div>
             <div>

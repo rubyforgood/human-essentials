@@ -123,6 +123,8 @@ RSpec.describe "Organizations", type: :request do
         expect(html.text).to include("Logo")
         expect(html.text).to include("Use one-step Partner invite and approve process?")
         expect(html.text).to include("Receive email when Partner makes a Request?")
+        expect(html.text).not_to include("Your next reminder date is ")
+        expect(html.text).not_to include("The deadline on your next reminder email will be ")
       end
 
       it "displays the correct organization details" do
@@ -150,6 +152,31 @@ RSpec.describe "Organizations", type: :request do
           Flipper.disable(:enable_packs)
           get organization_path
           expect(response.body).to_not include "Wolf Pack"
+        end
+      end
+
+      context "with a reminder schedule" do
+        before do
+          travel_to Time.zone.local(2020, 10, 10)
+          valid_reminder_schedule = ReminderScheduleService.new({
+            by_month_or_week: "day_of_month",
+            every_nth_month: 1,
+            day_of_month: 20
+          }).to_ical
+          organization.update(reminder_schedule_definition: valid_reminder_schedule)
+        end
+
+        it "reports the next date a reminder email will be sent" do
+          get organization_path
+          expect(response.body).to include "Your next reminder date is Tue Oct 20 2020."
+          expect(response.body).not_to include "The deadline on your next reminder email will be Sun Oct 25 2020."
+        end
+
+        it "reports the deadline date that will be included in the next reminder email" do
+          organization.update(deadline_day: 25)
+          get organization_path
+          expect(response.body).to include "Your next reminder date is Tue Oct 20 2020."
+          expect(response.body).to include "The deadline on your next reminder email will be Sun Oct 25 2020."
         end
       end
 

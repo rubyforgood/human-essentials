@@ -10,7 +10,7 @@ end
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.5.9"
+gem "pg", "~> 1.6.1"
 # Web server.
 gem "puma"
 # Rails web framework.
@@ -94,6 +94,8 @@ gem "flipper-ui"
 gem "geocoder"
 # Generate .ics calendars for use with Google Calendar
 gem 'icalendar', require: false
+# Offers functionality for date reocccurances
+gem "ice_cube"
 # JSON Web Token encoding / decoding (e.g. for links in e-mails)
 gem "jwt"
 # Use Newrelic for logs and APM
