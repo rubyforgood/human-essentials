@@ -218,16 +218,25 @@ RSpec.describe "Purchases", type: :system, js: true do
       # Bug fix -- Issue #378
       # A user can view another organizations purchase
       context "Editing purchase" do
-        it "A user can see purchased_from value" do
-          purchase = create(:purchase, purchased_from: "Old Vendor", organization: organization)
-          visit edit_purchase_path(purchase)
-          expect(page).to have_content("Vendor (Old Vendor)")
+        context "with an eligible purchase" do
+          let(:purchase) { create(:purchase, purchased_from: "Old Vendor", organization: organization) }
+
+          it "can view the edit page and vendor is present" do
+            visit edit_purchase_path(purchase)
+
+            expect(page).to have_content("Vendor (Old Vendor)")
+          end
         end
 
-        it "A user can view another organizations purchase" do
-          purchase = create(:purchase, organization: create(:organization))
-          visit edit_purchase_path(purchase)
-          expect(page).to have_content("Still haven't found what you're looking for")
+        context "with another organization's purchase" do
+          let(:another_organization) { create(:organization) }
+          let(:purchase) { create(:purchase, organization: another_organization) }
+
+          it "cannot view the edit page" do
+            visit edit_purchase_path(purchase)
+
+            expect(page).to have_content("Still haven't found what you're looking for")
+          end
         end
       end
 
