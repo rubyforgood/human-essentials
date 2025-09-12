@@ -348,7 +348,7 @@ RSpec.describe "Items", type: :request do
         expect(response.body).to include('NDBN Reporting Category')
         expect(response.body).to include('Adult Incontinence')
         expect(response.body).to include('Value Per Item')
-        expect(response.body).to include('$200.0')
+        expect(response.body).to include('$200.00')
         expect(response.body).to include('Quantity per Individual')
         expect(response.body).to include('2000')
         expect(response.body).to include('On hand minimum quantity')
