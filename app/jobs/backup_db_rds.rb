@@ -19,7 +19,7 @@ module BackupDbRds
       body: File.read(backup_filename),
       bucket: "human-essentials-backups")
 
-    Dir.glob(Rails.root.join("*.rds.dump")).each do |file|
+    Rails.root.glob("*.rds.dump").each do |file|
       File.delete(file)
     end
   end
