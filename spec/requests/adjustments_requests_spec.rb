@@ -119,7 +119,7 @@ RSpec.describe "Adjustments", type: :request do
 
         it "includes appropriate headers and data" do
           csv = <<~CSV
-            Created date,Storage Area,Comment,# of changes,#{item1.name},#{item2.name}
+            Created date,Storage Area,Comment,Change Diff #,#{item1.name},#{item2.name}
             2019-06-30,Test Storage Location,First adjustment,2,10,5
             2019-06-26,Test Storage Location,Second adjustment,1,-5,0
           CSV
