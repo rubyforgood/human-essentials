@@ -13,6 +13,7 @@
 #  package_size                 :integer
 #  partner_key                  :string
 #  reporting_category           :string
+#  unit_request_limit           :integer
 #  value_in_cents               :integer          default(0)
 #  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null
@@ -186,10 +187,12 @@ class Item < ApplicationRecord
     distribution_quantity || 50
   end
 
-  def sync_request_units!(unit_ids)
+  def sync_request_units!(unit_ids, limits = {})
     request_units.clear
-    organization.request_units.where(id: unit_ids).pluck(:name).each do |name|
-      request_units.create!(name:)
+    organization.request_units.where(id: unit_ids).each do |unit|
+      item_unit = request_units.create!(name: unit.name)
+      limit = limits[unit.id.to_s]
+      item_unit.update!(request_limit: limit.to_i) if limit.present?
     end
   end
 

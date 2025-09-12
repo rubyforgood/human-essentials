@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_11_094943) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_12_155420) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -387,6 +387,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_11_094943) do
     t.bigint "item_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "request_limit"
     t.index ["item_id"], name: "index_item_units_on_item_id"
   end
 
@@ -408,6 +409,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_11_094943) do
     t.integer "item_category_id"
     t.text "additional_info"
     t.string "reporting_category"
+    t.integer "unit_request_limit"
     t.index ["kit_id"], name: "index_items_on_kit_id"
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"
