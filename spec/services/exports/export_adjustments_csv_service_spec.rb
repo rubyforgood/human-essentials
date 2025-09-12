@@ -68,7 +68,7 @@ RSpec.describe Exports::ExportAdjustmentsCSVService do
 
       it "should include the correct adjustment data" do
         csv = <<~CSV
-          Created date,Storage Area,Comment,# of changes,item1,item2,item3,item4,item5
+          Created date,Storage Area,Comment,Change Diff #,item1,item2,item3,item4,item5
           2024-12-25,Test Storage Location,adjustment 1,2,10,-5,0,0,0
           2024-12-25,Test Storage Location,adjustment 2,1,0,0,3,0,0
           2024-12-25,Test Storage Location,adjustment 3,1,7,0,0,0,0
@@ -83,7 +83,7 @@ RSpec.describe Exports::ExportAdjustmentsCSVService do
 
       it "returns only headers row" do
         csv = <<~CSV
-          Created date,Storage Area,Comment,# of changes,item1,item2,item3,item4,item5
+          Created date,Storage Area,Comment,Change Diff #,item1,item2,item3,item4,item5
         CSV
 
         expect(subject).to eq(csv)
