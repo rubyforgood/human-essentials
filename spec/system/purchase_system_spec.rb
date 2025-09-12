@@ -254,6 +254,19 @@ RSpec.describe "Purchases", type: :system, js: true do
               expect(page.current_path).to eq(purchases_path)
             end
           end
+
+          context "with a deactivated vendor" do
+            let(:deactivated_vendor) { create(:vendor, active: false) }
+            let(:purchase) { create(:purchase, vendor: deactivated_vendor) }
+
+            it "can save the purchase" do
+              visit edit_purchase_path(purchase)
+              click_button "Save"
+
+              expect(page).to have_content("Purchase updated successfully")
+              expect(page.current_path).to eq(purchases_path)
+            end
+          end
         end
 
         context "with another organization's purchase" do
