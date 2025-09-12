@@ -175,7 +175,6 @@ RSpec.describe "Dashboard", type: :system, js: true do
               expect(page).to have_content partner.profile.primary_contact_name
               expect(page).to have_link "Review Applicant's Profile", href: partner_path(id: partner) + "#partner-information"
             end
-            binding.pry
             [partner_hidden1, partner_hidden2].each do |hidden_partner|
               expect(page).to_not have_content hidden_partner.name
               expect(page).to_not have_content hidden_partner.profile.primary_contact_email
