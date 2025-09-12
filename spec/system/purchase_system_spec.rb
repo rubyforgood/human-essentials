@@ -226,6 +226,34 @@ RSpec.describe "Purchases", type: :system, js: true do
 
             expect(page).to have_content("Vendor (Old Vendor)")
           end
+
+          it "can save the purchase" do
+            visit edit_purchase_path(purchase)
+            click_button "Save"
+
+            expect(page).to have_content("Purchase updated successfully")
+            expect(page.current_path).to eq(purchases_path)
+          end
+
+          context "with an error saving the purchase" do
+            it "can save the purchase from the update page " do
+              visit edit_purchase_path(purchase)
+
+              fill_in "purchase[amount_spent]", with: nil
+
+              click_button "Save"
+
+              expect(page).to have_content("Error updating purchase")
+              expect(page.current_path).to eq(purchase_path(purchase))
+
+              fill_in "purchase[amount_spent]", with: "10"
+
+              click_button "Save"
+
+              expect(page).to have_content("Purchase updated successfully")
+              expect(page.current_path).to eq(purchases_path)
+            end
+          end
         end
 
         context "with another organization's purchase" do

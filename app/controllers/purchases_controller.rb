@@ -78,6 +78,8 @@ class PurchasesController < ApplicationController
     ItemizableUpdateService.call(itemizable: @purchase,
       params: purchase_params,
       event_class: PurchaseEvent)
+
+    flash[:success] = "Purchase updated successfully"
     redirect_to purchases_path
   rescue => e
     load_form_collections
