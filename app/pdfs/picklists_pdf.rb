@@ -1,6 +1,6 @@
 require "prawn/table"
 
-# Configures a Prawn PDF template for generating Distribution manifests
+# Configures a Prawn PDF template for generating Picklists
 class PicklistsPdf
   include Prawn::View
   include ItemsHelper
