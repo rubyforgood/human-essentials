@@ -8,12 +8,12 @@ mkdir -p .vscode && cp -n .devcontainer/launch.json.codespaces .vscode/launch.js
 # If the project's required ruby version changes from 3.2.2, this command
 # will download and compile the correct version, but it will take a long time.
 # TODO: Why do we install this RVM shim when we use rbenv later on???
-if [ "$RUBY_VERSION" != "3.2.2" ]; then
-  echo "*** Installing Ruby $RUBY_VERSION (this may take a while)"
-  rvm install $RUBY_VERSION
-  rvm use $RUBY_VERSION
-  echo "Ruby $RUBY_VERSION installed"
-fi
+# if [ "$RUBY_VERSION" != "3.2.2" ]; then
+#   echo "*** Installing Ruby $RUBY_VERSION (this may take a while)"
+#   rvm install $RUBY_VERSION
+#   rvm use $RUBY_VERSION
+#   echo "Ruby $RUBY_VERSION installed"
+# fi
 
 echo "*** Setting up node"
 nvm install node
