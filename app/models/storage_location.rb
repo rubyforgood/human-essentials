@@ -44,6 +44,7 @@ class StorageLocation < ApplicationRecord
                           dependent: :destroy
 
   validates :name, :address, presence: true
+  validates :name, uniqueness: { scope: :organization_id, case_sensitive: false}
   validates :warehouse_type, inclusion: { in: WAREHOUSE_TYPES },
                              allow_blank: true
   validates :square_footage, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
@@ -60,7 +61,7 @@ class StorageLocation < ApplicationRecord
     joins(:adjustments).where(organization_id: organization.id).distinct.active.alphabetized
   }
   scope :with_audits_for, ->(organization) {
-    joins(:audits).where(organization_id: organization.id).distinct.active.alphabetized
+    joins(:audits).where(organization_id: organization.id).distinct.alphabetized
   }
   scope :with_transfers_to, ->(organization) {
     joins(:transfers_to).where(organization_id: organization.id).distinct.order(:name)
