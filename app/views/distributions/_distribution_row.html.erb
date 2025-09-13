@@ -1,14 +1,14 @@
 <tr <%= 'class="highlight"' if distribution_row.id == @highlight_id %>>
   <td><%= distribution_row.id %></td>
   <td><%= distribution_row.partner.name %></td>
-  <td class="date"><%= distribution_row.created_at.strftime("%m/%d/%Y") %></td>
-  <td class="date"><%= (distribution_row.issued_at.presence || distribution_row.created_at).strftime("%m/%d/%Y") %></td>
+  <td class="date text-left"><%= distribution_row.created_at.strftime("%m/%d/%Y") %></td>
+  <td class="date text-left""><%= (distribution_row.issued_at.presence || distribution_row.created_at).strftime("%m/%d/%Y") %></td>
   <td><%= distribution_row.storage_location.name %></td>
 
   <td class="numeric"><%= @distribution_totals[distribution_row.id].quantity %></td>
   <td class="numeric"><%= dollar_value(@distribution_totals[distribution_row.id].value) %></td>
   <td><%= distribution_row.delivery_method.humanize %></td>
-  <td><%= distribution_shipping_cost(distribution_row.shipping_cost) %></td>
+  <td class="text-right"><%= distribution_shipping_cost(distribution_row.shipping_cost) %></td>
   <td><%= distribution_row.comment %></td>
   <td><%= distribution_row.state&.humanize %></td>
 

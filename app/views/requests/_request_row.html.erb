@@ -5,7 +5,7 @@
     <% partner_user = @partner_users.find { |pu| pu.id == request_row.partner_user_id } %>
     <%= "#{partner_user&.formatted_email}" %>
   </td>
-  <td class="<%= quota_column_class(request_row.total_items, request_row.partner) %>">
+  <td class="<%= quota_column_class(request_row.total_items, request_row.partner) %> text-right">
     <%= request_row.total_items %>
     <%= quota_display(request_row.partner) %>
   </td>
