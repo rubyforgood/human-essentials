@@ -83,7 +83,7 @@ RSpec.describe Exports::ExportAdjustmentsCSVService do
 
       it "returns only headers row" do
         csv = <<~CSV
-          Created date,Storage Area,Comment,Change Diff #,item1,item2,item3,item4,item5
+          Created date,Storage Area,Comment,Updates,item1,item2,item3,item4,item5
         CSV
 
         expect(subject).to eq(csv)
