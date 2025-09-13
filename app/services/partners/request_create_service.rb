@@ -105,6 +105,23 @@ module Partners
         }.compact
       end
 
+      # Validate if request quantity exceeds its request limit
+      partner_request.request_items.each do |ir|
+        item = Item.find(ir["item_id"])
+        unit_type = ir["request_unit"]
+        quantity_requested = ir["quantity"].to_i
+
+        limit = if unit_type == ""
+                  item.unit_request_limit
+                else
+                  item.request_units.where(name: unit_type)&.first&.request_limit
+                end
+
+        if limit.present? && (quantity_requested > limit)
+          errors.add(:base, "please do not exceed #{limit} #{unit_type.pluralize} for #{item.name}")
+        end
+      end
+
       partner_request
     end
 
