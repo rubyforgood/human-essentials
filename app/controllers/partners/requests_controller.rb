@@ -43,7 +43,7 @@ module Partners
       else
         @partner_request = create_service.partner_request
         @errors = create_service.errors
-        flash[:error] = @errors.full_messages.join(", ").capitalize + "." if @errors.present?
+        flash[:error] = @errors.full_messages.join("; ").capitalize + "." if @errors.present?
 
         fetch_items
 
