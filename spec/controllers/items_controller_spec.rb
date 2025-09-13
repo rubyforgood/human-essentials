@@ -52,38 +52,76 @@ RSpec.describe ItemsController, type: :controller do
         end
       end
 
-      context "request units" do
+      context "changing request units (item units)" do
         before(:each) { Flipper.enable(:enable_packs) }
-        let(:item) { create(:item, organization:) }
-        let(:unit) { create(:unit, organization:) }
-        it "should add new item's request units" do
-          expect(item.request_units).to be_empty
-          request = put :update, params: { id: item.id, item: { request_unit_ids: [unit.id] } }
-          expect(request).to redirect_to(items_path)
-          expect(response).not_to have_error
-          expect(item.request_units.reload.pluck(:name)).to match_array [unit.name]
+
+        let!(:pack_unit) { create(:unit, organization: organization, name: "pack") }
+        let!(:box_unit) { create(:unit, organization: organization, name: "box") }
+        let(:item) { create(:item, organization: organization, unit_request_limit: 100) }
+
+        context "when checking pack" do
+          let(:params) do
+            {
+              id: item.id,
+              item: {
+                unit_ids:   [pack_unit.id.to_s, ""],
+                unit_limits: { pack_unit.id.to_s => "500" }
+              }
+            }
+          end
+
+          it "adds pack item unit to item" do
+            expect(item.request_units).to be_empty
+
+            put :update, params: params
+            expect(response).to redirect_to(items_path)
+            expect(response).not_to have_error
+            expect(item.request_units.reload.pluck(:name)).to match_array [pack_unit.name]
+            expect(item.request_units.first.request_limit).to eq 500
+          end
         end
 
-        it "should remove item request units" do
-          # add an existing unit
-          create(:item_unit, item:, name: unit.name)
-          expect(item.request_units.size).to eq 1
-          request = put :update, params: { id: item.id, item: { request_unit_ids: [""] } }
-          expect(response).not_to have_error
-          expect(request).to redirect_to(items_path)
-          expect(item.request_units.reload).to be_empty
+        context "when already has pack selected and unselects pack" do
+          let!(:item_unit){ create(:item_unit, item: item, request_limit: 500, name: pack_unit.name) }
+          let(:params) do
+            {
+              id: item.id,
+              item: { unit_ids: [""], unit_limits: {} }
+            }
+          end
+
+          it "removes item request units" do
+            expect(item.request_units.size).to eq 1
+
+            put :update, params: params
+            expect(response).not_to have_error
+            expect(response).to redirect_to(items_path)
+            expect(item.request_units.reload).to be_empty
+          end
         end
 
-        it "should add and remove request units at the same time" do
-          # attach a different unit to the item
-          unit_to_remove = create(:unit, organization:)
-          create(:item_unit, item:, name: unit_to_remove.name)
-          expect(item.request_units.pluck(:name)).to match_array [unit_to_remove.name]
-          request = put :update, params: { id: item.id, item: { request_unit_ids: [unit.id] } }
-          expect(response).not_to have_error
-          expect(request).to redirect_to(items_path)
-          # We should have removed the existing unit and replaced it with the new one
-          expect(item.request_units.reload.pluck(:name)).to match_array [unit.name]
+        context "when selecting pack and unselecting box" do
+          let!(:item_unit){ create(:item_unit, item: item, request_limit: 1500, name: box_unit.name) }
+          let(:params) do
+            {
+              id: item.id,
+              item: {
+                unit_ids:   [pack_unit.id.to_s, ""],
+                unit_limits: { pack_unit.id.to_s => "200" }
+              }
+            }
+          end
+
+          it "adds and removes request units at the same time" do
+            expect(item.request_units.pluck(:name)).to match_array [box_unit.name]
+
+            put :update, params: params
+            expect(response).not_to have_error
+            expect(response).to redirect_to(items_path)
+
+            expect(item.request_units.reload.pluck(:name)).to match_array [pack_unit.name]
+            expect(item.request_units.first.request_limit).to eq 200
+          end
         end
       end
     end
@@ -170,7 +208,8 @@ RSpec.describe ItemsController, type: :controller do
         it "should accept request_unit ids and create request_units" do
           Flipper.enable(:enable_packs)
           unit = create(:unit, organization: organization)
-          item_params[:item] = item_params[:item].merge({request_unit_ids: [unit.id]})
+          item_params[:item] = item_params[:item].merge({ unit_ids: [unit.id], unit_limits: {} })
+
           post :create, params: item_params
           expect(response).not_to have_error
           newly_created_item = Item.last

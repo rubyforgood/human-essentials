@@ -62,25 +62,14 @@
                                            item_unit&.request_limit,
                                            class: "form-control d-inline-block w-auto",
                                            min: 0,
-                                           placeholder: "Limit",
-                                           disabled: !selected %>
+                                           placeholder: "limit",
+                                           disabled: !selected,
+                                           autocomplete: "off" %>
                     </div>
                   <% end %>
 
-                  <!-- keep the param key present even if nothing checked -->
                   <%= hidden_field_tag "item[unit_ids][]", "" %>
                 <% end %>
-
-                <script>
-                    // Optional: toggle limit input enabled state with the checkbox
-                    document.addEventListener("change", (e) => {
-                        if (e.target.matches('input[type="checkbox"][id^="unit_"]')) {
-                            const id = e.target.id.replace("unit_", "");
-                            const limit = document.querySelector(`input[name="item[unit_limits][${id}]"]`);
-                            if (limit) limit.disabled = !e.target.checked;
-                        }
-                    });
-                </script>
               <% end %>
 
               <%= f.input :visible, label: "Item is Visible to Partners?", wrapper: :input_group do %>
@@ -108,3 +97,13 @@
     </div><!-- /.container-fluid -->
   </section>
 <% end %>
+
+<script>
+    document.addEventListener("change", (e) => {
+        if (e.target.matches('input[type="checkbox"][id^="unit_"]')) {
+            const id = e.target.id.replace("unit_", "");
+            const limit = document.querySelector(`input[name="item[unit_limits][${id}]"]`);
+            if (limit) limit.disabled = !e.target.checked;
+        }
+    });
+</script>
