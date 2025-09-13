@@ -249,6 +249,200 @@ RSpec.describe StorageLocation, type: :model do
         expect(storage_location.longitude).not_to eq(nil)
       end
     end
+
+    describe "to_csv" do
+      let(:organization) { create(:organization) }
+      let(:storage_location) { create(:storage_location, organization: organization) }
+      let(:item1) { create(:item, name: "Item 1", organization: organization) }
+      let(:item2) { create(:item, name: "Item 2", organization: organization) }
+      let(:item3) { create(:item, name: "Item 3", organization: organization) }
+
+      before do
+        # Create items in the organization
+        [item1, item2, item3]
+      end
+
+      it "generates a CSV with the correct headers and data" do
+        csv_data = storage_location.to_csv
+        parsed_csv = CSV.parse(csv_data, headers: true)
+
+        # Check headers
+        expect(parsed_csv.headers).to eq(["Quantity", "DO NOT CHANGE ANYTHING IN THIS COLUMN"])
+
+        # Check data rows
+        expect(parsed_csv.count).to eq(3) # One row per item
+        expect(parsed_csv.map { |row| row["DO NOT CHANGE ANYTHING IN THIS COLUMN"] }).to match_array([item1.name, item2.name, item3.name])
+        expect(parsed_csv.map { |row| row["Quantity"] }).to all(eq(""))
+      end
+
+      it "includes all organization items in the CSV" do
+        csv_data = storage_location.to_csv
+        parsed_csv = CSV.parse(csv_data, headers: true)
+
+        # Get all item names from the CSV
+        csv_item_names = parsed_csv.map { |row| row["DO NOT CHANGE ANYTHING IN THIS COLUMN"] }
+
+        # Check that all organization items are included
+        expect(csv_item_names).to match_array(organization.items.pluck(:name))
+      end
+
+      it "generates a valid CSV string" do
+        csv_data = storage_location.to_csv
+
+        # Verify it's a valid CSV string
+        expect { CSV.parse(csv_data) }.not_to raise_error
+
+        # Verify it has the correct number of lines (header + items)
+        expect(csv_data.lines.count).to eq(organization.items.count + 1)
+      end
+    end
+
+    describe "generate_csv_from_inventory" do
+      let(:organization) { create(:organization) }
+      let(:storage_location1) { create(:storage_location, name: "Location 1", organization: organization) }
+      let(:storage_location2) { create(:storage_location, name: "Location 2", organization: organization) }
+      let(:item1) { create(:item, name: "Item 1", organization: organization) }
+      let(:item2) { create(:item, name: "Item 2", organization: organization) }
+      let(:item3) { create(:item, name: "Item 3", organization: organization) }
+      let(:inventory) { View::Inventory.new(organization.id) }
+
+      before do
+        # Create inventory for both storage locations
+        TestInventory.create_inventory(organization, {
+          storage_location1.id => {
+            item1.id => 10,
+            item2.id => 20
+          },
+          storage_location2.id => {
+            item2.id => 30,
+            item3.id => 40
+          }
+        })
+      end
+
+      it "generates CSV with correct headers and data" do
+        csv_data = StorageLocation.generate_csv_from_inventory([storage_location1, storage_location2], inventory, organization)
+        parsed_csv = CSV.parse(csv_data, headers: true)
+
+        # Check headers
+        expected_headers = ["Name", "Address", "Square Footage", "Warehouse Type", "Total Inventory", "Item 1", "Item 2", "Item 3"]
+        expect(parsed_csv.headers).to eq(expected_headers)
+
+        # Check data rows
+        expect(parsed_csv.count).to eq(2) # One row per storage location
+
+        # Check first storage location data
+        row1 = parsed_csv.find { |row| row["Name"] == storage_location1.name }
+        expect(row1["Total Inventory"]).to eq("30") # 10 + 20
+        expect(row1["Item 1"]).to eq("10")
+        expect(row1["Item 2"]).to eq("20")
+        expect(row1["Item 3"]).to eq("0")
+
+        # Check second storage location data
+        row2 = parsed_csv.find { |row| row["Name"] == storage_location2.name }
+        expect(row2["Total Inventory"]).to eq("70") # 30 + 40
+        expect(row2["Item 1"]).to eq("0")
+        expect(row2["Item 2"]).to eq("30")
+        expect(row2["Item 3"]).to eq("40")
+      end
+
+      context "when an organization's item exists but isn't in any storage location" do
+        let(:unused_item) { create(:item, name: "Unused Item", organization: organization) }
+
+        it "includes the unused item as a column with 0 quantities" do
+          # Force unused_item to be created first
+          unused_item
+
+          csv_data = StorageLocation.generate_csv_from_inventory([storage_location1, storage_location2], inventory, organization)
+          parsed_csv = CSV.parse(csv_data, headers: true)
+
+          expect(parsed_csv.headers).to include("Unused Item")
+
+          parsed_csv.each do |row|
+            expect(row["Unused Item"]).to eq("0")
+          end
+        end
+      end
+
+      context "when an organization's item is inactive" do
+        let(:inactive_item) { create(:item, name: "Inactive Item", organization: organization, active: false) }
+
+        it "includes the inactive item as a column with 0 quantities" do
+          # Force inactive_item to be created first
+          inactive_item
+
+          csv_data = StorageLocation.generate_csv_from_inventory([storage_location1, storage_location2], inventory, organization)
+          parsed_csv = CSV.parse(csv_data, headers: true)
+
+          expect(parsed_csv.headers).to include("Inactive Item")
+
+          parsed_csv.each do |row|
+            expect(row["Inactive Item"]).to eq("0")
+          end
+        end
+
+        context "when inactive item has the same name as an inventoried item" do
+          let(:inactive_item) { create(:item, name: "Item 1", organization: organization, active: false) }
+
+          it "includes the inventory data from the active item" do
+            csv_data = StorageLocation.generate_csv_from_inventory([storage_location1, storage_location2], inventory, organization)
+            parsed_csv = CSV.parse(csv_data, headers: true)
+
+            expect(parsed_csv.headers).to include("Item 1")
+            expect(parsed_csv.find { |row| row["Name"] == storage_location1.name }["Item 1"]).to eq("10")
+          end
+        end
+      end
+
+      context "when generating CSV output" do
+        it "returns a valid CSV string" do
+          csv_data = StorageLocation.generate_csv_from_inventory([storage_location1, storage_location2], inventory, organization)
+
+          expect(csv_data).to be_a(String)
+          expect { CSV.parse(csv_data) }.not_to raise_error
+        end
+
+        it "includes headers as first row" do
+          csv_data = StorageLocation.generate_csv_from_inventory([storage_location1, storage_location2], inventory, organization)
+          csv_rows = CSV.parse(csv_data)
+
+          expected_headers = ["Name", "Address", "Square Footage", "Warehouse Type", "Total Inventory", "Item 1", "Item 2", "Item 3"]
+          expect(csv_rows.first).to eq(expected_headers)
+        end
+
+        it "includes data for all storage locations" do
+          csv_data = StorageLocation.generate_csv_from_inventory([storage_location1, storage_location2], inventory, organization)
+          csv_rows = CSV.parse(csv_data)
+
+          expect(csv_rows.count).to eq(3) # Headers + 2 storage locations
+        end
+      end
+
+      context "when items have different cases" do
+        let(:item_names) { ["Zebra", "apple", "Banana"] }
+        let(:expected_order) { ["apple", "Banana", item1.name, item2.name, item3.name, "Zebra"] }
+        let(:storage_location) { create(:storage_location, organization: organization) }
+
+        before do
+          # Create items in random order to ensure sort is working
+          item_names.shuffle.each do |name|
+            create(:item, name: name, organization: organization)
+          end
+        end
+
+        it "sorts item columns case-insensitively, ASC" do
+          csv_data = StorageLocation.generate_csv_from_inventory([storage_location], inventory, organization)
+          parsed_csv = CSV.parse(csv_data, headers: true)
+
+          # Get just the item columns by removing the known base headers
+          base_headers = ["Name", "Address", "Square Footage", "Warehouse Type", "Total Inventory"]
+          item_columns = parsed_csv.headers - base_headers
+
+          # Check that the remaining columns match our expected case-insensitive sort
+          expect(item_columns).to eq(expected_order)
+        end
+      end
+    end
   end
 
   describe "versioning" do
