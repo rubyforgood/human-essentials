@@ -10,7 +10,7 @@ module KitsHelper
     tag.span(**span_options) do
       deactivate_button_to(deactivate_kit_path(kit),
         options.merge({text: "Deactivate",
-          confirm: confirm_deactivate_msg(kit.name), size: "m"}))
+          confirm: confirm_deactivate_msg(kit.name), size: "xs"}))
     end
   end
 end
