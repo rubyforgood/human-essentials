@@ -64,7 +64,7 @@ RSpec.describe ItemsController, type: :controller do
             {
               id: item.id,
               item: {
-                unit_ids:   [pack_unit.id.to_s, ""],
+                unit_ids: [pack_unit.id.to_s, ""],
                 unit_limits: { pack_unit.id.to_s => "500" }
               }
             }
@@ -82,7 +82,7 @@ RSpec.describe ItemsController, type: :controller do
         end
 
         context "when already has pack selected and unselects pack" do
-          let!(:item_unit){ create(:item_unit, item: item, request_limit: 500, name: pack_unit.name) }
+          let!(:item_unit) { create(:item_unit, item: item, request_limit: 500, name: pack_unit.name) }
           let(:params) do
             {
               id: item.id,
@@ -101,12 +101,12 @@ RSpec.describe ItemsController, type: :controller do
         end
 
         context "when selecting pack and unselecting box" do
-          let!(:item_unit){ create(:item_unit, item: item, request_limit: 1500, name: box_unit.name) }
+          let!(:item_unit) { create(:item_unit, item: item, request_limit: 1500, name: box_unit.name) }
           let(:params) do
             {
               id: item.id,
               item: {
-                unit_ids:   [pack_unit.id.to_s, ""],
+                unit_ids: [pack_unit.id.to_s, ""],
                 unit_limits: { pack_unit.id.to_s => "200" }
               }
             }
