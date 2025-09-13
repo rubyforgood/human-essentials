@@ -48,7 +48,7 @@
                 <%= f.input_field :unit_request_limit, class: "form-control", min: 0 %>
               <% end %>
 
-              <% if Flipper.enabled?(:enable_packs) %>
+              <% if Flipper.enabled?(:enable_packs) && current_organization.request_units.present? %>
                 <%= f.input :request_units, label: "Additional Custom Request Units" do %>
                   <% current_organization.request_units.each do |unit| %>
                     <% item_unit = @item.request_units.find { |item_unit| item_unit.name == unit.name } %>
