@@ -218,16 +218,66 @@ RSpec.describe "Purchases", type: :system, js: true do
       # Bug fix -- Issue #378
       # A user can view another organizations purchase
       context "Editing purchase" do
-        it "A user can see purchased_from value" do
-          purchase = create(:purchase, purchased_from: "Old Vendor", organization: organization)
-          visit edit_purchase_path(purchase)
-          expect(page).to have_content("Vendor (Old Vendor)")
+        context "with an eligible purchase" do
+          let(:purchase) { create(:purchase, purchased_from: "Old Vendor", organization: organization) }
+
+          it "can view the edit page and vendor is present" do
+            visit edit_purchase_path(purchase)
+
+            expect(page).to have_content("Vendor (Old Vendor)")
+          end
+
+          it "can save the purchase" do
+            visit edit_purchase_path(purchase)
+            click_button "Save"
+
+            expect(page).to have_content("Purchase updated successfully")
+            expect(page.current_path).to eq(purchases_path)
+          end
+
+          context "with an error saving the purchase" do
+            it "can save the purchase from the update page " do
+              visit edit_purchase_path(purchase)
+
+              fill_in "purchase[amount_spent]", with: nil
+
+              click_button "Save"
+
+              expect(page).to have_content("Error updating purchase")
+              expect(page.current_path).to eq(purchase_path(purchase))
+
+              fill_in "purchase[amount_spent]", with: "10"
+
+              click_button "Save"
+
+              expect(page).to have_content("Purchase updated successfully")
+              expect(page.current_path).to eq(purchases_path)
+            end
+          end
+
+          context "with a deactivated vendor" do
+            let(:deactivated_vendor) { create(:vendor, active: false) }
+            let(:purchase) { create(:purchase, vendor: deactivated_vendor) }
+
+            it "can save the purchase" do
+              visit edit_purchase_path(purchase)
+              click_button "Save"
+
+              expect(page).to have_content("Purchase updated successfully")
+              expect(page.current_path).to eq(purchases_path)
+            end
+          end
         end
 
-        it "A user can view another organizations purchase" do
-          purchase = create(:purchase, organization: create(:organization))
-          visit edit_purchase_path(purchase)
-          expect(page).to have_content("Still haven't found what you're looking for")
+        context "with another organization's purchase" do
+          let(:another_organization) { create(:organization) }
+          let(:purchase) { create(:purchase, organization: another_organization) }
+
+          it "cannot view the edit page" do
+            visit edit_purchase_path(purchase)
+
+            expect(page).to have_content("Still haven't found what you're looking for")
+          end
         end
       end
 

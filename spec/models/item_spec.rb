@@ -49,16 +49,6 @@ RSpec.describe Item, type: :model do
       expect(subject.class).to respond_to :class_filter
     end
 
-    specify "->by_size returns all items with the same size, per their BaseItem parent" do
-      size4 = create(:base_item, size: "4", name: "Size 4 Diaper")
-      size_z = create(:base_item, size: "Z", name: "Size Z Diaper")
-
-      create(:item, base_item: size4, organization: organization)
-      create(:item, base_item: size4, organization: organization)
-      create(:item, base_item: size_z, organization: organization)
-      expect(Item.by_size("4").length).to eq(2)
-    end
-
     specify "->housing_a_kit returns all items which belongs_to (house) a kit" do
       name = "test kit"
       kit_params = attributes_for(:kit, name: name)
@@ -131,6 +121,15 @@ RSpec.describe Item, type: :model do
         end.to change { Item.active.size }.by(2)
 
         expect(Item.by_partner_key("foo").size).to eq(1)
+      end
+    end
+
+    describe "->by_reporting_category" do
+      it "shows the items for a particular reporting category" do
+        diaper = create(:item, reporting_category: :cloth_diapers, organization: organization)
+        create(:item, reporting_category: :adult_incontinence, organization: organization)
+
+        expect(Item.by_reporting_category(:cloth_diapers)).to eq([diaper])
       end
     end
 
@@ -408,6 +407,23 @@ RSpec.describe Item, type: :model do
     end
   end
 
+  describe "reporting_category_humanized" do
+    it "returns reporting_category to title case" do
+      item = create(:item, name: "InControl BeDry", reporting_category: "adult_incontinence")
+
+      expect(item.reporting_category).to eq("adult_incontinence")
+      expect(item.reporting_category_humanized).to eq("Adult Incontinence")
+    end
+
+    it "returns empty string when no reporting_category exists" do
+      kit = create(:kit, organization: organization)
+      item = Item.new(kit: kit)
+
+      expect(item.reporting_category).to eq(nil)
+      expect(item.reporting_category_humanized).to eq("")
+    end
+  end
+
   describe "when distribution_quantity is set by default" do
     it "should set distribution_quantity to 50 for regular items" do
       item = Item.new
@@ -451,15 +467,6 @@ RSpec.describe Item, type: :model do
           item.update(name: "my new name")
         }.not_to raise_error
       end
-    end
-  end
-
-  describe "after create" do
-    let(:base_item) { create(:base_item, size: "4", name: "Tampons") }
-    let(:item) { create(:item, name: "Period product", base_item:) }
-
-    it "sets the reporting category" do
-      expect(item.reporting_category).to eq("tampons")
     end
   end
 

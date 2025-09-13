@@ -44,6 +44,7 @@ class StorageLocation < ApplicationRecord
                           dependent: :destroy
 
   validates :name, :address, presence: true
+  validates :name, uniqueness: { scope: :organization_id, case_sensitive: false}
   validates :warehouse_type, inclusion: { in: WAREHOUSE_TYPES },
                              allow_blank: true
   validates :square_footage, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
