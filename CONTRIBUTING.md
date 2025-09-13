@@ -136,7 +136,7 @@ You might also want to try VSCode with [this WSL extension](https://marketplace.
 
 ## Codespaces and Dev Container - EXPERIMENTAL 🛠️
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/rubyforgood/human-essentials/tree/main?quickstart=1)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/rubyforgood/human-essentials/tree/fix-devcontainers?quickstart=1)
 
 [![Clone and open in VSCode Dev Container](https://img.shields.io/static/v1?label=Dev%20Containers&message=Clone%20and%20Open%20in%20VSCode&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/rubyforgood/human-essentials)
 
