@@ -5,7 +5,7 @@
   "features": {
     "ghcr.io/devcontainers/features/desktop-lite:1": {}
   },
-  "forwardPorts": [3000, 5432, 6080],
+  "forwardPorts": [5432, 6080],
   "portsAttributes": {
     "3000": {
       "label": "Application",
