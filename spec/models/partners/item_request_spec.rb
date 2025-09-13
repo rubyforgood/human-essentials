@@ -37,7 +37,7 @@ RSpec.describe Partners::ItemRequest, type: :model do
       item_request = build(:item_request, request_unit: "flat", request: request, item: item)
 
       expect(item_request.valid?).to eq(false)
-      expect(item_request.errors.full_messages).to eq(["Request unit is not supported"])
+      expect(item_request.errors.full_messages).to eq(["flat is not a supported unit type"])
 
       item_unit.update!(name: 'flat')
       item.reload

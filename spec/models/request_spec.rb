@@ -90,7 +90,7 @@ RSpec.describe Request, type: :model do
 
       it "is not valid" do
         expect(subject).to_not be_valid
-        expect(subject.errors[:item_requests]).to include("should have unique item_ids")
+        expect(subject.errors[:base]).to include("Please ensure a single unit is selected for each item that supports it")
       end
     end
 

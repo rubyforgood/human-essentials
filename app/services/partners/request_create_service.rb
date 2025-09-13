@@ -118,10 +118,10 @@ module Partners
 
         if limit.present? && (quantity_requested > limit)
           message = if unit_type.blank?
-                      "#{item.name}: You requested #{quantity_requested}, but are limited to #{limit}"
-                    else
-                      "#{item.name}: You requested #{quantity_requested} #{unit_type&.pluralize}, but are limited to #{limit} #{unit_type&.pluralize}"
-                    end
+            "#{item.name}: You requested #{quantity_requested}, but are limited to #{limit}"
+          else
+            "#{item.name}: You requested #{quantity_requested} #{unit_type&.pluralize}, but are limited to #{limit} #{unit_type&.pluralize}"
+          end
           errors.add(:base, message)
         end
       end
