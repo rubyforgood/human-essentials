@@ -100,7 +100,7 @@ RSpec.describe "Items", type: :request do
         get edit_item_path(item)
 
         parsed_body = Nokogiri::HTML(response.body)
-        checkboxes = parsed_body.css("input[type='checkbox'][name='item[request_unit_ids][]']")
+        checkboxes = parsed_body.css("input[type='checkbox'][name='item[unit_ids][]']")
         expect(checkboxes.length).to eq organization_units.length
         checkboxes.each do |checkbox|
           if checkbox['value'] == selected_unit.id.to_s

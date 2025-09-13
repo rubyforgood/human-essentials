@@ -68,7 +68,7 @@ class Request < ApplicationRecord
   def item_requests_uniqueness_by_item_id
     item_ids = item_requests.map(&:item_id)
     if item_ids.uniq.length != item_ids.length
-      errors.add(:item_requests, "should have unique item_ids")
+      errors.add(:base, "Please ensure a single unit is selected for each item that supports it")
     end
   end
 
