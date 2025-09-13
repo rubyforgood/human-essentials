@@ -14,7 +14,7 @@
 
 RSpec.describe ProductDrive, type: :model do
   let(:organization) { create(:organization) }
-  let(:product_drive) { create(:product_drive, organization: organization) }
+  let(:product_drive) { create(:product_drive, organization: organization, name: "Test Drive") }
   let!(:donation) { create(:donation, :with_items, item_quantity: 7, product_drive: product_drive) }
   let!(:donation2) { create(:donation, :with_items, item_quantity: 9, product_drive: product_drive) }
   let!(:extra_line_item) { create(:line_item, itemizable: donation, quantity: 4) }

@@ -29,10 +29,10 @@ module PDFComparisonTestFactory
 
     base_item = BaseItem.find_or_create_by!(name: "10T Diapers", partner_key: "10t_diapers")
 
-    item1 = Item.create!(name: "Item 1", package_size: 50, value_in_cents: 100, organization: org, partner_key: base_item.partner_key)
-    item2 = Item.create!(name: "Item 2", value_in_cents: 200, organization: org, partner_key: base_item.partner_key)
-    item3 = Item.create!(name: "Item 3", value_in_cents: 300, organization: org, partner_key: base_item.partner_key)
-    item4 = Item.create!(name: "Item 4", package_size: 25, value_in_cents: 400, organization: org, partner_key: base_item.partner_key)
+    item1 = FactoryBot.create(:item, name: "Item 1", package_size: 50, value_in_cents: 100, organization: org, partner_key: base_item.partner_key)
+    item2 = FactoryBot.create(:item, name: "Item 2", value_in_cents: 200, organization: org, partner_key: base_item.partner_key)
+    item3 = FactoryBot.create(:item, name: "Item 3", value_in_cents: 300, organization: org, partner_key: base_item.partner_key)
+    item4 = FactoryBot.create(:item, name: "Item 4", package_size: 25, value_in_cents: 400, organization: org, partner_key: base_item.partner_key)
 
     StorageCreation.new(org, storage_location, [item1, item2, item3, item4])
   end
@@ -113,7 +113,7 @@ module PDFComparisonTestFactory
 
   def self.create_dist(partner, storage_creation, delivery_method)
     Time.zone = "America/Los_Angeles"
-    dist = Distribution.create!(partner: partner, delivery_method: delivery_method, issued_at: DateTime.new(2024, 7, 4, 0, 0, 0, "-07:00"), organization: storage_creation.organization, storage_location: storage_creation.storage_location)
+    dist = Distribution.create!(id: 123, partner: partner, delivery_method: delivery_method, issued_at: DateTime.new(2024, 7, 4, 0, 0, 0, "-07:00"), organization: storage_creation.organization, storage_location: storage_creation.storage_location)
     create_line_items_request(dist, partner, storage_creation)
     dist
   end

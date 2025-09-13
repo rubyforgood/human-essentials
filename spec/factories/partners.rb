@@ -4,6 +4,7 @@
 #
 #  id                          :integer          not null, primary key
 #  email                       :string
+#  info_for_partner            :text
 #  name                        :string
 #  notes                       :text
 #  quota                       :integer
@@ -18,9 +19,8 @@
 
 FactoryBot.define do
   factory :partner do
-    sequence(:name) { |n| "Leslie Sue, the #{n}" }
-    sequence(:email) { |n| "leslie#{n}@gmail.com" }
-    notes { "Lorem ipsum" }
+    sequence(:name) { |n| "Dont test this #{n}" }
+    sequence(:email) { |n| "Dont#{n}@testthis.com" }
     send_reminders { true }
     organization_id { Organization.try(:first).try(:id) || create(:organization).id }
 

@@ -9,6 +9,7 @@ class PurchasesController < ApplicationController
                                      .order(created_at: :desc)
                                      .class_filter(filter_params)
                                      .during(helpers.selected_range)
+    @item_categories = current_organization.item_categories.pluck(:name).uniq
 
     @paginated_purchases = @purchases.page(params[:page])
     # Are these going to be inefficient with large datasets?
@@ -24,6 +25,7 @@ class PurchasesController < ApplicationController
     @paginated_fair_market_values = @paginated_purchases.collect(&:value_per_itemizable).sum
     # Storage and Vendor
     @storage_locations = current_organization.storage_locations.active
+    @selected_item_category = filter_params[:by_category]
     @selected_storage_location = filter_params[:at_storage_location]
     @vendors = current_organization.vendors.sort_by { |vendor| vendor.business_name.downcase }
     @selected_vendor = filter_params[:from_vendor]
@@ -63,7 +65,7 @@ class PurchasesController < ApplicationController
     @purchase.line_items.build
     @audit_performed_and_finalized = Audit.finalized_since?(@purchase, @purchase.storage_location_id)
 
-    load_form_collections
+    load_form_collections(@purchase)
   end
 
   def show
@@ -76,9 +78,11 @@ class PurchasesController < ApplicationController
     ItemizableUpdateService.call(itemizable: @purchase,
       params: purchase_params,
       event_class: PurchaseEvent)
+
+    flash[:success] = "Purchase updated successfully"
     redirect_to purchases_path
   rescue => e
-    load_form_collections
+    load_form_collections(@purchase)
     flash.now[:alert] = "Error updating purchase: #{e.message}"
     render "edit"
   end
@@ -98,10 +102,13 @@ class PurchasesController < ApplicationController
 
   private
 
-  def load_form_collections
+  def load_form_collections(purchase = nil)
     @storage_locations = current_organization.storage_locations.active.alphabetized
     @items = current_organization.items.active.alphabetized
-    @vendors = current_organization.vendors.active.alphabetized
+
+    @vendors = current_organization.vendors.active
+    @vendors = @vendors.or(Vendor.where(id: purchase.vendor_id)) if purchase
+    @vendors = @vendors.alphabetized
   end
 
   def purchase_params
@@ -118,7 +125,7 @@ class PurchasesController < ApplicationController
     def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).permit(:at_storage_location, :by_source, :from_vendor)
+    params.require(:filters).permit(:at_storage_location, :by_source, :from_vendor, :by_category)
   end
 
   # If line_items have submitted with empty rows, clear those out first.

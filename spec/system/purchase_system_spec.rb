@@ -80,6 +80,20 @@ RSpec.describe "Purchases", type: :system, js: true do
           expect(page).to have_css("table tbody tr", count: 1)
         end
 
+        it "Filters by category" do
+          category_1 = create(:item_category, name: "Category 1", organization: organization)
+          category_2 = create(:item_category, name: "Category 2", organization: organization)
+          item_1 = create(:item, item_category: category_1, name: "Item 1", value_in_cents: 100)
+          item_2 = create(:item, item_category: category_2, name: "Item 2", value_in_cents: 200)
+          create(:purchase, :with_items, item_quantity: 25, item: item_1)
+          create(:purchase, :with_items, item_quantity: 30, item: item_2)
+          visit subject
+          expect(page).to have_css("table tbody tr", count: 2)
+          select organization.item_categories.first.name, from: "filters[by_category]"
+          click_button "Filter"
+          expect(page).to have_css("table tbody tr", count: 1)
+        end
+
         it_behaves_like "Date Range Picker", Purchase, :issued_at
       end
     end
@@ -204,16 +218,66 @@ RSpec.describe "Purchases", type: :system, js: true do
       # Bug fix -- Issue #378
       # A user can view another organizations purchase
       context "Editing purchase" do
-        it "A user can see purchased_from value" do
-          purchase = create(:purchase, purchased_from: "Old Vendor", organization: organization)
-          visit edit_purchase_path(purchase)
-          expect(page).to have_content("Vendor (Old Vendor)")
+        context "with an eligible purchase" do
+          let(:purchase) { create(:purchase, purchased_from: "Old Vendor", organization: organization) }
+
+          it "can view the edit page and vendor is present" do
+            visit edit_purchase_path(purchase)
+
+            expect(page).to have_content("Vendor (Old Vendor)")
+          end
+
+          it "can save the purchase" do
+            visit edit_purchase_path(purchase)
+            click_button "Save"
+
+            expect(page).to have_content("Purchase updated successfully")
+            expect(page.current_path).to eq(purchases_path)
+          end
+
+          context "with an error saving the purchase" do
+            it "can save the purchase from the update page " do
+              visit edit_purchase_path(purchase)
+
+              fill_in "purchase[amount_spent]", with: nil
+
+              click_button "Save"
+
+              expect(page).to have_content("Error updating purchase")
+              expect(page.current_path).to eq(purchase_path(purchase))
+
+              fill_in "purchase[amount_spent]", with: "10"
+
+              click_button "Save"
+
+              expect(page).to have_content("Purchase updated successfully")
+              expect(page.current_path).to eq(purchases_path)
+            end
+          end
+
+          context "with a deactivated vendor" do
+            let(:deactivated_vendor) { create(:vendor, active: false) }
+            let(:purchase) { create(:purchase, vendor: deactivated_vendor) }
+
+            it "can save the purchase" do
+              visit edit_purchase_path(purchase)
+              click_button "Save"
+
+              expect(page).to have_content("Purchase updated successfully")
+              expect(page.current_path).to eq(purchases_path)
+            end
+          end
         end
 
-        it "A user can view another organizations purchase" do
-          purchase = create(:purchase, organization: create(:organization))
-          visit edit_purchase_path(purchase)
-          expect(page).to have_content("Still haven't found what you're looking for")
+        context "with another organization's purchase" do
+          let(:another_organization) { create(:organization) }
+          let(:purchase) { create(:purchase, organization: another_organization) }
+
+          it "cannot view the edit page" do
+            visit edit_purchase_path(purchase)
+
+            expect(page).to have_content("Still haven't found what you're looking for")
+          end
         end
       end
 
