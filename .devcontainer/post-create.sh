@@ -7,6 +7,7 @@ mkdir -p .vscode && cp -n .devcontainer/launch.json.codespaces .vscode/launch.js
 
 # If the project's required ruby version changes from 3.2.2, this command
 # will download and compile the correct version, but it will take a long time.
+# TODO: Why do we install this RVM shim when we use rbenv later on???
 if [ "$RUBY_VERSION" != "3.2.2" ]; then
   echo "*** Installing Ruby $RUBY_VERSION (this may take a while)"
   rvm install $RUBY_VERSION
@@ -19,10 +20,14 @@ nvm install node
 
 echo "*** Setting up ruby environment"
 rbenv init bash
+rbenv init fish
 rbenv init zsh
 
 # echo "*** Forcing platform version of nokogiri"
 # gem install nokogiri -v 1.18.1 --platform=ruby -- --use-system-libraries
+
+echo "*** Installing rbenv-able Ruby ***"
+rbenv install --skip-existing
 
 echo "*** Running project bin/setup"
 bin/setup
