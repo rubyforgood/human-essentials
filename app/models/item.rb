@@ -189,7 +189,7 @@ class Item < ApplicationRecord
 
   def sync_request_units!(unit_ids, limits = {})
     request_units.clear
-    organization.request_units.where(id: unit_ids).each do |unit|
+    organization.request_units.where(id: unit_ids).find_each do |unit|
       item_unit = request_units.create!(name: unit.name)
       limit = limits[unit.id.to_s]
       item_unit.update!(request_limit: limit.to_i) if limit.present?

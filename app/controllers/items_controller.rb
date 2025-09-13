@@ -183,13 +183,12 @@ class ItemsController < ApplicationController
   end
 
   def request_unit_ids
-    params.require(:item).permit(unit_ids: []).fetch(:unit_ids, []).reject(&:blank?)
+    params.require(:item).permit(unit_ids: []).fetch(:unit_ids, []).compact_blank
   end
 
   def request_unit_limits
     (params.require(:item).permit(unit_limits: {})[:unit_limits] || {}).to_h
   end
-
 
   # We need to update both the item and the request_units together and fail together
   def update_item

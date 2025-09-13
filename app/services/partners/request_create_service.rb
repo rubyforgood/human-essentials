@@ -112,10 +112,10 @@ module Partners
         quantity_requested = ir["quantity"].to_i
 
         limit = if unit_type.blank?
-                  item.unit_request_limit
-                else
-                  item.request_units.where(name: unit_type)&.first&.request_limit
-                end
+          item.unit_request_limit
+        else
+          item.request_units.where(name: unit_type)&.first&.request_limit
+        end
 
         if limit.present? && (quantity_requested > limit)
           errors.add(:base, "#{item.name}: You requested #{quantity_requested} #{unit_type.pluralize}, but are limited to #{limit} #{unit_type.pluralize}")
