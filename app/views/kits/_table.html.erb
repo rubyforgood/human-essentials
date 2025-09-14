@@ -37,7 +37,7 @@
           <%= edit_button_to allocations_kit_path(kit), { text: "Modify Allocation" } %>
         </div>
       </td>
-      <td>
+      <td class="text-right">
         <% if kit.active %>
           <%= deactivate_kit_button(kit, @inventory) %>
         <% else %>
