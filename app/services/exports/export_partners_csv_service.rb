@@ -186,7 +186,7 @@ module Exports
         partners
           .joins(profile: :counties)
           .group(:id)
-          .pluck(Arel.sql("partners.id, STRING_AGG(counties.name, '; ' ORDER BY counties.region, counties.name) AS county_list"))
+          .pluck(Arel.sql("partners.id, STRING_AGG(counties.name, '; ' ORDER BY LOWER(counties.region), LOWER(counties.name)) AS county_list"))
           .to_h
     end
 
