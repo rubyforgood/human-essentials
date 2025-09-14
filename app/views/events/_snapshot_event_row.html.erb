@@ -7,9 +7,7 @@
   <td><%= event.event_time.to_s %></td>
   <td>
     <% event.data.storage_locations.values.each_with_index do |loc, loc_index| %>
-
       <%= link_to storage_locs.find { |i| i.id == loc.id}.name, storage_location_path(loc.id) %>
-      
       <% loc.items.values.each do |entry| %>
         <% item = items.find { |i| i.id == entry.item_id} %>
         <% if item %>
@@ -25,4 +23,3 @@
   <td>&nbsp;</td>
   <td>&nbsp;</td>
 </tr>
-
