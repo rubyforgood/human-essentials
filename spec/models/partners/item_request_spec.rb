@@ -24,7 +24,11 @@ RSpec.describe Partners::ItemRequest, type: :model do
 
   describe 'validations' do
     it { should validate_presence_of(:quantity) }
-    it { should validate_numericality_of(:quantity).only_integer.is_greater_than_or_equal_to(1) }
+    it {
+      should validate_numericality_of(:quantity)
+        .only_integer.is_greater_than_or_equal_to(1)
+        .with_message("quantity must be a whole number greater than or equal to 1")
+    }
     it { should validate_presence_of(:name) }
 
     it "should only be able to use item's request units" do
