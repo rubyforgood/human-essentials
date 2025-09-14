@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_12_155420) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_13_173217) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -526,7 +526,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_12_155420) do
     t.bigint "essentials_bank_id"
     t.text "application_data"
     t.integer "partner_id"
-    t.string "partner_status", default: "pending"
     t.string "name"
     t.string "distributor_type"
     t.string "agency_type"
