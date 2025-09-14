@@ -20,6 +20,22 @@ RSpec.describe "Donation Site", type: :system, js: true do
       expect(page.find(:xpath, "//table/tbody/tr[1]/td[1]")).to have_content(@first.name)
       expect(page.find(:xpath, "//table/tbody/tr[3]/td[1]")).to have_content(@third.name)
     end
+
+    context "when exporting a csv with include inactive donation sites selected" do
+      it "includes active and inactive donation sites" do
+        create(:donation_site, name: "Active Donation Site")
+        create(:donation_site, name: "Inactive Donation Site", active: false)
+        visit subject
+        check "Also include inactive donation sites"
+        click_on "Filter"
+        click_on "Export Donation Sites"
+        wait_for_download
+        @csv_content = File.read(download)
+
+        expect(@csv_content).to have_content("Active Donation Site")
+        expect(@csv_content).to have_content("Inactive Donation Site")
+      end
+    end
   end
 
   context "When creating a new donation site" do
