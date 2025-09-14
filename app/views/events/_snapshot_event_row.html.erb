@@ -3,14 +3,7 @@
 <tr style="background-color: #e9e4f3;">
   <td><%= event.user&.name || "No Name Provided" %></td>
   <td>Snapshot</td>
-  <td>
-    <%= link_to event.eventable_id, event.eventable %>
-      <%= link_to(
-          events_path(eventable_type: event.eventable_type, eventable_id: event.eventable_id),
-          class: 'btn btn-md') do %>
-        <i class="fa fa-filter"></i>
-    <% end %>
-  </td>
+  <td>&nbsp;</td>
   <td><%= event.event_time.to_s %></td>
   <td>
     <% event.data.storage_locations.values.each_with_index do |loc, loc_index| %>
