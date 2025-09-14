@@ -12,6 +12,13 @@ RSpec.describe "/kits", type: :request do
       sign_in(user)
     end
 
+    describe "GET #show" do
+      it "should redirect to the allocations page" do
+        get kit_url(kit)
+        expect(response).to redirect_to allocations_kit_path(kit.id)
+      end
+    end
+
     describe "GET #index" do
       before do
         # this shouldn't be shown
