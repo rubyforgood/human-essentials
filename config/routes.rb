@@ -66,6 +66,7 @@ Rails.application.routes.draw do
       delete :remove_role
       post :add_role
       get :resource_ids, on: :collection
+      post :resend_invitation
     end
     resources :barcode_items
     resources :account_requests, only: [:index] do
