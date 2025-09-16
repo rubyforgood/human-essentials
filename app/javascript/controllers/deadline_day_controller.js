@@ -20,12 +20,16 @@ export default class extends Controller {
   ]
 
   static dateParser = /(\d{4})-(\d{2})-(\d{2})/;
-  
+
   getFirstOccurrenceAfterToday( occurrences, today ) {
     let index = occurrences.length - 1
     let firstOccurrence = null
+
     while (index >= 0){
-      if (occurrences[index].getTime() > today.getTime()) {
+      let occurrence = occurrences[index];
+      let occurrenceStartOfDay = new Date(occurrence.getFullYear(), occurrence.getMonth(), occurrence.getDate());
+
+      if (occurrenceStartOfDay.getTime() > today.getTime()) {
         firstOccurrence = occurrences[index]
         index--
       } else {
@@ -41,9 +45,10 @@ export default class extends Controller {
 
     // For now, we are assuming that all schedules are monthly and start on the current date
     let monthlyInterval = 1;
-    let today = new Date();
-    let untilDate = new Date( today );
-    untilDate.setMonth( untilDate.getMonth() + monthlyInterval + 1 )
+    let now = new Date();
+    let today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    let untilDate = new Date(today);
+    untilDate.setMonth(untilDate.getMonth() + monthlyInterval + 1);
 
     if (this.byDayOfMonthTarget.checked && this.dayOfMonthTarget.value) {
       const rule = new RRule({
