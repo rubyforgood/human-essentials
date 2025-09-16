@@ -51,6 +51,7 @@ class Donation < ApplicationRecord
   scope :from_manufacturer, ->(manufacturer_id) {
     where(manufacturer_id: manufacturer_id)
   }
+  scope :by_item_id, ->(item_id) { includes(:items).where(items: { id: item_id }) }
 
   scope :by_category, ->(item_category) {
     joins(line_items: {item: :item_category}).where("item_categories.name ILIKE ?", item_category)
