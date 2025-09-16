@@ -48,6 +48,22 @@ RSpec.describe Partners::FamilyRequestsController, type: :request do
       expect(subject).to redirect_to(partners_requests_path)
     end
 
+    it "does not allow requesting non-visible items" do
+      partner.update!(status: :approved)
+
+      # update child item to not be visible to partners
+      i = Item.first
+      i.update!(visible_to_partners: false)
+
+      subject
+
+      child_with_unavailable_item = children[0]
+
+      expected = "\"#{i.name}\" requested for #{child_with_unavailable_item.first_name} #{child_with_unavailable_item.last_name} is not currently available for request."
+
+      expect(response.request.flash[:error].message).to eql expected
+    end
+
     it "submits the request" do
       partner.update!(status: :approved)
 
