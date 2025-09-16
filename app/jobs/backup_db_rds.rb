@@ -18,5 +18,9 @@ module BackupDbRds
     client.put_object(key: "backups/#{backup_filename}",
       body: File.read(backup_filename),
       bucket: "human-essentials-backups")
+
+    Rails.root.glob("*.rds.dump").each do |file|
+      File.delete(file)
+    end
   end
 end

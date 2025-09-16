@@ -100,7 +100,7 @@ module Partners
     end
 
     def sort_column
-      Family.column_names.include?(params[:sort]) ? params[:sort] : "guardian_last_name"
+      Family.column_names.include?(params[:sort]) ? params[:sort] : "guardian_last_name, id"
     end
 
     def archive_children
