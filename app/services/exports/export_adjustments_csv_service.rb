@@ -11,7 +11,7 @@ module Exports
         item_names = get_item_names(organization)
         headers = [
           "Created date", "Storage Area",
-          "Comment", "# of changes"
+          "Comment", "Updates"
         ] + item_names
 
         [headers] + adjustments.map { |adjustment| build_row(adjustment, item_names) }

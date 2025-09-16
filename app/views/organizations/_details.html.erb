@@ -3,6 +3,11 @@
     <div class="row">
       <div class="col-md-12">
         <div class="card card-primary">
+          <% if can_administrate? %>
+            <div class="card-footer">
+              <%= edit_button_to(edit_organization_path, {size: "md"}) %>
+            </div>
+          <% end %>
 
           <div class="card-header">
             <h2 class="card-title">Organization Info</h2>
