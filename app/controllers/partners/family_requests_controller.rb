@@ -15,7 +15,12 @@ module Partners
     end
 
     def create
-      family_requests_attributes = build_family_requests_attributes(params)
+      begin
+        family_requests_attributes = build_family_requests_attributes(params)
+      rescue ArgumentError => e
+        redirect_to new_partners_family_request_path, error: e
+        return
+      end
 
       create_service = Partners::FamilyRequestCreateService.new(
         partner_user_id: current_user.id,
@@ -28,7 +33,7 @@ module Partners
       if create_service.errors.none?
         redirect_to partners_request_path(create_service.partner_request), notice: "Requested items successfully!"
       else
-        redirect_to new_partners_family_request_path, error: "Request failed! #{create_service.errors.map { |error| error.message.to_s }}}"
+        redirect_to new_partners_family_request_path, error: "Request failed! #{create_service.errors.map { |error| error.message.to_s }}"
       end
     end
 
@@ -55,21 +60,55 @@ module Partners
     private
 
     def build_family_requests_attributes(params)
-      children_ids = []
+      child_ids = params.keys.grep(/^child-/).map { |key| key.split('-').last }
 
-      params.each do |key, _|
-        is_child, id = key.split('-')
-        if is_child == 'child'
-          children_ids << id
-        end
-      end
+      validate_visible_items!(child_ids)
 
-      children = current_partner.children.where(id: children_ids).joins(:requested_items).select('children.*', :item_id)
+      children_grouped_by_item_id = current_partner
+        .children
+        .where(id: child_ids)
+        .joins(:requested_items)
+        .select('children.*', 'items.id as item_id',
+          'items.name as item_name',
+          'items.visible_to_partners')
+        .group_by(&:item_id)
 
-      children_grouped_by_item_id = children.group_by(&:item_id)
       children_grouped_by_item_id.map do |item_id, item_requested_children|
-        { item_id: item_id, person_count: item_requested_children.size, children: item_requested_children }
+        {
+          item_id: item_id,
+          person_count: item_requested_children.size,
+          children: item_requested_children
+        }
       end
+    end
+
+    def validate_visible_items!(child_ids)
+      invisible_item_requests = current_partner
+        .children
+        .where(id: child_ids)
+        .joins(:requested_items)
+        .where(items: { visible_to_partners: false })
+        .select(
+          'children.first_name',
+          'children.last_name',
+          'items.id as item_id',
+          'items.name as item_name',
+          'items.visible_to_partners'
+        )
+        .group_by(&:item_id)
+
+      return if invisible_item_requests.empty?
+
+      # raise an exception if there are requests
+      # to items that aren't visible to partners
+      item_errors = invisible_item_requests.map do |_, children|
+        children_names = children.map { |c| "#{c.first_name} #{c.last_name}" }.join(", ")
+        item_name = children.first.item_name
+
+        "\"#{item_name}\" requested for #{children_names} is not currently available for request."
+      end
+
+      raise ArgumentError.new item_errors.join(", ")
     end
   end
 end
