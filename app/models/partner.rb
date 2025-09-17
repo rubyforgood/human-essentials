@@ -112,16 +112,18 @@ class Partner < ApplicationRecord
 
       partner_create_service = PartnerCreateService.new(organization: organization, partner_attrs: hash_rows)
       partner_create_service.call
-      if partner_create_service.partner.errors.present? || partner_create_service.errors.present?
-        # Show ALL errors - both partner validation and service errors
-        all_errors = []
-        row_errors = partner_create_service.errors
-        all_errors.concat(partner_create_service.partner.errors.full_messages) if partner_create_service.partner.errors.present?
-        all_errors.concat(row_errors.map(&:message)) if partner_create_service.errors.present?
-        errors << "#{partner_create_service.partner.name}: #{all_errors.to_sentence}"
+
+      if partner_create_service.errors.present?
+        formatted_errors = partner_create_service.errors.map do |error|
+          "#{error.attribute.to_s.humanize} #{error.message.downcase}"
+        end
+        errors << "#{partner_create_service.partner.name}: #{formatted_errors.to_sentence}"
+
       elsif partner_create_service.warnings.present?
-        row_warnings = partner_create_service.warnings
-        warnings << "#{partner_create_service.partner.name}: #{row_warnings.map(&:message).to_sentence}"
+        formatted_warnings = partner_create_service.warnings.map do |warning|
+          "#{warning.attribute.to_s.humanize} #{warning.message.downcase}"
+        end
+        warnings << "#{partner_create_service.partner.name}: #{formatted_warnings.to_sentence}"
       end
     end
 
