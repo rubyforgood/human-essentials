@@ -323,7 +323,7 @@ RSpec.describe Partner, type: :model do
         response = Partner.import_csv(csv, organization.id)
         expect(response[:errors]).to be_empty
         expect(response[:warnings]).to be_present
-        expect(response[:warnings].join).to include("The default storage location is not a storage location for this partner's organization")
+        expect(response[:warnings].join).to include("Default storage location is not a storage location for this partner's organization")
       end
     end
   end

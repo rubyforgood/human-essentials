@@ -53,7 +53,7 @@ class PartnerCreateService
 
       if default_storage_location_id.nil?
         add_warning(:default_storage_location,
-          "The default storage location is not a storage location for this partner's organization")
+          "is not a storage location for this partner's organization")
       end
 
       partner_attrs.delete("default_storage_location")
