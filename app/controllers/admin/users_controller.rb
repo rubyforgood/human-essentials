@@ -94,6 +94,12 @@ class Admin::UsersController < AdminController
     redirect_back(fallback_location: admin_users_path, alert: e.message)
   end
 
+  def resend_invitation
+    user = User.find(params[:user_id])
+    user.invite!
+    redirect_to admin_users_path, notice: "#{user.name} re-invited!"
+  end
+
   private
 
   def user_params

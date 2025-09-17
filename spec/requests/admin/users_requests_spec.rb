@@ -239,6 +239,26 @@ RSpec.describe "Admin::UsersController", type: :request do
     end
   end
 
+  describe 'POST #resend_invitation' do
+    context 'when the user exists' do
+      it 're-sends the invitation email' do
+        expect_any_instance_of(User).to receive(:invite!).and_return(true)
+
+        post admin_user_resend_invitation_path(user)
+      end
+
+      it 'redirects to the admin users path' do
+        post admin_user_resend_invitation_path(user)
+        expect(response).to redirect_to(admin_users_path)
+      end
+
+      it 'sets a notice flash message' do
+        post admin_user_resend_invitation_path(user)
+        expect(flash[:notice]).to eq("#{user.name} re-invited!")
+      end
+    end
+  end
+
   context "When logged in as an organization_admin" do
     before do
       sign_in organization_admin
