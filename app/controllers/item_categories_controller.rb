@@ -37,12 +37,11 @@ class ItemCategoriesController < ApplicationController
     @item_category = current_organization.item_categories.find_by(id: params[:id])
     if @item_category.items.exists?
       flash[:alert] = "Cannot delete item category because it has associated items."
-      redirect_to items_path
     else
       @item_category.destroy
       flash[:notice] = "#{@item_category.name} has been deleted."
-      redirect_to items_path
     end
+    redirect_to items_path
   end
 
   private
