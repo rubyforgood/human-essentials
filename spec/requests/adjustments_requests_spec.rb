@@ -85,7 +85,7 @@ RSpec.describe "Adjustments", type: :request do
 
       context "csv" do
         let(:response_format) { 'csv' }
-        let(:storage_location) { create(:storage_location, organization: organization) }
+        let(:storage_location) { create(:storage_location, organization: organization, name: "Test Storage Location") }
         let(:item1) { create(:item, name: "Item One", organization: organization) }
         let(:item2) { create(:item, name: "Item Two", organization: organization) }
 
@@ -119,9 +119,9 @@ RSpec.describe "Adjustments", type: :request do
 
         it "includes appropriate headers and data" do
           csv = <<~CSV
-            Created date,Storage Area,Comment,# of changes,#{item1.name},#{item2.name}
-            2019-06-30,Smithsonian Conservation Center,First adjustment,2,10,5
-            2019-06-26,Smithsonian Conservation Center,Second adjustment,1,-5,0
+            Created date,Storage Area,Comment,Updates,#{item1.name},#{item2.name}
+            2019-06-30,Test Storage Location,First adjustment,2,10,5
+            2019-06-26,Test Storage Location,Second adjustment,1,-5,0
           CSV
 
           expect(response.body).to eq(csv)
@@ -135,8 +135,8 @@ RSpec.describe "Adjustments", type: :request do
             get adjustments_path, params: { filters: { date_range: "#{start_date} - #{end_date}" }, format: 'csv' }
 
             csv = <<~CSV
-              Created date,Storage Area,Comment,# of changes,Item One,Item Two
-              2019-06-30,Smithsonian Conservation Center,First adjustment,2,10,5
+              Created date,Storage Area,Comment,Updates,Item One,Item Two
+              2019-06-30,Test Storage Location,First adjustment,2,10,5
             CSV
 
             expect(response.body).to eq(csv)

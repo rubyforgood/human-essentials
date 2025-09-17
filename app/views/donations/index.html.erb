@@ -116,9 +116,9 @@
                   <th>Date</th>
                   <th>Details</th>
                   <th>Storage Location</th>
-                  <th>Quantity of Items</th>
-                  <th>Money Raised</th>
-                  <th>In Kind Value</th>
+                  <th class="text-right">Quantity of Items</th>
+                  <th class="text-right">Money Raised</th>
+                  <th class="text-right">In-kind Value</th>
                   <th>Comments</th>
                   <th class="text-right">Actions</th>
                 </tr>
@@ -132,7 +132,7 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td class="text-left numeric">
+                <td class="numeric">
                   <%= @paginated_donations_quantity %>
                   <br>
                   (This page)
@@ -143,8 +143,8 @@
                     (Total)
                   </strong>
                 </td>
-                <td class="text-left numeric"><strong><%= dollar_value(@total_money_raised) %></strong></td>
-                <td class="text-left numeric in-kind">
+                <td class="numeric"><strong><%= dollar_value(@total_money_raised) %></strong></td>
+                <td class="numeric in-kind">
                   <%= dollar_value(@paginated_in_kind_value) %>
                   <br>
                    (This page)

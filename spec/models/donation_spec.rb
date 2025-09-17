@@ -168,7 +168,7 @@ RSpec.describe Donation, type: :model do
         let(:product_drive) { create(:product_drive, name: "Test Drive") }
 
         context "participant known" do
-          let(:product_drive_participant) { create(:product_drive_participant, contact_name: contact_name) }
+          let(:product_drive_participant) { create(:product_drive_participant, business_name: "Business Name", contact_name: contact_name) }
 
           context "contact name present" do
             let(:contact_name) { "Contact Name" }

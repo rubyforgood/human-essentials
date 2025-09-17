@@ -27,7 +27,7 @@ RSpec.describe "Organization Administration", type: :system, js: true do
     end
 
     it "can edit the properties for an organization as an admin" do
-      click_on "Edit"
+      click_on "Edit", match: :first
       fill_in "Name", with: "Something else"
       click_button "Save"
       expect(page).to have_content("pdated your organization")

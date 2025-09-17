@@ -118,9 +118,12 @@ Rails.application.routes.draw do
     get :itemized_distributions
     get :distributions_summary
     get :activity_graph
+    get :itemized_requests
   end
 
-  resources :transfers, only: %i(index create new show destroy)
+  resources :transfers, only: %i(index create new show destroy) do
+    post :validate, on: :collection
+  end
 
   resources :storage_locations do
     put :deactivate
