@@ -603,7 +603,6 @@ RSpec.describe "Partners", type: :request do
     context "csv file with an invalid storage location" do
       let!(:current_organization) { create(:organization) }
       let!(:outside_organization) { create(:organization) }
-      let!(:outside_storage_location) { create(:storage_location, name: "Invalid", organization: outside_organization) }
       let(:file) { fixture_file_upload("partners_with_six_fields_invalid_location.csv", "text/csv") }
       before do
         allow(controller).to receive(:current_organization).and_return(current_organization)
