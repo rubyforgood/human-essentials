@@ -135,6 +135,13 @@ Click "My Organization" in the left hand menu. Click "Edit" button. Set the "Inc
 
 [!NOTE] Setting this affects both the donation and distribution exports.
 
+### Add Package Counts for each item
+If you want to also have the export include the package count for each item in the distributions, you can set that option.
+- Click "My Organization" in the left hand menu. 
+- Click "Edit" button. 
+- Set the "Include packages in distribution export" to "yes"
+- Click "Save"
+
 ## Donations
 
 ### Navigating to export Donations
