@@ -4,7 +4,7 @@ Note - this is editing a Partner's basic information,  not their [Partner Profil
 
 You can edit a partner's basic information by clicking [Partner Agencies] in the left-hand menu, then [All Partners], then click on  the partner you want to work with.
 
-That will bring up this screen. Click "Edit Partner Information"  to bring up the Partner edit screen:
+That will bring up this screen. Click "Edit details"  to bring up the Partner edit screen:
 
 ![top of View Partner screen](images/partners/partners_edit_navigation.png)
 
