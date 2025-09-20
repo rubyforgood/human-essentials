@@ -43,15 +43,17 @@ RSpec.describe 'Requests', type: :request do
       end
 
       context "when there is a filter applied" do
-        it "shows print unfulfilled picklists button with correct quantity when filtered" do
+        it "shows only filtered requests, print unfulfilled picklists button with correct quantity" do
           Request.delete_all
 
-          create(:request, :pending)
-          create(:request, :started)
+          started_request = create(:request, :started, comments: "Started request - should appear")
+          pending_request = create(:request, :pending, comments: "Pending request - should not appear")
 
           get requests_path({ filters: { by_status: :started} })
 
           expect(response.body).to include('Print Unfulfilled Picklists (1)')
+          expect(response.body).to include(started_request.comments)
+          expect(response.body).not_to include(pending_request.comments)
         end
       end
     end
