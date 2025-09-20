@@ -132,6 +132,7 @@ RSpec.describe Audit, type: :model do
       let!(:audit) { create(:audit, :with_items, organization: organization) }
       let!(:audit_2) { create(:audit, :with_items, organization: organization) }
       let(:sl) { audit.storage_location }
+      let(:sl2) { audit_2.storage_location }
 
       it "generates a CSV" do
         csv_data = described_class.generate_csv([audit, audit_2])
@@ -139,9 +140,9 @@ RSpec.describe Audit, type: :model do
         expect(csv_data).to be_a(String)
         expect(csv_data).to eq(
           <<~CSV
-            Audit Date,Audit Status,Storage Location Name,1Dont test this,2Dont test this
+            Audit Date,Audit Status,Storage Location Name,#{audit.line_items.first.name},#{audit_2.line_items.first.name}
             #{audit.updated_at.strftime("%B %d %Y")},#{audit.status},#{sl.name},#{audit.line_items.first.quantity},0
-            #{audit_2.updated_at.strftime("%B %d %Y")},#{audit_2.status},#{sl.name},0,#{audit_2.line_items.first.quantity}
+            #{audit_2.updated_at.strftime("%B %d %Y")},#{audit_2.status},#{sl2.name},0,#{audit_2.line_items.first.quantity}
           CSV
         )
       end
