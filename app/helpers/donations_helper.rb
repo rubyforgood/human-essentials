@@ -21,6 +21,12 @@ module DonationsHelper
     current_organization.product_drives.within_date_range(formatted_range).count
   end
 
+  def options_with_new(records)
+    model_class = records.klass
+    label = "---Create New #{model_class.model_name.human}---"
+    records.map { |record| [record.name, record.id] } << [label, "new"]
+  end
+
   private
 
   def total_received_donations_unformatted(range = selected_range)

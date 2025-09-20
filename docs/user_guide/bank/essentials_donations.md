@@ -50,13 +50,13 @@ Here you can enter all the information for your Donation:
 - Storage Location
 - Money raised in dollars (optional)
 - Comment (optional)
-- Issued On 
+- Issued On
   - This is the date that the Donation was made.  Note that inventory changes happen as of when you enter  the information.  They are not back-dated.
 - Items in this Donation
   - If you have set up [barcodes ](inventory_barcodes.md) for the Items you are receiving,  you can use your barcode reader to enter your Items.  Otherwise, pick the Item from "Choose an item", and enter the number of that Item in "Quantity".
   - Click "Add Another Item" as needed to get room for more Items.
 
-When you are finished entering your information, click 'Save'.  
+When you are finished entering your information, click 'Save'.
 
 ### Information entered in Donations
 #### Source
@@ -67,7 +67,7 @@ For Product Drive, Manufacturer, or Donation Site, you will further specify the 
 If  you specify Product drive,  you'll also need to specify the particular drive and participant for the Donation -- but you can enter them "on the fly", here. You can view summaries for the Product Drives in [Product Drives](product_drives.md), and manage the contact info for a Product Drive Participant under [Community -- Product Drive Participants](community_product_drive_participants.md).
 ##### *Donation Site
 Donation Site is meant to capture the concept of any place you have a more-or-less permanent place people can drop off donations at, such as your main office, or community locations such as fire halls, etc.
-You can see the Donations for each Donation Site and manage their contact information under [Community -- Donation Sites](community_donation_sites.md).  Unlike Product Drives, you can't create a new Donation Site 'on the fly' through the fields here
+You can see the Donations for each Donation Site and manage their contact information under [Community -- Donation Sites](community_donation_sites.md).  Like Product Drives, you can create a new Donation Site 'on the fly' through the fields here too.
 ##### *Manufacturer
 This is for the donations that come straight from a Manufacturer.  You can view a breakdown of the Donations for each Manufacturer under [Community --  Manufacturers](community_manufacturers.md)
 ##### *Misc. Donation
@@ -103,8 +103,8 @@ To view the details of a Donation, click on the "View" button beside the donatio
 ![Navigation to New Donations](images/essentials/donations/essentials_donations_4.png)
 
 Here you'll see the Donation, including:
-- Date 
-- Source 
+- Date
+- Source
 - Donation Site
 - Storage Location
 - for each Item in the donation
@@ -126,7 +126,7 @@ Donations shouldn't need to be updated very often -- you usually have all the in
 
 ![Navigation to Edit a Donation](images/essentials/donations/essentials_donations_6.png)
 
-Here, you can change all the information on the Donation, including adding and removing items.  
+Here, you can change all the information on the Donation, including adding and removing items.
 
 ##### Note that changes you make to the levels of Items will take effect as of the date you made the changes.  They will not be back-dated to the "issued on" date
 
