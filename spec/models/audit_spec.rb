@@ -128,29 +128,22 @@ RSpec.describe Audit, type: :model do
       expect(Audit.finalized_since?(xfer3, storage_location5)).to be false # since status isn't finalized
     end
 
-    describe ".generate_csv_from_inventory" do
+    describe ".generate_csv" do
       let!(:audit) { create(:audit, :with_items, organization: organization) }
+      let!(:audit_2) { create(:audit, :with_items, organization: organization) }
       let(:sl) { audit.storage_location }
-      let(:inventory) { View::Inventory.new(organization.id) }
 
       it "generates a CSV" do
-        csv_data = described_class.generate_csv_from_inventory([audit], inventory)
+        csv_data = described_class.generate_csv([audit, audit_2])
 
         expect(csv_data).to be_a(String)
-
-        table = CSV.parse(csv_data)
-        header = table.first
-        row = table.second
-
-        expect(header).to eq(described_class.csv_export_headers)
-
-        expect(row[0]).to eq(audit.updated_at.strftime("%B %d %Y"))
-        expect(row[1]).to eq(audit.status)
-        expect(row[2]).to eq(sl.name)
-        expect(row[3]).to eq(sl.address)
-        expect(row[4]).to eq(sl.square_footage.to_s)
-        expect(row[5]).to eq(sl.warehouse_type.to_s)
-        expect(row[6]).to eq("0")
+        expect(csv_data).to eq(
+          <<~CSV
+            Audit Date,Audit Status,Storage Location Name,1Dont test this,2Dont test this
+            #{audit.updated_at.strftime("%B %d %Y")},#{audit.status},#{sl.name},#{audit.line_items.first.quantity},0
+            #{audit_2.updated_at.strftime("%B %d %Y")},#{audit_2.status},#{sl.name},0,#{audit_2.line_items.first.quantity}
+          CSV
+        )
       end
     end
   end

@@ -11,8 +11,7 @@ class AuditsController < ApplicationController
     respond_to do |format|
       format.html
       format.csv do
-        inventory = View::Inventory.new(current_organization.id)
-        send_data Audit.generate_csv_from_inventory(@audits, inventory), filename: "Audits-#{Time.zone.today}.csv"
+        send_data Audit.generate_csv(@audits), filename: "Audits-#{Time.zone.today}.csv"
       end
     end
   end

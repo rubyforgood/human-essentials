@@ -50,18 +50,16 @@ class Audit < ApplicationRecord
     end
   end
 
-  def self.generate_csv_from_inventory(audits, inventory)
-    all_items = inventory.all_items.uniq(&:item_id).sort_by(&:name)
-    additional_headers = all_items.map(&:name).uniq
-    headers = csv_export_headers + additional_headers
+  def self.generate_csv(audits)
+    audited_items = audits.flat_map { |audit| audit.line_items.map(&:name) }.uniq
+    headers = csv_export_headers + audited_items
 
     CSV.generate(write_headers: true, headers: headers) do |csv|
       audits.map do |audit|
-        sl = audit.storage_location # preloaded earlier with includes to avoid n+1
-        total_quantity = inventory.quantity_for(storage_location: sl.id)
+        audit_hash = audited_items.index_with(0)
+        audit.line_items.each { |li| audit_hash[li.name] = li.quantity }
 
-        row = [audit.updated_at.strftime("%B %d %Y"), audit.status, sl.name, sl.address, sl.square_footage, sl.warehouse_type, total_quantity] +
-          all_items.map { |i| inventory.quantity_for(storage_location: sl.id, item_id: i.item_id) }
+        row = [audit.updated_at.strftime("%B %d %Y"), audit.status, audit.storage_location.name] + audit_hash.values
 
         csv << row.map { |attr| normalize_csv_attribute(attr) }
       end
@@ -69,7 +67,7 @@ class Audit < ApplicationRecord
   end
 
   def self.csv_export_headers
-    ["Audit Date", "Audit Status", "Name", "Address", "Square Footage", "Warehouse Type", "Total Inventory"]
+    ["Audit Date", "Audit Status", "Storage Location Name"]
   end
 
   private

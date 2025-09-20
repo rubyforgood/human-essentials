@@ -92,19 +92,16 @@ For more information on these, please see the [Annual Survey Report](reports_ann
 - % difference in disposable diaper Donations
 
 ## Audits
-### Navigating to export Audit
-Click "Inventory", then "Inventory" in the left-hand menu. Then click "Export Report."
+### Navigating to export Audits
+Click "Inventory", then "Inventory Audit" in the left-hand menu. Then click "Export Audits".
 
 ### Contents of Audit exports
 For each Audit of Storage Location in the list:
 - Audit Date
 - Audit Status
-- Name,
-- Address,
-- Square Footage,
-- Warehouse Type,
-- Total Inventory, and
-- Quantity for each of the organization's Items.
+- Storage Location Name
+- Audited Items
+- Quantity for each of the audited items.
 
 ## Barcode Items
 ### Navigating to export barcode Items

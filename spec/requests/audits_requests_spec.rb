@@ -40,59 +40,23 @@ RSpec.describe "Audits", type: :request do
 
       context "csv" do
         let(:response_format) { 'csv' }
-        let!(:audits) do
-          [
-            create(:audit, organization: organization, storage_location: storage_location_with_duplicate_item),
-            create(:audit, organization: organization, storage_location: storage_location_with_items)
-          ]
-        end
-        let(:storage_location_with_duplicate_item) {
-          create(:storage_location,
-            name: "Storage Location with Duplicate Items",
-            address: "1500 Remount Road, Front Royal, VA 22630",
-            warehouse_type: StorageLocation::WAREHOUSE_TYPES.first,
-            square_footage: 100)
-        }
-        let(:storage_location_with_items) {
-          create(:storage_location,
-            name: "Storage Location with Items",
-            address: "123 Donation Site Way",
-            warehouse_type: StorageLocation::WAREHOUSE_TYPES.first,
-            square_footage: 100)
-        }
-        let(:item1) { create(:item, name: 'A') }
-        let(:item2) { create(:item, name: 'B') }
-        let(:item3) { create(:item, name: 'C') }
+        let(:csv_body) { "Stubbed CSV" }
 
         before do
-          TestInventory.create_inventory(storage_location_with_items.organization, {
-            storage_location_with_items.id => {
-              item1.id => 1,
-              item2.id => 1,
-              item3.id => 1
-            },
-            storage_location_with_duplicate_item.id => { item3.id => 1 }
-          })
+          allow(Audit).to receive(:generate_csv).and_return(csv_body)
         end
 
         it "succeeds" do
           get audits_path(format: response_format)
+          expect(response.content_type).to eq("text/csv")
           expect(response).to be_successful
         end
 
-        it "includes headers followed by alphabetized item names" do
+        it "returns a CSV" do
           get audits_path(format: response_format)
-          expect(response.body.split("\n")[0]).to eq([Audit.csv_export_headers, item1.name, item2.name, item3.name].join(','))
-        end
 
-        it "Generates csv with Storage Location fields, alphabetized item names, item quantities lined up in their columns, and zeroes for no inventory" do
-          get audits_path(format: response_format)
-          csv = <<~CSV
-            Audit Date,Audit Status,Name,Address,Square Footage,Warehouse Type,Total Inventory,A,B,C
-            #{audits[0].updated_at.strftime("%B %d %Y")},in_progress,Storage Location with Duplicate Items,"1500 Remount Road, Front Royal, VA 22630",100,Residential space used,1,0,0,1
-            #{audits[1].updated_at.strftime("%B %d %Y")},in_progress,Storage Location with Items,123 Donation Site Way,100,Residential space used,3,1,1,1
-          CSV
-          expect(response.body).to eq(csv)
+          expect(Audit).to have_received(:generate_csv)
+          expect(response.body).to eq(csv_body)
         end
       end
     end
