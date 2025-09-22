@@ -247,7 +247,6 @@ RSpec.describe "Admin::UsersController", type: :request do
       sign_in(admin_user)
     end
 
-
     it 're-sends the invitation email' do
       expect_any_instance_of(User).to receive(:invite!).and_return(true)
 
