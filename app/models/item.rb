@@ -69,7 +69,7 @@ class Item < ApplicationRecord
   scope :period_supplies, -> {
     where(reporting_category: [:pads, :tampons, :period_liners, :period_underwear, :period_other])
   }
-  scope :created_between, ->(start_date, end_date) { where(created_at: start_date..end_date) }
+
   enum :reporting_category, {
     adult_incontinence: "adult_incontinence",
     cloth_diapers: "cloth_diapers",
@@ -191,18 +191,6 @@ class Item < ApplicationRecord
     organization.request_units.where(id: unit_ids).pluck(:name).each do |name|
       request_units.create!(name:)
     end
-  end
-
-  def quantity_in_storage(storage_location_id)
-    line_items.inventory_in_storage(storage_location_id).sum(:quantity)
-  end
-
-  def quantity_out_storage(storage_location_id)
-    line_items.inventory_out_storage(storage_location_id).sum(:quantity)
-  end
-
-  def quantity_change(storage_location_id)
-    quantity_in_storage(storage_location_id) - quantity_out_storage(storage_location_id)
   end
 
   private

@@ -25,28 +25,6 @@ class LineItem < ApplicationRecord
 
   scope :active, -> { joins(:item).where(items: { active: true }) }
 
-  scope :inventory_in_storage, ->(storage_location_id) do
-    joins("
-      LEFT OUTER JOIN donations ON donations.id = line_items.itemizable_id AND line_items.itemizable_type = 'Donation'
-      LEFT OUTER JOIN purchases ON purchases.id = line_items.itemizable_id AND line_items.itemizable_type = 'Purchase'
-      LEFT OUTER JOIN adjustments ON adjustments.id = line_items.itemizable_id AND line_items.itemizable_type = 'Adjustment'
-      LEFT OUTER JOIN transfers ON transfers.id = line_items.itemizable_id AND line_items.itemizable_type = 'Transfer'")
-      .where("donations.storage_location_id = :storage_location_id OR
-              purchases.storage_location_id = :storage_location_id OR
-              (adjustments.storage_location_id = :storage_location_id and line_items.quantity < 0) OR
-              transfers.to_id = :storage_location_id", storage_location_id: storage_location_id)
-  end
-
-  scope :inventory_out_storage, ->(storage_location_id) do
-    joins("
-      LEFT OUTER JOIN distributions ON distributions.id = line_items.itemizable_id AND line_items.itemizable_type = 'Distribution'
-      LEFT OUTER JOIN adjustments ON adjustments.id = line_items.itemizable_id AND line_items.itemizable_type = 'Adjustment'
-      LEFT OUTER JOIN transfers ON transfers.id = line_items.itemizable_id AND line_items.itemizable_type = 'Transfer'")
-      .where("distributions.storage_location_id = :storage_location_id OR
-              (adjustments.storage_location_id = :storage_location_id and line_items.quantity > 0) OR
-              transfers.from_id = :storage_location_id", storage_location_id: storage_location_id)
-  end
-
   delegate :name, to: :item
 
   # Used in a distribution that was initialized from a request. The `item_request` will be

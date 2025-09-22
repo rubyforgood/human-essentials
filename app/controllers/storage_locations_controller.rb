@@ -163,7 +163,7 @@ class StorageLocationsController < ApplicationController
   end
 
   def date_range
-    return unless filter_params[:date_range].present?
+    return if filter_params[:date_range].blank?
 
     date_range = filter_params[:date_range].split(" - ")
     start_date = Date.parse(date_range[0])

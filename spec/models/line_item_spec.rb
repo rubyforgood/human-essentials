@@ -55,48 +55,6 @@ RSpec.describe LineItem, type: :model do
         end.to change { described_class.active.size }.by(1)
       end
     end
-
-    describe "->inventory_in_storage" do
-      let(:storage_location) { create(:storage_location) }
-      let(:item) { create(:item) }
-
-      before do
-        create(:donation, :with_items, item: item, item_quantity: 5, storage_location: storage_location)
-        create(:purchase, :with_items, item: item, item_quantity: 10, storage_location: storage_location)
-        create(:adjustment, :with_items, item: item, item_quantity: -2, storage_location: storage_location)
-        create(:transfer, :with_items, item: item, item_quantity: 3, from: create(:storage_location), to: storage_location)
-      end
-
-      it "returns line items that are in the specified storage location" do
-        expect(described_class.inventory_in_storage(storage_location.id).count).to eq(4)
-      end
-
-      it "returns an empty collection if no line items are in the specified storage location" do
-        other_storage_location = create(:storage_location)
-        expect(described_class.inventory_in_storage(other_storage_location.id)).to be_empty
-      end
-    end
-
-    describe "->inventory_out_storage" do
-      let(:storage_location) { create(:storage_location) }
-      let(:item) { create(:item) }
-
-      before do
-        create(:donation, :with_items, item: item, item_quantity: 10, storage_location: storage_location)
-        create(:distribution, :with_items, item: item, item_quantity: 5, storage_location: storage_location)
-        create(:adjustment, :with_items, item: item, item_quantity: -2, storage_location: storage_location)
-        create(:transfer, :with_items, item: item, item_quantity: 3, from: storage_location, to: create(:storage_location))
-      end
-
-      it "returns line items that are out of the specified storage location" do
-        expect(described_class.inventory_out_storage(storage_location.id).count).to eq(2)
-      end
-
-      it "returns an empty collection if no line items are out of the specified storage location" do
-        other_storage_location = create(:storage_location)
-        expect(described_class.inventory_out_storage(other_storage_location.id)).to be_empty
-      end
-    end
   end
 
   describe 'Methods >' do

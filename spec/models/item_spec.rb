@@ -175,21 +175,6 @@ RSpec.describe Item, type: :model do
         expect(ai_items).to_not include(child_disposable_item, child_cloth_item, liner_item)
       end
     end
-
-    describe "->created_between" do
-      let!(:start_date) { 2.days.ago }
-      let!(:end_date) { 1.day.ago }
-      let!(:item1) { create(:item, created_at: start_date, organization:) }
-      let!(:item2) { create(:item, created_at: end_date, organization:) }
-      let!(:item3) { create(:item, created_at: 3.days.ago, organization:) }
-      let(:items_in_range) { Item.created_between(start_date, end_date) }
-
-      it "returns items created within the specified date range" do
-        expect(items_in_range.count).to eq(2)
-        expect(items_in_range).to include(item1, item2)
-        expect(items_in_range).to_not include(item3)
-      end
-    end
   end
 
   describe "->period_supplies" do
@@ -400,23 +385,6 @@ RSpec.describe Item, type: :model do
             Item.reactivate(item_id)
           end.to change { Item.active.size }.by(1)
         end
-      end
-    end
-
-    describe "#quantity_change" do
-      let(:storage_location) { create(:storage_location) }
-      let(:item) { create(:item) }
-
-      before do
-        create(:donation, :with_items, item: item, item_quantity: 5, storage_location: storage_location)
-        create(:purchase, :with_items, item: item, item_quantity: 10, storage_location: storage_location)
-        create(:distribution, :with_items, item: item, item_quantity: 5, storage_location: storage_location)
-        create(:adjustment, :with_items, item: item, item_quantity: -2, storage_location: storage_location)
-        create(:transfer, :with_items, item: item, item_quantity: 3, from: create(:storage_location), to: storage_location)
-      end
-
-      it "returns the total quantity change for the item" do
-        expect(item.quantity_change(storage_location.id)).to eq(5 + 10 - 5 - 2 + 3)
       end
     end
   end
