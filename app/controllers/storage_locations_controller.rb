@@ -58,9 +58,9 @@ class StorageLocationsController < ApplicationController
     setup_date_range_picker
     @storage_location = current_organization.storage_locations.find(params[:id])
     version_date = params[:version_date].presence&.to_date
-    @items = ItemsFlowQuery.new(storage_location: @storage_location, organization: current_organization).call.to_a
-    @total_quantity_in = @items.first["total_quantity_in"].to_i
-    @total_quantity_out = @items.first["total_quantity_out"].to_i
+    @items = ItemsFlowQuery.new(storage_location: @storage_location, organization: current_organization, filter_params: date_range).call.to_a
+    @total_quantity_in = @items.count.positive? ? @items.first["total_quantity_in"].to_i : 0
+    @total_quantity_out = @items.count.positive? ? @items.first["total_quantity_out"].to_i : 0
     @total_quantity_change = @total_quantity_in - @total_quantity_out
     if View::Inventory.within_snapshot?(current_organization.id, version_date)
       @inventory = View::Inventory.new(current_organization.id, event_time: version_date)
@@ -163,6 +163,8 @@ class StorageLocationsController < ApplicationController
   end
 
   def date_range
+    return unless filter_params[:date_range].present?
+
     date_range = filter_params[:date_range].split(" - ")
     start_date = Date.parse(date_range[0])
     end_date = Date.parse(date_range[1])

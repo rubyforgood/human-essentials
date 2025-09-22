@@ -54,6 +54,7 @@ class ItemsFlowQuery
         LEFT JOIN adjustments ON adjustments.id = li.itemizable_id AND li.itemizable_type = 'Adjustment'
         LEFT JOIN transfers ON transfers.id = li.itemizable_id AND li.itemizable_type = 'Transfer'
         LEFT JOIN items it ON it.id = li.item_id
+        WHERE it.created_at BETWEEN :start_date AND :end_date
       )
       SELECT
         item_id,
@@ -71,7 +72,12 @@ class ItemsFlowQuery
     SQL
 
     ActiveRecord::Base.connection.exec_query(
-      ActiveRecord::Base.send(:sanitize_sql_array, [query, {id: @storage_location.id, organization_id: @organization.id}])
+      ActiveRecord::Base.send(:sanitize_sql_array, [query, {
+        id: @storage_location.id,
+        organization_id: @organization.id,
+        start_date: @filter_params ? @filter_params[0] : 20.years.ago,
+        end_date: @filter_params ? @filter_params[1] : Time.current.end_of_day
+      }])
     )
   end
 end
