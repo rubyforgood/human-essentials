@@ -90,7 +90,7 @@ class Admin::UsersController < AdminController
   def resend_invitation
     user = User.find(params[:user_id])
     user.invite!
-    redirect_to admin_users_path, notice: "#{user.name} re-invited!"
+    redirect_back(fallback_location: admin_users_path, notice: "#{user.name} reinvited!")
   end
 
   def remove_role
