@@ -27,7 +27,7 @@ module Exports
     def generate_csv_data
       csv_data = []
 
-      csv_data << headers
+      csv_data << base_headers + item_headers
       distributions.each do |distribution|
         csv_data << build_row_data(distribution)
       end
@@ -38,17 +38,6 @@ module Exports
     private
 
     attr_reader :distributions
-
-    def headers
-      # Build the headers in the correct order
-      base_headers + item_headers
-    end
-
-    # Returns a Hash of keys to indexes so that obtaining the index
-    # doesn't require a linear scan.
-    def headers_with_indexes
-      @headers_with_indexes ||= headers.each_with_index.to_h
-    end
 
     # This method keeps the base headers associated with the lambdas
     # for extracting the values for the base columns from the given
@@ -132,35 +121,28 @@ module Exports
       base_table.keys
     end
 
+    def item_names
+      @item_names ||= @organization.items.pluck(:name).sort_by(&:downcase)
+    end
+
     def item_headers
-      return @item_headers if @item_headers
-
-      @item_headers = @organization.items.select("DISTINCT ON (LOWER(name)) items.name").order("LOWER(name) ASC").map(&:name)
-      @item_headers = @item_headers.flat_map { |header| [header, "#{header} In-Kind Value"] } if @organization.include_in_kind_values_in_exported_files
-
-      @item_headers
+      in_kind_value_headers = @organization.include_in_kind_values_in_exported_files ? item_names.map { |item| "#{item} In-Kind Value" } : []
+      package_headers = @organization.include_packages_in_distribution_export ? item_names.map { |item| "#{item} Packages" } : []
+      item_names.zip(in_kind_value_headers, package_headers).flatten.compact
     end
 
     def build_row_data(distribution)
       row = base_table.values.map { |closure| closure.call(distribution) }
-      row += make_item_quantity_and_value_slots
 
-      distribution.line_items.each do |line_item|
-        item_name = line_item.item.name
-        item_column_idx = headers_with_indexes[item_name]
-        next unless item_column_idx
+      item_names.each do |item_name|
+        line_items = distribution.line_items.where(item: @organization.items.find_by(name: item_name))
 
-        row[item_column_idx] += line_item.quantity
-        row[item_column_idx + 1] += Money.new(line_item.value_per_line_item) if @organization.include_in_kind_values_in_exported_files
+        row << line_items.sum(&:quantity)
+        row << Money.new(line_items.sum(&:value_per_line_item)) if @organization.include_in_kind_values_in_exported_files
+        row << line_items.map(&:has_packages).compact.sum.round(2) if @organization.include_packages_in_distribution_export
       end
 
       row
-    end
-
-    def make_item_quantity_and_value_slots
-      slots = Array.new(item_headers.size, 0)
-      slots = slots.map.with_index { |value, index| index.odd? ? Money.new(0) : value } if @organization.include_in_kind_values_in_exported_files
-      slots
     end
   end
 end

@@ -15,6 +15,7 @@
 #  hide_package_column_on_receipt           :boolean          default(FALSE)
 #  hide_value_columns_on_receipt            :boolean          default(FALSE)
 #  include_in_kind_values_in_exported_files :boolean          default(FALSE), not null
+#  include_packages_in_distribution_export  :boolean          default(FALSE), not null
 #  intake_location                          :integer
 #  invitation_text                          :text
 #  latitude                                 :float
