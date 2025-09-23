@@ -42,7 +42,7 @@ class RequestsController < ApplicationController
       flash[:notice] = "Request started"
       redirect_to new_distribution_path(request_id: request.id)
     rescue ActiveRecord::RecordInvalid
-      flash[:alert] = "Request has already been fulfilled"
+      flash[:alert] = request.errors.full_messages.to_sentence
       redirect_to request_path(request)
     end
   end
