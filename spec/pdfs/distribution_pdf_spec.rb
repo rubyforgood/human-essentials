@@ -26,8 +26,8 @@ describe DistributionPdf do
       expect(results).to eq([
         ["Items Received", "Requested", "Received", "Value/item", "In-Kind Value Received", "Packages"],
         ["Item 1", "", 50, "$1.00", "$50.00", "1"],
-        ["Item 2", 30, 100, "$2.00", "$200.00", nil],
-        ["Item 3", 50, "", "$3.00", nil, nil],
+        ["Item 2", "30", 100, "$2.00", "$200.00", nil],
+        ["Item 3", "50", "", "$3.00", nil, nil],
         ["Item 4", "120 packs", "", "$4.00", nil, nil],
         ["", "", "", "", ""],
         ["Total Items Received", 200, 150, "", "$250.00", ""]
@@ -54,9 +54,9 @@ describe DistributionPdf do
           expect(data).to eq([
             ["Items Received", "Requested", "Received"],
             ["Item 1", "", 50],
-            ["Item 2", 30, 100],
-            ["Item 3", 50, ""],
-            ["Item 4", 120, ""],
+            ["Item 2", "30", 100],
+            ["Item 3", "50", ""],
+            ["Item 4", "120", ""],
             ["", "", ""],
             ["Total Items Received", 200, 150]
           ])
@@ -69,9 +69,9 @@ describe DistributionPdf do
           expect(data).to eq([
             ["Items Received", "Requested", "Received", "Packages"],
             ["Item 1", "", 50, "1"],
-            ["Item 2", 30, 100, nil],
-            ["Item 3", 50, "", nil],
-            ["Item 4", 120, "", nil],
+            ["Item 2", "30", 100, nil],
+            ["Item 3", "50", "", nil],
+            ["Item 4", "120", "", nil],
             ["", "", ""],
             ["Total Items Received", 200, 150, ""]
           ])
@@ -87,9 +87,9 @@ describe DistributionPdf do
         expect(data).to eq([
           ["Items Received", "Requested", "Received"],
           ["Item 1", "", 50],
-          ["Item 2", 30, 100],
-          ["Item 3", 50, ""],
-          ["Item 4", 120, ""],
+          ["Item 2", "30", 100],
+          ["Item 3", "50", ""],
+          ["Item 4", "120", ""],
           ["", "", ""],
           ["Total Items Received", 200, 150]
         ])
@@ -102,9 +102,9 @@ describe DistributionPdf do
         expect(data).to eq([
           ["Items Received", "Requested", "Received", "Packages"],
           ["Item 1", "", 50, "1"],
-          ["Item 2", 30, 100, nil],
-          ["Item 3", 50, "", nil],
-          ["Item 4", 120, "", nil],
+          ["Item 2", "30", 100, nil],
+          ["Item 3", "50", "", nil],
+          ["Item 4", "120", "", nil],
           ["", "", ""],
           ["Total Items Received", 200, 150, ""]
         ])
@@ -120,9 +120,9 @@ describe DistributionPdf do
           expect(data).to eq([
             ["Items Received", "Requested", "Received", "Value/item", "In-Kind Value Received"],
             ["Item 1", "", 50, "$1.00", "$50.00"],
-            ["Item 2", 30, 100, "$2.00", "$200.00"],
-            ["Item 3", 50, "", "$3.00", nil],
-            ["Item 4", 120, "", "$4.00", nil],
+            ["Item 2", "30", 100, "$2.00", "$200.00"],
+            ["Item 3", "50", "", "$3.00", nil],
+            ["Item 4", "120", "", "$4.00", nil],
             ["", "", "", "", ""],
             ["Total Items Received", 200, 150, "", "$250.00"]
           ])
