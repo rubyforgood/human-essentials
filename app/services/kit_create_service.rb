@@ -43,6 +43,10 @@ class KitCreateService
       unless item_creation_result.success?
         raise item_creation_result.error
       end
+      kit.items.update_all(visible_to_partners: kit.visible_to_partners)
+      kit.items.each do |item|
+        item.update!(value_in_dollars: kit.value_in_dollars)
+      end
     rescue StandardError => e
       errors.add(:base, e.message)
       raise ActiveRecord::Rollback
