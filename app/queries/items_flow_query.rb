@@ -54,7 +54,7 @@ class ItemsFlowQuery
         LEFT JOIN adjustments ON adjustments.id = li.itemizable_id AND li.itemizable_type = 'Adjustment'
         LEFT JOIN transfers ON transfers.id = li.itemizable_id AND li.itemizable_type = 'Transfer'
         LEFT JOIN items it ON it.id = li.item_id
-        WHERE it.created_at BETWEEN :start_date AND :end_date
+        WHERE li.created_at >= :start_date AND li.created_at <= :end_date
       )
       SELECT
         item_id,

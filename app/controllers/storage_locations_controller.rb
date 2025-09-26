@@ -166,8 +166,8 @@ class StorageLocationsController < ApplicationController
     return if filter_params[:date_range].blank?
 
     date_range = filter_params[:date_range].split(" - ")
-    start_date = Date.parse(date_range[0])
-    end_date = Date.parse(date_range[1])
+    start_date = Date.parse(date_range[0]).beginning_of_day
+    end_date = Date.parse(date_range[1]).end_of_day
     [start_date, end_date]
   end
 end
