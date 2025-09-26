@@ -1,7 +1,3 @@
-module Types
-  include Dry.Types()
-end
-
 module View
   Donations = Data.define(
     :donations,

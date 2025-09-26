@@ -151,16 +151,4 @@ class DonationsController < ApplicationController
     params[:donation][:line_items_attributes].delete_if { |_row, data| data["quantity"].blank? && data["item_id"].blank? }
     params
   end
-
-  def total_value(donations)
-    total_value_all_donations = 0
-    donations.each do |donation|
-      total_value_all_donations += donation.value_per_itemizable
-    end
-    total_value_all_donations
-  end
-
-  def total_money_raised(donations)
-    donations.sum { |d| d.money_raised.to_i }
-  end
 end
