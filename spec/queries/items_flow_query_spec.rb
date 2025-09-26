@@ -49,19 +49,16 @@ RSpec.describe ItemsFlowQuery do
 
   context "with filter params" do
     let(:filter_params) { [11.days.ago, 9.days.ago] }
-    let!(:old_items) do
-      [
-        create(:item, organization: organization, created_at: 10.days.ago.beginning_of_day),
-        create(:item, organization: organization, created_at: 10.days.ago.end_of_day)
-      ]
-    end
+    let!(:old_items) { create_list(:item, 2) }
     let(:other_location) { create(:storage_location, organization: organization) }
 
     subject { described_class.new(organization: organization, storage_location: storage_location, filter_params: filter_params).call }
 
     before do
-      create(:donation, :with_items, item: old_items[0], item_quantity: 10, storage_location: storage_location)
-      create(:distribution, :with_items, item: old_items[1], item_quantity: 5, storage_location: storage_location)
+      donation = create(:donation, :with_items, item: old_items[0], item_quantity: 10, storage_location: storage_location)
+      donation.line_items.update_all(created_at: 10.days.ago)
+      distribution = create(:distribution, :with_items, item: old_items[1], item_quantity: 5, storage_location: storage_location)
+      distribution.line_items.update_all(created_at: 10.days.ago)
     end
 
     let(:filtered_result) do
