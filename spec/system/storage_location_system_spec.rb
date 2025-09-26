@@ -244,7 +244,7 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       context "date range filter" do
         let!(:start_date) { 2.days.ago }
         let!(:end_date) { 1.day.ago }
-        let!(:item) { create(:item, name: "Filtered Item", created_at: start_date) }
+        let!(:item) { create(:item, name: "Filtered Item") }
         let(:result) do
           [
             {
@@ -260,7 +260,8 @@ RSpec.describe "Storage Locations", type: :system, js: true do
           ].map(&:with_indifferent_access)
         end
         before do
-          create(:donation, :with_items, item: item, item_quantity: 10, storage_location: storage_location)
+          donation = create(:donation, :with_items, item: item, item_quantity: 10, storage_location: storage_location)
+          donation.line_items.update_all(created_at: start_date)
           fill_in "filters[date_range]", with: "#{start_date} - #{end_date}"
           click_button "Filter"
           find("#custom-tabs-inventory-flow-tab").click
