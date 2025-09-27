@@ -1,0 +1,5 @@
+<%= turbo_stream.append "donation_donation_site_id" do %>
+  <option value="<%= @donation_site.id %>" selected>
+    <%= @donation_site.name %>
+  </option>
+<% end %>
