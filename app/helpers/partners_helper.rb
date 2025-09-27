@@ -50,4 +50,22 @@ module PartnersHelper
       tag.span partner.display_status, class: %w(badge badge-pill badge-info bg-info float-right)
     end
   end
+
+  def partner_status_label(status)
+    status_options = {
+      "uninvited" => {icon: "exclamation-circle"},
+      "invited" => {icon: "check", type: "info"},
+      "awaiting_review" => {icon: "check", type: "warning"},
+      "approved" => {icon: "check", type: "success"},
+      "recertification_required" => {icon: "minus", type: "danger"},
+      "deactivated" => {icon: "minus", type: "secondary"}
+    }
+    return content_tag :span, "Errored", class: "label label-teal" unless status_options[status]
+
+    status_label(
+      status.humanize,
+      status_options[status][:icon],
+      status_options[status][:type] || "default"
+    )
+  end
 end
