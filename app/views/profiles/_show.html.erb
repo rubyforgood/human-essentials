@@ -116,13 +116,14 @@
       <p>Poverty Unknown: <%= partner_profile.poverty_unknown %></p>
       <br>
     <% end %>
-    <% if partner_profile_fields.include?('executive_director') || partner_profile_fields.empty? %>
-      <h4 class='text-2xl underline'>Executive Director</h4>
+    <% if partner_profile_fields.include?('contacts') || partner_profile_fields.empty? %>
+      <h4 class='text-2xl underline'>Contacts</h4>
+      <strong>Executive Director</strong>
       <p>Executive Director Name: <%= partner_profile.executive_director_name %></p>
       <p>Executive Director Phone: <%= partner_profile.executive_director_phone %></p>
       <p>Executive Director Email: <%= partner_profile.executive_director_email %></p>
       <br>
-      <h4 class='text-2xl underline'>Primary Contact Person</h4>
+      <strong>Primary Contact Person</strong>
       <p>Primary Contact Name: <%= partner_profile.primary_contact_name %></p>
       <p>Primary Contact Phone: <%= partner_profile.primary_contact_phone %></p>
       <p>Primary Contact Mobile: <%= partner_profile.primary_contact_mobile %></p>

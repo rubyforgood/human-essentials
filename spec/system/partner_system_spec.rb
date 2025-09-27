@@ -489,10 +489,10 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           find("button[data-bs-target='#media_information']").click
           expect(page).to have_css("#media_information.accordion-collapse.collapse", visible: false)
 
-          # Executive director
-          find("button[data-bs-target='#executive_director']").click
-          expect(page).to have_css("#executive_director.accordion-collapse.collapse.show", visible: true)
-          within "#executive_director" do
+          # Contacts
+          find("button[data-bs-target='#contacts']").click
+          expect(page).to have_css("#contacts.accordion-collapse.collapse.show", visible: true)
+          within "#contacts" do
             fill_in "Executive Director Name", with: "Lisa Smith"
           end
 
