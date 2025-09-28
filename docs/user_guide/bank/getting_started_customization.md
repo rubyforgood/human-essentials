@@ -131,9 +131,12 @@ This is a special topic that has its own guide page [here](special_custom_units.
 
 
 ## Other emails
-#### Default reminder day (day of month an email reminder to submit Requests is sent to Partners)
-At this point, we send those emails once a month on the day of the month you indicate here.
-If you do not pick a day, no reminder emails are sent.
+#### Send reminders on a specific day of the month (e.g. "the 5th") or a day of the week (eg "the first Tuesday")?
+You may configure when you would like reminder emails to be sent to your Partners.
+
+This works in conjunction with the reminder configuration set on a partner group level (see [Partner Groups](pm_partner_groups.md)) and the partner specific configuration (see [Adding a single Partner](pm_adding_a_partner.md)).
+
+For a full description of how the reminder schedules work, and how the different configurations interact, see [Partner Reminder Emails](pm_partner_reminders.md).
 
 The text of this email will be:  
 
@@ -155,8 +158,12 @@ if you have any questions about this!
 [Additional text for reminder email (see below)]
 </blockquote>
 
-#### Default deadline day (final day of month to submit Requests)
-This day will be included in the reminder email message.
+#### Deadline day in reminder email
+This is the day which will be included in the reminder email message.
+
+It is assumed that the deadline day always occurs after the day the reminder is sent, and in cases where the deadline date specified is in the past, the deadline will be set to the next month.
+
+As an example, the reminder is set to be every month on the 14th, and the deadline day is set to be the 7th. On January 14th, a reminder will be sent out and, since the 7th is in the past, the deadline date will be listed as February 7th.
 
 #### Additional text for reminder email
 If present, this text will be included in the reminder email after the default text. In the above email template, this additional message will replace `[Additional text for reminder email (see below)]`.

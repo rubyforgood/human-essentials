@@ -148,6 +148,13 @@ module UiHelper
     _link_to link, { icon: "search", type: "info", text: "View", size: "xs" }.merge(options)
   end
 
+  def status_label(text, icon, type)
+    css_class = "cursor-default btn btn-xs btn-#{type}"
+    content_tag :span, class: css_class do
+      fa_icon icon, text: text
+    end
+  end
+
   def invite_button_to(link, options = {}, properties = {})
     properties = { method: options[:method]&.to_sym || :post, rel: "nofollow", data: { confirm: options[:confirm] || "Are you sure?" } }.merge(properties)
     _link_to link, { icon: "envelope", type: "warning", text: "Invite", size: "xs" }.merge(options), properties
@@ -162,8 +169,11 @@ module UiHelper
     text = options[:text]
     size = options[:size]
     type = options[:type]
+
+    properties[:data] ||= {}
+    properties[:data][:disable_with] ||= "Please wait..."
+
     if options[:data].present?
-      properties[:data] ||= {}
       properties[:data].merge!(options[:data])
     end
     properties[:title] = options[:title] if options[:title].present?
@@ -180,7 +190,7 @@ module UiHelper
     end
   end
 
-  def _button_to(options = {}, other_properties = {})
+  def _button_to(options = {}, properties = {})
     submit_type = options[:submit_type] || "submit"
     id = options[:id]
     type = options[:type]
@@ -189,7 +199,10 @@ module UiHelper
     text = options[:text]
     align = options[:align]
 
-    button_tag({ type: submit_type, id: id, class: "btn btn-#{type} btn-#{size} #{align}" }.merge(other_properties)) do
+    properties[:data] ||= {}
+    properties[:data][:disable_with] ||= "Please wait..."
+
+    button_tag({ type: submit_type, id: id, class: "btn btn-#{type} btn-#{size} #{align}" }.merge(properties)) do
       fa_icon icon, text: text
     end
   end

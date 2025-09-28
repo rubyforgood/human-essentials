@@ -340,6 +340,7 @@ RSpec.feature "Distributions", type: :system do
   context "With an existing distribution" do
     let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", delivery_method: delivery_method, organization: user.organization, reminder_email_enabled: true) }
     let(:delivery_method) { "pick_up" }
+    let!(:request) { create(:request, distribution: distribution) }
 
     before do
       sign_in(organization_admin)
@@ -355,6 +356,12 @@ RSpec.feature "Distributions", type: :system do
 
       distribution.reload
       expect(distribution.agency_rep).to eq("SOMETHING DIFFERENT")
+    end
+
+    it "the user can view related request" do
+      click_on "View Request"
+
+      expect(page).to have_content "Request from #{distribution.request.partner.name}"
     end
 
     it "sends an email if reminders are enabled" do
@@ -886,5 +893,42 @@ RSpec.feature "Distributions", type: :system do
     expect(page).to have_content('Distribution')
 
     expect(page).to have_content("This distribution has been marked as being completed!")
+  end
+
+  it "Double clicking distribution complete does not result in the distribution attemping to be completed twice" do
+    visit new_distribution_path
+    item = View::Inventory.new(organization.id).items_for_location(storage_location.id).first.db_item
+    TestInventory.create_inventory(organization,
+      {
+        storage_location.id => { item.id => 20 }
+      })
+
+    select "Test Partner", from: "Partner"
+    select "Test Storage Location", from: "From storage location"
+    choose "Delivery"
+    select item.name, from: "distribution_line_items_attributes_0_item_id"
+    fill_in "distribution_line_items_attributes_0_quantity", with: 15
+
+    click_button "Save"
+
+    within "#distributionConfirmationModal" do
+      click_button "Yes, it's correct"
+    end
+
+    # Make sure the button is there before trying to double click it
+    expect(page.find('a.btn.btn-success.btn-md[href*="/picked_up"]')).to have_content("Distribution Complete")
+
+    # Double click on the Distribution complete button
+    ferrum_double_click('a.btn.btn-success.btn-md[href*="/picked_up"]')
+
+    # Capybara will be quick to determine that a screen doesn't have content.
+    # Make some positive assertions that only appears on the new screen to make
+    # sure it's loaded before asserting something isn't there.
+    expect(page).not_to have_content("Distribution Complete")
+    expect(page).to have_content("Complete")
+
+    # If it tries to mark the distribution as completed twice, the second time
+    # will fail (the distribution is already complete) and show this error
+    expect(page).not_to have_content("Sorry, we encountered an error when trying to mark this distribution as being completed")
   end
 end

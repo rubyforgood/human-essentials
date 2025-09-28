@@ -5,12 +5,8 @@
   "features": {
     "ghcr.io/devcontainers/features/desktop-lite:1": {}
   },
-  "forwardPorts": [3000, 5432, 6080],
+  "forwardPorts": [5432, 6080],
   "portsAttributes": {
-    "3000": {
-      "label": "Application",
-      "onAutoForward": "silent"
-    },
     "5432": {
       "label": "Database",
       "onAutoForward": "silent"
@@ -26,6 +22,8 @@
     "vscode": {
       "extensions": ["Shopify.ruby-extensions-pack"],
       "settings": {
+        // This doesn't seem to work. Not sure if we actually
+        // install+configure rvm.
         "rubyLsp.rubyVersionManager": {
           "identifier": "rvm"
         }

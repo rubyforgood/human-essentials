@@ -36,47 +36,63 @@
           <div class="card-body">
             <%= form_tag(donations_path, method: :get) do |f| %>
               <div class="row">
-                <% if @storage_locations.present? %>
+                <% if @donation_info.storage_locations.present? %>
                   <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                    <%= filter_select(label: "Filter by Storage Location", scope: :at_storage_location, collection: @storage_locations, selected: @selected_storage_location) %>
+                    <%= filter_select(label: "Filter by Storage Location",
+                                      scope: :at_storage_location,
+                                      collection: @donation_info.storage_locations,
+                                      selected: @donation_info.selected_storage_location) %>
                   </div>
                 <% end %>
-                <% if @sources.present? %>
+                <% if @donation_info.sources.present? %>
                   <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
                     <% id = "filter_#{SecureRandom.uuid}" %>
                     <%= label_tag id, "Filter by Source" %>
                     <%= select_tag "filters[by_source]",
-                    options_for_select(@sources, @selected_source),
+                    options_for_select(@donation_info.sources, @donation_info.selected_source),
                     { include_blank: true, class: "form-control", id: id } %>
                   </div>
                 <% end %>
-                <% if @product_drives.present? %>
+                <% if @donation_info.product_drives.present? %>
                   <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                    <%= filter_select(scope: :by_product_drive, collection: @product_drives, selected: @selected_product_drive) %>
+                    <%= filter_select(scope: :by_product_drive,
+                                      collection: @donation_info.product_drives,
+                                      selected: @donation_info.selected_product_drive) %>
 
                   </div>
                 <% end %>
-                <% if @product_drive_participants.present? %>
+                <% if @donation_info.product_drive_participants.present? %>
                   <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                    <%= filter_select(scope: :by_product_drive_participant, collection: @product_drive_participants, value: :business_name, selected: @selected_product_drive_participant) %>
+                    <%= filter_select(scope: :by_product_drive_participant,
+                                      collection: @donation_info.product_drive_participants,
+                                      value: :business_name,
+                                      selected: @donation_info.selected_product_drive_participant) %>
                   </div>
                 <% end %>
-                <% if @manufacturers.present? %>
+                <% if @donation_info.manufacturers.present? %>
                   <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                    <%= filter_select(label: "Filter by manufacturer", scope: :from_manufacturer, collection: @manufacturers, selected: @selected_manufacturer) %>
+                    <%= filter_select(label: "Filter by manufacturer",
+                                      scope: :from_manufacturer,
+                                      collection: @donation_info.manufacturers,
+                                      selected: @donation_info.selected_manufacturer) %>
                   </div>
                 <% end %>
-                <% if @donation_sites.present? %>
+                <% if @donation_info.donation_sites.present? %>
                   <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                    <%= filter_select(label: "Filter by Donation Site", scope: :from_donation_site, collection: @donation_sites, key: :id, value: :name, selected: @selected_donation_site) %>
+                    <%= filter_select(label: "Filter by Donation Site",
+                                      scope: :from_donation_site,
+                                      collection: @donation_info.donation_sites,
+                                      key: :id,
+                                      value: :name,
+                                      selected: @donation_info.selected_donation_site) %>
                   </div>
                 <% end %>
-                <% if @item_categories.present? %>
+                <% if @donation_info.item_categories.present? %>
                   <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
                     <% id = "filter_#{SecureRandom.uuid}" %>
                     <%= label_tag id, "Filter by Category" %>
                     <%= select_tag "filters[by_category]",
-                    options_for_select(@item_categories, @selected_item_category),
+                    options_for_select(@donation_info.item_categories, @donation_info.selected_item_category),
                     { include_blank: true, class: "form-control", id: id } %>
                   </div>
                 <% end %>
@@ -89,7 +105,11 @@
                 <%= filter_button %>
                 <%= clear_filter_button %>
                 <span class="float-right">
-                    <%= download_button_to(donations_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)), {text: "Export Donations", size: "md"}) if @donations.any? %>
+                  <% if @donation_info.donations.any? %>
+                    <%= download_button_to(donations_path(format: :csv,
+                                                          filters: filter_params.merge(date_range: date_range_params)),
+                                           {text: "Export Donations", size: "md"}) %>
+                  <% end %>
                   <%= new_button_to new_donation_path, {text: "New Donation"} %>
                     </span>
               </div>
@@ -116,15 +136,15 @@
                   <th>Date</th>
                   <th>Details</th>
                   <th>Storage Location</th>
-                  <th>Quantity of Items</th>
-                  <th>Money Raised</th>
-                  <th>In-kind Value</th>
+                  <th class="text-right">Quantity of Items</th>
+                  <th class="text-right">Money Raised</th>
+                  <th class="text-right">In-kind Value</th>
                   <th>Comments</th>
                   <th class="text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                <%= render partial: "donation_row", collection: @paginated_donations %>
+                <%= render partial: "donation_row", collection: @donation_info.paginated_donations %>
               </tbody>
               <tfoot>
               <tr>
@@ -132,25 +152,25 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td class="text-left numeric">
-                  <%= @paginated_donations_quantity %>
+                <td class="numeric">
+                  <%= @donation_info.paginated_donations_quantity %>
                   <br>
                   (This page)
                   <br>
                   <strong id="donation_quantity">
-                    <%= @donations_quantity %>
+                    <%= @donation_info.donations_quantity %>
                     <br>
                     (Total)
                   </strong>
                 </td>
-                <td class="text-left numeric"><strong><%= dollar_value(@total_money_raised) %></strong></td>
-                <td class="text-left numeric in-kind">
-                  <%= dollar_value(@paginated_in_kind_value) %>
+                <td class="numeric"><strong><%= dollar_value(@donation_info.total_money_raised) %></strong></td>
+                <td class="numeric in-kind">
+                  <%= dollar_value(@donation_info.paginated_in_kind_value) %>
                   <br>
                    (This page)
                   <br>
                   <strong>
-                    <%= dollar_value(@total_value_all_donations) %> (Total)
+                    <%= dollar_value(@donation_info.total_value_all_donations) %> (Total)
                   </strong>
                 </td>
               </tr>
@@ -159,7 +179,7 @@
           </div>
           <!-- /.card-body -->
           <div class="card-footer clearfix">
-            <%= paginate @paginated_donations %>
+            <%= paginate @donation_info.paginated_donations %>
           </div>
           <!-- /.card-footer-->
         </div>

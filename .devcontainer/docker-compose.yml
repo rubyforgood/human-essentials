@@ -16,6 +16,7 @@ services:
     command: sleep infinity
 
     # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
+    # (Although we're not sure if our port forwarding is actually doing any good)
     network_mode: service:postgres
 
   postgres:
