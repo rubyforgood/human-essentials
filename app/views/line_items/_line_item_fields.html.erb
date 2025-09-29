@@ -1,20 +1,25 @@
+<% if local_assigns[:changes_disallowed] %>
+  <div class="alert alert-warning">This <%= form.object.class.name.downcase %> is too old to edit inventory. You can only change non-inventory fields.</div>
+<% end %>
 <%= form.simple_fields_for :line_items, defined?(object) ? object : nil  do |field| %>
   <% requested = field.object.requested_item %>
   <section class="nested-fields line_item_section">
     <div class="row mt-2 d-flex flex-row align-items-center justify-content-between">
       <div class='d-flex flex-column justify-content-center'>
         <% if requested.blank? %>
+          <% unless local_assigns[:changes_disallowed] %>
           <div class='d-flex flex-row align-items-center'>
             <%= render partial: "barcode_items/barcode_item_lookup",
               locals: { index: field&.options[:child_index] || "new_item"  } %>
-            <div id="barcode-scanner-btn" class="fa fa-barcode barcode-scanner mx-2"> </div>
+              <div id="barcode-scanner-btn" class="fa fa-barcode barcode-scanner mx-2"> </div>
           </div>
           <label class='my-1 mx-auto font-weight-normal'>OR</label>
+          <% end %>
         <% end %>
         <div class='d-flex flex-row'>
           <span class="li-name w-100">
             <%= field.input :item_id,
-                            disabled: requested.present?,
+                            disabled: requested.present? || local_assigns[:changes_disallowed],
                             collection: @item_labels_with_quantities || @items, prompt: "Choose an item",
                             include_blank: "",
                             label: false,
@@ -26,6 +31,7 @@
           <div class="li-quantity mx-2">
             <%= field.input :quantity,
                             as: :string,
+                            disabled: local_assigns[:changes_disallowed],
                             placeholder: "Quantity",
                             label: false,
                             input_html: { class: "quantity my-0", data: { quantity: "" } } %>
@@ -44,7 +50,9 @@
         </div>
       </div>
 
-      <%= remove_element_button "Remove", container_selector: "section" %>
+      <% unless local_assigns[:changes_disallowed] %>
+        <%= remove_element_button "Remove", container_selector: "section" %>
+      <% end %>
     </div>
     <hr class="line-item-separator">
   </section>
