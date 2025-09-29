@@ -12,6 +12,9 @@ class RenameExecutiveDirectorToContactsInPartnerFormFields < ActiveRecord::Migra
         org.save!
       end
     end
+
+    still_has_old_field = Organization.where("? = ANY (partner_form_fields)", "executive_director").exists?
+    raise "Migration failed: some organizations still have 'executive_director' in partner_form_fields" if still_has_old_field
   end
 
   def down
@@ -23,5 +26,8 @@ class RenameExecutiveDirectorToContactsInPartnerFormFields < ActiveRecord::Migra
         org.save!
       end
     end
+
+    still_has_contacts_field = Organization.where("? = ANY (partner_form_fields)", "contacts").exists?
+    raise "Rollback failed: some organizations still have 'contacts' in partner_form_fields" if still_has_contacts_field
   end
 end
