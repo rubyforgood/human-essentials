@@ -219,6 +219,24 @@ RSpec.describe ItemsController, type: :controller do
         expect(response).to have_notice
       end
     end
+
+    describe "PATCH #deactivate" do
+      let(:item) { create(:item, organization: organization) }
+      let!(:partner) { create(:partner, organization: organization, name: "Helping Hands") }
+      let!(:family) { create(:partners_family, partner: partner) }
+      let!(:child) { create(:partners_child, family: family, active: true) }
+
+      before do
+        child.requested_items << item
+      end
+
+      it "sets a flash alert listing partners with active children for this item" do
+        patch :deactivate, params: { id: item.id }
+
+        expect(response).to redirect_to(items_path)
+        expect(flash[:alert]).to include("helping hands") # downcased in controller
+      end
+    end
   end
 
   context "While not signed in" do
