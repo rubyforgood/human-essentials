@@ -297,7 +297,7 @@ Population Served
 - % Greater than 2 times FPL,
 - % Poverty Unknown
 
-Executive Director
+Contacts
 - Executive Director Name,
 - Executive Director Phone,
 - Executive Director Email,
