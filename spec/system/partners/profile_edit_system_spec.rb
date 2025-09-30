@@ -80,7 +80,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       expect(page).to have_content("Enable child based requests At least one request type must be set")
       expect(page).to have_content("Pick up email can't have more than three email addresses")
 
-      # Expect media section, executive director section, and partner settings section to be opened
+      # Expect media section, pick up person section, and partner settings section to be opened
       expect(page).to have_css("#media_information.accordion-collapse.collapse.show", visible: true)
       expect(page).to have_css("#pick_up_person.accordion-collapse.collapse.show", visible: true)
       expect(page).to have_css("#partner_settings.accordion-collapse.collapse.show", visible: true)
@@ -94,7 +94,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       expect(page).to have_content("Enable child based requests At least one request type must be set")
       expect(page).to have_content("Pick up email can't have more than three email addresses")
 
-      # Expect media section, executive director section, and partner settings section to be opened
+      # Expect media section, pick up person section, and partner settings section to be opened
       expect(page).to have_css("#media_information.accordion-collapse.collapse.show", visible: true)
       expect(page).to have_css("#pick_up_person.accordion-collapse.collapse.show", visible: true)
       expect(page).to have_css("#partner_settings.accordion-collapse.collapse.show", visible: true)
