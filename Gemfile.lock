@@ -123,7 +123,7 @@ GEM
       erubi (~> 1.4)
       parser (>= 2.4)
       smart_properties
-    bigdecimal (3.2.2)
+    bigdecimal (3.2.3)
     bindex (0.8.1)
     binding_of_caller (1.0.1)
       debug_inspector (>= 1.2.0)
@@ -238,9 +238,9 @@ GEM
       smart_properties
     erubi (1.13.1)
     execjs (2.10.0)
-    factory_bot (6.5.4)
+    factory_bot (6.5.5)
       activesupport (>= 6.1.0)
-    factory_bot_rails (6.5.0)
+    factory_bot_rails (6.5.1)
       factory_bot (~> 6.5)
       railties (>= 6.1.0)
     faker (3.5.1)
@@ -394,7 +394,6 @@ GEM
     memory_profiler (1.1.0)
     method_source (1.1.0)
     mini_mime (1.1.5)
-    mini_portile2 (2.8.9)
     minitest (5.25.5)
     monetize (1.12.0)
       money (~> 6.12)
@@ -425,9 +424,6 @@ GEM
       net-protocol
     newrelic_rpm (9.20.0)
     nio4r (2.7.4)
-    nokogiri (1.18.9)
-      mini_portile2 (~> 2.8.2)
-      racc (~> 1.4)
     nokogiri (1.18.9-arm64-darwin)
       racc (~> 1.4)
     nokogiri (1.18.9-x86_64-darwin)
@@ -753,7 +749,6 @@ GEM
 
 PLATFORMS
   arm64-darwin
-  ruby
   x86_64-darwin
   x86_64-linux
   x86_64-linux-gnu
