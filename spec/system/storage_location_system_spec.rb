@@ -213,11 +213,13 @@ RSpec.describe "Storage Locations", type: :system, js: true do
     context "Inventory Flow Tab" do
       before do
         create(:donation, :with_items, item: items[0], item_quantity: 10, storage_location: storage_location)
-        create(:distribution, :with_items, item: items[0], item_quantity: 5, storage_location: storage_location)
+        distribution = create(:distribution, :with_items, item: items[0], item_quantity: 5, storage_location: storage_location)
+        DistributionEvent.publish(distribution)
         create(:donation, :with_items, item: items[1], item_quantity: 3, storage_location: storage_location)
-        create(:adjustment, :with_items, item: items[1], item_quantity: 3, storage_location: storage_location)
-        create(:transfer, :with_items, item: items[1], item_quantity: 2, from: storage_location, to: create(:storage_location))
-
+        adjustment = create(:adjustment, :with_items, item: items[1], item_quantity: 3, storage_location: storage_location)
+        AdjustmentEvent.publish(adjustment)
+        transfer = create(:transfer, :with_items, item: items[1], item_quantity: 2, from: storage_location, to: create(:storage_location))
+        TransferEvent.publish(transfer)
         visit subject
         find("#custom-tabs-inventory-flow-tab").click
       end
@@ -260,8 +262,8 @@ RSpec.describe "Storage Locations", type: :system, js: true do
           ].map(&:with_indifferent_access)
         end
         before do
-          donation = create(:donation, :with_items, item: item, item_quantity: 10, storage_location: storage_location)
-          donation.line_items.update_all(created_at: start_date)
+          create(:donation, :with_items, item: item, item_quantity: 10, storage_location: storage_location)
+          Event.last.update(created_at: start_date)
           fill_in "filters[date_range]", with: "#{start_date} - #{end_date}"
           click_button "Filter"
           find("#custom-tabs-inventory-flow-tab").click

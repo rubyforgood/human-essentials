@@ -33,10 +33,13 @@ RSpec.describe ItemsFlowQuery do
 
   before do
     create(:donation, :with_items, item: items[0], item_quantity: 10, storage_location: storage_location)
-    create(:distribution, :with_items, item: items[0], item_quantity: 5, storage_location: storage_location)
+    distribution = create(:distribution, :with_items, item: items[0], item_quantity: 5, storage_location: storage_location)
+    DistributionEvent.publish(distribution)
     create(:donation, :with_items, item: items[1], item_quantity: 3, storage_location: storage_location)
-    create(:adjustment, :with_items, item: items[1], item_quantity: 3, storage_location: storage_location)
-    create(:transfer, :with_items, item: items[1], item_quantity: 2, from: storage_location, to: create(:storage_location))
+    adjustment = create(:adjustment, :with_items, item: items[1], item_quantity: 3, storage_location: storage_location)
+    AdjustmentEvent.publish(adjustment)
+    transfer = create(:transfer, :with_items, item: items[1], item_quantity: 2, from: storage_location, to: create(:storage_location))
+    TransferEvent.publish(transfer)
   end
 
   subject { described_class.new(organization: organization, storage_location: storage_location).call }
@@ -55,10 +58,12 @@ RSpec.describe ItemsFlowQuery do
     subject { described_class.new(organization: organization, storage_location: storage_location, filter_params: filter_params).call }
 
     before do
-      donation = create(:donation, :with_items, item: old_items[0], item_quantity: 10, storage_location: storage_location)
-      donation.line_items.update_all(created_at: 10.days.ago)
+      create(:donation, :with_items, item: old_items[0], item_quantity: 10, storage_location: storage_location)
+      Event.last.update(created_at: 10.days.ago)
+      create(:donation, :with_items, item: old_items[1], item_quantity: 8, storage_location: storage_location)
       distribution = create(:distribution, :with_items, item: old_items[1], item_quantity: 5, storage_location: storage_location)
-      distribution.line_items.update_all(created_at: 10.days.ago)
+      DistributionEvent.publish(distribution)
+      Event.last.update(created_at: 10.days.ago)
     end
 
     let(:filtered_result) do

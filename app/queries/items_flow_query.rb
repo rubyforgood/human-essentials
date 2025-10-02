@@ -13,62 +13,56 @@ class ItemsFlowQuery
 
   def call
     query = <<~SQL
-      WITH line_items_with_flags AS (
-        SELECT
-          li.item_id,
-          it.name AS item_name,
+      with events_with_flags as (
+        select it.id as item_id,
+          it.name as item_name,
           -- in quantity for this row (0 if not matching)
-          CASE
-            WHEN (donations.storage_location_id = :id
-                  OR purchases.storage_location_id = :id
-                  OR (adjustments.storage_location_id = :id AND li.quantity > 0)
-                  OR transfers.to_id = :id)
-                 AND it.organization_id = :organization_id
-            THEN li.quantity
-            ELSE 0
-          END AS quantity_in,
+          case
+            when (e.type = 'DonationEvent' and (item->>'to_storage_location')::int = :id)
+              or (e.type = 'PurchaseEvent' and (item->>'to_storage_location')::int = :id)
+              or (e.type = 'AdjustmentEvent' and (item->>'to_storage_location')::int = :id)
+              or (e.type = 'TransferEvent' and (item->>'to_storage_location')::int = :id)
+              and e.organization_id = :organization_id
+            then (item->>'quantity')::int
+            else 0
+          end as quantity_in,
           -- out quantity normalized to positive numbers (0 if not matching)
-          CASE
-            WHEN (distributions.storage_location_id = :id
-                  OR (adjustments.storage_location_id = :id AND li.quantity < 0)
-                  OR transfers.from_id = :id)
-                 AND it.organization_id = :organization_id
-            THEN CASE WHEN li.quantity < 0 THEN -li.quantity ELSE li.quantity END
-            ELSE 0
-          END AS quantity_out,
+          case
+            when (e.type = 'DistributionEvent' and (item->>'from_storage_location')::int = :id)
+              or (e.type = 'AdjustmentEvent' and (item->>'from_storage_location')::int = :id)      
+              or (e.type = 'TransferEvent' and (item->>'from_storage_location')::int = :id)
+              and e.organization_id = :organization_id
+            then case when (item->>'quantity')::int < 0 then -(item->>'quantity')::int else (item->>'quantity')::int end
+            else 0
+          end as quantity_out,
           -- mark rows that are relevant for the overall WHERE in original query
-          CASE
-            WHEN (donations.storage_location_id = :id
-                  OR purchases.storage_location_id = :id
-                  OR distributions.storage_location_id = :id
-                  OR transfers.from_id = :id
-                  OR transfers.to_id = :id
-                  OR adjustments.storage_location_id = :id)
-                 AND it.organization_id = :organization_id
-            THEN 1 ELSE 0
-          END AS relevant
-        FROM line_items li
-        LEFT JOIN donations ON donations.id = li.itemizable_id AND li.itemizable_type = 'Donation'
-        LEFT JOIN purchases ON purchases.id = li.itemizable_id AND li.itemizable_type = 'Purchase'
-        LEFT JOIN distributions ON distributions.id = li.itemizable_id AND li.itemizable_type = 'Distribution'
-        LEFT JOIN adjustments ON adjustments.id = li.itemizable_id AND li.itemizable_type = 'Adjustment'
-        LEFT JOIN transfers ON transfers.id = li.itemizable_id AND li.itemizable_type = 'Transfer'
-        LEFT JOIN items it ON it.id = li.item_id
-        WHERE li.created_at >= :start_date AND li.created_at <= :end_date
+          case
+            when ( (e.type = 'DonationEvent' and (item->>'to_storage_location')::int = :id)
+                or (e.type = 'PurchaseEvent' and (item->>'to_storage_location')::int = :id)
+                or (e.type = 'DistributionEvent' and (item->>'from_storage_location')::int = :id)
+                or (e.type = 'TransferEvent' and ((item->>'from_storage_location')::int = :id or (item->>'to_storage_location')::int = :id))
+                or (e.type = 'AdjustmentEvent' and (item->>'from_storage_location')::int = :id or (item->>'to_storage_location')::int = :id)
+              ) and e.organization_id = :organization_id
+            then 1 else 0
+          end as relevant
+        from events e
+          left join lateral jsonb_array_elements(data->'items') as item on true
+          left join items it on it.id = (item->>'item_id')::int and it.organization_id = :organization_id
+        where e.created_at >= :start_date and e.created_at <= :end_date
       )
-      SELECT
+      select
         item_id,
         item_name,
-        SUM(quantity_in)   AS quantity_in,
-        SUM(quantity_out)  AS quantity_out,
-        SUM(quantity_in) - SUM(quantity_out) AS change,
-        SUM(SUM(quantity_in)) OVER () AS total_quantity_in,
-        SUM(SUM(quantity_out)) OVER () AS total_quantity_out,
-        SUM(SUM(quantity_in) - SUM(quantity_out)) OVER () AS total_change
-      FROM line_items_with_flags
-      WHERE relevant = 1
-      GROUP BY item_id, item_name
-      ORDER BY item_name;
+        sum(quantity_in) as quantity_in,
+        sum(quantity_out) as quantity_out,
+        sum(quantity_in) - sum(quantity_out) as change,
+        sum(sum(quantity_in)) over () as total_quantity_in,
+        sum(sum(quantity_out)) over () as total_quantity_out,
+        sum(sum(quantity_in) - sum(quantity_out)) over () as total_change
+      from events_with_flags
+      where relevant = 1
+      group by item_id, item_name
+      order by item_name;
     SQL
 
     ActiveRecord::Base.connection.exec_query(
