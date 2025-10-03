@@ -87,6 +87,12 @@ class Admin::UsersController < AdminController
     redirect_back(fallback_location: admin_users_path, notice: "Role added!")
   end
 
+  def resend_invitation
+    user = User.find(params[:user_id])
+    user.invite!
+    redirect_back(fallback_location: admin_users_path, notice: "#{user.name} reinvited!")
+  end
+
   def remove_role
     RemoveRoleService.call(user_id: params[:user_id], role_id: params[:role_id])
     redirect_back(fallback_location: admin_users_path, notice: "Role removed!")
