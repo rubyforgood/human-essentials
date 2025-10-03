@@ -136,7 +136,7 @@ module Exports
     end
 
     def executive_director_col(table)
-      if @partials_to_show.include? "executive_director"
+      if @partials_to_show.include? "contacts"
         table["Executive Director Name"] = ->(partner) { partner.profile.executive_director_name }
         table["Executive Director Phone"] = ->(partner) { partner.profile.executive_director_phone }
         table["Executive Director Email"] = ->(partner) { partner.profile.executive_director_email }

@@ -283,7 +283,7 @@ note = [
   end
 
   # Base profile information all partners should have
-  # Includes fields in the agency_information, executive_director, and pick_up_person partial
+  # Includes fields in the agency_information, contacts, and pick_up_person partial
   # The counties and areas served by the partner are handled elsewere
   profile = Partners::Profile.create!({
     essentials_bank_id: p.organization_id,
@@ -352,7 +352,7 @@ note = [
         receives_essentials_from_other: Faker::Lorem.sentence,
       )
     end
-  
+
     if p.partials_to_show.include? "organizational_capacity"
       profile.update(
         client_capacity: Faker::Lorem.sentence,
