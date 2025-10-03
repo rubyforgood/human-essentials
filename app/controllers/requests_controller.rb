@@ -8,7 +8,7 @@ class RequestsController < ApplicationController
                 .undiscarded
                 .during(helpers.selected_range)
                 .class_filter(filter_params)
-    @unfulfilled_requests_count = current_organization.requests.where(status: [:pending, :started]).count
+    @unfulfilled_requests_count = current_organization.requests.where(status: [:pending, :started]).during(helpers.selected_range).class_filter(filter_params).count
     @paginated_requests = @requests.includes(:partner).page(params[:page])
     @calculate_product_totals = RequestsTotalItemsService.new(requests: @requests).calculate
     @items = current_organization.items.alphabetized.select(:id, :name)
@@ -70,6 +70,8 @@ class RequestsController < ApplicationController
       .includes(:item_requests, partner: [:profile])
       .where(status: [:pending, :started])
       .order(created_at: :desc)
+      .during(helpers.selected_range)
+      .class_filter(filter_params)
 
     respond_to do |format|
       format.any do

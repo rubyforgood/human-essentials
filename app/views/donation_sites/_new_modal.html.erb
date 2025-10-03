@@ -1,0 +1,26 @@
+<%= turbo_frame_tag "modal-new" do %>
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="mainModalLabel">New Donation Site</h4>
+        <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <% flash.each do |key, value| %>
+          <div class="<%= flash_class(key) %> alert-dismissible">
+            <a href="#" class="close btn-close" data-bs-dismiss="alert" aria-label="close" style="text-decoration: none;"><%= fa_icon('times') %></a>
+            <%= value %>
+          </div>
+        <% end %>
+
+        <%= render partial: "form", object: @donation_site %>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+<% end %>

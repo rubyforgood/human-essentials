@@ -73,7 +73,7 @@ RSpec.describe "Approval process for partners", type: :system, js: true do
     let(:partner) { FactoryBot.create(:partner) }
 
     before do
-      partner.profile.update(website: '', facebook: '', twitter: '', instagram: '', no_social_media_presence: false, partner_status: 'pending')
+      partner.profile.update(website: '', facebook: '', twitter: '', instagram: '', no_social_media_presence: false)
       login_as(partner_user)
       visit partner_user_root_path
       click_on 'My Profile'

@@ -413,7 +413,8 @@ For each Storage Location in the filtered list:
 - Address,
 - Square Footage,
 - Warehouse Type,
-- Total Inventory, and
+- Total Inventory,
+- Fair Market Value,
 - Quantity for each of the organization's Items.
 
 ## Transfers

@@ -28,6 +28,7 @@ For your first partner, you can Click on the "Add a single partner" link in your
 For any subsequent Partners, please click on "Partner Agencies", then "All Partners", then "Add a Partner")
 
 ![add a partner navigation](images/partners/partners_add_navigation.png)
+
 Further details on adding a partner can be found [here](pm_adding_a_partner.md)
 
-[Prior: Storage Locations](getting_started_storage_locations.md)[Next: Donation Sites](getting_started_donation_sites.md)
+[Prior: User management](getting_started_user_management.md)  [Next:  Everyday Essentials -- your dashboard](essentials_dashboard.md)

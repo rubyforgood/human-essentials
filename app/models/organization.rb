@@ -24,6 +24,7 @@
 #  partner_form_fields                      :text             default([]), is an Array
 #  receive_email_on_requests                :boolean          default(FALSE), not null
 #  reminder_day                             :integer
+#  reminder_schedule_definition             :string
 #  repackage_essentials                     :boolean          default(FALSE), not null
 #  signature_for_distribution_pdf           :boolean          default(FALSE)
 #  state                                    :string
@@ -43,8 +44,6 @@ class Organization < ApplicationRecord
 
   DIAPER_APP_LOGO = Rails.public_path.join("img", "humanessentials_logo.png")
 
-  include Deadlinable
-
   # TODO: remove once migration "20250504183911_remove_short_name_from_organizations" has run in production
   self.ignored_columns += ["short_name"]
 
@@ -54,6 +53,13 @@ class Organization < ApplicationRecord
   validate :correct_logo_mime_type
   validate :some_request_type_enabled
   validate :logo_size_check, if: proc { |org| org.logo.attached? }
+  validates :deadline_day, numericality: {
+    only_integer: true,
+    less_than_or_equal_to: ReminderScheduleService::MAX_DAY_OF_MONTH,
+    greater_than_or_equal_to: ReminderScheduleService::MIN_DAY_OF_MONTH,
+    allow_nil: true
+  }
+  validate :reminder_schedule_is_empty_or_valid?
 
   belongs_to :account_request, optional: true
   belongs_to :ndbn_member, class_name: 'NDBNMember', optional: true
@@ -95,6 +101,8 @@ class Organization < ApplicationRecord
       this_week.scheduled.where(issued_at: Time.zone.today..)
     end
   end
+
+  before_save :save_reminder_schedule_definition
 
   after_create do
     account_request&.update!(status: "admin_approved")
@@ -238,6 +246,32 @@ class Organization < ApplicationRecord
   def display_last_distribution_date
     distribution = distributions.order(issued_at: :desc).first
     distribution.nil? ? "No distributions" : distribution[:issued_at].strftime("%F")
+  end
+
+  def reminder_schedule
+    if reminder_schedule_definition.present?
+      @reminder_schedule_service ||= ReminderScheduleService.from_ical(reminder_schedule_definition)
+    end
+    @reminder_schedule_service ||= ReminderScheduleService.new(start_date: Time.zone.today)
+  end
+
+  def save_reminder_schedule_definition
+    self.reminder_schedule_definition = reminder_schedule.to_ical
+    @reminder_schedule_service = nil
+  end
+
+  def reminder_schedule_is_empty_or_valid?
+    # The schedule shouldn't be validated if the user hasn't touched that form,
+    # so if by_month_or_week is still the default (nil) assume the user didn't
+    # intend to fill out that form and don't validate.
+    if reminder_schedule.fields_filled_out? && reminder_schedule.by_month_or_week.present?
+      if !reminder_schedule.valid?
+        errors.merge!(reminder_schedule.errors)
+      end
+      if reminder_schedule.by_month_or_week == "day_of_month" && reminder_schedule.day_of_month.to_i == deadline_day.to_i
+        errors.add(:day_of_month, "Reminder day must not be the same as deadline day")
+      end
+    end
   end
 
   private
