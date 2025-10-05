@@ -205,4 +205,3 @@ RSpec.describe "Item management", type: :system do
     end
   end
 end
-

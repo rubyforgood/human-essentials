@@ -340,6 +340,7 @@ RSpec.feature "Distributions", type: :system do
   context "With an existing distribution" do
     let!(:distribution) { create(:distribution, :with_items, agency_rep: "A Person", delivery_method: delivery_method, organization: user.organization, reminder_email_enabled: true) }
     let(:delivery_method) { "pick_up" }
+    let!(:request) { create(:request, distribution: distribution) }
 
     before do
       sign_in(organization_admin)
@@ -355,6 +356,12 @@ RSpec.feature "Distributions", type: :system do
 
       distribution.reload
       expect(distribution.agency_rep).to eq("SOMETHING DIFFERENT")
+    end
+
+    it "the user can view related request" do
+      click_on "View Request"
+
+      expect(page).to have_content "Request from #{distribution.request.partner.name}"
     end
 
     it "sends an email if reminders are enabled" do

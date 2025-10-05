@@ -141,7 +141,7 @@ RSpec.shared_examples_for "Date Range Picker" do |described_class, date_field|
 
       valid_date_range = "#{Time.zone.local(2019, 7, 22).to_fs(:date_picker)} - #{Time.zone.local(2019, 7, 28).to_fs(:date_picker)}"
       fill_in "filters_date_range", with: valid_date_range
-      find(:id, 'filters_date_range').native.send_keys(:enter)
+      click_button "Filter"
       expect(page).to have_css("table tbody tr", count: 1)
     end
   end
