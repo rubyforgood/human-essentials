@@ -148,6 +148,13 @@ module UiHelper
     _link_to link, { icon: "search", type: "info", text: "View", size: "xs" }.merge(options)
   end
 
+  def status_label(text, icon, type)
+    css_class = "cursor-default btn btn-xs btn-#{type}"
+    content_tag :span, class: css_class do
+      fa_icon icon, text: text
+    end
+  end
+
   def invite_button_to(link, options = {}, properties = {})
     properties = { method: options[:method]&.to_sym || :post, rel: "nofollow", data: { confirm: options[:confirm] || "Are you sure?" } }.merge(properties)
     _link_to link, { icon: "envelope", type: "warning", text: "Invite", size: "xs" }.merge(options), properties

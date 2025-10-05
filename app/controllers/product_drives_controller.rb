@@ -98,7 +98,7 @@ class ProductDrivesController < ApplicationController
       else
         error_message = product_drive.errors.full_messages.to_sentence
         format.html { redirect_to product_drive_path(product_drive), error: error_message }
-        format.json { render json: {error: error_message}, status: :unprocessable_entity }
+        format.json { render json: {error: error_message}, status: :unprocessable_content }
       end
     end
   end
