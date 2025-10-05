@@ -28,20 +28,20 @@ RSpec.describe "Vendor", type: :system, js: true do
     end
 
     it "should deactivate a vendor when the deactivate button is clicked" do
-      expect { click_link "Deactivate", match: :first }.to change { @first.reload.active }.to(false)
+      expect { click_button "Deactivate", match: :first }.to change { @first.reload.active }.to(false)
     end
 
     it "should reactivate a vendor when the reactivate button is clicked" do
-      expect { click_link "Deactivate", match: :first }.to change { @first.reload.active }.to(false)
+      expect { click_button "Deactivate", match: :first }.to change { @first.reload.active }.to(false)
 
       check "include_inactive_vendors"
       click_button "Filter"
 
-      expect { click_link "Reactivate", match: :first }.to change { @first.reload.active }.to(true)
+      expect { click_button "Reactivate", match: :first }.to change { @first.reload.active }.to(true)
     end
 
     it "should delete when vendor does not have purchases items" do
-      expect { click_link "Delete" }.to change(Vendor, :count).by(-1)
+      expect { click_button "Delete" }.to change(Vendor, :count).by(-1)
       expect(page).to have_content("#{@last.business_name} has been removed.")
     end
 

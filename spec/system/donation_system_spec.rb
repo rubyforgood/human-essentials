@@ -746,7 +746,7 @@ RSpec.describe "Donations", type: :system, js: true do
       end
 
       it "allows deletion of a donation" do
-        expect(page).to have_link("Delete")
+        expect(page).to have_button("Delete")
 
         accept_confirm do
           click_on "Delete", match: :first
