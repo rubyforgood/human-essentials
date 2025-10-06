@@ -35,17 +35,21 @@ RSpec.describe "Kit management", type: :system do
 
   context "kit creation" do
     let(:kit_traits) { attributes_for(:kit) }
-    let(:item) { Item.last }
-    let(:quantity_per_kit) { 5 }
     let(:value_in_dollars) { 10.10 }
+    let(:value_in_cents) { value_in_dollars * 100 }
+    let!(:items) { create_list(:item, 2, value_in_cents: value_in_cents, organization: organization) }
+    let(:quantity_per_kit) { 5 }
+    let(:kit_value_in_dollars) { (items.count * quantity_per_kit * value_in_dollars).round(2) }
 
     before do
       visit new_kit_path
       fill_in "Name", with: kit_traits[:name]
       find(:css, '#visible_to_partners').set(false)
-      find(:css, '#kit_value_in_dollars').set(value_in_dollars)
-      select item.name, from: "kit_line_items_attributes_0_item_id"
-      find(:css, '#kit_line_items_attributes_0_quantity').set(quantity_per_kit)
+      all(:css, '.line_item_name').first.select(items[0].name)
+      all(:css, '.quantity').first.set(quantity_per_kit)
+      click_link "Add Another Item"
+      all(:css, '.line_item_name').last.select(items[1].name)
+      all(:css, '.quantity').last.set(quantity_per_kit)
     end
 
     subject { click_button "Save" }
@@ -55,13 +59,31 @@ RSpec.describe "Kit management", type: :system do
         subject
         expect(page.find(".alert")).to have_content "Kit created successfully"
         expect(page).to have_content(kit_traits[:name])
-        expect(page).to have_content("#{quantity_per_kit} #{item.name}")
+        expect(page).to have_content("#{quantity_per_kit} #{items[0].name}")
+        expect(page).to have_content("#{quantity_per_kit} #{items[1].name}")
         expect(Kit.last.name).to eq(kit_traits[:name])
         expect(Kit.last.visible_to_partners).to eq(false)
-        expect(Kit.last.value_in_dollars).to eq(value_in_dollars)
-        expect(item.reload.visible_to_partners).to eq(false)
-        expect(item.reload.value_in_dollars).to eq(value_in_dollars)
+        expect(Kit.last.value_in_dollars).to eq(kit_value_in_dollars)
+        expect(items[0].reload.visible_to_partners).to eq(false)
+        expect(items[1].reload.visible_to_partners).to eq(false)
+        expect(items[0].reload.value_in_dollars).to eq(value_in_dollars)
+        expect(items[1].reload.value_in_dollars).to eq(value_in_dollars)
       }.to change(Kit, :count).by(1)
+    end
+
+    context "items not selected" do
+      before do
+        visit new_kit_path
+        fill_in "Name", with: kit_traits[:name]
+        find(:css, '#visible_to_partners').set(false)
+      end
+
+      it "displays error indicating at least one item is required" do
+        expect {
+          subject
+          expect(page.find(".alert")).to have_content "At least one item is required"
+        }.not_to change(Kit, :count)
+      end
     end
   end
 
@@ -224,8 +246,6 @@ RSpec.describe "Kit management", type: :system do
     it "displays error indicating missing field and preserves filled out fields" do
       visit new_kit_path
       kit_traits = attributes_for(:kit)
-
-      find(:css, '#kit_value_in_dollars').set('10.10')
 
       item = Item.last
       quantity_per_kit = 5

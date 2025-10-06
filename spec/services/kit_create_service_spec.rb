@@ -24,6 +24,12 @@ RSpec.describe KitCreateService do
         }
       end
     end
+    let(:kit_value_in_cents) do
+      line_items_attr.sum do |li|
+        item = Item.find(li[:item_id])
+        item.value_in_cents.to_i * li[:quantity].to_i
+      end
+    end
 
     it 'should return an the instance' do
       expect(subject).to be_a_kind_of(described_class)
@@ -31,15 +37,12 @@ RSpec.describe KitCreateService do
 
     context 'when the parameters are valid' do
       it 'should create a new Kit' do
-        expect { subject }.to change { Kit.all.count }.by(1)
+        expect { subject }.to change { Kit.count }.by(1)
+        expect(Kit.last.value_in_cents).to eq(kit_value_in_cents)
       end
 
       it 'should create a new Item' do
-        expect { subject }.to change { Item.all.count }.by(1)
-      end
-
-      it 'should create the new Item associated with the Kit' do
-        expect { subject }.to change { Kit.all.count }.by(1)
+        expect { subject }.to change { Item.count }.by(1)
       end
 
       context 'but an unexpected error gets raised' do
@@ -89,6 +92,14 @@ RSpec.describe KitCreateService do
 
         it 'should have an error on organization_id saying it does not match any Organization' do
           expect(subject.errors[:organization_id]).to eq(['does not match any Organization'])
+        end
+      end
+
+      context 'line_items_attributes is empty' do
+        let(:line_items_attr) { [] }
+
+        it 'should have an error At least one item is required' do
+          expect(subject.errors.full_messages).to include("At least one item is required")
         end
       end
 

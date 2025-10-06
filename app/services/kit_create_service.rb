@@ -44,9 +44,10 @@ class KitCreateService
         raise item_creation_result.error
       end
       kit.items.update_all(visible_to_partners: kit.visible_to_partners)
-      kit.items.each do |item|
-        item.update!(value_in_dollars: kit.value_in_dollars)
+      kit_value_in_cents = kit.items.reduce(0) do |sum, i|
+        sum + i.value_in_cents.to_i * kit.line_items.find_by(item_id: i.id).quantity.to_i
       end
+      kit.update!(value_in_cents: kit_value_in_cents)
     rescue StandardError => e
       errors.add(:base, e.message)
       raise ActiveRecord::Rollback
