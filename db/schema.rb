@@ -231,6 +231,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_13_173217) do
     t.index ["user_id"], name: "index_deprecated_feedback_messages_on_user_id"
   end
 
+  create_table "diaper_drive_participants", id: :serial, force: :cascade do |t|
+    t.string "contact_name"
+    t.string "email"
+    t.string "phone"
+    t.string "comment"
+    t.integer "organization_id"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.string "address"
+    t.string "business_name"
+    t.float "latitude"
+    t.float "longitude"
+    t.index ["latitude", "longitude"], name: "index_diaper_drive_participants_on_latitude_and_longitude"
+  end
+
   create_table "distributions", id: :serial, force: :cascade do |t|
     t.text "comment"
     t.datetime "created_at", precision: nil, null: false
@@ -324,6 +339,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_13_173217) do
     t.bigint "old_partner_id"
     t.boolean "archived", default: false
     t.index ["partner_id"], name: "index_families_on_partner_id"
+  end
+
+  create_table "feedback_messages", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "message"
+    t.string "path"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.boolean "resolved"
+    t.index ["user_id"], name: "index_feedback_messages_on_user_id"
   end
 
   create_table "flipper_features", force: :cascade do |t|
@@ -475,6 +500,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_13_173217) do
     t.string "zipcode"
     t.float "latitude"
     t.float "longitude"
+    t.integer "reminder_day"
     t.integer "deadline_day"
     t.text "invitation_text"
     t.integer "default_storage_location"
@@ -492,10 +518,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_13_173217) do
     t.boolean "hide_package_column_on_receipt", default: false
     t.boolean "signature_for_distribution_pdf", default: false
     t.boolean "receive_email_on_requests", default: false, null: false
-    t.boolean "bank_is_set_up", default: false, null: false
     t.boolean "include_in_kind_values_in_exported_files", default: false, null: false
-    t.integer "reminder_day"
     t.string "reminder_schedule_definition"
+    t.boolean "bank_is_set_up", default: false, null: false
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
   end
 
@@ -512,12 +537,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_13_173217) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "send_reminders", default: false, null: false
-    t.integer "deadline_day"
     t.integer "reminder_day"
+    t.integer "deadline_day"
     t.string "reminder_schedule_definition"
     t.index ["name", "organization_id"], name: "index_partner_groups_on_name_and_organization_id", unique: true
     t.index ["organization_id"], name: "index_partner_groups_on_organization_id"
     t.check_constraint "deadline_day <= 28", name: "deadline_day_of_month_check"
+    t.check_constraint "reminder_day <= 28", name: "reminder_day_of_month_check"
   end
 
   create_table "partner_profiles", force: :cascade do |t|
