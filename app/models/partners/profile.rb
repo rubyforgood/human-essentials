@@ -180,7 +180,6 @@ module Partners
     # These are columns which currently do not appear in any partial of the profile form.
     # It is possible these will be removed in the future.
 
-
     def client_share_total
       # client_share could be nil
       served_areas.map(&:client_share).compact.sum
