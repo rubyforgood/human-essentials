@@ -73,18 +73,18 @@ class ItemsController < ApplicationController
 
   def update
     @item = current_organization.items.find(params[:id])
-    @item.attributes = item_params
     deactivated = @item.active_changed? && !@item.active
     if deactivated && !@item.can_deactivate?
       flash.now[:error] = "Can't deactivate this item - it is currently assigned to either an active kit or a storage location!"
       render action: :edit
       return
     end
+    result = ItemUpdateService.new(item: @item, params: item_params, request_unit_ids: request_unit_ids).call
 
-    if update_item
+    if result.success?
       redirect_to items_path, notice: "#{@item.name} updated!"
     else
-      flash.now[:error] = "Something didn't work quite right -- try again? #{@item.errors.map { |error| "#{error.attribute}: #{error.message}" }}"
+      flash.now[:error] = result.error.record.errors.full_messages.to_sentence
       render action: :edit
     end
   end
@@ -183,27 +183,6 @@ class ItemsController < ApplicationController
 
   def request_unit_ids
     params.require(:item).permit(request_unit_ids: []).fetch(:request_unit_ids, [])
-  end
-
-  # We need to update both the item and the request_units together and fail together
-  def update_item
-    if Flipper.enabled?(:enable_packs)
-      update_item_and_request_units
-    else
-      @item.save
-    end
-  end
-
-  def update_item_and_request_units
-    begin
-      Item.transaction do
-        @item.save!
-        @item.sync_request_units!(request_unit_ids)
-      end
-    rescue
-      return false
-    end
-    true
   end
 
   helper_method \

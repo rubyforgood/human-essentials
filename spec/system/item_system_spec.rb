@@ -1,6 +1,6 @@
 RSpec.describe "Item management", type: :system do
   let(:organization) { create(:organization) }
-  let(:user) { create(:user, organization: organization) }
+  let(:user) { create(:organization_admin, organization: organization) }
 
   before do
     sign_in(user)
@@ -39,12 +39,86 @@ RSpec.describe "Item management", type: :system do
     expect(Item.last.value_in_cents).to eq(123_456)
   end
 
-  it "can update an existing item as a user" do
-    item = create(:item)
-    visit edit_item_path(item.id)
-    click_button "Save"
+  context "update item" do
+    let!(:item) { create(:item, organization: organization, name: "Old Name") }
+    let(:params) do
+      {
+        name: "New Name",
+        item_category_id: nil,
+        reporting_category: "Pads",
+        partner_key: "other",
+        value_in_cents: 1234,
+        package_size: 20,
+        on_hand_minimum_quantity: 5,
+        on_hand_recommended_quantity: 10,
+        distribution_quantity: 2,
+        visible_to_partners: true,
+        active: true,
+        additional_info: "Some additional info"
+      }
+    end
 
-    expect(page.find(".alert")).to have_content "updated"
+    before do
+      visit edit_item_path(item.id)
+      fill_in "Name", with: params[:name]
+      select params[:reporting_category], from: "Reporting Category"
+      fill_in "Value per item", with: params[:value_in_cents] / 100.00
+      fill_in "Package size", with: params[:package_size]
+      fill_in "On hand minimum quantity", with: params[:on_hand_minimum_quantity]
+      fill_in "On hand recommended quantity", with: params[:on_hand_recommended_quantity]
+      fill_in "Quantity Per Individual", with: params[:distribution_quantity]
+      fill_in "Additional Info", with: params[:additional_info]
+    end
+
+    subject { click_button "Save" }
+
+    it "updates the item with valid inputs" do
+      subject
+      item.reload
+      expect(page.find(".alert")).to have_content "#{item.name} updated!"
+      expect(item.name).to eq(params[:name])
+      expect(item.item_category_id).to eq(params[:item_category_id])
+      expect(item.reporting_category).to eq(params[:reporting_category].underscore)
+      expect(item.value_in_cents).to eq(params[:value_in_cents])
+      expect(item.package_size).to eq(params[:package_size])
+      expect(item.on_hand_minimum_quantity).to eq(params[:on_hand_minimum_quantity])
+      expect(item.on_hand_recommended_quantity).to eq(params[:on_hand_recommended_quantity])
+      expect(item.distribution_quantity).to eq(params[:distribution_quantity])
+      expect(item.visible_to_partners).to eq(params[:visible_to_partners])
+      expect(item.active).to eq(params[:active])
+      expect(item.additional_info).to eq(params[:additional_info])
+    end
+
+    context "item belongs to a kit" do
+      let!(:kit) { create(:kit, organization: organization) }
+      let!(:item2) { create(:item, organization: organization) }
+      let(:kit_value_in_cents) { item.value_in_cents.to_i + item2.value_in_cents.to_i }
+
+      before do
+        item.update!(kit: kit)
+        item2.update!(kit: kit)
+        visit edit_item_path(item.id)
+        fill_in "Name", with: params[:name]
+      end
+
+      it "does not allow changing reporting category" do
+        expect(page).to have_field("Reporting Category", disabled: true)
+        expect(page).to have_content("Kits are reported based on their contents.")
+        subject
+        expect(kit.value_in_cents).to eq(kit_value_in_cents)
+      end
+    end
+
+    context "with invalid inputs" do
+      let(:params) do
+        super().merge(name: "", reporting_category: "")
+      end
+
+      it "shows the error messages" do
+        subject
+        expect(page.find(".alert")).to have_content "Name can't be blank and Reporting category can't be blank"
+      end
+    end
   end
 
   it "can update an existing item with empty attributes as a user" do
@@ -53,7 +127,7 @@ RSpec.describe "Item management", type: :system do
     fill_in "Name", with: ""
     click_button "Save"
 
-    expect(page.find(".alert")).to have_content "didn't work"
+    expect(page.find(".alert")).to have_content "Name can't be blank"
   end
 
   it "can make the item invisible to partners" do
@@ -111,7 +185,7 @@ RSpec.describe "Item management", type: :system do
     end
 
     # Consolidated these into one to reduce the setup/teardown
-    it "should display items in separate tabs", js: true do
+    it "should display items in separate tabs", js: true, driver: :selenium_chrome do
       tab_items_only_text = page.find("#items-table", visible: true).text
       expect(tab_items_only_text).to have_content item_pullups.name
       expect(tab_items_only_text).to have_content item_tampons.name
