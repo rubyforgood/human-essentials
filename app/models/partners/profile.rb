@@ -8,6 +8,7 @@
 #  address2                       :string
 #  agency_mission                 :text
 #  agency_type                    :string
+#  application_data               :text
 #  at_fpl_or_below                :integer
 #  case_management                :boolean
 #  city                           :string
@@ -15,6 +16,7 @@
 #  currently_provide_diapers      :boolean
 #  describe_storage_space         :text
 #  distribution_times             :string
+#  distributor_type               :string
 #  enable_child_based_requests    :boolean          default(TRUE), not null
 #  enable_individual_requests     :boolean          default(TRUE), not null
 #  enable_quantity_based_requests :boolean          default(TRUE), not null
@@ -57,6 +59,7 @@
 #  program_address2               :string
 #  program_age                    :string
 #  program_city                   :string
+#  program_client_improvement     :text
 #  program_description            :text
 #  program_name                   :string
 #  program_state                  :string
@@ -176,21 +179,7 @@ module Partners
 
     # These are columns which currently do not appear in any partial of the profile form.
     # It is possible these will be removed in the future.
-    self.ignored_columns += %w[
-      application_data
-      distributor_type
-      evidence_based_description
-      program_client_improvement
-      incorporate_plan
-      turn_away_child_care
-      responsible_staff_position
-      trusted_pickup
-      serve_income_circumstances
-      internal_db
-      maac
-      pick_up_method
-      ages_served
-    ]
+
 
     def client_share_total
       # client_share could be nil
