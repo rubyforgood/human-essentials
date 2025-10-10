@@ -57,11 +57,25 @@ RSpec.describe Partners::FamilyRequestsController, type: :request do
 
       subject
 
-      child_with_unavailable_item = children[0]
+      expected = "Request failed! [\"#{i.name} requested for 1 child is not currently available for request.\"]"
 
-      expected = "\"#{i.name}\" requested for #{child_with_unavailable_item.first_name} #{child_with_unavailable_item.last_name} is not currently available for request."
+      expect(response.request.flash[:error]).to eql expected
+    end
+    
+    it "does not allow requesting non-visible items for multiple children" do
+      partner.update!(status: :approved)
 
-      expect(response.request.flash[:error].message).to eql expected
+      # update child item to not be visible to partners
+      i = Item.first
+      i.update!(visible_to_partners: false)
+
+      children[1].update(requested_item_ids: [i.id])
+
+      subject
+
+      expected = "Request failed! [\"#{i.name} requested for 2 children is not currently available for request.\"]"
+
+      expect(response.request.flash[:error]).to eql expected
     end
 
     it "submits the request" do
