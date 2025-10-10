@@ -76,7 +76,10 @@ module Partners
     # If requested item(s) isn't visible to partners,
     # an error specifying which item is not available is raised
     def check_for_item_visibility
-      invisible_items = item_requests_attributes.select { |attr| !included_items_by_id[attr[:item_id]].visible_to_partners }
+      invisible_items = item_requests_attributes.select { |attr|
+        !included_items_by_id[attr[:item_id]].nil? &&
+          !included_items_by_id[attr[:item_id]].visible_to_partners
+      }
 
       unless invisible_items.empty?
 
