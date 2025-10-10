@@ -57,6 +57,8 @@ module Partners
         errors.add(:base, 'detected a unknown item_id')
       end
 
+      check_for_item_visibility
+
       errors.none?
     end
 
@@ -68,6 +70,33 @@ module Partners
           quantity: convert_person_count_to_item_quantity(item_id: fr_attr[:item_id], person_count: fr_attr[:person_count])&.to_i,
           children: fr_attr[:children]
         }.with_indifferent_access
+      end
+    end
+
+    # If requested item(s) isn't visible to partners,
+    # an error specifying which item is not available is raised
+    def check_for_item_visibility
+      invisible_items = item_requests_attributes.select { |attr| !included_items_by_id[attr[:item_id]].visible_to_partners }
+
+      unless invisible_items.empty?
+
+        item_errors = invisible_items.map do |item|
+          item_name = included_items_by_id[item[:item_id]].name
+
+          child_count = item[:children].length
+
+          "#{item_name} requested for #{child_count} child#{"ren" if child_count > 1} is not currently available for request."
+        end
+
+        joined_errors = item_errors.join(", ")
+
+        # don't want to show a memflash error
+        if joined_errors.length >= Memflash.threshold
+          errors.add(:base, item_errors.first)
+        else
+          errors.add(:base, joined_errors)
+        end
+
       end
     end
 

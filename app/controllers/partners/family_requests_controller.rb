@@ -15,12 +15,7 @@ module Partners
     end
 
     def create
-      begin
-        family_requests_attributes = build_family_requests_attributes(params)
-      rescue ArgumentError => e
-        redirect_to new_partners_family_request_path, error: e
-        return
-      end
+      family_requests_attributes = build_family_requests_attributes(params)
 
       create_service = Partners::FamilyRequestCreateService.new(
         partner_user_id: current_user.id,
@@ -62,8 +57,6 @@ module Partners
     def build_family_requests_attributes(params)
       child_ids = params.keys.grep(/^child-/).map { |key| key.split('-').last }
 
-      validate_visible_items!(child_ids)
-
       children_grouped_by_item_id = current_partner
         .children
         .where(id: child_ids)
@@ -80,35 +73,6 @@ module Partners
           children: item_requested_children
         }
       end
-    end
-
-    def validate_visible_items!(child_ids)
-      invisible_item_requests = current_partner
-        .children
-        .where(id: child_ids)
-        .joins(:requested_items)
-        .where(items: { visible_to_partners: false })
-        .select(
-          'children.first_name',
-          'children.last_name',
-          'items.id as item_id',
-          'items.name as item_name',
-          'items.visible_to_partners'
-        )
-        .group_by(&:item_id)
-
-      return if invisible_item_requests.empty?
-
-      # raise an exception if there are requests
-      # to items that aren't visible to partners
-      item_errors = invisible_item_requests.map do |_, children|
-        children_names = children.map { |c| "#{c.first_name} #{c.last_name}" }.join(", ")
-        item_name = children.first.item_name
-
-        "\"#{item_name}\" requested for #{children_names} is not currently available for request."
-      end
-
-      raise ArgumentError.new item_errors.join(", ")
     end
   end
 end
