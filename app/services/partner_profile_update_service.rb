@@ -1,5 +1,6 @@
 class PartnerProfileUpdateService
   include ServiceObjectErrorsMixin
+
   attr_reader :error
   def initialize(old_partner, new_partner_params, new_profile_params)
     @partner = old_partner

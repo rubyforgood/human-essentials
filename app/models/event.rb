@@ -16,6 +16,7 @@
 #
 class Event < ApplicationRecord
   include Filterable
+
   scope :for_organization, ->(organization_id) { where(organization_id: organization_id).order(:event_time, :updated_at) }
   scope :without_snapshots, -> { where("type != 'SnapshotEvent'") }
   scope :during, ->(range) { where(events: {created_at: range}) }

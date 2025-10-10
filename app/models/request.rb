@@ -41,6 +41,7 @@ class Request < ApplicationRecord
   after_validation :sanitize_items_data
 
   include Filterable
+
   # add request item scope to allow filtering distributions by request item
   scope :by_request_item_id, ->(item_id) { where("request_items @> :with_item_id ", with_item_id: [{ item_id: item_id.to_i }].to_json) }
   # partner scope to allow filtering by partner

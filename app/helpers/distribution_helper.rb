@@ -1,6 +1,7 @@
 # Encapsulates methods that need some business logic
 module DistributionHelper
   include ActionView::Helpers::NumberHelper
+
   def pickup_day_params
     return {} unless params.key?(:filters)
 
