@@ -61,7 +61,7 @@ RSpec.describe Partners::FamilyRequestsController, type: :request do
 
       expect(response.request.flash[:error]).to eql expected
     end
-    
+
     it "does not allow requesting non-visible items for multiple children" do
       partner.update!(status: :approved)
 
