@@ -21,6 +21,7 @@ class Audit < ApplicationRecord
 
   include Itemizable
   include Filterable
+
   scope :at_location, ->(location_id) { where(storage_location_id: location_id) }
 
   accepts_nested_attributes_for :adjustment
