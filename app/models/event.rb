@@ -16,6 +16,7 @@
 #
 class Event < ApplicationRecord
   include Filterable
+
   scope :for_organization, ->(organization_id) { where(organization_id: organization_id).order(:event_time, :updated_at) }
   scope :without_snapshots, -> { where("type != 'SnapshotEvent'") }
   scope :during, ->(range) { where(events: {created_at: range}) }
@@ -39,6 +40,18 @@ class Event < ApplicationRecord
     self.user_id = PaperTrail.request&.whodunnit
   end
   after_create :validate_inventory
+  validate :no_intervening_snapshot, on: :create
+
+  def no_intervening_snapshot
+    return if is_a?(SnapshotEvent)
+    return unless eventable.respond_to?(:organization)
+
+    intervening = SnapshotEvent.intervening(eventable)
+    if intervening.present?
+      errors.add(:base,
+        "Cannot change inventory for an #{eventable.class.name.downcase} created before #{intervening.event_time.to_date}.")
+    end
+  end
 
   # @return [Array<Option>]
   def self.types_for_select

@@ -610,57 +610,6 @@ RSpec.describe InventoryAggregate do
       ))
     end
 
-    # NOTE: as of now, this behavior is not necessary since all our events are "now". However, we
-    # know this might change in the future if we allow rewriting history due to clerical errors.
-    # This was already coded, so we might as well leave it in so we don't shoot ourselves in the
-    # foot later.
-    it "should ignore unusable snapshots" do
-      freeze_time do
-        donation = FactoryBot.create(:donation, organization: organization, storage_location: storage_location1)
-        donation.line_items << build(:line_item, quantity: 50, item: item1, itemizable: donation)
-        donation.line_items << build(:line_item, quantity: 30, item: item2, itemizable: donation)
-        DonationEvent.publish(donation)
-
-        travel 1.minute
-        SnapshotEvent.publish(organization)
-
-        # check inventory at this point
-        inventory = described_class.inventory_for(organization.id)
-        expect(inventory).to eq(EventTypes::Inventory.new(
-          organization_id: organization.id,
-          storage_locations: {
-            storage_location1.id => EventTypes::EventStorageLocation.new(
-              id: storage_location1.id,
-              items: {
-                item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 50, storage_location_id: storage_location1.id),
-                item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 30, storage_location_id: storage_location1.id)
-              }
-            )
-          }
-        ))
-
-        travel 1.minute
-        # correction event - should ruin the snapshot since it's updating a previous event
-        donation.line_items = [build(:line_item, quantity: 40, item: item1, itemizable: donation)]
-        event = DonationEvent.publish(donation)
-        event.update!(event_time: donation.created_at)
-      end
-
-      inventory = described_class.inventory_for(organization.id)
-      expect(inventory).to eq(EventTypes::Inventory.new(
-        organization_id: organization.id,
-        storage_locations: {
-          storage_location1.id => EventTypes::EventStorageLocation.new(
-            id: storage_location1.id,
-            items: {
-              item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 40, storage_location_id: storage_location1.id),
-              item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 0, storage_location_id: storage_location1.id)
-            }
-          )
-        }
-      ))
-    end
-
     it "should handle multiple UpdateExisting events" do
       TestInventory.create_inventory(organization,
         {
