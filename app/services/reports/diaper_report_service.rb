@@ -61,13 +61,13 @@ module Reports
         FROM distributions
         INNER JOIN line_items ON line_items.itemizable_type = 'Distribution' AND line_items.itemizable_id = distributions.id
         INNER JOIN items ON items.id = line_items.item_id
-        INNER JOIN kits ON kits.id = items.kit_id
-        INNER JOIN line_items AS kit_line_items ON kits.id = kit_line_items.itemizable_id
+        INNER JOIN line_items AS kit_line_items ON items.id = kit_line_items.itemizable_id
         INNER JOIN items AS kit_items ON kit_items.id = kit_line_items.item_id
         WHERE distributions.organization_id = ?
           AND EXTRACT(year FROM issued_at) = ?
+          AND items.kit_id IS NOT NULL
           AND kit_items.reporting_category = 'disposable_diapers'
-          AND kit_line_items.itemizable_type = 'Kit';
+          AND kit_line_items.itemizable_type = 'Item';
       SQL
 
       sanitized_sql = ActiveRecord::Base.send(:sanitize_sql_array, [sql_query, organization_id, year])
