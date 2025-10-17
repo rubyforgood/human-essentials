@@ -107,7 +107,7 @@ module Itemizable
   end
 
   def value_per_itemizable
-    item.line_items.sum(&:value_per_line_item)
+    line_items.sum(&:value_per_line_item)
   end
 
   def total_quantity

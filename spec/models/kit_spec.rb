@@ -89,7 +89,7 @@ RSpec.describe Kit, type: :model do
           create(:line_item, quantity: 1, item: create(:item, value_in_cents: 100)),
           create(:line_item, quantity: 1, item: create(:item, value_in_cents: 90))
         ]
-        expect(kit.value_per_itemizable).to eq(190)
+        expect(kit.item.value_per_itemizable).to eq(190)
       end
     end
 

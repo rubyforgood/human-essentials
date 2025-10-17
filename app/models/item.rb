@@ -48,7 +48,7 @@ class Item < ApplicationRecord
   validates :reporting_category, presence: true, unless: proc { |i| i.kit }
   validate -> { line_items_quantity_is_at_least(1) }
 
-  has_many :used_line_items, dependent: :destroy
+  has_many :used_line_items, dependent: :destroy, class_name: "LineItem"
   has_many :inventory_items, dependent: :destroy
   has_many :barcode_items, as: :barcodeable, dependent: :destroy
   has_many :donations, through: :used_line_items, source: :itemizable, source_type: "::Donation"
@@ -109,7 +109,7 @@ class Item < ApplicationRecord
     else
       organization.kits
         .active
-        .joins(:line_items)
+        .joins(item: :line_items)
         .where(line_items: { item_id: id}).any?
     end
   end
