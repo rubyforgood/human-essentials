@@ -436,9 +436,9 @@ RSpec.describe InventoryAggregate do
         })
       inventory = InventoryAggregate.inventory_for(organization.id) # reload
 
-      kit.line_items = []
-      kit.line_items << build(:line_item, quantity: 20, item: item1, itemizable: kit)
-      kit.line_items << build(:line_item, quantity: 5, item: item2, itemizable: kit)
+      kit.item.line_items = []
+      kit.item.line_items << build(:line_item, quantity: 20, item: item1, itemizable: kit)
+      kit.item.line_items << build(:line_item, quantity: 5, item: item2, itemizable: kit)
       KitDeallocateEvent.publish(kit, storage_location1.id, 2)
 
       # 30 + (20*2) = 70, 10 + (5*2) = 20

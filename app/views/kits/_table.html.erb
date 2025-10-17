@@ -13,7 +13,7 @@
       <td><%= kit.name %></td>
       <td>
         <ul>
-          <% kit.line_items.quantities_by_name.map do |id, item_hash| %>
+          <% kit.item.line_items.quantities_by_name.map do |id, item_hash| %>
             <li><%= "#{item_hash[:quantity]} #{item_hash[:name]}" %></li>
           <% end %>
         </ul>

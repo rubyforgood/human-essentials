@@ -16,7 +16,7 @@ class KitsController < ApplicationController
     load_form_collections
 
     @kit = current_organization.kits.new
-    @kit.line_items.build
+    @kit.item.line_items.build
   end
 
   def create
@@ -33,7 +33,7 @@ class KitsController < ApplicationController
 
       @kit = Kit.new(kit_params)
       load_form_collections
-      @kit.line_items.build if @kit.line_items.empty?
+      @kit.item.line_items.build if @kit.item.line_items.empty?
 
       render :new
     end

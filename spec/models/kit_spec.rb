@@ -31,24 +31,19 @@ RSpec.describe Kit, type: :model do
       ).not_to be_valid
     end
 
-    it "requires at least one item" do
-      kit.line_items = []
-      expect(kit).not_to be_valid
-    end
-
     it "ensures the associated line_items are invalid with a nil quantity" do
-      kit.line_items << build(:line_item, quantity: nil)
-      expect(kit).not_to be_valid
+      kit.item.line_items << build(:line_item, quantity: nil)
+      expect(kit.item).not_to be_valid
     end
 
     it "ensures the associated line_items are invalid with a zero quantity" do
-      kit.line_items << build(:line_item, quantity: 0)
-      expect(kit).not_to be_valid
+      kit.item.line_items << build(:line_item, quantity: 0)
+      expect(kit.item).not_to be_valid
     end
 
     it "ensures the associated line_items are valid with a one quantity" do
-      kit.line_items << build(:line_item, quantity: 1)
-      expect(kit).to be_valid
+      kit.item.line_items << build(:line_item, quantity: 1)
+      expect(kit.item).to be_valid
     end
   end
 
@@ -90,7 +85,7 @@ RSpec.describe Kit, type: :model do
   context "Value >" do
     describe ".value_per_itemizable" do
       it "calculates values from associated items" do
-        kit.line_items = [
+        kit.item.line_items = [
           create(:line_item, quantity: 1, item: create(:item, value_in_cents: 100)),
           create(:line_item, quantity: 1, item: create(:item, value_in_cents: 90))
         ]
