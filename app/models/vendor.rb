@@ -23,7 +23,7 @@ class Vendor < ApplicationRecord
   include Geocodable
   include Filterable
 
-  has_many :purchases, inverse_of: :vendor, dependent: :destroy
+  has_many :purchases, -> { order(issued_at: :desc) }, inverse_of: :vendor, dependent: :destroy
 
   validates :business_name, presence: true
 

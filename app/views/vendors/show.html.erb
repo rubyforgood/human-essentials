@@ -76,7 +76,7 @@
               <tbody>
               <% @vendor.purchases.each do |purchase| %>
                 <tr>
-                  <td><%= purchase.created_at.strftime("%m/%d/%Y") %></td>
+                  <td><%= purchase.issued_at.strftime("%m/%d/%Y") %></td>
                   <td><%= purchase.line_items.total %></td>
                   <td><%= view_button_to purchase, { text: "View purchase details" } %></td>
                 </tr>
