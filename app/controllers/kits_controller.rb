@@ -16,6 +16,7 @@ class KitsController < ApplicationController
     load_form_collections
 
     @kit = current_organization.kits.new
+    @kit.item = current_organization.items.new
     @kit.item.line_items.build
   end
 
