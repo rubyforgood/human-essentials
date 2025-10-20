@@ -56,6 +56,22 @@ RSpec.describe Vendor, type: :model do
     end
   end
 
+  context "Associations" do
+    describe "purchases" do
+      it "orders purchases by issued_at in descending order (newest first)" do
+        vendor = create(:vendor)
+        
+        # Create purchases with different issued_at dates
+        old_purchase = create(:purchase, vendor: vendor, issued_at: 1.week.ago)
+        new_purchase = create(:purchase, vendor: vendor, issued_at: 1.day.ago)
+        middle_purchase = create(:purchase, vendor: vendor, issued_at: 3.days.ago)
+        
+        # Verify they're ordered newest first
+        expect(vendor.purchases.to_a).to eq([new_purchase, middle_purchase, old_purchase])
+      end
+    end
+  end
+
   describe "versioning" do
     it { is_expected.to be_versioned }
   end
