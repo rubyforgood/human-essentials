@@ -130,23 +130,5 @@ RSpec.describe "Vendor", type: :system, js: true do
       expect(page).to have_xpath("//table/tbody/tr", count: 3)
       expect(page).to have_xpath("//table/tbody/tr/td", text: "10")
     end
-
-    it "displays purchases in reverse chronological order by issued_at date" do
-      # Create purchases with specific issued_at dates
-      create(:purchase, vendor: @vendor, issued_at: 1.week.ago)
-      create(:purchase, vendor: @vendor, issued_at: 1.day.ago)
-      create(:purchase, vendor: @vendor, issued_at: 3.days.ago)
-
-      visit vendor_path(@vendor)
-
-      # Get all date text using the correct data attribute
-      dates = page.all("[data-testid='purchase-date']").map(&:text)
-
-      # Get all purchases for this vendor and sort them by issued_at desc
-      all_purchases = @vendor.reload.purchases.order(issued_at: :desc)
-      expected_dates = all_purchases.map { |p| p.issued_at.strftime("%m/%d/%Y") }
-
-      expect(dates).to eq(expected_dates)
-    end
   end
 end

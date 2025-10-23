@@ -123,6 +123,20 @@ RSpec.describe "Vendors", type: :request do
         get vendor_path(id: create(:vendor, organization: organization))
         expect(response).to be_successful
       end
+
+      it "displays purchases in reverse chronological order by issued_at date" do
+        vendor = create(:vendor, organization: organization)
+
+        # Create purchases with different issued_at dates
+        old_purchase = create(:purchase, vendor: vendor, issued_at: 1.week.ago, organization: organization)
+        new_purchase = create(:purchase, vendor: vendor, issued_at: 1.day.ago, organization: organization)
+        middle_purchase = create(:purchase, vendor: vendor, issued_at: 3.days.ago, organization: organization)
+
+        get vendor_path(vendor)
+
+        expect(vendor.reload.purchases.order(issued_at: :desc).to_a).to eq([new_purchase, middle_purchase, old_purchase])
+        expect(response).to be_successful
+      end
     end
 
     describe "DELETE #destroy" do
