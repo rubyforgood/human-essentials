@@ -26,7 +26,7 @@ class KitCreateService
       line_items = kit_params.delete(:line_items_attributes)
       @kit = Kit.new(kit_params_with_organization)
       @kit.save!
-      if line_items.none?
+      if line_items.blank?
         @kit.errors.add(:base, 'At least one item is required')
         raise ActiveRecord::RecordInvalid.new(@kit)
       end

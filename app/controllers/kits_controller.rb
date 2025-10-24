@@ -34,6 +34,7 @@ class KitsController < ApplicationController
 
       @kit = Kit.new(kit_params)
       load_form_collections
+      @kit.item ||= current_organization.items.new
       @kit.item.line_items.build if @kit.item.line_items.empty?
 
       render :new
@@ -88,12 +89,14 @@ class KitsController < ApplicationController
   end
 
   def kit_params
-    params.require(:kit).permit(
+    kit_params = params.require(:kit).permit(
       :name,
       :visible_to_partners,
-      :value_in_dollars,
-      line_items_attributes: [:item_id, :quantity, :_destroy]
+      :value_in_dollars
     )
+    item_params = params.require(:item)
+      .permit(line_items_attributes: [:item_id, :quantity, :_destroy])
+    kit_params.to_h.merge(item_params.to_h)
   end
 
   def kit_adjustment_params

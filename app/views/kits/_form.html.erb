@@ -19,17 +19,19 @@
                 <%= f.input_field :value_in_dollars, class: "form-control", min: 0 %>
               <% end %>
 
-              <fieldset style="margin-bottom: 2rem;" class='w-70'>
-                <legend>Items in this Kit</legend>
-                <div id="kit_line_items" class="line-item-fields" data-capture-barcode="true">
-                  <%= render 'line_items/line_item_fields', form: f %>
-                </div>
-                <div class="row links col-xs-12 justify-content-end">
-                  <%= add_element_button "Add Another Item", container_selector: "#kit_line_items", id: "__add_line_item" do %>
-                    <%= render 'line_items/line_item_fields', form: f, object: LineItem.new %>
-                  <% end %>
-                </div>
-              </fieldset>
+              <%= fields_for @kit.item do |ff| %>
+                <fieldset style="margin-bottom: 2rem;" class='w-70'>
+                  <legend>Items in this Kit</legend>
+                  <div id="kit_line_items" class="line-item-fields" data-capture-barcode="true">
+                    <%= render 'line_items/line_item_fields', form: ff %>
+                  </div>
+                  <div class="row links col-xs-12 justify-content-end">
+                    <%= add_element_button "Add Another Item", container_selector: "#kit_line_items", id: "__add_line_item" do %>
+                      <%= render 'line_items/line_item_fields', form: ff, object: LineItem.new %>
+                    <% end %>
+                  </div>
+                </fieldset>
+            <% end %>
 
             </div>
             <div class="card-footer">
