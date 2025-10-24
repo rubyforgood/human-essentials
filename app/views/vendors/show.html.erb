@@ -74,7 +74,7 @@
               </tr>
               </thead>
               <tbody>
-              <% @vendor.purchases.order(issued_at: :desc).each do |purchase| %>
+              <% @purchases.each do |purchase| %>
                 <tr>
                   <td><%= purchase.issued_at.strftime("%m/%d/%Y") %></td>
                   <td><%= purchase.line_items.total %></td>

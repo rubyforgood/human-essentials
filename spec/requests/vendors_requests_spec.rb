@@ -134,8 +134,15 @@ RSpec.describe "Vendors", type: :request do
 
         get vendor_path(vendor)
 
-        expect(vendor.reload.purchases.order(issued_at: :desc).to_a).to eq([new_purchase, middle_purchase, old_purchase])
-        expect(response).to be_successful
+        old_date = old_purchase.issued_at.strftime("%m/%d/%Y")
+        middle_date = middle_purchase.issued_at.strftime("%m/%d/%Y")
+        new_date = new_purchase.issued_at.strftime("%m/%d/%Y")
+
+        dates = [new_date, middle_date, old_date]
+        dates.each { |date| expect(response.body).to include(date) }
+
+        expect(response.body.index(new_date)).to be < response.body.index(middle_date)
+        expect(response.body.index(middle_date)).to be < response.body.index(old_date)
       end
     end
 
