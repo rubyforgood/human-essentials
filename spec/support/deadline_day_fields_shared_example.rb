@@ -22,7 +22,7 @@ def safe_subtract_days(date, num)
   result
 end
 
-RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_button, post_form_submit|
+RSpec.shared_examples_for "deadline and reminder form" do |path_to_visit, form_prefix, save_button, post_form_submit|
   it "can set a reminder on a day of the month" do
     choose "Day of Month"
     fill_in "#{form_prefix}_reminder_schedule_service_day_of_month", with: 1
@@ -79,7 +79,7 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
       if datetime
         travel_to datetime
       end
-      visit edit_organization_path
+      visit path_to_visit
     end
 
     context "when the reminder is a day of the month" do
