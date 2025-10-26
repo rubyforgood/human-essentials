@@ -262,6 +262,24 @@ RSpec.describe "Purchases", type: :request do
           expect(new_storage_location.size).to eq 8
         end
       end
+
+      context 'without line items - with intervening snapshot' do
+        it 'should save the other parameters' do
+          purchase = FactoryBot.create(:purchase,
+            :with_items,
+            organization: organization,
+            created_at: 1.week.ago)
+          SnapshotEvent.create!(organization_id: organization.id,
+            created_at: 1.day.ago,
+            event_time: 1.day.ago,
+            eventable: organization,
+            data: EventTypes::Inventory.new(
+              organization_id: organization.id, storage_locations: {}
+            ))
+          put purchase_path({ id: purchase.id, purchase: {comment: "A new comment"}})
+          expect(purchase.reload.comment).to eq("A new comment")
+        end
+      end
     end
 
     describe "GET #edit" do
@@ -272,6 +290,27 @@ RSpec.describe "Purchases", type: :request do
         expect(response).to be_successful
       end
 
+      it 'should not allow edits if there is an intervening snapshot' do
+        purchase = FactoryBot.create(:purchase,
+          :with_items,
+          organization: organization,
+          created_at: 1.week.ago)
+        SnapshotEvent.create!(organization_id: organization.id,
+          created_at: 1.day.ago,
+          event_time: 1.day.ago,
+          eventable: organization,
+          data: EventTypes::Inventory.new(
+            organization_id: organization.id, storage_locations: {}
+          ))
+        get edit_purchase_path(id: purchase.id)
+        expect(response.body)
+          .to include('This purchase is too old to edit inventory. You can only change non-inventory fields.')
+        expect(response.body).not_to include('Add Another Item')
+        expect(response.body).not_to include('Remove Item')
+        parsed_body = Nokogiri::HTML(response.body)
+        expect(parsed_body.css('select.line_item_name[disabled]')).not_to be_empty
+      end
+
       it "storage location is correct" do
         storage2 = create(:storage_location, name: "storage2")
         purchase2 = create(:purchase, storage_location: storage2)
@@ -279,47 +318,62 @@ RSpec.describe "Purchases", type: :request do
         expect(response.body).to match(/(<option selected="selected" value=")[0-9]*(">storage2<\/option>)/)
       end
 
-      context "when an finalized audit has been performed on the purchased items" do
-        it "shows a warning" do
-          item = create(:item, organization: organization, name: "Brightbloom Seed")
-          storage_location = create(:storage_location, :with_items, item: item, organization: organization)
-          purchase = create(:purchase, :with_items, item: item, storage_location: storage_location)
-          create(:audit, :with_items, item: item, storage_location: storage_location, status: "finalized")
+      describe 'audit warnings' do
+        let!(:item) { create(:item, organization: organization, name: "Brightbloom Seed") }
+        let!(:storage_location) { create(:storage_location, :with_items, item: item, organization: organization) }
+        let!(:purchase) { create(:purchase, :with_items, item: item, storage_location: storage_location, created_at: 1.week.ago) }
 
-          get edit_purchase_path(purchase)
+        context "when an finalized audit has been performed on the purchased items" do
+          before(:each) do
+            create(:audit, :with_items, item: item, storage_location: storage_location, status: "finalized")
+          end
 
-          expect(response.body).to include("You’ve had an audit since this purchase was started.")
-          expect(response.body).to include("In the case that you are correcting a typo, rather than recording that the physical amounts being purchased have changed,")
-          expect(response.body).to include("you’ll need to make an adjustment to the inventory as well.")
+          it "shows a warning" do
+            get edit_purchase_path(purchase)
+
+            expect(response.body).to include("You’ve had an audit since this purchase was started.")
+            expect(response.body).to include("In the case that you are correcting a typo, rather than recording that the physical amounts being purchased have changed,")
+            expect(response.body).to include("you’ll need to make an adjustment to the inventory as well.")
+          end
+
+          context 'with an intervening snapshot' do
+            it 'does not show a warning' do
+              SnapshotEvent.create!(organization_id: organization.id,
+                created_at: 1.day.ago,
+                event_time: 1.day.ago,
+                eventable: organization,
+                data: EventTypes::Inventory.new(
+                  organization_id: organization.id, storage_locations: {}
+                ))
+
+              get edit_purchase_path(purchase)
+
+              expect(response.body).not_to include("You’ve had an audit since this purchase was started.")
+            end
+          end
         end
-      end
 
-      context "when non-finalized audit has been performed on the purchased items" do
-        it "does not show a warning" do
-          item = create(:item, organization: organization, name: "Brightbloom Seed")
-          storage_location = create(:storage_location, :with_items, item: item, organization: organization)
-          purchase = create(:purchase, :with_items, item: item, storage_location: storage_location)
-          create(:audit, :with_items, item: item, storage_location: storage_location, status: "confirmed")
+        context "when non-finalized audit has been performed on the purchased items" do
+          before(:each) do
+            create(:audit, :with_items, item: item, storage_location: storage_location, status: "confirmed")
+          end
+          it "does not show a warning" do
+            get edit_purchase_path(purchase)
 
-          get edit_purchase_path(purchase)
-
-          expect(response.body).to_not include("You’ve had an audit since this purchase was started.")
-          expect(response.body).to_not include("In the case that you are correcting a typo, rather than recording that the physical amounts being purchased have changed,")
-          expect(response.body).to_not include("you’ll need to make an adjustment to the inventory as well.")
+            expect(response.body).to_not include("You’ve had an audit since this purchase was started.")
+            expect(response.body).to_not include("In the case that you are correcting a typo, rather than recording that the physical amounts being purchased have changed,")
+            expect(response.body).to_not include("you’ll need to make an adjustment to the inventory as well.")
+          end
         end
-      end
 
-      context "when no audit has been performed" do
-        it "does not show a warning" do
-          item = create(:item, organization: organization, name: "Brightbloom Seed")
-          storage_location = create(:storage_location, :with_items, item: item, organization: organization)
-          purchase = create(:purchase, :with_items, item: item, storage_location: storage_location)
+        context "when no audit has been performed" do
+          it "does not show a warning" do
+            get edit_purchase_path(purchase)
 
-          get edit_purchase_path(purchase)
-
-          expect(response.body).to_not include("You’ve had an audit since this purchase was started.")
-          expect(response.body).to_not include("In the case that you are correcting a typo, rather than recording that the physical amounts being purchased have changed,")
-          expect(response.body).to_not include("you’ll need to make an adjustment to the inventory as well.")
+            expect(response.body).to_not include("You’ve had an audit since this purchase was started.")
+            expect(response.body).to_not include("In the case that you are correcting a typo, rather than recording that the physical amounts being purchased have changed,")
+            expect(response.body).to_not include("you’ll need to make an adjustment to the inventory as well.")
+          end
         end
       end
     end
@@ -423,6 +477,19 @@ RSpec.describe "Purchases", type: :request do
         purchase_id = create(:purchase, purchased_from: "Google").id.to_s
         delete purchase_path(id: purchase_id)
         expect(response).to have_notice "Purchase #{purchase_id} has been removed!"
+      end
+
+      it "does not delete the donation if there is an intervening snapshot" do
+        purchase = create(:purchase, organization: organization, created_at: 1.week.ago)
+        data = EventTypes::Inventory.new(storage_locations: {}, organization_id: organization.id)
+        travel(-1.day) do
+          SnapshotEvent.create!(organization_id: organization.id,
+            eventable: organization,
+            data: data,
+            event_time: Time.zone.now)
+        end
+        expect { delete purchase_path(id: purchase.id) }.not_to change(Purchase, :count)
+        expect(response).to have_error("We can't delete purchases entered before #{1.day.ago.to_date}.")
       end
     end
   end
