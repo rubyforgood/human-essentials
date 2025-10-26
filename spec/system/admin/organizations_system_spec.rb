@@ -170,7 +170,7 @@ RSpec.describe "Admin Organization Management", type: :system, js: true, seed_it
         end
       end
 
-      it_behaves_like "deadline and reminder form", "/admin/organizations/new", "organization", "Save", :post_form_submit
+      it_behaves_like "deadline and reminder form", "organization", "Save", :post_form_submit
     end
   end
 end

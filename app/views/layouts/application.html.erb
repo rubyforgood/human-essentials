@@ -16,8 +16,8 @@
     # DO NOT LOAD ANY JAVASCRIPT BEFORE THIS!!!
     javascript_importmap_tags
   %>
-  
-  <!-- Use sinon to make sure the browser's time matches Rails' potentially spoofed time. 
+
+  <!-- Use sinon to make sure the browser's time matches Rails' potentially spoofed time.
   Be sure to navigate to the page under test AFTER spoofing Rails' time or there will be a
   mismatch. -->
   <% if Rails.env.test? %>
