@@ -22,6 +22,7 @@ class ItemsFlowQuery
               or (e.type = 'PurchaseEvent' and (item->>'to_storage_location')::int = :id)
               or (e.type = 'AdjustmentEvent' and (item->>'to_storage_location')::int = :id)
               or (e.type = 'TransferEvent' and (item->>'to_storage_location')::int = :id)
+              or (e.type = 'AuditEvent' and (item->>'to_storage_location')::int = :id)
               and e.organization_id = :organization_id
             then (item->>'quantity')::int
             else 0
@@ -31,6 +32,7 @@ class ItemsFlowQuery
             when (e.type = 'DistributionEvent' and (item->>'from_storage_location')::int = :id)
               or (e.type = 'AdjustmentEvent' and (item->>'from_storage_location')::int = :id)      
               or (e.type = 'TransferEvent' and (item->>'from_storage_location')::int = :id)
+              or (e.type = 'AuditEvent' and (item->>'from_storage_location')::int = :id)
               and e.organization_id = :organization_id
             then case when (item->>'quantity')::int < 0 then -(item->>'quantity')::int else (item->>'quantity')::int end
             else 0

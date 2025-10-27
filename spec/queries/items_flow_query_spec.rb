@@ -14,19 +14,19 @@ RSpec.describe ItemsFlowQuery do
         quantity_in: 10,
         quantity_out: 5,
         change: 5,
-        total_quantity_in: 16,
+        total_quantity_in: 19,
         total_quantity_out: 7,
-        total_change: 9
+        total_change: 12
       },
       {
         item_id: items[1].id,
         item_name: items[1].name,
-        quantity_in: 6,
+        quantity_in: 9,
         quantity_out: 2,
-        change: 4,
-        total_quantity_in: 16,
+        change: 7,
+        total_quantity_in: 19,
         total_quantity_out: 7,
-        total_change: 9
+        total_change: 12
       }
     ].map(&:with_indifferent_access)
   end
@@ -40,6 +40,8 @@ RSpec.describe ItemsFlowQuery do
     AdjustmentEvent.publish(adjustment)
     transfer = create(:transfer, :with_items, item: items[1], item_quantity: 2, from: storage_location, to: create(:storage_location))
     TransferEvent.publish(transfer)
+    audit = create(:audit, :with_items, item: items[1], item_quantity: 3, adjustment: adjustment, storage_location: storage_location)
+    AuditEvent.publish(audit)
   end
 
   subject { described_class.new(organization: organization, storage_location: storage_location).call }
