@@ -159,7 +159,7 @@ class StorageLocation < ApplicationRecord
   end
 
   def self.csv_export_headers
-    ["Name", "Address", "Square Footage", "Warehouse Type", "Total Inventory"]
+    ["Name", "Address", "Square Footage", "Warehouse Type", "Total Inventory", "Fair Market Value"]
   end
 
   # @param storage_locations [Array<StorageLocation>]
@@ -171,7 +171,7 @@ class StorageLocation < ApplicationRecord
     CSV.generate(headers: true) do |csv|
       csv_data = storage_locations.map do |sl|
         total_quantity = inventory.quantity_for(storage_location: sl.id)
-        attributes = [sl.name, sl.address, sl.square_footage, sl.warehouse_type, total_quantity] +
+        attributes = [sl.name, sl.address, sl.square_footage, sl.warehouse_type, total_quantity, sl.inventory_total_value_in_dollars] +
           all_items.map { |i| inventory.quantity_for(storage_location: sl.id, item_id: i.item_id) }
         attributes.map { |attr| normalize_csv_attribute(attr) }
       end
