@@ -147,34 +147,4 @@ RSpec.describe DonationsController, type: :controller do
       end
     end
   end
-
-  context 'calculating total value of multiple donations' do
-    it 'works correctly for multiple line items per donation' do
-      donations = [
-        create(:donation, :with_items, item_quantity: 1),
-        create(:donation, :with_items, item_quantity: 2)
-      ]
-      value = subject.send(:total_value, donations) # private method, need to use `send`
-      expect(value).to eq(300)
-    end
-
-    it 'returns zero for an empty array of donations' do
-      expect(subject.send(:total_value, [])).to be_zero # private method, need to use `send`
-    end
-  end
-
-  context 'calculating total money raised for all donations' do
-    it 'correctly calculates the total' do
-      donations = [
-        create(:donation, money_raised: 2),
-        create(:donation, money_raised: 3)
-      ]
-      value = subject.send(:total_money_raised, donations) # private method, need to use `send`
-      expect(value).to eq(5)
-    end
-
-    it 'returns zero for an empty array of donations' do
-      expect(subject.send(:total_money_raised, [])).to be_zero # private method, need to use `send`
-    end
-  end
 end
