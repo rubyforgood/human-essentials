@@ -9,6 +9,7 @@ require "rspec/rails"
 require "capybara/rails"
 require "capybara/rspec"
 require "capybara-screenshot/rspec"
+require 'capybara/cuprite/node' # for monkey patch
 require "pry"
 require 'knapsack_pro'
 require 'paper_trail/frameworks/rspec'
@@ -84,6 +85,18 @@ module Capybara
   module Screenshot
     def self.capybara_tmp_path
       Rails.root.join("tmp", "screenshots")
+    end
+  end
+
+  module Cuprite
+    class Node < Capybara::Driver::Node
+      # This is a hack that forces a reflow after each click. Without this, in
+      # early November 2025 Chrome, tests involving opening modals started failing
+      # because the modal would not be visible.
+      def click(keys = [], **options)
+        prepare_and_click(:left, __method__, keys, options)
+        @driver.execute_script("document.body.style.display = 'none'; document.body.offsetHeight; document.body.style.display = 'block';")
+      end
     end
   end
 end
