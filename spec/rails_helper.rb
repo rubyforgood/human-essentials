@@ -94,7 +94,7 @@ module Capybara
       # early November 2025 Chrome, tests involving opening modals started failing
       # because the modal would not be visible.
       def click(keys = [], **options)
-        prepare_and_click(:left, __method__, keys, options)
+        trigger('click')
         @driver.execute_script("document.body.style.display = 'none'; document.body.offsetHeight; document.body.style.display = 'block';")
       end
     end
