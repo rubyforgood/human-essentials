@@ -127,6 +127,35 @@ RSpec.describe Audit, type: :model do
       expect(Audit.finalized_since?(xfer3, storage_location4)).to be false # no audits at location
       expect(Audit.finalized_since?(xfer3, storage_location5)).to be false # since status isn't finalized
     end
+
+    describe ".generate_csv" do
+      let!(:item_1) { create(:item, name: "Baby Diapers") }
+      let!(:item_2) { create(:item, name: "Adult Diapers") }
+      let!(:sl_1) { create(:storage_location, organization: organization, name: "Diaperhaus") }
+      let!(:sl_2) { create(:storage_location, organization: organization, name: "Pawnee Diaper Bank") }
+      let!(:time_1) { Time.zone.parse("2025-10-02 01:00:00") }
+      let!(:time_2) { Time.zone.parse("2025-10-03 01:00:00") }
+      let!(:audit) { create(:audit, organization: organization, storage_location: sl_1, status: 1, updated_at: time_1) }
+      let!(:audit_2) { create(:audit, organization: organization, storage_location: sl_2, status: 2, updated_at: time_2) }
+
+      before do
+        audit.line_items.create!(item: item_1, quantity: 150)
+        audit_2.line_items.create!(item: item_2, quantity: 250)
+      end
+
+      it "generates a CSV" do
+        csv_data = described_class.generate_csv([audit, audit_2])
+
+        expect(csv_data).to be_a(String)
+        expect(csv_data).to eq(
+          <<~CSV
+            Audit Date,Audit Status,Storage Location Name,Baby Diapers,Adult Diapers
+            October 02 2025,confirmed,Diaperhaus,150,0
+            October 03 2025,finalized,Pawnee Diaper Bank,0,250
+          CSV
+        )
+      end
+    end
   end
 
   describe "versioning" do
