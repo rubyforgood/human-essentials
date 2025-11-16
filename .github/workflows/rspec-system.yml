@@ -51,10 +51,14 @@ jobs:
         run: |
           sudo apt-get -yqq install libpq-dev
       
-      - name: Setup Chrome v141
-        uses: browser-actions/setup-chrome@v1
-        with:
-          chrome-version: '141.0.6194.0'
+      - name: Install Chrome v141
+        run: |
+          sudo apt-get remove -y google-chrome-stable || true
+          wget -q https://storage.googleapis.com/chrome-for-testing-public/141.0.6194.0/linux64/chrome-linux64.zip
+          unzip chrome-linux64.zip
+          sudo mv chrome-linux64 /opt/chrome
+          sudo ln -sf /opt/chrome/chrome /usr/local/bin/google-chrome
+          sudo chmod +x /usr/local/bin/google-chrome
       - name: Build App with asset compilation
         env:
           POSTGRES_HOST: localhost
