@@ -36,3 +36,4 @@ pin "jquery-ui", to: "https://ga.jspm.io/npm:jquery-ui@1.13.2/ui/widget.js"
 pin "@rails/activestorage", to: "@rails--activestorage.js" # @8.0.100
 pin "rrule", to: "https://ga.jspm.io/npm:rrule@2.8.1/dist/esm/index.js" # @2.8.1
 pin "tslib", to: "https://ga.jspm.io/npm:tslib@2.8.1/tslib.es6.mjs" # @2.8.1
+pin "sinon" # @21.0.0

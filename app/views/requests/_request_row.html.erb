@@ -5,7 +5,7 @@
     <% partner_user = @partner_users.find { |pu| pu.id == request_row.partner_user_id } %>
     <%= "#{partner_user&.formatted_email}" %>
   </td>
-  <td class="<%= quota_column_class(request_row.total_items, request_row.partner) %>">
+  <td class="<%= quota_column_class(request_row.total_items, request_row.partner) %> text-right">
     <%= request_row.total_items %>
     <%= quota_display(request_row.partner) %>
   </td>
@@ -22,7 +22,7 @@
   </td>
   <td class="text-right">
     <%= view_button_to request_path(request_row) %>
-    <%= button_to 'Cancel', new_request_cancelation_path(request_id: request_row.id), method: :get, data: { disable_with: "Please wait..." }, class: 'btn btn-danger btn-xs' %>
+    <%= cancel_button_to new_request_cancelation_path(request_id: request_row.id), method: :get, data: { disable_with: "Please wait..."  }, size: "xs", type: "danger" %>
     <%= print_button_to print_picklist_request_path(request_row), { format: :pdf, text: "Print", size: "xs" } %>
     </td>
 </tr>

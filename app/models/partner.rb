@@ -64,6 +64,7 @@ class Partner < ApplicationRecord
 
   include Filterable
   include Exportable
+
   scope :by_status, ->(status) {
     where(status: status.to_sym)
   }

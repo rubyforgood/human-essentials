@@ -18,40 +18,14 @@ class DonationsController < ApplicationController
   def index
     setup_date_range_picker
 
-    @donations = current_organization.donations
-                                     .includes(:storage_location, :donation_site, :product_drive, :product_drive_participant, :manufacturer, line_items: [:item])
-                                     .order(created_at: :desc)
-                                     .class_filter(filter_params)
-                                     .during(helpers.selected_range)
-    @item_categories = current_organization.item_categories.pluck(:name).uniq
-    @paginated_donations = @donations.page(params[:page])
-
-    @product_drives = current_organization.product_drives.alphabetized
-    @product_drive_participants = current_organization.product_drive_participants.alphabetized
-
-    # Are these going to be inefficient with large datasets?
-    # Using the @donations allows drilling down instead of always starting with the total dataset
-    @donations_quantity = @donations.collect(&:total_quantity).sum
-    @paginated_donations_quantity = @paginated_donations.collect(&:total_quantity).sum
-    @total_value_all_donations = total_value(@donations)
-    @paginated_in_kind_value = total_value(@paginated_donations)
-    @total_money_raised = total_money_raised(@donations)
-    @storage_locations = @donations.filter_map { |donation| donation.storage_location if !donation.storage_location.discarded_at }.compact.uniq.sort
-    @selected_storage_location = filter_params[:at_storage_location]
-    @sources = @donations.collect(&:source).uniq.sort
-    @selected_source = filter_params[:by_source]
-    @selected_item_category = filter_params[:by_category]
-    @donation_sites = @donations.collect(&:donation_site).compact.uniq.sort_by { |site| site.name.downcase }
-    @selected_donation_site = filter_params[:from_donation_site]
-    @selected_product_drive = filter_params[:by_product_drive]
-    @selected_product_drive_participant = filter_params[:by_product_drive_participant]
-    @manufacturers = @donations.collect(&:manufacturer).compact.uniq.sort
-    @selected_manufacturer = filter_params[:from_manufacturer]
+    @donation_info = View::Donations.from_params(params: params, organization: current_organization, helpers: helpers)
 
     respond_to do |format|
       format.html
       format.csv do
-        send_data Exports::ExportDonationsCSVService.new(donation_ids: @donations.map(&:id), organization: current_organization).generate_csv, filename: "Donations-#{Time.zone.today}.csv"
+        send_data Exports::ExportDonationsCSVService.new(donation_ids: @donation_info.donations.map(&:id),
+          organization: current_organization).generate_csv,
+          filename: "Donations-#{Time.zone.today}.csv"
       end
     end
   end
@@ -81,7 +55,9 @@ class DonationsController < ApplicationController
   def edit
     @donation = Donation.find(params[:id])
     @donation.line_items.build
-    @audit_performed_and_finalized = Audit.finalized_since?(@donation, @donation.storage_location_id)
+    @changes_disallowed = SnapshotEvent.intervening(@donation).present?
+    @audit_performed_and_finalized = Audit.finalized_since?(@donation, @donation.storage_location_id) &&
+      !@changes_disallowed
 
     load_form_collections
   end
@@ -117,7 +93,7 @@ class DonationsController < ApplicationController
     if service.success?
       flash[:notice] = "Donation #{params[:id]} has been removed!"
     else
-      flash[:error] = "Donation #{params[:id]} failed to be removed because #{service.error}"
+      flash[:error] = service.error.message
     end
 
     redirect_to donations_path
@@ -176,17 +152,5 @@ class DonationsController < ApplicationController
 
     params[:donation][:line_items_attributes].delete_if { |_row, data| data["quantity"].blank? && data["item_id"].blank? }
     params
-  end
-
-  def total_value(donations)
-    total_value_all_donations = 0
-    donations.each do |donation|
-      total_value_all_donations += donation.value_per_itemizable
-    end
-    total_value_all_donations
-  end
-
-  def total_money_raised(donations)
-    donations.sum { |d| d.money_raised.to_i }
   end
 end

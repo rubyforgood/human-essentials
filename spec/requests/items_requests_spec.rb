@@ -111,6 +111,16 @@ RSpec.describe "Items", type: :request do
         end
       end
 
+      context "when the organization has no request_units" do
+        let(:item) { create(:item, organization: organization) }
+        before { organization.request_units.destroy_all }
+
+        it "does not show the Additional Custom Request Units section" do
+          get edit_item_path(item)
+          expect(response.body).to_not match "Additional Custom Request Units"
+        end
+      end
+
       context "when item is housing a kit" do
         let(:kit) { create(:kit, organization:) }
         let(:item) { create(:item, organization: organization, kit:) }
@@ -348,7 +358,7 @@ RSpec.describe "Items", type: :request do
         expect(response.body).to include('NDBN Reporting Category')
         expect(response.body).to include('Adult Incontinence')
         expect(response.body).to include('Value Per Item')
-        expect(response.body).to include('$200.0')
+        expect(response.body).to include('$200.00')
         expect(response.body).to include('Quantity per Individual')
         expect(response.body).to include('2000')
         expect(response.body).to include('On hand minimum quantity')

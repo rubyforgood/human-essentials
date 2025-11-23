@@ -757,6 +757,11 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         end
 
         describe "editing a custom reminder schedule" do
+          def post_refresh
+            # Opt in to sending deadline reminders
+            check 'Yes'
+          end
+
           before do
             partner.update!(partner_group: existing_partner_group)
             visit partners_path
@@ -765,13 +770,15 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
             assert page.has_content? existing_partner_group.name, wait: page_content_wait
 
             click_on 'Edit'
-            # Opt in to sending deadline reminders
-            check 'Yes'
+            post_refresh
           end
 
-          it_behaves_like "deadline and reminder form", "partner_group", "Update Partner Group"
+          it_behaves_like "deadline and reminder form", "partner_group", "Update Partner Group", nil, :post_refresh
 
           it "the deadline day form's reminder and deadline dates are consistent with the dates calculated by the FetchPartnersToRemindNowService and DeadlineService" do
+            travel_to Time.zone.local(2025, 9, 30)
+            refresh
+            post_refresh
             choose "Day of Month"
             fill_in "partner_group_reminder_schedule_service_day_of_month", with: safe_add_days(Time.zone.now, 1).day
             fill_in "Deadline day in reminder email", with: safe_add_days(Time.zone.now, 2).day
