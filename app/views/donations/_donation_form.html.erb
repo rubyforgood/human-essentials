@@ -109,14 +109,16 @@
       <legend>Items in this donation</legend>
       <div id="donation_line_items" data-capture-barcode="true">
 
-        <%= render 'line_items/line_item_fields', form: f, object: donation_form.line_items %>
+        <%= render 'line_items/line_item_fields', form: f, object: donation_form.line_items, changes_disallowed: @changes_disallowed %>
       </div>
 
-      <div class="row links justify-content-end">
-        <%= add_element_button "Add Another Item", container_selector: "#donation_line_items", id: "__add_line_item" do %>
-          <%= render 'line_items/line_item_fields', form: f, object: LineItem.new %>
-        <% end %>
-      </div>
+      <% unless @changes_disallowed %>
+        <div class="row links justify-content-end">
+          <%= add_element_button "Add Another Item", container_selector: "#donation_line_items", id: "__add_line_item" do %>
+            <%= render 'line_items/line_item_fields', form: f, object: LineItem.new %>
+          <% end %>
+        </div>
+      <% end %>
     </fieldset>
 
     <div class="card-footer">
