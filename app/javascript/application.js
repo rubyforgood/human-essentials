@@ -8,7 +8,11 @@ import "startup"
 import "jquery-ui"
 import 'admin-lte'
 import 'filterrific'
-import { Turbo } from "@hotwired/turbo-rails"
+import("@hotwired/turbo-rails").then(({ Turbo }) => {
+  // Disable turbo by default to avoid issues with turbolinks
+  Turbo.session.drive = false
+})
+
 import "trix"
 import "@rails/actiontext"
 import "bootstrap-select"
@@ -38,9 +42,6 @@ Rails.start()
 // Initialize Active Storage
 import * as ActiveStorage from "@rails/activestorage";
 ActiveStorage.start();
-
-// Disable turbo by default to avoid issues with turbolinks
-Turbo.session.drive = false
 
 // Global toastr options
 window.toastr = toastr;
