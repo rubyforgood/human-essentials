@@ -74,6 +74,8 @@ RSpec.describe "Organization management", type: :system, js: true do
       it_behaves_like "deadline and reminder form", "organization", "Save", :post_form_submit
 
       it "the deadline day form's reminder and deadline dates are consistent with the dates calculated by the FetchPartnersToRemindNowService and DeadlineService" do
+        travel_to Time.zone.local(2025, 9, 30)
+        refresh
         choose "Day of Month"
         fill_in "organization_reminder_schedule_service_day_of_month", with: safe_add_days(Time.zone.now, 1).day
         fill_in "Deadline day in reminder email", with: safe_add_days(Time.zone.now, 2).day
