@@ -360,6 +360,19 @@ RSpec.describe "Donations", type: :system, js: true do
           end.to change { Donation.count }.by(1)
         end
 
+        it "Allows User to create a Donataion Site from donation" do
+          select Donation::SOURCES[:donation_site], from: "donation_source"
+          select "---Create New Donation Site---", from: "donation_donation_site_id"
+
+          find(".modal-content")
+          expect(page).to have_content("New Donation Site")
+
+          fill_in "donation_site_name", with: "Test Donation Site"
+          fill_in "donation_site_address", with: "Test Address"
+          within(".modal-content") { click_button "Save" }
+          select "Test Donation Site", from: "donation_donation_site_id"
+        end
+
         it "Allows User to create a donation with a Miscellaneous source" do
           select Donation::SOURCES[:misc], from: "donation_source"
           expect(page).not_to have_xpath("//select[@id='donation_donation_site_id']")
