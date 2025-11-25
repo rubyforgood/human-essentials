@@ -151,7 +151,7 @@ group :development, :test do
   # Debugger which supports rdbg and Shopify Ruby LSP VSCode extension
   gem "debug", ">= 1.0.0"
   # RSpec behavioral testing framework for Rails.
-  gem "rspec-rails", "~> 8.0.0"
+  gem "rspec-rails", "~> 8.0.2"
   # Static analysis / linter.
   gem "rubocop"
   # Rails add-on for static analysis.
@@ -208,7 +208,7 @@ group :test do
   # Show code coverage.
   gem 'simplecov'
   # Mock HTTP requests and ensure they are not called during tests.
-  gem "webmock", "~> 3.25"
+  gem "webmock", "~> 3.26"
   # Interface capybara to chrome headless
   gem "cuprite"
   # Read PDF files for tests
