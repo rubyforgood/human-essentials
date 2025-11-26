@@ -86,16 +86,17 @@ module Partners
         item_errors = invisible_items.map do |item|
           item_name = included_items_by_id[item[:item_id]].name
 
-          child_count = item[:children].length
+          children_names = item[:children].map { |c| "#{c.first_name} #{c.last_name}" }.join(", ")
 
-          "#{item_name} requested for #{child_count} child#{"ren" if child_count > 1} is not currently available for request."
+          "\"#{item_name}\" requested for #{children_names} is not currently available for request."
         end
 
         joined_errors = item_errors.join(", ")
 
         # don't want to show a memflash error
         if joined_errors.length >= Memflash.threshold
-          errors.add(:base, item_errors.first)
+          truncated_errors = joined_errors[0...(Memflash.threshold - 10)]
+          errors.add(:base, "#{truncated_errors}...")
         else
           errors.add(:base, joined_errors)
         end

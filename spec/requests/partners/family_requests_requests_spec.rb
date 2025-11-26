@@ -57,7 +57,8 @@ RSpec.describe Partners::FamilyRequestsController, type: :request do
 
       subject
 
-      expected = "Request failed! [\"#{i.name} requested for 1 child is not currently available for request.\"]"
+      child_with_unavailable_item = children[0]
+      expected = "\"#{i.name}\" requested for #{child_with_unavailable_item.first_name} #{child_with_unavailable_item.last_name} is not currently available for request."
 
       expect(response.request.flash[:error]).to eql expected
     end
@@ -73,7 +74,11 @@ RSpec.describe Partners::FamilyRequestsController, type: :request do
 
       subject
 
-      expected = "Request failed! [\"#{i.name} requested for 2 children is not currently available for request.\"]"
+      children_with_unavailable_item = children[0..1]
+
+      child_formatting = children_with_unavailable_item.map { |c| "#{c.first_name} #{c.last_name}" }.join(", ")
+
+      expected = "\"#{i.name}\" requested for #{child_formatting} is not currently available for request."
 
       expect(response.request.flash[:error]).to eql expected
     end
