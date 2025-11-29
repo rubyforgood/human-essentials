@@ -165,7 +165,7 @@ module Partners
     #   population_hispanic, population_asian, population_american_indian, population_island,
     #   population_multi_racial, population_other, zips_served, at_fpl_or_below, above_1_2_times_fpl
     #   greater_2_times_fpl, poverty_unknown
-    # executive_director
+    # contacts
     #   executive_director_name, executive_director_phone, executive_director_email, primary_contact_name,
     #   primary_contact_phone, primary_contact_mobile, primary_contact_email
     # pick_up_person
