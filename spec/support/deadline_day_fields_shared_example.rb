@@ -22,7 +22,7 @@ def safe_subtract_days(date, num)
   result
 end
 
-RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_button, post_form_submit|
+RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_button, post_form_submit, post_refresh|
   it "can set a reminder on a day of the month" do
     choose "Day of Month"
     fill_in "#{form_prefix}_reminder_schedule_service_day_of_month", with: 1
@@ -74,7 +74,17 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
     expect(page).to have_content("Deadline day must be between 1 and 28")
   end
 
-  describe "reported reminder and deadline dates" do
+  RSpec.shared_examples_for "reported reminder and deadline dates" do |datetime|
+    before do
+      if datetime
+        travel_to datetime
+      end
+      refresh
+      if post_refresh
+        send(post_refresh)
+      end
+    end
+
     context "when the reminder is a day of the month" do
       before do
         choose "Day of Month"
@@ -163,5 +173,17 @@ RSpec.shared_examples_for "deadline and reminder form" do |form_prefix, save_but
         expect(page).to have_content(schedule.next_occurrence.strftime("%b %d %Y"))
       end
     end
+  end
+
+  context "at the end of the month" do
+    it_behaves_like "reported reminder and deadline dates", Time.zone.local(2025, 9, 30)
+  end
+
+  context "in the middle of the month" do
+    it_behaves_like "reported reminder and deadline dates", Time.zone.local(2025, 9, 14)
+  end
+
+  context "at the start of the month" do
+    it_behaves_like "reported reminder and deadline dates", Time.zone.local(2025, 9, 1)
   end
 end

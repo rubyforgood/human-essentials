@@ -42,6 +42,7 @@ pdx_org = Organization.find_or_create_by!(name: "Pawnee Diaper Bank") do |organi
   organization.state = "IN"
   organization.zipcode = "12345"
   organization.email = "info@pawneediaper.org"
+  organization.bank_is_set_up = true
 end
 Organization.seed_items(pdx_org)
 
@@ -51,6 +52,7 @@ sf_org = Organization.find_or_create_by!(name: "SF Diaper Bank") do |organizatio
   organization.state = "CA"
   organization.zipcode = "90210"
   organization.email = "info@sfdiaperbank.org"
+  organization.bank_is_set_up = false  #sf_org represents a brand new bank
 end
 Organization.seed_items(sf_org)
 
@@ -60,6 +62,7 @@ sc_org = Organization.find_or_create_by!(name: "Second City Essentials Bank") do
   organization.state = Faker::Address.state_abbr
   organization.zipcode = Faker::Address.zip_code
   organization.email = "info@scdiaperbank.org"
+  organization.bank_is_set_up = true
 end
 Organization.seed_items(sc_org)
 
@@ -280,7 +283,7 @@ note = [
   end
 
   # Base profile information all partners should have
-  # Includes fields in the agency_information, executive_director, and pick_up_person partial
+  # Includes fields in the agency_information, contacts, and pick_up_person partial
   # The counties and areas served by the partner are handled elsewere
   profile = Partners::Profile.create!({
     essentials_bank_id: p.organization_id,
@@ -349,7 +352,7 @@ note = [
         receives_essentials_from_other: Faker::Lorem.sentence,
       )
     end
-  
+
     if p.partials_to_show.include? "organizational_capacity"
       profile.update(
         client_capacity: Faker::Lorem.sentence,
@@ -1107,8 +1110,6 @@ end
 # ----------------------------------------------------------------------------
 
 Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "new_logo")
-Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "read_events")
-Flipper.enable(:read_events)
 Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "partner_step_form")
 Flipper.enable(:partner_step_form)
 Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "enable_packs")

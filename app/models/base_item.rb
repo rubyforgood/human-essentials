@@ -80,7 +80,7 @@ class BaseItem < ApplicationRecord
   }.freeze
 
   def to_h
-    { partner_key: partner_key, name: name }
+    { partner_key: partner_key, name: name, reporting_category: reporting_category }
   end
 
   private

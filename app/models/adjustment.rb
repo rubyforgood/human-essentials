@@ -20,6 +20,7 @@ class Adjustment < ApplicationRecord
   include Exportable
   include Itemizable
   include Filterable
+
   scope :at_location, ->(location_id) { where(storage_location_id: location_id) }
   scope :by_user, ->(user_id) { where(user_id: user_id) }
   scope :during, ->(range) { where(adjustments: { created_at: range }) }

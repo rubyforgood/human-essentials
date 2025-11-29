@@ -20,6 +20,28 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       expect(page.find(".alert")).to have_content "added"
     end
 
+    it "User creates a new storage location with the same name" do
+      visit subject
+      storage_location1 = create(:storage_location, name: "non-Unique Name")
+
+      fill_in "Name", with: storage_location1.name
+      fill_in "Address", with: storage_location1.address
+      click_on "Save"
+
+      expect(page).to have_content "Name has already been taken"
+    end
+
+    it "User creates a new storage location with the same name with different casing" do
+      visit subject
+      storage_location1 = create(:storage_location, name: "non-Unique Name")
+
+      fill_in "Name", with: storage_location1.name.upcase
+      fill_in "Address", with: storage_location1.address
+      click_on "Save"
+
+      expect(page).to have_content "Name has already been taken"
+    end
+
     it 'User creates a new storage location with optional fields' do
       visit subject
       storage_location_traits = attributes_for(:storage_location)
