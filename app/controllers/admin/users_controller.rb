@@ -65,7 +65,7 @@ class Admin::UsersController < AdminController
       raise "Unknown resource type #{params[:resource_type]}"
     end
 
-    objects = klass.where("name LIKE ?", "%#{params[:q]}%").select(:id, :name)
+    objects = klass.where("name ILIKE ?", "%#{params[:q]}%").order("lower(name)").select(:id, :name)
     object_json = objects.map do |obj|
       {
         id: obj.id,
