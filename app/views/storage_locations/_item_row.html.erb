@@ -1,0 +1,7 @@
+<% css_class = item_row["change"].negative? ? 'modal-body-warning-text' : '' %>
+<tr id="<%= item_row["item_id"] %>">
+  <td><%= link_to item_row["item_name"], item_path(item_row["item_id"]) %></td>
+  <td><%= item_row["quantity_in"] %></td>
+  <td><%= item_row["quantity_out"] %></td>
+  <td class="<%= css_class %>"><%= item_row["change"] %></td>
+</tr>
