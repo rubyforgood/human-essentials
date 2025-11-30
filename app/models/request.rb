@@ -37,10 +37,12 @@ class Request < ApplicationRecord
   validates :distribution_id, uniqueness: true, allow_nil: true
   validate :item_requests_uniqueness_by_item_id
   validate :not_completely_empty
+  validate :cannot_change_status_once_fulfilled, on: :update
 
   after_validation :sanitize_items_data
 
   include Filterable
+
   # add request item scope to allow filtering distributions by request item
   scope :by_request_item_id, ->(item_id) { where("request_items @> :with_item_id ", with_item_id: [{ item_id: item_id.to_i }].to_json) }
   # partner scope to allow filtering by partner
@@ -83,6 +85,12 @@ class Request < ApplicationRecord
   def not_completely_empty
     if comments.blank? && item_requests.blank?
       errors.add(:base, "completely empty request")
+    end
+  end
+
+  def cannot_change_status_once_fulfilled
+    if status_changed? && status_was == "fulfilled"
+      errors.add(:status, "cannot be changed once fulfilled")
     end
   end
 end

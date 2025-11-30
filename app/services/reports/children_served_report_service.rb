@@ -1,6 +1,7 @@
 module Reports
   class ChildrenServedReportService
     include ActionView::Helpers::NumberHelper
+
     attr_reader :year, :organization
 
     # @param year [Integer]

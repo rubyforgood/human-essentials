@@ -47,6 +47,7 @@ class VendorsController < ApplicationController
 
   def show
     @vendor = current_organization.vendors.includes(:purchases).find(params[:id])
+    @purchases = @vendor.purchases.order(issued_at: :desc)
   end
 
   def update
