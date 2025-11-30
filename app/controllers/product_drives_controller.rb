@@ -1,5 +1,6 @@
 class ProductDrivesController < ApplicationController
   include Importable
+
   before_action :set_product_drive, only: [:show, :edit, :update, :destroy]
   before_action :set_tags, only: [:index, :new, :edit]
 

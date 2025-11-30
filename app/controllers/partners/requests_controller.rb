@@ -1,6 +1,7 @@
 module Partners
   class RequestsController < BaseController
     include Validatable
+
     skip_before_action :require_partner, only: [:new, :create, :validate]
     before_action :require_partner_or_org_admin, only: [:new, :create, :validate]
     layout :layout
