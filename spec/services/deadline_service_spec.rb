@@ -1,6 +1,6 @@
 RSpec.describe DeadlineService, type: :service do
   let(:organization) { build_stubbed(:organization) }
-  let(:partner_group) { build_stubbed(:partner_group, :without_deadlines, organization: organization) }
+  let(:partner_group) { build_stubbed(:partner_group, organization: organization) }
   let(:partner) { build_stubbed(:partner, organization: organization, partner_group: partner_group) }
   let(:today) { Date.new(2022, 1, 10) }
 
@@ -9,7 +9,7 @@ RSpec.describe DeadlineService, type: :service do
   end
 
   shared_examples "calculates the next deadline" do
-    subject(:deadline) { described_class.new(partner: partner).next_deadline }
+    subject(:deadline) { described_class.new(deadline_day: described_class.get_deadline_for_partner(partner)).next_deadline }
 
     context "when the deadline is after today" do
       before { expected_receiver[:deadline_day] = 11 }
@@ -45,6 +45,14 @@ RSpec.describe DeadlineService, type: :service do
 
     context "from the organization" do
       let(:expected_receiver) { organization }
+
+      include_examples "calculates the next deadline"
+    end
+
+    context "the partner group is prioritized over the organization" do
+      before { organization[:deadline_day] = 20 }
+
+      let(:expected_receiver) { partner_group }
 
       include_examples "calculates the next deadline"
     end

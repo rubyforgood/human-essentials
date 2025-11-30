@@ -1,16 +1,10 @@
-<% total_criteria = 4 %>
-<% partner_criteria_met = org_stats.partners_added > 0 %>
-<% location_criteria_met = org_stats.storage_locations_added > 0 %>
-<% donation_criteria_met = org_stats.donation_sites_added > 0 %>
-<% inventory_criteria_met = org_stats.num_locations_with_inventory > 0 %>
-<% criterias = [ location_criteria_met, partner_criteria_met, donation_criteria_met, inventory_criteria_met ] %>
-<% current_step = criterias.find_index(false) %>
 
-<% if current_step.present? %>
+
+<% unless org_is_set_up %>
 
   <%= render(
     "shared/card",
-    id: "summary",
+    id: "getting-started-guide",
     header: "Getting Started",
     type: :plain,
   ) do %>
@@ -18,136 +12,52 @@
       <div class="col-md-12">
         <div class="box box-primary" id="getting-started-guide">
           <div class="box-header with-border">
-            <h2 class="box-title">
-              Just Starting?
-              <small>Here are some things you may need to set up:</small>
-            </h2>
+            <h5>
+              Here are a few steps to help you in getting started
+            </h5>
           </div>
 
-          <div class="box-body org-stats">
-            <div class="col-md-12">
-              <%= render partial: "getting_started_progress_stepper", locals: {
-                current_step: current_step,
-                criterias: criterias,
-                lines: ["line-right", "line-right line-left", "line-right line-left", "line-left"],
-                step_labels: ["Storage Locations", "Partner Agencies", "Donation Sites", "Inventory"]
-              } %>
-            </div>
+          <hr>
 
-            <div class="col-md-12 org-stats-box-container<%= current_step == 0 ? '' : ' d-none visible-xs' %>">
-              <div class="org-stats-box">
-                <div class="box-body text-center position-relative">
-                  <div class="org-stats-icon">
-                    <% if location_criteria_met %>
-                      <i class="fa fa-check-circle-o fa-2x success" aria-hidden="true"></i>
-                    <% else %>
-                      <i class="fa fa-map-marker fa-2x" aria-hidden="true"></i>
-                    <% end %>
-                    <h4><%= pluralize(org_stats.storage_locations_added, 'Storage Location') %> Added</h4>
-                  </div>
-
-                  <p class="org-stats-desc">
-                    Add details for all Storage Locations you use for your inventory.
-                  </p>
-
-                  <div id="org-stats-call-to-action-storage-locations">
-                    <% location_link_text = location_criteria_met ? "Add More Storage Locations" : "Add a Storage Location" %>
-                    <%= new_button_to new_storage_location_path, { text: location_link_text, size: "md" } %>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-12 org-stats-box-container<%= current_step == 1 ? '' : ' d-none visible-xs' %>">
-              <div class="org-stats-box">
-                <div class="box-body text-center position-relative">
-                  <div class="org-stats-icon">
-                    <% if partner_criteria_met %>
-                      <i class="fa fa-check-circle-o fa-2x success" aria-hidden="true"></i>
-                    <% else %>
-                      <i class="fa fa-users fa-2x" aria-hidden="true"></i>
-                    <% end %>
-                    <h4><%= pluralize(org_stats.partners_added, 'Partner Agency') %> Added</h4>
-                  </div>
-
-                  <p class="org-stats-desc">
-                    To start building your community in Human Essentials, import a list of your current partner agencies or add them individually.
-                  </p>
-
-                  <div id="org-stats-call-to-action-partners">
-                    <%= modal_button_to("#csvImportModal", { text: "Import Partners", icon: "upload", size: "md" }) %>
-                    <% partner_link_text = partner_criteria_met ? "Add More Partners" : "Add a Partner" %>
-                    <%= new_button_to new_partner_path, { text: partner_link_text, size: "md" } %>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-12 org-stats-box-container<%= current_step == 2 ? '' : ' d-none visible-xs' %>">
-              <div class="org-stats-box">
-                <div class="box-body text-center position-relative">
-                  <div class="org-stats-icon">
-                    <% if donation_criteria_met %>
-                      <i class="fa fa-check-circle-o fa-2x success" aria-hidden="true"></i>
-                    <% else %>
-                      <i class="fa fa-home fa-2x" aria-hidden="true"></i>
-                    <% end %>
-                    <h4><%= pluralize(org_stats.donation_sites_added, 'Donation Site') %> Added</h4>
-                  </div>
-
-                  <p class="org-stats-desc">
-                    Add any community sites (including your primary storage facility) that accept donations on your behalf.
-                  </p>
-
-                  <div id="org-stats-call-to-action-donation-sites">
-                    <% donation_link_text = donation_criteria_met ? "Add More Donation Sites" : "Add a Donation Site" %>
-                    <%= new_button_to new_donation_site_path, { text: donation_link_text, size: "md" } %>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-12 org-stats-box-container<%= current_step == 3 ? '' : ' d-none visible-xs' %>">
-              <div class="org-stats-box">
-                <div class="box-body text-center position-relative">
-                  <div class="org-stats-icon">
-                    <% if inventory_criteria_met %>
-                      <i class="fa fa-check-circle-o fa-2x success" aria-hidden="true"></i>
-                    <% else %>
-                      <i class="fa fa-pie-chart fa-2x" aria-hidden="true"></i>
-                    <% end %>
-                    <h4><%= pluralize(org_stats.num_locations_with_inventory, 'Storage Location') %> with Inventory</h4>
-                  </div>
-
-                  <div class="org-stats-desc">
-                    <p>
-                      As an essentials bank, you might already have inventory on hand. These items might have come from previous donations/purchases. If you have multiple sources or want to add inventory to multiple storage locations, you can create multiple donations or purchases while specifying the correct date, source, and location.
-                    </p>
-                  </div>
-
-                  <div id="org-stats-call-to-action-inventory">
-                    <%= new_button_to new_donation_path, { text: "Add past donation", size: "md" } %>
-                    <%= new_button_to new_purchase_path, { text: "Add past purchase", size: "md" } %>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div>
+            <ul>
+                <li>
+                    <%= link_to "Set up storage locations", storage_locations_path, target: :_blank %>
+                </li>
+                <li>
+                    Set up your inventory
+                    <ul>
+                        <li>
+                            <%= link_to "Add any custom items", items_path, target: :_blank %>
+                        </li>
+                        <li>
+                            <%= link_to "Do an audit to set up your current inventory levels", audits_path, target: :_blank %>
+                            -
+                            <%= link_to "(User guide)", "https://rubyforgood.github.io/human-essentials/user_guide/bank/getting_started_inventory.html", target: :_blank %>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <%= link_to "Customize your organization", edit_organization_path, target: :_blank %>
+                    -
+                    <%= link_to "(User guide)", "https://rubyforgood.github.io/human-essentials/user_guide/bank/getting_started_customization.html", target: :_blank %>
+                </li>
+                <li>
+                    <%= link_to "Add other users at your bank", new_user_path, target: :_blank %>
+                </li>
+                <li>
+                    <%= link_to "Import Partners", partners_path, target: :_blank %>
+                    or
+                    <%= link_to "Add a single partner", new_partner_path, target: :_blank %>
+                </li>
+            </ul>
           </div>
         </div>
       </div>
+
+      <p>When you're done, click this box to hide this section</p>
+      <%= button_to "Dismiss", "/manage", method: :patch, params: {organization: { bank_is_set_up: true }}, class: "btn btn-primary" %>
     </div>
 
-    <%= render(
-        layout: "shared/csv_import_modal",
-        locals: {
-          import_type: "Partners",
-          csv_template_url: "/partners_template.csv",
-          csv_import_url: import_csv_partners_path,
-        },
-      ) do %>
-      <li>Open the CSV file with Excel or your favourite spreadsheet program.</li>
-      <li>Delete the sample data and enter your partner agency names and addresses in the appropriate columns.</li>
-      <li>Save the file as a CSV file.</li>
-    <% end %>
   <% end %>
 <% end %>

@@ -3,6 +3,7 @@
 # Table name: organizations
 #
 #  id                                       :integer          not null, primary key
+#  bank_is_set_up                           :boolean          default(FALSE), not null
 #  city                                     :string
 #  deadline_day                             :integer
 #  default_storage_location                 :integer
@@ -23,6 +24,7 @@
 #  partner_form_fields                      :text             default([]), is an Array
 #  receive_email_on_requests                :boolean          default(FALSE), not null
 #  reminder_day                             :integer
+#  reminder_schedule_definition             :string
 #  repackage_essentials                     :boolean          default(FALSE), not null
 #  signature_for_distribution_pdf           :boolean          default(FALSE)
 #  state                                    :string

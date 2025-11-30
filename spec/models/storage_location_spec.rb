@@ -20,6 +20,7 @@ RSpec.describe StorageLocation, type: :model do
 
   context "Validations >" do
     it { is_expected.to validate_presence_of(:name) }
+    it { is_expected.to validate_uniqueness_of(:name).scoped_to(:organization_id).case_insensitive }
     it { is_expected.to validate_presence_of(:address) }
     it "ensures that square_footage cannot be negative" do
       expect(build(:storage_location, square_footage: -1)).not_to be_valid

@@ -32,10 +32,6 @@
             <table class="table">
             <tbody>
               <tr>
-                <th>Base Item</th>
-                <td><%= @item.base_item.name %></td>
-              </tr>
-              <tr>
                 <th>Name</th>
                 <td><%= @item.name %></td>
               </tr>
@@ -44,8 +40,12 @@
                 <td><%= @item&.item_category&.name %></td>
               </tr>
               <tr>
+                <th>NDBN Reporting Category</th>
+                <td><%= @item.reporting_category_humanized %><%= @reporting_category_hint %></td>
+              </tr>
+              <tr>
                 <th>Value Per Item</th>
-                <td>$<%= @item.value_in_dollars || 0 %></td>
+                <td><%= dollar_value(@item.value_in_cents || 0 ) %></td>
               </tr>
               <tr>
                 <th>Quantity per Individual</th>

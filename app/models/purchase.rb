@@ -59,6 +59,12 @@ class Purchase < ApplicationRecord
 
   validates :amount_spent_in_cents, numericality: { greater_than: 0 }
   validate :total_equal_to_all_categories
+  before_destroy :check_no_intervening_snapshot
+
+  validates :amount_spent_on_diapers_cents, numericality: { greater_than_or_equal_to: 0 }
+  validates :amount_spent_on_adult_incontinence_cents, numericality: { greater_than_or_equal_to: 0 }
+  validates :amount_spent_on_period_supplies_cents, numericality: { greater_than_or_equal_to: 0 }
+  validates :amount_spent_on_other_cents, numericality: { greater_than_or_equal_to: 0 }
 
   SummaryByDates = Data.define(
     :amount_spent,
@@ -125,6 +131,13 @@ class Purchase < ApplicationRecord
       total = humanized_money_with_symbol(amount_spent)
       errors.add(:amount_spent,
         "does not equal all categories - categories add to #{cat_total} but given total is #{total}")
+    end
+  end
+
+  def check_no_intervening_snapshot
+    intervening = SnapshotEvent.intervening(self)
+    if intervening
+      raise "We can't delete purchases entered before #{intervening.event_time.to_date}."
     end
   end
 end
