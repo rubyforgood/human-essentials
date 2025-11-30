@@ -58,7 +58,7 @@ RSpec.describe Exports::ExportPartnersCSVService do
         above_1_2_times_fpl: 25,
         greater_2_times_fpl: 25,
         poverty_unknown: 25,
-        executive_director_name: "executive_director_name", # Columns from the executive_director partial
+        executive_director_name: "executive_director_name", # Columns from the contacts partial
         executive_director_phone: "executive_director_phone",
         executive_director_email: "executive_director_email",
         primary_contact_name: "Jon Ralfeo",
@@ -93,7 +93,7 @@ RSpec.describe Exports::ExportPartnersCSVService do
         :sources_of_funding,
         :area_served,
         :population_served,
-        :executive_director,
+        :contacts,
         :pick_up_person,
         :agency_distribution_information
         ]
@@ -167,7 +167,7 @@ RSpec.describe Exports::ExportPartnersCSVService do
           "% Greater than 2 times FPL",
           "% Poverty Unknown"
         ],
-        executive_director: [
+        contacts: [
           "Executive Director Name",
           "Executive Director Phone",
           "Executive Director Email",
@@ -265,7 +265,7 @@ RSpec.describe Exports::ExportPartnersCSVService do
           "25",
           "25"
         ],
-        executive_director: [
+        contacts: [
           "executive_director_name",
           "executive_director_phone",
           "executive_director_email",

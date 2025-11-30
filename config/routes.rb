@@ -65,6 +65,7 @@ Rails.application.routes.draw do
     resources :users do
       delete :remove_role
       post :add_role
+      post :resend_invitation
       get :resource_ids, on: :collection
     end
     resources :barcode_items
@@ -117,9 +118,12 @@ Rails.application.routes.draw do
     get :itemized_distributions
     get :distributions_summary
     get :activity_graph
+    get :itemized_requests
   end
 
-  resources :transfers, only: %i(index create new show destroy)
+  resources :transfers, only: %i(index create new show destroy) do
+    post :validate, on: :collection
+  end
 
   resources :storage_locations do
     put :deactivate

@@ -63,9 +63,11 @@ class PurchasesController < ApplicationController
   def edit
     @purchase = current_organization.purchases.find(params[:id])
     @purchase.line_items.build
-    @audit_performed_and_finalized = Audit.finalized_since?(@purchase, @purchase.storage_location_id)
+    @changes_disallowed = SnapshotEvent.intervening(@purchase).present?
+    @audit_performed_and_finalized = Audit.finalized_since?(@purchase, @purchase.storage_location_id) &&
+      !@changes_disallowed
 
-    load_form_collections
+    load_form_collections(@purchase)
   end
 
   def show
@@ -78,9 +80,11 @@ class PurchasesController < ApplicationController
     ItemizableUpdateService.call(itemizable: @purchase,
       params: purchase_params,
       event_class: PurchaseEvent)
+
+    flash[:success] = "Purchase updated successfully"
     redirect_to purchases_path
   rescue => e
-    load_form_collections
+    load_form_collections(@purchase)
     flash.now[:alert] = "Error updating purchase: #{e.message}"
     render "edit"
   end
@@ -100,10 +104,13 @@ class PurchasesController < ApplicationController
 
   private
 
-  def load_form_collections
+  def load_form_collections(purchase = nil)
     @storage_locations = current_organization.storage_locations.active.alphabetized
     @items = current_organization.items.active.alphabetized
-    @vendors = current_organization.vendors.active.alphabetized
+
+    @vendors = current_organization.vendors.active
+    @vendors = @vendors.or(Vendor.where(id: purchase.vendor_id)) if purchase
+    @vendors = @vendors.alphabetized
   end
 
   def purchase_params

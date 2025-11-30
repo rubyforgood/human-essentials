@@ -1,6 +1,7 @@
 module Reports
   class PeriodSupplyReportService
     include ActionView::Helpers::NumberHelper
+
     attr_reader :year, :organization
 
     # @param year [Integer]

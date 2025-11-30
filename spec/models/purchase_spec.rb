@@ -104,6 +104,21 @@ RSpec.describe Purchase, type: :model do
       p = build(:purchase, issued_at: DateTime.now.next_year(2).to_s)
       expect(p).not_to be_valid
     end
+
+    it "ensures there is no intervening snapshot on destroy" do
+      org = create(:organization)
+      purchase = create(:purchase, organization: org, created_at: 1.week.ago)
+      data = EventTypes::Inventory.new(storage_locations: {}, organization_id: org.id)
+      travel(-1.day) do
+        SnapshotEvent.create!(organization_id: org.id,
+          eventable: org,
+          data: data,
+          event_time: Time.zone.now)
+      end
+
+      expect { purchase.destroy }
+        .to raise_error("We can't delete purchases entered before #{1.day.ago.to_date}.")
+    end
   end
 
   context "Callbacks >" do

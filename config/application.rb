@@ -33,5 +33,7 @@ module Diaper
     # sidekiq worker that is only taking work from the `default`
     # queue.
     config.action_mailer.deliver_later_queue_name = 'default'
+
+    config.active_support.to_time_preserves_timezone = :zone # New default starting in Rails 8.1
   end
 end

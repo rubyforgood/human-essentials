@@ -16,6 +16,7 @@ services:
     command: sleep infinity
 
     # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
+    # (Although we're not sure if our port forwarding is actually doing any good)
     network_mode: service:postgres
 
   postgres:
@@ -27,9 +28,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DB: postgres
       POSTGRES_PASSWORD: postgres
-    # Note that these ports are ignored by the devcontainer.
-    # Instead, the ports are specified in .devcontainer/devcontainer.json.
-    # ports:
-    #  - "5432:5432"
+    ports:
+     - "5432:5432" # For non-devcontainer local usage
 volumes:
   postgres-data:
