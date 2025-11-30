@@ -18,38 +18,14 @@ class DonationsController < ApplicationController
   def index
     setup_date_range_picker
 
-    @donations = current_organization.donations
-                                     .includes(:storage_location, :donation_site, :product_drive, :product_drive_participant, :manufacturer, line_items: [:item])
-                                     .order(created_at: :desc)
-                                     .class_filter(filter_params)
-                                     .during(helpers.selected_range)
-    @paginated_donations = @donations.page(params[:page])
-
-    @product_drives = current_organization.product_drives.alphabetized
-    @product_drive_participants = current_organization.product_drive_participants.alphabetized
-
-    # Are these going to be inefficient with large datasets?
-    # Using the @donations allows drilling down instead of always starting with the total dataset
-    @donations_quantity = @donations.collect(&:total_quantity).sum
-    @paginated_donations_quantity = @paginated_donations.collect(&:total_quantity).sum
-    @total_value_all_donations = total_value(@donations)
-    @paginated_in_kind_value = total_value(@paginated_donations)
-    @total_money_raised = total_money_raised(@donations)
-    @storage_locations = @donations.filter_map { |donation| donation.storage_location if !donation.storage_location.discarded_at }.compact.uniq.sort
-    @selected_storage_location = filter_params[:at_storage_location]
-    @sources = @donations.collect(&:source).uniq.sort
-    @selected_source = filter_params[:by_source]
-    @donation_sites = @donations.collect(&:donation_site).compact.uniq.sort_by { |site| site.name.downcase }
-    @selected_donation_site = filter_params[:from_donation_site]
-    @selected_product_drive = filter_params[:by_product_drive]
-    @selected_product_drive_participant = filter_params[:by_product_drive_participant]
-    @manufacturers = @donations.collect(&:manufacturer).compact.uniq.sort
-    @selected_manufacturer = filter_params[:from_manufacturer]
+    @donation_info = View::Donations.from_params(params: params, organization: current_organization, helpers: helpers)
 
     respond_to do |format|
       format.html
       format.csv do
-        send_data Exports::ExportDonationsCSVService.new(donation_ids: @donations.map(&:id), organization: current_organization).generate_csv, filename: "Donations-#{Time.zone.today}.csv"
+        send_data Exports::ExportDonationsCSVService.new(donation_ids: @donation_info.donations.map(&:id),
+          organization: current_organization).generate_csv,
+          filename: "Donations-#{Time.zone.today}.csv"
       end
     end
   end
@@ -79,7 +55,9 @@ class DonationsController < ApplicationController
   def edit
     @donation = Donation.find(params[:id])
     @donation.line_items.build
-    @audit_performed_and_finalized = Audit.finalized_since?(@donation, @donation.storage_location_id)
+    @changes_disallowed = SnapshotEvent.intervening(@donation).present?
+    @audit_performed_and_finalized = Audit.finalized_since?(@donation, @donation.storage_location_id) &&
+      !@changes_disallowed
 
     load_form_collections
   end
@@ -115,7 +93,7 @@ class DonationsController < ApplicationController
     if service.success?
       flash[:notice] = "Donation #{params[:id]} has been removed!"
     else
-      flash[:error] = "Donation #{params[:id]} failed to be removed because #{service.error}"
+      flash[:error] = service.error.message
     end
 
     redirect_to donations_path
@@ -125,11 +103,12 @@ class DonationsController < ApplicationController
 
   def load_form_collections
     @storage_locations = current_organization.storage_locations.active.alphabetized
-    @donation_sites = current_organization.donation_sites.active.alphabetized
     @product_drives = current_organization.product_drives.alphabetized
     @product_drive_participants = current_organization.product_drive_participants.alphabetized
     @manufacturers = current_organization.manufacturers.alphabetized
     @items = current_organization.items.active.alphabetized
+    # Return all active donation sites, or the donation site that was selected for the donation if it's inactive
+    @donation_sites = current_organization.donation_sites.active.or(DonationSite.where(id: @donation.donation_site_id)).alphabetized
   end
 
   def clean_donation_money_raised
@@ -155,7 +134,7 @@ class DonationsController < ApplicationController
     def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).permit(:at_storage_location, :by_source, :from_donation_site, :by_product_drive, :by_product_drive_participant, :from_manufacturer)
+    params.require(:filters).permit(:at_storage_location, :by_source, :from_donation_site, :by_product_drive, :by_product_drive_participant, :from_manufacturer, :by_category)
   end
 
   # Omits donation_site_id or product_drive_participant_id if those aren't selected as source
@@ -173,17 +152,5 @@ class DonationsController < ApplicationController
 
     params[:donation][:line_items_attributes].delete_if { |_row, data| data["quantity"].blank? && data["item_id"].blank? }
     params
-  end
-
-  def total_value(donations)
-    total_value_all_donations = 0
-    donations.each do |donation|
-      total_value_all_donations += donation.value_per_itemizable
-    end
-    total_value_all_donations
-  end
-
-  def total_money_raised(donations)
-    donations.sum { |d| d.money_raised.to_i }
   end
 end

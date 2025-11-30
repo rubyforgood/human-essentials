@@ -17,7 +17,8 @@ describe DistributionPdf do
     let(:partner) { create(:partner) }
 
     before(:each) do
-      PDFComparisonTestFactory.create_line_items_request(distribution, partner, storage_creation)
+      PDFComparisonTestFactory.create_line_items_for_distribution(distribution, storage_creation)
+      PDFComparisonTestFactory.create_line_items_request(distribution: distribution, partner: partner, storage_creation: storage_creation)
     end
 
     specify "#request_data with custom units feature" do
@@ -133,17 +134,22 @@ describe DistributionPdf do
 
   describe "address pdf output" do
     def compare_pdf(distribution, expected_file_path)
-      pdf_file = PDFComparisonTestFactory.render_pdf_at_year_end(organization, distribution)
+      pdf_file = PDFComparisonTestFactory.render_distribution_pdf_at_year_end(organization, distribution)
       begin
         # Run the following from Rails sandbox console (bin/rails/console --sandbox) to regenerate these comparison PDFs:
         # => load "lib/test_helpers/pdf_comparison_test_factory.rb"
-        # => Rails::ConsoleMethods.send(:prepend, PDFComparisonTestFactory)
+        # => Flipper.enable(:enable_packs)
         # => PDFComparisonTestFactory.create_comparison_pdfs
         expect(pdf_file).to eq(IO.binread(expected_file_path))
       rescue RSpec::Expectations::ExpectationNotMetError => e
         Rails.root.join("tmp", "failed_match_distribution_" + distribution.delivery_method.to_s + "_" + expected_file_path.to_s.split("/").last + ".pdf").binwrite(pdf_file)
         raise e.class, "PDF does not match, written to tmp/", cause: nil
       end
+    end
+
+    # The generated PDFs (PDFs to use for comparison) are expecting the packs feature to be enabled.
+    before(:each) do
+      Flipper.enable(:enable_packs)
     end
 
     let(:partner) { PDFComparisonTestFactory.create_partner(organization) }

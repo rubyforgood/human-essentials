@@ -7,6 +7,7 @@ Many of these can be filtered down to the information you might need for a speci
 The exports available include (in alphabetical order):
 - Adjustments
 - Annual Survey
+- Audits
 - Barcode Items
 - Distributions
 - Donations
@@ -27,9 +28,10 @@ The exports available include (in alphabetical order):
 Click "Inventory", then "Inventory Adjustments" in the left-hand menu.  Then click "Export Adjustments",
 
 ### Contents of adjustment export
-Creation date, Organization, Storage Area, Comment, # of changes.
-
-[! NOTE]  We have improving the adjustments export to include the changes made in each adjustment on our todo list. We'll also remove the organization as redundant information. Please reach out if this is a priority for you.
+- Creation date
+- Storage Area, Comment
+- # of changes
+- the quantity of each of your organization's Items in the adjustments
 
 ## Annual Survey
 ### Navigating to export annual survey
@@ -88,6 +90,19 @@ For more information on these, please see the [Annual Survey Report](reports_ann
 - % difference in yearly Donations,
 - % difference in total money donated,
 - % difference in disposable diaper Donations
+
+## Audits
+### Navigating to export Audits
+Click "Inventory", then "Inventory Audit" in the left-hand menu. Then click "Export Audits".
+
+### Contents of Audit exports
+For each Audit of Storage Location in the list:
+- Audit Date
+- Audit Status
+- Storage Location Name
+- Audited Items
+- Quantity for each of the audited items.
+
 ## Barcode Items
 ### Navigating to export barcode Items
 Click "Inventory" then "Barcode Items" in the left-hand menu.   Then click "Export Barcode Items."
@@ -296,7 +311,7 @@ Population Served
 - % Greater than 2 times FPL,
 - % Poverty Unknown
 
-Executive Director
+Contacts
 - Executive Director Name,
 - Executive Director Phone,
 - Executive Director Email,
@@ -412,7 +427,8 @@ For each Storage Location in the filtered list:
 - Address,
 - Square Footage,
 - Warehouse Type,
-- Total Inventory, and
+- Total Inventory,
+- Fair Market Value,
 - Quantity for each of the organization's Items.
 
 ## Transfers

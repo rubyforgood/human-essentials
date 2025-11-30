@@ -69,6 +69,21 @@ RSpec.describe Donation, type: :model do
       expect(build(:donation, money_raised: 100)).to be_valid
       expect(build(:donation, money_raised: nil)).to be_valid
     end
+
+    it "ensures there is no intervening snapshot on destroy" do
+      org = create(:organization)
+      donation = create(:donation, organization: org, created_at: 1.week.ago)
+      data = EventTypes::Inventory.new(storage_locations: {}, organization_id: org.id)
+      travel(-1.day) do
+        SnapshotEvent.create!(organization_id: org.id,
+          eventable: org,
+          data: data,
+          event_time: Time.zone.now)
+      end
+
+      expect { donation.destroy }
+        .to raise_error("We can't delete donations entered before #{1.day.ago.to_date}.")
+    end
   end
 
   context "Callbacks >" do
@@ -168,7 +183,7 @@ RSpec.describe Donation, type: :model do
         let(:product_drive) { create(:product_drive, name: "Test Drive") }
 
         context "participant known" do
-          let(:product_drive_participant) { create(:product_drive_participant, contact_name: contact_name) }
+          let(:product_drive_participant) { create(:product_drive_participant, business_name: "Business Name", contact_name: contact_name) }
 
           context "contact name present" do
             let(:contact_name) { "Contact Name" }

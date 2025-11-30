@@ -49,11 +49,10 @@ RSpec.describe " Participant", type: :system, js: true do
 
     it "allows a user to create a new product drive participant" do
       visit subject
-      product_drive_participant_traits = attributes_for(:product_drive_participant)
-      fill_in "Contact Name", with: product_drive_participant_traits[:contact_name]
-      fill_in "Business Name", with: product_drive_participant_traits[:business_name]
-      fill_in "Phone", with: product_drive_participant_traits[:phone]
-      fill_in "Comment", with: product_drive_participant_traits[:comment]
+      fill_in "Contact Name", with: "George Henry"
+      fill_in "Business Name", with: "George Company"
+      fill_in "Phone", with: "123-456-1234"
+      fill_in "Comment", with: "Participant comment"
 
       expect do
         click_button "Save"

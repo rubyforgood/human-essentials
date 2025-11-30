@@ -20,6 +20,7 @@ class Adjustment < ApplicationRecord
   include Exportable
   include Itemizable
   include Filterable
+
   scope :at_location, ->(location_id) { where(storage_location_id: location_id) }
   scope :by_user, ->(user_id) { where(user_id: user_id) }
   scope :during, ->(range) { where(adjustments: { created_at: range }) }
@@ -34,18 +35,11 @@ class Adjustment < ApplicationRecord
     [increasing_adjustment, decreasing_adjustment]
   end
 
-  def self.csv_export_headers
-    ["Created", "Organization", "Storage Location", "Comment", "Changes"]
-  end
+  def self.generate_csv(adjustments)
+    return nil if adjustments.empty?
 
-  def csv_export_attributes
-    [
-      created_at.strftime("%F"),
-      organization.name,
-      storage_location.name,
-      comment,
-      line_items.count
-    ]
+    Exports::ExportAdjustmentsCSVService
+      .generate_csv(adjustments, adjustments.first.organization)
   end
 
   private

@@ -294,11 +294,21 @@ RSpec.describe "ProductDrives", type: :request do
     end
 
     describe "DELETE #destroy" do
-      it "redirects to the index" do
-        product_drive = create(:product_drive, organization: organization)
+      let(:product_drive) { create(:product_drive, organization: organization) }
 
+      it "redirects to the index" do
         delete product_drive_path(id: product_drive.id)
         expect(response).to redirect_to(product_drives_path)
+      end
+
+      context "when the product drive has associated donations" do
+        it "does not delete and redirects with an error" do
+          create(:donation, product_drive: product_drive)
+
+          delete product_drive_path(id: product_drive.id)
+          expect(response).to redirect_to(product_drive_path(product_drive))
+          expect(flash[:error]).to eq("Cannot delete record because dependent donations exist")
+        end
       end
     end
   end

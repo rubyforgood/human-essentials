@@ -58,7 +58,7 @@ RSpec.describe Exports::ExportPartnersCSVService do
         above_1_2_times_fpl: 25,
         greater_2_times_fpl: 25,
         poverty_unknown: 25,
-        executive_director_name: "executive_director_name", # Columns from the executive_director partial
+        executive_director_name: "executive_director_name", # Columns from the contacts partial
         executive_director_phone: "executive_director_phone",
         executive_director_email: "executive_director_email",
         primary_contact_name: "Jon Ralfeo",
@@ -93,7 +93,7 @@ RSpec.describe Exports::ExportPartnersCSVService do
         :sources_of_funding,
         :area_served,
         :population_served,
-        :executive_director,
+        :contacts,
         :pick_up_person,
         :agency_distribution_information
         ]
@@ -167,7 +167,7 @@ RSpec.describe Exports::ExportPartnersCSVService do
           "% Greater than 2 times FPL",
           "% Poverty Unknown"
         ],
-        executive_director: [
+        contacts: [
           "Executive Director Name",
           "Executive Director Phone",
           "Executive Director Email",
@@ -265,7 +265,7 @@ RSpec.describe Exports::ExportPartnersCSVService do
           "25",
           "25"
         ],
-        executive_director: [
+        contacts: [
           "executive_director_name",
           "executive_director_phone",
           "executive_director_email",
@@ -303,10 +303,10 @@ RSpec.describe Exports::ExportPartnersCSVService do
     end
 
     it "should handle a partner with missing profile info" do
-      # The partner_profile factory defaults to populating the website, primary_contact_name, and primary_contact_email fields
+      # The partner_profile factory defaults to populating the no_social_media_presence, primary_contact_name, and primary_contact_email fields
       partners.first.update(profile: create(
         :partner_profile,
-        website: nil,
+        no_social_media_presence: nil,
         primary_contact_name: nil,
         primary_contact_email: nil
       ))

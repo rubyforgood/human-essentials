@@ -4,6 +4,7 @@
 #
 #  id                          :integer          not null, primary key
 #  email                       :string
+#  info_for_partner            :text
 #  name                        :string
 #  notes                       :text
 #  quota                       :integer
@@ -62,6 +63,7 @@ class Partner < ApplicationRecord
 
   include Filterable
   include Exportable
+
   scope :by_status, ->(status) {
     where(status: status.to_sym)
   }
@@ -146,7 +148,7 @@ class Partner < ApplicationRecord
   end
 
   def children_served_count
-    children.count
+    children.count { |child| !child.archived? }
   end
 
   def family_zipcodes_count

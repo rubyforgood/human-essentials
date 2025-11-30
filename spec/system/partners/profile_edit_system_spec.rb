@@ -32,10 +32,10 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       find("button[data-bs-target='#media_information']").click
       expect(page).to have_css("#media_information.accordion-collapse.collapse", visible: false)
 
-      # Executive director
-      find("button[data-bs-target='#executive_director']").click
-      expect(page).to have_css("#executive_director.accordion-collapse.collapse.show", visible: true)
-      within "#executive_director" do
+      # Contacts
+      find("button[data-bs-target='#contacts']").click
+      expect(page).to have_css("#contacts.accordion-collapse.collapse.show", visible: true)
+      within "#contacts" do
         fill_in "Executive Director Name", with: "Lisa Smith"
       end
 
@@ -54,6 +54,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       find("button[data-bs-target='#media_information']").click
       within "#media_information" do
         fill_in "Website", with: ""
+        uncheck "No Social Media Presence"
       end
 
       # Open Pick up person section and fill in 4 email addresses
@@ -79,7 +80,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       expect(page).to have_content("Enable child based requests At least one request type must be set")
       expect(page).to have_content("Pick up email can't have more than three email addresses")
 
-      # Expect media section, executive director section, and partner settings section to be opened
+      # Expect media section, pick up person section, and partner settings section to be opened
       expect(page).to have_css("#media_information.accordion-collapse.collapse.show", visible: true)
       expect(page).to have_css("#pick_up_person.accordion-collapse.collapse.show", visible: true)
       expect(page).to have_css("#partner_settings.accordion-collapse.collapse.show", visible: true)
@@ -93,7 +94,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
       expect(page).to have_content("Enable child based requests At least one request type must be set")
       expect(page).to have_content("Pick up email can't have more than three email addresses")
 
-      # Expect media section, executive director section, and partner settings section to be opened
+      # Expect media section, pick up person section, and partner settings section to be opened
       expect(page).to have_css("#media_information.accordion-collapse.collapse.show", visible: true)
       expect(page).to have_css("#pick_up_person.accordion-collapse.collapse.show", visible: true)
       expect(page).to have_css("#partner_settings.accordion-collapse.collapse.show", visible: true)

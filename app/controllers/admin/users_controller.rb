@@ -41,13 +41,14 @@ class Admin::UsersController < AdminController
     validate_role_resource_params
     klass = Role::TITLE_TO_RESOURCE[params[:resource_type].to_sym]
     resource = klass&.find(params[:resource_id])
+    existing_user = User.find_by(email: user_params[:email])
     UserInviteService.invite(
       name: user_params[:name],
       email: user_params[:email],
       roles: [params[:resource_type].to_sym],
       resource: resource
     )
-    flash[:notice] = "Created a new user!"
+    flash[:notice] = existing_user ? "Added new role to existing user" : "Created a new user!"
     redirect_to admin_users_path
   rescue => e
     flash.now[:error] = "Failed to create user: #{e}"
@@ -84,6 +85,12 @@ class Admin::UsersController < AdminController
       return
     end
     redirect_back(fallback_location: admin_users_path, notice: "Role added!")
+  end
+
+  def resend_invitation
+    user = User.find(params[:user_id])
+    user.invite!
+    redirect_back(fallback_location: admin_users_path, notice: "#{user.name} reinvited!")
   end
 
   def remove_role

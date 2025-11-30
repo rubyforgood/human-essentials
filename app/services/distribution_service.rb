@@ -19,6 +19,15 @@ class DistributionService
     return self
   end
 
+  def distribution
+    # Return distribution if it has already been defined
+    return @distribution if instance_variable_defined? :@distribution
+
+    # Otherwise try to get this value with possibly
+    # provided distribution_id from initialize
+    @distribution = @distribution_id.present? ? Distribution.find(@distribution_id) : nil
+  end
+
   def success?
     error.nil?
   end
@@ -33,15 +42,6 @@ class DistributionService
 
   def set_error(error)
     @error = error
-  end
-
-  def distribution
-    # Return distribution if it has already been defined
-    return @distribution if instance_variable_defined? :@distribution
-
-    # Otherwise try to get this value with possibly
-    # provided distribution_id from initialize
-    @distribution = @distribution_id.present? ? Distribution.find(@distribution_id) : nil
   end
 
   def distribution_id

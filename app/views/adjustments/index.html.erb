@@ -37,7 +37,7 @@
 
                 </div>
                 <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                   <%= filter_select(scope: :by_user, collection: @users, key: :id, value: :name, selected: @selected_user) %>
+                  <%= filter_select(scope: :by_user, collection: @users, key: :id, value: :preferred_name, selected: @selected_user) %>
                 </div>
                 <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-12">
                   <%= label_tag "Date Range" %>
@@ -77,11 +77,10 @@
               <thead>
               <tr>
                 <th class="text-center">Created</th>
-                <th>Organization</th>
                 <th>Storage location</th>
                 <th>Comment</th>
                 <th>Summary</th>
-                <th>&nbsp;</th>
+                <th class="text-right">Actions</th>
               </tr>
               </thead>
               <tbody>
@@ -90,7 +89,6 @@
                   <td class="date">
                     <time datetime="<%= adjustment.created_at %>"><%= adjustment.created_at.strftime("%B %e, %Y") %></time>
                   </td>
-                  <td><%= adjustment.organization.name %></td>
                   <td><%= adjustment.storage_location.name %></td>
                   <td><%= adjustment.comment %></td>
                   <td><%= pluralize(adjustment.line_items.size, 'change') %></td>

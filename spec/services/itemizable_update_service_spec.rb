@@ -1,7 +1,7 @@
 RSpec.describe ItemizableUpdateService do
   let(:organization) { create(:organization) }
-  let(:storage_location) { create(:storage_location, organization: organization, item_count: 0) }
-  let(:new_storage_location) { create(:storage_location, organization: organization, item_count: 0) }
+  let(:storage_location) { create(:storage_location, organization: organization) }
+  let(:new_storage_location) { create(:storage_location, organization: organization) }
   let(:item1) { create(:item, organization: organization, name: "My Item 1") }
   let(:item2) { create(:item, organization: organization, name: "My Item 2") }
   let(:item3) { create(:item, organization: organization, name: "My Item 3") }
@@ -261,6 +261,35 @@ RSpec.describe ItemizableUpdateService do
         expect(DistributionEvent.count).to eq(0)
         expect(UpdateExistingEvent.count).to eq(1)
         expect(View::Inventory.total_inventory(organization.id)).to eq(52) # 50 + 3 (item1) + 5 (item2) +- 6 (item3)
+      end
+
+      it "should raise an error if there is an intervening snapshot" do
+        itemizable.save!
+        travel(-1.week)
+        SnapshotEvent.publish(organization)
+        travel 1.week
+        itemizable.update!(created_at: 2.weeks.ago)
+        expect do
+          described_class.call(itemizable: itemizable, params: attributes, event_class: DistributionEvent)
+        end.to raise_error("Cannot update distribution because there has been an intervening snapshot of the inventory.")
+      end
+
+      it "should not raise an error if no inventory was changed" do
+        no_change_attrs = {
+          issued_at: 2.days.ago,
+          line_items_attributes: {
+            "0": {item_id: item1.id, quantity: 10},
+            "1": {item_id: item2.id, quantity: 10}
+          }
+        }
+        itemizable.save!
+        travel(-1.week)
+        SnapshotEvent.publish(organization)
+        travel 1.week
+        itemizable.update!(created_at: 2.weeks.ago)
+        expect do
+          described_class.call(itemizable: itemizable, params: no_change_attrs, event_class: DistributionEvent)
+        end.to raise_error("Cannot update distribution because there has been an intervening snapshot of the inventory.")
       end
     end
   end

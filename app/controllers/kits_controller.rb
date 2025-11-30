@@ -1,6 +1,10 @@
 class KitsController < ApplicationController
+  def show
+    redirect_to allocations_kit_path
+  end
+
   def index
-    @kits = current_organization.kits.includes(line_items: :item).class_filter(filter_params)
+    @kits = current_organization.kits.includes(:item, line_items: :item).class_filter(filter_params)
     @inventory = View::Inventory.new(current_organization.id)
     unless params[:include_inactive_items]
       @kits = @kits.active

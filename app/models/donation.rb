@@ -52,6 +52,10 @@ class Donation < ApplicationRecord
     where(manufacturer_id: manufacturer_id)
   }
 
+  scope :by_category, ->(item_category) {
+    joins(line_items: {item: :item_category}).where("item_categories.name ILIKE ?", item_category)
+  }
+
   before_create :combine_duplicates
 
   validates :donation_site, presence:
@@ -63,6 +67,7 @@ class Donation < ApplicationRecord
   validates :source, presence: true, inclusion: { in: SOURCES.values, message: "Must be a valid source." }
   validates :money_raised, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validate :line_items_quantity_is_positive
+  before_destroy :check_no_intervening_snapshot
 
   # TODO: move this to Organization.donations as an extension
   scope :during, ->(range) { where(donations: { issued_at: range }) }
@@ -130,5 +135,12 @@ class Donation < ApplicationRecord
 
   def line_items_quantity_is_positive
     line_items_quantity_is_at_least(1)
+  end
+
+  def check_no_intervening_snapshot
+    intervening = SnapshotEvent.intervening(self)
+    if intervening
+      raise "We can't delete donations entered before #{intervening.event_time.to_date}."
+    end
   end
 end

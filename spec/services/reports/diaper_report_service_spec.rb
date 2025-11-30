@@ -171,8 +171,7 @@ RSpec.describe Reports::DiaperReportService, type: :service, persisted_data: tru
                   "% disposable diapers purchased" => "22%",
                   "% cloth diapers purchased" => "11%",
                   "Money spent purchasing diapers" => "$60.00",
-                  "Purchased from" => "Google, Walmart",
-                  "Vendors diapers purchased through" => "Vendor 1, Vendor 2"},
+                  "Purchased from" => "Google, Walmart, Vendor 1, Vendor 2"},
         name: "Diapers"
       })
     end

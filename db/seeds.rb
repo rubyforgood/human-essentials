@@ -42,6 +42,7 @@ pdx_org = Organization.find_or_create_by!(name: "Pawnee Diaper Bank") do |organi
   organization.state = "IN"
   organization.zipcode = "12345"
   organization.email = "info@pawneediaper.org"
+  organization.bank_is_set_up = true
 end
 Organization.seed_items(pdx_org)
 
@@ -51,6 +52,7 @@ sf_org = Organization.find_or_create_by!(name: "SF Diaper Bank") do |organizatio
   organization.state = "CA"
   organization.zipcode = "90210"
   organization.email = "info@sfdiaperbank.org"
+  organization.bank_is_set_up = false  #sf_org represents a brand new bank
 end
 Organization.seed_items(sf_org)
 
@@ -60,6 +62,7 @@ sc_org = Organization.find_or_create_by!(name: "Second City Essentials Bank") do
   organization.state = Faker::Address.state_abbr
   organization.zipcode = Faker::Address.zip_code
   organization.email = "info@scdiaperbank.org"
+  organization.bank_is_set_up = true
 end
 Organization.seed_items(sc_org)
 
@@ -280,7 +283,7 @@ note = [
   end
 
   # Base profile information all partners should have
-  # Includes fields in the agency_information, executive_director, and pick_up_person partial
+  # Includes fields in the agency_information, contacts, and pick_up_person partial
   # The counties and areas served by the partner are handled elsewere
   profile = Partners::Profile.create!({
     essentials_bank_id: p.organization_id,
@@ -349,7 +352,7 @@ note = [
         receives_essentials_from_other: Faker::Lorem.sentence,
       )
     end
-  
+
     if p.partials_to_show.include? "organizational_capacity"
       profile.update(
         client_capacity: Faker::Lorem.sentence,
@@ -759,6 +762,110 @@ end
   end
 end
 
+# ----------------------------------------------------------------------------
+# Kits
+# ----------------------------------------------------------------------------
+
+complete_orgs.each do |org|
+  # Create comprehensive kits representing each NDBN category
+
+  # Diaper Care Kit - covering multiple diaper categories
+  diaper_kit_params = {
+    name: "Diaper Care Kit",
+    line_items_attributes: [
+      {item_id: org.items.find_by(name: "Kids (Size 1)").id, quantity: 50},
+      {item_id: org.items.find_by(name: "Kids (Size 2)").id, quantity: 50},
+      {item_id: org.items.find_by(name: "Kids (Size 3)").id, quantity: 50},
+      {item_id: org.items.find_by(name: "Wipes (Baby)").id, quantity: 10},
+      {item_id: org.items.find_by(name: "Diaper Rash Cream/Powder").id, quantity: 2}
+    ].compact_blank
+  }
+
+  if diaper_kit_params[:line_items_attributes].any?
+    diaper_kit_service = KitCreateService.new(organization_id: org.id, kit_params: diaper_kit_params)
+    diaper_kit_service.call
+  end
+
+  # Menstrual Care Kit
+  menstrual_kit_params = {
+    name: "Menstrual Care Kit",
+    line_items_attributes: [
+      {item_id: org.items.find_by(name: "Pads").id, quantity: 20},
+      {item_id: org.items.find_by(name: "Tampons").id, quantity: 20},
+      {item_id: org.items.find_by(name: "Liners (Menstrual)").id, quantity: 15}
+    ].compact_blank
+  }
+
+  if menstrual_kit_params[:line_items_attributes].any?
+    menstrual_kit_service = KitCreateService.new(organization_id: org.id, kit_params: menstrual_kit_params)
+    menstrual_kit_service.call
+  end
+
+  # Adult Incontinence Kit
+  adult_kit_params = {
+    name: "Adult Incontinence Kit",
+    line_items_attributes: [
+      {item_id: org.items.find_by(name: "Adult Briefs (Large/X-Large)").id, quantity: 30},
+      {item_id: org.items.find_by(name: "Adult Incontinence Pads").id, quantity: 25},
+      {item_id: org.items.find_by(name: "Wipes (Adult)").id, quantity: 5},
+      {item_id: org.items.find_by(name: "Underpads (Pack)").id, quantity: 5}
+    ].compact_blank
+  }
+
+  if adult_kit_params[:line_items_attributes].any?
+    adult_kit_service = KitCreateService.new(organization_id: org.id, kit_params: adult_kit_params)
+    adult_kit_service.call
+  end
+
+  # Baby Care Essentials Kit - covering miscellaneous category
+  baby_care_kit_params = {
+    name: "Baby Care Essentials Kit",
+    line_items_attributes: [
+      {item_id: org.items.find_by(name: "Bibs (Adult & Child)").id, quantity: 5},
+      {item_id: org.items.find_by(name: "Wipes (Baby)").id, quantity: 8},
+      {item_id: org.items.find_by(name: "Diaper Rash Cream/Powder").id, quantity: 1},
+      {item_id: org.items.find_by(name: "Cloth Diapers (Prefolds & Fitted)").id, quantity: 10}
+    ].compact_blank
+  }
+
+  if baby_care_kit_params[:line_items_attributes].any?
+    baby_care_service = KitCreateService.new(organization_id: org.id, kit_params: baby_care_kit_params)
+    baby_care_service.call
+  end
+
+  # Training Kit - covering training pants category
+  training_kit_params = {
+    name: "Potty Training Kit",
+    line_items_attributes: [
+      {item_id: org.items.find_by(name: "Cloth Potty Training Pants/Underwear").id, quantity: 8},
+      {item_id: org.items.find_by(name: "Kids Pull-Ups (2T-3T)").id, quantity: 20},
+      {item_id: org.items.find_by(name: "Kids Pull-Ups (3T-4T)").id, quantity: 20},
+      {item_id: org.items.find_by(name: "Wipes (Baby)").id, quantity: 5}
+    ].compact_blank
+  }
+
+  if training_kit_params[:line_items_attributes].any?
+    training_kit_service = KitCreateService.new(organization_id: org.id, kit_params: training_kit_params)
+    training_kit_service.call
+  end
+end
+
+# Create kit inventory for storage locations
+complete_orgs.each do |org|
+  org.storage_locations.active.each do |storage_location|
+    org.kits.active.each do |kit|
+      next unless kit.item # Ensure kit has an associated item
+
+      # Create inventory for each kit
+      InventoryItem.create!(
+        storage_location: storage_location,
+        item: kit.item,
+        quantity: Faker::Number.within(range: 10..50)
+      )
+    end
+  end
+end
+
 dates_generator = DispersedPastDatesGenerator.new
 complete_orgs.each do |org|
   # ----------------------------------------------------------------------------
@@ -842,6 +949,46 @@ complete_orgs.each do |org|
     end
 
     DistributionCreateService.new(distribution).call
+  end
+
+  # Create some distributions that use kits instead of individual items
+  kit_items = org.items.joins(:kit).where(kits: {active: true})
+  if kit_items.any?
+    5.times do |index|
+      issued_at = dates_generator.next
+      storage_location = org.storage_locations.active.sample
+      kit_item = kit_items.sample
+
+      # Check if there's inventory for this kit
+      kit_inventory_qty = storage_location.item_total(kit_item.id)
+      next if kit_inventory_qty.zero?
+
+      delivery_method = Distribution.delivery_methods.keys.sample
+      shipping_cost = (delivery_method == "shipped") ? rand(20.0..100.0).round(2).to_s : nil
+
+      kit_distribution = Distribution.new(
+        storage_location: storage_location,
+        partner: random_record_for_org(org, Partner),
+        organization: org,
+        issued_at: issued_at,
+        created_at: 3.days.ago(issued_at),
+        delivery_method: delivery_method,
+        shipping_cost: shipping_cost,
+        comment: "Kit distribution"
+      )
+
+      distribution_qty = [rand(1..3), kit_inventory_qty / 2].min
+      if distribution_qty >= 1
+        kit_distribution.line_items.push(
+          LineItem.new(
+            quantity: distribution_qty,
+            item_id: kit_item.id
+          )
+        )
+
+        DistributionCreateService.new(kit_distribution).call
+      end
+    end
   end
 end
 
@@ -963,8 +1110,6 @@ end
 # ----------------------------------------------------------------------------
 
 Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "new_logo")
-Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "read_events")
-Flipper.enable(:read_events)
 Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "partner_step_form")
 Flipper.enable(:partner_step_form)
 Flipper::Adapters::ActiveRecord::Feature.find_or_create_by(key: "enable_packs")
