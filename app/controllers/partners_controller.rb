@@ -3,6 +3,7 @@
 # of which Partners are associated with which Diaperbanks.
 class PartnersController < ApplicationController
   include Importable
+
   before_action :validate_user_role, only: :show
   skip_before_action :require_organization, only: :show
 
