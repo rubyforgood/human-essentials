@@ -20,7 +20,7 @@ class KitAllocateEvent < Event
   end
 
   def self.publish(kit, storage_location, quantity)
-    create(
+    create!(
       eventable: kit,
       group_id: "kit-allocate-#{kit.id}-#{SecureRandom.hex}",
       organization_id: kit.organization_id,

@@ -1,6 +1,7 @@
 module Partners
   class IndividualsRequestsController < BaseController
     include Validatable
+
     before_action :verify_partner_is_active
     before_action :authorize_verified_partners
 
