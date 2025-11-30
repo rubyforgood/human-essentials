@@ -58,7 +58,9 @@
                         <li class="attached-document d-flex justify-content-between align-items-center p-2 border rounded mb-2" data-document-id="<%= doc.signed_id %>">
                           <%= link_to doc.blob.filename.to_s, rails_blob_path(doc), class: "font-weight-bold w-75 text-truncate" %>
                           <%= f.hidden_field :documents, multiple: true, value: doc.signed_id %>
-                          <%= delete_button_to attachment_path(doc), { text: "Remove", size: "md", confirm: "Are you sure you want to permanently remove this document?" } %>
+                          <%= f.button :button, formmethod: :delete, formaction: attachment_path(doc), class: "btn btn-danger btn-md", data: {disable_with: "Please wait..."} do
+                            fa_icon "trash", text: "Remove"
+                          end %>
                         </li>
                       <% end %>
                     <% end %>

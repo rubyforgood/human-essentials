@@ -1,6 +1,11 @@
 # Simulates the user double clicking on an element specified by a css_selector
 # by using the API provided by Ferrum to manipulate the browser directly.
 #
+# Capybara's double click method and executing Javascript scripts were also tried,
+# but these were not able to reliably cause bugs observed when manually double
+# clicking an element. This method was the only one found to consistently produce
+# the buggy behavior and thus validate that the bug is fixed.
+#
 # @param css_selector [String] The CSS selector for the element to be double clicked.
 #
 # @example Usage

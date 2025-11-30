@@ -156,7 +156,9 @@ RSpec.describe "Storage Locations", type: :system, js: true do
       location1 = create(:storage_location, :with_items)
       visit subject
 
-      expect(page).to have_link('Deactivate', class: "disabled", href: "/storage_locations/#{location1.id}/deactivate")
+      within "form[action='/storage_locations/#{location1.id}/deactivate']" do
+        expect(page).to have_button('Deactivate', class: "disabled")
+      end
     end
 
     it "Allows user to deactivate and reactivate storage locations" do

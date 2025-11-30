@@ -51,7 +51,6 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           # If it tries to mark the partner as approved twice, the second time
           # will fail (the partner is already approved) and show this error
           expect(page).not_to have_content('Failed to approve partner because: ["partner is not waiting for approval"]')
-          # TODO: Verify multiple emails aren't sent?
         end
       end
 
@@ -104,7 +103,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           assert page.has_content? "Partner #{partner_attributes[:name]} added!"
 
           accept_confirm do
-            find('tr', text: partner_attributes[:name]).find_link('Invite').click
+            find('tr', text: partner_attributes[:name]).find_button('Invite').click
           end
 
           assert page.has_content? "Partner #{partner_attributes[:name]} invited!"

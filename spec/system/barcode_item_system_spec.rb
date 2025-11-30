@@ -69,6 +69,29 @@ RSpec.describe "Barcode management", type: :system, js: true do
 
       expect(page).to have_css("table tbody tr", count: 2)
     end
+
+    it "can delete a barcode item" do
+      item = create(:item, name: "Red 1T Diapers", base_item: base_item)
+      create(:barcode_item, organization: organization, barcodeable: item, value: "barcode_to_delete")
+
+      visit subject
+      expect(page).to have_content("barcode_to_delete")
+      click_button "Delete"
+      expect(page).to have_content("Barcode deleted!")
+      expect(page).not_to have_content("barcode_to_delete")
+    end
+
+    it "Double clicking the delete button does not result in the barcode attemping to be deleted twice" do
+      item = create(:item, name: "Red 1T Diapers", base_item: base_item)
+      b_item = create(:barcode_item, organization: organization, barcodeable: item, value: "barcode_to_delete")
+
+      visit subject
+      expect(page).to have_content(b_item.value)
+      ferrum_double_click('form[action*="/barcode_items/"] .btn.btn-danger.btn-xs')
+      expect(page).to have_content("Barcode deleted!")
+      expect(page).not_to have_content("barcode_to_delete")
+      expect(page).not_to have_content("Sorry, you don't have permission to delete this barcode.")
+    end
   end
 
   context "With organization-specific barcodes" do
