@@ -29,8 +29,10 @@ class Audit < ApplicationRecord
   enum :status, { in_progress: 0, confirmed: 1, finalized: 2 }
 
   validate :line_items_quantity_is_not_negative
-  validate :line_items_unique_by_item_id
+  validate :line_items_unique_by_item_id, unless: :merge_duplicates
   validate :user_is_organization_admin_of_the_organization
+
+  attr_accessor :merge_duplicates
 
   def self.finalized_since?(itemizable, *location_ids)
     item_ids = itemizable.line_items.pluck(:item_id)

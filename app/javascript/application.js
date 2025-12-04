@@ -27,6 +27,7 @@ import 'bootstrap'
 import 'controllers'
 
 import 'utils/barcode_items'
+import 'utils/audit_duplicates'
 import 'utils/barcode_scan'
 import 'utils/distributions_and_transfers'
 import 'utils/donations'
