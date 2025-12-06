@@ -884,12 +884,12 @@ RSpec.feature "Distributions", type: :system do
     # therefore the confirmation modal does not appear here.
 
     expect(page).to have_content("Distribution Complete")
-    expect(page).to have_link("Distribution Complete")
+    expect(page).to have_button("Distribution Complete")
 
     expect(View::Inventory.new(organization.id)
       .quantity_for(item_id: item.id, storage_location: storage_location.id)).to eq(0)
 
-    click_link "Distribution Complete"
+    click_button "Distribution Complete"
     expect(page).to have_content('Distribution')
 
     expect(page).to have_content("This distribution has been marked as being completed!")
@@ -916,10 +916,10 @@ RSpec.feature "Distributions", type: :system do
     end
 
     # Make sure the button is there before trying to double click it
-    expect(page.find('a.btn.btn-success.btn-md[href*="/picked_up"]')).to have_content("Distribution Complete")
+    expect(page.find('form[action*="/picked_up"] .btn.btn-success.btn-md')).to have_content("Distribution Complete")
 
     # Double click on the Distribution complete button
-    ferrum_double_click('a.btn.btn-success.btn-md[href*="/picked_up"]')
+    ferrum_double_click('form[action*="/picked_up"] .btn.btn-success.btn-md')
 
     # Capybara will be quick to determine that a screen doesn't have content.
     # Make some positive assertions that only appears on the new screen to make

@@ -59,7 +59,7 @@ class DistributionItemizedBreakdownService
   end
 
   def current_onhand_quantities(inventory)
-    inventory.all_items.group_by(&:name).to_h { |k, v| [k, v.sum(&:quantity)] }
+    inventory.all_items.each_with_object(Hash.new(0)) { |i, h| h[i.name] += i.quantity }
   end
 
   def current_onhand_minimums(inventory)

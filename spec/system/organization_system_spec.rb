@@ -15,7 +15,7 @@ RSpec.describe "Organization management", type: :system, js: true do
       visit organization_path
       accept_confirm do
         click_button dom_id(managed_user, "dropdownMenu")
-        click_link "Remove User"
+        click_button "Remove User"
       end
 
       expect(page).to have_content("User has been removed!")
@@ -26,7 +26,7 @@ RSpec.describe "Organization management", type: :system, js: true do
       visit organization_path
       accept_confirm do
         click_button dom_id(managed_user, "dropdownMenu")
-        click_link "Promote to Admin"
+        click_button "Promote to Admin"
       end
 
       expect(page).to have_content("User has been promoted!")
@@ -37,7 +37,7 @@ RSpec.describe "Organization management", type: :system, js: true do
       managed_user.add_role(Role::ORG_ADMIN, organization)
       visit organization_path
       accept_confirm do
-        click_link "Demote to User"
+        click_button "Demote to User"
       end
 
       expect(page).to have_content("User has been demoted!")

@@ -61,6 +61,16 @@ RSpec.describe AccountRequest, type: :model do
         expect(subject.valid?).to eq(false)
         expect(subject.errors.messages[:email]).to match_array(["already used by an existing User"])
       end
+
+      [:rejected, :admin_closed].each do |status|
+        context "when the status is #{status}" do
+          before { subject.status = status }
+
+          it 'allows the email' do
+            expect(subject).to be_valid
+          end
+        end
+      end
     end
   end
 
