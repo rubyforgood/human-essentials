@@ -52,7 +52,7 @@
               <tbody>
               <% @items.each do |inventory_item| %>
                 <% line_item = @audit.line_items.find { |i| i.item_id == inventory_item.item_id } %>
-                <tr class="<%= line_item.nil? ? "negative" : (@audit.in_progress? ? "highlight" : (line_item.quantity.equal?(inventory_item.quantity) ? "positive" : "highlight")) %>">
+                <tr class="<%= line_item.nil? ? "negative" : (line_item.quantity == inventory_item.quantity ? "positive" : "highlight") %>">
                   <td><%= inventory_item.name %></td>
                   <td><%= line_item&.quantity&.abs || "Not Audited" %></td>
                   <td class="text-right"><%= inventory_item.quantity %></td>

@@ -45,11 +45,11 @@ $(() => {
     if (duplicates.length > 0) {
       // Show modal with duplicate items
       showDuplicateModal(duplicates, itemQuantities, form);
+      e.preventDefault();
     } else {
-      // No duplicates, proceed normally
-      form.trigger('submit');
+      // No duplicates, let the form submit normally with the save_progress button
+      // Don't prevent default - let the button's natural submit behavior work
     }
-    e.preventDefault();
   });
 
   function showDuplicateModal(duplicateItems, duplicateQuantities, form) {
@@ -114,17 +114,12 @@ $(() => {
       // Merge duplicate items before submitting
       mergeDuplicateItems(form);
       
-      // Find and click the actual Save Progress button to preserve its behavior
-      const saveProgressBtn = form.find('button[name="save_progress"]');
-      if (saveProgressBtn.length > 0) {
-        // Temporarily remove our event handler to avoid infinite loop
-        saveProgressBtn.off('click');
-        saveProgressBtn.click();
-      } else {
-        // Fallback: add hidden input and submit
-        form.append('<input type="hidden" name="save_progress" value="Save Progress">');
-        form.trigger('submit');
-      }
+      // Create a hidden button with save_progress name to ensure proper parameter submission
+      const hiddenBtn = $('<button type="submit" name="save_progress" style="display:none;">Save Progress</button>');
+      form.append(hiddenBtn);
+      
+      // Click the hidden button to submit with save_progress parameter
+      hiddenBtn.click();
     });
   }
   
