@@ -341,7 +341,7 @@ GEM
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
     jmespath (1.6.2)
-    json (2.16.0)
+    json (2.17.1)
     jwt (3.1.2)
       base64
     kaminari (1.2.2)
@@ -629,11 +629,12 @@ GEM
       lint_roller (~> 1.1)
       rubocop (>= 1.75.0, < 2.0)
       rubocop-ast (>= 1.38.0, < 2.0)
-    rubocop-rails (2.25.1)
+    rubocop-rails (2.33.4)
       activesupport (>= 4.2.0)
+      lint_roller (~> 1.1)
       rack (>= 1.1)
-      rubocop (>= 1.33.0, < 2.0)
-      rubocop-ast (>= 1.31.1, < 2.0)
+      rubocop (>= 1.75.0, < 2.0)
+      rubocop-ast (>= 1.44.0, < 2.0)
     ruby-graphviz (1.2.5)
       rexml
     ruby-progressbar (1.13.0)
@@ -702,9 +703,9 @@ GEM
     standard-performance (1.8.0)
       lint_roller (~> 1.1)
       rubocop-performance (~> 1.25.0)
-    standard-rails (1.1.0)
+    standard-rails (1.5.0)
       lint_roller (~> 1.0)
-      rubocop-rails (~> 2.25.0)
+      rubocop-rails (~> 2.33.4)
     stimulus-rails (1.3.4)
       railties (>= 6.0.0)
     stringio (3.1.9)
@@ -831,7 +832,7 @@ DEPENDENCIES
   rspec-rails (~> 8.0.2)
   rubocop
   rubocop-performance
-  rubocop-rails (~> 2.25.1)
+  rubocop-rails (~> 2.33.4)
   sass-rails
   shoulda-matchers (~> 6.5)
   simple_form
