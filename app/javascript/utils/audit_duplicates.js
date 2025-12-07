@@ -1,8 +1,7 @@
 import $ from 'jquery';
 
 $(() => {
-  $("button[name='save_progress']").on('click', function (e) {
-
+  function checkForDuplicates(e, buttonName) {
     const form = $(this).closest('form');
     const itemCounts = {}; // Will look like: { "2": 3, "5": 1, "12": 2 }
     const itemNames = {}; // Will look like: { "2": "Item A", "5": "Item B", "12": "Item C" }
@@ -44,15 +43,23 @@ $(() => {
 
     if (duplicates.length > 0) {
       // Show modal with duplicate items
-      showDuplicateModal(duplicates, itemQuantities, form);
+      showDuplicateModal(duplicates, itemQuantities, form, buttonName);
       e.preventDefault();
     } else {
-      // No duplicates, let the form submit normally with the save_progress button
+      // No duplicates, let the form submit normally
       // Don't prevent default - let the button's natural submit behavior work
     }
+  }
+
+  $("button[name='save_progress']").on('click', function (e) {
+    checkForDuplicates.call(this, e, 'save_progress');
   });
 
-  function showDuplicateModal(duplicateItems, duplicateQuantities, form) {
+  $("button[name='confirm_audit']").on('click', function (e) {
+    checkForDuplicates.call(this, e, 'confirm_audit');
+  });
+
+  function showDuplicateModal(duplicateItems, duplicateQuantities, form, buttonName) {
     const itemRows = duplicateItems.map(item => {
       const entries = duplicateQuantities[item.id] || [];
       const total = entries.reduce((sum, entry) => sum + entry.qty, 0);
@@ -114,11 +121,11 @@ $(() => {
       // Merge duplicate items before submitting
       mergeDuplicateItems(form);
       
-      // Create a hidden button with save_progress name to ensure proper parameter submission
-      const hiddenBtn = $('<button type="submit" name="save_progress" style="display:none;">Save Progress</button>');
+      // Create a hidden button with the appropriate name to ensure proper parameter submission
+      const hiddenBtn = $(`<button type="submit" name="${buttonName}" style="display:none;"></button>`);
       form.append(hiddenBtn);
       
-      // Click the hidden button to submit with save_progress parameter
+      // Click the hidden button to submit with the correct parameter
       hiddenBtn.click();
     });
   }
