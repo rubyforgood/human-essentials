@@ -59,5 +59,17 @@
       <%= button_to "Dismiss", "/manage", method: :patch, params: {organization: { bank_is_set_up: true }}, class: "btn btn-primary" %>
     </div>
 
+    <%= render(
+        layout: "shared/csv_import_modal",
+        locals: {
+          import_type: "Partners",
+          csv_template_url: "/partners_template_updated.csv",
+          csv_import_url: import_csv_partners_path,
+        },
+      ) do %>
+      <li>Open the CSV file with Excel or your favourite spreadsheet program.</li>
+      <li>Delete the sample data and enter your partner agency names and addresses in the appropriate columns.</li>
+      <li>Save the file as a CSV file.</li>
+    <% end %>
   <% end %>
 <% end %>
