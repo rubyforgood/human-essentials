@@ -195,6 +195,51 @@ RSpec.describe "Audit management", type: :system, js: true do
         expect(page).to have_content("Delete Audit")
         expect(page).to have_content("Finalize Audit")
       end
+
+      it "detects duplicate items and shows modal", js: true do
+        # Disable server-side validation to test JS modal
+        allow_any_instance_of(Audit).to receive(:line_items_unique_by_item_id)
+        visit subject
+        click_link "New Audit"
+
+        await_select2("#audit_line_items_attributes_0_item_id") do
+          select storage_location.name, from: "Storage location"
+        end
+
+        # Add first entry for the item
+        select item.name, from: "audit_line_items_attributes_0_item_id"
+        fill_in "audit_line_items_attributes_0_quantity", with: "10"
+
+        # Add a new line item row
+        find("[data-form-input-target='addButton']").click
+
+        # Add second entry for the same item
+        within all('.line_item_section').last do
+          item_select = find('select[name*="[item_id]"]')
+          select item.name, from: item_select[:id]
+          quantity_input = find('input[name*="[quantity]"]')
+          fill_in quantity_input[:id], with: "15"
+        end
+
+        # Try to save - should trigger duplicate detection modal
+        click_button "Save Progress"
+
+        # JavaScript modal should appear
+        expect(page).to have_css("#duplicateItemsModal", visible: true)
+        expect(page).to have_content("Multiple Item Entries Detected")
+        expect(page).to have_content("Merge Items")
+        expect(page).to have_content("Make Changes")
+
+        # Test merge functionality
+        click_button "Merge Items"
+
+        # Should merge duplicates and submit successfully
+        expect(page).to have_content("Audit's progress was successfully saved.")
+
+        # Verify only one line item with merged quantity (10 + 15 = 25)
+        expect(Audit.last.line_items.count).to eq(1)
+        expect(Audit.last.line_items.first.quantity).to eq(25)
+      end
     end
 
     context "with an existing audit" do

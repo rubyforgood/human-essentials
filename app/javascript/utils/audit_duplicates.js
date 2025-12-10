@@ -1,13 +1,13 @@
 import $ from 'jquery';
 
 $(() => {
-  function checkForDuplicates(e, buttonName) {
-    const form = $(this).closest('form');
-    const itemCounts = {}; // Will look like: { "2": 3, "5": 1, "12": 2 }
-    const itemNames = {}; // Will look like: { "2": "Item A", "5": "Item B", "12": "Item C" }
-    const itemQuantities = {}; // Will look like: { "2": [{qty: 15, barcode: "123"}, {qty: 10, barcode: "456"}] }
+  function processFormItems(form) {
+    const itemCounts = {};
+    const itemNames = {};
+    const itemQuantities = {};
+    const itemSections = [];
 
-    form.find('select[name$="[item_id]"]').each(function() {
+    form.find('select[name*="[item_id]"]').each(function() {
       const itemId = $(this).val();
       const itemText = $(this).find('option:selected').text();
       const section = $(this).closest('.line_item_section');
@@ -15,8 +15,7 @@ $(() => {
       const itemQuantity = parseInt(quantityInput.val()) || 0;
       const barcodeValue = section.find('.__barcode_item_lookup').val() || '';
       
-      if (!itemId || itemText === "Choose an item" || itemQuantity === 0) {
-        section.remove();
+      if (!itemId || itemId === '' || itemText === "Choose an item" || itemQuantity === 0) {
         return;
       }
       
@@ -24,27 +23,39 @@ $(() => {
       itemNames[itemId] = itemText;
       if (!itemQuantities[itemId]) itemQuantities[itemId] = [];
       itemQuantities[itemId].push({ qty: itemQuantity, barcode: barcodeValue });
+      itemSections.push({ itemId, section, quantity: itemQuantity });
     });
+
+    return { itemCounts, itemNames, itemQuantities, itemSections };
+  }
+
+  function checkForDuplicates(e, buttonName) {
+    e.preventDefault(); // Always prevent default first
+    
+    const form = $(this).closest('form');
+    const { itemCounts, itemNames, itemQuantities } = processFormItems(form);
     
     // Check for duplicates
     const duplicates = Object.keys(itemCounts)
-      .filter(itemId => itemCounts[itemId] > 1)
+      .filter(itemId => itemId && itemId !== '' && itemCounts[itemId] > 1)
       .map(itemId => ({ name: itemNames[itemId], id: itemId }));
 
     if (duplicates.length > 0) {
       // Show modal with duplicate items
       showDuplicateModal(duplicates, itemQuantities, form, buttonName);
-      e.preventDefault();
-    } 
-    // else, allow form submission to proceed
+      return false;
+    } else {
+      // No duplicates, submit the form
+      const hiddenBtn = $(`<button type="submit" name="${buttonName}" style="display:none;"></button>`);
+      form.append(hiddenBtn);
+      form.off('submit'); // Remove event handlers to avoid recursion
+      hiddenBtn.trigger('click');
+    }
   }
 
-  $("button[name='save_progress']").on('click', function (e) {
-    checkForDuplicates.call(this, e, 'save_progress');
-  });
-
-  $("button[name='confirm_audit']").on('click', function (e) {
-    checkForDuplicates.call(this, e, 'confirm_audit');
+  $(document).on('click', "button[name='save_progress'], button[name='confirm_audit']", function (e) {
+    const buttonName = $(this).attr('name');
+    checkForDuplicates.call(this, e, buttonName);
   });
 
   function showDuplicateModal(duplicateItems, duplicateQuantities, form, buttonName) {
@@ -85,9 +96,6 @@ $(() => {
       </div>
     `;
     
-    // Remove existing modal
-    $('#duplicateItemsModal').remove();
-    
     // Add and show modal
     $('body').append(modalHtml);
     $('#duplicateItemsModal').modal('show');
@@ -108,39 +116,31 @@ $(() => {
       const hiddenBtn = $(`<button type="submit" name="${buttonName}" style="display:none;"></button>`);
       form.append(hiddenBtn);
       
-      // Click the hidden button to submit with the correct parameter
+      // // Click the hidden button to submit with the correct parameter
       hiddenBtn.trigger('click');
     });
   }
   
   function mergeDuplicateItems(form) {
-    const itemQuantities = {};
-    const itemSections = [];
+    const { itemSections } = processFormItems(form);
+    const mergedQuantities = {};
     
-    // Collect all line items and their quantities
-    form.find('select[name$="[item_id]"]').each(function() {
-      const itemId = $(this).val();
-      const section = $(this).closest('.line_item_section');
-      const quantityInput = section.find('input[name*="[quantity]"]');
-      const quantity = parseInt(quantityInput.val()) || 0;
-      
-      if (itemId && itemId !== '') {
-        itemSections.push({ itemId, section, quantity });
-        itemQuantities[itemId] = (itemQuantities[itemId] || 0) + quantity;
-      }
+    // Calculate merged quantities
+    itemSections.forEach(({ itemId, quantity }) => {
+      mergedQuantities[itemId] = (mergedQuantities[itemId] || 0) + quantity;
     });
     
     // Find duplicates and merge them
     const processedItems = new Set();
     
-    itemSections.forEach(({ itemId, section, quantity }) => {
+    itemSections.forEach(({ itemId, section }) => {
       if (processedItems.has(itemId)) {
         // This is a duplicate - remove it
         section.remove();
       } else {
         // This is the first occurrence - update quantity to merged total
         const quantityInput = section.find('input[name*="[quantity]"]');
-        quantityInput.val(itemQuantities[itemId]);
+        quantityInput.val(mergedQuantities[itemId]);
         processedItems.add(itemId);
       }
     });
