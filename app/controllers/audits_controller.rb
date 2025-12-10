@@ -51,7 +51,6 @@ class AuditsController < ApplicationController
   def create
     @audit = current_organization.audits.new(audit_params)
     @audit.user = current_user
-    @audit.merge_duplicates = params[:merge_duplicates] == 'true'
     if @audit.save
       save_audit_status_and_redirect(params)
     else

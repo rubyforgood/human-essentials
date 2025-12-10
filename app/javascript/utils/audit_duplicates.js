@@ -14,26 +14,16 @@ $(() => {
       const quantityInput = section.find('input[name*="[quantity]"]');
       const itemQuantity = parseInt(quantityInput.val()) || 0;
       const barcodeValue = section.find('.__barcode_item_lookup').val() || '';
+      
       if (!itemId || itemText === "Choose an item" || itemQuantity === 0) {
+        section.remove();
         return;
       }
+      
       itemCounts[itemId] = (itemCounts[itemId] || 0) + 1;
       itemNames[itemId] = itemText;
       if (!itemQuantities[itemId]) itemQuantities[itemId] = [];
       itemQuantities[itemId].push({ qty: itemQuantity, barcode: barcodeValue });
-    });
-    
-    // Remove rows with zero quantity or no item selected
-    form.find('select[name$="[item_id]"]').each(function() {
-      const itemId = $(this).val();
-      const itemText = $(this).find('option:selected').text();
-      const section = $(this).closest('.line_item_section');
-      const quantityInput = section.find('input[name*="[quantity]"]');
-      const itemQuantity = parseInt(quantityInput.val()) || 0;
-      
-      if (!itemId || itemText === "Choose an item" || itemQuantity === 0) {
-        section.remove();
-      }
     });
     
     // Check for duplicates
@@ -45,10 +35,8 @@ $(() => {
       // Show modal with duplicate items
       showDuplicateModal(duplicates, itemQuantities, form, buttonName);
       e.preventDefault();
-    } else {
-      // No duplicates, let the form submit normally
-      // Don't prevent default - let the button's natural submit behavior work
-    }
+    } 
+    // else, allow form submission to proceed
   }
 
   $("button[name='save_progress']").on('click', function (e) {
@@ -64,33 +52,33 @@ $(() => {
       const entries = duplicateQuantities[item.id] || [];
       const total = entries.reduce((sum, entry) => sum + entry.qty, 0);
       const rows = entries.map((entry, i) => {
-        const barcodeLine = entry.barcode ? `<div style="font-size: 0.85em; color: #666; margin-top: 2px;">Barcode: ${entry.barcode}</div>` : '';
-        if (i === 0) {
-          return `<div style="padding: 8px; margin: 4px 0; background-color: #f8f9fa; border-left: 3px solid #6c757d;">${item.name} - Quantity: ${entry.qty}${barcodeLine}</div>`;
-        } else {
-          return `<div style="padding: 8px; margin: 4px 0; background-color: #fff3cd; border-left: 3px solid #ffc107;"><strong>⚠ Duplicate:</strong> ${item.name} - Quantity: ${entry.qty}${barcodeLine}</div>`;
-        }
+        const barcodeLine = entry.barcode ? `<div class="duplicate-barcode">Barcode: ${entry.barcode}</div>` : '';
+        return `<div class="duplicate-entry">❐ ${item.name} : ${entry.qty}${barcodeLine}</div>`;
       }).join('');
-      return `<div style="margin-bottom: 20px; padding: 10px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 5px;">${rows}<div style="padding: 10px; margin: 10px 0 0 0; background-color: #d1ecf1; border: 2px solid #0c5460; border-radius: 4px; font-weight: bold;">✓ Merged Result - Quantity: ${total}</div></div>`;
+      return `<div class="duplicate-container">${rows}<div class="duplicate-merged">→ Merged Result: ${item.name} : ${total}</div></div>`;
     }).join('');
     const modalHtml = `
       <div class="modal fade" id="duplicateItemsModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-scrollable">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Duplicate Items Detected</h5>
+              <h5 class="modal-title">Multiple Item Entries Detected</h5>
               <button type="button" class="close" data-bs-dismiss="modal">
                 <span>&times;</span>
               </button>
             </div>
             <div class="modal-body">
               <p><strong>The following items have multiple entries:</strong></p>
-              <div>${itemRows}</div>
-              <p style="margin-top: 15px; padding: 10px; background-color: #f8f9fa; border-left: 3px solid #6c757d;">Choose <strong>Merge Items</strong> to combine quantities and continue, or <strong>Review Entries</strong> to go back and make changes.</p>
+              <div class="duplicate-items-list">${itemRows}</div>
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Review Entries</button>
-              <button type="button" class="btn btn-warning" id="confirmMerge">Merge Items</button>
+            <div class="modal-footer duplicate-modal-footer">
+              <p class="duplicate-modal-text">
+                Choose <strong>Merge Items</strong> to combine quantities and continue, or <strong>Make Changes</strong> to go back and edit.
+              </p>
+              <div class="duplicate-modal-buttons">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Make Changes</button>
+                <button type="button" class="btn btn-success" id="confirmMerge">Merge Items</button>
+              </div>
             </div>
           </div>
         </div>
@@ -109,12 +97,7 @@ $(() => {
       $('#duplicateItemsModal').modal('hide');
     });
     
-    // Handle review button
-    $('#duplicateItemsModal .btn-secondary').on('click', function() {
-      $('#duplicateItemsModal').modal('hide');
-    });
-    
-    // Handle confirm button
+    // Handle Merge Items button
     $('#confirmMerge').on('click', function() {
       $('#duplicateItemsModal').modal('hide');
       
@@ -126,7 +109,7 @@ $(() => {
       form.append(hiddenBtn);
       
       // Click the hidden button to submit with the correct parameter
-      hiddenBtn.click();
+      hiddenBtn.trigger('click');
     });
   }
   
