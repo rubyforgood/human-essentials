@@ -87,7 +87,7 @@ RSpec.describe "Audit management", type: :system, js: true do
           expect(page).to have_content(audit_quantity)
 
           accept_confirm do
-            click_link "Finalize Audit"
+            click_button "Finalize Audit"
           end
           expect(page.find(".alert-info")).to have_content "Audit is Finalized"
 
@@ -254,7 +254,7 @@ RSpec.describe "Audit management", type: :system, js: true do
         expect(page).to have_content("Delete Audit")
         expect do
           accept_confirm do
-            click_link "Delete Audit"
+            click_button "Delete Audit"
           end
           expect(page).to have_content("Audit is successfully deleted.")
         end.to change { Audit.count }.by(-1)
@@ -302,7 +302,7 @@ RSpec.describe "Audit management", type: :system, js: true do
         expect(page).to have_content("Delete Audit")
         expect do
           accept_confirm do
-            click_link "Delete Audit"
+            click_button "Delete Audit"
           end
           expect(page).to have_content("Audit is successfully deleted.")
         end.to change { Audit.count }.by(-1)
@@ -314,7 +314,7 @@ RSpec.describe "Audit management", type: :system, js: true do
         expect(page).to have_content("Finalize Audit")
         expect do
           accept_confirm do
-            click_link "Finalize Audit"
+            click_button "Finalize Audit"
           end
           expect(page).to have_content("Audit is Finalized.")
         end.to change { Audit.finalized.count }.by(1)
@@ -329,7 +329,7 @@ RSpec.describe "Audit management", type: :system, js: true do
           expect(page).to have_content("Finalize Audit")
           expect do
             accept_confirm do
-              click_link "Finalize Audit"
+              click_button "Finalize Audit"
             end
             expect(page).to have_content("Audit is Finalized.")
           end.to change { storage_location.size }.by(quantity - item_quantity)
@@ -339,7 +339,7 @@ RSpec.describe "Audit management", type: :system, js: true do
           visit subject
           expect(page).to have_content("Finalize Audit")
           accept_confirm do
-            click_link "Finalize Audit"
+            click_button "Finalize Audit"
           end
           expect(page).not_to have_content("Resume Audit")
           expect(page).not_to have_content("Delete Audit")
@@ -353,7 +353,7 @@ RSpec.describe "Audit management", type: :system, js: true do
           visit subject
           expect(page).to have_content("Finalize Audit")
           accept_confirm do
-            click_link "Finalize Audit"
+            click_button "Finalize Audit"
           end
           expect(page).not_to have_content("Delete Audit")
           # Actual Deletion(`delete :destroy`) Check is done in audits_controller_spec
@@ -376,7 +376,7 @@ RSpec.describe "Audit management", type: :system, js: true do
             visit subject
             expect do
               accept_confirm do
-                click_link "Finalize Audit"
+                click_button "Finalize Audit"
               end
               expect(page).to have_content("Audit is Finalized.")
             end.to change { storage_location.size }.by(quantity - item_quantity)

@@ -15,7 +15,7 @@
                 <i class="fa fa-clock"></i> Pending Approval
               <% end %>
             <% else %>
-              <%= link_to partners_approval_request_path, method: :post, class: "btn btn-success" do %>
+              <%= button_to partners_approval_request_path, method: :post, data: {disable_with: "Please wait..."}, class: "btn btn-success", form_class: "d-inline-block" do %>
                 <i class="fa fa-paper-plane"></i> Submit for Approval
               <% end %>
             <% end %>

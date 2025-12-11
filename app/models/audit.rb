@@ -19,6 +19,7 @@ class Audit < ApplicationRecord
   belongs_to :storage_location
   belongs_to :adjustment, optional: true
 
+  include Exportable
   include Itemizable
   include Filterable
 
@@ -48,6 +49,26 @@ class Audit < ApplicationRecord
     unless user.has_role?(Role::ORG_ADMIN, organization)
       errors.add :user, "user must be an organization admin of the organization"
     end
+  end
+
+  def self.generate_csv(audits)
+    audited_items = audits.flat_map { |audit| audit.line_items.map(&:name) }.uniq
+    headers = csv_export_headers + audited_items
+
+    CSV.generate(write_headers: true, headers: headers) do |csv|
+      audits.map do |audit|
+        audit_hash = audited_items.index_with(0)
+        audit.line_items.each { |li| audit_hash[li.name] = li.quantity }
+
+        row = [audit.updated_at.strftime("%B %d %Y"), audit.status, audit.storage_location.name] + audit_hash.values
+
+        csv << row.map { |attr| normalize_csv_attribute(attr) }
+      end
+    end
+  end
+
+  def self.csv_export_headers
+    ["Audit Date", "Audit Status", "Storage Location Name"]
   end
 
   private
