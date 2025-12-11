@@ -56,7 +56,7 @@ class Reports::AnnualReportsController < ApplicationController
 
   def get_range_report(year_start, year_end)
     (year_start..year_end).map do |year|
-      Reports.retrieve_report(organization: current_organization, year: year)
+      Reports.retrieve_report(organization: current_organization, year: year, recalculate: true)
     rescue ActiveRecord::RecordInvalid => e
       Rails.logger.error("Failed to retrieve annual report for year #{year}: #{e.message}")
       nil
