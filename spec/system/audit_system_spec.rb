@@ -231,14 +231,18 @@ RSpec.describe "Audit management", type: :system, js: true do
         expect(page).to have_content("Make Changes")
 
         # Test merge functionality
-        click_button "Merge Items"
-
-        # Should merge duplicates and submit successfully
-        expect(page).to have_content("Audit's progress was successfully saved.")
+        audit_id = nil
+        expect {
+          click_button "Merge Items"
+          expect(page).to have_content("Audit's progress was successfully saved.")
+          audit_id = Audit.maximum(:id)
+        }.to change { Audit.count }.by(1)
 
         # Verify only one line item with merged quantity (10 + 15 = 25)
-        expect(Audit.last.line_items.count).to eq(1)
-        expect(Audit.last.line_items.first.quantity).to eq(25)
+        created_audit = Audit.find(audit_id)
+        line_item = created_audit.line_items.find_by(item_id: item.id)
+        expect(created_audit.line_items.count).to eq(1)
+        expect(line_item.quantity).to eq(25)
       end
     end
 

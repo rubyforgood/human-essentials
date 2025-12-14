@@ -106,20 +106,18 @@ export default class extends Controller {
     duplicates.forEach(item => {
       const total = item.entries.reduce((sum, entry) => sum + entry.quantity, 0)
 
-      // Keep the first entry, remove the rest
+      // Separate the first entry from remaining entries
       const [firstEntry, ...remainingEntries] = item.entries
       
       // Update the first entry with the merged total
       firstEntry.section.querySelector('input[name*="[quantity]"]').value = total
       
-      // Remove all duplicate entries
+      // Remove all duplicate entries from the form submission
       remainingEntries.forEach(entry => entry.section.remove())
     })
 
-    document.getElementById('duplicateItemsModal')?.remove()
-    document.querySelector('.modal-backdrop')?.remove()
-    document.body.classList.remove('modal-open')
-    document.body.style.removeProperty('overflow')
+    const modal = new bootstrap.Modal(document.getElementById('duplicateItemsModal'))
+    modal.hide()
     
     this.submitForm(buttonName)
   }
