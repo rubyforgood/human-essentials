@@ -4,6 +4,15 @@ export default class extends Controller {
   connect() {
     this.boundHandleSubmit = this.handleSubmit.bind(this)
     this.element.addEventListener("submit", this.boundHandleSubmit)
+    
+    // Disable Rails UJS for this form to prevent "Saving" state
+    this.element.removeAttribute('data-remote')
+    
+    // Remove data-disable-with from all submit buttons
+    const buttons = this.element.querySelectorAll('input[type="submit"], button[type="submit"]')
+    buttons.forEach(button => {
+      button.removeAttribute('data-disable-with')
+    })
   }
 
   handleSubmit(event) {
