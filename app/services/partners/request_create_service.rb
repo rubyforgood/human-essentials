@@ -65,9 +65,7 @@ module Partners
         pre_existing_entry = items[input_item['item_id']]
 
         if pre_existing_entry
-          if pre_existing_entry.request_unit != input_item['request_unit']
-            errors.add(:base, "Please use the same unit for every #{Item.find(input_item["item_id"]).name}")
-          else
+          unless pre_existing_entry.request_unit != input_item['request_unit']
             pre_existing_entry.quantity = (pre_existing_entry.quantity.to_i + input_item['quantity'].to_i).to_s
             # NOTE: When this code was written (and maybe it's still the
             # case as you read it!), the FamilyRequestsController does a
@@ -82,7 +80,7 @@ module Partners
         end
 
         if input_item['request_unit'].to_s == '-1' # nothing selected
-          errors.add(:base, "Please select a unit for #{Item.find(input_item["item_id"]).name}")
+          errors.add(:base, "Please select a unit for #{Item.find_by_id(input_item["item_id"]).name}")
         end
 
         item_request = Partners::ItemRequest.new(
@@ -103,6 +101,29 @@ module Partners
           quantity: ir.quantity,
           request_unit: ir.request_unit
         }.compact
+      end
+
+      # Validate request quantity doesn't exceed the request limit for the item and unit type
+      partner_request.request_items.each do |ir|
+        item = Item.find_by_id(ir["item_id"])
+        next if item.nil?
+        unit_type = ir["request_unit"]
+        quantity_requested = ir["quantity"].to_i
+
+        limit = if unit_type.blank?
+          item.unit_request_limit
+        else
+          item.request_units.where(name: unit_type)&.first&.request_limit
+        end
+
+        if limit.present? && (quantity_requested > limit)
+          message = if unit_type.blank?
+            "#{item.name}: You requested #{quantity_requested}, but are limited to #{limit}"
+          else
+            "#{item.name}: You requested #{quantity_requested} #{unit_type&.pluralize}, but are limited to #{limit} #{unit_type&.pluralize}"
+          end
+          errors.add(:base, message)
+        end
       end
 
       partner_request
