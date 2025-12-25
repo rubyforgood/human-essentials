@@ -3,6 +3,7 @@
 <tr>
   <th>Name</th>
   <th>Items</th>
+  <th>Value for kit</th>
   <th>Allocations</th>
   <th class="text-right">Actions</th>
 </tr>
@@ -17,6 +18,12 @@
             <li><%= "#{item_hash[:quantity]} #{item_hash[:name]}" %></li>
           <% end %>
         </ul>
+      </td>
+      <td>
+        <span class="tooltip-target" data-toggle="tooltip" data-placement="top" title="Total value of all items in this kit based on current inventory item values">
+          <%= number_to_currency(kit.value_in_dollars) %>
+          <i class="fa fa-info-circle"></i>
+        </span>
       </td>
       <td class='d-flex flex-column'>
         <table>
