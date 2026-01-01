@@ -389,7 +389,7 @@ GEM
       net-pop
       net-smtp
     marcel (1.0.4)
-    matrix (0.4.2)
+    matrix (0.4.3)
     memflash (2.6.0)
       actionpack (>= 7.0)
     memory_profiler (1.1.0)
