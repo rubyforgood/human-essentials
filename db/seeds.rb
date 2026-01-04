@@ -76,7 +76,8 @@ Organization.all.find_each do |org|
 end
 
 def seed_random_item_with_name(organization, name)
-  base_items = BaseItem.all.map(&:to_h)
+  # Once we break the link between BaseItem and Item, we can remove the 'kit' BaseItem, and change this to BaseItem.all CLF 20251202
+  base_items = BaseItem.where.not(reporting_category: nil).map(&:to_h)
   base_item = Array.wrap(base_items).sample
   base_item[:name] = name
   organization.seed_items(base_item)
