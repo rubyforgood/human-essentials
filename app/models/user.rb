@@ -20,7 +20,6 @@
 #  last_sign_in_ip        :inet
 #  name                   :string
 #  organization_admin     :boolean
-#  pending_role_invites   :text
 #  provider               :string
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
