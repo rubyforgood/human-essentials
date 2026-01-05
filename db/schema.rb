@@ -520,6 +520,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_07_141240) do
     t.boolean "receive_email_on_requests", default: false, null: false
     t.boolean "include_in_kind_values_in_exported_files", default: false, null: false
     t.string "reminder_schedule_definition"
+    t.boolean "include_packages_in_distribution_export", default: false, null: false
     t.boolean "bank_is_set_up", default: false, null: false
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
   end
@@ -548,10 +549,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_07_141240) do
 
   create_table "partner_profiles", force: :cascade do |t|
     t.bigint "essentials_bank_id"
-    t.text "application_data"
     t.integer "partner_id"
     t.string "name"
-    t.string "distributor_type"
     t.string "agency_type"
     t.text "agency_mission"
     t.string "address1"
@@ -569,7 +568,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_07_141240) do
     t.string "program_age"
     t.boolean "case_management"
     t.boolean "evidence_based"
-    t.text "program_client_improvement"
     t.string "essentials_use"
     t.string "receives_essentials_from_other"
     t.boolean "currently_provide_diapers"
