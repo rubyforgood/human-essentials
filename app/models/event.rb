@@ -45,6 +45,7 @@ class Event < ApplicationRecord
   def no_intervening_snapshot
     return if is_a?(SnapshotEvent)
     return unless eventable.respond_to?(:organization)
+    return if eventable.is_a?(Kit)
 
     intervening = SnapshotEvent.intervening(eventable)
     if intervening.present?

@@ -15,7 +15,7 @@ RSpec.describe "Organization management", type: :system, js: true do
       visit organization_path
       accept_confirm do
         click_button dom_id(managed_user, "dropdownMenu")
-        click_link "Remove User"
+        click_button "Remove User"
       end
 
       expect(page).to have_content("User has been removed!")
@@ -26,7 +26,7 @@ RSpec.describe "Organization management", type: :system, js: true do
       visit organization_path
       accept_confirm do
         click_button dom_id(managed_user, "dropdownMenu")
-        click_link "Promote to Admin"
+        click_button "Promote to Admin"
       end
 
       expect(page).to have_content("User has been promoted!")
@@ -37,7 +37,7 @@ RSpec.describe "Organization management", type: :system, js: true do
       managed_user.add_role(Role::ORG_ADMIN, organization)
       visit organization_path
       accept_confirm do
-        click_link "Demote to User"
+        click_button "Demote to User"
       end
 
       expect(page).to have_content("User has been demoted!")
@@ -74,6 +74,8 @@ RSpec.describe "Organization management", type: :system, js: true do
       it_behaves_like "deadline and reminder form", "organization", "Save", :post_form_submit
 
       it "the deadline day form's reminder and deadline dates are consistent with the dates calculated by the FetchPartnersToRemindNowService and DeadlineService" do
+        travel_to Time.zone.local(2025, 9, 30)
+        refresh
         choose "Day of Month"
         fill_in "organization_reminder_schedule_service_day_of_month", with: safe_add_days(Time.zone.now, 1).day
         fill_in "Deadline day in reminder email", with: safe_add_days(Time.zone.now, 2).day

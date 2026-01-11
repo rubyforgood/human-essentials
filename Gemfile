@@ -10,7 +10,7 @@ end
 # User management and login workflow.
 gem "devise", '>= 4.7.1'
 # Postgres database adapter.
-gem "pg", "~> 1.6.1"
+gem "pg", "~> 1.6.2"
 # Web server.
 gem "puma"
 # Rails web framework.
@@ -151,16 +151,16 @@ group :development, :test do
   # Debugger which supports rdbg and Shopify Ruby LSP VSCode extension
   gem "debug", ">= 1.0.0"
   # RSpec behavioral testing framework for Rails.
-  gem "rspec-rails", "~> 8.0.0"
+  gem "rspec-rails", "~> 8.0.2"
   # Static analysis / linter.
   gem "rubocop"
   # Rails add-on for static analysis.
   gem 'rubocop-performance'
-  gem "rubocop-rails", "~> 2.25.1"
+  gem "rubocop-rails", "~> 2.33.4"
   # More concise test ("should") matchers
   gem "shoulda-matchers", "~> 6.5"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.50"
+  gem "standard", "~> 1.52"
   gem "standard-rails"
   gem "standard-performance"
   # Erb linter.
@@ -208,7 +208,7 @@ group :test do
   # Show code coverage.
   gem 'simplecov'
   # Mock HTTP requests and ensure they are not called during tests.
-  gem "webmock", "~> 3.25"
+  gem "webmock", "~> 3.26"
   # Interface capybara to chrome headless
   gem "cuprite"
   # Read PDF files for tests

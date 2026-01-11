@@ -87,7 +87,7 @@ RSpec.describe "Distributions", type: :request do
         get distributions_path
         page = Nokogiri::HTML(response.body)
         edit = page.at_css("a[href='#{edit_distribution_path(id: distribution.id)}']")
-        reclaim = page.at_css("a.btn-danger[href='#{distribution_path(id: distribution.id)}']")
+        reclaim = page.at_css("form[action='#{distribution_path(id: distribution.id)}'] .btn-danger")
         expect(edit.attr("class")).not_to match(/disabled/)
         expect(reclaim.attr("class")).not_to match(/disabled/)
         expect(response.body).not_to match(/Has Inactive Items/)
@@ -102,7 +102,7 @@ RSpec.describe "Distributions", type: :request do
           get distributions_path
           page = Nokogiri::HTML(response.body)
           edit = page.at_css("a[href='#{edit_distribution_path(id: distribution.id)}']")
-          reclaim = page.at_css("a.btn-danger[href='#{distribution_path(id: distribution.id)}']")
+          reclaim = page.at_css("form[action='#{distribution_path(id: distribution.id)}'] .btn-danger")
           expect(edit.attr("class")).to match(/disabled/)
           expect(reclaim.attr("class")).to match(/disabled/)
           expect(response.body).to match(/Has Inactive Items/)

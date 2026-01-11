@@ -385,6 +385,9 @@ RSpec.describe InventoryAggregate do
         {item_id: item1.id, quantity: 10},
         {item_id: item2.id, quantity: 3}
       ])
+      # it should work even if snapshot is after the kit
+      kit.update!(created_at: 1.week.ago)
+      SnapshotEvent.publish(organization)
 
       KitAllocateEvent.publish(kit, storage_location1.id, 2)
 
