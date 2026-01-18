@@ -1,3 +1,7 @@
+# Don't technically need to pull in csv for the code itself,
+# but this ensures that the unit test can run in isolation
+require 'csv'
+
 module Exports
   class ExportDistributionsCSVService
     include DistributionHelper
@@ -135,7 +139,8 @@ module Exports
       row = base_table.values.map { |closure| closure.call(distribution) }
 
       item_names.each do |item_name|
-        line_items = distribution.line_items.where(item: @organization.items.find_by(name: item_name))
+        # We are doing this in-memory so that we can use the already-loaded line item records
+        line_items = distribution.line_items.select { |item| item.name == item_name }
 
         row << line_items.sum(&:quantity)
         row << Money.new(line_items.sum(&:value_per_line_item)) if @organization.include_in_kind_values_in_exported_files
