@@ -1,3 +1,5 @@
+# Don't technically need to pull in csv for the code itself,
+# but this ensures that the unit test can run in isolation
 require 'csv'
 
 module Exports
