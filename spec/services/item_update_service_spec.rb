@@ -8,7 +8,7 @@ RSpec.describe ItemUpdateService, type: :service do
 
     let(:kit) { create(:kit) }
     let(:item) { create(:item, kit: kit) }
-    let(:item2) { create(:item, kit: kit) }
+    let(:line_item) { create(:line_item, item: item, quantity: 1) }
     let(:params) do
       {
         name: "Updated Item Name",
@@ -17,11 +17,9 @@ RSpec.describe ItemUpdateService, type: :service do
       }
     end
     let(:request_unit_ids) { [] }
-    let(:kit_value_in_cents) do
-      kit.line_items.reduce(0) do |sum, li|
-        item = Item.find(li.item_id)
-        sum + item.value_in_cents.to_i * li.quantity.to_i
-      end
+
+    before do
+      kit.line_items = [line_item]
     end
 
     context "params are ok" do
@@ -42,7 +40,7 @@ RSpec.describe ItemUpdateService, type: :service do
       it "updates the kit value_in_cents" do
         subject
         kit.reload
-        expect(kit.value_in_cents).to eq(kit_value_in_cents)
+        expect(kit.value_in_cents).to eq(params[:value_in_cents])
       end
     end
 
