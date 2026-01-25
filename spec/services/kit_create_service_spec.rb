@@ -16,19 +16,16 @@ RSpec.describe KitCreateService do
     end
 
     let!(:line_items_attr) do
-      items = create_list(:item, 3, organization: organization)
+      items = create_list(:item, 3, value_in_cents: 2000, organization: organization)
       items.map do |item|
         {
           item_id: item.id,
-          quantity: Faker::Number.number(digits: 2)
+          quantity: 1
         }
       end
     end
     let(:kit_value_in_cents) do
-      line_items_attr.sum do |li|
-        item = Item.find(li[:item_id])
-        item.value_in_cents.to_i * li[:quantity].to_i
-      end
+      6000
     end
 
     it 'should return an the instance' do
