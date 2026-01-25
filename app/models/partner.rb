@@ -44,6 +44,7 @@ class Partner < ApplicationRecord
   has_many :families, dependent: :destroy, class_name: 'Partners::Family'
   has_many :children, through: :families, class_name: 'Partners::Child'
   has_many :authorized_family_members, through: :families, class_name: 'Partners::AuthorizedFamilyMember'
+  has_one :default_storage_location, class_name: 'StorageLocation', dependent: :nullify, foreign_key: 'id', primary_key: 'default_storage_location_id', inverse_of: false
 
   has_many_attached :documents
 
