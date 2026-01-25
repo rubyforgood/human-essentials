@@ -520,6 +520,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_26_084615) do
     t.boolean "receive_email_on_requests", default: false, null: false
     t.boolean "include_in_kind_values_in_exported_files", default: false, null: false
     t.string "reminder_schedule_definition"
+    t.boolean "include_packages_in_distribution_export", default: false, null: false
     t.boolean "bank_is_set_up", default: false, null: false
     t.index ["latitude", "longitude"], name: "index_organizations_on_latitude_and_longitude"
   end
