@@ -176,21 +176,6 @@ module Partners
 
     # These are columns which currently do not appear in any partial of the profile form.
     # It is possible these will be removed in the future.
-    self.ignored_columns += %w[
-      application_data
-      distributor_type
-      evidence_based_description
-      program_client_improvement
-      incorporate_plan
-      turn_away_child_care
-      responsible_staff_position
-      trusted_pickup
-      serve_income_circumstances
-      internal_db
-      maac
-      pick_up_method
-      ages_served
-    ]
 
     def client_share_total
       # client_share could be nil
