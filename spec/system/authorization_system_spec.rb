@@ -46,7 +46,7 @@ RSpec.describe "Authorization", type: :system, js: true do
         visit new_distribution_path
         select "Test Partner", from: "Partner"
         select "Test Storage Location", from: "From storage location"
-        first('input[name="authenticity_token"]', visible: false).set("NOTAVALIDCSRFTOKEN")
+        first('form[action="/distributions"] input[name="authenticity_token"]', visible: false).set("NOTAVALIDCSRFTOKEN")
         page.execute_script("$(\"meta[name='csrf-token']\").attr('content', 'NOTAVALIDCSRFTOKEN');")
         click_button "Save"
         expect(current_path).to eql new_distribution_path
