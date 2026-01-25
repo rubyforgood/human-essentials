@@ -45,4 +45,4 @@ This bit is for information only -- A limited number of Human Essentials staff h
 - Administer Base Items
 - Administer the list of NDBN members
 
-[Prior: Customization](getting_started_customization.md)[Next: User Management](getting_started_user_management.md)
+[Prior: Customization](getting_started_customization.md)  [Next: User Management](getting_started_user_management.md)

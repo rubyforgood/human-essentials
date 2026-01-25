@@ -4,6 +4,7 @@ RSpec.describe DateRangeHelper do
   let(:dummy_class) do
     Class.new do
       include DateRangeHelper
+
       attr_accessor :params, :flash
 
       def initialize(params = {}, flash = nil)

@@ -39,6 +39,11 @@ class ReportsController < ApplicationController
     @distribution_data = received_distributed_data(helpers.selected_range)
   end
 
+  def itemized_requests
+    requests = current_organization.requests.during(helpers.selected_range)
+    @itemized_request_data = RequestItemizedBreakdownService.call(organization: current_organization, request_ids: requests.pluck(:id))
+  end
+
   private
 
   def total_purchased_unformatted(range = selected_range)

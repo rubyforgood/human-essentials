@@ -1,11 +1,11 @@
 # Partner Profiles
-Partner Profiles allow you to gather and hold a lot of information about your Partners that may be useful for meeting your regulatory requirements, managing their experience, and for grant-writing.  
+Partner Profiles allow you to gather and hold a lot of information about your Partners that may be useful for meeting your regulatory requirements, managing their experience, and for grant-writing.
 
 There is a *lot* of information in the profiles, and the information that is needed varies from bank to bank.  Once you decide what information you need from your partners, you can set up the Partner Profiles to show the sections that you need, customizing it through ["My organization"](getting_started_customization.md).
 
 ## How does a Partner fill in and submit their profile
 
-In the Partner's view of the system,  they can click on "Edit My Profile" to fill in all the information you want.  
+In the Partner's view of the system,  they can click on "Edit My Profile" to fill in all the information you want.
 Once they have saved this,  they will also see a "Submit for Approval" button.   Clicking that changes their status to "Waiting for Approval", and makes them appear in your [dashboard](essentials_dashboard.md)  list of partners waiting for approval, as well as making a "Review Partner's application" button appear beside them in your view of all the Partners.
 
 # Viewing a Partner Profile
@@ -17,7 +17,7 @@ The Partner's profile is viewable by clicking Partner Agencies in the left hand 
 
 More information about the partner profile can be found under "Editing a Partner's Profile", below.
 # Editing a Partner's Profile
-You can edit a Partner Profile clicking Partner Agencies in the left hand menu, then All Partners, then "view" beside the partner in question. Scroll down to "Partner Profile", then click "Edit Information."
+You can edit a Partner Profile clicking Partner Agencies in the left hand menu, then All Partners, then "view" beside the partner in question. Scroll down to "Partner Profile", then click "Edit partner profile"
 
 
 ![Partner Profile Edit Navigation 1](images/partners/partners_profile_edit_navigation_1.png)
@@ -42,8 +42,7 @@ The high level sections of the partner profile are:
 - Sources of Funding
 - Area Served (County/Client Share %)
 - Population Served
-- Executive Director
-- Primary Contact
+- Contacts
 - Pick up Person
 - Race/Ethnicity of Client Base
 - Agency Distribution Information
@@ -77,7 +76,7 @@ Sometimes, a large agency may have a separate address for a specific program or 
 
 ### Media Information
 ![screenshot of expanded media information section](images/partners/partners_profile_edit_media.png)
-This provides a place for the agency to indicate their major communication outlets. 
+This provides a place for the agency to indicate their major communication outlets.
 
 *If* the bank chooses to ask for this information,  the Partner must fill in at least one of the fields:
 
@@ -89,9 +88,9 @@ This provides a place for the agency to indicate their major communication outle
 
 ### Agency Stability
 ![screenshot of expanded agency stability section](images/partners/partners_profile_edit_agency_stability.png)
-This section is about the maturity of the agency. 
+This section is about the maturity of the agency.
 
-None of these fields are mandatory. 
+None of these fields are mandatory.
 
 - Year founded
 - Form 990
@@ -125,7 +124,7 @@ How does the agency get its funding?
 
 This asks what county/county equivalents the agency serves and what proportion of their client share is in which area.
 
-At this time, this only covers U.S. counties and equivalents.   We believe the list covers *all* of the U.S, including some areas that are not technically counties.    
+At this time, this only covers U.S. counties and equivalents.   We believe the list covers *all* of the U.S, including some areas that are not technically counties.
 Let us know if you need more!
 
 The sum of the client share has to be either 0 or 100, and the numbers have to be positive whole numbers.
@@ -165,19 +164,23 @@ There is no check on whether the numbers add up to 100 -- because there may be o
 - % Greater than 2 times FPL
 - % Poverty Unknown
 
-### Executive Director
+### Contacts
 ![screenshot of expanded executive director section](images/partners/partners_profile_edit_executive.png)
 ![NOTE] This section currently contains both Executive Director and Primary Contact for the partner.  We have splitting them up in our queue.
 Contact information for the head of the agency:
-- 
+-
 - Executive Director Name
 - Executive Director Phone
 - Executive Director Email
+- Primary Contact Name
+- Primary Contact Phone
+- Primary Contact Cell
+- Primary Contact Email
 
 This is for your information only.  It is not used for any emails.
 
 #### Primary Contact
-Contact information for your bank's primary contact 
+Contact information for your bank's primary contact
 - Primary Contact Name
 - Primary Contact Phone
 - Primary Contact Cell
@@ -190,7 +193,7 @@ This is for your information only.  It is not used for any emails.
 The Pick up person (as well as the person who made the Request) will receive an email  when a Distribution is scheduled, if the Distribution type is "Pick up"
 - Pick Up Person Name
 - Pick Up Person's Phone #
-- Pick Up Person's Email 
+- Pick Up Person's Email
   - This can be multiple, comma-separated emails.
 
 ### Agency Distribution Information
@@ -198,7 +201,7 @@ The Pick up person (as well as the person who made the Request) will receive an 
 This section is about the agency's practices when distributing to their clients.
 - Distribution Times
 - New Client Times
-- More Docs Required 
+- More Docs Required
   - This is meant to be the documentation required for new clients
 
 ### Additional Documents

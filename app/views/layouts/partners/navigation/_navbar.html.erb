@@ -1,27 +1,19 @@
 <li id="help" class="nav-item dropdown">
   <%= link_to 'Need Help?', partners_help_path, class: 'nav-link bg-yellow-400 mx-2 font-bold rounded-2xl' %>
 </li>
-
 <li class="nav-item dropdown">
   <a class="nav-link" data-bs-toggle="dropdown" href="#">
     <%= current_user.email %>
     <i class="fa fa-caret-down"></i>
   </a>
-
   <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-    <%= link_to '', class:"dropdown-item" do %>
-    <i class="fa fa-cog text-aqua"></i> Organization Settings
-    <% end %>
-
     <div class="dropdown-divider"></div>
     <%= link_to partners_users_path, class:"dropdown-item" do %>
       <i class="fa fa-users mr-2"></i> My Co-Workers
     <% end %>
-
     <%= link_to edit_partners_user_path(current_user), class:"dropdown-item" do %>
       <i class="fa fa-users mr-2"></i> My Profile
     <% end %>
-
     <div class="dropdown-divider"></div>
     <% current_user.switchable_roles.each do |role| %>
       <% next if role == current_role %>
@@ -29,11 +21,9 @@
         <i class="fa fa-repeat text-aqua"></i><%= "Switch to: #{role.resource.name}" %>
       <% end %>
     <% end %>
-
     <div class="dropdown-divider"></div>
-    <%= link_to destroy_user_session_path, method: :delete, class: "dropdown-item" do %>
+    <%= button_to destroy_user_session_path, method: :delete, class: "dropdown-item", data: {disable_with: "Please wait..."} do %>
       <i class="fa fa-sign-out fa-lg"></i> Logout
     <% end %>
-
   </div>
 </li>

@@ -30,6 +30,28 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
           expect(partner_awaiting_approval.reload.approved?).to eq(true)
         end
+
+        it 'Double clicking approval button does not result in the partner attemping to be approved twice' do
+          visit partners_path
+
+          assert page.has_content? partner_awaiting_approval.name
+          click_on "Review Applicant's Profile"
+
+          # Make sure the button is there before trying to double click it
+          expect(page.find('a.btn.btn-success.btn-md[href*="/approve_application"]')).to have_content("Approve Partner")
+
+          # Double click on the Distribution complete button
+          ferrum_double_click('a.btn.btn-success.btn-md[href*="/approve_application"]')
+
+          # Capybara will be quick to determine that a screen doesn't have content.
+          # Make some positive assertions that only appears on the new screen to make
+          # sure it's loaded before asserting something isn't there.
+          expect(page).to have_content("Partner Agencies for")
+
+          # If it tries to mark the partner as approved twice, the second time
+          # will fail (the partner is already approved) and show this error
+          expect(page).not_to have_content('Failed to approve partner because: ["partner is not waiting for approval"]')
+        end
       end
 
       context 'when the approval does not succeed' do
@@ -81,7 +103,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           assert page.has_content? "Partner #{partner_attributes[:name]} added!"
 
           accept_confirm do
-            find('tr', text: partner_attributes[:name]).find_link('Invite').click
+            find('tr', text: partner_attributes[:name]).find_button('Invite').click
           end
 
           assert page.has_content? "Partner #{partner_attributes[:name]} invited!"
@@ -252,9 +274,8 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         it 'only has an edit option available' do
           visit subject
 
-          expect(page).to have_selector(:link_or_button, 'Edit')
+          expect(page).to have_selector(:link_or_button, 'Edit details')
           expect(page).to_not have_selector(:link_or_button, 'View')
-          expect(page).to_not have_selector(:link_or_button, 'Activate Partner Now')
           expect(page).to_not have_selector(:link_or_button, 'Add/Remind Partner')
         end
       end
@@ -466,10 +487,10 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           find("button[data-bs-target='#media_information']").click
           expect(page).to have_css("#media_information.accordion-collapse.collapse", visible: false)
 
-          # Executive director
-          find("button[data-bs-target='#executive_director']").click
-          expect(page).to have_css("#executive_director.accordion-collapse.collapse.show", visible: true)
-          within "#executive_director" do
+          # Contacts
+          find("button[data-bs-target='#contacts']").click
+          expect(page).to have_css("#contacts.accordion-collapse.collapse.show", visible: true)
+          within "#contacts" do
             fill_in "Executive Director Name", with: "Lisa Smith"
           end
 
@@ -514,7 +535,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           expect(page).to have_content("Enable child based requests At least one request type must be set")
           expect(page).to have_content("Pick up email can't have more than three email addresses")
 
-          # Expect media section, executive director section, and partner settings section to be opened
+          # Expect media section, pick up person section, and partner settings section to be opened
           expect(page).to have_css("#media_information.accordion-collapse.collapse.show", visible: true)
           expect(page).to have_css("#pick_up_person.accordion-collapse.collapse.show", visible: true)
           expect(page).to have_css("#partner_settings.accordion-collapse.collapse.show", visible: true)
@@ -528,7 +549,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           expect(page).to have_content("Enable child based requests At least one request type must be set")
           expect(page).to have_content("Pick up email can't have more than three email addresses")
 
-          # Expect media section, executive director section, and partner settings section to be opened
+          # Expect media section, pick up person section, and partner settings section to be opened
           expect(page).to have_css("#media_information.accordion-collapse.collapse.show", visible: true)
           expect(page).to have_css("#pick_up_person.accordion-collapse.collapse.show", visible: true)
           expect(page).to have_css("#partner_settings.accordion-collapse.collapse.show", visible: true)
@@ -610,7 +631,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           let!(:items_in_category) { create_list(:item, 3, item_category_id: item_category.id) }
 
           before do
-            click_on 'Edit'
+            click_on 'Edit details'
             select existing_partner_group.name
             click_on 'Update Partner'
           end
@@ -624,7 +645,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
         context 'that has no requestable item categories' do
           before do
             expect(existing_partner_group.item_categories).to be_empty
-            click_on 'Edit'
+            click_on 'Edit details'
             select existing_partner_group.name
             click_on 'Update Partner'
           end
@@ -647,8 +668,40 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
       let!(:items_in_category_1) { create_list(:item, 3, item_category_id: item_category_1.id) }
       let!(:items_in_category_2) { create_list(:item, 3, item_category_id: item_category_2.id) }
 
+      describe 'viewing the partner groups' do
+        let!(:partner_group_1) { create(:partner_group, organization: organization) }
+        let!(:partner_1) { create(:partner, partner_group: partner_group_1) }
+        before do
+          partner_group_1.item_categories << item_category_1
+        end
+
+        context "with a reminder schedule" do
+          before do
+            travel_to Time.zone.local(2020, 10, 10)
+            valid_reminder_schedule = ReminderScheduleService.new({
+              by_month_or_week: "day_of_month",
+              every_nth_month: 1,
+              day_of_month: 20
+            }).to_ical
+            partner_group_1.update(
+              send_reminders: true,
+              deadline_day: 25,
+              reminder_schedule_definition: valid_reminder_schedule
+            )
+          end
+
+          it "reports the next date a reminder email will be sent the deadline date that will be included in the next reminder email" do
+            visit partners_path
+            click_on 'Groups'
+            expect(page).to have_content("Your next reminder date is Tue Oct 20 2020.")
+            expect(page).to have_content("The deadline on your next reminder email will be Sun Oct 25 2020.")
+          end
+        end
+      end
+
       describe 'creating a new partner group' do
         it 'should allow creating a new partner group with item categories' do
+          travel_to Time.zone.local(2020, 10, 10)
           visit partners_path
 
           click_on 'Groups'
@@ -658,11 +711,19 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           # Click on the second item category
           find("input#partner_group_item_category_ids_#{item_category_2.id}").click
 
+          # Opt in to sending deadline reminders
+          check 'Yes'
+
+          choose 'Day of Month'
+          fill_in "partner_group_reminder_schedule_service_day_of_month", with: 1
+          fill_in "partner_group_deadline_day", with: 25
           find_button('Add Partner Group').click
 
           assert page.has_content? 'Group Name', wait: page_content_wait
           assert page.has_content? 'Test Group'
           assert page.has_content? item_category_2.name
+          expect(page).to have_content("Your next reminder date is Sun Nov 01 2020.")
+          expect(page).to have_content("The deadline on your next reminder email will be Wed Nov 25 2020.")
         end
       end
 
@@ -692,6 +753,58 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
           assert page.has_content? 'New Group Name', wait: page_content_wait
           refute page.has_content? item_category_1.name
           assert page.has_content? item_category_2.name
+        end
+
+        describe "editing a custom reminder schedule" do
+          def post_refresh
+            # Opt in to sending deadline reminders
+            check 'Yes'
+          end
+
+          before do
+            partner.update!(partner_group: existing_partner_group)
+            visit partners_path
+
+            click_on 'Groups'
+            assert page.has_content? existing_partner_group.name, wait: page_content_wait
+
+            click_on 'Edit'
+            post_refresh
+          end
+
+          it_behaves_like "deadline and reminder form", "partner_group", "Update Partner Group", nil, :post_refresh
+
+          it "the deadline day form's reminder and deadline dates are consistent with the dates calculated by the FetchPartnersToRemindNowService and DeadlineService" do
+            travel_to Time.zone.local(2025, 9, 30)
+            refresh
+            post_refresh
+            choose "Day of Month"
+            fill_in "partner_group_reminder_schedule_service_day_of_month", with: safe_add_days(Time.zone.now, 1).day
+            fill_in "Deadline day in reminder email", with: safe_add_days(Time.zone.now, 2).day
+
+            reminder_text = find('small[data-deadline-day-target="reminderText"]').text
+            reminder_text.slice!("Your next reminder date is ")
+            reminder_text.slice!(".")
+            shown_recurrence_date = Time.zone.strptime(reminder_text, "%a %b %d %Y")
+
+            deadline_text = find('small[data-deadline-day-target="deadlineText"]').text
+            deadline_text.slice!("The deadline on your next reminder email will be ")
+            deadline_text.slice!(".")
+            shown_deadline_date = Time.zone.strptime(deadline_text, "%a %b %d %Y")
+
+            click_on "Update Partner Group"
+            existing_partner_group.reload
+
+            expect(Partners::FetchPartnersToRemindNowService.new.fetch).to_not include(partner)
+
+            travel_to shown_recurrence_date
+
+            expect(Partners::FetchPartnersToRemindNowService.new.fetch).to include(partner)
+            expect(DeadlineService.new(deadline_day: DeadlineService.get_deadline_for_partner(partner)).next_deadline.in_time_zone(Time.zone)).to be_within(1.second).of shown_deadline_date
+
+            expect(page).to have_content("Your next reminder date is #{reminder_text}.")
+            expect(page).to have_content("The deadline on your next reminder email will be #{deadline_text}.")
+          end
         end
       end
     end

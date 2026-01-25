@@ -24,6 +24,30 @@ RSpec.describe "Approval process for partners", type: :system, js: true do
         refute page.has_content? '# of Individuals'
       end
 
+      it "Double clicking submit for approval button does not result in the partner attemping to be approved twice" do
+        click_on 'My Profile'
+        assert page.has_content? 'Uninvited'
+        all('a', text: 'Update Information').last.click
+
+        fill_in 'Other Agency Type', with: 'Lorem'
+
+        fill_in 'Executive Director Name', with: 'Lorem'
+        fill_in 'Executive Director Phone', with: '8889990000'
+        fill_in 'Executive Director Email', with: 'lorem@example.com'
+        fill_in 'Primary Contact Phone', with: '8889990000'
+        check 'No Social Media Presence'
+
+        click_on 'Update Information'
+        assert page.has_content? 'Details were successfully updated.'
+
+        assert page.has_content? "Submit for Approval"
+
+        ferrum_double_click('form[action*="/partners/approval_request"] .btn.btn-success')
+
+        expect(page).to have_content("Pending Approval")
+        expect(page).not_to have_content("This partner has already requested approval.")
+      end
+
       context 'AND they fill out the form and submit it' do
         before do
           click_on 'My Profile'
@@ -41,7 +65,7 @@ RSpec.describe "Approval process for partners", type: :system, js: true do
           click_on 'Update Information'
           assert page.has_content? 'Details were successfully updated.'
 
-          all('a', text: 'Submit for Approval').last.click
+          all('button', text: 'Submit for Approval').last.click
           assert page.has_content? 'You have submitted your details for approval.'
           assert page.has_content? 'Awaiting Review'
         end
@@ -73,11 +97,11 @@ RSpec.describe "Approval process for partners", type: :system, js: true do
     let(:partner) { FactoryBot.create(:partner) }
 
     before do
-      partner.profile.update(website: '', facebook: '', twitter: '', instagram: '', no_social_media_presence: false, partner_status: 'pending')
+      partner.profile.update(website: '', facebook: '', twitter: '', instagram: '', no_social_media_presence: false)
       login_as(partner_user)
       visit partner_user_root_path
       click_on 'My Profile'
-      all('a', text: 'Submit for Approval').last.click
+      all('button', text: 'Submit for Approval').last.click
     end
 
     it "should render an error message", :aggregate_failures do

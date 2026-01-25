@@ -9,6 +9,9 @@ RSpec.describe "Admin::UsersController", type: :request do
     before do
       sign_in(super_admin)
       AddRoleService.call(user_id: user.id, resource_type: Role::PARTNER, resource_id: partner.id)
+      create(:organization, name: "Pawnee")
+      create(:organization, name: "SF Diaper")
+      create(:organization, name: "Second City")
     end
 
     describe "GET #index" do
@@ -236,6 +239,33 @@ RSpec.describe "Admin::UsersController", type: :request do
           expect(flash[:error]).to eq("Failed to create user: Please select an associated resource for the role.")
         end
       end
+    end
+    describe "Validate Order of returned organization list" do
+      it "Should sort display resource in human alphabetical order" do
+        get "/admin/users/resource_ids?resource_type=org_admin"
+        body_json = JSON.parse(response.body)
+        expect(body_json["results"].length).to be(4)
+        text_list = body_json["results"].map { |obj| obj["text"] }
+        expect(text_list).to match_array(["Org ABC", "Pawnee", "SF Diaper", "Second City"])
+      end
+    end
+  end
+
+  describe 'POST #resend_invitation' do
+    let!(:admin_user) { create(:super_admin, name: "Admin User") }
+    let!(:user) { create(:user, name: "User") }
+
+    before do
+      sign_in(admin_user)
+    end
+
+    it 're-sends the invitation email' do
+      expect_any_instance_of(User).to receive(:invite!).and_return(true)
+
+      post admin_user_resend_invitation_path(user_id: user.id)
+
+      expect(response).to redirect_to(admin_users_path)
+      expect(flash[:notice]).to eq("User reinvited!")
     end
   end
 

@@ -65,7 +65,7 @@ class Admin::UsersController < AdminController
       raise "Unknown resource type #{params[:resource_type]}"
     end
 
-    objects = klass.where("name LIKE ?", "%#{params[:q]}%").select(:id, :name)
+    objects = klass.where("name ILIKE ?", "%#{params[:q]}%").order("lower(name)").select(:id, :name)
     object_json = objects.map do |obj|
       {
         id: obj.id,
@@ -85,6 +85,12 @@ class Admin::UsersController < AdminController
       return
     end
     redirect_back(fallback_location: admin_users_path, notice: "Role added!")
+  end
+
+  def resend_invitation
+    user = User.find(params[:user_id])
+    user.invite!
+    redirect_back(fallback_location: admin_users_path, notice: "#{user.name} reinvited!")
   end
 
   def remove_role

@@ -151,7 +151,7 @@
                 <hr>
 
                 <h4>Other emails</h4>
-                <%= render 'shared/deadline_day_fields', f: f %>
+                <%= render 'shared/deadline_day_fields', parent_form: f, parent_object: current_organization %>
                 <% default_reminder_email_text_hint = "You can use the variable <code>%{partner_name}</code> to include the partner's name in the message." %>
                 <%= f.input :reminder_email_text, label: "Additional text for reminder email", hint: default_reminder_email_text_hint.html_safe do %>
                   <%= f.rich_text_area :reminder_email_text, placeholder: 'Enter reminder email content...' %>
@@ -171,6 +171,7 @@
 
                 <h4>Exports</h4>
                 <%= f.input :include_in_kind_values_in_exported_files, label: 'Include in-kind value in donation and distribution exports?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
+                <%= f.input :include_packages_in_distribution_export, label: 'Include packages in distribution export?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
 
                 <h4>Annual Survey</h4>
                 <%= f.input :repackage_essentials, label: 'Does your Bank repackage essentials?', as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label_method: :second, value_method: :first %>
