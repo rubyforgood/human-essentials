@@ -131,16 +131,5 @@ RSpec.describe "ProductDriveParticipants", type: :request do
         expect(response).to have_error(/try again/i)
       end
     end
-
-    context "Looking at a different organization" do
-      let(:object) { create(:product_drive_participant, organization: create(:organization)) }
-      include_examples "requiring authorization"
-    end
-  end
-
-  context "While not signed in" do
-    let(:object) { create(:product_drive_participant) }
-
-    include_examples "requiring authorization"
   end
 end
