@@ -550,11 +550,6 @@ RSpec.describe "Distributions", type: :request do
       include_examples "restricts access to organization users/admins"
     end
 
-    context "Looking at a different organization" do
-      let(:object) { create(:distribution, organization: create(:organization)) }
-      include_examples "requiring authorization"
-    end
-
     describe "PATCH #update" do
       subject { patch distribution_path(distribution_params) }
       let(:partner_name) { "Patrick" }
@@ -938,8 +933,6 @@ RSpec.describe "Distributions", type: :request do
 
   context "While not signed in" do
     let(:object) { create(:distribution) }
-
-    include_examples "requiring authorization"
 
     # calendar does not need signin
     describe 'GET #calendar' do

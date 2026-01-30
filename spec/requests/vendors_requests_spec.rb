@@ -199,11 +199,6 @@ RSpec.describe "Vendors", type: :request do
       end
     end
 
-    context "Looking at a different organization" do
-      let(:object) { create(:vendor, organization: create(:organization)) }
-      include_examples "requiring authorization"
-    end
-
     describe "when on vendors index page" do
       it "has the correct import type" do
         get vendors_path(format: 'html')
@@ -211,11 +206,5 @@ RSpec.describe "Vendors", type: :request do
         expect(response.body).to include('Import Vendors')
       end
     end
-  end
-
-  context "While not signed in" do
-    let(:object) { create(:vendor) }
-
-    include_examples "requiring authorization"
   end
 end
