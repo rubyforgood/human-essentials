@@ -215,6 +215,24 @@ RSpec.describe ItemizableUpdateService do
         expect(UpdateExistingEvent.count).to eq(1)
         expect(View::Inventory.total_inventory(organization.id)).to eq(75) # 40 - 5 (item1) - 10 (item2) + 50 (item3)
       end
+
+      it "should send an event when the storage location changes" do
+        DonationEvent.publish(itemizable)
+        expect(DonationEvent.count).to eq(1)
+
+        # attributes that keep quantities the same but change storage location
+        same_quantities_attributes = {
+          storage_location_id: new_storage_location.id,
+          line_items_attributes: {
+            "0" => {item_id: item1.id, quantity: 10},
+            "1" => {item_id: item2.id, quantity: 10}
+          }
+        }
+
+        described_class.call(itemizable: itemizable, params: same_quantities_attributes, event_class: DonationEvent)
+
+        expect(DonationEvent.count).to eq(2)
+      end
     end
     describe "with distributions" do
       before(:each) do
