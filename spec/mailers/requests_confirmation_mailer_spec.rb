@@ -4,7 +4,7 @@ RSpec.describe RequestsConfirmationMailer, type: :mailer do
   let(:request) { create(:request, organization:, partner_user:) }
   let(:mail) { RequestsConfirmationMailer.confirmation_email(request) }
 
-  let(:request_w_varied_quantities) { create(:request, :with_varied_quantities, organization: organization) }
+  let(:request_w_varied_quantities) { create(:request, :with_varied_quantities, :with_item_requests, organization: organization) }
   let(:mail_w_varied_quantities) { RequestsConfirmationMailer.confirmation_email(request_w_varied_quantities) }
 
   describe "#confirmation_email" do
@@ -69,7 +69,7 @@ RSpec.describe RequestsConfirmationMailer, type: :mailer do
       {item_id: item1.id, quantity: 1, request_unit: "Pack"},
       {item_id: item2.id, quantity: 7, request_unit: "Pack"}
     ]
-    request = create(:request, :pending, request_items:)
+    request = create(:request, :pending, :with_item_requests, request_items:)
     email = RequestsConfirmationMailer.confirmation_email(request)
     expect(email.body.encoded).to match("1 Pack")
     expect(email.body.encoded).to match("7 Packs")
@@ -79,7 +79,7 @@ RSpec.describe RequestsConfirmationMailer, type: :mailer do
     Flipper.enable(:enable_packs)
     item = create(:item, organization:)
     create(:item_unit, item: item, name: "Pack")
-    request = create(:request, :pending, request_items: [{item_id: item.id, quantity: 7}])
+    request = create(:request, :pending, :with_item_requests, request_items: [{item_id: item.id, quantity: 7}])
     email = RequestsConfirmationMailer.confirmation_email(request)
 
     expect(email.body.encoded).not_to match("7 Packs")

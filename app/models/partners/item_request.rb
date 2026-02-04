@@ -35,11 +35,24 @@ module Partners
       end
     end
 
+    # Usually the item_name, but fall back to our local copy
+    def item_name
+      item&.name || name
+    end
+
+    def quantity_with_units
+      if Flipper.enabled?(:enable_packs) && request_unit.present?
+        "#{quantity} #{request_unit.pluralize(quantity.to_i)}"
+      else
+        quantity
+      end
+    end
+
     def name_with_unit(quantity_override = nil)
       if Flipper.enabled?(:enable_packs) && request_unit.present?
-        "#{item&.name || name} - #{request_unit.pluralize(quantity_override || quantity.to_i)}"
+        "#{item_name} - #{request_unit.pluralize(quantity_override || quantity.to_i)}"
       else
-        item&.name || name
+        item_name
       end
     end
   end
