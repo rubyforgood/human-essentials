@@ -37,7 +37,7 @@ module ItemizableUpdateService
         # TODO once event sourcing has been out for long enough, we can safely remove this
         if Event.where(eventable: itemizable).none? || UpdateExistingEvent.where(eventable: itemizable).any?
           UpdateExistingEvent.publish(itemizable, previous, original_storage_location)
-        elsif inventory_changes?(previous, params[:line_items_attributes])
+        elsif inventory_changes?(previous, params[:line_items_attributes]) || itemizable.storage_location_id != original_storage_location.id
           event_class&.publish(itemizable)
         end
       end
