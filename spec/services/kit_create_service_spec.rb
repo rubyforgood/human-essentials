@@ -32,6 +32,8 @@ RSpec.describe KitCreateService do
     context 'when the parameters are valid' do
       it 'should create a new Kit' do
         expect { subject }.to change { Kit.all.count }.by(1)
+        kit = Kit.last
+        expect(kit.item.line_items.count).to eq(3)
       end
 
       it 'should create a new Item' do

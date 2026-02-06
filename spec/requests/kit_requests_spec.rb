@@ -83,7 +83,7 @@ RSpec.describe "/kits", type: :request do
       it "cannot reactivate if it has an inactive item" do
         kit.deactivate
         expect(kit).not_to be_active
-        kit.line_items.first.item.update!(active: false)
+        kit.item.line_items.first.item.update!(active: false)
 
         put reactivate_kit_url(kit)
         expect(kit.reload).not_to be_active
