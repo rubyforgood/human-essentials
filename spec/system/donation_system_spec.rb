@@ -135,6 +135,18 @@ RSpec.describe "Donations", type: :system, js: true do
         expect(page).to have_css("table tbody tr", count: 1)
       end
 
+      it "Filters by item" do
+        item_1 = create(:item, name: "Good item", organization: organization)
+        item_2 = create(:item, name: "Bad item", organization: organization)
+        create(:donation, :with_items, item: item_1)
+        create(:donation, :with_items, item: item_2)
+        visit subject
+        expect(page).to have_css("table tbody tr", count: 2)
+        select item_1.name, from: "filters[by_item_id]"
+        click_button "Filter"
+        expect(page).to have_css("table tbody tr", count: 1)
+      end
+
       it "Filters by category" do
         category_1 = create(:item_category, name: "Category 1", organization: organization)
         category_2 = create(:item_category, name: "Category 2", organization: organization)
