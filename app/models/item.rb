@@ -105,7 +105,7 @@ class Item < ApplicationRecord
 
   def is_in_kit?(kits = nil)
     if kits
-      kits.any? { |k| k.line_items.map(&:item_id).include?(id) }
+      kits.any? { |k| k.item.line_items.map(&:item_id).include?(id) }
     else
       organization.kits
         .active

@@ -40,26 +40,22 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
         adult_incontinence_item = organization.items.adult_incontinence.first
         non_adult_incontinence_item = organization.items.where.not(id: organization.items.adult_incontinence).first
 
-        # kits
-        adult_incontinence_kit_item_1 = create(:item, name: "Adult Briefs (Medium)", reporting_category: "adult_incontinence", distribution_quantity: 1)
-        adult_incontinence_kit_item_2 = create(:item, name: "Adult Briefs (Large)", reporting_category: "adult_incontinence", distribution_quantity: 1)
-        adult_incontinence_kit_item_3 = create(:item, name: "Adult Briefs (Small)", reporting_category: "adult_incontinence", distribution_quantity: 1)
-        non_adult_incontinence_kit_item = create(:item, name: "Baby Wipes", reporting_category: "other")
+        # kit items (each item represents a kit and contains itself as a component)
+        adult_incontinence_kit_item_1 = create(:item, name: "Adult Briefs (Medium)", reporting_category: "adult_incontinence", distribution_quantity: 1, organization: organization)
+        adult_incontinence_kit_item_2 = create(:item, name: "Adult Briefs (Large)", reporting_category: "adult_incontinence", distribution_quantity: 1, organization: organization)
+        adult_incontinence_kit_item_3 = create(:item, name: "Adult Briefs (Small)", reporting_category: "adult_incontinence", distribution_quantity: 1, organization: organization)
+        non_adult_incontinence_kit_item = create(:item, name: "Baby Wipes", reporting_category: "other", organization: organization)
 
-        donation_1 = create(:donation)
-        donation_2 = create(:donation)
-        donation_3 = create(:donation)
-        donation_4 = create(:donation)
+        # Add component line items to each kit item
+        adult_incontinence_kit_item_1.line_items.create!(item: adult_incontinence_kit_item_1, quantity: 5)
+        adult_incontinence_kit_item_2.line_items.create!(item: adult_incontinence_kit_item_2, quantity: 5)
+        adult_incontinence_kit_item_3.line_items.create!(item: adult_incontinence_kit_item_3, quantity: 5)
+        non_adult_incontinence_kit_item.line_items.create!(item: non_adult_incontinence_kit_item, quantity: 5)
 
-        line_item_1 = LineItem.create!(item: adult_incontinence_kit_item_1, itemizable_id: donation_1.id, itemizable_type: "Donation", quantity: 5)
-        line_item_2 = LineItem.create!(item: adult_incontinence_kit_item_2, itemizable_id: donation_2.id, itemizable_type: "Donation", quantity: 5)
-        line_item_4 = LineItem.create!(item: adult_incontinence_kit_item_3, itemizable_id: donation_4.id, itemizable_type: "Donation", quantity: 5)
-        line_item_3 = LineItem.create!(item: non_adult_incontinence_kit_item, itemizable_id: donation_3.id, itemizable_type: "Donation", quantity: 5)
-
-        @kit_1 = create(:kit, line_items: [line_item_1], organization: organization, item: adult_incontinence_kit_item_1)
-        @kit_2 = create(:kit, line_items: [line_item_2], organization: organization, item: adult_incontinence_kit_item_2)
-        @kit_4 = create(:kit, line_items: [line_item_4], organization: organization, item: adult_incontinence_kit_item_3)
-        @kit_3 = create(:kit, line_items: [line_item_3], organization: organization, item: non_adult_incontinence_kit_item)
+        @kit_1 = create(:kit, organization: organization, item: adult_incontinence_kit_item_1)
+        @kit_2 = create(:kit, organization: organization, item: adult_incontinence_kit_item_2)
+        @kit_4 = create(:kit, organization: organization, item: adult_incontinence_kit_item_3)
+        @kit_3 = create(:kit, organization: organization, item: non_adult_incontinence_kit_item)
 
         # kit distributions
         kit_distribution_1 = create(:distribution, organization: organization, issued_at: within_time)
@@ -68,11 +64,11 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
         # wipes distribution
         kit_distribution_3 = create(:distribution, organization: organization, issued_at: within_time)
 
-        create(:line_item, :distribution, quantity: 100, item: @kit_1.line_items.first.item, itemizable: kit_distribution_1)
-        create(:line_item, :distribution, quantity: 100, item: @kit_2.line_items.first.item, itemizable: kit_distribution_2)
-        create(:line_item, :distribution, quantity: 100, item: @kit_4.line_items.first.item, itemizable: kit_distribution_4)
+        create(:line_item, :distribution, quantity: 100, item: @kit_1.item, itemizable: kit_distribution_1)
+        create(:line_item, :distribution, quantity: 100, item: @kit_2.item, itemizable: kit_distribution_2)
+        create(:line_item, :distribution, quantity: 100, item: @kit_4.item, itemizable: kit_distribution_4)
         # wipes kit no ai items
-        create(:line_item, :distribution, quantity: 100, item: @kit_3.line_items.first.item, itemizable: kit_distribution_3)
+        create(:line_item, :distribution, quantity: 100, item: @kit_3.item, itemizable: kit_distribution_3)
         # We will create data both within and outside our date range, and both adult_incontinence and non adult_incontinence.
         # Spec will ensure that only the required data is included.
 
