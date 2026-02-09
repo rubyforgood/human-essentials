@@ -50,13 +50,6 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
     end
 
     it "displays the edit view with sections containing validation errors expanded" do
-      # Open up Media section and clear out website value
-      find("button[data-bs-target='#media_information']").click
-      within "#media_information" do
-        fill_in "Website", with: ""
-        uncheck "No Social Media Presence"
-      end
-
       # Open Pick up person section and fill in 4 email addresses
       find("button[data-bs-target='#pick_up_person']").click
       within "#pick_up_person" do
@@ -76,12 +69,10 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
 
       # Expect an alert-danger message containing validation errors
       expect(page).to have_css(".alert-danger", text: /There is a problem/)
-      expect(page).to have_content("No social media presence must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.")
       expect(page).to have_content("Enable child based requests At least one request type must be set")
       expect(page).to have_content("Pick up email can't have more than three email addresses")
 
-      # Expect media section, pick up person section, and partner settings section to be opened
-      expect(page).to have_css("#media_information.accordion-collapse.collapse.show", visible: true)
+      # Expect pick up person section, and partner settings section to be opened
       expect(page).to have_css("#pick_up_person.accordion-collapse.collapse.show", visible: true)
       expect(page).to have_css("#partner_settings.accordion-collapse.collapse.show", visible: true)
 
@@ -90,12 +81,10 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
 
       # Expect an alert-danger message containing validation errors
       expect(page).to have_css(".alert-danger", text: /There is a problem/)
-      expect(page).to have_content("No social media presence must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.")
       expect(page).to have_content("Enable child based requests At least one request type must be set")
       expect(page).to have_content("Pick up email can't have more than three email addresses")
 
-      # Expect media section, pick up person section, and partner settings section to be opened
-      expect(page).to have_css("#media_information.accordion-collapse.collapse.show", visible: true)
+      # Expect pick up person section, and partner settings section to be opened
       expect(page).to have_css("#pick_up_person.accordion-collapse.collapse.show", visible: true)
       expect(page).to have_css("#partner_settings.accordion-collapse.collapse.show", visible: true)
     end
@@ -301,6 +290,165 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
         expect(page).to have_text("Attached files:")
         expect(page).to have_link("document1.md")
         expect(page).to have_link("document2.md")
+      end
+    end
+
+    context "Mandatory fields validation" do
+      subject { all("input[type='submit'][value='Save Progress']").last.click }
+
+      before do
+        find("button[data-bs-target='#agency_information']").click
+        within "#agency_information" do
+          fill_in "Agency Name", with: "Agency1"
+          select "Basic Needs Bank", from: "Agency Type"
+          fill_in "Address (line 1)", with: "123 Main St"
+          fill_in "City", with: "Metropolis"
+          fill_in "State", with: "CA"
+          fill_in "Zip Code", with: "90210"
+        end
+        find("button[data-bs-target='#agency_stability']").click
+        within "#agency_stability" do
+          fill_in "Program Name(s)", with: "Program 1"
+          fill_in "Program Description(s)", with: "Really great program"
+        end
+      end
+
+      context "No social media filled" do
+        before do
+          find("button[data-bs-target='#media_information']").click
+          within "#media_information" do
+            fill_in "Website", with: ""
+            uncheck "No Social Media Presence"
+          end
+        end
+
+        context "partner status is invited" do
+          before do
+            partner1.invited!
+          end
+
+          it "displays success message" do
+            expect {
+              subject
+            }.to change { partner1.reload.updated_at }
+
+            expect(page).to have_content("Details were successfully updated.")
+          end
+        end
+
+        context "partner status is awaiting_review" do
+          before do
+            partner1.awaiting_review!
+          end
+
+          it "displays validation errors" do
+            expect {
+              subject
+            }.not_to change { partner1.reload.updated_at }
+
+            expect(page).to have_content("No social media presence must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.")
+          end
+        end
+
+        context "partner status is approved" do
+          before do
+            partner1.approved!
+          end
+
+          it "displays validation errors" do
+            expect {
+              subject
+            }.not_to change { partner1.reload.updated_at }
+
+            expect(page).to have_content("No social media presence must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.")
+          end
+
+          context "partner's organization one_step_partner_invite is true" do
+            before do
+              partner1.organization.update!(one_step_partner_invite: true)
+            end
+
+            it "displays success message" do
+              expect {
+                subject
+              }.to change { partner1.reload.updated_at }
+
+              expect(page).to have_content("Details were successfully updated.")
+            end
+          end
+        end
+      end
+
+      context "Mandatory fields empty" do
+        before do
+          # find("button[data-bs-target='#agency_information']").click
+          within "#agency_information" do
+            fill_in "Agency Name", with: ""
+            select "", from: "Agency Type"
+            fill_in "Address (line 1)", with: ""
+            fill_in "City", with: ""
+            fill_in "State", with: ""
+            fill_in "Zip Code", with: ""
+          end
+          # find("button[data-bs-target='#agency_stability']").click
+          within "#agency_stability" do
+            fill_in "Program Name(s)", with: ""
+            fill_in "Program Description(s)", with: ""
+          end
+        end
+        context "partner status is invited" do
+          before do
+            partner1.invited!
+          end
+
+          it "displays success message" do
+            expect {
+              subject
+            }.to change { partner1.reload.updated_at }
+
+            expect(page).to have_content("Details were successfully updated.")
+          end
+        end
+
+        context "partner status is awaiting_review" do
+          before do
+            partner1.awaiting_review!
+          end
+
+          it "displays validation errors" do
+            expect {
+              subject
+            }.not_to change { partner1.reload.updated_at }
+            expect(page).to have_content("Missing mandatory fields: agency_type, address1, city, state, zip_code, program_name, program_description, agency_name")
+          end
+        end
+
+        context "partner status is approved" do
+          before do
+            partner1.approved!
+          end
+
+          it "displays validation errors" do
+            expect {
+              subject
+            }.not_to change { partner1.reload.updated_at }
+            expect(page).to have_content("Missing mandatory fields: agency_type, address1, city, state, zip_code, program_name, program_description, agency_name")
+          end
+
+          context "partner's organization one_step_partner_invite is true" do
+            before do
+              partner1.organization.update!(one_step_partner_invite: true)
+            end
+
+            it "displays success message" do
+              expect {
+                subject
+              }.to change { partner1.reload.updated_at }
+
+              expect(page).to have_content("Details were successfully updated.")
+            end
+          end
+        end
       end
     end
   end

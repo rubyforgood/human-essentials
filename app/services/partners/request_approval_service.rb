@@ -33,6 +33,9 @@ module Partners
         errors.add :base, partner.profile.errors.full_messages.join('. ')
       end
 
+      errors.merge! partner.profile.errors if partner.profile.check_social_media
+      errors.merge! partner.profile.errors if partner.profile.check_mandatory_fields
+
       errors.none?
     end
   end
