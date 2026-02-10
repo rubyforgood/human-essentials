@@ -86,7 +86,9 @@ class KitCreateService
   def kit_validation_errors
     return @kit_validation_errors if @kit_validation_errors
 
-    kit = Kit.new(kit_params_with_organization)
+    # Exclude line_items_attributes as they belong to the Item, not the Kit
+    kit_only_params = kit_params_with_organization.except(:line_items_attributes)
+    kit = Kit.new(kit_only_params)
     kit.valid?
 
     @kit_validation_errors = kit.errors
