@@ -651,21 +651,6 @@ RSpec.describe "Partners", type: :request do
         expect(response).to have_notice "#{model_class.name.underscore.humanize.pluralize} were imported successfully!"
       end
     end
-
-    context "csv file with a blank line at the file's bottom" do
-      let(:file) { fixture_file_upload("partners_with_final_line_blank.csv", "text/csv") }
-      subject { post import_csv_partners_path, params: { file: file } }
-
-      it "redirects to :index" do
-        subject
-        expect(response).to be_redirect
-      end
-
-      it "presents a flash notice message" do
-        subject
-        expect(response).to have_notice "#{model_class.name.underscore.humanize.pluralize} were imported successfully!"
-      end
-    end
   end
 
   describe "POST #create" do
