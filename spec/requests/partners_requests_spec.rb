@@ -468,6 +468,22 @@ RSpec.describe "Partners", type: :request do
       end
     end
 
+    context "csv file with a partner email already in another organization" do
+      let(:file) { fixture_file_upload("partners_with_six_fields.csv", "text/csv") }
+
+      before do
+        other_org = create(:organization)
+        create(:partner, name: "Existing Partner", email: "partner1@example.com", organization: other_org)
+      end
+
+      subject { post import_csv_partners_path, params: { file: file } }
+
+      it "shows an error for the partner in another organization" do
+        subject
+        expect(flash[:error]).to match(/has already been taken/)
+      end
+    end
+
     context "csv file with wrong headers" do
       let(:file) { fixture_file_upload("wrong_headers.csv", "text/csv") }
       subject { post import_csv_partners_path, params: { file: file } }
