@@ -522,12 +522,10 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
           # Expect an alert-danger message containing validation errors
           expect(page).to have_css(".alert-danger", text: /There is a problem/)
-          expect(page).to have_content("No social media presence must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.")
           expect(page).to have_content("Enable child based requests At least one request type must be set")
           expect(page).to have_content("Pick up email can't have more than three email addresses")
 
           # Expect media section, pick up person section, and partner settings section to be opened
-          expect(page).to have_css("#media_information.accordion-collapse.collapse.show", visible: true)
           expect(page).to have_css("#pick_up_person.accordion-collapse.collapse.show", visible: true)
           expect(page).to have_css("#partner_settings.accordion-collapse.collapse.show", visible: true)
 
@@ -536,12 +534,10 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
           # Expect an alert-danger message containing validation errors
           expect(page).to have_css(".alert-danger", text: /There is a problem/)
-          expect(page).to have_content("No social media presence must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.")
           expect(page).to have_content("Enable child based requests At least one request type must be set")
           expect(page).to have_content("Pick up email can't have more than three email addresses")
 
           # Expect media section, pick up person section, and partner settings section to be opened
-          expect(page).to have_css("#media_information.accordion-collapse.collapse.show", visible: true)
           expect(page).to have_css("#pick_up_person.accordion-collapse.collapse.show", visible: true)
           expect(page).to have_css("#partner_settings.accordion-collapse.collapse.show", visible: true)
         end

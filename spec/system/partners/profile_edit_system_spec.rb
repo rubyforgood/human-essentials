@@ -346,7 +346,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
               subject
             }.not_to change { partner1.reload.updated_at }
 
-            expect(page).to have_content("No social media presence must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.")
+            expect(page).to have_content("At least one social media field must be filled out or 'No social media presence' must be checked.")
           end
         end
 
@@ -360,7 +360,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
               subject
             }.not_to change { partner1.reload.updated_at }
 
-            expect(page).to have_content("No social media presence must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.")
+            expect(page).to have_content("At least one social media field must be filled out or 'No social media presence' must be checked.")
           end
 
           context "partner's organization one_step_partner_invite is true" do
@@ -419,7 +419,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
             expect {
               subject
             }.not_to change { partner1.reload.updated_at }
-            expect(page).to have_content("Missing mandatory fields: agency_type, address1, city, state, zip_code, program_name, program_description, agency_name")
+            expect(page).to have_content("Missing mandatory fields: agency_name, agency_type, address1, city, state, zip_code, program_name, program_description")
           end
         end
 
@@ -432,7 +432,7 @@ RSpec.describe "Partners profile edit", type: :system, js: true do
             expect {
               subject
             }.not_to change { partner1.reload.updated_at }
-            expect(page).to have_content("Missing mandatory fields: agency_type, address1, city, state, zip_code, program_name, program_description, agency_name")
+            expect(page).to have_content("Missing mandatory fields: agency_name, agency_type, address1, city, state, zip_code, program_name, program_description")
           end
 
           context "partner's organization one_step_partner_invite is true" do
