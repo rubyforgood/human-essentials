@@ -193,7 +193,8 @@ RSpec.describe Partners::RequestCreateService do
     let(:partner) { create(:partner) }
     let(:request_type) { "child" }
     let(:comments) { Faker::Lorem.paragraph }
-    let(:item) { FactoryBot.create(:item) }
+    let(:item) { FactoryBot.create(:item, unit_request_limit: request_limit) }
+    let(:request_limit) { nil }
     let(:item_requests_attributes) do
       [
         ActionController::Parameters.new(
@@ -208,6 +209,15 @@ RSpec.describe Partners::RequestCreateService do
       expect(subject.partner_request.id).to be_nil
       expect(subject.partner_request.item_requests.first.item.name).to eq(item.name)
       expect(subject.partner_request.item_requests.first.quantity).to eq("25")
+    end
+
+    context "request quantity exceeds the request limit for the item and unit type" do
+      let(:request_limit) { 10 }
+
+      it "adds error" do
+        expect(subject.errors).not_to be_empty
+        expect(subject.errors[:base].first).to include "You requested 25, but are limited to 10"
+      end
     end
   end
 end

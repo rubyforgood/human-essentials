@@ -177,12 +177,17 @@ class ItemsController < ApplicationController
       :distribution_quantity,
       :visible_to_partners,
       :active,
-      :additional_info
+      :additional_info,
+      :unit_request_limit
     )
   end
 
   def request_unit_ids
-    params.require(:item).permit(request_unit_ids: []).fetch(:request_unit_ids, [])
+    params.require(:item).permit(unit_ids: []).fetch(:unit_ids, []).compact_blank
+  end
+
+  def request_unit_limits
+    (params.require(:item).permit(unit_limits: {})[:unit_limits] || {}).to_h
   end
 
   # We need to update both the item and the request_units together and fail together
@@ -198,7 +203,7 @@ class ItemsController < ApplicationController
     begin
       Item.transaction do
         @item.save!
-        @item.sync_request_units!(request_unit_ids)
+        @item.sync_request_units!(request_unit_ids, request_unit_limits)
       end
     rescue
       return false
