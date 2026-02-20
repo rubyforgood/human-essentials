@@ -55,6 +55,13 @@ class Kit < ApplicationRecord
     item.update!(active: true)
   end
 
+  def update_value_in_cents
+    kit_value_in_cents = line_items.includes(:item).reduce(0) do |sum, line_item|
+      sum + line_item.item.value_in_cents.to_i * line_item.quantity.to_i
+    end
+    update!(value_in_cents: kit_value_in_cents)
+  end
+
   private
 
   def at_least_one_item
