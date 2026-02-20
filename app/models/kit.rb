@@ -13,7 +13,6 @@
 #
 class Kit < ApplicationRecord
   has_paper_trail
-  include Itemizable
   include Filterable
   include Valuable
 
@@ -22,14 +21,10 @@ class Kit < ApplicationRecord
 
   scope :active, -> { where(active: true) }
   scope :alphabetized, -> { order(:name) }
-  scope :by_partner_key, ->(key) { joins(:items).where(items: { partner_key: key }) }
   scope :by_name, ->(name) { where("name ILIKE ?", "%#{name}%") }
 
   validates :name, presence: true
   validates :name, uniqueness: { scope: :organization }
-
-  validate :at_least_one_item
-  validate -> { line_items_quantity_is_at_least(1) }
 
   # @param inventory [View::Inventory]
   # @return [Boolean]
@@ -47,19 +42,11 @@ class Kit < ApplicationRecord
   # or deallocated, we are changing inventory for inactive items (which we don't allow).
   # @return [Boolean]
   def can_reactivate?
-    line_items.joins(:item).where(items: { active: false }).none?
+    item.line_items.joins(:item).where(items: { active: false }).none?
   end
 
   def reactivate
     update!(active: true)
     item.update!(active: true)
-  end
-
-  private
-
-  def at_least_one_item
-    unless line_items.any?
-      errors.add(:base, 'At least one item is required')
-    end
   end
 end

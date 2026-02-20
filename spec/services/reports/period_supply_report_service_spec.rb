@@ -44,13 +44,13 @@ RSpec.describe Reports::PeriodSupplyReportService, type: :service do
         another_period_supplies_kit_item = create(:item, name: "Adult Tampons", reporting_category: :tampons, organization:)
         purchased_period_supplies_kit_item = create(:item, name: "Liners", reporting_category: :period_liners, organization:)
 
-        period_supplies_kit.line_items.first.update!(item_id: period_supplies_kit_item.id, quantity: 5)
-        another_period_supply_kit.line_items.first.update!(item_id: another_period_supplies_kit_item.id, quantity: 5)
-        donated_period_supply_kit.line_items.first.update!(item_id: another_period_supplies_kit_item.id, quantity: 5)
-        purchased_period_supply_kit.line_items.first.update!(item_id: purchased_period_supplies_kit_item.id, quantity: 5)
+        period_supplies_kit.item.line_items.first.update!(item_id: period_supplies_kit_item.id, quantity: 5)
+        another_period_supply_kit.item.line_items.first.update!(item_id: another_period_supplies_kit_item.id, quantity: 5)
+        donated_period_supply_kit.item.line_items.first.update!(item_id: another_period_supplies_kit_item.id, quantity: 5)
+        purchased_period_supply_kit.item.line_items.first.update!(item_id: purchased_period_supplies_kit_item.id, quantity: 5)
 
-        pad_and_tampon_kit.line_items.first.update!(item_id: period_supplies_kit_item.id, quantity: 10)
-        pad_and_tampon_kit.line_items.first.update!(item_id: another_period_supplies_kit_item.id, quantity: 10)
+        pad_and_tampon_kit.item.line_items.first.update!(item_id: period_supplies_kit_item.id, quantity: 10)
+        pad_and_tampon_kit.item.line_items.first.update!(item_id: another_period_supplies_kit_item.id, quantity: 10)
 
         period_supplies_kit_distribution = create(:distribution, organization: organization, issued_at: within_time)
         another_period_supplies_kit_distribution = create(:distribution, organization: organization, issued_at: within_time)

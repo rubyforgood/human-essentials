@@ -23,8 +23,13 @@ class KitCreateService
 
     organization.transaction do
       # Create the Kit record
+      line_items = kit_params.delete(:line_items_attributes)
       @kit = Kit.new(kit_params_with_organization)
       @kit.save!
+      if line_items.blank?
+        @kit.errors.add(:base, 'At least one item is required')
+        raise ActiveRecord::RecordInvalid.new(@kit)
+      end
 
       # Find or create the BaseItem for all items housing kits
       item_housing_a_kit_base_item = KitCreateService.find_or_create_kit_base_item!
@@ -33,6 +38,7 @@ class KitCreateService
       item_creation = ItemCreateService.new(
         organization_id: organization.id,
         item_params: {
+          line_items_attributes: line_items,
           name: kit.name,
           partner_key: item_housing_a_kit_base_item.partner_key,
           kit_id: kit.id
@@ -80,7 +86,9 @@ class KitCreateService
   def kit_validation_errors
     return @kit_validation_errors if @kit_validation_errors
 
-    kit = Kit.new(kit_params_with_organization)
+    # Exclude line_items_attributes as they belong to the Item, not the Kit
+    kit_only_params = kit_params_with_organization.except(:line_items_attributes)
+    kit = Kit.new(kit_only_params)
     kit.valid?
 
     @kit_validation_errors = kit.errors
