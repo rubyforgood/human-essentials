@@ -135,8 +135,6 @@ module Partners
       twoycollege: "2YCOLLEGE",
       wic: "WIC"
 
-    validate :check_social_media, on: :edit
-
     validate :client_share_is_0_or_100
     validate :has_at_least_one_request_setting
     validate :pick_up_email_addresses
@@ -193,16 +191,41 @@ module Partners
       agency_types.keys.map(&:to_sym).sort_by { |sym| I18n.t(sym, scope: :partners_profile) }.partition { |v| v != :other }.flatten
     end
 
-    private
-
     def check_social_media
+      return if organization.one_step_partner_invite
       return if website.present? || twitter.present? || facebook.present? || instagram.present?
       return if partner.partials_to_show.exclude?("media_information")
 
       unless no_social_media_presence
-        errors.add(:no_social_media_presence, "must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.")
+        errors.add(:no_social_media_presence, "No social media presence must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.")
       end
+      errors
     end
+
+    def check_mandatory_fields
+      return if organization.one_step_partner_invite
+
+      mandatory_fields = [
+        :agency_type,
+        :address1,
+        :city,
+        :state,
+        :zip_code,
+        :program_name,
+        :program_description
+      ]
+      messages = []
+      messages << "Name can't be blank" if partner.name.blank?
+      mandatory_fields.each do |field|
+        if send(field).blank?
+          messages << "#{field.to_s.humanize.capitalize} can't be blank"
+        end
+      end
+      errors.add(:base, messages.join(", ")) if messages.any?
+      errors
+    end
+
+    private
 
     def client_share_is_0_or_100
       # business logic:  the client share has to be 0 or 100 -- although it is an estimate only,  making it 0 (not

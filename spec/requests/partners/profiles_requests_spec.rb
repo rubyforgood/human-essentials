@@ -100,11 +100,34 @@ RSpec.describe "/partners/profiles", type: :request do
     end
 
     context "with no social media" do
+      before do
+        partner.awaiting_review!
+      end
+      let(:params) do
+        {
+          partner: {
+            name: "Partnerdude", profile: {
+              no_social_media_presence: '0',
+              website: "",
+              twitter: "",
+              facebook: "",
+              instagram: "",
+              agency_type: 'OTHER',
+              address1: '123 Main St',
+              city: 'Anytown',
+              state: 'CA',
+              zip_code: '12345',
+              program_name: 'Test Program',
+              program_description: 'Test Description'
+            }
+          }
+        }
+      end
+
       it "shows an error" do
-        put partners_profile_path(partner,
-          partner: {name: "Partnerdude", profile: {no_social_media_presence: false}})
+        put partners_profile_path(partner, params)
         expect(response).not_to redirect_to(anything)
-        expect(response.body).to include("No social media presence must be checked if you have not provided any of Website, Twitter, Facebook, or Instagram.")
+        expect(response.body).to include("At least one social media field must be filled out or 'No social media presence' must be checked")
       end
     end
 
