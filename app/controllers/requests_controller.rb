@@ -29,7 +29,13 @@ class RequestsController < ApplicationController
 
   def show
     @request = Request.find(params[:id])
-    @request_items = load_items
+    @item_requests = @request.item_requests.includes(:item)
+
+    @inventory = View::Inventory.new(@request.organization_id)
+    @default_storage_location = @request.partner.default_storage_location_id || @request.organization.default_storage_location
+    @location = StorageLocation.find_by(id: @default_storage_location)
+
+    @custom_units = Flipper.enabled?(:enable_packs) && @request.item_requests.any? { |item| item.request_unit }
   end
 
   # Clicking the "New Distribution" button will set the the request to started
@@ -85,13 +91,6 @@ class RequestsController < ApplicationController
   end
 
   private
-
-  def load_items
-    return unless @request.request_items
-
-    inventory = View::Inventory.new(@request.organization_id)
-    @request.request_items.map { |json| RequestItem.from_json(json, @request, inventory) }
-  end
 
   helper_method \
     def filter_params
