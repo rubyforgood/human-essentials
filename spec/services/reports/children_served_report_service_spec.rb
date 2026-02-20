@@ -29,15 +29,17 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       toddler_disposable_kit_item = create(:item, name: "Toddler Disposable Diapers", reporting_category: :disposable_diapers)
       infant_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", reporting_category: :disposable_diapers)
 
-      kit_1 = create(:kit, organization: organization, line_items: [
+      kit_1 = create(:kit, organization: organization)
+      kit_1.item.line_items = [
         create(:line_item, item: toddler_disposable_kit_item),
         create(:line_item, item: infant_disposable_kit_item)
-      ])
+      ]
 
-      kit_2 = create(:kit, organization: organization, line_items: [
+      kit_2 = create(:kit, organization: organization)
+      kit_2.item.line_items = [
         create(:line_item, item: toddler_disposable_kit_item),
         create(:line_item, item: infant_disposable_kit_item)
-      ])
+      ]
 
       create(:item, name: "Kit 1", kit: kit_1, organization:, distribution_quantity: 1)
       create(:item, name: "Kit 2", kit: kit_2, organization:, distribution_quantity: 1)
@@ -83,10 +85,11 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       toddler_disposable_kit_item = create(:item, name: "Toddler Disposable Diapers", reporting_category: :disposable_diapers)
       infant_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", reporting_category: :disposable_diapers)
 
-      kit = create(:kit, organization: organization, line_items: [
+      kit = create(:kit, organization: organization)
+      kit.item.line_items = [
         create(:line_item, item: toddler_disposable_kit_item),
         create(:line_item, item: infant_disposable_kit_item)
-      ])
+      ]
 
       create(:item, name: "Kit 1", kit:, organization:, distribution_quantity: 1)
 
@@ -124,11 +127,12 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       not_disposable_kit_item = create(:item, name: "Adult Diapers", reporting_category: :adult_incontinence)
 
       # this quantity shouldn't matter so I'm setting it to a high number to ensure it isn't used
-      kit = create(:kit, organization: organization, line_items: [
+      kit = create(:kit, organization: organization)
+      kit.item.line_items = [
         create(:line_item, quantity: 1000, item: toddler_disposable_kit_item),
         create(:line_item, quantity: 1000, item: infant_disposable_kit_item),
         create(:line_item, quantity: 1000, item: not_disposable_kit_item)
-      ])
+      ]
 
       create(:item, name: "Kit 1", kit:, organization:, distribution_quantity: 3)
 
