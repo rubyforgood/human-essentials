@@ -1,0 +1,5 @@
+<% if session.delete(:trigger_csv_download) %>
+  <% csv_url = "#{request.path}.csv#{"?#{request.query_string}" if request.query_string.present?}" %>
+  <iframe src="<%= csv_url %>" class="d-none"></iframe>
+  <div data-controller="toast" data-toast-message-value="Your CSV export is downloading!" class="d-none"></div>
+<% end %>

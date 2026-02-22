@@ -153,7 +153,4 @@
   </div>
 </section>
 
-<% if session.delete(:trigger_csv_download) %>
-  <iframe src="<%= distributions_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)) %>" class="d-none"></iframe>
-  <div data-controller="toast" data-toast-message-value="Your CSV export is downloading!" class="d-none"></div>
-<% end %>
+<%= render "shared/csv_download" %>
