@@ -9,6 +9,7 @@ class DistributionsController < ApplicationController
   include Validatable
 
   before_action :enable_turbo!, only: %i[new show]
+  before_action :handle_csv_export, only: [:index]
   skip_before_action :authenticate_user!, only: %i(calendar)
   skip_before_action :authorize_user, only: %i(calendar)
   skip_before_action :require_organization, only: %i(calendar)
@@ -41,12 +42,6 @@ class DistributionsController < ApplicationController
   end
 
   def index
-    if params[:export_csv]
-      session[:trigger_csv_download] = true
-      redirect_to distributions_path(request.query_parameters.except("export_csv"))
-      return
-    end
-
     setup_date_range_picker
 
     @highlight_id = session.delete(:created_distribution_id)
