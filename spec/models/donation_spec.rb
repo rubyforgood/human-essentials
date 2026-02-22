@@ -167,17 +167,6 @@ RSpec.describe Donation, type: :model do
       end
     end
 
-    describe "by_item_category_id >" do
-      it "returns only donations with items in the specified category" do
-        category = create(:item_category, organization: organization)
-        other_category = create(:item_category, organization: organization)
-        item1 = create(:item, item_category: category, organization: organization)
-        item2 = create(:item, item_category: other_category, organization: organization)
-        create(:donation, :with_items, item: item1, organization: organization)
-        create(:donation, :with_items, item: item2, organization: organization)
-        expect(Donation.by_item_category_id(category.id).count).to eq(1)
-      end
-    end
   end
 
   context "Associations >" do

@@ -134,7 +134,7 @@ class DonationsController < ApplicationController
     def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).permit(:at_storage_location, :by_source, :from_donation_site, :by_product_drive, :by_product_drive_participant, :from_manufacturer, :by_item_id, :by_item_category_id, :by_category)
+    params.require(:filters).permit(:at_storage_location, :by_source, :from_donation_site, :by_product_drive, :by_product_drive_participant, :from_manufacturer, :by_item_id, :by_category)
   end
 
   # Omits donation_site_id or product_drive_participant_id if those aren't selected as source
