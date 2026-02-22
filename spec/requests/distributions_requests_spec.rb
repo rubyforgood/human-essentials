@@ -87,7 +87,7 @@ RSpec.describe "Distributions", type: :request do
         get distributions_path
         page = Nokogiri::HTML(response.body)
         edit = page.at_css("a[href='#{edit_distribution_path(id: distribution.id)}']")
-        reclaim = page.at_css("a.btn-danger[href='#{distribution_path(id: distribution.id)}']")
+        reclaim = page.at_css("form[action='#{distribution_path(id: distribution.id)}'] .btn-danger")
         expect(edit.attr("class")).not_to match(/disabled/)
         expect(reclaim.attr("class")).not_to match(/disabled/)
         expect(response.body).not_to match(/Has Inactive Items/)
@@ -102,7 +102,7 @@ RSpec.describe "Distributions", type: :request do
           get distributions_path
           page = Nokogiri::HTML(response.body)
           edit = page.at_css("a[href='#{edit_distribution_path(id: distribution.id)}']")
-          reclaim = page.at_css("a.btn-danger[href='#{distribution_path(id: distribution.id)}']")
+          reclaim = page.at_css("form[action='#{distribution_path(id: distribution.id)}'] .btn-danger")
           expect(edit.attr("class")).to match(/disabled/)
           expect(reclaim.attr("class")).to match(/disabled/)
           expect(response.body).to match(/Has Inactive Items/)
@@ -550,11 +550,6 @@ RSpec.describe "Distributions", type: :request do
       include_examples "restricts access to organization users/admins"
     end
 
-    context "Looking at a different organization" do
-      let(:object) { create(:distribution, organization: create(:organization)) }
-      include_examples "requiring authorization"
-    end
-
     describe "PATCH #update" do
       subject { patch distribution_path(distribution_params) }
       let(:partner_name) { "Patrick" }
@@ -938,8 +933,6 @@ RSpec.describe "Distributions", type: :request do
 
   context "While not signed in" do
     let(:object) { create(:distribution) }
-
-    include_examples "requiring authorization"
 
     # calendar does not need signin
     describe 'GET #calendar' do

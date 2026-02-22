@@ -14,7 +14,7 @@ RSpec.describe "User sign-in handling", type: :system, js: true do
       fill_in "Password", with: 'invalid_password'
       click_button "Log in"
 
-      expect(page).to have_content('Invalid Email or password.')
+      expect(page).to have_content('Invalid email or password.')
     end
   end
 

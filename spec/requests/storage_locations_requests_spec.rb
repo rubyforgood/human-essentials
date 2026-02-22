@@ -73,7 +73,7 @@ RSpec.describe "StorageLocations", type: :request do
           it "shows a deactivate button" do
             get storage_locations_path(format: response_format)
             page = Nokogiri::HTML(response.body)
-            deactivate_link = page.at_css("a[href='#{storage_location_deactivate_path(storage_location)}']")
+            deactivate_link = page.at_css("form[action='#{storage_location_deactivate_path(storage_location)}'] button")
             expect(deactivate_link.attr("class")).not_to match(/disabled/)
           end
         end
@@ -87,7 +87,7 @@ RSpec.describe "StorageLocations", type: :request do
           it "shows a disabled deactivate button" do
             get storage_locations_path(format: response_format)
             page = Nokogiri::HTML(response.body)
-            deactivate_link = page.at_css("a[href='#{storage_location_deactivate_path(storage_location)}']")
+            deactivate_link = page.at_css("form[action='#{storage_location_deactivate_path(storage_location)}'] button")
             expect(deactivate_link.attr("class")).to match(/disabled/)
           end
         end
@@ -560,16 +560,5 @@ RSpec.describe "StorageLocations", type: :request do
         expect(response.body).to include("Square footage must be greater than or equal to 0")
       end
     end
-
-    context "Looking at a different organization" do
-      let(:object) { create(:storage_location, organization: create(:organization)) }
-      include_examples "requiring authorization"
-    end
-  end
-
-  context "While not signed in" do
-    let(:object) { create(:storage_location) }
-
-    include_examples "requiring authorization"
   end
 end

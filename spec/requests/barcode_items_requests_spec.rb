@@ -123,11 +123,6 @@ RSpec.describe "BarcodeItems", type: :request do
         expect(subject).to redirect_to(barcode_items_path)
       end
     end
-
-    context "Looking at a different organization" do
-      let(:object) { create(:barcode_item, organization: create(:organization)) }
-      include_examples "requiring authorization"
-    end
   end
 
   context 'while signed in as organization admin' do

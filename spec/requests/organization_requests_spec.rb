@@ -228,6 +228,7 @@ RSpec.describe "Organizations", type: :request do
         expect(html.text).to include("Logo")
         expect(html.text).to include("Use one-step Partner invite and approve process?")
         expect(html.text).to include("Receive email when Partner makes a Request?")
+        expect(html.text).to include("Include packages in distribution export:")
       end
 
       context "when enable_packs flipper is on" do
@@ -444,6 +445,14 @@ RSpec.describe "Organizations", type: :request do
           expect(response).to redirect_to(organization_path)
           follow_redirect!
           expect(response.body).to include("Yes")
+        end
+      end
+
+      context "can enable if package count is included in distribution exports" do
+        let(:update_param) { { organization: { include_packages_in_distribution_export: true } } }
+
+        it "can update include_packages_in_distribution_export" do
+          expect { subject }.to change { organization.reload.include_packages_in_distribution_export }.to true
         end
       end
     end

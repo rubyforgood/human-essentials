@@ -13,7 +13,7 @@
               <div class="box-header with-border">
               </div>
               <div class="box-body">
-                <%= simple_form_for @audit, data: { controller: "form-input" }, html: {class: "storage-location-required"} do |f| %>
+                <%= simple_form_for @audit, data: { controller: "form-input audit-duplicates" }, html: {class: "storage-location-required"} do |f| %>
                   <%= render partial: "storage_locations/source", object: f, locals: { label: "Storage location", error: "What storage location are you auditing?", include_omitted_items: true } %>
                   <fieldset style="margin-bottom: 2rem;">
                     <legend>Items in this audit</legend>

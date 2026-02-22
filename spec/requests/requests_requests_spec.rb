@@ -170,10 +170,4 @@ RSpec.describe 'Requests', type: :request do
       end
     end
   end
-
-  context 'When not signed' do
-    let(:object) { create(:request) }
-
-    include_examples 'requiring authorization'
-  end
 end

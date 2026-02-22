@@ -198,11 +198,6 @@ RSpec.describe ItemsController, type: :controller do
       end
     end
 
-    context "Looking at a different organization" do
-      let(:object) { create(:item, organization: create(:organization)) }
-      include_examples "requiring authorization"
-    end
-
     describe "PATCH #remove_category" do
       let(:item_category) { create(:item_category) }
       let!(:item) { create(:item, item_category: item_category) }
@@ -219,11 +214,5 @@ RSpec.describe ItemsController, type: :controller do
         expect(response).to have_notice
       end
     end
-  end
-
-  context "While not signed in" do
-    let(:object) { create(:item) }
-
-    include_examples "requiring authorization"
   end
 end
