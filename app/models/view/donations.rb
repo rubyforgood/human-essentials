@@ -19,8 +19,7 @@ module View
           params.require(:filters).permit(
             :at_storage_location, :by_source, :from_donation_site,
             :by_product_drive, :by_product_drive_participant,
-            :from_manufacturer, :by_item_id, :by_item_category_id,
-            :by_category
+            :from_manufacturer, :by_item_id, :by_category
           )
         else
           {}
