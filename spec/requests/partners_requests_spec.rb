@@ -240,7 +240,7 @@ RSpec.describe "Partners", type: :request do
             enable_quantity_based_requests: true)
         end
 
-        it "orders partners alphaetically" do
+        it "orders partners alphabetically" do
           get partners_path(partner, format: response_format)
 
           csv = CSV.parse(response.body)
@@ -433,9 +433,12 @@ RSpec.describe "Partners", type: :request do
 
   describe "POST #import_csv" do
     let(:model_class) { Partner }
+    let!(:outside_organization) { create(:organization) }
+    let!(:invalid_storage_location) { create(:storage_location, name: 'invalid', organization: outside_organization) }
+    let!(:valid_storage_location) { create(:storage_location, organization: organization) }
 
     context "with a csv file" do
-      let(:file) { fixture_file_upload("#{model_class.name.underscore.pluralize}.csv", "text/csv") }
+      let(:file) { fixture_file_upload("partners_with_six_fields.csv", "text/csv") }
       subject { post import_csv_partners_path, params: { file: file } }
 
       it "invokes .import_csv" do
@@ -465,6 +468,22 @@ RSpec.describe "Partners", type: :request do
       end
     end
 
+    context "csv file with a partner email already in another organization" do
+      let(:file) { fixture_file_upload("partners_with_six_fields.csv", "text/csv") }
+
+      before do
+        other_org = create(:organization)
+        create(:partner, name: "Existing Partner", email: "partner1@example.com", organization: other_org)
+      end
+
+      subject { post import_csv_partners_path, params: { file: file } }
+
+      it "shows an error for the partner in another organization" do
+        subject
+        expect(flash[:error]).to match(/has already been taken/)
+      end
+    end
+
     context "csv file with wrong headers" do
       let(:file) { fixture_file_upload("wrong_headers.csv", "text/csv") }
       subject { post import_csv_partners_path, params: { file: file } }
@@ -477,6 +496,46 @@ RSpec.describe "Partners", type: :request do
       it "presents a flash error message" do
         subject
         expect(response).to have_error "Check headers in file!"
+      end
+    end
+
+    context "csv file with send_reminders header and field missing" do
+      let(:file) { fixture_file_upload("partners_missing_send_reminders_field_and_header.csv", "text/csv") }
+      subject { post import_csv_partners_path, params: { file: file } }
+
+      it "invokes .import_csv" do
+        expect(model_class).to respond_to(:import_csv).with(2).arguments
+      end
+
+      it "redirects to :index" do
+        subject
+        expect(response).to be_redirect
+      end
+
+      it "defaults send_reminders to false" do
+        subject
+        partner = Partner.find_by(name: "Partner 51")
+        expect(partner.send_reminders).to be(false)
+      end
+    end
+
+    context "csv file with send_reminders field missing" do
+      let(:file) { fixture_file_upload("partners_missing_send_reminders_field.csv", "text/csv") }
+      subject { post import_csv_partners_path, params: { file: file } }
+
+      it "invokes .import_csv" do
+        expect(model_class).to respond_to(:import_csv).with(2).arguments
+      end
+
+      it "redirects to :index" do
+        subject
+        expect(response).to be_redirect
+      end
+
+      it "defaults send_reminders to false" do
+        subject
+        partner = Partner.find_by(name: "Partner 51")
+        expect(partner.send_reminders).to be(false)
       end
     end
 
@@ -497,6 +556,99 @@ RSpec.describe "Partners", type: :request do
         subject
         expect(response).to have_error(/The following #{model_class.name.underscore.humanize.pluralize} did not import successfully:/)
         expect(response).to have_error(/Partner 2: Email is invalid/)
+      end
+    end
+
+    context "csv file with default storage location header and field missing" do
+      let(:file) { fixture_file_upload("partners_missing_default_storage_location_field_and_header.csv", "text/csv") }
+      subject { post import_csv_partners_path, params: { file: file } }
+
+      it "invokes .import_csv" do
+        expect(model_class).to respond_to(:import_csv).with(2).arguments
+      end
+
+      it "redirects to :index" do
+        subject
+        expect(response).to be_redirect
+      end
+
+      it "presents a flash notice message" do
+        subject
+        expect(response).to have_notice "#{model_class.name.underscore.humanize.pluralize} were imported successfully!"
+      end
+    end
+
+    context "csv file with default storage location field missing" do
+      let(:file) { fixture_file_upload("partners_missing_default_storage_location_field.csv", "text/csv") }
+      subject { post import_csv_partners_path, params: { file: file } }
+
+      it "invokes .import_csv" do
+        expect(model_class).to respond_to(:import_csv).with(2).arguments
+      end
+
+      it "redirects to :index" do
+        subject
+        expect(response).to be_redirect
+      end
+
+      it "presents a flash notice message" do
+        subject
+        expect(response).to have_notice "#{model_class.name.underscore.humanize.pluralize} were imported successfully!"
+      end
+    end
+
+    context "csv file with default storage location, email preferences, quota, and notes" do
+      let(:file) { fixture_file_upload("partners_with_six_fields.csv", "text/csv") }
+      subject { post import_csv_partners_path, params: { file: file } }
+
+      it "invokes .import_csv" do
+        expect(model_class).to respond_to(:import_csv).with(2).arguments
+      end
+
+      it "redirects to :index" do
+        subject
+        expect(response).to be_redirect
+      end
+
+      it "presents a flash notice message" do
+        subject
+        expect(response).to have_notice "#{model_class.name.underscore.humanize.pluralize} were imported successfully!"
+      end
+    end
+
+    context "csv file with an invalid storage location" do
+      let!(:current_organization) { create(:organization) }
+      let!(:outside_organization) { create(:organization) }
+      let(:file) { fixture_file_upload("partners_with_six_fields_invalid_location.csv", "text/csv") }
+      before do
+        allow(controller).to receive(:current_organization).and_return(current_organization)
+      end
+
+      subject { post import_csv_partners_path, params: { file: file } }
+
+      it "presents a flash error message" do
+        subject
+        expect(flash[:alert]).to be_present
+        expect(flash[:alert]).to match(/The following Partners imported with warnings/)
+      end
+    end
+
+    context "csv file with a valid all-caps storage location" do
+      let(:file) { fixture_file_upload("partners_with_six_fields.csv", "text/csv") }
+      subject { post import_csv_partners_path, params: { file: file } }
+
+      it "invokes .import_csv" do
+        expect(model_class).to respond_to(:import_csv).with(2).arguments
+      end
+
+      it "redirects to :index" do
+        subject
+        expect(response).to be_redirect
+      end
+
+      it "presents a flash notice message" do
+        subject
+        expect(response).to have_notice "#{model_class.name.underscore.humanize.pluralize} were imported successfully!"
       end
     end
   end

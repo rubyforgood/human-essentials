@@ -258,19 +258,27 @@ RSpec.describe Partner, type: :model do
 
   describe "import_csv" do
     let(:organization) { create(:organization) }
+    before do
+      create(:storage_location, organization: organization)
+      create(:storage_location, organization: organization, name: "shed")
+      create(:storage_location, organization: organization, name: "building")
+      create(:storage_location, organization: organization, name: "Smithsonian Conservation Center")
+    end
 
     it "imports partners from a csv file and prevents multiple imports" do
-      before_import = Partner.count
-      import_file_path = Rails.root.join("spec", "fixtures", "files", "partners.csv")
+      import_file_path = Rails.root.join("spec", "fixtures", "files", "partners_with_six_fields.csv")
       data = File.read(import_file_path, encoding: "BOM|UTF-8")
       csv = CSV.parse(data, headers: true)
-      Partner.import_csv(csv, organization.id)
-      expect(Partner.count).to eq before_import + 3
-      import_file_path2 = Rails.root.join("spec", "fixtures", "files", "partners_with_duplicates.csv")
+      expect do
+        Partner.import_csv(csv, organization.id)
+      end.to change { Partner.count }.by(3)
+
+      import_file_path2 = Rails.root.join("spec", "fixtures", "files", "partners_with_six_fields_and_duplicates.csv")
       data2 = File.read(import_file_path2, encoding: "BOM|UTF-8")
       csv2 = CSV.parse(data2, headers: true)
-      Partner.import_csv(csv2, organization.id)
-      expect(Partner.count).to eq before_import + 4
+      expect do
+        Partner.import_csv(csv2, organization.id)
+      end.to change { Partner.count }.by(1)
     end
 
     it "imports partners from a csv file with BOM encodings" do
@@ -280,6 +288,43 @@ RSpec.describe Partner, type: :model do
       expect do
         Partner.import_csv(csv, organization.id)
       end.to change { Partner.count }.by(20)
+    end
+
+    it "imports partners with the correct values for fields" do
+      import_file_path = Rails.root.join("spec", "fixtures", "files", "partners_with_six_fields.csv")
+      data = File.read(import_file_path, encoding: "BOM|UTF-8")
+      csv = CSV.parse(data, headers: true)
+      response = Partner.import_csv(csv, organization.id)
+
+      expect(response[:errors]).to be_empty
+      expect(response[:warnings]).to be_empty
+      partner = Partner.last
+      expect(StorageLocation.find(partner.default_storage_location_id).name).to eq("Smithsonian Conservation Center")
+      expect(partner.send_reminders).to eq(false)
+      expect(partner.quota).to eq(80)
+      expect(partner.notes).to eq("really ten out of ten")
+    end
+
+    it "imports partners with all caps storage location" do
+      import_file_path = Rails.root.join("spec", "fixtures", "files", "partners_with_six_fields_capitalized_location.csv")
+      data = File.read(import_file_path, encoding: "BOM|UTF-8")
+      csv = CSV.parse(data, headers: true)
+      expect do
+        response = Partner.import_csv(csv, organization.id)
+        expect(response[:warnings]).to be_empty
+      end.to change { Partner.count }.by(3)
+    end
+
+    context "when storage location is not found" do
+      it "returns a warning" do
+        import_file_path = Rails.root.join("spec", "fixtures", "files", "partners_with_six_fields_invalid_location.csv")
+        data = File.read(import_file_path, encoding: "BOM|UTF-8")
+        csv = CSV.parse(data, headers: true)
+        response = Partner.import_csv(csv, organization.id)
+        expect(response[:errors]).to be_empty
+        expect(response[:warnings]).to be_present
+        expect(response[:warnings].join).to include("Default storage location is not a storage location for this partner's organization")
+      end
     end
   end
 

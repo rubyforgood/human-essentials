@@ -9,6 +9,8 @@ class PartnerCreateService
   end
 
   def call
+    process_default_storage_location
+
     @partner = organization.partners.build(partner_attrs)
 
     if @partner.valid?
@@ -36,6 +38,28 @@ class PartnerCreateService
   end
 
   private
+
+  def process_default_storage_location
+    return unless partner_attrs.has_key?("default_storage_location")
+
+    if partner_attrs["default_storage_location"].blank?
+      partner_attrs.delete("default_storage_location")
+    else
+      default_storage_location_name = partner_attrs["default_storage_location"]&.titlecase
+      default_storage_location_id = StorageLocation.find_by(
+        name: default_storage_location_name,
+        organization: organization.id
+      )&.id
+
+      if default_storage_location_id.nil?
+        add_warning(:default_storage_location,
+          "is not a storage location for this partner's organization")
+      end
+
+      partner_attrs.delete("default_storage_location")
+      partner_attrs["default_storage_location_id"] = default_storage_location_id
+    end
+  end
 
   attr_reader :organization, :partner_attrs
 end

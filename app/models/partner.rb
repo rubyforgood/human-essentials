@@ -57,6 +57,7 @@ class Partner < ApplicationRecord
   validate :correct_document_mime_type
 
   before_save { email&.downcase! }
+  before_create :default_send_reminders_to_false, if: :send_reminders_nil?
   before_update :invite_new_partner, if: :should_invite_because_email_changed?
 
   scope :alphabetized, -> { order(:name) }
@@ -104,18 +105,30 @@ class Partner < ApplicationRecord
   # better to extract this outside of the model
   def self.import_csv(csv, organization_id)
     errors = []
+    warnings = []
     organization = Organization.find(organization_id)
 
     csv.each do |row|
       hash_rows = Hash[row.to_hash.map { |k, v| [k.downcase, v] }]
 
-      svc = PartnerCreateService.new(organization: organization, partner_attrs: hash_rows)
-      svc.call
-      if svc.errors.present?
-        errors << "#{svc.partner.name}: #{svc.partner.errors.full_messages.to_sentence}"
+      partner_create_service = PartnerCreateService.new(organization: organization, partner_attrs: hash_rows)
+      partner_create_service.call
+
+      if partner_create_service.errors.present?
+        formatted_errors = partner_create_service.errors.map do |error|
+          "#{error.attribute.to_s.humanize} #{error.message.downcase}"
+        end
+        errors << "#{partner_create_service.partner.name}: #{formatted_errors.to_sentence}"
+
+      elsif partner_create_service.warnings.present?
+        formatted_warnings = partner_create_service.warnings.map do |warning|
+          "#{warning.attribute.to_s.humanize} #{warning.message.downcase}"
+        end
+        warnings << "#{partner_create_service.partner.name}: #{formatted_warnings.to_sentence}"
       end
     end
-    errors
+
+    {errors: errors, warnings: warnings}
   end
 
   def partials_to_show
@@ -164,6 +177,14 @@ class Partner < ApplicationRecord
     if documents.attached? && documents.any? { |doc| !doc.content_type.in?(ALLOWED_MIME_TYPES) }
       errors.add(:documents, "Must be a PDF or DOC file")
     end
+  end
+
+  def default_send_reminders_to_false
+    self.send_reminders = false
+  end
+
+  def send_reminders_nil?
+    send_reminders.nil?
   end
 
   def invite_new_partner
