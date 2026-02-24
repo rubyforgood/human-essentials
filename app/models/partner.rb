@@ -48,8 +48,6 @@ class Partner < ApplicationRecord
 
   has_many_attached :documents
 
-  # validates :name, presence: true, uniqueness: { scope: :organization }
-
   validates :email, presence: true, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
 
   validates :quota, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true

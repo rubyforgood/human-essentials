@@ -107,18 +107,18 @@ RSpec.describe "/partners/profiles", type: :request do
         {
           partner: {
             name: "Partnerdude", profile: {
-              no_social_media_presence: '0',
+              no_social_media_presence: "0",
               website: "",
               twitter: "",
               facebook: "",
               instagram: "",
-              agency_type: 'OTHER',
-              address1: '123 Main St',
-              city: 'Anytown',
-              state: 'CA',
-              zip_code: '12345',
-              program_name: 'Test Program',
-              program_description: 'Test Description'
+              agency_type: "OTHER",
+              address1: "123 Main St",
+              city: "Anytown",
+              state: "CA",
+              zip_code: "12345",
+              program_name: "Test Program",
+              program_description: "Test Description"
             }
           }
         }

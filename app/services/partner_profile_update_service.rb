@@ -7,13 +7,14 @@ class PartnerProfileUpdateService
     @profile = @partner.profile
     @partner_params = new_partner_params
     @profile_params = new_profile_params
+    @error_messages = []
   end
 
   def call
     return self unless validation
 
     perform_profile_service do
-      @partner.update(@partner_params)
+      @partner.update!(@partner_params)
       @profile.served_areas.destroy_all
       @profile.attributes = @profile_params
       @profile.save!(context: :edit)
@@ -52,6 +53,7 @@ class PartnerProfileUpdateService
 
     check_social_media
     check_mandatory_fields
+    @error = @error_messages.join(". ") if @error_messages.any?
     @error.nil?
   end
 
@@ -60,14 +62,14 @@ class PartnerProfileUpdateService
     missing_fields = mandatory_fields.select { |field| @profile_params[field].blank? }
     missing_fields.prepend :agency_name if @partner_params[:name].blank?
     if missing_fields.any?
-      @error = "Missing mandatory fields: #{missing_fields.join(', ')}"
+      @error_messages << "Missing mandatory fields: #{missing_fields.join(", ")}"
     end
   end
 
   def check_social_media
     social_media_fields = %i[website facebook twitter instagram]
-    if social_media_fields.all? { |field| @profile_params[field].blank? } && @profile_params[:no_social_media_presence] == '0'
-      @error = "At least one social media field must be filled out or 'No social media presence' must be checked."
+    if social_media_fields.all? { |field| @profile_params[field].blank? } && !@profile_params[:no_social_media_presence]
+      @error_messages << "At least one social media field must be filled out or 'No social media presence' must be checked."
     end
   end
 end

@@ -25,7 +25,7 @@ class PartnerUpdateService
     mandatory_fields = %i[name]
     missing_fields = mandatory_fields.select { |field| params[field].blank? }
     if missing_fields.any?
-      @error = "Missing mandatory fields: #{missing_fields.join(', ')}"
+      @error = "Missing mandatory fields: #{missing_fields.join(", ")}"
       return false
     end
     true
