@@ -53,7 +53,7 @@ RSpec.describe "Item management", type: :system do
     fill_in "Name", with: ""
     click_button "Save"
 
-    expect(page.find(".alert")).to have_content "didn't work"
+    expect(page.find(".alert")).to have_content "Name can't be blank"
   end
 
   it "can make the item invisible to partners" do

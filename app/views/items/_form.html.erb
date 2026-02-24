@@ -22,25 +22,25 @@
                 <%= f.input :reporting_category, label: 'NDBN Reporting Category', collection: Item.reporting_categories_for_select, disabled: !!@item.kit_id, required: !@item.kit_id, hint: @reporting_category_hint %>
               </div>
 
-              <%= f.input :name, label: "Value per item", wrapper: :input_group do %>
+              <%= f.input :value_in_dollars, label: "Value per item", wrapper: :input_group do %>
                 <span class="input-group-text"><i class="fa fa-money"></i></span>
                 <%= f.input_field :value_in_dollars, class: "form-control" %>
               <% end %>
 
-              <%= f.input :name, label: "Quantity Per Individual", wrapper: :input_group do %>
+              <%= f.input :distribution_quantity, label: "Quantity Per Individual", wrapper: :input_group do %>
                 <%= f.input_field :distribution_quantity, class: "form-control" %>
               <% end %>
 
               <% if current_user.has_cached_role?(Role::ORG_ADMIN, current_organization) %>
-                <%= f.input :name, label: "On hand minimum quantity", wrapper: :input_group do %>
+                <%= f.input :on_hand_minimum_quantity, label: "On hand minimum quantity", wrapper: :input_group do %>
                   <%= f.input_field :on_hand_minimum_quantity, input_html: {value: 0}, class: "form-control" %>
                 <% end %>
-                <%= f.input :name, label: "On hand recommended quantity", wrapper: :input_group do %>
+                <%= f.input :on_hand_recommended_quantity, label: "On hand recommended quantity", wrapper: :input_group do %>
                   <%= f.input_field :on_hand_recommended_quantity, class: "form-control" %>
                 <% end %>
               <% end %>
 
-              <%= f.input :name, label: "Package size", wrapper: :input_group do %>
+              <%= f.input :package_size, label: "Package size", wrapper: :input_group do %>
                 <%= f.input_field :package_size, class: "form-control", min: 0 %>
               <% end %>
 
@@ -50,7 +50,7 @@
                 <% end %>
               <% end %>
 
-              <%= f.input :visible, label: "Item is Visible to Partners?", wrapper: :input_group do %>
+              <%= f.input :visible_to_partners, label: "Item is Visible to Partners?", wrapper: :input_group do %>
                 <%= f.check_box :visible_to_partners, {class: "input-group-text", id: "visible_to_partners"}, "true", "false" %>
               <% end %>
 
