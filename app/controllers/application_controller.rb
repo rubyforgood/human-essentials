@@ -149,7 +149,7 @@ class ApplicationController < ActionController::Base
   def handle_csv_export
     return unless params[:export_csv]
 
-    session[:trigger_csv_download] = true
+    flash[:trigger_csv_download] = true
     clean_params = request.query_parameters.except("export_csv")
     redirect_url = clean_params.any? ? "#{request.path}?#{clean_params.to_query}" : request.path
     redirect_to redirect_url
