@@ -931,4 +931,20 @@ RSpec.feature "Distributions", type: :system do
     # will fail (the distribution is already complete) and show this error
     expect(page).not_to have_content("Sorry, we encountered an error when trying to mark this distribution as being completed")
   end
+
+  describe "CSV export", js: true do
+    before do
+      create(:distribution, :with_items, organization: organization)
+      visit distributions_path
+    end
+
+    it "downloads a CSV and shows a toast notification" do
+      click_on "Export Distributions"
+
+      wait_for_download
+      expect(downloads.length).to eq(1)
+      expect(download).to match(/Distributions.*\.csv/)
+      expect(page).to have_text("Your CSV export is downloading!")
+    end
+  end
 end
