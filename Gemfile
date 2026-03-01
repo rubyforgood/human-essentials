@@ -158,7 +158,7 @@ group :development, :test do
   gem 'rubocop-performance'
   gem "rubocop-rails", "~> 2.33.4"
   # More concise test ("should") matchers
-  gem "shoulda-matchers", "~> 6.5"
+  gem "shoulda-matchers", "~> 7.0"
   # Default rules for Rubocop.
   gem "standard", "~> 1.52"
   gem "standard-rails"
