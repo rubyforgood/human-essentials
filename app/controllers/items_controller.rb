@@ -11,7 +11,7 @@ class ItemsController < ApplicationController
     @items = @items.active unless params[:include_inactive_items]
 
     @item_categories = current_organization.item_categories.includes(:items).order('name ASC')
-    @kits = current_organization.kits.includes(line_items: :item)
+    @kits = current_organization.kits.includes(item: {line_items: :item})
     @storages = current_organization.storage_locations.active.order(id: :asc)
 
     @include_inactive_items = params[:include_inactive_items]
