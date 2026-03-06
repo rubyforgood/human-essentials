@@ -396,7 +396,8 @@ GEM
     memory_profiler (1.1.0)
     method_source (1.1.0)
     mini_mime (1.1.5)
-    minitest (6.0.1)
+    minitest (6.0.2)
+      drb (~> 2.0)
       prism (~> 1.5)
     monetize (2.0.0)
       money (~> 7.0)
@@ -658,8 +659,8 @@ GEM
       tilt
     securerandom (0.4.1)
     shellany (0.0.1)
-    shoulda-matchers (6.5.0)
-      activesupport (>= 5.2.0)
+    shoulda-matchers (7.0.1)
+      activesupport (>= 7.1)
     simple_form (5.4.0)
       actionpack (>= 7.0)
       activemodel (>= 7.0)
@@ -837,7 +838,7 @@ DEPENDENCIES
   rubocop-performance
   rubocop-rails (~> 2.33.4)
   sass-rails
-  shoulda-matchers (~> 6.5)
+  shoulda-matchers (~> 7.0)
   simple_form
   simplecov
   solid_cache (~> 1.0)
