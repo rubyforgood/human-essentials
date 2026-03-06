@@ -502,9 +502,9 @@ GEM
     pry (0.14.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
-    pry-doc (1.6.0)
+    pry-doc (1.7.0)
       pry (~> 0.11)
-      yard (~> 0.9.11)
+      yard (~> 0.9.21)
     pry-nav (1.0.0)
       pry (>= 0.9.10, < 0.15)
     pry-rails (0.3.11)
@@ -752,7 +752,7 @@ GEM
     websocket-extensions (0.1.5)
     xpath (3.2.0)
       nokogiri (~> 1.8)
-    yard (0.9.37)
+    yard (0.9.38)
     zeitwerk (2.7.5)
 
 PLATFORMS
