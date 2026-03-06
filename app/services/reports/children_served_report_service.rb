@@ -52,7 +52,7 @@ module Reports
       kits_subquery = organization
         .distributions
         .for_year(year)
-        .joins(line_items: { item: { kit: { line_items: :item} }})
+        .joins(line_items: { item: { kit: { item: { line_items: :item} } }})
         .where("items_line_items.reporting_category = 'disposable_diapers'")
         .select("DISTINCT ON (distributions.id, line_items.id, kits.id) line_items.quantity, items.distribution_quantity")
         .to_sql
