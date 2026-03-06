@@ -159,14 +159,13 @@ RSpec.describe Donation, type: :model do
 
     describe "by_item_id >" do
       it "returns only donations with the specified item" do
-        item1 = create(:item, organization: organization)
-        item2 = create(:item, organization: organization)
-        create(:donation, :with_items, item: item1, organization: organization)
-        create(:donation, :with_items, item: item2, organization: organization)
+        item1 = create(:item)
+        item2 = create(:item)
+        create(:donation, :with_items, item: item1)
+        create(:donation, :with_items, item: item2)
         expect(Donation.by_item_id(item1.id).count).to eq(1)
       end
     end
-
   end
 
   context "Associations >" do
