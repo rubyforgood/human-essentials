@@ -59,6 +59,7 @@ class Purchase < ApplicationRecord
 
   validates :amount_spent_in_cents, numericality: { greater_than: 0 }
   validate :total_equal_to_all_categories
+  validate :line_items_quantity_is_positive
   before_destroy :check_no_intervening_snapshot
 
   validates :amount_spent_on_diapers_cents, numericality: { greater_than_or_equal_to: 0 }
@@ -139,5 +140,9 @@ class Purchase < ApplicationRecord
     if intervening
       raise "We can't delete purchases entered before #{intervening.event_time.to_date}."
     end
+  end
+
+  def line_items_quantity_is_positive
+    line_items_quantity_is_at_least(1)
   end
 end
