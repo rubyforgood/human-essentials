@@ -71,7 +71,7 @@
                   <%=
                     if @distributions.any?
                       download_button_to(
-                        distributions_path(format: :csv, filters: filter_params.merge(date_range: date_range_params)),
+                        distributions_path(export_csv: true, filters: filter_params.merge(date_range: date_range_params)),
                         text: "Export Distributions"
                       )
                     end
@@ -152,3 +152,5 @@
     </div>
   </div>
 </section>
+
+<%= render "shared/csv_download" %>
