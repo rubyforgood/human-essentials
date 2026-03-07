@@ -7,21 +7,17 @@ class PartnerProfileUpdateService
     @profile = @partner.profile
     @partner_params = new_partner_params
     @profile_params = new_profile_params
+    @error_messages = []
   end
 
   def call
-    @return_value = false
-    perform_profile_service do
-      @partner.update(@partner_params)
-      @return_value = @partner.valid?
+    return self unless validation
 
-      if @return_value
-        @profile.served_areas.destroy_all
-        @profile.attributes = @profile_params
-        @profile.save!(context: :edit)
-      else
-        @error = "Partner '#{@partner.name}' had error(s) preventing the profile from being updated: #{@partner.errors.full_messages.join(", ")}"
-      end
+    perform_profile_service do
+      @partner.update!(@partner_params)
+      @profile.served_areas.destroy_all
+      @profile.attributes = @profile_params
+      @profile.save!(context: :edit)
     end
   end
 
@@ -47,5 +43,33 @@ class PartnerProfileUpdateService
 
   def set_error(error)
     @error = error.to_s
+  end
+
+  private
+
+  def validation
+    return true unless %w[awaiting_review approved].include?(@partner.status)
+    return true if @partner.organization.one_step_partner_invite
+
+    check_social_media
+    check_mandatory_fields
+    @error = @error_messages.join(". ") if @error_messages.any?
+    @error.nil?
+  end
+
+  def check_mandatory_fields
+    mandatory_fields = %i[agency_type address1 city state zip_code program_name program_description]
+    missing_fields = mandatory_fields.select { |field| @profile_params[field].blank? }
+    missing_fields.prepend :agency_name if @partner_params[:name].blank?
+    if missing_fields.any?
+      @error_messages << "Missing mandatory fields: #{missing_fields.join(", ")}"
+    end
+  end
+
+  def check_social_media
+    social_media_fields = %i[website facebook twitter instagram]
+    if social_media_fields.all? { |field| @profile_params[field].blank? } && !@profile_params[:no_social_media_presence]
+      @error_messages << "At least one social media field must be filled out or 'No social media presence' must be checked."
+    end
   end
 end
