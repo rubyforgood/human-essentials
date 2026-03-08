@@ -62,6 +62,8 @@ class DistributionsController < ApplicationController
     @total_value_paginated_distributions = @distribution_totals.slice(*paginated_ids).values.sum(&:value)
     @total_items_paginated_distributions = @distribution_totals.slice(*paginated_ids).values.sum(&:quantity)
     @selected_item_category = filter_params[:by_item_category_id].presence
+    @reporting_categories = Item.reporting_categories_for_select
+    @selected_reporting_category = filter_params[:by_reporting_category].presence
     @selected_partner = filter_params[:by_partner]
     @selected_status = filter_params[:by_state]
     @selected_location = filter_params[:by_location]
@@ -325,7 +327,7 @@ class DistributionsController < ApplicationController
 
     params
       .require(:filters)
-      .permit(:by_item_id, :by_item_category_id, :by_partner, :by_state, :by_location, :date_range)
+      .permit(:by_item_id, :by_item_category_id, :by_reporting_category, :by_partner, :by_state, :by_location, :date_range)
   end
 
   def perform_inventory_check

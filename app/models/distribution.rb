@@ -54,6 +54,7 @@ class Distribution < ApplicationRecord
   scope :by_item_id, ->(item_id) { includes(:items).where(items: { id: item_id }) }
   # partner scope to allow filtering by partner
   scope :by_item_category_id, ->(item_category_id) { includes(:items).where(items: { item_category_id: item_category_id }) }
+  scope :by_reporting_category, ->(reporting_category) { includes(:items).where(items: { reporting_category: reporting_category }) }
   scope :by_partner, ->(partner_id) { where(partner_id: partner_id) }
   # location scope to allow filtering distributions by location
   scope :by_location, ->(storage_location_id) { where(storage_location_id: storage_location_id) }
