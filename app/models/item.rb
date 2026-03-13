@@ -110,7 +110,7 @@ class Item < ApplicationRecord
     else
       organization.kits
         .active
-        .joins(item: :line_items)
+        .joins(kit_item: :line_items)
         .where(line_items: { item_id: id}).any?
     end
   end
