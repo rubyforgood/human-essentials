@@ -23,5 +23,4 @@
 #  organization_id              :integer
 #
 class ConcreteItem < Item
-
 end

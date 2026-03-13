@@ -23,5 +23,7 @@
 #  organization_id              :integer
 #
 class KitItem < Item
-  belongs_to :kit # for now
+  # for now. Technically not optional, but since we will be changing this to be standalone (no kit),
+  # there isn't really a reason to enforce this at the moment.
+  belongs_to :kit, optional: true
 end
