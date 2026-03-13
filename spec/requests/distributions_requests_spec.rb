@@ -689,8 +689,10 @@ RSpec.describe "Distributions", type: :request do
       context "when accessing a distribution from another organization" do
         it "returns 404" do
           other_distribution = create(:distribution, organization: create(:organization))
+          original_comment = other_distribution.comment
           patch distribution_path(id: other_distribution.id), params: {distribution: {comment: "hacked"}}
           expect(response.status).to eq(404)
+          expect(other_distribution.reload.comment).to eq(original_comment)
         end
       end
 
