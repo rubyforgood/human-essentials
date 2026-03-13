@@ -30,13 +30,13 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       infant_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", reporting_category: :disposable_diapers)
 
       kit_1 = create(:kit, organization: organization)
-      kit_1.item.line_items = [
+      kit_1.kit_item.line_items = [
         create(:line_item, item: toddler_disposable_kit_item),
         create(:line_item, item: infant_disposable_kit_item)
       ]
 
       kit_2 = create(:kit, organization: organization)
-      kit_2.item.line_items = [
+      kit_2.kit_item.line_items = [
         create(:line_item, item: toddler_disposable_kit_item),
         create(:line_item, item: infant_disposable_kit_item)
       ]
