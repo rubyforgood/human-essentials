@@ -88,6 +88,9 @@ module Exports
         },
         "Comments" => ->(distribution) {
           distribution.comment
+        },
+        "Reporting Category" => ->(distribution) {
+          distribution.line_items.map { |li| li.item.reporting_category_humanized }.uniq.compact.sort.join(", ")
         }
       }
     end
@@ -98,6 +101,8 @@ module Exports
         "Total Number of #{filtered_item_name}"
       elsif @filters[:by_item_category_id].present?
         "Total Number of #{filtered_item_category_name}"
+      elsif @filters[:by_reporting_category].present?
+        "Total Number of #{filtered_reporting_category_name}"
       else
         "Total Items"
       end
@@ -108,6 +113,8 @@ module Exports
         "Total Value of #{filtered_item_name}"
       elsif @filters[:by_item_category_id].present?
         "Total Value of #{filtered_item_category_name}"
+      elsif @filters[:by_reporting_category].present?
+        "Total Value of #{filtered_reporting_category_name}"
       else
         "Total Value"
       end
@@ -119,6 +126,10 @@ module Exports
 
     def filtered_item_category_name
       @filtered_item_category ||= ItemCategory.find(@filters[:by_item_category_id].to_i).name
+    end
+
+    def filtered_reporting_category_name
+      @filtered_reporting_category ||= Item.reporting_categories_for_select.find { |rc| rc.id == @filters[:by_reporting_category] }&.name
     end
 
     def base_headers

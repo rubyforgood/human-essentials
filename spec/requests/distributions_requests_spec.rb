@@ -161,6 +161,63 @@ RSpec.describe "Distributions", type: :request do
         end
       end
 
+      context "when filtering by reporting category" do
+        let!(:item_pads) { create(:item, reporting_category: "pads", value_in_cents: 100, organization: organization) }
+        let!(:item_diapers) { create(:item, reporting_category: "disposable_diapers", value_in_cents: 100, organization: organization) }
+        let!(:distribution_pads) { create(:distribution, :with_items, item: item_pads, item_quantity: 5, organization: organization) }
+        let!(:distribution_diapers) { create(:distribution, :with_items, item: item_diapers, item_quantity: 8, organization: organization) }
+        let(:params) { { filters: { by_reporting_category: "pads" } } }
+
+        it "only shows distributions containing items with the given reporting category" do
+          get distributions_path, params: params
+
+          expect(assigns(:distributions)).to include(distribution_pads)
+          expect(assigns(:distributions)).not_to include(distribution_diapers)
+        end
+
+        it "includes the reporting category filter select in the page" do
+          get distributions_path
+
+          page = Nokogiri::HTML(response.body)
+          reporting_category_select = page.at_css("select[name='filters[by_reporting_category]']")
+          expect(reporting_category_select).to be_present
+          expect(reporting_category_select.text).to include("Pads")
+        end
+
+        it "annotates the quantity and value column headers with the reporting category name" do
+          get distributions_path, params: params
+
+          page = Nokogiri::HTML(response.body)
+          quantity_header, value_header = page.css("table thead tr th.numeric")
+          expect(quantity_header.text).to eq("Total Pads")
+          expect(value_header.text).to eq("Value of Pads")
+        end
+
+        it "exports only matching distributions to CSV with annotated headers and a Reporting Category column" do
+          get distributions_path(format: :csv, filters: params[:filters])
+
+          csv = CSV.parse(response.body, headers: true)
+          expect(csv.headers).to include("Reporting Category")
+          expect(csv.headers).to include("Total Number of Pads")
+          expect(csv.headers).to include("Total Value of Pads")
+          expect(csv.count).to eq(1)
+          expect(csv.first["Reporting Category"]).to eq("Pads")
+        end
+
+        context "when also filtering by item" do
+          let(:combined_params) { { filters: { by_item_id: item_pads.id, by_reporting_category: "pads" } } }
+
+          it "uses the item name in the column headers, not the reporting category" do
+            get distributions_path, params: combined_params
+
+            page = Nokogiri::HTML(response.body)
+            quantity_header, value_header = page.css("table thead tr th.numeric")
+            expect(quantity_header.text).to eq("Total #{item_pads.name}")
+            expect(value_header.text).to eq("Value of #{item_pads.name}")
+          end
+        end
+      end
+
       context "when filtering by item category id" do
         let!(:item_category) { create(:item_category, organization:) }
         let!(:item_category_2) { create(:item_category, organization:) }
