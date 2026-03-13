@@ -86,7 +86,7 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       infant_disposable_kit_item = create(:item, name: "Infant Disposable Diapers", reporting_category: :disposable_diapers)
 
       kit = create(:kit, organization: organization)
-      kit.item.line_items = [
+      kit.kit_item.line_items = [
         create(:line_item, item: toddler_disposable_kit_item),
         create(:line_item, item: infant_disposable_kit_item)
       ]
@@ -104,8 +104,8 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       infant_distribution = create(:distribution, organization: organization, issued_at: within_time)
       toddler_distribution = create(:distribution, organization: organization, issued_at: within_time)
 
-      create(:line_item, quantity: 10, item: kit.item, itemizable: infant_distribution)
-      create(:line_item, quantity: 10, item: kit.item, itemizable: toddler_distribution)
+      create(:line_item, quantity: 10, item: kit.kit_item, itemizable: infant_distribution)
+      create(:line_item, quantity: 10, item: kit.kit_item, itemizable: toddler_distribution)
 
       report = described_class.new(organization: organization, year: within_time.year).report
       expect(report).to eq({
@@ -128,7 +128,7 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
 
       # this quantity shouldn't matter so I'm setting it to a high number to ensure it isn't used
       kit = create(:kit, organization: organization)
-      kit.item.line_items = [
+      kit.kit_item.line_items = [
         create(:line_item, quantity: 1000, item: toddler_disposable_kit_item),
         create(:line_item, quantity: 1000, item: infant_disposable_kit_item),
         create(:line_item, quantity: 1000, item: not_disposable_kit_item)
@@ -141,7 +141,7 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       infant_distribution = create(:distribution, organization: organization, issued_at: within_time)
 
       [toddler_distribution, infant_distribution].each do |distribution|
-        create(:line_item, quantity: 2, item: kit.item, itemizable: distribution)
+        create(:line_item, quantity: 2, item: kit.kit_item, itemizable: distribution)
       end
 
       report = described_class.new(organization: organization, year: within_time.year).report

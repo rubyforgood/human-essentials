@@ -17,7 +17,7 @@ class Kit < ApplicationRecord
   include Valuable
 
   belongs_to :organization
-  has_one :item, dependent: :restrict_with_exception
+  has_one :kit_item, dependent: :restrict_with_exception
 
   scope :active, -> { where(active: true) }
   scope :alphabetized, -> { order(:name) }
