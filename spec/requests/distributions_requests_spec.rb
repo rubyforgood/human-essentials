@@ -55,6 +55,14 @@ RSpec.describe "Distributions", type: :request do
         end
       end
 
+      context "when accessing a distribution from another organization" do
+        it "returns 404" do
+          other_distribution = create(:distribution, organization: create(:organization))
+          get print_distribution_path(id: other_distribution.id)
+          expect(response.status).to eq(404)
+        end
+      end
+
       include_examples "restricts access to organization users/admins"
     end
 
@@ -473,6 +481,14 @@ RSpec.describe "Distributions", type: :request do
         end
       end
 
+      context "when accessing a distribution from another organization" do
+        it "returns 404" do
+          other_distribution = create(:distribution, organization: create(:organization))
+          get distribution_path(id: other_distribution.id)
+          expect(response.status).to eq(404)
+        end
+      end
+
       include_examples "restricts access to organization users/admins"
     end
 
@@ -667,6 +683,14 @@ RSpec.describe "Distributions", type: :request do
           it "does not send the e-mail" do
             expect { subject }.not_to change { ActionMailer::Base.deliveries.count }
           end
+        end
+      end
+
+      context "when accessing a distribution from another organization" do
+        it "returns 404" do
+          other_distribution = create(:distribution, organization: create(:organization))
+          patch distribution_path(id: other_distribution.id), params: {distribution: {comment: "hacked"}}
+          expect(response.status).to eq(404)
         end
       end
 
@@ -890,6 +914,14 @@ RSpec.describe "Distributions", type: :request do
         end
       end
 
+      context "when accessing a distribution from another organization" do
+        it "returns 404" do
+          other_distribution = create(:distribution, organization: create(:organization))
+          get edit_distribution_path(id: other_distribution.id)
+          expect(response.status).to eq(404)
+        end
+      end
+
       include_examples "restricts access to organization users/admins"
     end
 
@@ -925,6 +957,16 @@ RSpec.describe "Distributions", type: :request do
         end
         expect { subject }.not_to change { Distribution.count }
         expect(flash[:error]).to eq("We can't delete distributions entered before #{1.day.ago.to_date}.")
+      end
+
+      context "when accessing a distribution from another organization" do
+        it "returns 404" do
+          other_distribution = create(:distribution, organization: create(:organization))
+          expect {
+            delete distribution_path(id: other_distribution.id)
+          }.not_to change { Distribution.count }
+          expect(response.status).to eq(404)
+        end
       end
 
       include_examples "restricts access to organization users/admins"

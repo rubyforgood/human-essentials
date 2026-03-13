@@ -14,7 +14,7 @@ class DistributionsController < ApplicationController
   skip_before_action :require_organization, only: %i(calendar)
 
   def print
-    @distribution = Distribution.find(params[:id])
+    @distribution = current_organization.distributions.find(params[:id])
     respond_to do |format|
       format.any do
         pdf = DistributionPdf.new(current_organization, @distribution)
@@ -27,7 +27,8 @@ class DistributionsController < ApplicationController
   end
 
   def destroy
-    service = DistributionDestroyService.new(params[:id])
+    distribution = current_organization.distributions.find(params[:id])
+    service = DistributionDestroyService.new(distribution.id)
     result = service.call
 
     if result.success?
@@ -167,7 +168,7 @@ class DistributionsController < ApplicationController
   end
 
   def show
-    @distribution = Distribution.includes(:storage_location, line_items: :item).find(params[:id])
+    @distribution = current_organization.distributions.includes(:storage_location, line_items: :item).find(params[:id])
     @line_items = @distribution.line_items
 
     @total_quantity = @distribution.total_quantity
@@ -178,7 +179,7 @@ class DistributionsController < ApplicationController
   end
 
   def edit
-    @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
+    @distribution = current_organization.distributions.includes(:line_items).includes(:storage_location).find(params[:id])
     @distribution.initialize_request_items
     if (!@distribution.complete? && @distribution.future?) ||
         current_user.has_cached_role?(Role::ORG_ADMIN, current_organization)
@@ -201,7 +202,7 @@ class DistributionsController < ApplicationController
   end
 
   def update
-    @distribution = Distribution.includes(:line_items).includes(:storage_location).find(params[:id])
+    @distribution = current_organization.distributions.includes(:line_items).includes(:storage_location).find(params[:id])
     result = DistributionUpdateService.new(@distribution, distribution_params).call
 
     if result.success?
