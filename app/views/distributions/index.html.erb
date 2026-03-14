@@ -46,6 +46,9 @@
                     <%= filter_select(label: "Filter by Item Category", scope: :by_item_category_id, collection: @item_categories, selected: @selected_item_category) %>
                   </div>
                 <% end %>
+                <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                  <%= filter_select(label: "Filter by Reporting Category", scope: :by_reporting_category, collection: @reporting_categories, selected: @selected_reporting_category) %>
+                </div>
                 <% if @partners.present? %>
                   <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-12">
                     <%= filter_select(label: "Filter by Partner", scope: :by_partner, collection: @partners, selected: @selected_partner) %>
@@ -105,12 +108,15 @@
 
                 <% filtered_item_name = @selected_item ? @items.find { |i| i.id == filter_params[:by_item_id].to_i }&.name : nil %>
                 <% filtered_category_name = @selected_item_category ? @item_categories.find { |ic| ic.id == filter_params[:by_item_category_id].to_i }&.name : nil %>
+                <% filtered_reporting_category_name = @selected_reporting_category ? @reporting_categories.find { |rc| rc.id == filter_params[:by_reporting_category] }&.name : nil %>
 
                 <!-- Quantity -->
                 <% if filtered_item_name %>
                   <th class="numeric">Total <%= filtered_item_name %></th>
                 <% elsif filtered_category_name %>
                   <th class="numeric">Total in <%= filtered_category_name %></th>
+                <% elsif filtered_reporting_category_name %>
+                  <th class="numeric">Total <%= filtered_reporting_category_name %></th>
                 <% else %>
                   <th class="numeric">Total Items</th>
                 <% end %>
@@ -121,6 +127,8 @@
                   <th class="numeric">Value of <%= filtered_item_name %></th>
                 <% elsif filtered_category_name %>
                   <th class="numeric">Value of <%= filtered_category_name %></th>
+                <% elsif filtered_reporting_category_name %>
+                  <th class="numeric">Value of <%= filtered_reporting_category_name %></th>
                 <% else %>
                   <th class="numeric">Total Value</th>
                 <% end %>
@@ -137,7 +145,16 @@
               <%= render partial: "distribution_row", collection: @paginated_distributions %>
               </tbody>
               <tfoot>
-              <%= render partial: "distribution_total" %>
+              <% if filtered_item_name %>
+                <% quantity_label = filtered_item_name %>
+              <% elsif filtered_category_name %>
+                <% quantity_label = "in #{filtered_category_name}" %>
+              <% elsif filtered_reporting_category_name %>
+                <% quantity_label = filtered_reporting_category_name %>
+              <% else %>
+                <% quantity_label = "Items" %>
+              <% end %>
+              <%= render partial: "distribution_total", locals: { quantity_label: quantity_label } %>
               </tfoot>
             </table>
           </div>
