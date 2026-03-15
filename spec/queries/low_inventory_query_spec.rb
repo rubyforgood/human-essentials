@@ -35,8 +35,10 @@ RSpec.describe LowInventoryQuery do
     let(:item) { create :item, organization: organization }
     let(:minimum_quantity) { 0 }
 
+    # Use TestInventory to set up inventory directly, instead of creating
+    # a purchase with 0 quantity items (which our validation now rejects).
     before do
-      TestInventory.create_inventory(organization, { storage_location.id => { item.id => 0 } })
+      TestInventory.create_inventory(organization, {storage_location.id => {item.id => 0}})
     end
 
     it { is_expected.to eq [] }
