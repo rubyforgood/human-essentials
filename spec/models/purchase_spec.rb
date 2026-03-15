@@ -65,6 +65,20 @@ RSpec.describe Purchase, type: :model do
       expect(d).not_to be_valid
     end
 
+    it "is not valid if any line item has zero quantity" do
+      item = create(:item)
+      p = build(:purchase)
+      p.line_items.build(item_id: item.id, quantity: 0)
+      expect(p).not_to be_valid
+    end
+
+    it "is not valid if any line item has negative quantity" do
+      item = create(:item)
+      p = build(:purchase)
+      p.line_items.build(item_id: item.id, quantity: -1)
+      expect(p).not_to be_valid
+    end
+
     it "is valid if all categories are positive and add up to the total" do
       d = build(:purchase, amount_spent_in_cents: 1150,
         amount_spent_on_diapers_cents: 200,

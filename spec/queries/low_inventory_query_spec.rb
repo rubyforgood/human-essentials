@@ -34,7 +34,10 @@ RSpec.describe LowInventoryQuery do
   context "when minimum_quantity is 0 and recommended_quantity is nil and item quantity is 0" do
     let(:item) { create :item, organization: organization }
     let(:minimum_quantity) { 0 }
-    let(:inventory_item_quantity) { 0 }
+
+    before do
+      TestInventory.create_inventory(organization, { storage_location.id => { item.id => 0 } })
+    end
 
     it { is_expected.to eq [] }
   end
