@@ -4,7 +4,7 @@ class KitsController < ApplicationController
   end
 
   def index
-    @kits = current_organization.kits.includes(item: {line_items: :item}).class_filter(filter_params)
+    @kits = current_organization.kits.includes(kit_item: {line_items: :item}).class_filter(filter_params)
     @inventory = View::Inventory.new(current_organization.id)
     unless params[:include_inactive_items]
       @kits = @kits.active
@@ -16,8 +16,8 @@ class KitsController < ApplicationController
     load_form_collections
 
     @kit = current_organization.kits.new
-    @kit.item = current_organization.items.new
-    @kit.item.line_items.build
+    @kit.kit_item = current_organization.items.new
+    @kit.kit_item.line_items.build
   end
 
   def create
@@ -36,8 +36,8 @@ class KitsController < ApplicationController
       kit_only_params = kit_params.except(:line_items_attributes)
       @kit = Kit.new(kit_only_params)
       load_form_collections
-      @kit.item ||= current_organization.items.new(kit_params.slice(:line_items_attributes))
-      @kit.item.line_items.build if @kit.item.line_items.empty?
+      @kit.kit_item ||= current_organization.items.new(kit_params.slice(:line_items_attributes))
+      @kit.kit_item.line_items.build if @kit.kit_item.line_items.empty?
 
       render :new
     end

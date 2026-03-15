@@ -17,7 +17,7 @@ class Kit < ApplicationRecord
   include Valuable
 
   belongs_to :organization
-  has_one :item, dependent: :restrict_with_exception
+  has_one :kit_item, dependent: :restrict_with_exception
 
   scope :active, -> { where(active: true) }
   scope :alphabetized, -> { order(:name) }
@@ -30,23 +30,23 @@ class Kit < ApplicationRecord
   # @return [Boolean]
   def can_deactivate?(inventory = nil)
     inventory ||= View::Inventory.new(organization_id)
-    inventory.quantity_for(item_id: item.id).zero?
+    inventory.quantity_for(item_id: kit_item.id).zero?
   end
 
   def deactivate
     update!(active: false)
-    item.update!(active: false)
+    kit_item.update!(active: false)
   end
 
   # Kits can't reactivate if they have any inactive items, because now whenever they are allocated
   # or deallocated, we are changing inventory for inactive items (which we don't allow).
   # @return [Boolean]
   def can_reactivate?
-    item.line_items.joins(:item).where(items: { active: false }).none?
+    kit_item.line_items.joins(:kit_item).where(items: { active: false }).none?
   end
 
   def reactivate
     update!(active: true)
-    item.update!(active: true)
+    kit_item.update!(active: true)
   end
 end

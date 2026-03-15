@@ -38,6 +38,7 @@ class KitCreateService
       item_creation = ItemCreateService.new(
         organization_id: organization.id,
         item_params: {
+          type: 'KitItem',
           line_items_attributes: line_items,
           name: kit.name,
           partner_key: item_housing_a_kit_base_item.partner_key,

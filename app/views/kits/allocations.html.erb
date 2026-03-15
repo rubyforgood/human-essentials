@@ -51,7 +51,7 @@
                     </thead>
                     <tbody>
                     <% if @inventory %>
-                      <% @inventory.all_items.select { |i| i.item_id == @kit.item.id }.each do |ii| %>
+                      <% @inventory.all_items.select { |i| i.item_id == @kit.kit_item.id }.each do |ii| %>
                         <tr id="storage_location_<%= ii.storage_location_id %>">
                           <td> <%= @inventory.storage_location_name(ii.storage_location_id) %> </td>
                           <td>
@@ -100,7 +100,7 @@
                               <td><%= @kit.name %></td>
                               <td data-base-quantity='-1' class='text-bold'></td>
                             </tr>
-                            <% @kit.item.line_items.each do |li| %>
+                            <% @kit.kit_item.line_items.each do |li| %>
                               <tr>
                                 <td> <%= li.item.name %> </td>
                                 <td data-base-quantity="<%= li.quantity %>" class='text-bold'></td>
