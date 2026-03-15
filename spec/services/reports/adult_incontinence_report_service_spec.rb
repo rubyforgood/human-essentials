@@ -52,10 +52,10 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
         adult_incontinence_kit_item_3.line_items.create!(item: adult_incontinence_kit_item_3, quantity: 5)
         non_adult_incontinence_kit_item.line_items.create!(item: non_adult_incontinence_kit_item, quantity: 5)
 
-        @kit_1 = create(:kit, organization: organization, item: adult_incontinence_kit_item_1)
-        @kit_2 = create(:kit, organization: organization, item: adult_incontinence_kit_item_2)
-        @kit_4 = create(:kit, organization: organization, item: adult_incontinence_kit_item_3)
-        @kit_3 = create(:kit, organization: organization, item: non_adult_incontinence_kit_item)
+        @kit_1 = create(:kit, organization: organization, kit_item: adult_incontinence_kit_item_1)
+        @kit_2 = create(:kit, organization: organization, kit_item: adult_incontinence_kit_item_2)
+        @kit_4 = create(:kit, organization: organization, kit_item: adult_incontinence_kit_item_3)
+        @kit_3 = create(:kit, organization: organization, kit_item: non_adult_incontinence_kit_item)
 
         # kit distributions
         kit_distribution_1 = create(:distribution, organization: organization, issued_at: within_time)

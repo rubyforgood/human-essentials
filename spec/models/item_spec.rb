@@ -483,7 +483,7 @@ RSpec.describe Item, type: :model do
       let(:organization) { create(:organization) }
       let(:base_item) { create(:base_item, name: "Kit") }
       let(:kit) { create(:kit, organization: organization) }
-      let(:kit_item) { create(:item, kit: kit, organization: organization, base_item: base_item) }
+      let(:kit_item) { create(:kit_item, kit: kit, organization: organization, base_item: base_item) }
       let(:regular_item) { create(:item, organization: organization) }
 
       it "has no reporting category" do
