@@ -11,6 +11,7 @@ RSpec.describe "Reports::DonationsSummary", type: :request do
       let!(:donation) { create(:donation, :with_items, issued_at: 1.day.ago) }
 
       before do
+        freeze_time
         get reports_donations_summary_path
       end
 
