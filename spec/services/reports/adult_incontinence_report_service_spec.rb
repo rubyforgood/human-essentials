@@ -64,11 +64,11 @@ RSpec.describe Reports::AdultIncontinenceReportService, type: :service do
         # wipes distribution
         kit_distribution_3 = create(:distribution, organization: organization, issued_at: within_time)
 
-        create(:line_item, :distribution, quantity: 100, item: @kit_1.item, itemizable: kit_distribution_1)
-        create(:line_item, :distribution, quantity: 100, item: @kit_2.item, itemizable: kit_distribution_2)
-        create(:line_item, :distribution, quantity: 100, item: @kit_4.item, itemizable: kit_distribution_4)
+        create(:line_item, :distribution, quantity: 100, item: @kit_1.kit_item, itemizable: kit_distribution_1)
+        create(:line_item, :distribution, quantity: 100, item: @kit_2.kit_item, itemizable: kit_distribution_2)
+        create(:line_item, :distribution, quantity: 100, item: @kit_4.kit_item, itemizable: kit_distribution_4)
         # wipes kit no ai items
-        create(:line_item, :distribution, quantity: 100, item: @kit_3.item, itemizable: kit_distribution_3)
+        create(:line_item, :distribution, quantity: 100, item: @kit_3.kit_item, itemizable: kit_distribution_3)
         # We will create data both within and outside our date range, and both adult_incontinence and non adult_incontinence.
         # Spec will ensure that only the required data is included.
 

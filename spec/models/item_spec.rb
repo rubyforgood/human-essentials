@@ -343,7 +343,7 @@ RSpec.describe Item, type: :model do
         it "should not succeed" do
           allow(item).to receive(:can_delete?).and_return(false)
           expect { item.destroy! }
-            .to raise_error(/Failed to destroy Item/)
+            .to raise_error(/Failed to destroy ConcreteItem/)
             .and not_change { Item.count }
           expect(item.errors.full_messages).to eq(["Cannot delete item - it has already been used!"])
         end

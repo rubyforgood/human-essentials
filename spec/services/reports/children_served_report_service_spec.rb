@@ -55,10 +55,10 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
       infant_distribution = create(:distribution, organization: organization, issued_at: within_time)
       toddler_distribution = create(:distribution, organization: organization, issued_at: within_time)
 
-      create(:line_item, quantity: 5, item: kit_1.item, itemizable: infant_distribution)
-      create(:line_item, quantity: 5, item: kit_1.item, itemizable: toddler_distribution)
-      create(:line_item, quantity: 5, item: kit_2.item, itemizable: infant_distribution)
-      create(:line_item, quantity: 5, item: kit_2.item, itemizable: toddler_distribution)
+      create(:line_item, quantity: 5, item: kit_1.kit_item, itemizable: infant_distribution)
+      create(:line_item, quantity: 5, item: kit_1.kit_item, itemizable: toddler_distribution)
+      create(:line_item, quantity: 5, item: kit_2.kit_item, itemizable: infant_distribution)
+      create(:line_item, quantity: 5, item: kit_2.kit_item, itemizable: toddler_distribution)
 
       report = described_class.new(organization: organization, year: within_time.year).report
       expect(report).to eq({
