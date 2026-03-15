@@ -277,6 +277,36 @@ RSpec.describe "Donations", type: :request do
       end
     end
 
+    describe "when accessing a donation from another organization" do
+      let(:other_organization) { create(:organization) }
+      let(:other_donation) { create(:donation, organization: other_organization, comment: "Original comment") }
+
+      it "returns not found for show" do
+        get donation_path(id: other_donation.id)
+
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it "returns not found for edit" do
+        get edit_donation_path(id: other_donation.id)
+
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it "returns not found for print" do
+        get print_donation_path(id: other_donation.id)
+
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it "returns not found for update and does not change donation" do
+        put donation_path(id: other_donation.id, donation: {comment: "Changed comment"})
+        
+        expect(response).to have_http_status(:not_found)
+        expect(other_donation.reload.comment).to eq("Original comment")
+      end
+    end
+
     describe "GET #edit" do
       it 'should not allow edits if there is an intervening snapshot' do
         donation = FactoryBot.create(:donation,
