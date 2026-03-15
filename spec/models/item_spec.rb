@@ -312,7 +312,7 @@ RSpec.describe Item, type: :model do
 
         it 'deactivates the kit if it exists' do
           kit = create(:kit)
-          item = create(:item, kit: kit)
+          item = create(:kit_item, kit: kit)
           expect(kit).to be_active
           item.deactivate!
           expect(item).not_to be_active

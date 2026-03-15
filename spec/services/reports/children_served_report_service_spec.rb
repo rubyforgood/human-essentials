@@ -41,8 +41,8 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
         create(:line_item, item: infant_disposable_kit_item)
       ]
 
-      create(:item, name: "Kit 1", kit: kit_1, organization:, distribution_quantity: 1)
-      create(:item, name: "Kit 2", kit: kit_2, organization:, distribution_quantity: 1)
+      create(:kit_item, name: "Kit 1", kit: kit_1, organization:, distribution_quantity: 1)
+      create(:kit_item, name: "Kit 2", kit: kit_2, organization:, distribution_quantity: 1)
 
       # Distributions
       distributions = create_list(:distribution, 2, issued_at: within_time, organization: organization)
@@ -91,7 +91,7 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
         create(:line_item, item: infant_disposable_kit_item)
       ]
 
-      create(:item, name: "Kit 1", kit:, organization:, distribution_quantity: 1)
+      create(:kit_item, name: "Kit 1", kit:, organization:, distribution_quantity: 1)
 
       # Distributions
       distributions = create_list(:distribution, 2, issued_at: within_time, organization: organization)
@@ -134,7 +134,7 @@ RSpec.describe Reports::ChildrenServedReportService, type: :service do
         create(:line_item, quantity: 1000, item: not_disposable_kit_item)
       ]
 
-      create(:item, name: "Kit 1", kit:, organization:, distribution_quantity: 3)
+      create(:kit_item, name: "Kit 1", kit:, organization:, distribution_quantity: 3)
 
       # Distributions
       toddler_distribution = create(:distribution, organization: organization, issued_at: within_time)
