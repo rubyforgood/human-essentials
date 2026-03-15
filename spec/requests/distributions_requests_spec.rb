@@ -75,6 +75,16 @@ RSpec.describe "Distributions", type: :request do
         expect(response).to be_successful
       end
 
+      context "with export_csv param" do
+        it "redirects then renders an iframe to trigger CSV download" do
+          get distributions_path(export_csv: true, foo: "bar")
+          expect(response).to redirect_to(distributions_path(foo: "bar"))
+          follow_redirect!
+          expect(response.body).to include("iframe")
+          expect(response.body).to include("distributions.csv?foo=bar")
+        end
+      end
+
       it "sums distribution totals accurately" do
         create(:distribution, :with_items, item_quantity: 5, organization: organization)
         create(:line_item, :distribution, itemizable_id: distribution.id, quantity: 7)
