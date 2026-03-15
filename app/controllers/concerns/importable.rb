@@ -27,11 +27,15 @@ module Importable
       data = File.read(params[:file].path, encoding: "BOM|UTF-8")
       csv = CSV.parse(data, headers: true)
       if csv.count.positive? && csv.first.headers.all? { |header| !header.nil? }
-        errors = resource_model.import_csv(csv, current_organization.id)
-        if errors.empty?
+        results = resource_model.import_csv(csv, current_organization.id)
+        if results[:errors].empty?
           flash[:notice] = "#{resource_model_humanized} were imported successfully!"
         else
-          flash[:error] = "The following #{resource_model_humanized} did not import successfully:\n#{errors.join("\n")}"
+          flash[:error] = "The following #{resource_model_humanized} did not import successfully:\n#{results[:errors].join("\n")}"
+        end
+
+        if results[:warnings].present?
+          flash[:alert] = "The following #{resource_model_humanized} imported with warnings:\n#{results[:warnings].join("\n")}"
         end
       else
         flash[:error] = "Check headers in file!"

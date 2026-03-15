@@ -30,6 +30,23 @@ RSpec.describe PartnerCreateService do
       end
     end
 
+    context 'when the partner email already exists in a different organization' do
+      let(:other_organization) { create(:organization) }
+
+      before do
+        create(:partner, email: partner_attrs[:email], organization: other_organization)
+      end
+
+      it 'should contain an error about the partner being with a different organization' do
+        result = subject
+        expect(result.errors[:email]).to include("has already been taken")
+      end
+
+      it 'should not create a new partner' do
+        expect { subject }.not_to change { Partner.count }
+      end
+    end
+
     context 'when the arguments are valid' do
       it 'should create a new partner record with the organization provided' do
         expect { subject }.to change { organization.partners.count }.by(1)
@@ -41,6 +58,32 @@ RSpec.describe PartnerCreateService do
         expect(query.first.enable_child_based_requests).to eq(false)
         expect(query.first.enable_individual_requests).to eq(false)
         expect(query.first.enable_quantity_based_requests).to eq(true)
+      end
+
+      context 'when send_reminders is nil' do
+        before do
+          partner_attrs.merge!(send_reminders: nil)
+        end
+
+        it 'defaults send_reminders to false' do
+          subject
+
+          partner = Partner.find_by(name: partner_attrs[:name])
+          expect(partner.send_reminders).to be(false)
+        end
+      end
+
+      context 'when send_reminders is missing' do
+        before do
+          partner_attrs.delete(:send_reminders)
+        end
+
+        it 'defaults send_reminders to false' do
+          subject
+
+          partner = Partner.find_by(name: partner_attrs[:name])
+          expect(partner.send_reminders).to be(false)
+        end
       end
 
       context 'but there was an unexpected issue with saving the' do
@@ -77,4 +120,3 @@ RSpec.describe PartnerCreateService do
     end
   end
 end
-
