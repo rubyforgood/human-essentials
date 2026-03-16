@@ -13,10 +13,11 @@ class Admin::PartnersController < AdminController
 
   def update
     @partner = Partner.find(params[:id])
-    if @partner.update(partner_attributes)
+    partner_update_service = PartnerUpdateService.new(@partner, partner_attributes)
+    if partner_update_service.call
       redirect_to admin_partners_path, notice: "#{@partner.name} updated!"
     else
-      flash.now[:error] = "Something didn't work quite right -- try again?"
+      flash.now[:error] = partner_update_service.error
       render action: :edit
     end
   end
