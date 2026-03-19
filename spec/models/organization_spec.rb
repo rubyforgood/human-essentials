@@ -107,7 +107,6 @@ RSpec.describe Organization, type: :model do
 
     describe 'users' do
       subject { organization.users }
-      let(:organization) { create(:organization) }
 
       context 'when a organizaton has a user that has two roles' do
         let(:user) { create(:user) }
@@ -361,7 +360,6 @@ RSpec.describe Organization, type: :model do
     end
 
     context 'with invisible items' do
-      let!(:organization) { create(:organization) }
       let!(:item1) { create(:item, organization: organization, active: true, visible_to_partners: true) }
       let!(:item2) { create(:item, organization: organization, active: true, visible_to_partners: false) }
       let!(:item3) { create(:item, organization: organization, active: false, visible_to_partners: true) }
@@ -401,21 +399,20 @@ RSpec.describe Organization, type: :model do
   describe 'earliest reporting year' do
     # re 2813 update annual report -- allowing an earliest reporting year will let us do system testing and staging for annual reports
     it 'is the organization created year if no associated data' do
-      org = create(:organization)
-      expect(org.earliest_reporting_year).to eq(org.created_at.year)
+      expect(organization.earliest_reporting_year).to eq(organization.created_at.year)
     end
+
     it 'is the year of the earliest of donation, purchase, or distribution if they are earlier ' do
-      org = create(:organization)
-      create(:donation, organization: org, issued_at: 364.days.from_now)
-      create(:purchase, organization: org, issued_at: 364.days.from_now)
-      create(:distribution, organization: org, issued_at: 364.days.from_now)
-      expect(org.earliest_reporting_year).to eq(org.created_at.year)
-      create(:donation, organization: org, issued_at: 5.years.ago)
-      expect(org.earliest_reporting_year).to eq(5.years.ago.year)
-      create(:purchase, organization: org, issued_at: 6.years.ago)
-      expect(org.earliest_reporting_year).to eq(6.years.ago.year)
-      create(:purchase, organization: org, issued_at: 7.years.ago)
-      expect(org.earliest_reporting_year).to eq(7.years.ago.year)
+      create(:donation, organization: organization, issued_at: 364.days.from_now)
+      create(:purchase, organization: organization, issued_at: 364.days.from_now)
+      create(:distribution, organization: organization, issued_at: 364.days.from_now)
+      expect(organization.earliest_reporting_year).to eq(organization.created_at.year)
+      create(:donation, organization: organization, issued_at: 5.years.ago)
+      expect(organization.earliest_reporting_year).to eq(5.years.ago.year)
+      create(:purchase, organization: organization, issued_at: 6.years.ago)
+      expect(organization.earliest_reporting_year).to eq(6.years.ago.year)
+      create(:purchase, organization: organization, issued_at: 7.years.ago)
+      expect(organization.earliest_reporting_year).to eq(7.years.ago.year)
     end
   end
 
