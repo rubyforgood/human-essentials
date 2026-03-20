@@ -403,16 +403,20 @@ RSpec.describe Organization, type: :model do
     end
 
     it 'is the year of the earliest of donation, purchase, or distribution if they are earlier ' do
-      create(:donation, organization: organization, issued_at: 364.days.from_now)
-      create(:purchase, organization: organization, issued_at: 364.days.from_now)
-      create(:distribution, organization: organization, issued_at: 364.days.from_now)
-      expect(organization.earliest_reporting_year).to eq(organization.created_at.year)
-      create(:donation, organization: organization, issued_at: 5.years.ago)
-      expect(organization.earliest_reporting_year).to eq(5.years.ago.year)
-      create(:purchase, organization: organization, issued_at: 6.years.ago)
-      expect(organization.earliest_reporting_year).to eq(6.years.ago.year)
-      create(:purchase, organization: organization, issued_at: 7.years.ago)
-      expect(organization.earliest_reporting_year).to eq(7.years.ago.year)
+      freeze_time do
+        create(:donation, organization: organization, issued_at: DateTime.current.next_year - 1.day)
+        create(:purchase, organization: organization, issued_at: DateTime.current.next_year - 1.day)
+        create(:distribution, organization: organization, issued_at: DateTime.current.next_year - 1.day)
+        expect(organization.earliest_reporting_year).to eq(organization.created_at.year)
+        create(:donation, organization: organization, issued_at: 5.years.ago)
+        expect(organization.earliest_reporting_year).to eq(5.years.ago.year)
+        create(:purchase, organization: organization, issued_at: 6.years.ago)
+        expect(organization.earliest_reporting_year).to eq(6.years.ago.year)
+        create(:purchase, organization: organization, issued_at: 7.years.ago)
+        expect(organization.earliest_reporting_year).to eq(7.years.ago.year)
+      ensure
+        travel_back
+      end
     end
   end
 
