@@ -16,7 +16,7 @@ class KitsController < ApplicationController
     load_form_collections
 
     @kit = current_organization.kits.new
-    @kit.kit_item = current_organization.items.new
+    @kit.kit_item = KitItem.new(organization: current_organization)
     @kit.kit_item.line_items.build
   end
 
@@ -36,7 +36,8 @@ class KitsController < ApplicationController
       kit_only_params = kit_params.except(:line_items_attributes)
       @kit = Kit.new(kit_only_params)
       load_form_collections
-      @kit.kit_item ||= current_organization.items.new(kit_params.slice(:line_items_attributes))
+      @kit.kit_item ||= KitItem.new(organization: current_organization,
+                                    **kit_params.slice(:line_items_attributes))
       @kit.kit_item.line_items.build if @kit.kit_item.line_items.empty?
 
       render :new
@@ -96,7 +97,7 @@ class KitsController < ApplicationController
       :visible_to_partners,
       :value_in_dollars
     )
-    item_params = params.require(:item)
+    item_params = params.require(:kit_item)
       .permit(line_items_attributes: [:item_id, :quantity, :_destroy])
     kit_params.to_h.merge(item_params.to_h)
   end
