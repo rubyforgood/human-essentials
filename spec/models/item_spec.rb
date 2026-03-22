@@ -13,6 +13,7 @@
 #  package_size                 :integer
 #  partner_key                  :string
 #  reporting_category           :string
+#  type                         :string           default("ConcreteItem"), not null
 #  value_in_cents               :integer          default(0)
 #  visible_to_partners          :boolean          default(TRUE), not null
 #  created_at                   :datetime         not null
@@ -42,6 +43,9 @@ RSpec.describe Item, type: :model do
     it { should validate_numericality_of(:on_hand_recommended_quantity).is_greater_than_or_equal_to(0) }
     it { should validate_length_of(:additional_info).is_at_most(500) }
     it { should validate_numericality_of(:package_size).is_greater_than_or_equal_to(0) }
+    it 'should be a concrete item by default' do
+      expect(build(:item)).to be_a_kind_of(ConcreteItem)
+    end
   end
 
   context "Filtering >" do
@@ -308,7 +312,7 @@ RSpec.describe Item, type: :model do
 
         it 'deactivates the kit if it exists' do
           kit = create(:kit)
-          item = create(:item, kit: kit)
+          item = create(:kit_item, kit: kit)
           expect(kit).to be_active
           item.deactivate!
           expect(item).not_to be_active
@@ -339,7 +343,7 @@ RSpec.describe Item, type: :model do
         it "should not succeed" do
           allow(item).to receive(:can_delete?).and_return(false)
           expect { item.destroy! }
-            .to raise_error(/Failed to destroy Item/)
+            .to raise_error(/Failed to destroy ConcreteItem/)
             .and not_change { Item.count }
           expect(item.errors.full_messages).to eq(["Cannot delete item - it has already been used!"])
         end
@@ -479,7 +483,7 @@ RSpec.describe Item, type: :model do
       let(:organization) { create(:organization) }
       let(:base_item) { create(:base_item, name: "Kit") }
       let(:kit) { create(:kit, organization: organization) }
-      let(:kit_item) { create(:item, kit: kit, organization: organization, base_item: base_item) }
+      let(:kit_item) { create(:kit_item, kit: kit, organization: organization, base_item: base_item) }
       let(:regular_item) { create(:item, organization: organization) }
 
       it "has no reporting category" do
