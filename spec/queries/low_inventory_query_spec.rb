@@ -1,12 +1,10 @@
 RSpec.describe LowInventoryQuery do
-  subject { LowInventoryQuery.call(organization).map { |r| r.to_h.symbolize_keys } }
-
   let(:organization) { create :organization }
   let(:storage_location) { create :storage_location, organization: organization }
 
   let(:minimum_quantity) { 0 }
   let(:recommended_quantity) { 0 }
-  let(:inventory_item_quantity) { 100 }
+  let(:current_quantity) { 100 }
 
   let(:item) do
     create :item,
@@ -15,101 +13,116 @@ RSpec.describe LowInventoryQuery do
       on_hand_recommended_quantity: recommended_quantity
   end
 
-  let!(:purchase) {
-    create :purchase,
-      :with_items,
-      organization: organization,
-      storage_location: storage_location,
-      item: item,
-      item_quantity: inventory_item_quantity,
-      issued_at: Time.current
-  }
+  before :each do
+    TestInventory.create_inventory(organization, {storage_location.id => {item.id => current_quantity}})
+  end
 
-  context "when minimum_quantity and recommended_quantity is nil" do
-    let(:item) { create :item, organization: organization }
+  context "when minimum_quantity and recommended_quantity are zero" do
+    let(:minimum_quantity) { 0 }
+    let(:recommended_quantity) { 0 }
 
-    it { is_expected.to eq [] }
+    it "should return an empty array" do
+      result = LowInventoryQuery.call(organization).map { |r| r.to_h.symbolize_keys }
+      expect(result).to be_empty
+    end
   end
 
   context "when minimum_quantity is 0 and recommended_quantity is nil and item quantity is 0" do
-    let(:item) { create :item, organization: organization }
     let(:minimum_quantity) { 0 }
-    let(:inventory_item_quantity) { 0 }
+    let(:current_quantity) { 0 }
 
-    it { is_expected.to eq [] }
+    it "should return an empty array" do
+      result = LowInventoryQuery.call(organization).map { |r| r.to_h.symbolize_keys }
+      expect(result).to be_empty
+    end
   end
 
   context "when inventory quantity is over minimum quantity" do
     let(:minimum_quantity) { 50 }
+    let(:current_quantity) { 100 }
 
-    it { is_expected.to eq [] }
+    it "should return an empty array" do
+      result = LowInventoryQuery.call(organization).map { |r| r.to_h.symbolize_keys }
+      expect(result).to be_empty
+    end
   end
 
   context "when minimum_quantity is equal to quantity" do
     let(:minimum_quantity) { 100 }
+    let(:current_quantity) { 100 }
 
-    it { is_expected.to eq [] }
+    it "should return an empty array" do
+      result = LowInventoryQuery.call(organization).map { |r| r.to_h.symbolize_keys }
+      expect(result).to be_empty
+    end
   end
 
   context "when inventory quantity drops below minimum quantity" do
     let(:minimum_quantity) { 200 }
+    let(:current_quantity) { 100 }
 
-    it {
-      is_expected.to include({
+    it "should include the item in the low inventory list" do
+      result = LowInventoryQuery.call(organization).map { |r| r.to_h.symbolize_keys }
+      expect(result).to include({
         id: item.id,
         name: item.name,
         on_hand_minimum_quantity: 200,
         on_hand_recommended_quantity: 0,
         total_quantity: 100
       })
-    }
+    end
   end
 
   context "when inventory quantity equals recommended quantity" do
+    let(:minimum_quantity) { 50 }
     let(:recommended_quantity) { 100 }
+    let(:current_quantity) { 100 }
 
-    it { is_expected.to eq [] }
+    it "should return an empty array" do
+      result = LowInventoryQuery.call(organization).map { |r| r.to_h.symbolize_keys }
+      expect(result).to be_empty
+    end
   end
 
   context "when inventory quantity drops below recommended quantity" do
+    let(:minimum_quantity) { 50 }
     let(:recommended_quantity) { 200 }
+    let(:current_quantity) { 75 }
 
-    it {
-      is_expected.to include({
+    it "should include the item in the low inventory list" do
+      result = LowInventoryQuery.call(organization).map { |r| r.to_h.symbolize_keys }
+      expect(result).to include({
         id: item.id,
         name: item.name,
-        on_hand_minimum_quantity: 0,
+        on_hand_minimum_quantity: 50,
         on_hand_recommended_quantity: 200,
-        total_quantity: 100
+        total_quantity: 75
       })
-    }
+    end
   end
 
   context "when items are in multiple storage locations" do
-    let(:recommended_quantity) { 300 }
+    let(:minimum_quantity) { 50 }
+    let(:recommended_quantity) { 55 }
+    let(:current_quantity) { 40 }
     let(:secondary_storage_location) { create :storage_location, organization: organization }
-    let!(:secondary_purchase) {
-      create :purchase,
-        :with_items,
-        organization: organization,
-        storage_location: secondary_storage_location,
-        item: item,
-        item_quantity: inventory_item_quantity,
-        issued_at: Time.current
-    }
 
-    it {
-      expect(subject.count).to eq 1
-    }
+    it "should have no low inventory items when global total is above minimum" do
+      TestInventory.create_inventory(organization, {secondary_storage_location.id => {item.id => 17}})
+      result = LowInventoryQuery.call(organization).map { |r| r.to_h.symbolize_keys }
+      expect(result).to be_empty
+    end
 
-    it {
-      is_expected.to include({
+    it "should have no low inventory items when global total is below minimum" do
+      TestInventory.create_inventory(organization, {secondary_storage_location.id => {item.id => 2}})
+      result = LowInventoryQuery.call(organization).map { |r| r.to_h.symbolize_keys }
+      expect(result).to include({
         id: item.id,
         name: item.name,
-        on_hand_minimum_quantity: 0,
-        on_hand_recommended_quantity: 300,
-        total_quantity: 200
+        on_hand_minimum_quantity: 50,
+        on_hand_recommended_quantity: 55,
+        total_quantity: 42
       })
-    }
+    end
   end
 end
