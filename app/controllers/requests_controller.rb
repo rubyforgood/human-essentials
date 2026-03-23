@@ -28,7 +28,7 @@ class RequestsController < ApplicationController
   end
 
   def show
-    @request = Request.find(params[:id])
+    @request = current_organization.requests.find(params[:id])
     @item_requests = @request.item_requests.includes(:item)
 
     @inventory = View::Inventory.new(@request.organization_id)
@@ -42,7 +42,7 @@ class RequestsController < ApplicationController
   # and will move the user to the new distribution page with a
   # pre-filled distribution containing all the requested items.
   def start
-    request = Request.find(params[:id])
+    request = current_organization.requests.find(params[:id])
     begin
       request.status_started!
       flash[:notice] = "Request started"
