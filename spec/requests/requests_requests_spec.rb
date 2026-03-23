@@ -94,7 +94,7 @@ RSpec.describe 'Requests', type: :request do
           organization.update!(default_storage_location: storage_location.id)
           create(:request, organization: organization)
         end
-        
+
         it 'shows the column Default storage location inventory' do
           get request_path(request)
 

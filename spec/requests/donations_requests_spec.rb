@@ -301,7 +301,7 @@ RSpec.describe "Donations", type: :request do
 
       it "returns not found for update and does not change donation" do
         put donation_path(id: other_donation.id, donation: {comment: "Changed comment"})
-        
+
         expect(response).to have_http_status(:not_found)
         expect(other_donation.reload.comment).to eq("Original comment")
       end
