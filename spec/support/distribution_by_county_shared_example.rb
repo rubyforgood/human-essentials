@@ -5,7 +5,29 @@ shared_examples_for "distribution_by_county" do
   let(:user) { create(:user, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 
-  let(:item_1) { create(:item, value_in_cents: 1050, organization: organization) }
+
+
+  let(:item_1) { create(:item, value_in_cents: 1050, organization: organization, reporting_category: :cloth_diapers) }
+  let(:item_2) { create(:item, value_in_cents: 20, organization: organization, reporting_category: :tampons) }
+  let(:item_3) {create(:item, value_in_cents:75, organization: organization, reporting_category: :pads)}
+  let(:item_4) {create(:item, value_in_cents:50, organization: organization, reporting_category: :pads)}
+
+  let(:kit_a) {
+    kita = create_kit(name: "Kit A", organization: organization, line_items_attributes: [
+      {item_id: item_2.id, quantity: 40},
+      {item_id: item_3.id, quantity: 20}
+    ])
+
+
+
+    #  kita = create(:kit, name: "Kit A")
+    # kita.item.line_items = [
+    #   create(:line_item, quantity: 40, item: item_2),
+    #   create(:line_item, quantity: 20, item: item_3)
+    # ]
+    kita
+  }
+
   let(:issued_at_present) { Time.current.to_datetime }
   let(:partner_1) {
     p1 = create(:partner, organization: organization)

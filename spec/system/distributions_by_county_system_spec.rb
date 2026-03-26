@@ -10,79 +10,161 @@ RSpec.feature "Distributions by County", type: :system do
     setup_storage_location(@storage_location)
   end
 
-  context "handles time ranges properly" do
-    it("works for all time") do
-      @distribution_last_year = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
-      @distribution_current = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
-      visit_distribution_by_county_with_specified_date_range("All Time")
-      partner_1.profile.served_areas.each do |served_area|
-        expect(page).to have_text(served_area.county.name)
+  context "with only 'loose' items" do
+    context "handles time ranges properly" do
+      context "all time"  do
+        before do
+          @distribution_last_year = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
+          @distribution_current_1 = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
+          @distribution_current_2 = create(:distribution, :with_items, item: item_2, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
+        end
+
+        it("works for all time with no reporting categories") do
+                 visit_distribution_by_county_with_specified_filters("All Time",nil, nil)
+          expect(page).to have_text("Reporting Category");
+          partner_1.profile.served_areas.each do |served_area|
+            expect(page).to have_text(served_area.county.name)
+          end
+
+          expect(page).to have_css("table tbody tr td", text: "75", exact_text: true, count: 4)
+          expect(page).to have_css("table tbody tr td", text: "$530.00", exact_text: true, count: 4)
+        end
       end
 
-      expect(page).to have_css("table tbody tr td", text: "50", exact_text: true, count: 4)
-      expect(page).to have_css("table tbody tr td", text: "$525.00", exact_text: true, count: 4)
-    end
+      it("works for this year with no reporting categories") do
+        @distribution_current = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
+        @distribution_last_year = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
 
-    it("works for this year") do
-      @distribution_current = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
-      @distribution_last_year = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
+        visit_distribution_by_county_with_specified_filters("This Year",nil, nil)
 
-      visit_distribution_by_county_with_specified_date_range("This Year")
+        partner_1.profile.served_areas.each do |served_area|
+          expect(page).to have_text(served_area.county.name)
+        end
 
-      partner_1.profile.served_areas.each do |served_area|
-        expect(page).to have_text(served_area.county.name)
+        expect(page).to have_css("table tbody tr td", text: "25", exact_text: true, count: 4)
+        expect(page).to have_css("table tbody tr td", text: "$262.50", exact_text: true, count: 4)
       end
 
-      expect(page).to have_css("table tbody tr td", text: "25", exact_text: true, count: 4)
-      expect(page).to have_css("table tbody tr td", text: "$262.50", exact_text: true, count: 4)
-    end
 
-    it("works for prior year") do
-      # Should NOT return distribution issued before previous calendar year
-      last_day_of_two_years_ago = Time.current.beginning_of_day.change(year: current_year - 2, month: 12, day: 31).to_datetime
-      create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: last_day_of_two_years_ago)
+      it("works for this year with reporting categories") do
+        @distribution_current_1 = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
+        @distribution_current_2 = create(:distribution, :with_items, item: item_2, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
 
-      # Should return distribution issued during previous calendar year
-      one_year_ago = issued_at_last_year
-      create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: one_year_ago)
+        @distribution_last_year = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
 
-      # Should NOT return distribution issued after previous calendar year
-      first_day_of_current_year = Time.current.end_of_day.change(year: current_year, month: 1, day: 1).to_datetime
-      create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: first_day_of_current_year)
+        visit_distribution_by_county_with_specified_filters("This Year","Cloth Diapers", nil)
 
-      visit_distribution_by_county_with_specified_date_range("Prior Year")
+        partner_1.profile.served_areas.each do |served_area|
+          expect(page).to have_text(served_area.county.name)
+        end
 
-      partner_1.profile.served_areas.each do |served_area|
-        expect(page).to have_text(served_area.county.name)
+        expect(page).to have_css("table tbody tr td", text: "25", exact_text: true, count: 4)
+        expect(page).to have_css("table tbody tr td", text: "$262.50", exact_text: true, count: 4)
       end
-      expect(page).to have_css("table tbody tr td", text: "25", exact_text: true, count: 4)
-      expect(page).to have_css("table tbody tr td", text: "$262.50", exact_text: true, count: 4)
-    end
 
-    it("works for last 12 months") do
-      # Should NOT return disitribution issued before 12 months ago
-      one_year_and_one_day_ago = 1.year.ago.prev_day.beginning_of_day.to_datetime
-      create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: one_year_and_one_day_ago)
+      it("works for all time with reporting categories") do
+        @distribution_current_1 = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
+        @distribution_current_2 = create(:distribution, :with_items, item: item_2, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
 
-      # Should return distribution issued during previous 12 months
-      today = issued_at_present
-      create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: today)
+        @distribution_last_year = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
 
-      # Should NOT return distribution issued in the future
-      tomorrow = 1.day.from_now.end_of_day.to_datetime
-      create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: tomorrow)
+        visit_distribution_by_county_with_specified_filters("All Time","Cloth Diapers", nil)
 
-      visit_distribution_by_county_with_specified_date_range("Last 12 Months")
+        partner_1.profile.served_areas.each do |served_area|
+          expect(page).to have_text(served_area.county.name)
+        end
 
-      partner_1.profile.served_areas.each do |served_area|
-        expect(page).to have_text(served_area.county.name)
+        expect(page).to have_css("table tbody tr td", text: "50", exact_text: true, count: 4)
+        expect(page).to have_css("table tbody tr td", text: "$525.00", exact_text: true, count: 4)
       end
-      expect(page).to have_css("table tbody tr td", text: "25", exact_text: true, count: 4)
-      expect(page).to have_css("table tbody tr td", text: "$262.50", exact_text: true, count: 4)
+
+
+
+
+      it("works for prior year") do
+        # Should NOT return distribution issued before previous calendar year
+        last_day_of_two_years_ago = Time.current.beginning_of_day.change(year: current_year - 2, month: 12, day: 31).to_datetime
+        create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: last_day_of_two_years_ago)
+
+        # Should return distribution issued during previous calendar year
+        one_year_ago = issued_at_last_year
+        create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: one_year_ago)
+
+        # Should NOT return distribution issued after previous calendar year
+        first_day_of_current_year = Time.current.end_of_day.change(year: current_year, month: 1, day: 1).to_datetime
+        create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: first_day_of_current_year)
+
+        visit_distribution_by_county_with_specified_filters("Prior Year",nil, nil)
+
+        partner_1.profile.served_areas.each do |served_area|
+          expect(page).to have_text(served_area.county.name)
+        end
+        expect(page).to have_css("table tbody tr td", text: "25", exact_text: true, count: 4)
+        expect(page).to have_css("table tbody tr td", text: "$262.50", exact_text: true, count: 4)
+      end
+
+      it("works for last 12 months") do
+        # Should NOT return disitribution issued before 12 months ago
+        one_year_and_one_day_ago = 1.year.ago.prev_day.beginning_of_day.to_datetime
+        create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: one_year_and_one_day_ago)
+
+        # Should return distribution issued during previous 12 months
+        today = issued_at_present
+        create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: today)
+
+        # Should NOT return distribution issued in the future
+        tomorrow = 1.day.from_now.end_of_day.to_datetime
+        create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: tomorrow)
+
+        visit_distribution_by_county_with_specified_filters("Last 12 Months",nil, nil)
+
+        partner_1.profile.served_areas.each do |served_area|
+          expect(page).to have_text(served_area.county.name)
+        end
+        expect(page).to have_css("table tbody tr td", text: "25", exact_text: true, count: 4)
+        expect(page).to have_css("table tbody tr td", text: "$262.50", exact_text: true, count: 4)
+      end
     end
   end
 
-  def visit_distribution_by_county_with_specified_date_range(date_range_string)
+
+  context "with kits" do
+    context "with reporting category" do
+      it "works for all time" do
+        @distribution_current_1 = create(:distribution, :with_items, item: kit_a.item, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
+        @distribution_current_2 = create(:distribution, :with_items, item: item_2, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
+        @distribution_last_year_1 = create(:distribution, :with_items, item: kit_a.item, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
+        @distribution_last_year_2 = create(:distribution, :with_items, item: item_4, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
+        visit_distribution_by_county_with_specified_filters("All Time","Pads", nil)
+
+        partner_1.profile.served_areas.each do |served_area|
+          expect(page).to have_text(served_area.county.name)
+        end
+
+        expect(page).to have_css("table tbody tr td", text: "1,025", exact_text: true, count: 4)
+        expect(page).to have_css("table tbody tr td", text: "$762.50", exact_text: true, count: 4)
+      end
+    end
+
+    context "with item filter" do
+      it "works for all time" do
+        @distribution_current_1 = create(:distribution, :with_items, item: kit_a.item, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
+        @distribution_current_2 = create(:distribution, :with_items, item: item_2, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
+        @distribution_last_year_1 = create(:distribution, :with_items, item: kit_a.item, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
+        @distribution_last_year_2 = create(:distribution, :with_items, item: item_4, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
+        visit_distribution_by_county_with_specified_filters("All Time",nil, item_3.name)
+
+        partner_1.profile.served_areas.each do |served_area|
+          expect(page).to have_text(served_area.county.name)
+        end
+
+        expect(page).to have_css("table tbody tr td", text: "1,000", exact_text: true, count: 4)
+        expect(page).to have_css("table tbody tr td", text: "$750.00", exact_text: true, count: 4)
+      end
+    end
+  end
+
+  def visit_distribution_by_county_with_specified_filters(date_range_string, reporting_category, item_name)
     visit dashboard_path
 
     click_on "Reports"
@@ -93,6 +175,14 @@ RSpec.feature "Distributions by County", type: :system do
 
     within ".container__predefined-ranges" do
       find("button", text: date_range_string).click
+    end
+
+    if reporting_category
+      select reporting_category, from: "Reporting Category"
+    end
+
+    if item_name
+      select item_name, from: "Item"
     end
 
     click_on "Filter"

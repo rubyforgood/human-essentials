@@ -5,7 +5,9 @@ RSpec.describe DistributionSummaryByCountyQuery do
   let(:organization_id) { organization.id }
   let(:start_date) { nil }
   let(:end_date) { nil }
-  let(:params) { {organization_id:, start_date:, end_date:} }
+  let(:reporting_category) { nil }
+  let(:item_id) { nil }
+  let(:params) { {organization_id:, start_date:, end_date:, reporting_category:} }
 
   include_examples "distribution_by_county"
 
@@ -64,4 +66,125 @@ RSpec.describe DistributionSummaryByCountyQuery do
       expect(num_with_0).to eq 0
     end
   end
+
+  describe "handling reporting categories" do
+    context "with loose items only" do
+      let(:reporting_category) { :cloth_diapers }
+      let(:params) { {organization_id:, start_date:, end_date:, reporting_category:} }
+
+      it "divides the item numbers and values according to the partner profile" do
+        create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1)
+        create(:distribution, :with_items, item: item_2, organization: user.organization, partner: partner_1)
+
+        breakdown = DistributionSummaryByCountyQuery.call(**params)
+        expect(breakdown.size).to eq(5)
+        expect(breakdown[4].quantity).to eq(0)
+        expect(breakdown[4].value).to be_within(0.01).of(0)
+        4.times do |i|
+          expect(breakdown[i].quantity).to eq(25)
+          expect(breakdown[i].value).to be_within(0.01).of(26250.0)
+        end
+      end
+    end
+    context "with kits  only" do
+      let(:reporting_category) { :pads }
+     let(:params) { {organization_id:, start_date:, end_date:, reporting_category:} }
+
+      it "divides the item numbers and values according to the partner profile" do
+        create(:distribution, :with_items, item: kit_a.item, organization: user.organization, partner: partner_1)
+        create(:distribution, :with_items, item: item_2, organization: user.organization, partner: partner_1)
+
+        breakdown = DistributionSummaryByCountyQuery.call(**params)
+        expect(breakdown.size).to eq(5)
+        expect(breakdown[breakdown.size - 1].quantity).to eq(0)
+        expect(breakdown[breakdown.size-1].value).to be_within(0.01).of(0)
+        4.times do |i|
+          expect(breakdown[i].quantity).to eq(500)
+          expect(breakdown[i].value).to be_within(0.01).of(37500.0)
+        end
+      end
+    end
+
+    context "with an item that is in a kit and loose, and another item that is in the reporting category" do
+      let(:reporting_category) { :pads }
+      let(:params) { {organization_id:, start_date:, end_date:, reporting_category:} }
+
+      it "divides the item numbers and values according to the partner profile" do
+        create(:distribution, :with_items, item: kit_a.item, organization: user.organization, partner: partner_1)
+        create(:distribution, :with_items, item: item_3, organization: user.organization, partner: partner_1)
+        create(:distribution, :with_items, item: item_4, organization: user.organization, partner: partner_1)
+        breakdown = DistributionSummaryByCountyQuery.call(**params)
+        expect(breakdown.size).to eq(5)
+        expect(breakdown[breakdown.size - 1].quantity).to eq(0)
+        expect(breakdown[breakdown.size-1].value).to be_within(0.01).of(0)
+        4.times do |i|
+          expect(breakdown[i].quantity).to eq(550)
+          expect(breakdown[i].value).to be_within(0.01).of(40625.0)
+        end
+      end
+    end
+  end
+
+  describe "handling filtering by item" do
+
+    context "with loose items only" do
+      let(:item_id) { item_1.id}
+      let(:params) { {organization_id:, start_date:, end_date:, reporting_category:, item_id:} }
+
+      it "divides the item numbers and values according to the partner profile" do
+        create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1)
+        create(:distribution, :with_items, item: item_2, organization: user.organization, partner: partner_1)
+
+        breakdown = DistributionSummaryByCountyQuery.call(**params)
+        expect(breakdown.size).to eq(5)
+        expect(breakdown[4].quantity).to eq(0)
+        expect(breakdown[4].value).to be_within(0.01).of(0)
+        4.times do |i|
+          expect(breakdown[i].quantity).to eq(25)
+          expect(breakdown[i].value).to be_within(0.01).of(26250.0)
+        end
+      end
+    end
+
+    context "with kits  only" do
+      let(:item_id) { item_3.id }
+      let(:params) { {organization_id:, start_date:, end_date:, reporting_category:, item_id:} }
+
+      it "divides the item numbers and values according to the partner profile" do
+        create(:distribution, :with_items, item: kit_a.item, organization: user.organization, partner: partner_1)
+        create(:distribution, :with_items, item: item_2, organization: user.organization, partner: partner_1)
+
+        breakdown = DistributionSummaryByCountyQuery.call(**params)
+        expect(breakdown.size).to eq(5)
+        expect(breakdown[breakdown.size - 1].quantity).to eq(0)
+        expect(breakdown[breakdown.size-1].value).to be_within(0.01).of(0)
+        4.times do |i|
+          expect(breakdown[i].quantity).to eq(500)
+          expect(breakdown[i].value).to be_within(0.01).of(37500.0)
+        end
+      end
+    end
+
+    context "with an item that is in a kit and loose, and another item that is in the reporting category" do
+      let(:item_id) {item_3.id}
+      let(:params) { {organization_id:, start_date:, end_date:, reporting_category:, item_id:} }
+
+      it "divides the item numbers and values according to the partner profile" do
+        create(:distribution, :with_items, item: kit_a.item, organization: user.organization, partner: partner_1)
+        create(:distribution, :with_items, item: item_3, organization: user.organization, partner: partner_1)
+        create(:distribution, :with_items, item: item_4, organization: user.organization, partner: partner_1)
+        breakdown = DistributionSummaryByCountyQuery.call(**params)
+        expect(breakdown.size).to eq(5)
+        expect(breakdown[breakdown.size - 1].quantity).to eq(0)
+        expect(breakdown[breakdown.size-1].value).to be_within(0.01).of(0)
+        4.times do |i|
+          expect(breakdown[i].quantity).to eq(525)
+          expect(breakdown[i].value).to be_within(0.01).of(39375.0)
+        end
+      end
+    end
+
+  end
+
+
 end
