@@ -7,7 +7,7 @@ RSpec.describe Exports::ExportDistributionsCSVService do
 
   describe '#generate_csv_stream' do
     subject do
-      Proc.new { described_class.new(distributions: distributions, organization: organization, filters: filters).generate_csv_stream }
+      proc { described_class.new(distributions: distributions, organization: organization, filters: filters).generate_csv_stream }
     end
 
     let(:duplicate_item) { create(:item, name: "Dupe Item", value_in_cents: 300, organization: organization, package_size: 2) }
