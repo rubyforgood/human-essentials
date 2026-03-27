@@ -42,7 +42,7 @@ module Exports
     def generate_csv_stream
       yield CSV.generate_line(base_headers + item_headers)
 
-      distributions.find_each(batch_size: 500) do |distribution|
+      distributions.each do |distribution|
         yield CSV.generate_line(build_row_data(distribution))
       end
     end
