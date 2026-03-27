@@ -8,15 +8,16 @@ RSpec.describe "Reports::DonationsSummary", type: :request do
     end
 
     describe "time display" do
-      let!(:donation) { create(:donation, :with_items, issued_at: 1.day.ago) }
-
-      before do
-        freeze_time
-        get reports_donations_summary_path
-      end
-
       it "uses issued_at for the relative time display, not created_at" do
-        expect(response.body).to include("1 day ago")
+        freeze_time do
+          create(:donation, :with_items, issued_at: DateTime.current - 1.day)
+
+          get reports_donations_summary_path
+
+          expect(response.body).to include("1 day ago")
+        ensure
+          travel_back
+        end
       end
     end
 
