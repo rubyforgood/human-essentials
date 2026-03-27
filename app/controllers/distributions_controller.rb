@@ -75,8 +75,8 @@ class DistributionsController < ApplicationController
     respond_to do |format|
       format.html
       format.csv do
-        send_stream filename: "Distributions-#{Time.zone.today}.csv" do |stream| 
-          Exports::ExportDistributionsCSVService.new(distributions: @distributions.includes(line_items: :item), organization: current_organization, filters: scope_filters).generate_csv_stream do |row| 
+        send_stream filename: "Distributions-#{Time.zone.today}.csv" do |stream|
+          Exports::ExportDistributionsCSVService.new(distributions: @distributions.includes(line_items: :item), organization: current_organization, filters: scope_filters).generate_csv_stream do |row|
             stream.write(row)
           end
         end
