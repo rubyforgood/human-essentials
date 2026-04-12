@@ -126,7 +126,7 @@ GEM
       smart_properties
     bigdecimal (4.1.0)
     bindex (0.8.1)
-    binding_of_caller (1.0.1)
+    binding_of_caller (2.0.0)
       debug_inspector (>= 1.2.0)
     bootsnap (1.20.1)
       msgpack (~> 1.2)
@@ -512,8 +512,8 @@ GEM
     pry-remote (0.1.8)
       pry (~> 0.9)
       slop (~> 3.0)
-    pry-stack_explorer (0.6.1)
-      binding_of_caller (~> 1.0)
+    pry-stack_explorer (0.6.3)
+      binding_of_caller (>= 1.0)
       pry (~> 0.13)
     psych (5.3.1)
       date
