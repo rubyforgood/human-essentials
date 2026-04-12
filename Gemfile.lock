@@ -343,7 +343,7 @@ GEM
       actionview (>= 7.0.0)
       activesupport (>= 7.0.0)
     jmespath (1.6.2)
-    json (2.18.0)
+    json (2.19.3)
     jwt (3.1.2)
       base64
     kaminari (1.2.2)
@@ -471,7 +471,7 @@ GEM
       activerecord (>= 7.1)
       request_store (~> 1.4)
     parallel (1.27.0)
-    parser (3.3.10.0)
+    parser (3.3.11.1)
       ast (~> 2.4.1)
       racc
     pdf-core (0.9.0)
@@ -616,7 +616,7 @@ GEM
       rspec-mocks (~> 3.13)
       rspec-support (~> 3.13)
     rspec-support (3.13.6)
-    rubocop (1.81.7)
+    rubocop (1.84.2)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.1.0)
@@ -624,10 +624,10 @@ GEM
       parser (>= 3.3.0.2)
       rainbow (>= 2.2.2, < 4.0)
       regexp_parser (>= 2.9.3, < 3.0)
-      rubocop-ast (>= 1.47.1, < 2.0)
+      rubocop-ast (>= 1.49.0, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 2.4.0, < 4.0)
-    rubocop-ast (1.49.0)
+    rubocop-ast (1.49.1)
       parser (>= 3.3.7.2)
       prism (~> 1.7)
     rubocop-performance (1.26.1)
@@ -696,10 +696,10 @@ GEM
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
     stackprof (0.2.27)
-    standard (1.52.0)
+    standard (1.54.0)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.0)
-      rubocop (~> 1.81.7)
+      rubocop (~> 1.84.0)
       standard-custom (~> 1.0.0)
       standard-performance (~> 1.8)
     standard-custom (1.0.2)
@@ -844,7 +844,7 @@ DEPENDENCIES
   solid_cache (~> 1.0)
   sprockets (~> 4.2.2)
   stackprof
-  standard (~> 1.52)
+  standard (~> 1.54)
   standard-performance
   standard-rails
   stimulus-rails
