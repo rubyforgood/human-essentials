@@ -151,6 +151,14 @@ RSpec.describe ApplicationHelper, type: :helper do
       it { is_expected.to eq(2) }
     end
 
+    context "returns source object's storage_location_id even when org has different default" do
+      let(:organization) { build(:organization, default_storage_location: 42) }
+      let(:purchase) { build(:purchase, storage_location_id: 1) }
+      subject { helper.default_location(purchase) }
+
+      it { is_expected.to eq(1) }
+    end
+
     context "returns current_organization intake_location if storage_location_id is not present" do
       let(:organization) { build(:organization, intake_location: 1) }
       let(:purchase) { build(:purchase, storage_location_id: nil) }
