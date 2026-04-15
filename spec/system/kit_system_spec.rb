@@ -226,4 +226,51 @@ RSpec.describe "Kit management", type: :system do
       expect(page).to have_content(item.name)
     end
   end
+
+  describe "when duplicate items" do
+    it "detects duplicate items and shows modal", js: true do
+      # Disable server-side validation to test JS modal
+      #allow_any_instance_of(Audit).to receive(:line_items_unique_by_item_id)
+      visit new_kit_path
+      click_link "New Kit"
+
+      kit_traits = attributes_for(:kit)
+      fill_in "Name", with: kit_traits[:name]
+      find(:css, '#kit_value_in_dollars').set('10.10')
+      
+      item = Item.last
+
+      # Add first entry for the item
+      select item.name, from: "item_line_items_attributes_0_item_id"
+      fill_in "item_line_items_attributes_0_quantity", with: "10"
+      
+      # Add a new line item row
+      find("[data-form-input-target='addButton']").click
+      
+      # Add second entry for the same item
+      within all('.line_item_section').last do
+        item_select = find('select[name*="[item_id]"]')
+        select item.name, from: item_select[:id]
+        quantity_input = find('input[name*="[quantity]"]')
+        fill_in quantity_input[:id], with: "15"
+      end
+      
+      # Try to save - should trigger duplicate detection modal
+      click_button "Save"
+      
+      # JavaScript modal should appear
+      expect(page).to have_css("#duplicateItemsModal", visible: true)
+      expect(page).to have_content("Multiple Item Entries Detected")
+      expect(page).to have_content("Merge Items")
+      expect(page).to have_content("Make Changes")
+      
+      
+      # Test merge functionality
+      click_button "Merge Items"
+      
+      expect(page.find(".alert")).to have_content "Kit created successfully"
+      expect(page).to have_content(kit_traits[:name])
+      expect(page).to have_content("25 #{item.name}")
+    end
+  end
 end
