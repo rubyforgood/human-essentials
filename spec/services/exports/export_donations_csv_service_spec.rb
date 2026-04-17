@@ -71,6 +71,15 @@ RSpec.describe Exports::ExportDonationsCSVService do
         CSV
         expect(subject).to eq(csv)
       end
+      # new donations export regression test
+      it "includes all organization item headers even when exported donations only use a subset of items" do
+        unused_item = create(:item, name: "Z Unused Item", organization: organization)
+
+        csv_rows = CSV.parse(subject, headers: true)
+        headers = csv_rows.headers
+
+        expect(headers).to include("A Item", "B Item", "C Item", "Dupe Item", "E Item", "Z Unused Item")
+      end
     end
 
     context 'while "Include in-kind value in donation and distribution exports?" is set to yes' do

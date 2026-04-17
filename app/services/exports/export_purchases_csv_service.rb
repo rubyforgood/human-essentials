@@ -1,6 +1,7 @@
 module Exports
   class ExportPurchasesCSVService
-    def initialize(purchase_ids:)
+    def initialize(purchase_ids:, organization:)
+      @organization = organization
       # Use a where lookup so that I can eager load all the resources
       # needed rather than depending on external code to do it for me.
       # This makes this code more self contained and efficient!
@@ -101,18 +102,12 @@ module Exports
       base_table.keys
     end
 
+    # updated to use organization headers instead of just headers with a value when filtered
+    # more updates in purchases controller
     def item_headers
       return @item_headers if @item_headers
 
-      item_names = Set.new
-
-      purchases.each do |purchase|
-        purchase.line_items.each do |line_item|
-          item_names.add(line_item.item.name)
-        end
-      end
-
-      @item_headers = item_names.sort
+      @item_headers = @organization.items.pluck(:name).sort_by(&:downcase)
     end
 
     def build_row_data(purchase)
