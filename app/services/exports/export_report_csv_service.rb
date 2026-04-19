@@ -33,26 +33,31 @@ module Exports
     end
 
     def generate_range_csv_data
-      csv_data = []
-      return csv_data if @reports.empty?
+      return [] if @reports.empty?
 
-      headers = []
+      # Ordered unique headers (in first-seen order)
+      header_index = {}
 
-      @reports.each do |report|
-        report_headers = report.all_reports.flat_map { |r| r['entries'].keys }
+      # Cache each year's flattened entries so we don't re-walk twice
+      yearly_entries = @reports.map do |report|
+        entries = {}
 
-        headers |= report_headers
+        report.all_reports.each do |section|
+          section.fetch("entries", {}).each do |key, value|
+            header_index[key] ||= true
+            entries[key] = value
+          end
+        end
+
+        {year: report["year"], entries: entries}
       end
 
-      csv_data << ['Year'] + headers
+      headers = header_index.keys
+      csv_data = []
+      csv_data << ["Year"] + headers
 
-      @reports.each do |report|
-        report_data = report.all_reports
-        year = report['year']
-        values = report_data.flat_map { |r|
-          headers.map { |header| r['entries'][header] }
-        }
-        csv_data << [year] + values
+      yearly_entries.each do |row|
+        csv_data << [row[:year]] + headers.map { |h| row[:entries][h] }
       end
 
       csv_data
