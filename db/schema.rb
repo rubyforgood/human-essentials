@@ -412,6 +412,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_07_141240) do
     t.bigint "item_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "request_limit"
     t.index ["item_id"], name: "index_item_units_on_item_id"
   end
 
@@ -433,6 +434,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_07_141240) do
     t.integer "item_category_id"
     t.text "additional_info"
     t.string "reporting_category"
+    t.integer "unit_request_limit"
     t.index ["kit_id"], name: "index_items_on_kit_id"
     t.index ["organization_id"], name: "index_items_on_organization_id"
     t.index ["partner_key"], name: "index_items_on_partner_key"

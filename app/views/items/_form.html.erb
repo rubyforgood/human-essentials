@@ -44,9 +44,31 @@
                 <%= f.input_field :package_size, class: "form-control", min: 0 %>
               <% end %>
 
+              <%= f.input :name, label: "Request limit (individual items)", wrapper: :input_group do %>
+                <%= f.input_field :unit_request_limit, class: "form-control", min: 0 %>
+              <% end %>
+
               <% if Flipper.enabled?(:enable_packs) && current_organization.request_units.present? %>
                 <%= f.input :request_units, label: "Additional Custom Request Units" do %>
-                  <%= f.association :request_units, as: :check_boxes, collection: current_organization.request_units, checked: selected_item_request_units(@item), label_method: :name, value_method: :id, class: "form-check-input" %>
+                  <% current_organization.request_units.each do |unit| %>
+                    <% item_unit = @item.request_units.find { |item_unit| item_unit.name == unit.name } %>
+                    <% selected = item_unit.present? %>
+
+                    <div class="form-check mb-2">
+                      <%= check_box_tag "item[unit_ids][]", unit.id, selected, id: "unit_#{unit.id}", class: "form-check-input" %>
+                      <%= label_tag "unit_#{unit.id}", unit.name, class: "form-check-label me-2" %>
+
+                      <%= number_field_tag "item[unit_limits][#{unit.id}]",
+                                           item_unit&.request_limit,
+                                           class: "form-control d-inline-block w-auto",
+                                           min: 0,
+                                           placeholder: "limit",
+                                           disabled: !selected,
+                                           autocomplete: "off" %>
+                    </div>
+                  <% end %>
+
+                  <%= hidden_field_tag "item[unit_ids][]", "" %>
                 <% end %>
               <% end %>
 
@@ -75,3 +97,13 @@
     </div><!-- /.container-fluid -->
   </section>
 <% end %>
+
+<script>
+    document.addEventListener("change", (e) => {
+        if (e.target.matches('input[type="checkbox"][id^="unit_"]')) {
+            const id = e.target.id.replace("unit_", "");
+            const limit = document.querySelector(`input[name="item[unit_limits][${id}]"]`);
+            if (limit) limit.disabled = !e.target.checked;
+        }
+    });
+</script>
