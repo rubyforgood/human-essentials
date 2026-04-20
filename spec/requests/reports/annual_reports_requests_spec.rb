@@ -1,5 +1,5 @@
 RSpec.describe "Annual Reports", type: :request do
-  let(:organization) { create(:organization) }
+  let(:organization) { create(:organization, created_at: Time.zone.local(2006, 1, 1)) }
   let(:user) { create(:user, organization: organization) }
   let(:organization_admin) { create(:organization_admin, organization: organization) }
 
@@ -53,6 +53,70 @@ RSpec.describe "Annual Reports", type: :request do
       it "returns not found if the year params is not number" do
         get reports_annual_report_path({ year: 'invalid' })
         expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    describe "GET /range" do
+      context "with valid year range" do
+        it "returns http success and generates a CSV with the correct year ranges" do
+          get range_reports_annual_reports_path(year_start: 2016, year_end: 2018, format: :csv)
+
+          expect(response).to have_http_status(:success)
+          expect(response.body).to include("2016")
+          expect(response.body).to include("2017")
+          expect(response.body).to include("2018")
+        end
+
+        it "returns correct data given columns are not at parity between years" do
+          # Some years may have columns that do not exist in other years, simulate the
+          # situation with "New Field" that only exists in 2017, but not 2016
+          shared_entries = { "Total Distributed" => 100, "Total Donors" => 5 }
+          extra_entries = { "Total Distributed" => 200, "Total Donors" => 8, "New Field" => 42 }
+
+          report_2016 = instance_double(AnnualReport,
+                                        "[]": nil,
+                                        all_reports: [{ "entries" => shared_entries }])
+          report_2017 = instance_double(AnnualReport,
+                                        "[]": nil,
+                                        all_reports: [{ "entries" => extra_entries }])
+
+          allow(report_2016).to receive(:[]).with("year").and_return(2016)
+          allow(report_2017).to receive(:[]).with("year").and_return(2017)
+
+          allow(Reports).to receive(:retrieve_report)
+            .with(hash_including(year: 2016)).and_return(report_2016)
+          allow(Reports).to receive(:retrieve_report)
+            .with(hash_including(year: 2017)).and_return(report_2017)
+
+          get range_reports_annual_reports_path(year_start: 2016, year_end: 2017, format: :csv)
+
+          csv = CSV.parse(response.body, headers: true)
+
+          expect(csv&.headers).to include("Year", "Total Distributed", "Total Donors", "New Field")
+
+          row_2016 = csv&.find { |r| r["Year"] == "2016" }
+          row_2017 = csv&.find { |r| r["Year"] == "2017" }
+
+          expect(row_2016["New Field"]).to be_nil
+          expect(row_2017["New Field"]).to eq("42")
+          expect(row_2017["Total Distributed"]).to eq("200")
+        end
+
+        it "uses the earliest(smallest) year between year_start and organization's earliest_reporting_year" do
+          get range_reports_annual_reports_path(year_start: 2004, year_end: 2008, format: :csv)
+          # the organization was created in 2006 (created_at_2006)
+          # so the below years should not be in the output
+          expect(response.body).not_to include("2004")
+          expect(response.body).not_to include("2005")
+          response.body.split("\n")
+        end
+      end
+
+      context "invalid year ranges given" do
+        it "should raise a URL error" do
+          expect { get range_reports_annual_reports_path(year_start: 'test', year_end: 'test', format: :csv) }
+            .to raise_error(ActionController::UrlGenerationError)
+        end
       end
     end
 
