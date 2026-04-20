@@ -160,7 +160,7 @@ group :development, :test do
   # More concise test ("should") matchers
   gem "shoulda-matchers", "~> 7.0"
   # Default rules for Rubocop.
-  gem "standard", "~> 1.52"
+  gem "standard", "~> 1.54"
   gem "standard-rails"
   gem "standard-performance"
   # Erb linter.
@@ -181,7 +181,7 @@ group :development do
   # Open sent e-mails in the browser instead of trying to send to a real mail server.
   gem "letter_opener"
   # Used as a dependency for Guard.
-  gem "listen", "~> 3.9.0"
+  gem "listen", "~> 3.10.0"
   # Generate a diagram based on Rails models.
   gem "rails-erd"
   # Allows to create a console in the browser.
