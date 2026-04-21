@@ -96,8 +96,8 @@ RSpec.describe DistributionSummaryByCountyQuery do
 
         breakdown = DistributionSummaryByCountyQuery.call(**params)
         expect(breakdown.size).to eq(5)
-        expect(breakdown[breakdown.size - 1].quantity).to eq(0)
-        expect(breakdown[breakdown.size - 1].value).to be_within(0.01).of(0)
+        expect(breakdown[-1].quantity).to eq(0)
+        expect(breakdown[-1].value).to be_within(0.01).of(0)
         4.times do |i|
           expect(breakdown[i].quantity).to eq(500)
           expect(breakdown[i].value).to be_within(0.01).of(37500.0)
@@ -115,8 +115,8 @@ RSpec.describe DistributionSummaryByCountyQuery do
         create(:distribution, :with_items, item: item_4, organization: user.organization, partner: partner_1)
         breakdown = DistributionSummaryByCountyQuery.call(**params)
         expect(breakdown.size).to eq(5)
-        expect(breakdown[breakdown.size - 1].quantity).to eq(0)
-        expect(breakdown[breakdown.size - 1].value).to be_within(0.01).of(0)
+        expect(breakdown[-1].quantity).to eq(0)
+        expect(breakdown[-1].value).to be_within(0.01).of(0)
         4.times do |i|
           expect(breakdown[i].quantity).to eq(550)
           expect(breakdown[i].value).to be_within(0.01).of(40625.0)
@@ -155,8 +155,8 @@ RSpec.describe DistributionSummaryByCountyQuery do
 
         breakdown = DistributionSummaryByCountyQuery.call(**params)
         expect(breakdown.size).to eq(5)
-        expect(breakdown[breakdown.size - 1].quantity).to eq(0)
-        expect(breakdown[breakdown.size - 1].value).to be_within(0.01).of(0)
+        expect(breakdown[-1].quantity).to eq(0)
+        expect(breakdown[-1].value).to be_within(0.01).of(0)
         4.times do |i|
           expect(breakdown[i].quantity).to eq(500)
           expect(breakdown[i].value).to be_within(0.01).of(37500.0)
@@ -174,8 +174,8 @@ RSpec.describe DistributionSummaryByCountyQuery do
         create(:distribution, :with_items, item: item_4, organization: user.organization, partner: partner_1)
         breakdown = DistributionSummaryByCountyQuery.call(**params)
         expect(breakdown.size).to eq(5)
-        expect(breakdown[breakdown.size - 1].quantity).to eq(0)
-        expect(breakdown[breakdown.size - 1].value).to be_within(0.01).of(0)
+        expect(breakdown[-1].quantity).to eq(0)
+        expect(breakdown[-1].value).to be_within(0.01).of(0)
         4.times do |i|
           expect(breakdown[i].quantity).to eq(525)
           expect(breakdown[i].value).to be_within(0.01).of(39375.0)
