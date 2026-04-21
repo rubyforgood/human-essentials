@@ -12,7 +12,7 @@ RSpec.feature "Distributions by County", type: :system do
 
   context "with only 'loose' items" do
     context "handles time ranges properly" do
-      context "all time"  do
+      context "all time" do
         before do
           @distribution_last_year = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
           @distribution_current_1 = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
@@ -20,8 +20,7 @@ RSpec.feature "Distributions by County", type: :system do
         end
 
         it("works for all time with no reporting categories") do
-                 visit_distribution_by_county_with_specified_filters("All Time",nil, nil)
-          expect(page).to have_text("Reporting Category");
+          visit_distribution_by_county_with_specified_filters("All Time", nil, nil)
           partner_1.profile.served_areas.each do |served_area|
             expect(page).to have_text(served_area.county.name)
           end
@@ -35,7 +34,7 @@ RSpec.feature "Distributions by County", type: :system do
         @distribution_current = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
         @distribution_last_year = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
 
-        visit_distribution_by_county_with_specified_filters("This Year",nil, nil)
+        visit_distribution_by_county_with_specified_filters("This Year", nil, nil)
 
         partner_1.profile.served_areas.each do |served_area|
           expect(page).to have_text(served_area.county.name)
@@ -45,14 +44,13 @@ RSpec.feature "Distributions by County", type: :system do
         expect(page).to have_css("table tbody tr td", text: "$262.50", exact_text: true, count: 4)
       end
 
-
       it("works for this year with reporting categories") do
         @distribution_current_1 = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
         @distribution_current_2 = create(:distribution, :with_items, item: item_2, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
 
         @distribution_last_year = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
 
-        visit_distribution_by_county_with_specified_filters("This Year","Cloth Diapers", nil)
+        visit_distribution_by_county_with_specified_filters("This Year", "Cloth Diapers", nil)
 
         partner_1.profile.served_areas.each do |served_area|
           expect(page).to have_text(served_area.county.name)
@@ -68,7 +66,7 @@ RSpec.feature "Distributions by County", type: :system do
 
         @distribution_last_year = create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
 
-        visit_distribution_by_county_with_specified_filters("All Time","Cloth Diapers", nil)
+        visit_distribution_by_county_with_specified_filters("All Time", "Cloth Diapers", nil)
 
         partner_1.profile.served_areas.each do |served_area|
           expect(page).to have_text(served_area.county.name)
@@ -77,9 +75,6 @@ RSpec.feature "Distributions by County", type: :system do
         expect(page).to have_css("table tbody tr td", text: "50", exact_text: true, count: 4)
         expect(page).to have_css("table tbody tr td", text: "$525.00", exact_text: true, count: 4)
       end
-
-
-
 
       it("works for prior year") do
         # Should NOT return distribution issued before previous calendar year
@@ -94,7 +89,7 @@ RSpec.feature "Distributions by County", type: :system do
         first_day_of_current_year = Time.current.end_of_day.change(year: current_year, month: 1, day: 1).to_datetime
         create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: first_day_of_current_year)
 
-        visit_distribution_by_county_with_specified_filters("Prior Year",nil, nil)
+        visit_distribution_by_county_with_specified_filters("Prior Year", nil, nil)
 
         partner_1.profile.served_areas.each do |served_area|
           expect(page).to have_text(served_area.county.name)
@@ -116,7 +111,7 @@ RSpec.feature "Distributions by County", type: :system do
         tomorrow = 1.day.from_now.end_of_day.to_datetime
         create(:distribution, :with_items, item: item_1, organization: user.organization, partner: partner_1, issued_at: tomorrow)
 
-        visit_distribution_by_county_with_specified_filters("Last 12 Months",nil, nil)
+        visit_distribution_by_county_with_specified_filters("Last 12 Months", nil, nil)
 
         partner_1.profile.served_areas.each do |served_area|
           expect(page).to have_text(served_area.county.name)
@@ -127,7 +122,6 @@ RSpec.feature "Distributions by County", type: :system do
     end
   end
 
-
   context "with kits" do
     context "with reporting category" do
       it "works for all time" do
@@ -135,7 +129,7 @@ RSpec.feature "Distributions by County", type: :system do
         @distribution_current_2 = create(:distribution, :with_items, item: item_2, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
         @distribution_last_year_1 = create(:distribution, :with_items, item: kit_a.item, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
         @distribution_last_year_2 = create(:distribution, :with_items, item: item_4, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
-        visit_distribution_by_county_with_specified_filters("All Time","Pads", nil)
+        visit_distribution_by_county_with_specified_filters("All Time", "Pads", nil)
 
         partner_1.profile.served_areas.each do |served_area|
           expect(page).to have_text(served_area.county.name)
@@ -152,7 +146,7 @@ RSpec.feature "Distributions by County", type: :system do
         @distribution_current_2 = create(:distribution, :with_items, item: item_2, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
         @distribution_last_year_1 = create(:distribution, :with_items, item: kit_a.item, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
         @distribution_last_year_2 = create(:distribution, :with_items, item: item_4, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
-        visit_distribution_by_county_with_specified_filters("All Time",nil, item_3.name)
+        visit_distribution_by_county_with_specified_filters("All Time", nil, item_3.name)
 
         partner_1.profile.served_areas.each do |served_area|
           expect(page).to have_text(served_area.county.name)

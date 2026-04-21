@@ -27,10 +27,6 @@ class DistributionsByCountyController < ApplicationController
 
     params
       .require(:filters)
-      .permit(:by_item_id,  :by_reporting_category,  :date_range)
+      .permit(:by_item_id, :by_reporting_category, :date_range)
   end
-
-
 end
-
-

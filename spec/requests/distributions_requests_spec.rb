@@ -118,7 +118,6 @@ RSpec.describe "Distributions", type: :request do
       end
 
       context "with filters" do
-
         it "shows all active partners in dropdown filter unrestricted by current filter" do
           inactive_partner_name = create(:partner, :deactivated, organization:).name
           active_partner_name = distribution.partner.name

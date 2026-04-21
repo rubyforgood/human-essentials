@@ -22,9 +22,9 @@ RSpec.describe "DistributionsByCounties", type: :request do
     end
 
     it "includes loose items, but not kits in item dropdown" do
-      create(:distribution, :with_items, item: kit_a.item, organization: organization, partner: partner_1, issued_at: issued_at_present) #This is just to make sure the system creates the kit and items within it
+      create(:distribution, :with_items, item: kit_a.item, organization: organization, partner: partner_1, issued_at: issued_at_present) # This is just to make sure the system creates the kit and items within it
       get distributions_by_county_report_path
-      expect(response.body).to include (item_3.name)
+      expect(response.body).to include item_3.name
       expect(response.body).to_not include(kit_a.item.name)
     end
 
@@ -54,11 +54,10 @@ RSpec.describe "DistributionsByCounties", type: :request do
       end
     end
 
-
     context "filtration, kits" do
       before do
-        current_year =  Time.current.year
-        issued_at_last_year =  Time.current.change(year: current_year - 1).to_datetime
+        current_year = Time.current.year
+        issued_at_last_year = Time.current.change(year: current_year - 1).to_datetime
         @distribution_last_year = create(:distribution, :with_items, item: kit_a.item, organization: user.organization, partner: partner_1, issued_at: issued_at_last_year)
         @distribution_current_1 = create(:distribution, :with_items, item: kit_a.item, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
         @distribution_current_2 = create(:distribution, :with_items, item: item_2, organization: user.organization, partner: partner_1, issued_at: issued_at_present)
@@ -66,8 +65,8 @@ RSpec.describe "DistributionsByCounties", type: :request do
         @all_time_string = "January 1,1909 - January 1,9999"
       end
       it("works for all time with a reporting category") do
-        reporting_category_params =  {filters: { date_range: @all_time_string, by_reporting_category: "pads", by_item_id: nil }}
-        get distributions_by_county_report_path,  params: reporting_category_params
+        reporting_category_params = {filters: {date_range: @all_time_string, by_reporting_category: "pads", by_item_id: nil}}
+        get distributions_by_county_report_path, params: reporting_category_params
 
         partner_1.profile.served_areas.each do |served_area|
           expect(response.body).to include(served_area.county.name)
@@ -77,8 +76,8 @@ RSpec.describe "DistributionsByCounties", type: :request do
         expect(response.body).to include("$762.50").exactly(4).times
       end
       it("works for all time with an item") do
-        params =  {filters: { date_range: @all_time_string, by_reporting_category: nil, by_item_id: item_3.id }}
-        get distributions_by_county_report_path,  params: params
+        params = {filters: {date_range: @all_time_string, by_reporting_category: nil, by_item_id: item_3.id}}
+        get distributions_by_county_report_path, params: params
 
         partner_1.profile.served_areas.each do |served_area|
           expect(response.body).to include(served_area.county.name)
@@ -87,10 +86,6 @@ RSpec.describe "DistributionsByCounties", type: :request do
         expect(response.body).to include("1,000").at_least(4).times
         expect(response.body).to include("$750.00").exactly(4).times
       end
-
-
     end
-
-
   end
 end
