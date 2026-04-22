@@ -54,15 +54,14 @@ class StorageLocationsController < ApplicationController
     @storage_location = current_organization.storage_locations.find(params[:id])
   end
 
-  # TODO: Move these queries to Query Object
   def show
+    setup_date_range_picker
     @storage_location = current_organization.storage_locations.find(params[:id])
     version_date = params[:version_date].presence&.to_date
-    # TODO: Find a way to do these with less hard SQL. These queries have to be manually updated because they're not in-sync with the Model
-    @items_out = ItemsOutQuery.new(organization: current_organization, storage_location: @storage_location).call
-    @items_out_total = ItemsOutTotalQuery.new(organization: current_organization, storage_location: @storage_location).call
-    @items_in = ItemsInQuery.new(organization: current_organization, storage_location: @storage_location).call
-    @items_in_total = ItemsInTotalQuery.new(organization: current_organization, storage_location: @storage_location).call
+    @items = ItemsFlowQuery.new(storage_location: @storage_location, organization: current_organization, filter_params: date_range).call.to_a
+    @total_quantity_in = @items.count.positive? ? @items.first["total_quantity_in"].to_i : 0
+    @total_quantity_out = @items.count.positive? ? @items.first["total_quantity_out"].to_i : 0
+    @total_quantity_change = @total_quantity_in - @total_quantity_out
     if View::Inventory.within_snapshot?(current_organization.id, version_date)
       @inventory = View::Inventory.new(current_organization.id, event_time: version_date)
     else
@@ -157,9 +156,18 @@ class StorageLocationsController < ApplicationController
   end
 
   helper_method \
-    def filter_params
+  def filter_params
     return {} unless params.key?(:filters)
 
-    params.require(:filters).permit(:containing)
+    params.require(:filters).permit(:containing, :date_range, :date_range_label)
+  end
+
+  def date_range
+    return if filter_params[:date_range].blank?
+
+    date_range = filter_params[:date_range].split(" - ")
+    start_date = Date.parse(date_range[0]).beginning_of_day
+    end_date = Date.parse(date_range[1]).end_of_day
+    [start_date, end_date]
   end
 end
