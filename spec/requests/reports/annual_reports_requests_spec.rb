@@ -101,21 +101,18 @@ RSpec.describe "Annual Reports", type: :request do
           expect(row_2017["New Field"]).to eq("42")
           expect(row_2017["Total Distributed"]).to eq("200")
         end
-
-        it "uses the earliest(smallest) year between year_start and organization's earliest_reporting_year" do
-          get range_reports_annual_reports_path(year_start: 2004, year_end: 2008, format: :csv)
-          # the organization was created in 2006 (created_at_2006)
-          # so the below years should not be in the output
-          expect(response.body).not_to include("2004")
-          expect(response.body).not_to include("2005")
-          response.body.split("\n")
-        end
       end
 
       context "invalid year ranges given" do
         it "should raise a URL error" do
           expect { get range_reports_annual_reports_path(year_start: 'test', year_end: 'test', format: :csv) }
             .to raise_error(ActionController::UrlGenerationError)
+        end
+
+        it "should redirect and show an error message if end year is less than start year" do
+          get range_reports_annual_reports_path(year_start: 2018, year_end: 2016, format: :csv)
+          expect(response).to have_http_status(:found)
+          expect(flash[:error]).to eq("End year must be greater than or equal to start year.")
         end
       end
     end

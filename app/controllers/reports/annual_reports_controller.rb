@@ -33,7 +33,8 @@ class Reports::AnnualReportsController < ApplicationController
   end
 
   def range
-    year_start, year_end = range_params[:year_start], range_params[:year_end]
+    year_start = range_params[:year_start].to_i
+    year_end = range_params[:year_end].to_i
 
     if year_end < year_start
       flash[:error] = "End year must be greater than or equal to start year."
