@@ -1,6 +1,5 @@
 class Reports::AnnualReportsController < ApplicationController
   before_action :validate_show_params, only: [:show, :recalculate]
-  before_action :validate_range_params, only: [:range]
 
   def index
     # 2813_update_annual_report -- changed to earliest_reporting_year
@@ -34,12 +33,14 @@ class Reports::AnnualReportsController < ApplicationController
   end
 
   def range
-    year_start = [range_params[:year_start].to_i, current_organization.earliest_reporting_year].max
-    year_end = [range_params[:year_end].to_i, Time.current.year].min
+    year_start, year_end = range_params[:year_start], range_params[:year_end]
 
-    year_start, year_end = [year_start, year_end].minmax
+    if year_end < year_start
+      flash[:error] = "End year must be greater than or equal to start year."
+      redirect_to reports_annual_reports_path and return
+    end
 
-    reports = get_range_report(year_start, year_end)
+    reports = Reports::AnnualSurveyReportService.new(organization: current_organization, year_start: year_start, year_end: year_end).call
 
     respond_to do |format|
       format.csv do
@@ -51,15 +52,6 @@ class Reports::AnnualReportsController < ApplicationController
 
   private
 
-  def get_range_report(year_start, year_end)
-    (year_start..year_end).map do |year|
-      Reports.retrieve_report(organization: current_organization, year: year, recalculate: true)
-    rescue ActiveRecord::RecordInvalid => e
-      Rails.logger.error("Failed to retrieve annual report for year #{year}: #{e.message}")
-      nil
-    end.compact
-  end
-
   def year_param
     params.require(:year)
   end
@@ -70,13 +62,5 @@ class Reports::AnnualReportsController < ApplicationController
 
   def validate_show_params
     not_found! unless year_param.to_i.positive?
-  end
-
-  def validate_range_params
-    not_found! unless range_params[:year_start] =~ year_regex && range_params[:year_end] =~ year_regex
-  end
-
-  def year_regex
-    /^\d{4}$/
   end
 end
