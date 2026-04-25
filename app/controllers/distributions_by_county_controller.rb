@@ -2,6 +2,8 @@ class DistributionsByCountyController < ApplicationController
   include DateRangeHelper
   include DistributionHelper
 
+  helper_method :filter_params
+
   def report
     setup_date_range_picker
     start_date = helpers.selected_range.first.utc.iso8601
@@ -21,8 +23,7 @@ class DistributionsByCountyController < ApplicationController
     )
   end
 
-  helper_method \
-    def filter_params
+  def filter_params
     return {} unless params.key?(:filters)
 
     params
