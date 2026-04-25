@@ -50,7 +50,7 @@ class DistributionSummaryByCountyQuery
                 FULL OUTER JOIN kitted_distribution_totals kd ON ld.id = kd.id 
         ),
                  
-    /* Match loose distribution totals with client share and counties.
+    /* Match full distribution totals with client share and counties.
        If distribution has no associated county, set county name to "Unspecified"
        and set region to ZZZ so it will be last when sorted  */
     totals_by_county AS
