@@ -84,11 +84,11 @@ RSpec.describe "Distributions", type: :request do
       end
 
       context "with export_csv param" do
-        it "redirects then renders an iframe to trigger CSV download" do
+        it "redirects then renders a csv-download stimulus controller to export CSV" do
           get distributions_path(export_csv: true, foo: "bar")
           expect(response).to redirect_to(distributions_path(foo: "bar"))
           follow_redirect!
-          expect(response.body).to include("iframe")
+          expect(response.body).to include("data-controller=\"toast csv-download\"")
           expect(response.body).to include("distributions.csv?foo=bar")
         end
       end
