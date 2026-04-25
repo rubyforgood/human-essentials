@@ -86,7 +86,8 @@ RSpec.describe DistributionSummaryByCountyQuery do
         end
       end
     end
-    context "with kits  only" do
+
+    context "with kits only" do
       let(:reporting_category) { :pads }
       let(:params) { {organization_id:, start_date:, end_date:, reporting_category:} }
 
@@ -145,7 +146,7 @@ RSpec.describe DistributionSummaryByCountyQuery do
       end
     end
 
-    context "with kits  only" do
+    context "with kits only" do
       let(:item_id) { item_3.id }
       let(:params) { {organization_id:, start_date:, end_date:, reporting_category:, item_id:} }
 
