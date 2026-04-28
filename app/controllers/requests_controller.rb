@@ -8,6 +8,11 @@ class RequestsController < ApplicationController
                 .undiscarded
                 .during(helpers.selected_range)
                 .class_filter(filter_params)
+
+    if params[:include_cancelled]
+      @requests = @requests.with_discarded
+    end
+
     @unfulfilled_requests_count = current_organization.requests.where(status: [:pending, :started]).during(helpers.selected_range).class_filter(filter_params).count
     @paginated_requests = @requests.includes(:partner).page(params[:page])
     @calculate_product_totals = RequestsTotalItemsService.new(requests: @requests).calculate
@@ -20,6 +25,7 @@ class RequestsController < ApplicationController
     @selected_request_item = filter_params[:by_request_item_id]
     @selected_partner = filter_params[:by_partner]
     @selected_status = filter_params[:by_status]
+    @include_cancelled = params[:include_cancelled]
 
     respond_to do |format|
       format.html

@@ -34,11 +34,24 @@ RSpec.describe 'Requests', type: :request do
           create(:request, :pending)
           create(:request, :started)
           create(:request, :fulfilled)
-          create(:request, :discarded)
+          create(:request, :cancelled)
 
           get requests_path
 
           expect(response.body).to include('Print Unfulfilled Picklists (2)')
+          expect(response.body).not_to match(%r{<span class="badge badge-danger bg-danger">\s*Cancelled\s*</span>})
+        end
+      end
+
+      context "when 'include_cancelled' param is present" do
+        it "shows cancelled requests" do
+          Request.delete_all
+
+          create(:request, :cancelled)
+
+          get requests_path, params: {include_cancelled: "1"}
+
+          expect(response.body).to match(%r{<span class="badge badge-danger bg-danger">\s*Cancelled\s*</span>})
         end
       end
 

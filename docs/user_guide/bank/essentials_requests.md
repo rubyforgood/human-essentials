@@ -29,7 +29,7 @@ The list contains:
   - pending -- haven't started fulfilling it yet
   - started -- have started fulfilling, but haven't saved the resulting distribution
   - fulfilled -- have created the distribution for this Request
-  - discarded -- have cancelled the Request
+  - cancelled -- have cancelled the Request
 - and the actions you can take on that Request
 
 ### Filtering your Requests
