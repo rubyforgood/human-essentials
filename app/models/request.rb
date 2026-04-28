@@ -37,7 +37,9 @@ class Request < ApplicationRecord
   validates :distribution_id, uniqueness: true, allow_nil: true
   validate :item_requests_uniqueness_by_item_id
   validate :not_completely_empty
-  validate :cannot_change_status_once_fulfilled, on: :update
+  validate :cannot_change_status_once_fulfilled,
+    :cannot_change_status_once_cancelled,
+    on: :update
 
   after_validation :sanitize_items_data
 
@@ -91,6 +93,12 @@ class Request < ApplicationRecord
   def cannot_change_status_once_fulfilled
     if status_changed? && status_was == "fulfilled"
       errors.add(:status, "cannot be changed once fulfilled")
+    end
+  end
+
+  def cannot_change_status_once_cancelled
+    if status_changed? && status_was == "cancelled"
+      errors.add(:status, "cannot be changed once cancelled")
     end
   end
 end
