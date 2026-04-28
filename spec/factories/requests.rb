@@ -74,8 +74,9 @@ FactoryBot.define do
       status { 'pending' }
     end
 
-    trait :discarded do
-      status { 'discarded' }
+    trait :cancelled do
+      status { 'cancelled' }
+      discarded_at { Time.current }
     end
 
     trait :with_varied_quantities do

@@ -438,7 +438,7 @@ RSpec.describe "/partners/requests", type: :request do
     let(:partner_user) { partner1.primary_user }
     let!(:pending_request) { create(:request, :with_item_requests, :pending, partner: partner1, request_items: [{ item_id: item1.id, quantity: '100' }]) }
     let!(:started_request) { create(:request, :with_item_requests, :started, partner: partner1, request_items: [{ item_id: item2.id, quantity: '50' }]) }
-    let!(:discarded_request) { create(:request, :with_item_requests, :discarded, partner: partner1, request_items: [{ item_id: item2.id, quantity: '30' }]) }
+    let!(:cancelled_request) { create(:request, :with_item_requests, :cancelled, partner: partner1, request_items: [{ item_id: item2.id, quantity: '30' }]) }
     let!(:fulfilled_request) { create(:request, :with_item_requests, :fulfilled, partner: partner1, request_items: [{ item_id: item2.id, quantity: '20' }]) }
 
     before do

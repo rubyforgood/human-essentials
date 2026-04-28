@@ -16,13 +16,13 @@ RSpec.describe RequestDestroyService, type: :service do
       end
     end
 
-    context 'when the request is already discarded' do
+    context 'when the request is already cancelled' do
       before do
         request.discard!
       end
 
       it 'should not be successful and have errors' do
-        expect(subject.errors.full_messages).to eq(['request already discarded'])
+        expect(subject.errors.full_messages).to eq(['request already cancelled'])
       end
     end
 
@@ -37,7 +37,7 @@ RSpec.describe RequestDestroyService, type: :service do
       end
 
       it 'should update the status column on the request' do
-        expect { subject }.to change { request.reload.status_discarded? }.from(false).to(true)
+        expect { subject }.to change { request.reload.status_cancelled? }.from(false).to(true)
       end
 
       it 'should send a email notification to the partner' do
@@ -51,7 +51,7 @@ RSpec.describe RequestDestroyService, type: :service do
       let(:request) { create(:request, partner: partner) }
 
       it 'should update the status column on the request' do
-        expect { subject }.to change { request.reload.status_discarded? }.from(false).to(true)
+        expect { subject }.to change { request.reload.status_cancelled? }.from(false).to(true)
       end
 
       it 'should not send a email notification to the partner' do

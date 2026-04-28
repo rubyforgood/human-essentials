@@ -31,7 +31,7 @@ class Request < ApplicationRecord
   accepts_nested_attributes_for :item_requests, allow_destroy: true, reject_if: proc { |attributes| attributes["quantity"].blank? }
   has_many :child_item_requests, through: :item_requests
 
-  enum :status, { pending: 0, started: 1, fulfilled: 2, discarded: 3 }, prefix: true
+  enum :status, { pending: 0, started: 1, fulfilled: 2, cancelled: 3 }, prefix: true
   enum :request_type, %w[quantity individual child].map { |v| [v, v] }.to_h
 
   validates :distribution_id, uniqueness: true, allow_nil: true

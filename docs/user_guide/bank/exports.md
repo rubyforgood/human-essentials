@@ -404,7 +404,7 @@ Click 'Requests' in the left-hand menu, then "Export Requests"
 You can filter the exported Requests by the following:
 - Item
 - Partner
-- Status (Pending, Started, Fulfilled, Discarded)
+- Status (Pending, Started, Fulfilled, Cancelled)
 - Date Range
 Make your selection, then click 'Filter' before clicking 'Export Requests'
 
