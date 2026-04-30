@@ -33,13 +33,13 @@
               <div class="description-block border-right">
                 <%= form_tag(distributions_by_county_report_path(current_organization), method: :get) do |f| %>
                   <div class="row">
-                  <% if @items.present? %>
+                  <% if @dbc_info.items.present? %>
                     <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-12">
-                      <%= filter_select(label: "Item", scope: :by_item_id, collection: @items, selected: @selected_item) %>
+                      <%= filter_select(label: "Item", scope: :by_item_id, collection: @dbc_info.items, selected: @dbc_info.selected_item) %>
                     </div>
                   <% end %>
                   <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-12">
-                    <%= filter_select(label: "Reporting Category", scope: :by_reporting_category, collection: @reporting_categories, selected: @selected_reporting_category) %>
+                    <%= filter_select(label: "Reporting Category", scope: :by_reporting_category, collection: @dbc_info.reporting_categories, selected: @dbc_info.selected_reporting_category) %>
                   </div>
 
                  <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
@@ -66,7 +66,7 @@
               </tr>
               </thead>
               <tbody>
-              <% @breakdown.each do |bd| %>
+              <% @dbc_info.breakdown.each do |bd| %>
                 <tr>
                   <td><%= bd.name %></td>
                   <td class="numeric"><%= number_with_delimiter(bd.quantity) %></td>
