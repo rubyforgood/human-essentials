@@ -5,7 +5,7 @@ RSpec.describe Reports::AnnualSurveyReportService, type: :service do
     described_class.new(organization: organization, year_start: year_start, year_end: year_end)
   end
 
-  describe '#call' do
+  describe "#call" do
     context "with a valid year range" do
       let(:year_start) { 2020 }
       let(:year_end) { 2022 }
@@ -82,4 +82,3 @@ RSpec.describe Reports::AnnualSurveyReportService, type: :service do
     end
   end
 end
-
