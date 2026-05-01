@@ -5,7 +5,7 @@ class AddTypeToItems < ActiveRecord::Migration[8.0]
   end
 
   def down
-    add_column :items, :type, :string, default: 'ConcreteItem', null: false
+    remove_column :items, :type
   end
 
 end
