@@ -1,20 +1,21 @@
 RSpec.describe Exports::ExportPurchasesCSVService do
   describe "#generate_csv_data" do
-    subject { described_class.new(purchase_ids: purchase_ids).generate_csv_data }
+    let(:organization) { create(:organization) }
     let(:purchase_ids) { purchases.map(&:id) }
+    let(:storage_location) { create(:storage_location, organization: organization) }
+    subject { described_class.new(purchase_ids: purchase_ids, organization: organization).generate_csv_data }
+
     let(:duplicate_item) do
-      FactoryBot.create(
-        :item, name: Faker::Appliance.unique.equipment
-      )
+      create(:item, name: Faker::Appliance.unique.equipment, organization: organization)
     end
+
     let(:items_lists) do
       [
         [
           [duplicate_item, 5],
           [
-            FactoryBot.create(
-              :item, name: Faker::Appliance.unique.equipment
-            ),
+            FactoryBot.create(:item, name: Faker::Appliance.unique.equipment, 
+            organization: organization),
             7
           ],
           [duplicate_item, 3]
@@ -35,9 +36,9 @@ RSpec.describe Exports::ExportPurchasesCSVService do
       items_lists.each_with_index.map do |items, i|
         purchase = create(
           :purchase,
-          vendor: create(
-            :vendor, business_name: "Vendor Name #{i}"
-          ),
+          organization: organization,
+          storage_location: storage_location,
+          vendor: create(:vendor, business_name: "Vendor Name #{i}", organization: organization),
           issued_at: start_time + i.days,
           comment: "This is the #{i}-th purchase in the test.",
           amount_spent_in_cents: i * 4 + 555,
@@ -113,6 +114,14 @@ RSpec.describe Exports::ExportPurchasesCSVService do
 
         expect(subject[idx + 1]).to eq(row)
       end
+    end
+    # new purchase export regression test
+    it "includes all organization item headers even when exported purchases only use a subset of items" do
+      unused_item = create(:item, name: "Z Unused Item", organization: organization)
+
+      headers = subject[0]
+
+      expect(headers).to include("Z Unused Item")
     end
   end
 end
