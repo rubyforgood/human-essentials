@@ -855,12 +855,12 @@ end
 complete_orgs.each do |org|
   org.storage_locations.active.each do |storage_location|
     org.kits.active.each do |kit|
-      next unless kit.item # Ensure kit has an associated item
+      next unless kit.kit_item # Ensure kit has an associated item
 
       # Create inventory for each kit
       InventoryItem.create!(
         storage_location: storage_location,
-        item: kit.item,
+        item: kit.kit_item,
         quantity: Faker::Number.within(range: 10..50)
       )
     end
