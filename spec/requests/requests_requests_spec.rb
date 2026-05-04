@@ -44,14 +44,33 @@ RSpec.describe 'Requests', type: :request do
       end
 
       context "when 'include_cancelled' param is present" do
-        it "shows cancelled requests" do
+        it "shows print unfulfilled picklists button with correct quantity including cancelled requests" do
           Request.delete_all
 
+          create(:request, :pending)
+          create(:request, :started)
           create(:request, :cancelled)
 
           get requests_path, params: {include_cancelled: "1"}
 
+          expect(response.body).to include('Print Unfulfilled Picklists (2)')
           expect(response.body).to match(%r{<span class="badge badge-danger bg-danger">\s*Cancelled\s*</span>})
+        end
+      end
+
+      context "when 'Include Cancelled?' is checked and filter by Cancelled" do
+        it "constrains the list for cancelled requests only" do
+          Request.delete_all
+
+          create(:request, :started, comments: "Need more supplies")
+          create(:request, :pending, comments: "Awaiting for confirmation")
+          create(:request, :cancelled, comments: 'Not necessary anymore')
+
+          get requests_path, params: {include_cancelled: "1", filters: { by_status: :cancelled}}
+
+          expect(response.body).to include("Not necessary anymore")
+          expect(response.body).not_to include("Need more supplies")
+          expect(response.body).not_to include("Awaiting for confirmation")
         end
       end
 
@@ -61,12 +80,14 @@ RSpec.describe 'Requests', type: :request do
 
           create(:request, :started, comments: "Started request - should appear")
           create(:request, :pending, comments: "Pending request - should not appear")
+          create(:request, :cancelled, comments: 'Cancelled request - a comment')
 
           get requests_path({ filters: { by_status: :started} })
 
           expect(response.body).to include("Print Unfulfilled Picklists (1)")
           expect(response.body).to include("Started request - should appear")
           expect(response.body).not_to include("Pending request - should not appear")
+          expect(response.body).not_to include("Cancelled request - a comment")
         end
       end
     end
