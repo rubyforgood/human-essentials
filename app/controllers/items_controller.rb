@@ -91,12 +91,25 @@ class ItemsController < ApplicationController
 
   def deactivate
     item = current_organization.items.find(params[:id])
+
+    partners = Partner
+      .joins(families: {children: :requested_items})
+      .where(organization_id: current_organization.id)
+      .where(children: {active: true})
+      .where(items: {id: item.id})
+      .distinct
+
     begin
       item.deactivate!
     rescue => e
       flash[:error] = e.message
       redirect_back(fallback_location: items_path)
       return
+    end
+
+    if partners.any?
+      flash[:alert] = "The following partners have active children with this item: " +
+        partners.map(&:name).map(&:downcase).sort.join(", ")
     end
 
     flash[:notice] = "#{item.name} has been deactivated."
