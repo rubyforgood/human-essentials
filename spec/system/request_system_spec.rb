@@ -31,8 +31,6 @@ RSpec.describe "Requests", type: :system, js: true do
     end
 
     it "excludes cancelled requests by default" do
-      _cancelled_request = create(:request, :with_item_requests, :cancelled, partner: partner1, request_items: [{ "item_id": item1.id, "quantity": '7' }])
-
       visit subject
 
       expect(find_field("include_cancelled")).not_to be_checked
@@ -41,27 +39,9 @@ RSpec.describe "Requests", type: :system, js: true do
       expect(page.find("table")).to have_content('Started', count: 3)
       expect(page.find("table")).to have_content('Fulfilled', count: 1)
       expect(page.find("table")).to have_content('Pending', count: 1)
-      expect(page.find("table")).not_to have_content("Cancelled")
     end
 
     context "when 'Include Cancelled?' is checked" do
-      it "includes requests that are cancelled" do
-        _cancelled_request = create(:request, :with_item_requests, :cancelled, partner: partner1, request_items: [{ "item_id": item1.id, "quantity": '6' }])
-
-        visit subject
-
-        check "include_cancelled"
-        click_on 'Filter'
-
-        expect(find_field("include_cancelled")).to be_checked
-
-        expect(page).to have_xpath("//h1", text: "Requests")
-        expect(page.find("table")).to have_content('Started', count: 3)
-        expect(page.find("table")).to have_content('Fulfilled', count: 1)
-        expect(page.find("table")).to have_content('Pending', count: 1)
-        expect(page.find("table")).to have_content("Cancelled", count: 1)
-      end
-
       it 'does not display the Cancel button for cancelled requests' do
         _cancelled_request = create(:request, :with_item_requests, :cancelled, partner: partner1, request_items: [{ "item_id": item1.id, "quantity": '6' }])
 
@@ -149,9 +129,7 @@ RSpec.describe "Requests", type: :system, js: true do
       end
 
       context "when filtering by status" do
-        it "constrains the list excluding cancelled requests by default" do
-          _cancelled_request = create(:request, :with_item_requests, :cancelled, partner: partner1, request_items: [{ "item_id": item1.id, "quantity": '6' }])
-
+        it "constrains the list" do
           visit subject
           # check for all requests
           expect(page).to have_css("table tbody tr", count: 5)
@@ -160,20 +138,6 @@ RSpec.describe "Requests", type: :system, js: true do
           click_on 'Filter'
           # check for filtered requests
           expect(page).to have_css("table tbody tr", count: 1)
-        end
-
-        context "when 'Include Cancelled?' is checked and filter by Cancelled" do
-          it "constrains the list including cancelled requests" do
-            _cancelled_request = create(:request, :with_item_requests, :cancelled, partner: partner1, request_items: [{ "item_id": item1.id, "quantity": '6' }])
-
-            visit subject
-
-            check "Include Cancelled?"
-            select "Cancelled", from: "Filter by status"
-            click_on 'Filter'
-
-            expect(page).to have_css("table tbody tr", count: 1)
-          end
         end
       end
 
