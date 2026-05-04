@@ -156,6 +156,19 @@ RSpec.describe 'Requests', type: :request do
           expect(response.body).not_to include('Units (if applicable)')
         end
       end
+
+      context 'when the request has a Fulfilled status' do
+        it 'does not display the Cancel button' do
+          fulfilled_request = create(:request, :fulfilled)
+
+          get requests_path(fulfilled_request)
+
+          page = Nokogiri::HTML(response.body)
+          cancel_button = page.at_css('button') { |el| el.text.strip == 'Cancel' }
+
+          expect(cancel_button).not_to be_present
+        end
+      end
     end
 
     describe 'POST #start' do
