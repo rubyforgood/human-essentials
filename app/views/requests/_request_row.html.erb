@@ -22,7 +22,9 @@
   </td>
   <td class="text-right">
     <%= view_button_to request_path(request_row) %>
-    <%= cancel_button_to new_request_cancelation_path(request_id: request_row.id), method: :get, data: { disable_with: "Please wait..."  }, size: "xs", type: "danger" %>
+    <% unless request_row.status_cancelled? %>
+      <%= cancel_button_to new_request_cancelation_path(request_id: request_row.id), method: :get, data: { disable_with: "Please wait..."  }, size: "xs", type: "danger" %>
+    <% end %>
     <%= print_button_to print_picklist_request_path(request_row), { format: :pdf, text: "Print", size: "xs" } %>
-    </td>
+  </td>
 </tr>
