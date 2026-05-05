@@ -3,27 +3,11 @@ class RequestsController < ApplicationController
   def index
     setup_date_range_picker
 
-    @requests = current_organization
-                .ordered_requests
-                .undiscarded
-                .during(helpers.selected_range)
-                .class_filter(filter_params)
-    @unfulfilled_requests_count = current_organization.requests.where(status: [:pending, :started]).during(helpers.selected_range).class_filter(filter_params).count
-    @paginated_requests = @requests.includes(:partner).page(params[:page])
-    @calculate_product_totals = RequestsTotalItemsService.new(requests: @requests).calculate
-    @items = current_organization.items.alphabetized.select(:id, :name)
-    @partners = current_organization.partners.alphabetized.select(:id, :name, :status)
-    @statuses = Request.statuses.transform_keys(&:humanize)
-    @partner_users = User.where(id: @paginated_requests.map(&:partner_user_id)).select(:id, :name, :email)
-    @request_types = Request.request_types.transform_keys(&:humanize)
-    @selected_request_type = filter_params[:by_request_type]
-    @selected_request_item = filter_params[:by_request_item_id]
-    @selected_partner = filter_params[:by_partner]
-    @selected_status = filter_params[:by_status]
+    @request_info = View::Requests.from_params(params: params, organization: current_organization, helpers: helpers)
 
     respond_to do |format|
       format.html
-      format.csv { send_data Exports::ExportRequestService.new(@requests).generate_csv, filename: "Requests-#{Time.zone.today}.csv" }
+      format.csv { send_data Exports::ExportRequestService.new(@request_info.requests).generate_csv, filename: "Requests-#{Time.zone.today}.csv" }
     end
   end
 
