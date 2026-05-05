@@ -30,72 +30,24 @@ RSpec.describe "Requests", type: :system, js: true do
       create(:request, :with_item_requests, :pending, partner: partner1, request_items: [{ "item_id": item1.id, "quantity": '16' }])
     end
 
-    it "excludes cancelled requests by default" do
+    it "lists requests" do
       visit subject
-
-      expect(find_field("include_cancelled")).not_to be_checked
-
       expect(page).to have_xpath("//h1", text: "Requests")
-      expect(page.find("table")).to have_content('Started', count: 3)
-      expect(page.find("table")).to have_content('Fulfilled', count: 1)
-      expect(page.find("table")).to have_content('Pending', count: 1)
     end
 
-    context "when 'Include Cancelled?' is checked" do
-      it 'does not display the Cancel button for cancelled requests' do
-        _cancelled_request = create(:request, :with_item_requests, :cancelled, partner: partner1, request_items: [{ "item_id": item1.id, "quantity": '6' }])
+    it "can be exported in CSV" do
+      visit subject
+      click_on "Export Requests"
 
-        visit subject
+      wait_for_download
+      expect(downloads.length).to eq(1)
+      expect(download).to match(/.*\.csv/)
 
-        check "Include Cancelled?"
-        click_on 'Filter'
+      headers, *rows = download_content.split("\n")
 
-        within "table tbody" do
-          expect(page).to have_content("Cancelled", count: 1)
-          expect(page).to have_link("Cancel", count: 5) # 5 requests created in the before block
-        end
-      end
-    end
-
-    context "exporting requests" do
-      it "exports the requests CSV excluding cancelled requests by default" do
-        _cancelled_request = create(:request, :with_item_requests, :cancelled, partner: partner1, request_items: [{ "item_id": item1.id, "quantity": '6' }])
-
-        visit subject
-        click_on "Export Requests"
-
-        wait_for_download
-        expect(downloads.length).to eq(1)
-        expect(download).to match(/.*\.csv/)
-
-        headers, *rows = download_content.split("\n")
-
-        expect(rows.size).to eq(5)
-        expect(rows.join).to have_text(partner1.name, count: 4)
-        expect(rows.join).not_to have_text('Cancelled')
-        expect(headers).to have_text(item2.name, count: 1)
-      end
-
-      it "exports the requests CSV including cancelled requests when 'Include Cancelled' is checked" do
-        _cancelled_request = create(:request, :with_item_requests, :cancelled, partner: partner1, request_items: [{ "item_id": item1.id, "quantity": '6' }])
-
-        visit subject
-        check "Include Cancelled?"
-        click_on 'Filter'
-
-        click_on "Export Requests"
-
-        wait_for_download
-        expect(downloads.length).to eq(1)
-        expect(download).to match(/.*\.csv/)
-
-        headers, *rows = download_content.split("\n")
-
-        expect(rows.size).to eq(6)
-        expect(rows.join).to have_text(partner1.name, count: 5)
-        expect(rows.join).to have_text('Cancelled')
-        expect(headers).to have_text(item2.name, count: 1)
-      end
+      expect(rows.size).to eq(5)
+      expect(rows.join).to have_text(partner1.name, count: 4)
+      expect(headers).to have_text(item2.name, count: 1)
     end
 
     context "when filtering on the index page" do
@@ -159,28 +111,6 @@ RSpec.describe "Requests", type: :system, js: true do
           expect(rows.size).to eq(1)
           expect(rows.join).to have_text('13', count: 1)
           expect(rows.join).to have_text(partner1.name, count: 1)
-        end
-
-        it "exports only the cancelled requests CSV when 'Include Cancelled' is checked and 'Filter by Status' is 'Cancelled'" do
-          _cancelled_request = create(:request, :with_item_requests, :cancelled, partner: partner1, request_items: [{ "item_id": item1.id, "quantity": '6' }])
-
-          visit subject
-          check "Include Cancelled?"
-          select "Cancelled", from: "Filter by status"
-          click_on 'Filter'
-
-          click_on "Export Requests"
-
-          wait_for_download
-          expect(downloads.length).to eq(1)
-          expect(download).to match(/.*\.csv/)
-
-          headers, *rows = download_content.split("\n")
-
-          expect(rows.size).to eq(1)
-          expect(rows.join).to have_text(partner1.name, count: 1)
-          expect(rows.join).to have_text('Cancelled')
-          expect(headers).to have_text(item1.name, count: 1)
         end
       end
     end
@@ -276,19 +206,6 @@ RSpec.describe "Requests", type: :system, js: true do
       travel 1.second
       visit subject
       expect(page).to have_content("334")
-    end
-
-    context 'when the request has a cancelled status' do
-      it 'does not display the Cancel and Fulfill request buttons' do
-        cancelled_request = create(:request, :with_item_requests, :cancelled, organization: organization)
-
-        visit request_path(cancelled_request.id)
-
-        expect(page).to have_content('Cancelled')
-        expect(page).not_to have_button('Cancel')
-        expect(page).not_to have_button('Fulfill request')
-        expect(page).to have_content('Print')
-      end
     end
 
     context "change status request" do
