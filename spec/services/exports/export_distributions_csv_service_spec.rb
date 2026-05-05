@@ -5,8 +5,10 @@ RSpec.describe Exports::ExportDistributionsCSVService do
   let(:include_in_kind_values) { false }
   let(:include_packages) { false }
 
-  describe '#generate_csv' do
-    subject { described_class.new(distributions: distributions, organization: organization, filters: filters).generate_csv }
+  describe '#generate_csv_stream' do
+    subject do
+      proc { described_class.new(distributions: distributions, organization: organization, filters: filters).generate_csv_stream }
+    end
 
     let(:duplicate_item) { create(:item, name: "Dupe Item", value_in_cents: 300, organization: organization, package_size: 2) }
 
@@ -60,7 +62,9 @@ RSpec.describe Exports::ExportDistributionsCSVService do
           #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},0,0.0,shipped,$15.01,scheduled,"",comment 2,Disposable Diapers,0,0,2,0,0
           #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},0,0.0,shipped,$15.01,scheduled,"",comment 3,Disposable Diapers,0,0,0,0,3
         CSV
-        expect(subject).to eq(csv)
+        subject do |subject_row|
+          expect(row).to eq(csv.next)
+        end
       end
     end
 
@@ -75,7 +79,9 @@ RSpec.describe Exports::ExportDistributionsCSVService do
           #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},0,0.0,shipped,$15.01,scheduled,"",comment 2,Disposable Diapers,0,0.00,0,0.00,2,60.00,0,0.00,0,0.00
           #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},0,0.0,shipped,$15.01,scheduled,"",comment 3,Disposable Diapers,0,0.00,0,0.00,0,0.00,0,0.00,3,120.00
         CSV
-        expect(subject).to eq(csv)
+        subject do |subject_row|
+          expect(row).to eq(csv.next)
+        end
       end
     end
 
@@ -90,7 +96,9 @@ RSpec.describe Exports::ExportDistributionsCSVService do
           #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},0,0.0,shipped,$15.01,scheduled,"",comment 2,Disposable Diapers,0,0,0,0,2,0,0,0,0,0
           #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},0,0.0,shipped,$15.01,scheduled,"",comment 3,Disposable Diapers,0,0,0,0,0,0,0,0,3,0
         CSV
-        expect(subject).to eq(csv)
+        subject do |subject_row|
+          expect(row).to eq(csv.next)
+        end
       end
     end
 
@@ -106,7 +114,9 @@ RSpec.describe Exports::ExportDistributionsCSVService do
           #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},0,0.0,shipped,$15.01,scheduled,"",comment 2,Disposable Diapers,0,0.00,0,0,0.00,0,2,60.00,0,0,0.00,0,0,0.00,0
           #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},0,0.0,shipped,$15.01,scheduled,"",comment 3,Disposable Diapers,0,0.00,0,0,0.00,0,0,0.00,0,0,0.00,0,3,120.00,0
         CSV
-        expect(subject).to eq(csv)
+        subject do |subject_row|
+          expect(row).to eq(csv.next)
+        end
       end
     end
 
@@ -128,12 +138,23 @@ RSpec.describe Exports::ExportDistributionsCSVService do
           #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},0,0.0,shipped,$15.01,scheduled,"",comment 2,Disposable Diapers,0,0,2,0,0,0
           #{partner.name},04/04/2025,04/04/2025,#{storage_location.name},0,0.0,shipped,$15.01,scheduled,"",comment 3,Disposable Diapers,0,0,0,0,3,0
         CSV
-        expect(subject).to eq(csv)
+
+        subject do |subject_row|
+          expect(row).to eq(csv.next)
+        end
       end
     end
 
     context 'reporting category column' do
       let(:filters) { {} }
+
+      subject do
+        rows = ""
+        described_class.new(distributions: distributions, organization: organization, filters: filters).generate_csv_stream do |row|
+          rows << row
+        end
+        rows
+      end
 
       it 'includes a Reporting Category column with the humanized category for each distribution' do
         csv = CSV.parse(subject, headers: true)
@@ -174,12 +195,14 @@ RSpec.describe Exports::ExportDistributionsCSVService do
     end
 
     context 'when there are no distributions but the report is requested' do
-      subject { described_class.new(distributions: [], organization: organization, filters: filters).generate_csv }
+      let(:distributions) { [] }
       it 'returns a csv with only headers and no rows' do
         csv = <<~CSV
           Partner,Initial Allocation,Scheduled for,Source Inventory,Total Number of #{item_name},Total Value of #{item_name},Delivery Method,Shipping Cost,Status,Agency Representative,Comments,Reporting Category,Dupe Item
         CSV
-        expect(subject).to eq(csv)
+        subject do |subject_row|
+          expect(row).to eq(csv.next)
+        end
       end
     end
   end
