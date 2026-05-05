@@ -66,19 +66,19 @@ module View
     end
 
     def selected_request_type
-      filter_params[:by_request_type]
+      filters[:by_request_type]
     end
 
     def selected_request_item
-      filter_params[:by_request_item_id]
+      filters[:by_request_item_id]
     end
 
     def selected_partner
-      filter_params[:by_partner]
+      filters[:by_partner]
     end
 
     def selected_status
-      filter_params[:by_status]
+      filters[:by_status]
     end
   end
 end
