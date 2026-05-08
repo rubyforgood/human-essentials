@@ -95,7 +95,7 @@ class ItemsController < ApplicationController
       item.deactivate!
     rescue => e
       flash[:error] = e.message
-      redirect_back(fallback_location: items_path)
+      redirect_back_or_to(items_path)
       return
     end
 
@@ -108,7 +108,7 @@ class ItemsController < ApplicationController
     item.destroy
     if item.errors.any?
       flash[:error] = item.errors.full_messages.join("\n")
-      redirect_back(fallback_location: items_path)
+      redirect_back_or_to(items_path)
       return
     end
 
