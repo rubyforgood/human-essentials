@@ -45,23 +45,23 @@ class KitsController < ApplicationController
   end
 
   def deactivate
-    @kit = Kit.find(params[:id])
+    @kit = current_organization.kits.find(params[:id])
     @kit.deactivate
-    redirect_back(fallback_location: dashboard_path, notice: "Kit has been deactivated!")
+    redirect_back_or_to(dashboard_path, notice: "Kit has been deactivated!")
   end
 
   def reactivate
-    @kit = Kit.find(params[:id])
+    @kit = current_organization.kits.find(params[:id])
     if @kit.can_reactivate?
       @kit.reactivate
-      redirect_back(fallback_location: dashboard_path, notice: "Kit has been reactivated!")
+      redirect_back_or_to(dashboard_path, notice: "Kit has been reactivated!")
     else
-      redirect_back(fallback_location: dashboard_path, alert: "Cannot reactivate kit - it has inactive items! Please reactivate the items first.")
+      redirect_back_or_to(dashboard_path, alert: "Cannot reactivate kit - it has inactive items! Please reactivate the items first.")
     end
   end
 
   def allocations
-    @kit = Kit.find(params[:id])
+    @kit = current_organization.kits.find(params[:id])
     @storage_locations = current_organization.storage_locations.active
     @inventory = View::Inventory.new(current_organization.id)
 
@@ -69,7 +69,7 @@ class KitsController < ApplicationController
   end
 
   def allocate
-    @kit = Kit.find(params[:id])
+    @kit = current_organization.kits.find(params[:id])
     @storage_location = current_organization.storage_locations.active.find(kit_adjustment_params[:storage_location_id])
     @change_by = kit_adjustment_params[:change_by].to_i
     begin

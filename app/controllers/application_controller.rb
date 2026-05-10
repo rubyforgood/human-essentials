@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
 
   def session_expired
     flash[:error] = "Your session expired. This could be due to leaving a page open for a long time, or having multiple tabs open. Try resubmitting."
-    redirect_back fallback_location: root_path
+    redirect_back_or_to(root_path)
   end
 
   def current_organization

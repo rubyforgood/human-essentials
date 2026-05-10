@@ -77,8 +77,24 @@ RSpec.describe 'Requests', type: :request do
         end
       end
 
+      context 'When the request belongs to another organization' do
+        let(:other_organization) { create(:organization) }
+        let(:other_request) { create(:request, organization: other_organization) }
+
+        it 'responds with not found' do
+          get request_path(other_request)
+
+          expect(response).to have_http_status(:not_found)
+        end
+      end
+
       context 'When organization has a default storage location' do
-        let(:request) { create(:request, organization: create(:organization, default_storage_location: 1)) }
+        let(:storage_location) { create(:storage_location, organization: organization) }
+        let(:request) do
+          organization.update!(default_storage_location: storage_location.id)
+          create(:request, organization: organization)
+        end
+
         it 'shows the column Default storage location inventory' do
           get request_path(request)
 
@@ -140,6 +156,19 @@ RSpec.describe 'Requests', type: :request do
           expect(response.body).not_to include('Units (if applicable)')
         end
       end
+
+      context 'when the request has a Fulfilled status' do
+        it 'does not display the Cancel button' do
+          fulfilled_request = create(:request, :fulfilled)
+
+          get requests_path(fulfilled_request)
+
+          page = Nokogiri::HTML(response.body)
+          cancel_button = page.at_css('button') { |el| el.text.strip == 'Cancel' }
+
+          expect(cancel_button).not_to be_present
+        end
+      end
     end
 
     describe 'POST #start' do
@@ -164,6 +193,19 @@ RSpec.describe 'Requests', type: :request do
       context 'When the request does not exist' do
         it 'responds with not found' do
           post start_request_path(1)
+
+          expect(response).to have_http_status(:not_found)
+        end
+      end
+
+      context 'When the request belongs to another organization' do
+        let(:other_organization) { create(:organization) }
+        let(:other_request) { create(:request, organization: other_organization) }
+
+        it 'responds with not found and does not change status' do
+          expect do
+            post start_request_path(other_request)
+          end.not_to change { other_request.reload.status }
 
           expect(response).to have_http_status(:not_found)
         end
