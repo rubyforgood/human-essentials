@@ -39,19 +39,19 @@
               <div class="row">
                 <% if @requests_info.items.present? %>
                   <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                    <%= filter_select(label: "Filter by item", scope: :by_request_item_id, collection: @items, selected: @selected_request_item) %>
+                    <%= filter_select(label: "Filter by item", scope: :by_request_item_id, collection: @requests_info.items, selected: @requests_info.selected_request_item) %>
                   </div>
                 <% end %>
                 <% if @requests_info.partners.present? %>
                   <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                    <%= filter_select(scope: :by_partner, collection: @partners, selected: @selected_partner) %>
+                    <%= filter_select(scope: :by_partner, collection: @requests_info.partners, selected: @requests_info.selected_partner) %>
                   </div>
                 <% end %>
                 <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                  <%= filter_select(scope: :by_request_type, collection: @requests_info.request_types, key: :last, value: :first, selected: @selected_request_type) %>
+                  <%= filter_select(scope: :by_request_type, collection: @requests_info.request_types, key: :last, value: :first, selected: @requests_info.selected_request_type) %>
                 </div>
                 <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                  <%= filter_select(scope: :by_status, collection: @requests_info.statuses, key: :last, value: :first, selected: @selected_status) %>
+                  <%= filter_select(scope: :by_status, collection: @requests_info.statuses, key: :last, value: :first, selected: @requests_info.selected_status) %>
                 </div>
                 <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
                   <%= label_tag "Date Range" %>
