@@ -34,7 +34,7 @@ RSpec.describe View::RequestInfo do
   end
 
   describe "#custom_units" do
-    context "when a request has request units for an item request" do
+    context "when there are request units for an item request" do
        context "when enable_packs is disabled" do
         it "returns false" do
           organization = build(:organization)

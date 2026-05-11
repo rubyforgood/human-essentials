@@ -1,7 +1,7 @@
 RSpec.describe View::Requests do
   describe "#unfulfilled_requests_count" do
-    it "returns the unfulfilled requests count for the given date range" do
-      organization = create(:organization)
+    it "returns the unfulfilled requests count" do
+      organization = build(:organization)
       create(:request, :pending, organization:)
       create(:request, :started, organization:)
       create(:request, :fulfilled, organization:)
@@ -13,9 +13,9 @@ RSpec.describe View::Requests do
   end
 
   describe "#calculate_product_totals" do
-    it "returns the product total items service" do
-      organization = create(:organization)
-      create(:request, :pending, organization:)
+    it "returns the calculated product total items" do
+      organization = build(:organization)
+      build(:request, :pending, organization:)
       total_items_service_double =  instance_double(RequestsTotalItemsService, calculate: {"Diaper" => 10})
       allow(RequestsTotalItemsService).to receive(:new).with(requests: organization.requests).and_return(total_items_service_double)
 
@@ -26,9 +26,9 @@ RSpec.describe View::Requests do
   end
 
   describe "selected filter params" do
-    it "returns the filter params given" do
-      organization = create(:organization)
-      create(:request, :pending, organization:)
+    it "returns the given filter params" do
+      organization = build(:organization)
+      build(:request, :pending, organization:)
       params = ActionController::Parameters.new(
       {
         filters: {
@@ -50,7 +50,7 @@ RSpec.describe View::Requests do
   end
 
   def helpers
-    Class.new do
+    Module.new do
       def self.selected_range
         (1.month.ago..2.days.from_now)
       end
