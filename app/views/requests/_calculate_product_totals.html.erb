@@ -16,7 +16,7 @@
           </tr>
           </thead>
           <tbody>
-            <% @request_info.calculate_product_totals.sort_by { |name, quantity| name.downcase }.each do |name, quantity| %>
+            <% @requests_info.calculate_product_totals.sort_by { |name, quantity| name.downcase }.each do |name, quantity| %>
               <tr>
                 <td><%= name %></td>
                 <td><%= quantity %></td>

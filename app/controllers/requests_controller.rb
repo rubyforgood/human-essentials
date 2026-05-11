@@ -3,23 +3,16 @@ class RequestsController < ApplicationController
   def index
     setup_date_range_picker
 
-    @request_info = View::Requests.from_params(params: params, organization: current_organization, helpers: helpers)
+    @requests_info = View::Requests.from_params(params: params, organization: current_organization, helpers: helpers)
 
     respond_to do |format|
       format.html
-      format.csv { send_data Exports::ExportRequestService.new(@request_info.requests).generate_csv, filename: "Requests-#{Time.zone.today}.csv" }
+      format.csv { send_data Exports::ExportRequestService.new(@requests_info.requests).generate_csv, filename: "Requests-#{Time.zone.today}.csv" }
     end
   end
 
   def show
-    @request = current_organization.requests.find(params[:id])
-    @item_requests = @request.item_requests.includes(:item)
-
-    @inventory = View::Inventory.new(@request.organization_id)
-    @default_storage_location = @request.partner.default_storage_location_id || @request.organization.default_storage_location
-    @location = StorageLocation.find_by(id: @default_storage_location)
-
-    @custom_units = Flipper.enabled?(:enable_packs) && @request.item_requests.any? { |item| item.request_unit }
+   @request_info = View::RequestInfo.from_params(params:, organization: current_organization)
   end
 
   # Clicking the "New Distribution" button will set the the request to started
