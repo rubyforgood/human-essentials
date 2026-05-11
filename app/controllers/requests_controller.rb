@@ -12,7 +12,7 @@ class RequestsController < ApplicationController
   end
 
   def show
-   @request_info = View::RequestInfo.from_params(params:, organization: current_organization)
+    @request_info = View::RequestInfo.from_params(params:, organization: current_organization)
   end
 
   # Clicking the "New Distribution" button will set the the request to started

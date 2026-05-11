@@ -16,7 +16,7 @@ RSpec.describe View::Requests do
     it "returns the calculated product total items" do
       organization = build(:organization)
       build(:request, :pending, organization:)
-      total_items_service_double =  instance_double(RequestsTotalItemsService, calculate: {"Diaper" => 10})
+      total_items_service_double = instance_double(RequestsTotalItemsService, calculate: {"Diaper" => 10})
       allow(RequestsTotalItemsService).to receive(:new).with(requests: organization.requests).and_return(total_items_service_double)
 
       requests = View::Requests.from_params(params: {}, organization:, helpers:)

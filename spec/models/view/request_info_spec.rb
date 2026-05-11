@@ -35,7 +35,7 @@ RSpec.describe View::RequestInfo do
 
   describe "#custom_units" do
     context "when there are request units for an item request" do
-       context "when enable_packs is disabled" do
+      context "when enable_packs is disabled" do
         it "returns false" do
           organization = build(:organization)
           item = build(:item, name: "First item")
@@ -45,7 +45,7 @@ RSpec.describe View::RequestInfo do
             :with_item_requests,
             organization:,
             request_items: [
-              {item_id: item.id, quantity: '559', request_unit: 'flat'}
+              {item_id: item.id, quantity: "559", request_unit: "flat"}
             ]
           )
 
@@ -67,7 +67,7 @@ RSpec.describe View::RequestInfo do
             :with_item_requests,
             organization:,
             request_items: [
-              {item_id: item.id, quantity: '559', request_unit: 'flat'},
+              {item_id: item.id, quantity: "559", request_unit: "flat"}
             ]
           )
           request = View::RequestInfo.from_params(params: {id: request.id}, organization:)

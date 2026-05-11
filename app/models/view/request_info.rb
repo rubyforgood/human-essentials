@@ -2,7 +2,6 @@ module View
   RequestInfo = Data.define(
     :request
   ) do
-
     class << self
       def from_params(params:, organization:)
         request = organization.requests.find(params[:id])
