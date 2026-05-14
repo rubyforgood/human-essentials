@@ -5,8 +5,6 @@ module View
     :items,
     :reporting_categories
   ) do
-    include DateRangeHelper
-
     class << self
       def filter_params(params)
         return {} unless params.key?(:filters)
