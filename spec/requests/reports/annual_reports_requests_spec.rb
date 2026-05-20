@@ -17,6 +17,12 @@ RSpec.describe "Annual Reports", type: :request do
         get reports_annual_reports_path(default_params)
         expect(response).to have_http_status(:success)
       end
+
+      it "displays the first day of the following year as the date when the report will be available" do
+        get reports_annual_reports_path(default_params)
+
+        expect(response.body).to include("available in #{(Date.current + 1.year).beginning_of_year.strftime("%B%e, %Y")}")
+      end
     end
 
     describe "GET /show" do
