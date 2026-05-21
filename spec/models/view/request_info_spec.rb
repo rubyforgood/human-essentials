@@ -1,4 +1,45 @@
 RSpec.describe View::RequestInfo do
+  describe "#item_requests" do
+    context "when the request has item requests" do
+      it "returns the request's item requests" do
+        organization = build(:organization)
+        item = build(:item)
+        item_request = build(:item_request, item: item, quantity: 5)
+        request = create(
+          :request,
+          organization:,
+          item_requests: [item_request]
+        )
+
+        request_info = View::RequestInfo.from_params(params: {id: request.id}, organization:)
+
+        expect(request_info.item_requests).to eq([item_request])
+      end
+    end
+
+    context "when the request has no item requests" do
+      it "returns an empty array" do
+        organization = build(:organization)
+        request = create(:request, organization:)
+
+        request_info = View::RequestInfo.from_params(params: {id: request.id}, organization:)
+
+        expect(request_info.item_requests).to eq([])
+      end
+    end
+  end
+
+  describe "#inventory" do
+    it "returns a View::Inventory instance" do
+      organization = build(:organization)
+      request = create(:request, organization:)
+
+      request_info = View::RequestInfo.from_params(params: {id: request.id}, organization:)
+
+      expect(request_info.inventory).to be_a_kind_of(View::Inventory)
+    end
+  end
+
   describe "#default_storage_location" do
     context "when the request partner has a default_storage_location_id" do
       it "returns the request partner's default_storage_location_id" do
@@ -10,9 +51,9 @@ RSpec.describe View::RequestInfo do
           organization:
         )
 
-        request = View::RequestInfo.from_params(params: {id: request.id}, organization:)
+        request_info = View::RequestInfo.from_params(params: {id: request.id}, organization:)
 
-        expect(request.default_storage_location).to eq(storage_location.id)
+        expect(request_info.default_storage_location).to eq(storage_location.id)
       end
     end
 
@@ -26,9 +67,38 @@ RSpec.describe View::RequestInfo do
           organization:
         )
 
-        request = View::RequestInfo.from_params(params: {id: request.id}, organization:)
+        request_info = View::RequestInfo.from_params(params: {id: request.id}, organization:)
 
-        expect(request.default_storage_location).to eq(storage_location.id)
+        expect(request_info.default_storage_location).to eq(storage_location.id)
+      end
+    end
+  end
+
+  describe "#location" do
+    context "when no storage location is found" do
+      it "returns nil" do
+        organization = build(:organization)
+        request = create(:request, organization:)
+
+        request_info = View::RequestInfo.from_params(params: {id: request.id}, organization:)
+
+        expect(request_info.location).to be_nil
+      end
+    end
+
+    context "when a storage location is found" do
+      it "returns the found location" do
+        organization = build(:organization)
+        storage_location = create(:storage_location, organization:)
+        organization.update!(default_storage_location: storage_location.id)
+        request = create(
+          :request,
+          organization:
+        )
+
+        request_info = View::RequestInfo.from_params(params: {id: request.id}, organization:)
+
+        expect(request_info.location).to be_a_kind_of(StorageLocation)
       end
     end
   end
@@ -49,9 +119,9 @@ RSpec.describe View::RequestInfo do
             ]
           )
 
-          request = View::RequestInfo.from_params(params: {id: request.id}, organization:)
+          request_info = View::RequestInfo.from_params(params: {id: request.id}, organization:)
 
-          expect(request.custom_units).to be_falsey
+          expect(request_info.custom_units).to be_falsey
         end
       end
 
@@ -70,9 +140,9 @@ RSpec.describe View::RequestInfo do
               {item_id: item.id, quantity: "559", request_unit: "flat"}
             ]
           )
-          request = View::RequestInfo.from_params(params: {id: request.id}, organization:)
+          request_info = View::RequestInfo.from_params(params: {id: request.id}, organization:)
 
-          expect(request.custom_units).to be_truthy
+          expect(request_info.custom_units).to be_truthy
 
           Flipper.disable(:enable_packs)
         end
