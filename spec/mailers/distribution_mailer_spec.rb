@@ -98,6 +98,7 @@ RSpec.describe DistributionMailer, type: :mailer do
         mail = DistributionMailer.partner_mailer(organization, distribution, 'test subject', distribution_changes)
         expect(mail.body.encoded).to match(distribution_changes[:removed][0][:name])
         expect(mail.body.encoded).to match(distribution_changes[:updates][0][:name])
+        expect(mail.body.encoded).to match("We've had to change some items on your distribution")
       end
     end
 
