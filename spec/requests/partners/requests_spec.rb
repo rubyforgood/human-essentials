@@ -242,11 +242,7 @@ RSpec.describe "/partners/requests", type: :request do
         expect { post partners_requests_path, params: request_attributes }.to_not change { Request.count }
 
         expect(response).to be_unprocessable
-        expect(response.body).to include("Oops! Something went wrong with your Request")
-        expect(response.body).to include("Ensure each line item has a item selected AND a quantity greater than 0.")
-        expect(response.body).to include("Still need help? Please contact your essentials bank, #{partner.organization.name}")
-        expect(response.body).to include("Our email on record for them is:")
-        expect(response.body).to include(partner.organization.email)
+        expect(response.body).to include("quantity must be a whole number greater than or equal to 1")
       end
     end
 
@@ -346,11 +342,7 @@ RSpec.describe "/partners/requests", type: :request do
         expect { post partners_requests_path, params: request_attributes }.to_not change { Request.count }
 
         expect(response).to be_unprocessable
-        expect(response.body).to include("Oops! Something went wrong with your Request")
-        expect(response.body).to include("Ensure each line item has a item selected AND a quantity greater than 0.")
-        expect(response.body).to include("Still need help? Please contact your essentials bank, #{partner.organization.name}")
-        expect(response.body).to include("Our email on record for them is:")
-        expect(response.body).to include(partner.organization.email)
+        expect(response.body).to include("Completely empty request")
       end
     end
 

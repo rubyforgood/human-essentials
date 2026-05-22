@@ -27,11 +27,6 @@
           data-controller="confirmation"
           data-confirmation-pre-check-path-value="<%= validate_partners_requests_path(format: :json) %>">
           <div class="card-body">
-
-            <% if @errors.present? %>
-              <%= render partial: 'partners/requests/error' %>
-            <% end %>
-
             <%= simple_form_for @partner_request, url: partners_requests_path(@partner_request),
               html: {role: 'form', class: 'form-horizontal'}, method: :post, data: { controller: 'form-input', confirmation_target: "form" } do |form| %>
               <%= form.input :comments, label: "Comments:", as: :text, class: "form-control", wrapper: :input_group %>

@@ -24,29 +24,29 @@
       <div class="col-md-12">
         <!-- Default box -->
         <div class="card"
-          data-controller="confirmation"
-          data-confirmation-pre-check-path-value="<%= validate_partners_individuals_requests_path(format: :json) %>">
+             data-controller="confirmation"
+             data-confirmation-pre-check-path-value="<%= validate_partners_individuals_requests_path(format: :json) %>">
           <div class="card-body">
 
             <% if @errors.present? %>
               <%= render partial: 'partners/requests/error' %>
             <% end %>
 
-            <%= simple_form_for @request, url: partners_individuals_requests_path, html: {role: 'form', class: 'form-horizontal'},
-              data: {controller: 'form-input', confirmation_target: "form"} do |form| %>
+            <%= simple_form_for @request, url: partners_individuals_requests_path, html: { role: 'form', class: 'form-horizontal' },
+                                data: { controller: 'form-input', confirmation_target: "form" } do |form| %>
 
               <%= form.input :comments, label: "Comments:", as: :text, class: "form-control", wrapper: :input_group %>
 
               <table class='table'>
                 <thead>
-                  <tr>
-                    <th>Item Requested</th>
-                    <th>Number of Individuals</th>
-                  </tr>
+                <tr>
+                  <th>Item Requested</th>
+                  <th>Number of Individuals</th>
+                </tr>
                 </thead>
 
                 <tbody class='fields'>
-                  <%= render 'partners/individuals_requests/item_request', form: form %>
+                <%= render 'partners/individuals_requests/item_request', form: form %>
                 </tbody>
               </table>
 
@@ -65,15 +65,16 @@
               </div>
             <% end %>
 
-          <%# Confirmation modal: See confirmation_controller.js for how this gets displayed %>
-          <%# and app/controllers/partners/individuals_requests_controller.rb#validate for how it gets populated. %>
-          <div id="partnerIndividualRequestConfirmationModal"
-            class="modal confirm"
-            aria-labelledby="partnerIndividualRequestConfirmationModal"
-            aria-hidden="true"
-            tabindex="-1"
-            data-bs-backdrop="static"
-            data-confirmation-target="modal">
+            <%# Confirmation modal: See confirmation_controller.js for how this gets displayed %>
+            <%# and app/controllers/partners/individuals_requests_controller.rb#validate for how it gets populated. %>
+            <div id="partnerIndividualRequestConfirmationModal"
+                 class="modal confirm"
+                 aria-labelledby="partnerIndividualRequestConfirmationModal"
+                 aria-hidden="true"
+                 tabindex="-1"
+                 data-bs-backdrop="static"
+                 data-confirmation-target="modal">
+            </div>
           </div>
         </div>
       </div>
