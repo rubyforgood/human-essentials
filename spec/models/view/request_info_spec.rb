@@ -11,7 +11,7 @@ RSpec.describe View::RequestInfo do
           item_requests: [item_request]
         )
 
-        request_info = View::RequestInfo.from_params(params: {id: request.id}, organization:)
+        request_info = View::RequestInfo.new(params: {id: request.id}, organization:)
 
         expect(request_info.item_requests).to eq([item_request])
       end
@@ -22,7 +22,7 @@ RSpec.describe View::RequestInfo do
         organization = build(:organization)
         request = create(:request, organization:)
 
-        request_info = View::RequestInfo.from_params(params: {id: request.id}, organization:)
+        request_info = View::RequestInfo.new(params: {id: request.id}, organization:)
 
         expect(request_info.item_requests).to eq([])
       end
@@ -34,7 +34,7 @@ RSpec.describe View::RequestInfo do
       organization = build(:organization)
       request = create(:request, organization:)
 
-      request_info = View::RequestInfo.from_params(params: {id: request.id}, organization:)
+      request_info = View::RequestInfo.new(params: {id: request.id}, organization:)
 
       expect(request_info.inventory).to be_a_kind_of(View::Inventory)
     end
@@ -51,7 +51,7 @@ RSpec.describe View::RequestInfo do
           organization:
         )
 
-        request_info = View::RequestInfo.from_params(params: {id: request.id}, organization:)
+        request_info = View::RequestInfo.new(params: {id: request.id}, organization:)
 
         expect(request_info.default_storage_location).to eq(storage_location.id)
       end
@@ -67,7 +67,7 @@ RSpec.describe View::RequestInfo do
           organization:
         )
 
-        request_info = View::RequestInfo.from_params(params: {id: request.id}, organization:)
+        request_info = View::RequestInfo.new(params: {id: request.id}, organization:)
 
         expect(request_info.default_storage_location).to eq(storage_location.id)
       end
@@ -80,7 +80,7 @@ RSpec.describe View::RequestInfo do
         organization = build(:organization)
         request = create(:request, organization:)
 
-        request_info = View::RequestInfo.from_params(params: {id: request.id}, organization:)
+        request_info = View::RequestInfo.new(params: {id: request.id}, organization:)
 
         expect(request_info.location).to be_nil
       end
@@ -96,7 +96,7 @@ RSpec.describe View::RequestInfo do
           organization:
         )
 
-        request_info = View::RequestInfo.from_params(params: {id: request.id}, organization:)
+        request_info = View::RequestInfo.new(params: {id: request.id}, organization:)
 
         expect(request_info.location).to be_a_kind_of(StorageLocation)
       end
@@ -119,7 +119,7 @@ RSpec.describe View::RequestInfo do
             ]
           )
 
-          request_info = View::RequestInfo.from_params(params: {id: request.id}, organization:)
+          request_info = View::RequestInfo.new(params: {id: request.id}, organization:)
 
           expect(request_info.custom_units).to be_falsey
         end
@@ -140,7 +140,7 @@ RSpec.describe View::RequestInfo do
               {item_id: item.id, quantity: "559", request_unit: "flat"}
             ]
           )
-          request_info = View::RequestInfo.from_params(params: {id: request.id}, organization:)
+          request_info = View::RequestInfo.new(params: {id: request.id}, organization:)
 
           expect(request_info.custom_units).to be_truthy
 
