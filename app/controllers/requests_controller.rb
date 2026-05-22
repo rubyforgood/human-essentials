@@ -3,7 +3,7 @@ class RequestsController < ApplicationController
   def index
     setup_date_range_picker
 
-    @requests_info = View::Requests.from_params(params: params, organization: current_organization, helpers: helpers)
+    @requests_info = View::Requests.new(params: params, organization: current_organization, helpers: helpers)
 
     respond_to do |format|
       format.html

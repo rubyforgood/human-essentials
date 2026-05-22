@@ -6,7 +6,7 @@ RSpec.describe View::Requests do
       create(:request, :started, organization:)
       create(:request, :fulfilled, organization:)
 
-      requests = View::Requests.from_params(params: {}, organization:, helpers:)
+      requests = View::Requests.new(params: {}, organization:, helpers:)
 
       expect(requests.unfulfilled_requests_count).to eq(2)
     end
@@ -19,7 +19,7 @@ RSpec.describe View::Requests do
       total_items_service_double = instance_double(RequestsTotalItemsService, calculate: {"Diaper" => 10})
       allow(RequestsTotalItemsService).to receive(:new).with(requests: organization.requests).and_return(total_items_service_double)
 
-      requests = View::Requests.from_params(params: {}, organization:, helpers:)
+      requests = View::Requests.new(params: {}, organization:, helpers:)
 
       expect(requests.calculate_product_totals).to eq({"Diaper" => 10})
     end
@@ -33,7 +33,7 @@ RSpec.describe View::Requests do
       item_two = create(:item, base_item:, organization:, name: "B item")
       item_one = create(:item, base_item:, organization:, name: "A item")
 
-      requests = View::Requests.from_params(params: {}, organization:, helpers:)
+      requests = View::Requests.new(params: {}, organization:, helpers:)
 
       expect(requests.items.map(&:id)).to eq([item_one.id, item_two.id])
       expect(requests.items.map(&:name)).to eq(["A item", "B item"])
@@ -47,7 +47,7 @@ RSpec.describe View::Requests do
       partner_two = create(:partner, organization:, name: "B partner", status: "approved")
       partner_one = create(:partner, organization:, name: "A partner", status: "invited")
 
-      requests = View::Requests.from_params(params: {}, organization:, helpers:)
+      requests = View::Requests.new(params: {}, organization:, helpers:)
 
       expect(requests.partners.map(&:id)).to eq([partner_one.id, partner_two.id])
       expect(requests.partners.map(&:name)).to eq(["A partner", "B partner"])
@@ -61,7 +61,7 @@ RSpec.describe View::Requests do
       build(:request, organization:)
       humanized_statuses = {"Discarded" => 3, "Fulfilled" => 2, "Pending" => 0, "Started" => 1}
 
-      requests = View::Requests.from_params(params: {}, organization:, helpers:)
+      requests = View::Requests.new(params: {}, organization:, helpers:)
 
       expect(requests.statuses).to eq(humanized_statuses)
     end
@@ -73,7 +73,7 @@ RSpec.describe View::Requests do
       partner_user = create(:partner_user, name: "Jane Smith", email: "janesmith@example.com")
       create(:request, organization:, partner_user:)
 
-      requests = View::Requests.from_params(params: {}, organization:, helpers:)
+      requests = View::Requests.new(params: {}, organization:, helpers:)
 
       expect(requests.partner_users.map(&:id)).to eq([partner_user.id])
       expect(requests.partner_users.map(&:name)).to eq(["Jane Smith"])
@@ -87,7 +87,7 @@ RSpec.describe View::Requests do
       build(:request, organization:)
       humanized_types = {"Child" => "child", "Individual" => "individual", "Quantity" => "quantity"}
 
-      requests = View::Requests.from_params(params: {}, organization:, helpers:)
+      requests = View::Requests.new(params: {}, organization:, helpers:)
 
       expect(requests.request_types).to eq(humanized_types)
     end
@@ -108,7 +108,7 @@ RSpec.describe View::Requests do
       }
     ).permit!
 
-      requests = View::Requests.from_params(params:, organization:, helpers:)
+      requests = View::Requests.new(params:, organization:, helpers:)
 
       expect(requests.selected_request_type).to eq("quantity")
       expect(requests.selected_request_item).to eq("1")

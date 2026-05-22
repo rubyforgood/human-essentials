@@ -1,39 +1,34 @@
 module View
-  Requests = Data.define(
-    :requests,
-    :filters,
-    :paginated_requests,
-    :organization,
-    :helpers
-  ) do
+  class Requests
     include DateRangeHelper
 
-    class << self
-      def filter_params(params = {})
-        if params.key?(:filters)
-          params.require(:filters).permit(:by_request_item_id, :by_partner, :by_status, :by_request_type)
-        else
-          {}
-        end
-      end
+    attr_reader :filters, :helpers, :organization, :paginated_requests, :params, :requests
 
-      def from_params(params:, organization:, helpers:)
-        filters = filter_params(params)
+    def initialize(params:, organization:, helpers:)
+      @params = params
+      @organization = organization
+      @filters = filter_params(params)
+      @helpers = helpers
 
-        requests = organization
-          .ordered_requests
-          .undiscarded
-          .during(helpers.selected_range)
-          .class_filter(filters)
+      @requests = organization
+        .ordered_requests
+        .undiscarded
+        .during(helpers.selected_range)
+        .class_filter(filters)
 
-        paginated_requests = requests.includes(:partner).page(params[:page])
+      @paginated_requests = requests.includes(:partner).page(params[:page])
+    end
 
-        new(requests:, filters:, paginated_requests:, organization:, helpers:)
+    def filter_params(params = {})
+      if params.key?(:filters)
+        params.require(:filters).permit(:by_request_item_id, :by_partner, :by_status, :by_request_type)
+      else
+        {}
       end
     end
 
     def unfulfilled_requests_count
-      organization
+      @unfulfilled_requests_count ||= organization
         .requests
         .where(status: [:pending, :started])
         .during(helpers.selected_range)
@@ -42,27 +37,27 @@ module View
     end
 
     def calculate_product_totals
-      RequestsTotalItemsService.new(requests: requests).calculate
+      @calculate_product_totals ||= RequestsTotalItemsService.new(requests: requests).calculate
     end
 
     def items
-      organization.items.alphabetized.select(:id, :name)
+      @items ||= organization.items.alphabetized.select(:id, :name)
     end
 
     def partners
-      organization.partners.alphabetized.select(:id, :name, :status)
+      @partners ||= organization.partners.alphabetized.select(:id, :name, :status)
     end
 
     def statuses
-      Request.statuses.transform_keys(&:humanize)
+      @statuses ||= Request.statuses.transform_keys(&:humanize)
     end
 
     def partner_users
-      User.where(id: paginated_requests.map(&:partner_user_id)).select(:id, :name, :email)
+      @partner_users ||= User.where(id: paginated_requests.map(&:partner_user_id)).select(:id, :name, :email)
     end
 
     def request_types
-      Request.request_types.transform_keys(&:humanize)
+      @request_types ||= Request.request_types.transform_keys(&:humanize)
     end
 
     def selected_request_type
