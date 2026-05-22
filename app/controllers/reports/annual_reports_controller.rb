@@ -11,6 +11,15 @@ class Reports::AnnualReportsController < ApplicationController
     @years = (foundation_year...@actual_year).to_a
 
     @month_remaining_to_report = 12 - Time.current.month
+
+    respond_to do |format|
+      format.html
+      format.csv do
+        yearly_reports = Reports.reports_across_the_year(organization: current_organization)
+        send_data Exports::ExportYearlyReportCSVService.new(yearly_reports:).generate_csv,
+                  filename: "NdbnYearlyReports-#{Time.zone.today}.csv"
+      end
+    end
   end
 
   def show
