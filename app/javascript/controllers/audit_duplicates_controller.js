@@ -102,13 +102,47 @@ export default class extends Controller {
 
     document.getElementById('duplicateItemsModal')?.remove()
     document.body.insertAdjacentHTML('beforeend', modalHtml)
-    
-    const modal = new bootstrap.Modal(document.getElementById('duplicateItemsModal'))
+
+    // Snapshot the form's submit buttons so we can restore their interactive
+    // state when the user dismisses the modal without merging. Rails UJS
+    // (or any other delegated handler that fires before our submit listener)
+    // may have disabled the button and swapped its text to a "Saving" label
+    // by the time we reach this point; if the user clicks "Make Changes" or
+    // the close button, no actual submission happens and nothing else would
+    // re-enable the button.
+    const submitButtons = this.element.querySelectorAll('input[type="submit"], button[type="submit"]')
+    const buttonSnapshots = Array.from(submitButtons).map(button => ({
+      button,
+      disabled: button.disabled,
+      value: button.tagName === 'INPUT' ? button.value : null,
+      html: button.tagName === 'BUTTON' ? button.innerHTML : null,
+    }))
+
+    const modalElement = document.getElementById('duplicateItemsModal')
+    const modal = new bootstrap.Modal(modalElement)
     modal.show()
-    
+
+    let merging = false
+
     document.getElementById('confirmMerge').addEventListener('click', () => {
+      merging = true
       this.mergeAndSubmit(duplicates, buttonName)
     })
+
+    modalElement.addEventListener('hidden.bs.modal', () => {
+      // Only restore when the user dismissed without merging — the merge
+      // path submits the form, which navigates away anyway.
+      if (merging) return
+      buttonSnapshots.forEach(snapshot => {
+        snapshot.button.disabled = snapshot.disabled
+        if (snapshot.value !== null) {
+          snapshot.button.value = snapshot.value
+        }
+        if (snapshot.html !== null) {
+          snapshot.button.innerHTML = snapshot.html
+        }
+      })
+    }, { once: true })
   }
 
   mergeAndSubmit(duplicates, buttonName) {
