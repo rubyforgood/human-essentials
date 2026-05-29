@@ -31,7 +31,6 @@ module View
           .includes(:storage_location,
             :donation_site,
             :product_drive,
-            :product_drive_participant,
             :manufacturer,
             line_items: [:item])
           .order(created_at: :desc)
