@@ -2,7 +2,15 @@
 The annual survey contains information useful for completing the NDBN or Alliance for Period Supplies annual survey, but also for grant writing.
 Each year's annual survey becomes available January 1 of the following year.
 
-## How to get the report
+## How to export all annual survey reports
+
+1. Click on “Reports”
+2. Click on “Annual Survey”
+3. Click on "Export Yearly Reports
+
+![Annual Report Yearly](images/reports/reports-anual-survey-yearly-export.png)
+
+## How to export individual annual survey reports
 
 Click on "Reports", then "Annual Survey" in the left-hand menu.  Then click on the year of the report you wish to view.
 ![Navigation to annual report](images/reports/reports_annual_survey_1.png)
