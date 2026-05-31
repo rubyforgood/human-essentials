@@ -213,7 +213,7 @@ Capybara.using_wait_time 10 do # allow up to 10 seconds for content to load in t
 
         visit partners_path
 
-        accept_alert("Send an invitation to #{partner.name} to begin using the partner application?") do
+        accept_alert("Send an invitation to #{partner.name} to create their profile for approval?") do
           ele = find('tr', text: partner.name)
           within(ele) { click_on "Invite" }
         end
