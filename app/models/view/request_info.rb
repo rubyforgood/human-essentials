@@ -29,5 +29,9 @@ module View
     def custom_units
       Flipper.enabled?(:enable_packs) && request.item_requests.any? { |item| item.request_unit }
     end
+
+    def cancellable?
+      @request.status_pending? || @request.status_started?
+    end
   end
 end

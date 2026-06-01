@@ -104,12 +104,12 @@
             </table>
           </div>
           <div class="card-footer flex flex-row space-x-2">
-            <% unless @request.status_cancelled? %>
+            <% unless @request_info.request.status_cancelled? %>
               <%= submit_button_to start_request_path(@request_info.request), {text: "Fulfill request", size: "md"} unless @request_info.request.distribution %>
             <% end %>
             <%= view_button_to(distribution_path(@request_info.request.distribution), {text: "View Associated Distribution", size: "md"}) if @request_info.request.distribution %>
             <%= print_button_to print_picklist_request_path(@request_info.request), { format: :pdf, text: "Print", size: "md" } %>
-            <% unless @request_info.request.status_fulfilled? || @request.status_cancelled? %>
+            <% if @request_info.cancellable? %>
               <%= button_to 'Cancel', new_request_cancelation_path(request_id: @request_info.request.id),
                             method: :get, data: { disable_with: "Please wait..." }, form_class: 'd-inline', class: 'btn btn-danger btn-md' %>
             <% end %>

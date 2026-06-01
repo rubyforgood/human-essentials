@@ -149,4 +149,39 @@ RSpec.describe View::RequestInfo do
       end
     end
   end
+
+  describe "#cancellable?" do
+    context "when the request has been fulfilled" do
+      it "returns false" do
+        organization = build(:organization)
+        request = create(:request, organization:, status: "fulfilled")
+
+        request_info = View::RequestInfo.new(params: {id: request.id}, organization:)
+
+        expect(request_info.cancellable?).to eq(false)
+      end
+    end
+
+    context "when the request has been cancelled" do
+      it "returns false" do
+        organization = build(:organization)
+        request = create(:request, organization:, status: "fulfilled")
+
+        request_info = View::RequestInfo.new(params: {id: request.id}, organization:)
+
+        expect(request_info.cancellable?).to eq(false)
+      end
+    end
+
+    context "when the request has not been fulfilled nor cancelled" do
+      it "returns true" do
+        organization = build(:organization)
+        request = create(:request, organization:, status: "pending")
+
+        request_info = View::RequestInfo.new(params: {id: request.id}, organization:)
+
+        expect(request_info.cancellable?).to eq(true)
+      end
+    end
+  end
 end
