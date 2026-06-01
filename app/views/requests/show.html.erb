@@ -2,10 +2,10 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <% content_for :title, "Requests - #{@request.id} - #{current_organization.name}" %>
+        <% content_for :title, "Requests - #{@request_info.request.id} - #{current_organization.name}" %>
         <h1>
           Request
-          <small>from <%= @request.partner.name %></small>
+          <small>from <%= @request_info.request.partner.name %></small>
         </h1>
       </div>
       <div class="col-sm-6">
@@ -15,8 +15,8 @@
             <% end %>
           </li>
           <li class="breadcrumb-item"><%= link_to "Requests", requests_path %></li>
-          <li class="breadcrumb-item"><a href="#"> Request from <%= @request.partner.name %>
-            at <%= @request.created_at.to_fs(:distribution_date) %></a></li>
+          <li class="breadcrumb-item"><a href="#"> Request from <%= @request_info.request.partner.name %>
+            at <%= @request_info.request.created_at.to_fs(:distribution_date) %></a></li>
         </ol>
       </div>
     </div>
@@ -29,7 +29,7 @@
       <div class="col-12">
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">This request was sent on <%= @request.created_at.to_fs(:distribution_date) %></h3>
+            <h3 class="card-title">This request was sent on <%= @request_info.request.created_at.to_fs(:distribution_date) %></h3>
           </div>
           <div class="card-body p-0">
             <table class="table">
@@ -44,11 +44,11 @@
               </thead>
               <tbody>
               <tr>
-                <td><%= @request.partner.name %></td>
-                <td><%= @request.partner_user&.formatted_email %></td>
-                <td><%= @request.request_type&.humanize %></td>
-                <td><%= render partial: "status", locals: {status: @request.status} %></td>
-                <td><%= @request.comments || 'None' %></td>
+                <td><%= @request_info.request.partner.name %></td>
+                <td><%= @request_info.request.partner_user&.formatted_email %></td>
+                <td><%= @request_info.request.request_type&.humanize %></td>
+                <td><%= render partial: "status", locals: {status: @request_info.request.status} %></td>
+                <td><%= @request_info.request.comments || 'None' %></td>
               </tr>
             </table>
           </div>
@@ -67,36 +67,36 @@
               <tr>
                 <th>Item</th>
                 <th>Quantity</th>
-                <% if @custom_units %>
+                <% if @request_info.custom_units %>
                   <th>Units (if applicable)</th>
                 <% end %>
-                <% if @default_storage_location %>
+                <% if @request_info.default_storage_location %>
                   <th>Default storage location inventory</th>
                 <% end %>
                 <th>Total Inventory</th>
               </tr>
               </thead>
               <tbody>
-              <% @item_requests.each do |item_request| %>
+              <% @request_info.item_requests.each do |item_request| %>
                 <tr>
                   <td><%= item_request.item_name %></td>
                   <td><%= item_request.quantity %></td>
-                  <% if @custom_units %>
+                  <% if @request_info.custom_units %>
                     <td><%= item_request.request_unit&.pluralize(item_request.quantity.to_i) %></td>
                   <% end %>
-                  <% if @default_storage_location %>
-                    <% on_hand_for_location = @inventory.quantity_for(storage_location: @location&.id, item_id: item_request.item_id) %>
+                  <% if @request_info.default_storage_location %>
+                    <% on_hand_for_location = @request_info.inventory.quantity_for(storage_location: @request_info.location&.id, item_id: item_request.item_id) %>
                     <td><%= on_hand_for_location&.positive? ? on_hand_for_location : 'N/A' %></td>
                   <% end %>
-                  <% on_hand = @inventory.quantity_for(item_id: item_request.item_id) %>
+                  <% on_hand = @request_info.inventory.quantity_for(item_id: item_request.item_id) %>
                   <td><%= on_hand || 0 %></td>
                 </tr>
               <% end %>
               <tr>
                 <td>Total (Quota)</td>
                 <td>
-                  <%= @request.total_items %>
-                  <%= quota_display(@request.partner) %>
+                  <%= @request_info.request.total_items %>
+                  <%= quota_display(@request_info.request.partner) %>
                 </td>
                 <td />
               </tr>
@@ -105,12 +105,12 @@
           </div>
           <div class="card-footer flex flex-row space-x-2">
             <% unless @request.status_cancelled? %>
-              <%= submit_button_to start_request_path(@request), {text: "Fulfill request", size: "md"} unless @request.distribution %>
+              <%= submit_button_to start_request_path(@request_info.request), {text: "Fulfill request", size: "md"} unless @request_info.request.distribution %>
             <% end %>
-            <%= view_button_to(distribution_path(@request.distribution), {text: "View Associated Distribution", size: "md"}) if @request.distribution %>
-            <%= print_button_to print_picklist_request_path(@request), { format: :pdf, text: "Print", size: "md" } %>
-            <% unless @request.status_fulfilled? || @request.status_cancelled? %>
-              <%= button_to 'Cancel', new_request_cancelation_path(request_id: @request.id),
+            <%= view_button_to(distribution_path(@request_info.request.distribution), {text: "View Associated Distribution", size: "md"}) if @request_info.request.distribution %>
+            <%= print_button_to print_picklist_request_path(@request_info.request), { format: :pdf, text: "Print", size: "md" } %>
+            <% unless @request_info.request.status_fulfilled? || @request.status_cancelled? %>
+              <%= button_to 'Cancel', new_request_cancelation_path(request_id: @request_info.request.id),
                             method: :get, data: { disable_with: "Please wait..." }, form_class: 'd-inline', class: 'btn btn-danger btn-md' %>
             <% end %>
           </div>
