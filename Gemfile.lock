@@ -156,7 +156,7 @@ GEM
       launchy
     childprocess (5.0.0)
     choice (0.2.0)
-    clockwork (3.0.2)
+    clockwork (4.0.1)
       activesupport
       tzinfo
     coderay (1.1.3)
