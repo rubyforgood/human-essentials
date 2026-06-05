@@ -66,6 +66,7 @@ class Item < ApplicationRecord
   scope :alphabetized, -> { order(:name) }
   scope :by_base_item, ->(base_item) { where(base_item: base_item) }
   scope :by_reporting_category, ->(reporting_category) { where(reporting_category: reporting_category) }
+  scope :by_name, ->(name) { where(name: name) }
   scope :by_partner_key, ->(partner_key) { where(partner_key: partner_key) }
 
   scope :period_supplies, -> {

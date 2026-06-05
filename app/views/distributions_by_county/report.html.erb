@@ -6,6 +6,8 @@
         <h1>
           Estimated Distributions by County for <%= current_organization.name %>
         </h1>
+        <h5> Please note that any items within kits are included in these estimates
+        </h5>
       </div>
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
@@ -25,17 +27,33 @@
     <div class="row">
       <div class="col-12">
         <!-- Default box -->
-        <div class="card">
-          <div class="row">
-            <div class="col-sm-3 col-6">
+        <div class="card card-primary">
+          <div class="card-body">
+
               <div class="description-block border-right">
-                <%= simple_form_for :filters, url: distributions_by_county_report_path(current_organization), method: :get do |f| %>
-                  <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %><br>
-                  <%= filter_button %>
+                <%= form_tag(distributions_by_county_report_path(current_organization), method: :get) do |f| %>
+                  <div class="row">
+                  <% if @dbc_info.items.present? %>
+                    <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                      <%= filter_select(label: "Item", scope: :by_item_id, collection: @dbc_info.items, selected: @dbc_info.selected_item) %>
+                    </div>
+                  <% end %>
+                  <div class="form-group col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                    <%= filter_select(label: "Reporting Category", scope: :by_reporting_category, collection: @dbc_info.reporting_categories, selected: @dbc_info.selected_reporting_category) %>
+                  </div>
+
+                 <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <%= label_tag "Date Range", "Date Range" %>
+                    <%= render partial: "shared/date_range_picker", locals: {css_class: "form-control"} %>
+                  </div>
+                  </div>
+                    <div class="card-footer">
+                      <%= filter_button %>
+                      <%= clear_filter_button %>
+                    </div>
                 <% end %>
-              </div>
               <!-- /.description-block -->
-            </div>
+
           </div>
 
           <div class="card-body table-responsive p-0">
@@ -48,7 +66,7 @@
               </tr>
               </thead>
               <tbody>
-              <% @breakdown.each do |bd| %>
+              <% @dbc_info.breakdown.each do |bd| %>
                 <tr>
                   <td><%= bd.name %></td>
                   <td class="numeric"><%= number_with_delimiter(bd.quantity) %></td>
@@ -64,5 +82,6 @@
         <!-- /.card -->
       </div>
     </div>
+  </div>
   </div>
 </section>
