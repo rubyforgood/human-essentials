@@ -195,7 +195,7 @@ GEM
       railties (>= 7.0)
       responders
       warden (~> 1.2.3)
-    devise_invitable (2.0.11)
+    devise_invitable (2.0.12)
       actionmailer (>= 5.0)
       devise (>= 4.6)
     diff-lcs (1.6.2)
@@ -386,7 +386,8 @@ GEM
       pry
       pry-stack_explorer
       rails (>= 5.0)
-    mail (2.8.1)
+    mail (2.9.0)
+      logger
       mini_mime (>= 0.1.1)
       net-imap
       net-pop
@@ -420,7 +421,7 @@ GEM
     nenv (0.3.0)
     net-http-persistent (4.0.8)
       connection_pool (>= 2.2.4, < 4)
-    net-imap (0.5.9)
+    net-imap (0.6.4)
       date
       net-protocol
     net-pop (0.1.2)
