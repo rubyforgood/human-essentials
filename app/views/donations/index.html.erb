@@ -87,6 +87,11 @@
                                       selected: @donation_info.selected_donation_site) %>
                   </div>
                 <% end %>
+                <% if @donation_info.items.present? %>
+                  <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                    <%= filter_select(label: "Filter by Item", scope: :by_item_id, collection: @donation_info.items, selected: @donation_info.selected_item) %>
+                  </div>
+                <% end %>
                 <% if @donation_info.item_categories.present? %>
                   <div class="form-group col-lg-3 col-md-4 col-sm-6 col-xs-12">
                     <% id = "filter_#{SecureRandom.uuid}" %>
