@@ -51,7 +51,7 @@ module View
           donations: donations,
           filters: filters,
           items: organization.items.alphabetized.select(:id, :name),
-          item_categories: organization.item_categories.pluck(:name).uniq,
+          item_categories: organization.item_categories.alphabetized.pluck(:name).uniq,
           paginated_donations: paginated_donations,
           product_drives: organization.product_drives.alphabetized,
           product_drive_participants: organization.product_drive_participants.alphabetized,

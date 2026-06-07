@@ -161,6 +161,15 @@ RSpec.describe "Donations", type: :system, js: true do
         expect(page).to have_css("table tbody tr", count: 1)
       end
 
+      it "lists item categories alphabetically in the filter" do
+        names = ["Zebra supplies", "Apple goods", "Mango wares"]
+        names.each { |name| create(:item_category, name: name, organization: organization) }
+        visit subject
+        rendered = find("select[name='filters[by_category]']").all("option").map(&:text)
+        ours = rendered.select { |option| names.include?(option) }
+        expect(ours).to eq(names.sort)
+      end
+
       it_behaves_like "Date Range Picker", Donation, "issued_at"
 
       it "Filters by multiple attributes" do
