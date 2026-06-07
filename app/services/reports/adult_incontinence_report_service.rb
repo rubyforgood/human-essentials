@@ -144,7 +144,7 @@ module Reports
 
     def total_distributed_kits_containing_adult_incontinence_items_per_month
       kits = Kit.where(id: distributed_kits_for_year).select do |kit|
-        kit.item.items.adult_incontinence.exists?
+        kit.kit_item.items.adult_incontinence.exists?
       end
 
       total_assisted_adults = kits.sum do |kit|

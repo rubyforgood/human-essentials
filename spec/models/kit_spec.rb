@@ -32,18 +32,18 @@ RSpec.describe Kit, type: :model do
     end
 
     it "ensures the associated line_items are invalid with a nil quantity" do
-      kit.item.line_items << build(:line_item, quantity: nil)
-      expect(kit.item).not_to be_valid
+      kit.kit_item.line_items << build(:line_item, quantity: nil)
+      expect(kit.kit_item).not_to be_valid
     end
 
     it "ensures the associated line_items are invalid with a zero quantity" do
-      kit.item.line_items << build(:line_item, quantity: 0)
-      expect(kit.item).not_to be_valid
+      kit.kit_item.line_items << build(:line_item, quantity: 0)
+      expect(kit.kit_item).not_to be_valid
     end
 
     it "ensures the associated line_items are valid with a one quantity" do
-      kit.item.line_items << build(:line_item, quantity: 1)
-      expect(kit.item).to be_valid
+      kit.kit_item.line_items << build(:line_item, quantity: 1)
+      expect(kit.kit_item).to be_valid
     end
   end
 
@@ -69,11 +69,11 @@ RSpec.describe Kit, type: :model do
   context "Value >" do
     describe ".value_per_itemizable" do
       it "calculates values from associated items" do
-        kit.item.line_items = [
+        kit.kit_item.line_items = [
           create(:line_item, quantity: 1, item: create(:item, value_in_cents: 100)),
           create(:line_item, quantity: 1, item: create(:item, value_in_cents: 90))
         ]
-        expect(kit.item.value_per_itemizable).to eq(190)
+        expect(kit.kit_item.value_per_itemizable).to eq(190)
       end
     end
 
@@ -99,7 +99,7 @@ RSpec.describe Kit, type: :model do
 
         TestInventory.create_inventory(organization, {
           storage_location.id => {
-            kit.item.id => 10
+            kit.kit_item.id => 10
           }
         })
         expect(kit.reload.can_deactivate?).to eq(false)
@@ -116,13 +116,13 @@ RSpec.describe Kit, type: :model do
   specify 'deactivate and reactivate' do
     kit = create_kit(organization: organization)
     expect(kit.active).to eq(true)
-    expect(kit.item.active).to eq(true)
+    expect(kit.kit_item.active).to eq(true)
     kit.deactivate
     expect(kit.active).to eq(false)
-    expect(kit.item.active).to eq(false)
+    expect(kit.kit_item.active).to eq(false)
     kit.reactivate
     expect(kit.active).to eq(true)
-    expect(kit.item.active).to eq(true)
+    expect(kit.kit_item.active).to eq(true)
   end
 
   describe "versioning" do

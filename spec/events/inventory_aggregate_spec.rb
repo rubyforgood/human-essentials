@@ -404,7 +404,7 @@ RSpec.describe InventoryAggregate do
               item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 10, storage_location_id: storage_location1.id),
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 4, storage_location_id: storage_location1.id),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40, storage_location_id: storage_location1.id),
-              kit.item.id => EventTypes::EventItem.new(item_id: kit.item.id, quantity: 2, storage_location_id: storage_location1.id)
+              kit.kit_item.id => EventTypes::EventItem.new(item_id: kit.kit_item.id, quantity: 2, storage_location_id: storage_location1.id)
             }
           ),
           storage_location2.id => EventTypes::EventStorageLocation.new(
@@ -430,7 +430,7 @@ RSpec.describe InventoryAggregate do
             item1.id => 30,
             item2.id => 10,
             item3.id => 40,
-            kit.item.id => 3
+            kit.kit_item.id => 3
           },
           storage_location2.id => {
             item2.id => 10,
@@ -439,9 +439,9 @@ RSpec.describe InventoryAggregate do
         })
       inventory = InventoryAggregate.inventory_for(organization.id) # reload
 
-      kit.item.line_items = []
-      kit.item.line_items << build(:line_item, quantity: 20, item: item1, itemizable: kit.item)
-      kit.item.line_items << build(:line_item, quantity: 5, item: item2, itemizable: kit.item)
+      kit.kit_item.line_items = []
+      kit.kit_item.line_items << build(:line_item, quantity: 20, item: item1, itemizable: kit.kit_item)
+      kit.kit_item.line_items << build(:line_item, quantity: 5, item: item2, itemizable: kit.kit_item)
       KitDeallocateEvent.publish(kit, storage_location1.id, 2)
 
       # 30 + (20*2) = 70, 10 + (5*2) = 20
@@ -456,7 +456,7 @@ RSpec.describe InventoryAggregate do
               item1.id => EventTypes::EventItem.new(item_id: item1.id, quantity: 70, storage_location_id: storage_location1.id),
               item2.id => EventTypes::EventItem.new(item_id: item2.id, quantity: 20, storage_location_id: storage_location1.id),
               item3.id => EventTypes::EventItem.new(item_id: item3.id, quantity: 40, storage_location_id: storage_location1.id),
-              kit.item.id => EventTypes::EventItem.new(item_id: kit.item.id, quantity: 1, storage_location_id: storage_location1.id)
+              kit.kit_item.id => EventTypes::EventItem.new(item_id: kit.kit_item.id, quantity: 1, storage_location_id: storage_location1.id)
             }
           ),
           storage_location2.id => EventTypes::EventStorageLocation.new(
