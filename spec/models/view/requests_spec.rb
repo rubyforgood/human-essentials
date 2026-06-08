@@ -59,7 +59,7 @@ RSpec.describe View::Requests do
     it "returns the request statuses" do
       organization = build(:organization)
       build(:request, organization:)
-      humanized_statuses = {"Discarded" => 3, "Fulfilled" => 2, "Pending" => 0, "Started" => 1}
+      humanized_statuses = {"Cancelled" => 3, "Fulfilled" => 2, "Pending" => 0, "Started" => 1}
 
       requests = View::Requests.new(params: {}, organization:, helpers:)
 

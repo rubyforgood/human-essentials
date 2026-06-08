@@ -42,8 +42,8 @@ RSpec.describe "Kit management", type: :system do
 
     item = Item.last
     quantity_per_kit = 5
-    select item.name, from: "item_line_items_attributes_0_item_id"
-    find(:css, '#item_line_items_attributes_0_quantity').set(quantity_per_kit)
+    select item.name, from: "kit_item_line_items_attributes_0_item_id"
+    find(:css, '#kit_item_line_items_attributes_0_quantity').set(quantity_per_kit)
 
     click_button "Save"
 
@@ -73,7 +73,7 @@ RSpec.describe "Kit management", type: :system do
 
     expect(page).to have_content("Barcode Added to Inventory")
     # Check that item details have been filled in via javascript
-    expect(page).to have_field("item_line_items_attributes_0_quantity", with: quantity)
+    expect(page).to have_field("kit_item_line_items_attributes_0_quantity", with: quantity)
     # Check that new field has been added via javascript
     expect(page).to have_css(".line_item_section", count: 2)
   end
@@ -84,7 +84,7 @@ RSpec.describe "Kit management", type: :system do
     click_on 'Modify Allocation'
 
     inventory = View::Inventory.new(organization.id)
-    original_kit_count = inventory.quantity_for(item_id: existing_kit.item.id, storage_location: storage_location.id)
+    original_kit_count = inventory.quantity_for(item_id: existing_kit.kit_item.id, storage_location: storage_location.id)
     original_item_1_count = inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)
     original_item_2_count = inventory.quantity_for(item_id: existing_kit_item_2.id, storage_location: storage_location.id)
 
@@ -102,7 +102,7 @@ RSpec.describe "Kit management", type: :system do
     inventory.reload
 
     # Check that the kit quantity increased by the expected amount
-    expect(inventory.quantity_for(item_id: existing_kit.item.id, storage_location: storage_location.id)).to eq(2)
+    expect(inventory.quantity_for(item_id: existing_kit.kit_item.id, storage_location: storage_location.id)).to eq(2)
 
     # Ensure each of the contained items decrease the correct amount
     expect(inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)).to eq(40)
@@ -116,7 +116,7 @@ RSpec.describe "Kit management", type: :system do
     click_on 'Save'
     inventory.reload
 
-    expect(inventory.quantity_for(item_id: existing_kit.item.id, storage_location: storage_location.id)).to eq(0)
+    expect(inventory.quantity_for(item_id: existing_kit.kit_item.id, storage_location: storage_location.id)).to eq(0)
     expect(inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)).to eq(50)
     expect(inventory.quantity_for(item_id: existing_kit_item_2.id, storage_location: storage_location.id)).to eq(50)
   end
@@ -145,7 +145,7 @@ RSpec.describe "Kit management", type: :system do
       click_on 'Modify Allocation'
 
       inventory = View::Inventory.new(organization.id)
-      original_kit_count = inventory.quantity_for(item_id: existing_kit.item.id, storage_location: storage_location.id)
+      original_kit_count = inventory.quantity_for(item_id: existing_kit.kit_item.id, storage_location: storage_location.id)
       original_item_1_count = inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)
       original_item_2_count = inventory.quantity_for(item_id: existing_kit_item_2.id, storage_location: storage_location.id)
 
@@ -161,7 +161,7 @@ RSpec.describe "Kit management", type: :system do
       click_on 'Save'
       inventory.reload
 
-      expect(inventory.quantity_for(item_id: existing_kit.item.id, storage_location: storage_location.id)).to eq(0)
+      expect(inventory.quantity_for(item_id: existing_kit.kit_item.id, storage_location: storage_location.id)).to eq(0)
       expect(inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)).to eq(0)
       expect(inventory.quantity_for(item_id: existing_kit_item_2.id, storage_location: storage_location.id)).to eq(0)
     end
@@ -172,7 +172,7 @@ RSpec.describe "Kit management", type: :system do
       # Force there to be no kit quantity available
       TestInventory.create_inventory(organization, {
         storage_location.id => {
-          existing_kit.item.id => 0,
+          existing_kit.kit_item.id => 0,
           existing_kit_item_1.id => 50,
           existing_kit_item_2.id => 50
         }
@@ -185,7 +185,7 @@ RSpec.describe "Kit management", type: :system do
       click_on 'Modify Allocation'
 
       inventory = View::Inventory.new(organization.id)
-      original_kit_count = inventory.quantity_for(item_id: existing_kit.item.id, storage_location: storage_location.id)
+      original_kit_count = inventory.quantity_for(item_id: existing_kit.kit_item.id, storage_location: storage_location.id)
       original_item_1_count = inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)
       original_item_2_count = inventory.quantity_for(item_id: existing_kit_item_2.id, storage_location: storage_location.id)
 
@@ -201,7 +201,7 @@ RSpec.describe "Kit management", type: :system do
       click_on 'Save'
       inventory.reload
 
-      expect(inventory.quantity_for(item_id: existing_kit.item.id, storage_location: storage_location.id)).to eq(0)
+      expect(inventory.quantity_for(item_id: existing_kit.kit_item.id, storage_location: storage_location.id)).to eq(0)
       expect(inventory.quantity_for(item_id: existing_kit_item_1.id, storage_location: storage_location.id)).to eq(50)
       expect(inventory.quantity_for(item_id: existing_kit_item_2.id, storage_location: storage_location.id)).to eq(50)
     end
@@ -216,8 +216,8 @@ RSpec.describe "Kit management", type: :system do
 
       item = Item.last
       quantity_per_kit = 5
-      select item.name, from: "item_line_items_attributes_0_item_id"
-      find(:css, '#item_line_items_attributes_0_quantity').set(quantity_per_kit)
+      select item.name, from: "kit_item_line_items_attributes_0_item_id"
+      find(:css, '#kit_item_line_items_attributes_0_quantity').set(quantity_per_kit)
 
       click_button "Save"
 

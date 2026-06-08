@@ -12,7 +12,6 @@ module View
 
       @requests = organization
         .ordered_requests
-        .undiscarded
         .during(helpers.selected_range)
         .class_filter(filters)
 

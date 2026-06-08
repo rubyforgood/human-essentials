@@ -33,11 +33,12 @@ RSpec.describe KitCreateService do
       it 'should create a new Kit' do
         expect { subject }.to change { Kit.all.count }.by(1)
         kit = Kit.last
-        expect(kit.item.line_items.count).to eq(3)
+        expect(kit.kit_item.line_items.count).to eq(3)
       end
 
       it 'should create a new Item' do
-        expect { subject }.to change { Item.all.count }.by(1)
+        expect { subject }.to change { KitItem.all.count }.by(1)
+        expect(KitItem.last.kit).to eq(Kit.last)
       end
 
       it 'should create the new Item associated with the Kit' do
@@ -55,7 +56,7 @@ RSpec.describe KitCreateService do
         end
 
         it 'should not create a Item' do
-          expect { subject }.not_to change { Item.all.count }
+          expect { subject }.not_to change { KitItem.all.count }
         end
 
         it 'should have an error that includes the raised error' do
@@ -76,7 +77,7 @@ RSpec.describe KitCreateService do
         end
 
         it 'should not create a Item' do
-          expect { subject }.not_to change { Item.all.count }
+          expect { subject }.not_to change { KitItem.all.count }
         end
 
         it 'should have an error that includes the error' do

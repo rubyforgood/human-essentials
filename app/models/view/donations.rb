@@ -2,6 +2,7 @@ module View
   Donations = Data.define(
     :donations,
     :filters,
+    :items,
     :item_categories,
     :paginated_donations,
     :product_drives,
@@ -18,7 +19,7 @@ module View
           params.require(:filters).permit(
             :at_storage_location, :by_source, :from_donation_site,
             :by_product_drive, :by_product_drive_participant,
-            :from_manufacturer, :by_category
+            :from_manufacturer, :by_item_id, :by_category
           )
         else
           {}
@@ -48,7 +49,8 @@ module View
         new(
           donations: donations,
           filters: filters,
-          item_categories: organization.item_categories.pluck(:name).uniq,
+          items: organization.items.alphabetized.select(:id, :name),
+          item_categories: organization.item_categories.alphabetized.pluck(:name).uniq,
           paginated_donations: paginated_donations,
           product_drives: organization.product_drives.alphabetized,
           product_drive_participants: organization.product_drive_participants.alphabetized,
@@ -65,6 +67,10 @@ module View
 
     def selected_source
       filters[:by_source]
+    end
+
+    def selected_item
+      filters[:by_item_id].presence
     end
 
     def selected_item_category
