@@ -34,6 +34,7 @@
                 <th>Date</th>
                 <th>Source</th>
                 <th>Donation Site</th>
+                <th>Drive Participant</th>
                 <th>Storage Location</th>
               </tr>
               </thead>
@@ -41,6 +42,7 @@
               <td><%= @donation.created_at.to_fs(:distribution_date) %></td>
               <td><%= @donation.source %></td>
               <td><%= @donation.donation_site_view %></td>
+              <td><%= @donation.drive_participant_view %></td>
               <td><%= @donation.storage_view %></td>              </tbody>
             </table>
           </div>
