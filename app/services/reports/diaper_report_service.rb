@@ -65,7 +65,7 @@ module Reports
         INNER JOIN items AS kit_items ON kit_items.id = kit_line_items.item_id
         WHERE distributions.organization_id = ?
           AND EXTRACT(year FROM issued_at) = ?
-          AND items.kit_id IS NOT NULL
+          AND items.type = 'KitItem'
           AND kit_items.reporting_category = 'disposable_diapers'
           AND kit_line_items.itemizable_type = 'Item';
       SQL

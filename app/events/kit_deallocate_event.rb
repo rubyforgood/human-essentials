@@ -1,6 +1,6 @@
 class KitDeallocateEvent < Event
-  def self.event_line_items(kit, storage_location, quantity)
-    items = kit.kit_item.line_items.map do |item|
+  def self.event_line_items(kit_item, storage_location, quantity)
+    items = kit_item.line_items.map do |item|
       EventTypes::EventLineItem.new(
         quantity: item.quantity * quantity,
         item_id: item.item_id,
@@ -11,22 +11,22 @@ class KitDeallocateEvent < Event
     end
     items.push(EventTypes::EventLineItem.new(
       quantity: quantity,
-      item_id: kit.kit_item.id,
-      item_value_in_cents: kit.kit_item.value_in_cents,
+      item_id: kit_item.id,
+      item_value_in_cents: kit_item.value_in_cents,
       from_storage_location: storage_location,
       to_storage_location: nil
     ))
     items
   end
 
-  def self.publish(kit, storage_location, quantity)
+  def self.publish(kit_item, storage_location, quantity)
     create(
-      eventable: kit,
-      group_id: "kit-deallocate-#{kit.id}-#{SecureRandom.hex}",
-      organization_id: kit.organization_id,
+      eventable: kit_item,
+      group_id: "kit-deallocate-#{kit_item.id}-#{SecureRandom.hex}",
+      organization_id: kit_item.organization_id,
       event_time: Time.zone.now,
       data: EventTypes::InventoryPayload.new(
-        items: event_line_items(kit, storage_location, quantity)
+        items: event_line_items(kit_item, storage_location, quantity)
       )
     )
   end

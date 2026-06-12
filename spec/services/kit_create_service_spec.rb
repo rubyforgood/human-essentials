@@ -30,19 +30,19 @@ RSpec.describe KitCreateService do
     end
 
     context 'when the parameters are valid' do
-      it 'should create a new Kit' do
-        expect { subject }.to change { Kit.all.count }.by(1)
-        kit = Kit.last
-        expect(kit.kit_item.line_items.count).to eq(3)
-      end
-
-      it 'should create a new Item' do
+      it 'should create a new KitItem with line items' do
         expect { subject }.to change { KitItem.all.count }.by(1)
-        expect(KitItem.last.kit).to eq(Kit.last)
+        kit = KitItem.last
+        expect(kit.line_items.count).to eq(3)
       end
 
-      it 'should create the new Item associated with the Kit' do
-        expect { subject }.to change { Kit.all.count }.by(1)
+      it 'should return the created KitItem' do
+        expect(subject.kit).to eq(KitItem.last)
+        expect(subject.kit).to be_a(KitItem)
+      end
+
+      it 'should not create any other items' do
+        expect { subject }.to change { Item.count }.by(1)
       end
 
       context 'but an unexpected error gets raised' do
@@ -51,11 +51,7 @@ RSpec.describe KitCreateService do
           allow_any_instance_of(ItemCreateService).to receive(:call).and_raise(raised_error)
         end
 
-        it 'should not create the Kit' do
-          expect { subject }.not_to change { Kit.all.count }
-        end
-
-        it 'should not create a Item' do
+        it 'should not create a KitItem' do
           expect { subject }.not_to change { KitItem.all.count }
         end
 
@@ -72,11 +68,7 @@ RSpec.describe KitCreateService do
           allow_any_instance_of(ItemCreateService).to receive(:call).and_return(failing_result)
         end
 
-        it 'should not create the Kit' do
-          expect { subject }.not_to change { Kit.all.count }
-        end
-
-        it 'should not create a Item' do
+        it 'should not create a KitItem' do
           expect { subject }.not_to change { KitItem.all.count }
         end
 
@@ -98,7 +90,7 @@ RSpec.describe KitCreateService do
       context 'because the kit_params is invalid for kit creation' do
         let(:kit_params) { { organization_id: organization_id } }
         let(:kit_validation_errors) do
-          kit = Kit.new(kit_params)
+          kit = organization.kit_items.new
           kit.valid?
           kit.errors
         end

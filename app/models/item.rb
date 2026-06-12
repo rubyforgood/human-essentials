@@ -31,12 +31,10 @@ class Item < ApplicationRecord
   include Itemizable
 
   after_initialize :set_default_distribution_quantity, if: :new_record?
-  after_update :update_associated_kit_name, if: -> { kit.present? }
   before_destroy :validate_destroy, prepend: true
 
   belongs_to :organization # If these are universal this isn't necessary
   belongs_to :base_item, counter_cache: :item_count, primary_key: :partner_key, foreign_key: :partner_key, inverse_of: :items, optional: true
-  belongs_to :kit, optional: true
   belongs_to :item_category, optional: true
 
   validates :additional_info, length: { maximum: 500 }
@@ -46,7 +44,6 @@ class Item < ApplicationRecord
   validates :on_hand_recommended_quantity, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
   validates :on_hand_minimum_quantity, numericality: { greater_than_or_equal_to: 0 }
   validates :package_size, numericality: { greater_than_or_equal_to: 0 }, allow_blank: true
-  validates :reporting_category, presence: true, unless: proc { |i| i.kit }
   validate -> { line_items_quantity_is_at_least(1) }
 
   has_many :used_line_items, dependent: :destroy, class_name: "LineItem"
@@ -57,10 +54,6 @@ class Item < ApplicationRecord
   has_many :request_units, class_name: "ItemUnit", dependent: :destroy
 
   scope :active, -> { where(active: true) }
-
-  # :housing_a_kit are items which house a kit, NOT items is_in_kit
-  scope :housing_a_kit, -> { where.not(kit_id: nil) }
-  scope :loose, -> { where(kit_id: nil) }
   scope :inactive, -> { where.not(active: true) }
 
   scope :visible, -> { where(visible_to_partners: true) }
@@ -106,17 +99,17 @@ class Item < ApplicationRecord
 
   def is_in_kit?(kits = nil)
     if kits
-      kits.any? { |k| k.kit_item.line_items.map(&:item_id).include?(id) }
+      kits.any? { |k| k.line_items.map(&:item_id).include?(id) }
     else
-      organization.kits
+      organization.kit_items
         .active
-        .joins(kit_item: :line_items)
+        .joins(:line_items)
         .where(line_items: { item_id: id}).any?
     end
   end
 
   def can_delete?(inventory = nil, kits = nil)
-    can_deactivate_or_delete?(inventory, kits) && used_line_items.none? && !barcode_count&.positive? && !in_request? && kit.blank?
+    can_deactivate_or_delete?(inventory, kits) && used_line_items.none? && !barcode_count&.positive? && !in_request?
   end
 
   # @return [Boolean]
@@ -141,11 +134,7 @@ class Item < ApplicationRecord
     unless can_deactivate_or_delete?
       raise "Cannot deactivate item - it is in a storage location or kit!"
     end
-    if kit
-      kit.deactivate
-    else
-      update!(active: false)
-    end
+    update!(active: false)
   end
 
   # @return [String]
@@ -199,10 +188,11 @@ class Item < ApplicationRecord
   private
 
   def set_default_distribution_quantity
-    self.distribution_quantity ||= kit_id.present? ? 1 : 50
+    self.distribution_quantity ||= default_distribution_quantity
   end
 
-  def update_associated_kit_name
-    kit.update(name: name)
+  # Overridden in KitItem (kits default to 1).
+  def default_distribution_quantity
+    50
   end
 end

@@ -4,7 +4,7 @@ class KitsController < ApplicationController
   end
 
   def index
-    @kits = current_organization.kits.includes(kit_item: {line_items: :item}).class_filter(filter_params)
+    @kits = current_organization.kit_items.includes(line_items: :item).class_filter(filter_params)
     @inventory = View::Inventory.new(current_organization.id)
     unless params[:include_inactive_items]
       @kits = @kits.active
@@ -15,9 +15,8 @@ class KitsController < ApplicationController
   def new
     load_form_collections
 
-    @kit = current_organization.kits.new
-    @kit.kit_item = KitItem.new(organization: current_organization)
-    @kit.kit_item.line_items.build
+    @kit = current_organization.kit_items.new
+    @kit.line_items.build
   end
 
   def create
@@ -32,26 +31,22 @@ class KitsController < ApplicationController
         .map { |error| formatted_error_message(error) }
         .join(", ")
 
-      # Extract kit and item params separately since line_items belong to Item, not Kit
-      kit_only_params = kit_params.except(:line_items_attributes)
-      @kit = Kit.new(kit_only_params)
       load_form_collections
-      @kit.kit_item ||= KitItem.new(organization: current_organization,
-                                    **kit_params.slice(:line_items_attributes))
-      @kit.kit_item.line_items.build if @kit.kit_item.line_items.empty?
+      @kit = current_organization.kit_items.new(kit_params)
+      @kit.line_items.build if @kit.line_items.empty?
 
       render :new
     end
   end
 
   def deactivate
-    @kit = current_organization.kits.find(params[:id])
-    @kit.deactivate
+    @kit = current_organization.kit_items.find(params[:id])
+    @kit.deactivate!
     redirect_back_or_to(dashboard_path, notice: "Kit has been deactivated!")
   end
 
   def reactivate
-    @kit = current_organization.kits.find(params[:id])
+    @kit = current_organization.kit_items.find(params[:id])
     if @kit.can_reactivate?
       @kit.reactivate
       redirect_back_or_to(dashboard_path, notice: "Kit has been reactivated!")
@@ -61,7 +56,7 @@ class KitsController < ApplicationController
   end
 
   def allocations
-    @kit = current_organization.kits.find(params[:id])
+    @kit = current_organization.kit_items.find(params[:id])
     @storage_locations = current_organization.storage_locations.active
     @inventory = View::Inventory.new(current_organization.id)
 
@@ -69,7 +64,7 @@ class KitsController < ApplicationController
   end
 
   def allocate
-    @kit = current_organization.kits.find(params[:id])
+    @kit = current_organization.kit_items.find(params[:id])
     @storage_location = current_organization.storage_locations.active.find(kit_adjustment_params[:storage_location_id])
     @change_by = kit_adjustment_params[:change_by].to_i
     begin
@@ -92,14 +87,12 @@ class KitsController < ApplicationController
   end
 
   def kit_params
-    kit_params = params.require(:kit).permit(
+    params.require(:kit_item).permit(
       :name,
       :visible_to_partners,
-      :value_in_dollars
-    )
-    item_params = params.require(:kit_item)
-      .permit(line_items_attributes: [:item_id, :quantity, :_destroy])
-    kit_params.to_h.merge(item_params.to_h)
+      :value_in_dollars,
+      line_items_attributes: [:item_id, :quantity, :_destroy]
+    ).to_h
   end
 
   def kit_adjustment_params

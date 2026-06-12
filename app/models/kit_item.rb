@@ -23,7 +23,29 @@
 #  organization_id              :integer
 #
 class KitItem < Item
-  # for now. Technically not optional, but since we will be changing this to be standalone (no kit),
-  # there isn't really a reason to enforce this at the moment.
-  belongs_to :kit, optional: true
+  scope :by_name, ->(name) { where("name ILIKE ?", "%#{name}%") }
+
+  # Kit items are managed through the kits UI (deactivate/reactivate), not the normal
+  # item-deletion path.
+  def can_delete?(inventory = nil, kits = nil)
+    false
+  end
+
+  # Kits can't reactivate if they have any inactive items, because now whenever they are allocated
+  # or deallocated, we are changing inventory for inactive items (which we don't allow).
+  # @return [Boolean]
+  def can_reactivate?
+    line_items.joins(:item).where(items: {active: false}).none?
+  end
+
+  def reactivate
+    update!(active: true)
+  end
+
+  private
+
+  # Kits default to a distribution quantity of 1 (a single kit), not 50.
+  def default_distribution_quantity
+    1
+  end
 end

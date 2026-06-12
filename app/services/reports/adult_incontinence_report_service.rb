@@ -108,7 +108,7 @@ module Reports
         WHERE distributions.organization_id = ?
           AND EXTRACT(year FROM issued_at) = ?
           AND kit_items.reporting_category = 'adult_incontinence'
-          AND items.kit_id IS NOT NULL
+          AND items.type = 'KitItem'
           AND kit_line_items.itemizable_type = 'Item';
       SQL
 
@@ -128,30 +128,28 @@ module Reports
                         .distributions
                         .for_year(year)
                         .joins(line_items: :item)
-                        .merge(Item.adult_incontinence.where(kit_id: nil)) # exclude kits
+                        .merge(ConcreteItem.adult_incontinence) # exclude kits
                         .sum('line_items.quantity / COALESCE(items.distribution_quantity, 50.0)')
       total_quantity.to_f / 12.0
     end
 
+    # The distributed "kits" are KitItems that appear directly in distribution line items.
     def distributed_kits_for_year
       organization
         .distributions
         .for_year(year)
-        .joins(line_items: { item: :kit })
+        .joins(line_items: :item)
+        .where(items: { type: 'KitItem' })
         .distinct
-        .pluck('kits.id')
+        .pluck('items.id')
     end
 
     def total_distributed_kits_containing_adult_incontinence_items_per_month
-      kits = Kit.where(id: distributed_kits_for_year).select do |kit|
-        kit.kit_item.items.adult_incontinence.exists?
+      kit_items = KitItem.where(id: distributed_kits_for_year).select do |kit_item|
+        kit_item.items.adult_incontinence.exists?
       end
 
-      total_assisted_adults = kits.sum do |kit|
-        kit_item = Item.where(kit_id: kit.id).first
-
-        next 0 unless kit_item
-
+      total_assisted_adults = kit_items.sum do |kit_item|
         organization
           .distributions
           .for_year(year)
