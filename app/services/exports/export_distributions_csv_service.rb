@@ -7,7 +7,7 @@ module Exports
     include DistributionHelper
     include ItemsHelper
 
-    def initialize(distributions:, organization:, filters: [])
+    def initialize(distributions:, organization:, filters: {})
       # Currently, the @distributions are already loaded by the controllers that are delegating exporting
       # to this service object; this is happening within the same request/response cycle, so it's already
       # in memory, so we can pass that collection in directly. Should this be moved to a background / async

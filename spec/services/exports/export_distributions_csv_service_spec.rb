@@ -183,4 +183,26 @@ RSpec.describe Exports::ExportDistributionsCSVService do
       end
     end
   end
+
+  # this is intended for easier performance testing, not to be run with rest of suite
+  # also, better for testing consistency to disable config.order = :random
+  # lastly, test setup time gets long, the printed duration is the actual generation time to pay attention to
+  xcontext "performance timing" do
+    [500, 1000, 2000, 5000, 10_000, 20_000, 30_000].reverse_each do |distribution_count|
+      it "processes #{distribution_count} distributions" do
+        partners = create_list(:partner, 500)
+        items = create_list(:item, 5000, organization:, on_hand_minimum_quantity: 5)
+        create_list(:distribution, distribution_count, :with_items, item: items.sample, storage_location: storage_location, organization: organization, partner: partners.sample)
+        TestInventory.create_inventory(organization, {
+          storage_location.id => items.map { [it.id, rand(20..69)] }.to_h
+        })
+        t = Time.zone.now
+        csv = Exports::ExportDistributionsCSVService.new(distributions: organization.distributions.includes(:partner, :storage_location, line_items: :item), organization:).generate_csv
+        puts "================================================================="
+        puts "Duration: #{(d = Time.zone.now - t).round(4)} for #{distribution_count} distributions: #{(d / distribution_count).round(4)}/dist"
+        File.write("dist-#{distribution_count}.csv", csv)
+        expect(true)
+      end
+    end
+  end
 end
