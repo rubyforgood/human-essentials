@@ -149,10 +149,9 @@ module Exports
     def build_row_data(distribution)
       row = base_table.values.map { |closure| closure.call(distribution) }
 
+      grouped_line_items = distribution.line_items.group_by(&:name)
       item_names.each do |item_name|
-        # We are doing this in-memory so that we can use the already-loaded line item records
-        line_items = distribution.line_items.select { |item| item.name == item_name }
-
+        line_items = grouped_line_items.fetch(item_name, [])
         row << line_items.sum(&:quantity)
         row << Money.new(line_items.sum(&:value_per_line_item)) if @organization.include_in_kind_values_in_exported_files
         row << line_items.map(&:has_packages).compact.sum.round(2) if @organization.include_packages_in_distribution_export
