@@ -32,7 +32,7 @@ module Exports
       csv_data = []
 
       csv_data << base_headers + item_headers
-      distributions.each do |distribution|
+      distributions.find_each do |distribution|
         csv_data << build_row_data(distribution)
       end
 

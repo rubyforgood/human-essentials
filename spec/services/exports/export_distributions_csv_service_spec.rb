@@ -4,9 +4,10 @@ RSpec.describe Exports::ExportDistributionsCSVService do
   let(:partner) { create(:partner, name: "first partner", email: "firstpartner@gmail.com", notes: "just a note.", organization_id: organization.id) }
   let(:include_in_kind_values) { false }
   let(:include_packages) { false }
+  let(:distributions_query) { Distribution.where(id: distributions.map(&:id)).includes(:partner, :storage_location, line_items: :item) } # match the query design used in DistributionsController and PartnersController
 
   describe '#generate_csv' do
-    subject { described_class.new(distributions: distributions, organization: organization, filters: filters).generate_csv }
+    subject { described_class.new(distributions: distributions_query, organization: organization, filters: filters).generate_csv }
 
     let(:duplicate_item) { create(:item, name: "Dupe Item", value_in_cents: 300, organization: organization, package_size: 2) }
 
@@ -174,7 +175,7 @@ RSpec.describe Exports::ExportDistributionsCSVService do
     end
 
     context 'when there are no distributions but the report is requested' do
-      subject { described_class.new(distributions: [], organization: organization, filters: filters).generate_csv }
+      subject { described_class.new(distributions: Distribution.none, organization: organization, filters: filters).generate_csv }
       it 'returns a csv with only headers and no rows' do
         csv = <<~CSV
           Partner,Initial Allocation,Scheduled for,Source Inventory,Total Number of #{item_name},Total Value of #{item_name},Delivery Method,Shipping Cost,Status,Agency Representative,Comments,Reporting Category,Dupe Item
